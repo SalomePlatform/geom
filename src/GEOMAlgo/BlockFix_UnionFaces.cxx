@@ -429,7 +429,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
         myContext->Replace(aSolid,aResult);
       }
     }
-    else {
+//    else {
       for( exp.Init(aSolid, TopAbs_FACE); exp.More(); exp.Next()) {
         TopoDS_Face aFace = TopoDS::Face(exp.Current().Oriented(TopAbs_FORWARD));
         Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire;
@@ -445,7 +445,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
           sfw->FixShifted();
         }
       }
-    }
+//    }
 
   } // end processing each solid
 
