@@ -48,7 +48,8 @@ public :
 
   void MakeLinearEdgeAndDisplay(const gp_Pnt P1, const gp_Pnt P2);
   void MakeWireAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeFaceAndDisplay(GEOM::GEOM_Shape_ptr aWire, const Standard_Boolean wantPlanar);
+  void MakeFaceAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR,
+			  const Standard_Boolean wantPlanar);
   void MakeShellAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
   void MakeSolidAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
   void MakeCompoundAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);

@@ -164,10 +164,11 @@ void BuildGUI::MakeWireAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
 // function : MakeFaceAndDisplay()
 // purpose  :
 //=====================================================================================
-void BuildGUI::MakeFaceAndDisplay(GEOM::GEOM_Shape_ptr aWire, const Standard_Boolean wantPlanar)
+void BuildGUI::MakeFaceAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR,
+				  const Standard_Boolean wantPlanar)
 {
   try {
-    GEOM::GEOM_Shape_var result = myGeom->MakeFace(aWire, wantPlanar);
+    GEOM::GEOM_Shape_var result = myGeom->MakeFace(listShapesIOR, wantPlanar);
     if(result->_is_nil()) {
       QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
       return;

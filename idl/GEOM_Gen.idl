@@ -101,9 +101,6 @@ module GEOM
 
     GEOM_Shape MakePlacedBox(in double x1,  in double y1,  in double z1,
 			     in double delta1, in double delta2, in double delta3) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakePanel(in GEOM_Shape shape,
-			 in short directiontype,
-			 in double delta) raises (SALOME::SALOME_Exception) ;
     GEOM_Shape MakeGlueFaces(in GEOM_Shape shape,
 			     in double tol3d) raises (SALOME::SALOME_Exception) ;
     
@@ -237,7 +234,7 @@ module GEOM
 			     in PointStruct pstruct2) raises (SALOME::SALOME_Exception) ;
     GEOM_Shape MakeWire     (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
     GEOM_Shape MakeCompound (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeFace     (in GEOM_Shape shapeWire,
+    GEOM_Shape MakeFace     (in ListOfIOR ListShape,
 			     in boolean wantplanarface ) raises (SALOME::SALOME_Exception) ;
     GEOM_Shape MakeShell    (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
     GEOM_Shape MakeSolid    (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;

@@ -57,9 +57,8 @@ private:
     /* Filter selection */
     Handle(GEOM_ShapeTypeFilter) myWireFilter;
 
-    TopoDS_Shape myShape;   /* topology used to fuse */
-    GEOM::GEOM_Shape_var myGeomShape;   /* is myShape */
-    bool myOkShape;   /* to check when arguments is defined */
+    GEOM::GEOM_Gen::ListOfIOR myListShapes;
+    bool myOkListShapes;  /* to check when arguments is defined */
 
     DlgRef_1Sel1Check_QTD* GroupPoints;
 
@@ -67,7 +66,6 @@ private slots:
     void ClickOnOk();
     void ClickOnApply();
     void ActivateThisDialog();
-    void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
 

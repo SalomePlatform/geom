@@ -85,7 +85,7 @@ void BuildGUI_FaceDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->CheckButton1->setChecked(TRUE);
 
-  myOkShape = false;
+  myOkListShapes = false;
 
   myWireFilter = new GEOM_ShapeTypeFilter(TopAbs_WIRE, myGeom);
   mySelection->AddFilter(myWireFilter); /* first filter used */
@@ -124,8 +124,8 @@ void BuildGUI_FaceDlg::ClickOnOk()
 void BuildGUI_FaceDlg::ClickOnApply()
 {
   QAD_Application::getDesktop()->putInfo(tr(""));
-  if(myOkShape)	  
-    myBuildGUI->MakeFaceAndDisplay(myGeomShape, GroupPoints->CheckButton1->isChecked());
+  if(myOkListShapes)
+    myBuildGUI->MakeFaceAndDisplay(myListShapes, GroupPoints->CheckButton1->isChecked());
   return;
 }
 
@@ -139,24 +139,17 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
-  myOkShape = false;
+  myOkListShapes = false;
   int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
+  if(nbSel == 0)
     return;
-  }
+  if(nbSel != 1)
+    aString = tr("%1_objects").arg(nbSel);
+
+  myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes);
   
-  // nbSel == 1!
-  Standard_Boolean testResult;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomBase->GetTopoFromSelection(mySelection, myShape))
-    return;
-
-  myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-  if(!testResult)
-    return;
-
   myEditCurrentArgument->setText(aString);
-  myOkShape = true;
+  myOkListShapes = true;
   /* no simulation */
   return;
 }
@@ -172,23 +165,6 @@ void BuildGUI_FaceDlg::SetEditCurrentArgument()
   mySelection->ClearFilters();
   mySelection->AddFilter(myWireFilter);
   this->SelectionIntoArgument();
-  return;
-}
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void BuildGUI_FaceDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
   return;
 }
 
