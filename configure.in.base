@@ -140,13 +140,13 @@ echo
 
 CHECK_PYTHON
 
-echo
-echo ---------------------------------------------
-echo testing java
-echo ---------------------------------------------
-echo
+dnl echo
+dnl echo ---------------------------------------------
+dnl echo testing java
+dnl echo ---------------------------------------------
+dnl echo
 
-CHECK_JAVA
+dnl CHECK_JAVA
 
 echo
 echo ---------------------------------------------
@@ -172,13 +172,13 @@ echo
 
 CHECK_OMNIORB
 
-echo
-echo ---------------------------------------------
-echo testing mico
-echo ---------------------------------------------
-echo
+dnl echo
+dnl echo ---------------------------------------------
+dnl echo testing mico
+dnl echo ---------------------------------------------
+dnl echo
 
-CHECK_MICO
+dnl CHECK_MICO
 
 echo
 echo ---------------------------------------------
@@ -264,7 +264,7 @@ echo ---------------------------------------------
 echo
 
 echo Configure
-variables="cc_ok lex_yacc_ok python_ok java_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok med2_ok omniORB_ok mico_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
+variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok med2_ok omniORB_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
 
 for var in $variables
 do
