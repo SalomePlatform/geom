@@ -10,11 +10,11 @@
 #include "GeometryGUI_Swig.hxx"
 %}
 
-class GeometryGUI_Swig
+class GEOM_Swig
 {
  public:
-  GeometryGUI_Swig();
-  ~GeometryGUI_Swig();
+  GEOM_Swig();
+  ~GEOM_Swig();
 
   void createAndDisplayGO(const char* Entry);
   int  getIndexTopology(const char *SubEntry, const char *Entry);

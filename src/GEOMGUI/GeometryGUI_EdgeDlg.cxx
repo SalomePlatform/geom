@@ -39,8 +39,8 @@ using namespace std;
 GeometryGUI_EdgeDlg::GeometryGUI_EdgeDlg( QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl )
     : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
 {
-    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_BUILD_EDGE")));
-    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_SELECT")));
+    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_BUILD_EDGE")));
+    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
 
     if ( !name )
 	setName( "GeometryGUI_EdgeDlg" );
@@ -178,7 +178,7 @@ void GeometryGUI_EdgeDlg::Init( SALOME_Selection* Sel )
   // TODO : previous selection into argument ?
 
   /* Filters definition */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   myGeom = GEOM::GEOM_Gen::_narrow(comp);
   myVertexFilter = new GEOM_ShapeTypeFilter( TopAbs_VERTEX, myGeom );
   mySelection->AddFilter(myVertexFilter) ; /* first filter used */

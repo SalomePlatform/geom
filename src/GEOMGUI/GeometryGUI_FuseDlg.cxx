@@ -40,8 +40,8 @@ using namespace std;
 GeometryGUI_FuseDlg::GeometryGUI_FuseDlg( QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl )
     : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
 {
-     QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_FUSE")));
-     QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_SELECT")));
+     QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_FUSE")));
+     QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
 
     if ( !name )
 	setName( "GeometryGUI_FuseDlg" );
@@ -178,7 +178,7 @@ void GeometryGUI_FuseDlg::Init( SALOME_Selection* Sel )
 
   myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
 
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   myGeom = GEOM::GEOM_Gen::_narrow(comp);
   
   // TODO previous selection into argument ?

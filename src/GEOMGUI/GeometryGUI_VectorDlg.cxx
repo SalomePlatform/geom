@@ -46,9 +46,9 @@ using namespace std;
 GeometryGUI_VectorDlg::GeometryGUI_VectorDlg( QWidget* parent,  const char* name, SALOME_Selection* Sel, bool modal, WFlags fl )
     : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
 {
-    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_VECTOR_2P")));
-    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_SELECT")));
-    QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_VECTOR_DXYZ")));
+    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_VECTOR_2P")));
+    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
+    QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_VECTOR_DXYZ")));
 
     if ( !name )
 	setName( "GeometryGUI_VectorDlg" );
@@ -246,7 +246,7 @@ void GeometryGUI_VectorDlg::Init( SALOME_Selection* Sel )
 
 
   /* Filter definitions */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   myGeom = GEOM::GEOM_Gen::_narrow(comp);
   myVertexFilter = new GEOM_ShapeTypeFilter( TopAbs_VERTEX, myGeom );
   myEdgeFilter   = new GEOM_ShapeTypeFilter( TopAbs_EDGE, myGeom );

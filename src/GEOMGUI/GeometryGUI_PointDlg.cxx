@@ -58,9 +58,9 @@ GeometryGUI_PointDlg::GeometryGUI_PointDlg( QWidget* parent,
     : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
 {
 
-    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_POINT")));
-    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_SELECT")));
-    QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_POINT_EDGE")));
+    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_POINT")));
+    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
+    QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_POINT_EDGE")));
 
     if ( !name )
 	setName( "GeometryGUI_PointDlg" );
@@ -259,7 +259,7 @@ void GeometryGUI_PointDlg::Init(SALOME_Selection* Sel, const Handle(AIS_Interact
   Constructor1->setChecked( TRUE );
 
   /* filter for the second constructor */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   myGeom = GEOM::GEOM_Gen::_narrow(comp);
   myEdgeFilter = new GEOM_ShapeTypeFilter( TopAbs_EDGE, myGeom );
   

@@ -56,10 +56,10 @@ GeometryGUI_ChamferDlg::GeometryGUI_ChamferDlg( QWidget* parent,
   : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
 {
     /***************************************************************/
-    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_CHAMFER_ALL")));
-    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_SELECT")));
-    QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_CHAMFER_EDGE")));
-    QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_CHAMFER_FACE")));
+    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_CHAMFER_ALL")));
+    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
+    QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_CHAMFER_EDGE")));
+    QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_CHAMFER_FACE")));
 
     if ( !name )
 	setName( "GeometryGUI_ChamferDlg" );
@@ -388,7 +388,7 @@ void GeometryGUI_ChamferDlg::Init( SALOME_Selection* Sel, Handle (AIS_Interactiv
   mySimulationTopoDs.Nullify() ;
   
   /* Filters definition */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   myGeom = GEOM::GEOM_Gen::_narrow(comp);
 
   /* signals and slots connections */

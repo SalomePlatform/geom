@@ -41,8 +41,8 @@ using namespace std;
 GeometryGUI_CircleDlg::GeometryGUI_CircleDlg( QWidget* parent,  const char* name, SALOME_Selection* Sel, bool modal, WFlags fl )
     : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
 {
-    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_CIRCLE_PV")));
-    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_SELECT")));
+    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_CIRCLE_PV")));
+    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
 
     if ( !name )
 	setName( "GeometryGUI_CircleDlg" );
@@ -190,7 +190,7 @@ void GeometryGUI_CircleDlg::Init( SALOME_Selection* Sel )
   // TODO : previous selection into argument ?
 
   /* Filter definitions */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   myGeom = GEOM::GEOM_Gen::_narrow(comp);  
   myEdgeFilter   = new GEOM_EdgeFilter( StdSelect_Line, myGeom );
   myVertexFilter = new GEOM_ShapeTypeFilter( TopAbs_VERTEX, myGeom );

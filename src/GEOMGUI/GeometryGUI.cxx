@@ -4195,7 +4195,7 @@ bool GeometryGUI::OnGUIEvent(int theCommandID,	QAD_Desktop* parent)
 		if (!obj->FindAttribute(anAttr, "AttributeIOR") &&
 		    obj->FindAttribute(anAttr, "AttributePersistentRef")) {
 		  // load
-		  Engines::Component_var comp = GeomGUI->myDesktop->getEngine("FactoryServer","Geometry");
+		  Engines::Component_var comp = GeomGUI->myDesktop->getEngine("FactoryServer","GEOM");
 		  if (!CORBA::is_nil(comp)) {
 		    SALOMEDS::Driver_var   driver = SALOMEDS::Driver::_narrow(comp);
 

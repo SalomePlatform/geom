@@ -39,24 +39,24 @@ using namespace std;
 
 static GEOM_Client ShapeReader;
 
-GeometryGUI_Swig::GeometryGUI_Swig()
+GEOM_Swig::GEOM_Swig()
 {
   // MESSAGE("Constructeur");
 }
 
-GeometryGUI_Swig::~GeometryGUI_Swig()
+GEOM_Swig::~GEOM_Swig()
 {
   // MESSAGE("Destructeur");
 }
 
-void GeometryGUI_Swig::createAndDisplayGO(const char* Entry)
+void GEOM_Swig::createAndDisplayGO(const char* Entry)
 {
   // MESSAGE("createAndDisplayGO");
   QAD_Study* ActiveStudy = QAD_Application::getDesktop()->getActiveStudy();
   SALOMEDS::Study_var aStudy = ActiveStudy->getStudyDocument();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
 
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   GEOM::GEOM_Gen_var Geom = GEOM::GEOM_Gen::_narrow(comp);
 
   Standard_CString Fatherior = "";
@@ -133,9 +133,9 @@ void GeometryGUI_Swig::createAndDisplayGO(const char* Entry)
   ActiveStudy->updateObjBrowser( true );
 }
 
-int  GeometryGUI_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
+int  GEOM_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
 {
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   GEOM::GEOM_Gen_var  Geom = GEOM::GEOM_Gen::_narrow(comp);
  
   GEOM::GEOM_Shape_var aMainShape = Geom->GetIORFromString(IOR);
@@ -158,9 +158,9 @@ int  GeometryGUI_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
   return -1;
 }
 
-const char* GeometryGUI_Swig::getShapeTypeString(const char* IOR)
+const char* GEOM_Swig::getShapeTypeString(const char* IOR)
 {
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   GEOM::GEOM_Gen_var  Geom = GEOM::GEOM_Gen::_narrow(comp);
  
   GEOM::GEOM_Shape_var aShape = Geom->GetIORFromString(IOR);
@@ -225,9 +225,9 @@ const char* GeometryGUI_Swig::getShapeTypeString(const char* IOR)
 }
 
 
-const char* GeometryGUI_Swig::getShapeTypeIcon(const char* IOR)
+const char* GEOM_Swig::getShapeTypeIcon(const char* IOR)
 {
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   GEOM::GEOM_Gen_var  Geom = GEOM::GEOM_Gen::_narrow(comp);
  
   GEOM::GEOM_Shape_var aShape = Geom->GetIORFromString(IOR);
@@ -258,7 +258,7 @@ const char* GeometryGUI_Swig::getShapeTypeIcon(const char* IOR)
   return "None";
 }
 
-void GeometryGUI_Swig::setDisplayMode(const char* Entry, int mode)
+void GEOM_Swig::setDisplayMode(const char* Entry, int mode)
 {
   QAD_Study* myStudy = QAD_Application::getDesktop()->getActiveStudy();
   Handle(SALOME_InteractiveObject) IO = 
@@ -278,7 +278,7 @@ void GeometryGUI_Swig::setDisplayMode(const char* Entry, int mode)
     }
 }
 
-void GeometryGUI_Swig::setColor(const char* Entry, int red, int green, int blue)
+void GEOM_Swig::setColor(const char* Entry, int red, int green, int blue)
 {
   QAD_Study* myStudy = QAD_Application::getDesktop()->getActiveStudy();
   QColor c = QColor (red, green, blue);
@@ -298,7 +298,7 @@ void GeometryGUI_Swig::setColor(const char* Entry, int red, int green, int blue)
     }
 }
 
-void GeometryGUI_Swig::setTransparency(const char* Entry, float transp)
+void GEOM_Swig::setTransparency(const char* Entry, float transp)
 {
   QAD_Study* myStudy = QAD_Application::getDesktop()->getActiveStudy();
   Handle(SALOME_InteractiveObject) IO = 

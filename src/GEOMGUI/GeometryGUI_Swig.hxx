@@ -16,11 +16,11 @@
 
 class GEOM_Client;
 
-class GeometryGUI_Swig
+class GEOM_Swig
 {
 public:
-  GeometryGUI_Swig();
-  ~GeometryGUI_Swig();
+  GEOM_Swig();
+  ~GEOM_Swig();
 
   void createAndDisplayGO(const char* Entry);
   void setDisplayMode(const char* Entry, int mode);

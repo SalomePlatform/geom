@@ -43,8 +43,8 @@ GeometryGUI_SuppressFacesDlg::GeometryGUI_SuppressFacesDlg( QWidget* parent,
 							    WFlags fl )
     : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
 {
-    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_SUPRESS_FACE")));
-    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_SELECT")));
+    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_SUPRESS_FACE")));
+    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
     
     if ( !name )
 	setName( "GeometryGUI_SuppressFacesDlg" );
@@ -187,7 +187,7 @@ void GeometryGUI_SuppressFacesDlg::Init( SALOME_Selection* Sel, Handle (AIS_Inte
   // TODO : previous selection into argument ?
 
   /* Filter definitions */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   myGeom = GEOM::GEOM_Gen::_narrow(comp);
 
   /* signals and slots connections */

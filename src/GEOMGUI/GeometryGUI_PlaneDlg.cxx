@@ -50,10 +50,10 @@ GeometryGUI_PlaneDlg::GeometryGUI_PlaneDlg( QWidget* parent, const char* name, S
     : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
 {
     /***************************************************************/
-    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_PLANE_PV")));
-    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_SELECT")));
-    QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_PLANE_DXYZ")));
-    QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap( "GeometryGUI",tr("ICON_DLG_PLANE_FACE")));
+    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_PLANE_PV")));
+    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
+    QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_PLANE_DXYZ")));
+    QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_PLANE_FACE")));
 
     if ( !name )
 	setName( "GeometryGUI_PlaneDlg" );
@@ -356,7 +356,7 @@ void GeometryGUI_PlaneDlg::Init( SALOME_Selection* Sel )
   // TODO previous selection into argument ?
   
   /* Filters definition */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "Geometry");
+  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   myGeom = GEOM::GEOM_Gen::_narrow(comp);
   myVertexFilter = new GEOM_ShapeTypeFilter( TopAbs_VERTEX, myGeom );
   myEdgeFilter   = new GEOM_ShapeTypeFilter( TopAbs_EDGE, myGeom );
