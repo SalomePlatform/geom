@@ -21,6 +21,12 @@ class GEOMImpl_IGroupOperations : public GEOM_IOperations {
 
   void RemoveObject(Handle(GEOM_Object) theGroup, int theSubShapeID);
 
+  void UnionList (Handle(GEOM_Object) theGroup,
+                  const Handle(TColStd_HSequenceOfTransient)& theSubShapes);
+
+  void DifferenceList (Handle(GEOM_Object) theGroup,
+                       const Handle(TColStd_HSequenceOfTransient)& theSubShapes);
+
   TopAbs_ShapeEnum GetType(Handle(GEOM_Object) theGroup);
 
   Handle(GEOM_Object) GetMainShape(Handle(GEOM_Object) theGroup);

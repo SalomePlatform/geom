@@ -26,6 +26,10 @@ class GEOM_IGroupOperations_i :
 
   void RemoveObject (GEOM::GEOM_Object_ptr theGroup, CORBA::Long theSubShapeId);
 
+  void UnionList (GEOM::GEOM_Object_ptr theGroup, const GEOM::ListOfGO& theSubShapes);
+
+  void DifferenceList (GEOM::GEOM_Object_ptr theGroup, const GEOM::ListOfGO& theSubShapes);
+
   CORBA::Long GetType (GEOM::GEOM_Object_ptr theGroup);
   
   GEOM::GEOM_Object_ptr GetMainShape (GEOM::GEOM_Object_ptr theGroup);

@@ -1033,6 +1033,16 @@ def RemoveObject(Group, SubShapeID):
     if GroupOp.IsDone() == 0:
       print "RemoveObject : ", GroupOp.GetErrorCode()
 
+def UnionList (theGroup, theSubShapes):
+    GroupOp.UnionList(theGroup, theSubShapes)
+    if GroupOp.IsDone() == 0:
+      print "UnionList : ", GroupOp.GetErrorCode()
+
+def DifferenceList (theGroup, theSubShapes):
+    GroupOp.DifferenceList(theGroup, theSubShapes)
+    if GroupOp.IsDone() == 0:
+      print "DifferenceList : ", GroupOp.GetErrorCode()
+
 def GetObjectIDs(Group):
     ListIDs = GroupOp.GetObjects(Group)
     if GroupOp.IsDone() == 0:

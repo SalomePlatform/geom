@@ -2331,6 +2331,30 @@ def RemoveObject(theGroup, theSubShapeID):
     if GroupOp.IsDone() == 0:
       print "RemoveObject : ", GroupOp.GetErrorCode()
 
+def UnionList (theGroup, theSubShapes):
+    """
+     *  Adds to the group all the given shapes. No errors, if some shapes are alredy included.
+     *  \param theGroup is a GEOM group to which the new sub shapes are added.
+     *  \param theSubShapes is a list of sub shapes to be added.
+
+     *  Example: see GEOM_TestOthers.py
+    """
+    GroupOp.UnionList(theGroup, theSubShapes)
+    if GroupOp.IsDone() == 0:
+      print "UnionList : ", GroupOp.GetErrorCode()
+
+def DifferenceList (theGroup, theSubShapes):
+    """
+     *  Removes from the group all the given shapes. No errors, if some shapes are not included.
+     *  \param theGroup is a GEOM group from which the sub-shapes are removed.
+     *  \param theSubShapes is a list of sub-shapes to be removed.
+
+     *  Example: see GEOM_TestOthers.py
+    """
+    GroupOp.DifferenceList(theGroup, theSubShapes)
+    if GroupOp.IsDone() == 0:
+      print "DifferenceList : ", GroupOp.GetErrorCode()
+
 def GetObjectIDs(theGroup):
     """
      *  Returns a list of sub objects ID stored in the group

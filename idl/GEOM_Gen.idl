@@ -1860,11 +1860,25 @@ module GEOM
 
     /*!
      *  Removes a sub object with ID \a theSubShapeId from the group
-     *  \param theGroup is a GEOM group from which the new sub shape is removed
+     *  \param theGroup is a GEOM group from which the sub shape is removed.
      *  \param theSubShapeId is a sub shape ID in the main object.
      *  \note Use method <VAR>ILocalOperations.GetSubShapeIndex()</VAR> to get an ID by the sub shape
      */
     void RemoveObject (in GEOM_Object theGroup, in long theSubShapeId);
+
+    /*!
+     *  Adds to the group all the given shapes. No errors, if some shapes are alredy included.
+     *  \param theGroup is a GEOM group to which the new sub shapes are added.
+     *  \param theSubShapes is a list of sub shapes to be added.
+     */
+    void UnionList (in GEOM_Object theGroup, in ListOfGO theSubShapes);
+
+    /*!
+     *  Removes from the group all the given shapes. No errors, if some shapes are not included.
+     *  \param theGroup is a GEOM group from which the sub-shapes are removed.
+     *  \param theSubShapes is a list of sub-shapes to be removed.
+     */
+    void DifferenceList (in GEOM_Object theGroup, in ListOfGO theSubShapes);
 
     /*!
      *  Returns a type of sub objects stored in the group

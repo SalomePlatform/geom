@@ -106,6 +106,76 @@ void GEOM_IGroupOperations_i::RemoveObject(GEOM::GEOM_Object_ptr theGroup, CORBA
 
 //=============================================================================
 /*!
+ *  UnionList
+ */
+//=============================================================================
+void GEOM_IGroupOperations_i::UnionList (GEOM::GEOM_Object_ptr theGroup,
+					 const GEOM::ListOfGO& theSubShapes) 
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theGroup == NULL) return;
+
+  //Get the reference group
+  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject
+    (theGroup->GetStudyID(), theGroup->GetEntry());
+  if (aGroupRef.IsNull()) return;
+
+  //Get sub-shape to add
+  Handle(TColStd_HSequenceOfTransient) aSubShapes = new TColStd_HSequenceOfTransient;
+
+  int ind, aLen = theSubShapes.length();
+  for (ind = 0; ind < aLen; ind++) {
+    if (theSubShapes[ind] == NULL) return;
+    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
+      (theSubShapes[ind]->GetStudyID(), theSubShapes[ind]->GetEntry());
+    if (aSh.IsNull()) return;
+    aSubShapes->Append(aSh);
+  }
+
+  //Perform the operation
+  GetOperations()->UnionList(aGroupRef, aSubShapes);
+  return;
+}
+
+//=============================================================================
+/*!
+ *  DifferenceList
+ */
+//=============================================================================
+void GEOM_IGroupOperations_i::DifferenceList (GEOM::GEOM_Object_ptr theGroup,
+					      const GEOM::ListOfGO& theSubShapes) 
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theGroup == NULL) return;
+
+  //Get the reference group
+  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject
+    (theGroup->GetStudyID(), theGroup->GetEntry());
+  if (aGroupRef.IsNull()) return;
+
+  //Get sub-shape to remove
+  Handle(TColStd_HSequenceOfTransient) aSubShapes = new TColStd_HSequenceOfTransient;
+
+  int ind, aLen = theSubShapes.length();
+  for (ind = 0; ind < aLen; ind++) {
+    if (theSubShapes[ind] == NULL) return;
+    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
+      (theSubShapes[ind]->GetStudyID(), theSubShapes[ind]->GetEntry());
+    if (aSh.IsNull()) return;
+    aSubShapes->Append(aSh);
+  }
+
+  //Perform the operation
+  GetOperations()->DifferenceList(aGroupRef, aSubShapes);
+  return;
+}
+
+//=============================================================================
+/*!
  *  GetType
  */
 //============================================================================= 

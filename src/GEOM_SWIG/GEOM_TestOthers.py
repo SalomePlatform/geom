@@ -194,17 +194,24 @@ def TestOtherOperations (geompy, math):
   f_ind_5 = geompy.GetSubShapeID(Box, box_faces[4])
   f_ind_6 = geompy.GetSubShapeID(Box, box_faces[5])
 
-  geompy.AddObject(CreateGroup, f_ind_6)
-  geompy.AddObject(CreateGroup, f_ind_1)
-  geompy.AddObject(CreateGroup, f_ind_4)
+  geompy.AddObject(CreateGroup, f_ind_6) # box_faces[5]
+  geompy.AddObject(CreateGroup, f_ind_1) # box_faces[0]
+  geompy.AddObject(CreateGroup, f_ind_4) # box_faces[3]
+
+  # UnionList
+  geompy.UnionList(CreateGroup, [box_faces[2], box_faces[4], box_faces[5]])
 
   # RemoveObject(theGroup, theSubShapeID)
-  geompy.RemoveObject(CreateGroup, f_ind_1)
+  geompy.RemoveObject(CreateGroup, f_ind_1) # box_faces[0]
+
+  # DifferenceList
+  geompy.DifferenceList(CreateGroup, [box_faces[1], box_faces[0], box_faces[3]])
 
   # GetObjectIDs
   GetObjectIDs = geompy.GetObjectIDs(CreateGroup)
 
   print "Group of Box's faces includes the following IDs:"
+  print "(must be ", f_ind_6, ", ", f_ind_3, " and ", f_ind_5, ")"
   for ObjectID in GetObjectIDs:
     print " ", ObjectID
 
