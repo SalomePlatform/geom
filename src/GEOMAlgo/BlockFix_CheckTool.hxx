@@ -99,6 +99,7 @@ Standard_Boolean myHasCheck;
 Standard_Integer myNbSolids;
 Standard_Integer myNbBlocks;
 TopTools_SequenceOfShape myPossibleBlocks;
+Standard_Integer myNbDegen;
 Standard_Integer myNbUF;
 Standard_Integer myNbUE;
 Standard_Integer myNbUFUE;

@@ -54,6 +54,7 @@ void BlockFix_CheckTool::Perform()
 {
   myNbSolids=0;
   myNbBlocks=0;
+  myNbDegen=0;
   myNbUF=0;
   myNbUE=0;
   myNbUFUE=0;
@@ -108,13 +109,29 @@ void BlockFix_CheckTool::Perform()
       }
     }
 
-    Standard_Integer ne=0;
+    Standard_Integer nbe=0;
+    TopTools_MapOfShape DegenEdges;
     TopExp_Explorer expe;
-    for(expe.Init(aSolid, TopAbs_EDGE); expe.More(); expe.Next()) ne++;
-    ne = ne/2;
-    if(ne<12)
+    for(expe.Init(aSolid, TopAbs_EDGE); expe.More(); expe.Next()) {
+      TopoDS_Edge E = TopoDS::Edge(expe.Current());
+      if(BRep_Tool::Degenerated(E)) {
+        if(!DegenEdges.Contains(E)) {
+          DegenEdges.Add(E);
+        }
+      }
+      else {
+        nbe++;
+      }
+    }
+    if( nbe==24 && DegenEdges.Extent()>0 ) {
       IsBlock=Standard_False;
-    if(ne>12) {
+      myNbDegen++;
+      myPossibleBlocks.Append(aSolid);
+      continue;
+    }
+    if(nbe<24)
+      IsBlock=Standard_False;
+    if(nbe>24) {
       IsBlock=Standard_False;
       // check edges unification
       // creating map of edge faces
@@ -141,13 +158,13 @@ void BlockFix_CheckTool::Perform()
             }
           }
         }
-        Standard_Integer i = 1;
-        for (; i <= aMapFacesEdges.Extent(); i++) {
+        Standard_Integer i=1;
+        for(; i<=aMapFacesEdges.Extent(); i++) {
           const TopTools_ListOfShape& ListEdges = aMapFacesEdges.FindFromIndex(i);
-          if (ListEdges.Extent() > 1) break;
+          if(ListEdges.Extent()>1) break;
         }
-        if (i <= aMapFacesEdges.Extent()) {
-          MayBeUE = Standard_True;
+        if(i<=aMapFacesEdges.Extent()) {
+          MayBeUE=Standard_True;
           break;
         }
       }
@@ -214,11 +231,11 @@ void BlockFix_CheckTool::DumpCheckResult(Standard_OStream& S) const
     S<<"  total number of solids = "<<myNbSolids<<endl;
     S<<"  including: number of good blocks = "<<myNbBlocks<<endl;
     S<<"             number of possible blocks = "<<NbPossibleBlocks()<<endl;
-    Standard_Integer nbtmp = myNbSolids - myNbBlocks - NbPossibleBlocks();
-    S<<"             number of impossible blocks = "<<nbtmp<<endl;
-    S<<"             including: need unionfaces = "<<myNbUF<<endl;
+    S<<"             including: need remove degenerative = "<<myNbDegen<<endl;
+    S<<"                        need unionfaces = "<<myNbUF<<endl;
     S<<"                        need unionedges = "<<myNbUE<<endl;
     S<<"                        need both unionfaces and unionedges = "<<myNbUFUE<<endl;
+    Standard_Integer nbtmp = myNbSolids - myNbBlocks - NbPossibleBlocks();
+    S<<"             number of impossible blocks = "<<nbtmp<<endl;
   }
 }
-
