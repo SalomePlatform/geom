@@ -47,9 +47,8 @@ PYTHONHOME = @PYTHONHOME@
 PYTHON_INCLUDES = @PYTHON_INCLUDES@
 PYTHON_LIBS = @PYTHON_LIBS@
 PYTHON_VERSION = @PYTHON_VERSION@
-PYTHON_SITE = @PYTHON_SITE@
-PYTHON_SITE_INSTALL = @PYTHON_SITE_INSTALL@
-
+PYTHON_SITE = $(prefix)/lib/python$(PYTHON_VERSION)/site-packages
+PYTHON_SITE_INSTALL = $(prefix)/lib/python$(PYTHON_VERSION)/site-packages/salome
 # QT
 
 QT_ROOT = @QT_ROOT@
@@ -101,13 +100,18 @@ MED2_MT_LIBS=@MED2_MT_LIBS@
 OCC_INCLUDES=@CAS_CPPFLAGS@
 OCC_CXXFLAGS=@CAS_CXXFLAGS@
 
-OCC_KERNEL_LIBS=@CAS_KERNEL@
-OCC_OCAF_LIBS=@CAS_OCAF@
-OCC_VIEWER_LIBS=@CAS_VIEWER@
-OCC_MODELER_LIBS=@CAS_MODELER@
-OCC_DATAEXCHANGE_LIBS=@CAS_DATAEXCHANGE@
-OCC_LIBS=@CAS_LDFLAGS@
-
+#OCC_KERNEL_LIBS=@CAS_KERNEL@
+#OCC_OCAF_LIBS=@CAS_OCAF@
+#OCC_VIEWER_LIBS=@CAS_VIEWER@
+#OCC_MODELER_LIBS=@CAS_MODELER@
+#OCC_DATAEXCHANGE_LIBS=@CAS_DATAEXCHANGE@
+#OCC_LIBS=@CAS_LDFLAGS@
+CAS_KERNEL=@CAS_KERNEL@
+CAS_OCAF=@CAS_OCAF@
+CAS_VIEWER=@CAS_VIEWER@
+CAS_MODELER=@CAS_MODELER@
+CAS_DATAEXCHANGE=@CAS_DATAEXCHANGE@
+CAS_LDPATH=@CAS_LDPATH@
 # MPICH
 
 MPICH_INCLUDES=@MPICH_INCLUDES@
@@ -164,6 +168,8 @@ CXXFLAGS+= $(CORBA_CXXFLAGS)
 #LDFLAGS+= $(CORBA_LIBS)
 LIBS+=$(CORBA_LIBS)
 
+DOXYGEN = @DOXYGEN@
+
 ## Shared libraries
 LT_STATIC_EXEC=@LT_STATIC_EXEC@
 DYNAMIC_DIRS=@DYNAMIC_DIRS@
@@ -192,8 +198,9 @@ libdir=@libdir@/salome
 # warning : if user give this path in configure we could have salome/salome :-(
 includedir=@includedir@/salome
 datadir=@datadir@/salome
-idldir=$(prefix)/idl/salome
+idldir=${prefix}/idl/salome
 sharedpydir=@libdir@/python$(PYTHON_VERSION)/site-packages/salome/shared_modules
+incmakedir=${prefix}/salome_adm/unix
 
 docdir=$(datadir)/doc
 
@@ -201,7 +208,7 @@ docdir=$(datadir)/doc
 # begin of package rules
 #
 
-.PHONY: all lib bin inc resources tests install uninstall dep depend depend_idl cleandep mostlyclean clean distclean
+.PHONY: all lib bin inc resources data doc tests install uninstall dep depend depend_idl cleandep mostlyclean clean distclean
 
 .SUFFIXES: .cxx .cc .c .f .o .lo .idl .py .i .ui .po .qm
 

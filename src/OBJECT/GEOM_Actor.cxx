@@ -274,7 +274,8 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
     aMatrix->Delete();    
   } else
     this->Device->Render(ren, this->Mapper);
-  this->EstimatedRenderTime = WireframeMapper->GetTimeToDraw();
+ if(WireframeMapper!=NULL) this->EstimatedRenderTime = WireframeMapper->GetTimeToDraw(); 
+ else if(ShadingMapper!=NULL) this->EstimatedRenderTime = ShadingMapper->GetTimeToDraw();
 }
 
 // SubShape

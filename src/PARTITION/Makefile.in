@@ -55,7 +55,7 @@ EXPORT_IDLS=
 
 CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS += $(OCC_KERNEL_LIBS) $(OCC_MODELER_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS += $(CAS_LDPATH) -lTKBool -L${KERNEL_ROOT_DIR}/lib/salome
 
 %_moc.cxx: %.h
 	$(MOC) $< -o $@

@@ -40,7 +40,11 @@ using namespace std;
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
+#if OCC_VERSION_MAJOR >= 5
+#include <BRepAlgo.hxx>
+#else
 #include <BRepAlgoAPI.hxx>
+#endif
 #include <Geom_Curve.hxx>
 
 #include <qbuttongroup.h>
@@ -763,7 +767,11 @@ void GeometryGUI_PointDlg::ActivateThisDialog( )
 //=================================================================================
 bool GeometryGUI_PointDlg::CalculateVertexOnCurve(const TopoDS_Edge& anEdge, const Standard_Real aParameter, TopoDS_Shape& resultVertex) 
 {
+#if OCC_VERSION_MAJOR >= 5
+  if( anEdge.IsNull() || !BRepAlgo::IsValid(anEdge) )
+#else
   if( anEdge.IsNull() || !BRepAlgoAPI::IsValid(anEdge) )
+#endif
     return false ;
 
   Standard_Real first, last ;

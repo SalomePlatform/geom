@@ -1,29 +1,11 @@
 //  GEOM PARTITION : partition algorithm
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//  Copyright (C) 2003  CEA/DEN, EDF R&D
 //
 //
 //
 //  File   : Partition_Spliter.hxx
 //  Module : GEOM
-
 
 #ifndef _Partition_Spliter_HeaderFile
 #define _Partition_Spliter_HeaderFile
@@ -119,12 +101,16 @@ private:
 
  // Methods PRIVATE
  // 
+Standard_EXPORT   void MakeSolids(const TopoDS_Shape& Solid,TopTools_ListOfShape& Shells) ;
 Standard_EXPORT   void MakeShells(const TopoDS_Shape& S,TopTools_ListOfShape& NS) ;
 Standard_EXPORT   TopoDS_Shape MakeFaces(const TopoDS_Shape& S) ;
 Standard_EXPORT   void MakeEdges(const TopoDS_Edge& E,const TopTools_ListOfShape& VOnE,TopTools_ListOfShape& NE) const;
 Standard_EXPORT   TopoDS_Shape FindFacesInside(const TopoDS_Shape& S,const Standard_Boolean CheckClosed = Standard_False,const Standard_Boolean All = Standard_False) ;
 Standard_EXPORT   Standard_Boolean CheckTool(const TopoDS_Shape& S) ;
 Standard_EXPORT   void MergeEqualEdges(const TopTools_ListOfShape& LE) ;
+Standard_EXPORT static  Standard_Boolean IsInside(const TopoDS_Shape& S1,const TopoDS_Shape& S2) ;
+Standard_EXPORT   TopoDS_Shape GetOriginalShape(const TopoDS_Shape& aShape) const;
+Standard_EXPORT   void FindToolsToReconstruct() ;
 
 
  // Fields PRIVATE
@@ -135,17 +121,19 @@ BRep_Builder myBuilder;
 TopTools_ListOfShape myListShapes;
 TopTools_MapOfShape myMapFaces;
 TopTools_MapOfShape myMapTools;
-TopTools_DataMapOfShapeShape myFaceShapeMap;
+TopTools_MapOfShape myEqualEdges;
 TopTools_MapOfShape myNewSection;
+TopTools_MapOfShape myClosedShapes;
+TopTools_MapOfShape myWrappingSolid;
+TopTools_DataMapOfShapeShape myFaceShapeMap;
+TopTools_DataMapOfShapeShape myInternalFaces;
+TopTools_DataMapOfShapeShape myIntNotClFaces;
 Handle_BRepAlgo_AsDes myAsDes;
 BRepAlgo_Image myImagesFaces;
 BRepAlgo_Image myImagesEdges;
 BRepAlgo_Image myImageShape;
 Partition_Inter3d myInter3d;
 TopTools_MapOfOrientedShape myAddedFacesMap;
-TopTools_MapOfShape myEqualEdges;
-TopTools_DataMapOfShapeShape myInternalFaces;
-TopTools_DataMapOfShapeShape myIntNotClFaces;
 
 
 };

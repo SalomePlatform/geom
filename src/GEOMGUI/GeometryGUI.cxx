@@ -717,9 +717,9 @@ GEOM_Actor* GeometryGUI::ConvertIORinGEOMActor( const char * IOR,
 GEOM::GEOM_Shape_ptr GeometryGUI::ConvertIOinGEOMShape( const Handle(SALOME_InteractiveObject)& IO,
 						  Standard_Boolean& testResult )
 {
-  GEOM::GEOM_Shape_ptr aShape ;
+  GEOM::GEOM_Shape_var aShape ;
   testResult = false ;
-
+  
   /* case SObject */
   if ( IO->hasEntry() ) {
     SALOMEDS::Study_var aStudy = GeomGUI->myActiveStudy->getStudyDocument();
@@ -727,23 +727,23 @@ GEOM::GEOM_Shape_ptr GeometryGUI::ConvertIOinGEOMShape( const Handle(SALOME_Inte
     SALOMEDS::GenericAttribute_var anAttr;
     SALOMEDS::AttributeIOR_var     anIOR;
     if ( !obj->_is_nil() ) {
-       if (obj->FindAttribute(anAttr, "AttributeIOR")) {
-         anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	 aShape = myComponentGeom->GetIORFromString(anIOR->Value()) ;
-	 testResult = true ;
-	 return aShape;
-       }
+      if (obj->FindAttribute(anAttr, "AttributeIOR")) {
+	anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+	aShape = myComponentGeom->GetIORFromString(anIOR->Value()) ;
+	if(!CORBA::is_nil(aShape)) testResult = true ;
+	return aShape._retn();
+      }
     }
   }
   /* case Graphical Object */
   if ( IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject)) ) {
     Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast( IO );
     Standard_CString ior = GIObject->getIOR();
-    testResult = true ;
     aShape = myComponentGeom->GetIORFromString(ior) ;
-    return aShape;
-  } 
-  return aShape ;
+    if(!CORBA::is_nil(aShape)) testResult = true ;
+    return aShape._retn();
+  }
+  return aShape._retn();
 }
 
 

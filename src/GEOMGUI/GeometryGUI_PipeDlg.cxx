@@ -50,7 +50,11 @@ using namespace std;
 #include <Standard_ErrorHandler.hxx> 
 #include <Standard_Failure.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx> 
+#if OCC_VERSION_MAJOR >= 5
+#include <BRepAlgo.hxx>
+#else
 #include <BRepAlgoAPI.hxx>
+#endif
 
 
 //=================================================================================
@@ -386,7 +390,11 @@ void GeometryGUI_PipeDlg::SelectionIntoArgument()
 	try 
 	{
 		tds = BRepOffsetAPI_MakePipe(aWire,myShape1 ) ;
+#if OCC_VERSION_MAJOR >= 5
+		if (  BRepAlgo::IsValid(tds) ) 
+#else
 		if (  BRepAlgoAPI::IsValid(tds) ) 
+#endif
 		{
 			//Draw Pipe
 			mySimulationTopoDs = tds;

@@ -54,7 +54,7 @@ EXPORT_HEADERS= GEOM_ShapeTypeFilter.hxx \
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) $(PYTHON_INCLUDES) $(VTK_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += $(OCC_KERNEL_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS  += -lSalomeGUI -L${KERNEL_ROOT_DIR}/lib/salome
 
 # additional file to be cleaned
 MOSTLYCLEAN =

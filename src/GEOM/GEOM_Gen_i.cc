@@ -55,7 +55,11 @@ using namespace std;
 #include <GC_Root.hxx>
 
 #include <BRepCheck_Analyzer.hxx>
+#if OCC_VERSION_MAJOR >= 5
+#include <BRepAlgo.hxx>
+#else
 #include <BRepAlgoAPI.hxx>
+#endif
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepAlgoAPI_Common.hxx>
@@ -149,6 +153,14 @@ using namespace std;
 #include "GEOMDS_Explorer.hxx"
 
 #include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
+
+Standard_EXPORT static Standard_Boolean IsValid(const TopoDS_Shape& S) {
+#if OCC_VERSION_MAJOR >= 5
+  return BRepAlgo::IsValid(S);
+#else
+  return BRepAlgoAPI::IsValid(S);
+#endif
+}
 
 //============================================================================
 // function : GEOM_Gen_i()
@@ -761,8 +773,13 @@ const char* GEOM_Gen_i::GetStringFromIOR(GEOM::GEOM_Shape_var shapeIOR) {
 // purpose  : returns a 'GEOM::GEOM_Shape_var' from a string representing it
 //=================================================================================
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::GetIORFromString(const char* stringIOR) {
-  GEOM::GEOM_Shape_var shapeIOR =  GEOM::GEOM_Shape::_narrow(_orb->string_to_object(stringIOR)) ;
-  return shapeIOR._retn();
+  GEOM::GEOM_Shape_var shapeIOR;
+  if(strcmp(stringIOR,"") != 0){
+    CORBA::Object_var anObject = _orb->string_to_object(stringIOR);
+    if(!CORBA::is_nil(anObject))
+      shapeIOR =  GEOM::GEOM_Shape::_narrow(anObject.in()) ;
+  }
+  return shapeIOR._retn() ;
 }
 
 
@@ -1446,7 +1463,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::SuppressHolesInFaceOrShell( GEOM::GEOM_Shape_pt
     THROW_SALOME_CORBA_EXCEPTION("in GEOM_Gen_i::SuppressHolesInFace : no holes selected", SALOME::BAD_PARAM);
   
   const TopoDS_Shape tds = GetTopoShape(shapeFaceShell) ;
-  if( tds.IsNull() || !BRepAlgoAPI::IsValid(tds) )
+  if( tds.IsNull() || !IsValid(tds) )
     THROW_SALOME_CORBA_EXCEPTION("in GEOM_Gen_i::SuppressHolesInFace() : non valid main argument", SALOME::BAD_PARAM);
   
   /* Create a map of wires/holes to suppress */
@@ -1552,7 +1569,7 @@ bool GEOM_Gen_i::RebuildFaceRemovingHoles( const TopoDS_Face& aFace,
 {
   /* Get the outer wire of the face 'aFace' */
   TopoDS_Wire outW = BRepTools::OuterWire( aFace ) ;
-  if( outW.IsNull() || !BRepAlgoAPI::IsValid(outW) )
+  if( outW.IsNull() || !IsValid(outW) )
     THROW_SALOME_CORBA_EXCEPTION("in GEOM_Gen_i::SuppressHolesInFace : bad outer wire of 'aFace'", SALOME::BAD_PARAM);
   
   /* Rebuild a face avoiding holes in the map 'mapHoles' */  
@@ -1612,7 +1629,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::SuppressHole( GEOM::GEOM_Shape_ptr shape,
   /* Retrieve 'aShape' the initial main shape selection */
   const TopoDS_Shape aShape = GetTopoShape(shape);
   
-  if( !BRepAlgoAPI::IsValid(aShape) )
+  if( !IsValid(aShape) )
     THROW_SALOME_CORBA_EXCEPTION("in GEOM_Gen_i::SuppressHole() : non valid main shape", SALOME::BAD_PARAM);
   
   if( ListIdFace.length() != 1 || ListIdWire.length() != 1 )
@@ -1625,7 +1642,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::SuppressHole( GEOM::GEOM_Shape_ptr shape,
   else {
     aFace = TopoDS::Face(tmp) ;
   }
-  if( !BRepAlgoAPI::IsValid(aFace) )
+  if( !IsValid(aFace) )
     THROW_SALOME_CORBA_EXCEPTION("in GEOM_Gen_i::SuppressHole() : face shape not valid", SALOME::BAD_PARAM);  
   
    /* Retrieve 'aWire' selection : Warning : index of wire refers to the face ! */
@@ -1636,12 +1653,12 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::SuppressHole( GEOM::GEOM_Shape_ptr shape,
   else {
     aWire = TopoDS::Wire(aTmp) ;
   }
-  if( !BRepAlgoAPI::IsValid(aWire) )
+  if( !IsValid(aWire) )
     THROW_SALOME_CORBA_EXCEPTION("in GEOM_Gen_i::SuppressHole() : bad wire" , SALOME::BAD_PARAM);
 
   /* Get the outer wire of aFace */
   TopoDS_Wire outerW = BRepTools::OuterWire( aFace ) ;
-  if( outerW.IsNull() || !BRepAlgoAPI::IsValid(outerW) ) 
+  if( outerW.IsNull() || !IsValid(outerW) ) 
     THROW_SALOME_CORBA_EXCEPTION("in GEOM_Gen_i::SuppressHole() : bad outer wire", SALOME::BAD_PARAM);
   
   /* Test bad user selection aWire */
@@ -1655,7 +1672,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::SuppressHole( GEOM::GEOM_Shape_ptr shape,
   }
   else {
     TopoDS_Shape aTemp ;
-    if( !GetShapeFromIndex( aShape, TopAbs_FACE, ListIdEndFace[0], aTemp ) || tmp.IsNull() || !BRepAlgoAPI::IsValid(aTemp) )
+    if( !GetShapeFromIndex( aShape, TopAbs_FACE, ListIdEndFace[0], aTemp ) || tmp.IsNull() || !IsValid(aTemp) )
       THROW_SALOME_CORBA_EXCEPTION("in GEOM_Gen_i::SuppressHole() : non valid endFace", SALOME::BAD_PARAM);
 
     /* Test if 'endFace' as at least one hole */    
@@ -1665,7 +1682,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::SuppressHole( GEOM::GEOM_Shape_ptr shape,
     int nbWires = 0 ;
     for( fExp.Init(endFace, TopAbs_WIRE);  fExp.More(); fExp.Next() ) {
       TopoDS_Wire W = TopoDS::Wire( fExp.Current() ) ;
-      if( !W.IsNull() && BRepAlgoAPI::IsValid(W) )
+      if( !W.IsNull() && IsValid(W) )
 	nbWires++ ;
     }
     if(nbWires > 1)
@@ -1816,7 +1833,7 @@ bool GEOM_Gen_i::BuildShellWithFaceCompound( const TopoDS_Compound Comp,
   int i = 0 ;
   for( ex.Init( Comp, TopAbs_FACE); ex.More(); ex.Next() ) {
     TopoDS_Face F = TopoDS::Face( ex.Current() ) ;
-    if( !BRepAlgoAPI::IsValid(F) ) {
+    if( !IsValid(F) ) {
       return false ;
     }
     B.AddShellFace( resultShell, F ) ;
@@ -1847,7 +1864,7 @@ bool GEOM_Gen_i::FindCompareWireHoleOnFace( const TopoDS_Face& F,
   
   /* Get the outer wire of aFace */
   TopoDS_Wire outerW = BRepTools::OuterWire(F) ;
-  if( outerW.IsNull() || !BRepAlgoAPI::IsValid(outerW) ) {
+  if( outerW.IsNull() || !IsValid(outerW) ) {
     return false ;
   }
   
@@ -2354,7 +2371,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeBoolean(GEOM::GEOM_Shape_ptr shape1,
   }
     
   /* We test the validity of resulting shape */
-  if( !BRepAlgoAPI::IsValid(shape) ) {
+  if( !IsValid(shape) ) {
     THROW_SALOME_CORBA_EXCEPTION("Boolean aborted : non valid shape result", SALOME::BAD_PARAM);
   }
 	
@@ -2408,7 +2425,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFuse(GEOM::GEOM_Shape_ptr shape1,
   }
 
   /* We test the validity of resulting shape */
-  if( !BRepAlgoAPI::IsValid(shape) ) {
+  if( !IsValid(shape) ) {
     THROW_SALOME_CORBA_EXCEPTION("Fuse aborted : non valid shape result", SALOME::BAD_PARAM);
   }
 
@@ -2860,7 +2877,7 @@ throw (SALOME::SALOME_Exception)
     
     tds = PS.Shape();
     
-    if( !BRepAlgoAPI::IsValid(tds) ) {
+    if( !IsValid(tds) ) {
       //MESSAGE ( "In Partition: non valid shape result" );
       THROW_SALOME_CORBA_EXCEPTION("Partition aborted : non valid shape result", SALOME::BAD_PARAM);
     }
@@ -3004,7 +3021,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFilling(GEOM::GEOM_Shape_ptr myShape,
   } 
   
   /* We test the validity of resulting shape */
-  if( !BRepAlgoAPI::IsValid(tds) ) {
+  if( !IsValid(tds) ) {
     THROW_SALOME_CORBA_EXCEPTION("Filling aborted : non valid shape result", SALOME::BAD_PARAM);
   } 
   else {
@@ -3296,7 +3313,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSewing( const GEOM::GEOM_Gen::ListOfIOR& Li
     
     aMethod.Perform() ;
     tds = aMethod.SewedShape() ;
-    if( !BRepAlgoAPI::IsValid(tds) ) {
+    if( !IsValid(tds) ) {
       THROW_SALOME_CORBA_EXCEPTION("Make Sewing aborted : non valid shape", SALOME::BAD_PARAM);
     }
     if( tds.IsNull() ) {
@@ -3335,7 +3352,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSewingShape( GEOM::GEOM_Shape_ptr aShape,
     
     aMethod.Perform() ;
     tds = aMethod.SewedShape() ;
-    if( !BRepAlgoAPI::IsValid(tds) ) {
+    if( !IsValid(tds) ) {
       THROW_SALOME_CORBA_EXCEPTION("Make Sewing aborted : non valid shape", SALOME::BAD_PARAM);
     }
   }
@@ -4389,7 +4406,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePipe( GEOM::GEOM_Shape_ptr pathShape,
     THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakePipe", SALOME::BAD_PARAM);
   }
   
-  if (  !BRepAlgoAPI::IsValid(tds) ) {
+  if (  !IsValid(tds) ) {
     THROW_SALOME_CORBA_EXCEPTION("MakePipe aborted : non valid shape result", SALOME::BAD_PARAM);
   }
   else {

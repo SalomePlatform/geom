@@ -46,7 +46,7 @@ EXPORT_HEADERS= GEOM_Sketcher.h \
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += $(OCC_KERNEL_LIBS) $(OCC_MODELER_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS  += $(QT_LIBS) $(CAS_LDPATH) -lTKTopAlgo -L${KERNEL_ROOT_DIR}/lib/salome
 
 # additional file to be cleaned
 MOSTLYCLEAN =
