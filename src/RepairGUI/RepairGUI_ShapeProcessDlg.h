@@ -136,6 +136,7 @@ private slots:
     void             selectClicked();
     void             activateSelection();
     void             operationChanged();
+    void             advOptionToggled(bool);
 };             
 
 #endif // DIALOGBOX_ShapeProcess_H

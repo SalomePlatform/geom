@@ -30,14 +30,16 @@ using namespace std;
 
 #include "RepairGUI_ShapeProcessDlg.h"
 
+#include "GEOMImpl_Types.hxx"
+
+#include "QAD_Desktop.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
 #include "SALOME_ListIO.hxx"
 
-#include "GEOMImpl_Types.hxx"
+#include <TCollection_AsciiString.hxx>
 
 #include <qheader.h>
-#include "QAD_Desktop.h"
-#include <TCollection_AsciiString.hxx>
+#include <qmessagebox.h>
 
 
 //=================================================================================
@@ -290,6 +292,8 @@ void RepairGUI_ShapeProcessDlg::init()
   connect( mySelectWdgt->PushButton1, SIGNAL(clicked()), this, SLOT(selectClicked()) );
   connect( mySelectWdgt->LineEdit1,   SIGNAL(returnPressed()), this, SLOT(lineEditReturnPressed()) );
 
+  connect( myToBezierSurfModeChk,     SIGNAL(toggled(bool)), SLOT(advOptionToggled(bool)) );
+
   adjustSize();
   loadDefaults(); // init dialog fields with values from resource file
   myOpList->setSelected( myOpList->findItem( "FixShape", 0 ), true );
@@ -502,7 +506,6 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
   GEOM::string_array_var anOperators, aParams, aValues;
   anOp->GetShapeProcessParameters( anOperators, aParams, aValues );
 
-
   // check the default items-operators
   int i;
   for ( i = 0; i < anOperators->length(); i++ )
@@ -513,14 +516,19 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
       ((QCheckListItem*) anItem)->setOn( true );
   }
 
-  // set default values of parameters
-  if ( aParams->length() != aValues->length() )
-    return;
-  for ( i = 0; i < aParams->length(); i++ )
-  {
-    QWidget* aCtrl = getControl( (const char*)aParams[i] );
-    const char* aValue = set_convert( (const char*)aParams[i], aValues[i] );
-    setValue( aCtrl, aValue );
+  // Retrieve default parameters for ALL operators
+  for ( QListViewItemIterator it(myOpList); it.current(); ++it ) {
+    CORBA::String_var anOperator = CORBA::string_dup( it.current()->text( 0 ).latin1() );
+    anOp->GetOperatorParameters( anOperator.in(), aParams, aValues );
+
+    // set default values of parameters
+    if ( aParams->length() != aValues->length() )
+      continue;
+    for ( i = 0; i < aParams->length(); i++ ) {
+      QWidget* aCtrl = getControl( (const char*)aParams[i] );
+      const char* aValue = set_convert( (const char*)aParams[i], aValues[i] );
+      setValue( aCtrl, aValue );
+    }
   }
 }
 
@@ -805,4 +813,17 @@ void RepairGUI_ShapeProcessDlg::initSelection()
   aTypes.Add( GEOM_WIRE );
   aTypes.Add( GEOM_EDGE );
   globalSelection( aTypes );
+}
+
+//=================================================================================
+// function : advOptionToggled
+// purpose  : this slot is used to warn the user about possible consequences
+//            of enabling some advanced options
+//=================================================================================
+void RepairGUI_ShapeProcessDlg::advOptionToggled( bool on )
+{
+  QButton* btn = (QButton*)sender();
+  if ( on && btn->isToggleButton() &&
+       QMessageBox::warning( QAD_Application::getDesktop(), tr( "GEOM_WRN_WARNING" ), tr( "TIME_CONSUMING" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::No )
+    btn->toggle();
 }
