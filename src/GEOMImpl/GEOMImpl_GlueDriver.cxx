@@ -22,6 +22,9 @@ using namespace std;
 #include <Standard_NullObject.hxx>
 #include <Standard_Failure.hxx>
 
+#define MSG_BAD_TOLERANCE "Tolerance is too big"
+#define MSG_BAD_ARG_SHAPE "Argument shape is not a compound of hexahedral solids"
+
 //=======================================================================
 //function : GEOMImpl_GlueDriver
 //purpose  :
@@ -64,14 +67,22 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& the
     case 2:
       Standard_Failure::Raise("No vertices found in source shape");
       break;
+    case 3:
+    case 4:
+      Standard_Failure::Raise(MSG_BAD_TOLERANCE " or " MSG_BAD_ARG_SHAPE);
+      break;
     case 5:
       Standard_Failure::Raise("Source shape is Null");
       break;
     case 6:
       Standard_Failure::Raise("Result shape is Null");
       break;
+    case 100:
+      Standard_Failure::Raise(MSG_BAD_TOLERANCE);
+      break;
     case 101:
-      Standard_Failure::Raise("Argument shape is not a compound of hexahedral solids");
+    case 102:
+      Standard_Failure::Raise(MSG_BAD_ARG_SHAPE);
       break;
     case 200:
       Standard_Failure::Raise("Error occured during check of geometric coincidence");
