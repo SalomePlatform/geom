@@ -152,13 +152,45 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       gp_Pnt PV2 = BRep_Tool::Pnt(V2);
       TopoDS_Vertex VM = sae.LastVertex(edge1);
       gp_Pnt PVM = BRep_Tool::Pnt(VM);
+      Standard_Boolean IsClosed = Standard_False;
+      if(V1.IsSame(V2)) {
+        IsClosed = Standard_True;
+        TopExp_Explorer expe;
+        Standard_Boolean HasOtherEdges = Standard_False;
+        for(expe.Init(aFace, TopAbs_EDGE); expe.More(); expe.Next()) {
+          TopoDS_Edge Etmp = TopoDS::Edge(expe.Current());
+          if( Etmp.IsSame(edge1) || Etmp.IsSame(edge2) ) continue;
+          if( sae.FirstVertex(Etmp).IsSame(V1) ||
+              sae.LastVertex(Etmp).IsSame(V1) ) {
+            HasOtherEdges = Standard_True;
+            break;
+          }
+        }
+        if(HasOtherEdges) {
+          Standard_Real par = (fp2+lp2)/2.;
+          c3d2->D0(par,PV2);
+        }
+        else {
+          V1 = sae.FirstVertex(edge2);
+          PV1 = BRep_Tool::Pnt(V1);
+          V2 = VM;
+          VM = sae.LastVertex(edge2);
+          PVM = BRep_Tool::Pnt(VM);
+          Standard_Real par = (fp1+lp1)/2.;
+          c3d1->D0(par,PV2);
+        }
+      }
       GC_MakeCircle MC(PV1,PVM,PV2);
       Handle(Geom_Circle) C = MC.Value();
       gp_Pnt P0 = C->Location();
       gp_Dir D1(gp_Vec(P0,PV1));
       gp_Dir D2(gp_Vec(P0,PV2));
       Standard_Real fpar = C->XAxis().Direction().Angle(D1);
-      Standard_Real lpar = C->XAxis().Direction().Angle(D2);
+      Standard_Real lpar;
+      if(IsClosed)
+        lpar = fpar+2*PI;
+      else
+        lpar = C->XAxis().Direction().Angle(D2);
       Handle(Geom_TrimmedCurve) tc = new Geom_TrimmedCurve(C,fpar,lpar);
       TopoDS_Edge E;
       B.MakeEdge (E,tc,Precision::Confusion());
