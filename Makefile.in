@@ -17,8 +17,8 @@ VPATH=.:@srcdir@:@top_srcdir@/bin:@top_srcdir@/resources:./bin:@top_srcdir@/idl
 SUBDIRS = idl src
 
 RESOURCES_FILES = \
-Geometry_en.xml \
-Geometry_fr.xml \
+GEOM_en.xml \
+GEOM_fr.xml \
 arc.png \
 archimede.png \
 axisinertia.png \
