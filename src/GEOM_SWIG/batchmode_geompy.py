@@ -423,11 +423,11 @@ def GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState):
       print "GetShapesOnSphere : ", ShapesOp.GetErrorCode()
     return aList
 
-#def GetInPlace(theShapeWhere, theShapeWhat):
-#    anObj = ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
-#    if ShapesOp.IsDone() == 0:
-#      print "GetInPlace : ", ShapesOp.GetErrorCode()
-#    return anObj
+def GetInPlace(theShapeWhere, theShapeWhat):
+    anObj = ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
+    if ShapesOp.IsDone() == 0:
+      print "GetInPlace : ", ShapesOp.GetErrorCode()
+    return anObj
 
 # -----------------------------------------------------------------------------
 # Access to sub-shapes by their unique IDs inside the main shape.

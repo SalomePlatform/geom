@@ -51,24 +51,24 @@ if father is None:
 
 gg = ImportComponentGUI("GEOM")
 
-"""
+def SubShapeName(aSubObj, aMainObj):
+    """
      *  Get name for sub-shape aSubObj of shape aMainObj
 
      *  Example: see GEOM_TestAll.py
-"""
-def SubShapeName(aSubObj, aMainObj):
+    """
     aSubId  = orb.object_to_string(aSubObj)
     aMainId = orb.object_to_string(aMainObj)
     index = gg.getIndexTopology(aSubId, aMainId)
     name = gg.getShapeTypeString(aSubId) + "_%d"%(index)
     return name
 
-"""
+def addToStudy(aShape, aName):
+    """
      *  Publish in study aShape with name aName
 
      *  Example: see GEOM_TestAll.py
-"""
-def addToStudy(aShape, aName):
+    """
     try:
         aSObject = geom.AddInStudy(myStudy, aShape, aName, None)
     except:
@@ -76,12 +76,12 @@ def addToStudy(aShape, aName):
         return ""
     return aShape.GetStudyEntry()
 
-"""
+def addToStudyInFather(aFather, aShape, aName):
+    """
      *  Publish in study aShape with name aName as sub-object of previously published aFather
 
      *  Example: see GEOM_TestAll.py
-"""
-def addToStudyInFather(aFather, aShape, aName):
+    """
     try:
         aSObject = geom.AddInStudy(myStudy, aShape, aName, aFather)
     except:
@@ -116,7 +116,8 @@ GroupOp  = geom.GetIGroupOperations   (myStudyId)
 # Basic primitives
 # -----------------------------------------------------------------------------
 
-"""
+def MakeVertex(theX, theY, theZ):
+    """
      *  Create point by three coordinates.
      *  \param theX The X coordinate of the point.
      *  \param theY The Y coordinate of the point.
@@ -124,14 +125,14 @@ GroupOp  = geom.GetIGroupOperations   (myStudyId)
      *  \return New GEOM_Object, containing the created point.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeVertex(theX, theY, theZ):
+    """
     anObj = BasicOp.MakePointXYZ(theX, theY, theZ)
     if BasicOp.IsDone() == 0:
       print "MakePointXYZ : ", BasicOp.GetErrorCode()
     return anObj
 
-"""
+def MakeVertexWithRef(theReference, theX, theY, theZ):
+    """
      *  Create a point, distant from the referenced point
      *  on the given distances along the coordinate axes.
      *  \param theReference The referenced point.
@@ -141,28 +142,28 @@ def MakeVertex(theX, theY, theZ):
      *  \return New GEOM_Object, containing the created point.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeVertexWithRef(theReference, theX, theY, theZ):
+    """
     anObj = BasicOp.MakePointWithReference(theReference, theX, theY, theZ)
     if BasicOp.IsDone() == 0:
       print "MakePointWithReference : ", BasicOp.GetErrorCode()
     return anObj
 
-"""
+def MakeVertexOnCurve(theRefCurve, theParameter):
+    """
      *  Create a point, corresponding to the given parameter on the given curve.
      *  \param theRefCurve The referenced curve.
      *  \param theParameter Value of parameter on the referenced curve.
      *  \return New GEOM_Object, containing the created point.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeVertexOnCurve(theRefCurve, theParameter):
+    """
     anObj = BasicOp.MakePointOnCurve(theRefCurve, theParameter)
     if BasicOp.IsDone() == 0:
       print "MakePointOnCurve : ", BasicOp.GetErrorCode()
     return anObj
 
-"""
+def MakeVectorDXDYDZ(theDX, theDY, theDZ):
+    """
      *  Create a vector with the given components.
      *  \param theDX X component of the vector.
      *  \param theDY Y component of the vector.
@@ -170,28 +171,28 @@ def MakeVertexOnCurve(theRefCurve, theParameter):
      *  \return New GEOM_Object, containing the created vector.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeVectorDXDYDZ(theDX, theDY, theDZ):
+    """
     anObj = BasicOp.MakeVectorDXDYDZ(theDX, theDY, theDZ)
     if BasicOp.IsDone() == 0:
       print "MakeVectorDXDYDZ : ", BasicOp.GetErrorCode()
     return anObj
 
-"""
+def MakeVector(thePnt1, thePnt2):
+    """
      *  Create a vector between two points.
      *  \param thePnt1 Start point for the vector.
      *  \param thePnt2 End point for the vector.
      *  \return New GEOM_Object, containing the created vector.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeVector(thePnt1, thePnt2):
+    """
     anObj = BasicOp.MakeVectorTwoPnt(thePnt1, thePnt2)
     if BasicOp.IsDone() == 0:
       print "MakeVectorTwoPnt : ", BasicOp.GetErrorCode()
     return anObj
 
-"""
+def MakeLine(thePnt, theDir):
+    """
      *  Create a line, passing through the given point
      *  and parrallel to the given direction
      *  \param thePnt Point. The resulting line will pass through it.
@@ -199,28 +200,28 @@ def MakeVector(thePnt1, thePnt2):
      *  \return New GEOM_Object, containing the created line.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeLine(thePnt, theDir):
+    """
     anObj = BasicOp.MakeLine(thePnt, theDir)
     if BasicOp.IsDone() == 0:
       print "MakeLine : ", BasicOp.GetErrorCode()
     return anObj
 
-"""
+def MakeLineTwoPnt(thePnt1, thePnt2):
+    """
      *  Create a line, passing through the given points
      *  \param thePnt1 First of two points, defining the line.
      *  \param thePnt2 Second of two points, defining the line.
      *  \return New GEOM_Object, containing the created line.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeLineTwoPnt(thePnt1, thePnt2):
+    """
     anObj = BasicOp.MakeLineTwoPnt(thePnt1, thePnt2)
     if BasicOp.IsDone() == 0:
       print "MakeLineTwoPnt : ", BasicOp.GetErrorCode()
     return anObj
 
-"""
+def MakePlane(thePnt, theVec, theTrimSize):
+    """
      *  Create a plane, passing through the given point
      *  and normal to the given vector.
      *  \param thePnt Point, the plane has to pass through.
@@ -229,14 +230,14 @@ def MakeLineTwoPnt(thePnt1, thePnt2):
      *  \return New GEOM_Object, containing the created plane.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakePlane(thePnt, theVec, theTrimSize):
+    """
     anObj = BasicOp.MakePlanePntVec(thePnt, theVec, theTrimSize)
     if BasicOp.IsDone() == 0:
       print "MakePlanePntVec : ", BasicOp.GetErrorCode()
     return anObj
 
-"""
+def MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize):
+    """
      *  Create a plane, passing through the three given points
      *  \param thePnt1 First of three points, defining the plane.
      *  \param thePnt2 Second of three points, defining the plane.
@@ -245,28 +246,28 @@ def MakePlane(thePnt, theVec, theTrimSize):
      *  \return New GEOM_Object, containing the created plane.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize):
+    """
     anObj = BasicOp.MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize)
     if BasicOp.IsDone() == 0:
       print "MakePlaneThreePnt : ", BasicOp.GetErrorCode()
     return anObj
 
-"""
+def MakePlaneFace(theFace, theTrimSize):
+    """
      *  Create a plane, similar to the existing one, but with another size of representing face.
      *  \param theFace Referenced plane.
      *  \param theTrimSize New half size of a side of quadrangle face, representing the plane.
      *  \return New GEOM_Object, containing the created plane.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakePlaneFace(theFace, theTrimSize):
+    """
     anObj = BasicOp.MakePlaneFace(theFace, theTrimSize)
     if BasicOp.IsDone() == 0:
       print "MakePlaneFace : ", BasicOp.GetErrorCode()
     return anObj
 
-"""
+def MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
+    """
      *  Create a local coordinate system.
      *  \param OX,OY,OZ Three coordinates of coordinate system origin.
      *  \param XDX,XDY,XDZ Three components of OX direction
@@ -274,8 +275,7 @@ def MakePlaneFace(theFace, theTrimSize):
      *  \return New GEOM_Object, containing the created coordinate system.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
+    """
     anObj = BasicOp.MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ)
     if BasicOp.IsDone() == 0:
       print "MakeMarker : ", BasicOp.GetErrorCode()
@@ -285,7 +285,8 @@ def MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
 # Curves
 # -----------------------------------------------------------------------------
 
-"""
+def MakeArc(thePnt1, thePnt2, thePnt3):
+    """
      *  Create an arc of circle, passing through three given points.
      *  \param thePnt1 Start point of the arc.
      *  \param thePnt2 Middle point of the arc.
@@ -293,14 +294,14 @@ def MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
      *  \return New GEOM_Object, containing the created arc.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeArc(thePnt1, thePnt2, thePnt3):
+    """
     anObj = CurvesOp.MakeArc(thePnt1, thePnt2, thePnt3)
     if CurvesOp.IsDone() == 0:
       print "MakeArc : ", CurvesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeCircle(thePnt, theVec, theR):
+    """
      *  Create a circle with given center, normal vector and radius.
      *  \param thePnt Circle center.
      *  \param theVec Vector, normal to the plane of the circle.
@@ -308,27 +309,27 @@ def MakeArc(thePnt1, thePnt2, thePnt3):
      *  \return New GEOM_Object, containing the created circle.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeCircle(thePnt, theVec, theR):
+    """
     anObj = CurvesOp.MakeCirclePntVecR(thePnt, theVec, theR)
     if CurvesOp.IsDone() == 0:
       print "MakeCirclePntVecR : ", CurvesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeCircleThreePnt(thePnt1, thePnt2, thePnt3):
+    """
      *  Create a circle, passing through three given points
      *  \param thePnt1,thePnt2,thePnt3 Points, defining the circle.
      *  \return New GEOM_Object, containing the created circle.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeCircleThreePnt(thePnt1, thePnt2, thePnt3):
+    """
     anObj = CurvesOp.MakeCircleThreePnt(thePnt1, thePnt2, thePnt3)
     if CurvesOp.IsDone() == 0:
       print "MakeCircleThreePnt : ", CurvesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeEllipse(thePnt, theVec, theRMajor, theRMinor):
+    """
      *  Create an ellipse with given center, normal vector and radiuses.
      *  \param thePnt Ellipse center.
      *  \param theVec Vector, normal to the plane of the ellipse.
@@ -337,53 +338,53 @@ def MakeCircleThreePnt(thePnt1, thePnt2, thePnt3):
      *  \return New GEOM_Object, containing the created ellipse.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeEllipse(thePnt, theVec, theRMajor, theRMinor):
+    """
     anObj = CurvesOp.MakeEllipse(thePnt, theVec, theRMajor, theRMinor)
     if CurvesOp.IsDone() == 0:
       print "MakeEllipse : ", CurvesOp.GetErrorCode()
     return anObj
 
-"""
+def MakePolyline(thePoints):
+    """
      *  Create a polyline on the set of points.
      *  \param thePoints Sequence of points for the polyline.
      *  \return New GEOM_Object, containing the created polyline.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakePolyline(thePoints):
+    """
     anObj = CurvesOp.MakePolyline(thePoints)
     if CurvesOp.IsDone() == 0:
       print "MakePolyline : ", CurvesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeBezier(thePoints):
+    """
      *  Create bezier curve on the set of points.
      *  \param thePoints Sequence of points for the bezier curve.
      *  \return New GEOM_Object, containing the created bezier curve.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeBezier(thePoints):
+    """
     anObj = CurvesOp.MakeSplineBezier(thePoints)
     if CurvesOp.IsDone() == 0:
       print "MakeSplineBezier : ", CurvesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeInterpol(thePoints):
+    """
      *  Create B-Spline curve on the set of points.
      *  \param thePoints Sequence of points for the B-Spline curve.
      *  \return New GEOM_Object, containing the created B-Spline curve.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeInterpol(thePoints):
+    """
     anObj = CurvesOp.MakeSplineInterpolation(thePoints)
     if CurvesOp.IsDone() == 0:
       print "MakeSplineInterpolation : ", CurvesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeSketcher(theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0]):
+    """
      *  Create a sketcher (wire or face), following the textual description,
      *  passed through \a theCommand argument. \n
      *  Edges of the resulting wire or face will be arcs of circles and/or linear segments. \n
@@ -418,8 +419,7 @@ def MakeInterpol(thePoints):
      *  \return New GEOM_Object, containing the created wire.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeSketcher(theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0]):
+    """
     anObj = CurvesOp.MakeSketcher(theCommand, theWorkingPlane)
     if CurvesOp.IsDone() == 0:
       print "MakeSketcher : ", CurvesOp.GetErrorCode()
@@ -429,17 +429,18 @@ def MakeSketcher(theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0]):
 # Create 3D Primitives
 # -----------------------------------------------------------------------------
 
-"""
+def MakeBox(x1,y1,z1,x2,y2,z2):
+    """
      *  Create a box by coordinates of two opposite vertices.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeBox(x1,y1,z1,x2,y2,z2):
+    """
     pnt1 = MakeVertex(x1,y1,z1)
     pnt2 = MakeVertex(x2,y2,z2)
     return MakeBoxTwoPnt(pnt1,pnt2)
 
-"""
+def MakeBoxDXDYDZ(theDX, theDY, theDZ):
+    """
      *  Create a box with specified dimensions along the coordinate axes
      *  and with edges, parallel to the coordinate axes.
      *  Center of the box will be at point (DX/2, DY/2, DZ/2).
@@ -449,14 +450,14 @@ def MakeBox(x1,y1,z1,x2,y2,z2):
      *  \return New GEOM_Object, containing the created box.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeBoxDXDYDZ(theDX, theDY, theDZ):
+    """
     anObj = PrimOp.MakeBoxDXDYDZ(theDX, theDY, theDZ)
     if PrimOp.IsDone() == 0:
       print "MakeBoxDXDYDZ : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakeBoxTwoPnt(thePnt1, thePnt2):
+    """
      *  Create a box with two specified opposite vertices,
      *  and with edges, parallel to the coordinate axes
      *  \param thePnt1 First of two opposite vertices.
@@ -464,14 +465,14 @@ def MakeBoxDXDYDZ(theDX, theDY, theDZ):
      *  \return New GEOM_Object, containing the created box.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeBoxTwoPnt(thePnt1, thePnt2):
+    """
     anObj = PrimOp.MakeBoxTwoPnt(thePnt1, thePnt2)
     if PrimOp.IsDone() == 0:
       print "MakeBoxTwoPnt : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakeCylinder(thePnt, theAxis, theR, theH):
+    """
      *  Create a cylinder with given base point, axis, radius and height.
      *  \param thePnt Central point of cylinder base.
      *  \param theAxis Cylinder axis.
@@ -480,14 +481,14 @@ def MakeBoxTwoPnt(thePnt1, thePnt2):
      *  \return New GEOM_Object, containing the created cylinder.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeCylinder(thePnt, theAxis, theR, theH):
+    """
     anObj = PrimOp.MakeCylinderPntVecRH(thePnt, theAxis, theR, theH)
     if PrimOp.IsDone() == 0:
       print "MakeCylinderPntVecRH : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakeCylinderRH(theR, theH):
+    """
      *  Create a cylinder with given radius and height at
      *  the origin of coordinate system. Axis of the cylinder
      *  will be collinear to the OZ axis of the coordinate system.
@@ -496,54 +497,54 @@ def MakeCylinder(thePnt, theAxis, theR, theH):
      *  \return New GEOM_Object, containing the created cylinder.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeCylinderRH(theR, theH):
+    """
     anObj = PrimOp.MakeCylinderRH(theR, theH)
     if PrimOp.IsDone() == 0:
       print "MakeCylinderRH : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakeSpherePntR(thePnt, theR):
+    """
      *  Create a sphere with given center and radius.
      *  \param thePnt Sphere center.
      *  \param theR Sphere radius.
      *  \return New GEOM_Object, containing the created sphere.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeSpherePntR(thePnt, theR):
+    """
     anObj = PrimOp.MakeSpherePntR(thePnt, theR)
     if PrimOp.IsDone() == 0:
       print "MakeSpherePntR : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakeSphere(x, y, z, theR):
+    """
      *  Create a sphere with given center and radius.
      *  \param x,y,z Coordinates of sphere center.
      *  \param theR Sphere radius.
      *  \return New GEOM_Object, containing the created sphere.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeSphere(x, y, z, theR):
+    """
     point = MakeVertex(x, y, z)
     anObj = MakeSpherePntR(point, theR)
     return anObj
 
-"""
+def MakeSphereR(theR):
+    """
      *  Create a sphere with given radius at the origin of coordinate system.
      *  \param theR Sphere radius.
      *  \return New GEOM_Object, containing the created sphere.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeSphereR(theR):
+    """
     anObj = PrimOp.MakeSphereR(theR)
     if PrimOp.IsDone() == 0:
       print "MakeSphereR : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakeCone(thePnt, theAxis, theR1, theR2, theH):
+    """
      *  Create a cone with given base point, axis, height and radiuses.
      *  \param thePnt Central point of the first cone base.
      *  \param theAxis Cone axis.
@@ -555,14 +556,14 @@ def MakeSphereR(theR):
      *  \return New GEOM_Object, containing the created cone.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeCone(thePnt, theAxis, theR1, theR2, theH):
+    """
     anObj = PrimOp.MakeConePntVecR1R2H(thePnt, theAxis, theR1, theR2, theH)
     if PrimOp.IsDone() == 0:
       print "MakeConePntVecR1R2H : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakeConeR1R2H(theR1, theR2, theH):
+    """
      *  Create a cone with given height and radiuses at
      *  the origin of coordinate system. Axis of the cone will
      *  be collinear to the OZ axis of the coordinate system.
@@ -574,14 +575,14 @@ def MakeCone(thePnt, theAxis, theR1, theR2, theH):
      *  \return New GEOM_Object, containing the created cone.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeConeR1R2H(theR1, theR2, theH):
+    """
     anObj = PrimOp.MakeConeR1R2H(theR1, theR2, theH)
     if PrimOp.IsDone() == 0:
       print "MakeConeR1R2H : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakeTorus(thePnt, theVec, theRMajor, theRMinor):
+    """
      *  Create a torus with given center, normal vector and radiuses.
      *  \param thePnt Torus central point.
      *  \param theVec Torus axis of symmetry.
@@ -590,28 +591,28 @@ def MakeConeR1R2H(theR1, theR2, theH):
      *  \return New GEOM_Object, containing the created torus.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeTorus(thePnt, theVec, theRMajor, theRMinor):
+    """
     anObj = PrimOp.MakeTorusPntVecRR(thePnt, theVec, theRMajor, theRMinor)
     if PrimOp.IsDone() == 0:
       print "MakeTorusPntVecRR : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakeTorusRR(theRMajor, theRMinor):
+    """
      *  Create a torus with given radiuses at the origin of coordinate system.
      *  \param theRMajor Torus major radius.
      *  \param theRMinor Torus minor radius.
      *  \return New GEOM_Object, containing the created torus.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeTorusRR(theRMajor, theRMinor):
+    """
     anObj = PrimOp.MakeTorusRR(theRMajor, theRMinor)
     if PrimOp.IsDone() == 0:
       print "MakeTorusRR : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakePrism(theBase, thePoint1, thePoint2):
+    """
      *  Create a shape by extrusion of the base shape along a vector, defined by two points.
      *  \param theBase Base shape to be extruded.
      *  \param thePoint1 First end of extrusion vector.
@@ -619,14 +620,14 @@ def MakeTorusRR(theRMajor, theRMinor):
      *  \return New GEOM_Object, containing the created prism.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakePrism(theBase, thePoint1, thePoint2):
+    """
     anObj = PrimOp.MakePrismTwoPnt(theBase, thePoint1, thePoint2)
     if PrimOp.IsDone() == 0:
       print "MakePrismTwoPnt : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakePrismVecH(theBase, theVec, theH):
+    """
      *  Create a shape by extrusion of the base shape along the vector,
      *  i.e. all the space, transfixed by the base shape during its translation
      *  along the vector on the given distance.
@@ -636,14 +637,14 @@ def MakePrism(theBase, thePoint1, thePoint2):
      *  \return New GEOM_Object, containing the created prism.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakePrismVecH(theBase, theVec, theH):
+    """
     anObj = PrimOp.MakePrismVecH(theBase, theVec, theH)
     if PrimOp.IsDone() == 0:
       print "MakePrismVecH : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakePipe(theBase, thePath):
+    """
      *  Create a shape by extrusion of the base shape along
      *  the path shape. The path shape can be a wire or an edge.
      *  \param theBase Base shape to be extruded.
@@ -651,14 +652,14 @@ def MakePrismVecH(theBase, theVec, theH):
      *  \return New GEOM_Object, containing the created pipe.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakePipe(theBase, thePath):
+    """
     anObj = PrimOp.MakePipe(theBase, thePath)
     if PrimOp.IsDone() == 0:
       print "MakePipe : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakeRevolution(theBase, theAxis, theAngle):
+    """
      *  Create a shape by revolution of the base shape around the axis
      *  on the given angle, i.e. all the space, transfixed by the base
      *  shape during its rotation around the axis on the given angle.
@@ -668,8 +669,7 @@ def MakePipe(theBase, thePath):
      *  \return New GEOM_Object, containing the created revolution.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeRevolution(theBase, theAxis, theAngle):
+    """
     anObj = PrimOp.MakeRevolutionAxisAngle(theBase, theAxis, theAngle)
     if PrimOp.IsDone() == 0:
       print "MakeRevolutionAxisAngle : ", PrimOp.GetErrorCode()
@@ -679,34 +679,35 @@ def MakeRevolution(theBase, theAxis, theAngle):
 # Create base shapes
 # -----------------------------------------------------------------------------
 
-"""
+def MakeEdge(thePnt1, thePnt2):
+    """
      *  Create a linear edge with specified ends.
      *  \param thePnt1 Point for the first end of edge.
      *  \param thePnt2 Point for the second end of edge.
      *  \return New GEOM_Object, containing the created edge.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeEdge(thePnt1, thePnt2):
+    """
     anObj = ShapesOp.MakeEdge(thePnt1, thePnt2)
     if ShapesOp.IsDone() == 0:
       print "MakeEdge : ", ShapesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeWire(theEdgesAndWires):
+    """
      *  Create a wire from the set of edges and wires.
      *  \param theEdgesAndWires List of edges and/or wires.
      *  \return New GEOM_Object, containing the created wire.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeWire(theEdgesAndWires):
+    """
     anObj = ShapesOp.MakeWire(theEdgesAndWires)
     if ShapesOp.IsDone() == 0:
       print "MakeWire : ", ShapesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeFace(theWire, isPlanarWanted):
+    """
      *  Create a face on the given wire.
      *  \param theWire Wire to build the face on.
      *  \param isPlanarWanted If TRUE, only planar face will be built.
@@ -714,14 +715,14 @@ def MakeWire(theEdgesAndWires):
      *  \return New GEOM_Object, containing the created face.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeFace(theWire, isPlanarWanted):
+    """
     anObj = ShapesOp.MakeFace(theWire, isPlanarWanted)
     if ShapesOp.IsDone() == 0:
       print "MakeFace : ", ShapesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeFaceWires(theWires, isPlanarWanted):
+    """
      *  Create a face on the given wires set.
      *  \param theWires List of wires to build the face on.
      *  \param isPlanarWanted If TRUE, only planar face will be built.
@@ -729,124 +730,124 @@ def MakeFace(theWire, isPlanarWanted):
      *  \return New GEOM_Object, containing the created face.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeFaceWires(theWires, isPlanarWanted):
+    """
     anObj = ShapesOp.MakeFaceWires(theWires, isPlanarWanted)
     if ShapesOp.IsDone() == 0:
       print "MakeFaceWires : ", ShapesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeFaces(theWires, isPlanarWanted):
+    """
      *  Shortcut to MakeFaceWires()
 
      *  Example: see GEOM_TestOthers.py
-"""
-def MakeFaces(theWires, isPlanarWanted):
+    """
     anObj = MakeFaceWires(theWires, isPlanarWanted)
     return anObj
 
-"""
+def MakeShell(theFacesAndShells):
+    """
      *  Create a shell from the set of faces and shells.
      *  \param theFacesAndShells List of faces and/or shells.
      *  \return New GEOM_Object, containing the created shell.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeShell(theFacesAndShells):
+    """
     anObj = ShapesOp.MakeShell(theFacesAndShells)
     if ShapesOp.IsDone() == 0:
 	print "MakeShell : ", ShapesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeSolid(theShells):
+    """
      *  Create a solid, bounded by the given shells.
      *  \param theShells Sequence of bounding shells.
      *  \return New GEOM_Object, containing the created solid.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeSolid(theShells):
+    """
     anObj = ShapesOp.MakeSolidShells(theShells)
     if ShapesOp.IsDone() == 0:
 	print "MakeSolid : ", ShapesOp.GetErrorCode()
     return anObj
 
-"""
+def MakeCompound(theShapes):
+    """
      *  Create a compound of the given shapes.
      *  \param theShapes List of shapes to put in compound.
      *  \return New GEOM_Object, containing the created compound.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeCompound(theShapes):
+    """
     anObj = ShapesOp.MakeCompound(theShapes)
     if ShapesOp.IsDone() == 0:
       print "MakeCompound : ", ShapesOp.GetErrorCode()
     return anObj
 
-"""
+def NumberOfFaces(theShape):
+    """
      *  Gives quantity of faces in the given shape.
      *  \param theShape Shape to count faces of.
      *  \return Quantity of faces.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def NumberOfFaces(theShape):
+    """
     nb_faces = ShapesOp.NumberOfFaces(theShape)
     if ShapesOp.IsDone() == 0:
       print "NumberOfFaces : ", ShapesOp.GetErrorCode()
     return nb_faces
 
-"""
+def NumberOfEdges(theShape):
+    """
      *  Gives quantity of edges in the given shape.
      *  \param theShape Shape to count edges of.
      *  \return Quantity of edges.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def NumberOfEdges(theShape):
+    """
     nb_edges = ShapesOp.NumberOfEdges(theShape)
     if ShapesOp.IsDone() == 0:
       print "NumberOfEdges : ", ShapesOp.GetErrorCode()
     return nb_edges
 
-"""
+def ChangeOrientation(theShape):
+    """
      *  Reverses an orientation the given shape.
      *  \param theShape Shape to be reversed.
      *  \return The reversed copy of theShape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def ChangeOrientation(theShape):
+    """
     anObj = ShapesOp.ChangeOrientation(theShape)
     if ShapesOp.IsDone() == 0:
       print "ChangeOrientation : ", ShapesOp.GetErrorCode()
     return anObj
 
-"""
+def OrientationChange(theShape):
+    """
      *  Shortcut to ChangeOrientation()
 
      *  Example: see GEOM_TestOthers.py
-"""
-def OrientationChange(theShape):
+    """
     anObj = ChangeOrientation(theShape)
     return anObj
 
-"""
+def GetFreeFacesIDs(theShape):
+    """
      *  Retrieve all free faces from the given shape.
      *  Free face is a face, which is not shared between two shells of the shape.
      *  \param theShape Shape to find free faces in.
      *  \return List of IDs of all free faces, contained in theShape.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def GetFreeFacesIDs(theShape):
+    """
     anIDs = ShapesOp.GetFreeFacesIDs(theShape)
     if ShapesOp.IsDone() == 0:
       print "GetFreeFacesIDs : ", ShapesOp.GetErrorCode()
     return anIDs
 
-"""
+def GetSharedShapes(theShape1, theShape2, theShapeType):
+    """
      *  Get all sub-shapes of theShape1 of the given type, shared with theShape2.
      *  \param theShape1 Shape to find sub-shapes in.
      *  \param theShape2 Shape to find shared sub-shapes with.
@@ -854,14 +855,14 @@ def GetFreeFacesIDs(theShape):
      *  \return List of sub-shapes of theShape1, shared with theShape2.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def GetSharedShapes(theShape1, theShape2, theShapeType):
+    """
     aList = ShapesOp.GetSharedShapes(theShape1, theShape2, theShapeType)
     if ShapesOp.IsDone() == 0:
       print "GetSharedShapes : ", ShapesOp.GetErrorCode()
     return aList
 
-"""
+def GetShapesOnPlane(theShape, theShapeType, theAx1, theState):
+    """
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
      *  the specified plane by the certain way, defined through \a theState parameter.
      *  \param theShape Shape to find sub-shapes of.
@@ -873,14 +874,14 @@ def GetSharedShapes(theShape1, theShape2, theShapeType):
      *  \return List of all found sub-shapes.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def GetShapesOnPlane(theShape, theShapeType, theAx1, theState):
+    """
     aList = ShapesOp.GetShapesOnPlane(theShape, theShapeType, theAx1, theState)
     if ShapesOp.IsDone() == 0:
       print "GetShapesOnPlane : ", ShapesOp.GetErrorCode()
     return aList
 
-"""
+def GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState):
+    """
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
      *  the specified cylinder by the certain way, defined through \a theState parameter.
      *  \param theShape Shape to find sub-shapes of.
@@ -893,14 +894,14 @@ def GetShapesOnPlane(theShape, theShapeType, theAx1, theState):
      *  \return List of all found sub-shapes.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState):
+    """
     aList = ShapesOp.GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState)
     if ShapesOp.IsDone() == 0:
       print "GetShapesOnCylinder : ", ShapesOp.GetErrorCode()
     return aList
 
-"""
+def GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState):
+    """
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
      *  the specified sphere by the certain way, defined through \a theState parameter.
      *  \param theShape Shape to find sub-shapes of.
@@ -912,48 +913,47 @@ def GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState):
      *  \return List of all found sub-shapes.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState):
+    """
     aList = ShapesOp.GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState)
     if ShapesOp.IsDone() == 0:
       print "GetShapesOnSphere : ", ShapesOp.GetErrorCode()
     return aList
 
-#"""
-#     *  Get sub-shape(s) of theShapeWhere, which are
-#     *  coincident with \a theShapeWhat or could be a part of it.
-#     *  \param theShapeWhere Shape to find sub-shapes of.
-#     *  \param theShapeWhat Shape, specifying what to find.
-#     *  \return Group of all found sub-shapes or a single found sub-shape.
-#
-#     *  Example: see GEOM_TestOthers.py
-#"""
-#def GetInPlace(theShapeWhere, theShapeWhat):
-#    anObj = ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
-#    if ShapesOp.IsDone() == 0:
-#      print "GetInPlace : ", ShapesOp.GetErrorCode()
-#    return anObj
+def GetInPlace(theShapeWhere, theShapeWhat):
+    """
+     *  Get sub-shape(s) of theShapeWhere, which are
+     *  coincident with \a theShapeWhat or could be a part of it.
+     *  \param theShapeWhere Shape to find sub-shapes of.
+     *  \param theShapeWhat Shape, specifying what to find.
+     *  \return Group of all found sub-shapes or a single found sub-shape.
+
+     *  Example: see GEOM_TestOthers.py
+    """
+    anObj = ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
+    if ShapesOp.IsDone() == 0:
+      print "GetInPlace : ", ShapesOp.GetErrorCode()
+    return anObj
 
 # -----------------------------------------------------------------------------
 # Access to sub-shapes by their unique IDs inside the main shape.
 # -----------------------------------------------------------------------------
 
-"""
+def GetSubShape(aShape, ListOfID):
+    """
      *  Obtain a composite sub-shape of <aShape>, composed from sub-shapes
      *  of <aShape>, selected by their unique IDs inside <aShape>
 
      *  Example: see GEOM_TestAll.py
-"""
-def GetSubShape(aShape, ListOfID):
+    """
     anObj = geom.AddSubShape(aShape,ListOfID)
     return anObj
 
-"""
+def GetSubShapeID(aShape, aSubShape):
+    """
      *  Obtain unique ID of sub-shape <aSubShape> inside <aShape>
 
      *  Example: see GEOM_TestAll.py
-"""
-def GetSubShapeID(aShape, aSubShape):
+    """
     anID = LocalOp.GetSubShapeIndex(aShape, aSubShape)
     if LocalOp.IsDone() == 0:
       print "GetSubShapeIndex : ", LocalOp.GetErrorCode()
@@ -963,33 +963,34 @@ def GetSubShapeID(aShape, aSubShape):
 # Decompose objects
 # -----------------------------------------------------------------------------
 
-"""
+def SubShapeAll(aShape, aType):
+    """
      *  Explode a shape on subshapes of a given type.
      *  \param theShape Shape to be exploded.
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \return List of sub-shapes of type theShapeType, contained in theShape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def SubShapeAll(aShape, aType):
+    """
     ListObj = ShapesOp.MakeExplode(aShape,aType,0)
     if ShapesOp.IsDone() == 0:
       print "MakeExplode : ", ShapesOp.GetErrorCode()
     return ListObj
 
-"""
+def SubShapeAllIDs(aShape, aType):
+    """
      *  Explode a shape on subshapes of a given type.
      *  \param theShape Shape to be exploded.
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \return List of IDs of sub-shapes.
-"""
-def SubShapeAllIDs(aShape, aType):
+    """
     ListObj = ShapesOp.SubShapeAllIDs(aShape,aType,0)
     if ShapesOp.IsDone() == 0:
       print "SubShapeAllIDs : ", ShapesOp.GetErrorCode()
     return ListObj
 
-"""
+def SubShapeAllSorted(aShape, aType):
+    """
      *  Explode a shape on subshapes of a given type.
      *  Sub-shapes will be sorted by coordinates of their gravity centers.
      *  \param theShape Shape to be exploded.
@@ -997,34 +998,33 @@ def SubShapeAllIDs(aShape, aType):
      *  \return List of sub-shapes of type theShapeType, contained in theShape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def SubShapeAllSorted(aShape, aType):
+    """
     ListObj = ShapesOp.MakeExplode(aShape,aType,1)
     if ShapesOp.IsDone() == 0:
       print "MakeExplode : ", ShapesOp.GetErrorCode()
     return ListObj
 
-"""
+def SubShapeAllSortedIDs(aShape, aType):
+    """
      *  Explode a shape on subshapes of a given type.
      *  Sub-shapes will be sorted by coordinates of their gravity centers.
      *  \param theShape Shape to be exploded.
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \return List of IDs of sub-shapes.
-"""
-def SubShapeAllSortedIDs(aShape, aType):
+    """
     ListIDs = ShapesOp.SubShapeAllIDs(aShape,aType,1)
     if ShapesOp.IsDone() == 0:
       print "SubShapeAllSortedIDs : ", ShapesOp.GetErrorCode()
     return ListObj
 
-"""
+def SubShape(aShape, aType, ListOfInd):
+    """
      *  Obtain a compound of sub-shapes of <aShape>,
      *  selected by they indices in list of all sub-shapes of type <aType>.
      *  Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
 
      *  Example: see GEOM_TestAll.py
-"""
-def SubShape(aShape, aType, ListOfInd):
+    """
     ListOfIDs = []
     AllShapeList = SubShapeAll(aShape, aType)
     for ind in ListOfInd:
@@ -1032,14 +1032,14 @@ def SubShape(aShape, aType, ListOfInd):
     anObj = GetSubShape(aShape, ListOfIDs)
     return anObj
 
-"""
+def SubShapeSorted(aShape, aType, ListOfInd):
+    """
      *  Obtain a compound of sub-shapes of <aShape>,
      *  selected by they indices in sorted list of all sub-shapes of type <aType>.
      *  Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
 
      *  Example: see GEOM_TestAll.py
-"""
-def SubShapeSorted(aShape, aType, ListOfInd):
+    """
     ListOfIDs = []
     AllShapeList = SubShapeAllSorted(aShape, aType)
     for ind in ListOfInd:
@@ -1051,7 +1051,8 @@ def SubShapeSorted(aShape, aType, ListOfInd):
 # Healing operations
 # -----------------------------------------------------------------------------
 
-"""
+def ProcessShape(theShape, theOperators, theParameters, theValues):
+    """
      *  Apply a sequence of Shape Healing operators to the given object.
      *  \param theShape Shape to be processed.
      *  \param theOperators List of names of operators ("FixShape", "SplitClosedFaces", etc.).
@@ -1062,14 +1063,14 @@ def SubShapeSorted(aShape, aType, ListOfInd):
      *  \return New GEOM_Object, containing processed shape.
 
      *  Example: see GEOM_TestHealing.py
-"""
-def ProcessShape(theShape, theOperators, theParameters, theValues):
+    """
     anObj = HealOp.ProcessShape(theShape, theOperators, theParameters, theValues)
     if HealOp.IsDone() == 0:
 	print "ProcessShape : ", HealOp.GetErrorCode()
     return anObj
 
-"""
+def SuppressFaces(theObject, theFaces):
+    """
      *  Remove faces from the given object (shape).
      *  \param theObject Shape to be processed.
      *  \param theFaces Indices of faces to be removed, if EMPTY then the method
@@ -1077,38 +1078,38 @@ def ProcessShape(theShape, theOperators, theParameters, theValues):
      *  \return New GEOM_Object, containing processed shape.
 
      *  Example: see GEOM_TestHealing.py
-"""
-def SuppressFaces(theObject, theFaces):
+    """
     anObj = HealOp.SuppressFaces(theObject, theFaces)
     if HealOp.IsDone() == 0:
       print "SuppressFaces : ", HealOp.GetErrorCode()
     return anObj
 
-"""
+def MakeSewing(ListShape, theTolerance):
+    """
      *  Sewing of some shapes into single shape.
 
      *  Example: see GEOM_TestHealing.py
-"""
-def MakeSewing(ListShape, theTolerance):
+    """
     comp = MakeCompound(ListShape)
     anObj = Sew(comp, theTolerance)
     return anObj
 
-"""
+def Sew(theObject, theTolerance):
+    """
      *  Sewing of the given object.
      *  \param theObject Shape to be processed.
      *  \param theTolerance Required tolerance value.
      *  \return New GEOM_Object, containing processed shape.
 
      *  Example: see MakeSewing() above
-"""
-def Sew(theObject, theTolerance):
+    """
     anObj = HealOp.Sew(theObject, theTolerance)
     if HealOp.IsDone() == 0:
       print "Sew : ", HealOp.GetErrorCode()
     return anObj
 
-"""
+def SuppressInternalWires(theObject, theWires):
+    """
      *  Remove internal wires and edges from the given object (face).
      *  \param theObject Shape to be processed.
      *  \param theWires Indices of wires to be removed, if EMPTY then the method
@@ -1116,14 +1117,14 @@ def Sew(theObject, theTolerance):
      *  \return New GEOM_Object, containing processed shape.
 
      *  Example: see GEOM_TestHealing.py
-"""
-def SuppressInternalWires(theObject, theWires):
+    """
     anObj = HealOp.RemoveIntWires(theObject, theWires)
     if HealOp.IsDone() == 0:
       print "SuppressInternalWires : ", HealOp.GetErrorCode()
     return anObj
 
-"""
+def SuppressHoles(theObject, theWires):
+    """
      *  Remove internal closed contours (holes) from the given object.
      *  \param theObject Shape to be processed.
      *  \param theWires Indices of wires to be removed, if EMPTY then the method
@@ -1131,14 +1132,14 @@ def SuppressInternalWires(theObject, theWires):
      *  \return New GEOM_Object, containing processed shape.
 
      *  Example: see GEOM_TestHealing.py
-"""
-def SuppressHoles(theObject, theWires):
+    """
     anObj = HealOp.FillHoles(theObject, theWires)
     if HealOp.IsDone() == 0:
       print "SuppressHoles : ", HealOp.GetErrorCode()
     return anObj
 
-"""
+def CloseContour(theObject, theWires, isCommonVertex):
+    """
      *  Close an open wire.
      *  \param theObject Shape to be processed.
      *  \param theWires Indexes of edge(s) and wire(s) to be closed within <VAR>theObject</VAR>'s shape,
@@ -1148,14 +1149,14 @@ def SuppressHoles(theObject, theWires):
      *  \return New GEOM_Object, containing processed shape.
 
      *  Example: see GEOM_TestHealing.py
-"""
-def CloseContour(theObject, theWires, isCommonVertex):
+    """
     anObj = HealOp.CloseContour(theObject, theWires, isCommonVertex)
     if HealOp.IsDone() == 0:
       print "CloseContour : ", HealOp.GetErrorCode()
     return anObj
 
-"""
+def DivideEdge(theObject, theEdgeIndex, theValue, isByParameter):
+    """
      *  Addition of a point to a given edge object.
      *  \param theObject Shape to be processed.
      *  \param theEdgeIndex Index of edge to be divided within theObject's shape,
@@ -1167,14 +1168,14 @@ def CloseContour(theObject, theWires, isCommonVertex):
      *  \return New GEOM_Object, containing processed shape.
 
      *  Example: see GEOM_TestHealing.py
-"""
-def DivideEdge(theObject, theEdgeIndex, theValue, isByParameter):
+    """
     anObj = HealOp.DivideEdge(theObject, theEdgeIndex, theValue, isByParameter)
     if HealOp.IsDone() == 0:
       print "DivideEdge : ", HealOp.GetErrorCode()
     return anObj
 
-"""
+def GetFreeBoundary(theObject):
+    """
      *  Get a list of wires (wrapped in GEOM_Object-s),
      *  that constitute a free boundary of the given shape.
      *  \param theObject Shape to get free boundary of.
@@ -1184,8 +1185,7 @@ def DivideEdge(theObject, theEdgeIndex, theValue, isByParameter):
      *  theOpenWires: Open wires on the free boundary of the given shape.
 
      *  Example: see GEOM_TestHealing.py
-"""
-def GetFreeBoundary(theObject):
+    """
     anObj = HealOp.GetFreeBoundary(theObject)
     if HealOp.IsDone() == 0:
       print "GetFreeBoundaries : ", HealOp.GetErrorCode()
@@ -1195,18 +1195,19 @@ def GetFreeBoundary(theObject):
 # Create advanced objects
 # -----------------------------------------------------------------------------
 
-"""
+def MakeCopy(theOriginal):
+    """
      *  Create a copy of the given object
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeCopy(theOriginal):
+    """
     anObj = InsertOp.MakeCopy(theOriginal)
     if InsertOp.IsDone() == 0:
       print "MakeCopy : ", InsertOp.GetErrorCode()
     return anObj
 
-"""
+def MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter):
+    """
      *  Create a filling from the given compound of contours.
      *  \param theShape the compound of contours
      *  \param theMinDeg a minimal degree
@@ -1217,22 +1218,21 @@ def MakeCopy(theOriginal):
      *  \return New GEOM_Object, containing the created filling surface.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter):
+    """
     anObj = PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter)
     if PrimOp.IsDone() == 0:
       print "MakeFilling : ", PrimOp.GetErrorCode()
     return anObj
 
-"""
+def MakeGlueFaces(theShape, theTolerance):
+    """
      *  Replace coincident faces in theShape by one face.
      *  \param theShape Initial shape.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
      *  \return New GEOM_Object, containing a copy of theShape without coincident faces.
 
      *  Example: see GEOM_Spanner.py
-"""
-def MakeGlueFaces(theShape, theTolerance):
+    """
     anObj = ShapesOp.MakeGlueFaces(theShape, theTolerance)
     if ShapesOp.IsDone() == 0:
       print "MakeGlueFaces : ", ShapesOp.GetErrorCode()
@@ -1242,7 +1242,8 @@ def MakeGlueFaces(theShape, theTolerance):
 # Boolean (Common, Cut, Fuse, Section)
 # -----------------------------------------------------------------------------
 
-"""
+def MakeBoolean(theShape1, theShape2, theOperation):
+    """
      *  Perform one of boolean operations on two given shapes.
      *  \param theShape1 First argument for boolean operation.
      *  \param theShape2 Second argument for boolean operation.
@@ -1251,31 +1252,47 @@ def MakeGlueFaces(theShape, theTolerance):
      *  \return New GEOM_Object, containing the result shape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeBoolean(theShape1, theShape2, theOperation):
+    """
     anObj = BoolOp.MakeBoolean(theShape1, theShape2, theOperation)
     if BoolOp.IsDone() == 0:
       print "MakeBoolean : ", BoolOp.GetErrorCode()
     return anObj
 
-"""
-     *  Shortcuts to MakeBoolean() for certain operations
+def MakeCommon(s1, s2):
+    """
+     *  Shortcut to MakeBoolean(s1, s2, 1)
 
      *  Example: see GEOM_TestOthers.py
-"""
-def MakeCommon(s1, s2):
+    """
     return MakeBoolean(s1, s2, 1)
 
 def MakeCut(s1, s2):
+    """
+     *  Shortcut to MakeBoolean(s1, s2, 2)
+
+     *  Example: see GEOM_TestOthers.py
+    """
     return MakeBoolean(s1, s2, 2)
 
 def MakeFuse(s1, s2):
+    """
+     *  Shortcut to MakeBoolean(s1, s2, 3)
+
+     *  Example: see GEOM_TestOthers.py
+    """
     return MakeBoolean(s1, s2, 3)
 
 def MakeSection(s1, s2):
+    """
+     *  Shortcut to MakeBoolean(s1, s2, 4)
+
+     *  Example: see GEOM_TestOthers.py
+    """
     return MakeBoolean(s1, s2, 4)
 
-"""
+def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
+                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+    """
      *  Perform partition operation.
      *  \param ListShapes Shapes to be intersected.
      *  \param ListTools Shapes to intersect theShapes.
@@ -1289,9 +1306,7 @@ def MakeSection(s1, s2):
      *  \return New GEOM_Object, containing the result shapes.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+    """
     anObj = BoolOp.MakePartition(ListShapes, ListTools,
                                  ListKeepInside, ListRemoveInside,
                                  Limit, RemoveWebs, ListMaterials);
@@ -1299,27 +1314,27 @@ def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=
       print "MakePartition : ", BoolOp.GetErrorCode()
     return anObj
 
-"""
+def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
+              Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+    """
      *  Shortcut to MakePartition()
 
      *  Example: see GEOM_TestOthers.py
-"""
-def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-              Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+    """
     anObj = MakePartition(ListShapes, ListTools,
                           ListKeepInside, ListRemoveInside,
                           Limit, RemoveWebs, ListMaterials);
     return anObj
 
-"""
+def MakeHalfPartition(theShape, thePlane):
+    """
      *  Perform partition of the Shape with the Plane
      *  \param theShape Shape to be intersected.
      *  \param thePlane Tool shape, to intersect theShape.
      *  \return New GEOM_Object, containing the result shape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeHalfPartition(theShape, thePlane):
+    """
     anObj = BoolOp.MakeHalfPartition(theShape, thePlane)
     if BoolOp.IsDone() == 0:
       print "MakeHalfPartition : ", BoolOp.GetErrorCode()
@@ -1329,7 +1344,8 @@ def MakeHalfPartition(theShape, thePlane):
 # Transform objects
 # -----------------------------------------------------------------------------
 
-"""
+def MakeTranslationTwoPoints(theObject, thePoint1, thePoint2):
+    """
      *  Translate the given object along the vector, specified
      *  by its end points, creating its copy before the translation.
      *  \param theObject The object to be translated.
@@ -1338,14 +1354,14 @@ def MakeHalfPartition(theShape, thePlane):
      *  \return New GEOM_Object, containing the translated object.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeTranslationTwoPoints(theObject, thePoint1, thePoint2):
+    """
     anObj = TrsfOp.TranslateTwoPointsCopy(theObject, thePoint1, thePoint2)
     if TrsfOp.IsDone() == 0:
       print "TranslateTwoPointsCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MakeTranslation(theObject, theDX, theDY, theDZ):
+    """
      *  Translate the given object along the vector, specified
      *  by its components, creating its copy before the translation.
      *  \param theObject The object to be translated.
@@ -1353,14 +1369,14 @@ def MakeTranslationTwoPoints(theObject, thePoint1, thePoint2):
      *  \return New GEOM_Object, containing the translated object.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeTranslation(theObject, theDX, theDY, theDZ):
+    """
     anObj = TrsfOp.TranslateDXDYDZCopy(theObject, theDX, theDY, theDZ)
     if TrsfOp.IsDone() == 0:
       print "TranslateDXDYDZCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MakeTranslationVector(theObject, theVector):
+    """
      *  Translate the given object along the given vector,
      *  creating its copy before the translation.
      *  \param theObject The object to be translated.
@@ -1368,14 +1384,14 @@ def MakeTranslation(theObject, theDX, theDY, theDZ):
      *  \return New GEOM_Object, containing the translated object.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeTranslationVector(theObject, theVector):
+    """
     anObj = TrsfOp.TranslateVectorCopy(theObject, theVector)
     if TrsfOp.IsDone() == 0:
       print "TranslateVectorCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MakeRotation(theObject, theAxis, theAngle):
+    """
      *  Rotate the given object around the given axis
      *  on the given angle, creating its copy before the rotatation.
      *  \param theObject The object to be rotated.
@@ -1384,14 +1400,14 @@ def MakeTranslationVector(theObject, theVector):
      *  \return New GEOM_Object, containing the rotated object.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeRotation(theObject, theAxis, theAngle):
+    """
     anObj = TrsfOp.RotateCopy(theObject, theAxis, theAngle)
     if TrsfOp.IsDone() == 0:
       print "RotateCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MakeScaleTransform(theObject, thePoint, theFactor):
+    """
      *  Scale the given object by the factor, creating its copy before the scaling.
      *  \param theObject The object to be scaled.
      *  \param thePoint Center point for scaling.
@@ -1399,14 +1415,14 @@ def MakeRotation(theObject, theAxis, theAngle):
      *  \return New GEOM_Object, containing the scaled shape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeScaleTransform(theObject, thePoint, theFactor):
+    """
     anObj = TrsfOp.ScaleShapeCopy(theObject, thePoint, theFactor)
     if TrsfOp.IsDone() == 0:
       print "ScaleShapeCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MakeMirrorByPlane(theObject, thePlane):
+    """
      *  Create an object, symmetrical
      *  to the given one relatively the given plane.
      *  \param theObject The object to be mirrored.
@@ -1414,14 +1430,14 @@ def MakeScaleTransform(theObject, thePoint, theFactor):
      *  \return New GEOM_Object, containing the mirrored shape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeMirrorByPlane(theObject, thePlane):
+    """
     anObj = TrsfOp.MirrorPlaneCopy(theObject, thePlane)
     if TrsfOp.IsDone() == 0:
       print "MirrorPlaneCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MakeMirrorByAxis(theObject, theAxis):
+    """
      *  Create an object, symmetrical
      *  to the given one relatively the given axis.
      *  \param theObject The object to be mirrored.
@@ -1429,14 +1445,14 @@ def MakeMirrorByPlane(theObject, thePlane):
      *  \return New GEOM_Object, containing the mirrored shape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeMirrorByAxis(theObject, theAxis):
+    """
     anObj = TrsfOp.MirrorAxisCopy(theObject, theAxis)
     if TrsfOp.IsDone() == 0:
       print "MirrorAxisCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MakeMirrorByPoint(theObject, thePoint):
+    """
      *  Create an object, symmetrical
      *  to the given one relatively the given point.
      *  \param theObject The object to be mirrored.
@@ -1444,34 +1460,33 @@ def MakeMirrorByAxis(theObject, theAxis):
      *  \return New GEOM_Object, containing the mirrored shape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeMirrorByPoint(theObject, thePoint):
+    """
     anObj = TrsfOp.MirrorPointCopy(theObject, thePoint)
     if TrsfOp.IsDone() == 0:
       print "MirrorPointCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MakePosition(theObject, theStartLCS, theEndLCS):
+    """
      *  Modify the Location of the given object by LCS
      *  creating its copy before the setting
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakePosition(theObject, theStartLCS, theEndLCS):
+    """
     anObj = TrsfOp.PositionShapeCopy(theObject, theStartLCS, theEndLCS)
     if TrsfOp.IsDone() == 0:
       print "PositionShapeCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MakeOffset(theObject, theOffset):
+    """
      *  Create new object as offset of the given one.
      *  \param theObject The base object for the offset.
      *  \param theOffset Offset value.
      *  \return New GEOM_Object, containing the offset object.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeOffset(theObject, theOffset):
+    """
     anObj = TrsfOp.OffsetShapeCopy(theObject, theOffset)
     if TrsfOp.IsDone() == 0:
       print "OffsetShapeCopy : ", TrsfOp.GetErrorCode()
@@ -1481,7 +1496,8 @@ def MakeOffset(theObject, theOffset):
 # Patterns
 # -----------------------------------------------------------------------------
 
-"""
+def MakeMultiTranslation1D(theObject, theVector, theStep, theNbTimes):
+    """
      *  Translate the given object along the given vector a given number times
      *  \param theObject The object to be translated.
      *  \param theVector Direction of the translation.
@@ -1491,14 +1507,15 @@ def MakeOffset(theObject, theOffset):
      *          the shapes, obtained after each translation.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeMultiTranslation1D(theObject, theVector, theStep, theNbTimes):
+    """
     anObj = TrsfOp.MultiTranslate1D(theObject, theVector, theStep, theNbTimes)
     if TrsfOp.IsDone() == 0:
       print "MultiTranslate1D : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MakeMultiTranslation2D(theObject, theVector1, theStep1, theNbTimes1,
+			              theVector2, theStep2, theNbTimes2):
+    """
      *  Conseqently apply two specified translations to theObject specified number of times.
      *  \param theObject The object to be translated.
      *  \param theVector1 Direction of the first translation.
@@ -1511,16 +1528,15 @@ def MakeMultiTranslation1D(theObject, theVector, theStep, theNbTimes):
      *          the shapes, obtained after each translation.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeMultiTranslation2D(theObject, theVector1, theStep1, theNbTimes1,
-			              theVector2, theStep2, theNbTimes2):
+    """
     anObj = TrsfOp.MultiTranslate2D(theObject, theVector1, theStep1, theNbTimes1,
 			                       theVector2, theStep2, theNbTimes2)
     if TrsfOp.IsDone() == 0:
       print "MultiTranslate2D : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MultiRotate1D(theObject, theAxis, theNbTimes):
+    """
      *  Rotate the given object around the given axis a given number times.
      *  Rotation angle will be 2*PI/theNbTimes.
      *  \param theObject The object to be rotated.
@@ -1530,14 +1546,14 @@ def MakeMultiTranslation2D(theObject, theVector1, theStep1, theNbTimes1,
      *          shapes, obtained after each rotation.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MultiRotate1D(theObject, theAxis, theNbTimes):
+    """
     anObj = TrsfOp.MultiRotate1D(theObject, theAxis, theNbTimes)
     if TrsfOp.IsDone() == 0:
       print "MultiRotate1D : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2):
+    """
      *  Rotate the given object around the
      *  given axis on the given angle a given number
      *  times and multi-translate each rotation result.
@@ -1553,29 +1569,28 @@ def MultiRotate1D(theObject, theAxis, theNbTimes):
      *          shapes, obtained after each transformation.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2):
+    """
     anObj = TrsfOp.MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2)
     if TrsfOp.IsDone() == 0:
       print "MultiRotate2D : ", TrsfOp.GetErrorCode()
     return anObj
 
-"""
+def MakeMultiRotation1D(aShape,aDir,aPoint,aNbTimes):
+    """
      *  The same, as MultiRotate1D(), but axis is given by direction and point
 
      *  Example: see GEOM_TestOthers.py
-"""
-def MakeMultiRotation1D(aShape,aDir,aPoint,aNbTimes):
+    """
     aVec = MakeLine(aPoint,aDir)
     anObj = MultiRotate1D(aShape,aVec,aNbTimes)
     return anObj
 
-"""
+def MakeMultiRotation2D(aShape,aDir,aPoint,anAngle,nbtimes1,aStep,nbtimes2):
+    """
      *  The same, as MultiRotate2D(), but axis is given by direction and point
 
      *  Example: see GEOM_TestOthers.py
-"""
-def MakeMultiRotation2D(aShape,aDir,aPoint,anAngle,nbtimes1,aStep,nbtimes2):
+    """
     aVec = MakeLine(aPoint,aDir)
     anObj = MultiRotate2D(aShape,aVec,anAngle,nbtimes1,aStep,nbtimes2)
     return anObj
@@ -1584,21 +1599,22 @@ def MakeMultiRotation2D(aShape,aDir,aPoint,anAngle,nbtimes1,aStep,nbtimes2):
 # Local operations
 # -----------------------------------------------------------------------------
 
-"""
+def MakeFilletAll(theShape, theR):
+    """
      *  Perform a fillet on all edges of the given shape.
      *  \param theShape Shape, to perform fillet on.
      *  \param theR Fillet radius.
      *  \return New GEOM_Object, containing the result shape.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def MakeFilletAll(theShape, theR):
+    """
     anObj = LocalOp.MakeFilletAll(theShape, theR)
     if LocalOp.IsDone() == 0:
       print "MakeFilletAll : ", LocalOp.GetErrorCode()
     return anObj
 
-"""
+def MakeFillet(theShape, theR, theShapeType, theListShapes):
+    """
      *  Perform a fillet on the specified edges/faces of the given shape
      *  \param theShape Shape, to perform fillet on.
      *  \param theR Fillet radius.
@@ -1608,8 +1624,7 @@ def MakeFilletAll(theShape, theR):
      *  \return New GEOM_Object, containing the result shape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeFillet(theShape, theR, theShapeType, theListShapes):
+    """
     anObj = None
     if theShapeType == ShapeType["EDGE"]:
         anObj = LocalOp.MakeFilletEdges(theShape, theR, theListShapes)
@@ -1619,21 +1634,22 @@ def MakeFillet(theShape, theR, theShapeType, theListShapes):
       print "MakeFillet : ", LocalOp.GetErrorCode()
     return anObj
 
-"""
+def MakeChamferAll(theShape, theD):
+    """
      *  Perform a symmetric chamfer on all edges of the given shape.
      *  \param theShape Shape, to perform chamfer on.
      *  \param theD Chamfer size along each face.
      *  \return New GEOM_Object, containing the result shape.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def MakeChamferAll(theShape, theD):
+    """
     anObj = LocalOp.MakeChamferAll(theShape, theD)
     if LocalOp.IsDone() == 0:
       print "MakeChamferAll : ", LocalOp.GetErrorCode()
     return anObj
 
-"""
+def MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2):
+    """
      *  Perform a chamfer on edges, common to the specified faces,
      *  with distance D1 on the Face1
      *  \param theShape Shape, to perform chamfer on.
@@ -1644,14 +1660,14 @@ def MakeChamferAll(theShape, theD):
      *  \return New GEOM_Object, containing the result shape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2):
+    """
     anObj = LocalOp.MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2)
     if LocalOp.IsDone() == 0:
       print "MakeChamferEdge : ", LocalOp.GetErrorCode()
     return anObj
 
-"""
+def MakeChamferFaces(theShape, theD1, theD2, theFaces):
+    """
      *  Perform a chamfer on all edges of the specified faces,
      *  with distance D1 on the first specified face (if several for one edge)
      *  \param theShape Shape, to perform chamfer on.
@@ -1664,19 +1680,18 @@ def MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2):
      *  \return New GEOM_Object, containing the result shape.
 
      *  Example: see GEOM_TestAll.py
-"""
-def MakeChamferFaces(theShape, theD1, theD2, theFaces):
+    """
     anObj = LocalOp.MakeChamferFaces(theShape, theD1, theD2, theFaces)
     if LocalOp.IsDone() == 0:
       print "MakeChamferFaces : ", LocalOp.GetErrorCode()
     return anObj
 
-"""
+def MakeChamfer(aShape,d1,d2,aShapeType,ListShape):
+    """
      *  Shortcut to MakeChamferEdge() and MakeChamferFaces()
 
      *  Example: see GEOM_TestOthers.py
-"""
-def MakeChamfer(aShape,d1,d2,aShapeType,ListShape):
+    """
     anObj = None
     if aShapeType == ShapeType["EDGE"]:
         anObj = MakeChamferEdge(aShape,d1,d2,ListShape[0],ListShape[1])
@@ -1684,7 +1699,8 @@ def MakeChamfer(aShape,d1,d2,aShapeType,ListShape):
         anObj = MakeChamferFaces(aShape,d1,d2,ListShape)
     return anObj
 
-"""
+def Archimede(theShape, theWeight, theWaterDensity, theMeshDeflection):
+    """
      *  Perform an Archimde operation on the given shape with given parameters.
      *                    The object presenting the resulting face is returned
      *  \param theShape Shape to be put in water.
@@ -1695,8 +1711,7 @@ def MakeChamfer(aShape,d1,d2,aShapeType,ListShape):
      *          by a plane, corresponding to water level.
 
      *  Example: see GEOM_TestAll.py
-"""
-def Archimede(theShape, theWeight, theWaterDensity, theMeshDeflection):
+    """
     anObj = LocalOp.MakeArchimede(theShape, theWeight, theWaterDensity, theMeshDeflection)
     if LocalOp.IsDone() == 0:
       print "MakeArchimede : ", LocalOp.GetErrorCode()
@@ -1706,19 +1721,20 @@ def Archimede(theShape, theWeight, theWaterDensity, theMeshDeflection):
 # Information objects
 # -----------------------------------------------------------------------------
 
-"""
+def PointCoordinates(Point):
+    """
      *  Get point coordinates
      *  \return [x, y, z]
 
      *  Example: see GEOM_TestMeasures.py
-"""
-def PointCoordinates(Point):
+    """
     aTuple = MeasuOp.PointCoordinates(Point)
     if MeasuOp.IsDone() == 0:
       print "PointCoordinates : ", MeasuOp.GetErrorCode()
     return aTuple
 
-"""
+def BasicProperties(theShape):
+    """
      *  Get summarized length of all wires,
      *  area of surface and volume of the given shape.
      *  \param theShape Shape to define properties of.
@@ -1728,14 +1744,14 @@ def PointCoordinates(Point):
      *  theVolume:   Volume of the given shape.
 
      *  Example: see GEOM_TestMeasures.py
-"""
-def BasicProperties(theShape):
+    """
     aTuple = MeasuOp.GetBasicProperties(theShape)
     if MeasuOp.IsDone() == 0:
       print "BasicProperties : ", MeasuOp.GetErrorCode()
     return aTuple
 
-"""
+def BoundingBox(theShape):
+    """
      *  Get parameters of bounding box of the given shape
      *  \param theShape Shape to obtain bounding box of.
      *  \return [Xmin,Xmax, Ymin,Ymax, Zmin,Zmax]
@@ -1744,14 +1760,14 @@ def BasicProperties(theShape):
      *  Zmin,Zmax: Limits of shape along OZ axis.
 
      *  Example: see GEOM_TestMeasures.py
-"""
-def BoundingBox(theShape):
+    """
     aTuple = MeasuOp.GetBoundingBox(theShape)
     if MeasuOp.IsDone() == 0:
       print "BoundingBox : ", MeasuOp.GetErrorCode()
     return aTuple
 
-"""
+def Inertia(theShape):
+    """
      *  Get inertia matrix and moments of inertia of theShape.
      *  \param theShape Shape to calculate inertia of.
      *  \return [I11,I12,I13, I21,I22,I23, I31,I32,I33, Ix,Iy,Iz]
@@ -1759,27 +1775,27 @@ def BoundingBox(theShape):
      *  Ix,Iy,Iz:    Moments of inertia of the given shape.
 
      *  Example: see GEOM_TestMeasures.py
-"""
-def Inertia(theShape):
+    """
     aTuple = MeasuOp.GetInertia(theShape)
     if MeasuOp.IsDone() == 0:
       print "Inertia : ", MeasuOp.GetErrorCode()
     return aTuple
 
-"""
+def MinDistance(theShape1, theShape2):
+    """
      *  Get minimal distance between the given shapes.
      *  \param theShape1,theShape2 Shapes to find minimal distance between.
      *  \return Value of the minimal distance between the given shapes.
 
      *  Example: see GEOM_TestMeasures.py
-"""
-def MinDistance(theShape1, theShape2):
+    """
     aTuple = MeasuOp.GetMinDistance(theShape1, theShape2)
     if MeasuOp.IsDone() == 0:
       print "MinDistance : ", MeasuOp.GetErrorCode()
     return aTuple[0]
 
-"""
+def Tolerance(theShape):
+    """
      *  Get min and max tolerances of sub-shapes of theShape
      *  \param theShape Shape, to get tolerances of.
      *  \return [FaceMin,FaceMax, EdgeMin,EdgeMax, VertMin,VertMax]
@@ -1788,48 +1804,47 @@ def MinDistance(theShape1, theShape2):
      *  VertMin,VertMax: Min and max tolerances of the vertices.
 
      *  Example: see GEOM_TestMeasures.py
-"""
-def Tolerance(theShape):
+    """
     aTuple = MeasuOp.GetTolerance(theShape)
     if MeasuOp.IsDone() == 0:
       print "Tolerance : ", MeasuOp.GetErrorCode()
     return aTuple
 
-"""
+def WhatIs(theShape):
+    """
      *  Obtain description of the given shape (number of sub-shapes of each type)
      *  \param theShape Shape to be described.
      *  \return Description of the given shape.
 
      *  Example: see GEOM_TestMeasures.py
-"""
-def WhatIs(theShape):
+    """
     aDescr = MeasuOp.WhatIs(theShape)
     if MeasuOp.IsDone() == 0:
       print "WhatIs : ", MeasuOp.GetErrorCode()
     return aDescr
 
-"""
+def MakeCDG(theShape):
+    """
      *  Get a point, situated at the centre of mass of theShape.
      *  \param theShape Shape to define centre of mass of.
      *  \return New GEOM_Object, containing the created point.
 
      *  Example: see GEOM_TestMeasures.py
-"""
-def MakeCDG(theShape):
+    """
     anObj = MeasuOp.GetCentreOfMass(theShape)
     if MeasuOp.IsDone() == 0:
       print "GetCentreOfMass : ", MeasuOp.GetErrorCode()
     return anObj
 
-"""
+def CheckShape(theShape):
+    """
      *  Check a topology of the given shape.
      *  \param theShape Shape to check validity of.
      *  \return TRUE, if the shape "seems to be valid" from the topological point of view.
      *  If theShape is invalid, prints a description of problem.
 
      *  Example: see GEOM_TestMeasures.py
-"""
-def CheckShape(theShape):
+    """
     (IsValid, Status) = MeasuOp.CheckShape(theShape)
     if MeasuOp.IsDone() == 0:
       print "CheckShape : ", MeasuOp.GetErrorCode()
@@ -1842,7 +1857,8 @@ def CheckShape(theShape):
 # Import/Export objects
 # -----------------------------------------------------------------------------
 
-"""
+def Import(theFileName, theFormatName):
+    """
      *  Import a shape from the BREP or IGES or STEP file
      *  (depends on given format) with given name.
      *  \param theFileName The file, containing the shape.
@@ -1851,28 +1867,38 @@ def CheckShape(theShape):
      *  \return New GEOM_Object, containing the imported shape.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def Import(theFileName, theFormatName):
+    """
     anObj = InsertOp.Import(theFileName, theFormatName)
     if InsertOp.IsDone() == 0:
       print "Import : ", InsertOp.GetErrorCode()
     return anObj
 
-"""
-     *  Shortcuts to Import() for certain formats
+def ImportBREP(theFileName):
+    """
+     *  Shortcut to Import() for BREP format
 
      *  Example: see GEOM_TestOthers.py
-"""
-def ImportBREP(theFileName):
+    """
     return Import(theFileName, "BREP")
 
 def ImportIGES(theFileName):
+    """
+     *  Shortcut to Import() for IGES format
+
+     *  Example: see GEOM_TestOthers.py
+    """
     return Import(theFileName, "IGES")
 
 def ImportSTEP(theFileName):
+    """
+     *  Shortcut to Import() for STEP format
+
+     *  Example: see GEOM_TestOthers.py
+    """
     return Import(theFileName, "STEP")
 
-"""
+def Export(theObject, theFileName, theFormatName):
+    """
      *  Export the given shape into a file with given name.
      *  \param theObject Shape to be stored in the file.
      *  \param theFileName Name of the file to store the given shape in.
@@ -1880,101 +1906,111 @@ def ImportSTEP(theFileName):
      *         Available formats can be obtained with InsertOp.ImportTranslators() method.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def Export(theObject, theFileName, theFormatName):
+    """
     InsertOp.Export(theObject, theFileName, theFormatName)
     if InsertOp.IsDone() == 0:
       print "Export : ", InsertOp.GetErrorCode()
 
-"""
-     *  Shortcuts to Export() for certain formats
+def ExportBREP(theObject, theFileName):
+    """
+     *  Shortcut to Export() for BREP format
 
      *  Example: see GEOM_TestOthers.py
-"""
-def ExportBREP(theObject, theFileName):
+    """
     return Export(theObject, theFileName, "BREP")
 
 def ExportIGES(theObject, theFileName):
+    """
+     *  Shortcut to Export() for IGES format
+
+     *  Example: see GEOM_TestOthers.py
+    """
     return Export(theObject, theFileName, "IGES")
 
 def ExportSTEP(theObject, theFileName):
+    """
+     *  Shortcut to Export() for STEP format
+
+     *  Example: see GEOM_TestOthers.py
+    """
     return Export(theObject, theFileName, "STEP")
 
 # -----------------------------------------------------------------------------
 # Block operations
 # -----------------------------------------------------------------------------
 
-"""
+def MakeQuad(E1, E2, E3, E4):
+    """
      *  Create a quadrangle face from four edges. Order of Edges is not
      *  important. It is  not necessary that edges share the same vertex.
      *  \param E1,E2,E3,E4 Edges for the face bound.
      *  \return New GEOM_Object, containing the created face.
 
      *  Example: see GEOM_Spanner.py
-"""
-def MakeQuad(E1, E2, E3, E4):
+    """
     anObj = BlocksOp.MakeQuad(E1, E2, E3, E4)
     if BlocksOp.IsDone() == 0:
       print "MakeQuad : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def MakeQuad2Edges(E1, E2):
+    """
      *  Create a quadrangle face on two edges.
      *  The missing edges will be built by creating the shortest ones.
      *  \param E1,E2 Two opposite edges for the face.
      *  \return New GEOM_Object, containing the created face.
 
      *  Example: see GEOM_Spanner.py
-"""
-def MakeQuad2Edges(E1, E2):
+    """
     anObj = BlocksOp.MakeQuad2Edges(E1, E2)
     if BlocksOp.IsDone() == 0:
       print "MakeQuad2Edges : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def MakeQuad4Vertices(V1, V2, V3, V4):
+    """
      *  Create a quadrangle face with specified corners.
      *  The missing edges will be built by creating the shortest ones.
      *  \param V1,V2,V3,V4 Corner vertices for the face.
      *  \return New GEOM_Object, containing the created face.
 
      *  Example: see GEOM_Spanner.py
-"""
-def MakeQuad4Vertices(V1, V2, V3, V4):
+    """
     anObj = BlocksOp.MakeQuad4Vertices(V1, V2, V3, V4)
     if BlocksOp.IsDone() == 0:
       print "MakeQuad4Vertices : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def MakeHexa(F1, F2, F3, F4, F5, F6):
+    """
      *  Create a hexahedral solid, bounded by the six given faces. Order of
      *  faces is not important. It is  not necessary that Faces share the same edge.
      *  \param F1,F2,F3,F4,F5,F6 Faces for the hexahedral solid.
      *  \return New GEOM_Object, containing the created solid.
 
      *  Example: see GEOM_Spanner.py
-"""
-def MakeHexa(F1, F2, F3, F4, F5, F6):
+    """
     anObj = BlocksOp.MakeHexa(F1, F2, F3, F4, F5, F6)
     if BlocksOp.IsDone() == 0:
       print "MakeHexa : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def MakeHexa2Faces(F1, F2):
+    """
      *  Create a hexahedral solid between two given faces.
      *  The missing faces will be built by creating the smallest ones.
      *  \param F1,F2 Two opposite faces for the hexahedral solid.
      *  \return New GEOM_Object, containing the created solid.
 
      *  Example: see GEOM_Spanner.py
-"""
-def MakeHexa2Faces(F1, F2):
+    """
     anObj = BlocksOp.MakeHexa2Faces(F1, F2)
     if BlocksOp.IsDone() == 0:
       print "MakeHexa2Faces : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def MakeHexa2Faces(F1, F2):
+    """
      *  Get a vertex, found in the given shape by its coordinates.
      *  \param theShape Block or a compound of blocks.
      *  \param theX,theY,theZ Coordinates of the sought vertex.
@@ -1983,112 +2019,112 @@ def MakeHexa2Faces(F1, F2):
      *  \return New GEOM_Object, containing the found vertex.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def GetPoint(theShape, theX, theY, theZ, theEpsilon):
+    """
     anObj = BlocksOp.GetPoint(theShape, theX, theY, theZ, theEpsilon)
     if BlocksOp.IsDone() == 0:
       print "GetPoint : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def GetEdge(theShape, thePoint1, thePoint2):
+    """
      *  Get an edge, found in the given shape by two given vertices.
      *  \param theShape Block or a compound of blocks.
      *  \param thePoint1,thePoint2 Points, close to the ends of the desired edge.
      *  \return New GEOM_Object, containing the found edge.
 
      *  Example: see GEOM_Spanner.py
-"""
-def GetEdge(theShape, thePoint1, thePoint2):
+    """
     anObj = BlocksOp.GetEdge(theShape, thePoint1, thePoint2)
     if BlocksOp.IsDone() == 0:
       print "GetEdge : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def GetEdgeNearPoint(theShape, thePoint):
+    """
      *  Find an edge of the given shape, which has minimal distance to the given point.
      *  \param theShape Block or a compound of blocks.
      *  \param thePoint Point, close to the desired edge.
      *  \return New GEOM_Object, containing the found edge.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def GetEdgeNearPoint(theShape, thePoint):
+    """
     anObj = BlocksOp.GetEdgeNearPoint(theShape, thePoint)
     if BlocksOp.IsDone() == 0:
       print "GetEdgeNearPoint : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4):
+    """
      *  Returns a face, found in the given shape by four given corner vertices.
      *  \param theShape Block or a compound of blocks.
      *  \param thePoint1-thePoint4 Points, close to the corners of the desired face.
      *  \return New GEOM_Object, containing the found face.
 
      *  Example: see GEOM_Spanner.py
-"""
-def GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4):
+    """
     anObj = BlocksOp.GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4)
     if BlocksOp.IsDone() == 0:
       print "GetFaceByPoints : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def GetFaceByEdges(theShape, theEdge1, theEdge2):
+    """
      *  Get a face of block, found in the given shape by two given edges.
      *  \param theShape Block or a compound of blocks.
      *  \param theEdge1,theEdge2 Edges, close to the edges of the desired face.
      *  \return New GEOM_Object, containing the found face.
 
      *  Example: see GEOM_Spanner.py
-"""
-def GetFaceByEdges(theShape, theEdge1, theEdge2):
+    """
     anObj = BlocksOp.GetFaceByEdges(theShape, theEdge1, theEdge2)
     if BlocksOp.IsDone() == 0:
       print "GetFaceByEdges : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def GetOppositeFace(theBlock, theFace):
+    """
      *  Find a face, opposite to the given one in the given block.
      *  \param theBlock Must be a hexahedral solid.
      *  \param theFace Face of \a theBlock, opposite to the desired face.
      *  \return New GEOM_Object, containing the found face.
 
      *  Example: see GEOM_Spanner.py
-"""
-def GetOppositeFace(theBlock, theFace):
+    """
     anObj = BlocksOp.GetOppositeFace(theBlock, theFace)
     if BlocksOp.IsDone() == 0:
       print "GetOppositeFace : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def GetFaceNearPoint(theShape, thePoint):
+    """
      *  Find a face of the given shape, which has minimal distance to the given point.
      *  \param theShape Block or a compound of blocks.
      *  \param thePoint Point, close to the desired face.
      *  \return New GEOM_Object, containing the found face.
 
      *  Example: see GEOM_Spanner.py
-"""
-def GetFaceNearPoint(theShape, thePoint):
+    """
     anObj = BlocksOp.GetFaceNearPoint(theShape, thePoint)
     if BlocksOp.IsDone() == 0:
       print "GetFaceNearPoint : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def GetFaceByNormale(theBlock, theVector):
+    """
      *  Find a face of block, whose outside normale has minimal angle with the given vector.
      *  \param theShape Block or a compound of blocks.
      *  \param theVector Vector, close to the normale of the desired face.
      *  \return New GEOM_Object, containing the found face.
 
      *  Example: see GEOM_Spanner.py
-"""
-def GetFaceByNormale(theBlock, theVector):
+    """
     anObj = BlocksOp.GetFaceByNormale(theBlock, theVector)
     if BlocksOp.IsDone() == 0:
       print "GetFaceByNormale : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def CheckCompoundOfBlocks(theCompound):
+    """
      *  Check, if the compound of blocks is given.
      *  To be considered as a compound of blocks, the
      *  given shape must satisfy the following conditions:
@@ -2101,8 +2137,7 @@ def GetFaceByNormale(theBlock, theVector):
      *  If theCompound is not valid, prints all discovered errors.
 
      *  Example: see GEOM_Spanner.py
-"""
-def CheckCompoundOfBlocks(theCompound):
+    """
     (IsValid, BCErrors) = BlocksOp.CheckCompoundOfBlocks(theCompound)
     if BlocksOp.IsDone() == 0:
       print "CheckCompoundOfBlocks : ", BlocksOp.GetErrorCode()
@@ -2112,21 +2147,22 @@ def CheckCompoundOfBlocks(theCompound):
         print Descr
     return IsValid
 
-"""
+def RemoveExtraEdges(theShape):
+    """
      *  Remove all seam and degenerated edges from \a theShape.
      *  Unite faces and edges, sharing one surface.
      *  \param theShape The compound or single solid to remove irregular edges from.
      *  \return Improved shape.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def RemoveExtraEdges(theShape):
+    """
     anObj = BlocksOp.RemoveExtraEdges(theShape)
     if BlocksOp.IsDone() == 0:
       print "RemoveExtraEdges : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def CheckAndImprove(theShape):
+    """
      *  Check, if the given shape is a blocks compound.
      *  Fix all detected errors.
      *    \note Single block can be also fixed by this method.
@@ -2134,14 +2170,14 @@ def RemoveExtraEdges(theShape):
      *  \return Improved compound.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def CheckAndImprove(theShape):
+    """
     anObj = BlocksOp.CheckAndImprove(theShape)
     if BlocksOp.IsDone() == 0:
       print "CheckAndImprove : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def MakeBlockExplode(theCompound, theMinNbFaces, theMaxNbFaces):
+    """
      *  Get all the blocks, contained in the given compound.
      *  \param theCompound The compound to explode.
      *  \param theMinNbFaces If solid has lower number of faces, it is not a block.
@@ -2150,14 +2186,14 @@ def CheckAndImprove(theShape):
      *  \return List of GEOM_Objects, containing the retrieved blocks.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def MakeBlockExplode(theCompound, theMinNbFaces, theMaxNbFaces):
+    """
     aList = BlocksOp.ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces)
     if BlocksOp.IsDone() == 0:
       print "MakeBlockExplode : ", BlocksOp.GetErrorCode()
     return aList
 
-"""
+def GetBlockNearPoint(theCompound, thePoint):
+    """
      *  Find block, containing the given point inside its volume or on boundary.
      *  \param theCompound Compound, to find block in.
      *  \param thePoint Point, close to the desired block. If the point lays on
@@ -2165,42 +2201,42 @@ def MakeBlockExplode(theCompound, theMinNbFaces, theMaxNbFaces):
      *  \return New GEOM_Object, containing the found block.
 
      *  Example: see GEOM_Spanner.py
-"""
-def GetBlockNearPoint(theCompound, thePoint):
+    """
     anObj = BlocksOp.GetBlockNearPoint(theCompound, thePoint)
     if BlocksOp.IsDone() == 0:
       print "GetBlockNearPoint : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def GetBlockByParts(theCompound, theParts):
+    """
      *  Find block, containing all the elements, passed as the parts, or maximum quantity of them.
      *  \param theCompound Compound, to find block in.
      *  \param theParts List of faces and/or edges and/or vertices to be parts of the found block.
      *  \return New GEOM_Object, containing the found block.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def GetBlockByParts(theCompound, theParts):
+    """
     anObj = BlocksOp.GetBlockByParts(theCompound, theParts)
     if BlocksOp.IsDone() == 0:
       print "GetBlockByParts : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def GetBlocksByParts(theCompound, theParts):
+    """
      *  Return all blocks, containing all the elements, passed as the parts.
      *  \param theCompound Compound, to find blocks in.
      *  \param theParts List of faces and/or edges and/or vertices to be parts of the found blocks.
      *  \return List of GEOM_Objects, containing the found blocks.
 
      *  Example: see GEOM_Spanner.py
-"""
-def GetBlocksByParts(theCompound, theParts):
+    """
     aList = BlocksOp.GetBlocksByParts(theCompound, theParts)
     if BlocksOp.IsDone() == 0:
       print "GetBlocksByParts : ", BlocksOp.GetErrorCode()
     return aList
 
-"""
+def MakeMultiTransformation1D(Block, DirFace1, DirFace2, NbTimes):
+    """
      *  Multi-transformate block and glue the result.
      *  Transformation is defined so, as to superpose direction faces.
      *  \param Block Hexahedral solid to be multi-transformed.
@@ -2211,14 +2247,15 @@ def GetBlocksByParts(theCompound, theParts):
      *  \return New GEOM_Object, containing the result shape.
 
      *  Example: see GEOM_Spanner.py
-"""
-def MakeMultiTransformation1D(Block, DirFace1, DirFace2, NbTimes):
+    """
     anObj = BlocksOp.MakeMultiTransformation1D(Block, DirFace1, DirFace2, NbTimes)
     if BlocksOp.IsDone() == 0:
       print "MakeMultiTransformation1D : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def MakeMultiTransformation2D(Block, DirFace1U, DirFace2U, NbTimesU,
+			             DirFace1V, DirFace2V, NbTimesV):
+    """
      *  Multi-transformate block and glue the result.
      *  \param Block Hexahedral solid to be multi-transformed.
      *  \param DirFace1U,DirFace2U IDs of Direction faces for the first transformation.
@@ -2227,16 +2264,15 @@ def MakeMultiTransformation1D(Block, DirFace1, DirFace2, NbTimes):
      *  \return New GEOM_Object, containing the result shape.
 
      *  Example: see GEOM_Spanner.py
-"""
-def MakeMultiTransformation2D(Block, DirFace1U, DirFace2U, NbTimesU,
-			             DirFace1V, DirFace2V, NbTimesV):
+    """
     anObj = BlocksOp.MakeMultiTransformation2D(Block, DirFace1U, DirFace2U, NbTimesU,
 					              DirFace1V, DirFace2V, NbTimesV)
     if BlocksOp.IsDone() == 0:
       print "MakeMultiTransformation2D : ", BlocksOp.GetErrorCode()
     return anObj
 
-"""
+def Propagate(theShape):
+    """
      *  Build all possible propagation groups.
      *  Propagation group is a set of all edges, opposite to one (main)
      *  edge of this group directly or through other opposite edges.
@@ -2245,8 +2281,7 @@ def MakeMultiTransformation2D(Block, DirFace1U, DirFace2U, NbTimesU,
      *  \return List of GEOM_Objects, each of them is a propagation group.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def Propagate(theShape):
+    """
     listChains = BlocksOp.Propagate(theShape)
     if BlocksOp.IsDone() == 0:
       print "Propagate : ", BlocksOp.GetErrorCode()
@@ -2256,86 +2291,86 @@ def Propagate(theShape):
 # Group operations
 # -----------------------------------------------------------------------------
 
-"""
+def CreateGroup(theMainShape, theShapeType):
+    """
      *  Creates a new group which will store sub shapes of theMainShape
      *  \param theMainShape is a GEOM object on which the group is selected
      *  \param theShapeType defines a shape type of the group
      *  \return a newly created GEOM group
 
      *  Example: see GEOM_TestOthers.py
-"""
-def CreateGroup(theMainShape, theShapeType):
+    """
     anObj = GroupOp.CreateGroup(theMainShape, theShapeType)
     if GroupOp.IsDone() == 0:
        print "CreateGroup : ", GroupOp.GetErrorCode()
     return anObj
 
-"""
+def AddObject(theGroup, theSubShapeID):
+    """
      *  Adds a sub object with ID theSubShapeId to the group
      *  \param theGroup is a GEOM group to which the new sub shape is added
      *  \param theSubShapeID is a sub shape ID in the main object.
      *  \note Use method GetSubShapeID() to get an unique ID of the sub shape
 
      *  Example: see GEOM_TestOthers.py
-"""
-def AddObject(theGroup, theSubShapeID):
+    """
     GroupOp.AddObject(theGroup, theSubShapeID)
     if GroupOp.IsDone() == 0:
       print "AddObject : ", GroupOp.GetErrorCode()
 
-"""
+def RemoveObject(theGroup, theSubShapeID):
+    """
      *  Removes a sub object with ID \a theSubShapeId from the group
      *  \param theGroup is a GEOM group from which the new sub shape is removed
      *  \param theSubShapeID is a sub shape ID in the main object.
      *  \note Use method GetSubShapeID() to get an unique ID of the sub shape
 
      *  Example: see GEOM_TestOthers.py
-"""
-def RemoveObject(theGroup, theSubShapeID):
+    """
     GroupOp.RemoveObject(theGroup, theSubShapeID)
     if GroupOp.IsDone() == 0:
       print "RemoveObject : ", GroupOp.GetErrorCode()
 
-"""
+def GetObjectIDs(theGroup):
+    """
      *  Returns a list of sub objects ID stored in the group
      *  \param theGroup is a GEOM group for which a list of IDs is requested
 
      *  Example: see GEOM_TestOthers.py
-"""
-def GetObjectIDs(theGroup):
+    """
     ListIDs = GroupOp.GetObjects(theGroup)
     if GroupOp.IsDone() == 0:
       print "GetObjectIDs : ", GroupOp.GetErrorCode()
     return ListIDs
 
-"""
+def GetType(theGroup):
+    """
      *  Returns a type of sub objects stored in the group
      *  \param theGroup is a GEOM group which type is returned.
 
      *  Example: see GEOM_TestOthers.py
-"""
-def GetType(theGroup):
+    """
     aType = GroupOp.GetType(theGroup)
     if GroupOp.IsDone() == 0:
       print "GetType : ", GroupOp.GetErrorCode()
     return aType
 
-"""
+def GetMainShape(theGroup):
+    """
      *  Returns a main shape associated with the group
      *  \param theGroup is a GEOM group for which a main shape object is requested
      *  \return a GEOM object which is a main shape for theGroup
 
      *  Example: see GEOM_TestOthers.py
-"""
-def GetMainShape(theGroup):
+    """
     anObj = GroupOp.GetMainShape(theGroup)
     if GroupOp.IsDone() == 0:
       print "GetMainShape : ", GroupOp.GetErrorCode()
     return anObj
 
-"""
-     * Add Path to the system path
-"""
 def addPath(Path):
+    """
+     * Add Path to load python scripts from
+    """
     if (sys.path.count(Path) < 1):
 	sys.path.append(Path)
