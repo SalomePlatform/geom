@@ -116,7 +116,6 @@ static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
 GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
 			     const Standard_CString aName): SALOME_AISShape(shape)
 {
-  myIO = NULL;
   myName = new char [strlen(aName)+1];
   strcpy( myName, aName);
 
@@ -124,15 +123,18 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
 }
 
 void GEOM_AISShape::setIO(const Handle(SALOME_InteractiveObject)& io){
-  myIO = io;
+  SetOwner( io );
 }
 
 Handle(SALOME_InteractiveObject) GEOM_AISShape::getIO(){
-  return myIO;
+  Handle(SALOME_InteractiveObject) IO;
+  if ( !GetOwner().IsNull() )
+    IO = Handle(SALOME_InteractiveObject)::DownCast( GetOwner() );
+  return IO;
 }
 
 Standard_Boolean GEOM_AISShape::hasIO(){
-  return !myIO.IsNull();
+  return !getIO().IsNull();
 }
 
 void GEOM_AISShape::setName(const Standard_CString aName)
@@ -140,8 +142,9 @@ void GEOM_AISShape::setName(const Standard_CString aName)
   myName = new char [strlen(aName)+1];
   strcpy( myName, aName);
 
-  if ( hasIO() )
-    myIO->setName(aName);
+  Handle(SALOME_InteractiveObject) IO = getIO();
+  if ( !IO.IsNull() )
+    IO->setName(aName);
 }
 
 Standard_CString GEOM_AISShape::getName(){
