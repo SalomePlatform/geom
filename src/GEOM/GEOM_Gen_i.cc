@@ -2735,12 +2735,13 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::ImportIGES(const char* filename)
       THROW_SALOME_CORBA_EXCEPTION("Error in reading import file", SALOME::BAD_PARAM);    }
     
     MESSAGE("ImportIGES : all Geometry Transfer" << endl ) ;
-    //OCC 5.1.2 porting
-//     aReader.Clear();
-//     aReader.TransferRoots(false);
+#if OCC_VERSION_MAJOR >= 5
     aReader.ClearShapes();
     aReader.TransferRoots();
-
+#else
+    aReader.Clear();
+    aReader.TransferRoots(false);
+#endif
     MESSAGE("ImportIGES : count of shapes produced = " << aReader.NbShapes() << endl );    
     TopoDS_Shape shape = aReader.OneShape();
 
@@ -4891,7 +4892,11 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeFillet( GEOM::GEOM_Shape_ptr shape,
 	fill.Add(E);
       }
       for (int i = 1;i<=fill.NbContours();i++) {
+#if OCC_VERSION_MAJOR >= 5
 	fill.SetRadius(radius,i,i);
+#else
+	fill.SetRadius(radius,i);
+#endif
       }
       tds = fill.Shape();
       
@@ -4906,7 +4911,11 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeFillet( GEOM::GEOM_Shape_ptr shape,
 	}
       }
       for (int i = 1;i<=fill.NbContours();i++) {
+#if OCC_VERSION_MAJOR >= 5
 	fill.SetRadius(radius,i,i);
+#else
+	fill.SetRadius(radius,i);
+#endif
       }
       tds = fill.Shape();
     }
