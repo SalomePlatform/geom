@@ -20,6 +20,7 @@ RESOURCES_FILES = \
 GEOM_en.xml \
 GEOM_fr.xml \
 GEOMCatalog.xml \
+GEOMDS_Resources \
 arc.png \
 archimede.png \
 axisinertia.png \
