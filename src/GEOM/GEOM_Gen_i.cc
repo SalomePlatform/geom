@@ -63,6 +63,7 @@ using namespace std;
 #else
 #include <BRepAlgoAPI.hxx>
 #endif
+#include <BRepAlgo_FaceRestrictor.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepAlgoAPI_Common.hxx>
@@ -3635,6 +3636,69 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFace( GEOM::GEOM_Shape_ptr wire,
     THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeFace", SALOME::BAD_PARAM);
   }  
   return result ;
+}
+
+
+//=================================================================================
+// function : MakeFaces()
+// purpose  : 
+//=================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFaces(const GEOM::GEOM_Gen::ListOfIOR& ListShapes,
+					  CORBA::Boolean wantplanarface) 
+  throw (SALOME::SALOME_Exception) 
+{
+  GEOM::GEOM_Shape_var result;
+
+  try {
+    GEOM::GEOM_Shape_var aShape = GetIORFromString(ListShapes[0]);    
+    TopoDS_Shape Shape = GetTopoShape(aShape);
+    if(Shape.IsNull() || Shape.ShapeType() != TopAbs_WIRE) {
+      THROW_SALOME_CORBA_EXCEPTION("Shell aborted : null shape during operation", SALOME::BAD_PARAM);
+    }
+    TopoDS_Wire W = TopoDS::Wire(Shape);
+    TopoDS_Shape FFace = BRepBuilderAPI_MakeFace(W, wantplanarface).Shape();
+    if(!FFace.IsNull()) {
+      if(ListShapes.length() == 1) {
+	result = CreateObject(FFace);
+	InsertInLabelMoreArguments(FFace, result, ListShapes, myCurrentOCAFDoc);
+      }
+      else if(ListShapes.length() >= 2) {
+	TopoDS_Compound C;
+	BRep_Builder aBuilder;
+	aBuilder.MakeCompound(C);
+	BRepAlgo_FaceRestrictor FR;
+
+	TopAbs_Orientation OriF = FFace.Orientation();
+	TopoDS_Shape aLocalS = FFace.Oriented(TopAbs_FORWARD);
+	FR.Init(TopoDS::Face(aLocalS), Standard_False, Standard_True);
+
+	for(unsigned int i = 0; i < ListShapes.length(); i++) {
+	  GEOM::GEOM_Shape_var aShape = GetIORFromString(ListShapes[i]);    
+	  TopoDS_Shape Shape = GetTopoShape(aShape);
+	  if(Shape.IsNull()) {
+	    THROW_SALOME_CORBA_EXCEPTION("Shell aborted : null shape during operation", SALOME::BAD_PARAM);
+	  }
+	  FR.Add(TopoDS::Wire(Shape));
+	}
+
+	FR.Perform();
+    
+	if(FR.IsDone()) {
+	  for(; FR.More(); FR.Next())
+	    aBuilder.Add(C, FR.Current().Oriented(OriF));
+	  result = CreateObject(C);
+	  InsertInLabelMoreArguments(C, result, ListShapes, myCurrentOCAFDoc);
+	}
+      }
+    }
+    else {
+      THROW_SALOME_CORBA_EXCEPTION("Null result in GEOM_Gen_i::MakeFace", SALOME::BAD_PARAM);
+    }
+  }
+  catch (Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeFace", SALOME::BAD_PARAM);
+  }
+  return result;
 }
 
 
