@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
 **
-** Created: Fri Apr 16 12:57:26 2004
+** Created: Wed Aug 11 18:42:51 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -31,7 +31,7 @@ DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent,  const char* name, bo
 {
     if ( !name )
 	setName( "DlgRef_Skeleton_QTD" );
-    resize( 321, 295 ); 
+    resize( 307, 378 ); 
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)7, 0, 0, sizePolicy().hasHeightForWidth() ) );
     setCaption( trUtf8( "DlgRef_Skeleton_QTD" ) );
     setSizeGripEnabled( TRUE );
@@ -79,7 +79,7 @@ DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent,  const char* name, bo
     GroupConstructors->setColumnLayout(0, Qt::Vertical );
     GroupConstructors->layout()->setSpacing( 6 );
     GroupConstructors->layout()->setMargin( 11 );
-    GroupConstructorsLayout = new QGridLayout( GroupConstructors->layout() );
+    GroupConstructorsLayout = new QHBoxLayout( GroupConstructors->layout() );
     GroupConstructorsLayout->setAlignment( Qt::AlignTop );
 
     Layout2 = new QHBoxLayout( 0, 0, 6, "Layout2"); 
@@ -96,7 +96,10 @@ DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent,  const char* name, bo
     RadioButton3->setText( trUtf8( "" ) );
     Layout2->addWidget( RadioButton3 );
 
-    GroupConstructorsLayout->addLayout( Layout2, 0, 0 );
+    RadioButton4 = new QRadioButton( GroupConstructors, "RadioButton4" );
+    RadioButton4->setText( trUtf8( "" ) );
+    Layout2->addWidget( RadioButton4 );
+    GroupConstructorsLayout->addLayout( Layout2 );
 
     Layout1->addWidget( GroupConstructors, 0, 0 );
 

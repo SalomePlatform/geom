@@ -26,11 +26,10 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "BuildGUI_ShellDlg.h"
 
-#include "BuildGUI.h"
 #include "QAD_Desktop.h"
+#include "GEOMImpl_Types.hxx"
 
 //=================================================================================
 // class    : BuildGUI_ShellDlg()
@@ -39,7 +38,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_ShellDlg::BuildGUI_ShellDlg(QWidget* parent, const char* name, BuildGUI* theBuildGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+BuildGUI_ShellDlg::BuildGUI_ShellDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SHELL")));
@@ -57,12 +56,12 @@ BuildGUI_ShellDlg::BuildGUI_ShellDlg(QWidget* parent, const char* name, BuildGUI
   GroupShell->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupShell->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupShell->PushButton1->setPixmap(image1);
+  GroupShell->LineEdit1->setReadOnly( true );
   
-  Layout1->addWidget(GroupShell, 1, 0);
+  Layout1->addWidget(GroupShell, 2, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myBuildGUI = theBuildGUI;
   Init();
 }
 
@@ -85,11 +84,14 @@ void BuildGUI_ShellDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupShell->LineEdit1;
-  myOkListShapes = false;
-
-  myFaceFilter = new GEOM_ShapeTypeFilter(TopAbs_FACE, myGeom);
-  /* Filter for the next selection */
-  mySelection->AddFilter(myFaceFilter) ;
+  GroupShell->LineEdit1->setReadOnly( true );
+  
+  myOkFacesAndShells = false;
+  
+  TColStd_MapOfInteger aMap;
+  aMap.Add(GEOM_SHELL);
+  aMap.Add(GEOM_FACE);
+  globalSelection( aMap );
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -99,11 +101,7 @@ void BuildGUI_ShellDlg::Init()
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  /* displays Dialog */
-  GroupShell->show();
-  this->show();
-
-  return;
+  initName(tr("GEOM_SHELL"));
 }
 
 
@@ -113,9 +111,8 @@ void BuildGUI_ShellDlg::Init()
 //=================================================================================
 void BuildGUI_ShellDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return ;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -123,13 +120,13 @@ void BuildGUI_ShellDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BuildGUI_ShellDlg::ClickOnApply()
+bool BuildGUI_ShellDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo(tr(""));
+  if ( !onAccept() )
+    return false;
 
-  if(myOkListShapes) 
-    myBuildGUI->MakeShellAndDisplay(myListShapes);
-  return;
+  initName();
+  return true;
 }
 
 
@@ -139,21 +136,22 @@ void BuildGUI_ShellDlg::ClickOnApply()
 //=================================================================================
 void BuildGUI_ShellDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
-  QString aString = "";
+  myEditCurrentArgument->setText( "" );
+  QString aString;
 
-  myOkListShapes = false;
-  int nbSel = mySelection->IObjectCount();
-  if(nbSel == 0) 
+  myOkFacesAndShells = false;
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects( mySelection, aString, true );
+  if ( nbSel == 0 )
+    return;
+  if ( nbSel != 1 )
+    aString = QString( "%1_objects ").arg( nbSel );
+
+  GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(),  myFacesAndShells, true );
+  if ( !myFacesAndShells.length() )
     return;
 
-  aString = tr("%1_objects").arg(nbSel);
-
-  myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes);
-  myEditCurrentArgument->setText(aString);
-  myOkListShapes = true;
-
-  return;
+  myEditCurrentArgument->setText( aString );
+  myOkFacesAndShells = true;
 }
 
 
@@ -163,11 +161,18 @@ void BuildGUI_ShellDlg::SelectionIntoArgument()
 //=================================================================================
 void BuildGUI_ShellDlg::SetEditCurrentArgument()
 {
-  mySelection->ClearFilters();
-  GroupShell->LineEdit1->setFocus();
-  mySelection->AddFilter(myFaceFilter);
-  this->SelectionIntoArgument();
-  return;
+  QPushButton* send = (QPushButton*)sender();
+  if (send != GroupShell->PushButton1)
+    return;
+
+  TColStd_MapOfInteger aMap;
+  aMap.Add(GEOM_SHELL);
+  aMap.Add(GEOM_FACE);
+  globalSelection( aMap );
+  myEditCurrentArgument = GroupShell->LineEdit1;
+
+  myEditCurrentArgument->setFocus();
+  SelectionIntoArgument();
 }
 
 
@@ -179,8 +184,10 @@ void BuildGUI_ShellDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  mySelection->AddFilter(myFaceFilter);
-  return;
+  TColStd_MapOfInteger aMap;
+  aMap.Add(GEOM_SHELL);
+  aMap.Add(GEOM_FACE);
+  globalSelection( aMap );
 }
 
 
@@ -190,8 +197,42 @@ void BuildGUI_ShellDlg::ActivateThisDialog()
 //=================================================================================
 void BuildGUI_ShellDlg::enterEvent(QEvent* e)
 {
-  if(GroupConstructors->isEnabled())
-    return;  
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr BuildGUI_ShellDlg::createOperation()
+{
+  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool BuildGUI_ShellDlg::isValid( QString& )
+{
+  return myOkFacesAndShells;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool BuildGUI_ShellDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  anObj = GEOM::GEOM_IShapesOperations::_narrow(
+    getOperation() )->MakeShell( myFacesAndShells );
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
+}
+

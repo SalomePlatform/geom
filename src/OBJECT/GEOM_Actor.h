@@ -35,7 +35,7 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
 
-
+class vtkCamera;
 class TopoDS_Shape;
 
 #ifdef _WIN_32
@@ -43,9 +43,8 @@ class TopoDS_Shape;
 #else
 #define VTKOCC_EXPORT
 #endif
+
 class VTKOCC_EXPORT GEOM_Actor : public SALOME_Actor {
-
-
  public:
   vtkTypeMacro(GEOM_Actor,SALOME_Actor);
 
@@ -73,11 +72,11 @@ class VTKOCC_EXPORT GEOM_Actor : public SALOME_Actor {
   void SubShapeOff();
   
   // Display Mode
-  void setDisplayMode(int);
+  virtual void setDisplayMode(int);
 
   // Highlight
-  void highlight(Standard_Boolean highlight);
-  bool hasHighlight();
+  virtual void highlight(bool theHighlight);
+  virtual bool hasHighlight() { return true; }
 
   void ShallowCopy(vtkProp *prop);
 
@@ -122,6 +121,8 @@ class VTKOCC_EXPORT GEOM_Actor : public SALOME_Actor {
   vtkProperty* ShadingProperty;
   vtkProperty* WireframeProperty;
   vtkProperty* HighlightProperty;
-
 };
+
+
 #endif //GEOM_ACTOR_H
+

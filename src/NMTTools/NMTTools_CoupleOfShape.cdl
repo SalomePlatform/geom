@@ -1,0 +1,39 @@
+-- File:	NMTTools_CoupleOfShape.cdl
+-- Created:	Wed Jan 28 15:03:39 2004
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2004
+
+
+class CoupleOfShape from NMTTools 
+
+	---Purpose: 
+
+uses
+    Shape from TopoDS 
+    
+--raises
+
+is 
+    Create 
+    	returns CoupleOfShape from NMTTools; 
+
+    SetShape1(me:out; 
+    	aS: Shape from TopoDS); 
+	 
+    SetShape2(me:out; 
+    	aS: Shape from TopoDS); 
+	 
+    Shape1(me) 
+    	returns Shape from TopoDS; 
+    ---C++: return const & 	 
+
+    Shape2(me) 
+    	returns Shape from TopoDS; 
+    ---C++: return const & 
+    
+fields 
+    myShape1:Shape from TopoDS is protected;    
+    myShape2:Shape from TopoDS is protected;    
+
+end CoupleOfShape;

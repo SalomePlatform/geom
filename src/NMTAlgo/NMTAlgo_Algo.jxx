@@ -1,0 +1,9 @@
+#ifndef _NMTTools_DSFiller_HeaderFile
+#include <NMTTools_DSFiller.hxx>
+#endif
+#ifndef _TopoDS_Shape_HeaderFile
+#include <TopoDS_Shape.hxx>
+#endif
+#ifndef _NMTAlgo_Algo_HeaderFile
+#include <NMTAlgo_Algo.hxx>
+#endif

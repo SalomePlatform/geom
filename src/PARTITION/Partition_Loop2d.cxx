@@ -1111,7 +1111,7 @@ void  Partition_Loop2d::WiresToFaces(const BRepAlgo_Image& )
       {
         // error: pb with wires classification
 #ifdef DEB
-        cout << "Partition_Loop2d::WiresToFaces(), pb with wires classification" << endl;
+        MESSAGE("Partition_Loop2d::WiresToFaces(), pb with wires classification");
 #endif
         break;
       }

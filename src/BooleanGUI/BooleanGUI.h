@@ -24,35 +24,34 @@
 //  File   : BooleanGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef BOOLEANGUI_H
 #define BOOLEANGUI_H
 
-#include "GEOMBase.h"
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : BooleanGUI
 // purpose  :
 //=================================================================================
-class BooleanGUI : public QObject
+class BooleanGUI : public GEOMGUI
 {
-  Q_OBJECT /* for QT compatibility */
+protected:
+  BooleanGUI(); // hide constructor to avoid direct creation
 
-public :
-  BooleanGUI();
+public:
+  enum BooleanOperation { COMMON = 1, CUT = 2, FUSE = 3, SECTION = 4 };
+
   ~BooleanGUI();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  // Get the only BooleanGUI object
+  static BooleanGUI* GetBooleanGUI();
 
-  void MakeBooleanAndDisplay(GEOM::GEOM_Shape_ptr Shape1,
-			     GEOM::GEOM_Shape_ptr Shape2,
-			     const short operation);
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
-
+private:
+  static BooleanGUI* myGUIObject;        // the only BooleanGUI object
 };
 
 #endif

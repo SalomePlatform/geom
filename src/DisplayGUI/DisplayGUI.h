@@ -24,43 +24,59 @@
 //  File   : DisplayGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef DISPLAYGUI_H
 #define DISPLAYGUI_H
 
+#include "GEOMGUI.h"
 #include "GEOMBase.h"
 
 //=================================================================================
 // class    : GEOMBase_Display
 // purpose  :
 //=================================================================================
-class DisplayGUI : public QObject
+class QAD_ViewFrame;
+class DisplayGUI : public GEOMGUI
 {
-  Q_OBJECT /* for QT compatibility */
+protected:
+  DisplayGUI(); // hide constructor to avoid direct creation
 
 public :
-  DisplayGUI();
   ~DisplayGUI();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
-  static void BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO);
+  // Get the only DisplayGUI object
+  static DisplayGUI* GetDisplayGUI();
 
-  void OnDisplayAll(bool onlyPreviousDisplayedObject = false);
-  void OnVTKDisplayOnly();
-  void OnDisplayOnly();
-  void OnErase();
+  // Dispatch menu command
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
-  /* Method opening context for any sub shape selection */
-  bool PrepareSubShapeSelection(const int SubShapeType, Standard_Integer& returnLocalContextId);
-  /* Method opening context for sub shape selection on an argument shape */
-  bool PrepareSubShapeSelectionArgumentShape(const TopoDS_Shape& aShape, const int SubShapeType,
-					     Standard_Integer& returnLocalContextId);
+  // Display all GEOM objects
+  void DisplayAll();
+  // Erase all GEOM objects
+  void EraseAll();
+  // Display selected GEOM objects
+  void Display();
+  // Display selected GEOM objects and erase other
+  void DisplayOnly();
+  // Erase selected GEOM objects
+  void Erase();
 
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
+  // DISPLAY MODE methods : 0 - wireframe, 1 - shading
+  // Set display mode for the viewer (current viewer if <viewFrame> - 0 )
+  void SetDisplayMode( const int mode, QAD_ViewFrame* viewFrame = 0 );
+  // Get display mode of the viewer (current viewer if <viewFrame> - 0 )
+  int  GetDisplayMode( QAD_ViewFrame* viewFrame = 0 );
+  // Invert display mode ( shadin <-> wireframe ) for the viewer 
+  // (current viewer if <viewFrame> = 0 )
+  void InvertDisplayMode( QAD_ViewFrame* viewFrame = 0 );
 
+  // Set display mode for selected objects in the viewer given
+  // (current viewer if <viewFrame> = 0 )
+  void ChangeDisplayMode( const int mode, QAD_ViewFrame* viewFrame = 0 );
+
+private:
+  static DisplayGUI* myGUIObject;        // the only DisplayGUI object
 };
 
 #endif

@@ -29,8 +29,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=2856>
-<meta name=layout-width content=700>
+<meta name=layout-height content=2875>
+<meta name=layout-width content=491>
 
 
 <!--(Links)=========================================================-->
@@ -49,15 +49,16 @@ p.whs2 {font-size: 12pt; text-indent: 2px; margin-left: 0in; margin-right: 0in; 
 p.whs3 {font-size: 12pt; font-weight: normal;}
 img_whs4 {border-style: none; border: none; float: none; width: 30px; height: 30px;}
 p.whs5 {text-indent: 2px; margin-left: 0in; margin-right: 0in; margin-top: 0px; margin-bottom: 0px; font-size: 12pt;}
-p.whs6 {font-size: 12pt; text-indent: 2px; margin-right: 0in; margin-top: 0px; margin-bottom: 0px; font-weight: bold; margin-left: 40px;}
-p.whs7 {font-size: 12pt; margin-left: 0in; margin-right: 0in; margin-top: 0px; margin-bottom: 0px;}
+p.whs6 {font-size: 12pt; text-indent: 2px; margin-left: 0in; margin-right: 0in; margin-top: 0px; margin-bottom: 0px; font-weight: bold;}
+p.whs7 {font-size: 12pt; text-indent: 2px; margin-right: 0in; margin-top: 0px; margin-bottom: 0px; font-weight: bold; margin-left: 40px;}
 p.whs8 {margin-left: 0in; margin-right: 0in; margin-top: 0px; margin-bottom: 0px; font-size: 14pt;}
 img_whs9 {border-style: none; width: 20px; height: 20px;}
-p.whs10 {font-size: 12pt; margin-right: 0in; margin-top: 0px; margin-bottom: 0px; margin-left: 40px;}
-img_whs11 {border-style: none; border: none; width: 200px; height: 175px;}
-img_whs12 {border-style: none; border: none; width: 150px; height: 122px;}
+p.whs10 {font-size: 12pt; margin-left: 0in; margin-right: 0in; margin-top: 0px; margin-bottom: 0px;}
+p.whs11 {font-size: 12pt; margin-right: 0in; margin-top: 0px; margin-bottom: 0px; margin-left: 40px;}
+img_whs12 {border-style: none; border: none; width: 200px; height: 175px;}
 p.whs13 {list-style: disc; margin-right: 0in; margin-top: 0px; margin-bottom: 0px; margin-left: 40px;}
-p.whs14 {list-style: disc; margin-left: 0in; margin-right: 0in; margin-top: 0px; margin-bottom: 0px;}
+img_whs14 {border-style: none; border: none; width: 150px; height: 122px;}
+p.whs15 {list-style: disc; margin-left: 0in; margin-right: 0in; margin-top: 0px; margin-bottom: 0px;}
 -->
 </style>
 <script type="text/javascript" language="JavaScript">
@@ -68,12 +69,13 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
   strNSS += "h1.whs1 {margin-left:1;margin-right:1;margin-top:1;margin-bottom:1; }";
   strNSS += "p.whs2 {margin-left:1;margin-right:1;margin-top:1;margin-bottom:1; }";
   strNSS += "p.whs5 {margin-left:1;margin-right:1;margin-top:1;margin-bottom:1; }";
-  strNSS += "p.whs6 {margin-right:1;margin-top:1;margin-bottom:1; }";
-  strNSS += "p.whs7 {margin-left:1;margin-right:1;margin-top:1;margin-bottom:1; }";
+  strNSS += "p.whs6 {margin-left:1;margin-right:1;margin-top:1;margin-bottom:1; }";
+  strNSS += "p.whs7 {margin-right:1;margin-top:1;margin-bottom:1; }";
   strNSS += "p.whs8 {margin-left:1;margin-right:1;margin-top:1;margin-bottom:1; }";
-  strNSS += "p.whs10 {margin-right:1;margin-top:1;margin-bottom:1; }";
+  strNSS += "p.whs10 {margin-left:1;margin-right:1;margin-top:1;margin-bottom:1; }";
+  strNSS += "p.whs11 {margin-right:1;margin-top:1;margin-bottom:1; }";
   strNSS += "p.whs13 {margin-right:1;margin-top:1;margin-bottom:1; }";
-  strNSS += "p.whs14 {margin-left:1;margin-right:1;margin-top:1;margin-bottom:1; }";
+  strNSS += "p.whs15 {margin-left:1;margin-right:1;margin-top:1;margin-bottom:1; }";
   strNSS +="</style>";
   document.write(strNSS);
 }
@@ -152,6 +154,13 @@ else
 	
 	<li style="list-style: disc;"
 		type=disc
+		class=kadov-p><p class="whs2"><a href="#fuse">Fuse</a></p></li>
+</ul>
+
+<ul>
+	
+	<li style="list-style: disc;"
+		type=disc
 		class=kadov-p><p class="whs2"><a href="#common">Common</a></p></li>
 	
 	<li style="list-style: disc;"
@@ -160,153 +169,148 @@ else
 	
 	<li style="list-style: disc;"
 		type=disc
-		class=kadov-p><p class="whs2"><a href="#fuse">Fuse</a></p></li>
-	
-	<li style="list-style: disc;"
-		type=disc
 		class=kadov-p><p class="whs2"><a href="#section">Section</a></p></li>
 </ul>
 
 <p class="whs2">&nbsp;</p>
 
+<p class="whs6">TUI command:</p>
+
+<p class="whs2"><span style="font-style: italic;"><I>geompy.MakeBoolean(Shape1, 
+ Shape2, Operation)</I></span>, where Shape1 is the first argument and Shape2 
+ is the second argument of Boolean operation, Operation is a type of the 
+ Boolean operation (1 – Common, 2 – Cut, 3 – Fuse, 4 – Section).</p>
+
+<p>&nbsp;</p>
+
 <p class=TODO>To use boolean operations:</p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs6"><span style="font-weight: normal;">In the 
+<p class="whs7"><span style="font-weight: normal;">In the 
  main menu select </span><span>Operations &gt; Boolean</span><span style="font-weight: normal;">.</span></p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
+
+<p class="whs8"><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><a NAME=fuse
+	style="font-size: 14pt;"><img src="salome2_sp3_booleangui_functions_salome2_sp3_booleangui_functions_image3.gif" width="20px" height="20px" border="0" class="img_whs9"><b><font style="font-size: 14pt;"
+														size=4> Fuse</font></b></a> 
+ </font></span></p>
+
+<p class="whs8">&nbsp;</p>
+
+<p class="whs10"><b style="font-weight: bold;">Description:</b> 
+ Fuses 2 shapes.</p>
+
+<p class="whs10">&nbsp;</p>
+
+<p class="whs10"><b style="font-weight: bold;">Result:</b> 
+ GEOM_Object (COMPOUND).</p>
+
+<p class="whs10">&nbsp;</p>
+
+<p class="whs10"><b style="font-weight: bold;">Arguments:</b> 
+ 2 shapes.</p>
+
+<p class="whs10">&nbsp;</p>
+
+<p class="whs10"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs10">&nbsp;</p>
+
+<p class="whs11"><img src="../image23.jpg" width="200px" height="175px" border="0" class="img_whs12"></p>
+
+<p class="whs10">&nbsp;</p>
+
+<p class="whs10"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs13">&nbsp;</p>
+
+<p class="whs13"><img src="../image5.jpg" width="150px" height="122px" border="0" class="img_whs14"> &nbsp;<img src="../image7.jpg" width="150px" height="122px" border="0" class="img_whs14"></p>
+
+<p class="whs10">&nbsp;</p>
+
+<p class="whs10">&nbsp;</p>
 
 <p class="whs8"><b style="font-weight: bold;"><a NAME=common
 	style="font-size: 14pt;"><img src="salome2_sp3_booleangui_functions_salome2_sp3_booleangui_functions_image1.gif" width="20px" height="20px" border="0" class="img_whs9"> Common</a></b> </p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Description:</b> 
+<p class="whs10"><b style="font-weight: bold;">Description:</b> 
  The common part of 2 shapes is cut and transformed into an independent 
  geometrical object.</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Result:</b> 
- GEOM_Shape (COMPOUND).</p>
+<p class="whs10"><b style="font-weight: bold;">Result:</b> 
+ GEOM_Object (COMPOUND).</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeBoolean(GEOM_Shape, GEOM_Shape, Short = 1)</i></p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs7"><b style="font-weight: bold;">Arguments:</b> 
+<p class="whs10"><b style="font-weight: bold;">Arguments:</b> 
  2 shapes.</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Dialog Box:</b></p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs10"><img src="../image21.jpg" width="200px" height="175px" border="0" class="img_whs11"></p>
+<p class="whs10"><b style="font-weight: bold;">Dialog Box:</b></p>
 
 <p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Example:</b></p>
+<p class="whs11"><img src="../image21.jpg" width="200px" height="175px" border="0" class="img_whs12"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs10"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><img src="../image5.jpg" width="150px" height="122px" border="0" class="img_whs14"> &nbsp;<img src="../image2.gif" width="150px" height="122px" border="0" class="img_whs14"> </p>
+
+<p class="whs11">&nbsp;</p>
 
 <p class="whs10">&nbsp;</p>
 
-<p class="whs10"><img src="../image5.jpg" width="150px" height="122px" border="0" class="img_whs12"> &nbsp;<img src="../image2.gif" width="150px" height="122px" border="0" class="img_whs12"> </p>
-
-<p class="whs10">&nbsp;</p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs7"><a NAME=cut
+<p class="whs10"><a NAME=cut
 									style="font-size: 14pt;"><img src="salome2_sp3_booleangui_functions_salome2_sp3_booleangui_functions_image2.gif" width="20px" height="20px" border="0" class="img_whs9"><b><font style="font-size: 14pt;"
 						size=4> Cut</font></b></a> </p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Description:</b> 
+<p class="whs10"><b style="font-weight: bold;">Description:</b> 
  Cuts 1 shape with another one.</p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs7"><b style="font-weight: bold;">Result:</b> 
- GEOM_Shape (COMPOUND).</p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs7"><b style="font-weight: bold;">TUI Command 
- :</b><i> geompy.MakeBoolean(GEOM_Shape, GEOM_Shape, Short = 2)</i></p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs7"><b style="font-weight: bold;">Arguments:</b> 
- 2 shapes.</p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs7"><b style="font-weight: bold;">Dialog Box:</b></p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs10"><img src="../image22.jpg" width="200px" height="175px" border="0" class="img_whs11"></p>
 
 <p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Example:</b></p>
+<p class="whs10"><b style="font-weight: bold;">Result:</b> 
+ GEOM_Object (COMPOUND).</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs10"><img src="../image5.jpg" width="150px" height="122px" border="0" class="img_whs12"> &nbsp;<img src="../image4.gif" width="150px" height="122px" border="0" class="img_whs12"> </p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs8"><a NAME=fuse
-								style="font-size: 14pt;"><img src="salome2_sp3_booleangui_functions_salome2_sp3_booleangui_functions_image3.gif" width="20px" height="20px" border="0" class="img_whs9"><b><font style="font-size: 14pt;"
-						size=4> Fuse</font></b></a> </p>
-
-<p class="whs8">&nbsp;</p>
-
-<p class="whs7"><b style="font-weight: bold;">Description:</b> 
- Fuses 2 shapes.</p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs7"><b style="font-weight: bold;">Result:</b> 
- GEOM_Shape (COMPOUND).</p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs7"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeBoolean(GEOM_Shape, GEOM_Shape, Short = 3)</i></p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs7"><b style="font-weight: bold;">Arguments:</b> 
+<p class="whs10"><b style="font-weight: bold;">Arguments:</b> 
  2 shapes.</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Dialog Box:</b></p>
+<p class="whs10"><b style="font-weight: bold;">Dialog Box:</b></p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs10"><img src="../image23.jpg" width="200px" height="175px" border="0" class="img_whs11"></p>
+<p class="whs11"><img src="../image22.jpg" width="200px" height="175px" border="0" class="img_whs12"></p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs11">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Example:</b></p>
+<p class="whs10"><b style="font-weight: bold;">Example:</b></p>
 
-<p class="whs13">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs13"><img src="../image5.jpg" width="150px" height="122px" border="0" class="img_whs12"> &nbsp;<img src="../image7.jpg" width="150px" height="122px" border="0" class="img_whs12"></p>
+<p class="whs11"><img src="../image5.jpg" width="150px" height="122px" border="0" class="img_whs14"> &nbsp;<img src="../image4.gif" width="150px" height="122px" border="0" class="img_whs14"> </p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
+
+<p class="whs10">&nbsp;</p>
 
 <p class="whs8"><a NAME=section
 								style="font-size: 14pt;"><img src="salome2_sp3_booleangui_functions_salome2_sp3_booleangui_functions_image4.gif" width="20px" height="20px" border="0" class="img_whs9"><b><font style="font-size: 14pt;"
@@ -314,45 +318,40 @@ else
 
 <p class="whs8">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Description:</b> 
+<p class="whs10"><b style="font-weight: bold;">Description:</b> 
  Gets the section between 2 shapes.</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Result:</b> 
- GEOM_Shape (COMPOUND).</p>
+<p class="whs10"><b style="font-weight: bold;">Result:</b> 
+ GEOM_Object (COMPOUND).</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeBoolean(GEOM_Shape, GEOM_Shape, Short = 4)</i></p>
-
-<p class="whs7">&nbsp;</p>
-
-<p class="whs7"><b style="font-weight: bold;">Arguments:</b> 
+<p class="whs10"><b style="font-weight: bold;">Arguments:</b> 
  2 shapes.</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Dialog Box:</b></p>
+<p class="whs10"><b style="font-weight: bold;">Dialog Box:</b></p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs10"><img src="../image24.jpg" width="200px" height="175px" border="0" class="img_whs11"></p>
+<p class="whs11"><img src="../image24.jpg" width="200px" height="175px" border="0" class="img_whs12"></p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;">Example:</b></p>
+<p class="whs10"><b style="font-weight: bold;">Example:</b></p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs10"><img src="../image5.jpg" width="150px" height="122px" border="0" class="img_whs12"> &nbsp;<img src="../image5.gif" width="150px" height="122px" border="0" class="img_whs12"></p>
+<p class="whs11"><img src="../image5.jpg" width="150px" height="122px" border="0" class="img_whs14"> &nbsp;<img src="../image5.gif" width="150px" height="122px" border="0" class="img_whs14"></p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs14">&nbsp;&nbsp;</p>
+<p class="whs15">&nbsp;&nbsp;</p>
 
 <script type="text/javascript" language="javascript1.2">
 <!--

@@ -31,6 +31,7 @@
 #include <qlayout.h>
 #include <qspinbox.h>
 #include <qgroupbox.h>
+#include <qpushbutton.h>
 
 /* 
  *  Constructs a DlgRef_2Sel1Spin which is a child of 'parent', with the 
@@ -42,6 +43,10 @@ DlgRef_2Sel1Spin::DlgRef_2Sel1Spin(QWidget* parent,  const char* name, WFlags fl
   SpinBox1->close(TRUE);
   SpinBox_DX = new DlgRef_SpinBox(GroupBox1, "SpinBox_DX");
   Layout2->addWidget(SpinBox_DX, 0, 1);
+
+  // PAL 6532
+  PushButton1->setAutoDefault( false );
+  PushButton2->setAutoDefault( false );
 }
 
 

@@ -45,35 +45,33 @@ class BasicGUI_VectorDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_VectorDlg(QWidget* parent = 0, const char* name = 0, BasicGUI* theBasicGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_VectorDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_VectorDlg();
+    
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    bool AddArrowToSimulation(TopoDS_Shape& modifiedShape);
 
-    BasicGUI* myBasicGUI;
-
-    double step;
-    int myConstructorId;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;   /* Filter selection */
-
-    gp_Pnt myPoint1;   /* Points containing the vector */   
-    gp_Pnt myPoint2;
-    bool myOkPoint1;   /* Are true when myPoint is defined */    
-    bool myOkPoint2; 
-    double myDx;
-    double myDy;
-    double myDz;
+    GEOM::GEOM_Object_var myPoint1;   
+    GEOM::GEOM_Object_var myPoint2;
 
     DlgRef_2Sel_QTD* GroupPoints;
     DlgRef_3Spin1Check* GroupDimensions;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    void ClickOnCancel();
+    bool ClickOnApply();
+    
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
+    
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

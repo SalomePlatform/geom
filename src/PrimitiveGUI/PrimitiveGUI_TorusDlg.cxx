@@ -28,10 +28,10 @@
 
 #include "PrimitiveGUI_TorusDlg.h"
 
-#include <gp_Lin.hxx>
-#include <BRepPrimAPI_MakeTorus.hxx>
-#include <BRepAdaptor_Curve.hxx>
 #include "QAD_Config.h"
+#include "QAD_Desktop.h"
+
+#include "GEOMImpl_Types.hxx"
 
 #include "utilities.h"
 
@@ -44,7 +44,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-PrimitiveGUI_TorusDlg::PrimitiveGUI_TorusDlg(QWidget* parent, const char* name, PrimitiveGUI* thePrimitiveGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+PrimitiveGUI_TorusDlg::PrimitiveGUI_TorusDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_TORUS_PV")));
@@ -73,12 +73,10 @@ PrimitiveGUI_TorusDlg::PrimitiveGUI_TorusDlg(QWidget* parent, const char* name, 
   GroupDimensions->TextLabel1->setText(tr("GEOM_RADIUS_I").arg("1"));
   GroupDimensions->TextLabel2->setText(tr("GEOM_RADIUS_I").arg("2"));
 
-  Layout1->addWidget(GroupPoints, 1, 0);
-  Layout1->addWidget(GroupDimensions, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
+  Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
-
-  /* Initialisations */
-  myPrimitiveGUI = thePrimitiveGUI;
+  
   Init();
 }
 
@@ -100,20 +98,15 @@ PrimitiveGUI_TorusDlg::~PrimitiveGUI_TorusDlg()
 void PrimitiveGUI_TorusDlg::Init()
 {
   /* init variables */
-  myConstructorId = 0;
   myEditCurrentArgument = GroupPoints->LineEdit1;
-
-  myRadius1 = 300.0;
-  myRadius2 = 100.0;
-  myOkPoint1 = myOkDir = false;
-
-  myEdgeFilter = new GEOM_EdgeFilter(StdSelect_Line, myGeom);
-  myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
-  mySelection->AddFilter(myVertexFilter);
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
+ 
+  myPoint = myDir = GEOM::GEOM_Object::_nil();
 
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
+  double step = St.toDouble();
 
   /* min, max, step and decimals for spin boxes & initial values */
   GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
@@ -121,10 +114,10 @@ void PrimitiveGUI_TorusDlg::Init()
   GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
   GroupDimensions->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
 
-  GroupPoints->SpinBox_DX->SetValue(myRadius1);
-  GroupPoints->SpinBox_DY->SetValue(myRadius2);
-  GroupDimensions->SpinBox_DX->SetValue(myRadius1);
-  GroupDimensions->SpinBox_DY->SetValue(myRadius2);
+  GroupPoints->SpinBox_DX->SetValue(300.0);
+  GroupPoints->SpinBox_DY->SetValue(100.0);
+  GroupDimensions->SpinBox_DX->SetValue(300.0);
+  GroupDimensions->SpinBox_DY->SetValue(100.0);
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -137,10 +130,10 @@ void PrimitiveGUI_TorusDlg::Init()
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
@@ -148,13 +141,9 @@ void PrimitiveGUI_TorusDlg::Init()
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
-
-  /* displays Dialog */
-  GroupDimensions->hide();
-  GroupPoints->show();
-  this->show();
-
-  return;
+  
+  initName( tr( "GEOM_TORUS" ) );
+  ConstructorsClicked(0);
 }
 
 
@@ -165,31 +154,23 @@ void PrimitiveGUI_TorusDlg::Init()
 //=================================================================================
 void PrimitiveGUI_TorusDlg::ConstructorsClicked(int constructorId)
 {
-  myConstructorId = constructorId;
-  mySelection->ClearFilters();
-  myGeomBase->EraseSimulationShape();
   disconnect(mySelection, 0, this, 0);
-  myRadius1 = 300.0;
-  myRadius2 = 100.0;
-
-  switch(myConstructorId)
+  
+  switch(constructorId)
     { 
     case 0 :
       {
+	globalSelection( GEOM_LINE );
+
 	GroupDimensions->hide();
 	resize(0, 0);
 	GroupPoints->show();
-	myOkPoint1 = myOkDir = false;
-
+	
 	myEditCurrentArgument = GroupPoints->LineEdit1;
 	GroupPoints->LineEdit1->setText(tr(""));
 	GroupPoints->LineEdit2->setText(tr(""));
+	myPoint = myDir = GEOM::GEOM_Object::_nil();
 	
-	GroupPoints->SpinBox_DX->SetValue(myRadius1);
-	GroupPoints->SpinBox_DY->SetValue(myRadius2);
-
-	/* filter for next selection */
-	mySelection->AddFilter(myVertexFilter);
 	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break ;
       }
@@ -198,18 +179,11 @@ void PrimitiveGUI_TorusDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->hide();
 	resize( 0, 0 );
 	GroupDimensions->show();
-	myOkPoint1 = myOkDir = true;
-
-	GroupDimensions->SpinBox_DX->SetValue(myRadius1);
-	GroupDimensions->SpinBox_DY->SetValue(myRadius2);
-	myPoint1.SetCoord(0.0, 0.0, 0.0);
-	myDir.SetCoord(0.0, 0.0, 1.0);
-
-	MakeTorusSimulationAndDisplay();
+	
 	break ;
       }
     }
-  return ;
+  displayPreview();
 }
 
 
@@ -219,9 +193,8 @@ void PrimitiveGUI_TorusDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void PrimitiveGUI_TorusDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -229,18 +202,24 @@ void PrimitiveGUI_TorusDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void PrimitiveGUI_TorusDlg::ClickOnApply()
+bool PrimitiveGUI_TorusDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  if(myOkPoint1 && myOkDir)	  
-    myPrimitiveGUI->MakeTorusAndDisplay(myPoint1, myDir, myRadius1, myRadius2); 
-  return ;
+  initName();
+  ConstructorsClicked( getConstructorId() );
+  return true;
+}
+
+
+//=======================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=======================================================================
+void PrimitiveGUI_TorusDlg::ClickOnCancel()
+{
+  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -250,39 +229,35 @@ void PrimitiveGUI_TorusDlg::ClickOnApply()
 //=================================================================================
 void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape(); 
-  myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
-  
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkPoint1 = false;
-    else if(myEditCurrentArgument == GroupPoints->LineEdit2)
-      myOkDir = false;
+  if ( getConstructorId() != 0 )
     return;
-  }
-
+  
+  myEditCurrentArgument->setText("");
+  
+  if(mySelection->IObjectCount() != 1)
+    {
+      if(myEditCurrentArgument == GroupPoints->LineEdit1)
+	myPoint = GEOM::GEOM_Object::_nil();
+      else if(myEditCurrentArgument == GroupPoints->LineEdit2)
+	myDir = GEOM::GEOM_Object::_nil();
+      return;
+    }
+  
+  
   /* nbSel == 1 */
-  TopoDS_Shape S;  
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;  
- 
-  /*  gp_Pnt : not used */
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
-    GroupPoints->LineEdit1->setText(aString);
-    myOkPoint1 = true;
-  }    
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
-    BRepAdaptor_Curve curv(TopoDS::Edge(S));
-    myDir = curv.Line().Direction();
-    GroupPoints->LineEdit2->setText(aString);
-    myOkDir = true;
-  }
-
-  if(myOkPoint1 && myOkDir)
-    MakeTorusSimulationAndDisplay();
-  return;
+  Standard_Boolean testResult = Standard_False;
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+  
+  if(!testResult || CORBA::is_nil( aSelectedObject ))
+    return;
+  
+  if(myEditCurrentArgument == GroupPoints->LineEdit1)
+    myPoint = aSelectedObject;
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2)
+    myDir = aSelectedObject;
+    
+  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  displayPreview();
 }
 
 
@@ -292,25 +267,19 @@ void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
 //=================================================================================
 void PrimitiveGUI_TorusDlg::SetEditCurrentArgument()
 {
-  if(myConstructorId != 0)
-    return;
-
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters();
-
+  
   if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    mySelection->AddFilter(myVertexFilter);
+    globalSelection( GEOM_POINT );
   }
   else if(send == GroupPoints->PushButton2) {
-    GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    mySelection->AddFilter(myEdgeFilter);
+    globalSelection( GEOM_LINE );
   }
-  this->SelectionIntoArgument();
-
-  return;
+  
+  myEditCurrentArgument->setFocus();
+  SelectionIntoArgument();
 }
 
 
@@ -321,15 +290,12 @@ void PrimitiveGUI_TorusDlg::SetEditCurrentArgument()
 void PrimitiveGUI_TorusDlg::LineEditReturnPressed()
 {  
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if (send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  if(send == GroupPoints->LineEdit1 ||
+     send == GroupPoints->LineEdit2)
+    {
+      myEditCurrentArgument = send;
+      GEOMBase_Skeleton::LineEditReturnPressed();
+    }
 }
 
 
@@ -341,14 +307,8 @@ void PrimitiveGUI_TorusDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(myConstructorId == 1) {
-    GroupPoints->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-    mySelection->AddFilter(myVertexFilter);
-  }
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+ 
+  ConstructorsClicked( getConstructorId() );
 }
 
 
@@ -358,10 +318,18 @@ void PrimitiveGUI_TorusDlg::ActivateThisDialog()
 //=================================================================================
 void PrimitiveGUI_TorusDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
+}
+
+
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void PrimitiveGUI_TorusDlg::DeactivateActiveDialog()
+{
+  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -369,51 +337,102 @@ void PrimitiveGUI_TorusDlg::enterEvent(QEvent* e)
 // function : ValueChangedInSpinBox
 // purpose  :
 //=================================================================================
-void PrimitiveGUI_TorusDlg::ValueChangedInSpinBox(double newValue)
+void PrimitiveGUI_TorusDlg::ValueChangedInSpinBox()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  QObject* send = (QObject*)sender();
-  
-  if(send == GroupPoints->SpinBox_DX || send == GroupDimensions->SpinBox_DX) {
-    if(newValue > myRadius2)
-      myRadius1 = newValue;
-    else {
-      GroupPoints->SpinBox_DX->SetValue(myRadius1);
-      GroupDimensions->SpinBox_DX->SetValue(myRadius1);
-    }
-  }
-  else if(send == GroupPoints->SpinBox_DY || send == GroupDimensions->SpinBox_DY) {
-    if(newValue < myRadius1)
-      myRadius2 = newValue;
-    else {
-      GroupPoints->SpinBox_DY->SetValue(myRadius2);
-      GroupDimensions->SpinBox_DY->SetValue(myRadius2);
-    }
-  }
-  
-  if(myOkPoint1 && myOkDir)
-    MakeTorusSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
 
 //=================================================================================
-// function : MakeTorusSimulationAndDisplay()
+// function : createOperation
 // purpose  :
 //=================================================================================
-void PrimitiveGUI_TorusDlg::MakeTorusSimulationAndDisplay() 
+GEOM::GEOM_IOperations_ptr PrimitiveGUI_TorusDlg::createOperation()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  return getGeomEngine()->GetI3DPrimOperations( getStudyId() );
+}
 
-  try {
-    gp_Ax2 anAxis(myPoint1, myDir);
-    mySimulationTopoDs = BRepPrimAPI_MakeTorus(anAxis, myRadius1, myRadius2).Shape();
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool PrimitiveGUI_TorusDlg::isValid( QString& msg )
+{
+  return getConstructorId() == 0 ? !(myPoint->_is_nil() || myDir->_is_nil()) : true;
+}
+
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool PrimitiveGUI_TorusDlg::execute( ObjectList& objects )
+{
+  bool res = false;
+  
+  GEOM::GEOM_Object_var anObj;
+
+  switch ( getConstructorId() ) 
+  {
+  case 0 :
+  {
+    if (!CORBA::is_nil( myPoint ) && !CORBA::is_nil( myDir )){
+      anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeTorusPntVecRR(myPoint, myDir, getRadius1(), getRadius2());
+      res = true;
+    }
+    break;
   }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakeTorusSimulationAndDisplay");
+  case 1 :
+    {
+      anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeTorusRR(getRadius1(), getRadius2());
+      res = true;
+      break;
+    }
   }
-  return;
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return res;
+}
+
+
+//=================================================================================
+// function : closeEvent
+// purpose  :
+//=================================================================================
+void PrimitiveGUI_TorusDlg::closeEvent( QCloseEvent* e )
+{
+  GEOMBase_Skeleton::closeEvent( e );
+}
+
+
+//=================================================================================
+// function : getRadius1()
+// purpose  :
+//=================================================================================
+double PrimitiveGUI_TorusDlg::getRadius1() const
+{
+  int aConstructorId = getConstructorId();
+  if (aConstructorId == 0)
+    return GroupPoints->SpinBox_DX->GetValue();
+  else if (aConstructorId == 1)
+    return GroupDimensions->SpinBox_DX->GetValue();
+  return 0;
+}
+
+
+//=================================================================================
+// function : getRadius2()
+// purpose  :
+//=================================================================================
+double PrimitiveGUI_TorusDlg::getRadius2() const
+{
+  int aConstructorId = getConstructorId();
+  if (aConstructorId == 0)
+    return GroupPoints->SpinBox_DY->GetValue();
+  else if (aConstructorId == 1)
+    return GroupDimensions->SpinBox_DY->GetValue();
+  return 0;
 }

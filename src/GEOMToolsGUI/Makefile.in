@@ -41,6 +41,7 @@ LIB = libGEOMToolsGUI.la
 EXPORT_HEADERS= 
 
 LIB_SRC = 	GEOMToolsGUI.cxx \
+		GEOMToolsGUI_1.cxx \
 		GEOMToolsGUI_NbIsosDlg.cxx \
 		GEOMToolsGUI_TransparencyDlg.cxx
 
@@ -49,7 +50,7 @@ LIB_MOC = \
 		GEOMToolsGUI_NbIsosDlg.h \
 		GEOMToolsGUI_TransparencyDlg.h
 
-LIB_CLIENT_IDL = SALOMEDS_Attributes.idl
+LIB_CLIENT_IDL = SALOMEDS_Attributes.idl SALOME_GenericObj.idl
 
 LIB_SERVER_IDL = 
 

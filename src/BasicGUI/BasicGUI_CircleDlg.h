@@ -31,11 +31,14 @@
 
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel1Spin.h"
+#include "DlgRef_3Sel_QTD.h"
 
 #include "BasicGUI.h"
 
+#include "GEOM_EdgeFilter.hxx"
 #include "GEOM_ShapeTypeFilter.hxx"
 #include <gp_Dir.hxx>
+
 
 //=================================================================================
 // class    : BasicGUI_CircleDlg
@@ -46,36 +49,41 @@ class BasicGUI_CircleDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_CircleDlg(QWidget* parent = 0, const char* name = 0, BasicGUI* theBasicGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_CircleDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_CircleDlg();
 
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );    
+
 private :
-    void Init();
-    void enterEvent(QEvent* e);
-    void MakeCircleSimulationAndDisplay();
+    void   Init();
+    void   enterEvent(QEvent* e);
+    double getRadius() const;
 
-    BasicGUI* myBasicGUI;
+    GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3;
 
-    double step;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;
-    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;  /* Filter selection */
-
-    gp_Pnt myPoint1;
-    gp_Dir myDir;
-    Standard_Real myRadius;
-    bool myOkPoint1;
-    bool myOkDir;
-
-    DlgRef_2Sel1Spin* GroupPoints;
+    DlgRef_2Sel1Spin* GroupPntVecR;
+    DlgRef_3Sel_QTD*  Group3Pnts;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    void ClickOnCancel();
+    bool ClickOnApply();
+
     void ActivateThisDialog();
-    void LineEditReturnPressed();
+    void DeactivateActiveDialog();
+    
     void SelectionIntoArgument();
+
+    void ConstructorsClicked( int );
+    void LineEditReturnPressed();
     void SetEditCurrentArgument();
-    void ValueChangedInSpinBox(double newValue);
+    void ValueChangedInSpinBox();
 
 };
 

@@ -30,6 +30,7 @@
 
 #include "QAD_WaitCursor.h"
 #include "QAD_Config.h"
+#include "QAD_Desktop.h"
 
 #include <GeomFill_SectionGenerator.hxx>
 #include <GeomFill_Line.hxx>
@@ -42,10 +43,9 @@
 #include <BRep_Tool.hxx>
 #include <Precision.hxx>
 #include <Standard_ErrorHandler.hxx>
+#include "GEOMImpl_Types.hxx"
 
 #include "utilities.h"
-
-using namespace std;
 
 //=================================================================================
 // class    : GenerationGUI_FillingDlg()
@@ -54,7 +54,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GenerationGUI_FillingDlg::GenerationGUI_FillingDlg(QWidget* parent, const char* name, GenerationGUI* theGenerationGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+GenerationGUI_FillingDlg::GenerationGUI_FillingDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_FILLING")));
@@ -77,12 +77,12 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg(QWidget* parent, const char* 
   GroupPoints->TextLabel5->setText(tr("GEOM_FILLING_MAX_DEG"));
   GroupPoints->TextLabel6->setText(tr("GEOM_FILLING_TOL_3D"));
   GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myGenerationGUI = theGenerationGUI;
   Init();
 }
 
@@ -105,16 +105,16 @@ void GenerationGUI_FillingDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
+  GroupPoints->LineEdit1->setReadOnly( true );
 
   myMinDeg = 2;
   myMaxDeg = 5;
   myTol3D = 0.0001;
   myTol2D = 0.0001;
   myNbIter = 5;
-  myOkSectionShape = false;
+  myOkCompound = false;
 
-  myCompoundFilter = new GEOM_ShapeTypeFilter(TopAbs_COMPOUND, myGeom);
-  mySelection->AddFilter(myCompoundFilter);
+  globalSelection( GEOM_COMPOUND );
 
   double SpecificStep1 = 1;
   double SpecificStep2 = 0.0001;
@@ -152,11 +152,7 @@ void GenerationGUI_FillingDlg::Init()
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
-
-  return;
+  initName(tr("GEOM_FILLING"));
 }
 
 
@@ -166,9 +162,8 @@ void GenerationGUI_FillingDlg::Init()
 //=================================================================================
 void GenerationGUI_FillingDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -176,18 +171,13 @@ void GenerationGUI_FillingDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void GenerationGUI_FillingDlg::ClickOnApply()
+bool GenerationGUI_FillingDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  if(myOkSectionShape)	  
-    myGenerationGUI->MakeFillingAndDisplay(myGeomShape, myMinDeg, myMaxDeg, myTol3D, myTol2D, myNbIter);
-  return;
+  initName();
+  return true;
 }
 
 
@@ -197,39 +187,40 @@ void GenerationGUI_FillingDlg::ClickOnApply()
 //=================================================================================
 void GenerationGUI_FillingDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  erasePreview();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
-  
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
+ 
+  if(mySelection->IObjectCount() != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkSectionShape = false;
+      myOkCompound = false;
     return;
   }
   
   // nbSel == 1
-  Standard_Boolean testResult;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomBase->GetTopoFromSelection(mySelection, mySectionShape))
+  Standard_Boolean testResult = Standard_False;
+  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+  
+  if (!testResult)
     return;
   
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && mySectionShape.ShapeType() == TopAbs_COMPOUND) {
-    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-    if(!testResult)
-      return;
-    // mySectionShape should be a compound of edges
-    for ( TopoDS_Iterator it( mySectionShape ); it.More(); it.Next() )
-      if ( it.Value().ShapeType() != TopAbs_EDGE )
-        return;
-    myEditCurrentArgument->setText(aString);
-    myOkSectionShape = true;
+  if(myEditCurrentArgument == GroupPoints->LineEdit1) {
+    TopoDS_Shape S;
+    myOkCompound = false;
+    
+    if ( GEOMBase::GetShape(aSelectedObject, S) &&
+	 S.ShapeType() == TopAbs_COMPOUND)
+      {
+	// myCompound should be a compound of edges
+	for ( TopoDS_Iterator it( S ); it.More(); it.Next() )
+	  if ( it.Value().ShapeType() != TopAbs_EDGE )
+	    return;
+	myCompound = aSelectedObject;
+	myOkCompound = true;
+      }
   }
-
-  if(myOkSectionShape)
-    this->MakeFillingSimulationAndDisplay();
-  return;
+  
+  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  displayPreview();
 }
 
 
@@ -240,16 +231,14 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
 void GenerationGUI_FillingDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters();
+  globalSelection( GEOM_ALLSHAPES );
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    mySelection->AddFilter(myCompoundFilter);
+    globalSelection( GEOM_COMPOUND );
     this->SelectionIntoArgument();
   }
-
-  return;
 }
 
 
@@ -261,12 +250,10 @@ void GenerationGUI_FillingDlg::LineEditReturnPressed()
 {  
   QLineEdit* send = (QLineEdit*)sender();
   if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+    {
+      myEditCurrentArgument = send;
+      GEOMBase_Skeleton::LineEditReturnPressed();
+    }
 }
 
 
@@ -278,10 +265,8 @@ void GenerationGUI_FillingDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  mySelection->AddFilter(myCompoundFilter);
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+  globalSelection( GEOM_COMPOUND );
+  displayPreview();
 }
 
 
@@ -291,10 +276,8 @@ void GenerationGUI_FillingDlg::ActivateThisDialog()
 //=================================================================================
 void GenerationGUI_FillingDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
 
@@ -317,70 +300,41 @@ void GenerationGUI_FillingDlg::ValueChangedInSpinBox(double newValue)
   else if(send == GroupPoints->SpinBox_5)
     myTol3D = newValue;
 
-  if(myOkSectionShape)
-    this->MakeFillingSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
-
 //=================================================================================
-// function : MakeFillingSimulationAndDisplay()
+// function : createOperation
 // purpose  :
 //=================================================================================
-void GenerationGUI_FillingDlg::MakeFillingSimulationAndDisplay()
+GEOM::GEOM_IOperations_ptr GenerationGUI_FillingDlg::createOperation()
 {
-  QAD_WaitCursor wc;
-
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-
-  try {
-    /* we verify the contents of the shape */
-    TopExp_Explorer Ex;
-    TopoDS_Shape Scurrent;	
-    Standard_Real First, Last;
-    Handle(Geom_Curve) C;
-    GeomFill_SectionGenerator Section;
-    
-    Standard_Integer i = 0;
-    for(Ex.Init(mySectionShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
-      Scurrent = Ex.Current();
-      if( Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE)
-	return;
-      C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
-      if (C.IsNull()) continue;
-      C = new Geom_TrimmedCurve(C, First, Last);
-      Section.AddCurve(C) ;
-      i++ ;
-    }
-    
-    /* a 'tolerance' is used to compare 2 knots : see GeomFill_Generator.cdl */
-    /* We set 'tolerance' = tol3d                                            */
-    // Section.Perform( tol3d ) ; NRI */
-    Section.Perform(Precision::Confusion());
-    Handle(GeomFill_Line) Line = new GeomFill_Line(i);
-
-    GeomFill_AppSurf App(myMinDeg, myMaxDeg, myTol3D, myTol2D, myNbIter) ; /* user parameters */
-    App.Perform(Line, Section);
-    
-    if(!App.IsDone())
-      return;
-
-    Standard_Integer UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots;
-    App.SurfShape(UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots);	
-    Handle(Geom_BSplineSurface) GBS = new Geom_BSplineSurface(App.SurfPoles(), App.SurfWeights(), App.SurfUKnots(), App.SurfVKnots(), App.SurfUMults(), App.SurfVMults(), App.UDegree(), App.VDegree());
-    
-    if(GBS.IsNull())
-      return;
-    mySimulationTopoDs  = BRepBuilderAPI_MakeFace(GBS);    
-    if(mySimulationTopoDs.IsNull())
-      return;
-    else
-      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakePrismSimulationAndDisplay" << endl);
-    return;
-  }
-  return;
+  return getGeomEngine()->GetI3DPrimOperations( getStudyId() );
 }
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool GenerationGUI_FillingDlg::isValid( QString& )
+{
+  return myOkCompound > 0;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation() )->MakeFilling(
+    myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D, myNbIter );
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
+}
+

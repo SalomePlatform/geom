@@ -1,23 +1,23 @@
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #
 #  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-# 
-#  This library is free software; you can redistribute it and/or 
-#  modify it under the terms of the GNU Lesser General Public 
-#  License as published by the Free Software Foundation; either 
-#  version 2.1 of the License. 
-# 
-#  This library is distributed in the hope that it will be useful, 
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-#  Lesser General Public License for more details. 
-# 
-#  You should have received a copy of the GNU Lesser General Public 
-#  License along with this library; if not, write to the Free Software 
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-# 
-#  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+#  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
 #
 #
 #
@@ -40,7 +40,7 @@ PosZ = 0
 NbBranches = 7    #>2
 HauteurT = 70     #Hauteur total du stator
 
-#Varaibles
+#Variables
 Angle1 = 2 * math.pi / NbBranches
 Angle2 = Angle1 / 2
 HauteurR = HauteurT / 3
@@ -56,30 +56,32 @@ PosCour = PosZ + HauteurT * 4 / 7
 PosRot = PosZ + 0.9 * HauteurT
 
 #Points
-P0 = geom.MakePointStruct(0, 0, 1)
-P1 = geom.MakePointStruct(PosX, PosY, PosZ)
-P2 = geom.MakePointStruct(PosX, PosY, PosZ + Ep)
-P3 = geom.MakePointStruct(PosX, PosY, PosCour)
-P4 = geom.MakePointStruct(PosX, PosY, PosCour + Ep)
-P5 = geom.MakePointStruct(PosX, PosY, PosRot)
-P6 = geom.MakePointStruct(Pos1C, Pos1S, PosZ)
-P7 = geom.MakePointStruct(PosX + DExtExt, Pos1S, PosZ)
-P8 = geom.MakePointStruct(Pos1C, Pos1S, PosZ + HauteurT)
+BasicOp = geom.GetIBasicOperations(salome.myStudyId)
+OO = BasicOp.MakePointXYZ(0, 0, 0)
+P0 = BasicOp.MakePointXYZ(0, 0, 1)
+P1 = BasicOp.MakePointXYZ(PosX, PosY, PosZ)
+P2 = BasicOp.MakePointXYZ(PosX, PosY, PosZ + Ep)
+P3 = BasicOp.MakePointXYZ(PosX, PosY, PosCour)
+P4 = BasicOp.MakePointXYZ(PosX, PosY, PosCour + Ep)
+P5 = BasicOp.MakePointXYZ(PosX, PosY, PosRot)
+P6 = BasicOp.MakePointXYZ(Pos1C, Pos1S, PosZ)
+P7 = BasicOp.MakePointXYZ(PosX + DExtExt, Pos1S, PosZ)
+P8 = BasicOp.MakePointXYZ(Pos1C, Pos1S, PosZ + HauteurT)
 
 #Vecteurs
-V1 = geom.MakeDirection(P0)
-V2 = geom.MakeAxisStruct(PosX, PosY, PosZ, 0, 0, 1)
-V3 = geom.MakeAxisStruct(Pos1C, Pos1S, PosZ, 0, 0, 1)
+V1 = BasicOp.MakeVectorTwoPnt(OO,P0)
+V2 = BasicOp.MakeVectorTwoPnt(P1,P2)
+V3 = BasicOp.MakeVectorTwoPnt(P6,P8)
 
 #Cylindre central
-C0 = geompy.MakeCylinder(P1, V1, DIntInt, PosCour + Ep - PosZ)
+C0  = geompy.MakeCylinder(P1, V1, DIntInt, PosCour + Ep - PosZ)
 C01 = geompy.MakeCylinder(P1, V1, DIntExt, PosCour + Ep - PosZ)
 Cylindre = geompy.MakeBoolean(C01, C0, 2)
 #Id_Cyl = geompy.addToStudy(Cylindre, "Cylindre")
 
 #Camemberts de coupe
-B1 = geompy.MakeVector(P6, P7)
-B2 = geompy.MakePrism(B1, P6, P8)
+B1 = BasicOp.MakeVectorTwoPnt(P6, P7)
+B2 = geompy.MakePrismVecH(B1, V1, HauteurT)
 S0 = geompy.MakeRevolution(B2, V3, Angle1)
 CoupeList = []
 CoupeList.append(S0)
@@ -88,10 +90,7 @@ while Ind < NbBranches :
       S = geompy.MakeRotation(S0, V2, Ind * Angle1)
       CoupeList.append(S)
       Ind = Ind + 1
-IorCoupeList = []
-for CoupeShape in CoupeList :
-    IorCoupeList.append(CoupeShape._get_Name())
-Coupe1 = geompy.MakeCompound(IorCoupeList)
+Coupe1 = geompy.MakeCompound(CoupeList)
 #Id_Coupe1 = geompy.addToStudy(Coupe1, "Coupe1")
 
 #Couronne1
@@ -117,10 +116,7 @@ C10 = geompy.MakeCylinder(P5, V1, DIntExt / 4, 2 * HauteurR)
 Rotor1List = []
 Rotor1List.append(C9)
 Rotor1List.append(C10)
-IorRotor1List = []
-for Rotor1Shape in Rotor1List :
-    IorRotor1List.append(Rotor1Shape._get_Name())
-Rotor1 = geompy.MakeCompound(IorRotor1List)
+Rotor1 = geompy.MakeCompound(Rotor1List)
 Id_Rotor1 = geompy.addToStudy(Rotor1, "Rotor1")
 
 #Rotor2
@@ -132,10 +128,7 @@ while Ind < NbBranches :
       R = geompy.MakeRotation(D0, V2, Ind * Angle1)
       Rotor2List.append(R)
       Ind = Ind + 1
-IorRotor2List = []
-for Rotor2Shape in Rotor2List :
-    IorRotor2List.append(Rotor2Shape._get_Name())
-Rotor2 = geompy.MakeCompound(IorRotor2List)
+Rotor2 = geompy.MakeCompound(Rotor2List)
 Id_Rotor2 = geompy.addToStudy(Rotor2, "Rotor2")
 
 #Rotor3
@@ -147,8 +140,5 @@ StatorList = []
 StatorList.append(Cylindre)
 StatorList.append(Couronne1)
 StatorList.append(Couronne2)
-IorStatorList = []
-for StatorShape in StatorList :
-    IorStatorList.append(StatorShape._get_Name())
-Stator = geompy.MakeCompound(IorStatorList)
+Stator = geompy.MakeCompound(StatorList)
 Id_Stator = geompy.addToStudy(Stator, "Stator")

@@ -29,8 +29,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=4258>
-<meta name=layout-width content=700>
+<meta name=layout-height content=4611>
+<meta name=layout-width content=491>
 
 
 <!--(Links)=========================================================-->
@@ -50,18 +50,20 @@ p.whs3 {font-size: 12pt;}
 p.whs4 {margin-left: 40px;}
 p.whs5 {font-family: 'Times New Roman', serif; font-size: 14pt;}
 img_whs6 {border-style: none; width: 20px; height: 20px;}
-p.whs7 {font-size: 12pt; margin-left: 40px;}
-img_whs8 {border-style: none; border: none; width: 200px; height: 181px;}
-img_whs9 {border-style: none; border: none; width: 200px; height: 175px;}
-img_whs10 {border-style: none; border: none; width: 150px; height: 102px;}
-img_whs11 {border-style: none; border: none; width: 200px; height: 146px;}
-img_whs12 {border-style: none; border: none; width: 150px; height: 120px;}
-p.whs13 {font-family: 'Times New Roman', serif; font-size: 12pt;}
-img_whs14 {border-style: none; border: none; width: 200px; height: 164px;}
-img_whs15 {border-style: none; border: none; width: 150px; height: 116px;}
-img_whs16 {border-style: none; border: none; width: 200px; height: 148px;}
-img_whs17 {border-style: none; border: none; width: 150px; height: 131px;}
-img_whs18 {border-style: none; border: none; width: 150px; height: 105px;}
+ul.whs7 {list-style: disc;}
+p.whs8 {font-size: 12pt; margin-left: 40px;}
+img_whs9 {border-style: none; border: none; width: 200px; height: 181px;}
+p.whs10 {font-family: 'Times New Roman', serif; font-size: 14pt; font-style: italic; font-weight: bold;}
+img_whs11 {border-style: none; border: none; width: 200px; height: 175px;}
+img_whs12 {border-style: none; border: none; width: 150px; height: 102px;}
+img_whs13 {border-style: none; border: none; width: 200px; height: 146px;}
+img_whs14 {border-style: none; border: none; width: 150px; height: 120px;}
+p.whs15 {font-family: 'Times New Roman', serif; font-size: 12pt;}
+img_whs16 {border-style: none; border: none; width: 200px; height: 164px;}
+img_whs17 {border-style: none; border: none; width: 150px; height: 116px;}
+img_whs18 {border-style: none; border: none; width: 200px; height: 148px;}
+img_whs19 {border-style: none; border: none; width: 150px; height: 131px;}
+img_whs20 {border-style: none; border: none; width: 150px; height: 105px;}
 -->
 </style>
 <script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
@@ -136,29 +138,42 @@ else
 	
 	<li class=kadov-p><p class="whs3"><a href="#explode">Explode</a></p></li>
 	
-	<li class=kadov-p><p class="whs3"><a href="#edge">Edge</a></p></li>
+	<li class=kadov-p><p class="whs3">Build</p></li>
 	
-	<li class=kadov-p><p class="whs3"><a href="#wire">Wire</a></p></li>
-	
-	<li class=kadov-p><p class="whs3"><a href="#face">Face</a></p></li>
-	
-	<li class=kadov-p><p class="whs3"><a href="#shell">Shell</a></p></li>
-	
-	<li class=kadov-p><p class="whs3"><a href="#solid">Solid</a></p></li>
-	
-	<li class=kadov-p><p class="whs3"><a href="#compound">Compound</a></p></li>
+	<ul>
+		
+		<li class=kadov-p><p class="whs3"><a href="#edge">Edge</a></p></li>
+		
+		<li class=kadov-p><p class="whs3"><a href="#wire">Wire</a></p></li>
+		
+		<li class=kadov-p><p class="whs3"><a href="#face">Face</a></p></li>
+		
+		<li class=kadov-p><p class="whs3"><a href="#shell">Shell</a></p></li>
+		
+		<li class=kadov-p><p class="whs3"><a href="#solid">Solid</a></p></li>
+		
+		<li class=kadov-p><p class="whs3"><a href="#compound">Compound</a></p></li>
+	</ul>
 </ul>
 
 <p class="whs3">&nbsp;</p>
 
 <p class="whs3">&nbsp;</p>
 
-<p class=TODO>To use building functions:</p>
-
 <p class=TODO>&nbsp;</p>
 
+<p class=TODO
+	style="font-family: 'Times New Roman', serif;
+			font-size: 14pt;
+			font-weight: bold;">To use Explode:</p>
+
+<p class=TODO
+	style="font-family: 'Times New Roman', serif;
+			font-size: 14pt;
+			font-weight: bold;">&nbsp;</p>
+
 <p class="whs4">In the main menu select <span style="font-weight: bold;"><B>New 
- Entity &gt; Build </B></span><span>submenu.</span></p>
+ Entity &gt; Explode</B></span>.</p>
 
 <p>&nbsp;</p>
 
@@ -174,21 +189,23 @@ else
 <p class="whs3">&nbsp;</p>
 
 <p class="whs3"><b style="font-weight: bold;">Result :</b> 
- GEOM_Shape (ListOfGeomShapes).</p>
+ List of GEOM_Objects.</p>
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">TUI Command:</b></p>
+<p class="whs3"><b style="font-weight: bold;">TUI Command: 
+ </b></p>
 
-<ul>
+<ul type="disc" class="whs7">
 	
-	<li style="margin-left: -20px;"
-		class=kadov-p><p class="whs3"><i style="font-style: italic;">geompy.SubShape(GEOM_Shape, 
- Short, ListOfSubShapeID)</i></p></li>
+	<li class=kadov-p><p class="whs3"><span style="font-style: italic;"><I>geompy.SubShape(Shape, 
+ ListOfID)</I></span>, where Shape is a shape whose subshape(s) is (are) retrieved, 
+ ListOfID is a list of requested sub shapes IDs. To get a subshape ID use 
+ method GetSubShapeID().</p></li>
 	
-	<li style="margin-left: -20px;"
-		class=kadov-p><p class="whs3"><i style="font-style: italic;">geompy.SubShapeAll(GEOM_Shape, 
- Short)</i></p></li>
+	<li class=kadov-p><p class="whs3"><span style="font-style: italic;"><I>geompy.SubShapeAll(Shape, 
+ TypeOfShape)</I></span>, where Shape is a shape to be exploded on sub shapes 
+ of type TypeOfShape.</p></li>
 </ul>
 
 <p class="whs3">&nbsp;</p>
@@ -202,12 +219,23 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image13.jpg" width="200px" height="181px" border="0" class="img_whs8"></p>
+<p class="whs8"><img src="../image13.jpg" width="200px" height="181px" border="0" class="img_whs9"></p>
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs5"><a NAME=edge><span 
- style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="../salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image14.gif" width="20px" height="20px" border="0" class="img_whs6"><b style="font-size: 14pt;"> Edge</b></font></span></a></p>
+<p class="whs5">&nbsp;</p>
+
+<p class="whs10">To use building functions:</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs8">In the main menu select 
+ <span style="font-weight: bold;"><B>New Entity &gt; </B></span><span style="font-weight: bold;"><B>Build 
+ </B></span>submenu.</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><a NAME=edge><img src="../salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image14.gif" width="20px" height="20px" border="0" class="img_whs6"><b> Edge</b></a></p>
 
 <p class="whs5">&nbsp;</p>
 
@@ -216,13 +244,15 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (EDGE).</p>
 
 <p class="whs3">&nbsp;</p>
 
 <p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeEdge(PointStruct, PointStruct)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakeEdge(Vertex1, Vertex2)</I></span>, 
+ where Vertex1 and Vertex2 are correspondingly the first and the last vertex 
+ of the edge.</p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -235,15 +265,15 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image14.jpg" width="200px" height="175px" border="0" class="img_whs9"></p>
+<p class="whs8"><img src="../image14.jpg" width="200px" height="175px" border="0" class="img_whs11"></p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs8">&nbsp;</p>
 
 <p class="whs3"><b style="font-weight: bold;">Example:</b></p>
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image9.gif" width="150px" height="102px" border="0" class="img_whs10"></p>
+<p class="whs8"><img src="../image9.gif" width="150px" height="102px" border="0" class="img_whs12"></p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -257,13 +287,15 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (WIRE).</p>
 
 <p class="whs3">&nbsp;</p>
 
 <p class="whs3"><b style="font-weight: bold;">TUI Command :</b><i> 
- geompy.MakeWire(ListOfIOR)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakeWire(ListOfShape)</I></span>, 
+ where ListOfShape is a list of edges and/or wires from which the wire 
+ to be constructed.</p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -276,7 +308,7 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image15.jpg" width="200px" height="146px" border="0" class="img_whs11"></p>
+<p class="whs8"><img src="../image15.jpg" width="200px" height="146px" border="0" class="img_whs13"></p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -284,27 +316,29 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image11.gif" width="150px" height="120px" border="0" class="img_whs12"></p>
+<p class="whs8"><img src="../image11.gif" width="150px" height="120px" border="0" class="img_whs14"></p>
 
 <p class="whs3">&nbsp;</p>
 
 <p class="whs5"><a NAME=face><span 
  style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="../salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image16.gif" width="20px" height="20px" border="0" class="img_whs6"><b style="font-size: 14pt;"> Face</b></font></span></a></p>
 
-<p class="whs13">&nbsp;</p>
+<p class="whs15">&nbsp;</p>
 
 <p class="whs3"><b style="font-weight: bold;">Description:</b> 
  Creates a face.</p>
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (FACE).</p>
 
 <p class="whs3">&nbsp;</p>
 
 <p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeFace(GEOM_Shape, Boolean)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakeFace(Wire, WantPlanarFace)</I></span>, 
+ where Wire is a wire and if boolean parameter WantPlanarFace is planar 
+ then only a planar face or no face is constructed.</p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -317,7 +351,7 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image16.jpg" width="200px" height="164px" border="0" class="img_whs14"></p>
+<p class="whs8"><img src="../image16.jpg" width="200px" height="164px" border="0" class="img_whs16"></p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -325,7 +359,7 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image12.gif" width="150px" height="116px" border="0" class="img_whs15"></p>
+<p class="whs8"><img src="../image12.gif" width="150px" height="116px" border="0" class="img_whs17"></p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -339,13 +373,15 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (SHELL).</p>
 
 <p class="whs3">&nbsp;</p>
 
 <p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeShell(ListOfIOR)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakeShell(ListOfShape)</I></span>, 
+ where ListOfShape is a list of faces and (or) shells from which the shell 
+ is constructed.</p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -358,7 +394,7 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image17.jpg" width="200px" height="148px" border="0" class="img_whs16"></p>
+<p class="whs8"><img src="../image17.jpg" width="200px" height="148px" border="0" class="img_whs18"></p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -366,7 +402,7 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image18.jpg" width="150px" height="131px" border="0" class="img_whs17"></p>
+<p class="whs8"><img src="../image18.jpg" width="150px" height="131px" border="0" class="img_whs19"></p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -380,13 +416,14 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
- (SOLID).</p>
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_<span>Object 
+ (SOLID).</span></p>
 
 <p class="whs3">&nbsp;</p>
 
 <p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeSolid(ListOfIOR)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakeSolid(ListOfShape)</I></span>, 
+ where ListOfShape is a list of shells from which the solid is constructed.</p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -399,7 +436,7 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image19.jpg" width="200px" height="148px" border="0" class="img_whs16"></p>
+<p class="whs8"><img src="../image19.jpg" width="200px" height="148px" border="0" class="img_whs18"></p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -415,13 +452,14 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (COMPOUND).</p>
 
 <p class="whs3">&nbsp;</p>
 
 <p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeCompound(ListOfIOR)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakeCompound(ListOfShape)</I></span>, 
+ where ListOfShape is a list of shapes from which the compound is constructed.</p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -434,19 +472,19 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image20.jpg" width="200px" height="148px" border="0" class="img_whs16"></p>
+<p class="whs8"><img src="../image20.jpg" width="200px" height="148px" border="0" class="img_whs18"></p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs8">&nbsp;</p>
 
 <p class="whs3"><b style="font-weight: bold;">Example:</b></p>
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs7"><img src="../image13.gif" width="150px" height="105px" border="0" class="img_whs18"></p>
+<p class="whs8"><img src="../image13.gif" width="150px" height="105px" border="0" class="img_whs20"></p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs8">&nbsp;</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs8">&nbsp;</p>
 
 <p class="whs3">&nbsp;</p>
 

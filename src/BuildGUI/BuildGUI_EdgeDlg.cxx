@@ -32,8 +32,8 @@
 #include <Precision.hxx>
 
 #include "utilities.h"
-
-using namespace std;
+#include "QAD_Desktop.h"
+#include "GEOMImpl_Types.hxx"
 
 //=================================================================================
 // class    : BuildGUI_EdgeDlg()
@@ -42,7 +42,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_EdgeDlg::BuildGUI_EdgeDlg(QWidget* parent, const char* name, BuildGUI* theBuildGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+BuildGUI_EdgeDlg::BuildGUI_EdgeDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_EDGE")));
@@ -62,12 +62,14 @@ BuildGUI_EdgeDlg::BuildGUI_EdgeDlg(QWidget* parent, const char* name, BuildGUI* 
   GroupPoints->TextLabel2->setText(tr("GEOM_POINT_I").arg("2"));
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->PushButton2->setPixmap(image1);
+  
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myBuildGUI = theBuildGUI;
   Init();
 }
 
@@ -90,14 +92,12 @@ void BuildGUI_EdgeDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
 
-  myPoint1.SetCoord(0.0, 0.0, 0.0);
-  myPoint2.SetCoord(0.0, 0.0, 0.0);
   myOkPoint1 = myOkPoint2 = false;
 
-  /* first filter used */
-  myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
-  mySelection->AddFilter(myVertexFilter);
+  globalSelection( GEOM_POINT );
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -111,11 +111,7 @@ void BuildGUI_EdgeDlg::Init()
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
-
-  return;
+  initName( tr( "GEOM_EDGE") );
 }
 
 
@@ -125,9 +121,8 @@ void BuildGUI_EdgeDlg::Init()
 //=================================================================================
 void BuildGUI_EdgeDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -135,17 +130,13 @@ void BuildGUI_EdgeDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BuildGUI_EdgeDlg::ClickOnApply()
+bool BuildGUI_EdgeDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  if(myOkPoint1 && myOkPoint2) 
-    myBuildGUI->MakeLinearEdgeAndDisplay(myPoint1, myPoint2);
-  return;
+  initName();
+  return true;
 }
 
 
@@ -155,13 +146,10 @@ void BuildGUI_EdgeDlg::ClickOnApply()
 //=================================================================================
 void BuildGUI_EdgeDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  erasePreview();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
+  if(mySelection->IObjectCount() != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkPoint1 = false;
     else if(myEditCurrentArgument == GroupPoints->LineEdit2)
@@ -170,22 +158,24 @@ void BuildGUI_EdgeDlg::SelectionIntoArgument()
   }
   
   // nbSel == 1
-  TopoDS_Shape S; 
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;
+  Standard_Boolean testResult = Standard_False;
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), testResult );
   
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
-    myEditCurrentArgument->setText(aString);
+  if(!testResult)
+    return;
+
+  if(myEditCurrentArgument == GroupPoints->LineEdit1) {
+    myPoint1 = aSelectedObject;
     myOkPoint1 = true;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomBase->VertexToPoint(S, myPoint2)) {
-    myEditCurrentArgument->setText(aString);
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
+    myPoint2 = aSelectedObject;
     myOkPoint2 = true;
   }
-
-  if(myOkPoint1 && myOkPoint2 && myPoint1.Distance(myPoint2) > Precision::Confusion())
-    this->MakeEdgeSimulationAndDisplay();
-  return;
+  
+  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  
+  displayPreview();
 }
 
 
@@ -196,15 +186,11 @@ void BuildGUI_EdgeDlg::SelectionIntoArgument()
 void BuildGUI_EdgeDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if (send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  if(send == GroupPoints->LineEdit1 || send == GroupPoints->LineEdit2)
+    {
+      myEditCurrentArgument = send;
+      GEOMBase_Skeleton::LineEditReturnPressed();
+    }
 }
 
 
@@ -214,21 +200,21 @@ void BuildGUI_EdgeDlg::LineEditReturnPressed()
 //=================================================================================
 void BuildGUI_EdgeDlg::SetEditCurrentArgument()
 {
+  
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters();
+  globalSelection();
 
   if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
+    globalSelection( GEOM_POINT );
   }
   else if(send == GroupPoints->PushButton2) {
-    GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
+    globalSelection( GEOM_POINT );
   }
-  mySelection->AddFilter(myVertexFilter);
-  this->SelectionIntoArgument();
-
-  return;
+  
+  myEditCurrentArgument->setFocus();
+  SelectionIntoArgument();
 }
 
 
@@ -240,10 +226,8 @@ void BuildGUI_EdgeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  mySelection->AddFilter(myVertexFilter);
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+  globalSelection( GEOM_POINT );
+  displayPreview();
 }
 
 
@@ -253,29 +237,40 @@ void BuildGUI_EdgeDlg::ActivateThisDialog()
 //=================================================================================
 void BuildGUI_EdgeDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr BuildGUI_EdgeDlg::createOperation()
+{
+  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+}
 
 //=================================================================================
-// function : MakeMirrorSimulationAndDisplay()
-// purpose  : S1 is a shape and S2 a mirror.
+// function : isValid
+// purpose  :
 //=================================================================================
-void BuildGUI_EdgeDlg::MakeEdgeSimulationAndDisplay()
+bool BuildGUI_EdgeDlg::isValid( QString& )
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  
-  try {
-    mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakeEdgeSimulationAndDisplay");
-    return;
-  }
-  return;
+  return myOkPoint1 && myOkPoint2;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool BuildGUI_EdgeDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  anObj = GEOM::GEOM_IShapesOperations::_narrow( getOperation() )->MakeEdge( myPoint1, myPoint2 );
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
 }

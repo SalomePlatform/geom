@@ -29,8 +29,10 @@
 using namespace std;
 #include "GEOM_Client.hxx"
 #include <SALOMEconfig.h>
+#include "OpUtil.hxx"
 #include "utilities.h"
 
+#include CORBA_SERVER_HEADER(SALOMEDS)
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
 #include <BRep_Builder.hxx>
@@ -39,38 +41,34 @@ using namespace std;
 #include <TopoDS_Compound.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TopExp_Explorer.hxx>
+#include <TopExp.hxx>
 #include <TopAbs.hxx>
-#include <TColStd_MapOfInteger.hxx>
-#include <TopoDS_Iterator.hxx>
-#include <TopTools_MapOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
-
+#include <TopTools_IndexedMapOfShape.hxx>
 
 #include <unistd.h>
 
 #define HST_CLIENT_LEN 256
 
 
+
 //=======================================================================
 // function : Load()
 // purpose  : 
 //=======================================================================
-TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Shape_ptr aShape )
+TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape )
 {
-    char hst_client[HST_CLIENT_LEN];
-    gethostname(hst_client, HST_CLIENT_LEN);
+    string hst_client = GetHostname();
 
     Engines::Container_var ctn_server = geom->GetContainerRef();
     long                   pid_server = ctn_server->getPID();
-
-    if ( (pid_client==pid_server) && (strcmp(hst_client, ctn_server->getHostName())==0) ) {
+ 
+   if ( (pid_client==pid_server) && (strcmp(hst_client.c_str(), ctn_server->getHostName())==0) ) {
         TopoDS_Shape* S = (TopoDS_Shape*)(aShape->getShape());
         return(*S);
     } else {
         /* get sequence of bytes of resulting brep shape from GEOM server */
         TopoDS_Shape S;
-        GEOM::GEOM_Shape::TMPFile_var SeqFile = aShape->GetShapeStream();
+        SALOMEDS::TMPFile_var SeqFile = aShape->GetShapeStream();
         int sizebuf = SeqFile->length();
         char* buf;
         buf = (char*) &SeqFile[0];
@@ -88,7 +86,7 @@ TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Shape_ptr aS
 //=======================================================================
 GEOM_Client::GEOM_Client()
 {
-  pid_client = (-1);
+  pid_client = (long)getpid();
 }
 
 //=======================================================================
@@ -115,6 +113,20 @@ Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_S
   return 0;
 }
 
+//=======================================================================
+// function : Find()
+// purpose  : 
+//=======================================================================
+Standard_Integer GEOM_Client::Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR )
+{
+  for ( Standard_Integer i = 1; i<= myShapes.Length(); i++ ) {
+    if (myShapes.Value(i) == S) {
+      IOR = myIORs.Value(i);
+      return i;
+    }
+  }
+  return 0;
+}
 
 //=======================================================================
 // function : Bind()
@@ -130,13 +142,13 @@ void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& 
 // function : RemoveShapeFromBuffer()
 // purpose  : Remove shape from Client Buffer
 //=======================================================================
-void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& shapeIOR )
+void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& IOR)
 {
   if( myIORs.IsEmpty() )
     return ;
   
   TopoDS_Shape S ;
-  Standard_Integer anIndex = Find( shapeIOR, S ) ;
+  Standard_Integer anIndex = Find( IOR, S ) ;
   if( anIndex != 0 ) {
     myIORs.Remove(anIndex) ;
     myShapes.Remove(anIndex) ;
@@ -173,105 +185,46 @@ unsigned int GEOM_Client::BufferLength()
 // purpose  : 
 //=======================================================================
 
-TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Shape_ptr aShape ) 
+TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape ) 
 { 
-  
   TopoDS_Shape            S; 
-  TCollection_AsciiString IOR(aShape->Name()); 
-  Standard_Integer        anIndex = Find(IOR, S); 
+  TCollection_AsciiString IOR = geom->GetStringFromIOR(aShape); 
+  Standard_Integer anIndex = Find(IOR, S); 
   
-  BRep_Builder B; 
-
-  if (anIndex !=0 ) { 
-    return S ; 
-   } 
+  if (anIndex !=0 ) return S ;  
 
   /******* in case of a MAIN GEOM::SHAPE ********/ 
   if (aShape->IsMainShape()) { 
     S = Load(geom, aShape); 
-    Bind(IOR,S); 
+    Bind(IOR, S); 
     return S; 
   } 
 
   /******* in case of SUB GEOM::SHAPE ***********/ 
   // Load and Explore the Main Shape 
-  TopoDS_Shape MainShape = GetShape (geom, geom->GetIORFromString(aShape->MainName())); 
-  GEOM::GEOM_Shape::ListOfSubShapeID_var list = aShape->Index(); 
+  TopoDS_Shape aMainShape = GetShape (geom, aShape->GetMainShape()); 
+  GEOM::ListOfLong_var list = aShape->GetSubShapeIndices(); 
 
-  Standard_Integer j = 1; 
-  TopExp_Explorer exp; 
-  TopAbs_ShapeEnum ShapeType = TopAbs_ShapeEnum(aShape->ShapeType()); 
-  
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aMainShape, anIndices);
+
   /* Case of only one subshape */ 
   if (list->length() == 1) 
   { 
-    if (ShapeType == TopAbs_COMPOUND) 
-      { 
-	TopoDS_Iterator it; 
-	TopTools_ListOfShape CL; 
-	CL.Append( MainShape ); 
-	TopTools_ListIteratorOfListOfShape itC; 
-	for (itC.Initialize( CL ); itC.More(); itC.Next()) 
-	  { 
-	    for (it.Initialize( itC.Value() );  it.More(); it.Next()) 
-	      { 
-		if ( it.Value().ShapeType() == TopAbs_COMPOUND) 
-		  {
-		    if (j == list[0]) 
-		      { 
-			S = it.Value(); 
-			Bind(IOR, S); 
-			return S; 
-		      } 
-		    j++; 
-		    CL.Append( it.Value() ); 
-		  }
-	      } 
-	  } 
-      } 
-    else 
-      { 
-	TopTools_MapOfShape M; 
-	for (exp.Init(MainShape, ShapeType); exp.More(); exp.Next()) { 
-	  if ( M.Add(exp.Current()) ) 
-	    { 
-	      if (j == list[0]) 
-		{ 
-		  S = exp.Current(); 
-		  Bind(IOR, S); 
-		  return S; 
-		} 
-	      j++; 
-	    } 
-	} 
-      } 
+    S = anIndices.FindKey(list[0]); 
   } 
-  
-  /* Case of a compound containing two or more sub shapes (not a main shape compound !)   */ 
+  else {
+    BRep_Builder B;
+    TopoDS_Compound aCompound;
+    B.MakeCompound(aCompound);
+    for(int i=0; i<list->length(); i++) {
+      TopoDS_Shape aSubShape = anIndices.FindKey(list[i]); 
+      B.Add(aCompound, aSubShape);
+    }
 
-  /* Warning : the compound when representing sub shapes must be explored in a sub type   */ 
-  /* that is NOT ShapeType=aShape->ShapeType()= TopAbs_COMPOUND !                         */ 
-  /* We have to retrieve the exact sub type of shapes contained in the compound first !   */ 
-  TopoDS_Iterator it ; 
-  TopAbs_ShapeEnum exactSubType ; 
-  S = Load( geom, aShape ); 
-  it.Initialize( S, true, true ) ; 
-  it.More(); 
-  exactSubType = it.Value().ShapeType() ; 
-
-  TColStd_MapOfInteger MapIndex; 
-  Standard_Integer nbSS = list->length(); 
-  TopoDS_Compound Comp; 
-  B.MakeCompound(Comp); 
-  
-  for (Standard_Integer i=1; i<=nbSS; i++) 
-    MapIndex.Add(list[i-1]); 
-  
-  for (exp.Init(MainShape, exactSubType), j=1; exp.More() ; exp.Next(), j++) { 
-    if ( MapIndex.Contains(j) ) { 
-      B.Add( Comp, exp.Current() ); 
-    } 
-  } 
-  Bind(IOR, Comp); 
-  return Comp; 
+    S = aCompound;
+  }
+  Bind(IOR, S); 
+  return S; 
 } 
+

@@ -15,6 +15,8 @@
 import geompy
 geom = geompy.geom
 
+vecx = geompy.MakeVectorDXDYDZ(1.,0.,0.)
+
 # -- colis
 
 colis_xmin = 05.76
@@ -22,12 +24,12 @@ colis_xmax = 19.83
 colis_radius = 0.3
 
 colis = geompy.MakeCylinder(
-    geom.MakePointStruct(colis_xmin,0.,0.),
-    geom.MakeDirection(geom.MakePointStruct(1.,0.,0.)),
+    geompy.MakeVertex(colis_xmin,0.,0.),
+    vecx,
     colis_radius,
     colis_xmax-colis_xmin)
 
-iorL = [colis._get_Name()]
+GOList = [colis]
 
 # -- bo
 
@@ -36,12 +38,12 @@ bo_xmax = colis_xmax
 bo_radius = 1.23
 
 bo = geompy.MakeCylinder(
-    geom.MakePointStruct(bo_xmin,0.,0.),
-    geom.MakeDirection(geom.MakePointStruct(1.,0.,0.)),
+    geompy.MakeVertex(bo_xmin,0.,0.),
+    vecx,
     bo_radius,
     bo_xmax-bo_xmin)
 
-iorL.append(bo._get_Name())
+GOList.append(bo)
 
 # -- rupture alveole
 
@@ -50,12 +52,12 @@ alvRup_xmax = colis_xmax
 alvRup_radius = 1.6
 
 alvRup = geompy.MakeCylinder(
-    geom.MakePointStruct(alvRup_xmin,0.,0.),
-    geom.MakeDirection(geom.MakePointStruct(1.,0.,0.)),
+    geompy.MakeVertex(alvRup_xmin,0.,0.),
+    vecx,
     alvRup_radius,
     alvRup_xmax-alvRup_xmin)
 
-iorL.append(alvRup._get_Name())
+GOList.append(alvRup)
 
 # bouchon
 
@@ -64,12 +66,12 @@ bouchon_xmax = 22.83
 bouchon_radius = alvRup_radius
 
 bouchon = geompy.MakeCylinder(
-    geom.MakePointStruct(bouchon_xmin,0.,0.),
-    geom.MakeDirection(geom.MakePointStruct(1.,0.,0.)),
+    geompy.MakeVertex(bouchon_xmin,0.,0.),
+    vecx,
     bouchon_radius,
     bouchon_xmax-bouchon_xmin)
 
-#iorL.append(bouchon._get_Name())
+#GOList.append(bouchon)
 
 # -- endommagement alveole
 
@@ -78,12 +80,12 @@ alvEnd_xmax = 20.66
 alvEnd_radius = 2.46
 
 alvEnd = geompy.MakeCylinder(
-    geom.MakePointStruct(alvEnd_xmin,0.,0.),
-    geom.MakeDirection(geom.MakePointStruct(1.,0.,0.)),
+    geompy.MakeVertex(alvEnd_xmin,0.,0.),
+    vecx,
     alvEnd_radius,
     alvEnd_xmax-alvEnd_xmin)
 
-iorL.append(alvEnd._get_Name())
+GOList.append(alvEnd)
 
 # galerie
 
@@ -92,12 +94,12 @@ galerie_xmax = 25.0
 galerie_radius = 2.17
 
 galerie = geompy.MakeCylinder(
-    geom.MakePointStruct(galerie_xmin,0.,0.),
-    geom.MakeDirection(geom.MakePointStruct(1.,0.,0.)),
+    geompy.MakeVertex(galerie_xmin,0.,0.),
+    vecx,
     galerie_radius,
     galerie_xmax-galerie_xmin)
 
-iorL.append(galerie._get_Name())
+GOList.append(galerie)
 
 # -- rupture galerie
 
@@ -106,12 +108,12 @@ galRup_xmax = galerie_xmax
 galRup_radius = 2.82
 
 galRup = geompy.MakeCylinder(
-    geom.MakePointStruct(galRup_xmin,0.,0.),
-    geom.MakeDirection(geom.MakePointStruct(1.,0.,0.)),
+    geompy.MakeVertex(galRup_xmin,0.,0.),
+    vecx,
     galRup_radius,
     galRup_xmax-galRup_xmin)
 
-iorL.append(galRup._get_Name())
+GOList.append(galRup)
 
 # -- endom. galerie
 
@@ -120,12 +122,12 @@ galEnd_xmax = galerie_xmax
 galEnd_radius = 4.34
 
 galEnd = geompy.MakeCylinder(
-    geom.MakePointStruct(galEnd_xmin,0.,0.),
-    geom.MakeDirection(geom.MakePointStruct(1.,0.,0.)),
+    geompy.MakeVertex(galEnd_xmin,0.,0.),
+    vecx,
     galEnd_radius,
     galEnd_xmax-galEnd_xmin)
 
-iorL.append(galEnd._get_Name())
+GOList.append(galEnd)
 
 # --
 
@@ -133,9 +135,9 @@ box_y = 30.0
 box = geompy.MakeBox(0., 0., 0., galerie_xmax, box_y, box_y)
 box = geompy.MakeTranslation(box, 0.0, -box_y/2, -box_y/2)
 
-iorL.append(box._get_Name())
+GOList.append(box)
 
 # --
 
-callovo = geompy.Partition(iorL,[],[], [bouchon._get_Name()])
+callovo = geompy.MakePartition(GOList, [], [], [bouchon])
 geompy.addToStudy(callovo, "callovo 2")

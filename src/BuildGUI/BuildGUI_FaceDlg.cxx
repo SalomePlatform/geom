@@ -28,6 +28,11 @@
 
 using namespace std;
 #include "BuildGUI_FaceDlg.h"
+#include "QAD_Desktop.h"
+#include "GEOMImpl_Types.hxx"
+
+//Qt includes
+#include <qcheckbox.h>
 
 //=================================================================================
 // class    : BuildGUI_FaceDlg()
@@ -36,7 +41,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_FaceDlg::BuildGUI_FaceDlg(QWidget* parent, const char* name, BuildGUI* theBuildGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+BuildGUI_FaceDlg::BuildGUI_FaceDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_FACE")));
@@ -50,17 +55,16 @@ BuildGUI_FaceDlg::BuildGUI_FaceDlg(QWidget* parent, const char* name, BuildGUI* 
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_1Sel1Check_QTD(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_FACE_FFW"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_WIRES"));
-  GroupPoints->CheckButton1->setText(tr("GEOM_FACE_OPT"));
-  GroupPoints->PushButton1->setPixmap(image1);
+  GroupWire = new DlgRef_1Sel1Check_QTD(this, "GroupWire");
+  GroupWire->GroupBox1->setTitle(tr("GEOM_FACE_FFW"));
+  GroupWire->TextLabel1->setText(tr("GEOM_WIRES"));
+  GroupWire->CheckButton1->setText(tr("GEOM_FACE_OPT"));
+  GroupWire->PushButton1->setPixmap(image1);
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupWire, 2, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myBuildGUI = theBuildGUI;
   Init();
 }
 
@@ -82,26 +86,21 @@ BuildGUI_FaceDlg::~BuildGUI_FaceDlg()
 void BuildGUI_FaceDlg::Init()
 {
   /* init variables */
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  GroupPoints->CheckButton1->setChecked(TRUE);
+  myEditCurrentArgument = GroupWire->LineEdit1;
+  GroupWire->LineEdit1->setReadOnly( true );
 
-  myOkListShapes = false;
+  GroupWire->CheckButton1->setChecked(TRUE);
 
-  myWireFilter = new GEOM_ShapeTypeFilter(TopAbs_WIRE, myGeom);
-  mySelection->AddFilter(myWireFilter); /* first filter used */
+  globalSelection( GEOM_WIRE );
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));  
+  connect(GroupWire->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupWire->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));  
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
-
-  return;
+  initName(tr("GEOM_FACE"));
 }
 
 
@@ -111,9 +110,8 @@ void BuildGUI_FaceDlg::Init()
 //=================================================================================
 void BuildGUI_FaceDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -121,12 +119,13 @@ void BuildGUI_FaceDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BuildGUI_FaceDlg::ClickOnApply()
+bool BuildGUI_FaceDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if(myOkListShapes)
-    myBuildGUI->MakeFaceAndDisplay(myListShapes, GroupPoints->CheckButton1->isChecked());
-  return;
+  if ( !onAccept() )
+    return false;
+
+  initName();
+  return true;
 }
 
 
@@ -137,21 +136,25 @@ void BuildGUI_FaceDlg::ClickOnApply()
 void BuildGUI_FaceDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
-
-  myOkListShapes = false;
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel == 0)
-    return;
-  if(nbSel != 1)
-    aString = tr("%1_objects").arg(nbSel);
-
-  myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes);
+  QString aName;
   
-  myEditCurrentArgument->setText(aString);
-  myOkListShapes = true;
-  /* no simulation */
-  return;
+  int aNbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aName);
+  
+  if(aNbSel < 1)
+    {
+      myWires.length(0);
+      return;
+    }
+  
+  GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(), myWires);
+  if (!myWires.length())
+    return;
+  if(aNbSel != 1)
+    aName = tr("%1_wires").arg(aNbSel);
+  
+  myEditCurrentArgument->setText( aName );
+  
+  myEditCurrentArgument->setText( aName );
 }
 
 
@@ -161,11 +164,15 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
 //=================================================================================
 void BuildGUI_FaceDlg::SetEditCurrentArgument()
 {
-  GroupPoints->LineEdit1->setFocus();
-  mySelection->ClearFilters();
-  mySelection->AddFilter(myWireFilter);
-  this->SelectionIntoArgument();
-  return;
+  QPushButton* send = (QPushButton*)sender();
+  if (send != GroupWire->PushButton1)
+    return;
+  
+  globalSelection( GEOM_WIRE );
+  myEditCurrentArgument = GroupWire->LineEdit1;
+
+  myEditCurrentArgument->setFocus();
+  SelectionIntoArgument();
 }
 
 
@@ -177,8 +184,7 @@ void BuildGUI_FaceDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  mySelection->AddFilter(myWireFilter);
-  return;
+  globalSelection( GEOM_WIRE );
 }
 
 
@@ -188,8 +194,43 @@ void BuildGUI_FaceDlg::ActivateThisDialog()
 //=================================================================================
 void BuildGUI_FaceDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog(); 
 }
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr BuildGUI_FaceDlg::createOperation()
+{
+  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool BuildGUI_FaceDlg::isValid( QString& )
+{
+  return (myWires.length() != 0);
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool BuildGUI_FaceDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  bool isPlanarWanted = GroupWire->CheckButton1->isChecked();
+  anObj = GEOM::GEOM_IShapesOperations::_narrow(
+    getOperation() )->MakeFaceWires( myWires, isPlanarWanted );
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
+}
+

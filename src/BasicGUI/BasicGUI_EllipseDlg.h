@@ -34,6 +34,7 @@
 #include "BasicGUI.h"
 
 #include "GEOM_ShapeTypeFilter.hxx"
+#include "GEOM_EdgeFilter.hxx"
 #include <gp_Dir.hxx>
 
 //=================================================================================
@@ -45,34 +46,33 @@ class BasicGUI_EllipseDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_EllipseDlg(QWidget* parent = 0, const char* name = 0, BasicGUI* theBasicGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_EllipseDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_EllipseDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakeEllipseSimulationAndDisplay();
 
-    BasicGUI* myBasicGUI;
-
-    double step;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;
-    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;  /* Filter selection */
-
-    gp_Pnt myPoint;   /* Central point of ellipse */   
-    bool myOkPoint;   /* true when myPoint is defined */
-    gp_Dir myDir;     /* to set normal axis of ellipse */
-    bool myOkDir;     /* true when myPoint is defined */
-    
-    Standard_Real myMajorRadius;
-    Standard_Real myMinorRadius;
+    GEOM::GEOM_Object_var myPoint, myDir;
 
     DlgRef_2Sel2Spin* GroupPoints;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    void ClickOnCancel();
+    bool ClickOnApply();
+
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
+    
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

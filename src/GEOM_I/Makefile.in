@@ -1,0 +1,93 @@
+#  GEOM GEOM : implementaion of GEOM_Gen.idl
+#
+#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+# 
+#  This library is free software; you can redistribute it and/or 
+#  modify it under the terms of the GNU Lesser General Public 
+#  License as published by the Free Software Foundation; either 
+#  version 2.1 of the License. 
+# 
+#  This library is distributed in the hope that it will be useful, 
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+#  Lesser General Public License for more details. 
+# 
+#  You should have received a copy of the GNU Lesser General Public 
+#  License along with this library; if not, write to the Free Software 
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+# 
+#  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+#
+#
+#
+#  File   : Makefile.in
+#  Author : Patrick GOLDBRONN (CEA)
+#  Module : GEOM
+#  $Header$
+
+top_srcdir=@top_srcdir@
+top_builddir=../..
+srcdir=@srcdir@
+VPATH=.:@srcdir@:@top_srcdir@/idl
+
+@COMMENCE@
+
+# Libraries targets
+
+LIB = libGEOMEngine.la
+LIB_SRC = \
+	GEOM_Object_i.cc \
+	GEOM_IOperations_i.cc \
+	GEOM_IBasicOperations_i.cc \
+        GEOM_IHealingOperations_i.cc \
+	GEOM_I3DPrimOperations_i.cc \
+	GEOM_IShapesOperations_i.cc \
+	GEOM_IBlocksOperations_i.cc \
+	GEOM_IBooleanOperations_i.cc \
+	GEOM_ICurvesOperations_i.cc \
+	GEOM_ILocalOperations_i.cc \
+	GEOM_IInsertOperations_i.cc \
+	GEOM_ITransformOperations_i.cc \
+	GEOM_IMeasureOperations_i.cc \
+	GEOM_IGroupOperations_i.cc \
+	GEOM_Gen_i.cc
+
+LIB_SERVER_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl \
+		 GEOM_Gen.idl SALOME_GenericObj.idl
+
+# Executables targets
+BIN = 
+BIN_SRC = 
+BIN_CLIENT_IDL = 
+BIN_SERVER_IDL =
+
+#This export required to compile GEOM_Superv_i.lo library
+EXPORT_HEADERS = GEOM_Object_i.hh \
+	         GEOM_IOperations_i.hh \
+	         GEOM_IBasicOperations_i.hh \
+		 GEOM_IHealingOperations_i.hh \
+                 GEOM_I3DPrimOperations_i.hh \
+	         GEOM_IShapesOperations_i.hh \
+	         GEOM_IBlocksOperations_i.hh \
+	         GEOM_IBooleanOperations_i.hh \
+	         GEOM_ICurvesOperations_i.hh \
+	         GEOM_ILocalOperations_i.hh \
+	         GEOM_IInsertOperations_i.hh \
+	         GEOM_ITransformOperations_i.hh \
+		 GEOM_IMeasureOperations_i.hh \
+	         GEOM_IGroupOperations_i.hh \
+		 GEOM_Gen_i.hh
+
+# additionnal information to compil and link file
+CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome $(BOOST_CPPFLAGS) 
+CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
+LDFLAGS  += -lTOOLSDS -lSalomeNS -lSalomeContainer -lGEOMPartition -lGEOMArchimede -lGEOMbasic -lGEOMimpl $(CAS_LDPATH) -lTKIGES -lTKSTEP -lTKFillet -lTKOffset -lGEOMSketcher -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeGenericObj 
+
+# additional file to be cleaned
+MOSTLYCLEAN =
+CLEAN =
+DISTCLEAN =
+
+@CONCLUDE@
+

@@ -1,0 +1,39 @@
+-- File:	NMTDS_IndexRange.cdl
+-- Created:	Fri Nov 28 10:31:05 2003
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2003
+
+
+class IndexRange from NMTDS 
+
+	---Purpose: 
+
+--uses
+--raises
+
+is 
+    Create 
+    	returns IndexRange from NMTDS; 
+	 
+    SetFirst(me:out; 
+    	    aFirst:Integer from Standard);	 
+	 
+    SetLast(me:out; 
+    	    aLast:Integer from Standard);	 
+     
+    First(me) 
+    	returns Integer from Standard; 
+	 
+    Last(me) 
+    	returns Integer from Standard; 				     
+
+    IsInRange(me; 
+    	    aIndex:Integer from Standard) 
+    	returns Boolean from Standard; 
+
+fields 
+    myFirst  :  Integer from Standard is protected;  
+    myLast   :  Integer from Standard is protected;  
+
+end IndexRange;

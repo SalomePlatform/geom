@@ -24,33 +24,29 @@
 //  File   : MeasureGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef MEASUREGUI_H
 #define MEASUREGUI_H
 
-#include "GEOMBase.h"
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : MeasureGUI
 // purpose  :
 //=================================================================================
-class MeasureGUI : public QObject
+class MeasureGUI : public GEOMGUI
 {
-  Q_OBJECT /* for QT compatibility */
+protected:
+                              MeasureGUI(); 
 
 public :
-  MeasureGUI();
-  ~MeasureGUI();
+                              ~MeasureGUI();
+  static MeasureGUI*          GetMeasureGUI();
+  bool                        OnGUIEvent( int , QAD_Desktop* );
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
-
-  void MakeCDGAndDisplay(GEOM::GEOM_Shape_ptr Shape);
-
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
-
+private:
+  static MeasureGUI*          myGUIObject;
 };
 
 #endif

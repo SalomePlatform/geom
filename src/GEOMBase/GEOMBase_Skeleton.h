@@ -24,7 +24,7 @@
 //  File   : GEOMBase_Skeleton.h
 //  Author : Damine COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef GEOMBASE_SKELETON_H
 #define GEOMBASE_SKELETON_H
@@ -32,16 +32,18 @@
 #include "DlgRef_Skeleton_QTD.h"
 
 #include "GEOMBase.h"
+#include "GEOMBase_Helper.h"
+#include "GeometryGUI.h"
 
 #include <qwidget.h>
 #include <qgroupbox.h>
 #include <qlineedit.h>
 #include <qlayout.h>
+#include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
-#include <qpushbutton.h>
 
-class GEOMBase_Skeleton : public DlgRef_Skeleton_QTD
+class GEOMBase_Skeleton : public DlgRef_Skeleton_QTD, public GEOMBase_Helper
 { 
     Q_OBJECT
 
@@ -55,12 +57,14 @@ private :
 protected:
     void closeEvent(QCloseEvent* e);
 
-    TopoDS_Shape mySimulationTopoDs;    /* Shape used for simulation display */
+    void initName( const char* thePrefix = 0 ); // initialize "Name" field with a string "thePrefix_X" (Vertex_3)
+    const char* getNewObjectName() const; // returns contents of "Name" field
+    int getConstructorId() const; // returns id of a selected "constructor" radio button or '-1' in case of error
+
     QLineEdit* myEditCurrentArgument;   /* Current LineEdit */
     SALOME_Selection* mySelection;      /* User shape selection */
-    GEOM::GEOM_Gen_var myGeom;          /* Current GeomI object */
-    GEOMBase* myGeomBase;
-    GEOMContext* myGeomGUI;  /* Current GeomGUI object */
+    GEOMBase* myGeomBase; // SAN -- TO BE REMOVED !!!
+    GeometryGUI* myGeomGUI;             /* reference GEOM GUI */
 
 protected slots:
     void ClickOnCancel();

@@ -33,10 +33,6 @@
 #include "DlgRef_1Sel1Spin.h"
 #include "DlgRef_1Spin.h"
 
-#include "PrimitiveGUI.h"
-
-#include "GEOM_ShapeTypeFilter.hxx"
-#include <gp_Pnt.hxx>
 
 //=================================================================================
 // class    : PrimitiveGUI_SphereDlg
@@ -47,36 +43,38 @@ class PrimitiveGUI_SphereDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    PrimitiveGUI_SphereDlg(QWidget* parent = 0, const char* name = 0, PrimitiveGUI* thePrimitiveGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    PrimitiveGUI_SphereDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~PrimitiveGUI_SphereDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-
-    PrimitiveGUI* myPrimitiveGUI;
-
-    double step;
-    int myConstructorId;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;  /* filter for selection */
-
-    gp_Pnt myPoint1;   /* Points containing the vector */
-    Standard_Real myRadius;
-    bool myOkPoint1;
-
+    double getRadius() const;
+       
+    GEOM::GEOM_Object_var myPoint; /* Center point */
+    
     DlgRef_1Sel1Spin* GroupPoints;
     DlgRef_1Spin* GroupDimensions;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
+    void ClickOnCancel();
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ConstructorsClicked(int constructorId);
-    void ValueChangedInSpinBox(double newValue);
-
+    void ConstructorsClicked(int);
+    void ValueChangedInSpinBox();
 };
 
 #endif // DIALOGBOX_SPHERE_H

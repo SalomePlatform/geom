@@ -30,9 +30,8 @@
 #define DIALOGBOX_MAXTOLERANCE_H
 
 #include "MeasureGUI_Skeleton.h"
-#include "MeasureGUI_1Sel6LineEdit_QTD.h"
 
-#include "MeasureGUI.h"
+class  MeasureGUI_1Sel6LineEdit_QTD;
 
 //=================================================================================
 // class    : DialogBox_PROPERTIES
@@ -43,22 +42,40 @@ class MeasureGUI_MaxToleranceDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-    MeasureGUI_MaxToleranceDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
-    ~MeasureGUI_MaxToleranceDlg();
+                                        MeasureGUI_MaxToleranceDlg( QWidget* parent,
+                                                                    SALOME_Selection* );
+                                        ~MeasureGUI_MaxToleranceDlg();
+
+protected:
+
+    // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
+    virtual void                        processObject();
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
-    void CalculateMaxTolerance(const TopoDS_Shape& S);
 
-    MeasureGUI_1Sel6LineEdit_QTD* GroupC1;
+    void                                Init( SALOME_Selection* Sel );
+    bool                                getParameters( double& theMinFaceToler,
+                                                       double& theMaxFaceToler,
+                                                       double& theMinEdgeToler,
+                                                       double& theMaxEdgeToler,
+                                                       double& theMinVertexToler,
+                                                       double& theMaxVertexToler );
+                                                       
 
-private slots:
-    void SetEditCurrentArgument();
-    void SelectionIntoArgument();
-    void LineEditReturnPressed();
-    void ActivateThisDialog();
 
+private:
+
+    MeasureGUI_1Sel6LineEdit_QTD*       myGrp;
 };
 
 #endif // DIALOGBOX_MAXTOLERANCE_H
+
+
+
+
+
+
+
+
+
+

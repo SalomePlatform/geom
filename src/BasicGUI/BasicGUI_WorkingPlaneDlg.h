@@ -30,10 +30,9 @@
 
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_QTD.h"
+#include "DlgRef_2Sel_QTD.h"
+#include "DlgRef_3Check_QTD.h"
 
-#include "BasicGUI.h"
-
-#include "GEOM_FaceFilter.hxx"
 
 //=================================================================================
 // class    : BasicGUI_WorkingPlaneDlg
@@ -44,30 +43,40 @@ class BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_WorkingPlaneDlg( QWidget* parent = 0, const char* name = 0, BasicGUI* theBasicGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    BasicGUI_WorkingPlaneDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
     ~BasicGUI_WorkingPlaneDlg();
+    
+    virtual void closeEvent( QCloseEvent* e );
 
 private:
     void Init();
     void enterEvent(QEvent* e);
 
-    BasicGUI* myBasicGUI;
+    GEOM::GEOM_Object_var myFace;
+    GEOM::GEOM_Object_var myVectX;
+    GEOM::GEOM_Object_var myVectZ;
 
-    Handle(GEOM_FaceFilter) myFaceFilter;   /* filter for selection */
+    int aOriginType;
 
-    gp_Pnt myLoc;
-    gp_Dir myDir;
-    bool myOkPlane;   /* to check when arguments are defined */
+    DlgRef_1Sel_QTD* Group1;
+    DlgRef_2Sel_QTD* Group2;
+    DlgRef_3Check_QTD* Group3;
 
-    DlgRef_1Sel_QTD* GroupWPlane;
+    gp_Ax3 myWPlane;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    void ClickOnCancel();
+    bool ClickOnApply();
+
+    void ConstructorsClicked(int constructorId);
+    void GroupClicked(int groupId);
     void SetEditCurrentArgument();
     void SelectionIntoArgument();
     void LineEditReturnPressed();
+
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
 
 };
 

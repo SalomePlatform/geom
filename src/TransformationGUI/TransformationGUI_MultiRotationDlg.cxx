@@ -21,25 +21,19 @@
 //
 //
 //
-//  File   : TransformationGUI_MultiTranslationDlg.cxx
+//  File   : TransformationGUI_MultiRotationDlg.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header$
 
 #include "TransformationGUI_MultiRotationDlg.h"
 
-#include <gp_Lin.hxx>
-#include <Precision.hxx>
-#include <BRepBuilderAPI_MakeVertex.hxx>
-#include <GeomAPI_ProjectPointOnCurve.hxx>
-#include <BRepAdaptor_Curve.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepGProp.hxx>
-#include <GProp_GProps.hxx>
-#include <TopoDS_Compound.hxx>
-#include <Geom_Line.hxx>
-#include <BRepBuilderAPI_Transform.hxx>
+#include "GEOMImpl_Types.hxx"
+
 #include "QAD_Config.h"
+#include "QAD_Desktop.h"
+
+#include <qcheckbox.h>
 
 #include "utilities.h"
 
@@ -52,7 +46,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg(QWidget* parent,  const char* name, TransformationGUI* theTransformationGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg(QWidget* parent,  const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_MULTIROTATION_SIMPLE")));
@@ -74,6 +68,8 @@ TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg(QWidget* 
   GroupPoints->TextLabel3->setText(tr("GEOM_NB_TIMES"));
   GroupPoints->PushButton1->setPixmap(image2);
   GroupPoints->PushButton2->setPixmap(image2);
+  GroupPoints->LineEdit1->setReadOnly(true);
+  GroupPoints->LineEdit2->setReadOnly(true);
 
   GroupDimensions = new DlgRef_2Sel4Spin1Check(this, "GroupDimensions");
   GroupDimensions->GroupBox1->setTitle(tr("GEOM_MULTIROTATION_DOUBLE"));
@@ -86,13 +82,13 @@ TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg(QWidget* 
   GroupDimensions->CheckButton1->setText(tr("GEOM_REVERSE"));
   GroupDimensions->PushButton1->setPixmap(image2);
   GroupDimensions->PushButton2->setPixmap(image2);
+  GroupDimensions->LineEdit1->setReadOnly(true);
+  GroupDimensions->LineEdit2->setReadOnly(true);
 
-  Layout1->addWidget(GroupPoints, 1, 0);
-  Layout1->addWidget(GroupDimensions, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
+  Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
-  /* Initialisations */
-  myTransformationGUI = theTransformationGUI;
   Init();
 }
 
@@ -113,21 +109,9 @@ TransformationGUI_MultiRotationDlg::~TransformationGUI_MultiRotationDlg()
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::Init()
 {
-  /* init variables */
-  myConstructorId = 0;
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-
-  myAng = 45.0;
-  myStep = 50.0;
-  myNbTimes1 = 2;
-  myNbTimes2 = 2;
-  myOkBase = myOkDir = false;
-
-  myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
-
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
+  double step = St.toDouble();
 
   double SpecificStep1 = 5;
   double SpecificStep2 = 1;
@@ -171,16 +155,12 @@ void TransformationGUI_MultiRotationDlg::Init()
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX2, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY2, SLOT(SetStep(double)));
 
-  connect(GroupDimensions->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ReverseAngle(int)));
+  connect(GroupDimensions->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(ReverseAngle()));
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  /* displays Dialog */
-  GroupDimensions->hide();
-  GroupPoints->show();
-  this->show();
-
-  return;
+  initName( tr( "GEOM_MULTIROTATION" ) );
+  ConstructorsClicked( 0 );
 }
 
 
@@ -190,16 +170,13 @@ void TransformationGUI_MultiRotationDlg::Init()
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::ConstructorsClicked(int constructorId)
 {
-  myConstructorId = constructorId;
-  mySelection->ClearFilters();
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
   disconnect(mySelection, 0, this, 0);
+  
   myAng = 45.0;
   myStep = 50.0;
-  myNbTimes1 = 2;
-  myNbTimes2 = 2;
-  myOkBase = myOkDir = false;
+  myNbTimes1 = myNbTimes2 = 2;
+  
+  globalSelection( GEOM_ALLSHAPES );
 
   switch (constructorId)
     {
@@ -215,8 +192,6 @@ void TransformationGUI_MultiRotationDlg::ConstructorsClicked(int constructorId)
 
 	GroupPoints->SpinBox_DX->SetValue(myNbTimes1);
 
-	/* filter for next selection */
-	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
     case 1: /* Rotate double */
@@ -234,12 +209,13 @@ void TransformationGUI_MultiRotationDlg::ConstructorsClicked(int constructorId)
 	GroupDimensions->SpinBox_DX2->SetValue(myStep);
 	GroupDimensions->SpinBox_DY2->SetValue(myNbTimes2);
 
-	/* filter for next selection */
-	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }      
     }
-  return;
+
+  myEditCurrentArgument->setFocus();
+  myBase = myVector = GEOM::GEOM_Object::_nil();
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
 
@@ -249,9 +225,8 @@ void TransformationGUI_MultiRotationDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -259,24 +234,24 @@ void TransformationGUI_MultiRotationDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void TransformationGUI_MultiRotationDlg::ClickOnApply()
+bool TransformationGUI_MultiRotationDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
+  
+  initName();
+  ConstructorsClicked( getConstructorId() );
+  return true;
+}
 
-  if(myConstructorId == 0) {
-    if(myOkBase && myOkDir)
-      myTransformationGUI->MakeMultiRotation1DAndDisplay(myGeomShape, myDir, myLoc, myNbTimes1);
-  }
-  else if(myConstructorId == 1) {
-    if(myOkBase && myOkDir)
-      myTransformationGUI->MakeMultiRotation2DAndDisplay(myGeomShape, myDir, myLoc, myAng, myNbTimes1, myStep, myNbTimes2);
-  }
-  return;
+
+//=======================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=======================================================================
+void TransformationGUI_MultiRotationDlg::ClickOnCancel()
+{
+  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -286,46 +261,32 @@ void TransformationGUI_MultiRotationDlg::ClickOnApply()
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
-
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
+  
+  if(mySelection->IObjectCount() != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1 || myEditCurrentArgument == GroupDimensions->LineEdit1)
-      myOkBase = false;
+      myBase = GEOM::GEOM_Object::_nil();
     else if(myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupDimensions->LineEdit2)
-      myOkDir = false;
+      myVector = GEOM::GEOM_Object::_nil();
     return;
   }
-
+  
   // nbSel == 1
-  TopoDS_Shape S; 
-  Standard_Boolean testResult;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
+  Standard_Boolean testResult = Standard_False;;
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), testResult );
+
+  if ( !testResult || CORBA::is_nil( aSelectedObject ) || !GEOMBase::IsShape( aSelectedObject ) )
     return;
 
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 || myEditCurrentArgument == GroupDimensions->LineEdit1) {
-    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-    if(!testResult)
-      return;
-    myEditCurrentArgument->setText(aString);
-    myBase = S;
-    myOkBase = true;
-  }    
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupDimensions->LineEdit2) {
-    BRepAdaptor_Curve curv(TopoDS::Edge(S));
-    myDir = curv.Line().Direction();
-    myLoc = curv.Line().Location();
-    myEditCurrentArgument->setText(aString);
-    myOkDir = true;
-  }
 
-  if(myOkBase && myOkDir)
-    this->MakeMultiRotationSimulationAndDisplay();
-  return;
+  if(myEditCurrentArgument == GroupPoints->LineEdit1 || myEditCurrentArgument == GroupDimensions->LineEdit1)
+    myBase = aSelectedObject;
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupDimensions->LineEdit2)
+    myVector = aSelectedObject;
+    
+  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+
+  displayPreview();
 }
 
 
@@ -336,29 +297,26 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
 void TransformationGUI_MultiRotationDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters();
-
+  
   if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
+    globalSelection( GEOM_ALLSHAPES );
   }
   else if(send == GroupPoints->PushButton2) {
-    GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    mySelection->AddFilter(myEdgeFilter);
+    globalSelection( GEOM_LINE  );
   }
   else if(send == GroupDimensions->PushButton1) {
-    GroupDimensions->LineEdit1->setFocus();
     myEditCurrentArgument = GroupDimensions->LineEdit1;
+    globalSelection( GEOM_ALLSHAPES );
   }
   else if(send == GroupDimensions->PushButton2) {
-    GroupDimensions->LineEdit2->setFocus();
     myEditCurrentArgument = GroupDimensions->LineEdit2;
-    mySelection->AddFilter(myEdgeFilter);
+    globalSelection( GEOM_LINE  );
   }
-  this->SelectionIntoArgument();
 
-  return;
+  myEditCurrentArgument->setFocus();
+  SelectionIntoArgument();
 }
 
 
@@ -369,19 +327,12 @@ void TransformationGUI_MultiRotationDlg::SetEditCurrentArgument()
 void TransformationGUI_MultiRotationDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if (send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else if (send == GroupDimensions->LineEdit1)
-    myEditCurrentArgument = GroupDimensions->LineEdit1;
-  else if (send == GroupDimensions->LineEdit2)
-    myEditCurrentArgument = GroupDimensions->LineEdit2;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  if(send == GroupPoints->LineEdit1 || send == GroupDimensions->LineEdit1 || 
+     send == GroupPoints->LineEdit2 || send == GroupDimensions->LineEdit2)
+    {
+      myEditCurrentArgument = send; 
+      GEOMBase_Skeleton::LineEditReturnPressed();
+    }
 }
 
 
@@ -393,19 +344,18 @@ void TransformationGUI_MultiRotationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  
+  ConstructorsClicked( getConstructorId() );
+}
 
-  if(myConstructorId == 0) {
-    GroupPoints->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  }
-  else if(myConstructorId == 1) {
-    GroupDimensions->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupDimensions->LineEdit1;
-  }
 
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void TransformationGUI_MultiRotationDlg::DeactivateActiveDialog()
+{
+  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -415,10 +365,8 @@ void TransformationGUI_MultiRotationDlg::ActivateThisDialog()
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if(!GroupConstructors->isEnabled())
+    ActivateThisDialog();
 }
 
 
@@ -428,8 +376,6 @@ void TransformationGUI_MultiRotationDlg::enterEvent(QEvent* e)
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::ValueChangedInSpinBox(double newValue)
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
   QObject* send = (QObject*)sender();
 
   if(send == GroupPoints->SpinBox_DX || send == GroupDimensions->SpinBox_DY1)
@@ -440,10 +386,8 @@ void TransformationGUI_MultiRotationDlg::ValueChangedInSpinBox(double newValue)
     myStep = newValue;
   else if(send == GroupDimensions->SpinBox_DY2)
     myNbTimes2 = (int)newValue;
-
-  if(myOkBase && myOkDir)
-    this->MakeMultiRotationSimulationAndDisplay();
-  return;
+  
+  displayPreview();
 }
 
 
@@ -451,108 +395,84 @@ void TransformationGUI_MultiRotationDlg::ValueChangedInSpinBox(double newValue)
 // function : ReverseAngle()
 // purpose  : 'state' not used here
 //=================================================================================
-void TransformationGUI_MultiRotationDlg::ReverseAngle(int state)
+void TransformationGUI_MultiRotationDlg::ReverseAngle()
 {
   myAng = -myAng;
-  if(myConstructorId == 0)
+
+  int aConstructorId = getConstructorId();
+
+  if(aConstructorId == 0)
     GroupPoints->SpinBox_DX->SetValue(myAng);
-  else if(myConstructorId == 1)
+  else if(aConstructorId == 1)
     GroupDimensions->SpinBox_DX1->SetValue(myAng);
 
-  if(myOkBase && myOkDir)
-    this->MakeMultiRotationSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
 
 //=================================================================================
-// function : MakeMultiRotationSimulationAndDisplay()
+// function : createOperation
 // purpose  :
 //=================================================================================
-void TransformationGUI_MultiRotationDlg::MakeMultiRotationSimulationAndDisplay() 
+GEOM::GEOM_IOperations_ptr TransformationGUI_MultiRotationDlg::createOperation()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  return getGeomEngine()->GetITransformOperations( getStudyId() );
+}
 
-  int i, j;
-  Standard_Real DX, DY, DZ;
-  gp_Trsf theTransformation;
-  gp_Trsf theTransformation1;
-  gp_Trsf theTransformation2;
-  gp_Pnt myPoint;
-  GProp_GProps System;
-  TopoDS_Compound compound;
 
-  BRep_Builder B;
-  B.MakeCompound(compound);  
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool TransformationGUI_MultiRotationDlg::isValid( QString& msg )
+{
+  return !(myBase->_is_nil() || myVector->_is_nil());
+}
 
-  if(myBase.ShapeType() == TopAbs_VERTEX)
-    myGeomBase->VertexToPoint(myBase, myPoint);
-  else if(myBase.ShapeType() == TopAbs_EDGE || myBase.ShapeType() == TopAbs_WIRE) {
-    BRepGProp::LinearProperties(myBase, System);
-    myPoint = System.CentreOfMass();
-  }
-  else if(myBase.ShapeType() == TopAbs_FACE || myBase.ShapeType() == TopAbs_SHELL) {
-    BRepGProp::SurfaceProperties(myBase, System);
-    myPoint = System.CentreOfMass();
-  }
-  else {
-    BRepGProp::VolumeProperties(myBase, System);
-    myPoint = System.CentreOfMass();
-  }
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool TransformationGUI_MultiRotationDlg::execute( ObjectList& objects )
+{
+  bool res = false;
+  
+  GEOM::GEOM_Object_var anObj;
 
-  TopoDS_Shape S = BRepBuilderAPI_MakeVertex(myPoint).Shape();
-
-  try {
-    switch (myConstructorId)
+  switch ( getConstructorId() ) 
+    {
+    case 0 :
       {
-      case 0 :
-	{ 
-	  gp_Ax1 AX1(myLoc, myDir);
-	  Standard_Real angle = 360/myNbTimes1;
-	  for(i = 0; i < myNbTimes1; i++) {
-	    theTransformation.SetRotation(AX1, i*angle*PI180);
-	    BRepBuilderAPI_Transform myBRepTransformation(S, theTransformation, Standard_False);
-	    B.Add(compound, myBRepTransformation.Shape());
-	  }
-	  mySimulationTopoDs = compound;
-	  myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-	  break;
+	if ( !CORBA::is_nil( myBase ) && !CORBA::is_nil( myVector ) ) {
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MultiRotate1D( myBase, myVector, myNbTimes1 );
+	  res = true;
 	}
-      case 1 :
-	{	
-	  gp_Ax1 AX2(myLoc, myDir);
-	  Handle(Geom_Line) Line = new Geom_Line(AX2);
-	  gp_Pnt P2 = GeomAPI_ProjectPointOnCurve(myPoint, Line);
-	  if(myPoint.IsEqual(P2, Precision::Confusion()))
-	    return;
-
-	  gp_Vec Vec(P2, myPoint);
-	  Vec.Normalize();
-
-	  for(i = 0; i < myNbTimes2; i++) {
-	    for(j = 0; j < myNbTimes1; j++) {
-	      DX = i * myStep * Vec.X();
-	      DY = i * myStep * Vec.Y();
-	      DZ = i * myStep * Vec.Z();
-	      myVec.SetCoord(DX, DY, DZ);
-
-	      theTransformation1.SetTranslation(myVec);
-	      theTransformation2.SetRotation(AX2, j*myAng*PI180);
-	      BRepBuilderAPI_Transform myBRepTransformation1(S, theTransformation1, Standard_False);
-	      BRepBuilderAPI_Transform myBRepTransformation2(myBRepTransformation1.Shape(), theTransformation2, Standard_False);
-	      B.Add(compound, myBRepTransformation2.Shape());
-	    }
-	  }
-	  mySimulationTopoDs = compound;
-	  myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-	  break;
-	}
+	break;
       }
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakeMultitranslationSimulationAndDisplay");
-    return;
-  }
-  return;
+    case 1 :
+      {
+	if ( !CORBA::is_nil( myBase ) && !CORBA::is_nil( myVector ) )
+	  {
+	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MultiRotate2D( myBase, myVector, myAng, myNbTimes1, myStep, myNbTimes2 );
+	    res = true;
+	  }
+	break;
+      }
+    }
+  
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+  
+  return res;
+}
+
+
+//=================================================================================
+// function : closeEvent
+// purpose  :
+//=================================================================================
+void  TransformationGUI_MultiRotationDlg::closeEvent( QCloseEvent* e )
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::closeEvent( e );
 }

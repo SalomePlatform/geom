@@ -29,8 +29,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=2926>
-<meta name=layout-width content=701>
+<meta name=layout-height content=3135>
+<meta name=layout-width content=491>
 
 
 <!--(Links)=========================================================-->
@@ -143,13 +143,14 @@ else
 
 <ul>
 	
-	<li class=kadov-p><p class="whs1"><a href="#Prism">Prism</a></p></li>
+	<li class=kadov-p><p class="whs1"><a href="#Prism">Extrusion</a></p></li>
 	
 	<li class=kadov-p><p class="whs1"><a href="#Revolution">Revolution</a></p></li>
 	
 	<li class=kadov-p><p class="whs1"><a href="#Filling">Filling</a></p></li>
 	
-	<li class=kadov-p><p class="whs1"><a href="#Pipe">Pipe</a></p></li>
+	<li class=kadov-p><p class="whs1"><a href="#Pipe">Pipe 
+ creation</a></p></li>
 </ul>
 
 <p class="whs1">&nbsp;</p>
@@ -163,20 +164,22 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<h3 class="whs4"><b style="font-weight: bold;"><a NAME=Prism><img src="salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image56.gif" width="20px" height="20px" border="0" class="img_whs5"> Prism</a></b> </h3>
+<h3 class="whs4"><b style="font-weight: bold;"><a NAME=Prism><img src="salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image56.gif" width="20px" height="20px" border="0" class="img_whs5"> Extrusion</a></b> </h3>
 
 <p class="whs1"><b style="font-weight: bold;">Description:</b> 
  Creates an extruded shape.</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (edge, face, solid or compsolid).</p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">TUI Command :</b><i> 
- geompy.MakePrism(GEOM_Shape, PointStruct, PointStruct)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakePrism(baseShape, Vector, 
+ Height)</I></span>, where baseShape is a basis of the prism, Vector is a normal 
+ of the prism and Height is a height of the prism.</p>
 
 <p class="whs1">&nbsp;</p>
 
@@ -213,13 +216,16 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (edge, face, solid or compsolid).</p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeRevolution(GEOM_Shape, AxisStruct, Double)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakeRevolution(Shape, Axis, 
+ Angle)</I></span>, where Shape is a shape to rotate, Axis is the axis of the 
+ revolution and Angle is an angle by which Shape has to be rotated around 
+ Axis.</p>
 
 <p class="whs1">&nbsp;</p>
 
@@ -254,13 +260,17 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (face).</p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeFilling(GEOM_Shape, Short, Short, Double, Double, Short)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakeFilling(Shape, MinDegree, 
+ MaxDegree, Tol2D, Tol3D, NbIter)</I></span>, where Shape is a shape to fill, 
+ MinDegree and MaxDegree are correspondingly maximal and minimal degree, 
+ Tol2D is a tolerance for 2D and Tol3D is a tolerance for 3D, NbIter is 
+ a number of iterations.</p>
 
 <p class="whs1">&nbsp;</p>
 
@@ -300,13 +310,15 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (edge, face, solid or compsolid).</p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakePipe(GEOM_Shape, GEOM_Shape)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakePipe(baseShape, pathShape)</I></span>, 
+ where baseShape is a shape to be extruded, pathShape is a path along which 
+ baseShape is extruded.</p>
 
 <p class="whs1">&nbsp;</p>
 

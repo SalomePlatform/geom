@@ -1,0 +1,14 @@
+Import: BREP|IGES|STEP
+Export: BREP|IGES|STEP
+
+BREP.Import: libBREPImport.so
+BREP.Export: libBREPExport.so
+BREP.Pattern: BREP Files ( *.brep )
+
+IGES.Import: libIGESImport.so
+IGES.Export: libIGESExport.so
+IGES.Pattern: IGES Files ( *.iges *.igs )
+
+STEP.Import: libSTEPImport.so
+STEP.Export: libSTEPExport.so
+STEP.Pattern: STEP Files ( *.step *.stp )

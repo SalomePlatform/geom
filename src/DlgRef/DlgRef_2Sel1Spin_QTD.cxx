@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DlgRef_2Sel1Spin_QTD.ui'
 **
-** Created: mar sep 23 16:05:09 2003
+** Created: Tue Jun 1 16:15:00 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ DlgRef_2Sel1Spin_QTD::DlgRef_2Sel1Spin_QTD( QWidget* parent,  const char* name, 
 {
     if ( !name )
 	setName( "DlgRef_2Sel1Spin_QTD" );
-    resize( 129, 117 ); 
+    resize( 163, 122 ); 
     setCaption( trUtf8( "DlgRef_2Sel1Spin_QTD" ) );
     DlgRef_2Sel1Spin_QTDLayout = new QGridLayout( this, 1, 1, 0, 6, "DlgRef_2Sel1Spin_QTDLayout"); 
 
@@ -69,6 +69,8 @@ DlgRef_2Sel1Spin_QTD::DlgRef_2Sel1Spin_QTD( QWidget* parent,  const char* name, 
 
     TextLabel2 = new QLabel( GroupBox1, "TextLabel2" );
     TextLabel2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel2->sizePolicy().hasHeightForWidth() ) );
+    TextLabel2->setFrameShape( QLabel::NoFrame );
+    TextLabel2->setFrameShadow( QLabel::Plain );
     TextLabel2->setText( trUtf8( "TL2" ) );
 
     Layout1->addWidget( TextLabel2, 1, 0 );
@@ -93,6 +95,12 @@ DlgRef_2Sel1Spin_QTD::DlgRef_2Sel1Spin_QTD( QWidget* parent,  const char* name, 
     GroupBox1Layout->addLayout( Layout1, 0, 0 );
 
     DlgRef_2Sel1Spin_QTDLayout->addWidget( GroupBox1, 0, 0 );
+
+    // tab order
+    setTabOrder( PushButton1, LineEdit1 );
+    setTabOrder( LineEdit1, PushButton2 );
+    setTabOrder( PushButton2, LineEdit2 );
+    setTabOrder( LineEdit2, SpinBox1 );
 }
 
 /*  

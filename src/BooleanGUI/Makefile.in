@@ -41,21 +41,14 @@ EXPORT_HEADERS=
 LIB = libBooleanGUI.la 
 
 LIB_SRC = 	BooleanGUI.cxx \
-		BooleanGUI_FuseDlg.cxx \
-		BooleanGUI_CommonDlg.cxx \
-		BooleanGUI_CutDlg.cxx \
-		BooleanGUI_SectionDlg.cxx
+		BooleanGUI_Dialog.cxx
 
 LIB_MOC = \
-		BooleanGUI.h \
-		BooleanGUI_FuseDlg.h \
-		BooleanGUI_CommonDlg.h \
-		BooleanGUI_CutDlg.h \
-		BooleanGUI_SectionDlg.h
+		BooleanGUI_Dialog.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl
 
-LIB_SERVER_IDL = 
+LIB_SERVER_IDL =  
 
 # additionnal information to compil and link file
 

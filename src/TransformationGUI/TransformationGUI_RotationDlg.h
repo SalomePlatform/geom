@@ -30,13 +30,8 @@
 #define DIALOGBOX_ROTATION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1Spin1Check.h"
-
-#include "TransformationGUI.h"
-
-#include "GEOM_ShapeTypeFilter.hxx"
-#include <gp_Dir.hxx>
-
+#include "DlgRef_2Sel1Spin2Check.h"
+  
 //=================================================================================
 // class    : TransformationGUI_RotationDlg
 // purpose  :
@@ -46,38 +41,39 @@ class TransformationGUI_RotationDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_RotationDlg(QWidget* parent = 0, const char* name = 0, TransformationGUI* theTransformationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_RotationDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_RotationDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakeRotationSimulationAndDisplay();
+    double GetAngle() const;
 
-    TransformationGUI* myTransformationGUI;
-
-    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;   /* Filters selection */
-
-    TopoDS_Shape myBase;
-    GEOM::GEOM_Shape_var myGeomShape;   /* is myBase */
-    gp_Pnt myLoc;
-    gp_Dir myDir;    
-    Standard_Real myAngle;
-    bool myOkBase; 
-    bool myOkAxis;
-
-    DlgRef_2Sel1Spin1Check* GroupPoints;
+    GEOM::ListOfGO myObjects;
+    GEOM::GEOM_Object_var myAxis;
+    
+    DlgRef_2Sel1Spin2Check* GroupPoints;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
+    void ClickOnCancel();
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ReverseAngle(int state);
-    void ValueChangedInSpinBox(double newValue);
-
+    void ValueChangedInSpinBox();
+    void CreateCopyModeChanged(bool isCreateCopy);
+    void onReverse();
 };
 
 #endif // DIALOGBOX_ROTATION_H

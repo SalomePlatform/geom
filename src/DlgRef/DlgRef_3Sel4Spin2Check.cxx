@@ -31,6 +31,7 @@
 #include <qlayout.h>
 #include <qspinbox.h>
 #include <qgroupbox.h>
+#include <qpushbutton.h>
 
 /* 
  *  Constructs a DlgRef_2Sel1Spin which is a child of 'parent', with the 
@@ -51,6 +52,11 @@ DlgRef_3Sel4Spin2Check::DlgRef_3Sel4Spin2Check(QWidget* parent, const char* name
   Layout2->addWidget(SpinBox_DY1, 1, 1);
   Layout3->addWidget(SpinBox_DX2, 0, 1);
   Layout3->addWidget(SpinBox_DY2, 1, 1);
+
+  // PAL6532
+  PushButton1->setAutoDefault( false );
+  PushButton2->setAutoDefault( false );
+  PushButton3->setAutoDefault( false );
 }
 
 

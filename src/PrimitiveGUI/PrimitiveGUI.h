@@ -24,40 +24,33 @@
 //  File   : PrimitiveGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef PRIMITIVEGUI_H
 #define PRIMITIVEGUI_H
 
-#include "GEOMBase.h"
+#include "GEOMGUI.h"
 
+  
 //=================================================================================
 // class    : PrimitiveGUI
 // purpose  :
 //=================================================================================
-class PrimitiveGUI : public QObject
+class PrimitiveGUI : public GEOMGUI
 {
-  Q_OBJECT /* for QT compatibility */
+protected:
+  PrimitiveGUI(); // hide constructor to avoid direct creation
 
 public :
-  PrimitiveGUI();
   ~PrimitiveGUI();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  // Get the only PrimitiveGUI object
+  static PrimitiveGUI* GetPrimitiveGUI();
 
-  void MakeBoxAndDisplay(const gp_Pnt P1, const gp_Pnt P2);
-  void MakeCylinderAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir,
-			      const double Radius, const double aHeight);
-  void MakeSphereAndDisplay(const gp_Pnt aCenterPoint, const double aRadius);
-  void MakeTorusAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir,
-			   const double Radius1, const double Radius2); 
-  void MakeConeAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir,
-			  const double Radius1, const double Radius2, const double aHeight);
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
-
+private:
+  static PrimitiveGUI* myGUIObject;    // the only PrimitiveGUI object
 };
 
 #endif

@@ -1,0 +1,12 @@
+#ifndef _TopoDS_Shape_HeaderFile
+#include <TopoDS_Shape.hxx>
+#endif
+#ifndef _NMTTools_DSFiller_HeaderFile
+#include <NMTTools_DSFiller.hxx>
+#endif
+#ifndef _TopTools_ListOfShape_HeaderFile
+#include <TopTools_ListOfShape.hxx>
+#endif
+#ifndef _NMTAlgo_Splitter_HeaderFile
+#include <NMTAlgo_Splitter.hxx>
+#endif

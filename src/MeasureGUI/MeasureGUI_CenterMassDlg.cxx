@@ -1,23 +1,23 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
 //
 //
 //
@@ -27,54 +27,56 @@
 //  $Header$
 
 #include "MeasureGUI_CenterMassDlg.h"
-
-#include <BRepBuilderAPI_MakeVertex.hxx>
-#include <BRepGProp.hxx>
-#include <GProp_GProps.hxx>
-#include <GProp_PrincipalProps.hxx>
-
+#include "MeasureGUI_1Sel3LineEdit_QTD.h"
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
 #include "utilities.h"
+#include "QAD_Desktop.h"
 
-using namespace std;
+#include <BRep_Tool.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <TopoDS.hxx>
+#include <gp_Pnt.hxx>
 
 //=================================================================================
 // class    : MeasureGUI_CenterMassDlg()
-// purpose  : Constructs a MeasureGUI_CenterMassDlg which is a child of 'parent', with the 
+// purpose  : Constructs a MeasureGUI_CenterMassDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg(QWidget* parent, const char* name, MeasureGUI* theMeasureGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg( QWidget* parent, SALOME_Selection* Sel )
+: GEOMBase_Skeleton( parent, "MeasureGUI_CenterMassDlg", Sel, false,
+    WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CENTERMASS")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr( "ICON_DLG_CENTERMASS" ) ) );
+  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr( "ICON_SELECT" ) ) );
 
-  setCaption(tr("GEOM_CMASS_TITLE"));
+  setCaption( tr( "GEOM_CMASS_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_CMASS"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  
+  GroupConstructors->setTitle( tr( "GEOM_CMASS" ) );
+  RadioButton1->setPixmap( image0 );
+  RadioButton2->close( TRUE );
+  RadioButton3->close( TRUE );
 
-  GroupC1 = new MeasureGUI_1Sel3LineEdit_QTD(this, "GroupC1");
-  GroupC1->GroupBox1->setTitle(tr("GEOM_CENTER"));
-  GroupC1->TextLabel1->setText(tr("GEOM_OBJECT"));
-  GroupC1->TextLabel2->setText(tr("GEOM_X"));
-  GroupC1->TextLabel3->setText(tr("GEOM_Y"));
-  GroupC1->TextLabel4->setText(tr("GEOM_Z"));
-  GroupC1->LineEdit2->setReadOnly(TRUE);
-  GroupC1->LineEdit3->setReadOnly(TRUE);
-  GroupC1->LineEdit4->setReadOnly(TRUE);
-  GroupC1->PushButton1->setPixmap(image1);
+  myGrp = new MeasureGUI_1Sel3LineEdit_QTD( this, "myGrp" );
+  myGrp->GroupBox1->setTitle( tr( "GEOM_CENTER" ) );
+  myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
+  myGrp->TextLabel2->setText( tr( "GEOM_X" ) );
+  myGrp->TextLabel3->setText( tr( "GEOM_Y" ) );
+  myGrp->TextLabel4->setText( tr( "GEOM_Z" ) );
+  myGrp->LineEdit2->setReadOnly( TRUE );
+  myGrp->LineEdit3->setReadOnly( TRUE );
+  myGrp->LineEdit4->setReadOnly( TRUE );
+  myGrp->PushButton1->setPixmap( image1 );
+  myGrp->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupC1, 1, 0);
+  Layout1->addWidget( myGrp, 2, 0 );
   /***************************************************************/
 
   /* Initialisation */
-  myMeasureGUI = theMeasureGUI;
-  Init();
+  Init( Sel );
 }
 
 
@@ -84,7 +86,6 @@ MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg(QWidget* parent, const char* 
 //=================================================================================
 MeasureGUI_CenterMassDlg::~MeasureGUI_CenterMassDlg()
 {
-  // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -92,27 +93,28 @@ MeasureGUI_CenterMassDlg::~MeasureGUI_CenterMassDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_CenterMassDlg::Init()
+void MeasureGUI_CenterMassDlg::Init( SALOME_Selection* Sel )
 {
   /* init variables */
-  myEditCurrentArgument = GroupC1->LineEdit1;
-
-  myOkCenterMass = false;
+  mySelection = Sel;
+  myEditCurrentArgument = myGrp->LineEdit1;
 
    /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk, SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply, SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupC1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupC1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( myGrp->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( myGrp->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+
+  initName( tr( "GEOM_POINT") );
+  globalSelection();
+  SelectionIntoArgument();
 
   /* displays Dialog */
-  GroupC1->show();
+  myGrp->show();
   this->show();
-
-  return;
 }
 
 
@@ -122,9 +124,8 @@ void MeasureGUI_CenterMassDlg::Init()
 //=================================================================================
 void MeasureGUI_CenterMassDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -132,17 +133,15 @@ void MeasureGUI_CenterMassDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void MeasureGUI_CenterMassDlg::ClickOnApply()
+bool MeasureGUI_CenterMassDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  if(myOkCenterMass)
-    myMeasureGUI->MakeCDGAndDisplay(myGeomShape);
-  return;
+  initName();
+  return true;
+
+//    myMeasureGUI->MakeCDGAndDisplay( myGeomShape );
 }
 
 
@@ -152,34 +151,28 @@ void MeasureGUI_CenterMassDlg::ClickOnApply()
 //=================================================================================
 void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  myEditCurrentArgument->setText("");
-  QString aString = "";
+  erasePreview();
+  myObj = GEOM::GEOM_Object::_nil();
 
-  myOkCenterMass = false;
-  GroupC1->LineEdit2->setText("");
-  GroupC1->LineEdit3->setText("");
-  GroupC1->LineEdit4->setText("");
-
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1)
+  if ( mySelection->IObjectCount() != 1 )
+  {
+    processObject();
     return;
+  }
 
-  /*  nbSel == 1  */
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomBase->GetTopoFromSelection(mySelection, this->myShape))
-    return;  
+  Standard_Boolean testResult = Standard_False;
+  GEOM::GEOM_Object_var aSelectedObject =
+    GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
 
-  Standard_Boolean testResult;
-  myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-  if(!testResult)
+  if ( !testResult || aSelectedObject->_is_nil() )
+  {
+    processObject();
     return;
+  }
 
-  myEditCurrentArgument->setText(aString);
-
-  if(this->CalculateAndDisplayCenterMass())
-    myOkCenterMass = true;
-  return;
+  myObj = aSelectedObject;
+  processObject();
+  displayPreview();
 }
 
 
@@ -189,15 +182,9 @@ void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
 //=================================================================================
 void MeasureGUI_CenterMassDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();
-
-  if(send == GroupC1->PushButton1) {
-    GroupC1->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupC1->LineEdit1;
-  }
-
-  this->SelectionIntoArgument();
-  return;
+  myGrp->LineEdit1->setFocus();
+  myEditCurrentArgument = myGrp->LineEdit1;
+  SelectionIntoArgument();
 }
 
 
@@ -207,14 +194,12 @@ void MeasureGUI_CenterMassDlg::SetEditCurrentArgument()
 //=================================================================================
 void MeasureGUI_CenterMassDlg::LineEditReturnPressed()
 {
-  QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupC1->LineEdit1)
-    myEditCurrentArgument = GroupC1->LineEdit1;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  QLineEdit* send = ( QLineEdit* )sender();
+  if ( send == myGrp->LineEdit1 )
+  {
+    myEditCurrentArgument = myGrp->LineEdit1;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 
@@ -225,10 +210,41 @@ void MeasureGUI_CenterMassDlg::LineEditReturnPressed()
 void MeasureGUI_CenterMassDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+
+  connect( mySelection, SIGNAL( currentSelectionChanged() ),
+           this,        SLOT  ( SelectionIntoArgument() ) );
+
+  globalSelection();
+  displayPreview();
+}
+
+//=================================================================================
+// function : processObject()
+// purpose  : Fill dialog fields in accordance with myObj
+//=================================================================================
+void MeasureGUI_CenterMassDlg::processObject()
+{
+  if ( myObj->_is_nil() )
+  {
+    myGrp->LineEdit1->setText( "" );
+    myGrp->LineEdit2->setText( "" );
+    myGrp->LineEdit3->setText( "" );
+    myGrp->LineEdit4->setText( "" );
+    erasePreview();
+  }
+  else
+  {
+    double x = 0, y = 0, z = 0;
+    
+    getParameters( x, y, z );
+    
+    myGrp->LineEdit1->setText( GEOMBase::GetName( myObj ) );
+    myGrp->LineEdit2->setText( QString( "%1" ).arg( x ) );
+    myGrp->LineEdit3->setText( QString( "%1" ).arg( y ) );
+    myGrp->LineEdit4->setText( QString( "%1" ).arg( z ) );
+
+    displayPreview();
+  }
 }
 
 
@@ -236,65 +252,85 @@ void MeasureGUI_CenterMassDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void MeasureGUI_CenterMassDlg::enterEvent(QEvent* e)
+void MeasureGUI_CenterMassDlg::enterEvent( QEvent* e )
 {
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
-
 //=================================================================================
-// function : CalculateAndDisplayCenterMass()
+// function : createOperation
 // purpose  :
 //=================================================================================
-bool MeasureGUI_CenterMassDlg::CalculateAndDisplayCenterMass()
+GEOM::GEOM_IOperations_ptr MeasureGUI_CenterMassDlg::createOperation()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  return getGeomEngine()->GetIMeasureOperations( getStudyId() );
+}
 
-  try {
-    QString resString;     
-    GProp_GProps System;
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool MeasureGUI_CenterMassDlg::isValid( QString& )
+{
+  return !myObj->_is_nil();
+}
 
-    if(myShape.ShapeType() == TopAbs_VERTEX)
-      myGeomBase->VertexToPoint(myShape, myCenterMass);
-    else if(myShape.ShapeType() == TopAbs_EDGE || myShape.ShapeType() == TopAbs_WIRE) {
-      BRepGProp::LinearProperties(myShape, System);
-      myCenterMass = System.CentreOfMass();
-    }
-    else if(myShape.ShapeType() == TopAbs_FACE || myShape.ShapeType() == TopAbs_SHELL) {
-      BRepGProp::SurfaceProperties(myShape, System);
-      myCenterMass = System.CentreOfMass();
-    }
-    else {
-      BRepGProp::VolumeProperties(myShape, System);
-      myCenterMass = System.CentreOfMass();
-    }
-    
-    BRepBuilderAPI_MakeVertex V(myCenterMass);
-    mySimulationTopoDs = V.Shape();
-    
-    resString = tr("%1").arg(myCenterMass.X(), 12, 'f', 6);    
-    GroupC1->LineEdit2->setText(resString);
-    
-    resString = tr("%1").arg(myCenterMass.Y(), 12, 'f', 6);    
-    GroupC1->LineEdit3->setText(resString);
-    
-    resString = tr("%1").arg(myCenterMass.Z(), 12, 'f', 6);    
-    GroupC1->LineEdit4->setText(resString);
-    
-    
-    if(!mySimulationTopoDs.IsNull()) {
-      myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool MeasureGUI_CenterMassDlg::getParameters( double& theX, double& theY, double& theZ )
+{
+  if ( myObj->_is_nil() )
+    return false;
+  else
+  {
+    try
+    {
+      GEOM::GEOM_Object_var anObj;
+      anObj = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetCentreOfMass( myObj );
+      if ( !getOperation()->IsDone() )
+        return false;
+
+      TopoDS_Shape aShape;
+      if ( !GEOMBase::GetShape( anObj, aShape ) ||
+           aShape.IsNull() ||
+           aShape.ShapeType() != TopAbs_VERTEX )
+        return false;
+
+      TopoDS_Vertex aVertex = TopoDS::Vertex( aShape );
+
+      gp_Pnt aPnt = BRep_Tool::Pnt( aVertex );
+
+      theX = aPnt.X();
+      theY = aPnt.Y();
+      theZ = aPnt.Z();
+
       return true;
     }
+    catch( const SALOME::SALOME_Exception& e )
+    {
+      QtCatchCorbaException( e );
+      return false;
+    }
   }
-  catch(Standard_Failure) {
-    MESSAGE("Catch intercepted in CalculateAndDisplayCenterMass()");
-  }
-  return false;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool MeasureGUI_CenterMassDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  anObj = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetCentreOfMass( myObj );
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
 }
 
 

@@ -33,10 +33,7 @@
 #include "DlgRef_2Sel_QTD.h"
 #include "DlgRef_3Spin.h"
 
-#include "PrimitiveGUI.h"
-
-#include "GEOM_ShapeTypeFilter.hxx"
-#include <gp_Pnt.hxx>
+using namespace std;
 
 //=================================================================================
 // class    : PrimitiveGUI_BoxDlg
@@ -45,40 +42,40 @@
 class PrimitiveGUI_BoxDlg : public GEOMBase_Skeleton
 {
     Q_OBJECT
-
-public:
-    PrimitiveGUI_BoxDlg(QWidget* parent = 0, const char* name = 0, PrimitiveGUI* thePrimitiveGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    
+    public:
+    PrimitiveGUI_BoxDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~PrimitiveGUI_BoxDlg();
+    
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+    
+    virtual void closeEvent( QCloseEvent* e );
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    bool TestBoxDimensions(gp_Pnt P1, gp_Pnt P2);
-
-    PrimitiveGUI* myPrimitiveGUI;
-
-    double step;
-    int myConstructorId;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;  /* filter for selection */
-
-    gp_Pnt myPoint1;   /* Points containing the vector */ 
-    gp_Pnt myPoint2;
-    bool myOkPoint1;   /* true when myPoint is defined */
-    bool myOkPoint2;
-
+    
+    GEOM::GEOM_Object_var myPoint1, myPoint2;   /* Points containing the vector */ 
+    
     DlgRef_2Sel_QTD* GroupPoints;
     DlgRef_3Spin* GroupDimensions;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
+    void ClickOnCancel();
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ConstructorsClicked(int constructorId);
-    void ValueChangedInSpinBox(double newValue);
-
+    void ConstructorsClicked(int);
+    void ValueChangedInSpinBox();
+    
 };
 
 #endif // DIALOGBOX_BOX_H

@@ -29,35 +29,53 @@
 #define DIALOGBOX_PROPERTIES_H
 
 #include "MeasureGUI_Skeleton.h"
-#include "MeasureGUI_1Sel3LineEdit_QTD.h"
-
-#include "MeasureGUI.h"
+class MeasureGUI_1Sel3LineEdit_QTD;
 
 //=================================================================================
 // class    : MeasureGUI_PropertiesDlg
-// purpose  :
+// purpose  : Dialog for displaying length, area and volume
 //=================================================================================
+
 class MeasureGUI_PropertiesDlg : public MeasureGUI_Skeleton
 { 
     Q_OBJECT
 
 public:
-    MeasureGUI_PropertiesDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
-    ~MeasureGUI_PropertiesDlg();
+                                        MeasureGUI_PropertiesDlg( QWidget*          parent,
+                                                                  SALOME_Selection* Sel );
+                                        ~MeasureGUI_PropertiesDlg();
+
+protected:
+
+    // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
+    virtual void                        processObject();
+    virtual void                        activateSelection();
+    virtual SALOME_Prs*                 buildPrs();
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
-    void CalculateAndDisplayProperties(const TopoDS_Shape& S);
 
-    MeasureGUI_1Sel3LineEdit_QTD* GroupC1;
+    void                                Init( SALOME_Selection* Sel );
+    bool                                getParameters( double& theLength,
+                                                       double& theArea,
+                                                       double& theVolume );
 
-private slots:
-    void SetEditCurrentArgument();
-    void SelectionIntoArgument();
-    void LineEditReturnPressed();
-    void ActivateThisDialog();
+private:    
 
+    MeasureGUI_1Sel3LineEdit_QTD*       myGrp;
 };
 
 #endif // DIALOGBOX_PROPERTIES_H
+
+
+
+
+
+
+
+
+
+
+
+
+
+

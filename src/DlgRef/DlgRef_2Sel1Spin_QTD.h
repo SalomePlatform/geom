@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DlgRef_2Sel1Spin_QTD.ui'
 **
-** Created: mar sep 23 16:05:09 2003
+** Created: Tue Jun 1 16:14:59 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

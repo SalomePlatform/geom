@@ -26,27 +26,29 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "EntityGUI_SubShapeDlg.h"
+#include "GEOM_Displayer.h"
 
-#include "DisplayGUI.h"
 #include "QAD_RightFrame.h"
-#include "OCCViewer_Viewer3d.h"
+#include "QAD_Desktop.h"
+#include "SALOME_ListIteratorOfListIO.hxx"
 
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
 
 #include <qmessagebox.h>
 
 //=================================================================================
-// class    : EntityGUI_SubShapeDlg()
+// class    : EntityGUI_SubShapeDlg
 // purpose  : Constructs a EntityGUI_SubShapeDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(QWidget* parent, const char* name, EntityGUI* theEntityGUI, SALOME_Selection* Sel, Handle(AIS_InteractiveContext) ic, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, Sel, modal, fl)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SUBSHAPE")));
   QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -65,13 +67,12 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(QWidget* parent, const char* name, 
   GroupPoints->TextLabel2->setText(tr("GEOM_SUBSHAPE_TYPE"));
   GroupPoints->CheckButton1->setText(tr("GEOM_SUBSHAPE_SELECT"));
   GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints->LineEdit1->setReadOnly( true );
 
   Layout1->addWidget(GroupPoints, 1, 0);
   /***************************************************************/
 
-  /* Initialisations */
-  myEntityGUI = theEntityGUI;
-  Init(ic);
+  Init();
 }
 
 
@@ -81,7 +82,6 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(QWidget* parent, const char* name, 
 //=================================================================================
 EntityGUI_SubShapeDlg::~EntityGUI_SubShapeDlg()
 {
-  // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -89,15 +89,13 @@ EntityGUI_SubShapeDlg::~EntityGUI_SubShapeDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void EntityGUI_SubShapeDlg::Init(Handle(AIS_InteractiveContext) ic)
+void EntityGUI_SubShapeDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
+  myObject = GEOM::GEOM_Object::_nil();
 
   myWithShape = true;
-  myAbort = myOkShape = myUseLocalContext = false;
-  myIC = ic;
-  myLocalContextId = -1;
 
   /* type for sub shape selection */
   GroupPoints->ComboBox1->insertItem("Compound");
@@ -109,9 +107,6 @@ void EntityGUI_SubShapeDlg::Init(Handle(AIS_InteractiveContext) ic)
   GroupPoints->ComboBox1->insertItem("Edge");
   GroupPoints->ComboBox1->insertItem("Vertex");
   GroupPoints->ComboBox1->insertItem("Shape");
-
-  myShapeType = GroupPoints->ComboBox1->currentItem();
-  myOkSelectSubMode = GroupPoints->CheckButton1->isChecked();
 
   if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC)
     GroupPoints->CheckButton1->setEnabled(false);
@@ -128,15 +123,13 @@ void EntityGUI_SubShapeDlg::Init(Handle(AIS_InteractiveContext) ic)
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(ComboTextChanged()));
-  connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(AllOrNotAll()));
+  connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(SubShapeToggled()));
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
+  updateButtonState();
 
-  return;
+  SelectionIntoArgument();
 }
 
 
@@ -146,15 +139,8 @@ void EntityGUI_SubShapeDlg::Init(Handle(AIS_InteractiveContext) ic)
 //=================================================================================
 void EntityGUI_SubShapeDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-
-  /* User has aborted or not operation of explode all with many sub shapes */
-  if(myAbort == false)
-    this->ClickOnCancel();
-  else
-    myAbort = false;
-
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -162,65 +148,26 @@ void EntityGUI_SubShapeDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void EntityGUI_SubShapeDlg::ClickOnApply()
+bool EntityGUI_SubShapeDlg::ClickOnApply()
 {
   QAD_Application::getDesktop()->putInfo(tr(""));
-  bool testResult = false;
-  myAbort = false; /* Not aborted by default */
     
   /* Explode all sub shapes */
-  if(myOkShape && !myOkSelectSubMode) {
+  if( isAllSubShapes() ) {
     /* More than 30 subshapes : ask confirmation */
-    unsigned int nb = NumberOfSubShapes(myShape, myShapeType);
+    unsigned int nb = NumberOfSubShapes(myShape, shapeType());
     if(nb > 30) {
       const QString caption = tr("GEOM_CONFIRM");
       const QString text = tr("GEOM_CONFIRM_INFO").arg(nb);
       const QString button0 = tr("GEOM_BUT_EXPLODE");
       const QString button1 = tr("GEOM_BUT_CANCEL");
-	    
-      if(QMessageBox::warning(this, caption, text, button0, button1) == 0)
-	testResult = myEntityGUI->OnSubShapeGetAll(myShape, myShapeIOR, myShapeType);
-      else
-	myAbort = true;  /* aborted */
+
+      if(QMessageBox::warning(this, caption, text, button0, button1) != 0)
+        return false;  /* aborted */
     }
-    else
-      testResult = myEntityGUI->OnSubShapeGetAll(myShape, myShapeIOR, myShapeType);
   }
-  /* explode only selected sub shapes */
-  else if(myOkShape && myOkSelectSubMode)
-    testResult = myEntityGUI->OnSubShapeGetSelected(myShape, myShapeIOR, myShapeType, myLocalContextId, myUseLocalContext); 
 
-  if(!testResult) {
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-    myAbort = true;
-  }
-  else
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-
-  /* Reset all arguments and local context to allow user a new selection ...*/
-  //this->ResetStateOfDialog();
-  return;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void EntityGUI_SubShapeDlg::ClickOnCancel()
-{
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      myUseLocalContext = false;
-    }
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
-  }
-  GEOMBase_Skeleton::ClickOnCancel();
-  return;
+  return onAccept();
 }
 
 
@@ -231,98 +178,107 @@ void EntityGUI_SubShapeDlg::ClickOnCancel()
 //=================================================================================
 void EntityGUI_SubShapeDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
-  this->ResetStateOfDialog();
+  if ( !isAllSubShapes() )
+    return;
+
+  ResetStateOfDialog();
+
   QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
-    myOkShape = false;
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects( mySelection, aString, true );
+  if( nbSel != 1 )
     return;
-  }
-  
-  /* nbSel == 1 */
+
   TopoDS_Shape S;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;
-  
-  if(!IO->hasEntry()) {
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
+  if ( !IO->hasEntry() )
+  {
+    QAD_Application::getDesktop()->putInfo( tr( "GEOM_PRP_SHAPE_IN_STUDY" ) );
+    updateButtonState();
     return;
   }
 
-  if(!S.IsNull() && S.ShapeType() != TopAbs_VERTEX) {
-    if(IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject))) {
-      Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast( IO );
-      myShapeIOR = GIObject->getIOR(); /* the Geom IOR string of selection */
-      myEditCurrentArgument->setText(aString);
-      myShape = S;
-      myOkShape = true;
-    }
-    else {
-      SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-      SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
-      SALOMEDS::GenericAttribute_var anAttr;
-      SALOMEDS::AttributeIOR_var anIOR;
-      if(!obj->_is_nil()) {
-	if(obj->FindAttribute(anAttr, "AttributeIOR")) {
-	  anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	  myShapeIOR = anIOR->Value();
-	  myOkShape = true;
-	  myShape = S;
-	  GroupPoints->LineEdit1->setText(aString);
-	}
-      }
-    }
-    
-    int SelectedShapeType = GroupPoints->ComboBox1->currentItem();
-    int count = GroupPoints->ComboBox1->count();
+  if ( !myGeomBase->GetTopoFromSelection( mySelection, S ) ||
+       S.IsNull() ||
+       S.ShapeType() == TopAbs_VERTEX )
+  {
+    updateButtonState();
+    return;
+  }
 
-    if(myWithShape) 
-      count = count - 1;
 
-    int i = 0;
-    while(i <= myShape.ShapeType()) {
-      GroupPoints->ComboBox1->removeItem(0);
+  Standard_Boolean testResult;
+  myObject = GEOMBase::ConvertIOinGEOMObject( IO, testResult );
+  if ( !testResult || myObject->_is_nil() )
+  {
+    updateButtonState();
+    return;
+  }
+
+  myShape = S;
+  GroupPoints->LineEdit1->setText( aString );
+
+
+  int SelectedShapeType = GroupPoints->ComboBox1->currentItem();
+  int count = GroupPoints->ComboBox1->count();
+
+  if ( myWithShape )
+    count = count - 1;
+
+  int i = 0;
+  // Solving PAL5590
+  if ( myShape.ShapeType() == TopAbs_COMPOUND ) {
+    unsigned int nb = NumberOfSubShapes(myShape, TopAbs_COMPOUND);
+    if (nb > 0)
       i++;
-    }
-
-    if(myShape.ShapeType()==TopAbs_COMPOUND) {
-      if(myWithShape == false) {
-	GroupPoints->ComboBox1->insertItem("Shape");
-	myWithShape = true;
-      }
-    }
-    else {
-      if(myWithShape == true) {
-	GroupPoints->ComboBox1->removeItem(GroupPoints->ComboBox1->count() - 1);
-	myWithShape = false;
-      }
-    }
-    
-    int count1 = GroupPoints->ComboBox1->count();
-    if(myWithShape)
-      count1 = count1 - 1;
-    
-    if(SelectedShapeType > myShape.ShapeType()) {
-      if(SelectedShapeType == 8) {
-	if(myShape.ShapeType() != TopAbs_COMPOUND) {
-	  GroupPoints->ComboBox1->setCurrentItem(0);
-	  myShapeType = 8 - count1;
-	}
-      }
-      else {
-	GroupPoints->ComboBox1->setCurrentItem(count1 - count + SelectedShapeType);
-	myShapeType = 8 - count1 + GroupPoints->ComboBox1->currentItem();
-      }
-    } 
-    else {
-      GroupPoints->ComboBox1->setCurrentItem(0);
-      myShapeType = 8 - count1;
-    }    
   }
-  return;
+  while ( i <= myShape.ShapeType())
+  {
+    GroupPoints->ComboBox1->removeItem( 0 );
+    i++;
+  }
+
+  if ( myShape.ShapeType() == TopAbs_COMPOUND )
+  {
+    if ( myWithShape == false )
+    {
+      GroupPoints->ComboBox1->insertItem( "Shape" );
+      myWithShape = true;
+    }
+  }
+  else
+  {
+    if ( myWithShape == true )
+    {
+      GroupPoints->ComboBox1->removeItem( GroupPoints->ComboBox1->count() - 1 );
+      myWithShape = false;
+    }
+  }
+
+  int count1 = GroupPoints->ComboBox1->count();
+  if ( myWithShape )
+    count1 = count1 - 1;
+
+  if ( SelectedShapeType > myShape.ShapeType() )
+  {
+    if ( SelectedShapeType == 8 )
+    {
+      if ( myShape.ShapeType() != TopAbs_COMPOUND )
+      {
+        GroupPoints->ComboBox1->setCurrentItem( 0 );
+        ComboTextChanged();
+      }
+    }
+    else
+      GroupPoints->ComboBox1->setCurrentItem(count1 - count + SelectedShapeType);
+  }
+  else
+  {
+    GroupPoints->ComboBox1->setCurrentItem( 0 );
+    ComboTextChanged();
+  }
+
+  updateButtonState();
 }
 
 
@@ -332,15 +288,12 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
 //=================================================================================
 void EntityGUI_SubShapeDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();
-
-  if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  }
-  this->SelectionIntoArgument();
-
-  return;
+  GroupPoints->LineEdit1->setFocus();
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+  
+  GroupPoints->CheckButton1->setChecked( FALSE );
+  SubShapeToggled();
+  SelectionIntoArgument();
 }
 
 
@@ -352,12 +305,11 @@ void EntityGUI_SubShapeDlg::LineEditReturnPressed()
 {  
   QLineEdit* send = (QLineEdit*)sender();
   if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
+    SetEditCurrentArgument();
   else
     return;
 
   GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
 }
 
 
@@ -368,10 +320,8 @@ void EntityGUI_SubShapeDlg::LineEditReturnPressed()
 void EntityGUI_SubShapeDlg::DeactivateActiveDialog()
 {
   if(GroupConstructors->isEnabled()) {
-    this->ResetStateOfDialog();
     GEOMBase_Skeleton::DeactivateActiveDialog();
   }
-  return;
 }
 
 
@@ -383,11 +333,8 @@ void EntityGUI_SubShapeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
-    GroupPoints->CheckButton1->setEnabled(true);
-  else
-    GroupPoints->CheckButton1->setEnabled(false);
-  return;
+  SubShapeToggled();
+  updateButtonState();
 }
 
 
@@ -399,22 +346,8 @@ void EntityGUI_SubShapeDlg::enterEvent(QEvent* e)
 {
   if(GroupConstructors->isEnabled())
     return;
-  this->ActivateThisDialog();
-  return;
+  ActivateThisDialog();
 }
-
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void EntityGUI_SubShapeDlg::closeEvent(QCloseEvent* e)
-{
-  /* same than click on cancel button */
-  this->ClickOnCancel();
-  return;
-}
-
 
 //=================================================================================
 // function : ResetStateOfDialog()
@@ -422,14 +355,13 @@ void EntityGUI_SubShapeDlg::closeEvent(QCloseEvent* e)
 //=================================================================================
 void EntityGUI_SubShapeDlg::ResetStateOfDialog()
 {
-  if(myAbort == true) {
-    myOkShape = false;
-    myEditCurrentArgument->setText("");
-  }
+  myObject = GEOM::GEOM_Object::_nil();
+  myShape.Nullify();
+  myEditCurrentArgument->setText("");
 
   int SelectedShapeType = GroupPoints->ComboBox1->currentItem();
   int count = GroupPoints->ComboBox1->count();
-  if(myWithShape)
+  if ( myWithShape )
     count = count - 1;
 
   /* type for sub shape selection */
@@ -443,80 +375,27 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
   GroupPoints->ComboBox1->insertItem("Edge");
   GroupPoints->ComboBox1->insertItem("Vertex");
   GroupPoints->ComboBox1->insertItem("Shape");
-  myWithShape=true;
-  GroupPoints->ComboBox1->setCurrentItem(8 - count + SelectedShapeType);
-  myOkSelectSubMode = false;
+  
+  myWithShape = true;
+  
+  GroupPoints->ComboBox1->setCurrentItem( 8 - count + SelectedShapeType );
+  ComboTextChanged();
 
-  /* unpress buttons : due to abort box*/
-  buttonApply->setDown(FALSE);
-  buttonOk->setDown(FALSE);
-  GroupPoints->CheckButton1->setChecked(FALSE);
-
-  /* Close its local contact if opened */
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      myUseLocalContext = false;
-    }
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
-  }
-  return;
+  updateButtonState();
 }
 
 
 //=================================================================================
-// function : AllOrNotAll()
+// function : SubShapeToggled()
 // purpose  : Allow user selection of all or only selected sub shapes
 //          : Called when 'CheckButton1' state change
 //=================================================================================
-void EntityGUI_SubShapeDlg::AllOrNotAll()
+void EntityGUI_SubShapeDlg::SubShapeToggled()
 {
-  /* No sub shape selection if main shape not selected */
-  if(!myOkShape) {
-    this->ResetStateOfDialog();
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_FIRST"));
-    return;
-  }
-  
-  if(myShapeType ==TopAbs_SHAPE && myShape.ShapeType()==TopAbs_COMPOUND) {
-    /* Select sub shapes mode not checked */
-    myOkSelectSubMode = false;    
-    GroupPoints->CheckButton1->setChecked( FALSE );
-    //no meaning to allow user selection for type = shape
-    //TODO - add another message
-    //QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_FIRST")) ;
-    return;
-  }
-
-  myOkSelectSubMode = GroupPoints->CheckButton1->isChecked();
-
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      myUseLocalContext = false;
-    }
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
-  }
-  else {
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER"));
-    return;
-  }
-
-  if(myOkShape && myOkSelectSubMode) {
-    /* local context is defined into the method */
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->PrepareSubShapeSelection(myShapeType, myLocalContextId);    
-    myUseLocalContext = true;
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_FACE"));
-  }
-  return;
+  if ( isAllSubShapes() )
+    globalSelection( GEOM_ALLSHAPES );
+  else
+    localSelection( myObject, shapeType() );
 }
 
 
@@ -526,27 +405,9 @@ void EntityGUI_SubShapeDlg::AllOrNotAll()
 //=================================================================================
 void EntityGUI_SubShapeDlg::ComboTextChanged()
 {
-  if(myOkShape)
-    myShapeType = GroupPoints->ComboBox1->currentItem() + myShape.ShapeType() + 1;
-  else
-    myShapeType = GroupPoints->ComboBox1->currentItem();
-
   /* Select sub shapes mode not checked */
-  GroupPoints->CheckButton1->setChecked(FALSE);
-  myOkSelectSubMode = FALSE;
-
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      myUseLocalContext = false;
-    }
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
-  }
-  return;
+  updateButtonState();
+  SubShapeToggled();    
 }
 
 
@@ -554,19 +415,170 @@ void EntityGUI_SubShapeDlg::ComboTextChanged()
 // function : NumberOfSubShapes()
 // purpose  :
 //=================================================================================
-unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes(const TopoDS_Shape& S, const int shapeType)
+unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes (const TopoDS_Shape& S,
+                                                       const int shapeType) const
 {
-  if(S.IsNull())
+  if (S.IsNull())
     return 0;
-  
+
   unsigned int index = 0;
-  TopExp_Explorer Exp(S, TopAbs_ShapeEnum(shapeType));
   TopTools_MapOfShape M;
-  while(Exp.More()) {
-    if(M.Add(Exp.Current()))
-      index++;
-    Exp.Next();
+
+  if (S.ShapeType() == TopAbs_COMPOUND &&
+      (TopAbs_ShapeEnum(shapeType) == TopAbs_SHAPE ||
+       TopAbs_ShapeEnum(shapeType) == TopAbs_COMPSOLID ||
+       TopAbs_ShapeEnum(shapeType) == TopAbs_COMPOUND)) {
+    TopoDS_Iterator It (S, Standard_True, Standard_True);
+    for (; It.More(); It.Next()) {
+      if (M.Add(It.Value())) {
+        if (TopAbs_ShapeEnum(shapeType) == TopAbs_SHAPE ||
+            TopAbs_ShapeEnum(shapeType) == It.Value().ShapeType()) {
+          index++;
+        }
+      }
+    }
+  } else {
+    TopExp_Explorer Exp (S, TopAbs_ShapeEnum(shapeType));
+    for (; Exp.More(); Exp.Next()) {
+      if (M.Add(Exp.Current())) {
+        index++;
+      }
+    }
   }
+
   M.Clear();
   return index;
 }
+
+//=================================================================================
+// function : updateButtonState
+// purpose  :
+//=================================================================================
+void EntityGUI_SubShapeDlg::updateButtonState()
+{
+  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC ||
+       myObject->_is_nil() || shapeType() == TopAbs_SHAPE || shapeType() == TopAbs_COMPOUND ) {
+    GroupPoints->CheckButton1->setChecked( FALSE );
+    GroupPoints->CheckButton1->setEnabled( FALSE );
+  }
+  else
+    GroupPoints->CheckButton1->setEnabled( TRUE );
+}
+
+//=================================================================================
+// function : isAllSubShapes
+// purpose  :
+//=================================================================================
+bool EntityGUI_SubShapeDlg::isAllSubShapes() const
+{
+  return !GroupPoints->CheckButton1->isChecked() || !GroupPoints->CheckButton1->isEnabled();
+}
+
+//=================================================================================
+// function : shapeType
+// purpose  :
+//=================================================================================
+int EntityGUI_SubShapeDlg::shapeType() const
+{
+  int type = GroupPoints->ComboBox1->currentItem();
+
+  if (myObject->_is_nil())
+    return type;
+
+  // Solving PAL5590
+  type += myShape.ShapeType() + 1;
+  if (myShape.ShapeType() == TopAbs_COMPOUND &&
+      NumberOfSubShapes(myShape, TopAbs_COMPOUND) > 0) {
+    type--;
+  }
+
+  return type;
+}
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr EntityGUI_SubShapeDlg::createOperation()
+{
+  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool EntityGUI_SubShapeDlg::isValid( QString& msg )
+{
+  bool isOk = false;
+  if ( !myObject->_is_nil() ) {
+    if ( isAllSubShapes() )
+      isOk = true;
+    else if ( mySelection->IObjectCount() == 1 ) {
+      Standard_Boolean aResult = Standard_False;
+      GEOM::GEOM_Object_var anObj =
+	GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+      
+      if ( aResult && !anObj->_is_nil() ) {
+	TColStd_IndexedMapOfInteger aMapIndex;
+	mySelection->GetIndex( mySelection->firstIObject(), aMapIndex );
+	isOk = aMapIndex.Extent() > 0;
+	if ( !isOk )
+	  msg += tr( "NO_SUBSHAPES_SELECTED" );
+      }
+    }
+  }
+  return isOk;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool EntityGUI_SubShapeDlg::execute( ObjectList& objects )
+{
+  GEOM::ListOfGO_var aList = GEOM::GEOM_IShapesOperations::_narrow(
+    getOperation() )->MakeExplode( myObject, shapeType(), false );
+    
+  if ( !aList->length() )
+    return false;
+  
+  // Throw away sub-shapes not selected by user if not in preview mode 
+  // and manual selection is active
+  if ( !isAllSubShapes() )
+  {
+    if ( mySelection->IObjectCount() == 1 ) {
+      Standard_Boolean aResult = Standard_False;
+      GEOM::GEOM_Object_var anObj =
+	GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+
+      if ( aResult && !anObj->_is_nil() ) {
+	TColStd_IndexedMapOfInteger aMapIndex;
+	mySelection->GetIndex( mySelection->firstIObject(), aMapIndex );
+
+	GEOM::GEOM_ILocalOperations_var aLocOp = 
+	  getGeomEngine()->GetILocalOperations( getStudyId() );
+
+	for ( int i = 0, n = aList->length(); i < n; i++ )
+	  if ( aMapIndex.Contains( aLocOp->GetSubShapeIndex( myObject, aList[i] ) ) )
+	    objects.push_back( GEOM::GEOM_Object::_duplicate( aList[i] ) );
+      }
+    }
+  }
+  else
+    for ( int i = 0, n = aList->length(); i < n; i++ )
+      objects.push_back( GEOM::GEOM_Object::_duplicate( aList[i] ) );
+  
+  return objects.size();
+}
+
+//================================================================
+// Function : getFather
+// Purpose  : Get father object for object to be added in study
+//            ( called with addInStudy method )
+//================================================================
+GEOM::GEOM_Object_ptr EntityGUI_SubShapeDlg::getFather( GEOM::GEOM_Object_ptr )
+{
+  return myObject;
+}
+

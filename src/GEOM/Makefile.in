@@ -1,30 +1,3 @@
-#  GEOM GEOM : implementaion of GEOM_Gen.idl and GEOM_Shape.idl
-#
-#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-# 
-#  This library is free software; you can redistribute it and/or 
-#  modify it under the terms of the GNU Lesser General Public 
-#  License as published by the Free Software Foundation; either 
-#  version 2.1 of the License. 
-# 
-#  This library is distributed in the hope that it will be useful, 
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-#  Lesser General Public License for more details. 
-# 
-#  You should have received a copy of the GNU Lesser General Public 
-#  License along with this library; if not, write to the Free Software 
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-# 
-#  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
-#
-#
-#
-#  File   : Makefile.in
-#  Author : Patrick GOLDBRONN (CEA)
-#  Module : GEOM
-#  $Header$
 
 top_srcdir=@top_srcdir@
 top_builddir=../..
@@ -36,22 +9,44 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 
 # Libraries targets
 
-LIB = libGEOMEngine.la
-LIB_SRC = GEOM_Shape_i.cc GEOM_Gen_i.cc
-LIB_SERVER_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl GEOM_Gen.idl GEOM_Shape.idl
+LIB = libGEOMbasic.la 
+LIB_SRC = GEOM_Application.cxx \
+	  GEOM_Engine.cxx \
+	  GEOM_Function.cxx \
+	  GEOM_Object.cxx \
+	  GEOM_IOperations.cxx \
+	  GEOM_Solver.cxx \
+	  GEOM_SubShapeDriver.cxx \
+	  GEOM_DataMapNodeOfDataMapOfAsciiStringTransient_0.cxx \
+	  GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient_0.cxx \
+	  GEOM_DataMapOfAsciiStringTransient_0.cxx
+
+LIB_CLIENT_IDL = 
+LIB_SERVER_IDL = 
 
 # Executables targets
-BIN = 
-BIN_SRC = 
+BIN =
+BIN_SRC =
 BIN_CLIENT_IDL = 
-BIN_SERVER_IDL =
+BIN_SERVER_IDL = 
 
-EXPORT_HEADERS =
+# header files 
+EXPORT_HEADERS= GEOM_Application.hxx \
+	        Handle_GEOM_Application.hxx \
+		GEOM_Engine.hxx \
+		GEOM_Function.hxx \
+		GEOM_Object.hxx \
+		GEOM_IOperations.hxx \
+		GEOM_ISubShape.hxx \
+		GEOM_Solver.hxx \
+		GEOM_DataMapOfAsciiStringTransient.hxx \
+		Handle_GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx
 
 # additionnal information to compil and link file
-CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
+CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome $(BOOST_CPPFLAGS) 
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -lGEOMDS -lTOOLSDS -lSalomeNS -lSalomeContainer -lGEOMPartition -lGEOMArchimede $(CAS_LDPATH) -lTKIGES -lTKSTEP -lTKFillet -lTKOffset -lGEOMSketcher -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS  += -L${KERNEL_ROOT_DIR}/lib/salome $(CAS_LDPATH) -lTKCAF
+
 
 # additional file to be cleaned
 MOSTLYCLEAN =

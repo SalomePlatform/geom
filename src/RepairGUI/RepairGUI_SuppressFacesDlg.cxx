@@ -29,9 +29,15 @@
 using namespace std;
 #include "RepairGUI_SuppressFacesDlg.h"
 
-#include "DisplayGUI.h"
 #include "QAD_RightFrame.h"
+#include "QAD_Desktop.h"
 #include "OCCViewer_Viewer3d.h"
+#include "SALOME_ListIteratorOfListIO.hxx"
+
+#include "GEOMImpl_Types.hxx"
+
+#include <TopAbs.hxx>
+
 
 //=================================================================================
 // class    : RepairGUI_SuppressFacesDlg()
@@ -40,7 +46,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(QWidget* parent, const char* name, RepairGUI* theRepairGUI, SALOME_Selection* Sel, Handle(AIS_InteractiveContext) ic, bool modal, WFlags fl)
+RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SUPRESS_FACE")));
@@ -54,18 +60,16 @@ RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(QWidget* parent, const ch
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_1Sel1Check_QTD(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
-  GroupPoints->CheckButton1->setText(tr("GEOM_SUPRESSFACE_SELECT"));
+  GroupPoints = new DlgRef_1Sel_QTD(this, "GroupPoints");
+  GroupPoints->GroupBox1->setTitle(tr("Faces to remove"));
+  GroupPoints->TextLabel1->setText(tr("Faces"));
   GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  /* Initialisations */
-  myRepairGUI = theRepairGUI;
-  Init(ic);
+  Init();
 }
 
 
@@ -75,7 +79,6 @@ RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(QWidget* parent, const ch
 //=================================================================================
 RepairGUI_SuppressFacesDlg::~RepairGUI_SuppressFacesDlg()
 {
-  // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -83,16 +86,17 @@ RepairGUI_SuppressFacesDlg::~RepairGUI_SuppressFacesDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void RepairGUI_SuppressFacesDlg::Init(Handle(AIS_InteractiveContext) ic)
+void RepairGUI_SuppressFacesDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  myOkSelectSubMode = false;
-  myOkShape = myUseLocalContext = false;
-  myIC = ic;
-  myLocalContextId = -1;
+  myObjects = new GEOM::ListOfGO();
+  myObjects->length( 0 );
 
+  myGeomGUI->SetState( 0 );
+  initSelection();
+	  
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
   connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
@@ -104,15 +108,9 @@ void RepairGUI_SuppressFacesDlg::Init(Handle(AIS_InteractiveContext) ic)
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ActivateUserSelection()));
-  
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
-
-  return;
+  initName( tr( "SUPRESS_FACE_NEW_OBJ_NAME" ) );
 }
 
 
@@ -122,9 +120,8 @@ void RepairGUI_SuppressFacesDlg::Init(Handle(AIS_InteractiveContext) ic)
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  this->ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -133,22 +130,20 @@ void RepairGUI_SuppressFacesDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void RepairGUI_SuppressFacesDlg::ClickOnApply()
+bool RepairGUI_SuppressFacesDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  bool testResult = false;
+  if ( !onAccept() )
+    return false;
 
-  if(myOkShape && myOkSelectSubMode)
-    testResult = myRepairGUI->OnSuppressFaces(myShape, myShapeIOR, myLocalContextId, myUseLocalContext); 
+  initName();
 
-  if(!testResult)
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-  else
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+  myEditCurrentArgument->setText("");
+  myObjects->length( 0 );
+  myFaces.clear();
 
-  /* Reset arguments to allow a new selection */
-  this->ResetStateOfDialog();
-  return ;
+  initSelection();
+  
+  return true;
 }
 
 
@@ -158,18 +153,7 @@ void RepairGUI_SuppressFacesDlg::ClickOnApply()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::ClickOnCancel()
 {
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      myUseLocalContext = false;
-    }
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
-  }
   GEOMBase_Skeleton::ClickOnCancel();
-  return;
 }
 
 
@@ -181,58 +165,53 @@ void RepairGUI_SuppressFacesDlg::ClickOnCancel()
 void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
-  this->ResetStateOfDialog();
-  QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
-    myOkShape = false;
-    return;
-  }
-  
-  /* nbSel == 1 */
-  TopoDS_Shape S;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;
-  
-  if(!IO->hasEntry()) {
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
-    return;
-  }
-
-  /* Test the exact type of topology to suppress faces into */
-  if(!S.IsNull() && (S.ShapeType() == TopAbs_SOLID || S.ShapeType() == TopAbs_SHELL || S.ShapeType() == TopAbs_COMPOUND)) {
-    if(IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject))) {
-      Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast(IO);
-      myShapeIOR = GIObject->getIOR(); /* the Geom IOR string of selection */
-      myEditCurrentArgument->setText(aString);
-      myShape = S;
-      myOkShape = true;
-      return;
-    } 
-    
-    if(IO->hasEntry()) {
-      SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-      SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
-      SALOMEDS::GenericAttribute_var anAttr;
-      SALOMEDS::AttributeIOR_var anIOR;
-      if(!obj->_is_nil()) {
-	if(obj->FindAttribute(anAttr, "AttributeIOR")) {
-          anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	  myShapeIOR = anIOR->Value();
-	  myOkShape = true;
-	  myShape = S;
-	  myEditCurrentArgument->setText(aString);
-	  return;
+  Standard_Boolean aRes = Standard_False;
+  int i = 0;
+  int numFaces = 0;
+  myObjects->length( mySelection->IObjectCount() );
+  myFaces.clear();
+  for ( SALOME_ListIteratorOfListIO anIt( mySelection->StoredIObjects() ); anIt.More(); anIt.Next() )
+  {
+    Handle(SALOME_InteractiveObject) anIO = anIt.Value();
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
+    if ( !CORBA::is_nil( aSelectedObject ) && aRes )
+    {
+      TopoDS_Shape aShape;
+      if ( myGeomBase->GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) )
+      {
+	if ( aShape.ShapeType() <= TopAbs_FACE ) // FACE, SHELL, SOLID, COMPOUND
+	{
+	  GEOM::short_array anIndexes;
+	  if ( mySelection->HasIndex( anIO ) )
+	  {
+	    TColStd_IndexedMapOfInteger aMap;
+	    mySelection->GetIndex( anIO, aMap );
+	    Convert( aMap, anIndexes );
+	    myObjects[i++] = aSelectedObject; // append the object
+	    myFaces.append( anIndexes );   // append faces' indexes
+	    numFaces += anIndexes.length();// just for text field output
+	  }
 	}
       }
     }
-
   }
-  return;
+  myObjects->length( i ); // this is the right length, smaller of equal to the previously set
+  if ( numFaces )
+    myEditCurrentArgument->setText( QString::number( numFaces ) + "_" + tr( "GEOM_FACE" ) + tr( "_S_" ) );
 }
 
+//=================================================================================
+// function : Convert()
+// purpose  :
+//=================================================================================
+void RepairGUI_SuppressFacesDlg::Convert( const TColStd_IndexedMapOfInteger& theMap, GEOM::short_array& theOutSeq )
+{
+  const int n = theMap.Extent();
+  theOutSeq.length( n );
+  for ( int i = 0; i < n; i++ )
+    theOutSeq[i] = theMap( i+1 );
+}
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -240,15 +219,12 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();
-
-  if(send == GroupPoints->PushButton1) {
+  if( sender() == GroupPoints->PushButton1 )
+  {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
   }
-  this->SelectionIntoArgument();
-
-  return;
+  SelectionIntoArgument();
 }
 
 
@@ -258,14 +234,11 @@ void RepairGUI_SuppressFacesDlg::SetEditCurrentArgument()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::LineEditReturnPressed()
 {
-  QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
+  if( sender() == GroupPoints->LineEdit1 )
+  {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 
@@ -275,11 +248,8 @@ void RepairGUI_SuppressFacesDlg::LineEditReturnPressed()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::DeactivateActiveDialog()
 {
-  if(GroupConstructors->isEnabled()) {
-    this->ResetStateOfDialog();
-    GEOMBase_Skeleton::DeactivateActiveDialog();
-  }
-  return;
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -291,7 +261,9 @@ void RepairGUI_SuppressFacesDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  return;
+
+  myGeomGUI->SetState( 0 );
+  initSelection();
 }
 
 
@@ -301,10 +273,8 @@ void RepairGUI_SuppressFacesDlg::ActivateThisDialog()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::enterEvent(QEvent* e)
 {
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
 
@@ -314,76 +284,60 @@ void RepairGUI_SuppressFacesDlg::enterEvent(QEvent* e)
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::closeEvent(QCloseEvent* e)
 {
-  /* same than click on cancel button */
-  this->ClickOnCancel();
-  return;
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::closeEvent( e );
 }
 
-
 //=================================================================================
-// function : ActivateUserSelection()
-// purpose  : Activate selection of faces when CheckBox1->isChecked()...
+// function : createOperation
+// purpose  :
 //=================================================================================
-void RepairGUI_SuppressFacesDlg::ActivateUserSelection()
+GEOM::GEOM_IOperations_ptr RepairGUI_SuppressFacesDlg::createOperation()
 {
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    if(!myOkShape) {
-      this->ResetStateOfDialog();
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_FIRST"));
-      return;
-    }
-  
-    myOkSelectSubMode = GroupPoints->CheckButton1->isChecked();
-    
-    if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-      myIC = v3d->getAISContext();
-      if(myUseLocalContext) {
-	myIC->CloseLocalContext(myLocalContextId);
-	myUseLocalContext = false;
-      }
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true);
-    }
-    
-    if(myOkShape && myOkSelectSubMode) {
-      /* local context is defined into the method : 4 = FACES sub selection */
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->PrepareSubShapeSelection(int(TopAbs_FACE), myLocalContextId);    
-      myUseLocalContext = true;
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_FACE"));
-    }
-  } 
-  else
-    GroupPoints->CheckButton1->setChecked(false);
-  return;
+  return getGeomEngine()->GetIHealingOperations( getStudyId() );
 }
 
-
-
 //=================================================================================
-// function : ResetStateOfDialog()
-// purpose  : Completely reset the state of method including local context
+// function : isValid
+// purpose  :
 //=================================================================================
-void RepairGUI_SuppressFacesDlg::ResetStateOfDialog()
+bool RepairGUI_SuppressFacesDlg::isValid( QString& msg )
 {
-  myOkShape = false ;
-  myEditCurrentArgument->setText("");
+  const int objL = myObjects->length(), facesL = myFaces.size();
+  return ( objL && objL == facesL );
+}
 
-  /* Select sub shapes mode not checked */
-  myOkSelectSubMode = false;    
-  GroupPoints->CheckButton1->setChecked(FALSE);
-
-  /* Close its local contact if opened */
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      myUseLocalContext = false;
-    }
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool RepairGUI_SuppressFacesDlg::execute( ObjectList& objects )
+{
+  QStringList anErrorObjNames;
+  for ( int i = 0; i < myObjects->length(); i++ )
+  {
+    GEOM::GEOM_Object_var obj = myObjects[i];
+    GEOM::short_array faces = myFaces[i];
+    //MESSAGE(">>>> Dlg, passing faces.. len = " << faces.length());
+    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->SuppressFaces( obj, faces );
+    if ( anObj->_is_nil() )
+      anErrorObjNames << GEOMBase::GetName( obj );
+    else
+      objects.push_back( anObj._retn() );
   }
-  return;
+
+  if ( !anErrorObjNames.empty() )
+    MESSAGE("ERRORS occured while processing the following objects: " << anErrorObjNames.join( " " ));
+
+  return anErrorObjNames.size() < myObjects->length(); // true if at least one object was OK, false if ALL objects were nil after Healing.
+}
+
+//=================================================================================
+// function : initSelection
+// purpose  :
+//=================================================================================
+void RepairGUI_SuppressFacesDlg::initSelection()
+{
+  GEOM::GEOM_Object_var aNullGeomObject;
+  localSelection( aNullGeomObject, TopAbs_FACE ); // load local selection on ALL objects
 }

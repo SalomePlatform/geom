@@ -39,20 +39,25 @@ LIB = libGEOMBase.la
 
 # header files 
 EXPORT_HEADERS= GEOMBase.h \
-		GEOMBase_Skeleton.h
+		GEOMBase_Skeleton.h \
+		GEOMBase_Helper.h \
+		GEOM_Operation.h
 
 LIB_SRC = 	GEOMBase.cxx \
 		GEOMBase_Skeleton.cxx \
-		GEOMBase_aParameterDlg.cxx
+		GEOMBase_aParameterDlg.cxx \
+		GEOMBase_Helper.cxx \
+		GEOM_Operation.cxx
 
 LIB_MOC = \
-		GEOMBase.h \
 		GEOMBase_Skeleton.h \
 		GEOMBase_aParameterDlg.h
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 SALOMEDS.idl \
-		 SALOMEDS_Attributes.idl
+		 SALOMEDS_Attributes.idl \
+                 SALOME_GenericObj.idl \
+		 GEOM_Gen.idl
 
 LIB_SERVER_IDL = 
 
@@ -61,6 +66,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lDlgRef -lGEOMContext
+LDFLAGS += -lDlgRef -lGEOMGUI
 
 @CONCLUDE@

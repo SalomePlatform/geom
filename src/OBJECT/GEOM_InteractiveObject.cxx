@@ -41,34 +41,33 @@ GEOM_InteractiveObject::GEOM_InteractiveObject()
   myFatherIOR = "";
 }
 
-GEOM_InteractiveObject::GEOM_InteractiveObject(const Standard_CString anIOR,
-					       const Standard_CString aFatherIOR,
-					       const Standard_CString aComponentDataType,
-					       const Standard_CString anEntry)
+GEOM_InteractiveObject::GEOM_InteractiveObject(const char* anIOR,
+					       const char* aFatherIOR,
+					       const char* aComponentDataType,
+					       const char* anEntry)
   : SALOME_InteractiveObject(anEntry,aComponentDataType)
 {
-  myIOR       = new char [strlen(anIOR)+1];
-  strcpy( myIOR, anIOR);
-  myFatherIOR = new char [strlen(aFatherIOR)+1];
-  strcpy( myFatherIOR, aFatherIOR);
+  myIOR       = anIOR;
+  myFatherIOR = aFatherIOR;
 }
 
-Standard_CString GEOM_InteractiveObject::getIOR(){
-  return myIOR;
+const char* GEOM_InteractiveObject::getIOR(){
+  return myIOR.c_str();
 }
-Standard_CString GEOM_InteractiveObject::getFatherIOR(){
-  return myFatherIOR;
+
+const char* GEOM_InteractiveObject::getFatherIOR(){
+  return myFatherIOR.c_str();
 }
 
 Standard_Boolean GEOM_InteractiveObject::isSame(const Handle(SALOME_InteractiveObject)& anIO ){
   if ( anIO->hasEntry() && this->hasEntry() ) {
-    if ( strcmp(myEntry, anIO->getEntry() ) == 0 )
+    if ( myEntry == anIO->getEntry() )
       return Standard_True;
   }
   
   if ( anIO->IsKind(STANDARD_TYPE(GEOM_InteractiveObject))) {
     Handle(GEOM_InteractiveObject) theIO = Handle(GEOM_InteractiveObject)::DownCast( anIO );
-    if ( strcmp(myIOR, theIO->getIOR() ) == 0 )
+    if ( myIOR == theIO->getIOR() )
       return Standard_True;
   }
 

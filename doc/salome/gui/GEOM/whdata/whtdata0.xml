@@ -10,8 +10,11 @@
   <book name="Creating geometrical objects" >
     <item name="Creating basic geometrical objects" url="files/salome2_sp3_basicgui_functions.htm" />
     <item name="Constructing primitives" url="files/salome2_sp3_primitivegui_functions.htm" />
-    <item name="Building geometrical objects" url="files/salome2_sp3_buildgui_functions.htm" />
     <item name="Generating complex objects" url="files/salome2_sp3_generationgui_functions.htm" />
+    <item name="Working with groups" url="working_with_groups.htm" />
+    <item name="Building by blocks" url="newentity_blocks.htm" />
+    <item name="Sketcher" url="sketcher.htm" />
+    <item name="Building geometrical objects" url="files/salome2_sp3_buildgui_functions.htm" />
   </book>
   <book name="Transforming geometrical objects" >
     <item name="Using basic operations" url="files/salome2_sp3_operationgui_functions.htm" />

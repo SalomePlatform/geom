@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'EntityGUI_1Sel_QTD.ui'
 **
-** Created: Fri Apr 30 11:23:36 2004
+** Created: Thu Aug 12 19:03:19 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ EntityGUI_1Sel_QTD::EntityGUI_1Sel_QTD( QWidget* parent,  const char* name, WFla
 {
     if ( !name )
 	setName( "EntityGUI_1Sel_QTD" );
-    resize( 245, 110 ); 
+    resize( 329, 112 ); 
     setCaption( trUtf8( "EntityGUI_1Sel_QTD" ) );
     EntityGUI_1Sel_QTDLayout = new QGridLayout( this, 1, 1, 0, 6, "EntityGUI_1Sel_QTDLayout"); 
 
@@ -38,23 +38,32 @@ EntityGUI_1Sel_QTD::EntityGUI_1Sel_QTD( QWidget* parent,  const char* name, WFla
     GroupBox1Layout = new QGridLayout( GroupBox1->layout() );
     GroupBox1Layout->setAlignment( Qt::AlignTop );
 
+    Layout4 = new QGridLayout( 0, 1, 1, 0, 6, "Layout4"); 
+
     Layout3 = new QGridLayout( 0, 1, 1, 0, 6, "Layout3"); 
-
-    Layout2 = new QGridLayout( 0, 1, 1, 0, 6, "Layout2"); 
-
-    buttonUndo = new QPushButton( GroupBox1, "buttonUndo" );
-    buttonUndo->setText( trUtf8( "Undo" ) );
-
-    Layout2->addWidget( buttonUndo, 1, 0 );
+    QSpacerItem* spacer = new QSpacerItem( 0, 163, QSizePolicy::Minimum, QSizePolicy::Expanding );
+    Layout3->addItem( spacer, 2, 0 );
 
     buttonApply = new QPushButton( GroupBox1, "buttonApply" );
     buttonApply->setText( trUtf8( "Create" ) );
 
-    Layout2->addWidget( buttonApply, 0, 0 );
-    QSpacerItem* spacer = new QSpacerItem( 0, 51, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    Layout2->addItem( spacer, 2, 0 );
+    Layout3->addWidget( buttonApply, 0, 0 );
 
-    Layout3->addLayout( Layout2, 0, 1 );
+    Layout2 = new QGridLayout( 0, 1, 1, 0, 6, "Layout2"); 
+
+    buttonRedo = new QPushButton( GroupBox1, "buttonRedo" );
+    buttonRedo->setText( trUtf8( "Redo" ) );
+
+    Layout2->addWidget( buttonRedo, 0, 1 );
+
+    buttonUndo = new QPushButton( GroupBox1, "buttonUndo" );
+    buttonUndo->setText( trUtf8( "Undo" ) );
+
+    Layout2->addWidget( buttonUndo, 0, 0 );
+
+    Layout3->addLayout( Layout2, 1, 0 );
+
+    Layout4->addLayout( Layout3, 0, 1 );
 
     Layout1 = new QGridLayout( 0, 1, 1, 0, 6, "Layout1"); 
 
@@ -73,13 +82,13 @@ EntityGUI_1Sel_QTD::EntityGUI_1Sel_QTD( QWidget* parent,  const char* name, WFla
     Layout1->addWidget( PushButton1, 0, 1 );
 
     LineEdit1 = new QLineEdit( GroupBox1, "LineEdit1" );
-    LineEdit1->setFocusPolicy( QLineEdit::NoFocus );
+    LineEdit1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, 0, 0, LineEdit1->sizePolicy().hasHeightForWidth() ) );
 
     Layout1->addWidget( LineEdit1, 0, 2 );
 
-    Layout3->addLayout( Layout1, 0, 0 );
+    Layout4->addLayout( Layout1, 0, 0 );
 
-    GroupBox1Layout->addLayout( Layout3, 0, 0 );
+    GroupBox1Layout->addLayout( Layout4, 0, 0 );
 
     EntityGUI_1Sel_QTDLayout->addWidget( GroupBox1, 0, 0 );
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DlgRef_1Sel1Spin1Check_QTD.ui'
 **
-** Created: lun nov 17 14:16:09 2003
+** Created: Mon May 24 15:59:03 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -9,11 +9,11 @@
 #include "DlgRef_1Sel1Spin1Check_QTD.h"
 
 #include <qvariant.h>
+#include <qcheckbox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
-#include <qradiobutton.h>
 #include <qspinbox.h>
 #include <qlayout.h>
 #include <qtooltip.h>
@@ -28,7 +28,7 @@ DlgRef_1Sel1Spin1Check_QTD::DlgRef_1Sel1Spin1Check_QTD( QWidget* parent,  const 
 {
     if ( !name )
 	setName( "DlgRef_1Sel1Spin1Check_QTD" );
-    resize( 129, 106 ); 
+    resize( 163, 109 ); 
     setCaption( trUtf8( "DlgRef_1Sel1Spin1Check_QTD" ) );
     DlgRef_1Sel1Spin1Check_QTDLayout = new QGridLayout( this, 1, 1, 0, 6, "DlgRef_1Sel1Spin1Check_QTDLayout"); 
 
@@ -40,21 +40,7 @@ DlgRef_1Sel1Spin1Check_QTD::DlgRef_1Sel1Spin1Check_QTD( QWidget* parent,  const 
     GroupBox1Layout = new QGridLayout( GroupBox1->layout() );
     GroupBox1Layout->setAlignment( Qt::AlignTop );
 
-    Layout1 = new QGridLayout( 0, 1, 1, 0, 6, "Layout1"); 
-    QSpacerItem* spacer = new QSpacerItem( 0, 120, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    Layout1->addItem( spacer, 3, 2 );
-
-    TextLabel1 = new QLabel( GroupBox1, "TextLabel1" );
-    TextLabel1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel1->sizePolicy().hasHeightForWidth() ) );
-    TextLabel1->setText( trUtf8( "TL1" ) );
-
-    Layout1->addWidget( TextLabel1, 0, 0 );
-
-    PushButton1 = new QPushButton( GroupBox1, "PushButton1" );
-    PushButton1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, PushButton1->sizePolicy().hasHeightForWidth() ) );
-    PushButton1->setText( trUtf8( "" ) );
-
-    Layout1->addWidget( PushButton1, 0, 1 );
+    Layout8 = new QGridLayout( 0, 1, 1, 0, 6, "Layout8"); 
 
     Layout2 = new QGridLayout( 0, 1, 1, 0, 6, "Layout2"); 
 
@@ -69,18 +55,32 @@ DlgRef_1Sel1Spin1Check_QTD::DlgRef_1Sel1Spin1Check_QTD( QWidget* parent,  const 
 
     Layout2->addWidget( TextLabel2, 0, 0 );
 
-    Layout1->addMultiCellLayout( Layout2, 1, 1, 0, 2 );
+    Layout8->addMultiCellLayout( Layout2, 1, 1, 0, 2 );
+
+    TextLabel1 = new QLabel( GroupBox1, "TextLabel1" );
+    TextLabel1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel1->sizePolicy().hasHeightForWidth() ) );
+    TextLabel1->setText( trUtf8( "TL1" ) );
+
+    Layout8->addWidget( TextLabel1, 0, 0 );
 
     LineEdit1 = new QLineEdit( GroupBox1, "LineEdit1" );
 
-    Layout1->addWidget( LineEdit1, 0, 2 );
+    Layout8->addWidget( LineEdit1, 0, 2 );
 
-    CheckButton1 = new QRadioButton( GroupBox1, "CheckButton1" );
+    PushButton1 = new QPushButton( GroupBox1, "PushButton1" );
+    PushButton1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, PushButton1->sizePolicy().hasHeightForWidth() ) );
+    PushButton1->setText( trUtf8( "" ) );
+
+    Layout8->addWidget( PushButton1, 0, 1 );
+
+    CheckButton1 = new QCheckBox( GroupBox1, "CheckButton1" );
     CheckButton1->setText( trUtf8( "" ) );
 
-    Layout1->addMultiCellWidget( CheckButton1, 2, 2, 0, 2 );
+    Layout8->addMultiCellWidget( CheckButton1, 2, 2, 0, 2 );
+    QSpacerItem* spacer = new QSpacerItem( 0, 16, QSizePolicy::Minimum, QSizePolicy::Expanding );
+    Layout8->addItem( spacer, 3, 2 );
 
-    GroupBox1Layout->addLayout( Layout1, 0, 0 );
+    GroupBox1Layout->addLayout( Layout8, 0, 0 );
 
     DlgRef_1Sel1Spin1Check_QTDLayout->addWidget( GroupBox1, 0, 0 );
 }

@@ -17,15 +17,15 @@
 <!-- ************************* File  (menubar) ************************************** -->
 <menu-item label-id="Fichier" item-id="1" pos-id="1">
    <submenu label-id="Importer" item-id="11" pos-id="8">
-       <popup-item item-id="111" pos-id="" label-id="BRep" icon-id="" tooltip-id="" accel-id="Ctrl+B" toggle-id="" execute-action=""/>
-       <popup-item item-id="112" pos-id="" label-id="Iges" icon-id="" tooltip-id="" accel-id="Ctrl+I" toggle-id="" execute-action=""/>
-       <popup-item item-id="113" pos-id="" label-id="Step" icon-id="" tooltip-id="" accel-id="Ctrl+S" toggle-id="" execute-action=""/>
+       <popup-item item-id="111" pos-id="" label-id="BRep" icon-id="" tooltip-id="" accel-id="Ctrl+Alt+B" toggle-id="" execute-action=""/>
+       <popup-item item-id="112" pos-id="" label-id="Iges" icon-id="" tooltip-id="" accel-id="Ctrl+Alt+I" toggle-id="" execute-action=""/>
+       <popup-item item-id="113" pos-id="" label-id="Step" icon-id="" tooltip-id="" accel-id="Ctrl+Alt+S" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
    <submenu label-id="Exporter" item-id="12" pos-id="9">
-       <popup-item item-id="121" pos-id="" label-id="BRep" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="122" pos-id="" label-id="Iges" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="123" pos-id="" label-id="Step" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="121" pos-id="" label-id="BRep" icon-id="" tooltip-id="" accel-id="Ctrl+Shift+B" toggle-id="" execute-action=""/>
+       <popup-item item-id="122" pos-id="" label-id="Iges" icon-id="" tooltip-id="" accel-id="Ctrl+Shift+I" toggle-id="" execute-action=""/>
+       <popup-item item-id="123" pos-id="" label-id="Step" icon-id="" tooltip-id="" accel-id="Ctrl+Shift+S" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
    <separator pos-id="10"/>
@@ -69,15 +69,16 @@
    <endsubmenu />
    <separator pos-id=""/>
    <popup-item item-id="404" pos-id="" label-id="Sketch" icon-id="sketch.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="406" pos-id="" label-id="Spline" icon-id="spline.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id=""/>
-   <popup-item item-id="407" pos-id="" label-id="Eclater" icon-id="subshape.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="407" pos-id="" label-id="Exploser" icon-id="subshape.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <submenu label-id="Construction" item-id="408" pos-id="">
-      <popup-item item-id="4081" pos-id="" label-id="Arête" icon-id="build_edge.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
-      <popup-item item-id="4082" pos-id="" label-id="Wire" icon-id="build_wire.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
-      <popup-item item-id="4083" pos-id="" label-id="Face" icon-id="build_face.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/> 
-      <popup-item item-id="4084" pos-id="" label-id="Shell" icon-id="build_shell.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="4085" pos-id="" label-id="Solid" icon-id="build_solid.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="4086" pos-id="" label-id="Compound" icon-id="build_compound.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
+      <popup-item item-id="4081" pos-id="" label-id="Edge" icon-id="build_edge.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
+       <popup-item item-id="4082" pos-id="" label-id="Wire" icon-id="build_wire.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
+       <popup-item item-id="4083" pos-id="" label-id="Face" icon-id="build_face.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
+       <popup-item item-id="4084" pos-id="" label-id="Shell" icon-id="build_shell.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="4085" pos-id="" label-id="Solid" icon-id="build_solid.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="4086" pos-id="" label-id="Compound" icon-id="build_compound.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
 </menu-item>
@@ -93,13 +94,15 @@
    </submenu>
    <endsubmenu />
    <submenu label-id="Transformation" item-id="502" pos-id="2">
-       <popup-item item-id="5021" pos-id="" label-id="Translation" icon-id="translation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5021" pos-id="" label-id="Translation" icon-id="translationVector.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
        <popup-item item-id="5022" pos-id="" label-id="Rotation" icon-id="rotate.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="5023" pos-id="" label-id="Symétrie par un plan" icon-id="mirrorPlane.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="5024" pos-id="" label-id="Facteur d'échelle" icon-id="scale.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/> 
+       <popup-item item-id="5023" pos-id="" label-id="Location" icon-id="position2.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5024" pos-id="" label-id="Symétrie" icon-id="mirrorPlane.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5025" pos-id="" label-id="Facteur d'échelle" icon-id="scale.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/> 
+       <popup-item item-id="5026" pos-id="" label-id="Offset surface(MZN: translate)" icon-id="offset.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
        <separator pos-id=""/>
-       <popup-item item-id="5025" pos-id="" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="5026" pos-id="" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5027" pos-id="" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5028" pos-id="" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
    <popup-item item-id="503" pos-id="" label-id="Partition" icon-id="partition.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
@@ -209,13 +212,15 @@
 </toolbar>
 
 <toolbar label-id="Transformation">
-   <toolbutton-item item-id="5021" label-id="Translation" icon-id="translation.png" tooltip-id="Translation d'une shape"accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5021" label-id="Translation" icon-id="translationVector.png" tooltip-id="Translation d'une shape"accel-id="" toggle-id="" execute-action=""/>
    <toolbutton-item item-id="5022" label-id="Rotation" icon-id="rotate.png" tooltip-id="Rotation d'une shape" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="5023" label-id="Symétrie" icon-id="mirrorPlane.png" tooltip-id="Symétrie" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="5024" label-id="Facteur d'échelle" icon-id="scale.png" tooltip-id="Facteur d'échelle" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5023" label-id="Location" icon-id="position2.png" tooltip-id="Mise en position" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5024" label-id="Symétrie" icon-id="mirrorPlane.png" tooltip-id="Symétrie" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5025" label-id="Facteur d'échelle" icon-id="scale.png" tooltip-id="Facteur d'échelle" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5026" label-id="Offset surface(MZN:translate)" icon-id="offset.png" tooltip-id="Offset surface" accel-id="" toggle-id="" execute-action=""/>
    <separatorTB/>
-   <toolbutton-item item-id="5025" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="Multi-translation d'une shape" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="5026" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="Multi-rotation d'une shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5027" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="Multi-translation d'une shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5028" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="Multi-rotation d'une shape" accel-id="" toggle-id="" execute-action=""/>
 </toolbar>
 
 

@@ -33,13 +33,6 @@
 #include "DlgRef_2Sel2Spin.h"
 #include "DlgRef_2Spin.h"
 
-#include "PrimitiveGUI.h"
-
-#include "GEOM_EdgeFilter.hxx"
-#include "GEOM_ShapeTypeFilter.hxx"
-
-#include <gp_Pnt.hxx>
-#include <gp_Dir.hxx>
 
 //=================================================================================
 // class    : PrimitiveGUI_CylinderDlg
@@ -50,44 +43,39 @@ class PrimitiveGUI_CylinderDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    PrimitiveGUI_CylinderDlg(QWidget* parent = 0, const char* name = 0, PrimitiveGUI* thePrimitiveGUI = 0, SALOME_Selection* Sel = 0,  bool modal = FALSE, WFlags fl = 0);
+    PrimitiveGUI_CylinderDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0,  bool modal = FALSE, WFlags fl = 0);
     ~PrimitiveGUI_CylinderDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );
 
 private:
     void Init();
     void enterEvent(QEvent* e);
-    void MakeCylinderSimulationAndDisplay();
-
-    PrimitiveGUI* myPrimitiveGUI;
-
-    double step;
-    int myConstructorId;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;
-    Handle(GEOM_EdgeFilter) myEdgeFilter;  /* Filter selection */
-
-    gp_Pnt myPoint1;   /* topology used  */
-    gp_Dir myDir;
-    bool myOkPoint1;   /* to check when arguments is defined */
-    bool myOkDir;
-
-    Standard_Real myRadius;
-    Standard_Real myHeight;
-    bool myOkRadius;
-    bool myOkHeight;
-
+    double getRadius() const;
+    double getHeight() const;
+        
+    GEOM::GEOM_Object_var myPoint, myDir;
+      
     DlgRef_2Sel2Spin* GroupPoints;
     DlgRef_2Spin* GroupDimensions;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
+    void ClickOnCancel();
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ConstructorsClicked(int constructorId);
-    void ValueChangedInSpinBox(double newValue);
-
+    void ConstructorsClicked(int);
+    void ValueChangedInSpinBox();
 };
 
 #endif // DIALOGBOX_CYLINDER_H

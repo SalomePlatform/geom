@@ -1,0 +1,35 @@
+-- File:	NMTTools_PCurveMaker.cdl
+-- Created:	 
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+
+class PCurveMaker from NMTTools 
+
+	---Purpose:  
+    	--  Class provides computation p-curves for the edges and theirs  
+        --- split parts  	
+
+uses 
+    PDSFiller from NMTTools
+    
+is   
+    Create (aFiller:out PDSFiller from NMTTools)  
+    	returns PCurveMaker from NMTTools; 
+    	---Purpose:  
+    	--- Constructor 
+    	---
+    Do(me:out);   
+    	---Purpose: 
+    	--- Launch the processor   
+    	---
+    IsDone(me) 
+    	returns Boolean from Standard;  
+    	---Purpose:  
+    	--- Returns TRUE if Ok       
+    	---
+	
+fields  
+    myDSFiller: PDSFiller from NMTTools  	is protected;
+    myIsDone  : Boolean   from Standard	        is protected;   
+    
+end PCurveMaker;

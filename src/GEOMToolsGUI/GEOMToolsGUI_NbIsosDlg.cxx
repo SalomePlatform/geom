@@ -21,7 +21,7 @@
 //
 //
 //
-//  File   : GEOMToolsGUI_NbIsosDlg.cxx
+//  File   : GEOMBase_NbIsosDlg.cxx
 //  Author : 
 //  Module : GEOM
 //  $Header: 
@@ -37,17 +37,17 @@ using namespace std;
 #include <qspinbox.h>
 
 //=================================================================================
-// class    : GEOMToolsGUI_NbIsosDlg()
-// purpose  : Constructs a GEOMToolsGUI_NbIsosDlg which is a child of 'parent', with the 
+// class    : GEOMBase_NbIsosDlg()
+// purpose  : Constructs a GEOMBase_NbIsosDlg which is a child of 'parent', with the 
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GEOMToolsGUI_NbIsosDlg::GEOMToolsGUI_NbIsosDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
   :QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   if( !name )
-    setName("GEOMToolsGUI_NbIsosDlg");
+    setName("GEOMBase_NbIsosDlg");
   setCaption(name);
   setSizeGripEnabled(TRUE);
   QGridLayout* MyDialogLayout = new QGridLayout(this); 
@@ -122,10 +122,10 @@ GEOMToolsGUI_NbIsosDlg::GEOMToolsGUI_NbIsosDlg(QWidget* parent, const char* name
 
 
 //=================================================================================
-// function : ~GEOMToolsGUI_NbIsosDlg()
+// function : ~GEOMBase_NbIsosDlg()
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
-GEOMToolsGUI_NbIsosDlg::~GEOMToolsGUI_NbIsosDlg()
+GEOMBase_NbIsosDlg::~GEOMBase_NbIsosDlg()
 {
     // no need to delete child widgets, Qt does it all for us
 }

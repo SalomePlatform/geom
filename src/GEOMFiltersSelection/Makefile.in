@@ -39,9 +39,12 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 LIB = libGEOMFiltersSelection.la 
 LIB_SRC = GEOM_ShapeTypeFilter.cxx \
 	  GEOM_FaceFilter.cxx \
-	  GEOM_EdgeFilter.cxx
+	  GEOM_EdgeFilter.cxx \
+	  GEOM_PreviewFilter.cxx \
+	  GEOM_LogicalFilter.cxx \
+	  GEOM_TypeFilter.cxx
 
-LIB_CLIENT_IDL = SALOME_Component.idl SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Exception.idl GEOM_Shape.idl GEOM_Gen.idl
+LIB_CLIENT_IDL = SALOME_Component.idl SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Exception.idl GEOM_Gen.idl SALOME_GenericObj.idl
 
 # header files 
 EXPORT_HEADERS= GEOM_ShapeTypeFilter.hxx \
@@ -49,7 +52,11 @@ EXPORT_HEADERS= GEOM_ShapeTypeFilter.hxx \
 	        GEOM_FaceFilter.hxx \
 	        Handle_GEOM_FaceFilter.hxx \
 	        GEOM_EdgeFilter.hxx \
-	        Handle_GEOM_EdgeFilter.hxx
+	        Handle_GEOM_EdgeFilter.hxx \
+          GEOM_TypeFilter.hxx \
+          GEOM_LogicalFilter.hxx \
+		GEOM_PreviewFilter.hxx \
+		Handle_GEOM_PreviewFilter.hxx
 
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) $(PYTHON_INCLUDES) $(VTK_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome

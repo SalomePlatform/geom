@@ -32,8 +32,6 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel_QTD.h"
 
-#include "BasicGUI.h"
-#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
 // class    : BasicGUI_LineDlg
@@ -44,28 +42,34 @@ class BasicGUI_LineDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_LineDlg(QWidget* parent = 0, const char* name = 0, BasicGUI* theBasicGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_LineDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_LineDlg();
 
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );
+    
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakeLineSimulationAndDisplay();
 
-    BasicGUI* myBasicGUI;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;   /* Filter selection */
-
-    gp_Pnt myPoint1;   /* Points containing the vector */   
-    gp_Pnt myPoint2;
-    bool myOkPoint1;   /* Are true when myPoint is defined */    
-    bool myOkPoint2;
+    GEOM::GEOM_Object_var myPoint1;   
+    GEOM::GEOM_Object_var myPoint2;
 
     DlgRef_2Sel_QTD* GroupPoints;
     
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    void ClickOnCancel();
+    bool ClickOnApply();
+
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
+    
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

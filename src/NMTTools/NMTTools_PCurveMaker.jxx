@@ -1,0 +1,3 @@
+#ifndef _NMTTools_PCurveMaker_HeaderFile
+#include <NMTTools_PCurveMaker.hxx>
+#endif

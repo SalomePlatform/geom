@@ -11,8 +11,8 @@ VPATH=.:${KERNEL_ROOT_DIR}/idl/salome
 @COMMENCE@
 
 IDL_FILES = \
-  GEOM_Shape.idl \
-  GEOM_Gen.idl
+  GEOM_Gen.idl \
+  GEOM_Superv.idl
 
 PY_CLIENT_IDL = $(IDL_FILES)
 

@@ -26,15 +26,19 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GEOM_OCCReader.h"
 
-// SALOME Includes
-#include "utilities.h"
-
 // VTK Includes
-#include "VTKViewer_Common.h"
+#include <vtkPoints.h>
+#include <vtkCellArray.h>
+
+#include <vtkObjectFactory.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
 #include <vtkMergePoints.h>
+
+#include <vtkTransform.h>
+#include <vtkMatrix4x4.h>
 
 // OpenCASCADE Includes
 #include <BRepAdaptor_Surface.hxx>
@@ -71,6 +75,9 @@ using namespace std;
 #include <TColStd_Array1OfReal.hxx>
 #include <Adaptor3d_HCurve.hxx>
 
+#include "utilities.h"
+
+using namespace std;
 
 #define MAX2(X, Y)	(  Abs(X) > Abs(Y)? Abs(X) : Abs(Y) )
 #define MAX3(X, Y, Z)	( MAX2 ( MAX2(X,Y) , Z) )

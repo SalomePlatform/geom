@@ -1,0 +1,3 @@
+#ifndef _NMTDS_IndexRange_HeaderFile
+#include <NMTDS_IndexRange.hxx>
+#endif

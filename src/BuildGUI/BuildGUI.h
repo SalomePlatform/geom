@@ -24,40 +24,32 @@
 //  File   : BuildGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef BUILDGUI_H
 #define BUILDGUI_H
 
-#include "GEOMBase.h"
-#include <gp_Pnt.hxx>
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : BuildGUI
 // purpose  :
 //=================================================================================
-class BuildGUI : public QObject
+class BuildGUI : public GEOMGUI
 {
-  Q_OBJECT /* for QT compatibility */
+protected:
+  BuildGUI(); // hide constructor to avoid direct creation
 
 public :
-  BuildGUI();
   ~BuildGUI();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  // Get the only BuildGUI object
+  static BuildGUI* GetBuildGUI();
 
-  void MakeLinearEdgeAndDisplay(const gp_Pnt P1, const gp_Pnt P2);
-  void MakeWireAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeFaceAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR,
-			  const Standard_Boolean wantPlanar);
-  void MakeShellAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeSolidAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeCompoundAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
+  bool OnGUIEvent( int theCommandID, QAD_Desktop* parent );
 
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
-
+private:
+  static BuildGUI* myGUIObject;        // the only BuildGUI object
 };
 
 #endif

@@ -27,15 +27,21 @@
 //  $Header$
 
 #include "MeasureGUI_PropertiesDlg.h"
-
-#include <TopExp_Explorer.hxx>
-#include <BRepGProp.hxx>
-#include <GProp_GProps.hxx>
-#include <GProp_PrincipalProps.hxx>
-
+#include "MeasureGUI_1Sel3LineEdit_QTD.h"
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "GEOM_Displayer.h"
 #include "utilities.h"
+#include "QAD_Desktop.h"
+#include "GEOMImpl_Types.hxx"
+#include "GEOMBase.h"
 
-using namespace std;
+#include <TColStd_MapOfInteger.hxx>
+
+#include <qlineedit.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qbuttongroup.h>
 
 //=================================================================================
 // class    : MeasureGUI_PropertiesDlg()
@@ -44,34 +50,39 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :MeasureGUI_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg( QWidget* parent, SALOME_Selection* Sel )
+: MeasureGUI_Skeleton( parent, "MeasureGUI_PropertiesDlg", Sel )
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BASICPROPERTIES")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap(
+    "GEOM",tr( "ICON_DLG_BASICPROPERTIES" ) ) );
+  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap(
+    "GEOM",tr( "ICON_SELECT" ) ) );
 
-  setCaption(tr("GEOM_PROPERTIES_TITLE"));
+  setCaption( tr( "GEOM_PROPERTIES_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_PROPERTIES"));
-  RadioButton1->setPixmap(image0);
+  
+  GroupConstructors->setTitle( tr( "GEOM_PROPERTIES" ) );
+  RadioButton1->setPixmap( image0 );
 
-  GroupC1 = new MeasureGUI_1Sel3LineEdit_QTD(this, "GroupC1");
-  GroupC1->GroupBox1->setTitle(tr("GEOM_PROPERTIES_CONSTR"));
-  GroupC1->TextLabel1->setText(tr("GEOM_OBJECT"));
-  GroupC1->TextLabel2->setText(tr("GEOM_LENGTH"));
-  GroupC1->TextLabel3->setText(tr("GEOM_PROPERTIES_SURFACE"));
-  GroupC1->TextLabel4->setText(tr("GEOM_PROPERTIES_VOLUME"));
-  GroupC1->LineEdit2->setReadOnly(TRUE);
-  GroupC1->LineEdit3->setReadOnly(TRUE);
-  GroupC1->LineEdit4->setReadOnly(TRUE);
-  GroupC1->PushButton1->setPixmap(image1);
+  myGrp = new MeasureGUI_1Sel3LineEdit_QTD( this, "myGrp"  );
+  myGrp->GroupBox1->setTitle( tr( "GEOM_PROPERTIES_CONSTR" ) );
+  myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
+  myGrp->TextLabel2->setText( tr( "GEOM_LENGTH" ) );
+  myGrp->TextLabel3->setText( tr( "GEOM_PROPERTIES_SURFACE" ) );
+  myGrp->TextLabel4->setText( tr( "GEOM_PROPERTIES_VOLUME" ) );
+  myGrp->LineEdit2->setReadOnly( TRUE );
+  myGrp->LineEdit3->setReadOnly( TRUE );
+  myGrp->LineEdit4->setReadOnly( TRUE );
+  myGrp->PushButton1->setPixmap( image1 );
+  myGrp->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupC1, 1, 0);
+  Layout1->addWidget( myGrp, 1, 0 );
+  
   /***************************************************************/
 
   /* Initialisation */
-  Init();
+  Init( Sel );
 }
 
 
@@ -81,7 +92,6 @@ MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg(QWidget* parent, const char* 
 //=================================================================================
 MeasureGUI_PropertiesDlg::~MeasureGUI_PropertiesDlg()
 {
-  // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -89,173 +99,121 @@ MeasureGUI_PropertiesDlg::~MeasureGUI_PropertiesDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_PropertiesDlg::Init()
+void MeasureGUI_PropertiesDlg::Init( SALOME_Selection* Sel   )
 {
-  /* init variables */
-  myEditCurrentArgument = GroupC1->LineEdit1;
-
-   /* signals and slots connections */
-  connect(GroupC1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupC1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-
-  /* displays Dialog */
-  GroupC1->show();
-  this->show();
-
-  return;
+  mySelBtn = myGrp->PushButton1;
+  mySelEdit = myGrp->LineEdit1;
+  MeasureGUI_Skeleton::Init( Sel );
 }
 
-
 //=================================================================================
-// function : SelectionIntoArgument()
-// purpose  : Called when selection as changed or other case
+// function : activateSelection
+// purpose  :
 //=================================================================================
-void MeasureGUI_PropertiesDlg::SelectionIntoArgument()
+void MeasureGUI_PropertiesDlg::activateSelection()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  myEditCurrentArgument->setText("");
-  QString aString = "";
+  static TColStd_MapOfInteger aTypes;
+  if ( aTypes.IsEmpty() )
+  {
+    aTypes.Add( GEOM_COMPOUND );
+//    aTypes.Add( TopAbs_COMPSOLID );
+    aTypes.Add( GEOM_SOLID );
+    aTypes.Add( GEOM_SHELL );
+    aTypes.Add( GEOM_FACE );
+    aTypes.Add( GEOM_WIRE );
+    aTypes.Add( GEOM_EDGE );
+  }
 
-  GroupC1->LineEdit2->setText("");
-  GroupC1->LineEdit3->setText("");
-  GroupC1->LineEdit4->setText("");
+  globalSelection( aTypes );
+}
 
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1)
-    return;
-
-  /*  nbSel == 1  */
-  TopoDS_Shape S;
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;
-
+//=================================================================================
+// function : processObject
+// purpose  :
+//=================================================================================
+void MeasureGUI_PropertiesDlg::processObject()
+{
+  double aLength, anArea, aVolume;
   
-  if(S.IsNull() || S.ShapeType() == TopAbs_VERTEX)
-    return;
- 
-  GroupC1->LineEdit1->setText(aString);
-
-  /* Try to display of a cone simulation shape to show direction of a linear edge only in OCC viewer */
-  if(myGeomBase->CreateArrowForLinearEdge(S, mySimulationTopoDs))
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-
-  this->CalculateAndDisplayProperties(S);
-  return;
-}
-
-
-//=================================================================================
-// function : SetEditCurrentArgument()
-// purpose  :
-//=================================================================================
-void MeasureGUI_PropertiesDlg::SetEditCurrentArgument()
-{
-  QPushButton* send = (QPushButton*)sender();
-
-  if(send == GroupC1->PushButton1) {
-    GroupC1->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupC1->LineEdit1;
+  if ( !getParameters( aLength, anArea, aVolume ) )
+  {
+    mySelEdit->setText( "" );
+    myGrp->LineEdit2->setText( "" );
+    myGrp->LineEdit3->setText( "" );
+    myGrp->LineEdit4->setText( "" );
   }
-
-  this->SelectionIntoArgument();
-  return;
-}
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void MeasureGUI_PropertiesDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupC1->LineEdit1)
-    myEditCurrentArgument = GroupC1->LineEdit1;
   else
-    return;
-
-  MeasureGUI_Skeleton::LineEditReturnPressed();
-  return;
-}
-
-
-//=================================================================================
-// function : ActivateThisDialog()
-// purpose  :
-//=================================================================================
-void MeasureGUI_PropertiesDlg::ActivateThisDialog()
-{
-  MeasureGUI_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
-}
-
-
-//=================================================================================
-// function : enterEvent()
-// purpose  :
-//=================================================================================
-void MeasureGUI_PropertiesDlg::enterEvent(QEvent* e)
-{
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
-}
-
-
-//=================================================================================
-// function : CalculateAndDisplayProperties()
-// purpose  :
-//=================================================================================
-void MeasureGUI_PropertiesDlg::CalculateAndDisplayProperties(const TopoDS_Shape& S)
-{
-  GroupC1->LineEdit2->setText("");
-  GroupC1->LineEdit3->setText("");
-  GroupC1->LineEdit4->setText("");
-
-  if(S.IsNull()) 
-    return;
-
-  Standard_Real result;
-  GProp_GProps LProps, SProps;
-  QString resString;
-
-  try {
-    BRepGProp::LinearProperties(S,LProps);
-    result = LProps.Mass();
-    if(!IsEqual(result, 0.0)) {	
-      resString = tr("%1").arg(result, 12, 'f', 6);
-      GroupC1->LineEdit2->setText(resString);
-    }
-
-    BRepGProp::SurfaceProperties(S, SProps);
-    result = SProps.Mass();
-    if(!IsEqual(result, 0.0)) {	
-      resString = tr("%1").arg(result, 12, 'f', 6);
-      GroupC1->LineEdit3->setText(resString);
-    }
-	
-    result = 0.0;
-    if(S.ShapeType() < TopAbs_SHELL) {
-      for(TopExp_Explorer Exp(S,TopAbs_SOLID); Exp.More(); Exp.Next()) { 
-	GProp_GProps VProps;
-	BRepGProp::VolumeProperties(Exp.Current(), VProps);
-	result += VProps.Mass();
-      }
-    }
-    if (!IsEqual(result, 0.0)) {	
-      resString = tr("%1").arg(result, 12, 'f', 6);
-      GroupC1->LineEdit4->setText(resString);
-    }
+  {
+    myGrp->LineEdit2->setText( QString( "%1" ).arg( aLength ) );
+    myGrp->LineEdit3->setText( QString( "%1" ).arg( anArea ) );
+    myGrp->LineEdit4->setText( QString( "%1" ).arg( aVolume ) );
   }
-  catch(Standard_Failure) {
-    MESSAGE("Catch intercepted in CalculateAndDisplayProperties()");
-  }
-  return;
 }
+
+//=================================================================================
+// function : getParameters
+// purpose  :
+//=================================================================================
+bool MeasureGUI_PropertiesDlg::getParameters( double& theLength,
+                                              double& theArea,
+                                              double& theVolume )
+{
+  if ( myObj->_is_nil() )
+    return false;
+  else
+  {
+    try
+    {
+      GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetBasicProperties(
+        myObj, theLength, theArea, theVolume );
+    }
+    catch( const SALOME::SALOME_Exception& e )
+    {
+      QtCatchCorbaException( e );
+      return false;
+    }
+
+    return getOperation()->IsDone();
+  }
+}
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+SALOME_Prs* MeasureGUI_PropertiesDlg::buildPrs()
+{
+  TopoDS_Shape aShape, aResult;
+  
+  if ( myObj->_is_nil() ||
+       !GEOMBase::GetShape( myObj, aShape )||
+       aShape.IsNull() ||
+       aShape.ShapeType() != TopAbs_EDGE ||
+       !GEOMBase::CreateArrowForLinearEdge( aShape, aResult ) ||
+       aResult.IsNull() )
+    return 0;
+
+  return getDisplayer()->BuildPrs( aResult );
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

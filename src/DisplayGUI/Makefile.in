@@ -42,10 +42,9 @@ EXPORT_HEADERS= DisplayGUI.h
 
 LIB_SRC = 	DisplayGUI.cxx
 
-LIB_MOC = \
-		DisplayGUI.h
+LIB_MOC =
 
-LIB_CLIENT_IDL = SALOME_Exception.idl
+LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl
 
 LIB_SERVER_IDL = 
 
@@ -54,6 +53,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lGEOMBase
+LDFLAGS += -lGEOMGUI
 
 @CONCLUDE@

@@ -55,10 +55,10 @@ LIB_SRC = 	MeasureGUI.cxx \
 		MeasureGUI_DistanceDlg.cxx \
 		MeasureGUI_MaxToleranceDlg.cxx \
 		MeasureGUI_WhatisDlg.cxx \
-		MeasureGUI_CheckShapeDlg.cxx
+		MeasureGUI_CheckShapeDlg.cxx \
+		MeasureGUI_PointDlg.cxx
 
 LIB_MOC = \
-		MeasureGUI.h \
 		MeasureGUI_Skeleton_QTD.h \
 		MeasureGUI_1Sel3LineEdit_QTD.h \
 		MeasureGUI_1Sel6LineEdit_QTD.h \
@@ -73,11 +73,12 @@ LIB_MOC = \
 		MeasureGUI_DistanceDlg.h \
 		MeasureGUI_MaxToleranceDlg.h \
 		MeasureGUI_WhatisDlg.h \
-		MeasureGUI_CheckShapeDlg.h
+		MeasureGUI_CheckShapeDlg.h \
+		MeasureGUI_PointDlg.h    
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl
 
-LIB_SERVER_IDL = 
+LIB_SERVER_IDL =  
 
 # additionnal information to compil and link file
 

@@ -87,6 +87,7 @@ Standard_EXPORT   void setIO(const Handle(SALOME_InteractiveObject)& name) ;
 Standard_EXPORT   void setName(const Standard_CString aName) ;
 Standard_EXPORT   Standard_CString getName() ;
 Standard_EXPORT   Handle_SALOME_InteractiveObject getIO() ;
+Standard_EXPORT   void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
 Standard_EXPORT   ~GEOM_AISShape();
 
 Standard_EXPORT   void SetTransparency(const Standard_Real aValue);

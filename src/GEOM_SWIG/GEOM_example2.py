@@ -33,32 +33,36 @@ import math
 geom = salome.lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 myBuilder = salome.myStudy.NewBuilder()
 
-point0  = geom.MakePointStruct(0.,0.,0.)
-pointz1 = geom.MakePointStruct(0.,0.,1.)
-dirz = geom.MakeDirection(pointz1)
+BasicOp  = geom.GetIBasicOperations(salome.myStudyId)
+PrimOp   = geom.GetI3DPrimOperations(salome.myStudyId)
+InsertOp = geom.GetIInsertOperations(salome.myStudyId)
+TrsfOp   = geom.GetITransformOperations(salome.myStudyId)
 
-torus1 = geompy.MakeTorus(point0,dirz,150.,25.)
+point0  = BasicOp.MakePointXYZ(0.,0.,0.)
+pointz1 = BasicOp.MakePointXYZ(0.,0.,1.)
+dirz = BasicOp.MakeVectorTwoPnt(point0,pointz1)
+
+torus1 = PrimOp.MakeTorusPntVecRR(point0,dirz,150.,25.)
 id_torus1 = geompy.addToStudy(torus1,"torus1")
 
-torus2 = geom.MakeCopy(torus1)
-torus2 = geom.MakeTranslation(torus2,0.,0.,100.)
+torus2 = InsertOp.MakeCopy(torus1)
+
+vec1 = BasicOp.MakeVectorDXDYDZ(0.,0.,100.)
+torus2 = TrsfOp.TranslateVectorCopy(torus2,vec1)
 id_torus2 = geompy.addToStudy(torus2,"torus2")
 
-cylz1 = geompy.MakeCylinder(point0,dirz,25.,100.)
+cylz1 = PrimOp.MakeCylinderPntVecRH(point0,dirz,25.,100.)
 
 ind = 0
 cyllist = []
 while ind < 6:
-    acyl = geom.MakeCopy(cylz1)
+    acyl = InsertOp.MakeCopy(cylz1)
     x = 150. * math.cos(ind * math.pi/3.)
     y = 150. * math.sin(ind * math.pi/3.)
     z = 0.
+    vec_i = BasicOp.MakeVectorDXDYDZ(x,y,z)
     name = "cyl%d"%(ind)
-    acyl = geompy.MakeTranslation(acyl,x,y,z)
+    acyl = TrsfOp.TranslateVectorCopy(acyl,vec_i)
     id_acyl = geompy.addToStudy(acyl,name)
     cyllist.append(acyl)
-    ind = ind +1
-
-
-
-                                  
+    ind = ind + 1

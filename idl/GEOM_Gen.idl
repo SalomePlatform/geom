@@ -1,26 +1,5 @@
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
-//
-//
-//
 //  File   : GEOM_Gen.idl
-//  Author : Lucien PIGNOLONI
+//  Author : Sergey RUIN
 
 #ifndef __GEOM_GEN__
 #define __GEOM_GEN__
@@ -28,305 +7,1786 @@
 #include "SALOME_Exception.idl"
 #include "SALOME_Component.idl"
 #include "SALOMEDS.idl"
-#include "GEOM_Shape.idl"
+
+#include "SALOME_GenericObj.idl"
 
 module GEOM
 {
+  /*!
+   *  Topological types of shapes (like Open Cascade types)
+   */
+  enum shape_type { COMPOUND, COMPSOLID, SOLID, SHELL,
+	            FACE, WIRE, EDGE, VERTEX, SHAPE };
+
+  typedef sequence<string>      string_array;
+  typedef sequence<short>       short_array;
+  typedef sequence<long>        ListOfLong;
+  typedef sequence<double>      ListOfDouble;
+
+  interface GEOM_Object;
+
+  typedef sequence<GEOM_Object> ListOfGO;
+
+  /*!
+   *  GEOM_Object: interface of geometric object
+   */
+  interface GEOM_Object : SALOME::GenericObj
+  {
+
+    /*!
+     *  Get an entry of the object in GEOM component.
+     */
+    string GetEntry();
+
+    /*!
+     *  Get ID of study, where the object is created.
+     */
+    long GetStudyID();
+
+    /*!
+     *  Get internal type of the object (POINT, BOX, CYLINDER, EXTRUSION...).
+     */
+    long GetType();
+
+    /*!
+     *  Get a <VAR>shape_type</VAR> of the object value.
+     */
+    shape_type GetShapeType();
+
+    /*!
+     *  Set name of the object.
+     *  \param theName is a name which will be associated with this object.
+     */
+    void SetName (in string theName);
+
+    /*!
+     *  Get name of the object associated with this object.
+     */
+    string GetName();
+
+    /*!
+     *  Set a Study entry where this object was published.
+     */
+    void SetStudyEntry (in string theEntry);
+
+    /*!
+     *  Get a Study entry where this object was published.
+     */
+    string GetStudyEntry();
+
+    /*!
+     *  Get a list of all GEOM objects on which were the arguments
+     *  when this object was constructed and modified.
+     *  \note This method is supposed to be used by GUI only.
+     */
+    ListOfGO GetDependency();
+
+    /*!
+     *  Get a list of GEOM objects on which the last function that created or modified the object depends.
+     *  \note This method is supposed to be used by GUI only.
+     */
+    ListOfGO GetLastDependency();
+
+    /*!
+     *  Get the TopoDS_Shape, for colocated case only.
+     */
+    long getShape();
+
+    /*!
+     ######################################################################
+     *  Internal methods (For sub shape identification)
+     ######################################################################
+     */
+
+    /*!
+     *  Get geometric shape of the object as a byte stream
+     */
+    SALOMEDS::TMPFile GetShapeStream();
+
+    /*
+     *  Returns True if this object is not a sub shape of another object.
+     */
+    boolean IsMainShape();
+
+    /*
+     *  Get a list of ID's of sub shapes in the main shape.
+     *  \note Internal method, suppopsed to be used only by GEOM_Client
+     */
+    ListOfLong GetSubShapeIndices();
+
+    /*
+     *  Get a main shape object to which this object is a sub shape
+     *  \note Internal method, suppopsed to be used only by GEOM_Client
+     */
+    GEOM_Object GetMainShape();
+
+    /*
+     *  Return true if geom object representes a shape.
+     *  For example, method return false for GEOM_MARKER
+     */
+     boolean IsShape();
+  };
+
+
+  /*!
+   *  GEOM_IOperations: basic methods of all geometric operations
+   */
+  interface GEOM_IOperations : SALOME::GenericObj
+  {
+    /*!
+     *  To know, if the operation was successfully performed
+     */
+    boolean IsDone();
+
+    /*!
+     *  Set the operation error code
+     *  \param theErrorID is a string describing the error occured
+     *  \note This method is supposed to be used only by interfaces inheriting from IOperations.
+     */
+    void SetErrorCode (in string theErrorID);
+
+    /*!
+     *  Get the operation error code
+     */
+    string GetErrorCode();
+
+    /*!
+     *  Get ID of study, where the operation is defined
+     */
+    long GetStudyID();
+
+    /*!
+     *  Opens a new transaction
+     */
+    void StartOperation();
+
+    /*!
+     *  Closes the previously opened trasaction
+     */
+    void FinishOperation();
+
+    /*!
+     *  Aborts the previously opened transaction
+     */
+    void AbortOperation();
+  };
+
+  /*!
+   *  GEOM_IBasicOperations: interface for basic geometry creation
+   *  (Point, Vector, Plane, Marker)
+   */
+  interface GEOM_IBasicOperations : GEOM_IOperations
+  {
+    /*!
+     *  Create point by three coordinates.
+     *  \param theX The X coordinate of the point.
+     *  \param theY The Y coordinate of the point.
+     *  \param theZ The Z coordinate of the point.
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object MakePointXYZ (in double theX, in double theY, in double theZ);
+
+    /*!
+     *  Create a point, distant from the referenced point
+     *  on the given distances along the coordinate axes.
+     *  \param theReference The referenced point.
+     *  \param theX Displacement from the referenced point along OX axis.
+     *  \param theY Displacement from the referenced point along OY axis.
+     *  \param theZ Displacement from the referenced point along OZ axis.
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object MakePointWithReference (in GEOM_Object theReference,
+					in double theX, in double theY, in double theZ);
+
+    /*!
+     *  Create a point, corresponding to the given parameter on the given curve.
+     *  \param theRefCurve The referenced curve.
+     *  \param theParameter Value of parameter on the referenced curve.
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object MakePointOnCurve (in GEOM_Object theRefCurve,
+				  in double theParameter);
+
+    /*!
+     *  Create a vector with the given components.
+     *  \param theDX X component of the vector.
+     *  \param theDY Y component of the vector.
+     *  \param theDZ Z component of the vector.
+     *  \return New GEOM_Object, containing the created vector.
+     */
+    GEOM_Object MakeVectorDXDYDZ (in double theDX,
+				  in double theDY,
+				  in double theDZ);
+
+    /*!
+     *  Create a vector between two points.
+     *  \param thePnt1 Start point for the vector.
+     *  \param thePnt2 End point for the vector.
+     *  \return New GEOM_Object, containing the created vector.
+     */
+    GEOM_Object MakeVectorTwoPnt (in GEOM_Object thePnt1, in GEOM_Object thePnt2);
+
+    /*!
+     *  Create a line, passing through the given point
+     *  and parrallel to the given direction
+     *  \param thePnt Point. The resulting line will pass through it.
+     *  \param theDir Direction. The resulting line will be parallel to it.
+     *  \return New GEOM_Object, containing the created line.
+     */
+    GEOM_Object MakeLine (in GEOM_Object thePnt, in GEOM_Object theDir);
+
+    /*!
+     *  Create a line, passing through the given points
+     *  \param thePnt1 First of two points, defining the line.
+     *  \param thePnt2 Second of two points, defining the line.
+     *  \return New GEOM_Object, containing the created line.
+     */
+    GEOM_Object MakeLineTwoPnt (in GEOM_Object thePnt1, in GEOM_Object thePnt2);
+
+    /*!
+     *  Create a plane, passing through the three given points
+     *  \param thePnt1 First of three points, defining the plane.
+     *  \param thePnt2 Second of three points, defining the plane.
+     *  \param thePnt3 Fird of three points, defining the plane.
+     *  \param theTrimSize Half size of a side of quadrangle face, representing the plane.
+     *  \return New GEOM_Object, containing the created plane.
+     */
+    GEOM_Object MakePlaneThreePnt (in GEOM_Object thePnt1,
+				   in GEOM_Object thePnt2,
+				   in GEOM_Object thePnt3,
+				   in double theTrimSize);
+
+    /*!
+     *  Create a plane, passing through the given point
+     *  and normal to the given vector.
+     *  \param thePnt Point, the plane has to pass through.
+     *  \param theVec Vector, defining the plane normal direction.
+     *  \param theTrimSize Half size of a side of quadrangle face, representing the plane.
+     *  \return New GEOM_Object, containing the created plane.
+     */
+    GEOM_Object MakePlanePntVec (in GEOM_Object thePnt,
+				 in GEOM_Object theVec,
+				 in double theTrimSize);
+
+    /*!
+     *  Create a plane, similar to the existing one, but with another size of representing face.
+     *  \param theFace Referenced plane.
+     *  \param theTrimSize New half size of a side of quadrangle face, representing the plane.
+     *  \return New GEOM_Object, containing the created plane.
+     */
+    GEOM_Object MakePlaneFace (in GEOM_Object theFace,
+			       in double theTrimSize);
+
+    /*!
+     *  Create a local coordinate system.
+     *  \param theOX,theOY,theOZ Three coordinates of coordinate system origin.
+     *  \param theXDX,theXDY,theXDZ Three components of OX direction
+     *  \param theYDX,theYDY,theYDZ Three components of OY direction
+     *  \return New GEOM_Object, containing the created coordinate system.
+     */
+    GEOM_Object MakeMarker (in double theOX , in double theOY , in double theOZ,
+			    in double theXDX, in double theXDY, in double theXDZ,
+			    in double theYDX, in double theYDY, in double theYDZ);
+  };
+
+  interface GEOM_ITransformOperations : GEOM_IOperations
+  {
+    /*!
+     *  Translate the given object along the vector, specified by its end points.
+     *  \param theObject The object to be translated.
+     *  \param thePoint1 Start point of translation vector.
+     *  \param thePoint2 End point of translation vector.
+     *  \return theObject.
+     */
+    GEOM_Object TranslateTwoPoints (in GEOM_Object theObject,
+				    in GEOM_Object thePoint1,
+				    in GEOM_Object thePoint2);
+
+    /*!
+     *  Translate the given object along the vector, specified
+     *  by its end points, creating its copy before the translation.
+     *  \param theObject The object to be translated.
+     *  \param thePoint1 Start point of translation vector.
+     *  \param thePoint2 End point of translation vector.
+     *  \return New GEOM_Object, containing the translated object.
+     */
+    GEOM_Object TranslateTwoPointsCopy (in GEOM_Object theObject,
+					in GEOM_Object thePoint1,
+                                        in GEOM_Object thePoint2);
+
+    /*!
+     *  Translate the given object along the vector, specified by its components.
+     *  \param theObject The object to be translated.
+     *  \param theDX,theDY,theDZ Components of translation vector.
+     *  \return theObject.
+     */
+    GEOM_Object TranslateDXDYDZ (in GEOM_Object theObject,
+				 in double theDX, in double theDY, in double theDZ);
+
+    /*!
+     *  Translate the given object along the vector, specified
+     *  by its components, creating its copy before the translation.
+     *  \param theObject The object to be translated.
+     *  \param theDX,theDY,theDZ Components of translation vector.
+     *  \return New GEOM_Object, containing the translated object.
+     */
+    GEOM_Object TranslateDXDYDZCopy (in GEOM_Object theObject,
+				     in double theDX, in double theDY, in double theDZ);
+
+
+    /*!
+     *  Translate the given object along the given vector.
+     *  \param theObject The object to be translated.
+     *  \param theVector Translation vector, giving both direction and distance.
+     *  \return theObject.
+     */
+    GEOM_Object TranslateVector (in GEOM_Object theObject,
+				 in GEOM_Object theVector);
+
+    /*!
+     *  Translate the given object along the given vector,
+     *  creating its copy before the translation.
+     *  \param theObject The object to be translated.
+     *  \param theVector Translation vector, giving both direction and distance.
+     *  \return New GEOM_Object, containing the translated object.
+     */
+    GEOM_Object TranslateVectorCopy (in GEOM_Object theObject,
+				     in GEOM_Object theVector);
+
+    /*!
+     *  Translate the given object along the given vector a given number times
+     *  \param theObject The object to be translated.
+     *  \param theVector Direction of the translation.
+     *  \param theStep Distance to translate on.
+     *  \param theNbTimes Quantity of translations to be done.
+     *  \return New GEOM_Object, containing compound of all
+     *          the shapes, obtained after each translation.
+     */
+    GEOM_Object MultiTranslate1D (in GEOM_Object theObject,
+				  in GEOM_Object theVector,
+				  in double theStep,
+				  in long theNbTimes);
+
+    /*!
+     *  Conseqently apply two specified translations to theObject specified number of times.
+     *  \param theObject The object to be translated.
+     *  \param theVector1 Direction of the first translation.
+     *  \param theStep1 Step of the first translation.
+     *  \param theNbTimes1 Quantity of translations to be done along theVector1.
+     *  \param theVector2 Direction of the second translation.
+     *  \param theStep2 Step of the second translation.
+     *  \param theNbTimes2 Quantity of translations to be done along theVector2.
+     *  \return New GEOM_Object, containing compound of all
+     *          the shapes, obtained after each translation.
+     */
+    GEOM_Object MultiTranslate2D (in GEOM_Object theObject,
+				  in GEOM_Object theVector1,
+				  in double theStep1,
+				  in long theNbTimes1,
+				  in GEOM_Object theVector2,
+				  in double theStep2,
+				  in long theNbTimes2);
+
+    /*!
+     *  Rotate the given object around the given axis on the given angle.
+     *  \param theObject The object to be rotated.
+     *  \param theAxis Rotation axis.
+     *  \param theAngle Rotation angle in radians.
+     *  \return theObject.
+     */
+    GEOM_Object Rotate (in GEOM_Object theObject,
+			in GEOM_Object theAxis,
+			in double theAngle);
+
+    /*!
+     *  Rotate the given object around the given axis
+     *  on the given angle, creating its copy before the rotatation.
+     *  \param theObject The object to be rotated.
+     *  \param theAxis Rotation axis.
+     *  \param theAngle Rotation angle in radians.
+     *  \return New GEOM_Object, containing the rotated object.
+     */
+    GEOM_Object RotateCopy (in GEOM_Object theObject,
+			    in GEOM_Object theAxis,
+			    in double theAngle);
+
+    /*!
+     *  Rotate the given object around the given axis a given number times.
+     *  Rotation angle will be 2*PI/theNbTimes.
+     *  \param theObject The object to be rotated.
+     *  \param theAxis The rotation axis.
+     *  \param theNbTimes Quantity of rotations to be done.
+     *  \return New GEOM_Object, containing compound of all the
+     *          shapes, obtained after each rotation.
+     */
+    GEOM_Object MultiRotate1D (in GEOM_Object theObject,
+			       in GEOM_Object theAxis,
+			       in long theNbTimes);
+
+    /*!
+     *  Rotate the given object around the
+     *  given axis on the given angle a given number
+     *  times and multi-translate each rotation result.
+     *  Translation direction passes through center of gravity
+     *  of rotated shape and its projection on the rotation axis.
+     *  \param theObject The object to be rotated.
+     *  \param theAxis Rotation axis.
+     *  \param theAngle Rotation angle in graduces.
+     *  \param theNbTimes1 Quantity of rotations to be done.
+     *  \param theStep Translation distance.
+     *  \param theNbTimes2 Quantity of translations to be done.
+     *  \return New GEOM_Object, containing compound of all the
+     *          shapes, obtained after each transformation.
+     */
+    GEOM_Object MultiRotate2D (in GEOM_Object theObject,
+			       in GEOM_Object theAxis,
+			       in double theAngle,
+			       in long theNbTimes1,
+			       in double theStep,
+			       in long theNbTimes2);
+
+    /*!
+     *  Replace the given object by an object,
+     *  symmetrical to it relatively the given plane.
+     *  \param theObject The object to be mirrored.
+     *  \param thePlane Plane of symmetry.
+     */
+    GEOM_Object MirrorPlane (in GEOM_Object theObject, in GEOM_Object thePlane);
+
+    /*!
+     *  Create an object, symmetrical
+     *  to the given one relatively the given plane.
+     *  \param theObject The object to be mirrored.
+     *  \param thePlane Plane of symmetry.
+     *  \return New GEOM_Object, containing the mirrored shape.
+     */
+    GEOM_Object MirrorPlaneCopy (in GEOM_Object theObject, in GEOM_Object thePlane);
+
+    /*!
+     *  Replace the given object by an object,
+     *  symmetrical to it relatively the given axis.
+     *  \param theObject The object to be mirrored.
+     *  \param theAxis Axis of symmetry.
+     *  \return theObject.
+     */
+    GEOM_Object MirrorAxis (in GEOM_Object theObject, in GEOM_Object theAxis);
+
+    /*!
+     *  Create an object, symmetrical
+     *  to the given one relatively the given axis.
+     *  \param theObject The object to be mirrored.
+     *  \param theAxis Axis of symmetry.
+     *  \return New GEOM_Object, containing the mirrored object.
+     */
+    GEOM_Object MirrorAxisCopy (in GEOM_Object theObject, in GEOM_Object theAxis);
+
+    /*!
+     *  Replace the given object by an object, symmetrical to it relatively the given point.
+     *  \param theObject The object to be mirrored.
+     *  \param thePoint Point of symmetry.
+     *  \return theObject.
+     */
+    GEOM_Object MirrorPoint (in GEOM_Object theObject, in GEOM_Object thePoint);
+
+    /*!
+     *  Create an object, symmetrical to the given one relatively the given point.
+     *  \param theObject The object to be mirrored.
+     *  \param thePoint Point of symmetry.
+     *  \return New GEOM_Object, containing the mirrored object.
+     */
+    GEOM_Object MirrorPointCopy (in GEOM_Object theObject, in GEOM_Object thePoint);
+
+    /*!
+     *  Replace the given object by its offset.
+     *  \param theObject The base object for the offset.
+     *  \param theOffset Offset value.
+     *  \return theObject.
+     */
+    GEOM_Object OffsetShape (in GEOM_Object theObject, in double theOffset);
+
+    /*!
+     *  Create new object as offset of the given one.
+     *  \param theObject The base object for the offset.
+     *  \param theOffset Offset value.
+     *  \return New GEOM_Object, containing the offset object.
+     */
+    GEOM_Object OffsetShapeCopy (in GEOM_Object theObject, in double theOffset);
+
+    /*!
+     *  Scale the given object by the factor.
+     *  \param theObject The object to be scaled.
+     *  \param thePoint Center point for scaling.
+     *  \param theFactor Scaling factor value.
+     *  \return theObject.
+     */
+    GEOM_Object ScaleShape (in GEOM_Object theObject, in GEOM_Object thePoint,
+			    in double theFactor);
+
+    /*!
+     *  Scale the given object by the factor, creating its copy before the scaling.
+     *  \param theObject The object to be scaled.
+     *  \param thePoint Center point for scaling.
+     *  \param theFactor Scaling factor value.
+     *  \return New GEOM_Object, containing the scaled shape.
+     */
+    GEOM_Object ScaleShapeCopy (in GEOM_Object theObject, in GEOM_Object thePoint,
+				in double theFactor);
+
+    /*!
+     *  Modify the Location of the given object by LCS
+     */
+    GEOM_Object PositionShape (in GEOM_Object theObject,
+			       in GEOM_Object theStartLCS,
+			       in GEOM_Object theEndLCS);
+
+    /*!
+     *  Modify the Location of the given object by LCS
+     *  creating its copy before the setting
+     */
+    GEOM_Object PositionShapeCopy (in GEOM_Object theObject,
+				   in GEOM_Object theStartLCS,
+				   in GEOM_Object theEndLCS);
+  };
+
+  /*!
+   *  GEOM_I3DPrimOperations: Interface for 3D primitives creation
+   *  Box, Cylinder, Cone, Sphere, Prism (extrusion),
+   *  Pipe (extrusion along contour), Revolution, Solid (from shell).
+   */
+  interface GEOM_I3DPrimOperations : GEOM_IOperations
+  {
+    /*!
+     *  Create a box with specified dimensions along the coordinate axes
+     *  and with edges, parallel to the coordinate axes.
+     *  Center of the box will be at point (DX/2, DY/2, DZ/2).
+     *  \param theDX Length of Box edges, parallel to OX axis.
+     *  \param theDY Length of Box edges, parallel to OY axis.
+     *  \param theDZ Length of Box edges, parallel to OZ axis.
+     *  \return New GEOM_Object, containing the created box.
+     */
+    GEOM_Object MakeBoxDXDYDZ (in double theDX, in double theDY, in double theDZ);
+
+    /*!
+     *  Create a box with two specified opposite vertices,
+     *  and with edges, parallel to the coordinate axes
+     *  \param thePnt1 First of two opposite vertices.
+     *  \param thePnt2 Second of two opposite vertices.
+     *  \return New GEOM_Object, containing the created box.
+     */
+    GEOM_Object MakeBoxTwoPnt (in GEOM_Object thePnt1, in GEOM_Object thePnt2);
+
+    /*!
+     *  Create a cylinder with given radius and height at
+     *  the origin of coordinate system. Axis of the cylinder
+     *  will be collinear to the OZ axis of the coordinate system.
+     *  \param theR Cylinder radius.
+     *  \param theH Cylinder height.
+     *  \return New GEOM_Object, containing the created cylinder.
+     */
+    GEOM_Object MakeCylinderRH (in double theR, in double theH);
+
+    /*!
+     *  Create a cylinder with given base point, axis, radius and height.
+     *  \param thePnt Central point of cylinder base.
+     *  \param theAxis Cylinder axis.
+     *  \param theR Cylinder radius.
+     *  \param theH Cylinder height.
+     *  \return New GEOM_Object, containing the created cylinder.
+     */
+    GEOM_Object MakeCylinderPntVecRH (in GEOM_Object thePnt,
+				      in GEOM_Object theAxis,
+				      in double      theR,
+				      in double      theH);
+
+    /*!
+     *  Create a cone with given height and radiuses at
+     *  the origin of coordinate system. Axis of the cone will
+     *  be collinear to the OZ axis of the coordinate system.
+     *  \param theR1 Radius of the first cone base.
+     *  \param theR2 Radius of the second cone base.
+     *    \note If both radiuses are non-zero, the cone will be truncated.
+     *    \note If the radiuses are equal, a cylinder will be created instead.
+     *  \param theH Cone height.
+     *  \return New GEOM_Object, containing the created cone.
+     */
+    GEOM_Object MakeConeR1R2H (in double theR1, in double theR2, in double theH);
+
+    /*!
+     *  Create a cone with given base point, axis, height and radiuses.
+     *  \param thePnt Central point of the first cone base.
+     *  \param theAxis Cone axis.
+     *  \param theR1 Radius of the first cone base.
+     *  \param theR2 Radius of the second cone base.
+     *    \note If both radiuses are non-zero, the cone will be truncated.
+     *    \note If the radiuses are equal, a cylinder will be created instead.
+     *  \param theH Cone height.
+     *  \return New GEOM_Object, containing the created cone.
+     */
+    GEOM_Object MakeConePntVecR1R2H (in GEOM_Object thePnt,
+				     in GEOM_Object theAxis,
+				     in double      theR1,
+				     in double      theR2,
+				     in double      theH);
+
+    /*!
+     *  Create a torus with given radiuses at the origin of coordinate system.
+     *  \param theRMajor Torus major radius.
+     *  \param theRMinor Torus minor radius.
+     *  \return New GEOM_Object, containing the created torus.
+     */
+    GEOM_Object MakeTorusRR (in double theRMajor,
+			     in double theRMinor);
+
+    /*!
+     *  Create a torus with given center, normal vector and radiuses.
+     *  \param thePnt Torus central point.
+     *  \param theVec Torus axis of symmetry.
+     *  \param theRMajor Torus major radius.
+     *  \param theRMinor Torus minor radius.
+     *  \return New GEOM_Object, containing the created torus.
+     */
+    GEOM_Object MakeTorusPntVecRR (in GEOM_Object thePnt,
+				   in GEOM_Object theVec,
+				   in double theRMajor,
+				   in double theRMinor);
+
+    /*!
+     *  Create a sphere with given radius at the origin of coordinate system.
+     *  \param theR Sphere radius.
+     *  \return New GEOM_Object, containing the created sphere.
+     */
+    GEOM_Object MakeSphereR (in double theR);
+
+    /*!
+     *  Create a sphere with given center and radius.
+     *  \param thePnt Sphere center.
+     *  \param theR Sphere radius.
+     *  \return New GEOM_Object, containing the created .
+     */
+    GEOM_Object MakeSpherePntR (in GEOM_Object thePnt, in double theR);
+
+    /*!
+     *  Create a shape by extrusion of the base shape along the vector,
+     *  i.e. all the space, transfixed by the base shape during its translation
+     *  along the vector on the given distance.
+     *  \param theBase Base shape to be extruded.
+     *  \param theVec Direction of extrusion.
+     *  \param theH Prism dimension along theVec.
+     *  \return New GEOM_Object, containing the created prism.
+     */
+    GEOM_Object MakePrismVecH (in GEOM_Object theBase,
+			       in GEOM_Object theVec,
+			       in double      theH);
+
+    /*!
+     *  Create a shape by extrusion of the base shape along a vector, defined by two points.
+     *  \param theBase Base shape to be extruded.
+     *  \param thePoint1 First end of extrusion vector.
+     *  \param thePoint2 Second end of extrusion vector.
+     *  \return New GEOM_Object, containing the created prism.
+     */
+    GEOM_Object MakePrismTwoPnt (in GEOM_Object theBase,
+				 in GEOM_Object thePoint1,
+				 in GEOM_Object thePoint2);
+
+    /*!
+     *  Create a shape by extrusion of the base shape along
+     *  the path shape. The path shape can be a wire or an edge.
+     *  \param theBase Base shape to be extruded.
+     *  \param thePath Path shape to extrude the base shape along it.
+     *  \return New GEOM_Object, containing the created pipe.
+     */
+    GEOM_Object MakePipe (in GEOM_Object theBase, in GEOM_Object thePath);
+
+    /*!
+     *  Create a shape by revolution of the base shape around the axis
+     *  on the given angle, i.e. all the space, transfixed by the base
+     *  shape during its rotation around the axis on the given angle.
+     *  \param theBase Base shape to be rotated.
+     *  \param theAxis Rotation axis.
+     *  \param theAngle Rotation angle in radians.
+     *  \return New GEOM_Object, containing the created revolution.
+     */
+    GEOM_Object MakeRevolutionAxisAngle (in GEOM_Object theBase,
+					 in GEOM_Object theAxis,
+					 in double theAngle);
+
+    /*!
+     *  Create a filling from the given compound of contours.
+     *  \param theMinDeg a minimal degree
+     *  \param theMaxDeg a maximal degree
+     *  \param theTol2D a 2d tolerance
+     *  \param theTol3D a 3d tolerance
+     *  \param theNbIter a number of iteration
+     *  \return New GEOM_Object, containing the created filling surface.
+     */
+    GEOM_Object MakeFilling (in GEOM_Object theShape,
+			     in long theMinDeg, in long theMaxDeg,
+			     in double theTol2D, in double theTol3D,
+			     in long theNbIter);
+  };
+
+  /*!
+   *  GEOM_IShapesOperations: Interface for Shapes creation:
+   *  Edge from two points, Wire from edges, Face from wire,
+   *  Shell from faces, Solid from shells, Compound from shapes
+   */
+  interface GEOM_IShapesOperations : GEOM_IOperations
+  {
+    /*!
+     *  Create a linear edge with specified ends.
+     *  \param thePnt1 Point for the first end of edge.
+     *  \param thePnt2 Point for the second end of edge.
+     *  \return New GEOM_Object, containing the created edge.
+     */
+    GEOM_Object MakeEdge (in GEOM_Object thePnt1, in GEOM_Object thePnt2);
+
+    /*!
+     *  Create a wire from the set of edges and wires.
+     *  \param theEdgesAndWires List of edge and/or wires.
+     *  \return New GEOM_Object, containing the created wire.
+     */
+    GEOM_Object MakeWire (in ListOfGO theEdgesAndWires);
+
+    /*!
+     *  Create a face on the given wire.
+     *  \param theWire Wire to build the face on.
+     *  \param isPlanarWanted If TRUE, only planar face will be built.
+     *                        If impossible, NULL object will be returned.
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeFace (in GEOM_Object theWire, in boolean isPlanarWanted);
+
+    /*!
+     *  Create a face on the given wires set.
+     *  \param theWires List of wires to build the face on.
+     *  \param isPlanarWanted If TRUE, only planar face will be built.
+     *                        If impossible, NULL object will be returned.
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeFaceWires (in ListOfGO theWires, in boolean isPlanarWanted);
+
+    /*!
+     *  Create a shell from the set of faces and shells.
+     *  \param theFacesAndShells List of faces and/or shells.
+     *  \return New GEOM_Object, containing the created shell.
+     */
+    GEOM_Object MakeShell (in ListOfGO theFacesAndShells);
+
+    /*!
+     *  Create a solid, bounded by the given shell.
+     *  \param theShell Bounding shell.
+     *  \return New GEOM_Object, containing the created solid.
+     */
+    GEOM_Object MakeSolidShell (in GEOM_Object theShell);
+
+    /*!
+     *  Create a solid, bounded by the given shells.
+     *  \param theShells Bounding shells.
+     *  \return New GEOM_Object, containing the created solid.
+     */
+    GEOM_Object MakeSolidShells (in ListOfGO theShells);
+
+    /*!
+     *  Create a compound of the given shapes.
+     *  \param theShapes List of shapes to put in compound.
+     *  \return New GEOM_Object, containing the created compound.
+     */
+    GEOM_Object MakeCompound (in ListOfGO theShapes);
+
+    /*!
+     *  Replace coincident faces in theShape by one face.
+     *  \param theShape Initial shape.
+     *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
+     *  \return New GEOM_Object, containing a copy of theShape without coincident faces.
+     */
+    GEOM_Object MakeGlueFaces (in GEOM_Object theShape, in double theTolerance);
+
+    /*!
+     *  Explode a shape on subshapes of a given type.
+     *  \param theShape Shape to be exploded.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param isSorted If this parameter is TRUE, sub-shapes will be
+     *                  sorted by coordinates of their gravity centers.
+     *  \return List of sub-shapes of type theShapeType, contained in theShape.
+     */
+    ListOfGO MakeExplode (in GEOM_Object theShape,
+			  in long        theShapeType,
+			  in boolean     isSorted);
+
+    /*!
+     *  Get a sub shape defined by its unique ID inside \a theMainShape
+     *  \note The sub shape GEOM_Objects can has ONLY ONE function.
+     *        Don't try to apply modification operations on them.
+     */
+    GEOM_Object GetSubShape (in GEOM_Object theMainShape,
+			     in long        theID);
+
+    /*!
+     *  Count number of faces in the given shape.
+     *  \param theShape Shape to count faces in.
+     *  \return Number of faces in the given shape.
+     */
+    long NumberOfFaces (in GEOM_Object theShape);
+
+    /*!
+     *  Count number of edges in the given shape.
+     *  \param theShape Shape to count edges in.
+     *  \return Number of edges in theShape.
+     */
+    long NumberOfEdges (in GEOM_Object theShape);
+
+    /*!
+     *  Reverses an orientation the given shape.
+     *  \param theShape Shape to be reversed.
+     *  \return The reversed copy of theShape.
+     */
+    GEOM_Object ChangeOrientation (in GEOM_Object theShape);
+  };
+
+  /*!
+   *  GEOM_IBlocksOperations: Interface for Blocks construction
+   *  Face from points or edges, Block from faces,
+   *  Blocks multi-translation and multi-rotation
+   */
+  interface GEOM_IBlocksOperations : GEOM_IOperations
+  {
+    /*!
+     *  Creation of blocks
+     */
+
+    /*!
+     *  Create a quadrangle face from four edges. Order of Edges is not
+     *  important. It is  not necessary that edges share the same vertex.
+     *  \param theEdge1,theEdge2,theEdge3,theEdge4 Edges for the face bound.
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeQuad (in GEOM_Object theEdge1,
+			  in GEOM_Object theEdge2,
+			  in GEOM_Object theEdge3,
+			  in GEOM_Object theEdge4);
+
+    /*!
+     *  Create a quadrangle face on two edges.
+     *  The missing edges will be built by creating the shortest ones.
+     *  \param theEdge1,theEdge2 Two opposite edges for the face.
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeQuad2Edges (in GEOM_Object theEdge1,
+				in GEOM_Object theEdge2);
+
+    /*!
+     *  Create a quadrangle face with specified corners.
+     *  The missing edges will be built by creating the shortest ones.
+     *  \param thePnt1,thePnt2,thePnt3,thePnt4 Corner vertices for the face.
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeQuad4Vertices (in GEOM_Object thePnt1,
+				   in GEOM_Object thePnt2,
+				   in GEOM_Object thePnt3,
+				   in GEOM_Object thePnt4);
+
+    /*!
+     *  Create a hexahedral solid, bounded by the six given faces. Order of
+     *  faces is not important. It is  not necessary that Faces share the same edge.
+     *  \param theFace1-theFace6 Faces for the hexahedral solid.
+     *  \return New GEOM_Object, containing the created solid.
+     */
+    GEOM_Object MakeHexa (in GEOM_Object theFace1,
+			  in GEOM_Object theFace2,
+			  in GEOM_Object theFace3,
+			  in GEOM_Object theFace4,
+			  in GEOM_Object theFace5,
+			  in GEOM_Object theFace6);
+
+    /*!
+     *  Create a hexahedral solid between two given faces.
+     *  The missing faces will be built by creating the smallest ones.
+     *  \param theFace1,theFace2 Two opposite faces for the hexahedral solid.
+     *  \return New GEOM_Object, containing the created solid.
+     */
+    GEOM_Object MakeHexa2Faces (in GEOM_Object theFace1,
+				in GEOM_Object theFace2);
+
+    /*!
+     *  Extract elements of blocks and blocks compounds
+     */
+
+    /*!
+     *  Get a vertex, found in the given shape by its coordinates.
+     *  \param theShape Block or a compound of blocks.
+     *  \param theX,theY,theZ Coordinates of the sought vertex.
+     *  \param theEpsilon Maximum allowed distance between the resulting
+     *                    vertex and point with the given coordinates.
+     *  \return New GEOM_Object, containing the found vertex.
+     */
+    GEOM_Object GetPoint (in GEOM_Object theShape,
+			  in double      theX,
+			  in double      theY,
+			  in double      theZ,
+			  in double      theEpsilon);
+
+    /*!
+     *  Get an edge, found in the given shape by two given vertices.
+     *  \param theShape Block or a compound of blocks.
+     *  \param thePoint1,thePoint2 Points, close to the ends of the desired edge.
+     *  \return New GEOM_Object, containing the found edge.
+     */
+    GEOM_Object GetEdge (in GEOM_Object theShape,
+			 in GEOM_Object thePoint1,
+			 in GEOM_Object thePoint2);
+
+    /*!
+     *  Find an edge of the given shape, which has minimal distance to the given point.
+     *  \param theShape Block or a compound of blocks.
+     *  \param thePoint Point, close to the desired edge.
+     *  \return New GEOM_Object, containing the found edge.
+     */
+    GEOM_Object GetEdgeNearPoint (in GEOM_Object theShape,
+				  in GEOM_Object thePoint);
+
+    /*!
+     *  Returns a face, found in the given shape by four given corner vertices.
+     *  \param theShape Block or a compound of blocks.
+     *  \param thePoint1-thePoint4 Points, close to the corners of the desired face.
+     *  \return New GEOM_Object, containing the found face.
+     */
+    GEOM_Object GetFaceByPoints (in GEOM_Object theShape,
+				 in GEOM_Object thePoint1,
+				 in GEOM_Object thePoint2,
+				 in GEOM_Object thePoint3,
+				 in GEOM_Object thePoint4);
+
+    /*!
+     *  Get a face of block, found in the given shape by two given edges.
+     *  \param theShape Block or a compound of blocks.
+     *  \param theEdge1,theEdge2 Edges, close to the edges of the desired face.
+     *  \return New GEOM_Object, containing the found face.
+     */
+    GEOM_Object GetFaceByEdges (in GEOM_Object theShape,
+				in GEOM_Object theEdge1,
+				in GEOM_Object theEdge2);
+
+    /*!
+     *  Find a face, opposite to the given one in the given block.
+     *  \param theBlock Must be a hexahedral solid.
+     *  \param theFace Face of \a theBlock, opposite to the desired face.
+     *  \return New GEOM_Object, containing the found face.
+     */
+    GEOM_Object GetOppositeFace (in GEOM_Object theBlock,
+				 in GEOM_Object theFace);
+
+    /*!
+     *  Find a face of the given shape, which has minimal distance to the given point.
+     *  \param theShape Block or a compound of blocks.
+     *  \param thePoint Point, close to the desired face.
+     *  \return New GEOM_Object, containing the found face.
+     */
+    GEOM_Object GetFaceNearPoint (in GEOM_Object theShape,
+				  in GEOM_Object thePoint);
+
+    /*!
+     *  Find a face of block, whose outside normale has minimal angle with the given vector.
+     *  \param theShape Block or a compound of blocks.
+     *  \param theVector Vector, close to the normale of the desired face.
+     *  \return New GEOM_Object, containing the found face.
+     */
+    GEOM_Object GetFaceByNormale (in GEOM_Object theBlock,
+				  in GEOM_Object theVector);
+
+    /*!
+     *  Extract blocks from blocks compounds
+     */
+
+    /*!
+     *  Check, if the compound contains only specified blocks.
+     *  \param theCompound The compound to check.
+     *  \param theMinNbFaces If solid has lower number of faces, it is not a block.
+     *  \param theMaxNbFaces If solid has higher number of faces, it is not a block.
+     *    \note If theMaxNbFaces = 0, the maximum number of faces is not restricted.
+     *  \return TRUE, if the given compound contains only blocks.
+     *  \return theNbBlocks Number of specified blocks in theCompound.
+     */
+    boolean IsCompoundOfBlocks (in GEOM_Object theCompound,
+				in long        theMinNbFaces,
+				in long        theMaxNbFaces,
+				out long       theNbBlocks);
+
+    /*!
+     *  Enumeration of Blocks Compound defects.
+     */
+    enum BCErrorType
+    {
+      NOT_BLOCK,          /* Each element of the compound should be a Block */
+      INVALID_CONNECTION, /* A connection between two Blocks should be an entire face or an entire edge */
+      NOT_CONNECTED,      /* The compound should be connexe */
+      NOT_GLUED           /* The glue between two quadrangle faces should be applied */
+    };
+
+    /*!
+     *  Description of Blocks Compound defect: type and incriminated sub-shapes.
+     */
+    struct BCError
+    {
+      BCErrorType error;
+      ListOfLong  incriminated;
+    };
+
+    /*!
+     *  Sequence of all Blocks Compound defects.
+     */
+    typedef sequence<BCError> BCErrors;
+
+    /*!
+     *  Check, if the compound of blocks is given.
+     *  To be considered as a compound of blocks, the
+     *  given shape must satisfy the following conditions:
+     *  - Each element of the compound should be a Block (6 faces and 12 edges).
+     *  - A connection between two Blocks should be an entire quadrangle face or an entire edge.
+     *  - The compound should be connexe.
+     *  - The glue between two quadrangle faces should be applied.
+     *  \param theCompound The compound to check.
+     *  \return TRUE, if the given shape is a compound of blocks.
+     *  \return theErrors Structure, containing discovered errors and incriminated sub-shapes.
+     */
+    boolean CheckCompoundOfBlocks (in GEOM_Object theCompound,
+				   out BCErrors   theErrors);
+
+    /*!
+     *  Convert sequence of Blocks Compound errors, returned by
+     *  <VAR>CheckCompoundOfBlocks()</VAR>, into string.
+     *  \param theCompound The bad compound.
+     *  \param theErrors The sequence of \a theCompound errors.
+     *  \return String, describing all the errors in form, suitable for printing.
+     */
+    string PrintBCErrors (in GEOM_Object theCompound,
+			  in BCErrors    theErrors);
+
+    /*!
+     *  Get all the blocks, contained in the given compound.
+     *  \param theCompound The compound to explode.
+     *  \param theMinNbFaces If solid has lower number of faces, it is not a block.
+     *  \param theMaxNbFaces If solid has higher number of faces, it is not a block.
+     *    \note If theMaxNbFaces = 0, the maximum number of faces is not restricted.
+     *  \return List of GEOM_Objects, containing the retrieved blocks.
+     */
+    ListOfGO ExplodeCompoundOfBlocks (in GEOM_Object theCompound,
+				      in long        theMinNbFaces,
+				      in long        theMaxNbFaces);
+
+    /*!
+     *  Find block, containing the given point inside its volume or on boundary.
+     *  \param theCompound Compound, to find block in.
+     *  \param thePoint Point, close to the desired block. If the point lays on
+     *         boundary between some blocks, we return block with nearest center.
+     *  \return New GEOM_Object, containing the found block.
+     */
+    GEOM_Object GetBlockNearPoint (in GEOM_Object theCompound,
+				   in GEOM_Object thePoint);
+
+    /*!
+     *  Find block, containing all the elements, passed as the parts, or maximum quantity of them.
+     *  \param theCompound Compound, to find block in.
+     *  \param theParts List of faces and/or edges and/or vertices to be parts of the found block.
+     *  \return New GEOM_Object, containing the found block.
+     */
+    GEOM_Object GetBlockByParts (in GEOM_Object theCompound,
+				 in ListOfGO    theParts);
+
+    /*!
+     *  Return all blocks, containing all the elements, passed as the parts.
+     *  \param theCompound Compound, to find blocks in.
+     *  \param theParts List of faces and/or edges and/or vertices to be parts of the found blocks.
+     *  \return List of GEOM_Objects, containing the found blocks.
+     */
+    ListOfGO GetBlocksByParts (in GEOM_Object theCompound,
+			       in ListOfGO    theParts);
+
+    /*!
+     *  Operations on blocks with gluing of result
+     */
+
+    /*!
+     *  Multi-transformate block and glue the result.
+     *  Transformation is defined so, as to superpose theDirFace1 with theDirFace2.
+     *  \param theBlock Hexahedral solid to be multi-transformed.
+     *  \param theDirFace1 First direction face global index.
+     *  \param theDirFace2 Second direction face global index.
+     *  \param theNbTimes Quantity of transformations to be done.
+     *    \note Global index of sub-shape can be obtained, using method
+     *          <VAR>GEOM_ILocalOperations.GetSubShapeIndex()</VAR>.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeMultiTransformation1D (in GEOM_Object theBlock,
+					   in long        theDirFace1,
+					   in long        theDirFace2,
+					   in long        theNbTimes);
+
+    /*!
+     *  Multi-transformate block and glue the result.
+     *  \param theBlock Hexahedral solid to be multi-transformed.
+     *  \param theDirFace1U,theDirFace2U Direction faces for the first transformation.
+     *  \param theDirFace1V,theDirFace2V Direction faces for the second transformation.
+     *  \param theNbTimesU,theNbTimesV Quantity of transformations to be done.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeMultiTransformation2D (in GEOM_Object theBlock,
+					   in long        theDirFace1U,
+					   in long        theDirFace2U,
+					   in long        theNbTimesU,
+					   in long        theDirFace1V,
+					   in long        theDirFace2V,
+					   in long        theNbTimesV);
+  };
+
+  /*!
+   *  GEOM_IBooleanOperations: Interface for boolean operations (Cut, Fuse, Common)
+   */
+  interface GEOM_IBooleanOperations : GEOM_IOperations
+  {
+    /*!
+     *  Perform one of boolean operations on two given shapes.
+     *  \param theShape1 First argument for boolean operation.
+     *  \param theShape2 Second argument for boolean operation.
+     *  \param theOperation Indicates the operation to be done:
+     *                      1 - Common, 2 - Cut, 3 - Fuse, 4 - Section.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeBoolean (in GEOM_Object theShape1,
+			     in GEOM_Object theShape2,
+			     in long theOperation);
+
+    /*!
+     *  Perform partition operation.
+     *  \param theShapes Shapes to be intersected.
+     *  \param theTools Shapes to intersect theShapes.
+     *  \param theKeepInside Shapes, outside which the results will be deleted.
+     *         Each shape from theKeepInside must belong to theShapes also.
+     *  \param theRemoveInside Shapes, inside which the results will be deleted.
+     *         Each shape from theRemoveInside must belong to theShapes also.
+     *  \param theLimit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
+     *  \param theRemoveWebs If TRUE, perform Glue 3D algorithm.
+     *  \param theMaterials Material indices for each shape. Make sence, only if theRemoveWebs is TRUE.
+     *  \return New GEOM_Object, containing the result shapes.
+     */
+    GEOM_Object MakePartition (in ListOfGO   theShapes,
+			       in ListOfGO   theTools,
+			       in ListOfGO   theKeepInside,
+			       in ListOfGO   theRemoveInside,
+			       in short      theLimit,
+			       in boolean    theRemoveWebs,
+			       in ListOfLong theMaterials);
+
+    /*!
+     *  Perform partition of the Shape with the Plane
+     *  \param theShape Shape to be intersected.
+     *  \param thePlane Tool shape, to intersect theShape.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeHalfPartition (in GEOM_Object theShape,
+				   in GEOM_Object thePlane);
+  };
+
+  /*!
+   *  GEOM_ICurvesOperations: Interface for curves creation.
+   *  Polyline, Circle, Spline (Bezier and Interpolation)
+   */
+  interface GEOM_ICurvesOperations : GEOM_IOperations
+  {
+    /*!
+     *  Create a circle with given center, normal vector and radius.
+     *  \param thePnt Circle center.
+     *  \param theVec Vector, normal to the plane of the circle.
+     *  \param theR Circle radius.
+     *  \return New GEOM_Object, containing the created circle.
+     */
+    GEOM_Object MakeCirclePntVecR (in GEOM_Object thePnt,
+				   in GEOM_Object theVec,
+				   in double theR);
+    /*!
+     *  Create a circle, passing through three given points
+     *  \param thePnt1,thePnt2,thePnt3 Points, defining the circle.
+     *  \return New GEOM_Object, containing the created circle.
+     */
+    GEOM_Object MakeCircleThreePnt (in GEOM_Object thePnt1,
+				    in GEOM_Object thePnt2,
+				    in GEOM_Object thePnt3);
+
+    /*!
+     *  Create an ellipse with given center, normal vector and radiuses.
+     *  \param thePnt Ellipse center.
+     *  \param theVec Vector, normal to the plane of the ellipse.
+     *  \param theRMajor Major ellipse radius.
+     *  \param theRMinor Minor ellipse radius.
+     *  \return New GEOM_Object, containing the created ellipse.
+     */
+    GEOM_Object MakeEllipse (in GEOM_Object thePnt,
+			     in GEOM_Object theVec,
+			     in double theRMajor,
+			     in double theRMinor);
+
+    /*!
+     *  Create an arc of circle, passing through three given points.
+     *  \param thePnt1 Start point of the arc.
+     *  \param thePnt2 Middle point of the arc.
+     *  \param thePnt3 End point of the arc.
+     *  \return New GEOM_Object, containing the created arc.
+     */
+    GEOM_Object MakeArc (in GEOM_Object thePnt1,
+			 in GEOM_Object thePnt2,
+			 in GEOM_Object thePnt3);
+
+    /*!
+     *  Create a polyline on the set of points.
+     *  \param thePoints Sequence of points for the polyline.
+     *  \return New GEOM_Object, containing the created polyline.
+     */
+    GEOM_Object MakePolyline (in ListOfGO thePoints);
+
+    /*!
+     *  Create bezier curve on the set of points.
+     *  \param thePoints Sequence of points for the bezier curve.
+     *  \return New GEOM_Object, containing the created bezier curve.
+     */
+    GEOM_Object MakeSplineBezier (in ListOfGO thePoints);
+
+    /*!
+     *  Create B-Spline curve on the set of points.
+     *  \param thePoints Sequence of points for the B-Spline curve.
+     *  \return New GEOM_Object, containing the created B-Spline curve.
+     */
+    GEOM_Object MakeSplineInterpolation (in ListOfGO thePoints);
+
+    /*!
+     *  Create a sketcher (wire or face), following the textual description,
+     *  passed through \a theCommand argument. \n
+     *  Edges of the resulting wire or face will be arcs of circles and/or linear segments. \n
+     *  Format of the description string have to be the following:
+     *
+     *  "Sketcher[:F x1 y1]:CMD[:CMD[:CMD...]]"
+     *
+     *  Where:
+     *  - x1, y1 are coordinates of the first sketcher point (zero by default),
+     *  - CMD is one of
+     *     - "R angle" : Set the direction by angle
+     *     - "D dx dy" : Set the direction by DX & DY
+     *     .
+     *       \n
+     *     - "TT x y" : Create segment by point at X & Y
+     *     - "T dx dy" : Create segment by point with DX & DY
+     *     - "L length" : Create segment by direction & Length
+     *     - "IX x" : Create segment by direction & Intersect. X
+     *     - "IY y" : Create segment by direction & Intersect. Y
+     *     .
+     *       \n
+     *     - "C radius length" : Create arc by direction, radius and length(in degree)
+     *     .
+     *       \n
+     *     - "WW" : Close Wire (to finish)
+     *     - "WF" : Close Wire and build face (to finish)
+     *
+     *  \param theCommand String, defining the sketcher in local
+     *                    coordinates of the working plane.
+     *  \param theWorkingPlane Nine double values, defining origin,
+     *                         OZ and OX directions of the working plane.
+     *  \return New GEOM_Object, containing the created wire.
+     */
+    GEOM_Object MakeSketcher (in string theCommand, in ListOfDouble theWorkingPlane);
+  };
+
+  /*!
+   *  GEOM_ILocalOperations: Interface for fillet and chamfer creation.
+   */
+  interface GEOM_ILocalOperations : GEOM_IOperations
+  {
+    /*!
+     *  Perform a fillet on all edges of the given shape.
+     *  \param theShape Shape, to perform fillet on.
+     *  \param theR Fillet radius.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeFilletAll (in GEOM_Object theShape,
+			       in double      theR);
+
+    /*!
+     *  Perform a fillet on the specified edges of the given shape
+     *  \param theShape Shape, to perform fillet on.
+     *  \param theR Fillet radius.
+     *  \param theEdges Global indices of edges to perform fillet on.
+     *    \note Global index of sub-shape can be obtained, using method <VAR>GetSubShapeIndex()</VAR>.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeFilletEdges (in GEOM_Object theShape,
+				 in double      theR,
+				 in ListOfLong  theEdges);
+
+    /*!
+     *  Perform a fillet on all edges of the specified faces of the given shape.
+     *  \param theShape Shape, to perform fillet on.
+     *  \param theR Fillet radius.
+     *  \param theFaces Global indices of faces to perform fillet on.
+     *    \note Global index of sub-shape can be obtained, using method <VAR>GetSubShapeIndex()</VAR>.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeFilletFaces (in GEOM_Object theShape,
+				 in double      theR,
+				 in ListOfLong  theFaces);
+
+    /*!
+     *  Perform a symmetric chamfer on all edges of the given shape.
+     *  \param theShape Shape, to perform chamfer on.
+     *  \param theD Chamfer size along each face.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeChamferAll (in GEOM_Object theShape,
+				in double      theD);
+
+    /*!
+     *  Perform a chamfer on edges, common to the specified faces.
+     *  with distance D1 on the Face1
+     *  \param theShape Shape, to perform chamfer on.
+     *  \param theD1 Chamfer size along \a theFace1.
+     *  \param theD2 Chamfer size along \a theFace2.
+     *  \param theFace1,theFace2 Global indices of two faces of \a theShape.
+     *    \note Global index of sub-shape can be obtained, using method <VAR>GetSubShapeIndex()</VAR>.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeChamferEdge (in GEOM_Object theShape,
+				 in double theD1, in double theD2,
+				 in long theFace1, in long theFace2);
+
+    /*!
+     *  Perform a chamfer on all edges of the specified faces.
+     *  with distance D1 on the first specified face (if several for one edge)
+     *  \param theShape Shape, to perform chamfer on.
+     *  \param theD1 Chamfer size along face from \a theFaces. If both faces,
+     *               connected to the edge, are in \a theFaces, \a theD1
+     *               will be get along face, which is nearer to \a theFaces beginning.
+     *  \param theD2 Chamfer size along another of two faces, connected to the edge.
+     *  \param theFaces Sequence of global indices of faces of \a theShape.
+     *    \note Global index of sub-shape can be obtained, using method <VAR>GetSubShapeIndex()</VAR>.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeChamferFaces (in GEOM_Object theShape,
+				  in double theD1, in double theD2,
+				  in ListOfLong theFaces);
+
+    /*!
+     *  Perform an Archimde operation on the given shape with given parameters.
+     *                    The object presenting the resulting face is returned
+     *  \param theShape Shape to be put in water.
+     *  \param theWeight Weight og the shape.
+     *  \param theWaterDensity Density of the water.
+     *  \param theMeshDeflection Deflection od the mesh, using to compute the section.
+     *  \return New GEOM_Object, containing a section of \a theShape
+     *          by a plane, corresponding to water level.
+     */
+    GEOM_Object MakeArchimede (in GEOM_Object theShape,
+			       in double theWeight,
+			       in double theWaterDensity,
+			       in double theMeshDeflection);
+
+    /*!
+     *  Get global index of \a theSubShape in \a theShape.
+     *  \param theShape Main shape.
+     *  \param theSubShape Sub-shape of the main shape.
+     *  \return global index of \a theSubShape in \a theShape.
+     */
+    long GetSubShapeIndex (in GEOM_Object theShape, in GEOM_Object theSubShape);
+  };
+
+  /*!
+   *  GEOM_IHealingOperations: Interface for shape healing operations.
+   *  Shape Processing, SuppressFaces, etc.
+   */
+  interface GEOM_IHealingOperations : GEOM_IOperations
+  {
+    /*!
+     *  Apply a sequence of Shape Healing operators to the given object.
+     *  \param theShapes Shape to be processed.
+     *  \param theOperators List of names of operators ("FixShape", "SplitClosedFaces", etc.).
+     *  \param theParameters List of names of parameters
+     *                    ("FixShape.Tolerance3d", "SplitClosedFaces.NbSplitPoints", etc.).
+     *  \param theValues List of values of parameters, in the same order
+     *                    as parameters are listed in \a theParameters list.
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object ProcessShape (in GEOM_Object theShapes,
+			      in string_array theOperators,
+			      in string_array theParameters,
+			      in string_array theValues);
+
+    /*!
+     *  Get default sequence of operators, their parameters and parameters' values
+     *  of Shape Process operation. In the current implementation the defaults are
+     *  read from the file pointed by CSF_ShHealingDefaults environmental variable.
+     *  \param theOperators Output. Default list of names of operators.
+     *  \param theParameters Output. Default list of names of parameters.
+     *  \param theValues Output. List of default values of parameters, in the same order
+     *                           as parameters are listed in \a theParameters list.
+     */
+    void GetShapeProcessParameters (out string_array theOperators,
+				    out string_array theParameters,
+				    out string_array theValues);
+
+    /*!
+     *  Remove faces from the given object (shape).
+     *  \param theObject Shape to be processed.
+     *  \param theFaces Indices of faces to be removed, if EMPTY then the method
+     *                  removes ALL faces of the given object.
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object SuppressFaces (in GEOM_Object theObject, in short_array theFaces);
+
+    /*!
+     *  Close an open wire.
+     *  \param theObject Shape to be processed.
+     *  \param theWires Indexes of edge(s) and wire(s) to be closed within <VAR>theObject</VAR>'s shape,
+     *                  if -1, then theObject itself is a wire.
+     *  \param isCommonVertex If TRUE : closure by creation of a common vertex,
+     *                        If FALS : closure by creation of an edge between ends.
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object CloseContour (in GEOM_Object theObject, in short_array theWires,
+			      in boolean isCommonVertex);
+
+    /*!
+     *  Remove internal wires and edges from the given object (face).
+     *  \param theObject Shape to be processed.
+     *  \param theWires Indices of wires to be removed, if EMPTY then the method
+     *                  removes ALL internal wires of the given object.
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object RemoveIntWires (in GEOM_Object theObject, in short_array theWires);
+
+    /*!
+     *  Remove internal closed contours (holes) from the given object.
+     *  \param theObject Shape to be processed.
+     *  \param theWires Indices of wires to be removed, if EMPTY then the method
+     *                  removes ALL internal holes of the given object
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object FillHoles (in GEOM_Object theObject, in short_array theWires);
+
+    /*!
+     *  Sewing of the given object.
+     *  \param theObject Shape to be processed.
+     *  \param theTolerance Required tolerance value.
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object Sew (in GEOM_Object theObject, in double theTolerance);
+
+    /*!
+     *  Addition of a point to a given edge object.
+     *  \param theObject Shape to be processed.
+     *  \param theEdgeIndex Index of edge to be divided within theObject's shape,
+     *                      if -1, then theObject itself is the edge.
+     *  \param theValue Value of parameter on edge or length parameter,
+     *                  depending on \a isByParameter.
+     *  \param isByParameter If TRUE : \a theValue is treated as a curve parameter [0..1],
+     *                       if FALSE : \a theValue is treated as a length parameter [0..1]
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object DivideEdge (in GEOM_Object theObject, in short theEdgeIndex,
+			    in double theValue, in boolean isByParameter);
+
+    /*!
+     *  Get a list of wires (wrapped in GEOM_Object-s),
+     *  that constitute a free boundary of the given shape.
+     *  \param theObject Shape to get free boundary of.
+     *  \param theClosedWires Output. Closed wires on the free boundary of the given shape.
+     *  \param theOpenWires Output. Open wires on the free boundary of the given shape.
+     *  \return FALSE, if an error(s) occured during the method execution.
+     */
+    boolean GetFreeBoundary (in GEOM_Object theObject,
+			     out ListOfGO theClosedWires,
+			     out ListOfGO theOpenWires);
+  };
+
+  /*!
+   *  GEOM_IInsertOperations: Interface for shape insert operations (like copy, import).
+   *
+   */
+  interface GEOM_IInsertOperations : GEOM_IOperations
+  {
+    /*!
+     *  Create a copy of the given object
+     */
+    GEOM_Object MakeCopy (in GEOM_Object theOriginal);
+
+    /*!
+     *  Export the given shape into a file with given name.
+     *  \param theObject Shape to be stored in the file.
+     *  \param theFileName Name of the file to store the given shape in.
+     *  \param theFormatName Specify format for the shape storage.
+     *         Available formats can be obtained with <VAR>ImportTranslators()</VAR> method.
+     */
+    void Export (in GEOM_Object theObject, in string theFileName, in string theFormatName);
+
+    /*!
+     *  Import a shape from the BRep or IGES or STEP file
+     *  (depends on given format) with given name.
+     *  \param theFileName The file, containing the shape.
+     *  \param theFormatName Specify format for the file reading.
+     *         Available formats can be obtained with <VAR>ImportTranslators()</VAR> method.
+     *  \return New GEOM_Object, containing the imported shape.
+     */
+    GEOM_Object Import (in string theFileName, in string theFormatName);
+
+    /*!
+     *  Get the supported import formats and corresponding patterns for File dialog.
+     *  \param theFormats Output. List of formats, available for import.
+     *  \param thePatterns Output. List of file patterns, corresponding to available formats.
+     *  \return Returns available formats and patterns through the arguments.
+     */
+    void ImportTranslators (out string_array theFormats,
+			    out string_array thePatterns);
+
+    /*!
+     *  Get the supported export formats and corresponding patterns for File dialog.
+     *  \param theFormats Output. List of formats, available for export.
+     *  \param thePatterns Output. List of file patterns, corresponding to available formats.
+     *  \return Returns available formats and patterns through the arguments.
+     */
+    void ExportTranslators (out string_array theFormats,
+			    out string_array thePatterns);
+  };
+
+  /*!
+   *  GEOM_IMeasureOperations: Interface for measurement (distance, whatis) and
+   *  properties calculation (like Centre of Mass, Inertia, etc.).
+   *
+   */
+  interface GEOM_IMeasureOperations : GEOM_IOperations
+  {
+    /*!
+     *  Get summarized length of all wires,
+     *  area of surface and volume of the given shape.
+     *  \param theShape Shape to define properties of.
+     *  \param theLength Output. Summarized length of all wires of the given shape.
+     *  \param theSurfArea Output. Area of surface of the given shape.
+     *  \param theVolume Output. Volume of the given shape.
+     *  \return Returns shape properties through the last three arguments.
+     */
+    void GetBasicProperties (in GEOM_Object theShape,
+			     out double theLength,
+			     out double theSurfArea,
+			     out double theVolume);
+
+    /*!
+     *  Get a point, situated at the centre of mass of theShape.
+     *  \param theShape Shape to define centre of mass of.
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object GetCentreOfMass (in GEOM_Object theShape);
+
+    /*!
+     *  Get inertia matrix and moments of inertia of theShape.
+     *  \param theShape Shape to calculate inertia of.
+     *  \param I(1-3)(1-3) Output. Components of the inertia matrix of the given shape.
+     *  \param Ix,Iy,Iz Output. Moments of inertia of the given shape.
+     *  \return Returns inertia through the last twelve arguments.
+     */
+    void GetInertia (in GEOM_Object theShape,
+		     out double I11, out double I12, out double I13,
+		     out double I21, out double I22, out double I23,
+		     out double I31, out double I32, out double I33,
+		     out double Ix , out double Iy , out double Iz);
+
+    /*!
+     *  Get parameters of bounding box of the given shape
+     *  \param theShape Shape to obtain bounding box of.
+     *  \param Xmin,Xmax Output. Limits of shape along OX axis.
+     *  \param Ymin,Ymax Output. Limits of shape along OY axis.
+     *  \param Zmin,Zmax Output. Limits of shape along OZ axis.
+     *  \return Returns parameters of bounding box through the last six arguments.
+     */
+    void GetBoundingBox (in GEOM_Object theShape,
+			 out double Xmin, out double Xmax,
+			 out double Ymin, out double Ymax,
+			 out double Zmin, out double Zmax);
+
+    /*!
+     *  Get min and max tolerances of sub-shapes of theShape
+     *  \param theShape Shape, to get tolerances of.
+     *  \param FaceMin,FaceMax Output. Min and max tolerances of the faces.
+     *  \param EdgeMin,EdgeMax Output. Min and max tolerances of the edges.
+     *  \param VertMin,VertMax Output. Min and max tolerances of the vertices.
+     *  \return Returns shape tolerances through the last six arguments.
+     */
+    void GetTolerance (in GEOM_Object theShape,
+		       out double FaceMin, out double FaceMax,
+		       out double EdgeMin, out double EdgeMax,
+		       out double VertMin, out double VertMax);
+
+    /*!
+     *  Check a topology of the given shape.
+     *  \param theShape Shape to check validity of.
+     *  \param theDescription Output. Description of problems in the shape, if they are.
+     *  \return TRUE, if the shape "seems to be valid" from the topological point of view.
+     */
+    boolean CheckShape (in GEOM_Object theShape,
+			out string     theDescription);
+
+    /*!
+     *  Obtain description of the given shape
+     *  \param theShape Shape to be described.
+     *  \return Description of the given shape.
+     */
+    string WhatIs (in GEOM_Object theShape);
+
+    /*!
+     *  Get minimal distance between the given shapes.
+     *  \param theShape1,theShape2 Shapes to find minimal distance between.
+     *  \param X1,Y1,Z1 Output. Coordinates of point on theShape1, nearest to theShape2.
+     *  \param X2,Y2,Z2 Output. Coordinates of point on theShape2, nearest to theShape1.
+     *  \return Value of the minimal distance between the given shapes.
+     */
+    double GetMinDistance (in GEOM_Object theShape1, in GEOM_Object theShape2,
+			   out double X1, out double Y1, out double Z1,
+			   out double X2, out double Y2, out double Z2);
+
+
+    /*!
+     *  Get point coordinates
+     */
+    void PointCoordinates (in GEOM_Object theShape, out double X, out double Y, out double Z);
+  };
+
+
+  /*!
+   *  GEOM_IGroupOperations: Interface for groups creation.
+   */
+  interface GEOM_IGroupOperations : GEOM_IOperations
+  {
+    /*!
+     *  Creates a new group which will store  sub shapes of theMainShape
+     *  \param theMainShape is a GEOM object on which the group is selected
+     *  \param theShapeType defines a shape type of the group
+     *  \return a newly created GEOM group
+     */
+    GEOM_Object CreateGroup (in GEOM_Object theMainShape, in long theShapeType);
+
+    /*!
+     *  Adds a sub object with ID theSubShapeId to the group
+     *  \param theGroup is a GEOM group to which the new sub shape is added
+     *  \param theSubShapeId is a sub shape ID in the main object.
+     *  \note Use method <VAR>ILocalOperations.GetSubShapeIndex()</VAR> to get an ID by the sub shape
+     */
+    void AddObject (in GEOM_Object theGroup, in long theSubShapeId);
+
+    /*!
+     *  Removes a sub object with ID \a theSubShapeId from the group
+     *  \param theGroup is a GEOM group from which the new sub shape is removed
+     *  \param theSubShapeId is a sub shape ID in the main object.
+     *  \note Use method <VAR>ILocalOperations.GetSubShapeIndex()</VAR> to get an ID by the sub shape
+     */
+    void RemoveObject (in GEOM_Object theGroup, in long theSubShapeId);
+
+    /*!
+     *  Returns a type of sub objects stored in the group
+     *  \param theGroup is a GEOM group which type is returned.
+     */
+    long GetType (in GEOM_Object theGroup);
+
+    /*!
+     *  Returns a main shape associated with the group
+     *  \param theGroup is a GEOM group for which a main shape object is requested
+     *  \return a GEOM object which is a main shape for theGroup
+     */
+    GEOM_Object GetMainShape (in GEOM_Object theGroup);
+
+    /*!
+     *  Returns a list of sub objects ID stored in the group
+     *  \param theGroup is a GEOM group for which a list of IDs is requested
+     */
+    ListOfLong GetObjects (in GEOM_Object theGroup);
+  };
+
+
+  /*!
+   *  GEOM_Gen: Interface to access other GEOM interfaces.
+   *  Also contains some methods to access and manage GEOM objects.
+   */
   interface GEOM_Gen : Engines::Component,SALOMEDS::Driver
   {
-    typedef sequence<string> ListOfIOR ;
-    typedef sequence<GEOM_Shape> ListOfGeomShapes ;
+    /*!
+     *  Undo/Redo Management
+     */
 
-    //--------------------------------------------------------------//
-    // Studies Management                                           //
-    //--------------------------------------------------------------//
-    void       GetCurrentStudy(in long StudyID) ; 
+    void Undo (in long theStudyID);
 
-    short      NbLabels();
+    void Redo (in long theStudyID);
 
-    //--------------------------------------------------------------//
-    // Shapes Management                                            //
-    //--------------------------------------------------------------//
-    GEOM_Shape GetIORFromString    (in string ior);
-    ListOfIOR  GetReferencedObjects(in GEOM_Shape shape);
-    ListOfIOR  GetObjects          (in GEOM_Shape shape);
+    /*!
+     * Publishing manangement
+     * Adds in theStudy a object theObject under with a name theName,
+     * if theFather is not NULL the object is placed under thFather's SObject.
+     * Returns a SObject where theObject is placed
+     */
+    SALOMEDS::SObject AddInStudy (in SALOMEDS::Study theStudy,
+				  in GEOM_Object theObject,
+				  in string theName,
+				  in GEOM_Object theFather);
 
-    //--------------------------------------------------------------//
-    // Structures                                                   //
-    //--------------------------------------------------------------//
-    PointStruct MakePointStruct(in double x,
-				in double y,
-				in double z) ; 
-    DirStruct   MakeDirection (in PointStruct p) ; 
-    AxisStruct  MakeAxisStruct(in double x,
-			       in double y,
-			       in double z,
-			       in double vx,
-			       in double vy,
-			       in double vz) ; 
+    /*!
+     *  Methods to access interfaces for objects creation and transformation
+     */
+    GEOM_IBasicOperations     GetIBasicOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_ITransformOperations GetITransformOperations(in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_I3DPrimOperations    GetI3DPrimOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IShapesOperations    GetIShapesOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IBooleanOperations   GetIBooleanOperations  (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_ICurvesOperations    GetICurvesOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_ILocalOperations     GetILocalOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IHealingOperations   GetIHealingOperations  (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IInsertOperations    GetIInsertOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IMeasureOperations   GetIMeasureOperations  (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IBlocksOperations    GetIBlocksOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IGroupOperations     GetIGroupOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
 
-    //------------------------------------------------------------//
-    // Boolean Operations                                         //
-    //------------------------------------------------------------//
-    GEOM_Shape MakeBoolean  (in GEOM_Shape shape1,
-			     in GEOM_Shape shape2,
-			     in long operation) raises (SALOME::SALOME_Exception) ;
+    /*!
+     *  Objects Management
+     */
 
-    GEOM_Shape MakeFuse( in GEOM_Shape shape1,
-			 in GEOM_Shape shape2) raises (SALOME::SALOME_Exception) ;
-    
-    //-----------------------------------------------------------//
-    // Advanced Operations                                       //
-    //-----------------------------------------------------------//
-    GEOM_Shape Partition  (in ListOfIOR ListShapes,
-			   in ListOfIOR ListTools,
-			   in ListOfIOR ListKeepInside,
-			   in ListOfIOR ListRemoveInside,
-                           in short Limit)
-      raises (SALOME::SALOME_Exception) ;
+    /*!
+     *  Removes the object from the GEOM component
+     *  \param theObject is a GEOM object to be removed
+     */
+    void RemoveObject (in GEOM_Object theObject);
 
+    /*!
+     *  Returns an object defined by the study and its entry in the GEOM component
+     *  \param theStudyID is a SALOMEDS Study ID
+     *  \param theEntry is an entry of the requested GEOM object in the GEOM component
+     *  \note if the object has not previously been created a NULL GEOM object is returned
+     */
+    GEOM_Object GetObject (in long theStudyID, in string theEntry);
 
-    GEOM_Shape MakeFilling(in GEOM_Shape shape,
-			   in  short mindeg,
-			   in  short maxdeg,
-			   in  double tol3d,
-			   in  double tol2d,
-			   in  short nbiter) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeSewing (in ListOfIOR ListShape,
-			   in double precision)  raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeSewingShape( in GEOM_Shape aShape,
-				in double precision )  raises (SALOME::SALOME_Exception);
+    /*!
+     *  Add a sub shape defined by indices in \a theIndices
+     *  (contains unique IDs of sub shapes inside theMainShape)
+     *  \note The sub shape GEOM_Objects can has ONLY ONE function.
+     *        Don't try to apply modification operations on them.
+     *  \note Internal method
+     */
+    GEOM_Object AddSubShape (in GEOM_Object theMainShape, in ListOfLong theIndices);
 
-    GEOM_Shape OrientationChange(in GEOM_Shape shape) raises (SALOME::SALOME_Exception) ;
+    /*!
+     *  GEOM object's IOR Management
+     */
 
-    GEOM_Shape MakePlacedBox(in double x1,  in double y1,  in double z1,
-			     in double delta1, in double delta2, in double delta3) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakePanel(in GEOM_Shape shape,
-			 in short directiontype,
-			 in double delta) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeGlueFaces(in GEOM_Shape shape,
-			     in double tol3d) raises (SALOME::SALOME_Exception) ;
-    
-    //-----------------------------------------------------------//
-    // Transformations Operations                                //
-    //-----------------------------------------------------------//
-    GEOM_Shape MakeCopy(in GEOM_Shape shape) raises (SALOME::SALOME_Exception) ;
+    /*!
+     *  Returns a GEOM Object defined by its IOR
+     *  \param theIOR a string containg an IOR of the requested GEOM object
+     */
+    GEOM_Object GetIORFromString (in string theIOR);
 
-    GEOM_Shape MakeTranslation(in GEOM_Shape shape,
-			       in double x,
-			       in double y,
-			       in double z) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeRotation(in GEOM_Shape shape,
-			    in AxisStruct axis,
-			    in double angle) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeScaleTransform(in GEOM_Shape shape,
-				  in PointStruct theCenterofScale,
-				  in double factor) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeMirrorByPlane(in GEOM_Shape shape,
-				 in GEOM_Shape shapePlane) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeRevolution(in GEOM_Shape shape,
-			      in AxisStruct axis,
-			      in double angle) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakePrism(in GEOM_Shape baseShape,
-			 in PointStruct P1,
-			 in PointStruct P2) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakePipe(in GEOM_Shape pathShape,			
-			in GEOM_Shape baseShape) raises (SALOME::SALOME_Exception) ;
-
-    //-----------------------------------------------------------//
-    // Patterns Construction                                     //
-    //-----------------------------------------------------------//
-    GEOM_Shape MakeMultiTranslation1D(in GEOM_Shape shape,
-				      in DirStruct dir,
-				      in double step,
-				      in short nbtimes) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeMultiTranslation2D(in GEOM_Shape shape,
-				      in DirStruct dir1,
-				      in double step1,
-				      in short nbtimes1,
-				      in DirStruct dir2,
-				      in double step2,
-				      in short nbtimes2) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeMultiRotation1D(in GEOM_Shape shape,
-				   in DirStruct dir,
-				   in PointStruct loc,
-				   in short nbtimes) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeMultiRotation2D(in GEOM_Shape shape,
-				   in DirStruct dir,
-				   in PointStruct loc,
-				   in double ang,
-				   in short nbtimes1,
-				   in double step,
-				   in short nbtimes2) raises (SALOME::SALOME_Exception) ;
-
-    //-----------------------------------------------------------//
-    // Mesures Construction                                      //
-    //-----------------------------------------------------------//
-    GEOM_Shape MakeCDG(in GEOM_Shape shape) raises (SALOME::SALOME_Exception) ;
-
-
-    //-----------------------------------------------------------//
-    // Primitives Construction                                   //
-    //-----------------------------------------------------------//
-
-    GEOM_Shape MakeVertex(in double x,
-			  in double y,
-			  in double z) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeVector (in PointStruct pstruct1,
-			   in PointStruct pstruct2) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeLine  (in PointStruct pstruct,
-			  in DirStruct dstruct) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakePlane (in PointStruct pstruct,
-			  in DirStruct dstruct,
-			  in double trimsize) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeCircle(in PointStruct pstruct,
-			  in DirStruct dstruct,
-			  in double radius) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeArc(in PointStruct pInit,
-		       in PointStruct pCircle,
-		       in PointStruct pEnd) raises (SALOME::SALOME_Exception) ;
-
-    GEOM_Shape MakeEllipse(in PointStruct pstruct,
-			   in DirStruct dstruct,
-			   in double major_radius,
-			   in double minor_radius) raises (SALOME::SALOME_Exception) ;
-    
-    //-----------------------------------------------------------//
-    // Sketcher                                                  //
-    //-----------------------------------------------------------//  
-    GEOM_Shape MakeSketcher (in string Cmd) raises (SALOME::SALOME_Exception) ;
-    
-    //-----------------------------------------------------------//
-    // Primitives Construction                                   //
-    //-----------------------------------------------------------//
-    GEOM_Shape MakeBox     (in double x1,
-			    in double y1,
-			    in double z1,
-			    in double x2,
-			    in double y2,
-			    in double z2) raises (SALOME::SALOME_Exception) ; 
-    GEOM_Shape MakeCylinder(in PointStruct pstruct,
-			    in DirStruct dstruct,
-			    in double radius,
-			    in double height) raises (SALOME::SALOME_Exception) ;
-
-    GEOM_Shape MakeSphere  (in double x1,
-			    in double y1,
-			    in double z1,
-			    in double radius) raises (SALOME::SALOME_Exception) ;
-
-    GEOM_Shape MakeTorus(in PointStruct pstruct,
-			 in DirStruct dstruct,
-			 in double major_radius,
-			 in double minor_radius) raises (SALOME::SALOME_Exception) ;
-
-    GEOM_Shape MakeCone(in PointStruct pstruct,
-			in DirStruct dstruct,
-			in double radius1,
-			in double radius2,
-			in double height) raises (SALOME::SALOME_Exception) ;
-    
-    //-----------------------------------------------------------//
-    // Archimede                                                 //
-    //-----------------------------------------------------------//  
-    GEOM_Shape Archimede(in GEOM_Shape shape,
-			 in double Weight,
-			 in double WaterDensity,
-			 in double MeshingDeflection) raises (SALOME::SALOME_Exception);
-
-
-    //-----------------------------------------------------------//
-    // Build                                                     //
-    //-----------------------------------------------------------//  
-    GEOM_Shape MakeEdge     (in PointStruct pstruct1,
-			     in PointStruct pstruct2) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeWire     (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeCompound (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeFace     (in GEOM_Shape shapeWire,
-			     in boolean wantplanarface) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeFaces    (in ListOfIOR ListShape,
-			     in boolean wantplanarface) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeShell    (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeSolid    (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
-
-  
-    //-----------------------------------------------------------//
-    // Subshapes Construction for GUI only                       //
-    //-----------------------------------------------------------//
-    GEOM_Shape SubShape(in GEOM_Shape shape,
-			in short ShapeType,
-			in GEOM_Shape::ListOfSubShapeID ListOfID) raises (SALOME::SALOME_Exception) ;
-    
-    //-----------------------------------------------------------//
-    // Subshapes Construction for TUI or GUI                     //
-    //-----------------------------------------------------------//
-    ListOfGeomShapes SubShapeAll(in GEOM_Shape shape,
-				 in short ShapeType) raises (SALOME::SALOME_Exception) ;
-    
-    //-----------------------------------------------------------//
-    // Subshapes Construction
-    // Use it to have the same order of subshapes if their
-    // order may change as a result of <shape> reconstruction using
-    // boolean operations, fillet etc.
-    //-----------------------------------------------------------//
-    GEOM_Shape SubShapeSorted(in GEOM_Shape shape,
-			      in short ShapeType,
-			      in GEOM_Shape::ListOfSubShapeID ListOfID) raises (SALOME::SALOME_Exception) ;
-    
-    ListOfGeomShapes SubShapeAllSorted(in GEOM_Shape shape,
-				       in short ShapeType) raises (SALOME::SALOME_Exception) ;
-
-    //-----------------------------------------------------------//
-    // Fillet and Chamfer construction                           //
-    //-----------------------------------------------------------//
-    GEOM_Shape MakeFillet(in GEOM_Shape shape,
-			  in double radius,
-			  in short ShapeType,
-			  in GEOM_Shape::ListOfSubShapeID ListOfID) raises (SALOME::SALOME_Exception) ;
- 
-    GEOM_Shape MakeChamfer(in GEOM_Shape shape,
-			   in double d1,
-			   in double d2,
-			   in short ShapeType,
-			   in GEOM_Shape::ListOfSubShapeID ListOfID) raises (SALOME::SALOME_Exception) ;
-
-    //-----------------------------------------------------------//
-    // Suppress faces in a shape                                 //
-    //-----------------------------------------------------------//
-    ListOfGeomShapes SuppressFaces(in GEOM_Shape shape,
-				   in GEOM_Shape::ListOfSubShapeID ListOfID) raises (SALOME::SALOME_Exception) ;
-    
-    //-----------------------------------------------------------//
-    // Suppress a single hole in topology (face) shell or solid  //
-    //          :  ListOfIdEndFace may be an empty list          //
-    //          :  used only when hole traverses the topology    //
-    //-----------------------------------------------------------//
-    GEOM_Shape SuppressHole(in GEOM_Shape shape,
-			    in GEOM_Shape::ListOfSubShapeID ListOfIdFace,
-			    in GEOM_Shape::ListOfSubShapeID ListOfIdWire,
-			    in GEOM_Shape::ListOfSubShapeID ListOfIdEndFace ) raises (SALOME::SALOME_Exception) ;
-
-    //-----------------------------------------------------------//
-    // Suppress one or more holes in a face or a shell           //
-    //-----------------------------------------------------------//
-    GEOM_Shape SuppressHolesInFaceOrShell(in GEOM_Shape shapeFaceShell,
-					  in GEOM_Shape::ListOfSubShapeID ListOfIdWires ) raises (SALOME::SALOME_Exception) ;
-    
-    //-----------------------------------------------------------//
-    // Import/Export                                             //
-    //-----------------------------------------------------------//
-    GEOM_Shape ImportIGES(in string filename) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape ImportBREP(in string filename) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape ImportSTEP(in string filename) raises (SALOME::SALOME_Exception) ;
-  
-    void ExportIGES(in string filename,in GEOM_Shape theShape) raises (SALOME::SALOME_Exception) ;
-    void ExportBREP(in string filename,in GEOM_Shape theShape) raises (SALOME::SALOME_Exception) ;
-    void ExportSTEP(in string filename,in GEOM_Shape theShape) raises (SALOME::SALOME_Exception) ;
-    //-----------------------------------------------------------//
-    // Check Shape                                               //
-    //-----------------------------------------------------------//
-    boolean CheckShape(in GEOM_Shape shape) raises (SALOME::SALOME_Exception) ;
-
+    /*!
+     *  Returns a string which contains an IOR of the GEOM object
+     *  \param theObject is a GEOM object which IOR is requested
+     */
+    string GetStringFromIOR (in GEOM_Object theObject);
   };
 };
 

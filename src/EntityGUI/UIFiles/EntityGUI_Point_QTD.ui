@@ -1,0 +1,103 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>EntityGUI_Point_QTD</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>EntityGUI_Point_QTD</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>124</width>
+            <height>106</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>EntityGUI_Point_QTD</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QButtonGroup" row="0" column="0">
+            <property name="name">
+                <cstring>GroupPoint</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="title">
+                <string>Point</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLayoutWidget" row="0" column="0">
+                    <property name="name">
+                        <cstring>Layout1</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QRadioButton" row="1" column="0">
+                            <property name="name">
+                                <cstring>RB_Point2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Relative</string>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton" row="0" column="0">
+                            <property name="name">
+                                <cstring>RB_Point1</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Absolute</string>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton" row="2" column="0">
+                            <property name="name">
+                                <cstring>RB_Point3</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Selection</string>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+            </grid>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>RB_Point1</tabstop>
+    <tabstop>RB_Point2</tabstop>
+    <tabstop>RB_Point3</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

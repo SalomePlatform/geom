@@ -24,49 +24,33 @@
 //  File   : TransformationGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef TRANSFORMATIONGUI_H
 #define TRANSFORMATIONGUI_H
 
-#include "GEOMBase.h"
-#include <gp_Vec.hxx>
+#include "GEOMGUI.h"
+
 
 //=================================================================================
 // class    : TransformationGUI
 // purpose  :
 //=================================================================================
-class TransformationGUI : public QObject
+class TransformationGUI : public GEOMGUI
 {
-  Q_OBJECT /* for QT compatibility */
+protected:
+  TransformationGUI(); // hide constructor to avoid direct creation
 
 public :
-  TransformationGUI();
   ~TransformationGUI();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  // Get the only TransformationGUI object
+  static TransformationGUI* GetTransformationGUI();
 
-  void MakeTranslationAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Vec V);
-  void MakeRotationAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Pnt loc,
-			      const gp_Dir dir, const Standard_Real angle);
-  void MakeMirrorAndDisplay(GEOM::GEOM_Shape_ptr Shape1, GEOM::GEOM_Shape_ptr Shape2);
-  void MakeScaleAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Pnt centralPoint,
-			   const Standard_Real factor);
-  void MakeMultiTranslation1DAndDisplay(GEOM::GEOM_Shape_ptr Shape,
-					const gp_Dir Dir, const double Step, const short NbTimes);
-  void MakeMultiTranslation2DAndDisplay(GEOM::GEOM_Shape_ptr Shape,
-					const gp_Dir Dir1, const double Step1, const short NbTimes1,
-					const gp_Dir Dir2, const double Step2, const short NbTimes2);
-  void MakeMultiRotation1DAndDisplay(GEOM::GEOM_Shape_ptr Shape,
-				     const gp_Dir Dir, const gp_Pnt Loc, const short NbTimes);
-  void MakeMultiRotation2DAndDisplay(GEOM::GEOM_Shape_ptr Shape,
-				     const gp_Dir Dir, const gp_Pnt Loc, const double Ang,
-				     const short NbTimes1, const double Step, const short NbTimes2);
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
-
+private:
+  static TransformationGUI* myGUIObject;        // the only TransformationGUI object
 };
 
 #endif

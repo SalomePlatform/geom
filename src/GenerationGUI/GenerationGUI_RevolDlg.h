@@ -30,11 +30,8 @@
 #define DIALOGBOX_REVOLUTION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1Spin1Check.h"
+#include "DlgRef_2Sel1Spin2Check.h"
 
-#include "GenerationGUI.h"
-
-#include "GEOM_ShapeTypeFilter.hxx"
 #include <gp_Dir.hxx>
 
 //=================================================================================
@@ -46,37 +43,36 @@ class GenerationGUI_RevolDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    GenerationGUI_RevolDlg(QWidget* parent = 0, const char* name = 0, GenerationGUI* theGenerationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    GenerationGUI_RevolDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~GenerationGUI_RevolDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& msg );
+    virtual bool execute( ObjectList& objects );    
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakeRevolutionSimulationAndDisplay();
+    double getAngle() const;
 
-    GenerationGUI* myGenerationGUI;
-
-    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;   /* Filters selection */
-
-    TopoDS_Shape myBase;
-    GEOM::GEOM_Shape_var myGeomShape; /* is myBase */
-    gp_Pnt myLoc;
-    gp_Dir myDir;
-    Standard_Real myAngle;
+    GEOM::GEOM_Object_var myBase; /* Base shape */
+    GEOM::GEOM_Object_var myAxis; /* Axis of the revolution */
     bool myOkBase; 
     bool myOkAxis;
 
-    DlgRef_2Sel1Spin1Check* GroupPoints;
+    DlgRef_2Sel1Spin2Check* GroupPoints;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
     void ActivateThisDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ReverseAngle(int state);
-    void ValueChangedInSpinBox(double newValue);
+    void ValueChangedInSpinBox();
+    void onReverse();
 
 };
 

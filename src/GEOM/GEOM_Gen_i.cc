@@ -212,7 +212,7 @@ char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 {
   GEOM::GEOM_Shape_var aShape = GEOM::GEOM_Shape::_narrow(_orb->string_to_object(IORString));
   if (!CORBA::is_nil(aShape)) {
-    return CORBA::string_dup(aShape->ShapeId());
+    return aShape->ShapeId();
   }
   return 0;
 }
@@ -458,16 +458,16 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
 				    bool isMultiFile) {
   SALOMEDS::TMPFile_var aStreamFile;
   // Get a temporary directory to store a file
-  TCollection_AsciiString aTmpDir = (isMultiFile)?TCollection_AsciiString((char*)theURL):SALOMEDS_Tool::GetTmpDir();
+  TCollection_AsciiString aTmpDir = (isMultiFile)?TCollection_AsciiString((char*)theURL):(char*)SALOMEDS_Tool::GetTmpDir().c_str();
   // Create a list to store names of created files
   SALOMEDS::ListOfFileNames_var aSeq = new SALOMEDS::ListOfFileNames;
   aSeq->length(1);
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt("");
   if (isMultiFile)
-    aNameWithExt = TCollection_AsciiString(SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL()));
+    aNameWithExt = TCollection_AsciiString((char*)SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL()).c_str());
   aNameWithExt += TCollection_AsciiString("_GEOM.sgd");
-  aSeq[0] = CORBA::string_dup(aNameWithExt.ToCString());
+  aSeq[0] = aNameWithExt.ToCString();
   // Build a full file name of temporary file
   TCollection_AsciiString aFullName = aTmpDir + aNameWithExt;
   // Save GEOM component in this file
@@ -499,7 +499,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   }
 
   // Get a temporary directory for a file
-  TCollection_AsciiString aTmpDir = isMultiFile?TCollection_AsciiString((char*)theURL):SALOMEDS_Tool::GetTmpDir();
+  TCollection_AsciiString aTmpDir = isMultiFile?TCollection_AsciiString((char*)theURL):(char*)SALOMEDS_Tool::GetTmpDir().c_str();
   // Conver the byte stream theStream to a file and place it in tmp directory
   SALOMEDS::ListOfFileNames_var aSeq = SALOMEDS_Tool::PutStreamToFiles(theStream,
 								       aTmpDir.ToCString(),
@@ -508,7 +508,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt("");
   if (isMultiFile)
-    aNameWithExt = TCollection_AsciiString(SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL()));
+    aNameWithExt = TCollection_AsciiString((char*)SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL()).c_str());
   aNameWithExt += TCollection_AsciiString("_GEOM.sgd");
   TCollection_AsciiString aFullName = aTmpDir + aNameWithExt;
 
@@ -597,7 +597,7 @@ void GEOM_Gen_i::Close(SALOMEDS::SComponent_ptr theComponent)
 //      Handle(TDocStd_Document) anEmptyDoc;
 //      if (aDoc->Main().Root().FindAttribute(TDocStd_Owner::GetID(), anOwner)) {
 //        anOwner->SetDocument(anEmptyDoc);
-//        cout<<"********** Nullify owner of document"<<endl;
+//        MESSAGE("********** Nullify owner of document");
 //      }
     myOCAFApp->Close(aDoc);
     myStudyIDToDoc.UnBind(anID); // remove document from GEOM documents data map
@@ -661,7 +661,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::CopyFrom(SALOMEDS::SObject_ptr theObject, CORBA::
 CORBA::Boolean GEOM_Gen_i::CanPaste(const char* theComponentName, CORBA::Long theObjectID) {
   // The Geometry component can paste only objects copied by Geometry component
   // and with the object type = 1
-//    cout<<"********** GEOM_Gen_i::CanPaste ("<<theComponentName<<","<<theObjectID<<")"<<endl;
+//    MESSAGE("********** GEOM_Gen_i::CanPaste ("<<theComponentName<<","<<theObjectID<<")");
   if (strcmp(theComponentName, ComponentDataType()) != 0 || theObjectID != 1) return false;
   return true;
 }
@@ -684,7 +684,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   try {
     BRepTools::Read(aTopology, aStreamedBrep, aBuilder);
   } catch (Standard_Failure) {
-//      cout<<"GEOM_Gen_i::PasteInto exception"<<endl;
+    MESSAGE("GEOM_Gen_i::PasteInto exception");
     return false;
   }
   
@@ -4035,33 +4035,116 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeArc(const GEOM::PointStruct& pInit,
 }
 
 //=================================================================================
- // function : MakeSketcher()
- // purpose  : Make a wire from a list containing many points
- //=================================================================================
- GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSketcher( const char *Cmd )
-   throw (SALOME::SALOME_Exception)
- {
-   GEOM::GEOM_Shape_var result ;
-   TopoDS_Shape tds ;
-   try {
-     Sketcher_Profile aProfile (Cmd);
-     if(aProfile.IsDone())
-       tds = aProfile.GetShape();
-   }
-   catch(Standard_Failure) {
-     THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeSketcher", SALOME::BAD_PARAM);
-   }
- 
-   if (tds.IsNull()) {
-     THROW_SALOME_CORBA_EXCEPTION("MakeSketcher aborted : null shape", SALOME::BAD_PARAM);
-   } 
-   else {
-     result = CreateObject(tds);
-     const char *entry = InsertInLabel(tds, result->Name(), myCurrentOCAFDoc) ;
-     result->ShapeId(entry) ;
-   }
-   return result;
- }
+// function : MakeSketcher()
+// purpose  : Make a wire from a list containing many points
+//=================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSketcher( const char *Cmd )
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::GEOM_Shape_var result ;
+  TopoDS_Shape tds ;
+  try {
+    Sketcher_Profile aProfile (Cmd);
+    if(aProfile.IsDone())
+      tds = aProfile.GetShape();
+  }
+  catch(Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeSketcher", SALOME::BAD_PARAM);
+  }
+
+  if (tds.IsNull()) {
+    THROW_SALOME_CORBA_EXCEPTION("MakeSketcher aborted : null shape", SALOME::BAD_PARAM);
+  } 
+  else {
+    result = CreateObject(tds);
+    const char *entry = InsertInLabel(tds, result->Name(), myCurrentOCAFDoc) ;
+    result->ShapeId(entry) ;
+  }
+  return result;
+}
+
+
+
+//=================================================================================
+// function : MakeBezier()
+// purpose  : Make a wire from a list containing many points
+//=================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeBezier( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::GEOM_Shape_var result;
+  TopoDS_Shape tds, Shape;
+  TColgp_Array1OfPnt CurvePoints(1, ListShapes.length());
+  
+  try {
+    for(unsigned int i = 0; i < ListShapes.length(); i++) {
+      GEOM::GEOM_Shape_var aShape = GetIORFromString(ListShapes[i]);    
+      Shape = GetTopoShape(aShape);
+      if(Shape.IsNull()) {
+	THROW_SALOME_CORBA_EXCEPTION("MakeBezier aborted : null shape during operation", SALOME::BAD_PARAM);
+      }
+      if(Shape.ShapeType() == TopAbs_VERTEX) {
+	const gp_Pnt& P = BRep_Tool::Pnt(TopoDS::Vertex(Shape));
+	CurvePoints.SetValue(i + 1, P);
+      }
+    }
+    Handle(Geom_BezierCurve) GBC = new Geom_BezierCurve(CurvePoints);
+    tds = BRepBuilderAPI_MakeEdge(GBC);
+  }
+  catch(Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeBezier", SALOME::BAD_PARAM);
+  }
+  
+  if( tds.IsNull() ) {
+    THROW_SALOME_CORBA_EXCEPTION("Make Bezier operation aborted : null result", SALOME::BAD_PARAM);
+  }
+  else {
+    result = CreateObject(tds);
+    InsertInLabelMoreArguments(tds, result, ListShapes, myCurrentOCAFDoc);   
+  }
+  return result;
+}
+
+
+//=================================================================================
+// function : MakeInterpol()
+// purpose  : Make a wire from a list containing many points
+//=================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeInterpol( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::GEOM_Shape_var result;
+  TopoDS_Shape tds, Shape;
+  TColgp_Array1OfPnt CurvePoints(1, ListShapes.length());
+  
+  try {
+    for(unsigned int i = 0; i < ListShapes.length(); i++) {
+      GEOM::GEOM_Shape_var aShape = GetIORFromString(ListShapes[i]);    
+      Shape = GetTopoShape(aShape);
+      if(Shape.IsNull()) {
+	THROW_SALOME_CORBA_EXCEPTION("MakeBSpline aborted : null shape during operation", SALOME::BAD_PARAM);
+      }
+      if(Shape.ShapeType() == TopAbs_VERTEX) {
+	const gp_Pnt& P = BRep_Tool::Pnt(TopoDS::Vertex(Shape));
+ 	CurvePoints.SetValue(i + 1, P);
+      }
+    }
+    GeomAPI_PointsToBSpline GBC(CurvePoints);
+    tds = BRepBuilderAPI_MakeEdge(GBC);
+  }
+  catch(Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeBSpline", SALOME::BAD_PARAM);
+  }
+  
+  if( tds.IsNull() ) {
+    THROW_SALOME_CORBA_EXCEPTION("Make BSpline operation aborted : null result", SALOME::BAD_PARAM);
+  }
+  else {
+    result = CreateObject(tds) ;
+    InsertInLabelMoreArguments(tds, result, ListShapes, myCurrentOCAFDoc) ;   
+  }
+  return result;
+}
 
 //=================================================================================
 // function : MakeTranslation()

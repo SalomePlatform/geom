@@ -31,22 +31,18 @@
 #include "Handle_GEOM_FaceFilter.hxx"
 #endif
 
-#include "SALOME_InteractiveObject.hxx"
-#include "SALOME_Filter.hxx"
+#include "GEOM_ShapeTypeFilter.hxx"
 
 // IDL Headers
 #include <SALOMEconfig.h>
-#include CORBA_SERVER_HEADER(GEOM_Shape)
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 #include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
 // Open CASCADE Includes
 #include <Standard.hxx>
-#include <TopAbs.hxx>
-#include <TopoDS_Shape.hxx>
 #include <StdSelect_TypeOfFace.hxx>
 
-class GEOM_FaceFilter : public SALOME_Filter {
+class GEOM_FaceFilter : public GEOM_ShapeTypeFilter {
 
 public:
 
@@ -68,10 +64,7 @@ public:
 //      }
  // Methods PUBLIC
  // 
-Standard_EXPORT GEOM_FaceFilter(const StdSelect_TypeOfFace Face,
-				GEOM::GEOM_Gen_ptr geom);
-
-Standard_EXPORT virtual  Standard_Boolean IsOk(const Handle(SALOME_InteractiveObject)& anobj) const;
+Standard_EXPORT GEOM_FaceFilter( const StdSelect_TypeOfFace Face );
 Standard_EXPORT ~GEOM_FaceFilter();
 
 
@@ -81,18 +74,18 @@ Standard_EXPORT ~GEOM_FaceFilter();
  //
  Standard_EXPORT friend Handle_Standard_Type& GEOM_FaceFilter_Type_();
  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- Standard_EXPORT Standard_Boolean	       IsKind(const Handle(Standard_Type)&) const;
+ Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)&) const;
 
 protected:
 
  // Methods PROTECTED
  // 
+ Standard_EXPORT virtual Standard_Boolean IsShapeOk(const TopoDS_Shape& theShape ) const;
 
 
  // Fields PROTECTED
  //
 StdSelect_TypeOfFace  myKind;
-GEOM::GEOM_Gen_var myComponentGeom;
 
 private: 
 

@@ -1,23 +1,23 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
 //
 //
 //
@@ -27,13 +27,17 @@
 //  $Header$
 
 #include "MeasureGUI_DistanceDlg.h"
-
+#include "MeasureGUI_2Sel1LineEdit_QTD.h"
+#include "GEOMBase.h"
+#include "GEOM_Displayer.h"
 #include "QAD_RightFrame.h"
+#include "QAD_Desktop.h"
 #include "OCCViewer_Viewer3d.h"
+#include "OCCViewer_Prs.h"
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
 
 #include <Geom_Plane.hxx>
 #include <TopoDS_Edge.hxx>
-#include <BRepExtrema_DistShapeShape.hxx>
 #include <AIS_LengthDimension.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -43,41 +47,51 @@
 
 #include "utilities.h"
 
-using namespace std;
+#include <qlineedit.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qbuttongroup.h>
 
 //=================================================================================
 // class    : MeasureGUI_DistanceDlg()
-// purpose  : Constructs a MeasureGUI_DistanceDlg which is a child of 'parent', with the 
+// purpose  : Constructs a MeasureGUI_DistanceDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :MeasureGUI_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg( QWidget* parent, SALOME_Selection* Sel )
+: MeasureGUI_Skeleton( parent, "MeasureGUI_DistanceDlg", Sel )
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_MINDIST")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap(
+    "GEOM",tr( "ICON_DLG_MINDIST" ) ) );
+  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap(
+  "GEOM",tr( "ICON_SELECT" ) ) );
 
-  setCaption(tr("GEOM_MINDIST_TITLE"));
+  setCaption( tr( "GEOM_MINDIST_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_DISTANCE"));
-  RadioButton1->setPixmap(image0);
+  
+  GroupConstructors->setTitle( tr( "GEOM_DISTANCE" ) );
+  RadioButton1->setPixmap( image0 );
 
-  GroupC1 = new MeasureGUI_2Sel1LineEdit_QTD(this, "GroupC1");
-  GroupC1->GroupBox1->setTitle(tr("GEOM_MINDIST_OBJ"));
-  GroupC1->TextLabel1->setText(tr("GEOM_OBJECT_I").arg("1"));
-  GroupC1->TextLabel2->setText(tr("GEOM_OBJECT_I").arg("2"));
-  GroupC1->TextLabel3->setText(tr("GEOM_LENGTH"));
-  GroupC1->LineEdit3->setReadOnly(TRUE);
-  GroupC1->PushButton1->setPixmap(image1);
-  GroupC1->PushButton2->setPixmap(image1);
+  myGrp = new MeasureGUI_2Sel1LineEdit_QTD( this, "myGrp" );
+  myGrp->GroupBox1->setTitle( tr( "GEOM_MINDIST_OBJ" ) );
+  myGrp->TextLabel1->setText( tr( "GEOM_OBJECT_I" ).arg( "1" ) );
+  myGrp->TextLabel2->setText( tr( "GEOM_OBJECT_I" ).arg( "2" ) );
+  myGrp->TextLabel3->setText( tr( "GEOM_LENGTH" ) );
+  myGrp->LineEdit3->setReadOnly( TRUE );
+  myGrp->PushButton1->setPixmap( image1 );
+  myGrp->PushButton2->setPixmap( image1 );
+  myGrp->LineEdit1->setReadOnly( true );
+  myGrp->LineEdit2->setReadOnly( true );
 
-  Layout1->addWidget(GroupC1, 1, 0);
+  Layout1->addWidget( myGrp, 1, 0 );
+
   /***************************************************************/
 
   /* Initialisation */
-  Init();
+  Init( Sel );
 }
 
 
@@ -86,8 +100,7 @@ MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg(QWidget* parent, const char* name
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 MeasureGUI_DistanceDlg::~MeasureGUI_DistanceDlg()
-{  
-  /* no need to delete child widgets, Qt does it all for us */
+{
 }
 
 
@@ -95,43 +108,20 @@ MeasureGUI_DistanceDlg::~MeasureGUI_DistanceDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_DistanceDlg::Init()
+void MeasureGUI_DistanceDlg::Init( SALOME_Selection* Sel )
 {
-  /* init variables */
-  myEditCurrentArgument = GroupC1->LineEdit1;
+  mySelBtn   = myGrp->PushButton1;
+  mySelEdit  = myGrp->LineEdit1;
+  mySelBtn2  = myGrp->PushButton2;
+  mySelEdit2 = myGrp->LineEdit2;
+  
+  myEditCurrentArgument = mySelEdit;
 
-  myOkShape1 = myOkShape2 = false;
+  connect( mySelEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( mySelBtn2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-   /* signals and slots connections */
-  connect(buttonClose, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  MeasureGUI_Skeleton::Init( Sel );
 
-  connect(GroupC1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupC1->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-
-  connect(GroupC1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupC1->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-
-  /* displays Dialog */
-  GroupC1->show();
-  this->show();
-
-  return;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void MeasureGUI_DistanceDlg::ClickOnCancel()
-{
-  this->EraseDistance();
-  MeasureGUI_Skeleton::ClickOnCancel();
-  return;
 }
 
 
@@ -141,51 +131,75 @@ void MeasureGUI_DistanceDlg::ClickOnCancel()
 //=================================================================================
 void MeasureGUI_DistanceDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  this->EraseDistance();
-  myEditCurrentArgument->setText("");
-  QString aString = "";
+  Standard_Boolean testResult = Standard_False;
+  GEOM::GEOM_Object_var aSelectedObject =
+    GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
 
-  GroupC1->LineEdit3->setText("");
+  if ( !testResult )
+    aSelectedObject = GEOM::GEOM_Object::_nil();
 
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
-    if(myEditCurrentArgument == GroupC1->LineEdit1)
-      myOkShape1 = false;
-    else if(myEditCurrentArgument == GroupC1->LineEdit2)
-      myOkShape2 = false;
-    return;
+  if ( myEditCurrentArgument == mySelEdit )
+      myObj = aSelectedObject;
+    else
+      myObj2 = aSelectedObject;
+
+  processObject();
+}
+
+//=================================================================================
+// function : processObject()
+// purpose  : Fill dialogs fileds in accordance with myObj and myObj2
+//=================================================================================
+void MeasureGUI_DistanceDlg::processObject()
+{
+  myGrp->LineEdit1->setText( !myObj->_is_nil()  ? GEOMBase::GetName( myObj  ) : "" );
+  myGrp->LineEdit2->setText( !myObj2->_is_nil() ? GEOMBase::GetName( myObj2 ) : "" );
+
+  gp_Pnt aPnt1, aPnt2;
+  double aDist = 0.;
+  if ( getParameters( aDist, aPnt1, aPnt2 ) )
+  {
+    myGrp->LineEdit3->setText( QString( "%1" ).arg( aDist ) );
+    redisplayPreview();
   }
-
-  /*  nbSel == 1  */
-  TopoDS_Shape S;
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;
-
-  Standard_Boolean testResult;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  
-  if(myEditCurrentArgument == GroupC1->LineEdit1) {
-    myGeomShape1 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-    if(!testResult)
-      return;
-    myShape1 = S;
-    myEditCurrentArgument->setText(aString);
-    myOkShape1 = true;
-  }    
-  else if(myEditCurrentArgument == GroupC1->LineEdit2) {
-    myGeomShape2 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-    if(!testResult)
-      return;
-    myShape2 = S;
-    myEditCurrentArgument->setText(aString);
-    myOkShape2 = true;
+  else
+  {
+    myGrp->LineEdit3->setText( "" );
+    erasePreview();
   }
+    
+}
 
-  if(myOkShape1 && myOkShape2)
-    this->MakeDistanceSimulationAndDisplay(myShape1 ,myShape2);
-  return; 
+//=================================================================================
+// function : getParameters()
+// purpose  : Get distance between objects
+//=================================================================================
+bool MeasureGUI_DistanceDlg::getParameters( double& theDistance,
+                                            gp_Pnt& thePnt1,
+                                            gp_Pnt& thePnt2 )
+{
+  QString msg;
+  if ( !isValid( msg ) )
+    return false;
+  else
+  {
+    try
+    {
+      double x1, y1, z1, x2, y2, z2;
+      theDistance = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetMinDistance(
+        myObj, myObj2, x1, y1, z1, x2, y2, z2 );
+
+      thePnt1.SetCoord( x1, y1, z1 );
+      thePnt2.SetCoord( x2, y2, z2 );
+    }
+    catch( const SALOME::SALOME_Exception& e )
+    {
+      QtCatchCorbaException( e );
+      return false;
+    }
+
+    return getOperation()->IsDone();
+  }
 }
 
 
@@ -195,19 +209,20 @@ void MeasureGUI_DistanceDlg::SelectionIntoArgument()
 //=================================================================================
 void MeasureGUI_DistanceDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();
+  QPushButton* send = ( QPushButton* )sender();
 
-  if(send == GroupC1->PushButton1) {
-    GroupC1->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupC1->LineEdit1;
+  if( send == mySelBtn )
+  {
+    mySelEdit->setFocus();
+    myEditCurrentArgument = mySelEdit;
   }
-  else if(send == GroupC1->PushButton2) {
-    GroupC1->LineEdit2->setFocus();
-    myEditCurrentArgument = GroupC1->LineEdit2;
+  else
+  {
+    mySelEdit2->setFocus();
+    myEditCurrentArgument = mySelEdit2;
   }
 
-  this->SelectionIntoArgument();
-  return;
+  SelectionIntoArgument();
 }
 
 
@@ -217,157 +232,101 @@ void MeasureGUI_DistanceDlg::SetEditCurrentArgument()
 //=================================================================================
 void MeasureGUI_DistanceDlg::LineEditReturnPressed()
 {
-  QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupC1->LineEdit1)
-    myEditCurrentArgument = GroupC1->LineEdit1;
-  else if(send == GroupC1->LineEdit2)
-    myEditCurrentArgument = GroupC1->LineEdit2;
+  QLineEdit* send = ( QLineEdit* )sender();
+
+  if( send == mySelEdit )
+    myEditCurrentArgument = mySelEdit;
   else
-    return;
+    myEditCurrentArgument = mySelEdit2;
 
-  MeasureGUI_Skeleton::LineEditReturnPressed();
-  return;
+  if ( GEOMBase::SelectionByNameInDialogs( this, mySelEdit->text(), mySelection ) )
+    mySelEdit->setText( mySelEdit->text() );
 }
 
 
 //=================================================================================
-// function : ActivateThisDialog()
+// function : buildPrs()
 // purpose  :
 //=================================================================================
-void MeasureGUI_DistanceDlg::ActivateThisDialog()
+SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
 {
-  MeasureGUI_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
-}
-
-
-//=================================================================================
-// function : enterEvent()
-// purpose  : when mouse enter onto the QWidget
-//=================================================================================
-void MeasureGUI_DistanceDlg::enterEvent(QEvent* e)
-{
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
-}
-
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void MeasureGUI_DistanceDlg::closeEvent(QCloseEvent* e)
-{
-  /* same than click on cancel button */
-  this->ClickOnCancel();
-  return;
-}
-
-
-//=================================================================================
-// function : MakeDistanceSimulationAndDisplay()
-// purpose  :
-//=================================================================================
-void MeasureGUI_DistanceDlg::MakeDistanceSimulationAndDisplay(const TopoDS_Shape& S1, const TopoDS_Shape& S2) 
-{
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  GroupC1->LineEdit3->setText("");
+  double aDist = 0.;
+  gp_Pnt aPnt1( 0, 0, 0 ), aPnt2( 0, 0, 0 );
   
-  BRepExtrema_DistShapeShape dst(S1, S2);
+  if ( myObj->_is_nil() || myObj2->_is_nil() || !getParameters( aDist, aPnt1, aPnt2 ) ||
+       QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC )
+    return 0;
+  
+  try
+  {
+    if( aDist <= 1.e-9 )
+    {
+      BRepBuilderAPI_MakeVertex aMaker( aPnt1 );
+      return getDisplayer()->BuildPrs( aMaker.Vertex() );
+    }
+    else
+    {
+      BRepBuilderAPI_MakeEdge MakeEdge( aPnt1, aPnt2 );
+      TopoDS_Vertex aVert1 = BRepBuilderAPI_MakeVertex( aPnt1 );
+      TopoDS_Vertex aVert2 = BRepBuilderAPI_MakeVertex( aPnt2 );
 
-  try {
-    if(dst.IsDone()) {
-      gp_Pnt P1, P2;
-      Standard_Real Dist = 1.e9;
-      for(int i = 1; i <= dst.NbSolution(); i++) {
-	P1 = (dst.PointOnShape1(i));
-	P2 = (dst.PointOnShape2(i));
+      QString aLabel;
+      aLabel.sprintf( "%.1f", aDist );
 
-	Standard_Real MinDist = P1.Distance(P2);
-	if(Dist > MinDist)
-	  Dist = MinDist;
+      gp_Pnt aPnt3( ( aPnt1.X() + aPnt2.X() ) / 2,
+                    ( aPnt1.Y() + aPnt2.Y() ) / 2,
+                    ( aPnt1.Z() + aPnt2.Z() ) / 2 + 100 );
+
+
+      gp_Vec va( aPnt3, aPnt1 );
+      gp_Vec vb( aPnt3, aPnt2 );
+
+      if ( va.IsParallel( vb, Precision::Angular() ) )
+      {
+        aPnt3.SetY( ( aPnt1.Y() + aPnt2.Y() ) / 2 + 100 );
+        aPnt3.SetZ( ( aPnt1.Z() + aPnt2.Z() ) / 2 );
       }
+      
+      gce_MakePln gce_MP( aPnt1, aPnt2, aPnt3 );
+      Handle( Geom_Plane ) P = new Geom_Plane( gce_MP.Value() );
 
-      if(Dist <= 1.e-9) {
-	BRepBuilderAPI_MakeVertex MakeVertex(P1);
-	mySimulationTopoDs = MakeVertex.Vertex();
-	myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
+      Handle( AIS_LengthDimension ) anIO = new AIS_LengthDimension(
+        aVert1, aVert2, P, aDist, TCollection_ExtendedString( (Standard_CString)aLabel.latin1() ) );
 
-	GroupC1->LineEdit3->setText("0.0");
-      } 
-      else {
-	BRepBuilderAPI_MakeEdge MakeEdge(P1, P2);
-	mySimulationTopoDs = MakeEdge.Edge();
+      QAD_ViewFrame* vf = GEOM_Displayer::GetActiveView();
+      OCCViewer_Prs* aPrs = dynamic_cast<OCCViewer_Prs*>( vf->CreatePrs( 0 ) );
 
-	TopoDS_Vertex V1 = BRepBuilderAPI_MakeVertex(P1);
-	TopoDS_Vertex V2 = BRepBuilderAPI_MakeVertex(P2);
+      if ( aPrs )
+        aPrs->AddObject( anIO );
 
-	QString S;
-	S.sprintf("%.1f", Dist);
-
-	gp_Pnt P3;
-	P3.SetX((P1.X() + P2.X()) / 2);
-	P3.SetY((P1.Y() + P2.Y()) / 2);
-	P3.SetZ(((P1.Z() + P2.Z()) / 2) + 100);
-	gp_Vec va(P3, P1);
-	gp_Vec vb(P3, P2);
-	if(va.IsParallel(vb, Precision::Angular())) {
-	  P3.SetY(((P1.Y() + P2.Y()) / 2) + 100);
-	  P3.SetZ(((P1.Z() + P2.Z()) / 2));
-	}
-	gce_MakePln gce_MP(P1, P2, P3);
-	gp_Pln gp_P = gce_MP.Value();
-	Handle(Geom_Plane) P = new Geom_Plane(gp_P);
-
-	char* aCopyS = CORBA::string_dup(S);
-	Handle(AIS_LengthDimension) Distance = new AIS_LengthDimension(V1, V2, P, Dist, TCollection_ExtendedString(aCopyS));
-	delete(aCopyS);
-
-	GroupC1->LineEdit3->setText(S);
-
-	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-	  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
-	  ic->Display(Distance);
-	  ic->UpdateCurrentViewer();
-	}
-      }
+      return aPrs;
     }
   }
-  catch(Standard_Failure) {
-    MESSAGE("Catch intercepted in MakeDistanceSimulationAndDisplay()");
+  catch( Standard_Failure )
+  {
+    return 0;
   }
-  return;
 }
 
-
 //=================================================================================
-// function : EraseDistance()
+// function : isValid()
 // purpose  :
 //=================================================================================
-void MeasureGUI_DistanceDlg::EraseDistance()
+bool MeasureGUI_DistanceDlg::isValid( QString& msg )
 {
-  int count = QAD_Application::getDesktop()->getActiveStudy()->getStudyFramesCount();
-  for(int i = 0; i < count; i++) {
-    if (QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i)->getTypeView() == VIEW_OCC ) {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i)->getRightFrame()->getViewFrame())->getViewer();
-      Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
-
-      AIS_ListOfInteractive L;
-      ic->DisplayedObjects(AIS_KOI_Relation, -1, L);
-      AIS_ListIteratorOfListOfInteractive ite(L);
-      while (ite.More()) {
-	ic->Remove(ite.Value());
-	ic->UpdateCurrentViewer();
-	ite.Next();
-      }
-    }
-  }
-  return;
+  return MeasureGUI_Skeleton::isValid( msg ) && !myObj2->_is_nil();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -34,17 +34,17 @@
 #include <Standard.hxx>
 #endif
 
-#ifndef _Handle_SALOME_Filter_HeaderFile
-#include "Handle_SALOME_Filter.hxx"
+#ifndef _Handle_GEOM_ShapeTypeFilter_HeaderFile
+#include "Handle_GEOM_ShapeTypeFilter.hxx"
 #endif
 
 class Standard_Transient;
 class Handle_Standard_Type;
-class Handle(SALOME_Filter);
+class Handle(GEOM_ShapeTypeFilter);
 class GEOM_EdgeFilter;
 Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOM_EdgeFilter);
 
-class Handle(GEOM_EdgeFilter) : public Handle(SALOME_Filter) {
+class Handle(GEOM_EdgeFilter) : public Handle(GEOM_ShapeTypeFilter) {
   public:
     inline void* operator new(size_t,void* anAddress) 
       {
@@ -62,12 +62,12 @@ class Handle(GEOM_EdgeFilter) : public Handle(SALOME_Filter) {
 //      { 
 //        if (anAddress) Standard::Free((Standard_Address&)anAddress,size); 
 //      }
-    Handle(GEOM_EdgeFilter)():Handle(SALOME_Filter)() {} 
-    Handle(GEOM_EdgeFilter)(const Handle(GEOM_EdgeFilter)& aHandle) : Handle(SALOME_Filter)(aHandle) 
+    Handle(GEOM_EdgeFilter)():Handle(GEOM_ShapeTypeFilter)() {} 
+    Handle(GEOM_EdgeFilter)(const Handle(GEOM_EdgeFilter)& aHandle) : Handle(GEOM_ShapeTypeFilter)(aHandle) 
      {
      }
 
-    Handle(GEOM_EdgeFilter)(const GEOM_EdgeFilter* anItem) : Handle(SALOME_Filter)((SALOME_Filter *)anItem) 
+    Handle(GEOM_EdgeFilter)(const GEOM_EdgeFilter* anItem) : Handle(GEOM_ShapeTypeFilter)((GEOM_ShapeTypeFilter *)anItem) 
      {
      }
 

@@ -28,7 +28,11 @@
 
 #include "TransformationGUI_ScaleDlg.h"
 
-#include <BRepBuilderAPI_Transform.hxx>
+#include "QAD_Desktop.h"
+
+#include "GEOMImpl_Types.hxx"
+
+#include <qcheckbox.h>
 
 #include "utilities.h"
 
@@ -41,7 +45,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(QWidget* parent, const char* name, TransformationGUI* theTransformationGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SCALE")));
@@ -55,19 +59,49 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(QWidget* parent, const ch
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_2Sel1Spin(this, "GroupPoints");
+  GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
+  GroupPoints->CheckButton2->hide();
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_OBJECT"));
+  GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupPoints->TextLabel2->setText(tr("GEOM_CENTRAL_POINT"));
   GroupPoints->TextLabel3->setText(tr("GEOM_SCALE_FACTOR"));
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->CheckButton1->setText(tr("GEOM_CREATE_COPY"));
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  // san -- modification of an exisitng object by offset is not allowed
+  GroupPoints->CheckButton1->hide();
+
+  Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
+  double aFactor = 2.0;
+  double SpecificStep = 0.5;
+  /* min, max, step and decimals for spin boxes & initial values */
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
+  GroupPoints->SpinBox_DX->SetValue(aFactor);
+  
+  // Activate Create a Copy mode
+  GroupPoints->CheckButton1->setChecked(true);
+  CreateCopyModeChanged(true);
 
-  /* Initialisations */
-  myTransformationGUI = theTransformationGUI;
+  /* signals and slots connections */
+  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  
+  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  
+  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+
+  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
+   
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+
   Init();
 }
 
@@ -88,40 +122,12 @@ TransformationGUI_ScaleDlg::~TransformationGUI_ScaleDlg()
 //=================================================================================
 void TransformationGUI_ScaleDlg::Init()
 {
-  /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
-
-  myPoint1.SetCoord(0.0, 0.0, 0.0);
-  myOkPoint1 = myOkBaseTopo = false;
-  myFactor = 2.0;
-
-  myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
-
-  double SpecificStep = 0.5;
-  /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
-  GroupPoints->SpinBox_DX->SetValue(myFactor);
-
-  /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-
-  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  GroupPoints->LineEdit2->clear();
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
-
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
-
-  return;
+  myPoint = GEOM::GEOM_Object::_nil();
+  
+  initName( tr( "GEOM_SCALE" ) );
 }
 
 
@@ -131,9 +137,8 @@ void TransformationGUI_ScaleDlg::Init()
 //=================================================================================
 void TransformationGUI_ScaleDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -141,18 +146,23 @@ void TransformationGUI_ScaleDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void TransformationGUI_ScaleDlg::ClickOnApply()
+bool TransformationGUI_ScaleDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept(GroupPoints->CheckButton1->isChecked()) )
+    return false;
 
-  if(myOkBaseTopo && myOkPoint1)
-    myTransformationGUI->MakeScaleAndDisplay(myGeomShape, myPoint1, myFactor);
-  return;
+  Init();
+  return true;
+}
+
+
+//=======================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=======================================================================
+void TransformationGUI_ScaleDlg::ClickOnCancel()
+{
+  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -162,44 +172,39 @@ void TransformationGUI_ScaleDlg::ClickOnApply()
 //=================================================================================
 void TransformationGUI_ScaleDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
+  QString aName;
+
+  if(myEditCurrentArgument == GroupPoints->LineEdit1)
+    {
+      int aNbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aName);
+      if(aNbSel < 1)
+	{
+	  myObjects.length(0);
+	  return;
+	}
+      GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(), myObjects);
+      if (!myObjects.length())
+	return;
+      if(aNbSel != 1)
+	aName = tr("%1_objects").arg(aNbSel);
+    }
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2)
+    {
+      if(mySelection->IObjectCount() != 1)
+	{
+	  myPoint = GEOM::GEOM_Object::_nil();
+	  return;
+	}
+      Standard_Boolean testResult = Standard_False;
+      myPoint = GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), testResult );
+      if(!testResult || CORBA::is_nil( myPoint ))
+	return;
+      aName = GEOMBase::GetName( myPoint );
+    }
+  myEditCurrentArgument->setText( aName );
   
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if (nbSel != 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkBaseTopo = false;
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
-      myOkPoint1 = false;
-    return;
-  }
-
-  /* nbSel == 1 */
-  TopoDS_Shape S;
-  Standard_Boolean testResult;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;  
- 
-  /*  gp_Pnt : not used */
-  if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-    if(!testResult)
-      return ;
-    GroupPoints->LineEdit1->setText(aString);
-    myBaseTopo = S; 
-    myOkBaseTopo = true;
-  }    
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomBase->VertexToPoint(S, myPoint1)) {
-    GroupPoints->LineEdit2->setText(aString);
-    myOkPoint1 = true;
-  }
-
-  if(myOkPoint1 && myOkBaseTopo)
-    this->MakeScaleSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
 
@@ -210,15 +215,12 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
 void TransformationGUI_ScaleDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if (send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  if(send == GroupPoints->LineEdit1 ||
+     send == GroupPoints->LineEdit2)
+    {
+      myEditCurrentArgument = send;
+      GEOMBase_Skeleton::LineEditReturnPressed();
+    }
 }
 
 
@@ -229,20 +231,18 @@ void TransformationGUI_ScaleDlg::LineEditReturnPressed()
 void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters();
-
+  
   if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
+    globalSelection();
   }
   else if(send == GroupPoints->PushButton2) {
-    GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    mySelection->AddFilter(myVertexFilter);
+    globalSelection( GEOM_POINT );
   }
-  this->SelectionIntoArgument();
-
-  return;
+  
+  myEditCurrentArgument->setFocus();
+  SelectionIntoArgument();
 }
 
 
@@ -254,11 +254,19 @@ void TransformationGUI_ScaleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  globalSelection();
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+}
+
+
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void TransformationGUI_ScaleDlg::DeactivateActiveDialog()
+{
+  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -268,10 +276,8 @@ void TransformationGUI_ScaleDlg::ActivateThisDialog()
 //=================================================================================
 void TransformationGUI_ScaleDlg::enterEvent(QEvent* e)
 {
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
 
@@ -279,37 +285,86 @@ void TransformationGUI_ScaleDlg::enterEvent(QEvent* e)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void TransformationGUI_ScaleDlg::ValueChangedInSpinBox(double newValue)
+void TransformationGUI_ScaleDlg::ValueChangedInSpinBox()
 {
-  myFactor = newValue;
-  if(fabs(myFactor) > 0.00001 && myOkPoint1 && myOkBaseTopo)
-    MakeScaleSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
 
 //=================================================================================
-// function : MakeScaleSimulationAndDisplay()
+// function : createOperation
 // purpose  :
 //=================================================================================
-void TransformationGUI_ScaleDlg::MakeScaleSimulationAndDisplay()
+GEOM::GEOM_IOperations_ptr  TransformationGUI_ScaleDlg::createOperation()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  return getGeomEngine()->GetITransformOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool TransformationGUI_ScaleDlg::isValid( QString& msg )
+{
+  return !(myObjects.length() == 0 || myPoint->_is_nil() || fabs(GetFactor()) <= 0.00001);
+}
+
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool TransformationGUI_ScaleDlg::execute( ObjectList& objects )
+{
+  bool res = false;
   
-  try {
-    gp_Trsf theTransformation;
-    theTransformation.SetScale(myPoint1, myFactor);
-    BRepBuilderAPI_Transform myBRepTransformation(myBaseTopo, theTransformation, Standard_False);
-    mySimulationTopoDs = myBRepTransformation.Shape();
-    if(mySimulationTopoDs.IsNull())
-      return;
-    else
-      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakeScaleSimulationAndDisplay");
-    return;
-  }
-  return;
+  GEOM::GEOM_Object_var anObj;
+
+  if (GroupPoints->CheckButton1->isChecked() || IsPreview())
+    for (int i = 0; i < myObjects.length(); i++)
+      {
+	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->ScaleShapeCopy( myObjects[i], myPoint, GetFactor() );
+	if ( !anObj->_is_nil() )
+	  objects.push_back( anObj._retn() );
+      }
+  else
+    for (int i = 0; i < myObjects.length(); i++)
+      {
+	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->ScaleShape( myObjects[i], myPoint, GetFactor() );
+	if ( !anObj->_is_nil() )
+	  objects.push_back( anObj._retn() );
+      }
+  res = true;
+  
+  return res;
+}
+
+
+//=================================================================================
+// function : closeEvent
+// purpose  :
+//=================================================================================
+void  TransformationGUI_ScaleDlg::closeEvent( QCloseEvent* e )
+{
+  GEOMBase_Skeleton::closeEvent( e );
+}
+
+
+//=================================================================================
+// function : GetFactor()
+// purpose  :
+//=================================================================================
+double TransformationGUI_ScaleDlg::GetFactor() const
+{
+  return GroupPoints->SpinBox_DX->GetValue();
+}
+
+
+//=================================================================================
+// function :  CreateCopyModeChanged()
+// purpose  :
+//=================================================================================
+void TransformationGUI_ScaleDlg::CreateCopyModeChanged(bool isCreateCopy)
+{
+  this->GroupBoxName->setEnabled(isCreateCopy);
 }

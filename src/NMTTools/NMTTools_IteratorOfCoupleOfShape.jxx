@@ -1,0 +1,9 @@
+#ifndef _Standard_NoSuchObject_HeaderFile
+#include <Standard_NoSuchObject.hxx>
+#endif
+#ifndef _NMTDS_ShapesDataStructure_HeaderFile
+#include <NMTDS_ShapesDataStructure.hxx>
+#endif
+#ifndef _NMTTools_IteratorOfCoupleOfShape_HeaderFile
+#include <NMTTools_IteratorOfCoupleOfShape.hxx>
+#endif

@@ -24,45 +24,34 @@
 //  File   : RepairGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef REPAIRGUI_H
 #define REPAIRGUI_H
 
+#include "GEOMGUI.h"
 #include "GEOMBase.h"
 
 //=================================================================================
 // class    : RepairGUI
 // purpose  :
 //=================================================================================
-class RepairGUI : public QObject
+class RepairGUI : public GEOMGUI
 {
-  Q_OBJECT /* for QT compatibility */
+protected:
+  RepairGUI(); // hide constructor to avoid direct creation
 
 public :
-  RepairGUI();
   ~RepairGUI();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  // Get the only RepairGUI object
+  static RepairGUI* GetRepairGUI();
 
-  void MakeSewingAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR, 
-			    const Standard_Real precision);
-  void MakeOrientationChangeAndDisplay(GEOM::GEOM_Shape_ptr Shape);
-  bool OnSuppressHole(const char* ShapeTopoIOR,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdFace,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWire,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdEndFace);
-  bool OnSuppressHolesInFaceOrShell(const char* ShapeTopoIOR,
-				    const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWires);
-  bool OnSuppressFaces(const TopoDS_Shape& ShapeTopo,
-		       const char* ShapeTopoIOR,
-		       const Standard_Integer& aLocalContextId,
-		       bool& myUseLocalContext);
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
-
+private:
+  static RepairGUI* myGUIObject;        // the only RepairGUI object
+  
 };
 
 #endif

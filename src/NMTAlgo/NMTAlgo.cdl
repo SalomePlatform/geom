@@ -1,0 +1,40 @@
+-- File:	NMTAlgo.cdl
+-- Created:	Tue Jan 27 14:39:05 2004
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2004
+
+
+package NMTAlgo 
+
+	---Purpose: 
+
+uses
+    TCollection,
+    TColStd, 
+    gp,
+    TopAbs, 
+    TopoDS, 
+    TopTools,  
+    
+    BooleanOperations,
+    BOPTColStd,
+    IntTools,
+    BOPTools, 
+    BOP, 
+     
+    NMTDS,
+    NMTTools, 
+      
+    BRep,
+    BRepAlgo 
+    
+is 
+    deferred class Algo; 
+    class Splitter; 
+    class Splitter1; --modified by NIZNHY-PKV Wed Feb 11 14:28:50 2004
+    class Builder; 
+    class Tools; 
+    class Loop3d; 
+      	
+end NMTAlgo;

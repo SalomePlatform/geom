@@ -39,15 +39,79 @@ using namespace std;
 
 // Open CASCADE Includes
 #include <AIS_Drawer.hxx>
+#include <AIS_InteractiveContext.hxx>
+#include <Graphic3d_AspectFillArea3d.hxx>
 #include <Prs3d_Drawer.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_LineAspect.hxx>
 #include <Prs3d_ShadingAspect.hxx>
+#include <SelectBasics_SensitiveEntity.hxx>
+#include <SelectMgr_EntityOwner.hxx>
+#include <SelectMgr_IndexedMapOfOwner.hxx>
+#include <SelectMgr_Selection.hxx>
 #include <StdSelect_DisplayMode.hxx>
 #include <StdPrs_WFShape.hxx>
 #include <StdPrs_ShadedShape.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TColStd_ListOfInteger.hxx>
+#include <TopExp.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
-#include <Graphic3d_AspectFillArea3d.hxx>
+static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
+			     const Handle(AIS_InteractiveContext)& theIC,
+			     SelectMgr_IndexedMapOfOwner& theMap )
+{
+  if ( theObj.IsNull() || theIC.IsNull() )
+    return;
+
+  TColStd_ListOfInteger modes;
+  theIC->ActivatedModes( theObj, modes );
+
+  TColStd_ListIteratorOfListOfInteger itr( modes );
+  for (; itr.More(); itr.Next() ) {
+    int m = itr.Value();
+    if ( !theObj->HasSelection( m ) )
+      continue;
+
+    Handle(SelectMgr_Selection) sel = theObj->Selection( m );
+
+    for ( sel->Init(); sel->More(); sel->Next() ) {
+      Handle(SelectBasics_SensitiveEntity) entity = sel->Sensitive();
+      if ( entity.IsNull() )
+	continue;
+
+      Handle(SelectMgr_EntityOwner) owner =
+	Handle(SelectMgr_EntityOwner)::DownCast(entity->OwnerId());
+      if ( !owner.IsNull() )
+	theMap.Add( owner );
+    }
+  }
+}
+
+static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
+ 			     const TopoDS_Shape& aMainShape,
+			     const SelectMgr_IndexedMapOfOwner& anAllMap, 
+			     SelectMgr_IndexedMapOfOwner& aToHiliteMap )
+{
+  TopTools_IndexedMapOfShape aMapOfShapes;
+  TopExp::MapShapes(aMainShape, aMapOfShapes);
+
+  for  ( Standard_Integer i = 1, n = anAllMap.Extent(); i <= n; i++ ) {
+    Handle(SelectMgr_EntityOwner) anOwner = anAllMap( i );
+    if ( anOwner.IsNull() || !anOwner->HasShape() )
+      continue;
+
+    const TopoDS_Shape& aSubShape = anOwner->Shape();
+    Standard_Integer aSubShapeId = aMapOfShapes.FindIndex( aSubShape );
+    if ( !aSubShapeId || !aIndexMap.Contains( aSubShapeId ) )
+      continue;
+    
+    if ( !aToHiliteMap.Contains( anOwner ) )
+      aToHiliteMap.Add( anOwner );
+  }
+}
 
 GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
 			     const Standard_CString aName): SALOME_AISShape(shape)
@@ -68,7 +132,7 @@ Handle(SALOME_InteractiveObject) GEOM_AISShape::getIO(){
 }
 
 Standard_Boolean GEOM_AISShape::hasIO(){
-  return !( myIO == NULL ) ;
+  return !myIO.IsNull();
 }
 
 void GEOM_AISShape::setName(const Standard_CString aName)
@@ -152,4 +216,35 @@ void GEOM_AISShape::SetTransparency(const Standard_Real aValue)
 void GEOM_AISShape::SetShadingColor(const Quantity_Color &aCol)
 {
   myShadingColor = aCol;
+}
+
+void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, 
+				       const Standard_Boolean aHighlight )
+{
+  Handle(AIS_InteractiveObject) anObj = this;
+  Handle(AIS_InteractiveContext) anIC = GetContext();
+  if ( anIC.IsNull() || !anIC->HasOpenedContext() ) 
+    return;
+
+  Standard_Boolean isAutoHilight = anIC->AutomaticHilight();
+  anIC->SetAutomaticHilight( false );
+
+  anIC->ClearSelected( false );
+
+  if ( aHighlight ) {
+    SelectMgr_IndexedMapOfOwner anAllMap, aToHiliteMap;
+
+    // Get entity owners for all activated selection modes
+    getEntityOwners( anObj, anIC, anAllMap );
+
+    // Convert <aIndexMap> into the map of owners to highlight/unhighlight
+    indicesToOwners( aIndexMap, Shape(), anAllMap, aToHiliteMap );
+
+
+    for ( Standard_Integer i = 1, n = aToHiliteMap.Extent(); i <= n; i++ )
+      anIC->AddOrRemoveSelected( aToHiliteMap( i ), false );
+  }
+
+  anIC->SetAutomaticHilight( isAutoHilight );
+  anIC->HilightSelected( false );
 }

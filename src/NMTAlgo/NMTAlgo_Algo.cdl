@@ -1,0 +1,59 @@
+-- File:	NMTAlgo_Algo.cdl
+-- Created:	Tue Jan 27 14:41:04 2004
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2004
+
+
+deferred class Algo from NMTAlgo 
+
+	---Purpose: 
+
+uses 
+    Shape     from TopoDS, 
+    
+    DSFiller  from NMTTools,
+    PDSFiller from NMTTools
+
+--raises
+
+is
+    Initialize 
+    	returns Algo from NMTAlgo;  
+    ---C++: alias "Standard_EXPORT virtual ~NMTAlgo_Algo();" 
+      
+     
+    SetFiller(me:out; 
+    	    aDSF: DSFiller from NMTTools);
+     
+    Filler(me)
+    	returns DSFiller from NMTTools; 
+    ---C++:  return const &     
+     
+    ComputeWithFiller(me:out; 
+    	aDSF: DSFiller from NMTTools) 
+    	is virtual;  
+	 
+    Clear (me:out) 
+    	is virtual; 
+	
+    Shape (me) 
+     	returns Shape from TopoDS;
+    ---C++:  return const &  	 	    		  
+     
+    IsDone(me) 
+    	returns Boolean from Standard; 
+     
+    ErrorStatus (me) 
+    	returns Integer from Standard; 
+
+fields 
+    myDSFiller       : PDSFiller from NMTTools   	is protected; 
+    myShape          : Shape   from TopoDS      	is protected;
+    -- 
+    myIsDone         : Boolean from Standard    	is protected; 
+    myIsComputed     : Boolean from Standard    	is protected; 
+    myErrorStatus    : Integer from Standard    	is protected;	 
+    myDraw           : Integer from Standard   	        is protected;  
+    
+end Algo;

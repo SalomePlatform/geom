@@ -34,29 +34,41 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 
 @COMMENCE@
 
+# ressources files
+PO_FILES = \
+	GEOM_icons.po \
+	GEOM_msg_en.po \
+	GEOM_msg_fr.po
+
 # header files 
-EXPORT_HEADERS= GeometryGUI_Swig.hxx \
-		GeometryGUI_Swig.i
+EXPORT_HEADERS= GeometryGUI.h \
+                GEOMGUI.h \
+                GeometryGUI_Swig.hxx \
+		GeometryGUI_Swig.i \
+	        GEOM_Displayer.h
 
 # Libraries targets 
 LIB = libGEOMGUI.la
 LIB_SRC =	GeometryGUI.cxx \
-		GeometryGUI_Swig.cxx
+		GeometryGUI_Swig.cxx \
+                GEOM_Displayer.cxx  \
+                GEOMGUI.cxx
 
 LIB_MOC = \
                 GeometryGUI.h \
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 SALOMEDS.idl \
-		 SALOMEDS_Attributes.idl
+		 SALOMEDS_Attributes.idl \
+		 SALOME_GenericObj.idl
 
-LIB_SERVER_IDL = 
+LIB_SERVER_IDL =  
 
 # additionnal information to compil and link file
 
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lGEOMContext
+LDFLAGS += -L$(KERNEL_ROOT_DIR)/lib/salome -lOCCViewer -lVTKViewer -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection
 
 @CONCLUDE@

@@ -1,0 +1,1350 @@
+# This is a Qt message file in .po format.  Each msgid starts with
+# a scope.  This scope should *NOT* be translated - eg. translating
+# from French to English, "Foo::Bar" would be translated to "Pub",
+# not "Foo::Pub".
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2002-03-19 09:35:48 AM CET\n"
+"PO-Revision-Date: YYYY-MM-DD\n"
+"Last-Translator: FULLNAME <EMAIL@ADDRESS>\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+
+#
+#==============================================================================
+#
+
+#Button Apply
+msgid "GEOM_BUT_APPLY"
+msgstr "&Appliquer"
+
+#Button Close
+msgid "GEOM_BUT_CLOSE"
+msgstr "&Fermer"
+
+#Button Cancel
+msgid "GEOM_BUT_CANCEL"
+msgstr "&Annuler"
+
+#Button Ok
+msgid "GEOM_BUT_OK"
+msgstr "&Ok"
+
+#Button Yes
+msgid "GEOM_BUT_YES"
+msgstr "&Oui"
+
+#Button No
+msgid "GEOM_BUT_NO"
+msgstr "&Non"
+
+#Button Help
+msgid "GEOM_BUT_HELP"
+msgstr "&Aide"
+
+
+#Button Explode
+msgid "GEOM_BUT_EXPLODE"
+msgstr "&Exploser"
+
+#
+#==============================================================================
+#
+
+#: GeometryGUI.cxx:563
+msgid "GEOM_INF_LOADED"
+msgstr "Le fichier %1 est chargé."
+
+#
+#==============================================================================
+#
+
+#: GeometryGUI.cxx:3069
+msgid "GEOM_PRP_COMMAND"
+msgstr "Pas de commande associée à l'id = %1."
+
+#: GeometryGUI.cxx:4977
+msgid "GEOM_PRP_ABORT"
+msgstr "L'opération a echoué"
+
+#: GeometryGUI.cxx:5058
+msgid "GEOM_PRP_DONE"
+msgstr "Opération effectuée"
+
+#: GeometryGUI.cxx:3717
+msgid "GEOM_PRP_LOADING"
+msgstr "Chargement de %1 ..."
+
+#: GeometryGUI.cxx:1412
+msgid "GEOM_PRP_NULLSHAPE"
+msgstr "Erreur, objet inconsistant ou inapproprié !"
+
+#: GeometryGUI.cxx:5072
+msgid "GEOM_PRP_READY"
+msgstr "Prêt..."
+
+#: GeometryGUI.cxx:1690
+msgid "GEOM_PRP_SELECT_SUBSHAPES"
+msgstr "Selection de sous objets"
+
+msgid "GEOM_CONFIRM"
+msgstr "Confirmer cette operation"
+
+msgid "GEOM_CONFIRM_INFO"
+msgstr "L'objet contient %1 sous objets"
+
+
+msgid "GEOM_PRP_NOT_FOR_VTK_VIEWER"
+msgstr "Non permis dans viewer VTK"
+
+#: GeometryGUI.cxx:1690
+msgid "GEOM_PRP_SHAPE_IN_STUDY"
+msgstr "La shape principale doit etre avant dans l'etude"
+
+#: GeometryGUI.cxx:1690
+msgid "GEOM_PRP_SELECT_EDGE"
+msgstr "Selectionner les edges et clicker sur Apply"
+
+#: GeometryGUI.cxx:1690
+msgid "GEOM_PRP_SELECT_FACE"
+msgstr "Select les faces a supprimer et clicker sur Ok/Apply"
+
+#: GeometryGUI.cxx:1690
+msgid "GEOM_PRP_SELECT_FIRST"
+msgstr "Selectionner la shape principale en premier"
+
+#: GeometryGUI.cxx:1690
+msgid "GEOM_PRP_MIN_DIST"
+msgstr "Min Distance non calculer"
+
+#
+#==============================================================================
+#
+
+#: GeometryGUI.cxx:3698
+msgid "GEOM_MEN_ALL_FILES"
+msgstr "Tous fichiers ( * )"
+
+#: GeometryGUI.cxx:4389
+msgid "GEOM_MEN_ANGLE"
+msgstr "Angle :"
+
+#: GeometryGUI.cxx:3941
+msgid "GEOM_MEN_COMPONENT"
+msgstr "Géometrie"
+
+#: GeometryGUI.cxx:4389
+msgid "GEOM_MEN_ENTER_ANGLE"
+msgstr "Saisir un angle en degrés"
+
+#: GeometryGUI.cxx:3758
+msgid "GEOM_MEN_EXPORT"
+msgstr "Exporter"
+
+#: GeometryGUI.cxx:3648
+msgid "GEOM_MEN_IMPORT"
+msgstr "Importer"
+
+#: GeometryGUI.cxx:3763
+msgid "GEOM_MEN_LOAD_SCRIPT"
+msgstr "Fichiers PYTHON ( *.py )"
+
+#: GeometryGUI.cxx:2931
+msgid "GEOM_MEN_ISOS"
+msgstr "Choisir un nombre d'isos"
+
+#: GeometryGUI.cxx:4278
+msgid "GEOM_MEN_POPUP_NAME"
+msgstr "%1 Objets"
+
+#: GeometryGUI.cxx:4414
+msgid "GEOM_MEN_SKETCHER_X"
+msgstr "Saisir une longueur pour fixer X"
+
+#: GeometryGUI.cxx:4438
+msgid "GEOM_MEN_SKETCHER_Y"
+msgstr "Saisir une longueur pour fixer Y"
+
+#: GeometryGUI.cxx:2898
+msgid "GEOM_MEN_TRANSPARENCY"
+msgstr "Transparence"
+
+#: GeometryGUI.cxx:4413
+msgid "GEOM_MEN_X"
+msgstr "X :"
+
+#: GeometryGUI.cxx:4437
+msgid "GEOM_MEN_Y"
+msgstr "Y :"
+
+#: GeometryGUI_NbIsosDlg.cxx:36
+msgid "GEOM_MEN_ISOU"
+msgstr "Isos u :"
+
+#: GeometryGUI_NbIsosDlg.cxx:53
+msgid "GEOM_MEN_ISOV"
+msgstr "Isos v :"
+
+#: GeometryGUI_TransparencyDlg.cxx:31
+msgid "GEOM_MEN_TRANSPARENCY_LABEL"
+msgstr "Transparence :"
+
+msgid "GEOM_MEN_STEP_LABEL"
+msgstr "Increment"
+
+msgid "GEOM_IDENTICAL_NAMES_SELECT_BY_MOUSE"
+msgstr "Noms identiques : selectionner avec la souris !"
+
+msgid "GEOM_NAME_INCORRECT"
+msgstr "Le nom saisi n'existe pas"
+
+
+
+#
+#==============================================================================
+#
+
+#: GeometryGUI.cxx:892
+msgid "GEOM_WRN_RADIUS_NULL"
+msgstr "Le rayon est nul"
+
+#: GeometryGUI.cxx:3854
+msgid "GEOM_WRN_WARNING"
+msgstr "Avertissement"
+
+#: GeometryGUI.cxx:3854
+msgid "GEOM_REALLY_DELETE"
+msgstr "Voulez-vous supprimer l'object(s) ?"
+
+#
+#==============================================================================
+#
+
+#Object
+msgid "GEOM_OBJECT"
+msgstr "Objet"
+
+#Main object
+msgid "GEOM_MAIN_OBJECT"
+msgstr "Objet Principal"
+
+#Tool object
+msgid "GEOM_TOOL_OBJECT"
+msgstr "Objet Outil"
+
+#Base Object
+msgid "GEOM_BASE_OBJECT"
+msgstr "Objet De Base"
+
+#Path Object
+msgid "GEOM_PATH_OBJECT"
+msgstr "Objet Chemin"
+
+#Objects
+msgid "GEOM_OBJECTS"
+msgstr "Objets"
+
+#Object i
+msgid "GEOM_OBJECT_I"
+msgstr "Objet %1"
+
+#Object and result
+msgid "GEOM_OBJECT_RESULT"
+msgstr "Objet Et Résultat"
+
+#Point
+msgid "GEOM_POINT"
+msgstr "Point"
+
+#Base point
+msgid "GEOM_BASE_POINT"
+msgstr "Point De Base"
+
+#Center Point
+msgid "GEOM_CENTER_POINT"
+msgstr "Point Centre"
+
+#Diagonal Points
+msgid "GEOM_DIAGONAL_POINTS"
+msgstr "Points Diagonaux"
+
+#Central Point
+msgid "GEOM_CENTRAL_POINT"
+msgstr "Point Central"
+
+#Points
+msgid "GEOM_POINTS"
+msgstr "Points"
+
+#Point i
+msgid "GEOM_POINT_I"
+msgstr "Point %1"
+
+#Arguments
+msgid "GEOM_ARGUMENTS"
+msgstr "Arguments"
+
+#Center
+msgid "GEOM_CENTER"
+msgstr "Centre"
+
+#Radius
+msgid "GEOM_RADIUS"
+msgstr "Rayon"
+
+#Radius i
+msgid "GEOM_RADIUS_I"
+msgstr "Rayon %1"
+
+#Height
+msgid "GEOM_HEIGHT"
+msgstr "Hauteur"
+
+#Length
+msgid "GEOM_LENGTH"
+msgstr "Longueur :"
+
+#Weight
+msgid "GEOM_WEIGHT"
+msgstr "poids"
+
+#Coordinates
+msgid "GEOM_COORDINATES"
+msgstr "Coordonnées"
+
+#Coor.
+msgid "GEOM_COOR"
+msgstr "Coord. :"
+
+#Reverse
+msgid "GEOM_REVERSE"
+msgstr "Renverser"
+
+#Reverse U
+msgid "GEOM_REVERSE_U"
+msgstr "Renverser U"
+
+#Reverse V
+msgid "GEOM_REVERSE_V"
+msgstr "Reverser V"
+
+#Angle
+msgid "GEOM_ANGLE"
+msgstr "Angle :"
+
+#Axis
+msgid "GEOM_AXIS"
+msgstr "Axe"
+
+#Matrix
+msgid "GEOM_MATRIX"
+msgstr "Matrice :"
+
+#Vector Length
+msgid "GEOM_VECTOR_LENGTH"
+msgstr "Longueur Du Vecteur :"
+
+#Reverse Vector
+msgid "GEOM_REVERSE_VECTOR"
+msgstr "Renverser Le Vecteur"
+
+#Point Mirror
+msgid "GEOM_POINT_MIRROR"
+msgstr "Point Miroir"
+
+#Axe Mirror
+msgid "GEOM_AXE_MIRROR"
+msgstr "Axe Miroir"
+
+#Plane Mirror
+msgid "GEOM_PLANE_MIRROR"
+msgstr "Plan Miroir"
+
+#Face Selection
+msgid "GEOM_FACE_SELECTION"
+msgstr "Selection de Face"
+
+#Base
+msgid "GEOM_BASE"
+msgstr "Base"
+
+#Water Density
+msgid "GEOM_WATER_DENSITY"
+msgstr "Densité de l'eau :"
+
+#Meshing Deflection
+msgid "GEOM_MESHING_DEFLECTION"
+msgstr "Déflection Du Maillage :"
+
+#Dimensions
+msgid "GEOM_DIMENSIONS"
+msgstr "Dimensions"
+
+#Precision
+msgid "GEOM_PRECISION"
+msgstr "Précision :"
+
+#Selection
+msgid "GEOM_SELECTION"
+msgstr "Sélection"
+
+#Nb. Times
+msgid "GEOM_NB_TIMES"
+msgstr "Nb. Fois :"
+
+#Nb. Times U
+msgid "GEOM_NB_TIMES_U"
+msgstr "Nb. Fois U :"
+
+#Nb. Times V
+msgid "GEOM_NB_TIMES_V"
+msgstr "Nb. Fois V :"
+
+#Step
+msgid "GEOM_STEP"
+msgstr "Pas :"
+
+#Step V
+msgid "GEOM_STEP_V"
+msgstr "Pas V :"
+
+#Step U
+msgid "GEOM_STEP_U"
+msgstr "Pas U :"
+
+#
+#==============================================================================
+#
+
+#Partition
+msgid "GEOM_PARTITION"
+msgstr "Partition"
+
+#Half-space partition
+msgid "GEOM_PARTITION_HALFSPACE"
+msgstr "Half-space partition"
+
+#Tolerance
+msgid "GEOM_TOLERANCE"
+msgstr "Tolérance"
+
+#Orientation
+msgid "GEOM_ORIENTATION"
+msgstr "Orientation"
+
+#Pipe
+msgid "GEOM_PIPE"
+msgstr "Pipe"
+
+#Revolution
+msgid "GEOM_REVOLUTION"
+msgstr "Révolution"
+
+#Rotation
+msgid "GEOM_ROTATION"
+msgstr "Rotation"
+
+#Archimede
+msgid "GEOM_ARCHIMEDE"
+msgstr "Archimède"
+
+#Common
+msgid "GEOM_COMMON"
+msgstr "Joindre"
+
+#Cut
+msgid "GEOM_CUT" 
+msgstr "Couper"
+
+#Distance
+msgid "GEOM_DISTANCE"
+msgstr "Distance"
+
+#Filling
+msgid "GEOM_FILLING"
+msgstr "Surface Par Courbes"
+
+#Fuse
+msgid "GEOM_FUSE"
+msgstr "Fusionner"
+
+#Scale
+msgid "GEOM_SCALE"
+msgstr "Echelle"
+
+#Section
+msgid "GEOM_SECTION"
+msgstr "Section"
+
+#Sewing
+msgid "GEOM_SEWING"
+msgstr "Coudre"
+
+#Translation
+msgid "GEOM_TRANSLATION"
+msgstr "Translation"
+
+#Working Plane
+msgid "GEOM_WPLANE"
+msgstr "Plan de Travail"
+
+#Mirror
+msgid "GEOM_MIRROR"
+msgstr "Miroir"
+
+#Prism
+msgid "GEOM_PRISM"
+msgstr "Extrusion"
+
+#Sub Shapes
+msgid "GEOM_SUB_SHAPE"
+msgstr "Sous Shapes"
+
+#Supress Face
+msgid "GEOM_SUPRESSFACE"
+msgstr "Supression de Face"
+
+#Fillet
+msgid "GEOM_FILLET"
+msgstr "Conge"
+
+#Chamfer
+msgid "GEOM_CHAMFER"
+msgstr "Chanfrein"
+
+#Check Shape
+msgid "GEOM_CHECK_SHAPE"
+msgstr "Check Shape"
+
+#Whatis
+msgid "GEOM_WHATIS"
+msgstr "Whatis"
+
+#Bounding Box
+msgid "GEOM_BNDBOX"
+msgstr "Boite Anglobante"
+
+#Center Of Mass
+msgid "GEOM_CMASS"
+msgstr "Centre de Masse"
+
+#Basic Properties
+msgid "GEOM_PROPERTIES"
+msgstr "Basiques Proprietes"
+
+#Multi-Translation
+msgid "GEOM_MULTITRANSLATION"
+msgstr "Multi-Translation"
+
+#Multi-Rotation
+msgid "GEOM_MULTIROTATION"
+msgstr "Multi-Rotation"
+
+#
+#==============================================================================
+#
+
+#Arc
+msgid "GEOM_ARC"
+msgstr "Arc"
+
+#Box
+msgid "GEOM_BOX"
+msgstr "Boite"
+
+#Circle
+msgid "GEOM_CIRCLE"
+msgstr "Cercle"
+
+#Ellipse
+msgid "GEOM_ELLIPSE"
+msgstr "Ellipse"
+
+msgid "GEOM_ELLIPSE_TITLE"
+msgstr "Construction d'Ellipses"
+
+#Radius major
+msgid "GEOM_RADIUS_MAJOR"
+msgstr "Rayon max. :"
+
+#Radius minor
+msgid "GEOM_RADIUS_MINOR"
+msgstr "Rayon min. :"
+
+#Compound
+msgid "GEOM_COMPOUND"
+msgstr "Compound"
+
+#CompSolid
+msgid "GEOM_COMPOUNDSOLID"
+msgstr "CompSolid"
+
+#Cone
+msgid "GEOM_CONE"
+msgstr "Cone"
+
+#Cylinder
+msgid "GEOM_CYLINDER"
+msgstr "Cylindre"
+
+#Edge
+msgid "GEOM_EDGE"
+msgstr "Edge"
+
+#Face
+msgid "GEOM_FACE"
+msgstr "Face"
+
+#Faces
+msgid "GEOM_FACES"
+msgstr "Faces"
+
+#Line
+msgid "GEOM_LINE"
+msgstr "Ligne"
+
+#Plane
+msgid "GEOM_PLANE"
+msgstr "Plan"
+
+#Shape
+msgid "GEOM_SHAPE"
+msgstr "Shape"
+
+#Shell
+msgid "GEOM_SHELL"
+msgstr "Shell"
+
+#Shells
+msgid "GEOM_SHELLS"
+msgstr "Shells"
+
+#Solid
+msgid "GEOM_SOLID"
+msgstr "Solide"
+
+#Sphere
+msgid "GEOM_SPHERE"
+msgstr "Sphère"
+
+#Conical Face
+msgid "GEOM_SURFCONE"
+msgstr "Face Conique"
+
+#Cylindrical Face
+msgid "GEOM_SURFCYLINDER"
+msgstr "Face Cylindrique"
+
+#Spherical Face
+msgid "GEOM_SURFSPHERE"
+msgstr "Face Sphèrique"
+
+#Toroidal Face
+msgid "GEOM_SURFTORUS"
+msgstr "Face Toroique"
+
+#Torus
+msgid "GEOM_TORUS"
+msgstr "Tore"
+
+#Vector
+msgid "GEOM_VECTOR"
+msgstr "Vecteur"
+
+#Vector U
+msgid "GEOM_VECTOR_U"
+msgstr "Vecteur U"
+
+#Vector V
+msgid "GEOM_VECTOR_V"
+msgstr "Vecteur V"
+
+#Vertex
+msgid "GEOM_VERTEX"
+msgstr "Vertex"
+
+#Wire
+msgid "GEOM_WIRE"
+msgstr "Wire"
+
+#Wire(s)
+msgid "GEOM_WIRES"
+msgstr "Wire(s)"
+	
+#Parameter
+msgid "GEOM_PARAMETER"
+msgstr "Paramètre :"
+
+
+#
+#==============================================================================
+#
+
+#Min
+msgid "GEOM_MIN"
+msgstr "Min :"
+
+#Max
+msgid "GEOM_MAX"
+msgstr "Max :"
+
+#X
+msgid "GEOM_X"
+msgstr "X :"
+
+#Y
+msgid "GEOM_Y"
+msgstr "Y :"
+
+#Z
+msgid "GEOM_Z"
+msgstr "Z :"
+
+#DX
+msgid "GEOM_DX"
+msgstr "Dx :"
+
+#DY
+msgid "GEOM_DY"
+msgstr "Dy :"
+
+#DZ
+msgid "GEOM_DZ"
+msgstr "Dz :"
+
+#D1
+msgid "GEOM_D1"
+msgstr "D1 :"
+
+#D2
+msgid "GEOM_D2"
+msgstr "D2 :"
+
+#
+#==============================================================================
+#
+
+#: GeometryGUI.cxx
+msgid "GEOM_STEP_TITLE"
+msgstr "Increment par défaut lors des constructions"
+
+#: GeometryGUI_ArcDlg.cxx:45
+msgid "GEOM_ARC_TITLE"
+msgstr "Construction d'un Arc"
+
+#: GeometryGUI_ArchimedeDlg.cxx:55
+msgid "GEOM_ARCHIMEDE_TITLE"
+msgstr "Construction d'Archimède"
+
+#: GeometryGUI_BndBoxDlg.cxx:59
+msgid "GEOM_BNDBOX_TITLE"
+msgstr "Boite Englobante"
+
+#: GeometryGUI_BndBoxDlg.cxx:82
+msgid "GEOM_BNDBOX_OBJDIM"
+msgstr "Objet and ses dimensions"
+
+#: GeometryGUI_BoxDlg.cxx:50
+msgid "GEOM_BOX_TITLE"
+msgstr "Construction d'une Boite"
+
+#: GeometryGUI_BoxDlg.cxx:50
+msgid "GEOM_BOX_OBJ"
+msgstr "Dimensions A l'Origine"
+
+#: GeometryGUI_ChamferDlg.cxx:58
+msgid "GEOM_CHAMFER_TITLE"
+msgstr "Construction d'un Chanfrein"
+
+#: GeometryGUI_ChamferDlg.cxx:58
+msgid "GEOM_CHAMFER_ALL"
+msgstr "Chanfrein sur toute la Shape"
+
+#: GeometryGUI_ChamferDlg.cxx:58
+msgid "GEOM_CHAMFER_EDGES"
+msgstr "Chanfrein sur Edges de la Shape"
+
+#: GeometryGUI_ChamferDlg.cxx:58
+msgid "GEOM_CHAMFER_FACES"
+msgstr "Chanfrein sur Faces de la Shape"
+
+#: GeometryGUI_CircleDlg.cxx:48
+msgid "GEOM_CIRCLE_TITLE"
+msgstr "Construction d'un Cercle"
+
+#: GeometryGUI_CenterMassDlg.cxx:77
+msgid "GEOM_CMASS_TITLE"
+msgstr "Centre De Gravité"
+
+msgid "GEOM_PLANE_SIZE"
+msgstr "Taille du plan :"
+
+#: GeometryGUI_CommonDlg.cxx:47
+msgid "GEOM_COMMON_TITLE"
+msgstr "BOOLEEN : Jonction De Deux Objets"
+
+#: GeometryGUI_CompoundDlg.cxx:44
+msgid "GEOM_COMPOUND_TITLE"
+msgstr "Création d'un Compound"
+
+#: GeometryGUI_ConeDlg.cxx:49
+msgid "GEOM_CONE_TITLE"
+msgstr "Construction d'un Cone"
+
+#: GeometryGUI_CutDlg.cxx:48
+msgid "GEOM_CUT_TITLE"
+msgstr "BOOLEEN : Couper Deux Objets"
+#
+#: GeometryGUI_CylinderDlg.cxx:47
+msgid "GEOM_CYLINDER_TITLE"
+msgstr "Construction d'un Cylindre"
+
+#: GeometryGUI_CheckShape.cxx:60
+msgid "GEOM_CHECK_TITLE"
+msgstr "Check Shape"
+
+#: GeometryGUI_CheckShape.cxx:83
+msgid "GEOM_CHECK_INFOS"
+msgstr "Objet et ses Informations Topologiques"
+
+#: GeometryGUI_DistanceDlg.cxx:57
+msgid "GEOM_MINDIST_TITLE"
+msgstr "Distance Minimale entre Deux Objets"
+
+#: GeometryGUI_DistanceDlg.cxx:57
+msgid "GEOM_MINDIST_OBJ"
+msgstr "Objets Et Resultats"
+
+#: GeometryGUI_EdgeDlg.cxx:47
+msgid "GEOM_EDGE_TITLE"
+msgstr "Création d'un Edge"
+
+#: GeometryGUI_FilletDlg.cxx:58
+msgid "GEOM_FILLET_TITLE"
+msgstr "Construction d'un Congé"
+
+#: GeometryGUI_FilletDlg.cxx:58
+msgid "GEOM_FILLET_ALL"
+msgstr "Congé sur toute la Shape"
+
+#: GeometryGUI_FilletDlg.cxx:58
+msgid "GEOM_FILLET_EDGES"
+msgstr "Congé sur Edges de la Shape"
+
+#: GeometryGUI_FilletDlg.cxx:58
+msgid "GEOM_FILLET_FACES"
+msgstr "Congé sur Faces de la Shape"
+
+#: GeometryGUI_FaceDlg.cxx:49
+msgid "GEOM_FACE_TITLE"
+msgstr "Création d'une Face"
+
+#: GeometryGUI_FaceDlg.cxx:78
+msgid "GEOM_FACE_FFW"
+msgstr "Face a partir d'un wire"
+
+#: GeometryGUI_FaceDlg.cxx:103
+msgid "GEOM_FACE_OPT"
+msgstr "Création d'une Face plane"
+
+#: GeometryGUI_FillingDlg.cxx:53
+msgid "GEOM_FILLING_TITLE"
+msgstr "Surface Par Courbes"
+
+#: GeometryGUI_FillingDlg.cxx:112
+msgid "GEOM_FILLING_ARG"
+msgstr "Argument Et Parametres"
+
+#: GeometryGUI_FillingDlg.cxx:128
+msgid "GEOM_FILLING_MIN_DEG"
+msgstr "Min. Deg"
+
+#: GeometryGUI_FillingDlg.cxx:142
+msgid "GEOM_FILLING_MAX_DEG"
+msgstr "Max. Deg"
+
+#: GeometryGUI_FillingDlg.cxx:150
+msgid "GEOM_FILLING_TOL_2D"
+msgstr "Tol. 2D"
+
+#: GeometryGUI_FillingDlg.cxx:170
+msgid "GEOM_FILLING_COMPOUND"
+msgstr "Compound de Courbes"
+
+#: GeometryGUI_FillingDlg.cxx:184
+msgid "GEOM_FILLING_TOL_3D"
+msgstr "Tol. 3D"
+
+#: GeometryGUI_FillingDlg.cxx:192
+msgid "GEOM_FILLING_NB_ITER"
+msgstr "Nb. Iter"
+
+#: GeometryGUI_FuseDlg.cxx:48
+msgid "GEOM_FUSE_TITLE"
+msgstr "BOOLEEN : Fusionner deux Objets"
+
+#: GeometryGUI_InertiaDlg.cxx:42
+msgid "GEOM_INERTIA_TITLE"
+msgstr "Calculs d'Inertie"
+
+#: GeometryGUI_InertiaDlg.cxx:50
+msgid "GEOM_INERTIA_CONSTR"
+msgstr "Matrice Et Moments d'Inertie"
+
+#: GeometryGUI_InertiaDlg.cxx:100
+msgid "GEOM_INERTIA_I"
+msgstr "%1:1"
+
+#: GeometryGUI_InertiaDlg.cxx:182
+msgid "GEOM_INERTIA_IXYZ"
+msgstr "IX & IY & IZ"
+
+#: GeometryGUI_LineDlg.cxx:50
+msgid "GEOM_LINE_TITLE"
+msgstr "Construction d'une Ligne"
+
+#: GeometryGUI_MaxToleranceDlg.cxx:53
+msgid "GEOM_TOLERANCE_TITLE"
+msgstr "Tolerance Maximale"
+
+#: GeometryGUI_MaxToleranceDlg.cxx:84
+msgid "GEOM_TOLERANCE_CONSTR"
+msgstr "Object et ses Tolerances"
+
+#: GeometryGUI_MaxToleranceDlg.cxx:121
+msgid "GEOM_TOLERANCE_FACE"
+msgstr "Face :"
+
+#: GeometryGUI_MaxToleranceDlg.cxx:138
+msgid "GEOM_TOLERANCE_EDGE"
+msgstr "Edge :"
+
+#: GeometryGUI_MaxToleranceDlg.cxx:155
+msgid "GEOM_TOLERANCE_VERTEX"
+msgstr "Vertex :"
+
+#: GeometryGUI_MirrorDlg.cxx:52
+msgid "GEOM_MIRROR_TITLE"
+msgstr "Methode Miroir"
+
+#: GeometryGUI_OrientationDlg.cxx:46
+msgid "GEOM_ORIENTATION_TITLE"
+msgstr "Changer l'Orientation"
+
+#: GeometryGUI_OrientationDlg.cxx:134
+msgid "GEOM_ORIENTATION_OPT"
+msgstr "Renverser l'orientation avec une simulation de vecteur normal"
+
+#: GeometryGUI_PartitionDlg.cxx:45
+msgid "GEOM_PARTITION_TITLE"
+msgstr "Partition d'Objects Avec Outils"
+
+#: GeometryGUI_PartitionDlg.cxx:45
+msgid "GEOM_KEEP_OBJECT"
+msgstr "Objet garde"
+
+#: GeometryGUI_PartitionDlg.cxx:45
+msgid "GEOM_PARTITION_ORIENTATION"
+msgstr "Change l'orientation"
+
+#: GeometryGUI_PartitionDlg.cxx:45
+msgid "SUPPRESS_RESULT"
+msgstr "Suppress Result"
+
+msgid "GEOM_REMOVE_WEBS"
+msgstr "Remove webs"
+
+msgid "GEOM_SET_MATERIALS"
+msgstr "Set materials"
+
+#: OperationGUI_MaterialDlg.cxx:45
+msgid "GEOM_MATERIAL_TITLE"
+msgstr "Define materials for Dominant Fuse"
+
+msgid "GEOM_MATERIAL_SHAPE"
+msgstr "Shapes"
+
+msgid "GEOM_MATERIAL_MATERIAL"
+msgstr "Material"
+
+msgid "GEOM_MATERIAL_ID"
+msgstr "Material ID:"
+
+msgid "GEOM_MATERIAL_SET"
+msgstr "<< Set"
+
+#: GeometryGUI_PipeDlg.cxx:47
+msgid "GEOM_PIPE_TITLE"
+msgstr "Construction d'une Pipe"
+
+#: GeometryGUI_PointDlg.cxx:52
+msgid "GEOM_POINT_TITLE"
+msgstr "Construction d'un Point"
+
+#: GeometryGUI_PlaneDlg.cxx:60
+msgid "GEOM_PLANE_TITLE"
+msgstr "Construction d'un Plan"
+
+#: GeometryGUI_PlaneDlg.cxx:172
+msgid "GEOM_PLANE_PVC"
+msgstr "Point + Vecteur Coordonnes"
+
+#: GeometryGUI_PlaneDlg.cxx:133
+msgid "GEOM_PLANE_PV"
+msgstr "Point + Vecteur"
+
+#: GeometryGUI_PrismDlg.cxx:54
+msgid "GEOM_PRISM_TITLE"
+msgstr "Extruder une Shape de base"
+
+#: GeometryGUI_PrismDlg.cxx:83
+msgid "GEOM_PRISM_BSV"
+msgstr "Shape de base + Vecteur"
+
+#: GeometryGUI_PropertiesDlg.cxx:56
+msgid "GEOM_PROPERTIES_TITLE"
+msgstr "Proprietes Basiques"
+
+#: GeometryGUI_PropertiesDlg.cxx:78
+msgid "GEOM_PROPERTIES_CONSTR"
+msgstr "Objet et ses Proprietes"
+
+#: GeometryGUI_PropertiesDlg.cxx:114
+msgid "GEOM_PROPERTIES_SURFACE"
+msgstr "Surface :"
+
+#: GeometryGUI_PropertiesDlg.cxx:120
+msgid "GEOM_PROPERTIES_VOLUME"
+msgstr "Volume :"
+
+#: GeometryGUI_RevolDlg.cxx:49
+msgid "GEOM_REVOLUTION_TITLE"
+msgstr "Construction Par Revolution"
+
+#: GeometryGUI_RotationDlg.cxx:51
+msgid "GEOM_ROTATION_TITLE"
+msgstr "Rotation d'un Objet"
+
+#: GeometryGUI_ScaleDlg.cxx:52
+msgid "GEOM_SCALE_TITLE"
+msgstr "Echelle d'un Objet"
+
+#: GeometryGUI_ScaleDlg.cxx:117
+msgid "GEOM_SCALE_FACTOR"
+msgstr "Facteur d'echelle"
+
+#: GeometryGUI_SectionDlg.cxx:50
+msgid "GEOM_SECTION_TITLE"
+msgstr "BOOLEEN : Section De Deux Objets"
+
+#: GeometryGUI_SewingDlg.cxx:48
+msgid "GEOM_SEWING_TITLE"
+msgstr "Coudre des Topologies"
+
+#: GeometryGUI_ShellDlg.cxx:53
+msgid "GEOM_SHELL_TITLE"
+msgstr "Construction d'une Shell"
+
+#: GeometryGUI_SolidDlg.cxx:74
+msgid "GEOM_SOLID_TITLE"
+msgstr "Construction d'un Solid"
+
+#: GeometryGUI_SphereDlg.cxx:50
+msgid "GEOM_SPHERE_TITLE"
+msgstr "Construction d'une Sphere"
+
+#: GeometryGUI_SphereDlg.cxx:113
+msgid "GEOM_SPHERE_CR"
+msgstr "Centre + rayon"
+
+#: GeometryGUI_SphereDlg.cxx:146
+msgid "GEOM_SPHERE_RO"
+msgstr "Rayon a l'origine"
+
+#: GeometryGUI_SubShapeDlg.cxx:55
+msgid "GEOM_SUBSHAPE_TITLE"
+msgstr "Selection de Sous Shapes"
+
+#: GeometryGUI_SubShapeDlg.cxx:131
+msgid "GEOM_SUBSHAPE_TYPE"
+msgstr "Type de Sous Shapes"
+
+#: GeometryGUI_SubShapeDlg.cxx:137
+msgid "GEOM_SUBSHAPE_SELECT"
+msgstr "Selectionner de Sous Shapes"
+
+#: GeometryGUI_TorusDlg.cxx:51
+msgid "GEOM_TORUS_TITLE"
+msgstr "Constructiond'un Tore"
+
+#: GeometryGUI_SuppressFacesDlg.cxx:103
+msgid "GEOM_SUPRESSFACE_TITLE"
+msgstr "Supprimer des Faces dans un Objet"
+
+#: GeometryGUI_SuppressFacesDlg.cxx:164
+msgid "GEOM_SUPRESSFACE_SELECT"
+msgstr "Selectionner les Faces a Supprimer"
+
+#: GeometryGUI_TranslationDlg.cxx:78
+msgid "GEOM_TRANSLATION_COOR"
+msgstr "Translation Avec Coordonnees"
+
+msgid "GEOM_TRANSPARENCY_TITLE"
+msgstr "Transparence"	
+
+msgid "GEOM_TRANSPARENCY_OPAQUE"
+msgstr "Opaque"
+
+msgid "GEOM_TRANSPARENCY_TRANSPARENT"
+msgstr "Transparent"
+
+msgid "GEOM_SUPPRESSHOLE_TITLE"
+msgstr "Suppression de trous"
+
+msgid "GEOM_SUPPRESSHOLE_SELECTFACE"
+msgstr "Selection de la face initiale"
+
+msgid "GEOM_SUPPRESSHOLE_SELECTWIRE"
+msgstr "Selection du contour/trou sur la face"
+
+msgid "GEOM_SUPPRESSHOLE_SELECTFACE_END"
+msgstr "Selection de la face terminale (si trou traversant)"
+
+msgid "GEOM_SUPPRESSHOLE_SELECTWIRE_END"
+msgstr "Selection de contour final (si trou traversant)"
+
+msgid "GEOM_SUPPRESSHOLE_FACE_SHELL"
+msgstr "Face ou shell"
+	
+msgid "GEOM_SUPPRESSHOLE_SELECT_HOLES_ON_FACE"
+msgstr "Selection de trou(s) sur la face"
+
+#: GeometryGUI_TranslationDlg.cxx:56
+msgid "GEOM_TRANSLATION_TITLE"
+msgstr "Translation d'un Objet"
+
+#: GeometryGUI_VectorDlg.cxx:54
+msgid "GEOM_VECTOR_TITLE"
+msgstr "Construction d'un Vecteur" 
+
+#: GeometryGUI_WhatisDlg.cxx:63
+msgid "GEOM_WHATIS_TITLE"
+msgstr "Whatis"
+
+#: GeometryGUI_WhatisDlg.cxx:86
+msgid "GEOM_WHATIS_OBJECT"
+msgstr "Objet et ses Informations Topologiques"
+
+#: GeometryGUI_WireDlg.cxx:46
+msgid "GEOM_WIRE_TITLE"
+msgstr "Creer un Wire"
+
+#: GeometryGUI_WireDlg.cxx:103
+msgid "GEOM_WIRE_CONNECT"
+msgstr "Creation d'un Wire a partir de wires/edges connectes"
+
+#: GeometryGUI_WorkingPlaneDlg.cxx:50
+msgid "GEOM_WPLANE_TITLE"
+msgstr "plan de travail"
+
+#: GeometryGUI_WorkingPlaneDlg.cxx:107
+msgid "GEOM_WPLANE_FACE"
+msgstr "Plan Ou Face plane"
+
+#: GeometryGUI_multiTranslationDlg.cxx:107
+msgid "GEOM_MULTITRANSLATION_TITLE"
+msgstr "Multi-Translation"
+
+#: GeometryGUI_multiTranslationDlg.cxx:107
+msgid "GEOM_MULTITRANSLATION_SIMPLE"
+msgstr "Multi Translation Simple"
+
+#: GeometryGUI_multiTranslationDlg.cxx:107
+msgid "GEOM_MULTITRANSLATION_DOUBLE"
+msgstr "Multi Translation Double"
+
+#: GeometryGUI_multiRotationDlg.cxx:107
+msgid "GEOM_MULTIROTATION_TITLE"
+msgstr "Multi-Rotation"
+
+#: GeometryGUI_multiRotationDlg.cxx:107
+msgid "GEOM_MULTIROTATION_SIMPLE"
+msgstr "Multi Rotation Simple"
+
+#: GeometryGUI_multiRotationDlg.cxx:107
+msgid "GEOM_MULTIROTATION_DOUBLE"
+msgstr "Multi Rotation Double"
+
+msgid "GEOM_PARAM_POINT"
+msgstr "Point paramétrique"
+
+#
+#==============================================================================
+#
+
+#: GeometryGUI.cxx:4613
+msgid "GEOM_MEN_WIREFRAME"
+msgstr "Filaire"
+
+#: GeometryGUI.cxx:4613
+msgid "GEOM_MEN_SHADING"
+msgstr "Ombré"
+
+msgid "GEOM_RECONSTRUCTION_LIMIT"
+msgstr "Limite de Reconstruction"
+
+msgid "GEOM_SUPPRESS_RESULT"
+msgstr "Supprimer le Resultat"
+
+msgid "GEOM_SUPPRESS_RESULT_INSIDE"
+msgstr "Intérieur"
+
+msgid "GEOM_SUPPRESS_RESULT_OUTSIDE"
+msgstr "Extérieur"
+
+msgid "GEOM_RECONSTRUCTION_LIMIT_SHAPE"
+msgstr "Shape"
+msgid "GEOM_RECONSTRUCTION_LIMIT_SOLID"
+msgstr "Solid"
+msgid "GEOM_RECONSTRUCTION_LIMIT_SHELL"
+msgstr "Shell"
+msgid "GEOM_RECONSTRUCTION_LIMIT_FACE"
+msgstr "Face"
+msgid "GEOM_RECONSTRUCTION_LIMIT_WIRE"
+msgstr "Wire"
+msgid "GEOM_RECONSTRUCTION_LIMIT_EDGE"
+msgstr "Edge"
+msgid "GEOM_RECONSTRUCTION_LIMIT_VERTEX"
+msgstr "Vertex"
+
+msgid "GEOM_SPLINE_TITLE"
+msgstr "Construction de Splines"
+msgid "GEOM_SPLINE"
+msgstr "Spline"
+msgid "GEOM_BEZIER"
+msgstr "Bezier"
+msgid "GEOM_INTERPOL"
+msgstr "Interpolation"
+
+#
+#==============================================================================
+#
+
+msgid "GEOM_SKETCHER_EL"
+msgstr "Type d'Element"
+
+msgid "GEOM_BUT_CLOSE_SKETCH"
+msgstr "Fermer Sketch"
+
+msgid "GEOM_BUT_END_SKETCH"
+msgstr "Terminer Sketch"
+
+msgid "GEOM_SKETCHER_TITLE"
+msgstr "Construction de Sketch"
+
+msgid "GEOM_SKETCHER_POINT"
+msgstr "Point"
+
+msgid "GEOM_SKETCHER_SEGMENT"
+msgstr "Sègment"
+
+msgid "GEOM_SKETCHER_ARC"
+msgstr "Arc"
+
+msgid "GEOM_SKETCHER_DIR"
+msgstr "Direction"
+
+msgid "GEOM_SKETCHER_POINT2"
+msgstr "Point :"
+
+msgid "GEOM_SKETCHER_DEST"
+msgstr "Destination"
+
+msgid "GEOM_SKETCHER_ABS"
+msgstr "Absolu"
+
+msgid "GEOM_SKETCHER_REL"
+msgstr "Relative"
+
+msgid "GEOM_SKETCHER_SEL"
+msgstr "Sélection"
+
+msgid "GEOM_SKETCHER_ANGLE"
+msgstr "Angle"
+
+msgid "GEOM_SKETCHER_PER"
+msgstr "Perpendiculaire"
+
+msgid "GEOM_SKETCHER_TAN"
+msgstr "Tangent"
+
+msgid "GEOM_SKETCHER_VXVY"
+msgstr "VX-VY"
+
+msgid "GEOM_SKETCHER_LENGTH"
+msgstr "Longueur"
+
+msgid "GEOM_SKETCHER_X"
+msgstr "X"
+
+msgid "GEOM_SKETCHER_Y"
+msgstr "Y"
+
+msgid "GEOM_SKETCHER_X2"
+msgstr "X :"
+
+msgid "GEOM_SKETCHER_Y2"
+msgstr "Y :"
+
+msgid "GEOM_SKETCHER_X3"
+msgstr "Abs. X :"
+
+msgid "GEOM_SKETCHER_Y3"
+msgstr "Abs. Y :"
+
+msgid "GEOM_SKETCHER_DX2"
+msgstr "DX :"
+
+msgid "GEOM_SKETCHER_DY2"
+msgstr "DY :"
+
+msgid "GEOM_SKETCHER_VX2"
+msgstr "VX :"
+
+msgid "GEOM_SKETCHER_VY2"
+msgstr "VY :"
+
+msgid "GEOM_SKETCHER_LENGTH2"
+msgstr "Longueur :"
+
+msgid "GEOM_SKETCHER_ANGLE2"
+msgstr "Angle :"
+
+msgid "GEOM_SKETCHER_RADIUS2"
+msgstr "Radius :"
+
+msgid "GEOM_SKETCHER_UNDO"
+msgstr "Undo"
+
+msgid "GEOM_SKETCHER_APPLY"
+msgstr "Appliquer"
+
+msgid "GEOM_SKETCHER_VALUES"
+msgstr "Valeurs"
+
+msgid "GEOM_SKETCHER_TYPE"
+msgstr "Type"
+
+msgid "GEOM_FILLET_ABORT"
+msgstr "Le congé ne peut-être realisé avec un rayon de %1 "
+
+msgid "GEOM_CHAMFER_ABORT"
+msgstr "Le chanfrein ne peut-être realisé avec %1 et %2 "
+
+#MZN: to be translated
+msgid "GEOM_CREATE_COPY"
+msgstr "Create a copy"
+
+#MZN: to be translated
+msgid "GEOM_CREATE_SINGLE_SOLID"
+msgstr "Create a single solid"

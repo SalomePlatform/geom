@@ -37,8 +37,8 @@ GEOM_FaceFilter::~GEOM_FaceFilter() {}
 Standard_EXPORT Handle_Standard_Type& GEOM_FaceFilter_Type_()
 {
 
-    static Handle_Standard_Type aType1 = STANDARD_TYPE(SALOME_Filter);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(SALOME_Filter);
+    static Handle_Standard_Type aType1 = STANDARD_TYPE(GEOM_ShapeTypeFilter);
+  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(GEOM_ShapeTypeFilter);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
   if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
@@ -77,7 +77,7 @@ const Handle(Standard_Type)& GEOM_FaceFilter::DynamicType() const
 }
 Standard_Boolean GEOM_FaceFilter::IsKind(const Handle(Standard_Type)& AType) const 
 { 
-  return (STANDARD_TYPE(GEOM_FaceFilter) == AType || SALOME_Filter::IsKind(AType)); 
+  return (STANDARD_TYPE(GEOM_FaceFilter) == AType || GEOM_ShapeTypeFilter::IsKind(AType)); 
 }
 Handle_GEOM_FaceFilter::~Handle_GEOM_FaceFilter() {}
 

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'EntityGUI_1Sel_QTD.ui'
 **
-** Created: Fri Apr 30 11:23:32 2004
+** Created: Fri Jul 30 16:06:00 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -28,8 +28,9 @@ public:
     ~EntityGUI_1Sel_QTD();
 
     QGroupBox* GroupBox1;
-    QPushButton* buttonUndo;
     QPushButton* buttonApply;
+    QPushButton* buttonRedo;
+    QPushButton* buttonUndo;
     QLabel* TextLabel1;
     QPushButton* PushButton1;
     QLineEdit* LineEdit1;
@@ -38,6 +39,7 @@ public:
 protected:
     QGridLayout* EntityGUI_1Sel_QTDLayout;
     QGridLayout* GroupBox1Layout;
+    QGridLayout* Layout4;
     QGridLayout* Layout3;
     QGridLayout* Layout2;
     QGridLayout* Layout1;

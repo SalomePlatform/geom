@@ -1,0 +1,71 @@
+-- File:	NMTAlgo_Tools.cdl
+-- Created:	Fri Jan 30 16:29:14 2004
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2004
+
+
+class Tools from NMTAlgo 
+
+	---Purpose: 
+
+uses  
+    Orientation from TopAbs,
+
+    Shape from TopoDS, 
+    Edge  from TopoDS, 
+    Face  from TopoDS,
+    Shell from TopoDS, 
+    	 
+    ListOfShape from TopTools, 
+    IndexedMapOfShape from TopTools
+--raises
+
+is
+    OrientFacesOnShell (myclass; 
+    	    aShell: Shell from TopoDS;  
+	    aShellNew: out Shell from TopoDS); 
+	 
+    OrientFacesOnShell (myclass; 
+    	    aF  : Face from TopoDS;  
+	    aSh : out Shell from TopoDS);   
+	    
+    Orientation(myclass;  
+    	    aE:  Edge from TopoDS; 
+	    aF:  Face from TopoDS) 
+	returns Orientation from TopAbs; 
+	 
+    Sense  (myclass;  
+    	    aF1:  Face from TopoDS; 
+	    aF2:  Face from TopoDS) 
+	returns Integer from Standard; 
+	 
+    IsInside (myclass;  
+    	    aS1:  Shape from TopoDS; 
+    	    aS2:  Shape from TopoDS) 
+    	returns Boolean from Standard;  
+	 
+    MakeShells(myclass; 
+	aFC:Shape from TopoDS;
+	aLS:out ListOfShape from TopTools);  
+	
+    MakeSolids(myclass; 
+	aLS:out ListOfShape from TopTools);     
+
+    MakeSolids(myclass; 
+	aFC:Shape from TopoDS;
+	aLS:out ListOfShape from TopTools);  
+	 
+    BreakWebs (myclass;  
+    	    aS1:  Shape from TopoDS; 
+    	    aS2:out Shape from TopoDS);  
+	 
+    FindImageSolid (myclass;  
+    	    aFC  :  Shape from TopoDS;  
+	    aMSo :  IndexedMapOfShape from TopTools;
+    	    aSo  :  out Shape from TopoDS) 
+    	returns Boolean from Standard;      
+	    
+--fields
+
+end Tools;

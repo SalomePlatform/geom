@@ -28,82 +28,137 @@
 
 using namespace std;
 #include "GEOM_ShapeTypeFilter.ixx"
-#include "GEOM_Client.hxx"
-
 #include "SALOME_InteractiveObject.hxx"
-#include "GEOM_InteractiveObject.hxx"
-#include "SALOME_TypeFilter.hxx"
-
-#include "utilities.h"
+#include "GEOM_Client.hxx"
 #include "QAD_Application.h"
 #include "QAD_Desktop.h"
-#include "QAD_Study.h"
+#include "utilities.h"
 
-static GEOM_Client  ShapeReader;
+#include <TopoDS_Shape.hxx>
 
-GEOM_ShapeTypeFilter::GEOM_ShapeTypeFilter(TopAbs_ShapeEnum ShapeType,
-					   GEOM::GEOM_Gen_ptr geom) 
+//=======================================================================
+// function : getShape()
+// purpose  : returns a TopoDS_Shape stored in GEOM_Object
+//=======================================================================
+static bool getShape( const GEOM::GEOM_Object_ptr& theObject, TopoDS_Shape& theShape )
 {
-  myKind = ShapeType;
-  myComponentGeom = GEOM::GEOM_Gen::_narrow(geom);
-}
-
-Standard_Boolean GEOM_ShapeTypeFilter::IsOk(const Handle(SALOME_InteractiveObject)& anObj) const 
-{
-  Handle(SALOME_TypeFilter) GeomFilter = new SALOME_TypeFilter( "GEOM" );
-  if ( !GeomFilter->IsOk(anObj) ) 
-    return false;
-  if ( anObj->hasEntry() ) {
-    QAD_Study*                     ActiveStudy = QAD_Application::getDesktop()->getActiveStudy();
-    SALOMEDS::Study_var            aStudy      = ActiveStudy->getStudyDocument();
-    SALOMEDS::SObject_var          obj         = aStudy->FindObjectID( anObj->getEntry() );
-    SALOMEDS::GenericAttribute_var anAttr;
-    SALOMEDS::AttributeIOR_var     anIOR;
-    if ( !obj->_is_nil() ) {
-       if (obj->FindAttribute(anAttr, "AttributeIOR")) {
-         anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	 GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString( anIOR->Value() );  
-	 if ( aShape->_is_nil() )
-	   return false;
-     
-	 TopoDS_Shape    Shape = ShapeReader.GetShape( myComponentGeom, aShape );
-	 if ( Shape.IsNull() )
-	   return false;
-	 
-	 MESSAGE ( " myKind          = " << myKind );
-	 MESSAGE ( " Shape.ShapeType = " << Shape.ShapeType() );
-	 if ( myKind == TopAbs_SHAPE )
-	   return true;
-	 
-	 if ( Shape.ShapeType() == myKind )
-	   return true;
-	 else
-	   return false; 
-       }
+  if ( !CORBA::is_nil( theObject ) )
+  {
+    Engines::Component_var comp = QAD_Application::getDesktop()->getEngine( "FactoryServer", "GEOM" );
+    GEOM::GEOM_Gen_var myGeom   = GEOM::GEOM_Gen::_narrow( comp );
+    TopoDS_Shape aTopoDSShape = GEOM_Client().GetShape( myGeom, theObject );
+        
+    if ( !aTopoDSShape.IsNull() )
+    {
+      theShape = aTopoDSShape;
+       return true;
     }
   }
-  
-  if ( anObj->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject)) ) {
-     Handle(GEOM_InteractiveObject) GObject =
-	Handle(GEOM_InteractiveObject)::DownCast(anObj);
-
-     GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString( GObject->getIOR() );  
-     if ( aShape->_is_nil() )
-       return false;
-     
-     TopoDS_Shape    Shape = ShapeReader.GetShape( myComponentGeom, aShape );
-     if ( Shape.IsNull() )
-       return false;
-     
-     MESSAGE ( " myKind          = " << myKind );
-     MESSAGE ( " Shape.ShapeType = " << Shape.ShapeType() );
-     if ( myKind == TopAbs_SHAPE )
-       return true;
-     
-     if ( Shape.ShapeType() == myKind )
-       return true;
-     else
-       return false;  
-  } 
   return false;
 }
+
+//=======================================================================
+// function : ConvertIOinGEOMObject()
+// purpose  :
+//=======================================================================
+static GEOM::GEOM_Object_ptr convertIOinGEOMObject(
+  const Handle(SALOME_InteractiveObject)& theIO, Standard_Boolean& theResult )
+{
+  theResult = Standard_False;
+  GEOM::GEOM_Object_var aReturnObject;
+  if ( !theIO.IsNull() )
+  {
+    const char* anEntry = theIO->getEntry();
+    SALOMEDS::SObject_var aSObj =
+      QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument()->FindObjectID( anEntry );
+    if ( !CORBA::is_nil( aSObj ) )
+    {
+      aReturnObject = GEOM::GEOM_Object::_narrow( aSObj->GetObject() );
+      theResult = !CORBA::is_nil( aReturnObject );
+    }
+  }
+  return aReturnObject._retn();
+}
+
+//=======================================================================
+// function : ShapeTypeFilter
+// purpose  : 
+//=======================================================================
+GEOM_ShapeTypeFilter::GEOM_ShapeTypeFilter( const TopAbs_ShapeEnum theShapeType,
+                                            const bool theIsAll ) 
+{
+  myIsAll = theIsAll;
+  myShapeTypes.Add( theShapeType );
+  myTypeFilter = new SALOME_TypeFilter( "GEOM" );
+}
+
+//=======================================================================
+// function : ShapeTypeFilter
+// purpose  : 
+//=======================================================================
+GEOM_ShapeTypeFilter::GEOM_ShapeTypeFilter( const TColStd_MapOfInteger& theShapeTypes,
+                                            const bool theIsAll ) 
+{
+  myIsAll = theIsAll;
+  myShapeTypes = theShapeTypes;
+  myTypeFilter = new SALOME_TypeFilter( "GEOM" );
+}
+
+//=======================================================================
+// function : IsOk
+// purpose  : 
+//=======================================================================
+Standard_Boolean GEOM_ShapeTypeFilter::IsOk(
+  const Handle(SALOME_InteractiveObject)& anObj ) const 
+{
+  if ( !myTypeFilter->IsOk(anObj) ) 
+    return Standard_False;
+
+  Standard_Boolean aResult = Standard_False;
+  GEOM::GEOM_Object_ptr aGeomObj = convertIOinGEOMObject( anObj, aResult );
+  if ( !CORBA::is_nil( aGeomObj ) && aResult && aGeomObj->IsShape() )
+  {
+    if ( myIsAll )
+      return true;
+    TopoDS_Shape aShape;
+    if ( getShape( aGeomObj, aShape ) )
+    {
+      if ( myShapeTypes.Contains( aShape.ShapeType() ) )
+        return IsShapeOk( aShape );
+    }
+  }
+  return Standard_False;
+}
+
+//=======================================================================
+// function : IsShapeOk
+// purpose  : 
+//=======================================================================
+Standard_Boolean GEOM_ShapeTypeFilter::IsShapeOk( const TopoDS_Shape& ) const
+{
+  return Standard_True;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

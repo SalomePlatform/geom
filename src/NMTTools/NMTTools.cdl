@@ -1,0 +1,66 @@
+-- File:	NMTTools.cdl
+-- Created:	Thu Dec  4 16:55:49 2003
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2003
+
+
+package NMTTools 
+
+	---Purpose: 
+
+uses  
+    
+    TCollection,
+    TColStd,
+    gp, 
+    TopAbs, 
+    TopoDS, 
+    TopTools, 
+    Geom2d,
+    BooleanOperations,
+    BOPTColStd,
+    IntTools,
+    BOPTools, 
+    
+    NMTDS
+
+is 
+    class IteratorOfCoupleOfShape; 
+    class DSFiller; 
+    class PaveFiller; 
+    class Tools; 
+    class CommonBlock; 
+    class CommonBlockAPI; 
+    class PCurveMaker; 
+    class DEProcessor; 
+    class CoupleOfShape; 
+    
+    pointer PPaveFiller to PaveFiller from NMTTools;
+    pointer PDSFiller   to DSFiller   from NMTTools;
+
+    class ListOfCommonBlock  instantiates  
+    	List from TCollection(CommonBlock from NMTTools); 
+	 
+    class CommonBlockPool    instantiates  
+    	CArray1 from BOPTColStd (ListOfCommonBlock from NMTTools); 
+
+    class IndexedDataMapOfIndexedMapOfInteger instantiates  
+    	IndexedDataMap from TCollection  (Integer from Standard, 
+	    	    	    	    	  IndexedMapOfInteger from TColStd,
+	    	    	    	    	  MapIntegerHasher from TColStd); 
+	 
+    class IndexedDataMapOfShapePaveBlock instantiates  
+    	IndexedDataMap from TCollection  (Shape from TopoDS, 
+	    	    	    	    	  PaveBlock from BOPTools,
+	    	    	    	    	  ShapeMapHasher from TopTools); 
+    
+    class IndexedDataMapOfShapeIndexedMapOfShape instantiates  
+    	IndexedDataMap from TCollection  (Shape from TopoDS, 
+	    	    	    	    	  IndexedMapOfShape from TopTools,
+	    	    	    	    	  ShapeMapHasher from TopTools);   
+					   
+    class ListOfCoupleOfShape  instantiates  
+    	List from TCollection(CoupleOfShape from NMTTools); 	 
+
+end NMTTools;

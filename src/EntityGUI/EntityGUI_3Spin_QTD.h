@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'EntityGUI_3Spin_QTD.ui'
 **
-** Created: ven déc 12 11:17:11 2003
+** Created: Fri Jul 30 16:06:00 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -28,8 +28,9 @@ public:
     ~EntityGUI_3Spin_QTD();
 
     QGroupBox* GroupBox1;
-    QPushButton* buttonUndo;
     QPushButton* buttonApply;
+    QPushButton* buttonUndo;
+    QPushButton* buttonRedo;
     QLabel* TextLabel2;
     QLabel* TextLabel1;
     QSpinBox* SpinBox1;
@@ -41,6 +42,7 @@ public:
 protected:
     QGridLayout* EntityGUI_3Spin_QTDLayout;
     QGridLayout* GroupBox1Layout;
+    QGridLayout* Layout4;
     QGridLayout* Layout3;
     QGridLayout* Layout2;
     QGridLayout* Layout1;

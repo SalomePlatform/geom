@@ -48,16 +48,15 @@ LIB_SRC = 	PrimitiveGUI.cxx \
 		PrimitiveGUI_ConeDlg.cxx
 
 LIB_MOC = \
-		PrimitiveGUI.h \
 		PrimitiveGUI_BoxDlg.h \
 		PrimitiveGUI_CylinderDlg.h \
 		PrimitiveGUI_SphereDlg.h \
 		PrimitiveGUI_TorusDlg.h \
 		PrimitiveGUI_ConeDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl
 
-LIB_SERVER_IDL = 
+LIB_SERVER_IDL =  
 
 # additionnal information to compil and link file
 

@@ -1,4 +1,4 @@
-//  GEOM GEOM : implementaion of GEOM_Gen.idl and GEOM_Shape.idl
+//  GEOM GEOM : implementaion of GEOM_Gen.idl
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 

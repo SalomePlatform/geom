@@ -24,55 +24,33 @@
 //  File   : OperationGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef OPERATIONGUI_H
 #define OPERATIONGUI_H
 
+#include "GEOMGUI.h"
 #include "GEOMBase.h"
 
 //=================================================================================
 // class    : OperationGUI
 // purpose  :
 //=================================================================================
-class OperationGUI : public QObject
+class OperationGUI : public GEOMGUI
 {
-  Q_OBJECT /* for QT compatibility */
+protected:
+  OperationGUI(); // hide constructor to avoid direct creation
 
 public :
-  OperationGUI();
   ~OperationGUI();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  // Get the only OperationGUI object
+  static OperationGUI* GetOperationGUI();
 
-  void MakePartitionAndDisplay(const GEOM::GEOM_Gen::ListOfIOR& listShapesIOR,
-			       const GEOM::GEOM_Gen::ListOfIOR& listToolsIOR,
-			       const GEOM::GEOM_Gen::ListOfIOR& listKeepInsIOR,
-			       const GEOM::GEOM_Gen::ListOfIOR& listRemoveInsIOR,
-			       const GEOM::shape_type limit ) ;
-  void Archimede(const Handle(SALOME_InteractiveObject)& IO, const double aWeight,
-		 const double aWaterDensity, const double aMeshingDeflection);
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
-  /* Method for Fillet */
-  bool OnFilletGetAll(const TopoDS_Shape& ShapeTopo, const double Radius,
-		      const int SubShapeType, const char* ShapeTopoIOR);
-  bool OnFilletGetSelected(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR,
-			   const double Radius, const int SubShapeType,
-			   Standard_Integer& aLocalContextId, bool& myUseLocalContext);
-
-  /* Methods for Chamfer */
-  bool OnChamferGetAll(const TopoDS_Shape& ShapeTopo, const double D1, const double D2, 
-		       const int SubShapeType, const char* ShapeTopoIOR);
-  bool OnChamferGetSelected(const TopoDS_Shape& ShapeTopo,
-			    const char* ShapeTopoIOR,
-			    const double D1, const double D2, const int SubShapeType,
-			    Standard_Integer& aLocalContextId,
-			    bool& myUseLocalContext);
-
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
-
+private:
+  static OperationGUI* myGUIObject;        // the only OperationGUI object
 };
 
 #endif

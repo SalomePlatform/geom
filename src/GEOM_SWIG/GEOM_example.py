@@ -39,9 +39,16 @@ while ind < 5:
     y2 = 20. * (ind+1)
     z2 = 30. * (ind+1)
     print x1, y1, z1, x2, y2, z2
+
+    point1 = geompy.MakeVertex(x1, y1, z1)
+    name1 = "point1_%d"%(ind)
+    id_pt1 = geompy.addToStudy(point1, name1)
+    point2 = geompy.MakeVertex(x2, y2, z2)
+    name2 = "point2_%d"%(ind)
+    id_pt2 = geompy.addToStudy(point2, name2)
+
     name = "box%d"%(ind)
-    box = geompy.MakeBox(x1, y1, z1, x2, y2, z2)
+    box = geompy.MakeBoxTwoPnt(point1, point2)
     id_box = geompy.addToStudy(box, name)
     boxlist.append(box)
-    ind = ind +1
-
+    ind = ind + 1

@@ -49,6 +49,8 @@ using namespace std;
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(SALOMEDS)
 
+#include "utilities.h"
+
 //=======================================================================
 // profile
 // command to build a profile
@@ -116,7 +118,7 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       {
 	if (n1 != 3) goto badargs;
 	if (!first) {
-	  cout<<"profile : The F instruction must precede all moves"<<endl;
+	  MESSAGE("profile : The F instruction must precede all moves");
 	  return;
 	}
 	x0 = x = a[1].RealValue();
@@ -137,7 +139,7 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
 	gp_Vec vn(a[1].RealValue(), a[2].RealValue(), a[3].RealValue());
 	gp_Vec vx(a[4].RealValue(), a[5].RealValue(), a[6].RealValue());
 	if (vn.Magnitude() <= Precision::Confusion() || vx.Magnitude() <= Precision::Confusion()) {
-	  cout<<"profile : null direction"<<endl;
+	  MESSAGE("profile : null direction");
 	  return;
 	}
 	gp_Ax2 ax(P.Location(), vn, vx);
@@ -243,14 +245,14 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
 	length = a[1].RealValue();
 	if (a[0] == "IX") {
 	  if (Abs(dx) < Precision::Confusion()) {
-	    cout<<"profile : cannot intersect, arg "<<i-1<<endl;
+	    MESSAGE("profile : cannot intersect, arg "<<i-1);
 	    return;
 	  }
 	  length = (length - x) / dx;
 	}
 	else if (a[0] == "IY") {
 	  if (Abs(dy) < Precision::Confusion()) {
-	    cout<<"profile : cannot intersect, arg "<<i-1<<endl;
+	    MESSAGE("profile : cannot intersect, arg "<<i-1);
 	    return;
 	  }
 	  length = (length - y) / dy;
@@ -274,7 +276,7 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       }
     default:
       {
-	cout<<"profile : unknown code "<<a[i]<<endl;
+	MESSAGE("profile : unknown code "<<a[i]);
 	return;
       }
     }
@@ -290,7 +292,10 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
 	  dy = -dy;
 	}
 	Handle(Geom2d_Line) l = new Geom2d_Line(gp_Pnt2d(x,y),gp_Dir2d(dx,dy));
-	MW.Add(BRepBuilderAPI_MakeEdge(GeomAPI::To3d(l,P),0,length));
+        BRepBuilderAPI_MakeEdge ME (GeomAPI::To3d(l,P),0,length);
+        if (!ME.IsDone())
+          return;
+	MW.Add(ME);
 	x += length*dx;
 	y += length*dy;
 	break;
@@ -310,7 +315,10 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
 	  sense = !sense;
 	}
 	Handle(Geom2d_Circle) c = new Geom2d_Circle(ax,radius,sense);
-	MW.Add(BRepBuilderAPI_MakeEdge(GeomAPI::To3d(c,P),0,angle));
+        BRepBuilderAPI_MakeEdge ME (GeomAPI::To3d(c,P),0,angle);
+        if (!ME.IsDone())
+          return;
+	MW.Add(ME);
 	gp_Pnt2d p;
 	gp_Vec2d v;
 	c->D1(angle,p,v);
@@ -360,14 +368,25 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
   }
 
   // get the result, face or wire
-  if (move == none)
+  if (move == none) {
     return;
-  else if (move == point)
+  } else if (move == point) {
     S = MP;
-  else if (face)
-    S = BRepBuilderAPI_MakeFace(P, MW.Wire());
-  else
+  } else if (face) {
+    if (!MW.IsDone()) {
+      return;
+    }
+    BRepBuilderAPI_MakeFace MF (P, MW.Wire());
+    if (!MF.IsDone()) {
+      return;
+    }
+    S = MF;
+  } else {
+    if (!MW.IsDone()) {
+      return;
+    }
     S = MW;
+  }
   
   if(!TheLocation.IsIdentity())
     S.Move(TheLocation);
@@ -377,6 +396,6 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
   return;
 
   badargs :
-    cout<<"profile : bad number of arguments"<<endl;
+    MESSAGE("profile : bad number of arguments");
     return;
 }

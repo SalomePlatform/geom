@@ -1,0 +1,66 @@
+#ifndef _BOPTools_InterferencePool_HeaderFile
+#include <BOPTools_InterferencePool.hxx>
+#endif
+#ifndef _BOPTools_Pave_HeaderFile
+#include <BOPTools_Pave.hxx>
+#endif
+#ifndef _IntTools_ShrunkRange_HeaderFile
+#include <IntTools_ShrunkRange.hxx>
+#endif
+#ifndef _IntTools_Context_HeaderFile
+#include <IntTools_Context.hxx>
+#endif
+#ifndef _BOPTools_PavePool_HeaderFile
+#include <BOPTools_PavePool.hxx>
+#endif
+#ifndef _NMTTools_CommonBlockPool_HeaderFile
+#include <NMTTools_CommonBlockPool.hxx>
+#endif
+#ifndef _BOPTools_SplitShapesPool_HeaderFile
+#include <BOPTools_SplitShapesPool.hxx>
+#endif
+#ifndef _BOPTools_PaveBlock_HeaderFile
+#include <BOPTools_PaveBlock.hxx>
+#endif
+#ifndef _TopoDS_Vertex_HeaderFile
+#include <TopoDS_Vertex.hxx>
+#endif
+#ifndef _NMTTools_ListOfCommonBlock_HeaderFile
+#include <NMTTools_ListOfCommonBlock.hxx>
+#endif
+#ifndef _NMTTools_CommonBlock_HeaderFile
+#include <NMTTools_CommonBlock.hxx>
+#endif
+#ifndef _BOPTools_IDMapOfPaveBlockIMapOfPaveBlock_HeaderFile
+#include <BOPTools_IDMapOfPaveBlockIMapOfPaveBlock.hxx>
+#endif
+#ifndef _BOPTools_IDMapOfPaveBlockIMapOfInteger_HeaderFile
+#include <BOPTools_IDMapOfPaveBlockIMapOfInteger.hxx>
+#endif
+#ifndef _BooleanOperations_IndexedDataMapOfShapeInteger_HeaderFile
+#include <BooleanOperations_IndexedDataMapOfShapeInteger.hxx>
+#endif
+#ifndef _TColStd_ListOfInteger_HeaderFile
+#include <TColStd_ListOfInteger.hxx>
+#endif
+#ifndef _BOPTools_ListOfPaveBlock_HeaderFile
+#include <BOPTools_ListOfPaveBlock.hxx>
+#endif
+#ifndef _TopoDS_Face_HeaderFile
+#include <TopoDS_Face.hxx>
+#endif
+#ifndef _BOPTools_PaveSet_HeaderFile
+#include <BOPTools_PaveSet.hxx>
+#endif
+#ifndef _BOPTools_Curve_HeaderFile
+#include <BOPTools_Curve.hxx>
+#endif
+#ifndef _BOPTools_SSInterference_HeaderFile
+#include <BOPTools_SSInterference.hxx>
+#endif
+#ifndef _gp_Pnt_HeaderFile
+#include <gp_Pnt.hxx>
+#endif
+#ifndef _NMTTools_PaveFiller_HeaderFile
+#include <NMTTools_PaveFiller.hxx>
+#endif

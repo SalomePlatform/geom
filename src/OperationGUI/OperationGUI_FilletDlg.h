@@ -30,9 +30,11 @@
 #define DIALOGBOX_FILLET_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel1Spin.h"
 
-#include "OperationGUI.h"
+#include <TColStd_IndexedMapOfInteger.hxx>
+
+class DlgRef_1Sel1Spin;
+class DlgRef_2Sel1Spin;
 
 //=================================================================================
 // class    : OperationGUI_FilletDlg
@@ -43,46 +45,49 @@ class OperationGUI_FilletDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    OperationGUI_FilletDlg(QWidget* parent = 0, const char* name = 0, OperationGUI* theOperationGUI = 0, SALOME_Selection* Sel = 0, Handle(AIS_InteractiveContext) ic = 0, bool modal = FALSE, WFlags fl = 0);
-    ~OperationGUI_FilletDlg();
+                                        OperationGUI_FilletDlg( QWidget* parent,
+                                                                SALOME_Selection* Sel );
+                                        ~OperationGUI_FilletDlg();
 
-private :
-    void Init(Handle(AIS_InteractiveContext) ic);
-    void enterEvent(QEvent* e);
-    void closeEvent(QCloseEvent* e);
-    void MakeFilletSimulationAndDisplay();
-
-    void ResetStateOfDialog();
-    void MakePreview();
-
-    OperationGUI* myOperationGUI;
-
-    int myConstructorId;   /* Current constructor id = radio button id */
-
-    /* Interactive and local context management see also : bool myUseLocalContext() */
-    Handle(AIS_InteractiveContext) myIC;   /* Interactive context */ 
-    Standard_Integer myLocalContextId;   /* identify a local context used by this method */
-    bool myUseLocalContext;   /* true when this method as opened a local context  */
-
-    TopoDS_Shape myShape;
-    bool myOkShape;
-    char* myShapeIOR;
-    int myShapeType;
-    double myRadius;
-    
-    DlgRef_1Sel1Spin* Group1;
+protected:
+    // redefined from GEOMBase_Helper
+    virtual                             GEOM::GEOM_IOperations_ptr createOperation();
+    virtual                             bool isValid( QString& msg );
+    virtual                             bool execute( ObjectList& objects );
 
 private slots:
-    void ClickOnOk();
-    void ClickOnApply();
-    void ClickOnCancel();
-    void ActivateThisDialog();
-    void DeactivateActiveDialog();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
-    void ValueChangedInSpinBox(double newValue);
-    void ConstructorsClicked(int constructorId);
 
+    void                                ClickOnOk();
+    bool                                ClickOnApply();
+    void                                ActivateThisDialog();
+    void                                DeactivateActiveDialog();
+    void                                LineEditReturnPressed();
+    void                                SelectionIntoArgument();
+    void                                SetEditCurrentArgument();
+    void                                ValueChangedInSpinBox( double newValue );
+    void                                ConstructorsClicked( int constructorId );
+
+private :
+
+    void                                Init( SALOME_Selection* );
+    void                                enterEvent( QEvent* e );
+    void                                reset();
+    int                                 getConstructorId() const;
+    void                                activateSelection();
+    void                                enableWidgets();
+    double                              getRadius() const;
+
+private :
+
+    int                                 myConstructorId;
+
+    GEOM::GEOM_Object_var               myShape;
+    TColStd_IndexedMapOfInteger         myEdges;
+    TColStd_IndexedMapOfInteger         myFaces;
+    
+    DlgRef_1Sel1Spin*                   Group1;
+    DlgRef_2Sel1Spin*                   Group2;
+    DlgRef_2Sel1Spin*                   Group3;
 };
 
 #endif // DIALOGBOX_FILLET_H

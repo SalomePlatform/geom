@@ -29,6 +29,8 @@
 #ifndef ENTITYGUI_SKETCHERDLG_H
 #define ENTITYGUI_SKETCHERDLG_H
 
+#include "GEOMBase_Helper.h"
+
 #include "EntityGUI_Skeleton_QTD.h"
 #include "EntityGUI_Point_QTD.h"
 #include "EntityGUI_Dir1_QTD.h"
@@ -41,6 +43,7 @@
 #include "EntityGUI_4Spin.h"
 
 #include "EntityGUI.h"
+#include "GeometryGUI.h"
 
 #include "GEOM_ShapeTypeFilter.hxx"
 
@@ -57,56 +60,48 @@
 // class    : EntityGUI_Dlg
 // purpose  :
 //=================================================================================
-class EntityGUI_SketcherDlg : public EntityGUI_Skeleton_QTD
+class EntityGUI_SketcherDlg : public EntityGUI_Skeleton_QTD, public GEOMBase_Helper
 { 
     Q_OBJECT
 
 public:
-    EntityGUI_SketcherDlg(QWidget* parent = 0, const char* name = 0, EntityGUI* theEntityGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    EntityGUI_SketcherDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~EntityGUI_SketcherDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    void closeEvent( QCloseEvent* e );
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void closeEvent(QCloseEvent* e);
     void InitClick();
-    void MakeSimulationAndDisplay();
+    void setEnabledUndo(bool value);
+    void setEnabledRedo(bool value);
+
     QString GetNewCommand();
 
-    EntityGUI* myEntityGUI;
-
-    double step;
     int myConstructorId;
     int myConstructorDirId;
     int mySketchType;
     int mySketchState;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;
 
-    TopoDS_Shape mySimulationTopoDs1;    /* Shape used for simulation display */
-    TopoDS_Shape mySimulationTopoDs2;    /* Shape used for simulation display */
+    bool myIsAllAdded;
+    
     QLineEdit* myEditCurrentArgument;   /* Current LineEdit */
     SALOME_Selection* mySelection;      /* User shape selection */
-    GEOM::GEOM_Gen_var myGeom;          /* Current GeomI object */
-    GEOMBase* myGeomBase;
-    GEOMContext* myGeomGUI;  /* Current GeomGUI object */
+    
+    QStringList myCommand;
+    QStringList myUndoCommand;
 
-    int myLastOp;
-    QString myCommand;
-    QString myLastCommand;
-    TopoDS_Shape myShape;
-    gp_Dir myLastDir;
-
-    Standard_Real myX;
-    Standard_Real myY;
-    Standard_Real myDX;
-    Standard_Real myDY;
-    Standard_Real myLastX1;
-    Standard_Real myLastY1;
-    Standard_Real myLastX2;
-    Standard_Real myLastY2;
-    Standard_Real myLength;
-    Standard_Real myAngle;
-    Standard_Real myRadius;
+    Standard_Real myX, myY, myDX, myDY;
+    Standard_Real myLength, myAngle, myRadius;
+    Standard_Real myLastX1, myLastY1;
+    Standard_Real myLastX2, myLastY2;
 
     EntityGUI_Point_QTD* GroupPt;
     EntityGUI_Dir1_QTD* GroupD1;
@@ -118,7 +113,7 @@ private :
     EntityGUI_3Spin* Group3Spin;
     EntityGUI_4Spin* Group4Spin;
 
-    enum SketchState {FIRST_POINT, SECOND_POINT, NEXT_POINT};
+    enum SketchState {FIRST_POINT, NEXT_POINT};
 
     enum SketchType {PT_ABS, PT_RELATIVE, PT_SEL,
 		     DIR_ANGLE_LENGTH, DIR_ANGLE_X, DIR_ANGLE_Y,
@@ -126,12 +121,21 @@ private :
 		     DIR_TAN_LENGTH, DIR_TAN_X, DIR_TAN_Y,
 		     DIR_DXDY_LENGTH, DIR_DXDY_X, DIR_DXDY_Y};
 
+  virtual void displayPreview  ( GEOM::GEOM_Object_ptr obj,
+                                 const bool            append = false,
+                                 const bool            activate = false,
+                                 const bool            update = true,
+                                 const double          lineWidth = -1 );
+
+  bool createShapes( GEOM::GEOM_Object_ptr theObject,
+                     TopoDS_Shape&         theApplyedWire,
+                     TopoDS_Shape&         theLastSegment );
 private slots:
     void ClickOnEnd();
-    void ClickOnClose();
     void ClickOnCancel();
-    void ClickOnApply();
+    bool ClickOnApply();
     void ClickOnUndo();
+    void ClickOnRedo();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

@@ -47,15 +47,14 @@ LIB_SRC = 	GenerationGUI.cxx \
 		GenerationGUI_PipeDlg.cxx
 
 LIB_MOC = \
-		GenerationGUI.h \
 		GenerationGUI_PrismDlg.h \
 		GenerationGUI_RevolDlg.h \
 		GenerationGUI_FillingDlg.h \
 		GenerationGUI_PipeDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl
 
-LIB_SERVER_IDL = 
+LIB_SERVER_IDL =  
 
 # additionnal information to compil and link file
 

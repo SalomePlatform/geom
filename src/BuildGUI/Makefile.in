@@ -49,7 +49,6 @@ LIB_SRC = 	BuildGUI.cxx \
 		BuildGUI_CompoundDlg.cxx
 
 LIB_MOC = \
-		BuildGUI.h \
 		BuildGUI_EdgeDlg.h \
 		BuildGUI_WireDlg.h \
 		BuildGUI_FaceDlg.h \
@@ -57,9 +56,9 @@ LIB_MOC = \
 		BuildGUI_SolidDlg.h \
 		BuildGUI_CompoundDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl
 
-LIB_SERVER_IDL = 
+LIB_SERVER_IDL =  
 
 # additionnal information to compil and link file
 

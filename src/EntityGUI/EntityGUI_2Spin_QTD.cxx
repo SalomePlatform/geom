@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'EntityGUI_2Spin_QTD.ui'
 **
-** Created: ven déc 12 11:17:11 2003
+** Created: Fri Jul 30 16:06:00 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ EntityGUI_2Spin_QTD::EntityGUI_2Spin_QTD( QWidget* parent,  const char* name, WF
 {
     if ( !name )
 	setName( "EntityGUI_2Spin_QTD" );
-    resize( 154, 96 ); 
+    resize( 255, 112 ); 
     setCaption( trUtf8( "EntityGUI_2Spin_QTD" ) );
     EntityGUI_2Spin_QTDLayout = new QGridLayout( this, 1, 1, 0, 6, "EntityGUI_2Spin_QTDLayout"); 
 
@@ -38,23 +38,7 @@ EntityGUI_2Spin_QTD::EntityGUI_2Spin_QTD( QWidget* parent,  const char* name, WF
     GroupBox1Layout = new QGridLayout( GroupBox1->layout() );
     GroupBox1Layout->setAlignment( Qt::AlignTop );
 
-    Layout3 = new QGridLayout( 0, 1, 1, 0, 6, "Layout3"); 
-
-    Layout2 = new QGridLayout( 0, 1, 1, 0, 6, "Layout2"); 
-
-    buttonUndo = new QPushButton( GroupBox1, "buttonUndo" );
-    buttonUndo->setText( trUtf8( "Undo" ) );
-
-    Layout2->addWidget( buttonUndo, 1, 0 );
-
-    buttonApply = new QPushButton( GroupBox1, "buttonApply" );
-    buttonApply->setText( trUtf8( "Create" ) );
-
-    Layout2->addWidget( buttonApply, 0, 0 );
-    QSpacerItem* spacer = new QSpacerItem( 0, 51, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    Layout2->addItem( spacer, 2, 0 );
-
-    Layout3->addLayout( Layout2, 0, 1 );
+    Layout4 = new QGridLayout( 0, 1, 1, 0, 6, "Layout4"); 
 
     Layout1 = new QGridLayout( 0, 1, 1, 0, 6, "Layout1"); 
 
@@ -79,12 +63,37 @@ EntityGUI_2Spin_QTD::EntityGUI_2Spin_QTD( QWidget* parent,  const char* name, WF
     SpinBox2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, SpinBox2->sizePolicy().hasHeightForWidth() ) );
 
     Layout1->addWidget( SpinBox2, 1, 1 );
-    QSpacerItem* spacer_2 = new QSpacerItem( 0, 82, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    Layout1->addItem( spacer_2, 3, 1 );
+    QSpacerItem* spacer = new QSpacerItem( 0, 82, QSizePolicy::Minimum, QSizePolicy::Expanding );
+    Layout1->addItem( spacer, 3, 1 );
 
-    Layout3->addLayout( Layout1, 0, 0 );
+    Layout4->addLayout( Layout1, 0, 0 );
 
-    GroupBox1Layout->addLayout( Layout3, 0, 0 );
+    Layout3 = new QGridLayout( 0, 1, 1, 0, 6, "Layout3"); 
+    QSpacerItem* spacer_2 = new QSpacerItem( 0, 51, QSizePolicy::Minimum, QSizePolicy::Expanding );
+    Layout3->addItem( spacer_2, 2, 0 );
+
+    Layout2 = new QGridLayout( 0, 1, 1, 0, 6, "Layout2"); 
+
+    buttonUndo = new QPushButton( GroupBox1, "buttonUndo" );
+    buttonUndo->setText( trUtf8( "Undo" ) );
+
+    Layout2->addWidget( buttonUndo, 0, 0 );
+
+    buttonRedo = new QPushButton( GroupBox1, "buttonRedo" );
+    buttonRedo->setText( trUtf8( "Redo" ) );
+
+    Layout2->addWidget( buttonRedo, 0, 1 );
+
+    Layout3->addLayout( Layout2, 1, 0 );
+
+    buttonApply = new QPushButton( GroupBox1, "buttonApply" );
+    buttonApply->setText( trUtf8( "Create" ) );
+
+    Layout3->addWidget( buttonApply, 0, 0 );
+
+    Layout4->addLayout( Layout3, 0, 1 );
+
+    GroupBox1Layout->addLayout( Layout4, 0, 0 );
 
     EntityGUI_2Spin_QTDLayout->addWidget( GroupBox1, 0, 0 );
 }

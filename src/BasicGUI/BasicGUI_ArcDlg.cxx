@@ -28,10 +28,13 @@
 
 #include "BasicGUI_ArcDlg.h"
 
+#include "QAD_Desktop.h"
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <GC_MakeArcOfCircle.hxx>
 #include <Geom_TrimmedCurve.hxx>
 #include <Precision.hxx>
+
+#include "GEOMImpl_Types.hxx"
 
 #include "utilities.h"
 
@@ -44,7 +47,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_ArcDlg::BasicGUI_ArcDlg(QWidget* parent, const char* name, BasicGUI* theBasicGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+BasicGUI_ArcDlg::BasicGUI_ArcDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_ARC")));
@@ -58,20 +61,22 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg(QWidget* parent, const char* name, BasicGUI* th
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_3Sel_QTD(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_POINTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_POINT_I").arg("1"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_POINT_I").arg("2"));
-  GroupPoints->TextLabel3->setText(tr("GEOM_POINT_I").arg("3"));
-  GroupPoints->PushButton1->setPixmap(image1);
-  GroupPoints->PushButton2->setPixmap(image1);
-  GroupPoints->PushButton3->setPixmap(image1);
+  Group3Pnts = new DlgRef_3Sel_QTD(this, "Group3Pnts");
+  Group3Pnts->GroupBox1->setTitle(tr("GEOM_POINTS"));
+  Group3Pnts->TextLabel1->setText(tr("GEOM_POINT_I").arg("1"));
+  Group3Pnts->TextLabel2->setText(tr("GEOM_POINT_I").arg("2"));
+  Group3Pnts->TextLabel3->setText(tr("GEOM_POINT_I").arg("3"));
 
-  Layout1->addWidget(GroupPoints, 1, 0);
-  /***************************************************************/
+  Group3Pnts->LineEdit1->setReadOnly( true );
+  Group3Pnts->LineEdit2->setReadOnly( true );
+  Group3Pnts->LineEdit3->setReadOnly( true );
+  
+  Group3Pnts->PushButton1->setPixmap(image1);
+  Group3Pnts->PushButton2->setPixmap(image1);
+  Group3Pnts->PushButton3->setPixmap(image1);
 
-  /* Initialisations */
-  myBasicGUI = theBasicGUI;
+  Layout1->addWidget( Group3Pnts, 2, 0 );
+
   Init();
 }
 
@@ -82,7 +87,6 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg(QWidget* parent, const char* name, BasicGUI* th
 //=================================================================================
 BasicGUI_ArcDlg::~BasicGUI_ArcDlg()
 {
-    // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -93,32 +97,33 @@ BasicGUI_ArcDlg::~BasicGUI_ArcDlg()
 void BasicGUI_ArcDlg::Init()
 {
   /* init variables */
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  myOkPoint1 = myOkPoint2 = myOkPoint3 = false;
+  myGeomGUI->SetState( 0 );
+  globalSelection( GEOM_POINT );
 
-  /*  Vertices Filter for all arguments */
-  myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
-  mySelection->AddFilter(myVertexFilter);
+  myEditCurrentArgument = Group3Pnts->LineEdit1;
+  myEditCurrentArgument->setFocus();
+
+  myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 
   /* signals and slots connections */
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3Pnts->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3Pnts->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3Pnts->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group3Pnts->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group3Pnts->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group3Pnts->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
-
-  return;
+  initName( tr( "GEOM_ARC" ) );
 }
 
 
@@ -128,28 +133,38 @@ void BasicGUI_ArcDlg::Init()
 //=================================================================================
 void BasicGUI_ArcDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
+//=======================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=======================================================================
+void BasicGUI_ArcDlg::ClickOnCancel()
+{
+  GEOMBase_Skeleton::ClickOnCancel();
+}
 
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BasicGUI_ArcDlg::ClickOnApply()
+bool BasicGUI_ArcDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  if(myOkPoint1 && myOkPoint2 && myOkPoint3) 
-    myBasicGUI->MakeArcAndDisplay(myPoint1, myPoint2, myPoint3);
-  return;
+  initName();
+
+  // reset
+  myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
+  Group3Pnts->LineEdit1->setText( "" );
+  Group3Pnts->LineEdit2->setText( "" );
+  Group3Pnts->LineEdit3->setText( "" );
+  myEditCurrentArgument = Group3Pnts->LineEdit1;
+  
+  return true;
 }
 
 
@@ -159,43 +174,28 @@ void BasicGUI_ArcDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_ArcDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
-
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if (nbSel != 1) {
-    if (myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkPoint1 = false;
-    else if(myEditCurrentArgument == GroupPoints->LineEdit2)
-      myOkPoint2 = false;
-    else if(myEditCurrentArgument == GroupPoints->LineEdit3)
-      myOkPoint3 = false;
+  
+  if ( mySelection->IObjectCount() != 1 )  
+  {
+    if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = GEOM::GEOM_Object::_nil();
     return;
   }
 
   // nbSel == 1
-  TopoDS_Shape S; 
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;
-  
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
-    myEditCurrentArgument->setText(aString);
-    myOkPoint1 = true;
-  }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomBase->VertexToPoint(S, myPoint2)) {
-    myEditCurrentArgument->setText(aString);
-    myOkPoint2 = true;
-  }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit3 && myGeomBase->VertexToPoint(S, myPoint3)) {
-    myEditCurrentArgument->setText(aString);
-    myOkPoint3 = true;
+  Standard_Boolean aRes = Standard_False;
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
+  {  
+    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) ); 
+    if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = aSelectedObject;
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = aSelectedObject;
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = aSelectedObject;
   }
 
-  if(myOkPoint1 && myOkPoint2 && myOkPoint3)
-    this->MakeArcSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
 
@@ -206,24 +206,13 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 void BasicGUI_ArcDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters();
 
-  if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  }
-  else if(send == GroupPoints->PushButton2) {
-    GroupPoints->LineEdit2->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  }
-  else if(send == GroupPoints->PushButton3) {
-    GroupPoints->LineEdit3->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit3;
-  }
-  mySelection->AddFilter(myVertexFilter);
-  this->SelectionIntoArgument();
-
-  return;
+  if      ( send == Group3Pnts->PushButton1 )   myEditCurrentArgument = Group3Pnts->LineEdit1;
+  else if ( send == Group3Pnts->PushButton2 )   myEditCurrentArgument = Group3Pnts->LineEdit2;
+  else if ( send == Group3Pnts->PushButton3 )   myEditCurrentArgument = Group3Pnts->LineEdit3;
+  
+  myEditCurrentArgument->setFocus();
+  SelectionIntoArgument();
 }
 
 
@@ -234,17 +223,13 @@ void BasicGUI_ArcDlg::SetEditCurrentArgument()
 void BasicGUI_ArcDlg::LineEditReturnPressed()
 { 
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if(send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else if(send == GroupPoints->LineEdit3)
-    myEditCurrentArgument = GroupPoints->LineEdit3;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  if ( send == Group3Pnts->LineEdit1 ||
+       send == Group3Pnts->LineEdit2 ||
+       send == Group3Pnts->LineEdit3 )
+  {
+    myEditCurrentArgument = send;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 
@@ -256,12 +241,28 @@ void BasicGUI_ArcDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  mySelection->AddFilter(myVertexFilter);
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+
+  myGeomGUI->SetState( 0 );
+  globalSelection( GEOM_POINT );
+
+  myEditCurrentArgument = Group3Pnts->LineEdit1;
+  myEditCurrentArgument->setFocus();
+
+  Group3Pnts->LineEdit1->setText( "" );
+  Group3Pnts->LineEdit2->setText( "" );
+  Group3Pnts->LineEdit3->setText( "" );
+  myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 }
 
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void BasicGUI_ArcDlg::DeactivateActiveDialog()
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::DeactivateActiveDialog();
+}
 
 //=================================================================================
 // function : enterEvent()
@@ -269,45 +270,56 @@ void BasicGUI_ArcDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_ArcDlg::enterEvent(QEvent* e)
 {
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
-
 //=================================================================================
-// function : MakeArcSimulationAndDisplay()
+// function : createOperation
 // purpose  :
 //=================================================================================
-void BasicGUI_ArcDlg::MakeArcSimulationAndDisplay() 
+GEOM::GEOM_IOperations_ptr BasicGUI_ArcDlg::createOperation()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  return getGeomEngine()->GetICurvesOperations( getStudyId() );
+}
 
-  try {
-    if(myPoint2.IsEqual(myPoint1, Precision::Confusion()) || 
-       myPoint2.IsEqual(myPoint3, Precision::Confusion())) {
-      myEditCurrentArgument->setText("");
-      return;
-    }
+//=================================================================================
+// function : isEqual
+// purpose  : it may also be needed to check for min distance between gp_Pnt-s...
+//=================================================================================
+static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Object_var& thePnt2 )
+{
+	return thePnt1->_is_equivalent( thePnt2 );
+}
 
-    gp_Vec v1(myPoint2, myPoint1);
-    gp_Vec v2(myPoint2, myPoint3);
-    if(v1.IsParallel(v2, Precision::Angular())) {
-      myEditCurrentArgument->setText("");
-      return;
-    }
-    
-    GC_MakeArcOfCircle Arc(myPoint1, myPoint2, myPoint3);
-    if(Arc.IsDone()) {
-      Handle(Geom_TrimmedCurve) curve = Arc.Value();
-      mySimulationTopoDs = BRepBuilderAPI_MakeEdge(curve).Shape();
-      myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-    }
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakeArcSimulationAndDisplay");
-  }
-  return;
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool BasicGUI_ArcDlg::isValid( QString& msg )
+{
+  return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
+		     !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool BasicGUI_ArcDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeArc( myPoint1, myPoint2, myPoint3 );
+	if ( !anObj->_is_nil() )
+   	objects.push_back( anObj._retn() );
+  return true;
+}
+
+//=================================================================================
+// function : closeEvent
+// purpose  :
+//=================================================================================
+void BasicGUI_ArcDlg::closeEvent( QCloseEvent* e )
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::closeEvent( e );
 }

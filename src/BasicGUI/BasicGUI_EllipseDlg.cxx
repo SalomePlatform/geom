@@ -26,12 +26,10 @@
 //  $Header$
 
 #include "BasicGUI_EllipseDlg.h"
-
-#include <gp_Lin.hxx>
-#include <gp_Elips.hxx>
-#include <BRepBuilderAPI_MakeEdge.hxx>
-#include <BRepAdaptor_Curve.hxx>
+#include "QAD_Desktop.h"
 #include "QAD_Config.h"
+
+#include "GEOMImpl_Types.hxx"
 
 #include "utilities.h"
 
@@ -44,7 +42,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_EllipseDlg::BasicGUI_EllipseDlg(QWidget* parent, const char* name, BasicGUI* theBasicGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+BasicGUI_EllipseDlg::BasicGUI_EllipseDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_ELLIPSE_PV")));
@@ -62,16 +60,17 @@ BasicGUI_EllipseDlg::BasicGUI_EllipseDlg(QWidget* parent, const char* name, Basi
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_CENTER"));
   GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
-  GroupPoints->TextLabel3->setText(tr("GEOM_RADIUS_MINOR"));
-  GroupPoints->TextLabel4->setText(tr("GEOM_RADIUS_MAJOR"));
+  GroupPoints->TextLabel3->setText(tr("GEOM_RADIUS_MAJOR"));
+  GroupPoints->TextLabel4->setText(tr("GEOM_RADIUS_MINOR"));
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->PushButton2->setPixmap(image1);
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
+
+  Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  /* Initialisations */
-  myBasicGUI = theBasicGUI;
   Init();
 }
 
@@ -82,7 +81,6 @@ BasicGUI_EllipseDlg::BasicGUI_EllipseDlg(QWidget* parent, const char* name, Basi
 //=================================================================================
 BasicGUI_EllipseDlg::~BasicGUI_EllipseDlg()
 {
-  // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -94,26 +92,28 @@ void BasicGUI_EllipseDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
+  globalSelection( GEOM_POINT );
 
-  myMajorRadius = 200.0;
-  myMinorRadius = 100.0;
-  myOkPoint = myOkDir = false;
+  myPoint = myDir = GEOM::GEOM_Object::_nil();
 
-  myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
-  myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
-  mySelection->AddFilter(myVertexFilter);
+  myGeomGUI->SetState( 0 );
 
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
+  double step = St.toDouble();
+  double aMajorR( 200. ), aMinorR( 100. );
 
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_DX->SetValue(myMajorRadius);
-  GroupPoints->SpinBox_DY->SetValue(myMinorRadius);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator( 0.001, 999.999, step, 3 );
+  GroupPoints->SpinBox_DY->RangeStepAndValidator( 0.001, 999.999, step, 3 );
+  GroupPoints->SpinBox_DX->SetValue( aMajorR );
+  GroupPoints->SpinBox_DY->SetValue( aMinorR );
 
   /* signals and slots connections */
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
@@ -131,11 +131,7 @@ void BasicGUI_EllipseDlg::Init()
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
-
-  return;
+  initName( tr( "GEOM_ELLIPSE" ) );
 }
 
 
@@ -145,28 +141,40 @@ void BasicGUI_EllipseDlg::Init()
 //=================================================================================
 void BasicGUI_EllipseDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
+
 
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BasicGUI_EllipseDlg::ClickOnApply()
+bool BasicGUI_EllipseDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  if(myOkPoint && myOkDir)
-    myBasicGUI->MakeEllipseAndDisplay(myPoint, myDir, myMajorRadius, myMinorRadius); 
+  initName();
+
+  // reset
+  myPoint = myDir = GEOM::GEOM_Object::_nil();
+  GroupPoints->LineEdit1->setText( "" );
+  GroupPoints->LineEdit2->setText( "" );
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+  globalSelection( GEOM_POINT );
+  
+  return true;
 }
 
+//=======================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=======================================================================
+void BasicGUI_EllipseDlg::ClickOnCancel()
+{
+  GEOMBase_Skeleton::ClickOnCancel();
+}
 
 //=================================================================================
 // function : SelectionIntoArgument()
@@ -174,40 +182,25 @@ void BasicGUI_EllipseDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_EllipseDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
-  
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if (nbSel != 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkPoint = false;
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
-      myOkDir = false;
+
+  if ( mySelection->IObjectCount() != 1 )  
+  {
+    if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myDir   = GEOM::GEOM_Object::_nil();
     return;
   }
 
-  /* nbSel == 1 */
-  TopoDS_Shape S;  
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;  
- 
-  /*  gp_Pnt : not used */
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint)) {
-    GroupPoints->LineEdit1->setText(aString);
-    myOkPoint = true;
-  }    
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
-    BRepAdaptor_Curve curv(TopoDS::Edge(S));
-    myDir = curv.Line().Direction();
-    GroupPoints->LineEdit2->setText(aString);
-    myOkDir = true;
+  Standard_Boolean aRes = Standard_False;
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
+  {  
+    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+    if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myDir   = aSelectedObject;
   }
 
-  if(myOkPoint && myOkDir)
-    this->MakeEllipseSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
 
@@ -218,21 +211,16 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
 void BasicGUI_EllipseDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters();
 
-  if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-    mySelection->AddFilter(myVertexFilter);
-  }
-  else if(send == GroupPoints->PushButton2) {
-    GroupPoints->LineEdit2->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-    mySelection->AddFilter(myEdgeFilter);
-  }
-  this->SelectionIntoArgument();
-
-  return;
+  if      ( send == GroupPoints->PushButton1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
+  else if ( send == GroupPoints->PushButton2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
+  
+  myEditCurrentArgument->setFocus();
+  if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+    globalSelection( GEOM_LINE );
+  else
+    globalSelection( GEOM_POINT );
+  SelectionIntoArgument();
 }
 
 //=================================================================================
@@ -242,15 +230,12 @@ void BasicGUI_EllipseDlg::SetEditCurrentArgument()
 void BasicGUI_EllipseDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if (send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  if ( send == GroupPoints->LineEdit1 ||
+       send == GroupPoints->LineEdit2 )
+  {
+    myEditCurrentArgument = send;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 
@@ -262,14 +247,26 @@ void BasicGUI_EllipseDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  mySelection->AddFilter(myVertexFilter);
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+
+  GroupPoints->LineEdit1->setText( "" );
+  GroupPoints->LineEdit2->setText( "" );
+
+  myPoint = myDir = GEOM::GEOM_Object::_nil();
+  globalSelection( GEOM_POINT );
 }
 
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void BasicGUI_EllipseDlg::DeactivateActiveDialog()
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::DeactivateActiveDialog();
+}
 
 //=================================================================================
 // function : enterEvent()
@@ -277,12 +274,9 @@ void BasicGUI_EllipseDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_EllipseDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
-
 
 //=================================================================================
 // function : ValueChangedInSpinBox()
@@ -290,40 +284,57 @@ void BasicGUI_EllipseDlg::enterEvent(QEvent* e)
 //=================================================================================
 void BasicGUI_EllipseDlg::ValueChangedInSpinBox(double newValue)
 {
-  QObject* send = (QObject*)sender();
-
-  if(send == GroupPoints->SpinBox_DX )
-    myMajorRadius = newValue;
-  else if(send == GroupPoints->SpinBox_DY)
-    myMinorRadius = newValue;
-
-  if (myOkPoint && myOkDir)
-    MakeEllipseSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
-
 //=================================================================================
-// function : MakeEllipseSimulationAndDisplay()
+// function : createOperation
 // purpose  :
 //=================================================================================
-void BasicGUI_EllipseDlg::MakeEllipseSimulationAndDisplay() 
+GEOM::GEOM_IOperations_ptr BasicGUI_EllipseDlg::createOperation()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-
-  if(myMajorRadius < myMinorRadius)
-    return;
-
-  try {
-    gp_Ax2 anAxis(myPoint, myDir);
-    gp_Elips ellipse(anAxis, myMajorRadius, myMinorRadius);
-    BRepBuilderAPI_MakeEdge MakeEdge(ellipse);
-    mySimulationTopoDs = MakeEdge.Shape();
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakeEllipseSimulationAndDisplay");
-  }
-  return;
+  return getGeomEngine()->GetICurvesOperations( getStudyId() );
 }
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool BasicGUI_EllipseDlg::isValid( QString& msg )
+{
+  double aMajorR = GroupPoints->SpinBox_DX->GetValue();
+  double aMinorR = GroupPoints->SpinBox_DY->GetValue();
+  if ( aMajorR < aMinorR )
+  {
+  	msg = tr( "GEOM_ELLIPSE_ERROR_1" );
+   	return false;
+  }
+  return !myPoint->_is_nil() && !myDir->_is_nil();
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool BasicGUI_EllipseDlg::execute( ObjectList& objects )
+{
+  double aMajorR = GroupPoints->SpinBox_DX->GetValue();
+  double aMinorR = GroupPoints->SpinBox_DY->GetValue();
+  GEOM::GEOM_Object_var anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeEllipse( myPoint, myDir, aMajorR, aMinorR );
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
+}
+
+//=================================================================================
+// function : closeEvent
+// purpose  :
+//=================================================================================
+void BasicGUI_EllipseDlg::closeEvent( QCloseEvent* e )
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::closeEvent( e );
+}
+

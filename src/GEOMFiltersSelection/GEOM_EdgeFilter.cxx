@@ -28,107 +28,39 @@
 
 using namespace std;
 #include "GEOM_EdgeFilter.ixx"
-#include "GEOM_Client.hxx"
 
-#include "SALOME_InteractiveObject.hxx"
-#include "GEOM_InteractiveObject.hxx"
-#include "GEOM_ShapeTypeFilter.hxx"
-#include "SALOME_TypeFilter.hxx"
-
-#include "utilities.h"
-#include "QAD_Application.h"
-#include "QAD_Desktop.h"
-#include "QAD_Study.h"
-
-// Open CASCADE Includes
 #include <BRepAdaptor_Curve.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS.hxx>
-#include <TopAbs.hxx>
 
 
-static GEOM_Client  ShapeReader;
-
-
-/*!
-  enumeration TypeOfEdge is AnyEdge,Line,Circle;
-*/
-GEOM_EdgeFilter::GEOM_EdgeFilter(const StdSelect_TypeOfEdge Edge,
-				 GEOM::GEOM_Gen_ptr geom) 
+//=======================================================================
+// function : IsShapeOk
+// purpose  : enumeration TypeOfEdge is AnyEdge,Line,Circle;
+//=======================================================================
+GEOM_EdgeFilter::GEOM_EdgeFilter( const StdSelect_TypeOfEdge theKind )
+: GEOM_ShapeTypeFilter( TopAbs_EDGE )
 {
-  myKind = Edge;
-  myComponentGeom = GEOM::GEOM_Gen::_narrow(geom);
+  myKind = theKind;
 }
 
-Standard_Boolean GEOM_EdgeFilter::IsOk(const Handle(SALOME_InteractiveObject)& anObj) const 
+//=======================================================================
+// function : IsShapeOk
+// purpose  : 
+//=======================================================================
+Standard_Boolean GEOM_EdgeFilter::IsShapeOk( const TopoDS_Shape& theShape ) const
 {
-  Handle(SALOME_TypeFilter) GeomFilter = new SALOME_TypeFilter( "GEOM" );
-  if ( !GeomFilter->IsOk(anObj) ) 
-    return false;
-
-  Handle(GEOM_ShapeTypeFilter) GeomShapeTypeFilter = new GEOM_ShapeTypeFilter( TopAbs_EDGE, myComponentGeom );
-  if ( !GeomShapeTypeFilter->IsOk(anObj) ) 
-    return false;
-
-  if ( anObj->hasEntry() ) {
-    QAD_Study* ActiveStudy = QAD_Application::getDesktop()->getActiveStudy();
-    SALOMEDS::Study_var aStudy = ActiveStudy->getStudyDocument();
-    SALOMEDS::SObject_var obj = aStudy->FindObjectID( anObj->getEntry() );
-    SALOMEDS::GenericAttribute_var anAttr;
-    SALOMEDS::AttributeIOR_var     anIOR;
-    if ( !obj->_is_nil() ) {
-       if (obj->FindAttribute(anAttr, "AttributeIOR")) { 
-         anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	 GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString( anIOR->Value() );  
-	 if ( aShape->_is_nil() )
-	   return false;
-     
-	 TopoDS_Shape    Shape = ShapeReader.GetShape( myComponentGeom, aShape );
-	 if ( Shape.IsNull() )
-	   return false;
-	 
-	 switch (myKind) {
-	 case StdSelect_AnyEdge:
-	   return Standard_True;
-	 case StdSelect_Line:
-	   {
-	     BRepAdaptor_Curve curv(TopoDS::Edge(Shape));
-	     return (curv.GetType() == GeomAbs_Line);
-	   }
-	   break;
-	 case StdSelect_Circle:
-	   BRepAdaptor_Curve curv(TopoDS::Edge(Shape));
-	   return (curv.GetType() == GeomAbs_Circle);
-	 }
-       }
+  if ( !theShape.IsNull() && theShape.ShapeType() == TopAbs_EDGE )
+  {
+    BRepAdaptor_Curve aCurve( TopoDS::Edge( theShape ) );
+    GeomAbs_CurveType aType = aCurve.GetType();
+	
+    switch ( myKind ) 
+    {
+    case StdSelect_AnyEdge: return Standard_True;
+    case StdSelect_Line:    return ( aType == GeomAbs_Line );
+    case StdSelect_Circle:  return ( aType == GeomAbs_Circle );
     }
   }
-    
-  if ( anObj->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject)) ) {
-    Handle(GEOM_InteractiveObject) GObject =
-      Handle(GEOM_InteractiveObject)::DownCast(anObj);
-    
-    GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString( GObject->getIOR() );  
-    if ( aShape->_is_nil() )
-      return false;
-    
-    TopoDS_Shape    Shape = ShapeReader.GetShape( myComponentGeom, aShape );
-    if ( Shape.IsNull() )
-      return false;
-    
-    switch (myKind) {
-    case StdSelect_AnyEdge:
-      return Standard_True;
-    case StdSelect_Line:
-      {
-	BRepAdaptor_Curve curv(TopoDS::Edge(Shape));
-	return (curv.GetType() == GeomAbs_Line);
-      }
-      break;
-    case StdSelect_Circle:
-      BRepAdaptor_Curve curv(TopoDS::Edge(Shape));
-      return (curv.GetType() == GeomAbs_Circle);
-    }
-  }
-  return false;
+  return Standard_False;
 }

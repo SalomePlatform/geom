@@ -1,0 +1,72 @@
+-- File:	NMTTools_Tools.cdl
+-- Created:	Mon Dec  8 10:32:34 2003
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2003
+
+
+class Tools from NMTTools 
+
+	---Purpose: 
+
+uses
+    Vertex from TopoDS, 
+    Edge from TopoDS, 
+    Face from TopoDS, 
+    Context from IntTools,  
+    Curve from Geom2d,
+     
+    ListOfShape from TopTools,
+    IndexedDataMapOfIntegerIndexedMapOfInteger from BOPTColStd, 
+    CArray1OfVVInterference from BOPTools, 
+    CArray1OfSSInterference from BOPTools, 
+    ListOfCoupleOfShape from NMTTools, 
+    IndexedDataMapOfShapeIndexedMapOfShape from NMTTools
+
+--raises
+
+is 
+    MakeNewVertex  (myclass;  
+        	    aLV : ListOfShape from TopTools; 
+		    aNewVertex: out Vertex from TopoDS); 
+    FindChains(myclass; 
+    	aVVs:CArray1OfVVInterference from BOPTools; 
+	aMCX: out IndexedDataMapOfIntegerIndexedMapOfInteger from BOPTColStd); 
+     
+    FindChains(myclass; 
+    	aVVs:CArray1OfSSInterference from BOPTools; 
+	aMCX: out IndexedDataMapOfIntegerIndexedMapOfInteger from BOPTColStd);  
+     
+    FindChains(myclass;   
+    	aMCV: IndexedDataMapOfIntegerIndexedMapOfInteger from BOPTColStd; 
+	aMCX: out IndexedDataMapOfIntegerIndexedMapOfInteger from BOPTColStd); 
+	
+     
+    IsSplitInOnFace(myclass; 
+    	    aE  : Edge from TopoDS; 
+	    aF  : Face from TopoDS; 
+	    aCtx:out Context from IntTools) 
+    	returns Boolean from Standard; 
+
+    AreFacesSameDomain(myclass; 
+	    aF1  : Face from TopoDS; 
+	    aF2  : Face from TopoDS; 
+    	    aCtx : out Context from IntTools) 
+    	returns Boolean from Standard; 
+
+    FindChains(myclass; 
+    	    aLCS:ListOfCoupleOfShape from NMTTools; 
+	    aM  :out  IndexedDataMapOfShapeIndexedMapOfShape from NMTTools);	
+
+    FindChains(myclass; 
+    	    aM1: IndexedDataMapOfShapeIndexedMapOfShape from NMTTools;
+	    aM2:out  IndexedDataMapOfShapeIndexedMapOfShape from NMTTools);
+     
+    MakePCurve(myclass;  
+    	    aE  :  Edge from TopoDS; 
+    	    aF  :  Face from TopoDS;  
+    	    aC2D:  Curve from Geom2d; 
+    	    aTolR2D: Real from Standard);    
+--fields
+
+end Tools;

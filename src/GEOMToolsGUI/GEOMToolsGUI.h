@@ -21,41 +21,56 @@
 //
 //
 //
-//  File   : GEOMBase_Tools.h
+//  File   : GEOMToolsGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef GEOMTOOLSGUI_H
 #define GEOMTOOLSGUI_H
 
-#include "GEOMBase.h"
+#include "GEOMGUI.h"
 
 //=================================================================================
-// class    : GEOMBase_Tools
+// class    : GEOMToolsGUI
 // purpose  :
 //=================================================================================
-class GEOMToolsGUI : public QObject
+class GEOMToolsGUI : public GEOMGUI
 {
-  Q_OBJECT /* for QT compatibility */
+protected:
+  GEOMToolsGUI(); // hide constructor to avoid direct creation
 
 public :
-  GEOMToolsGUI();
   ~GEOMToolsGUI();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  // Get the only GEOMToolsGUI object
+  static GEOMToolsGUI* GetGEOMToolsGUI();
 
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+
+private:
   /* Import and export topology methods */
-  bool Import(int aState);
-  bool Export(int aState); 
+  bool Import();
+  bool Export(); 
   
   void OnEditCopy();
   void OnEditDelete();
 
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
+  void OnSettingsColor();
+  void OnSettingsIsos();
+  void OnSettingsStep();
+  void OnRename();
+  void OnCheckGeometry();
+  void OnLoadScript();
 
+  // Popup commands
+  void OnColor();
+  void OnTransparency();
+  void OnNbIsos();
+  void OnOpen();
+
+private:
+  static GEOMToolsGUI* myGUIObject;        // the only GEOMToolsGUI object
 };
 
 #endif

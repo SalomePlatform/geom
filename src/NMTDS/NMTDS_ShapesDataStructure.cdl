@@ -1,0 +1,56 @@
+-- File:	NMTDS_ShapesDataStructure.cdl
+-- Created:	Mon Dec  1 10:17:05 2003
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2003
+
+
+class ShapesDataStructure from NMTDS  
+    inherits ShapesDataStructure from BooleanOperations  
+
+	---Purpose: 
+
+uses
+    Shape from TopoDS, 
+    CArray1OfIndexRange from NMTDS, 
+    IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger from NMTDS
+--raises
+
+is 
+    Create 
+    	returns ShapesDataStructure from NMTDS; 
+	 
+    SetCompositeShape(me:out; 
+    	    aS:Shape from TopoDS);   
+    	 
+    Init(me:out);
+     
+    Ranges(me) 
+    	returns CArray1OfIndexRange from NMTDS; 
+    ---C++: return const & 
+     
+    CompositeShape(me) 
+        returns Shape from TopoDS; 
+    ---C++: return const &  
+     
+    ShapeRangeIndex(me; 
+    	aId:Integer from Standard) 
+    	returns  Integer from Standard;
+     
+    Rank (me; 
+    	  anIndex:Integer from Standard) 
+	  returns Integer from Standard    
+    	is redefined;                   
+	 
+    ShapeIndex  (me;  
+    	    aS:Shape from TopoDS; 
+    	    iRank:Integer from Standard) 
+    	returns Integer from Standard  
+    	is redefined;                    
+fields
+    myCompositeShape:  Shape from TopoDS is protected; 
+    myRanges        :  CArray1OfIndexRange from NMTDS is protected; 
+    myShapeIndexMap :  IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger from NMTDS is protected;  
+     
+end ShapesDataStructure;
+    

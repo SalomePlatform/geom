@@ -30,12 +30,9 @@
 #define DIALOGBOX_SCALE_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1Spin.h"
-
-#include "TransformationGUI.h"
-
-#include "GEOM_ShapeTypeFilter.hxx"
-
+#include "DlgRef_2Sel1Spin2Check.h"
+  
+  
 //=================================================================================
 // class    : TransformationGUI_ScaleDlg
 // purpose  :
@@ -45,36 +42,38 @@ class TransformationGUI_ScaleDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_ScaleDlg(QWidget* parent = 0, const char* name = 0, TransformationGUI* theTransformationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_ScaleDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_ScaleDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakeScaleSimulationAndDisplay();
-
-    TransformationGUI* myTransformationGUI;
-
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;
-
-    gp_Pnt myPoint1;   /* Points containing the vector */
-    bool myOkPoint1;   /* true when myPoint1 is defined */
-    TopoDS_Shape myBaseTopo;
-    bool myOkBaseTopo;   /* true when myBaseTopo is defined */
-    GEOM::GEOM_Shape_var myGeomShape;   /* is myBaseTopo */
-    Standard_Real myFactor;
-
-    DlgRef_2Sel1Spin* GroupPoints;
+    double GetFactor() const;
+    
+    GEOM::ListOfGO myObjects;
+    GEOM::GEOM_Object_var myPoint;   /* Central Point */
+    
+    DlgRef_2Sel1Spin2Check* GroupPoints;
 
 private slots :
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
+    void ClickOnCancel();
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ValueChangedInSpinBox(double newValue);
-
+    void ValueChangedInSpinBox();
+    void CreateCopyModeChanged(bool isCreateCopy);
 };
 
 #endif // DIALOGBOX_SCALE_H

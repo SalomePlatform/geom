@@ -1,0 +1,170 @@
+-- File:	NMTAlgo_Splitter.cdl
+-- Created:	Tue Jan 27 15:09:45 2004
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2004
+
+
+class Splitter from NMTAlgo  
+    inherits Builder from NMTAlgo 
+
+	---Purpose: 
+
+uses  
+    Builder             from BRep,
+    ShapeEnum           from TopAbs,
+    Compound            from TopoDS,
+    Face                from TopoDS,
+    Edge                from TopoDS,
+    Shape               from TopoDS,
+    MapOfOrientedShape  from TopTools,
+    IndexedMapOfShape   from TopTools,
+    DataMapOfShapeShape from TopTools,
+    ListOfShape         from TopTools,
+    MapOfShape          from TopTools,
+    AsDes               from BRepAlgo,
+    Image               from BRepAlgo, 
+     
+    DSFiller from NMTTools
+
+--raises
+
+is 
+    Create 
+    	returns Splitter from NMTAlgo;  
+    ---C++: alias "Standard_EXPORT virtual ~NMTAlgo_Splitter();" 
+
+    AddShape (me:out;  
+    	    S : Shape from TopoDS) 
+    	is virtual;
+     
+    AddTool (me:out;  
+    	    S : Shape from TopoDS) 
+    	is virtual;  
+     
+    Compute(me:out) 
+    	is virtual; 
+
+    Build (me:out; 
+    	    aLimit:ShapeEnum from TopAbs=TopAbs_SHAPE) 
+    	is virtual; 
+  
+    ComputeWithFiller(me:out; 
+    	aDSF: DSFiller from NMTTools) 
+    	is redefined;  
+     
+----vv 
+    KeepShapesInside (me:out;  
+    	    S : Shape from TopoDS);
+        ---Purpose: remove shapes that are outside of S from result.
+        --          S should be an object shape.
+        ---Warning: call it after Build()
+
+    RemoveShapesInside (me:out;  
+    	    S : Shape from TopoDS);
+        ---Purpose: remove shapes that are inside S from result.
+        --          S should be an object shape.
+        ---Warning: call it after Build()
+
+    Modified(me:out;  
+    	    S : Shape from TopoDS) 
+    	returns ListOfShape from TopTools;
+    ---Purpose: Returns the list  of shapes modified from the shape <S>. 
+    ---C++: return const & 
+    ---Level: Public
+
+    Generated(me:out;  
+    	    S : Shape from TopoDS) 
+    	returns ListOfShape from TopTools;
+    ---Purpose: Returns the list of shapes generated from the shape <S>. 
+    ---C++: return const & 
+    ---Level: Public
+
+    IsDeleted (me:out;  
+    	    S : Shape from TopoDS)
+       returns Boolean  from  Standard;
+----^^
+
+    Clear (me:out) 
+    	is redefined; 
+
+    SourceShapes(me) 
+    	returns ListOfShape from TopTools; 
+    ---C++: return const &   
+     
+    FillResult(me:out) 
+    	is protected; 
+     
+    FillImageShape(me:out) 
+    	is protected; 
+	 
+    SplittedFaces (me:out) 
+    	is protected; 
+	 
+    SplittedWires (me:out) 
+    	is protected;   
+     
+    SplitsAndSections (me:out) 
+    	is protected;    
+     
+    ShellsAndSolids(me:out) 
+    	is protected;  
+	
+    MakeShells(me:out; 
+    	    aS  :Shape from TopoDS; 
+    	    aLNS:out ListOfShape from TopTools) 
+    	is protected;  
+	 
+    MakeSolids (me:out;  
+    	    Solid : Shape from TopoDS;
+            Shells: out ListOfShape from TopTools) 
+    	is protected;   
+
+    FindFacesInside (me:out;  
+    	    S : Shape from TopoDS;
+            CheckClosed : Boolean from Standard= Standard_False;
+            All         : Boolean from Standard= Standard_False) 
+        returns Shape from TopoDS  
+    	is protected;
+     
+    IsInside (myclass;  
+    	    S1,S2 : Shape from TopoDS)
+        returns Boolean from Standard is protected;   
+        ---Purpose: Return True if the first vertex of S1 inside S2.
+        --          If S1.IsNull(), check infinite point against S2.
+
+    GetOriginalShape(me;  
+    	    aShape : Shape from TopoDS)
+        returns Shape from TopoDS  
+    	is protected;  
+	 	
+fields 
+    myDoneStep     : ShapeEnum           from TopAbs is protected;   -- rebuilt level
+    myBuilder      : Builder             from BRep   is protected;
+    		   			   
+    myListShapes   : ListOfShape         from TopTools is protected; -- object shapes
+    myMapFaces     : MapOfShape          from TopTools is protected; -- object faces
+    myMapTools     : MapOfShape          from TopTools is protected; -- tool faces
+    myEqualEdges   : MapOfShape          from TopTools is protected; -- equal splits
+    myNewSection   : MapOfShape          from TopTools is protected; -- new secton edges
+    myClosedShapes : MapOfShape          from TopTools is protected;
+    myWrappingSolid: MapOfShape          from TopTools is protected; -- solids having other shapes inside
+    myFaceShapeMap : DataMapOfShapeShape from TopTools is protected; -- to find a shape by face
+    		   			   
+    myInternalFaces: DataMapOfShapeShape from TopTools is protected; -- shape and its internal faces
+    myIntNotClFaces: DataMapOfShapeShape from TopTools is protected; -- internal but not closed 
+
+    myImageShape   : Image               from BRepAlgo is protected;
+
+    -- avoid rebuilding twice commont part of solids
+    myAddedFacesMap: MapOfOrientedShape  from TopTools is protected; 
+    --***-- 
+    mySourceShapes : ListOfShape         from TopTools is protected;  
+    myLimit        : ShapeEnum	         from TopAbs   is protected; 
+    myToolShapes   : MapOfShape          from TopTools is protected; 	    
+    myObjShapes    : MapOfShape          from TopTools is protected; 
+    myMapSIFC      : DataMapOfShapeShape from TopTools is protected;  
+----vv    
+    myGenerated    : ListOfShape         from TopTools is protected;
+----^^
+end Splitter;

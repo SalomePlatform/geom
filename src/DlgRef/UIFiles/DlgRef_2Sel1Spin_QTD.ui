@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>129</width>
-            <height>117</height>
+            <width>163</width>
+            <height>122</height>
         </rect>
     </property>
     <property name="caption">
@@ -126,6 +126,12 @@
                                     <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
+                            <property name="frameShape">
+                                <enum>NoFrame</enum>
+                            </property>
+                            <property name="frameShadow">
+                                <enum>Plain</enum>
+                            </property>
                             <property name="text">
                                 <string>TL2</string>
                             </property>
@@ -198,5 +204,12 @@
         </widget>
     </grid>
 </widget>
+<tabstops>
+    <tabstop>PushButton1</tabstop>
+    <tabstop>LineEdit1</tabstop>
+    <tabstop>PushButton2</tabstop>
+    <tabstop>LineEdit2</tabstop>
+    <tabstop>SpinBox1</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -31,7 +31,7 @@ C_DEPEND_FLAG = @C_DEPEND_FLAG@
 # C++
 
 CXX = @CXX@
-CXXFLAGS = @CXXFLAGS@ -Wparentheses -Wreturn-type -Wmissing-declarations -Winline 
+CXXFLAGS = @CXXFLAGS@
 CXX_DEPEND_FLAG = @CXX_DEPEND_FLAG@
 
 # JAVA

@@ -29,8 +29,14 @@
 using namespace std;
 #include "PrimitiveGUI_SphereDlg.h"
 
-#include <BRepPrimAPI_MakeSphere.hxx>
 #include "QAD_Config.h"
+#include "QAD_Desktop.h"
+
+#include "GEOMImpl_Types.hxx"
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : PrimitiveGUI_SphereDlg()
@@ -39,7 +45,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg(QWidget* parent,  const char* name, PrimitiveGUI* thePrimitiveGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg(QWidget* parent,  const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SPHERE_P")));
@@ -64,12 +70,10 @@ PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg(QWidget* parent,  const char* nam
   GroupDimensions->GroupBox1->setTitle(tr("GEOM_SPHERE_RO"));
   GroupDimensions->TextLabel1->setText(tr("GEOM_RADIUS"));
 
-  Layout1->addWidget(GroupPoints, 1, 0);
-  Layout1->addWidget(GroupDimensions, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
+  Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
-  /* Initialisations */
-  myPrimitiveGUI = thePrimitiveGUI;
   Init();
 }
 
@@ -91,26 +95,20 @@ PrimitiveGUI_SphereDlg::~PrimitiveGUI_SphereDlg()
 void PrimitiveGUI_SphereDlg::Init()
 {
   /* init variables */
-  myConstructorId = 0;
   myEditCurrentArgument = GroupPoints->LineEdit1;
-
-  myPoint1.SetCoord(0.0, 0.0, 0.0);
-  myRadius = 100.0;
-  myOkPoint1 = false;
-
-  /*  Vertices Filter for all arguments */
-  myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
-  mySelection->AddFilter(myVertexFilter);
-
+  GroupPoints->LineEdit1->setReadOnly( true );
+  
+  myPoint = GEOM::GEOM_Object::_nil();
+  
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
+  double step = St.toDouble();
 
   /* min, max, step and decimals for spin boxes */
   GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
   GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_DX->SetValue(myRadius);
-  GroupDimensions->SpinBox_DX->SetValue(myRadius);
+  GroupPoints->SpinBox_DX->SetValue(100.0);
+  GroupDimensions->SpinBox_DX->SetValue(100.0);
   
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -120,20 +118,16 @@ void PrimitiveGUI_SphereDlg::Init()
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  /* displays Dialog */
-  GroupDimensions->hide();
-  GroupPoints->show();
-  this->show();
-
-  return;
+  initName(tr("GEOM_SPHERE"));
+  ConstructorsClicked(0);
 }
 
 
@@ -143,28 +137,21 @@ void PrimitiveGUI_SphereDlg::Init()
 //=================================================================================
 void PrimitiveGUI_SphereDlg::ConstructorsClicked(int constructorId)
 {
-  myConstructorId = constructorId;
-  mySelection->ClearFilters();
-  myGeomBase->EraseSimulationShape();
   disconnect(mySelection, 0, this, 0);
-  myRadius = 100.0;
-
+  
   switch (constructorId)
     {
     case 0:
       {
+	globalSelection( GEOM_POINT );
 	GroupDimensions->hide();
 	resize(0, 0);
 	GroupPoints->show();
 
 	myEditCurrentArgument = GroupPoints->LineEdit1;
 	GroupPoints->LineEdit1->setText("");
+	myPoint = GEOM::GEOM_Object::_nil();
 
-	GroupPoints->SpinBox_DX->SetValue(myRadius);
-	myOkPoint1 = false;
-
-	/* filter for next selections */
-	mySelection->AddFilter(myVertexFilter);
 	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
@@ -173,17 +160,11 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->hide();
 	resize(0, 0);
 	GroupDimensions->show();
-
-	GroupDimensions->SpinBox_DX->SetValue(myRadius);
-	myPoint1.SetCoord(0.0, 0.0, 0.0); /* at origin */
-	myOkPoint1 = true;
-
-	mySimulationTopoDs = BRepPrimAPI_MakeSphere(myPoint1, myRadius).Shape();
-	myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
+	
 	break;
       }
     }
- return ;
+  displayPreview();
 }
 
 
@@ -193,9 +174,8 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void PrimitiveGUI_SphereDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -203,18 +183,25 @@ void PrimitiveGUI_SphereDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void PrimitiveGUI_SphereDlg::ClickOnApply()
+bool PrimitiveGUI_SphereDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if(mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
+  
+  initName();
+  ConstructorsClicked( getConstructorId() );
+  return true;
+}
 
-  if(myOkPoint1)
-    myPrimitiveGUI->MakeSphereAndDisplay(myPoint1, myRadius);
-  return;
+
+
+//=======================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=======================================================================
+void PrimitiveGUI_SphereDlg::ClickOnCancel()
+{
+  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -224,35 +211,28 @@ void PrimitiveGUI_SphereDlg::ClickOnApply()
 //=================================================================================
 void PrimitiveGUI_SphereDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
-
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-      GroupPoints->LineEdit1->setText("");
-      myOkPoint1 = false;
-    }
+  if ( getConstructorId() != 0 )
     return;
-  }
+  
+  myEditCurrentArgument->setText("");
+  
+  if(mySelection->IObjectCount() != 1) 
+    {
+      myPoint = GEOM::GEOM_Object::_nil();
+      return;
+    }
   
   /* nbSel == 1 ! */
-  TopoDS_Shape S; 
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
+  Standard_Boolean testResult = Standard_False;
+  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+  
+  if (!testResult || CORBA::is_nil( aSelectedObject ))
     return;
     
-  /* Constructor 1 treatment */
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
-    GroupPoints->LineEdit1->setText(aString);
-    myOkPoint1 = true;
-  }
+  myPoint = aSelectedObject;
+  myEditCurrentArgument->setText( GEOMBase::GetName( myPoint ) );
   
-  if(myOkPoint1) {
-    mySimulationTopoDs = BRepPrimAPI_MakeSphere(myPoint1, myRadius).Shape();
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
-  }
-  return ;
+  displayPreview();
 }
 
 
@@ -264,12 +244,10 @@ void PrimitiveGUI_SphereDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
   if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+    {
+      myEditCurrentArgument = send;
+      GEOMBase_Skeleton::LineEditReturnPressed();
+    }
 }
 
 
@@ -279,18 +257,14 @@ void PrimitiveGUI_SphereDlg::LineEditReturnPressed()
 //=================================================================================
 void PrimitiveGUI_SphereDlg::SetEditCurrentArgument()
 {
-  if(myConstructorId != 0)
-    return;
-
   QPushButton* send = (QPushButton*)sender();
-
+  
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    mySelection->AddFilter(myVertexFilter);
-    this->SelectionIntoArgument();
+    globalSelection( GEOM_POINT );
+    SelectionIntoArgument();
   }
-  return;
 }
 
 
@@ -302,11 +276,18 @@ void PrimitiveGUI_SphereDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(myConstructorId == 0)
-    mySelection->AddFilter(myVertexFilter);
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+  
+  ConstructorsClicked( getConstructorId() );
+}
+
+
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void PrimitiveGUI_SphereDlg::DeactivateActiveDialog()
+{
+  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -316,10 +297,8 @@ void PrimitiveGUI_SphereDlg::ActivateThisDialog()
 //=================================================================================
 void PrimitiveGUI_SphereDlg::enterEvent(QEvent* e)
 {
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
 
@@ -327,15 +306,87 @@ void PrimitiveGUI_SphereDlg::enterEvent(QEvent* e)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void PrimitiveGUI_SphereDlg::ValueChangedInSpinBox(double newValue)
+void PrimitiveGUI_SphereDlg::ValueChangedInSpinBox()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  myRadius = newValue;
+  displayPreview();
+}
+
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr PrimitiveGUI_SphereDlg::createOperation()
+{
+  return getGeomEngine()->GetI3DPrimOperations( getStudyId() );
+}
+
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool PrimitiveGUI_SphereDlg::isValid( QString& msg  )
+{
+  return getConstructorId() == 0 ? !myPoint->_is_nil() : true;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool  PrimitiveGUI_SphereDlg::execute( ObjectList& objects )
+{
+  bool res = false;
   
-  if(myOkPoint1) {
-    mySimulationTopoDs = BRepPrimAPI_MakeSphere(myPoint1, myRadius).Shape();
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
+  GEOM::GEOM_Object_var anObj;
+
+  switch ( getConstructorId() ) 
+  {
+  case 0 :
+    {
+      if ( !CORBA::is_nil( myPoint ) ) {
+	anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeSpherePntR( myPoint, getRadius() );
+	res = true;
+      }
+      break;
+    }
+  case 1 :
+    {
+      anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeSphereR( getRadius() );
+      res = true;
+      break;
+    }
   }
-  return;
+  
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+  
+  return res;
+}
+
+//=================================================================================
+// function : closeEvent
+// purpose  :
+//=================================================================================
+void PrimitiveGUI_SphereDlg::closeEvent( QCloseEvent* e )
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::closeEvent( e );
+}
+
+
+
+//=================================================================================
+// function : getRadius()
+// purpose  :
+//=================================================================================
+double PrimitiveGUI_SphereDlg::getRadius() const
+{
+  int aConstructorId = getConstructorId();
+  if (aConstructorId == 0)
+    return GroupPoints->SpinBox_DX->GetValue();
+  else if (aConstructorId == 1)
+    return GroupDimensions->SpinBox_DX->GetValue();
+  return 0;
 }

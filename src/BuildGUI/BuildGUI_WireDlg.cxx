@@ -26,8 +26,9 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BuildGUI_WireDlg.h"
+#include "QAD_Desktop.h"
+#include "GEOMImpl_Types.hxx"
 
 //=================================================================================
 // class    : BuildGUI_WireDlg()
@@ -36,7 +37,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_WireDlg::BuildGUI_WireDlg(QWidget* parent, const char* name, BuildGUI* theBuildGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+BuildGUI_WireDlg::BuildGUI_WireDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_WIRE")));
@@ -54,12 +55,12 @@ BuildGUI_WireDlg::BuildGUI_WireDlg(QWidget* parent, const char* name, BuildGUI* 
   GroupPoints->GroupBox1->setTitle(tr("GEOM_WIRE_CONNECT"));
   GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myBuildGUI = theBuildGUI;
   Init();
 }
 
@@ -82,19 +83,22 @@ void BuildGUI_WireDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  myOkListShapes = false;
+  GroupPoints->LineEdit1->setReadOnly( true );
+  
+  myOkEdgesAndWires = false;
+  
+  TColStd_MapOfInteger aMap;
+  aMap.Add(GEOM_WIRE);
+  aMap.Add(GEOM_EDGE);
+  globalSelection( aMap );
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));  
+  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
-
-  return;
+  initName(tr("GEOM_WIRE"));
 }
 
 
@@ -104,9 +108,8 @@ void BuildGUI_WireDlg::Init()
 //=================================================================================
 void BuildGUI_WireDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -114,12 +117,13 @@ void BuildGUI_WireDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BuildGUI_WireDlg::ClickOnApply()
+bool BuildGUI_WireDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if(myOkListShapes)  
-    myBuildGUI->MakeWireAndDisplay(myListShapes);
-  return;
+  if ( !onAccept() )
+    return false;
+
+  initName();
+  return true;
 }
 
 
@@ -132,17 +136,20 @@ void BuildGUI_WireDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel < 1) {
-    myOkListShapes = false;
+  myOkEdgesAndWires = false;
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aString);
+
+  if(nbSel == 0)
     return;
-  }
-  
-  myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes);
+  if(nbSel != 1)
+    aString = tr("%1_objects").arg(nbSel);
+
+  GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(),  myEdgesAndWires);
+  if (!myEdgesAndWires.length())
+    return;
+
   myEditCurrentArgument->setText(aString);
-  myOkListShapes = true;
-  /* no simulation */
-  return;
+  myOkEdgesAndWires = true;
 }
 
 
@@ -152,9 +159,18 @@ void BuildGUI_WireDlg::SelectionIntoArgument()
 //=================================================================================
 void BuildGUI_WireDlg::SetEditCurrentArgument()
 {
-  GroupPoints->LineEdit1->setFocus();
-  this->SelectionIntoArgument();
-  return;
+  QPushButton* send = (QPushButton*)sender();
+  if (send != GroupPoints->PushButton1)
+    return;
+
+  TColStd_MapOfInteger aMap;
+  aMap.Add(GEOM_WIRE);
+  aMap.Add(GEOM_EDGE);
+  globalSelection( aMap );
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+
+  myEditCurrentArgument->setFocus();
+  SelectionIntoArgument();
 }
 
 
@@ -166,7 +182,10 @@ void BuildGUI_WireDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  return;
+  TColStd_MapOfInteger aMap;
+  aMap.Add(GEOM_WIRE);
+  aMap.Add(GEOM_EDGE);
+  globalSelection( aMap );
 }
 
 
@@ -176,8 +195,42 @@ void BuildGUI_WireDlg::ActivateThisDialog()
 //=================================================================================
 void BuildGUI_WireDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr BuildGUI_WireDlg::createOperation()
+{
+  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool BuildGUI_WireDlg::isValid( QString& )
+{
+  return myOkEdgesAndWires;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool BuildGUI_WireDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  anObj = GEOM::GEOM_IShapesOperations::_narrow(
+    getOperation() )->MakeWire( myEdgesAndWires );
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
+}
+

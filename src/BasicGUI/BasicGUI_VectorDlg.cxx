@@ -29,12 +29,12 @@
 using namespace std;
 #include "BasicGUI_VectorDlg.h"
 
+#include "QAD_Desktop.h"
 #include "QAD_Config.h"
-#include <TopoDS_Shape.hxx>
-#include <TopoDS_Compound.hxx>
-#include <BRepBuilderAPI_MakeEdge.hxx>
-#include <BRep_Builder.hxx>
-#include <Precision.hxx>
+
+#include "GEOMImpl_Types.hxx"
+
+#include "utilities.h"
 
 //=================================================================================
 // class    : BasicGUI_VectorDlg()
@@ -43,8 +43,8 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_VectorDlg::BasicGUI_VectorDlg(QWidget* parent, const char* name, BasicGUI* theBasicGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BasicGUI_VectorDlg::BasicGUI_VectorDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, Sel, modal, fl )
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_2P")));
   QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_DXYZ")));
@@ -65,6 +65,9 @@ BasicGUI_VectorDlg::BasicGUI_VectorDlg(QWidget* parent, const char* name, BasicG
   GroupPoints->PushButton1->setPixmap(image2);
   GroupPoints->PushButton2->setPixmap(image2);
 
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
+
   GroupDimensions = new DlgRef_3Spin1Check(this, "GroupDimensions");
   GroupDimensions->GroupBox1->setTitle(tr("GEOM_COORDINATES"));
   GroupDimensions->TextLabel1->setText(tr("GEOM_DX"));
@@ -72,12 +75,11 @@ BasicGUI_VectorDlg::BasicGUI_VectorDlg(QWidget* parent, const char* name, BasicG
   GroupDimensions->TextLabel3->setText(tr("GEOM_DZ"));
   GroupDimensions->CheckBox1->setText(tr("GEOM_REVERSE_VECTOR"));
 
-  Layout1->addWidget(GroupPoints, 1, 0);
-  Layout1->addWidget(GroupDimensions, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
+  Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myBasicGUI = theBasicGUI;
   Init();
 }
 
@@ -88,7 +90,6 @@ BasicGUI_VectorDlg::BasicGUI_VectorDlg(QWidget* parent, const char* name, BasicG
 //=================================================================================
 BasicGUI_VectorDlg::~BasicGUI_VectorDlg()
 {  
-  /* no need to delete child widgets, Qt does it all for us */
 }
 
 
@@ -99,36 +100,32 @@ BasicGUI_VectorDlg::~BasicGUI_VectorDlg()
 void BasicGUI_VectorDlg::Init()
 {
     /* init variables */
-  myConstructorId = 0;
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  myDx = 0.0;
-  myDy = 0.0;
-  myDz = 200.0;
-  myPoint1.SetCoord(0.0, 0.0, 0.0);
-  myPoint2.SetCoord(0.0, 0.0, 0.0);
-  myOkPoint1 = myOkPoint2 = false;
-
-  /*  Vertices Filter for all arguments */
-  myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
-  mySelection->AddFilter(myVertexFilter);
+  myPoint1 = GEOM::GEOM_Object::_nil();
+  myPoint2 = GEOM::GEOM_Object::_nil();
 
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
+  double step = St.toDouble();
 
   /* min, max, step and decimals for spin boxes */
   GroupDimensions->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
   GroupDimensions->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
   GroupDimensions->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
 
-  GroupDimensions->SpinBox_DX->SetValue(myDx);
-  GroupDimensions->SpinBox_DY->SetValue(myDy);
-  GroupDimensions->SpinBox_DZ->SetValue(myDz);
+  double dx( 0. ), dy( 0. ), dz( 200. );
+  GroupDimensions->SpinBox_DX->SetValue( dx );
+  GroupDimensions->SpinBox_DY->SetValue( dy );
+  GroupDimensions->SpinBox_DZ->SetValue( dz );
 
   GroupDimensions->CheckBox1->setChecked(FALSE);
 
   /* signals and slots connections */
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
   connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
@@ -151,12 +148,10 @@ void BasicGUI_VectorDlg::Init()
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  /* displays Dialog */
-  GroupDimensions->hide();
-  GroupPoints->show();
-  this->show();
+  initName( tr("GEOM_VECTOR") );
 
-  return;
+  GroupDimensions->hide();
+  ConstructorsClicked( 0 );
 }
 
 
@@ -164,13 +159,11 @@ void BasicGUI_VectorDlg::Init()
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void BasicGUI_VectorDlg::ConstructorsClicked(int constructorId)
+void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
 {
-  myConstructorId = constructorId;
-  mySelection->ClearFilters();
-  myGeomBase->EraseSimulationShape();
   disconnect(mySelection, 0, this, 0);
-  myOkPoint1 = myOkPoint2 = false;
+  myPoint1 = GEOM::GEOM_Object::_nil();
+  myPoint2 = GEOM::GEOM_Object::_nil();
 
   switch (constructorId)
     {
@@ -184,8 +177,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->LineEdit1->setText("");
  	GroupPoints->LineEdit2->setText("");
 
-	/* filter for next selection */
-	mySelection->AddFilter(myVertexFilter);
+	globalSelection( GEOM_POINT );
 	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
@@ -194,28 +186,18 @@ void BasicGUI_VectorDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->hide();
 	resize( 0, 0 );
 	GroupDimensions->show();
+	
+	double dx( 0. ), dy( 0. ), dz( 0. ); 
+	GroupDimensions->SpinBox_DX->SetValue( dx );
+	GroupDimensions->SpinBox_DY->SetValue( dy );
+	GroupDimensions->SpinBox_DZ->SetValue( dz );
 
-	myDx = 0.0;
-	myDy = 0.0;
-	myDz = 200.0;
-
-	GroupDimensions->SpinBox_DX->SetValue(myDx);
-	GroupDimensions->SpinBox_DY->SetValue(myDy);
-	GroupDimensions->SpinBox_DZ->SetValue(myDz);
-
-	myPoint1.SetCoord(0.0, 0.0, 0.0) ;
-	myPoint2.SetCoord(myDx, myDy, myDz);
-
-	GroupDimensions->CheckBox1->setChecked(FALSE);
-
-	mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
-	/* Add arrow in simulation */
-	bool noNeedToTest = AddArrowToSimulation(mySimulationTopoDs);
-	myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
+	GroupDimensions->CheckBox1->setChecked( FALSE );
 	break;
       }
     }
- return;
+
+  displayPreview();
 }
 
 
@@ -225,46 +207,34 @@ void BasicGUI_VectorDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void BasicGUI_VectorDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
+//=======================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=======================================================================
+void BasicGUI_VectorDlg::ClickOnCancel()
+{
+  GEOMBase_Skeleton::ClickOnCancel();
+}
 
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BasicGUI_VectorDlg::ClickOnApply()
+bool BasicGUI_VectorDlg::ClickOnApply()
 {
   buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
 
-  switch(myConstructorId)
-    { 
-    case 0 :
-      { 
-	if(myOkPoint1 && myOkPoint2) 
-	  myBasicGUI->MakeVectorAndDisplay(myPoint1, myPoint2);
-	break ;
-      }
-    case 1 :
-      {
-	/* Recup args and call method */
-	myDx = GroupDimensions->SpinBox_DX->GetValue();
-	myDy = GroupDimensions->SpinBox_DY->GetValue();
-	myDz = GroupDimensions->SpinBox_DZ->GetValue();
-	myPoint1.SetCoord(0.0, 0.0, 0.0);
-	myPoint2.SetCoord(myDx, myDy, myDz);	
-	myBasicGUI->MakeVectorAndDisplay(myPoint1, myPoint2);
-	break;
-      }
-    }
-  return;
+  if ( !onAccept() )
+    return false;
+
+  initName();
+  if ( getConstructorId() != 1 )
+  	ConstructorsClicked( getConstructorId() );
+  return true;
 }
 
 
@@ -274,40 +244,28 @@ void BasicGUI_VectorDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_VectorDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if (nbSel != 1) {
-    if (myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkPoint1 = false;
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2)
-      myOkPoint2 = false;
+  if ( mySelection->IObjectCount() != 1 ) 
+  {
+    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
+      myPoint1 = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+      myPoint2 = GEOM::GEOM_Object::_nil();
     return;
   }
 
-  // nbSel == 1
-  TopoDS_Shape S; 
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;
-
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
-    myEditCurrentArgument->setText(aString);
-    myOkPoint1 = true;
-  }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomBase->VertexToPoint(S, myPoint2)) {
-    myEditCurrentArgument->setText(aString);
-    myOkPoint2 = true;
+  // nbSel == 1 
+  Standard_Boolean aRes = Standard_False;
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
+  {
+    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+    if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint1 = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = aSelectedObject;
   }
 
-  if(myOkPoint1 && myOkPoint2 && myPoint1.Distance(myPoint2) > Precision::Confusion()) {
-    mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
-    /* Add arrow in simulation */
-    bool noNeedToTest = this->AddArrowToSimulation(mySimulationTopoDs);
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
-  }
-  return;
+  displayPreview();
 }
 
 
@@ -317,23 +275,11 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
 //=================================================================================
 void BasicGUI_VectorDlg::SetEditCurrentArgument()
 {
-  if(myConstructorId != 0)
-    return;
-
   QPushButton* send = (QPushButton*)sender();
-
-  if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  }
-  else if(send == GroupPoints->PushButton2) {
-    GroupPoints->LineEdit2->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  }
-  mySelection->AddFilter(myVertexFilter);
-  this->SelectionIntoArgument();
-
-  return;
+  if      ( send == GroupPoints->PushButton1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
+  else if ( send == GroupPoints->PushButton2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
+  myEditCurrentArgument->setFocus();
+  SelectionIntoArgument();
 }
 
 
@@ -344,15 +290,10 @@ void BasicGUI_VectorDlg::SetEditCurrentArgument()
 void BasicGUI_VectorDlg::LineEditReturnPressed()
 { 
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if (send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else
-    return;
-
+  if      ( send == GroupPoints->LineEdit1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
+  else if ( send == GroupPoints->LineEdit2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
+  else return;
   GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
 }
 
 
@@ -364,13 +305,19 @@ void BasicGUI_VectorDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(myConstructorId == 0)
-    mySelection->AddFilter(myVertexFilter);
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+	
+  ConstructorsClicked( getConstructorId() );
 }
 
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void BasicGUI_VectorDlg::DeactivateActiveDialog()
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::DeactivateActiveDialog();
+}
 
 //=================================================================================
 // function : enterEvent()
@@ -378,65 +325,18 @@ void BasicGUI_VectorDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_VectorDlg::enterEvent(QEvent* e)
 {
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
-
 
 //=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BasicGUI_VectorDlg::ValueChangedInSpinBox(double newValue)
+void BasicGUI_VectorDlg::ValueChangedInSpinBox( double newValue )
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  QObject* send = (QObject*)sender();
-
-  if(send == GroupDimensions->SpinBox_DX)
-    myDx = newValue;
-  else if (send == GroupDimensions->SpinBox_DY)
-    myDy = newValue;
-  else if (send == GroupDimensions->SpinBox_DZ)
-    myDz = newValue;
-
-  myPoint1.SetCoord(0.0, 0.0, 0.0);
-  myPoint2.SetCoord(myDx, myDy, myDz);
-  
-  if(myPoint1.Distance(myPoint2) > Precision::Confusion()) { // mySimulationTopoDs
-    mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
-    /* Create simulation vector with an arrow */
-    this->AddArrowToSimulation(mySimulationTopoDs);
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
-  }
-  return;
+  displayPreview();
 }
-
-
-//=================================================================================
-// function : AddArrowToSimulation()
-// purpose  : An arrow (cone topology) is added to 'modifiedShape'
-//          : to simulate a vector or an 'oriented line' display. The result is in 'modifiedShape'.
-//          : If an arrow can't be added returns false and 'modifiedShape' isn't modified !
-//=================================================================================
-bool BasicGUI_VectorDlg::AddArrowToSimulation(TopoDS_Shape& modifiedShape)
-{
-  TopoDS_Shape arrow;
-  /* Try to add a cone simulation shape to show direction of a linear edge */
-  if(myGeomBase->CreateArrowForLinearEdge(modifiedShape, arrow)) {
-    TopoDS_Compound Comp;
-    BRep_Builder B;
-    B.MakeCompound (Comp);
-    B.Add(Comp, modifiedShape);
-    B.Add(Comp, arrow);
-    modifiedShape = Comp;
-    return true;
-  }
-  return false;
-}
-
 
 //=================================================================================
 // function : ReverseVector()
@@ -444,25 +344,65 @@ bool BasicGUI_VectorDlg::AddArrowToSimulation(TopoDS_Shape& modifiedShape)
 //=================================================================================
 void BasicGUI_VectorDlg::ReverseVector(int state)
 {
-  myGeomBase->EraseSimulationShape(); 
-  mySimulationTopoDs.Nullify();
+  double dx = -GroupDimensions->SpinBox_DX->GetValue();
+  double dy = -GroupDimensions->SpinBox_DY->GetValue();
+  double dz = -GroupDimensions->SpinBox_DZ->GetValue();
 
-  myDx = -myDx;
-  GroupDimensions->SpinBox_DX->SetValue(myDx);
-  myDy = -myDy;
-  GroupDimensions->SpinBox_DY->SetValue(myDy);
-  myDz = -myDz;
-  GroupDimensions->SpinBox_DZ->SetValue(myDz);
+  GroupDimensions->SpinBox_DX->SetValue( dx );
+  GroupDimensions->SpinBox_DY->SetValue( dy );
+  GroupDimensions->SpinBox_DZ->SetValue( dz );
   
-  myPoint1.SetCoord(0.0, 0.0, 0.0);
-  myPoint2.SetCoord(myDx, myDy, myDz);
-  
-  /* In the appropriate constructor */
-  if(myPoint1.Distance(myPoint2) > Precision::Confusion()) {
-    mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
-    /* Add arrow in simulation */
-    bool noNeedToTest = this->AddArrowToSimulation(mySimulationTopoDs);
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  }
-  return;
+  displayPreview();
 }
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr BasicGUI_VectorDlg::createOperation()
+{
+  return getGeomEngine()->GetIBasicOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool BasicGUI_VectorDlg::isValid( QString& msg )
+{
+  return getConstructorId() == 0 ? !myPoint1->_is_nil() && !myPoint2->_is_nil(): true;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool BasicGUI_VectorDlg::execute( ObjectList& objects )
+{
+  bool res = false;
+  
+  GEOM::GEOM_Object_var anObj;
+
+  switch ( getConstructorId() ) {
+  case 0 :
+    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeVectorTwoPnt( myPoint1, myPoint2 );
+    res = true;
+    break;
+
+  case 1 :
+    {
+      double dx = GroupDimensions->SpinBox_DX->GetValue();
+      double dy = GroupDimensions->SpinBox_DY->GetValue();
+      double dz = GroupDimensions->SpinBox_DZ->GetValue();
+      anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeVectorDXDYDZ( dx,dy,dz );
+      res = true;
+      break;
+    }
+  }
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return res;
+}
+

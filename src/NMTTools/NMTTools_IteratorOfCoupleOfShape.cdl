@@ -1,0 +1,55 @@
+-- File:	NMTTools_IteratorOfCoupleOfShape.cdl
+-- Created:	Thu Dec  4 16:57:48 2003
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2003
+
+
+class IteratorOfCoupleOfShape from NMTTools  
+    inherits IteratorOfCoupleOfShape from BOPTools
+
+	---Purpose: 
+
+uses 
+    ShapeEnum from TopAbs, 
+    IndexedMapOfCoupleOfInteger from BOPTools, 
+    PShapesDataStructure from NMTDS, 
+    ShapesDataStructure from NMTDS 
+    
+raises
+    NoSuchObject from Standard
+
+is  
+    Create  
+	returns IteratorOfCoupleOfShape from NMTTools; 
+	 
+    SetDS(me:out; 
+    	    pDS:PShapesDataStructure from NMTDS); 
+	    
+    Initialize(me: in out;  
+    	    Type1: ShapeEnum from TopAbs;
+    	    Type2: ShapeEnum from TopAbs) 
+	raises NoSuchObject from Standard 
+    	is redefined; 
+     
+    Current(me; Index1: in out Integer from Standard;
+    	    	Index2: in out Integer from Standard;
+    	    	WithSubShape: out Boolean from Standard) 
+    	is redefined; 
+	 
+    More(me)  
+    	returns Boolean from Standard 
+    	is redefined;
+     
+    DS(me) 
+      returns ShapesDataStructure from NMTDS; 
+    ---C++:return const & 
+          
+fields
+    myPNMTPS          :  PShapesDataStructure from NMTDS is protected; 
+    myMap             :  IndexedMapOfCoupleOfInteger from BOPTools is protected; 
+    myIndex1          :  Integer from Standard is protected;
+    myIndex2          :  Integer from Standard is protected;
+    myWithSubShapeFlag:  Boolean from Standard is protected; 
+    
+end IteratorOfCoupleOfShape;

@@ -28,15 +28,12 @@
 
 #include "BasicGUI_CircleDlg.h"
 
-#include <gp_Lin.hxx>
-#include <gp_Circ.hxx>
-#include <BRepBuilderAPI_MakeEdge.hxx>
-#include <BRepAdaptor_Curve.hxx>
+#include "QAD_Desktop.h"
 #include "QAD_Config.h"
 
-#include "utilities.h"
+#include "GEOMImpl_Types.hxx"
 
-using namespace std;
+#include "utilities.h"
 
 //=================================================================================
 // class    : BasicGUI_CircleDlg()
@@ -45,10 +42,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_CircleDlg::BasicGUI_CircleDlg(QWidget* parent, const char* name, BasicGUI* theBasicGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+BasicGUI_CircleDlg::BasicGUI_CircleDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PV")));
+  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PNTS")));
   QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_CIRCLE_TITLE"));
@@ -56,22 +54,38 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg(QWidget* parent, const char* name, BasicG
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_CIRCLE"));
   RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
+  RadioButton2->setPixmap(image2);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_2Sel1Spin(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_CENTER_POINT"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
-  GroupPoints->TextLabel3->setText(tr("GEOM_RADIUS"));
-  GroupPoints->PushButton1->setPixmap(image1);
-  GroupPoints->PushButton2->setPixmap(image1);
+  GroupPntVecR = new DlgRef_2Sel1Spin(this, "GroupPntVecR");
+  GroupPntVecR->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  
+  GroupPntVecR->TextLabel1->setText(tr("GEOM_CENTER_POINT"));
+  GroupPntVecR->TextLabel2->setText(tr("GEOM_VECTOR"));
+  GroupPntVecR->TextLabel3->setText(tr("GEOM_RADIUS"));
+  GroupPntVecR->PushButton1->setPixmap(image1);
+  GroupPntVecR->PushButton2->setPixmap(image1);
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  GroupPntVecR->LineEdit1->setReadOnly( true );
+  GroupPntVecR->LineEdit2->setReadOnly( true );
+
+  Group3Pnts = new DlgRef_3Sel_QTD(this, "Group3Pnts");
+  Group3Pnts->GroupBox1->setTitle(tr("GEOM_3_POINTS"));
+  Group3Pnts->TextLabel1->setText(tr("GEOM_POINT1"));
+  Group3Pnts->TextLabel2->setText(tr("GEOM_POINT2"));
+  Group3Pnts->TextLabel3->setText(tr("GEOM_POINT3"));
+  Group3Pnts->PushButton1->setPixmap(image1);
+  Group3Pnts->PushButton2->setPixmap(image1);
+  Group3Pnts->PushButton3->setPixmap(image1);
+
+  Group3Pnts->LineEdit1->setReadOnly( true );
+  Group3Pnts->LineEdit2->setReadOnly( true );
+  Group3Pnts->LineEdit3->setReadOnly( true );
+
+  Layout1->addWidget( GroupPntVecR, 2, 0 );
+  Layout1->addWidget( Group3Pnts, 2, 0 );
   /***************************************************************/
 
-  /* Initialisations */
-  myBasicGUI = theBasicGUI;
   Init();
 }
 
@@ -82,7 +96,6 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg(QWidget* parent, const char* name, BasicG
 //=================================================================================
 BasicGUI_CircleDlg::~BasicGUI_CircleDlg()
 {
-    // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -93,45 +106,89 @@ BasicGUI_CircleDlg::~BasicGUI_CircleDlg()
 void BasicGUI_CircleDlg::Init()
 {
   /* init variables */
-  myEditCurrentArgument = GroupPoints->LineEdit1;
+  myEditCurrentArgument = GroupPntVecR->LineEdit1;
 
-  myRadius = 100.0;
-  myOkPoint1 = myOkDir = false;
+  myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 
-  myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
-  myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
-  mySelection->AddFilter(myVertexFilter);
+  myGeomGUI->SetState( 0 );
 
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
+  double aStep = St.toDouble();
 
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_DX->SetValue(myRadius);
+  GroupPntVecR->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, aStep, 3);
+  GroupPntVecR->SpinBox_DX->SetValue( 100 );
 
   /* signals and slots connections */
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPntVecR->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPntVecR->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3Pnts->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3Pnts->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3Pnts->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupPntVecR->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupPntVecR->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(GroupPntVecR->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPntVecR->SpinBox_DX, SLOT(SetStep(double)));
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
+  initName( tr( "GEOM_CIRCLE" ) );
 
-  return;
+  Group3Pnts->hide();
+  ConstructorsClicked( 0 );
 }
 
+//=================================================================================
+// function : ConstructorsClicked()
+// purpose  : Radio button management
+//=================================================================================
+void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
+{
+  disconnect( mySelection, 0, this, 0 );
+  myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
+
+  switch ( constructorId )
+  {
+    case 0:
+      {
+				Group3Pnts->hide();
+				resize(0, 0);
+				GroupPntVecR->show();
+
+				myEditCurrentArgument = GroupPntVecR->LineEdit1;
+				GroupPntVecR->LineEdit1->setText("");
+ 				GroupPntVecR->LineEdit2->setText("");
+				break;
+      }
+    case 1:
+      {
+				GroupPntVecR->hide();
+				resize( 0, 0 );
+				Group3Pnts->show();
+
+				myEditCurrentArgument = Group3Pnts->LineEdit1;
+				Group3Pnts->LineEdit1->setText("");
+				Group3Pnts->LineEdit2->setText("");
+				Group3Pnts->LineEdit3->setText("");
+				break;
+      }
+  }
+  
+  myEditCurrentArgument->setFocus();
+	globalSelection( GEOM_POINT );
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+}
 
 //=================================================================================
 // function : ClickOnOk()
@@ -139,29 +196,32 @@ void BasicGUI_CircleDlg::Init()
 //=================================================================================
 void BasicGUI_CircleDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BasicGUI_CircleDlg::ClickOnApply()
+bool BasicGUI_CircleDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  if(myOkPoint1 && myOkDir)
-    myBasicGUI->MakeCircleAndDisplay(myPoint1, myDir, myRadius);
-  return;
+  initName();
+  ConstructorsClicked( getConstructorId() );
+  return true;
 }
 
+//=======================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=======================================================================
+void BasicGUI_CircleDlg::ClickOnCancel()
+{
+  GEOMBase_Skeleton::ClickOnCancel();
+}
 
 //=================================================================================
 // function : SelectionIntoArgument()
@@ -169,40 +229,32 @@ void BasicGUI_CircleDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_CircleDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape(); 
-  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if (nbSel != 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkPoint1 = false;
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
-      myOkDir = false;
+  if ( mySelection->IObjectCount() != 1 )  
+  {
+    if      ( myEditCurrentArgument == GroupPntVecR->LineEdit1 ) myPoint  = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) myDir    = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = GEOM::GEOM_Object::_nil();
     return;
   }
 
-  /* nbSel == 1 */
-  TopoDS_Shape S;  
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;  
- 
-  /*  gp_Pnt : not used */
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
-    GroupPoints->LineEdit1->setText(aString);
-    myOkPoint1 = true;
-  }    
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
-    BRepAdaptor_Curve curv(TopoDS::Edge(S));
-    myDir = curv.Line().Direction();
-    GroupPoints->LineEdit2->setText(aString);
-    myOkDir = true;
+  // nbSel == 1
+  Standard_Boolean aRes = Standard_False;
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
+  {  
+    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+    if      ( myEditCurrentArgument == GroupPntVecR->LineEdit1 ) myPoint  = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) myDir    = aSelectedObject;
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = aSelectedObject;
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = aSelectedObject;
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = aSelectedObject;
   }
 
-  if(myOkPoint1 && myOkDir)
-    this->MakeCircleSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
 
@@ -213,21 +265,20 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
 void BasicGUI_CircleDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters();
 
-  if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-    mySelection->AddFilter(myVertexFilter);
-  }
-  else if(send == GroupPoints->PushButton2) {
-    GroupPoints->LineEdit2->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-    mySelection->AddFilter(myEdgeFilter);
-  }
-  this->SelectionIntoArgument();
-
-  return;
+  if ( send == GroupPntVecR->PushButton1 )      myEditCurrentArgument = GroupPntVecR->LineEdit1;
+  else if ( send == GroupPntVecR->PushButton2 ) myEditCurrentArgument = GroupPntVecR->LineEdit2;
+  else if ( send == Group3Pnts->PushButton1 )   myEditCurrentArgument = Group3Pnts->LineEdit1;
+  else if ( send == Group3Pnts->PushButton2 )   myEditCurrentArgument = Group3Pnts->LineEdit2;
+  else if ( send == Group3Pnts->PushButton3 )   myEditCurrentArgument = Group3Pnts->LineEdit3;
+  
+  myEditCurrentArgument->setFocus();
+  
+  if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) 
+    globalSelection( GEOM_LINE );
+  else
+    globalSelection( GEOM_POINT );
+  SelectionIntoArgument();
 }
 
 //=================================================================================
@@ -237,15 +288,15 @@ void BasicGUI_CircleDlg::SetEditCurrentArgument()
 void BasicGUI_CircleDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if (send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  if ( send == GroupPntVecR->LineEdit1 ||
+       send == GroupPntVecR->LineEdit2 ||
+       send == Group3Pnts->LineEdit1 ||
+       send == Group3Pnts->LineEdit2 ||
+       send == Group3Pnts->LineEdit3 )
+  {
+    myEditCurrentArgument = send;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 
@@ -256,13 +307,12 @@ void BasicGUI_CircleDlg::LineEditReturnPressed()
 void BasicGUI_CircleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_POINT );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  GroupPoints->LineEdit1->setFocus();
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  mySelection->AddFilter(myVertexFilter);
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+
+  myGeomGUI->SetState( 0 );
+
+  ConstructorsClicked( getConstructorId() );
 }
 
 
@@ -272,44 +322,106 @@ void BasicGUI_CircleDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_CircleDlg::enterEvent(QEvent* e)
 {
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void BasicGUI_CircleDlg::DeactivateActiveDialog()
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::DeactivateActiveDialog();
+}
 
 //=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BasicGUI_CircleDlg::ValueChangedInSpinBox(double newValue)
+void BasicGUI_CircleDlg::ValueChangedInSpinBox()
 {
-  myRadius = newValue;
-  if(myOkPoint1 && myOkDir)
-    MakeCircleSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
-
 //=================================================================================
-// function : MakeCircleSimulationAndDisplay()
+// function : getRadius()
 // purpose  :
 //=================================================================================
-void BasicGUI_CircleDlg::MakeCircleSimulationAndDisplay() 
+double BasicGUI_CircleDlg::getRadius() const
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-
-  try {
-    gp_Ax2 anAxis(myPoint1, myDir);
-    gp_Circ circ(anAxis, myRadius);
-    BRepBuilderAPI_MakeEdge MakeEdge(circ);
-    mySimulationTopoDs = MakeEdge.Shape();
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakeCircleSimulationAndDisplay");
-  }
-  return;
+  return GroupPntVecR->SpinBox_DX->GetValue();
 }
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr BasicGUI_CircleDlg::createOperation()
+{
+  return getGeomEngine()->GetICurvesOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isEqual
+// purpose  : it may also be needed to check for min distance between gp_Pnt-s...
+//=================================================================================
+static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Object_var& thePnt2 )
+{
+	return thePnt1->_is_equivalent( thePnt2 );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool BasicGUI_CircleDlg::isValid( QString& msg )
+{
+	const int id = getConstructorId();
+	if ( id == 0 )
+		return !myPoint->_is_nil() && !myDir->_is_nil() && getRadius() > 0;
+	else if ( id == 1 )
+		return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
+		       !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
+	return false;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool BasicGUI_CircleDlg::execute( ObjectList& objects )
+{
+  bool res = false;
+
+  GEOM::GEOM_Object_var anObj;
+
+  switch ( getConstructorId() )
+  {
+  case 0 :
+    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCirclePntVecR( myPoint, myDir, getRadius() );
+    res = true;
+    break;
+  case 1 :
+    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCircleThreePnt( myPoint1, myPoint2, myPoint3 );
+    res = true;
+    break;
+  }
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return res;
+}
+
+//=================================================================================
+// function : closeEvent
+// purpose  :
+//=================================================================================
+void BasicGUI_CircleDlg::closeEvent( QCloseEvent* e )
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::closeEvent( e );
+}
+

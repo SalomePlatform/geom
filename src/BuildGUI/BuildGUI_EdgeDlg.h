@@ -32,10 +32,6 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel_QTD.h"
 
-#include "BuildGUI.h"
-
-#include "GEOM_ShapeTypeFilter.hxx"
-
 //=================================================================================
 // class    : BuildGUI_EdgeDlg
 // purpose  :
@@ -45,27 +41,28 @@ class BuildGUI_EdgeDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_EdgeDlg(QWidget* parent = 0, const char* name = 0, BuildGUI* theBuildGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_EdgeDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_EdgeDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& msg );
+    virtual bool execute( ObjectList& objects );    
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakeEdgeSimulationAndDisplay();
-
-    BuildGUI* myBuildGUI;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;   /* Filter selection */
-
-    gp_Pnt myPoint1;   /* Points containing the vector */   
-    gp_Pnt myPoint2;
+    
+    GEOM::GEOM_Object_var myPoint1, myPoint2;   /* Points containing the edge */ 
     bool myOkPoint1;   /* true when myPoint is defined */    
     bool myOkPoint2;
-
+    
     DlgRef_2Sel_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
     void ActivateThisDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();

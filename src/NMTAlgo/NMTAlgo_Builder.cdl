@@ -1,0 +1,79 @@
+-- File:	NMTAlgo_Builder.cdl
+-- Created:	Tue Jan 27 15:09:45 2004
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2004
+
+
+class Builder from NMTAlgo  
+    inherits Algo from NMTAlgo 
+
+	---Purpose: 
+
+uses  
+    Shape from TopoDS, 
+    Face  from TopoDS,
+    Edge  from TopoDS,
+    IndexedMapOfShape                from TopTools, 
+    IndexedDataMapOfShapeListOfShape from TopTools,  
+    IndexedDataMapOfShapeShape       from TopTools,
+    Image from BRepAlgo,
+    DSFiller from NMTTools
+--raises
+
+is 
+    Create 
+    	returns Builder from NMTAlgo;  
+    ---C++: alias "Standard_EXPORT virtual ~NMTAlgo_Builder();" 
+
+    Clear (me:out) 
+    	is redefined;     	  
+     
+    ComputeWithFiller(me:out; 
+    	aDSF: DSFiller from NMTTools) 
+    	is redefined;  
+     
+    FillImagesEdges (me:out) 
+    	is protected; 
+	 
+    FillIn2DParts (me:out) 
+    	is protected; 
+	 
+    FillImagesFaces (me:out) 
+    	is protected;  
+	 
+    FillSDFaces  (me:out) 
+    	is protected; 
+	
+    ---  Queries 
+    SplitVertices  (me:out) 
+    	is protected;   
+
+    IsSectionEdge (me;  
+    	    E : Edge from TopoDS) 
+        returns Boolean from Standard 
+    	is protected;	  
+	 
+    HasSameDomainF(me;  
+    	    F : Face from TopoDS)
+        returns Boolean from Standard 
+    	is protected;
+    
+    IsSameDomainF(me;  
+    	    F1 : Face from TopoDS;
+    	    F2 : Face from TopoDS)
+        returns Boolean from Standard 
+    	is protected;
+
+fields 
+
+    myImagesEdges       : Image from BRepAlgo is protected; 
+    myImagesFaces       : Image from BRepAlgo is protected; 
+    
+    myQueryShapes       : IndexedMapOfShape                from TopTools is protected;
+    -- 
+    myIn2DParts         : IndexedDataMapOfShapeListOfShape from TopTools is protected;         
+    mySectionParts      : IndexedDataMapOfShapeListOfShape from TopTools is protected; 
+    mySDFaces           : IndexedDataMapOfShapeShape       from TopTools is protected;
+    --	     
+end Builder;

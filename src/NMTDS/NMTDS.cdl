@@ -1,0 +1,39 @@
+-- File:	NMTDS.cdl
+-- Created:	Fri Nov 28 10:13:19 2003
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2003
+
+
+package NMTDS 
+
+	---Purpose: 
+
+uses   
+    
+    TCollection, 
+    TColStd,
+    Bnd,
+    TopoDS, 
+    TopAbs, 
+    TopTools, 
+    BooleanOperations,
+    BOPTColStd
+is  
+    class ShapesDataStructure;
+    class IndexRange; 
+
+    pointer PShapesDataStructure to ShapesDataStructure from NMTDS;
+
+    class CArray1OfIndexRange instantiates 
+	CArray1 from BOPTColStd(IndexRange from NMTDS); 
+     
+    class ListOfIndexedDataMapOfShapeAncestorsSuccessors instantiates 
+	List from TCollection(IndexedDataMapOfShapeAncestorsSuccessors from BooleanOperations); 
+	 
+    class IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger instantiates 
+    	IndexedDataMap from TCollection(Integer        from Standard, 
+	    	    	    	    	IndexedDataMapOfShapeInteger from BooleanOperations, 
+					MapIntegerHasher from TColStd); 
+					 
+end NMTDS;

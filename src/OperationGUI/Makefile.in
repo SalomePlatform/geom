@@ -43,25 +43,28 @@ LIB = libOperationGUI.la
 LIB_SRC = 	OperationGUI.cxx \
 		OperationGUI_ArchimedeDlg.cxx \
 		OperationGUI_PartitionDlg.cxx \
+		OperationGUI_MaterialDlg.cxx \
 		OperationGUI_FilletDlg.cxx \
-		OperationGUI_ChamferDlg.cxx
+		OperationGUI_ChamferDlg.cxx \
+		OperationGUI_ClippingDlg.cxx
 
 LIB_MOC = \
-		OperationGUI.h \
 		OperationGUI_ArchimedeDlg.h \
 		OperationGUI_PartitionDlg.h \
+		OperationGUI_MaterialDlg.h \
 		OperationGUI_FilletDlg.h \
-		OperationGUI_ChamferDlg.h
+		OperationGUI_ChamferDlg.h \
+		OperationGUI_ClippingDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl
 
-LIB_SERVER_IDL = 
+LIB_SERVER_IDL =  
 
 # additionnal information to compil and link file
 
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lDisplayGUI $(CAS_LDPATH) -lTKFillet
+LDFLAGS += $(CAS_LDPATH) -lTKFillet -lGEOMBase
 
 @CONCLUDE@

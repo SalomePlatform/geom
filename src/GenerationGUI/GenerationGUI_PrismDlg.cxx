@@ -29,11 +29,15 @@
 #include "GenerationGUI_PrismDlg.h"
 
 #include <BRepPrimAPI_MakePrism.hxx>
+#include <BRepAdaptor_Curve.hxx>
+#include <gp_Lin.hxx>
 #include "QAD_Config.h"
+#include "QAD_Desktop.h"
+#include "GEOMImpl_Types.hxx"
+
+#include <qcheckbox.h>
 
 #include "utilities.h"
-
-using namespace std;
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg()
@@ -42,7 +46,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(QWidget* parent, const char* name, GenerationGUI* theGenerationGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_PRISM")));
@@ -56,20 +60,22 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(QWidget* parent, const char* name
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_2Sel1Spin1Check(this, "GroupPoints");
+  GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
+  GroupPoints->CheckButton1->hide();
   GroupPoints->GroupBox1->setTitle(tr("GEOM_PRISM_BSV"));
   GroupPoints->TextLabel1->setText(tr("GEOM_BASE"));
   GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
   GroupPoints->TextLabel3->setText(tr("GEOM_HEIGHT"));
-  GroupPoints->CheckButton1->setText(tr("GEOM_REVERSE"));
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->CheckButton2->setText(tr("GEOM_REVERSE"));
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myGenerationGUI = theGenerationGUI;
   Init();
 }
 
@@ -92,20 +98,18 @@ void GenerationGUI_PrismDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
 
-  myHeight = 100.000;
-  myDx = myDy = myDz = 0.0;
-  myOkBase = myOkLine = false;
-
-  myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
-
+  myOkBase = myOkVec = false;
+  
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
+  double step = St.toDouble();
 
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_DX->SetValue(myHeight);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, +999.999, step, 3);
+  GroupPoints->SpinBox_DX->SetValue(100.0);
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -117,17 +121,16 @@ void GenerationGUI_PrismDlg::Init()
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ReverseVector(int)));
-  
+
+  connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)),      this, SLOT(onReverse()));
+   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
+  initName(tr("GEOM_PRISM"));
 
-  return;
+  globalSelection( GEOM_ALLSHAPES );
 }
 
 
@@ -137,9 +140,8 @@ void GenerationGUI_PrismDlg::Init()
 //=================================================================================
 void GenerationGUI_PrismDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -147,33 +149,13 @@ void GenerationGUI_PrismDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void GenerationGUI_PrismDlg::ClickOnApply()
+bool GenerationGUI_PrismDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  gp_Pnt P1, P2;
-
-  try {
-    gp_Vec Vec(myDx, myDy, myDz);
-    Vec.Normalize();
-    Vec *= myHeight;
-    P1.SetCoord(0.0, 0.0, 0.0);
-    P2.SetCoord(Vec.X(), Vec.Y(), Vec.Z());
-
-    if(myOkBase && myOkLine)
-      myGenerationGUI->MakePrismAndDisplay(myGeomShape, P1, P2);
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception intercepted in GenerationGUI_PrismDlg" << endl);
-    return;
-  }
-
-  return;
+  initName();
+  return true;
 }
 
 
@@ -183,48 +165,43 @@ void GenerationGUI_PrismDlg::ClickOnApply()
 //=================================================================================
 void GenerationGUI_PrismDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  erasePreview();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkBase = false;
-    else if(myEditCurrentArgument == GroupPoints->LineEdit2)
-      myOkLine = false;
-    return;
-  }
+  if(mySelection->IObjectCount() != 1) 
+    {
+      if(myEditCurrentArgument == GroupPoints->LineEdit1)
+	myOkBase = false;
+      else if(myEditCurrentArgument == GroupPoints->LineEdit2)
+	myOkVec = false;
+      return;
+    }
   
   // nbSel == 1
-  TopoDS_Shape S; 
-  Standard_Boolean testResult;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
+  Standard_Boolean testResult = Standard_False;
+  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+  
+  if (!testResult)
     return;
-  
-  gp_Pnt aPoint1, aPoint2;
-  
-  if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-    if(!testResult)
-      return;
-    if(S.ShapeType() <= 2)
-      return;
-    myEditCurrentArgument->setText(aString);
-    myOkBase = true;
-    myBaseTopo = S;
-  }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomBase->LinearEdgeExtremities(S, aPoint1, aPoint2)) {
-    myGeomBase->GetBipointDxDyDz(aPoint1, aPoint2, myDx, myDy, myDz);
-    myEditCurrentArgument->setText(aString);
-    myOkLine = true;
-  }
 
-  if(myOkBase && myOkLine)
-    this->MakePrismSimulationAndDisplay();
-  return; 
+  if(myEditCurrentArgument == GroupPoints->LineEdit1) {
+    myOkBase = false;
+    TopoDS_Shape S;
+    
+    if ( !GEOMBase::GetShape(aSelectedObject, S) ||
+	 S.ShapeType() <= 2)
+      return;
+    
+    myBase = aSelectedObject;
+    myOkBase = true;
+  }
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
+    myVec = aSelectedObject;
+    myOkVec = true;
+  }
+  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  
+  displayPreview();
 }
 
 
@@ -235,7 +212,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 void GenerationGUI_PrismDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters();
+  globalSelection( GEOM_ALLSHAPES );
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
@@ -244,11 +221,9 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
   else if(send == GroupPoints->PushButton2) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    mySelection->AddFilter(myEdgeFilter);
+    globalSelection( GEOM_LINE );
   }
-  this->SelectionIntoArgument();
-
-  return;
+  SelectionIntoArgument();
 }
 
 
@@ -259,17 +234,13 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
 void GenerationGUI_PrismDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if (send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  if(send == GroupPoints->LineEdit1 ||
+     send == GroupPoints->LineEdit2)
+    {
+      myEditCurrentArgument = send;
+      GEOMBase_Skeleton::LineEditReturnPressed();
+    }
 }
-
 
 //=================================================================================
 // function : enterEvent()
@@ -277,10 +248,8 @@ void GenerationGUI_PrismDlg::LineEditReturnPressed()
 //=================================================================================
 void GenerationGUI_PrismDlg::enterEvent(QEvent * e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
 
@@ -291,12 +260,11 @@ void GenerationGUI_PrismDlg::enterEvent(QEvent * e)
 void GenerationGUI_PrismDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_ALLSHAPES );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+  displayPreview();
 }
 
 
@@ -304,52 +272,66 @@ void GenerationGUI_PrismDlg::ActivateThisDialog()
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void GenerationGUI_PrismDlg::ValueChangedInSpinBox(double newValue)
+void GenerationGUI_PrismDlg::ValueChangedInSpinBox()
 {
-  myHeight = newValue;
-  if(myOkBase && myOkLine)
-    this->MakePrismSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
 
-//=================================================================================
-// function : ReverseVector()
-// purpose  : 'state' not used here
-//=================================================================================
-void GenerationGUI_PrismDlg::ReverseVector(int state)
-{
-  myDx = -myDx;
-  myDy = -myDy;
-  myDz = -myDz;
-  if(myOkBase && myOkLine)
-    this->MakePrismSimulationAndDisplay();
-  return;
-} 
-
 
 //=================================================================================
-// function : MakePrismSimulationAndDisplay()
+// function : getHeight()
 // purpose  :
 //=================================================================================
-void GenerationGUI_PrismDlg::MakePrismSimulationAndDisplay()
+double GenerationGUI_PrismDlg::getHeight() const
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-
-  try {
-    gp_Vec Vec(myDx, myDy, myDz);
-    Vec.Normalize();
-    Vec *= myHeight;
-    mySimulationTopoDs = BRepPrimAPI_MakePrism(myBaseTopo, Vec, Standard_False).Shape();
-    if(mySimulationTopoDs.IsNull())
-      return;
-    else
-      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakePrismSimulationAndDisplay" << endl);
-    return;
-  }
-  return;
+  return GroupPoints->SpinBox_DX->GetValue();
 }
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr GenerationGUI_PrismDlg::createOperation()
+{
+  return getGeomEngine()->GetI3DPrimOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool GenerationGUI_PrismDlg::isValid( QString& )
+{
+  return myOkBase && myOkVec;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool GenerationGUI_PrismDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+  
+  anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation() )->MakePrismVecH ( myBase, myVec, getHeight() );
+  
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
+}
+
+
+//=================================================================================
+// function :  onReverse()
+// purpose  :
+//=================================================================================
+void GenerationGUI_PrismDlg::onReverse()
+{
+  double anOldValue = GroupPoints->SpinBox_DX->GetValue();
+  GroupPoints->SpinBox_DX->SetValue( -anOldValue );
+}
+
+
+

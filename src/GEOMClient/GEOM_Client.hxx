@@ -30,7 +30,6 @@
 #define _GEOM_Client_HeaderFile
 
 #include <SALOMEconfig.h>
-#include CORBA_SERVER_HEADER(GEOM_Shape)
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 #
 #ifndef _TColStd_SequenceOfAsciiString_HeaderFile
@@ -76,13 +75,14 @@ public:
   // 
   Standard_EXPORT   GEOM_Client();
   Standard_EXPORT   GEOM_Client(Engines::Container_ptr client);
-  Standard_EXPORT   Standard_Integer Find( const TCollection_AsciiString& ShapeIOR, TopoDS_Shape& S ) ;
-  Standard_EXPORT   void Bind( const TCollection_AsciiString& ShapeIOR, const TopoDS_Shape& S ) ;
-  Standard_EXPORT   TopoDS_Shape GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Shape_ptr aShape );
-  Standard_EXPORT   void RemoveShapeFromBuffer( const TCollection_AsciiString& shapeIOR ) ;
+  Standard_EXPORT   Standard_Integer Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S ) ;
+  Standard_EXPORT   Standard_Integer Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR ) ;
+  Standard_EXPORT   void Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& S ) ;
+  Standard_EXPORT   TopoDS_Shape GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape );
+  Standard_EXPORT   void RemoveShapeFromBuffer( const TCollection_AsciiString& IOR ) ;
   Standard_EXPORT   void ClearClientBuffer() ;
   Standard_EXPORT   unsigned int BufferLength() ;
-                    TopoDS_Shape Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Shape_ptr aShape);
+  TopoDS_Shape Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape);
 
 private: 
   // Fields PRIVATE

@@ -1,0 +1,54 @@
+-- File:	NMTTools_CommonBlockAPI.cdl
+-- Created:	Mon Dec 15 11:35:46 2003
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2003
+
+
+class CommonBlockAPI from NMTTools 
+
+	---Purpose: 
+
+uses
+    ListOfCommonBlock from NMTTools, 
+    ListOfPaveBlock   from BOPTools, 
+    PaveBlock         from BOPTools, 
+    CommonBlock       from NMTTools 
+    
+--raises
+
+is 
+    Create  (aList:ListOfCommonBlock from NMTTools)   
+    	returns CommonBlockAPI from NMTTools; 
+	 
+    List(me) 
+    	returns  ListOfCommonBlock from NMTTools; 
+    ---C++:  return const & 
+    	---Purpose:   
+    	--- Selector 
+    	---
+    CommonPaveBlocks(me;   
+    	    anE:Integer from  Standard) 
+    	returns  ListOfPaveBlock from BOPTools;
+    ---C++:  return const &  
+    	---Purpose:   
+    	--- Returns all PaveBlock-s (from the list) that are 
+    	--- common for the given edge with  DS-index <anE>     
+    	---
+    IsCommonBlock   (me;  
+    	    aPB: PaveBlock from BOPTools) 
+    	returns  Boolean from Standard;
+    	---Purpose:   
+    	--- Returns TRUE if given PaveBlock <aPB> is 
+    	--- common for the Blocks from the list  
+	 
+    CommonBlock(me; 
+    	    aPB: PaveBlock from BOPTools) 
+	returns  CommonBlock from NMTTools;  
+    ---C++:  return &     
+
+fields
+    myListOfCommonBlock  :Address from Standard;
+    myListOfPaveBlock    :ListOfPaveBlock from BOPTools;
+    
+end CommonBlockAPI;

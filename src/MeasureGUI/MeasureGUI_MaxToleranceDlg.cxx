@@ -27,57 +27,63 @@
 //  $Header$
 
 #include "MeasureGUI_MaxToleranceDlg.h"
-
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Face.hxx>
-#include <TopExp_Explorer.hxx>
-#include <BRep_Tool.hxx>
+#include "MeasureGUI_1Sel6LineEdit_QTD.h"
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
 
 #include "utilities.h"
+#include "QAD_Desktop.h"
 
-using namespace std;
+#include <qlineedit.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qbuttongroup.h>
 
 //=================================================================================
 // class    : MeasureGUI_MaxToleranceDlg()
-// purpose  : Constructs a MeasureGUI_MaxToleranceDlg which is a child of 'parent', with the 
+// purpose  : Constructs a MeasureGUI_MaxToleranceDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_MaxToleranceDlg::MeasureGUI_MaxToleranceDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :MeasureGUI_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+MeasureGUI_MaxToleranceDlg::MeasureGUI_MaxToleranceDlg( QWidget* parent, SALOME_Selection* Sel )
+: MeasureGUI_Skeleton( parent, "MeasureGUI_MaxToleranceDlg", Sel )
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_TOLERANCE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap(
+    "GEOM",tr( "ICON_DLG_TOLERANCE" ) ) );
+  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap(
+    "GEOM",tr( "ICON_SELECT" ) ) );
 
-  setCaption(tr("GEOM_TOLERANCE_TITLE"));
+  setCaption( tr( "GEOM_TOLERANCE_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_TOLERANCE"));
-  RadioButton1->setPixmap(image0);
+  
+  GroupConstructors->setTitle( tr( "GEOM_TOLERANCE" ) );
+  RadioButton1->setPixmap( image0 );
 
-  GroupC1 = new MeasureGUI_1Sel6LineEdit_QTD(this, "GroupC1");
-  GroupC1->GroupBox1->setTitle(tr("GEOM_TOLERANCE_CONSTR"));
-  GroupC1->TextLabel1->setText(tr("GEOM_OBJECT"));
-  GroupC1->TextLabel2->setText(tr("GEOM_MIN"));
-  GroupC1->TextLabel3->setText(tr("GEOM_MAX"));
-  GroupC1->TextLabel4->setText(tr("GEOM_TOLERANCE_FACE"));
-  GroupC1->TextLabel5->setText(tr("GEOM_TOLERANCE_EDGE"));
-  GroupC1->TextLabel6->setText(tr("GEOM_TOLERANCE_VERTEX"));
-  GroupC1->LineEdit11->setReadOnly(TRUE);
-  GroupC1->LineEdit12->setReadOnly(TRUE);
-  GroupC1->LineEdit21->setReadOnly(TRUE);
-  GroupC1->LineEdit22->setReadOnly(TRUE);
-  GroupC1->LineEdit31->setReadOnly(TRUE);
-  GroupC1->LineEdit32->setReadOnly(TRUE);
-  GroupC1->PushButton1->setPixmap(image1);
+  myGrp = new MeasureGUI_1Sel6LineEdit_QTD( this, "myGrp" );
+  myGrp->GroupBox1->setTitle( tr( "GEOM_TOLERANCE_CONSTR" ) );
+  myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
+  myGrp->TextLabel2->setText( tr( "GEOM_MIN" ) );
+  myGrp->TextLabel3->setText( tr( "GEOM_MAX" ) );
+  myGrp->TextLabel4->setText( tr( "GEOM_TOLERANCE_FACE" ) );
+  myGrp->TextLabel5->setText( tr( "GEOM_TOLERANCE_EDGE" ) );
+  myGrp->TextLabel6->setText( tr( "GEOM_TOLERANCE_VERTEX" ) );
+  myGrp->LineEdit11->setReadOnly( TRUE );
+  myGrp->LineEdit12->setReadOnly( TRUE );
+  myGrp->LineEdit21->setReadOnly( TRUE );
+  myGrp->LineEdit22->setReadOnly( TRUE );
+  myGrp->LineEdit31->setReadOnly( TRUE );
+  myGrp->LineEdit32->setReadOnly( TRUE );
+  myGrp->PushButton1->setPixmap( image1 );
+  myGrp->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupC1, 1, 0);
+  Layout1->addWidget( myGrp, 1, 0 );
+  
   /***************************************************************/
 
   /* Initialisation */
-  Init();
+  Init( Sel );
 }
 
 
@@ -87,7 +93,6 @@ MeasureGUI_MaxToleranceDlg::MeasureGUI_MaxToleranceDlg(QWidget* parent, const ch
 //=================================================================================
 MeasureGUI_MaxToleranceDlg::~MeasureGUI_MaxToleranceDlg()
 {
-  // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -95,193 +100,102 @@ MeasureGUI_MaxToleranceDlg::~MeasureGUI_MaxToleranceDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_MaxToleranceDlg::Init()
+void MeasureGUI_MaxToleranceDlg::Init( SALOME_Selection* Sel )
 {
-  /* init variables */
-  myEditCurrentArgument = GroupC1->LineEdit1;
-
-   /* signals and slots connections */
-  connect(GroupC1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupC1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-
-  /* displays Dialog */
-  GroupC1->show();
-  this->show();
-
-  return;
+  mySelBtn = myGrp->PushButton1;
+  mySelEdit = myGrp->LineEdit1;
+  MeasureGUI_Skeleton::Init( Sel );
 }
 
-
 //=================================================================================
-// function : SelectionIntoArgument()
-// purpose  : Called when selection as changed or other case
-//=================================================================================
-void MeasureGUI_MaxToleranceDlg::SelectionIntoArgument()
-{
-  myEditCurrentArgument->setText("");
-  QString aString = "";
-
-  GroupC1->LineEdit11->setText("");
-  GroupC1->LineEdit12->setText("");
-  GroupC1->LineEdit21->setText("");
-  GroupC1->LineEdit22->setText("");
-  GroupC1->LineEdit31->setText("");
-  GroupC1->LineEdit32->setText("");
-
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1)
-    return;
-
-  /*  nbSel == 1  */
-  TopoDS_Shape S;
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S) || S.IsNull())
-    return;
-
-  if(S.IsNull())
-    return;
-
-  GroupC1->LineEdit1->setText(aString);
-
-  this->CalculateMaxTolerance(S);
-  return;
-}
-
-
-//=================================================================================
-// function : SetEditCurrentArgument()
+// function : processObject
 // purpose  :
 //=================================================================================
-void MeasureGUI_MaxToleranceDlg::SetEditCurrentArgument()
+void MeasureGUI_MaxToleranceDlg::processObject()
 {
-  QPushButton* send = (QPushButton*)sender();
+  double aMinFaceToler, aMaxFaceToler;
+  double aMinEdgeToler, aMaxEdgeToler;
+  double aMinVertexToler, aMaxVertexToler;
+  
+  if ( !getParameters( aMinFaceToler, aMaxFaceToler,
+                       aMinEdgeToler, aMaxEdgeToler,
+                       aMinVertexToler, aMaxVertexToler ) )
+  {
+    myGrp->LineEdit11->setText( "" );
+    myGrp->LineEdit12->setText( "" );
 
-  if(send == GroupC1->PushButton1) {
-    GroupC1->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupC1->LineEdit1;
+    myGrp->LineEdit21->setText( "" );
+    myGrp->LineEdit22->setText( "" );
+
+    myGrp->LineEdit31->setText( "" );
+    myGrp->LineEdit32->setText( "" );
+
+    return;
   }
 
-  this->SelectionIntoArgument();
-  return;
+  double invalidMin = RealLast();
+  double invalidMax = -RealLast();
+
+  myGrp->LineEdit11->setText( aMinFaceToler != invalidMin ? QString( "%1" ).arg( aMinFaceToler, 5, 'e', 8 ) : QString("") );
+  myGrp->LineEdit12->setText( aMaxFaceToler != invalidMax ? QString( "%1" ).arg( aMaxFaceToler, 5, 'e', 8 ) : QString("") );
+
+  myGrp->LineEdit21->setText( aMinEdgeToler != invalidMin ? QString( "%1" ).arg( aMinEdgeToler, 5, 'e', 8 ) : QString("") );
+  myGrp->LineEdit22->setText( aMaxEdgeToler != invalidMax ? QString( "%1" ).arg( aMaxEdgeToler, 5, 'e', 8 ) : QString("") );
+
+  myGrp->LineEdit31->setText( aMinVertexToler != invalidMin ? QString( "%1" ).arg( aMinVertexToler, 5, 'e', 8 ) : QString("") );
+  myGrp->LineEdit32->setText( aMaxVertexToler != invalidMax ? QString( "%1" ).arg( aMaxVertexToler, 5, 'e', 8 ) : QString("") );
 }
 
-
 //=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
+// function : getParameters
+// purpose  : Get tolerances. Returns false is myObj is nill. If there is no a
+//            type of entity ( face, edge or vertex ) in selected object then corresponding
+//            tolerances is less than 0
 //=================================================================================
-void MeasureGUI_MaxToleranceDlg::LineEditReturnPressed()
+bool MeasureGUI_MaxToleranceDlg::getParameters( double& theMinFaceToler,
+                                                double& theMaxFaceToler,
+                                                double& theMinEdgeToler,
+                                                double& theMaxEdgeToler,
+                                                double& theMinVertexToler,
+                                                double& theMaxVertexToler )
 {
-  QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupC1->LineEdit1)
-    myEditCurrentArgument = GroupC1->LineEdit1;
+  if ( myObj->_is_nil() )
+    return false;
   else
-    return;
-
-  MeasureGUI_Skeleton::LineEditReturnPressed();
-  return;
-}
-
-
-//=================================================================================
-// function : ActivateThisDialog()
-// purpose  :
-//=================================================================================
-void MeasureGUI_MaxToleranceDlg::ActivateThisDialog()
-{
-  MeasureGUI_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  return;
-}
-
-
-//=================================================================================
-// function : enterEvent()
-// purpose  :
-//=================================================================================
-void MeasureGUI_MaxToleranceDlg::enterEvent(QEvent* e)
-{
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
-}
-
-
-//=================================================================================
-// function : CalculateMaxTolerance()
-// purpose  :
-//=================================================================================
-void MeasureGUI_MaxToleranceDlg::CalculateMaxTolerance(const TopoDS_Shape& S)
-{
-  GroupC1->LineEdit11->setText("");
-  GroupC1->LineEdit12->setText("");
-  GroupC1->LineEdit21->setText("");
-  GroupC1->LineEdit22->setText("");
-  GroupC1->LineEdit31->setText("");
-  GroupC1->LineEdit32->setText("");
-
-  if(S.IsNull()) 
-    return;
-
-  Standard_Real T, TMF, TME, TMV, TmF, TmE, TmV;
-  Standard_Integer nbF, nbE, nbV;
-  bool m_isFace, m_isEdge, m_isVertex;
-
-  TMF = TME = TMV = -RealLast();
-  TmF = TmE = TmV = RealLast();
-  nbF = nbE = nbV = 0;
-  m_isFace = m_isEdge = m_isVertex = false;
-
-  try {
-    for(TopExp_Explorer ExF(S,TopAbs_FACE); ExF.More(); ExF.Next()) { 
-      m_isFace = true;
-      TopoDS_Face Face=TopoDS::Face(ExF.Current());
-      T=BRep_Tool::Tolerance(Face);
-      if(T>TMF)
-	TMF=T;
-      if(T<TmF)
-	TmF=T;
-      nbF++;
-    }
-    for(TopExp_Explorer ExE(S,TopAbs_EDGE); ExE.More(); ExE.Next()) { 
-      m_isEdge = true;
-      TopoDS_Edge Edge=TopoDS::Edge(ExE.Current());
-      T=BRep_Tool::Tolerance(Edge);
-      if(T>TME)
-	TME=T;
-      if(T<TmE)
-	TmE=T;
-      nbE++;
-    }
-    for(TopExp_Explorer ExV(S,TopAbs_VERTEX); ExV.More(); ExV.Next()) { 
-      m_isVertex = true;
-      TopoDS_Vertex Vertex=TopoDS::Vertex(ExV.Current());
-      T=BRep_Tool::Tolerance(Vertex);
-      if(T>TMV)
-	TMV=T;
-      if(T<TmV)
-	TmV=T;
-      nbV++;
-    }
-
-    if(m_isFace) {
-      GroupC1->LineEdit11->setText(tr("%1").arg(TmF, 5, 'e', 8));
-      GroupC1->LineEdit12->setText(tr("%1").arg(TMF, 5, 'e', 8));
-    }
-    if(m_isEdge) {
-      GroupC1->LineEdit21->setText(tr("%1").arg(TmE, 5, 'e', 8));
-      GroupC1->LineEdit22->setText(tr("%1").arg(TME, 5, 'e', 8));
-      }
-    if(m_isVertex) {
-      GroupC1->LineEdit31->setText(tr("%1").arg(TmV, 5, 'e', 8));
-      GroupC1->LineEdit32->setText(tr("%1").arg(TMV, 5, 'e', 8));
-    }
-  }
-  catch(Standard_Failure) 
+  {
+    try
     {
-      MESSAGE("Catch intercepted in CalculateMaxTolerance()");
+      GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetTolerance( myObj,
+        theMinFaceToler, theMaxFaceToler, theMinEdgeToler,
+        theMaxEdgeToler, theMinVertexToler, theMaxVertexToler  );
     }
-  return;
+    catch( const SALOME::SALOME_Exception& e )
+    {
+      QtCatchCorbaException( e );
+      return false;
+    }
+
+    return getOperation()->IsDone();
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

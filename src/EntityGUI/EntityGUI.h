@@ -24,31 +24,38 @@
 //  File   : EntityGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef ENTITYGUI_H
 #define ENTITYGUI_H
 
+#include "GEOMGUI.h"
 #include "GEOMBase.h"
 
 //=================================================================================
 // class    : EntityGUI
 // purpose  :
 //=================================================================================
-class EntityGUI : public QObject
+class EntityGUI : public GEOMGUI
 {
-  Q_OBJECT /* for QT compatibility */
+protected:
+  EntityGUI(); // hide constructor to avoid direct creation
 
 public :
-  EntityGUI();
   ~EntityGUI();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  // Get the only EntityGUI object
+  static EntityGUI* GetEntityGUI();
+
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void OnSketchEnd(const char *Cmd);
 
   void DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shape& S2); 
-  void EraseSimulationShape(int Sh = 0);
+  void EraseSimulationShape();
+
+  void MakeInterpolAndDisplay(GEOM::string_array& listShapesIOR);
+  void MakeBezierAndDisplay(GEOM::string_array& listShapesIOR);
 
     /* Methods for sub shapes explode */
   bool SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* IOR);
@@ -61,9 +68,10 @@ public :
   Handle(AIS_Shape) mySimulationShape2;
 
   GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 
+private:
+  static EntityGUI* myGUIObject;    // the only EntityGUI object
 };
 
 #endif

@@ -1,0 +1,6 @@
+#ifndef _TopoDS_Shape_HeaderFile
+#include <TopoDS_Shape.hxx>
+#endif
+#ifndef _NMTTools_CoupleOfShape_HeaderFile
+#include <NMTTools_CoupleOfShape.hxx>
+#endif

@@ -1,0 +1,73 @@
+-- File:	NMTAlgo_Splitter1.cdl
+-- Created:	Wed Feb 11 14:23:25 2004
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2004
+
+
+class Splitter1 from NMTAlgo  
+    inherits Splitter from NMTAlgo 
+
+	---Purpose: 
+
+uses
+    ShapeEnum from TopAbs,  
+    Shape from TopoDS,
+    DataMapOfShapeInteger from TopTools
+
+--raises
+
+is
+    Create 
+    	returns Splitter1 from NMTAlgo;  
+    ---C++: alias "Standard_EXPORT virtual ~NMTAlgo_Splitter1();"  
+     
+    Clear (me:out) 
+    	is redefined; 
+     
+    AddShape (me:out;  
+    	    aS : Shape from TopoDS) 
+    	is redefined; 
+    	 
+     
+    AddTool(me:out;  
+    	    aS : Shape from TopoDS) 
+    	is redefined; 
+    	
+	 
+    SetMaterial (me:out;  
+    	aS : Shape from TopoDS; 
+    	aM : Integer from Standard=0);  
+     
+    SetRemoveWebs(me:out; 
+	bFlag:Boolean from Standard); 
+	 
+    RemoveWebs(me) 
+    	returns  Boolean from Standard; 
+	 
+    GetMaterialTable(me) 
+    	returns DataMapOfShapeInteger from TopTools; 
+    ---C++:  return const &    	 
+     
+    Build (me:out; 
+    	Limit:ShapeEnum from TopAbs=TopAbs_SHAPE) 
+    	is redefined; 
+
+    --  protected block	  
+    TreatSolids (me:out) 
+    	is protected; 
+     
+    TreatWebs (me:out) 
+    	is protected; 
+
+    RestParts (me:out) 
+    	is protected; 
+	
+    
+fields 
+    myRemoveWebs :  Boolean from Standard is protected;   
+    myMapSWM     :  DataMapOfShapeInteger from TopTools is protected;
+    myMapSWMOut  :  DataMapOfShapeInteger from TopTools is protected;
+    myRestParts  :  Shape from TopoDS is protected; 
+    
+end Splitter1;

@@ -46,18 +46,21 @@ LIB_SRC = 	TransformationGUI.cxx \
 		TransformationGUI_TranslationDlg.cxx \
 		TransformationGUI_RotationDlg.cxx \
 		TransformationGUI_MirrorDlg.cxx \
-		TransformationGUI_ScaleDlg.cxx
+		TransformationGUI_ScaleDlg.cxx \
+		TransformationGUI_OffsetDlg.cxx \
+		TransformationGUI_PositionDlg.cxx
 
 LIB_MOC = \
-		TransformationGUI.h \
 		TransformationGUI_MultiTranslationDlg.h \
 		TransformationGUI_MultiRotationDlg.h \
 		TransformationGUI_TranslationDlg.h \
 		TransformationGUI_RotationDlg.h \
 		TransformationGUI_MirrorDlg.h \
-		TransformationGUI_ScaleDlg.h
+		TransformationGUI_ScaleDlg.h \
+		TransformationGUI_OffsetDlg.h \
+		TransformationGUI_PositionDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl
 
 LIB_SERVER_IDL = 
 

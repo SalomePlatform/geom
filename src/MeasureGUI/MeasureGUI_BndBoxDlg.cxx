@@ -27,13 +27,22 @@
 //  $Header$
 
 #include "MeasureGUI_BndBoxDlg.h"
+#include "MeasureGUI_1Sel6LineEdit_QTD.h"
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
+
+#include "GEOMBase.h"
+#include "GEOM_Displayer.h"
 
 #include <BRepPrimAPI_MakeBox.hxx>
-#include <BRepBndLib.hxx>
 
 #include "utilities.h"
+#include "QAD_Desktop.h"
 
-using namespace std;
+#include <qlineedit.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qbuttongroup.h>
 
 //=================================================================================
 // class    : MeasureGUI_BndBoxDlg()
@@ -42,39 +51,44 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_BndBoxDlg::MeasureGUI_BndBoxDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :MeasureGUI_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+MeasureGUI_BndBoxDlg::MeasureGUI_BndBoxDlg( QWidget* parent, SALOME_Selection* Sel )
+: MeasureGUI_Skeleton( parent, "MeasureGUI_PropertiesDlg", Sel )
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BOUNDING_BOX")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap(
+    "GEOM",tr( "ICON_DLG_BOUNDING_BOX" ) ) );
+  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap(
+    "GEOM",tr( "ICON_SELECT" ) ) );
 
-  setCaption(tr("GEOM_BNDBOX_TITLE"));
+  setCaption( tr( "GEOM_BNDBOX_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_BNDBOX"));
-  RadioButton1->setPixmap(image0);
+  
+  GroupConstructors->setTitle( tr( "GEOM_BNDBOX" ) );
+  RadioButton1->setPixmap( image0 );
 
-  GroupC1 = new MeasureGUI_1Sel6LineEdit_QTD(this, "GroupC1");
-  GroupC1->GroupBox1->setTitle(tr("GEOM_BNDBOX_OBJDIM"));
-  GroupC1->TextLabel1->setText(tr("GEOM_OBJECT"));
-  GroupC1->TextLabel2->setText(tr("GEOM_MIN"));
-  GroupC1->TextLabel3->setText(tr("GEOM_MAX"));
-  GroupC1->TextLabel4->setText(tr("GEOM_X"));
-  GroupC1->TextLabel5->setText(tr("GEOM_Y"));
-  GroupC1->TextLabel6->setText(tr("GEOM_Z"));
-  GroupC1->LineEdit11->setReadOnly(TRUE);
-  GroupC1->LineEdit12->setReadOnly(TRUE);
-  GroupC1->LineEdit21->setReadOnly(TRUE);
-  GroupC1->LineEdit22->setReadOnly(TRUE);
-  GroupC1->LineEdit31->setReadOnly(TRUE);
-  GroupC1->LineEdit32->setReadOnly(TRUE);
-  GroupC1->PushButton1->setPixmap(image1);
+  myGrp = new MeasureGUI_1Sel6LineEdit_QTD( this, "myGrp" );
+  myGrp->GroupBox1->setTitle( tr( "GEOM_BNDBOX_OBJDIM" ) );
+  myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
+  myGrp->TextLabel2->setText( tr( "GEOM_MIN" ) );
+  myGrp->TextLabel3->setText( tr( "GEOM_MAX" ) );
+  myGrp->TextLabel4->setText( tr( "GEOM_X" ) );
+  myGrp->TextLabel5->setText( tr( "GEOM_Y" ) );
+  myGrp->TextLabel6->setText( tr( "GEOM_Z" ) );
+  myGrp->LineEdit11->setReadOnly( TRUE );
+  myGrp->LineEdit12->setReadOnly( TRUE );
+  myGrp->LineEdit21->setReadOnly( TRUE );
+  myGrp->LineEdit22->setReadOnly( TRUE );
+  myGrp->LineEdit31->setReadOnly( TRUE );
+  myGrp->LineEdit32->setReadOnly( TRUE );
+  myGrp->PushButton1->setPixmap( image1 );
+  myGrp->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupC1, 1, 0);
+  Layout1->addWidget( myGrp, 1, 0 );
+  
   /***************************************************************/
 
   /* Initialisation */
-  Init();
+  Init( Sel );
 }
 
 
@@ -84,7 +98,6 @@ MeasureGUI_BndBoxDlg::MeasureGUI_BndBoxDlg(QWidget* parent, const char* name, SA
 //=================================================================================
 MeasureGUI_BndBoxDlg::~MeasureGUI_BndBoxDlg()
 {
-  // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -92,155 +105,105 @@ MeasureGUI_BndBoxDlg::~MeasureGUI_BndBoxDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_BndBoxDlg::Init()
+void MeasureGUI_BndBoxDlg::Init( SALOME_Selection* Sel )
 {
-  /* init variables */
-  myEditCurrentArgument = GroupC1->LineEdit1;
-
-   /* signals and slots connections */
-  connect(GroupC1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupC1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-
-  /* displays Dialog */
-  GroupC1->show();
-  this->show();
-
-  return;
+  mySelBtn = myGrp->PushButton1;
+  mySelEdit = myGrp->LineEdit1;
+  MeasureGUI_Skeleton::Init( Sel );
 }
 
-
 //=================================================================================
-// function : SelectionIntoArgument()
-// purpose  : Called when selection as changed or other case
-//=================================================================================
-void MeasureGUI_BndBoxDlg::SelectionIntoArgument()
-{
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  myEditCurrentArgument->setText("");
-  QString aString = "";
-
-  GroupC1->LineEdit11->setText("");
-  GroupC1->LineEdit12->setText("");
-  GroupC1->LineEdit21->setText("");
-  GroupC1->LineEdit22->setText("");
-  GroupC1->LineEdit31->setText("");
-  GroupC1->LineEdit32->setText("");
-
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1)
-    return;
-
-  /*  nbSel == 1  */
-  TopoDS_Shape S;
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S) || S.IsNull())
-    return;
-
-  GroupC1->LineEdit1->setText(aString);
-
-  this->CalculateAndDisplayBndBox(S);
-  return;
-}
-
-
-//=================================================================================
-// function : SetEditCurrentArgument()
+// function : processObject
 // purpose  :
 //=================================================================================
-void MeasureGUI_BndBoxDlg::SetEditCurrentArgument()
+void MeasureGUI_BndBoxDlg::processObject()
 {
-  QPushButton* send = (QPushButton*)sender();
+  double aXMin, aXMax, aYMin, aYMax, aZMin, aZMax;
 
-  if(send == GroupC1->PushButton1) {
-    GroupC1->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupC1->LineEdit1;
+  if ( !getParameters( aXMin, aXMax, aYMin, aYMax, aZMin, aZMax ) )
+  {
+    mySelEdit->setText( "" );
+    myGrp->LineEdit11->setText( "" );
+    myGrp->LineEdit12->setText( "" );
+    myGrp->LineEdit21->setText( "" );
+    myGrp->LineEdit22->setText( "" );
+    myGrp->LineEdit31->setText( "" );
+    myGrp->LineEdit32->setText( "" );
   }
-
-  this->SelectionIntoArgument();
-  return;
-}
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void MeasureGUI_BndBoxDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupC1->LineEdit1)
-    myEditCurrentArgument = GroupC1->LineEdit1;
   else
-    return;
-
-  MeasureGUI_Skeleton::LineEditReturnPressed();
-  return;
-}
-
-
-//=================================================================================
-// function : ActivateThisDialog()
-// purpose  :
-//=================================================================================
-void MeasureGUI_BndBoxDlg::ActivateThisDialog()
-{
-  MeasureGUI_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
-}
-
-
-//=================================================================================
-// function : enterEvent()
-// purpose  :
-//=================================================================================
-void MeasureGUI_BndBoxDlg::enterEvent(QEvent* e)
-{
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
-}
-
-
-//=================================================================================
-// function : CalculateAndDisplayBndBox()
-// purpose  :
-//=================================================================================
-void MeasureGUI_BndBoxDlg::CalculateAndDisplayBndBox(const TopoDS_Shape& S)
-{
-  GroupC1->LineEdit11->setText("");
-  GroupC1->LineEdit12->setText("");
-  GroupC1->LineEdit21->setText("");
-  GroupC1->LineEdit22->setText("");
-  GroupC1->LineEdit31->setText("");
-  GroupC1->LineEdit32->setText("");
-
-  if(S.IsNull()) 
-    return;
-
-  Standard_Real axmin, aymin, azmin, axmax, aymax, azmax;
-  Bnd_Box B;
-
-  try {
-    BRepBndLib::Add(S,B);
-    B.Get(axmin, aymin, azmin, axmax, aymax, azmax);
-    GroupC1->LineEdit11->setText(tr("%1").arg(axmin, 12, 'f', 6));
-    GroupC1->LineEdit12->setText(tr("%1").arg(axmax, 12, 'f', 6));
-    GroupC1->LineEdit21->setText(tr("%1").arg(aymin, 12, 'f', 6));
-    GroupC1->LineEdit22->setText(tr("%1").arg(aymax, 12, 'f', 6));
-    GroupC1->LineEdit31->setText(tr("%1").arg(azmin, 12, 'f', 6));
-    GroupC1->LineEdit32->setText(tr("%1").arg(azmax, 12, 'f', 6));
+  {
     
-    mySimulationTopoDs = BRepPrimAPI_MakeBox(gp_Pnt(axmin, aymin, azmin), gp_Pnt(axmax, aymax, azmax)).Shape();
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
+    myGrp->LineEdit11->setText( tr( "%1" ).arg( aXMin, 12, 'f', 6 ) );
+    myGrp->LineEdit12->setText( tr( "%1" ).arg( aXMax, 12, 'f', 6 ) );
+
+    myGrp->LineEdit21->setText( tr( "%1" ).arg( aYMin, 12, 'f', 6 ) );
+    myGrp->LineEdit22->setText( tr( "%1" ).arg( aYMax, 12, 'f', 6 ) );
+
+    myGrp->LineEdit31->setText( tr( "%1" ).arg( aZMin, 12, 'f', 6 ) );
+    myGrp->LineEdit32->setText( tr( "%1" ).arg( aZMax, 12, 'f', 6 ) );            
   }
-  catch(Standard_Failure) {
-    MESSAGE("Catch intercepted in CalculateAndDisplayBndBox()");
-  }
-  return;
 }
+
+//=================================================================================
+// function : getParameters
+// purpose  :
+//=================================================================================
+bool MeasureGUI_BndBoxDlg::getParameters( double& theXmin, double& theXmax,
+                                          double& theYmin, double& theYmax,
+                                          double& theZmin, double& theZmax )
+{
+  if ( myObj->_is_nil() )
+    return false;
+  else
+  {
+    try
+    {
+      GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetBoundingBox(
+        myObj, theXmin, theXmax, theYmin, theYmax, theZmin, theZmax );
+    }
+    catch( const SALOME::SALOME_Exception& e )
+    {
+      QtCatchCorbaException( e );
+      return false;
+    }
+
+    return getOperation()->IsDone();
+  }
+}
+
+//=================================================================================
+// function : buildPrs
+// purpose  :
+//=================================================================================
+SALOME_Prs* MeasureGUI_BndBoxDlg::buildPrs()
+{
+  double aXMin, aYMin, aZMin, aXMax, aYMax, aZMax;
+
+  if ( myObj->_is_nil() || !getParameters( aXMin, aXMax, aYMin, aYMax, aZMin, aZMax ) )
+    return 0;
+
+  TopoDS_Shape aShape = BRepPrimAPI_MakeBox( gp_Pnt( aXMin, aYMin, aZMin ),
+                                             gp_Pnt( aXMax, aYMax, aZMax ) ).Shape();
+       
+  return !aShape.IsNull() ? getDisplayer()->BuildPrs( aShape ) : 0;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

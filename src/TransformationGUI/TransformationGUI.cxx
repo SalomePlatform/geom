@@ -24,10 +24,11 @@
 //  File   : TransformationGUI.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 using namespace std;
 #include "TransformationGUI.h"
+#include "QAD_Desktop.h"
 
 #include "SALOMEGUI_QtCatchCorbaException.hxx"
 
@@ -37,17 +38,30 @@ using namespace std;
 #include "TransformationGUI_RotationDlg.h"           // Method ROTATION
 #include "TransformationGUI_MirrorDlg.h"             // Method MIRROR
 #include "TransformationGUI_ScaleDlg.h"              // Method SCALE
+#include "TransformationGUI_OffsetDlg.h"             // Method OFFSET
+#include "TransformationGUI_PositionDlg.h"           // Method POSITION
+
+TransformationGUI* TransformationGUI::myGUIObject = 0;
+
+//=======================================================================
+// function : GetTransformationGUI()
+// purpose  : Get the only TransformationGUI object [ static ]
+//=======================================================================
+TransformationGUI* TransformationGUI::GetTransformationGUI()
+{
+  if ( myGUIObject == 0 ) {
+    // init TransformationGUI only once
+    myGUIObject = new TransformationGUI();
+  }
+  return myGUIObject;
+}
 
 //=======================================================================
 // function : TransformationGUI()
 // purpose  : Constructor
 //=======================================================================
-TransformationGUI::TransformationGUI() :
-  QObject()
+TransformationGUI::TransformationGUI() : GEOMGUI()
 {
-  myGeomBase = new GEOMBase();
-  myGeomGUI = GEOMContext::GetGeomGUI();
-  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -66,40 +80,50 @@ TransformationGUI::~TransformationGUI()
 //=======================================================================
 bool TransformationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  TransformationGUI* myTransformationGUI = new TransformationGUI();
-  myTransformationGUI->myGeomGUI->EmitSignalDeactivateDialog();
+  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
+  QDialog* aDlg = NULL;
 
   switch (theCommandID)
     {
     case 5021: // TRANSLATION
       {	
-  	TransformationGUI_TranslationDlg *aDlg = new TransformationGUI_TranslationDlg(parent, "", myTransformationGUI, Sel);
+  	aDlg = new TransformationGUI_TranslationDlg(parent, "", Sel);
 	break;
       }
     case 5022: // ROTATION
       {	
-  	TransformationGUI_RotationDlg *aDlg = new TransformationGUI_RotationDlg(parent, "", myTransformationGUI, Sel);
+  	aDlg = new TransformationGUI_RotationDlg(parent, "", Sel);
 	break;
       }
-    case 5023: // MIRROR
+    case 5023: // POSITION
       {	
-	TransformationGUI_MirrorDlg *aDlg = new TransformationGUI_MirrorDlg(parent, "", myTransformationGUI, Sel);
+	aDlg = new TransformationGUI_PositionDlg(parent, "", Sel);
 	break;
       }
-    case 5024: // SCALE
+    case 5024: // MIRROR
       {	
-  	TransformationGUI_ScaleDlg *aDlg = new TransformationGUI_ScaleDlg(parent, "", myTransformationGUI, Sel );
+	aDlg = new TransformationGUI_MirrorDlg(parent, "", Sel);
 	break;
       }
-    case 5025: // MULTI TRANSLATION
+    case 5025: // SCALE
       {	
-  	TransformationGUI_MultiTranslationDlg *aDlg = new TransformationGUI_MultiTranslationDlg(parent, "", myTransformationGUI, Sel);
+  	aDlg = new TransformationGUI_ScaleDlg(parent, "", Sel );
 	break;
       }
-    case 5026: // MULTI ROTATION
+    case 5026: // OFFSET
       {	
-  	TransformationGUI_MultiRotationDlg *aDlg = new TransformationGUI_MultiRotationDlg(parent, "", myTransformationGUI, Sel);
+  	aDlg = new TransformationGUI_OffsetDlg(parent, "", Sel );
+	break;
+      }  
+    case 5027: // MULTI TRANSLATION
+      {	
+  	aDlg = new TransformationGUI_MultiTranslationDlg(parent, "", Sel);
+	break;
+      }
+    case 5028: // MULTI ROTATION
+      {	
+  	aDlg = new TransformationGUI_MultiRotationDlg(parent, "", Sel);
 	break;
       }
     default:
@@ -108,218 +132,11 @@ bool TransformationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	break;
       }
     }
+
+  if ( aDlg != NULL )
+    aDlg->show();
+
   return true;
-}
-
-
-//=================================================================================
-// function : MakeTranslationAndDisplay()
-// purpose  : Translate a shape
-//=================================================================================
-void TransformationGUI::MakeTranslationAndDisplay(GEOM::GEOM_Shape_ptr Shape, gp_Vec V)
-{
-  try {
-    GEOM::GEOM_Shape_var result = myGeom->MakeTranslation(Shape, V.X(), V.Y(), V.Z());
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-      return;
-    }
-    result->NameType(Shape->NameType());
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }  
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
-
-//=======================================================================================
-// function : MakeRotationAndDisplay()
-// purpose  :
-//=======================================================================================
-void TransformationGUI::MakeRotationAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Pnt loc,
-					       const gp_Dir dir, const Standard_Real angle)
-{
-  try {
-    const GEOM::AxisStruct axis = myGeom->MakeAxisStruct(loc.X(), loc.Y(), loc.Z(),
-							 dir.X(), dir.Y(), dir.Z());
-    GEOM::GEOM_Shape_var result = myGeom->MakeRotation(Shape, axis, angle);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-      return ;
-    }
-    result->NameType(Shape->NameType());
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }  
-  return;
-}
-
-
-//=====================================================================================
-// function : MakeMirrorAndDisplay()
-// purpose  :
-//=====================================================================================
-void TransformationGUI::MakeMirrorAndDisplay(GEOM::GEOM_Shape_ptr Shape1, GEOM::GEOM_Shape_ptr Shape2)
-{
-  try {
-    GEOM::GEOM_Shape_var result = myGeom->MakeMirrorByPlane(Shape1, Shape2);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
-      return;
-    }  
-    result->NameType(Shape1->NameType());
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
-
-//=====================================================================================
-// function : MakeScaleAndDisplay()
-// purpose  :
-//=====================================================================================
-void TransformationGUI::MakeScaleAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Pnt centralPoint,
-					    const Standard_Real factor)
-{
-  try {
-    GEOM::PointStruct P = myGeom->MakePointStruct(centralPoint.X(), centralPoint.Y(), centralPoint.Z());
-    GEOM::GEOM_Shape_var result = myGeom->MakeScaleTransform(Shape, P, factor);
-    result->NameType(Shape->NameType());
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-    else 
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
-  }
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
-
-//=================================================================================
-// function : MakeMultiTranslation1DAndDisplay()
-// purpose  : Multi-Translate a shape
-//=================================================================================
-void TransformationGUI::MakeMultiTranslation1DAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Dir Dir,
-							 const double Step, const short NbTimes) 
-{
-  try {
-    GEOM::PointStruct d = myGeom->MakePointStruct(Dir.X(), Dir.Y(), Dir.Z());
-    GEOM::DirStruct dstruct = myGeom->MakeDirection(d);
-
-    GEOM::GEOM_Shape_var result = myGeom->MakeMultiTranslation1D(Shape, dstruct, Step, NbTimes);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-      return;
-    }
-    result->NameType(tr("GEOM_COMPOUND"));
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }  
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
-
-//=================================================================================
-// function : MakeMultiTranslation2DAndDisplay()
-// purpose  : Multi-Translate a shape
-//=================================================================================
-void TransformationGUI::MakeMultiTranslation2DAndDisplay(GEOM::GEOM_Shape_ptr Shape,
-							 const gp_Dir Dir1,const double Step1, const short NbTimes1,
-							 const gp_Dir Dir2, const double Step2, const short NbTimes2) 
-{
-  try {
-    GEOM::PointStruct d1 = myGeom->MakePointStruct(Dir1.X(), Dir1.Y(), Dir1.Z());
-    GEOM::DirStruct dstruct1 = myGeom->MakeDirection(d1);
-    GEOM::PointStruct d2 = myGeom->MakePointStruct(Dir2.X(), Dir2.Y(), Dir2.Z());
-    GEOM::DirStruct dstruct2 = myGeom->MakeDirection(d2);
-
-    GEOM::GEOM_Shape_var result = myGeom->MakeMultiTranslation2D(Shape, dstruct1, Step1, NbTimes1,
-								 dstruct2, Step2, NbTimes2);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-      return;
-    }
-    result->NameType(tr("GEOM_COMPOUND"));
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }  
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
-
-//=================================================================================
-// function : MakeMultiRotation1DAndDisplay()
-// purpose  : Multi-Rotate a shape
-//=================================================================================
-void TransformationGUI::MakeMultiRotation1DAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Dir Dir, 
-						      const gp_Pnt Loc, const short NbTimes) 
-{
-  try {
-    GEOM::PointStruct d = myGeom->MakePointStruct(Dir.X(), Dir.Y(), Dir.Z());
-    GEOM::DirStruct dstruct = myGeom->MakeDirection(d) ;
-    GEOM::PointStruct pstruct = myGeom->MakePointStruct(Loc.X(), Loc.Y(), Loc.Z());
-
-    GEOM::GEOM_Shape_var result = myGeom->MakeMultiRotation1D(Shape, dstruct, pstruct, NbTimes);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-      return;
-    }
-    result->NameType(tr("GEOM_COMPOUND"));
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }  
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
-
-//=================================================================================
-// function : MakeMultiRotation2DAndDisplay()
-// purpose  : Multi-Rotate a shape
-//=================================================================================
-void TransformationGUI::MakeMultiRotation2DAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Dir Dir,
-						      const gp_Pnt Loc, const double Ang, const short NbTimes1,
-						const double Step, const short NbTimes2) 
-{
-  try {
-    GEOM::PointStruct d = myGeom->MakePointStruct(Dir.X(), Dir.Y(), Dir.Z());
-    GEOM::DirStruct dstruct = myGeom->MakeDirection(d);
-    GEOM::PointStruct pstruct = myGeom->MakePointStruct(Loc.X(), Loc.Y(), Loc.Z());
-
-    GEOM::GEOM_Shape_var result = myGeom->MakeMultiRotation2D(Shape, dstruct, pstruct, 
-							      Ang, NbTimes1, Step, NbTimes2);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-      return;
-    }
-    result->NameType(tr("GEOM_COMPOUND"));
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }  
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
 }
 
 
@@ -328,6 +145,8 @@ void TransformationGUI::MakeMultiRotation2DAndDisplay(GEOM::GEOM_Shape_ptr Shape
 //=====================================================================================
 extern "C"
 {
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
-  {return TransformationGUI::OnGUIEvent(theCommandID, parent);}
+  GEOMGUI* GetLibGUI()
+  {
+    return TransformationGUI::GetTransformationGUI();
+  }
 }

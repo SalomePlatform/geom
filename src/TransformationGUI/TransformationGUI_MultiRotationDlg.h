@@ -33,11 +33,6 @@
 #include "DlgRef_2Sel4Spin1Check.h"
 #include "DlgRef_2Sel1Spin.h"
 
-#include "TransformationGUI.h"
-
-#include "GEOM_ShapeTypeFilter.hxx"
-#include <gp_Vec.hxx>
-#include <gp_Dir.hxx>
 
 //=================================================================================
 // class    : TransformationGUI_MultiRotationDlg
@@ -48,43 +43,40 @@ class TransformationGUI_MultiRotationDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_MultiRotationDlg(QWidget* parent = 0, const char* name = 0, TransformationGUI* theTransformationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_MultiRotationDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_MultiRotationDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+    
+    virtual void closeEvent( QCloseEvent* e );
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakeMultiRotationSimulationAndDisplay();
-
-    TransformationGUI* myTransformationGUI;
-
-    double step;
-    int myConstructorId;   /* Current constructor id = radio button id */ 
-    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;   /* Filters selection */
-
-    TopoDS_Shape myBase;
-    GEOM::GEOM_Shape_var myGeomShape;   /* is myBase */
-    gp_Vec myVec;
+   
+    GEOM::GEOM_Object_var myBase, myVector;
     int myNbTimes1;
     int myNbTimes2;
     Standard_Real myAng;
     Standard_Real myStep;
-    gp_Dir myDir;
-    gp_Pnt myLoc;
-    bool myOkBase; 
-    bool myOkDir;
-
+    
     DlgRef_2Sel1Spin* GroupPoints;
     DlgRef_2Sel4Spin1Check* GroupDimensions;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
+    void ClickOnCancel();
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ReverseAngle(int state);
+    void ReverseAngle();
     void ValueChangedInSpinBox(double newValue);
     void ConstructorsClicked(int constructorId);
 

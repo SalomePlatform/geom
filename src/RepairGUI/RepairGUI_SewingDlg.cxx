@@ -1,23 +1,23 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
 //
 //
 //
@@ -29,16 +29,27 @@
 using namespace std;
 #include "RepairGUI_SewingDlg.h"
 
-#include "QAD_Config.h"
+#include "QAD_RightFrame.h"
+#include "QAD_Desktop.h"
+#include "QAD_MessageBox.h"
+#include "OCCViewer_Viewer3d.h"
+#include "SALOME_ListIteratorOfListIO.hxx"
+
+#include "GEOMImpl_Types.hxx"
+
+#include <TopAbs.hxx>
+
+#define DEFAULT_TOLERANCE_VALUE 1e-07
+
 
 //=================================================================================
 // class    : RepairGUI_SewingDlg()
-// purpose  : Constructs a RepairGUI_SewingDlg which is a child of 'parent', with the 
+// purpose  : Constructs a RepairGUI_SewingDlg  which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_SewingDlg::RepairGUI_SewingDlg(QWidget* parent,  const char* name, RepairGUI* theRepairGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+RepairGUI_SewingDlg::RepairGUI_SewingDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SEWING")));
@@ -47,22 +58,33 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg(QWidget* parent,  const char* name, Rep
   setCaption(tr("GEOM_SEWING_TITLE"));
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_SEWING"));
+  GroupConstructors->setTitle(tr("GEOM_SEWING_TITLE"));
   RadioButton1->setPixmap(image0);
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_1Sel1Spin(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_PRECISION"));
+  GroupPoints = new DlgRef_1Sel_Ext(this, "GroupPoints");
+  GroupPoints->GroupBox1->setTitle(tr("GEOM_SEWING"));
+  GroupPoints->TextLabel1->setText(tr("GEOM_SELECTED_SHAPE"));
   GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
+
+  QGridLayout* aLay = new QGridLayout( 0, 2, 2, 0, 6, "aLay" );
+  myTolEdt = new QAD_SpinBoxDbl( GroupPoints->GroupBox1, 0, 100, 1e-7, 10, 1e-10 );
+  myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
+  QLabel* aLbl1 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->GroupBox1 );
+	myFreeBoundBtn = new QPushButton( tr( "GEOM_DETECT" ), GroupPoints->GroupBox1 );
+  QLabel* aLbl2 = new QLabel( tr( "GEOM_FREE_BOUNDARIES" ), GroupPoints->GroupBox1 );
+  aLay->addWidget( aLbl1, 0, 0 );
+  aLay->addWidget( myTolEdt, 0, 1 );
+  aLay->addWidget( aLbl2, 1, 0 );
+  aLay->addWidget( myFreeBoundBtn, 1, 1 );
+
+  GroupPoints->getGroupBoxLayout()->addLayout( aLay, 3, 0 );
   /***************************************************************/
 
-  /* Initialisations */
-  myRepairGUI = theRepairGUI;
   Init();
 }
 
@@ -73,7 +95,6 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg(QWidget* parent,  const char* name, Rep
 //=================================================================================
 RepairGUI_SewingDlg::~RepairGUI_SewingDlg()
 {
-  // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -86,83 +107,94 @@ void RepairGUI_SewingDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  myOkListShapes = false;
-  myPrecision = 0.00001;
+  myObject = GEOM::GEOM_Object::_nil();
 
-  /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
+  myGeomGUI->SetState( 0 );
+  initSelection();
 
-  /* min, max, step and decimals for spin boxes */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.00001, 999.99999, step, 5);
-  GroupPoints->SpinBox_DX->SetValue(myPrecision);
-  
+  myClosed = -1;
+  myOpen = -1;
+	
   /* signals and slots connections */
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
+  connect(myFreeBoundBtn, SIGNAL(clicked()), this, SLOT(onDetect()));
 
-  return;
+  initName( tr( "SEWING_NEW_OBJ_NAME" ) );
 }
 
 
 //=================================================================================
 // function : ClickOnOk()
-// purpose  :
+// purpose  : Same than click on apply but close this dialog.
 //=================================================================================
 void RepairGUI_SewingDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
+
 
 
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void RepairGUI_SewingDlg::ClickOnApply()
+bool RepairGUI_SewingDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if(myOkListShapes)  
-    myRepairGUI->MakeSewingAndDisplay(myListShapes, myPrecision);
-  return;
+  if ( !onAccept() )
+  	return false;
+
+  initName();
+
+  GroupPoints->LineEdit1->setText("");
+  myObject = GEOM::GEOM_Object::_nil();
+
+  initSelection();
+
+  return true;
+}
+
+
+//=================================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=================================================================================
+void RepairGUI_SewingDlg::ClickOnCancel()
+{
+  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
 //=================================================================================
 // function : SelectionIntoArgument()
-// purpose  : Called when selection as changed or other case
+// purpose  : Called when selection
 //=================================================================================
 void RepairGUI_SewingDlg::SelectionIntoArgument()
 {
+  erasePreview();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
-  myOkListShapes = false; 
+  myObject = GEOM::GEOM_Object::_nil();
 
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel < 2)
-    return;
-
-  myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes);  
-  myEditCurrentArgument->setText(aString);
-  myOkListShapes = true;
-  /* no simulation */
-  return;
+  if ( mySelection->IObjectCount() == 1 )
+  {
+    Handle(SALOME_InteractiveObject) anIO = mySelection->firstIObject();
+    Standard_Boolean aRes;
+    myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
+    if ( aRes )
+      myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+  }
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -170,14 +202,38 @@ void RepairGUI_SewingDlg::SelectionIntoArgument()
 //=================================================================================
 void RepairGUI_SewingDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();
-
-  if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-    this->SelectionIntoArgument();
+  const QObject* send = sender();
+  if ( send == GroupPoints->PushButton1 )
+  {
+    myEditCurrentArgument->setFocus();
+    SelectionIntoArgument();
   }
-  return;
+}
+
+
+//=================================================================================
+// function : LineEditReturnPressed()
+// purpose  :
+//=================================================================================
+void RepairGUI_SewingDlg::LineEditReturnPressed()
+{
+  const QObject* send = sender();
+  if( send == GroupPoints->LineEdit1 )
+  {
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
+}
+
+
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  :
+//=================================================================================
+void RepairGUI_SewingDlg::DeactivateActiveDialog()
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -189,29 +245,121 @@ void RepairGUI_SewingDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  return;
+
+  GroupPoints->LineEdit1->setText("");
+  myObject = GEOM::GEOM_Object::_nil();
+
+  myClosed = -1;
+  myOpen = -1;
+
+  myGeomGUI->SetState( 0 );
+  initSelection();
 }
 
 
 //=================================================================================
 // function : enterEvent()
-// purpose  :
+// purpose  : Mouse enter onto the dialog to activate it
 //=================================================================================
 void RepairGUI_SewingDlg::enterEvent(QEvent* e)
 {
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
 
 //=================================================================================
-// function : ValueChangedInSpinBox()
+// function : closeEvent()
 // purpose  :
 //=================================================================================
-void RepairGUI_SewingDlg::ValueChangedInSpinBox(double newValue)
+void RepairGUI_SewingDlg::closeEvent(QCloseEvent* e)
 {
-  myPrecision = newValue;
-  return;
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::closeEvent( e );
+}
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr RepairGUI_SewingDlg::createOperation()
+{
+  return getGeomEngine()->GetIHealingOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool RepairGUI_SewingDlg::isValid( QString& msg )
+{
+  myClosed = -1;
+  return !myObject->_is_nil() && ( IsPreview() || myTolEdt->value() > 0. );
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool RepairGUI_SewingDlg::execute( ObjectList& objects )
+{
+  bool aResult = false;
+  if ( IsPreview() ) // called from onDetect(): detect free boundary edges, highlight them (add to objects), display message dialog
+  {
+    GEOM::ListOfGO_var aClosed, anOpen;
+
+    aResult = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->GetFreeBoundary( myObject, aClosed, anOpen );
+
+    if ( aResult )
+    {
+      myClosed = aClosed->length();
+      myOpen = anOpen->length();
+      int i;
+      for ( i = 0; i < myClosed; i++ )
+	objects.push_back( aClosed[i]._retn() );
+      for ( i = 0; i < myOpen; i++ )
+	objects.push_back( anOpen[i]._retn() );
+    }
+    else
+      myClosed = -1;
+  }
+  else
+  {
+    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->Sew( myObject, myTolEdt->value() );
+    aResult = !anObj->_is_nil();
+    if ( aResult )
+      objects.push_back( anObj._retn() );
+  }
+
+  return aResult;
+}
+
+//=================================================================================
+// function : initSelection
+// purpose  :
+//=================================================================================
+void RepairGUI_SewingDlg::initSelection()
+{
+  TColStd_MapOfInteger aTypes;
+  aTypes.Add( GEOM_SHELL );
+  aTypes.Add( GEOM_SOLID );
+  aTypes.Add( GEOM_COMPOUND );
+  globalSelection( aTypes );
+}
+
+//=================================================================================
+// function : onDetect
+// purpose  :
+//=================================================================================
+void RepairGUI_SewingDlg::onDetect()
+{
+  displayPreview( false, true, true, 3 );
+
+  // field myClosed,myOpen is initialized in execute() method, called by displayPreview().
+  QString msg;
+  if ( myClosed != -1 )
+    msg = tr( "GEOM_FREE_BOUNDS_MSG" ).arg( myClosed + myOpen ).arg( myClosed ).arg( myOpen );
+  else
+    msg = tr( "GEOM_FREE_BOUNDS_ERROR" );
+  QAD_MessageBox::info1( this, tr( "GEOM_FREE_BOUNDS_TLT" ), msg, "Close" );
 }

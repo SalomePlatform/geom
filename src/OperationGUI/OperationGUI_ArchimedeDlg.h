@@ -30,11 +30,8 @@
 #define DIALOGBOX_ARCHIMEDE_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel3Spin.h"
 
-#include "OperationGUI.h"
-
-//#include "SALOME_InteractiveObject.hxx"
+class DlgRef_1Sel3Spin;
 
 //=================================================================================
 // class    : OperationGUI_ArchimedeDlg
@@ -45,34 +42,33 @@ class OperationGUI_ArchimedeDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    OperationGUI_ArchimedeDlg(QWidget* parent = 0, const char* name = 0, OperationGUI* theOperationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
-    ~OperationGUI_ArchimedeDlg();
+                                        OperationGUI_ArchimedeDlg( QWidget* parent,
+                                                                   SALOME_Selection* Sel );
+                                        ~OperationGUI_ArchimedeDlg();
+
+protected:
+
+    // redefined from GEOMBase_Helper
+    
+    virtual GEOM::GEOM_IOperations_ptr  createOperation();
+    virtual bool                        isValid( QString& msg );
+    virtual bool                        execute( ObjectList& objects );    
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
+    void                                Init( SALOME_Selection* );
+    void                                enterEvent(QEvent* e);
 
-    double step;
-
-    OperationGUI* myOperationGUI;
-
-    Handle(SALOME_InteractiveObject) myIO; 
-    Standard_Real myWeight;
-    Standard_Real myWaterDensity;
-    Standard_Real myMeshingDeflection;
-    bool myOkIO; 
-
-    DlgRef_1Sel3Spin* GroupPoints;
+private:    
+    GEOM::GEOM_Object_var               myShape;
+    DlgRef_1Sel3Spin*                   GroupPoints;
+    double                              myStep;
 
 private slots:
-    void ClickOnOk();
-    void ClickOnApply();
-    void ActivateThisDialog();
-    void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
-    void ValueChangedInSpinBox(double newValue);
-
+    void                                ClickOnOk();
+    bool                                ClickOnApply();
+    void                                ActivateThisDialog();
+    void                                LineEditReturnPressed();
+    void                                SelectionIntoArgument();
 };
 
 #endif // DIALOGBOX_ARCHIMEDE_H

@@ -21,41 +21,35 @@
 //
 //
 //
-//  File   : BooleanGUI.h
+//  File   : GenerationGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #ifndef GENERATIONGUI_H
 #define GENERATIONGUI_H
 
-#include "GEOMBase.h"
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : GenerationGUI
 // purpose  :
 //=================================================================================
-class GenerationGUI : public QObject
+class GenerationGUI : public GEOMGUI
 {
-  Q_OBJECT /* for QT compatibility */
+protected:
+  GenerationGUI(); // hide constructor to avoid direct creation
 
 public :
-  GenerationGUI();
   ~GenerationGUI();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  // Get the only GenerationGUI object
+  static GenerationGUI* GetGenerationGUI();
 
-  void MakePrismAndDisplay(GEOM::GEOM_Shape_ptr BaseShape, const gp_Pnt P1, const gp_Pnt P2);
-  void MakeRevolutionAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Pnt loc, 
-				const gp_Dir dir, Standard_Real revolAngle);
-  void MakeFillingAndDisplay(GEOM::GEOM_Shape_ptr SectionShape, const short mindeg, const short maxdeg, 
-			     const double tol3d, const double tol2d, const short nbiter);
-  void MakePipeAndDisplay(GEOM::GEOM_Shape_ptr aPath, GEOM::GEOM_Shape_ptr aBase);
+  bool OnGUIEvent( int theCommandID, QAD_Desktop* parent );
 
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
-
+private:
+  static GenerationGUI* myGUIObject; // the only GenerationGUI object
 };
 
 #endif

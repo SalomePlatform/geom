@@ -33,11 +33,6 @@
 #include "DlgRef_2Sel2Spin1Check.h"
 #include "DlgRef_3Sel4Spin2Check.h"
 
-#include "TransformationGUI.h"
-
-#include "GEOM_ShapeTypeFilter.hxx"
-#include <gp_Vec.hxx>
-#include <gp_Dir.hxx>
 
 //=================================================================================
 // class    : TransformationGUI_MultiTranslationDlg
@@ -48,45 +43,41 @@ class TransformationGUI_MultiTranslationDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_MultiTranslationDlg(QWidget* parent = 0, const char* name = 0, TransformationGUI* theTransformationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_MultiTranslationDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_MultiTranslationDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+    
+    virtual void closeEvent( QCloseEvent* e );
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakeMultiTranslationSimulationAndDisplay();
-
-    TransformationGUI* myTransformationGUI;
-
-    double step;
-    int myConstructorId;   /* Current constructor id = radio button id */ 
-    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;   /* Filters selection */
-
-    TopoDS_Shape myBase;
-    GEOM::GEOM_Shape_var myGeomShape;   /* is myBase */
-    gp_Vec myVec;
-    int myNbTimes1;
-    int myNbTimes2;
-    Standard_Real myStep1;
-    Standard_Real myStep2;
-    gp_Dir myDir1;
-    gp_Dir myDir2;
-    bool myOkBase; 
-    bool myOkDir1;
-    bool myOkDir2;
-
+        
+    GEOM::GEOM_Object_var myBase, myVectorU, myVectorV ;
+    int myNbTimesU;
+    int myNbTimesV;
+    Standard_Real myStepU;
+    Standard_Real myStepV;
+    
     DlgRef_2Sel2Spin1Check* GroupPoints;
     DlgRef_3Sel4Spin2Check* GroupDimensions;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
+    void ClickOnCancel();
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ReverseAngle1(int state);
-    void ReverseAngle2(int state);
+    void ReverseStepU();
+    void ReverseStepV();
     void ValueChangedInSpinBox(double newValue);
     void ConstructorsClicked(int constructorId);
 

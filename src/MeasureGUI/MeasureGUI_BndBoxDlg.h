@@ -30,9 +30,8 @@
 #define DIALOGBOX_BNDBOX_H
 
 #include "MeasureGUI_Skeleton.h"
-#include "MeasureGUI_1Sel6LineEdit_QTD.h"
 
-#include "MeasureGUI.h"
+class MeasureGUI_1Sel6LineEdit_QTD;
 
 //=================================================================================
 // class    : DialogBox_PROPERTIES
@@ -43,22 +42,39 @@ class MeasureGUI_BndBoxDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-    MeasureGUI_BndBoxDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
-    ~MeasureGUI_BndBoxDlg();
+                                        MeasureGUI_BndBoxDlg( QWidget* parent,
+                                                              SALOME_Selection* Sel );
+                                        ~MeasureGUI_BndBoxDlg();
+protected:
+
+    // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
+    virtual void                        processObject();
+    virtual SALOME_Prs*                 buildPrs();
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
-    void CalculateAndDisplayBndBox(const TopoDS_Shape& S);
 
-    MeasureGUI_1Sel6LineEdit_QTD* GroupC1;
+    void                                Init( SALOME_Selection* Sel );
+    bool                                getParameters( double& Xmin, double& Xmax,
+                                                       double& Ymin, double& Ymax,
+                                                       double& Zmin, double& Zmax );
 
-private slots:
-    void SetEditCurrentArgument();
-    void SelectionIntoArgument();
-    void LineEditReturnPressed();
-    void ActivateThisDialog();
+private:
 
+    MeasureGUI_1Sel6LineEdit_QTD*       myGrp;
 };
 
 #endif // DIALOGBOX_BNDBOX_H
+
+
+
+
+
+
+
+
+
+
+
+
+
+

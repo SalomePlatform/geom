@@ -72,14 +72,14 @@ public:
  // Methods PUBLIC
  // 
 Standard_EXPORT GEOM_InteractiveObject();
-Standard_EXPORT GEOM_InteractiveObject(const Standard_CString anIOR,
-				       const Standard_CString aFatherIOR,
-				       const Standard_CString aComponentDataType,
-				       const Standard_CString anEntry = "");
-Standard_EXPORT   void setIOR(const Standard_CString anEntry) ;
-Standard_EXPORT   Standard_CString getIOR() ;
-Standard_EXPORT   void setFatherIOR(const Standard_CString anEntry) ;
-Standard_EXPORT   Standard_CString getFatherIOR() ;
+Standard_EXPORT GEOM_InteractiveObject(const char* anIOR,
+				       const char* aFatherIOR,
+				       const char* aComponentDataType,
+				       const char* anEntry = "");
+Standard_EXPORT   void setIOR(const char* anEntry) ;
+Standard_EXPORT   const char* getIOR() ;
+Standard_EXPORT   void setFatherIOR(const char* anEntry) ;
+Standard_EXPORT   const char* getFatherIOR() ;
 Standard_EXPORT   virtual Standard_Boolean isSame(const Handle(SALOME_InteractiveObject)& anIO) ;
 Standard_EXPORT   ~GEOM_InteractiveObject();
 
@@ -110,8 +110,8 @@ private:
 
  // Fields PRIVATE
  //
-Standard_CString myIOR;
-Standard_CString myFatherIOR;
+std::string myIOR;
+std::string myFatherIOR;
 
 
 };

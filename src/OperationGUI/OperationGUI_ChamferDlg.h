@@ -30,9 +30,9 @@
 #define DIALOGBOX_CHAMFER_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel2Spin.h"
+#include <TColStd_IndexedMapOfInteger.hxx>
 
-#include "OperationGUI.h"
+class DlgRef_SpinBox;
 
 //=================================================================================
 // class    : OperationGUI_ChamferDlg
@@ -42,48 +42,57 @@ class OperationGUI_ChamferDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
+  enum { MainObj1, MainObj2, Face1, Face2, MainObj3, Faces };
+  enum { SpinBox1, SpinBox21, SpinBox22, SpinBox31, SpinBox32 };
+
 public:
-    OperationGUI_ChamferDlg(QWidget* parent = 0, const char* name = 0, OperationGUI* theOperationGUI = 0, SALOME_Selection* Sel = 0, Handle(AIS_InteractiveContext) ic = 0, bool modal = FALSE, WFlags fl = 0);
-    ~OperationGUI_ChamferDlg();
+                                        OperationGUI_ChamferDlg( QWidget* parent,
+                                                                 SALOME_Selection* Sel );
+    virtual                             ~OperationGUI_ChamferDlg();
 
-private :
-    void Init(Handle(AIS_InteractiveContext) ic);
-    void enterEvent(QEvent* e);
-    void closeEvent(QCloseEvent* e);
-    void MakeFilletSimulationAndDisplay();
-
-    void ResetStateOfDialog();
-    void MakePreview();
-
-    OperationGUI* myOperationGUI;
-
-    int myConstructorId;   /* Current constructor id = radio button id */
-
-    /* Interactive and local context management see also : bool myUseLocalContext() */
-    Handle(AIS_InteractiveContext) myIC;   /* Interactive context */ 
-    Standard_Integer myLocalContextId;   /* identify a local context used by this method */
-    bool myUseLocalContext;   /* true when this method as opened a local context  */
-
-    TopoDS_Shape myShape;
-    bool myOkShape;
-    char* myShapeIOR;
-    int myShapeType;
-    double myD1;
-    double myD2;
-    
-    DlgRef_1Sel2Spin* Group1;
+protected:
+    // redefined from GEOMBase_Helper
+    virtual                             GEOM::GEOM_IOperations_ptr createOperation();
+    virtual                             bool isValid( QString& msg );
+    virtual                             bool execute( ObjectList& objects );    
 
 private slots:
-    void ClickOnOk();
-    void ClickOnApply();
-    void ClickOnCancel();
-    void ActivateThisDialog();
-    void DeactivateActiveDialog();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
-    void ValueChangedInSpinBox(double newValue);
-    void ConstructorsClicked(int constructorId);
 
+    void                                ClickOnOk();
+    bool                                ClickOnApply();
+    void                                ActivateThisDialog();
+    void                                DeactivateActiveDialog();
+    void                                LineEditReturnPressed();
+    void                                SelectionIntoArgument();
+    void                                SetEditCurrentArgument();
+    void                                ValueChangedInSpinBox( double newValue );
+    void                                ConstructorsClicked( int constructorId );
+
+private :
+
+    void                                Init( SALOME_Selection* );
+    void                                enterEvent( QEvent* e );
+    void                                reset();
+    void                                createSelWg( const QString&, QPixmap&, QWidget*, const int );
+    int                                 getConstructorId() const;
+    void                                activateSelection();
+    void                                enableWidgets();
+
+private:
+
+    int                                 myConstructorId;
+
+    GEOM::GEOM_Object_var               myShape; 
+    QMap< int, int >                    myFace;  // indexes of faces from second tab ( Face1,2 )
+    TColStd_IndexedMapOfInteger         myFaces; // indexes of faces from first tab ( Faces )
+    
+    QFrame*                             myGrp1;
+    QFrame*                             myGrp2;
+    QFrame*                             myGrp3;
+
+    QMap< int, QPushButton* >           mySelBtn;
+    QMap< int, QLineEdit* >             mySelName;
+    QMap< int, DlgRef_SpinBox* >        mySpinBox;
 };
 
 #endif // DIALOGBOX_CHAMFER_H

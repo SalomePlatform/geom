@@ -26,8 +26,9 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BuildGUI_CompoundDlg.h"
+#include "QAD_Desktop.h"
+#include "GEOMImpl_Types.hxx"
 
 //=================================================================================
 // class    : BuildGUI_CompoundDlg()
@@ -36,7 +37,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_CompoundDlg::BuildGUI_CompoundDlg(QWidget* parent, const char* name, BuildGUI* theBuildGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+BuildGUI_CompoundDlg::BuildGUI_CompoundDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_COMPOUND")));
@@ -50,16 +51,16 @@ BuildGUI_CompoundDlg::BuildGUI_CompoundDlg(QWidget* parent, const char* name, Bu
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_1Sel_QTD(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
-  GroupPoints->PushButton1->setPixmap(image1);
+  GroupShapes = new DlgRef_1Sel_QTD(this, "GroupShapes");
+  GroupShapes->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  GroupShapes->TextLabel1->setText(tr("GEOM_OBJECTS"));
+  GroupShapes->PushButton1->setPixmap(image1);
+  GroupShapes->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupShapes, 2, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myBuildGUI = theBuildGUI;
   Init();
 }
 
@@ -81,20 +82,20 @@ BuildGUI_CompoundDlg::~BuildGUI_CompoundDlg()
 void BuildGUI_CompoundDlg::Init()
 {
   /* init variables */
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  myOkListShapes = false;
+  myEditCurrentArgument = GroupShapes->LineEdit1;
+  GroupShapes->LineEdit1->setReadOnly( true );
+  
+  myOkShapes = false;
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));  
+  connect(GroupShapes->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));  
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
+  globalSelection( GEOM_ALLSHAPES );
 
-  return;
+  initName( tr( "GEOM_COMPOUND" ) );
 }
 
 
@@ -104,9 +105,8 @@ void BuildGUI_CompoundDlg::Init()
 //=================================================================================
 void BuildGUI_CompoundDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -114,12 +114,13 @@ void BuildGUI_CompoundDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BuildGUI_CompoundDlg::ClickOnApply()
+bool BuildGUI_CompoundDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if(myOkListShapes)  
-    myBuildGUI->MakeCompoundAndDisplay(myListShapes);
-  return;
+  if ( !onAccept() )
+    return false;
+
+  initName();
+  return true;
 }
 
 
@@ -129,26 +130,19 @@ void BuildGUI_CompoundDlg::ClickOnApply()
 //=================================================================================
 void BuildGUI_CompoundDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   QString aString = ""; /* name of selection */
 
-  myOkListShapes = false;
-  int nbSel = mySelection->IObjectCount();
-  if(nbSel == 0) 
+  myOkShapes = false;
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects( mySelection, aString, true );
+  if ( nbSel == 0 ) 
     return;
-  aString = tr("%1_objects").arg(nbSel);
-
-//   int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-//   if(nbSel <= 1) {
-//     myOkListShapes = false;
-//     return;
-//   }
+  if ( nbSel != 1 )
+    aString = QString( "%1_objects").arg( nbSel );
   
-  myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes);
-  myEditCurrentArgument->setText(aString);
-  myOkListShapes = true;
-  /* no simulation */
-  return;
+  GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(), myShapes, true );
+  myEditCurrentArgument->setText( aString );
+  myOkShapes = true;
 }
 
 
@@ -158,9 +152,14 @@ void BuildGUI_CompoundDlg::SelectionIntoArgument()
 //=================================================================================
 void BuildGUI_CompoundDlg::SetEditCurrentArgument()
 {
-  GroupPoints->LineEdit1->setFocus();
-  this->SelectionIntoArgument();
-  return;
+  QPushButton* send = (QPushButton*)sender();
+  if (send != GroupShapes->PushButton1)
+    return;
+  
+  myEditCurrentArgument = GroupShapes->LineEdit1;
+  
+  myEditCurrentArgument->setFocus();
+  SelectionIntoArgument();
 }
 
 
@@ -171,8 +170,8 @@ void BuildGUI_CompoundDlg::SetEditCurrentArgument()
 void BuildGUI_CompoundDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_ALLSHAPES );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  return;
 }
 
 
@@ -182,8 +181,40 @@ void BuildGUI_CompoundDlg::ActivateThisDialog()
 //=================================================================================
 void BuildGUI_CompoundDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog(); 
+}
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr BuildGUI_CompoundDlg::createOperation()
+{
+  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool BuildGUI_CompoundDlg::isValid( QString& )
+{
+  return myOkShapes;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool BuildGUI_CompoundDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  anObj = GEOM::GEOM_IShapesOperations::_narrow( getOperation() )->MakeCompound( myShapes );
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
 }

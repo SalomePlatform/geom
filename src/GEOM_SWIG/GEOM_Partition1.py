@@ -8,7 +8,7 @@
 #  Module : GEOM
 
 #%Make geometry (like CEA script (A1)) using Partition algorithm%
-# appel: 
+# appel:
 # import alveole_3D_01_GEOM
 # reload(alveole_3D_01_GEOM)
 
@@ -38,61 +38,49 @@ boolean_section = 4
 
 # --
 
+pnt0 = geompy.MakeVertex(0.,0.,0.)
+vecz = geompy.MakeVectorDXDYDZ(0.,0.,1.)
+
 barier = geompy.MakeCylinder(
-    geom.MakePointStruct(0.,0.,0.),
-    geom.MakeDirection(geom.MakePointStruct(0.,0.,1.)),
+    pnt0,
+    vecz,
     barier_radius,
     barier_height)
 
 # --
 
-colis = geompy.MakeCylinder(
-    geom.MakePointStruct(0.,0.,0.),
-    geom.MakeDirection(geom.MakePointStruct(0.,0.,1.)),
-    colis_radius,
-    barier_height)
+colis = geompy.MakeCylinder(pnt0, vecz, colis_radius, barier_height)
 
-cc = geompy.MakeCylinder(
-    geom.MakePointStruct(0.,0.,0.),
-    geom.MakeDirection(geom.MakePointStruct(0.,0.,1.)),
-    cc_radius,
-    barier_height)
+cc = geompy.MakeCylinder(pnt0, vecz, cc_radius, barier_height)
 
-colis_cc = geompy.MakeCompound(
-    [colis._get_Name(), cc._get_Name()])
+colis_cc = geompy.MakeCompound([colis, cc])
 
-colis_cc = geompy.MakeTranslation(
-    colis_cc, colis_center, 0.0, 0.0)
+colis_cc = geompy.MakeTranslation(colis_cc, colis_center, 0.0, 0.0)
 
-colis_cc_multi = geompy.MakeMultiRotation1D(
-    colis_cc,
-    geom.MakeDirection(geom.MakePointStruct(0.,0.,1.)),
-    geom.MakePointStruct(0.,0.,0.),
-    4)
+colis_cc_multi = geompy.MultiRotate1D(colis_cc, vecz, 4)
 
 # --
 
-alveole = geompy.Partition(
-    [colis_cc_multi._get_Name(), barier._get_Name()])
+alveole = geompy.MakePartition([colis_cc_multi, barier])
 
-subshapes = geompy.SubShapeAll( alveole, geompy.ShapeType["SHAPE"] )
+geompy.addToStudy(alveole, "alveole before explode")
+
+subshapes = geompy.SubShapeAll(alveole, geompy.ShapeType["SHAPE"])
 
 ## there are 9 subshapes
 
-comp1 = geompy.MakeCompound( [ subshapes[0]._get_Name(), subshapes[1]._get_Name() ] );
-comp2 = geompy.MakeCompound( [ subshapes[2]._get_Name(), subshapes[3]._get_Name() ] );
-comp3 = geompy.MakeCompound( [ subshapes[4]._get_Name(), subshapes[5]._get_Name() ] );
-comp4 = geompy.MakeCompound( [ subshapes[6]._get_Name(), subshapes[7]._get_Name() ] );
+comp1 = geompy.MakeCompound([subshapes[0], subshapes[1]]);
+comp2 = geompy.MakeCompound([subshapes[2], subshapes[3]]);
+comp3 = geompy.MakeCompound([subshapes[4], subshapes[5]]);
+comp4 = geompy.MakeCompound([subshapes[6], subshapes[7]]);
 
-compIORs = []
-compIORs.append( comp1._get_Name() );
-compIORs.append( comp2._get_Name() );
-compIORs.append( comp3._get_Name() );
-compIORs.append( comp4._get_Name() );
-comp = geompy.MakeCompound( compIORs );
+compGOs = []
+compGOs.append(comp1);
+compGOs.append(comp2);
+compGOs.append(comp3);
+compGOs.append(comp4);
+comp = geompy.MakeCompound(compGOs);
 
-alveole = geompy.MakeCompound( [ comp._get_Name(), subshapes[8]._get_Name() ]);
-	
+alveole = geompy.MakeCompound([comp, subshapes[8]]);
+
 geompy.addToStudy(alveole, "alveole")
-
-

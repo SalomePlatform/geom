@@ -32,8 +32,6 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel_QTD.h"
 
-#include "GenerationGUI.h"
-
 //=================================================================================
 // class    : GenerationGUI_PipeDlg
 // purpose  :
@@ -43,28 +41,29 @@ class GenerationGUI_PipeDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    GenerationGUI_PipeDlg(QWidget* parent = 0, const char* name = 0, GenerationGUI* theGenerationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    GenerationGUI_PipeDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~GenerationGUI_PipeDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& msg );
+    virtual bool execute( ObjectList& objects );    
 
 private:
     void Init();
     void enterEvent(QEvent* e);
-    void MakePipeSimulationAndDisplay();
 
-    GenerationGUI* myGenerationGUI;
-
-    TopoDS_Shape myShape1;   /* topology used */
-    TopoDS_Shape myShape2;   /* topology used */
-    GEOM::GEOM_Shape_var myGeomShape1; /* is myShape1 */
-    GEOM::GEOM_Shape_var myGeomShape2; /* is myShape2 */
-    bool myOkShape1;
-    bool myOkShape2;   /* to check when arguments are defined */
+    GEOM::GEOM_Object_var myBase; /* Base shape */
+    GEOM::GEOM_Object_var myPath; /* Shape, defining the path */
+    bool myOkBase;
+    bool myOkPath             ;   /* to check when arguments are defined */
 
     DlgRef_2Sel_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
     void ActivateThisDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();

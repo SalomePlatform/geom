@@ -27,16 +27,10 @@
 //  $Header$
 
 #include "BasicGUI_PlaneDlg.h"
-
-#include <BRepBuilderAPI_MakeFace.hxx>
-#include <BRepAdaptor_Surface.hxx>
-#include <gp_Pln.hxx>
-#include <gp_Ax1.hxx>
-#include <gp_Dir.hxx>
-#include <Precision.hxx>
 #include "QAD_Config.h"
+#include "QAD_Desktop.h"
 
-#include "utilities.h"
+#include "GEOMImpl_Types.hxx"
 
 using namespace std;
 
@@ -47,11 +41,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(QWidget* parent, const char* name, BasicGUI* theBasicGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_PLANE_PV")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_PLANE_DXYZ")));
+  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_PLANE_3PNTS")));
   QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_PLANE_FACE")));
   QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
@@ -63,37 +57,43 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(QWidget* parent, const char* name, BasicGUI
   RadioButton2->setPixmap(image1);
   RadioButton3->setPixmap(image2);
 
-  GroupPointDirection = new DlgRef_2Sel1Spin(this, "GroupPointDirection");
-  GroupPointDirection->GroupBox1->setTitle(tr("GEOM_PLANE_PV"));
-  GroupPointDirection->TextLabel1->setText(tr("GEOM_POINT"));
-  GroupPointDirection->TextLabel2->setText(tr("GEOM_VECTOR"));
-  GroupPointDirection->TextLabel3->setText(tr("GEOM_PLANE_SIZE"));
-  GroupPointDirection->PushButton1->setPixmap(image3);
-  GroupPointDirection->PushButton2->setPixmap(image3);
+  GroupPntDir = new DlgRef_2Sel1Spin(this, "GroupPointDirection");
+  GroupPntDir->GroupBox1->setTitle(tr("GEOM_PLANE_PV"));
+  GroupPntDir->TextLabel1->setText(tr("GEOM_POINT"));
+  GroupPntDir->TextLabel2->setText(tr("GEOM_VECTOR"));
+  GroupPntDir->TextLabel3->setText(tr("GEOM_PLANE_SIZE"));
+  GroupPntDir->PushButton1->setPixmap(image3);
+  GroupPntDir->PushButton2->setPixmap(image3);
+  GroupPntDir->LineEdit1->setReadOnly( true );
+  GroupPntDir->LineEdit2->setReadOnly( true );
 
-  GroupPointPlusCoordinates = new DlgRef_1Sel4Spin(this, "GroupPointPlusCoordinates" );
-  GroupPointPlusCoordinates->GroupBox1->setTitle(tr("GEOM_PLANE_PVC"));
-  GroupPointPlusCoordinates->TextLabel1->setText(tr("GEOM_POINT"));
-  GroupPointPlusCoordinates->TextLabel2->setText(tr("GEOM_COOR"));
-  GroupPointPlusCoordinates->TextLabel3->setText(tr("GEOM_DX"));
-  GroupPointPlusCoordinates->TextLabel4->setText(tr("GEOM_DY"));
-  GroupPointPlusCoordinates->TextLabel5->setText(tr("GEOM_DZ"));
-  GroupPointPlusCoordinates->TextLabel6->setText(tr("GEOM_PLANE_SIZE"));
-  GroupPointPlusCoordinates->PushButton1->setPixmap(image3);
+  Group3Pnts = new DlgRef_3Sel1Spin(this, "Group3Pnts");
+  Group3Pnts->GroupBox1->setTitle(tr("GEOM_3_POINTS"));
+  Group3Pnts->TextLabel1->setText(tr("GEOM_POINT1"));
+  Group3Pnts->TextLabel2->setText(tr("GEOM_POINT2"));
+  Group3Pnts->TextLabel3->setText(tr("GEOM_POINT3"));
+  Group3Pnts->TextLabel4->setText(tr("GEOM_PLANE_SIZE"));
+  Group3Pnts->PushButton1->setPixmap(image3);
+  Group3Pnts->PushButton2->setPixmap(image3);
+  Group3Pnts->PushButton3->setPixmap(image3);
+
+  Group3Pnts->LineEdit1->setReadOnly( true );
+  Group3Pnts->LineEdit2->setReadOnly( true );
+  Group3Pnts->LineEdit3->setReadOnly( true );
 
   GroupFace = new DlgRef_1Sel1Spin(this, "GroupFace");
   GroupFace->GroupBox1->setTitle(tr("GEOM_FACE"));
   GroupFace->TextLabel1->setText(tr("GEOM_SELECTION"));
   GroupFace->TextLabel2->setText(tr("GEOM_PLANE_SIZE"));
   GroupFace->PushButton1->setPixmap(image3);
+
+  GroupFace->LineEdit1->setReadOnly( true );
     
-  Layout1->addWidget(GroupPointDirection, 1, 0);
-  Layout1->addWidget(GroupPointPlusCoordinates, 1, 0);
-  Layout1->addWidget(GroupFace, 1, 0);
+  Layout1->addWidget(GroupPntDir, 2, 0);
+  Layout1->addWidget(Group3Pnts, 2, 0);
+  Layout1->addWidget(GroupFace, 2, 0);
   /***************************************************************/
 
-  /* Initialisation */
-  myBasicGUI = theBasicGUI;
   Init();
 }
 
@@ -104,7 +104,6 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(QWidget* parent, const char* name, BasicGUI
 //=================================================================================
 BasicGUI_PlaneDlg::~BasicGUI_PlaneDlg()
 {  
-  /* no need to delete child widgets, Qt does it all for us */
 }
 
 
@@ -115,79 +114,63 @@ BasicGUI_PlaneDlg::~BasicGUI_PlaneDlg()
 void BasicGUI_PlaneDlg::Init()
 {
   /* init variables */
-  myConstructorId = 0;
-  myEditCurrentArgument = GroupPointDirection->LineEdit1;
+  myEditCurrentArgument = GroupPntDir->LineEdit1;
 
-  myPoint1.SetCoord(0.0, 0.0, 0.0);
-  myOkPoint1 = myOkDirection = myOkCoordinates = myOkPlanarFace = false;
+  myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = myFace = GEOM::GEOM_Object::_nil();
 
-  /* Filters definition */
-  myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
-  myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
-  myFaceFilter = new GEOM_FaceFilter(StdSelect_Plane, myGeom);
-  /* Filter for the next selection */
-  mySelection->AddFilter(myVertexFilter);
+	myGeomGUI->SetState( 0 );
 
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
-  this->myTrimSize = 2000.0;
+  double aStep = St.toDouble();
+  double aTrimSize = 2000.0;
   
   /* min, max, step and decimals for spin boxes */
-  GroupPointDirection->SpinBox_DX->RangeStepAndValidator(0.001, 10000000.0, step, 3);
-  GroupPointDirection->SpinBox_DX->SetValue(myTrimSize);
-
-  double SpecificStep = 1;
-  GroupPointPlusCoordinates->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
-  GroupPointPlusCoordinates->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
-  GroupPointPlusCoordinates->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
-  GroupPointPlusCoordinates->SpinBox_DX->SetValue(0.0);
-  GroupPointPlusCoordinates->SpinBox_DY->SetValue(0.0);
-  GroupPointPlusCoordinates->SpinBox_DZ->SetValue(1.0); 
-  GroupPointPlusCoordinates->SpinBox_S->RangeStepAndValidator(0.001, 10000000.0, step, 3);
-  GroupPointPlusCoordinates->SpinBox_S->SetValue(myTrimSize) ;
-
-  GroupFace->SpinBox_DX->RangeStepAndValidator(0.001, 10000000.0, step, 3);
-  GroupFace->SpinBox_DX->SetValue(myTrimSize);
+  GroupPntDir->SpinBox_DX->RangeStepAndValidator( 0.001, 10000000.0, aStep, 3 );
+  GroupPntDir->SpinBox_DX->SetValue( aTrimSize );
+  Group3Pnts->SpinBox_DX->RangeStepAndValidator(0.001, 10000000.0, aStep, 3);
+  Group3Pnts->SpinBox_DX->SetValue( aTrimSize );
+  GroupFace->SpinBox_DX->RangeStepAndValidator(0.001, 10000000.0, aStep, 3);
+  GroupFace->SpinBox_DX->SetValue( aTrimSize );
 
   /* signals and slots connections */
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(GroupConstructors, SIGNAL(clicked(int)), SLOT(ConstructorsClicked(int)));
+  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
 
-  connect(GroupPointDirection->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPointDirection->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPointPlusCoordinates->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupFace->PushButton1, SIGNAL(clicked()), this, SLOT( SetEditCurrentArgument()));
+  connect(GroupPntDir->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPntDir->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3Pnts->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3Pnts->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3Pnts->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupFace->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(GroupPointDirection->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPointDirection->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPointPlusCoordinates->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupPntDir->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupPntDir->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group3Pnts->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group3Pnts->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group3Pnts->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupFace->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupPointPlusCoordinates->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupPointPlusCoordinates->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupPointPlusCoordinates->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupPointPlusCoordinates->SpinBox_S, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupPointDirection->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPntDir->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group3Pnts->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupFace->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPointPlusCoordinates->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPointPlusCoordinates->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPointPlusCoordinates->SpinBox_DZ, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPointPlusCoordinates->SpinBox_S, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPointDirection->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPntDir->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3Pnts->SpinBox_DX, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupFace->SpinBox_DX, SLOT(SetStep(double)));
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  /* Displays Dialog */
-  GroupPointPlusCoordinates->hide();
-  GroupFace->hide();
-  GroupPointDirection->show();
-  this->show();
+  initName( tr( "GEOM_PLANE" ) );
 
-  return ;
+  Group3Pnts->hide();
+  GroupFace->hide();
+  ConstructorsClicked( 0 );
 }
 
 
@@ -197,64 +180,60 @@ void BasicGUI_PlaneDlg::Init()
 //=================================================================================
 void BasicGUI_PlaneDlg::ConstructorsClicked(int constructorId)
 {
-  myConstructorId = constructorId;
-  mySelection->ClearFilters();
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  myOkPoint1 = myOkDirection = myOkCoordinates = myOkPlanarFace = false;
+  disconnect(mySelection, 0, this, 0);
+  myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = myFace = GEOM::GEOM_Object::_nil();
 
-  switch (constructorId)
-    {
+  switch ( constructorId )
+  {
     case 0: /* plane from a point and a direction (vector, edge...) */
       {	
-	GroupPointPlusCoordinates->hide();
-	GroupFace->hide();
-	resize(0, 0);
-	GroupPointDirection->show();
+				Group3Pnts->hide();
+				GroupFace->hide();
+				resize(0, 0);
+				GroupPntDir->show();
 
-	myEditCurrentArgument = GroupPointDirection->LineEdit1;
-	GroupPointDirection->LineEdit1->setText(tr(""));
-	GroupPointDirection->LineEdit2->setText(tr(""));
+				myEditCurrentArgument = GroupPntDir->LineEdit1;
+				GroupPntDir->LineEdit1->setText(tr(""));
+				GroupPntDir->LineEdit2->setText(tr(""));
 
-	/* for the first argument */
-	mySelection->AddFilter(myVertexFilter);
-	break;
+				/* for the first argument */
+				globalSelection( GEOM_POINT );
+				break;
       }
-    case 1: /* plane from a point and vector coordinates */
+    case 1: /* plane from 3 points */
       {
-	GroupPointDirection->hide();
-	GroupFace->hide();
-	resize(0, 0);
-	GroupPointPlusCoordinates->show();
+				GroupPntDir->hide();
+				GroupFace->hide();
+				resize(0, 0);
+				Group3Pnts->show();
 
-	myEditCurrentArgument = GroupPointPlusCoordinates->LineEdit1;
-	GroupPointPlusCoordinates->LineEdit1->setText(tr(""));
-	GroupPointPlusCoordinates->SpinBox_DX->SetValue(0.0);
-	GroupPointPlusCoordinates->SpinBox_DY->SetValue(0.0);
-	GroupPointPlusCoordinates->SpinBox_DZ->SetValue(1.0);
-	myOkCoordinates = true;
+				myEditCurrentArgument = Group3Pnts->LineEdit1;
+				Group3Pnts->LineEdit1->setText("");
+				Group3Pnts->LineEdit2->setText("");
+				Group3Pnts->LineEdit3->setText("");
 
-	/* for the first argument */
-	mySelection->AddFilter(myVertexFilter);
-	break;
+				/* for the first argument */
+				globalSelection( GEOM_POINT );
+				break;
       } 
     case 2: /* plane from a planar face selection */
       {
-	GroupPointDirection->hide();
-	GroupPointPlusCoordinates->hide();
-	resize(0, 0);
-	GroupFace->show();
+				GroupPntDir->hide();
+				Group3Pnts->hide();
+				resize(0, 0);
+				GroupFace->show();
 
-	myEditCurrentArgument = GroupFace->LineEdit1;
-	GroupFace->LineEdit1->setText(tr(""));
+				myEditCurrentArgument = GroupFace->LineEdit1;
+				GroupFace->LineEdit1->setText(tr(""));
 
-	/* for the first argument */
-	mySelection->AddFilter(myFaceFilter);
-	break;
+				/* for the first argument */
+				globalSelection( GEOM_PLANE );
+				break;
       }
     }
-  return;
+
+  myEditCurrentArgument->setFocus();
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
 
@@ -264,9 +243,8 @@ void BasicGUI_PlaneDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void BasicGUI_PlaneDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return ;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -274,39 +252,24 @@ void BasicGUI_PlaneDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BasicGUI_PlaneDlg::ClickOnApply()
+bool BasicGUI_PlaneDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  switch(myConstructorId)
-    { 
-    case 0 : /* args are myPoint1 and myDx, myDy, myDz from a vector(edge) */
-      {	
-	if(myOkPoint1 && myOkDirection)
-	  myBasicGUI->MakePlaneAndDisplay(myPoint1, myDx, myDy, myDz, myTrimSize);
-	break;
-      }
-    case 1 : /* args are myPoint1 and myDx, myDy, myDz from a Spin Box */
-      {	
-	if(myOkPoint1)
-	  myBasicGUI->MakePlaneAndDisplay(myPoint1, myDx, myDy, myDz, myTrimSize);
-	break;
-      }
-    case 2 :  /* arg is a planar face selection */
-      {
-	if(myOkPlanarFace)
-	  myBasicGUI->MakePlaneAndDisplay(myPoint1, myDx, myDy, myDz, myTrimSize);
-	break;
-      }
-    }
-  return;
+  initName();
+  ConstructorsClicked( getConstructorId() );
+  return true;
 }
 
+//=======================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=======================================================================
+void BasicGUI_PlaneDlg::ClickOnCancel()
+{
+  GEOMBase_Skeleton::ClickOnCancel();
+}
 
 //=================================================================================
 // function : SelectionIntoArgument()
@@ -314,104 +277,34 @@ void BasicGUI_PlaneDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_PlaneDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape(); 
-  mySimulationTopoDs.Nullify();
-  QString aString = "";
+  myEditCurrentArgument->setText("");
   
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
-    switch (myConstructorId) 
-      {
-       case 0:
-	 {
-	   if(myEditCurrentArgument == GroupPointDirection->LineEdit1) {
-	     GroupPointDirection->LineEdit1->setText("");
-	     myOkPoint1 = false ;
-	   }
-	   else if(myEditCurrentArgument == GroupPointDirection->LineEdit2) {
-	     GroupPointDirection->LineEdit2->setText("");
-	     myOkDirection = false ;
-	   }
-	   break;
-	 }
-      case 1:
-	{
-	  if(myEditCurrentArgument == GroupPointPlusCoordinates->LineEdit1) {
-	    GroupPointPlusCoordinates->LineEdit1->setText("") ;
-	    myOkPoint1 = false ;
-	  }
-	  break;
-	}
-      case 2:
-	{
-	  if(myEditCurrentArgument == GroupFace->LineEdit1) {
-	    GroupFace->LineEdit1->setText("") ;
-	    if(aString.compare("") == 0)
-	      myOkPlanarFace = false;
-	    else
-	      myOkPlanarFace = true;
-	  }
-	  break;
-	}
-      }
-    return ;
+  if ( mySelection->IObjectCount() != 1 )  
+  {
+    if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) myPoint  = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) myDir    = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )  myPoint1 = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )  myPoint2 = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )  myPoint3 = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupFace->LineEdit1 )   myFace   = GEOM::GEOM_Object::_nil();
+    return;
   }
 
-  /*  nbSel == 1  */ 
-  TopoDS_Shape S; 
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return ;
- 
-  /* FIRST CONSTRUCTOR */
-  if(myEditCurrentArgument == GroupPointDirection->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
-    GroupPointDirection->LineEdit1->setText(aString);
-    myOkPoint1 = true;
-  }
-  else if( myEditCurrentArgument == GroupPointDirection->LineEdit2) {
-    /* We verify if the selection is a linear edge */
-    gp_Pnt Pfirst, Plast;
-    if( myGeomBase->LinearEdgeExtremities(S, Pfirst, Plast)) {    
-      myGeomBase->GetBipointDxDyDz(Pfirst, Plast, myDx, myDy, myDz);
-      GroupPointDirection->LineEdit2->setText(aString);
-      myOkDirection = true;
-      myTrimSize = GroupPointDirection->SpinBox_DX->GetValue();
-    }
-  }
-  
-  /* SECOND CONSTRUCTOR */
-  else if(myEditCurrentArgument == GroupPointPlusCoordinates->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
-    GroupPointPlusCoordinates->LineEdit1->setText(aString);
-    /* Get arguments */
-    myDx = GroupPointPlusCoordinates->SpinBox_DX->GetValue();
-    myDy = GroupPointPlusCoordinates->SpinBox_DY->GetValue();
-    myDz = GroupPointPlusCoordinates->SpinBox_DZ->GetValue();
-    myTrimSize = GroupPointPlusCoordinates->SpinBox_S->GetValue();
-    myOkPoint1 = true;    
-    myOkCoordinates = true;
-  }
- 
-  /* THIRD CONSTRUCTOR */
-  else if(myEditCurrentArgument == GroupFace->LineEdit1) {
-    if(myOkPlanarFace) {
-      GroupFace->LineEdit1->setText(aString);
-      BRepAdaptor_Surface surf(TopoDS::Face(S));
-      gp_Pln Plane = surf.Plane();
-
-      gp_Pnt myPoint1 = Plane.Location();
-      gp_Ax1 ax = Plane.Axis();
-      myDx = (ax.Direction()).X();
-      myDy = (ax.Direction()).Y();
-      myDz = (ax.Direction()).Z();
-      myTrimSize = GroupFace->SpinBox_DX->GetValue();
-    }
+  // nbSel == 1
+  Standard_Boolean aRes = Standard_False;
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
+  {  
+    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+    if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) myPoint  = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) myDir    = aSelectedObject;
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )  myPoint1 = aSelectedObject;
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )  myPoint2 = aSelectedObject;
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )  myPoint3 = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupFace->LineEdit1 )   myFace   = aSelectedObject;
   }
 
-  /* Call method simulation */    
-  if((myOkPoint1 && myOkDirection) || (myOkPoint1 && myOkCoordinates) || myOkPlanarFace) {
-    if(myDx*myDx + myDy*myDy + myDz*myDz > Precision::Confusion()*Precision::Confusion())
-      this->MakePlaneSimulationAndDisplay();
-  }
-  return;
+  displayPreview();
 }
 
 
@@ -422,48 +315,24 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
 void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();  
-  mySelection->ClearFilters();
 
-  switch(myConstructorId)
-    {
-    case 0:
-      {	
-	if(send == GroupPointDirection->PushButton1) {
-	  GroupPointDirection->LineEdit1->setFocus();
-	  myEditCurrentArgument = GroupPointDirection->LineEdit1;
-	  mySelection->AddFilter(myVertexFilter);
-	}
-	else if(send == GroupPointDirection->PushButton2) {
-	  GroupPointDirection->LineEdit2->setFocus();
-	  myEditCurrentArgument = GroupPointDirection->LineEdit2;	
-	  /* Edge filter here */
-	  mySelection->AddFilter(myEdgeFilter);
-	}	
-	break;
-      }
-    case 1:
-      {	
-	if(send == GroupPointPlusCoordinates->PushButton1) {
-	  GroupPointPlusCoordinates->LineEdit1->setFocus();
-	  myEditCurrentArgument = GroupPointPlusCoordinates->LineEdit1;
-	  /* Vertex filter here */
-	  mySelection->AddFilter(myVertexFilter);
-	}
-	break;
-      }
-    case 2:
-      {
-	if(send == GroupFace->PushButton1) {
-	  GroupFace->LineEdit1->setFocus();
-	  myEditCurrentArgument = GroupFace->LineEdit1;
-	  /* Face filter here */
-	  mySelection->AddFilter(myFaceFilter);
-	}
-	break;
-      }
-    }
-  this->SelectionIntoArgument();
-  return;
+  if      ( send == GroupPntDir->PushButton1 ) myEditCurrentArgument = GroupPntDir->LineEdit1;
+  else if ( send == GroupPntDir->PushButton2 ) myEditCurrentArgument = GroupPntDir->LineEdit2;
+  else if ( send == Group3Pnts->PushButton1 )  myEditCurrentArgument = Group3Pnts->LineEdit1;
+  else if ( send == Group3Pnts->PushButton2 )  myEditCurrentArgument = Group3Pnts->LineEdit2;
+  else if ( send == Group3Pnts->PushButton3 )  myEditCurrentArgument = Group3Pnts->LineEdit3;
+  else if ( send == GroupFace->PushButton1 )   myEditCurrentArgument = GroupFace->LineEdit1;
+
+  myEditCurrentArgument->setFocus();
+  
+  if ( myEditCurrentArgument == GroupPntDir->LineEdit2 )
+    globalSelection( GEOM_LINE );
+  else if ( myEditCurrentArgument == GroupFace->LineEdit1 )
+  	globalSelection( GEOM_PLANE );
+  else
+  	globalSelection( GEOM_POINT );
+   
+  SelectionIntoArgument();
 }
 
 
@@ -473,20 +342,17 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 //=================================================================================
 void BasicGUI_PlaneDlg::LineEditReturnPressed()
 {
-  QLineEdit* send = (QLineEdit*)sender();  
-  if(send == GroupPointDirection->LineEdit1)
-    myEditCurrentArgument = GroupPointDirection->LineEdit1;
-  else if (send == GroupPointDirection->LineEdit2)
-    myEditCurrentArgument = GroupPointDirection->LineEdit2; 
-  else if (send == GroupPointPlusCoordinates->LineEdit1)
-    myEditCurrentArgument = GroupPointPlusCoordinates->LineEdit1;
-  else if (send == GroupFace->LineEdit1)
-    myEditCurrentArgument = GroupFace->LineEdit1;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return ;
+  QLineEdit* send = (QLineEdit*)sender();
+  if ( send == GroupPntDir->LineEdit1 ||
+       send == GroupPntDir->LineEdit2 ||
+       send == Group3Pnts->LineEdit1 ||
+       send == Group3Pnts->LineEdit2 ||
+       send == Group3Pnts->LineEdit3 ||
+       send == GroupFace->LineEdit1 )
+  {
+    myEditCurrentArgument = send;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 
@@ -498,35 +364,21 @@ void BasicGUI_PlaneDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  switch(myConstructorId)
-    {
-    case 0:
-      {	
-	GroupPointDirection->LineEdit1->setFocus();
-	myEditCurrentArgument = GroupPointDirection->LineEdit1;
-	mySelection->AddFilter(myVertexFilter);
-	break;
-      }
-    case 1:
-      {	
-	GroupPointPlusCoordinates->LineEdit1->setFocus();
-	myEditCurrentArgument = GroupPointPlusCoordinates->LineEdit1;
-	mySelection->AddFilter(myVertexFilter);
-	break;
-      }
-    case 2:
-      {
-	GroupFace->LineEdit1->setFocus();
-	myEditCurrentArgument = GroupFace->LineEdit1;
-	mySelection->AddFilter(myFaceFilter);
-	break;
-      }
-    }
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+
+  myGeomGUI->SetState( 0 );
+
+  ConstructorsClicked( getConstructorId() );
 }
 
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void BasicGUI_PlaneDlg::DeactivateActiveDialog()
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::DeactivateActiveDialog();
+}
 
 //=================================================================================
 // function : enterEvent()
@@ -534,10 +386,8 @@ void BasicGUI_PlaneDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_PlaneDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;  
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
 
@@ -547,46 +397,103 @@ void BasicGUI_PlaneDlg::enterEvent(QEvent* e)
 //=================================================================================
 void BasicGUI_PlaneDlg::ValueChangedInSpinBox(double newValue)
 {
-  QObject* send = (QObject*)sender(); 
-  
-  if(send == GroupPointPlusCoordinates->SpinBox_DX)
-    myDx = newValue;
-  else if(send == GroupPointPlusCoordinates->SpinBox_DY) 
-    myDy = newValue;
-  else if(send == GroupPointPlusCoordinates->SpinBox_DZ)
-    myDz = newValue;
-  else if(send == GroupPointDirection->SpinBox_DX || send == GroupPointPlusCoordinates->SpinBox_S || send == GroupFace->SpinBox_DX) {
-    myTrimSize = newValue;
-  } else
-    return;
-
-  if((myOkPoint1 && myOkDirection) || (myOkPoint1 && myOkCoordinates) || myOkPlanarFace) {
-    if(myDx*myDx + myDy*myDy + myDz*myDz > Precision::Confusion() * Precision::Confusion())
-      this->MakePlaneSimulationAndDisplay();
-  }
-  return;
+  displayPreview();
 }
 
-
 //=================================================================================
-// function : MakePlaneSimulationAndDisplay(()
+// function : getSize()
 // purpose  :
 //=================================================================================
-void BasicGUI_PlaneDlg::MakePlaneSimulationAndDisplay()
+double BasicGUI_PlaneDlg::getSize() const
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-
-  try {
-    gp_Dir aDirection(myDx, myDy, myDz);
-    /* We make a trimmed plane */
-    gp_Pln gplane(myPoint1, aDirection);
-    mySimulationTopoDs = BRepBuilderAPI_MakeFace(gplane, -myTrimSize, +myTrimSize, -myTrimSize, +myTrimSize);
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
+  switch ( getConstructorId() )
+  {
+  case 0 : return GroupPntDir->SpinBox_DX->GetValue();
+  case 1 : return Group3Pnts->SpinBox_DX->GetValue();
+  case 2 : return GroupFace->SpinBox_DX->GetValue();
   }
-  catch(Standard_Failure) {
-    MESSAGE( "Exception catched in MakePlaneSimulation" << endl );
-    return;
-  }
-  return;
+  return 0.;
 }
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr BasicGUI_PlaneDlg::createOperation()
+{
+  return getGeomEngine()->GetIBasicOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isEqual
+// purpose  : it may also be needed to check for min distance between gp_Pnt-s...
+//=================================================================================
+static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Object_var& thePnt2 )
+{
+	return thePnt1->_is_equivalent( thePnt2 );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool BasicGUI_PlaneDlg::isValid( QString& msg )
+{
+	const int id = getConstructorId();
+	if ( getSize() <= 0 )
+	{
+		msg = QString( "Please, enter size greater than 0." );
+		return false;
+	}
+	if ( id == 0 )
+		return !CORBA::is_nil( myPoint ) && !CORBA::is_nil( myDir );
+	else if ( id == 1 )
+		return !CORBA::is_nil( myPoint1  ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) &&
+		       !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
+	else if ( id == 2 )
+		return !CORBA::is_nil( myFace );
+	return false;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool BasicGUI_PlaneDlg::execute( ObjectList& objects )
+{
+  bool res = false;
+
+  GEOM::GEOM_Object_var anObj;
+
+  switch ( getConstructorId() )
+  {
+  case 0 :
+    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePlanePntVec( myPoint, myDir, getSize() );
+    res = true;
+    break;
+  case 1 :
+    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePlaneThreePnt( myPoint1, myPoint2, myPoint3, getSize() );
+    res = true;
+    break;
+  case 2 :
+    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePlaneFace( myFace, getSize() );
+    res = true;
+    break;
+  }
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return res;
+}
+
+//=================================================================================
+// function : closeEvent
+// purpose  :
+//=================================================================================
+void BasicGUI_PlaneDlg::closeEvent( QCloseEvent* e )
+{
+  myGeomGUI->SetState( -1 );
+  GEOMBase_Skeleton::closeEvent( e );
+}
+

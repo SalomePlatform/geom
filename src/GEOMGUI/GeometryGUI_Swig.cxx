@@ -26,9 +26,8 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GeometryGUI_Swig.hxx"
-#include "utilities.h"
+#include "SALOMEGUI_Swig.hxx"
 
 #include "QAD_Application.h"
 #include "QAD_Desktop.h"
@@ -38,6 +37,7 @@ using namespace std;
 #include "SALOMEGUI_ImportOperation.h"
 
 #include "OCCViewer_Viewer3d.h"
+#include "OCCViewer_ViewFrame.h"
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
@@ -51,6 +51,8 @@ using namespace std;
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Iterator.hxx>
 
+#include "SALOME_Event.hxx"
+
 #include "VTKViewer_RenderWindowInteractor.h"
 #include "VTKViewer_ViewFrame.h"
 
@@ -60,7 +62,17 @@ using namespace std;
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_InteractiveObject.hxx"
 
+#include "utilities.h"
+
+using namespace std;
+
 static GEOM_Client ShapeReader;
+
+
+template<class TViewFrame> inline TViewFrame* GetFrame(QAD_Study* theStudy){
+  return dynamic_cast<TViewFrame*>(SALOME::GetViewFrame(theStudy));
+}
+
 
 GEOM_Swig::GEOM_Swig()
 {
@@ -82,27 +94,29 @@ void GEOM_Swig::createAndDisplayGO(const char* Entry)
   Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   GEOM::GEOM_Gen_var Geom = GEOM::GEOM_Gen::_narrow(comp);
 
-  Standard_CString Fatherior = "";
+  CORBA::String_var aFatherIOR;
   SALOMEDS::SComponent_var father = aStudy->FindComponent("GEOM");
   aStudyBuilder->DefineComponentInstance( father, Geom );
-  father->ComponentIOR( Fatherior );
+  father->ComponentIOR(aFatherIOR);
 
   SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(ActiveStudy->getActiveStudyFrame()->entry());
 
   SALOMEDS::SObject_var obj = aStudy->FindObjectID(Entry);
   SALOMEDS::GenericAttribute_var anAttr;
-  SALOMEDS::AttributeName_var    aName;
   SALOMEDS::AttributeIOR_var     anIOR;
   // Create new actor
   if ( !obj->FindAttribute(anAttr, "AttributeIOR")) 
     return;
   anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-  GEOM::GEOM_Shape_var aShape = Geom->GetIORFromString(anIOR->Value());
+  CORBA::String_var anIORValue = anIOR->Value();
+  
+  GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(anIORValue);
   TopoDS_Shape Shape = ShapeReader.GetShape(Geom,aShape);
   
   if ( !obj->_is_nil() ) {
     if (obj->FindAttribute(anAttr, "AttributeName")) {
-      aName = SALOMEDS::AttributeName::_narrow(anAttr);
+      SALOMEDS::AttributeName_var aName = SALOMEDS::AttributeName::_narrow(anAttr);
+      CORBA::String_var aNameValue = aName->Value();
       // open transaction
       QAD_Operation* op = new SALOMEGUI_ImportOperation( ActiveStudy );
       op->start();
@@ -112,60 +126,65 @@ void GEOM_Swig::createAndDisplayGO(const char* Entry)
       // commit transaction
       op->finish();
 		  
-      if ( ActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK )  { // VTK
-	//vtkQGLRenderWindowInteractor* myRenderInter = ActiveStudy->getActiveStudyFrame()->getRightFrame()->getVTKView()->getRWInteractor();
-	VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)ActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
- 	int themode = myRenderInter->GetDisplayMode();
+      Handle(GEOM_InteractiveObject) anIO = new GEOM_InteractiveObject(const_cast<char*>(anIORValue.in()),
+								       const_cast<char*>(aFatherIOR.in()),
+								       "GEOM",
+								       const_cast<char*>(obj->GetID()));
       
-	vtkActorCollection* theActors = 
-	  GEOM_AssemblyBuilder::BuildActors(Shape,0,themode,Standard_True);
-	theActors->InitTraversal();
-	vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
-	while(!(anActor==NULL)) {
-	  GEOM_Actor* GActor = GEOM_Actor::SafeDownCast( anActor );
-	  Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(),
-									 Fatherior,
-									 "GEOM");
-	  IO->setEntry(obj->GetID());
-	  GActor->setIO( IO );
-	  GActor->setName( aName->Value() );
-	  
-	  myRenderInter->Display(GActor);
-	  anActor = (vtkActor*)theActors->GetNextActor();
-	}
-	myRenderInter->Update();
-      } 
-      else if ( ActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) // OCC
-	{
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)ActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-	  //	  QAD_Viewer3d* v3d = ActiveStudy->getActiveStudyFrame()->getViewerOCC();
-	  Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-	  Handle(GEOM_AISShape) aSh = new GEOM_AISShape(Shape, aName->Value());
-	  Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(),
-									 Fatherior,
-									 "GEOM");
-	  
-	  IO->setEntry(obj->GetID());
-	  aSh->setIO( IO );
-	  aSh->setName( aName->Value() );
-	  ic->Display (aSh);
-	  ic->AddOrRemoveCurrentObject(aSh, true);
-	}
+      class TEvent: public SALOME_Event{
+        QAD_Study* myStudy;
+        TopoDS_Shape myShape;
+        Handle(SALOME_InteractiveObject) myIO;
+        const char* myName;
+      public:
+        TEvent(QAD_Study* theStudy, TopoDS_Shape theShape,
+	       const Handle(SALOME_InteractiveObject)& theIO, 
+	       const char* theName):
+	  myStudy(theStudy), myShape(theShape),
+				   myIO(theIO), myName(theName)
+        {}
+        virtual void Execute(){
+	  if(VTKViewer_ViewFrame* aViewFrame = GetFrame<VTKViewer_ViewFrame>(myStudy)){
+	    VTKViewer_RenderWindowInteractor* myRenderInter= aViewFrame->getRWInteractor();
+	    int aMode = myRenderInter->GetDisplayMode();
+	    
+	    vtkActorCollection* theActors = GEOM_AssemblyBuilder::BuildActors(myShape,0,aMode,true);
+	    theActors->InitTraversal();
+	    while(vtkActor* anActor = theActors->GetNextActor()){
+	      GEOM_Actor* GActor = GEOM_Actor::SafeDownCast(anActor);
+	      GActor->setName(const_cast<char*>(myName));
+	      GActor->setIO(myIO);
+	      myRenderInter->Display(GActor);
+	    }
+	    myRenderInter->Update();
+	  }else if(OCCViewer_ViewFrame* aViewFrame = GetFrame<OCCViewer_ViewFrame>(myStudy)){
+	    Handle(AIS_InteractiveContext) ic = aViewFrame->getViewer()->getAISContext();
+	    Handle(GEOM_AISShape) aSh = new GEOM_AISShape(myShape,const_cast<char*>(myName));
+	    aSh->setName(const_cast<char*>(myName));
+	    aSh->setIO(myIO);
+	    
+	    ic->Display(aSh);
+	    ic->AddOrRemoveCurrentObject(aSh,true);
+	  }
+	  myStudy->updateObjBrowser(true);
+        }
+      };
+      ProcessVoidEvent(new TEvent(ActiveStudy,Shape,anIO,aNameValue.in()));
     }
   }
-  ActiveStudy->updateObjBrowser( true );
 }
+
 
 int  GEOM_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
 {
   Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   GEOM::GEOM_Gen_var  Geom = GEOM::GEOM_Gen::_narrow(comp);
  
-  GEOM::GEOM_Shape_var aMainShape = Geom->GetIORFromString(IOR);
-  TopoDS_Shape shape        = ShapeReader.GetShape(Geom, aMainShape);
+  GEOM::GEOM_Object_var aMainShape = Geom->GetIORFromString(IOR);
+  TopoDS_Shape shape = ShapeReader.GetShape(Geom, aMainShape);
 
-  GEOM::GEOM_Shape_var aSubShape = Geom->GetIORFromString(SubIOR);
-  TopoDS_Shape subshape    = ShapeReader.GetShape(Geom, aSubShape);
+  GEOM::GEOM_Object_var aSubShape = Geom->GetIORFromString(SubIOR);
+  TopoDS_Shape subshape = ShapeReader.GetShape(Geom, aSubShape);
 
   int index = 1;
   if(subshape.ShapeType() == TopAbs_COMPOUND) { 
@@ -205,7 +224,7 @@ const char* GEOM_Swig::getShapeTypeString(const char* IOR)
   Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   GEOM::GEOM_Gen_var  Geom = GEOM::GEOM_Gen::_narrow(comp);
  
-  GEOM::GEOM_Shape_var aShape = Geom->GetIORFromString(IOR);
+  GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(IOR);
   TopoDS_Shape shape    = ShapeReader.GetShape(Geom, aShape);
 
   if( shape.IsNull() ) {
@@ -273,13 +292,14 @@ const char* GEOM_Swig::getShapeTypeIcon(const char* IOR)
   Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
   GEOM::GEOM_Gen_var  Geom = GEOM::GEOM_Gen::_narrow(comp);
  
-  GEOM::GEOM_Shape_var aShape = Geom->GetIORFromString(IOR);
+  GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(IOR);
+  TopoDS_Shape shape = ShapeReader.GetShape(Geom, aShape);
 
-  if( aShape->_is_nil() ) {
+  if( shape.IsNull() ) {
     return "None" ;
   }
       
-  switch (aShape->ShapeType() )
+  switch (shape.ShapeType() )
     {
     case TopAbs_COMPOUND:
       { return "ICON_OBJBROWSER_COMPOUND" ;}
@@ -301,61 +321,87 @@ const char* GEOM_Swig::getShapeTypeIcon(const char* IOR)
   return "None";
 }
 
-void GEOM_Swig::setDisplayMode(const char* Entry, int mode)
+void GEOM_Swig::setDisplayMode(const char* theEntry, int theMode)
 {
-  QAD_Study* myStudy = QAD_Application::getDesktop()->getActiveStudy();
-  Handle(SALOME_InteractiveObject) IO = 
-    myStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame()->FindIObject( Entry );
+  QAD_Study* aStudy = QAD_Application::getDesktop()->getActiveStudy();
+  Handle(SALOME_InteractiveObject) anIO = SALOME::FindIObject(aStudy,theEntry);
 
-  if ( myStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK )  { // VTK
-    VTKViewer_RenderWindowInteractor* myRenderInter = 
-      ((VTKViewer_ViewFrame*)myStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-    
-    myRenderInter->SwitchRepresentation(IO, mode);
-    myRenderInter->Update();
-  } 
-  else if ( myStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) // OCC
-    {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-      v3d->SwitchRepresentation(IO, mode);
+  class TEvent: public SALOME_Event{
+    QAD_Study* myStudy;
+    Handle(SALOME_InteractiveObject) myIO;
+    int myParam;
+  public:
+    TEvent(QAD_Study* theStudy, const Handle(SALOME_InteractiveObject)& theIO, int theParam):
+      myStudy(theStudy), myIO(theIO), myParam(theParam)
+    {}
+    virtual void Execute(){
+      if(VTKViewer_ViewFrame* aViewFrame = GetFrame<VTKViewer_ViewFrame>(myStudy)){
+	VTKViewer_RenderWindowInteractor* myRenderInter= aViewFrame->getRWInteractor();
+	myRenderInter->SetDisplayMode(myIO,myParam);
+	myRenderInter->Update();
+      }else if(OCCViewer_ViewFrame* aViewFrame = GetFrame<OCCViewer_ViewFrame>(myStudy)){
+	OCCViewer_Viewer3d* v3d = aViewFrame->getViewer();
+	v3d->SwitchRepresentation(myIO,myParam);
+      }
     }
+  };
+
+  ProcessVoidEvent(new TEvent(aStudy,anIO,theMode));
 }
 
-void GEOM_Swig::setColor(const char* Entry, int red, int green, int blue)
+void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue)
 {
-  QAD_Study* myStudy = QAD_Application::getDesktop()->getActiveStudy();
-  QColor c = QColor (red, green, blue);
-  Handle(SALOME_InteractiveObject) IO = 
-    myStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame()->FindIObject( Entry );
- 
-  if ( myStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK )  { // VTK
-    VTKViewer_RenderWindowInteractor* myRenderInter = 
-      ((VTKViewer_ViewFrame*)myStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-    myRenderInter->SetColor(IO,c);
-    myRenderInter->Update();
-  } 
-  else if ( myStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) // OCC
-    {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-      v3d->SetColor(IO,c);
+  QAD_Study* aStudy = QAD_Application::getDesktop()->getActiveStudy();
+  Handle(SALOME_InteractiveObject) anIO = SALOME::FindIObject(aStudy,theEntry);
+  QColor aColor(red,green,blue);
+
+  class TEvent: public SALOME_Event{
+    QAD_Study* myStudy;
+    Handle(SALOME_InteractiveObject) myIO;
+    QColor myParam;
+  public:
+    TEvent(QAD_Study* theStudy, const Handle(SALOME_InteractiveObject)& theIO, const QColor& theParam):
+      myStudy(theStudy), myIO(theIO), myParam(theParam)
+    {}
+    virtual void Execute(){
+      if(VTKViewer_ViewFrame* aViewFrame = GetFrame<VTKViewer_ViewFrame>(myStudy)){
+	VTKViewer_RenderWindowInteractor* myRenderInter= aViewFrame->getRWInteractor();
+	myRenderInter->SetColor(myIO,myParam);
+	myRenderInter->Update();
+      }else if(OCCViewer_ViewFrame* aViewFrame = GetFrame<OCCViewer_ViewFrame>(myStudy)){
+	OCCViewer_Viewer3d* v3d = aViewFrame->getViewer();
+	v3d->SetColor(myIO,myParam);
+      }
     }
+  };
+
+  ProcessVoidEvent(new TEvent(aStudy,anIO,aColor));
 }
 
-void GEOM_Swig::setTransparency(const char* Entry, float transp)
+void GEOM_Swig::setTransparency(const char* theEntry, float transp)
 {
-  QAD_Study* myStudy = QAD_Application::getDesktop()->getActiveStudy();
-  Handle(SALOME_InteractiveObject) IO = 
-    myStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame()->FindIObject( Entry );
- 
-  if ( myStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK )  { // VTK
-    VTKViewer_RenderWindowInteractor* myRenderInter = 
-      ((VTKViewer_ViewFrame*)myStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-    myRenderInter->SetTransparency(IO,transp);
-    myRenderInter->Update();
-  } 
-  else if ( myStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) // OCC
-    {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-      v3d->SetTransparency(IO,transp);
+  QAD_Study* aStudy = QAD_Application::getDesktop()->getActiveStudy();
+  Handle(SALOME_InteractiveObject) anIO = SALOME::FindIObject(aStudy,theEntry);
+
+  class TEvent: public SALOME_Event{
+    QAD_Study* myStudy;
+    Handle(SALOME_InteractiveObject) myIO;
+    float myParam;
+  public:
+    TEvent(QAD_Study* theStudy, const Handle(SALOME_InteractiveObject)& theIO, float theParam):
+      myStudy(theStudy), myIO(theIO), myParam(theParam)
+    {}
+    virtual void Execute(){
+      if(VTKViewer_ViewFrame* aViewFrame = GetFrame<VTKViewer_ViewFrame>(myStudy)){
+	VTKViewer_RenderWindowInteractor* myRenderInter= aViewFrame->getRWInteractor();
+	myRenderInter->SetTransparency(myIO,myParam);
+	myRenderInter->Update();
+      }else if(OCCViewer_ViewFrame* aViewFrame = GetFrame<OCCViewer_ViewFrame>(myStudy)){
+	OCCViewer_Viewer3d* v3d = aViewFrame->getViewer();
+	v3d->SetTransparency(myIO,myParam);
+      }
     }
+  };
+
+  ProcessVoidEvent(new TEvent(aStudy,anIO,transp));
 }

@@ -33,10 +33,10 @@
 
 #include "SALOME_InteractiveObject.hxx"
 #include "SALOME_Filter.hxx"
+#include "SALOME_TypeFilter.hxx"
 
 // IDL Headers
 #include <SALOMEconfig.h>
-#include CORBA_SERVER_HEADER(GEOM_Shape)
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 #include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
@@ -44,8 +44,10 @@
 #include <Standard.hxx>
 #include <TopAbs.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TColStd_MapOfInteger.hxx>
 
-class GEOM_ShapeTypeFilter : public SALOME_Filter {
+class GEOM_ShapeTypeFilter : public SALOME_Filter
+{
 
 public:
 
@@ -61,45 +63,38 @@ public:
       { 
         if (anAddress) Standard::Free((Standard_Address&)anAddress); 
       }
-//    inline void  operator delete(void *anAddress, size_t size) 
-//      { 
-//        if (anAddress) Standard::Free((Standard_Address&)anAddress,size); 
-//      }
  // Methods PUBLIC
- // 
-Standard_EXPORT GEOM_ShapeTypeFilter(TopAbs_ShapeEnum ShapeType,
-				     GEOM::GEOM_Gen_ptr geom);
-Standard_EXPORT virtual  Standard_Boolean IsOk(const Handle(SALOME_InteractiveObject)& anobj) const;
+ //
+Standard_EXPORT GEOM_ShapeTypeFilter( const TopAbs_ShapeEnum theShapeType,
+                                      const bool theIsAll = false );
+Standard_EXPORT GEOM_ShapeTypeFilter( const TColStd_MapOfInteger& theShapeTypes,
+                                      const bool theIsAll = false );
 Standard_EXPORT ~GEOM_ShapeTypeFilter();
 
-
+Standard_EXPORT virtual  Standard_Boolean IsOk(const Handle(SALOME_InteractiveObject)& anobj) const;
 
 
  // Type management
  //
  Standard_EXPORT friend Handle_Standard_Type& GEOM_ShapeTypeFilter_Type_();
  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- Standard_EXPORT Standard_Boolean	       IsKind(const Handle(Standard_Type)&) const;
+ Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)&) const;
 
 protected:
 
  // Methods PROTECTED
- // 
+ //
+ Standard_EXPORT virtual Standard_Boolean IsShapeOk(const TopoDS_Shape& theShape ) const;
 
 
  // Fields PROTECTED
  //
-TopAbs_ShapeEnum myKind;
-GEOM::GEOM_Gen_var myComponentGeom;
+TColStd_MapOfInteger myShapeTypes;
+Handle(SALOME_TypeFilter) myTypeFilter;
 
 private: 
 
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
+ bool myIsAll;
 
 
 };

@@ -30,11 +30,8 @@
 #define DIALOGBOX_TRANSLATION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel3Spin.h"
+#include "DlgRef_3Sel3Spin1Check.h"
 
-#include "TransformationGUI.h"
-
-#include <gp_Vec.hxx>
 
 //=================================================================================
 // class    : TransformationGUI_TranslationDlg
@@ -45,33 +42,38 @@ class TransformationGUI_TranslationDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_TranslationDlg(QWidget* parent = 0, const char* name = 0, TransformationGUI* theTransformationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_TranslationDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_TranslationDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakeTranslationSimulationAndDisplay();
+    
+    GEOM::GEOM_Object_var myVector, myPoint1, myPoint2;
+    GEOM::ListOfGO        myObjects;
 
-    TransformationGUI* myTransformationGUI;
-    double step;
-
-    TopoDS_Shape myBase;   /* is myBase */
-    GEOM::GEOM_Shape_var myGeomShape;
-    bool myOkBase;
-    gp_Vec myVec;
-
-    DlgRef_1Sel3Spin* GroupPoints;
+    DlgRef_3Sel3Spin1Check* GroupPoints;
 
 private slots :
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
+    void ClickOnCancel();
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ValueChangedInSpinBox(double newValue);
-
+    void ValueChangedInSpinBox();
+    void ConstructorsClicked(int constructorId);
+    void CreateCopyModeChanged(bool isCreateCopy);
 };
 
 #endif // DIALOGBOX_TRANSLATION_H

@@ -32,9 +32,6 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_3Sel_QTD.h"
 
-#include "BasicGUI.h"
-#include "GEOM_ShapeTypeFilter.hxx"
-
 //=================================================================================
 // class    : BasicGUI_ArcDlg
 // purpose  : 
@@ -44,30 +41,33 @@ class BasicGUI_ArcDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_ArcDlg( QWidget* parent = 0, const char* name = 0, BasicGUI* theBasicGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    BasicGUI_ArcDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
     ~BasicGUI_ArcDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );    
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakeArcSimulationAndDisplay();
 
-    BasicGUI* myBasicGUI;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;   /* Filter selection */
+    GEOM::GEOM_Object_var myPoint1, myPoint2, myPoint3;
 
-    gp_Pnt myPoint1;
-    gp_Pnt myPoint2;
-    gp_Pnt myPoint3;
-    bool myOkPoint1;
-    bool myOkPoint2;
-    bool myOkPoint3;
-
-    DlgRef_3Sel_QTD* GroupPoints;
+    DlgRef_3Sel_QTD* Group3Pnts;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    void ClickOnCancel();
+    bool ClickOnApply();
+    
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
+    
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

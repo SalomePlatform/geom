@@ -48,10 +48,11 @@ LIB_SRC = 	BasicGUI.cxx \
 		BasicGUI_ArcDlg.cxx \
 		BasicGUI_VectorDlg.cxx \
 		BasicGUI_PlaneDlg.cxx \
-		BasicGUI_WorkingPlaneDlg.cxx
+		BasicGUI_WorkingPlaneDlg.cxx \
+		BasicGUI_CurveDlg.cxx \
+		BasicGUI_MarkerDlg.cxx		
 
 LIB_MOC = \
-		BasicGUI.h \
 		BasicGUI_PointDlg.h \
 		BasicGUI_LineDlg.h \
 		BasicGUI_CircleDlg.h \
@@ -59,9 +60,11 @@ LIB_MOC = \
 		BasicGUI_ArcDlg.h \
 		BasicGUI_VectorDlg.h \
 		BasicGUI_PlaneDlg.h \
-		BasicGUI_WorkingPlaneDlg.h
+		BasicGUI_WorkingPlaneDlg.h \
+		BasicGUI_CurveDlg.h \
+		BasicGUI_MarkerDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = SALOME_GenericObj.idl
 
 LIB_SERVER_IDL = 
 
@@ -70,6 +73,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lGEOMFiltersSelection -lGEOMBase
+LDFLAGS += -lGEOMFiltersSelection -lGEOMBase -lGEOMGUI
 
 @CONCLUDE@

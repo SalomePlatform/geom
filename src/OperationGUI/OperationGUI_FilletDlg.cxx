@@ -26,20 +26,15 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "OperationGUI_FilletDlg.h"
+#include "DlgRef_1Sel1Spin.h"
+#include "DlgRef_2Sel1Spin.h"
+#include "QAD_Desktop.h"
+#include "qpixmap.h"
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <list>
 
-#include "DisplayGUI.h"
-#include "QAD_MessageBox.h"
-
-#include <TopoDS_Edge.hxx>
-#include <AIS_InteractiveContext.hxx>
-#include <TopExp_Explorer.hxx>
-#include <BRepFilletAPI_MakeFillet.hxx>
-#include <Precision.hxx>
-
-#include <Standard_ErrorHandler.hxx> 
-#include <Standard_Failure.hxx>
+#include "GEOMImpl_Types.hxx"
 
 //=================================================================================
 // class    : OperationGUI_FilletDlg()
@@ -48,34 +43,66 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_FilletDlg::OperationGUI_FilletDlg(QWidget* parent, const char* name, OperationGUI* theOperationGUI, SALOME_Selection* Sel, Handle(AIS_InteractiveContext) ic, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+OperationGUI_FilletDlg::OperationGUI_FilletDlg( QWidget* parent, SALOME_Selection* Sel )
+  :GEOMBase_Skeleton( parent, "OperationGUI_FilletDlg", Sel, false,
+     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_FILLET_ALL")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_FILLET_EDGE")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_FILLET_FACE")));
-  QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  myConstructorId = -1;
+  mySelection = Sel;
+  
+  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_ALL" ) ) );
+  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_EDGE" ) ) );
+  QPixmap image2( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_FACE" ) ) );
+  
+  QPixmap iconSelect( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption(tr("GEOM_FILLET_TITLE"));
+  setCaption( tr( "GEOM_FILLET_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_FILLET"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->setPixmap(image2);
+  GroupConstructors->setTitle( tr( "GEOM_FILLET" ) );
+  RadioButton1->setPixmap( image0 );
+  RadioButton2->setPixmap( image1 );
+  RadioButton3->setPixmap( image2 );
 
-  Group1 = new DlgRef_1Sel1Spin(this, "Group1");
-  Group1->GroupBox1->setTitle(tr("GEOM_FILLET_ALL"));
-  Group1->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
-  Group1->TextLabel2->setText(tr("GEOM_RADIUS"));
-  Group1->PushButton1->setPixmap(image3);
+  Group1 = new DlgRef_1Sel1Spin( this, "Group1" );
+  Group1->GroupBox1->setTitle( tr( "GEOM_FILLET_ALL" ) );
+  Group1->TextLabel1->setText( tr( "GEOM_MAIN_OBJECT" ) );
+  Group1->TextLabel2->setText( tr( "GEOM_RADIUS" ) );
+  Group1->PushButton1->setPixmap( iconSelect );
+  Group1->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(Group1, 1, 0);
+  Group2 = new DlgRef_2Sel1Spin( this, "Group2" );
+  Group2->GroupBox1->setTitle( tr( "GEOM_FILLET_EDGES" ) );
+  Group2->TextLabel1->setText( tr( "GEOM_MAIN_OBJECT" ) );
+  Group2->TextLabel2->setText( tr( "SELECTED_EDGES" ) );
+  Group2->TextLabel3->setText( tr( "GEOM_RADIUS" ) );
+  Group2->PushButton1->setPixmap( iconSelect );
+  Group2->PushButton2->setPixmap( iconSelect );
+  Group2->LineEdit1->setReadOnly( true );
+  Group2->LineEdit2->setReadOnly( true );
+
+  Group3 = new DlgRef_2Sel1Spin( this, "Group3" );
+  Group3->GroupBox1->setTitle(tr( "GEOM_FILLET_FACES" ) );
+  Group3->TextLabel1->setText(tr( "GEOM_MAIN_OBJECT" ) );
+  Group3->TextLabel2->setText(tr( "SELECTED_FACES" ) );
+  Group3->TextLabel3->setText(tr( "GEOM_RADIUS" ) );
+  Group3->PushButton1->setPixmap( iconSelect );
+  Group3->PushButton2->setPixmap( iconSelect );
+  Group3->LineEdit1->setReadOnly( true );
+  Group3->LineEdit2->setReadOnly( true );
+
+  Layout1->addWidget( Group1, 2, 0 );
+  Layout1->addWidget( Group2, 2, 0 );
+  Layout1->addWidget( Group3, 2, 0 );
   /***************************************************************/
+
+  double SpecificStep = 10.0;
+  Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
+  Group2->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
+  Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
 
   /* Initialisations */
-  myOperationGUI = theOperationGUI;
-  Init(ic);
+  Init( mySelection );
 }
 
 
@@ -85,7 +112,6 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg(QWidget* parent, const char* name
 //=================================================================================
 OperationGUI_FilletDlg::~OperationGUI_FilletDlg()
 {  
-  /* no need to delete child widgets, Qt does it all for us */
 }
 
 
@@ -93,45 +119,49 @@ OperationGUI_FilletDlg::~OperationGUI_FilletDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void OperationGUI_FilletDlg::Init(Handle(AIS_InteractiveContext) ic)
+void OperationGUI_FilletDlg::Init( SALOME_Selection* Sel )
 {
-  /* init variables */
-  myConstructorId = 0;
+  mySelection = Sel;
+  myConstructorId = -1;
+  reset();
+  RadioButton1->setChecked( true );
   myEditCurrentArgument = Group1->LineEdit1;
 
-  myRadius = 5.0;
-  myOkShape = false;
-  myIC = ic;
-  myLocalContextId = -1;
-  myUseLocalContext = false;
+  // main buttons
+  connect( buttonOk   , SIGNAL( clicked() ), this, SLOT( ClickOnOk()    ) );
+  connect( buttonApply, SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  double SpecificStep = 10.0;
-  /* min, max, step and decimals for spin boxes */
-  Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-  Group1->SpinBox_DX->SetValue(myRadius);
+  // group box
+  connect( GroupConstructors, SIGNAL( clicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
-  /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
-
+  // push buttons
   connect(Group1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group2->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group2->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+
+  // line edits
   connect(Group1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group2->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group3->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
+  // spin boxes  
   connect(Group1->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group1->SpinBox_DX, SLOT(SetStep(double)));
+  connect(Group2->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group3->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+    // selection
+  connect( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  
 
-  /* displays Dialog */
+  initName( tr( "GEOM_FILLET" ) );
+
+  Group2->hide();
+  Group3->hide();
   Group1->show();
-  this->show();
 
-  return;
+  this->show();
 }
 
 
@@ -139,52 +169,65 @@ void OperationGUI_FilletDlg::Init(Handle(AIS_InteractiveContext) ic)
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void OperationGUI_FilletDlg::ConstructorsClicked(int constructorId)
+void OperationGUI_FilletDlg::ConstructorsClicked( int constructorId )
 {
+  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC )
+  {
+    RadioButton1->setChecked( true );
+    return;
+  }
+
+  if ( myConstructorId == constructorId )
+    return;
+
+  // Get radius from previous widget
+  double R = 5;
+  if      ( myConstructorId == 0 ) R = Group1->SpinBox_DX->GetValue();
+  else if ( myConstructorId == 1 ) R = Group2->SpinBox_DX->GetValue();
+  else                             R = Group3->SpinBox_DX->GetValue();
+
   myConstructorId = constructorId;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  disconnect(mySelection, 0, this, 0);
-  myOkShape = false;
-  myRadius = 5.0;
 
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myUseLocalContext) {
-    myIC->CloseLocalContext(myLocalContextId);
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
-    myUseLocalContext = false;
+  switch ( constructorId )
+  {
+    case 0:
+        Group1->show();
+        Group2->hide();
+        Group3->hide();
+        Group1->SpinBox_DX->SetValue( R );
+    break;
+    case 1:
+        Group1->hide();
+        Group2->show();
+        Group3->hide();
+        Group2->SpinBox_DX->SetValue( R );
+    break;
+    case 2:
+        Group1->hide();
+        Group2->hide();
+        Group3->show();
+        Group3->SpinBox_DX->SetValue( R );
+    break;
+    default:
+    break;
   }
 
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC) {
-    myConstructorId = constructorId = 0; //No subshape selection if viewer is not OCC
-    RadioButton1->setChecked(TRUE);
+  if      ( constructorId == 0 ) myEditCurrentArgument = Group1->LineEdit1;
+  else if ( constructorId == 1 ) myEditCurrentArgument = Group2->LineEdit1;
+  else                           myEditCurrentArgument = Group3->LineEdit1;
+
+  activateSelection();
+  enableWidgets();
+
+  if ( !myShape->_is_nil() )
+  {
+    myEditCurrentArgument->setText( GEOMBase::GetName( myShape ) );
+    GEOMBase_Skeleton::LineEditReturnPressed();
   }
-  
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  Group1->LineEdit1->setText("");
-  Group1->SpinBox_DX->SetValue(myRadius);
-  switch (constructorId)
-    {
-    case 0: /* Fillet All */
-      {
-	Group1->GroupBox1->setTitle(tr("GEOM_FILLET_ALL"));
-	myShapeType = -1;
-	break;
-      }
-    case 1: /* Fillet edges */
-      {
-	Group1->GroupBox1->setTitle(tr("GEOM_FILLET_EDGES"));
-	myShapeType = 6;
-	break;
-      }
-    case 2: /* Fillet Faces */
-      {
-	Group1->GroupBox1->setTitle(tr("GEOM_FILLET_FACES"));
-	myShapeType = 4;
-	break;
-      }
-    }
-  return;
+  else
+    myEditCurrentArgument->setText( "" );
+
+  displayPreview();  
 }
 
 
@@ -194,9 +237,8 @@ void OperationGUI_FilletDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void OperationGUI_FilletDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  this->ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -204,59 +246,14 @@ void OperationGUI_FilletDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void OperationGUI_FilletDlg::ClickOnApply()
+bool OperationGUI_FilletDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QApplication::setOverrideCursor(Qt::waitCursor);
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+    if ( !onAccept() )
+    return false;
 
-  bool testResult = false;
-  switch(myConstructorId)
-    { 
-    case 0 : /* Fillet All */
-      {	
-	if(myOkShape)
-	  testResult = myOperationGUI->OnFilletGetAll(myShape, myRadius, myShapeType, myShapeIOR);
-	break;
-      }
-    case 1 : /* Fillet Edge */
-      {	
-	if(myOkShape)
-	  testResult = myOperationGUI->OnFilletGetSelected(myShape, myShapeIOR, myRadius, myShapeType, myLocalContextId, myUseLocalContext);
-	break;
-      }
-    case 2 : /* Fillet Face */
-      {
-	if(myOkShape)
-	  testResult = myOperationGUI->OnFilletGetSelected(myShape, myShapeIOR, myRadius, myShapeType, myLocalContextId, myUseLocalContext);       
-	break;
-      }
-    }
-
-  if(!testResult) 
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-  else
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  /* Reset all arguments and local context to allow user a new selection ...*/
-  this->ResetStateOfDialog();
-  QApplication::restoreOverrideCursor();
-  return;
+  initName();
+  return true;
 }
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void OperationGUI_FilletDlg::ClickOnCancel()
-{
-  this->ResetStateOfDialog();
-  GEOMBase_Skeleton::ClickOnCancel();
-  return;
-}
-
 
 //=================================================================================
 // function : SelectionIntoArgument()
@@ -264,60 +261,96 @@ void OperationGUI_FilletDlg::ClickOnCancel()
 //=================================================================================
 void OperationGUI_FilletDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  myEditCurrentArgument->setText("");
-  this->ResetStateOfDialog();
-  QString aString = ""; /* name of selection */
+  erasePreview();
+  myEditCurrentArgument->setText( "" );
 
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if (nbSel == 1) {
-    TopoDS_Shape S;
-    Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-    if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-      return;
-    if(!IO->hasEntry()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
-      return;
-    }
-	
-    if(!S.IsNull() &&  S.ShapeType() <= 2) {
-      if(IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject))) {
-	Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast(IO);
-	myShapeIOR = GIObject->getIOR(); /* the Geom IOR string of selection */
-	myEditCurrentArgument->setText(aString);
-	myShape = S;
-	myOkShape = true;
-      }
-      
-      if(IO->hasEntry()) {
-	SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-	SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
-        SALOMEDS::GenericAttribute_var anAttr;
-        SALOMEDS::AttributeIOR_var anIOR;
-	if(!obj->_is_nil()) {
-	  if(obj->FindAttribute(anAttr, "AttributeIOR")) {
-            anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	    myShapeIOR = anIOR->Value();
-	    myOkShape = true;
-	    myShape = S;
-	    myEditCurrentArgument->setText(aString);
-	  }
-	}
+  // If selection of main object is activated
+  if ( myEditCurrentArgument == Group1->LineEdit1 ||
+       myEditCurrentArgument == Group2->LineEdit1 ||
+       myEditCurrentArgument == Group3->LineEdit1 )
+  {
+    if ( mySelection->IObjectCount() == 1 )
+    {
+      Standard_Boolean aResult = Standard_False;
+      GEOM::GEOM_Object_var anObj =
+        GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+
+      if ( aResult && !anObj->_is_nil() )
+      {
+        myShape = anObj;
+        myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
+        displayPreview();
+        enableWidgets();
+        return;
       }
     }
-    if(myOkShape && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myConstructorId == 0)
-      this->MakePreview();
+
+    myShape = GEOM::GEOM_Object::_nil();
+    enableWidgets();
   }
-  else 
-    return;
+  // If face or edge selection is activated
+  else if ( myEditCurrentArgument == Group2->LineEdit2 ||
+            myEditCurrentArgument == Group3->LineEdit2 )
+  {
+    if ( mySelection->IObjectCount() == 1 )
+    {
+      Standard_Boolean aResult = Standard_False;
+      GEOM::GEOM_Object_var anObj =
+        GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+
+      if ( aResult && !anObj->_is_nil() )
+      {
+         TColStd_IndexedMapOfInteger anIndexes;
+         mySelection->GetIndex( mySelection->firstIObject(), anIndexes );
+
+         if ( anIndexes.Extent() > 0 )
+         {
+           QString aName;
+           if ( anIndexes.Extent() == 1 )
+           {
+             int anIndex = anIndexes( 1 );
+
+             aName = QString( GEOMBase::GetName( anObj ) ) + QString( ":%1" ).arg( anIndex );
+           }
+           else
+             aName = tr( "GEOM_MEN_POPUP_NAME" ).arg( anIndexes.Extent() );
+
+           myEditCurrentArgument->setText( aName );
+
+           if ( myConstructorId == 1 )
+             myEdges = anIndexes;
+           else
+             myFaces = anIndexes;
+           
+           displayPreview();
+           return;
+         }
+      }
+    }
+    myFaces.Clear();
+  }
+}
+
+
+//=================================================================================
+// function : LineEditReturnPressed()
+// purpose  :
+//=================================================================================
+void OperationGUI_FilletDlg::LineEditReturnPressed()
+{
+  QLineEdit* send = ( QLineEdit* )sender();
   
-  if(myOkShape && myShapeType!=-1 && myConstructorId != 0) {
-    /* local context is defined into the method */
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->PrepareSubShapeSelection(myShapeType, myLocalContextId);  
-    myUseLocalContext = true;
-  }
+  if ( send == Group1->LineEdit1 )
+    myEditCurrentArgument = Group1->LineEdit1;
+  else if ( send == Group2->LineEdit1 )
+    myEditCurrentArgument = Group2->LineEdit1;
+  else if ( send == Group3->LineEdit1 )
+    myEditCurrentArgument = Group3->LineEdit1;
+  else
+    return;
+
+  GEOMBase_Skeleton::LineEditReturnPressed();
+  return;
 }
 
 
@@ -327,13 +360,35 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
 //=================================================================================
 void OperationGUI_FilletDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();  
+  QPushButton* send = (QPushButton*)sender();
 
-  if(send == Group1->PushButton1)
+  if ( send == Group1->PushButton1 )
+  {
     Group1->LineEdit1->setFocus();
+    myEditCurrentArgument = Group1->LineEdit1;
+  }
+  else if( send == Group2->PushButton1 )
+  {
+    Group2->LineEdit1->setFocus();
+    myEditCurrentArgument = Group2->LineEdit1;
+  }
+  else if( send == Group2->PushButton2 )
+  {
+    Group2->LineEdit2->setFocus();
+    myEditCurrentArgument = Group2->LineEdit2;
+  }
+  else if ( send == Group3->PushButton1 )
+  {
+    Group3->LineEdit1->setFocus();
+    myEditCurrentArgument = Group3->LineEdit1;
+  }
+  else if( send == Group3->PushButton2 )
+  {
+    Group3->LineEdit1->setFocus();
+    myEditCurrentArgument = Group3->LineEdit2;
+  }
 
-  this->SelectionIntoArgument();
-  return;
+  activateSelection();
 }
 
 
@@ -343,7 +398,6 @@ void OperationGUI_FilletDlg::SetEditCurrentArgument()
 //=================================================================================
 void OperationGUI_FilletDlg::DeactivateActiveDialog()
 {
-  this->ResetStateOfDialog();
   GEOMBase_Skeleton::DeactivateActiveDialog();
   return;
 }
@@ -356,10 +410,12 @@ void OperationGUI_FilletDlg::DeactivateActiveDialog()
 void OperationGUI_FilletDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+
+  connect( mySelection, SIGNAL(currentSelectionChanged()),
+           this, SLOT( SelectionIntoArgument() ) );
+
+  activateSelection();
+  displayPreview();
 }
 
 
@@ -367,126 +423,205 @@ void OperationGUI_FilletDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void OperationGUI_FilletDlg::enterEvent(QEvent* e)
+void OperationGUI_FilletDlg::enterEvent( QEvent* e )
 {
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    this->ActivateThisDialog();
 }
-
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void OperationGUI_FilletDlg::closeEvent(QCloseEvent* e)
-{ 
-  /* same than click on cancel button */
-  this->ClickOnCancel();
-  return;
-}
-
-
-//=================================================================================
-// function : ResetStateOfDialog()
-// purpose  :
-//=================================================================================
-void OperationGUI_FilletDlg::ResetStateOfDialog()
-{
-  myOkShape = false;
-  myEditCurrentArgument->setText("");
-  QApplication::restoreOverrideCursor();
-
-  /* Close its local contact if opened */
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myUseLocalContext) {
-    myIC->CloseLocalContext(myLocalContextId);
-    myUseLocalContext = false;
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
-  }
-  return;
-}
-
 
 //=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void OperationGUI_FilletDlg::ValueChangedInSpinBox(double newValue)
+void OperationGUI_FilletDlg::ValueChangedInSpinBox( double newValue )
 {
-  myGeomBase->EraseSimulationShape(); 
-  mySimulationTopoDs.Nullify();
-
-  myRadius = newValue;
-
-  if(myOkShape && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myConstructorId == 0)
-    this->MakePreview();
-  return;
+  displayPreview();
 }
 
-
 //=================================================================================
-// function : MakePreview()
+// function : reset()
 // purpose  :
 //=================================================================================
-void OperationGUI_FilletDlg::MakePreview()
+void OperationGUI_FilletDlg::reset()
 {
-  QApplication::setOverrideCursor(Qt::waitCursor);
-  TopoDS_Shape tds;
+  // Set Initial values of spinboxes
+  Group1->SpinBox_DX->SetValue( 5 );
+  Group2->SpinBox_DX->SetValue( 5 );
+  Group3->SpinBox_DX->SetValue( 5 );
 
-  try {
-    BRepFilletAPI_MakeFillet fill(myShape);
-    switch(myConstructorId) 
-      {
-      case 0: /* Fillet All */
-	{
-	  TopExp_Explorer Exp(myShape, TopAbs_EDGE);
-	  for(Exp; Exp.More(); Exp.Next()) {
-	    TopoDS_Edge E = TopoDS::Edge(Exp.Current());
-	    fill.Add(E);
-	  }
-	  
-	  for(int i = 1; i <= fill.NbContours(); i++) {
-	    try {
-#if OCC_VERSION_MAJOR >= 5
-	      fill.SetRadius(myRadius,i,i);
-#else
-	      fill.SetRadius(myRadius,i);
-#endif
-	    }  
-	    catch(Standard_Failure) {
-	      QApplication::restoreOverrideCursor();
-	      QAD_MessageBox::warn1 (QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_FILLET_ABORT").arg(myRadius), tr("GEOM_BUT_OK"));
-	      QApplication::setOverrideCursor(Qt::waitCursor);
-	      myGeomBase->EraseSimulationShape(); 
-	      mySimulationTopoDs.Nullify();
-	      Group1->SpinBox_DX->SetValue(5.0);
-	      QApplication::restoreOverrideCursor();
-	      return;
-	    }
-	  }
-	  tds = fill.Shape();
-	  break;
-	}
-      //    case 1: /* Fillet edges */
-      //    case 2: /* Fillet Faces */
-      }
+  Group1->LineEdit1->setText( "" );
+  Group2->LineEdit1->setText( "" );
+  Group2->LineEdit2->setText( "" );
+  Group3->LineEdit1->setText( "" );
+  Group3->LineEdit2->setText( "" );
 
-    if(!tds.IsNull()) {
-      mySimulationTopoDs = tds;
-      myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-    }
-  }  
-  catch(Standard_Failure) {
-    QApplication::restoreOverrideCursor();
-    QAD_MessageBox::warn1 (QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_FILLET_ABORT").arg(myRadius), tr("GEOM_BUT_OK"));
-    QApplication::setOverrideCursor(Qt::waitCursor);
-    myGeomBase->EraseSimulationShape(); 
-    mySimulationTopoDs.Nullify();
-    Group1->SpinBox_DX->SetValue(5.0);
+  // constructor id
+  int aConstructorId = getConstructorId();
+
+  if      ( aConstructorId == 0 ) myEditCurrentArgument = Group1->LineEdit1;
+  else if ( aConstructorId == 1 ) myEditCurrentArgument = Group2->LineEdit1;
+  else                            myEditCurrentArgument = Group3->LineEdit1;
+
+  myShape = GEOM::GEOM_Object::_nil();
+
+  myFaces.Clear();
+  myEdges.Clear();
+
+  erasePreview( true );
+
+  activateSelection();
+
+  enableWidgets();
+}
+
+//=================================================================================
+// function : getConstructorId()
+// purpose  :
+//=================================================================================
+int OperationGUI_FilletDlg::getConstructorId() const
+{
+  return GroupConstructors->id( GroupConstructors->selected() );
+}
+
+//=================================================================================
+// function : activateSelection
+// purpose  : Activate selection in accordance with myEditCurrentArgument
+//=================================================================================
+void OperationGUI_FilletDlg::activateSelection()
+{
+
+  if ( !myShape->_is_nil() && myEditCurrentArgument == Group2->LineEdit2 )
+    localSelection( myShape, TopAbs_EDGE );
+  else if ( !myShape->_is_nil() && myEditCurrentArgument == Group3->LineEdit2 )
+    localSelection( myShape, TopAbs_FACE );
+  else
+  {
+    TColStd_MapOfInteger aMap;
+    aMap.Add( GEOM_SHELL );
+    aMap.Add( GEOM_SOLID );
+    aMap.Add( GEOM_COMPOUND );
+    globalSelection( aMap );
   }
 
-  QApplication::restoreOverrideCursor();
-  return;
+  SelectionIntoArgument();
 }
+
+//=================================================================================
+// function : enableWidgets
+// purpose  : Enable widgets of faces in accordance with value of main object
+//=================================================================================
+void OperationGUI_FilletDlg::enableWidgets()
+{
+  int anId = getConstructorId();
+
+  bool toEnable = !myShape->_is_nil();
+
+  if ( anId == 1 )
+  {
+    Group2->LineEdit2->setEnabled( toEnable );
+    Group2->PushButton2->setEnabled( toEnable );
+    
+    if ( !toEnable )
+    {
+      Group2->LineEdit2->setText( "" );
+      myEdges.Clear();
+    }
+  }
+  else if ( anId == 2 )
+  {
+    Group3->LineEdit2->setEnabled( toEnable );
+    Group3->PushButton2->setEnabled( toEnable );
+
+    if ( !toEnable )
+    {
+      Group3->LineEdit2->setText( "" );
+      myFaces.Clear();
+    }
+  }
+}
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr OperationGUI_FilletDlg::createOperation()
+{
+  return getGeomEngine()->GetILocalOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : ClickOnApply()
+// purpose  : Verify validity of input data
+//=================================================================================
+bool OperationGUI_FilletDlg::isValid( QString& )
+{
+  switch ( getConstructorId() )
+  {
+    case 0: return !myShape->_is_nil();
+    case 1: return !myShape->_is_nil() && myEdges.Extent() > 0;
+    case 2: return !myShape->_is_nil() && myFaces.Extent() > 0;
+    default: return false;
+  }
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool OperationGUI_FilletDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  int anId = getConstructorId();
+  if ( anId == 0 )
+    anObj = GEOM::GEOM_ILocalOperations::_narrow(
+      getOperation() )->MakeFilletAll( myShape,
+                                       getRadius() );
+  else if ( anId == 1 )
+  {
+    GEOM::ListOfLong_var aList = new GEOM::ListOfLong;
+    aList->length( myEdges.Extent() );
+
+    for ( int i = 1, n = myEdges.Extent(); i <= n; i++ )
+      aList[ i - 1 ] = myEdges( i );
+
+    anObj = GEOM::GEOM_ILocalOperations::_narrow(
+      getOperation() )->MakeFilletEdges( myShape, getRadius(), aList );
+  }
+  else if ( anId == 2 )
+  {
+    int i = 0;
+    GEOM::ListOfLong_var aList = new GEOM::ListOfLong;
+    aList->length( myFaces.Extent() );
+
+    for ( int i = 1, n = myFaces.Extent(); i <= n; i++ )
+      aList[ i - 1 ] = myFaces( i );
+
+    anObj = GEOM::GEOM_ILocalOperations::_narrow(
+      getOperation() )->MakeFilletFaces( myShape, getRadius(), aList );
+  }
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
+}
+
+//=================================================================================
+// function : getRadius
+// purpose  : Get radius     
+//=================================================================================
+double OperationGUI_FilletDlg::getRadius() const
+{
+  int anId = getConstructorId();
+  if      ( anId == 0 ) return Group1->SpinBox_DX->GetValue();
+  else if ( anId == 1 ) return Group2->SpinBox_DX->GetValue();
+  else                  return Group3->SpinBox_DX->GetValue();
+}
+
+
+
+
+
+
+

@@ -1,0 +1,15 @@
+#ifndef _NMTTools_ListOfCommonBlock_HeaderFile
+#include <NMTTools_ListOfCommonBlock.hxx>
+#endif
+#ifndef _BOPTools_ListOfPaveBlock_HeaderFile
+#include <BOPTools_ListOfPaveBlock.hxx>
+#endif
+#ifndef _BOPTools_PaveBlock_HeaderFile
+#include <BOPTools_PaveBlock.hxx>
+#endif
+#ifndef _NMTTools_CommonBlock_HeaderFile
+#include <NMTTools_CommonBlock.hxx>
+#endif
+#ifndef _NMTTools_CommonBlockAPI_HeaderFile
+#include <NMTTools_CommonBlockAPI.hxx>
+#endif

@@ -1,0 +1,80 @@
+-- File:	NMTTools_DSFiller.cdl
+-- Created:	Fri Dec  5 13:57:03 2003
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2003
+
+
+class DSFiller from NMTTools 
+
+	---Purpose: 
+
+uses
+    Shape from TopoDS,  
+    InterferencePool     from BOPTools, 
+    PInterferencePool    from BOPTools,
+    ShapesDataStructure  from NMTDS, 
+    PShapesDataStructure from NMTDS,
+    PPaveFiller          from NMTTools, 
+    PaveFiller           from NMTTools
+--raises
+
+is  
+    Create  
+    	returns DSFiller from NMTTools; 
+	 
+    Destroy (me:out);
+    ---C++: alias ~
+    ---Purpose: Destructor 
+    -- 
+    --  Selectors/Modifiers   
+    SetCompositeShape (me:out;  
+    	    aS:  Shape from TopoDS);  
+     
+    CompositeShape(me) 
+    	returns  Shape from TopoDS; 
+    	---C++:  return  const& 
+     
+    SetNewFiller(me;  
+    	    aFlag:Boolean from  Standard); 
+     
+    IsNewFiller(me) 
+    	returns Boolean from  Standard;  
+    --	 
+    --  Perform the algo      
+    Perform (me:out);   
+    --
+    --  Protected section 
+    Clear   (me:out) 
+    	is protected;  
+    --
+    -- Query section 
+    DS  (me) 
+	returns  ShapesDataStructure from NMTDS; 
+    	---C++:  return const &    
+	 
+    InterfPool (me) 
+    	returns  InterferencePool from BOPTools;
+    ---C++:  return const & 
+	 
+    IsDone(me) 
+    	returns  Boolean  from  Standard; 
+      
+    PaveFiller(me) 
+	returns PaveFiller from NMTTools; 
+    ---C++:  return const &
+
+    ChangePaveFiller (me:out) 
+	returns PaveFiller from NMTTools; 
+    ---C++:  return &
+
+fields
+    myCompositeShape  :  Shape from TopoDS is protected;
+    myDS              :  PShapesDataStructure from NMTDS is protected; 
+    myInterfPool      :  PInterferencePool    from BOPTools is protected;  
+    myPaveFiller      :  PPaveFiller from NMTTools is protected;   
+
+    myIsDone          :  Boolean from  Standard is protected; 
+    myIsNewFiller     :  Boolean from  Standard is protected;  
+
+end DSFiller;

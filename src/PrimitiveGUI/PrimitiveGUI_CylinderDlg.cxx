@@ -28,11 +28,10 @@
 
 #include "PrimitiveGUI_CylinderDlg.h"
 
-#include <gp_Lin.hxx>
-#include <BRepPrimAPI_MakeCylinder.hxx>
-#include <BRepAdaptor_Curve.hxx>
-#include <Precision.hxx>
 #include "QAD_Config.h"
+#include "QAD_Desktop.h"
+
+#include "GEOMImpl_Types.hxx"
 
 #include "utilities.h"
 
@@ -45,7 +44,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-PrimitiveGUI_CylinderDlg::PrimitiveGUI_CylinderDlg(QWidget* parent, const char* name, PrimitiveGUI* thePrimitiveGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+PrimitiveGUI_CylinderDlg::PrimitiveGUI_CylinderDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CYLINDER_PV")));
@@ -74,12 +73,10 @@ PrimitiveGUI_CylinderDlg::PrimitiveGUI_CylinderDlg(QWidget* parent, const char* 
   GroupDimensions->TextLabel1->setText(tr("GEOM_RADIUS"));
   GroupDimensions->TextLabel2->setText(tr("GEOM_HEIGHT"));
 
-  Layout1->addWidget(GroupPoints, 1, 0);
-  Layout1->addWidget(GroupDimensions, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
+  Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
-  /* Initialisations */
-  myPrimitiveGUI = thePrimitiveGUI;
   Init();
 }
 
@@ -101,21 +98,15 @@ PrimitiveGUI_CylinderDlg::~PrimitiveGUI_CylinderDlg()
 void PrimitiveGUI_CylinderDlg::Init()
 {
   /* init variables */
-  myConstructorId = 0;
   myEditCurrentArgument = GroupPoints->LineEdit1;
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
 
-  myRadius = 100.0;
-  myHeight = 300.0;
-  myOkRadius = myOkHeight = true;
-  myOkPoint1 = myOkDir = false;
-
-  myEdgeFilter = new GEOM_EdgeFilter(StdSelect_Line, myGeom);
-  myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
-  mySelection->AddFilter(myVertexFilter);
-
+  myPoint = myDir = GEOM::GEOM_Object::_nil();
+  
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
+  double step = St.toDouble();
 
   /* min, max, step and decimals for spin boxes & initial values */
   /* First constructor : radius */
@@ -127,10 +118,10 @@ void PrimitiveGUI_CylinderDlg::Init()
   /* Second constructor : algebric height */
   GroupDimensions->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
 
-  GroupPoints->SpinBox_DX->SetValue(myRadius);
-  GroupPoints->SpinBox_DY->SetValue(myHeight);
-  GroupDimensions->SpinBox_DX->SetValue(myRadius);  
-  GroupDimensions->SpinBox_DY->SetValue(myHeight);  
+  GroupPoints->SpinBox_DX->SetValue(100.0);
+  GroupPoints->SpinBox_DY->SetValue(300.0);
+  GroupDimensions->SpinBox_DX->SetValue(100.0);  
+  GroupDimensions->SpinBox_DY->SetValue(300.0);  
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -143,10 +134,10 @@ void PrimitiveGUI_CylinderDlg::Init()
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
@@ -154,13 +145,9 @@ void PrimitiveGUI_CylinderDlg::Init()
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
-
-  /* displays Dialog */
-  GroupDimensions->hide();
-  GroupPoints->show();
-  this->show();
-
-  return ;
+  
+  initName( tr( "GEOM_CYLINDER" ) );
+  ConstructorsClicked(0);
 }
 
 
@@ -170,32 +157,23 @@ void PrimitiveGUI_CylinderDlg::Init()
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::ConstructorsClicked(int constructorId)
 {
-  myConstructorId = constructorId;
-  mySelection->ClearFilters();
-  myGeomBase->EraseSimulationShape();
   disconnect(mySelection, 0, this, 0);
-  myOkHeight = myOkRadius = true;
-  myRadius = 100.0;
-  myHeight = 300.0;
-
-  switch(myConstructorId)
+    
+  switch(constructorId)
     { 
     case 0 :
       {
+	globalSelection( GEOM_POINT );
+
 	GroupDimensions->hide();
 	resize(0, 0);
 	GroupPoints->show();
-	myOkPoint1 = myOkDir = false;
-
+	
 	myEditCurrentArgument = GroupPoints->LineEdit1;
 	GroupPoints->LineEdit1->setText(tr(""));
 	GroupPoints->LineEdit2->setText(tr(""));
-	
-	GroupPoints->SpinBox_DX->SetValue(myRadius);
-	GroupPoints->SpinBox_DY->SetValue(myHeight);
+	myPoint = myDir = GEOM::GEOM_Object::_nil();
 
-	/* filter for next selection */
-	mySelection->AddFilter(myVertexFilter);
 	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
@@ -204,18 +182,11 @@ void PrimitiveGUI_CylinderDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->hide();
 	resize( 0, 0 );
 	GroupDimensions->show();
-	myOkPoint1 = myOkDir = true;
-
-	GroupDimensions->SpinBox_DX->SetValue(myRadius);
-	GroupDimensions->SpinBox_DY->SetValue(myHeight);
-	myPoint1.SetCoord(0.0, 0.0, 0.0);
-	myDir.SetCoord(0.0, 0.0, 1.0);
-
-	MakeCylinderSimulationAndDisplay();
+	
 	break;
       }
     }
-  return ;
+  displayPreview();
 }
 
 
@@ -225,9 +196,8 @@ void PrimitiveGUI_CylinderDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -235,23 +205,24 @@ void PrimitiveGUI_CylinderDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void PrimitiveGUI_CylinderDlg::ClickOnApply()
+bool PrimitiveGUI_CylinderDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  if(myOkPoint1 && myOkDir && myOkRadius && myOkHeight) {
-    gp_Dir aDir = myDir;
-    /* allows user to reverse direction of construction with a negative height */
-    if(this->myHeight < -Precision::Confusion())
-      aDir.Reverse();
-    myPrimitiveGUI->MakeCylinderAndDisplay(myPoint1, aDir, myRadius, fabs(myHeight)); 
-  }
-  return;
+  initName();
+  ConstructorsClicked( getConstructorId() );
+  return true;
+}
+
+
+//=======================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=======================================================================
+void PrimitiveGUI_CylinderDlg::ClickOnCancel()
+{
+  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -261,39 +232,35 @@ void PrimitiveGUI_CylinderDlg::ClickOnApply()
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape(); 
+  if ( getConstructorId() != 0 )
+    return;
+
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
-
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkPoint1 = false;
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
-      myOkDir = false;
-    return;
-  }
-
-  /* nbSel == 1 */
-  TopoDS_Shape S;
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-    return;
- 
-  /*  gp_Pnt : not used */
-  if (myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
-    GroupPoints->LineEdit1->setText(aString);
-    myOkPoint1 = true;
-  }    
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
-    BRepAdaptor_Curve curv(TopoDS::Edge(S));
-    myDir = curv.Line().Direction();
-    GroupPoints->LineEdit2->setText(aString);
-    myOkDir = true;
-  }
   
-  if(myOkPoint1 && myOkDir && myOkRadius && myOkHeight)
-    MakeCylinderSimulationAndDisplay();
-  return;
+  if(mySelection->IObjectCount() != 1) 
+    {
+      if(myEditCurrentArgument == GroupPoints->LineEdit1)
+	myPoint = GEOM::GEOM_Object::_nil();
+      else if (myEditCurrentArgument == GroupPoints->LineEdit2)
+	myDir = GEOM::GEOM_Object::_nil();
+      return;
+    }
+  
+  /* nbSel == 1 */
+  Standard_Boolean testResult = Standard_False;
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+    
+  if(!testResult || CORBA::is_nil( aSelectedObject ))
+    return;
+  
+  if (myEditCurrentArgument == GroupPoints->LineEdit1)
+    myPoint = aSelectedObject;
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2)
+    myDir = aSelectedObject;
+    
+  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+ 
+  displayPreview();
 }
 
 
@@ -303,25 +270,19 @@ void PrimitiveGUI_CylinderDlg::SelectionIntoArgument()
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::SetEditCurrentArgument()
 {
-  if(myConstructorId != 0)
-    return;
-
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters();
-
+  
   if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    mySelection->AddFilter(myVertexFilter);
+    globalSelection( GEOM_POINT );
   }
   else if(send == GroupPoints->PushButton2) {
-    GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    mySelection->AddFilter(myEdgeFilter);
+    globalSelection( GEOM_LINE );
   }
-  this->SelectionIntoArgument();
-
-  return;
+  
+  myEditCurrentArgument->setFocus();
+  SelectionIntoArgument();
 }
 
 
@@ -332,15 +293,12 @@ void PrimitiveGUI_CylinderDlg::SetEditCurrentArgument()
 void PrimitiveGUI_CylinderDlg::LineEditReturnPressed()
 {  
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if (send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  if(send == GroupPoints->LineEdit1 ||
+     send == GroupPoints->LineEdit2)
+    {
+      myEditCurrentArgument = send;
+      GEOMBase_Skeleton::LineEditReturnPressed();
+    }
 }
 
 
@@ -352,14 +310,8 @@ void PrimitiveGUI_CylinderDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(myConstructorId == 0) {
-    GroupPoints->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-    mySelection->AddFilter(myVertexFilter);
-  }
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+  
+  ConstructorsClicked( getConstructorId() );
 }
 
 
@@ -369,10 +321,18 @@ void PrimitiveGUI_CylinderDlg::ActivateThisDialog()
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
+}
+
+
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void PrimitiveGUI_CylinderDlg::DeactivateActiveDialog()
+{
+  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -380,50 +340,101 @@ void PrimitiveGUI_CylinderDlg::enterEvent(QEvent* e)
 // function : ValueChangedInSpinBox
 // purpose  :
 //=================================================================================
-void PrimitiveGUI_CylinderDlg::ValueChangedInSpinBox( double newValue )
+void PrimitiveGUI_CylinderDlg::ValueChangedInSpinBox( )
 {  
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  QObject* send = (QObject*)sender();
-  
-    /* radius */
-  if(send == GroupPoints->SpinBox_DX || send == GroupDimensions->SpinBox_DX) {
-    myRadius = newValue;
-    myOkRadius = true;
-  } /* algebric height */
-  else if(send == GroupPoints->SpinBox_DY || send == GroupDimensions->SpinBox_DY) {
-    myHeight = newValue;
-    myOkHeight = true;
-  }
-
-  if (myOkPoint1 && myOkDir && myOkRadius && myOkHeight)
-    MakeCylinderSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
 
 //=================================================================================
-// function : MakeCylinderSimulationAndDisplay()
+// function : createOperation
 // purpose  :
 //=================================================================================
-void PrimitiveGUI_CylinderDlg::MakeCylinderSimulationAndDisplay() 
+GEOM::GEOM_IOperations_ptr PrimitiveGUI_CylinderDlg::createOperation()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  gp_Dir aDir = this->myDir;
+  return getGeomEngine()->GetI3DPrimOperations( getStudyId() );
+}
+
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool PrimitiveGUI_CylinderDlg::isValid( QString& msg )
+{
+  return getConstructorId() == 0 ? !(myPoint->_is_nil() || myDir->_is_nil() ) : true;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool  PrimitiveGUI_CylinderDlg::execute( ObjectList& objects )
+{
+  bool res = false;
   
-  try {
-    /* allows user to reverse direction of construction with a negative height */
-    if(this->myHeight < -Precision::Confusion())
-      aDir.Reverse();
+  GEOM::GEOM_Object_var anObj;
+  
+  switch ( getConstructorId() ) 
+    {
+    case 0 :
+      {
+	if ( !CORBA::is_nil( myPoint ) && !CORBA::is_nil( myDir )) {
+	  anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeCylinderPntVecRH(myPoint, myDir, getRadius(), getHeight());
+	  res = true;
+	}
+	break;
+      }
+    case 1 :
+      {
+	anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeCylinderRH(getRadius(), getHeight());
+	res = true;
 
-    gp_Ax2 anAxis(this->myPoint1, aDir);
+	break;
+      }
+    }
+  
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+  
+  return res;
+}
 
-    mySimulationTopoDs = BRepPrimAPI_MakeCylinder(anAxis, this->myRadius, fabs(myHeight)).Shape();
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakeCylinderSimulationAndDisplay");
-  }
-  return;
+//=================================================================================
+// function : closeEvent
+// purpose  :
+//=================================================================================
+void  PrimitiveGUI_CylinderDlg::closeEvent( QCloseEvent* e )
+{
+  GEOMBase_Skeleton::closeEvent( e );
+}
+
+
+//=================================================================================
+// function : getRadius()
+// purpose  :
+//=================================================================================
+double PrimitiveGUI_CylinderDlg::getRadius() const
+{
+  int aConstructorId = getConstructorId();
+  if (aConstructorId == 0)
+    return GroupPoints->SpinBox_DX->GetValue();
+  else if (aConstructorId == 1)
+    return GroupDimensions->SpinBox_DX->GetValue();
+  return 0;
+}
+
+
+//=================================================================================
+// function : getHeight()
+// purpose  :
+//=================================================================================
+double PrimitiveGUI_CylinderDlg::getHeight() const
+{
+  int aConstructorId = getConstructorId();
+  if (aConstructorId == 0)
+    return GroupPoints->SpinBox_DY->GetValue();
+  else if (aConstructorId == 1)
+    return GroupDimensions->SpinBox_DY->GetValue();
+  return 0;
 }

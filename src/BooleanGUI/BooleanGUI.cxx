@@ -24,28 +24,36 @@
 //  File   : BooleanGUI.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 using namespace std;
 #include "BooleanGUI.h"
 
+#include "QAD_Desktop.h"
 #include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "BooleanGUI_Dialog.h"
 
-#include "BooleanGUI_FuseDlg.h"    // Method FUSE
-#include "BooleanGUI_CommonDlg.h"  // Method COMMON
-#include "BooleanGUI_CutDlg.h"     // Method CUT
-#include "BooleanGUI_SectionDlg.h" // Method SECTION
+BooleanGUI* BooleanGUI::myGUIObject = 0;
+
+//=======================================================================
+// function : GetBooleanGUI()
+// purpose  : Get the only BooleanGUI object [ static ]
+//=======================================================================
+BooleanGUI* BooleanGUI::GetBooleanGUI()
+{
+  if ( myGUIObject == 0 ) {
+    // init BooleanGUI only once
+    myGUIObject = new BooleanGUI();
+  }
+  return myGUIObject;
+}
 
 //=======================================================================
 // function : BooleanGUI()
 // purpose  : Constructor
 //=======================================================================
-BooleanGUI::BooleanGUI() :
-  QObject()
+BooleanGUI::BooleanGUI() : GEOMGUI()
 {
-  myGeomBase = new GEOMBase();
-  myGeomGUI = GEOMContext::GetGeomGUI();
-  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -64,75 +72,34 @@ BooleanGUI::~BooleanGUI()
 //=======================================================================
 bool BooleanGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  BooleanGUI* myBooleanGUI = new BooleanGUI();
-  myBooleanGUI->myGeomGUI->EmitSignalDeactivateDialog();
+  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
-  switch (theCommandID)
-    {
-    case 5011: // FUSE
-      {
-	BooleanGUI_FuseDlg *aDlg = new BooleanGUI_FuseDlg(parent, "", myBooleanGUI, Sel);
-	break;
-      }
-    case 5012: // COMMON
-      {
-	BooleanGUI_CommonDlg *aDlg = new BooleanGUI_CommonDlg(parent, "", myBooleanGUI, Sel);
-	break;
-      }
-    case 5013: // CUT
-      {
-	BooleanGUI_CutDlg *aDlg = new BooleanGUI_CutDlg(parent, "", myBooleanGUI, Sel);
-	break;
-      }
-    case 5014: // SECTION
-      {
-	BooleanGUI_SectionDlg *aDlg = new BooleanGUI_SectionDlg(parent, "", myBooleanGUI, Sel);
-	break;
-      }
-    default:
-      {
-	parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-	break;
-      }
-    }
+  int anOperation = 0;	
+  if      ( theCommandID == 5011 )
+    anOperation = FUSE;
+  else if ( theCommandID == 5012 )
+    anOperation = COMMON;
+  else if ( theCommandID == 5013 )
+    anOperation = CUT;
+  else if ( theCommandID == 5014 )
+    anOperation = SECTION;
+  else
+    return false;
+
+  QDialog* aDlg = new BooleanGUI_Dialog( anOperation, parent, "", Sel);
+  aDlg->show();
+   
   return true;
 }
-
-
-//=======================================================================
-// function : MakeBooleanAndDisplay()
-// purpose  : 
-//=======================================================================
-void BooleanGUI::MakeBooleanAndDisplay(GEOM::GEOM_Shape_ptr Shape1, GEOM::GEOM_Shape_ptr Shape2, const short operation)
-{
-  try {
-    GEOM::GEOM_Shape_ptr result = myGeom->MakeBoolean(Shape1, Shape2, operation);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
-      return;
-    }  
-
-    TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
-    Standard_CString type;
-    myGeomBase->GetShapeTypeString(S,type);
-    result->NameType(type);
-
-    if (myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch (const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
 
 //=====================================================================================
 // EXPORTED METHODS
 //=====================================================================================
 extern "C"
 {
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
-  {return BooleanGUI::OnGUIEvent(theCommandID, parent);}
+  GEOMGUI* GetLibGUI()
+  {
+    return BooleanGUI::GetBooleanGUI();
+  }
 }

@@ -30,14 +30,10 @@
 #define DIALOGBOX_PLANE_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1Spin.h"
-#include "DlgRef_1Sel4Spin.h"
 #include "DlgRef_1Sel1Spin.h"
+#include "DlgRef_2Sel1Spin.h"
+#include "DlgRef_3Sel1Spin.h"
 
-#include "BasicGUI.h"
-
-#include "GEOM_FaceFilter.hxx"
-#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
 // class    : BasicGUI_PlaneDlg
@@ -48,42 +44,36 @@ class BasicGUI_PlaneDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_PlaneDlg(QWidget* parent = 0, const char* name = 0, BasicGUI* theBasicGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_PlaneDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_PlaneDlg();
+    
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );
 
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakePlaneSimulationAndDisplay();
+    double getSize() const;
 
-    BasicGUI* myBasicGUI;
+    GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3, myFace;
 
-    double step;
-    int myConstructorId;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;  /* Filters selection */
-    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;
-    Handle(GEOM_FaceFilter) myFaceFilter;
-
-    gp_Pnt myPoint1;   /* Point on the plane */
-
-    Standard_Real myDx;
-    Standard_Real myDy;
-    Standard_Real myDz;
-    Standard_Real myTrimSize;
-
-    bool myOkPoint1;   /* true when argument is defined */
-    bool myOkDirection;
-    bool myOkCoordinates;
-    bool myOkPlanarFace;
-
-    DlgRef_2Sel1Spin* GroupPointDirection;
-    DlgRef_1Sel4Spin* GroupPointPlusCoordinates;
+    DlgRef_2Sel1Spin* GroupPntDir;
+    DlgRef_3Sel1Spin* Group3Pnts;
     DlgRef_1Sel1Spin* GroupFace;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    void ClickOnCancel();
+    bool ClickOnApply();
+    
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
+    
     void SelectionIntoArgument();
     void LineEditReturnPressed();
     void SetEditCurrentArgument();

@@ -32,8 +32,6 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_QTD.h"
 
-#include "BuildGUI.h"
-
 //=================================================================================
 // class    : BuildGUI_WireDlg
 // purpose  :
@@ -43,23 +41,27 @@ class BuildGUI_WireDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_WireDlg(QWidget* parent = 0, const char* name = 0, BuildGUI* theBuildGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_WireDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_WireDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& msg );
+    virtual bool execute( ObjectList& objects );    
 
 private:
     void Init();
     void enterEvent(QEvent* e);
 
-    BuildGUI* myBuildGUI;
-
-    GEOM::GEOM_Gen::ListOfIOR myListShapes;
-    bool myOkListShapes;   /* to check when arguments is defined */
+    GEOM::ListOfGO myEdgesAndWires;
+    bool myOkEdgesAndWires;   /* to check when arguments is defined */
 
     DlgRef_1Sel_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
     void ActivateThisDialog();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DlgRef_2Sel2Spin1Check_QTD.ui'
 **
-** Created: ven oct 24 09:53:25 2003
+** Created: Tue Jun 1 16:29:28 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -14,11 +14,11 @@
 class QVBoxLayout; 
 class QHBoxLayout; 
 class QGridLayout; 
+class QCheckBox;
 class QGroupBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
-class QRadioButton;
 class QSpinBox;
 
 class DlgRef_2Sel2Spin1Check_QTD : public QWidget
@@ -31,16 +31,16 @@ public:
 
     QGroupBox* GroupBox1;
     QLabel* TextLabel2;
-    QPushButton* PushButton1;
+    QLabel* TextLabel1;
     QSpinBox* SpinBox1;
     QLabel* TextLabel3;
     QLabel* TextLabel4;
     QSpinBox* SpinBox2;
-    QLabel* TextLabel1;
-    QPushButton* PushButton2;
-    QLineEdit* LineEdit2;
-    QRadioButton* CheckButton1;
     QLineEdit* LineEdit1;
+    QCheckBox* CheckButton1;
+    QLineEdit* LineEdit2;
+    QPushButton* PushButton2;
+    QPushButton* PushButton1;
 
 
 protected:

@@ -30,9 +30,8 @@
 #define DIALOGBOX_WHATIS_H
 
 #include "MeasureGUI_Skeleton.h"
-#include "MeasureGUI_1Sel1TextView_QTD.h"
 
-#include "MeasureGUI.h"
+class MeasureGUI_1Sel1TextView_QTD;
 
 //=================================================================================
 // class    : DialogBox_PROPERTIES
@@ -43,22 +42,23 @@ class MeasureGUI_WhatisDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-    MeasureGUI_WhatisDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
-    ~MeasureGUI_WhatisDlg();
+                                        MeasureGUI_WhatisDlg( QWidget* parent,
+                                                              SALOME_Selection* Sel );
+                                        ~MeasureGUI_WhatisDlg();
+
+protected:
+
+    // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
+    virtual void                        processObject();
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
-    void CalculateWhatis(const TopoDS_Shape& S);
 
-    QString SelectedName;
-    MeasureGUI_1Sel1TextView_QTD* GroupC1;
+    void                                Init( SALOME_Selection* Sel );
+    bool                                getParameters( QString& );
 
-private slots:
-    void SetEditCurrentArgument();
-    void SelectionIntoArgument();
-    void LineEditReturnPressed();
-    void ActivateThisDialog();
+private:
+
+    MeasureGUI_1Sel1TextView_QTD*       myGrp;
 
 };
 

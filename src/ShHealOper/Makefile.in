@@ -1,0 +1,80 @@
+#  GEOM ShHealOper : Shape Healing
+#
+#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+# 
+#  This library is free software; you can redistribute it and/or 
+#  modify it under the terms of the GNU Lesser General Public 
+#  License as published by the Free Software Foundation; either 
+#  version 2.1 of the License. 
+# 
+#  This library is distributed in the hope that it will be useful, 
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+#  Lesser General Public License for more details. 
+# 
+#  You should have received a copy of the GNU Lesser General Public 
+#  License along with this library; if not, write to the Free Software 
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+# 
+#  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org
+#
+#
+#
+#  File   : Makefile.in
+#  Author : Alexander SLADKOV
+#  Module : GEOM
+#  $Header: 
+
+top_srcdir=@top_srcdir@
+top_builddir=../..
+srcdir=@srcdir@
+VPATH=.:@srcdir@
+
+
+@COMMENCE@
+
+# Libraries targets
+LIB = libShHealOper.la
+
+LIB_SRC = \
+	ShHealOper_CloseContour.cxx \
+	ShHealOper_EdgeDivide.cxx \
+	ShHealOper_FillHoles.cxx \
+	ShHealOper_RemoveFace.cxx \
+	ShHealOper_RemoveInternalWires.cxx \
+	ShHealOper_Sewing.cxx \
+	ShHealOper_ShapeProcess.cxx \
+	ShHealOper_SplitCurve2d.cxx \
+	ShHealOper_SplitCurve3d.cxx \
+	ShHealOper_Tool.cxx \
+
+LIB_CLIENT_IDL = 
+LIB_SERVER_IDL = 
+
+# header files 
+EXPORT_HEADERS = \
+	ShHealOper_CloseContour.hxx \
+	ShHealOper_EdgeDivide.hxx \
+	ShHealOper_FillHoles.hxx \
+	ShHealOper_RemoveFace.hxx \
+	ShHealOper_RemoveInternalWires.hxx \
+	ShHealOper_Sewing.hxx \
+	ShHealOper_ShapeProcess.hxx \
+	ShHealOper_SpiltCurve2d.hxx \
+	ShHealOper_SplitCurve2d.hxx \
+	ShHealOper_SplitCurve3d.hxx \
+	ShHealOper_Tool.hxx
+
+# idl files
+EXPORT_IDLS=
+
+CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
+CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
+
+LDFLAGS += $(CAS_LDPATH) -lTKernel -lTKGeomAlgo -lTKG3d -lTKG2d -lTKGeomBase -lTKShHealing -lTKMath -lTKBRep -lTKTopAlgo -lTKBool 
+
+%_moc.cxx: %.h
+	$(MOC) $< -o $@
+
+@CONCLUDE@

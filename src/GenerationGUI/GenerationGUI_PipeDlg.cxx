@@ -37,9 +37,10 @@
 #include <BRepAlgoAPI.hxx>
 #endif
 
-#include "utilities.h"
+#include "GEOMImpl_Types.hxx"
 
-using namespace std;
+#include "QAD_Desktop.h"
+#include "utilities.h"
 
 //=================================================================================
 // class    : GenerationGUI_PipeDlg()
@@ -48,7 +49,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GenerationGUI_PipeDlg::GenerationGUI_PipeDlg(QWidget* parent, const char* name, GenerationGUI* theGenerationGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+GenerationGUI_PipeDlg::GenerationGUI_PipeDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_PIPE")));
@@ -68,12 +69,13 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg(QWidget* parent, const char* name, 
   GroupPoints->TextLabel2->setText(tr("GEOM_PATH_OBJECT"));
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myGenerationGUI = theGenerationGUI;
   Init();
 }
 
@@ -96,8 +98,10 @@ void GenerationGUI_PipeDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
 
-  myOkShape1 = myOkShape2 = false;
+  myOkBase = myOkPath = false;
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -111,11 +115,9 @@ void GenerationGUI_PipeDlg::Init()
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
+  initName(tr("GEOM_PIPE"));
 
-  return;
+  globalSelection( GEOM_ALLSHAPES );
 }
 
 
@@ -125,9 +127,8 @@ void GenerationGUI_PipeDlg::Init()
 //=================================================================================
 void GenerationGUI_PipeDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -135,18 +136,13 @@ void GenerationGUI_PipeDlg::ClickOnOk()
 // function : ClickOnAply()
 // purpose  :
 //=================================================================================
-void GenerationGUI_PipeDlg::ClickOnApply()
+bool GenerationGUI_PipeDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  if(myOkShape1 && myOkShape2)	  
-    myGenerationGUI->MakePipeAndDisplay(myGeomShape2 ,myGeomShape1);
-
-  return;
+  initName();
+  return true;
 }
 
 
@@ -156,53 +152,52 @@ void GenerationGUI_PipeDlg::ClickOnApply()
 //=================================================================================
 void GenerationGUI_PipeDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  erasePreview();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
+  if(mySelection->IObjectCount() != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkShape1 = false;
+      myOkBase = false;
     else if(myEditCurrentArgument == GroupPoints->LineEdit2)
-      myOkShape2 = false;
+      myOkPath = false;
     return;
   }
   
   // nbSel == 1
-  TopoDS_Shape S; 
-  Standard_Boolean testResult;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
+  Standard_Boolean testResult = Standard_False;
+  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+    
+  if (!testResult)
     return;
   
+  TopoDS_Shape S;
+  
   if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myOkShape1 = false;
-    if(S.ShapeType() != TopAbs_COMPSOLID && S.ShapeType() != TopAbs_COMPOUND && S.ShapeType() != TopAbs_SOLID && S.ShapeType() != TopAbs_SHAPE) {
-      myGeomShape1 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-      if(!testResult)
-	return;
-      myEditCurrentArgument->setText(aString);
-      myOkShape1 = true;
-      myShape1 = S;
-    }
+    myOkBase = false;
+    
+    if(!GEOMBase::GetShape(aSelectedObject, S) ||
+       S.ShapeType() == TopAbs_COMPSOLID || 
+       S.ShapeType() == TopAbs_COMPOUND || 
+       S.ShapeType() == TopAbs_SOLID || 
+       S.ShapeType() == TopAbs_SHAPE) 
+      return;
+    
+    myBase = aSelectedObject;
+    myOkBase = true;
   }
   else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
-    myOkShape2 = false;
-    if(S.ShapeType() == TopAbs_WIRE || S.ShapeType() == TopAbs_EDGE ) {
-      myGeomShape2 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-      if(!testResult)
-	return;
-      myEditCurrentArgument->setText(aString);
-      myOkShape2 = true;
-      myShape2 = S;
-    }
+    myOkPath = false;
+    
+    if(!GEOMBase::GetShape(aSelectedObject, S) ||
+       !(S.ShapeType() == TopAbs_WIRE || S.ShapeType() == TopAbs_EDGE) ) 
+      return;
+    
+    myPath = aSelectedObject;
+    myOkPath = true;
   }
-
-  if(myOkShape1 && myOkShape2)
-    this->MakePipeSimulationAndDisplay();
-  return;
+  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  
+  displayPreview();
 }
 
 
@@ -222,9 +217,7 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
   }
-  this->SelectionIntoArgument();
-
-  return;
+  SelectionIntoArgument();
 }
 
 
@@ -235,15 +228,12 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
 void GenerationGUI_PipeDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if (send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  if(send == GroupPoints->LineEdit1 ||
+     send == GroupPoints->LineEdit2)
+    {
+      myEditCurrentArgument = send;
+      GEOMBase_Skeleton::LineEditReturnPressed();
+    }
 }
 
 
@@ -253,10 +243,8 @@ void GenerationGUI_PipeDlg::LineEditReturnPressed()
 //=================================================================================
 void GenerationGUI_PipeDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
 
@@ -267,47 +255,46 @@ void GenerationGUI_PipeDlg::enterEvent(QEvent* e)
 void GenerationGUI_PipeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_ALLSHAPES );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+  displayPreview();
 }
 
 
 //=================================================================================
-// function : MakeMirrorSimulationAndDisplay()
-// purpose  : S1 is a shape and S2 a mirror.
+// function : createOperation
+// purpose  :
 //=================================================================================
-void GenerationGUI_PipeDlg::MakePipeSimulationAndDisplay()
+GEOM::GEOM_IOperations_ptr GenerationGUI_PipeDlg::createOperation()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  
-  try {
-    TopoDS_Wire aWire;
-
-    if(myShape2.ShapeType() == TopAbs_WIRE) 
-      aWire = TopoDS::Wire(myShape2);
-    else if(myShape2.ShapeType() == TopAbs_EDGE) {
-      TopoDS_Edge aEdge = TopoDS::Edge(myShape2);
-      aWire = BRepBuilderAPI_MakeWire(aEdge);
-    }
-
-    TopoDS_Shape tds = BRepOffsetAPI_MakePipe(aWire,myShape1);
-#if OCC_VERSION_MAJOR >= 5
-    if(BRepAlgo::IsValid(tds)) 
-#else
-    if(BRepAlgoAPI::IsValid(tds)) 
-#endif
-    {
-      //Draw Pipe
-      mySimulationTopoDs = tds;
-      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
-    }
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakePipeSimulationAndDisplay");
-    return;
-  }
-  return;
+  return getGeomEngine()->GetI3DPrimOperations( getStudyId() );
 }
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool GenerationGUI_PipeDlg::isValid( QString& )
+{
+  return myOkBase && myOkPath;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool GenerationGUI_PipeDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  anObj = GEOM::GEOM_I3DPrimOperations::_narrow(
+    getOperation() )->MakePipe( myBase, myPath );
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
+}
+
+
+

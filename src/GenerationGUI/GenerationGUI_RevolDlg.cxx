@@ -32,12 +32,14 @@
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepPrimAPI_MakeRevol.hxx>
 #include "QAD_Config.h"
+#include "QAD_Desktop.h"
 #include <TopExp_Explorer.hxx>
 #include <Standard_ErrorHandler.hxx>
+#include "GEOMImpl_Types.hxx"
+
+#include <qcheckbox.h>
 
 #include "utilities.h"
-
-using namespace std;
 
 //=================================================================================
 // class    : GenerationGUI_RevolDlg()
@@ -46,7 +48,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(QWidget* parent, const char* name, GenerationGUI* theGenerationGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_REVOL")));
@@ -60,20 +62,22 @@ GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(QWidget* parent, const char* name
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_2Sel1Spin1Check(this, "GroupPoints");
+  GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
+  GroupPoints->CheckButton1->hide();
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_OBJECT"));
   GroupPoints->TextLabel2->setText(tr("GEOM_AXIS"));
   GroupPoints->TextLabel3->setText(tr("GEOM_ANGLE"));
-  GroupPoints->CheckButton1->setText(tr("GEOM_REVERSE"));
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->CheckButton2->setText(tr("GEOM_REVERSE"));
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myGenerationGUI = theGenerationGUI;
   Init();
 }
 
@@ -96,16 +100,15 @@ void GenerationGUI_RevolDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
+  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit2->setReadOnly( true );
 
-  myAngle = 45.0;
   myOkBase = myOkAxis = false;
-
-  myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
 
   double SpecificStep = 5;
   /* min, max, step and decimals for spin boxes & initial values */
   GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
-  GroupPoints->SpinBox_DX->SetValue(myAngle);
+  GroupPoints->SpinBox_DX->SetValue(45.0);
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -117,18 +120,16 @@ void GenerationGUI_RevolDlg::Init()
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(GroupPoints->SpinBox_DX,   SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)),        this, SLOT(onReverse()));
 
-  connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ReverseAngle(int)));
-  
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
+  initName(tr("GEOM_REVOLUTION"));
 
-  return;
+  globalSelection( GEOM_ALLSHAPES );
 }
 
 
@@ -138,9 +139,8 @@ void GenerationGUI_RevolDlg::Init()
 //=================================================================================
 void GenerationGUI_RevolDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 
@@ -148,18 +148,13 @@ void GenerationGUI_RevolDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void GenerationGUI_RevolDlg::ClickOnApply()
+bool GenerationGUI_RevolDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  if(myOkBase && myOkAxis)
-    myGenerationGUI->MakeRevolutionAndDisplay(myGeomShape, myLoc, myDir, myAngle*PI180); 
-  return;
+  initName();
+  return true;
 }
 
 //=======================================================================
@@ -195,48 +190,41 @@ static bool isAcceptableBase(const TopoDS_Shape& theBase)
 //=================================================================================
 void GenerationGUI_RevolDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  erasePreview();
   myEditCurrentArgument->setText("");
-  QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
+  if(mySelection->IObjectCount() != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkBase = false;
+      myOkBase = false;        
     else if(myEditCurrentArgument == GroupPoints->LineEdit2)
       myOkAxis = false;
     return;
   }
   
   // nbSel == 1
-  TopoDS_Shape S; 
-  Standard_Boolean testResult;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
+  Standard_Boolean testResult = Standard_False;
+  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+  
+  if (!testResult)
     return;
-    
+
   if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-    if(!testResult)
+    TopoDS_Shape S;
+    myOkBase = false;
+    
+    if ( !GEOMBase::GetShape(aSelectedObject, S) || !isAcceptableBase( S ) )
       return;
-    if( !isAcceptableBase( S ))
-      return;
-    myEditCurrentArgument->setText(aString);
+    
+    myBase = aSelectedObject;
     myOkBase = true;
-    myBase = S;
   }
   else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
-    BRepAdaptor_Curve curv(TopoDS::Edge(S));
-    myDir = curv.Line().Direction();
-    myLoc = curv.Line().Location();
-    myEditCurrentArgument->setText(aString);
+    myAxis = aSelectedObject;
     myOkAxis = true;
   }
+  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
 
-  if(myOkBase && myOkAxis)
-    this->MakeRevolutionSimulationAndDisplay();
-  return; 
+  displayPreview();
 }
 
 
@@ -247,7 +235,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
 void GenerationGUI_RevolDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters();
+  globalSelection( GEOM_ALLSHAPES );
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
@@ -256,11 +244,9 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
   else if(send == GroupPoints->PushButton2) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    mySelection->AddFilter(myEdgeFilter);
+    globalSelection( GEOM_LINE );
   }
-  this->SelectionIntoArgument();
-
-  return;
+  SelectionIntoArgument();
 }
 
 
@@ -271,15 +257,12 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
 void GenerationGUI_RevolDlg::LineEditReturnPressed()
 {  
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if (send == GroupPoints->LineEdit2)
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
+  if(send == GroupPoints->LineEdit1 ||
+     send == GroupPoints->LineEdit2)
+    {
+      myEditCurrentArgument = send;
+      GEOMBase_Skeleton::LineEditReturnPressed();
+    }
 }
 
 
@@ -290,12 +273,11 @@ void GenerationGUI_RevolDlg::LineEditReturnPressed()
 void GenerationGUI_RevolDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_ALLSHAPES );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+  displayPreview();
 }
 
 
@@ -305,10 +287,8 @@ void GenerationGUI_RevolDlg::ActivateThisDialog()
 //=================================================================================
 void GenerationGUI_RevolDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
 
 
@@ -316,49 +296,63 @@ void GenerationGUI_RevolDlg::enterEvent(QEvent* e)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void GenerationGUI_RevolDlg::ValueChangedInSpinBox(double newValue)
-{  
-  myAngle = newValue;
-  if(myOkBase && myOkAxis)
-    this->MakeRevolutionSimulationAndDisplay();
-  return;
-}
-
-
-//=================================================================================
-// function : ReverseAngle()
-// purpose  : 'state' not used here
-//=================================================================================
-void GenerationGUI_RevolDlg::ReverseAngle(int state)
+void GenerationGUI_RevolDlg::ValueChangedInSpinBox()
 {
-  myAngle = -myAngle;
-  GroupPoints->SpinBox_DX->SetValue(myAngle);
-  if(myOkBase && myOkAxis)
-    this->MakeRevolutionSimulationAndDisplay();
-  return;
+  displayPreview();
 }
 
 
 //=================================================================================
-// function : MakeRevolutionSimulationAndDisplay()
+// function : getAngle()
 // purpose  :
 //=================================================================================
-void GenerationGUI_RevolDlg::MakeRevolutionSimulationAndDisplay() 
+double GenerationGUI_RevolDlg::getAngle() const
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  return GroupPoints->SpinBox_DX->GetValue();
+}
 
-  if (!isAcceptableBase( myBase ))
-    return;
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr GenerationGUI_RevolDlg::createOperation()
+{
+  return getGeomEngine()->GetI3DPrimOperations( getStudyId() );
+}
 
-  try {
-    gp_Ax1 AX(myLoc, myDir);
-    mySimulationTopoDs = BRepPrimAPI_MakeRevol(myBase, AX, myAngle*PI180);
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakeRevolutionSimulationAndDisplay");
-    return;
-  }
-  return;
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool GenerationGUI_RevolDlg::isValid( QString& )
+{
+  return myOkBase && myOkAxis;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool GenerationGUI_RevolDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  anObj = GEOM::GEOM_I3DPrimOperations::_narrow(
+    getOperation() )->MakeRevolutionAxisAngle( myBase, myAxis, getAngle() * PI180 );
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
+}
+
+
+//=================================================================================
+// function :  onReverse()
+// purpose  :
+//=================================================================================
+void GenerationGUI_RevolDlg::onReverse()
+{
+  double anOldValue = GroupPoints->SpinBox_DX->GetValue();
+  GroupPoints->SpinBox_DX->SetValue( -anOldValue );
 }

@@ -30,11 +30,7 @@
 #define DIALOGBOX_SOLID_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel_QTD.h"
-
-#include "BuildGUI.h"
-
-#include "GEOM_ShapeTypeFilter.hxx"
+#include "DlgRef_1Sel1Check_QTD.h"
 
 //=================================================================================
 // class    : BuildGUI_SolidDlg
@@ -45,28 +41,33 @@ class BuildGUI_SolidDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_SolidDlg(QWidget* parent = 0, const char* name = 0, BuildGUI* theBuildGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_SolidDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_SolidDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& msg );
+    virtual bool execute( ObjectList& objects );    
 
 private:
     void Init();
     void enterEvent(QEvent * e);
 
-    BuildGUI* myBuildGUI;
+    GEOM::ListOfGO myShells;
+    bool myOkShells;          /* to check when arguments is defined and
+                                 all shells are closed */
 
-    Handle(GEOM_ShapeTypeFilter) myShellFilter;  /* filter for selection */
-    GEOM::GEOM_Gen::ListOfIOR myListShapes;
-    bool myOkListShapes;          /* to check when arguments is defined */
-
-    DlgRef_1Sel_QTD* GroupSolid;
+    DlgRef_1Sel1Check_QTD* GroupSolid;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
     void SetEditCurrentArgument();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void ActivateThisDialog();
+    void EnableNameField(bool toEnable);
 
 };
 

@@ -53,15 +53,18 @@ LIB_SRC = 	DlgRef_Skeleton_QTD.cxx \
 		DlgRef_2Sel2Spin_QTD.cxx \
 		DlgRef_2Sel3Spin_QTD.cxx \
 		DlgRef_1Sel1Spin1Check_QTD.cxx \
-		DlgRef_2Sel1Spin1Check_QTD.cxx \
+		DlgRef_2Sel1Spin2Check_QTD.cxx \
 		DlgRef_2Sel2Spin1Check_QTD.cxx \
 		DlgRef_2Sel4Spin1Check_QTD.cxx \
 		DlgRef_3Sel4Spin2Check_QTD.cxx \
 		DlgRef_4Sel1List_QTD.cxx \
+		DlgRef_1List1Spin1Btn_QTD.cxx \
+		DlgRef_4Sel1List1Check_QTD.cxx \
 		DlgRef_1Spin_QTD.cxx \
 		DlgRef_2Spin_QTD.cxx \
 		DlgRef_3Spin_QTD.cxx \
 		DlgRef_3Spin1Check_QTD.cxx \
+		DlgRef_3Sel3Spin1Check_QTD.cxx \
 		DlgRef_SpinBox.cxx \
 		DlgRef_1Sel1Spin.cxx \
 		DlgRef_1Sel2Spin.cxx \
@@ -72,14 +75,18 @@ LIB_SRC = 	DlgRef_Skeleton_QTD.cxx \
 		DlgRef_2Sel2Spin.cxx \
 		DlgRef_2Sel3Spin.cxx \
 		DlgRef_1Sel1Spin1Check.cxx \
-		DlgRef_2Sel1Spin1Check.cxx \
+		DlgRef_2Sel1Spin2Check.cxx \
 		DlgRef_2Sel2Spin1Check.cxx \
 		DlgRef_2Sel4Spin1Check.cxx \
 		DlgRef_3Sel4Spin2Check.cxx \
+		DlgRef_3Sel3Spin1Check.cxx \
 		DlgRef_1Spin.cxx \
 		DlgRef_2Spin.cxx \
 		DlgRef_3Spin.cxx \
-		DlgRef_3Spin1Check.cxx
+		DlgRef_3Spin1Check.cxx \
+		DlgRef_3Sel1Spin.cxx \
+		DlgRef_3Check_QTD.cxx \
+		DlgRef_6Sel_QTD.cxx
 
 LIB_MOC = \
 		DlgRef_Skeleton_QTD.h \
@@ -98,15 +105,18 @@ LIB_MOC = \
 		DlgRef_2Sel2Spin_QTD.h \
 		DlgRef_2Sel3Spin_QTD.h \
 		DlgRef_1Sel1Spin1Check_QTD.h \
-		DlgRef_2Sel1Spin1Check_QTD.h \
+		DlgRef_2Sel1Spin2Check_QTD.h \
 		DlgRef_2Sel2Spin1Check_QTD.h \
 		DlgRef_2Sel4Spin1Check_QTD.h \
 		DlgRef_3Sel4Spin2Check_QTD.h \
 		DlgRef_4Sel1List_QTD.h \
+		DlgRef_1List1Spin1Btn_QTD.h \
+		DlgRef_4Sel1List1Check_QTD.h \
 		DlgRef_1Spin_QTD.h \
 		DlgRef_2Spin_QTD.h \
 		DlgRef_3Spin_QTD.h \
 		DlgRef_3Spin1Check_QTD.h \
+		DlgRef_3Sel3Spin1Check_QTD.h \
 		DlgRef_SpinBox.h \
 		DlgRef_1Sel1Spin.h \
 		DlgRef_1Sel2Spin.h \
@@ -117,14 +127,19 @@ LIB_MOC = \
 		DlgRef_2Sel2Spin.h \
 		DlgRef_2Sel3Spin.h \
 		DlgRef_1Sel1Spin1Check.h \
-		DlgRef_2Sel1Spin1Check.h \
+		DlgRef_2Sel1Spin2Check.h \
 		DlgRef_2Sel2Spin1Check.h \
 		DlgRef_2Sel4Spin1Check.h \
 		DlgRef_3Sel4Spin2Check.h \
+		DlgRef_3Sel3Spin1Check.h \
 		DlgRef_1Spin.h \
 		DlgRef_2Spin.h \
 		DlgRef_3Spin.h \
-		DlgRef_3Spin1Check.h
+		DlgRef_3Spin1Check.h \
+		DlgRef_3Sel1Spin.h \
+		DlgRef_1Sel_Ext.h \
+		DlgRef_3Check_QTD.h \
+		DlgRef_6Sel_QTD.h
 
 # header files 
 EXPORT_HEADERS= $(LIB_MOC)

@@ -28,157 +28,47 @@
 
 using namespace std;
 #include "GEOM_FaceFilter.ixx"
-#include "GEOM_Client.hxx"
 
-#include "SALOME_InteractiveObject.hxx"
-#include "GEOM_InteractiveObject.hxx"
-#include "GEOM_ShapeTypeFilter.hxx"
-#include "SALOME_TypeFilter.hxx"
-
-#include "utilities.h"
-#include "QAD_Application.h"
-#include "QAD_Desktop.h"
-#include "QAD_Study.h"
-
-// Open CASCADE Includes
 #include <BRepAdaptor_Surface.hxx>
 #include <TopoDS_Face.hxx>
-#include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
-#include <TopAbs.hxx>
 
 
-static GEOM_Client  ShapeReader;
-
-/*!
-  enumeration TypeOfFace is AnyFace,Plane,Cylinder,Sphere,Torus,Revol,Cone;
-*/
-GEOM_FaceFilter::GEOM_FaceFilter(const StdSelect_TypeOfFace Face,
-				 GEOM::GEOM_Gen_ptr geom) 
+//=======================================================================
+// function : IsShapeOk
+// purpose  : enumeration TypeOfFace is AnyFace,Plane,Cylinder,Sphere,Torus,Revol,Cone;
+//=======================================================================
+GEOM_FaceFilter::GEOM_FaceFilter( const StdSelect_TypeOfFace theKind ) 
+: GEOM_ShapeTypeFilter( TopAbs_FACE )
 {
-  myKind = Face;
-  myComponentGeom = GEOM::GEOM_Gen::_narrow(geom);
+  myKind = theKind;
 }
 
-Standard_Boolean GEOM_FaceFilter::IsOk(const Handle(SALOME_InteractiveObject)& anObj) const 
+//=======================================================================
+// function : IsShapeOk
+// purpose  : 
+//=======================================================================
+Standard_Boolean GEOM_FaceFilter::IsShapeOk( const TopoDS_Shape& theShape ) const
 {
-  Handle(SALOME_TypeFilter) GeomFilter = new SALOME_TypeFilter( "GEOM" );
-  if ( !GeomFilter->IsOk(anObj) ) 
-    return false;
-
-  Handle(GEOM_ShapeTypeFilter) GeomShapeTypeFilter = new GEOM_ShapeTypeFilter( TopAbs_FACE, myComponentGeom );
-  if ( !GeomShapeTypeFilter->IsOk(anObj) ) 
-    return false;
-
-  if ( anObj->hasEntry() ) {
-    QAD_Study* ActiveStudy = QAD_Application::getDesktop()->getActiveStudy();
-    SALOMEDS::Study_var aStudy = ActiveStudy->getStudyDocument();
-    SALOMEDS::SObject_var obj = aStudy->FindObjectID( anObj->getEntry() );
-    SALOMEDS::GenericAttribute_var anAttr;
-    SALOMEDS::AttributeIOR_var     anIOR;
-    if ( !obj->_is_nil() ) {
-       if (obj->FindAttribute(anAttr, "AttributeIOR")) {
-         anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	 GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString( anIOR->Value() );  
-	 if ( aShape->_is_nil() )
-	   return false;
-     
-	 TopoDS_Shape    Shape = ShapeReader.GetShape( myComponentGeom, aShape );
-	 if ( Shape.IsNull() )
-	   return false;
-	 
-	 switch (myKind) {
-	 case StdSelect_AnyFace:
-	   return Standard_True;
-	 case StdSelect_Plane:
-	   {
-	     BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	     return (surf.GetType() == GeomAbs_Plane);
-	   }
-	 case StdSelect_Cylinder:
-	   {
-	     BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	     return (surf.GetType() == GeomAbs_Cylinder);
-	   }
-	 case StdSelect_Sphere: 
-	   {
-	     BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	     return (surf.GetType() == GeomAbs_Sphere);      
-	   }
-	 case StdSelect_Torus: 
-	   {
-	     BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	     return ( surf.GetType() == GeomAbs_Torus);      
-	   }
-	 case StdSelect_Revol: 
-	   {
-	     BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	     return ( surf.GetType() == GeomAbs_Cylinder || 
-		      surf.GetType() == GeomAbs_Cone     ||
-		      surf.GetType() == GeomAbs_Torus    ||
-		      surf.GetType() == GeomAbs_Sphere	  || 
-		      surf.GetType() == GeomAbs_SurfaceOfRevolution ); 
-	   }
-	 case StdSelect_Cone: // en attendant la liberation du cdl, on l'utilise pour Cone
-	   {
-	     BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	     return (surf.GetType() == GeomAbs_Cone);      
-	   }	 
-	 }
-       }
+  if ( !theShape.IsNull() && theShape.ShapeType() == TopAbs_FACE )
+  {
+    BRepAdaptor_Surface aSurf( TopoDS::Face( theShape ) );
+    GeomAbs_SurfaceType aType = aSurf.GetType();
+	
+    switch ( myKind ) 
+    {
+    case StdSelect_AnyFace:   return Standard_True;
+    case StdSelect_Plane:     return ( aType == GeomAbs_Plane );
+    case StdSelect_Cylinder:  return ( aType == GeomAbs_Cylinder);
+    case StdSelect_Sphere:    return ( aType == GeomAbs_Sphere);      
+    case StdSelect_Torus:     return ( aType == GeomAbs_Torus);      
+    case StdSelect_Revol:     return ( aType == GeomAbs_Cylinder  || 
+				       aType == GeomAbs_Cone      ||
+		                       aType == GeomAbs_Torus     ||
+		                       aType == GeomAbs_Sphere    || 
+		                       aType == GeomAbs_SurfaceOfRevolution ); 
+    case StdSelect_Cone:      return ( aType == GeomAbs_Cone);      
     }
   }
-    
-  if ( anObj->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject)) ) {
-    Handle(GEOM_InteractiveObject) GObject =
-      Handle(GEOM_InteractiveObject)::DownCast(anObj);
-    
-    GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString( GObject->getIOR() );  
-    if ( aShape->_is_nil() )
-      return false;
-    
-    TopoDS_Shape    Shape = ShapeReader.GetShape( myComponentGeom, aShape );
-    if ( Shape.IsNull() )
-      return false;
-    
-    switch (myKind) {
-    case StdSelect_AnyFace:
-      return Standard_True;
-    case StdSelect_Plane:
-      {
-	BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	return (surf.GetType() == GeomAbs_Plane);
-      }
-    case StdSelect_Cylinder:
-      {
-	BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	return (surf.GetType() == GeomAbs_Cylinder);
-      }
-    case StdSelect_Sphere: 
-      {
-	BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	return (surf.GetType() == GeomAbs_Sphere);      
-      }
-    case StdSelect_Torus: 
-      {
-	BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	return ( surf.GetType() == GeomAbs_Torus);      
-      }
-    case StdSelect_Revol: 
-      {
-	BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	return ( surf.GetType() == GeomAbs_Cylinder || 
-		 surf.GetType() == GeomAbs_Cone     ||
-		 surf.GetType() == GeomAbs_Torus    ||
-		 surf.GetType() == GeomAbs_Sphere	  || 
-		 surf.GetType() == GeomAbs_SurfaceOfRevolution ); 
-      }
-    case StdSelect_Cone: // en attendant la liberation du cdl, on l'utilise pour Cone
-      {
-	BRepAdaptor_Surface surf(TopoDS::Face(Shape));
-	return (surf.GetType() == GeomAbs_Cone);      
-      }	 
-    }
-  }
-  return false;
+  return Standard_False;
 }

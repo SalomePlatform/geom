@@ -34,8 +34,10 @@
 #ifndef GEOM_OCCREADER_H
 #define GEOM_OCCREADER_H
 
-// VTK
-#include "VTKViewer_Common.h"
+#include <vtkPolyDataSource.h>
+
+class vtkPoints;
+class vtkCellArray;
 
 // OpenCASCADE
 #include <TopoDS_Shape.hxx>
@@ -50,6 +52,7 @@
 #else
 #define VTKOCC_EXPORT
 #endif
+
 class VTKOCC_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
 
   // methods	

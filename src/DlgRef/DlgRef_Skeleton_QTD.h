@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
 **
-** Created: Fri Apr 16 12:57:26 2004
+** Created: Wed Aug 11 18:42:51 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -38,6 +38,7 @@ public:
     QRadioButton* RadioButton1;
     QRadioButton* RadioButton2;
     QRadioButton* RadioButton3;
+    QRadioButton* RadioButton4;
     QGroupBox* GroupBoxName;
     QLineEdit* ResultName;
     QLabel* NameLabel;
@@ -48,7 +49,7 @@ protected:
     QGridLayout* Layout1;
     QHBoxLayout* GroupButtonsLayout;
     QHBoxLayout* Layout3;
-    QGridLayout* GroupConstructorsLayout;
+    QHBoxLayout* GroupConstructorsLayout;
     QHBoxLayout* Layout2;
     QGridLayout* GroupBoxNameLayout;
     QGridLayout* Layout66;

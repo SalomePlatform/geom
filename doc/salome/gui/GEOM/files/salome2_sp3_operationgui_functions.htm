@@ -29,8 +29,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=3103>
-<meta name=layout-width content=700>
+<meta name=layout-height content=5720>
+<meta name=layout-width content=684>
 
 
 <!--(Links)=========================================================-->
@@ -74,8 +74,39 @@ img_whs14 {border-style: none; border: none; width: 200px; height: 166px;}
 img_whs15 {border-style: none; border: none; width: 150px; height: 99px;}
 img_whs16 {border-style: none; border: none; width: 200px; height: 184px;}
 img_whs17 {border-style: none; border: none; width: 150px; height: 104px;}
+img_whs18 {border-style: none; border: none; width: 24px; height: 22px;}
+p.whs19 {font-size: 12pt; font-weight: bold;}
+ul.whs20 {list-style: circle;}
+p.whs21 {font-size: 12pt; font-weight: normal;}
+table.whs22 {x-cell-content-align: top; width: 69.489%; border-spacing: 0px; border-spacing: 0px;}
+col.whs23 {width: 51.451%;}
+col.whs24 {width: 48.549%;}
+tr.whs25 {x-cell-content-align: top;}
+td.whs26 {width: 51.451%; padding-right: 10px; padding-left: 10px; border-right-style: none; border-left-style: none; border-top-style: none; border-bottom-style: none;}
+td.whs27 {width: 48.549%; padding-right: 10px; padding-left: 10px; border-top-style: none; border-bottom-style: none; border-right-style: none;}
+img_whs28 {border-style: none; border: none; width: 200px; height: 323px;}
+p.whs29 {font-weight: bold;}
+img_whs30 {border-style: none; border: none; width: 250px; height: 284px; float: none;}
+img_whs31 {border-style: none; border: none; width: 271px; height: 284px;}
+img_whs32 {border-style: none; border: none; width: 23px; height: 22px;}
+img_whs33 {border-style: none; border: none; width: 200px; height: 271px;}
+p.whs34 {font-size: 12pt; margin-left: 0px;}
+p.whs35 {font-size: 12pt; margin-left: 0px; font-weight: bold;}
+img_whs36 {border-style: none; border: none; width: 300px; height: 311px;}
 -->
 </style>
+<script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs34 {margin-left:1; }";
+  strNSS += "p.whs35 {margin-left:1; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
 <script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
 function reDo() {
@@ -156,7 +187,19 @@ else
  HREF="#_Toc57113145"><font><span style="font-family: 'Times New Roman', serif; font-size: 12pt;"><font size=3 style="font-size:12pt;">Fillet&#9;</font></span></font></a></p></li>
 	
 	<li class=kadov-p><p class="whs3"><a 
- HREF="#_Toc57113146"><font><span style="font-family: 'Times New Roman', serif; font-size: 12pt;"><font size=3 style="font-size:12pt;">Chamfer&#9;</font></span></font></a></p></li>
+ HREF="#_Toc57113146">Chamfer</a></p></li>
+	
+	<li class=kadov-p><p class="whs3">Blocks</p></li>
+	
+	<ul type="disc" class="whs4">
+		
+		<li class=kadov-p><p class="whs3"><a 
+ href="#Multi-transformation">Multi-transformation</a></p></li>
+		
+		<li class=kadov-p><p class="whs3"><a 
+ href="#ExplodeOnBlocks">Explode on blocks</a><span style="font-family: 'Times New Roman', serif; font-size: 12pt;"><font size=3 style="font-size:12pt;"><a 
+ HREF="#_Toc57113146">&#9;</a></font></span></p></li>
+	</ul>
 </ul>
 
 <p class="whs5">&nbsp;</p>
@@ -183,12 +226,21 @@ else
 
 <p class="whs5">&nbsp;</p>
 
-<p class="whs5"><b style="font-weight: bold;">Result:</b> GEOM_Shape.</p>
+<p class="whs5"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
 
 <p class="whs5">&nbsp;</p>
 
 <p class="whs5"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.Partition(ListOfIOR, ListOfIOR)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakePartition(ListOfShapes, 
+ ListOfTools, ListOfKeepInside, ListOfRemoveInside, Limit, RemoveWebs, 
+ ListOfMaterials)</I></span>, where ListOfShapes is a list of shapes to be 
+ intersected, ListOfTools is a list of shapes to intersect the shapes from 
+ ListOfShapes, ListOfKeepInside is a list of shapes outside which the results 
+ will be deleted, ListOfRemoveInside is a list of shapes inside which the 
+ results will be deleted, Limit is a type of the result shapes, if RemoveWebs 
+ is True the Glue 3D algorithm will be performed on the results, ListOfMaterials 
+ is a list of materials indices for each shape, it makes sense only if 
+ RemoveWebs is True.</p>
 
 <p class="whs5">&nbsp;</p>
 
@@ -225,12 +277,16 @@ else
 
 <p class="whs5">&nbsp;</p>
 
-<p class="whs5"><b style="font-weight: bold;">Result:</b> GEOM_Shape.</p>
+<p class="whs5"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
 
 <p class="whs5">&nbsp;</p>
 
-<p class="whs5"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.Archimede(GEOM_Shape, Double, Double, Double)</i></p>
+<p class="whs5"><b style="font-weight: bold;">TUI Command: 
+ </b><span style="font-style: italic;"><I>geompy.Archimede(Shape,Weight,WaterDensity,MeshingDeflection)</I></span>, 
+ where Shape is a shape to put into the water, Weight is a weight of the 
+ shape, WaterDensity &nbsp;is 
+ density of water, MeshingDeflection is a deflection of the mesh, using 
+ to compute the section.</p>
 
 <p class="whs5">&nbsp;</p>
 
@@ -269,12 +325,15 @@ else
 
 <p class="whs5">&nbsp;</p>
 
-<p class="whs5"><b style="font-weight: bold;">Result:</b> GEOM_Shape.</p>
+<p class="whs5"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
 
 <p class="whs5">&nbsp;</p>
 
 <p class="whs5"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeFillet(GEOM_Shape, Double, Short, ListOfSubShapeID)</i></p>
+ </i><span style="font-style: italic;"><I>geompy.MakeFillet(Shape, Radius, 
+ ShapeType, ListOfShapeID)</I></span>, where Shape is a shape to create a fillet 
+ on, Radius is a radius of the fillet, ShapeType is a type of shapes to 
+ be processed, ListOfShapeID is a list of subshape’s Ids to be processed.</p>
 
 <p class="whs5">&nbsp;</p>
 
@@ -323,12 +382,27 @@ else
 
 <p class="whs5">&nbsp;</p>
 
-<p class="whs5"><b style="font-weight: bold;">Result:</b> GEOM_Shape.</p>
+<p class="whs5"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
 
 <p class="whs5">&nbsp;</p>
 
 <p class="whs5"><b style="font-weight: bold;">TUI Command:</b><i> 
- geompy.MakeChamfer(GEOM_Shape, Double, Double, Short, ListOfSubShapeID)</i></p>
+ </i></p>
+
+<ul type="disc" class="whs4">
+	
+	<li class=kadov-p><p class="whs5"><span style="font-style: italic;"><I>geompy.MakeChamferEdge(Shape, 
+ D1, D2, Face1, Face2)</I></span>, where Shape is a shape to create a chamfer 
+ on, D1 is a chamfer size along Face1, D2 is a chamfer size along Face2, 
+ Face1 and Face2 are indices of faces in Shape.</p></li>
+	
+	<li class=kadov-p><p class="whs5"><span style="font-style: italic;"><I>geompy.MakeChamferFace(Shape, 
+ D1, D2, ListOfFaceID)</I></span>, where Shape is a shape to create chamfer 
+ on, D1 is a chamfer size along a face from &nbsp;ListOfFaceID, 
+ &nbsp;D2 is a 
+ chamfer size along two faces connected to the edge to which the chamfer 
+ is applied, ListOfFaceID is a list of indices of faces in Shape.</p></li>
+</ul>
 
 <p class="whs5">&nbsp;</p>
 
@@ -367,6 +441,151 @@ else
 <p class="whs5">&nbsp;</p>
 
 <p class="whs5">&nbsp;</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><a name=Multi-transformation><img src="../image52.gif" width="24px" height="22px" border="0" class="img_whs18"> <span style="font-size: 14pt; font-weight: bold;"><font size=4 style="font-size:14pt;"><B>Block</B></font></span> 
+ <span style="font-weight: bold; font-size: 14pt;"><font size=4 style="font-size:14pt;"><B>multi-transformation</B></font></span></a></p>
+
+<p>&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;">Description:</b> 
+ Makes several translations of a block (solid) in <span style="font-weight: bold;"><B>one</B></span> 
+ or <span style="font-weight: bold;"><B>two</B></span> directions depending on 
+ the arguments specified by the user.</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i></p>
+
+<ul type="disc" class="whs4">
+	
+	<li class=kadov-p><p class="whs5"><span style="font-style: italic;"><I>geompy. 
+ MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes)</I></span>, 
+ where Block is a block to be transformed, DirFaceID1 is an ID of the face 
+ which defines the first direction of transformation, DirFaceID2 is an 
+ ID of the face which defines the second direction of transformation, NbTimes 
+ is a numeber of transformations.</p></li>
+	
+	<li class=kadov-p><p class="whs5"><span style="font-style: italic;"><I>geompy. 
+ MakeMultiTransformation2D(Block, DirFaceID1U, DirFaceID2U, NbTimesU, DirFaceID1V, 
+ DirFaceID2V, NbTimesV)</I></span>, where Block is a block to be transformed, 
+ DirFaceID1U and DirFace1V are ID’s of the faces, which define directions 
+ of the first transformation, DirFaceID1V and DirFaceID2V are ID’s of the 
+ faces which define directions of the second transformation, NbTimesU and 
+ NbTimesV are numbers of transformations.</p></li>
+</ul>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;">Arguments:</b></p>
+
+<p class="whs5">&nbsp;</p>
+
+<ul type="disc" class="whs4">
+	
+	<li class=kadov-p><p class="whs19">1D 
+ transformation: <span style="font-weight: normal;">1 hexahedral solid 
+ + 1 or 2 faces + 1 integer (number of blocks)</span></p></li>
+	
+	<li class=kadov-p><p class="whs19">2D 
+ transformation:<span style="font-weight: normal;"> 1 hexahedral solid 
+ + </span></p></li>
+	
+	<ul type="circle" class="whs20">
+		
+		<li class=kadov-p><p class="whs21">2 
+ faces and 1 integer, or</p></li>
+		
+		<li class=kadov-p><p class="whs19"><span 
+ style="font-weight: normal;">3 or 4 faces and 2 integers</span></p></li>
+	</ul>
+</ul>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<!--(Table)=========================================================-->
+<table x-use-null-cells cellspacing="0" width="69.489%" class="whs22">
+<col class="whs23">
+<col class="whs24">
+
+<tr valign="top" class="whs25">
+<td width="51.451%" class="whs26">
+<p><img src="../image186.jpg" width="200px" height="247px" border="0" class="img_whs10"></td>
+<td width="48.549%" class="whs27">
+<p><img src="../image187.jpg" width="200px" height="323px" border="0" class="img_whs28"></td></tr>
+</table>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs29">Example:</p>
+
+<p class="whs29">&nbsp;</p>
+
+<p class="whs29"><img src="../image188.jpg" x-maintain-ratio="TRUE" width="250px" height="284px" border="0" class="img_whs30"> &nbsp;&nbsp;&nbsp;&nbsp;<img src="../image189.jpg" width="271px" height="284px" border="0" class="img_whs31"></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><a name=ExplodeOnBlocks><img src="../image53.gif" width="23px" height="22px" border="0" class="img_whs32"> <span style="font-weight: bold; font-size: 14pt;"><font size=4 style="font-size:14pt;"><B>Explode 
+ on blocks</B></font></span></a></p>
+
+<p>&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;">Description:</b> 
+ Returns blocks of the given compound. The user may define the type blocks 
+ to be extracted by setting the minimum and maximum number of faces in 
+ the target block. By checking the corresponding box the user may also 
+ interactively choose the blocks from a compound .</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeBlockExplode(Compound, 
+ MinNbFaces, MaxNbFaces)</I></span>, where Compound is a compound to be exploded 
+ into the blocks, MinNbFaces, MaxNbFaces are correspondingly the minimal 
+ and &nbsp;the 
+ maximal number of faces of the resulting blocks.</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;">Arguments: <span 
+ style="font-weight: normal;">1 compound + 1 integer (min. and max. number 
+ of faces in the block to be extracted).</span></b></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs9"><img src="../image190.jpg" width="200px" height="271px" border="0" class="img_whs33"></p>
+
+<p class="whs34">&nbsp;</p>
+
+<p class="whs35">Example:</p>
+
+<p class="whs34">&nbsp;</p>
+
+<p class="whs9"><img src="../image191.jpg" width="300px" height="311px" border="0" class="img_whs36"></p>
 
 <script type="text/javascript" language="javascript1.2">
 <!--

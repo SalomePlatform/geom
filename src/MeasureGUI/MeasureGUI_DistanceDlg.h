@@ -30,9 +30,10 @@
 #define DIALOGBOX_DISTANCE_H
 
 #include "MeasureGUI_Skeleton.h"
-#include "MeasureGUI_2Sel1LineEdit_QTD.h"
 
-#include "MeasureGUI.h"
+class MeasureGUI_2Sel1LineEdit_QTD;
+class gp_Pnt;
+
 
 //=================================================================================
 // class    : MeasureGUI_DistanceDlg
@@ -43,31 +44,33 @@ class MeasureGUI_DistanceDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-    MeasureGUI_DistanceDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
-    ~MeasureGUI_DistanceDlg();
+                                        MeasureGUI_DistanceDlg( QWidget*          parent,
+                                                                SALOME_Selection* Sel );
+                                        ~MeasureGUI_DistanceDlg();
+protected:
+
+    // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
+    virtual void                        processObject();
+    virtual SALOME_Prs*                 buildPrs();
+    virtual void                        SelectionIntoArgument();
+    virtual void                        LineEditReturnPressed();
+    virtual void                        SetEditCurrentArgument();
+    virtual bool                        isValid( QString& msg );
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
-    void closeEvent(QCloseEvent* e);
-    void MakeDistanceSimulationAndDisplay(const TopoDS_Shape& S1, const TopoDS_Shape& S2);
-    void EraseDistance();
 
-    TopoDS_Shape myShape1;              
-    TopoDS_Shape myShape2;              
-    GEOM::GEOM_Shape_var myGeomShape1;          
-    GEOM::GEOM_Shape_var myGeomShape2;          
-    bool myOkShape1;
-    bool myOkShape2;   /* to check when arguments are defined */
+    void                                Init( SALOME_Selection* Sel );
+    bool                                getParameters( double& theDistance,
+                                                       gp_Pnt& thePnt1,
+                                                       gp_Pnt& thePnt2  );
+private:
 
-    MeasureGUI_2Sel1LineEdit_QTD* GroupC1;
+    QLineEdit*                          myEditCurrentArgument;
+    QLineEdit*                          mySelEdit2;
+    QPushButton*                        mySelBtn2;
 
-private slots:
-    void ClickOnCancel();
-    void SetEditCurrentArgument();
-    void SelectionIntoArgument();
-    void LineEditReturnPressed();
-    void ActivateThisDialog();
+    MeasureGUI_2Sel1LineEdit_QTD*       myGrp;
+    GEOM::GEOM_Object_var               myObj2;
 
 };
 

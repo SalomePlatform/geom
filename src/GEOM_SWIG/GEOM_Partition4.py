@@ -39,49 +39,45 @@ geom = geompy.geom
 
 # -- Construction de backfill
 
-backA = geompy.MakeBox(0.0,0.0,0.0,baDx,baDy,baDz)
-back = geompy.MakeTranslation(backA,-baDx/2,-baDy/2,-baDz/2)
+backA = geompy.MakeBox(0.0, 0.0, 0.0, baDx, baDy, baDz)
+back = geompy.MakeTranslation(backA, -baDx/2, -baDy/2, -baDz/2)
 
 # -- Construction de alveolus
 
 import math
 
-alveA = geompy.MakeBox(0.0,0.0,0.0,alDx,alDy,alDz)
-alveB = geompy.MakeTranslation(alveA,-alDx/2,baDy/2,-alDz/2)
-axis  = geompy.geom.MakeAxisStruct(0.0,0.0,0.0,1.0,0.0,0.0)
-alve1 = geompy.MakeRotation(alveB,axis,math.pi)
-alve2 = geompy.MakeTranslation(alveB,+alSepx/2,0.0,0.0)
-alve3 = geompy.MakeTranslation(alveB,-alSepx/2,0.0,0.0)
-IORlist = []
-IORlist.append(alve1._get_Name())
-IORlist.append(alve2._get_Name())
-IORlist.append(alve3._get_Name())
-alve = geompy.MakeCompound(IORlist)
+alveA = geompy.MakeBox(0.0, 0.0, 0.0, alDx, alDy, alDz)
+alveB = geompy.MakeTranslation(alveA, -alDx/2, baDy/2, -alDz/2)
+axis  = geompy.MakeVectorDXDYDZ(1.0, 0.0, 0.0)
+alve1 = geompy.MakeRotation(alveB, axis, math.pi)
+alve2 = geompy.MakeTranslation(alveB, +alSepx/2, 0.0, 0.0)
+alve3 = geompy.MakeTranslation(alveB, -alSepx/2, 0.0, 0.0)
+GOlist = []
+GOlist.append(alve1)
+GOlist.append(alve2)
+GOlist.append(alve3)
+alve = geompy.MakeCompound(GOlist)
 
 # -- Construction de geological medium
 
-geolA = geompy.MakeBox(0.0,0.0,0.0,gmDx,gmDy,gmDz)
-geol = geompy.MakeTranslation(geolA,-gmDx/2,-gmDy/2,-gmDz/2)
+geolA = geompy.MakeBox(0.0, 0.0, 0.0, gmDx, gmDy, gmDz)
+geol = geompy.MakeTranslation(geolA, -gmDx/2, -gmDy/2, -gmDz/2)
 
-geol = geompy.Partition(
-    [alve._get_Name(), geol._get_Name(), back._get_Name()])
+geol = geompy.MakePartition([alve, geol, back])
 
-subshapes = geompy.SubShapeAll( geol, geompy.ShapeType["SHAPE"] )
+subshapes = geompy.SubShapeAll(geol, geompy.ShapeType["SHAPE"])
 
-IORlist = []
-IORlist.append(subshapes[0]._get_Name())
-IORlist.append(subshapes[1]._get_Name())
-IORlist.append(subshapes[2]._get_Name())
-alve = geompy.MakeCompound(IORlist)
+GOlist = []
+GOlist.append(subshapes[0])
+GOlist.append(subshapes[1])
+GOlist.append(subshapes[2])
+alve = geompy.MakeCompound(GOlist)
 
 geol = subshapes[3]
 back = subshapes[4]
 
 # --
 
-geol = geompy.MakeCompound(
-    [geol._get_Name(), back._get_Name(), alve._get_Name()])
+geol = geompy.MakeCompound([geol, back, alve])
 
-geompy.addToStudy(geol,"couplex2 2")
-
-
+geompy.addToStudy(geol, "couplex2 2")

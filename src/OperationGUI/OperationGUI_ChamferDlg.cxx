@@ -24,62 +24,126 @@
 //  File   : OperationGUI_ChamferDlg.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
+
 //  $Header$
 
-using namespace std;
 #include "OperationGUI_ChamferDlg.h"
+#include "DlgRef_SpinBox.h"
+#include "QAD_Desktop.h"
+#include "qpixmap.h"
+#include <list>
 
-#include "DisplayGUI.h"
-#include "QAD_MessageBox.h"
-
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Face.hxx>
-#include <AIS_InteractiveContext.hxx>
-#include <BRepFilletAPI_MakeChamfer.hxx>
-#include <BRepTools.hxx>
-#include <BRep_Tool.hxx>
-#include <TopExp.hxx>
-#include <Precision.hxx>
-
-#include <Standard_ErrorHandler.hxx> 
-#include <Standard_Failure.hxx>
+#include "GEOMImpl_Types.hxx"
 
 //=================================================================================
 // class    : OperationGUI_ChamferDlg()
-// purpose  : Constructs a OperationGUI_ChamferDlg which is a child of 'parent', with the 
+// purpose  : Constructs a OperationGUI_ChamferDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(QWidget* parent, const char* name, OperationGUI* theOperationGUI, SALOME_Selection* Sel, Handle(AIS_InteractiveContext) ic, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+OperationGUI_ChamferDlg::OperationGUI_ChamferDlg( QWidget* parent, SALOME_Selection* Sel )
+: GEOMBase_Skeleton(parent, "ChamferDlg", Sel, false,
+    WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_ALL")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_EDGE")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_FACE")));
-  QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-    setCaption(tr("GEOM_CHAMFER_TITLE"));
+  mySelection = Sel;
+  myConstructorId = -1;
 
-  /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_CHAMFER"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->setPixmap(image2);
+  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_ALL")));
+  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_EDGE")));
+  QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_FACE")));
+  QPixmap iconSelect(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  Group1 = new DlgRef_1Sel2Spin(this, "Group1");
-  Group1->GroupBox1->setTitle(tr("GEOM_CHAMFER_ALL"));
-  Group1->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
-  Group1->TextLabel2->setText(tr("GEOM_D1"));
-  Group1->TextLabel3->setText(tr("GEOM_D2"));
-  Group1->PushButton1->setPixmap(image3);
+  setCaption( tr( "GEOM_CHAMFER_TITLE" ) );
 
-  Layout1->addWidget(Group1, 1, 0);
-  /***************************************************************/
+  GroupConstructors->setTitle( tr( "GEOM_CHAMFER" ) );
+
+  RadioButton1->setPixmap( image1 );
+  RadioButton2->setPixmap( image2 );
+  RadioButton3->setPixmap( image3 );
+
+  // Create first group
+
+  myGrp1 = new QGroupBox( 1, Qt::Horizontal, tr( "GEOM_CHAMFER_ALL" ), this );
+
+  QGroupBox* aSelGrp1 = new QGroupBox( 3, Qt::Horizontal, myGrp1 );
+  aSelGrp1->setFrameStyle( QFrame::NoFrame );
+  aSelGrp1->setInsideMargin( 0 );
+
+  createSelWg( tr( "GEOM_MAIN_OBJECT" ), iconSelect, aSelGrp1, MainObj1 );
+
+  QGroupBox* aSpinGrp = new QGroupBox( 1, Qt::Vertical, myGrp1 );
+  aSpinGrp->setFrameStyle( QFrame::NoFrame );
+  aSpinGrp->setInsideMargin( 0 );
+
+  new QLabel( tr( "D" ), aSpinGrp );
+  mySpinBox[ SpinBox1 ] = new DlgRef_SpinBox( aSpinGrp );
+
+  ( new QFrame( myGrp1 ) )->setSizePolicy(
+    QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+
+  // Create second group
+
+  myGrp2 = new QGroupBox( 1, Qt::Horizontal, tr( "GEOM_CHAMFER_EDGES" ), this );
+
+  QGroupBox* aSelGrp2 = new QGroupBox( 3, Qt::Horizontal, myGrp2 );
+  aSelGrp2->setFrameStyle( QFrame::NoFrame );
+  aSelGrp2->setInsideMargin( 0 );
+
+  createSelWg( tr( "GEOM_MAIN_OBJECT" ), iconSelect, aSelGrp2, MainObj2 );
+  createSelWg( tr( "FACE_1" ), iconSelect, aSelGrp2, Face1 );
+  createSelWg( tr( "FACE_2" ), iconSelect, aSelGrp2, Face2 );
+
+  aSpinGrp = new QGroupBox( 1, Qt::Vertical, myGrp2 );
+  aSpinGrp->setFrameStyle( QFrame::NoFrame );
+  aSpinGrp->setInsideMargin( 0 );
+
+  new QLabel( tr( "GEOM_D1" ), aSpinGrp );
+  mySpinBox[ SpinBox21 ] = new DlgRef_SpinBox( aSpinGrp );
+
+  new QLabel( tr( "GEOM_D2" ), aSpinGrp );
+  mySpinBox[ SpinBox22 ] = new DlgRef_SpinBox( aSpinGrp );
+
+  // Create third group
+
+  myGrp3 = new QGroupBox( 1, Qt::Horizontal, tr( "GEOM_CHAMFER_FACES" ), this );
+
+  QGroupBox* aSelGrp3 = new QGroupBox( 3, Qt::Horizontal, myGrp3 );
+  aSelGrp3->setFrameStyle( QFrame::NoFrame );
+  aSelGrp3->setInsideMargin( 0 );
+
+  createSelWg( tr( "GEOM_MAIN_OBJECT" ), iconSelect, aSelGrp3, MainObj3 );
+  createSelWg( tr( "SELECTED_FACES" ), iconSelect, aSelGrp3, Faces );
+
+  aSpinGrp = new QGroupBox( 1, Qt::Vertical, myGrp3 );
+  aSpinGrp->setFrameStyle( QFrame::NoFrame );
+  aSpinGrp->setInsideMargin( 0 );
+
+  new QLabel( tr( "GEOM_D1" ), aSpinGrp );
+  mySpinBox[ SpinBox31 ] = new DlgRef_SpinBox( aSpinGrp );
+
+  new QLabel( tr( "GEOM_D2" ), aSpinGrp );
+  mySpinBox[ SpinBox32 ] = new DlgRef_SpinBox( aSpinGrp );
+
+  ( new QLabel( myGrp3 ) )->setSizePolicy(
+    QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+
+  // Add groups to layout
+
+  Layout1->addWidget( myGrp1, 2, 0 );
+  Layout1->addWidget( myGrp2, 2, 0 );
+  Layout1->addWidget( myGrp3, 2, 0 );
+
+  // Set range of spinboxes
+
+  double SpecificStep = 10.0;
+  QMap< int, DlgRef_SpinBox* >::iterator anIter;
+  for ( anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter )
+    anIter.data()->RangeStepAndValidator( 0.001, 999.999, SpecificStep, 3 );
 
   /* Initialisations */
-  myOperationGUI = theOperationGUI;
-  Init(ic);
+  Init( mySelection );
 }
 
 
@@ -88,8 +152,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(QWidget* parent, const char* na
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 OperationGUI_ChamferDlg::~OperationGUI_ChamferDlg()
-{  
-  /* no need to delete child widgets, Qt does it all for us */
+{
 }
 
 
@@ -97,51 +160,53 @@ OperationGUI_ChamferDlg::~OperationGUI_ChamferDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void OperationGUI_ChamferDlg::Init(Handle (AIS_InteractiveContext) ic)
+void OperationGUI_ChamferDlg::Init( SALOME_Selection* Sel )
 {
-  /* init variables */
-  myConstructorId = 0;
-  myEditCurrentArgument = Group1->LineEdit1;
-
-  myD1 = 5.0;
-  myD2 = 5.0;
-  myOkShape = false;
-  myIC = ic;
-  myLocalContextId = -1;
-  myUseLocalContext = false;
-
-  double SpecificStep = 10.0;
-  /* min, max, step and decimals for spin boxes */
-  Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-  Group1->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-
-  Group1->SpinBox_DX->SetValue(myD1);
-  Group1->SpinBox_DY->SetValue(myD2);
+  mySelection = Sel;
+  myConstructorId = -1;
+  reset();
+  RadioButton1->setChecked( true );
+  myEditCurrentArgument = mySelName[ MainObj1 ];
 
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
+  // main buttons
+  connect( buttonOk   , SIGNAL( clicked() ), this, SLOT( ClickOnOk()    ) );
+  connect( buttonApply, SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(Group1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(Group1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  // group box
+  connect( GroupConstructors, SIGNAL( clicked( int ) ),
+           this, SLOT( ConstructorsClicked( int ) ) );
 
-  connect(Group1->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group1->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group1->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group1->SpinBox_DY, SLOT(SetStep(double)));
+  // push buttons
+  QMap< int, QPushButton* >::iterator anIterBtn;
+  for ( anIterBtn = mySelBtn.begin(); anIterBtn != mySelBtn.end(); ++anIterBtn )
+    connect( anIterBtn.data(), SIGNAL( clicked() ),
+             this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  // line edits
+  QMap< int, QLineEdit* >::iterator anIterLE2;
+  for ( anIterLE2 = mySelName.begin(); anIterLE2 != mySelName.end(); ++anIterLE2 )
+    connect( anIterLE2.data(), SIGNAL( returnPressed() ),
+             this, SLOT( LineEditReturnPressed() ) );
 
-  /* displays Dialog */
-  Group1->show();
+  // spin boxes
+  QMap< int, DlgRef_SpinBox* >::iterator anIterSpin;
+  for ( anIterSpin = mySpinBox.begin(); anIterSpin != mySpinBox.end(); ++anIterSpin )
+    connect( anIterSpin.data(), SIGNAL( valueChanged( double ) ),
+             this, SLOT( ValueChangedInSpinBox( double ) ) );
+
+  // selection
+  connect( mySelection, SIGNAL( currentSelectionChanged() ),
+           this, SLOT( SelectionIntoArgument() ) );
+
+  initName( tr( "GEOM_CHAMFER" ) );
+
+  myGrp2->hide();
+  myGrp3->hide();
+  myGrp1->show();
+
   this->show();
-
-  return;
 }
 
 
@@ -149,54 +214,77 @@ void OperationGUI_ChamferDlg::Init(Handle (AIS_InteractiveContext) ic)
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void OperationGUI_ChamferDlg::ConstructorsClicked(int constructorId)
+void OperationGUI_ChamferDlg::ConstructorsClicked( int constructorId )
 {
+   // Activate next widget
+ if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC )
+ {
+    RadioButton1->setChecked( true );
+    return;
+ }
+  
+  if ( myConstructorId == constructorId )
+    return;
+
+  // Get values from previous widget
+  double D1 = 5, D2 = 5;
+  if ( myConstructorId == 0 )
+    D1 = D2 = mySpinBox[ SpinBox1 ]->GetValue();
+  else if ( myConstructorId == 1 )
+  {
+    D1 = mySpinBox[ SpinBox21 ]->GetValue();
+    D2 = mySpinBox[ SpinBox22 ]->GetValue();
+  }
+  else if ( myConstructorId == 2 )
+  {
+    D1 = mySpinBox[ SpinBox31 ]->GetValue();
+    D2 = mySpinBox[ SpinBox32 ]->GetValue();
+  }
+
   myConstructorId = constructorId;
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  disconnect(mySelection, 0, this, 0);
-  myOkShape = false;
-  myD1 = 5.0;
-  myD2 = 5.0;
 
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myUseLocalContext) {
-    myIC->CloseLocalContext(myLocalContextId);
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
-    myUseLocalContext = false;
+   switch ( constructorId )
+  {
+    case 0:
+        myGrp1->show();
+        myGrp2->hide();
+        myGrp3->hide();
+        mySpinBox[ SpinBox1 ]->SetValue( D1 );
+    break;
+    case 1:
+        myGrp1->hide();
+        myGrp2->show();
+        myGrp3->hide();
+        mySpinBox[ SpinBox21 ]->SetValue( D1 );
+        mySpinBox[ SpinBox22 ]->SetValue( D2 );
+    break;
+    case 2:
+        myGrp1->hide();
+        myGrp2->hide();
+        myGrp3->show();
+        mySpinBox[ SpinBox31 ]->SetValue( D1 );
+        mySpinBox[ SpinBox32 ]->SetValue( D2 );        
+    break;
+    default:
+    break;
   }
 
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC) {
-    myConstructorId = constructorId = 0; //No subshape selection if viewer is not OCC
-    RadioButton1->setChecked(TRUE);
-  }
+  if      ( constructorId == 0 ) myEditCurrentArgument = mySelName[ MainObj1 ];
+  else if ( constructorId == 1 ) myEditCurrentArgument = mySelName[ MainObj2 ];
+  else                           myEditCurrentArgument = mySelName[ MainObj3 ];
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  Group1->LineEdit1->setText("");
-  Group1->SpinBox_DX->SetValue(myD1);
-  Group1->SpinBox_DY->SetValue(myD2);
-  switch (constructorId)
-    {
-    case 0: /* Chamfer All */
-      {
-	Group1->GroupBox1->setTitle(tr("GEOM_CHAMFER_ALL"));
-	myShapeType = -1;
-	break;
-      }
-    case 1: /* Chamfer edges */
-      {
-	Group1->GroupBox1->setTitle(tr("GEOM_CHAMFER_EDGES"));
-	myShapeType = 6;
-	break;
-      }
-    case 2: /* Chamfer Faces */
-      {
-	Group1->GroupBox1->setTitle(tr("GEOM_CHAMFER_FACES"));
-	myShapeType = 4;
-	break;
-      }
-    }
- return;
+  activateSelection(); 
+  enableWidgets();
+  
+  if ( !myShape->_is_nil() )
+  {
+    myEditCurrentArgument->setText( GEOMBase::GetName( myShape ) );
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
+  else
+    myEditCurrentArgument->setText( "" );
+
+  displayPreview();
 }
 
 
@@ -206,69 +294,21 @@ void OperationGUI_ChamferDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void OperationGUI_ChamferDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  this->ClickOnCancel();
-  return;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
-
 
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void OperationGUI_ChamferDlg::ClickOnApply()
+bool OperationGUI_ChamferDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
-  QApplication::setOverrideCursor(Qt::waitCursor);
-  QAD_Application::getDesktop()->putInfo(tr(""));
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
+  if ( !onAccept() )
+    return false;
 
-  bool testResult = false;
-  switch(myConstructorId)
-    { 
-    case 0 : /* Chamfer All */
-      {	
-	if(myOkShape)
-	  testResult = myOperationGUI->OnChamferGetAll(myShape, myD1, myD2, myShapeType, myShapeIOR);
-	break;
-      }
-    case 1 : /* Chamfer Edge */
-      {	
-	if(myOkShape)
-	  testResult = myOperationGUI->OnChamferGetSelected(myShape, myShapeIOR, myD1, myD2, myShapeType, 
-							    myLocalContextId, myUseLocalContext);
-	break;
-      }
-    case 2 :  /* Chamfer Face */
-      {
-	if(myOkShape)
-	  testResult = myOperationGUI->OnChamferGetSelected(myShape, myShapeIOR, myD1, myD2, myShapeType, 
-							    myLocalContextId, myUseLocalContext);
-	break;
-      }
-    }
-
-  if(!testResult) 
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-  else
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  /* Reset all arguments and local context to allow user a new selection ...*/
-  this->ResetStateOfDialog();
-  QApplication::restoreOverrideCursor();
-  return;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void OperationGUI_ChamferDlg::ClickOnCancel()
-{
-  this->ResetStateOfDialog();
-  GEOMBase_Skeleton::ClickOnCancel();
-  return;
+  initName();
+  return true;
 }
 
 
@@ -278,61 +318,121 @@ void OperationGUI_ChamferDlg::ClickOnCancel()
 //=================================================================================
 void OperationGUI_ChamferDlg::SelectionIntoArgument()
 {
-  myGeomBase->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  myEditCurrentArgument->setText("");
-  this->ResetStateOfDialog();
-  QString aString = ""; /* name of selection */
+  erasePreview();
+  myEditCurrentArgument->setText( "" );
 
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if (nbSel == 1) {
-    TopoDS_Shape S;
-    Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-    if(!myGeomBase->GetTopoFromSelection(mySelection, S))
-      return;
-    if(!IO->hasEntry()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
-      return;
+  // Get index of current selection focus
+  int aCurrFocus = -1;
+  QMap< int, QLineEdit* >::iterator anIter;
+  for ( anIter = mySelName.begin(); anIter != mySelName.end(); ++anIter )
+    if ( myEditCurrentArgument == anIter.data() )
+    {
+      aCurrFocus = anIter.key();
+      break;
     }
 
-    if(!S.IsNull() &&  S.ShapeType() <= 2) {
-      if(IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject))) {
-	Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast(IO);
-	myShapeIOR = GIObject->getIOR(); /* the Geom IOR string of selection */
-	myEditCurrentArgument->setText(aString);
-	myShape = S;
-	myOkShape = true;
-      }
-	
-      if(IO->hasEntry()) {
-	SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-	SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
-        SALOMEDS::GenericAttribute_var anAttr;
-        SALOMEDS::AttributeIOR_var anIOR;
-	if(!obj->_is_nil()) {
-	  if(obj->FindAttribute(anAttr, "AttributeIOR")) {
-            anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	    myShapeIOR = anIOR->Value();
-	    myOkShape = true;
-	    myShape = S;
-	    myEditCurrentArgument->setText(aString);
-	  }
-	}
+  // If selection of main object is activated
+  if ( aCurrFocus == MainObj1 || aCurrFocus == MainObj2 || aCurrFocus == MainObj3 )
+  {
+    if ( mySelection->IObjectCount() == 1 )
+    {
+      Standard_Boolean aResult = Standard_False;
+      GEOM::GEOM_Object_var anObj =
+        GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+
+      if ( aResult && !anObj->_is_nil() )
+      {
+        myShape = anObj;
+        mySelName[ aCurrFocus ]->setText( GEOMBase::GetName( anObj ) );
+        displayPreview();
+        enableWidgets();
+        return;
       }
     }
-    if(myOkShape && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myConstructorId == 0)
-      this->MakePreview();
 
+    myShape = GEOM::GEOM_Object::_nil();
+    enableWidgets();
   }
-  else 
-    return;
-  
-  if(myOkShape && myShapeType!=-1 && myConstructorId != 0) {
-    /* local context is defined into the method */
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->PrepareSubShapeSelection(myShapeType, myLocalContextId);  
-    myUseLocalContext = true;
+  // If face selection of second tab is activated
+  else if ( aCurrFocus == Face1 || aCurrFocus == Face2 )
+  {
+    if ( mySelection->IObjectCount() == 1 )
+    {
+      Standard_Boolean aResult = Standard_False;
+      GEOM::GEOM_Object_var anObj =
+        GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+
+      if ( aResult && !anObj->_is_nil() )
+      {
+         TColStd_IndexedMapOfInteger anIndexes;
+         mySelection->GetIndex( mySelection->firstIObject(), anIndexes );
+
+         if ( anIndexes.Extent() == 1 )
+         {
+            int anIndex = anIndexes( 1 );
+            QString aFaceName = QString( GEOMBase::GetName( anObj ) ) + ":%1";
+            myEditCurrentArgument->setText( aFaceName.arg( anIndex ) );
+            myFace[ aCurrFocus ] = anIndex;
+            displayPreview();
+            return;
+         }
+      }
+    }
+
+    myFace[ aCurrFocus ] = -1;
   }
+  // If face selection of third tab is activated
+  else if ( aCurrFocus == Faces )
+  {
+    if ( mySelection->IObjectCount() == 1 )
+    {
+      Standard_Boolean aResult = Standard_False;
+      GEOM::GEOM_Object_var anObj =
+        GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+
+      if ( aResult && !anObj->_is_nil() )
+      {
+         TColStd_IndexedMapOfInteger anIndexes;
+         mySelection->GetIndex( mySelection->firstIObject(), anIndexes );
+
+         if ( anIndexes.Extent() > 0 )
+         {
+           QString aFaceName;
+           if ( anIndexes.Extent() == 1 )
+           {
+             int anIndex = anIndexes( 1 );
+
+             aFaceName = QString( GEOMBase::GetName( anObj ) ) + QString( ":%1" ).arg( anIndex );
+           }
+           else
+             aFaceName = tr( "GEOM_MEN_POPUP_NAME" ).arg( anIndexes.Extent() );
+
+           myEditCurrentArgument->setText( aFaceName );
+           myFaces = anIndexes;
+           displayPreview();
+           return;
+         }
+      }
+    }
+    myFaces.Clear();
+  }
+}
+
+
+//=================================================================================
+// function : LineEditReturnPressed()
+// purpose  :
+//=================================================================================
+void OperationGUI_ChamferDlg::LineEditReturnPressed()
+{
+  QLineEdit* aSender = ( QLineEdit* )sender();
+
+  QMap< int, QLineEdit* >::iterator anIterLE;
+  for ( anIterLE = mySelName.begin(); anIterLE != mySelName.end(); ++anIterLE )
+    if ( anIterLE.data() == aSender )
+      myEditCurrentArgument = anIterLE.data();
+
+  GEOMBase_Skeleton::LineEditReturnPressed();
 }
 
 
@@ -342,13 +442,17 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
 //=================================================================================
 void OperationGUI_ChamferDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();  
+  QPushButton* aSender = ( QPushButton* )sender();
 
-  if(send == Group1->PushButton1)
-    Group1->LineEdit1->setFocus();
+  QMap< int, QPushButton* >::iterator anIter;
+  for ( anIter = mySelBtn.begin(); anIter != mySelBtn.end(); ++anIter )
+    if ( anIter.data() == aSender )
+    {
+      mySelName[ anIter.key() ]->setFocus();
+      myEditCurrentArgument = mySelName[ anIter.key() ];
+    }
 
-  this->SelectionIntoArgument();
-  return;
+  activateSelection();
 }
 
 
@@ -358,9 +462,8 @@ void OperationGUI_ChamferDlg::SetEditCurrentArgument()
 //=================================================================================
 void OperationGUI_ChamferDlg::DeactivateActiveDialog()
 {
-  this->ResetStateOfDialog();
+  // disconnect selection
   GEOMBase_Skeleton::DeactivateActiveDialog();
-  return;
 }
 
 
@@ -371,10 +474,12 @@ void OperationGUI_ChamferDlg::DeactivateActiveDialog()
 void OperationGUI_ChamferDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(!mySimulationTopoDs.IsNull())
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  return;
+
+  connect( mySelection, SIGNAL(currentSelectionChanged()),
+           this, SLOT( SelectionIntoArgument() ) );
+
+  activateSelection();
+  displayPreview();
 }
 
 
@@ -384,22 +489,8 @@ void OperationGUI_ChamferDlg::ActivateThisDialog()
 //=================================================================================
 void OperationGUI_ChamferDlg::enterEvent(QEvent* e)
 {
-  if(GroupConstructors->isEnabled())
-    return;
-  this->ActivateThisDialog();
-  return;
-}
-
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void OperationGUI_ChamferDlg::closeEvent(QCloseEvent* e)
-{ 
-  /* same than click on cancel button */
-  this->ClickOnCancel();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    this->ActivateThisDialog();
 }
 
 
@@ -407,90 +498,204 @@ void OperationGUI_ChamferDlg::closeEvent(QCloseEvent* e)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void OperationGUI_ChamferDlg::ValueChangedInSpinBox(double newValue)
+void OperationGUI_ChamferDlg::ValueChangedInSpinBox( double newValue )
 {
-  myGeomBase->EraseSimulationShape(); 
-  mySimulationTopoDs.Nullify();
-
-  QObject* send = (QObject*)sender();
-  if(send == Group1->SpinBox_DX)  /* D1 */
-    myD1 = newValue;
-  else if(send == Group1->SpinBox_DY)  /* D2 */
-    myD2 = newValue;
-
-  if(myOkShape && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myConstructorId == 0)
-    this->MakePreview();
-
-  return;
+  displayPreview();
 }
 
 
 //=================================================================================
-// function : ResetStateOfDialog()
+// function : createSelWg()
 // purpose  :
 //=================================================================================
-void OperationGUI_ChamferDlg::ResetStateOfDialog()
+void OperationGUI_ChamferDlg::createSelWg( const QString& theLbl,
+                                           QPixmap&       thePix,
+                                           QWidget*       theParent,
+                                           const int      theId )
 {
-  myOkShape = false;
-  myEditCurrentArgument->setText("");
-  QApplication::restoreOverrideCursor();
+  new QLabel( theLbl, theParent );
+  mySelBtn[ theId ] = new QPushButton( theParent );
+  mySelBtn[ theId ]->setPixmap( thePix );
+  mySelName[ theId ] = new QLineEdit( theParent );
+  mySelName[ theId ]->setReadOnly( true );
+}
 
-  /* Close its local contact if opened */
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myUseLocalContext) {
-    myIC->CloseLocalContext(myLocalContextId);
-    myUseLocalContext = false;
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
+//=================================================================================
+// function : reset()
+// purpose  :
+//=================================================================================
+void OperationGUI_ChamferDlg::reset()
+{
+  // Set Initial values of spinboxes
+  QMap< int, DlgRef_SpinBox* >::iterator anIter;
+  for ( anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter )
+    anIter.data()->SetValue( 5 );
+
+  // clear line edits
+  QMap< int, QLineEdit* >::iterator anIterLE;
+  for ( anIterLE = mySelName.begin(); anIterLE != mySelName.end(); ++anIterLE )
+    anIterLE.data()->setText( "" );
+
+  // constructor id
+  int aConstructorId = getConstructorId();
+
+  if      ( aConstructorId == 0 ) myEditCurrentArgument = mySelName[ MainObj1 ];
+  else if ( aConstructorId == 1 ) myEditCurrentArgument = mySelName[ MainObj2 ];
+  else                            myEditCurrentArgument = mySelName[ MainObj3 ];
+
+  myShape = GEOM::GEOM_Object::_nil();
+
+  myFaces.Clear();
+  myFace[ Face1 ] = -1;
+  myFace[ Face2 ] = -1;
+
+  erasePreview( true );
+
+  activateSelection();
+
+  enableWidgets();
+}
+
+//=================================================================================
+// function : getConstructorId()
+// purpose  :
+//=================================================================================
+int OperationGUI_ChamferDlg::getConstructorId() const
+{
+  return GroupConstructors->id( GroupConstructors->selected() );
+}
+
+//=================================================================================
+// function : activateSelection
+// purpose  : Activate selection in accordance with myEditCurrentArgument
+//=================================================================================
+void OperationGUI_ChamferDlg::activateSelection()
+{
+  if (  !myShape->_is_nil() &&
+       ( myEditCurrentArgument == mySelName[ Face1 ] ||
+         myEditCurrentArgument == mySelName[ Face2 ] ||
+         myEditCurrentArgument == mySelName[ Faces ] ) )
+    localSelection( myShape, TopAbs_FACE );
+  else
+  {
+    TColStd_MapOfInteger aMap;
+    aMap.Add( GEOM_SHELL );
+    aMap.Add( GEOM_SOLID );
+    aMap.Add( GEOM_COMPOUND );
+    globalSelection( aMap );
   }
-  return;
+
+  SelectionIntoArgument();
 }
 
-
 //=================================================================================
-// function : MakePreview()
-// purpose  :
+// function : enableWidgets
+// purpose  : Enable widgets of faces in accordance with value of main object
 //=================================================================================
-void OperationGUI_ChamferDlg::MakePreview()
+void OperationGUI_ChamferDlg::enableWidgets()
 {
-  QApplication::setOverrideCursor(Qt::waitCursor);
-  TopoDS_Shape tds;
+  int anId = getConstructorId();
 
-  try {
-    BRepFilletAPI_MakeChamfer MC(myShape);
-    switch(myConstructorId)
-      {
-      case 0: /* Chamfer All */
-	{
-	  TopTools_IndexedDataMapOfShapeListOfShape M;
-	  TopExp::MapShapesAndAncestors(myShape, TopAbs_EDGE, TopAbs_FACE, M);
-	  for(int i = 1; i <= M.Extent(); i++) {
-	    TopoDS_Edge E = TopoDS::Edge(M.FindKey(i));
-	    TopoDS_Face F = TopoDS::Face(M.FindFromIndex(i).First());
-	    if(!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
-	      MC.Add(myD1, myD2, E, F);
-	  }
-	  tds = MC.Shape();
-	  break;
-	}
-      //    case 1: /* Chamfer edges */
-      //    case 2: /* Chamfer Faces */
-      }
+  bool toEnable = !myShape->_is_nil();
+  
+  if ( anId == 1 )
+  {
+    mySelName[ Face1 ]->setEnabled( toEnable );
+    mySelName[ Face2 ]->setEnabled( toEnable );
+    mySelBtn[ Face1 ]->setEnabled( toEnable );
+    mySelBtn[ Face2 ]->setEnabled( toEnable );
 
-    if(!tds.IsNull()) {
-      mySimulationTopoDs = tds;
-      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
+    if ( !toEnable )
+    {
+      mySelName[ Face1 ]->setText( "" );
+      mySelName[ Face2 ]->setText( "" );
+      myFace[ Face1 ] = -1;
+      myFace[ Face2 ] = -1;
     }
   }
-  catch(Standard_Failure) {
-    QApplication::restoreOverrideCursor();
-    QAD_MessageBox::warn1 (QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_CHAMFER_ABORT").arg(myD1).arg(myD2), tr("GEOM_BUT_OK"));
-    QApplication::setOverrideCursor(Qt::waitCursor);
-    myGeomBase->EraseSimulationShape(); 
-    mySimulationTopoDs.Nullify();
-    Group1->SpinBox_DX->SetValue(5.0);
-    Group1->SpinBox_DY->SetValue(5.0);
+  else if ( anId == 2 )
+  {
+    mySelName[ Faces ]->setEnabled( toEnable );
+
+    if ( !toEnable )
+      myFaces.Clear();
+  }
+}
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr OperationGUI_ChamferDlg::createOperation()
+{
+  return getGeomEngine()->GetILocalOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : ClickOnApply()
+// purpose  : Verify validity of input data
+//=================================================================================
+bool OperationGUI_ChamferDlg::isValid( QString& )
+{
+  switch ( getConstructorId() )
+  {
+    case 0: return !myShape->_is_nil();
+    case 1: return !myShape->_is_nil() && myFace[ Face1 ] > 0 && myFace[ Face2 ] > 0;
+    case 2: return !myShape->_is_nil() && myFaces.Extent() > 0;
+    default: return false;
+  }
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool OperationGUI_ChamferDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  int anId = getConstructorId();
+  if ( anId == 0 )
+    anObj = GEOM::GEOM_ILocalOperations::_narrow(
+      getOperation() )->MakeChamferAll( myShape,
+                                        mySpinBox[ SpinBox1 ]->GetValue() );
+  else if ( anId == 1 )
+    anObj = GEOM::GEOM_ILocalOperations::_narrow(
+      getOperation() )->MakeChamferEdge( myShape,
+                                         mySpinBox[ SpinBox21 ]->GetValue(),
+                                         mySpinBox[ SpinBox22 ]->GetValue(),
+                                         myFace[ Face1 ],
+                                         myFace[ Face2 ] );
+  else if ( anId == 2 )
+  {
+
+    int i = 0;
+    GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
+    anArray->length( myFaces.Extent() );
+
+
+    for ( int i = 1, n = myFaces.Extent(); i <= n; i++ )
+      anArray[ i - 1 ] = myFaces( i );             
+    
+    anObj = GEOM::GEOM_ILocalOperations::_narrow(
+      getOperation() )->MakeChamferFaces( myShape,
+                                          mySpinBox[ SpinBox31 ]->GetValue(),
+                                          mySpinBox[ SpinBox32 ]->GetValue(),
+                                          anArray );
   }
 
-  QApplication::restoreOverrideCursor();
-  return;
+
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
+
+  return true;
 }
+
+
+
+
+
+
+
+
+

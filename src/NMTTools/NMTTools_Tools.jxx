@@ -1,0 +1,36 @@
+#ifndef _TopTools_ListOfShape_HeaderFile
+#include <TopTools_ListOfShape.hxx>
+#endif
+#ifndef _TopoDS_Vertex_HeaderFile
+#include <TopoDS_Vertex.hxx>
+#endif
+#ifndef _BOPTools_CArray1OfVVInterference_HeaderFile
+#include <BOPTools_CArray1OfVVInterference.hxx>
+#endif
+#ifndef _BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger_HeaderFile
+#include <BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger.hxx>
+#endif
+#ifndef _BOPTools_CArray1OfSSInterference_HeaderFile
+#include <BOPTools_CArray1OfSSInterference.hxx>
+#endif
+#ifndef _TopoDS_Edge_HeaderFile
+#include <TopoDS_Edge.hxx>
+#endif
+#ifndef _TopoDS_Face_HeaderFile
+#include <TopoDS_Face.hxx>
+#endif
+#ifndef _IntTools_Context_HeaderFile
+#include <IntTools_Context.hxx>
+#endif
+#ifndef _NMTTools_ListOfCoupleOfShape_HeaderFile
+#include <NMTTools_ListOfCoupleOfShape.hxx>
+#endif
+#ifndef _NMTTools_IndexedDataMapOfShapeIndexedMapOfShape_HeaderFile
+#include <NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx>
+#endif
+#ifndef _Geom2d_Curve_HeaderFile
+#include <Geom2d_Curve.hxx>
+#endif
+#ifndef _NMTTools_Tools_HeaderFile
+#include <NMTTools_Tools.hxx>
+#endif

@@ -142,7 +142,7 @@ static Standard_Boolean findVOnE(const TopoDS_Vertex &         theV,
     return Standard_False;
 
 #ifdef DEB
-  cout << "findVOnE: found MinDist = " << sqrt (MinDist2) << endl;
+  MESSAGE("findVOnE: found MinDist = " << sqrt (MinDist2));
 #endif
 
   return Standard_True;

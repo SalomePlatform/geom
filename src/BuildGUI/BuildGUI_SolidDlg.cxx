@@ -26,11 +26,13 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "BuildGUI_SolidDlg.h"
 
-#include "BuildGUI.h"
 #include "QAD_Desktop.h"
+#include "GEOMImpl_Types.hxx"
+
+//Qt includes
+#include <qcheckbox.h>
 
 //=================================================================================
 // class    : BuildGUI_SolidDlg()
@@ -39,7 +41,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_SolidDlg::BuildGUI_SolidDlg(QWidget* parent, const char* name, BuildGUI* theBuildGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+BuildGUI_SolidDlg::BuildGUI_SolidDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SOLID")));
@@ -53,16 +55,17 @@ BuildGUI_SolidDlg::BuildGUI_SolidDlg(QWidget* parent, const char* name, BuildGUI
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupSolid = new DlgRef_1Sel_QTD(this, "GroupSolid");
+  GroupSolid = new DlgRef_1Sel1Check_QTD(this, "GroupSolid");
   GroupSolid->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupSolid->TextLabel1->setText(tr("GEOM_OBJECTS"));
+  GroupSolid->CheckButton1->setText(tr("GEOM_CREATE_SINGLE_SOLID"));
   GroupSolid->PushButton1->setPixmap(image1);
+  GroupSolid->LineEdit1->setReadOnly( true );
   
-  Layout1->addWidget(GroupSolid, 1, 0);
+  Layout1->addWidget(GroupSolid, 2, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myBuildGUI = theBuildGUI;
   Init();
 }
 
@@ -85,25 +88,23 @@ void BuildGUI_SolidDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupSolid->LineEdit1;
-  myOkListShapes = false;
+  GroupSolid->LineEdit1->setReadOnly( true );
+  GroupSolid->CheckButton1->setChecked( true );
 
-  myShellFilter = new GEOM_ShapeTypeFilter(TopAbs_SHELL, myGeom);
-  /* filter for next selection */
-  mySelection->AddFilter(myShellFilter);
+  myOkShells = false;
+
+  globalSelection( GEOM_SHELL );
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
   connect(GroupSolid->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupSolid->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(EnableNameField(bool)));
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
- 
-  /* displays Dialog */
-  GroupSolid->show();
-  this->show();
 
-  return;
+  initName(tr("GEOM_SOLID"));
 }
 
 
@@ -113,23 +114,21 @@ void BuildGUI_SolidDlg::Init()
 //=================================================================================
 void BuildGUI_SolidDlg::ClickOnOk()
 {
-  this->ClickOnApply();
-  ClickOnCancel();
-  return ;
+  if ( ClickOnApply() )
+    ClickOnCancel();
 }
 
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BuildGUI_SolidDlg::ClickOnApply()
+bool BuildGUI_SolidDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo(tr("")); 
+  if ( !onAccept() )
+    return false;
 
-  if(myOkListShapes)  
-    myBuildGUI->MakeSolidAndDisplay(myListShapes);
-
-  return;
+  initName();
+  return true;
 }
 
 
@@ -141,19 +140,20 @@ void BuildGUI_SolidDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
   QString aString = "";
-
-  myOkListShapes = false;
-  int nbSel = mySelection->IObjectCount();
+  
+  myOkShells = false;
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aString);
   if (nbSel == 0) 
     return;
-
-  aString = tr("%1_objects").arg(nbSel);
+  if(nbSel != 1)
+    aString = tr("%1_objects").arg(nbSel);
   
-  myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes);
+  GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(), myShells);
+  if (!myShells.length()) 
+    return;
+  
   myEditCurrentArgument->setText(aString);
-  myOkListShapes = true;
-
-  return ;
+  myOkShells = true;
 }
 
 //=================================================================================
@@ -163,12 +163,14 @@ void BuildGUI_SolidDlg::SelectionIntoArgument()
 void BuildGUI_SolidDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters() ;
-  GroupSolid->LineEdit1->setFocus();
+  if(send != GroupSolid->PushButton1)
+    return;
+  
+  globalSelection( GEOM_SHELL );
   myEditCurrentArgument = GroupSolid->LineEdit1;
-  mySelection->AddFilter(myShellFilter);
+
+  myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
-  return;
 }
 
 
@@ -180,8 +182,7 @@ void BuildGUI_SolidDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  mySelection->AddFilter(myShellFilter);
-  return;
+  globalSelection( GEOM_SHELL );
 }
 
 
@@ -191,8 +192,66 @@ void BuildGUI_SolidDlg::ActivateThisDialog()
 //=================================================================================
 void BuildGUI_SolidDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
-    return;  
-  this->ActivateThisDialog();
-  return;
+  if ( !GroupConstructors->isEnabled() )
+    ActivateThisDialog();
 }
+
+
+//=================================================================================
+// function :  EnableNameField()
+// purpose  :
+//=================================================================================
+void  BuildGUI_SolidDlg::EnableNameField(bool toEnable)
+{
+  this->GroupBoxName->setEnabled(toEnable); 
+}
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr BuildGUI_SolidDlg::createOperation()
+{
+  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool BuildGUI_SolidDlg::isValid( QString& )
+{
+  return myOkShells;
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool BuildGUI_SolidDlg::execute( ObjectList& objects )
+{
+  bool toCreateSingleSolid = GroupSolid->CheckButton1->isChecked();
+  
+  if ( toCreateSingleSolid )
+  {
+    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow(
+      getOperation() )->MakeSolidShells( myShells );
+
+    if ( !anObj->_is_nil() )
+      objects.push_back( anObj._retn() );
+  }
+  else
+  {
+    for ( int i = 0, n = myShells.length(); i< n; i++ )
+    {
+      GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow(
+        getOperation() )->MakeSolidShell( myShells[ i ] );
+
+     if ( !anObj->_is_nil() )
+       objects.push_back( anObj._retn() );
+    }
+  }
+
+  return true;
+}
+

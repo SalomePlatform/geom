@@ -1,6 +1,23 @@
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #
-#  Copyright (C) 2003  CEA/DEN, EDF R&D
+#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+#  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
 #
 #
 #
@@ -12,230 +29,470 @@
 from batchmode_salome import *
 import GEOM
 
-#--------------------------------------------------------------------------
-modulecatalog = naming_service.Resolve("/Kernel/ModulCatalog")
-
-geom = lcc.FindOrLoadComponent("FactoryServer", "GEOM")
-geom.GetCurrentStudy(myStudyId)
+g=None
+step = 0
+while step < 50 and g == None:
+    g = lcc.FindOrLoadComponent("FactoryServer", "GEOM")
+    step = step + 1
+    time.sleep(4)
+geom = g._narrow( GEOM.GEOM_Gen )
 myBuilder = myStudy.NewBuilder()
 
 father = myStudy.FindComponent("GEOM")
 if father is None:
         father = myBuilder.NewComponent("GEOM")
-        A1 = myBuilder.FindOrCreateAttribute(father, "AttributeName");
+        A1 = myBuilder.FindOrCreateAttribute(father, "AttributeName")
         FName = A1._narrow(SALOMEDS.AttributeName)
-#        FName.SetValue("Geometry")
-
-	Comp = modulecatalog.GetComponent( "GEOM" )
-	FName.SetValue( Comp._get_componentusername() )
-
-      	A2 = myBuilder.FindOrCreateAttribute(father, "AttributePixMap");
-      	aPixmap = A2._narrow(SALOMEDS.AttributePixMap);
-	aPixmap.SetPixMap( "ICON_OBJBROWSER_Geometry" );
+        FName.SetValue("Geometry")
+      	A2 = myBuilder.FindOrCreateAttribute(father, "AttributePixMap")
+      	aPixmap = A2._narrow(SALOMEDS.AttributePixMap)
+	aPixmap.SetPixMap("ICON_OBJBROWSER_Geometry")
 	myBuilder.DefineComponentInstance(father,geom)
 
-
 # -----------------------------------------------------------------------------
-# add To Study  
+# add To Study
 # -----------------------------------------------------------------------------
 
-def SubShapeName(aSubId, aMainId):
-#    index = gg.getIndexTopology(aSubId, aMainId)
-#    print index
-#    name = gg.getShapeTypeString(aSubId) + "_%d"%(index)
-    name = "Shape"
+def SubShapeName(aSubObj, aMainObj):
+    name = "SubShape"
     print name
     return name
 
-def addArguments(aShape):
-    ListIOR = []
-    ListIOR = geom.GetReferencedObjects(aShape)
-
-    if aShape._get_StudyShapeId()!="":
-    	father = IDToSObject(aShape._get_StudyShapeId())
-
-	myBuilder.NewCommand()
-    	if len(ListIOR) > 0:
-	  Arg = myBuilder.NewObject(father)
-          A1 = myBuilder.FindOrCreateAttribute(Arg, "AttributeName");
-          ArgName = A1._narrow(SALOMEDS.AttributeName)
-          ArgName.SetValue("Arguments")
-    	  A2 = myBuilder.FindOrCreateAttribute(Arg, "AttributeSelectable");
-	  SelAttr = A2._narrow(SALOMEDS.AttributeSelectable);
-    	  SelAttr.SetSelectable(0);
-	
-	  OneObject = 0
-	  for anIOR in ListIOR:
-	     Shape = orb.string_to_object(anIOR)
-	     if Shape is not None:
-		if Shape._get_StudyShapeId()!="":
-		   Obj = IDToSObject(Shape._get_StudyShapeId())
-		   if Obj is not None:
-			   Obj1 = myBuilder.NewObject(Arg)
-			   myBuilder.Addreference(Obj1,Obj)
-			   OneObject = 1
-
-	  if OneObject == 0:
-	     myBuilder.RemoveObject(Arg)
-
-    myBuilder.CommitCommand()
-    return 1	
+# -----------------------------------------------------------------------------
+# Operations
+# -----------------------------------------------------------------------------
 
 def addToStudy(aShape, aName):
-    try: 
-    	myBuilder.NewCommand()
-    	newObj = myBuilder.NewObject(father)
-    	ior = orb.object_to_string(aShape)
-    	A1 = myBuilder.FindOrCreateAttribute(newObj, "AttributeIOR");
-    	ObjIOR = A1._narrow(SALOMEDS.AttributeIOR)
-    	ObjIOR.SetValue(ior)
-    	A2 = myBuilder.FindOrCreateAttribute(newObj, "AttributeName");
-    	ObjName = A2._narrow(SALOMEDS.AttributeName)
-   	ObjName.SetValue(aName)
-    	id = newObj.GetID()
-    	aShape._set_StudyShapeId(id)
-    	myBuilder.CommitCommand()
-
-    	addArguments( aShape )
-
+    try:
+        aSObject = geom.AddInStudy(myStudy, aShape, aName, None)
     except:
-	  return None
-    return id
+        print "addToStudy() failed"
+        return ""
+    return aShape.GetStudyEntry()
 
 def addToStudyInFather(aFather, aShape, aName):
-    myBuilder.NewCommand()
-    newObj = myBuilder.NewObject( IDToSObject(aFather._get_StudyShapeId()) )
-    ior = orb.object_to_string(aShape)
-    A1 = myBuilder.FindOrCreateAttribute(newObj, "AttributeIOR");
-    ObjIOR = A1._narrow(SALOMEDS.AttributeIOR)
-    ObjIOR.SetValue(ior)
-    A2 = myBuilder.FindOrCreateAttribute(newObj, "AttributeName");
-    ObjName = A2._narrow(SALOMEDS.AttributeName)
-    ObjName.SetValue(aName)
-    id = newObj.GetID()
-    aShape._set_StudyShapeId(id)
-    myBuilder.CommitCommand()
-    addArguments( aShape )
-    return id
+    try:
+#        myBuilder.NewCommand()
+        aSObject = geom.AddInStudy(myStudy, aShape, aName, aFather)
+#        myBuilder.CommitCommand()
+    except:
+        print "addToStudyInFather() failed"
+        return ""
+    return aShape.GetStudyEntry()
 
 # -----------------------------------------------------------------------------
-# Create Geometry 2D
+# enumeration ShapeType as a dictionary
+# -----------------------------------------------------------------------------
+
+ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
+
+# -----------------------------------------------------------------------------
+# Get Operations Interfaces
+# -----------------------------------------------------------------------------
+
+BasicOp  = geom.GetIBasicOperations    (myStudyId)
+CurvesOp = geom.GetICurvesOperations   (myStudyId)
+PrimOp   = geom.GetI3DPrimOperations   (myStudyId)
+ShapesOp = geom.GetIShapesOperations   (myStudyId)
+HealOp   = geom.GetIHealingOperations  (myStudyId)
+InsertOp = geom.GetIInsertOperations   (myStudyId)
+BoolOp   = geom.GetIBooleanOperations  (myStudyId)
+TrsfOp   = geom.GetITransformOperations(myStudyId)
+LocalOp  = geom.GetILocalOperations    (myStudyId)
+MeasuOp  = geom.GetIMeasureOperations  (myStudyId)
+BlocksOp = geom.GetIBlocksOperations   (myStudyId)
+GroupOp  = geom.GetIGroupOperations   (myStudyId)
+
+# -----------------------------------------------------------------------------
+# Basic primitives
 # -----------------------------------------------------------------------------
 
 def MakeVertex(x,y,z):
-    anObj = geom.MakeVertex(x,y,z)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = BasicOp.MakePointXYZ(x,y,z)
+    if BasicOp.IsDone() == 0:
+      print "MakePointXYZ : ", BasicOp.GetErrorCode()
+    return anObj
+
+def MakeVertexWithRef(vertex,x,y,z):
+    anObj = BasicOp.MakePointWithReference(vertex,x,y,z)
+    if BasicOp.IsDone() == 0:
+      print "MakePointWithReference : ", BasicOp.GetErrorCode()
+    return anObj
+
+def MakeVertexOnCurve(curve,par):
+    anObj = BasicOp.MakePointOnCurve(curve,par)
+    if BasicOp.IsDone() == 0:
+      print "MakePointOnCurve : ", BasicOp.GetErrorCode()
+    return anObj
+
+def MakeVectorDXDYDZ(dx,dy,dz):
+    anObj = BasicOp.MakeVectorDXDYDZ(dx,dy,dz)
+    if BasicOp.IsDone() == 0:
+      print "MakeVectorDXDYDZ : ", BasicOp.GetErrorCode()
     return anObj
 
 def MakeVector(p1,p2):
-    anObj = geom.MakeVector(p1,p2)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = BasicOp.MakeVectorTwoPnt(p1, p2)
+    if BasicOp.IsDone() == 0:
+      print "MakeVectorTwoPnt : ", BasicOp.GetErrorCode()
     return anObj
 
-def MakeLine(p1,d1):
-    anObj = geom.MakeLine(p1,d1)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeLine(p1, d1):
+    anObj = BasicOp.MakeLine(p1,d1)
+    if BasicOp.IsDone() == 0:
+      print "MakeLine : ", BasicOp.GetErrorCode()
     return anObj
 
-def MakeArc(p1,p2,p3):
-    anObj = geom.MakeArc(p1,p2,p3)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeLineTwoPnt(p1, p2):
+    anObj = BasicOp.MakeLineTwoPnt(p1,p2)
+    if BasicOp.IsDone() == 0:
+      print "MakeLineTwoPnt : ", BasicOp.GetErrorCode()
     return anObj
 
-def MakeCircle(p1,d1,radius):  
-    anObj = geom.MakeCircle(p1,d1,radius)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakePlane(p1,v1,trimsize):
+    anObj = BasicOp.MakePlanePntVec(p1,v1,trimsize)
+    if BasicOp.IsDone() == 0:
+      print "MakePlanePntVec : ", BasicOp.GetErrorCode()
     return anObj
 
-def MakeEllipse(p1,d1,radiusMaj,radiusMin):  
-    anObj = geom.MakeEllipse(p1,d1,radiusMaj, radiusMin)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakePlaneThreePnt(p1,p2,p3,trimsize):
+    anObj = BasicOp.MakePlaneThreePnt(p1,p2,p3,trimsize)
+    if BasicOp.IsDone() == 0:
+      print "MakePlaneThreePnt : ", BasicOp.GetErrorCode()
     return anObj
 
-def MakePlane(p1,d1,trimsize): 
-    anObj = geom.MakePlane(p1,d1,trimsize)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakePlaneFace(face,trimsize):
+    anObj = BasicOp.MakePlaneFace(face,trimsize)
+    if BasicOp.IsDone() == 0:
+      print "MakePlaneFace : ", BasicOp.GetErrorCode()
     return anObj
 
-def MakeSketcher(Cmd): 
-    anObj = geom.MakeSketcher(Cmd)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
+    anObj = BasicOp.MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ)
+    if BasicOp.IsDone() == 0:
+      print "MakeMarker : ", BasicOp.GetErrorCode()
     return anObj
 
 # -----------------------------------------------------------------------------
-# Create Geometry 3D
+# Curves
+# -----------------------------------------------------------------------------
+
+def MakeArc(p1,p2,p3):
+    anObj = CurvesOp.MakeArc(p1,p2,p3)
+    if CurvesOp.IsDone() == 0:
+      print "MakeArc : ", CurvesOp.GetErrorCode()
+    return anObj
+
+def MakeCircle(p1,v1,radius):
+    anObj = CurvesOp.MakeCirclePntVecR(p1,v1,radius)
+    if CurvesOp.IsDone() == 0:
+      print "MakeCirclePntVecR : ", CurvesOp.GetErrorCode()
+    return anObj
+
+def MakeCircleThreePnt(p1,p2,p3):
+    anObj = CurvesOp.MakeCircleThreePnt(p1,p2,p3)
+    if CurvesOp.IsDone() == 0:
+      print "MakeCircleThreePnt : ", CurvesOp.GetErrorCode()
+    return anObj
+
+def MakeEllipse(p1,v1,radiusMaj,radiusMin):
+    anObj = CurvesOp.MakeEllipse(p1,v1,radiusMaj, radiusMin)
+    if CurvesOp.IsDone() == 0:
+      print "MakeEllipse : ", CurvesOp.GetErrorCode()
+    return anObj
+
+def MakePolyline(ListShape):
+    anObj = CurvesOp.MakePolyline(ListShape)
+    if CurvesOp.IsDone() == 0:
+      print "MakePolyline : ", CurvesOp.GetErrorCode()
+    return anObj
+
+def MakeBezier(ListShape):
+    anObj = CurvesOp.MakeSplineBezier(ListShape)
+    if CurvesOp.IsDone() == 0:
+      print "MakeSplineBezier : ", CurvesOp.GetErrorCode()
+    return anObj
+
+def MakeInterpol(ListShape):
+    anObj = CurvesOp.MakeSplineInterpolation(ListShape)
+    if CurvesOp.IsDone() == 0:
+      print "MakeSplineInterpolation : ", CurvesOp.GetErrorCode()
+    return anObj
+
+# <WPL>: Nine double values, defining origin,
+# OZ and OX directions of the working plane.
+def MakeSketcher(Cmd, WPL = [0,0,0, 0,0,1, 1,0,0]):
+    anObj = CurvesOp.MakeSketcher(Cmd, WPL)
+    if CurvesOp.IsDone() == 0:
+      print "MakeSketcher : ", CurvesOp.GetErrorCode()
+    return anObj
+
+# -----------------------------------------------------------------------------
+# Create 3D Primitives
 # -----------------------------------------------------------------------------
 
 def MakeBox(x1,y1,z1,x2,y2,z2):
-    anObj = geom.MakeBox(x1,y1,z1,x2,y2,z2)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    pnt1 = MakeVertex(x1,y1,z1)
+    pnt2 = MakeVertex(x2,y2,z2)
+    return MakeBoxTwoPnt(pnt1,pnt2)
+
+def MakeBoxDXDYDZ(dx,dy,dz):
+    anObj = PrimOp.MakeBoxDXDYDZ(dx,dy,dz)
+    if PrimOp.IsDone() == 0:
+      print "MakeBoxDXDYDZ : ", PrimOp.GetErrorCode()
     return anObj
 
-def MakeCylinder(p1,d1,radius,height):
-    anObj = geom.MakeCylinder(p1,d1,radius,height)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeBoxTwoPnt(point1, point2):
+    anObj = PrimOp.MakeBoxTwoPnt(point1, point2)
+    if PrimOp.IsDone() == 0:
+      print "MakeBoxTwoPnt : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakeCylinder(p1,v1,radius,height):
+    anObj = PrimOp.MakeCylinderPntVecRH(p1,v1,radius,height)
+    if PrimOp.IsDone() == 0:
+      print "MakeCylinderPntVecRH : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakeCylinderRH(radius,height):
+    anObj = PrimOp.MakeCylinderRH(radius,height)
+    if PrimOp.IsDone() == 0:
+      print "MakeCylinderRH : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakeSpherePntR(point,radius):
+    anObj = PrimOp.MakeSpherePntR(point,radius)
+    if PrimOp.IsDone() == 0:
+      print "MakeSpherePntR : ", PrimOp.GetErrorCode()
     return anObj
 
 def MakeSphere(x,y,z,radius):
-    anObj = geom.MakeSphere(x,y,z,radius)	
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    point = MakeVertex(x,y,z)
+    anObj = MakeSpherePntR(point,radius)
     return anObj
 
-def MakeCone(p1,d1,radius1,radius2,height):
-    anObj = geom.MakeCone(p1,d1,radius1,radius2,height)	
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeSphereR(radius):
+    anObj = PrimOp.MakeSphereR(radius)
+    if PrimOp.IsDone() == 0:
+      print "MakeSphereR : ", PrimOp.GetErrorCode()
     return anObj
 
-def MakeTorus(p1,d1,major_radius,minor_radius):
-    anObj = geom.MakeTorus(p1,d1,major_radius,minor_radius)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeCone(p1,v1,radius1,radius2,height):
+    anObj = PrimOp.MakeConePntVecR1R2H(p1,v1,radius1,radius2,height)
+    if PrimOp.IsDone() == 0:
+      print "MakeConePntVecR1R2H : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakeConeR1R2H(radius1,radius2,height):
+    anObj = PrimOp.MakeConeR1R2H(radius1,radius2,height)
+    if PrimOp.IsDone() == 0:
+      print "MakeConeR1R2H : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakeTorus(p1,v1,major_radius,minor_radius):
+    anObj = PrimOp.MakeTorusPntVecRR(p1,v1,major_radius,minor_radius)
+    if PrimOp.IsDone() == 0:
+      print "MakeTorusPntVecRR : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakeTorusRR(major_radius,minor_radius):
+    anObj = PrimOp.MakeTorusRR(major_radius,minor_radius)
+    if PrimOp.IsDone() == 0:
+      print "MakeTorusRR : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakePrism(baseShape,point1,point2):
+    anObj = PrimOp.MakePrismTwoPnt(baseShape,point1,point2)
+    if PrimOp.IsDone() == 0:
+      print "MakePrismTwoPnt : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakePrismVecH(baseShape,vector,height):
+    anObj = PrimOp.MakePrismVecH(baseShape,vector,height)
+    if PrimOp.IsDone() == 0:
+      print "MakePrismVecH : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakePipe(baseShape,pathShape):
+    anObj = PrimOp.MakePipe(baseShape,pathShape)
+    if PrimOp.IsDone() == 0:
+      print "MakePipe : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakeRevolution(aShape,axis,angle):
+    anObj = PrimOp.MakeRevolutionAxisAngle(aShape,axis,angle)
+    if PrimOp.IsDone() == 0:
+      print "MakeRevolutionAxisAngle : ", PrimOp.GetErrorCode()
     return anObj
 
 # -----------------------------------------------------------------------------
-# Create base objects
+# Create base shapes
 # -----------------------------------------------------------------------------
 
 def MakeEdge(p1,p2):
-    anObj = geom.MakeEdge(p1,p2)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = ShapesOp.MakeEdge(p1,p2)
+    if ShapesOp.IsDone() == 0:
+      print "MakeEdge : ", ShapesOp.GetErrorCode()
     return anObj
 
 def MakeWire(ListShape):
-    anObj = geom.MakeWire(ListShape)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = ShapesOp.MakeWire(ListShape)
+    if ShapesOp.IsDone() == 0:
+      print "MakeWire : ", ShapesOp.GetErrorCode()
     return anObj
 
 def MakeFace(aShapeWire,WantPlanarFace):
-    anObj = geom.MakeFace(aShapeWire,WantPlanarFace)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = ShapesOp.MakeFace(aShapeWire,WantPlanarFace)
+    if ShapesOp.IsDone() == 0:
+      print "MakeFace : ", ShapesOp.GetErrorCode()
     return anObj
 
-def MakeFaces(ListShape,WantPlanarFace):
-    anObj = geom.MakeFaces(ListShape,WantPlanarFace)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeFaceWires(ListWires,WantPlanarFace):
+    anObj = ShapesOp.MakeFaceWires(ListWires,WantPlanarFace)
+    if ShapesOp.IsDone() == 0:
+      print "MakeFaceWires : ", ShapesOp.GetErrorCode()
+    return anObj
+
+def MakeFaces(ListWires,WantPlanarFace):
+    anObj = MakeFaceWires(ListWires,WantPlanarFace)
+    return anObj
+
+def MakeShell(ListOfShapes):
+    anObj = ShapesOp.MakeShell(ListOfShapes)
+    if ShapesOp.IsDone() == 0:
+	print "MakeShell : ", ShapesOp.GetErrorCode()
+    return anObj
+
+def MakeSolid(ListOfShells):
+    anObj = ShapesOp.MakeSolidShells(ListOfShells)
+    if ShapesOp.IsDone() == 0:
+	print "MakeSolid : ", ShapesOp.GetErrorCode()
     return anObj
 
 def MakeCompound(ListShape):
-    anObj = geom.MakeCompound(ListShape)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = ShapesOp.MakeCompound(ListShape)
+    if ShapesOp.IsDone() == 0:
+      print "MakeCompound : ", ShapesOp.GetErrorCode()
+    return anObj
+
+def ChangeOrientation(Shape):
+    anObj = ShapesOp.ChangeOrientation(Shape)
+    if ShapesOp.IsDone() == 0:
+      print "ChangeOrientation : ", ShapesOp.GetErrorCode()
+    return anObj
+
+def OrientationChange(Shape):
+    anObj = ChangeOrientation(Shape)
+    return anObj
+
+# -----------------------------------------------------------------------------
+# Access to sub-shapes by their unique IDs inside the main shape.
+# -----------------------------------------------------------------------------
+
+# Obtain a composite sub-shape of <aShape>, composed from sub-shapes
+# of <aShape>, selected by their unique IDs inside <aShape>
+def GetSubShape(aShape, ListOfID):
+    anObj = geom.AddSubShape(aShape,ListOfID)
+    return anObj
+
+# Obtain unique ID of sub-shape <aSubShape> inside <aShape>
+def GetSubShapeID(aShape, aSubShape):
+    anID = LocalOp.GetSubShapeIndex(aShape, aSubShape)
+    if LocalOp.IsDone() == 0:
+      print "GetSubShapeIndex : ", LocalOp.GetErrorCode()
+    return anID
+
+# -----------------------------------------------------------------------------
+# Decompose objects
+# -----------------------------------------------------------------------------
+
+def SubShapeAll(aShape, aType):
+    ListObj = ShapesOp.MakeExplode(aShape,aType,0)
+    if ShapesOp.IsDone() == 0:
+      print "MakeExplode : ", ShapesOp.GetErrorCode()
+    return ListObj
+
+def SubShapeAllSorted(aShape,aType):
+    ListObj = ShapesOp.MakeExplode(aShape,aType,1)
+    if ShapesOp.IsDone() == 0:
+      print "MakeExplode : ", ShapesOp.GetErrorCode()
+    return ListObj
+
+# Obtain a compound of sub-shapes of <aShape>,
+# selected by they indices in list of all sub-shapes of type <aType>
+def SubShape(aShape, aType, ListOfInd):
+    ListOfIDs = []
+    AllShapeList = SubShapeAll(aShape, aType)
+    for ind in ListOfInd:
+        ListOfIDs.append(GetSubShapeID(aShape, AllShapeList[ind - 1]))
+    anObj = GetSubShape(aShape, ListOfIDs)
+    return anObj
+
+# Obtain a compound of sub-shapes of <aShape>,
+# selected by they indices in sorted list of all sub-shapes of type <aType>
+def SubShapeSorted(aShape, aType, ListOfInd):
+    ListOfIDs = []
+    AllShapeList = SubShapeAllSorted(aShape, aType)
+    for ind in ListOfInd:
+        ListOfIDs.append(GetSubShapeID(aShape, AllShapeList[ind - 1]))
+    anObj = GetSubShape(aShape, ListOfIDs)
+    return anObj
+
+# -----------------------------------------------------------------------------
+# Healing operations
+# -----------------------------------------------------------------------------
+
+def ProcessShape(Shape, Operators, Parameters, Values):
+    anObj = HealOp.ProcessShape(Shape, Operators, Parameters, Values)
+    if HealOp.IsDone() == 0:
+	print "ProcessShape : ", HealOp.GetErrorCode()
+    return anObj
+
+def SuppressFaces(aShape,ListOfId):
+    anObj = HealOp.SuppressFaces(aShape,ListOfId)
+    if HealOp.IsDone() == 0:
+      print "SuppressFaces : ", HealOp.GetErrorCode()
+    return anObj
+
+def MakeSewing(ListShape,precision):
+    comp = MakeCompound(ListShape)
+    anObj = Sew(comp,precision)
+    return anObj
+
+def Sew(aShape,precision):
+    anObj = HealOp.Sew(aShape,precision)
+    if HealOp.IsDone() == 0:
+      print "Sew : ", HealOp.GetErrorCode()
+    return anObj
+
+def SuppressInternalWires(aShape, Wires):
+    anObj = HealOp.RemoveIntWires(aShape, Wires)
+    if HealOp.IsDone() == 0:
+      print "SuppressInternalWires : ", HealOp.GetErrorCode()
+    return anObj
+
+def SuppressHoles(aShape, ListOfId):
+    anObj = HealOp.FillHoles(aShape,ListOfId)
+    if HealOp.IsDone() == 0:
+      print "SuppressHoles : ", HealOp.GetErrorCode()
+    return anObj
+
+def CloseContour(aShape, Wires, IsCommonVertex):
+    anObj = HealOp.CloseContour(aShape, Wires, IsCommonVertex)
+    if HealOp.IsDone() == 0:
+      print "CloseContour : ", HealOp.GetErrorCode()
+    return anObj
+
+def DivideEdge(aShape, EdgeID, Value, IsByParameter):
+    anObj = HealOp.DivideEdge(aShape, EdgeID, Value, IsByParameter)
+    if HealOp.IsDone() == 0:
+      print "DivideEdge : ", HealOp.GetErrorCode()
+    return anObj
+
+def GetFreeBoundary(Shape):
+    anObj = HealOp.GetFreeBoundary(Shape)
+    if HealOp.IsDone() == 0:
+      print "GetFreeBoundaries : ", HealOp.GetErrorCode()
     return anObj
 
 # -----------------------------------------------------------------------------
@@ -243,39 +500,21 @@ def MakeCompound(ListShape):
 # -----------------------------------------------------------------------------
 
 def MakeCopy(aShape):
-    anObj = geom.MakeCopy(aShape)	
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = InsertOp.MakeCopy(aShape)
+    if InsertOp.IsDone() == 0:
+      print "MakeCopy : ", InsertOp.GetErrorCode()
     return anObj
 
-def MakePrism(baseShape,p1,p2):
-    anObj = geom.MakePrism(baseShape,p1,p2)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeFilling(aShape,mindeg,maxdeg,tol2d,tol3d,nbiter):
+    anObj = PrimOp.MakeFilling(aShape,mindeg,maxdeg,tol2d,tol3d,nbiter)
+    if PrimOp.IsDone() == 0:
+      print "MakeFilling : ", PrimOp.GetErrorCode()
     return anObj
 
-def MakeRevolution(aShape,axis,angle):    
-    anObj = geom.MakeRevolution(aShape,axis,angle)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
-    return anObj
-
-def MakeFilling(aShape,mindeg,maxdeg,tol3d,tol2d,nbiter):
-    anObj = geom.MakeFilling(aShape,mindeg,maxdeg,tol3d,tol2d,nbiter)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
-    return anObj
-
-def MakePipe(pathShape,baseShape):
-    anObj = geom.MakePipe(pathShape,baseShape)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
-    return anObj
-
-def MakeSewing(ListShape,precision):
-    anObj = geom.MakeSewing(ListShape,precision)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeGlueFaces(aShape,aTolerance):
+    anObj = ShapesOp.MakeGlueFaces(aShape,aTolerance)
+    if ShapesOp.IsDone() == 0:
+      print "MakeGlueFaces : ", ShapesOp.GetErrorCode()
     return anObj
 
 # -----------------------------------------------------------------------------
@@ -283,107 +522,83 @@ def MakeSewing(ListShape,precision):
 # -----------------------------------------------------------------------------
 
 def MakeBoolean(shape1,shape2,operation):
-    anObj = geom.MakeBoolean(shape1,shape2,operation)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = BoolOp.MakeBoolean(shape1,shape2,operation)
+    if BoolOp.IsDone() == 0:
+      print "MakeBoolean : ", BoolOp.GetErrorCode()
+    return anObj
+
+def MakeCommon(s1, s2):
+    return MakeBoolean(s1, s2, 1)
+
+def MakeCut(s1, s2):
+    return MakeBoolean(s1, s2, 2)
+
+def MakeFuse(s1, s2):
+    return MakeBoolean(s1, s2, 3)
+
+def MakeSection(s1, s2):
+    return MakeBoolean(s1, s2, 4)
+
+def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
+                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+    anObj = BoolOp.MakePartition(ListShapes, ListTools,
+                                 ListKeepInside, ListRemoveInside,
+                                 Limit, RemoveWebs, ListMaterials);
+    if BoolOp.IsDone() == 0:
+      print "MakePartition : ", BoolOp.GetErrorCode()
+    return anObj
+
+def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
+              Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+    anObj = MakePartition(ListShapes, ListTools,
+                          ListKeepInside, ListRemoveInside,
+                          Limit, RemoveWebs, ListMaterials);
     return anObj
 
 # -----------------------------------------------------------------------------
 # Transform objects
 # -----------------------------------------------------------------------------
 
-def MakeTranslation(aShape,x,y,z):
-    anObj = geom.MakeTranslation(aShape,x,y,z)	
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeTranslationTwoPoints(aShape,point1,point2):
+    anObj = TrsfOp.TranslateTwoPointsCopy(aShape,point1,point2)
+    if TrsfOp.IsDone() == 0:
+      print "TranslateTwoPointsCopy : ", TrsfOp.GetErrorCode()
+    return anObj
+
+def MakeTranslation(aShape,dx,dy,dz):
+    anObj = TrsfOp.TranslateDXDYDZCopy(aShape,dx,dy,dz)
+    if TrsfOp.IsDone() == 0:
+      print "TranslateDXDYDZCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
 def MakeRotation(aShape,axis,angle):
-    anObj = geom.MakeRotation(aShape,axis,angle)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = TrsfOp.RotateCopy(aShape,axis,angle)
+    if TrsfOp.IsDone() == 0:
+      print "RotateCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-def MakeScaleTransform(aShape,theCenterofScale,factor): 
-    anObj = geom.MakeScaleTransform(aShape,theCenterofScale,factor)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeScaleTransform(aShape,theCenterofScale,factor):
+    anObj = TrsfOp.ScaleShapeCopy(aShape,theCenterofScale,factor)
+    if TrsfOp.IsDone() == 0:
+      print "ScaleShapeCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
 def MakeMirrorByPlane(aShape,aPlane):
-    anObj = geom.MakeMirrorByPlane(aShape,aPlane)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = TrsfOp.MirrorPlaneCopy(aShape,aPlane)
+    if TrsfOp.IsDone() == 0:
+      print "MirrorPlaneCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-def OrientationChange(aShape):
-    anObj = geom.OrientationChange(aShape)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakePosition(aShape,theStartLCS,theEndLCS):
+    anObj = TrsfOp.PositionShapeCopy(aShape,theStartLCS,theEndLCS)
+    if TrsfOp.IsDone() == 0:
+      print "PositionShapeCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-def MakeFillet(aShape,radius,ShapeType,ListShape):
-    anObj = geom.MakeFillet(aShape,radius,ShapeType,ListShape)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
-    return anObj
-
-def MakeChamfer(aShape,d1,d2,ShapeType,ListShape):
-    anObj = geom.MakeChamfer(aShape,d1,d2,ShapeType,ListShape)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
-    return anObj
-
-# -----------------------------------------------------------------------------
-# Decompose objects
-# -----------------------------------------------------------------------------
-
-def SubShape(aShape,type,ListOfId):
-    anObj = geom.SubShape(aShape,type, ListOfId)	
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
-    return anObj
-
-def SubShapeAll(aShape,type):
-    ListObj = geom.SubShapeAll(aShape,type)
-    for anObj in ListObj :
-	    ior = orb.object_to_string(anObj)
-	    anObj._set_Name(ior)
-    return ListObj
-
-def SubShapeSorted(aShape,type,ListOfId):
-    anObj = geom.SubShapeSorted(aShape,type, ListOfId)	
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
-    return anObj
-
-def SubShapeAllSorted(aShape,type):
-    ListObj = geom.SubShapeAllSorted(aShape,type)
-    for anObj in ListObj :
-	    ior = orb.object_to_string(anObj)
-	    anObj._set_Name(ior)
-    return ListObj
-
-# -- enumeration ShapeType as a dictionary --
-ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
-
-def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[], Limit=ShapeType["SHAPE"]):
-    anObj = geom.Partition(ListShapes, ListTools, ListKeepInside, ListRemoveInside, Limit);
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
-    return anObj
-
-def SuppressFaces(aShape,ListOfId):
-    ListObj = geom.SuppressFaces(aShape,ListOfId)
-    for anObj in ListObj :
-	    ior = orb.object_to_string(anObj)
-	    anObj._set_Name(ior)
-    return ListObj
-
-def SuppressHole(aShape,ListOfFace,ListOfWire,ListOfEndFace):
-    anObj = geom.SuppressHole(aShape,ListOfFace,ListOfWire,ListOfEndFace)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeOffset(aShape, anOffset):
+    anObj = TrsfOp.OffsetShapeCopy(aShape, anOffset)
+    if TrsfOp.IsDone() == 0:
+      print "OffsetShapeCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
 # -----------------------------------------------------------------------------
@@ -391,79 +606,257 @@ def SuppressHole(aShape,ListOfFace,ListOfWire,ListOfEndFace):
 # -----------------------------------------------------------------------------
 
 def MakeMultiTranslation1D(aShape,aDir,aStep,aNbTimes):
-    anObj = geom.MakeMultiTranslation1D(aShape,aDir,aStep,aNbTimes)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = TrsfOp.MultiTranslate1D(aShape,aDir,aStep,aNbTimes)
+    if TrsfOp.IsDone() == 0:
+      print "MultiTranslate1D : ", TrsfOp.GetErrorCode()
     return anObj
 
 def MakeMultiTranslation2D(aShape,d1,step1,nbtimes1,d2,step2,nbtimes2):
-    anObj = geom.MakeMultiTranslation2D(aShape,d1,step1,nbtimes1,d2,step2,nbtimes2)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    anObj = TrsfOp.MultiTranslate2D(aShape,d1,step1,nbtimes1,d2,step2,nbtimes2)
+    if TrsfOp.IsDone() == 0:
+      print "MultiTranslate2D : ", TrsfOp.GetErrorCode()
+    return anObj
+
+def MultiRotate1D(aShape,aVec,aNbTimes):
+    anObj = TrsfOp.MultiRotate1D(aShape,aVec,aNbTimes)
+    if TrsfOp.IsDone() == 0:
+      print "MultiRotate1D : ", TrsfOp.GetErrorCode()
+    return anObj
+
+def MultiRotate2D(aShape,aVec,anAngle,nbtimes1,aStep,nbtimes2):
+    anObj = TrsfOp.MultiRotate2D(aShape,aVec,anAngle,nbtimes1,aStep,nbtimes2)
+    if TrsfOp.IsDone() == 0:
+      print "MultiRotate2D : ", TrsfOp.GetErrorCode()
     return anObj
 
 def MakeMultiRotation1D(aShape,aDir,aPoint,aNbTimes):
-    anObj = geom.MakeMultiRotation1D(aShape,aDir,aPoint,aNbTimes)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    aVec = MakeLine(aPoint,aDir)
+    anObj = MultiRotate1D(aShape,aVec,aNbTimes)
     return anObj
 
 def MakeMultiRotation2D(aShape,aDir,aPoint,anAngle,nbtimes1,aStep,nbtimes2):
-    anObj = geom.MakeMultiRotation2D(aShape,aDir,aPoint,anAngle,nbtimes1,aStep,nbtimes2)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+    aVec = MakeLine(aPoint,aDir)
+    anObj = MultiRotate2D(aShape,aVec,anAngle,nbtimes1,aStep,nbtimes2)
     return anObj
 
 # -----------------------------------------------------------------------------
-# Import objects
+# Local operations
 # -----------------------------------------------------------------------------
 
-def ImportBREP(filename):
-    anObj = geom.ImportBREP(filename)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeFilletAll(aShape,radius):
+    anObj = LocalOp.MakeFilletAll(aShape,radius)
+    if LocalOp.IsDone() == 0:
+      print "MakeFilletAll : ", LocalOp.GetErrorCode()
     return anObj
 
-def ImportIGES(filename):
-    anObj = geom.ImportIGES(filename)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeFillet(aShape,radius,aShapeType,ListShape):
+    anObj = None
+    if aShapeType == ShapeType["EDGE"]:
+        anObj = LocalOp.MakeFilletEdges(aShape,radius,ListShape)
+    else:
+        anObj = LocalOp.MakeFilletFaces(aShape,radius,ListShape)
+    if LocalOp.IsDone() == 0:
+      print "MakeFillet : ", LocalOp.GetErrorCode()
     return anObj
 
-def ImportSTEP(filename):
-    anObj = geom.ImportSTEP(filename)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def MakeChamferAll(aShape,d):
+    anObj = LocalOp.MakeChamferAll(aShape,d)
+    if LocalOp.IsDone() == 0:
+      print "MakeChamferAll : ", LocalOp.GetErrorCode()
     return anObj
 
-# -----------------------------------------------------------------------------
-# Export objects
-# -----------------------------------------------------------------------------
-def ExportBREP(filename,aShape):
-    geom.ExportBREP(filename,aShape)
+def MakeChamferEdge(aShape,d1,d2,face1,face2):
+    anObj = LocalOp.MakeChamferEdge(aShape,d1,d2,face1,face2)
+    if LocalOp.IsDone() == 0:
+      print "MakeChamferEdge : ", LocalOp.GetErrorCode()
+    return anObj
 
-def ExportIGES(filename,aShape):
-    geom.ExportIGES(filename,aShape)
+def MakeChamferFaces(aShape,d1,d2,ListShape):
+    anObj = LocalOp.MakeChamferFaces(aShape,d1,d2,ListShape)
+    if LocalOp.IsDone() == 0:
+      print "MakeChamferFaces : ", LocalOp.GetErrorCode()
+    return anObj
 
-def ExportSTEP(filename,aShape):
-    geom.ExportSTEP(filename,aShape)
+def MakeChamfer(aShape,d1,d2,aShapeType,ListShape):
+    anObj = None
+    if aShapeType == ShapeType["EDGE"]:
+        anObj = MakeChamferEdge(aShape,d1,d2,ListShape[0],ListShape[1])
+    else:
+        anObj = MakeChamferFaces(aShape,d1,d2,ListShape)
+    return anObj
+
+def Archimede(aShape,weight,WaterDensity,MeshingDeflection):
+    anObj = LocalOp.MakeArchimede(aShape,weight,WaterDensity,MeshingDeflection)
+    if LocalOp.IsDone() == 0:
+      print "MakeArchimede : ", LocalOp.GetErrorCode()
+    return anObj
 
 # -----------------------------------------------------------------------------
 # Information objects
 # -----------------------------------------------------------------------------
 
-def MakeCDG(aShape):	
-    anObj = geom.MakeCDG(aShape)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def PointCoordinates(Point):
+    aTuple = MeasuOp.PointCoordinates(Point)
+    if MeasuOp.IsDone() == 0:
+      print "PointCoordinates : ", MeasuOp.GetErrorCode()
+    return aTuple
+
+def BasicProperties(Shape):
+    aTuple = MeasuOp.GetBasicProperties(Shape)
+    if MeasuOp.IsDone() == 0:
+      print "BasicProperties : ", MeasuOp.GetErrorCode()
+    return aTuple
+
+def BoundingBox(Shape):
+    aTuple = MeasuOp.GetBoundingBox(Shape)
+    if MeasuOp.IsDone() == 0:
+      print "BoundingBox : ", MeasuOp.GetErrorCode()
+    return aTuple
+
+def Inertia(Shape):
+    aTuple = MeasuOp.GetInertia(Shape)
+    if MeasuOp.IsDone() == 0:
+      print "Inertia : ", MeasuOp.GetErrorCode()
+    return aTuple
+
+def MinDistance(Shape1, Shape2):
+    aTuple = MeasuOp.GetMinDistance(Shape1, Shape2)
+    if MeasuOp.IsDone() == 0:
+      print "MinDistance : ", MeasuOp.GetErrorCode()
+    return aTuple[0]
+
+def Tolerance(Shape):
+    aTuple = MeasuOp.GetTolerance(Shape)
+    if MeasuOp.IsDone() == 0:
+      print "Tolerance : ", MeasuOp.GetErrorCode()
+    return aTuple
+
+def WhatIs(Shape):
+    aDescr = MeasuOp.WhatIs(Shape)
+    if MeasuOp.IsDone() == 0:
+      print "WhatIs : ", MeasuOp.GetErrorCode()
+    return aDescr
+
+def MakeCDG(aShape):
+    anObj = MeasuOp.GetCentreOfMass(aShape)
+    if MeasuOp.IsDone() == 0:
+      print "GetCentreOfMass : ", MeasuOp.GetErrorCode()
     return anObj
 
-def Archimede(aShape,weight,WaterDensity,MeshingDeflection):	
-    anObj = geom.Archimede(aShape,weight,WaterDensity,MeshingDeflection)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
+def CheckShape(aShape):
+    (IsValid, Status) = MeasuOp.CheckShape(aShape)
+    if MeasuOp.IsDone() == 0:
+      print "CheckShape : ", MeasuOp.GetErrorCode()
+    else:
+      if IsValid == 0:
+        print Status
+    return IsValid
+
+# -----------------------------------------------------------------------------
+# Import/Export objects
+# -----------------------------------------------------------------------------
+
+def Import(filename, formatname):
+    anObj = InsertOp.Import(filename, formatname)
+    if InsertOp.IsDone() == 0:
+      print "Import : ", InsertOp.GetErrorCode()
     return anObj
 
-def CheckShape(aShape):	
-    Status = geom.CheckShape(aShape)
-    return Status
+def Export(aShape, filename, formatname):
+    InsertOp.Export(aShape, filename, formatname)
+    if InsertOp.IsDone() == 0:
+      print "Export : ", InsertOp.GetErrorCode()
+
+# -----------------------------------------------------------------------------
+# Block operations
+# -----------------------------------------------------------------------------
+
+def MakeQuad(E1, E2, E3, E4):
+    anObj = BlocksOp.MakeQuad(E1, E2, E3, E4)
+    if BlocksOp.IsDone() == 0:
+      print "MakeQuad : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def MakeQuad2Edges(E1, E2):
+    anObj = BlocksOp.MakeQuad2Edges(E1, E2)
+    if BlocksOp.IsDone() == 0:
+      print "MakeQuad2Edges : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def MakeQuad4Vertices(V1, V2, V3, V4):
+    anObj = BlocksOp.MakeQuad4Vertices(V1, V2, V3, V4)
+    if BlocksOp.IsDone() == 0:
+      print "MakeQuad4Vertices : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def MakeHexa(F1, F2, F3, F4, F5, F6):
+    anObj = BlocksOp.MakeHexa(F1, F2, F3, F4, F5, F6)
+    if BlocksOp.IsDone() == 0:
+      print "MakeHexa : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def MakeHexa2Faces(F1, F2):
+    anObj = BlocksOp.MakeHexa2Faces(F1, F2)
+    if BlocksOp.IsDone() == 0:
+      print "MakeHexa2Faces : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes):
+    anObj = BlocksOp.MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes)
+    if BlocksOp.IsDone() == 0:
+      print "MakeMultiTransformation1D : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def MakeMultiTransformation2D(Block, DirFaceID1U, DirFaceID2U, NbTimesU,
+			             DirFaceID1V, DirFaceID2V, NbTimesV):
+    anObj = BlocksOp.MakeMultiTransformation2D(Block, DirFaceID1U, DirFaceID2U, NbTimesU,
+					              DirFaceID1V, DirFaceID2V, NbTimesV)
+    if BlocksOp.IsDone() == 0:
+      print "MakeMultiTransformation2D : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def MakeBlockExplode(Compound, MinNbFaces, MaxNbFaces):
+    aList = BlocksOp.ExplodeCompoundOfBlocks(Compound, MinNbFaces, MaxNbFaces)
+    if BlocksOp.IsDone() == 0:
+      print "MakeBlockExplode : ", BlocksOp.GetErrorCode()
+    return aList
+
+def CheckCompoundOfBlocks(Compound):
+    (IsValid, BCErrors) = BlocksOp.CheckCompoundOfBlocks(Compound)
+    if BlocksOp.IsDone() == 0:
+      print "CheckCompoundOfBlocks : ", BlocksOp.GetErrorCode()
+    else:
+      if IsValid == 0:
+        Descr = BlocksOp.PrintBCErrors(Compound, BCErrors)
+        print Descr
+    return IsValid
+
+# -----------------------------------------------------------------------------
+# Group operations
+# -----------------------------------------------------------------------------
+
+def CreateGroup(MainShape, ShapeType):
+    anObj = GroupOp.CreateGroup(MainShape, ShapeType)
+    if GroupOp.IsDone() == 0:
+       print "CreateGroup : ", GroupOp.GetErrorCode()
+    return anObj
+
+def AddObject(Group, SubShapeID):
+    GroupOp.AddObject(Group, SubShapeID)
+    if GroupOp.IsDone() == 0:
+      print "AddObject : ", GroupOp.GetErrorCode()
+
+def RemoveObject(Group, SubShapeID):
+    GroupOp.RemoveObject(Group, SubShapeID)
+    if GroupOp.IsDone() == 0:
+      print "RemoveObject : ", GroupOp.GetErrorCode()
+
+def GetObjectIDs(Group):
+    ListIDs = GroupOp.GetObjects(Group)
+    if GroupOp.IsDone() == 0:
+      print "GetObjectIDs : ", GroupOp.GetErrorCode()
+    return ListIDs
+
+def addPath(Path):
+    if (sys.path.count(Path) < 1):
+	sys.path.append(Path)

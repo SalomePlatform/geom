@@ -30,9 +30,8 @@
 #define DIALOGBOX_PARTITION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_4Sel1List_QTD.h"
+#include "DlgRef_4Sel1List1Check_QTD.h"
 
-#include "OperationGUI.h"
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg
@@ -43,37 +42,50 @@ class OperationGUI_PartitionDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    OperationGUI_PartitionDlg(QWidget* parent = 0, const char* name = 0, OperationGUI* theOperationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    OperationGUI_PartitionDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~OperationGUI_PartitionDlg();
+
+    void SetListMaterials(GEOM::ListOfLong ListMaterials)
+    { myListMaterials = ListMaterials; }
+
+    GEOM::ListOfLong GetListMaterials()
+    { return myListMaterials; }
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );
 
 private:
     void Init();
     void enterEvent(QEvent* e);
-
-    OperationGUI* myOperationGUI;
-
-    GEOM::GEOM_Gen::ListOfIOR myListShapes;
-    GEOM::GEOM_Gen::ListOfIOR myListTools;
-    GEOM::GEOM_Gen::ListOfIOR myListRemoveInside;
-    GEOM::GEOM_Gen::ListOfIOR myListKeepInside;
-
-    bool myOkListShapes;   /* to check when argument is defined */
-    bool myOkListTools;    /* to check when argument is defined */
-    bool myOkKeepShape;    /* to check when argument is defined */
-    bool myOkRemoveShape;  /* to check when argument is defined */
-    int myLimit;
-
-    DlgRef_4Sel1List_QTD* GroupPoints;
+    bool toRemoveWebs() const;
+    int GetLimit() const;
+    
+    GEOM::ListOfGO myListShapes;
+    GEOM::ListOfLong   myListMaterials;
+    GEOM::ListOfGO     myListTools;
+    GEOM::ListOfGO     myListRemoveInside;
+    GEOM::ListOfGO     myListKeepInside;
+          
+    DlgRef_4Sel1List1Check_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
+    void ClickOnCancel();
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
     void ComboTextChanged();
-
+    void onRemoveWebs(bool);
+    void SetMaterials();
+    void ConstructorsClicked(int constructorId);
 };
 
 #endif // DIALOGBOX_PARTITION_H

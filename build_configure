@@ -14,7 +14,6 @@ CONF_DIR=`echo $0 | sed -e "s,[^/]*$,,;s,/$,,;s,^$,.,"`
 
 ########################################################################
 # Test if the KERNEL_ROOT_DIR is set correctly
-
 if test ! -d "${KERNEL_ROOT_DIR}"; then
     echo "failed : KERNEL_ROOT_DIR variable is not correct !"
     exit

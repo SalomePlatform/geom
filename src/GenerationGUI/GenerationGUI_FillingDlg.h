@@ -32,10 +32,6 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel5Spin.h"
 
-#include "GenerationGUI.h"
-
-#include "GEOM_ShapeTypeFilter.hxx"
-
 //=================================================================================
 // class    : GenerationGUI_FillingDlg
 // purpose  :
@@ -45,32 +41,32 @@ class GenerationGUI_FillingDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    GenerationGUI_FillingDlg(QWidget* parent = 0, const char* name = 0, GenerationGUI* theGenerationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    GenerationGUI_FillingDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~GenerationGUI_FillingDlg();
+
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& msg );
+    virtual bool execute( ObjectList& objects );    
 
 private:
     void Init();
     void enterEvent(QEvent* e);
-    void MakeFillingSimulationAndDisplay();
 
-    GenerationGUI* myGenerationGUI;
-
-    Handle(GEOM_ShapeTypeFilter) myCompoundFilter;  /* Filter selection */
-
-    GEOM::GEOM_Shape_var myGeomShape; /* is mySectionShape */
-    TopoDS_Shape mySectionShape;
+    GEOM::GEOM_Object_var myCompound; /* compound of curves */
     Standard_Integer myMinDeg;
     Standard_Integer myMaxDeg;
     Standard_Real myTol3D;
     Standard_Real myTol2D;
     Standard_Integer myNbIter;
-    bool myOkSectionShape;         /* to check when arguments is defined */
+    bool myOkCompound;         /* to check when curv. compound is defined */
 
     DlgRef_1Sel5Spin* GroupPoints;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
     void ActivateThisDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();

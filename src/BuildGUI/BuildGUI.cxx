@@ -24,12 +24,12 @@
 //  File   : BooleanGUI.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
-using namespace std;
 #include "BuildGUI.h"
 
 #include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "QAD_Desktop.h"
 
 #include "BuildGUI_EdgeDlg.h"       // Method EDGE
 #include "BuildGUI_WireDlg.h"       // Method WIRE
@@ -38,16 +38,27 @@ using namespace std;
 #include "BuildGUI_SolidDlg.h"      // Method SOLID
 #include "BuildGUI_CompoundDlg.h"   // Method COMPOUND
 
+BuildGUI* BuildGUI::myGUIObject = 0;
+
+//=======================================================================
+// function : GetBuildGUI()
+// purpose  : Get the only BuildGUI object [ static ]
+//=======================================================================
+BuildGUI* BuildGUI::GetBuildGUI()
+{
+  if ( myGUIObject == 0 ) 
+    myGUIObject = new BuildGUI();
+
+  return myGUIObject;
+}
+
 //=======================================================================
 // function : BuildGUI()
 // purpose  : Constructor
 //=======================================================================
-BuildGUI::BuildGUI() :
-  QObject()
+BuildGUI::BuildGUI()
+: GEOMGUI()
 {
-  myGeomBase = new GEOMBase();
-  myGeomGUI = GEOMContext::GetGeomGUI();
-  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -64,203 +75,40 @@ BuildGUI::~BuildGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool BuildGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+bool BuildGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
 {
-  BuildGUI* myBuildGUI = new BuildGUI();
-  myBuildGUI->myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
+  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
+  
+  SALOME_Selection* Sel = SALOME_Selection::Selection(
+    QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
 
-  switch (theCommandID)
-    {
-    case 4081: // GEOM::EDGE
-      {
-	BuildGUI_EdgeDlg *aDlg = new BuildGUI_EdgeDlg(parent, "", myBuildGUI, Sel);
-	break;
-      }
-    case 4082: // GEOM::WIRE
-      {
-	BuildGUI_WireDlg *aDlg = new BuildGUI_WireDlg(parent, "", myBuildGUI, Sel);
-	break;
-      }
-    case 4083: // GEOM::FACE
-      {
-	BuildGUI_FaceDlg *aDlg = new BuildGUI_FaceDlg(parent, "", myBuildGUI, Sel);
-	break;
-      }
-    case 4084: // GEOM::SHELL
-      {
-	BuildGUI_ShellDlg *aDlg = new BuildGUI_ShellDlg(parent, "", myBuildGUI, Sel);
-	break;
-      }
-    case 4085: // GEOM::SOLID
-      {
-	BuildGUI_SolidDlg *aDlg = new BuildGUI_SolidDlg(parent, "", myBuildGUI, Sel);
-	break;
-      }
-    case 4086: // GEOM::COMPOUND
-      {
-	BuildGUI_CompoundDlg *aDlg = new BuildGUI_CompoundDlg(parent, "", myBuildGUI, Sel);
-	break;
-      }
-    default:
-      {
-	parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-	break;
-      }
-    }
+  QDialog* aDlg = NULL;
+
+  switch ( theCommandID )
+  {
+    case 4081: aDlg = new BuildGUI_EdgeDlg    ( parent, "", Sel ); break;
+    case 4082: aDlg = new BuildGUI_WireDlg    ( parent, "", Sel ); break;
+    case 4083: aDlg = new BuildGUI_FaceDlg    ( parent, "", Sel ); break;
+    case 4084: aDlg = new BuildGUI_ShellDlg   ( parent, "", Sel ); break;
+    case 4085: aDlg = new BuildGUI_SolidDlg   ( parent, "", Sel ); break;
+    case 4086: aDlg = new BuildGUI_CompoundDlg( parent, "", Sel ); break;
+    
+    default: parent->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); break;
+  }
+  
+  if ( aDlg != NULL )
+    aDlg->show();
+  
   return true;
 }
-
-
-//=====================================================================================
-// function : MakeLinearEdgeAndDisplay()
-// purpose  :
-//=====================================================================================
-void BuildGUI::MakeLinearEdgeAndDisplay(const gp_Pnt P1, const gp_Pnt P2)
-{
-  try {
-    GEOM::PointStruct ps1 = myGeom->MakePointStruct(P1.X(), P1.Y(), P1.Z());
-    GEOM::PointStruct ps2 = myGeom->MakePointStruct(P2.X(), P2.Y(), P2.Z());
-    GEOM::GEOM_Shape_var result = myGeom->MakeEdge(ps1, ps2);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
-      return;
-    }
-    result->NameType(tr("GEOM_EDGE"));
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
-
-//=====================================================================================
-// function : MakeWireAndDisplay()
-// purpose  :
-//=====================================================================================
-void BuildGUI::MakeWireAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
-{
-  try {
-    GEOM::GEOM_Shape_var result = myGeom->MakeWire(listShapesIOR);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
-      return;
-    }
-    result->NameType(tr("GEOM_WIRE"));
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
-
-//=====================================================================================
-// function : MakeFaceAndDisplay()
-// purpose  :
-//=====================================================================================
-void BuildGUI::MakeFaceAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR,
-				  const Standard_Boolean wantPlanar)
-{
-  try {
-    GEOM::GEOM_Shape_var result = myGeom->MakeFaces(listShapesIOR, wantPlanar);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
-      return;
-    }
-    if (wantPlanar)
-      result->NameType(tr("GEOM_PLANE"));
-    else
-      result->NameType(tr("GEOM_FACE"));
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
-
-//=====================================================================================
-// function : MakeShellAndDisplay()
-// purpose  :
-//=====================================================================================
-void BuildGUI::MakeShellAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
-{
-  try {
-    GEOM::GEOM_Shape_var result = myGeom->MakeShell(listShapesIOR);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
-      return;
-    }
-    result->NameType(tr("GEOM_SHELL"));
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
-
-//=====================================================================================
-// function : MakeSolidAndDisplay()
-// purpose  :
-//=====================================================================================
-void BuildGUI::MakeSolidAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
-{
-  try {
-    GEOM::GEOM_Shape_var result = myGeom->MakeSolid(listShapesIOR);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
-      return;
-    }
-    result->NameType(tr("GEOM_SOLID"));
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
-
-//=====================================================================================
-// function : MakeCompoundAndDisplay()
-// purpose  :
-//=====================================================================================
-void BuildGUI::MakeCompoundAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
-{
-  try {
-    GEOM::GEOM_Shape_var result = myGeom->MakeCompound(listShapesIOR);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
-      return;
-    }
-    result->NameType(tr("GEOM_COMPOUND"));
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return;
-}
-
 
 //=====================================================================================
 // EXPORTED METHODS
 //=====================================================================================
 extern "C"
 {
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
-  {return BuildGUI::OnGUIEvent(theCommandID, parent);}
+  GEOMGUI* GetLibGUI()
+  {
+    return BuildGUI::GetBuildGUI();
+  }
 }

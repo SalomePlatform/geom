@@ -32,11 +32,10 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel1Spin.h"
 #include "DlgRef_3Spin.h"
+#include "DlgRef_1Sel3Spin.h"
 
-#include "BasicGUI.h"
-
-#include "GEOM_ShapeTypeFilter.hxx"
-#include <TopoDS_Edge.hxx>
+class QLineEdit;
+class QGroupBox;
 
 //=================================================================================
 // class    : BasicGUI_PointDlg
@@ -47,38 +46,42 @@ class BasicGUI_PointDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_PointDlg(QWidget* parent = 0, const char* name = 0, BasicGUI* theBasicGUI = 0, SALOME_Selection* Sel = 0, const Handle(AIS_InteractiveContext)& ic = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_PointDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
 
     ~BasicGUI_PointDlg();
+
+    bool acceptMouseEvent() const { return ( getConstructorId() == 0 );  };
+    void OnPointSelected( const gp_Pnt& ); // called by BasicGUI::OnMousePress()
     
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );
+
+    virtual void closeEvent( QCloseEvent* e );
+
 private :
-    void Init(const Handle(AIS_InteractiveContext)& ic);
+    void Init();
     void enterEvent(QEvent* e);
-    void closeEvent(QCloseEvent* e);
+    double getParameter() const;
 
-    BasicGUI* myBasicGUI;
+    GEOM::GEOM_Object_var myEdge;
+    GEOM::GEOM_Object_var myRefPoint; 
 
-    double step;
-    int myConstructorId;
-    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;   /* filter for selection */
+    DlgRef_3Spin*     GroupXYZ;
+    DlgRef_1Sel3Spin* GroupRefPoint;
+    DlgRef_1Sel1Spin* GroupOnCurve;
 
-    gp_Pnt myPoint;       /* Is 'mySimulationTopoDs'  */
-    bool myOkEdge;        /* true when an edge is selected by user */
-    double myParameter;   /* Parameter used to create a vertex on edge (point on curve) */
-
-    /* Interactive and local context management see also : bool UseLocalContext() */
-    Handle(AIS_InteractiveContext) myIC;   /* Interactive context from IAPP */
-    Standard_Integer myLocalContextId;     /* identify a local context for this method */
-    TopAbs_ShapeEnum myLocalContextMode;   /* identify a selection mode into local context */
-    bool myUseLocalContext;                /* true when method as opened a local context  */
-
-    DlgRef_1Sel1Spin* GroupDimensions;
-    DlgRef_3Spin* GroupPoints;
+    QGroupBox*        myCoordGrp;
+    QLineEdit*        myX;
+    QLineEdit*        myY;
+    QLineEdit*        myZ;
 
 private slots:
     void ClickOnOk();
     void ClickOnCancel();
-    void ClickOnApply();
+    bool ClickOnApply();
     void ActivateThisDialog();
     void DeactivateActiveDialog();
     void LineEditReturnPressed();
@@ -86,16 +89,6 @@ private slots:
     void SetEditCurrentArgument();
     void ConstructorsClicked(int constructorId);
     void ValueChangedInSpinBox(double newValue);
-
-    bool CalculateVertexOnCurve(const TopoDS_Edge& anEdge,
-				const Standard_Real aParameter,
-				TopoDS_Shape& resultVertex);
-
-public:   
-    void PointIntoCoordinates(gp_Pnt P, bool displayPoint);
-    /* return true if method has opened a local context */
-    bool UseLocalContext(){return myUseLocalContext;};
-
 };
 
 #endif // DIALOGBOX_POINT_H

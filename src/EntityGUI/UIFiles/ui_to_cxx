@@ -1,0 +1,28 @@
+#!/bin/sh
+
+uic -o EntityGUI_Skeleton_QTD.h EntityGUI_Skeleton_QTD.ui
+uic -o EntityGUI_Skeleton_QTD.cxx -impl EntityGUI_Skeleton_QTD.h EntityGUI_Skeleton_QTD.ui
+
+uic -o EntityGUI_Point_QTD.h EntityGUI_Point_QTD.ui
+uic -o EntityGUI_Point_QTD.cxx -impl EntityGUI_Point_QTD.h EntityGUI_Point_QTD.ui
+
+uic -o EntityGUI_Dir1_QTD.h EntityGUI_Dir1_QTD.ui
+uic -o EntityGUI_Dir1_QTD.cxx -impl EntityGUI_Dir1_QTD.h EntityGUI_Dir1_QTD.ui
+
+uic -o EntityGUI_Dir2_QTD.h EntityGUI_Dir2_QTD.ui
+uic -o EntityGUI_Dir2_QTD.cxx -impl EntityGUI_Dir2_QTD.h EntityGUI_Dir2_QTD.ui
+
+uic -o EntityGUI_1Spin_QTD.h EntityGUI_1Spin_QTD.ui
+uic -o EntityGUI_1Spin_QTD.cxx -impl EntityGUI_1Spin_QTD.h EntityGUI_1Spin_QTD.ui
+
+uic -o EntityGUI_2Spin_QTD.h EntityGUI_2Spin_QTD.ui
+uic -o EntityGUI_2Spin_QTD.cxx -impl EntityGUI_2Spin_QTD.h EntityGUI_2Spin_QTD.ui
+
+uic -o EntityGUI_3Spin_QTD.h EntityGUI_3Spin_QTD.ui
+uic -o EntityGUI_3Spin_QTD.cxx -impl EntityGUI_3Spin_QTD.h EntityGUI_3Spin_QTD.ui
+
+uic -o EntityGUI_4Spin_QTD.h EntityGUI_4Spin_QTD.ui
+uic -o EntityGUI_4Spin_QTD.cxx -impl EntityGUI_4Spin_QTD.h EntityGUI_4Spin_QTD.ui
+
+uic -o EntityGUI_1Sel_QTD.h EntityGUI_1Sel_QTD.ui
+uic -o EntityGUI_1Sel_QTD.cxx -impl EntityGUI_1Sel_QTD.h EntityGUI_1Sel_QTD.ui

@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 /*!
   \class GEOM_Actor GEOM_Actor.h
   \brief This class allows to display an OpenCASCADE CAD model in a VTK viewer.
@@ -34,9 +33,23 @@ using namespace std;
 
 #include "GEOM_Actor.h"
 
+#include <vtkObjectFactory.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkPolyDataNormals.h>
+
+#include <vtkTransform.h>
+#include <vtkMatrix4x4.h>
+#include <vtkMath.h>
+
+#include <vtkRenderer.h>
+#include <vtkCamera.h>
+
 // OpenCASCADE Includes
 #include "GEOM_OCCReader.h"
 #include <BRep_Tool.hxx>
+
+using namespace std;
 
 //-------------------------------------------------------------
 // Main methods
@@ -73,7 +86,7 @@ GEOM_Actor::GEOM_Actor()
   this->myName = "";
 
   this->HighlightProperty = NULL;
-  this->ishighlighted = false;
+  this->myIsHighlighted = false;
 
   this->subshape = false;
   this->myIsInfinite = false;
@@ -221,8 +234,8 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
     this->Property->SetSpecularColor(0.99,0.98,0.83);
   }
 
-  if(!ishighlighted) {
-    if ( ispreselected ) 
+  if(!myIsHighlighted) {
+    if ( myIsPreselected ) 
       this->Property = PreviewProperty;
     else if(myDisplayMode >= 1) {
       // SHADING
@@ -314,20 +327,20 @@ void GEOM_Actor::SetColor(float r,float g,float b) {
 
 void GEOM_Actor::GetColor(float& r,float& g,float& b) {
   float color[3];
-   ShadingProperty->GetColor(color);
-   r = color[0];
-   g = color[1];
-   b = color[2];
+  ShadingProperty->GetColor(color);
+  r = color[0];
+  g = color[1];
+  b = color[2];
 }
 
 //-------------------------------------------------------------
 // Highlight methods
 //-------------------------------------------------------------
 
-void GEOM_Actor::highlight(Standard_Boolean highlight) {
+void GEOM_Actor::highlight(bool highlight) {
 
-  if(highlight && !ishighlighted) {
-    ishighlighted=true;
+  if(highlight && !myIsHighlighted) {
+    myIsHighlighted=true;
     // build highlight property is necessary
     if(HighlightProperty==NULL) {
       HighlightProperty = vtkProperty::New();
@@ -344,8 +357,8 @@ void GEOM_Actor::highlight(Standard_Boolean highlight) {
  
   }
   else if (!highlight) {
-    if(ishighlighted) {
-      ishighlighted=false;
+    if(myIsHighlighted) {
+      myIsHighlighted=false;
       if(myDisplayMode==1) {
 	//unhilight in shading
 	this->Property = ShadingProperty;
@@ -356,11 +369,6 @@ void GEOM_Actor::highlight(Standard_Boolean highlight) {
       }
     }
   }
-}
-
-bool GEOM_Actor::hasHighlight()
-{
-  return true;
 }
 
 void GEOM_Actor::SetHighlightProperty(vtkProperty* Prop) {

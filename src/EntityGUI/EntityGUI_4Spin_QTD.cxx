@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'EntityGUI_4Spin_QTD.ui'
 **
-** Created: Fri Apr 30 10:56:21 2004
+** Created: Fri Jul 30 16:06:00 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ EntityGUI_4Spin_QTD::EntityGUI_4Spin_QTD( QWidget* parent,  const char* name, WF
 {
     if ( !name )
 	setName( "EntityGUI_4Spin_QTD" );
-    resize( 176, 154 ); 
+    resize( 255, 154 ); 
     setCaption( trUtf8( "EntityGUI_4Spin_QTD" ) );
     EntityGUI_4Spin_QTDLayout = new QGridLayout( this, 1, 1, 0, 6, "EntityGUI_4Spin_QTDLayout"); 
 
@@ -38,23 +38,32 @@ EntityGUI_4Spin_QTD::EntityGUI_4Spin_QTD( QWidget* parent,  const char* name, WF
     GroupBox1Layout = new QGridLayout( GroupBox1->layout() );
     GroupBox1Layout->setAlignment( Qt::AlignTop );
 
+    Layout4 = new QGridLayout( 0, 1, 1, 0, 6, "Layout4"); 
+
     Layout3 = new QGridLayout( 0, 1, 1, 0, 6, "Layout3"); 
 
     Layout2 = new QGridLayout( 0, 1, 1, 0, 6, "Layout2"); 
 
+    buttonRedo = new QPushButton( GroupBox1, "buttonRedo" );
+    buttonRedo->setText( trUtf8( "Redo" ) );
+
+    Layout2->addWidget( buttonRedo, 0, 1 );
+
     buttonUndo = new QPushButton( GroupBox1, "buttonUndo" );
     buttonUndo->setText( trUtf8( "Undo" ) );
 
-    Layout2->addWidget( buttonUndo, 1, 0 );
+    Layout2->addWidget( buttonUndo, 0, 0 );
+
+    Layout3->addLayout( Layout2, 1, 0 );
+    QSpacerItem* spacer = new QSpacerItem( 0, 45, QSizePolicy::Minimum, QSizePolicy::Expanding );
+    Layout3->addItem( spacer, 2, 0 );
 
     buttonApply = new QPushButton( GroupBox1, "buttonApply" );
     buttonApply->setText( trUtf8( "Create" ) );
 
-    Layout2->addWidget( buttonApply, 0, 0 );
-    QSpacerItem* spacer = new QSpacerItem( 0, 51, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    Layout2->addItem( spacer, 2, 0 );
+    Layout3->addWidget( buttonApply, 0, 0 );
 
-    Layout3->addLayout( Layout2, 0, 1 );
+    Layout4->addLayout( Layout3, 0, 1 );
 
     Layout1 = new QGridLayout( 0, 1, 1, 0, 6, "Layout1"); 
 
@@ -104,18 +113,11 @@ EntityGUI_4Spin_QTD::EntityGUI_4Spin_QTD( QWidget* parent,  const char* name, WF
 
     Layout1->addWidget( TextLabel4, 3, 0 );
 
-    Layout3->addLayout( Layout1, 0, 0 );
+    Layout4->addLayout( Layout1, 0, 0 );
 
-    GroupBox1Layout->addLayout( Layout3, 0, 0 );
+    GroupBox1Layout->addLayout( Layout4, 0, 0 );
 
     EntityGUI_4Spin_QTDLayout->addWidget( GroupBox1, 0, 0 );
-
-    // tab order
-    setTabOrder( buttonUndo, buttonApply );
-    setTabOrder( buttonApply, SpinBox1 );
-    setTabOrder( SpinBox1, SpinBox2 );
-    setTabOrder( SpinBox2, SpinBox3 );
-    setTabOrder( SpinBox3, SpinBox4 );
 }
 
 /*  

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'EntityGUI_2Spin_QTD.ui'
 **
-** Created: ven déc 12 11:17:10 2003
+** Created: Fri Jul 30 16:06:00 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -28,20 +28,22 @@ public:
     ~EntityGUI_2Spin_QTD();
 
     QGroupBox* GroupBox1;
-    QPushButton* buttonUndo;
-    QPushButton* buttonApply;
     QLabel* TextLabel2;
     QLabel* TextLabel1;
     QSpinBox* SpinBox1;
     QSpinBox* SpinBox2;
+    QPushButton* buttonUndo;
+    QPushButton* buttonRedo;
+    QPushButton* buttonApply;
 
 
 protected:
     QGridLayout* EntityGUI_2Spin_QTDLayout;
     QGridLayout* GroupBox1Layout;
+    QGridLayout* Layout4;
+    QGridLayout* Layout1;
     QGridLayout* Layout3;
     QGridLayout* Layout2;
-    QGridLayout* Layout1;
 };
 
 #endif // ENTITYGUI_2SPIN_QTD_H

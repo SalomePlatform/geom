@@ -30,44 +30,71 @@
 #define MEASUREGUI_SKELETON_H
 
 #include "MeasureGUI_Skeleton_QTD.h"
+#include "GEOMBase_Helper.h"
 
-#include "GEOMBase.h"
+class GeometryGUI;
+class QWidget;
+class QLineEdit;
+class QPushButton;
+class SALOME_Selection;
+class GEOM_Displayer;
 
-#include <qwidget.h>
-#include <qgroupbox.h>
-#include <qlineedit.h>
-#include <qlayout.h>
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
-#include <qpushbutton.h>
-
-class MeasureGUI_Skeleton : public MeasureGUI_Skeleton_QTD
+class MeasureGUI_Skeleton : public MeasureGUI_Skeleton_QTD,
+                            public GEOMBase_Helper
 { 
     Q_OBJECT
 
 public:
-    MeasureGUI_Skeleton(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
-    ~MeasureGUI_Skeleton();
-
-private :
-    void Init(SALOME_Selection* Sel);
-
-protected:
-    void closeEvent(QCloseEvent* e);
-
-    TopoDS_Shape mySimulationTopoDs;    /* Shape used for simulation display */
-    QLineEdit* myEditCurrentArgument;   /* Current LineEdit */
-    SALOME_Selection* mySelection;      /* User shape selection */
-    GEOM::GEOM_Gen_var myGeom;          /* Current GeomI object */
-    GEOMBase* myGeomBase;
-    GEOMContext* myGeomGUI;  /* Current GeomGUI object */
+                              MeasureGUI_Skeleton( QWidget*          parent,
+                                                   const char*       name,
+                                                   SALOME_Selection* Sel = 0 );
+                              ~MeasureGUI_Skeleton();
 
 protected slots:
-    void ClickOnCancel();
-    void LineEditReturnPressed();
-    void DeactivateActiveDialog();
-    void ActivateThisDialog();
 
+    virtual void              ClickOnCancel();
+    virtual void              DeactivateActiveDialog();
+    virtual void              ActivateThisDialog();
+    virtual void              SelectionIntoArgument();
+    virtual void              LineEditReturnPressed();
+    virtual void              SetEditCurrentArgument();                              
+
+protected:
+
+    void                      Init( SALOME_Selection* Sel );
+
+    void                      enterEvent( QEvent* e );
+    void                      closeEvent( QCloseEvent* e );
+    void                      redisplayPreview();
+    GEOM_Displayer*           getDisplayer();
+
+    virtual bool              isValid( QString& msg );
+    virtual SALOME_Prs*       buildPrs();
+    virtual void              processObject();
+    virtual void              activateSelection();
+
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+
+protected:    
+    
+    QPushButton*              mySelBtn;
+    QLineEdit*                mySelEdit;
+    GEOM::GEOM_Object_var     myObj;
+    
+    SALOME_Selection*         mySelection;              
+    GeometryGUI*              myGeomGUI;
+    GEOM_Displayer*           myDisplayer;
 };
 
 #endif // MEASUREGUI_SKELETON_H
+
+
+
+
+
+
+
+
+
+
+

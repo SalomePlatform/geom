@@ -30,9 +30,9 @@
 #define DIALOGBOX_SUPPRESSFACES_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel1Check_QTD.h"
+#include "DlgRef_1Sel_QTD.h"
 
-#include "RepairGUI.h"
+#include <TColStd_IndexedMapOfInteger.hxx>
 
 //=================================================================================
 // class    : RepairGUI_SuppressFacesDlg
@@ -43,42 +43,43 @@ class RepairGUI_SuppressFacesDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    RepairGUI_SuppressFacesDlg(QWidget* parent = 0, const char* name = 0, RepairGUI* theRepairGUI = 0, SALOME_Selection* Sel = 0, Handle(AIS_InteractiveContext) ic = 0, bool modal = FALSE, WFlags fl = 0);
-    
+    RepairGUI_SuppressFacesDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_SuppressFacesDlg();
 
+protected:
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid( QString& );
+    virtual bool execute( ObjectList& objects );    
+
 private :
-    void Init(Handle(AIS_InteractiveContext) ic);
+    void Init();
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
 
-    void ResetStateOfDialog();
+		GEOM::ListOfGO_var myObjects;
+		QValueList<GEOM::short_array> myFaces;
+		// GEOM::short_array-s contain indexes of selected faces,
+		// index of a GEOM::short_array in myFaces list equals to index of
+		// GEOM::GEOM_Object in myObjects list to which the faces belong to.
+		
+		void Convert( const TColStd_IndexedMapOfInteger&, GEOM::short_array& );
 
-    RepairGUI* myRepairGUI;
-
-    /* Interactive and local context management see also : bool myUseLocalContext() */
-    Handle(AIS_InteractiveContext) myIC;   /* Interactive context */ 
-    Standard_Integer myLocalContextId;   /* identify a local context used by this method */
-    bool myUseLocalContext;   /* true when this method as opened a local context  */
-
-    TopoDS_Shape myShape;
-    char* myShapeIOR;
-    bool myOkShape;
-    bool myOkSelectSubMode; /* true = sub mode selection activated */
-
-    DlgRef_1Sel1Check_QTD* GroupPoints;
+		void initSelection();
+		
+    DlgRef_1Sel_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();
-    void ClickOnApply();
+    bool ClickOnApply();
     void ClickOnCancel();
+    
     void ActivateThisDialog();
     void DeactivateActiveDialog();
+
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ActivateUserSelection();
-
 };
 
 #endif // DIALOGBOX_SUPPRESSFACES_H
