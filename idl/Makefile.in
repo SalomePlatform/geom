@@ -11,23 +11,17 @@ VPATH=.:$(srcdir):${KERNEL_ROOT_DIR}/idl/salome
 @COMMENCE@
 
 IDL_FILES = \
-  SALOME_Component.idl \
-  SALOMEDS.idl \
-  SALOMEDS_Attributes.idl \
-  SALOME_Exception.idl \
-  Logger.idl \
-  SALOME_ModuleCatalog.idl \
   GEOM_Shape.idl \
   GEOM_Gen.idl
 
 PY_CLIENT_IDL = $(IDL_FILES)
 
 # we copy all idl file in $(top_builddir)/idl
-#inc: $(IDL_FILES:%=$(top_builddir)/idl/%)
+inc: $(IDL_FILES:%=$(top_builddir)/idl/%)
 
-#$(IDL_FILES:%=$(top_builddir)/idl/%):$(top_builddir)/idl/%:%
+$(IDL_FILES:%=$(top_builddir)/idl/%):$(top_builddir)/idl/%:%
 #	$(CP) $< $@
-#	cp -f $< $@
+	cp -f $< $@
 
 
 lib: pyidl
