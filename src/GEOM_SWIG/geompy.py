@@ -17,7 +17,7 @@ geom = salome.lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 geom.GetCurrentStudy(salome.myStudyId)
 myBuilder = salome.myStudy.NewBuilder()
 
-gg = salome.ImportComponentGUI("Geometry")
+gg = salome.ImportComponentGUI("GEOM")
 
 father = salome.myStudy.FindComponent("GEOM")
 if father is None:

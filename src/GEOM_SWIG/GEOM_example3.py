@@ -15,7 +15,7 @@ from time import sleep
 geom = salome.lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 myBuilder = salome.myStudy.NewBuilder()
 
-gg = salome.ImportComponentGUI("Geometry")
+gg = salome.ImportComponentGUI("GEOM")
 
 point0  = geom.MakePointStruct(0.,0.,0.)
 pointz1 = geom.MakePointStruct(0.,0.,1.)
