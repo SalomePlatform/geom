@@ -46,7 +46,7 @@ EXPORT_HEADERS = Archimede_VolumeSection.hxx
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES)
 CXXFLAGS += $(OCC_CXXFLAGS)
-LDFLAGS  += $(OCC_LIBS)
+LDFLAGS  += $(CAS_LDPATH) -lTKGeomBase
 
 # additional file to be cleaned
 MOSTLYCLEAN =

@@ -55,7 +55,7 @@ EXPORT_IDLS=
 
 CPPFLAGS += $(OCC_INCLUDES)
 CXXFLAGS += $(OCC_CXXFLAGS)
-LDFLAGS += $(OCC_LIBS)
+LDFLAGS += $(CAS_LDPATH) -lTKBool
 
 %_moc.cxx: %.h
 	$(MOC) $< -o $@

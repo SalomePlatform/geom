@@ -1,6 +1,6 @@
 //  GEOM PARTITION : partition algorithm
 //
-//  Copyright (C) 2003  CEA/DEN, EDF R&D
+//  Copyright (C) 2003  CEA/DEN, EDF R& D
 //
 //
 //
@@ -18,6 +18,7 @@ using namespace std;
 #include <BRepAdaptor_Curve2d.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepAlgo_AsDes.hxx>
+#include <BRepAlgo_FaceRestrictor.hxx>
 #include <BRepOffset_DataMapOfShapeReal.hxx>
 #include <BRepTopAdaptor_FClass2d.hxx>
 #include <BRep_Builder.hxx>
@@ -116,17 +117,71 @@ void Partition_Loop2d::AddSectionEdge (const TopoDS_Edge& E)
 }
 
 //=======================================================================
+//function : preciseU
+//purpose  : find u such that the 3D point on theE is just out of tolerance
+//           of theV
+//=======================================================================
+
+static Standard_Real preciseU (const BRepAdaptor_Surface&  theSurf,
+                               const TopoDS_Edge&          theE,
+                               const TopoDS_Vertex&        theV,
+                               const Handle(Geom2d_Curve)& theC,
+                               const Standard_Boolean      theFirstEnd)
+{
+  Standard_Boolean isForward = ( theE.Orientation () == TopAbs_FORWARD );
+  if (theFirstEnd) isForward = !isForward;
+
+  // find the first point in 2d and 3d
+  Standard_Real f,l;
+  BRep_Tool::Range( theE, f, l );
+  Standard_Real u0 = isForward ? l : f;
+  gp_Pnt2d aP2d0 = theC->Value( u0 );
+  gp_Pnt aPnt0 = theSurf.Value( aP2d0.X(), aP2d0.Y() );
+
+  // shift in 2d and 3d
+  Standard_Real du = ( l - f ) / 100, du3d = 0;
+  if (isForward)
+    du = -du;
+
+  // target parameter
+  Standard_Real u;
+
+  while (du3d < ::RealSmall())
+  {
+    // u for test
+    u = u0 + du;
+    du *= 10; // for the next iteration: increase du untill du3d is large enough
+
+    // find out how u is far from u0 in 3D
+    gp_Pnt2d aP2d  = theC->Value( u );
+    gp_Pnt aPnt  = theSurf.Value( aP2d.X(), aP2d.Y() );
+    du3d = aPnt0.Distance( aPnt );
+  }
+
+  // find u such that the 3D point is just out of tolerance of theV
+  Standard_Real tolV = BRep_Tool::Tolerance( theV ) + Precision::Confusion();
+  u = u0 + du * tolV / du3d;
+
+  // check that u is within the range
+  if ( isForward ? (u < f) : (u > l) )
+    u = u0 + du;
+
+  return u;
+}
+
+//=======================================================================
 //function : SelectEdge
-//purpose  : Find the edge <NE> connected <CE> by the vertex <CV> in the list <LE>.
-//           <NE> Is erased  of the list. If <CE> is too in the list <LE>
-//           with the same orientation, it's erased of the list
+//purpose  : Find in the list <LE> the edge <NE> connected with <CE> by
+//           the vertex <CV>.
+//           <NE> is removed from the list. If <CE> is in <LE>
+//           with the same orientation, it's removed from the list
 //=======================================================================
 
 static Standard_Boolean  SelectEdge(const BRepAdaptor_Surface& Surf,
-				    const TopoDS_Edge&    CE,
-				    const TopoDS_Vertex&  CV,
-				    TopoDS_Edge&          NE,
-				    const TopTools_ListOfShape& LE)
+                                    const TopoDS_Edge&    CE,
+                                    const TopoDS_Vertex&  CV,
+                                    TopoDS_Edge&          NE,
+                                    const TopTools_ListOfShape& LE)
 {
   NE.Nullify();
 
@@ -136,68 +191,90 @@ static Standard_Boolean  SelectEdge(const BRepAdaptor_Surface& Surf,
     // - Test the edges differents of CE
     //--------------------------------------------------------------
     TopoDS_Face FForward = Surf.Face();
+    TopoDS_Edge aPrevNE;
 
-    Standard_Real   cf, cl, f, l;
-    Handle(Geom2d_Curve) Cc, C;
-    Cc = BRep_Tool::CurveOnSurface(CE,FForward,cf,cl);
-
-//    Standard_Real tolV, tol2d2;
-    Standard_Real tolV = BRep_Tool::Tolerance(CV);
-//     tol2d2 = Max ( Surf.UResolution(tolV) , Surf.VResolution(tolV) );
-//     tol2d2 = 2 * Max ( tol2d2, Precision::PConfusion() );
-//     tol2d2 *= tol2d2;
-
-    Standard_Real uc,u, du = Precision::PConfusion();
-    if (CE.Orientation () == TopAbs_FORWARD) uc = cl + du;
-    else                                     uc = cf - du;
-
-    gp_Vec2d CTg1, Tg1;
+    gp_Vec2d CTg1, Tg1, CTg2, Tg2;
     gp_Pnt2d PC, P;
-    gp_Pnt P3d;
 
+    Standard_Real f, l;
+    Handle(Geom2d_Curve) Cc, C;
+    Cc = BRep_Tool::CurveOnSurface(CE,FForward,f,l);
+
+    Standard_Boolean isForward = ( CE.Orientation () == TopAbs_FORWARD );
+    Standard_Real uc, u, du = Precision::PConfusion();
+    uc = isForward ? ( l - du ) : ( f + du );
     Cc->D1(uc, PC, CTg1);
-    if (CE.Orientation () == TopAbs_REVERSED) CTg1.Reverse();
+    if (!isForward) CTg1.Reverse();
 
-    Standard_Real anglemin = 3 * PI;
-//    Standard_Real sqdist, sqdistmin = 1.0e50;
+    Standard_Real anglemin = 3 * PI, tolAng = 1.e-8;
 
+    // select an edge whose first derivative is most left of CTg1
+    // ie an angle between Tg1 and CTg1 is least
     TopTools_ListIteratorOfListOfShape itl;
     for ( itl.Initialize(LE); itl.More(); itl.Next()) {
       const TopoDS_Edge& E = TopoDS::Edge(itl.Value());
       if (E.IsSame(CE))
-	continue;
+        continue;
       if (! CV.IsSame( TopExp::FirstVertex( E, Standard_True )))
-	continue;
+        continue;
 
+      isForward = ( E.Orientation () == TopAbs_FORWARD );
+
+      // get E curve
       C = BRep_Tool::CurveOnSurface(E,FForward,f,l);
-      if (E.Orientation () == TopAbs_FORWARD) u = f + du;
-      else                                    u = l - du;
-
+      // get the first derivative Tg1
+      u = isForward ? ( f + du ) : ( l - du );
       C->D1(u, P, Tg1);
-//       if (P.SquareDistance(PC); > tol2d2)
-// 	  continue;
+      if (!isForward) Tg1.Reverse();
 
-      if (E.Orientation () == TopAbs_REVERSED) Tg1.Reverse();
-
+      // -PI < angle < PI
       Standard_Real angle = Tg1.Angle(CTg1);
 
-      if (angle <= anglemin) {
-	anglemin = angle ;
-	NE = E;
-#ifdef DEB
-// 	sqdist = P.SquareDistance(PC);
-// 	if (sqdist < sqdistmin)
-// 	  sqdistmin = sqdist;
-	P3d = Surf.Value (PC.X(), PC.Y());
-#endif
+      if (PI - Abs(angle) <= tolAng)
+      {
+        // an angle is too close to PI; assure that an angle sign really
+        // reflects an edge position: +PI - an edge is worst,
+        // -PI - an edge is best.
+        u = preciseU( Surf, CE, CV, Cc, Standard_False);
+        gp_Vec2d CTg;
+        Cc->D1(u, PC, CTg);
+        if (CE.Orientation() == TopAbs_REVERSED) CTg.Reverse();
+
+        u = preciseU( Surf, E, CV, C, Standard_True);
+        C->D1(u, P, Tg1);
+        if (!isForward) Tg1.Reverse();
+
+        angle = Tg1.Angle(CTg);
       }
+
+      Standard_Boolean isClose = ( Abs( angle - anglemin ) <= tolAng );
+      if (angle <= anglemin) {
+        if (isClose)
+          aPrevNE = NE;
+        else
+          aPrevNE.Nullify();
+        anglemin = angle ;
+        NE = E;
+      }
+      else
+        if (isClose)
+          aPrevNE = E;
+
     }
-#ifdef DEB
-    if (!NE.IsNull() && P3d.Distance( BRep_Tool::Pnt(CV)) > tolV) {
-      MESSAGE( "DISTANCE MORE THAN VERTEX TOL (" << tolV << ")" );
-      cout << "point p " << P3d.X() << " " << P3d.Y() << " " << P3d.Z() << endl;
+    if (!aPrevNE.IsNull()) {
+      // select one of close edges, the most left one.
+      Cc = BRep_Tool::CurveOnSurface( NE, FForward, f, l );
+      uc = preciseU( Surf, NE, CV, Cc, Standard_True);
+      Cc->D1(uc, PC, CTg1);
+      if (NE.Orientation() != TopAbs_FORWARD) CTg1.Reverse();
+      
+      u = preciseU( Surf, aPrevNE, CV, C, Standard_True);
+      C->D1(u, P, Tg1);
+      if (aPrevNE.Orientation() != TopAbs_FORWARD) Tg1.Reverse();
+
+      if ( Tg1.Angle(CTg1) < 0)
+        NE = aPrevNE;
     }
-#endif
   }
   else if (LE.Extent() == 1) {
     NE = TopoDS::Edge(LE.First());
@@ -214,10 +291,10 @@ static Standard_Boolean  SelectEdge(const BRepAdaptor_Surface& Surf,
 //=======================================================================
 
 static Standard_Boolean  SamePnt2d(const TopoDS_Vertex& V1,
-				   const TopoDS_Edge&   E1,
-				   const TopoDS_Vertex& V2,
-				   const TopoDS_Edge&   E2,
-				   const TopoDS_Face&   F)
+                                   const TopoDS_Edge&   E1,
+                                   const TopoDS_Vertex& V2,
+                                   const TopoDS_Edge&   E2,
+                                   const TopoDS_Face&   F)
 {
   Standard_Real   f1,f2,l1,l2;
   Handle(Geom2d_Curve) C1 = BRep_Tool::CurveOnSurface(E1,F,f1,l1);
@@ -238,8 +315,8 @@ static Standard_Boolean  SamePnt2d(const TopoDS_Vertex& V1,
 //=======================================================================
 
 static void StoreInMVE (const TopoDS_Face& /*F*/,
-			TopoDS_Edge& E,
-			TopTools_DataMapOfShapeListOfShape& MVE )
+                        TopoDS_Edge& E,
+                        TopTools_DataMapOfShapeListOfShape& MVE )
 
 {
   TopoDS_Vertex V1, V2;
@@ -259,11 +336,11 @@ static void StoreInMVE (const TopoDS_Face& /*F*/,
 
 //=======================================================================
 //function : RemoveFromMVE
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 static void RemoveFromMVE(const TopoDS_Edge& E,
-			  TopTools_DataMapOfShapeListOfShape& MVE)
+                          TopTools_DataMapOfShapeListOfShape& MVE)
 {
   TopTools_ListIteratorOfListOfShape itl;
   TopoDS_Vertex  V1,V2;
@@ -271,15 +348,15 @@ static void RemoveFromMVE(const TopoDS_Edge& E,
   if (MVE.IsBound(V1))
     for ( itl.Initialize(MVE(V1)); itl.More(); itl.Next()) {
       if (itl.Value().IsEqual(E)) {
-	MVE(V1).Remove(itl);
-	break;
+        MVE(V1).Remove(itl);
+        break;
       }
     }
   if (MVE.IsBound(V2))
     for ( itl.Initialize(MVE(V2)); itl.More(); itl.Next()) {
       if (itl.Value().IsEqual(E)) {
-	MVE(V2).Remove(itl);
-	break;
+        MVE(V2).Remove(itl);
+        break;
       }
     }
 }
@@ -289,21 +366,21 @@ static void RemoveFromMVE(const TopoDS_Edge& E,
 //=======================================================================
 
 static void addConnected(const TopoDS_Shape& E,
-			 TopTools_MapOfShape& EM,
-			 TopTools_MapOfShape& VM,
-			 const TopTools_DataMapOfShapeListOfShape& MVE)
+                         TopTools_MapOfShape& EM,
+                         TopTools_MapOfShape& VM,
+                         const TopTools_DataMapOfShapeListOfShape& MVE)
 {
   // Loop on vertices of E
   TopoDS_Iterator itV ( E );
   for ( ; itV.More(); itV.Next()) {
 
     if ( ! VM.Add ( itV.Value() )) continue;
-    
+
     // Loop on edges sharing V
     TopTools_ListIteratorOfListOfShape itE( MVE( itV.Value() ) );
     for (; itE.More(); itE.Next()) {
       if ( EM.Add( itE.Value() ))
-	addConnected ( itE.Value(), EM, VM, MVE );
+        addConnected ( itE.Value(), EM, VM, MVE );
     }
   }
 }
@@ -312,31 +389,31 @@ static void addConnected(const TopoDS_Shape& E,
 //purpose  :
 //=======================================================================
 
-static Standard_Boolean canPassToOld (const TopoDS_Shape& V,
-				      TopTools_MapOfShape& UsedShapesMap,
-				      const TopTools_DataMapOfShapeListOfShape& MVE,
-				      const TopTools_MapOfShape& SectionEdgesMap)
-{
-  TopTools_ListIteratorOfListOfShape itE( MVE(V) );
-  // Loop on edges sharing V
-  for (; itE.More(); itE.Next()) {
-    if ( !UsedShapesMap.Add( itE.Value() ))
-      continue; // already checked
+// static Standard_Boolean canPassToOld (const TopoDS_Shape& V,
+//                                    TopTools_MapOfShape& UsedShapesMap,
+//                                    const TopTools_DataMapOfShapeListOfShape& MVE,
+//                                    const TopTools_MapOfShape& SectionEdgesMap)
+// {
+//   TopTools_ListIteratorOfListOfShape itE( MVE(V) );
+//   // Loop on edges sharing V
+//   for (; itE.More(); itE.Next()) {
+//     if ( !UsedShapesMap.Add( itE.Value() ))
+//       continue; // already checked
 
-    if ( !SectionEdgesMap.Contains( itE.Value() ))
-      return Standard_True; // WE PASSED
+//     if ( !SectionEdgesMap.Contains( itE.Value() ))
+//       return Standard_True; // WE PASSED
 
-    TopoDS_Iterator itV( itE.Value() );
-    // Loop on vertices of an edge
-    for (; itV.More(); itV.Next()) {
-      if ( !UsedShapesMap.Add( itV.Value() ))
-	continue; // already checked
-      else
-	return canPassToOld( itV.Value(), UsedShapesMap, MVE, SectionEdgesMap);
-    }
-  }
-  return Standard_False;
-}
+//     TopoDS_Iterator itV( itE.Value() );
+//     // Loop on vertices of an edge
+//     for (; itV.More(); itV.Next()) {
+//       if ( !UsedShapesMap.Add( itV.Value() ))
+//      continue; // already checked
+//       else
+//      return canPassToOld( itV.Value(), UsedShapesMap, MVE, SectionEdgesMap);
+//     }
+//   }
+//   return Standard_False;
+// }
 
 //=======================================================================
 //function : MakeDegenAndSelect
@@ -346,11 +423,11 @@ static Standard_Boolean canPassToOld (const TopoDS_Shape& V,
 //=======================================================================
 
 static TopoDS_Edge MakeDegenAndSelect(const TopoDS_Edge& CE,
-				      const TopoDS_Vertex& CV,
-				      TopoDS_Edge& NE,
-				      TopTools_SequenceOfShape& EdgesSeq,
-				      TColStd_SequenceOfReal& USeq,
-				      const TopoDS_Edge& DE)
+                                      const TopoDS_Vertex& CV,
+                                      TopoDS_Edge& NE,
+                                      TopTools_SequenceOfShape& EdgesSeq,
+                                      TColStd_SequenceOfReal& USeq,
+                                      const TopoDS_Edge& DE)
 {
   if (EdgesSeq.Length() < 3) {
     if (CE == EdgesSeq.First())
@@ -378,7 +455,7 @@ static TopoDS_Edge MakeDegenAndSelect(const TopoDS_Edge& CE,
   for (i=1; i<= nb; ++i) {
     dU = USeq(i) - U1;
     if (isReversed ? (dU > 0) : (dU < 0))
-	continue;
+        continue;
     dU = Abs( dU );
     if ( dU  > dUmin || IsEqual( dU, 0.))
       continue;
@@ -417,12 +494,12 @@ static TopoDS_Edge MakeDegenAndSelect(const TopoDS_Edge& CE,
 //=======================================================================
 
 static void prepareDegen (const TopoDS_Edge&                        DegEdge,
-			  const TopoDS_Face&                        F,
-			  const TopTools_DataMapOfShapeListOfShape& MVE,
-			  TopTools_SequenceOfShape&                 EdgesSeq,
-			  TColStd_SequenceOfReal&                   USeq,
-			  TopTools_DataMapOfShapeInteger&           MVDEI,
-			  const Standard_Integer                    DegEdgeIndex)
+                          const TopoDS_Face&                        F,
+                          const TopTools_DataMapOfShapeListOfShape& MVE,
+                          TopTools_SequenceOfShape&                 EdgesSeq,
+                          TColStd_SequenceOfReal&                   USeq,
+                          TopTools_DataMapOfShapeInteger&           MVDEI,
+                          const Standard_Integer                    DegEdgeIndex)
 {
   const TopoDS_Vertex& V = TopExp::FirstVertex ( DegEdge );
   MVDEI.Bind ( V, DegEdgeIndex );
@@ -456,9 +533,9 @@ static void prepareDegen (const TopoDS_Edge&                        DegEdge,
       // seam edge: select U among f and l
       Standard_Boolean first = Standard_True;
       if ( V.IsSame ( TopExp::FirstVertex( E, Standard_True ) ))
-	first = Standard_False;
+        first = Standard_False;
       if ( DegEdge.Orientation() == TopAbs_REVERSED )
-	first = !first;
+        first = !first;
       U = first ? f : l;
     }
     else if ( EUMap.IsBound( E ) ) {
@@ -470,8 +547,8 @@ static void prepareDegen (const TopoDS_Edge&                        DegEdge,
       C.Initialize( E, F );
       InterCC.Perform ( DC, C , Tol, Tol );
       if (! InterCC.IsDone() || InterCC.NbPoints() == 0) {
-	MESSAGE ( "NO 2d INTERSECTION ON DEGENERATED EDGE" );
-	continue;
+        MESSAGE ( "NO 2d INTERSECTION ON DEGENERATED EDGE" );
+        continue;
       }
       // hope there is only one point of intersection
       U = InterCC.Point( 1 ).ParamOnFirst();
@@ -566,13 +643,13 @@ void Partition_Loop2d::Perform()
 
       // only a seam is allowed twice in a wire, the others should be removed
       if (addedEM.Add ( CE ) || BRep_Tool::IsClosed( CE, myFace ) )
-	WEL.Append( CE );
+        WEL.Append( CE );
       else {
-	doubleEM.Add( CE );
-	RemoveFromMVE (CE,MVE2);
-	TopoDS_Edge CERev = CE;
-	CERev.Reverse();
-	RemoveFromMVE (CERev,MVE2);
+        doubleEM.Add( CE );
+        RemoveFromMVE (CE,MVE2);
+        TopoDS_Edge CERev = CE;
+        CERev.Reverse();
+        RemoveFromMVE (CERev,MVE2);
       }
 
       RemoveFromMVE (CE,MVE);
@@ -580,161 +657,158 @@ void Partition_Loop2d::Perform()
       CV = TopExp::LastVertex( CE, Standard_True);
 
       if (isInternCW && !mySectionEdges.Contains(CE))
-	// wire is internal if all edges are section ones
-	isInternCW = Standard_False;
+        // wire is internal if all edges are section ones
+        isInternCW = Standard_False;
 
       if (MVDEI.IsBound( CV )) { // CE comes to the degeneration
-	iDeg = MVDEI( CV );  
-	TopoDS_Edge NewDegen;
-	NewDegen = MakeDegenAndSelect( CE, CV, NE, SEID[iDeg], SeqU[iDeg], DE[iDeg]);
-	WEL.Append( NewDegen );
+        iDeg = MVDEI( CV );
+        TopoDS_Edge NewDegen;
+        NewDegen = MakeDegenAndSelect( CE, CV, NE, SEID[iDeg], SeqU[iDeg], DE[iDeg]);
+        WEL.Append( NewDegen );
         CE = NE;
         End = CV.IsSame( VF );
-	continue;
+        continue;
       }
 
       //--------------
       // stop test
       //--------------
       if (MVE(CV).IsEmpty()) {
-	End=Standard_True;
-	MVE.UnBind(CV);
+        End=Standard_True;
+        MVE.UnBind(CV);
       }
       else if (CV.IsSame(VF) && SamePnt2d(CV,CE, VF,EF, myFace) ) {
-	End = Standard_True;
+        End = Standard_True;
       }
       else {
-	//----------------------------
-	// select new current edge
-	//----------------------------
-	if (! SelectEdge (Surface,CE,CV,NE,MVE(CV))) {
-	  MESSAGE ( " NOT CLOSED WIRE " );
-	  End=Standard_True;
-	}
-	else 
-	  CE = NE;
+        //----------------------------
+        // select new current edge
+        //----------------------------
+        if (! SelectEdge (Surface,CE,CV,NE,MVE(CV))) {
+          MESSAGE ( " NOT CLOSED WIRE " );
+          End=Standard_True;
+        }
+        else
+          CE = NE;
       }
-    } // while ( !End ) 
+    } // while ( !End )
 
-    
+
     // WEL is built, built wire(s)
 
-    
+
     itl.Initialize( WEL );
     if ( doubleEM.IsEmpty()) { // no double edges
       B.MakeWire( NW );
       for (; itl.More(); itl.Next())
-	B.Add ( NW, itl.Value());
+        B.Add ( NW, itl.Value());
       if (isInternCW) myInternalWL.Append(NW);
       else            myNewWires.Append  (NW);
     }
-    
+
     else {
       // remove double and degenerated edges from WEL
       while (itl.More()) {
-	const TopoDS_Edge& E = TopoDS::Edge ( itl.Value() );
-	if ( doubleEM.Contains( E ) || BRep_Tool::Degenerated( E ))
-	  WEL.Remove( itl );
-	else
-	   itl.Next();
+        const TopoDS_Edge& E = TopoDS::Edge ( itl.Value() );
+        if ( doubleEM.Contains( E ) || BRep_Tool::Degenerated( E ))
+          WEL.Remove( itl );
+        else
+           itl.Next();
       }
       if ( WEL.IsEmpty())
-	continue;
+        continue;
       // remove double edges from SEID and SeqU
       Standard_Integer i,j;
       for (j=0; j<2; ++j) {
-	for (i=1; i<=SEID[j].Length(); ++i) {
-	  if (doubleEM.Contains( SEID[j].Value(i))) {
-	    SEID[j].Remove( i );
-	    SeqU[j].Remove( i-- );
-	  }
-	}
+        for (i=1; i<=SEID[j].Length(); ++i) {
+          if (doubleEM.Contains( SEID[j].Value(i))) {
+            SEID[j].Remove( i );
+            SeqU[j].Remove( i-- );
+          }
+        }
       }
       // removal of doulbe edges can explode a wire into parts,
       // make new wires of them.
       // A Loop like previous one but without 2d check
       while ( !WEL.IsEmpty() ) {
-	CE = TopoDS::Edge( WEL.First() );
-	WEL.RemoveFirst();
-	B.MakeWire( NW );
-	VF = TopExp::FirstVertex ( EF, Standard_True);
-	
-	End = Standard_False;
-	while ( !End) {
-	  B.Add( NW, CE );
-	  CV = TopExp::LastVertex  ( CE, Standard_True);
+        CE = TopoDS::Edge( WEL.First() );
+        WEL.RemoveFirst();
+        B.MakeWire( NW );
+        VF = TopExp::FirstVertex ( CE, Standard_True);
 
-	  if (MVDEI.IsBound( CV )) {   // CE comes to the degeneration
-	    iDeg = MVDEI( CV );
+        End = Standard_False;
+        while ( !End) {
+          B.Add( NW, CE );
+          CV = TopExp::LastVertex  ( CE, Standard_True);
+
+          if (MVDEI.IsBound( CV )) {   // CE comes to the degeneration
+            iDeg = MVDEI( CV );
             TopoDS_Edge NewDegen;
             NewDegen = MakeDegenAndSelect( CE, CV, NE, SEID[iDeg], SeqU[iDeg], DE[iDeg]);
             B.Add( NW, NewDegen );
             End = CV.IsSame( VF );
-	    CE = NE;
-	    if (!NE.IsNull()) { // remove NE from WEL
-	      for (itl.Initialize( WEL ); itl.More(); itl.Next())
-		if ( NE == itl.Value()) {
-		  WEL.Remove( itl );
-		  break;
-		}
-	    }
-	  }  // end degeneration
-	  
-	  else {
-	    if (CV.IsSame( VF )) {
-	      End = Standard_True;
-	      continue;
-	    }
-	    // edges in WEL most often are well ordered
-	    // so try to iterate until the End
-	    Standard_Boolean add = Standard_False;
-	    itl.Initialize(WEL);
-	    while ( itl.More() && !End) {
+            CE = NE;
+            if (!NE.IsNull()) { // remove NE from WEL
+              for (itl.Initialize( WEL ); itl.More(); itl.Next())
+                if ( NE == itl.Value()) {
+                  WEL.Remove( itl );
+                  break;
+                }
+            }
+          }  // end degeneration
+
+          else {
+            if (CV.IsSame( VF )) {
+              End = Standard_True;
+              continue;
+            }
+            // edges in WEL most often are well ordered
+            // so try to iterate until the End
+            Standard_Boolean add = Standard_False;
+            itl.Initialize(WEL);
+            while ( itl.More() && !End) {
               NE = TopoDS::Edge( itl.Value() );
               if ( CV.IsSame( TopExp::FirstVertex( NE, Standard_True ))) {
                 WEL.Remove( itl );
-		if (add)
-		  B.Add( NW, CE );
-		CE = NE;
+                if (add)
+                  B.Add( NW, CE );
+                CE = NE;
                 add = Standard_True;
                 CV = TopExp::LastVertex( CE, Standard_True);
                 if (MVDEI.IsBound( CV ) || CV.IsSame( VF ))
                   break;
               }
-	      else
-		itl.Next();
-	    }
-	    if (!add)
-	      End = Standard_True;
-	  }
-	} // !End
-	
-	myInternalWL.Append( NW );
+              else
+                itl.Next();
+            }
+            if (!add)
+              End = Standard_True;
+          }
+        } // !End
+
+        myInternalWL.Append( NW );
       }
     } // end building new wire(s) from WEL
 
   } // end Loop on MVE
-  
+
   // all wires are built
-  
-  
+
+
   // ============================================================
   // select really internal wires i.e. those from which we can`t
   // pass to an old (not section) edge
   // ============================================================
 
   Standard_Integer nbIW = myInternalWL.Extent();
-  if ( nbIW == 1 ) {
-    TopTools_MapOfShape UsedShapes( 2*NbConstEdges );
-    TopExp_Explorer expV (myInternalWL.First(), TopAbs_VERTEX);
-    if (canPassToOld (expV.Current(), UsedShapes, MVE2, mySectionEdges)) 
-      myNewWires.Append ( myInternalWL );
-  }
-  else if ( nbIW > 1 ) {
+  if (nbIW == 0)
+    return;
+
+  if ( myNewWires.Extent() != 1 && nbIW > 1) {
     TopTools_MapOfShape outerEM (NbConstEdges); // edges connected to non-section ones
     TopTools_MapOfShape visitedVM (NbConstEdges);
     for ( itl.Initialize( myConstEdges ); itl.More(); itl.Next()) {
-      if ( ! mySectionEdges.Contains( itl.Value() )) 
+      if ( ! mySectionEdges.Contains( itl.Value() ))
         addConnected (itl.Value(), outerEM, visitedVM, MVE2);
     }
     // if an edge of a wire is in <outerEM>, the wire is not internal
@@ -757,13 +831,13 @@ void Partition_Loop2d::Perform()
 //=======================================================================
 
 static Standard_Boolean isHole (const TopoDS_Wire& W,
-				const TopoDS_Face& F)
+                                const TopoDS_Face& F)
 {
   BRep_Builder B;
   TopoDS_Shape newFace = F.EmptyCopied();
   B.Add(newFace,W.Oriented(TopAbs_FORWARD));
   BRepTopAdaptor_FClass2d classif (TopoDS::Face(newFace),
-				   Precision::PConfusion());
+                                   Precision::PConfusion());
   return (classif.PerformInfinitePoint() == TopAbs_IN);
 }
 
@@ -773,8 +847,8 @@ static Standard_Boolean isHole (const TopoDS_Wire& W,
 //=======================================================================
 
 static Standard_Boolean isInside(const TopoDS_Face& F,
-				 const TopoDS_Wire& W1,
-				 const TopoDS_Wire& W2)
+                                 const TopoDS_Wire& W1,
+                                 const TopoDS_Wire& W2)
 {
   // make a face with wire W2
   BRep_Builder B;
@@ -784,10 +858,12 @@ static Standard_Boolean isInside(const TopoDS_Face& F,
 
   // get any 2d point of W1
   TopExp_Explorer exp(W1,TopAbs_EDGE);
-  const TopoDS_Edge& edg = TopoDS::Edge(exp.Current());
+  if (BRep_Tool::Degenerated( TopoDS::Edge( exp.Current() )))
+    exp.Next();
+  const TopoDS_Edge& e = TopoDS::Edge(exp.Current());
   Standard_Real f,l;
-  Handle(Geom2d_Curve) C2d = BRep_Tool::CurveOnSurface(edg,F,f,l);
-  gp_Pnt2d pt2d(C2d->Value(f));
+  Handle(Geom2d_Curve) C2d = BRep_Tool::CurveOnSurface(e,F,f,l);
+  gp_Pnt2d pt2d(C2d->Value( 0.5 * ( f + l )));
 
   BRepTopAdaptor_FClass2d classif(newFace,Precision::PConfusion());
   return (classif.Perform(pt2d) == TopAbs_IN);
@@ -822,8 +898,8 @@ const TopTools_ListOfShape&  Partition_Loop2d::NewFaces() const
 //=======================================================================
 
 static void findEqual (TopTools_ListOfShape& WL,
-		       TopTools_DataMapOfShapeShape& EqWM,
-		       const TopoDS_Face& F)
+                       TopTools_DataMapOfShapeShape& EqWM,
+                       const TopoDS_Face& F)
 {
   TopTools_ListIteratorOfListOfShape it1, it2;
   Standard_Integer i,j;
@@ -832,7 +908,7 @@ static void findEqual (TopTools_ListOfShape& WL,
 
     if (IndMap.Contains(i)) continue;
     const TopoDS_Wire& Wire1 = TopoDS::Wire( it1.Value());
-    
+
     for (it2.Initialize(WL), j=1;  it2.More();  it2.Next(), j++) {
 
       if (j <= i || IndMap.Contains(j)) continue;
@@ -843,19 +919,19 @@ static void findEqual (TopTools_ListOfShape& WL,
       const TopoDS_Shape& Wire2 = it2.Value();
       TopoDS_Iterator itE ( Wire2);
       for (; itE.More(); itE.Next()) {
-	if ( !EdgesMap.Contains( itE.Value()) )
-	  break;
+        if ( !EdgesMap.Contains( itE.Value()) )
+          break;
       }
       if (!itE.More()) { // all edges are same
-	if (isHole( Wire1, F)) {
-	  EqWM.Bind ( Wire1, Wire2 );
-	}
-	else {
-	  EqWM.Bind ( Wire2, Wire1 );
-	}
-	IndMap.Add(i);
-	IndMap.Add(j);
-	break;
+        if (isHole( Wire1, F)) {
+          EqWM.Bind ( Wire1, Wire2 );
+        }
+        else {
+          EqWM.Bind ( Wire2, Wire1 );
+        }
+        IndMap.Add(i);
+        IndMap.Add(j);
+        break;
       }
     }
   }
@@ -877,20 +953,26 @@ static void findEqual (TopTools_ListOfShape& WL,
 //=======================================================================
 
 static void classify(const TopTools_DataMapOfShapeShape& EqWM,
-		     BRepAlgo_AsDes& OuterInner,
-		     const TopoDS_Face& F)
+                     BRepAlgo_AsDes& OuterInner,
+                     const TopoDS_Face& F)
 {
   TopTools_DataMapIteratorOfDataMapOfShapeShape it1, it2;
 
   for (it1.Initialize(EqWM);  it1.More();  it1.Next()) {
-    for (it2.Initialize(EqWM);  it2.More();  it2.Next()) {
-      if (it1.Value().IsSame( it2.Value() )) continue;
+    // find next after it1.Value()
+    for (it2.Initialize(EqWM);  it2.More();  it2.Next())
+      if (it1.Value().IsSame( it2.Value() ))
+      {
+        it2.Next();
+        break;
+      }
+    for ( ;  it2.More();  it2.Next()) {
       const TopoDS_Wire& Wire1 = TopoDS::Wire( it1.Value() );
       const TopoDS_Wire& Wire2 = TopoDS::Wire( it2.Value() );
       if (isInside(F, Wire1, Wire2))
-	OuterInner.Add (Wire2, Wire1);
+        OuterInner.Add (Wire2, Wire1);
       else if (isInside(F, Wire2, Wire1))
-	OuterInner.Add (Wire1, Wire2);
+        OuterInner.Add (Wire1, Wire2);
     }
   }
 }
@@ -902,27 +984,11 @@ static void classify(const TopTools_DataMapOfShapeShape& EqWM,
 //           intersections
 //=======================================================================
 
-//#define USE_BREPFEAT_SPLITSHAPE
-
-#ifdef USE_BREPFEAT_SPLITSHAPE
-
-# include <BRepFeat_SplitShape.hxx>
-void  Partition_Loop2d::WiresToFaces(const BRepAlgo_Image& EdgeImage)
-#else
-     
-# include <BRepAlgo_FaceRestrictor.hxx>
 void  Partition_Loop2d::WiresToFaces(const BRepAlgo_Image& )
-#endif
 {
   Standard_Integer nbW = myNewWires.Extent() + myInternalWL.Extent();
   if (nbW==0)
     return;
-
-#ifndef USE_BREPFEAT_SPLITSHAPE
-
-  // ============================================================
-  // use BRepAlgo_FaceRestrictor to make faces
-  // ============================================================
 
   BRepAlgo_FaceRestrictor FR;
   FR.Init (myFace,Standard_False);
@@ -932,7 +998,7 @@ void  Partition_Loop2d::WiresToFaces(const BRepAlgo_Image& )
   // sometimes 1-2 faces are missing ).
   // So we use it as less as possible: no holes -> make faces by hands
 
-  
+
   // are there holes in myFace ?
   Standard_Boolean hasOldHoles = Standard_False;
   TopoDS_Iterator itOldW (myFace);
@@ -953,7 +1019,7 @@ void  Partition_Loop2d::WiresToFaces(const BRepAlgo_Image& )
     }
     return;
   }
-  
+
   // FaceRestrictor can't classify wires build on all the same edges
   // and gives incorrect result in such cases (ex. a plane cut into 2 parts by cylinder)
   // We must make faces of equal wires separately. One of equal wires makes a
@@ -968,7 +1034,7 @@ void  Partition_Loop2d::WiresToFaces(const BRepAlgo_Image& )
 
     if (hasOldHoles)
       myInternalWL.Append( myNewWires ); // an old wire can be inside an equal wire
-    
+
     // classify equal wire pairs
     BRepAlgo_AsDes OuterInner;
     classify (EqWM,OuterInner,myFace);
@@ -980,69 +1046,79 @@ void  Partition_Loop2d::WiresToFaces(const BRepAlgo_Image& )
 
       // find most internal wires among pairs (key - hole, value - outer part)
       TopTools_DataMapIteratorOfDataMapOfShapeShape it(EqWM);
+      Standard_Integer nbEqW = EqWM.Extent(); // protection against infinite loop
       for ( ; it.More(); it.Next()) {
 
-	TopoDS_Wire outerW = TopoDS::Wire ( it.Value() );
-	if (  OuterInner.HasDescendant( outerW ) && // has internal
-	     ! OuterInner.Descendant( outerW ).IsEmpty() )
-	  continue;
+        TopoDS_Wire outerW = TopoDS::Wire ( it.Value() );
+        if (  OuterInner.HasDescendant( outerW ) && // has internal
+             ! OuterInner.Descendant( outerW ).IsEmpty() )
+          continue;
 
-	FR.Add( outerW );
+        FR.Add( outerW );
 
         // add internal wires that are inside of outerW
         TopTools_ListIteratorOfListOfShape itIW (myInternalWL);
         while ( itIW.More()) {
           TopoDS_Wire IW = TopoDS::Wire ( itIW.Value() );
           if ( isInside (myFace, IW, outerW)) {
-	    FR.Add (IW);
-	    myInternalWL.Remove( itIW ); // == itIW.Next() !!!
-	  }
-	  else
-	    itIW.Next();
-	}
+            FR.Add (IW);
+            myInternalWL.Remove( itIW ); // == itIW.Next() !!!
+          }
+          else
+            itIW.Next();
+        }
 
-	// the hole-part of current pair of equal wires will be in the next new face
-	prevHolesL.Append ( it.Key() );
+        // the hole-part of current pair of equal wires will be in the next new face
+        prevHolesL.Append ( it.Key() );
 
       } // Loop on map of equal pairs searching for innermost wires
 
       // make faces
       FR.Perform();
       if (FR.IsDone()) {
-	for (; FR.More(); FR.Next())
-	  myNewFaces.Append(FR.Current());
+        for (; FR.More(); FR.Next())
+          myNewFaces.Append(FR.Current());
       }
 
       FR.Clear();
 
       // add hole-parts to FaceRestrictor,
-      // remove themfrom the EqWM,
+      // remove them from the EqWM,
       // remove found wires as internal of resting classified wires
       Standard_Boolean clearOuterInner =  ( prevHolesL.Extent() < EqWM.Extent() );
       TopTools_ListIteratorOfListOfShape itPrev (prevHolesL);
       for (; itPrev.More(); itPrev.Next()) {
-	TopoDS_Wire& Hole = TopoDS::Wire ( itPrev.Value() );
-	FR.Add ( Hole );
-	if (clearOuterInner) {
-	  const TopoDS_Wire& outerW = TopoDS::Wire ( EqWM.Find( Hole ) );
-	  // Loop on wires including outerW
-	  TopTools_ListIteratorOfListOfShape itO( OuterInner.Ascendant( outerW ));
-	  for (; itO.More(); itO.Next()) {
-	    TopTools_ListOfShape& innerL = OuterInner.ChangeDescendant( itO.Value() );
-	    TopTools_ListIteratorOfListOfShape itI (innerL);
-	    // Loop on internal wires of current including wire
-	    for (; itI.More(); itI.Next())
-	      if ( outerW.IsSame( itI.Value() )) {
-		innerL.Remove( itI );   break;
-	      }
-	  }
-	}
-	EqWM.UnBind ( Hole );
+        TopoDS_Wire& Hole = TopoDS::Wire ( itPrev.Value() );
+        FR.Add ( Hole );
+        if (clearOuterInner) {
+          const TopoDS_Wire& outerW = TopoDS::Wire ( EqWM.Find( Hole ) );
+          // Loop on wires including outerW
+          TopTools_ListIteratorOfListOfShape itO( OuterInner.Ascendant( outerW ));
+          for (; itO.More(); itO.Next()) {
+            TopTools_ListOfShape& innerL = OuterInner.ChangeDescendant( itO.Value() );
+            TopTools_ListIteratorOfListOfShape itI (innerL);
+            // Loop on internal wires of current including wire
+            for (; itI.More(); itI.Next())
+              if ( outerW.IsSame( itI.Value() )) {
+                innerL.Remove( itI );   break;
+              }
+          }
+        }
+        EqWM.UnBind ( Hole );
+      }
+
+      if (nbEqW == EqWM.Extent())
+      {
+        // error: pb with wires classification
+#ifdef DEB
+        cout << "Partition_Loop2d::WiresToFaces(), pb with wires classification" << endl;
+#endif
+        break;
       }
 
     } // while (!EqWM.IsEmpty)
 
-  } //  !EqWM.IsEmpty()
+  } //  if !EqWM.IsEmpty()
 
   myNewWires.Append ( myInternalWL );
 
@@ -1056,50 +1132,7 @@ void  Partition_Loop2d::WiresToFaces(const BRepAlgo_Image& )
     myNewFaces.Append(FR.Current());
 
 
-  
-#else // ifndef USE_BREPFEAT_SPLITSHAPE
-
-  // ============================================================
-  // use BRepFeat_SplitShape to make faces
-  // ============================================================
-  
-  BRepFeat_SplitShape Split(myFace);
-  TopTools_MapOfShape AddedSectionEdgesMap;
-
-  myNewWires.Append(myInternalWL);
-
-  TopTools_ListIteratorOfListOfShape it(myNewWires);
-  for (; it.More(); it.Next()) {
-    TopoDS_Iterator itE(it.Value());
-    for (; itE.More(); itE.Next()) {
-      const TopoDS_Edge& newE = TopoDS::Edge( itE.Value() );
-      if (AddedSectionEdgesMap.Add(newE)) {
-	if (mySectionEdges.Contains(newE))
-          Split.Add(newE,F); // new edge on face
-	else {
-	  const TopoDS_Edge& oldE = TopoDS::Edge( EdgeImage.ImageFrom(newE) );
-	  Split.Add(newE, oldE); // splited edge
-	}
-      }
-    }
-  }
-  Split.Build();
-
-  if (Split.IsDone())
-    myNewFaces = Split.Modified(F);
-
-#endif  // ifndef USE_BREPFEAT_SPLITSHAPE
-
-
-  
-#ifdef DEB
-  Standard_Integer nbF = myNewFaces.Extent();
-  if (nbW != nbF)
-    cout << "WiresToFaces(): " << nbW << " wires --> " << myNewFaces.Extent() << " faces "
-      << endl;
-#endif
-
   TopTools_ListIteratorOfListOfShape itNF (myNewFaces);
-  for (; itNF.More(); itNF.Next()) 
+  for (; itNF.More(); itNF.Next())
     itNF.Value().Orientation( myFaceOri );
 }

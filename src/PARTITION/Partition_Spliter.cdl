@@ -94,6 +94,11 @@ is
         ---Category: private methods
 
 
+    MakeSolids (me: in out; Solid : Shape from TopoDS;
+                            Shells: in out ListOfShape from TopTools) 
+        is private;
+        ---Purpose: make solids out of Shells
+
     MakeShells (me: in out; S : Shape from TopoDS;
                             NS: in out ListOfShape from TopTools) is private;
         ---Purpose: split S into shells
@@ -131,18 +136,39 @@ is
         --          shared by
         --          <LE> contains edge splits
 
+    IsInside (myclass; S1,S2 : Shape from TopoDS)
+        returns Boolean from Standard is private;
+        ---Purpose: Return True if the first vertex of S1 inside S2.
+        --          If S1.IsNull(), check infinite point against S2.
+
+    GetOriginalShape(me; aShape : Shape from TopoDS)
+        returns Shape from TopoDS is private;
+        ---Purpose: Return the  shape  aShape  originates from. aShape
+        --          should be a face or more complex result shape
+
+    FindToolsToReconstruct(me: in out) is private;
+        ---Purpose: find and store  as  objects  tools which interfere
+        --          with  solids   or   are   inside   solids  without
+        --          an interference
+
 fields
 
-    myDoneStep     : ShapeEnum           from TopAbs;   -- reconstructed topology
+    myDoneStep     : ShapeEnum           from TopAbs;   -- rebuilt level
     myShape        : Compound            from TopoDS;   -- result
     myBuilder      : Builder             from BRep;
     		   			   
     myListShapes   : ListOfShape         from TopTools; -- object shapes
     myMapFaces     : MapOfShape          from TopTools; -- object faces
     myMapTools     : MapOfShape          from TopTools; -- tool faces
+    myEqualEdges   : MapOfShape          from TopTools; -- equal splits
+    myNewSection   : MapOfShape          from TopTools; -- new secton edges
+    myClosedShapes : MapOfShape          from TopTools;
+    myWrappingSolid: MapOfShape          from TopTools; -- solids having other shapes inside
     myFaceShapeMap : DataMapOfShapeShape from TopTools; -- to find a shape by face
     		   			   
-    myNewSection   : MapOfShape          from TopTools; -- new secton edges
+    myInternalFaces: DataMapOfShapeShape from TopTools; -- shape and its internal faces
+    myIntNotClFaces: DataMapOfShapeShape from TopTools; -- internal but not closed 
+
 		   			   
     myAsDes        : AsDes               from BRepAlgo;
     myImagesFaces  : Image               from BRepAlgo;   
@@ -154,12 +180,5 @@ fields
     
         -- avoid rebuilding twice commont part of solids
     myAddedFacesMap: MapOfOrientedShape  from TopTools;
-    
-        -- equal splits
-    myEqualEdges   : MapOfShape          from TopTools;
-    
-        -- shape and its internal faces
-    myInternalFaces: DataMapOfShapeShape from TopTools;
-    myIntNotClFaces: DataMapOfShapeShape from TopTools;-- internal but not closed 
     
 end Spliter;

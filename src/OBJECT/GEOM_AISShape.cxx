@@ -101,9 +101,17 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   case StdSelect_DM_Shading:
     {
       myDrawer->ShadingAspect()->Aspect()->SetDistinguishOn();
-      myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(Graphic3d_NOM_BRASS);
+      
+      Graphic3d_MaterialAspect aMatAspect;
+      aMatAspect.SetAmbient( 1 );
+      aMatAspect.SetDiffuse( 0 );
+      aMatAspect.SetEmissive( 0 );
+      aMatAspect.SetShininess(1 );
+      aMatAspect.SetSpecular( 0 );
+      
+      myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
       myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(Graphic3d_NOM_JADE);
-
+      
       Graphic3d_MaterialAspect FMat = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
       Graphic3d_MaterialAspect BMat = myDrawer->ShadingAspect()->Aspect()->BackMaterial();
       FMat.SetTransparency(myTransparency); BMat.SetTransparency(myTransparency);

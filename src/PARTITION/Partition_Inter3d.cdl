@@ -68,14 +68,21 @@ is
     TouchedFaces(me : in out) returns MapOfShape from TopTools
         ---C++: return &
         is static;
-        ---Purpose: return map of 
-
-    AsDes(me) returns AsDes from BRepAlgo
-        is static;
+        ---Purpose: return map of faces cut by new or section edges
 
     NewEdges(me : in out) returns MapOfShape from TopTools
         ---C++:  return &
         is static;
+        ---Purpose: return new and section edges
+
+    AsDes(me) returns AsDes from BRepAlgo
+        is static;
+        ---Purpose: return an object containing info about
+        --             Ascendants     | Descendants
+        --          ------------------+---------------------
+        --          1. faces          | edges cutting them
+        --          2. sectoin edges  | new vertices on them
+
 
         -------------------------------
         ---Category: Same domain shapes

@@ -53,7 +53,7 @@ BIN_SERVER_IDL =
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES)
 CXXFLAGS += $(OCC_CXXFLAGS)
-LDFLAGS  += $(OCC_LIBS) 
+LDFLAGS  += $(CAS_LDPATH) -lTKTopAlgo   
 
 
 @CONCLUDE@

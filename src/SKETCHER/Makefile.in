@@ -47,7 +47,7 @@ EXPORT_HEADERS= GEOM_Sketcher.h \
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES)
 CXXFLAGS += $(OCC_CXXFLAGS)
-LDFLAGS  += $(OCC_LIBS)
+LDFLAGS  += $(QT_LIBS) $(CAS_LDPATH) -lTKTopAlgo  
 
 # additional file to be cleaned
 MOSTLYCLEAN =

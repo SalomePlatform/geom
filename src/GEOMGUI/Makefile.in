@@ -169,6 +169,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES)
 CXXFLAGS += $(OCC_CXXFLAGS)
 
-LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGeometryClient -lGeometryObject -lGeometryFiltersSelection -lGeometrySketcher $(OCC_LIBS)
+LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGeometryClient -lGeometryObject -lGeometryFiltersSelection -lGeometrySketcher $(CAS_LDPATH) -lTKFillet -lTKOffset
 
 @CONCLUDE@

@@ -62,13 +62,30 @@ is
     
     AddVonE(myclass; V : Vertex from TopoDS;
                      E1,E2 : Edge from TopoDS;
-                     AsDes : mutable AsDes from BRepAlgo)
+                     AsDes : mutable AsDes from BRepAlgo;
+                     F: Face from TopoDS)
         returns Vertex from TopoDS;
         ---Purpose: Put V in AsDes as intersection of E1 and E2.
         --          Check that vertex equal to V already exists on one
         --          of edges, in  such  a  case,  V  is  not added but
         --          existing vertex is updated to  be on E1 and E2 and
-        --          is returned insead of V. 
+        --          is returned insead of V.
+        --          Optional F is a face  E1  and  E2  are on. If F is
+        --          provided, it is used  to  find  new vertices on E1
+        --          and E2 resulting from intersection of new edges on
+        --          the two  other  faces  the  F  interferes with and
+        --          through which E1 and  E2  pass  too. This helps to
+        --          avoid small edges.
+
+
+    GetTolerance(myclass; theV : Vertex from TopoDS;
+                          theU : Real from Standard;
+                          theE : Edge from TopoDS;
+                          theAsDes : AsDes from BRepAlgo)
+        returns Real from Standard;
+        ---Purpose: Returns  tolerance  theV   must   have  atfer  its
+        --          addition to theE with  theU parameter. theAsDes is
+        --          used to find pcurves of theE
 
 end Inter2d;
 

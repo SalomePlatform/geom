@@ -27,18 +27,18 @@
 //  $Header$
 
 using namespace std;
-#include "Partition_Spliter.ixx"
 #include "Partition_Inter2d.hxx"
 #include "Partition_Inter3d.hxx"
 #include "Partition_Loop2d.hxx"
 #include "Partition_Loop3d.hxx"
+#include "Partition_Spliter.ixx"
 
 #include "utilities.h"
 
-#include <TopExp_Explorer.hxx>
-#include <TopExp.hxx>
 #include <Precision.hxx>
 #include <TopAbs_Orientation.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
 
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
@@ -49,13 +49,13 @@ using namespace std;
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 
-#include <gp_Pnt2d.hxx>
-#include <gp_Pnt.hxx>
-#include <gp_Vec.hxx>
 #include <Geom2d_Curve.hxx>
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
 #include <Geom_TrimmedCurve.hxx>
+#include <gp_Pnt.hxx>
+#include <gp_Pnt2d.hxx>
+#include <gp_Vec.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
@@ -67,31 +67,41 @@ using namespace std;
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Wire.hxx>
 
-#include <BRep_Tool.hxx>
-#include <BRepLib.hxx>
 #include <BRepBndLib.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
+#include <BRepLib.hxx>
+#include <BRep_Tool.hxx>
 
-#include <stdio.h>
 #include <Extrema_ExtPC.hxx>
 #include <GeomAdaptor_Curve.hxx>
 #include <TopOpeBRepTool_CurveTool.hxx>
 
 #ifdef DEB
-#define DRAW 0
+//# define PART_PERF
 #endif
 
-#ifdef DRAW
-#include <DBRep.hxx>
-Standard_IMPORT Standard_Boolean AffichInter3d ;
-Standard_IMPORT Standard_Boolean AffichInter2d ;
-Standard_IMPORT Standard_Boolean AffichVertex;
-Standard_IMPORT Standard_Boolean AffichFace;
-Standard_IMPORT Standard_Boolean AffichWire;
-Standard_IMPORT Standard_Boolean SelectFace;
-
-static char* names = new char[100];
-
+#ifdef PART_PERF
+# include <OSD_Chronometer.hxx>
 #endif
+
+//=======================================================================
+//function : isClosed
+//purpose  : check id a shape is closed, ie is a solid or a closed shell
+//=======================================================================
+
+static Standard_Boolean isClosed(const TopoDS_Shape& theShape)
+{
+  Standard_Boolean isClosed = (theShape.ShapeType() == TopAbs_SOLID);
+
+  if (!isClosed && theShape.ShapeType() == TopAbs_SHELL) {
+    TopTools_IndexedDataMapOfShapeListOfShape MEF;
+    TopExp::MapShapesAndAncestors(theShape, TopAbs_EDGE, TopAbs_FACE, MEF);
+    for (Standard_Integer i=1;  isClosed && i<=MEF.Extent();  ++i)
+      isClosed = ( MEF(i).Extent() != 1 );
+  }
+  
+  return isClosed;
+}
 
 //=======================================================================
 //function : Partition_Spliter
@@ -111,8 +121,23 @@ Partition_Spliter::Partition_Spliter()
 
 void Partition_Spliter::AddTool(const TopoDS_Shape& S)
 {
+  if (S.ShapeType() < TopAbs_SOLID) { // compound or compsolid
+    TopoDS_Iterator it (S);
+    for (; it.More(); it.Next())
+    {
+      AddTool( it.Value());
+      myFaceShapeMap.Bind( it.Value(), S ); // to know compound by shape
+    }
+    return;
+  }
+
   for (TopExp_Explorer exp(S,TopAbs_FACE); exp.More(); exp.Next())
+  {
     myMapTools.Add(exp.Current());
+    myFaceShapeMap.Bind( exp.Current(), S );
+  }
+  if (isClosed( S ))
+    myClosedShapes.Add( S );
 }
 
 //=======================================================================
@@ -125,7 +150,10 @@ void Partition_Spliter::AddShape(const TopoDS_Shape& S)
   if (S.ShapeType() < TopAbs_SOLID) { // compound or compsolid
     TopoDS_Iterator it (S);
     for (; it.More(); it.Next())
+    {
       AddShape( it.Value());
+      myFaceShapeMap.Bind( it.Value(), S ); // to know compound by shape
+    }
     return;
   }
 
@@ -134,14 +162,28 @@ void Partition_Spliter::AddShape(const TopoDS_Shape& S)
     //myBuilder.Add( myShape, S );
     return;
   }
-  
-  myListShapes.Append(S);
 
+  Standard_Integer nbFacesBefore = myMapFaces.Extent(); // not to add twice the same S
   for (; exp.More(); exp.Next()) {
-    myFaceShapeMap.Bind( exp.Current(), S );
-    myMapFaces.Add(exp.Current());
-    myImagesFaces.SetRoot(exp.Current());
+    const TopoDS_Shape & aFace = exp.Current();
+    if ( ! myFaceShapeMap.IsBound( aFace )) // keep shape of tool face added as object
+      myFaceShapeMap.Bind( aFace, S );
+    if (myMapFaces.Add( aFace ))
+      myImagesFaces.SetRoot( aFace );
   }
+
+  if (nbFacesBefore == myMapFaces.Extent())
+    return;
+
+  // solids must be processed before all
+  if (S.ShapeType() == TopAbs_SOLID)
+    myListShapes.Prepend(S);
+  else
+    myListShapes.Append(S);
+
+  if (isClosed( S ))
+    myClosedShapes.Add( S );
+
 }
 
 //=======================================================================
@@ -166,9 +208,14 @@ void Partition_Spliter::Clear()
   myListShapes.Clear();
   myMapFaces.Clear();
   myMapTools.Clear();
+  myClosedShapes.Clear();
+  myEqualEdges.Clear();
+  myNewSection.Clear();
+  myWrappingSolid.Clear();
   myFaceShapeMap.Clear();
   
-  myNewSection.Clear();
+  myInternalFaces.Clear();
+  myIntNotClFaces.Clear();
   
   myAsDes->Clear();
   myImagesFaces.Clear();
@@ -179,7 +226,6 @@ void Partition_Spliter::Clear()
   
   myAddedFacesMap.Clear();
 
-  myInternalFaces.Clear();
 }
 
 //=======================================================================
@@ -199,6 +245,10 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
   TopTools_ListIteratorOfListOfShape itl;
   TopExp_Explorer exp;
 
+#ifdef PART_PERF
+  OSD_Chronometer aCron;
+#endif
+
   if (myDoneStep > TopAbs_VERTEX) {
 
     TopTools_ListOfShape aListFaces;
@@ -206,101 +256,37 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
     for (it.Initialize(myMapTools); it.More(); it.Next())
       aListFaces.Append(it.Key());
 
+#ifdef PART_PERF
+    aCron.Start();
+#endif
+
     //-----------------------------------------------
     // Intersection between faces
     //-----------------------------------------------
     // result is in myAsDes as a map Face - list of new edges;
     // special care is done for section edges, same domain faces and vertices:
     // data about them is inside myInter3d
-
     myInter3d.CompletPart3d(aListFaces, myFaceShapeMap);
 
-    TopTools_MapOfShape& Modif = myInter3d.TouchedFaces();
-    TopTools_MapOfShape& NewEdges = myInter3d.NewEdges();
-    Handle(BRepAlgo_AsDes) SectionEdgesAD = myInter3d.SectionEdgesAD();
-
-#ifdef DRAW
-    if (AffichInter3d) {
-      Standard_Integer i=0;
-      for (it.Initialize(NewEdges); it.More(); it.Next(), i++) {
-        sprintf(names,"e_%d",i);
-        cout << "donly " << names << endl;
-        DBRep::Set(names,it.Key());
-      }
-    }
+#ifdef PART_PERF
+    cout << "+++ CompletPart3d()" << endl;
+    aCron.Show( cout );
+    aCron.Reset();
+    aCron.Start();
 #endif
-    //if (Modif.IsEmpty()) return;
-
-    // -----------------------------------------------
-    // store tools intersecting solids as object shapes,
-    // they must split into faces too
-    // -----------------------------------------------
-
-    // build edge - face map for tool faces
-    TopTools_IndexedDataMapOfShapeListOfShape EFM;
-    for (it.Initialize(myMapTools); it.More(); it.Next())
-      TopExp::MapShapesAndAncestors( it.Key(), TopAbs_EDGE, TopAbs_FACE, EFM);
-
-    TopTools_MapOfShape checkedEdgeMap;
-    for (itl.Initialize( myListShapes ); itl.More(); itl.Next()) {
-      TopExp_Explorer expSo (itl.Value(), TopAbs_SOLID);
-      for (; expSo.More(); expSo.Next()) {
-
-        TopTools_ListOfShape checkFL;  // faces to check
-        for ( exp.Init( expSo.Current(), TopAbs_FACE); exp.More(); exp.Next())
-          checkFL.Append ( exp.Current());
-
-        // iterate a list while appending new items
-        TopTools_ListIteratorOfListOfShape itF, itCF;
-        for (itCF.Initialize (checkFL) ; itCF.More(); itCF.Next()) {
-          const TopoDS_Shape& F = itCF.Value();
-          if ( myAsDes->HasDescendant( F )) {
-            // new edges on face to check
-            const TopTools_ListOfShape& NEL = myAsDes->Descendant( F );
-            TopTools_ListIteratorOfListOfShape itE (NEL);
-            for (; itE.More(); itE.Next()) {
-              if (checkedEdgeMap.Add( itE.Value() )) {
-                // intersected faces originating an edge
-                itF.Initialize (myAsDes->Ascendant( itE.Value() ));
-                for (; itF.More(); itF.Next()) {
-                  if (!myMapFaces.Contains( itF.Value())) {
-                    AddShape( itF.Value() );
-                    checkFL.Append( itF.Value() );
-                  }
-                }
-                // faces having section edges on F
-                if (EFM.Contains( itE.Value())) 
-                  itF.Initialize ( EFM.FindFromKey (itE.Value()));
-                for (; itF.More(); itF.Next()) {
-                  if (!myMapFaces.Contains( itF.Value())) {
-                    AddShape( itF.Value() );
-                    checkFL.Append( itF.Value() );
-                  }
-                }
-              }
-            }
-          }
-          // find faces cut by edges of F
-          TopExp_Explorer expE(F, TopAbs_EDGE);
-          for (; expE.More();expE.Next()) {
-            if ( SectionEdgesAD->HasAscendant( expE.Current() )
-                && checkedEdgeMap.Add( expE.Current() )) {
-              itF.Initialize( SectionEdgesAD->Ascendant( expE.Current()) );
-              for (; itF.More(); itF.Next()) {
-                if (!myMapFaces.Contains( itF.Value())) {
-                  AddShape( itF.Value() );
-                  checkFL.Append( itF.Value() );
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
     //-----------------------------------------------
     // Intersection of edges
     //-----------------------------------------------
+
+    // add tool faces which must be reconstructed to myMapFaces too
+    FindToolsToReconstruct();
+
+#ifdef PART_PERF
+    cout << "+++ FindToolsToReconstruct()" << endl;
+    aCron.Show( cout );
+    aCron.Reset();
+    aCron.Start();
+#endif
 
     // add existing vertices to edges of object faces in myAsDes
     TopTools_MapOfShape DoneEM;
@@ -321,15 +307,22 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
     }
 
     // intersect edges that are descendants of a face in myAsDes
+    TopTools_MapOfShape& Modif = myInter3d.TouchedFaces();
     for ( it.Initialize(Modif); it.More(); it.Next()) {
       const TopoDS_Face& F  = TopoDS::Face(it.Key());
-      Partition_Inter2d::CompletPart2d (myAsDes, F, NewEdges);
+      Partition_Inter2d::CompletPart2d (myAsDes, F, myInter3d.NewEdges());
     }
     // now myAsDes contains also new vertices made at edge intersection as
     // descendant of edges both new and old
 
     myDoneStep = TopAbs_VERTEX;
     
+#ifdef PART_PERF
+    cout << "+++ CompletPart2d()" << endl;
+    aCron.Show( cout );
+    aCron.Reset();
+    aCron.Start();
+#endif
   } //   if (myDoneStep > TopAbs_VERTEX)
   
   if (Limit == TopAbs_VERTEX) {
@@ -344,17 +337,20 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
     return;
   }
   
+
   if (myDoneStep > TopAbs_EDGE) {
 
     //-----------------------------------------------
-    // Reconstruction of all the edges.
+    //-----------------------------------------------
+    // ------- Reconstruction of all the edges.------
+    //-----------------------------------------------
     //-----------------------------------------------
 
-    // Add to myAsDes end vertices of new edges and cut new edges
-    int j=1;
-    TopTools_MapOfShape& NewEdges = myInter3d.NewEdges();
+    // ==============
+    // cut new edges
+    // ==============
     TopTools_ListOfShape LSE; // all edge splits
-    for ( it.Initialize(NewEdges); it.More(); it.Next()) {
+    for ( it.Initialize(myInter3d.NewEdges()); it.More(); it.Next()) {
 
       TopoDS_Vertex V1,V2;
       TopoDS_Edge EE = TopoDS::Edge(it.Key());
@@ -366,9 +362,11 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
       if (aListV.IsEmpty())
         continue;  // new edge does not intersect any other edge
 
-      // one face is Tool, the other is Shape:
-      if ( (myMapTools.Contains(aListF.First()) && myMapFaces.Contains(aListF.Last()) ) ||
-          ( myMapFaces.Contains(aListF.First()) && myMapTools.Contains(aListF.Last()) ) )
+      // Add end vertices to new edges only if 
+      // one face is Tool and the other is Shape
+      Standard_Boolean isTool1 = ! myMapFaces.Contains( aListF.First() );
+      Standard_Boolean isTool2 = ! myMapFaces.Contains( aListF.Last() );
+      if (isTool1 || isTool2)
       {
         TopExp::Vertices(EE,V1,V2);
 	Standard_Real Tol = Max (BRep_Tool::Tolerance( V1 ),
@@ -402,19 +400,10 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
           myAsDes->Add(EE,V2);
         }
       }
-#ifdef DRAW
-      if (AffichVertex) {
-        for(itl.Initialize(aListV);itl.More();itl.Next(), j++) {
-          sprintf(names,"v_%d",j);
-          cout << "donly " << names << endl;
-          DBRep::Set(names,itl.Value());
-        }
-      }
-#endif
 
+      // cut new edges
       Standard_Integer NbV=aListV.Extent() ;
       if (NbV>1 || (NbV==1 && V1.IsSame(V2)) ) {
-        // cut new edges
         TopTools_ListOfShape LNE;
         MakeEdges (EE,aListV, LNE);
         myImagesEdges.Bind(EE,LNE);
@@ -422,7 +411,9 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
       }
     }
 
+    // ==============
     // cut old edges
+    // ==============
     for ( it.Initialize(myMapFaces); it.More(); it.Next()) {
       for (exp.Init( it.Key(), TopAbs_EDGE); exp.More(); exp.Next()) {
         const TopoDS_Edge& EE = TopoDS::Edge( exp.Current() );
@@ -435,17 +426,32 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
 	LSE.Append( LNE );
       }
     }
+#ifdef PART_PERF
+    cout << "+++ Cut Edges" << endl;
+    aCron.Show( cout );
+    aCron.Reset();
+    aCron.Start();
+#endif
 
+    // process same domain section edges
     MergeEqualEdges( LSE );
     
     myDoneStep = TopAbs_EDGE;
     
+#ifdef PART_PERF
+    cout << "+++ MergeEqualEdges()" << endl;
+    aCron.Show( cout );
+    aCron.Reset();
+    aCron.Start();
+#endif
   }  //   if (myDoneStep > TopAbs_EDGE) 
 
   if (Limit == TopAbs_EDGE) {
     // add splits of old edges
     TopTools_ListIteratorOfListOfShape itNE;
     for (itl.Initialize( myListShapes );itl.More();itl.Next()) {
+      if (myMapTools.Contains( itl.Value() ))
+        continue; // skip tool faces
       for ( exp.Init( itl.Value(), TopAbs_EDGE ); exp.More(); exp.Next()) {
 	itNE.Initialize( myImagesEdges.Image( exp.Current() ));
 	for ( ; itNE.More(); itNE.Next())
@@ -461,9 +467,6 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
     return;
   }
   
-  // make faces interfering by section edges share the same splits
-  //ProcessSectionEdges( SectionEdgesAD );
-
   
   //-----------------------------------------------
   // split faces
@@ -480,6 +483,12 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
     }
     
     myDoneStep = TopAbs_FACE;
+#ifdef PART_PERF
+    cout << "+++ MakeFaces()" << endl;
+    aCron.Show( cout );
+    aCron.Reset();
+    aCron.Start();
+#endif
   }
   
   if (Limit == TopAbs_WIRE ||
@@ -496,203 +505,128 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
 
   
   //-----------------------------------------------
-  // split solids
+  // split and add solids and shells
   //-----------------------------------------------
-  
-  // solids must remains closed, so process them first
+
   Standard_Boolean makeSolids = (Limit == TopAbs_SHAPE ||
 				 Limit < TopAbs_SHELL);
+  for (itl.Initialize(myListShapes);itl.More();itl.Next())
+  {
+    const TopoDS_Shape & S = itl.Value();
+    if (S.ShapeType() > TopAbs_SHELL)
+      continue;
 
-  for (itl.Initialize(myListShapes);itl.More();itl.Next()) {
-    if (itl.Value().ShapeType() == TopAbs_SOLID) {
-      TopTools_ListOfShape NSL;
-      MakeShells (itl.Value() , NSL);
-      TopTools_ListIteratorOfListOfShape itS(NSL);
-      for ( ; itS.More(); itS.Next()) 
-        if (makeSolids) {
-          // make a solid from a shell
-          TopoDS_Solid Solid;
-          myBuilder.MakeSolid( Solid );
-          myBuilder.Add (Solid, itS.Value());
-          myBuilder.Add (myShape, Solid);
-        }
-	else 
-          myBuilder.Add (myShape, itS.Value());
-    }
+    TopTools_ListOfShape NSL; // new shape list
+    MakeShells (S , NSL);
+    if (makeSolids && S.ShapeType() == TopAbs_SOLID )
+      MakeSolids( S, NSL );
+    
+    TopTools_ListIteratorOfListOfShape itNSL (NSL);
+    for ( ; itNSL.More(); itNSL.Next()) 
+      myBuilder.Add (myShape, itNSL.Value());
   }
-      
-  //-----------------------------------------------
-  // split shells
-  //-----------------------------------------------
+#ifdef PART_PERF
+    cout << "+++ MakeShells()" << endl;
+    aCron.Show( cout );
+#endif
 
-  for (itl.Initialize(myListShapes);itl.More();itl.Next()) {
-    if (itl.Value().ShapeType() == TopAbs_SHELL) {
-      TopTools_ListOfShape NSL;
-      MakeShells (itl.Value() , NSL);
-      TopTools_ListIteratorOfListOfShape itS(NSL);
-      for ( ; itS.More(); itS.Next())
-	myBuilder.Add (myShape, itS.Value());
-    }
-  }
-      
   //-----------------------------------------------
   // add split faces
   //-----------------------------------------------
 
-  for (itl.Initialize(myListShapes);itl.More();itl.Next()) {
-    const TopoDS_Shape& S = itl.Value();
+  for (itl.Initialize(myListShapes);itl.More();itl.Next())
+  {
+    const TopoDS_Shape & S = itl.Value();
     if (S.ShapeType() != TopAbs_FACE ||
-	myMapTools.Contains( S ))
+        myMapTools.Contains( S ))
       continue; 
     TopoDS_Iterator itS( myImageShape.Image(S).First() );
     for (; itS.More(); itS.Next())
       if (! myAddedFacesMap.Contains( itS.Value() ))
-	myBuilder.Add (myShape, itS.Value());
+        myBuilder.Add (myShape, itS.Value());
   }
-    
+
   myDoneStep = makeSolids ? TopAbs_SOLID : TopAbs_SHELL;
   
 }
 
-
 //=======================================================================
-//function : Tri
-//purpose  : 
+//function : MakeSolids
+//purpose  : make solids out of Shells
 //=======================================================================
 
-static void Tri(const TopoDS_Edge&        E,
-		TopTools_SequenceOfShape& Seq)
+void Partition_Spliter::MakeSolids(const TopoDS_Shape &   theSolid,
+                                   TopTools_ListOfShape & theShellList)
 {
-  Standard_Boolean Invert   = Standard_True;
-  Standard_Integer NbPoints = Seq.Length();
-  Standard_Real    U1,U2;
-  TopoDS_Vertex    V1,V2;
+  // for a solid wrapping other shells or solids without intersection,
+  // it is necessary to find shells making holes in it
 
-  while (Invert) {
-    Invert = Standard_False;
-    for ( Standard_Integer i = 1; i < Seq.Length(); i++) {
-      
-      V1 = TopoDS::Vertex(Seq.Value(i));
-      V2 = TopoDS::Vertex(Seq.Value(i+1));
-      
-      V1.Orientation(TopAbs_INTERNAL);
-      V2.Orientation(TopAbs_INTERNAL);
-      
-      U1 = BRep_Tool::Parameter(V1,E);
-      U2 = BRep_Tool::Parameter(V2,E);
-      
-      if (IsEqual(U1,U2)) {
-	Seq.Remove(i);
-	i--;
-	continue;
-      }
-      if (U2 < U1) {
-	Seq.Exchange(i,i+1);
-	Invert = Standard_True;
-      }
-    }
+  TopTools_ListOfShape aNewSolids; // result
+  TopTools_ListOfShape aHoleShells;
+  TopoDS_Shape anInfinitePointShape;
+
+  Standard_Boolean isWrapping = myWrappingSolid.Contains( theSolid );
+  if (!isWrapping && !theShellList.IsEmpty())
+  {
+    // check if theSolid initially has internal shells
+    TopoDS_Iterator aShellExp (theSolid);
+    aShellExp.Next();
+    isWrapping = aShellExp.More();
   }
-}
+  
+  TopTools_ListIteratorOfListOfShape aShellIt(theShellList);
+  for ( ; aShellIt.More(); aShellIt.Next())
+  {
+    const TopoDS_Shape & aShell = aShellIt.Value();
 
-//=======================================================================
-//function : MakeEdges
-//purpose  : cut E by vertices VOnE, return list of new edges NE
-//=======================================================================
+    // check if a shell is a hole
+    if (isWrapping && IsInside (anInfinitePointShape, aShell))
+      aHoleShells.Append( aShell );
+    else
+    {
+      // make a solid from a shell
+      TopoDS_Solid Solid;
+      myBuilder.MakeSolid( Solid );
+      myBuilder.Add (Solid, aShell);
 
-void Partition_Spliter::MakeEdges (const TopoDS_Edge& E,
-                                   const TopTools_ListOfShape& VOnE,
-                                   TopTools_ListOfShape& NE   ) const
-{
-  TopoDS_Edge WE = E;
-  WE.Orientation(TopAbs_FORWARD);
-
-  TopTools_ListIteratorOfListOfShape itv(VOnE);
-  TopTools_SequenceOfShape SV;
-
-  Standard_Real    U1,U2, f, l;
-  TopoDS_Vertex    V1,V2,VF,VL;
-
-  BRep_Tool::Range(WE,f,l);
-  TopExp::Vertices(WE,VF,VL);
-
-  if (VOnE.Extent() < 3) { // do not rebuild not cut edge
-    if (( VF.IsSame( VOnE.First() ) && VL.IsSame( VOnE.Last() )) ||
-	VL.IsSame( VOnE.First() ) && VF.IsSame( VOnE.Last() )  ) {
-      NE.Append( E );
-      return;
+      aNewSolids.Append (Solid);
     }
   }
 
-  for (; itv.More(); itv.Next()) 
-    SV.Append(itv.Value());
+  // find outer a shell most close to each hole shell
+  TopTools_DataMapOfShapeShape aInOutMap;
+  for (aShellIt.Initialize( aHoleShells ); aShellIt.More(); aShellIt.Next())
+  {
+    const TopoDS_Shape & aHole = aShellIt.Value();
+    TopTools_ListIteratorOfListOfShape aSolisIt (aNewSolids);
+    for ( ; aSolisIt.More(); aSolisIt.Next())
+    {
+      const TopoDS_Shape & aSolid = aSolisIt.Value();
+      if (! IsInside( aHole, aSolid ))
+        continue;
 
-  Tri( WE, SV);
-
-  Standard_Integer iVer, NbVer = SV.Length();
-
-
-  //----------------------------------------------------------------
-  // Construction of the new edges .
-  //----------------------------------------------------------------
-
-  if (VF.IsSame(VL)) { // closed edge
-    if (NbVer==1) 
-      SV.Append( SV.First() );
-    else if (!SV.First().IsSame(SV.Last())) {
-      Standard_Boolean isFirst=0;
-      Standard_Real    minDU = 1.e10;
-      TopoDS_Vertex endV = Partition_Inter2d::FindEndVertex(VOnE, f,l, E, isFirst,minDU);
-      if (endV.IsSame(SV.First()))
-	SV.Append(endV);
-      else if (endV.IsSame(SV.Last()))
-	SV.Prepend(endV);
+      if ( aInOutMap.IsBound (aHole))
+      {
+        const TopoDS_Shape & aSolid2 = aInOutMap( aHole );
+        if ( IsInside( aSolid, aSolid2 ))
+        {
+          aInOutMap.UnBind( aHole );
+          aInOutMap.Bind ( aHole, aSolid );
+        }
+      }
       else
-	MESSAGE ("END VERTEX IS IN SEQUNCE MIDDLE");
+        aInOutMap.Bind ( aHole, aSolid );
     }
-    NbVer = SV.Length();
+
+    // add aHole to a solid
+    if (aInOutMap.IsBound( aHole ))
+      myBuilder.Add ( aInOutMap( aHole ), aHole );
   }
 
-  for (iVer=1; iVer < NbVer; iVer++) {
-    V1  = TopoDS::Vertex(SV(iVer));
-    V2  = TopoDS::Vertex(SV(iVer+1));
-    
-    TopoDS_Shape NewEdge = WE.EmptyCopied();
-    V1.Orientation(TopAbs_FORWARD);
-    myBuilder.Add  (NewEdge,V1);
-    V2.Orientation(TopAbs_REVERSED);
-    myBuilder.Add  (NewEdge,V2);
-    
-    if (iVer==1)
-      U1 = f;
-    else 	{
-      V1.Orientation(TopAbs_INTERNAL);
-      U1=BRep_Tool::Parameter(V1,WE);
-    }
-    if (iVer+1 == NbVer)
-      U2 = l;
-    else	{
-      V2.Orientation(TopAbs_INTERNAL);
-      U2=BRep_Tool::Parameter(V2,WE);
-    }
-    if (Abs(U1-U2) <= Precision::PConfusion()) {
-      MESSAGE( "MakeEdges(), EQUAL PARAMETERS OF DIFFERENT VERTICES");
-      continue;
-    }
-    TopoDS_Edge EE=TopoDS::Edge(NewEdge);
-    myBuilder.Range (EE,U1,U2);
-
-    TopoDS_Edge NEdge = TopoDS::Edge(NewEdge);
-    myBuilder.SameParameter(NEdge,Standard_False);
-
-    Standard_Real tol = 1.0e-2;
-    Standard_Boolean flag = BRep_Tool::SameParameter(NEdge);
-    if (!flag) {
-      BRepLib::SameParameter(NEdge,tol);
-    }
-    NE.Append(NEdge.Oriented(E.Orientation()));
-  }
+  theShellList.Clear();
+  theShellList.Append( aNewSolids );
 }
-
+ 
 //=======================================================================
 //function : FindFacesInside
 //purpose  : return compound of faces  of other shapes that are
@@ -707,6 +641,9 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
 						const Standard_Boolean CheckClosed,
 						const Standard_Boolean All)
 {
+  // ================================================
+  // check if internal faces have been already found
+  // ================================================
   TopExp_Explorer expl;
   if (myInternalFaces.IsBound( theShape ))
   {
@@ -728,6 +665,10 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
     return C;
   }
 
+  // ===================================
+  // get data for internal faces search
+  // ===================================
+
   // compound of split faces of theShape 
   const TopoDS_Shape& CSF = myImageShape.Image(theShape).First();
 
@@ -738,7 +679,7 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
 
   // MSE filling: map of new section edges of CSF
   for (expl.Init(CSF,TopAbs_EDGE); expl.More(); expl.Next()) {
-    TopoDS_Shape resE = expl.Current() ;
+    const TopoDS_Shape & resE = expl.Current() ;
     if (myNewSection.Contains( resE )) // only new edges
       MSE.Add(resE);
   }
@@ -774,7 +715,28 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
     }
   }
 
+  // add tool faces having section edges on faces of theShape to MFP and DMSEFP;
+  // such tool faces need not to be reconstructed and so they are not in myListShapes
+  for (itm.Initialize(myMapTools); itm.More(); itm.Next())
+  {
+    const TopoDS_Shape & aToolFace = itm.Key();
+    if (myMapFaces.Contains( aToolFace ))
+      continue;
+    MFP.Add(aToolFace);
+    for (expl.Init( aToolFace, TopAbs_EDGE ); expl.More(); expl.Next()) {
+      TopoDS_Shape se = expl.Current();
+      if ( MSE.Contains( se )) {// section edge
+        if (!DMSEFP.IsBound( se )) 
+          DMSEFP.Bind( se, EmptyL );
+        DMSEFP( se ).Append( aToolFace );
+      }
+    }
+  }
+  
+
+  // ===========================
   // find faces inside theShape
+  // ===========================
 
   Standard_Boolean skipAlreadyAdded = Standard_False;
   Standard_Boolean GoodOri, inside;
@@ -789,7 +751,7 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
     const TopoDS_Edge& E = TopoDS::Edge (Mapit.Key());
     // an original edge of which E is a split
     const TopoDS_Edge& OrigE = TopoDS::Edge ( myImagesEdges.Root( E ));
-    // is OrigE itself splits a face
+    // does OrigE itself splits a face
     Standard_Boolean isSectionE = myInter3d.IsSectionEdge ( OrigE );
 
     // split faces of other shapes sharing E
@@ -813,7 +775,9 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
       // find another face which originates from the same face as aFace1:
       // usually aFace2 is internal if aFace1 is not and vice versa
 
-      const TopoDS_Shape& anOrigFace = myImagesFaces.Root(aFace1);
+      TopoDS_Shape anOrigFace = aFace1;
+      if (myImagesFaces.IsImage(aFace1))
+        anOrigFace = myImagesFaces.Root(aFace1);
       TopoDS_Shape aFace2;
       if ( !isSectionE ) {
         while (itl.More()) {
@@ -863,14 +827,24 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
 
       // keep one of found faces
 
-       //face of CSF sharing E
+      //face of CSF sharing E
       const TopoDS_Shape& aShapeFace = sameDom1 ? FL.Last() : FL.First();
       // analyse aFace1 state
       inside = Partition_Loop3d::IsInside (E, TopoDS::Face(aShapeFace), aFace1,
 					   1, dot, GoodOri);
+      if (inside && isSectionE)
+      {
+        // aFace1 must be tested with both adjacent faces of CSF
+        const TopoDS_Shape& aShapeFace2 = sameDom1 ? FL.First() : FL.Last();
+        if (aShapeFace2 != aShapeFace)
+          inside = Partition_Loop3d::IsInside (E, TopoDS::Face(aShapeFace2), aFace1,
+                                               1, dot, GoodOri);
+      }
+
       // store internal face
       if (inside)
-	KeepFaces.Append(aFace1);
+        KeepFaces.Append(aFace1);
+
       else if (!aFace2.IsNull())
       {
         if (dot + Precision::Angular() >= 1.0)
@@ -881,12 +855,14 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
           LSF.Append( aFace2 );
         }
         else
-	  KeepFaces.Append(aFace2);
+          KeepFaces.Append(aFace2);
       }
     }
   }
 
+  // ===================================================
   // add not distributed faces connected with KeepFaces
+  // ===================================================
 
   // ultimate list of internal faces
   TopTools_ListOfShape KeptFaces;
@@ -927,10 +903,74 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
     }
   }
 
+  // ===============================================================
+  // here MFP contains faces outer of theShape and those of shapes
+  // which do not interfere with theShape at all and between which
+  // there may be those wrapped by theShape and whose faces may be
+  // needed to be returned as well
+  // ===============================================================
+
+  Standard_Boolean isSolid = (theShape.ShapeType() == TopAbs_SOLID);
+  if (All || isSolid)  // All is for sub-result removal
+  {
+    for ( itm.Initialize( MFP ); itm.More(); itm.Next() ) {
+      TopoDS_Shape aFace = itm.Key();
+
+      // find a shape aFace originates from
+      TopoDS_Shape anOrigShape = GetOriginalShape( aFace );
+
+      // find out if all faces of anOrigShape are not in MFP
+      // and by the way remove them from MFP
+      Standard_Boolean isAllOut = Standard_True;
+      TopoDS_Shape aSplitFaces = anOrigShape;
+      if (myImageShape.HasImage(anOrigShape))
+        aSplitFaces = myImageShape.Image(anOrigShape).First();
+
+      TopTools_ListOfShape aSplitFaceL;
+      for (expl.Init( aSplitFaces, TopAbs_FACE ); expl.More(); expl.Next())
+      {
+        const TopoDS_Shape & aSpFace = expl.Current();
+        // a tool face which become object has image but the whole tool shape has not
+        if (myImageShape.HasImage( aSpFace ))
+        {
+          TopExp_Explorer exF (myImageShape.Image( aSpFace ).First(), TopAbs_FACE );
+          for ( ; exF.More(); exF.Next() )
+          {
+            aSplitFaceL.Append( exF.Current() );
+            if ( ! MFP.Remove( exF.Current() ))
+              isAllOut = Standard_False;
+          }
+        }
+        else
+        {
+          aSplitFaceL.Append( aSpFace );
+          if ( ! MFP.Remove( aSpFace ))
+            isAllOut = Standard_False;
+        }
+      }
+      itm.Initialize( MFP );
+      if ( !isAllOut )
+        continue;
+
+      // classify anOrigShape against theShape
+      if (IsInside (anOrigShape, theShape))
+      {
+        if (isSolid && myClosedShapes.Contains( anOrigShape ))
+          // to make a special care at solid reconstruction
+          myWrappingSolid.Add ( theShape );
+
+        // keep faces of an internal shape anOrigShape
+        KeptFaces.Append( aSplitFaceL );
+      }
+    }
+  }
+
+  // ====================================================
   // check if kept faces form a shell without free edges
+  // ====================================================
 
   DMEF.Clear();  // edge - kept faces
-  MFP.Clear(); // wrong faces
+  MFP.Clear(); // reuse it for wrong faces
   if (CheckClosed) {
     for (itl.Initialize(KeptFaces); itl.More(); itl.Next() ) 
       TopExp::MapShapesAndAncestors(itl.Value(), TopAbs_EDGE, TopAbs_FACE, DMEF);
@@ -941,7 +981,8 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
       isClosed = Standard_True;
       for (i=1;  isClosed && i<=nb;  ++i) {
         const TopoDS_Shape& E = DMEF.FindKey( i );
-        if (! MSE.Contains( E ))
+        if (! BRep_Tool::Degenerated( TopoDS::Edge( E )) &&
+            ! MSE.Contains( E ))
           isClosed = ( DMEF(i).Extent() != 1 );
       }
       if (!isClosed) {
@@ -962,7 +1003,10 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
     }
   }
 
-  // a result compound
+  // ==============
+  // make a result
+  // ==============
+
   TopoDS_Compound C;
   // compound of removed internal faces
   TopoDS_Compound CNotCl;
@@ -997,77 +1041,35 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
 void Partition_Spliter::MakeShells(const TopoDS_Shape& S,
                                    TopTools_ListOfShape& NS)
 {
-  // check if S is closed shape
-  Standard_Boolean isClosed = Standard_True;
-
-  TopTools_IndexedDataMapOfShapeListOfShape MEF;
-  Standard_Integer i;
-  if (S.ShapeType() != TopAbs_SOLID) {
-    TopExp::MapShapesAndAncestors(S, TopAbs_EDGE, TopAbs_FACE, MEF);
-    for (i=1;  isClosed && i<=MEF.Extent();  ++i) 
-      isClosed = ( MEF(i).Extent() != 1 );
-  }
   Partition_Loop3d ShellMaker;
   // get compound of split faces of S
   const TopoDS_Shape& FacesComp = myImageShape.Image(S).First();
   ShellMaker.AddConstFaces( FacesComp );
-  // split faces inside S
-  if (isClosed) {
+  // add split faces inside S
+  if (myClosedShapes.Contains( S )) {
     TopoDS_Shape InternalFacesComp = FindFacesInside(S, Standard_True);
     ShellMaker.AddSectionFaces( InternalFacesComp );
-// } else { // a shell may become closed
-//     ShellMaker.AddConstFaces( InternalFacesComp );
   }
   
   NS = ShellMaker.MakeShells( myAddedFacesMap );
 
-  // 1. Add faces added to new shell to myAddedFacesMap:
+  // Add faces added to new shell to myAddedFacesMap:
   // avoid rebuilding twice commont part of 2 solids.
-  // 2. Check shell closeness (DEBUG)
   TopTools_ListIteratorOfListOfShape itS(NS);
   while ( itS.More()) {
-#ifdef DEB
-    Standard_Boolean checkCloseness = Standard_True;
-#endif
     TopExp_Explorer expF (itS.Value(), TopAbs_FACE);
-    for (; expF.More(); expF.Next()) {
-      
+    for (; expF.More(); expF.Next())
       myAddedFacesMap.Add (expF.Current());
-      
-#ifdef DEB
-      if (checkCloseness &&
-	  ! myInter3d.HasSameDomainF( myImagesFaces.Root(expF.Current()) ))
-	checkCloseness = Standard_False;
-#endif
-    }
     
-#ifdef DEB
-    if (checkCloseness) {
-      // if S is closed, a new shell must be closed too;
-      if (isClosed) {
-	// check that a new shell is closed
-	MEF.Clear();
-	TopExp::MapShapesAndAncestors(itS.Value(), TopAbs_EDGE, TopAbs_FACE, MEF);
-	for (i=1;  isClosed && i<=MEF.Extent();  ++i) 
-	  isClosed = ( MEF(i).Extent() != 1 );
-	if (!isClosed) { // remove not closed shell
-	  MESSAGE (" NOT CLOSED SHELL " );
-	  //NS.Remove( itS );
-	  itS.Next();
-	  continue;
-	}
-      }
-    }
-#endif
     itS.Next();
-  } // loop on new shells
+  }
 }
 
 //=======================================================================
 //function : findEqual
-//purpose  : compare edges form EL1 against edges from EL2,
-//           Result is in EMM binding edge form EL1 to list of equal edges
-//           Edges are considered equall only if they have same vertices
+//purpose  : compare edges of EL1 against edges of EL2,
+//           Result is in EMM binding EL1 edges to list of equal edges.
+//           Edges are considered equall only if they have same vertices.
 //           <addSame>==True makes consider same edges as equal
 //           Put in <AllEqMap> all equal edges
 //=======================================================================
@@ -1111,7 +1113,7 @@ static void findEqual (const TopTools_ListOfShape& EL1,
       itE2.Initialize( VEM(V1) );
     for (; itE2.More(); itE2.Next()) {
       const TopoDS_Edge& E2 = TopoDS::Edge( itE2.Value());
-      if (BRep_Tool::Degenerated( E2 ))
+      if (BRep_Tool::Degenerated( E2 ) || AllEqMap.Contains (E2))
         continue;
 
       if (E1.IsSame(E2)) {
@@ -1207,7 +1209,7 @@ TopoDS_Shape Partition_Spliter::MakeFaces (const TopoDS_Shape& S)
       TopTools_IndexedMapOfShape EM;
       TopExp::MapShapes( F, TopAbs_EDGE, EM);
 
-      TopTools_MapOfShape AddedEqualM;
+      TopTools_MapOfShape AddedEqualM, EqualSeamM;
       Standard_Boolean needRebuild = Standard_False;
 
       // add splits to loops
@@ -1230,8 +1232,11 @@ TopoDS_Shape Partition_Spliter::MakeFaces (const TopoDS_Shape& S)
 	  Standard_Boolean isSameE = NE.IsSame ( E );
 	  
 	  if ( isNewE || isSectionE || !isSameE) {
-	    if (AddedEqualM.Contains( NE ))
-	      continue;
+	    if (AddedEqualM.Contains( NE )) {
+              // a seam must be twice in a loop
+              if (!BRep_Tool::IsClosed( E, F ) || !EqualSeamM.Add( NE ))
+                continue;
+            }
 
 	    if (isNewE) {
 	      if (isSectionE) {
@@ -1266,8 +1271,8 @@ TopoDS_Shape Partition_Spliter::MakeFaces (const TopoDS_Shape& S)
 		}
 	      }
 	    }
-	    if (myEqualEdges.Contains( NE ) && !AddedEqualM.Add( NE ))
-	      continue;
+	    if (myEqualEdges.Contains( NE ))
+              AddedEqualM.Add( NE );
 
 	    needRebuild = Standard_True;
 	  }
@@ -1370,6 +1375,157 @@ TopoDS_Shape Partition_Spliter::MakeFaces (const TopoDS_Shape& S)
   return C;
 }
 
+
+//=======================================================================
+//function : Tri
+//purpose  : 
+//=======================================================================
+
+static void Tri(const TopoDS_Edge&        E,
+		TopTools_SequenceOfShape& Seq,
+                const Partition_Inter3d & theInter3d)
+{
+  Standard_Boolean Invert   = Standard_True;
+  Standard_Real    U1,U2;
+  TopoDS_Vertex    V1,V2;
+
+  while (Invert) {
+    Invert = Standard_False;
+    for ( Standard_Integer i = 1; i < Seq.Length(); i++) {
+      
+      V1 = TopoDS::Vertex(Seq.Value(i));
+      V2 = TopoDS::Vertex(Seq.Value(i+1));
+      
+      V1.Orientation(TopAbs_INTERNAL);
+      V2.Orientation(TopAbs_INTERNAL);
+      
+      U1 = BRep_Tool::Parameter(V1,E);
+      U2 = BRep_Tool::Parameter(V2,E);
+      
+      if (IsEqual(U1,U2)) {
+        if (theInter3d.ReplaceSameDomainV( V1, E ).IsSame( V1 ))
+          Seq.Remove(i+1); // remove V2
+        else
+          Seq.Remove(i);
+	i--;
+	continue;
+      }
+      if (U2 < U1) {
+	Seq.Exchange(i,i+1);
+	Invert = Standard_True;
+      }
+    }
+  }
+}
+
+//=======================================================================
+//function : MakeEdges
+//purpose  : cut E by vertices VOnE, return list of new edges NE
+//=======================================================================
+
+void Partition_Spliter::MakeEdges (const TopoDS_Edge& E,
+                                   const TopTools_ListOfShape& VOnE,
+                                   TopTools_ListOfShape& NE   ) const
+{
+  TopoDS_Edge WE = E;
+  WE.Orientation(TopAbs_FORWARD);
+
+  Standard_Real    U1,U2, f, l;
+  TopoDS_Vertex    V1,V2,VF,VL;
+
+  BRep_Tool::Range(WE,f,l);
+  TopExp::Vertices(WE,VF,VL);
+
+  if (VOnE.Extent() < 3) { // do not rebuild not cut edge
+    if (( VF.IsSame( VOnE.First() ) && VL.IsSame( VOnE.Last() )) ||
+	VL.IsSame( VOnE.First() ) && VF.IsSame( VOnE.Last() )  ) {
+      NE.Append( E );
+      return;
+    }
+  }
+
+  TopTools_SequenceOfShape SV;
+  TopTools_ListIteratorOfListOfShape itv(VOnE);
+  TopTools_MapOfOrientedShape VM( VOnE.Extent() );
+  for (; itv.More(); itv.Next())
+    if ( VM.Add( itv.Value() ))
+      SV.Append(itv.Value());
+
+  Tri( WE, SV, myInter3d );
+
+  if (SV.Length() < 3) { // do not rebuild not cut edge
+    if (( VF.IsSame( SV.First() ) && VL.IsSame( SV.Last() )) ||
+	VL.IsSame( SV.First() ) && VF.IsSame( SV.Last() )  ) {
+      NE.Append( E );
+      return;
+    }
+  }
+
+  Standard_Integer iVer, NbVer = SV.Length();
+
+
+  //----------------------------------------------------------------
+  // Construction of the new edges .
+  //----------------------------------------------------------------
+
+  if (VF.IsSame(VL)) { // closed edge
+    if (NbVer==1) 
+      SV.Append( SV.First() );
+    else if (!SV.First().IsSame(SV.Last())) {
+      Standard_Boolean isFirst=0;
+      Standard_Real    minDU = 1.e10;
+      TopoDS_Vertex endV = Partition_Inter2d::FindEndVertex(VOnE, f,l, E, isFirst,minDU);
+      if (endV.IsSame(SV.First()))
+	SV.Append(endV);
+      else if (endV.IsSame(SV.Last()))
+	SV.Prepend(endV);
+      else
+	MESSAGE ("END VERTEX IS IN SEQUNCE MIDDLE");
+    }
+    NbVer = SV.Length();
+  }
+
+  for (iVer=1; iVer < NbVer; iVer++) {
+    V1  = TopoDS::Vertex(SV(iVer));
+    V2  = TopoDS::Vertex(SV(iVer+1));
+    
+    TopoDS_Shape NewEdge = WE.EmptyCopied();
+    V1.Orientation(TopAbs_FORWARD);
+    myBuilder.Add  (NewEdge,V1);
+    V2.Orientation(TopAbs_REVERSED);
+    myBuilder.Add  (NewEdge,V2);
+    
+    if (iVer==1)
+      U1 = f;
+    else 	{
+      V1.Orientation(TopAbs_INTERNAL);
+      U1=BRep_Tool::Parameter(V1,WE);
+    }
+    if (iVer+1 == NbVer)
+      U2 = l;
+    else	{
+      V2.Orientation(TopAbs_INTERNAL);
+      U2=BRep_Tool::Parameter(V2,WE);
+    }
+    if (Abs(U1-U2) <= Precision::PConfusion()) {
+      MESSAGE( "MakeEdges(), EQUAL PARAMETERS OF DIFFERENT VERTICES");
+      continue;
+    }
+    TopoDS_Edge EE=TopoDS::Edge(NewEdge);
+    myBuilder.Range (EE,U1,U2);
+
+    TopoDS_Edge NEdge = TopoDS::Edge(NewEdge);
+    myBuilder.SameParameter(NEdge,Standard_False);
+
+    Standard_Real tol = 1.0e-2;
+    Standard_Boolean flag = BRep_Tool::SameParameter(NEdge);
+    if (!flag) {
+      BRepLib::SameParameter(NEdge,tol);
+    }
+    NE.Append(NEdge.Oriented(E.Orientation()));
+  }
+}
+
 //=======================================================================
 //function : MergeEqualEdges
 //purpose  : find equal edges,  choose  ones  to  keep and make
@@ -1388,6 +1544,7 @@ void Partition_Spliter::MergeEqualEdges (const TopTools_ListOfShape& LSE)
   for ( ; itM.More(); itM.Next()) {
     EEL = itM.Value();
     EEL.Append( itM.Key() );
+
     // choose an edge to keep, section edges have priority
     TopoDS_Edge EKeep;
     TopTools_ListIteratorOfListOfShape itEE (EEL);
@@ -1398,22 +1555,30 @@ void Partition_Spliter::MergeEqualEdges (const TopTools_ListOfShape& LSE)
         break;
     }
 
+    // update edge images and build pcurves
     Standard_Real f,l, tol;
     for (itEE.Initialize (EEL); itEE.More(); itEE.Next()) {
       const TopoDS_Edge& E = TopoDS::Edge( itEE.Value() );
       if ( E.IsSame( EKeep )) 
         continue;
+
+      // 1. build pcurves of the kept edge on faces where replaced edges exist
       const TopoDS_Edge& EReplOrig = TopoDS::Edge( myImagesEdges.Root( E ));
       TopTools_ListOfShape FL;
-      if (myInter3d.IsSectionEdge( EReplOrig ))
-	FL = myInter3d.SectionEdgeFaces ( EReplOrig );
-      else
-	FL = myAsDes->Ascendant( EReplOrig );
-	
+      FL = myAsDes->Ascendant( EReplOrig );
+      Standard_Integer iFace, iFirstSectionFace = FL.Extent() + 1;
+      // add faces where the replaced edge is a section edge
+      if (myInter3d.IsSectionEdge( EReplOrig )) {
+        TopTools_ListIteratorOfListOfShape seIt;
+        seIt.Initialize( myInter3d.SectionEdgeFaces ( EReplOrig ));
+        for ( ; seIt.More(); seIt.Next())
+          FL.Append( seIt.Value() );
+      }
+      // loop on faces
       TopTools_ListIteratorOfListOfShape itF (FL);
-      for ( ; itF.More(); itF.Next()) {
+      for ( iFace = 1 ; itF.More(); itF.Next(), ++iFace ) {
         const TopoDS_Face& F = TopoDS::Face( itF.Value());
-        // build pcurves
+
         Handle(Geom2d_Curve) pc = BRep_Tool::CurveOnSurface( EKeep, F, f,l);
         if (pc.IsNull()) {
           Handle(Geom_Curve) C3d = BRep_Tool::Curve( EKeep, f, l);
@@ -1424,12 +1589,56 @@ void Partition_Spliter::MergeEqualEdges (const TopTools_ListOfShape& LSE)
           }
           myBuilder.UpdateEdge( EKeep, pc, F, tol);
         }
-      }
-      // replace edges in faces
-      if (!myImagesEdges.HasImage( E ))
-	myImagesEdges.Bind( E, EKeep );
-    }
-  }
+
+        if (iFace >= iFirstSectionFace ||
+            !BRep_Tool::IsClosed( EReplOrig, F ))
+          continue;
+
+        // build the second pcurve for a seam
+        TopoDS_Vertex V = TopExp::FirstVertex( EKeep );
+        Standard_Real Ukeep = BRep_Tool::Parameter( V, EKeep );
+        Standard_Real Urepl = BRep_Tool::Parameter( V, E );
+
+        TopoDS_Edge EReplRev = E;
+        EReplRev.Reverse();
+        Handle(Geom2d_Curve) pcRepl1 = BRep_Tool::CurveOnSurface( E, F, f,l);
+        Handle(Geom2d_Curve) pcRepl2 = BRep_Tool::CurveOnSurface( EReplRev, F, f,l);
+
+        gp_Pnt2d p1r, p2r, pk;
+        p1r = pcRepl1->Value( Urepl );
+        p2r = pcRepl2->Value( Urepl );
+        pk  = pc->Value( Ukeep );
+
+        // suppose that pk is equal to either p1r or p2r
+        Standard_Boolean isUPeriod =
+          ( Abs( p1r.X() - p2r.X() ) > Abs( p1r.Y() - p2r.Y() ));
+        Standard_Boolean is1Equal;
+        if (isUPeriod)
+          is1Equal = ( Abs( p1r.X() - pk.X() ) < Abs( p2r.X() - pk.X() ));
+        else
+          is1Equal = ( Abs( p1r.Y() - pk.Y() ) < Abs( p2r.Y() - pk.Y() ));
+
+        Handle(Geom2d_Curve) pc2 = Handle(Geom2d_Curve)::DownCast
+          ( pc->Translated( pk, is1Equal ? p2r : p1r ) );
+
+        if (E.Orientation() == TopAbs_REVERSED)
+          is1Equal = !is1Equal;
+
+        if (is1Equal)
+          myBuilder.UpdateEdge( EKeep, pc, pc2, F, tol);
+        else
+          myBuilder.UpdateEdge( EKeep, pc2, pc, F, tol);
+
+      } // loop on a Faces where a replaced edge exists
+
+
+      // 2. update edge images according to replacement
+      if (myImagesEdges.HasImage( E ))
+        myImagesEdges.Remove( E );
+      myImagesEdges.Bind( E, EKeep );
+
+    } // loop on a list of equal edges EEL
+  } // loop on a map of equal edges EEM
 }
 
 //=======================================================================
@@ -1454,24 +1663,46 @@ void Partition_Spliter::KeepShapesInside (const TopoDS_Shape& S)
 
   // build map of internal faces
   TopTools_IndexedMapOfShape MIF;
-
-  // if S is not a tool, make sure that split faces of S are in MIF
-  if (!isTool)
-    TopExp::MapShapes( myImageShape.Image(S).First(), TopAbs_FACE, MIF);
-
-  TopoDS_Shape InsFacesComp = FindFacesInside( S, Standard_False, Standard_True);
-  TopExp::MapShapes( InsFacesComp, TopAbs_FACE, MIF );
-
+  TopoDS_Shape IntFacesComp = FindFacesInside( S, Standard_False, Standard_True);
+  TopExp::MapShapes( IntFacesComp, TopAbs_FACE, MIF );
 
   TopoDS_Compound C;
   myBuilder.MakeCompound(C);
 
-  // leave in the result only those shapes having a face in MIF
-  for (it.Initialize( myShape ); it.More(); it.Next()) {
+  TopAbs_ShapeEnum anInternalShapeType = TopAbs_SHAPE;
+  if (!MIF.IsEmpty())
+  {
+    // leave in the result only those shapes having a face in MIF
+    for (it.Initialize( myShape ); it.More(); it.Next()) {
+      const TopoDS_Shape & aResShape = it.Value();
+      TopExp_Explorer expResF( aResShape, TopAbs_FACE );
+      for (; expResF.More(); expResF.Next()) {
+        if ( MIF.Contains( expResF.Current())) {
+          myBuilder.Add( C, aResShape );
+          if (aResShape.ShapeType() < anInternalShapeType)
+            anInternalShapeType = aResShape.ShapeType();
+          break;
+        }
+      }
+    }
+  }
 
-    TopExp_Explorer expResF( it.Value(), TopAbs_FACE );
-    for (; expResF.More(); expResF.Next()) {
-      if ( MIF.Contains( expResF.Current())) {
+  // may be S was not split by internal faces then it is missing
+  // in myShape, add it
+  if (!isTool &&
+      (anInternalShapeType > TopAbs_SOLID || S.ShapeType() > TopAbs_SOLID))
+  {
+    TopTools_IndexedMapOfShape MSF; // map of split faces of S
+    TopExp::MapShapes( myImageShape.Image(S).First(), TopAbs_FACE, MSF);
+
+    // find a shape having all faces in MSF
+    for (it.Initialize( myShape ); it.More(); it.Next()) {
+      TopExp_Explorer expResF( it.Value(), TopAbs_FACE );
+      for (; expResF.More(); expResF.Next()) {
+        if (! MSF.Contains( expResF.Current())) 
+          break;
+      }
+      if (! expResF.More()) {
         myBuilder.Add( C, it.Value() );
         break;
       }
@@ -1500,9 +1731,9 @@ void Partition_Spliter::RemoveShapesInside (const TopoDS_Shape& S)
     if (!isTool) return;
   }
 
-  TopoDS_Shape InsFacesComp = FindFacesInside( S, Standard_False, Standard_True);
+  TopoDS_Shape IntFacesComp = FindFacesInside( S, Standard_False, Standard_True);
   TopTools_IndexedMapOfShape MIF; // map of internal faces
-  TopExp::MapShapes( InsFacesComp, TopAbs_FACE, MIF);
+  TopExp::MapShapes( IntFacesComp, TopAbs_FACE, MIF);
 
   if (MIF.IsEmpty()) return;
 
@@ -1637,7 +1868,11 @@ Standard_Boolean Partition_Spliter::CheckTool(const TopoDS_Shape& S)
     Standard_Boolean hasSectionE = myInter3d.HasSectionEdge( F );
     Standard_Boolean hasNewE     = myAsDes->HasDescendant( F );
     if (!hasSectionE && !hasNewE)
-      continue; // F intersects nothing
+    {
+      // F intersects nothing
+      myBuilder.Add( C, F );
+      continue;
+    }
     
     // make an image for F
     
@@ -1682,4 +1917,229 @@ Standard_Boolean Partition_Spliter::CheckTool(const TopoDS_Shape& S)
     myImageShape.Bind (S, C);
 
   return isTool;
+}
+
+//=======================================================================
+//function : IsInside
+//purpose  : Return True if the first vertex of S1 inside S2.
+//           If S1.IsNull(), check infinite point against S2.
+//=======================================================================
+
+Standard_Boolean Partition_Spliter::IsInside (const TopoDS_Shape& theS1,
+                                              const TopoDS_Shape& theS2)
+{
+  BRepClass3d_SolidClassifier aClassifier( theS2 );
+
+  TopExp_Explorer expl( theS1, TopAbs_VERTEX );
+  if (!expl.More())
+    aClassifier.PerformInfinitePoint( ::RealSmall());
+  else
+  {
+    const TopoDS_Vertex & aVertex = TopoDS::Vertex( expl.Current() );
+    aClassifier.Perform (BRep_Tool::Pnt( aVertex ),
+                         BRep_Tool::Tolerance( aVertex ));
+  }
+
+  return ( aClassifier.State() == TopAbs_IN );
+}
+
+//=======================================================================
+//function : GetOriginalShape
+//purpose  : Return the  shape  aShape  originates from. aShape
+//           should be a face or more complex result shape
+//=======================================================================
+
+TopoDS_Shape Partition_Spliter::GetOriginalShape(const TopoDS_Shape& theShape) const
+{
+  TopoDS_Shape anOrigShape;
+
+  TopExp_Explorer expl( theShape, TopAbs_FACE);
+  if (expl.More())
+  {
+
+    TopoDS_Shape aFace = expl.Current();
+    if (myImagesFaces.IsImage( aFace ))
+      aFace = myImagesFaces.Root( aFace );
+    anOrigShape = myFaceShapeMap.Find( aFace );
+  }
+  return anOrigShape;
+}
+
+//=======================================================================
+//function : FindToolsToReconstruct
+//purpose  : find and store  as  objects  tools which interfere
+//           with  solids   or   are   inside   solids  without
+//           an interference
+//=======================================================================
+
+void Partition_Spliter::FindToolsToReconstruct()
+{
+  if (myMapTools.IsEmpty())
+    return;
+
+  Standard_Integer nbFoundTools = 0;
+
+  // build edge - face map in order to detect interference with section edges
+  TopTools_IndexedDataMapOfShapeListOfShape EFM;
+  TopTools_MapIteratorOfMapOfShape aMapIt;
+  for (aMapIt.Initialize(myMapTools); aMapIt.More(); aMapIt.Next())
+    TopExp::MapShapesAndAncestors( aMapIt.Key(), TopAbs_EDGE, TopAbs_FACE, EFM);
+  for (aMapIt.Initialize(myMapFaces); aMapIt.More(); aMapIt.Next())
+    TopExp::MapShapesAndAncestors( aMapIt.Key(), TopAbs_EDGE, TopAbs_FACE, EFM);
+
+  TopTools_MapOfShape aCurrentSolids, aCheckedShapes;
+
+  // faces cut by new edges
+  TopTools_MapOfShape & aSectionFaces = myInter3d.TouchedFaces();
+
+  // keep solids interfering with each other in aCurrentSolids map
+  // and add tool faces intersecting solids as object shapes
+
+  TopTools_ListIteratorOfListOfShape itS, itF, itCF, itE;
+  for (itS.Initialize( myListShapes ); itS.More(); itS.Next()) {
+    TopExp_Explorer expSo (itS.Value(), TopAbs_SOLID);
+    for (; expSo.More(); expSo.Next()) {
+
+      // check if a solid has been already processed
+      const TopoDS_Shape & aSo = expSo.Current();
+      if (!aCheckedShapes.Add( aSo ))
+        continue;
+      aCurrentSolids.Add( aSo );
+
+      // faces to check
+      TopTools_ListOfShape aFacesToCheck;
+      TopExp_Explorer exp( aSo, TopAbs_FACE );
+      for ( ; exp.More(); exp.Next())
+        aFacesToCheck.Append ( exp.Current());
+
+      // add other shapes interefering with a solid.
+      // iterate faces to check while appending new ones
+      for (itCF.Initialize (aFacesToCheck) ; itCF.More(); itCF.Next())
+      {
+        const TopoDS_Shape& aCheckFace = itCF.Value();
+//         if (!aCheckedShapes.Add( aCheckFace ))
+//           continue;
+
+        // find faces interfering with aCheckFace
+        TopTools_ListOfShape anIntFaces;
+
+        // ** 1. faces intersecting aCheckFace with creation of new edges on it
+        if ( myAsDes->HasDescendant( aCheckFace ))
+        {
+          // new edges on aCheckFace
+          const TopTools_ListOfShape& NEL = myAsDes->Descendant( aCheckFace );
+          for (itE.Initialize( NEL); itE.More(); itE.Next())
+          {
+            const TopoDS_Shape & aNewEdge = itE.Value();
+            if (!aCheckedShapes.Add( aNewEdge ))
+              continue;
+
+            // faces interfering by aNewEdge
+            itF.Initialize (myAsDes->Ascendant( aNewEdge ));
+            for (; itF.More(); itF.Next())
+              if (aCheckFace != itF.Value())
+                anIntFaces.Append( itF.Value() );
+
+            // ** 2. faces having section edge aNewEdge on aFacesToCheck
+            if (EFM.Contains( aNewEdge))
+            {
+              itF.Initialize ( EFM.FindFromKey (itE.Value()));
+              for (; itF.More(); itF.Next())
+                if (aCheckFace != itF.Value())
+                  anIntFaces.Append( itF.Value() );
+            }
+          }
+        }
+
+        // ** 3. faces cut by edges of aCheckFace
+        TopExp_Explorer expE (aCheckFace, TopAbs_EDGE);
+        for ( ; expE.More(); expE.Next())
+        {
+          const TopoDS_Shape & aCheckEdge = expE.Current();
+          if (aCheckedShapes.Add( aCheckEdge ) &&
+              myInter3d.IsSectionEdge( TopoDS::Edge( aCheckEdge )))
+          {
+            itF.Initialize( myInter3d.SectionEdgeFaces( TopoDS::Edge( aCheckEdge )));
+            for (; itF.More(); itF.Next()) 
+              if (aCheckFace != itF.Value())
+                anIntFaces.Append( itF.Value() );
+          }
+        }
+
+        // process faces interfering with aCheckFace and shapes they
+        // belong to
+        for (itF.Initialize (anIntFaces); itF.More(); itF.Next())
+        {
+          const TopoDS_Shape & F = itF.Value();
+          if (! aCheckedShapes.Add( F ))
+            continue;
+
+          Standard_Boolean isTool = myMapTools.Contains( F );
+          if (isTool && 
+              myFaceShapeMap( aCheckFace ).ShapeType() == TopAbs_SOLID )
+          {
+            // a tool interfering with a solid
+            if (aSectionFaces.Contains( F ))
+              AddShape( F );
+            ++ nbFoundTools;
+            if (nbFoundTools == myMapTools.Extent())
+              return;
+          }
+
+          const TopoDS_Shape & S = myFaceShapeMap( F );
+          if (aCheckedShapes.Add( S ))
+          {
+            // a new shape interefering with aCurrentSolids is found
+            if (!isTool && S.ShapeType() == TopAbs_SOLID)
+              aCurrentSolids.Add ( S );
+            // add faces to aFacesToCheck list
+            for ( exp.Init( S, TopAbs_FACE ); exp.More(); exp.Next())
+              aFacesToCheck.Append ( exp.Current() );
+          }
+        }
+      } // loop on aFacesToCheck
+
+      // Here aCurrentSolids contains all solids interfering with each other.
+      // aCheckedShapes contains all faces belonging to shapes included
+      // in or interfering with aCurrentSolids or previously checked solids.
+      // Test if tool faces that do not interefere with other shapes are
+      // wrapped by any of aCurrentSolids
+
+      TopTools_MapIteratorOfMapOfShape aSolidIt (aCurrentSolids);
+      for ( ; aSolidIt.More(); aSolidIt.Next())
+      {
+        const TopoDS_Shape & aSolid = aSolidIt.Key();
+        TopTools_MapOfShape aCheckedTools( myMapTools.Extent() );
+
+        TopTools_MapIteratorOfMapOfShape aToolIt (myMapTools);
+        for ( ; aToolIt.More(); aToolIt.Next())
+        {
+          const TopoDS_Shape & aToolFace = aToolIt.Key();
+          if (aCheckedShapes.Contains( aToolFace ) || // already found
+              aCheckedTools.Contains( aToolFace ))    // checked against aSolid
+            continue;
+
+          const TopoDS_Shape & aToolShape = myFaceShapeMap( aToolFace );
+          TopExp_Explorer aToolFaceIt( aToolShape, TopAbs_FACE );
+          
+          Standard_Boolean isInside = IsInside( aToolShape, aSolid );
+          for ( ; aToolFaceIt.More(); aToolFaceIt.Next() )
+          {
+            const TopoDS_Shape & aTool = aToolFaceIt.Current();
+            aCheckedTools.Add( aTool );
+            if (isInside)
+            {
+              if (aSectionFaces.Contains( aTool ))
+                AddShape( aTool );
+              ++ nbFoundTools;
+              if (nbFoundTools == myMapTools.Extent())
+                return;
+              aCheckedShapes.Add( aTool );
+            }
+          }
+        }
+      }
+      
+    } // loop on solid shapes
+  }
 }

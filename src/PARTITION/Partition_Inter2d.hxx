@@ -71,8 +71,8 @@ public:
  // 
 Standard_EXPORT static  void CompletPart2d(const Handle(BRepAlgo_AsDes)& AsDes,const TopoDS_Face& F,const TopTools_MapOfShape& NewEdges) ;
 Standard_EXPORT static  TopoDS_Vertex FindEndVertex(const TopTools_ListOfShape& VertList,const Standard_Real f,const Standard_Real l,const TopoDS_Edge& E,Standard_Boolean& First,Standard_Real& DU) ;
-Standard_EXPORT static  TopoDS_Vertex AddVonE(const TopoDS_Vertex& V,const TopoDS_Edge& E1,const TopoDS_Edge& E2,const Handle(BRepAlgo_AsDes)& AsDes) ;
-
+Standard_EXPORT static  TopoDS_Vertex AddVonE(const TopoDS_Vertex& V,const TopoDS_Edge& E1,const TopoDS_Edge& E2,const Handle(BRepAlgo_AsDes)& AsDes,const TopoDS_Face& F) ;
+Standard_EXPORT static  Standard_Real GetTolerance(const TopoDS_Vertex& theV,const Standard_Real theU,const TopoDS_Edge& theE,const Handle(BRepAlgo_AsDes)& theAsDes) ;
 
 
 

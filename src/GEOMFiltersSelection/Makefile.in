@@ -54,7 +54,7 @@ EXPORT_HEADERS= GEOM_ShapeTypeFilter.hxx \
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) $(PYTHON_INCLUDES) $(VTK_INCLUDES)
 CXXFLAGS += $(OCC_CXXFLAGS)
-LDFLAGS  += $(OCC_LIBS)
+LDFLAGS  +=  -lSalomeGUI
 
 # additional file to be cleaned
 MOSTLYCLEAN =
