@@ -4,6 +4,8 @@
 
 #include "GEOM_IOperations.hxx"
 
+#include "GEOMAlgo_State.hxx"
+
 #include <TopTools_ListOfShape.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
@@ -62,19 +64,32 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
                                                         Handle(GEOM_Object)    theShape2,
                                                         const Standard_Integer theShapeType);
 
-  Handle(GEOM_Object) GetShapesOnPlane (Handle(GEOM_Object)    theShape,
-                                        const Standard_Integer theShapeType,
-                                        Handle(GEOM_Object)    thePlane);
+  Handle(TColStd_HSequenceOfTransient) GetShapesOnPlane (const Handle(GEOM_Object)& theShape,
+                                                         const Standard_Integer     theShapeType,
+                                                         const Handle(GEOM_Object)& theAx1,
+                                                         const GEOMAlgo_State       theState);
 
-  Handle(GEOM_Object) GetShapesOnCylinder (Handle(GEOM_Object)    theShape,
-                                           const Standard_Integer theShapeType,
-                                           Handle(GEOM_Object)    theAxis,
-                                           const Standard_Real    theRadius);
+  Handle(TColStd_HSequenceOfTransient) GetShapesOnCylinder (const Handle(GEOM_Object)& theShape,
+                                                            const Standard_Integer     theShapeType,
+                                                            const Handle(GEOM_Object)& theAxis,
+                                                            const Standard_Real        theRadius,
+                                                            const GEOMAlgo_State       theState);
 
-  Handle(GEOM_Object) GetShapesOnSphere (Handle(GEOM_Object)    theShape,
-                                         const Standard_Integer theShapeType,
-                                         Handle(GEOM_Object)    theCenter,
-                                         const Standard_Real    theRadius);
+  Handle(TColStd_HSequenceOfTransient) GetShapesOnSphere (const Handle(GEOM_Object)& theShape,
+                                                          const Standard_Integer     theShapeType,
+                                                          const Handle(GEOM_Object)& theCenter,
+                                                          const Standard_Real        theRadius,
+                                                          const GEOMAlgo_State       theState);
+
+  Handle(GEOM_Object) GetShapesOnCylinderOld (Handle(GEOM_Object)    theShape,
+                                              const Standard_Integer theShapeType,
+                                              Handle(GEOM_Object)    theAxis,
+                                              const Standard_Real    theRadius);
+
+  Handle(GEOM_Object) GetShapesOnSphereOld (Handle(GEOM_Object)    theShape,
+                                            const Standard_Integer theShapeType,
+                                            Handle(GEOM_Object)    theCenter,
+                                            const Standard_Real    theRadius);
 
   Handle(GEOM_Object) GetInPlace (Handle(GEOM_Object) theShapeWhere,
                                   Handle(GEOM_Object) theShapeWhat);

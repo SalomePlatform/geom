@@ -862,70 +862,77 @@ def GetSharedShapes(theShape1, theShape2, theShapeType):
     return aList
 
 """
-     *  Get sub-shapes of theShape of the given type,
-     *  laying on the specified plane.
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified plane by the certain way, defined through \a theState parameter.
      *  \param theShape Shape to find sub-shapes of.
      *  \param theShapeType Type of sub-shapes to be retrieved.
-     *  \param thePlane Face, specifying the plane to find shapes on.
-     *  \return Group of all found sub-shapes.
+     *  \param theAx1 Vector (or line, or linear edge), specifying normal
+     *                direction and location of the plane to find shapes on.
+     *  \param theState The state of the subshapes to find. It can be one of
+     *   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
+     *  \return List of all found sub-shapes.
 
      *  Example: see GEOM_TestOthers.py
 """
-def GetShapesOnPlane(theShape, theShapeType, thePlane):
-    anObj = ShapesOp.GetShapesOnPlane(theShape, theShapeType, thePlane)
+def GetShapesOnPlane(theShape, theShapeType, theAx1, theState):
+    aList = ShapesOp.GetShapesOnPlane(theShape, theShapeType, theAx1, theState)
     if ShapesOp.IsDone() == 0:
       print "GetShapesOnPlane : ", ShapesOp.GetErrorCode()
-    return anObj
+    return aList
 
 """
-     *  Get sub-shape of theShape of the given type,
-     *  laying on the specified cylinder.
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified cylinder by the certain way, defined through \a theState parameter.
      *  \param theShape Shape to find sub-shapes of.
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theAxis Vector (or line, or linear edge), specifying
      *                 axis of the cylinder to find shapes on.
      *  \param theRadius Radius of the cylinder to find shapes on.
-     *  \return Group of all found sub-shapes.
+     *  \param theState The state of the subshapes to find. It can be one of
+     *   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
+     *  \return List of all found sub-shapes.
 
      *  Example: see GEOM_TestOthers.py
 """
-def GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius):
-    anObj = ShapesOp.GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius)
+def GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState):
+    aList = ShapesOp.GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState)
     if ShapesOp.IsDone() == 0:
       print "GetShapesOnCylinder : ", ShapesOp.GetErrorCode()
-    return anObj
+    return aList
 
 """
-     *  Get sub-shape of theShape of the given type,
-     *  laying on the specified sphere.
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified sphere by the certain way, defined through \a theState parameter.
      *  \param theShape Shape to find sub-shapes of.
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theCenter Point, specifying center of the sphere to find shapes on.
      *  \param theRadius Radius of the sphere to find shapes on.
-     *  \return Group of all found sub-shapes.
+     *  \param theState The state of the subshapes to find. It can be one of
+     *   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
+     *  \return List of all found sub-shapes.
 
      *  Example: see GEOM_TestOthers.py
 """
-def GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius):
-    anObj = ShapesOp.GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius)
+def GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState):
+    aList = ShapesOp.GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState)
     if ShapesOp.IsDone() == 0:
       print "GetShapesOnSphere : ", ShapesOp.GetErrorCode()
-    return anObj
+    return aList
 
-"""
-     *  Get sub-shape(s) of theShapeWhere, which are
-     *  coincident with \a theShapeWhat or could be a part of it.
-     *  \param theShapeWhere Shape to find sub-shapes of.
-     *  \param theShapeWhat Shape, specifying what to find.
-     *  \return Group of all found sub-shapes or a single found sub-shape.
-
-     *  Example: see GEOM_TestOthers.py
-"""
-def GetInPlace(theShapeWhere, theShapeWhat):
-    anObj = ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
-    if ShapesOp.IsDone() == 0:
-      print "GetInPlace : ", ShapesOp.GetErrorCode()
-    return anObj
+#"""
+#     *  Get sub-shape(s) of theShapeWhere, which are
+#     *  coincident with \a theShapeWhat or could be a part of it.
+#     *  \param theShapeWhere Shape to find sub-shapes of.
+#     *  \param theShapeWhat Shape, specifying what to find.
+#     *  \return Group of all found sub-shapes or a single found sub-shape.
+#
+#     *  Example: see GEOM_TestOthers.py
+#"""
+#def GetInPlace(theShapeWhere, theShapeWhat):
+#    anObj = ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
+#    if ShapesOp.IsDone() == 0:
+#      print "GetInPlace : ", ShapesOp.GetErrorCode()
+#    return anObj
 
 # -----------------------------------------------------------------------------
 # Access to sub-shapes by their unique IDs inside the main shape.

@@ -233,17 +233,49 @@ def TestOtherOperations (geompy, math):
   v_pp0 = geompy.MakeVectorDXDYDZ( 1,  1,  0)
   v_np0 = geompy.MakeVectorDXDYDZ(-1,  1,  0)
 
-  pln_0pp = geompy.MakePlane(p0, v_0pp, 200)
-  pln_0np = geompy.MakePlane(p0, v_0np, 200)
-  pln_p0p = geompy.MakePlane(p0, v_p0p, 200)
-  pln_n0p = geompy.MakePlane(p0, v_n0p, 200)
-  pln_pp0 = geompy.MakePlane(p0, v_pp0, 200)
-  pln_np0 = geompy.MakePlane(p0, v_np0, 200)
+  pln_0pp = geompy.MakePlane(p0, v_0pp, 300)
+  pln_0np = geompy.MakePlane(p0, v_0np, 300)
+  pln_p0p = geompy.MakePlane(p0, v_p0p, 300)
+  pln_n0p = geompy.MakePlane(p0, v_n0p, 300)
+  pln_pp0 = geompy.MakePlane(p0, v_pp0, 300)
+  pln_np0 = geompy.MakePlane(p0, v_np0, 300)
 
-  part_tool = geompy.MakePartition([b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0],
-                                   [],
-                                   [],
-                                   [b0])
+  part_tool_1 = geompy.MakePartition([b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0],
+                                     [],
+                                     [],
+                                     [b0])
+
+  pt_pnt_1  = geompy.MakeVertex( 55,   0,  55)
+  pt_pnt_2  = geompy.MakeVertex(  0,  55,  55)
+  pt_pnt_3  = geompy.MakeVertex(-55,   0,  55)
+  pt_pnt_4  = geompy.MakeVertex(  0, -55,  55)
+  pt_pnt_5  = geompy.MakeVertex( 55,  55,   0)
+  pt_pnt_6  = geompy.MakeVertex( 55, -55,   0)
+  pt_pnt_7  = geompy.MakeVertex(-55,  55,   0)
+  pt_pnt_8  = geompy.MakeVertex(-55, -55,   0)
+  pt_pnt_9  = geompy.MakeVertex( 55,   0, -55)
+  pt_pnt_10 = geompy.MakeVertex(  0,  55, -55)
+  pt_pnt_11 = geompy.MakeVertex(-55,   0, -55)
+  pt_pnt_12 = geompy.MakeVertex(  0, -55, -55)
+
+  pt_face_1  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_1)
+  pt_face_2  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_2)
+  pt_face_3  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_3)
+  pt_face_4  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_4)
+  pt_face_5  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_5)
+  pt_face_6  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_6)
+  pt_face_7  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_7)
+  pt_face_8  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_8)
+  pt_face_9  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_9)
+  pt_face_10 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_10)
+  pt_face_11 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_11)
+  pt_face_12 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_12)
+
+  pt_box = geompy.GetBlockNearPoint(part_tool_1, p0)
+
+  part_tool = geompy.MakeCompound([pt_face_1, pt_face_4, pt_face_7, pt_face_10,
+                                   pt_face_2, pt_face_5, pt_face_8, pt_face_11,
+                                   pt_face_3, pt_face_6, pt_face_9, pt_face_12, pt_box])
   id_part_tool = geompy.addToStudy(part_tool, "part_tool")
 
   part = geompy.MakePartition([s0], [part_tool])
@@ -302,8 +334,22 @@ def TestOtherOperations (geompy, math):
 
   geompy.addToStudyInFather(blocksComp, b0_image, "b0 image")
 
-  # GetShapesOnPlane(theShape, theShapeType, thePlane)
-  # GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius)
-  # GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius)
+  # GetShapesOnPlane
+  faces_on_pln = geompy.GetShapesOnPlane(blocksComp, geompy.ShapeType["FACE"],
+                                         v_0pp, geompy.GEOM.ST_ONIN)
+  for face_i in faces_on_pln:
+    geompy.addToStudy(face_i, "Face on Plane or in direction of normale (0, 1, 1)")
+
+  # GetShapesOnCylinder
+  edges_on_cyl = geompy.GetShapesOnCylinder(blocksComp, geompy.ShapeType["EDGE"],
+                                            vy, 55, geompy.GEOM.ST_OUT)
+  for edge_i in edges_on_cyl:
+    geompy.addToStudy(edge_i, "Edge out of Cylinder (axis = (0, 1, 0), r = 55)")
+
+  # GetShapesOnSphere
+  vertices_on_sph = geompy.GetShapesOnSphere(blocksComp, geompy.ShapeType["VERTEX"],
+                                             p0, 100, geompy.GEOM.ST_ON)
+  for vertex_i in vertices_on_sph:
+    geompy.addToStudy(vertex_i, "Vertex on Sphere (center = (0, 0, 0), r = 100)")
 
   # GetInPlace(theShapeWhere, theShapeWhat)

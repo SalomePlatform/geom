@@ -65,19 +65,22 @@ class GEOM_IShapesOperations_i :
 				   GEOM::GEOM_Object_ptr theShape2,
 				   const CORBA::Long     theShapeType);
 
-  GEOM::GEOM_Object_ptr GetShapesOnPlane (GEOM::GEOM_Object_ptr theShape,
-					  const CORBA::Long     theShapeType,
-					  GEOM::GEOM_Object_ptr thePlane);
+  GEOM::ListOfGO* GetShapesOnPlane (GEOM::GEOM_Object_ptr   theShape,
+				    const CORBA::Long       theShapeType,
+				    GEOM::GEOM_Object_ptr   theAx1,
+				    const GEOM::shape_state theState);
 
-  GEOM::GEOM_Object_ptr GetShapesOnCylinder (GEOM::GEOM_Object_ptr theShape,
-					     const CORBA::Long     theShapeType,
-					     GEOM::GEOM_Object_ptr theAxis,
-					     const CORBA::Double   theRadius);
+  GEOM::ListOfGO* GetShapesOnCylinder (GEOM::GEOM_Object_ptr   theShape,
+				       const CORBA::Long       theShapeType,
+				       GEOM::GEOM_Object_ptr   theAxis,
+				       const CORBA::Double     theRadius,
+				       const GEOM::shape_state theState);
 
-  GEOM::GEOM_Object_ptr GetShapesOnSphere (GEOM::GEOM_Object_ptr theShape,
-					   const CORBA::Long     theShapeType,
-					   GEOM::GEOM_Object_ptr theCenter,
-					   const CORBA::Double   theRadius);
+  GEOM::ListOfGO* GetShapesOnSphere (GEOM::GEOM_Object_ptr   theShape,
+				     const CORBA::Long       theShapeType,
+				     GEOM::GEOM_Object_ptr   theCenter,
+				     const CORBA::Double     theRadius,
+				     const GEOM::shape_state theState);
 
   GEOM::GEOM_Object_ptr GetInPlace (GEOM::GEOM_Object_ptr theShapeWhere,
 				    GEOM::GEOM_Object_ptr theShapeWhat);

@@ -18,6 +18,44 @@ module GEOM
   enum shape_type { COMPOUND, COMPSOLID, SOLID, SHELL,
 	            FACE, WIRE, EDGE, VERTEX, SHAPE };
 
+
+  /*!
+   *  State of shape relatively geometrical surface like plane, sphere or cylinder.
+   *  Is used in functions GEOM_IShapesOperations.GetShapesOn<xxx>()
+   */
+  enum shape_state
+  {
+    /*! Shape is on surface */
+    ST_ON,
+
+    /*!
+     *  Shape is in the direction defined by the normal and not on surface.
+     *  For plane it means above the plane,
+     *  For sphere and cylinder it means outside of volume, bounded by the surface.
+     */
+    ST_OUT,
+
+    /*!
+     *  Shape is in the direction defined by the normal and on surface.
+     *  ONOUT = ON || OUT
+     */
+    ST_ONOUT,
+
+    /*!
+     *  Complementary to ONOUT.
+     *  For plane it means below the plane,
+     *  For sphere and cylinder it means inside the volume, bounded by the surface
+     *  (beyond axis and surface for cylinder and beyond cented and surface for sphere).
+     */
+    ST_IN,
+
+    /*!
+     *  Complementary to OUT.
+     *  ONIN = ON || IN
+     */
+    ST_ONIN
+  };
+
   typedef sequence<string>      string_array;
   typedef sequence<short>       short_array;
   typedef sequence<long>        ListOfLong;
@@ -877,45 +915,52 @@ module GEOM
 			      in long        theShapeType);
 
     /*!
-     *  Get sub-shapes of theShape of the given type,
-     *  laying on the specified plane.
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified plane by the certain way, defined through \a theState parameter.
      *  \param theShape Shape to find sub-shapes of.
      *  \param theShapeType Type of sub-shapes to be retrieved.
-     *  \param thePlane Face, specifying the plane to find shapes on.
-     *  \return Group of all found sub-shapes.
+     *  \param theAx1 Vector (or line, or linear edge), specifying normal
+     *                direction and location of the plane to find shapes on.
+     *  \param theState The state of the subshapes to find.
+     *  \return List of all found sub-shapes.
      */
-    GEOM_Object GetShapesOnPlane (in GEOM_Object theShape,
-				  in long        theShapeType,
-				  in GEOM_Object thePlane);
+    ListOfGO GetShapesOnPlane (in GEOM_Object theShape,
+			       in long        theShapeType,
+			       in GEOM_Object theAx1,
+			       in shape_state theState);
 
     /*!
-     *  Get sub-shape of theShape of the given type,
-     *  laying on the specified cylinder.
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified cylinder by the certain way, defined through \a theState parameter.
      *  \param theShape Shape to find sub-shapes of.
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theAxis Vector (or line, or linear edge), specifying
      *                 axis of the cylinder to find shapes on.
      *  \param theRadius Radius of the cylinder to find shapes on.
-     *  \return Group of all found sub-shapes.
+     *  \param theState The state of the subshapes to find.
+     *  \return List of all found sub-shapes.
      */
-    GEOM_Object GetShapesOnCylinder (in GEOM_Object theShape,
-				     in long        theShapeType,
-				     in GEOM_Object theAxis,
-				     in double      theRadius);
+    ListOfGO GetShapesOnCylinder (in GEOM_Object theShape,
+				  in long        theShapeType,
+				  in GEOM_Object theAxis,
+				  in double      theRadius,
+				  in shape_state theState);
 
     /*!
-     *  Get sub-shape of theShape of the given type,
-     *  laying on the specified sphere.
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified sphere by the certain way, defined through \a theState parameter.
      *  \param theShape Shape to find sub-shapes of.
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theCenter Point, specifying center of the sphere to find shapes on.
      *  \param theRadius Radius of the sphere to find shapes on.
-     *  \return Group of all found sub-shapes.
+     *  \param theState The state of the subshapes to find.
+     *  \return List of all found sub-shapes.
      */
-    GEOM_Object GetShapesOnSphere (in GEOM_Object theShape,
-				   in long        theShapeType,
-				   in GEOM_Object theCenter,
-				   in double      theRadius);
+    ListOfGO GetShapesOnSphere (in GEOM_Object theShape,
+				in long        theShapeType,
+				in GEOM_Object theCenter,
+				in double      theRadius,
+				in shape_state theState);
 
     /*!
      *  Get sub-shape(s) of theShapeWhere, which are

@@ -405,24 +405,24 @@ def GetSharedShapes(theShape1, theShape2, theShapeType):
       print "GetSharedShapes : ", ShapesOp.GetErrorCode()
     return aList
 
-#def GetShapesOnPlane(theShape, theShapeType, thePlane):
-#    anObj = ShapesOp.GetShapesOnPlane(theShape, theShapeType, thePlane)
-#    if ShapesOp.IsDone() == 0:
-#      print "GetShapesOnPlane : ", ShapesOp.GetErrorCode()
-#    return anObj
-#
-#def GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius):
-#    anObj = ShapesOp.GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius)
-#    if ShapesOp.IsDone() == 0:
-#      print "GetShapesOnCylinder : ", ShapesOp.GetErrorCode()
-#    return anObj
-#
-#def GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius):
-#    anObj = ShapesOp.GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius)
-#    if ShapesOp.IsDone() == 0:
-#      print "GetShapesOnSphere : ", ShapesOp.GetErrorCode()
-#    return anObj
-#
+def GetShapesOnPlane(theShape, theShapeType, theAx1, theState):
+    aList = ShapesOp.GetShapesOnPlane(theShape, theShapeType, theAx1, theState)
+    if ShapesOp.IsDone() == 0:
+      print "GetShapesOnPlane : ", ShapesOp.GetErrorCode()
+    return aList
+
+def GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState):
+    aList = ShapesOp.GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState)
+    if ShapesOp.IsDone() == 0:
+      print "GetShapesOnCylinder : ", ShapesOp.GetErrorCode()
+    return aList
+
+def GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState):
+    aList = ShapesOp.GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState)
+    if ShapesOp.IsDone() == 0:
+      print "GetShapesOnSphere : ", ShapesOp.GetErrorCode()
+    return aList
+
 #def GetInPlace(theShapeWhere, theShapeWhat):
 #    anObj = ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
 #    if ShapesOp.IsDone() == 0:
