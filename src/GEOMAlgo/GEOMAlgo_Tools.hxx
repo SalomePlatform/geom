@@ -22,23 +22,23 @@
 #ifndef _GEOMAlgo_Tools_HeaderFile
 #define _GEOMAlgo_Tools_HeaderFile
 
+#ifndef _Standard_Boolean_HeaderFile
+#include <Standard_Boolean.hxx>
+#endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
 #endif
 #ifndef _Standard_Real_HeaderFile
 #include <Standard_Real.hxx>
 #endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
 #ifndef _Handle_Geom_Surface_HeaderFile
 #include <Handle_Geom_Surface.hxx>
 #endif
+class TopoDS_Shape;
 class GEOMAlgo_IndexedDataMapOfPassKeyListOfShape;
 class IntTools_Context;
 class TopTools_ListOfShape;
 class TopTools_IndexedDataMapOfShapeListOfShape;
-class TopoDS_Shape;
 class gp_Pnt;
 class TopoDS_Edge;
 class TopoDS_Face;
@@ -70,6 +70,7 @@ public:
       }
  // Methods PUBLIC
  // 
+Standard_EXPORT static  Standard_Boolean IsCompositeShape(const TopoDS_Shape& aS) ;
 Standard_EXPORT static  Standard_Integer RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKeyListOfShape& aMSD,const Standard_Real aTol,IntTools_Context& aCtx) ;
 Standard_EXPORT static  Standard_Integer FindSDShapes(const TopTools_ListOfShape& aLE,const Standard_Real aTol,TopTools_IndexedDataMapOfShapeListOfShape& aMEE,IntTools_Context& aCtx) ;
 Standard_EXPORT static  Standard_Integer FindSDShapes(const TopoDS_Shape& aE1,const TopTools_ListOfShape& aLE,const Standard_Real aTol,TopTools_ListOfShape& aLESD,IntTools_Context& aCtx) ;

@@ -16,7 +16,8 @@ uses
     ListOfShape from TopTools, 
     DataMapOfShapeShape from TopTools, 
     Shape from TopoDS, 
-    State from GEOMAlgo
+    State from GEOMAlgo, 
+    IndexedDataMapOfShapeState from GEOMAlgo 
     
 --raises
 
@@ -57,12 +58,22 @@ is
     CheckData(me:out) 
 	is redefined protected; 
 
-    MakeArguments(me:out) 
+    MakeArgument1(me:out) 
 	is protected;  
 
+    MakeArgument2(me:out) 
+	is protected;
+     
     Find(me:out) 
 	is protected; 
 
+    Find(me:out; 
+    	    aS:Shape from TopoDS) 
+	is protected; 
+
+    FindVertices(me:out) 
+	is protected; 
+	 
     CopySource(myclass; 
     	aS  :Shape from TopoDS; 
 	aImages   : out DataMapOfShapeShape from TopTools;   	 
@@ -79,5 +90,7 @@ fields
     myArg2       : Shape from TopoDS is protected;  
     myLS         : ListOfShape from TopTools is protected;
     myImages     : DataMapOfShapeShape from TopTools is protected; 
-    
+    myMSS        : IndexedDataMapOfShapeState from GEOMAlgo is protected; 
+    myIsAnalytic : Boolean from Standard is protected; 
+     
 end FinderShapeOn;

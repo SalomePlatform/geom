@@ -35,80 +35,27 @@ void GEOMAlgo_ShapeSolid::SetFiller(const BOPTools_DSFiller& aDSFiller)
 {
   myDSFiller=(BOPTools_DSFiller*) &aDSFiller;
 }
-
 //=======================================================================
 // function: Shapes
 // purpose: 
 //=======================================================================
-const TopTools_ListOfShape& GEOMAlgo_ShapeSolid::Shapes(const GEOMAlgo_State aState) const
+const TopTools_ListOfShape& GEOMAlgo_ShapeSolid::Shapes(const TopAbs_State aState) const
 {
-  TopTools_ListIteratorOfListOfShape aIt;
-  //
-  TopTools_ListOfShape* pLS=(TopTools_ListOfShape*)&myLS;
-  //
-  pLS->Clear();
+  const TopTools_ListOfShape *pL;
   //
   switch (aState) {
-    case GEOMAlgo_ST_IN: {
-      aIt.Initialize(myLSIN);
-      for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aS=aIt.Value(); 
-	pLS->Append(aS);
-      }
-    }
+    case TopAbs_IN:
+      pL=&myLSIN;
       break;
-    //  
-    case GEOMAlgo_ST_OUT: {
-      aIt.Initialize(myLSOUT);
-      for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aS=aIt.Value(); 
-	pLS->Append(aS);
-      }
-    }
+    case TopAbs_OUT:
+      pL=&myLSOUT;
       break;
-    //  
-    case GEOMAlgo_ST_ON: {
-      aIt.Initialize(myLSON);
-      for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aS=aIt.Value(); 
-	pLS->Append(aS);
-      }
-    }
-      break;
-    //  
-    case GEOMAlgo_ST_ONIN: {
-      aIt.Initialize(myLSON);
-      for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aS=aIt.Value(); 
-	pLS->Append(aS);
-      }
-      aIt.Initialize(myLSIN);
-      for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aS=aIt.Value(); 
-	pLS->Append(aS);
-      }
-    }
-      break;
-    //  
-    case GEOMAlgo_ST_ONOUT: {
-      aIt.Initialize(myLSON);
-      for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aS=aIt.Value(); 
-	pLS->Append(aS);
-      }
-      aIt.Initialize(myLSOUT);
-      for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aS=aIt.Value(); 
-	pLS->Append(aS);
-      }
-    }
-      break;
-    //
-    case GEOMAlgo_ST_UNKNOWN:
-    case GEOMAlgo_ST_INOUT:
+    case TopAbs_ON:
+      pL=&myLSON;
+      break;  
     default:
-      break;
+      pL=&myLSON;
+      break; 
   }
-  return myLS;
+  return *pL;
 }
-

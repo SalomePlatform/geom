@@ -19,26 +19,16 @@
 // the specific terms and conditions governing rights and limitations under the
 // License.
 
-#ifndef _GEOMAlgo_ShapeSolid_HeaderFile
-#define _GEOMAlgo_ShapeSolid_HeaderFile
+#ifndef _GEOMAlgo_SolidSolid_HeaderFile
+#define _GEOMAlgo_SolidSolid_HeaderFile
 
-#ifndef _TopTools_ListOfShape_HeaderFile
-#include <TopTools_ListOfShape.hxx>
+#ifndef _TopoDS_Shape_HeaderFile
+#include <TopoDS_Shape.hxx>
 #endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
+#ifndef _GEOMAlgo_ShellSolid_HeaderFile
+#include <GEOMAlgo_ShellSolid.hxx>
 #endif
-#ifndef _BOPTools_PDSFiller_HeaderFile
-#include <BOPTools_PDSFiller.hxx>
-#endif
-#ifndef _GEOMAlgo_Algo_HeaderFile
-#include <GEOMAlgo_Algo.hxx>
-#endif
-#ifndef _TopAbs_State_HeaderFile
-#include <TopAbs_State.hxx>
-#endif
-class BOPTools_DSFiller;
-class TopTools_ListOfShape;
+class TopoDS_Shape;
 
 
 #ifndef _Standard_HeaderFile
@@ -48,7 +38,7 @@ class TopTools_ListOfShape;
 #include <Standard_Macro.hxx>
 #endif
 
-class GEOMAlgo_ShapeSolid  : public GEOMAlgo_Algo {
+class GEOMAlgo_SolidSolid  : public GEOMAlgo_ShellSolid {
 
 public:
 
@@ -66,9 +56,11 @@ public:
       }
  // Methods PUBLIC
  // 
-Standard_EXPORT   void SetFiller(const BOPTools_DSFiller& aDSF) ;
-Standard_EXPORT virtual ~GEOMAlgo_ShapeSolid();
-Standard_EXPORT  const TopTools_ListOfShape& Shapes(const TopAbs_State aState) const;
+Standard_EXPORT GEOMAlgo_SolidSolid();
+Standard_EXPORT virtual ~GEOMAlgo_SolidSolid();
+Standard_EXPORT virtual  void Perform() ;
+Standard_EXPORT   void SetShape2(const TopoDS_Shape& aS) ;
+Standard_EXPORT  const TopoDS_Shape& Shape2() const;
 
 
 
@@ -78,18 +70,12 @@ protected:
 
  // Methods PROTECTED
  // 
-Standard_EXPORT GEOMAlgo_ShapeSolid();
-Standard_EXPORT virtual  void BuildResult()  = 0;
-Standard_EXPORT virtual  void Prepare()  = 0;
+Standard_EXPORT virtual  void BuildResult() ;
 
 
  // Fields PROTECTED
  //
-TopTools_ListOfShape myLSIN;
-TopTools_ListOfShape myLSOUT;
-TopTools_ListOfShape myLSON;
-Standard_Integer myRank;
-BOPTools_PDSFiller myDSFiller;
+TopoDS_Shape myS2;
 
 
 private: 

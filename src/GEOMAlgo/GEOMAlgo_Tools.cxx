@@ -20,6 +20,7 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
+#include <TopoDS_Iterator.hxx>
 
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
@@ -34,7 +35,55 @@
 
 #include <GEOMAlgo_PassKey.hxx>
 #include <GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx>
-//
+
+static 
+  void GetCount(const TopoDS_Shape& aS,
+		Standard_Integer& iCnt);
+
+//=======================================================================
+//function : IsCompositeShape
+//purpose  : 
+//=======================================================================
+Standard_Boolean GEOMAlgo_Tools::IsCompositeShape(const TopoDS_Shape& aS)
+{
+  Standard_Boolean bRet;
+  Standard_Integer iCnt;
+  TopoDS_Iterator aIt;
+  //
+  iCnt=0;
+  GetCount(aS, iCnt);
+  bRet=(iCnt>1);
+  //
+  return bRet;
+}
+
+//=======================================================================
+//function : GetCount
+//purpose  : 
+//=======================================================================
+void GetCount(const TopoDS_Shape& aS,
+	      Standard_Integer& iCnt)
+{
+  TopoDS_Iterator aIt;
+  TopAbs_ShapeEnum aTS;
+  //
+  aTS=aS.ShapeType();
+  //
+  if (aTS==TopAbs_SHAPE) {
+    return;
+  }
+  if (aTS!=TopAbs_COMPOUND) {
+    ++iCnt;
+    return;
+  }
+  //
+  aIt.Initialize(aS);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aSx=aIt.Value();
+    GetCount(aSx, iCnt); 
+  }
+}
+
 //=======================================================================
 //function : RefineSDShapes
 //purpose  : 

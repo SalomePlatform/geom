@@ -40,6 +40,12 @@
 #ifndef _TopTools_DataMapOfShapeShape_HeaderFile
 #include <TopTools_DataMapOfShapeShape.hxx>
 #endif
+#ifndef _GEOMAlgo_IndexedDataMapOfShapeState_HeaderFile
+#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
+#endif
+#ifndef _Standard_Boolean_HeaderFile
+#include <Standard_Boolean.hxx>
+#endif
 #ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
 #include <GEOMAlgo_ShapeAlgo.hxx>
 #endif
@@ -95,8 +101,11 @@ protected:
  // Methods PROTECTED
  // 
 Standard_EXPORT virtual  void CheckData() ;
-Standard_EXPORT   void MakeArguments() ;
+Standard_EXPORT   void MakeArgument1() ;
+Standard_EXPORT   void MakeArgument2() ;
 Standard_EXPORT   void Find() ;
+Standard_EXPORT   void Find(const TopoDS_Shape& aS) ;
+Standard_EXPORT   void FindVertices() ;
 
 
  // Fields PROTECTED
@@ -108,6 +117,8 @@ TopoDS_Shape myArg1;
 TopoDS_Shape myArg2;
 TopTools_ListOfShape myLS;
 TopTools_DataMapOfShapeShape myImages;
+GEOMAlgo_IndexedDataMapOfShapeState myMSS;
+Standard_Boolean myIsAnalytic;
 
 
 private: 

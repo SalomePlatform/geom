@@ -1,0 +1,61 @@
+-- File:	GEOMAlgo_SurfaceTools.cdl
+-- Created:	Thu Jan 27 11:03:49 2005
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2005
+
+
+class SurfaceTools from GEOMAlgo 
+
+	---Purpose: 
+
+uses 
+    Pnt      from gp, 
+    Pln      from gp, 
+    Cylinder from gp, 
+    Sphere   from gp,
+    Surface  from Geom, 
+    State    from TopAbs,	
+    State from GEOMAlgo
+
+--raises
+
+is 
+    IsAnalytic(myclass;  
+    	    aS:Surface from Geom) 
+    	returns Boolean from Standard; 
+   
+    IsConformState(myclass;  
+    	    aST1:State from TopAbs; 
+    	    aST2:State from GEOMAlgo) 
+    	returns Boolean from Standard; 		  
+
+    GetState(myclass; 
+	    aP:Pnt from gp;  	     
+    	    aS:Surface from Geom; 
+    	    aTol:Real from Standard; 
+    	    aSt:out State from TopAbs)
+    	returns Integer from Standard;
+
+    Distance(myclass;  
+    	    aP:Pnt from gp;  	 
+    	    aPln:Pln from gp) 
+    	returns Real from Standard; 
+
+    Distance(myclass;  
+    	    aP:Pnt from gp;  	 
+    	    aCyl:Cylinder from gp) 
+    	returns Real from Standard; 
+	 
+    Distance(myclass;  
+    	    aP:Pnt from gp;  	 
+    	    aSph:Sphere from gp) 
+    	returns Real from Standard; 
+	 
+    ReverseState(myclass; 
+    	    aSt: State from TopAbs) 
+	returns State from TopAbs; 
+	 
+--fields
+
+end SurfaceTools;

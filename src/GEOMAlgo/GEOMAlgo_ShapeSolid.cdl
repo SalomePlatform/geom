@@ -10,9 +10,9 @@ deferred class ShapeSolid from GEOMAlgo
 	 
 	---Purpose: 
 
-uses
+uses 
+    State from TopAbs,
     ListOfShape from TopTools, 
-    State from GEOMAlgo, 
     PDSFiller from BOPTools,
     DSFiller  from BOPTools
 --raises
@@ -26,8 +26,9 @@ is
     	    aDSF:DSFiller  from BOPTools); 
     ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_ShapeSolid();"  
      
+      
     Shapes(me;
-	     aState:State from GEOMAlgo) 
+	     aState:State from TopAbs) 
 	returns ListOfShape from TopTools; 
     ---C++: return const &  
        
@@ -41,8 +42,6 @@ fields
     myLSIN  :  ListOfShape from TopTools is protected;  
     myLSOUT :  ListOfShape from TopTools is protected;  
     myLSON  :  ListOfShape from TopTools is protected;  
-    
-    myLS    :  ListOfShape from TopTools is protected;  
     myRank  :  Integer from Standard is protected; 
     myDSFiller : PDSFiller from BOPTools is protected; 
 

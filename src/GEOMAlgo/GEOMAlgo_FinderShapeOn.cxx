@@ -6,7 +6,10 @@
 
 #include <GEOMAlgo_FinderShapeOn.ixx>
 
+#include <gp_Pnt.hxx>
+
 #include <TopAbs_ShapeEnum.hxx>
+#include <TopAbs_Orientation.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Face.hxx>
@@ -16,7 +19,6 @@
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Edge.hxx>
-
 #include <TopoDS_Iterator.hxx>
 
 #include <TopTools_ListIteratorOfListOfShape.hxx>
@@ -24,6 +26,7 @@
 #include <TopTools_DataMapOfShapeShape.hxx>
 
 #include <BRep_Builder.hxx>
+#include <BRep_Tool.hxx>
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -37,7 +40,9 @@
 #include <GEOMAlgo_ShellSolid.hxx>
 #include <GEOMAlgo_VertexSolid.hxx>
 #include <GEOMAlgo_ShapeSolid.hxx>
-
+#include <GEOMAlgo_SolidSolid.hxx>
+#include <GEOMAlgo_SurfaceTools.hxx>
+#include <GEOMAlgo_Tools.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn
@@ -49,7 +54,8 @@ GEOMAlgo_FinderShapeOn::GEOMAlgo_FinderShapeOn()
 {
   myTolerance=0.0001;
   myShapeType=TopAbs_VERTEX;
-  myState=GEOMAlgo_ST_UNKNOWN; 
+  myState=GEOMAlgo_ST_UNKNOWN;
+  myIsAnalytic=Standard_True;
 }
 //=======================================================================
 //function : ~
@@ -112,6 +118,24 @@ GEOMAlgo_State GEOMAlgo_FinderShapeOn::State() const
 //=======================================================================
 const TopTools_ListOfShape& GEOMAlgo_FinderShapeOn::Shapes() const
 {
+  Standard_Boolean bIsConformState;
+  Standard_Integer i, aNb;
+  TopAbs_State aSt;
+  TopTools_ListOfShape* pL;
+  //
+  pL=(TopTools_ListOfShape*) &myLS;
+  pL->Clear();
+  //
+  aNb=myMSS.Extent();
+  for (i=1; i<=aNb; ++i) {
+    const TopoDS_Shape& aS=myMSS.FindKey(i);
+    aSt=myMSS.FindFromIndex(i);
+    //
+    bIsConformState=GEOMAlgo_SurfaceTools::IsConformState(aSt, myState);
+    if (bIsConformState) {
+      pL->Append(aS);
+    }
+  }
   return myLS;
 }
 //=======================================================================
@@ -123,6 +147,7 @@ void GEOMAlgo_FinderShapeOn::Perform()
   myErrorStatus=0;
   myWarningStatus=0;
   myLS.Clear();
+  myMSS.Clear();
   //
   if (!myResult.IsNull()){
     myResult.Nullify();
@@ -133,16 +158,63 @@ void GEOMAlgo_FinderShapeOn::Perform()
     return;
   }
   //
-  MakeArguments();
-  if(myErrorStatus || myWarningStatus) {
-    return;
-  }
+  myIsAnalytic=GEOMAlgo_SurfaceTools::IsAnalytic(mySurface);
   //
-  Find();
+  MakeArgument1();
   if(myErrorStatus) {
     return;
   }
   //
+  if (myIsAnalytic && myShapeType==TopAbs_VERTEX) {
+    FindVertices();
+    return;
+  }
+  //
+  MakeArgument2();
+  if(myErrorStatus) {
+    return;
+  }
+  //
+  Find();
+  if(myErrorStatus || myWarningStatus) {
+    return;
+  }
+  //
+}
+//=======================================================================
+//function : FindVertices
+//purpose  : 
+//=======================================================================
+void GEOMAlgo_FinderShapeOn::FindVertices()
+{ 
+  Standard_Integer i, aNb, iErr;
+  TopAbs_State aSt;
+  TopAbs_Orientation aOr;
+  gp_Pnt aP;
+  TopTools_IndexedMapOfShape aM;
+  //
+  TopExp::MapShapes(myArg1, TopAbs_FACE, aM);
+  const TopoDS_Face& aF=TopoDS::Face(aM(1));
+  aOr=aF.Orientation();
+  //
+  aM.Clear();
+  TopExp::MapShapes(myShape, myShapeType, aM);
+  aNb=aM.Extent();
+  if (!aNb) {
+    myWarningStatus=10; // No found subshapes of type myShapeType
+    return;
+  }
+  //
+  for (i=1; i<=aNb; ++i) {
+    const TopoDS_Shape& aS=aM(i);
+    const TopoDS_Vertex& aV=TopoDS::Vertex(aS);
+    aP=BRep_Tool::Pnt(aV);
+    iErr=GEOMAlgo_SurfaceTools::GetState(aP, mySurface, myTolerance, aSt);
+    if (aOr==TopAbs_REVERSED) {
+      aSt=GEOMAlgo_SurfaceTools::ReverseState(aSt);
+    }
+    myMSS.Add(aS, aSt);
+  }
 }
 //=======================================================================
 //function : Find
@@ -150,17 +222,58 @@ void GEOMAlgo_FinderShapeOn::Perform()
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::Find()
 {
+  Standard_Integer i, aNb;
+  Standard_Boolean bICS;
+  TopTools_IndexedMapOfShape aM;
+  //
+  TopExp::MapShapes(myArg2, myShapeType, aM);
+  //
+  aNb=aM.Extent();
+  if (!aNb) {
+    myWarningStatus=10; // No found subshapes of type myShapeType
+    return;
+  }
+  //
+  bICS=GEOMAlgo_Tools::IsCompositeShape(myArg2);
+  if (!bICS || myIsAnalytic) {
+    TopoDS_Compound aCmp;
+    BRep_Builder aBB;
+    //
+    aBB.MakeCompound(aCmp);
+    for (i=1; i<=aNb; ++i) {
+      const TopoDS_Shape& aSi=aM(i);
+      aBB.Add(aCmp, aSi);
+    }
+    //
+    aM.Clear();
+    aM.Add(aCmp);
+    aNb=1;
+  }
+  //
+  for (i=1; i<=aNb; ++i) {
+    const TopoDS_Shape& aS=aM(i);
+    Find(aS);
+    if (myErrorStatus) {
+      return;
+    }
+  }
+}
+//=======================================================================
+//function : Find
+//purpose  : 
+//=======================================================================
+void GEOMAlgo_FinderShapeOn::Find(const TopoDS_Shape& aS)
+{
   myErrorStatus=0;
   //
   Standard_Boolean bIsDone;
-  Standard_Integer iErr;
+  Standard_Integer i, iErr;
+  TopAbs_State aSts[]={TopAbs_IN, TopAbs_OUT, TopAbs_ON};
   TopTools_ListIteratorOfListOfShape aIt;
-  BRep_Builder aBB;
   BOPTools_DSFiller aDF;
-  GEOMAlgo_ShapeSolid* pSS;
   //
   // 1. Prepare DSFiller
-  aDF.SetShapes (myArg1, myArg2);
+  aDF.SetShapes (myArg1, aS);
   bIsDone=aDF.IsDone();
   if (!bIsDone) {
     myErrorStatus=30; // wrong args are used for DSFiller
@@ -174,16 +287,31 @@ void GEOMAlgo_FinderShapeOn::Find()
   }
   // 
   // 2. Find shapes
-  myLS.Clear();
+  GEOMAlgo_ShapeSolid* pSS;
+  GEOMAlgo_VertexSolid aVXS;
+  GEOMAlgo_WireSolid aWRS;
+  GEOMAlgo_ShellSolid aSHS;
+  GEOMAlgo_SolidSolid aSLS;
   //
-  if (myShapeType==TopAbs_VERTEX) {
-    pSS=new GEOMAlgo_VertexSolid;
-  }
-  else if (myShapeType==TopAbs_EDGE) {
-    pSS=new GEOMAlgo_WireSolid;
-  }
-  else if (myShapeType==TopAbs_FACE) {
-    pSS=new GEOMAlgo_ShellSolid;
+  pSS=NULL;
+  //
+  switch (myShapeType) {
+    case TopAbs_VERTEX:
+      pSS=&aVXS;
+      break;
+    case TopAbs_EDGE:
+      pSS=&aWRS;
+      break;
+    case TopAbs_FACE:
+      pSS=&aSHS;
+      break;
+    case TopAbs_SOLID:
+      aSLS.SetShape2(myArg2);
+      pSS=&aSLS;
+      break;
+    default:
+      myErrorStatus=12; // unallowed subshape type
+      return;
   }
   //
   pSS->SetFiller(aDF);
@@ -191,70 +319,87 @@ void GEOMAlgo_FinderShapeOn::Find()
   iErr=pSS->ErrorStatus();
   if (iErr) {
     myErrorStatus=32; // builder ShapeSolid failed
-    delete pSS;
     return;
   }
   //
-  const TopTools_ListOfShape& aLS=pSS->Shapes(myState);
-  //
-  aIt.Initialize(aLS);
-  for (; aIt.More(); aIt.Next()) {
-    const TopoDS_Shape& aSImage=aIt.Value(); 
-    if (myImages.IsBound(aSImage)) { 
-      const TopoDS_Shape& aS=myImages.Find(aSImage); 
-      myLS.Append(aS);
-    }
-    else {
-      myErrorStatus=33;// can not find original shape
-      return; 
+  for (i=0; i<3; ++i) {
+    const TopTools_ListOfShape& aLS=pSS->Shapes(aSts[i]);
+    aIt.Initialize(aLS);
+    for (; aIt.More(); aIt.Next()) {
+      const TopoDS_Shape& aSImage=aIt.Value(); 
+      if (myImages.IsBound(aSImage)) { 
+	const TopoDS_Shape& aSx=myImages.Find(aSImage); 
+	myMSS.Add(aSx, aSts[i]);
+      }
+      else {
+	myErrorStatus=33;// can not find original shape
+	return; 
+      }
     }
   }
-  //
-  delete pSS;
 }
 //=======================================================================
-//function : MakeArguments
+//function : MakeArgument1
 //purpose  : 
 //=======================================================================
-void GEOMAlgo_FinderShapeOn::MakeArguments()
+void GEOMAlgo_FinderShapeOn::MakeArgument1()
 {
   myErrorStatus=0;
   //
   Standard_Integer i, aNb;
+  TopAbs_ShapeEnum aType;
   BRepLib_FaceError aFErr;
   BRepLib_MakeFace aMF;
   TopTools_IndexedMapOfShape aM;
   BRep_Builder aBB;
-  TopoDS_Compound aCmp;
+  TopoDS_Face aFace;
   TopoDS_Shell aSh;
   TopoDS_Solid aSd;
-  TopoDS_Shape aSC;
-  TopTools_DataMapOfShapeShape aOriginals;
-  TopExp_Explorer aExp;
   //
   // Argument 1
-  aMF.Init(mySurface, Standard_True);
-  aFErr=aMF.Error();
-  if (aFErr!=BRepLib_FaceDone) {
-    myErrorStatus=20; // can not build the face
-    return;
+  if (!myIsAnalytic) {
+    aMF.Init(mySurface, Standard_True);
+    aFErr=aMF.Error();
+    if (aFErr!=BRepLib_FaceDone) {
+      myErrorStatus=20; // can not build the face
+      return;
+    }
+    //
+    const TopoDS_Shape& aF=aMF.Shape();
+    aFace=TopoDS::Face(aF);
+    //
+    // update tolerances
+    aM.Add(aF);
+    TopExp::MapShapes(aF, TopAbs_VERTEX, aM);
+    TopExp::MapShapes(aF, TopAbs_EDGE, aM);
+    aNb=aM.Extent();
+    for (i=1; i<=aNb; ++i) {
+      const TopoDS_Shape& aS=aM(i);
+      aType=aS.ShapeType();
+      switch (aType) {
+      case TopAbs_VERTEX: {
+        const TopoDS_Vertex& aVx=TopoDS::Vertex(aS);
+	aBB.UpdateVertex(aVx, myTolerance);
+      }
+	break;
+      case TopAbs_EDGE: {
+        const TopoDS_Edge& aEx=TopoDS::Edge(aS);
+	aBB.UpdateEdge(aEx, myTolerance);
+      }
+	break;
+      case TopAbs_FACE: {
+        const TopoDS_Face& aFx=TopoDS::Face(aS);
+	aBB.UpdateFace(aFx, myTolerance);
+      }
+	break;
+      default:
+	break;
+      }
+    }
+  } //  
+  else {
+    aBB.MakeFace(aFace, mySurface, myTolerance);
   }
-  //
-  const TopoDS_Shape& aF=aMF.Shape();
-  //
-  // update tolerance
-  aExp.Init(aF, TopAbs_VERTEX);
-  for (; aExp.More(); aExp.Next()) {
-    const TopoDS_Vertex& aV=TopoDS::Vertex(aExp.Current());
-    aBB.UpdateVertex(aV, myTolerance);
-  }
-  aExp.Init(aF, TopAbs_EDGE);
-  for (; aExp.More(); aExp.Next()) {
-    const TopoDS_Edge& aE=TopoDS::Edge(aExp.Current());
-    aBB.UpdateEdge(aE, myTolerance);
-  }
-  const TopoDS_Face& aFace=TopoDS::Face(aF);
-  aBB.UpdateFace(aFace, myTolerance);
   //
   // make solid
   aBB.MakeShell(aSh);
@@ -262,26 +407,23 @@ void GEOMAlgo_FinderShapeOn::MakeArguments()
   aBB.MakeSolid(aSd);
   aBB.Add(aSd, aSh);
   myArg1=aSd;
+}
+//=======================================================================
+//function : MakeArgument2
+//purpose  : 
+//=======================================================================
+void GEOMAlgo_FinderShapeOn::MakeArgument2()
+{
+  myErrorStatus=0;
   //
-  // Argument 2
+  TopoDS_Shape aSC;
+  TopTools_DataMapOfShapeShape aOriginals;
   //
   myImages.Clear();
   //
   GEOMAlgo_FinderShapeOn::CopySource(myShape, myImages, aOriginals, aSC);
   //
-  TopExp::MapShapes(aSC, myShapeType, aM);
-  aNb=aM.Extent();
-  if (!aNb) {
-    myWarningStatus=10; // No found subshapes of type myShapeType
-    return;
-  }
-  //
-  aBB.MakeCompound(aCmp);
-  for (i=1; i<=aNb; ++i) {
-    const TopoDS_Shape& aS=aM(i);
-    aBB.Add(aCmp, aS);
-  }
-  myArg2=aCmp;
+  myArg2=aSC;
 }
 //=======================================================================
 //function : CheckData
@@ -303,7 +445,8 @@ void GEOMAlgo_FinderShapeOn::CheckData()
   //
   if (!(myShapeType==TopAbs_VERTEX ||
 	myShapeType==TopAbs_EDGE ||
-	myShapeType==TopAbs_FACE)) {
+	myShapeType==TopAbs_FACE ||
+	myShapeType==TopAbs_SOLID)) {
     myErrorStatus=12; // unallowed subshape type
     return;
   }
@@ -334,9 +477,7 @@ void GEOMAlgo_FinderShapeOn::CopySource(const TopoDS_Shape& aE,
   //
   if (aOriginals.IsBound(aE)) {
     aEx=aOriginals.ChangeFind(aE);
-    if (aType==TopAbs_EDGE) {
-      return;
-    }
+    return;
   }
   else {
     aEx=aE.EmptyCopied();

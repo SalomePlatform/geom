@@ -11,9 +11,10 @@ class Tools from GEOMAlgo
 
 uses    
     Pnt from gp, 
-    Surface from Geom,  
-    Edge from TopoDS, 
-    Face from TopoDS, 
+    Surface from Geom, 
+    ShapeEnum from TopAbs,  
+    Edge  from TopoDS, 
+    Face  from TopoDS, 
     Shape from TopoDS,
     ListOfShape from TopTools,  
     IndexedDataMapOfShapeListOfShape from TopTools,
@@ -23,6 +24,10 @@ uses
 --raises
 
 is   
+    IsCompositeShape(myclass;  
+    	    aS  :Shape from TopoDS) 
+	returns Boolean from Standard;    
+
     RefineSDShapes(myclass; 
     	    aMSD:out IndexedDataMapOfPassKeyListOfShape from GEOMAlgo; 
     	    aTol:Real from Standard; 
@@ -83,6 +88,7 @@ is
     IsUPeriodic(myclass;  
     	    aS:Surface from Geom) 
     	returns Boolean from Standard;   
+
 --fields
 
 end Tools;

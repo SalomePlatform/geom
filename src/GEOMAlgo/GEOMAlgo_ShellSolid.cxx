@@ -10,24 +10,25 @@
 
 #include <gp_Pnt2d.hxx>
 #include <gp_Pnt.hxx>
+#include <gp_Dir.hxx>
 
+#include <TopoDS.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
-#include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Solid.hxx>
 
 #include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
 
+#include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopExp_Explorer.hxx>
-
-#include <BOPTColStd_Dump.hxx>
 
 #include <BRepClass3d_SolidClassifier.hxx>
 
 #include <IntTools_Context.hxx>
-
+#include <BOPTColStd_Dump.hxx>
 #include <BooleanOperations_ShapesDataStructure.hxx>
 
 #include <BOPTools_PaveFiller.hxx>
@@ -46,28 +47,10 @@
 #include <BOPTools_SplitShapesPool.hxx>
 #include <BOPTools_Tools3D.hxx>
 #include <BOPTools_DSFiller.hxx>
-//
-#include <gp_Dir.hxx>
-#include <BOPTools_SSInterference.hxx>
-#include <TopoDS_Face.hxx>
-#include <TopoDS.hxx>
-#include <BOPTools_ListOfPaveBlock.hxx>
-#include <TopoDS_Edge.hxx>
-#include <BOPTools_Tools3D.hxx>
+
 #include <BOP_WireEdgeSet.hxx>
 #include <BOP_SDFWESFiller.hxx>
 #include <BOP_FaceBuilder.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <BRepTools.hxx>
-#include <IntTools_Context.hxx>
-#include <Geom_Surface.hxx>
-#include <TopExp_Explorer.hxx>
-#include <GeomAPI_ProjectPointOnSurf.hxx>
-
-static
-  Standard_Boolean CheckSameDomainFaceInside(const TopoDS_Face& theFace1,
-					     const TopoDS_Face& theFace2); 
 
 //=======================================================================
 //function : GEOMAlgo_ShellSolid
@@ -345,10 +328,10 @@ void GEOMAlgo_ShellSolid::DetectSDFaces()
 	  Standard_Boolean bIsValidIn2D, bNegativeFlag;
 	  bIsValidIn2D=BOPTools_Tools3D::IsValidArea (aFaceResult, bNegativeFlag);
 	  if (bIsValidIn2D) { 
-	    if(CheckSameDomainFaceInside(aFaceResult, aF2)) {
-	      iZone=1;
-	      break;
-	    }
+	    //if(CheckSameDomainFaceInside(aFaceResult, aF2)) {
+	    iZone=1;
+	    break;
+	    //}
 	  }
 	  //
 	}
@@ -364,53 +347,4 @@ void GEOMAlgo_ShellSolid::DetectSDFaces()
   aFF.SetTangentFacesFlag(bFlag);
   aFF.SetSenseFlag (iSenseFlag);
   }// end of for (i=1; i<=aNb; i++) 
-}
-//=======================================================================
-//function : CheckSameDomainFaceInside
-//purpose  : 
-//=======================================================================
-Standard_Boolean CheckSameDomainFaceInside(const TopoDS_Face& theFace1,
-					   const TopoDS_Face& theFace2) 
-{
-  Standard_Real umin = 0., umax = 0., vmin = 0., vmax = 0.;
-  BRepTools::UVBounds(theFace1, umin, umax, vmin, vmax);
-  IntTools_Context aContext;
-  Handle(Geom_Surface) aSurface = BRep_Tool::Surface(theFace1);
-  Standard_Real aTolerance = BRep_Tool::Tolerance(theFace1);
-
-  TopExp_Explorer anExpE(theFace1, TopAbs_EDGE);
-
-  for(; anExpE.More(); anExpE.Next()) {
-    const TopoDS_Edge& anEdge = TopoDS::Edge(anExpE.Current());
-    Standard_Real anEdgeTol = BRep_Tool::Tolerance(anEdge);
-    aTolerance = (aTolerance < anEdgeTol) ? anEdgeTol : aTolerance;
-  }
-  aTolerance += BRep_Tool::Tolerance(theFace2);
-
-  Standard_Integer nbpoints = 5;
-  Standard_Real adeltau = (umax - umin) / (nbpoints + 1);
-  Standard_Real adeltav = (vmax - vmin) / (nbpoints + 1);
-  Standard_Real U = umin + adeltau;
-  GeomAPI_ProjectPointOnSurf& aProjector = aContext.ProjPS(theFace2);
-
-  for(Standard_Integer i = 1; i <= nbpoints; i++, U+=adeltau) {
-    Standard_Real V = vmin + adeltav;
-
-    for(Standard_Integer j = 1; j <= nbpoints; j++, V+=adeltav) {
-      gp_Pnt2d aPoint(U,V);
-
-      if(aContext.IsPointInFace(theFace1, aPoint)) {
-	gp_Pnt aP3d = aSurface->Value(U, V);
-	aProjector.Perform(aP3d);
-
-	if(aProjector.IsDone()) {
-
-	  if(aProjector.LowerDistance() > aTolerance)
-	    return Standard_False;
-	}
-      }
-    }
-  }
-
-  return Standard_True;
 }

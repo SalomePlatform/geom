@@ -64,7 +64,11 @@ LIB_SRC = \
 	GEOMAlgo_ShapeSolid.cxx \
 	GEOMAlgo_ShellSolid.cxx \
 	GEOMAlgo_VertexSolid.cxx \
-	GEOMAlgo_WireSolid.cxx
+	GEOMAlgo_WireSolid.cxx \
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState_0.cxx \
+	GEOMAlgo_IndexedDataMapOfShapeState_0.cxx \
+	GEOMAlgo_SolidSolid.cxx \
+	GEOMAlgo_SurfaceTools.cxx
 
 LIB_CLIENT_IDL = 
 LIB_SERVER_IDL = 
@@ -84,7 +88,9 @@ EXPORT_HEADERS = \
 	BlockFix_CheckTool.hxx \
 	Handle_BlockFix_BlockFixAPI.hxx \
 	GEOMAlgo_State.hxx \
-	GEOMAlgo_FinderShapeOn.hxx
+	GEOMAlgo_FinderShapeOn.hxx \
+	GEOMAlgo_IndexedDataMapOfShapeState.hxx \
+	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState.hxx
 
 # idl files
 EXPORT_IDLS=

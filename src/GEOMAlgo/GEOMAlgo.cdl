@@ -46,6 +46,7 @@ is
     class CoupleOfShapes; 
     class PassKey; 
     class PassKeyMapHasher; 
+    class SurfaceTools; 
     class Tools; 
     --	     
     --  finder on 
@@ -53,8 +54,10 @@ is
     class WireSolid; 
     class ShellSolid; 
     class VertexSolid; 
+    class SolidSolid; 
     class FinderShapeOn; 
     --
+    --  instantiations
     class IndexedDataMapOfPassKeyListOfShape   
 	instantiates IndexedDataMap from TCollection (PassKey from GEOMAlgo, 
 						      ListOfShape from TopTools, 
@@ -72,5 +75,10 @@ is
     class ListOfCoupleOfShapes  
     	instantiates List from TCollection  (CoupleOfShapes from GEOMAlgo);
 
+
+    class IndexedDataMapOfShapeState  
+    	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
+	    		    		         	 State from TopAbs,  
+	    	    	    	    	    	    	 ShapeMapHasher from TopTools);
 
 end GEOMAlgo;

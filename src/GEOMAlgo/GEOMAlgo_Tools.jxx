@@ -1,3 +1,6 @@
+#ifndef _TopoDS_Shape_HeaderFile
+#include <TopoDS_Shape.hxx>
+#endif
 #ifndef _GEOMAlgo_IndexedDataMapOfPassKeyListOfShape_HeaderFile
 #include <GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx>
 #endif
@@ -9,9 +12,6 @@
 #endif
 #ifndef _TopTools_IndexedDataMapOfShapeListOfShape_HeaderFile
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#endif
-#ifndef _TopoDS_Shape_HeaderFile
-#include <TopoDS_Shape.hxx>
 #endif
 #ifndef _gp_Pnt_HeaderFile
 #include <gp_Pnt.hxx>
