@@ -24,7 +24,7 @@ if father is None:
         father = myBuilder.NewComponent("GEOM")
         A1 = myBuilder.FindOrCreateAttribute(father, "AttributeName");
         FName = A1._narrow(SALOMEDS.AttributeName)
-        FName.SetValue("Geometry")
+        FName.SetValue( salome.sg.getComponentUserName("GEOM") )
       	A2 = myBuilder.FindOrCreateAttribute(father, "AttributePixMap");
       	aPixmap = A2._narrow(SALOMEDS.AttributePixMap);
 	aPixmap.SetPixMap( "ICON_OBJBROWSER_Geometry" );

@@ -20,7 +20,7 @@ EXPORT_HEADERS = \
 
 # Libraries targets
 
-LIB = libGeometryClient.la
+LIB = libGEOMClient.la
 LIB_SRC = GEOM_Client.cxx
 LIB_SERVER_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl GEOM_Shape.idl GEOM_Gen.idl
 

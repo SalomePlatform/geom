@@ -15,7 +15,7 @@ VPATH=.:$(srcdir):$(top_srcdir)/idl:$(top_builddir)/idl
 @COMMENCE@
 
 # Libraries targets
-LIB = libGeometryPartition.la
+LIB = libGEOMPartition.la
 LIB_SRC = Partition_Inter2d.cxx \
 	  Partition_Inter3d.cxx \
 	  Partition_Loop2d.cxx \

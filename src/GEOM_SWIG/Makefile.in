@@ -17,7 +17,7 @@ VPATH=.:$(srcdir):$(top_srcdir)/idl:$(top_builddir)/idl
 
 # Libraries targets
 
-LIB = libGeometry_Swigcmodule.la
+LIB = libGEOM_Swigcmodule.la
 LIB_SRC = 
 
 SWIG_DEF = libGeometry_Swig.i

@@ -11,7 +11,7 @@ import salome
 import geompy
 import math
 
-geom = salome.lcc.FindOrLoadComponent("FactoryServer", "Geometry")
+geom = salome.lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 myBuilder = salome.myStudy.NewBuilder()
 
 point0  = geom.MakePointStruct(0.,0.,0.)

@@ -17,7 +17,7 @@ EXPORT_HEADERS = GEOM_Actor.h \
 
 # Libraries targets
 
-LIB = libGeometryObject.la
+LIB = libGEOMObject.la
 LIB_SRC =	 GEOM_Actor.cxx \
 		 GEOM_OCCReader.cxx \
 	  	 GEOM_AssemblyBuilder.cxx \

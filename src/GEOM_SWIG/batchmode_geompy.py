@@ -13,7 +13,7 @@ from batchmode_salome import *
 
 #--------------------------------------------------------------------------
 
-geom = lcc.FindOrLoadComponent("FactoryServer", "Geometry")
+geom = lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 geom.GetCurrentStudy(myStudyId)
 myBuilder = myStudy.NewBuilder()
 

@@ -15,7 +15,7 @@ VPATH=.:$(srcdir):$(top_srcdir)/idl:$(top_builddir)/idl
 
 # Libraries targets
 
-LIB = libGeometrySketcher.la 
+LIB = libGEOMSketcher.la 
 LIB_SRC = GEOM_Sketcher.cxx
 LIB_CLIENT_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl GEOM_Shape.idl GEOM_Gen.idl
 

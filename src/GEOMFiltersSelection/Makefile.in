@@ -16,7 +16,7 @@ VPATH=.:$(srcdir):$(top_srcdir)/idl:$(top_builddir)/idl
 
 # Libraries targets
 
-LIB = libGeometryFiltersSelection.la 
+LIB = libGEOMFiltersSelection.la 
 LIB_SRC = GEOM_ShapeTypeFilter.cxx \
 	  GEOM_FaceFilter.cxx \
 	  GEOM_EdgeFilter.cxx

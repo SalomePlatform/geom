@@ -12,7 +12,7 @@ import geompy
 import math
 from time import sleep
 
-geom = salome.lcc.FindOrLoadComponent("FactoryServer", "Geometry")
+geom = salome.lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 myBuilder = salome.myStudy.NewBuilder()
 
 gg = salome.ImportComponentGUI("Geometry")

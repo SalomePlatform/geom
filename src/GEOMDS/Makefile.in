@@ -16,7 +16,7 @@ VPATH=.:$(srcdir):$(top_srcdir)/idl:$(top_builddir)/idl
 
 # Libraries targets
 
-LIB = libGeometryDS.la 
+LIB = libGEOMDS.la 
 LIB_SRC = GEOMDS_Application.cxx \
 	  GEOMDS_Commands.cxx \
 	  GEOMDS_Explorer.cxx \
@@ -43,7 +43,7 @@ EXPORT_HEADERS= GEOMDS_Application.hxx \
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += $(OCC_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS  += $(OCC_LIBS)
 
 # additional file to be cleaned
 MOSTLYCLEAN =

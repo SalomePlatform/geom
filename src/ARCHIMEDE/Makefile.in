@@ -16,7 +16,7 @@ VPATH=.:$(srcdir):$(top_srcdir)/idl:$(top_builddir)/idl
 
 # Libraries targets
 
-LIB = libGeometryArchimede.la 
+LIB = libGEOMArchimede.la 
 LIB_SRC = Archimede_VolumeSection.cxx
 LIB_CLIENT_IDL = 
 
