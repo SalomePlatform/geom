@@ -808,6 +808,15 @@ void GEOMAlgo_Gluer::MakeFace(const TopoDS_Face& aF,
       //
       aBB.Add(newWire, aER);
     }
+    //modified by NIZNHY-PKV Mon Jan 31 17:26:36 2005f
+    //
+    TopTools_ListOfShape aLW;
+    //
+    aLW.Append(aW);
+    myImages.Bind(newWire, aLW);
+    myOrigins.Bind(aW, newWire);
+    //
+    //modified by NIZNHY-PKV Mon Jan 31 17:26:41 2005 t
     aBB.Add(newFace, newWire);
   }
   aNewFace=newFace;
@@ -928,9 +937,12 @@ const TopTools_ListOfShape& GEOMAlgo_Gluer::Modified (const TopoDS_Shape& aS)
   myGenerated.Clear();
   //
   aType=aS.ShapeType();
-  if (aType==TopAbs_FACE || 
-      aType==TopAbs_EDGE || 
-      aType==TopAbs_VERTEX) {
+  if (aType==TopAbs_VERTEX ||
+      aType==TopAbs_EDGE   || 
+      aType==TopAbs_WIRE   || //modified by NIZNHY-PKV Mon Jan 31 17:18:36 2005ft
+      aType==TopAbs_FACE   || 
+      aType==TopAbs_SHELL  || //modified by NIZNHY-PKV Mon Jan 31 17:18:36 2005ft
+      aType==TopAbs_SOLID) {  //modified by NIZNHY-PKV Mon Jan 31 17:18:36 2005ft
     if(myOrigins.IsBound(aS)) {
       const TopoDS_Shape& aSnew=myOrigins.Find(aS);
       if (!aSnew.IsSame(aS)) {

@@ -138,7 +138,14 @@ is
     	    aShape : Shape from TopoDS)
         returns Shape from TopoDS  
     	is protected;  
-	 	
+
+--modified by NIZNHY-PKV Tue Feb  1 10:24:39 2005f	 
+    FindImage(me:out; 
+    	    aS   : Shape from TopoDS; 
+    	    aLIms: out ListOfShape from TopTools) 
+    	is protected; 
+--modified by NIZNHY-PKV Tue Feb  1 10:24:47 2005t 
+
 fields 
     myDoneStep     : ShapeEnum           from TopAbs is protected;   -- rebuilt level
     myBuilder      : Builder             from BRep   is protected;

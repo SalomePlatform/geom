@@ -479,6 +479,7 @@
     //
     aNbFSo=aMFSo.Extent();
     if (aNbFSo!=aNbF) {
+      bFound=Standard_False;
       continue;
     }
     //

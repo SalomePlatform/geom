@@ -5,29 +5,36 @@
 
 
 #include <NMTAlgo_Splitter.ixx>
-#include <TopoDS_Iterator.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <TopoDS_Shape.hxx>
-#include <TopExp.hxx>
 #include <TopoDS_Compound.hxx>
-#include <TopExp_Explorer.hxx>
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Shell.hxx>
-#include <TopTools_MapIteratorOfMapOfShape.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Wire.hxx>
+#include <TopoDS_Iterator.hxx>
+
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_MapIteratorOfMapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <NMTTools_DSFiller.hxx>
-#include <NMTDS_ShapesDataStructure.hxx>
-#include <NMTTools_PaveFiller.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+
 #include <BOPTools_PInterferencePool.hxx>
 #include <BOPTools_InterferencePool.hxx>
 #include <BOPTools_CArray1OfEEInterference.hxx>
 #include <BOPTools_EEInterference.hxx>
 #include <BOPTools_CArray1OfESInterference.hxx>
 #include <BOPTools_ESInterference.hxx>
+
+#include <NMTDS_ShapesDataStructure.hxx>
+#include <NMTTools_PaveFiller.hxx>
+#include <NMTTools_DSFiller.hxx>
+#include <NMTAlgo_Tools.hxx>
 
 //=======================================================================
 //function : KeepShapesInside
@@ -122,10 +129,7 @@
   TopTools_MapOfShape RFM;
   TopTools_MapIteratorOfMapOfShape itF;
   //
-  //modified by NIZNHY-PKV Wed Dec 22 18:56:27 2004 f
   isTool=myToolShapes.Contains(S);
-  //modified by NIZNHY-PKV Wed Dec 22 18:56:31 2004 t
-  //
   //isTool = Standard_False;
   if (!myImageShape.HasImage( S )) {
     return;
@@ -174,7 +178,7 @@
     }
   }// for (; it.More(); it.Next())
   //
-  //modified by NIZNHY-PKV Wed Dec 22 18:59:46 2004 f
+  //
   TopoDS_Compound aCx;
   //
   myBuilder.MakeCompound(aCx);
@@ -183,7 +187,6 @@
     const TopoDS_Shape& aF=itF.Key();
     myBuilder.Add(aCx, aF);
   }
-  //modified by NIZNHY-PKV Wed Dec 22 18:59:48 2004 t
   //
   if (!isTool) {
     // rebuild S, it must remain in the result
@@ -253,117 +256,75 @@
   //
   myShape = C;
 }
- //modified by NIZNHY-PKV Mon Jan 24 10:19:30 2005 f
+//
+//modified by NIZNHY-PKV Tue Feb  1 16:02:29 2005 f
 //=======================================================================
 //function : Modified
 //purpose  : 
 //=======================================================================
-  const TopTools_ListOfShape& NMTAlgo_Splitter::Modified (const TopoDS_Shape& S) 
+const TopTools_ListOfShape& NMTAlgo_Splitter::Modified (const TopoDS_Shape& S) 
 
 {
   TopAbs_ShapeEnum aType;
-  TopTools_ListIteratorOfListOfShape it;
-  TopTools_MapOfShape aMap;
-  TopExp_Explorer anExp;
   //
   myGenerated.Clear();
+  //
   aType=S.ShapeType();
   //
-  switch (aType) {
-    case TopAbs_FACE: {
-      if (myModifiedFaces.IsBound(S)) {
-	anExp.Init(myShape, aType);
-	for(; anExp.More(); anExp.Next()) {
-	  aMap.Add(anExp.Current());
-	}
-	//
-	const TopTools_ListOfShape& aLS=myModifiedFaces.Find(S);
-	it.Initialize(aLS);
-	for (; it.More(); it.Next()) {
-	  const TopoDS_Shape& aFx=it.Value();
-	  if (!aFx.IsSame(S)) {
-	    if (aMap.Contains(aFx)) {
-	      myGenerated.Append(aFx);
-	    }
-	  }
-	}
-      }
-    }
+  switch (aType) { 
+    case TopAbs_SOLID:
+    case TopAbs_FACE: 
+    case TopAbs_EDGE:
+    case TopAbs_VERTEX:
+      FindImage(S, myGenerated);
       break;
-      //
-    case TopAbs_EDGE: {
-      if (myImagesEdges.HasImage(S)) {
-	anExp.Init(myShape, aType);
-	for(; anExp.More(); anExp.Next()) {
-	  aMap.Add(anExp.Current());
-	}
-	//
-	const TopTools_ListOfShape& aLE=myImagesEdges.Image(S);
-	it.Initialize(aLE);
-	for (; it.More(); it.Next()) {
-	  const TopoDS_Shape& aEx=it.Value();
-	  if (!aEx.IsSame(S)) {
-	    if(aMap.Contains(aEx)) {
-	      myGenerated.Append(aEx);
-	    }
-	  }
-	}
-      }
-    }
+    
+    case TopAbs_SHELL:
       break;
-      //
-    case TopAbs_VERTEX: {
-      Standard_Integer aNbS, anIndex, i, aSDVInd;
-      //
-      const NMTTools_DSFiller& aDSF = Filler();
-      const NMTTools_PaveFiller& aPF = aDSF.PaveFiller();
-      const NMTDS_ShapesDataStructure& aDS = aDSF.DS();
-      //
-      aNbS = aDS.NumberOfSourceShapes();
-      anIndex = 0;
-      //
-      for(i=1; i<=aNbS; ++i) {
-	const TopoDS_Shape& aS = aDS.Shape(i);
-	if(S.IsSame(aS)) {
-	  anIndex = i;
-	  break;
-	}
-      }
-      //
-      if(!anIndex) {
-	break;//return myGenerated;
-      }
-      //
-      aSDVInd=aPF.FindSDVertex(anIndex);
-      if(!aSDVInd) {
-	break;//return myGenerated;
-      }
-      //
-      const TopoDS_Shape& aSDV=aDS.Shape(aSDVInd);
-      //
-      anExp.Init(myShape, aType);
-      for(; anExp.More(); anExp.Next()) {
-	const TopoDS_Shape& aVx=anExp.Current();
-	if(aSDV.IsSame(aVx)) {
-	  myGenerated.Append(aSDV);
-	  break;
-	}
-      }
-    } 
+      
+    case TopAbs_WIRE:
       break;
-      //
+      
     default:
       break;
-  } // switch (aType) {
+  } 
   //
   return myGenerated;
 }
-//modified by NIZNHY-PKV Mon Jan 24 10:28:40 2005 t
+//modified by NIZNHY-PKV Tue Feb  1 16:02:33 2005 t
+//=======================================================================
+//function : IsDeleted
+//purpose  : 
+//=======================================================================
+Standard_Boolean NMTAlgo_Splitter::IsDeleted (const TopoDS_Shape& S) 
+
+{
+  const TopTools_ListOfShape& aL = Modified(S);
+  if(aL.Extent() != 0) return Standard_False;
+
+  TopTools_MapOfShape aMap;
+  TopExp_Explorer anExp;
+
+  TopAbs_ShapeEnum aType = S.ShapeType();
+
+  if(aType == TopAbs_VERTEX || 
+     aType == TopAbs_EDGE   || 
+     aType == TopAbs_FACE     ) {
+
+    anExp.Init(myShape, aType);
+    for(; anExp.More(); anExp.Next()) {
+      if(S.IsSame(anExp.Current())) return Standard_False;
+    }
+
+  }
+  
+  return Standard_True;
+}
 //=======================================================================
 //function : Generated
 //purpose  : 
 //=======================================================================
-  const TopTools_ListOfShape& NMTAlgo_Splitter::Generated(const TopoDS_Shape& S) 
+const TopTools_ListOfShape& NMTAlgo_Splitter::Generated(const TopoDS_Shape& S) 
 {
   myGenerated.Clear();
   TopTools_ListIteratorOfListOfShape it;
@@ -531,43 +492,169 @@
 	if(!aMap.Contains(it.Value())) {
 	  myGenerated.Remove(it);
 	}
-
       }
     }
-
     return myGenerated;
-  
   }
-
   return myGenerated;
 }
-
+//modified by NIZNHY-PKV Tue Feb  1 10:26:18 2005f
 //=======================================================================
-//function : IsDeleted
+//function : FindImage
 //purpose  : 
 //=======================================================================
-  Standard_Boolean NMTAlgo_Splitter::IsDeleted (const TopoDS_Shape& S) 
-
+void NMTAlgo_Splitter::FindImage(const TopoDS_Shape& aS,
+				 TopTools_ListOfShape& aLIms)
 {
-  const TopTools_ListOfShape& aL = Modified(S);
-  if(aL.Extent() != 0) return Standard_False;
-
-  TopTools_MapOfShape aMap;
-  TopExp_Explorer anExp;
-
-  TopAbs_ShapeEnum aType = S.ShapeType();
-
-  if(aType == TopAbs_VERTEX || 
-     aType == TopAbs_EDGE   || 
-     aType == TopAbs_FACE     ) {
-
+  TopAbs_ShapeEnum aType;
+  //
+  aType=aS.ShapeType();
+  //
+  if (aType==TopAbs_SOLID) {
+    Standard_Boolean bHasImage, bHasInternalFaces;
+    Standard_Integer i, aNbSd;
+    TopTools_IndexedMapOfShape aMSo, aMSd;
+    TopoDS_Iterator aIt;
+    TopTools_IndexedDataMapOfShapeListOfShape aMFS;
+    TopTools_ListIteratorOfListOfShape aItLS;
+    //
+    bHasInternalFaces=myMapSIFC.IsBound(aS);
+    if (bHasInternalFaces){
+      TopExp::MapShapesAndAncestors(myShape, TopAbs_FACE, TopAbs_SOLID, aMFS);
+      //
+      const TopoDS_Shape& aIFC=myMapSIFC.Find(aS);
+      //
+      aIt.Initialize(aIFC);
+      for (; aIt.More(); aIt.Next()) {
+	const TopoDS_Shape& aIF=aIt.Value();
+	if (aMFS.Contains(aIF)) {
+	  const TopTools_ListOfShape& aLS=aMFS.FindFromKey(aIF);
+	  //
+	  aItLS.Initialize(aLS);
+	  for (; aItLS.More(); aItLS.Next()) {
+	    const TopoDS_Shape& aSx=aItLS.Value();
+	    aMSd.Add(aSx);
+	  }
+	}
+      }
+      //
+      aNbSd=aMSd.Extent();
+      if (aNbSd) {
+	for (i=1; i<=aNbSd; ++i) {
+	  const TopoDS_Shape& aSx=aMSd(i);
+	  if (!aSx.IsSame(aS)) {
+	    aLIms.Append(aSx);
+	  }
+	}
+	return;
+      }
+    }
+    //
+    bHasImage=myImageShape.HasImage(aS);
+    if (!bHasImage) {
+      return;
+    }
+    //
+    TopoDS_Shape aSd;
+    //
+    TopExp::MapShapes(myShape, TopAbs_SOLID, aMSo);
+    //
+    const TopoDS_Shape& aFC=myImageShape.Image(aS).First();
+    bHasImage=NMTAlgo_Tools::FindImageSolid(aFC, aMSo, aSd);
+    if (bHasImage) {
+      if (!aSd.IsSame(aS)) {
+	aLIms.Append(aSd);
+      }
+    }
+  } //if (aType==TopAbs_SOLID) {
+  //==
+  else if (aType==TopAbs_FACE) {
+    TopTools_MapOfShape aMap;
+    TopTools_ListIteratorOfListOfShape aIt;
+    TopExp_Explorer anExp;
+    //
+    if (myModifiedFaces.IsBound(aS)) {
+      anExp.Init(myShape, aType);
+      for(; anExp.More(); anExp.Next()) {
+	aMap.Add(anExp.Current());
+      }
+      //
+      const TopTools_ListOfShape& aLS=myModifiedFaces.Find(aS);
+      aIt.Initialize(aLS);
+      for (; aIt.More(); aIt.Next()) {
+	const TopoDS_Shape& aFx=aIt.Value();
+	if (!aFx.IsSame(aS)) {
+	  if (aMap.Contains(aFx)) {
+	    aLIms.Append(aFx);
+	  }
+	}
+      }
+    }
+  } // else if (aType==TopAbs_FACE)
+  //==
+  else if (aType==TopAbs_EDGE) {
+    TopTools_MapOfShape aMap;
+    TopTools_ListIteratorOfListOfShape aIt;
+    TopExp_Explorer anExp;
+    //
+    if (myImagesEdges.HasImage(aS)) {
+      anExp.Init(myShape, aType);
+      for(; anExp.More(); anExp.Next()) {
+	aMap.Add(anExp.Current());
+      }
+      //
+      const TopTools_ListOfShape& aLE=myImagesEdges.Image(aS);
+      aIt.Initialize(aLE);
+      for (; aIt.More(); aIt.Next()) {
+	const TopoDS_Shape& aEx=aIt.Value();
+	if (!aEx.IsSame(aS)) {
+	  if(aMap.Contains(aEx)) {
+	    aLIms.Append(aEx);
+	  }
+	}
+      }
+    }
+  }// else if (aType==TopAbs_EDGE)
+  //==
+  else if (aType==TopAbs_VERTEX) {
+    Standard_Integer aNbS, anIndex, i, aSDVInd;
+    TopExp_Explorer anExp;
+    //
+    const NMTTools_DSFiller& aDSF = Filler();
+    const NMTTools_PaveFiller& aPF = aDSF.PaveFiller();
+    const NMTDS_ShapesDataStructure& aDS = aDSF.DS();
+    //
+    aNbS = aDS.NumberOfSourceShapes();
+    anIndex = 0;
+      //
+    for(i=1; i<=aNbS; ++i) {
+      const TopoDS_Shape& aSx = aDS.Shape(i);
+      if(aS.IsSame(aSx)) {
+	anIndex = i;
+	break;
+      }
+    }
+    //
+    if(!anIndex) {
+      return;
+    }
+    //
+    aSDVInd=aPF.FindSDVertex(anIndex);
+    if(!aSDVInd) {
+      return;
+    }
+    //
+    const TopoDS_Shape& aSDV=aDS.Shape(aSDVInd);
+    //
     anExp.Init(myShape, aType);
     for(; anExp.More(); anExp.Next()) {
-      if(S.IsSame(anExp.Current())) return Standard_False;
+      const TopoDS_Shape& aVx=anExp.Current();
+      if(aSDV.IsSame(aVx)) {
+	aLIms.Append(aSDV);
+	break;
+      }
     }
-
-  }
-  
-  return Standard_True;
+  }// else if (aType==TopAbs_VERTEX) 
 }
+//modified by NIZNHY-PKV Tue Feb  1 10:26:22 2005t 
 

@@ -116,6 +116,7 @@ Standard_EXPORT   void MakeSolids(const TopoDS_Shape& Solid,TopTools_ListOfShape
 Standard_EXPORT   TopoDS_Shape FindFacesInside(const TopoDS_Shape& S,const Standard_Boolean CheckClosed = Standard_False,const Standard_Boolean All = Standard_False) ;
 Standard_EXPORT static  Standard_Boolean IsInside(const TopoDS_Shape& S1,const TopoDS_Shape& S2) ;
 Standard_EXPORT   TopoDS_Shape GetOriginalShape(const TopoDS_Shape& aShape) const;
+Standard_EXPORT   void FindImage(const TopoDS_Shape& aS,TopTools_ListOfShape& aLIms) ;
 
 
  // Fields PROTECTED

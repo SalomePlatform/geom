@@ -1407,7 +1407,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
 
     TDF_Label aHistoryLabel = aWhereFunction->GetHistoryEntry(Standard_False);
     if (aHistoryLabel.IsNull()) {
-      SetErrorCode("History for an operation, produced the shape, does not exist.");
+      SetErrorCode("Modifications history does not exist for the shape under consideration.");
       return NULL;
     }
 
@@ -1436,32 +1436,34 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
         TDF_Label anArgumentHistoryLabel =
           aWhereFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_False);
         if (anArgumentHistoryLabel.IsNull()) {
-          SetErrorCode("History for this entity does not exist.");
+          // Lost History of operation argument. Possibly, all its entities was removed.
+          SetErrorCode(OK);
           return NULL;
         }
 
         TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(aWhatIndex, Standard_False);
         if (aWhatHistoryLabel.IsNull()) {
-          SetErrorCode("History for this entity does not exist.");
+          // Removed entity
+          SetErrorCode(OK);
           return NULL;
         }
 
         Handle(TDataStd_IntegerArray) anIntegerArray;
         if (!aWhatHistoryLabel.FindAttribute(TDataStd_IntegerArray::GetID(), anIntegerArray)) {
-          SetErrorCode("Empty history. Possibly, this entity is absent in result.");
+          SetErrorCode("Error: Empty modifications history for the sought shape.");
           return NULL;
         }
 
         aModifiedArray = anIntegerArray->Array();
         if (aModifiedArray->Length() == 0) {
-          SetErrorCode("This entity is absent in result.");
+          SetErrorCode("Error: Empty modifications history for the sought shape.");
           return NULL;
         }
       }
     }
 
     if (!isFound) {
-      SetErrorCode("Not found in arguments.");
+      SetErrorCode("The sought shape does not belong to any operation argument.");
       return NULL;
     }
   }

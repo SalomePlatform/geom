@@ -305,7 +305,7 @@ gp_Vec NextNormal(const TopoDS_Edge& E,
   p.SetY( p.Y() + dir.Y()*duv );
   
   gp_Pnt Ps;
-  gp_Vec Norm, V1, V2, VV1, VV2;
+  gp_Vec Norm, V1, V2;
   Sf->D1( p.X(), p.Y(), Ps, V1, V2);
   Norm = V1.Crossed(V2);
 
