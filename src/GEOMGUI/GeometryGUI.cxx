@@ -337,7 +337,7 @@ GeometryGUI* GeometryGUI::GetOrCreateGeometryGUI( QAD_Desktop* desktop )
 
     GeomGUI->myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
 
-    Engines::Component_var comp = desktop->getEngine("FactoryServer", "Geometry");
+    Engines::Component_var comp = desktop->getEngine("FactoryServer", "GEOM");
     GeomGUI->myComponentGeom = GEOM::GEOM_Gen::_narrow(comp);
     
     /* GetCurrentStudy */
@@ -4990,7 +4990,8 @@ bool GeometryGUI::Import( )
       father = aStudyBuilder->NewComponent("GEOM");
       anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributeName");
       aName = SALOMEDS::AttributeName::_narrow(anAttr);
-      aName->SetValue( tr("GEOM_MEN_COMPONENT") );
+      //      aName->SetValue( tr("GEOM_MEN_COMPONENT") );
+      aName->SetValue( QAD_Application::getDesktop()->getComponentUserName( "GEOM" ) );
       anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributePixMap");
       aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
       aPixmap->SetPixMap( "ICON_OBJBROWSER_Geometry" );
@@ -5194,7 +5195,8 @@ bool GeometryGUI::Display( GEOM::GEOM_Shape_ptr aShape,
     father = aStudyBuilder->NewComponent("GEOM");
     anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributeName");
     aName = SALOMEDS::AttributeName::_narrow(anAttr);
-    aName->SetValue( tr("GEOM_MEN_COMPONENT") );
+    //    aName->SetValue( tr("GEOM_MEN_COMPONENT") );
+    aName->SetValue( QAD_Application::getDesktop()->getComponentUserName( "GEOM" ) );
     anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributePixMap");
     aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
     aPixmap->SetPixMap( "ICON_OBJBROWSER_Geometry" );
@@ -5308,7 +5310,8 @@ bool GeometryGUI::AddInStudy( bool selection,
     father = aStudyBuilder->NewComponent("GEOM");
     anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributeName");
     aName = SALOMEDS::AttributeName::_narrow(anAttr);
-    aName->SetValue( tr("GEOM_MEN_COMPONENT") );
+    //    aName->SetValue( tr("GEOM_MEN_COMPONENT") );
+    aName->SetValue( QAD_Application::getDesktop()->getComponentUserName( "GEOM" ) );
     anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributePixMap");
     aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
     aPixmap->SetPixMap( "ICON_OBJBROWSER_Geometry" );

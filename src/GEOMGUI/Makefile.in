@@ -20,12 +20,12 @@ EXPORT_HEADERS= GeometryGUI_Swig.hxx \
 
 # ressources files :
 PO_FILES = \
-	GeometryGUI_icons.po \
-	GeometryGUI_msg_en.po \
-	GeometryGUI_msg_fr.po
+	GEOM_icons.po \
+	GEOM_msg_en.po \
+	GEOM_msg_fr.po
 
 # Libraries targets 
-LIB = libGeometryGUI.la
+LIB = libGEOMGUI.la
 LIB_SRC =	GeometryGUI.cxx \
 		GeometryGUI_SpinBox.cxx \
 		GeometryGUI_TransparencyDlg.cxx \
