@@ -68,11 +68,11 @@ EXPORT_PYSCRIPTS = \
 	GEOM_tube_geom_gg2.py \
 	GEOM_Nut.py \
 	GEOM_Sketcher.py \
-	PAL-MESH-019-020_geometry.py \
-	PAL-MESH-028_geometry.py \
-	PAL-MESH-030_geometry.py \
-	PAL-MESH-033_geometry.py \
-	PAL-MESH-035_geometry.py
+	PAL_MESH_019_020_geometry.py \
+	PAL_MESH_028_geometry.py \
+	PAL_MESH_030_geometry.py \
+	PAL_MESH_033_geometry.py \
+	PAL_MESH_035_geometry.py
 
 LIB_CLIENT_IDL = SALOMEDS.idl \
                  SALOMEDS_Attributes.idl \
