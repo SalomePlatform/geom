@@ -1,3 +1,5 @@
+#  GEOM PARTITION : partition algorithm
+#
 #  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 # 
@@ -20,18 +22,42 @@
 #
 #
 #  File   : Makefile.in
-#  Author : Patrick GOLDBRONN (CEA)
+#  Author : Marc Tajchman (CEA)
 #  Module : GEOM
 #  $Header$
 
 top_srcdir=@top_srcdir@
-top_builddir=../..
+top_builddir=../../..
 srcdir=@srcdir@
 VPATH=.:@srcdir@
 
 
 @COMMENCE@
 
-SUBDIRS = OBJECT SKETCHER ARCHIMEDE PARTITION GEOMDS GEOM GEOMClient GEOMFiltersSelection GEOMGUI GEOM_SWIG
+# Libraries targets
+LIB = libGeometryPartition.la
+LIB_SRC = Partition_Inter2d.cxx \
+	  Partition_Inter3d.cxx \
+	  Partition_Loop2d.cxx \
+	  Partition_Loop3d.cxx \
+          Partition_Spliter.cxx
 
-@MODULE@
+LIB_CLIENT_IDL = 
+LIB_SERVER_IDL = 
+
+# header files 
+EXPORT_HEADERS = Partition_Spliter.hxx \
+		 Partition_Inter3d.hxx
+
+# idl files
+EXPORT_IDLS=
+
+
+CPPFLAGS += $(OCC_INCLUDES)
+CXXFLAGS += $(OCC_CXXFLAGS)
+LDFLAGS += $(OCC_LIBS)
+
+%_moc.cxx: %.h
+	$(MOC) $< -o $@
+
+@CONCLUDE@

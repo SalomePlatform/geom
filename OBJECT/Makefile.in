@@ -1,3 +1,5 @@
+#  GEOM OBJECT : interactive object for Geometry entities visualization
+#
 #  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 # 
@@ -20,18 +22,44 @@
 #
 #
 #  File   : Makefile.in
-#  Author : Patrick GOLDBRONN (CEA)
 #  Module : GEOM
-#  $Header$
 
 top_srcdir=@top_srcdir@
-top_builddir=../..
+top_builddir=../../..
 srcdir=@srcdir@
-VPATH=.:@srcdir@
+VPATH=.:@srcdir@:@top_srcdir@/idl
 
 
 @COMMENCE@
 
-SUBDIRS = OBJECT SKETCHER ARCHIMEDE PARTITION GEOMDS GEOM GEOMClient GEOMFiltersSelection GEOMGUI GEOM_SWIG
+EXPORT_HEADERS = GEOM_Actor.h \
+		 GEOM_AssemblyBuilder.h \
+		 GEOM_AISShape.hxx \
+		 Handle_GEOM_AISShape.hxx \
+		 GEOM_InteractiveObject.hxx \
+		 Handle_GEOM_InteractiveObject.hxx 
 
-@MODULE@
+
+# Libraries targets
+
+LIB = libGeometryObject.la
+LIB_SRC =	 GEOM_Actor.cxx \
+		 GEOM_OCCReader.cxx \
+	  	 GEOM_AssemblyBuilder.cxx \
+		 GEOM_AISShape.cxx \
+		 GEOM_InteractiveObject.cxx 
+
+LIB_CLIENT_IDL = 
+
+# Executables targets
+BIN = 
+BIN_SRC	=
+
+CPPFLAGS+=$(QT_INCLUDES) $(PYTHON_INCLUDES) $(OCC_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES)
+LDFLAGS+=$(QT_MT_LIBS) $(OCC_LIBS) $(VTK_LIBS) $(OGL_LIBS) $(PYTHON_LIBS) -lSalomeObject
+
+%_moc.cxx: %.h
+	$(MOC) $< -o $@
+
+
+@CONCLUDE@

@@ -1,3 +1,5 @@
+#  GEOM GEOMClient : tool to transfer BREP files from GEOM server to GEOM client
+#
 #  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 # 
@@ -25,13 +27,34 @@
 #  $Header$
 
 top_srcdir=@top_srcdir@
-top_builddir=../..
+top_builddir=../../..
 srcdir=@srcdir@
-VPATH=.:@srcdir@
+VPATH=.:@srcdir@:@top_srcdir@/idl
 
 
 @COMMENCE@
 
-SUBDIRS = OBJECT SKETCHER ARCHIMEDE PARTITION GEOMDS GEOM GEOMClient GEOMFiltersSelection GEOMGUI GEOM_SWIG
+# header files 
+EXPORT_HEADERS = \
+	GEOM_Client.hxx
 
-@MODULE@
+# Libraries targets
+
+LIB = libGeometryClient.la
+LIB_SRC = GEOM_Client.cxx
+LIB_SERVER_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl GEOM_Shape.idl GEOM_Gen.idl
+
+# Executables targets
+BIN = 
+BIN_SRC = 
+BIN_CLIENT_IDL = 
+BIN_SERVER_IDL =
+
+# additionnal information to compil and link file
+CPPFLAGS += $(OCC_INCLUDES)
+CXXFLAGS += $(OCC_CXXFLAGS)
+LDFLAGS  += $(OCC_LIBS) 
+
+
+@CONCLUDE@
+
