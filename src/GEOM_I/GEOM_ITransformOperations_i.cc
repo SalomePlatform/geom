@@ -787,34 +787,34 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShapeCopy
  *  MultiTranslate1D
  */
 //============================================================================= 
-GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate1D (GEOM::GEOM_Object_ptr theObject, GEOM::GEOM_Object_ptr theVector, CORBA::Double theStep, CORBA::Long theNbTimes)
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate1D
+                           (GEOM::GEOM_Object_ptr theObject,
+			    GEOM::GEOM_Object_ptr theVector,
+			    CORBA::Double theStep, CORBA::Long theNbTimes)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
-
-   //Set a not done flag
+  //Set a not done flag
   GetOperations()->SetNotDone(); 
+
+  GEOM::GEOM_Object_var aGEOMObject;
 
   if (theObject == NULL || theVector == NULL) return aGEOMObject._retn();
 
-  //check if the object is a subshape
-  if(!theObject->IsMainShape()) {
-     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
-     return aGEOMObject._retn();
-   }
-    
-   //Get the object itself
-   Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
-   if (aBasicObject.IsNull()) return aGEOMObject._retn();
-    
-   //Get the vector of translation
-   Handle(GEOM_Object) aVector =  GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), theVector->GetEntry());
-   if (aVector.IsNull()) return aGEOMObject._retn();
-    
-   //Perform the translation
-   Handle(GEOM_Object) anObject  = GetOperations()->Translate1D(aBasicObject, aVector, theStep, theNbTimes);   
-   if (!GetOperations()->IsDone() || anObject.IsNull())  return aGEOMObject._retn();
-    
-   return GetObject(anObject); 
+  //Get the object itself
+  Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject
+    (theObject->GetStudyID(), theObject->GetEntry());
+  if (aBasicObject.IsNull()) return aGEOMObject._retn();
+
+  //Get the vector of translation
+  Handle(GEOM_Object) aVector = GetOperations()->GetEngine()->GetObject
+    (theVector->GetStudyID(), theVector->GetEntry());
+  if (aVector.IsNull()) return aGEOMObject._retn();
+
+  //Perform the translation
+  Handle(GEOM_Object) anObject =
+    GetOperations()->Translate1D(aBasicObject, aVector, theStep, theNbTimes);   
+  if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
+
+  return GetObject(anObject); 
 }
 
 //=============================================================================
@@ -830,33 +830,31 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate2D (GEOM::GEOM_
 								     CORBA::Double theStep2, 
 								     CORBA::Long theNbTimes2)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
-
   //Set a not done flag
   GetOperations()->SetNotDone(); 
-  
+
+  GEOM::GEOM_Object_var aGEOMObject;
+
   if (theObject == NULL || theVector1 == NULL || theVector2 == NULL) return aGEOMObject._retn();
 
-  //check if the object is a subshape
-  if(!theObject->IsMainShape()) {
-    GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
-    return aGEOMObject._retn();
-  }
-
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject
+    (theObject->GetStudyID(), theObject->GetEntry());
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector1 of translation
-  Handle(GEOM_Object) aVector1 = GetOperations()->GetEngine()->GetObject(theVector1->GetStudyID(), theVector1->GetEntry());
+  Handle(GEOM_Object) aVector1 = GetOperations()->GetEngine()->GetObject
+    (theVector1->GetStudyID(), theVector1->GetEntry());
   if (aVector1.IsNull()) return aGEOMObject._retn();
 
- //Get the vector2 of translation
-  Handle(GEOM_Object) aVector2 = GetOperations()->GetEngine()->GetObject(theVector2->GetStudyID(), theVector2->GetEntry());
+  //Get the vector2 of translation
+  Handle(GEOM_Object) aVector2 = GetOperations()->GetEngine()->GetObject
+    (theVector2->GetStudyID(), theVector2->GetEntry());
   if (aVector2.IsNull()) return aGEOMObject._retn();
-  
+
   //Perform the translation
-  Handle(GEOM_Object) anObject = GetOperations()->Translate2D(aBasicObject, aVector1, theStep1, theNbTimes1, aVector2, theStep2, theNbTimes2);   
+  Handle(GEOM_Object) anObject = GetOperations()->Translate2D
+    (aBasicObject, aVector1, theStep1, theNbTimes1, aVector2, theStep2, theNbTimes2);   
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject); 
@@ -871,29 +869,23 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate1D (GEOM::GEOM_Obj
 								  GEOM::GEOM_Object_ptr theVector,
 								  CORBA::Long theNbTimes)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
-
   //Set a not done flag
   GetOperations()->SetNotDone(); 
 
+  GEOM::GEOM_Object_var aGEOMObject;
+
   if (theObject == NULL || theVector == NULL) return aGEOMObject._retn();
 
-  //check if the object is a subshape
-  if(!theObject->IsMainShape()) {
-    GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
-    return aGEOMObject._retn();
-  }
-
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject
+    (theObject->GetStudyID(), theObject->GetEntry());
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the a directon of rotation
-  Handle(GEOM_Object) aVector = GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), theVector->GetEntry());
+  Handle(GEOM_Object) aVector = GetOperations()->GetEngine()->GetObject
+    (theVector->GetStudyID(), theVector->GetEntry());
   if (aVector.IsNull()) return aGEOMObject._retn();
 
-  
   //Perform the rotation
   Handle(GEOM_Object) anObject = GetOperations()->Rotate1D(aBasicObject, aVector, theNbTimes);   
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
@@ -913,31 +905,26 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate2D (GEOM::GEOM_Obj
 								  CORBA::Double theStep, 
 								  CORBA::Long theNbTimes2)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
-
   //Set a not done flag
   GetOperations()->SetNotDone(); 
 
+  GEOM::GEOM_Object_var aGEOMObject;
+
   if (theObject == NULL || theVector == NULL) return aGEOMObject._retn();
 
-  //check if the object is a subshape
-  if(!theObject->IsMainShape()) {
-    GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
-    return aGEOMObject._retn();
-  }
-
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject
+    (theObject->GetStudyID(), theObject->GetEntry());
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
-
   //Get the a directon of rotation
-  Handle(GEOM_Object) aVector = GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), theVector->GetEntry());
+  Handle(GEOM_Object) aVector = GetOperations()->GetEngine()->GetObject
+    (theVector->GetStudyID(), theVector->GetEntry());
   if (aVector.IsNull()) return aGEOMObject._retn();
 
-  
   //Perform the rotation
-  Handle(GEOM_Object) anObject = GetOperations()->Rotate2D(aBasicObject, aVector, theAngle, theNbTimes1, theStep, theNbTimes2);   
+  Handle(GEOM_Object) anObject = GetOperations()->Rotate2D
+    (aBasicObject, aVector, theAngle, theNbTimes1, theStep, theNbTimes2);   
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);  
