@@ -38,7 +38,7 @@ void GEOMDS_Application::Formats(TColStd_SequenceOfExtendedString& Formats)
 
 Standard_CString GEOMDS_Application::ResourcesName() 
 {
-  return Standard_CString ("Resources");
+  return Standard_CString ("GEOMDS_Resources");
 }
 
 
