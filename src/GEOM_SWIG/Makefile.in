@@ -66,6 +66,7 @@ EXPORT_PYSCRIPTS = \
 	GEOM_shellSolid.py \
 	GEOM_tube_geom.py \
 	GEOM_tube_geom_gg2.py \
+	GEOM_Nut.py \
 	GEOM_Sketcher.py
 
 LIB_CLIENT_IDL = SALOMEDS.idl \
