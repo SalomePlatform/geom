@@ -88,6 +88,9 @@ GEOMBase_Helper::GEOMBase_Helper()
 //================================================================
 GEOMBase_Helper::~GEOMBase_Helper()
 {
+  if ( !QAD_Application::getDesktop()  )
+    return;
+
   if ( myPreview.size() )
     erasePreview();
   if ( hasCommand() )
