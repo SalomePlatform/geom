@@ -1,12 +1,32 @@
-using namespace std;
-//  File      : GeometryGUI_PartitionDlg.cxx
-//  Created   :
-//  Author    : Lucien PIGNOLONI
-//  Project   : SALOME
-//  Module    : GeometryGUI
-//  Copyright : OPEN CASCADE
+//  GEOM GEOMGUI : GUI for Geometry component
+//
+//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// 
+//  This library is free software; you can redistribute it and/or 
+//  modify it under the terms of the GNU Lesser General Public 
+//  License as published by the Free Software Foundation; either 
+//  version 2.1 of the License. 
+// 
+//  This library is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//  Lesser General Public License for more details. 
+// 
+//  You should have received a copy of the GNU Lesser General Public 
+//  License along with this library; if not, write to the Free Software 
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// 
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//
+//
+//
+//  File   : GeometryGUI_PartitionDlg.cxx
+//  Author : Lucien PIGNOLONI
+//  Module : GEOM
 //  $Header$
 
+using namespace std;
 #include "GeometryGUI_PartitionDlg.h"
 
 #include "GeometryGUI.h"
@@ -212,8 +232,8 @@ void GeometryGUI_PartitionDlg::Init( SALOME_Selection* Sel )
   myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
 
   /* type for sub shape selection */
-  ComboBox1->insertItem( tr( "RECONSTRUCTION_LIMIT_SHAPE"  ) );
-//  ComboBox1->insertItem( tr( "RECONSTRUCTION_LIMIT_SOLID"  ) );
+//  ComboBox1->insertItem( tr( "RECONSTRUCTION_LIMIT_SHAPE"  ) );
+  ComboBox1->insertItem( tr( "RECONSTRUCTION_LIMIT_SOLID"  ) );
   ComboBox1->insertItem( tr( "RECONSTRUCTION_LIMIT_SHELL"  ) );
   ComboBox1->insertItem( tr( "RECONSTRUCTION_LIMIT_FACE"   ) );
   ComboBox1->insertItem( tr( "RECONSTRUCTION_LIMIT_WIRE"   ) );
@@ -284,13 +304,13 @@ void GeometryGUI_PartitionDlg::ClickOnApply()
   {
     GEOM::shape_type limit;
     switch (myLimit) {
+//    case 0: limit = GEOM::SOLID ; break;
     case 0: limit = GEOM::SHAPE ; break;  
-    case 1: limit = GEOM::SOLID ; break;
-    case 2: limit = GEOM::SHELL ; break;
-    case 3: limit = GEOM::FACE  ; break;
-    case 4: limit = GEOM::WIRE  ; break; 
-    case 5: limit = GEOM::EDGE  ; break; 
-    case 6: limit = GEOM::VERTEX; break; 
+    case 1: limit = GEOM::SHELL ; break;
+    case 2: limit = GEOM::FACE  ; break;
+    case 3: limit = GEOM::WIRE  ; break; 
+    case 4: limit = GEOM::EDGE  ; break; 
+    case 5: limit = GEOM::VERTEX; break; 
     default:limit = GEOM::SHAPE;
     }
     myGeomGUI->MakePartitionAndDisplay (myListShapes,
