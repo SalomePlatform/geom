@@ -16,8 +16,8 @@
         <component-username>Geometry</component-username>
         <component-type>Geom</component-type>
         <component-author>NRI</component-author>
-        <component-version>2.0.0</component-version>
-        <component-comment>Geom component - Open CASCADE</component-comment>
+        <component-version>2.2.0</component-version>
+        <component-comment>Geometry component</component-comment>
         <component-multistudy>1</component-multistudy>
         <component-icone>ModuleGeom.png</component-icone>
 
@@ -526,8 +526,8 @@
             <component-username>GEOM_Superv</component-username>
             <component-type>OTHER</component-type>
             <component-author>mkr</component-author>
-            <component-version>2.1.0</component-version>
-            <component-comment>unknown</component-comment>
+            <component-version>2.2.0</component-version>
+            <component-comment>Supervision wrapper for Geometry component</component-comment>
             <component-multistudy>1</component-multistudy>
             <component-icone></component-icone>
             <constraint></constraint>
