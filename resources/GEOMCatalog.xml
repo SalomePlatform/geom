@@ -3379,13 +3379,13 @@
                         </inParameter-list>
                         <outParameter-list>
                             <outParameter>
-                                <outParameter-name>theNbBlocks</outParameter-name>
+                                <outParameter-name>return</outParameter-name>
                                 <outParameter-type>long</outParameter-type>
                                 <outParameter-comment>unknown</outParameter-comment>
                             </outParameter>
                             <outParameter>
-                                <outParameter-name>return</outParameter-name>
-                                <outParameter-type>boolean</outParameter-type>
+                                <outParameter-name>theNbBlocks</outParameter-name>
+                                <outParameter-type>long</outParameter-type>
                                 <outParameter-comment>unknown</outParameter-comment>
                             </outParameter>
                         </outParameter-list>
@@ -3406,13 +3406,13 @@
                         </inParameter-list>
                         <outParameter-list>
                             <outParameter>
-                                <outParameter-name>theErrors</outParameter-name>
-                                <outParameter-type>BCErrors</outParameter-type>
+                                <outParameter-name>return</outParameter-name>
+                                <outParameter-type>long</outParameter-type>
                                 <outParameter-comment>unknown</outParameter-comment>
                             </outParameter>
                             <outParameter>
-                                <outParameter-name>return</outParameter-name>
-                                <outParameter-type>boolean</outParameter-type>
+                                <outParameter-name>theErrors</outParameter-name>
+                                <outParameter-type>BCErrors</outParameter-type>
                                 <outParameter-comment>unknown</outParameter-comment>
                             </outParameter>
                         </outParameter-list>
