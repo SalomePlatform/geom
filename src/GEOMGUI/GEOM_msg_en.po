@@ -1532,10 +1532,10 @@ msgid "GEOM_NUM_SPLIT_POINTS"
 msgstr "Number of splitting points"
 
 msgid "GEOM_SURFACE_CONTINUTY"
-msgstr "Surface continuty"
+msgstr "Surface continuity"
 
 msgid "GEOM_CURVE_CONTINUTY"
-msgstr "Curve continuty"
+msgstr "Curve continuity"
 
 msgid "GEOM_SURFACE_MODE"
 msgstr "Surface mode"
@@ -1556,10 +1556,10 @@ msgid "GEOM_REQUIRED_NUM_SEGMENTS"
 msgstr "Required number of segments"
 
 msgid "GEOM_3D_CONTINUTY"
-msgstr "3D continuty"
+msgstr "3D continuity"
 
 msgid "GEOM_2D_CONTINUTY"
-msgstr "2D continuty"
+msgstr "2D continuity"
 
 msgid "GEOM_CLOSECONTOUR_TITLE"
 msgstr "Close contour"
