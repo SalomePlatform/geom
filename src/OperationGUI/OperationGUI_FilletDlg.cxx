@@ -449,7 +449,11 @@ void OperationGUI_FilletDlg::MakePreview()
 	  
 	  for(int i = 1; i <= fill.NbContours(); i++) {
 	    try {
+#if OCC_VERSION_MAJOR >= 5
 	      fill.SetRadius(myRadius,i,i);
+#else
+	      fill.SetRadius(myRadius,i);
+#endif
 	    }  
 	    catch(Standard_Failure) {
 	      QApplication::restoreOverrideCursor();
