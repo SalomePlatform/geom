@@ -12,6 +12,7 @@
 from batchmode_salome import *
 
 #--------------------------------------------------------------------------
+modulecatalog = naming_service.Resolve("/Kernel/ModulCatalog")
 
 geom = lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 geom.GetCurrentStudy(myStudyId)
@@ -22,7 +23,11 @@ if father is None:
         father = myBuilder.NewComponent("GEOM")
         A1 = myBuilder.FindOrCreateAttribute(father, "AttributeName");
         FName = A1._narrow(SALOMEDS.AttributeName)
-        FName.SetValue("Geometry")
+#        FName.SetValue("Geometry")
+
+	Comp = modulecatalog.GetComponent( "GEOM" )
+	FName.SetValue( Comp._get_componentusername() )
+
       	A2 = myBuilder.FindOrCreateAttribute(father, "AttributePixMap");
       	aPixmap = A2._narrow(SALOMEDS.AttributePixMap);
 	aPixmap.SetPixMap( "ICON_OBJBROWSER_Geometry" );
