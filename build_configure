@@ -136,8 +136,8 @@ sed 's/.in / /' configure.in_tmp2 >> configure.in_tmp1
 echo  "])" >> configure.in_tmp1
 
 # delete the link created for AC_OUTPUT
-echo "" >> configure.in_tmp1
-echo 'rm -f ${ROOT_SRCDIR}/salome_adm' >> configure.in_tmp1
+#echo "" >> configure.in_tmp1
+#echo 'rm -f ${ROOT_SRCDIR}/salome_adm' >> configure.in_tmp1
 \mv configure.in_tmp1 configure.in_new
 \rm  -f configure.in_tmp2 configure.in_tmp3
 
