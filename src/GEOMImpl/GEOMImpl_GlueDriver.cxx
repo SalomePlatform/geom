@@ -70,6 +70,9 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& the
     case 6:
       Standard_Failure::Raise("Result shape is Null");
       break;
+    case 101:
+      Standard_Failure::Raise("Argument shape is not a compound of hexahedral solids");
+      break;
     case 200:
       Standard_Failure::Raise("Error occured during check of geometric coincidence");
       break;
