@@ -30,6 +30,7 @@ using namespace std;
 
 #include "QAD_RightFrame.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
+#include "OCCViewer_Viewer3d.h"
 #include <AIS_InteractiveContext.hxx>
 
 #include <qframe.h>
@@ -221,6 +222,8 @@ void GEOMBase_TransparencyDlg::ValueHasChanged(int newValue)
     }
 
     QApplication::setOverrideCursor(Qt::waitCursor);
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
     for(;It.More(); It.Next()) {
       Handle(SALOME_InteractiveObject) IObject = It.Value();
       Standard_Boolean found;
@@ -229,10 +232,10 @@ void GEOMBase_TransparencyDlg::ValueHasChanged(int newValue)
 	QApplication::restoreOverrideCursor();
 	return;
       }
-      this->myIc->SetTransparency(Shape, newValue / 10.0, false);
-      myIc->Redisplay(Shape, Standard_False, Standard_True);
+      ic->SetTransparency(Shape, newValue / 10.0, false);
+      ic->Redisplay(Shape, Standard_False, Standard_True);
     }
-    myIc->UpdateCurrentViewer();
+    ic->UpdateCurrentViewer();
   }
   QApplication::restoreOverrideCursor();
   return;

@@ -396,11 +396,10 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 8033: // TRANSPARENCY - POPUP VIEWER
       {
-	OCCViewer_Viewer3d* v3d;
 	Handle(AIS_InteractiveContext) ic;
-	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC) {
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-	  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+	  ic = v3d->getAISContext();
 	}
 	GEOMBase_TransparencyDlg *aDlg = new GEOMBase_TransparencyDlg(parent, "", Sel, ic);
 	break;
