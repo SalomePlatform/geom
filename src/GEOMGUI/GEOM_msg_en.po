@@ -1865,6 +1865,8 @@ msgstr "Dz"
 msgid "BasicGUI_MarkerDlg::LCS_NAME"
 msgstr "LocalCS"
 
+msgid "BasicGUI_MarkerDlg::VEC_PARALLEL"
+msgstr "Coordinate system axes cannot be parallel"
 
 
 

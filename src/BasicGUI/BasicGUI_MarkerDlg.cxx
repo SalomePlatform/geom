@@ -452,6 +452,19 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 
 	    myEditCurrentArgument->setText( aName );
 	  }
+	  else {
+	    myData[ X ]->SetValue( 0 );
+	    myData[ Y ]->SetValue( 0 );
+	    myData[ Z ]->SetValue( 0 );
+
+	    myData[ DX1 ]->SetValue( 0 );
+	    myData[ DY1 ]->SetValue( 0 );
+	    myData[ DZ1 ]->SetValue( 0 );
+
+	    myData[ DX2 ]->SetValue( 0 );
+	    myData[ DY2 ]->SetValue( 0 );
+	    myData[ DZ2 ]->SetValue( 0 );
+	  }
 	}
 	else if ( getConstructorId() == 2 ) {
 	  if (myEditCurrentArgument == Group2->LineEdit1) {
@@ -461,6 +474,11 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 	      myData[ Y ]->SetValue( aPnt.Y() );
 	      myData[ Z ]->SetValue( aPnt.Z() );
 	      myEditCurrentArgument->setText( aName );
+	    }
+	    else {
+	      myData[ X ]->SetValue( 0 );
+	      myData[ Y ]->SetValue( 0 );
+	      myData[ Z ]->SetValue( 0 );
 	    }
 	  }
 	  else if (myEditCurrentArgument == Group2->LineEdit2) {
@@ -474,6 +492,11 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 	      myData[ DZ1 ]->SetValue( aDir.Z() );
 	      myEditCurrentArgument->setText( aName );
 	    }
+	    else {
+	      myData[ DX1 ]->SetValue( 0 );
+	      myData[ DY1 ]->SetValue( 0 );
+	      myData[ DZ1 ]->SetValue( 0 );
+	    }
 	  }
 	  else if (myEditCurrentArgument == Group2->LineEdit3) {
 	    if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_EDGE ) {
@@ -486,10 +509,47 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 	      myData[ DZ2 ]->SetValue( aDir.Z() );
 	      myEditCurrentArgument->setText( aName );
 	    }
+	    else {
+	      myData[ DX2 ]->SetValue( 0 );
+	      myData[ DY2 ]->SetValue( 0 );
+	      myData[ DZ2 ]->SetValue( 0 );
+	    }
 	  }
 	}
       }
     }
+  }
+  else {
+    if ( getConstructorId() == 1 ) {
+      myData[ X ]->SetValue( 0 );
+      myData[ Y ]->SetValue( 0 );
+      myData[ Z ]->SetValue( 0 );
+
+      myData[ DX1 ]->SetValue( 0 );
+      myData[ DY1 ]->SetValue( 0 );
+      myData[ DZ1 ]->SetValue( 0 );
+
+      myData[ DX2 ]->SetValue( 0 );
+      myData[ DY2 ]->SetValue( 0 );
+      myData[ DZ2 ]->SetValue( 0 );
+    }
+    else if ( getConstructorId() == 2 ) {
+      if (myEditCurrentArgument == Group2->LineEdit1) {
+	myData[ X ]->SetValue( 0 );
+	myData[ Y ]->SetValue( 0 );
+	myData[ Z ]->SetValue( 0 );
+      }
+      else if (myEditCurrentArgument == Group2->LineEdit2) {
+	myData[ DX1 ]->SetValue( 0 );
+	myData[ DY1 ]->SetValue( 0 );
+	myData[ DZ1 ]->SetValue( 0 );
+      }
+      else if (myEditCurrentArgument == Group2->LineEdit3) {
+	myData[ DX2 ]->SetValue( 0 );
+	myData[ DY2 ]->SetValue( 0 );
+	myData[ DZ2 ]->SetValue( 0 );
+      }
+    }    
   }
 
   displayPreview();
@@ -586,21 +646,25 @@ bool BasicGUI_MarkerDlg::isValid( QString& msg )
   gp_Vec v1( myData[ DX1 ]->GetValue(), myData[ DY1 ]->GetValue(), myData[ DZ1 ]->GetValue() ),
          v2( myData[ DX2 ]->GetValue(), myData[ DY2 ]->GetValue(), myData[ DZ2 ]->GetValue() );
 
-  bool isOrthogonal = false;
+  bool isOk = false;
   // we will got exception if the magnitude of any of the 2 vectors <= gp::Resolution()
-  if ( v1.Magnitude() > gp::Resolution() && v2.Magnitude() > gp::Resolution() )
-    isOrthogonal = v1.IsNormal( v2, Precision::Confusion() );
+  // Vectors shouldn't be checked for being orthogonal here!
+  if ( v1.Magnitude() > gp::Resolution() && v2.Magnitude() > gp::Resolution() ) {
+    isOk = !v1.IsParallel( v2, Precision::Angular() );
+    if ( !isOk )
+      msg += tr( "VEC_PARALLEL" );
+  }
 
   switch ( id )
   {
     case 0:
-      return isOrthogonal;
+      return isOk;
     case 1:
-      return !Group1->LineEdit1->text().isEmpty() && isOrthogonal;
+      return !Group1->LineEdit1->text().isEmpty() && isOk;
     case 2:
       return !Group2->LineEdit1->text().isEmpty() && 
 	     !Group2->LineEdit2->text().isEmpty() && 
-	     !Group2->LineEdit3->text().isEmpty() && isOrthogonal;
+	     !Group2->LineEdit3->text().isEmpty() && isOk;
   }
   return false;
 }
