@@ -162,7 +162,7 @@ bool BasicGUI::OnMousePress( QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFram
   QDialog* aDlg = GeometryGUI::GetGeomGUI()->GetActiveDialogBox();
 
   // Create Point dialog, OCC viewer 
-  if ( aDlg && aDlg->isA( "BasicGUI_PointDlg" ) && theFrame->getTypeView() == VIEW_OCC )
+  if ( aDlg && aDlg->isA( "BasicGUI_PointDlg" ) && theFrame->getTypeView() == VIEW_OCC &&  pe->state() != Qt::ControlButton )
   {
     BasicGUI_PointDlg* aPntDlg = (BasicGUI_PointDlg*) aDlg;
     if ( aPntDlg->acceptMouseEvent() )
