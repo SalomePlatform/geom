@@ -15,21 +15,38 @@ uses
     Cylinder from gp, 
     Sphere   from gp,
     Surface  from Geom, 
+    Surface from GeomAdaptor, 
     State    from TopAbs,	
     State from GEOMAlgo
 
 --raises
 
 is 
+ 
+
     IsAnalytic(myclass;  
     	    aS:Surface from Geom) 
     	returns Boolean from Standard; 
-   
+    
+    IsCoaxial(myclass;  
+    	    aP1  :  Pnt from gp; 
+    	    aP2  :  Pnt from gp; 
+	    aCyl :  Cylinder from gp; 
+            aTol :  Real from Standard) 	     
+    	returns Boolean from Standard; 
+     
     IsConformState(myclass;  
     	    aST1:State from TopAbs; 
     	    aST2:State from GEOMAlgo) 
     	returns Boolean from Standard; 		  
 
+    GetState(myclass; 
+	    aP:Pnt from gp;  	     
+    	    aS:Surface from GeomAdaptor; 
+    	    aTol:Real from Standard; 
+    	    aSt:out State from TopAbs)
+    	returns Integer from Standard; 
+	
     GetState(myclass; 
 	    aP:Pnt from gp;  	     
     	    aS:Surface from Geom; 

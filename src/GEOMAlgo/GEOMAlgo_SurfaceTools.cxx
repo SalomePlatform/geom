@@ -6,6 +6,8 @@
 
 #include <GEOMAlgo_SurfaceTools.ixx>
 
+#include <math.h>
+
 #include <gp_Pln.hxx>
 #include <gp_Cylinder.hxx>
 #include <gp_Sphere.hxx>
@@ -13,30 +15,31 @@
 #include <gp_Lin.hxx>
 #include <gp_Ax3.hxx>
 #include <gp_Dir.hxx>
+#include <gp_Ax1.hxx>
+#include <gp_Vec.hxx>
 
 #include <GeomAbs_SurfaceType.hxx>
 #include <GeomAdaptor_Surface.hxx>
+
 
 //=======================================================================
 //function : GetState
 //purpose  : 
 //=======================================================================
  Standard_Integer GEOMAlgo_SurfaceTools::GetState(const gp_Pnt& aP,
-						  const Handle(Geom_Surface)& aSurf,
+						  const GeomAdaptor_Surface& aGAS,
 						  const Standard_Real aTol,
 						  TopAbs_State& aState)
 {
   Standard_Integer iErr;
   Standard_Real aDp, aR;
   GeomAbs_SurfaceType aType;
-  GeomAdaptor_Surface aGAS;
   gp_Sphere aSph;
   gp_Cylinder aCyl;
   gp_Pln aPln;
   //
   iErr=0;
   aState=TopAbs_UNKNOWN;
-  aGAS.Load(aSurf);
   //
   aType=aGAS.GetType();
   switch (aType) {
@@ -76,6 +79,25 @@
   return iErr;
 }
 //=======================================================================
+//function : GetState
+//purpose  : 
+//=======================================================================
+ Standard_Integer GEOMAlgo_SurfaceTools::GetState(const gp_Pnt& aP,
+						  const Handle(Geom_Surface)& aSurf,
+						  const Standard_Real aTol,
+						  TopAbs_State& aState)
+{
+  Standard_Integer iErr;
+  GeomAdaptor_Surface aGAS;
+  //
+  aState=TopAbs_UNKNOWN;
+  aGAS.Load(aSurf);
+  //
+  iErr=GEOMAlgo_SurfaceTools::GetState(aP, aGAS, aTol, aState);
+  //
+  return iErr;
+}
+//=======================================================================
 //function : ReverseState
 //purpose  : 
 //=======================================================================
@@ -103,9 +125,8 @@
 Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP, 
 					      const gp_Sphere& aSph)
 {
-  Standard_Real aD, aR;
+  Standard_Real aD;
   //
-  aR=aSph.Radius();
   const gp_Pnt& aLoc=aSph.Location();
   aD=aLoc.Distance(aP);
   //
@@ -118,9 +139,8 @@ Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
 Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP, 
 					      const gp_Cylinder& aCyl)
 {
-  Standard_Real aD, aR;
+  Standard_Real aD;
   //
-  aR=aCyl.Radius();
   const gp_Ax1& aAxis=aCyl.Axis();
   gp_Lin aLin(aAxis);
   aD=aLin.Distance(aP);
@@ -144,6 +164,31 @@ Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
        aDir.Y() * (aP.Y() - aLoc.Y()) +
        aDir.Z() * (aP.Z() - aLoc.Z()));
   return aD;
+}
+//=======================================================================
+//function : IsCoaxial
+//purpose  : 
+//=======================================================================
+Standard_Boolean GEOMAlgo_SurfaceTools::IsCoaxial(const gp_Pnt& aP1,
+						  const gp_Pnt& aP2,
+						  const gp_Cylinder& aCyl,
+						  const Standard_Real aTol)
+{
+  Standard_Boolean bRet=Standard_False;
+  Standard_Real aSM;
+  //
+  gp_Vec aV12(aP1, aP2);
+  gp_Dir aD12(aV12);
+  //
+  const gp_Ax1& aAxis=aCyl.Axis();
+  const gp_Dir& aDAxis=aAxis.Direction();
+  //
+  aSM=fabs(aD12*aDAxis);
+  if (fabs(1.-aSM) > aTol) {
+    return bRet;
+  }
+  //
+  return !bRet;
 }
 //=======================================================================
 //function : IsAnalytic

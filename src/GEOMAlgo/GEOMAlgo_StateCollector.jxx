@@ -1,0 +1,3 @@
+#ifndef _GEOMAlgo_StateCollector_HeaderFile
+#include <GEOMAlgo_StateCollector.hxx>
+#endif

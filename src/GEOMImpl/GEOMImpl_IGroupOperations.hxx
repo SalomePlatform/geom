@@ -8,6 +8,7 @@
 #include "GEOM_Object.hxx"
 #include <TDocStd_Document.hxx>
 #include <TColStd_HArray1OfInteger.hxx> 
+#include <TColStd_HSequenceOfInteger.hxx>
 #include <TopAbs.hxx>
 
 class GEOMImpl_IGroupOperations : public GEOM_IOperations {
@@ -26,6 +27,12 @@ class GEOMImpl_IGroupOperations : public GEOM_IOperations {
 
   void DifferenceList (Handle(GEOM_Object) theGroup,
                        const Handle(TColStd_HSequenceOfTransient)& theSubShapes);
+
+  void UnionIDs (Handle(GEOM_Object) theGroup,
+                 const Handle(TColStd_HSequenceOfInteger)& theSubShapes);
+
+  void DifferenceIDs (Handle(GEOM_Object) theGroup,
+                      const Handle(TColStd_HSequenceOfInteger)& theSubShapes);
 
   TopAbs_ShapeEnum GetType(Handle(GEOM_Object) theGroup);
 

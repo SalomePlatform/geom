@@ -459,6 +459,149 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
 
 //=============================================================================
 /*!
+ *  UnionIDs
+ */
+//=============================================================================
+void GEOMImpl_IGroupOperations::UnionIDs (Handle(GEOM_Object) theGroup,
+                                          const Handle(TColStd_HSequenceOfInteger)& theSubShapes)
+{
+  SetErrorCode(KO);
+  if (theGroup.IsNull()) return;
+
+  Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
+  if (aFunction.IsNull()) return;
+
+  GEOM_ISubShape aSSI (aFunction);
+
+  // New contents of the group
+  TColStd_ListOfInteger aNewIDs;
+  TColStd_MapOfInteger mapIDs;
+
+  // Add current IDs to the list
+  Handle(TColStd_HArray1OfInteger) aSeq = aSSI.GetIndices();
+  if (aSeq.IsNull()) return;
+  Standard_Integer val_j, aLength = aSeq->Length();
+
+  for (Standard_Integer j = 1; j <= aLength; j++) {
+    val_j = aSeq->Value(j);
+    if (val_j > 0 && mapIDs.Add(val_j)) {
+      aNewIDs.Append(val_j);
+    }
+  }
+
+  // Get Main Shape
+  Handle(GEOM_Function) aMainShapeFunc = aSSI.GetMainShape();
+  if (aMainShapeFunc.IsNull()) return;
+  TDF_Label aLabel = aMainShapeFunc->GetOwnerEntry();
+  if (aLabel.IsRoot()) return;
+  Handle(GEOM_Object) aMainObj = GEOM_Object::GetObject(aLabel);
+  if (aMainObj.IsNull()) return;
+  TopoDS_Shape aMainShape = aMainObj->GetValue();
+  if (aMainShape.IsNull()) return;
+
+  TopTools_IndexedMapOfShape mapIndices;
+  TopExp::MapShapes(aMainShape, mapIndices);
+
+  // Get IDs of sub-shapes to add
+  Standard_Integer i, new_id, aLen = theSubShapes->Length();
+  for (i = 1; i <= aLen; i++) {
+    new_id = theSubShapes->Value(i);
+
+    if (0 < new_id && new_id <= mapIndices.Extent()) {
+      if (mapIDs.Add(new_id)) {
+        aNewIDs.Append(new_id);
+      }
+    }
+  }
+
+  if (aNewIDs.Extent() > 0) {
+    Standard_Integer k = 1;
+    TColStd_ListIteratorOfListOfInteger aNewIDsIter (aNewIDs);
+    Handle(TColStd_HArray1OfInteger) aNewSeq = new TColStd_HArray1OfInteger(1, aNewIDs.Extent());
+    for (; aNewIDsIter.More(); aNewIDsIter.Next(), k++) {
+      aNewSeq->SetValue(k, aNewIDsIter.Value());
+    }
+
+    aSSI.SetIndices(aNewSeq);
+  }
+
+  SetErrorCode(OK);
+}
+
+//=============================================================================
+/*!
+ *  DifferenceIDs
+ */
+//=============================================================================
+void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
+                                               const Handle(TColStd_HSequenceOfInteger)& theSubShapes)
+{
+  SetErrorCode(KO);
+  if (theGroup.IsNull()) return;
+
+  Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
+  if (aFunction.IsNull()) return;
+
+  GEOM_ISubShape aSSI (aFunction);
+
+  // Map of IDs to be removed
+  TColStd_MapOfInteger mapIDsToRemove;
+
+  // Map of current IDs
+  Handle(TColStd_HArray1OfInteger) aSeq = aSSI.GetIndices();
+  if (aSeq.IsNull()) return;
+  Standard_Integer aLength = aSeq->Length();
+
+  if (aLength == 1 && aSeq->Value(1) == -1) // empty group
+    return;
+
+  TColStd_MapOfInteger mapIDsCurrent;
+  Standard_Integer j = 1;
+  for (; j <= aLength; j++) {
+    mapIDsCurrent.Add(aSeq->Value(j));
+  }
+
+  // Get Main Shape
+  Handle(GEOM_Function) aMainShapeFunc = aSSI.GetMainShape();
+  if (aMainShapeFunc.IsNull()) return;
+  TDF_Label aLabel = aMainShapeFunc->GetOwnerEntry();
+  if (aLabel.IsRoot()) return;
+  Handle(GEOM_Object) aMainObj = GEOM_Object::GetObject(aLabel);
+  if (aMainObj.IsNull()) return;
+  TopoDS_Shape aMainShape = aMainObj->GetValue();
+  if (aMainShape.IsNull()) return;
+
+  TopTools_IndexedMapOfShape mapIndices;
+  TopExp::MapShapes(aMainShape, mapIndices);
+
+  // Get IDs of sub-shapes to be removed
+  Standard_Integer i, rem_id, aLen = theSubShapes->Length();
+  for (i = 1; i <= aLen; i++) {
+    rem_id = theSubShapes->Value(i);
+    if (mapIDsCurrent.Contains(rem_id)) {
+      mapIDsToRemove.Add(rem_id);
+    }
+  }
+
+  if (mapIDsToRemove.Extent() > 0) {
+    Standard_Integer k = 1, aRemLength = mapIDsToRemove.Extent();
+    Handle(TColStd_HArray1OfInteger) aNewSeq = new TColStd_HArray1OfInteger(1, aLength - aRemLength);
+
+    for (j = 1; j <= aLength; j++) {
+      if (!mapIDsToRemove.Contains(aSeq->Value(j))) {
+        aNewSeq->SetValue(k, aSeq->Value(j));
+        k++;
+      }
+    }
+
+    aSSI.SetIndices(aNewSeq);
+  }
+
+  SetErrorCode(OK);
+}
+
+//=============================================================================
+/*!
  *  GetType
  */
 //=============================================================================

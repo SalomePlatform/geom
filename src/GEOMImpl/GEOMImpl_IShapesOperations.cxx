@@ -17,7 +17,7 @@ using namespace std;
 
 #include "GEOM_Function.hxx"
 
-#include "GEOMAlgo_FinderShapeOn.hxx"
+#include "GEOMAlgo_FinderShapeOn1.hxx"
 
 #include "utilities.h"
 #include "OpUtil.hxx"
@@ -35,7 +35,9 @@ using namespace std;
 #include <BRep_Tool.hxx>
 #include <BRepGProp.hxx>
 #include <BRepAdaptor_Curve.hxx>
+#include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepMesh_IncrementalMesh.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -60,6 +62,7 @@ using namespace std;
 
 #include <Geom2d_Curve.hxx>
 
+#include <Bnd_Box.hxx>
 #include <GProp_GProps.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Lin.hxx>
@@ -1027,6 +1030,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
 {
   SetErrorCode(KO);
 
+//  MESSAGE("--------------------------- GetShapesOnPlane phase 1 takes:");
+//  OSD_Timer timer1;
+//  timer1.Start();
+
   if (theShape.IsNull() || theAx1.IsNull()) return NULL;
 
   TopoDS_Shape aShape = theShape->GetValue();
@@ -1061,8 +1068,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
 
   Handle(Geom_Plane) aPlane = new Geom_Plane(aLoc, aVec);
 
+  // Check presence of triangulation, build if need
+  if (!CheckTriangulation(aShape))
+    return NULL;
+
   // Call algo
-  GEOMAlgo_FinderShapeOn aFinder;
+  GEOMAlgo_FinderShapeOn1 aFinder;
   Standard_Real aTol = 0.0001; // default value
 
   aFinder.SetShape(aShape);
@@ -1071,11 +1082,33 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
   aFinder.SetShapeType(aShapeType);
   aFinder.SetState(theState);
 
+  // Sets the minimal number of inner points for the faces that do not have own
+  // inner points at all (for e.g. rectangular planar faces have just 2 triangles).
+  // Default value=3
+  aFinder.SetNbPntsMin(3);
+  // Sets the maximal number of inner points for edges or faces.
+  // It is usefull for the cases when this number is very big (e.g =2000) to improve
+  // the performance. If this value =0, all inner points will be taken into account.
+  // Default value=0
+  aFinder.SetNbPntsMax(100);
+
+//  timer1.Stop();
+//  timer1.Show();
+
+//  MESSAGE("--------------------------- Perform on Plane takes:");
+//  timer1.Reset();
+//  timer1.Start();
   aFinder.Perform();
+//  timer1.Stop();
+//  timer1.Show();
+
+//  MESSAGE("--------------------------- GetShapesOnPlane phase 3 takes:");
+//  timer1.Reset();
+//  timer1.Start();
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
   if (iErr) {
     MESSAGE(" iErr : " << iErr);
     TCollection_AsciiString aMsg (" iErr : ");
@@ -1084,7 +1117,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
     return NULL;
   }
   Standard_Integer iWrn = aFinder.WarningStatus();
-  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn.cxx
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
   if (iWrn) {
     MESSAGE(" *** iWrn : " << iWrn);
   }
@@ -1095,6 +1128,13 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
     SetErrorCode("Not a single sub-shape of the requested type found on the given plane");
     return NULL;
   }
+
+//  timer1.Stop();
+//  timer1.Show();
+
+//  MESSAGE("--------------------------- GetShapesOnPlane phase 4 takes:");
+//  timer1.Reset();
+//  timer1.Start();
 
   // Fill sequence of objects
   TopTools_IndexedMapOfShape anIndices;
@@ -1112,6 +1152,13 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
     anObj = GetEngine()->AddSubShape(theShape, anArray);
     aSeq->Append(anObj);
   }
+
+//  timer1.Stop();
+//  timer1.Show();
+
+//  MESSAGE("--------------------------- GetShapesOnPlane phase 5 takes:");
+//  timer1.Reset();
+//  timer1.Start();
   
   // The GetShapesOnPlane() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
@@ -1128,6 +1175,9 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
   TCollection_AsciiString anOldDescr = aFunction->GetDescription();
   anOldDescr += aDescr;
   aFunction->SetDescription(anOldDescr);
+
+//  timer1.Stop();
+//  timer1.Show();
 
   SetErrorCode(OK);
   return aSeq;
@@ -1186,8 +1236,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnCyli
   Handle(Geom_CylindricalSurface) aCylinder =
     new Geom_CylindricalSurface(anAx3, theRadius);
 
+  // Check presence of triangulation, build if need
+  if (!CheckTriangulation(aShape))
+    return NULL;
+
   // Call algo
-  GEOMAlgo_FinderShapeOn aFinder;
+  GEOMAlgo_FinderShapeOn1 aFinder;
   Standard_Real aTol = 0.0001; // default value
 
   aFinder.SetShape(aShape);
@@ -1196,11 +1250,14 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnCyli
   aFinder.SetShapeType(aShapeType);
   aFinder.SetState(theState);
 
+  aFinder.SetNbPntsMin(3);
+  aFinder.SetNbPntsMax(100);
+
   aFinder.Perform();
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
   if (iErr) {
     MESSAGE(" iErr : " << iErr);
     TCollection_AsciiString aMsg (" iErr : ");
@@ -1209,7 +1266,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnCyli
     return NULL;
   }
   Standard_Integer iWrn = aFinder.WarningStatus();
-  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn.cxx
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
   if (iWrn) {
     MESSAGE(" *** iWrn : " << iWrn);
   }
@@ -1297,8 +1354,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnSphe
   Handle(Geom_SphericalSurface) aSphere =
     new Geom_SphericalSurface(anAx3, theRadius);
 
+  // Check presence of triangulation, build if need
+  if (!CheckTriangulation(aShape))
+    return NULL;
+
   // Call algo
-  GEOMAlgo_FinderShapeOn aFinder;
+  GEOMAlgo_FinderShapeOn1 aFinder;
   Standard_Real aTol = 0.0001; // default value
 
   aFinder.SetShape(aShape);
@@ -1307,11 +1368,14 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnSphe
   aFinder.SetShapeType(aShapeType);
   aFinder.SetState(theState);
 
+  aFinder.SetNbPntsMin(3);
+  aFinder.SetNbPntsMax(100);
+
   aFinder.Perform();
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
   if (iErr) {
     MESSAGE(" iErr : " << iErr);
     TCollection_AsciiString aMsg (" iErr : ");
@@ -1320,7 +1384,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnSphe
     return NULL;
   }
   Standard_Integer iWrn = aFinder.WarningStatus();
-  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn.cxx
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
   if (iWrn) {
     MESSAGE(" *** iWrn : " << iWrn);
   }
@@ -1355,6 +1419,368 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnSphe
   // Make a Python command
   TCollection_AsciiString anEntry, aDescr
     ("\nlistShapesOnSphere = IShapesOperations.GetShapesOnSphere(");
+  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
+  aDescr += anEntry + TCollection_AsciiString(theShapeType) + ",";
+  TDF_Tool::Entry(theCenter->GetEntry(), anEntry);
+  aDescr += anEntry + ",";
+  aDescr += TCollection_AsciiString(theRadius) + ",";
+  aDescr += TCollection_AsciiString(theState) + ")";
+
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
+  anOldDescr += aDescr;
+  aFunction->SetDescription(anOldDescr);
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnPlaneIDs
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnPlaneIDs
+                                        (const Handle(GEOM_Object)& theShape,
+                                         const Standard_Integer     theShapeType,
+                                         const Handle(GEOM_Object)& theAx1,
+                                         const GEOMAlgo_State       theState)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull() || theAx1.IsNull()) return NULL;
+
+  TopoDS_Shape aShape = theShape->GetValue();
+  TopoDS_Shape anAx1  = theAx1->GetValue();
+
+  if (aShape.IsNull() || anAx1.IsNull()) return NULL;
+
+  TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
+  if (aShapeType != TopAbs_VERTEX &&
+      aShapeType != TopAbs_EDGE &&
+      aShapeType != TopAbs_FACE &&
+      aShapeType != TopAbs_SOLID) {
+    SetErrorCode("Only solids, vertices, edges or faces can be found by this method");
+    return NULL;
+  }
+
+  // Create plane
+  if (anAx1.ShapeType() != TopAbs_EDGE) return NULL;
+  TopoDS_Edge anEdge = TopoDS::Edge(anAx1);
+  TopoDS_Vertex V1, V2;
+  TopExp::Vertices(anEdge, V1, V2, Standard_True);
+  if (V1.IsNull() || V2.IsNull()) {
+    SetErrorCode("Bad edge given for the plane normal vector");
+    return NULL;
+  }
+  gp_Pnt aLoc = BRep_Tool::Pnt(V1);
+  gp_Vec aVec (aLoc, BRep_Tool::Pnt(V2));
+  if (aVec.Magnitude() < Precision::Confusion()) {
+    SetErrorCode("Vector with null magnitude given");
+    return NULL;
+  }
+
+  Handle(Geom_Plane) aPlane = new Geom_Plane(aLoc, aVec);
+
+  // Check presence of triangulation, build if need
+  if (!CheckTriangulation(aShape))
+    return NULL;
+
+  // Call algo
+  GEOMAlgo_FinderShapeOn1 aFinder;
+  Standard_Real aTol = 0.0001; // default value
+
+  aFinder.SetShape(aShape);
+  aFinder.SetTolerance(aTol);
+  aFinder.SetSurface(aPlane);
+  aFinder.SetShapeType(aShapeType);
+  aFinder.SetState(theState);
+
+  aFinder.SetNbPntsMin(3);
+  aFinder.SetNbPntsMax(100);
+
+  aFinder.Perform();
+
+  // Interprete results
+  Standard_Integer iErr = aFinder.ErrorStatus();
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iErr) {
+    MESSAGE(" iErr : " << iErr);
+    TCollection_AsciiString aMsg (" iErr : ");
+    aMsg += TCollection_AsciiString(iErr);
+    SetErrorCode(aMsg);
+    return NULL;
+  }
+  Standard_Integer iWrn = aFinder.WarningStatus();
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iWrn) {
+    MESSAGE(" *** iWrn : " << iWrn);
+  }
+
+  const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
+
+  if (listSS.Extent() < 1) {
+    SetErrorCode("Not a single sub-shape of the requested type found on the given plane");
+    return NULL;
+  }
+
+  // Fill sequence of objects
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+
+  Handle(TColStd_HSequenceOfInteger) aSeq = new TColStd_HSequenceOfInteger;
+
+  TopTools_ListIteratorOfListOfShape itSub (listSS);
+  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+    int id = anIndices.FindIndex(itSub.Value());
+    aSeq->Append(id);
+  }
+
+  // The GetShapesOnPlane() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+
+  // Make a Python command
+  TCollection_AsciiString anEntry, aDescr
+    ("\nlistShapesOnPlane = IShapesOperations.GetShapesOnPlaneIDs(");
+  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
+  aDescr += anEntry + TCollection_AsciiString(theShapeType) + ",";
+  TDF_Tool::Entry(theAx1->GetEntry(), anEntry);
+  aDescr += anEntry + ",";
+  aDescr += TCollection_AsciiString(theState) + ")";
+
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
+  anOldDescr += aDescr;
+  aFunction->SetDescription(anOldDescr);
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnCylinderIDs
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylinderIDs
+                                          (const Handle(GEOM_Object)& theShape,
+                                           const Standard_Integer     theShapeType,
+                                           const Handle(GEOM_Object)& theAxis,
+                                           const Standard_Real        theRadius,
+                                           const GEOMAlgo_State       theState)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull() || theAxis.IsNull()) return NULL;
+
+  TopoDS_Shape aShape = theShape->GetValue();
+  TopoDS_Shape anAxis = theAxis->GetValue();
+
+  if (aShape.IsNull() || anAxis.IsNull()) return NULL;
+
+  TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
+  if (aShapeType != TopAbs_VERTEX &&
+      aShapeType != TopAbs_EDGE &&
+      aShapeType != TopAbs_FACE &&
+      aShapeType != TopAbs_SOLID) {
+    SetErrorCode("Only solids, vertices, edges or faces can be found by this method");
+    return NULL;
+  }
+
+  //Axis of the cylinder
+  if (anAxis.ShapeType() != TopAbs_EDGE) {
+    SetErrorCode("Not an edge given for the axis");
+    return NULL;
+  }
+  TopoDS_Edge anEdge = TopoDS::Edge(anAxis);
+  TopoDS_Vertex V1, V2;
+  TopExp::Vertices(anEdge, V1, V2, Standard_True);
+  if (V1.IsNull() || V2.IsNull()) {
+    SetErrorCode("Bad edge given for the axis");
+    return NULL;
+  }
+  gp_Pnt aLoc = BRep_Tool::Pnt(V1);
+  gp_Vec aVec (aLoc, BRep_Tool::Pnt(V2));
+  if (aVec.Magnitude() < Precision::Confusion()) {
+    SetErrorCode("Vector with null magnitude given");
+    return NULL;
+  }
+
+  gp_Ax3 anAx3 (aLoc, aVec);
+  Handle(Geom_CylindricalSurface) aCylinder =
+    new Geom_CylindricalSurface(anAx3, theRadius);
+
+  // Check presence of triangulation, build if need
+  if (!CheckTriangulation(aShape))
+    return NULL;
+
+  // Call algo
+  GEOMAlgo_FinderShapeOn1 aFinder;
+  Standard_Real aTol = 0.0001; // default value
+
+  aFinder.SetShape(aShape);
+  aFinder.SetTolerance(aTol);
+  aFinder.SetSurface(aCylinder);
+  aFinder.SetShapeType(aShapeType);
+  aFinder.SetState(theState);
+
+  aFinder.SetNbPntsMin(3);
+  aFinder.SetNbPntsMax(100);
+
+  aFinder.Perform();
+
+  // Interprete results
+  Standard_Integer iErr = aFinder.ErrorStatus();
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iErr) {
+    MESSAGE(" iErr : " << iErr);
+    TCollection_AsciiString aMsg (" iErr : ");
+    aMsg += TCollection_AsciiString(iErr);
+    SetErrorCode(aMsg);
+    return NULL;
+  }
+  Standard_Integer iWrn = aFinder.WarningStatus();
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iWrn) {
+    MESSAGE(" *** iWrn : " << iWrn);
+  }
+
+  const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
+
+  if (listSS.Extent() < 1) {
+    SetErrorCode("Not a single sub-shape of the requested type found on the given cylinder");
+    return NULL;
+  }
+
+  // Fill sequence of objects
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+
+  Handle(TColStd_HSequenceOfInteger) aSeq = new TColStd_HSequenceOfInteger;
+
+  TopTools_ListIteratorOfListOfShape itSub (listSS);
+  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+    int id = anIndices.FindIndex(itSub.Value());
+    aSeq->Append(id);
+  }
+  
+  // The GetShapesOnCylinder() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+
+  // Make a Python command
+  TCollection_AsciiString anEntry, aDescr
+    ("\nlistShapesOnCylinder = IShapesOperations.GetShapesOnCylinderIDs(");
+  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
+  aDescr += anEntry + TCollection_AsciiString(theShapeType) + ",";
+  TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
+  aDescr += anEntry + ",";
+  aDescr += TCollection_AsciiString(theRadius) + ",";
+  aDescr += TCollection_AsciiString(theState) + ")";
+
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
+  anOldDescr += aDescr;
+  aFunction->SetDescription(anOldDescr);
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnSphereIDs
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnSphereIDs
+                                          (const Handle(GEOM_Object)& theShape,
+                                           const Standard_Integer     theShapeType,
+                                           const Handle(GEOM_Object)& theCenter,
+                                           const Standard_Real        theRadius,
+                                           const GEOMAlgo_State       theState)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull() || theCenter.IsNull()) return NULL;
+
+  TopoDS_Shape aShape  = theShape->GetValue();
+  TopoDS_Shape aCenter = theCenter->GetValue();
+
+  if (aShape.IsNull() || aCenter.IsNull()) return NULL;
+
+  TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
+  if (aShapeType != TopAbs_VERTEX &&
+      aShapeType != TopAbs_EDGE &&
+      aShapeType != TopAbs_FACE &&
+      aShapeType != TopAbs_SOLID) {
+    SetErrorCode("Only solids, vertices, edges or faces can be found by this method");
+    return NULL;
+  }
+
+  // Center of the sphere
+  if (aCenter.ShapeType() != TopAbs_VERTEX) return NULL;
+  gp_Pnt aLoc = BRep_Tool::Pnt(TopoDS::Vertex(aCenter));
+
+  gp_Ax3 anAx3 (aLoc, gp::DZ());
+  Handle(Geom_SphericalSurface) aSphere =
+    new Geom_SphericalSurface(anAx3, theRadius);
+
+  // Check presence of triangulation, build if need
+  if (!CheckTriangulation(aShape))
+    return NULL;
+
+  // Call algo
+  GEOMAlgo_FinderShapeOn1 aFinder;
+  Standard_Real aTol = 0.0001; // default value
+
+  aFinder.SetShape(aShape);
+  aFinder.SetTolerance(aTol);
+  aFinder.SetSurface(aSphere);
+  aFinder.SetShapeType(aShapeType);
+  aFinder.SetState(theState);
+
+  aFinder.SetNbPntsMin(3);
+  aFinder.SetNbPntsMax(100);
+
+  aFinder.Perform();
+
+  // Interprete results
+  Standard_Integer iErr = aFinder.ErrorStatus();
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iErr) {
+    MESSAGE(" iErr : " << iErr);
+    TCollection_AsciiString aMsg (" iErr : ");
+    aMsg += TCollection_AsciiString(iErr);
+    SetErrorCode(aMsg);
+    return NULL;
+  }
+  Standard_Integer iWrn = aFinder.WarningStatus();
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iWrn) {
+    MESSAGE(" *** iWrn : " << iWrn);
+  }
+
+  const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
+
+  if (listSS.Extent() < 1) {
+    SetErrorCode("Not a single sub-shape of the requested type found on the given sphere");
+    return NULL;
+  }
+
+  // Fill sequence of objects
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+
+  Handle(TColStd_HSequenceOfInteger) aSeq = new TColStd_HSequenceOfInteger;
+
+  TopTools_ListIteratorOfListOfShape itSub (listSS);
+  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+    int id = anIndices.FindIndex(itSub.Value());
+    aSeq->Append(id);
+  }
+  
+  // The GetShapesOnSphere() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+
+  // Make a Python command
+  TCollection_AsciiString anEntry, aDescr
+    ("\nlistShapesOnSphere = IShapesOperations.GetShapesOnSphereIDs(");
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += anEntry + TCollection_AsciiString(theShapeType) + ",";
   TDF_Tool::Entry(theCenter->GetEntry(), anEntry);
@@ -1561,4 +1987,48 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
   }
   for (Index=1; Index <= MaxShapes; Index++)
     SL.Append( aShapes( OrderInd(Index) ));
+}
+
+//=======================================================================
+//function : CheckTriangulation
+//purpose  :
+//=======================================================================
+bool GEOMImpl_IShapesOperations::CheckTriangulation (const TopoDS_Shape& aShape)
+{
+//  MESSAGE("CheckTriangulation");
+//
+//  OSD_Timer timer1;
+//  timer1.Start();
+
+  TopExp_Explorer exp (aShape, TopAbs_FACE);
+  if (!exp.More()) {
+    SetErrorCode("Shape without faces given");
+    return false;
+  }
+
+  TopLoc_Location aTopLoc;
+  Handle(Poly_Triangulation) aTRF;
+  aTRF = BRep_Tool::Triangulation(TopoDS::Face(exp.Current()), aTopLoc);
+  if (aTRF.IsNull()) {
+    // calculate deflection
+    Standard_Real aDeviationCoefficient = 0.001;
+
+    Bnd_Box B;
+    BRepBndLib::Add(aShape, B);
+    Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+    B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+
+    Standard_Real dx = aXmax - aXmin, dy = aYmax - aYmin, dz = aZmax - aZmin;
+    Standard_Real aDeflection = Max(Max(dx, dy), dz) * aDeviationCoefficient * 4;
+
+//    MESSAGE("Deflection = " << aDeflection);
+
+    Standard_Real aHLRAngle = 0.349066;
+
+    BRepMesh_IncrementalMesh Inc (aShape, aDeflection, Standard_False, aHLRAngle);
+  }
+//  timer1.Stop();
+//  timer1.Show();
+
+  return true;
 }

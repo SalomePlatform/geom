@@ -20,7 +20,7 @@ uses
     DataMapOfShapeShape from TopTools,
     DataMapOfShapeListOfShape from TopTools, 
     Context from IntTools, 
-    PassKey from GEOMAlgo
+    PassKeyShape from GEOMAlgo
 
 --raises
 
@@ -87,12 +87,12 @@ is
  
     EdgePassKey(me:out; 
     	    aE:Edge from TopoDS;  
-	    aPK:out PassKey from GEOMAlgo) 
+	    aPK:out PassKeyShape from GEOMAlgo) 
     	is protected;     
    
     FacePassKey(me:out; 
     	    aF:Face from TopoDS;  
-	    aPK:out PassKey from GEOMAlgo) 
+	    aPK:out PassKeyShape from GEOMAlgo) 
     	is protected; 
 	 
     MakeVertex(me:out; 

@@ -14,7 +14,8 @@ uses
     TColStd, 
     Geom,     
     Bnd, 
-    gp,	 
+    gp,	  
+    GeomAdaptor,
     TopAbs,
     TopoDS, 
     TopTools, 
@@ -44,10 +45,12 @@ is
     class Gluer; 
     class GlueAnalyser; 
     class CoupleOfShapes; 
-    class PassKey; 
+    class PassKey;  
     class PassKeyMapHasher; 
+    class PassKeyShape;  
     class SurfaceTools; 
-    class Tools; 
+    class Tools;  
+    
     --	     
     --  finder on 
     deferred class ShapeSolid;
@@ -56,10 +59,13 @@ is
     class VertexSolid; 
     class SolidSolid; 
     class FinderShapeOn; 
+    -- 
+    class FinderShapeOn1;
+    class StateCollector;
     --
     --  instantiations
-    class IndexedDataMapOfPassKeyListOfShape   
-	instantiates IndexedDataMap from TCollection (PassKey from GEOMAlgo, 
+    class IndexedDataMapOfPassKeyShapeListOfShape   
+	instantiates IndexedDataMap from TCollection (PassKeyShape from GEOMAlgo, 
 						      ListOfShape from TopTools, 
                                                       PassKeyMapHasher from GEOMAlgo); 
      
@@ -80,5 +86,20 @@ is
     	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
 	    		    		         	 State from TopAbs,  
 	    	    	    	    	    	    	 ShapeMapHasher from TopTools);
+--
+    class ListOfPnt  
+    	instantiates List from TCollection  (Pnt from gp);
+
+--    class IndexedDataMapOfPassKeyInteger   
+--	instantiates IndexedDataMap from TCollection (PassKeyRoot from GEOMAlgo, 
+--						      Integer from Standard, 
+--                                                      PassKeyMapHasher from GEOMAlgo); 
+						       
+
+    class DataMapOfPassKeyInteger   
+	instantiates DataMap from TCollection (PassKey from GEOMAlgo, 
+					       Integer from Standard, 
+                                               PassKeyMapHasher from GEOMAlgo);
+
 
 end GEOMAlgo;

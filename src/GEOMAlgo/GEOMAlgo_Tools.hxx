@@ -35,7 +35,7 @@
 #include <Handle_Geom_Surface.hxx>
 #endif
 class TopoDS_Shape;
-class GEOMAlgo_IndexedDataMapOfPassKeyListOfShape;
+class GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape;
 class IntTools_Context;
 class TopTools_ListOfShape;
 class TopTools_IndexedDataMapOfShapeListOfShape;
@@ -71,7 +71,7 @@ public:
  // Methods PUBLIC
  // 
 Standard_EXPORT static  Standard_Boolean IsCompositeShape(const TopoDS_Shape& aS) ;
-Standard_EXPORT static  Standard_Integer RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKeyListOfShape& aMSD,const Standard_Real aTol,IntTools_Context& aCtx) ;
+Standard_EXPORT static  Standard_Integer RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape& aMSD,const Standard_Real aTol,IntTools_Context& aCtx) ;
 Standard_EXPORT static  Standard_Integer FindSDShapes(const TopTools_ListOfShape& aLE,const Standard_Real aTol,TopTools_IndexedDataMapOfShapeListOfShape& aMEE,IntTools_Context& aCtx) ;
 Standard_EXPORT static  Standard_Integer FindSDShapes(const TopoDS_Shape& aE1,const TopTools_ListOfShape& aLE,const Standard_Real aTol,TopTools_ListOfShape& aLESD,IntTools_Context& aCtx) ;
 Standard_EXPORT static  Standard_Boolean ProjectPointOnShape(const gp_Pnt& aP1,const TopoDS_Shape& aS,gp_Pnt& aP2,IntTools_Context& aCtx) ;

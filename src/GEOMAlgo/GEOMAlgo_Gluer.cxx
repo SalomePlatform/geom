@@ -58,8 +58,8 @@
 
 #include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
 #include <GEOMAlgo_IndexedDataMapOfShapeBox.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx>
-#include <GEOMAlgo_PassKey.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
+#include <GEOMAlgo_PassKeyShape.hxx>
 #include <GEOMAlgo_Tools.hxx>
 //
 
@@ -324,7 +324,7 @@ void GEOMAlgo_Gluer::MakeSolids()
   //
   aNbS=aMS.Extent();
   if (aNbS) {
-    //Standard_Real aTol=1.e-7;
+    Standard_Real aTol=1.e-7;
     BOP_CorrectTolerances::CorrectCurveOnSurface(myResult);
   }
 }
@@ -405,8 +405,8 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
   TopoDS_Shape aNewShape;
   TopTools_IndexedMapOfShape aMF;
   TopTools_ListIteratorOfListOfShape aItS;
-  GEOMAlgo_PassKey aPKF;
-  GEOMAlgo_IndexedDataMapOfPassKeyListOfShape aMPKLF;
+  GEOMAlgo_PassKeyShape aPKF;
+  GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape aMPKLF;
   //
   TopExp::MapShapes(myShape, aType, aMF);
   //
@@ -460,8 +460,6 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
     //
     const TopoDS_Shape& aS1=aLSDF.First();
     //
-    //modified by NIZNHY-PKV Fri Jan 21 15:34:00 2005 f
-    //
     bHasNewSubShape=Standard_True;
     // prevent creation of a new shape if there are not
     // new subshapes of aSS among the originals
@@ -472,9 +470,8 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
 	aNewShape.Orientation(TopAbs_FORWARD);
       }
     }
-    //modified by NIZNHY-PKV Fri Jan 21 15:34:05 2005 t
     //
-    if (bHasNewSubShape) {//modified by NIZNHY-PKV Fri Jan 21 15:34:10 2005ft 
+    if (bHasNewSubShape) { 
       if (aType==TopAbs_FACE) {
 	TopoDS_Face aNewFace;
 	//
@@ -604,7 +601,7 @@ void GEOMAlgo_Gluer::InnerTolerance()
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_Gluer::FacePassKey(const TopoDS_Face& aF, 
-				 GEOMAlgo_PassKey& aPK)
+				 GEOMAlgo_PassKeyShape& aPK)
 {
   Standard_Integer i, aNbE, aNbMax;
   TopTools_ListOfShape aLE;
@@ -634,7 +631,7 @@ void GEOMAlgo_Gluer::FacePassKey(const TopoDS_Face& aF,
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_Gluer::EdgePassKey(const TopoDS_Edge& aE, 
-				 GEOMAlgo_PassKey& aPK)
+				 GEOMAlgo_PassKeyShape& aPK)
 {
   TopoDS_Vertex aV1, aV2;
   //
@@ -867,8 +864,6 @@ Standard_Boolean GEOMAlgo_Gluer::IsToReverse(const TopoDS_Face& aFR,
   }
   return bRet;
 }
-//
-//modified by NIZNHY-PKV Fri Jan 21 10:55:42 2005 f
 //=======================================================================
 //function : HasNewSubShape
 //purpose  : 
@@ -975,7 +970,6 @@ Standard_Boolean GEOMAlgo_Gluer::IsDeleted (const TopoDS_Shape& aS)
   //
   return bRet;
 }
-//modified by NIZNHY-PKV Fri Jan 21 10:59:21 2005 t
 //
 // ErrorStatus
 //

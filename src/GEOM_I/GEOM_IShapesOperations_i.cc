@@ -701,6 +701,128 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnSphere
 
 //=============================================================================
 /*!
+ *  GetShapesOnPlaneIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnPlaneIDs
+                                                (GEOM::GEOM_Object_ptr   theShape,
+						 const CORBA::Long       theShapeType,
+						 GEOM::GEOM_Object_ptr   theAx1,
+						 const GEOM::shape_state theState)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape == NULL || theAx1 == NULL) return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) anAx1 = GetOperations()->GetEngine()->GetObject
+    (theAx1->GetStudyID(), theAx1->GetEntry());
+
+  if (aShape.IsNull() || anAx1.IsNull()) return aSeq._retn();
+
+  //Get Shapes On Plane
+  Handle(TColStd_HSequenceOfInteger) aHSeq =
+    GetOperations()->GetShapesOnPlaneIDs(aShape, theShapeType, anAx1, ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnCylinderIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnCylinderIDs
+                                                (GEOM::GEOM_Object_ptr   theShape,
+						 const CORBA::Long       theShapeType,
+						 GEOM::GEOM_Object_ptr   theAxis,
+						 const CORBA::Double     theRadius,
+						 const GEOM::shape_state theState)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape == NULL || theAxis == NULL) return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) anAxis = GetOperations()->GetEngine()->GetObject
+    (theAxis->GetStudyID(), theAxis->GetEntry());
+
+  if (aShape.IsNull() || anAxis.IsNull()) return aSeq._retn();
+
+  //Get Shapes On Cylinder
+  Handle(TColStd_HSequenceOfInteger) aHSeq = GetOperations()->GetShapesOnCylinderIDs
+    (aShape, theShapeType, anAxis, theRadius, ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnSphereIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnSphereIDs
+                                                (GEOM::GEOM_Object_ptr   theShape,
+						 const CORBA::Long       theShapeType,
+						 GEOM::GEOM_Object_ptr   theCenter,
+						 const CORBA::Double     theRadius,
+						 const GEOM::shape_state theState)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape == NULL || theCenter == NULL) return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aCenter = GetOperations()->GetEngine()->GetObject
+    (theCenter->GetStudyID(), theCenter->GetEntry());
+
+  if (aShape.IsNull() || aCenter.IsNull()) return aSeq._retn();
+
+  //Get Shapes On Sphere
+  Handle(TColStd_HSequenceOfInteger) aHSeq = GetOperations()->GetShapesOnSphereIDs
+    (aShape, theShapeType, aCenter, theRadius, ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
  *  GetInPlace
  */
 //=============================================================================

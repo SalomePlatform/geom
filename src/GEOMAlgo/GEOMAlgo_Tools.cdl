@@ -19,7 +19,7 @@ uses
     ListOfShape from TopTools,  
     IndexedDataMapOfShapeListOfShape from TopTools,
     Context from IntTools, 
-    IndexedDataMapOfPassKeyListOfShape from GEOMAlgo 
+    IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo 
     
 --raises
 
@@ -29,7 +29,7 @@ is
 	returns Boolean from Standard;    
 
     RefineSDShapes(myclass; 
-    	    aMSD:out IndexedDataMapOfPassKeyListOfShape from GEOMAlgo; 
+    	    aMSD:out IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo; 
     	    aTol:Real from Standard; 
     	    aCtx:out Context from IntTools) 
     	returns Integer from Standard;

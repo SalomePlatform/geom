@@ -22,8 +22,8 @@
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 
-#include <GEOMAlgo_PassKey.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx>
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
 #include <GEOMAlgo_Tools.hxx>
 #include <GEOMAlgo_CoupleOfShapes.hxx>
 
@@ -242,8 +242,8 @@
   TopoDS_Shape aNewShape;
   TopTools_IndexedMapOfShape aMF;
   TopTools_ListIteratorOfListOfShape aItS;
-  GEOMAlgo_PassKey aPKF;
-  GEOMAlgo_IndexedDataMapOfPassKeyListOfShape aMPKLF;
+  GEOMAlgo_PassKeyShape aPKF;
+  GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape aMPKLF;
   //
   TopExp::MapShapes(myShape, aType, aMF);
   //
@@ -322,8 +322,8 @@
   TopTools_IndexedDataMapOfShapeListOfShape aMFS;
   TopTools_IndexedMapOfShape aMx, aMS;
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItIm;
-  GEOMAlgo_IndexedDataMapOfPassKeyListOfShape aMPKLS;
-  GEOMAlgo_PassKey aPKSx;
+  GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape aMPKLS;
+  GEOMAlgo_PassKeyShape aPKSx;
   GEOMAlgo_CoupleOfShapes aCS;
   //
   aBB.MakeCompound(aCmp);

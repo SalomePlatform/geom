@@ -82,6 +82,23 @@ class GEOM_IShapesOperations_i :
 				     const CORBA::Double     theRadius,
 				     const GEOM::shape_state theState);
 
+  GEOM::ListOfLong* GetShapesOnPlaneIDs (GEOM::GEOM_Object_ptr   theShape,
+					 const CORBA::Long       theShapeType,
+					 GEOM::GEOM_Object_ptr   theAx1,
+					 const GEOM::shape_state theState);
+
+  GEOM::ListOfLong* GetShapesOnCylinderIDs (GEOM::GEOM_Object_ptr   theShape,
+					    const CORBA::Long       theShapeType,
+					    GEOM::GEOM_Object_ptr   theAxis,
+					    const CORBA::Double     theRadius,
+					    const GEOM::shape_state theState);
+
+  GEOM::ListOfLong* GetShapesOnSphereIDs (GEOM::GEOM_Object_ptr   theShape,
+					  const CORBA::Long       theShapeType,
+					  GEOM::GEOM_Object_ptr   theCenter,
+					  const CORBA::Double     theRadius,
+					  const GEOM::shape_state theState);
+
   GEOM::GEOM_Object_ptr GetInPlace (GEOM::GEOM_Object_ptr theShapeWhere,
 				    GEOM::GEOM_Object_ptr theShapeWhat);
 

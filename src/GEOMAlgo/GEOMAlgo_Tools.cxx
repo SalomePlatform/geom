@@ -33,8 +33,8 @@
 #include <BOPTools_Tools2D.hxx>
 #include <IntTools_Context.hxx>
 
-#include <GEOMAlgo_PassKey.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx>
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
 
 static 
   void GetCount(const TopoDS_Shape& aS,
@@ -88,7 +88,7 @@ void GetCount(const TopoDS_Shape& aS,
 //function : RefineSDShapes
 //purpose  : 
 //=======================================================================
-Standard_Integer GEOMAlgo_Tools::RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKeyListOfShape &aMPKLE,
+Standard_Integer GEOMAlgo_Tools::RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape &aMPKLE,
 						const Standard_Real aTol,
 						IntTools_Context& aCtx)
 {
@@ -132,7 +132,7 @@ Standard_Integer GEOMAlgo_Tools::RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKey
   }
   //
   for (i=1; i<=aNbToAdd; ++i) {
-    GEOMAlgo_PassKey aPKE1;
+    GEOMAlgo_PassKeyShape aPKE1;
     //
     const TopoDS_Shape& aE1=aMEToAdd.FindKey(i);
     const TopTools_ListOfShape& aLE=aMEToAdd(i);

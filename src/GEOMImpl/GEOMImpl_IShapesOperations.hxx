@@ -81,6 +81,23 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
                                                           const Standard_Real        theRadius,
                                                           const GEOMAlgo_State       theState);
 
+  Handle(TColStd_HSequenceOfInteger) GetShapesOnPlaneIDs (const Handle(GEOM_Object)& theShape,
+                                                          const Standard_Integer     theShapeType,
+                                                          const Handle(GEOM_Object)& theAx1,
+                                                          const GEOMAlgo_State       theState);
+
+  Handle(TColStd_HSequenceOfInteger) GetShapesOnCylinderIDs (const Handle(GEOM_Object)& theShape,
+                                                             const Standard_Integer     theShapeType,
+                                                             const Handle(GEOM_Object)& theAxis,
+                                                             const Standard_Real        theRadius,
+                                                             const GEOMAlgo_State       theState);
+
+  Handle(TColStd_HSequenceOfInteger) GetShapesOnSphereIDs (const Handle(GEOM_Object)& theShape,
+                                                           const Standard_Integer     theShapeType,
+                                                           const Handle(GEOM_Object)& theCenter,
+                                                           const Standard_Real        theRadius,
+                                                           const GEOMAlgo_State       theState);
+
   Handle(GEOM_Object) GetShapesOnCylinderOld (Handle(GEOM_Object)    theShape,
                                               const Standard_Integer theShapeType,
                                               Handle(GEOM_Object)    theAxis,
@@ -101,6 +118,8 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
                                  const Standard_Integer        theObjectType,
                                  const Standard_Integer        theFunctionType,
                                  const TCollection_AsciiString theMethodName);
+
+  bool CheckTriangulation (const TopoDS_Shape& aShape);
 };
 
 #endif

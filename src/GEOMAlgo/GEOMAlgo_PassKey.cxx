@@ -8,8 +8,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
-#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
 
 #ifdef WNT
 #pragma warning( disable : 4101) 
@@ -17,6 +16,9 @@
 
 static 
   void SortShell(const int n, int* a); 
+static
+  Standard_Integer NormalizedId(const Standard_Integer aId,
+				const Standard_Integer aDiv);
 
 //=======================================================================
 //function :
@@ -25,19 +27,6 @@ static
   GEOMAlgo_PassKey::GEOMAlgo_PassKey()
 {
   Clear();
-}
-//=======================================================================
-//function :Clear
-//purpose  : 
-//=======================================================================
-  void GEOMAlgo_PassKey::Clear()
-{
-  myNbIds=0;
-  myNbMax=8;
-  mySum=0;
-  myIds[0]=0;  myIds[1]=0;  myIds[2]=0;  myIds[3]=0;
-  myIds[4]=0;  myIds[5]=0;  myIds[6]=0;  myIds[7]=0;
-  myUpper=432123;//2147483647;
 }
 //=======================================================================
 //function :Assign
@@ -52,113 +41,138 @@ static
   return *this;
 }
 //=======================================================================
+//function :Clear
+//purpose  : 
+//=======================================================================
+  void GEOMAlgo_PassKey::Clear()
+{
+  Standard_Integer i;
+  //
+  myNbIds=0;
+  myNbMax=8;
+  mySum=0;
+  for (i=0; i<myNbMax; ++i) {
+    myIds[i]=0;
+  }
+}
+//=======================================================================
 //function :SetIds
 //purpose  : 
 //=======================================================================
-  void GEOMAlgo_PassKey::SetIds(const TopoDS_Shape& aS1)
+  void GEOMAlgo_PassKey::SetIds(const Standard_Integer anId1)
 			       
 {
-  Standard_Integer anId1;
-  //
-  anId1=aS1.HashCode(myUpper);
-  //
   myNbIds=1;
-  myIds[7]=anId1;
+  myIds[myNbMax-1]=anId1;
   mySum=anId1;
 }
 //=======================================================================
 //function :SetIds
 //purpose  : 
 //=======================================================================
-  void GEOMAlgo_PassKey::SetIds(const TopoDS_Shape& aS1,
-				const TopoDS_Shape& aS2)
+  void GEOMAlgo_PassKey::SetIds(const Standard_Integer anId1,
+				const Standard_Integer anId2)
 {
-  Standard_Integer anId1, anId2;
-  //
-  anId1=aS1.HashCode(myUpper);
-  anId2=aS2.HashCode(myUpper);
+  Standard_Integer aIdN1, aIdN2;
   //
   myNbIds=2;
-  mySum=anId1+anId2;
+  aIdN1=NormalizedId(anId1, myNbIds);
+  aIdN2=NormalizedId(anId2, myNbIds);
+  mySum=aIdN1+aIdN2;
+  //
   if (anId1<anId2) {
-    myIds[6]=anId1;
-    myIds[7]=anId2;
+    myIds[myNbMax-2]=anId1;
+    myIds[myNbMax-1]=anId2;
     return;
   }
-  myIds[6]=anId2;
-  myIds[7]=anId1;
+  myIds[myNbMax-2]=anId2;
+  myIds[myNbMax-1]=anId1;
 }
+
 //=======================================================================
 //function :SetIds
 //purpose  : 
 //=======================================================================
-  void GEOMAlgo_PassKey::SetIds(const TopoDS_Shape& aS1,
-				const TopoDS_Shape& aS2,
-				const TopoDS_Shape& aS3)
+  void GEOMAlgo_PassKey::SetIds(const Standard_Integer anId1,
+				const Standard_Integer anId2,
+				const Standard_Integer anId3)
 {
-  Standard_Integer anId1, anId2, anId3;
-  //
-  anId1=aS1.HashCode(myUpper);
-  anId2=aS2.HashCode(myUpper);
-  anId3=aS3.HashCode(myUpper);
+  Standard_Integer aIdN1, aIdN2, aIdN3;
   //
   myNbIds=3;
-  myIds[5]=anId1;
-  myIds[6]=anId2;
-  myIds[7]=anId3;
-  mySum=anId1+anId2+anId3;
+  aIdN1=NormalizedId(anId1, myNbIds);
+  aIdN2=NormalizedId(anId2, myNbIds);
+  aIdN3=NormalizedId(anId3, myNbIds);
+  mySum=aIdN1+aIdN2+aIdN3;
+  //
+  myIds[myNbMax-3]=anId1;
+  myIds[myNbMax-2]=anId2;
+  myIds[myNbMax-1]=anId3;
+  //
   Compute();
 }
 //=======================================================================
 //function :SetIds
 //purpose  : 
 //=======================================================================
-  void GEOMAlgo_PassKey::SetIds(const TopoDS_Shape& aS1,
-				const TopoDS_Shape& aS2,
-				const TopoDS_Shape& aS3,
-				const TopoDS_Shape& aS4)
+  void GEOMAlgo_PassKey::SetIds(const Standard_Integer anId1,
+				const Standard_Integer anId2,
+				const Standard_Integer anId3,
+				const Standard_Integer anId4)
 {
-  Standard_Integer anId1, anId2, anId3, anId4;
-  //
-  anId1=aS1.HashCode(myUpper);
-  anId2=aS2.HashCode(myUpper);
-  anId3=aS3.HashCode(myUpper);
-  anId4=aS4.HashCode(myUpper);
+  Standard_Integer aIdN1, aIdN2, aIdN3, aIdN4;
   //
   myNbIds=4;
-  myIds[4]=anId1;
-  myIds[5]=anId2;
-  myIds[6]=anId3;
-  myIds[7]=anId4;
-  mySum=anId1+anId2+anId3+anId4;
+  aIdN1=NormalizedId(anId1, myNbIds);
+  aIdN2=NormalizedId(anId2, myNbIds);
+  aIdN3=NormalizedId(anId3, myNbIds);
+  aIdN4=NormalizedId(anId4, myNbIds);
+  mySum=aIdN1+aIdN2+aIdN3+aIdN4;
+  //
+  myIds[myNbMax-4]=anId1;
+  myIds[myNbMax-3]=anId2;
+  myIds[myNbMax-2]=anId3;
+  myIds[myNbMax-1]=anId4;
+  //
   Compute();
 }
 //=======================================================================
 //function :SetIds
 //purpose  : 
 //=======================================================================
-  void GEOMAlgo_PassKey::SetIds(const TopTools_ListOfShape& aLS)
+  void GEOMAlgo_PassKey::SetIds(const TColStd_ListOfInteger& aLI)
 {
-  Standard_Integer aNb, i, anId;
-  TopTools_ListIteratorOfListOfShape aIt;
+  Standard_Integer aNb, i, anId, aIdN;
+  TColStd_ListIteratorOfListOfInteger aIt;
   //
-  aNb=aLS.Extent();
-  if (aNb<1 || aNb > myNbMax) {
+  aNb=aLI.Extent();
+  if (!aNb || aNb > myNbMax) {
     return;
   }
   //
   myNbIds=aNb;
   mySum=0;
   i=myNbMax-myNbIds;
-  aIt.Initialize(aLS);
+  aIt.Initialize(aLI);
   for (; aIt.More(); aIt.Next(), ++i) {
-    const TopoDS_Shape& aS=aIt.Value();
-    anId=aS.HashCode(myUpper);
+    anId=aIt.Value();
     myIds[i]=anId;
-    mySum+=anId;
+    aIdN=NormalizedId(anId, myNbIds);
+    mySum+=aIdN;
   }
   //
   Compute();
+}
+//=======================================================================
+//function :Id
+//purpose  : 
+//=======================================================================
+  Standard_Integer GEOMAlgo_PassKey::Id(const Standard_Integer aIndex)const
+{
+  if (aIndex < 0 || aIndex >= myNbMax) {
+    return 0;
+  }
+  return myIds[aIndex];
 }
 //=======================================================================
 //function :NbMax
@@ -206,7 +220,8 @@ static
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKey::HashCode(const Standard_Integer Upper) const
 {
-  return (mySum % Upper);
+  //return (mySum % Upper);
+  return ::HashCode(mySum, Upper);
 }
 //=======================================================================
 //function : Dump
@@ -221,6 +236,23 @@ static
     printf(" %d", myIds[i]);
   }
   printf(" }");
+}
+//=======================================================================
+// function: NormalizedId
+// purpose : 
+//=======================================================================
+Standard_Integer NormalizedId(const Standard_Integer aId,
+			      const Standard_Integer aDiv)
+{
+  Standard_Integer aMax, aTresh, aIdRet;
+  //
+  aIdRet=aId;
+  aMax=::IntegerLast();
+  aTresh=aMax/aDiv;
+  if (aId>aTresh) {
+    aIdRet=aId%aTresh;
+  }
+  return aIdRet;
 }
 //=======================================================================
 // function: SortShell

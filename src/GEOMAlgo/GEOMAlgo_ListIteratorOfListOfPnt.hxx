@@ -19,19 +19,23 @@
 // the specific terms and conditions governing rights and limitations under the
 // License.
 
-#ifndef _GEOMAlgo_PassKey_HeaderFile
-#define _GEOMAlgo_PassKey_HeaderFile
+#ifndef _GEOMAlgo_ListIteratorOfListOfPnt_HeaderFile
+#define _GEOMAlgo_ListIteratorOfListOfPnt_HeaderFile
 
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
+#ifndef _Standard_Address_HeaderFile
+#include <Standard_Address.hxx>
+#endif
+#ifndef _Handle_GEOMAlgo_ListNodeOfListOfPnt_HeaderFile
+#include <Handle_GEOMAlgo_ListNodeOfListOfPnt.hxx>
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
-#ifndef _Standard_Address_HeaderFile
-#include <Standard_Address.hxx>
-#endif
-class TColStd_ListOfInteger;
+class Standard_NoMoreObject;
+class Standard_NoSuchObject;
+class GEOMAlgo_ListOfPnt;
+class gp_Pnt;
+class GEOMAlgo_ListNodeOfListOfPnt;
 
 
 #ifndef _Standard_HeaderFile
@@ -41,7 +45,7 @@ class TColStd_ListOfInteger;
 #include <Standard_Macro.hxx>
 #endif
 
-class GEOMAlgo_PassKey  {
+class GEOMAlgo_ListIteratorOfListOfPnt  {
 
 public:
 
@@ -59,28 +63,15 @@ public:
       }
  // Methods PUBLIC
  // 
-Standard_EXPORT GEOMAlgo_PassKey();
-Standard_EXPORT   GEOMAlgo_PassKey& Assign(const GEOMAlgo_PassKey& Other) ;
-  GEOMAlgo_PassKey& operator =(const GEOMAlgo_PassKey& Other) 
-{
-  return Assign(Other);
-}
-
-Standard_EXPORT   void SetIds(const Standard_Integer aI1) ;
-Standard_EXPORT   void SetIds(const Standard_Integer aI1,const Standard_Integer aI2) ;
-Standard_EXPORT   void SetIds(const Standard_Integer aI1,const Standard_Integer aI2,const Standard_Integer aI3) ;
-Standard_EXPORT   void SetIds(const Standard_Integer aI1,const Standard_Integer aI2,const Standard_Integer aI3,const Standard_Integer aI4) ;
-Standard_EXPORT   void SetIds(const TColStd_ListOfInteger& aLS) ;
-Standard_EXPORT   Standard_Integer NbMax() const;
-Standard_EXPORT   void Clear() ;
-Standard_EXPORT   void Compute() ;
-Standard_EXPORT   Standard_Boolean IsEqual(const GEOMAlgo_PassKey& aOther) const;
-Standard_EXPORT   Standard_Address Key() const;
-Standard_EXPORT   Standard_Integer HashCode(const Standard_Integer Upper) const;
-Standard_EXPORT   Standard_Integer Id(const Standard_Integer aIndex) const;
-Standard_EXPORT   void Dump() const;
+Standard_EXPORT GEOMAlgo_ListIteratorOfListOfPnt();
+Standard_EXPORT GEOMAlgo_ListIteratorOfListOfPnt(const GEOMAlgo_ListOfPnt& L);
+Standard_EXPORT   void Initialize(const GEOMAlgo_ListOfPnt& L) ;
+  Standard_Boolean More() const;
+Standard_EXPORT   void Next() ;
+Standard_EXPORT   gp_Pnt& Value() const;
 
 
+friend class GEOMAlgo_ListOfPnt;
 
 
 
@@ -92,10 +83,6 @@ protected:
 
  // Fields PROTECTED
  //
-Standard_Integer myNbIds;
-Standard_Integer myNbMax;
-Standard_Integer mySum;
-Standard_Integer myIds[8];
 
 
 private: 
@@ -106,12 +93,35 @@ private:
 
  // Fields PRIVATE
  //
+Standard_Address current;
+Standard_Address previous;
 
 
 };
 
+#define Item gp_Pnt
+#define Item_hxx <gp_Pnt.hxx>
+#define TCollection_ListNode GEOMAlgo_ListNodeOfListOfPnt
+#define TCollection_ListNode_hxx <GEOMAlgo_ListNodeOfListOfPnt.hxx>
+#define TCollection_ListIterator GEOMAlgo_ListIteratorOfListOfPnt
+#define TCollection_ListIterator_hxx <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
+#define Handle_TCollection_ListNode Handle_GEOMAlgo_ListNodeOfListOfPnt
+#define TCollection_ListNode_Type_() GEOMAlgo_ListNodeOfListOfPnt_Type_()
+#define TCollection_List GEOMAlgo_ListOfPnt
+#define TCollection_List_hxx <GEOMAlgo_ListOfPnt.hxx>
 
+#include <TCollection_ListIterator.lxx>
 
+#undef Item
+#undef Item_hxx
+#undef TCollection_ListNode
+#undef TCollection_ListNode_hxx
+#undef TCollection_ListIterator
+#undef TCollection_ListIterator_hxx
+#undef Handle_TCollection_ListNode
+#undef TCollection_ListNode_Type_
+#undef TCollection_List
+#undef TCollection_List_hxx
 
 
 // other Inline functions and methods (like "C++: function call" methods)

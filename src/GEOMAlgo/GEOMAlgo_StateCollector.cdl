@@ -1,0 +1,31 @@
+-- File:	GEOMAlgo_StateCollector.cdl
+-- Created:	Thu Mar 10 09:39:25 2005
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2005
+
+
+class StateCollector from GEOMAlgo 
+
+	---Purpose: 
+
+uses
+    State from TopAbs 
+
+--raises
+
+is 
+    Create 
+    	returns StateCollector from GEOMAlgo; 
+
+    AppendState(me:out; 
+    	    aSt:State from TopAbs) 
+    	returns Boolean from Standard; 
+	     
+    State(me) 
+    	returns State from TopAbs; 
+	 
+fields 
+    myCounter:Integer from Standard[3];  
+
+end StateCollector;

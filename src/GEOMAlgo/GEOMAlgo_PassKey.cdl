@@ -11,40 +11,40 @@ class PassKey from GEOMAlgo
 
 uses
     Shape from TopoDS, 
-    ListOfShape from TopTools   
+    ListOfInteger from TColStd   
   	 
 --raises
 
 is 
     Create  
     	returns PassKey from GEOMAlgo; 
-      
+     
     Assign(me:out;  
-    	Other : PassKey from GEOMAlgo) 
+    	    Other : PassKey from GEOMAlgo) 
     	returns PassKey from GEOMAlgo; 
     ---C++: alias operator =
     ---C++: return & 
+--    
+    SetIds(me:out; 
+    	    aI1  :Integer from Standard); 
+	     
+    SetIds(me:out; 
+    	    aI1 :Integer from Standard;    
+    	    aI2 :Integer from Standard);  
+	     
+    SetIds(me:out; 
+    	    aI1 :Integer from Standard;    
+    	    aI2 :Integer from Standard;    
+    	    aI3 :Integer from Standard);  
+
+    SetIds(me:out; 
+    	    aI1 :Integer from Standard;    
+    	    aI2 :Integer from Standard;    
+    	    aI3 :Integer from Standard;    
+    	    aI4 :Integer from Standard); 
      
-    SetIds(me:out; 
-    	    aS  :Shape from TopoDS); 
-    	    
-    SetIds(me:out; 
-    	    aS1  :Shape from TopoDS; 
-    	    aS2  :Shape from TopoDS); 
-     
-    SetIds(me:out; 
-    	    aS1  :Shape from TopoDS; 
-    	    aS2  :Shape from TopoDS; 
-    	    aS3  :Shape from TopoDS); 
- 
     SetIds(me:out;  
-    	    aS1  :Shape from TopoDS; 
-    	    aS2  :Shape from TopoDS; 
-    	    aS3  :Shape from TopoDS;
-    	    aS4  :Shape from TopoDS);
- 
-    SetIds(me:out;  
-    	    aLS  :ListOfShape from TopTools); 
+    	    aLS  :ListOfInteger from TColStd);   
  
     NbMax(me) 
 	returns Integer  from Standard; 
@@ -64,6 +64,11 @@ is
 	    Upper : Integer  from Standard)  
     	returns Integer from Standard;   	 
      
+    Id(me; 
+    	    aIndex: Integer  from Standard)  
+    	returns Integer from Standard;
+    	
+
     Dump(me); 
 
 fields 
@@ -72,7 +77,5 @@ fields
     myNbMax: Integer from Standard is protected; 
     mySum  : Integer from Standard is protected;   
     myIds  : Integer from Standard [8] is protected; 
-    myShapes : Shape from TopoDS [8] is protected; 
-    myUpper  : Integer from Standard is protected; 
 
 end PassKey;

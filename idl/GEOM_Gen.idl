@@ -963,6 +963,54 @@ module GEOM
 				in shape_state theState);
 
     /*!
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified plane by the certain way, defined through \a theState parameter.
+     *  \param theShape Shape to find sub-shapes of.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param theAx1 Vector (or line, or linear edge), specifying normal
+     *                direction and location of the plane to find shapes on.
+     *  \param theState The state of the subshapes to find.
+     *  \return List of IDs of all found sub-shapes.
+     */
+    ListOfLong GetShapesOnPlaneIDs (in GEOM_Object theShape,
+				    in long        theShapeType,
+				    in GEOM_Object theAx1,
+				    in shape_state theState);
+
+    /*!
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified cylinder by the certain way, defined through \a theState parameter.
+     *  \param theShape Shape to find sub-shapes of.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param theAxis Vector (or line, or linear edge), specifying
+     *                 axis of the cylinder to find shapes on.
+     *  \param theRadius Radius of the cylinder to find shapes on.
+     *  \param theState The state of the subshapes to find.
+     *  \return List of IDs of all found sub-shapes.
+     */
+    ListOfLong GetShapesOnCylinderIDs (in GEOM_Object theShape,
+				       in long        theShapeType,
+				       in GEOM_Object theAxis,
+				       in double      theRadius,
+				       in shape_state theState);
+
+    /*!
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified sphere by the certain way, defined through \a theState parameter.
+     *  \param theShape Shape to find sub-shapes of.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param theCenter Point, specifying center of the sphere to find shapes on.
+     *  \param theRadius Radius of the sphere to find shapes on.
+     *  \param theState The state of the subshapes to find.
+     *  \return List of IDs of all found sub-shapes.
+     */
+    ListOfLong GetShapesOnSphereIDs (in GEOM_Object theShape,
+				     in long        theShapeType,
+				     in GEOM_Object theCenter,
+				     in double      theRadius,
+				     in shape_state theState);
+
+    /*!
      *  Get sub-shape(s) of theShapeWhere, which are
      *  coincident with \a theShapeWhat or could be a part of it.
      *  \param theShapeWhere Shape to find sub-shapes of.
@@ -1879,6 +1927,20 @@ module GEOM
      *  \param theSubShapes is a list of sub-shapes to be removed.
      */
     void DifferenceList (in GEOM_Object theGroup, in ListOfGO theSubShapes);
+
+    /*!
+     *  Adds to the group all the given shapes. No errors, if some shapes are alredy included.
+     *  \param theGroup is a GEOM group to which the new sub shapes are added.
+     *  \param theSubShapes is a list of IDs of sub shapes to be added.
+     */
+    void UnionIDs (in GEOM_Object theGroup, in ListOfLong theSubShapes);
+
+    /*!
+     *  Removes from the group all the given shapes. No errors, if some shapes are not included.
+     *  \param theGroup is a GEOM group from which the sub-shapes are removed.
+     *  \param theSubShapes is a list of IDs of sub-shapes to be removed.
+     */
+    void DifferenceIDs (in GEOM_Object theGroup, in ListOfLong theSubShapes);
 
     /*!
      *  Returns a type of sub objects stored in the group

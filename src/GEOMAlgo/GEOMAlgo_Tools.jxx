@@ -1,8 +1,8 @@
 #ifndef _TopoDS_Shape_HeaderFile
 #include <TopoDS_Shape.hxx>
 #endif
-#ifndef _GEOMAlgo_IndexedDataMapOfPassKeyListOfShape_HeaderFile
-#include <GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx>
+#ifndef _GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape_HeaderFile
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
 #endif
 #ifndef _IntTools_Context_HeaderFile
 #include <IntTools_Context.hxx>

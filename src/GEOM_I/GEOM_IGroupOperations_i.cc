@@ -176,6 +176,68 @@ void GEOM_IGroupOperations_i::DifferenceList (GEOM::GEOM_Object_ptr theGroup,
 
 //=============================================================================
 /*!
+ *  UnionIDs
+ */
+//=============================================================================
+void GEOM_IGroupOperations_i::UnionIDs (GEOM::GEOM_Object_ptr   theGroup,
+					const GEOM::ListOfLong& theSubShapes) 
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theGroup == NULL) return;
+
+  //Get the reference group
+  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject
+    (theGroup->GetStudyID(), theGroup->GetEntry());
+  if (aGroupRef.IsNull()) return;
+
+  //Get sub-shape to add
+  Handle(TColStd_HSequenceOfInteger) aSubShapes = new TColStd_HSequenceOfInteger;
+
+  int ind, aLen = theSubShapes.length();
+  for (ind = 0; ind < aLen; ind++) {
+    aSubShapes->Append(theSubShapes[ind]);
+  }
+
+  //Perform the operation
+  GetOperations()->UnionIDs(aGroupRef, aSubShapes);
+  return;
+}
+
+//=============================================================================
+/*!
+ *  DifferenceIDs
+ */
+//=============================================================================
+void GEOM_IGroupOperations_i::DifferenceIDs (GEOM::GEOM_Object_ptr   theGroup,
+					     const GEOM::ListOfLong& theSubShapes) 
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theGroup == NULL) return;
+
+  //Get the reference group
+  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject
+    (theGroup->GetStudyID(), theGroup->GetEntry());
+  if (aGroupRef.IsNull()) return;
+
+  //Get sub-shape to remove
+  Handle(TColStd_HSequenceOfInteger) aSubShapes = new TColStd_HSequenceOfInteger;
+
+  int ind, aLen = theSubShapes.length();
+  for (ind = 0; ind < aLen; ind++) {
+    aSubShapes->Append(theSubShapes[ind]);
+  }
+
+  //Perform the operation
+  GetOperations()->DifferenceIDs(aGroupRef, aSubShapes);
+  return;
+}
+
+//=============================================================================
+/*!
  *  GetType
  */
 //============================================================================= 

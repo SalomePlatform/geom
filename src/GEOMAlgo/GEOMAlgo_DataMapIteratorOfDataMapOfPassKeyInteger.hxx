@@ -19,33 +19,23 @@
 // the specific terms and conditions governing rights and limitations under the
 // License.
 
-#ifndef _GEOMAlgo_SurfaceTools_HeaderFile
-#define _GEOMAlgo_SurfaceTools_HeaderFile
+#ifndef _GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger_HeaderFile
+#define _GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger_HeaderFile
 
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-#ifndef _Handle_Geom_Surface_HeaderFile
-#include <Handle_Geom_Surface.hxx>
-#endif
-#ifndef _Standard_Real_HeaderFile
-#include <Standard_Real.hxx>
-#endif
-#ifndef _TopAbs_State_HeaderFile
-#include <TopAbs_State.hxx>
-#endif
-#ifndef _GEOMAlgo_State_HeaderFile
-#include <GEOMAlgo_State.hxx>
+#ifndef _TCollection_BasicMapIterator_HeaderFile
+#include <TCollection_BasicMapIterator.hxx>
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
 #endif
-class Geom_Surface;
-class gp_Pnt;
-class gp_Cylinder;
-class GeomAdaptor_Surface;
-class gp_Pln;
-class gp_Sphere;
+#ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_HeaderFile
+#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx>
+#endif
+class Standard_NoSuchObject;
+class GEOMAlgo_PassKey;
+class GEOMAlgo_PassKeyMapHasher;
+class GEOMAlgo_DataMapOfPassKeyInteger;
+class GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger;
 
 
 #ifndef _Standard_HeaderFile
@@ -55,7 +45,7 @@ class gp_Sphere;
 #include <Standard_Macro.hxx>
 #endif
 
-class GEOMAlgo_SurfaceTools  {
+class GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger  : public TCollection_BasicMapIterator {
 
 public:
 
@@ -73,15 +63,11 @@ public:
       }
  // Methods PUBLIC
  // 
-Standard_EXPORT static  Standard_Boolean IsAnalytic(const Handle(Geom_Surface)& aS) ;
-Standard_EXPORT static  Standard_Boolean IsCoaxial(const gp_Pnt& aP1,const gp_Pnt& aP2,const gp_Cylinder& aCyl,const Standard_Real aTol) ;
-Standard_EXPORT static  Standard_Boolean IsConformState(const TopAbs_State aST1,const GEOMAlgo_State aST2) ;
-Standard_EXPORT static  Standard_Integer GetState(const gp_Pnt& aP,const GeomAdaptor_Surface& aS,const Standard_Real aTol,TopAbs_State& aSt) ;
-Standard_EXPORT static  Standard_Integer GetState(const gp_Pnt& aP,const Handle(Geom_Surface)& aS,const Standard_Real aTol,TopAbs_State& aSt) ;
-Standard_EXPORT static  Standard_Real Distance(const gp_Pnt& aP,const gp_Pln& aPln) ;
-Standard_EXPORT static  Standard_Real Distance(const gp_Pnt& aP,const gp_Cylinder& aCyl) ;
-Standard_EXPORT static  Standard_Real Distance(const gp_Pnt& aP,const gp_Sphere& aSph) ;
-Standard_EXPORT static  TopAbs_State ReverseState(const TopAbs_State aSt) ;
+Standard_EXPORT GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger();
+Standard_EXPORT GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger(const GEOMAlgo_DataMapOfPassKeyInteger& aMap);
+Standard_EXPORT   void Initialize(const GEOMAlgo_DataMapOfPassKeyInteger& aMap) ;
+Standard_EXPORT  const GEOMAlgo_PassKey& Key() const;
+Standard_EXPORT  const Standard_Integer& Value() const;
 
 
 

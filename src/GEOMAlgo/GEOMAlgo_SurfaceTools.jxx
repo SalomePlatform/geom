@@ -4,11 +4,14 @@
 #ifndef _gp_Pnt_HeaderFile
 #include <gp_Pnt.hxx>
 #endif
-#ifndef _gp_Pln_HeaderFile
-#include <gp_Pln.hxx>
-#endif
 #ifndef _gp_Cylinder_HeaderFile
 #include <gp_Cylinder.hxx>
+#endif
+#ifndef _GeomAdaptor_Surface_HeaderFile
+#include <GeomAdaptor_Surface.hxx>
+#endif
+#ifndef _gp_Pln_HeaderFile
+#include <gp_Pln.hxx>
 #endif
 #ifndef _gp_Sphere_HeaderFile
 #include <gp_Sphere.hxx>

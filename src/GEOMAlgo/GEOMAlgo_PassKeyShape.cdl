@@ -1,0 +1,48 @@
+-- File:	GEOMAlgo_PassKeyShape.cdl
+-- Created:	
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 
+
+
+class PassKeyShape from GEOMAlgo 
+    inherits PassKey from GEOMAlgo  
+    
+	---Purpose: 
+
+uses
+    Shape from TopoDS, 
+    ListOfShape from TopTools   
+  	 
+--raises
+
+is 
+    Create  
+    	returns PassKeyShape from GEOMAlgo; 
+      
+    SetIds(me:out; 
+    	    aS  :Shape from TopoDS); 
+    	    
+    SetIds(me:out; 
+    	    aS1  :Shape from TopoDS; 
+    	    aS2  :Shape from TopoDS); 
+     
+    SetIds(me:out; 
+    	    aS1  :Shape from TopoDS; 
+    	    aS2  :Shape from TopoDS; 
+    	    aS3  :Shape from TopoDS); 
+ 
+    SetIds(me:out;  
+    	    aS1  :Shape from TopoDS; 
+    	    aS2  :Shape from TopoDS; 
+    	    aS3  :Shape from TopoDS;
+    	    aS4  :Shape from TopoDS);
+ 
+    SetIds(me:out;  
+    	    aLS  :ListOfShape from TopTools); 
+	     
+
+fields 
+    myUpper  : Integer from Standard is protected; 
+
+end PassKeyShape;

@@ -19,19 +19,27 @@
 // the specific terms and conditions governing rights and limitations under the
 // License.
 
-#ifndef _GEOMAlgo_PassKey_HeaderFile
-#define _GEOMAlgo_PassKey_HeaderFile
+#ifndef _GEOMAlgo_DataMapOfPassKeyInteger_HeaderFile
+#define _GEOMAlgo_DataMapOfPassKeyInteger_HeaderFile
 
+#ifndef _TCollection_BasicMap_HeaderFile
+#include <TCollection_BasicMap.hxx>
+#endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
+#endif
+#ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_HeaderFile
+#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx>
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
-#ifndef _Standard_Address_HeaderFile
-#include <Standard_Address.hxx>
-#endif
-class TColStd_ListOfInteger;
+class Standard_DomainError;
+class Standard_NoSuchObject;
+class GEOMAlgo_PassKey;
+class GEOMAlgo_PassKeyMapHasher;
+class GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger;
+class GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger;
 
 
 #ifndef _Standard_HeaderFile
@@ -41,7 +49,7 @@ class TColStd_ListOfInteger;
 #include <Standard_Macro.hxx>
 #endif
 
-class GEOMAlgo_PassKey  {
+class GEOMAlgo_DataMapOfPassKeyInteger  : public TCollection_BasicMap {
 
 public:
 
@@ -59,26 +67,35 @@ public:
       }
  // Methods PUBLIC
  // 
-Standard_EXPORT GEOMAlgo_PassKey();
-Standard_EXPORT   GEOMAlgo_PassKey& Assign(const GEOMAlgo_PassKey& Other) ;
-  GEOMAlgo_PassKey& operator =(const GEOMAlgo_PassKey& Other) 
+Standard_EXPORT GEOMAlgo_DataMapOfPassKeyInteger(const Standard_Integer NbBuckets = 1);
+Standard_EXPORT   GEOMAlgo_DataMapOfPassKeyInteger& Assign(const GEOMAlgo_DataMapOfPassKeyInteger& Other) ;
+  GEOMAlgo_DataMapOfPassKeyInteger& operator =(const GEOMAlgo_DataMapOfPassKeyInteger& Other) 
 {
   return Assign(Other);
 }
 
-Standard_EXPORT   void SetIds(const Standard_Integer aI1) ;
-Standard_EXPORT   void SetIds(const Standard_Integer aI1,const Standard_Integer aI2) ;
-Standard_EXPORT   void SetIds(const Standard_Integer aI1,const Standard_Integer aI2,const Standard_Integer aI3) ;
-Standard_EXPORT   void SetIds(const Standard_Integer aI1,const Standard_Integer aI2,const Standard_Integer aI3,const Standard_Integer aI4) ;
-Standard_EXPORT   void SetIds(const TColStd_ListOfInteger& aLS) ;
-Standard_EXPORT   Standard_Integer NbMax() const;
+Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
 Standard_EXPORT   void Clear() ;
-Standard_EXPORT   void Compute() ;
-Standard_EXPORT   Standard_Boolean IsEqual(const GEOMAlgo_PassKey& aOther) const;
-Standard_EXPORT   Standard_Address Key() const;
-Standard_EXPORT   Standard_Integer HashCode(const Standard_Integer Upper) const;
-Standard_EXPORT   Standard_Integer Id(const Standard_Integer aIndex) const;
-Standard_EXPORT   void Dump() const;
+~GEOMAlgo_DataMapOfPassKeyInteger()
+{
+  Clear();
+}
+
+Standard_EXPORT   Standard_Boolean Bind(const GEOMAlgo_PassKey& K,const Standard_Integer& I) ;
+Standard_EXPORT   Standard_Boolean IsBound(const GEOMAlgo_PassKey& K) const;
+Standard_EXPORT   Standard_Boolean UnBind(const GEOMAlgo_PassKey& K) ;
+Standard_EXPORT  const Standard_Integer& Find(const GEOMAlgo_PassKey& K) const;
+ const Standard_Integer& operator()(const GEOMAlgo_PassKey& K) const
+{
+  return Find(K);
+}
+
+Standard_EXPORT   Standard_Integer& ChangeFind(const GEOMAlgo_PassKey& K) ;
+  Standard_Integer& operator()(const GEOMAlgo_PassKey& K) 
+{
+  return ChangeFind(K);
+}
+
 
 
 
@@ -92,16 +109,13 @@ protected:
 
  // Fields PROTECTED
  //
-Standard_Integer myNbIds;
-Standard_Integer myNbMax;
-Standard_Integer mySum;
-Standard_Integer myIds[8];
 
 
 private: 
 
  // Methods PRIVATE
  // 
+Standard_EXPORT GEOMAlgo_DataMapOfPassKeyInteger(const GEOMAlgo_DataMapOfPassKeyInteger& Other);
 
 
  // Fields PRIVATE

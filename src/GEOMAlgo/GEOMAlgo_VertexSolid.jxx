@@ -1,3 +1,0 @@
-#ifndef _GEOMAlgo_VertexSolid_HeaderFile
-#include <GEOMAlgo_VertexSolid.hxx>
-#endif

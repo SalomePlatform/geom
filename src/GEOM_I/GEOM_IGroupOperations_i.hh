@@ -30,6 +30,10 @@ class GEOM_IGroupOperations_i :
 
   void DifferenceList (GEOM::GEOM_Object_ptr theGroup, const GEOM::ListOfGO& theSubShapes);
 
+  void UnionIDs (GEOM::GEOM_Object_ptr theGroup, const GEOM::ListOfLong& theSubShapes);
+
+  void DifferenceIDs (GEOM::GEOM_Object_ptr theGroup, const GEOM::ListOfLong& theSubShapes);
+
   CORBA::Long GetType (GEOM::GEOM_Object_ptr theGroup);
   
   GEOM::GEOM_Object_ptr GetMainShape (GEOM::GEOM_Object_ptr theGroup);
