@@ -1,0 +1,343 @@
+<?xml version='1.0' encoding='us-ascii' ?>
+ 
+<!-- XML component catalog -->
+<begin-catalog>
+
+<!-- Path prefix information -->
+
+<path-prefix-list>
+</path-prefix-list>
+
+<!-- Component list -->
+<component-list>
+	<component>
+		<!-- Component identification -->
+		<component-name>GEOM</component-name>
+		<component-username>Geometry</component-username>
+		<component-type>Geom</component-type>
+		<component-author>NRI</component-author>
+		<component-version> 1.0</component-version>
+		<component-comment>Geom component - Open CASCADE</component-comment>
+		<component-multistudy>1</component-multistudy>
+		<component-icone>ModuleGeom.png</component-icone>
+
+		<!-- component interface list -->
+		<component-interface-list>
+			<!-- component interface identification -->
+			<component-interface-name>GEOM</component-interface-name>
+			<component-interface-comment>No comment</component-interface-comment>
+
+		<!-- Component service list-->
+			<component-service-list>
+			         <component-service>
+				        <service-name>InitGeomEngine</service-name>
+					<service-author></service-author>
+					<service-version></service-version>
+					<service-comment></service-comment>
+					<service-by-default>1</service-by-default>
+					<inParameter-list>
+					    <inParameter>
+					            <inParameter-type>long</inParameter-type>
+						    <inParameter-name>StudyID</inParameter-name>
+						    <inParameter-comment></inParameter-comment>
+					    </inParameter>
+					</inParameter-list>
+					<outParameter-list>
+					    <outParameter>
+					            <outParameter-type>Engines::GEOM_Gen</outParameter-type>
+						    <outParameter-name>geomEngine</outParameter-name>
+						    <outParameter-comment></outParameter-comment>
+					    </outParameter>
+					</outParameter-list>
+			        </component-service>
+                    <component-service>
+                        <service-name>MakeAxisStruct</service-name>
+                        <service-author></service-author>
+                        <service-version></service-version>
+                        <service-comment></service-comment>
+                        <service-by-default>1</service-by-default>
+                        <inParameter-list>
+                            <inParameter>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-name>x</inParameter-name>
+                                <inParameter-comment></inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-name>y</inParameter-name>
+                                <inParameter-comment></inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-name>z</inParameter-name>
+                                <inParameter-comment></inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-name>vx</inParameter-name>
+                                <inParameter-comment></inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-name>vy</inParameter-name>
+                                <inParameter-comment></inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-name>vz</inParameter-name>
+                                <inParameter-comment></inParameter-comment>
+                            </inParameter>
+                        </inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-type>AxisStruct</outParameter-type>
+                                <outParameter-name>axis</outParameter-name>
+                                <outParameter-comment></outParameter-comment>
+                            </outParameter>
+			</outParameter-list>
+                    </component-service>
+                    <component-service>
+                        <service-name>MakePointStruct</service-name>
+                        <service-author></service-author>
+                        <service-version></service-version>
+                        <service-comment></service-comment>
+                        <service-by-default>1</service-by-default>
+                        <inParameter-list>
+                            <inParameter>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-name>x</inParameter-name>
+                                <inParameter-comment></inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-name>y</inParameter-name>
+                                <inParameter-comment></inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-name>z</inParameter-name>
+                                <inParameter-comment></inParameter-comment>
+                            </inParameter>
+                        </inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-type>PointStruct</outParameter-type>
+                                <outParameter-name>point</outParameter-name>
+                                <outParameter-comment></outParameter-comment>
+                            </outParameter>
+			</outParameter-list>
+                    </component-service>
+				<component-service>
+					<!-- service-identification -->
+					<service-name>MakeBox</service-name>
+					<service-author>NRI</service-author>
+					<service-version>1.0</service-version>
+					<service-comment>test XML</service-comment>
+					<service-by-default>1</service-by-default>
+					<!-- service-connexion -->
+					<inParameter-list>
+						<inParameter>
+							<inParameter-type>double</inParameter-type>
+							<inParameter-name>x1</inParameter-name>
+							<inParameter-comment>X coordinate</inParameter-comment>
+						</inParameter>
+						<inParameter>
+							<inParameter-type>double</inParameter-type>
+							<inParameter-name>y1</inParameter-name>
+							<inParameter-comment>Y coordinate</inParameter-comment>
+						</inParameter>
+						<inParameter>
+							<inParameter-type>double</inParameter-type>
+							<inParameter-name>z1</inParameter-name>
+							<inParameter-comment>Z coordinate</inParameter-comment>
+						</inParameter>
+						<inParameter>
+							<inParameter-type>double</inParameter-type>
+							<inParameter-name>x2</inParameter-name>
+							<inParameter-comment>X coordinate</inParameter-comment>
+						</inParameter>
+						<inParameter>
+							<inParameter-type>double</inParameter-type>
+							<inParameter-name>y2</inParameter-name>
+							<inParameter-comment>Y coordinate</inParameter-comment>
+						</inParameter>
+						<inParameter>
+							<inParameter-type>double</inParameter-type>
+							<inParameter-name>z2</inParameter-name>
+							<inParameter-comment>Z coordinate</inParameter-comment>
+						</inParameter>
+					</inParameter-list>
+                       	 		<outParameter-list>
+						<outParameter>
+							<outParameter-type>GEOM_Shape</outParameter-type>
+							<outParameter-name>shape</outParameter-name>
+							<outParameter-comment>boite</outParameter-comment>
+						</outParameter>
+					</outParameter-list>
+				</component-service>
+				<component-service>
+					<!-- service-identification -->
+					<service-name>MakeSphere</service-name>
+					<service-author>NRI</service-author>
+					<service-version>1.0</service-version>
+					<service-comment>test XML</service-comment>
+					<service-by-default>1</service-by-default>
+					<!-- service-connexion -->
+					<inParameter-list>
+						<inParameter>
+							<inParameter-type>double</inParameter-type>
+							<inParameter-name>x1</inParameter-name>
+							<inParameter-comment>X coordinate</inParameter-comment>
+						</inParameter>
+						<inParameter>
+							<inParameter-type>double</inParameter-type>
+							<inParameter-name>y1</inParameter-name>
+							<inParameter-comment>Y coordinate</inParameter-comment>
+						</inParameter>
+						<inParameter>
+							<inParameter-type>double</inParameter-type>
+							<inParameter-name>z1</inParameter-name>
+							<inParameter-comment>Z coordinate</inParameter-comment>
+						</inParameter>
+						<inParameter>
+							<inParameter-type>double</inParameter-type>
+							<inParameter-name>radius</inParameter-name>
+							<inParameter-comment>Sphere Radius</inParameter-comment>
+						</inParameter>
+					</inParameter-list>
+                       	 		<outParameter-list>
+						<outParameter>
+							<outParameter-type>GEOM_Shape</outParameter-type>
+							<outParameter-name>shape</outParameter-name>
+							<outParameter-comment>sphere</outParameter-comment>
+						</outParameter>
+					</outParameter-list>
+				</component-service>
+                                <component-service>
+                                        <!-- service-identification -->
+                                        <service-name>MakeTranslation</service-name>
+                                        <service-author>NRI</service-author>
+                                        <service-version>1.0</service-version>
+                                        <service-comment>test XML</service-comment>
+                                        <service-by-default>1</service-by-default>
+                                        <!-- service-connexion -->
+                                        <inParameter-list>
+                                                <inParameter>
+                                                        <inParameter-type>GEOM_Shape</inParameter-type>
+                                                        <inParameter-name>shape1</inParameter-name>
+                                                        <inParameter-comment>Shape</inParameter-comment>
+                                                </inParameter>
+                                                <inParameter>
+                                                        <inParameter-type>double</inParameter-type>
+                                                        <inParameter-name>x1</inParameter-name>
+                                                        <inParameter-comment>..</inParameter-comment>
+                                                </inParameter>
+                                                <inParameter>
+                                                        <inParameter-type>double</inParameter-type>
+                                                        <inParameter-name>y1</inParameter-name>
+                                                        <inParameter-comment>..</inParameter-comment>
+                                                </inParameter>
+                                                <inParameter>
+                                                        <inParameter-type>double</inParameter-type>
+                                                        <inParameter-name>z1</inParameter-name>
+                                                        <inParameter-comment>..</inParameter-comment>
+                                                </inParameter>
+                                        </inParameter-list>
+                                        <outParameter-list>
+                                                <outParameter>
+                                                        <outParameter-type>GEOM_Shape</outParameter-type>
+                                                        <outParameter-name>shape</outParameter-name>
+                                                        <outParameter-comment>Result</outParameter-comment>
+                                                </outParameter>
+                                        </outParameter-list>
+                                </component-service>
+                                <component-service>
+                                        <!-- service-identification -->
+                                        <service-name>MakeCopy</service-name>
+                                        <service-author>NRI</service-author>
+                                        <service-version>1.0</service-version>
+                                        <service-comment>test XML</service-comment>
+                                        <service-by-default>1</service-by-default>
+                                        <!-- service-connexion -->
+                                        <inParameter-list>
+                                                <inParameter>
+                                                        <inParameter-type>GEOM_Shape</inParameter-type>
+                                                        <inParameter-name>shape1</inParameter-name>
+                                                        <inParameter-comment>Shape</inParameter-comment>
+                                                </inParameter>
+                                        </inParameter-list>
+                                        <outParameter-list>
+                                                <outParameter>
+                                                        <outParameter-type>GEOM_Shape</outParameter-type>
+                                                        <outParameter-name>shape</outParameter-name>
+                                                        <outParameter-comment>Result</outParameter-comment>
+                                                </outParameter>
+                                        </outParameter-list>
+                                </component-service>
+                                <component-service>
+                                        <!-- service-identification -->
+                                        <service-name>MakeBoolean</service-name>
+                                        <service-author>NRI</service-author>
+                                        <service-version>1.0</service-version>
+                                        <service-comment>test XML</service-comment>
+                                        <service-by-default>1</service-by-default>
+                                        <!-- service-connexion -->
+                                        <inParameter-list>
+                                                <inParameter>
+                                                        <inParameter-type>GEOM_Shape</inParameter-type>
+                                                        <inParameter-name>shape1</inParameter-name>
+                                                        <inParameter-comment>Shape</inParameter-comment>
+                                                </inParameter>
+                                                <inParameter>
+                                                        <inParameter-type>GEOM_Shape</inParameter-type>
+                                                        <inParameter-name>shape2</inParameter-name>
+                                                        <inParameter-comment>Tools</inParameter-comment>
+                                                </inParameter>
+                                                <inParameter>
+                                                        <inParameter-type>long</inParameter-type>
+                                                        <inParameter-name>operation</inParameter-name>
+                                                        <inParameter-comment>Operation Type</inParameter-comment>
+                                                </inParameter>
+                                        </inParameter-list>
+                                        <outParameter-list>
+                                                <outParameter>
+                                                        <outParameter-type>GEOM_Shape</outParameter-type>
+                                                        <outParameter-name>shape</outParameter-name>
+                                                        <outParameter-comment>Result</outParameter-comment>
+                                                </outParameter>
+                                        </outParameter-list>
+                                </component-service>
+                                <component-service>
+                                        <!-- service-identification -->
+                                        <service-name>MakeFuse</service-name>
+                                        <service-author>NRI</service-author>
+                                        <service-version>1.0</service-version>
+                                        <service-comment>test XML</service-comment>
+                                        <service-by-default>1</service-by-default>
+                                        <!-- service-connexion -->
+                                        <inParameter-list>
+                                                <inParameter>
+                                                        <inParameter-type>GEOM_Shape</inParameter-type>
+                                                        <inParameter-name>shape1</inParameter-name>
+                                                        <inParameter-comment>Shape</inParameter-comment>
+                                                </inParameter>
+                                                <inParameter>
+                                                        <inParameter-type>GEOM_Shape</inParameter-type>
+                                                        <inParameter-name>shape2</inParameter-name>
+                                                        <inParameter-comment>Tools</inParameter-comment>
+                                                </inParameter>
+                                        </inParameter-list>
+                                        <outParameter-list>
+                                                <outParameter>
+                                                        <outParameter-type>GEOM_Shape</outParameter-type>
+                                                        <outParameter-name>shape</outParameter-name>
+                                                        <outParameter-comment>Result</outParameter-comment>
+                                                </outParameter>
+                                        </outParameter-list>
+                                </component-service>
+			</component-service-list>
+		</component-interface-list>
+	<constraint>hostname = localhost</constraint>
+	</component>
+</component-list>
+</begin-catalog>

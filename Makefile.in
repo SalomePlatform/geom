@@ -19,6 +19,7 @@ SUBDIRS = idl src
 RESOURCES_FILES = \
 GEOM_en.xml \
 GEOM_fr.xml \
+GEOMCatalog.xml \
 arc.png \
 archimede.png \
 axisinertia.png \
