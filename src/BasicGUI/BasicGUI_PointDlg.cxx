@@ -259,6 +259,7 @@ void BasicGUI_PointDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_PointDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if(mySimulationTopoDs.IsNull())
     return;

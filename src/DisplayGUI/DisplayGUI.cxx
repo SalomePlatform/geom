@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "DisplayGUI.h"
 
 #include "QAD_RightFrame.h"
@@ -38,6 +37,10 @@ using namespace std;
 #include "SALOME_ListIteratorOfListIO.hxx"
 
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=======================================================================
 // function : DisplayGUI()
@@ -231,6 +234,11 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
 
   if(theIO.IsNull())
     MESSAGE("BuildPresentation(): null SALOME_InteractiveObject passed")
+
+  Standard_Boolean testResult;
+  GEOM::GEOM_Shape_var myGeomShape = myDisplayGUI->myGeomBase->ConvertIOinGEOMShape(theIO, testResult);
+  if(!testResult)
+    return;
 
   if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
     // VTK

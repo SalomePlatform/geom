@@ -26,13 +26,16 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "MeasureGUI_PropertiesDlg.h"
 
 #include <TopExp_Explorer.hxx>
 #include <BRepGProp.hxx>
 #include <GProp_GProps.hxx>
 #include <GProp_PrincipalProps.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : MeasureGUI_PropertiesDlg()

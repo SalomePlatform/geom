@@ -40,6 +40,8 @@ using namespace std;
 #include "OCCViewer_Viewer3d.h"
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <GeomAbs_CurveType.hxx>
@@ -47,6 +49,7 @@ using namespace std;
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
+#include <TopoDS_Iterator.hxx>
 
 #include "VTKViewer_RenderWindowInteractor.h"
 #include "VTKViewer_ViewFrame.h"
@@ -164,17 +167,36 @@ int  GEOM_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
   GEOM::GEOM_Shape_var aSubShape = Geom->GetIORFromString(SubIOR);
   TopoDS_Shape subshape    = ShapeReader.GetShape(Geom, aSubShape);
 
-  TopExp_Explorer Exp ( shape, subshape.ShapeType() );
   int index = 1;
-  TopTools_MapOfShape M;
-  while ( Exp.More() ) {
-    if ( M.Add(Exp.Current()) ) {
-      if ( Exp.Current().IsSame(subshape) )
-	return index;
-      index++;
-    }
-    Exp.Next();
-  }
+  if(subshape.ShapeType() == TopAbs_COMPOUND) { 
+    TopoDS_Iterator it; 
+    TopTools_ListOfShape CL; 
+    CL.Append(shape); 
+    TopTools_ListIteratorOfListOfShape itC; 
+    for(itC.Initialize(CL); itC.More(); itC.Next()) {
+      for(it.Initialize(itC.Value()); it.More(); it.Next()) { 
+	if (it.Value().ShapeType() == TopAbs_COMPOUND) {
+	  if (it.Value().IsSame(subshape))
+	    return index; 
+	  else 
+	    index++; 
+	  CL.Append(it.Value()); 
+	}
+      } 
+    } 
+  } 
+  else { 
+    TopExp_Explorer Exp(shape, subshape.ShapeType()); 
+    TopTools_MapOfShape M; 
+    while(Exp.More()) { 
+      if(M.Add(Exp.Current())) {
+	if(Exp.Current().IsSame(subshape)) 
+	  return index; 
+	index++; 
+      } 
+      Exp.Next(); 
+    } 
+  } 
   return -1;
 }
 
@@ -242,6 +264,7 @@ const char* GEOM_Swig::getShapeTypeString(const char* IOR)
   case TopAbs_SHAPE:
     { return "Shape" ;}
   }
+  return 0;
 }
 
 

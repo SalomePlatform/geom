@@ -201,7 +201,7 @@ gp_Pnt BasicGUI::ConvertClickToPoint(Standard_Real x, Standard_Real y, Handle(V3
 
   gp_Pln PlaneOfTheView = gp_Pln(AtPoint,EyeDir);
   Standard_Real X, Y, Z;
-  aView->Convert(x, y, X, Y, Z);
+  aView->Convert(int(x), int(y), X, Y, Z);
   gp_Pnt ConvertedPoint(X, Y, Z);
 
   gp_Pnt2d ConvertedPointOnPlane = ProjLib::Project(PlaneOfTheView, ConvertedPoint);

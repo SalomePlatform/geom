@@ -175,7 +175,7 @@ unsigned int GEOM_Client::BufferLength()
 
 TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Shape_ptr aShape ) 
 { 
-
+  
   TopoDS_Shape            S; 
   TCollection_AsciiString IOR(aShape->Name()); 
   Standard_Integer        anIndex = Find(IOR, S); 

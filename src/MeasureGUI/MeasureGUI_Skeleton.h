@@ -39,6 +39,7 @@
 #include <qlayout.h>
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
+#include <qpushbutton.h>
 
 class MeasureGUI_Skeleton : public MeasureGUI_Skeleton_QTD
 { 

@@ -110,6 +110,9 @@ public :
   bool SelectionByNameInDialogs(QWidget* aWidget, const QString& userObjectName, SALOME_Selection *Sel);
   bool DefineDlgPosition(QWidget* aDlg, int& x, int& y);
 
+  /* This method generates default names for results of geometrical operations */
+  static QString GetDefaultName(const QString& theOperation);   
+
   GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 

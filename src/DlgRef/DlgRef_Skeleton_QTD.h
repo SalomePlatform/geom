@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
 **
-** Created: mar sep 23 15:06:57 2003
+** Created: Fri Apr 16 12:57:26 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -16,6 +16,8 @@ class QHBoxLayout;
 class QGridLayout; 
 class QButtonGroup;
 class QGroupBox;
+class QLabel;
+class QLineEdit;
 class QPushButton;
 class QRadioButton;
 
@@ -27,6 +29,7 @@ public:
     DlgRef_Skeleton_QTD( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~DlgRef_Skeleton_QTD();
 
+    QGroupBox* GroupMedium;
     QGroupBox* GroupButtons;
     QPushButton* buttonOk;
     QPushButton* buttonApply;
@@ -35,7 +38,9 @@ public:
     QRadioButton* RadioButton1;
     QRadioButton* RadioButton2;
     QRadioButton* RadioButton3;
-    QGroupBox* GroupMedium;
+    QGroupBox* GroupBoxName;
+    QLineEdit* ResultName;
+    QLabel* NameLabel;
 
 
 protected:
@@ -45,6 +50,8 @@ protected:
     QHBoxLayout* Layout3;
     QGridLayout* GroupConstructorsLayout;
     QHBoxLayout* Layout2;
+    QGridLayout* GroupBoxNameLayout;
+    QGridLayout* Layout66;
 };
 
 #endif // DLGREF_SKELETON_QTD_H

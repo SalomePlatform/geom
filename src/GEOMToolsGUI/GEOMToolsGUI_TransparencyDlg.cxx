@@ -21,7 +21,7 @@
 //
 //
 //
-//  File   : GEOMBase_TransparencyDlg.cxx
+//  File   : GEOMToolsGUI_TransparencyDlg.cxx
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
 
@@ -48,24 +48,24 @@ using namespace std;
 #include "VTKViewer_RenderWindowInteractor.h"
 
 //=================================================================================
-// class    : GEOMBase_TransparencyDlg()
+// class    : GEOMToolsGUI_TransparencyDlg()
 // purpose  : Constructs a GEOMBase_SUBSHAPE which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //
 //          : WARNING : this dialog is modal !
 //
 //=================================================================================
-GEOMBase_TransparencyDlg::GEOMBase_TransparencyDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, const Handle(AIS_InteractiveContext)& ic, bool modal, WFlags fl)
+GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, const Handle(AIS_InteractiveContext)& ic, bool modal, WFlags fl)
   :QDialog(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   if(!name)
-    setName("GEOMBase_TransparencyDlg");
+    setName("GEOMToolsGUI_TransparencyDlg");
   resize(152, 107); 
   setCaption(tr("GEOM_TRANSPARENCY_TITLE"));
   setSizeGripEnabled(TRUE);
-  GEOMBase_TransparencyDlgLayout = new QGridLayout(this); 
-  GEOMBase_TransparencyDlgLayout->setSpacing(6);
-  GEOMBase_TransparencyDlgLayout->setMargin(11);
+  GEOMToolsGUI_TransparencyDlgLayout = new QGridLayout(this); 
+  GEOMToolsGUI_TransparencyDlgLayout->setSpacing(6);
+  GEOMToolsGUI_TransparencyDlgLayout->setMargin(11);
 
   /*************************************************************************/
   QGroupBox* GroupButtons = new QGroupBox( this, "GroupButtons" );
@@ -112,8 +112,8 @@ GEOMBase_TransparencyDlg::GEOMBase_TransparencyDlg(QWidget* parent, const char* 
   GroupC1Layout->addMultiCellWidget( Slider1, 1, 1, 0, 2 );
   /*************************************************************************/
   
-  GEOMBase_TransparencyDlgLayout->addWidget(GroupC1, 0,  0);
-  GEOMBase_TransparencyDlgLayout->addWidget(GroupButtons, 1, 0);
+  GEOMToolsGUI_TransparencyDlgLayout->addWidget(GroupC1, 0,  0);
+  GEOMToolsGUI_TransparencyDlgLayout->addWidget(GroupButtons, 1, 0);
   
   /* Initialisations */
   this->myGeomGUI = GEOMContext::GetGeomGUI();
@@ -133,18 +133,18 @@ GEOMBase_TransparencyDlg::GEOMBase_TransparencyDlg(QWidget* parent, const char* 
   connect(Slider1, SIGNAL(valueChanged(int)), this, SLOT(ValueHasChanged(int)));
   
   /* Move widget on the botton right corner of main widget */
-  int x, y ;
-  myGeomBase->DefineDlgPosition(this, x, y);
-  this->move(x, y) ;
+//   int x, y ;
+//   myGeomBase->DefineDlgPosition(this, x, y);
+//   this->move(x, y) ;
   this->show() ; /* Displays this Dialog */
 }
 
 
 //=================================================================================
-// function : ~GEOMBase_TransparencyDlg()
+// function : ~GEOMToolsGUI_TransparencyDlg()
 // purpose  :
 //=================================================================================
-GEOMBase_TransparencyDlg::~GEOMBase_TransparencyDlg()
+GEOMToolsGUI_TransparencyDlg::~GEOMToolsGUI_TransparencyDlg()
 {
     // no need to delete child widgets, Qt does it all for us
 }
@@ -154,7 +154,7 @@ GEOMBase_TransparencyDlg::~GEOMBase_TransparencyDlg()
 // function : ClickOnOk()
 // purpose  :
 //=======================================================================
-void GEOMBase_TransparencyDlg::ClickOnOk()
+void GEOMToolsGUI_TransparencyDlg::ClickOnOk()
 {
   accept();
   return;
@@ -165,7 +165,7 @@ void GEOMBase_TransparencyDlg::ClickOnOk()
 // function : ClickOnClose()
 // purpose  :
 //=======================================================================
-void GEOMBase_TransparencyDlg::ClickOnClose()
+void GEOMToolsGUI_TransparencyDlg::ClickOnClose()
 {
   accept();
   return;
@@ -177,7 +177,7 @@ void GEOMBase_TransparencyDlg::ClickOnClose()
 // purpose  : Called when value of slider change
 //          : or the first time as initilisation
 //=================================================================================
-void GEOMBase_TransparencyDlg::ValueHasChanged(int newValue)
+void GEOMToolsGUI_TransparencyDlg::ValueHasChanged(int newValue)
 {
   if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
     // VTK

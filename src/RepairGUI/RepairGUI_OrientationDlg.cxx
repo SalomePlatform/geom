@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "RepairGUI_OrientationDlg.h"
 
 #include <Precision.hxx>
@@ -35,6 +34,10 @@ using namespace std;
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <TopExp_Explorer.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : RepairGUI_OrientationDlg()
@@ -140,6 +143,7 @@ void RepairGUI_OrientationDlg::ClickOnOk()
 //=================================================================================
 void RepairGUI_OrientationDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

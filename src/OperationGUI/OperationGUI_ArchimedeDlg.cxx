@@ -152,6 +152,7 @@ void OperationGUI_ArchimedeDlg::ClickOnOk()
 //=================================================================================
 void OperationGUI_ArchimedeDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if(myOkIO)
     myOperationGUI->Archimede(myIO, myWeight, myWaterDensity, myMeshingDeflection);

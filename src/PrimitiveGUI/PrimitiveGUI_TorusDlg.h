@@ -72,8 +72,6 @@ private:
 
     Standard_Real myRadius1;
     Standard_Real myRadius2;
-    bool myOkRadius1;
-    bool myOkRadius2;
 
     DlgRef_2Sel2Spin* GroupPoints;
     DlgRef_2Spin* GroupDimensions;

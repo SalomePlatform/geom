@@ -52,6 +52,7 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg(QWidget* parent, const char
 
   GroupPoints = new DlgRef_4Sel1List_QTD(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_PARTITION"));
+  GroupPoints->GroupBox2->setTitle(tr("SUPPRESS_RESULT"));
   GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupPoints->TextLabel2->setText(tr("GEOM_TOOL_OBJECT"));
   GroupPoints->TextLabel3->setText(tr("GEOM_RECONSTRUCTION_LIMIT"));

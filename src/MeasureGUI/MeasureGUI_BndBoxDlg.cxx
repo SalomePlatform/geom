@@ -26,11 +26,14 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "MeasureGUI_BndBoxDlg.h"
 
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepBndLib.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : MeasureGUI_BndBoxDlg()

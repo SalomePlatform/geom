@@ -21,7 +21,7 @@
 //
 //
 //
-//  File   : GEOMBase_TransparencyDlg.h
+//  File   : GEOMToolsGUI_TransparencyDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
 //  $Header$
@@ -51,23 +51,23 @@ class QSlider;
 
 
 //=================================================================================
-// class    : GEOMBase_TransparencyDlg
+// class    : GEOMToolsGUI_TransparencyDlg
 // purpose  :
 //          : WARNING : that is a MODAL dialog.
 //=================================================================================
-class GEOMBase_TransparencyDlg : public QDialog
+class GEOMToolsGUI_TransparencyDlg : public QDialog
 { 
     Q_OBJECT
 
 public:
-    GEOMBase_TransparencyDlg( QWidget* parent = 0,
+    GEOMToolsGUI_TransparencyDlg( QWidget* parent = 0,
 				 const char* name = 0,
 				 SALOME_Selection* Sel = 0,
 				 const Handle(AIS_InteractiveContext)& ic = 0,
 				 bool modal = TRUE,
 				 WFlags fl = 0 );
 
-    ~GEOMBase_TransparencyDlg();
+    ~GEOMToolsGUI_TransparencyDlg();
 
 private :
 
@@ -89,7 +89,7 @@ public slots:
     void ValueHasChanged( int newValue ) ;
     
 protected:
-    QGridLayout* GEOMBase_TransparencyDlgLayout;
+    QGridLayout* GEOMToolsGUI_TransparencyDlgLayout;
     QHBoxLayout* Layout1;
     QHBoxLayout* Layout2;
 };

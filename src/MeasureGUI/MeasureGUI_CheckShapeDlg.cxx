@@ -26,12 +26,15 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "MeasureGUI_CheckShapeDlg.h"
 
 #include <BRepCheck_Analyzer.hxx>
 
 #include <qtextedit.h>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : MeasureGUI_CheckShapeDlg()

@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "PrimitiveGUI_ConeDlg.h"
 
 #include <gp_Lin.hxx>
@@ -35,6 +34,10 @@ using namespace std;
 #include <BRepAdaptor_Curve.hxx>
 #include <Precision.hxx>
 #include "QAD_Config.h"
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : PrimitiveGUI_ConeDlg()
@@ -120,11 +123,11 @@ void PrimitiveGUI_ConeDlg::Init()
   step = St.toDouble();
 
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.000, 999.999, step, 3);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.000, 999.999, step, 3);
   GroupPoints->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupDimensions->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.000, 999.999, step, 3);
+  GroupDimensions->SpinBox_DY->RangeStepAndValidator(0.000, 999.999, step, 3);
   GroupDimensions->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
 
   GroupPoints->SpinBox_DX->SetValue(myRadius1);
@@ -247,6 +250,7 @@ void PrimitiveGUI_ConeDlg::ClickOnOk()
 //=================================================================================
 void PrimitiveGUI_ConeDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

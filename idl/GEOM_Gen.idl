@@ -190,7 +190,12 @@ module GEOM
 			   in DirStruct dstruct,
 			   in double major_radius,
 			   in double minor_radius) raises (SALOME::SALOME_Exception) ;
-
+    
+    //-----------------------------------------------------------//
+    // Sketcher                                                  //
+    //-----------------------------------------------------------//  
+    GEOM_Shape MakeSketcher (in string Cmd) raises (SALOME::SALOME_Exception) ;
+    
     //-----------------------------------------------------------//
     // Primitives Construction                                   //
     //-----------------------------------------------------------//

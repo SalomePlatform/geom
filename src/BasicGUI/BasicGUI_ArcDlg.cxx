@@ -26,13 +26,16 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BasicGUI_ArcDlg.h"
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <GC_MakeArcOfCircle.hxx>
 #include <Geom_TrimmedCurve.hxx>
 #include <Precision.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : BasicGUI_ArcDlg()
@@ -137,6 +140,7 @@ void BasicGUI_ArcDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_ArcDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

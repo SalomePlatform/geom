@@ -406,3 +406,4 @@ void VolumeSection::getZ( double& min, double& max)
   min = Zmin;
   max = Zmax;
 }
+

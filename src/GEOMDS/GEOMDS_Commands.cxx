@@ -264,9 +264,10 @@ Standard_Boolean GEOMDS_Commands::ClearAllIOR(const TDF_Label& aLabel)
     TDF_Label L = it.Value() ;
     if( L.FindAttribute(TDataStd_Name::GetID(), anAttName) ) {
       notTested = L.ForgetAttribute(TDataStd_Name::GetID()) ;
+      if(notTested)
+	MESSAGE("in GEOMDS_Commands::ClearAllIOR : IOR CLEARED" )
+    ClearAllIOR(L);
     }
-    if(notTested)
-      MESSAGE("in GEOMDS_Commands::ClearAllIOR : IOR CLEARED" )
   }
   return true ;
 }

@@ -26,13 +26,16 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BasicGUI_LineDlg.h"
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <TopoDS_Compound.hxx>
 #include <BRep_Builder.hxx>
 #include <Precision.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : BasicGUI_LineDlg()
@@ -135,6 +138,7 @@ void BasicGUI_LineDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_LineDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

@@ -388,6 +388,7 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
   GEOM::GEOM_Shape_ptr MakePlacedBox(CORBA::Double x1,  CORBA::Double y1,  CORBA::Double z1,
 				     CORBA::Double delta1, CORBA::Double delta2, CORBA::Double delta3)
     throw (SALOME::SALOME_Exception) ;
+
   GEOM::GEOM_Shape_ptr MakePanel(GEOM::GEOM_Shape_ptr shape,
 				 CORBA::Short directiontype,
 				 CORBA::Double delta)
@@ -575,6 +576,14 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
 				  const  GEOM::PointStruct& pCircle,
 				  const  GEOM::PointStruct& pEnd)
     throw (SALOME::SALOME_Exception) ;
+
+  //-------------------------------------------------------------------//
+  // Specific method Sketcher                                           //
+  //-------------------------------------------------------------------//
+  GEOM::GEOM_Shape_ptr MakeSketcher   (const char* Cmd)
+    throw (SALOME::SALOME_Exception) ;
+  
+  //-------------------------------------------------------------------//
 
   GEOM::GEOM_Shape_ptr MakeCompound (const GEOM::GEOM_Gen::ListOfIOR& ListShapes)
     throw (SALOME::SALOME_Exception) ;

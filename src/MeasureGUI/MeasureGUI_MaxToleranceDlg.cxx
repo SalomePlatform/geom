@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "MeasureGUI_MaxToleranceDlg.h"
 
 #include <TopoDS_Vertex.hxx>
@@ -34,6 +33,10 @@ using namespace std;
 #include <TopoDS_Face.hxx>
 #include <TopExp_Explorer.hxx>
 #include <BRep_Tool.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : MeasureGUI_MaxToleranceDlg()

@@ -52,8 +52,8 @@ BooleanGUI_CutDlg::BooleanGUI_CutDlg(QWidget* parent, const char* name, BooleanG
 
   GroupCut = new DlgRef_2Sel_QTD(this, "GroupCut");
   GroupCut->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupCut->TextLabel1->setText(tr("GEOM_OBJECT_I").arg("1"));
-  GroupCut->TextLabel2->setText(tr("GEOM_OBJECT_I").arg("2"));
+  GroupCut->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  GroupCut->TextLabel2->setText(tr("GEOM_TOOL_OBJECT"));
   GroupCut->PushButton1->setPixmap(image1);
   GroupCut->PushButton2->setPixmap(image1);
 

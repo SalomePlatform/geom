@@ -52,7 +52,7 @@ BuildGUI_FaceDlg::BuildGUI_FaceDlg(QWidget* parent, const char* name, BuildGUI* 
 
   GroupPoints = new DlgRef_1Sel1Check_QTD(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_FACE_FFW"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_WIRE"));
+  GroupPoints->TextLabel1->setText(tr("GEOM_WIRES"));
   GroupPoints->CheckButton1->setText(tr("GEOM_FACE_OPT"));
   GroupPoints->PushButton1->setPixmap(image1);
 

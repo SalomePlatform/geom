@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BasicGUI_CircleDlg.h"
 
 #include <gp_Lin.hxx>
@@ -34,6 +33,10 @@ using namespace std;
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include "QAD_Config.h"
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : BasicGUI_CircleDlg()
@@ -147,6 +150,7 @@ void BasicGUI_CircleDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_CircleDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

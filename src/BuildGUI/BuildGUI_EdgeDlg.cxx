@@ -26,11 +26,14 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BuildGUI_EdgeDlg.h"
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <Precision.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : BuildGUI_EdgeDlg()

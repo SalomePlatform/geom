@@ -39,6 +39,7 @@
 #include <qlayout.h>
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
+#include <qpushbutton.h>
 
 class GEOMBase_Skeleton : public DlgRef_Skeleton_QTD
 { 

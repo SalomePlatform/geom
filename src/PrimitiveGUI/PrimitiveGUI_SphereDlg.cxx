@@ -205,6 +205,7 @@ void PrimitiveGUI_SphereDlg::ClickOnOk()
 //=================================================================================
 void PrimitiveGUI_SphereDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if(mySimulationTopoDs.IsNull())
     return;

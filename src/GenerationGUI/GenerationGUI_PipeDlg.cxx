@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GenerationGUI_PipeDlg.h"
 
 #include <TopoDS_Edge.hxx>
@@ -37,6 +36,10 @@ using namespace std;
 #else
 #include <BRepAlgoAPI.hxx>
 #endif
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : GenerationGUI_PipeDlg()
@@ -187,7 +190,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
   }
   else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
     myOkShape2 = false;
-    if(S.ShapeType() != TopAbs_COMPSOLID && S.ShapeType() != TopAbs_COMPOUND && S.ShapeType() != TopAbs_SOLID && S.ShapeType() != TopAbs_SHAPE && S.ShapeType() != TopAbs_VERTEX) {
+    if(S.ShapeType() == TopAbs_WIRE || S.ShapeType() == TopAbs_EDGE ) {
       myGeomShape2 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
       if(!testResult)
 	return;

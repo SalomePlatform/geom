@@ -25,12 +25,15 @@
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
 
-using namespace std;
 #include "MeasureGUI_InertiaDlg.h"
 
 #include <BRepGProp.hxx>
 #include <GProp_GProps.hxx>
 #include <GProp_PrincipalProps.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : MeasureGUI_InertiaDlg()

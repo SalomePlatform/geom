@@ -29,6 +29,7 @@ public:
     ~DlgRef_4Sel1List_QTD();
 
     QGroupBox* GroupBox1;
+    QGroupBox* GroupBox2;
     QLineEdit* LineEdit2;
     QPushButton* PushButton4;
     QPushButton* PushButton1;
@@ -48,7 +49,9 @@ public:
 protected:
     QGridLayout* DlgRef_4Sel1List_QTDLayout;
     QGridLayout* GroupBox1Layout;
+    QGridLayout* GroupBox2Layout;
     QGridLayout* Layout1;
+    QGridLayout* Layout2;
 };
 
 #endif // DLGREF_4SEL1LIST_QTD_H

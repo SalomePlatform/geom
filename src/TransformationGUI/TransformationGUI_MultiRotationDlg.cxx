@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "TransformationGUI_MultiRotationDlg.h"
 
 #include <gp_Lin.hxx>
@@ -41,6 +40,10 @@ using namespace std;
 #include <Geom_Line.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include "QAD_Config.h"
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_MultiRotationDlg()
@@ -258,6 +261,7 @@ void TransformationGUI_MultiRotationDlg::ClickOnOk()
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
@@ -429,13 +433,13 @@ void TransformationGUI_MultiRotationDlg::ValueChangedInSpinBox(double newValue)
   QObject* send = (QObject*)sender();
 
   if(send == GroupPoints->SpinBox_DX || send == GroupDimensions->SpinBox_DY1)
-    myNbTimes1 = newValue;
+    myNbTimes1 = (int)newValue;
   else if(send == GroupDimensions->SpinBox_DX1)
     myAng = newValue;
   else if(send == GroupDimensions->SpinBox_DX2)
     myStep = newValue;
   else if(send == GroupDimensions->SpinBox_DY2)
-    myNbTimes2 = newValue;
+    myNbTimes2 = (int)newValue;
 
   if(myOkBase && myOkDir)
     this->MakeMultiRotationSimulationAndDisplay();

@@ -26,11 +26,14 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GenerationGUI_PrismDlg.h"
 
 #include <BRepPrimAPI_MakePrism.hxx>
 #include "QAD_Config.h"
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg()
@@ -146,6 +149,7 @@ void GenerationGUI_PrismDlg::ClickOnOk()
 //=================================================================================
 void GenerationGUI_PrismDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

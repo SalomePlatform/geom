@@ -41,10 +41,38 @@ LIB = libEntityGUI.la
 EXPORT_HEADERS= 
 
 LIB_SRC = 	EntityGUI.cxx \
+		EntityGUI_Skeleton_QTD.cxx \
+		EntityGUI_Point_QTD.cxx \
+		EntityGUI_Dir1_QTD.cxx \
+		EntityGUI_Dir2_QTD.cxx \
+		EntityGUI_1Sel_QTD.cxx \
+		EntityGUI_1Spin_QTD.cxx \
+		EntityGUI_2Spin_QTD.cxx \
+		EntityGUI_3Spin_QTD.cxx \
+		EntityGUI_4Spin_QTD.cxx \
+		EntityGUI_1Spin.cxx \
+		EntityGUI_2Spin.cxx \
+		EntityGUI_3Spin.cxx \
+		EntityGUI_4Spin.cxx \
+		EntityGUI_SketcherDlg.cxx \
 		EntityGUI_SubShapeDlg.cxx
 
 LIB_MOC = \
 		EntityGUI.h \
+		EntityGUI_Skeleton_QTD.h \
+		EntityGUI_Point_QTD.h \
+		EntityGUI_Dir1_QTD.h \
+		EntityGUI_Dir2_QTD.h \
+		EntityGUI_1Sel_QTD.h \
+		EntityGUI_1Spin_QTD.h \
+		EntityGUI_2Spin_QTD.h \
+		EntityGUI_3Spin_QTD.h \
+		EntityGUI_4Spin_QTD.h \
+		EntityGUI_1Spin.h \
+		EntityGUI_2Spin.h \
+		EntityGUI_3Spin.h \
+		EntityGUI_4Spin.h \
+		EntityGUI_SketcherDlg.h \
 		EntityGUI_SubShapeDlg.h
 
 LIB_CLIENT_IDL = 
@@ -56,6 +84,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(OCC_INCLUDES) $(VTK_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lGEOMFiltersSelection -lDisplayGUI
+LDFLAGS += -lGEOMFiltersSelection -lDisplayGUI -lGEOMSketcher
 
 @CONCLUDE@

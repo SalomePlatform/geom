@@ -31,7 +31,7 @@ C_DEPEND_FLAG = @C_DEPEND_FLAG@
 # C++
 
 CXX = @CXX@
-CXXFLAGS = @CXXFLAGS@ 
+CXXFLAGS = @CXXFLAGS@ -Wparentheses -Wreturn-type -Wmissing-declarations -Winline 
 CXX_DEPEND_FLAG = @CXX_DEPEND_FLAG@
 
 # JAVA
@@ -131,7 +131,7 @@ OMNIORB_CXXFLAGS    = @OMNIORB_CXXFLAGS@
 
 OMNIORB_IDL         = @OMNIORB_IDL@
 OMNIORB_IDLCXXFLAGS = @OMNIORB_IDLCXXFLAGS@
-OMNIORB_IDLPYFLAGS  = @OMNIORB_IDLPYFLAGS@ -I$(top_srcdir)/idl -I$(top_builddir)/idl -I$(KERNEL_ROOT_DIR)/idl/salome
+OMNIORB_IDLPYFLAGS  = @OMNIORB_IDLPYFLAGS@ -I$(top_srcdir)/idl -I$(KERNEL_ROOT_DIR)/idl/salome
 
 OMNIORB_IDL_CLN_H   = @OMNIORB_IDL_CLN_H@
 OMNIORB_IDL_CLN_CXX = @OMNIORB_IDL_CLN_CXX@
@@ -148,7 +148,7 @@ CORBA_INCLUDES    = @CORBA_INCLUDES@
 CORBA_LIBS        = @CORBA_LIBS@
 CORBA_CXXFLAGS    = @CORBA_CXXFLAGS@
 
-IDLCXXFLAGS = -bcxx @IDLCXXFLAGS@ -I$(top_srcdir)/idl -I$(top_builddir)/idl -I$(KERNEL_ROOT_DIR)/idl/salome
+IDLCXXFLAGS = -bcxx @IDLCXXFLAGS@ -I$(top_srcdir)/idl -I$(KERNEL_ROOT_DIR)/idl/salome
 IDLPYFLAGS  = @IDLPYFLAGS@
 
 IDL = @IDL@
@@ -202,13 +202,13 @@ idldir=${prefix}/idl/salome
 sharedpydir=@libdir@/python$(PYTHON_VERSION)/site-packages/salome/shared_modules
 incmakedir=${prefix}/salome_adm/unix
 
-docdir=$(datadir)/doc
+docdir=${prefix}/doc/salome
 
 #
 # begin of package rules
 #
 
-.PHONY: all lib bin inc resources data doc tests install uninstall dep depend depend_idl cleandep mostlyclean clean distclean
+.PHONY: all lib bin inc resources data docs tests install uninstall dep depend depend_idl cleandep mostlyclean clean distclean
 
 .SUFFIXES: .cxx .cc .c .f .o .lo .idl .py .i .ui .po .qm
 

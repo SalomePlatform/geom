@@ -26,13 +26,16 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
-#include <BRepTools_ShapeSet.hxx>
-#include "GEOM_Shape_i.hh"
-#include "SALOME_NamingService.hxx"
 #include <fstream.h>
+#include <strstream>
+
+#include <BRepTools_ShapeSet.hxx>
 #include <BRepTools.hxx>
 
+#include "GEOM_Shape_i.hh"
+#include "SALOME_NamingService.hxx"
+
+using namespace std;
 
 
 //=================================================================================
@@ -84,7 +87,7 @@ GEOM_Shape_i::~GEOM_Shape_i() { delete &_geom; }
 //          : WARNING : Register to naming service actually removed !
 //=================================================================================
 void GEOM_Shape_i::Name(const char* name) {
-  _name = strdup(name);
+  _name = CORBA::string_dup(name);
   GEOM::GEOM_Shape_ptr g = GEOM::GEOM_Shape::_narrow(_this());
 
   // Removed declaration of shapes to naming service
@@ -97,14 +100,14 @@ void GEOM_Shape_i::Name(const char* name) {
 // function : Name (get method)
 // purpose  : to get the attribute 'name' of this shape
 //=================================================================================
-char* GEOM_Shape_i::Name() { return strdup(_name); }
+char* GEOM_Shape_i::Name() { return CORBA::string_dup(_name); }
 
 //=================================================================================
 // function : MainName (set method)
 // purpose  : to set the attribute 'name' of this mainshape. 
 //=================================================================================
 void GEOM_Shape_i::MainName(const char* name) {
-  _mainname = strdup(name);
+  _mainname = CORBA::string_dup(name);
 }
 
 
@@ -112,7 +115,7 @@ void GEOM_Shape_i::MainName(const char* name) {
 // function : MainName (get method)
 // purpose  : to get the attribute 'name' of this shape
 //=================================================================================
-char* GEOM_Shape_i::MainName() { return strdup(_mainname); }
+char* GEOM_Shape_i::MainName() { return CORBA::string_dup(_mainname); }
 
 //=================================================================================
 // function : IsMainShape (get method)
@@ -132,14 +135,14 @@ void GEOM_Shape_i::IsMainShape(const bool abool) { _ismain = abool ; }
 // function : ShapeId
 // purpose  : to get the id of this shape from GEOM (OCAF entry)
 //=================================================================================
-char* GEOM_Shape_i::ShapeId() { return strdup(_shapeid) ; }
+char* GEOM_Shape_i::ShapeId() { return CORBA::string_dup(_shapeid) ; }
 
 
 //=================================================================================
 // function : ShapeId (set method) 
 // purpose  : to set the id of this shape in GEOM/OCAF doc
 //=================================================================================
-void GEOM_Shape_i::ShapeId(const char * shapeid) { _shapeid = strdup(shapeid) ; }
+void GEOM_Shape_i::ShapeId(const char * shapeid) { _shapeid = CORBA::string_dup(shapeid) ; }
 
 
 
@@ -147,7 +150,7 @@ void GEOM_Shape_i::ShapeId(const char * shapeid) { _shapeid = strdup(shapeid) ; 
 // function : StudyShapeId (get method)
 // purpose  : to get the id of this shape from the study document (OCAF entry)
 //=================================================================================
-char* GEOM_Shape_i::StudyShapeId() { return strdup(_studyshapeid) ; }
+char* GEOM_Shape_i::StudyShapeId() { return CORBA::string_dup(_studyshapeid) ; }
 
 
 //=================================================================================
@@ -155,7 +158,7 @@ char* GEOM_Shape_i::StudyShapeId() { return strdup(_studyshapeid) ; }
 // purpose  : to set the id of this shape in the Study document (OCAF entry)
 //=================================================================================
 void GEOM_Shape_i::StudyShapeId(const char * studyshapeid)
-{ _studyshapeid = strdup(studyshapeid) ; }
+{ _studyshapeid = CORBA::string_dup(studyshapeid) ; }
 
 
 
@@ -209,7 +212,7 @@ void GEOM_Shape_i::NameType(const char* name) {
 // function : NameType (get method)
 // purpose  : to get the attribute 'nametype' of this shape
 //=================================================================================
-char* GEOM_Shape_i::NameType() { return strdup(_nametype); }
+char* GEOM_Shape_i::NameType() { return CORBA::string_dup(_nametype); }
 
 //=================================================================================
 // function : GetShapeStream

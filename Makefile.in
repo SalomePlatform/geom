@@ -14,11 +14,12 @@ VPATH=.:@srcdir@:@top_srcdir@/bin:@top_srcdir@/resources:./bin:@top_srcdir@/idl
 
 @COMMENCE@
 
-SUBDIRS = idl src
+SUBDIRS = idl src doc
 
 RESOURCES_FILES = \
 GEOM_en.xml \
 GEOM_fr.xml \
+GEOM.config \
 GEOMCatalog.xml \
 GEOMDS_Resources \
 arc.png \
@@ -144,10 +145,10 @@ include/salome/SALOMEconfig.h: salome_adm/unix/SALOMEconfig.ref
 # test if SALOMEconfig.h has changed (contents)
 salome_adm/unix/SALOMEconfig.ref: salome_adm/unix/SALOMEconfig.h
 	@if ! [ -a $@ ]; then \
-	  cp -p $< $@;        \
+	  cp -p -f $< $@;        \
 	fi;		      \
 	if ! cmp $< $@; then  \
-	  cp -p $< $@;        \
+	  cp -p -f $< $@;        \
 	fi;		      \
 
 include/salome/sstream: salome_adm/unix/sstream
@@ -169,10 +170,10 @@ install-end:
 
 install-include: $(include_list)
 	$(INSTALL) -d  $(includedir)
-	@for f in X $(include_list); do				\
-	   if test $$f != X; then				\
-	     ($(INSTALL_DATA) $$f $(includedir)/. || exit 1);	\
-	   fi;							\
+	@for f in X $(include_list); do					\
+	   if test $$f != X; then					\
+	     ($(INSTALL_DATA) -p $$f $(includedir)/. || exit 1);	\
+	   fi;								\
 	done
 
 # install script in $(bindir) :

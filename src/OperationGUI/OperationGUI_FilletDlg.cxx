@@ -30,11 +30,16 @@ using namespace std;
 #include "OperationGUI_FilletDlg.h"
 
 #include "DisplayGUI.h"
+#include "QAD_MessageBox.h"
 
+#include <TopoDS_Edge.hxx>
 #include <AIS_InteractiveContext.hxx>
 #include <TopExp_Explorer.hxx>
 #include <BRepFilletAPI_MakeFillet.hxx>
 #include <Precision.hxx>
+
+#include <Standard_ErrorHandler.hxx> 
+#include <Standard_Failure.hxx>
 
 //=================================================================================
 // class    : OperationGUI_FilletDlg()
@@ -65,21 +70,7 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg(QWidget* parent, const char* name
   Group1->TextLabel2->setText(tr("GEOM_RADIUS"));
   Group1->PushButton1->setPixmap(image3);
 
-  Group2 = new DlgRef_1Sel1Spin(this, "Group2");
-  Group2->GroupBox1->setTitle(tr("GEOM_FILLET_EDGES"));
-  Group2->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
-  Group2->TextLabel2->setText(tr("GEOM_RADIUS"));
-  Group2->PushButton1->setPixmap(image3);
-
-  Group3 = new DlgRef_1Sel1Spin(this, "Group3");
-  Group3->GroupBox1->setTitle(tr("GEOM_FILLET_FACES"));
-  Group3->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
-  Group3->TextLabel2->setText(tr("GEOM_RADIUS"));
-  Group3->PushButton1->setPixmap(image3);
-
   Layout1->addWidget(Group1, 1, 0);
-  Layout1->addWidget(Group2, 1, 0);
-  Layout1->addWidget(Group3, 1, 0);
   /***************************************************************/
 
   /* Initialisations */
@@ -117,12 +108,7 @@ void OperationGUI_FilletDlg::Init(Handle(AIS_InteractiveContext) ic)
   double SpecificStep = 10.0;
   /* min, max, step and decimals for spin boxes */
   Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-  Group2->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-  Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-
   Group1->SpinBox_DX->SetValue(myRadius);
-  Group2->SpinBox_DX->SetValue(myRadius);
-  Group3->SpinBox_DX->SetValue(myRadius);
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
@@ -134,26 +120,14 @@ void OperationGUI_FilletDlg::Init(Handle(AIS_InteractiveContext) ic)
   connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
 
   connect(Group1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(Group2->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(Group3->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-
   connect(Group1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group2->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group3->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(Group1->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group2->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group3->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group1->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group2->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3->SpinBox_DX, SLOT(SetStep(double)));
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   /* displays Dialog */
-  Group2->hide();
-  Group3->hide();
   Group1->show();
   this->show();
 
@@ -181,49 +155,32 @@ void OperationGUI_FilletDlg::ConstructorsClicked(int constructorId)
     myUseLocalContext = false;
   }
 
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC) {
+    myConstructorId = constructorId = 0; //No subshape selection if viewer is not OCC
+    RadioButton1->setChecked(TRUE);
+  }
+  
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  Group1->LineEdit1->setText("");
+  Group1->SpinBox_DX->SetValue(myRadius);
   switch (constructorId)
     {
     case 0: /* Fillet All */
       {
-	Group2->hide();
-	Group3->hide();
-	resize(0, 0);
-	Group1->show();
-
-	myEditCurrentArgument = Group1->LineEdit1;
-	Group1->LineEdit1->setText("");
+	Group1->GroupBox1->setTitle(tr("GEOM_FILLET_ALL"));
 	myShapeType = -1;
-
-	Group1->SpinBox_DX->SetValue(myRadius);
 	break;
       }
     case 1: /* Fillet edges */
       {
-	Group1->hide();
-	Group3->hide();
-	resize(0, 0);
-	Group2->show();
-
-	myEditCurrentArgument = Group2->LineEdit1;
-	Group2->LineEdit1->setText("");
+	Group1->GroupBox1->setTitle(tr("GEOM_FILLET_EDGES"));
 	myShapeType = 6;
-
-	Group2->SpinBox_DX->SetValue(myRadius);
 	break;
       }
     case 2: /* Fillet Faces */
       {
-	Group1->hide();
-	Group2->hide();
-	resize(0, 0);
-	Group3->show();
-
-	myEditCurrentArgument = Group3->LineEdit1;
-	Group3->LineEdit1->setText("");
+	Group1->GroupBox1->setTitle(tr("GEOM_FILLET_FACES"));
 	myShapeType = 4;
-
-	Group3->SpinBox_DX->SetValue(myRadius);
 	break;
       }
     }
@@ -249,6 +206,7 @@ void OperationGUI_FilletDlg::ClickOnOk()
 //=================================================================================
 void OperationGUI_FilletDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QApplication::setOverrideCursor(Qt::waitCursor);
   QAD_Application::getDesktop()->putInfo(tr(""));
   myGeomBase->EraseSimulationShape();
@@ -348,7 +306,7 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
 	}
       }
     }
-    if(myConstructorId == 0)
+    if(myOkShape && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myConstructorId == 0)
       this->MakePreview();
   }
   else 
@@ -364,27 +322,6 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
 
 
 //=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void OperationGUI_FilletDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if(send == Group1->LineEdit1)
-    myEditCurrentArgument = Group1->LineEdit1;
-  else if (send == Group2->LineEdit1)
-    myEditCurrentArgument = Group2->LineEdit1;
-  else if (send == Group3->LineEdit1)
-    myEditCurrentArgument = Group3->LineEdit1;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
-}
-
-
-//=================================================================================
 // function : SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
@@ -392,18 +329,9 @@ void OperationGUI_FilletDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();  
 
-  if(send == Group1->PushButton1) {
+  if(send == Group1->PushButton1)
     Group1->LineEdit1->setFocus();
-    myEditCurrentArgument = Group1->LineEdit1;
-  }
-  else if(send == Group2->PushButton1) {
-    Group2->LineEdit1->setFocus();
-    myEditCurrentArgument = Group2->LineEdit1;
-  }
-  else if(send == Group3->PushButton1) {
-    Group3->LineEdit1->setFocus();
-    myEditCurrentArgument = Group3->LineEdit1;
-  }
+
   this->SelectionIntoArgument();
   return;
 }
@@ -492,7 +420,7 @@ void OperationGUI_FilletDlg::ValueChangedInSpinBox(double newValue)
 
   myRadius = newValue;
 
-  if(myConstructorId == 0)
+  if(myOkShape && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myConstructorId == 0)
     this->MakePreview();
   return;
 }
@@ -505,46 +433,56 @@ void OperationGUI_FilletDlg::ValueChangedInSpinBox(double newValue)
 void OperationGUI_FilletDlg::MakePreview()
 {
   QApplication::setOverrideCursor(Qt::waitCursor);
+  TopoDS_Shape tds;
 
-  if(!myOkShape) {
-    QApplication::restoreOverrideCursor();
-    return;
-  }
-
-  GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
-  ListOfID->length(0);
-
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR(myShapeIOR);
-  if(theObj->_is_nil()) {
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
-    QApplication::restoreOverrideCursor();
-    return;
-  }
-  
   try {
-    if(myRadius <= Precision::Confusion()) {
-      QApplication::restoreOverrideCursor();
-      return;
-    }
+    BRepFilletAPI_MakeFillet fill(myShape);
+    switch(myConstructorId) 
+      {
+      case 0: /* Fillet All */
+	{
+	  TopExp_Explorer Exp(myShape, TopAbs_EDGE);
+	  for(Exp; Exp.More(); Exp.Next()) {
+	    TopoDS_Edge E = TopoDS::Edge(Exp.Current());
+	    fill.Add(E);
+	  }
+	  
+	  for(int i = 1; i <= fill.NbContours(); i++) {
+	    try {
+	      fill.SetRadius(myRadius,i,i);
+	    }  
+	    catch(Standard_Failure) {
+	      QApplication::restoreOverrideCursor();
+	      QAD_MessageBox::warn1 (QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_FILLET_ABORT").arg(myRadius), tr("GEOM_BUT_OK"));
+	      QApplication::setOverrideCursor(Qt::waitCursor);
+	      myGeomBase->EraseSimulationShape(); 
+	      mySimulationTopoDs.Nullify();
+	      Group1->SpinBox_DX->SetValue(5.0);
+	      QApplication::restoreOverrideCursor();
+	      return;
+	    }
+	  }
+	  tds = fill.Shape();
+	  break;
+	}
+      //    case 1: /* Fillet edges */
+      //    case 2: /* Fillet Faces */
+      }
 
-    GEOM::GEOM_Shape_var aShape = myGeom->GetIORFromString(myShapeIOR);
-    GEOM::GEOM_Shape_var result = myGeom->MakeFillet(aShape, myRadius, myShapeType, ListOfID);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-      QApplication::restoreOverrideCursor();
-      return;
+    if(!tds.IsNull()) {
+      mySimulationTopoDs = tds;
+      myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
     }
-    TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
-
-    mySimulationTopoDs = S;
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
-  }
+  }  
   catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakePreview");
     QApplication::restoreOverrideCursor();
-    return;
+    QAD_MessageBox::warn1 (QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_FILLET_ABORT").arg(myRadius), tr("GEOM_BUT_OK"));
+    QApplication::setOverrideCursor(Qt::waitCursor);
+    myGeomBase->EraseSimulationShape(); 
+    mySimulationTopoDs.Nullify();
+    Group1->SpinBox_DX->SetValue(5.0);
   }
+
   QApplication::restoreOverrideCursor();
   return;
 }

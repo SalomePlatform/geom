@@ -71,21 +71,6 @@
    <endsubmenu />
    <separator pos-id=""/>
    <popup-item item-id="404" pos-id="" label-id="Sketch" icon-id="sketch.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <submenu label-id="Sketch Constraints" item-id="405" pos-id="">
-      <popup-item item-id="4051" pos-id="" label-id="Set Plane" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <separator pos-id=""/>
-      <popup-item item-id="4052" pos-id="" label-id="Tangent" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="4053" pos-id="" label-id="Perpendicular" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   </submenu>
-   <endsubmenu />
-   <submenu label-id="Sketch Options" item-id="406" pos-id="">
-      <popup-item item-id="4061" pos-id="" label-id="Length Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
-      <popup-item item-id="4062" pos-id="" label-id="Angle Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
-      <popup-item item-id="4063" pos-id="" label-id="Radius Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
-      <popup-item item-id="4064" pos-id="" label-id="X Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="false" execute-action=""/>
-      <popup-item item-id="4065" pos-id="" label-id="Y Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="false" execute-action=""/>
-   </submenu>
-   <endsubmenu />
    <separator pos-id=""/>
    <popup-item item-id="407" pos-id="" label-id="Explode" icon-id="subshape.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <submenu label-id="Build" item-id="408" pos-id="">
@@ -255,20 +240,6 @@
    <popup-item item-id="9024" pos-id="" label-id="Open" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id=""/>
    <popup-item item-id="901" pos-id="" label-id="Rename" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-</popupmenu>
-
-<popupmenu label-id="Sketch" context-id="Sketch" parent-id="Viewer" object-id="">
-   <popup-item item-id="4041" pos-id="" label-id="Segment" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
-   <popup-item item-id="4042" pos-id="" label-id="Arc" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <separator pos-id=""/>
-   <popup-item item-id="4043" pos-id="" label-id="Set Angle" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="4044" pos-id="" label-id="Set X" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="4045" pos-id="" label-id="Set Y" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <separator pos-id=""/>
-   <popup-item item-id="4046" pos-id="" label-id="Undo" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <separator pos-id=""/>
-   <popup-item item-id="4047" pos-id="" label-id="End" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="4048" pos-id="" label-id="Close" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </popupmenu>
 
 </desktop>      <!--   DESKTOP END    -->  

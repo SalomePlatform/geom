@@ -1,4 +1,4 @@
-//  GEOM SKETCHER : basic sketcher
+//  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
@@ -21,33 +21,36 @@
 //
 //
 //
-//  File   : GEOM_SketcherStatus.h
-//  Author : Nicolas REJNERI
+//  File   : EntityGUI_1Spin.cxx
+//  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
+//  $Header: 
 
-enum TransitionStatus {
-	NOCONSTRAINT, // no constraint between consecutive edges
-	TANGENT,      // arc and segment are tangent
-	PERPENDICULAR,// arc is tangent to the perpendicular to the segment
-	ANGLE,        // Angular constraint between 2 segments
-	LENGTH_FIXED, // Length of segment has been fixed 
-	X_FIXED,      // X coordinate for segment has been fixed
-	Y_FIXED       // Y coordinate for segment has been fixed
-	};
+#include "EntityGUI_1Spin.h"
 
-enum TypeOfParameter {
-	ANGLE_PARAMETER,
-	LENGTH_PARAMETER,
-	RADIUS_PARAMETER,
-	XVALUE_PARAMETER,
-	YVALUE_PARAMETER
-	};
+#include <qlayout.h>
+#include <qspinbox.h>
+#include <qgroupbox.h>
 
-enum SketchStatus {
-	BEGIN_SKETCH, // Begin sketch; no edges created yet
-	SEGMENT,      // Current mode for creation is segment
-	ARC_CHORD,    // Current mode for creation is arc by chord
-	ARC_CHORD_END,// Chord validated, waiting for radius or center
-	END_SKETCH    // End sketch
-};
+/* 
+ *  Constructs a EntityGUI_1Spin which is a child of 'parent', with the 
+ *  name 'name' and widget flags set to 'f' 
+ */
+EntityGUI_1Spin::EntityGUI_1Spin(QWidget* parent, const char* name, WFlags fl)
+  :EntityGUI_1Spin_QTD(parent, name, fl)
+{
+  SpinBox1->close(TRUE);
+
+  SpinBox_DX = new DlgRef_SpinBox(GroupBox1, "SpinBox_DX");
+  Layout1->addWidget(SpinBox_DX, 0, 1);
+
+}
+
+
+/*  
+ *  Destroys the object and frees any allocated resources
+ */
+EntityGUI_1Spin::~EntityGUI_1Spin()
+{
+    // no need to delete child widgets, Qt does it all for us
+}

@@ -36,22 +36,16 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 
 # Libraries targets
 LIB = libGEOMSketcher.la 
-LIB_SRC = GEOM_Sketcher.cxx
-LIB_CLIENT_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl GEOM_Shape.idl GEOM_Gen.idl
+LIB_SRC = Sketcher_Profile.cxx
+LIB_CLIENT_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl
 
 # header files 
-EXPORT_HEADERS= GEOM_Sketcher.h \
-		GEOM_SketcherStatus.h
+EXPORT_HEADERS= Sketcher_Profile.hxx
 
 # additionnal information to compil and link file
-CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += $(QT_LIBS) $(CAS_LDPATH) -lTKTopAlgo -L${KERNEL_ROOT_DIR}/lib/salome
-
-# additional file to be cleaned
-MOSTLYCLEAN =
-CLEAN =
-DISTCLEAN =
+CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
+CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
+LDFLAGS  += $(OCC_KERNEL_LIBS) $(OCC_MODELER_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
 
 @CONCLUDE@
 

@@ -45,20 +45,20 @@ public :
 
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
-  /* Sketcher management */
-  void OnSketchSetAngle();
-  void OnSketchSetx();
-  void OnSketchSety();
-  
-  void OnSketchDelete();
-  void OnSketchClose();
-  void OnSketchEnd();
+  void OnSketchEnd(const char *Cmd);
+
+  void DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shape& S2); 
+  void EraseSimulationShape(int Sh = 0);
 
     /* Methods for sub shapes explode */
   bool SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* IOR);
   bool OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType);  
   bool OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType,
 			     Standard_Integer& aLocalContextId, bool& myUseLocalContext);
+
+  /* AIS shape used only during topo/geom simulations */
+  Handle(AIS_Shape) mySimulationShape1;
+  Handle(AIS_Shape) mySimulationShape2;
 
   GEOMBase* myGeomBase;
   GEOMContext* myGeomGUI;

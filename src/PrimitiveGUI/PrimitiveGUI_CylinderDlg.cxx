@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "PrimitiveGUI_CylinderDlg.h"
 
 #include <gp_Lin.hxx>
@@ -34,6 +33,10 @@ using namespace std;
 #include <BRepAdaptor_Curve.hxx>
 #include <Precision.hxx>
 #include "QAD_Config.h"
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : PrimitiveGUI_CylinderDlg()
@@ -234,6 +237,7 @@ void PrimitiveGUI_CylinderDlg::ClickOnOk()
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "EntityGUI.h"
 
 #include "QAD_RightFrame.h"
@@ -36,18 +35,18 @@ using namespace std;
 #include "SALOMEGUI_ImportOperation.h"
 #include "SALOMEGUI_QtCatchCorbaException.hxx"
 
-#include <BRepTools_WireExplorer.hxx>
-#include <TopoDS_Wire.hxx>
 #include <TopoDS_Compound.hxx>
-#include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
-#include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
-#include <Geom_Circle.hxx>
-#include <Precision.hxx>
 
 #include "DisplayGUI.h"
-#include "EntityGUI_SubShapeDlg.h"   // Method SUBSHAPE
+
+#include "EntityGUI_SketcherDlg.h" // Sketcher
+#include "EntityGUI_SubShapeDlg.h" // Method SUBSHAPE
+
+#include "utilities.h"
+
+using namespace std;
 
 //=======================================================================
 // function : EntityGUI()
@@ -59,6 +58,9 @@ EntityGUI::EntityGUI() :
   myGeomBase = new GEOMBase();
   myGeomGUI = GEOMContext::GetGeomGUI();
   myGeom = myGeomGUI->myComponentGeom;
+
+  mySimulationShape1 = new AIS_Shape(TopoDS_Shape());
+  mySimulationShape2 = new AIS_Shape(TopoDS_Shape());
 }
 
 
@@ -81,126 +83,12 @@ bool EntityGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
   myEntityGUI->myGeomGUI->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
-  QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
-
   switch (theCommandID)
     {
     case 404: // SKETCHER
       {
 	((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->onViewTop(); // DCQ : 28/02/2002
-	
-	OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-
-	myEntityGUI->myGeomGUI->GetSketcher() = Sketch(v3d->getViewer3d());
-	myEntityGUI->myGeomGUI->myState = 2;
-
-	Mb->setItemChecked(4052, false);
-	Mb->setItemChecked(4053, false);
-
-	myEntityGUI->myGeomGUI->GetSketcher().SetParameterVisibility(LENGTH_PARAMETER, Mb->isItemChecked(4061));
-	myEntityGUI->myGeomGUI->GetSketcher().SetParameterVisibility(ANGLE_PARAMETER, Mb->isItemChecked(4062));
-	myEntityGUI->myGeomGUI->GetSketcher().SetParameterVisibility(RADIUS_PARAMETER, Mb->isItemChecked(4063));
-	myEntityGUI->myGeomGUI->GetSketcher().SetParameterVisibility(XVALUE_PARAMETER, Mb->isItemChecked(4064));
-	myEntityGUI->myGeomGUI->GetSketcher().SetParameterVisibility(YVALUE_PARAMETER, Mb->isItemChecked(4065));
-	
-	myEntityGUI->myGeomGUI->GetSketcher().SetTransitionStatus(NOCONSTRAINT);
-	break;
-      }
-    case 4041: // SKETCH Segment
-      {
-	myEntityGUI->myGeomGUI->GetSketcher().ChangeMode(SEGMENT);
-	break;
-      }
-    case 4042: // SKETCH Arc
-      {
-	myEntityGUI->myGeomGUI->GetSketcher().ChangeMode(ARC_CHORD);
-	break;
-      }
-    case 4043: // SKETCH Set Angle
-      {
-	myEntityGUI->OnSketchSetAngle();
-	break;
-      }
-    case 4044: // SKETCH Set X
-      {
-	myEntityGUI->OnSketchSetx();
-	break;
-      }
-    case 4045: // SKETCH Set Y
-      {
-	myEntityGUI->OnSketchSety();
-	break;
-      }
-    case 4046: // SKETCH Delete
-      {
-	myEntityGUI->OnSketchDelete();
-	break;
-      }
-    case 4047: // SKETCH End
-      {
-	myEntityGUI->OnSketchEnd();
-	break;
-      }
-    case 4048: // SKETCH Close
-      {
-	myEntityGUI->OnSketchClose();
-	break;
-      }
-    case 4051: // sketcher Set Plane
-      {
-	//TO DO
-	break;
-      }
-    case 4052: // sketcher TANGENT
-      { 
-	Mb->setItemChecked(theCommandID, !Mb->isItemChecked(theCommandID));
-	if(Mb->isItemChecked(theCommandID) == true) 
-	  myEntityGUI->myGeomGUI->GetSketcher().SetTransitionStatus(TANGENT);
-	else
-	  myEntityGUI->myGeomGUI->GetSketcher().SetTransitionStatus(NOCONSTRAINT);
-
-	Mb->setItemChecked(4053, false);
-	break;
-      }
-    case 4053: // sketcher PERPENDICULAR
-      {
-	Mb->setItemChecked(theCommandID, !Mb->isItemChecked(theCommandID));
-	if(Mb->isItemChecked(theCommandID) == true) 
-	  myEntityGUI->myGeomGUI->GetSketcher().SetTransitionStatus(PERPENDICULAR);
-	else 
-	  myEntityGUI->myGeomGUI->GetSketcher().SetTransitionStatus(NOCONSTRAINT);
-	
-	Mb->setItemChecked(4052, false);
-	break;
-      }
-    case 4061: // SKETCH OptionsOnofflengthdimension
-      {
-	Mb->setItemChecked(theCommandID, !Mb->isItemChecked(theCommandID));
-	myEntityGUI->myGeomGUI->GetSketcher().SetParameterVisibility(LENGTH_PARAMETER, Mb->isItemChecked(theCommandID));
-	break;
-      }
-    case 4062: // SKETCH OptionsOnoffangledimension
-      {
-	Mb->setItemChecked(theCommandID, !Mb->isItemChecked(theCommandID));
-	myEntityGUI->myGeomGUI->GetSketcher().SetParameterVisibility(ANGLE_PARAMETER, Mb->isItemChecked(theCommandID));
-	break;
-      }
-    case 4063: // SKETCH OptionsOnoffradiusdimension
-      {
-	Mb->setItemChecked(theCommandID, !Mb->isItemChecked(theCommandID));
-	myEntityGUI->myGeomGUI->GetSketcher().SetParameterVisibility(RADIUS_PARAMETER, Mb->isItemChecked(theCommandID));
-	break;
-      }
-    case 4064: // SKETCH OptionsOnoffxdimension
-      {
-	Mb->setItemChecked(theCommandID, !Mb->isItemChecked(theCommandID));
-	myEntityGUI->myGeomGUI->GetSketcher().SetParameterVisibility(XVALUE_PARAMETER, Mb->isItemChecked(theCommandID));
-	break;
-      }
-    case 4065: // SKETCH OptionsOnoffydimension
-      {
-	Mb->setItemChecked(theCommandID, !Mb->isItemChecked(theCommandID));
-	myEntityGUI->myGeomGUI->GetSketcher().SetParameterVisibility(YVALUE_PARAMETER, Mb->isItemChecked(theCommandID));
+	EntityGUI_SketcherDlg* aDlg = new EntityGUI_SketcherDlg(parent, "", myEntityGUI, Sel);
 	break;
       }
     case 407: // EXPLODE : use ic
@@ -224,254 +112,97 @@ bool EntityGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
 
 //=======================================================================
-// function : OnSketchSetAngle()
-// purpose  : 
-//=======================================================================
-void EntityGUI::OnSketchSetAngle()
-{
-  Standard_Real anAngle = myGeomGUI->GetSketcher().GetSegmentAngle()/PI180;
-  Sketch::fitInResol(anAngle); 
-  Standard_Boolean res = false;
-  QString Value = QString("%1").arg(anAngle);
-  anAngle = myGeomBase->Parameter(res, Value, tr("GEOM_MEN_ANGLE"), tr("GEOM_MEN_ENTER_ANGLE"),
-		      -180.0, +180.0, 6) * PI180;
-
-  if(res) {
-    myGeomGUI->GetSketcher().SetSegmentAngle(anAngle);
-    QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
-    Mb->setItemChecked(4052, false);
-    Mb->setItemChecked(4053, false);
-  }
-  return;
-}
-
-
-//=======================================================================
-// function : OnSketchSetx()
-// purpose  : 
-//=======================================================================
-void EntityGUI::OnSketchSetx()
-{
-  Standard_Boolean res = false;
-  double X = myGeomBase->Parameter(res, "0.", tr("GEOM_MEN_X"), tr("GEOM_MEN_SKETCHER_X"),
-		       2.0 * Precision::Confusion(), 1E6, 6);
-  if(res)
-    myGeomGUI->GetSketcher().SetXDimension(X);
-  QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
-  Mb->setItemChecked(4052, false);
-  Mb->setItemChecked(4053, false);
-  return;
-}
-
-
-//=======================================================================
-// function : OnSketchSety()
-// purpose  : 
-//=======================================================================
-void EntityGUI::OnSketchSety()
-{
-  Standard_Boolean res = false;
-  double Y = myGeomBase->Parameter(res, "0.", tr("GEOM_MEN_Y"), tr("GEOM_MEN_SKETCHER_Y"), 2.0 * Precision::Confusion(), 1E6, 6);
-  if(res)
-    myGeomGUI->GetSketcher().SetYDimension(Y);
-  QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
-  Mb->setItemChecked(4052, false);
-  Mb->setItemChecked(4053, false);
-  return;
-}
-
-
-//=======================================================================
-// function : OnSketchDelete()
-// purpose  : 
-//=======================================================================
-void EntityGUI::OnSketchDelete()
-{
-  if(myGeomGUI->GetSketcher().GetmyEdgesNumber() == 1) {
-    QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
-    Mb->setItemEnabled(405, false);  // SKETCH CONTRAINTS
-    myGeomGUI->GetSketcher().SetTransitionStatus(NOCONSTRAINT);
-  }
-
-  if(myGeomGUI->GetSketcher().Delete())
-    myGeomGUI->myState = -1;
-  return;
-}
-
-
-//=======================================================================
-// function : OnSketchClose()
-// purpose  : 
-//=======================================================================
-void EntityGUI::OnSketchClose()
-{
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  Handle(AIS_InteractiveContext) myContext = v3d->getAISContext();
-
-  TopoDS_Wire W = myGeomGUI->GetSketcher().Close();
-  if(!W.IsNull()) {
-    GEOM::GEOM_Gen::ListOfIOR_var listShapes = new GEOM::GEOM_Gen::ListOfIOR;
-    listShapes->length(0);
-    unsigned int i = 0;
-
-    BRepTools_WireExplorer Ex(W);
-    while(Ex.More()) {
-      TopoDS_Edge E = Ex.Current();
-      gp_Pnt pt1, pt2;
-
-      pt1 = BRep_Tool::Pnt(TopExp::FirstVertex(E));
-      pt2 = BRep_Tool::Pnt(TopExp::LastVertex(E));
-
-      gp_Pnt CenterPoint;
-      Handle(Geom_Curve) Curve;
-      Handle(Geom_Circle) Circle;
-      gp_Circ Circ;
-      Standard_Real First,Last;
-
-      Curve = BRep_Tool::Curve(E,First,Last);
-      if(Curve->IsKind(STANDARD_TYPE(Geom_Circle))) {
-	Circle = Handle(Geom_Circle)::DownCast(Curve); // pointer on geom_circ
-	Circ = Circle->Circ();                         // gp_Circ
-	
-	Curve->D0((First + Last) / 2., CenterPoint);
-
-	GEOM::PointStruct pI = myGeom->MakePointStruct(pt1.X(), pt1.Y(), pt1.Z());
-	GEOM::PointStruct pC = myGeom->MakePointStruct(CenterPoint.X(), CenterPoint.Y(), CenterPoint.Z());
-	GEOM::PointStruct pE = myGeom->MakePointStruct(pt2.X(), pt2.Y(), pt2.Z());
-
-	GEOM::GEOM_Shape_var arc;
-
-	try {
-	  arc = myGeom->MakeArc(pI, pC, pE);
-	}
-	catch (const SALOME::SALOME_Exception& S_ex) {
-	  QtCatchCorbaException(S_ex);
-	}
-
- 	listShapes->length(i+1);
-	listShapes[i] = strdup(arc->Name());
-	i++;   
-      }
-      else {
-	GEOM::PointStruct pI = myGeom->MakePointStruct(pt1.X(), pt1.Y(), pt1.Z());
-	GEOM::PointStruct pE = myGeom->MakePointStruct(pt2.X(), pt2.Y(), pt2.Z());
-	GEOM::GEOM_Shape_var segment;
-
-	try {
-	  segment = myGeom->MakeEdge(pI,pE);
-	}	
-	catch (const SALOME::SALOME_Exception& S_ex) {
-	  QtCatchCorbaException(S_ex);
-	}
-
-	listShapes->length(i+1);
-	listShapes[i] = strdup(segment->Name());
-	i++;
-      }
-      Ex.Next();
-    }
-    GEOM::GEOM_Shape_var Wire = myGeom->MakeWire(listShapes);
-    TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, Wire);
-    Standard_CString type;
-    myGeomBase->GetShapeTypeString(S,type);
-    Wire->NameType(type);
-
-    if(myGeomBase->Display(Wire))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  myGeomGUI->myState = -1;
-  QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
-  Mb->setItemEnabled(405, false);  // SKETCH CONTRAINTS
-  myGeomGUI->GetSketcher().SetTransitionStatus(NOCONSTRAINT);
-  return;
-}
-
-
-//=======================================================================
 // function : OnSketchEnd()
 // purpose  : 
 //=======================================================================
-void EntityGUI::OnSketchEnd()
+void EntityGUI::OnSketchEnd(const char *Cmd)
 {
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
-
-  TopoDS_Wire W = myGeomGUI->GetSketcher().End();
-  if(!W.IsNull()) {
-    GEOM::GEOM_Gen::ListOfIOR_var listShapes = new GEOM::GEOM_Gen::ListOfIOR;
-    listShapes->length(0);
-    unsigned int i = 0;
-
-    BRepTools_WireExplorer Ex(W);
-    while(Ex.More()) {
-      TopoDS_Edge E = TopoDS::Edge(Ex.Current());
-      
-      gp_Pnt pt1, pt2;
-      pt1 = BRep_Tool::Pnt(TopExp::FirstVertex(E));
-      pt2 = BRep_Tool::Pnt(TopExp::LastVertex(E));
-
-      gp_Pnt CenterPoint;
-      Handle(Geom_Curve) Curve;
-      Handle(Geom_Circle) Circle;
-      gp_Circ Circ;
-      Standard_Real First,Last;
-      
-      Curve = BRep_Tool::Curve(E,First,Last);
-      if(Curve->IsKind(STANDARD_TYPE(Geom_Circle))) {
-	Circle = Handle(Geom_Circle)::DownCast(Curve); // pointer on geom_circ
-	Circ = Circle->Circ();                         // gp_Circ
-	
-	Curve->D0((First + Last) / 2., CenterPoint);
-
-	GEOM::PointStruct pI = myGeom->MakePointStruct(pt1.X(), pt1.Y(), pt1.Z());
-	GEOM::PointStruct pC = myGeom->MakePointStruct(CenterPoint.X(), CenterPoint.Y(), CenterPoint.Z());
-	GEOM::PointStruct pE = myGeom->MakePointStruct(pt2.X(), pt2.Y(), pt2.Z());
-
-	GEOM::GEOM_Shape_var arc;
-
-	try {
-	  arc = myGeom->MakeArc(pI, pC, pE);
-	}
-	catch (const SALOME::SALOME_Exception& S_ex) {
-	  QtCatchCorbaException(S_ex);
-	}
-		
- 	listShapes->length(i+1);
-	listShapes[i] = strdup(arc->Name());
-	i++;   
-      } else {
-	GEOM::PointStruct pI = myGeom->MakePointStruct(pt1.X(), pt1.Y(), pt1.Z());
-	GEOM::PointStruct pE = myGeom->MakePointStruct(pt2.X(), pt2.Y(), pt2.Z());
-	GEOM::GEOM_Shape_var segment;
-	
-	try {
-	  segment = myGeom->MakeEdge(pI,pE);
-	}
-	catch (const SALOME::SALOME_Exception& S_ex) {
-	  QtCatchCorbaException(S_ex);
-	}
-	
-	listShapes->length(i+1);
-	listShapes[i] = strdup(segment->Name());
-	i++;
-      }
-      Ex.Next();
+  try {
+    GEOM::GEOM_Shape_var result = myGeom->MakeSketcher(Cmd);
+    if(result->_is_nil()) {
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
+      return;
     }
-
-    GEOM::GEOM_Shape_var Wire = myGeom->MakeWire(listShapes);
-    TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, Wire);
-    Standard_CString type;
-    myGeomBase->GetShapeTypeString(S,type);
-    Wire->NameType(type);
-
-    if(myGeomBase->Display(Wire))
+    result->NameType(tr("GEOM_WIRE"));
+    if(myGeomBase->Display(result))
       QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
-  myGeomGUI->myState = -1;
-  QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
-  Mb->setItemEnabled(405, false);  // SKETCH CONTRAINTS
-  myGeomGUI->GetSketcher().SetTransitionStatus(NOCONSTRAINT);
+  catch(const SALOME::SALOME_Exception& S_ex) {
+    QtCatchCorbaException(S_ex);
+  }
   return;
+}
+
+
+//=====================================================================================
+// function : DisplaySimulationShape() 
+// purpose  : Displays 'this->mySimulationShape' a pure graphical shape from a TopoDS_Shape
+//=====================================================================================
+void EntityGUI::DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shape& S2) 
+{
+  //NRI DEBUG : 14/02/2002
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+    return;
+	
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
+  try {
+    if(!S1.IsNull()) {
+      /* erase any previous */
+      ic->Erase(mySimulationShape1, Standard_True, Standard_False);
+      ic->ClearPrs(mySimulationShape1);
+      
+      mySimulationShape1 = new AIS_Shape(TopoDS_Shape());
+      mySimulationShape1->Set(S1);
+      mySimulationShape1->SetColor(Quantity_NOC_RED);
+    
+      ic->Deactivate(mySimulationShape1);
+      ic->Display(mySimulationShape1, Standard_False);
+      mySimulationShape1->UnsetColor();
+    }
+    if(!S2.IsNull()) {
+      ic->Erase(mySimulationShape2, Standard_True, Standard_False);
+      ic->ClearPrs(mySimulationShape2);
+
+      mySimulationShape2 = new AIS_Shape(TopoDS_Shape());
+      mySimulationShape2->Set(S2);
+      mySimulationShape2->SetColor(Quantity_NOC_VIOLET);
+
+      ic->Deactivate(mySimulationShape2);
+      ic->Display(mySimulationShape2, Standard_False);
+      mySimulationShape2->UnsetColor();
+    }
+    ic->UpdateCurrentViewer();
+  }
+  catch(Standard_Failure) {
+    MESSAGE("Exception catched in EntityGUI::DisplaySimulationShape ");
+  } 
+  return;
+}
+
+
+//==================================================================================
+// function : EraseSimulationShape()
+// purpose  : Clears the display of 'mySimulationShape' a pure graphical shape
+//==================================================================================
+void EntityGUI::EraseSimulationShape(int Sh)
+{
+  int count = QAD_Application::getDesktop()->getActiveStudy()->getStudyFramesCount();
+  for(int i = 0; i < count; i++) {
+    if(QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i)->getTypeView() == VIEW_OCC) {
+      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i)->getRightFrame()->getViewFrame())->getViewer();
+      Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
+      if(Sh < 1) {
+	ic->Erase(mySimulationShape1, Standard_True, Standard_False);
+	ic->ClearPrs(mySimulationShape1);
+      }
+      if(Sh <= 1) {
+	ic->Erase(mySimulationShape2, Standard_True, Standard_False);
+	ic->ClearPrs(mySimulationShape2);
+      }
+      ic->UpdateCurrentViewer();
+    } 
+  }
 }
 
 
@@ -579,7 +310,7 @@ bool EntityGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Shap
     } 
     else {
       aResult->NameType(tr("GEOM_SHAPE"));
-      sprintf(nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->GetNbGeom()++);
+      sprintf(nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->myNbGeom++);
     }
     SALOMEDS::SObject_var SO = aStudy->FindObjectIOR(aResult->Name());
 
@@ -814,7 +545,7 @@ bool EntityGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char*
       } 
       else {
 	aResult->NameType(tr("GEOM_SHAPE"));
-	sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->GetNbGeom()++);
+	sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->myNbGeom++);
       }
       result = new GEOM_AISShape(Exp.Current(), nameG);
       IO = new GEOM_InteractiveObject(aResult->Name(), myGeomGUI->GetFatherior(), "GEOM");
@@ -823,10 +554,10 @@ bool EntityGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char*
   else {
     if ( myGeomBase->GetShapeTypeString(compound,Type)) {
       aResult->NameType(Type);
-      sprintf (nameG, "%s_%d", Type, myGeomGUI->GetNbGeom()++);
+      sprintf (nameG, "%s_%d", Type, myGeomGUI->myNbGeom++);
     } else {
       aResult->NameType(tr("GEOM_SHAPE"));
-      sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->GetNbGeom()++);
+      sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->myNbGeom++);
     }
     result = new GEOM_AISShape(compound, nameG);
     IO = new GEOM_InteractiveObject(aResult->Name(), myGeomGUI->GetFatherior(), "GEOM");

@@ -51,7 +51,8 @@ EXPORT_PYSCRIPTS = libGEOM_Swig.py geompy.py batchmode_geompy.py \
 		 GEOM_Partition2.py \
 		 GEOM_Partition3.py \
 		 GEOM_Partition4.py \
-		 GEOM_Partition5.py
+		 GEOM_Partition5.py \
+		 GEOM_Sketcher.py
 
 LIB_CLIENT_IDL = SALOMEDS.idl \
                  SALOMEDS_Attributes.idl \

@@ -237,6 +237,7 @@ void BasicGUI_VectorDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_VectorDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

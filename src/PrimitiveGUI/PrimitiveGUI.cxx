@@ -216,14 +216,17 @@ void PrimitiveGUI::MakeConeAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir,
 				     const double Radius1, const double Radius2, const double aHeight)
 {
   try {
-    if((Radius1 <= Precision::Confusion() && Radius2 <= Precision::Confusion()) || aHeight <= Precision::Confusion())
+    double myRadius2 = Radius2;
+    if(myRadius2 < Precision::Confusion())
+      myRadius2 = Precision::Confusion();
+    if(Radius1 <= Precision::Confusion() || aHeight <= Precision::Confusion())
       return;
 
     GEOM::PointStruct pstruct = myGeom->MakePointStruct(BasePoint.X(), BasePoint.Y(), BasePoint.Z());
     GEOM::PointStruct d = myGeom->MakePointStruct(aDir.X(), aDir.Y(), aDir.Z());
     GEOM::DirStruct dstruct = myGeom->MakeDirection(d);
 
-    GEOM::GEOM_Shape_var result = myGeom->MakeCone(pstruct, dstruct, Radius1, Radius2, aHeight);  
+    GEOM::GEOM_Shape_var result = myGeom->MakeCone(pstruct, dstruct, Radius1, myRadius2, aHeight);  
     if(result->_is_nil()) {
       QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;

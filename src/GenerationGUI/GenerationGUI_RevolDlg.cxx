@@ -26,13 +26,18 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GenerationGUI_RevolDlg.h"
 
 #include <gp_Lin.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepPrimAPI_MakeRevol.hxx>
 #include "QAD_Config.h"
+#include <TopExp_Explorer.hxx>
+#include <Standard_ErrorHandler.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : GenerationGUI_RevolDlg()
@@ -145,6 +150,7 @@ void GenerationGUI_RevolDlg::ClickOnOk()
 //=================================================================================
 void GenerationGUI_RevolDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
@@ -156,6 +162,32 @@ void GenerationGUI_RevolDlg::ClickOnApply()
   return;
 }
 
+//=======================================================================
+//function : isAcceptableBase
+//purpose  : return true if theBase can be used as algo argument
+//=======================================================================
+
+static bool isAcceptableBase(const TopoDS_Shape& theBase)
+{
+  switch ( theBase.ShapeType() ) {
+  case TopAbs_VERTEX:
+  case TopAbs_EDGE:
+  case TopAbs_WIRE:
+  case TopAbs_FACE:
+  case TopAbs_SHELL:
+    return true;
+  case TopAbs_SOLID:
+  case TopAbs_COMPSOLID:
+    return false;
+  case TopAbs_COMPOUND: {
+    TopExp_Explorer exp( theBase, TopAbs_SOLID);
+    return !exp.More();
+  }
+  default:
+    return false;
+  }
+  return false;
+}
 
 //=================================================================================
 // function : SelectionIntoArgument()
@@ -188,8 +220,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
     myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
-    TopAbs_ShapeEnum aType = S.ShapeType();
-    if(aType != TopAbs_VERTEX && aType != TopAbs_EDGE && aType != TopAbs_WIRE && aType != TopAbs_FACE && aType != TopAbs_SHELL && aType != TopAbs_COMPOUND)
+    if( !isAcceptableBase( S ))
       return;
     myEditCurrentArgument->setText(aString);
     myOkBase = true;
@@ -317,8 +348,7 @@ void GenerationGUI_RevolDlg::MakeRevolutionSimulationAndDisplay()
   myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
-  TopAbs_ShapeEnum aType = myBase.ShapeType();
-  if(aType != TopAbs_VERTEX && aType != TopAbs_EDGE && aType != TopAbs_WIRE && aType != TopAbs_FACE && aType != TopAbs_SHELL && aType !=TopAbs_COMPOUND)
+  if (!isAcceptableBase( myBase ))
     return;
 
   try {

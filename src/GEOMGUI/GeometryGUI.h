@@ -29,34 +29,36 @@
 #ifndef GEOMETRYGUI_H
 #define GEOMETRYGUI_H
 
+#include "SALOMEGUI.h"
 #include "GEOMContext.h"
 
 //=================================================================================
 // class    : GeometryGUI
 // purpose  :
 //=================================================================================
-class GeometryGUI : public QObject
+class GeometryGUI : public SALOMEGUI
 {
   Q_OBJECT /* for QT compatibility */
 
 public :
-    GeometryGUI();
-    ~GeometryGUI();
-
-    static GEOMContext* GetOrCreateGeometryGUI(QAD_Desktop* desktop);
-
-    /* Managed by IAPP */
-    Standard_EXPORT static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
-    Standard_EXPORT static bool OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
-    Standard_EXPORT static bool OnMouseMove(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
-    Standard_EXPORT static bool OnKeyPress(QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
-    Standard_EXPORT static bool SetSettings(QAD_Desktop* parent);
-    Standard_EXPORT static void activeStudyChanged(QAD_Desktop* parent);
-    Standard_EXPORT static void BuildPresentation(const Handle(SALOME_InteractiveObject)&);
-    Standard_EXPORT static void DefinePopup(QString & theContext, QString & theParent, QString & theObject);
-    Standard_EXPORT static bool CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString& theContext,
-					    const QString& theParent, const QString& theObject);
-
+  GeometryGUI( const QString& name = "", QObject* parent = 0 );
+  ~GeometryGUI();
+  
+  static GEOMContext* GetOrCreateGeometryGUI(QAD_Desktop* desktop);
+  
+  /* Managed by IAPP */
+  virtual bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  virtual bool OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
+  virtual bool OnMouseMove(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
+  virtual bool OnKeyPress(QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
+  virtual bool SetSettings(QAD_Desktop* parent);
+  virtual bool ActiveStudyChanged(QAD_Desktop* parent);
+  virtual void BuildPresentation(const Handle(SALOME_InteractiveObject)&);
+  virtual void DefinePopup(QString & theContext, QString & theParent, QString & theObject);
+  virtual bool CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString& theContext,
+			   const QString& theParent, const QString& theObject);
+  virtual void SupportedViewType (int* buffer, int bufferSize);
+  virtual void Deactivate        ();
 };
 
 #endif

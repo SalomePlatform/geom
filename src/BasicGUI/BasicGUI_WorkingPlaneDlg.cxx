@@ -127,6 +127,7 @@ void BasicGUI_WorkingPlaneDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_WorkingPlaneDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if(myOkPlane)
     myBasicGUI->MakeWorkingPlane(myLoc, myDir);

@@ -87,7 +87,7 @@ void BuildGUI_ShellDlg::Init()
   myEditCurrentArgument = GroupShell->LineEdit1;
   myOkListShapes = false;
 
-  myFaceFilter = new GEOM_FaceFilter(StdSelect_Plane, myGeom);
+  myFaceFilter = new GEOM_ShapeTypeFilter(TopAbs_FACE, myGeom);
   /* Filter for the next selection */
   mySelection->AddFilter(myFaceFilter) ;
 
@@ -163,10 +163,8 @@ void BuildGUI_ShellDlg::SelectionIntoArgument()
 //=================================================================================
 void BuildGUI_ShellDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters() ;
+  mySelection->ClearFilters();
   GroupShell->LineEdit1->setFocus();
-  myEditCurrentArgument = GroupShell->LineEdit1;
   mySelection->AddFilter(myFaceFilter);
   this->SelectionIntoArgument();
   return;

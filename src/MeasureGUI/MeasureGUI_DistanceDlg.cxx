@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "MeasureGUI_DistanceDlg.h"
 
 #include "QAD_RightFrame.h"
@@ -41,6 +40,10 @@ using namespace std;
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <gce_MakePln.hxx>
 #include <Precision.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : MeasureGUI_DistanceDlg()
@@ -322,7 +325,9 @@ void MeasureGUI_DistanceDlg::MakeDistanceSimulationAndDisplay(const TopoDS_Shape
 	gp_Pln gp_P = gce_MP.Value();
 	Handle(Geom_Plane) P = new Geom_Plane(gp_P);
 
-	Handle(AIS_LengthDimension) Distance = new AIS_LengthDimension(V1, V2, P, Dist, TCollection_ExtendedString(strdup(S)));
+	char* aCopyS = CORBA::string_dup(S);
+	Handle(AIS_LengthDimension) Distance = new AIS_LengthDimension(V1, V2, P, Dist, TCollection_ExtendedString(aCopyS));
+	delete(aCopyS);
 
 	GroupC1->LineEdit3->setText(S);
 

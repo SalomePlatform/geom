@@ -134,6 +134,7 @@ void RepairGUI_SewingDlg::ClickOnOk()
 //=================================================================================
 void RepairGUI_SewingDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if(myOkListShapes)  
     myRepairGUI->MakeSewingAndDisplay(myListShapes, myPrecision);

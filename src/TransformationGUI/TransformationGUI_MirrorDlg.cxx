@@ -26,12 +26,15 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "TransformationGUI_MirrorDlg.h"
 
 #include <BRepBuilderAPI_Transform.hxx>
 #include <Geom_Plane.hxx>
 #include <BRep_Tool.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_MirrorDlg()
@@ -131,6 +134,7 @@ void TransformationGUI_MirrorDlg::ClickOnOk()
 //=================================================================================
 void TransformationGUI_MirrorDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

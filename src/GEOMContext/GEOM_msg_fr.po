@@ -34,6 +34,10 @@ msgstr "&Ok"
 msgid "GEOM_BUT_YES"
 msgstr "&Oui"
 
+#Button No
+msgid "GEOM_BUT_NO"
+msgstr "&Non"
+
 #Button Help
 msgid "GEOM_BUT_HELP"
 msgstr "&Aide"
@@ -49,7 +53,7 @@ msgstr "&Exploser"
 
 #: GeometryGUI.cxx:563
 msgid "GEOM_INF_LOADED"
-msgstr "Le fichier %1 est chargé."
+msgstr "Le fichier %1 est chargÃ©."
 
 #
 #==============================================================================
@@ -57,15 +61,15 @@ msgstr "Le fichier %1 est chargé."
 
 #: GeometryGUI.cxx:3069
 msgid "GEOM_PRP_COMMAND"
-msgstr "Pas de commande associée à l'id = %1."
+msgstr "Pas de commande associÃ©e Ã  l'id = %1."
 
 #: GeometryGUI.cxx:4977
 msgid "GEOM_PRP_ABORT"
-msgstr "L'opération a echoué"
+msgstr "L'opÃ©ration a echouÃ©"
 
 #: GeometryGUI.cxx:5058
 msgid "GEOM_PRP_DONE"
-msgstr "Opération effectuée"
+msgstr "OpÃ©ration effectuÃ©e"
 
 #: GeometryGUI.cxx:3717
 msgid "GEOM_PRP_LOADING"
@@ -73,11 +77,11 @@ msgstr "Chargement de %1 ..."
 
 #: GeometryGUI.cxx:1412
 msgid "GEOM_PRP_NULLSHAPE"
-msgstr "Erreur, objet inconsistant ou inapproprié !"
+msgstr "Erreur, objet inconsistant ou inappropriÃ© !"
 
 #: GeometryGUI.cxx:5072
 msgid "GEOM_PRP_READY"
-msgstr "Prêt..."
+msgstr "PrÃªt..."
 
 #: GeometryGUI.cxx:1690
 msgid "GEOM_PRP_SELECT_SUBSHAPES"
@@ -127,11 +131,11 @@ msgstr "Angle :"
 
 #: GeometryGUI.cxx:3941
 msgid "GEOM_MEN_COMPONENT"
-msgstr "Géometrie"
+msgstr "GÃ©ometrie"
 
 #: GeometryGUI.cxx:4389
 msgid "GEOM_MEN_ENTER_ANGLE"
-msgstr "Saisir un angle en degrés"
+msgstr "Saisir un angle en degrÃ©s"
 
 #: GeometryGUI.cxx:3758
 msgid "GEOM_MEN_EXPORT"
@@ -152,6 +156,10 @@ msgstr "Fichiers IGES ( *.iges *.igs )"
 #: GeometryGUI.cxx:3763
 msgid "GEOM_MEN_IMPORT_STEP"
 msgstr "Fichiers STEP ( *.step *.stp )"
+
+#: GeometryGUI.cxx:3763
+msgid "GEOM_MEN_LOAD_SCRIPT"
+msgstr "Fichiers PYTHON ( *.py )"
 
 #: GeometryGUI.cxx:2931
 msgid "GEOM_MEN_ISOS"
@@ -216,6 +224,10 @@ msgstr "Le rayon est nul"
 msgid "GEOM_WRN_WARNING"
 msgstr "Avertissement"
 
+#: GeometryGUI.cxx:3854
+msgid "GEOM_REALLY_DELETE"
+msgstr "Voulez-vous supprimer l'object(s) ?"
+
 #
 #==============================================================================
 #
@@ -250,7 +262,7 @@ msgstr "Objet %1"
 
 #Object and result
 msgid "GEOM_OBJECT_RESULT"
-msgstr "Objet Et Résultat"
+msgstr "Objet Et RÃ©sultat"
 
 #Point
 msgid "GEOM_POINT"
@@ -265,7 +277,7 @@ msgid "GEOM_CENTER_POINT"
 msgstr "Point Centre"
 
 #Diagonal Points
-msgid "GEOM__DIAGONAL_POINTS"
+msgid "GEOM_DIAGONAL_POINTS"
 msgstr "Points Diagonaux"
 
 #Central Point
@@ -310,7 +322,7 @@ msgstr "poids"
 
 #Coordinates
 msgid "GEOM_COORDINATES"
-msgstr "Coordonnées"
+msgstr "CoordonnÃ©es"
 
 #Coor.
 msgid "GEOM_COOR"
@@ -362,11 +374,11 @@ msgstr "Base"
 
 #Water Density
 msgid "GEOM_WATER_DENSITY"
-msgstr "Densité de l'eau :"
+msgstr "DensitÃ© de l'eau :"
 
 #Meshing Deflection
 msgid "GEOM_MESHING_DEFLECTION"
-msgstr "Déflection Du Maillage :"
+msgstr "DÃ©flection Du Maillage :"
 
 #Dimensions
 msgid "GEOM_DIMENSIONS"
@@ -374,11 +386,11 @@ msgstr "Dimensions"
 
 #Precision
 msgid "GEOM_PRECISION"
-msgstr "Précision :"
+msgstr "PrÃ©cision :"
 
 #Selection
 msgid "GEOM_SELECTION"
-msgstr "Sélection"
+msgstr "SÃ©lection"
 
 #Nb. Times
 msgid "GEOM_NB_TIMES"
@@ -414,7 +426,7 @@ msgstr "Partition"
 
 #Tolerance
 msgid "GEOM_TOLERANCE"
-msgstr "Tolérance"
+msgstr "TolÃ©rance"
 
 #Orientation
 msgid "GEOM_ORIENTATION"
@@ -426,7 +438,7 @@ msgstr "Pipe"
 
 #Revolution
 msgid "GEOM_REVOLUTION"
-msgstr "Révolution"
+msgstr "RÃ©volution"
 
 #Rotation
 msgid "GEOM_ROTATION"
@@ -434,7 +446,7 @@ msgstr "Rotation"
 
 #Archimede
 msgid "GEOM_ARCHIMEDE"
-msgstr "Archimède"
+msgstr "ArchimÃ¨de"
 
 #Common
 msgid "GEOM_COMMON"
@@ -544,6 +556,21 @@ msgstr "Boite"
 msgid "GEOM_CIRCLE"
 msgstr "Cercle"
 
+#Ellipse
+msgid "GEOM_ELLIPSE"
+msgstr "Ellipse"
+
+msgid "GEOM_ELLIPSE_TITLE"
+msgstr "Construction d'Ellipses"
+
+#Radius major
+msgid "GEOM_RADIUS_MAJOR"
+msgstr "Rayon max. :"
+
+#Radius minor
+msgid "GEOM_RADIUS_MINOR"
+msgstr "Rayon min. :"
+
 #Compound
 msgid "GEOM_COMPOUND"
 msgstr "Compound"
@@ -594,7 +621,7 @@ msgstr "Solide"
 
 #Sphere
 msgid "GEOM_SPHERE"
-msgstr "Sphère"
+msgstr "SphÃ¨re"
 
 #Conical Face
 msgid "GEOM_SURFCONE"
@@ -606,7 +633,7 @@ msgstr "Face Cylindrique"
 
 #Spherical Face
 msgid "GEOM_SURFSPHERE"
-msgstr "Face Sphèrique"
+msgstr "Face SphÃ¨rique"
 
 #Toroidal Face
 msgid "GEOM_SURFTORUS"
@@ -635,10 +662,14 @@ msgstr "Vertex"
 #Wire
 msgid "GEOM_WIRE"
 msgstr "Wire"
+
+#Wire(s)
+msgid "GEOM_WIRES"
+msgstr "Wire(s)"
 	
 #Parameter
 msgid "GEOM_PARAMETER"
-msgstr "Paramètre :"
+msgstr "ParamÃ¨tre :"
 
 
 #
@@ -691,7 +722,7 @@ msgstr "D2 :"
 
 #: GeometryGUI.cxx
 msgid "GEOM_STEP_TITLE"
-msgstr "Increment par défaut lors des constructions"
+msgstr "Increment par dÃ©faut lors des constructions"
 
 #: GeometryGUI_ArcDlg.cxx:45
 msgid "GEOM_ARC_TITLE"
@@ -699,7 +730,7 @@ msgstr "Construction d'un Arc"
 
 #: GeometryGUI_ArchimedeDlg.cxx:55
 msgid "GEOM_ARCHIMEDE_TITLE"
-msgstr "Construction d'Archimède"
+msgstr "Construction d'ArchimÃ¨de"
 
 #: GeometryGUI_BndBoxDlg.cxx:59
 msgid "GEOM_BNDBOX_TITLE"
@@ -739,7 +770,7 @@ msgstr "Construction d'un Cercle"
 
 #: GeometryGUI_CenterMassDlg.cxx:77
 msgid "GEOM_CMASS_TITLE"
-msgstr "Centre De Gravité"
+msgstr "Centre De GravitÃ©"
 
 msgid "GEOM_PLANE_SIZE"
 msgstr "Taille du plan :"
@@ -750,7 +781,7 @@ msgstr "BOOLEEN : Jonction De Deux Objets"
 
 #: GeometryGUI_CompoundDlg.cxx:44
 msgid "GEOM_COMPOUND_TITLE"
-msgstr "Création d'un Compound"
+msgstr "CrÃ©ation d'un Compound"
 
 #: GeometryGUI_ConeDlg.cxx:49
 msgid "GEOM_CONE_TITLE"
@@ -782,27 +813,27 @@ msgstr "Objets Et Resultats"
 
 #: GeometryGUI_EdgeDlg.cxx:47
 msgid "GEOM_EDGE_TITLE"
-msgstr "Création d'un Edge"
+msgstr "CrÃ©ation d'un Edge"
 
 #: GeometryGUI_FilletDlg.cxx:58
 msgid "GEOM_FILLET_TITLE"
-msgstr "Construction d'un Congé"
+msgstr "Construction d'un CongÃ©"
 
 #: GeometryGUI_FilletDlg.cxx:58
 msgid "GEOM_FILLET_ALL"
-msgstr "Congé sur toute la Shape"
+msgstr "CongÃ© sur toute la Shape"
 
 #: GeometryGUI_FilletDlg.cxx:58
 msgid "GEOM_FILLET_EDGES"
-msgstr "Congé sur Edges de la Shape"
+msgstr "CongÃ© sur Edges de la Shape"
 
 #: GeometryGUI_FilletDlg.cxx:58
 msgid "GEOM_FILLET_FACES"
-msgstr "Congé sur Faces de la Shape"
+msgstr "CongÃ© sur Faces de la Shape"
 
 #: GeometryGUI_FaceDlg.cxx:49
 msgid "GEOM_FACE_TITLE"
-msgstr "Création d'une Face"
+msgstr "CrÃ©ation d'une Face"
 
 #: GeometryGUI_FaceDlg.cxx:78
 msgid "GEOM_FACE_FFW"
@@ -810,7 +841,7 @@ msgstr "Face a partir d'un wire"
 
 #: GeometryGUI_FaceDlg.cxx:103
 msgid "GEOM_FACE_OPT"
-msgstr "Création d'une Face plane"
+msgstr "CrÃ©ation d'une Face plane"
 
 #: GeometryGUI_FillingDlg.cxx:53
 msgid "GEOM_FILLING_TITLE"
@@ -912,6 +943,10 @@ msgstr "Objet garde"
 msgid "GEOM_PARTITION_ORIENTATION"
 msgstr "Change l'orientation"
 
+#: GeometryGUI_PartitionDlg.cxx:45
+msgid "SUPPRESS_RESULT"
+msgstr "Suppress Result"
+
 #: GeometryGUI_PipeDlg.cxx:47
 msgid "GEOM_PIPE_TITLE"
 msgstr "Construction d'une Pipe"
@@ -984,9 +1019,9 @@ msgstr "Coudre des Topologies"
 msgid "GEOM_SHELL_TITLE"
 msgstr "Construction d'une Shell"
 
-#: GeometryGUI_ShellDlg.cxx:74
-msgid "GEOM_SHELL_LIST"
-msgstr "List de Faces Connectees"
+#: GeometryGUI_SolidDlg.cxx:74
+msgid "GEOM_SOLID_TITLE"
+msgstr "Construction d'un Solid"
 
 #: GeometryGUI_SphereDlg.cxx:50
 msgid "GEOM_SPHERE_TITLE"
@@ -1083,11 +1118,11 @@ msgid "GEOM_WIRE_CONNECT"
 msgstr "Creation d'un Wire a partir de wires/edges connectes"
 
 #: GeometryGUI_WorkingPlaneDlg.cxx:50
-msgid "GEOM_WPALNE_TITLE"
+msgid "GEOM_WPLANE_TITLE"
 msgstr "plan de travail"
 
 #: GeometryGUI_WorkingPlaneDlg.cxx:107
-msgid "GEOM_WPALNE_FACE"
+msgid "GEOM_WPLANE_FACE"
 msgstr "Plan Ou Face plane"
 
 #: GeometryGUI_multiTranslationDlg.cxx:107
@@ -1115,7 +1150,7 @@ msgid "GEOM_MULTIROTATION_DOUBLE"
 msgstr "Multi Rotation Double"
 
 msgid "GEOM_PARAM_POINT"
-msgstr "Point paramétrique"
+msgstr "Point paramÃ©trique"
 
 #
 #==============================================================================
@@ -1127,4 +1162,155 @@ msgstr "Filaire"
 
 #: GeometryGUI.cxx:4613
 msgid "GEOM_MEN_SHADING"
-msgstr "Ombré"
+msgstr "OmbrÃ©"
+
+msgid "GEOM_RECONSTRUCTION_LIMIT"
+msgstr "Limite de Reconstruction"
+
+msgid "GEOM_SUPPRESS_RESULT"
+msgstr "Supprimer le Resultat"
+
+msgid "GEOM_SUPPRESS_RESULT_INSIDE"
+msgstr "IntÃ©rieur"
+
+msgid "GEOM_SUPPRESS_RESULT_OUTSIDE"
+msgstr "ExtÃ©rieur"
+
+msgid "GEOM_RECONSTRUCTION_LIMIT_SHAPE"
+msgstr "Shape"
+msgid "GEOM_RECONSTRUCTION_LIMIT_SOLID"
+msgstr "Solid"
+msgid "GEOM_RECONSTRUCTION_LIMIT_SHELL"
+msgstr "Shell"
+msgid "GEOM_RECONSTRUCTION_LIMIT_FACE"
+msgstr "Face"
+msgid "GEOM_RECONSTRUCTION_LIMIT_WIRE"
+msgstr "Wire"
+msgid "GEOM_RECONSTRUCTION_LIMIT_EDGE"
+msgstr "Edge"
+msgid "GEOM_RECONSTRUCTION_LIMIT_VERTEX"
+msgstr "Vertex"
+
+msgid "GEOM_SPLINE_TITLE"
+msgstr "Construction de Splines"
+msgid "GEOM_SPLINE"
+msgstr "Spline"
+msgid "GEOM_BEZIER"
+msgstr "Bezier"
+msgid "GEOM_INTERPOL"
+msgstr "Interpolation"
+
+#
+#==============================================================================
+#
+
+msgid "GEOM_SKETCHER_EL"
+msgstr "Type d'Element"
+
+msgid "GEOM_BUT_CLOSE_SKETCH"
+msgstr "Fermer Sketch"
+
+msgid "GEOM_BUT_END_SKETCH"
+msgstr "Terminer Sketch"
+
+msgid "GEOM_SKETCHER_TITLE"
+msgstr "Construction de Sketch"
+
+msgid "GEOM_SKETCHER_POINT"
+msgstr "Point"
+
+msgid "GEOM_SKETCHER_SEGMENT"
+msgstr "SÃ¨gment"
+
+msgid "GEOM_SKETCHER_ARC"
+msgstr "Arc"
+
+msgid "GEOM_SKETCHER_DIR"
+msgstr "Direction"
+
+msgid "GEOM_SKETCHER_POINT2"
+msgstr "Point :"
+
+msgid "GEOM_SKETCHER_DEST"
+msgstr "Destination"
+
+msgid "GEOM_SKETCHER_ABS"
+msgstr "Absolu"
+
+msgid "GEOM_SKETCHER_REL"
+msgstr "Relative"
+
+msgid "GEOM_SKETCHER_SEL"
+msgstr "SÃ©lection"
+
+msgid "GEOM_SKETCHER_ANGLE"
+msgstr "Angle"
+
+msgid "GEOM_SKETCHER_PER"
+msgstr "Perpendiculaire"
+
+msgid "GEOM_SKETCHER_TAN"
+msgstr "Tangent"
+
+msgid "GEOM_SKETCHER_VXVY"
+msgstr "VX-VY"
+
+msgid "GEOM_SKETCHER_LENGTH"
+msgstr "Longueur"
+
+msgid "GEOM_SKETCHER_X"
+msgstr "X"
+
+msgid "GEOM_SKETCHER_Y"
+msgstr "Y"
+
+msgid "GEOM_SKETCHER_X2"
+msgstr "X :"
+
+msgid "GEOM_SKETCHER_Y2"
+msgstr "Y :"
+
+msgid "GEOM_SKETCHER_X3"
+msgstr "Abs. X :"
+
+msgid "GEOM_SKETCHER_Y3"
+msgstr "Abs. Y :"
+
+msgid "GEOM_SKETCHER_DX2"
+msgstr "DX :"
+
+msgid "GEOM_SKETCHER_DY2"
+msgstr "DY :"
+
+msgid "GEOM_SKETCHER_VX2"
+msgstr "VX :"
+
+msgid "GEOM_SKETCHER_VY2"
+msgstr "VY :"
+
+msgid "GEOM_SKETCHER_LENGTH2"
+msgstr "Longueur :"
+
+msgid "GEOM_SKETCHER_ANGLE2"
+msgstr "Angle :"
+
+msgid "GEOM_SKETCHER_RADIUS2"
+msgstr "Radius :"
+
+msgid "GEOM_SKETCHER_UNDO"
+msgstr "Undo"
+
+msgid "GEOM_SKETCHER_APPLY"
+msgstr "Appliquer"
+
+msgid "GEOM_SKETCHER_VALUES"
+msgstr "Valeurs"
+
+msgid "GEOM_SKETCHER_TYPE"
+msgstr "Type"
+
+msgid "GEOM_FILLET_ABORT"
+msgstr "Le congÃ© ne peut-Ãªtre realisÃ© avec un rayon de %1 "
+
+msgid "GEOM_CHAMFER_ABORT"
+msgstr "Le chanfrein ne peut-Ãªtre realisÃ© avec %1 et %2 "

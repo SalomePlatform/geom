@@ -662,6 +662,10 @@ msgstr "Vertex"
 msgid "GEOM_WIRE"
 msgstr "Wire"
 
+#Wire(s)
+msgid "GEOM_WIRES"
+msgstr "Wire(s)"
+
 #Parameter
 msgid "GEOM_PARAMETER"
 msgstr "Parameter :"
@@ -937,6 +941,10 @@ msgstr "Keep Object"
 msgid "GEOM_PARTITION_ORIENTATION"
 msgstr "Change Orientation"
 
+#: GeometryGUI_PartitionDlg.cxx:45
+msgid "SUPPRESS_RESULT"
+msgstr "Suppress Result"
+
 #: GeometryGUI_PipeDlg.cxx:47
 msgid "GEOM_PIPE_TITLE"
 msgstr "Pipe Construction"
@@ -1199,13 +1207,13 @@ msgid "GEOM_SKETCHER_EL"
 msgstr "Element Type"
 
 msgid "GEOM_BUT_CLOSE_SKETCH"
-msgstr "Close Sketcher"
+msgstr "Close Sketch"
 
 msgid "GEOM_BUT_END_SKETCH"
-msgstr "End Sketcher"
+msgstr "End Sketch"
 
 msgid "GEOM_SKETCHER_TITLE"
-msgstr "Spline Construction"
+msgstr "Sketch Construction"
 
 msgid "GEOM_SKETCHER_POINT"
 msgstr "Point"
@@ -1299,3 +1307,10 @@ msgstr "Values"
 
 msgid "GEOM_SKETCHER_TYPE"
 msgstr "Type"
+
+msgid "GEOM_FILLET_ABORT"
+msgstr "Fillet can't be computed with radius %1"
+
+msgid "GEOM_CHAMFER_ABORT"
+msgstr "Chamfer can't be computed with %1 and %2"
+

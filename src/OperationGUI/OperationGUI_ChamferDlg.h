@@ -72,8 +72,6 @@ private :
     double myD2;
     
     DlgRef_1Sel2Spin* Group1;
-    DlgRef_1Sel2Spin* Group2;
-    DlgRef_1Sel2Spin* Group3;
 
 private slots:
     void ClickOnOk();
@@ -81,7 +79,6 @@ private slots:
     void ClickOnCancel();
     void ActivateThisDialog();
     void DeactivateActiveDialog();
-    void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
     void ValueChangedInSpinBox(double newValue);

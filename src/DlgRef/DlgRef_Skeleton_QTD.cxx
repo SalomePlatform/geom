@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
 **
-** Created: mar sep 23 15:06:58 2003
+** Created: Fri Apr 16 12:57:26 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -11,6 +11,8 @@
 #include <qvariant.h>
 #include <qbuttongroup.h>
 #include <qgroupbox.h>
+#include <qlabel.h>
+#include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qlayout.h>
@@ -29,13 +31,19 @@ DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent,  const char* name, bo
 {
     if ( !name )
 	setName( "DlgRef_Skeleton_QTD" );
-    resize( 307, 147 ); 
+    resize( 321, 295 ); 
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)7, 0, 0, sizePolicy().hasHeightForWidth() ) );
     setCaption( trUtf8( "DlgRef_Skeleton_QTD" ) );
     setSizeGripEnabled( TRUE );
     DlgRef_Skeleton_QTDLayout = new QGridLayout( this, 1, 1, 11, 6, "DlgRef_Skeleton_QTDLayout"); 
 
     Layout1 = new QGridLayout( 0, 1, 1, 0, 6, "Layout1"); 
+
+    GroupMedium = new QGroupBox( this, "GroupMedium" );
+    GroupMedium->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, GroupMedium->sizePolicy().hasHeightForWidth() ) );
+    GroupMedium->setTitle( trUtf8( "" ) );
+
+    Layout1->addWidget( GroupMedium, 2, 0 );
 
     GroupButtons = new QGroupBox( this, "GroupButtons" );
     GroupButtons->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, GroupButtons->sizePolicy().hasHeightForWidth() ) );
@@ -63,7 +71,7 @@ DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent,  const char* name, bo
     Layout3->addWidget( buttonCancel );
     GroupButtonsLayout->addLayout( Layout3 );
 
-    Layout1->addWidget( GroupButtons, 2, 0 );
+    Layout1->addWidget( GroupButtons, 3, 0 );
 
     GroupConstructors = new QButtonGroup( this, "GroupConstructors" );
     GroupConstructors->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)0, 0, 0, GroupConstructors->sizePolicy().hasHeightForWidth() ) );
@@ -92,11 +100,28 @@ DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent,  const char* name, bo
 
     Layout1->addWidget( GroupConstructors, 0, 0 );
 
-    GroupMedium = new QGroupBox( this, "GroupMedium" );
-    GroupMedium->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, GroupMedium->sizePolicy().hasHeightForWidth() ) );
-    GroupMedium->setTitle( trUtf8( "" ) );
+    GroupBoxName = new QGroupBox( this, "GroupBoxName" );
+    GroupBoxName->setTitle( trUtf8( "Result name" ) );
+    GroupBoxName->setColumnLayout(0, Qt::Vertical );
+    GroupBoxName->layout()->setSpacing( 6 );
+    GroupBoxName->layout()->setMargin( 11 );
+    GroupBoxNameLayout = new QGridLayout( GroupBoxName->layout() );
+    GroupBoxNameLayout->setAlignment( Qt::AlignTop );
 
-    Layout1->addWidget( GroupMedium, 1, 0 );
+    Layout66 = new QGridLayout( 0, 1, 1, 0, 6, "Layout66"); 
+
+    ResultName = new QLineEdit( GroupBoxName, "ResultName" );
+
+    Layout66->addWidget( ResultName, 0, 1 );
+
+    NameLabel = new QLabel( GroupBoxName, "NameLabel" );
+    NameLabel->setText( trUtf8( "Name" ) );
+
+    Layout66->addWidget( NameLabel, 0, 0 );
+
+    GroupBoxNameLayout->addLayout( Layout66, 0, 0 );
+
+    Layout1->addWidget( GroupBoxName, 1, 0 );
 
     DlgRef_Skeleton_QTDLayout->addLayout( Layout1, 0, 0 );
 }
