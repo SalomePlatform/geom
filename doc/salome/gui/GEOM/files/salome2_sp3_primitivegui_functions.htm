@@ -1,0 +1,414 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Titre</title>
+
+<!--(Meta)==========================================================-->
+
+<meta HTTP-EQUIV=Content-Type CONTENT="text/html; charset=windows-1252">
+<meta NAME=subject CONTENT=Sujet>
+<meta NAME=keywords CONTENT=Etude>
+<meta NAME=Client CONTENT=Client>
+<meta NAME=Department CONTENT="D&#1081;veloppements sp&#1081;cifiques open cascade">
+<meta NAME=Division CONTENT="Une filiale EADS Matra Datavision">
+<meta NAME=Owner CONTENT=OCC>
+<meta NAME=Project CONTENT=ProjectRef>
+<meta NAME=Folder CONTENT=FF>
+<meta NAME=Study CONTENT=SSS>
+<meta NAME=Reference CONTENT=Reference>
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=3796>
+<meta name=layout-width content=700>
+
+
+<!--(Links)=========================================================-->
+
+ <link rel='stylesheet' href='../default_ns.css'>
+<script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='../default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 {border-style: none; border: none; float: none; width: 30px; height: 30px;}
+ul.whs2 {list-style: disc;}
+p.whs3 {margin-left: 40px;}
+p.whs4 {font-size: 14pt;}
+img_whs5 {border-style: none; width: 20px; height: 20px;}
+img_whs6 {border-style: none; border: none; width: 200px; height: 175px;}
+img_whs7 {border-style: none; border: none; width: 150px; height: 129px;}
+p.whs8 {font-family: 'Times New Roman', serif; font-size: 14pt;}
+img_whs9 {border-style: none; border: none; width: 200px; height: 211px;}
+img_whs10 {border-style: none; border: none; width: 150px; height: 142px;}
+img_whs11 {border-style: none; border: none; width: 200px; height: 166px;}
+img_whs12 {border-style: none; border: none; width: 150px; height: 137px;}
+p.whs13 {margin-left: 40px; font-weight: bold;}
+img_whs14 {border-style: none; border: none; width: 150px; height: 96px;}
+img_whs15 {border-style: none; border: none; width: 200px; height: 229px;}
+p.whs16 {font-size: 12pt; margin-left: 40px;}
+img_whs17 {border-style: none; border: none; width: 150px; height: 119px;}
+-->
+</style>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+  div.WebHelpPopupMenu {position:absolute; left:0px; top:0px; z-index:4; visibility:hidden;}
+-->
+</style>
+<script type="text/javascript" language="javascript1.2" src="../whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="../whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whtopic.js"></script>
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nConstructing primitives");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("../geom.html");
+
+		autoSync(0);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	document.location.reload();
+//-->
+</script>
+<h1>Constructing primitives</h1>
+
+<p><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;"><img src="../i_blue.jpg" x-maintain-ratio="TRUE" x-save-file="TRUE" x-save-method="compute-relative" width="30px" height="30px" border="0" class="img_whs1"> </font></span><span style="font-size: 12pt; font-weight: normal;"><font size=3 style="font-size:12pt;">In 
+ GEOM you can create different types of primitive geometrical objects </font></span></b>(3D 
+ elements):</p>
+
+<p>&nbsp;</p>
+
+<ul type="disc" class="whs2">
+	
+	<li class=kadov-p><p><a href="#box">Box</a></p></li>
+	
+	<li class=kadov-p><p><a href="#cylinder">Cylinder</a></p></li>
+	
+	<li class=kadov-p><p><a href="#sphere">Sphere</a></p></li>
+	
+	<li class=kadov-p><p><a href="#torus">Torus</a></p></li>
+	
+	<li class=kadov-p><p><a href="#cone">Cone</a></p></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p class=TODO>To construct primitive geometrical objects:</p>
+
+<p class=TODO>&nbsp;</p>
+
+<p class="whs3">In the main menu select <span style="font-weight: bold;"><B>New 
+ Entity &gt; Primitives</B></span><span>.</span></p>
+
+<p>&nbsp;</p>
+
+<p class="whs4"><b style="font-weight: bold;"><a NAME=box
+															style="font-size: 14pt;"><img src="salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image99.gif" width="20px" height="20px" border="0" class="img_whs5"><font style="font-size: 14pt;"
+					size=4> Box</font></a></b></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p><b style="font-weight: bold;">Description:</b> Creates a box.</p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Result:</b> GEOM_Shape (SOLID).</p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">TUI Command :</b> <i>geompy.MakeBox(Double, 
+ Double, Double)</i></p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Arguments:</b></p>
+
+<ul type="disc" class="whs2">
+	
+	<li class=kadov-p><p><b style="font-weight: bold;"><span>1st Constructor 
+ :</b> 2 vertices (opposite corners of the box).</span></p></li>
+	
+	<li class=kadov-p><p><b style="font-weight: bold;">2nd Constructor 
+ :</b> 3 values (dimensions at origin).</p></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs3"><img src="../image99.jpg" width="200px" height="175px" border="0" class="img_whs6"> &nbsp;<img src="../image100.jpg" width="200px" height="175px" border="0" class="img_whs6"></p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Example:</b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs3"><img src="../image94.jpg" width="150px" height="129px" border="0" class="img_whs7"></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p class="whs8"><a NAME=cylinder
+	style="font-size: 14pt;"><img src="salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image100.gif" width="20px" height="20px" border="0" class="img_whs5"><b><font style="font-size: 14pt;"
+														size=4> Cylinder</font></b></a></p>
+
+<p class="whs8">&nbsp;</p>
+
+<p><b style="font-weight: bold;">Description:</b> Creates a cylinder.</p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Result:</b> GEOM_Shape (solid).</p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">TUI Command:</b> <i>geompy.MakeCylinder(PointStruct, 
+ DirStruct, Double, Double)</i></p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Arguments:</b></p>
+
+<ul type="disc" class="whs2">
+	
+	<li class=kadov-p><p><b style="font-weight: bold;"><span>1st Constructor:</b> 
+ 1 vertex + 1 edge + 2 values (Dimensions).</span></p></li>
+	
+	<li class=kadov-p><p><b style="font-weight: bold;"><span>2nd Constructor:</b> 
+ 2 values (Dimensions at origin).</span></p></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs3"><img src="../image101.jpg" width="200px" height="211px" border="0" class="img_whs9"> &nbsp;<img src="../image102.jpg" width="200px" height="211px" border="0" class="img_whs9"></p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Example:</b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs3"><img src="../image95.jpg" width="150px" height="142px" border="0" class="img_whs10"></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p class="whs4"><a NAME=sphere
+								style="font-size: 14pt;"><img src="salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image101.gif" width="20px" height="20px" border="0" class="img_whs5"><b><font style="font-size: 14pt;"
+						size=4> Sphere</font></b></a></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p><b style="font-weight: bold;">Description:</b> Creates a sphere.</p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Result:</b> GEOM_Shape (solid).</p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">TUI Command:</b> <i>geompy.MakeSphere(Double, 
+ Double, Double, Double)</i></p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Arguments:</b></p>
+
+<ul type="disc" class="whs2">
+	
+	<li class=kadov-p><p><b style="font-weight: bold;"><span>1st Constructor 
+ :</b> 1 vertex + 1 value (Radius).</span></p></li>
+	
+	<li class=kadov-p><p><b style="font-weight: bold;"><span>2nd Constructor 
+ :</b> 1 &nbsp;value 
+ (Radius from the origin).</span></p></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs3"><img src="../image103.jpg" width="200px" height="166px" border="0" class="img_whs11"> &nbsp;<img src="../image104.jpg" width="200px" height="166px" border="0" class="img_whs11"></p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Example:</b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs3"><img src="../image96.jpg" width="150px" height="137px" border="0" class="img_whs12"></p>
+
+<p class="whs13">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p class="whs4"><a NAME=torus
+								style="font-size: 14pt;"><img src="salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image102.gif" width="20px" height="20px" border="0" class="img_whs5"><b><font style="font-size: 14pt;"
+						size=4> Torus</font></b></a></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p><b style="font-weight: bold;">Description:</b> Creates a torus.</p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Result:</b> GEOM_Shape (solid).</p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">TUI Command:</b> <i>geompy.MakeTorus(PointStruct, 
+ DirStruct, Double, Double)</i></p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Arguments:</b></p>
+
+<ul type="disc" class="whs2">
+	
+	<li class=kadov-p><p><b style="font-weight: bold;"><span>1st Constructor:</b> 
+ 1 vertex + 1 edge (for direction) + 2 values (1 &amp; 2 Radius).</span></p></li>
+	
+	<li class=kadov-p><p><b style="font-weight: bold;">2nd Constructor:</b> 
+ 2 values (1 &amp; 2 Radius from the origin).</p></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs3"><img src="../image105.jpg" width="200px" height="211px" border="0" class="img_whs9"> &nbsp;<img src="../image106.jpg" width="200px" height="211px" border="0" class="img_whs9"></p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><img src="../image97.jpg" width="150px" height="96px" border="0" class="img_whs14"></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p class="whs4"><a NAME=cone
+								style="font-size: 14pt;"><img src="salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image103.gif" width="20px" height="20px" border="0" class="img_whs5"><b><font style="font-size: 14pt;"
+						size=4> Cone</font></b></a></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p><b style="font-weight: bold;">Description:</b> Creates a cone.</p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Result:</b> GEOM_Shape (SOLID).</p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">TUI Command:</b> <i>geompy.MakeCone(PointStruct, 
+ DirStruct, Double, Double, Double)</i></p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Arguments:</b></p>
+
+<ul type="disc" class="whs2">
+	
+	<li class=kadov-p><p><b style="font-weight: bold;"><span>1st Constructor:</b> 
+ 1 vertex + 1 edge (for direction) + 3 values (Radius of the base part, 
+ radius of the upper part, height).</span></p></li>
+	
+	<li class=kadov-p><p><b style="font-weight: bold;">2nd Constructor:</b> 
+ 3 values (Radius of the base part, radius of the upper part, height).</p></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs3"><img src="../image107.jpg" width="200px" height="229px" border="0" class="img_whs15"> &nbsp;<img src="../image108.jpg" width="200px" height="229px" border="0" class="img_whs15"></p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Example:</b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs16"><img src="../image98.jpg" width="150px" height="119px" border="0" class="img_whs17"></p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+
+</html>
