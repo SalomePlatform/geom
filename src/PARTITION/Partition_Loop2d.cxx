@@ -1,13 +1,15 @@
-using namespace std;
-//  File      : Partition_Loop2d.cxx
-//  Created   : Thu Aug 02 16:25:17 2001
-//  Author    : Benedicte MARTIN
-//  Project   : SALOME
-//  Module    : PARTITION
-//  Copyright : Open CASCADE
+//  GEOM PARTITION : partition algorithm
+//
+//  Copyright (C) 2003  CEA/DEN, EDF R&D
+//
+//
+//
+//  File   : Partition_Loop2d.cxx
+//  Author : Benedicte MARTIN
+//  Module : GEOM
 //  $Header$
 
-
+using namespace std;
 #include "Partition_Loop2d.ixx"
 
 #include "utilities.h"

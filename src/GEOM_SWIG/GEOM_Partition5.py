@@ -1,3 +1,12 @@
+#  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
+#
+#  Copyright (C) 2003  CEA/DEN, EDF R&D
+#
+#
+#
+#  File   : GEOM_Partition5.py
+#  Module : GEOM
+
 #%Make geometry (like CEA script (A4)) using Partition algorithm%
 # import gallery_01_GEOM
 # reload(gallery_01_GEOM)

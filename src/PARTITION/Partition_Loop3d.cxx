@@ -1,8 +1,13 @@
-using namespace std;
-//  File      : Partition_Loop3d.cxx
-//  Created   :	Mon Oct 21 09:47:19 2002
-//  Copyright : Open CASCADE
+//  GEOM PARTITION : partition algorithm
+//
+//  Copyright (C) 2003  CEA/DEN, EDF R&D
+//
+//
+//
+//  File   : Partition_Loop3d.cxx
+//  Module : GEOM
 
+using namespace std;
 #include "Partition_Loop3d.ixx"
 
 #include <TopExp_Explorer.hxx>

@@ -1,13 +1,32 @@
-using namespace std;
-//  File      : GeometryGUI_WhatisDlg.cxx
-//  Created   : Mon Mar 04 14:48:16 2002
-//  Author    : Nicolas REJNERI
-//  Project   : SALOME
-//  Module    : GEOM
-//  Copyright : Open CASCADE 2002
+//  GEOM GEOMGUI : GUI for Geometry component
+//
+//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// 
+//  This library is free software; you can redistribute it and/or 
+//  modify it under the terms of the GNU Lesser General Public 
+//  License as published by the Free Software Foundation; either 
+//  version 2.1 of the License. 
+// 
+//  This library is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//  Lesser General Public License for more details. 
+// 
+//  You should have received a copy of the GNU Lesser General Public 
+//  License along with this library; if not, write to the Free Software 
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// 
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//
+//
+//
+//  File   : GeometryGUI_WhatisDlg.cxx
+//  Author : Nicolas REJNERI
+//  Module : GEOM
 //  $Header$
 
-
+using namespace std;
 #include "GeometryGUI_WhatisDlg.h"
 
 #include "GeometryGUI.h"
@@ -16,7 +35,11 @@ using namespace std;
 #include "utilities.h"
 
 // Open CASCADE Includes
-#include <BRepTools_ShapeSet.hxx>
+//#include <BRepTools_ShapeSet.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopoDS_Iterator.hxx>
 
 // QT Includes
 #include <qtextview.h>
@@ -373,15 +396,50 @@ void GeometryGUI_WhatisDlg::CalculateWhatis(const TopoDS_Shape& S)
 
   if( S.IsNull() ) 
     return ;
-  
+
   TCollection_AsciiString Astr; 
   Astr = Astr + " Number of shapes in " + strdup(SelectedName.latin1()) + ": \n";
-  
+
   try {
-    BRepTools_ShapeSet BS;
-    BS.Add(S);
-    BS.DumpExtent(Astr);
-    
+    //     BRepTools_ShapeSet BS;
+    //     BS.Add(S);
+    //     BS.DumpExtent(Astr);
+
+    int iType, nbTypes [TopAbs_SHAPE];
+    for (iType = 0; iType < TopAbs_SHAPE; ++iType)
+      nbTypes[ iType ] = 0;
+    nbTypes[ S.ShapeType() ]++;
+
+    TopTools_MapOfShape aMapOfShape;
+    aMapOfShape.Add( S );
+    TopTools_ListOfShape aListOfShape;
+    aListOfShape.Append( S );
+
+    TopTools_ListIteratorOfListOfShape itL(aListOfShape);
+    for (; itL.More(); itL.Next())
+    {
+      TopoDS_Iterator it(itL.Value());
+      for (; it.More(); it.Next())
+      {
+        TopoDS_Shape s = it.Value();
+        if (aMapOfShape.Add( s ))
+        {
+          aListOfShape.Append( s );
+          nbTypes[ s.ShapeType() ] ++;
+        }
+      }
+    }
+
+    Astr = Astr + " VERTEX    : " + TCollection_AsciiString(nbTypes[ TopAbs_VERTEX    ]) + "\n";
+    Astr = Astr + " EDGE      : " + TCollection_AsciiString(nbTypes[ TopAbs_EDGE      ]) + "\n";
+    Astr = Astr + " WIRE      : " + TCollection_AsciiString(nbTypes[ TopAbs_WIRE      ]) + "\n";
+    Astr = Astr + " FACE      : " + TCollection_AsciiString(nbTypes[ TopAbs_FACE      ]) + "\n";
+    Astr = Astr + " SHELL     : " + TCollection_AsciiString(nbTypes[ TopAbs_SHELL     ]) + "\n";
+    Astr = Astr + " SOLID     : " + TCollection_AsciiString(nbTypes[ TopAbs_SOLID     ]) + "\n";
+    Astr = Astr + " COMPSOLID : " + TCollection_AsciiString(nbTypes[ TopAbs_COMPSOLID ]) + "\n";
+    Astr = Astr + " COMPOUND  : " + TCollection_AsciiString(nbTypes[ TopAbs_COMPOUND  ]) + "\n";
+    Astr = Astr + " SHAPE     : " + TCollection_AsciiString(aMapOfShape.Extent()) + "\n";
+
     Text->setText( Astr.ToCString() );
   }
   catch(Standard_Failure) {

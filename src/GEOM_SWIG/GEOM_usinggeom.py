@@ -1,11 +1,30 @@
-#==============================================================================
-#  File      : GEOM_usinggeom.py
-#  Created   : mon apr 22 11:55:00 CET 2002
-#  Author    : Damien COQUERET, Open CASCADE
-#  Project   : SALOME
-#  Copyright : Open CASCADE, 2002
+#  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
+#
+#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+# 
+#  This library is free software; you can redistribute it and/or 
+#  modify it under the terms of the GNU Lesser General Public 
+#  License as published by the Free Software Foundation; either 
+#  version 2.1 of the License. 
+# 
+#  This library is distributed in the hope that it will be useful, 
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+#  Lesser General Public License for more details. 
+# 
+#  You should have received a copy of the GNU Lesser General Public 
+#  License along with this library; if not, write to the Free Software 
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+# 
+#  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+#
+#
+#
+#  File   : GEOM_usinggeom.py
+#  Author : Damien COQUERET, Open CASCADE
+#  Module : GEOM
 #  $Header$
-#==============================================================================
 
 import salome
 import geompy
@@ -121,7 +140,7 @@ for Shape in ShapeListSewing :
 #Create advanced objects
 Copy       = geompy.MakeCopy(Box)                                               #(GEOM_Shape_ptr)->GEOM_Shape_ptr
 Prism      = geompy.MakePrism(Face, p0, pz)                                     #(GEOM_Shape_ptr, PointStruct, PointStruct)->GEOM_Shape_ptr
-Revolution = geompy.MakeRevolution(Face, az, angle2)                            #(GEOM_Shape_ptr, AxisStruct, Double)->GEOM_Shape_ptr
+#Revolution = geompy.MakeRevolution(Face, az, angle2)                            #(GEOM_Shape_ptr, AxisStruct, Double)->GEOM_Shape_ptr
 Filling    = geompy.MakeFilling(Compound, mindeg, maxdeg, tol3d, tol2d, nbiter) #(GEOM_Shape_ptr, Short, Short, Double, Double, Short)->GEOM_Shape_ptr
 Pipe       = geompy.MakePipe(Edge, Wire)                                        #(GEOM_Shape_ptr, GEOM_Shape_ptr)->GEOM_Shape_ptr
 Sewing     = geompy.MakeSewing(IORListSewing, precision)                        #(ListOfIOR, Double)->GEOM_Shape_ptr
@@ -199,7 +218,7 @@ id_Section      = geompy.addToStudy(Section,      "Section")
 
 id_Copy         = geompy.addToStudy(Copy,         "Copy")
 id_Prism        = geompy.addToStudy(Prism,        "Prism")
-id_Revolution   = geompy.addToStudy(Revolution,   "Revolution")
+#id_Revolution   = geompy.addToStudy(Revolution,   "Revolution")
 id_Filling      = geompy.addToStudy(Filling,      "Filling")
 id_Pipe         = geompy.addToStudy(Pipe,         "Pipe")
 id_Sewing       = geompy.addToStudy(Sewing,       "Sewing")

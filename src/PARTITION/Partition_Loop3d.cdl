@@ -1,6 +1,11 @@
--- File:	Partition_Loop3d.cdl
--- Created:	Mon Oct 21 09:47:19 2002
----Copyright:	 OPEN CASCADE 2002
+--  GEOM PARTITION : partition algorithm
+--
+--  Copyright (C) 2003  CEA/DEN, EDF R&D
+--
+--
+--
+--  File   : Partition_Loop3d.cdl
+--  Module : GEOM
 
 class Loop3d from Partition
 

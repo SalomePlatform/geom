@@ -1,22 +1,35 @@
-//  File      : GEOM_Actor.h
-//  Created   : Wed Feb 20 17:24:59 2002
-//  Author    : Christophe ATTANASIO
-//  Project   : SALOME
-//  Module    : GEOM
-//  Copyright : Open CASCADE 2002
+//  GEOM OBJECT : interactive object for Geometry entities visualization
+//
+//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// 
+//  This library is free software; you can redistribute it and/or 
+//  modify it under the terms of the GNU Lesser General Public 
+//  License as published by the Free Software Foundation; either 
+//  version 2.1 of the License. 
+// 
+//  This library is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//  Lesser General Public License for more details. 
+// 
+//  You should have received a copy of the GNU Lesser General Public 
+//  License along with this library; if not, write to the Free Software 
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// 
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//
+//
+//
+//  File   : GEOM_Actor.h
+//  Author : Christophe ATTANASIO
+//  Module : GEOM
 //  $Header$
-
 
 #ifndef GEOM_ACTOR_H
 #define GEOM_ACTOR_H
 
 #include "SALOME_Actor.h"
-
-//VTK
-#include <vtkMapper.h>
-#include <vtkProperty.h>
-#include <vtkMatrix4x4.h>
-#include <vtkCamera.h>
 
 //OpenCASCADE
 #include <TopoDS_Shape.hxx>
@@ -107,8 +120,6 @@ class VTKOCC_EXPORT GEOM_Actor : public SALOME_Actor {
   vtkProperty* ShadingProperty;
   vtkProperty* WireframeProperty;
   vtkProperty* HighlightProperty;
-
-  int myDisplayMode;
 
 };
 #endif //GEOM_ACTOR_H
