@@ -31,7 +31,7 @@ function delayReload()
 	}
 }
 
-var gsToolbarOrder = "toc|idx|fts|glo|blankblock|searchform|banner";
+var gsToolbarOrder = "toc|fts|glo|blankblock|searchform|banner";
 var gsMinibarOrder = "blankblock|hide2|";
 
 var gsTopic = "files/introduction_to_geom.htm";
