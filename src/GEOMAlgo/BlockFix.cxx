@@ -92,7 +92,7 @@ static void FixResult(const TopoDS_Shape& result,
           }
         }
         
-        isDone |= sfw->FixLacking();
+        //isDone |= sfw->FixLacking(); // commented by skl 22.03.2005 (PAL8395)
         
         // remove neighbour seam edges 
         if(isDone) {
