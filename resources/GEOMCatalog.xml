@@ -16,7 +16,7 @@
         <component-username>Geometry</component-username>
         <component-type>Geom</component-type>
         <component-author>NRI</component-author>
-        <component-version>2.2.0</component-version>
+        <component-version>2.2.1</component-version>
         <component-comment>Geometry component</component-comment>
         <component-multistudy>1</component-multistudy>
         <component-icone>ModuleGeom.png</component-icone>
@@ -526,7 +526,7 @@
             <component-username>GEOM_Superv</component-username>
             <component-type>OTHER</component-type>
             <component-author>mkr</component-author>
-            <component-version>2.2.0</component-version>
+            <component-version>2.2.1</component-version>
             <component-comment>Supervision wrapper for Geometry component</component-comment>
             <component-multistudy>1</component-multistudy>
             <component-icone></component-icone>
