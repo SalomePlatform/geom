@@ -338,5 +338,8 @@ msgstr "multirotation.png"
 msgid "ICON_DLG_MULTIROTATION_DOUBLE"
 msgstr "multirotationdouble.png"
 
+#EllipseDlg
+msgid "ICON_DLG_ELLIPSE_PV"
+msgstr "ellipsepointvector.png"
 
 

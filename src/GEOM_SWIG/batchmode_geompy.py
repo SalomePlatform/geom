@@ -1,13 +1,13 @@
-#==============================================================================
-#  File      : geompy.py
-#  Created   : sam nov 10 00:49:10 CET 2001
-#  Author    : Paul RASCLE, EDF
-#  Project   : SALOME
-#  Copyright : EDF 2001
+#  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
+#
+#  Copyright (C) 2003  CEA/DEN, EDF R&D
+#
+#
+#
+#  File   : geompy.py
+#  Author : Paul RASCLE, EDF
+#  Module : GEOM
 #  $Header$
-#==============================================================================
-
-#--------------------------------------------------------------------------
 
 from batchmode_salome import *
 

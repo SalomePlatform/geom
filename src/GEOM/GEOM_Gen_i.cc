@@ -1,11 +1,32 @@
-using namespace std;
-// File :      GEOM_GEN_i.cc file
-// Created :   
-// Author :    Lucien PIGNOLONI
-// Project :   SALOME
-// Copyright : OPEN CASCADE
-// $Header$
+//  GEOM GEOM : implementaion of GEOM_Gen.idl and GEOM_Shape.idl
+//
+//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// 
+//  This library is free software; you can redistribute it and/or 
+//  modify it under the terms of the GNU Lesser General Public 
+//  License as published by the Free Software Foundation; either 
+//  version 2.1 of the License. 
+// 
+//  This library is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//  Lesser General Public License for more details. 
+// 
+//  You should have received a copy of the GNU Lesser General Public 
+//  License along with this library; if not, write to the Free Software 
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// 
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//
+//
+//
+//  File   : GEOM_GEN_i.cc file
+//  Author : Lucien PIGNOLONI
+//  Module : GEOM
+//  $Header$
 
+using namespace std;
 #include "GEOM_Gen_i.hh"
 
 #include "Partition_Spliter.hxx"
@@ -22,6 +43,7 @@ using namespace std;
 
 #include <gp_Circ.hxx>
 #include <gp_Pln.hxx>
+#include <gp_Elips.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_Line.hxx>
 #include <GeomFill_Line.hxx>
@@ -165,7 +187,8 @@ GEOM_Gen_i::~GEOM_Gen_i() {
 //============================================================================
 char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 					 const char* IORString,
-					 CORBA::Boolean isMultiFile)
+					 CORBA::Boolean isMultiFile,
+					 CORBA::Boolean isASCII)
 {
   GEOM::GEOM_Shape_var aShape = GEOM::GEOM_Shape::_narrow(_orb->string_to_object(IORString));
   if (!CORBA::is_nil(aShape)) {
@@ -183,7 +206,8 @@ char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 //============================================================================
 char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
 					 const char* aLocalPersistentID,
-					 CORBA::Boolean isMultiFile) 
+					 CORBA::Boolean isMultiFile,
+					 CORBA::Boolean isASCII) 
 { 
   SALOMEDS::Study_var myStudy = theSObject->GetStudy();
   GetCurrentStudy(myStudy->StudyId());
@@ -221,7 +245,7 @@ char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
       CORBA::String_var ent = strdup(entry.ToCString());
       
       /* Create the main object recursively */
-      MainIOR = LocalPersistentIDToIOR(theSObject, ent, isMultiFile ) ;
+      MainIOR = LocalPersistentIDToIOR(theSObject, ent, isMultiFile, isASCII) ;
     } else {
       GC.ReturnNameIOR( mainLabel, MainIOR ); 
     }
@@ -427,21 +451,38 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   return aStreamFile._retn();
 }
 
+SALOMEDS::TMPFile* GEOM_Gen_i::SaveASCII(SALOMEDS::SComponent_ptr theComponent,
+					 const char* theURL,
+					 bool isMultiFile) {
+  SALOMEDS::TMPFile_var aStreamFile = Save(theComponent, theURL, isMultiFile);
+  return aStreamFile._retn();
+}
+
+
 CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
 				const SALOMEDS::TMPFile& theStream,
 				const char* theURL,
 				bool isMultiFile) {
+
+  if (theStream.length() <= 9) {
+    MESSAGE("The TMPFile is too short : " << theStream.length() << " bytes ");
+    return false;
+  }
+
   // Get a temporary directory for a file
   TCollection_AsciiString aTmpDir = isMultiFile?TCollection_AsciiString((char*)theURL):SALOMEDS_Tool::GetTmpDir();
   // Conver the byte stream theStream to a file and place it in tmp directory
   SALOMEDS::ListOfFileNames_var aSeq = SALOMEDS_Tool::PutStreamToFiles(theStream,
 								       aTmpDir.ToCString(),
 								       isMultiFile);
+
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt(aSeq[0]);
   TCollection_AsciiString aFullName = aTmpDir + aNameWithExt;
+
   // Open document
   if (myOCAFApp->Open(aFullName, myCurrentOCAFDoc) != CDF_RS_OK) return false;
+
   // Remove the created file and tmp directory
   if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.ToCString(), aSeq.in(), true);
 
@@ -451,12 +492,20 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   int StudyID = Study->StudyId();
   myStudyIDToDoc.Bind( StudyID, myCurrentOCAFDoc );  
   myStudyID = StudyID;
+    
   /* We clear all IOR (nameIOR) attributes of all objects before reconstruction */
   /* This information will be setted when each object is reconstructed          */
   GEOMDS_Commands GC( myCurrentOCAFDoc->Main() ) ;
   GC.ClearAllIOR(myCurrentOCAFDoc->Main());
 
   return true;
+}
+
+CORBA::Boolean GEOM_Gen_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
+				     const SALOMEDS::TMPFile& theStream,
+				     const char* theURL,
+				     bool isMultiFile) {
+  return Load(theComponent, theStream, theURL, isMultiFile);
 }
 
 //  //============================================================================
@@ -2500,8 +2549,6 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeCylinder(const GEOM::PointStruct& pstruct,
   return result ;  
 }
 
-
-
 //================================================================================
 // function : MakeSphere()
 // purpose  : Make a sphere topology
@@ -2529,8 +2576,6 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSphere(CORBA::Double x1,
   result->ShapeId(entry);
   return result;  
 }
-
-
 
 //================================================================================
 // function : MakeTorus()
@@ -3664,6 +3709,41 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeCircle(const GEOM::PointStruct& pstruct,
 }
 
 //================================================================================
+// function : MakeEllipse()
+// purpose  : 
+//================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeEllipse( const GEOM::PointStruct& pstruct,
+					      const GEOM::DirStruct& dstruct,
+					      CORBA::Double radius_major,
+					      CORBA::Double radius_minor )
+  throw (SALOME::SALOME_Exception) 
+{
+  GEOM::GEOM_Shape_var result;
+  TopoDS_Shape tds ;
+  
+  try {
+    gp_Pnt p(pstruct.x, pstruct.y, pstruct.z) ;
+    gp_Dir d(dstruct.PS.x, dstruct.PS.y, dstruct.PS.z) ;
+
+    const gp_Ax2 axis(p, d) ;
+    gp_Elips anEllipse( axis, radius_major, radius_minor ) ;
+    BRepBuilderAPI_MakeEdge MakeEdge( anEllipse );
+    tds = MakeEdge.Edge();
+
+  }
+  catch(Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeEllipse", SALOME::BAD_PARAM);
+  }
+  if (tds.IsNull()) {
+    THROW_SALOME_CORBA_EXCEPTION("Make Ellipse aborted", SALOME::BAD_PARAM);
+  } 
+  result = CreateObject(tds);
+  const char *entry = InsertInLabel(tds, result->Name(), myCurrentOCAFDoc) ;
+  result->ShapeId(entry);
+  return result ;  
+}
+
+//================================================================================
 // function : MakeArc()
 // purpose  : make an arc of circle from pInit to pEnd and passing on pCircle
 //================================================================================
@@ -4050,8 +4130,8 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeMirrorByPlane(GEOM::GEOM_Shape_ptr myShape,
   /* Insert arguments in ocaf */
   GEOM::GEOM_Gen::ListOfIOR_var ListShapes = new GEOM::GEOM_Gen::ListOfIOR;
   ListShapes->length(2);
-  ListShapes[0] = GetStringFromIOR(myShape) ;
-  ListShapes[1] = GetStringFromIOR(shapePlane) ;
+  ListShapes[0] = GetStringFromIOR(GEOM::GEOM_Shape::_duplicate(myShape)) ;
+  ListShapes[1] = GetStringFromIOR(GEOM::GEOM_Shape::_duplicate(shapePlane)) ;
   InsertInLabelMoreArguments(tds, result, ListShapes, myCurrentOCAFDoc) ;
   return result ;
 }
@@ -4318,8 +4398,8 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePipe( GEOM::GEOM_Shape_ptr pathShape,
     /* Insert arguments in ocaf */
     GEOM::GEOM_Gen::ListOfIOR_var ListShapes = new GEOM::GEOM_Gen::ListOfIOR;
     ListShapes->length(2);
-    ListShapes[0] = GetStringFromIOR(pathShape) ;
-    ListShapes[1] = GetStringFromIOR(baseShape) ;    
+    ListShapes[0] = GetStringFromIOR(GEOM::GEOM_Shape::_duplicate(pathShape)) ;
+    ListShapes[1] = GetStringFromIOR(GEOM::GEOM_Shape::_duplicate(baseShape)) ;    
     InsertInLabelMoreArguments(tds, result, ListShapes, myCurrentOCAFDoc) ;
   }
   return result ;
@@ -4849,11 +4929,8 @@ extern "C"
 						const char *instanceName, 
 						const char * interfaceName)
   {
-MESSAGE("mygeom")
    GEOM_Gen_i * myGEOM_Gen_i = new GEOM_Gen_i(orb, poa, contId, instanceName, interfaceName);
-MESSAGE("mygeom")
    myGEOM_Gen_i->register_name("/myGEOM_Gen"); // NRI : 11/07/2002 : Add for Supervision example 
-MESSAGE("mygeom")
    return myGEOM_Gen_i->getId() ;
   }
 }

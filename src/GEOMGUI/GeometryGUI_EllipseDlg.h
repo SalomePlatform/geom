@@ -1,7 +1,6 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+//  Copyright (C) 2003  OPEN CASCADE 
 // 
 //  This library is free software; you can redistribute it and/or 
 //  modify it under the terms of the GNU Lesser General Public 
@@ -21,97 +20,95 @@
 //
 //
 //
-//  File   : GeometryGUI_BoxDlg.h
-//  Author : Lucien PIGNOLONI
+//  File   : GeometryGUI_EllipseDlg.h
+//  Author : Nicolas REJNERI
 //  Module : GEOM
 //  $Header$
 
-#ifndef DIALOGBOX_BOX_H
-#define DIALOGBOX_BOX_H
+#ifndef GEOMETRYGUI_ELLIPSE_H
+#define GEOMETRYGUI_ELLIPSE_H
 
 #include "SALOME_Selection.h"
 #include "GEOM_ShapeTypeFilter.hxx"
+#include "GEOM_EdgeFilter.hxx"
+#include "GeometryGUI_SpinBox.h"
 
 #include <gp_Pnt.hxx>
-#include <BRepPrimAPI_MakeBox.hxx>
-#include <Precision.hxx>
+#include <gp_Dir.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
 
 #include <qvariant.h>
 #include <qdialog.h>
-#include <qwidget.h>
 
 class QVBoxLayout; 
 class QHBoxLayout; 
 class QGridLayout; 
 class QButtonGroup;
-class QFrame;
 class QGroupBox;
+class QLabel;
 class QLineEdit;
 class QPushButton;
 class QRadioButton;
-class QLabel;
-class QPushButton;
-class GeometryGUI_SpinBox;
+class QSpinBox;
 class GeometryGUI;
 
 
 //=================================================================================
-// class    : GeometryGUI_BoxDlg
+// class    : GeometryGUI_EllipseDlg
 // purpose  :
 //=================================================================================
-class GeometryGUI_BoxDlg : public QDialog
+class GeometryGUI_EllipseDlg : public QDialog
 { 
     Q_OBJECT
 
 public:
-    GeometryGUI_BoxDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
-    ~GeometryGUI_BoxDlg();
+    GeometryGUI_EllipseDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    ~GeometryGUI_EllipseDlg();
 
 private :
- 
+
     void closeEvent( QCloseEvent* e ) ;
     void enterEvent( QEvent* e );
     void Init(SALOME_Selection* Sel) ;
-    bool TestBoxDimensions( gp_Pnt P1, gp_Pnt P2 ) ;
+    void MakeEllipseSimulationAndDisplay() ;
 
-    GEOM::GEOM_Gen_var myGeom ;                /* Current GeomI object */
+    GEOM::GEOM_Gen_var    myGeom ;                /* Current GeomI object */
     GeometryGUI*          myGeomGUI ;             /* Current GeomGUI object */
     TopoDS_Shape          mySimulationTopoDs ;    /* Shape used for simulation display */
-    SALOME_Selection*     mySelection ;           /* User shape selection */    
-    gp_Pnt                myPoint1 ;              /* Points containing the vector */    
-    gp_Pnt                myPoint2 ;
-    bool                  myOkPoint1 ;            /* true when myPoint is defined */
-    bool                  myOkPoint2 ;
+    SALOME_Selection*     mySelection ;           /* User shape selection */   
+ 
+    gp_Pnt                myPoint ;               /* Central point of ellipse */   
+    bool                  myOkPoint ;             /* true when myPoint is defined */
+
+    gp_Dir                myDir ;                 /* to set normal axis of ellipse */
+    bool                  myOkDir ;               /* true when myPoint is defined */
+    
+    Standard_Real         myMajorRadius ;
+    Standard_Real         myMinorRadius ;
+
     int                   myConstructorId ;       /* Current constructor id = radio button id */ 
     QLineEdit*            myEditCurrentArgument;  /* Current LineEdit */
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;  /* filter for selection */
 
+    Handle(GEOM_ShapeTypeFilter) myVertexFilter;  /* filter for selection */
+    Handle(GEOM_EdgeFilter)      myEdgeFilter;    /* filter for selection */
 
     QButtonGroup* GroupConstructors;
     QRadioButton* Constructor1;
-    QRadioButton* Constructor2;
-
     QGroupBox* GroupButtons;
     QPushButton* buttonApply;
-    QPushButton* buttonOk;
     QPushButton* buttonCancel;
-
-    QGroupBox* GroupPoints;
-    QPushButton* SelectButtonPt1;    
-    QPushButton* SelectButtonPt2;
-    QLineEdit* LineEditPt2;
-    QLineEdit* LineEditPt1;
-    QLabel* TextLabelPt1;
-    QLabel* TextLabelPt2;
-
-    QGroupBox* GroupDimensions ;    
-    QLabel* TextLabel_DX ;
-    QLabel* TextLabel_DY ;
-    QLabel* TextLabel_DZ ;
-
-    GeometryGUI_SpinBox* SpinBox_DX ;
-    GeometryGUI_SpinBox* SpinBox_DY ;
-    GeometryGUI_SpinBox* SpinBox_DZ ;
+    QPushButton* buttonOk;
+    QGroupBox* GroupC1;
+    QLineEdit* LineEditC1A1;
+    QLineEdit* LineEditC1A2;
+    QLabel* TextLabelC1A1;
+    QLabel* TextLabelC1A4;
+    QLabel* TextLabelC1A3;
+    QLabel* TextLabelC1A2;
+    QPushButton* SelectButtonC1A1;
+    QPushButton* SelectButtonC1A2;
+    GeometryGUI_SpinBox* SpinBox_C1A3;
+    GeometryGUI_SpinBox* SpinBox_C1A4;
 
 private slots:
 
@@ -124,16 +121,13 @@ private slots:
     void LineEditReturnPressed() ;
     void DeactivateActiveDialog() ;
     void ActivateThisDialog() ;
-    void ValueChangedInSpinBox( double newValue ) ;
+    void ValueChangedInSpinBox(double newValue) ;
 
 protected:
-
-    QGridLayout* GeometryGUI_BoxDlgLayout;
+    QGridLayout* GeometryGUI_EllipseDlgLayout;
     QGridLayout* GroupConstructorsLayout;
     QGridLayout* GroupButtonsLayout;
-    QGridLayout* GroupPointsLayout;
-    QGridLayout* GroupDimensionsLayout;
-
+    QGridLayout* GroupC1Layout;
 };
 
-#endif // DIALOGBOX_BOX_H
+#endif // GEOMETRYGUI_ELLIPSE_H

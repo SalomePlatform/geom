@@ -1,7 +1,6 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+//  Copyright (C) 2003  OPEN CASCADE 
 // 
 //  This library is free software; you can redistribute it and/or 
 //  modify it under the terms of the GNU Lesser General Public 
@@ -21,65 +20,61 @@
 //
 //
 //
-//  File   : GeometryGUI_OrientationDlg.cxx
-//  Author : Lucien PIGNOLONI
+//  File   : GeometryGUI_EllipseDlg.cxx
+//  Author : Nicolas REJNERI
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
-#include "GeometryGUI_OrientationDlg.h"
+#include "GeometryGUI_EllipseDlg.h"
 
 #include "GeometryGUI.h"
+#include "gp_Elips.hxx"
 #include "QAD_Application.h"
 #include "QAD_Desktop.h"
 #include "QAD_Config.h"
 #include "utilities.h"
 
-#include <TopoDS_Compound.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepBuilderAPI_MakeEdge.hxx>
-#include <BRepAdaptor_Surface.hxx>
-#include <TopExp_Explorer.hxx>
+#include <BRepAdaptor_Curve.hxx>
 
 #include <qbuttongroup.h>
-#include <qcheckbox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
+#include <qspinbox.h>
 #include <qlayout.h>
 #include <qvariant.h>
 #include <qtooltip.h>
-#include <qvalidator.h>
 #include <qwhatsthis.h>
 #include <qimage.h>
 #include <qpixmap.h>
 
 //=================================================================================
-// class    : GeometryGUI_OrientationDlg()
-// purpose  : Constructs a GeometryGUI_OrientationDlg which is a child of 'parent', with the 
+// class    : GeometryGUI_EllipseDlg()
+// purpose  : Constructs a GeometryGUI_EllipseDlg which is a child of 'parent', with the 
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GeometryGUI_OrientationDlg::GeometryGUI_OrientationDlg( QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl )
-    : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
+GeometryGUI_EllipseDlg::GeometryGUI_EllipseDlg( QWidget* parent,  const char* name, SALOME_Selection* Sel, bool modal, WFlags fl )
+    : QDialog( parent, name, modal, fl )
 {
-    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_ORIENTATION")));
+    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_ELLIPSE_PV")));
     QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
+
     if ( !name )
-	setName( "GeometryGUI_OrientationDlg" );
-    resize( 303, 242 ); 
-    setCaption( tr( "GEOM_ORIENTATION_TITLE"  ) );
-    setSizeGripEnabled( TRUE );
-    GeometryGUI_OrientationDlgLayout = new QGridLayout( this ); 
-    GeometryGUI_OrientationDlgLayout->setSpacing( 6 );
-    GeometryGUI_OrientationDlgLayout->setMargin( 11 );
+	setName( "GeometryGUI_EllipseDlg" );
+    resize( 303, 285 ); 
+    setCaption( tr( "GEOM_ELLIPSE_TITLE"  ) );
+  
+    GeometryGUI_EllipseDlgLayout = new QGridLayout( this ); 
+    GeometryGUI_EllipseDlgLayout->setSpacing( 6 );
+    GeometryGUI_EllipseDlgLayout->setMargin( 11 );
     
     /***************************************************************/
     GroupConstructors = new QButtonGroup( this, "GroupConstructors" );
-    GroupConstructors->setTitle( tr( "GEOM_ORIENTATION"  ) );
+    GroupConstructors->setTitle( tr( "GEOM_ELLIPSE"  ) );
     GroupConstructors->setExclusive( TRUE );
     GroupConstructors->setColumnLayout(0, Qt::Vertical );
     GroupConstructors->layout()->setSpacing( 0 );
@@ -97,12 +92,12 @@ GeometryGUI_OrientationDlg::GeometryGUI_OrientationDlg( QWidget* parent, const c
     GroupConstructorsLayout->addWidget( Constructor1, 0, 0 );
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     GroupConstructorsLayout->addItem( spacer, 0, 1 );
-    GeometryGUI_OrientationDlgLayout->addWidget( GroupConstructors, 0, 0 );    
+    GeometryGUI_EllipseDlgLayout->addWidget( GroupConstructors, 0, 0 );
     
     /***************************************************************/
     GroupButtons = new QGroupBox( this, "GroupButtons" );
-    GroupButtons->setGeometry( QRect( 10, 10, 281, 48 ) ); 
     GroupButtons->setTitle( tr( ""  ) );
+    GroupButtons->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)5, GroupButtons->sizePolicy().hasHeightForWidth() ) );
     GroupButtons->setColumnLayout(0, Qt::Vertical );
     GroupButtons->layout()->setSpacing( 0 );
     GroupButtons->layout()->setMargin( 0 );
@@ -110,27 +105,27 @@ GeometryGUI_OrientationDlg::GeometryGUI_OrientationDlg( QWidget* parent, const c
     GroupButtonsLayout->setAlignment( Qt::AlignTop );
     GroupButtonsLayout->setSpacing( 6 );
     GroupButtonsLayout->setMargin( 11 );
+    buttonApply = new QPushButton( GroupButtons, "buttonApply" );
+    buttonApply->setText( tr( "GEOM_BUT_APPLY"  ) );
+    buttonApply->setAutoDefault( TRUE );
+    buttonApply->setDefault( TRUE );
+    GroupButtonsLayout->addWidget( buttonApply, 0, 2 );
     buttonCancel = new QPushButton( GroupButtons, "buttonCancel" );
     buttonCancel->setText( tr( "GEOM_BUT_CLOSE"  ) );
     buttonCancel->setAutoDefault( TRUE );
     GroupButtonsLayout->addWidget( buttonCancel, 0, 3 );
-    buttonApply = new QPushButton( GroupButtons, "buttonApply" );
-    buttonApply->setText( tr( "GEOM_BUT_APPLY"  ) );
-    buttonApply->setAutoDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonApply, 0, 1 );
-    QSpacerItem* spacer_9 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupButtonsLayout->addItem( spacer_9, 0, 2 );
+    QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    GroupButtonsLayout->addItem( spacer_2, 0, 1 );
     buttonOk = new QPushButton( GroupButtons, "buttonOk" );
     buttonOk->setText( tr( "GEOM_BUT_OK"  ) );
     buttonOk->setAutoDefault( TRUE );
-    buttonOk->setDefault( TRUE );
     GroupButtonsLayout->addWidget( buttonOk, 0, 0 );
-    GeometryGUI_OrientationDlgLayout->addWidget( GroupButtons, 2, 0 );
+    GeometryGUI_EllipseDlgLayout->addWidget( GroupButtons, 2, 0 );
 
     /***************************************************************/
     GroupC1 = new QGroupBox( this, "GroupC1" );
     GroupC1->setTitle( tr( "GEOM_ARGUMENTS"  ) );
-    GroupC1->setMinimumSize( QSize( 0, 0 ) );
+    GroupC1->setMinimumSize( QSize( 0, 150 ) );
     GroupC1->setFrameShape( QGroupBox::Box );
     GroupC1->setFrameShadow( QGroupBox::Sunken );
     GroupC1->setColumnLayout(0, Qt::Vertical );
@@ -142,104 +137,128 @@ GeometryGUI_OrientationDlg::GeometryGUI_OrientationDlg( QWidget* parent, const c
     GroupC1Layout->setMargin( 11 );
     LineEditC1A1 = new QLineEdit( GroupC1, "LineEditC1A1" );
     GroupC1Layout->addWidget( LineEditC1A1, 0, 2 );
+    LineEditC1A2 = new QLineEdit( GroupC1, "LineEditC1A2" );
+    GroupC1Layout->addWidget( LineEditC1A2, 1, 2 );
+    TextLabelC1A1 = new QLabel( GroupC1, "TextLabelC1A1" );
+    TextLabelC1A1->setText( tr( "GEOM_CENTER"  ) );
+    TextLabelC1A1->setMinimumSize( QSize( 50, 0 ) );
+    TextLabelC1A1->setFrameShape( QLabel::NoFrame );
+    TextLabelC1A1->setFrameShadow( QLabel::Plain );
 
-    /* Spin box construction */
-    SpinBox_C1A2 = new GeometryGUI_SpinBox( GroupC1, "GeomSpinBox_C1A2" ) ;
-    GroupC1Layout->addWidget( SpinBox_C1A2, 1, 2 );
-    
+    GroupC1Layout->addWidget( TextLabelC1A1, 0, 0 );
+    TextLabelC1A4 = new QLabel( GroupC1, "TextLabelC1A4" );
+    TextLabelC1A4->setText( tr( "GEOM_RADIUS_MINOR"  ) );
+    TextLabelC1A4->setMinimumSize( QSize( 50, 0 ) );
+    GroupC1Layout->addMultiCellWidget( TextLabelC1A4, 3, 3, 0, 1 );
+
+    TextLabelC1A3 = new QLabel( GroupC1, "TextLabelC1A3" );
+    TextLabelC1A3->setText( tr( "GEOM_RADIUS_MAJOR"  ) );
+    TextLabelC1A3->setMinimumSize( QSize( 50, 0 ) );
+    GroupC1Layout->addWidget( TextLabelC1A3, 2, 0 );
+
+    TextLabelC1A2 = new QLabel( GroupC1, "TextLabelC1A2" );
+    TextLabelC1A2->setText( tr( "GEOM_VECTOR"  ) );
+    TextLabelC1A2->setMinimumSize( QSize( 50, 0 ) );
+
+    GroupC1Layout->addWidget( TextLabelC1A2, 1, 0 );
     SelectButtonC1A1 = new QPushButton( GroupC1, "SelectButtonC1A1" );
     SelectButtonC1A1->setText( tr( ""  ) );
     SelectButtonC1A1->setPixmap( image1 );
     SelectButtonC1A1->setToggleButton( FALSE );
     GroupC1Layout->addWidget( SelectButtonC1A1, 0, 1 );
-    TextLabelC1A1 = new QLabel( GroupC1, "TextLabelC1A1" );
-    TextLabelC1A1->setText( tr( "GEOM_OBJECT"  ) );
-    TextLabelC1A1->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC1A1->setFrameShape( QLabel::NoFrame );
-    TextLabelC1A1->setFrameShadow( QLabel::Plain );
-    GroupC1Layout->addWidget( TextLabelC1A1, 0, 0 );
-    TextLabelC1A2 = new QLabel( GroupC1, "TextLabelC1A2" );
-    TextLabelC1A2->setText( tr( "GEOM_VECTOR_LENGTH"  ) );
-    TextLabelC1A2->setMinimumSize( QSize( 50, 0 ) );
-    GroupC1Layout->addWidget( TextLabelC1A2, 1, 0 );
-    CheckBoxReverse = new QCheckBox( GroupC1, "CheckBoxReverse" );
-    CheckBoxReverse->setText( tr( "GEOM_ORIENTATION_OPT"  ) );
-    GroupC1Layout->addMultiCellWidget( CheckBoxReverse, 2, 2, 0, 2 );
-    GeometryGUI_OrientationDlgLayout->addWidget( GroupC1, 1, 0 );
+    SelectButtonC1A2 = new QPushButton( GroupC1, "SelectButtonC1A2" );
+    SelectButtonC1A2->setText( tr( ""  ) );
+    SelectButtonC1A2->setPixmap( image1 );
+    GroupC1Layout->addWidget( SelectButtonC1A2, 1, 1 );
+
+    SpinBox_C1A3 = new GeometryGUI_SpinBox( GroupC1, "GeomSpinBox_C1A3" );
+    GroupC1Layout->addWidget( SpinBox_C1A3, 2, 2 ) ;
+    SpinBox_C1A4 = new GeometryGUI_SpinBox( GroupC1, "GeomSpinBox_C1A4" );
+    GroupC1Layout->addWidget( SpinBox_C1A4, 3, 2 );
+
+    GeometryGUI_EllipseDlgLayout->addWidget( GroupC1, 1, 0 );
     /***************************************************************/
 
     Init(Sel) ; /* Initialisations */
-
 }
 
+
 //=================================================================================
-// function : ~GeometryGUI_OrientationDlg()
+// function : ~GeometryGUI_EllipseDlg()
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
-GeometryGUI_OrientationDlg::~GeometryGUI_OrientationDlg()
+GeometryGUI_EllipseDlg::~GeometryGUI_EllipseDlg()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
+
 
 
 //=================================================================================
 // function : Init()
 // purpose  :
 //=================================================================================
-void GeometryGUI_OrientationDlg::Init( SALOME_Selection* Sel )
+void GeometryGUI_EllipseDlg::Init( SALOME_Selection* Sel )
 {
-
   double step ;
   QString St = QAD_CONFIG->getSetting( "Geometry:SettingsGeomStep" ) ;
   step = St.toDouble() ;
 
   /* min, max, step and decimals for spin boxes */
-  SpinBox_C1A2->RangeStepAndValidator( 0.001, 999.999, step, 3 ) ;
-  SpinBox_C1A2->SetValue( 25.0 ) ; /* = myLength */
+  SpinBox_C1A3->RangeStepAndValidator( 0.00001, 999999.99999, step, 5 ) ;
+  SpinBox_C1A3->SetValue( 200.0 ) ;   /* = myMajorRadius */
+  myMajorRadius = 200.0 ;
+
+  /* min, max, step and decimals for spin boxes */
+  SpinBox_C1A4->RangeStepAndValidator( 0.00001, 999999.99999, step, 5 ) ;
+  SpinBox_C1A4->SetValue( 100.0 ) ;   /* = myMinorRadius */
+  myMinorRadius = 100.0 ;
 
   GroupC1->show();
   myConstructorId = 0 ;
   Constructor1->setChecked( TRUE );
-  CheckBoxReverse->setChecked( FALSE );
   myEditCurrentArgument = LineEditC1A1 ;	
   mySelection = Sel;
   myGeomGUI = GeometryGUI::GetGeometryGUI() ;
-
-  myLength = 25.0 ;
-  myOkShape = false ;
-  myOkLength = true;
+  myOkPoint = myOkDir = false ;
   mySimulationTopoDs.Nullify() ;
-  myShape.Nullify() ;
   myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
 
   // TODO : previous selection into argument ?
 
   /* Filter definitions */
   Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeom = GEOM::GEOM_Gen::_narrow(comp);  
+  myEdgeFilter   = new GEOM_EdgeFilter( StdSelect_Line, myGeom );
+  myVertexFilter = new GEOM_ShapeTypeFilter( TopAbs_VERTEX, myGeom );
+
+  mySelection->AddFilter(myVertexFilter) ; /* first filter used */
 
   /* signals and slots connections */
-  connect( buttonOk, SIGNAL( clicked() ),     this, SLOT( ClickOnOk() ) );
-  connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) ) ;
-  connect( buttonApply, SIGNAL( clicked() ),  this, SLOT(ClickOnApply() ) );
+  connect( buttonOk, SIGNAL( pressed() ),     this, SLOT( ClickOnOk() ) );
+  connect( buttonCancel, SIGNAL( pressed() ), this, SLOT( ClickOnCancel() ) ) ;
+  connect( buttonApply, SIGNAL( pressed() ),     this, SLOT( ClickOnApply() ) );
   connect( GroupConstructors, SIGNAL(clicked(int) ), SLOT( ConstructorsClicked(int) ) );  
-  connect( SelectButtonC1A1, SIGNAL (clicked() ), this, SLOT( SetEditCurrentArgument() ) ) ;
-  connect( CheckBoxReverse, SIGNAL (stateChanged(int) ), this, SLOT( ReverseOrientation(int) ) ) ;
+  connect( SelectButtonC1A1, SIGNAL (pressed() ), this, SLOT( SetEditCurrentArgument() ) ) ;
+  connect( SelectButtonC1A2, SIGNAL (pressed() ), this, SLOT( SetEditCurrentArgument() ) ) ;
 
-  connect( LineEditC1A1, SIGNAL ( returnPressed() ),                   this, SLOT( LineEditReturnPressed() ) ) ;
-  connect( SpinBox_C1A2, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
+  connect( LineEditC1A1, SIGNAL ( returnPressed() ), this, SLOT( LineEditReturnPressed() ) ) ;
+  connect( LineEditC1A2, SIGNAL ( returnPressed() ), this, SLOT( LineEditReturnPressed() ) ) ;
+  
+  connect( SpinBox_C1A3, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
+  connect( SpinBox_C1A4, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
 
   connect( myGeomGUI, SIGNAL ( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) ) ;  
   connect( mySelection, SIGNAL( currentSelectionChanged() ),     this, SLOT( SelectionIntoArgument() ) );
   /* to close dialog if study change */
   connect( myGeomGUI, SIGNAL ( SignalCloseAllDialogs() ), this, SLOT( ClickOnCancel() ) ) ;
- 
+
   /* Move widget on the botton right corner of main widget */
   int x, y ;
   myGeomGUI->DefineDlgPosition( this, x, y ) ;
   this->move( x, y ) ;
   this->show() ; /* displays Dialog */
-
+  
   return ;
 }
 
@@ -248,8 +267,9 @@ void GeometryGUI_OrientationDlg::Init( SALOME_Selection* Sel )
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void GeometryGUI_OrientationDlg::ConstructorsClicked(int constructorId)
+void GeometryGUI_EllipseDlg::ConstructorsClicked(int constructorId)
 {
+  /* only a constructor now */
   return ;
 }
 
@@ -257,7 +277,7 @@ void GeometryGUI_OrientationDlg::ConstructorsClicked(int constructorId)
 // function : ClickOnOk()
 // purpose  :
 //=================================================================================
-void GeometryGUI_OrientationDlg::ClickOnOk()
+void GeometryGUI_EllipseDlg::ClickOnOk()
 {
   this->ClickOnApply() ;
   this->ClickOnCancel() ;
@@ -269,33 +289,30 @@ void GeometryGUI_OrientationDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void GeometryGUI_OrientationDlg::ClickOnApply()
+void GeometryGUI_EllipseDlg::ClickOnApply()
 {
-  /* Leave simulation display in this method ! */
-  myGeomGUI->GetDesktop()->putInfo( tr("") ) ; 
-  
+  myGeomGUI->EraseSimulationShape() ;
+  mySimulationTopoDs.Nullify() ;
   switch(myConstructorId)
     { 
     case 0 :
       { 
-	if(myOkShape && CheckBoxReverse->isChecked() && myOkLength == true ) {	  
-	  myGeomGUI->MakeOrientationChangeAndDisplay( myGeomShape ) ;
-	  CheckBoxReverse->setChecked( FALSE );
+	if(myOkPoint && myOkDir) {	  
+	  myGeomGUI->MakeEllipseAndDisplay( myPoint, myDir, myMajorRadius, myMinorRadius ) ; 
 	}
 	break ;
       }
     }
-  // accept();
   return ;
 }
-
 
 //=================================================================================
 // function : ClickOnCancel()
 // purpose  :
 //=================================================================================
-void GeometryGUI_OrientationDlg::ClickOnCancel()
+void GeometryGUI_EllipseDlg::ClickOnCancel()
 {
+  mySelection->ClearFilters() ;
   myGeomGUI->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
   disconnect( mySelection, 0, this, 0 );
@@ -305,14 +322,94 @@ void GeometryGUI_OrientationDlg::ClickOnCancel()
 }
 
 //=================================================================================
+// function : SelectionIntoArgument()
+// purpose  : Called when selection as changed or other case
+//=================================================================================
+void GeometryGUI_EllipseDlg::SelectionIntoArgument()
+{
+
+  myGeomGUI->EraseSimulationShape() ; 
+  mySimulationTopoDs.Nullify() ;
+
+  /* Future name of selection */
+  QString aString = "";
+  
+  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
+  if ( nbSel != 1 ) {
+    if ( myEditCurrentArgument == LineEditC1A1 ) {
+      LineEditC1A1->setText("") ;
+      myOkPoint = false ;
+    }
+    else if ( myEditCurrentArgument == LineEditC1A2 ) { 
+      LineEditC1A2->setText("") ;
+      myOkDir = false ;
+    }
+    return ;
+  }
+
+  /* nbSel == 1 */
+  TopoDS_Shape S; 
+  if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
+    return ;
+ 
+  /*  gp_Pnt : not used */
+  if ( myEditCurrentArgument == LineEditC1A1 && myGeomGUI->VertexToPoint(S, myPoint) ) {
+    LineEditC1A1->setText(aString) ;
+    myOkPoint = true ;
+  }    
+  else if ( myEditCurrentArgument == LineEditC1A2 /*&& myGeomGUI->LinearLocationAndDirection(S, notUsed, myDir) */) {
+    BRepAdaptor_Curve curv(TopoDS::Edge(S));
+    myDir = curv.Line().Direction();    
+    LineEditC1A2->setText(aString) ;
+    myOkDir = true ;
+  }
+
+  if( myOkPoint && myOkDir ) {
+    this->MakeEllipseSimulationAndDisplay() ;
+  }
+  return ;
+}
+
+//=================================================================================
+// function : SetEditCurrentArgument()
+// purpose  :
+//=================================================================================
+void GeometryGUI_EllipseDlg::SetEditCurrentArgument()
+{
+  mySelection->ClearFilters() ;
+  QPushButton* send = (QPushButton*)sender();
+  switch (myConstructorId)
+    {
+    case 0: /* default constructor */
+      {	
+	if(send == SelectButtonC1A1) {
+	  LineEditC1A1->setFocus() ;
+	  myEditCurrentArgument = LineEditC1A1;
+	  mySelection->AddFilter(myVertexFilter) ;
+	}
+	else if(send == SelectButtonC1A2) {
+	  LineEditC1A2->setFocus() ;	  
+	  myEditCurrentArgument = LineEditC1A2;
+	  mySelection->AddFilter(myEdgeFilter) ;
+	}	
+	SelectionIntoArgument() ;
+	break;
+      }
+    }
+  return ;
+}
+
+//=================================================================================
 // function : LineEditReturnPressed()
 // purpose  :
 //=================================================================================
-void GeometryGUI_OrientationDlg::LineEditReturnPressed()
+void GeometryGUI_EllipseDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();  
   if( send == LineEditC1A1 )
     myEditCurrentArgument = LineEditC1A1 ;
+  else if ( send == LineEditC1A2 )
+    myEditCurrentArgument = LineEditC1A2 ; 
   else
     return ;
   
@@ -328,93 +425,27 @@ void GeometryGUI_OrientationDlg::LineEditReturnPressed()
 }
 
 
-
-//=================================================================================
-// function : SelectionIntoArgument()
-// purpose  : Called when selection as changed or other case
-//=================================================================================
-void GeometryGUI_OrientationDlg::SelectionIntoArgument()
-{
-  myGeomGUI->EraseSimulationShape() ; 
-  this->mySimulationTopoDs.Nullify() ;
-  
-  /* Name of future selection */
-  QString aString = "";
-
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
-  if ( nbSel != 1 ) {
-    if ( myEditCurrentArgument == LineEditC1A1 ) {
-      LineEditC1A1->setText("") ;
-      this->myOkShape = false ;
-    }
-    return ;
-  }
-  
-  /* nbSel == 1 ! */
-  TopoDS_Shape S;
-  Standard_Boolean testResult ;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
-  if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
-    return ;  
-  
-  /* Constructor */
-  if ( myEditCurrentArgument == LineEditC1A1 ) { 
-    myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult) ;
-    if( !testResult )
-      return ;
-    LineEditC1A1->setText(aString) ;
-    myShape = S ;
-    myOkShape = true ;
-  }
-  
-  if( myOkShape && myOkLength ) {
-    MakeOrientationSimulationAndDisplay( this->myShape, this->myLength ) ;
-  }
-  return ;
-}
-
-
-//=================================================================================
-// function : SetEditCurrentArgument()
-// purpose  :
-//=================================================================================
-void GeometryGUI_OrientationDlg::SetEditCurrentArgument()
-{
-  QPushButton* send = (QPushButton*)sender();
-  switch (myConstructorId)
-    {
-    case 0: /* default constructor */
-      {	
-	if(send == SelectButtonC1A1) {
-	  LineEditC1A1->setFocus() ;
-	  myEditCurrentArgument = LineEditC1A1 ;
-	}
-	SelectionIntoArgument() ;
-	break;
-      }
-    }
-  return ;
-}
-
-
 //=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void GeometryGUI_OrientationDlg::ValueChangedInSpinBox( double newValue )
-{ 
-  myGeomGUI->EraseSimulationShape() ;
+void GeometryGUI_EllipseDlg::ValueChangedInSpinBox( double newValue )
+{  
+  myGeomGUI->EraseSimulationShape() ; 
   mySimulationTopoDs.Nullify() ;
-  
-  QObject* send = (QObject*)sender() ; 
-  if( send == SpinBox_C1A2 ) {
-    this->myLength = newValue ;
-    myOkLength = true ;
-  } 
-  
-  if ( myConstructorId == 0 && myOkShape && myOkLength == true ) {
-    MakeOrientationSimulationAndDisplay( this->myShape, this->myLength ) ;
+
+  GeometryGUI_SpinBox* send = (GeometryGUI_SpinBox*)sender();
+  if(send == SpinBox_C1A3)
+    myMajorRadius = newValue ;
+  else if(send == SpinBox_C1A4)
+    myMinorRadius = newValue ;
+  else
+    return ;
+
+  if (myOkPoint && myOkDir) {
+    MakeEllipseSimulationAndDisplay() ;
   }
+
   return ;
 }
 
@@ -423,35 +454,33 @@ void GeometryGUI_OrientationDlg::ValueChangedInSpinBox( double newValue )
 // function : DeactivateActiveDialog()
 // purpose  :
 //=================================================================================
-void GeometryGUI_OrientationDlg::DeactivateActiveDialog()
+void GeometryGUI_EllipseDlg::DeactivateActiveDialog()
 {
   if ( GroupConstructors->isEnabled() ) {
     GroupConstructors->setEnabled(false) ;
-    GroupButtons->setEnabled(false) ;
     GroupC1->setEnabled(false) ;
+    GroupButtons->setEnabled(false) ;
     disconnect( mySelection, 0, this, 0 );
     myGeomGUI->EraseSimulationShape() ;
+    mySelection->ClearFilters() ;
   }
   return ;
 }
-
 
 //=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
-void GeometryGUI_OrientationDlg::ActivateThisDialog()
+void GeometryGUI_EllipseDlg::ActivateThisDialog()
 {
   /* Emit a signal to deactivate the active dialog */
-  myGeomGUI->EmitSignalDeactivateDialog() ;
+  myGeomGUI->EmitSignalDeactivateDialog() ;   
   GroupConstructors->setEnabled(true) ;
-  GroupButtons->setEnabled(true) ;
   GroupC1->setEnabled(true) ;
-  
+  GroupButtons->setEnabled(true) ;
   connect ( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   if( !mySimulationTopoDs.IsNull() )
     myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
-
   return ;
 }
 
@@ -460,149 +489,45 @@ void GeometryGUI_OrientationDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void GeometryGUI_OrientationDlg::enterEvent(QEvent* e)
+void GeometryGUI_EllipseDlg::enterEvent(QEvent* e)
 {
   if ( GroupConstructors->isEnabled() )
     return ;  
   ActivateThisDialog() ;
-  return ;
 }
-
 
 
 //=================================================================================
 // function : closeEvent()
 // purpose  :
 //=================================================================================
-void GeometryGUI_OrientationDlg::closeEvent( QCloseEvent* e )
+void GeometryGUI_EllipseDlg::closeEvent( QCloseEvent* e )
 {
-  /* same than click on cancel button */
-  this->ClickOnCancel() ;
-  return ;
+  this->ClickOnCancel() ; /* same than click on cancel button */
 }
 
 
-
-//===========================================================================================
-// function : ReverseOrientation()
+//=================================================================================
+// function : MakeEllipseSimulationAndDisplay()
 // purpose  :
-//===========================================================================================
-void GeometryGUI_OrientationDlg::ReverseOrientation(int state)
+//=================================================================================
+void GeometryGUI_EllipseDlg::MakeEllipseSimulationAndDisplay() 
 {
-  if( this->myOkShape && myOkLength == true ) {
-    MakeOrientationSimulationAndDisplay( this->myShape, this-> myLength ) ;
-  }
-  return ;
-}
-
-
-//===========================================================================================
-// function : MakeOrientationSimulationAndDisplay()
-// purpose  : Create 'aCompound1' and 'aCompound2' each contains edges oriented
-//	    : respectively FORWARD and REVERSE for all faces of 'aTopoDS'
-//	    : These edges represent normal vectors on faces of 'aTopoDS'
-//          : For a unique edge an arrow is displayed to show its orientation.
-//===========================================================================================
-void GeometryGUI_OrientationDlg::MakeOrientationSimulationAndDisplay(const TopoDS_Shape& aTopoDS, Standard_Real length )
-{
-  myGeomGUI->EraseSimulationShape() ; 
-  mySimulationTopoDs.Nullify() ;
+  myGeomGUI->EraseSimulationShape() ;
   
-  TopoDS_Compound aCompound1, aCompound2 ;
-  TopoDS_Compound NullComp ;
-  BRep_Builder aBuilder1, aBuilder2;
-  aCompound1 = aCompound2 = NullComp ;
-  aBuilder1.MakeCompound(aCompound1) ;
-  aBuilder2.MakeCompound(aCompound2) ;
-  
-  if( aTopoDS.IsNull() )
+  if( myMajorRadius <  myMinorRadius )
     return ;
-  
-  /* Case of an edge */
-  if( aTopoDS.ShapeType() == TopAbs_EDGE ) {
-    /* Try to display a cone simulation shape to show direction of edge */
-    TopoDS_Shape tmpShape = aTopoDS ;
-    if( this->CheckBoxReverse->isChecked() ) {
-      if( aTopoDS.Orientation() == TopAbs_FORWARD)
-	tmpShape.Orientation(TopAbs_REVERSED) ;
-      else
-	tmpShape.Orientation(TopAbs_FORWARD) ;
-    }
-    if( myGeomGUI->CreateArrowForLinearEdge( tmpShape, mySimulationTopoDs ) ) {
-      myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
-    }
-    return ;
-  }
-  
 
-  gp_Pnt P1, P2 ;
-  gp_Vec V, V1, V2 ;
-  TopExp_Explorer ex( aTopoDS, TopAbs_FACE );
-  int test = 0 ;
-  while (ex.More()) {
-    
-    const TopoDS_Face& F = TopoDS::Face(ex.Current());
-    /* find the center of the minmax */
-    BRepAdaptor_Surface SF(F);
-    Standard_Real u, v, x;
-    
-    u = SF.FirstUParameter();
-    x = SF.LastUParameter();
-    if ( Precision::IsInfinite(u) ) {
-      if( Precision::IsInfinite(x) ) u = 0.0 ;  else u = x ;
-    }
-    else if ( !Precision::IsInfinite(x) )
-      u = (u+x) / 2.0 ;
-    
-    v = SF.FirstVParameter();
-    x = SF.LastVParameter();
-    if ( Precision::IsInfinite(v) ) {
-      if ( Precision::IsInfinite(x) ) v = 0.0 ;  else v = x ;
-    }
-    else if ( !Precision::IsInfinite(x) )
-      v = (v+x) / 2.0 ;
-    
-    SF.D1( u, v, P1, V1, V2 );
-    V = V1.Crossed(V2);
-    x = V.Magnitude();
-    if ( x > 1.e-10 )
-      V.Multiply( length/x );
-    else {
-      V.SetCoord( length/2.0, 0.0, 0.0 ) ;
-      MESSAGE ("Null normal in Orientation " << endl ) ;
-    }
-    
-    P2 = P1;
-    /* test orientation of each face and displays forward (aCompound1) */
-    if( F.Orientation() == TopAbs_FORWARD )
-      P2.Translate(V);
-    else
-      P2.Translate(-V) ;    
-    BRepBuilderAPI_MakeEdge anEdge(P1, P2) ;
-    aBuilder1.Add( aCompound1, anEdge ) ;
-    
-    P2 = P1;
-    /* test orientation of each face and displays forward (aCompound2) */
-    if( F.Orientation() == TopAbs_FORWARD )
-      P2.Translate(-V);
-    else
-      P2.Translate(V) ;    
-    anEdge = BRepBuilderAPI_MakeEdge(P1, P2) ;
-    aBuilder2.Add( aCompound2, anEdge ) ;
-    
-    ex.Next();
-    test++ ;
+  try {
+    const gp_Ax2 axis( this->myPoint, this->myDir ) ;
+    gp_Elips ellipse( axis, this->myMajorRadius, this->myMinorRadius );
+
+    BRepBuilderAPI_MakeEdge MakeEdge( ellipse );
+    mySimulationTopoDs = MakeEdge.Shape();
+    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
   }
-  
-  /* display simulation compounds */
-  if( test > 0 && this->CheckBoxReverse->isChecked() ) {
-    mySimulationTopoDs = aCompound1 ;    
+  catch(Standard_Failure) {
+    MESSAGE( "Exception catched in MakeEllipseSimulationAndDisplay" ) ;
   }
-  else if ( test > 0 && !CheckBoxReverse->isChecked() ) {
-    mySimulationTopoDs = aCompound2 ;
-  }
-  if(!mySimulationTopoDs.IsNull() )
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs) ;
-  
   return ;
 }

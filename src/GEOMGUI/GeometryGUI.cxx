@@ -1,12 +1,32 @@
-using namespace std;
-//  File      : GeometryGUI.cxx
-//  Created   : 
-//  Author    : Lucien PIGNOLONI
-//  Project   : SALOME
-//  Module    : GeometryGUI
-//  Copyright : OPEN CASCADE
+//  GEOM GEOMGUI : GUI for Geometry component
+//
+//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// 
+//  This library is free software; you can redistribute it and/or 
+//  modify it under the terms of the GNU Lesser General Public 
+//  License as published by the Free Software Foundation; either 
+//  version 2.1 of the License. 
+// 
+//  This library is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//  Lesser General Public License for more details. 
+// 
+//  You should have received a copy of the GNU Lesser General Public 
+//  License along with this library; if not, write to the Free Software 
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// 
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//
+//
+//
+//  File   : GeometryGUI.cxx
+//  Author : Lucien PIGNOLONI
+//  Module : GEOM
 //  $Header$
 
+using namespace std;
 #include "GeometryGUI.h"
 
 // SALOME Includes
@@ -25,15 +45,6 @@ using namespace std;
 #include "OCCViewer_ViewPort.h"
 #include "OCCViewer_ViewPort3d.h"
 #include "OCCViewer_Viewer3d.h"
-
-#include "VTKViewer_RenderWindowInteractor.h"
-#include "VTKViewer_ViewFrame.h"
-
-#include "GEOM_Actor.h"
-#include "GEOM_Client.hxx"
-#include "GEOM_AISShape.hxx"
-#include "GEOM_AssemblyBuilder.h"
-#include "GEOM_InteractiveObject.hxx"
 
 #include "SALOME_NamingService.hxx"
 #include "SALOME_ListIteratorOfListIO.hxx"
@@ -141,6 +152,16 @@ using namespace std;
 #include <qwidget.h> 
 #include <qevent.h> 
 #include <qlineedit.h>
+
+#include "VTKViewer_RenderWindowInteractor.h"
+#include "VTKViewer_ViewFrame.h"
+#include "GEOM_Actor.h"
+#include "GEOM_Client.hxx"
+#include "GEOM_AISShape.hxx"
+#include "GEOM_AssemblyBuilder.h"
+#include "GEOM_InteractiveObject.hxx"
+
+
 #include "GeometryGUI_aParameterDlg.h"
 
 #include "GeometryGUI_PointDlg.h"         // Method POINT
@@ -158,6 +179,7 @@ using namespace std;
 #include "GeometryGUI_MirrorDlg.h"        // Method MIRROR
 #include "GeometryGUI_SphereDlg.h"        // Method SPHERE
 #include "GeometryGUI_CircleDlg.h"        // Method CIRCLE
+#include "GeometryGUI_EllipseDlg.h"       // Method ELLIPSE
 #include "GeometryGUI_RevolDlg.h"         // Method REVOL
 #include "GeometryGUI_RotationDlg.h"      // Method ROTATION
 #include "GeometryGUI_TranslationDlg.h"   // Method TRANSLATION
@@ -1762,6 +1784,35 @@ void GeometryGUI::MakeCircleAndDisplay( const gp_Pnt CenterPoint, const gp_Dir d
 }
 
 
+//=====================================================================================
+// function : MakeEllipseAndDisplay()
+// purpose  :
+//=====================================================================================
+void GeometryGUI::MakeEllipseAndDisplay( const gp_Pnt CenterPoint,
+					 const gp_Dir dir,
+					 const Standard_Real Major_Radius,
+					 const Standard_Real Minor_Radius )
+{
+  try {
+    GEOM::PointStruct pstruct = myComponentGeom->MakePointStruct( CenterPoint.X(), CenterPoint.Y(),  CenterPoint.Z() ) ;
+    GEOM::PointStruct d = myComponentGeom->MakePointStruct( dir.X(), dir.Y(), dir.Z() ) ;
+    GEOM::DirStruct dstruct = myComponentGeom->MakeDirection(d) ;
+    
+    GEOM::GEOM_Shape_var result = myComponentGeom->MakeEllipse(pstruct, dstruct, Major_Radius, Minor_Radius) ;
+    if ( result->_is_nil() ) {
+      myDesktop->putInfo(tr("GEOM_PRP_ABORT") );
+      return ;
+    }
+    result->NameType(tr("GEOM_ELLIPSE"));
+    if ( Display( result ) )
+      myDesktop->putInfo(tr("GEOM_PRP_DONE"));
+  }
+  catch (const SALOME::SALOME_Exception& S_ex) {
+    QtCatchCorbaException(S_ex);
+  }
+  return  ;
+}
+
 
 //=====================================================================================
 // function : MakeWireAndDisplay()
@@ -2942,13 +2993,13 @@ bool GeometryGUI::OnGUIEvent(int theCommandID,	QAD_Desktop* parent)
 	
 	AIS_ListIteratorOfListOfInteractive ite(List);
 	ic->InitCurrent();
-	if ( ic-> NbCurrents() )
+	if ( ic->NbCurrents() )
 	  while (ite.More()) {
 	    if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
 	      
 	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
 	      Handle (AIS_Drawer) CurDrawer;
-	      CurDrawer = ic->Current()->Attributes();
+	      CurDrawer = aSh->Attributes();
 	      CurDrawer->UIsoAspect()->SetNumber( UIso );
 	      CurDrawer->VIsoAspect()->SetNumber( VIso );
 	      ic->SetLocalAttributes(aSh, CurDrawer);
@@ -3272,6 +3323,14 @@ bool GeometryGUI::OnGUIEvent(int theCommandID,	QAD_Desktop* parent)
 	GeomGUI->EmitSignalDeactivateDialog() ;
 	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
   	GeometryGUI_CircleDlg *aDlg = new GeometryGUI_CircleDlg( parent, "", Sel ) ;
+	break ;
+      }
+
+    case 3014:  // ELLIPSE
+      {
+	GeomGUI->EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
+  	GeometryGUI_EllipseDlg *aDlg = new GeometryGUI_EllipseDlg( parent, "", Sel ) ;
 	break ;
       }
 

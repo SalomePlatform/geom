@@ -551,6 +551,21 @@ msgstr "Box"
 msgid "GEOM_CIRCLE"
 msgstr "Circle"
 
+#Ellipse
+msgid "GEOM_ELLIPSE"
+msgstr "Ellipse"
+
+msgid "GEOM_ELLIPSE_TITLE"
+msgstr "Ellipse Construction"
+
+#Radius major
+msgid "GEOM_RADIUS_MAJOR"
+msgstr "Major radius :"
+
+#Radius minor
+msgid "GEOM_RADIUS_MINOR"
+msgstr "Minor radius :"
+
 #Compound
 msgid "GEOM_COMPOUND"
 msgstr "Compound"
