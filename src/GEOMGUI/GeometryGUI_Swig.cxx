@@ -1,12 +1,32 @@
-using namespace std;
-//  File      : GeometryGUI_Swig.cxx
-//  Created   : Tue Mar 26 15:08:38 2002
-//  Author    : Nicolas REJNERI, Paul RASCLE
-//  Project   : SALOME
-//  Module    : GEOM
-//  Copyright : Open CASCADE, EDF 2002
+//  GEOM GEOMGUI : GUI for Geometry component
+//
+//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// 
+//  This library is free software; you can redistribute it and/or 
+//  modify it under the terms of the GNU Lesser General Public 
+//  License as published by the Free Software Foundation; either 
+//  version 2.1 of the License. 
+// 
+//  This library is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//  Lesser General Public License for more details. 
+// 
+//  You should have received a copy of the GNU Lesser General Public 
+//  License along with this library; if not, write to the Free Software 
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// 
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//
+//
+//
+//  File   : GeometryGUI_Swig.cxx
+//  Author : Nicolas REJNERI, Paul RASCLE
+//  Module : GEOM
 //  $Header$
 
+using namespace std;
 #include "GeometryGUI_Swig.hxx"
 #include "utilities.h"
 
@@ -18,15 +38,6 @@ using namespace std;
 #include "SALOMEGUI_ImportOperation.h"
 
 #include "OCCViewer_Viewer3d.h"
-#include "VTKViewer_RenderWindowInteractor.h"
-#include "VTKViewer_ViewFrame.h"
-
-#include "GEOM_Actor.h"
-#include "GEOM_Client.hxx"
-#include "GEOM_AISShape.hxx"
-#include "GEOM_AssemblyBuilder.h"
-#include "GEOM_InteractiveObject.hxx"
-
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <BRepAdaptor_Surface.hxx>
@@ -36,6 +47,15 @@ using namespace std;
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
+
+#include "VTKViewer_RenderWindowInteractor.h"
+#include "VTKViewer_ViewFrame.h"
+
+#include "GEOM_Actor.h"
+#include "GEOM_Client.hxx"
+#include "GEOM_AISShape.hxx"
+#include "GEOM_AssemblyBuilder.h"
+#include "GEOM_InteractiveObject.hxx"
 
 static GEOM_Client ShapeReader;
 

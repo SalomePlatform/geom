@@ -46,7 +46,7 @@
     	<popup-item item-id="3011" pos-id="" label-id="Point" icon-id="point2.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 	<popup-item item-id="3012" pos-id="" label-id="Line" icon-id="line.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 	<popup-item item-id="3013" pos-id="" label-id="Circle" icon-id="circle.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-
+	<popup-item item-id="3014" pos-id="" label-id="Ellipse" icon-id="ellipse.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 	<popup-item item-id="3015" pos-id="" label-id="Arc" icon-id="arc.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 	<separator pos-id="6"/>
 	<popup-item item-id="3016" pos-id="" label-id="Vector" icon-id="vector.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
@@ -195,7 +195,7 @@
   <toolbutton-item item-id="3011" pos-id="" label-id="Point" icon-id="point2.png" tooltip-id="Point" accel-id="" toggle-id="" execute-action=""/>
   <toolbutton-item item-id="3012" pos-id="" label-id="Line" icon-id="line.png" tooltip-id="Line" accel-id="" toggle-id="" execute-action=""/>
   <toolbutton-item item-id="3013" pos-id="" label-id="Circle" icon-id="circle.png" tooltip-id="Circle" accel-id="" toggle-id="" execute-action=""/>
-
+  <toolbutton-item item-id="3014" pos-id="" label-id="Ellipse" icon-id="ellipse.png" tooltip-id="Ellipse" accel-id="" toggle-id="" execute-action=""/>
   <toolbutton-item item-id="3015" pos-id="" label-id="Arc" icon-id="arc.png" tooltip-id="Arc" accel-id="" toggle-id="" execute-action=""/>
   <toolbutton-item item-id="3016" pos-id="" label-id="Vector" icon-id="vector.png" tooltip-id="Vector" accel-id="" toggle-id="" execute-action=""/>
   <toolbutton-item item-id="3017" pos-id="" label-id="Plane" icon-id="plane.png" tooltip-id="Plane" accel-id="" toggle-id="" execute-action=""/>   	

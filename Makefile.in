@@ -121,7 +121,9 @@ tree_wire.png \
 vector.png \
 vector2points.png \
 vectordxyz.png \
-whatis.png
+whatis.png \
+ellipse.png \
+ellipsepointvector.png
 
 BIN_SCRIPT= \
 VERSION
