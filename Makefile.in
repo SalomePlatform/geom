@@ -128,14 +128,14 @@ VERSION
 
 # copy header files in common directory
 ifeq ($(HAVE_SSTREAM),yes)
-  include_list=include/salome/SALOMEconfig.h
+  include_list=include/salome/GEOMconfig.h
 else
-  include_list=include/salome/SALOMEconfig.h include/salome/sstream
+  include_list=include/salome/GEOMconfig.h include/salome/sstream
 endif
 
 inc: idl $(include_list)
 
-include/salome/SALOMEconfig.h: salome_adm/unix/SALOMEconfig.h
+include/salome/GEOMconfig.h: adm_local/unix/GEOMconfig.h
 	-$(RM) $@
 	$(LN_S) ../../$< $@
 

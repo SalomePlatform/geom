@@ -1,0 +1,6 @@
+#define DEBUG
+
+#define QUOTE(x)  #x
+#define CORBA_CLIENT_HEADER(x)  QUOTE(x@IDL_CLN_H@)
+#define CORBA_SERVER_HEADER(x)  QUOTE(x@IDL_SRV_H@)
+

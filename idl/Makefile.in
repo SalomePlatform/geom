@@ -23,11 +23,11 @@ IDL_FILES = \
 PY_CLIENT_IDL = $(IDL_FILES)
 
 # we copy all idl file in $(top_builddir)/idl
-inc: $(IDL_FILES:%=$(top_builddir)/idl/%)
+#inc: $(IDL_FILES:%=$(top_builddir)/idl/%)
 
-$(IDL_FILES:%=$(top_builddir)/idl/%):$(top_builddir)/idl/%:%
+#$(IDL_FILES:%=$(top_builddir)/idl/%):$(top_builddir)/idl/%:%
 #	$(CP) $< $@
-	cp -f $< $@
+#	cp -f $< $@
 
 
 lib: pyidl
