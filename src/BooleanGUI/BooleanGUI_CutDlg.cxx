@@ -84,9 +84,6 @@ void BooleanGUI_CutDlg::Init()
 {  
   /* init variables */
   myEditCurrentArgument = GroupCut->LineEdit1;
-
-  myShape1.Nullify();
-  myShape2.Nullify();
   myOkShape1 = myOkShape2 = false;
 
    /* signals and slots connections */
@@ -166,7 +163,6 @@ void BooleanGUI_CutDlg::SelectionIntoArgument()
     myGeomShape1 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
-    myShape1 = S;
     GroupCut->LineEdit1->setText(aString);
     myOkShape1 = true;
   }
@@ -174,7 +170,6 @@ void BooleanGUI_CutDlg::SelectionIntoArgument()
     myGeomShape2 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
-    myShape2 = S;
     GroupCut->LineEdit2->setText(aString);
     myOkShape2 = true;
   }

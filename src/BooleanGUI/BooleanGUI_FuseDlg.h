@@ -54,8 +54,6 @@ private:
 
     BooleanGUI* myBooleanGUI;
 
-    TopoDS_Shape myShape1;   /* topology used to fuse */
-    TopoDS_Shape myShape2;   /* topology used to fuse */
     GEOM::GEOM_Shape_var myGeomShape1;          /* is myShape1 */
     GEOM::GEOM_Shape_var myGeomShape2;          /* is myShape2 */
     bool myOkShape1;        /* to check when arguments are defined */
