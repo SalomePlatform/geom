@@ -38,6 +38,7 @@ fields
     myNbSolids   : Integer;
     myNbBlocks   : Integer;
     myPossibleBlocks : SequenceOfShape from TopTools;
+    myNbDegen    : Integer;
     myNbUF       : Integer;
     myNbUE       : Integer;
     myNbUFUE     : Integer;
