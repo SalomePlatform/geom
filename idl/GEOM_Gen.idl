@@ -1,0 +1,302 @@
+// File :      GEOM_Gen.idl
+// Created :   
+// Author :    Lucien PIGNOLONI
+// Project :   SALOME
+// Copyright : OPEN CASCADE
+// $HEADERS:
+
+
+#ifndef __GEOM_GEN__
+#define __GEOM_GEN__
+
+#include "SALOME_Exception.idl"
+#include "SALOME_Component.idl"
+#include "SALOMEDS.idl"
+#include "GEOM_Shape.idl"
+
+module GEOM
+{
+  interface GEOM_Gen : Engines::Component,SALOMEDS::Driver
+  {
+    typedef sequence<string> ListOfIOR ;
+    typedef sequence<GEOM_Shape> ListOfGeomShapes ;
+
+    //--------------------------------------------------------------//
+    // Studies Management                                           //
+    //--------------------------------------------------------------//
+    void       GetCurrentStudy(in long StudyID) ; 
+
+    short      NbLabels();
+
+    //--------------------------------------------------------------//
+    // Shapes Management                                            //
+    //--------------------------------------------------------------//
+    GEOM_Shape GetIORFromString    (in string ior);
+    ListOfIOR  GetReferencedObjects(in GEOM_Shape shape);
+    ListOfIOR  GetObjects          (in GEOM_Shape shape);
+
+    //--------------------------------------------------------------//
+    // Structures                                                   //
+    //--------------------------------------------------------------//
+    PointStruct MakePointStruct(in double x,
+				in double y,
+				in double z) ; 
+    DirStruct   MakeDirection (in PointStruct p) ; 
+    AxisStruct  MakeAxisStruct(in double x,
+			       in double y,
+			       in double z,
+			       in double vx,
+			       in double vy,
+			       in double vz) ; 
+
+    //------------------------------------------------------------//
+    // Boolean Operations                                         //
+    //------------------------------------------------------------//
+    GEOM_Shape MakeBoolean  (in GEOM_Shape shape1,
+			     in GEOM_Shape shape2,
+			     in long operation) raises (SALOME::SALOME_Exception) ;
+
+    GEOM_Shape MakeFuse( in GEOM_Shape shape1,
+			 in GEOM_Shape shape2) raises (SALOME::SALOME_Exception) ;
+    
+    //-----------------------------------------------------------//
+    // Advanced Operations                                       //
+    //-----------------------------------------------------------//
+    GEOM_Shape Partition  (in ListOfIOR ListShapes,
+			   in ListOfIOR ListTools,
+			   in ListOfIOR ListKeepInside,
+			   in ListOfIOR ListRemoveInside,
+                           in short Limit)
+      raises (SALOME::SALOME_Exception) ;
+
+
+    GEOM_Shape MakeFilling(in GEOM_Shape shape,
+			   in  short mindeg,
+			   in  short maxdeg,
+			   in  double tol3d,
+			   in  double tol2d,
+			   in  short nbiter) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeSewing (in ListOfIOR ListShape,
+			   in double precision)  raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeSewingShape( in GEOM_Shape aShape,
+				in double precision )  raises (SALOME::SALOME_Exception);
+
+    GEOM_Shape OrientationChange(in GEOM_Shape shape) raises (SALOME::SALOME_Exception) ;
+
+    GEOM_Shape MakePlacedBox(in double x1,  in double y1,  in double z1,
+			     in double delta1, in double delta2, in double delta3) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakePanel(in GEOM_Shape shape,
+			 in short directiontype,
+			 in double delta) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeGlueFaces(in GEOM_Shape shape,
+			     in double tol3d) raises (SALOME::SALOME_Exception) ;
+    
+    //-----------------------------------------------------------//
+    // Transformations Operations                                //
+    //-----------------------------------------------------------//
+    GEOM_Shape MakeCopy(in GEOM_Shape shape) raises (SALOME::SALOME_Exception) ;
+
+    GEOM_Shape MakeTranslation(in GEOM_Shape shape,
+			       in double x,
+			       in double y,
+			       in double z) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeRotation(in GEOM_Shape shape,
+			    in AxisStruct axis,
+			    in double angle) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeScaleTransform(in GEOM_Shape shape,
+				  in PointStruct theCenterofScale,
+				  in double factor) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeMirrorByPlane(in GEOM_Shape shape,
+				 in GEOM_Shape shapePlane) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeRevolution(in GEOM_Shape shape,
+			      in AxisStruct axis,
+			      in double angle) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakePrism(in GEOM_Shape baseShape,
+			 in PointStruct P1,
+			 in PointStruct P2) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakePipe(in GEOM_Shape pathShape,			
+			in GEOM_Shape baseShape) raises (SALOME::SALOME_Exception) ;
+
+    //-----------------------------------------------------------//
+    // Patterns Construction                                     //
+    //-----------------------------------------------------------//
+    GEOM_Shape MakeMultiTranslation1D(in GEOM_Shape shape,
+				      in DirStruct dir,
+				      in double step,
+				      in short nbtimes) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeMultiTranslation2D(in GEOM_Shape shape,
+				      in DirStruct dir1,
+				      in double step1,
+				      in short nbtimes1,
+				      in DirStruct dir2,
+				      in double step2,
+				      in short nbtimes2) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeMultiRotation1D(in GEOM_Shape shape,
+				   in DirStruct dir,
+				   in PointStruct loc,
+				   in short nbtimes) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeMultiRotation2D(in GEOM_Shape shape,
+				   in DirStruct dir,
+				   in PointStruct loc,
+				   in double ang,
+				   in short nbtimes1,
+				   in double step,
+				   in short nbtimes2) raises (SALOME::SALOME_Exception) ;
+
+    //-----------------------------------------------------------//
+    // Mesures Construction                                      //
+    //-----------------------------------------------------------//
+    GEOM_Shape MakeCDG(in GEOM_Shape shape) raises (SALOME::SALOME_Exception) ;
+
+
+    //-----------------------------------------------------------//
+    // Primitives Construction                                   //
+    //-----------------------------------------------------------//
+
+    GEOM_Shape MakeVertex(in double x,
+			  in double y,
+			  in double z) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeVector (in PointStruct pstruct1,
+			   in PointStruct pstruct2) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeLine  (in PointStruct pstruct,
+			  in DirStruct dstruct) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakePlane (in PointStruct pstruct,
+			  in DirStruct dstruct,
+			  in double trimsize) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeCircle(in PointStruct pstruct,
+			  in DirStruct dstruct,
+			  in double radius) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeArc(in PointStruct pInit,
+		       in PointStruct pCircle,
+		       in PointStruct pEnd) raises (SALOME::SALOME_Exception) ;
+
+    //-----------------------------------------------------------//
+    // Primitives Construction                                   //
+    //-----------------------------------------------------------//
+    GEOM_Shape MakeBox     (in double x1,
+			    in double y1,
+			    in double z1,
+			    in double x2,
+			    in double y2,
+			    in double z2) raises (SALOME::SALOME_Exception) ; 
+    GEOM_Shape MakeCylinder(in PointStruct pstruct,
+			    in DirStruct dstruct,
+			    in double radius,
+			    in double height) raises (SALOME::SALOME_Exception) ;
+
+    GEOM_Shape MakeSphere  (in double x1,
+			    in double y1,
+			    in double z1,
+			    in double radius) raises (SALOME::SALOME_Exception) ;
+
+    GEOM_Shape MakeTorus(in PointStruct pstruct,
+			 in DirStruct dstruct,
+			 in double major_radius,
+			 in double minor_radius) raises (SALOME::SALOME_Exception) ;
+
+    GEOM_Shape MakeCone(in PointStruct pstruct,
+			in DirStruct dstruct,
+			in double radius1,
+			in double radius2,
+			in double height) raises (SALOME::SALOME_Exception) ;
+    
+    //-----------------------------------------------------------//
+    // Archimede                                                 //
+    //-----------------------------------------------------------//  
+    GEOM_Shape Archimede(in GEOM_Shape shape,
+			 in double Weight,
+			 in double WaterDensity,
+			 in double MeshingDeflection) raises (SALOME::SALOME_Exception);
+
+    //-----------------------------------------------------------//
+    // Build                                                     //
+    //-----------------------------------------------------------//  
+    GEOM_Shape MakeEdge     (in PointStruct pstruct1,
+			     in PointStruct pstruct2) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeWire     (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeCompound (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeFace     (in GEOM_Shape shapeWire,
+			     in boolean wantplanarface ) raises (SALOME::SALOME_Exception) ;
+
+  
+    //-----------------------------------------------------------//
+    // Subshapes Construction for GUI only                       //
+    //-----------------------------------------------------------//
+    GEOM_Shape SubShape(in GEOM_Shape shape,
+			in short ShapeType,
+			in GEOM_Shape::ListOfSubShapeID ListOfID) raises (SALOME::SALOME_Exception) ;
+    
+    //-----------------------------------------------------------//
+    // Subshapes Construction for TUI or GUI                     //
+    //-----------------------------------------------------------//
+    ListOfGeomShapes SubShapeAll(in GEOM_Shape shape,
+				 in short ShapeType) raises (SALOME::SALOME_Exception) ;
+    
+    //-----------------------------------------------------------//
+    // Subshapes Construction
+    // Use it to have the same order of subshapes if their
+    // order may change as a result of <shape> reconstruction using
+    // boolean operations, fillet etc.
+    //-----------------------------------------------------------//
+    GEOM_Shape SubShapeSorted(in GEOM_Shape shape,
+			      in short ShapeType,
+			      in GEOM_Shape::ListOfSubShapeID ListOfID) raises (SALOME::SALOME_Exception) ;
+    
+    ListOfGeomShapes SubShapeAllSorted(in GEOM_Shape shape,
+				       in short ShapeType) raises (SALOME::SALOME_Exception) ;
+
+    //-----------------------------------------------------------//
+    // Fillet and Chamfer construction                           //
+    //-----------------------------------------------------------//
+    GEOM_Shape MakeFillet(in GEOM_Shape shape,
+			  in double radius,
+			  in short ShapeType,
+			  in GEOM_Shape::ListOfSubShapeID ListOfID) raises (SALOME::SALOME_Exception) ;
+ 
+    GEOM_Shape MakeChamfer(in GEOM_Shape shape,
+			   in double d1,
+			   in double d2,
+			   in short ShapeType,
+			   in GEOM_Shape::ListOfSubShapeID ListOfID) raises (SALOME::SALOME_Exception) ;
+
+    //-----------------------------------------------------------//
+    // Suppress faces in a shape                                 //
+    //-----------------------------------------------------------//
+    ListOfGeomShapes SuppressFaces(in GEOM_Shape shape,
+				   in GEOM_Shape::ListOfSubShapeID ListOfID) raises (SALOME::SALOME_Exception) ;
+    
+    //-----------------------------------------------------------//
+    // Suppress a single hole in topology (face) shell or solid  //
+    //          :  ListOfIdEndFace may be an empty list          //
+    //          :  used only when hole traverses the topology    //
+    //-----------------------------------------------------------//
+    GEOM_Shape SuppressHole(in GEOM_Shape shape,
+			    in GEOM_Shape::ListOfSubShapeID ListOfIdFace,
+			    in GEOM_Shape::ListOfSubShapeID ListOfIdWire,
+			    in GEOM_Shape::ListOfSubShapeID ListOfIdEndFace ) raises (SALOME::SALOME_Exception) ;
+
+    //-----------------------------------------------------------//
+    // Suppress one or more holes in a face or a shell           //
+    //-----------------------------------------------------------//
+    GEOM_Shape SuppressHolesInFaceOrShell(in GEOM_Shape shapeFaceShell,
+					  in GEOM_Shape::ListOfSubShapeID ListOfIdWires ) raises (SALOME::SALOME_Exception) ;
+    
+    //-----------------------------------------------------------//
+    // Import/Export                                             //
+    //-----------------------------------------------------------//
+    GEOM_Shape ImportIGES(in string filename) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape ImportBREP(in string filename) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape ImportSTEP(in string filename) raises (SALOME::SALOME_Exception) ;
+  
+    void ExportIGES(in string filename,in GEOM_Shape theShape) raises (SALOME::SALOME_Exception) ;
+    void ExportBREP(in string filename,in GEOM_Shape theShape) raises (SALOME::SALOME_Exception) ;
+    void ExportSTEP(in string filename,in GEOM_Shape theShape) raises (SALOME::SALOME_Exception) ;
+    //-----------------------------------------------------------//
+    // Check Shape                                               //
+    //-----------------------------------------------------------//
+    boolean CheckShape(in GEOM_Shape shape) raises (SALOME::SALOME_Exception) ;
+
+  };
+};
+
+#endif
