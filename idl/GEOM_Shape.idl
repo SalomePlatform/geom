@@ -78,6 +78,8 @@ module GEOM
     // the generator engine
     GEOM_Gen Engine();
    
+    // Get the TopoDS_Shape, for colocated case only
+    long getShape();
   };
 };
 #endif

@@ -47,34 +47,58 @@ using namespace std;
 #include <TopTools_ListOfShape.hxx>
 
 
+#include <unistd.h>
+
+#define HST_CLIENT_LEN 256
+
 
 //=======================================================================
 // function : Load()
 // purpose  : 
 //=======================================================================
-static TopoDS_Shape Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Shape_ptr aShape )
+TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Shape_ptr aShape )
 {
-  TopoDS_Shape S;
-  /* get sequence of bytes of resulting brep shape from GEOM server */
-  GEOM::GEOM_Shape::TMPFile_var SeqFile = aShape->GetShapeStream();
-  int sizebuf = SeqFile->length();
-  char* buf;
-  buf = (char*) &SeqFile[0];
-  istrstream streamBrep(buf,sizebuf);
-  BRep_Builder aBuilder;
-  BRepTools::Read(S, streamBrep, aBuilder);
-  return S;
+    char hst_client[HST_CLIENT_LEN];
+    gethostname(hst_client, HST_CLIENT_LEN);
+
+    Engines::Container_var ctn_server = geom->GetContainerRef();
+    long                   pid_server = ctn_server->getPID();
+
+    if ( (pid_client==pid_server) && (strcmp(hst_client, ctn_server->getHostName())==0) ) {
+        TopoDS_Shape* S = (TopoDS_Shape*)(aShape->getShape());
+        return(*S);
+    } else {
+        /* get sequence of bytes of resulting brep shape from GEOM server */
+        TopoDS_Shape S;
+        GEOM::GEOM_Shape::TMPFile_var SeqFile = aShape->GetShapeStream();
+        int sizebuf = SeqFile->length();
+        char* buf;
+        buf = (char*) &SeqFile[0];
+        istrstream streamBrep(buf,sizebuf);
+        BRep_Builder aBuilder;
+        BRepTools::Read(S, streamBrep, aBuilder);
+        return(S);
+    };
 }
 
 
 //=======================================================================
 // function : Create()
-// purpose  : 
+// purpose  : Create in client not in a container
 //=======================================================================
 GEOM_Client::GEOM_Client()
 {
+  pid_client = (-1);
 }
 
+//=======================================================================
+// function : Create()
+// purpose  : 
+//=======================================================================
+GEOM_Client::GEOM_Client(Engines::Container_ptr client)
+{
+  pid_client = client->getPID();
+}
 
 //=======================================================================
 // function : Find()

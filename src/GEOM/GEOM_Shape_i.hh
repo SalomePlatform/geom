@@ -112,6 +112,8 @@ public:
   GEOM::GEOM_Shape::TMPFile* GetShapeStream();
 
   GEOM::GEOM_Gen_ptr Engine();
+
+  long getShape();
 };
   
 #endif

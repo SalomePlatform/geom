@@ -75,18 +75,21 @@ public:
   // Methods PUBLIC
   // 
   Standard_EXPORT   GEOM_Client();
+  Standard_EXPORT   GEOM_Client(Engines::Container_ptr client);
   Standard_EXPORT   Standard_Integer Find( const TCollection_AsciiString& ShapeIOR, TopoDS_Shape& S ) ;
   Standard_EXPORT   void Bind( const TCollection_AsciiString& ShapeIOR, const TopoDS_Shape& S ) ;
   Standard_EXPORT   TopoDS_Shape GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Shape_ptr aShape );
   Standard_EXPORT   void RemoveShapeFromBuffer( const TCollection_AsciiString& shapeIOR ) ;
   Standard_EXPORT   void ClearClientBuffer() ;
   Standard_EXPORT   unsigned int BufferLength() ;
+                    TopoDS_Shape Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Shape_ptr aShape);
 
 private: 
   // Fields PRIVATE
   //
   TColStd_SequenceOfAsciiString myIORs ;
   TopTools_SequenceOfShape myShapes ;
+  long  pid_client;
 };
 
 

@@ -246,3 +246,12 @@ GEOM::GEOM_Gen_ptr GEOM_Shape_i::Engine()
 {
   return _engine;
 }
+
+//=======================================================================
+//function : getShape
+//purpose  : return the TopoDS_Shape when client and servant are colocated, be careful
+//=======================================================================
+
+long GEOM_Shape_i::getShape() {
+    return((long)(&_geom));
+}
