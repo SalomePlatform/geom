@@ -65,11 +65,30 @@ static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
     ShapeAnalysis::GetFaceUVBounds(aFace,Umin, Umax, Vmin, Vmax);
     Standard_Real PI2 = PI/2.;
     if(Vmax > PI2 - Precision::PConfusion() || Vmin < -PI2+::Precision::PConfusion()) {
+      Handle(Geom_SphericalSurface) aSphere = Handle(Geom_SphericalSurface)::DownCast(S);
+      gp_Sphere sp = aSphere->Sphere();
+      gp_Ax3 ax3 = sp.Position();
       if(Abs(Vmax-Vmin) < PI2) {
-        Handle(Geom_SphericalSurface) aSphere = Handle(Geom_SphericalSurface)::DownCast(S);
-        gp_Sphere sp = aSphere->Sphere();
-        gp_Ax3 ax3 = sp.Position();
         gp_Ax3 axnew3(ax3.Axis().Location(), ax3.Direction()^ax3.XDirection(),ax3.XDirection());
+        sp.SetPosition(axnew3);
+        Handle(Geom_SphericalSurface) aNewSphere = new Geom_SphericalSurface(sp);
+        aNewSurface = aNewSphere;
+        return Standard_True;
+      }
+      else {
+        gp_Pnt PC = ax3.Location();
+        Standard_Real Vpar;
+        if(fabs(PI2-Vmax)>fabs(-PI2-Vmin))
+          Vpar = (PI2+Vmax)/2.;
+        else
+          Vpar = (-PI2+Vmin)/2.;
+        Standard_Real Upar = (Umin+Umax)/2.;;
+        gp_Pnt PN,PX;
+        S->D0(Upar,Vpar,PN);
+        S->D0(Upar+PI2,0.,PX);
+        gp_Dir newNorm(gp_Vec(PC,PN));
+        gp_Dir newDirX(gp_Vec(PC,PX));
+        gp_Ax3 axnew3(ax3.Axis().Location(), newNorm, newDirX);
         sp.SetPosition(axnew3);
         Handle(Geom_SphericalSurface) aNewSphere = new Geom_SphericalSurface(sp);
         aNewSurface = aNewSphere;
@@ -221,4 +240,3 @@ GeomAbs_Shape BlockFix_SphereSpaceModifier::Continuity(const TopoDS_Edge& E,cons
 {
   return BRep_Tool::Continuity(E,F1,F2);
 }
-
