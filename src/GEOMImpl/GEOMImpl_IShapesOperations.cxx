@@ -1055,9 +1055,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
     return NULL;
   }
 
-  Handle(Geom_Plane) aPlane = new Geom_Plane(aLoc, - aVec);
-  // The "-" is because interpretation of normale differs
-  // between interface and algorithm for the case of plane
+  Handle(Geom_Plane) aPlane = new Geom_Plane(aLoc, aVec);
 
   // Call algo
   GEOMAlgo_FinderShapeOn aFinder;

@@ -338,7 +338,7 @@ def TestOtherOperations (geompy, math):
   faces_on_pln = geompy.GetShapesOnPlane(blocksComp, geompy.ShapeType["FACE"],
                                          v_0pp, geompy.GEOM.ST_ONIN)
   for face_i in faces_on_pln:
-    geompy.addToStudy(face_i, "Face on Plane or in direction of normale (0, 1, 1)")
+    geompy.addToStudy(face_i, "Face on Plane (N = (0, 1, 1)) or below it")
 
   # GetShapesOnCylinder
   edges_on_cyl = geompy.GetShapesOnCylinder(blocksComp, geompy.ShapeType["EDGE"],
