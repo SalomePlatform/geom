@@ -13,7 +13,7 @@ import SALOMEDS
 
 #NRI : BugID 1682 : from libSALOME_Swig import *
 
-geom = salome.lcc.FindOrLoadComponent("FactoryServer", "Geometry")
+geom = salome.lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 geom.GetCurrentStudy(salome.myStudyId)
 myBuilder = salome.myStudy.NewBuilder()
 
