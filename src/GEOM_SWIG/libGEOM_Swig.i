@@ -6,7 +6,7 @@
 //  Copyright : Open CASCADE, EDF 2002
 //  $Header$
 
-%module libGeometry_Swig
+%module libGEOM_Swig
 
 %include "GeometryGUI_Swig.i"
 

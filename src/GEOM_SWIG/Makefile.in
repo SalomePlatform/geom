@@ -20,8 +20,8 @@ VPATH=.:$(srcdir):$(top_srcdir)/idl:$(top_builddir)/idl
 LIB = libGEOM_Swigcmodule.la
 LIB_SRC = 
 
-SWIG_DEF = libGeometry_Swig.i
-EXPORT_PYSCRIPTS = libGeometry_Swig.py geompy.py batchmode_geompy.py \
+SWIG_DEF = libGEOM_Swig.i
+EXPORT_PYSCRIPTS = libGEOM_Swig.py geompy.py batchmode_geompy.py \
 		 GEOM_example.py \
 		 GEOM_example2.py \
 		 GEOM_example3.py \
