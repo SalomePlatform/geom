@@ -41,28 +41,28 @@
 
 
 <!-- ************************* New Entity  (menubar) ******************************* -->
-<menu-item label-id="New Entity" item-id="70" pos-id="3">
-   <submenu label-id="Basic" item-id="301" pos-id="1">
-    	<popup-item item-id="3011" pos-id="" label-id="Point" icon-id="point2.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-	<popup-item item-id="3012" pos-id="" label-id="Line" icon-id="line.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-	<popup-item item-id="3013" pos-id="" label-id="Circle" icon-id="circle.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-	<popup-item item-id="3014" pos-id="" label-id="Ellipse" icon-id="ellipse.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-	<popup-item item-id="3015" pos-id="" label-id="Arc" icon-id="arc.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+<menu-item label-id="New Entity" item-id="40" pos-id="3">
+   <submenu label-id="Basic" item-id="401" pos-id="1">
+    	<popup-item item-id="4011" pos-id="" label-id="Point" icon-id="point2.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="4012" pos-id="" label-id="Line" icon-id="line.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="4013" pos-id="" label-id="Circle" icon-id="circle.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="4014" pos-id="" label-id="Ellipse" icon-id="ellipse.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="4015" pos-id="" label-id="Arc" icon-id="arc.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 	<separator pos-id="6"/>
-	<popup-item item-id="3016" pos-id="" label-id="Vector" icon-id="vector.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-    	<popup-item item-id="3017" pos-id="" label-id="Plane" icon-id="plane.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   	
-	<popup-item item-id="3018" pos-id="" label-id="Working Plane" icon-id="planeWorking.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="4016" pos-id="" label-id="Vector" icon-id="vector.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+    	<popup-item item-id="4017" pos-id="" label-id="Plane" icon-id="plane.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   	
+	<popup-item item-id="4018" pos-id="" label-id="Working Plane" icon-id="planeWorking.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
-   <submenu label-id="Primitives" item-id="302" pos-id="2">
-	<popup-item item-id="3021" pos-id="" label-id="Box" icon-id="box.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-	<popup-item item-id="3022" pos-id="" label-id="Cylinder" icon-id="cylinder.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-	<popup-item item-id="3023" pos-id="" label-id="Sphere" icon-id="sphere.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-	<popup-item item-id="3024" pos-id="" label-id="Torus" icon-id="torus.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-        <popup-item item-id="3025" pos-id="" label-id="Cone" icon-id="cone.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <submenu label-id="Primitives" item-id="402" pos-id="2">
+	<popup-item item-id="4021" pos-id="" label-id="Box" icon-id="box.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="4022" pos-id="" label-id="Cylinder" icon-id="cylinder.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="4023" pos-id="" label-id="Sphere" icon-id="sphere.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="4024" pos-id="" label-id="Torus" icon-id="torus.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+        <popup-item item-id="4025" pos-id="" label-id="Cone" icon-id="cone.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
-   <submenu label-id="Generation" item-id="310" pos-id="3">
+   <submenu label-id="Generation" item-id="403" pos-id="3">
        <popup-item item-id="4031" pos-id="" label-id="Extrusion" icon-id="prism.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
        <popup-item item-id="4032" pos-id="" label-id="Revolution" icon-id="revol.png"tooltip-id="" accel-id="" toggle-id="" execute-action=""/>	
        <popup-item item-id="4033" pos-id="" label-id="Filling" icon-id="filling.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/> 
@@ -70,104 +70,106 @@
    </submenu>
    <endsubmenu />
    <separator pos-id=""/>
-   <popup-item item-id="312" pos-id="" label-id="Sketch" icon-id="sketch.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <submenu label-id="Sketch Constraints" item-id="313" pos-id="">
-      <popup-item item-id="3131" pos-id="" label-id="Set Plane" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="404" pos-id="" label-id="Sketch" icon-id="sketch.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <submenu label-id="Sketch Constraints" item-id="405" pos-id="">
+      <popup-item item-id="4051" pos-id="" label-id="Set Plane" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
       <separator pos-id=""/>
-      <popup-item item-id="3133" pos-id="" label-id="Tangent" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="3134" pos-id="" label-id="Perpendicular" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="4052" pos-id="" label-id="Tangent" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="4053" pos-id="" label-id="Perpendicular" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
-   <submenu label-id="Sketch Options" item-id="10009" pos-id="">
-      <popup-item item-id="10010" pos-id="" label-id="Length Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
-      <popup-item item-id="10011" pos-id="" label-id="Angle Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
-      <popup-item item-id="10012" pos-id="" label-id="Radius Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
-      <popup-item item-id="10013" pos-id="" label-id="X Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="false" execute-action=""/>
-      <popup-item item-id="10014" pos-id="" label-id="Y Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="false" execute-action=""/>
+   <submenu label-id="Sketch Options" item-id="406" pos-id="">
+      <popup-item item-id="4061" pos-id="" label-id="Length Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
+      <popup-item item-id="4062" pos-id="" label-id="Angle Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
+      <popup-item item-id="4063" pos-id="" label-id="Radius Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
+      <popup-item item-id="4064" pos-id="" label-id="X Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="false" execute-action=""/>
+      <popup-item item-id="4065" pos-id="" label-id="Y Dimension" icon-id="" tooltip-id="" accel-id="" toggle-id="false" execute-action=""/>
    </submenu>
    <endsubmenu />
    <separator pos-id=""/>
-   <popup-item item-id="303" pos-id="" label-id="Explode" icon-id="subshape.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="309" pos-id="" label-id="Suppress faces" icon-id="supressface.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="314" pos-id="" label-id="Suppress hole" icon-id="supresshole.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <submenu label-id="Build" item-id="311" pos-id="">
-      <popup-item item-id="304" pos-id="" label-id="Edge" icon-id="build_edge.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
-       <popup-item item-id="305" pos-id="" label-id="Wire" icon-id="build_wire.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
-       <popup-item item-id="306" pos-id="" label-id="Face" icon-id="build_face.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
-       <popup-item item-id="308" pos-id="" label-id="Compound" icon-id="build_compound.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
+   <popup-item item-id="407" pos-id="" label-id="Explode" icon-id="subshape.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <submenu label-id="Build" item-id="408" pos-id="">
+      <popup-item item-id="4081" pos-id="" label-id="Edge" icon-id="build_edge.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
+       <popup-item item-id="4082" pos-id="" label-id="Wire" icon-id="build_wire.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
+       <popup-item item-id="4083" pos-id="" label-id="Face" icon-id="build_face.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
+       <popup-item item-id="4084" pos-id="" label-id="Shell" icon-id="build_shell.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="4085" pos-id="" label-id="Solid" icon-id="build_solid.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="4086" pos-id="" label-id="Compound" icon-id="build_compound.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
 </menu-item>
 
 
 <!-- ************************ Operations  (menubar) *********************************** -->
-<menu-item label-id="Operations" item-id="40" pos-id="4">
-   <submenu label-id="Boolean" item-id="401" pos-id="1">
-      <popup-item item-id="4011" pos-id="" label-id="Fuse" icon-id="fuse.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="4012" pos-id="" label-id="Common" icon-id="common.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="4013" pos-id="" label-id="Cut" icon-id="cut.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="4014" pos-id="" label-id="Section" icon-id="section.png"tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+<menu-item label-id="Operations" item-id="50" pos-id="4">
+   <submenu label-id="Boolean" item-id="501" pos-id="1">
+      <popup-item item-id="5011" pos-id="" label-id="Fuse" icon-id="fuse.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="5012" pos-id="" label-id="Common" icon-id="common.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="5013" pos-id="" label-id="Cut" icon-id="cut.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="5014" pos-id="" label-id="Section" icon-id="section.png"tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
-   <submenu label-id="Transformation" item-id="402" pos-id="2">
-       <popup-item item-id="4021" pos-id="" label-id="Translation" icon-id="translation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="4022" pos-id="" label-id="Rotation" icon-id="rotate.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="4023" pos-id="" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="4024" pos-id="" label-id="Scale transform" icon-id="scale.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <submenu label-id="Transformation" item-id="502" pos-id="2">
+       <popup-item item-id="5021" pos-id="" label-id="Translation" icon-id="translation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5022" pos-id="" label-id="Rotation" icon-id="rotate.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5023" pos-id="" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5024" pos-id="" label-id="Scale transform" icon-id="scale.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
        <separator pos-id=""/>	
-       <popup-item item-id="4030" pos-id="" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="4040" pos-id="" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5025" pos-id="" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5026" pos-id="" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
-   <popup-item item-id="4025" pos-id="" label-id="Partition" icon-id="partition.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
-   <popup-item item-id="4026" pos-id="" label-id="Archimede" icon-id="archimede.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
+   <popup-item item-id="503" pos-id="" label-id="Partition" icon-id="partition.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
+   <popup-item item-id="504" pos-id="" label-id="Archimede" icon-id="archimede.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
    <separator pos-id=""/>
-   <popup-item item-id="4027" pos-id="" label-id="Fillet" icon-id="fillet.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
-   <popup-item item-id="4028" pos-id="" label-id="Chamfer" icon-id="chamfer.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
+   <popup-item item-id="505" pos-id="" label-id="Fillet" icon-id="fillet.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
+   <popup-item item-id="506" pos-id="" label-id="Chamfer" icon-id="chamfer.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
 </menu-item>
 
 
 <!-- ************************** Advanced  (menubar) ************************************** -->
-<menu-item label-id="Repair" item-id="50" pos-id="5">
-   <popup-item item-id="501" pos-id="" label-id="Sewing" icon-id="sewing.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="502" pos-id="" label-id="Orientation" icon-id="orientation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+<menu-item label-id="Repair" item-id="60" pos-id="5">
+   <popup-item item-id="601" pos-id="" label-id="Sewing" icon-id="sewing.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="602" pos-id="" label-id="Orientation" icon-id="orientation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="603" pos-id="" label-id="Suppress faces" icon-id="supressface.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="604" pos-id="" label-id="Suppress hole" icon-id="supresshole.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </menu-item>
 
 
 <!-- ************************** Mesures  (menubar)  ************************************ -->
-<menu-item label-id="Measures" item-id="60" pos-id="6">
-   <popup-item item-id="601" pos-id="" label-id="Basic properties" icon-id="basicproperties.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+<menu-item label-id="Measures" item-id="70" pos-id="6">
+   <popup-item item-id="701" pos-id="" label-id="Basic properties" icon-id="basicproperties.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id="4"/>
-   <popup-item item-id="604" pos-id="" label-id="Center of gravity" icon-id="centergravity.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="605" pos-id="" label-id="Axis of inertia" icon-id="axisinertia.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="702" pos-id="" label-id="Center of gravity" icon-id="centergravity.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="703" pos-id="" label-id="Axis of inertia" icon-id="axisinertia.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id="7"/>
-   <submenu label-id="Dimensions" item-id="606" pos-id="8">
-	<popup-item item-id="6060" pos-id="" label-id="Bounding Box" icon-id="bounding.png"	tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-	<popup-item item-id="6061" pos-id="" label-id="Min distance" icon-id="mindist.png"	tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <submenu label-id="Dimensions" item-id="704" pos-id="8">
+	<popup-item item-id="7041" pos-id="" label-id="Bounding Box" icon-id="bounding.png"	tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="7042" pos-id="" label-id="Min distance" icon-id="mindist.png"	tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
    <separator pos-id="9"/>
-   <popup-item item-id="607" pos-id="" label-id="Tolerance" icon-id="tolerance.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="705" pos-id="" label-id="Tolerance" icon-id="tolerance.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id=""/>
-   <popup-item item-id="608" pos-id="" label-id="Whatis" icon-id="whatis.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="609" pos-id="" label-id="Check" icon-id="check.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="706" pos-id="" label-id="Whatis" icon-id="whatis.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="707" pos-id="" label-id="Check" icon-id="check.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </menu-item>
 
 <!-- ********************************* Tools  (menubar) ************************************ -->
 <menu-item label-id="Tools" item-id="5" pos-id="">
    <separator pos-id=""/>
-   <popup-item item-id="5001" pos-id="" label-id="Check Geometry" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="5103" pos-id="" label-id="Check Geometry" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="5104" pos-id="" label-id="Load Script" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </menu-item>
 
 <!-- ********************************* Settings  (menubar) ********************************* -->
 <menu-item label-id="Preferences" item-id="4" pos-id="">
-   <submenu label-id="Geometry" item-id="40" pos-id="-1">
-      <popup-item item-id="701" pos-id="" label-id="Automatic copy" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="702" pos-id="" label-id="Name/Store automatic" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <submenu label-id="Geometry" item-id="41" pos-id="-1">
+      <popup-item item-id="411" pos-id="" label-id="Name/Store automatic" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
       <separator pos-id=""/>
-      <popup-item item-id="703" pos-id="" label-id="Shading Color" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="704" pos-id="" label-id="Isos" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="705" pos-id="" label-id="Step value" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
+      <popup-item item-id="412" pos-id="" label-id="Shading Color" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="413" pos-id="" label-id="Isos" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="414" pos-id="" label-id="Step value" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
    </submenu>
    <endsubmenu />
    <separator pos-id="-1"/>
@@ -176,12 +178,12 @@
 <!-- ***************************** View (menubar) ************************************ -->
 <menu-item label-id="View" item-id="2" pos-id="">
    <submenu label-id="Display mode" item-id="21" pos-id="5">
-       <popup-item item-id="6021" pos-id="" label-id="Shading" icon-id="shading.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="211" pos-id="" label-id="Shading" icon-id="shading.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
        <separator pos-id=""/>
-       <popup-item item-id="6022" pos-id="" label-id="Display all" icon-id="displayall.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="6023" pos-id="" label-id="Display only" icon-id="display.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="6024" pos-id="" label-id="Erase all" icon-id="eraseall.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="6025" pos-id="" label-id="Erase only" icon-id="erase.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="212" pos-id="" label-id="Display all" icon-id="displayall.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="213" pos-id="" label-id="Display only" icon-id="display.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="214" pos-id="" label-id="Erase all" icon-id="eraseall.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="215" pos-id="" label-id="Erase only" icon-id="erase.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
 </menu-item>
@@ -192,29 +194,29 @@
 
 <!-- ///////////////////////////////////// TOOLBARS ////////////////////////////////////// -->
 <toolbar label-id="Basic">
-  <toolbutton-item item-id="3011" pos-id="" label-id="Point" icon-id="point2.png" tooltip-id="Point" accel-id="" toggle-id="" execute-action=""/>
-  <toolbutton-item item-id="3012" pos-id="" label-id="Line" icon-id="line.png" tooltip-id="Line" accel-id="" toggle-id="" execute-action=""/>
-  <toolbutton-item item-id="3013" pos-id="" label-id="Circle" icon-id="circle.png" tooltip-id="Circle" accel-id="" toggle-id="" execute-action=""/>
-  <toolbutton-item item-id="3014" pos-id="" label-id="Ellipse" icon-id="ellipse.png" tooltip-id="Ellipse" accel-id="" toggle-id="" execute-action=""/>
-  <toolbutton-item item-id="3015" pos-id="" label-id="Arc" icon-id="arc.png" tooltip-id="Arc" accel-id="" toggle-id="" execute-action=""/>
-  <toolbutton-item item-id="3016" pos-id="" label-id="Vector" icon-id="vector.png" tooltip-id="Vector" accel-id="" toggle-id="" execute-action=""/>
-  <toolbutton-item item-id="3017" pos-id="" label-id="Plane" icon-id="plane.png" tooltip-id="Plane" accel-id="" toggle-id="" execute-action=""/>   	
-  <toolbutton-item item-id="3018" pos-id="" label-id="Working Plane" icon-id="planeWorking.png" tooltip-id="Working Plane" accel-id="" toggle-id="" execute-action=""/>
+  <toolbutton-item item-id="4011" pos-id="" label-id="Point" icon-id="point2.png" tooltip-id="Point" accel-id="" toggle-id="" execute-action=""/>
+  <toolbutton-item item-id="4012" pos-id="" label-id="Line" icon-id="line.png" tooltip-id="Line" accel-id="" toggle-id="" execute-action=""/>
+  <toolbutton-item item-id="4013" pos-id="" label-id="Circle" icon-id="circle.png" tooltip-id="Circle" accel-id="" toggle-id="" execute-action=""/>
+  <toolbutton-item item-id="4014" pos-id="" label-id="Ellipse" icon-id="ellipse.png" tooltip-id="Ellipse" accel-id="" toggle-id="" execute-action=""/>
+  <toolbutton-item item-id="4015" pos-id="" label-id="Arc" icon-id="arc.png" tooltip-id="Arc" accel-id="" toggle-id="" execute-action=""/>
+  <toolbutton-item item-id="4016" pos-id="" label-id="Vector" icon-id="vector.png" tooltip-id="Vector" accel-id="" toggle-id="" execute-action=""/>
+  <toolbutton-item item-id="4017" pos-id="" label-id="Plane" icon-id="plane.png" tooltip-id="Plane" accel-id="" toggle-id="" execute-action=""/>   	
+  <toolbutton-item item-id="4018" pos-id="" label-id="Working Plane" icon-id="planeWorking.png" tooltip-id="Working Plane" accel-id="" toggle-id="" execute-action=""/>
 </toolbar>
 
 <toolbar label-id="Primitives">
-   <toolbutton-item item-id="3021" label-id="Box" icon-id="box.png" tooltip-id="Box" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="3022" label-id="Cylinder" icon-id="cylinder.png" tooltip-id="Cylinder" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="3023" label-id="Sphere" icon-id="sphere.png" tooltip-id="Sphere" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="3024" label-id="Torus" icon-id="torus.png" tooltip-id="Torus" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="3025" label-id="Cone" icon-id="cone.png" tooltip-id="Cone" accel-id="" toggle-id="" execute-action=""/> 
+   <toolbutton-item item-id="4021" label-id="Box" icon-id="box.png" tooltip-id="Box" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="4022" label-id="Cylinder" icon-id="cylinder.png" tooltip-id="Cylinder" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="4023" label-id="Sphere" icon-id="sphere.png" tooltip-id="Sphere" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="4024" label-id="Torus" icon-id="torus.png" tooltip-id="Torus" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="4025" label-id="Cone" icon-id="cone.png" tooltip-id="Cone" accel-id="" toggle-id="" execute-action=""/> 
 </toolbar>
 
 <toolbar label-id="Ope. Boolean">
-   <toolbutton-item item-id="4011" label-id="Fuse" icon-id="fuse.png" tooltip-id="Fuse two shapes" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="4012" label-id="Common" icon-id="common.png" tooltip-id="Common of two shapes" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="4013" label-id="Cut" icon-id="cut.png" tooltip-id="Cut first shape with second" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="4014" label-id="Section" icon-id="section.png" tooltip-id="Section lines of intersection (2 shapes)" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5011" label-id="Fuse" icon-id="fuse.png" tooltip-id="Fuse two shapes" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5012" label-id="Common" icon-id="common.png" tooltip-id="Common of two shapes" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5013" label-id="Cut" icon-id="cut.png" tooltip-id="Cut first shape with second" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5014" label-id="Section" icon-id="section.png" tooltip-id="Section lines of intersection (2 shapes)" accel-id="" toggle-id="" execute-action=""/>
 </toolbar>
 
 <toolbar label-id="Generation">
@@ -225,28 +227,28 @@
 </toolbar>
 
 <toolbar label-id="Transformation">
-   <toolbutton-item item-id="4021" label-id="Translation" icon-id="translation.png" tooltip-id="Translate a shape"accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="4022" label-id="Rotation" icon-id="rotate.png" tooltip-id="Rotate a shape" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="4023" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="Mirror a shape" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="4024" label-id="Scale transform" icon-id="scale.png" tooltip-id="Scale a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5021" label-id="Translation" icon-id="translation.png" tooltip-id="Translate a shape"accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5022" label-id="Rotation" icon-id="rotate.png" tooltip-id="Rotate a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5023" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="Mirror a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5024" label-id="Scale transform" icon-id="scale.png" tooltip-id="Scale a shape" accel-id="" toggle-id="" execute-action=""/>
    <separatorTB/>
-   <toolbutton-item item-id="4030" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="Multi-translate a shape" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="4040" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="Multi-rotate a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5025" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="Multi-translate a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5026" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="Multi-rotate a shape" accel-id="" toggle-id="" execute-action=""/>
 </toolbar>
 
 
 <!-- ################################# POPUP MENU #################################  -->
 <popupmenu label-id="Popup for Viewer" context-id="" parent-id="Viewer" object-id="">
    <submenu label-id="Properties" item-id="803" pos-id="6">
-      <popup-item item-id="8021" pos-id="" label-id="Wireframe - Shading" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="8031" pos-id="" label-id="Wireframe - Shading" icon-id="" tooltip-id="" accel-id="Ctrl+D" toggle-id="" execute-action=""/>
       <separator pos-id=""/>
-      <popup-item item-id="8031" pos-id="" label-id="Color" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="8032" pos-id="" label-id="Transparency" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="8033" pos-id="" label-id="Isos" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="8032" pos-id="" label-id="Color" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="8033" pos-id="" label-id="Transparency" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="8034" pos-id="" label-id="Isos" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
    <separator pos-id=""/>
-   <popup-item item-id="801" pos-id="" label-id="Add in study" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="804" pos-id="" label-id="Add in study" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </popupmenu>
 
 <popupmenu label-id="Popup for ObjectBrowser" context-id="" parent-id="ObjectBrowser" object-id="">
@@ -256,17 +258,17 @@
 </popupmenu>
 
 <popupmenu label-id="Sketch" context-id="Sketch" parent-id="Viewer" object-id="">
-   <popup-item item-id="10000" pos-id="" label-id="Segment" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
-   <popup-item item-id="10001" pos-id="" label-id="Arc" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="4041" pos-id="" label-id="Segment" icon-id="" tooltip-id="" accel-id="" toggle-id="true" execute-action=""/>
+   <popup-item item-id="4042" pos-id="" label-id="Arc" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id=""/>
-   <popup-item item-id="10002" pos-id="" label-id="Set Angle" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="10003" pos-id="" label-id="Set X" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="10004" pos-id="" label-id="Set Y" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="4043" pos-id="" label-id="Set Angle" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="4044" pos-id="" label-id="Set X" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="4045" pos-id="" label-id="Set Y" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id=""/>
-   <popup-item item-id="10006" pos-id="" label-id="Undo" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="4046" pos-id="" label-id="Undo" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id=""/>
-   <popup-item item-id="10007" pos-id="" label-id="End" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="10008" pos-id="" label-id="Close" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="4047" pos-id="" label-id="End" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="4048" pos-id="" label-id="Close" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </popupmenu>
 
 </desktop>      <!--   DESKTOP END    -->  

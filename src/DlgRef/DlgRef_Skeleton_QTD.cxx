@@ -1,0 +1,111 @@
+/****************************************************************************
+** Form implementation generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
+**
+** Created: mar sep 23 15:06:58 2003
+**      by:  The User Interface Compiler (uic)
+**
+** WARNING! All changes made in this file will be lost!
+****************************************************************************/
+#include "DlgRef_Skeleton_QTD.h"
+
+#include <qvariant.h>
+#include <qbuttongroup.h>
+#include <qgroupbox.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qlayout.h>
+#include <qtooltip.h>
+#include <qwhatsthis.h>
+
+/* 
+ *  Constructs a DlgRef_Skeleton_QTD which is a child of 'parent', with the 
+ *  name 'name' and widget flags set to 'f'.
+ *
+ *  The dialog will by default be modeless, unless you set 'modal' to
+ *  TRUE to construct a modal dialog.
+ */
+DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent,  const char* name, bool modal, WFlags fl )
+    : QDialog( parent, name, modal, fl )
+{
+    if ( !name )
+	setName( "DlgRef_Skeleton_QTD" );
+    resize( 307, 147 ); 
+    setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)7, 0, 0, sizePolicy().hasHeightForWidth() ) );
+    setCaption( trUtf8( "DlgRef_Skeleton_QTD" ) );
+    setSizeGripEnabled( TRUE );
+    DlgRef_Skeleton_QTDLayout = new QGridLayout( this, 1, 1, 11, 6, "DlgRef_Skeleton_QTDLayout"); 
+
+    Layout1 = new QGridLayout( 0, 1, 1, 0, 6, "Layout1"); 
+
+    GroupButtons = new QGroupBox( this, "GroupButtons" );
+    GroupButtons->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, GroupButtons->sizePolicy().hasHeightForWidth() ) );
+    GroupButtons->setTitle( trUtf8( "" ) );
+    GroupButtons->setColumnLayout(0, Qt::Vertical );
+    GroupButtons->layout()->setSpacing( 6 );
+    GroupButtons->layout()->setMargin( 11 );
+    GroupButtonsLayout = new QHBoxLayout( GroupButtons->layout() );
+    GroupButtonsLayout->setAlignment( Qt::AlignTop );
+
+    Layout3 = new QHBoxLayout( 0, 0, 6, "Layout3"); 
+
+    buttonOk = new QPushButton( GroupButtons, "buttonOk" );
+    buttonOk->setText( trUtf8( "&Ok" ) );
+    Layout3->addWidget( buttonOk );
+
+    buttonApply = new QPushButton( GroupButtons, "buttonApply" );
+    buttonApply->setText( trUtf8( "&Apply" ) );
+    Layout3->addWidget( buttonApply );
+    QSpacerItem* spacer = new QSpacerItem( 91, 0, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    Layout3->addItem( spacer );
+
+    buttonCancel = new QPushButton( GroupButtons, "buttonCancel" );
+    buttonCancel->setText( trUtf8( "&Cancel" ) );
+    Layout3->addWidget( buttonCancel );
+    GroupButtonsLayout->addLayout( Layout3 );
+
+    Layout1->addWidget( GroupButtons, 2, 0 );
+
+    GroupConstructors = new QButtonGroup( this, "GroupConstructors" );
+    GroupConstructors->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)0, 0, 0, GroupConstructors->sizePolicy().hasHeightForWidth() ) );
+    GroupConstructors->setTitle( trUtf8( "" ) );
+    GroupConstructors->setColumnLayout(0, Qt::Vertical );
+    GroupConstructors->layout()->setSpacing( 6 );
+    GroupConstructors->layout()->setMargin( 11 );
+    GroupConstructorsLayout = new QGridLayout( GroupConstructors->layout() );
+    GroupConstructorsLayout->setAlignment( Qt::AlignTop );
+
+    Layout2 = new QHBoxLayout( 0, 0, 6, "Layout2"); 
+
+    RadioButton1 = new QRadioButton( GroupConstructors, "RadioButton1" );
+    RadioButton1->setText( trUtf8( "" ) );
+    Layout2->addWidget( RadioButton1 );
+
+    RadioButton2 = new QRadioButton( GroupConstructors, "RadioButton2" );
+    RadioButton2->setText( trUtf8( "" ) );
+    Layout2->addWidget( RadioButton2 );
+
+    RadioButton3 = new QRadioButton( GroupConstructors, "RadioButton3" );
+    RadioButton3->setText( trUtf8( "" ) );
+    Layout2->addWidget( RadioButton3 );
+
+    GroupConstructorsLayout->addLayout( Layout2, 0, 0 );
+
+    Layout1->addWidget( GroupConstructors, 0, 0 );
+
+    GroupMedium = new QGroupBox( this, "GroupMedium" );
+    GroupMedium->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, GroupMedium->sizePolicy().hasHeightForWidth() ) );
+    GroupMedium->setTitle( trUtf8( "" ) );
+
+    Layout1->addWidget( GroupMedium, 1, 0 );
+
+    DlgRef_Skeleton_QTDLayout->addLayout( Layout1, 0, 0 );
+}
+
+/*  
+ *  Destroys the object and frees any allocated resources
+ */
+DlgRef_Skeleton_QTD::~DlgRef_Skeleton_QTD()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
+

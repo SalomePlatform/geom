@@ -38,140 +38,25 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 EXPORT_HEADERS= GeometryGUI_Swig.hxx \
 		GeometryGUI_Swig.i
 
-# ressources files :
-PO_FILES = \
-	GEOM_icons.po \
-	GEOM_msg_en.po \
-	GEOM_msg_fr.po
-
 # Libraries targets 
 LIB = libGEOMGUI.la
 LIB_SRC =	GeometryGUI.cxx \
-		GeometryGUI_SpinBox.cxx \
-		GeometryGUI_TransparencyDlg.cxx \
-		GeometryGUI_NbIsosDlg.cxx \
-		GeometryGUI_BoxDlg.cxx \
-		GeometryGUI_ArchimedeDlg.cxx \
-		GeometryGUI_PointDlg.cxx \
-		GeometryGUI_VectorDlg.cxx \
-		GeometryGUI_PlaneDlg.cxx \
-		GeometryGUI_PrismDlg.cxx \
-		GeometryGUI_FuseDlg.cxx \
-		GeometryGUI_SectionDlg.cxx \
-		GeometryGUI_CommonDlg.cxx \
-		GeometryGUI_CutDlg.cxx \
-		GeometryGUI_LineDlg.cxx \
-		GeometryGUI_ScaleDlg.cxx \
-		GeometryGUI_MirrorDlg.cxx \
-		GeometryGUI_SphereDlg.cxx \
-		GeometryGUI_CircleDlg.cxx \
-		GeometryGUI_RevolDlg.cxx \
-		GeometryGUI_RotationDlg.cxx \
-		GeometryGUI_TranslationDlg.cxx \
-		GeometryGUI_ArcDlg.cxx \
-		GeometryGUI_PipeDlg.cxx \
-		GeometryGUI_CylinderDlg.cxx \
-		GeometryGUI_ConeDlg.cxx \
-		GeometryGUI_TorusDlg.cxx \
-		GeometryGUI_FillingDlg.cxx \
-		GeometryGUI_SewingDlg.cxx \
-		GeometryGUI_CompoundDlg.cxx \
-		GeometryGUI_EdgeDlg.cxx \
-		GeometryGUI_OrientationDlg.cxx \
-		GeometryGUI_PartitionDlg.cxx \
-		GeometryGUI_SubShapeDlg.cxx \
-		GeometryGUI_aParameterDlg.cxx \
-		GeometryGUI_WireDlg.cxx \
-		GeometryGUI_WorkingPlaneDlg.cxx \
-		GeometryGUI_PropertiesDlg.cxx \
-		GeometryGUI_InertiaDlg.cxx \
-		GeometryGUI_CenterMassDlg.cxx \
-		GeometryGUI_FaceDlg.cxx \
-		GeometryGUI_BndBoxDlg.cxx \
-		GeometryGUI_MaxToleranceDlg.cxx \
-		GeometryGUI_WhatisDlg.cxx \
-		GeometryGUI_DistanceDlg.cxx \
-		GeometryGUI_SuppressFacesDlg.cxx \
-		GeometryGUI_CheckShape.cxx \
-		GeometryGUI_FilletDlg.cxx \
-		GeometryGUI_ChamferDlg.cxx \
-		GeometryGUI_MultiTranslationDlg.cxx \
-		GeometryGUI_MultiRotationDlg.cxx \
-		GeometryGUI_Swig.cxx \
-		GeometryGUI_SuppressHoleDlg.cxx \
-		GeometryGUI_EllipseDlg.cxx
+		GeometryGUI_Swig.cxx
 
 LIB_MOC = \
                 GeometryGUI.h \
-                GeometryGUI_SpinBox.h \
-                GeometryGUI_TransparencyDlg.h \
-                GeometryGUI_NbIsosDlg.h \
-                GeometryGUI_BoxDlg.h \
-                GeometryGUI_ArchimedeDlg.h \
-                GeometryGUI_PointDlg.h \
-                GeometryGUI_VectorDlg.h \
-                GeometryGUI_PlaneDlg.h \
-                GeometryGUI_PrismDlg.h \
-                GeometryGUI_FuseDlg.h \
-                GeometryGUI_SectionDlg.h \
-                GeometryGUI_CommonDlg.h \
-                GeometryGUI_CutDlg.h \
-                GeometryGUI_LineDlg.h \
-                GeometryGUI_ScaleDlg.h \
-                GeometryGUI_MirrorDlg.h \
-                GeometryGUI_SphereDlg.h \
-                GeometryGUI_CircleDlg.h \
-                GeometryGUI_RevolDlg.h \
-                GeometryGUI_RotationDlg.h \
-                GeometryGUI_TranslationDlg.h \
-                GeometryGUI_ArcDlg.h \
-                GeometryGUI_PipeDlg.h \
-                GeometryGUI_CylinderDlg.h \
-                GeometryGUI_ConeDlg.h \
-                GeometryGUI_TorusDlg.h \
-                GeometryGUI_FillingDlg.h \
-                GeometryGUI_SewingDlg.h \
-                GeometryGUI_CompoundDlg.h \
-                GeometryGUI_EdgeDlg.h \
-                GeometryGUI_OrientationDlg.h \
-                GeometryGUI_PartitionDlg.h \
-                GeometryGUI_SubShapeDlg.h \
-                GeometryGUI_aParameterDlg.h \
-                GeometryGUI_WireDlg.h \
-                GeometryGUI_WorkingPlaneDlg.h \
-                GeometryGUI_PropertiesDlg.h \
-                GeometryGUI_InertiaDlg.h \
-                GeometryGUI_CenterMassDlg.h \
-                GeometryGUI_FaceDlg.h \
-                GeometryGUI_BndBoxDlg.h \
-                GeometryGUI_MaxToleranceDlg.h \
-                GeometryGUI_WhatisDlg.h \
-                GeometryGUI_DistanceDlg.h \
-                GeometryGUI_SuppressFacesDlg.h \
-                GeometryGUI_CheckShape.h \
-                GeometryGUI_FilletDlg.h \
-                GeometryGUI_ChamferDlg.h \
-                GeometryGUI_MultiTranslationDlg.h \
-                GeometryGUI_MultiRotationDlg.h \
-                GeometryGUI_SuppressHoleDlg.h \
-		GeometryGUI_EllipseDlg.h
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
-		 GEOM_Gen.idl \
-		 GEOM_Shape.idl \
 		 SALOMEDS.idl \
-		 SALOMEDS_Attributes.idl \
-		 SALOME_ModuleCatalog.idl \
-		 SALOME_Component.idl \
+		 SALOMEDS_Attributes.idl
 
 LIB_SERVER_IDL = 
 
 # additionnal information to compil and link file
 
-CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
+CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
+CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lGEOMSketcher $(CAS_LDPATH) -lTKFillet -lTKOffset -L${KERNEL_ROOT_DIR}/lib/salome
-
+LDFLAGS += -lGEOMContext
 
 @CONCLUDE@

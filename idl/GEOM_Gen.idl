@@ -229,6 +229,7 @@ module GEOM
 			 in double WaterDensity,
 			 in double MeshingDeflection) raises (SALOME::SALOME_Exception);
 
+
     //-----------------------------------------------------------//
     // Build                                                     //
     //-----------------------------------------------------------//  
@@ -238,6 +239,8 @@ module GEOM
     GEOM_Shape MakeCompound (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
     GEOM_Shape MakeFace     (in GEOM_Shape shapeWire,
 			     in boolean wantplanarface ) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeShell    (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeSolid    (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
 
   
     //-----------------------------------------------------------//

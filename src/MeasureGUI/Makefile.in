@@ -1,0 +1,89 @@
+#  GEOM MEASUREGUI : 
+#
+#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+# 
+#  This library is free software; you can redistribute it and/or 
+#  modify it under the terms of the GNU Lesser General Public 
+#  License as published by the Free Software Foundation; either 
+#  version 2.1 of the License. 
+# 
+#  This library is distributed in the hope that it will be useful, 
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+#  Lesser General Public License for more details. 
+# 
+#  You should have received a copy of the GNU Lesser General Public 
+#  License along with this library; if not, write to the Free Software 
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+# 
+#  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+#
+#
+#
+#  File   : Makefile.in
+#  Author : Damien COQUERET (OCC)
+#  Module : GEOM
+#  $Header: 
+
+top_srcdir=@top_srcdir@
+top_builddir=../..
+srcdir=@srcdir@
+VPATH=.:@srcdir@:@top_srcdir@/idl
+
+
+@COMMENCE@
+
+# header files 
+EXPORT_HEADERS=
+
+# Libraries targets
+LIB = libMeasureGUI.la 
+
+LIB_SRC = 	MeasureGUI.cxx \
+		MeasureGUI_Skeleton_QTD.cxx \
+		MeasureGUI_1Sel3LineEdit_QTD.cxx \
+		MeasureGUI_1Sel6LineEdit_QTD.cxx \
+		MeasureGUI_1Sel12LineEdit_QTD.cxx \
+		MeasureGUI_1Sel1TextView_QTD.cxx \
+		MeasureGUI_2Sel1LineEdit_QTD.cxx \
+		MeasureGUI_Skeleton.cxx \
+		MeasureGUI_PropertiesDlg.cxx \
+		MeasureGUI_CenterMassDlg.cxx \
+		MeasureGUI_InertiaDlg.cxx \
+		MeasureGUI_BndBoxDlg.cxx \
+		MeasureGUI_DistanceDlg.cxx \
+		MeasureGUI_MaxToleranceDlg.cxx \
+		MeasureGUI_WhatisDlg.cxx \
+		MeasureGUI_CheckShapeDlg.cxx
+
+LIB_MOC = \
+		MeasureGUI.h \
+		MeasureGUI_Skeleton_QTD.h \
+		MeasureGUI_1Sel3LineEdit_QTD.h \
+		MeasureGUI_1Sel6LineEdit_QTD.h \
+		MeasureGUI_1Sel12LineEdit_QTD.h \
+		MeasureGUI_1Sel1TextView_QTD.h \
+		MeasureGUI_2Sel1LineEdit_QTD.h \
+		MeasureGUI_Skeleton.h \
+		MeasureGUI_PropertiesDlg.h \
+		MeasureGUI_CenterMassDlg.h \
+		MeasureGUI_InertiaDlg.h \
+		MeasureGUI_BndBoxDlg.h \
+		MeasureGUI_DistanceDlg.h \
+		MeasureGUI_MaxToleranceDlg.h \
+		MeasureGUI_WhatisDlg.h \
+		MeasureGUI_CheckShapeDlg.h
+
+LIB_CLIENT_IDL = 
+
+LIB_SERVER_IDL = 
+
+# additionnal information to compil and link file
+
+CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
+CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
+
+LDFLAGS += -lGEOMBase
+
+@CONCLUDE@

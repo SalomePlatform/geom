@@ -1,0 +1,19 @@
+#!/bin/sh
+
+#uic -o MeasureGUI_Skeleton_QTD.h MeasureGUI_Skeleton_QTD.ui
+#uic -o MeasureGUI_Skeleton_QTD.cxx -impl MeasureGUI_Skeleton_QTD.h MeasureGUI_Skeleton_QTD.ui
+
+uic -o MeasureGUI_1Sel3LineEdit_QTD.h MeasureGUI_1Sel3LineEdit_QTD.ui
+uic -o MeasureGUI_1Sel3LineEdit_QTD.cxx -impl MeasureGUI_1Sel3LineEdit_QTD.h MeasureGUI_1Sel3LineEdit_QTD.ui
+
+uic -o MeasureGUI_1Sel6LineEdit_QTD.h MeasureGUI_1Sel6LineEdit_QTD.ui
+uic -o MeasureGUI_1Sel6LineEdit_QTD.cxx -impl MeasureGUI_1Sel6LineEdit_QTD.h MeasureGUI_1Sel6LineEdit_QTD.ui
+
+uic -o MeasureGUI_1Sel12LineEdit_QTD.h MeasureGUI_1Sel12LineEdit_QTD.ui
+uic -o MeasureGUI_1Sel12LineEdit_QTD.cxx -impl MeasureGUI_1Sel12LineEdit_QTD.h MeasureGUI_1Sel12LineEdit_QTD.ui
+
+uic -o MeasureGUI_2Sel1LineEdit_QTD.h MeasureGUI_2Sel1LineEdit_QTD.ui
+uic -o MeasureGUI_2Sel1LineEdit_QTD.cxx -impl MeasureGUI_2Sel1LineEdit_QTD.h MeasureGUI_2Sel1LineEdit_QTD.ui
+
+#uic -o MeasureGUI_1Sel1TextView_QTD.h MeasureGUI_1Sel1TextView_QTD.ui
+#uic -o MeasureGUI_1Sel1TextView_QTD.cxx -impl MeasureGUI_1Sel1TextView_QTD.h MeasureGUI_1Sel1TextView_QTD.ui
