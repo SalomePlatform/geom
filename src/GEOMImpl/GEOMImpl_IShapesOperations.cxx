@@ -1037,8 +1037,9 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
   TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
   if (aShapeType != TopAbs_VERTEX &&
       aShapeType != TopAbs_EDGE &&
-      aShapeType != TopAbs_FACE) {
-    SetErrorCode("Only vertices, edges or faces can be found by this method");
+      aShapeType != TopAbs_FACE &&
+      aShapeType != TopAbs_SOLID) {
+    SetErrorCode("Only solids, vertices, edges or faces can be found by this method");
     return NULL;
   }
 
@@ -1156,8 +1157,9 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnCyli
   TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
   if (aShapeType != TopAbs_VERTEX &&
       aShapeType != TopAbs_EDGE &&
-      aShapeType != TopAbs_FACE) {
-    SetErrorCode("Only vertices, edges or faces can be found by this method");
+      aShapeType != TopAbs_FACE &&
+      aShapeType != TopAbs_SOLID) {
+    SetErrorCode("Only solids, vertices, edges or faces can be found by this method");
     return NULL;
   }
 
@@ -1281,8 +1283,9 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnSphe
   TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
   if (aShapeType != TopAbs_VERTEX &&
       aShapeType != TopAbs_EDGE &&
-      aShapeType != TopAbs_FACE) {
-    SetErrorCode("Only vertices, edges or faces can be found by this method");
+      aShapeType != TopAbs_FACE &&
+      aShapeType != TopAbs_SOLID) {
+    SetErrorCode("Only solids, vertices, edges or faces can be found by this method");
     return NULL;
   }
 
