@@ -10,6 +10,7 @@
 #  $Header$
 
 from batchmode_salome import *
+import GEOM
 
 #--------------------------------------------------------------------------
 modulecatalog = naming_service.Resolve("/Kernel/ModulCatalog")
