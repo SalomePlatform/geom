@@ -47,7 +47,7 @@ ShapeProcess.SplitContinuity.SurfaceContinuity		:C0
 ShapeProcess.SplitContinuity.CurveContinuity		:C1
 
 ShapeProcess.ToBezier.EdgeMode				: 0
-ShapeProcess.ToBezier.SurfaceMode			: 1
+ShapeProcess.ToBezier.SurfaceMode			: 0
 ShapeProcess.ToBezier.PlaneMode				: 1
 ShapeProcess.ToBezier.RevolutionMode			: 1
 ShapeProcess.ToBezier.ExtrusionMode			: 1
