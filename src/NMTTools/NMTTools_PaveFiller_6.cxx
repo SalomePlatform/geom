@@ -64,6 +64,9 @@
 #include <NMTTools_Tools.hxx>
 #include <BRepLib.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
+//
+#include <Geom_Surface.hxx>
+#include <TopLoc_Location.hxx>
 
 static 
   Standard_Boolean IsPairFound(const Standard_Integer nF1,
@@ -524,10 +527,9 @@ static
       //
       if (aCBAPI.IsCommonBlock(aPB)) {
 	// it can be Common Block
-	Standard_Boolean bHasPCOnF, bFound;
-	Standard_Integer nF, k, nEOrx, nF1x, nF2x;
-	Standard_Real aTolEx, aT1x, aT2x;
-	BOPTools_ListIteratorOfListOfPaveBlock aItPBx;
+	Standard_Real aTolEx;
+	Handle(Geom2d_Curve) aC2D1, aC2D2;
+	TopoDS_Face aF1FWD, aF2FWD;
 	//
 	NMTTools_CommonBlock& aCB=aCBAPI.CommonBlock(aPB);
 	const BOPTools_ListOfPaveBlock& aLPBx=aCB.PaveBlocks();
@@ -537,49 +539,18 @@ static
 	const TopoDS_Edge& aEx=TopoDS::Edge(tDS.Shape(mE));
 	aTolEx=BRep_Tool::Tolerance(aEx);
 	//
-	for (k=0; k<2; ++k) {	
-	  nF=(!k) ? nF1 : nF2;
-	  const TopoDS_Face& aF=TopoDS::Face(myDS->Shape(nF));
-	  //
-	  bHasPCOnF=BOPTools_Tools2D::HasCurveOnSurface(aEx, aF); 
-	  if (bHasPCOnF) {
-	    continue;
-	  }
-	  //
-	  bFound=Standard_False;
-	  aItPBx.Initialize(aLPBx);
-	  for (; aItPBx.More(); aItPBx.Next()) {
-	    BOPTools_PaveBlock& aPBx=aIt.Value();
-	    nEOrx=aPBx.OriginalEdge();
-	    const TopoDS_Shape& aEOrx=tDS.Shape(nEOrx);
-	    BOPTools_PaveBlock& aPBSEx=aMEPB.ChangeFromKey(aEOrx);
-	    aT1x=aPBSEx.Pave1().Param();
-	    aT2x=aPBSEx.Pave2().Param();
-	    const IntTools_Curve& aICx=aPBSEx.Curve();
-	    //
-	    nF1x=aPBSEx.Face1();
-	    nF2x=aPBSEx.Face2();
-	    //
-	    if (nF1x==nF) {
-	      Handle(Geom2d_Curve) aC2D1x=aICx.FirstCurve2d();
-	      Handle(Geom2d_TrimmedCurve)aC2D1xT =new Geom2d_TrimmedCurve(aC2D1x, aT1x, aT2x);
-	      aBB.UpdateEdge(aEx, aC2D1xT, aF, aTolEx);
-	      bFound=!bFound;
-	      break;
-	    }
-	    //
-	    if (nF2x==nF) {
-	      Handle(Geom2d_Curve) aC2D2x=aICx.SecondCurve2d();
-	      Handle(Geom2d_TrimmedCurve)aC2D2xT =new Geom2d_TrimmedCurve(aC2D2x, aT1x, aT2x);
-	      aBB.UpdateEdge(aEx, aC2D2xT, aF, aTolEx);
-	      bFound=!bFound;
-	      break;
-	    }
-	  }
-	  if (bFound){
-	    BRepLib::SameParameter(aEx, aTolEx, Standard_True);
-	  }
-	}
+	//modified by NIZNHY-PKV Mon Dec 27 14:30:15 2004 f
+	//
+	aF1FWD=aF1;
+	aF1FWD.Orientation(TopAbs_FORWARD);
+	NMTTools_Tools::MakePCurve(aEx, aF1FWD, aC2D1, aTolEx);
+	//
+	aF2FWD=aF2;
+	aF2FWD.Orientation(TopAbs_FORWARD);
+	NMTTools_Tools::MakePCurve(aEx, aF2FWD, aC2D2, aTolEx);
+	//
+	// block A has been removed
+	//modified by NIZNHY-PKV Mon Dec 27 14:33:26 2004 t				
       } //if (aCBAPI.IsCommonBlock(aPB))
       //
       // new SE
@@ -1149,3 +1120,49 @@ Standard_Boolean IsFound(const TColStd_IndexedMapOfInteger& aMapWhat,
   }
   return bFlag;
 }
+/* 
+// block A
+	for (k=0; k<2; ++k) {	
+	  nF=(!k) ? nF1 : nF2;
+	  const TopoDS_Face& aF=TopoDS::Face(myDS->Shape(nF));
+	  //
+	  bHasPCOnF=BOPTools_Tools2D::HasCurveOnSurface(aEx, aF); 
+	  if (bHasPCOnF) {
+	    continue;
+	  }
+	  //
+	  bFound=Standard_False;
+	  aItPBx.Initialize(aLPBx);
+	  for (; aItPBx.More(); aItPBx.Next()) {
+	    BOPTools_PaveBlock& aPBx=aIt.Value();
+	    nEOrx=aPBx.OriginalEdge();
+	    const TopoDS_Shape& aEOrx=tDS.Shape(nEOrx);
+	    BOPTools_PaveBlock& aPBSEx=aMEPB.ChangeFromKey(aEOrx);
+	    aT1x=aPBSEx.Pave1().Param();
+	    aT2x=aPBSEx.Pave2().Param();
+	    const IntTools_Curve& aICx=aPBSEx.Curve();
+	    //
+	    nF1x=aPBSEx.Face1();
+	    nF2x=aPBSEx.Face2();
+	    //
+	    if (nF1x==nF) {
+	      Handle(Geom2d_Curve) aC2D1x=aICx.FirstCurve2d();
+	      Handle(Geom2d_TrimmedCurve)aC2D1xT =new Geom2d_TrimmedCurve(aC2D1x, aT1x, aT2x);
+	      aBB.UpdateEdge(aEx, aC2D1xT, aF, aTolEx);
+	      bFound=!bFound;
+	      break;
+	    }
+	    //
+	    if (nF2x==nF) {
+	      Handle(Geom2d_Curve) aC2D2x=aICx.SecondCurve2d();
+	      Handle(Geom2d_TrimmedCurve)aC2D2xT =new Geom2d_TrimmedCurve(aC2D2x, aT1x, aT2x);
+	      aBB.UpdateEdge(aEx, aC2D2xT, aF, aTolEx);
+	      bFound=!bFound;
+	      break;
+	    }
+	  }
+	  if (bFound){
+	    BRepLib::SameParameter(aEx, aTolEx, Standard_True);
+	  }
+	} 
+	*/

@@ -8,7 +8,7 @@
 #include <BOPTColStd_Failure.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTTools_DEProcessor.hxx>
-#include "utilities.h"
+//QQ #include "utilities.h"
 
 //=======================================================================
 // function: NMTTools_PaveFiller::NMTTools_PaveFiller
@@ -164,6 +164,7 @@
     // 2.VE
     myPavePool.Resize (myNbEdges);
     PrepareEdges();
+    
     PerformVE();
     //
     // 3.VF
@@ -206,6 +207,6 @@
     //
   }
   catch (BOPTColStd_Failure& x) {
-    MESSAGE(x.Message() << flush);
+    //QQ MESSAGE(x.Message() << flush);
   }
 }
