@@ -525,7 +525,7 @@
             <component-name>GEOM_Superv</component-name>
             <component-username>GEOM_Superv</component-username>
             <component-type>OTHER</component-type>
-            <component-author>asv</component-author>
+            <component-author>mkr</component-author>
             <component-version>2.1.0</component-version>
             <component-comment>unknown</component-comment>
             <component-multistudy>1</component-multistudy>
@@ -537,7 +537,7 @@
                 <component-service-list>
                     <component-service>
                         <service-name>SetStudyID</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -552,8 +552,137 @@
                         <DataStream-list></DataStream-list>
                     </component-service>
                     <component-service>
+                        <service-name>CreateListOfGO</service-name>
+                        <service-author>mkr</service-author>
+                        <service-version>2.1.0</service-version>
+                        <service-comment>unknown</service-comment>
+                        <service-by-default>0</service-by-default>
+                        <inParameter-list></inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-name>return</outParameter-name>
+                                <outParameter-type>GEOM_List</outParameter-type>
+                                <outParameter-comment>unknown</outParameter-comment>
+                            </outParameter>
+                        </outParameter-list>
+                        <DataStream-list></DataStream-list>
+                    </component-service>
+                    <component-service>
+                        <service-name>AddItemToListOfGO</service-name>
+                        <service-author>mkr</service-author>
+                        <service-version>2.1.0</service-version>
+                        <service-comment>unknown</service-comment>
+                        <service-by-default>0</service-by-default>
+                        <inParameter-list>
+                            <inParameter>
+                                <inParameter-name>theList</inParameter-name>
+                                <inParameter-type>GEOM_List</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>theObject</inParameter-name>
+                                <inParameter-type>GEOM_Object</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                        </inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-name>theList</outParameter-name>
+                                <outParameter-type>GEOM_List</outParameter-type>
+                                <outParameter-comment>unknown</outParameter-comment>
+                            </outParameter>
+                        </outParameter-list>
+                        <DataStream-list></DataStream-list>
+                    </component-service>
+                    <component-service>
+                        <service-name>CreateListOfLong</service-name>
+                        <service-author>mkr</service-author>
+                        <service-version>2.1.0</service-version>
+                        <service-comment>unknown</service-comment>
+                        <service-by-default>0</service-by-default>
+                        <inParameter-list></inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-name>return</outParameter-name>
+                                <outParameter-type>GEOM_List</outParameter-type>
+                                <outParameter-comment>unknown</outParameter-comment>
+                            </outParameter>
+                        </outParameter-list>
+                        <DataStream-list></DataStream-list>
+                    </component-service>
+                    <component-service>
+                        <service-name>AddItemToListOfLong</service-name>
+                        <service-author>mkr</service-author>
+                        <service-version>2.1.0</service-version>
+                        <service-comment>unknown</service-comment>
+                        <service-by-default>0</service-by-default>
+                        <inParameter-list>
+                            <inParameter>
+                                <inParameter-name>theList</inParameter-name>
+                                <inParameter-type>GEOM_List</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>theObject</inParameter-name>
+                                <inParameter-type>long</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                        </inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-name>theList</outParameter-name>
+                                <outParameter-type>GEOM_List</outParameter-type>
+                                <outParameter-comment>unknown</outParameter-comment>
+                            </outParameter>
+                        </outParameter-list>
+                        <DataStream-list></DataStream-list>
+                    </component-service>
+                    <component-service>
+                        <service-name>CreateListOfDouble</service-name>
+                        <service-author>mkr</service-author>
+                        <service-version>2.1.0</service-version>
+                        <service-comment>unknown</service-comment>
+                        <service-by-default>0</service-by-default>
+                        <inParameter-list></inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-name>return</outParameter-name>
+                                <outParameter-type>GEOM_List</outParameter-type>
+                                <outParameter-comment>unknown</outParameter-comment>
+                            </outParameter>
+                        </outParameter-list>
+                        <DataStream-list></DataStream-list>
+                    </component-service>
+                    <component-service>
+                        <service-name>AddItemToListOfDouble</service-name>
+                        <service-author>mkr</service-author>
+                        <service-version>2.1.0</service-version>
+                        <service-comment>unknown</service-comment>
+                        <service-by-default>0</service-by-default>
+                        <inParameter-list>
+                            <inParameter>
+                                <inParameter-name>theList</inParameter-name>
+                                <inParameter-type>GEOM_List</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>theObject</inParameter-name>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                        </inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-name>theList</outParameter-name>
+                                <outParameter-type>GEOM_List</outParameter-type>
+                                <outParameter-comment>unknown</outParameter-comment>
+                            </outParameter>
+                        </outParameter-list>
+                        <DataStream-list></DataStream-list>
+                    </component-service>
+                    <component-service>
                         <service-name>MakePointXYZ</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -585,7 +714,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakePointWithReference</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -622,7 +751,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakePointOnCurve</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -649,7 +778,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeVectorDXDYDZ</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -681,7 +810,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeVectorTwoPnt</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -708,7 +837,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeLineTwoPnt</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -735,7 +864,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakePlaneThreePnt</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -772,7 +901,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakePlanePntVec</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -804,7 +933,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakePlaneFace</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -831,7 +960,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeMarker</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -893,7 +1022,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeBox</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -940,7 +1069,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeBoxDXDYDZ</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -972,7 +1101,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeBoxTwoPnt</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -999,7 +1128,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeCylinderPntVecRH</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1036,7 +1165,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeCylinderRH</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1063,7 +1192,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeSphere</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1100,7 +1229,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeSphereR</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1122,7 +1251,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeSpherePntR</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1149,7 +1278,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeTorusPntVecRR</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1186,7 +1315,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeTorusRR</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1213,7 +1342,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeConePntVecR1R2H</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1255,7 +1384,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeConeR1R2H</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1287,7 +1416,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakePrismVecH</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1319,7 +1448,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakePrismTwoPnt</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1351,7 +1480,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakePipe</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1378,7 +1507,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeRevolutionAxisAngle</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1410,7 +1539,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeFilling</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1457,7 +1586,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeBoolean</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1489,7 +1618,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeFuse</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1516,29 +1645,29 @@
                     </component-service>
                     <component-service>
                         <service-name>MakePartition</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
                             <inParameter>
                                 <inParameter-name>theShapes</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>theTools</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>theKeepInside</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>theRemoveInside</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                             <inParameter>
@@ -1553,7 +1682,7 @@
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>theMaterials</inParameter-name>
-                                <inParameter-type>ListOfLong</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -1568,7 +1697,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeHalfPartition</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1595,7 +1724,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeCopy</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1617,7 +1746,7 @@
                     </component-service>
                     <component-service>
                         <service-name>Export</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1643,7 +1772,7 @@
                     </component-service>
                     <component-service>
                         <service-name>Import</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1670,7 +1799,7 @@
                     </component-service>
                     <component-service>
                         <service-name>ImportTranslators</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1691,7 +1820,7 @@
                     </component-service>
                     <component-service>
                         <service-name>ExportTranslators</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1712,7 +1841,7 @@
                     </component-service>
                     <component-service>
                         <service-name>TranslateTwoPoints</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1744,7 +1873,7 @@
                     </component-service>
                     <component-service>
                         <service-name>TranslateTwoPointsCopy</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1776,7 +1905,7 @@
                     </component-service>
                     <component-service>
                         <service-name>TranslateDXDYDZ</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1813,7 +1942,7 @@
                     </component-service>
                     <component-service>
                         <service-name>TranslateDXDYDZCopy</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1850,7 +1979,7 @@
                     </component-service>
                     <component-service>
                         <service-name>TranslateVector</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1877,7 +2006,7 @@
                     </component-service>
                     <component-service>
                         <service-name>TranslateVectorCopy</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1904,7 +2033,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MultiTranslate1D</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1941,7 +2070,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MultiTranslate2D</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -1993,7 +2122,7 @@
                     </component-service>
                     <component-service>
                         <service-name>Rotate</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2025,7 +2154,7 @@
                     </component-service>
                     <component-service>
                         <service-name>RotateCopy</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2057,7 +2186,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MultiRotate1D</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2089,7 +2218,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MultiRotate2D</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2136,7 +2265,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MirrorPlane</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2163,7 +2292,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MirrorPlaneCopy</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2190,7 +2319,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MirrorAxis</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2217,7 +2346,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MirrorAxisCopy</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2244,7 +2373,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MirrorPoint</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2271,7 +2400,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MirrorPointCopy</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2298,7 +2427,7 @@
                     </component-service>
                     <component-service>
                         <service-name>OffsetShape</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2325,7 +2454,7 @@
                     </component-service>
                     <component-service>
                         <service-name>OffsetShapeCopy</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2352,7 +2481,7 @@
                     </component-service>
                     <component-service>
                         <service-name>ScaleShape</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2384,7 +2513,7 @@
                     </component-service>
                     <component-service>
                         <service-name>ScaleShapeCopy</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2416,7 +2545,7 @@
                     </component-service>
                     <component-service>
                         <service-name>PositionShape</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2448,7 +2577,7 @@
                     </component-service>
                     <component-service>
                         <service-name>PositionShapeCopy</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2480,7 +2609,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeEdge</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2507,14 +2636,14 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeWire</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
                             <inParameter>
                                 <inParameter-name>theEdgesAndWires</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -2529,7 +2658,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeFace</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2556,14 +2685,14 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeFaceWires</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
                             <inParameter>
                                 <inParameter-name>theWires</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                             <inParameter>
@@ -2583,14 +2712,14 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeShell</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
                             <inParameter>
                                 <inParameter-name>theFacesAndShells</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -2605,7 +2734,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeSolidShell</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2627,14 +2756,14 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeSolidShells</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
                             <inParameter>
                                 <inParameter-name>theShells</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -2649,14 +2778,14 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeCompound</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
                             <inParameter>
                                 <inParameter-name>theShapes</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -2671,7 +2800,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeGlueFaces</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2698,7 +2827,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeExplode</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2722,7 +2851,7 @@
                         <outParameter-list>
                             <outParameter>
                                 <outParameter-name>return</outParameter-name>
-                                <outParameter-type>ListOfGO</outParameter-type>
+                                <outParameter-type>GEOM_List</outParameter-type>
                                 <outParameter-comment>unknown</outParameter-comment>
                             </outParameter>
                         </outParameter-list>
@@ -2730,7 +2859,7 @@
                     </component-service>
                     <component-service>
                         <service-name>NumberOfFaces</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2752,7 +2881,7 @@
                     </component-service>
                     <component-service>
                         <service-name>NumberOfEdges</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2774,7 +2903,7 @@
                     </component-service>
                     <component-service>
                         <service-name>ChangeOrientation</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2796,7 +2925,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeQuad4Vertices</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2833,7 +2962,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeQuad</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2870,7 +2999,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeQuad2Edges</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2897,7 +3026,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeHexa</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2944,7 +3073,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeHexa2Faces</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -2971,7 +3100,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetPoint</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3013,7 +3142,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetEdge</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3045,7 +3174,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetEdgeNearPoint</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3072,7 +3201,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetFaceByPoints</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3114,7 +3243,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetFaceByEdges</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3146,7 +3275,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetOppositeFace</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3173,7 +3302,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetFaceNearPoint</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3200,7 +3329,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetFaceByNormale</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3227,7 +3356,7 @@
                     </component-service>
                     <component-service>
                         <service-name>IsCompoundOfBlocks</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3264,7 +3393,7 @@
                     </component-service>
                     <component-service>
                         <service-name>CheckCompoundOfBlocks</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3291,7 +3420,7 @@
                     </component-service>
                     <component-service>
                         <service-name>PrintBCErrors</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3318,7 +3447,7 @@
                     </component-service>
                     <component-service>
                         <service-name>ExplodeCompoundOfBlocks</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3342,7 +3471,7 @@
                         <outParameter-list>
                             <outParameter>
                                 <outParameter-name>return</outParameter-name>
-                                <outParameter-type>ListOfGO</outParameter-type>
+                                <outParameter-type>GEOM_List</outParameter-type>
                                 <outParameter-comment>unknown</outParameter-comment>
                             </outParameter>
                         </outParameter-list>
@@ -3350,7 +3479,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetBlockNearPoint</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3377,7 +3506,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetBlockByParts</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3389,7 +3518,7 @@
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>theParts</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -3404,7 +3533,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetBlocksByParts</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3416,14 +3545,14 @@
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>theParts</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
                         <outParameter-list>
                             <outParameter>
                                 <outParameter-name>return</outParameter-name>
-                                <outParameter-type>ListOfGO</outParameter-type>
+                                <outParameter-type>GEOM_List</outParameter-type>
                                 <outParameter-comment>unknown</outParameter-comment>
                             </outParameter>
                         </outParameter-list>
@@ -3431,7 +3560,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeMultiTransformation1D</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3468,7 +3597,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeMultiTransformation2D</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3520,7 +3649,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeCirclePntVecR</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3552,7 +3681,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeCircleThreePnt</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3584,7 +3713,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeEllipse</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3621,7 +3750,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeArc</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3653,14 +3782,14 @@
                     </component-service>
                     <component-service>
                         <service-name>MakePolyline</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
                             <inParameter>
                                 <inParameter-name>thePoints</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -3675,14 +3804,14 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeSplineBezier</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
                             <inParameter>
                                 <inParameter-name>thePoints</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -3697,14 +3826,14 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeSplineInterpolation</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
                             <inParameter>
                                 <inParameter-name>thePoints</inParameter-name>
-                                <inParameter-type>ListOfGO</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -3719,7 +3848,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeSketcher</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3731,7 +3860,7 @@
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>theWorkingPlane</inParameter-name>
-                                <inParameter-type>ListOfDouble</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -3746,7 +3875,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeFilletAll</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3773,7 +3902,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeFilletEdges</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3790,7 +3919,7 @@
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>theEdges</inParameter-name>
-                                <inParameter-type>ListOfLong</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -3805,7 +3934,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeFilletFaces</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3822,7 +3951,7 @@
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>theFaces</inParameter-name>
-                                <inParameter-type>ListOfLong</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -3837,7 +3966,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeChamferAll</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3864,7 +3993,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeChamferEdge</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3906,7 +4035,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeChamferFaces</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3928,7 +4057,7 @@
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>theFaces</inParameter-name>
-                                <inParameter-type>ListOfLong</inParameter-type>
+                                <inParameter-type>GEOM_List</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
                         </inParameter-list>
@@ -3943,7 +4072,7 @@
                     </component-service>
                     <component-service>
                         <service-name>MakeArchimede</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -3980,7 +4109,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetSubShapeIndex</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -4007,7 +4136,7 @@
                     </component-service>
                     <component-service>
                         <service-name>CreateGroup</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -4034,7 +4163,7 @@
                     </component-service>
                     <component-service>
                         <service-name>AddObject</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -4055,7 +4184,7 @@
                     </component-service>
                     <component-service>
                         <service-name>RemoveObject</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -4076,7 +4205,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetType</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -4098,7 +4227,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetMainShape</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -4120,7 +4249,7 @@
                     </component-service>
                     <component-service>
                         <service-name>GetObjects</service-name>
-                        <service-author>asv</service-author>
+                        <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>
                         <service-comment>unknown</service-comment>
                         <service-by-default>0</service-by-default>
@@ -4134,7 +4263,7 @@
                         <outParameter-list>
                             <outParameter>
                                 <outParameter-name>return</outParameter-name>
-                                <outParameter-type>ListOfLong</outParameter-type>
+                                <outParameter-type>GEOM_List</outParameter-type>
                                 <outParameter-comment>unknown</outParameter-comment>
                             </outParameter>
                         </outParameter-list>

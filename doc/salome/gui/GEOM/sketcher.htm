@@ -2,31 +2,11 @@
 
 <html>
 
-<!--(==============================================================)-->
-<!--(Document created with RoboEditor. )============================-->
-<!--(==============================================================)-->
-
 <head>
-
 <title>Sketcher</title>
-
-<!--(Meta)==========================================================-->
-
-<meta http-equiv=content-type content="text/html; charset=windows-1252">
-<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
-<meta name=generator-major-version content=0.1>
-<meta name=generator-minor-version content=1>
-<meta name=filetype content=kadov>
-<meta name=filetype-version content=1>
-<meta name=page-count content=1>
-<meta name=layout-height content=1268>
-<meta name=layout-width content=740>
-
-
-<!--(Links)=========================================================-->
-
- <link rel='stylesheet' href='default_ns.css'>
-<script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
 <!--
 if (navigator.appName !="Netscape")
 {   document.write("<link rel='stylesheet' href='default.css'>");}
@@ -34,27 +14,26 @@ if (navigator.appName !="Netscape")
 </script>
 <style type="text/css">
 <!--
-img_whs1 {border-style: none; border: none; float: none; width: 30px; height: 30px;}
-p.whs2 {font-size: 12pt;}
-ul.whs3 {list-style: disc;}
-p.whs4 {margin-left: 40px; font-size: 12pt;}
-img_whs5 {border-style: none; border: none; width: 200px; height: 277px;}
-img_whs6 {border-style: none; border: none; width: 200px; height: 276px;}
-p.whs7 {font-size: 12pt; margin-left: 40px; text-indent: -40px;}
-p.whs8 {font-size: 12pt; margin-left: 40px; text-indent: -40px; font-weight: bold;}
-p.whs9 {font-size: 12pt; text-indent: -40px; font-weight: bold; margin-left: 80px;}
-img_whs10 {border-style: none; border: none; width: 200px; height: 200px;}
-img_whs11 {border-style: none; border: none; width: 200px; height: 195px;}
+img_whs1 { border-style:none; border:none; float:none; width:30px; height:30px; }
+p.whs2 { font-size:12pt; }
+ul.whs3 { list-style:disc; }
+p.whs4 { margin-left:40px; font-size:12pt; }
+img_whs5 { border:none; width:200px; height:277px; }
+img_whs6 { border:none; width:200px; height:276px; }
+p.whs7 { font-size:12pt; margin-left:40px; text-indent:-40px; }
+p.whs8 { font-size:12pt; margin-left:40px; text-indent:-40px; font-weight:bold; }
+p.whs9 { font-size:12pt; text-indent:-40px; font-weight:bold; margin-left:80px; }
+img_whs10 { border:none; width:200px; height:200px; }
+img_whs11 { border:none; width:200px; height:195px; }
 -->
-</style>
-<script type="text/javascript" language="JavaScript">
+</style><script type="text/javascript" language="JavaScript">
 <!--
 if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
 {
   var strNSS = "<style type='text/css'>";
-  strNSS += "p.whs7 {text-indent:1; }";
-  strNSS += "p.whs8 {text-indent:1; }";
-  strNSS += "p.whs9 {text-indent:1; }";
+  strNSS += "p.whs7 {text-indent:1pt; }";
+  strNSS += "p.whs8 {text-indent:1pt; }";
+  strNSS += "p.whs9 {text-indent:1pt; }";
   strNSS +="</style>";
   document.write(strNSS);
 }
@@ -76,22 +55,15 @@ onerror = null;
 </script>
 <style type="text/css">
 <!--
-  div.WebHelpPopupMenu {position:absolute; left:0px; top:0px; z-index:4; visibility:hidden;}
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
 -->
-</style>
-<script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
 <script type="text/javascript" language="javascript" src="whver.js"></script>
 <script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
 <script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
 <script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
 </head>
-
-<!--(Body)==========================================================-->
-
-
-<body>
-
-<script type="text/javascript" language="javascript1.2">
+<body><script type="text/javascript" language="javascript1.2">
 <!--
 if (window.gbWhTopic)
 {
@@ -109,15 +81,16 @@ addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	if (window.setRelStartPage)
 	{
-	setRelStartPage("geom.html");
+	setRelStartPage("geom.htm");
 
-		autoSync(0);
+		autoSync(1);
 		sendSyncInfo();
 		sendAveInfoOut();
 	}
 }
 else
-	document.location.reload();
+	if (window.gbIE4)
+		document.location.reload();
 //-->
 </script>
 <h1>Sketcher</h1>
@@ -156,8 +129,7 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"><b style="font-weight: bold;">Arguments:</b> 
- </p>
+<p class="whs2"><b>Arguments:</b> </p>
 
 <p class="whs2"><span><font size=3 style="font-size:12pt;">1. Element type (segment or arc).</font></span></p>
 
@@ -200,7 +172,7 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"><b style="font-weight: bold;">Dialog Box:</b></p>
+<p class="whs2"><b>Dialog Box:</b></p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -221,5 +193,4 @@ if (window.writeIntopicBar)
 //-->
 </script>
 </body>
-
 </html>

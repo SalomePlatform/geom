@@ -49,19 +49,15 @@ if father is None:
 	aPixmap.SetPixMap("ICON_OBJBROWSER_Geometry")
 	myBuilder.DefineComponentInstance(father,geom)
 
-# -----------------------------------------------------------------------------
-# add To Study
-# -----------------------------------------------------------------------------
-
+#     *  Get name for sub-shape aSubObj of shape aMainObj
+#
 def SubShapeName(aSubObj, aMainObj):
     name = "SubShape"
     print name
     return name
 
-# -----------------------------------------------------------------------------
-# Operations
-# -----------------------------------------------------------------------------
-
+#     *  Publish in study aShape with name aName
+#
 def addToStudy(aShape, aName):
     try:
         aSObject = geom.AddInStudy(myStudy, aShape, aName, None)
@@ -70,11 +66,11 @@ def addToStudy(aShape, aName):
         return ""
     return aShape.GetStudyEntry()
 
+#     *  Publish in study aShape with name aName as sub-object of previously published aFather
+#
 def addToStudyInFather(aFather, aShape, aName):
     try:
-#        myBuilder.NewCommand()
         aSObject = geom.AddInStudy(myStudy, aShape, aName, aFather)
-#        myBuilder.CommitCommand()
     except:
         print "addToStudyInFather() failed"
         return ""
@@ -762,10 +758,28 @@ def Import(filename, formatname):
       print "Import : ", InsertOp.GetErrorCode()
     return anObj
 
+def ImportBREP(theFileName):
+    return Import(theFileName, "BREP")
+
+def ImportIGES(theFileName):
+    return Import(theFileName, "IGES")
+
+def ImportSTEP(theFileName):
+    return Import(theFileName, "STEP")
+
 def Export(aShape, filename, formatname):
     InsertOp.Export(aShape, filename, formatname)
     if InsertOp.IsDone() == 0:
       print "Export : ", InsertOp.GetErrorCode()
+
+def ExportBREP(theObject, theFileName):
+    return Export(theObject, theFileName, "BREP")
+
+def ExportIGES(theObject, theFileName):
+    return Export(theObject, theFileName, "IGES")
+
+def ExportSTEP(theObject, theFileName):
+    return Export(theObject, theFileName, "STEP")
 
 # -----------------------------------------------------------------------------
 # Block operations

@@ -71,12 +71,14 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
     if (aShape1.IsSame(aShape2)) {
       Standard_ConstructionError::Raise("The end points must be different");
     }
-    gp_Pnt P1 = BRep_Tool::Pnt(TopoDS::Vertex(aShape1));
-    gp_Pnt P2 = BRep_Tool::Pnt(TopoDS::Vertex(aShape2));
+    TopoDS_Vertex V1 = TopoDS::Vertex(aShape1);
+    TopoDS_Vertex V2 = TopoDS::Vertex(aShape2);
+    gp_Pnt P1 = BRep_Tool::Pnt(V1);
+    gp_Pnt P2 = BRep_Tool::Pnt(V2);
     if (P1.Distance(P2) < Precision::Confusion()) {
       Standard_ConstructionError::Raise("The end points are too close");
     }
-    aShape = BRepBuilderAPI_MakeEdge(P1, P2).Shape();
+    aShape = BRepBuilderAPI_MakeEdge(V1, V2).Shape();
   } else {
   }
 

@@ -32,6 +32,6 @@ VPATH=.:@srcdir@
 
 @COMMENCE@
 
-SUBDIRS = OBJECT ARCHIMEDE NMTDS NMTTools NMTAlgo SKETCHER PARTITION GEOM BREPExport BREPImport IGESExport IGESImport STEPExport STEPImport ShHealOper GEOMImpl GEOM_I GEOMClient DlgRef GEOMFiltersSelection GEOMGUI GEOMBase DisplayGUI GEOMToolsGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI RepairGUI MeasureGUI GroupGUI BlocksGUI GEOM_SWIG GEOM_I_Superv
+SUBDIRS = OBJECT ARCHIMEDE NMTDS NMTTools NMTAlgo GEOMAlgo SKETCHER PARTITION GEOM BREPExport BREPImport IGESExport IGESImport STEPExport STEPImport ShHealOper GEOMImpl GEOM_I GEOMClient DlgRef GEOMFiltersSelection GEOMGUI GEOMBase DisplayGUI GEOMToolsGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI RepairGUI MeasureGUI GroupGUI BlocksGUI GEOM_SWIG GEOM_I_Superv
 
 @MODULE@

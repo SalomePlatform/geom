@@ -1,0 +1,47 @@
+-- File:	GEOMAlgo_ShapeAlgo.cdl
+-- Created:	Tue Dec  7 12:05:19 2004
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2004
+
+
+deferred class ShapeAlgo from GEOMAlgo 
+    inherits Algo from GEOMAlgo  
+    
+	---Purpose: 
+
+uses
+    Shape from TopoDS, 
+    Context from IntTools
+
+--raises
+
+is
+    Initialize 
+    	returns ShapeAlgo from GEOMAlgo;  
+    ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_ShapeAlgo();"  
+    
+    SetShape(me:out; 
+    	    aS:Shape from TopoDS);
+     
+    SetTolerance(me:out; 
+    	    aT:Real from Standard); 
+	     
+    Shape(me) 
+    	returns Shape from TopoDS; 
+    ---C++:return const &  
+     
+    Tolerance(me) 
+    	returns Real from Standard;  
+     
+    Result(me) 
+    	returns Shape from TopoDS; 
+    ---C++:return const &  
+    
+fields 
+    myShape     : Shape from TopoDS is protected;     
+    myTolerance : Real from Standard is protected; 
+    myResult    : Shape from TopoDS is protected; 
+    myContext   : Context from IntTools is protected; 
+    
+end ShapeAlgo;

@@ -6,6 +6,7 @@
 #include CORBA_SERVER_HEADER(GEOM_Superv)
 
 #include "GEOM_Gen_i.hh"
+#include "GEOM_List_i.hh"
 
 #include "QAD_Study.h"
 #include "QAD_Application.h"
@@ -37,10 +38,34 @@ public:
   void getLocalOp();
   void getGroupOp();  
 
+  PortableServer::ServantBase_var GetServant(CORBA::Object_ptr       theObject,
+					     PortableServer::POA_ptr thePOA);
+
   //-----------------------------------------------------------------------//
   // Set current stydy ID                                                  //
   //-----------------------------------------------------------------------//
   void SetStudyID( CORBA::Long theId );      
+
+  //-----------------------------------------------------------//
+  // Create ListOfGO and add items to it                       // 
+  //-----------------------------------------------------------//
+  GEOM::GEOM_List_ptr CreateListOfGO();
+  void AddItemToListOfGO(GEOM::GEOM_List_ptr& theList, 
+			 GEOM::GEOM_Object_ptr    theObject);
+
+  //-----------------------------------------------------------//
+  // Create ListOfLong and add items to it                     // 
+  //-----------------------------------------------------------//
+  GEOM::GEOM_List_ptr CreateListOfLong();
+  void AddItemToListOfLong(GEOM::GEOM_List_ptr& theList, 
+			   long    theObject);
+  
+  //-----------------------------------------------------------//
+  // Create ListOfDouble and add items to it                   // 
+  //-----------------------------------------------------------//
+  GEOM::GEOM_List_ptr CreateListOfDouble();
+  void AddItemToListOfDouble(GEOM::GEOM_List_ptr& theList, 
+			     double    theObject);
 
   //-----------------------------------------------------------------------//
   // Inherited methods from SALOMEDS::Driver                               //
@@ -187,13 +212,13 @@ public:
 				     CORBA::Long theOperation);
   GEOM::GEOM_Object_ptr MakeFuse (GEOM::GEOM_Object_ptr theShape1,
 				  GEOM::GEOM_Object_ptr theShape2);
-  GEOM::GEOM_Object_ptr MakePartition (const GEOM::ListOfGO&   theShapes,
-				       const GEOM::ListOfGO&   theTools,
-				       const GEOM::ListOfGO&   theKeepInside,
-				       const GEOM::ListOfGO&   theRemoveInside,
+  GEOM::GEOM_Object_ptr MakePartition (GEOM::GEOM_List_ptr   theShapes,
+				       GEOM::GEOM_List_ptr   theTools,
+				       GEOM::GEOM_List_ptr   theKeepInside,
+				       GEOM::GEOM_List_ptr   theRemoveInside,
 				       const CORBA::Short      theLimit,
 				       const CORBA::Boolean    theRemoveWebs,
-				       const GEOM::ListOfLong& theMaterials);
+				       GEOM::GEOM_List_ptr theMaterials);
   GEOM::GEOM_Object_ptr MakeHalfPartition (GEOM::GEOM_Object_ptr theShape,
 					   GEOM::GEOM_Object_ptr thePlane);
 
@@ -292,20 +317,20 @@ public:
   //-----------------------------------------------------------//
   GEOM::GEOM_Object_ptr MakeEdge (GEOM::GEOM_Object_ptr thePnt1,
 				  GEOM::GEOM_Object_ptr thePnt2);
-  GEOM::GEOM_Object_ptr MakeWire (const GEOM::ListOfGO& theEdgesAndWires);
+  GEOM::GEOM_Object_ptr MakeWire (GEOM::GEOM_List_ptr theEdgesAndWires);
   GEOM::GEOM_Object_ptr MakeFace (GEOM::GEOM_Object_ptr theWire,
 				  CORBA::Boolean isPlanarWanted);
-  GEOM::GEOM_Object_ptr MakeFaceWires (const GEOM::ListOfGO& theWires,
+  GEOM::GEOM_Object_ptr MakeFaceWires (GEOM::GEOM_List_ptr theWires,
 				       CORBA::Boolean isPlanarWanted);
-  GEOM::GEOM_Object_ptr MakeShell (const GEOM::ListOfGO& theFacesAndShells);
+  GEOM::GEOM_Object_ptr MakeShell (GEOM::GEOM_List_ptr theFacesAndShells);
   GEOM::GEOM_Object_ptr MakeSolidShell (GEOM::GEOM_Object_ptr theShell);
-  GEOM::GEOM_Object_ptr MakeSolidShells (const GEOM::ListOfGO& theShells);
-  GEOM::GEOM_Object_ptr MakeCompound (const GEOM::ListOfGO& theShapes);
+  GEOM::GEOM_Object_ptr MakeSolidShells (GEOM::GEOM_List_ptr theShells);
+  GEOM::GEOM_Object_ptr MakeCompound (GEOM::GEOM_List_ptr theShapes);
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
 				       const CORBA::Double   theTolerance);
-  GEOM::ListOfGO* MakeExplode (GEOM::GEOM_Object_ptr theShape,
-			       const CORBA::Long theShapeType,
-			       const CORBA::Boolean isSorted);
+  GEOM::GEOM_List_ptr MakeExplode (GEOM::GEOM_Object_ptr theShape,
+				       const CORBA::Long theShapeType,
+				       const CORBA::Boolean isSorted);
   CORBA::Long NumberOfFaces (GEOM::GEOM_Object_ptr theShape);
   CORBA::Long NumberOfEdges (GEOM::GEOM_Object_ptr theShape);
   GEOM::GEOM_Object_ptr ChangeOrientation (GEOM::GEOM_Object_ptr theShape);
@@ -363,15 +388,15 @@ public:
 					GEOM::GEOM_IBlocksOperations::BCErrors_out theErrors);
   char* PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
 		       const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors);
-  GEOM::ListOfGO* ExplodeCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-					   const CORBA::Long     theMinNbFaces,
-					   const CORBA::Long     theMaxNbFaces);
+  GEOM::GEOM_List_ptr ExplodeCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
+						   const CORBA::Long     theMinNbFaces,
+						   const CORBA::Long     theMaxNbFaces);
   GEOM::GEOM_Object_ptr GetBlockNearPoint (GEOM::GEOM_Object_ptr theCompound,
 					   GEOM::GEOM_Object_ptr thePoint);
   GEOM::GEOM_Object_ptr GetBlockByParts (GEOM::GEOM_Object_ptr theCompound,
-					 const GEOM::ListOfGO& theParts);
-  GEOM::ListOfGO* GetBlocksByParts (GEOM::GEOM_Object_ptr theCompound,
-				    const GEOM::ListOfGO& theParts);
+					 GEOM::GEOM_List_ptr theParts);
+  GEOM::GEOM_List_ptr GetBlocksByParts (GEOM::GEOM_Object_ptr theCompound,
+					    GEOM::GEOM_List_ptr theParts);
   GEOM::GEOM_Object_ptr MakeMultiTransformation1D (GEOM::GEOM_Object_ptr theBlock,
 						   const CORBA::Long     theDirFace1,
 						   const CORBA::Long     theDirFace2,
@@ -399,11 +424,11 @@ public:
   GEOM::GEOM_Object_ptr MakeArc (GEOM::GEOM_Object_ptr thePnt1,
 				 GEOM::GEOM_Object_ptr thePnt2,
 				 GEOM::GEOM_Object_ptr thePnt3);
-  GEOM::GEOM_Object_ptr MakePolyline (const GEOM::ListOfGO& thePoints);
-  GEOM::GEOM_Object_ptr MakeSplineBezier (const GEOM::ListOfGO& thePoints);
-  GEOM::GEOM_Object_ptr MakeSplineInterpolation (const GEOM::ListOfGO& thePoints);
+  GEOM::GEOM_Object_ptr MakePolyline (GEOM::GEOM_List_ptr thePoints);
+  GEOM::GEOM_Object_ptr MakeSplineBezier (GEOM::GEOM_List_ptr thePoints);
+  GEOM::GEOM_Object_ptr MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, 
-				      const GEOM::ListOfDouble& theWorkingPlane);
+				      const GEOM::GEOM_List_ptr theWorkingPlane);
 
   //-----------------------------------------------------------//
   // LocalOperations                                           //
@@ -411,16 +436,16 @@ public:
   GEOM::GEOM_Object_ptr MakeFilletAll (GEOM::GEOM_Object_ptr theShape,
 				       CORBA::Double theR);
   GEOM::GEOM_Object_ptr MakeFilletEdges (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
-					 const GEOM::ListOfLong& theEdges);
+					 GEOM::GEOM_List_ptr theEdges);
   GEOM::GEOM_Object_ptr MakeFilletFaces (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
-					 const GEOM::ListOfLong& theFaces);
+					 GEOM::GEOM_List_ptr theFaces);
   GEOM::GEOM_Object_ptr MakeChamferAll (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD);
   GEOM::GEOM_Object_ptr MakeChamferEdge (GEOM::GEOM_Object_ptr theShape,
 					 CORBA::Double theD1, CORBA::Double theD2,
 					 CORBA::Long theFace1, CORBA::Long theFace2);
   GEOM::GEOM_Object_ptr MakeChamferFaces (GEOM::GEOM_Object_ptr theShape,
 					  CORBA::Double theD1, CORBA::Double theD2,
-					  const GEOM::ListOfLong& theFaces);
+					  GEOM::GEOM_List_ptr theFaces);
   GEOM::GEOM_Object_ptr MakeArchimede (GEOM::GEOM_Object_ptr theShape,
                                        CORBA::Double theWeight,
 				       CORBA::Double theWaterDensity,
@@ -439,12 +464,13 @@ public:
 		     CORBA::Long theSubShapeId);
   CORBA::Long GetType (GEOM::GEOM_Object_ptr theGroup);
   GEOM::GEOM_Object_ptr GetMainShape (GEOM::GEOM_Object_ptr theGroup);
-  GEOM::ListOfLong* GetObjects (GEOM::GEOM_Object_ptr theGroup);
+  GEOM::GEOM_List_ptr GetObjects (GEOM::GEOM_Object_ptr theGroup);
   
 private:
   SALOME_NamingService *  name_service; 
   GEOM::GEOM_Gen_ptr      myGeomEngine;
   CORBA::Long             myStudyID;
+  PortableServer::POA_var myPOA;
   
   GEOM::GEOM_IBasicOperations_ptr     myBasicOp;
   GEOM::GEOM_I3DPrimOperations_ptr    my3DPrimOp;

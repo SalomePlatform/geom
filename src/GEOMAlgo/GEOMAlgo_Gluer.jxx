@@ -1,0 +1,18 @@
+#ifndef _TopoDS_Edge_HeaderFile
+#include <TopoDS_Edge.hxx>
+#endif
+#ifndef _GEOMAlgo_PassKey_HeaderFile
+#include <GEOMAlgo_PassKey.hxx>
+#endif
+#ifndef _TopoDS_Face_HeaderFile
+#include <TopoDS_Face.hxx>
+#endif
+#ifndef _TopTools_DataMapOfShapeListOfShape_HeaderFile
+#include <TopTools_DataMapOfShapeListOfShape.hxx>
+#endif
+#ifndef _TopTools_DataMapOfShapeShape_HeaderFile
+#include <TopTools_DataMapOfShapeShape.hxx>
+#endif
+#ifndef _GEOMAlgo_Gluer_HeaderFile
+#include <GEOMAlgo_Gluer.hxx>
+#endif

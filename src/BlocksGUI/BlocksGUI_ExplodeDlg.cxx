@@ -315,9 +315,12 @@ void BlocksGUI_ExplodeDlg::activateSelection()
   erasePreview(true);
 
   if (isAllSubShapes()) { // Sub-shapes selection disabled
+    disconnect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
     globalSelection( GEOM_ALLSHAPES );
-    SelectionIntoArgument();
-
+    if (myObject->_is_nil()) {
+      SelectionIntoArgument();
+    }
+    connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   } else {
     displayPreview(true, true, false);
     globalSelection(GEOM_PREVIEW);

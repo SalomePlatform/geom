@@ -1,0 +1,113 @@
+-- File:	GEOMAlgo_Gluer.cdl
+-- Created:	Sat Dec 04 12:41:32 2004
+-- Author:	Peter KURNEV
+--		<peter@PREFEX>
+---Copyright:	 Matra Datavision 2004
+
+
+class Gluer from GEOMAlgo  
+    inherits ShapeAlgo from GEOMAlgo
+
+	---Purpose: 
+
+uses 
+    ShapeEnum from TopAbs,
+    Shape from TopoDS,  
+    Edge from TopoDS, 
+    Face from TopoDS,
+    DataMapOfShapeShape from TopTools,
+    DataMapOfShapeListOfShape from TopTools, 
+    Context from IntTools, 
+    PassKey from GEOMAlgo
+--raises
+
+is 
+    Create   
+    	returns Gluer from GEOMAlgo; 
+    ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_Gluer();" 
+     
+    SetCheckGeometry (me:out; 
+    	    aFlag:Boolean from Standard); 
+	     
+    CheckGeometry (me) 
+    	returns Boolean from Standard; 
+  
+    Perform(me:out) 
+	is redefined;  
+	 
+    CheckData(me:out) 
+	is redefined protected; 
+	 
+    CheckResult	(me:out) 
+    	is redefined protected; 
+	 
+    BuildResult	(me:out) 
+    	is protected;
+     
+    MakeVertices(me:out) 
+	is protected;   
+  
+    MakeEdges(me:out) 
+	is protected; 
+     
+    MakeFaces(me:out) 
+	is protected;
+     
+    MakeShapes(me:out; 
+    	    aType:ShapeEnum from TopAbs) 
+    	is protected;  
+     
+    MakeShells(me:out) 
+	is protected;
+      
+    MakeSolids(me:out) 
+	is protected; 
+	 
+    InnerTolerance(me:out) 
+	is protected;
+ 
+    EdgePassKey(me:out; 
+    	    aE:Edge from TopoDS;  
+	    aPK:out PassKey from GEOMAlgo) 
+    	is protected;     
+   
+    FacePassKey(me:out; 
+    	    aF:Face from TopoDS;  
+	    aPK:out PassKey from GEOMAlgo) 
+    	is protected; 
+	 
+    MakeEdge(me:out; 
+    	    aEdge   : Edge from TopoDS;  
+    	    aNewEdge: out Edge from TopoDS) 
+    	is protected;    	 
+ 
+    MakeFace(me:out; 
+    	    aFace   : Face from TopoDS;  
+    	    aNewEdge: out Face from TopoDS) 
+    	is protected; 
+	 
+    IsToReverse(me:out; 
+    	    aFR : Face from TopoDS;  
+    	    aF  : Face from TopoDS) 
+	returns Boolean	from Standard 	     
+    	is protected; 
+-- 
+    Images(me) 
+	returns DataMapOfShapeListOfShape from TopTools;         	 
+    ---C++:return const &  
+     
+    Origins(me) 
+	returns DataMapOfShapeShape from TopTools;         	 
+    ---C++:return const &  
+    
+fields 
+    
+    myCheckGeometry : Boolean from Standard is protected;   
+  
+    myImages    : DataMapOfShapeListOfShape from TopTools is protected;   
+    myOrigins   : DataMapOfShapeShape from TopTools is protected; 
+    myContext   : Context from IntTools is protected; 	     
+    myTypeResult: ShapeEnum from TopAbs is protected;   
+    myTol       : Real from Standard is protected;   
+
+end Gluer;

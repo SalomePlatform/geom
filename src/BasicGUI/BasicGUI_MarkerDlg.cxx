@@ -585,7 +585,12 @@ bool BasicGUI_MarkerDlg::isValid( QString& msg )
   const int id = getConstructorId();
   gp_Vec v1( myData[ DX1 ]->GetValue(), myData[ DY1 ]->GetValue(), myData[ DZ1 ]->GetValue() ),
          v2( myData[ DX2 ]->GetValue(), myData[ DY2 ]->GetValue(), myData[ DZ2 ]->GetValue() );
-  bool isOrthogonal = v1.IsNormal( v2, Precision::Confusion() );
+
+  bool isOrthogonal = false;
+  // we will got exception if the magnitude of any of the 2 vectors <= gp::Resolution()
+  if ( v1.Magnitude() > gp::Resolution() && v2.Magnitude() > gp::Resolution() )
+    isOrthogonal = v1.IsNormal( v2, Precision::Confusion() );
+
   switch ( id )
   {
     case 0:

@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='windows-1252' ?>
+<fts>
+<chunkinfo url="whfwdata0.xml" first="0" last="geometry"/>
+<chunkinfo url="whfwdata1.xml" first="geompy" last="radiu"/>
+<chunkinfo url="whfwdata2.xml" first="radius" last="zmin"/>
+
+<tchunkinfo first="0" last="16" url="whftdata0.xml" />
+
+</fts>

@@ -39,6 +39,7 @@
 #include "QAD_MessageBox.h"
 #include "QAD_RightFrame.h"
 #include "QAD_WaitCursor.h"
+#include "SALOMEGUI_Desktop.h"
 
 #include "OCCViewer_Viewer3d.h"
 #include "VTKViewer_ViewFrame.h"
@@ -256,7 +257,18 @@ void GEOMToolsGUI::OnEditDelete()
 			    QObject::tr("BUT_OK") );
     return;
   }
-  
+
+  // VSR 17/11/04: check if all objects selected belong to GEOM component --> start
+  QString aParentComponent = ((SALOMEGUI_Desktop*)QAD_Application::getDesktop())->getComponentFromSelection();
+  if ( aParentComponent != QAD_Application::getDesktop()->getActiveComponent() )  {
+    QAD_MessageBox::warn1 ( (QWidget*)QAD_Application::getDesktop(),
+			    QObject::tr("ERR_ERROR"), 
+			    QObject::tr("NON_GEOM_OBJECTS_SELECTED").arg(QAD_Application::getDesktop()->getComponentUserName( "GEOM" )),
+			    QObject::tr("BUT_OK") );
+    return;
+  }
+  // VSR 17/11/04: check if all objects selected belong to GEOM component <-- finish
+
   if ( QAD_MessageBox::warn2( QAD_Application::getDesktop(),
                               tr( "GEOM_WRN_WARNING" ),
                               tr( "GEOM_REALLY_DELETE" ),

@@ -1929,4 +1929,8 @@ msgstr "ProcessShape"
 
 msgid "SUPRESS_FACE_NEW_OBJ_NAME"
 msgstr "SupressFaces"
+
+msgid "NON_GEOM_OBJECTS_SELECTED"
+msgstr "There are objects selected which do not belong to %1 component."
+
 ###

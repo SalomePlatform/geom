@@ -1,0 +1,27 @@
+#ifndef _GEOMAlgo_IndexedDataMapOfPassKeyListOfShape_HeaderFile
+#include <GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx>
+#endif
+#ifndef _IntTools_Context_HeaderFile
+#include <IntTools_Context.hxx>
+#endif
+#ifndef _TopTools_ListOfShape_HeaderFile
+#include <TopTools_ListOfShape.hxx>
+#endif
+#ifndef _TopTools_IndexedDataMapOfShapeListOfShape_HeaderFile
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#endif
+#ifndef _TopoDS_Shape_HeaderFile
+#include <TopoDS_Shape.hxx>
+#endif
+#ifndef _gp_Pnt_HeaderFile
+#include <gp_Pnt.hxx>
+#endif
+#ifndef _TopoDS_Edge_HeaderFile
+#include <TopoDS_Edge.hxx>
+#endif
+#ifndef _TopoDS_Face_HeaderFile
+#include <TopoDS_Face.hxx>
+#endif
+#ifndef _GEOMAlgo_Tools_HeaderFile
+#include <GEOMAlgo_Tools.hxx>
+#endif

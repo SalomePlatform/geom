@@ -17,6 +17,10 @@ GEOM_Superv_i::GEOM_Superv_i(CORBA::ORB_ptr orb,
   _thisObj = this ;
   _id = _poa->activate_object(_thisObj);
   name_service = new SALOME_NamingService(_orb);
+  //get RootPOA (the default)
+  //myPOA = PortableServer::RefCountServantBase::_default_POA();
+  CORBA::Object_var anObj = _orb->resolve_initial_references("RootPOA");
+  myPOA = PortableServer::POA::_narrow(anObj);
 
   myGeomEngine = GEOM::GEOM_Gen::_nil();
   myStudyID = -1;
@@ -70,6 +74,78 @@ void GEOM_Superv_i::setGeomEngine()
 void GEOM_Superv_i::SetStudyID( CORBA::Long theId )
 {
   myStudyID = theId;
+}
+
+//=============================================================================
+//  CreateListOfGO:
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::CreateListOfGO()
+{
+  MESSAGE("GEOM_Superv_i::CreateListOfGO()");
+  GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>();
+  return aListPtr->_this();
+}
+
+//=============================================================================
+//  AddItemToListOfGO:
+//=============================================================================
+void GEOM_Superv_i::AddItemToListOfGO(GEOM::GEOM_List_ptr& theList, 
+				      GEOM::GEOM_Object_ptr    theObject)
+{
+  MESSAGE("GEOM_Superv_i::AddItemToListOfGO(...)");
+  if (GEOM_List_i<GEOM::ListOfGO>* aList = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theList, myPOA).in())) {
+    aList->AddObject(theObject);
+    MESSAGE(" NewLength = "<<aList->GetList().length());
+  }
+}
+
+//=============================================================================
+//  CreateListOfLong:
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::CreateListOfLong()
+{
+  MESSAGE("GEOM_Superv_i::CreateListOfLong()");
+  GEOM_List_i<GEOM::ListOfLong>* aListPtr = new GEOM_List_i<GEOM::ListOfLong>();
+  return aListPtr->_this();
+}
+
+//=============================================================================
+//  AddItemToListOfLong:
+//=============================================================================
+void GEOM_Superv_i::AddItemToListOfLong(GEOM::GEOM_List_ptr& theList, 
+					long                     theObject)
+{
+  MESSAGE("GEOM_Superv_i::AddItemToListOfLong(...)");
+  if (GEOM_List_i<GEOM::ListOfLong>* aList = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theList, myPOA).in())) {
+    aList->AddObject(theObject);
+    MESSAGE(" NewLength = "<<aList->GetList().length());
+  }
+}
+
+//=============================================================================
+//  CreateListOfDouble:
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::CreateListOfDouble()
+{
+  MESSAGE("GEOM_Superv_i::CreateListOfDouble()");
+  GEOM_List_i<GEOM::ListOfDouble>* aListPtr = new GEOM_List_i<GEOM::ListOfDouble>();
+  return aListPtr->_this();
+}
+
+//=============================================================================
+//  AddItemToListOfDouble:
+//=============================================================================
+void GEOM_Superv_i::AddItemToListOfDouble(GEOM::GEOM_List_ptr& theList, 
+					  double                   theObject)
+{
+  MESSAGE("GEOM_Superv_i::AddItemToListOfDouble(...)");
+  if (GEOM_List_i<GEOM::ListOfDouble>* aList = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfDouble>*>(GetServant(theList, myPOA).in())) {
+    aList->AddObject(theObject);
+    MESSAGE(" NewLength = "<<aList->GetList().length());
+  }
 }
 
 //=============================================================================
@@ -180,6 +256,17 @@ void GEOM_Superv_i::getGroupOp()
     setGeomEngine();
   // get GEOM_IGroupOperations interface
   myGroupOp = myGeomEngine->GetIGroupOperations(myStudyID);
+}
+
+//=============================================================================
+//  GetServant:
+//=============================================================================
+PortableServer::ServantBase_var GEOM_Superv_i::GetServant(CORBA::Object_ptr       theObject,
+							  PortableServer::POA_ptr thePOA)
+{
+  if(CORBA::is_nil(theObject))  return NULL;
+  PortableServer::Servant aServant = thePOA->reference_to_servant(theObject);
+  return aServant;
 }
 
 //============================================================================
@@ -698,18 +785,32 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFuse (GEOM::GEOM_Object_ptr theShape1,
 //=============================================================================
 //  MakePartition:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (const GEOM::ListOfGO&   theShapes,
-						    const GEOM::ListOfGO&   theTools,
-						    const GEOM::ListOfGO&   theKeepInside,
-						    const GEOM::ListOfGO&   theRemoveInside,
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theShapes,
+						    GEOM::GEOM_List_ptr   theTools,
+						    GEOM::GEOM_List_ptr   theKeepInside,
+						    GEOM::GEOM_List_ptr   theRemoveInside,
 						    const CORBA::Short      theLimit,
 						    const CORBA::Boolean    theRemoveWebs,
-						    const GEOM::ListOfLong& theMaterials)
+						    GEOM::GEOM_List_ptr theMaterials)
 {
   MESSAGE("GEOM_Superv_i::MakePartition");
-  if (CORBA::is_nil(myBoolOp)) getBoolOp();
-  return myBoolOp->MakePartition(theShapes, theTools, theKeepInside, theRemoveInside,
-				 theLimit, theRemoveWebs, theMaterials);
+  GEOM_List_i<GEOM::ListOfGO>* aListImplS = 
+    dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theShapes, myPOA).in());
+  GEOM_List_i<GEOM::ListOfGO>* aListImplT = 
+    dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theTools, myPOA).in());
+  GEOM_List_i<GEOM::ListOfGO>* aListImplKI = 
+    dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theKeepInside, myPOA).in());
+  GEOM_List_i<GEOM::ListOfGO>* aListImplRI = 
+    dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theRemoveInside, myPOA).in());
+  GEOM_List_i<GEOM::ListOfLong>* aListImplM = 
+    dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theMaterials, myPOA).in());
+  if (aListImplS && aListImplT && aListImplKI && aListImplRI && aListImplM) {
+    if (CORBA::is_nil(myBoolOp)) getBoolOp();
+    return myBoolOp->MakePartition(aListImplS->GetList(), aListImplT->GetList(), 
+				   aListImplKI->GetList(), aListImplRI->GetList(),
+				   theLimit, theRemoveWebs, aListImplM->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
@@ -1084,11 +1185,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEdge (GEOM::GEOM_Object_ptr thePnt1,
 //=============================================================================
 //  MakeWire:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeWire (const GEOM::ListOfGO& theEdgesAndWires)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeWire (GEOM::GEOM_List_ptr theEdgesAndWires)
 {
   MESSAGE("GEOM_Superv_i::MakeWire");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
-  return myShapesOp->MakeWire(theEdgesAndWires);
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplEW = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theEdgesAndWires, myPOA).in())) {
+    if (CORBA::is_nil(myShapesOp)) getShapesOp();
+    return myShapesOp->MakeWire(aListImplEW->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
@@ -1105,22 +1210,30 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFace (GEOM::GEOM_Object_ptr theWire,
 //=============================================================================
 //  MakeFaceWires:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceWires (const GEOM::ListOfGO& theWires,
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceWires (GEOM::GEOM_List_ptr theWires,
 						    CORBA::Boolean isPlanarWanted)
 {
   MESSAGE("GEOM_Superv_i::MakeFaceWires");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
-  return myShapesOp->MakeFaceWires(theWires, isPlanarWanted);
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplW = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theWires, myPOA).in())) {
+    if (CORBA::is_nil(myShapesOp)) getShapesOp();
+    return myShapesOp->MakeFaceWires(aListImplW->GetList(), isPlanarWanted);
+  }
+  return NULL;
 }
 
 //=============================================================================
 //  MakeShell:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeShell (const GEOM::ListOfGO& theFacesAndShells)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeShell (GEOM::GEOM_List_ptr theFacesAndShells)
 {
   MESSAGE("GEOM_Superv_i::MakeShell");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
-  return myShapesOp->MakeShell(theFacesAndShells);
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplFS = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theFacesAndShells, myPOA).in())) {
+    if (CORBA::is_nil(myShapesOp)) getShapesOp();
+    return myShapesOp->MakeShell(aListImplFS->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
@@ -1136,21 +1249,29 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSolidShell (GEOM::GEOM_Object_ptr theSh
 //=============================================================================
 //  MakeSolidShells:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSolidShells (const GEOM::ListOfGO& theShells)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSolidShells (GEOM::GEOM_List_ptr theShells)
 {
   MESSAGE("GEOM_Superv_i::MakeSolidShells");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
-  return myShapesOp->MakeSolidShells(theShells);
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplS = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theShells, myPOA).in())) {
+    if (CORBA::is_nil(myShapesOp)) getShapesOp();
+    return myShapesOp->MakeSolidShells(aListImplS->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
 //  MakeCompound:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (const GEOM::ListOfGO& theShapes)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (GEOM::GEOM_List_ptr theShapes)
 {
   MESSAGE("GEOM_Superv_i::MakeCompound");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
-  return myShapesOp->MakeCompound(theShapes);
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImpl = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theShapes, myPOA).in())) {
+    if (CORBA::is_nil(myShapesOp)) getShapesOp();
+    return myShapesOp->MakeCompound(aListImpl->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
@@ -1167,13 +1288,17 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theSha
 //=============================================================================
 //  MakeExplode:
 //=============================================================================
-GEOM::ListOfGO* GEOM_Superv_i::MakeExplode (GEOM::GEOM_Object_ptr theShape,
-					    const CORBA::Long theShapeType,
-					    const CORBA::Boolean isSorted)
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakeExplode (GEOM::GEOM_Object_ptr theShape,
+						    const CORBA::Long theShapeType,
+						    const CORBA::Boolean isSorted)
 {
   MESSAGE("GEOM_Superv_i::MakeExplode");
   if (CORBA::is_nil(myShapesOp)) getShapesOp();
-  return myShapesOp->MakeExplode(theShape, theShapeType, isSorted);
+
+  GEOM::ListOfGO* aList = myShapesOp->MakeExplode(theShape, theShapeType, isSorted);
+  GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aList));
+  MESSAGE(" List of "<<aListPtr->GetList().length()<<" element(s)");
+  return aListPtr->_this();
 }
 
 //=============================================================================
@@ -1406,13 +1531,15 @@ char* GEOM_Superv_i::PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
 //=============================================================================
 //  ExplodeCompoundOfBlocks:
 //=============================================================================
-GEOM::ListOfGO* GEOM_Superv_i::ExplodeCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-							const CORBA::Long     theMinNbFaces,
-							const CORBA::Long     theMaxNbFaces)
+GEOM::GEOM_List_ptr GEOM_Superv_i::ExplodeCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
+								const CORBA::Long     theMinNbFaces,
+								const CORBA::Long     theMaxNbFaces)
 {
   MESSAGE("GEOM_Superv_i::ExplodeCompoundOfBlocks");
   if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
-  return myBlocksOp->ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces);
+  GEOM::ListOfGO* aBlocks = myBlocksOp->ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces);
+  GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aBlocks));
+  return aListPtr->_this();
 }
 
 //=============================================================================
@@ -1430,22 +1557,33 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetBlockNearPoint (GEOM::GEOM_Object_ptr th
 //  GetBlockByParts:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetBlockByParts (GEOM::GEOM_Object_ptr theCompound,
-						      const GEOM::ListOfGO& theParts)
+						      GEOM::GEOM_List_ptr theParts)
 {
   MESSAGE("GEOM_Superv_i::GetBlockByParts");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
-  return myBlocksOp->GetBlockByParts(theCompound, theParts);
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theParts, myPOA).in())) {
+    if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+    return myBlocksOp->GetBlockByParts(theCompound, aListImplP->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
 //  GetBlocksByParts:
 //=============================================================================
-GEOM::ListOfGO* GEOM_Superv_i::GetBlocksByParts (GEOM::GEOM_Object_ptr theCompound,
-						 const GEOM::ListOfGO& theParts)
+GEOM::GEOM_List_ptr GEOM_Superv_i::GetBlocksByParts (GEOM::GEOM_Object_ptr theCompound,
+							 GEOM::GEOM_List_ptr theParts)
 {
   MESSAGE("GEOM_Superv_i::GetBlocksByParts");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
-  return myBlocksOp->GetBlocksByParts(theCompound, theParts);
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theParts, myPOA).in())) {
+    if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+    
+    GEOM::ListOfGO* aBlocks = myBlocksOp->GetBlocksByParts(theCompound, aListImplP->GetList());
+    GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aBlocks));
+    return aListPtr->_this();
+  }
+  return NULL;
 }
 
 //=============================================================================
@@ -1533,42 +1671,58 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArc (GEOM::GEOM_Object_ptr thePnt1,
 //=============================================================================
 //  MakePolyline:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePolyline (const GEOM::ListOfGO& thePoints)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePolyline (GEOM::GEOM_List_ptr thePoints)
 {
   MESSAGE("GEOM_Superv_i::MakePolyline");
-  if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
-  return myCurvesOp->MakePolyline(thePoints);
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
+    if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+    return myCurvesOp->MakePolyline(aListImplP->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
 //  MakeSplineBezier:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineBezier (const GEOM::ListOfGO& thePoints)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineBezier (GEOM::GEOM_List_ptr thePoints)
 {
   MESSAGE("GEOM_Superv_i::MakeSplineBezier");
-  if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
-  return myCurvesOp->MakeSplineBezier(thePoints);
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
+    if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+    return myCurvesOp->MakeSplineBezier(aListImplP->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
 //  MakeSplineInterpolation:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineInterpolation (const GEOM::ListOfGO& thePoints)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints)
 {
   MESSAGE("GEOM_Superv_i::MakeSplineInterpolation");
-  if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
-  return myCurvesOp->MakeSplineInterpolation(thePoints);
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
+    if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+    return myCurvesOp->MakeSplineInterpolation(aListImplP->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
 //  MakeSketcher:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSketcher (const char* theCommand, 
-						   const GEOM::ListOfDouble& theWorkingPlane)
+						   GEOM::GEOM_List_ptr theWorkingPlane)
 {
   MESSAGE("GEOM_Superv_i::MakeSketcher");
-  if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
-  return myCurvesOp->MakeSketcher(theCommand, theWorkingPlane);
+  if (GEOM_List_i<GEOM::ListOfDouble>* aListImplWP = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfDouble>*>(GetServant(theWorkingPlane, myPOA).in())) {
+    if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+    return myCurvesOp->MakeSketcher(theCommand, aListImplWP->GetList());
+  }
+  return NULL;
 }
 
 //=============================== LocalOperations =============================
@@ -1588,11 +1742,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletAll (GEOM::GEOM_Object_ptr theSha
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletEdges (GEOM::GEOM_Object_ptr theShape, 
 						      CORBA::Double theR,
-						      const GEOM::ListOfLong& theEdges)
+						      GEOM::GEOM_List_ptr theEdges)
 {
   MESSAGE("GEOM_Superv_i::MakeFilletEdges");
-  if (CORBA::is_nil(myLocalOp)) getLocalOp();
-  return myLocalOp->MakeFilletEdges(theShape, theR, theEdges);
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplE = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theEdges, myPOA).in())) {
+    if (CORBA::is_nil(myLocalOp)) getLocalOp();
+    return myLocalOp->MakeFilletEdges(theShape, theR, aListImplE->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
@@ -1600,11 +1758,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletEdges (GEOM::GEOM_Object_ptr theS
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFaces (GEOM::GEOM_Object_ptr theShape, 
 						      CORBA::Double theR,
-						      const GEOM::ListOfLong& theFaces)
+						      GEOM::GEOM_List_ptr theFaces)
 {
   MESSAGE("GEOM_Superv_i::MakeFilletFaces");
-  if (CORBA::is_nil(myLocalOp)) getLocalOp();
-  return myLocalOp->MakeFilletFaces(theShape, theR, theFaces);
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theFaces, myPOA).in())) {
+    if (CORBA::is_nil(myLocalOp)) getLocalOp();
+    return myLocalOp->MakeFilletFaces(theShape, theR, aListImplF->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
@@ -1634,11 +1796,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdge (GEOM::GEOM_Object_ptr theS
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferFaces (GEOM::GEOM_Object_ptr theShape,
 						       CORBA::Double theD1, CORBA::Double theD2,
-						       const GEOM::ListOfLong& theFaces)
+						       GEOM::GEOM_List_ptr theFaces)
 {
   MESSAGE("GEOM_Superv_i::MakeChamferFaces");
-  if (CORBA::is_nil(myLocalOp)) getLocalOp();
-  return myLocalOp->MakeChamferFaces(theShape, theD1, theD2, theFaces);
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theFaces, myPOA).in())) {
+    if (CORBA::is_nil(myLocalOp)) getLocalOp();
+    return myLocalOp->MakeChamferFaces(theShape, theD1, theD2, aListImplF->GetList());
+  }
+  return NULL;
 }
 
 //=============================================================================
@@ -1722,11 +1888,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetMainShape (GEOM::GEOM_Object_ptr theGrou
 //=============================================================================
 //  GetObjects:
 //=============================================================================
-GEOM::ListOfLong* GEOM_Superv_i::GetObjects (GEOM::GEOM_Object_ptr theGroup)
+GEOM::GEOM_List_ptr GEOM_Superv_i::GetObjects (GEOM::GEOM_Object_ptr theGroup)
 {
   MESSAGE("GEOM_Superv_i::GetObjects");
   if (CORBA::is_nil(myGroupOp)) getGroupOp();
-  return myGroupOp->GetObjects(theGroup);
+
+  GEOM::ListOfLong* aList = myGroupOp->GetObjects(theGroup);
+  GEOM_List_i<GEOM::ListOfLong>* aListPtr = new GEOM_List_i<GEOM::ListOfLong>(*(aList));
+  MESSAGE(" List of "<<aListPtr->GetList().length()<<" element(s)");
+  return aListPtr->_this();
 }
 
 //=====================================================================================

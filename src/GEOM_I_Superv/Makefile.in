@@ -43,7 +43,7 @@ LIB_SERVER_IDL = SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Component.idl SALOM
                  SALOME_GenericObj.idl SALOME_ModuleCatalog.idl GEOM_Gen.idl GEOM_Superv.idl \
 
 # Executables targets
-BIN = 
+BIN =
 BIN_SRC = 
 BIN_CLIENT_IDL = 
 BIN_SERVER_IDL =

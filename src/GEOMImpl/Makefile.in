@@ -87,90 +87,13 @@ EXPORT_HEADERS= GEOMImpl_Gen.hxx \
 	        GEOMImpl_IInsertOperations.hxx \
 	        GEOMImpl_IMeasureOperations.hxx \
 		GEOMImpl_IGroupOperations.hxx \
-		GEOMImpl_PointDriver.hxx \
-		GEOMImpl_VectorDriver.hxx \
-		GEOMImpl_LineDriver.hxx \
-		GEOMImpl_PlaneDriver.hxx \
-		GEOMImpl_MarkerDriver.hxx \
-		GEOMImpl_TranslateDriver.hxx \
-		GEOMImpl_MirrorDriver.hxx \
-	  	GEOMImpl_PositionDriver.hxx \
-		GEOMImpl_OffsetDriver.hxx \
-		GEOMImpl_ScaleDriver.hxx \
-		GEOMImpl_BoxDriver.hxx \
-		GEOMImpl_ConeDriver.hxx \
-		GEOMImpl_CylinderDriver.hxx \
-		GEOMImpl_SphereDriver.hxx \
-		GEOMImpl_TorusDriver.hxx \
-		GEOMImpl_PrismDriver.hxx \
-		GEOMImpl_PipeDriver.hxx \
-		GEOMImpl_RevolutionDriver.hxx \
-		GEOMImpl_ShapeDriver.hxx \
-		GEOMImpl_BlockDriver.hxx \
-		GEOMImpl_MeasureDriver.hxx \
-		GEOMImpl_PolylineDriver.hxx \
-		GEOMImpl_CircleDriver.hxx \
-		GEOMImpl_EllipseDriver.hxx \
-		GEOMImpl_ArcDriver.hxx \
-		GEOMImpl_SplineDriver.hxx \
-		GEOMImpl_SketcherDriver.hxx \
-		GEOMImpl_FilletDriver.hxx \
-		GEOMImpl_ChamferDriver.hxx \
-		GEOMImpl_BooleanDriver.hxx \
-		GEOMImpl_PartitionDriver.hxx \
 		GEOMImpl_CopyDriver.hxx \
-		GEOMImpl_ExportDriver.hxx \
-		GEOMImpl_ImportDriver.hxx \
-		GEOMImpl_RotateDriver.hxx \
-		GEOMImpl_ArchimedeDriver.hxx \
-		GEOMImpl_FillingDriver.hxx \
-		GEOMImpl_GlueDriver.hxx \
-		GEOMImpl_IArchimede.hxx \
-		GEOMImpl_IPoint.hxx \
-		GEOMImpl_IVector.hxx \
-		GEOMImpl_ILine.hxx \
-		GEOMImpl_IPlane.hxx \
-		GEOMImpl_IMarker.hxx \
-		GEOMImpl_IMirror.hxx \
-		GEOMImpl_IOffset.hxx \
-		GEOMImpl_IScale.hxx \
-		GEOMImpl_IPosition.hxx \
-		GEOMImpl_IBox.hxx \
-		GEOMImpl_ICone.hxx \
-		GEOMImpl_ICylinder.hxx \
-		GEOMImpl_ISphere.hxx \
-		GEOMImpl_ITorus.hxx \
-		GEOMImpl_IPrism.hxx \
-		GEOMImpl_IPipe.hxx \
-		GEOMImpl_IRevolution.hxx \
-		GEOMImpl_IShapes.hxx \
-		GEOMImpl_IBlocks.hxx \
-		GEOMImpl_IMeasure.hxx \
-		GEOMImpl_IPolyline.hxx \
-		GEOMImpl_ICircle.hxx \
-		GEOMImpl_IEllipse.hxx \
-		GEOMImpl_IArc.hxx \
-		GEOMImpl_ISpline.hxx \
-		GEOMImpl_ISketcher.hxx \
-		GEOMImpl_IFillet.hxx \
-		GEOMImpl_IChamfer.hxx \
-		GEOMImpl_IBoolean.hxx \
-		GEOMImpl_IPartition.hxx \
-		GEOMImpl_ICopy.hxx \
-		GEOMImpl_IImportExport.hxx \
-		GEOMImpl_ITranslate.hxx \
-		GEOMImpl_IRotate.hxx \
-		GEOMImpl_IBlockTrsf.hxx \
-		GEOMImpl_Types.hxx \
-		GEOMImpl_IHealing.hxx \
-		GEOMImpl_IFilling.hxx \
-		GEOMImpl_IGlue.hxx \
-		GEOMImpl_HealingDriver.hxx
+		GEOMImpl_Types.hxx
 
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome $(BOOST_CPPFLAGS)
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -L${KERNEL_ROOT_DIR}/lib/salome $(CAS_LDPATH) -lTKCAF -lCASCatch -lGEOMbasic -lNMTAlgo -lShHealOper
+LDFLAGS  += -L${KERNEL_ROOT_DIR}/lib/salome $(CAS_LDPATH) -lTKCAF -lCASCatch -lGEOMbasic -lNMTAlgo -lGEOMAlgo -lShHealOper
 
 
 # additional file to be cleaned

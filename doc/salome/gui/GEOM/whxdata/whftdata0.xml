@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='windows-1252' ?>
+<ftstdata>
+<topic name="Building of blocks" url="blocks.htm" />
+<topic name="Changing displaying parameters" url="changing_displaying_parameters.htm" />
+<topic name="Introduction to GEOM" url="files/introduction_to_geom.htm" />
+<topic name="Titre" url="files/salome2_sp3_basicgui_functions.htm" />
+<topic name="Titre" url="files/salome2_sp3_booleangui_functions.htm" />
+<topic name="Titre" url="files/salome2_sp3_buildgui_functions.htm" />
+<topic name="Titre" url="files/salome2_sp3_displaygui_functions.htm" />
+<topic name="Titre" url="files/salome2_sp3_generationgui_functions.htm" />
+<topic name="Titre" url="files/salome2_sp3_geomtoolsgui_functions.htm" />
+<topic name="Titre" url="files/salome2_sp3_measuregui_functions.htm" />
+<topic name="Titre" url="files/salome2_sp3_operationgui_functions.htm" />
+<topic name="Titre" url="files/salome2_sp3_primitivegui_functions.htm" />
+<topic name="Titre" url="files/salome2_sp3_repairgui_functions.htm" />
+<topic name="Titre" url="files/salome2_sp3_transformationgui_functions.htm" />
+<topic name="Blocks" url="newentity_blocks.htm" />
+<topic name="Sketcher" url="sketcher.htm" />
+<topic name="Working with groups" url="working_with_groups.htm" />
+
+</ftstdata>  

@@ -24,7 +24,7 @@
 #  Module : GEOM
 #  $Header$
 
-def TestOtherOperations (geompy, math, BATCHMODE = None):
+def TestOtherOperations (geompy, math):
 
   # MakeFaces
   p11 = geompy.MakeVertex( 0,  0, 0)
@@ -123,14 +123,9 @@ def TestOtherOperations (geompy, math, BATCHMODE = None):
   geompy.Export(f12, "/tmp/testExportImport.brep", "BREP")
 
   # ExportBREP, ExportIGES, ExportSTEP
-  if BATCHMODE is not None:
-    geompy.Export(f12, "/tmp/testExportImportBREP.brep","BREP")
-    geompy.Export(f12, "/tmp/testExportImportIGES.iges","IGES")
-    geompy.Export(f12, "/tmp/testExportImportSTEP.step","STEP")
-  else:
-    geompy.ExportBREP(f12, "/tmp/testExportImportBREP.brep")
-    geompy.ExportIGES(f12, "/tmp/testExportImportIGES.iges")
-    geompy.ExportSTEP(f12, "/tmp/testExportImportSTEP.step")
+  geompy.ExportBREP(f12, "/tmp/testExportImportBREP.brep")
+  geompy.ExportIGES(f12, "/tmp/testExportImportIGES.iges")
+  geompy.ExportSTEP(f12, "/tmp/testExportImportSTEP.step")
 
   # Import
   Import = geompy.Import("/tmp/testExportImport.brep", "BREP")
@@ -138,14 +133,9 @@ def TestOtherOperations (geompy, math, BATCHMODE = None):
   id_Import = geompy.addToStudy(Import, "Import")
 
   # ImportBREP, ImportIGES, ImportSTEP
-  if BATCHMODE is not None:
-    ImportBREP = geompy.Import("/tmp/testExportImportBREP.brep","BREP")
-    ImportIGES = geompy.Import("/tmp/testExportImportIGES.iges","IGES")
-    ImportSTEP = geompy.Import("/tmp/testExportImportSTEP.step","STEP")
-  else:
-    ImportBREP = geompy.ImportBREP("/tmp/testExportImportBREP.brep")
-    ImportIGES = geompy.ImportIGES("/tmp/testExportImportIGES.iges")
-    ImportSTEP = geompy.ImportSTEP("/tmp/testExportImportSTEP.step")
+  ImportBREP = geompy.ImportBREP("/tmp/testExportImportBREP.brep")
+  ImportIGES = geompy.ImportIGES("/tmp/testExportImportIGES.iges")
+  ImportSTEP = geompy.ImportSTEP("/tmp/testExportImportSTEP.step")
 
   id_ImportBREP = geompy.addToStudy(ImportBREP, "ImportBREP")
   id_ImportIGES = geompy.addToStudy(ImportIGES, "ImportIGES")

@@ -1,0 +1,39 @@
+-- File:	GEOMAlgo_Algo.cdl
+-- Created:	Sat Dec 04 12:37:56 2004
+-- Author:	Peter KURNEV
+--		<peter@PREFEX>
+---Copyright:	 Matra Datavision 2004
+
+
+deferred  class Algo from GEOMAlgo 
+
+	---Purpose: 
+
+--uses
+--raises
+
+is
+    Initialize 
+    	returns Algo from GEOMAlgo;  
+    ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_Algo();" 
+
+    Perform(me:out) 
+	is deferred;      
+
+    CheckData(me:out) 
+	is deferred protected;  
+    	
+    CheckResult(me:out) 
+	is deferred protected;
+     
+    ErrorStatus (me) 
+    	returns Integer from Standard; 
+  
+    WarningStatus (me) 
+    	returns Integer from Standard;
+ 
+fields
+    myErrorStatus   : Integer from Standard  is protected;	 
+    myWarningStatus : Integer from Standard  is protected;	 
+ 
+end Algo;

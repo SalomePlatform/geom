@@ -1,0 +1,29 @@
+-- File:	GEOMAlgo_PassKeyMapHasher.cdl
+-- Created:	
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 
+
+
+class PassKeyMapHasher from GEOMAlgo 
+
+	---Purpose: 
+
+uses 
+    PassKey from GEOMAlgo 
+
+--raises
+
+is 
+    HashCode(myclass;  
+    	    aPKey : PassKey from GEOMAlgo;  
+    	    Upper : Integer from Standard)  
+    	returns Integer from Standard;
+	
+	
+    IsEqual(myclass;  
+    	    aPKey1 : PassKey from GEOMAlgo;  
+    	    aPKey2 : PassKey from GEOMAlgo)  
+    	returns Boolean from Standard;
+
+end PassKeyMapHasher;

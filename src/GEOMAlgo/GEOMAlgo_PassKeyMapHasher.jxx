@@ -1,0 +1,6 @@
+#ifndef _GEOMAlgo_PassKey_HeaderFile
+#include <GEOMAlgo_PassKey.hxx>
+#endif
+#ifndef _GEOMAlgo_PassKeyMapHasher_HeaderFile
+#include <GEOMAlgo_PassKeyMapHasher.hxx>
+#endif

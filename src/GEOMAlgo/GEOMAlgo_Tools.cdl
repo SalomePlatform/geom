@@ -1,0 +1,77 @@
+-- File:	GEOMAlgo_Tools.cdl
+-- Created:	Mon Dec  6 11:26:02 2004
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2004
+
+
+class Tools from GEOMAlgo 
+
+	---Purpose: 
+
+uses    
+    Pnt from gp,
+    Edge from TopoDS, 
+    Face from TopoDS, 
+    Shape from TopoDS,
+    ListOfShape from TopTools,  
+    IndexedDataMapOfShapeListOfShape from TopTools,
+    Context from IntTools, 
+    IndexedDataMapOfPassKeyListOfShape from GEOMAlgo 
+    
+--raises
+
+is   
+    RefineSDShapes(myclass; 
+    	    aMSD:out IndexedDataMapOfPassKeyListOfShape from GEOMAlgo; 
+    	    aTol:Real from Standard; 
+    	    aCtx:out Context from IntTools) 
+    	returns Integer from Standard;
+
+    FindSDShapes(myclass; 
+    	    aLE :ListOfShape from TopTools;   
+    	    aTol:Real from Standard; 
+    	    aMEE:out IndexedDataMapOfShapeListOfShape from TopTools; 
+	    aCtx:out Context from IntTools) 
+    	returns Integer from Standard;
+     
+    FindSDShapes(myclass; 
+    	    aE1   :Shape from TopoDS; 
+	    aLE   :ListOfShape from TopTools; 
+	    aTol  :Real from Standard;   
+    	    aLESD :out ListOfShape from TopTools;
+	    aCtx  :out Context from IntTools) 
+    	returns Integer from Standard;  
+	 
+    ProjectPointOnShape(myclass;  
+    	    aP1: Pnt from gp;  
+    	    aS  :Shape from TopoDS;  
+	    aP2:out Pnt from gp; 
+    	    aCtx  :out Context from IntTools) 
+        returns Boolean from Standard;  
+  
+    PointOnShape(myclass;  
+    	    aS  :Shape from TopoDS; 
+	    aP3D:out Pnt from gp); 
+	     
+    PointOnEdge(myclass;  
+    	    aE  :Edge from TopoDS; 
+	    aP3D:out Pnt from gp); 
+	     
+    PointOnEdge(myclass;  
+    	    aE  :Edge from TopoDS; 
+    	    aT  :Real from Standard;   
+	    aP3D:out Pnt from gp); 
+
+    PointOnFace(myclass;  
+    	    aF  :Face from TopoDS; 
+	    aP3D:out Pnt from gp); 
+     
+    PointOnFace(myclass;  
+    	    aF  :Face from TopoDS; 
+    	    aU  :Real from Standard; 
+    	    aV  :Real from Standard; 
+	    aP3D:out Pnt from gp);     
+--fields
+
+end Tools;

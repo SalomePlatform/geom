@@ -200,8 +200,26 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     aPixmap->SetPixMap( "ICON_OBJBROWSER_VERTEX" );
     aShapeName = "Vertex_";
   }                                          
-  if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
-  else aShapeName = TCollection_AsciiString(strdup(theName));
+  //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
+  //else aShapeName = TCollection_AsciiString(strdup(theName));
+
+  // asv : 11.11.04 Introducing a more sofisticated method of name creation, just as
+  //       it is done in GUI in GEOMBase::GetDefaultName() - not just add a Tag() == number
+  //       of objects in the study, but compute a number of objects with the same prefix
+  //       and build a new name as Prefix_N+1
+  if ( strlen( theName ) == 0 ) { // MOST PROBABLY CALLED FROM BATCHMODE OR SUPERVISOR
+    int i = 0;                    // (WITH EMPTY NEW NAME)
+    SALOMEDS::SObject_var obj;
+    TCollection_AsciiString aNewShapeName;
+    do {
+      aNewShapeName = aShapeName + TCollection_AsciiString(++i);
+      obj = theStudy->FindObject( aNewShapeName.ToCString() );
+    } 
+    while ( !obj->_is_nil() );
+    aShapeName = aNewShapeName;
+  }
+  else // MOST PROBABLY CALLED FROM GEOM GUI (ALREADY WITH VALID NAME)
+    aShapeName = TCollection_AsciiString(strdup(theName));
 
   //Set the study entry as a name of  the published GEOM_Object
   aShape->SetStudyEntry(aResultSO->GetID());

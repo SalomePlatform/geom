@@ -70,7 +70,7 @@ GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg(QWidget* parent, const char* name, bool m
   
   SpinBoxU = new QSpinBox( GroupC1, "SpinBoxU" );
   SpinBoxU->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-  SpinBoxU->setMinValue( 1 );
+  SpinBoxU->setMinValue( 0 );
   SpinBoxU->setValue( 1 );
   GroupC1Layout->addWidget( SpinBoxU, 0, 1 );
 
@@ -81,7 +81,7 @@ GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg(QWidget* parent, const char* name, bool m
   SpinBoxV = new QSpinBox( GroupC1, "SpinBoxV");
   SpinBoxV->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
   SpinBoxV->setValue( 1 );
-  SpinBoxV->setMinValue( 1 );
+  SpinBoxV->setMinValue( 0 );
   GroupC1Layout->addWidget( SpinBoxV, 0, 3 );
   
   /***************************************************************/

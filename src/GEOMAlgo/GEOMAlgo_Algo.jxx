@@ -1,0 +1,3 @@
+#ifndef _GEOMAlgo_Algo_HeaderFile
+#include <GEOMAlgo_Algo.hxx>
+#endif

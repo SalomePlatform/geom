@@ -90,30 +90,27 @@ public:
 
   void paint(QPainter* p, const QColorGroup& cg, bool act, bool /*enabled*/, int x, int y, int w, int h)
   {
-    if ( !act ) {
-      p->fillRect( x, y+1, w, h-2, cg.mid() );
-      p->drawRect( x, y+1, w, h-2 );
-    }
-    else {
-      p->fillRect( x, y+1, w, h-2, cg.midlight() );
-      QPen oldPen = p->pen();
-      p->setPen( cg.mid() );
-      p->drawRect( x, y+1, w, h-2 );
-      p->setPen( oldPen );
-    }
+    p->save();
+    p->fillRect( x, y, w, h, act ? cg.highlight() : cg.mid() );
+    p->setPen( act ? cg.highlightedText() : cg.buttonText() );
     p->setFont( myFont );
-    p->drawText( x, y, w, h, AlignHCenter | AlignVCenter | ShowPrefix | DontClip, myString );
+    p->drawText( x, y, w, h, AlignHCenter | AlignVCenter | ShowPrefix | DontClip | SingleLine, myString );
+    p->restore();
   }
 
   QSize sizeHint()
   {
-    return QFontMetrics( myFont ).size( AlignHCenter | AlignVCenter | ShowPrefix | DontClip, myString );
+    return QFontMetrics( myFont ).size( AlignHCenter | AlignVCenter | ShowPrefix | DontClip | SingleLine, myString );
+  }
+
+  bool fullSpan() const
+  {
+    return true;
   }
 
 private:
   QString myString;
   QFont   myFont;
-
 };
 
 //=======================================================================
@@ -912,7 +909,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
     popup->removeItem( QAD_TopLabel_Popup_ID );
     if ( theParent == "Viewer" && !objectName.isEmpty() && popup->count() > 0 ) {
       // set bold font for popup menu's title
-      QFont f = QApplication::font(); f.setBold( TRUE );
+      QFont f = popup->font(); f.setBold( TRUE );
       popup->removeItem( QAD_TopLabel_Popup_ID );
       popup->insertItem( new CustomItem( objectName, f ), QAD_TopLabel_Popup_ID, topItem );
     }
@@ -954,6 +951,8 @@ bool GeometryGUI::ActiveStudyChanged(QAD_Desktop* parent)
   Mb->setItemEnabled( 604, ViewOCC ); // SuppressHole
   Mb->setItemEnabled( 606, ViewOCC ); // CloseContour
   Mb->setItemEnabled( 413, ViewOCC ); // Isos Settings
+  Mb->setItemEnabled( 800, ViewOCC ); // Create Group
+  Mb->setItemEnabled( 801, ViewOCC ); // Edit Group
   Mb->setItemEnabled(9998, ViewOCC ); // MENU BLOCKS - MULTI-TRANSFORMATION
 
   geomGUI->EmitSignalCloseAllDialogs();

@@ -1,0 +1,78 @@
+-- File:	GEOMAlgo_PassKey.cdl
+-- Created:	
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 
+
+
+class PassKey from GEOMAlgo 
+
+	---Purpose: 
+
+uses
+    Shape from TopoDS, 
+    ListOfShape from TopTools   
+  	 
+--raises
+
+is 
+    Create  
+    	returns PassKey from GEOMAlgo; 
+      
+    Assign(me:out;  
+    	Other : PassKey from GEOMAlgo) 
+    	returns PassKey from GEOMAlgo; 
+    ---C++: alias operator =
+    ---C++: return & 
+     
+    SetIds(me:out; 
+    	    aS  :Shape from TopoDS); 
+    	    
+    SetIds(me:out; 
+    	    aS1  :Shape from TopoDS; 
+    	    aS2  :Shape from TopoDS); 
+     
+    SetIds(me:out; 
+    	    aS1  :Shape from TopoDS; 
+    	    aS2  :Shape from TopoDS; 
+    	    aS3  :Shape from TopoDS); 
+ 
+    SetIds(me:out;  
+    	    aS1  :Shape from TopoDS; 
+    	    aS2  :Shape from TopoDS; 
+    	    aS3  :Shape from TopoDS;
+    	    aS4  :Shape from TopoDS);
+ 
+    SetIds(me:out;  
+    	    aLS  :ListOfShape from TopTools); 
+ 
+    NbMax(me) 
+	returns Integer  from Standard; 
+	 
+    Clear(me:out); 
+     
+    Compute(me:out); 
+     
+    IsEqual(me; 
+    	    aOther:PassKey from GEOMAlgo) 
+	returns Boolean from Standard;   		     
+
+    Key(me) 
+    	returns Address from Standard;  
+	 
+    HashCode(me; 
+	    Upper : Integer  from Standard)  
+    	returns Integer from Standard;   	 
+     
+    Dump(me); 
+
+fields 
+ 
+    myNbIds: Integer from Standard is protected;  
+    myNbMax: Integer from Standard is protected; 
+    mySum  : Integer from Standard is protected;   
+    myIds  : Integer from Standard [8] is protected; 
+    myShapes : Shape from TopoDS [8] is protected; 
+    myUpper  : Integer from Standard is protected; 
+
+end PassKey;

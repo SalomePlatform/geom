@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='windows-1252' ?>
+<tocdata>
+<book name="GEOM module" >
+  <item name="Introduction to GEOM" url="files/introduction_to_geom.htm" />
+  <item name="Importing\exporting geometrical objects" url="files/salome2_sp3_geomtoolsgui_functions.htm" />
+  <book name="Managing geometrical objects" >
+    <item name="Changing displaying parameters" url="changing_displaying_parameters.htm" />
+    <item name="Displaying\hiding objects" url="files/salome2_sp3_displaygui_functions.htm" />
+  </book>
+  <book name="Creating geometrical objects" >
+    <item name="Creating basic geometrical objects" url="files/salome2_sp3_basicgui_functions.htm" />
+    <item name="Constructing primitives" url="files/salome2_sp3_primitivegui_functions.htm" />
+    <item name="Generating complex objects" url="files/salome2_sp3_generationgui_functions.htm" />
+    <item name="Working with groups" url="working_with_groups.htm" />
+    <item name="Building by blocks" url="newentity_blocks.htm" />
+    <item name="Sketcher" url="sketcher.htm" />
+    <item name="Building geometrical objects" url="files/salome2_sp3_buildgui_functions.htm" />
+  </book>
+  <book name="Transforming geometrical objects" >
+    <item name="Using basic operations" url="files/salome2_sp3_operationgui_functions.htm" />
+    <item name="Using boolean operations" url="files/salome2_sp3_booleangui_functions.htm" />
+    <item name="Using transformation operations" url="files/salome2_sp3_transformationgui_functions.htm" />
+    <item name="Repairing geometrical objects" url="files/salome2_sp3_repairgui_functions.htm" />
+  </book>
+  <item name="Using measurement tools" url="files/salome2_sp3_measuregui_functions.htm" />
+</book>
+
+</tocdata>

@@ -1,0 +1,44 @@
+-- File:	GEOMAlgo.cdl
+-- Created:	Sat Dec 04 12:36:22 2004
+-- Author:	Peter KURNEV
+--		<peter@PREFEX>
+---Copyright:	 Matra Datavision 2004
+
+
+package GEOMAlgo 
+
+	---Purpose: 
+
+uses  
+    TCollection, 
+    TColStd, 
+    Bnd, 
+    gp,	 
+    TopAbs,
+    TopoDS, 
+    TopTools, 
+    IntTools 
+    
+is  
+    deferred class Algo;
+    deferred class ShapeAlgo;
+    class Gluer; 
+    class PassKey; 
+    class PassKeyMapHasher; 
+    class Tools; 
+ 
+    class IndexedDataMapOfPassKeyListOfShape   
+	instantiates IndexedDataMap from TCollection (PassKey from GEOMAlgo, 
+						      ListOfShape from TopTools, 
+                                                      PassKeyMapHasher from GEOMAlgo); 
+     
+    class IndexedDataMapOfShapeBox  
+    	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
+	    		    		         	 Box from Bnd,
+	    		    		         	 ShapeMapHasher from TopTools);
+    class IndexedDataMapOfIntegerShape  
+    	instantiates IndexedDataMap from TCollection   	(Integer from Standard,
+	    		    		         	 Shape from TopoDS,
+	    		    		         	 MapIntegerHasher from TColStd);
+
+end GEOMAlgo;
