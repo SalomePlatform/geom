@@ -1,0 +1,45 @@
+# -* Makefile *- 
+#
+# Author : Patrick GOLDBRONN (CEA)
+# Date : 29/06/2001
+# $Header$
+#
+
+# source path
+top_srcdir=@top_srcdir@
+top_builddir=../..
+srcdir=@srcdir@
+VPATH=.:$(srcdir):$(top_srcdir)/idl:$(top_builddir)/idl
+
+
+@COMMENCE@
+
+# Libraries targets
+
+LIB = libGeometryFiltersSelection.la 
+LIB_SRC = GEOM_ShapeTypeFilter.cxx \
+	  GEOM_FaceFilter.cxx \
+	  GEOM_EdgeFilter.cxx
+
+LIB_CLIENT_IDL = SALOME_Component.idl SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Exception.idl GEOM_Shape.idl GEOM_Gen.idl
+
+# header files 
+EXPORT_HEADERS= GEOM_ShapeTypeFilter.hxx \
+		Handle_GEOM_ShapeTypeFilter.hxx \
+	        GEOM_FaceFilter.hxx \
+	        Handle_GEOM_FaceFilter.hxx \
+	        GEOM_EdgeFilter.hxx \
+	        Handle_GEOM_EdgeFilter.hxx
+
+# additionnal information to compil and link file
+CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) $(PYTHON_INCLUDES) $(VTK_INCLUDES)
+CXXFLAGS += $(OCC_CXXFLAGS)
+LDFLAGS  += $(OCC_LIBS)
+
+# additional file to be cleaned
+MOSTLYCLEAN =
+CLEAN =
+DISTCLEAN =
+
+@CONCLUDE@
+

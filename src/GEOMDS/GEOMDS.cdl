@@ -1,0 +1,33 @@
+-- File:	GEOMDS.cdl
+-- Created:	Fri Mar 16 12:16:40 2001
+-- Author:	Yves FRICAUD
+--		<yfr@claquox.paris1.matra-dtv.fr>
+---Copyright:	 Matra Datavision 2001
+
+
+package GEOMDS 
+
+	---Purpose: 
+
+uses
+    TDF, 
+    TDocStd,
+    TDataStd,
+    TColStd,
+    TopoDS,
+    TCollection,
+    TNaming
+
+
+is
+    class Application;
+    class Commands;
+    class Explorer;
+
+
+    class DataMapOfIntegerTransient instantiates  DataMap from 
+TCollection(Integer from Standard, Transient from Standard, MapIntegerHasher 
+from TColStd);
+    
+end GEOMDS;
+

@@ -1,0 +1,3 @@
+#ifndef _GEOM_EdgeFilter_HeaderFile
+#include "GEOM_EdgeFilter.hxx"
+#endif

@@ -1,0 +1,6 @@
+#ifndef _SALOME_InteractiveObject_HeaderFile
+#include "SALOME_InteractiveObject.hxx"
+#endif
+#ifndef _GEOM_InteractiveObject_HeaderFile
+#include "GEOM_InteractiveObject.hxx"
+#endif

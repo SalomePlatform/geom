@@ -1,0 +1,26 @@
+-- File:	GEOMDS_Commands.cdl
+-- Created:	Fri Mar 16 12:21:51 2001
+-- Author:	Yves FRICAUD
+--		<yfr@claquox.paris1.matra-dtv.fr>
+---Copyright:	 Matra Datavision 2001
+
+
+class Commands from GEOMDS 
+
+	---Purpose: 
+
+uses
+    Label          from TDF,
+    Shape          from TopoDS,
+    ExtendedString from TCollection
+
+is
+    Create ( Main : Label from TDF) returns Commands from GEOMDS;
+
+    AddShape(me : in out; S    : Shape from TopoDS;
+    	    	    	  Name : ExtendedString from TCollection)
+    returns Label from TDF;
+    
+fields
+    myLab : Label from TDF;
+end Commands;

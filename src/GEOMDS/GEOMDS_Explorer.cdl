@@ -1,0 +1,33 @@
+//  File      : GEOMDS_Explorer.cdl
+//  Created   :
+//  Author    : Yves FRICAUD
+//  Project   : SALOME
+//  Module    : GEOM
+//  Copyright : OPEN CASCADE
+//  $Header$
+
+class Explorer from GEOMDS 
+
+	---Purpose: 
+
+uses
+    ChildIterator  from TDF,
+    Label          from TDF, 
+    ExtendedString from TCollection,
+    Shape          from TopoDS
+
+
+is
+    Create ( Main : Label from TDF) returns Explorer from GEOMDS;
+    
+    More(me : in out) returns Boolean from Standard;
+    
+    Next(me : in out);
+    	
+    Shape(me)returns Shape from TopoDS;
+    
+    Name(me) returns ExtendedString from TCollection;
+
+fields
+    myChildIterator : ChildIterator from TDF; 
+end Explorer;

@@ -1,0 +1,6 @@
+#ifndef _TColStd_SequenceOfExtendedString_HeaderFile
+#include <TColStd_SequenceOfExtendedString.hxx>
+#endif
+#ifndef _GEOMDS_Application_HeaderFile
+#include "GEOMDS_Application.hxx"
+#endif
