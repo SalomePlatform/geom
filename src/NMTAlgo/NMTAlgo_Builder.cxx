@@ -511,6 +511,18 @@
       continue;
     }
     //
+    //modified by NIZNHY-PKV Fri Jan 21 17:01:10 2005 f
+    if (aNbSp==1) {
+      const BOPTools_PaveBlock& aPB1=aLPB.First();
+      const BOPTools_PaveBlock& aPBR1=pPF->RealPaveBlock(aPB1);
+      nSp=aPBR1.Edge();
+      const TopoDS_Shape& aSp1=aDS.Shape(nSp);
+      if (aSp1.IsSame(aE)) {
+	continue;
+      }
+    }
+    //modified by NIZNHY-PKV Fri Jan 21 17:01:14 2005 t
+    //
     aLSp.Clear();
     aIt.Initialize(aLPB);
     for (; aIt.More(); aIt.Next()) {

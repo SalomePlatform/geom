@@ -4,13 +4,21 @@ using namespace std;
 #include "GEOMImpl_IGlue.hxx"
 #include "GEOMImpl_Types.hxx"
 
+#include "GEOM_Object.hxx"
 #include "GEOM_Function.hxx"
 
 #include "GEOMAlgo_Gluer.hxx"
 
 #include "utilities.h"
 
+#include <TDataStd_IntegerArray.hxx>
+
+#include <TopExp.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+
 #include <Standard_NullObject.hxx>
 #include <Standard_Failure.hxx>
 
@@ -96,6 +104,51 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& the
   }
 
   aRes = aGluer.Result();
+
+  // Fill history to be used by GetInPlace functionality
+  TopTools_IndexedMapOfShape aResIndices;
+  TopExp::MapShapes(aRes, aResIndices);
+
+  Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
+
+  // history for all argument shapes
+  TDF_LabelSequence aLabelSeq;
+  aFunction->GetDependency(aLabelSeq);
+  Standard_Integer nbArg = aLabelSeq.Length();
+
+  for (Standard_Integer iarg = 1; iarg <= nbArg; iarg++) {
+
+    TDF_Label anArgumentRefLabel = aLabelSeq.Value(iarg);
+
+    Handle(GEOM_Object) anArgumentObject = GEOM_Object::GetReferencedObject(anArgumentRefLabel);
+    TopoDS_Shape anArgumentShape = anArgumentObject->GetValue();
+
+    TopTools_IndexedMapOfShape anArgumentIndices;
+    TopExp::MapShapes(anArgumentShape, anArgumentIndices);
+    Standard_Integer nbArgumentEntities = anArgumentIndices.Extent();
+
+    // Find corresponding label in history
+    TDF_Label anArgumentHistoryLabel =
+      aFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_True);
+
+    for (Standard_Integer ie = 1; ie <= nbArgumentEntities; ie++) {
+      TopoDS_Shape anEntity = anArgumentIndices.FindKey(ie);
+      const TopTools_ListOfShape& aModified = aGluer.Modified(anEntity);
+      Standard_Integer nbModified = aModified.Extent();
+
+      if (nbModified > 0) {
+        TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(ie, Standard_True);
+        Handle(TDataStd_IntegerArray) anAttr =
+          TDataStd_IntegerArray::Set(aWhatHistoryLabel, 1, nbModified);
+
+        TopTools_ListIteratorOfListOfShape itM (aModified);
+        for (int im = 1; itM.More(); itM.Next(), ++im) {
+          int id = aResIndices.FindIndex(itM.Value());
+          anAttr->SetValue(im, id);
+        }
+      }
+    }
+  }
 
   return aRes;
 }

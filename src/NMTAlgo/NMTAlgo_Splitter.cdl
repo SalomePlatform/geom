@@ -19,7 +19,8 @@ uses
     Shape               from TopoDS,
     MapOfOrientedShape  from TopTools,
     IndexedMapOfShape   from TopTools,
-    DataMapOfShapeShape from TopTools,
+    DataMapOfShapeShape from TopTools, 
+    DataMapOfShapeListOfShape from TopTools,
     ListOfShape         from TopTools,
     MapOfShape          from TopTools,
     AsDes               from BRepAlgo,
@@ -166,5 +167,8 @@ fields
     myMapSIFC      : DataMapOfShapeShape from TopTools is protected;  
 ----vv    
     myGenerated    : ListOfShape         from TopTools is protected;
+    --modified by NIZNHY-PKV Mon Jan 24 09:45:10 2005f 
+    myModifiedFaces: DataMapOfShapeListOfShape from TopTools is protected;     
+    --modified by NIZNHY-PKV Mon Jan 24 09:45:14 2005t	
 ----^^
 end Splitter;

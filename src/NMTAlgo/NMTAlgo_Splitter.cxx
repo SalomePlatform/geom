@@ -114,6 +114,9 @@ static
   myObjShapes.Clear();
   myToolShapes.Clear();
   myMapSIFC.Clear();
+  //modified by NIZNHY-PKV Mon Jan 24 09:47:37 2005f
+  myModifiedFaces.Clear();
+  //modified by NIZNHY-PKV Mon Jan 24 09:47:41 2005t
   myErrorStatus=0;
 }
 //=======================================================================
@@ -472,10 +475,13 @@ static
   TopTools_ListIteratorOfListOfShape aItS, aItFI;
   TopExp_Explorer aExp;
   TopAbs_Orientation aOriFS; 
-  TopoDS_Face aFIx;
+  TopoDS_Face aFIx, aFIy;
   BRep_Builder aBB;
   //
   myImageShape.Clear();
+  //modified by NIZNHY-PKV Mon Jan 24 09:48:15 2005f
+  myModifiedFaces.Clear();
+  //modified by NIZNHY-PKV Mon Jan 24 09:48:18 2005t
   //
   aItS.Initialize(myListShapes);
   for ( ;aItS.More(); aItS.Next()) {
@@ -490,6 +496,14 @@ static
       //
       if (!myImagesFaces.HasImage(aFS)) {
 	myQueryShapes.Add(aFS);
+	//modified by NIZNHY-PKV Mon Jan 24 09:50:42 2005 f
+	if (!myModifiedFaces.IsBound(aFS)) {
+	  TopTools_ListOfShape aLS;
+	  //
+	  aLS.Append(aFS);
+	  myModifiedFaces.Bind(aFS, aLS);
+	}
+	//modified by NIZNHY-PKV Mon Jan 24 09:50:44 2005 t
 	continue;
       }
       //
@@ -510,10 +524,28 @@ static
 	    aFSDIx.Reverse();
 	  }
 	  myQueryShapes.Add(aFSDIx);
+	  //modified by NIZNHY-PKV Mon Jan 24 09:56:06 2005f
+	  aFIy=aFSDIx;
+	  //modified by NIZNHY-PKV Mon Jan 24 09:56:09 2005t
 	}
 	else {
 	  myQueryShapes.Add(aFIx);
+	  //modified by NIZNHY-PKV Mon Jan 24 09:56:06 2005f
+	  aFIy=aFIx;
+	  //modified by NIZNHY-PKV Mon Jan 24 09:56:09 2005t
 	}
+	//modified by NIZNHY-PKV Mon Jan 24 09:53:38 2005f
+	if (!myModifiedFaces.IsBound(aFS)) {
+	  TopTools_ListOfShape aLS;
+	  //
+	  aLS.Append(aFIy);
+	  myModifiedFaces.Bind(aFS, aLS);
+	}
+	else {
+	  TopTools_ListOfShape& aLS=myModifiedFaces.ChangeFind(aFS);
+	  aLS.Append(aFIy);
+	}
+	//modified by NIZNHY-PKV Mon Jan 24 09:53:43 2005t
       }
     }//for (; aExp.More(); aExp.Next()) {
     //

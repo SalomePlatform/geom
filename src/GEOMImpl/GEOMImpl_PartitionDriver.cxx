@@ -3,11 +3,17 @@ using namespace std;
 #include "GEOMImpl_PartitionDriver.hxx"
 #include "GEOMImpl_IPartition.hxx"
 #include "GEOMImpl_Types.hxx"
+
+#include "GEOM_Object.hxx"
 #include "GEOM_Function.hxx"
 
 #include <NMTAlgo_Splitter1.hxx>
+
+#include <TDataStd_IntegerArray.hxx>
+
 #include <BRep_Tool.hxx>
 #include <BRepAlgo.hxx>
+
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
@@ -15,7 +21,10 @@ using namespace std;
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
 #include <TopTools_MapOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
 
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TColStd_ListOfInteger.hxx>
 #include <Standard_NullObject.hxx>
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
@@ -52,6 +61,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   Standard_Integer aType = aFunction->GetType();
 
   TopoDS_Shape aShape;
+  NMTAlgo_Splitter1 PS;
 
   if (aType == PARTITION_PARTITION) {
     Handle(TColStd_HSequenceOfTransient) aShapes  = aCI.GetShapes();
@@ -65,7 +75,6 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
     nbshapes += aShapes->Length() + aTools->Length();
     nbshapes += aKeepIns->Length() + aRemIns->Length();
 
-    NMTAlgo_Splitter1 PS;
     TopTools_MapOfShape ShapesMap(nbshapes), ToolsMap(nbshapes);
 
     // add object shapes that are in ListShapes;
@@ -135,11 +144,6 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       PS.RemoveShapesInside(aShape_i);
     }
 
-    aShape = PS.Shape();
-
-    if (!BRepAlgo::IsValid(aShape)) {
-      Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
-    }
   } else if (aType == PARTITION_HALF) {
     Handle(GEOM_Function) aRefShape = aCI.GetShape();
     Handle(GEOM_Function) aRefPlane = aCI.GetPlane();
@@ -149,8 +153,6 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
     if (aShapeArg.IsNull() || aPlaneArg.IsNull()) {
       Standard_NullObject::Raise("In Half Partition a shape or a plane is null");
     }
-
-    NMTAlgo_Splitter1 PS;
 
     // add object shapes that are in ListShapes;
     PS.AddShape(aShapeArg);
@@ -162,18 +164,60 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
     PS.SetRemoveWebs(Standard_False);
     PS.Build(aShapeArg.ShapeType());
 
-    aShape = PS.Shape();
-
-    if (!BRepAlgo::IsValid(aShape)) {
-      Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
-    }
-  }
-  else {
+  } else {
   }
 
+  aShape = PS.Shape();
   if (aShape.IsNull()) return 0;
 
+  if (!BRepAlgo::IsValid(aShape)) {
+    Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
+  }
+
   aFunction->SetValue(aShape);
+
+  // Fill history to be used by GetInPlace functionality
+  TopTools_IndexedMapOfShape aResIndices;
+  TopExp::MapShapes(aShape, aResIndices);
+
+  // history for all argument shapes
+  TDF_LabelSequence aLabelSeq;
+  aFunction->GetDependency(aLabelSeq);
+  Standard_Integer nbArg = aLabelSeq.Length();
+
+  for (Standard_Integer iarg = 1; iarg <= nbArg; iarg++) {
+
+    TDF_Label anArgumentRefLabel = aLabelSeq.Value(iarg);
+
+    Handle(GEOM_Object) anArgumentObject = GEOM_Object::GetReferencedObject(anArgumentRefLabel);
+    TopoDS_Shape anArgumentShape = anArgumentObject->GetValue();
+
+    TopTools_IndexedMapOfShape anArgumentIndices;
+    TopExp::MapShapes(anArgumentShape, anArgumentIndices);
+    Standard_Integer nbArgumentEntities = anArgumentIndices.Extent();
+
+    // Find corresponding label in history
+    TDF_Label anArgumentHistoryLabel =
+      aFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_True);
+
+    for (Standard_Integer ie = 1; ie <= nbArgumentEntities; ie++) {
+      TopoDS_Shape anEntity = anArgumentIndices.FindKey(ie);
+      const TopTools_ListOfShape& aModified = PS.Modified(anEntity);
+      Standard_Integer nbModified = aModified.Extent();
+
+      if (nbModified > 0) {
+        TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(ie, Standard_True);
+        Handle(TDataStd_IntegerArray) anAttr =
+          TDataStd_IntegerArray::Set(aWhatHistoryLabel, 1, nbModified);
+
+        TopTools_ListIteratorOfListOfShape itM (aModified);
+        for (int im = 1; itM.More(); itM.Next(), ++im) {
+          int id = aResIndices.FindIndex(itM.Value());
+          anAttr->SetValue(im, id);
+        }
+      }
+    }
+  }
 
   log.SetTouched(Label());
 

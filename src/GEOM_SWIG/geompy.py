@@ -2009,7 +2009,7 @@ def MakeHexa2Faces(F1, F2):
       print "MakeHexa2Faces : ", BlocksOp.GetErrorCode()
     return anObj
 
-def MakeHexa2Faces(F1, F2):
+def GetPoint(theShape, theX, theY, theZ, theEpsilon):
     """
      *  Get a vertex, found in the given shape by its coordinates.
      *  \param theShape Block or a compound of blocks.

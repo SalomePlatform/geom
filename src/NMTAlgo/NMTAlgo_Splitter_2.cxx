@@ -104,48 +104,45 @@
 //function : RemoveShapesInside
 //purpose  : remove shapes that are inside S from result
 //=======================================================================
-  void NMTAlgo_Splitter::RemoveShapesInside (const TopoDS_Shape& aS)
+  void NMTAlgo_Splitter::RemoveShapesInside (const TopoDS_Shape& S)
 {
   TopoDS_Iterator it;
-  TopAbs_ShapeEnum aTypeS;
-  //
-  aTypeS=aS.ShapeType();
-  if (aTypeS < TopAbs_SOLID) { // compound or compsolid
-    it.Initialize(aS);
+  if (S.ShapeType() < TopAbs_SOLID) { // compound or compsolid
+    it.Initialize( S );
     for (; it.More(); it.Next()) {
-      const TopoDS_Shape& aSx=it.Value();
-      RemoveShapesInside(aSx);
+      RemoveShapesInside( it.Value());
     }
     return;
   }
   //
-  Standard_Boolean bFromTool, bIsClosed;
-  Standard_Integer i, aNbE;
-  TopoDS_Shape aIntFacesComp;
-  TopoDS_Compound aC;
+  Standard_Boolean isTool;
+  TopoDS_Shape IntFacesComp;
+  TopoDS_Compound C;
   TopTools_IndexedMapOfShape MIF; // map of internal faces
   TopTools_MapOfShape RFM;
   TopTools_MapIteratorOfMapOfShape itF;
-  TopTools_IndexedDataMapOfShapeListOfShape aMEF;
   //
-  bFromTool=myToolShapes.Contains(aS);
+  //modified by NIZNHY-PKV Wed Dec 22 18:56:27 2004 f
+  isTool=myToolShapes.Contains(S);
+  //modified by NIZNHY-PKV Wed Dec 22 18:56:31 2004 t
   //
-  if (!myImageShape.HasImage(aS)) {
-    return; 
+  //isTool = Standard_False;
+  if (!myImageShape.HasImage( S )) {
+    return;
   }
   //
-  aIntFacesComp = FindFacesInside(aS, Standard_False, Standard_True);
+  IntFacesComp = FindFacesInside( S, Standard_False, Standard_True);
   //
-  TopExp::MapShapes(aIntFacesComp, TopAbs_FACE, MIF);
+  TopExp::MapShapes( IntFacesComp, TopAbs_FACE, MIF);
   if (MIF.IsEmpty()) {
     return;
   }
   // add to MIF split faces of S
-  const TopoDS_Shape& aSIm=myImageShape.Image(aS).First();
+  const TopoDS_Shape& aSIm=myImageShape.Image(S).First();
   TopExp::MapShapes(aSIm, TopAbs_FACE, MIF);
   //
   // leave in the result only those shapes not having all face in MIF
-  myBuilder.MakeCompound(aC);
+  myBuilder.MakeCompound(C);
   //
   // RFM : faces of removed shapes that encounter once
   it.Initialize(myShape);
@@ -164,90 +161,99 @@
     //
     if (expResF.More()) {
       // add shape to result
-      myBuilder.Add(aC, aSR);
+      myBuilder.Add(C, aSR);
     }
     else {
       // add faces of a removed shape to RFM
-      if (!bFromTool) { //modified by NIZNHY-PKV Thu Dec 23 09:55:39 2004 ft
-	for (expResF.ReInit(); expResF.More(); expResF.Next()) {
-	  const TopoDS_Shape& aF = expResF.Current();
-	  if (!RFM.Remove(aF)) {
-	    RFM.Add(aF);
-	  }
+      for (expResF.ReInit(); expResF.More(); expResF.Next()) {
+	const TopoDS_Shape& aF = expResF.Current();
+	if (!RFM.Remove(aF)) {
+	  RFM.Add(aF);
 	}
-      }//modified by NIZNHY-PKV Thu Dec 23 09:55:29 2004 ft
+      }
     }
   }// for (; it.More(); it.Next())
   //
-  if (bFromTool) {
-    myShape=aC;
-    return;
-  }
+  //modified by NIZNHY-PKV Wed Dec 22 18:59:46 2004 f
+  TopoDS_Compound aCx;
   //
-  // bIsClosed
-  bIsClosed = Standard_False; 
-  if (aTypeS==TopAbs_SOLID) {
-    bIsClosed = Standard_True; 
+  myBuilder.MakeCompound(aCx);
+  itF.Initialize (RFM);
+  for (; itF.More(); itF.Next()) {
+    const TopoDS_Shape& aF=itF.Key();
+    myBuilder.Add(aCx, aF);
   }
-  else if (aTypeS==TopAbs_SHELL) {
-    aMEF.Clear();
-    TopExp::MapShapesAndAncestors(aS, TopAbs_EDGE, TopAbs_FACE, aMEF);
-    aNbE=aMEF.Extent(); 
-    for (i=1; bIsClosed && i<=aNbE; ++i) {
-      bIsClosed=(aMEF(i).Extent()!=1);
+  //modified by NIZNHY-PKV Wed Dec 22 18:59:48 2004 t
+  //
+  if (!isTool) {
+    // rebuild S, it must remain in the result
+    Standard_Boolean isClosed = Standard_False;
+    switch (S.ShapeType()) {
+    case TopAbs_SOLID :
+      isClosed = Standard_True; break;
+    case TopAbs_SHELL: {
+      TopTools_IndexedDataMapOfShapeListOfShape MEF;
+      TopExp::MapShapesAndAncestors(S, TopAbs_EDGE, TopAbs_FACE, MEF);
+      Standard_Integer i;
+      for (i=1;  isClosed && i<=MEF.Extent();  ++i) {
+        isClosed = ( MEF(i).Extent() != 1 );
+      }
+      break;
     }
-  }
-  //
-  // rebuild S, it must remain in the result
-  if (bIsClosed) {
-    // add to a new shape external faces of removed shapes, ie those in RFM
-    TopoDS_Shell aShell;
+    default:
+      isClosed = Standard_False;
+    }
     //
-    myBuilder.MakeShell(aShell);
-    // exclude redundant internal face with edges encounterd only once
-    aMEF.Clear();
-    itF.Initialize (RFM);
-    for (; itF.More(); itF.Next()) {
-      const TopoDS_Shape& aF=itF.Key();
-      TopExp::MapShapesAndAncestors(aF, TopAbs_EDGE, TopAbs_FACE, aMEF);
-    }
-    // add only faces forming a closed shell
-    for (itF.Reset() ; itF.More(); itF.Next())  {
-      const TopoDS_Shape& aF=itF.Key();
-      TopExp_Explorer expE (aF, TopAbs_EDGE);
-      for (; expE.More(); expE.Next()) {
-	if (aMEF.FindFromKey(expE.Current()).Extent()==1) {
-	  break;
+    if (isClosed) {
+      // add to a new shape external faces of removed shapes, ie those in RFM
+      TopoDS_Shell Shell;
+      myBuilder.MakeShell(Shell);
+      // exclude redundant internal face with edges encounterd only once
+      TopTools_IndexedDataMapOfShapeListOfShape MEF;
+      //
+      itF.Initialize (RFM);
+      for ( ; itF.More(); itF.Next()) {
+	const TopoDS_Shape& aF=itF.Key();
+        TopExp::MapShapesAndAncestors(aF, TopAbs_EDGE, TopAbs_FACE, MEF);
+      }
+      // add only faces forming a closed shell
+      for (itF.Reset() ; itF.More(); itF.Next())  {
+	const TopoDS_Shape& aF=itF.Key();
+        TopExp_Explorer expE (aF, TopAbs_EDGE);
+        for (; expE.More(); expE.Next()) {
+          if (MEF.FindFromKey(expE.Current()).Extent() == 1) {
+            break;
+	  }
+	}
+        if (!expE.More()) {
+          myBuilder.Add( Shell, aF);
+	}
+	else {
+	  //int a=0;
 	}
       }
-      if (!expE.More()) {
-	myBuilder.Add(aShell, aF);
+      
+      if (S.ShapeType() == TopAbs_SOLID) {
+        TopoDS_Solid Solid;
+        myBuilder.MakeSolid( Solid );
+        myBuilder.Add (Solid, Shell);
+        myBuilder.Add (C, Solid);
       }
-    }
-    //
-    if (aTypeS==TopAbs_SOLID) {
-      TopoDS_Solid aSolid;
-      //
-      myBuilder.MakeSolid(aSolid);
-      myBuilder.Add (aSolid, aShell);
-      myBuilder.Add (aC, aSolid);
-    }
+      else {
+        myBuilder.Add (C, Shell);
+      }
+    } // if (isClosed) {
     else {
-      myBuilder.Add (aC, aShell);
-    }
-  } // if (bIsClosed) {
-  //
-  else {
-    it.Initialize(aSIm);
-    for (; it.More(); it.Next()) {
-      const TopoDS_Shape& aSx=it.Value();
-      myBuilder.Add (aC, aSx);
+      it.Initialize(aSIm);
+      for (; it.More(); it.Next()) {
+	myBuilder.Add (C, it.Value());
+      }
     }
   }
   //
-  myShape=aC;
+  myShape = C;
 }
-
+ //modified by NIZNHY-PKV Mon Jan 24 10:19:30 2005 f
 //=======================================================================
 //function : Modified
 //purpose  : 
@@ -255,81 +261,104 @@
   const TopTools_ListOfShape& NMTAlgo_Splitter::Modified (const TopoDS_Shape& S) 
 
 {
-  myGenerated.Clear();
+  TopAbs_ShapeEnum aType;
   TopTools_ListIteratorOfListOfShape it;
   TopTools_MapOfShape aMap;
   TopExp_Explorer anExp;
-
-  if(S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_EDGE) {
-
-    if(S.ShapeType() == TopAbs_FACE) { 
-      if (myImagesFaces.HasImage( S )) {
-	it.Initialize(myImagesFaces.Image(S));
-	anExp.Init(myShape, TopAbs_FACE);
+  //
+  myGenerated.Clear();
+  aType=S.ShapeType();
+  //
+  switch (aType) {
+    case TopAbs_FACE: {
+      if (myModifiedFaces.IsBound(S)) {
+	anExp.Init(myShape, aType);
+	for(; anExp.More(); anExp.Next()) {
+	  aMap.Add(anExp.Current());
+	}
+	//
+	const TopTools_ListOfShape& aLS=myModifiedFaces.Find(S);
+	it.Initialize(aLS);
+	for (; it.More(); it.Next()) {
+	  const TopoDS_Shape& aFx=it.Value();
+	  if (!aFx.IsSame(S)) {
+	    if (aMap.Contains(aFx)) {
+	      myGenerated.Append(aFx);
+	    }
+	  }
+	}
       }
     }
-    else {
-      if (myImagesEdges.HasImage( S )) {
-	it.Initialize(myImagesEdges.Image(S));
-	anExp.Init(myShape, TopAbs_EDGE);
+      break;
+      //
+    case TopAbs_EDGE: {
+      if (myImagesEdges.HasImage(S)) {
+	anExp.Init(myShape, aType);
+	for(; anExp.More(); anExp.Next()) {
+	  aMap.Add(anExp.Current());
+	}
+	//
+	const TopTools_ListOfShape& aLE=myImagesEdges.Image(S);
+	it.Initialize(aLE);
+	for (; it.More(); it.Next()) {
+	  const TopoDS_Shape& aEx=it.Value();
+	  if (!aEx.IsSame(S)) {
+	    if(aMap.Contains(aEx)) {
+	      myGenerated.Append(aEx);
+	    }
+	  }
+	}
       }
     }
-  
-    for(; anExp.More(); anExp.Next()) {
-      aMap.Add(anExp.Current());
-    }
-
-    for (; it.More(); it.Next()) {
-      if(aMap.Contains(it.Value())) {
-	myGenerated.Append(it.Value());
+      break;
+      //
+    case TopAbs_VERTEX: {
+      Standard_Integer aNbS, anIndex, i, aSDVInd;
+      //
+      const NMTTools_DSFiller& aDSF = Filler();
+      const NMTTools_PaveFiller& aPF = aDSF.PaveFiller();
+      const NMTDS_ShapesDataStructure& aDS = aDSF.DS();
+      //
+      aNbS = aDS.NumberOfSourceShapes();
+      anIndex = 0;
+      //
+      for(i=1; i<=aNbS; ++i) {
+	const TopoDS_Shape& aS = aDS.Shape(i);
+	if(S.IsSame(aS)) {
+	  anIndex = i;
+	  break;
+	}
       }
-    }
-
-    return myGenerated;
-
-  }
-
-  if(S.ShapeType() == TopAbs_VERTEX) {
-    
-    const NMTTools_DSFiller& aDSF = Filler();
-    const NMTTools_PaveFiller& aPF = aDSF.PaveFiller();
-    const NMTDS_ShapesDataStructure& aDS = aDSF.DS();
-
-    Standard_Integer aNbS = aDS.NumberOfSourceShapes();
-    Standard_Integer anIndex = 0, i;
-
-    for(i = 1; i <= aNbS; ++i) {
-
-      const TopoDS_Shape& aS = aDS.Shape(i);
-      if(S.IsSame(aS)) {
-	anIndex = i;
-	break;
+      //
+      if(!anIndex) {
+	break;//return myGenerated;
       }
-
-    }
-
-    if(anIndex == 0) return myGenerated;
-
-    Standard_Integer aSDVInd = aPF.FindSDVertex(anIndex);
-
-    if(aSDVInd == 0) return myGenerated;
-
-    const TopoDS_Shape aSDV = aDS.Shape(aSDVInd);
-
-    anExp.Init(myShape, TopAbs_VERTEX);
-    for(; anExp.More(); anExp.Next()) {
-
-      if(aSDV.IsSame(anExp.Current())) {
-	myGenerated.Append(aSDV);
-	break;
+      //
+      aSDVInd=aPF.FindSDVertex(anIndex);
+      if(!aSDVInd) {
+	break;//return myGenerated;
       }
-
-    }
-    
-  }
-
+      //
+      const TopoDS_Shape& aSDV=aDS.Shape(aSDVInd);
+      //
+      anExp.Init(myShape, aType);
+      for(; anExp.More(); anExp.Next()) {
+	const TopoDS_Shape& aVx=anExp.Current();
+	if(aSDV.IsSame(aVx)) {
+	  myGenerated.Append(aSDV);
+	  break;
+	}
+      }
+    } 
+      break;
+      //
+    default:
+      break;
+  } // switch (aType) {
+  //
   return myGenerated;
 }
+//modified by NIZNHY-PKV Mon Jan 24 10:28:40 2005 t
 //=======================================================================
 //function : Generated
 //purpose  : 

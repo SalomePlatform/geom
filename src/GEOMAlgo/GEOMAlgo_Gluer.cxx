@@ -32,6 +32,7 @@
 #include <TopoDS_Wire.hxx>
 #include <TopoDS_Shell.hxx>
 #include <TopoDS_Solid.hxx>
+#include <TopoDS_Iterator.hxx>
 
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
@@ -60,6 +61,11 @@
 #include <GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx>
 #include <GEOMAlgo_PassKey.hxx>
 #include <GEOMAlgo_Tools.hxx>
+//
+
+static 
+  void GetSubShapes(const TopoDS_Shape& aS,
+		    TopTools_IndexedMapOfShape& aMSS);
 
 //=======================================================================
 //function : GEOMAlgo_Gluer
@@ -318,7 +324,7 @@ void GEOMAlgo_Gluer::MakeSolids()
   //
   aNbS=aMS.Extent();
   if (aNbS) {
-    Standard_Real aTol=1.e-7;
+    //Standard_Real aTol=1.e-7;
     BOP_CorrectTolerances::CorrectCurveOnSurface(myResult);
   }
 }
@@ -394,6 +400,7 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
 {
   myErrorStatus=0;
   //
+  Standard_Boolean bHasNewSubShape;
   Standard_Integer i, aNbF, aNbSDF, iErr;
   TopoDS_Shape aNewShape;
   TopTools_IndexedMapOfShape aMF;
@@ -442,6 +449,7 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
   }
   //
   // Images/Origins
+  //
   aNbF=aMPKLF.Extent();
   for (i=1; i<=aNbF; ++i) {
     const TopTools_ListOfShape& aLSDF=aMPKLF(i);
@@ -451,19 +459,36 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
     }
     //
     const TopoDS_Shape& aS1=aLSDF.First();
-    if (aType==TopAbs_FACE) {
-      TopoDS_Face aNewFace;
-      //
-      const TopoDS_Face& aF1=TopoDS::Face(aS1);
-      MakeFace(aF1, aNewFace);
-      aNewShape=aNewFace;
+    //
+    //modified by NIZNHY-PKV Fri Jan 21 15:34:00 2005 f
+    //
+    bHasNewSubShape=Standard_True;
+    // prevent creation of a new shape if there are not
+    // new subshapes of aSS among the originals
+    if (aNbSDF==1) {
+      bHasNewSubShape=HasNewSubShape(aS1);
+      if (!bHasNewSubShape) {
+	aNewShape=aS1;
+	aNewShape.Orientation(TopAbs_FORWARD);
+      }
     }
-    else if (aType==TopAbs_EDGE) {
-      TopoDS_Edge aNewEdge;
-      //
-      const TopoDS_Edge& aE1=TopoDS::Edge(aS1);
-      MakeEdge(aE1, aNewEdge);
-      aNewShape=aNewEdge;
+    //modified by NIZNHY-PKV Fri Jan 21 15:34:05 2005 t
+    //
+    if (bHasNewSubShape) {//modified by NIZNHY-PKV Fri Jan 21 15:34:10 2005ft 
+      if (aType==TopAbs_FACE) {
+	TopoDS_Face aNewFace;
+	//
+	const TopoDS_Face& aF1=TopoDS::Face(aS1);
+	MakeFace(aF1, aNewFace);
+	aNewShape=aNewFace;
+      }
+      else if (aType==TopAbs_EDGE) {
+	TopoDS_Edge aNewEdge;
+	//
+	const TopoDS_Edge& aE1=TopoDS::Edge(aS1);
+	MakeEdge(aE1, aNewEdge);
+	aNewShape=aNewEdge;
+      }
     }
     //
     myImages.Bind(aNewShape, aLSDF);
@@ -676,7 +701,6 @@ void GEOMAlgo_Gluer::MakeVertex(const TopTools_ListOfShape& aLV,
 void GEOMAlgo_Gluer::MakeEdge(const TopoDS_Edge& aE, 
 			      TopoDS_Edge& aNewEdge)
 {
-  //modified by NIZNHY-PKV Thu Dec 30 11:15:23 2004 f
   myErrorStatus=0;
   //
   Standard_Boolean bIsDE;
@@ -723,7 +747,6 @@ void GEOMAlgo_Gluer::MakeEdge(const TopoDS_Edge& aE,
   else {
     BOPTools_Tools::MakeSplitEdge(aEx, aVR1, aT1, aVR2, aT2, aNewEdge); 
   }
-  //modified by NIZNHY-PKV Thu Dec 30 11:15:28 2004 t
 }
 //
 //=======================================================================
@@ -766,7 +789,7 @@ void GEOMAlgo_Gluer::MakeFace(const TopoDS_Face& aF,
       aER=TopoDS::Edge(myOrigins.Find(aE));
       //
       aER.Orientation(TopAbs_FORWARD);
-      if (!BRep_Tool::Degenerated(aER)) {//modified by NIZNHY-PKV Thu Dec 30 11:31:37 2004 ft
+      if (!BRep_Tool::Degenerated(aER)) {
 	// build p-curve
 	if (bIsUPeriodic) {
 	  GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(aER, aFFWD, aUMin, aUMax);
@@ -808,11 +831,11 @@ Standard_Boolean GEOMAlgo_Gluer::IsToReverse(const TopoDS_Face& aFR,
   aExp.Init(aF, TopAbs_EDGE);
   for (; aExp.More(); aExp.Next()) {
     const TopoDS_Edge& aE=TopoDS::Edge(aExp.Current());
-    //modified by NIZNHY-PKV Thu Dec 30 11:38:05 2004 f
+    //
     if (BRep_Tool::Degenerated(aE)) {
       continue;
     }
-    //modified by NIZNHY-PKV Thu Dec 30 11:38:08 2004 t
+    //
     const TopoDS_Edge& aER=TopoDS::Edge(myOrigins.Find(aE));
     //
     aC3D=BRep_Tool::Curve(aE, aT1, aT2);
@@ -836,7 +859,111 @@ Standard_Boolean GEOMAlgo_Gluer::IsToReverse(const TopoDS_Face& aFR,
   return bRet;
 }
 //
-
+//modified by NIZNHY-PKV Fri Jan 21 10:55:42 2005 f
+//=======================================================================
+//function : HasNewSubShape
+//purpose  : 
+//=======================================================================
+Standard_Boolean GEOMAlgo_Gluer::HasNewSubShape(const TopoDS_Shape& aS)const
+{
+  Standard_Boolean bRet;
+  Standard_Integer i, aNbSS;
+  TopTools_IndexedMapOfShape aMSS;
+  //
+  GetSubShapes(aS, aMSS);
+  //
+  bRet=Standard_False;
+  aNbSS=aMSS.Extent();
+  for (i=1; i<=aNbSS; ++i) {
+    const TopoDS_Shape& aSS=aMSS(i);
+    if (aSS.ShapeType()==TopAbs_WIRE) {
+      continue;
+    }
+    //
+    bRet=!myOrigins.IsBound(aSS);
+    if (bRet) {
+      return bRet;
+    }
+    //
+    const TopoDS_Shape& aSSIm=myOrigins.Find(aSS);
+    bRet=!aSSIm.IsSame(aSS);
+    if (bRet) {
+      return bRet;
+    }
+  }
+  return bRet;
+}
+//=======================================================================
+//function : GetSubShapes
+//purpose  : 
+//=======================================================================
+void GetSubShapes(const TopoDS_Shape& aS,
+		  TopTools_IndexedMapOfShape& aMSS)
+{
+  Standard_Integer aR;
+  TopAbs_ShapeEnum aType;
+  TopoDS_Iterator aIt;
+  //
+  aType=aS.ShapeType();
+  aR=(Standard_Integer)aType+1;
+  if (aR>TopAbs_VERTEX) {
+    return;
+  }
+  //
+  aIt.Initialize(aS);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aSS=aIt.Value();
+    aMSS.Add(aSS);
+    GetSubShapes(aSS, aMSS);
+  }
+}
+//=======================================================================
+//function : Modified
+//purpose  : 
+//=======================================================================
+const TopTools_ListOfShape& GEOMAlgo_Gluer::Modified (const TopoDS_Shape& aS) 
+{
+  TopAbs_ShapeEnum aType;
+  //
+  myGenerated.Clear();
+  //
+  aType=aS.ShapeType();
+  if (aType==TopAbs_FACE || 
+      aType==TopAbs_EDGE || 
+      aType==TopAbs_VERTEX) {
+    if(myOrigins.IsBound(aS)) {
+      const TopoDS_Shape& aSnew=myOrigins.Find(aS);
+      if (!aSnew.IsSame(aS)) {
+	myGenerated.Append(aSnew);
+      }
+    }
+  }
+  //
+  return myGenerated;
+}
+//=======================================================================
+//function : Generated
+//purpose  : 
+//=======================================================================
+const TopTools_ListOfShape& GEOMAlgo_Gluer::Generated(const TopoDS_Shape& )
+{
+  myGenerated.Clear();
+  return myGenerated;
+}
+//=======================================================================
+//function : IsDeleted
+//purpose  : 
+//=======================================================================
+Standard_Boolean GEOMAlgo_Gluer::IsDeleted (const TopoDS_Shape& aS)
+{
+  Standard_Boolean bRet=Standard_False;
+  //
+  const TopTools_ListOfShape& aL=Modified(aS);
+  bRet=!aL.IsEmpty();
+  //
+  return bRet;
+}
+//modified by NIZNHY-PKV Fri Jan 21 10:59:21 2005 t
 //
 // ErrorStatus
 //
@@ -854,37 +981,3 @@ Standard_Boolean GEOMAlgo_Gluer::IsToReverse(const TopoDS_Face& aFR,
 //
 // 1   - some shapes can not be glued by faces
 //
-/*
-//=======================================================================
-//function : BuildResult
-//purpose  : 
-//=======================================================================
-void GEOMAlgo_Gluer::BuildResult()
-{
-  Standard_Boolean bAdded;
-  TopoDS_Compound aCmp;
-  BRep_Builder aBB;
-  TopAbs_ShapeEnum aType;
-  TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItIm;
-  //
-  aBB.MakeCompound(aCmp);
-  //
-  bAdded=Standard_False;
-  aItIm.Initialize(myImages);
-  for (; aItIm.More(); aItIm.Next()) {
-    const TopoDS_Shape& aIm=aItIm.Key();
-    aType=aIm.ShapeType();
-    if(aType==TopAbs_SOLID) {
-      bAdded=Standard_True;
-      aBB.Add(aCmp, aIm);
-    }
-  }
-  myResult=aCmp;
-  //
-  if (bAdded) {
-    Standard_Real aTol=1.e-7;
-    BOP_CorrectTolerances::CorrectCurveOnSurface(myResult);
-    //BRepLib::SameParameter(myResult, aTol, bAdded);
-  }
-}
-*/

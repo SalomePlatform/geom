@@ -7,6 +7,7 @@ using namespace std;
 #include "utilities.h"
 
 #include <TDF.hxx>
+#include <TDF_Tool.hxx>
 #include <TDF_Data.hxx>
 #include <TDF_ChildIterator.hxx>
 #include <TDF_Reference.hxx>
@@ -25,6 +26,8 @@ using namespace std;
 #include <TNaming_NamedShape.hxx>
 #include <TNaming_Builder.hxx>
 
+#include <TColStd_ListOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_HArray1OfReal.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
@@ -36,6 +39,8 @@ using namespace std;
 #define ARGUMENT_LABEL 1
 #define RESULT_LABEL 2
 #define DESCRIPTION_LABEL 3
+#define HISTORY_LABEL 4
+
 #define ARGUMENTS _label.FindChild((ARGUMENT_LABEL))
 #define ARGUMENT(thePosition) _label.FindChild((ARGUMENT_LABEL)).FindChild((thePosition))
 #define SUB_ARGUMENT(thePos1, thePos2) _label.FindChild((ARGUMENT_LABEL)).FindChild((thePos1)).FindChild((thePos2))
@@ -542,38 +547,38 @@ Handle(TColStd_HSequenceOfTransient) GEOM_Function::GetReferenceList(int thePosi
  *  SetShape
  */
 //=============================================================================
-void GEOM_Function::SetShape(int thePosition, const TopoDS_Shape& theShape)
-{
-  _isDone = false;
-  if(thePosition <= 0 || theShape.IsNull()) return;
-
-  TDF_Label anArgLabel = ARGUMENT(thePosition);
-  TNaming_Builder aBuilder(anArgLabel);
-  aBuilder.Generated(theShape);
-
-  _isDone = true;
-  return;
-}
-
+//void GEOM_Function::SetShape(int thePosition, const TopoDS_Shape& theShape)
+//{
+//  _isDone = false;
+//  if(thePosition <= 0 || theShape.IsNull()) return;
+//
+//  TDF_Label anArgLabel = ARGUMENT(thePosition);
+//  TNaming_Builder aBuilder(anArgLabel);
+//  aBuilder.Generated(theShape);
+//
+//  _isDone = true;
+//  return;
+//}
+//
 //=============================================================================
 /*!
  *  GetShape
  */
 //=============================================================================
-TopoDS_Shape GEOM_Function::GetShape(int thePosition)
-{
-  _isDone = false;
-  TopoDS_Shape aShape;
-  if(thePosition <= 0) return aShape;
-
-  TDF_Label anArgLabel = ARGUMENT(thePosition);
-  Handle(TNaming_NamedShape) aNS;
-  if(!anArgLabel.FindAttribute(TNaming_NamedShape::GetID(), aNS)) return aShape;
-
-  aShape = aNS->Get();
-  _isDone = true;
-  return aShape;
-}
+//TopoDS_Shape GEOM_Function::GetShape(int thePosition)
+//{
+//  _isDone = false;
+//  TopoDS_Shape aShape;
+//  if(thePosition <= 0) return aShape;
+//
+//  TDF_Label anArgLabel = ARGUMENT(thePosition);
+//  Handle(TNaming_NamedShape) aNS;
+//  if(!anArgLabel.FindAttribute(TNaming_NamedShape::GetID(), aNS)) return aShape;
+//
+//  aShape = aNS->Get();
+//  _isDone = true;
+//  return aShape;
+//}
 
 
 //=============================================================================
@@ -587,6 +592,49 @@ void GEOM_Function::GetDependency(TDF_LabelSequence& theSeq)
   for(; anIterator.More(); anIterator.Next()) {
     if(anIterator.Value().IsAttribute(GetDependencyID())) theSeq.Append(anIterator.Value());
   }
+}
+
+//=============================================================================
+/*!
+ *  GetHistoryEntry
+ */
+//=============================================================================
+TDF_Label GEOM_Function::GetHistoryEntry (const Standard_Boolean create)
+{
+  return _label.FindChild(HISTORY_LABEL, create);
+}
+
+//=============================================================================
+/*!
+ *  GetArgumentHistoryEntry
+ */
+//=============================================================================
+TDF_Label GEOM_Function::GetArgumentHistoryEntry (const TDF_Label&       theArgumentRefEntry,
+                                                  const Standard_Boolean create)
+{
+  TColStd_ListOfInteger anArgumentRefTags;
+  TDF_Tool::TagList(theArgumentRefEntry, anArgumentRefTags);
+  Standard_Integer anArgumentRefLabelPos = anArgumentRefTags.Extent();
+
+  TDF_Label aHistoryLabel = GetHistoryEntry(create);
+  if (aHistoryLabel.IsNull())
+    return aHistoryLabel;
+  Standard_Integer aHistoryLabelPos = aHistoryLabel.Depth() + 1;
+
+  Standard_Integer itag;
+  TDF_Label aHistoryCurLabel = aHistoryLabel;
+  TColStd_ListIteratorOfListOfInteger aListIter (anArgumentRefTags);
+  for (itag = 1; itag <= aHistoryLabelPos; itag++) {
+    aListIter.Next();
+  }
+  for (; itag <= anArgumentRefLabelPos; itag++) {
+    aHistoryCurLabel = aHistoryCurLabel.FindChild(aListIter.Value(), create);
+    if (aHistoryCurLabel.IsNull())
+      return aHistoryCurLabel;
+    aListIter.Next();
+  }
+
+  return aHistoryCurLabel;
 }
 
 //=======================================================================

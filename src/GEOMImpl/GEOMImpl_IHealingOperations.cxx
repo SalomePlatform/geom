@@ -197,6 +197,8 @@ bool GEOMImpl_IHealingOperations::GetOperatorParameters( const string theOperati
     aMsg += TCollection_AsciiString( nbParamValueErrors );
     MESSAGE(aMsg.ToCString());
   }
+
+  return true;
 }
 
 //=============================================================================

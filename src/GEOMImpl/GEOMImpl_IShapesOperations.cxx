@@ -27,6 +27,7 @@ using namespace std;
 #include <TFunction_Driver.hxx>
 #include <TFunction_Logbook.hxx>
 #include <TDataStd_Integer.hxx>
+#include <TDataStd_IntegerArray.hxx>
 #include <TDF_Tool.hxx>
 
 #include <BRepExtrema_ExtCF.hxx>
@@ -64,6 +65,8 @@ using namespace std;
 #include <gp_Lin.hxx>
 #include <TColStd_Array1OfReal.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
+#include <TColStd_ListOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
 
 //#include <OSD_Timer.hxx>
 
@@ -1383,46 +1386,112 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
   if (aWhere.IsNull() || aWhat.IsNull()) return NULL;
 
   //Fill array of indices
-  TopTools_IndexedMapOfShape anIndices;
-  TopExp::MapShapes(aWhere, anIndices);
+  Handle(TColStd_HArray1OfInteger) aModifiedArray;
 
-//  Handle(TColStd_HArray1OfInteger) anArray =
-//    new TColStd_HArray1OfInteger (1, listSS.Extent());
-//  TopTools_ListIteratorOfListOfShape itSub (listSS);
-//  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
-//    int id = anIndices.FindIndex(itSub.Value());
-//    anArray->SetValue(index, id);
-//  }
-//  
-//  //Add a new group object
-//  Handle(GEOM_Object) aGroup = GetEngine()->AddSubShape(theShape, anArray);
-//
-//  //Set a GROUP type
-//  aGroup->SetType(GEOM_GROUP);
-//
-//  //Set a sub shape type
-//  TDF_Label aFreeLabel = aGroup->GetFreeLabel();
-//  TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)theShapeType);
-// 
-//  //Make a Python command
-//  TCollection_AsciiString anEntry, aDescr;
-//  TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
-//  aDescr += anEntry;
-//  aDescr += " = IShapesOperations.GetInPlace(";
-//  TDF_Tool::Entry(theShapeWhere->GetEntry(), anEntry);
-//  aDescr += anEntry + ",";
-//  TDF_Tool::Entry(theShapeWhat->GetEntry(), anEntry);
-//  aDescr += anEntry + ")";
-//
-//  Handle(GEOM_Function) aFunction = aGroup->GetFunction(1);
-//  aFunction->SetDescription(aDescr);
+  Handle(GEOM_Function) aWhereFunction = theShapeWhere->GetLastFunction();
 
-//  SetErrorCode(OK);
-//  return aGroup;
-  SetErrorCode("Not yet implemented");
-  return NULL;
+  TopTools_IndexedMapOfShape aWhereIndices;
+  TopExp::MapShapes(aWhere, aWhereIndices);
+
+  if (aWhereIndices.Contains(aWhat)) {
+
+    // entity was not changed by the operation
+    Standard_Integer aWhatIndex = aWhereIndices.FindIndex(aWhat);
+    aModifiedArray = new TColStd_HArray1OfInteger(1,1);
+    aModifiedArray->SetValue(1, aWhatIndex);
+
+  } else {
+
+    TDF_Label aHistoryLabel = aWhereFunction->GetHistoryEntry(Standard_False);
+    if (aHistoryLabel.IsNull()) {
+      SetErrorCode("History for an operation, produced the shape, does not exist.");
+      return NULL;
+    }
+
+    // search in history for all argument shapes
+    Standard_Boolean isFound = Standard_False;
+
+    TDF_LabelSequence aLabelSeq;
+    aWhereFunction->GetDependency(aLabelSeq);
+    Standard_Integer nbArg = aLabelSeq.Length();
+
+    for (Standard_Integer iarg = 1; iarg <= nbArg && !isFound; iarg++) {
+
+      TDF_Label anArgumentRefLabel = aLabelSeq.Value(iarg);
+
+      Handle(GEOM_Object) anArgumentObject = GEOM_Object::GetReferencedObject(anArgumentRefLabel);
+      TopoDS_Shape anArgumentShape = anArgumentObject->GetValue();
+
+      TopTools_IndexedMapOfShape anArgumentIndices;
+      TopExp::MapShapes(anArgumentShape, anArgumentIndices);
+
+      if (anArgumentIndices.Contains(aWhat)) {
+        isFound = Standard_True;
+        Standard_Integer aWhatIndex = anArgumentIndices.FindIndex(aWhat);
+
+        // Find corresponding label in history
+        TDF_Label anArgumentHistoryLabel =
+          aWhereFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_False);
+        if (anArgumentHistoryLabel.IsNull()) {
+          SetErrorCode("History for this entity does not exist.");
+          return NULL;
+        }
+
+        TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(aWhatIndex, Standard_False);
+        if (aWhatHistoryLabel.IsNull()) {
+          SetErrorCode("History for this entity does not exist.");
+          return NULL;
+        }
+
+        Handle(TDataStd_IntegerArray) anIntegerArray;
+        if (!aWhatHistoryLabel.FindAttribute(TDataStd_IntegerArray::GetID(), anIntegerArray)) {
+          SetErrorCode("Empty history. Possibly, this entity is absent in result.");
+          return NULL;
+        }
+
+        aModifiedArray = anIntegerArray->Array();
+        if (aModifiedArray->Length() == 0) {
+          SetErrorCode("This entity is absent in result.");
+          return NULL;
+        }
+      }
+    }
+
+    if (!isFound) {
+      SetErrorCode("Not found in arguments.");
+      return NULL;
+    }
+  }
+
+  //Add a new object
+  Handle(GEOM_Object) aResult = GetEngine()->AddSubShape(theShapeWhere, aModifiedArray);
+
+  if (aModifiedArray->Length() > 1) {
+    //Set a GROUP type
+    aResult->SetType(GEOM_GROUP);
+
+    //Set a sub shape type
+    TDF_Label aFreeLabel = aResult->GetFreeLabel();
+    TopAbs_ShapeEnum aShapeType = aWhat.ShapeType();
+    TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)aShapeType);
+  }
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
+  aDescr += anEntry;
+  aDescr += " = IShapesOperations.GetInPlace(";
+  TDF_Tool::Entry(theShapeWhere->GetEntry(), anEntry);
+  aDescr += anEntry + ",";
+  TDF_Tool::Entry(theShapeWhat->GetEntry(), anEntry);
+  aDescr += anEntry + ")";
+
+  Handle(GEOM_Function) aFunction = aResult->GetFunction(1);
+  aFunction->SetDescription(aDescr);
+
+  SetErrorCode(OK);
+  return aResult;
 }
-
 
 //=======================================================================
 //function : SortShapes

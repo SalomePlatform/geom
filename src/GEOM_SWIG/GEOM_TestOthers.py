@@ -353,3 +353,23 @@ def TestOtherOperations (geompy, math):
     geompy.addToStudy(vertex_i, "Vertex on Sphere (center = (0, 0, 0), r = 100)")
 
   # GetInPlace(theShapeWhere, theShapeWhat)
+  box5 = geompy.MakeBoxDXDYDZ(100, 100, 100)
+  box6 = geompy.MakeTranslation(box5, 50, 50, 0)
+
+  part = geompy.MakePartition([box5], [box6])
+  geompy.addToStudy(part, "Partitioned")
+
+  ibb = 5
+  box_list = [box5, box6]
+  for abox in box_list:
+    geompy.addToStudy(abox, "Box " + `ibb`)
+    box_faces = geompy.SubShapeAll(abox, geompy.ShapeType["FACE"])
+    ifa = 1
+    for aface in box_faces:
+      geompy.addToStudyInFather(abox, aface, "Face" + `ifa`)
+      refl_box_face = geompy.GetInPlace(part, aface)
+      if refl_box_face is not None:
+        geompy.addToStudyInFather(part, refl_box_face,
+                                  "Reflection of Face " + `ifa` + " of box " + `ibb`)
+      ifa = ifa + 1
+    ibb = ibb + 1

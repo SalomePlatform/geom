@@ -222,16 +222,24 @@ public:
   Handle(TColStd_HSequenceOfTransient) GetReferenceList (int thePosition); 
 
   //Sets a TopoDS_Shape argument at position thePosition
-  void SetShape(int thePosition, const TopoDS_Shape& theShape);
+  //void SetShape(int thePosition, const TopoDS_Shape& theShape);
     
   //Returns a TopoDS_Shape argument at position thePosition
-  TopoDS_Shape GetShape(int thePosition);  
+  //TopoDS_Shape GetShape(int thePosition);  
   
   //Returns true if the last method succided 
   bool IsDone() { return _isDone; }
 
   //Returns a sequence of the external dependencies of this function
- void GetDependency(TDF_LabelSequence& theSeq);
+  void GetDependency(TDF_LabelSequence& theSeq);
+
+  //Returns top label of this function's history tree
+  TDF_Label GetHistoryEntry (const Standard_Boolean create = Standard_True);
+
+  //Returns history label, corresponding to the label,
+  //on which a reference on argument is stored
+  TDF_Label GetArgumentHistoryEntry (const TDF_Label&       theArgumentRefEntry,
+                                     const Standard_Boolean create = Standard_True);
 
 private:
 

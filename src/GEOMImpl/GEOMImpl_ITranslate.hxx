@@ -6,14 +6,12 @@
 #define TRANSLATE_ARG_POINT1   1  
 #define TRANSLATE_ARG_POINT2   2
 #define TRANSLATE_ARG_VECTOR   3
-#define TRANSLATE_ARG_REF      4
-#define TRANSLATE_ARG_SHAPE    5
 #define TRANSLATE_ARG_ORIGINAL 6
-#define TRANSLATE_ARG_STEP1      7
-#define TRANSLATE_ARG_NBITER1   8
-#define TRANSLATE_ARG_STEP2      9
-#define TRANSLATE_ARG_NBITER2   10
-#define TRANSLATE_ARG_VECTOR2 11
+#define TRANSLATE_ARG_STEP1    7
+#define TRANSLATE_ARG_NBITER1  8
+#define TRANSLATE_ARG_STEP2    9
+#define TRANSLATE_ARG_NBITER2  10
+#define TRANSLATE_ARG_VECTOR2  11
 #define TRANSLATE_ARG_DX  12
 #define TRANSLATE_ARG_DY  13  
 #define TRANSLATE_ARG_DZ  14  
@@ -36,10 +34,6 @@ class GEOMImpl_ITranslate
   
   Handle(GEOM_Function) GetVector() { return _func->GetReference(TRANSLATE_ARG_VECTOR); } 
   
-  void SetShape(const TopoDS_Shape& theShape) { _func->SetShape(TRANSLATE_ARG_SHAPE, theShape); }
-  
-  TopoDS_Shape GetShape() { return _func->GetShape(TRANSLATE_ARG_SHAPE); }
-
   void SetOriginal(Handle(GEOM_Function) theOriginal) { _func->SetReference(TRANSLATE_ARG_ORIGINAL, theOriginal); }
 
   Handle(GEOM_Function) GetOriginal() { return _func->GetReference(TRANSLATE_ARG_ORIGINAL); }

@@ -41,6 +41,22 @@ is
     AloneShapes(me) 
 	 returns Integer from Standard;     
 
+    --modified by NIZNHY-PKV Fri Jan 21 14:16:58 2005f-
+    Modified(me:out;  
+    	    S : Shape from TopoDS) 
+    	returns ListOfShape from TopTools;
+    ---C++: return const & 
+   
+    Generated(me:out;  
+    	    S : Shape from TopoDS) 
+    	returns ListOfShape from TopTools;
+    ---C++: return const & 
+
+    IsDeleted (me:out;  
+    	    S : Shape from TopoDS)
+       returns Boolean from Standard; 
+    --modified by NIZNHY-PKV Fri Jan 21 14:17:04 2005t  
+
     CheckData(me:out) 
 	is redefined protected; 
 	 
@@ -97,6 +113,11 @@ is
     	    aFR : Face from TopoDS;  
     	    aF  : Face from TopoDS) 
 	returns Boolean	from Standard 	     
+    	is protected;  
+     
+    HasNewSubShape(me; 
+    	    aS  : Shape from TopoDS) 
+	returns Boolean	from Standard 	     
     	is protected; 
 -- 
     Images(me) 
@@ -113,5 +134,8 @@ fields
     myImages      : DataMapOfShapeListOfShape from TopTools is protected;   
     myOrigins     : DataMapOfShapeShape from TopTools is protected; 
     myNbAlone     : Integer from Standard is protected;      
-    
+----    
+    myGenerated   : ListOfShape from TopTools is protected;
+----    
+
 end Gluer;
