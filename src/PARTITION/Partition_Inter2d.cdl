@@ -1,0 +1,53 @@
+-- File   :	Partition_Inter2d.cdl
+-- Created:	Thu Aug 02 16:07:39 2001
+-- Author :	Benedicte MARTIN
+--		
+---Copyright:	OPEN CASCADE 2001
+
+class Inter2d from Partition 
+
+	---Purpose: Computes the intersections between edges on a face
+	--          stores result is SD as AsDes from BRepAlgo.
+
+uses
+    AsDes               from BRepAlgo,
+    Edge                from TopoDS,
+    Face                from TopoDS,
+    Vertex              from TopoDS,
+    MapOfShape          from TopTools,
+    Real                from Standard,
+    ListOfShape         from TopTools
+
+is
+    CompletPart2d(myclass ; AsDes : mutable AsDes from BRepAlgo;
+                            F     :         Face  from TopoDS;
+                            NewEdges :      MapOfShape from TopTools);
+		      
+      	---Purpose: Computes the intersections between the edges stored
+      	--          is AsDes as descendants of <F> . Intersections is computed
+      	--          between two edges if one of them is bound in NewEdges.
+
+
+    FindEndVertex(myclass; VertList : ListOfShape from TopTools;
+                           f,l      : Real        from Standard;
+                           E        : Edge        from TopoDS;
+                           First    : out Boolean from Standard;
+                           DU       : out Real    from Standard)
+        returns Vertex from TopoDS;
+    ---Purpose: Returns a vertex  from  <VertList> having parameter on
+    --          <E> most close  to  <f>  or  <l>.  <First>  is True if
+    --          found vertex is closer  to <f>. <DU> returns parameter
+    --          difference.
+    
+    AddVonE(myclass; V : Vertex from TopoDS;
+                     E1,E2 : Edge from TopoDS;
+                     AsDes : mutable AsDes from BRepAlgo)
+        returns Vertex from TopoDS;
+        ---Purpose: Put V in AsDes as intersection of E1 and E2.
+        --          Check that vertex equal to V already exists on one
+        --          of edges, in  such  a  case,  V  is  not added but
+        --          existing vertex is updated to  be on E1 and E2 and
+        --          is returned insead of V. 
+
+end Inter2d;
+

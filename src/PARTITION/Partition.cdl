@@ -1,0 +1,24 @@
+-- File   :	Partition.cdl
+-- Created:	Thu Aug 02 16:07:39 2001
+-- Author :	Benedicte MARTIN 
+--		
+---Copyright:	 OPEN CASCADE  2001
+
+
+package Partition
+
+uses
+    TopoDS,
+    TopTools,
+    TopAbs,
+    BRepAlgo,
+    BRep,
+    gp
+is
+    class Spliter;
+    class Inter3d;
+    class Inter2d;
+    class Loop2d;
+    class Loop3d;
+
+end Partition;

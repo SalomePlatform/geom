@@ -1,0 +1,48 @@
+#  File      : Makefile.in
+#  Created   : Tue Mar 26 15:04:48 2002
+#  Author    : Nicolas REJNERI, Paul RASCLE
+#  Project   : SALOME
+#  Module    : GEOM
+#  Copyright : Open CASCADE, EDF 2002
+#  $Header$
+
+# source path
+top_srcdir=@top_srcdir@
+top_builddir=../..
+srcdir=@srcdir@
+VPATH=.:$(srcdir):$(top_srcdir)/idl:$(top_builddir)/idl
+
+
+@COMMENCE@
+
+# Libraries targets
+
+LIB = libGeometry_Swigcmodule.la
+LIB_SRC = 
+
+SWIG_DEF = libGeometry_Swig.i
+EXPORT_PYSCRIPTS = libGeometry_Swig.py geompy.py batchmode_geompy.py \
+		 GEOM_example.py \
+		 GEOM_example2.py \
+		 GEOM_example3.py \
+		 GEOM_example4.py \
+		 GEOM_moteur.py \
+		 GEOM_usinggeom.py  \
+		 GEOM_Partition1.py \
+		 GEOM_Partition2.py \
+		 GEOM_Partition3.py \
+		 GEOM_Partition4.py \
+		 GEOM_Partition5.py
+
+LIB_CLIENT_IDL = SALOMEDS.idl \
+                 SALOMEDS_Attributes.idl \
+		 SALOME_Exception.idl \
+		 GEOM_Gen.idl \
+		 GEOM_Shape.idl \
+		 SALOME_Component.idl 
+
+CPPFLAGS+=$(QT_INCLUDES) $(PYTHON_INCLUDES) $(OCC_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) -DHAVE_CONFIG_H
+LIBS+= $(PYTHON_LIBS)
+LDFLAGS+= -lGeometryGUI
+
+@CONCLUDE@

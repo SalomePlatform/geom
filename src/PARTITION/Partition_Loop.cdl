@@ -1,0 +1,67 @@
+-- File   :	Partition_Loop.cdl
+-- Created:	Thu Aug 02 16:07:39 2001
+-- Author :	Benedicte MARTIN
+--		
+---Copyright:	 Matra Datavision 2001
+
+
+class Loop from Partition
+
+	---Purpose: Builds the loops from a set of edges on a face.
+
+uses
+
+    Face                      from TopoDS,
+    Edge                      from TopoDS,
+    ListOfShape               from TopTools,
+    DataMapOfShapeListOfShape from TopTools
+
+is
+
+    Create;
+    
+    Init (me : in out; F : Face from TopoDS)
+	---Purpose: Init with <F> the set of edges must have
+	--          pcurves on <F>. 
+    is static;
+    
+    AddEdge (me : in out; E  : in out Edge from TopoDS;
+    	    	    	  LV : ListOfShape from TopTools)
+    	---Purpose: Add E with <LV>. <E> will be copied and trim 
+    	--          by vertices in <LV>.
+    is static;
+    
+    AddConstEdge  (me : in out; E : Edge from TopoDS)
+	---Purpose: Add <E> as const edge, E can be in the result.
+    is static;
+
+    Perform(me : in out)
+	---Purpose: Make loops.
+    is static;
+    
+    NewWires (me)	
+	---Purpose: Returns the list of wires performed. 
+	--          can be an empty list.
+	---C++: return const &
+    returns ListOfShape from TopTools;
+    	
+    WiresToFaces (me : in out)
+    	---Purpose:  Build faces from the wires result.
+    is static;
+    
+    NewFaces (me)
+        ---Purpose: Returns the list of faces.
+    	---Warning: The method <WiresToFaces> as to be called before.
+    	--          can be an empty list.
+	---C++: return const &
+    returns ListOfShape from TopTools;
+
+    
+fields
+
+    myFace       : Face                      from TopoDS;
+    myConstEdges : ListOfShape               from TopTools;
+    myNewWires   : ListOfShape               from TopTools;
+    myNewFaces   : ListOfShape               from TopTools;
+         
+end Loop;
