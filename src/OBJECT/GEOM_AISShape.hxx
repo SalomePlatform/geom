@@ -121,7 +121,6 @@ private:
 
  // Fields PRIVATE
  //
-  Handle_SALOME_InteractiveObject myIO;
   Standard_CString myName;
   Quantity_Color myShadingColor;
 };

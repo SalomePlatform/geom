@@ -50,6 +50,9 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Iterator.hxx>
+#include <AIS_ListOfInteractive.hxx>
+#include <AIS_ListIteratorOfListOfInteractive.hxx>
+#include <V3d_Viewer.hxx>
 
 #include "SALOME_Event.hxx"
 
@@ -162,7 +165,6 @@ void GEOM_Swig::createAndDisplayGO(const char* Entry)
 	    Handle(GEOM_AISShape) aSh = new GEOM_AISShape(myShape,const_cast<char*>(myName));
 	    aSh->setName(const_cast<char*>(myName));
 	    aSh->setIO(myIO);
-	    
 	    ic->Display(aSh);
 	    ic->AddOrRemoveCurrentObject(aSh,true);
 	  }
@@ -370,7 +372,26 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue)
 	myRenderInter->Update();
       }else if(OCCViewer_ViewFrame* aViewFrame = GetFrame<OCCViewer_ViewFrame>(myStudy)){
 	OCCViewer_Viewer3d* v3d = aViewFrame->getViewer();
-	v3d->SetColor(myIO,myParam);
+	Handle(AIS_InteractiveContext) ic = aViewFrame->getViewer()->getAISContext();
+	AIS_ListOfInteractive List;
+	ic->DisplayedObjects(List);
+	AIS_ListIteratorOfListOfInteractive ite(List);
+	for ( ; ite.More(); ite.Next() ) {
+	  Handle(SALOME_InteractiveObject) anObj =
+	    Handle(SALOME_InteractiveObject)::DownCast( ite.Value()->GetOwner() );
+	  if ( !anObj.IsNull() && anObj->hasEntry() && anObj->isSame( myIO ) ) {
+	    Quantity_Color CSFColor = Quantity_Color ( myParam.red()   / 255.,
+						       myParam.green() / 255.,
+						       myParam.blue()  / 255.,
+						       Quantity_TOC_RGB );
+	    ite.Value()->SetColor( CSFColor );
+	    if ( ite.Value()->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
+              Handle(GEOM_AISShape)::DownCast( ite.Value() )->SetShadingColor( CSFColor );
+	    ite.Value()->Redisplay( Standard_True );
+	    v3d->getViewer3d()->Update();
+	    break;
+	  }
+	}
       }
     }
   };
