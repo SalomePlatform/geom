@@ -588,7 +588,7 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnPlane
 						 GEOM::GEOM_Object_ptr   theAx1,
 						 const GEOM::shape_state theState)
 {
-  GEOM::ListOfGO_var aSeq;
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -610,7 +610,6 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnPlane
     return aSeq._retn();
 
   Standard_Integer aLength = aHSeq->Length();
-  aSeq = new GEOM::ListOfGO;
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
     aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
@@ -630,7 +629,7 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnCylinder
 						 const CORBA::Double     theRadius,
 						 const GEOM::shape_state theState)
 {
-  GEOM::ListOfGO_var aSeq;
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -652,7 +651,6 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnCylinder
     return aSeq._retn();
 
   Standard_Integer aLength = aHSeq->Length();
-  aSeq = new GEOM::ListOfGO;
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
     aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
@@ -672,7 +670,7 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnSphere
 						 const CORBA::Double     theRadius,
 						 const GEOM::shape_state theState)
 {
-  GEOM::ListOfGO_var aSeq;
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -694,7 +692,6 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnSphere
     return aSeq._retn();
 
   Standard_Integer aLength = aHSeq->Length();
-  aSeq = new GEOM::ListOfGO;
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
     aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
