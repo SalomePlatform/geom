@@ -114,6 +114,9 @@ void GEOMBase_Skeleton::ClickOnCancel()
 //=================================================================================
 void GEOMBase_Skeleton::LineEditReturnPressed()
 {
+  if ( !myEditCurrentArgument )
+    return;
+
   /* User name of object input management                          */
   /* If successfull the selection is changed and signal emitted... */
   /* so SelectionIntoArgument() is automatically called.           */

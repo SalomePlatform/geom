@@ -385,6 +385,7 @@ void RepairGUI_ShapeProcessDlg::selectionChanged()
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::selectClicked()
 {
+  myEditCurrentArgument = mySelectWdgt->LineEdit1;
   mySelectWdgt->LineEdit1->setFocus();
   selectionChanged();
 }
