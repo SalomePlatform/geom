@@ -15,7 +15,7 @@ VPATH=.:$(srcdir):$(top_srcdir)/idl:$(top_builddir)/idl
 
 # Libraries targets
 
-LIB = libGeometryEngine.la
+LIB = libGEOMEngine.la
 LIB_SRC = GEOM_Shape_i.cc GEOM_Gen_i.cc
 LIB_SERVER_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl GEOM_Gen.idl GEOM_Shape.idl
 

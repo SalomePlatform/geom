@@ -4843,11 +4843,11 @@ void GEOM_Gen_i::ExportSTEP(const char* filename,GEOM::GEOM_Shape_ptr theShape)
 //=====================================================================================
 extern "C"
 {
-  PortableServer::ObjectId * GeometryEngine_factory(CORBA::ORB_ptr orb,
-						    PortableServer::POA_ptr poa, 
-						    PortableServer::ObjectId * contId,
-						    const char *instanceName, 
-						    const char * interfaceName)
+  PortableServer::ObjectId * GEOMEngine_factory(CORBA::ORB_ptr orb,
+						PortableServer::POA_ptr poa, 
+						PortableServer::ObjectId * contId,
+						const char *instanceName, 
+						const char * interfaceName)
   {
 MESSAGE("mygeom")
    GEOM_Gen_i * myGEOM_Gen_i = new GEOM_Gen_i(orb, poa, contId, instanceName, interfaceName);
