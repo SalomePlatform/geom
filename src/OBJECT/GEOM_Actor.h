@@ -93,7 +93,8 @@ class VTKOCC_EXPORT GEOM_Actor : public SALOME_Actor {
   // Color
   void SetColor(float r,float g,float b);
   void GetColor(float& r,float& g,float& b);
-  
+
+  virtual bool IsInfinite() {return myIsInfinite;}  
  protected:
 
   GEOM_Actor();
@@ -110,6 +111,7 @@ class VTKOCC_EXPORT GEOM_Actor : public SALOME_Actor {
  private:
 
   bool subshape;
+  bool myIsInfinite;
 
   TopoDS_Shape myShape;
   double deflection;

@@ -205,14 +205,19 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
 
   int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel < 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1)
+    if(myEditCurrentArgument == GroupPoints->LineEdit1) {
+      myListShapes.length(0);
       myOkListShapes = false;
-    else if(myEditCurrentArgument == GroupPoints->LineEdit2)
+    } else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
+      myListTools.length(0);
       myOkListTools = false;
-    else if(myEditCurrentArgument == GroupPoints->LineEdit3)
+    } else if(myEditCurrentArgument == GroupPoints->LineEdit3) {
+      myListRemoveInside.length(0);
       myOkKeepShape = false;
-    else if(myEditCurrentArgument == GroupPoints->LineEdit4)
+    } else if(myEditCurrentArgument == GroupPoints->LineEdit4) {
+      myListKeepInside.length(0);
       myOkRemoveShape = false;
+    }
     return;
   }
 

@@ -241,11 +241,14 @@ TopoDS_Vertex Partition_Inter2d::AddVonE(const TopoDS_Vertex& theV,
 
   if (!OnE1 && !OnE2 && !theF.IsNull())
   {
-    // analitically find vertices E1 and E2 must pass trough
+    // if 3 faces intersects each others, 3 new edges on them must pass
+    // through one vertex but real intersection points of each
+    // pair of edges are sometimes more far than a tolerance.
+    // Try to analitically find vertices that E1 and E2 must pass trough
 
     TopoDS_Shape F1 = getOtherShape( theF, AsDes->Ascendant( E1 ));
     TopoDS_Shape F2 = getOtherShape( theF, AsDes->Ascendant( E2 ));
-    if (!F1.IsNull() && !F2.IsNull())
+    if (!F1.IsNull() && !F2.IsNull() && !F1.IsSame( F2 ))
     {
       OnE1 = findVOnE ( theV, E1, E2, F1, F2, AsDes, V1 );
       OnE2 = findVOnE ( theV, E2, E1, F1, F2, AsDes, V2 );

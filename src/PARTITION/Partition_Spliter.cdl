@@ -163,6 +163,7 @@ fields
     myEqualEdges   : MapOfShape          from TopTools; -- equal splits
     myNewSection   : MapOfShape          from TopTools; -- new secton edges
     myClosedShapes : MapOfShape          from TopTools;
+    mySharedFaces  : MapOfShape          from TopTools; -- faces shared by several shapes
     myWrappingSolid: MapOfShape          from TopTools; -- solids having other shapes inside
     myFaceShapeMap : DataMapOfShapeShape from TopTools; -- to find a shape by face
     		   			   

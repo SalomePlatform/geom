@@ -452,7 +452,9 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   SALOMEDS::ListOfFileNames_var aSeq = new SALOMEDS::ListOfFileNames;
   aSeq->length(1);
   // Prepare a file name to open
-  TCollection_AsciiString aNameWithExt(SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL()));
+  TCollection_AsciiString aNameWithExt("");
+  if (isMultiFile)
+    aNameWithExt = TCollection_AsciiString(SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL()));
   aNameWithExt += TCollection_AsciiString("_GEOM.sgd");
   aSeq[0] = CORBA::string_dup(aNameWithExt.ToCString());
   // Build a full file name of temporary file
@@ -493,7 +495,10 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
 								       isMultiFile);
 
   // Prepare a file name to open
-  TCollection_AsciiString aNameWithExt(aSeq[0]);
+  TCollection_AsciiString aNameWithExt("");
+  if (isMultiFile)
+    aNameWithExt = TCollection_AsciiString(SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL()));
+  aNameWithExt += TCollection_AsciiString("_GEOM.sgd");
   TCollection_AsciiString aFullName = aTmpDir + aNameWithExt;
 
   // Open document

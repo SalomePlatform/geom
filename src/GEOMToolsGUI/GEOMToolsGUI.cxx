@@ -313,7 +313,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       {
 	QAD_PyEditor* PyEditor = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getPyEditor();
 	PyEditor->setText("from GEOM_usinggeom import *\n");
-	PyEditor->setText(">>> ");
+	//PyEditor->setText(">>> ");
 	PyEditor->handleReturn();
 	break;
       }
@@ -533,6 +533,9 @@ void GEOMToolsGUI::OnEditDelete()
   SALOMEDS::AttributeIOR_var anIOR;
   
   SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
+  QAD_Operation* op = new SALOMEGUI_ImportOperation( QAD_Application::getDesktop()->getActiveStudy() );
+  op->start();
+  Standard_Boolean deleted = false;
   for(;It.More();It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
     if(IObject->hasEntry()) {
@@ -598,14 +601,15 @@ void GEOMToolsGUI::OnEditDelete()
       /* Erase objects in Study */
       SALOMEDS::SObject_var obj = aStudy->FindObjectID(IObject->getEntry());
       if(!obj->_is_nil()) {
-	QAD_Operation* op = new SALOMEGUI_ImportOperation(QAD_Application::getDesktop()->getActiveStudy());
-	op->start();
 	aStudyBuilder->RemoveObject(obj);
-	op->finish();
+	deleted = true;
       }
 
     } /* IObject->hasEntry() */
   }   /* more/next           */
+
+  if (deleted) op->finish();
+  else op->abort();
 
   /* Clear any previous selection */
   Sel->ClearIObjects(); 
@@ -742,11 +746,11 @@ bool GEOMToolsGUI::Import(int aState)
       anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributePixMap");
       aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
       aPixmap->SetPixMap( "ICON_OBJBROWSER_Geometry" );
+      aStudyBuilder->DefineComponentInstance( father, myGeom );
       if (aLocked) aStudy->GetProperties()->SetLocked(true);
       op->finish();
     }
 //      if (aLocked) return false;
-    aStudyBuilder->DefineComponentInstance( father, myGeom );
     father->ComponentIOR(myGeomGUI->GetFatherior());
 
     QString nameShape = QAD_Tools::getFileNameFromPath(file,false) +  QString("_%1").arg(myGeomGUI->GetNbGeom()++);

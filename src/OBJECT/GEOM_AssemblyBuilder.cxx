@@ -69,7 +69,7 @@ void GEOM_AssemblyBuilder::InitProperties(vtkProperty* IsoProp,
 {
   // Shading like default OCC material
   FaceProp->SetRepresentationToSurface();
-  FaceProp->SetInterpolation(1);
+  FaceProp->SetInterpolationToGouraud();
   FaceProp->SetAmbient(1.0);
   FaceProp->SetDiffuse(1.0);
   FaceProp->SetSpecular(0.4);
@@ -109,9 +109,9 @@ void GEOM_AssemblyBuilder::InitProperties(vtkProperty* IsoProp,
 
   // Wireframe for Preview edge 
   EdgePVProp->SetRepresentationToWireframe();
-  EdgePVProp->SetAmbientColor(0, 1, 1);
-  EdgePVProp->SetDiffuseColor(0, 1, 1);
-  EdgePVProp->SetSpecularColor(0, 1, 1);
+  EdgePVProp->SetAmbientColor(1, 1, 0);
+  EdgePVProp->SetDiffuseColor(1, 1, 0);
+  EdgePVProp->SetSpecularColor(1, 1, 0);
 
   // Wireframe for vertex 
   VertexProp->SetRepresentationToWireframe();

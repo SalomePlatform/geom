@@ -115,7 +115,7 @@ def addToStudy(aShape, aName):
 
 #NRI : BugID 1682 :     sg = SALOMEGUI_Swig()
 #NRI : BugID 1682 :     sg.updateObjBrowser(0)
-    salome.sg.updateObjBrowser(0)
+#    salome.sg.updateObjBrowser(0)
     return id
 
 def addToStudyInFather(aFather, aShape, aName):
@@ -141,7 +141,7 @@ def addToStudyInFather(aFather, aShape, aName):
     addArguments( aShape )
 
 #NRI : BugID 1682 :     sg.updateObjBrowser(0)
-    salome.sg.updateObjBrowser(0)
+#    salome.sg.updateObjBrowser(0)
     return id
 
 # -----------------------------------------------------------------------------

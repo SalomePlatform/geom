@@ -490,13 +490,13 @@ bool GEOMBase::Display(GEOM::GEOM_Shape_ptr aShape, Standard_CString name)
     anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributePixMap");
     aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
     aPixmap->SetPixMap("ICON_OBJBROWSER_Geometry");
+    aStudyBuilder->DefineComponentInstance(father, myGeom);
     QAD_Application::getDesktop()->getActiveStudy()->updateObjBrowser();
     if(aLocked)
       aStudy->GetProperties()->SetLocked(true);
     op->finish();
   }
 
-  aStudyBuilder->DefineComponentInstance(father, myGeom);
   father->ComponentIOR(myGeomGUI->GetFatherior());
 
   TCollection_AsciiString nameG("");
@@ -540,6 +540,7 @@ bool GEOMBase::Display(GEOM::GEOM_Shape_ptr aShape, Standard_CString name)
     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
     Handle(GEOM_AISShape) theResult = new GEOM_AISShape(shape, nameG.ToCString());
+    theResult->SetInfiniteState(shape.Infinite());
     theResult->SetShadingColor(myShadingColor);
     IO = new GEOM_InteractiveObject(aShape->Name(), myGeomGUI->GetFatherior(), "GEOM");
     theResult->setIO(IO);
@@ -595,12 +596,12 @@ bool GEOMBase::AddInStudy(bool selection, const Handle(SALOME_InteractiveObject)
     anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributePixMap");
     aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
     aPixmap->SetPixMap("ICON_OBJBROWSER_Geometry");
+    aStudyBuilder->DefineComponentInstance(father, myGeom);
     if (aLocked)
       aStudy->GetProperties()->SetLocked(true);
     op->finish();
   }
 
-  aStudyBuilder->DefineComponentInstance(father, myGeom);
   father->ComponentIOR(myGeomGUI->GetFatherior());
   
   SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->entry());

@@ -208,9 +208,10 @@ void Partition_Spliter::Clear()
   myListShapes.Clear();
   myMapFaces.Clear();
   myMapTools.Clear();
-  myClosedShapes.Clear();
   myEqualEdges.Clear();
   myNewSection.Clear();
+  myClosedShapes.Clear();
+  mySharedFaces.Clear();
   myWrappingSolid.Clear();
   myFaceShapeMap.Clear();
   
@@ -520,7 +521,8 @@ void Partition_Spliter::Compute(const TopAbs_ShapeEnum Limit)
     MakeShells (S , NSL);
     if (makeSolids && S.ShapeType() == TopAbs_SOLID )
       MakeSolids( S, NSL );
-    
+
+    // store new shells or solids
     TopTools_ListIteratorOfListOfShape itNSL (NSL);
     for ( ; itNSL.More(); itNSL.Next()) 
       myBuilder.Add (myShape, itNSL.Value());
@@ -593,7 +595,7 @@ void Partition_Spliter::MakeSolids(const TopoDS_Shape &   theSolid,
     }
   }
 
-  // find outer a shell most close to each hole shell
+  // find an outer shell most close to each hole shell
   TopTools_DataMapOfShapeShape aInOutMap;
   for (aShellIt.Initialize( aHoleShells ); aShellIt.More(); aShellIt.Next())
   {
@@ -913,42 +915,46 @@ TopoDS_Shape Partition_Spliter::FindFacesInside(const TopoDS_Shape& theShape,
   Standard_Boolean isSolid = (theShape.ShapeType() == TopAbs_SOLID);
   if (All || isSolid)  // All is for sub-result removal
   {
+    // loop on not used faces; checked faces will be removed from MFP
+    // during the loop
     for ( itm.Initialize( MFP ); itm.More(); itm.Next() ) {
-      TopoDS_Shape aFace = itm.Key();
+      const TopoDS_Shape & aFace = itm.Key();
 
-      // find a shape aFace originates from
+      // a shape which aFace originates from
       TopoDS_Shape anOrigShape = GetOriginalShape( aFace );
 
-      // find out if all faces of anOrigShape are not in MFP
+      // find out if all split faces of anOrigShape are not in MFP
       // and by the way remove them from MFP
       Standard_Boolean isAllOut = Standard_True;
       TopoDS_Shape aSplitFaces = anOrigShape;
       if (myImageShape.HasImage(anOrigShape))
         aSplitFaces = myImageShape.Image(anOrigShape).First();
 
-      TopTools_ListOfShape aSplitFaceL;
+      TopTools_ListOfShape aSplitFaceL; // faces candidate to be kept
       for (expl.Init( aSplitFaces, TopAbs_FACE ); expl.More(); expl.Next())
       {
         const TopoDS_Shape & aSpFace = expl.Current();
-        // a tool face which become object has image but the whole tool shape has not
+        // a tool face which became object has image but the whole tool shape has not
         if (myImageShape.HasImage( aSpFace ))
         {
           TopExp_Explorer exF (myImageShape.Image( aSpFace ).First(), TopAbs_FACE );
           for ( ; exF.More(); exF.Next() )
           {
             aSplitFaceL.Append( exF.Current() );
-            if ( ! MFP.Remove( exF.Current() ))
-              isAllOut = Standard_False;
+            if ( ! MFP.Remove( exF.Current() ) && isAllOut )
+              // a shared face might be removed from MFP during a prev loop
+              isAllOut = mySharedFaces.Contains( exF.Current() );
           }
         }
         else
         {
           aSplitFaceL.Append( aSpFace );
-          if ( ! MFP.Remove( aSpFace ))
-            isAllOut = Standard_False;
+          if ( ! MFP.Remove( aSpFace ) && isAllOut)
+            // a shared face might be removed from MFP during a prev loop
+            isAllOut = mySharedFaces.Contains( aSpFace );
         }
       }
-      itm.Initialize( MFP );
+      itm.Initialize( MFP ); // iterate remaining faces
       if ( !isAllOut )
         continue;
 
@@ -1301,15 +1307,17 @@ TopoDS_Shape Partition_Spliter::MakeFaces (const TopoDS_Shape& S)
         myImagesFaces.Bind(F,LNF);
 
         // replace the result faces that have already been built
-        // during same domain faces reconstruction
-        if (myInter3d.HasSameDomainF( F )) {
-          // build map edge to same domain faces
+        // during same domain faces reconstruction done earlier
+        if (myInter3d.HasSameDomainF( F ))
+        {
+          // build map edge to same domain faces: EFM
           TopTools_IndexedDataMapOfShapeListOfShape EFM;
           TopTools_MapOfShape SDFM; // avoid doubling
           itl.Initialize( myInter3d.SameDomain( F ));
           for (; itl.More(); itl.Next()) {
             if ( !myImagesFaces.HasImage( itl.Value() ))
               continue;
+            // loop on splits of a SD face
             TopTools_ListIteratorOfListOfShape itNF;
             itNF.Initialize (myImagesFaces.Image( itl.Value() ));
             for ( ; itNF.More(); itNF.Next()) {
@@ -1320,7 +1328,7 @@ TopoDS_Shape Partition_Spliter::MakeFaces (const TopoDS_Shape& S)
                 TopExp::MapShapesAndAncestors(SDF, TopAbs_EDGE, TopAbs_FACE, EFM);
             }
           }
-          // do replace
+          // do replace faces in the LNF
           TopTools_ListOfShape LOF;
           if ( !EFM.IsEmpty() )
             itl.Initialize( LNF );
@@ -1335,13 +1343,15 @@ TopoDS_Shape Partition_Spliter::MakeFaces (const TopoDS_Shape& S)
               Standard_Real dot;
               Partition_Loop3d::IsInside (E, TopoDS::Face(NF), TopoDS::Face(SDF),
                                           1, dot, GoodOri);
-              if (dot < 0) {
+              if (dot < 0)
+              {
+                // NF and SDF are on different side of E
                 if (SDFL.Extent() == 1) {
                   itl.Next();
                   continue;
                 }
                 else
-                  SDF = SDFL.Last();
+                  SDF = SDFL.Last(); // next face must be on the same side
               }
               gp_Vec V1 = Partition_Loop3d::Normal( E, TopoDS::Face( NF ));
               gp_Vec V2 = Partition_Loop3d::Normal( E, TopoDS::Face( SDF ));
@@ -1350,6 +1360,9 @@ TopoDS_Shape Partition_Spliter::MakeFaces (const TopoDS_Shape& S)
 
               if (!myImagesFaces.HasImage( NF ))
                 myImagesFaces.Bind( NF, SDF );
+
+              // mySharedFaces is used in FindFacesInside()
+              mySharedFaces.Add( SDF );
 
               LOF.Prepend ( SDF );
               LNF.Remove (itl);
@@ -1367,9 +1380,11 @@ TopoDS_Shape Partition_Spliter::MakeFaces (const TopoDS_Shape& S)
 	myImagesFaces.Bind(F,LNF);
       }
     } // if (myImagesFaces.HasImage( F ))
-    
+
+    // fill the resulting compound
     for (itl.Initialize(LNF); itl.More(); itl.Next())
       myBuilder.Add ( C, itl.Value());
+    
   } // loop on faces of S
 
   return C;

@@ -76,6 +76,7 @@ GEOM_Actor::GEOM_Actor()
   this->ishighlighted = false;
 
   this->subshape = false;
+  this->myIsInfinite = false;
 }
 
 GEOM_Actor::~GEOM_Actor()
@@ -171,6 +172,7 @@ void GEOM_Actor::SetShadingProperty(vtkProperty* Prop) {
 // Mapper creating function
 //-------------------------------------------------------------
 void GEOM_Actor::CreateMapper(int theMode) {
+  this->myIsInfinite = myShape.Infinite();  
   if(myShape.ShapeType() == TopAbs_VERTEX) {
     gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(myShape));
     this->SetPosition(aPnt.X(),aPnt.Y(),aPnt.Z());
@@ -220,7 +222,9 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
   }
 
   if(!ishighlighted) {
-    if(myDisplayMode >= 1) {
+    if ( ispreselected ) 
+      this->Property = PreviewProperty;
+    else if(myDisplayMode >= 1) {
       // SHADING
       this->Property = ShadingProperty;
     }
@@ -228,8 +232,6 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
       this->Property = WireframeProperty;     
     }
 
-    if ( ispreselected )
-      this->Property = PreviewProperty;
   }
 
   this->Property->Render(this, ren);

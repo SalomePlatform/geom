@@ -198,7 +198,7 @@ void EntityGUI_SubShapeDlg::ClickOnApply()
     QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
 
   /* Reset all arguments and local context to allow user a new selection ...*/
-  this->ResetStateOfDialog();
+  //this->ResetStateOfDialog();
   return;
 }
 

@@ -124,6 +124,7 @@ TopTools_MapOfShape myMapTools;
 TopTools_MapOfShape myEqualEdges;
 TopTools_MapOfShape myNewSection;
 TopTools_MapOfShape myClosedShapes;
+TopTools_MapOfShape mySharedFaces;
 TopTools_MapOfShape myWrappingSolid;
 TopTools_DataMapOfShapeShape myFaceShapeMap;
 TopTools_DataMapOfShapeShape myInternalFaces;

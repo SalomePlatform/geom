@@ -103,11 +103,11 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       myDrawer->ShadingAspect()->Aspect()->SetDistinguishOn();
       
       Graphic3d_MaterialAspect aMatAspect;
-      aMatAspect.SetAmbient( 1 );
-      aMatAspect.SetDiffuse( 0 );
-      aMatAspect.SetEmissive( 0 );
-      aMatAspect.SetShininess(1 );
-      aMatAspect.SetSpecular( 0 );
+      aMatAspect.SetAmbient( 0.5 );
+      aMatAspect.SetDiffuse( 0.5 );
+      aMatAspect.SetEmissive( 0.5 );
+      aMatAspect.SetShininess(0.5 );
+      aMatAspect.SetSpecular( 0.5 );
       
       myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
       myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(Graphic3d_NOM_JADE);

@@ -440,6 +440,7 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
 		}
 		Handle(GEOM_AISShape) aSh = new GEOM_AISShape(Shape, aName->Value());
 		aSh->SetShadingColor(myDisplayGUI->myGeomBase->myShadingColor);
+		aSh->SetInfiniteState(Shape.Infinite());
 		Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(), myDisplayGUI->myGeomGUI->GetFatherior(), "GEOM");
 		IO->setEntry(obj->GetID());
 		aSh->setIO(IO);
