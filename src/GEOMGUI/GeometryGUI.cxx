@@ -724,8 +724,8 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 
       if ( theObject == "Component" ) {
 	////// menu for component
-	popup->removeItem( QAD_DisplayOnly_Popup_ID );
 	if ( !isOCCViewer && !isVTKViewer ) {
+	  popup->removeItem( QAD_DisplayOnly_Popup_ID );
 	  popup->removeItem( QAD_Display_Popup_ID );
 	  popup->removeItem( QAD_Erase_Popup_ID );
 	}
