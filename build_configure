@@ -55,6 +55,7 @@ find_in()
 
   case $1 in
     */CVS) return ;;
+    */adm_local/*) return ;;
     *) ;;
   esac
 
