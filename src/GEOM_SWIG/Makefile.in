@@ -51,8 +51,7 @@ EXPORT_PYSCRIPTS = libGEOM_Swig.py geompy.py batchmode_geompy.py \
 		 GEOM_Partition2.py \
 		 GEOM_Partition3.py \
 		 GEOM_Partition4.py \
-		 GEOM_Partition5.py \
-		 GEOM_shared_modules.py
+		 GEOM_Partition5.py
 
 LIB_CLIENT_IDL = SALOMEDS.idl \
                  SALOMEDS_Attributes.idl \
@@ -60,6 +59,9 @@ LIB_CLIENT_IDL = SALOMEDS.idl \
 		 GEOM_Gen.idl \
 		 GEOM_Shape.idl \
 		 SALOME_Component.idl 
+
+EXPORT_SHAREDPYSCRIPTS=\
+		 GEOM_shared_modules.py
 
 CPPFLAGS+=$(QT_INCLUDES) $(PYTHON_INCLUDES) $(OCC_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) -DHAVE_CONFIG_H
 LIBS+= $(PYTHON_LIBS)
