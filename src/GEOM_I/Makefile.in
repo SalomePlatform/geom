@@ -82,7 +82,7 @@ EXPORT_HEADERS = GEOM_Object_i.hh \
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome $(BOOST_CPPFLAGS) 
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -lTOOLSDS -lSalomeNS -lSalomeContainer -lGEOMPartition -lGEOMArchimede -lGEOMbasic -lGEOMimpl $(CAS_LDPATH) -lTKIGES -lTKSTEP -lTKFillet -lTKOffset -lGEOMSketcher -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeGenericObj 
+LDFLAGS  += -lTOOLSDS -lSalomeNS -lSalomeContainer -lGEOMArchimede -lGEOMbasic -lGEOMimpl $(CAS_LDPATH) -lTKIGES -lTKSTEP -lTKFillet -lTKOffset -lGEOMSketcher -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeGenericObj 
 
 # additional file to be cleaned
 MOSTLYCLEAN =
