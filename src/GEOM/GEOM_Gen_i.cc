@@ -762,7 +762,7 @@ const char* GEOM_Gen_i::GetStringFromIOR(GEOM::GEOM_Shape_var shapeIOR) {
 //=================================================================================
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::GetIORFromString(const char* stringIOR) {
   GEOM::GEOM_Shape_var shapeIOR =  GEOM::GEOM_Shape::_narrow(_orb->string_to_object(stringIOR)) ;
-  return shapeIOR ;
+  return shapeIOR._retn();
 }
 
 
