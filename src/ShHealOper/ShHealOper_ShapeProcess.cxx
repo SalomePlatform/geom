@@ -29,6 +29,13 @@
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopTools_DataMapOfShapeShape.hxx>
 #include <ShapeProcess_ShapeContext.hxx>
+#include <ShapeAnalysis_ShapeTolerance.hxx>
+#include <Precision.hxx>
+#include <BRep_Builder.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <TColStd_IndexedDataMapOfTransientTransient.hxx>
+#include <TNaming_CopyShape.hxx>
+
 //=======================================================================
 //function : ShHealOper_ShapeProcess()
 //purpose  : Constructor
@@ -73,11 +80,23 @@ void ShHealOper_ShapeProcess::Perform(const TopoDS_Shape& theOldShape,
   //ShapeProcessAPI_ApplySequence aOperations(myResource,myPrefix.ToCString());
   //myDone = Standard_False;
   myOperations.ClearMap();
-  
-  theNewShape = myOperations.PrepareShape(theOldShape,mySaveHistoryMode,myLevel);
+  ShapeAnalysis_ShapeTolerance aSatol;
+  Standard_Real ainitTol = aSatol.Tolerance(theOldShape,0);
+
+  // PAL6487: san -- preserve the original shape from being modified
+  TopoDS_Shape anOldShape;
+  TColStd_IndexedDataMapOfTransientTransient aMap;
+  TNaming_CopyShape::CopyTool(theOldShape, aMap, anOldShape);
+  // PAL6487: san -- preserve the original shape from being modified
+
+  theNewShape = myOperations.PrepareShape(anOldShape,mySaveHistoryMode,myLevel);
   if(mySaveHistoryMode)
     myMapModifications = myOperations.Map();
-  myDone = !theOldShape.IsSame(theNewShape);
+  myDone = !anOldShape.IsSame(theNewShape);
+  if(!myDone) {
+    Standard_Real aendTol =aSatol.Tolerance(theNewShape,0);
+    myDone = (fabs(ainitTol - aendTol) > Precision::Confusion()); 
+  }
 }
 //=======================================================================
 //function : SetOperators
