@@ -123,6 +123,9 @@ vector2points.png \
 vectordxyz.png \
 whatis.png
 
+BIN_SCRIPT= \
+VERSION
+
 # copy header files in common directory
 ifeq ($(HAVE_SSTREAM),yes)
   include_list=include/salome/SALOMEconfig.h
