@@ -1,9 +1,12 @@
--- File   :	Partition_Loop2d.cdl
--- Created:	Thu Aug 02 16:07:39 2001
--- Author :	Benedicte MARTIN
---		
----Copyright:	 OPEN CASCADE 2001
-
+--  GEOM PARTITION : partition algorithm
+--
+--  Copyright (C) 2003  CEA/DEN, EDF R&D
+--
+--
+--
+--  File   : Partition_Loop2d.cdl
+--  Author : Benedicte MARTIN
+--  Module : GEOM
 
 class Loop2d from Partition
 

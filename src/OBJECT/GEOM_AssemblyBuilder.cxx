@@ -1,12 +1,32 @@
-using namespace std;
-//  File      : GEOM_AssemblyBuilder.cxx
-//  Created   : Wed Feb 20 17:24:59 2002
-//  Author    : Christophe ATTANASIO
-//  Project   : SALOME
-//  Module    : GEOM
-//  Copyright : Open CASCADE 2002
+//  GEOM OBJECT : interactive object for Geometry entities visualization
+//
+//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// 
+//  This library is free software; you can redistribute it and/or 
+//  modify it under the terms of the GNU Lesser General Public 
+//  License as published by the Free Software Foundation; either 
+//  version 2.1 of the License. 
+// 
+//  This library is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//  Lesser General Public License for more details. 
+// 
+//  You should have received a copy of the GNU Lesser General Public 
+//  License along with this library; if not, write to the Free Software 
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// 
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//
+//
+//
+//  File   : GEOM_AssemblyBuilder.cxx
+//  Author : Christophe ATTANASIO
+//  Module : GEOM
 //  $Header$
 
+using namespace std;
 /*!
   \class GEOM_AssemblyBuilder GEOM_AssemblyBuilder.h
   \brief ....
@@ -26,6 +46,7 @@ using namespace std;
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopExp.hxx>
 #include <TopTools_ListOfShape.hxx>
+#include <TopoDS_Iterator.hxx>
 
 // SALOME
 
@@ -143,6 +164,18 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
 
   vtkActorCollection* AISActors = vtkActorCollection::New();
 
+  if(myShape.ShapeType() == TopAbs_COMPOUND) {
+    TopoDS_Iterator anItr(myShape);
+    for(; anItr.More(); anItr.Next()) {
+      vtkActorCollection* theActors = GEOM_AssemblyBuilder::BuildActors(anItr.Value(), deflection, mode, forced);
+      theActors->InitTraversal();
+      vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
+      while(!(anActor==NULL)) {
+	AISActors->AddItem(anActor);
+	anActor = (vtkActor*)theActors->GetNextActor();
+      }
+    }
+  }
   // Create graphics properties
 
   vtkProperty* IsoProp = vtkProperty::New();
@@ -160,7 +193,7 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
 
   MeshShape(myShape,deflection,forced);
 
-  if ( myShape.ShapeType() <= 4 ) {
+  if ( myShape.ShapeType() <= 4 && myShape.ShapeType() != TopAbs_COMPOUND) {
     
     // FACE Actor
     // look if edges are free or shared 
