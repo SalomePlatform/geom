@@ -12,6 +12,12 @@ using namespace std;
 
 #include "GEOM_Function.hxx"
 
+#include "GEOMAlgo_GlueAnalyser.hxx"
+#include "GEOMAlgo_CoupleOfShapes.hxx"
+#include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
+#include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
+#include "BlockFix_CheckTool.hxx"
+
 #include "utilities.h"
 #include "OpUtil.hxx"
 #include "Utils_ExceptHandlers.hxx"
@@ -19,10 +25,13 @@ using namespace std;
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
 #include <TFunction_Logbook.hxx>
+#include <TDataStd_Integer.hxx>
 #include <TDF_Tool.hxx>
 
 #include <BRep_Tool.hxx>
+#include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
+#include <BRepTools_WireExplorer.hxx>
 #include <BRepGProp.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepAdaptor_Surface.hxx>
@@ -34,22 +43,32 @@ using namespace std;
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_Array1OfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_DataMapOfShapeInteger.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfShapeInteger.hxx>
 
 #include <Bnd_Box.hxx>
-#include <Precision.hxx>
 #include <GProp_GProps.hxx>
+
+#include <Geom_Surface.hxx>
+#include <ShapeAnalysis_Surface.hxx>
+
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_Array1OfReal.hxx>
 #include <TColStd_Array1OfInteger.hxx>
 #include <TColStd_Array2OfInteger.hxx>
+
+//#include <OSD_Timer.hxx>
+
+#include <Precision.hxx>
 
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -1214,6 +1233,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
                                                 (Handle(GEOM_Object) theShape,
                                                  Handle(GEOM_Object) thePoint)
 {
+//  OSD_Timer timer1, timer2, timer3, timer4, timer5;
+//  timer1.Start();
+
   SetErrorCode(KO);
 
   //New object
@@ -1250,51 +1272,66 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
 
     TopoDS_Vertex aVert = TopoDS::Vertex(anArg);
     gp_Pnt aPnt = BRep_Tool::Pnt(aVert);
+    Standard_Real PX, PY, PZ;
+    aPnt.Coord(PX, PY, PZ);
 
-    // 1. Explode blocks on faces
-    TopTools_MapOfShape mapShape;
-    Standard_Integer nbFaces = 0;
+//    timer1.Stop();
+//    timer2.Start();
+
+    // 1. Classify the point relatively each face
+    Standard_Integer nearest = 2, nbFound = 0;
+    TopTools_DataMapOfShapeInteger mapShapeDist;
     TopExp_Explorer exp (aBlockOrComp, TopAbs_FACE);
     for (; exp.More(); exp.Next()) {
-      if (mapShape.Add(exp.Current())) {
-        nbFaces++;
-      }
-    }
+      TopoDS_Shape aFace = exp.Current();
 
-    mapShape.Clear();
-    Standard_Integer ind = 1;
-    TopTools_Array1OfShape aFaces (1, nbFaces);
-    TColStd_Array1OfInteger aDistances (1, nbFaces);
-    for (exp.Init(aBlockOrComp, TopAbs_FACE); exp.More(); exp.Next()) {
-      if (mapShape.Add(exp.Current())) {
-        TopoDS_Shape aFace = exp.Current();
-        aFaces(ind) = aFace;
+      if (!mapShapeDist.IsBound(aFace)) {
+        Standard_Integer aDistance = 2;
 
-        // 2. Classify the point relatively each face
-        BRepClass_FaceClassifier FC (TopoDS::Face(aFace), aPnt, Precision::Confusion());
-        if (FC.State() == TopAbs_IN) {
-          aDistances(ind) = -1;
-        } else if (FC.State() == TopAbs_ON) {
-          aDistances(ind) = 0;
-        } else { // OUT
-          aDistances(ind) = 1;
+        // 1.a. Classify relatively Surface
+        Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(aFace));
+        Handle(ShapeAnalysis_Surface) aSurfAna = new ShapeAnalysis_Surface (aSurf);
+        gp_Pnt2d p2dOnSurf = aSurfAna->ValueOfUV(aPnt, Precision::Confusion());
+        gp_Pnt p3dOnSurf = aSurfAna->Value(p2dOnSurf);
+        Standard_Real aDist = p3dOnSurf.Distance(aPnt);
+        if (aDist > Precision::Confusion()) {
+          // OUT of Surface
+          aDistance = 1;
+        } else {
+          // 1.b. Classify relatively the face itself
+          BRepClass_FaceClassifier FC (TopoDS::Face(aFace), p2dOnSurf, Precision::Confusion());
+          if (FC.State() == TopAbs_IN) {
+            aDistance = -1;
+          } else if (FC.State() == TopAbs_ON) {
+            aDistance = 0;
+          } else { // OUT
+            aDistance = 1;
+          }
         }
-        ind++;
-      }
+
+        if (aDistance < nearest) {
+          nearest = aDistance;
+          aShape = aFace;
+          nbFound = 1;
+
+          // A first found face, containing the point inside, will be returned.
+          // It is the solution, if there are no
+          // coincident or intersecting faces in the compound.
+          if (nearest == -1) break;
+
+        } else if (aDistance == nearest) {
+          nbFound++;
+        } else {
+        }
+
+        mapShapeDist.Bind(aFace, aDistance);
+      } // if (!mapShapeDist.IsBound(aFace))
     }
 
-    // 3. Define face, containing the point or having minimum distance to it
-    Standard_Integer nearest = 2, nbFound = 0;
-    for (ind = 1; ind <= nbFaces; ind++) {
-      if (aDistances(ind) < nearest) {
-        nearest = aDistances(ind);
-        aShape = aFaces(ind);
-        nbFound = 1;
-      } else if (aDistances(ind) == nearest) {
-        nbFound++;
-      } else {
-      }
-    }
+//    timer2.Stop();
+//    timer3.Start();
+
+    // 2. Define face, containing the point or having minimum distance to it
     if (nbFound > 1) {
       if (nearest == 0) {
         // The point is on boundary of some faces and there are
@@ -1306,40 +1343,66 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
         // The point is outside some faces and there are
         // no faces, having the point inside or on boundary.
         // We will get a nearest face
-        Standard_Real minDist = RealLast();
-        for (ind = 1; ind <= nbFaces; ind++) {
-          if (aDistances(ind) == 1) {
-            BRepExtrema_DistShapeShape aDistTool (aVert, aFaces(ind));
-            if (!aDistTool.IsDone()) {
-              SetErrorCode("Can not find a distance from the given point to one of faces");
-              return NULL;
+        Standard_Real bigReal = RealLast();
+        Standard_Real minDist = bigReal;
+        TopTools_DataMapIteratorOfDataMapOfShapeInteger mapShapeDistIter (mapShapeDist);
+        for (; mapShapeDistIter.More(); mapShapeDistIter.Next()) {
+          if (mapShapeDistIter.Value() == 1) {
+            TopoDS_Shape aFace = mapShapeDistIter.Key();
+            Standard_Real aDist = bigReal;
+
+            // 2.a. Fast check of distance - if point projection on surface is on face
+            Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(aFace));
+            Handle(ShapeAnalysis_Surface) aSurfAna = new ShapeAnalysis_Surface (aSurf);
+            gp_Pnt2d p2dOnSurf = aSurfAna->ValueOfUV(aPnt, Precision::Confusion());
+            gp_Pnt p3dOnSurf = aSurfAna->Value(p2dOnSurf);
+            aDist = p3dOnSurf.Distance(aPnt);
+
+            BRepClass_FaceClassifier FC (TopoDS::Face(aFace), p2dOnSurf, Precision::Confusion());
+            if (FC.State() == TopAbs_OUT) {
+              if (aDist < minDist) {
+                // 2.b. Slow check - if point projection on surface is outside of face
+                BRepExtrema_DistShapeShape aDistTool (aVert, aFace);
+                if (!aDistTool.IsDone()) {
+                  SetErrorCode("Can not find a distance from the given point to one of faces");
+                  return NULL;
+                }
+                aDist = aDistTool.Value();
+              } else {
+                aDist = bigReal;
+              }
             }
-            Standard_Real aDist = aDistTool.Value();
+
             if (aDist < minDist) {
               minDist = aDist;
-              aShape = aFaces(ind);
+              aShape = aFace;
             }
           }
         }
       } else { // nearest == -1
-        // The point is inside some faces.
-        // We will get a face with nearest center
-        Standard_Real minDist = RealLast();
-        for (ind = 1; ind <= nbFaces; ind++) {
-          if (aDistances(ind) == -1) {
-            GProp_GProps aSystem;
-            BRepGProp::SurfaceProperties(aFaces(ind), aSystem);
-            gp_Pnt aCenterMass = aSystem.CentreOfMass();
-
-            Standard_Real aDist = aCenterMass.Distance(aPnt);
-            if (aDist < minDist) {
-              minDist = aDist;
-              aShape = aFaces(ind);
-            }
-          }
-        }
+//        // The point is inside some faces.
+//        // We will get a face with nearest center
+//        Standard_Real minDist = RealLast();
+//        TopTools_DataMapIteratorOfDataMapOfShapeInteger mapShapeDistIter (mapShapeDist);
+//        for (; mapShapeDistIter.More(); mapShapeDistIter.Next()) {
+//          if (mapShapeDistIter.Value() == -1) {
+//            TopoDS_Shape aFace = mapShapeDistIter.Key();
+//            GProp_GProps aSystem;
+//            BRepGProp::SurfaceProperties(aFace, aSystem);
+//            gp_Pnt aCenterMass = aSystem.CentreOfMass();
+//
+//            Standard_Real aDist = aCenterMass.Distance(aPnt);
+//            if (aDist < minDist) {
+//              minDist = aDist;
+//              aShape = aFace;
+//            }
+//          }
+//        }
       }
-    }
+    } // if (nbFound > 1)
+
+//    timer3.Stop();
+//    timer4.Start();
 
     if (nbFound == 0) {
       SetErrorCode("There are no faces near the given point");
@@ -1351,12 +1414,16 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
       anArray->SetValue(1, anIndices.FindIndex(aShape));
       aResult = GetEngine()->AddSubShape(theShape, anArray);
     }
+
+//    timer4.Stop();
   }
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
+
+//  timer5.Start();
 
   //The GetFaceNearPoint() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
@@ -1375,6 +1442,16 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
   aFunction->SetDescription(aNewDescr);
 
   SetErrorCode(OK);
+
+//  timer5.Stop();
+//
+//  cout << "Show current face times:" << endl;
+//  timer1.Show();
+//  timer2.Show();
+//  timer3.Show();
+//  timer4.Show();
+//  timer5.Show();
+
   return aResult;
 }
 
@@ -1583,9 +1660,10 @@ Standard_Boolean GEOMImpl_IBlocksOperations::IsCompoundOfBlocks
  *  Set of functions, used by CheckCompoundOfBlocks() method
  */
 //=============================================================================
-void AddBlocksFrom (const TopoDS_Shape&  theShape,
-                    TopTools_ListOfShape& BLO,
-                    TopTools_ListOfShape& NOT)
+void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
+                                                TopTools_ListOfShape& BLO,
+                                                TopTools_ListOfShape& NOT,
+                                                TopTools_ListOfShape& EXT)
 {
   TopAbs_ShapeEnum aType = theShape.ShapeType();
   switch (aType) {
@@ -1594,7 +1672,89 @@ void AddBlocksFrom (const TopoDS_Shape&  theShape,
     {
       TopoDS_Iterator It (theShape);
       for (; It.More(); It.Next()) {
-        AddBlocksFrom(It.Value(), BLO, NOT);
+        AddBlocksFrom(It.Value(), BLO, NOT, EXT);
+      }
+    }
+    break;
+  case TopAbs_SOLID:
+    {
+      // Check, if there are seam or degenerated edges
+      BlockFix_CheckTool aTool;
+      aTool.SetShape(theShape);
+      aTool.Perform();
+      if (aTool.NbPossibleBlocks() > 0) {
+        EXT.Append(theShape);
+      } else {
+        // Count faces and edges in each face to recognize blocks
+        TopTools_MapOfShape mapFaces;
+        Standard_Integer nbFaces = 0;
+        Standard_Boolean hasNonQuadr = Standard_False;
+        TopExp_Explorer expF (theShape, TopAbs_FACE);
+
+        for (; expF.More(); expF.Next()) {
+          if (mapFaces.Add(expF.Current())) {
+            nbFaces++;
+            if (nbFaces > 6) break;
+
+            // get wire
+            TopoDS_Shape aF = expF.Current();
+            TopExp_Explorer wires (aF, TopAbs_WIRE);
+            if (!wires.More()) {
+              // no wire in the face
+              hasNonQuadr = Standard_True;
+              break;
+            }
+            TopoDS_Shape aWire = wires.Current();
+            wires.Next();
+            if (wires.More()) {
+              // multiple wires in the face
+              hasNonQuadr = Standard_True;
+              break;
+            }
+
+            // Check number of edges in the face
+            Standard_Integer nbEdges = 0;
+            TopTools_MapOfShape mapEdges;
+            TopExp_Explorer expW (aWire, TopAbs_EDGE);
+            for (; expW.More(); expW.Next()) {
+              if (mapEdges.Add(expW.Current())) {
+                nbEdges++;
+                if (nbEdges > 4) break;
+              }
+            }
+            if (nbEdges != 4) {
+              hasNonQuadr = Standard_True;
+            }
+          }
+        }
+
+        if (nbFaces == 6 && !hasNonQuadr) {
+          BLO.Append(theShape);
+        } else {
+          NOT.Append(theShape);
+        }
+      }
+    }
+    break;
+  default:
+    NOT.Append(theShape);
+  }
+}
+
+void AddBlocksFromOld (const TopoDS_Shape&   theShape,
+                       TopTools_ListOfShape& BLO,
+                       TopTools_ListOfShape& NOT,
+                       TopTools_ListOfShape& DEG,
+                       TopTools_ListOfShape& SEA)
+{
+  TopAbs_ShapeEnum aType = theShape.ShapeType();
+  switch (aType) {
+  case TopAbs_COMPOUND:
+  case TopAbs_COMPSOLID:
+    {
+      TopoDS_Iterator It (theShape);
+      for (; It.More(); It.Next()) {
+        AddBlocksFromOld(It.Value(), BLO, NOT, DEG, SEA);
       }
     }
     break;
@@ -1603,25 +1763,67 @@ void AddBlocksFrom (const TopoDS_Shape&  theShape,
       TopTools_MapOfShape mapFaces;
       TopExp_Explorer expF (theShape, TopAbs_FACE);
       Standard_Integer nbFaces = 0;
-      Standard_Integer nbEdges = 0;
+      Standard_Boolean hasNonQuadr = Standard_False;
+      Standard_Boolean hasDegenerated = Standard_False;
+      Standard_Boolean hasSeam = Standard_False;
       for (; expF.More(); expF.Next()) {
         if (mapFaces.Add(expF.Current())) {
           nbFaces++;
           if (nbFaces > 6) break;
 
           // Check number of edges in the face
+          Standard_Integer nbEdges = 0;
+          TopTools_MapOfShape mapEdges;
+
+          // get wire
           TopoDS_Shape aF = expF.Current();
-          TopExp_Explorer expE (aF, TopAbs_EDGE);
-          nbEdges = 0;
-          for (; expE.More(); expE.Next()) {
-            nbEdges++;
-            if (nbEdges > 4) break;
+          TopExp_Explorer wires (aF, TopAbs_WIRE);
+          if (!wires.More()) {
+            // no wire in the face
+            hasNonQuadr = Standard_True;
+            break;
           }
-          if (nbEdges != 4) break;
+          TopoDS_Shape aWire = wires.Current();
+          wires.Next();
+          if (wires.More()) {
+            // multiple wires in the face
+            hasNonQuadr = Standard_True;
+            break;
+          }
+
+          // iterate on wire
+          BRepTools_WireExplorer aWE (TopoDS::Wire(aWire), TopoDS::Face(aF));
+          for (; aWE.More(); aWE.Next(), nbEdges++) {
+            if (BRep_Tool::Degenerated(aWE.Current())) {
+              // degenerated edge found
+              hasDegenerated = Standard_True;
+//              break;
+            }
+            if (mapEdges.Contains(aWE.Current())) {
+              // seam edge found
+              hasSeam = Standard_True;
+//              break;
+            }
+            mapEdges.Add(aWE.Current());
+          }
+          if (nbEdges != 4) {
+            hasNonQuadr = Standard_True;
+          }
         }
       }
-      if (nbFaces == 6 && nbEdges == 4) {
-        BLO.Append(theShape);
+      if (nbFaces == 6) {
+        if (hasDegenerated || hasSeam) {
+          if (hasDegenerated) {
+            DEG.Append(theShape);
+          }
+          if (hasSeam) {
+            SEA.Append(theShape);
+          }
+        } else if (hasNonQuadr) {
+          NOT.Append(theShape);
+        } else {
+          BLO.Append(theShape);
+        }
       } else {
         NOT.Append(theShape);
       }
@@ -1649,20 +1851,13 @@ Standard_Integer BlocksRelation (const TopoDS_Shape& theBlock1,
   Bnd_Box B1, B2;
   BRepBndLib::Add(theBlock1, B1);
   BRepBndLib::Add(theBlock2, B2);
-//  BRepBndLib::AddClose(theBlock1, B1);
-//  BRepBndLib::AddClose(theBlock2, B2);
   B1.Get(Xmin1, Ymin1, Zmin1, Xmax1, Ymax1, Zmax1);
   B2.Get(Xmin2, Ymin2, Zmin2, Xmax2, Ymax2, Zmax2);
   if (Xmax2 < Xmin1 || Xmax1 < Xmin2 ||
       Ymax2 < Ymin1 || Ymax1 < Ymin2 ||
       Zmax2 < Zmin1 || Zmax1 < Zmin2) {
-//  Standard_Real prec = Precision::Confusion();
-//  if (prec < Xmin1 - Xmax2 || prec < Xmin2 - Xmax1 ||
-//      prec < Ymin1 - Ymax2 || prec < Ymin2 - Ymax1 ||
-//      prec < Zmin1 - Zmax2 || prec < Zmin2 - Zmax1) {
     return REL_NOT_CONNECTED;
   }
-  // to be done
 
   BRepExtrema_DistShapeShape dst (theBlock1, theBlock2);
   if (!dst.IsDone()) {
@@ -1863,10 +2058,10 @@ Standard_Boolean HasAnyConnection (const Standard_Integer         theBlockIndex,
 
 //=============================================================================
 /*!
- *  CheckCompoundOfBlocks
+ *  CheckCompoundOfBlocksOld
  */
 //=============================================================================
-Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
+Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocksOld
                                                 (Handle(GEOM_Object) theCompound,
                                                  list<BCError>&      theErrors)
 {
@@ -1883,17 +2078,37 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
 
   // 1. Report non-blocks
   TopTools_ListOfShape NOT; // Not blocks
+  TopTools_ListOfShape DEG; // Hexahedral solids, having degenerated edges
+  TopTools_ListOfShape SEA; // Hexahedral solids, having seam edges
   TopTools_ListOfShape BLO; // All blocks from the given compound
-  AddBlocksFrom(aBlockOrComp, BLO, NOT);
+  AddBlocksFromOld(aBlockOrComp, BLO, NOT, DEG, SEA);
 
   if (NOT.Extent() > 0) {
     isCompOfBlocks = Standard_False;
     BCError anErr;
     anErr.error = NOT_BLOCK;
-    TopTools_ListIteratorOfListOfShape NOTit (NOT);
-    for (; NOTit.More(); NOTit.Next()) {
-      anErr.incriminated.push_back(anIndices.FindIndex(NOTit.Value()));
+    TopTools_ListIteratorOfListOfShape it (NOT);
+    for (; it.More(); it.Next()) {
+      anErr.incriminated.push_back(anIndices.FindIndex(it.Value()));
     }
+    theErrors.push_back(anErr);
+  }
+
+  if (DEG.Extent() > 0 || SEA.Extent() > 0) {
+    isCompOfBlocks = Standard_False;
+    BCError anErr;
+    anErr.error = EXTRA_EDGE;
+
+    TopTools_ListIteratorOfListOfShape itDEG (DEG);
+    for (; itDEG.More(); itDEG.Next()) {
+      anErr.incriminated.push_back(anIndices.FindIndex(itDEG.Value()));
+    }
+
+    TopTools_ListIteratorOfListOfShape itSEA (SEA);
+    for (; itSEA.More(); itSEA.Next()) {
+      anErr.incriminated.push_back(anIndices.FindIndex(itSEA.Value()));
+    }
+
     theErrors.push_back(anErr);
   }
 
@@ -1962,6 +2177,7 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
   TColStd_MapOfInteger aCurrentSet;
   for (ibl = 1; ibl <= nbBlocks; ibl++) {
     if (!aProcessedMap.Contains(ibl)) {
+      aCurrentSet.Clear();
       FindConnected(ibl, aRelations, aProcessedMap, aCurrentSet);
       if (aCurrentSet.Extent() > aLargestSet.Extent()) {
         aLargestSet = aCurrentSet;
@@ -2012,6 +2228,9 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
     case NOT_BLOCK:
       aDescr += "\nNot a Blocks: ";
       break;
+    case EXTRA_EDGE:
+      aDescr += "\nHexahedral solids with degenerated and/or seam edges: ";
+      break;
     case INVALID_CONNECTION:
       aDescr += "\nInvalid connection between two blocks: ";
       break;
@@ -2036,6 +2255,298 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
   }
 
   return aDescr;
+}
+
+//=============================================================================
+/*!
+ *  CheckCompoundOfBlocks
+ */
+//=============================================================================
+Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
+                                              (Handle(GEOM_Object) theCompound,
+                                               list<BCError>&      theErrors)
+{
+  SetErrorCode(KO);
+
+  if (theCompound.IsNull()) return Standard_False;
+  TopoDS_Shape aBlockOrComp = theCompound->GetValue();
+
+  Standard_Boolean isCompOfBlocks = Standard_True;
+
+  // Map sub-shapes and their indices
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aBlockOrComp, anIndices);
+
+  // 1. Separate blocks from non-blocks
+  TopTools_ListOfShape NOT; // Not blocks
+  TopTools_ListOfShape EXT; // Hexahedral solids, having degenerated and/or seam edges
+  TopTools_ListOfShape BLO; // All blocks from the given compound
+  AddBlocksFrom(aBlockOrComp, BLO, NOT, EXT);
+
+  // Report non-blocks
+  if (NOT.Extent() > 0) {
+    isCompOfBlocks = Standard_False;
+    BCError anErr;
+    anErr.error = NOT_BLOCK;
+    TopTools_ListIteratorOfListOfShape it (NOT);
+    for (; it.More(); it.Next()) {
+      anErr.incriminated.push_back(anIndices.FindIndex(it.Value()));
+    }
+    theErrors.push_back(anErr);
+  }
+
+  // Report solids, having degenerated and/or seam edges
+  if (EXT.Extent() > 0) {
+    isCompOfBlocks = Standard_False;
+    BCError anErr;
+    anErr.error = EXTRA_EDGE;
+    TopTools_ListIteratorOfListOfShape it (EXT);
+    for (; it.More(); it.Next()) {
+      anErr.incriminated.push_back(anIndices.FindIndex(it.Value()));
+    }
+    theErrors.push_back(anErr);
+  }
+
+  Standard_Integer nbBlocks = BLO.Extent();
+  if (nbBlocks == 0) {
+    isCompOfBlocks = Standard_False;
+    SetErrorCode(OK);
+    return isCompOfBlocks;
+  }
+  if (nbBlocks == 1) {
+    SetErrorCode(OK);
+    return isCompOfBlocks;
+  }
+
+  // Prepare data for 2. and 3.
+  TColStd_Array2OfInteger aRelations (1, nbBlocks, 1, nbBlocks);
+  aRelations.Init(REL_NOT_CONNECTED);
+
+  TopTools_IndexedMapOfShape mapBlocks;
+
+  BRep_Builder BB;
+  TopoDS_Compound aComp;
+  BB.MakeCompound(aComp);
+
+  TopTools_ListIteratorOfListOfShape BLOit (BLO);
+  for (; BLOit.More(); BLOit.Next()) {
+    mapBlocks.Add(BLOit.Value());
+    BB.Add(aComp, BLOit.Value());
+  }
+
+  // 2. Find glued blocks (having shared faces)
+  TopTools_IndexedDataMapOfShapeListOfShape mapFaceBlocks;
+  GEOMImpl_Block6Explorer::MapShapesAndAncestors
+    (aComp, TopAbs_FACE, TopAbs_SOLID, mapFaceBlocks);
+
+  Standard_Integer prevInd = 0, curInd = 0;
+  Standard_Integer ind = 1, nbFaces = mapFaceBlocks.Extent();
+  for (; ind <= nbFaces; ind++) {
+    const TopTools_ListOfShape& aGluedBlocks = mapFaceBlocks.FindFromIndex(ind);
+    if (aGluedBlocks.Extent() > 1) { // Shared face found
+      TopTools_ListIteratorOfListOfShape aGluedBlocksIt (aGluedBlocks);
+      TopoDS_Shape prevBlock, curBlock;
+      for (; aGluedBlocksIt.More(); aGluedBlocksIt.Next()) {
+        curBlock = aGluedBlocksIt.Value();
+        if (!prevBlock.IsNull()) {
+          prevInd = mapBlocks.FindIndex(prevBlock);
+          curInd  = mapBlocks.FindIndex(curBlock);
+          aRelations.SetValue(prevInd, curInd, REL_OK);
+          aRelations.SetValue(curInd, prevInd, REL_OK);
+        }
+        prevBlock = curBlock;
+      }
+    }
+  }
+
+  // 3. Find not glued blocks
+  GEOMAlgo_GlueAnalyser aGD; 
+
+  aGD.SetShape(aComp);
+  aGD.SetTolerance(Precision::Confusion());
+  aGD.SetCheckGeometry(Standard_True);
+  aGD.Perform();
+
+  Standard_Integer iErr, iWrn;
+  iErr = aGD.ErrorStatus();
+  if (iErr) {
+    SetErrorCode("Error in GEOMAlgo_GlueAnalyser");
+    return isCompOfBlocks;
+  }
+  iWrn = aGD.WarningStatus();
+  if (iWrn) {
+    MESSAGE("Warning in GEOMAlgo_GlueAnalyser");
+  }
+
+  // Report not glued blocks
+  if (aGD.HasSolidsToGlue()) {
+    isCompOfBlocks = Standard_False;
+    Standard_Integer aSx1Ind, aSx2Ind;
+
+    const GEOMAlgo_ListOfCoupleOfShapes& aLCS = aGD.SolidsToGlue();
+    GEOMAlgo_ListIteratorOfListOfCoupleOfShapes aItCS (aLCS);
+    for (; aItCS.More(); aItCS.Next()) {
+      const GEOMAlgo_CoupleOfShapes& aCS = aItCS.Value();
+      const TopoDS_Shape& aSx1 = aCS.Shape1();
+      const TopoDS_Shape& aSx2 = aCS.Shape2();
+
+      aSx1Ind = mapBlocks.FindIndex(aSx1);
+      aSx2Ind = mapBlocks.FindIndex(aSx2);
+      aRelations.SetValue(aSx1Ind, aSx2Ind, NOT_GLUED);
+      aRelations.SetValue(aSx2Ind, aSx1Ind, NOT_GLUED);
+
+      BCError anErr;
+      anErr.error = NOT_GLUED;
+      anErr.incriminated.push_back(anIndices.FindIndex(aSx1));
+      anErr.incriminated.push_back(anIndices.FindIndex(aSx2));
+      theErrors.push_back(anErr);
+    }
+  }
+
+  // 4. Find largest set of connected (good connection or not glued) blocks
+  Standard_Integer ibl = 1;
+  TColStd_MapOfInteger aProcessedMap;
+  TColStd_MapOfInteger aLargestSet;
+  TColStd_MapOfInteger aCurrentSet;
+  for (ibl = 1; ibl <= nbBlocks; ibl++) {
+    if (!aProcessedMap.Contains(ibl)) {
+      aCurrentSet.Clear();
+      FindConnected(ibl, aRelations, aProcessedMap, aCurrentSet);
+      if (aCurrentSet.Extent() > aLargestSet.Extent()) {
+        aLargestSet = aCurrentSet;
+      }
+    }
+  }
+
+  // 5. Report all blocks, isolated from <aLargestSet>
+  BCError anErr;
+  anErr.error = NOT_CONNECTED;
+  Standard_Boolean hasIsolated = Standard_False;
+  for (ibl = 1; ibl <= nbBlocks; ibl++) {
+    if (!aLargestSet.Contains(ibl)) {
+      aProcessedMap.Clear();
+      if (!HasAnyConnection(ibl, aLargestSet, aRelations, aProcessedMap)) {
+        // report connection absence
+        hasIsolated = Standard_True;
+        anErr.incriminated.push_back(anIndices.FindIndex(mapBlocks.FindKey(ibl)));
+      }
+    }
+  }
+  if (hasIsolated) {
+    isCompOfBlocks = Standard_False;
+    theErrors.push_back(anErr);
+  }
+
+  SetErrorCode(OK);
+  return isCompOfBlocks;
+}
+
+//=============================================================================
+/*!
+ *  RemoveExtraEdges
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
+                                             (Handle(GEOM_Object) theObject)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be fixed
+
+  //Add a new Copy object
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+
+  //Add a function
+  Handle(GEOM_Function) aFunction =
+    aCopy->AddFunction(GEOMImpl_BlockDriver::GetID(), BLOCK_REMOVE_EXTRA);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_BlockDriver::GetID()) return NULL;
+
+  GEOMImpl_IBlockTrsf aTI (aFunction);
+  aTI.SetOriginal(aLastFunction);
+
+  //Compute the fixed shape
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Block driver failed to remove extra edges of the given shape");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
+  aDescr += anEntry + " = IBlocksOperations.RemoveExtraEdges(";
+  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+  aDescr += anEntry + ")";
+
+  aFunction->SetDescription(aDescr);
+
+  SetErrorCode(OK);
+  return aCopy;
+}
+
+//=============================================================================
+/*!
+ *  CheckAndImprove
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::CheckAndImprove
+                                             (Handle(GEOM_Object) theObject)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be fixed
+
+  //Add a new Copy object
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+
+  //Add a function
+  Handle(GEOM_Function) aFunction =
+    aCopy->AddFunction(GEOMImpl_BlockDriver::GetID(), BLOCK_COMPOUND_IMPROVE);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_BlockDriver::GetID()) return NULL;
+
+  GEOMImpl_IBlockTrsf aTI (aFunction);
+  aTI.SetOriginal(aLastFunction);
+
+  //Compute the fixed shape
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Block driver failed to improve the given blocks compound");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
+  aDescr += anEntry + " = IBlocksOperations.CheckAndImprove(";
+  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+  aDescr += anEntry + ")";
+
+  aFunction->SetDescription(aDescr);
+
+  SetErrorCode(OK);
+  return aCopy;
 }
 
 //=============================================================================
@@ -2153,70 +2664,80 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockNearPoint
   }
   if (aBlockOrComp.ShapeType() != TopAbs_COMPOUND &&
       aBlockOrComp.ShapeType() != TopAbs_COMPSOLID) {
-    SetErrorCode("Shape is neither a block, nor a compound of blocks");
+    SetErrorCode("Shape to find block in is not a compound");
     return NULL;
   }
 
   TopoDS_Shape anArg = thePoint->GetValue();
   if (anArg.IsNull()) {
-    SetErrorCode("Null shape is given as argument");
+    SetErrorCode("Point is null");
     return NULL;
   }
   if (anArg.ShapeType() != TopAbs_VERTEX) {
-    SetErrorCode("Element for block identification is not a vertex");
+    SetErrorCode("Shape for block identification is not a vertex");
     return NULL;
   }
 
   //Compute the Block value
   try {
     TopoDS_Shape aShape;
+
     TopoDS_Vertex aVert = TopoDS::Vertex(anArg);
     gp_Pnt aPnt = BRep_Tool::Pnt(aVert);
+    Standard_Real PX, PY, PZ;
+    aPnt.Coord(PX, PY, PZ);
 
-    // 1. Explode compound on blocks
-    TopTools_MapOfShape mapShape;
-    Standard_Integer nbSolids = 0;
+    // 1. Classify the point relatively each block
+    Standard_Integer nearest = 2, nbFound = 0;
+    TopTools_DataMapOfShapeInteger mapShapeDist;
     TopExp_Explorer exp (aBlockOrComp, TopAbs_SOLID);
     for (; exp.More(); exp.Next()) {
-      if (mapShape.Add(exp.Current())) {
-        nbSolids++;
-      }
-    }
+      TopoDS_Shape aSolid = exp.Current();
 
-    mapShape.Clear();
-    Standard_Integer ind = 1;
-    TopTools_Array1OfShape aSolids (1, nbSolids);
-    TColStd_Array1OfInteger aDistances (1, nbSolids);
-    for (exp.Init(aBlockOrComp, TopAbs_SOLID); exp.More(); exp.Next()) {
-      if (mapShape.Add(exp.Current())) {
-        TopoDS_Shape aSolid = exp.Current();
-        aSolids(ind) = aSolid;
+      if (!mapShapeDist.IsBound(aSolid)) {
+        Standard_Integer aDistance = 2;
 
-        // 2. Classify the point relatively each block
-        BRepClass3d_SolidClassifier SC (aSolid, aPnt, Precision::Confusion());
-        if (SC.State() == TopAbs_IN) {
-          aDistances(ind) = -1;
-        } else if (SC.State() == TopAbs_ON) {
-          aDistances(ind) = 0;
-        } else { // OUT
-          aDistances(ind) = 1;
+        // 1.a. Classify relatively Bounding box
+        Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+        Bnd_Box BB;
+        BRepBndLib::Add(aSolid, BB);
+        BB.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
+        if (PX < Xmin || Xmax < PX ||
+            PY < Ymin || Ymax < PY ||
+            PZ < Zmin || Zmax < PZ) {
+          // OUT of bounding box
+          aDistance = 1;
+        } else {
+          // 1.b. Classify relatively the solid itself
+          BRepClass3d_SolidClassifier SC (aSolid, aPnt, Precision::Confusion());
+          if (SC.State() == TopAbs_IN) {
+            aDistance = -1;
+          } else if (SC.State() == TopAbs_ON) {
+            aDistance = 0;
+          } else { // OUT
+            aDistance = 1;
+          }
         }
-        ind++;
-      }
+
+        if (aDistance < nearest) {
+          nearest = aDistance;
+          aShape = aSolid;
+          nbFound = 1;
+
+          // A first found block, containing the point inside, will be returned.
+          // It is the solution, if there are no intersecting blocks in the compound.
+          if (nearest == -1) break;
+
+        } else if (aDistance == nearest) {
+          nbFound++;
+        } else {
+        }
+
+        mapShapeDist.Bind(aSolid, aDistance);
+      } // if (!mapShapeDist.IsBound(aSolid))
     }
 
-    // 3. Define block, containing the point or having minimum distance to it
-    Standard_Integer nearest = 2, nbFound = 0;
-    for (ind = 1; ind <= nbSolids; ind++) {
-      if (aDistances(ind) < nearest) {
-        nearest = aDistances(ind);
-        aShape = aSolids(ind);
-        nbFound = 1;
-      } else if (aDistances(ind) == nearest) {
-        nbFound++;
-      } else {
-      }
-    }
+    // 2. Define block, containing the point or having minimum distance to it
     if (nbFound > 1) {
       if (nearest == 0) {
         // The point is on boundary of some blocks and there are
@@ -2229,9 +2750,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockNearPoint
         // no blocks, having the point inside or on boundary.
         // We will get a nearest block
         Standard_Real minDist = RealLast();
-        for (ind = 1; ind <= nbSolids; ind++) {
-          if (aDistances(ind) == 1) {
-            BRepExtrema_DistShapeShape aDistTool (aVert, aSolids(ind));
+        TopTools_DataMapIteratorOfDataMapOfShapeInteger mapShapeDistIter (mapShapeDist);
+        for (; mapShapeDistIter.More(); mapShapeDistIter.Next()) {
+          if (mapShapeDistIter.Value() == 1) {
+            TopoDS_Shape aSolid = mapShapeDistIter.Key();
+            BRepExtrema_DistShapeShape aDistTool (aVert, aSolid);
             if (!aDistTool.IsDone()) {
               SetErrorCode("Can not find a distance from the given point to one of blocks");
               return NULL;
@@ -2239,29 +2762,31 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockNearPoint
             Standard_Real aDist = aDistTool.Value();
             if (aDist < minDist) {
               minDist = aDist;
-              aShape = aSolids(ind);
+              aShape = aSolid;
             }
           }
         }
       } else { // nearest == -1
-        // The point is inside some blocks.
-        // We will get a block with nearest center
-        Standard_Real minDist = RealLast();
-        for (ind = 1; ind <= nbSolids; ind++) {
-          if (aDistances(ind) == -1) {
-            GProp_GProps aSystem;
-            BRepGProp::VolumeProperties(aSolids(ind), aSystem);
-            gp_Pnt aCenterMass = aSystem.CentreOfMass();
-
-            Standard_Real aDist = aCenterMass.Distance(aPnt);
-            if (aDist < minDist) {
-              minDist = aDist;
-              aShape = aSolids(ind);
-            }
-          }
-        }
+//        // The point is inside some blocks.
+//        // We will get a block with nearest center
+//        Standard_Real minDist = RealLast();
+//        TopTools_DataMapIteratorOfDataMapOfShapeInteger mapShapeDistIter (mapShapeDist);
+//        for (; mapShapeDistIter.More(); mapShapeDistIter.Next()) {
+//          if (mapShapeDistIter.Value() == -1) {
+//            TopoDS_Shape aSolid = mapShapeDistIter.Key();
+//            GProp_GProps aSystem;
+//            BRepGProp::VolumeProperties(aSolid, aSystem);
+//            gp_Pnt aCenterMass = aSystem.CentreOfMass();
+//
+//            Standard_Real aDist = aCenterMass.Distance(aPnt);
+//            if (aDist < minDist) {
+//              minDist = aDist;
+//              aShape = aSolid;
+//            }
+//          }
+//        }
       }
-    }
+    } // if (nbFound > 1)
 
     if (nbFound == 0) {
       SetErrorCode("There are no blocks near the given point");
@@ -2691,4 +3216,140 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation2D
 
   SetErrorCode(OK);
   return aCopy;
+}
+
+//=============================================================================
+/*!
+ *  Propagate
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
+                                                 (Handle(GEOM_Object) theShape)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+
+  TopoDS_Shape aShape = theShape->GetValue();
+  if (aShape.IsNull()) return NULL;
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+
+  TopTools_IndexedDataMapOfShapeListOfShape MEW;
+  GEOMImpl_Block6Explorer::MapShapesAndAncestors
+    (aShape, TopAbs_EDGE, TopAbs_WIRE, MEW);
+  Standard_Integer ie, nbEdges = MEW.Extent();
+
+  // Result
+  Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+
+  TopTools_MapOfShape mapAcceptedEdges;
+
+  for (ie = 1; ie <= nbEdges; ie++) {
+    TopoDS_Shape curE = MEW.FindKey(ie);
+
+    if (mapAcceptedEdges.Contains(curE)) continue;
+
+    // Build the chain
+    TopTools_ListOfShape currentChain;
+    TopTools_ListOfShape listPrevEdges;
+
+    currentChain.Append(curE);
+    listPrevEdges.Append(curE);
+    mapAcceptedEdges.Add(curE);
+
+    // Collect all edges pass by pass
+    while (listPrevEdges.Extent() > 0) {
+      // List of edges, added to chain on this cycle pass
+      TopTools_ListOfShape listCurEdges;
+
+      // Find the next portion of edges
+      TopTools_ListIteratorOfListOfShape itE (listPrevEdges);
+      for (; itE.More(); itE.Next()) {
+        TopoDS_Shape anE = itE.Value();
+
+        // Iterate on faces, having edge <anE>
+        TopTools_ListIteratorOfListOfShape itW (MEW.FindFromKey(anE));
+        for (; itW.More(); itW.Next()) {
+          TopoDS_Shape aW = itW.Value();
+          TopoDS_Shape anOppE;
+
+          BRepTools_WireExplorer aWE (TopoDS::Wire(aW));
+          Standard_Integer nb = 1, found = 0;
+          TopTools_Array1OfShape anEdges (1,4);
+          for (; aWE.More(); aWE.Next(), nb++) {
+            if (nb > 4) {
+              found = 0;
+              break;
+            }
+            anEdges(nb) = aWE.Current();
+            if (anEdges(nb).IsSame(anE)) found = nb;
+          }
+
+          if (nb == 5 && found > 0) {
+            // Quadrangle face found, get an opposite edge
+            Standard_Integer opp = found + 2;
+            if (opp > 4) opp -= 4;
+            anOppE = anEdges(opp);
+
+            if (!mapAcceptedEdges.Contains(anOppE)) {
+              // Add found edge to the chain
+              currentChain.Append(anOppE);
+              listCurEdges.Append(anOppE);
+              mapAcceptedEdges.Add(anOppE);
+            }
+          } // if (nb == 5 && found > 0)
+        } // for (; itF.More(); itF.Next())
+      } // for (; itE.More(); itE.Next())
+
+      listPrevEdges = listCurEdges;
+    } // while (listPrevEdges.Extent() > 0)
+
+    // Store the chain in the document
+    Handle(TColStd_HArray1OfInteger) anArray =
+      new TColStd_HArray1OfInteger (1, currentChain.Extent());
+
+    // Fill array of sub-shape indices
+    TopTools_ListIteratorOfListOfShape itSub (currentChain);
+    for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+      int id = anIndices.FindIndex(itSub.Value());
+      anArray->SetValue(index, id);
+    }
+
+    // Add a new group object
+    Handle(GEOM_Object) aChain = GetEngine()->AddSubShape(theShape, anArray);
+
+    // Set a GROUP type
+    aChain->SetType(GEOM_GROUP);
+
+    // Set a sub shape type
+    TDF_Label aFreeLabel = aChain->GetFreeLabel();
+    TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)TopAbs_EDGE);
+
+    // Add the chain to the result
+    aSeq->Append(aChain);
+  }
+
+  if (aSeq->IsEmpty()) {
+    SetErrorCode("There are no quadrangle faces in the shape");
+    return aSeq;
+  }
+
+  // The Propagation doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+
+  // Make a Python command
+  TCollection_AsciiString aDescr
+    ("\nlistPropagationChains = IShapesOperations.Propagate(");
+  TCollection_AsciiString anEntry;
+  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
+  aDescr += (anEntry + ")");
+
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
+  anOldDescr = anOldDescr + aDescr;
+  aFunction->SetDescription(anOldDescr);
+
+  SetErrorCode(OK);
+  return aSeq;
 }

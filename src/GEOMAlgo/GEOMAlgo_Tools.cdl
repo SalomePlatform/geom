@@ -10,7 +10,8 @@ class Tools from GEOMAlgo
 	---Purpose: 
 
 uses    
-    Pnt from gp,
+    Pnt from gp, 
+    Surface from Geom,  
     Edge from TopoDS, 
     Face from TopoDS, 
     Shape from TopoDS,
@@ -72,6 +73,16 @@ is
     	    aU  :Real from Standard; 
     	    aV  :Real from Standard; 
 	    aP3D:out Pnt from gp);     
+
+    RefinePCurveForEdgeOnFace  (myclass; 
+    	    aE  :  Edge from TopoDS; 
+            aF  :  Face from TopoDS; 
+    	    aU1 : Real from Standard; 
+    	    aU2 : Real from Standard); 
+
+    IsUPeriodic(myclass;  
+    	    aS:Surface from Geom) 
+    	returns Boolean from Standard;   
 --fields
 
 end Tools;

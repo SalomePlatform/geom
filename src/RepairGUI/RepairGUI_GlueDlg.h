@@ -58,6 +58,10 @@ private :
     void closeEvent(QCloseEvent* e);
     void initSelection();
 
+    bool onAcceptLocal( const bool publish = true, const bool useTransaction = true );
+    void clearShapeBufferLocal( GEOM::GEOM_Object_ptr );
+    // Reimplementation of onAccept for local case of this class.
+
     GEOM::GEOM_Object_var myObject;
 
     DlgRef_1Sel_Ext* GroupPoints;

@@ -344,6 +344,9 @@ msgstr "chamferface.png"
 msgid "ICON_DLG_CHECKSHAPE"
 msgstr "check.png"
 
+msgid "ICON_DLG_CHECK_COMPOUND_OF_BLOCKS"
+msgstr "check_blocks_compound.png"
+
 #SupressFaceDlg
 msgid "ICON_DLG_SUPRESS_FACE"
 msgstr "supressface.png"
@@ -486,3 +489,9 @@ msgstr "block_face_4e.png"
 
 msgid "ICON_DLG_GLUE_FACES"
 msgstr "glue.png"
+
+msgid "ICON_DLG_FREE_FACES"
+msgstr "free_faces.png"
+
+msgid "ICON_DLG_PROPAGATE"
+msgstr "propagate.png"

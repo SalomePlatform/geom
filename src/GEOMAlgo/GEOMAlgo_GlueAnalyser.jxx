@@ -1,0 +1,9 @@
+#ifndef _GEOMAlgo_ListOfCoupleOfShapes_HeaderFile
+#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
+#endif
+#ifndef _TopTools_ListOfShape_HeaderFile
+#include <TopTools_ListOfShape.hxx>
+#endif
+#ifndef _GEOMAlgo_GlueAnalyser_HeaderFile
+#include <GEOMAlgo_GlueAnalyser.hxx>
+#endif

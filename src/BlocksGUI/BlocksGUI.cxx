@@ -32,6 +32,7 @@
 #include "BlocksGUI_TrsfDlg.h"
 //#include "BlocksGUI_CheckMultiBlockDlg.h"
 #include "BlocksGUI_ExplodeDlg.h"
+#include "BlocksGUI_PropagateDlg.h"
 
 #include "SALOMEGUI_QtCatchCorbaException.hxx"
 
@@ -106,6 +107,9 @@ bool BlocksGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
 
     case 9995:
       aDlg = new BlocksGUI_ExplodeDlg (parent, Sel);
+      break;
+    case 99991:
+      aDlg = new BlocksGUI_PropagateDlg (parent, "", Sel);
       break;
 
     default:

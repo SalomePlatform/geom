@@ -527,6 +527,25 @@ msgstr "Chamfer"
 msgid "GEOM_CHECK_SHAPE"
 msgstr "Check Shape"
 
+#Check Blocks Compound
+msgid "GEOM_CHECK_BLOCKS_COMPOUND"
+msgstr "Check Blocks Compound"
+
+#Check Blocks Compound Errors
+msgid "GEOM_CHECK_BLOCKS_COMPOUND_ERRORS"
+msgstr "Errors"
+
+#Check Blocks Compound Errors
+msgid "GEOM_CHECK_BLOCKS_COMPOUND_HAS_NO_ERRORS"
+msgstr "The Compound of Blocks has no errors"
+
+msgid "GEOM_CHECK_BLOCKS_COMPOUND_HAS_ERRORS"
+msgstr "The Compound of Blocks has errors"
+
+#Check Blocks Compound SubShapes
+msgid "GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES"
+msgstr "Incriminated Sub-Shapes"
+
 #Whatis
 msgid "GEOM_WHATIS"
 msgstr "Whatis"
@@ -819,6 +838,10 @@ msgstr "Cylinder Construction"
 #: GeometryGUI_CheckShape.cxx:60
 msgid "GEOM_CHECK_TITLE"
 msgstr "Check Shape Informations"
+
+#: MeasureGUI_CheckCompoundOfBlocks.cxx:61
+msgid "GEOM_CHECK_COMPOUND_BLOCKS_TITLE"
+msgstr "Check Blocks Compound"
 
 #: GeometryGUI_CheckShape.cxx:83
 msgid "GEOM_CHECK_INFOS"
@@ -1595,6 +1618,9 @@ msgstr "Detect"
 msgid "GEOM_FREE_BOUNDARIES"
 msgstr "Free boundaries"
 
+msgid "GEOM_FREE_FACES"
+msgstr "Free faces"
+
 msgid "GEOM_BY_PARAMETER"
 msgstr "By parameter"
 
@@ -1905,6 +1931,9 @@ msgstr "Glue faces"
 msgid "GEOM_GLUE"
 msgstr "Glue"
 
+msgid "GEOM_FREE_FACES_TITLE"
+msgstr "Free faces"
+
 ### New object names for RepairGUI ###
 msgid "SEWING_NEW_OBJ_NAME"
 msgstr "Sewing"
@@ -1932,5 +1961,11 @@ msgstr "SupressFaces"
 
 msgid "NON_GEOM_OBJECTS_SELECTED"
 msgstr "There are objects selected which do not belong to %1 component."
+
+msgid "GEOM_PROPAGATE_TITLE"
+msgstr "Propagate"
+
+msgid "GEOM_PROPAGATE"
+msgstr "Propagate"
 
 ###

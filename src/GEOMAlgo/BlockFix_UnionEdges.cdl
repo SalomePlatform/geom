@@ -1,0 +1,28 @@
+-- File:	BlockFix_UnionEdges.cdl
+-- Created:	Tue Dec  7 15:24:51 2004
+-- Author:	Sergey KUUL
+--		<skl@novgorox.nnov.matra-dtv.fr>
+
+class UnionEdges from BlockFix
+
+    	---Purpose: 
+	
+uses
+    
+    Shape           from TopoDS,
+    ReShape         from ShapeBuild
+
+is
+
+    Create returns UnionEdges from BlockFix;
+    
+    Perform(me: in out; Shape: Shape from TopoDS;
+                        Tol  : Real)
+    returns Shape from TopoDS;    
+    
+fields
+
+    myTolerance : Real;
+    myContext   : ReShape from ShapeBuild;
+    
+end UnionEdges;

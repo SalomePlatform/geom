@@ -39,6 +39,7 @@
 #include "MeasureGUI_MaxToleranceDlg.h"  // Method MAXTOLERANCE
 #include "MeasureGUI_WhatisDlg.h"        // Method WHATIS
 #include "MeasureGUI_CheckShapeDlg.h"    // Method CHECKSHAPE
+#include "MeasureGUI_CheckCompoundOfBlocksDlg.h" // Method CHECKCOMPOUND
 #include "MeasureGUI_PointDlg.h"         // Method POINTCOORDINATES
 
 MeasureGUI* MeasureGUI::myGUIObject = 0;
@@ -87,15 +88,16 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
 
   switch ( theCommandID )
   {
-    case 701 : new MeasureGUI_PropertiesDlg  ( parent, Sel ); break;  // LENGTH, AREA AND VOLUME
-    case 702 : new MeasureGUI_CenterMassDlg  ( parent, Sel ); break;  // CENTER MASS
-    case 703 : new MeasureGUI_InertiaDlg     ( parent, Sel ); break;  // INERTIA
-    case 7041: new MeasureGUI_BndBoxDlg      ( parent, Sel ); break;  // BOUNDING BOX
-    case 7042: new MeasureGUI_DistanceDlg    ( parent, Sel ); break;  // MIN DISTANCE
-    case 705 : new MeasureGUI_MaxToleranceDlg( parent, Sel ); break;  // MAXTOLERANCE
-    case 706 : new MeasureGUI_WhatisDlg      ( parent, Sel ); break;  // WHATIS
-    case 707 : new MeasureGUI_CheckShapeDlg  ( parent, Sel ); break;  // CHECKSHAPE
-    case 708 : new MeasureGUI_PointDlg       ( parent, Sel ); break;  // POINT COORDINATES
+    case 701   : new MeasureGUI_PropertiesDlg  ( parent, Sel ); break;  // LENGTH, AREA AND VOLUME
+    case 702   : new MeasureGUI_CenterMassDlg  ( parent, Sel ); break;  // CENTER MASS
+    case 703   : new MeasureGUI_InertiaDlg     ( parent, Sel ); break;  // INERTIA
+    case 7041  : new MeasureGUI_BndBoxDlg      ( parent, Sel ); break;  // BOUNDING BOX
+    case 7042  : new MeasureGUI_DistanceDlg    ( parent, Sel ); break;  // MIN DISTANCE
+    case 705   : new MeasureGUI_MaxToleranceDlg( parent, Sel ); break;  // MAXTOLERANCE
+    case 706   : new MeasureGUI_WhatisDlg      ( parent, Sel ); break;  // WHATIS
+    case 707   : new MeasureGUI_CheckShapeDlg  ( parent, Sel ); break;  // CHECKSHAPE
+    case 7072  : new MeasureGUI_CheckCompoundOfBlocksDlg  ( parent, Sel ); break;  // CHECKCOMPOUND
+    case 708   : new MeasureGUI_PointDlg       ( parent, Sel ); break;  // POINT COORDINATES
     
     default: parent->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); break;
   }

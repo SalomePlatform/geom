@@ -1,0 +1,42 @@
+#include <BlockFix_BlockFixAPI.hxx>
+
+//=======================================================================
+//function : Shape
+//purpose  : 
+//=======================================================================
+
+inline void BlockFix_BlockFixAPI::SetShape(const TopoDS_Shape& Shape)
+{
+  myShape = Shape;
+}
+
+//=======================================================================
+//function : Shape
+//purpose  : 
+//=======================================================================
+
+inline TopoDS_Shape BlockFix_BlockFixAPI::Shape() const
+{
+  return myShape;
+}
+  
+//=======================================================================
+//function : Context
+//purpose  : 
+//=======================================================================
+
+inline Handle(ShapeBuild_ReShape)& BlockFix_BlockFixAPI::Context()
+{
+  return myContext;
+}
+  
+//=======================================================================
+//function : Tolerance
+//purpose  : 
+//=======================================================================
+
+inline Standard_Real& BlockFix_BlockFixAPI::Tolerance()
+{
+  return myTolerance;
+}
+  

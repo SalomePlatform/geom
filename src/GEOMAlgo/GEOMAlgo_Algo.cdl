@@ -21,10 +21,10 @@ is
 	is deferred;      
 
     CheckData(me:out) 
-	is deferred protected;  
+	is virtual protected;  
     	
     CheckResult(me:out) 
-	is deferred protected;
+	is virtual protected;
      
     ErrorStatus (me) 
     	returns Integer from Standard; 

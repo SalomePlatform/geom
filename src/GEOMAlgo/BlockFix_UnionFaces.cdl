@@ -1,0 +1,46 @@
+-- File:	BlockFix_UnionFaces.cdl
+-- Created:	Tue Dec  7 17:15:42 2004
+-- Author:	Pavel Durandin
+--		<det@doomox>
+---Copyright:	Open CASCADE SA 2004
+
+
+class UnionFaces from BlockFix
+
+uses
+
+    Face from TopoDS,
+    Shape from TopoDS
+
+is
+
+    Create returns UnionFaces from BlockFix;
+    	---Purpose: Empty constructor
+    
+    GetTolerance(me: in out) returns Real;
+    	---Purpose: Returns modifiable tolerance
+	---C++: return& 
+        
+    Perform (me: in out; Shape: Shape from TopoDS) returns Shape from TopoDS;
+    	---Purpose: Performs the unification of the fsces
+	--          whith the same geometry
+	
+    IsSameDomain(me; aFace      : Face from TopoDS;
+    	    	     aChekedFace: Face from TopoDS)
+    returns Boolean is virtual;
+    	---Purpose: Returns true is surfaces have same geometrically domain
+	--          with given tolerance
+	
+    MovePCurves(me; aTarget: in out Face from TopoDS;
+    	    	    aSource:        Face from TopoDS)
+    is virtual;
+    	---Purpose: Creates pcurves on aTarget face for each edge from 
+	--          aSource one.
+
+fields
+
+    myTolerance: Real;
+    
+end;
+    
+

@@ -10,10 +10,15 @@ using namespace std;
 #include "GEOMImpl_Types.hxx"
 #include "GEOMImpl_ILocalOperations.hxx"
 #include "GEOMImpl_Block6Explorer.hxx"
+#include "GEOMImpl_IBlocksOperations.hxx"
+
 #include "GEOM_Function.hxx"
 
 #include "ShHealOper_Sewing.hxx"
 #include "NMTAlgo_Splitter1.hxx"
+#include "BlockFix_BlockFixAPI.hxx"
+
+#include "utilities.h"
 
 #include <TNaming_CopyShape.hxx>
 
@@ -456,113 +461,173 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
     } else {
     }
 
-  } else { // Multi-transformations
+  } else { // Multi-transformations and compound improving
 
-    TopoDS_Shape aMulti;
-    GEOMImpl_IBlockTrsf aCI (aFunction);
-    Handle(GEOM_Function) aRefShape = aCI.GetOriginal();
-    TopoDS_Shape aBlockIni = aRefShape->GetValue();
-    if (aBlockIni.IsNull()) {
-      Standard_NullObject::Raise("Null Block");
-    }
+    if (aType == BLOCK_REMOVE_EXTRA ||
+        aType == BLOCK_COMPOUND_IMPROVE) {
 
-    // Copy block to avoid problems (PAL6706)
-    TColStd_IndexedDataMapOfTransientTransient aMap;
-    TopoDS_Shape aBlock;
-    TNaming_CopyShape::CopyTool(aBlockIni, aMap, aBlock);
-
-    // Block tolerance in vertices
-    Standard_Real aTol = prec;
-    TopExp_Explorer expV (aBlock, TopAbs_VERTEX);
-    TopTools_MapOfShape mapShape;
-    for (; expV.More(); expV.Next()) {
-      if (mapShape.Add(expV.Current())) {
-        TopoDS_Vertex aV = TopoDS::Vertex(expV.Current());
-        aTol = Max(BRep_Tool::Tolerance(aV), aTol);
-      }
-    }
-
-    if (aType == BLOCK_MULTI_TRANSFORM_1D) {
-      // Retrieve a faces by Ids
-      Standard_Integer aFace1Id = aCI.GetFace1U();
-      Standard_Integer aFace2Id = aCI.GetFace2U();
-      TopoDS_Shape aFace1, aFace2;
-      if (!GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace1Id, aFace1)) {
-        Standard_NullObject::Raise("Can not retrieve a sub-shape with given Id");
-      }
-      if (aFace1.ShapeType() != TopAbs_FACE) {
-        Standard_TypeMismatch::Raise("Sub-shape with given Id is not a face");
+      GEOMImpl_IBlockTrsf aCI (aFunction);
+      Handle(GEOM_Function) aRefShape = aCI.GetOriginal();
+      TopoDS_Shape aBlockOrComp = aRefShape->GetValue();
+      if (aBlockOrComp.IsNull()) {
+        Standard_NullObject::Raise("Null Shape given");
       }
 
-      if (aFace2Id > 0) {
-        if (!GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace2Id, aFace2)) {
+      // 1. Improve solids with seam and/or degenerated edges
+      BlockFix_BlockFixAPI aTool;
+      //aTool.Tolerance() = toler;
+      aTool.SetShape(aBlockOrComp);
+      aTool.Perform();
+
+      if (aType == BLOCK_REMOVE_EXTRA) {
+
+        aShape = aTool.Shape();
+        if (aShape == aBlockOrComp) {
+          MESSAGE("No modifications have been done");
+        }
+
+      } else { // aType == BLOCK_COMPOUND_IMPROVE
+
+        TopoDS_Shape aFixedExtra = aTool.Shape();
+
+        // 2. Separate non-blocks
+        TopTools_ListOfShape BLO; // All blocks from the given compound
+        TopTools_ListOfShape NOT; // Not blocks
+        TopTools_ListOfShape EXT; // Hexahedral solids, having degenerated and/or seam edges
+        GEOMImpl_IBlocksOperations::AddBlocksFrom(aFixedExtra, BLO, NOT, EXT);
+
+        if (NOT.Extent() > 0) {
+          MESSAGE("Some non-blocks have been removed");
+        }
+
+        // 3. Warn about staying extra-edges
+        if (EXT.Extent() > 0) {
+          MESSAGE("Warning: Not all seam or degenerated edges was removed");
+        }
+
+        // ??? Throw away standalone blocks ???
+
+        // 4. Create compound of all blocks
+        TopoDS_Compound aComp;
+        BRep_Builder BB;
+        BB.MakeCompound(aComp);
+        TopTools_ListIteratorOfListOfShape BLOit (BLO);
+        for (; BLOit.More(); BLOit.Next()) {
+          BB.Add(aComp, BLOit.Value());
+        }
+
+        // 5. Glue Faces
+        aShape = GEOMImpl_GlueDriver::GlueFaces(aComp, Precision::Confusion());
+      }
+
+    } else if (aType == BLOCK_MULTI_TRANSFORM_1D ||
+               aType == BLOCK_MULTI_TRANSFORM_2D) {
+
+      TopoDS_Shape aMulti;
+      GEOMImpl_IBlockTrsf aCI (aFunction);
+      Handle(GEOM_Function) aRefShape = aCI.GetOriginal();
+      TopoDS_Shape aBlockIni = aRefShape->GetValue();
+      if (aBlockIni.IsNull()) {
+        Standard_NullObject::Raise("Null Block");
+      }
+
+      // Copy block to avoid problems (PAL6706)
+      TColStd_IndexedDataMapOfTransientTransient aMap;
+      TopoDS_Shape aBlock;
+      TNaming_CopyShape::CopyTool(aBlockIni, aMap, aBlock);
+
+      // Block tolerance in vertices
+      Standard_Real aTol = prec;
+      TopExp_Explorer expV (aBlock, TopAbs_VERTEX);
+      TopTools_MapOfShape mapShape;
+      for (; expV.More(); expV.Next()) {
+        if (mapShape.Add(expV.Current())) {
+          TopoDS_Vertex aV = TopoDS::Vertex(expV.Current());
+          aTol = Max(BRep_Tool::Tolerance(aV), aTol);
+        }
+      }
+
+      if (aType == BLOCK_MULTI_TRANSFORM_1D) {
+        // Retrieve a faces by Ids
+        Standard_Integer aFace1Id = aCI.GetFace1U();
+        Standard_Integer aFace2Id = aCI.GetFace2U();
+        TopoDS_Shape aFace1, aFace2;
+        if (!GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace1Id, aFace1)) {
           Standard_NullObject::Raise("Can not retrieve a sub-shape with given Id");
         }
-        if (aFace2.ShapeType() != TopAbs_FACE) {
+        if (aFace1.ShapeType() != TopAbs_FACE) {
           Standard_TypeMismatch::Raise("Sub-shape with given Id is not a face");
         }
-      }
 
-      Standard_Integer aNbIter = aCI.GetNbIterU();
+        if (aFace2Id > 0) {
+          if (!GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace2Id, aFace2)) {
+            Standard_NullObject::Raise("Can not retrieve a sub-shape with given Id");
+          }
+          if (aFace2.ShapeType() != TopAbs_FACE) {
+            Standard_TypeMismatch::Raise("Sub-shape with given Id is not a face");
+          }
+        }
 
-      MultiTransformate1D(aBlock, aFace1, aFace2, aNbIter, aMulti);
+        Standard_Integer aNbIter = aCI.GetNbIterU();
 
-    } else if (aType == BLOCK_MULTI_TRANSFORM_2D) {
-      // Retrieve a faces by Ids
-      Standard_Integer aFace1UId = aCI.GetFace1U();
-      Standard_Integer aFace2UId = aCI.GetFace2U();
-      Standard_Integer aFace1VId = aCI.GetFace1V();
-      Standard_Integer aFace2VId = aCI.GetFace2V();
+        MultiTransformate1D(aBlock, aFace1, aFace2, aNbIter, aMulti);
 
-      TopoDS_Shape aFace1U, aFace2U, aFace1V, aFace2V;
-      if (!GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace1UId, aFace1U) ||
-          !GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace1VId, aFace1V)) {
-        Standard_NullObject::Raise("Can not retrieve a sub-shape with given Id");
-      }
+      } else { // aType == BLOCK_MULTI_TRANSFORM_2D
+        // Retrieve a faces by Ids
+        Standard_Integer aFace1UId = aCI.GetFace1U();
+        Standard_Integer aFace2UId = aCI.GetFace2U();
+        Standard_Integer aFace1VId = aCI.GetFace1V();
+        Standard_Integer aFace2VId = aCI.GetFace2V();
 
-      if (aFace1U.ShapeType() != TopAbs_FACE ||
-          aFace1V.ShapeType() != TopAbs_FACE) {
-        Standard_TypeMismatch::Raise("Sub-shape with given Id is not a face");
-      }
-
-      if (aFace2UId > 0) {
-        if (!GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace2UId, aFace2U)) {
+        TopoDS_Shape aFace1U, aFace2U, aFace1V, aFace2V;
+        if (!GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace1UId, aFace1U) ||
+            !GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace1VId, aFace1V)) {
           Standard_NullObject::Raise("Can not retrieve a sub-shape with given Id");
         }
 
-        if (aFace2U.ShapeType() != TopAbs_FACE) {
+        if (aFace1U.ShapeType() != TopAbs_FACE ||
+            aFace1V.ShapeType() != TopAbs_FACE) {
           Standard_TypeMismatch::Raise("Sub-shape with given Id is not a face");
         }
-      }
 
-      if (aFace2VId > 0) {
-        if (!GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace2VId, aFace2V)) {
-          Standard_NullObject::Raise("Can not retrieve a sub-shape with given Id");
+        if (aFace2UId > 0) {
+          if (!GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace2UId, aFace2U)) {
+            Standard_NullObject::Raise("Can not retrieve a sub-shape with given Id");
+          }
+
+          if (aFace2U.ShapeType() != TopAbs_FACE) {
+            Standard_TypeMismatch::Raise("Sub-shape with given Id is not a face");
+          }
         }
 
-        if (aFace2V.ShapeType() != TopAbs_FACE) {
-          Standard_TypeMismatch::Raise("Sub-shape with given Id is not a face");
+        if (aFace2VId > 0) {
+          if (!GEOMImpl_ILocalOperations::GetSubShape(aBlock, aFace2VId, aFace2V)) {
+            Standard_NullObject::Raise("Can not retrieve a sub-shape with given Id");
+          }
+
+          if (aFace2V.ShapeType() != TopAbs_FACE) {
+            Standard_TypeMismatch::Raise("Sub-shape with given Id is not a face");
+          }
         }
+
+        Standard_Integer aNbIterU = aCI.GetNbIterU();
+        Standard_Integer aNbIterV = aCI.GetNbIterV();
+
+        MultiTransformate2D(aBlock,
+                            aFace1U, aFace2U, aNbIterU,
+                            aFace1V, aFace2V, aNbIterV, aMulti);
       }
 
-      Standard_Integer aNbIterU = aCI.GetNbIterU();
-      Standard_Integer aNbIterV = aCI.GetNbIterV();
+      if (aMulti.IsNull()) {
+        StdFail_NotDone::Raise("Multi-transformation failed");
+      }
 
-      MultiTransformate2D(aBlock,
-                          aFace1U, aFace2U, aNbIterU,
-                          aFace1V, aFace2V, aNbIterV, aMulti);
+      // Glue faces of the multi-block
+      aShape = GEOMImpl_GlueDriver::GlueFaces(aMulti, aTol);
 
-    } else {
+    } else { // unknown function type
       return 0;
     }
-
-    if (aMulti.IsNull()) {
-      StdFail_NotDone::Raise("Multi-transformation failed");
-      return 0;
-    }
-
-    // Glue faces of the multi-block
-    aShape = GEOMImpl_GlueDriver::GlueFaces(aMulti, aTol);
   }
 
   if (aShape.IsNull()) return 0;

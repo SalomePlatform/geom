@@ -1,0 +1,49 @@
+-- File:	GEOMAlgo_ShapeSolid.cdl
+-- Created:	Thu Jan 13 12:44:07 2005
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2005
+
+
+deferred class ShapeSolid from GEOMAlgo 
+    	inherits Algo from GEOMAlgo 
+	 
+	---Purpose: 
+
+uses
+    ListOfShape from TopTools, 
+    State from GEOMAlgo, 
+    PDSFiller from BOPTools,
+    DSFiller  from BOPTools
+--raises
+
+is 
+    Initialize 
+    	returns ShapeSolid from GEOMAlgo;  
+    
+
+    SetFiller(me:out; 
+    	    aDSF:DSFiller  from BOPTools); 
+    ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_ShapeSolid();"  
+     
+    Shapes(me;
+	     aState:State from GEOMAlgo) 
+	returns ListOfShape from TopTools; 
+    ---C++: return const &  
+       
+    BuildResult (me:out) 
+	is deferred protected;	
+    	
+    Prepare(me:out)  
+   	is deferred protected; 
+	
+fields
+    myLSIN  :  ListOfShape from TopTools is protected;  
+    myLSOUT :  ListOfShape from TopTools is protected;  
+    myLSON  :  ListOfShape from TopTools is protected;  
+    
+    myLS    :  ListOfShape from TopTools is protected;  
+    myRank  :  Integer from Standard is protected; 
+    myDSFiller : PDSFiller from BOPTools is protected; 
+
+end ShapeSolid;

@@ -12,6 +12,7 @@ using namespace std;
 
 #include <TopoDS_Shape.hxx>
 #include <Standard_NullObject.hxx>
+#include <Standard_Failure.hxx>
 
 //=======================================================================
 //function : GEOMImpl_GlueDriver
@@ -29,6 +30,74 @@ const Standard_GUID& GEOMImpl_GlueDriver::GetID()
 {
   static Standard_GUID aGlueDriver("FF1BBB63-5D14-4df2-980B-3A668264EA16");
   return aGlueDriver;
+}
+
+//=======================================================================
+//function : GlueFacesWithWarnings
+//purpose  :
+//=======================================================================
+TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& theShape,
+                                                         const Standard_Real theTolerance,
+                                                         TCollection_AsciiString& theWarning) const
+{
+  Standard_Integer iErr, iWrn;
+  TopoDS_Shape aRes;
+  GEOMAlgo_Gluer aGluer;
+
+  aGluer.SetShape(theShape);
+  aGluer.SetTolerance(theTolerance);
+  aGluer.SetCheckGeometry(Standard_True);
+
+  aGluer.Perform();
+
+  iErr = aGluer.ErrorStatus();
+  if (iErr) {
+    switch (iErr) {
+    case 2:
+      Standard_Failure::Raise("No vertices found in source shape");
+      break;
+    case 5:
+      Standard_Failure::Raise("Source shape is Null");
+      break;
+    case 6:
+      Standard_Failure::Raise("Result shape is Null");
+      break;
+    case 200:
+      Standard_Failure::Raise("Error occured during check of geometric coincidence");
+      break;
+    default:
+      {
+        // description of all errors see in GEOMAlgo_Gluer.cxx
+        TCollection_AsciiString aMsg ("Error in GEOMAlgo_Gluer with code ");
+        aMsg += TCollection_AsciiString(iErr);
+        Standard_Failure::Raise(aMsg.ToCString());
+        break;
+      }
+    }
+    return aRes;
+  }
+
+  iWrn = aGluer.WarningStatus();
+  if (iWrn) {
+    switch (iWrn) {
+    case 1:
+      {
+        Standard_Integer nbAlone = aGluer.AloneShapes();
+        theWarning = TCollection_AsciiString(nbAlone);
+        theWarning += " solid(s) can not be glued by faces";
+      }
+      break;
+    default:
+      // description of all warnings see in GEOMAlgo_Gluer.cxx
+      theWarning = "Warning in GEOMAlgo_Gluer with code ";
+      theWarning += TCollection_AsciiString(iWrn);
+      break;
+    }
+  }
+
+  aRes = aGluer.Result();
+
+  return aRes;
 }
 
 //=======================================================================
@@ -106,6 +175,7 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
   Standard_Integer aType = aFunction->GetType();
 
   TopoDS_Shape aShape;
+  TCollection_AsciiString aWrn;
 
   if (aType == GLUE_FACES) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
@@ -115,7 +185,7 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
     }
 
     Standard_Real tol3d = aCI.GetTolerance();
-    aShape = GlueFaces(aShapeBase, tol3d);
+    aShape = GlueFacesWithWarnings(aShapeBase, tol3d, aWrn);
   } else {
   }
 
@@ -124,6 +194,10 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label());
+
+  if (!aWrn.IsEmpty()) {
+    Standard_Failure::Raise(aWrn.ToCString());
+  }
 
   return 1;
 }

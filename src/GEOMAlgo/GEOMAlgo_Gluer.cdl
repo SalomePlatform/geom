@@ -14,11 +14,14 @@ uses
     ShapeEnum from TopAbs,
     Shape from TopoDS,  
     Edge from TopoDS, 
-    Face from TopoDS,
+    Face from TopoDS, 
+    Vertex from TopoDS, 
+    ListOfShape from TopTools,
     DataMapOfShapeShape from TopTools,
     DataMapOfShapeListOfShape from TopTools, 
     Context from IntTools, 
     PassKey from GEOMAlgo
+
 --raises
 
 is 
@@ -33,17 +36,17 @@ is
     	returns Boolean from Standard; 
   
     Perform(me:out) 
-	is redefined;  
-	 
+	is redefined;   
+	
+    AloneShapes(me) 
+	 returns Integer from Standard;     
+
     CheckData(me:out) 
 	is redefined protected; 
 	 
     CheckResult	(me:out) 
     	is redefined protected; 
 	 
-    BuildResult	(me:out) 
-    	is protected;
-     
     MakeVertices(me:out) 
 	is protected;   
   
@@ -76,6 +79,10 @@ is
 	    aPK:out PassKey from GEOMAlgo) 
     	is protected; 
 	 
+    MakeVertex(me:out; 
+    	    aLV   : ListOfShape from TopTools;  
+    	    aNewV: out Vertex from TopoDS) 
+    	is protected;   
     MakeEdge(me:out; 
     	    aEdge   : Edge from TopoDS;  
     	    aNewEdge: out Edge from TopoDS) 
@@ -101,13 +108,10 @@ is
     ---C++:return const &  
     
 fields 
+    myCheckGeometry : Boolean from Standard is protected; 
+    myTol         : Real from Standard is protected;   
+    myImages      : DataMapOfShapeListOfShape from TopTools is protected;   
+    myOrigins     : DataMapOfShapeShape from TopTools is protected; 
+    myNbAlone     : Integer from Standard is protected;      
     
-    myCheckGeometry : Boolean from Standard is protected;   
-  
-    myImages    : DataMapOfShapeListOfShape from TopTools is protected;   
-    myOrigins   : DataMapOfShapeShape from TopTools is protected; 
-    myContext   : Context from IntTools is protected; 	     
-    myTypeResult: ShapeEnum from TopAbs is protected;   
-    myTol       : Real from Standard is protected;   
-
 end Gluer;

@@ -56,7 +56,7 @@
    <endsubmenu />
    <submenu label-id="Generation" item-id="403" pos-id="3">
        <popup-item item-id="4031" pos-id="" label-id="Extrusion" icon-id="prism.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="4032" pos-id="" label-id="Revolution" icon-id="revol.png"tooltip-id="" accel-id="" toggle-id="" execute-action=""/>	
+       <popup-item item-id="4032" pos-id="" label-id="Revolution" icon-id="revol.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>	
        <popup-item item-id="4033" pos-id="" label-id="Filling" icon-id="filling.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/> 
        <popup-item item-id="4034" pos-id="" label-id="Pipe creation" icon-id="pipe.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/> 
    </submenu>
@@ -99,7 +99,7 @@
       <popup-item item-id="5011" pos-id="" label-id="Fuse" icon-id="fuse.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
       <popup-item item-id="5012" pos-id="" label-id="Common" icon-id="common.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
       <popup-item item-id="5013" pos-id="" label-id="Cut" icon-id="cut.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-      <popup-item item-id="5014" pos-id="" label-id="Section" icon-id="section.png"tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="5014" pos-id="" label-id="Section" icon-id="section.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
    <submenu label-id="Transformation" item-id="502" pos-id="2">
@@ -126,6 +126,7 @@
    <submenu label-id="Blocks" item-id="510" pos-id="">
        <popup-item item-id="9998" pos-id="" label-id="Multi-transformation" icon-id="multirotation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
        <popup-item item-id="9995" pos-id="" label-id="Explode on Blocks" icon-id="subshape.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="99991" pos-id="" label-id="Propagate" icon-id="propagate.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
 
@@ -144,6 +145,7 @@
    <popup-item item-id="602" pos-id="" label-id="Glue faces" icon-id="glue.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <popup-item item-id="608" pos-id="" label-id="Add point on edge" icon-id="pointonedge.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <popup-item item-id="609" pos-id="" label-id="Check free boundaries" icon-id="free_bound.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="610" pos-id="" label-id="Check free faces" icon-id="free_faces.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </menu-item>
 
 
@@ -165,6 +167,7 @@
    <separator pos-id=""/>
    <popup-item item-id="706" pos-id="" label-id="Whatis" icon-id="whatis.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <popup-item item-id="707" pos-id="" label-id="Check" icon-id="check.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="7072" pos-id="" label-id="Check Compound of Blocks" icon-id="check_blocks_compound.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </menu-item>
 
 <!-- ********************************* Tools  (menubar) ************************************ -->
@@ -244,7 +247,7 @@
 </toolbar>
 
 <toolbar label-id="Transformation">
-   <toolbutton-item item-id="5021" label-id="Translation" icon-id="translationVector.png" tooltip-id="Translate a shape"accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5021" label-id="Translation" icon-id="translationVector.png" tooltip-id="Translate a shape" accel-id="" toggle-id="" execute-action=""/>
    <toolbutton-item item-id="5022" label-id="Rotation" icon-id="rotate.png" tooltip-id="Rotate a shape" accel-id="" toggle-id="" execute-action=""/>
    <toolbutton-item item-id="5023" label-id="Location" icon-id="position2.png" tooltip-id="Modify The Location" accel-id="" toggle-id="" execute-action=""/>
    <toolbutton-item item-id="5024" label-id="Mirror image" icon-id="mirrorPlane.png" tooltip-id="Mirror a shape" accel-id="" toggle-id="" execute-action=""/>

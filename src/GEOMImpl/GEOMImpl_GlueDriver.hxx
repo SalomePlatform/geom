@@ -97,6 +97,7 @@ class Handle(GEOMImpl_GlueDriver) : public Handle(TFunction_Driver) {
 #include <Standard_CString.hxx>
 #endif
 #include <TopoDS_Shape.hxx>
+#include <TCollection_AsciiString.hxx>
 
 class TColStd_SequenceOfExtendedString;
 
@@ -129,6 +130,10 @@ Standard_EXPORT ~GEOMImpl_GlueDriver() {};
 
 Standard_EXPORT static TopoDS_Shape GlueFaces (const TopoDS_Shape& theShape,
                                                const Standard_Real theTolerance);
+
+Standard_EXPORT TopoDS_Shape GlueFacesWithWarnings (const TopoDS_Shape& theShape,
+                                                    const Standard_Real theTolerance,
+                                                    TCollection_AsciiString& theWarning) const;
 
  // Type management
  //

@@ -53,7 +53,7 @@ EXPORT_HEADERS =
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome $(BOOST_CPPFLAGS) 
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -lGEOMEngine -lSalomeNS -lSalomeContainer -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeGenericObj 
+LDFLAGS  += -lGEOMEngine -lSalomeNS -lSalomeLifeCycleCORBA -lSalomeContainer -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeGenericObj 
 
 # additional file to be cleaned
 MOSTLYCLEAN =

@@ -6,9 +6,12 @@
 #include <GEOMAlgo_Tools.ixx>
 
 #include <gp_Pnt.hxx>
+#include <gp_Pnt2d.hxx>
 
 #include <Geom_Surface.hxx>
 #include <Geom_Curve.hxx>
+#include <Geom2d_Curve.hxx>
+#include <GeomAdaptor_Surface.hxx>
 
 #include <GeomAPI_ProjectPointOnSurf.hxx>
 
@@ -23,7 +26,7 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <BRep_Tool.hxx>
-#include <BOPTools_Tools2D.hxx>
+#include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
 
 #include <BOPTools_Tools2D.hxx>
@@ -31,7 +34,7 @@
 
 #include <GEOMAlgo_PassKey.hxx>
 #include <GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx>
-
+//
 //=======================================================================
 //function : RefineSDShapes
 //purpose  : 
@@ -48,8 +51,8 @@ Standard_Integer GEOMAlgo_Tools::RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKey
   aNbE=aMPKLE.Extent();
   for (i=1; i<=aNbE; ++i) {
     TopTools_ListOfShape& aLSDE=aMPKLE.ChangeFromIndex(i);
-    aMEE.Clear();
     //
+    aMEE.Clear();
     iErr=GEOMAlgo_Tools::FindSDShapes(aLSDE, aTol, aMEE, aCtx);
     if (iErr) {
       return iErr;
@@ -104,11 +107,17 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopTools_ListOfShape& aLE,
   TopTools_ListOfShape aLESD;
   TopTools_ListIteratorOfListOfShape aIt, aIt1;
   TopTools_IndexedMapOfShape aMProcessed;
+  TopAbs_ShapeEnum aType;
   //
   aNbE=aLE.Extent();
   if (!aNbE) {
     return 3; // Err
-  }
+  } 
+  //modified by NIZNHY-PKV Thu Dec 30 10:56:52 2004 f
+  if (aNbE==1) {
+    return 0; // Nothing to do
+  } 
+  //modified by NIZNHY-PKV Thu Dec 30 10:56:56 2004 t
   //
   while(1) {
     aNbEProcessed=aMProcessed.Extent();
@@ -119,9 +128,21 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopTools_ListOfShape& aLE,
     aIt.Initialize(aLE);
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aS=aIt.Value();
+      //
       if (aMProcessed.Contains(aS)) {
 	continue;
       }
+      //
+      //modified by NIZNHY-PKV Thu Dec 30 10:57:01 2004 f
+      aType=aS.ShapeType();
+      if (aType==TopAbs_EDGE) {
+	const TopoDS_Edge& aE=TopoDS::Edge(aS);
+	if (BRep_Tool::Degenerated(aE)) {
+	  aMProcessed.Add(aE);
+	  continue;
+	}
+      }
+      //modified by NIZNHY-PKV Thu Dec 30 10:57:03 2004 t
       //
       aLESD.Clear();
       iErr=GEOMAlgo_Tools::FindSDShapes(aS, aLE, aTol, aLESD, aCtx);
@@ -314,84 +335,55 @@ void GEOMAlgo_Tools::PointOnEdge(const TopoDS_Edge& aE,
   aC3D=BRep_Tool::Curve(aE, aT1, aT2);
   aC3D->D0(aT, aP3D);
 }
-/*
 //=======================================================================
-//function : FindSDEdges
+//function : RefinePCurveForEdgeOnFace
 //purpose  : 
 //=======================================================================
-Standard_Integer GEOMAlgo_Tools::FindSDEdges(const TopoDS_Edge& aE1,
-					     const TopTools_ListOfShape& aLE,
-					     const Standard_Real aTol,
-					     TopTools_ListOfShape& aLESD,
-					     IntTools_Context& aCtx)
+void GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(const TopoDS_Edge& aE,
+					       const TopoDS_Face& aF,
+					       const Standard_Real aUMin, 
+					       const Standard_Real aUMax) 
 {
-  Standard_Boolean bIsDone;
-  Standard_Real aT2, aTol2, aD2;
-  gp_Pnt aP1, aP2;
-  TopTools_ListIteratorOfListOfShape aIt;
+  Standard_Real aT1, aT2, aTx, aUx, aTol, aTwoPI;
+  gp_Pnt2d aP2D;
+  Handle(Geom_Surface) aS;
+  Handle(Geom2d_Curve) aC2D;
+  BRep_Builder aBB;
   //
-  aTol2=aTol*aTol;
+  aTwoPI=PI+PI;
   //
-  GEOMAlgo_Tools::PointOnEdge(aE1, aP1);
-  aIt.Initialize(aLE);
-  for (; aIt.More(); aIt.Next()) {
-    const TopoDS_Edge& aE2=TopoDS::Edge(aIt.Value());
-    if (aE2.IsSame(aE1)) {
-       aLESD.Append(aE2);
+  aC2D=BRep_Tool::CurveOnSurface(aE, aF, aT1, aT2);
+  if (!aC2D.IsNull()) {
+    if (BRep_Tool::IsClosed(aE, aF)) {
+      return;
     }
-    else {
-      bIsDone=aCtx.ProjectPointOnEdge(aP1, aE2, aT2);
-      if (!bIsDone) {
-	return 1; 
-      }
-      GEOMAlgo_Tools::PointOnEdge(aE2, aT2, aP2);
-      aD2=aP1.SquareDistance(aP2);
-      if(aD2<aTol2) {
-	aLESD.Append(aE2);
-      }
-    }
-  }
-  return 0;
-}
-//=======================================================================
-//function : FindSDFaces
-//purpose  : 
-//=======================================================================
-Standard_Integer GEOMAlgo_Tools::FindSDFaces(const TopoDS_Face& aF1,
-					     const TopTools_ListOfShape& aLF,
-					     const Standard_Real aTol,
-					     TopTools_ListOfShape& aLFSD,
-					     IntTools_Context& aCtx)
-{
-  Standard_Boolean bIsDone;
-  Standard_Real aTol2, aD2;
-  gp_Pnt aP1, aP2;
-  TopTools_ListIteratorOfListOfShape aIt;
-  //
-  aTol2=aTol*aTol;
-  //
-  GEOMAlgo_Tools::PointOnFace(aF1, aP1);
-  aIt.Initialize(aLF);
-  for (; aIt.More(); aIt.Next()) {
-    const TopoDS_Face& aF2=TopoDS::Face(aIt.Value());
-    if (aF2.IsSame(aF1)) {
-       aLFSD.Append(aF2);
-    }
-    else {
-      GeomAPI_ProjectPointOnSurf& aProj=aCtx.ProjPS(aF2);
-      aProj.Perform(aP1);
-      bIsDone=aProj.IsDone();
-      if (!bIsDone) {
-	return 1; //??
-      }
+    aTx=BOPTools_Tools2D::IntermediatePoint(aT1, aT2);
+    aC2D->D0(aTx, aP2D);
+    aUx=aP2D.X();
+    if (aUx < aUMin || aUx > aUMax) {
+      // need to rebuild
+      Handle(Geom2d_Curve) aC2Dx;
       //
-      aP2=aProj.NearestPoint();
-      aD2=aP1.SquareDistance(aP2);
-      if(aD2<aTol2) {
-	aLFSD.Append(aF2);
-      }
+      aTol=BRep_Tool::Tolerance(aE);
+      aBB.UpdateEdge(aE, aC2Dx, aF, aTol); 
     }
   }
-  return 0;
 }
-*/
+//=======================================================================
+//function : IsUPeriodic
+//purpose  : 
+//=======================================================================
+Standard_Boolean GEOMAlgo_Tools::IsUPeriodic(const  Handle(Geom_Surface) &aS)
+{
+  Standard_Boolean bRet;
+  GeomAbs_SurfaceType aType;
+  GeomAdaptor_Surface aGAS;
+  //
+  aGAS.Load(aS);
+  aType=aGAS.GetType();
+  bRet=(aType==GeomAbs_Cylinder||
+	aType==GeomAbs_Cone ||
+	aType==GeomAbs_Sphere);
+  //
+  return bRet;
+}

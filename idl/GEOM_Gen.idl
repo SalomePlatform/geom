@@ -815,6 +815,20 @@ module GEOM
 			  in boolean     isSorted);
 
     /*!
+     *  Explode a shape on subshapes of a given type.
+     *  Does the same, as the above method, but returns IDs of sub-shapes,
+     *  not GEOM_Objects. It works faster.
+     *  \param theShape Shape to be exploded.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param isSorted If this parameter is TRUE, sub-shapes will be
+     *                  sorted by coordinates of their gravity centers.
+     *  \return List of IDs of sub-shapes of type theShapeType, contained in theShape.
+     */
+    ListOfLong SubShapeAllIDs (in GEOM_Object theShape,
+			       in long        theShapeType,
+			       in boolean     isSorted);
+
+    /*!
      *  Get a sub shape defined by its unique ID inside \a theMainShape
      *  \note The sub shape GEOM_Objects can has ONLY ONE function.
      *        Don't try to apply modification operations on them.
@@ -842,6 +856,76 @@ module GEOM
      *  \return The reversed copy of theShape.
      */
     GEOM_Object ChangeOrientation (in GEOM_Object theShape);
+
+    /*!
+     *  Retrieve all free faces from the given shape.
+     *  Free face is a face, which is not shared between two shells of the shape.
+     *  \param theShape Shape to find free faces in.
+     *  \return List of IDs of all free faces, contained in theShape.
+     */
+    ListOfLong GetFreeFacesIDs (in GEOM_Object theShape);
+
+    /*!
+     *  Get all sub-shapes of theShape1 of the given type, shared with theShape2.
+     *  \param theShape1 Shape to find sub-shapes in.
+     *  \param theShape2 Shape to find shared sub-shapes with.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \return List of sub-shapes of theShape1, shared with theShape2.
+     */
+    ListOfGO GetSharedShapes (in GEOM_Object theShape1,
+			      in GEOM_Object theShape2,
+			      in long        theShapeType);
+
+    /*!
+     *  Get sub-shapes of theShape of the given type,
+     *  laying on the specified plane.
+     *  \param theShape Shape to find sub-shapes of.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param thePlane Face, specifying the plane to find shapes on.
+     *  \return Group of all found sub-shapes.
+     */
+    GEOM_Object GetShapesOnPlane (in GEOM_Object theShape,
+				  in long        theShapeType,
+				  in GEOM_Object thePlane);
+
+    /*!
+     *  Get sub-shape of theShape of the given type,
+     *  laying on the specified cylinder.
+     *  \param theShape Shape to find sub-shapes of.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param theAxis Vector (or line, or linear edge), specifying
+     *                 axis of the cylinder to find shapes on.
+     *  \param theRadius Radius of the cylinder to find shapes on.
+     *  \return Group of all found sub-shapes.
+     */
+    GEOM_Object GetShapesOnCylinder (in GEOM_Object theShape,
+				     in long        theShapeType,
+				     in GEOM_Object theAxis,
+				     in double      theRadius);
+
+    /*!
+     *  Get sub-shape of theShape of the given type,
+     *  laying on the specified sphere.
+     *  \param theShape Shape to find sub-shapes of.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param theCenter Point, specifying center of the sphere to find shapes on.
+     *  \param theRadius Radius of the sphere to find shapes on.
+     *  \return Group of all found sub-shapes.
+     */
+    GEOM_Object GetShapesOnSphere (in GEOM_Object theShape,
+				   in long        theShapeType,
+				   in GEOM_Object theCenter,
+				   in double      theRadius);
+
+    /*!
+     *  Get sub-shape(s) of theShapeWhere, which are
+     *  coincident with \a theShapeWhat or could be a part of it.
+     *  \param theShapeWhere Shape to find sub-shapes of.
+     *  \param theShapeWhat Shape, specifying what to find.
+     *  \return Group of all found sub-shapes or a single found sub-shape.
+     */
+    GEOM_Object GetInPlace (in GEOM_Object theShapeWhere,
+			    in GEOM_Object theShapeWhat);
   };
 
   /*!
@@ -1017,10 +1101,20 @@ module GEOM
      */
     enum BCErrorType
     {
-      NOT_BLOCK,          /* Each element of the compound should be a Block */
-      INVALID_CONNECTION, /* A connection between two Blocks should be an entire face or an entire edge */
-      NOT_CONNECTED,      /* The compound should be connexe */
-      NOT_GLUED           /* The glue between two quadrangle faces should be applied */
+      /* Each element of the compound should be a Block */
+      NOT_BLOCK,
+
+      /* An element is a potential block, but has degenerated and/or seam edge(s). */
+      EXTRA_EDGE,
+
+      /* A connection between two Blocks should be an entire face or an entire edge */
+      INVALID_CONNECTION,
+
+      /* The compound should be connexe */
+      NOT_CONNECTED,
+
+      /* The glue between two quadrangle faces should be applied */
+      NOT_GLUED
     };
 
     /*!
@@ -1045,6 +1139,7 @@ module GEOM
      *  - A connection between two Blocks should be an entire quadrangle face or an entire edge.
      *  - The compound should be connexe.
      *  - The glue between two quadrangle faces should be applied.
+     *    \note Single block is also accepted as a valid compound of blocks.
      *  \param theCompound The compound to check.
      *  \return TRUE, if the given shape is a compound of blocks.
      *  \return theErrors Structure, containing discovered errors and incriminated sub-shapes.
@@ -1061,6 +1156,23 @@ module GEOM
      */
     string PrintBCErrors (in GEOM_Object theCompound,
 			  in BCErrors    theErrors);
+
+    /*!
+     *  Remove all seam and degenerated edges from \a theShape.
+     *  Unite faces and edges, sharing one surface.
+     *  \param theShape The compound or single solid to remove irregular edges from.
+     *  \return Improved shape.
+     */
+    GEOM_Object RemoveExtraEdges (in GEOM_Object theShape);
+
+    /*!
+     *  Check, if the given shape is a blocks compound.
+     *  Fix all detected errors.
+     *    \note Single block can be also fixed by this method.
+     *  \param theCompound The compound to check and improve.
+     *  \return Improved compound.
+     */
+    GEOM_Object CheckAndImprove (in GEOM_Object theCompound);
 
     /*!
      *  Get all the blocks, contained in the given compound.
@@ -1137,6 +1249,20 @@ module GEOM
 					   in long        theDirFace1V,
 					   in long        theDirFace2V,
 					   in long        theNbTimesV);
+
+    /*!
+     *  Special operation - propagation
+     */
+
+    /*!
+     *  Build all possible propagation groups.
+     *  Propagation group is a set of all edges, opposite to one (main)
+     *  edge of this group directly or through other opposite edges.
+     *  Notion of Opposite Edge make sence only on quadrangle face.
+     *  \param theShape Shape to build propagation groups on.
+     *  \return List of GEOM_Objects, each of them is a propagation group.
+     */
+    ListOfGO Propagate (in GEOM_Object theShape);
   };
 
   /*!

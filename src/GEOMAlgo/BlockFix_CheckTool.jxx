@@ -1,0 +1,6 @@
+#ifndef _TopoDS_Shape_HeaderFile
+#include <TopoDS_Shape.hxx>
+#endif
+#ifndef _BlockFix_CheckTool_HeaderFile
+#include <BlockFix_CheckTool.hxx>
+#endif

@@ -25,27 +25,29 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+#ifndef _Standard_Real_HeaderFile
+#include <Standard_Real.hxx>
+#endif
 #ifndef _TopTools_DataMapOfShapeListOfShape_HeaderFile
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #endif
 #ifndef _TopTools_DataMapOfShapeShape_HeaderFile
 #include <TopTools_DataMapOfShapeShape.hxx>
 #endif
-#ifndef _IntTools_Context_HeaderFile
-#include <IntTools_Context.hxx>
-#endif
-#ifndef _TopAbs_ShapeEnum_HeaderFile
-#include <TopAbs_ShapeEnum.hxx>
-#endif
-#ifndef _Standard_Real_HeaderFile
-#include <Standard_Real.hxx>
+#ifndef _Standard_Integer_HeaderFile
+#include <Standard_Integer.hxx>
 #endif
 #ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
 #include <GEOMAlgo_ShapeAlgo.hxx>
 #endif
+#ifndef _TopAbs_ShapeEnum_HeaderFile
+#include <TopAbs_ShapeEnum.hxx>
+#endif
 class TopoDS_Edge;
 class GEOMAlgo_PassKey;
 class TopoDS_Face;
+class TopTools_ListOfShape;
+class TopoDS_Vertex;
 class TopTools_DataMapOfShapeListOfShape;
 class TopTools_DataMapOfShapeShape;
 
@@ -80,6 +82,7 @@ Standard_EXPORT virtual ~GEOMAlgo_Gluer();
 Standard_EXPORT   void SetCheckGeometry(const Standard_Boolean aFlag) ;
 Standard_EXPORT   Standard_Boolean CheckGeometry() const;
 Standard_EXPORT virtual  void Perform() ;
+Standard_EXPORT   Standard_Integer AloneShapes() const;
 Standard_EXPORT  const TopTools_DataMapOfShapeListOfShape& Images() const;
 Standard_EXPORT  const TopTools_DataMapOfShapeShape& Origins() const;
 
@@ -93,7 +96,6 @@ protected:
  // 
 Standard_EXPORT virtual  void CheckData() ;
 Standard_EXPORT virtual  void CheckResult() ;
-Standard_EXPORT   void BuildResult() ;
 Standard_EXPORT   void MakeVertices() ;
 Standard_EXPORT   void MakeEdges() ;
 Standard_EXPORT   void MakeFaces() ;
@@ -103,6 +105,7 @@ Standard_EXPORT   void MakeSolids() ;
 Standard_EXPORT   void InnerTolerance() ;
 Standard_EXPORT   void EdgePassKey(const TopoDS_Edge& aE,GEOMAlgo_PassKey& aPK) ;
 Standard_EXPORT   void FacePassKey(const TopoDS_Face& aF,GEOMAlgo_PassKey& aPK) ;
+Standard_EXPORT   void MakeVertex(const TopTools_ListOfShape& aLV,TopoDS_Vertex& aNewV) ;
 Standard_EXPORT   void MakeEdge(const TopoDS_Edge& aEdge,TopoDS_Edge& aNewEdge) ;
 Standard_EXPORT   void MakeFace(const TopoDS_Face& aFace,TopoDS_Face& aNewEdge) ;
 Standard_EXPORT   Standard_Boolean IsToReverse(const TopoDS_Face& aFR,const TopoDS_Face& aF) ;
@@ -111,11 +114,10 @@ Standard_EXPORT   Standard_Boolean IsToReverse(const TopoDS_Face& aFR,const Topo
  // Fields PROTECTED
  //
 Standard_Boolean myCheckGeometry;
+Standard_Real myTol;
 TopTools_DataMapOfShapeListOfShape myImages;
 TopTools_DataMapOfShapeShape myOrigins;
-IntTools_Context myContext;
-TopAbs_ShapeEnum myTypeResult;
-Standard_Real myTol;
+Standard_Integer myNbAlone;
 
 
 private: 

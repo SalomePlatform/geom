@@ -49,6 +49,7 @@ LIB_SRC = 	RepairGUI.cxx \
 		RepairGUI_RemoveHolesDlg.cxx \
 		RepairGUI_DivideEdgeDlg.cxx \
 		RepairGUI_FreeBoundDlg.cxx \
+		RepairGUI_FreeFacesDlg.cxx \
 		RepairGUI_GlueDlg.cxx
     
 LIB_MOC = \
@@ -60,6 +61,7 @@ LIB_MOC = \
 		RepairGUI_RemoveHolesDlg.h \
 		RepairGUI_DivideEdgeDlg.h  \
 		RepairGUI_FreeBoundDlg.h \
+		RepairGUI_FreeFacesDlg.h \
 		RepairGUI_GlueDlg.h     
 
 LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl

@@ -44,12 +44,14 @@ LIB_SRC = \
 	BlocksGUI_QuadFaceDlg.cxx \
 	BlocksGUI_BlockDlg.cxx \
 	BlocksGUI_ExplodeDlg.cxx \
+	BlocksGUI_PropagateDlg.cxx \
 	BlocksGUI_TrsfDlg.cxx
 
 LIB_MOC = \
 	BlocksGUI_QuadFaceDlg.h \
 	BlocksGUI_BlockDlg.h \
 	BlocksGUI_ExplodeDlg.h \
+	BlocksGUI_PropagateDlg.h \
 	BlocksGUI_TrsfDlg.h
 
 LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl

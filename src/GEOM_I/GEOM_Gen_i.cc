@@ -1,3 +1,5 @@
+#include <strstream>
+
 using namespace std;
 
 #include "GEOM_Gen_i.hh"

@@ -44,5 +44,16 @@ aux1 = insFld(foldersTree, gFld("Namespace List", "", "namespaces.html"))
 aux1 = insFld(foldersTree, gFld("IDL/Python mapping", ""))
          insDoc(aux1, gLnk("Mapping of GEOMETRY IDL definitions to Python language", "", "page2.html"))
 
+/*!aux1 = insFld(foldersTree, gFld("Python Commands", "", "geompy_doc/main.html"))
+         insDoc(aux1, gLnk("Package geompy", "", "geompy_doc/namespacegeompy.html"))
+         insDoc(aux1, gLnk("Namespace Members", "", "geompy_doc/namespacemembers.html"))
+         insDoc(aux1, gLnk("File geompy.py", "", "geompy_doc/geompy_8py.html"))
+*/
+
+aux1 = insFld(foldersTree, gFld("Python Commands", "", "geompy_doc/main.html"))
+         insDoc(aux1, gLnk("Package List", "", "geompy_doc/namespaces.html"))
+         insDoc(aux1, gLnk("Namespace Members", "", "geompy_doc/namespacemembers.html"))
+         insDoc(aux1, gLnk("File List", "", "geompy_doc/files.html"))
+
 /*!  insDoc(foldersTree, gLnk("Graphical Class Hierarchy", "", "inherits.html"))
 */

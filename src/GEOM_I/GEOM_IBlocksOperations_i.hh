@@ -91,6 +91,10 @@ class GEOM_IBlocksOperations_i :
   char* PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
 		       const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors);
 
+  GEOM::GEOM_Object_ptr RemoveExtraEdges (GEOM::GEOM_Object_ptr theShape);
+
+  GEOM::GEOM_Object_ptr CheckAndImprove (GEOM::GEOM_Object_ptr theCompound);
+
   // Extract blocks from blocks compounds
   GEOM::ListOfGO* ExplodeCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
 					   const CORBA::Long     theMinNbFaces,
@@ -118,6 +122,9 @@ class GEOM_IBlocksOperations_i :
 						   const CORBA::Long     theDirFace1V,
 						   const CORBA::Long     theDirFace2V,
 						   const CORBA::Long     theNbTimesV);
+
+  // Build groups for Propagation of 1D hypotheses
+  GEOM::ListOfGO* Propagate (GEOM::GEOM_Object_ptr theShape);
 
   ::GEOMImpl_IBlocksOperations* GetOperations()
   { return (::GEOMImpl_IBlocksOperations*)GetImpl(); }

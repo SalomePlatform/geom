@@ -1,0 +1,50 @@
+-- File:	BlockFix.cdl
+-- Created:	Tue Dec  7 11:59:05 2004
+-- Author:	Pavel Durandin
+--		<det@doomox>
+---Copyright:	Open CASCADE SA 2004
+
+
+
+
+package BlockFix
+
+uses
+
+    TColStd,
+    gp,
+    Geom,
+    Geom2d,
+    GeomAbs,
+    TopLoc,
+    TopoDS,
+    BRepTools,
+    TopTools,
+    ShapeBuild
+
+is
+
+    class SphereSpaceModifier;
+    
+    class UnionFaces;
+    
+    class UnionEdges;
+    
+    class BlockFixAPI;
+    	---Purpose: API class to perform the fixing of the
+	--          block
+    
+    class PeriodicSurfaceModifier;
+
+    class CheckTool;
+    
+    RotateSphereSpace (S: Shape from TopoDS; Tol: Real)
+    returns Shape from TopoDS;
+
+    FixRanges (S: Shape from TopoDS; Tol: Real)
+    returns Shape from TopoDS;
+    	---Purpose: checking and fixing cases where parametric
+	--          boundaries of face based on periodic surface are not
+	--          contained in the range of this surface.
+
+end BlockFix;

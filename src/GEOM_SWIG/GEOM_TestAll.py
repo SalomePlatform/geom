@@ -157,9 +157,12 @@ def TestAll (geompy, math):
 
   #Transform objects
   Translation = geompy.MakeTranslationTwoPoints(Box, px, pz)  #(3 GEOM_Object_ptr)->GEOM_Object_ptr
+  TranslVect  = geompy.MakeTranslationVector(Box, vxyz)       #(2 GEOM_Object_ptr)->GEOM_Object_ptr
   Rotation    = geompy.MakeRotation(Box, vz, angle1)          #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Scale       = geompy.MakeScaleTransform(Box, p0, factor)    #
   Mirror      = geompy.MakeMirrorByPlane(Box, Plane)          #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  MirrorAxis  = geompy.MakeMirrorByAxis(Box, Line1)           #
+  MirrorPnt   = geompy.MakeMirrorByPoint(Box, p200)           #
   Position    = geompy.MakePosition(Box, cs1, cs2)            #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   Offset      = geompy.MakeOffset(Box, 10.)                   #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Orientation = geompy.ChangeOrientation(Box)
@@ -210,7 +213,8 @@ def TestAll (geompy, math):
   print "CheckShape(Prism) = ", CheckShape
 
   #Partition objects
-  Partition = geompy.MakePartition([Box], [Plane]) #(2 Lists Of GEOM_Object_ptr)->GEOM_Object_ptr
+  Partition  = geompy.MakePartition([Box], [Plane]) #(2 Lists Of GEOM_Object_ptr)->GEOM_Object_ptr
+  Partition1 = geompy.MakeHalfPartition(Box, Plane) #(2 GEOM_Object_ptr)->GEOM_Object_ptr
 
   #Add In Study
 
@@ -286,9 +290,12 @@ def TestAll (geompy, math):
   id_Sewing     = geompy.addToStudy(Sewing,     "Sewing")
 
   id_Translation = geompy.addToStudy(Translation, "Translation")
+  id_TranslVect  = geompy.addToStudy(TranslVect , "Translation along vector")
   id_Rotation    = geompy.addToStudy(Rotation,    "Rotation")
   id_Scale       = geompy.addToStudy(Scale,       "Scale")
-  id_Mirror      = geompy.addToStudy(Mirror,      "Mirror")
+  id_Mirror      = geompy.addToStudy(Mirror,      "Mirror by Plane")
+  id_MirrorAxis  = geompy.addToStudy(MirrorAxis,  "Mirror by Axis")
+  id_MirrorPnt   = geompy.addToStudy(MirrorPnt,   "Mirror by Point")
   id_Position    = geompy.addToStudy(Position,    "Positioned box")
   id_Offset      = geompy.addToStudy(Offset,      "Offset")
   id_Orientation = geompy.addToStudy(Orientation, "Orientation")
@@ -305,7 +312,8 @@ def TestAll (geompy, math):
   id_CDG       = geompy.addToStudy(CDG,       "CDG")
   id_Archimede = geompy.addToStudy(Archimede, "Archimede")
 
-  id_Partition = geompy.addToStudy(Partition, "Partition")
+  id_Partition  = geompy.addToStudy(Partition, "Partition")
+  id_Partition1 = geompy.addToStudy(Partition1, "Half Partition")
 
   #Decompose objects
   SubFace    = geompy.SubShape(Box, geompy.ShapeType["FACE"], [2])

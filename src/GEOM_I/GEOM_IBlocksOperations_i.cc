@@ -657,6 +657,9 @@ CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
     case GEOMImpl_IBlocksOperations::NOT_BLOCK:
       anError->error = GEOM::GEOM_IBlocksOperations::NOT_BLOCK;
       break;
+    case GEOMImpl_IBlocksOperations::EXTRA_EDGE:
+      anError->error = GEOM::GEOM_IBlocksOperations::EXTRA_EDGE;
+      break;
     case GEOMImpl_IBlocksOperations::INVALID_CONNECTION:
       anError->error = GEOM::GEOM_IBlocksOperations::INVALID_CONNECTION;
       break;
@@ -720,6 +723,9 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
     case GEOM::GEOM_IBlocksOperations::NOT_BLOCK:
       errStruct.error = GEOMImpl_IBlocksOperations::NOT_BLOCK;
       break;
+    case GEOM::GEOM_IBlocksOperations::EXTRA_EDGE:
+      errStruct.error = GEOMImpl_IBlocksOperations::EXTRA_EDGE;
+      break;
     case GEOM::GEOM_IBlocksOperations::INVALID_CONNECTION:
       errStruct.error = GEOMImpl_IBlocksOperations::INVALID_CONNECTION;
       break;
@@ -744,6 +750,64 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
 
   TCollection_AsciiString aDescr = GetOperations()->PrintBCErrors(aCompound, anErrors);
   return CORBA::string_dup(aDescr.ToCString());    
+}
+
+//=============================================================================
+/*!
+ *  RemoveExtraEdges
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::RemoveExtraEdges (GEOM::GEOM_Object_ptr theShape)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape == NULL) return aGEOMObject._retn();
+
+  //Get the reference Objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  //Get the result
+  Handle(GEOM_Object) anObject =
+    GetOperations()->RemoveExtraEdges(aShape);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  CheckAndImprove
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::CheckAndImprove (GEOM::GEOM_Object_ptr theCompound)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theCompound == NULL) return aGEOMObject._retn();
+
+  //Get the reference Objects
+  Handle(GEOM_Object) aCompound = GetOperations()->GetEngine()->GetObject
+    (theCompound->GetStudyID(), theCompound->GetEntry());
+
+  if (aCompound.IsNull()) return aGEOMObject._retn();
+
+  //Get the result
+  Handle(GEOM_Object) anObject =
+    GetOperations()->CheckAndImprove(aCompound);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
 }
 
 //=============================================================================
@@ -936,4 +1000,38 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeMultiTransformation2D
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  Propagate
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IBlocksOperations_i::Propagate (GEOM::GEOM_Object_ptr theShape)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape == NULL) return aSeq._retn();
+
+  //Get the reference Shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+
+  if (aShape.IsNull()) return aSeq._retn();
+
+  //Get the Propagation chains
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->Propagate(aShape);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
 }

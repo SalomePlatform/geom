@@ -103,8 +103,8 @@ GroupOp  = geom.GetIGroupOperations   (myStudyId)
 # Basic primitives
 # -----------------------------------------------------------------------------
 
-def MakeVertex(x,y,z):
-    anObj = BasicOp.MakePointXYZ(x,y,z)
+def MakeVertex(theX, theY, theZ):
+    anObj = BasicOp.MakePointXYZ(theX, theY, theZ)
     if BasicOp.IsDone() == 0:
       print "MakePointXYZ : ", BasicOp.GetErrorCode()
     return anObj
@@ -371,6 +371,18 @@ def MakeCompound(ListShape):
       print "MakeCompound : ", ShapesOp.GetErrorCode()
     return anObj
 
+def NumberOfFaces(theShape):
+    nb_faces = ShapesOp.NumberOfFaces(theShape)
+    if ShapesOp.IsDone() == 0:
+      print "NumberOfFaces : ", ShapesOp.GetErrorCode()
+    return nb_faces
+
+def NumberOfEdges(theShape):
+    nb_edges = ShapesOp.NumberOfEdges(theShape)
+    if ShapesOp.IsDone() == 0:
+      print "NumberOfEdges : ", ShapesOp.GetErrorCode()
+    return nb_edges
+
 def ChangeOrientation(Shape):
     anObj = ShapesOp.ChangeOrientation(Shape)
     if ShapesOp.IsDone() == 0:
@@ -380,6 +392,42 @@ def ChangeOrientation(Shape):
 def OrientationChange(Shape):
     anObj = ChangeOrientation(Shape)
     return anObj
+
+def GetFreeFacesIDs(theShape):
+    anIDs = ShapesOp.GetFreeFacesIDs(theShape)
+    if ShapesOp.IsDone() == 0:
+      print "GetFreeFacesIDs : ", ShapesOp.GetErrorCode()
+    return anIDs
+
+def GetSharedShapes(theShape1, theShape2, theShapeType):
+    aList = ShapesOp.GetSharedShapes(theShape1, theShape2, theShapeType)
+    if ShapesOp.IsDone() == 0:
+      print "GetSharedShapes : ", ShapesOp.GetErrorCode()
+    return aList
+
+#def GetShapesOnPlane(theShape, theShapeType, thePlane):
+#    anObj = ShapesOp.GetShapesOnPlane(theShape, theShapeType, thePlane)
+#    if ShapesOp.IsDone() == 0:
+#      print "GetShapesOnPlane : ", ShapesOp.GetErrorCode()
+#    return anObj
+#
+#def GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius):
+#    anObj = ShapesOp.GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius)
+#    if ShapesOp.IsDone() == 0:
+#      print "GetShapesOnCylinder : ", ShapesOp.GetErrorCode()
+#    return anObj
+#
+#def GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius):
+#    anObj = ShapesOp.GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius)
+#    if ShapesOp.IsDone() == 0:
+#      print "GetShapesOnSphere : ", ShapesOp.GetErrorCode()
+#    return anObj
+#
+#def GetInPlace(theShapeWhere, theShapeWhat):
+#    anObj = ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
+#    if ShapesOp.IsDone() == 0:
+#      print "GetInPlace : ", ShapesOp.GetErrorCode()
+#    return anObj
 
 # -----------------------------------------------------------------------------
 # Access to sub-shapes by their unique IDs inside the main shape.
@@ -408,10 +456,22 @@ def SubShapeAll(aShape, aType):
       print "MakeExplode : ", ShapesOp.GetErrorCode()
     return ListObj
 
-def SubShapeAllSorted(aShape,aType):
+def SubShapeAllIDs(aShape, aType):
+    ListObj = ShapesOp.SubShapeAllIDs(aShape,aType,0)
+    if ShapesOp.IsDone() == 0:
+      print "SubShapeAllIDs : ", ShapesOp.GetErrorCode()
+    return ListObj
+
+def SubShapeAllSorted(aShape, aType):
     ListObj = ShapesOp.MakeExplode(aShape,aType,1)
     if ShapesOp.IsDone() == 0:
       print "MakeExplode : ", ShapesOp.GetErrorCode()
+    return ListObj
+
+def SubShapeAllSortedIDs(aShape, aType):
+    ListIDs = ShapesOp.SubShapeAllIDs(aShape,aType,1)
+    if ShapesOp.IsDone() == 0:
+      print "SubShapeAllSortedIDs : ", ShapesOp.GetErrorCode()
     return ListObj
 
 # Obtain a compound of sub-shapes of <aShape>,
@@ -551,6 +611,12 @@ def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                           Limit, RemoveWebs, ListMaterials);
     return anObj
 
+def MakeHalfPartition(theShape, thePlane):
+    anObj = BoolOp.MakeHalfPartition(theShape, thePlane)
+    if BoolOp.IsDone() == 0:
+      print "MakeHalfPartition : ", BoolOp.GetErrorCode()
+    return anObj
+
 # -----------------------------------------------------------------------------
 # Transform objects
 # -----------------------------------------------------------------------------
@@ -565,6 +631,12 @@ def MakeTranslation(aShape,dx,dy,dz):
     anObj = TrsfOp.TranslateDXDYDZCopy(aShape,dx,dy,dz)
     if TrsfOp.IsDone() == 0:
       print "TranslateDXDYDZCopy : ", TrsfOp.GetErrorCode()
+    return anObj
+
+def MakeTranslationVector(theObject, theVector):
+    anObj = TrsfOp.TranslateVectorCopy(theObject, theVector)
+    if TrsfOp.IsDone() == 0:
+      print "TranslateVectorCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
 def MakeRotation(aShape,axis,angle):
@@ -583,6 +655,18 @@ def MakeMirrorByPlane(aShape,aPlane):
     anObj = TrsfOp.MirrorPlaneCopy(aShape,aPlane)
     if TrsfOp.IsDone() == 0:
       print "MirrorPlaneCopy : ", TrsfOp.GetErrorCode()
+    return anObj
+
+def MakeMirrorByAxis(theObject, theAxis):
+    anObj = TrsfOp.MirrorAxisCopy(theObject, theAxis)
+    if TrsfOp.IsDone() == 0:
+      print "MirrorAxisCopy : ", TrsfOp.GetErrorCode()
+    return anObj
+
+def MakeMirrorByPoint(theObject, thePoint):
+    anObj = TrsfOp.MirrorPointCopy(theObject, thePoint)
+    if TrsfOp.IsDone() == 0:
+      print "MirrorPointCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
 def MakePosition(aShape,theStartLCS,theEndLCS):
@@ -815,6 +899,100 @@ def MakeHexa2Faces(F1, F2):
       print "MakeHexa2Faces : ", BlocksOp.GetErrorCode()
     return anObj
 
+def GetPoint(theShape, theX, theY, theZ, theEpsilon):
+    anObj = BlocksOp.GetPoint(theShape, theX, theY, theZ, theEpsilon)
+    if BlocksOp.IsDone() == 0:
+      print "GetPoint : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def GetEdge(theShape, thePoint1, thePoint2):
+    anObj = BlocksOp.GetEdge(theShape, thePoint1, thePoint2)
+    if BlocksOp.IsDone() == 0:
+      print "GetEdge : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def GetEdgeNearPoint(theShape, thePoint):
+    anObj = BlocksOp.GetEdgeNearPoint(theShape, thePoint)
+    if BlocksOp.IsDone() == 0:
+      print "GetEdgeNearPoint : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4):
+    anObj = BlocksOp.GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4)
+    if BlocksOp.IsDone() == 0:
+      print "GetFaceByPoints : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def GetFaceByEdges(theShape, theEdge1, theEdge2):
+    anObj = BlocksOp.GetFaceByEdges(theShape, theEdge1, theEdge2)
+    if BlocksOp.IsDone() == 0:
+      print "GetFaceByEdges : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def GetOppositeFace(theBlock, theFace):
+    anObj = BlocksOp.GetOppositeFace(theBlock, theFace)
+    if BlocksOp.IsDone() == 0:
+      print "GetOppositeFace : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def GetFaceNearPoint(theShape, thePoint):
+    anObj = BlocksOp.GetFaceNearPoint(theShape, thePoint)
+    if BlocksOp.IsDone() == 0:
+      print "GetFaceNearPoint : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def GetFaceByNormale(theBlock, theVector):
+    anObj = BlocksOp.GetFaceByNormale(theBlock, theVector)
+    if BlocksOp.IsDone() == 0:
+      print "GetFaceByNormale : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def CheckCompoundOfBlocks(theCompound):
+    (IsValid, BCErrors) = BlocksOp.CheckCompoundOfBlocks(theCompound)
+    if BlocksOp.IsDone() == 0:
+      print "CheckCompoundOfBlocks : ", BlocksOp.GetErrorCode()
+    else:
+      if IsValid == 0:
+        Descr = BlocksOp.PrintBCErrors(theCompound, BCErrors)
+        print Descr
+    return IsValid
+
+def RemoveExtraEdges(theShape):
+    anObj = BlocksOp.RemoveExtraEdges(theShape)
+    if BlocksOp.IsDone() == 0:
+      print "RemoveExtraEdges : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def CheckAndImprove(theShape):
+    anObj = BlocksOp.CheckAndImprove(theShape)
+    if BlocksOp.IsDone() == 0:
+      print "CheckAndImprove : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def MakeBlockExplode(theCompound, theMinNbFaces, theMaxNbFaces):
+    aList = BlocksOp.ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces)
+    if BlocksOp.IsDone() == 0:
+      print "MakeBlockExplode : ", BlocksOp.GetErrorCode()
+    return aList
+
+def GetBlockNearPoint(theCompound, thePoint):
+    anObj = BlocksOp.GetBlockNearPoint(theCompound, thePoint)
+    if BlocksOp.IsDone() == 0:
+      print "GetBlockNearPoint : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def GetBlockByParts(theCompound, theParts):
+    anObj = BlocksOp.GetBlockByParts(theCompound, theParts)
+    if BlocksOp.IsDone() == 0:
+      print "GetBlockByParts : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def GetBlocksByParts(theCompound, theParts):
+    aList = BlocksOp.GetBlocksByParts(theCompound, theParts)
+    if BlocksOp.IsDone() == 0:
+      print "GetBlocksByParts : ", BlocksOp.GetErrorCode()
+    return aList
+
 def MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes):
     anObj = BlocksOp.MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes)
     if BlocksOp.IsDone() == 0:
@@ -829,21 +1007,11 @@ def MakeMultiTransformation2D(Block, DirFaceID1U, DirFaceID2U, NbTimesU,
       print "MakeMultiTransformation2D : ", BlocksOp.GetErrorCode()
     return anObj
 
-def MakeBlockExplode(Compound, MinNbFaces, MaxNbFaces):
-    aList = BlocksOp.ExplodeCompoundOfBlocks(Compound, MinNbFaces, MaxNbFaces)
+def Propagate(theShape):
+    listChains = BlocksOp.Propagate(theShape)
     if BlocksOp.IsDone() == 0:
-      print "MakeBlockExplode : ", BlocksOp.GetErrorCode()
-    return aList
-
-def CheckCompoundOfBlocks(Compound):
-    (IsValid, BCErrors) = BlocksOp.CheckCompoundOfBlocks(Compound)
-    if BlocksOp.IsDone() == 0:
-      print "CheckCompoundOfBlocks : ", BlocksOp.GetErrorCode()
-    else:
-      if IsValid == 0:
-        Descr = BlocksOp.PrintBCErrors(Compound, BCErrors)
-        print Descr
-    return IsValid
+      print "Propagate : ", BlocksOp.GetErrorCode()
+    return listChains
 
 # -----------------------------------------------------------------------------
 # Group operations
@@ -871,6 +1039,20 @@ def GetObjectIDs(Group):
       print "GetObjectIDs : ", GroupOp.GetErrorCode()
     return ListIDs
 
+def GetType(theGroup):
+    aType = GroupOp.GetType(theGroup)
+    if GroupOp.IsDone() == 0:
+      print "GetType : ", GroupOp.GetErrorCode()
+    return aType
+
+def GetMainShape(theGroup):
+    anObj = GroupOp.GetMainShape(theGroup)
+    if GroupOp.IsDone() == 0:
+      print "GetMainShape : ", GroupOp.GetErrorCode()
+    return anObj
+
+# Add Path to the system path
+#
 def addPath(Path):
     if (sys.path.count(Path) < 1):
 	sys.path.append(Path)

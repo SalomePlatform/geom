@@ -37,6 +37,8 @@ VPATH=.:@srcdir@
 LIB = libGEOMAlgo.la
 LIB_SRC = \
 	GEOMAlgo_Algo.cxx \
+	GEOMAlgo_CoupleOfShapes.cxx \
+	GEOMAlgo_GlueAnalyser.cxx \
 	GEOMAlgo_Gluer.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape_0.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape_0.cxx \
@@ -44,10 +46,25 @@ LIB_SRC = \
 	GEOMAlgo_IndexedDataMapOfIntegerShape_0.cxx \
 	GEOMAlgo_IndexedDataMapOfPassKeyListOfShape_0.cxx \
 	GEOMAlgo_IndexedDataMapOfShapeBox_0.cxx \
+	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes_0.cxx \
+	GEOMAlgo_ListNodeOfListOfCoupleOfShapes_0.cxx \
+	GEOMAlgo_ListOfCoupleOfShapes_0.cxx \
 	GEOMAlgo_PassKey.cxx \
 	GEOMAlgo_PassKeyMapHasher.cxx \
 	GEOMAlgo_ShapeAlgo.cxx \
-	GEOMAlgo_Tools.cxx
+	GEOMAlgo_Tools.cxx \
+	BlockFix.cxx \
+	BlockFix_BlockFixAPI.cxx \
+	BlockFix_CheckTool.cxx \
+	BlockFix_PeriodicSurfaceModifier.cxx \
+	BlockFix_SphereSpaceModifier.cxx \
+	BlockFix_UnionEdges.cxx \
+	BlockFix_UnionFaces.cxx \
+	GEOMAlgo_FinderShapeOn.cxx \
+	GEOMAlgo_ShapeSolid.cxx \
+	GEOMAlgo_ShellSolid.cxx \
+	GEOMAlgo_VertexSolid.cxx \
+	GEOMAlgo_WireSolid.cxx
 
 LIB_CLIENT_IDL = 
 LIB_SERVER_IDL = 
@@ -56,7 +73,18 @@ LIB_SERVER_IDL =
 EXPORT_HEADERS = \
 	GEOMAlgo_Gluer.hxx \
 	GEOMAlgo_ShapeAlgo.hxx \
-	GEOMAlgo_Algo.hxx
+	GEOMAlgo_Algo.hxx \
+	GEOMAlgo_GlueAnalyser.hxx \
+	GEOMAlgo_CoupleOfShapes.hxx \
+	GEOMAlgo_ListOfCoupleOfShapes.hxx \
+	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx \
+	Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx \
+	BlockFix_BlockFixAPI.hxx \
+	BlockFix_BlockFixAPI.lxx \
+	BlockFix_CheckTool.hxx \
+	Handle_BlockFix_BlockFixAPI.hxx \
+	GEOMAlgo_State.hxx \
+	GEOMAlgo_FinderShapeOn.hxx
 
 # idl files
 EXPORT_IDLS=

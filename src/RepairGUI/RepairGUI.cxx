@@ -41,6 +41,7 @@
 #include "RepairGUI_RemoveIntWiresDlg.h"// Method REMOVE INTERNAL WIRES
 #include "RepairGUI_DivideEdgeDlg.h"    // Method DEVIDE EDGE
 #include "RepairGUI_FreeBoundDlg.h"     // Method FREE BOUNDARIES
+#include "RepairGUI_FreeFacesDlg.h"     // Method FREE FACES
 #include "RepairGUI_GlueDlg.h"          // Method GLUE FACES
 
 #include "utilities.h"
@@ -117,6 +118,9 @@ bool RepairGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       break;
     case 609: // FREE BOUNDARIES
       aDlg = new RepairGUI_FreeBoundDlg( parent, Sel );
+      break;    
+    case 610: // FREE FACES
+      aDlg = new RepairGUI_FreeFacesDlg( parent, "", Sel );
       break;    
     default:
       parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));

@@ -516,6 +516,25 @@ msgstr "Chanfrein"
 msgid "GEOM_CHECK_SHAPE"
 msgstr "Check Shape"
 
+#Check Blocks Compound
+msgid "GEOM_CHECK_BLOCKS_COMPOUND"
+msgstr "Check Blocks Compound"
+
+#Check Blocks Compound Errors
+msgid "GEOM_CHECK_BLOCKS_COMPOUND_ERRORS"
+msgstr "Errors"
+
+#Check Blocks Compound Errors
+msgid "GEOM_CHECK_BLOCKS_COMPOUND_HAS_NO_ERRORS"
+msgstr "The Compound of Blocks has no errors"
+
+msgid "GEOM_CHECK_BLOCKS_COMPOUND_HAS_ERRORS"
+msgstr "The Compound of Blocks has errors"
+
+#Check Blocks Compound SubShapes
+msgid "GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES"
+msgstr "Incriminated Sub-Shapes"
+
 #Whatis
 msgid "GEOM_WHATIS"
 msgstr "Whatis"
@@ -802,6 +821,10 @@ msgstr "Construction d'un Cylindre"
 #: GeometryGUI_CheckShape.cxx:60
 msgid "GEOM_CHECK_TITLE"
 msgstr "Check Shape"
+
+#: MeasureGUI_CheckCompoundOfBlocks.cxx:61
+msgid "GEOM_CHECK_COMPOUND_BLOCKS_TITLE"
+msgstr "Check Blocks Compound"
 
 #: GeometryGUI_CheckShape.cxx:83
 msgid "GEOM_CHECK_INFOS"
@@ -1348,3 +1371,15 @@ msgstr "Create a copy"
 #MZN: to be translated
 msgid "GEOM_CREATE_SINGLE_SOLID"
 msgstr "Create a single solid"
+
+msgid "GEOM_FREE_FACES"
+msgstr "Free faces"
+
+msgid "GEOM_FREE_FACES_TITLE"
+msgstr "Free faces"
+
+msgid "GEOM_PROPAGATE_TITLE"
+msgstr "Propagate"
+
+msgid "GEOM_PROPAGATE"
+msgstr "Propagate"

@@ -285,12 +285,20 @@
     //
     aNbSd=aMSd.Extent();
     if (!aNbSd) {
+      //modified by NIZNHY-PKV Thu Dec 23 15:07:46 2004 f
+      Standard_Boolean bFound;
+      //modified by NIZNHY-PKV Thu Dec 23 15:07:49 2004 t
       TopoDS_Shape aSd;
       //
       const TopoDS_Shape& aFC=myImageShape.Image(aS).First();
-      NMTAlgo_Tools::FindImageSolid(aFC, aMSo, aSd);
-      //
-      aMSd.Add(aSd);
+      //modified by NIZNHY-PKV Thu Dec 23 15:08:17 2004 f
+      //NMTAlgo_Tools::FindImageSolid(aFC, aMSo, aSd);
+      //aMSd.Add(aSd);
+      bFound=NMTAlgo_Tools::FindImageSolid(aFC, aMSo, aSd);
+      if (!aSd.IsNull()) {
+	aMSd.Add(aSd);
+      }
+      //modified by NIZNHY-PKV Thu Dec 23 15:09:02 2004 t
     }
     aMCS.Add(aS, aMSd); 
   } //for ( ;aItS.More(); aItS.Next())

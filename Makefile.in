@@ -169,7 +169,11 @@ tree_block.png \
 subblock.png \
 group_new.png \
 group_edit.png \
-glue.png
+glue.png \
+check_blocks_compound.png \
+free_faces.png \
+propagate.png
+
 
 BIN_SCRIPT= \
 VERSION

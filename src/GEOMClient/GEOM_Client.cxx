@@ -26,7 +26,10 @@
 //  Module : GEOM
 //  $Header$
 
+#include <strstream>
+
 using namespace std;
+
 #include "GEOM_Client.hxx"
 #include <SALOMEconfig.h>
 #include "OpUtil.hxx"

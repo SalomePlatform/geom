@@ -141,6 +141,16 @@ def TestOtherOperations (geompy, math):
   id_ImportIGES = geompy.addToStudy(ImportIGES, "ImportIGES")
   id_ImportSTEP = geompy.addToStudy(ImportSTEP, "ImportSTEP")
 
+  # NumberOfFaces
+  NumberOfFaces = geompy.NumberOfFaces(Box)
+  if NumberOfFaces != 6:
+    print "Bad number of faces in BOX!"
+
+  # NumberOfEdges
+  NumberOfEdges = geompy.NumberOfEdges(Box)
+  if NumberOfEdges != 12:
+    print "Bad number of edges in BOX!"
+
   # MakeBlockExplode
   Compound = geompy.MakeCompound([Box, Sphere])
   MakeBlockExplode = geompy.MakeBlockExplode(Compound, 6, 6)
@@ -197,3 +207,103 @@ def TestOtherOperations (geompy, math):
   print "Group of Box's faces includes the following IDs:"
   for ObjectID in GetObjectIDs:
     print " ", ObjectID
+
+  BoxCopy = geompy.GetMainShape(CreateGroup)
+
+  # -----------------------------------------------------------------------------
+  # enumeration ShapeTypeString as a dictionary
+  # -----------------------------------------------------------------------------
+  ShapeTypeString = {'0':"COMPOUND", '1':"COMPSOLID", '2':"SOLID", '3':"SHELL", '4':"FACE", '5':"WIRE", '6':"EDGE", '7':"VERTEX", '8':"SHAPE"}
+
+  GroupType = geompy.GetType(CreateGroup)
+  print "Type of elements of the created group is ", ShapeTypeString[`GroupType`]
+
+  # Prepare data for the following operations
+  p0 = geompy.MakeVertex(0, 0, 0)
+  b0 = geompy.MakeBox(-50, -50, -50, 50, 50, 50)
+  s0 = geompy.MakeSphereR(100)
+
+  id_b0 = geompy.addToStudy(b0, "b0")
+  id_s0 = geompy.addToStudy(s0, "s0")
+
+  v_0pp = geompy.MakeVectorDXDYDZ( 0,  1,  1)
+  v_0np = geompy.MakeVectorDXDYDZ( 0, -1,  1)
+  v_p0p = geompy.MakeVectorDXDYDZ( 1,  0,  1)
+  v_n0p = geompy.MakeVectorDXDYDZ(-1,  0,  1)
+  v_pp0 = geompy.MakeVectorDXDYDZ( 1,  1,  0)
+  v_np0 = geompy.MakeVectorDXDYDZ(-1,  1,  0)
+
+  pln_0pp = geompy.MakePlane(p0, v_0pp, 200)
+  pln_0np = geompy.MakePlane(p0, v_0np, 200)
+  pln_p0p = geompy.MakePlane(p0, v_p0p, 200)
+  pln_n0p = geompy.MakePlane(p0, v_n0p, 200)
+  pln_pp0 = geompy.MakePlane(p0, v_pp0, 200)
+  pln_np0 = geompy.MakePlane(p0, v_np0, 200)
+
+  part_tool = geompy.MakePartition([b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0],
+                                   [],
+                                   [],
+                                   [b0])
+  id_part_tool = geompy.addToStudy(part_tool, "part_tool")
+
+  part = geompy.MakePartition([s0], [part_tool])
+  geompy.addToStudy(part, "part")
+
+  # GetFreeFacesIDs
+  anIDs = geompy.GetFreeFacesIDs(part)
+  freeFaces = geompy.GetSubShape(part, anIDs)
+
+  geompy.addToStudy(freeFaces, "freeFaces")
+
+  # RemoveExtraEdges
+  freeFacesWithoutExtra = geompy.RemoveExtraEdges(freeFaces)
+
+  geompy.addToStudy(freeFacesWithoutExtra, "freeFacesWithoutExtra")
+
+  # GetSharedShapes
+  sharedFaces = geompy.GetSharedShapes(part, freeFacesWithoutExtra, geompy.ShapeType["FACE"])
+
+  for shFace in sharedFaces:
+    geompy.addToStudy(shFace, "sharedFace")
+
+  # CheckAndImprove
+  blocksComp = geompy.CheckAndImprove(part)
+
+  geompy.addToStudy(blocksComp, "blocksComp")
+
+  # Propagate
+  listChains = geompy.Propagate(blocksComp)
+
+  for chain in listChains:
+    geompy.addToStudyInFather(blocksComp, chain, "propagation chain")
+
+  # GetPoint(theShape, theX, theY, theZ, theEpsilon)
+  # 
+  # (-50,  50, 50) .-----. (50,  50, 50)
+  #      pb0_top_1 |     | 
+  #                |     . pmidle
+  #                |     | 
+  # (-50, -50, 50) '-----' (50, -50, 50)
+  #
+  pb0_top_1 = geompy.GetPoint(blocksComp, -50,  50,  50, 0.01)
+  pb0_bot_1 = geompy.GetPoint(blocksComp, -50, -50, -50, 0.01)
+
+  geompy.addToStudyInFather(blocksComp, pb0_top_1, "point from blocksComp (-50,  50,  50)")
+  geompy.addToStudyInFather(blocksComp, pb0_bot_1, "point from blocksComp (-50, -50, -50)")
+
+  # GetEdgeNearPoint(theShape, thePoint)
+  pmidle = geompy.MakeVertex(50, 0, 50)
+  edge1 = geompy.GetEdgeNearPoint(blocksComp, pmidle)
+
+  geompy.addToStudyInFather(blocksComp, edge1, "edge near point (50, 0, 50)")
+
+  # GetBlockByParts(theCompound, theParts)
+  b0_image = geompy.GetBlockByParts(blocksComp, [pb0_top_1, pb0_bot_1, edge1])
+
+  geompy.addToStudyInFather(blocksComp, b0_image, "b0 image")
+
+  # GetShapesOnPlane(theShape, theShapeType, thePlane)
+  # GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius)
+  # GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius)
+
+  # GetInPlace(theShapeWhere, theShapeWhat)

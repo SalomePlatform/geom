@@ -16,13 +16,31 @@ doxygen=@DOXYGEN@
 
 @COMMENCE@
 
+PYTHON_SCRIPTS = \
+	geompy.py \
+	GEOM_TestMeasures.py
+
+#PYTHON_SCRIPTS_PY2 = py2/geompy.py py2/GEOM_TestMeasures.py
+
 docs:
-	cp -fr $(srcdir)/GEOM ./INPUT; \
+	cp -fr $(srcdir)/GEOM ./INPUT
 	cd INPUT; \
 	sed 's|../../../share/salome|$(root_srcdir)|' ./doxyfile > ./doxyfile1; \
 	mv -f doxyfile1 doxyfile; \
 	$(doxygen) ./doxyfile; \
-	cd ..; \
+	mkdir py1; mkdir py2; \
+	cd ..
+	for file in $(PYTHON_SCRIPTS) dummy; do \
+	  if [ $$file != "dummy" ]; then \
+	    cp $(root_srcdir)/src/GEOM_SWIG/$$file INPUT/py1/; \
+	  fi ; \
+	done
+	cd INPUT; \
+	python $(KERNEL_ROOT_DIR)/doc/salome/tui/KERNEL/pythfilter.py ./py1 ./py2; \
+	sed 's|list_py_files_to_process|$(PYTHON_SCRIPTS)|' ./doxyfile_py > py2/doxyfile_py; \
+	cd py2; \
+	$(doxygen) ./doxyfile_py; \
+	cd ../..; \
 	cp -fr $(srcdir)/GEOM/sources/static/*.* ./GEOM/
 	cp -fr $(srcdir)/GEOM/sources/ GEOM/
 	cp -fr $(srcdir)/GEOM/HTML/ GEOM/

@@ -85,6 +85,7 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
 
   enum BCErrorType {
     NOT_BLOCK,
+    EXTRA_EDGE,
     INVALID_CONNECTION,
     NOT_CONNECTED,
     NOT_GLUED
@@ -95,11 +96,23 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
     list<int>   incriminated;
   };
 
+  Standard_Boolean CheckCompoundOfBlocksOld (Handle(GEOM_Object) theCompound,
+                                             list<BCError>&      theErrors);
+
   Standard_Boolean CheckCompoundOfBlocks (Handle(GEOM_Object) theCompound,
                                           list<BCError>&      theErrors);
 
   TCollection_AsciiString PrintBCErrors (Handle(GEOM_Object)  theCompound,
                                          const list<BCError>& theErrors);
+
+  Handle(GEOM_Object) RemoveExtraEdges (Handle(GEOM_Object) theShape);
+
+  Handle(GEOM_Object) CheckAndImprove (Handle(GEOM_Object) theCompound);
+
+  static void AddBlocksFrom (const TopoDS_Shape&   theShape,
+                             TopTools_ListOfShape& BLO,
+                             TopTools_ListOfShape& NOT,
+                             TopTools_ListOfShape& EXT);
 
   // Extract blocks from blocks compounds
   Handle(TColStd_HSequenceOfTransient) ExplodeCompoundOfBlocks
@@ -131,6 +144,9 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
                                                  const Standard_Integer theDirFace1V,
                                                  const Standard_Integer theDirFace2V,
                                                  const Standard_Integer theNbTimesV);
+
+  // Build groups for Propagation of 1D hypotheses
+  Handle(TColStd_HSequenceOfTransient) Propagate (Handle(GEOM_Object) theShape);
 };
 
 #endif

@@ -1,0 +1,63 @@
+-- File:	GEOMAlgo_GlueAnalyser.cdl
+-- Created:	Wed Dec 15 11:03:03 2004
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2004
+
+
+class GlueAnalyser from GEOMAlgo 
+    inherits Gluer from GEOMAlgo  
+	---Purpose: 
+
+uses 
+    ShapeEnum from TopAbs, 
+    ListOfShape from TopTools,
+    ListOfCoupleOfShapes from GEOMAlgo
+
+--raises
+
+is
+    Create   
+    	returns GlueAnalyser from GEOMAlgo; 
+    ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_GlueAnalyser();"
+
+    Perform(me:out) 
+	is redefined; 
+	 
+    HasSolidsToGlue(me)   
+        returns Boolean from Standard;  
+     
+    SolidsToGlue(me) 
+    	returns ListOfCoupleOfShapes from GEOMAlgo; 
+    ---C++:return const &  
+     
+    HasSolidsAlone(me)   
+        returns Boolean from Standard; 
+     
+    SolidsAlone(me) 
+    	returns ListOfShape from TopTools; 
+    ---C++:return const &   
+     
+    DetectVertices(me:out) 
+	is protected;  
+     
+    DetectEdges(me:out) 
+	is protected; 
+     
+    DetectFaces(me:out) 
+	is protected;
+     
+    DetectShapes(me:out; 
+    	    aType:ShapeEnum from TopAbs) 
+    	is protected;        
+
+    DetectSolids (me:out) 
+    	is protected; 
+	
+    
+     
+fields  
+    mySolidsToGlue   : ListOfCoupleOfShapes from GEOMAlgo is protected; 
+    mySolidsAlone    : ListOfShape from TopTools is protected; 
+    
+end GlueAnalyser;

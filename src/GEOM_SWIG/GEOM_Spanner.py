@@ -25,30 +25,6 @@
 #  Module : GEOM
 #  $Header$
 
-def GetFaceNearPoint (geompy, block, pnt):
-  anObj = geompy.BlocksOp.GetFaceNearPoint(block, pnt)
-  if anObj is None:
-    print "GetFaceNearPoint : ", geompy.BlocksOp.GetErrorCode()
-  return anObj
-
-def GetOppositeFace (geompy, block, face):
-  anObj = geompy.BlocksOp.GetOppositeFace(block, face)
-  if anObj is None:
-    print "GetOppositeFace : ", geompy.BlocksOp.GetErrorCode()
-  return anObj
-
-def GetFaceByNormale (geompy, block, vec):
-  anObj = geompy.BlocksOp.GetFaceByNormale(block, vec)
-  if anObj is None:
-    print "GetFaceByNormale : ", geompy.BlocksOp.GetErrorCode()
-  return anObj
-
-def GetBlockNearPoint (geompy, comp, pnt):
-  anObj = geompy.BlocksOp.GetBlockNearPoint(comp, pnt)
-  if anObj is None:
-    print "GetBlockNearPoint : ", geompy.BlocksOp.GetErrorCode()
-  return anObj
-
 ############# MakeSpanner #############
 
 def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None, hasGUI = 0):
@@ -96,9 +72,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   Edge21 = geompy.MakeEdge(p_15_0, p_15_20)
   id_edge21 = geompy.addToStudy(Edge21, "1 Edge for Block 2")
 
-  Edge22 = BlocksOp.GetEdge(Block1, p_10_0, p_10_25)
-  if Edge22 is None:
-    print "BlocksOp.GetEdge(Block1, p_10_0, p_10_25) : ", BlocksOp.GetErrorCode()
+  Edge22 = geompy.GetEdge(Block1, p_10_0, p_10_25)
   id_edge22 = geompy.addToStudy(Edge22, "2 Edge for Block 2")
 
   Face21 = geompy.MakeQuad2Edges(Edge21, Edge22);
@@ -114,7 +88,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
   p_15_10_1 = geompy.MakeVertex(15., 10., 1.)
 
-  Face31 = GetFaceNearPoint(geompy, Block2, p_15_10_1)
+  Face31 = geompy.GetFaceNearPoint(Block2, p_15_10_1)
   id_face31 = geompy.addToStudy(Face31, "1 Face for Block 3")
 
   Prism1 = geompy.MakePrismVecH(Face31, vx, 5);
@@ -140,7 +114,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
   ### Block 4 ###
 
-  Face41 = GetOppositeFace(geompy, Block3, Face31)
+  Face41 = geompy.GetOppositeFace(Block3, Face31)
   id_face41 = geompy.addToStudy(Face41, "1 Face for Block 4")
 
   p_25_5  = geompy.MakeVertex(25.,  5., 0.)
@@ -222,7 +196,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
   p_30_0_1 = geompy.MakeVertex(30., 0., 1.)
 
-  Face2s = GetFaceNearPoint(geompy, Block1s, p_30_0_1)
+  Face2s = geompy.GetFaceNearPoint(Block1s, p_30_0_1)
   id_face2s = geompy.addToStudy(Face2s, "2 Face of Block 1s")
 
   f2s_ind = geompy.LocalOp.GetSubShapeIndex(Block1s, Face2s)
@@ -241,10 +215,10 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   p_55_0_1 = geompy.MakeVertex(55., 0., 1.)
   p_55_110_1 = geompy.MakeVertex(55., -110., 1.)
 
-  Face11l = GetFaceNearPoint(geompy, Block5, p_55_0_1)
+  Face11l = geompy.GetFaceNearPoint(Block5, p_55_0_1)
   id_face11l = geompy.addToStudy(Face11l, "1 Face for Linking Block 1")
 
-  Face12l = GetFaceNearPoint(geompy, Gear, p_55_110_1)
+  Face12l = geompy.GetFaceNearPoint(Gear, p_55_110_1)
   id_face12l = geompy.addToStudy(Face12l, "2 Face for Linking Block 1")
 
   Block1l = geompy.MakeHexa2Faces(Face11l, Face12l)
@@ -255,10 +229,10 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   p_25_0_1 = geompy.MakeVertex(25., 0., 1.)
   p_45_110_1 = geompy.MakeVertex(45., -110., 1.)
 
-  Face21l = GetFaceNearPoint(geompy, Block4, p_25_0_1)
+  Face21l = geompy.GetFaceNearPoint(Block4, p_25_0_1)
   id_face21l = geompy.addToStudy(Face21l, "1 Face for Linking Block 2")
 
-  Face22l = GetFaceNearPoint(geompy, Gear, p_45_110_1)
+  Face22l = geompy.GetFaceNearPoint(Gear, p_45_110_1)
   id_face22l = geompy.addToStudy(Face22l, "2 Face for Linking Block 2")
 
   Block2l = geompy.MakeHexa2Faces(Face21l, Face22l)
@@ -269,10 +243,10 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   p_55_30_1 = geompy.MakeVertex(55., 30., 1.)
   p_65_110_1 = geompy.MakeVertex(65., -110., 1.)
 
-  Face31l = GetFaceNearPoint(geompy, Mirror1, p_55_30_1)
+  Face31l = geompy.GetFaceNearPoint(Mirror1, p_55_30_1)
   id_face31l = geompy.addToStudy(Face31l, "1 Face for Linking Block 3")
 
-  Face32l = GetFaceNearPoint(geompy, Gear, p_65_110_1)
+  Face32l = geompy.GetFaceNearPoint(Gear, p_65_110_1)
   id_face32l = geompy.addToStudy(Face32l, "2 Face for Linking Block 3")
 
   Block3l = geompy.MakeHexa2Faces(Face31l, Face32l)
@@ -284,22 +258,22 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   Handle = geompy.MakeGlueFaces(CompLB, 1e-5)
   id_handle = geompy.addToStudy(Handle, "Handle")
 
-  Block1h = GetBlockNearPoint(geompy, Handle, p_45_110_1)
+  Block1h = geompy.GetBlockNearPoint(Handle, p_45_110_1)
   id_block1h = geompy.addToStudyInFather(Handle, Block1h, "Block 1 of Handle")
 
-  Block2h = GetBlockNearPoint(geompy, Handle, p_65_110_1)
+  Block2h = geompy.GetBlockNearPoint(Handle, p_65_110_1)
   id_block2h = geompy.addToStudyInFather(Handle, Block2h, "Block 2 of Handle")
 
-  Face11h = GetFaceByNormale(geompy, Block1h, vx)
+  Face11h = geompy.GetFaceByNormale(Block1h, vx)
   id_face11h = geompy.addToStudyInFather(Block1h, Face11h, "Face 1")
 
-  Face12h = GetOppositeFace(geompy, Block1h, Face11h)
+  Face12h = geompy.GetOppositeFace(Block1h, Face11h)
   id_face12h = geompy.addToStudyInFather(Block1h, Face12h, "Face 2")
 
-  Face21h = GetFaceByNormale(geompy, Block2h, vx)
+  Face21h = geompy.GetFaceByNormale(Block2h, vx)
   id_face21h = geompy.addToStudyInFather(Block2h, Face21h, "Face 1")
 
-  Face22h = GetOppositeFace(geompy, Block2h, Face21h)
+  Face22h = geompy.GetOppositeFace(Block2h, Face21h)
   id_face22h = geompy.addToStudyInFather(Block2h, Face22h, "Face 2")
 
   Block3h = BlocksOp.GetBlockByParts(Handle, [Face11h, Face21h])
@@ -322,7 +296,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
   ### Check the Spanner ###
 
-  isCompOfBlocks6 = BlocksOp.IsCompoundOfBlocks(Spanner, 6, 6)
+  isCompOfBlocks6 = BlocksOp.CheckCompoundOfBlocks(Spanner)
   if isCompOfBlocks6 == 0:
     print "Spanner is not a compound of hexahedral solids"
   else:
@@ -334,14 +308,12 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
     ### Get Blocks 4 and 5 from the spanner ###
 
-    Face42_sp = BlocksOp.GetFaceByEdges(Spanner, Edge41, Edge42)
-    if Face42_sp is None:
-      print "BlocksOp.GetFaceByEdges(Spanner, Edge41, Edge42) : ", BlocksOp.GetErrorCode()
+    Face42_sp = geompy.GetFaceByEdges(Spanner, Edge41, Edge42)
     id_face42_sp = geompy.addToStudyInFather(Spanner, Face42_sp, "Face 4_2")
 
-    Blocks_f4_sp = BlocksOp.GetBlocksByParts(Spanner, [Face42_sp])
-    if Blocks_f4_sp is None:
-      print "BlocksOp.GetBlocksByParts() : ", BlocksOp.GetErrorCode()
+    Blocks_f4_sp = geompy.GetBlocksByParts(Spanner, [Face42_sp])
+
+    isMRot2D = 0
 
     for aBlock in Blocks_f4_sp:
       name = geompy.SubShapeName(aBlock, Spanner)
@@ -349,17 +321,18 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
       f42_sp_ind = geompy.LocalOp.GetSubShapeIndex(aBlock, Face42_sp)
 
-      Face_5_horiz = GetFaceByNormale(geompy, aBlock, vz)
+      Face_5_horiz = geompy.GetFaceByNormale(aBlock, vz)
       f_5_horiz_ind = geompy.LocalOp.GetSubShapeIndex(aBlock, Face_5_horiz)
 
       MRot = geompy.MakeMultiTransformation2D(aBlock, f42_sp_ind, 0, 3, f_5_horiz_ind, 0, 5)
       if MRot is not None:
+        isMRot2D = 1
         p_z100 = geompy.MakeVertex(0., 0., 100.)
         MRot_tr = geompy.MakeTranslationTwoPoints(MRot, p0, p_z100)
         id_MRot_tr = geompy.addToStudy(MRot_tr, "Multi-rotated block 5")
 
-    if BlocksOp.IsDone() == 0:
-      print "Operation failed"
+    if isMRot2D == 0:
+      print "2D Multi Transformation failed"
 
     ### Get one face of the Gear ###
 
@@ -368,9 +341,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
     p_40_0_tr   = geompy.MakeTranslationTwoPoints(p_40_0  , p0, p_60_150_0)
     p_40_0_r_tr = geompy.MakeTranslationTwoPoints(p_40_0_r, p0, p_60_150_0)
 
-    Face_g_1 = BlocksOp.GetFaceByPoints(Gear, p_20_0_tr, p_20_0_r_tr, p_40_0_tr, p_40_0_r_tr)
-    if Face_g_1 is None:
-      print "BlocksOp.GetFaceByPoints(Gear, ...) : ", BlocksOp.GetErrorCode()
+    Face_g_1 = geompy.GetFaceByPoints(Gear, p_20_0_tr, p_20_0_r_tr, p_40_0_tr, p_40_0_r_tr)
     id_face_g_1 = geompy.addToStudyInFather(Gear, Face_g_1, "Face of Gear by four points")
 
     edgesNb = geompy.ShapesOp.NumberOfEdges(Face_g_1)
@@ -393,12 +364,12 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
     # ---- add a middle block of spanner handle in study
 
     p_45_0_1 = geompy.MakeVertex(45., 0., 1.)
-    BlockMh = GetBlockNearPoint(geompy, Spanner, p_45_0_1)
+    BlockMh = geompy.GetBlockNearPoint(Spanner, p_45_0_1)
     id_blockMh = geompy.addToStudyInFather(Spanner, BlockMh, "Middle Block of Spanner Handle")
 
     # ---- add the top face of the middle block in study
 
-    FaceTop = GetFaceByNormale(geompy, BlockMh, vz)
+    FaceTop = geompy.GetFaceByNormale(BlockMh, vz)
     id_facetop = geompy.addToStudyInFather(BlockMh, FaceTop, "Top Face")
 
     # ---- add long edges of the top face in study

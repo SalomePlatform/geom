@@ -29,12 +29,16 @@
 using namespace std;
 #include "RepairGUI_GlueDlg.h"
 
+#include "DlgRef_1Sel_Ext.h"
+
 #include "QAD_Desktop.h"
 #include "QAD_SpinBoxDbl.h"
+#include "QAD_MessageBox.h"
+#include "QAD_WaitCursor.h"
 
 #include "OCCViewer_Viewer3d.h"
-#include "DlgRef_1Sel_Ext.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
 
 #include "GEOMImpl_Types.hxx"
 
@@ -143,7 +147,7 @@ void RepairGUI_GlueDlg::ClickOnOk()
 //=================================================================================
 bool RepairGUI_GlueDlg::ClickOnApply()
 {
-  if ( !onAccept() )
+  if ( !onAcceptLocal() )
     return false;
 
   initName();
@@ -288,10 +292,143 @@ bool RepairGUI_GlueDlg::isValid( QString& msg )
 bool RepairGUI_GlueDlg::execute( ObjectList& objects )
 {
   bool aResult = false;
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow( getOperation() )->MakeGlueFaces( myObject, myTolEdt->value() );
+  GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow
+    ( getOperation() )->MakeGlueFaces( myObject, myTolEdt->value() );
   aResult = !anObj->_is_nil();
   if ( aResult )
     objects.push_back( anObj._retn() );
 
   return aResult;
+}
+
+//================================================================
+// Function : clearShapeBufferLocal
+// Purpose  : 
+//================================================================
+void RepairGUI_GlueDlg::clearShapeBufferLocal( GEOM::GEOM_Object_ptr theObj )
+{
+  if ( CORBA::is_nil( theObj ) )
+    return;
+
+  string IOR = GeometryGUI::GetORB()->object_to_string( theObj );
+  TCollection_AsciiString asciiIOR( strdup( IOR.c_str() ) );
+  GeometryGUI::GetGeomGUI()->GetShapeReader().RemoveShapeFromBuffer( asciiIOR );
+
+  if ( !getStudy() || CORBA::is_nil( getStudy()->getStudyDocument() ) )
+    return;
+
+  SALOMEDS::Study_var aStudy = getStudy()->getStudyDocument();
+  SALOMEDS::SObject_var aSObj = aStudy->FindObjectIOR( IOR.c_str() );
+  if ( CORBA::is_nil( aSObj ) )
+    return;
+
+  SALOMEDS::ChildIterator_var anIt = aStudy->NewChildIterator( aSObj );
+  for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
+    SALOMEDS::GenericAttribute_var anAttr;
+    if ( anIt->Value()->FindAttribute(anAttr, "AttributeIOR") ) {
+      SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+      TCollection_AsciiString asciiIOR( anIOR->Value() );
+      GeometryGUI::GetGeomGUI()->GetShapeReader().RemoveShapeFromBuffer( asciiIOR );      
+    }
+  }
+}
+
+//================================================================
+// Function : onAccept
+// Purpose  : This method should be called from dialog's slots onOk() and onApply()
+//            It perfroms user input validation, then it 
+//            performs a proper operation and manages transactions, etc.
+//================================================================
+bool RepairGUI_GlueDlg::onAcceptLocal( const bool publish, const bool useTransaction )
+{
+  QAD_Study* aDoc = QAD_Application::getDesktop()->getActiveStudy();
+  SALOMEDS::Study_var aStudy = aDoc->getStudyDocument();
+
+  bool aLocked = aStudy->GetProperties()->IsLocked();
+  if ( aLocked ) {
+    MESSAGE("GEOMBase_Helper::onAccept - ActiveStudy is locked");
+    QAD_MessageBox::warn1 ( (QWidget*)QAD_Application::getDesktop(),
+			   QObject::tr("WRN_WARNING"), 
+			   QObject::tr("WRN_STUDY_LOCKED"),
+			   QObject::tr("BUT_OK") );
+    return false;
+  }
+
+  QString msg;
+  if ( !isValid( msg ) ) {
+    showError( msg );
+    return false;
+  }
+
+  erasePreview( false );
+
+  try {
+    if ( ( !publish && !useTransaction ) || openCommand() ) {
+      QAD_WaitCursor wc;
+      QAD_Application::getDesktop()->putInfo( "" );
+      ObjectList objects;
+      // JFA 28.12.2004 if ( !execute( objects ) || !getOperation()->IsDone() ) {
+      if ( !execute( objects ) ) { // JFA 28.12.2004 // To enable warnings
+	wc.stop();
+	abortCommand();
+	showError();
+      }
+      else {
+	const int nbObjs = objects.size();
+	bool withChildren = false;
+	for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
+	  if ( publish ) {
+	    QString aName("");
+	    if ( nbObjs > 1 )
+	      aName = strlen( getNewObjectName() ) ? GEOMBase::GetDefaultName( getNewObjectName() ) : GEOMBase::GetDefaultName( getPrefix( *it ) );
+	    else {
+	      aName = getNewObjectName();
+	      // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
+	      if ( aName.isEmpty() )
+		aName = GEOMBase::GetDefaultName( getPrefix( *it ) );
+	    }
+	    addInStudy( *it, aName.latin1() );
+	    withChildren = false;
+	    display( *it, false );
+	  }
+	  else { // asv : fix of PAL6454. If publish==false, then the original shape was modified, and need to be re-cached in GEOM_Client 
+	         // before redisplay
+	    clearShapeBufferLocal( *it );
+	    withChildren = true;
+	    redisplay( *it, withChildren, false );
+          }
+	}
+
+	if ( nbObjs ) {
+	  commitCommand();
+	  updateObjBrowser();
+	  QAD_Application::getDesktop()->putInfo( QObject::tr("GEOM_PRP_DONE") );
+	}
+	else {
+	  abortCommand();
+        }
+
+        // JFA 28.12.2004 BEGIN // To enable warnings
+        if ( !getOperation()->_is_nil() ) {
+          if ( !getOperation()->IsDone() ) {
+            wc.stop();
+            QString msgw = QObject::tr( getOperation()->GetErrorCode() );
+            QAD_MessageBox::warn1(QAD_Application::getDesktop(), 
+                                  QObject::tr( "WRN_WARNING" ), 
+                                  msgw, 
+                                  QObject::tr( "BUT_OK" ));
+          }
+        }
+        // JFA 28.12.2004 END
+      }
+    }
+  }
+  catch( const SALOME::SALOME_Exception& e ) {
+    QtCatchCorbaException( e );
+    abortCommand();
+  }
+
+  updateViewer();
+
+  return true;
 }

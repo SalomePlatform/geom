@@ -403,17 +403,19 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
            theCommandID == 607 ||   // MENU REPAIR - REMOVE INTERNAL WIRES
            theCommandID == 608 ||   // MENU REPAIR - ADD POINT ON EDGE
            theCommandID == 609 ||   // MENU REPAIR - FREE BOUNDARIES
+           theCommandID == 610 ||   // MENU REPAIR - FREE FACES
 	   theCommandID == 602 ) {  // MENU REPAIR - GLUE FACES
     library = geomGUI->getLibrary( "libRepairGUI.so" );
   }
-  else if( theCommandID == 701  ||  // MENU MEASURE - PROPERTIES
-	   theCommandID == 702  ||  // MENU MEASURE - CDG
-	   theCommandID == 703  ||  // MENU MEASURE - INERTIA
-	   theCommandID == 7041 ||  // MENU MEASURE - BOUNDING BOX
-	   theCommandID == 7042 ||  // MENU MEASURE - MIN DISTANCE
-	   theCommandID == 705  ||  // MENU MEASURE - TOLERANCE
-	   theCommandID == 706  ||  // MENU MEASURE - WHATIS
-	   theCommandID == 707  ||  // MENU MEASURE - CHECK
+  else if( theCommandID == 701   ||  // MENU MEASURE - PROPERTIES
+	   theCommandID == 702   ||  // MENU MEASURE - CDG
+	   theCommandID == 703   ||  // MENU MEASURE - INERTIA
+	   theCommandID == 7041  ||  // MENU MEASURE - BOUNDING BOX
+	   theCommandID == 7042  ||  // MENU MEASURE - MIN DISTANCE
+	   theCommandID == 705   ||  // MENU MEASURE - TOLERANCE
+	   theCommandID == 706   ||  // MENU MEASURE - WHATIS
+	   theCommandID == 707   ||  // MENU MEASURE - CHECK
+	   theCommandID == 7072  ||  // MENU MEASURE - CHECK COMPOUND OF BLOCKS
 	   theCommandID == 708 ) {  // MENU MEASURE - POINT COORDINATES
     library = geomGUI->getLibrary( "libMeasureGUI.so" );
   }
@@ -421,9 +423,10 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	   theCommandID == 801 ) {  // MENU GROUP - EDIT
     library = geomGUI->getLibrary( "libGroupGUI.so" );
   }
-  else if( theCommandID == 9999 ||  // MENU BLOCKS - HEXAHEDRAL SOLID
-           theCommandID == 9998 ||  // MENU BLOCKS - MULTI-TRANSFORMATION
-           theCommandID == 9997 ||  // MENU BLOCKS - QUADRANGLE FACE
+  else if( theCommandID == 9999  ||  // MENU BLOCKS - HEXAHEDRAL SOLID
+           theCommandID == 9998  ||  // MENU BLOCKS - MULTI-TRANSFORMATION
+           theCommandID == 9997  ||  // MENU BLOCKS - QUADRANGLE FACE
+           theCommandID == 99991 ||  // MENU BLOCKS - PROPAGATE
            theCommandID == 9995 ) { // MENU BLOCKS - EXPLODE ON BLOCKS
     library = geomGUI->getLibrary( "libBlocksGUI.so" );
   }

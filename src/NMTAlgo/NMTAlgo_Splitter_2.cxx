@@ -31,7 +31,7 @@
 
 //=======================================================================
 //function : KeepShapesInside
-//purpose  : remove shapes that are outside of S from resul
+//purpose  : remove shapes that are outside of S from result
 //=======================================================================
   void NMTAlgo_Splitter::KeepShapesInside (const TopoDS_Shape& S)
 {
@@ -102,121 +102,150 @@
 
 //=======================================================================
 //function : RemoveShapesInside
-//purpose  : remove shapes that are inside S from resul
+//purpose  : remove shapes that are inside S from result
 //=======================================================================
-  void NMTAlgo_Splitter::RemoveShapesInside (const TopoDS_Shape& S)
+  void NMTAlgo_Splitter::RemoveShapesInside (const TopoDS_Shape& aS)
 {
   TopoDS_Iterator it;
-  if (S.ShapeType() < TopAbs_SOLID) { // compound or compsolid
-    for (it.Initialize( S ); it.More(); it.Next())
-      RemoveShapesInside( it.Value());
+  TopAbs_ShapeEnum aTypeS;
+  //
+  aTypeS=aS.ShapeType();
+  if (aTypeS < TopAbs_SOLID) { // compound or compsolid
+    it.Initialize(aS);
+    for (; it.More(); it.Next()) {
+      const TopoDS_Shape& aSx=it.Value();
+      RemoveShapesInside(aSx);
+    }
     return;
   }
-  Standard_Boolean isTool = Standard_False;
-  if (!myImageShape.HasImage( S )) {
-    //isTool = CheckTool( S );
-    //if (!isTool) return;
-    return;
-  }
-
-  TopoDS_Shape IntFacesComp = FindFacesInside( S, Standard_False, Standard_True);
+  //
+  Standard_Boolean bFromTool, bIsClosed;
+  Standard_Integer i, aNbE;
+  TopoDS_Shape aIntFacesComp;
+  TopoDS_Compound aC;
   TopTools_IndexedMapOfShape MIF; // map of internal faces
-  TopExp::MapShapes( IntFacesComp, TopAbs_FACE, MIF);
-
-  if (MIF.IsEmpty()) return;
-
-  // add to MIF split faces of S
-  if (myImageShape.HasImage(S))
-    TopExp::MapShapes( myImageShape.Image(S).First(), TopAbs_FACE, MIF);
-
-  // leave in the result only those shapes not having all face in MIF
-  
-  TopoDS_Compound C;
-  myBuilder.MakeCompound(C);
-
-  // RMF : faces of removed shapes that encounter once
   TopTools_MapOfShape RFM;
-  
-  for (it.Initialize( myShape ); it.More(); it.Next()) {
-    
-    TopExp_Explorer expResF( it.Value(), TopAbs_FACE );
-    for (; expResF.More(); expResF.Next())
-      if (!MIF.Contains( expResF.Current()))
-	break;
-
-    if (expResF.More())
-      // add shape to result
-      myBuilder.Add( C, it.Value() );
-    else 
-      // add faces of a removed shape to RFM
-      for (expResF.ReInit(); expResF.More(); expResF.Next()) {
-	const TopoDS_Shape& F = expResF.Current();
-	if ( ! RFM.Remove ( F ))
-	  RFM.Add( F );
-      }
+  TopTools_MapIteratorOfMapOfShape itF;
+  TopTools_IndexedDataMapOfShapeListOfShape aMEF;
+  //
+  bFromTool=myToolShapes.Contains(aS);
+  //
+  if (!myImageShape.HasImage(aS)) {
+    return; 
   }
-
-  if (!isTool) {
-
-    // rebuild S, it must remain in the result
-
-    Standard_Boolean isClosed = Standard_False;
-    switch (S.ShapeType()) {
-    case TopAbs_SOLID :
-      isClosed = Standard_True; break;
-    case TopAbs_SHELL: {
-      TopTools_IndexedDataMapOfShapeListOfShape MEF;
-      TopExp::MapShapesAndAncestors(S, TopAbs_EDGE, TopAbs_FACE, MEF);
-      Standard_Integer i;
-      for (i=1;  isClosed && i<=MEF.Extent();  ++i) 
-        isClosed = ( MEF(i).Extent() != 1 );
-      break;
-    }
-    default:
-      isClosed = Standard_False;
-    }
-    if (isClosed) {
-
-      // add to a new shape external faces of removed shapes, ie those in RFM
-
-      TopoDS_Shell Shell;
-      myBuilder.MakeShell( Shell );
-
-      // exclude redundant internal face with edges encounterd only once
-      TopTools_IndexedDataMapOfShapeListOfShape MEF;
-      TopTools_MapIteratorOfMapOfShape itF (RFM);
-      for ( ; itF.More(); itF.Next()) 
-        TopExp::MapShapesAndAncestors(itF.Key(), TopAbs_EDGE, TopAbs_FACE, MEF);
-
-      // add only faces forming a closed shell
-      for (itF.Reset() ; itF.More(); itF.Next())
-      {
-        TopExp_Explorer expE (itF.Key(), TopAbs_EDGE);
-        for (; expE.More(); expE.Next())
-          if (MEF.FindFromKey(expE.Current()).Extent() == 1)
-            break;
-        if (!expE.More())
-          myBuilder.Add( Shell, itF.Key());
+  //
+  aIntFacesComp = FindFacesInside(aS, Standard_False, Standard_True);
+  //
+  TopExp::MapShapes(aIntFacesComp, TopAbs_FACE, MIF);
+  if (MIF.IsEmpty()) {
+    return;
+  }
+  // add to MIF split faces of S
+  const TopoDS_Shape& aSIm=myImageShape.Image(aS).First();
+  TopExp::MapShapes(aSIm, TopAbs_FACE, MIF);
+  //
+  // leave in the result only those shapes not having all face in MIF
+  myBuilder.MakeCompound(aC);
+  //
+  // RFM : faces of removed shapes that encounter once
+  it.Initialize(myShape);
+  for (; it.More(); it.Next()) {
+    TopExp_Explorer expResF;
+    //
+    const TopoDS_Shape& aSR=it.Value();
+    //
+    expResF.Init(aSR, TopAbs_FACE);
+    for (; expResF.More(); expResF.Next()) {
+      const TopoDS_Shape& aFR=expResF.Current();
+      if (!MIF.Contains(aFR)) {
+	break;
       }
-
-      if (S.ShapeType() == TopAbs_SOLID) {
-        TopoDS_Solid Solid;
-        myBuilder.MakeSolid( Solid );
-        myBuilder.Add (Solid, Shell);
-        myBuilder.Add (C, Solid);
-      }
-      else
-        myBuilder.Add (C, Shell);
+    }
+    //
+    if (expResF.More()) {
+      // add shape to result
+      myBuilder.Add(aC, aSR);
     }
     else {
-      if (myImageShape.HasImage( S )) {
-        for (it.Initialize( myImageShape.Image(S).First()); it.More(); it.Next())
-          myBuilder.Add (C, it.Value());
-      }
+      // add faces of a removed shape to RFM
+      if (!bFromTool) { //modified by NIZNHY-PKV Thu Dec 23 09:55:39 2004 ft
+	for (expResF.ReInit(); expResF.More(); expResF.Next()) {
+	  const TopoDS_Shape& aF = expResF.Current();
+	  if (!RFM.Remove(aF)) {
+	    RFM.Add(aF);
+	  }
+	}
+      }//modified by NIZNHY-PKV Thu Dec 23 09:55:29 2004 ft
+    }
+  }// for (; it.More(); it.Next())
+  //
+  if (bFromTool) {
+    myShape=aC;
+    return;
+  }
+  //
+  // bIsClosed
+  bIsClosed = Standard_False; 
+  if (aTypeS==TopAbs_SOLID) {
+    bIsClosed = Standard_True; 
+  }
+  else if (aTypeS==TopAbs_SHELL) {
+    aMEF.Clear();
+    TopExp::MapShapesAndAncestors(aS, TopAbs_EDGE, TopAbs_FACE, aMEF);
+    aNbE=aMEF.Extent(); 
+    for (i=1; bIsClosed && i<=aNbE; ++i) {
+      bIsClosed=(aMEF(i).Extent()!=1);
     }
   }
-  
-  myShape = C;
+  //
+  // rebuild S, it must remain in the result
+  if (bIsClosed) {
+    // add to a new shape external faces of removed shapes, ie those in RFM
+    TopoDS_Shell aShell;
+    //
+    myBuilder.MakeShell(aShell);
+    // exclude redundant internal face with edges encounterd only once
+    aMEF.Clear();
+    itF.Initialize (RFM);
+    for (; itF.More(); itF.Next()) {
+      const TopoDS_Shape& aF=itF.Key();
+      TopExp::MapShapesAndAncestors(aF, TopAbs_EDGE, TopAbs_FACE, aMEF);
+    }
+    // add only faces forming a closed shell
+    for (itF.Reset() ; itF.More(); itF.Next())  {
+      const TopoDS_Shape& aF=itF.Key();
+      TopExp_Explorer expE (aF, TopAbs_EDGE);
+      for (; expE.More(); expE.Next()) {
+	if (aMEF.FindFromKey(expE.Current()).Extent()==1) {
+	  break;
+	}
+      }
+      if (!expE.More()) {
+	myBuilder.Add(aShell, aF);
+      }
+    }
+    //
+    if (aTypeS==TopAbs_SOLID) {
+      TopoDS_Solid aSolid;
+      //
+      myBuilder.MakeSolid(aSolid);
+      myBuilder.Add (aSolid, aShell);
+      myBuilder.Add (aC, aSolid);
+    }
+    else {
+      myBuilder.Add (aC, aShell);
+    }
+  } // if (bIsClosed) {
+  //
+  else {
+    it.Initialize(aSIm);
+    for (; it.More(); it.Next()) {
+      const TopoDS_Shape& aSx=it.Value();
+      myBuilder.Add (aC, aSx);
+    }
+  }
+  //
+  myShape=aC;
 }
 
 //=======================================================================

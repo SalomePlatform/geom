@@ -12,21 +12,49 @@ package GEOMAlgo
 uses  
     TCollection, 
     TColStd, 
+    Geom,     
     Bnd, 
     gp,	 
     TopAbs,
     TopoDS, 
     TopTools, 
-    IntTools 
+    IntTools, 
+    BOPTools, 
+    BOP     
     
-is  
+is   
+    --  enumerations 
+    --
+    enumeration State is 
+    	ST_UNKNOWN, 
+	ST_IN,
+	ST_OUT,
+	ST_ON, 
+	ST_ONIN, 
+	ST_ONOUT, 
+	ST_INOUT    
+    end State;
+    -- 
+    --  classes 
+    -- 
     deferred class Algo;
-    deferred class ShapeAlgo;
+    deferred class ShapeAlgo; 
+    -- 
+    --  gluer    	     
     class Gluer; 
+    class GlueAnalyser; 
+    class CoupleOfShapes; 
     class PassKey; 
     class PassKeyMapHasher; 
     class Tools; 
- 
+    --	     
+    --  finder on 
+    deferred class ShapeSolid;
+    class WireSolid; 
+    class ShellSolid; 
+    class VertexSolid; 
+    class FinderShapeOn; 
+    --
     class IndexedDataMapOfPassKeyListOfShape   
 	instantiates IndexedDataMap from TCollection (PassKey from GEOMAlgo, 
 						      ListOfShape from TopTools, 
@@ -39,6 +67,10 @@ is
     class IndexedDataMapOfIntegerShape  
     	instantiates IndexedDataMap from TCollection   	(Integer from Standard,
 	    		    		         	 Shape from TopoDS,
-	    		    		         	 MapIntegerHasher from TColStd);
+	    		    		         	 MapIntegerHasher from TColStd); 
+							  
+    class ListOfCoupleOfShapes  
+    	instantiates List from TCollection  (CoupleOfShapes from GEOMAlgo);
+
 
 end GEOMAlgo;

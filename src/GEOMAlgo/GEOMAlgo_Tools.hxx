@@ -31,6 +31,9 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+#ifndef _Handle_Geom_Surface_HeaderFile
+#include <Handle_Geom_Surface.hxx>
+#endif
 class GEOMAlgo_IndexedDataMapOfPassKeyListOfShape;
 class IntTools_Context;
 class TopTools_ListOfShape;
@@ -39,6 +42,7 @@ class TopoDS_Shape;
 class gp_Pnt;
 class TopoDS_Edge;
 class TopoDS_Face;
+class Geom_Surface;
 
 
 #ifndef _Standard_HeaderFile
@@ -75,6 +79,8 @@ Standard_EXPORT static  void PointOnEdge(const TopoDS_Edge& aE,gp_Pnt& aP3D) ;
 Standard_EXPORT static  void PointOnEdge(const TopoDS_Edge& aE,const Standard_Real aT,gp_Pnt& aP3D) ;
 Standard_EXPORT static  void PointOnFace(const TopoDS_Face& aF,gp_Pnt& aP3D) ;
 Standard_EXPORT static  void PointOnFace(const TopoDS_Face& aF,const Standard_Real aU,const Standard_Real aV,gp_Pnt& aP3D) ;
+Standard_EXPORT static  void RefinePCurveForEdgeOnFace(const TopoDS_Edge& aE,const TopoDS_Face& aF,const Standard_Real aU1,const Standard_Real aU2) ;
+Standard_EXPORT static  Standard_Boolean IsUPeriodic(const Handle(Geom_Surface)& aS) ;
 
 
 

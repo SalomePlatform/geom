@@ -202,7 +202,9 @@
 #define BLOCK_TWO_FACES           5
 #define BLOCK_MULTI_TRANSFORM_1D  6
 #define BLOCK_MULTI_TRANSFORM_2D  7
-#define BLOCK_COMPOUND_GLUE      8
+#define BLOCK_COMPOUND_GLUE       8
+#define BLOCK_REMOVE_EXTRA        9
+#define BLOCK_COMPOUND_IMPROVE    10
 
 // Marker
 #define MARKER_CS 1

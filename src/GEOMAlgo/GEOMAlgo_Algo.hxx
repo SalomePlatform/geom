@@ -66,8 +66,8 @@ protected:
  // 
 Standard_EXPORT GEOMAlgo_Algo();
 Standard_EXPORT virtual ~GEOMAlgo_Algo();
-Standard_EXPORT virtual  void CheckData()  = 0;
-Standard_EXPORT virtual  void CheckResult()  = 0;
+Standard_EXPORT virtual  void CheckData() ;
+Standard_EXPORT virtual  void CheckResult() ;
 
 
  // Fields PROTECTED

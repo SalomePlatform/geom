@@ -1,0 +1,48 @@
+-- File:	GEOMAlgo_CoupleOfShapes.cdl
+-- Created:	Wed Dec 15 13:00:10 2004
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2004
+
+
+class CoupleOfShapes from GEOMAlgo 
+
+	---Purpose: 
+
+uses
+    Shape from TopoDS
+
+--raises
+
+is 
+    Create 
+    	returns CoupleOfShapes from GEOMAlgo; 
+
+    SetShapes(me:out; 
+    	    aS1: Shape from TopoDS; 
+    	    aS2: Shape from TopoDS);
+     
+    SetShape1(me:out; 
+    	    aS1: Shape from TopoDS); 
+	 
+    SetShape2(me:out; 
+    	    aS2: Shape from TopoDS);     
+
+    Shapes(me; 
+    	    aS1:out Shape from TopoDS; 
+    	    aS2:out Shape from TopoDS); 
+
+    Shape1(me) 
+    	returns Shape from TopoDS; 
+    ---C++:return const &  
+     
+    Shape2(me) 
+    	returns Shape from TopoDS; 
+    ---C++:return const & 
+
+fields  
+
+    myShape1: Shape from TopoDS is protected;   
+    myShape2: Shape from TopoDS is protected;   
+
+end CoupleOfShapes;

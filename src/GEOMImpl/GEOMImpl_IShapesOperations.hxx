@@ -6,6 +6,7 @@
 
 #include <TopTools_ListOfShape.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
+#include <TColStd_HSequenceOfInteger.hxx>
 
 #include <list>
 
@@ -23,9 +24,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
 
   Handle(GEOM_Object) MakeWire (list<Handle(GEOM_Object)> theEdgesAndWires);
 
-  Handle(GEOM_Object) MakeFace (Handle(GEOM_Object) theWire, bool isPlanarWanted);
+  Handle(GEOM_Object) MakeFace (Handle(GEOM_Object) theWire, const bool isPlanarWanted);
 
-  Handle(GEOM_Object) MakeFaceWires (list<Handle(GEOM_Object)> theWires, bool isPlanarWanted);
+  Handle(GEOM_Object) MakeFaceWires (list<Handle(GEOM_Object)> theWires,
+                                     const bool isPlanarWanted);
 
   Handle(GEOM_Object) MakeShell (list<Handle(GEOM_Object)> theShapes);
 
@@ -42,6 +44,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
                                                     const Standard_Integer theShapeType,
                                                     const Standard_Boolean isSorted);
 
+  Handle(TColStd_HSequenceOfInteger) SubShapeAllIDs (Handle(GEOM_Object)    theShape,
+                                                     const Standard_Integer theShapeType,
+                                                     const Standard_Boolean isSorted);
+
   Handle(GEOM_Object) GetSubShape (Handle(GEOM_Object)    theMainShape,
                                    const Standard_Integer theID);
 
@@ -49,6 +55,29 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
   Standard_Integer NumberOfEdges (Handle(GEOM_Object) theShape);
 
   Handle(GEOM_Object) ReverseShape(Handle(GEOM_Object) theShapes);
+
+  Handle(TColStd_HSequenceOfInteger) GetFreeFacesIDs (Handle(GEOM_Object) theShape);
+
+  Handle(TColStd_HSequenceOfTransient) GetSharedShapes (Handle(GEOM_Object)    theShape1,
+                                                        Handle(GEOM_Object)    theShape2,
+                                                        const Standard_Integer theShapeType);
+
+  Handle(GEOM_Object) GetShapesOnPlane (Handle(GEOM_Object)    theShape,
+                                        const Standard_Integer theShapeType,
+                                        Handle(GEOM_Object)    thePlane);
+
+  Handle(GEOM_Object) GetShapesOnCylinder (Handle(GEOM_Object)    theShape,
+                                           const Standard_Integer theShapeType,
+                                           Handle(GEOM_Object)    theAxis,
+                                           const Standard_Real    theRadius);
+
+  Handle(GEOM_Object) GetShapesOnSphere (Handle(GEOM_Object)    theShape,
+                                         const Standard_Integer theShapeType,
+                                         Handle(GEOM_Object)    theCenter,
+                                         const Standard_Real    theRadius);
+
+  Handle(GEOM_Object) GetInPlace (Handle(GEOM_Object) theShapeWhere,
+                                  Handle(GEOM_Object) theShapeWhat);
 
   static void SortShapes (TopTools_ListOfShape& SL);
 
