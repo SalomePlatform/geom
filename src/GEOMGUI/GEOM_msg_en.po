@@ -1672,6 +1672,9 @@ msgstr "Please, select at least one Shape Process operation to proceed."
 msgid "RepairGUI_ShapeProcessDlg::ERROR_NO_OBJECTS"
 msgstr "Please, select a geometrical object for Shape Processing."
 
+msgid "RepairGUI_ShapeProcessDlg::TIME_CONSUMING"
+msgstr "Enabling this option may result in a very time-consuming operation for some input shapes.\nWould you like to continue?"
+
 msgid "MeasureGUI_PointDlg::POINT"
 msgstr "Point"
 

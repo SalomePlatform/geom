@@ -23,9 +23,14 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
                                     const Handle(TColStd_HArray1OfExtendedString)& theValues );
 
   // Retrieve default Shape Process parameters (from resource file)
-	void GetShapeProcessParameters( list<string>& theOperations,
-                                 	list<string>& theParams,
+  void GetShapeProcessParameters( list<string>& theOperations,
+                                  list<string>& theParams,
                                   list<string>& theValues );
+
+  // Retrieve default Shape Process parameters for given operator
+  bool GetOperatorParameters( const string theOperation, 
+                              list<string>& theParams,
+                              list<string>& theValues );
 
   // returns all parameters that are valid for the given operation (Shape Process operator)
   static bool GetParameters( const string theOperation, list<string>& theParams );                                      

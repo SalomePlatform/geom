@@ -1599,6 +1599,18 @@ module GEOM
     void GetShapeProcessParameters (out string_array theOperators,
 				    out string_array theParameters,
 				    out string_array theValues);
+    /*!
+     *  Get parameters and parameters' values for the given Shape Process operation.
+     *  In the current implementation the defaults are
+     *  read from the file pointed by CSF_ShHealingDefaults environmental variable.
+     *  \param theOperator Input. The operator's name.
+     *  \param theParameters Output. Default list of names of parameters.
+     *  \param theValues Output. List of default values of parameters, in the same order
+     *                           as parameters are listed in \a theParameters list.
+     */
+    void GetOperatorParameters (in string theOperator,
+				out string_array theParameters,
+				out string_array theValues);
 
     /*!
      *  Remove faces from the given object (shape).

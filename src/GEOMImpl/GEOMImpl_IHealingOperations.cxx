@@ -141,29 +141,14 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (list<string>& theOp
 {
   ShHealOper_ShapeProcess aHealer;
   TColStd_SequenceOfAsciiString anOperators;
-  int nbOperatorErrors( 0 ), nbParamValueErrors( 0 );
+  int nbOperatorErrors( 0 );
   if ( aHealer.GetOperators( anOperators ) )
   {
     for ( Standard_Integer i = 1; i <= anOperators.Length(); i++ )
     {
       string anOperation = anOperators.Value( i ).ToCString();
-      theOperations.push_back( anOperation );
-      list<string> aParams, aValues;
-      if ( GetParameters( anOperation, aParams ) )
-      {
-        for ( list<string>::iterator it = aParams.begin(); it != aParams.end(); ++it )
-        {
-          TCollection_AsciiString aParam( (Standard_CString)(*it).c_str() );
-          TCollection_AsciiString aValue;
-          if ( aHealer.GetParameter( aParam, aValue ) )
-          {
-            theParams.push_back( aParam.ToCString() );
-            theValues.push_back( aValue.ToCString() );
-          }
-	  else
-            nbParamValueErrors++;
-        }
-      }
+      if ( GetOperatorParameters( anOperation, theParams, theValues ) )
+	theOperations.push_back( anOperation );
       else
         nbOperatorErrors++;
     }
@@ -173,11 +158,43 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (list<string>& theOp
     SetErrorCode("ERROR retrieving operators (GEOMImpl_IHealingOperations)");
   }
 
-  if (nbOperatorErrors || nbParamValueErrors) {
+  if ( nbOperatorErrors ) {
     TCollection_AsciiString aMsg ("ERRORS retrieving ShapeProcess parameters (GEOMImpl_IHealingOperations): nbOperatorErrors = ");
-    aMsg += TCollection_AsciiString(nbOperatorErrors);
-    aMsg += " ,nbParamValueErrors = ";
-    aMsg += TCollection_AsciiString(nbParamValueErrors);
+    aMsg += TCollection_AsciiString( nbOperatorErrors );
+    MESSAGE(aMsg.ToCString());
+  }
+}
+
+//=============================================================================
+/*!
+ *  GetOperatorParameters
+ */
+//=============================================================================
+bool GEOMImpl_IHealingOperations::GetOperatorParameters( const string theOperation, 
+							 list<string>& theParams,
+							 list<string>& theValues )
+{
+  ShHealOper_ShapeProcess aHealer;
+  int nbParamValueErrors( 0 );
+  list<string> aParams;
+  if ( GetParameters( theOperation, aParams ) ) {
+    for ( list<string>::iterator it = aParams.begin(); it != aParams.end(); ++it ) {
+      TCollection_AsciiString aParam( (Standard_CString)(*it).c_str() );
+      TCollection_AsciiString aValue;
+      if ( aHealer.GetParameter( aParam, aValue ) ) {
+	theParams.push_back( aParam.ToCString() );
+	theValues.push_back( aValue.ToCString() );
+      }
+      else
+	nbParamValueErrors++;
+    }
+  }
+  else
+    return false;
+
+  if ( nbParamValueErrors ) {
+    TCollection_AsciiString aMsg ("ERRORS retrieving ShapeProcess parameter values (GEOMImpl_IHealingOperations): nbParamValueErrors = ");
+    aMsg += TCollection_AsciiString( nbParamValueErrors );
     MESSAGE(aMsg.ToCString());
   }
 }

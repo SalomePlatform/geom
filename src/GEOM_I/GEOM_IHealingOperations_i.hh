@@ -26,6 +26,8 @@ class GEOM_IHealingOperations_i :
 
    void GetShapeProcessParameters(GEOM::string_array_out theOperations, GEOM::string_array_out theParams, GEOM::string_array_out theValues);
 
+   void GetOperatorParameters (const char* theOperator,  GEOM::string_array_out theParams, GEOM::string_array_out theValues);
+
    GEOM::GEOM_Object_ptr SuppressFaces(GEOM::GEOM_Object_ptr theObject, const GEOM::short_array& theFaces);
 
    GEOM::GEOM_Object_ptr CloseContour (GEOM::GEOM_Object_ptr theObject, const GEOM::short_array& theWires, CORBA::Boolean isCommonVertex);

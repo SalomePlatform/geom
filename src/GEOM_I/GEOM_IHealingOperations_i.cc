@@ -123,6 +123,10 @@ void GEOM_IHealingOperations_i::GetShapeProcessParameters(GEOM::string_array_out
                                                           GEOM::string_array_out theParams,
                                                           GEOM::string_array_out theValues)
 {
+  GEOM::string_array_var anOpArray = new GEOM::string_array();
+  GEOM::string_array_var aParArray = new GEOM::string_array();
+  GEOM::string_array_var aValArray = new GEOM::string_array();
+
   // retrieve the values as stl-lists
   list<string> operationsList, paramsList, valuesList;
   GetOperations()->GetShapeProcessParameters( operationsList, paramsList, valuesList );
@@ -130,33 +134,64 @@ void GEOM_IHealingOperations_i::GetShapeProcessParameters(GEOM::string_array_out
   parSize = paramsList.size(),
   valSize = valuesList.size();
 
-  // returns in case of an error
-  if ( opSize < 0 || parSize < 0 || parSize != valSize )
-    return;
+  if ( opSize >= 0 && parSize >= 0 && parSize == valSize ) {
+    // allocate the CORBA arrays, sizes == returned lists' sizes
+    anOpArray->length(opSize);
+    aParArray->length(parSize);
+    aValArray->length(valSize);
 
-  // allocate the CORBA arrays, sizes == returned lists' sizes
-  GEOM::string_array_var anOpArray = new GEOM::string_array();
-  GEOM::string_array_var aParArray = new GEOM::string_array();
-  GEOM::string_array_var aValArray = new GEOM::string_array();
-  anOpArray->length(opSize);
-  aParArray->length(parSize);
-  aValArray->length(valSize);
+    // fill the local CORBA arrays with values from lists
+    list<string>::iterator opIt, parIt, valIt;
+    int i = 0;
+    for ( opIt = operationsList.begin(); opIt != operationsList.end(); i++,++opIt )
+      anOpArray[i] = CORBA::string_dup( (*opIt).c_str() );
 
-  // fill the local CORBA arrays with values from lists
-  list<string>::iterator opIt, parIt, valIt;
-  int i = 0;
-  for ( opIt = operationsList.begin(); opIt != operationsList.end(); i++,++opIt )
-    anOpArray[i] = CORBA::string_dup( (*opIt).c_str() );
-
-  for ( i = 0, parIt = paramsList.begin(), valIt = valuesList.begin();
-       parIt != paramsList.end(); i++, ++parIt,++valIt )
-  {
-    aParArray[i] = CORBA::string_dup( (*parIt).c_str() );
-    aValArray[i] = CORBA::string_dup( (*valIt).c_str() );
+    for ( i = 0, parIt = paramsList.begin(), valIt = valuesList.begin();
+	  parIt != paramsList.end(); i++, ++parIt,++valIt ) {
+      aParArray[i] = CORBA::string_dup( (*parIt).c_str() );
+      aValArray[i] = CORBA::string_dup( (*valIt).c_str() );
+    }
   }
 
   // initialize out-parameters with local arrays
   theOperations = anOpArray._retn();
+  theParams = aParArray._retn();
+  theValues = aValArray._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetOperatorParameters
+ */
+//=============================================================================
+void GEOM_IHealingOperations_i::GetOperatorParameters (const char* theOperator,  
+						       GEOM::string_array_out theParams, 
+						       GEOM::string_array_out theValues)
+{
+  GEOM::string_array_var aParArray = new GEOM::string_array();
+  GEOM::string_array_var aValArray = new GEOM::string_array();
+
+  // retrieve the values as stl-lists
+  list<string> paramsList, valuesList;
+  if ( GetOperations()->GetOperatorParameters( theOperator, paramsList, valuesList ) ) {
+    const int parSize = paramsList.size(), valSize = valuesList.size();
+
+    if ( parSize == valSize ) {
+      aParArray->length(parSize);
+      aValArray->length(valSize);
+
+      // fill the local CORBA arrays with values from lists
+      list<string>::iterator parIt, valIt;
+      int i;
+      for ( i = 0, parIt = paramsList.begin(), valIt = valuesList.begin();
+            parIt != paramsList.end(); i++, ++parIt,++valIt ) {
+	aParArray[i] = CORBA::string_dup( (*parIt).c_str() );
+	aValArray[i] = CORBA::string_dup( (*valIt).c_str() );
+      }
+    }
+  }
+
+  // initialize out-parameters with local arrays
   theParams = aParArray._retn();
   theValues = aValArray._retn();
 }
