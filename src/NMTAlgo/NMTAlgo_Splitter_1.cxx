@@ -37,16 +37,35 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 
 #include <NMTAlgo_Loop3d.hxx>
+//
+#include <BOPTools_Tools2D.hxx>
+#include <Geom_Curve.hxx>
+#include <TopAbs_Orientation.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <gp_Dir.hxx>
+#include <gp_Pnt.hxx>
+#include <BOPTools_Tools3D.hxx>
+#include <TopoDS.hxx>
+#include <BRep_Tool.hxx>
+#include <gp_Pln.hxx>
+#include <TopAbs_State.hxx>
 
 //
-//modified by NIZNHY-PKV Tue Feb  1 12:12:39 2005 f
 static 
   void RefineShells(const TopoDS_Shape& ,
 		    TopTools_ListOfShape&);
 static 
   void RefineSolids(const TopoDS_Shape& ,
 		    TopTools_ListOfShape&);
-//modified by NIZNHY-PKV Tue Feb  1 12:12:43 2005 t
+
+//modified by NIZNHY-PKV Fri Feb 25 17:19:39 2005f XX
+static
+  void GetPlanes (const TopoDS_Edge& anEx,
+		const TopTools_IndexedDataMapOfShapeListOfShape& anEFMapx,
+		const TopoDS_Face& aF1,
+		TopAbs_State& aStPF1);
+//modified by NIZNHY-PKV Fri Feb 25 17:19:44 2005t XX
 
 //=======================================================================
 //function : ShellsAndSolids
@@ -62,6 +81,9 @@ static
   myAddedFacesMap.Clear();
   bMakeSolids=(myLimit==TopAbs_SHAPE || myLimit<TopAbs_SHELL);
   //
+  //modified by NIZNHY-PKV Thu Feb 24 17:22:32 2005 f XX
+  myInternalFaces.Clear(); // remove it after all modifs
+  //modified by NIZNHY-PKV Thu Feb 24 17:22:56 2005 t XX
   aItS.Initialize(myListShapes);
   for ( ;aItS.More(); aItS.Next()) {
     const TopoDS_Shape& aS=aItS.Value();
@@ -131,9 +153,8 @@ void NMTAlgo_Splitter::MakeShells(const TopoDS_Shape& aS,
   }
   //
   aLNS=aShellMaker.MakeShells(myAddedFacesMap);
-  //modified by NIZNHY-PKV Tue Feb  1 14:11:11 2005 f
+  //
   RefineShells(aS, aLNS);
-  //modified by NIZNHY-PKV Tue Feb  1 14:11:14 2005 t
   //
   // Add faces added to new shell to myAddedFacesMap:
   // avoid rebuilding twice common part of 2 solids.
@@ -223,9 +244,9 @@ void NMTAlgo_Splitter::MakeSolids(const TopoDS_Shape&   theSolid,
   }
   //
   theShellList.Clear();
-  //modified by NIZNHY-PKV Tue Feb  1 15:06:16 2005 f
+  //
   RefineSolids(theSolid, aNewSolids);
-  //modified by NIZNHY-PKV Tue Feb  1 15:06:21 2005 t
+  //
   theShellList.Append(aNewSolids);
 }
  
@@ -243,6 +264,7 @@ void NMTAlgo_Splitter::MakeSolids(const TopoDS_Shape&   theSolid,
 						const Standard_Boolean All)
 {
   TopExp_Explorer expl;
+  TopAbs_State aState;
   //
   // ================================================
   // check if internal faces have been already found
@@ -334,6 +356,7 @@ void NMTAlgo_Splitter::MakeSolids(const TopoDS_Shape&   theSolid,
   // ===========================
   // find faces inside theShape
   // ===========================
+  Standard_Boolean sameDom1, sameDom2;
   Standard_Boolean skipAlreadyAdded = Standard_False;
   Standard_Boolean GoodOri, inside;
   Standard_Real dot;
@@ -343,137 +366,77 @@ void NMTAlgo_Splitter::MakeSolids(const TopoDS_Shape&   theSolid,
   // iterate on section edges, check faces of other shapes
   // sharing section edges and put internal faces to KeepFaces
   Mapit.Initialize(DMSEFP);
-  for (; Mapit.More() ; Mapit.Next() ) {
+  for (; Mapit.More() ; Mapit.Next()) {
     // a new edge of theShape
     const TopoDS_Edge& E = TopoDS::Edge (Mapit.Key());
-    // an original edge of which E is a split
-    //const TopoDS_Edge& OrigE = TopoDS::Edge (myImagesEdges.Root(E));
-    // does OrigE itself splits a face
-    Standard_Boolean isSectionE=IsSectionEdge(E);//(OrigE);  
-
+    //
+    //Standard_Boolean isSectionE=IsSectionEdge(E);//(OrigE);  
+    //
     // split faces of other shapes sharing E
     TopTools_ListOfShape& LSF = DMSEFP.ChangeFind(E);
+    //
     itl.Initialize( LSF );
     while (itl.More()) {
       // a split faces of other shape
       TopoDS_Face aFace1 = TopoDS::Face(itl.Value());
       // remove aFace1 form DMSEFP and MFP
       LSF.Remove( itl ); // == itl.Next();
-      if (!MFP.Remove( aFace1 ))
-	continue; // was not is MFP ( i.e already checked)
+      if (!MFP.Remove(aFace1))
+	continue; // was not is MFP (i.e already checked)
+      //
       // check if aFace1 was already added to 2 shells
       if (!All &&
 	  myAddedFacesMap.Contains(aFace1) &&
 	  myAddedFacesMap.Contains(aFace1.Reversed())) {
 	skipAlreadyAdded = Standard_True;
-	//modified by NIZNHY-PKV Wed Feb 11 16:11:53 2004 f
-	//continue;
-	//modified by NIZNHY-PKV Wed Feb 11 16:35:48 2004 t
       }
       //
-      // find another face which originates from the same face as aFace1:
-      // usually aFace2 is internal if aFace1 is not and vice versa
       TopoDS_Shape anOrigFace = aFace1;
       if (myImagesFaces.IsImage(aFace1)){
         anOrigFace = myImagesFaces.Root(aFace1);
       }
       //
-      TopoDS_Shape aFace2;
-      if ( !isSectionE ) {
-        while (itl.More()) {
-          aFace2 = itl.Value();
-	  //
-	   TopoDS_Shape anOrigFace2 = aFace2;
-	  if (myImagesFaces.IsImage(aFace2)) {
-	    anOrigFace2 = myImagesFaces.Root(aFace2);
-	  }
-	  //
-          if (!MFP.Contains( aFace2 )) {
-            LSF.Remove( itl );
-            continue;
-          }
-          //if (anOrigFace.IsSame( myImagesFaces.Root( aFace2 )))
-          if (anOrigFace.IsSame(anOrigFace2)) {
-            break;
-	  }
-          itl.Next();
-        }
-        if (itl.More()) { // aFace2 found, remove it from maps
-          LSF.Remove( itl );
-          MFP.Remove(aFace2);
-        }
-        else{
-          aFace2.Nullify();
-	}
-        itl.Initialize( LSF );
-      } 
-
+      // <- A was here
+      //
       // check that anOrigFace is not same domain with CSF faces it intersects
-
+      //
       const TopTools_ListOfShape& FL = DMEF.FindFromKey(E); //faces of CSF sharing E
-      
+      //
       const TopoDS_Shape& origF1 = myImagesFaces.IsImage(FL.First()) ?
 	myImagesFaces.Root(FL.First()) : FL.First();
+      //
       const TopoDS_Shape& origF2 = myImagesFaces.IsImage(FL.Last()) ?
 	myImagesFaces.Root(FL.Last()) : FL.Last();
       //
-      Standard_Boolean sameDom1 = anOrigFace.IsSame( origF1 );
-      Standard_Boolean sameDom2 = anOrigFace.IsSame( origF2 );
-
+      sameDom1 = anOrigFace.IsSame( origF1 );
+      sameDom2 = anOrigFace.IsSame( origF2 );
+      //
       if (!(sameDom1 || sameDom2) && HasSameDomainF( TopoDS::Face(anOrigFace) )) {       
 	sameDom1 = IsSameDomainF( TopoDS::Face(anOrigFace), TopoDS::Face(origF1));
         if (origF1 == origF2) {
           sameDom2 = sameDom1;
 	}
-        else{
-          IsSameDomainF( TopoDS::Face(anOrigFace), TopoDS::Face(origF2));                   
-	}
       }
       if (sameDom1 && sameDom2){
 	continue;
       }
+      //
       if (sameDom1 || sameDom2) {
 	inside = NMTAlgo_Loop3d::IsInside (E,
 					   TopoDS::Face(FL.First()),
 					   TopoDS::Face(FL.Last()),
 					   1, dot, GoodOri);
-	if (inside || (dot + Precision::Angular() >= 1.0))
+	if (inside || (dot + Precision::Angular() >= 1.0)) {
 	  continue; // E is convex between origF1 and origF2 or they are tangent
-      }
-      //
-      // keep one of found faces
-
-      //face of CSF sharing E
-      const TopoDS_Shape& aShapeFace = sameDom1 ? FL.Last() : FL.First();
-      // analyse aFace1 state
-      inside = NMTAlgo_Loop3d::IsInside (E, TopoDS::Face(aShapeFace), aFace1,
-					   1, dot, GoodOri);
-//      if (inside && isSectionE) {
-      if (inside) { //IFV 27.08.04
-        // aFace1 must be tested with both adjacent faces of CSF
-        const TopoDS_Shape& aShapeFace2 = sameDom1 ? FL.First() : FL.Last();
-        if (aShapeFace2 != aShapeFace){
-          inside = NMTAlgo_Loop3d::IsInside (E, TopoDS::Face(aShapeFace2), aFace1,
-                                               1, dot, GoodOri);
 	}
       }
       //
-      // store internal face
-      if (inside)
-        KeepFaces.Append(aFace1);
-
-      else if (!aFace2.IsNull()) {
-        if (dot + Precision::Angular() >= 1.0) {
-          // aFace2 state is not clear, it will be analysed alone,
-          // put it back to the maps
-          MFP.Add( aFace2 );
-          LSF.Append( aFace2 );
-        }
-        else
-          KeepFaces.Append(aFace2);
+      GetPlanes(E, DMEF, aFace1, aState);
+      if (aState==TopAbs_IN) {
+	KeepFaces.Append(aFace1);
       }
-    }
-  }
+    } //while (itl.More()) {
+  } //for (; Mapit.More() ; Mapit.Next() )
 
   // ===================================================
   // add not distributed faces connected with KeepFaces
@@ -713,8 +676,6 @@ TopoDS_Shape NMTAlgo_Splitter::GetOriginalShape(const TopoDS_Shape& theShape) co
   }
   return anOrigShape;
 }
-
-//modified by NIZNHY-PKV Tue Feb  1 11:56:24 2005f
 //=======================================================================
 //function :RefineShells 
 //purpose  : 
@@ -825,4 +786,131 @@ void RefineSolids(const TopoDS_Shape& aSolidOr,
   aLNS.Clear();
   aLNS.Append(aSolidOr);
 }
-//modified by NIZNHY-PKV Tue Feb  1 11:56:28 2005t
+//modified by NIZNHY-PKV Fri Feb 25 16:59:57 2005f XX
+//=======================================================================
+//function : GetPlanes
+//purpose  :
+//=======================================================================
+void GetPlanes (const TopoDS_Edge& anEx,
+		const TopTools_IndexedDataMapOfShapeListOfShape& anEFMapx,
+		const TopoDS_Face& aF1,
+		TopAbs_State& aStPF1)
+		
+{
+  Standard_Boolean bIsAdjExists;
+  Standard_Real aT, aT1, aT2;
+  TopAbs_Orientation anOrEx, anOr;
+  gp_Dir aDNFx1, aDNFx2, aDNF1; 
+  gp_Pnt aPx, aPx1, aPx2, aPF1;
+  TopoDS_Edge aERight, aSpxSimm;
+  TopoDS_Face aFx1, aFx2, aFF1;
+  TopTools_ListIteratorOfListOfShape anIt;
+  //
+  // Point on Edge
+  Handle(Geom_Curve)aC3D =BRep_Tool::Curve(anEx, aT1, aT2);
+  aT=BOPTools_Tools2D::IntermediatePoint(aT1, aT2);
+  
+  aC3D->D0(aT, aPx);
+  //
+  anOrEx=anEx.Orientation();
+  
+  aSpxSimm=anEx;
+  if (anOrEx==TopAbs_FORWARD) {
+    aSpxSimm.Orientation(TopAbs_REVERSED);
+  }
+  else if (anOrEx==TopAbs_REVERSED){
+    aSpxSimm.Orientation(TopAbs_FORWARD);
+  }
+  //
+  const TopTools_ListOfShape& aLF=anEFMapx.FindFromKey(anEx);
+  anIt.Initialize(aLF);
+  for (; anIt.More(); anIt.Next()) {
+    const TopoDS_Shape& aFE=anIt.Value();
+    aFx1=TopoDS::Face(aFE);
+    anOr=BOPTools_Tools3D::Orientation(anEx, aFx1);
+    if (anOr==anOrEx){
+      break;
+    }
+  }
+  //
+  BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (anEx, aFx1, aT, aPx1, aDNFx1);
+  //
+  bIsAdjExists=BOPTools_Tools3D::GetAdjacentFace (aFx1, anEx, anEFMapx, aFx2);
+  if (!bIsAdjExists) {
+    BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aSpxSimm, aFx1, aT, aPx2, aDNFx2); 
+  }
+  else {
+    BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aSpxSimm, aFx2, aT, aPx2, aDNFx2);
+  }
+  //
+  aFF1=aF1;
+  aFF1.Orientation(TopAbs_FORWARD);
+  BOPTools_Tools3D::OrientEdgeOnFace (anEx, aFF1, aERight);
+  BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aERight, aFF1, aT, aPF1, aDNF1);
+  //
+  {
+    Standard_Real d12, d1, anAlfa12, anAlfa1, aTwoPI;
+    
+    aTwoPI=Standard_PI+Standard_PI;
+    
+    gp_Vec aVx1(aPx, aPx1);
+    gp_Dir aDBx1 (aVx1);
+    gp_Pln aPlnToCompare (aPx, aDNFx1);
+    
+    gp_Vec aVx2(aPx, aPx2);
+    gp_Dir aDBx2 (aVx2);
+    
+    anAlfa12=aDBx1.Angle(aDBx2);
+    d12=BOPTools_Tools3D::SignDistance(aPx2, aPlnToCompare);
+    if (d12 < 0.) {
+      anAlfa12=aTwoPI-anAlfa12;
+    }
+    
+    gp_Vec aVF1(aPx, aPF1);
+    gp_Dir aDBF1 (aVF1);
+    anAlfa1=aDBx1.Angle(aDBF1);
+    d1=BOPTools_Tools3D::SignDistance(aPF1, aPlnToCompare);
+    if (d1 < 0.) {
+      anAlfa1=aTwoPI-anAlfa1;
+    }
+    
+    aStPF1=TopAbs_OUT;
+    if (anAlfa1 > anAlfa12) {
+      aStPF1=TopAbs_IN;
+    }
+  }
+}
+//modified by NIZNHY-PKV Fri Feb 25 17:00:03 2005t XX 
+/*
+	 A
+      //
+      TopoDS_Shape aFace2;
+      if ( !isSectionE ) {
+        while (itl.More()) {
+          aFace2 = itl.Value();
+	  //
+	   TopoDS_Shape anOrigFace2 = aFace2;
+	  if (myImagesFaces.IsImage(aFace2)) {
+	    anOrigFace2 = myImagesFaces.Root(aFace2);
+	  }
+	  //
+          if (!MFP.Contains( aFace2 )) {
+            LSF.Remove( itl );
+            continue;
+          }
+          //if (anOrigFace.IsSame( myImagesFaces.Root( aFace2 )))
+          if (anOrigFace.IsSame(anOrigFace2)) {
+            break;
+	  }
+          itl.Next();
+        }
+        if (itl.More()) { // aFace2 found, remove it from maps
+          LSF.Remove( itl );
+          MFP.Remove(aFace2);
+        }
+        else{
+          aFace2.Nullify();
+	}
+        itl.Initialize( LSF );
+      } 
+      */
