@@ -1061,6 +1061,34 @@ def GetMainShape(theGroup):
       print "GetMainShape : ", GroupOp.GetErrorCode()
     return anObj
 
+def GetEdgesByLength (theShape, min_length, max_length, include_min = 1, include_max = 1):
+    """
+    Create group of edges of theShape, whose length is in range [min_length, max_length].
+    If include_min/max == 0, edges with length == min/max_length will not be included in result.
+    """
+
+    edges = SubShapeAll(theShape, ShapeType["EDGE"])
+    edges_in_range = []
+    for edge in edges:
+        Props = BasicProperties(edge)
+	if min_length <= Props[0] and Props[0] <= max_length:
+	    if (not include_min) and (min_length == Props[0]):
+	        skip = 1
+            else:
+	        if (not include_max) and (Props[0] == max_length):
+	            skip = 1
+                else:
+	            edges_in_range.append(edge)
+
+    if len(edges_in_range) <= 0:
+        print "No edges found by given criteria"
+	return 0
+
+    group_edges = CreateGroup(theShape, ShapeType["EDGE"])
+    UnionList(group_edges, edges_in_range)
+
+    return group_edges
+
 # Add Path to the system path
 #
 def addPath(Path):
