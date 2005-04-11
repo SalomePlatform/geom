@@ -374,7 +374,10 @@ is
     --   
     PrepareSetForFace(me:out;   
     	    	nF1 :Integer from Standard;  
-    	        nF2 :Integer from Standard;
+    	        nF2 :Integer from Standard;  
+    --modified by NIZNHY-PKV Fri Apr  1 11:19:15 2005f		
+		aLPB: ListOfPaveBlock from BOPTools;  
+    --modified by NIZNHY-PKV Fri Apr  1 10:54:16 2005t    
     	    	aPSF:out PaveSet from BOPTools); 
 		 
     PutPaveOnCurve(me:out;   
@@ -405,11 +408,19 @@ is
      	    	    aTol: Real  from  Standard) 
     	returns Integer from Standard; 	
 		
+--    IsExistingPaveBlock (me:out; 
+--    	    	    aPB : PaveBlock      from BOPTools; 
+--     	    	    aFF : SSInterference from BOPTools) 
+--    	returns Boolean from Standard;  
+	
+--modified by NIZNHY-PKV Fri Apr  1 09:35:34 2005f	 
     IsExistingPaveBlock (me:out; 
-    	    	    aPB : PaveBlock      from BOPTools; 
-     	    	    aFF : SSInterference from BOPTools) 
+    	    	    aPB : PaveBlock       from BOPTools; 
+     	    	    aLPB: ListOfPaveBlock from BOPTools; 
+    	    	    aTol: Real  from  Standard) 
     	returns Boolean from Standard;  
-	 
+--modified by NIZNHY-PKV Fri Apr  1 09:35:39 2005t	 
+	  
     MakePCurves (me:out); 
      
 fields 
