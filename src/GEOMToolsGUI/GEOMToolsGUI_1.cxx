@@ -26,6 +26,8 @@
 //  Module : GEOM
 //  $Header$
 
+#include "QAD_PyEditor.h"
+
 #include "GEOMToolsGUI.h"
 #include "GeometryGUI.h"
 #include "GEOM_Actor.h"
@@ -34,7 +36,6 @@
 #include "QAD_Desktop.h"
 #include "QAD_Config.h"
 #include "QAD_FileDlg.h"
-#include "QAD_PyEditor.h"
 #include "QAD_RightFrame.h"
 #include "QAD_MessageBox.h"
 #include "SALOMEGUI_NameDlg.h"
