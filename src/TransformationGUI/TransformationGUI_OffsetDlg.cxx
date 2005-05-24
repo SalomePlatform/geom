@@ -98,7 +98,7 @@ void TransformationGUI_OffsetDlg::Init()
   double step = 1;
    
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
   GroupPoints->SpinBox_DX->setPrecision(5);
   GroupPoints->SpinBox_DX->setDblPrecision(1e-05);    
   GroupPoints->SpinBox_DX->SetValue(1e-05);

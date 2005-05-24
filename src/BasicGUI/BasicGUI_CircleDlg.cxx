@@ -117,7 +117,7 @@ void BasicGUI_CircleDlg::Init()
   double aStep = St.toDouble();
 
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPntVecR->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, aStep, 3);
+  GroupPntVecR->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, aStep, 3);
   GroupPntVecR->SpinBox_DX->SetValue( 100 );
 
   /* signals and slots connections */

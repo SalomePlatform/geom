@@ -29,7 +29,10 @@
 #ifndef  GEOMSPINBOX_H
 #define  GEOMSPINBOX_H
 
-#include "QAD_SpinBoxDbl.h" 
+#include "QAD_SpinBoxDbl.h"
+
+#define COORD_MIN -1e+15
+#define COORD_MAX +1e+15
 
 //=================================================================================
 // class    : DlgRef_SpinBox

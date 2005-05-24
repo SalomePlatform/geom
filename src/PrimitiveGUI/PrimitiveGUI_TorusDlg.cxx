@@ -109,10 +109,10 @@ void PrimitiveGUI_TorusDlg::Init()
   double step = St.toDouble();
 
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupDimensions->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, step, 3);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, COORD_MAX, step, 3);
+  GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, step, 3);
+  GroupDimensions->SpinBox_DY->RangeStepAndValidator(0.001, COORD_MAX, step, 3);
 
   GroupPoints->SpinBox_DX->SetValue(300.0);
   GroupPoints->SpinBox_DY->SetValue(100.0);

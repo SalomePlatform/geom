@@ -116,13 +116,13 @@ void TransformationGUI_MultiRotationDlg::Init()
   double SpecificStep1 = 5;
   double SpecificStep2 = 1;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(1.0, 999.999, SpecificStep2, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(1.0, COORD_MAX, SpecificStep2, 3);
   GroupPoints->SpinBox_DX->SetValue(myNbTimes1);
 
-  GroupDimensions->SpinBox_DX1->RangeStepAndValidator(-999.999, 999.999, SpecificStep1, 3);
-  GroupDimensions->SpinBox_DY1->RangeStepAndValidator(1.0, 999.999, SpecificStep2, 3);
-  GroupDimensions->SpinBox_DX2->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupDimensions->SpinBox_DY2->RangeStepAndValidator(1.0, 999.999, SpecificStep2, 3);
+  GroupDimensions->SpinBox_DX1->RangeStepAndValidator(COORD_MIN, COORD_MAX, SpecificStep1, 3);
+  GroupDimensions->SpinBox_DY1->RangeStepAndValidator(      1.0, COORD_MAX, SpecificStep2, 3);
+  GroupDimensions->SpinBox_DX2->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupDimensions->SpinBox_DY2->RangeStepAndValidator(      1.0, COORD_MAX, SpecificStep2, 3);
   GroupDimensions->SpinBox_DX1->SetValue(myAng);
   GroupDimensions->SpinBox_DY1->SetValue(myNbTimes1);
   GroupDimensions->SpinBox_DX2->SetValue(myStep);

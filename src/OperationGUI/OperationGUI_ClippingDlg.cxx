@@ -108,8 +108,8 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( QWidget* parent, const char*
   Layout1->addWidget( GroupArguments, 2, 0 );
   
   /* Initialisations */
-  SpinBox_Near->RangeStepAndValidator( -999999.999, +999999.999, 10.0, 3 );
-  SpinBox_Far->RangeStepAndValidator( -999999.999, +999999.999, 10.0, 3 );
+  SpinBox_Near->RangeStepAndValidator( COORD_MIN, COORD_MAX, 10.0, 3 );
+  SpinBox_Far->RangeStepAndValidator ( COORD_MIN, COORD_MAX, 10.0, 3 );
   
   //GeometryGUI* aGeomGUI = GeometryGUI::GetGeomGUI();
   

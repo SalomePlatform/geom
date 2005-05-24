@@ -140,7 +140,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg( QWidget* parent, SALOME_Select
   double SpecificStep = 10.0;
   QMap< int, DlgRef_SpinBox* >::iterator anIter;
   for ( anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter )
-    anIter.data()->RangeStepAndValidator( 0.001, 999.999, SpecificStep, 3 );
+    anIter.data()->RangeStepAndValidator( 0.001, COORD_MAX, SpecificStep, 3 );
 
   /* Initialisations */
   Init( mySelection );
