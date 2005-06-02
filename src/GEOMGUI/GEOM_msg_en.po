@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "POT-Creation-Date: 2002-03-19 09:35:48 AM CET\n"
-"PO-Revision-Date: 2003-10-27 17:32+0100\n"
+"PO-Revision-Date: 2005-06-01 16:24+0400\n"
 "Last-Translator: FULLNAME <EMAIL@ADDRESS>\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 
@@ -2041,22 +2041,22 @@ msgid "STB_CIRCLE"
 msgstr "Create a circle"
 
 msgid "TOP_ELLIPSE"
-msgstr "Create a ellipse"
+msgstr "Create an ellipse"
 
 msgid "MEN_ELLIPSE"
 msgstr "Ellipse"
 
 msgid "STB_ELLIPSE"
-msgstr "Create a ellipse"
+msgstr "Create an ellipse"
 
 msgid "TOP_ARC"
-msgstr "Create a arc"
+msgstr "Create an arc"
 
 msgid "MEN_ARC"
 msgstr "Arc"
 
 msgid "STB_ARC"
-msgstr "Create a arc"
+msgstr "Create an arc"
 
 msgid "TOP_CURVE"
 msgstr "Create a curve"
@@ -2836,13 +2836,13 @@ msgid "STB_POP_COLOR"
 msgstr "Color"
 
 msgid "TOP_POP_TRANSPARENCY"
-msgstr "Trancparency"
+msgstr "Transparency"
 
 msgid "MEN_POP_TRANSPARENCY"
-msgstr "Trancparency"
+msgstr "Transparency"
 
 msgid "STB_POP_TRANSPARENCY"
-msgstr "Trancparency"
+msgstr "Transparency"
 
 msgid "TOP_POP_ISOS"
 msgstr "Isolines"
