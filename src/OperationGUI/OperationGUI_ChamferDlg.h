@@ -46,8 +46,7 @@ class OperationGUI_ChamferDlg : public GEOMBase_Skeleton
   enum { SpinBox1, SpinBox21, SpinBox22, SpinBox31, SpinBox32 };
 
 public:
-                                        OperationGUI_ChamferDlg( QWidget* parent,
-                                                                 SALOME_Selection* Sel );
+                                        OperationGUI_ChamferDlg( QWidget* parent );
     virtual                             ~OperationGUI_ChamferDlg();
 
 protected:
@@ -70,7 +69,7 @@ private slots:
 
 private :
 
-    void                                Init( SALOME_Selection* );
+    void                                Init();
     void                                enterEvent( QEvent* e );
     void                                reset();
     void                                createSelWg( const QString&, QPixmap&, QWidget*, const int );

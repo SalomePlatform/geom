@@ -28,6 +28,13 @@
 
 #include "GenerationGUI_PipeDlg.h"
 
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
+
 #include <TopoDS_Edge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
@@ -39,7 +46,6 @@
 
 #include "GEOMImpl_Types.hxx"
 
-#include "QAD_Desktop.h"
 #include "utilities.h"
 
 //=================================================================================
@@ -49,11 +55,11 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GenerationGUI_PipeDlg::GenerationGUI_PipeDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+GenerationGUI_PipeDlg::GenerationGUI_PipeDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_PIPE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PIPE")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_PIPE_TITLE"));
 
@@ -113,7 +119,8 @@ void GenerationGUI_PipeDlg::Init()
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName(tr("GEOM_PIPE"));
 
@@ -155,7 +162,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
   
-  if(mySelection->IObjectCount() != 1) {
+  if(IObjectCount() != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkBase = false;
     else if(myEditCurrentArgument == GroupPoints->LineEdit2)
@@ -165,7 +172,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
   
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
     
   if (!testResult)
     return;
@@ -256,7 +263,8 @@ void GenerationGUI_PipeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection( GEOM_ALLSHAPES );
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   displayPreview();
 }
 

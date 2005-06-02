@@ -29,8 +29,8 @@
 using namespace std;
 #include "GenerationGUI.h"
 
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
-#include "QAD_Desktop.h"
+#include "SUIT_Session.h"
+#include "SUIT_Desktop.h"
 
 #include "GenerationGUI_PrismDlg.h"     // Method PRISM
 #include "GenerationGUI_RevolDlg.h"     // Method REVOL
@@ -43,10 +43,10 @@ GenerationGUI* GenerationGUI::myGUIObject = 0;
 // function : GetGenerationGUI()
 // purpose  : Get the only GenerationGUI object [ static ]
 //=======================================================================
-GenerationGUI* GenerationGUI::GetGenerationGUI()
+GenerationGUI* GenerationGUI::GetGenerationGUI(GeometryGUI* parent)
 {
   if ( myGUIObject == 0 )
-    myGUIObject = new GenerationGUI();
+    myGUIObject = new GenerationGUI(parent);
 
   return myGUIObject;
 }
@@ -55,7 +55,7 @@ GenerationGUI* GenerationGUI::GetGenerationGUI()
 // function : GenerationGUI()
 // purpose  : Constructor
 //=======================================================================
-GenerationGUI::GenerationGUI() : GEOMGUI()
+GenerationGUI::GenerationGUI(GeometryGUI* parent) : GEOMGUI(parent)
 {
 }
 
@@ -73,23 +73,20 @@ GenerationGUI::~GenerationGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool GenerationGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
+bool GenerationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
-  
-  SALOME_Selection* Sel = SALOME_Selection::Selection(
-    QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
+  getGeometryGUI()->EmitSignalDeactivateDialog();
   
   QDialog* aDlg = NULL;
 
   switch ( theCommandID )
-  {
-    case 4031: aDlg = new GenerationGUI_PrismDlg   ( parent, "", Sel ); break;
-    case 4032: aDlg = new GenerationGUI_RevolDlg   ( parent, "", Sel ); break;
-    case 4033: aDlg = new GenerationGUI_FillingDlg ( parent, "", Sel ); break;
-    case 4034: aDlg = new GenerationGUI_PipeDlg    ( parent, "", Sel ); break;
+    {
+    case 4031: aDlg = new GenerationGUI_PrismDlg   ( getGeometryGUI(), parent, ""); break;
+    case 4032: aDlg = new GenerationGUI_RevolDlg   ( getGeometryGUI(), parent, ""); break;
+    case 4033: aDlg = new GenerationGUI_FillingDlg ( getGeometryGUI(), parent, ""); break;
+    case 4034: aDlg = new GenerationGUI_PipeDlg    ( parent, ""); break;
     
-    default: parent->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); break;
+    default: SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); break;
   }
 
   if ( aDlg != NULL )
@@ -104,8 +101,8 @@ bool GenerationGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI(GeometryGUI* parent)
   {
-    return GenerationGUI::GetGenerationGUI();
+    return GenerationGUI::GetGenerationGUI(parent);
   }
 }

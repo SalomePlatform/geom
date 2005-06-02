@@ -44,12 +44,12 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeBoxDXDYDZ (CORBA::Double the
 
   //Set a not done flag
   GetOperations()->SetNotDone();
-
+   
   //Create the Box
   Handle(GEOM_Object) anObject = GetOperations()->MakeBoxDXDYDZ(theDX, theDY, theDZ);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
-
+ 
   return GetObject(anObject);
 }
 

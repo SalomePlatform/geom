@@ -28,12 +28,14 @@
 
 #include "MeasureGUI_CheckCompoundOfBlocksDlg.h"
 #include "MeasureGUI_1Sel1TextView_QTD.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
 
 #include "utilities.h"
-#include "QAD_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Tools.h"
+
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopExp.hxx>
+#include <TColStd_MapOfInteger.hxx>
 #include "GEOMBase.h"
 #include "GEOMImpl_Types.hxx"
 
@@ -64,12 +66,12 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( QWidget* parent, SALOME_Selection* Sel )
-: MeasureGUI_Skeleton( parent, "MeasureGUI_CheckCompoundOfBlocksDlg", Sel )
+MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( GeometryGUI* GUI, QWidget* parent )
+: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_CheckCompoundOfBlocksDlg" )
 {
-  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_DLG_CHECK_COMPOUND_OF_BLOCKS" ) ) );
-  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_SELECT" ) ) );
 
   setCaption( tr( "GEOM_CHECK_BLOCKS_COMPOUND" ) );
@@ -116,7 +118,7 @@ MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( QWidge
   connect( myErrorsLBox, SIGNAL( selectionChanged() ), SLOT( onErrorsListSelectionChanged() ) );
   connect( mySubShapesLBox, SIGNAL( selectionChanged() ), SLOT( onSubShapesListSelectionChanged() ) );
   /* Initialisation */
-  Init( Sel );
+  Init();
 }
 
 
@@ -133,12 +135,12 @@ MeasureGUI_CheckCompoundOfBlocksDlg::~MeasureGUI_CheckCompoundOfBlocksDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_CheckCompoundOfBlocksDlg::Init( SALOME_Selection* Sel )
+void MeasureGUI_CheckCompoundOfBlocksDlg::Init()
 {
   activateSelection();
   mySelBtn = myGrp->PushButton1;
   mySelEdit = myGrp->LineEdit1;
-  MeasureGUI_Skeleton::Init( Sel );
+  MeasureGUI_Skeleton::Init();
 }
 
 //=================================================================================
@@ -161,7 +163,7 @@ bool MeasureGUI_CheckCompoundOfBlocksDlg::getBCErrors( bool& theIsCompoundOfBloc
     }
     catch( const SALOME::SALOME_Exception& e )
     {
-      QtCatchCorbaException( e );
+      SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 
@@ -349,7 +351,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
       }
       catch( const SALOME::SALOME_Exception& e )
       {
-        QtCatchCorbaException( e );
+        SalomeApp_Tools::QtCatchCorbaException( e );
       }
     }
   }

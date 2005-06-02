@@ -28,11 +28,14 @@
 
 #include "BasicGUI_MarkerDlg.h"
 #include "DlgRef_SpinBox.h"
-#include "QAD_Desktop.h"
-#include "QAD_RightFrame.h"
-#include "VTKViewer_ViewFrame.h"
-#include "OCCViewer_ViewFrame.h"
-#include "QAD_Config.h"
+
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
+
 #include "GEOMImpl_Types.hxx"
 #include "utilities.h"
 
@@ -54,14 +57,14 @@
 // class    : BasicGUI_MarkerDlg()
 // purpose  : Constructor
 //=================================================================================
-BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( QWidget* theParent, SALOME_Selection* theSel )
-: GEOMBase_Skeleton( theParent, "BasicGUI_MarkerDlg", theSel, false,
-    WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* theParent )
+: GEOMBase_Skeleton( theParent, "BasicGUI_MarkerDlg", false,
+		     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
 {
-  QPixmap iconCS1   ( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_MARKER" ) ) );
-  QPixmap iconCS2   ( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_MARKER2" ) ) );
-  QPixmap iconCS3   ( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_MARKER3" ) ) );
-  QPixmap iconSelect( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap iconCS1   ( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_MARKER" ) ) );
+  QPixmap iconCS2   ( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_MARKER2" ) ) );
+  QPixmap iconCS3   ( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_MARKER3" ) ) );
+  QPixmap iconSelect( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
   setCaption( tr( "CAPTION" ) );
 
@@ -116,7 +119,7 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( QWidget* theParent, SALOME_Selection* th
   Layout1->addWidget( Group1, 2, 0 );
   Layout1->addWidget( Group2, 2, 0 );
 
-  Init( theSel );
+  Init();
 }
 
 
@@ -133,7 +136,7 @@ BasicGUI_MarkerDlg::~BasicGUI_MarkerDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void BasicGUI_MarkerDlg::Init( SALOME_Selection* theSel )
+void BasicGUI_MarkerDlg::Init()
 {
   myBlockPreview = false;
   myConstructorId = -1;
@@ -142,9 +145,7 @@ void BasicGUI_MarkerDlg::Init( SALOME_Selection* theSel )
   Group2->LineEdit1->setReadOnly( true );
   Group2->LineEdit2->setReadOnly( true );
   Group2->LineEdit3->setReadOnly( true );
-
-  GeometryGUI* aGeomGUI = GeometryGUI::GetGeomGUI();
-
+  
   connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
   connect(Group1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(Group2->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
@@ -157,20 +158,23 @@ void BasicGUI_MarkerDlg::Init( SALOME_Selection* theSel )
   connect(Group2->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( onClose() ) );
-  connect( aGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( onDeactivate() ) );
-  connect( aGeomGUI, SIGNAL( SignalCloseAllDialogs() ), this, SLOT( onClose() ) );
+  connect( myGeometryGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( onDeactivate() ) );
+  connect( myGeometryGUI, SIGNAL( SignalCloseAllDialogs() ), this, SLOT( onClose() ) );
 
   connect( buttonOk, SIGNAL( clicked() ), this, SLOT( onOk() ) );
   connect( buttonApply, SIGNAL( clicked() ), this, SLOT( onApply() ) );
 
-  connect( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
 
   initName( tr( "LCS_NAME" ) );
 
-  QString aStr = QAD_CONFIG->getSetting( "Geometry:SettingsGeomStep" );
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
+  
   for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter )
   {
-    anIter.data()->RangeStepAndValidator( -999.999, 999.999, aStr.toDouble(), 3 );
+    anIter.data()->RangeStepAndValidator( -999.999, 999.999, step, 3 );
     connect( anIter.data(), SIGNAL( valueChanged( double ) ),
              this, SLOT( onValueChanged( double ) ) );
   }
@@ -184,6 +188,9 @@ void BasicGUI_MarkerDlg::Init( SALOME_Selection* theSel )
 
   ConstructorsClicked( 0 );
 
+
+  //@
+  /*
   QAD_ViewFrame* aFrame = QAD_Application::getDesktop()->getActiveApp()->
     getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame();
 
@@ -197,6 +204,7 @@ void BasicGUI_MarkerDlg::Init( SALOME_Selection* theSel )
   OCCViewer_ViewFrame* aOCCFrame = dynamic_cast<OCCViewer_ViewFrame*>( aFrame );
   if ( aOCCFrame )
     aOCCFrame->AdjustTrihedrons( true );
+  */
 }
 
 //=================================================================================
@@ -215,7 +223,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
 
   myConstructorId = constructorId;
 
-  disconnect(mySelection, 0, this, 0);
+  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
 
   switch (constructorId)
     {
@@ -257,7 +265,8 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       }
     }
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(onSelectionDone()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(onSelectionDone()));
   onSelectionDone();
 }
 
@@ -301,11 +310,11 @@ bool BasicGUI_MarkerDlg::onApply()
 //=================================================================================
 void BasicGUI_MarkerDlg::onSelectionDone0()
 {
-  if ( mySelection->IObjectCount() == 1 )
+  if ( IObjectCount() == 1 )
   {
 
     Standard_Boolean aRes = Standard_False;
-    Handle(SALOME_InteractiveObject) anIO = mySelection->firstIObject();
+    Handle(SALOME_InteractiveObject) anIO = firstIObject();
     GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
 
     if ( aRes && !aSelectedObj->_is_nil() )
@@ -336,24 +345,22 @@ void BasicGUI_MarkerDlg::onSelectionDone0()
             myData[ DX2 ]->SetValue( aYDir.X() );
             myData[ DY2 ]->SetValue( aYDir.Y() );
             myData[ DZ2 ]->SetValue( aYDir.Z() );
-            //mySelection->ClearIObjects();
+	    ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->clearSelected();
           }
         }
         else
         {
-          if ( mySelection->HasIndex( anIO ) )
+	  TColStd_IndexedMapOfInteger aMap;
+	  ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( anIO, aMap );
+	  if ( aMap.Extent() == 1 )
           {
-            TColStd_IndexedMapOfInteger aMap;
-            mySelection->GetIndex( anIO, aMap );
-            if ( aMap.Extent() == 1 )
-            {
-              int anIndex = aMap( 1 );
-              TopTools_IndexedMapOfShape aShapes;
-              TopExp::MapShapes( aShape, aShapes );
-              aShape = aShapes.FindKey( anIndex );
-              //mySelection->ClearIObjects();
-            }
-          }
+	    int anIndex = aMap( 1 );
+	    TopTools_IndexedMapOfShape aShapes;
+	    TopExp::MapShapes( aShape, aShapes );
+	    aShape = aShapes.FindKey( anIndex );
+	    ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->clearSelected();
+	  }
+          
 
           if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
           {
@@ -387,9 +394,9 @@ void BasicGUI_MarkerDlg::onSelectionDone()
   myEditCurrentArgument->setText("");
   QString aName;
 
-  if ( mySelection->IObjectCount() == 1 ) {
+  if ( IObjectCount() == 1 ) {
     Standard_Boolean aRes = Standard_False;
-    Handle(SALOME_InteractiveObject) anIO = mySelection->firstIObject();
+    Handle(SALOME_InteractiveObject) anIO = firstIObject();
     GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
 
     if ( !CORBA::is_nil( aSelectedObj ) && aRes ) {
@@ -397,16 +404,18 @@ void BasicGUI_MarkerDlg::onSelectionDone()
       TopoDS_Shape aShape;
       if ( myGeomBase->GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) ) {
 	GEOM::short_array anIndexes;
-	if ( mySelection->HasIndex( anIO ) ) {
-	  TColStd_IndexedMapOfInteger aMap;
-	  mySelection->GetIndex( anIO, aMap );
+
+	TColStd_IndexedMapOfInteger aMap;
+	((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( anIO, aMap );
+	
+	if ( !aMap.IsEmpty() ) { 
 	  int anIndex = aMap( 1 );
 	  TopTools_IndexedMapOfShape aShapes;
 	  TopExp::MapShapes( aShape, aShapes );
 	  aShape = aShapes.FindKey( anIndex );
 	}
 
-  if ( getConstructorId() == 1 ) {
+	if ( getConstructorId() == 1 ) {
 	  if ( !aShape.IsNull() ) {
 	    gp_Pnt aPnt;
 	    if (aShape.ShapeType() == TopAbs_VERTEX) {
@@ -423,7 +432,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 	      
 	      aPnt = aSystem.CentreOfMass();
 	    }
-
+	    
 	    gp_Ax3 anAx3;
 	    anAx3.Transform(aShape.Location().Transformation());
 	    if(aShape.ShapeType() == TopAbs_FACE) {
@@ -434,33 +443,33 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 		anAx3 = aPln.Position();
 	      }
 	    }
-
+	    
 	    gp_Dir aDirX = anAx3.XDirection();
 	    gp_Dir aDirY = anAx3.YDirection();
-
+	    
 	    myData[ X ]->SetValue( aPnt.X() );
 	    myData[ Y ]->SetValue( aPnt.Y() );
 	    myData[ Z ]->SetValue( aPnt.Z() );
-
+	    
 	    myData[ DX1 ]->SetValue( aDirX.X() );
 	    myData[ DY1 ]->SetValue( aDirX.Y() );
 	    myData[ DZ1 ]->SetValue( aDirX.Z() );
-
+	    
 	    myData[ DX2 ]->SetValue( aDirY.X() );
 	    myData[ DY2 ]->SetValue( aDirY.Y() );
 	    myData[ DZ2 ]->SetValue( aDirY.Z() );
-
+	    
 	    myEditCurrentArgument->setText( aName );
 	  }
 	  else {
 	    myData[ X ]->SetValue( 0 );
 	    myData[ Y ]->SetValue( 0 );
 	    myData[ Z ]->SetValue( 0 );
-
+	    
 	    myData[ DX1 ]->SetValue( 0 );
 	    myData[ DY1 ]->SetValue( 0 );
 	    myData[ DZ1 ]->SetValue( 0 );
-
+	    
 	    myData[ DX2 ]->SetValue( 0 );
 	    myData[ DY2 ]->SetValue( 0 );
 	    myData[ DZ2 ]->SetValue( 0 );
@@ -486,7 +495,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 	      gp_Pnt aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(TopoDS::Edge(aShape)));
 	      gp_Pnt aP2 = BRep_Tool::Pnt(TopExp::LastVertex(TopoDS::Edge(aShape)));
 	      gp_Dir aDir(gp_Vec(aP1, aP2));
-
+	      
 	      myData[ DX1 ]->SetValue( aDir.X() );
 	      myData[ DY1 ]->SetValue( aDir.Y() );
 	      myData[ DZ1 ]->SetValue( aDir.Z() );
@@ -503,7 +512,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 	      gp_Pnt aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(TopoDS::Edge(aShape)));
 	      gp_Pnt aP2 = BRep_Tool::Pnt(TopExp::LastVertex(TopoDS::Edge(aShape)));
 	      gp_Dir aDir(gp_Vec(aP1, aP2));
-
+	      
 	      myData[ DX2 ]->SetValue( aDir.X() );
 	      myData[ DY2 ]->SetValue( aDir.Y() );
 	      myData[ DZ2 ]->SetValue( aDir.Z() );
@@ -524,11 +533,11 @@ void BasicGUI_MarkerDlg::onSelectionDone()
       myData[ X ]->SetValue( 0 );
       myData[ Y ]->SetValue( 0 );
       myData[ Z ]->SetValue( 0 );
-
+      
       myData[ DX1 ]->SetValue( 0 );
       myData[ DY1 ]->SetValue( 0 );
       myData[ DZ1 ]->SetValue( 0 );
-
+      
       myData[ DX2 ]->SetValue( 0 );
       myData[ DY2 ]->SetValue( 0 );
       myData[ DZ2 ]->SetValue( 0 );
@@ -551,7 +560,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
       }
     }    
   }
-
+  
   displayPreview();
 }
 
@@ -603,7 +612,8 @@ void BasicGUI_MarkerDlg::LineEditReturnPressed()
 void BasicGUI_MarkerDlg::onActivate()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -633,7 +643,7 @@ void BasicGUI_MarkerDlg::enterEvent(QEvent* e)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_MarkerDlg::createOperation()
 {
-  return getGeomEngine()->GetIBasicOperations( getStudyId() );
+  return myGeometryGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
 }
 
 //=================================================================================

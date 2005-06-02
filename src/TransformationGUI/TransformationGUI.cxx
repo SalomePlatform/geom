@@ -28,9 +28,10 @@
 
 using namespace std;
 #include "TransformationGUI.h"
-#include "QAD_Desktop.h"
+#include "GeometryGUI.h"
 
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "SUIT_Session.h"
+#include "SUIT_Desktop.h"
 
 #include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
 #include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION
@@ -47,11 +48,11 @@ TransformationGUI* TransformationGUI::myGUIObject = 0;
 // function : GetTransformationGUI()
 // purpose  : Get the only TransformationGUI object [ static ]
 //=======================================================================
-TransformationGUI* TransformationGUI::GetTransformationGUI()
+TransformationGUI* TransformationGUI::GetTransformationGUI( GeometryGUI* parent )
 {
   if ( myGUIObject == 0 ) {
     // init TransformationGUI only once
-    myGUIObject = new TransformationGUI();
+    myGUIObject = new TransformationGUI( parent );
   }
   return myGUIObject;
 }
@@ -60,7 +61,7 @@ TransformationGUI* TransformationGUI::GetTransformationGUI()
 // function : TransformationGUI()
 // purpose  : Constructor
 //=======================================================================
-TransformationGUI::TransformationGUI() : GEOMGUI()
+TransformationGUI::TransformationGUI(GeometryGUI* parent) : GEOMGUI(parent)
 {
 }
 
@@ -78,57 +79,56 @@ TransformationGUI::~TransformationGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool TransformationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+bool TransformationGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
+  getGeometryGUI()->EmitSignalDeactivateDialog();
   QDialog* aDlg = NULL;
 
   switch (theCommandID)
     {
     case 5021: // TRANSLATION
       {	
-  	aDlg = new TransformationGUI_TranslationDlg(parent, "", Sel);
+  	aDlg = new TransformationGUI_TranslationDlg( getGeometryGUI(), parent, "" );
 	break;
       }
     case 5022: // ROTATION
       {	
-  	aDlg = new TransformationGUI_RotationDlg(parent, "", Sel);
+  	aDlg = new TransformationGUI_RotationDlg( parent, "" );
 	break;
       }
     case 5023: // POSITION
       {	
-	aDlg = new TransformationGUI_PositionDlg(parent, "", Sel);
+	aDlg = new TransformationGUI_PositionDlg( parent, "" );
 	break;
       }
     case 5024: // MIRROR
       {	
-	aDlg = new TransformationGUI_MirrorDlg(parent, "", Sel);
+	aDlg = new TransformationGUI_MirrorDlg( parent, "" );
 	break;
       }
     case 5025: // SCALE
       {	
-  	aDlg = new TransformationGUI_ScaleDlg(parent, "", Sel );
+  	aDlg = new TransformationGUI_ScaleDlg( getGeometryGUI(), parent, "" );
 	break;
       }
     case 5026: // OFFSET
       {	
-  	aDlg = new TransformationGUI_OffsetDlg(parent, "", Sel );
+  	aDlg = new TransformationGUI_OffsetDlg( parent, "" );
 	break;
       }  
     case 5027: // MULTI TRANSLATION
       {	
-  	aDlg = new TransformationGUI_MultiTranslationDlg(parent, "", Sel);
+  	aDlg = new TransformationGUI_MultiTranslationDlg( getGeometryGUI(), parent, "" );
 	break;
       }
     case 5028: // MULTI ROTATION
       {	
-  	aDlg = new TransformationGUI_MultiRotationDlg(parent, "", Sel);
+  	aDlg = new TransformationGUI_MultiRotationDlg( getGeometryGUI(), parent, "" );
 	break;
       }
     default:
       {
-	parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+	SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
 	break;
       }
     }
@@ -145,8 +145,8 @@ bool TransformationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return TransformationGUI::GetTransformationGUI();
+    return TransformationGUI::GetTransformationGUI( parent );
   }
 }

@@ -50,7 +50,7 @@ public:
       EditGroup
     } Mode;
 
-    GroupGUI_GroupDlg(Mode mode, QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    GroupGUI_GroupDlg(Mode mode, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~GroupGUI_GroupDlg();
 
 protected:
@@ -76,7 +76,7 @@ private slots:
     void                                selectionChanged();
 
 private:
-    void                                Init( SALOME_Selection* );
+    void                                Init();
     void                                enterEvent( QEvent* e );
     int                                 getConstructorId() const;    
     TopAbs_ShapeEnum                    getShapeType() const;

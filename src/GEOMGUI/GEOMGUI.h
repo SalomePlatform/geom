@@ -31,10 +31,11 @@
 
 #include <qobject.h>
 
-class QAD_Desktop;
-class QAD_StudyFrame;
+class SUIT_Desktop;
+class SUIT_ViewWindow;
 class QMouseEvent;
 class QKeyEvent;
+class GeometryGUI;
 
 //=================================================================================
 // class    : GEOMGUI
@@ -44,18 +45,24 @@ class GEOMGUI : public QObject
 {
 public :
   // Constructor
-  GEOMGUI( QObject* parent = 0 );
+  GEOMGUI( GeometryGUI* parent );
   // Destructor
   virtual ~GEOMGUI();
 
   // Each of this methods can be redifined by descendants
-  virtual bool OnGUIEvent( int theCommandID, QAD_Desktop* parent );
-  virtual bool OnMousePress( QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame );
-  virtual bool OnMouseMove( QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame );
-  virtual bool OnKeyPress( QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame );
-  virtual bool SetSettings( QAD_Desktop* parent );
-  virtual void Deactivate();
-  virtual bool ActiveStudyChanged( QAD_Desktop* parent );
+  virtual bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
+
+  virtual bool OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* );
+  virtual bool OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* );
+  virtual bool OnKeyPress( QKeyEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* );
+
+  virtual void activate( SUIT_Desktop* parent );
+  virtual void deactivate();
+
+  GeometryGUI*  getGeometryGUI();
+
+private:
+  GeometryGUI*  myGeometryGUI;
 };
 
 #endif // __GEOMGUI_H

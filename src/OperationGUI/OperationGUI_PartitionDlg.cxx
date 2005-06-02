@@ -31,9 +31,14 @@
 
 #include "GEOMImpl_Types.hxx"
 
-#include "QAD_Desktop.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
 #include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qlabel.h>
 
 #include "utilities.h"
 
@@ -44,12 +49,12 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_PartitionDlg::OperationGUI_PartitionDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+OperationGUI_PartitionDlg::OperationGUI_PartitionDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_PARTITION")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_PARTITION_PLANE")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PARTITION")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PARTITION_PLANE")));
+  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_PARTITION_TITLE"));
 
@@ -130,7 +135,8 @@ void OperationGUI_PartitionDlg::Init()
   
   connect(GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(ComboTextChanged()));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   
   initName( tr( "GEOM_PARTITION" ) );
   ConstructorsClicked( 0 );
@@ -143,7 +149,7 @@ void OperationGUI_PartitionDlg::Init()
 //=================================================================================
 void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect(mySelection, 0, this, 0);
+  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
   globalSelection();
   
   myListShapes.length(0);
@@ -187,7 +193,8 @@ void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
   onRemoveWebs(false);
 
   myEditCurrentArgument->setFocus();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   MESSAGE(width()<<" "<<height());
 }
 
@@ -237,7 +244,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aString = "";
   
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects( mySelection, aString, true );
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString, true );
     
   if ( nbSel < 1 )
   {
@@ -264,26 +271,26 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
   
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
   {
-    GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(), myListShapes, true );
+    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myListShapes, true );
     myListMaterials.length( 0 );
     if ( !myListShapes.length() )
       return;
   }
   else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
   {
-    GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(), myListTools, true );
+    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myListTools, true );
     if ( !myListTools.length() )
       return;
   }
   else if(myEditCurrentArgument == GroupPoints->LineEdit3)
   {
-    GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(), myListRemoveInside, true );
+    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myListRemoveInside, true );
     if (!myListRemoveInside.length())
       return;
   }
   else if(myEditCurrentArgument == GroupPoints->LineEdit4)
   {
-    GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(),  myListKeepInside, true );
+    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(),  myListKeepInside, true );
     if ( !myListKeepInside.length() )
       return;
   }
@@ -346,7 +353,8 @@ void OperationGUI_PartitionDlg::LineEditReturnPressed()
 void OperationGUI_PartitionDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   ConstructorsClicked( getConstructorId() ); 
 }
@@ -467,11 +475,9 @@ void OperationGUI_PartitionDlg::ComboTextChanged()
 //=================================================================================
 void OperationGUI_PartitionDlg::SetMaterials()
 {
-  SALOME_Selection* Sel =
-    SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
   MESSAGE("OperationGUI_MaterialDlg ...");
   OperationGUI_MaterialDlg *aDlg =
-    new OperationGUI_MaterialDlg(this, "", Sel, myListShapes, true);	
+    new OperationGUI_MaterialDlg(this, "", myListShapes, true);	
   MESSAGE("OperationGUI_MaterialDlg");
   return;
 }

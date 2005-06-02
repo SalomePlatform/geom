@@ -8,10 +8,6 @@
 #include "GEOM_Gen_i.hh"
 #include "GEOM_List_i.hh"
 
-#include "QAD_Study.h"
-#include "QAD_Application.h"
-#include "QAD_Desktop.h"
-
 class GEOM_Superv_i : public virtual POA_GEOM::GEOM_Superv,
 		      public Engines_Component_i
 {

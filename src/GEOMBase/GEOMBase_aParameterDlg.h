@@ -32,7 +32,7 @@
 #include <qdialog.h>
 
 class QPushButton;
-class QAD_SpinBoxDbl;
+class QtxDblSpinBox;
 
 //=================================================================================
 // class    : GEOMBase_aParameterDlg
@@ -52,7 +52,7 @@ public:
 private:
     QPushButton* myButtonOk;
     QPushButton* myButtonCancel;
-    QAD_SpinBoxDbl* mySpinBox;
+    QtxDblSpinBox* mySpinBox;
 
 };
 

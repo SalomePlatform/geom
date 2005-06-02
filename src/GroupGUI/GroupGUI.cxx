@@ -31,9 +31,12 @@
 
 #include "GEOMImpl_Types.hxx"
 
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
-#include "QAD_Desktop.h"
-#include "QAD_MessageBox.h"
+#include "SUIT_Session.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_MessageBox.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_Study.h"
+#include "SalomeApp_SelectionMgr.h"
 
 GroupGUI* GroupGUI::myGUIObject = 0;
 
@@ -41,10 +44,10 @@ GroupGUI* GroupGUI::myGUIObject = 0;
 // function : GetGroupGUI()
 // purpose  : Get the only GroupGUI object [ static ]
 //=======================================================================
-GroupGUI* GroupGUI::GetGroupGUI()
+GroupGUI* GroupGUI::GetGroupGUI(GeometryGUI* parent)
 {
   if ( myGUIObject == 0 ) 
-    myGUIObject = new GroupGUI();
+    myGUIObject = new GroupGUI(parent);
 
   return myGUIObject;
 }
@@ -53,8 +56,8 @@ GroupGUI* GroupGUI::GetGroupGUI()
 // function : GroupGUI()
 // purpose  : Constructor
 //=======================================================================
-GroupGUI::GroupGUI()
-: GEOMGUI()
+GroupGUI::GroupGUI(GeometryGUI* parent)
+: GEOMGUI(parent)
 {
 }
 
@@ -72,47 +75,58 @@ GroupGUI::~GroupGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool GroupGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
+bool GroupGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
+  getGeometryGUI()->EmitSignalDeactivateDialog();
   
-  SALOME_Selection* Sel = SALOME_Selection::Selection(
-    QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
-
   QDialog* aDlg = NULL;
 
-  if ( QAD_Application::getDesktop()->getActiveStudy()->isLocked() ) {
-    QAD_MessageBox::warn1 ( QAD_Application::getDesktop(),
-			   QObject::tr("WRN_WARNING"), 
-			   QObject::tr("WRN_STUDY_LOCKED"),
-			   QObject::tr("BUT_OK") );
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( !appStudy ) return false;
+  _PTR(Study) aStudy = appStudy->studyDS();
+  
+  if ( aStudy->GetProperties()->IsLocked() ) {
+    SUIT_MessageBox::warn1 ( parent,
+			     QObject::tr("WRN_WARNING"), 
+			     QObject::tr("WRN_STUDY_LOCKED"),
+			     QObject::tr("BUT_OK") );
     return false;
   }
 
   switch ( theCommandID ) {
   case 800: 
-    aDlg = new GroupGUI_GroupDlg( GroupGUI_GroupDlg::CreateGroup, parent, "", Sel ); 
+    aDlg = new GroupGUI_GroupDlg( GroupGUI_GroupDlg::CreateGroup, parent, ""); 
     break;
   case 801: 
     {
-      if ( Sel->IObjectCount() == 1 ) {
+      SALOME_ListIO aList;
+      aList.Clear();
+  
+      SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+      if ( app ) {
+	SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+	if ( aSelMgr )
+	  aSelMgr->selectedObjects( aList );
+      }
+
+      if ( aList.Extent() == 1 ) {
 	Standard_Boolean aResult = Standard_False;
 	GEOM::GEOM_Object_var anObj =
-	  GEOMBase::ConvertIOinGEOMObject( Sel->firstIObject(), aResult );
+	  GEOMBase::ConvertIOinGEOMObject( aList.First(), aResult );
 
 	if ( aResult && !CORBA::is_nil( anObj ) && anObj->GetType() == GEOM_GROUP ) {
-	  aDlg = new GroupGUI_GroupDlg( GroupGUI_GroupDlg::EditGroup,   parent, "", Sel ); 
+	  aDlg = new GroupGUI_GroupDlg( GroupGUI_GroupDlg::EditGroup,   parent, "" ); 
 	  break;
 	}
       }
-      QAD_MessageBox::warn1 ( QAD_Application::getDesktop(),
-			     tr("WRN_WARNING"), 
-			     tr("NO_GROUP"),
-			     tr("BUT_OK") );
+      SUIT_MessageBox::warn1 ( parent,
+			       tr("WRN_WARNING"), 
+			       tr("NO_GROUP"),
+			       tr("BUT_OK") );
       break;
     }
   default: 
-    parent->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
+    SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
     break;
   }
   
@@ -127,8 +141,8 @@ bool GroupGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI(GeometryGUI* p)
   {
-    return GroupGUI::GetGroupGUI();
+    return GroupGUI::GetGroupGUI(p);
   }
 }

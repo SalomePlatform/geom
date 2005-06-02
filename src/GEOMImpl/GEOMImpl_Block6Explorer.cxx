@@ -1181,10 +1181,10 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
       Standard_Real aTol = MF.G0Error();
 
       TColgp_Array1OfPnt aPnts (1,nbEdges); // points of the given wire
-      aWE = BRepTools_WireExplorer(theWire);
+      BRepTools_WireExplorer aWE1 (theWire);
       Standard_Integer vi = 1;
-      for (; aWE.More() && vi <= nbEdges; aWE.Next(), vi++) {
-        aPnts(vi) = BRep_Tool::Pnt(TopoDS::Vertex(aWE.CurrentVertex()));
+      for (; aWE1.More() && vi <= nbEdges; aWE1.Next(), vi++) {
+        aPnts(vi) = BRep_Tool::Pnt(TopoDS::Vertex(aWE1.CurrentVertex()));
       }
 
       // Find maximum deviation in vertices

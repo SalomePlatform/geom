@@ -28,14 +28,19 @@
 
 #include "MeasureGUI_CenterMassDlg.h"
 #include "MeasureGUI_1Sel3LineEdit_QTD.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+
 #include "utilities.h"
-#include "QAD_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "SalomeApp_Tools.h"
 
 #include <BRep_Tool.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS.hxx>
 #include <gp_Pnt.hxx>
+
+#include <qlabel.h>
 
 //=================================================================================
 // class    : MeasureGUI_CenterMassDlg()
@@ -44,12 +49,12 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg( QWidget* parent, SALOME_Selection* Sel )
-: GEOMBase_Skeleton( parent, "MeasureGUI_CenterMassDlg", Sel, false,
+MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg( QWidget* parent )
+: GEOMBase_Skeleton( parent, "MeasureGUI_CenterMassDlg", false,
     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr( "ICON_DLG_CENTERMASS" ) ) );
-  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr( "ICON_SELECT" ) ) );
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr( "ICON_DLG_CENTERMASS" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr( "ICON_SELECT" ) ) );
 
   setCaption( tr( "GEOM_CMASS_TITLE" ) );
 
@@ -76,7 +81,7 @@ MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg( QWidget* parent, SALOME_Sele
   /***************************************************************/
 
   /* Initialisation */
-  Init( Sel );
+  Init();
 }
 
 
@@ -93,10 +98,9 @@ MeasureGUI_CenterMassDlg::~MeasureGUI_CenterMassDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_CenterMassDlg::Init( SALOME_Selection* Sel )
+void MeasureGUI_CenterMassDlg::Init()
 {
   /* init variables */
-  mySelection = Sel;
   myEditCurrentArgument = myGrp->LineEdit1;
 
    /* signals and slots connections */
@@ -106,7 +110,8 @@ void MeasureGUI_CenterMassDlg::Init( SALOME_Selection* Sel )
   connect( myGrp->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( myGrp->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName( tr( "GEOM_POINT") );
   globalSelection();
@@ -154,7 +159,7 @@ void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
   erasePreview();
   myObj = GEOM::GEOM_Object::_nil();
 
-  if ( mySelection->IObjectCount() != 1 )
+  if ( IObjectCount() != 1 )
   {
     processObject();
     return;
@@ -162,7 +167,7 @@ void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
 
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
 
   if ( !testResult || aSelectedObject->_is_nil() )
   {
@@ -211,8 +216,8 @@ void MeasureGUI_CenterMassDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  connect( mySelection, SIGNAL( currentSelectionChanged() ),
-           this,        SLOT  ( SelectionIntoArgument() ) );
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   globalSelection();
   displayPreview();
@@ -311,7 +316,7 @@ bool MeasureGUI_CenterMassDlg::getParameters( double& theX, double& theY, double
     }
     catch( const SALOME::SALOME_Exception& e )
     {
-      QtCatchCorbaException( e );
+      SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
   }

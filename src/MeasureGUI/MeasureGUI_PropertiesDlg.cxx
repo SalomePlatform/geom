@@ -28,16 +28,18 @@
 
 #include "MeasureGUI_PropertiesDlg.h"
 #include "MeasureGUI_1Sel3LineEdit_QTD.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
 #include "GEOM_Displayer.h"
-#include "utilities.h"
-#include "QAD_Desktop.h"
 #include "GEOMImpl_Types.hxx"
 #include "GEOMBase.h"
+
+#include "SalomeApp_Tools.h"
+#include "utilities.h"
+#include "SUIT_Session.h"
 
 #include <TColStd_MapOfInteger.hxx>
 
 #include <qlineedit.h>
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -50,12 +52,12 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg( QWidget* parent, SALOME_Selection* Sel )
-: MeasureGUI_Skeleton( parent, "MeasureGUI_PropertiesDlg", Sel )
+MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg( GeometryGUI* GUI, QWidget* parent )
+: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_PropertiesDlg" )
 {
-  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_DLG_BASICPROPERTIES" ) ) );
-  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_SELECT" ) ) );
 
   setCaption( tr( "GEOM_PROPERTIES_TITLE" ) );
@@ -82,7 +84,7 @@ MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg( QWidget* parent, SALOME_Sele
   /***************************************************************/
 
   /* Initialisation */
-  Init( Sel );
+  Init();
 }
 
 
@@ -99,11 +101,11 @@ MeasureGUI_PropertiesDlg::~MeasureGUI_PropertiesDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_PropertiesDlg::Init( SALOME_Selection* Sel   )
+void MeasureGUI_PropertiesDlg::Init()
 {
   mySelBtn = myGrp->PushButton1;
   mySelEdit = myGrp->LineEdit1;
-  MeasureGUI_Skeleton::Init( Sel );
+  MeasureGUI_Skeleton::Init();
 }
 
 //=================================================================================
@@ -169,7 +171,7 @@ bool MeasureGUI_PropertiesDlg::getParameters( double& theLength,
     }
     catch( const SALOME::SALOME_Exception& e )
     {
-      QtCatchCorbaException( e );
+      SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 

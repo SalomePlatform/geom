@@ -44,7 +44,7 @@ class TransformationGUI_PositionDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_PositionDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_PositionDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_PositionDlg();
 
 protected:

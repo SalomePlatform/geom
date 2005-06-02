@@ -29,8 +29,12 @@
 using namespace std;
 #include "PrimitiveGUI_SphereDlg.h"
 
-#include "QAD_Config.h"
-#include "QAD_Desktop.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -45,12 +49,12 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg(QWidget* parent,  const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg(GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SPHERE_P")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SPHERE_DXYZ")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SPHERE_P")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SPHERE_DXYZ")));
+  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_SPHERE_TITLE"));
 
@@ -101,8 +105,8 @@ void PrimitiveGUI_SphereDlg::Init()
   myPoint = GEOM::GEOM_Object::_nil();
   
   /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  double step = St.toDouble();
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
 
   /* min, max, step and decimals for spin boxes */
   GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
@@ -121,10 +125,11 @@ void PrimitiveGUI_SphereDlg::Init()
   connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName(tr("GEOM_SPHERE"));
   ConstructorsClicked(0);
@@ -137,7 +142,7 @@ void PrimitiveGUI_SphereDlg::Init()
 //=================================================================================
 void PrimitiveGUI_SphereDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect(mySelection, 0, this, 0);
+  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
   
   switch (constructorId)
     {
@@ -152,7 +157,8 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->LineEdit1->setText("");
 	myPoint = GEOM::GEOM_Object::_nil();
 
-	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+	connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
     case 1:
@@ -216,7 +222,7 @@ void PrimitiveGUI_SphereDlg::SelectionIntoArgument()
   
   myEditCurrentArgument->setText("");
   
-  if(mySelection->IObjectCount() != 1) 
+  if(IObjectCount() != 1) 
     {
       myPoint = GEOM::GEOM_Object::_nil();
       return;
@@ -224,7 +230,7 @@ void PrimitiveGUI_SphereDlg::SelectionIntoArgument()
   
   /* nbSel == 1 ! */
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
   
   if (!testResult || CORBA::is_nil( aSelectedObject ))
     return;
@@ -275,7 +281,8 @@ void PrimitiveGUI_SphereDlg::SetEditCurrentArgument()
 void PrimitiveGUI_SphereDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   
   ConstructorsClicked( getConstructorId() );
 }
@@ -371,7 +378,7 @@ bool  PrimitiveGUI_SphereDlg::execute( ObjectList& objects )
 //=================================================================================
 void PrimitiveGUI_SphereDlg::closeEvent( QCloseEvent* e )
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 

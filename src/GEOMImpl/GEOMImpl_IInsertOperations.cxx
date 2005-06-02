@@ -12,6 +12,7 @@ using namespace std;
 #include <TDF_Tool.hxx>
 
 #include "GEOM_Function.hxx"
+#include "GEOM_PythonDump.hxx"
 
 #include "GEOMImpl_CopyDriver.hxx"
 #include "GEOMImpl_ExportDriver.hxx"
@@ -90,13 +91,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy(Handle(GEOM_Object) the
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IInsertOperations.MakeCopy(");
-  TDF_Tool::Entry(theOriginal->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeCopy(" << theOriginal << ")";
 
   SetErrorCode(OK);
   return aCopy;
@@ -154,14 +149,8 @@ void GEOMImpl_IInsertOperations::Export
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  aDescr = "IInsertOperations.Export(";
-  TDF_Tool::Entry(theOriginal->GetEntry(), anEntry);
-  aDescr += (anEntry + ", ");
-  aDescr += (TCollection_AsciiString(aFileName) + ", ");
-  aDescr += (TCollection_AsciiString(aFormatName) + ")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << "geompy.Export(" << theOriginal
+    << ", \"" << theFileName << "\", \"" << theFormatName << "\")";
 
   SetErrorCode(OK);
 }
@@ -216,13 +205,8 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(result->GetEntry(), anEntry);
-  aDescr += (anEntry + " = IInsertOperations.Import(");
-  aDescr += (TCollection_AsciiString(aFileName) + ", ");
-  aDescr += (TCollection_AsciiString(aFormatName) + ")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << result << " = geompy.Import(\""
+    << theFileName << "\", \"" << theFormatName << "\")";
 
   SetErrorCode(OK);
   return result;

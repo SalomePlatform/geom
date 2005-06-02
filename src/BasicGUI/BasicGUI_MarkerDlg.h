@@ -46,9 +46,9 @@ private:
   typedef QMap< int, DlgRef_SpinBox* > DataMap;
 
 public:
-                                BasicGUI_MarkerDlg( QWidget*, SALOME_Selection* );
+                                BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* );
   virtual                       ~BasicGUI_MarkerDlg();
-  void                          Init( SALOME_Selection* );
+  void                          Init();
 
 protected:
   virtual                       GEOM::GEOM_IOperations_ptr createOperation();
@@ -63,6 +63,8 @@ protected:
 private :
   void                          enterEvent( QEvent* e );
   void                          onSelectionDone0();
+
+  GeometryGUI* myGeometryGUI;
 
 private slots:
   void                          onOk();

@@ -29,8 +29,16 @@
 #include "OperationGUI_FilletDlg.h"
 #include "DlgRef_1Sel1Spin.h"
 #include "DlgRef_2Sel1Spin.h"
-#include "QAD_Desktop.h"
+
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "OCCViewer_ViewModel.h"
+
+#include "qlabel.h"
 #include "qpixmap.h"
+#include <TColStd_MapOfInteger.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <list>
 
@@ -43,18 +51,17 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_FilletDlg::OperationGUI_FilletDlg( QWidget* parent, SALOME_Selection* Sel )
-  :GEOMBase_Skeleton( parent, "OperationGUI_FilletDlg", Sel, false,
-     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+OperationGUI_FilletDlg::OperationGUI_FilletDlg( QWidget* parent )
+  :GEOMBase_Skeleton( parent, "OperationGUI_FilletDlg", false,
+		      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   myConstructorId = -1;
-  mySelection = Sel;
   
-  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_ALL" ) ) );
-  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_EDGE" ) ) );
-  QPixmap image2( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_FACE" ) ) );
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_ALL" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_EDGE" ) ) );
+  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_FACE" ) ) );
   
-  QPixmap iconSelect( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap iconSelect( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
   setCaption( tr( "GEOM_FILLET_TITLE" ) );
 
@@ -102,7 +109,7 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg( QWidget* parent, SALOME_Selectio
   Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
 
   /* Initialisations */
-  Init( mySelection );
+  Init();
 }
 
 
@@ -119,9 +126,8 @@ OperationGUI_FilletDlg::~OperationGUI_FilletDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void OperationGUI_FilletDlg::Init( SALOME_Selection* Sel )
+void OperationGUI_FilletDlg::Init()
 {
-  mySelection = Sel;
   myConstructorId = -1;
   reset();
   RadioButton1->setChecked( true );
@@ -152,7 +158,8 @@ void OperationGUI_FilletDlg::Init( SALOME_Selection* Sel )
   connect(Group3->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
     // selection
-  connect( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
 
   initName( tr( "GEOM_FILLET" ) );
@@ -171,7 +178,8 @@ void OperationGUI_FilletDlg::Init( SALOME_Selection* Sel )
 //=================================================================================
 void OperationGUI_FilletDlg::ConstructorsClicked( int constructorId )
 {
-  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC )
+  if ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+       != OCCViewer_Viewer::Type() )
   {
     RadioButton1->setChecked( true );
     return;
@@ -269,11 +277,11 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
        myEditCurrentArgument == Group2->LineEdit1 ||
        myEditCurrentArgument == Group3->LineEdit1 )
   {
-    if ( mySelection->IObjectCount() == 1 )
+    if ( IObjectCount() == 1 )
     {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
       if ( aResult && !anObj->_is_nil() )
       {
@@ -292,16 +300,16 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
   else if ( myEditCurrentArgument == Group2->LineEdit2 ||
             myEditCurrentArgument == Group3->LineEdit2 )
   {
-    if ( mySelection->IObjectCount() == 1 )
+    if ( IObjectCount() == 1 )
     {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
       if ( aResult && !anObj->_is_nil() )
       {
          TColStd_IndexedMapOfInteger anIndexes;
-         mySelection->GetIndex( mySelection->firstIObject(), anIndexes );
+	 ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), anIndexes );
 
          if ( anIndexes.Extent() > 0 )
          {
@@ -411,8 +419,8 @@ void OperationGUI_FilletDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  connect( mySelection, SIGNAL(currentSelectionChanged()),
-           this, SLOT( SelectionIntoArgument() ) );
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	   SIGNAL(currentSelectionChanged()), this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
   displayPreview();

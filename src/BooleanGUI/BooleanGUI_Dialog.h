@@ -42,7 +42,7 @@ class BooleanGUI_Dialog : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BooleanGUI_Dialog( const int theOperation, QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BooleanGUI_Dialog( const int theOperation, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BooleanGUI_Dialog();
 
 protected:

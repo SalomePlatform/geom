@@ -28,9 +28,13 @@
 
 #include "TransformationGUI_MirrorDlg.h"
 
-#include "QAD_Desktop.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -45,13 +49,13 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(QWidget* parent,  const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-    :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(QWidget* parent,  const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_MIRROR_POINT")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_MIRROR_AXE")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_MIRROR_PLANE")));
-  QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_MIRROR_POINT")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_MIRROR_AXE")));
+  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_MIRROR_PLANE")));
+  QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_MIRROR_TITLE"));
 
@@ -120,7 +124,8 @@ void TransformationGUI_MirrorDlg::Init()
   
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_MIRROR" ) );
   ConstructorsClicked( 0 );
@@ -134,7 +139,7 @@ void TransformationGUI_MirrorDlg::Init()
 //=================================================================================
 void TransformationGUI_MirrorDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect( mySelection, 0, this, 0 );
+  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
   
   globalSelection();
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -159,7 +164,8 @@ void TransformationGUI_MirrorDlg::ConstructorsClicked(int constructorId)
 	break;
       }
     }
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
 
@@ -211,13 +217,13 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
 
   if(myEditCurrentArgument == GroupPoints->LineEdit1)
     {
-      int aNbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aName);
+      int aNbSel = GEOMBase::GetNameOfSelectedIObjects(selectedIO(), aName);
       if(aNbSel < 1)
 	{
 	  myObjects.length(0);
 	  return;
 	}
-      GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(), myObjects);
+      GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), myObjects);
       if (!myObjects.length())
 	return;
       if(aNbSel != 1)
@@ -225,13 +231,13 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
     }
   else if(myEditCurrentArgument == GroupPoints->LineEdit2)
     {
-      if(mySelection->IObjectCount() != 1)
+      if(IObjectCount() != 1)
 	{
 	  myArgument = GEOM::GEOM_Object::_nil();
 	  return;
 	}
       Standard_Boolean testResult = Standard_False;
-      myArgument = GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), testResult );
+      myArgument = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
       if(!testResult || CORBA::is_nil( myArgument ))
 	return;
       aName = GEOMBase::GetName( myArgument );
@@ -304,7 +310,8 @@ void TransformationGUI_MirrorDlg::SetEditCurrentArgument()
 void TransformationGUI_MirrorDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   ConstructorsClicked( getConstructorId() );
 }
 

@@ -41,7 +41,7 @@ class TransformationGUI_RotationDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_RotationDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_RotationDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_RotationDlg();
 
 protected:
@@ -56,7 +56,7 @@ private :
     void Init();
     void enterEvent(QEvent* e);
     double GetAngle() const;
-
+    
     GEOM::ListOfGO myObjects;
     GEOM::GEOM_Object_var myAxis;
     

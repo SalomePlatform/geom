@@ -26,8 +26,13 @@
 //  $Header$
 
 #include "BasicGUI_EllipseDlg.h"
-#include "QAD_Desktop.h"
-#include "QAD_Config.h"
+
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -42,11 +47,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_EllipseDlg::BasicGUI_EllipseDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BasicGUI_EllipseDlg::BasicGUI_EllipseDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_ELLIPSE_PV")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ELLIPSE_PV")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_ELLIPSE_TITLE"));
   
@@ -96,11 +101,12 @@ void BasicGUI_EllipseDlg::Init()
 
   myPoint = myDir = GEOM::GEOM_Object::_nil();
 
-  myGeomGUI->SetState( 0 );
+  // myGeometryGUI->SetState( 0 );
 
   /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  double step = St.toDouble();
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
+  
   double aMajorR( 200. ), aMinorR( 100. );
 
   /* min, max, step and decimals for spin boxes & initial values */
@@ -111,8 +117,8 @@ void BasicGUI_EllipseDlg::Init()
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -126,10 +132,11 @@ void BasicGUI_EllipseDlg::Init()
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName( tr( "GEOM_ELLIPSE" ) );
 }
@@ -184,7 +191,7 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
 
-  if ( mySelection->IObjectCount() != 1 )  
+  if ( IObjectCount() != 1 )  
   {
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myDir   = GEOM::GEOM_Object::_nil();
@@ -192,7 +199,7 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
   }
 
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {  
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
@@ -246,7 +253,8 @@ void BasicGUI_EllipseDlg::LineEditReturnPressed()
 void BasicGUI_EllipseDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -264,7 +272,7 @@ void BasicGUI_EllipseDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_EllipseDlg::DeactivateActiveDialog()
 {
-  myGeomGUI->SetState( -1 );
+  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -293,7 +301,7 @@ void BasicGUI_EllipseDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_EllipseDlg::createOperation()
 {
-  return getGeomEngine()->GetICurvesOperations( getStudyId() );
+  return myGeometryGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
 }
 
 //=================================================================================
@@ -334,7 +342,7 @@ bool BasicGUI_EllipseDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_EllipseDlg::closeEvent( QCloseEvent* e )
 {
-  myGeomGUI->SetState( -1 );
+  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 

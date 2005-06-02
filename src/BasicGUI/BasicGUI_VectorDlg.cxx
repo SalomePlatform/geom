@@ -29,8 +29,12 @@
 using namespace std;
 #include "BasicGUI_VectorDlg.h"
 
-#include "QAD_Desktop.h"
-#include "QAD_Config.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -43,15 +47,15 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_VectorDlg::BasicGUI_VectorDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, fl )
+BasicGUI_VectorDlg::BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, fl ), myGeometryGUI(theGeometryGUI)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_2P")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_DXYZ")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_2P")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_DXYZ")));
+  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_VECTOR_TITLE"));
-
+  
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_VECTOR"));
   RadioButton1->setPixmap(image0);
@@ -106,9 +110,9 @@ void BasicGUI_VectorDlg::Init()
   myPoint2 = GEOM::GEOM_Object::_nil();
 
   /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  double step = St.toDouble();
-
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
+ 
   /* min, max, step and decimals for spin boxes */
   GroupDimensions->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
   GroupDimensions->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
@@ -123,8 +127,8 @@ void BasicGUI_VectorDlg::Init()
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
   
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -140,13 +144,14 @@ void BasicGUI_VectorDlg::Init()
   connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
 
   connect(GroupDimensions->CheckBox1, SIGNAL(stateChanged(int)), this, SLOT(ReverseVector(int)));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr("GEOM_VECTOR") );
 
@@ -161,7 +166,7 @@ void BasicGUI_VectorDlg::Init()
 //=================================================================================
 void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
 {
-  disconnect(mySelection, 0, this, 0);
+  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
   myPoint1 = GEOM::GEOM_Object::_nil();
   myPoint2 = GEOM::GEOM_Object::_nil();
 
@@ -178,7 +183,8 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
  	GroupPoints->LineEdit2->setText("");
 
 	globalSelection( GEOM_POINT );
-	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+	connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
     case 1:
@@ -246,7 +252,7 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
 
-  if ( mySelection->IObjectCount() != 1 ) 
+  if ( IObjectCount() != 1 ) 
   {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
       myPoint1 = GEOM::GEOM_Object::_nil();
@@ -257,7 +263,7 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
 
   // nbSel == 1 
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
@@ -304,7 +310,8 @@ void BasicGUI_VectorDlg::LineEditReturnPressed()
 void BasicGUI_VectorDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	
   ConstructorsClicked( getConstructorId() );
 }
@@ -315,7 +322,7 @@ void BasicGUI_VectorDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_VectorDlg::DeactivateActiveDialog()
 {
-  myGeomGUI->SetState( -1 );
+  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -361,7 +368,7 @@ void BasicGUI_VectorDlg::ReverseVector(int state)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_VectorDlg::createOperation()
 {
-  return getGeomEngine()->GetIBasicOperations( getStudyId() );
+  return myGeometryGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
 }
 
 //=================================================================================

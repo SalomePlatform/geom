@@ -41,7 +41,7 @@ class BasicGUI_ArcDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_ArcDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    BasicGUI_ArcDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~BasicGUI_ArcDlg();
 
 protected:
@@ -55,6 +55,8 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
+
+    GeometryGUI*  myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint1, myPoint2, myPoint3;
 

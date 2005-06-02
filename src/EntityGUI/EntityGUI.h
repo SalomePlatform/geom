@@ -32,6 +32,8 @@
 #include "GEOMGUI.h"
 #include "GEOMBase.h"
 
+#include "SALOMEDSClient.hxx"
+
 //=================================================================================
 // class    : EntityGUI
 // purpose  :
@@ -39,15 +41,15 @@
 class EntityGUI : public GEOMGUI
 {
 protected:
-  EntityGUI(); // hide constructor to avoid direct creation
+  EntityGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
 
 public :
   ~EntityGUI();
 
   // Get the only EntityGUI object
-  static EntityGUI* GetEntityGUI();
+  static EntityGUI* GetEntityGUI( GeometryGUI* parent );
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
 
   void OnSketchEnd(const char *Cmd);
 
@@ -58,7 +60,7 @@ public :
   void MakeBezierAndDisplay(GEOM::string_array& listShapesIOR);
 
     /* Methods for sub shapes explode */
-  bool SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* IOR);
+  bool SObjectExist(const _PTR(SObject)& theFatherObject, const char* IOR);
   bool OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType);  
   bool OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType,
 			     Standard_Integer& aLocalContextId, bool& myUseLocalContext);

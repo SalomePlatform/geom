@@ -28,10 +28,15 @@
 
 using namespace std;
 #include "BlocksGUI_PropagateDlg.h"
-
-#include "QAD_Desktop.h"
 #include "GEOMImpl_Types.hxx"
 
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <TColStd_MapOfInteger.hxx>
+
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BlocksGUI_PropagateDlg()
@@ -40,11 +45,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BlocksGUI_PropagateDlg::BlocksGUI_PropagateDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BlocksGUI_PropagateDlg::BlocksGUI_PropagateDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_PROPAGATE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PROPAGATE")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_PROPAGATE_TITLE"));
 
@@ -93,7 +98,7 @@ void BlocksGUI_PropagateDlg::Init()
   myObject = GEOM::GEOM_Object::_nil();
   ResultName->setText( "" );
 
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
@@ -161,8 +166,8 @@ void BlocksGUI_PropagateDlg::SelectionIntoArgument()
   mySelName->setText("");
   myObject = GEOM::GEOM_Object::_nil();
 
-  if ( mySelection->IObjectCount() == 1 ) {
-    Handle(SALOME_InteractiveObject) anIO = mySelection->firstIObject();
+  if ( IObjectCount() == 1 ) {
+    Handle(SALOME_InteractiveObject) anIO = firstIObject();
     Standard_Boolean aRes;
     myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
     if ( aRes )
@@ -203,7 +208,7 @@ void BlocksGUI_PropagateDlg::LineEditReturnPressed()
 //=================================================================================
 void BlocksGUI_PropagateDlg::DeactivateActiveDialog()
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -219,7 +224,7 @@ void BlocksGUI_PropagateDlg::ActivateThisDialog()
   mySelName->setText("");
   myObject = GEOM::GEOM_Object::_nil();
 
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
   activateSelection();
 }
 
@@ -241,7 +246,7 @@ void BlocksGUI_PropagateDlg::enterEvent(QEvent* e)
 //=================================================================================
 void BlocksGUI_PropagateDlg::closeEvent(QCloseEvent* e)
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 
@@ -297,7 +302,8 @@ void BlocksGUI_PropagateDlg::activateSelection()
   if (myObject->_is_nil()) {
     SelectionIntoArgument();
   }
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 }
 
 //================================================================

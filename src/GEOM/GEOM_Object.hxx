@@ -178,7 +178,7 @@ class GEOM_Object : public MMgt_TShared
   void SetAuxData(const char* theData);
 
   //Returns an auxiliary data
-  char* GetAuxData();
+  TCollection_AsciiString GetAuxData();
 
   //###########################################################  
   // Sub shape methods

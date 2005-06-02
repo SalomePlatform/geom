@@ -36,7 +36,7 @@ using namespace std;
 // purpose  : constructor of specific widget accepting floats in double precision.
 //=================================================================================
 DlgRef_SpinBox::DlgRef_SpinBox(QWidget* parent, const char* name)
-: QAD_SpinBoxDbl(parent, name)
+  : QtxDblSpinBox(parent, name)
 {
 }
 

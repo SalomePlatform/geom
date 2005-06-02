@@ -39,15 +39,15 @@
 class RepairGUI : public GEOMGUI
 {
 protected:
-  RepairGUI(); // hide constructor to avoid direct creation
+  RepairGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
 
 public :
   ~RepairGUI();
 
   // Get the only RepairGUI object
-  static RepairGUI* GetRepairGUI();
+  static RepairGUI* GetRepairGUI( GeometryGUI* parent );
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
 
 private:
   static RepairGUI* myGUIObject;        // the only RepairGUI object

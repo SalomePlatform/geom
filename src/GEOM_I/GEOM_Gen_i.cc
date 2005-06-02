@@ -1,10 +1,7 @@
-#include <strstream>
-
-using namespace std;
-
 #include "GEOM_Gen_i.hh"
 #include "GEOM_Object_i.hh"
-#include "SALOMEDS_Tool.hxx"
+
+#include <strstream> 
 
 #include "Utils_CorbaException.hxx"
 #include "OpUtil.hxx"
@@ -25,6 +22,9 @@ using namespace std;
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TopAbs_ShapeEnum.hxx>
+
+#include "SALOMEDS_Tool.hxx"
+using namespace std;
 
 //============================================================================
 // function : GEOM_Gen_i()
@@ -760,7 +760,8 @@ GEOM::GEOM_IGroupOperations_ptr GEOM_Gen_i::GetIGroupOperations(CORBA::Long theS
  *  AddSubShape
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape(GEOM::GEOM_Object_ptr theMainShape, const GEOM::ListOfLong& theIndices)
+GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr theMainShape,
+					       const GEOM::ListOfLong& theIndices)
 {
   if(theMainShape == NULL || theIndices.length() < 1) return GEOM::GEOM_Object::_nil();
   Handle(GEOM_Object) aMainsShape = _impl->GetObject(theMainShape->GetStudyID(), theMainShape->GetEntry());
@@ -769,7 +770,7 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape(GEOM::GEOM_Object_ptr theMainShape
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1, theIndices.length());
   for(Standard_Integer i = 0; i<theIndices.length(); i++) anArray->SetValue(i+1, theIndices[i]);
 
-  Handle(GEOM_Object) anObject = _impl->AddSubShape(aMainsShape, anArray);
+  Handle(GEOM_Object) anObject = _impl->AddSubShape(aMainsShape, anArray, true);
   if(anObject.IsNull()) return GEOM::GEOM_Object::_nil();
 
   TCollection_AsciiString anEntry;

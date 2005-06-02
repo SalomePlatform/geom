@@ -41,8 +41,7 @@ class OperationGUI_MaterialDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    OperationGUI_MaterialDlg (QWidget* parent, const char* name,
-			      SALOME_Selection* Sel,
+    OperationGUI_MaterialDlg (QWidget* parent, const char* name,			     
 			      GEOM::ListOfGO ListShapes,
 			      bool modal = FALSE, WFlags fl = 0);
     ~OperationGUI_MaterialDlg();

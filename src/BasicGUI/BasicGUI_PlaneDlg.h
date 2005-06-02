@@ -44,7 +44,7 @@ class BasicGUI_PlaneDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_PlaneDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_PlaneDlg();
     
 protected:
@@ -59,6 +59,8 @@ private :
     void Init();
     void enterEvent(QEvent* e);
     double getSize() const;
+
+    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3, myFace;
 

@@ -41,8 +41,7 @@ class MeasureGUI_CenterMassDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-                                        MeasureGUI_CenterMassDlg( QWidget* parent,
-                                                                  SALOME_Selection* Sel );
+                                        MeasureGUI_CenterMassDlg( QWidget* parent );
                                         ~MeasureGUI_CenterMassDlg();
 
 protected:
@@ -62,7 +61,7 @@ private slots:
 
 private:
 
-    void                                Init( SALOME_Selection* );
+    void                                Init( );
     void                                enterEvent( QEvent* e );
     void                                processObject();
     bool                                getParameters( double&, double&, double& );

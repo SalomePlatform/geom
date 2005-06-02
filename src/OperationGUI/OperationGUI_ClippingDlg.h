@@ -48,7 +48,7 @@ class OperationGUI_ClippingDlg : public GEOMBase_Skeleton
     Q_OBJECT
     
     public:
-    OperationGUI_ClippingDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    OperationGUI_ClippingDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~OperationGUI_ClippingDlg();
     
 private :

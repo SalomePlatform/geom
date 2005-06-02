@@ -31,7 +31,7 @@
 
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_Ext.h"
-#include "QAD_SpinBoxDbl.h"
+#include "QtxDblSpinBox.h"
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 
@@ -49,7 +49,7 @@ class RepairGUI_SewingDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    RepairGUI_SewingDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    RepairGUI_SewingDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_SewingDlg();
 
 protected:
@@ -64,10 +64,10 @@ private :
     void closeEvent(QCloseEvent* e);
     void initSelection();
 
-		GEOM::GEOM_Object_var myObject;
+    GEOM::GEOM_Object_var myObject;
 
     DlgRef_1Sel_Ext* GroupPoints;
-    QAD_SpinBoxDbl*  myTolEdt;
+    QtxDblSpinBox*   myTolEdt;
     QPushButton*     myFreeBoundBtn;
 
     int myClosed; // number of free closed boundaries detected.  calculated in execute(), used in onDetect().    

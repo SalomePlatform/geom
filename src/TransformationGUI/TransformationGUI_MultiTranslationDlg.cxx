@@ -28,10 +28,14 @@
 
 #include "TransformationGUI_MultiTranslationDlg.h"
 
-#include "GEOMImpl_Types.hxx"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
-#include "QAD_Config.h"
-#include "QAD_Desktop.h"
+#include <qlabel.h>
+
+#include "GEOMImpl_Types.hxx"
 
 #include <qcheckbox.h>
 
@@ -46,12 +50,12 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg(QWidget* parent,  const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg(GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_MULTITRANSLATION_SIMPLE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_MULTITRANSLATION_DOUBLE")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_DLG_MULTITRANSLATION_SIMPLE")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_DLG_MULTITRANSLATION_DOUBLE")));
+  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_MULTITRANSLATION_TITLE"));
 
@@ -116,9 +120,9 @@ TransformationGUI_MultiTranslationDlg::~TransformationGUI_MultiTranslationDlg()
 void TransformationGUI_MultiTranslationDlg::Init()
 {
   /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  double step = St.toDouble();
-
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
+  
   double SpecificStep = 1;
   /* min, max, step and decimals for spin boxes & initial values */
   GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
@@ -159,18 +163,19 @@ void TransformationGUI_MultiTranslationDlg::Init()
   connect(GroupDimensions->SpinBox_DX2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DY2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX1, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY1, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX2, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY2, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX1, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY1, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX2, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY2, SLOT(SetStep(double)));
 
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(ReverseStepU()));
   connect(GroupDimensions->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(ReverseStepU()));
   connect(GroupDimensions->CheckButton2, SIGNAL(toggled(bool)), this, SLOT(ReverseStepV()));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   
   initName( tr( "GEOM_MULTITRANSLATION" ) );
@@ -184,7 +189,7 @@ void TransformationGUI_MultiTranslationDlg::Init()
 //=================================================================================
 void TransformationGUI_MultiTranslationDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect(mySelection, 0, this, 0);
+  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
   
   myStepU = myStepV = 50.0;
   myNbTimesU = myNbTimesV = 2;
@@ -231,7 +236,8 @@ void TransformationGUI_MultiTranslationDlg::ConstructorsClicked(int constructorI
   
   myEditCurrentArgument->setFocus();
   myBase = myVectorU = GEOM::GEOM_Object::_nil();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
 
@@ -279,7 +285,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
   
-  if(mySelection->IObjectCount() != 1) {
+  if(IObjectCount() != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1 || myEditCurrentArgument == GroupDimensions->LineEdit1)
       myBase = GEOM::GEOM_Object::_nil();
     else if(myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupDimensions->LineEdit2)
@@ -291,7 +297,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), testResult );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
 
   if ( !testResult || CORBA::is_nil( aSelectedObject ) || !GEOMBase::IsShape( aSelectedObject ) )
     return;
@@ -368,7 +374,8 @@ void TransformationGUI_MultiTranslationDlg::LineEditReturnPressed()
 void TransformationGUI_MultiTranslationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -470,7 +477,7 @@ void TransformationGUI_MultiTranslationDlg::ReverseStepV()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_MultiTranslationDlg::createOperation()
 {
-  return getGeomEngine()->GetITransformOperations( getStudyId() );
+  return myGeometryGUI->GetGeomGen()->GetITransformOperations( getStudyId() );
 }
 
 
@@ -534,6 +541,6 @@ bool TransformationGUI_MultiTranslationDlg::execute( ObjectList& objects )
 //=================================================================================
 void  TransformationGUI_MultiTranslationDlg::closeEvent( QCloseEvent* e )
 {
-  myGeomGUI->SetState( -1 );
+  // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }

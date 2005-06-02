@@ -10,7 +10,7 @@ HAVE_SSTREAM=@HAVE_SSTREAM@
 
 
 LIBS=@LIBS@ 
-LDFLAGS=@LDFLAGS@ -L$(top_builddir)/lib/salome -Xlinker -rpath-link -Xlinker $(top_builddir)/lib/salome
+LDFLAGS=@LDFLAGS@ -L$(top_builddir)/lib/salome -Xlinker -rpath-link -Xlinker -L$(top_builddir)/lib/salome
 # add libstdc++ to link c++ library with libtool !
 LDFLAGS+= -lstdc++
 
@@ -33,6 +33,10 @@ C_DEPEND_FLAG = @C_DEPEND_FLAG@
 CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CXX_DEPEND_FLAG = @CXX_DEPEND_FLAG@
+
+# BOOST Library
+
+BOOST_CPPFLAGS = @BOOST_CPPFLAGS@ 
 
 # JAVA
 
@@ -60,6 +64,7 @@ QT_MT_LIBS = @QT_MT_LIBS@
 MOC = @MOC@
 UIC = @UIC@
 
+MSG2QM = @MSG2QM@
 
 #QWT
 

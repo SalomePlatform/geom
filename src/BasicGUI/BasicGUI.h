@@ -33,6 +33,7 @@
 #include "GEOMBase.h"
 #include <V3d_View.hxx>
 
+
 //=================================================================================
 // class    : BasicGUI
 // purpose  :
@@ -40,16 +41,16 @@
 class BasicGUI : public GEOMGUI
 {
 protected:
-  BasicGUI(); // hide constructor to avoid direct creation
+  BasicGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
 
 public :
   ~BasicGUI();
 
   // Get the only BasicGUI object
-  static BasicGUI* GetBasicGUI();
+  static BasicGUI* GetBasicGUI( GeometryGUI* parent );
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
-  bool OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
+  bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
+  bool OnMousePress(QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow);
 
   gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) aView );
 

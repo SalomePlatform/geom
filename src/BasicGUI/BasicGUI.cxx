@@ -30,14 +30,13 @@ using namespace std;
 #include "BasicGUI.h"
 #include "GeometryGUI.h"
 
-#include "QAD_RightFrame.h"
-#include "QAD_Desktop.h"
-#include "OCCViewer_Viewer3d.h"
-#include "OCCViewer_ViewFrame.h"
-#include "OCCViewer_AISSelector.h"
+#include "SUIT_Session.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_ViewWindow.h"
+#include "OCCViewer_ViewWindow.h"
+#include "OCCViewer_ViewModel.h"
+#include "OCCViewer_ViewManager.h"
 #include "OCCViewer_ViewPort3d.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
-
 #include "utilities.h"
 
 #include <Precision.hxx>
@@ -63,10 +62,10 @@ BasicGUI* BasicGUI::myGUIObject = 0;
 // function : GetBasicGUI()
 // purpose  : Get the only BasicGUI object [ static ]
 //=======================================================================
-BasicGUI* BasicGUI::GetBasicGUI()
+BasicGUI* BasicGUI::GetBasicGUI( GeometryGUI* parent )
 {
   if ( myGUIObject == 0 ) {
-    myGUIObject = new BasicGUI();
+    myGUIObject = new BasicGUI( parent );
   }
   return myGUIObject;
 }
@@ -75,8 +74,8 @@ BasicGUI* BasicGUI::GetBasicGUI()
 // function : BasicGUI()
 // purpose  : Constructor
 //=======================================================================
-BasicGUI::BasicGUI() :
-  GEOMGUI()
+BasicGUI::BasicGUI( GeometryGUI* parent ) :
+  GEOMGUI(parent)
 {
 }
 
@@ -94,55 +93,45 @@ BasicGUI::~BasicGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool BasicGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+bool BasicGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
+  getGeometryGUI()->EmitSignalDeactivateDialog();
   QDialog* aDlg = NULL;
 
   switch ( theCommandID )
     {
     case 4011: // POINT
-      {
-	Handle(AIS_InteractiveContext) ic;
-	QAD_StudyFrame* aFrame = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame();
-	if ( aFrame->getTypeView() == VIEW_OCC) 
-	{
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)aFrame->getRightFrame()->getViewFrame())->getViewer();
-	  ic = v3d->getAISContext();
-	}
-	aDlg = new BasicGUI_PointDlg( parent, "", Sel ); 
-	break;
-      }
+      aDlg = new BasicGUI_PointDlg( getGeometryGUI(), parent, "" ); 
+      break;
     case 4012:  // LINE
-      aDlg = new BasicGUI_LineDlg(parent, "",  Sel);
+      aDlg = new BasicGUI_LineDlg( getGeometryGUI(), parent, "" );
       break;
     case 4013:  // CIRCLE
-      aDlg = new BasicGUI_CircleDlg(parent, "", Sel);
+      aDlg = new BasicGUI_CircleDlg( getGeometryGUI(), parent, "");
       break;
     case 4014:  // ELLIPSE
-      aDlg = new BasicGUI_EllipseDlg(parent, "", Sel);
+      aDlg = new BasicGUI_EllipseDlg( getGeometryGUI(), parent, "" );
       break;
     case 4015:  // ARC
-      aDlg = new BasicGUI_ArcDlg(parent, "", Sel);
+      aDlg = new BasicGUI_ArcDlg( getGeometryGUI(), parent, "" );
       break ;
     case 4016: // VECTOR
-      aDlg = new BasicGUI_VectorDlg(parent, "", Sel);
+      aDlg = new BasicGUI_VectorDlg( getGeometryGUI(), parent, "" );
       break;
     case 4017: // PLANE
-      aDlg = new BasicGUI_PlaneDlg(parent, "", Sel);
+      aDlg = new BasicGUI_PlaneDlg( getGeometryGUI(), parent, "");
       break;
     case 4018: // WORKING PLANE
-      aDlg = new BasicGUI_WorkingPlaneDlg(parent, "", Sel);
+      aDlg = new BasicGUI_WorkingPlaneDlg( getGeometryGUI(), parent, "" );
       break;
     case 4019: // CURVE
-      aDlg = new BasicGUI_CurveDlg( parent, "", Sel );
+      aDlg = new BasicGUI_CurveDlg( getGeometryGUI(), parent, "" );
       break;
     case 4020: // REPAIR
-      aDlg = new BasicGUI_MarkerDlg( parent, Sel );
+      aDlg = new BasicGUI_MarkerDlg( getGeometryGUI(), parent );
       break;      
     default:
-      parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;
     }
 
@@ -157,42 +146,42 @@ bool BasicGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 // function : 0nMousePress()
 // purpose  : [static] manage mouse events
 //=================================================================================
-bool BasicGUI::OnMousePress( QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* theFrame )
+bool BasicGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
 {
-  QDialog* aDlg = GeometryGUI::GetGeomGUI()->GetActiveDialogBox();
+  QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
 
   // Create Point dialog, OCC viewer 
-  if ( aDlg && aDlg->isA( "BasicGUI_PointDlg" ) && theFrame->getTypeView() == VIEW_OCC &&  pe->state() != Qt::ControlButton )
+  if ( aDlg && aDlg->isA( "BasicGUI_PointDlg" ) && theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&  pe->state() != Qt::ControlButton )
   {
     BasicGUI_PointDlg* aPntDlg = (BasicGUI_PointDlg*) aDlg;
     if ( aPntDlg->acceptMouseEvent() )
-		{
-    	OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)theFrame->getRightFrame()->getViewFrame())->getViewer();
-    	Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
-      
+      {
+	OCCViewer_Viewer* anOCCViewer = ((OCCViewer_ViewManager*)(theViewWindow->getViewManager()))->getOCCViewer();
+	Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();
+	
     	gp_Pnt aPnt;    
 
     	ic->InitSelected();
     	if( pe->state() == Qt::ShiftButton )
-      	v3d->getAISSelector()->shiftSelect();  // Append selection
+	  ic->ShiftSelect();  // Append selection
     	else
-      	v3d->getAISSelector()->select();       // New selection
+	  ic->Select();       // New selection
 
     	ic->InitSelected();
     	if( ic->MoreSelected() )
-    	{
-      	TopoDS_Shape aShape = ic->SelectedShape();
-      	if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
-        	aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
-    	}
+	  {
+	    TopoDS_Shape aShape = ic->SelectedShape();
+	    if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
+	      aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
+	  }
     	else
-     	{
-     		OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)theFrame->getRightFrame()->getViewFrame())->getViewPort();
-      	aPnt = ConvertClickToPoint( pe->x(), pe->y(), ((OCCViewer_ViewPort3d*)vp)->getView() );
-    	}
+	  {
+	    OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+	    aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+	  }
 
     	aPntDlg->OnPointSelected( aPnt );  // "feed" the point to point construction dialog
-    } // acceptMouseEvent()
+      } // acceptMouseEvent()
   } 
   return false;
 }
@@ -229,8 +218,8 @@ gp_Pnt BasicGUI::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView)
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return BasicGUI::GetBasicGUI();
+    return BasicGUI::GetBasicGUI( parent );
   }
 }

@@ -32,11 +32,10 @@
 #include <qdialog.h>
 #include "GEOMBase_Helper.h"
 
-class SALOME_Prs;
-class SALOME_Selection;
 class QLineEdit;
 class QLabel;
 class GEOM_Displayer;
+class GeometryGUI;
 
 //=================================================================================
 // class    : RepairGUI_FreeBoundDlg
@@ -48,7 +47,7 @@ class RepairGUI_FreeBoundDlg : public QDialog,
     Q_OBJECT
 
 public:
-                                        RepairGUI_FreeBoundDlg( QWidget*, SALOME_Selection* );
+                                        RepairGUI_FreeBoundDlg( GeometryGUI*, QWidget* );
                                         ~RepairGUI_FreeBoundDlg();
 
 private slots:
@@ -60,7 +59,7 @@ private slots:
                                                                                   
 private:
 
-  void                                  Init( SALOME_Selection* );
+  void                                  Init();
   void                                  enterEvent( QEvent* e );
   void                                  closeEvent( QCloseEvent* e );
   void                                  activateSelection();
@@ -68,6 +67,7 @@ private:
   virtual GEOM::GEOM_IOperations_ptr    createOperation();
   virtual bool                          execute( ObjectList& objects );
   virtual bool                          isValid( QString& );
+  virtual SUIT_Desktop*                 getDesktop() const;
 
 private:
 
@@ -75,7 +75,7 @@ private:
   QLabel*                               myClosedLbl;
   QLabel*                               myOpenLbl;
   GEOM::GEOM_Object_var                 myObj;
-  SALOME_Selection*                     mySelection;
+  GeometryGUI*                          myGeomGUI;
   int                                   myNbClosed;
   int                                   myNbOpen;
 };

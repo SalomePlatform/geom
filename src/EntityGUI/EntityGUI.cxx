@@ -28,15 +28,17 @@
 
 #include "EntityGUI.h"
 #include "GeometryGUI.h"
-
-#include "QAD_RightFrame.h"
-#include "QAD_Desktop.h"
-#include "OCCViewer_Viewer3d.h"
-#include "OCCViewer_ViewFrame.h"
-#include "VTKViewer_ViewFrame.h"
 #include "GEOM_AssemblyBuilder.h"
-#include "SALOMEGUI_ImportOperation.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SUIT_ViewWindow.h"
+#include "OCCViewer_ViewModel.h"
+#include "OCCViewer_ViewManager.h"
+#include "VTKViewer_ViewModel.h"
+#include "SalomeApp_Study.h"
+#include "SalomeApp_Tools.h"
+//#include "SALOMEGUI_ImportOperation.h"
 
 #include <TopoDS_Compound.hxx>
 #include <BRep_Builder.hxx>
@@ -47,6 +49,7 @@
 
 #include "utilities.h"
 
+using namespace boost;
 using namespace std;
 
 EntityGUI* EntityGUI::myGUIObject = 0;
@@ -55,11 +58,11 @@ EntityGUI* EntityGUI::myGUIObject = 0;
 // function : GetEntityGUI()
 // purpose  : Get the only EntityGUI object [ static ]
 //=======================================================================
-EntityGUI* EntityGUI::GetEntityGUI()
+EntityGUI* EntityGUI::GetEntityGUI( GeometryGUI* parent )
 {
   if ( myGUIObject == 0 ) {
     // init EntityGUI only once
-    myGUIObject = new EntityGUI();
+    myGUIObject = new EntityGUI( parent );
   }
   return myGUIObject;
 }
@@ -68,10 +71,10 @@ EntityGUI* EntityGUI::GetEntityGUI()
 // function : EntityGUI()
 // purpose  : Constructor
 //=======================================================================
-EntityGUI::EntityGUI() :  GEOMGUI()
+EntityGUI::EntityGUI( GeometryGUI* parent ) :  GEOMGUI( parent )
 {
   myGeomBase = new GEOMBase();
-  myGeom = GEOM::GEOM_Gen::_duplicate( GeometryGUI::GetGeomGUI()->GetGeomGen() );
+  myGeom = GEOM::GEOM_Gen::_duplicate( GeometryGUI::GetGeomGen() );
 
   mySimulationShape1 = new AIS_Shape(TopoDS_Shape());
   mySimulationShape2 = new AIS_Shape(TopoDS_Shape());
@@ -91,23 +94,22 @@ EntityGUI::~EntityGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool EntityGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+bool EntityGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
+  getGeometryGUI()->EmitSignalDeactivateDialog();
   QDialog* aDlg = NULL;
 
   switch (theCommandID)
   {
     case 404: // SKETCHER
-      GeometryGUI::GetGeomGUI()->ActiveWorkingPlane();
-      aDlg = new EntityGUI_SketcherDlg(parent, "", Sel);
+      getGeometryGUI()->ActiveWorkingPlane();
+      aDlg = new EntityGUI_SketcherDlg(getGeometryGUI(), parent, "");
       break;
     case 407: // EXPLODE : use ic
-      aDlg = new EntityGUI_SubShapeDlg(parent, "", Sel);
+      aDlg = new EntityGUI_SubShapeDlg(parent, "");
       break;
     default:
-      parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;
   }
   if ( aDlg )
@@ -137,7 +139,7 @@ void EntityGUI::OnSketchEnd(const char *Cmd)
       QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
+    SalomeApp_Tools::QtCatchCorbaException(S_ex);
   }
   */
   return;
@@ -151,10 +153,12 @@ void EntityGUI::OnSketchEnd(const char *Cmd)
 void EntityGUI::DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shape& S2) 
 {
   //NRI DEBUG : 14/02/2002
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  if( SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+      != OCCViewer_Viewer::Type() )
     return;
-	
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+
+  OCCViewer_Viewer* v3d = 
+    ((OCCViewer_ViewManager*)(SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()))->getOCCViewer();
   Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
   try {
     if(!S1.IsNull()) {
@@ -197,10 +201,18 @@ void EntityGUI::DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shap
 //==================================================================================
 void EntityGUI::EraseSimulationShape()
 {
-  int count = QAD_Application::getDesktop()->getActiveStudy()->getStudyFramesCount();
-  for(int i = 0; i < count; i++) {
-    if(QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i)->getTypeView() == VIEW_OCC) {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i)->getRightFrame()->getViewFrame())->getViewer();
+  // get all view windows at the desktop
+  QPtrList<SUIT_ViewWindow> aWndLst = SUIT_Session::session()->activeApplication()->desktop()->windows();
+  //get all view windows, which belong to the active study
+  QPtrList<SUIT_ViewWindow> aWndLstAS;
+  SUIT_ViewWindow* vw;
+  for ( vw = aWndLst.first(); vw; vw = aWndLst.next() )
+    if ( vw->getViewManager()->study() == SUIT_Session::session()->activeApplication()->activeStudy() )
+      aWndLstAS.append( vw );
+  
+  for ( vw = aWndLstAS.first(); vw; vw = aWndLstAS.next() ) {
+    if ( vw->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
+      OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(vw->getViewManager()))->getOCCViewer();
       Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
       ic->Erase(mySimulationShape1, Standard_True, Standard_False);
       ic->ClearPrs(mySimulationShape1);
@@ -215,24 +227,25 @@ void EntityGUI::EraseSimulationShape()
 // function : SObjectExist()
 // purpose  :
 //=====================================================================================
-bool EntityGUI::SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* IOR)
+bool EntityGUI::SObjectExist(const _PTR(SObject)& theFatherObject, const char* IOR)
 {
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  SALOMEDS::ChildIterator_var it = aStudy->NewChildIterator(theFatherObject);
-  SALOMEDS::SObject_var RefSO;
-  SALOMEDS::GenericAttribute_var anAttr;
-  SALOMEDS::AttributeIOR_var anIOR;
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( !appStudy ) return false;
+  _PTR(Study) aStudy = appStudy->studyDS();
+  _PTR(ChildIterator) it ( aStudy->NewChildIterator(theFatherObject) );
+  _PTR(SObject) RefSO;
+  _PTR(GenericAttribute) anAttr;
   for(; it->More();it->Next()) {
-    SALOMEDS::SObject_var SO= it->Value();
+    _PTR(SObject) SO ( it->Value() );
     if(SO->FindAttribute(anAttr, "AttributeIOR")) {
-      anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-      if(strcmp( anIOR->Value(), IOR ) == 0)
+      _PTR(AttributeIOR) anIOR ( anAttr  );
+      if(strcmp( anIOR->Value().c_str(), IOR ) == 0)
 	return true;
     }
     if(SO->ReferencedObject(RefSO)) {
       if(RefSO->FindAttribute(anAttr, "AttributeIOR")) {
-        anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	if(strcmp(anIOR->Value(), IOR) == 0)
+        _PTR(AttributeIOR) anIOR ( anAttr );
+	if(strcmp(anIOR->Value().c_str(), IOR) == 0)
 	  return true;
       }
     }
@@ -247,7 +260,7 @@ bool EntityGUI::SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* 
 //=====================================================================================
 bool EntityGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType)
 {
-  QAD_Application::getDesktop()->putInfo("OnSubShapeGetAll method from EntityGUI should be reimplemented ...");
+  SUIT_Session::session()->activeApplication()->putInfo("OnSubShapeGetAll method from EntityGUI should be reimplemented ...");
   /*
   SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR(ShapeTopoIOR);
@@ -277,7 +290,7 @@ bool EntityGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Shap
     }
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
+    SalomeApp_Tools::QtCatchCorbaException(S_ex);
   }
   
   // open transaction
@@ -467,7 +480,7 @@ bool EntityGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Shap
 //=====================================================================================
 bool EntityGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType, Standard_Integer& aLocalContextId, bool& myUseLocalContext)
 {
-  QAD_Application::getDesktop()->putInfo("OnSubShapeGetSelected method from EntityGUI should be reimplemented ...");
+  SUIT_Session::session()->activeApplication()->putInfo("OnSubShapeGetSelected method from EntityGUI should be reimplemented ...");
  //  //* Test the type of viewer */
 //   if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
 //     return false;
@@ -532,7 +545,7 @@ bool EntityGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char*
 //     aResult = myGeom->SubShape(aShape, SubShapeType, ListOfID);
 //   }
 //   catch (const SALOME::SALOME_Exception& S_ex) {
-//     QtCatchCorbaException(S_ex);
+//     SalomeApp_Tools::QtCatchCorbaException(S_ex);
 //   }
 
 //   /* local context from DialogBox */
@@ -655,8 +668,8 @@ bool EntityGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char*
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return EntityGUI::GetEntityGUI();
+    return EntityGUI::GetEntityGUI( parent );
   }
 }

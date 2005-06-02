@@ -39,15 +39,15 @@
 class OperationGUI : public GEOMGUI
 {
 protected:
-  OperationGUI(); // hide constructor to avoid direct creation
+  OperationGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
 
 public :
   ~OperationGUI();
 
   // Get the only OperationGUI object
-  static OperationGUI* GetOperationGUI();
+  static OperationGUI* GetOperationGUI( GeometryGUI* parent  );
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
 
 private:
   static OperationGUI* myGUIObject;        // the only OperationGUI object

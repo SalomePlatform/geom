@@ -3,14 +3,14 @@
 #define _GEOM_Engine_HXX_
 
 #include "GEOM_Application.hxx"
-#include <Interface_DataMapOfIntegerTransient.hxx> 
-#include <TDF_Label.hxx>
-#include <TDocStd_Document.hxx>
 #include "GEOM_Object.hxx"
-#include <TColStd_HArray1OfInteger.hxx>
-#include <TopAbs.hxx>
-
 #include "GEOM_DataMapOfAsciiStringTransient.hxx"
+
+#include <Interface_DataMapOfIntegerTransient.hxx> 
+#include <Resource_DataMapOfAsciiStringAsciiString.hxx>
+#include <TDocStd_Document.hxx>
+#include <TColStd_HArray1OfInteger.hxx>
+#include <TColStd_HSequenceOfAsciiString.hxx>
 
 class GEOM_Engine
 {
@@ -58,7 +58,18 @@ class GEOM_Engine
   void Redo(int theDocID);
 
   //Adds a new sub shape object of the MainShape object
-  Handle(GEOM_Object) AddSubShape(Handle(GEOM_Object) theMainShape, Handle(TColStd_HArray1OfInteger) theIndices);
+  Handle(GEOM_Object) AddSubShape(Handle(GEOM_Object) theMainShape, 
+				  Handle(TColStd_HArray1OfInteger) theIndices,
+				  bool isStandaloneOperation = false);
+
+  TCollection_AsciiString DumpPython(int theDocID, 
+				     Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+				     bool isPublished, 
+				     bool& aValidScript);
+
+  const char* GetDumpName (const char* theStudyEntry) const;
+
+  Handle(TColStd_HSequenceOfAsciiString) GetAllDumpNames() const;
 
  protected:
   static void SetEngine(GEOM_Engine* theEngine);       
@@ -69,6 +80,8 @@ class GEOM_Engine
   Interface_DataMapOfIntegerTransient _mapIDDocument;
   int _UndoLimit;
   GEOM_DataMapOfAsciiStringTransient _objects;
+
+  Resource_DataMapOfAsciiStringAsciiString _studyEntry2NameMap;
 };
 
 #endif

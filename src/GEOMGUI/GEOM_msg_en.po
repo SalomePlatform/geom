@@ -1973,4 +1973,906 @@ msgstr "Propagate"
 msgid "GEOM_PROPAGATE"
 msgstr "Propagate"
 
-###
+### Menu of GEOM module ###
+msgid "MEN_FILE"
+msgstr "File"
+
+msgid "TOP_IMPORT"
+msgstr "Import geometry from BREP file"
+
+msgid "MEN_IMPORT"
+msgstr "Import..."
+
+msgid "STB_IMPORT"
+msgstr "Import geometry from BREP file"
+
+msgid "TOP_EXPORT"
+msgstr "Export geometry to BREP file"
+
+msgid "MEN_EXPORT"
+msgstr "Export..."
+
+msgid "STB_EXPORT"
+msgstr "Export geometry to BREP file"
+
+msgid "MEN_EDIT"
+msgstr "Edit"
+
+msgid "TOP_DELETE"
+msgstr "Delete object"
+
+msgid "MEN_DELETE"
+msgstr "Delete"
+
+msgid "STB_DELETE"
+msgstr "Delete object"
+
+msgid "MEN_NEW_ENTITY"
+msgstr "New Entity"
+
+msgid "MEN_BASIC"
+msgstr "Basic"
+
+msgid "TOP_POINT"
+msgstr "Create a point"
+
+msgid "MEN_POINT"
+msgstr "Point"
+
+msgid "STB_POINT"
+msgstr "Create a point"
+
+msgid "TOP_LINE"
+msgstr "Create a line"
+
+msgid "MEN_LINE"
+msgstr "Line"
+
+msgid "STB_LINE"
+msgstr "Create a line"
+
+msgid "TOP_CIRCLE"
+msgstr "Create a circle"
+
+msgid "MEN_CIRCLE"
+msgstr "Circle"
+
+msgid "STB_CIRCLE"
+msgstr "Create a circle"
+
+msgid "TOP_ELLIPSE"
+msgstr "Create a ellipse"
+
+msgid "MEN_ELLIPSE"
+msgstr "Ellipse"
+
+msgid "STB_ELLIPSE"
+msgstr "Create a ellipse"
+
+msgid "TOP_ARC"
+msgstr "Create a arc"
+
+msgid "MEN_ARC"
+msgstr "Arc"
+
+msgid "STB_ARC"
+msgstr "Create a arc"
+
+msgid "TOP_CURVE"
+msgstr "Create a curve"
+
+msgid "MEN_CURVE"
+msgstr "Curve"
+
+msgid "STB_CURVE"
+msgstr "Create a curve"
+
+msgid "TOP_VECTOR"
+msgstr "Create a vector"
+
+msgid "MEN_VECTOR"
+msgstr "Vector"
+
+msgid "STB_VECTOR"
+msgstr "Create a vector"
+
+msgid "TOP_PLANE"
+msgstr "Create a plane"
+
+msgid "MEN_PLANE"
+msgstr "Plane"
+
+msgid "STB_PLANE"
+msgstr "Create a plane"
+
+msgid "TOP_WORK_PLANE"
+msgstr "Create a working plane"
+
+msgid "MEN_WORK_PLANE"
+msgstr "Working plane"
+
+msgid "STB_WORK_PLANE"
+msgstr "Create a working plane"
+
+msgid "TOP_LOCAL_CS"
+msgstr "Create a local coordinate system"
+
+msgid "MEN_LOCAL_CS"
+msgstr "Local coordinate system"
+
+msgid "STB_LOCAL_CS"
+msgstr "Create a local coordinate system"
+
+msgid "MEN_PRIMITIVES"
+msgstr "Primitives"
+
+msgid "TOP_BOX"
+msgstr "Create a box"
+
+msgid "MEN_BOX"
+msgstr "Box"
+
+msgid "STB_BOX"
+msgstr "Create a box"
+
+msgid "TOP_CYLINDER"
+msgstr "Create a cyliner"
+
+msgid "MEN_CYLINDER"
+msgstr "Cyliner"
+
+msgid "STB_CYLINDER"
+msgstr "Create a cylinder"
+
+msgid "TOP_SPHERE"
+msgstr "Create a sphere"
+
+msgid "MEN_SPHERE"
+msgstr "Sphere"
+
+msgid "STB_SPHERE"
+msgstr "Create a sphere"
+
+msgid "TOP_TORUS"
+msgstr "Create a torus"
+
+msgid "MEN_TORUS"
+msgstr "Torus"
+
+msgid "STB_TORUS"
+msgstr "Create a torus"
+
+msgid "TOP_CONE"
+msgstr "Create a cone"
+
+msgid "MEN_CONE"
+msgstr "Cone"
+
+msgid "STB_CONE"
+msgstr "Create a cone"
+
+msgid "MEN_GENERATION"
+msgstr "Generation"
+
+msgid "TOP_EXTRUSION"
+msgstr "Create an extrusion"
+
+msgid "MEN_EXTRUSION"
+msgstr "Extrusion"
+
+msgid "STB_EXTRUSION"
+msgstr "Create an extrusion"
+
+msgid "TOP_REVOLUTION"
+msgstr "Create a revolution"
+
+msgid "MEN_REVOLUTION"
+msgstr "Revolution"
+
+msgid "STB_REVOLUTION"
+msgstr "Create a revolution"
+
+msgid "TOP_FILLING"
+msgstr "Create a filling"
+
+msgid "MEN_FILLING"
+msgstr "Filling"
+
+msgid "STB_FILLING"
+msgstr "Create a filling"
+
+msgid "TOP_PIPE"
+msgstr "Create a pipe"
+
+msgid "MEN_PIPE"
+msgstr "Pipe"
+
+msgid "STB_PIPE"
+msgstr "Create a pipe"
+
+msgid "MEN_GROUP"
+msgstr "Group"
+
+msgid "TOP_GROUP_CREATE"
+msgstr "Create a group"
+
+msgid "MEN_GROUP_CREATE"
+msgstr "Create"
+
+msgid "STB_GROUP_CREATE"
+msgstr "Create a group"
+
+msgid "TOP_GROUP_EDIT"
+msgstr "Edit a group"
+
+msgid "MEN_GROUP_EDIT"
+msgstr "Edit"
+
+msgid "STB_GROUP_EDIT"
+msgstr "Edit a group"
+
+msgid "MEN_BLOCKS"
+msgstr "Blocks"
+
+msgid "TOP_Q_FACE"
+msgstr "Quadrangle Face"
+
+msgid "MEN_Q_FACE"
+msgstr "Quadrangle Face"
+
+msgid "STB_Q_FACE"
+msgstr "Quadrangle Face"
+
+msgid "TOP_HEX_SOLID"
+msgstr "Hexahedral Solid"
+
+msgid "MEN_HEX_SOLID"
+msgstr "Hexahedral Solid"
+
+msgid "STB_HEX_SOLID"
+msgstr "Hexahedral Solid"
+
+msgid "TOP_SKETCH"
+msgstr "Sketch"
+
+msgid "MEN_SKETCH"
+msgstr "Sketch"
+
+msgid "STB_SKETCH"
+msgstr "Sketch"
+
+msgid "TOP_EXPLODE"
+msgstr "Explode"
+
+msgid "MEN_EXPLODE"
+msgstr "Explode"
+
+msgid "STB_EXPLODE"
+msgstr "Explode"
+
+msgid "MEN_BUILD"
+msgstr "Build"
+
+msgid "TOP_EDGE"
+msgstr "Build an edge"
+
+msgid "MEN_EDGE"
+msgstr "Edge"
+
+msgid "STB_EDGE"
+msgstr "Build an edge"
+
+msgid "TOP_WIRE"
+msgstr "Build a wire"
+
+msgid "MEN_WIRE"
+msgstr "Wire"
+
+msgid "STB_WIRE"
+msgstr "Build a wire"
+
+msgid "TOP_FACE"
+msgstr "Build a face"
+
+msgid "MEN_FACE"
+msgstr "Face"
+
+msgid "STB_FACE"
+msgstr "Build a face"
+
+msgid "TOP_SHELL"
+msgstr "Build a shell"
+
+msgid "MEN_SHELL"
+msgstr "Shell"
+
+msgid "STB_SHELL"
+msgstr "Build a shell"
+
+msgid "TOP_SOLID"
+msgstr "Build a solid"
+
+msgid "MEN_SOLID"
+msgstr "Solid"
+
+msgid "STB_SOLID"
+msgstr "Build a solid"
+
+msgid "TOP_COMPOUND"
+msgstr "Build a compound"
+
+msgid "MEN_COMPOUND"
+msgstr "Compound"
+
+msgid "STB_COMPOUND"
+msgstr "Build a compound"
+
+msgid "MEN_OPERATIONS"
+msgstr "Operations"
+
+msgid "MEN_BOOLEAN"
+msgstr "Boolean"
+
+msgid "TOP_FUSE"
+msgstr "Fuse"
+
+msgid "MEN_FUSE"
+msgstr "Fuse"
+
+msgid "STB_FUSE"
+msgstr "Fuse"
+
+msgid "TOP_COMMON"
+msgstr "Common"
+
+msgid "MEN_COMMON"
+msgstr "Common"
+
+msgid "STB_COMMON"
+msgstr "Common"
+
+msgid "TOP_CUT"
+msgstr "Cut"
+
+msgid "MEN_CUT"
+msgstr "Cut"
+
+msgid "STB_CUT"
+msgstr "Cut"
+
+msgid "TOP_SECTION"
+msgstr "Section"
+
+msgid "MEN_SECTION"
+msgstr "Section"
+
+msgid "STB_SECTION"
+msgstr "Section"
+
+msgid "MEN_TRANSFORMATION"
+msgstr "Transformation"
+
+msgid "TOP_TRANSLATION"
+msgstr "Translation"
+
+msgid "MEN_TRANSLATION"
+msgstr "Translation"
+
+msgid "STB_TRANSLATION"
+msgstr "Translation"
+
+msgid "TOP_ROTATION"
+msgstr "Rotation"
+
+msgid "MEN_ROTATION"
+msgstr "Rotation"
+
+msgid "STB_ROTATION"
+msgstr "Rotation"
+
+msgid "TOP_MODIFY_LOCATION"
+msgstr "Modify the Location"
+
+msgid "MEN_MODIFY_LOCATION"
+msgstr "Modify the Location"
+
+msgid "STB_MODIFY_LOCATION"
+msgstr "Modify the Location"
+
+msgid "TOP_MIRROR"
+msgstr "Mirror image"
+
+msgid "MEN_MIRROR"
+msgstr "Mirror image"
+
+msgid "STB_MIRROR"
+msgstr "Mirror image"
+
+msgid "TOP_SCALE"
+msgstr "Scale transform"
+
+msgid "MEN_SCALE"
+msgstr "Scale transform"
+
+msgid "STB_SCALE"
+msgstr "Scale transform"
+
+msgid "TOP_OFFSET"
+msgstr "Offset surface"
+
+msgid "MEN_OFFSET"
+msgstr "Offset surface"
+
+msgid "STB_OFFSET"
+msgstr "Offset surface"
+
+msgid "TOP_MUL_TRANSLATION"
+msgstr "Multi-Translation"
+
+msgid "MEN_MUL_TRANSLATION"
+msgstr "Multi-Translation"
+
+msgid "STB_MUL_TRANSLATION"
+msgstr "Multi-Translation"
+
+msgid "TOP_MUL_ROTATION"
+msgstr "Multi-Rotation"
+
+msgid "MEN_MUL_ROTATION"
+msgstr "Multi-Rotation"
+
+msgid "STB_MUL_ROTATION"
+msgstr "Multi-Rotation"
+
+msgid "TOP_PARTITION"
+msgstr "Partition"
+
+msgid "MEN_PARTITION"
+msgstr "Partition"
+
+msgid "STB_PARTITION"
+msgstr "Partition"
+
+msgid "TOP_ARCHIMEDE"
+msgstr "Archimede"
+
+msgid "MEN_ARCHIMEDE"
+msgstr "Archimede"
+
+msgid "STB_ARCHIMEDE"
+msgstr "Archimede"
+
+msgid "TOP_FILLET"
+msgstr "Fillet"
+
+msgid "MEN_FILLET"
+msgstr "Fillet"
+
+msgid "STB_FILLET"
+msgstr "Fillet"
+
+msgid "TOP_CHAMFER"
+msgstr "Chamfer"
+
+msgid "MEN_CHAMFER"
+msgstr "Chamfer"
+
+msgid "STB_CHAMFER"
+msgstr "Chamfer"
+
+msgid "TOP_CLIPPING"
+msgstr "Clipping range"
+
+msgid "MEN_CLIPPING"
+msgstr "Clipping range"
+
+msgid "STB_CLIPPING"
+msgstr "Clipping range"
+
+msgid "TOP_MUL_TRANSFORM"
+msgstr "Multi-transformation"
+
+msgid "MEN_MUL_TRANSFORM"
+msgstr "Multi-transformation"
+
+msgid "STB_MUL_TRANSFORM"
+msgstr "Multi-transformation"
+
+msgid "TOP_EXPLODE_BLOCKS"
+msgstr "Expload on Blocks"
+
+msgid "MEN_EXPLODE_BLOCKS"
+msgstr "Expload on Blocks"
+
+msgid "STB_EXPLODE_BLOCKS"
+msgstr "Expload on Blocks"
+
+msgid "TOP_PROPAGATE"
+msgstr "Propagate"
+
+msgid "MEN_PROPAGATE"
+msgstr "Propagate"
+
+msgid "STB_PROPAGATE"
+msgstr "Propagate"
+
+msgid "MEN_REPAIR"
+msgstr "Repair"
+
+msgid "TOP_SHAPE_PROCESS"
+msgstr "Perform shape processing"
+
+msgid "MEN_SHAPE_PROCESS"
+msgstr "Shape processing"
+
+msgid "STB_SHAPE_PROCESS"
+msgstr "Perform shape processing "
+
+msgid "TOP_SUPPRESS_FACES"
+msgstr "Perform suppress faces"
+
+msgid "MEN_SUPPRESS_FACES"
+msgstr "Suppress faces"
+
+msgid "STB_SUPPRESS_FACES"
+msgstr "Perform suppress faces"
+
+msgid "TOP_CLOSE_CONTOUR"
+msgstr "Perform close contour"
+
+msgid "MEN_CLOSE_CONTOUR"
+msgstr "Close contour"
+
+msgid "STB_CLOSE_CONTOUR"
+msgstr "Perform close contour"
+
+msgid "TOP_SUPPRESS_INT_WIRES"
+msgstr "Perform suppress internal wires"
+
+msgid "MEN_SUPPRESS_INT_WIRES"
+msgstr "Suppress internal wires"
+
+msgid "STB_SUPPRESS_INT_WIRES"
+msgstr "Perform suppress internal wires"
+
+msgid "TOP_SUPPERSS_HOLES"
+msgstr "Perform suppress holes"
+
+msgid "MEN_SUPPERSS_HOLES"
+msgstr "Suppress holes"
+
+msgid "STB_SUPPERSS_HOLES"
+msgstr "Perform suppress holes"
+
+msgid "TOP_SEWING"
+msgstr "Perform sewing"
+
+msgid "MEN_SEWING"
+msgstr "Sewing"
+
+msgid "STB_SEWING"
+msgstr "Perform sewing"
+
+msgid "TOP_GLUE_FACES"
+msgstr "Perform glue faces"
+
+msgid "MEN_GLUE_FACES"
+msgstr "Glue faces"
+
+msgid "STB_GLUE_FACES"
+msgstr "Perform glue faces"
+
+msgid "TOP_POINT_ON_EDGE"
+msgstr "Add point on edge"
+
+msgid "MEN_POINT_ON_EDGE"
+msgstr "Add point on edge"
+
+msgid "STB_POINT_ON_EDGE"
+msgstr "Add point on edge"
+
+msgid "TOP_CHECK_FREE_BNDS"
+msgstr "Check free boundaries"
+
+msgid "MEN_CHECK_FREE_BNDS"
+msgstr "Check free boundaries"
+
+msgid "STB_CHECK_FREE_BNDS"
+msgstr "Check free boundaries"
+
+msgid "TOP_CHECK_FREE_FACES"
+msgstr "Check free faces"
+
+msgid "MEN_CHECK_FREE_FACES"
+msgstr "Check free faces"
+
+msgid "STB_CHECK_FREE_FACES"
+msgstr "Check free faces"
+
+msgid "MEN_MEASURES"
+msgstr "Measures"
+
+msgid "TOP_POINT_COORDS"
+msgstr "Point corrdinates"
+
+msgid "MEN_POINT_COORDS"
+msgstr "Point corrdinates"
+
+msgid "STB_POINT_COORDS"
+msgstr "Point corrdinates"
+
+msgid "TOP_BASIC_PROPS"
+msgstr "Basic properties"
+
+msgid "MEN_BASIC_PROPS"
+msgstr "Basic properties"
+
+msgid "STB_BASIC_PROPS"
+msgstr "Basic properties"
+
+msgid "TOP_MASS_CENTER"
+msgstr "Compute center of mass"
+
+msgid "MEN_MASS_CENTER"
+msgstr "Center of mass"
+
+msgid "STB_MASS_CENTER"
+msgstr "Compute center of mass"
+
+msgid "TOP_INERTIA"
+msgstr "Compute intertia"
+
+msgid "MEN_INERTIA"
+msgstr "Inertia"
+
+msgid "STB_INERTIA"
+msgstr "Compute intertia"
+
+msgid "MEN_DIMENSIONS"
+msgstr "Dimensions"
+
+msgid "TOP_BND_BOX"
+msgstr "Compute bounding box"
+
+msgid "MEN_BND_BOX"
+msgstr "Bounding box"
+
+msgid "STB_BND_BOX"
+msgstr "Compute bounding box"
+
+msgid "TOP_MIN_DIST"
+msgstr "Compute minimum distance"
+
+msgid "MEN_MIN_DIST"
+msgstr "Min distance"
+
+msgid "STB_MIN_DIST"
+msgstr "Compute minimum distance"
+
+msgid "TOP_TOLERANCE"
+msgstr "Compute tolerance"
+
+msgid "MEN_TOLERANCE"
+msgstr "Compute tolerance"
+
+msgid "STB_TOLERANCE"
+msgstr "Compute tolerance"
+
+msgid "TOP_WHAT_IS"
+msgstr "What is"
+
+msgid "MEN_WHAT_IS"
+msgstr "What is"
+
+msgid "STB_WHAT_IS"
+msgstr "What is"
+
+msgid "TOP_CHECK"
+msgstr "Check"
+
+msgid "MEN_CHECK"
+msgstr "Check"
+
+msgid "STB_CHECK"
+msgstr "Check"
+
+msgid "TOP_CHECK_COMPOUND"
+msgstr "Check compound of blocks"
+
+msgid "MEN_CHECK_COMPOUND"
+msgstr "Check compound of blocks"
+
+msgid "STB_CHECK_COMPOUND"
+msgstr "Check compound of blocks"
+
+msgid "MEN_TOOLS"
+msgstr "Tools"
+
+msgid "TOP_CHECK_GEOMETRY"
+msgstr "Check Geometry"
+
+msgid "MEN_CHECK_GEOMETRY"
+msgstr "Check Geometry"
+
+msgid "STB_CHECK_GEOMETRY"
+msgstr "Check Geometry"
+
+msgid "TOP_LOAD_SCRIPT"
+msgstr "Load script"
+
+msgid "MEN_LOAD_SCRIPT"
+msgstr "Load script"
+
+msgid "STB_LOAD_SCRIPT"
+msgstr "Load script"
+
+msgid "MEN_PREFERENCES"
+msgstr "Preferences"
+
+msgid "MEN_PREFERENCES_GEOM"
+msgstr "Geometry"
+
+msgid "TOP_SHADING_COLOR"
+msgstr "Set shading color"
+
+msgid "MEN_SHADING_COLOR"
+msgstr "Shading color"
+
+msgid "STB_SHADING_COLOR"
+msgstr "Set shading color"
+
+msgid "TOP_ISOS"
+msgstr "Set number of isolines"
+
+msgid "MEN_ISOS"
+msgstr "Isos"
+
+msgid "STB_ISOS"
+msgstr "Set number of isolines"
+
+msgid "TOP_STEP_VALUE"
+msgstr "Set step value"
+
+msgid "MEN_STEP_VALUE"
+msgstr "Step value"
+
+msgid "STB_STEP_VALUE"
+msgstr "Set step value"
+
+msgid "MEN_VIEW"
+msgstr "View"
+
+msgid "MEN_DISPLAY_MODE"
+msgstr "Display mode"
+
+msgid "TOP_SHADING"
+msgstr "Shading"
+
+msgid "MEN_SHADING"
+msgstr "Shading"
+
+msgid "STB_SHADING"
+msgstr "Shading"
+
+msgid "TOP_DISPLAY_ALL"
+msgstr "Display all"
+
+msgid "MEN_DISPLAY_ALL"
+msgstr "Display all"
+
+msgid "STB_DISPLAY_ALL"
+msgstr "Display all"
+
+msgid "TOP_ERASE_ALL"
+msgstr "Erase all"
+
+msgid "MEN_ERASE_ALL"
+msgstr "Erase all"
+
+msgid "STB_ERASE_ALL"
+msgstr "Erase all"
+
+msgid "TOP_DISPLAY"
+msgstr "Display"
+
+msgid "MEN_DISPLAY"
+msgstr "Display"
+
+msgid "STB_DISPLAY"
+msgstr "Display"
+
+msgid "TOP_DISPLAY_ONLY"
+msgstr "Display only"
+
+msgid "MEN_DISPLAY_ONLY"
+msgstr "Display only"
+
+msgid "STB_DISPLAY_ONLY"
+msgstr "Display only"
+
+msgid "TOP_ERASE"
+msgstr "Erase"
+
+msgid "MEN_ERASE"
+msgstr "Erase"
+
+msgid "STB_ERASE"
+msgstr "Erase"
+
+msgid "TOP_POP_RENAME"
+msgstr "Rename"
+
+msgid "MEN_POP_RENAME"
+msgstr "Rename"
+
+msgid "STB_POP_RENAME"
+msgstr "Rename"
+
+msgid "TOP_POP_WIREFRAME"
+msgstr "Wireframe"
+
+msgid "MEN_POP_WIREFRAME"
+msgstr "Wireframe"
+
+msgid "STB_POP_WIREFRAME"
+msgstr "Wireframe"
+
+msgid "TOP_POP_SHADING"
+msgstr "Shading"
+
+msgid "MEN_POP_SHADING"
+msgstr "Shading"
+
+msgid "STB_POP_SHADING"
+msgstr "Shading"
+
+msgid "TOP_POP_COLOR"
+msgstr "Color"
+
+msgid "MEN_POP_COLOR"
+msgstr "Color"
+
+msgid "STB_POP_COLOR"
+msgstr "Color"
+
+msgid "TOP_POP_TRANSPARENCY"
+msgstr "Trancparency"
+
+msgid "MEN_POP_TRANSPARENCY"
+msgstr "Trancparency"
+
+msgid "STB_POP_TRANSPARENCY"
+msgstr "Trancparency"
+
+msgid "TOP_POP_ISOS"
+msgstr "Isolines"
+
+msgid "MEN_POP_ISOS"
+msgstr "Isos"
+
+msgid "STB_POP_ISOS"
+msgstr "Isolines"
+
+msgid "TOP_POP_CREATE_GROUP"
+msgstr "Create Group"
+
+msgid "MEN_POP_CREATE_GROUP"
+msgstr "Create Group"
+
+msgid "STB_POP_CREATE_GROUP"
+msgstr "Create Group"
+
+msgid "TOOL_BASIC"
+msgstr "Basic"
+
+msgid "TOOL_PRIMITIVES"
+msgstr "Primitives"
+
+msgid "TOOL_BOOLEAN"
+msgstr "Boolean operations"
+
+msgid "TOOL_GENERATION"
+msgstr "Generation"
+
+msgid "TOOL_TRANSFORMATION"
+msgstr "Transformation"

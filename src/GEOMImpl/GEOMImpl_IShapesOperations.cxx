@@ -16,6 +16,7 @@ using namespace std;
 #include "GEOMImpl_Block6Explorer.hxx"
 
 #include "GEOM_Function.hxx"
+#include "GEOM_PythonDump.hxx"
 
 #include "GEOMAlgo_FinderShapeOn1.hxx"
 
@@ -142,15 +143,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(anEdge->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IShapesOperations.MakeEdge(");
-  TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << anEdge << " = geompy.MakeEdge("
+                               << thePnt1 << ", " << thePnt2 << ")";
 
   SetErrorCode(OK);
   return anEdge;
@@ -213,19 +207,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aFace->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = IShapesOperations.MakeFace(";
-  TDF_Tool::Entry(theWire->GetEntry(), anEntry);
-  aDescr += anEntry;
-  if (isPlanarWanted)
-    aDescr += ", 1)";
-
-  else
-    aDescr += ", 0)";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aFace << " = geompy.MakeFace("
+    << theWire << ", " << (int)isPlanarWanted << ")";
 
   SetErrorCode(OK);
   return aFace;
@@ -285,28 +268,18 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aShape->GetEntry(), anEntry);
-  aDescr += (anEntry + " = IShapesOperations.MakeFaceWires([");
+  GEOM::TPythonDump pd (aFunction);
+  pd << aShape << " = geompy.MakeFaceWires([";
+
   // Shapes
   it = theShapes.begin();
   if (it != theShapes.end()) {
-    TDF_Tool::Entry((*it)->GetEntry(), anEntry);
-    it++;
-    aDescr += (anEntry+", ");
-    for (; it != theShapes.end(); it++) {
-      aDescr += ", ";
-      TDF_Tool::Entry((*it)->GetEntry(), anEntry);
-      aDescr += anEntry;
+    pd << (*it++);
+    while (it != theShapes.end()) {
+      pd << ", " << (*it++);
     }
   }
-  if (isPlanarWanted)
-    aDescr += "], 1)";
-
-  else
-    aDescr += "], 0)";
-
-  aFunction->SetDescription(aDescr);
+  pd << "], " << (int)isPlanarWanted << ")";
 
   SetErrorCode(OK);
   return aShape;
@@ -378,14 +351,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidShell (Handle(GEOM_Obje
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aSolid->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = IShapesOperations.MakeSolidShell(";
-  TDF_Tool::Entry(theShell->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aSolid
+    << " = geompy.MakeSolid(" << theShell << ")";
 
   SetErrorCode(OK);
   return aSolid;
@@ -456,25 +423,18 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aShape->GetEntry(), anEntry);
-  aDescr += (anEntry + " = IShapesOperations.");
-  aDescr += (theMethodName + "([");
+  GEOM::TPythonDump pd (aFunction);
+  pd << aShape << " = geompy." << theMethodName.ToCString() << "([";
+
   // Shapes
   it = theShapes.begin();
   if (it != theShapes.end()) {
-    TDF_Tool::Entry((*it)->GetEntry(), anEntry);
-    it++;
-    aDescr += (anEntry+", ");
-    for (; it != theShapes.end(); it++) {
-      aDescr += ", ";
-      TDF_Tool::Entry((*it)->GetEntry(), anEntry);
-      aDescr += anEntry;
+    pd << (*it++);
+    while (it != theShapes.end()) {
+      pd << ", " << (*it++);
     }
   }
-  aDescr += "])";
-
-  aFunction->SetDescription(aDescr);
+  pd << "])";
 
   SetErrorCode(OK);
   return aShape;
@@ -532,15 +492,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aGlued->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = IShapesOperations.MakeGlueFaces(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  aDescr += TCollection_AsciiString(theTolerance) + ")";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aGlued << " = geompy.MakeGlueFaces("
+    << theShape << ", " << theTolerance << ")";
 
   // to provide warning
   if (!isWarning) SetErrorCode(OK);
@@ -611,7 +564,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   Handle(TColStd_HArray1OfInteger) anArray;
 
   TopTools_ListIteratorOfListOfShape itSub (listShape);
-  TCollection_AsciiString anAsciiList = "[", anEntry;
+  TCollection_AsciiString anAsciiList, anEntry;
   for (int index = 1; itSub.More(); itSub.Next(), ++index) {
     TopoDS_Shape aValue = itSub.Value();
     anArray = new TColStd_HArray1OfInteger(1,1);
@@ -619,35 +572,22 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
     anObj = GetEngine()->AddSubShape(theShape, anArray);
     aSeq->Append(anObj);
 
+    // for python command
     TDF_Tool::Entry(anObj->GetEntry(), anEntry);
     anAsciiList += anEntry;
     anAsciiList += ",";
   }
 
-//  timer3.Stop();
-//  timer4.Start();
-
-  anAsciiList.Trunc(anAsciiList.Length() - 1);
-  anAsciiList += "]";
-
-  anAsciiList = TCollection_AsciiString("\n") + anAsciiList;
-
-  //The explode doesn't change object so no new function is requiered.
-  aFunction = theShape->GetLastFunction();
-
   //Make a Python command
-  TCollection_AsciiString aDescr(anAsciiList);
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += " = IShapesOperations.MakeExplode(";
-  aDescr += (anEntry + ",");
-  if (isSorted)
-    aDescr += (TCollection_AsciiString(theShapeType) + ", 1)");
-  else
-    aDescr += (TCollection_AsciiString(theShapeType) + ", 0)");
+  anAsciiList.Trunc(anAsciiList.Length() - 1);
 
+  aFunction = theShape->GetLastFunction();
   TCollection_AsciiString anOldDescr = aFunction->GetDescription();
-  anOldDescr = anOldDescr + aDescr;
-  aFunction->SetDescription(anOldDescr);
+
+  GEOM::TPythonDump pd (aFunction);
+  pd << anOldDescr.ToCString() << "\n\t[" << anAsciiList.ToCString();
+  pd << "] = geompy.SubShapeAll" << (isSorted ? "Sorted(" : "(");
+  pd << theShape << ", " << theShapeType << ")";
 
   SetErrorCode(OK);
 
@@ -723,23 +663,14 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
     aSeq->Append(anIndices.FindIndex(aValue));
   }
 
-  //The explode doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
   //Make a Python command
-  TCollection_AsciiString aDescr
-    ("\nlistSubShapeAllIDs = IShapesOperations.SubShapeAllIDs(");
-  TCollection_AsciiString anEntry;
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry + ",");
-  if (isSorted)
-    aDescr += (TCollection_AsciiString(theShapeType) + ", 1)");
-  else
-    aDescr += (TCollection_AsciiString(theShapeType) + ", 0)");
-
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
-  anOldDescr = anOldDescr + aDescr;
-  aFunction->SetDescription(anOldDescr);
+  GEOM::TPythonDump pd (aFunction);
+  pd << anOldDescr.ToCString() << "\n\tlistSubShapeIDs = geompy.SubShapeAll";
+  pd << (isSorted ? "SortedIDs(" : "IDs(");
+  pd << theShape << ", " << theShapeType << ")";
 
   SetErrorCode(OK);
   return aSeq;
@@ -760,27 +691,17 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSubShape
 
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
   anArray->SetValue(1, theID);
-  Handle(GEOM_Object) anObj = GetEngine()->AddSubShape(theMainShape, anArray);
+  Handle(GEOM_Object) anObj = GetEngine()->AddSubShape(theMainShape, anArray,true);
   if (anObj.IsNull()) {
     SetErrorCode("Can not get a sub-shape with the given ID");
     return NULL;
   }
 
-  //The GetSubShape() doesn't change object so no new function is requiered.
-  Handle(GEOM_Function) aFunction = theMainShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
 
   //Make a Python command
-  TCollection_AsciiString aDescr ("\n");
-  TCollection_AsciiString anEntry;
-  TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-  aDescr += anEntry + " = IShapesOperations.GetSubShape(";
-  TDF_Tool::Entry(theMainShape->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  aDescr += TCollection_AsciiString(theID) + ")";
-
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
-  anOldDescr = anOldDescr + aDescr;
-  aFunction->SetDescription(anOldDescr);
+  GEOM::TPythonDump(aFunction) << anObj << " = geompy.GetSubShape("
+                               << theMainShape << ", [" << theID << "])";
 
   SetErrorCode(OK);
   return anObj;
@@ -882,14 +803,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aReversed->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = IShapesOperations.ReverseShape(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aReversed
+    << " = geompy.ChangeOrientation(" << theShape << ")";
 
   SetErrorCode(OK);
   return aReversed;
@@ -935,16 +850,11 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetFreeFacesIDs
 
   //The explode doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
   //Make a Python command
-  TCollection_AsciiString aDescr ("\nlistFreeFacesIDs = IShapesOperations.GetFreeFacesIDs(");
-  TCollection_AsciiString anEntry;
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry + ")");
-
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
-  anOldDescr = anOldDescr + aDescr;
-  aFunction->SetDescription(anOldDescr);
+  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString()
+    << "\n\tlistFreeFacesIDs = geompy.GetFreeFacesIDs(" << theShape << ")";
 
   SetErrorCode(OK);
   return aSeq;
@@ -978,6 +888,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
 
   Handle(GEOM_Object) anObj;
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+  TCollection_AsciiString anAsciiList, anEntry;
 
   TopTools_MapOfShape mapShape2;
   TopExp_Explorer exp (aShape2, TopAbs_ShapeEnum(theShapeType));
@@ -988,6 +899,11 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
       anArray->SetValue(1, anIndices.FindIndex(aSS));
       anObj = GetEngine()->AddSubShape(theShape1, anArray);
       aSeq->Append(anObj);
+
+      // for python command
+      TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+      anAsciiList += anEntry;
+      anAsciiList += ",";
     }
   }
 
@@ -996,25 +912,48 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
     return aSeq;
   }
 
-  //The explode doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape1->GetLastFunction();
-
   //Make a Python command
-  TCollection_AsciiString aDescr
-    ("\nlistSharedShapes = IShapesOperations.GetSharedShapes(");
-  TCollection_AsciiString anEntry;
-  TDF_Tool::Entry(theShape1->GetEntry(), anEntry);
-  aDescr += (anEntry + ",");
-  TDF_Tool::Entry(theShape2->GetEntry(), anEntry);
-  aDescr += (anEntry + ",");
-  aDescr += TCollection_AsciiString(theShapeType) + ")";
+  anAsciiList.Trunc(anAsciiList.Length() - 1);
 
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
-  anOldDescr = anOldDescr + aDescr;
-  aFunction->SetDescription(anOldDescr);
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
+    << "] = geompy.GetSharedShapes(" << theShape1 << ", "
+      << theShape2 << ", " << theShapeType << ")";
 
   SetErrorCode(OK);
   return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+static GEOM::TPythonDump& operator<< (GEOM::TPythonDump&   theDump,
+                                      const GEOMAlgo_State theState)
+{
+  switch (theState) {
+  case GEOMAlgo_ST_IN:
+    theDump << "geompy.GEOM.ST_IN";
+    break;
+  case GEOMAlgo_ST_OUT:
+    theDump << "geompy.GEOM.ST_OUT";
+    break;
+  case GEOMAlgo_ST_ON:
+    theDump << "geompy.GEOM.ST_ON";
+    break;
+  case GEOMAlgo_ST_ONIN:
+    theDump << "geompy.GEOM.ST_ONIN";
+    break;
+  case GEOMAlgo_ST_ONOUT:
+    theDump << "geompy.GEOM.ST_ONOUT";
+    break;
+  default:
+    theDump << "geompy.GEOM.ST_UNKNOWN";
+    break;
+  }
+  return theDump;
 }
 
 //=============================================================================
@@ -1143,6 +1082,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
   Handle(GEOM_Object) anObj;
   Handle(TColStd_HArray1OfInteger) anArray;
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+  TCollection_AsciiString anAsciiList, anEntry;
 
   TopTools_ListIteratorOfListOfShape itSub (listSS);
   for (int index = 1; itSub.More(); itSub.Next(), ++index) {
@@ -1151,6 +1091,11 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
     anArray->SetValue(1, id);
     anObj = GetEngine()->AddSubShape(theShape, anArray);
     aSeq->Append(anObj);
+
+    // for python command
+    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+    anAsciiList += anEntry;
+    anAsciiList += ",";
   }
 
 //  timer1.Stop();
@@ -1160,24 +1105,14 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
 //  timer1.Reset();
 //  timer1.Start();
   
-  // The GetShapesOnPlane() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
-
   // Make a Python command
-  TCollection_AsciiString anEntry, aDescr
-    ("\nlistShapesOnPlane = IShapesOperations.GetShapesOnPlane(");
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + TCollection_AsciiString(theShapeType) + ",";
-  TDF_Tool::Entry(theAx1->GetEntry(), anEntry);
-  aDescr += anEntry + ",";
-  aDescr += TCollection_AsciiString(theState) + ")";
+  anAsciiList.Trunc(anAsciiList.Length() - 1);
 
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
-  anOldDescr += aDescr;
-  aFunction->SetDescription(anOldDescr);
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
 
-//  timer1.Stop();
-//  timer1.Show();
+  GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
+    << "] = geompy.GetShapesOnPlane(" << theShape << ", "
+      << theShapeType << ", " << theAx1 << ", " << theState << ")";
 
   SetErrorCode(OK);
   return aSeq;
@@ -1285,6 +1220,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnCyli
   Handle(GEOM_Object) anObj;
   Handle(TColStd_HArray1OfInteger) anArray;
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+  TCollection_AsciiString anAsciiList, anEntry;
 
   TopTools_ListIteratorOfListOfShape itSub (listSS);
   for (int index = 1; itSub.More(); itSub.Next(), ++index) {
@@ -1293,24 +1229,21 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnCyli
     anArray->SetValue(1, id);
     anObj = GetEngine()->AddSubShape(theShape, anArray);
     aSeq->Append(anObj);
+
+    // for python command
+    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+    anAsciiList += anEntry;
+    anAsciiList += ",";
   }
   
-  // The GetShapesOnCylinder() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
-
   // Make a Python command
-  TCollection_AsciiString anEntry, aDescr
-    ("\nlistShapesOnCylinder = IShapesOperations.GetShapesOnCylinder(");
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + TCollection_AsciiString(theShapeType) + ",";
-  TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
-  aDescr += anEntry + ",";
-  aDescr += TCollection_AsciiString(theRadius) + ",";
-  aDescr += TCollection_AsciiString(theState) + ")";
+  anAsciiList.Trunc(anAsciiList.Length() - 1);
 
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
-  anOldDescr += aDescr;
-  aFunction->SetDescription(anOldDescr);
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
+    << "] = geompy.GetShapesOnCylinder(" << theShape << ", " << theShapeType
+      << ", " << theAxis << ", " << theRadius << ", " << theState << ")";
 
   SetErrorCode(OK);
   return aSeq;
@@ -1403,6 +1336,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnSphe
   Handle(GEOM_Object) anObj;
   Handle(TColStd_HArray1OfInteger) anArray;
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+  TCollection_AsciiString anAsciiList, anEntry;
 
   TopTools_ListIteratorOfListOfShape itSub (listSS);
   for (int index = 1; itSub.More(); itSub.Next(), ++index) {
@@ -1411,29 +1345,25 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnSphe
     anArray->SetValue(1, id);
     anObj = GetEngine()->AddSubShape(theShape, anArray);
     aSeq->Append(anObj);
+
+    // for python command
+    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+    anAsciiList += anEntry;
+    anAsciiList += ",";
   }
   
-  // The GetShapesOnSphere() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
-
   // Make a Python command
-  TCollection_AsciiString anEntry, aDescr
-    ("\nlistShapesOnSphere = IShapesOperations.GetShapesOnSphere(");
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + TCollection_AsciiString(theShapeType) + ",";
-  TDF_Tool::Entry(theCenter->GetEntry(), anEntry);
-  aDescr += anEntry + ",";
-  aDescr += TCollection_AsciiString(theRadius) + ",";
-  aDescr += TCollection_AsciiString(theState) + ")";
+  anAsciiList.Trunc(anAsciiList.Length() - 1);
 
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
-  anOldDescr += aDescr;
-  aFunction->SetDescription(anOldDescr);
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
+    << "] = geompy.GetShapesOnSphere(" << theShape << ", " << theShapeType
+      << ", " << theCenter << ", " << theRadius << ", " << theState << ")";
 
   SetErrorCode(OK);
   return aSeq;
 }
-
 //=============================================================================
 /*!
  *  GetShapesOnPlaneIDs
@@ -1908,17 +1838,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = IShapesOperations.GetInPlace(";
-  TDF_Tool::Entry(theShapeWhere->GetEntry(), anEntry);
-  aDescr += anEntry + ",";
-  TDF_Tool::Entry(theShapeWhat->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
   Handle(GEOM_Function) aFunction = aResult->GetFunction(1);
-  aFunction->SetDescription(aDescr);
+
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetInPlace("
+    << theShapeWhere << ", " << theShapeWhat << ")";
 
   SetErrorCode(OK);
   return aResult;

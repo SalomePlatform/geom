@@ -17,6 +17,7 @@ LIB_SRC = GEOM_Application.cxx \
 	  GEOM_IOperations.cxx \
 	  GEOM_Solver.cxx \
 	  GEOM_SubShapeDriver.cxx \
+	  GEOM_PythonDump.cxx \
 	  GEOM_DataMapNodeOfDataMapOfAsciiStringTransient_0.cxx \
 	  GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient_0.cxx \
 	  GEOM_DataMapOfAsciiStringTransient_0.cxx
@@ -39,13 +40,14 @@ EXPORT_HEADERS= GEOM_Application.hxx \
 		GEOM_IOperations.hxx \
 		GEOM_ISubShape.hxx \
 		GEOM_Solver.hxx \
+		GEOM_PythonDump.hxx \
 		GEOM_DataMapOfAsciiStringTransient.hxx \
 		Handle_GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx
 
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome $(BOOST_CPPFLAGS) 
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -L${KERNEL_ROOT_DIR}/lib/salome $(CAS_LDPATH) -lTKCAF
+LDFLAGS  += -L${KERNEL_ROOT_DIR}/lib/salome $(CAS_LDPATH) $(CAS_OCAF)
 
 
 # additional file to be cleaned

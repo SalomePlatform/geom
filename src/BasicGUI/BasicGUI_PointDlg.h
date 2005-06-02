@@ -46,7 +46,7 @@ class BasicGUI_PointDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_PointDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
 
     ~BasicGUI_PointDlg();
 
@@ -65,6 +65,8 @@ private :
     void Init();
     void enterEvent(QEvent* e);
     double getParameter() const;
+
+    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myEdge;
     GEOM::GEOM_Object_var myRefPoint; 

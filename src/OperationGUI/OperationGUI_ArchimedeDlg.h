@@ -42,9 +42,8 @@ class OperationGUI_ArchimedeDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-                                        OperationGUI_ArchimedeDlg( QWidget* parent,
-                                                                   SALOME_Selection* Sel );
-                                        ~OperationGUI_ArchimedeDlg();
+    OperationGUI_ArchimedeDlg( GeometryGUI* theGeometryGUI, QWidget* parent );
+    ~OperationGUI_ArchimedeDlg();
 
 protected:
 
@@ -55,13 +54,14 @@ protected:
     virtual bool                        execute( ObjectList& objects );    
 
 private:
-    void                                Init( SALOME_Selection* );
+    void                                Init();
     void                                enterEvent(QEvent* e);
 
 private:    
     GEOM::GEOM_Object_var               myShape;
     DlgRef_1Sel3Spin*                   GroupPoints;
     double                              myStep;
+    GeometryGUI*                        myGeometryGUI;
 
 private slots:
     void                                ClickOnOk();

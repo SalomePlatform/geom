@@ -42,7 +42,7 @@ class TransformationGUI_OffsetDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_OffsetDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_OffsetDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_OffsetDlg();
 
 protected:

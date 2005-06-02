@@ -40,15 +40,15 @@ class GroupGUI : public GEOMGUI
   Q_OBJECT
 
 protected:
-  GroupGUI(); // hide constructor to avoid direct creation
+  GroupGUI(GeometryGUI* parent); // hide constructor to avoid direct creation
 
 public :
   ~GroupGUI();
 
   // Get the only GroupGUI object
-  static GroupGUI* GetGroupGUI();
+  static GroupGUI* GetGroupGUI(GeometryGUI* parent);
 
-  bool OnGUIEvent( int theCommandID, QAD_Desktop* parent );
+  bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
 
 private:
   static GroupGUI* myGUIObject;        // the only GroupGUI object

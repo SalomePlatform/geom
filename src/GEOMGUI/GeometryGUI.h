@@ -29,7 +29,7 @@
 #ifndef GEOMETRYGUI_H
 #define GEOMETRYGUI_H
 
-#include "SALOMEGUI.h"
+#include "SalomeApp_Module.h"
 
 #include "GEOMGUI.h"
 #include "GEOM_Client.hxx"
@@ -42,35 +42,35 @@ typedef QMap<QString, GEOMGUI*> GUIMap;
 
 class QDialog;
 class QPopupMenu;
+class GEOMGUI_OCCSelector;
+class SalomeApp_VTKSelector;
+class SUIT_ViewManager;
+
 
 //=================================================================================
 // class    : GeometryGUI
 // purpose  :
 //=================================================================================
-class GeometryGUI : public SALOMEGUI
+class GeometryGUI : public SalomeApp_Module
 {
   Q_OBJECT;
 
-protected:
-  // Constructor
-  GeometryGUI(); // hide constructor to avoid direct creation
-  // get or load GUI library by name
-  GEOMGUI* getLibrary( const QString& libraryName );
-
 public:
+  // Constructor
+  GeometryGUI(); 
+
   // Destructor
   ~GeometryGUI();
 
-  // Get the only GeometryGUI object
-  static GeometryGUI*         GetGeomGUI();
+  virtual void                initialize( CAM_Application* );
+  virtual QString             engineIOR() const;
 
-  static CORBA::ORB_var       GetORB();
-
-  GEOM::GEOM_Gen_ptr          GetGeomGen()        { return myComponentGeom; }
+  static GEOM::GEOM_Gen_var   GetGeomGen()        { return myComponentGeom; }
+  
   GEOM_Client&                GetShapeReader()    { return myShapeReader; }
   Standard_CString&           GetFatherior()      { return myFatherior; }
-  void                        SetState( const int state ) { myState = state; }
-  int                         GetState() const    { return myState; }
+  //void                        SetState( const int state ) { myState = state; }
+  //int                         GetState() const    { return myState; }
   
   // Get active dialog box
   QDialog*                    GetActiveDialogBox(){ return myActiveDialogBox; }
@@ -82,41 +82,67 @@ public:
   void                        EmitSignalCloseAllDialogs();
   void                        EmitSignalDefaultStepValueChanged( double newVal );
 
-  // The following methods are called from IAPP
-  virtual bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
-  virtual bool OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
-  virtual bool OnMouseMove(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
-  virtual bool OnKeyPress(QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
-  virtual bool SetSettings(QAD_Desktop* parent);
-  virtual bool ActiveStudyChanged(QAD_Desktop* parent);
-  virtual void Deactivate();
-  virtual void BuildPresentation( const Handle(SALOME_InteractiveObject)&,
-                                  QAD_ViewFrame*  = 0 );
-  virtual void SupportedViewType (int* buffer, int bufferSize);
-  virtual void DefinePopup(QString & theContext, QString & theParent, QString & theObject);
-  virtual bool CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString& theContext,
-			   const QString& theParent, const QString& theObject);
+  void                        OnGUIEvent( int id );
+  
+  virtual bool                OnKeyPress( QKeyEvent*, SUIT_ViewWindow* );
+  virtual bool                OnMousePress( QMouseEvent*, SUIT_ViewWindow* );
+  virtual bool                OnMouseMove( QMouseEvent*, SUIT_ViewWindow* );
+
+//  virtual bool                SetSettings();
+//  virtual void                SupportedViewType ( int* buffer, int bufferSize );
+  virtual void                BuildPresentation( const Handle(SALOME_InteractiveObject)&, SUIT_ViewWindow* = 0 );
+
+//  virtual void                DefinePopup( QString & theContext, QString & theParent, QString & theObject);
+//  virtual bool                CustomPopup( QAD_Desktop* parent, QPopupMenu* popup, const QString& theContext,
+//			                   const QString& theParent, const QString& theObject );
 
   // The Working Plane management
-  void SetWorkingPlane(gp_Ax3 WorkingPlane) { myWorkingPlane = WorkingPlane; };
-  gp_Ax3 GetWorkingPlane() { return myWorkingPlane; };
-  void ActiveWorkingPlane();
+  void                        SetWorkingPlane( gp_Ax3 wp ) { myWorkingPlane = wp;   }
+  gp_Ax3                      GetWorkingPlane()            { return myWorkingPlane; }
+  void                        ActiveWorkingPlane();
+
+  virtual void                windows( QMap<int, int>& ) const;
+  virtual void                viewManagers( QStringList& ) const;
+
+
+public slots:
+  virtual void                deactivateModule( SUIT_Study* );
+  virtual void                activateModule( SUIT_Study* );
+
+private slots:
+  void                        OnGUIEvent();
+  void                        onViewManagerAdded( SUIT_ViewManager* );
+  void                        onViewManagerRemoved( SUIT_ViewManager* );
+  void                        onWindowActivated( SUIT_ViewWindow* );
 
 signals :
-  void SignalDeactivateActiveDialog();
-  void SignalCloseAllDialogs();
-  void SignalDefaultStepValueChanged( double newVal );
+  void                        SignalDeactivateActiveDialog();
+  void                        SignalCloseAllDialogs();
+  void                        SignalDefaultStepValueChanged( double newVal );
+
+protected:
+  virtual SalomeApp_Selection* createSelection() const;
 
 private:
-  static GeometryGUI* myContext;         // the only GeometryGUI object
+  GEOMGUI*                    getLibrary( const QString& libraryName );
+  void                        createGeomAction( const int id, const QString& po_id, const QString& icon_id = QString(""), const int key = 0, const bool toggle = false );
+  void                        createPopupItem( const int, const QString& clients, const QString& types, 
+					       const bool isSingle = false, const int isVisible = -1, 
+					       const bool isExpandAll = false, const bool isOCC = false, const int parentId = -1 );
 
-  GUIMap              myGUIMap;          // GUI libraries map
-  QDialog*            myActiveDialogBox; // active dialog box
-  GEOM_Client         myShapeReader;     // geom shape reader
-  Standard_CString    myFatherior;
-  GEOM::GEOM_Gen_var  myComponentGeom;   // GEOM engine
-  int                 myState;           // identify a method
-  gp_Ax3              myWorkingPlane;
+private:
+  static GEOM::GEOM_Gen_var   myComponentGeom;   // GEOM engine
+
+  GUIMap                      myGUIMap;          // GUI libraries map
+  QDialog*                    myActiveDialogBox; // active dialog box
+  GEOM_Client                 myShapeReader;     // geom shape reader
+  Standard_CString            myFatherior;
+  int                         myState;           // identify a method
+  gp_Ax3                      myWorkingPlane;
+  QMap<int,QString>           myRules;           // popup rules
+
+  QPtrList<GEOMGUI_OCCSelector>   myOCCSelectors;
+  QPtrList<SalomeApp_VTKSelector> myVTKSelectors;
 };
 
 #endif

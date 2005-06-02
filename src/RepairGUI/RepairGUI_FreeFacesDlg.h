@@ -33,10 +33,9 @@
 #include "GEOMBase_Helper.h"
 
 class GEOM_Displayer;
-class SALOME_Selection;
-class SALOME_Prs;
 class QPushButton;
 class QLineEdit;
+class GeometryGUI;
 
 //=================================================================================
 // class    : RepairGUI_FreeFacesDlg
@@ -48,7 +47,7 @@ class RepairGUI_FreeFacesDlg : public QDialog,
     Q_OBJECT
 
 public:
-    RepairGUI_FreeFacesDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_FreeFacesDlg();
 
 protected:
@@ -56,10 +55,11 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
+    virtual SUIT_Desktop* getDesktop() const;
 
 private :
 
-    void Init(SALOME_Selection*);
+    void Init();
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
     void activateSelection();
@@ -71,15 +71,15 @@ private slots:
   void                                  onDeactivate();
   void                                  onActivate();
   void                                  onSelectionDone();
-  void                                  onSetEditCurrentArgument();                              
+  void                                  onSetEditCurrentArgument();
 
 private :
 
     GEOM_Displayer*        myDisplayer;
     GEOM::GEOM_Object_var  myObj;
-    SALOME_Selection*      mySelection;
     QPushButton*           mySelBtn;
     QLineEdit*             myEdit;
+    GeometryGUI*           myGeomGUI;
 
 };
 

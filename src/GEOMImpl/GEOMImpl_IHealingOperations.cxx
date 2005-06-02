@@ -2,6 +2,8 @@ using namespace std;
 
 #include "GEOMImpl_IHealingOperations.hxx"
 
+#include "GEOM_PythonDump.hxx"
+
 #include "GEOMImpl_HealingDriver.hxx"
 #include "GEOMImpl_Types.hxx"
 #include "GEOMImpl_IHealing.hxx"
@@ -21,6 +23,8 @@ using namespace std;
 #include <TColStd_HArray1OfExtendedString.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TCollection_AsciiString.hxx>
+
+#include <TDF_Tool.hxx>
 
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -123,8 +127,30 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ShapeProcess (Handle(GEOM_Objec
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  GEOM::TPythonDump pd (aFunction);
+  pd << aNewObject << " = geompy.ProcessShape(" << theObject << ", [";
+
+  // list of operators
+  int i = theOperators->Lower(), nb = theOperators->Upper();
+  for ( ; i <= nb; i++) {
+    pd << "\"" << TCollection_AsciiString(theOperators->Value( i )).ToCString()
+      << (( i < nb ) ? "\", " : "\"");
+  }
+  pd << "], [";
+  // list of parameters
+  i = theParams->Lower(); nb = theParams->Upper();
+  for ( ; i <= nb; i++) {
+    pd << "\"" << TCollection_AsciiString(theParams->Value( i )).ToCString()
+      << (( i < nb ) ? "\", " : "\"");
+  }
+  pd << "], [";
+  // list of values
+  i = theValues->Lower(); nb = theValues->Upper();
+  for ( ; i <= nb; i++) {
+    pd << "\"" << TCollection_AsciiString(theValues->Value( i )).ToCString()
+      << (( i < nb ) ? "\", " : "\"");
+  }
+  pd << "])";
 
   SetErrorCode(OK);
   return aNewObject;
@@ -263,8 +289,8 @@ bool GEOMImpl_IHealingOperations::GetParameters (const string theOperation,
  *  SuppressFaces
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces (Handle(GEOM_Object) theObject,
-                                                                const Handle(TColStd_HArray1OfInteger)& theFaces)
+Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
+       (Handle(GEOM_Object) theObject, const Handle(TColStd_HArray1OfInteger)& theFaces)
 {
   // set error code, check parameters
   SetErrorCode(KO);
@@ -308,8 +334,13 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces (Handle(GEOM_Obje
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  GEOM::TPythonDump pd (aFunction);
+  pd << aNewObject << " = geompy.SuppressFaces(" << theObject << ", [";
+
+  // list of face ids
+  int i = theFaces->Lower(), nb = theFaces->Upper();
+  for ( ; i <= nb; i++)
+    pd << theFaces->Value( i ) << (( i < nb ) ? ", " : "])");
 
   SetErrorCode(OK);
   return aNewObject;
@@ -321,9 +352,10 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces (Handle(GEOM_Obje
  *  CloseContour
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour (Handle(GEOM_Object) theObject,
-							       const Handle(TColStd_HArray1OfInteger)& theWires,
-                                                               bool isCommonVertex)
+Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
+                    (Handle(GEOM_Object) theObject,
+                     const Handle(TColStd_HArray1OfInteger)& theWires,
+                     bool isCommonVertex)
 {
   // set error code, check parameters
   SetErrorCode(KO);
@@ -368,8 +400,15 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour (Handle(GEOM_Objec
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  GEOM::TPythonDump pd (aFunction);
+  pd << aNewObject << " = geompy.CloseContour(" << theObject << ", [";
+
+  // list of wire ids
+  int i = theWires->Lower(), nb = theWires->Upper();
+  for ( ; i <= nb; i++)
+    pd << theWires->Value( i ) << (( i < nb ) ? ", " : "], ");
+
+  pd << (int)isCommonVertex << ")";
 
   SetErrorCode(OK);
   return aNewObject;
@@ -380,8 +419,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour (Handle(GEOM_Objec
  *  RemoveIntWires
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveIntWires (Handle(GEOM_Object) theObject,
-                                                                 const Handle(TColStd_HArray1OfInteger)& theWires)
+Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveIntWires
+       (Handle(GEOM_Object) theObject, const Handle(TColStd_HArray1OfInteger)& theWires)
 {
   // set error code, check parameters
   SetErrorCode(KO);
@@ -425,8 +464,17 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveIntWires (Handle(GEOM_Obj
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  GEOM::TPythonDump pd (aFunction);
+  pd << aNewObject << " = geompy.SuppressInternalWires(" << theObject << ", [";
+
+  // list of wire ids
+  if (!theWires.IsNull()) {
+    int i = theWires->Lower(), nb = theWires->Upper();
+    for ( ; i <= nb; i++)
+      pd << theWires->Value( i ) << (( i < nb ) ? ", " : "])");
+  } else {
+    pd << "])";
+  }
 
   SetErrorCode(OK);
   return aNewObject;
@@ -482,8 +530,13 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  GEOM::TPythonDump pd (aFunction);
+  pd << aNewObject << " = geompy.SuppressHoles(" << theObject << ", [";
+
+  // list of wire ids
+  int i = theWires->Lower(), nb = theWires->Upper();
+  for ( ; i <= nb; i++)
+    pd << theWires->Value( i ) << (( i < nb ) ? ", " : "])");
 
   SetErrorCode(OK);
   return aNewObject;
@@ -539,8 +592,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.Sew("
+                               << theObject << ", " << theTolerance << ")";
 
   SetErrorCode(OK);
   return aNewObject;
@@ -600,8 +653,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.DivideEdge(" << theObject
+    << ", " << theIndex << ", " << theValue << ", " << (int)isByParameter << ")";
 
   SetErrorCode(OK);
   return aNewObject;
@@ -651,6 +704,35 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject
     aFunction->SetValue( aValueShape );
     theOpen->Append(anObj);
   }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+
+  Standard_Integer i, aLen = theClosed->Length();
+  if (aLen > 0) {
+    pd << "(isDone, [";
+    for (i = 1; i <= aLen; i++) {
+      Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theClosed->Value(i));
+      pd << anObj_i << ((i < aLen) ? ", " : "");
+    }
+    pd << "], ";
+  } else {
+    pd << "(isDone, empty_list, ";
+  }
+
+  aLen = theOpen->Length();
+  if (aLen > 0) {
+    pd << "[";
+    for (i = 1; i <= aLen; i++) {
+      Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theOpen->Value(i));
+      pd << anObj_i << ((i < aLen) ? ", " : "");
+    }
+    pd << "]";
+  } else {
+    pd << "empty_list";
+  }
+
+  pd << ") = geompy.GetFreeBoundary(" << theObject << ")";
 
   SetErrorCode(OK);
   return true;

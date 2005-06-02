@@ -29,22 +29,22 @@
 using namespace std;
 #include "RepairGUI_FreeFacesDlg.h"
 
-#include "QAD_Desktop.h"
-#include "QAD_WaitCursor.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "SalomeApp_Tools.h"
+#include "SUIT_Session.h"
 
 #include "SALOME_ListIteratorOfListIO.hxx"
 
 #include "GEOMImpl_Types.hxx"
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TColStd_MapOfInteger.hxx>
 #include <TopExp.hxx>
 #include "GEOMBase.h"
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
-#include "SALOME_Selection.h"
-#include "SALOME_Prs.h"
 
-
+#include <qapplication.h>
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -62,14 +62,15 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(QWidget* parent, const char* name, SALOME_Selection* theSelection, bool modal, WFlags fl)
+RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent, const char* name, bool modal, WFlags fl)
 :QDialog( parent, "RepairGUI_FreeBoundDlg", false,
-    WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose )
+	  WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ),
+ myGeomGUI( GUI )
 {
   myDisplayer = 0;
 
   setSizeGripEnabled( TRUE );
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_FREE_FACES_TITLE"));
 
@@ -110,7 +111,7 @@ RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(QWidget* parent, const char* name
            this,        SLOT  ( onSetEditCurrentArgument() ) );
   /***************************************************************/
 
-  Init( theSelection );
+  Init();
 }
 
 
@@ -130,8 +131,8 @@ RepairGUI_FreeFacesDlg::~RepairGUI_FreeFacesDlg()
 void RepairGUI_FreeFacesDlg::onClose()
 {
   globalSelection();
-  disconnect( mySelection, 0, this, 0 );
-  GeometryGUI::GetGeomGUI()->SetActiveDialogBox( 0 );
+  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  myGeomGUI->SetActiveDialogBox( 0 );
   reject();
   erasePreview();
 }
@@ -144,8 +145,8 @@ void RepairGUI_FreeFacesDlg::onDeactivate()
 {
   setEnabled(false);
   globalSelection();
-  disconnect( mySelection, 0, this, 0 );
-  GeometryGUI::GetGeomGUI()->SetActiveDialogBox( 0 );
+  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  myGeomGUI->SetActiveDialogBox( 0 );
 }
 
 //=================================================================================
@@ -154,10 +155,11 @@ void RepairGUI_FreeFacesDlg::onDeactivate()
 //=================================================================================
 void RepairGUI_FreeFacesDlg::onActivate()
 {
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
+  myGeomGUI->EmitSignalDeactivateDialog();
   setEnabled( true );
-  GeometryGUI::GetGeomGUI()->SetActiveDialogBox( this );
-  connect( mySelection, SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
+  myGeomGUI->SetActiveDialogBox( this );
+  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
   activateSelection();
 }
 
@@ -165,16 +167,14 @@ void RepairGUI_FreeFacesDlg::onActivate()
 // function : Init()
 // purpose  :
 //=================================================================================
-void RepairGUI_FreeFacesDlg::Init(SALOME_Selection* theSel)
+void RepairGUI_FreeFacesDlg::Init()
 {
   myObj = GEOM::GEOM_Object::_nil();
 
-  mySelection = theSel;
-
   /* signals and slots connections */
-  GeometryGUI* aGeomGUI = GeometryGUI::GetGeomGUI();
-  connect( aGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), SLOT  ( onDeactivate() ) );
-  connect( mySelection, SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
+  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), SLOT  ( onDeactivate() ) );
+  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
 
   activateSelection();
   onSelectionDone();
@@ -187,7 +187,7 @@ void RepairGUI_FreeFacesDlg::Init(SALOME_Selection* theSel)
 void RepairGUI_FreeFacesDlg::onSelectionDone()
 {
   erasePreview();
-  if( mySelection->IObjectCount() != 1 )
+  if( IObjectCount() != 1 )
   {
     myEdit->setText( "" );
     return;
@@ -195,7 +195,7 @@ void RepairGUI_FreeFacesDlg::onSelectionDone()
 
   Standard_Boolean isOk = Standard_False;
   GEOM::GEOM_Object_var anObj =
-    GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), isOk );
+    GEOMBase::ConvertIOinGEOMObject( firstIObject(), isOk );
 
   if ( !isOk || anObj->_is_nil() || !GEOMBase::IsShape( anObj ) )
   {
@@ -281,7 +281,7 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
 
     TopExp::MapShapes( aSelShape, anIndices);
     SALOME_Prs* aPrs = 0;
-    QAD_WaitCursor wc;
+    QApplication::setOverrideCursor( Qt::waitCursor );
 
     for ( int i = 0, n = aFaceLst->length(); i < n; i++ )
     {
@@ -296,7 +296,7 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
       }
       catch( const SALOME::SALOME_Exception& e )
       {
-        QtCatchCorbaException( e );
+        SalomeApp_Tools::QtCatchCorbaException( e );
       }
     }
   }
@@ -310,7 +310,7 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
 GEOM_Displayer* RepairGUI_FreeFacesDlg::getDisplayer()
 {
   if ( !myDisplayer )
-    myDisplayer = new GEOM_Displayer();
+    myDisplayer = new GEOM_Displayer( getStudy() );
   return myDisplayer;
 }
 
@@ -324,3 +324,11 @@ void RepairGUI_FreeFacesDlg::onSetEditCurrentArgument()
   onSelectionDone();
 }
 
+//=================================================================================
+// function : getDesktop()
+// purpose  :
+//=================================================================================
+SUIT_Desktop* RepairGUI_FreeFacesDlg::getDesktop() const
+{
+  return dynamic_cast<SUIT_Desktop*>( parentWidget() );
+}

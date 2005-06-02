@@ -33,8 +33,8 @@
 
 #include "BasicGUI.h"
 
-#include "GEOM_ShapeTypeFilter.hxx"
-#include "GEOM_EdgeFilter.hxx"
+//#include "GEOM_ShapeTypeFilter.hxx"
+//#include "GEOM_EdgeFilter.hxx"
 #include <gp_Dir.hxx>
 
 //=================================================================================
@@ -46,7 +46,7 @@ class BasicGUI_EllipseDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_EllipseDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_EllipseDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_EllipseDlg();
 
 protected:
@@ -60,6 +60,8 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
+
+    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint, myDir;
 

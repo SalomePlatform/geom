@@ -30,22 +30,28 @@
 #include "GeometryGUI.h"
 #include "GEOM_Actor.h"
 #include "GEOMBase.h"
+#include "GEOMToolsGUI_TransparencyDlg.h"
+#include "GEOMToolsGUI_NbIsosDlg.h"        // Method ISOS adjustement
 
-#include "QAD_Desktop.h"
-#include "QAD_Config.h"
-#include "QAD_FileDlg.h"
-#include "QAD_PyEditor.h"
-#include "QAD_RightFrame.h"
-#include "QAD_MessageBox.h"
-#include "SALOMEGUI_NameDlg.h"
+#include <SALOME_ListIO.hxx>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
-#include "OCCViewer_Viewer3d.h"
-#include "OCCViewer_ViewFrame.h"
-#include "VTKViewer_ViewFrame.h"
-#include "VTKViewer_RenderWindowInteractor.h"
+#include <VTKViewer_ViewModel.h>
+#include <OCCViewer_ViewModel.h>
+#include <OCCViewer_ViewWindow.h>
 
-#include "SALOME_ListIO.hxx"
-#include "SALOME_ListIteratorOfListIO.hxx"
+#include <SVTK_ViewWindow.h>
+#include <SVTK_RenderWindowInteractor.h>
+
+#include <SUIT_ViewManager.h>
+#include <SUIT_Application.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SUIT_OverrideCursor.h>
+
+#include <SalomeApp_Application.h>
+#include <SalomeApp_SelectionMgr.h>
 
 #include <AIS_Drawer.hxx>
 #include <AIS_ListOfInteractive.hxx>
@@ -64,106 +70,99 @@
 #include <qspinbox.h>
 #include <qapplication.h>
 
-#include "GEOMToolsGUI_NbIsosDlg.h"        // Method ISOS adjustement
-#include "GEOMToolsGUI_TransparencyDlg.h"  // Method TRANSPARENCY adjustement
-
 #include "utilities.h"
 
 using namespace std;
 
+#include "SALOMEDSClient.hxx"
+#include "SALOMEDS_Study.hxx"
+
+
+
 void GEOMToolsGUI::OnSettingsColor()
 {
+  SUIT_Session* sess = SUIT_Session::session();
+  SUIT_ResourceMgr* resMgr = sess->resourceMgr();
+  SUIT_Desktop* desk = sess->activeApplication()->desktop();
+
+  QColor anInitColor = resMgr->colorValue( "Geometry:SettingsShadingColor", QColor( "yellow" ) );
   
-  QString aSCr = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorRed");
-  QString aSCg = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorGreen");
-  QString aSCb = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorBlue");
-  QColor anInitColor;
-  if(!aSCr.isEmpty() && !aSCg.isEmpty() && !aSCb.isEmpty()) {	  
-    anInitColor = QColor (aSCr.toInt(), aSCg.toInt(), aSCb.toInt());
-  } 
-  else {
-    Quantity_Color aDefColor = Quantity_Color();
-    anInitColor = 
-      QColor ((int)( aDefColor.Red() * 255.0 ), (int)( aDefColor.Green() * 255.0 ), (int)( aDefColor.Blue() * 255.0 ) );
-  }
-  
-  QColor aDialogColor = QColorDialog::getColor(anInitColor, QAD_Application::getDesktop());
-  if(aDialogColor.isValid()) {
-    QApplication::setOverrideCursor(Qt::waitCursor);
-    
-    if( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC &&
-	QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_VTK )
+  QColor aDialogColor = QColorDialog::getColor(anInitColor, desk );
+  if( aDialogColor.isValid() ) 
+  {
+    QString type = desk->activeWindow()->getViewManager()->getType();
+    if( type != OCCViewer_Viewer::Type() && type != VTKViewer_Viewer::Type() )
       MESSAGE("Settings Color is not supported for current Viewer");
     
-    QAD_CONFIG->addSetting("Geometry:SettingsShadingColorRed", aDialogColor.red());
-    QAD_CONFIG->addSetting("Geometry:SettingsShadingColorGreen", aDialogColor.green());
-    QAD_CONFIG->addSetting("Geometry:SettingsShadingColorBlue", aDialogColor.blue());	
-    QApplication::restoreOverrideCursor();
+    resMgr->setValue( "Geometry:SettingsShadingColor", aDialogColor );
   }
 }
 
 void GEOMToolsGUI::OnSettingsIsos()
 {
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+/*
+  SUIT_Session* sess = SUIT_Session::session();
+  SUIT_ResourceMgr* resMgr = sess->resourceMgr();
+  SUIT_Desktop* desk = sess->activeApplication()->desktop();
+
+  SUIT_ViewManager* vman = desk->activeWindow()->getViewManager();
+  QString type = vman->getType();
+
+  if ( type != OCCViewer_Viewer::Type() )
     return;
   
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+  OCCViewer_Viewer* vm = (OCCViewer_Viewer*)vman->getViewModel();
+  Handle (AIS_InteractiveContext) ic = vm->getAISContext();
   
-  QString IsoU = QAD_CONFIG->getSetting("Geometry:SettingsIsoU");
-  QString IsoV = QAD_CONFIG->getSetting("Geometry:SettingsIsoV");
+  int IsoU = resMgr->integerValue( "Geometry:SettingsIsoU", 1 );
+  int IsoV = resMgr->integerValue( "Geometry:SettingsIsoV", 1 );
   
-  if(!IsoU.isEmpty())
-    ic->DefaultDrawer()->UIsoAspect()->SetNumber(IsoU.toInt());
-  else
-    IsoU = "1";
-  if (!IsoV.isEmpty())
-    ic->DefaultDrawer()->VIsoAspect()->SetNumber(IsoV.toInt());
-  else
-    IsoV = "1";
+  ic->DefaultDrawer()->UIsoAspect()->SetNumber( IsoU );
+  ic->DefaultDrawer()->VIsoAspect()->SetNumber( IsoV );
   
-  GEOMBase_NbIsosDlg* NbIsosDlg = new GEOMBase_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);	
-  int UIso = IsoU.toInt();
-  int VIso = IsoV.toInt();
+  GEOMBase_NbIsosDlg* NbIsosDlg = new GEOMBase_NbIsosDlg(desk, tr("GEOM_MEN_ISOS"), TRUE);	
   
-  NbIsosDlg->SpinBoxU->setValue(UIso);
-  NbIsosDlg->SpinBoxV->setValue(VIso);
+  NbIsosDlg->SpinBoxU->setValue(IsoU);
+  NbIsosDlg->SpinBoxV->setValue(IsoV);
   
   if(NbIsosDlg->exec()) {
-    UIso = NbIsosDlg->SpinBoxU->text().toInt();
-    VIso = NbIsosDlg->SpinBoxV->text().toInt();
+    IsoU = NbIsosDlg->SpinBoxU->text().toInt();
+    IsoV = NbIsosDlg->SpinBoxV->text().toInt();
     
     ic->DefaultDrawer()->UIsoAspect()->SetNumber(UIso);
     ic->DefaultDrawer()->VIsoAspect()->SetNumber(VIso);
-    QAD_CONFIG->addSetting("Geometry:SettingsIsoU", NbIsosDlg->SpinBoxU->text()); /* text format */
-    QAD_CONFIG->addSetting("Geometry:SettingsIsoV", NbIsosDlg->SpinBoxV->text()); /* text format */
+    resMgr->setValue("Geometry:SettingsIsoU", isoU);
+    resMgr->setValue("Geometry:SettingsIsoV", isoV);
   }
+*/
 }
 
 void GEOMToolsGUI::OnSettingsStep()
 {
-  QString step = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  if(step.isEmpty())
-    step = "100.0";
+  SUIT_Session* sess = SUIT_Session::session();
+  SUIT_ResourceMgr* resMgr = sess->resourceMgr();
+
+  double step = resMgr->doubleValue( "Geometry:SettingsGeomStep", 100. );
   
   Standard_Boolean res = false;
   double dd = GEOMBase::Parameter(res, QString("%1").arg(step), tr("GEOM_MEN_STEP_LABEL"), tr("GEOM_STEP_TITLE"), 0.001, 10000.0, 3);
   if(res) {
-    QAD_CONFIG->addSetting("Geometry:SettingsGeomStep", QString("%1").arg(dd));
+    resMgr->setValue( "Geometry:SettingsGeomStep", dd );
     
     /* Emit signal to GeometryGUI_SpinBoxes */
-    GeometryGUI::GetGeomGUI()->EmitSignalDefaultStepValueChanged(dd);
+    getGeometryGUI()->EmitSignalDefaultStepValueChanged( dd );
   }
   else
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+    sess->activeApplication()->putInfo(tr("GEOM_PRP_ABORT"));
 }
 
 void GEOMToolsGUI::OnRename()
 {
+/*
   SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+  _PTR(Study) aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   
-  bool aLocked = aStudy->GetProperties()->IsLocked();
+  bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
   if ( aLocked ) {
     QAD_MessageBox::warn1 ( (QWidget*)QAD_Application::getDesktop(),
 			    QObject::tr("WRN_WARNING"), 
@@ -176,14 +175,13 @@ void GEOMToolsGUI::OnRename()
   for(; It.More(); It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
     
-    SALOMEDS::SObject_var obj = aStudy->FindObjectID(IObject->getEntry());
-    SALOMEDS::GenericAttribute_var anAttr;
-    SALOMEDS::AttributeName_var aName;
-    if(!obj->_is_nil()) {
+    _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
+    _PTR(GenericAttribute) anAttr;
+    if(obj) {
       if(obj->FindAttribute(anAttr, "AttributeName")) {
-	aName = SALOMEDS::AttributeName::_narrow(anAttr);
+	_PTR(AttributeName) aName (anAttr);
 	
-	QString nm = QString(aName->Value());
+	QString nm = QString(aName->Value().c_str());
 	nm = SALOMEGUI_NameDlg::getName(QAD_Application::getDesktop(), nm);
 	if(!nm.isEmpty()) {
 	  QApplication::setOverrideCursor(Qt::waitCursor);
@@ -193,19 +191,23 @@ void GEOMToolsGUI::OnRename()
       }
     }
   }
+*/
 }
 
 void GEOMToolsGUI::OnCheckGeometry()
 {
+/*
   QAD_PyEditor* PyEditor = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getPyEditor();
   PyEditor->setText("from GEOM_usinggeom import *\n");
   PyEditor->handleReturn();
+*/
 }
 
 void GEOMToolsGUI::OnLoadScript()
 {
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  bool aLocked = aStudy->GetProperties()->IsLocked();
+/*
+  _PTR(Study) aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+  bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties())->IsLocked();
   if ( aLocked ) {
     QAD_MessageBox::warn1 ( (QWidget*)QAD_Application::getDesktop(),
 			    QObject::tr("WRN_WARNING"), 
@@ -230,123 +232,102 @@ void GEOMToolsGUI::OnLoadScript()
     PyEditor->handleReturn();
   }
   QApplication::restoreOverrideCursor();
+*/
 }
 
 void GEOMToolsGUI::OnColor()
 {
-  SALOME_Selection* Sel = SALOME_Selection::Selection(
-    QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
+  SALOME_ListIO selected;
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( app ) {
+    SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if ( aSelMgr ) {
+      aSelMgr->selectedObjects( selected );
+      if ( !selected.IsEmpty() ) {
+	SUIT_ViewWindow* window = app->desktop()->activeWindow();
+	bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+	bool isVTK = ( window && window->getViewManager()->getType() == VTKViewer_Viewer::Type() );
+	if ( isVTK ) {
+	  SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
+	  if ( !vtkVW )
+	    return;
+	  SVTK_RenderWindowInteractor* rwi = vtkVW->getRWInteractor();
+	  QColor initcolor = rwi->GetColor( selected.First()  );
+	  QColor c = QColorDialog::getColor( QColor(), app->desktop() );
+	  if ( c.isValid() ) {
+	    SUIT_OverrideCursor();
+	    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+	      rwi->SetColor( It.Value(), c );
+	    }
+	  }
+	} // if ( isVTK )
+	else if ( isOCC ) {
+	  Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( selected.First() );
+	  if ( !io.IsNull() ) {
+	    Quantity_Color aColor;
+	    io->Color( aColor );
+	    QColor initcolor( (int)( aColor.Red() * 255.0 ), (int)( aColor.Green() * 255.0 ), (int)( aColor.Blue() * 255.0 ) );
+	    QColor c =  QColorDialog::getColor( initcolor, app->desktop() );
+	    if ( c.isValid() ) {
+	      SUIT_OverrideCursor();
+	      aColor = Quantity_Color( c.red() / 255., c.green() / 255., c.blue() / 255., Quantity_TOC_RGB );
+	      for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+		io = GEOMBase::GetAIS( It.Value(), true );
+		if ( !io.IsNull() ) {
+		  io->SetColor( aColor );
+		  if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
+		    Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aColor );
 
-  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK )
-  {
-    VTKViewer_RenderWindowInteractor* myRenderInter =
-      ( (VTKViewer_ViewFrame*)QAD_Application::getDesktop()->
-         getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-    
-    SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-    Handle(SALOME_InteractiveObject) FirstIOS =  Sel->firstIObject();
-    if ( !FirstIOS.IsNull() )
-    {
-      QColor initcolor = myRenderInter->GetColor(FirstIOS);
-      QColor c = QColorDialog::getColor( initcolor, QAD_Application::getDesktop() );
-      
-      if ( c.isValid() )
-      {
-        QApplication::setOverrideCursor( Qt::waitCursor );
-        for ( ;It.More();It.Next() )
-        {
-          Handle(SALOME_InteractiveObject) IOS = It.Value();
-          myRenderInter->SetColor(IOS,c);
-        }
-      }
-      QApplication::restoreOverrideCursor();
+		  io->Redisplay( Standard_True );
+		}
+	      }
+	    } // if c.isValid()
+	  } // first IO is not null
+	} // if ( isOCC )
+      } // if ( selection not empty )
     }
   }
-  else if( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC )
-  {
-    Handle(AIS_InteractiveObject) anIO = GEOMBase::GetAIS( Sel->firstIObject() );
-    if ( !anIO.IsNull() )
-    {
-      Quantity_Color aColor;
-      anIO->Color( aColor );
-      
-      QColor qColor =  QColorDialog::getColor( QColor( (int)( aColor.Red() * 255.0 ),
-                                                       (int)( aColor.Green() * 255.0 ),
-                                                       (int)( aColor.Blue() * 255.0 ) ),
-                                               QAD_Application::getDesktop());
-      
-      if ( qColor.isValid() )
-      {
-        aColor = Quantity_Color( qColor.red() / 255.,
-                                 qColor.green() / 255.,
-                                 qColor.blue() / 255.,
-                                 Quantity_TOC_RGB );
-        
-        QApplication::setOverrideCursor( Qt::waitCursor );
-        
-        SALOME_ListIteratorOfListIO anIter ( Sel->StoredIObjects() );
-        for( ;anIter.More();anIter.Next() )
-        {
-          Handle(SALOME_InteractiveObject) IObject = anIter.Value();
-          Handle(AIS_InteractiveObject) anIO = GEOMBase::GetAIS( IObject, true );
-          if ( !anIO.IsNull() )
-          {
-            anIO->SetColor( aColor );
-
-            if ( anIO->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
-              Handle(GEOM_AISShape)::DownCast( anIO )->SetShadingColor( aColor );
-
-            anIO->Redisplay( Standard_True );
-          }
-        }
-      }
-    }
-  }
-  
-  QApplication::restoreOverrideCursor();
 }
 
 void GEOMToolsGUI::OnTransparency()
 {
-  Handle(AIS_InteractiveContext) ic;
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    ic = v3d->getAISContext();
-  }
-  new GEOMBase_TransparencyDlg(QAD_Application::getDesktop(), "", Sel, ic);
+  GEOMToolsGUI_TransparencyDlg dlg( SUIT_Session::session()->activeApplication()->desktop() );
+  dlg.exec();
 }
 
 void GEOMToolsGUI::OnNbIsos()
 {
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+
+  if ( !isOCC )
     return;
   
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+  OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
+  Handle (AIS_InteractiveContext) ic = vm->getAISContext();
   
   ic->InitCurrent();
-  if(ic->MoreCurrent()) {
+  if ( ic->MoreCurrent() ) {
     Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
     Handle(AIS_Drawer)    CurDrawer = CurObject->Attributes();
     
     int UIso = CurDrawer->UIsoAspect()->Number();
     int VIso = CurDrawer->VIsoAspect()->Number();
     
-    GEOMBase_NbIsosDlg * NbIsosDlg =
-      new GEOMBase_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);
+    GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
+      new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
     
-    NbIsosDlg->SpinBoxU->setValue( UIso );
-    NbIsosDlg->SpinBoxV->setValue( VIso );
+    NbIsosDlg->setU( UIso );
+    NbIsosDlg->setV( VIso );
     
-    if(NbIsosDlg->exec()) {
-      QApplication::setOverrideCursor(Qt::waitCursor);
+    if ( NbIsosDlg->exec() ) {
+      SUIT_OverrideCursor();
       for(; ic->MoreCurrent(); ic->NextCurrent()) {
         CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
 	Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
 	
-	int nbUIso = NbIsosDlg->SpinBoxU->text().toInt();
-	int nbVIso = NbIsosDlg->SpinBoxV->text().toInt();
+	int nbUIso = NbIsosDlg->getU();
+	int nbVIso = NbIsosDlg->getV();
 	
 	CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbUIso) );
 	CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbVIso) );
@@ -356,31 +337,31 @@ void GEOMToolsGUI::OnNbIsos()
       }
     }
   }
-  QApplication::restoreOverrideCursor();
 }
 
 void GEOMToolsGUI::OnOpen()
 {
+/*
   SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+  _PTR(Study) aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
 
   SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
   Handle(SALOME_InteractiveObject) anIObject;
   for(;It.More();It.Next()) {
     anIObject = It.Value();
-    SALOMEDS::SObject_var obj = aStudy->FindObjectID(anIObject->getEntry());
-    SALOMEDS::AttributePersistentRef_var aPersist;
-    SALOMEDS::AttributeIOR_var anIOR;
-    if(!obj->_is_nil()) {
+    _PTR(SObject) obj ( aStudy->FindObjectID(anIObject->getEntry()) );
+    _PTR(AttributePersistentRef) aPersist;
+    _PTR(AttributeIOR) anIOR;
+    if(obj) {
       // this SObject may be GEOM module root SObject
-      SALOMEDS::ChildIterator_var anIter = aStudy->NewChildIterator(obj);
-      SALOMEDS::GenericAttribute_var anAttr;
+      _PTR(ChildIterator) anIter ( aStudy->NewChildIterator() );
+      _PTR(GenericAttribute) anAttr;
       bool useSubItems = false;
       while (anIter->More() && !useSubItems) {
-	SALOMEDS::SObject_var subobj = anIter->Value();
+	_PTR(SObject) subobj ( anIter->Value() );
 	if (subobj->FindAttribute(anAttr, "AttributePersistentRef")) {
 	  useSubItems = true;
-	  obj = subobj;
+	  obj =  subobj;
 	}
 	else 
 	  anIter->Next();
@@ -390,11 +371,11 @@ void GEOMToolsGUI::OnOpen()
       while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
 	if(!obj->FindAttribute(anAttr, "AttributeIOR") &&
 	   obj->FindAttribute(anAttr, "AttributePersistentRef")) {
-	  SALOMEDS::SComponent_var FComp = obj->GetFatherComponent();
-	  if (!CORBA::is_nil(FComp)) {
+	  _PTR(SComponent) FComp ( obj->GetFatherComponent() );
+	  if (FComp) {
 	    if (FComp->FindAttribute(anAttr, "AttributeName")) {
-	      SALOMEDS::AttributeName_var aName = SALOMEDS::AttributeName::_narrow(anAttr);
-	      QString compName = QAD_Application::getDesktop()->getComponentName(aName->Value());
+	      _PTR(AttributeName) aName ( anAttr );
+	      QString compName = QAD_Application::getDesktop()->getComponentName(aName->Value().c_str());
 	      //		    parent->loadComponentData(parent->getComponentName(aName->Value()));
 	      Engines::Component_var comp ;
 	      if ( compName.compare("SUPERV") == 0 ) {
@@ -409,7 +390,7 @@ void GEOMToolsGUI::OnOpen()
 	      if (!CORBA::is_nil(comp)) {
 		SALOMEDS::Driver_var   driver = SALOMEDS::Driver::_narrow(comp);
 		if (!CORBA::is_nil(driver)) {
-		  SALOMEDS::StudyBuilder_var  B = aStudy->NewBuilder();
+		  SALOMEDS::StudyBuilder_var  B = dynamic_cast<SALOMEDS_Study*>(aStudy.get())->GetStudy()->NewBuilder();
 		  if (!CORBA::is_nil(B)) {
 		    B->LoadWith(FComp,driver);
 		  } else {
@@ -441,11 +422,12 @@ void GEOMToolsGUI::OnOpen()
 	}
 	if(useSubItems) {
 	  anIter->Next();
-	  obj = anIter->Value();
+	  obj.reset( anIter->Value() );
 	} 
 	else 
-	  anAttr = SALOMEDS::GenericAttribute::_nil();
+	  anAttr = NULL;
       }
     }
   }
+*/
 }

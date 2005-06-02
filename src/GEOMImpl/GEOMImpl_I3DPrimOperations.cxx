@@ -12,6 +12,8 @@ using namespace std;
 #include <TDF_Tool.hxx>
 
 #include "GEOM_Function.hxx"
+#include "GEOM_PythonDump.hxx"
+
 #include "GEOMImpl_Types.hxx"
 
 #include "GEOMImpl_BoxDriver.hxx"
@@ -99,15 +101,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxDXDYDZ (double theDX, dou
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aBox->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeBoxDXDYDZ(";
-  aDescr += (TCollection_AsciiString(theDX)+", ");
-  aDescr += (TCollection_AsciiString(theDY)+", ");
-  aDescr += (TCollection_AsciiString(theDZ)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aBox << " = geompy.MakeBoxDXDYDZ("
+    << theDX << ", " << theDY << ", " << theDZ << ")";
 
   SetErrorCode(OK);
   return aBox;
@@ -160,16 +155,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxTwoPnt (Handle(GEOM_Objec
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aBox->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeBoxTwoPnt(";
-  TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aBox << " = geompy.MakeBoxTwoPnt("
+    << thePnt1 << ", " << thePnt2 << ")";
 
   SetErrorCode(OK);
   return aBox;
@@ -214,14 +201,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aCylinder->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeCylinderRH(";
-  aDescr += (TCollection_AsciiString(theR)+", ");
-  aDescr += (TCollection_AsciiString(theH)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCylinder
+    << " = geompy.MakeCylinderRH(" << theR << ", " << theH << ")";
 
   SetErrorCode(OK);
   return aCylinder;
@@ -278,18 +259,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aCylinder->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeCylinderPntVecRH(";
-  TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(theVec->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theR)+", ");
-  aDescr += (TCollection_AsciiString(theH)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCylinder << " = geompy.MakeCylinder("
+    << thePnt << ", " << theVec << ", " << theR << ", " << theH << ")";
 
   SetErrorCode(OK);
   return aCylinder;
@@ -337,15 +308,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConeR1R2H (double theR1, dou
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aCone->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeConeR1R2H(";
-  aDescr += (TCollection_AsciiString(theR1)+", ");
-  aDescr += (TCollection_AsciiString(theR2)+", ");
-  aDescr += (TCollection_AsciiString(theH)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCone << " = geompy.MakeConeR1R2H("
+    << theR1 << ", " << theR2 << ", " << theH << ")";
 
   SetErrorCode(OK);
   return aCone;
@@ -404,19 +368,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConePntVecR1R2H (Handle(GEOM
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aCone->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeConePntVecR1R2H(";
-  TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(theVec->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theR1)+", ");
-  aDescr += (TCollection_AsciiString(theR2)+", ");
-  aDescr += (TCollection_AsciiString(theH)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCone << " = geompy.MakeCone(" << thePnt
+    << ", " << theVec << ", " << theR1 << ", " << theR2 << ", " << theH << ")";
 
   SetErrorCode(OK);
   return aCone;
@@ -460,13 +413,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSphereR (double theR)
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aSphere->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeSphereR(";
-  aDescr += (TCollection_AsciiString(theR)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aSphere << " = geompy.MakeSphereR(" << theR << ")";
 
   SetErrorCode(OK);
   return aSphere;
@@ -518,15 +465,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSpherePntR (Handle(GEOM_Obje
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aSphere->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeSpherePntR(";
-  TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theR)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aSphere
+    << " = geompy.MakeSpherePntR(" << thePnt << ", " << theR << ")";
 
   SetErrorCode(OK);
   return aSphere;
@@ -573,14 +513,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusRR
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(anEll->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeTorusRR(";
-  aDescr += (TCollection_AsciiString(theRMajor)+", ");
-  aDescr += (TCollection_AsciiString(theRMinor)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << anEll << " = geompy.MakeTorusRR("
+    << theRMajor << ", " << theRMinor << ")";
 
   SetErrorCode(OK);
   return anEll;
@@ -636,18 +570,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusPntVecRR
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(anEll->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeTorusPntVecRR(";
-  TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(theVec->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theRMajor)+", ");
-  aDescr += (TCollection_AsciiString(theRMinor)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << anEll << " = geompy.MakeTorus(" << thePnt
+    << ", " << theVec << ", " << theRMajor << ", " << theRMinor << ")";
 
   SetErrorCode(OK);
   return anEll;
@@ -703,17 +627,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aPrism->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakePrismVecH(";
-  TDF_Tool::Entry(theBase->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(theVec->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theH)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrismVecH("
+    << theBase << ", " << theVec << ", " << theH << ")";
 
   SetErrorCode(OK);
   return aPrism;
@@ -769,18 +684,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aPrism->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakePrismVecH(";
-  TDF_Tool::Entry(theBase->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePoint1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePoint2->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrism("
+    << theBase << ", " << thePoint1 << ", " << thePoint2 << ")";
 
   SetErrorCode(OK);
   return aPrism;
@@ -834,15 +739,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipe (Handle(GEOM_Object) th
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aPipe->GetEntry(), anEntry);
-  aDescr += (anEntry + " = I3DPrimOperations.MakePipe(");
-  TDF_Tool::Entry(theBase->GetEntry(), anEntry);
-  aDescr += (anEntry + ", ");
-  TDF_Tool::Entry(thePath->GetEntry(), anEntry);
-  aDescr += (anEntry + ")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aPipe << " = geompy.MakePipe("
+    << theBase << ", " << thePath << ")";
 
   SetErrorCode(OK);
   return aPipe;
@@ -898,17 +796,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aRevolution->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeRevolutionAxisAngle(";
-  TDF_Tool::Entry(theBase->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theAngle)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aRevolution << " = geompy.MakeRevolution("
+    << theBase << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
 
   SetErrorCode(OK);
   return aRevolution;
@@ -959,14 +848,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSolidShell (Handle(GEOM_Obje
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aSolid->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeSolidShell(";
-  TDF_Tool::Entry(theShell->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aSolid << " = geompy.MakeSolid(" << theShell << ")";
 
   SetErrorCode(OK);
   return aSolid;
@@ -977,7 +859,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSolidShell (Handle(GEOM_Obje
  *  MakeFilling
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg, double theTol2D, double theTol3D, int theNbIter)
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
+       (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg,
+        double theTol2D, double theTol3D, int theNbIter)
 {
   SetErrorCode(KO);
 
@@ -1020,19 +904,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling (Handle(GEOM_Object)
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aFilling->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeFilling(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theMinDeg)+", ");
-  aDescr += (TCollection_AsciiString(theMaxDeg)+", ");
-  aDescr += (TCollection_AsciiString(theTol2D)+", ");
-  aDescr += (TCollection_AsciiString(theTol3D)+", ");
-  aDescr += (TCollection_AsciiString(theNbIter)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aFilling << " = geompy.MakeFilling("
+    << theShape << ", " << theMinDeg << ", " << theMaxDeg << ", "
+      << theTol2D << ", " << theTol3D << ", " << theNbIter << ")";
 
   SetErrorCode(OK);
   return aFilling;

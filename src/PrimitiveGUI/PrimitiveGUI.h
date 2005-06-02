@@ -39,15 +39,15 @@
 class PrimitiveGUI : public GEOMGUI
 {
 protected:
-  PrimitiveGUI(); // hide constructor to avoid direct creation
+  PrimitiveGUI(GeometryGUI* parent); // hide constructor to avoid direct creation
 
 public :
   ~PrimitiveGUI();
 
   // Get the only PrimitiveGUI object
-  static PrimitiveGUI* GetPrimitiveGUI();
+  static PrimitiveGUI* GetPrimitiveGUI(GeometryGUI* parent);
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
 
 private:
   static PrimitiveGUI* myGUIObject;    // the only PrimitiveGUI object

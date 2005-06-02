@@ -41,7 +41,7 @@ class BlocksGUI_PropagateDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BlocksGUI_PropagateDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BlocksGUI_PropagateDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BlocksGUI_PropagateDlg();
 
 protected:

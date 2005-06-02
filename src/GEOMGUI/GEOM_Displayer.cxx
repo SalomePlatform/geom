@@ -26,38 +26,51 @@
 //  Module : GEOM
 //  $Header$
 
+#include <SOCC_ViewModel.h>
+
 #include "GEOM_Displayer.h"
-#include "GEOM_ShapeTypeFilter.hxx"
-#include "GEOM_TypeFilter.hxx"
-#include "QAD_Desktop.h"
-#include "QAD_Application.h"
-#include "QAD_Study.h"
-#include "QAD_StudyFrame.h"
-#include "QAD_RightFrame.h"
-#include "QAD_ViewFrame.h"
-#include "QAD_Config.h"
-#include "SALOME_ListIteratorOfListIO.hxx"
-#include "OCCViewer_Prs.h"
-#include "OCCViewer_ViewFrame.h"
-#include "OCCViewer_Viewer3d.h"
-#include "VTKViewer_Prs.h"
-#include "VTKViewer_ViewFrame.h"
 #include "GEOMImpl_Types.hxx"
-#include "TColStd_MapOfInteger.hxx"
-#include "TColStd_MapIteratorOfMapOfInteger.hxx"
-#include "GEOM_EdgeFilter.hxx"
-#include "GEOM_FaceFilter.hxx"
-#include "GEOM_PreviewFilter.hxx"
-#include "GEOM_LogicalFilter.hxx"
+
+#include "GEOM_TypeFilter.h"
+#include "GEOM_EdgeFilter.h"
+#include "GEOM_FaceFilter.h"
+#include "GEOM_PreviewFilter.h"
+#include "GEOM_LogicalFilter.h"
+#include "GEOM_OCCFilter.h"
+
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_Actor.h"
 #include "GEOM_AISTrihedron.hxx"
 #include "GEOM_VTKTrihedron.hxx"
 
+#include <SUIT_Desktop.h>
+#include <SUIT_ViewWindow.h>
+#include <SUIT_Session.h>
+#include <SUIT_Tools.h>
+#include <SUIT_ViewManager.h>
+
+#include <SalomeApp_Study.h>
+#include <SalomeApp_Application.h>
+#include <SalomeApp_SelectionMgr.h>
+#include <SalomeApp_TypeFilter.h>
+
+#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOMEDSClient.hxx>
+#include <SALOMEDS_SObject.hxx>
+#include <SALOMEDSClient_SObject.hxx>
+
+#include <SOCC_Prs.h>
+
+#include <SVTK_Prs.h>
+#include <SVTK_ViewModel.h>
+
+#include <TColStd_MapOfInteger.hxx>
+#include <TColStd_MapIteratorOfMapOfInteger.hxx>
+
 #include CORBA_CLIENT_HEADER(SALOMEDS_Attributes)
 
-#include "GeometryGUI.h"
-#include "GEOM_AISShape.hxx"
+#include <GeometryGUI.h>
+#include <GEOM_AISShape.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <AIS_Drawer.hxx>
 #include <Prs3d_PointAspect.hxx>
@@ -67,7 +80,8 @@
 #include <BRep_Tool.hxx>
 #include <gp_Pln.hxx>
 #include <Geom_Axis2Placement.hxx>
-
+#include <StdSelect_TypeOfEdge.hxx>
+#include <StdSelect_TypeOfFace.hxx>
 #include <vtkActorCollection.h>
 
 #include <cstring>
@@ -78,14 +92,12 @@ using namespace std;
 // Function : getActiveStudy
 // Purpose  : Get active study, returns 0 if no open study frame
 //================================================================
-static inline QAD_Study* getActiveStudy()
+static inline SalomeApp_Study* getActiveStudy()
 {
-  QAD_Desktop* desktop = QAD_Application::getDesktop();
-  if ( desktop ) {
-    QAD_Application* app = desktop->getActiveApp();
-    if ( app )
-      return app->getActiveStudy();
-  }
+  SUIT_Session* session = SUIT_Session::session();
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  if ( app )
+    return ( SalomeApp_Study* )app->activeStudy();
   return 0;
 }
 
@@ -110,38 +122,38 @@ static inline int getTopAbsMode( const int implType )
 }
 
 //================================================================
-// Function : getTopAbsMode
+// Function : getFilter
 // Purpose  : Get filter corresponding to the type of object
 //            from GEOMImpl_Types.h
 //================================================================
-static inline Handle(SALOME_Filter) getFilter( const int theMode )
+SUIT_SelectionFilter* GEOM_Displayer::getFilter( const int theMode )
 {
-  Handle(SALOME_Filter) aFilter;
+  SUIT_SelectionFilter* aFilter;
   
   int aTopAbsMode = getTopAbsMode( theMode );
   if ( aTopAbsMode != -1 )
-    aFilter = new GEOM_ShapeTypeFilter( ( TopAbs_ShapeEnum )aTopAbsMode );
+    aFilter = new GEOM_TypeFilter( getStudy(), theMode ); //@ aFilter = new GEOM_TypeFilter( ( TopAbs_ShapeEnum )aTopAbsMode );
   else
     switch ( theMode )
-    {
-      case GEOM_LINE      : aFilter = new GEOM_EdgeFilter( StdSelect_Line     ); break;
-      case GEOM_CIRCLE    : aFilter = new GEOM_EdgeFilter( StdSelect_Circle   ); break;
-
-      case GEOM_PLANE     : aFilter = new GEOM_FaceFilter( StdSelect_Plane    ); break;
-      case GEOM_CYLINDER  : aFilter = new GEOM_FaceFilter( StdSelect_Cylinder ); break;
-      case GEOM_SPHERE    : aFilter = new GEOM_FaceFilter( StdSelect_Sphere   ); break;
-      case GEOM_TORUS     : aFilter = new GEOM_FaceFilter( StdSelect_Torus    ); break;
-      case GEOM_REVOLUTION: aFilter = new GEOM_FaceFilter( StdSelect_Revol    ); break;
-      case GEOM_CONE      : aFilter = new GEOM_FaceFilter( StdSelect_Cone     ); break;
-      
-      case GEOM_PREVIEW   : aFilter = new GEOM_PreviewFilter(); break;
-      
-      case GEOM_ALLSHAPES : aFilter = new GEOM_ShapeTypeFilter( -1, true ); break;
-      case GEOM_ALLGEOM   : aFilter = new SALOME_TypeFilter( "GEOM" ); break;
-
-      default             : aFilter = new GEOM_TypeFilter( theMode ); break;
-    }
-
+      {
+      case GEOM_LINE      : aFilter = new GEOM_EdgeFilter( getStudy(), StdSelect_Line ); break;
+      case GEOM_CIRCLE    : aFilter = new GEOM_EdgeFilter( getStudy(), StdSelect_Circle ); break;
+	
+      case GEOM_PLANE     : aFilter = new GEOM_FaceFilter( getStudy(), StdSelect_Plane ); break;
+      case GEOM_CYLINDER  : aFilter = new GEOM_FaceFilter( getStudy(), StdSelect_Cylinder ); break;
+      case GEOM_SPHERE    : aFilter = new GEOM_FaceFilter( getStudy(), StdSelect_Sphere ); break;
+      case GEOM_TORUS     : aFilter = new GEOM_FaceFilter( getStudy(), StdSelect_Torus ); break;
+      case GEOM_REVOLUTION: aFilter = new GEOM_FaceFilter( getStudy(), StdSelect_Revol ); break;
+      case GEOM_CONE      : aFilter = new GEOM_FaceFilter( getStudy(), StdSelect_Cone ); break;
+	
+      case GEOM_PREVIEW   : aFilter = new GEOM_PreviewFilter( getStudy() ); break;
+	
+      case GEOM_ALLSHAPES : aFilter = new GEOM_SelectionFilter(getStudy(), true ); break;
+      case GEOM_ALLGEOM   : aFilter = new SalomeApp_TypeFilter( getStudy(), "GEOM" ); break;
+	
+      default             : aFilter = new GEOM_TypeFilter( getStudy(), theMode ); break;
+      }
+  
   return aFilter;
 }
 
@@ -151,14 +163,17 @@ static inline Handle(SALOME_Filter) getFilter( const int theMode )
 //================================================================
 static char* getEntry( GEOM::GEOM_Object_ptr object )
 {
-  QAD_Study* study = getActiveStudy();
-  if ( study )  {
-    string IOR = GeometryGUI::GetORB()->object_to_string( object );
-    if ( IOR != "" ) {
-      SALOMEDS::SObject_var SO = study->getStudyDocument()->FindObjectIOR( IOR.c_str() );
-      if ( !SO->_is_nil() ) {
-	return SO->GetID();
-      }
+  SUIT_Session* session = SUIT_Session::session();
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  if ( app ) 
+  {
+    string IOR = app->orb()->object_to_string( object );
+    if ( IOR != "" ) 
+    {
+      SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
+      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
+      if ( SO )
+	return (char*)(SO->GetID().c_str());
     }
   }
   return "";
@@ -168,22 +183,24 @@ static char* getEntry( GEOM::GEOM_Object_ptr object )
 // Function : getName
 // Purpose  :
 //================================================================
-static const char* getName( GEOM::GEOM_Object_ptr theObj )
+static const char* getName( GEOM::GEOM_Object_ptr object )
 {
-  QAD_Study* aStudy = QAD_Application::getDesktop()->getActiveStudy();
-
-  if ( aStudy )
+  SUIT_Session* session = SUIT_Session::session();
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  if ( app ) 
   {
-    string anIOR = GeometryGUI::GetORB()->object_to_string( theObj );
-    if ( anIOR != "" )
+    string IOR = app->orb()->object_to_string( object );
+    if ( IOR != "" ) 
     {
-      SALOMEDS::SObject_var aSObj = aStudy->getStudyDocument()->FindObjectIOR( anIOR.c_str() );
-      SALOMEDS::GenericAttribute_var anAttr;
+      SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
+      _PTR(SObject) aSObj ( study->studyDS()->FindObjectIOR( IOR ) );
 
-      if ( !aSObj->_is_nil() && aSObj->FindAttribute( anAttr, "AttributeName") )
+      _PTR(GenericAttribute) anAttr;
+
+      if ( aSObj && aSObj->FindAttribute( anAttr, "AttributeName") )
       {
-        SALOMEDS::AttributeName_var aNameAttr = SALOMEDS::AttributeName::_narrow( anAttr );
-        return aNameAttr->Value();
+        _PTR(AttributeName) aNameAttr( anAttr );
+        return aNameAttr->Value().c_str();
       }
     }
   }
@@ -197,17 +214,18 @@ static const char* getName( GEOM::GEOM_Object_ptr theObj )
  *  Constructor
  */
 //=================================================================
-GEOM_Displayer::GEOM_Displayer()
+GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* study )
 {
+  myStudy = study;
+  
   /* Shading Color */
-  QString SCr = QAD_CONFIG->getSetting( "Geometry:SettingsShadingColorRed" );
-  QString SCg = QAD_CONFIG->getSetting( "Geometry:SettingsShadingColorGreen" );
-  QString SCb = QAD_CONFIG->getSetting( "Geometry:SettingsShadingColorBlue" );
-  if ( !SCr.isEmpty() && !SCg.isEmpty() && !SCb.isEmpty() )
-    myShadingColor = Quantity_Color(
-      SCr.toInt()/255., SCg.toInt()/255., SCb.toInt()/255., Quantity_TOC_RGB );
-  else
-    myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
+  SUIT_Session* session = SUIT_Session::session();
+  SUIT_ResourceMgr* resMgr = session->resourceMgr();
+  QColor col = resMgr->colorValue( "Geometry", "SettingsShadingColor", QColor( "goldenrod" ) );
+
+// TO DO: make some utility method to convert QColor into Quantity_Color
+//  myShadingColor = SUIT_Tools::color( col );
+  myShadingColor = Quantity_NOC_RED;
 
   myColor = -1;
   // This color is used for shape displaying. If it is equal -1 then
@@ -238,15 +256,29 @@ GEOM_Displayer::~GEOM_Displayer()
  *  Get active study frame, returns 0 if no open study frame
  */
 //=================================================================
-QAD_ViewFrame* GEOM_Displayer::GetActiveView()
+SALOME_View* GEOM_Displayer::GetActiveView()
 {
-  QAD_Study* activeStudy = getActiveStudy();
-  if ( activeStudy )
+  SUIT_Session* session = SUIT_Session::session();
+  SUIT_Application* app = session->activeApplication();
+  if ( app )
   {
-    QAD_StudyFrame* sf = activeStudy->getActiveStudyFrame();
-    if ( sf )
+    SUIT_Desktop* desk = app->desktop();
+    if ( desk )
     {
-      return sf->getRightFrame()->getViewFrame();
+      SUIT_ViewWindow* win = desk->activeWindow(); 
+      if ( win ) 
+      {
+	SUIT_ViewManager* vman = win->getViewManager();
+	if ( vman )
+	{
+	  SUIT_ViewModel* vmodel = vman->getViewModel();
+	  if ( vmodel )
+	  {
+	    SALOME_View* view = dynamic_cast<SALOME_View*>(vmodel);
+	    return view;
+	  }
+	}
+      }
     }
   }
   return 0;
@@ -258,30 +290,21 @@ QAD_ViewFrame* GEOM_Displayer::GetActiveView()
  *  Display interactive object in the current viewer
  */
 //=================================================================
-void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO, const bool updateViewer,
-			      QAD_ViewFrame* theViewFrame )
+void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO, 
+			     const bool updateViewer,
+			     SALOME_View* theViewFrame )
 {
-  QAD_ViewFrame* vf = theViewFrame;
-  if ( !vf )
-    vf = GetActiveView();
-  
+  SALOME_View* vf = theViewFrame ? theViewFrame : GetActiveView();
   if ( vf )
   {
-      if ( vf->inherits( "VTKViewer_ViewFrame" ) )
-      {
-        SALOME_Prs* prs = vf->CreatePrs( !theIO.IsNull() ? theIO->getEntry() : 0 );
-        ((SALOME_View*)vf)->Erase( prs, true );
-        delete prs;
-      }
-    
     SALOME_Prs* prs = buildPresentation( theIO, vf );
     
     if ( prs )
     {
       vf->BeforeDisplay( this );
-      ((SALOME_View*)vf)->Display( prs );
+      vf->Display( prs );
       vf->AfterDisplay( this );
-      
+
       if ( updateViewer )
         vf->Repaint();
       
@@ -318,19 +341,17 @@ void GEOM_Displayer::Display( GEOM::GEOM_Object_ptr theObj, const bool updateVie
 void GEOM_Displayer::Erase( const Handle(SALOME_InteractiveObject)& theIO,
                             const bool forced,
                             const bool updateViewer,
-			    QAD_ViewFrame* theViewFrame )
+			    SALOME_View* theViewFrame )
 {
   if ( theIO.IsNull() )
     return;
 
-  QAD_ViewFrame* vf = theViewFrame;
-  if ( !vf )
-    vf = GetActiveView();
+  SALOME_View* vf = theViewFrame ? theViewFrame : GetActiveView();
   
   if ( vf ) {
     SALOME_Prs* prs = vf->CreatePrs( theIO->getEntry() );
     if ( prs ) {
-      ((SALOME_View*)vf)->Erase( prs, forced );
+      vf->Erase( prs, forced );
       if ( updateViewer )
 	vf->Repaint();
       delete prs;  // delete presentation because displayer is its owner
@@ -358,6 +379,25 @@ void GEOM_Displayer::Erase( GEOM::GEOM_Object_ptr theObj,
 
 //=================================================================
 /*!
+ *  GEOM_Displayer::EraseAll
+ *  Erase all objects in the current viewer
+ */
+//=================================================================
+void GEOM_Displayer::EraseAll ( const bool forced,
+				const bool updateViewer,
+				SALOME_View* theViewFrame )
+{
+  SALOME_View* vf = theViewFrame ? theViewFrame : GetActiveView();
+  
+  if ( vf ) {
+    vf->EraseAll( forced );
+    if ( updateViewer )
+      vf->Repaint();
+  }
+}
+
+//=================================================================
+/*!
  *  GEOM_Displayer::Redisplay
  *  Redisplay (erase and then display again) interactive object
  *  in the current viewer
@@ -367,28 +407,34 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
                                 const bool updateViewer )
 {
   // Remove the object permanently (<forced> == true)
-  
-  QAD_Study* activeStudy = getActiveStudy();
-  if ( !activeStudy )
-    return;
-  
-  int aNbFrames = activeStudy->getStudyFramesCount();
-  for (int i = 0; i < aNbFrames; i++)
+  SUIT_Session* ses = SUIT_Session::session();
+  SUIT_Application* app = ses->activeApplication();
+  if ( app )
+  {
+    SUIT_Desktop* desk = app->desktop();
+    QPtrList<SUIT_ViewWindow> wnds = desk->windows();
+    SUIT_ViewWindow* wnd;
+    for ( wnd = wnds.first(); wnd; wnd = wnds.next() )
     {
-      QAD_StudyFrame* sf = activeStudy->getStudyFrame(i);
-      if ( !sf )
-	continue;
-      
-      QAD_ViewFrame* vf = sf->getRightFrame()->getViewFrame();
-      if ( !vf )
-	continue;
-      
-      if ( vf->isVisible(theIO) || vf == GetActiveView() )
+      SUIT_ViewManager* vman = wnd->getViewManager();
+      if ( vman )
+      {
+	SUIT_ViewModel* vmodel = vman->getViewModel();
+	if ( vmodel )
 	{
-	  Erase( theIO, true, false, vf );
-	  Display( theIO, updateViewer, vf );
+	  SALOME_View* view = dynamic_cast<SALOME_View*>(vmodel);
+	  if ( view )
+	  {
+	    if ( view->isVisible( theIO ) || view == GetActiveView() )
+	    {
+	      Erase( theIO, true, false, view );
+	      Display( theIO, updateViewer, view );
+	    }
+	  }
 	}
+      }
     }
+  }
 }
 
 //=================================================================
@@ -434,9 +480,9 @@ void GEOM_Displayer::Erase( const SALOME_ListIO& theIOList,
 void GEOM_Displayer::Redisplay( const SALOME_ListIO& theIOList, const bool updateViewer )
 {
   SALOME_ListIteratorOfListIO Iter( theIOList );
-  for ( ; Iter.More(); Iter.Next() ) {
+  for ( ; Iter.More(); Iter.Next() )
     Redisplay( Iter.Value(), false );
-  }
+
   if ( updateViewer )
     UpdateViewer();
 }
@@ -449,7 +495,7 @@ void GEOM_Displayer::Redisplay( const SALOME_ListIO& theIOList, const bool updat
 //=================================================================
 void GEOM_Displayer::UpdateViewer()
 {
-  QAD_ViewFrame* vf = GetActiveView();
+  SALOME_View* vf = GetActiveView();
   if ( vf )
     vf->Repaint();
 }
@@ -463,12 +509,8 @@ void GEOM_Displayer::UpdateViewer()
 //=================================================================
 void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 {
-  OCCViewer_Prs* occPrs = dynamic_cast<OCCViewer_Prs*>( prs );
+  SOCC_Prs* occPrs = dynamic_cast<SOCC_Prs*>( prs );
   if ( !occPrs )
-    return;
-
-  OCCViewer_ViewFrame* vf = dynamic_cast<OCCViewer_ViewFrame*>( myViewFrame );
-  if ( !vf )
     return;
 
   if ( myType == GEOM_MARKER && !myShape.IsNull() && myShape.ShapeType() == TopAbs_FACE )
@@ -611,7 +653,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 //=================================================================
 void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 {
-  VTKViewer_Prs* vtkPrs = dynamic_cast<VTKViewer_Prs*>( prs );
+  SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
   if ( !vtkPrs || myShape.IsNull() )
     return;
 
@@ -636,8 +678,8 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
     gp_Ax2 anAx2 = aPlane->Pln().Position().Ax2();
     aTrh->SetPlacement( new Geom_Axis2Placement( anAx2 ) );
 
-    if ( VTKViewer_ViewFrame* vf = dynamic_cast<VTKViewer_ViewFrame*>( GetActiveView() ) )
-      aTrh->SetSize( 0.5 * vf->GetTrihedronSize() );
+//    if ( SVTK_Viewer* vf = dynamic_cast<SVTK_Viewer*>( GetActiveView() ) )
+//      aTrh->SetSize( 0.5 * vf->GetTrihedronSize() );
 
     vtkPrs->AddObject( aTrh );
       
@@ -716,8 +758,6 @@ SALOME_Prs* GEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )
   if ( theObj->_is_nil() )
     return 0;
 
-  GeometryGUI* geomGUI = GeometryGUI::GetGeomGUI();
-
   myViewFrame = GetActiveView();
   if ( myViewFrame == 0 )
     return 0;
@@ -727,7 +767,7 @@ SALOME_Prs* GEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )
     return 0;
 
   internalReset();  
-  setShape( geomGUI->GetShapeReader().GetShape( geomGUI->GetGeomGen(), theObj ) );
+  setShape( GEOM_Client().GetShape( GeometryGUI::GetGeomGen(), theObj ) );
   myType = theObj->GetType();
 
   // Update presentation
@@ -770,35 +810,46 @@ SALOME_Prs* GEOM_Displayer::BuildPrs( const TopoDS_Shape& theShape )
  */
 //=================================================================
 SALOME_Prs* GEOM_Displayer::buildPresentation( const Handle(SALOME_InteractiveObject)& theIO, 
-					       QAD_ViewFrame* theViewFrame )
+					       SALOME_View* theViewFrame )
 {
   SALOME_Prs* prs = 0;
   internalReset();
 
-  GeometryGUI* geomGUI = GeometryGUI::GetGeomGUI();
-
-  myViewFrame = theViewFrame;  // no dynamic_cast here to use double dispatch
-  if ( !myViewFrame )
-    myViewFrame = GetActiveView();
+  myViewFrame = theViewFrame ? theViewFrame : GetActiveView();
   
-  if ( myViewFrame ) {
+  if ( myViewFrame ) 
+  {
     prs = myViewFrame->CreatePrs( !theIO.IsNull() ? theIO->getEntry() : 0 );
-    if ( prs ) {
-      if ( !theIO.IsNull() ) {
+    if ( prs ) 
+    {
+      if ( !theIO.IsNull() ) 
+      {
 	// set interactive object
 	setIO( theIO );
 	//  Find SOBject (because shape should be published previously)
-	SALOMEDS::SObject_var SO = getActiveStudy()->getStudyDocument()->FindObjectID( theIO->getEntry() );
-	if ( !SO->_is_nil() ) {
-	  // get CORBA reference to data object
-	  CORBA::Object_var object = SO->GetObject();
-	  if ( !CORBA::is_nil( object ) ) {
-	    // downcast to GEOM object
-	    GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( object );
-	    if ( !GeomObject->_is_nil() ) {
-	      // finally set shape
-	      setShape( geomGUI->GetShapeReader().GetShape( geomGUI->GetGeomGen(), GeomObject ) );
-	      myType = GeomObject->GetType();
+	SUIT_Session* session = SUIT_Session::session();
+	SUIT_Application* app = session->activeApplication();
+	if ( app ) 
+	{
+	  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+	  if ( study )
+	  {
+	    _PTR(SObject) SO ( study->studyDS()->FindObjectID( theIO->getEntry() ) );
+	    if ( SO ) 
+	    {
+	      // get CORBA reference to data object
+	      CORBA::Object_var object = dynamic_cast<SALOMEDS_SObject*>(SO.get())->GetObject();
+	      if ( !CORBA::is_nil( object ) ) 
+	      {
+		// downcast to GEOM object
+		GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( object );
+		if ( !GeomObject->_is_nil() ) 
+		{
+		  // finally set shape
+		  setShape( GEOM_Client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
+		  myType = GeomObject->GetType();
+		}
+	      }
 	    }
 	  }
 	}
@@ -831,19 +882,23 @@ void GEOM_Displayer::internalReset()
 //=================================================================
 void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& theIO, const int theMode )
 {
+  SUIT_Session* session = SUIT_Session::session();
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  if ( !app )
+    return;
+
+  SalomeApp_SelectionMgr* sm = app->selectionMgr();
+ 
   // remove all filters from selection
-  SALOME_Selection* aSel = SALOME_Selection::Selection(
-    QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
+  sm->clearFilters();
 
-  aSel->ClearFilters();
-
-  QAD_ViewFrame* vf = GetActiveView();
+  SALOME_View* vf = GetActiveView();
   if ( vf )
-  {
-    SALOME_Prs* prs = vf->CreatePrs( theIO.IsNull() ? 0 : theIO->getEntry() );
-    ((SALOME_View*)vf)->LocalSelection( prs, theMode );
-    delete prs;  // delete presentation because displayer is its owner
-  }  
+    {
+      SALOME_Prs* prs = vf->CreatePrs( theIO.IsNull() ? 0 : theIO->getEntry() );
+      vf->LocalSelection( prs, theMode );
+      delete prs;  // delete presentation because displayer is its owner
+    }  
 }
 
 //=================================================================
@@ -870,53 +925,76 @@ void GEOM_Displayer::GlobalSelection( const int theMode, const bool update )
 void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
 				      const bool update )
 {
-  QAD_ViewFrame* vf = GetActiveView();
+  SUIT_Session* session = SUIT_Session::session();
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  if ( !app )
+    return;
+  
+  SALOME_View* vf = GetActiveView();
   if ( vf == 0 )
     return;
-
+  
   // Close local context
   vf->GlobalSelection( update );
 
   // Set selection filters in accordance with current mode
-  SALOME_Selection* aSel = SALOME_Selection::Selection(
-    QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
+  SalomeApp_SelectionMgr* sm = app->selectionMgr();
+  if ( !sm )
+    return;
 
   // Remove from selection temporary objects if necessary
   if ( !theModes.Contains( GEOM_PREVIEW ) )
-    clearTemporary( aSel );
+    clearTemporary( sm );
 
-  aSel->ClearIndex();
+  //@ aSel->ClearIndex();
     
-  aSel->ClearFilters();
-
+  sm->clearFilters();
+ 
+  // Remove filters from AIS_InteractiveContext
+  Handle(AIS_InteractiveContext) ic;
+  SOCC_Viewer* viewer = dynamic_cast<SOCC_Viewer*>( vf );
+  if ( viewer )
+    {
+      ic = viewer->getAISContext();
+      if ( !ic.IsNull() )
+	ic->RemoveFilters();
+    }
+  
   if ( theModes.Contains( GEOM_ALLOBJECTS ) )
     return;
 
-  Handle(SALOME_Filter) aFilter;
+  SUIT_SelectionFilter* aFilter;
   if ( theModes.Extent() == 1 )
-  {
-    int aMode = TColStd_MapIteratorOfMapOfInteger( theModes ).Key();
-    aFilter = getFilter( aMode );
-  }
-  else if ( theModes.Extent() > 1 )
-  {
-    TColStd_MapOfInteger aTopAbsModes;
-    TColStd_MapIteratorOfMapOfInteger anIter( theModes );
-    GEOM_ListOfFilter aListOfFilters;
-    for ( ; anIter.More(); anIter.Next() )
     {
-      Handle(SALOME_Filter) aFilter = getFilter( anIter.Key() );
-      if ( !aFilter.IsNull() )
-        aListOfFilters.Append( aFilter );
+      int aMode = TColStd_MapIteratorOfMapOfInteger( theModes ).Key();
+      aFilter = getFilter( aMode );
     }
-
-    aFilter = new GEOM_LogicalFilter( aListOfFilters, GEOM_LogicalFilter::LO_OR );
-  }
+  else if ( theModes.Extent() > 1 )
+    {
+      TColStd_MapOfInteger aTopAbsModes;
+      TColStd_MapIteratorOfMapOfInteger anIter( theModes );
+      QPtrList<SUIT_SelectionFilter> aListOfFilters;
+      for ( ; anIter.More(); anIter.Next() )
+	{
+	  SUIT_SelectionFilter* aFilter = getFilter( anIter.Key() );
+	  if ( aFilter )
+	    aListOfFilters.append( aFilter );
+	}
+      
+      aFilter = new GEOM_LogicalFilter( aListOfFilters, GEOM_LogicalFilter::LO_OR );
+    }
   else
     return;
 
-  if ( !aFilter.IsNull() )
-    aSel->AddFilter( aFilter );
+  if ( aFilter )
+    {
+      sm->installFilter( aFilter );
+      if ( !ic.IsNull() )
+	{
+	  Handle(GEOM_OCCFilter) anOCCFilter = new GEOM_OCCFilter( sm );
+	  ic->AddFilter( anOCCFilter );
+	}
+    }
 }
 
 //=================================================================
@@ -942,10 +1020,10 @@ void GEOM_Displayer::LocalSelection( const SALOME_ListIO& theIOList, const int t
 //=================================================================
 void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCViewType& )
 {
-  OCCViewer_ViewFrame* vf = dynamic_cast<OCCViewer_ViewFrame*>( v );
+  SOCC_Viewer* vf = dynamic_cast<SOCC_Viewer*>( v );
   if ( vf )
   {
-    Handle(AIS_InteractiveContext) ic = vf->getViewer()->getAISContext();
+    Handle(AIS_InteractiveContext) ic = vf->getAISContext();
     if ( !ic.IsNull() )
     {
       if ( ic->HasOpenedContext() )
@@ -1033,42 +1111,19 @@ bool GEOM_Displayer::ToActivate() const
  *  Removes from selection temporary objects 
  */
 //=================================================================
-void GEOM_Displayer::clearTemporary( SALOME_Selection* theSel )
+void GEOM_Displayer::clearTemporary( SalomeApp_SelectionMgr* theSelMgr )
 {
-  SALOME_ListIO toBeRemoved;
-  SALOME_ListIteratorOfListIO anIter( theSel->StoredIObjects() );
+  SALOME_ListIO toBeSelected;
+  theSelMgr->selectedObjects(toBeSelected)
+;
+  SALOME_ListIteratorOfListIO anIter( toBeSelected );
   for ( ; anIter.More(); anIter.Next() )
-  {
-    Handle(SALOME_InteractiveObject) anIO = anIter.Value();
-    if ( anIO->hasEntry() && ( strncmp( anIO->getEntry(), "TEMP_", 5 ) == 0 ) )
-    toBeRemoved.Append( anIO );
-  }
-
-  SALOME_ListIteratorOfListIO anIter2( toBeRemoved );
-  for ( ; anIter2.More(); anIter2.Next() )
-    theSel->RemoveIObject( anIter2.Value(), false );
+    {
+      Handle(SALOME_InteractiveObject) anIO = anIter.Value();
+      if ( !(anIO->hasEntry()) || ( strncmp( anIO->getEntry(), "TEMP_", 5 ) != 0 ) )
+	toBeSelected.Remove( anIter );
+    }
+  
+  theSelMgr->setSelectedObjects( toBeSelected, true );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

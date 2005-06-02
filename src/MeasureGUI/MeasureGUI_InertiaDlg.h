@@ -45,8 +45,8 @@ class MeasureGUI_InertiaDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-                                        MeasureGUI_InertiaDlg( QWidget*          parent,
-                                                               SALOME_Selection* Sel );
+                                        MeasureGUI_InertiaDlg( GeometryGUI* GUI,
+							       QWidget*     parent );
                                         ~MeasureGUI_InertiaDlg();
 protected:
 
@@ -55,7 +55,7 @@ protected:
 
 private:
 
-    void                                Init( SALOME_Selection* Sel );
+    void                                Init();
     bool                                getParameters( gp_Mat& theMatrix,
                                                        gp_XYZ& theMoment );
 

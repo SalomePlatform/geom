@@ -27,14 +27,16 @@
 //  $Header$
 
 #include "RepairGUI_FreeBoundDlg.h"
-#include "QAD_Desktop.h"
 #include "GEOMBase.h"
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
 #include "GEOMImpl_Types.hxx"
-#include "SALOME_Prs.h"
-#include "SALOME_Selection.h"
+
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "SUIT_Session.h"
+
+#include <TColStd_MapOfInteger.hxx>
 
 #include <qlineedit.h>
 #include <qlabel.h>
@@ -55,13 +57,14 @@
 // function : RepairGUI_FreeBoundDlg
 // purpose  : Constructor
 //=================================================================================
-RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg( QWidget* theParen, SALOME_Selection* theSelection )
-: QDialog( theParen, "RepairGUI_FreeBoundDlg", false,
-    WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose )
+RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg( GeometryGUI* theGUI, QWidget* theParent )
+: QDialog( theParent, "RepairGUI_FreeBoundDlg", false,
+	   WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ),
+  myGeomGUI ( theGUI )
 {
   setCaption( tr( "CAPTION" ) );
 
-  QPixmap iconSelect( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr( "ICON_SELECT" ) ) );
+  QPixmap iconSelect( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr( "ICON_SELECT" ) ) );
   
   QGroupBox* aMainGrp = new QGroupBox( 1, Qt::Horizontal, tr( "FREE_BOUND" ), this );
   
@@ -93,7 +96,7 @@ RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg( QWidget* theParen, SALOME_Select
   
   connect( aCloseBtn, SIGNAL( clicked() ), SLOT( onClose() ) );
 
-  Init( theSelection );
+  Init();
 }
 
 //=================================================================================
@@ -111,8 +114,8 @@ RepairGUI_FreeBoundDlg::~RepairGUI_FreeBoundDlg()
 void RepairGUI_FreeBoundDlg::onClose()
 {
   globalSelection();
-  disconnect( mySelection, 0, this, 0 );
-  GeometryGUI::GetGeomGUI()->SetActiveDialogBox( 0 );
+  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  myGeomGUI->SetActiveDialogBox( 0 );
   reject();
   erasePreview();
 }
@@ -125,8 +128,8 @@ void RepairGUI_FreeBoundDlg::onDeactivate()
 {
   setEnabled(false);
   globalSelection();
-  disconnect( mySelection, 0, this, 0 );
-  GeometryGUI::GetGeomGUI()->SetActiveDialogBox( 0 );
+  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  myGeomGUI->SetActiveDialogBox( 0 );
 }
 
 //=================================================================================
@@ -135,10 +138,11 @@ void RepairGUI_FreeBoundDlg::onDeactivate()
 //=================================================================================
 void RepairGUI_FreeBoundDlg::onActivate()
 {
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
+  myGeomGUI->EmitSignalDeactivateDialog();
   setEnabled( true );
-  GeometryGUI::GetGeomGUI()->SetActiveDialogBox( this );
-  connect( mySelection, SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
+  myGeomGUI->SetActiveDialogBox( this );
+  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
   activateSelection();
   onSelectionDone();
 }
@@ -149,12 +153,12 @@ void RepairGUI_FreeBoundDlg::onActivate()
 //=================================================================================
 void RepairGUI_FreeBoundDlg::onSelectionDone()
 {
-  if( mySelection->IObjectCount() != 1 )
+  if( IObjectCount() != 1 )
     return;
 
   Standard_Boolean isOk = Standard_False;
   GEOM::GEOM_Object_var anObj =
-    GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), isOk );
+    GEOMBase::ConvertIOinGEOMObject( firstIObject(), isOk );
 
   if ( !isOk || anObj->_is_nil() || !GEOMBase::IsShape( anObj ) )
     return;
@@ -170,15 +174,14 @@ void RepairGUI_FreeBoundDlg::onSelectionDone()
 // function : Init
 // purpose  : Initialize dialog fields
 //=================================================================================
-void RepairGUI_FreeBoundDlg::Init( SALOME_Selection* theSel )
+void RepairGUI_FreeBoundDlg::Init()
 {
   myNbClosed = myNbOpen = 0;
   myObj = GEOM::GEOM_Object::_nil();
-  mySelection = theSel;
 
-  GeometryGUI* aGeomGUI = GeometryGUI::GetGeomGUI();
-  connect( aGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), SLOT  ( onDeactivate() ) );
-  connect( mySelection, SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
+  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), SLOT  ( onDeactivate() ) );
+  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
 
   activateSelection();
   onSelectionDone();
@@ -274,16 +277,14 @@ bool RepairGUI_FreeBoundDlg::execute( ObjectList& objects )
   return result;
 }
 
-
-
-
-
-
-
-
-
-
-
+//=================================================================================
+// function : getDesktop()
+// purpose  :
+//=================================================================================
+SUIT_Desktop* RepairGUI_FreeBoundDlg::getDesktop() const
+{
+  return dynamic_cast<SUIT_Desktop*>( parentWidget() );
+}
 
 
 

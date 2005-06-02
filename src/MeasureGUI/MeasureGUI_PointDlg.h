@@ -42,8 +42,8 @@ class MeasureGUI_PointDlg : public MeasureGUI_Skeleton
   Q_OBJECT
 
 public:
-                                      MeasureGUI_PointDlg( QWidget*          parent,
-                                                           SALOME_Selection* Sel );
+                                      MeasureGUI_PointDlg( GeometryGUI* GUI,
+							   QWidget*     parent );
                                       ~MeasureGUI_PointDlg();
 
 protected:
@@ -54,7 +54,7 @@ protected:
 
 private:
 
-  void                                Init( SALOME_Selection* Sel );
+  void                                Init();
 private:
   QLineEdit*                          myX;
   QLineEdit*                          myY;

@@ -27,56 +27,50 @@
 //  $Header$
 
 #include "GeometryGUI.h"
+#include "GEOMGUI_OCCSelector.h"
+#include "GEOMGUI_Selection.h"
 
-// SALOME Includes
-#include "Utils_ORB_INIT.hxx"
-#include "Utils_SINGLETON.hxx"
+#include <SUIT_MessageBox.h>
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SUIT_ViewManager.h>
 
-#include "QAD_Desktop.h"
-#include "QAD_Application.h"
-#include "QAD_RightFrame.h"
-#include "QAD_Config.h"
-#include "QAD_Tools.h"
-#include "QAD_MessageBox.h"
-#include "QAD_Resource.h"
-#include "SALOMEGUI_Desktop.h"
+#include <OCCViewer_ViewWindow.h>
+#include <OCCViewer_ViewPort3d.h>
+#include <OCCViewer_ViewModel.h>
+#include <OCCViewer_ViewManager.h>
 
-#include "OCCViewer_Viewer3d.h"
-#include "OCCViewer_ViewFrame.h"
-#include "OCCViewer_ViewPort3d.h"
-#include "OCCViewer_Prs.h"
+#include <VTKViewer_ViewWindow.h>
+#include <SVTK_RenderWindowInteractor.h>
+#include <SVTK_InteractorStyle.h>
+#include <SVTK_ViewModel.h>
+#include <VTKViewer_ViewManager.h>
 
-#include "VTKViewer_ViewFrame.h"
-#include "VTKViewer_RenderWindowInteractor.h"
-#include "VTKViewer_InteractorStyleSALOME.h"
-#include "VTKViewer_Prs.h"
-#include "SALOME_Actor.h"
-
-#include "SALOME_Selection.h"
-#include "SALOME_ListIteratorOfListIO.hxx"
-#include "GEOM_AISShape.hxx"
-#include "GEOM_Displayer.h"
-
-#include "GEOMImpl_Types.hxx"
+#include <SalomeApp_Application.h>
+#include <SalomeApp_SelectionMgr.h>
+#include <SalomeApp_VTKSelector.h>
+#include <SALOME_LifeCycleCORBA.hxx>
 
 // External includes
 #include <qfileinfo.h>
+#include <qpainter.h>
+
 #include <Prs3d_Drawer.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <OSD_SharedLibrary.hxx>
 
-#include "utilities.h"
+#include <utilities.h>
 
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
 
-using namespace std;
-
 extern "C" {
-  Standard_EXPORT SALOMEGUI* GetComponentGUI() {
-    return GeometryGUI::GetGeomGUI();
+  Standard_EXPORT CAM_Module* createModule() {
+    return new GeometryGUI();
   }
 }
+
+GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil(); 
 
 //=================================================================================
 // class   : CustomItem
@@ -114,36 +108,19 @@ private:
 };
 
 //=======================================================================
-// function : GeometryGUI::GetGeomGUI()
-// purpose  : Gets the only object of GeometryGUI [ static ]
-//=======================================================================
-GeometryGUI* GeometryGUI::GetGeomGUI()
-{
-  static GeometryGUI myContext;
-  return &myContext;
-}
-
-//=======================================================================
-// function : GetORB
-// purpose  : Returns a reference to ORB [ static ]
-//=======================================================================
-CORBA::ORB_var GeometryGUI::GetORB()
-{
-  ORB_INIT& init = *SINGLETON_<ORB_INIT>::Instance();
-  return init.orb();
-}
-
-//=======================================================================
 // function : GeometryGUI::GeometryGUI()
 // purpose  : Constructor
 //=======================================================================
 GeometryGUI::GeometryGUI() :
-  SALOMEGUI()
+  SalomeApp_Module( "GEOM" )
 {
-  QAD_Desktop* desktop = QAD_Application::getDesktop();
-  Engines::Component_var comp = desktop->getEngine( "FactoryServer", "GEOM" );
+  if ( CORBA::is_nil( myComponentGeom ) )
+  { 
+    SALOME_LifeCycleCORBA* ls = new SALOME_LifeCycleCORBA( getApp()->namingService() );
+    Engines::Component_var comp = ls->FindOrLoad_Component( "FactoryServer", "GEOM" );
+    myComponentGeom   = GEOM::GEOM_Gen::_narrow( comp );
+  }
 
-  myComponentGeom   = GEOM::GEOM_Gen::_narrow( comp );
   myState           = -1;
   myActiveDialogBox = 0;
   myFatherior       = "";
@@ -151,6 +128,9 @@ GeometryGUI::GeometryGUI() :
   gp_Pnt origin = gp_Pnt(0., 0., 0.);
   gp_Dir direction = gp_Dir(0., 0., 1.);
   myWorkingPlane = gp_Ax3(origin, direction);
+
+  myOCCSelectors.setAutoDelete( true );
+  myVTKSelectors.setAutoDelete( true );
 }
 
 //=======================================================================
@@ -165,7 +145,7 @@ GeometryGUI::~GeometryGUI()
 // function : GeometryGUI::getLibrary()
 // purpose  : get or load GUI library by name [ internal ]
 //=======================================================================
-typedef GEOMGUI* (*LibraryGUI)();
+typedef GEOMGUI* (*LibraryGUI)( GeometryGUI* );
 GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
 {
   if ( !myGUIMap.contains( libraryName ) ) {
@@ -175,7 +155,7 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
       QStringList dirList = QStringList::split( ":", libs, false ); // skip empty entries
       for( int i = dirList.count()-1; i >= 0; i-- ) {
 	QString dir = dirList[ i ];
-	QFileInfo fi( QAD_Tools::addSlash( dirList[ i ] ) + libraryName );
+	QFileInfo fi( Qtx::addSlash( dirList[ i ] ) + libraryName );
 	if( fi.exists() ) {
 	  OSD_SharedLibrary aSharedLibrary( (char*)fi.fileName().latin1() );
 	  bool res = aSharedLibrary.DlOpen( OSD_RTLD_LAZY );
@@ -185,8 +165,8 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
 	  }
 	  OSD_Function osdF = aSharedLibrary.DlSymb( "GetLibGUI" );
 	  if ( osdF != NULL ) {
-	    LibraryGUI func = (GEOMGUI* (*) ())osdF;
-	    GEOMGUI* libGUI = (*func)();
+	    LibraryGUI func = (GEOMGUI* (*) (GeometryGUI*))osdF;
+	    GEOMGUI* libGUI = (*func)(this);
 	    if ( libGUI ) {
 	      myGUIMap[ libraryName ] = libGUI;
 	      break; // found and loaded!
@@ -211,26 +191,33 @@ void GeometryGUI::ActiveWorkingPlane()
   gp_Dir DZ = myWorkingPlane.Direction();
   gp_Dir DY = myWorkingPlane.YDirection();
 
-  if( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewPort();
-    Handle(V3d_View) view3d = ((OCCViewer_ViewPort3d*)vp)->getView();
+  SUIT_ViewWindow* window = application()->desktop()->activeWindow();
+  bool ViewOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+  bool ViewVTK = ( window && window->getViewManager()->getType() == VTKViewer_Viewer::Type() );
 
-    view3d->SetProj(DZ.X(), DZ.Y(), DZ.Z());
-    view3d->SetUp(DY.X(), DY.Y(), DY.Z());
+  if( ViewOCC ) {
+    OCCViewer_ViewWindow* vw = dynamic_cast<OCCViewer_ViewWindow*>( window );
+    if ( vw ) {
+      Handle(V3d_View) view3d =  vw->getViewPort()->getView();
 
-    ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->onViewFitAll();
+      view3d->SetProj(DZ.X(), DZ.Y(), DZ.Z());
+      view3d->SetUp(DY.X(), DY.Y(), DY.Z());
+
+      vw->onViewFitAll();
+    }
   }
-  else if( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
-    vtkRenderer* myRenderer = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+  else if( ViewVTK ) {
+    VTKViewer_ViewWindow* vw = dynamic_cast<VTKViewer_ViewWindow*>( window );
+    if ( vw ) {
+      vtkCamera* camera = vw->getRenderer()->GetActiveCamera();
 
-    vtkCamera* camera = myRenderer->GetActiveCamera();
-    camera->SetPosition(DZ.X(), DZ.Y(), DZ.Z());
-    camera->SetViewUp(DY.X(), DY.Y(), DY.Z());
-    camera->SetFocalPoint(0,0,0);
+      camera->SetPosition(DZ.X(), DZ.Y(), DZ.Z());
+      camera->SetViewUp(DY.X(), DY.Y(), DY.Z());
+      camera->SetFocalPoint(0,0,0);
 
-    ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->onViewFitAll();
+      vw->onFitAll();
+    }
   }
-
 }
 
 //=======================================================================
@@ -272,173 +259,169 @@ void GeometryGUI::EmitSignalDefaultStepValueChanged(double newVal)
 
 //=======================================================================
 // function : GeometryGUI::OnGUIEvent()
+// purpose  : common slot for all menu/toolbar actions
+//=======================================================================
+void GeometryGUI::OnGUIEvent()
+{
+  const QObject* obj = sender();
+  if ( !obj || !obj->inherits( "QAction" ) )
+    return;
+  int id = actionId((QAction*)obj);
+  if ( id != -1 )
+    OnGUIEvent( id );
+}
+
+//=======================================================================
+// function : GeometryGUI::OnGUIEvent()
 // purpose  : manage all events on GUI [static]
 //=======================================================================
-bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+void GeometryGUI::OnGUIEvent( int id )
 {
-  GeometryGUI* geomGUI = GeometryGUI::GetGeomGUI();
-
-  // get main menu
-  QMenuBar* Mb = parent->getMainMenuBar();
+  SUIT_Desktop* desk = application()->desktop();
   // check if current viewframe is of OCC type
-  bool ViewOCC = parent->getActiveStudy()->getActiveStudyFrame()->getTypeView()  == VIEW_OCC;
+  SUIT_ViewWindow* window = desk->activeWindow();
+  bool ViewOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+  bool ViewVTK = ( window && window->getViewManager()->getType() == VTKViewer_Viewer::Type() );
   // if current viewframe is not of OCC and not of VTK type - return immediately
-  if( !ViewOCC && parent->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_VTK)
-    return false;
-
-  // disable non-OCC viewframe menu commands
-  //Mb->setItemEnabled( 404, ViewOCC ); // SKETCHER
-  Mb->setItemEnabled( 603, ViewOCC ); // SuppressFace
-  Mb->setItemEnabled( 604, ViewOCC ); // SuppressHole
-  Mb->setItemEnabled( 606, ViewOCC ); // CloseContour
-  Mb->setItemEnabled( 607, ViewOCC ); // RemoveInternalWires
-  Mb->setItemEnabled( 608, ViewOCC ); // AddPointOnEdge
-  //Mb->setItemEnabled( 609, ViewOCC ); // Free boundaries
-  Mb->setItemEnabled( 413, ViewOCC ); // Isos Settings
-
-  Mb->setItemEnabled( 800, ViewOCC ); // Create Group
-  Mb->setItemEnabled( 801, ViewOCC ); // Edit Group
-
-  Mb->setItemEnabled(9998, ViewOCC ); // MENU BLOCKS - MULTI-TRANSFORMATION
+  if( !ViewOCC && !ViewVTK )
+      return;
 
   GEOMGUI* library = 0;
   // try to get-or-load corresponding GUI library
-  if( theCommandID == 111  ||  // MENU FILE - IMPORT BREP
-      theCommandID == 112  ||  // MENU FILE - IMPORT IGES
-      theCommandID == 113  ||  // MENU FILE - IMPORT STEP
-      theCommandID == 121  ||  // MENU FILE - EXPORT BREP
-      theCommandID == 122  ||  // MENU FILE - EXPORT IGES
-      theCommandID == 123  ||  // MENU FILE - EXPORT STEP
-      theCommandID == 31   ||  // MENU EDIT - COPY
-      theCommandID == 33   ||  // MENU EDIT - DELETE
-      theCommandID == 411  ||  // MENU SETTINGS - ADD IN STUDY
-      theCommandID == 412  ||  // MENU SETTINGS - SHADING COLOR
-      theCommandID == 413  ||  // MENU SETTINGS - ISOS
-      theCommandID == 414  ||  // MENU SETTINGS - STEP VALUE FOR SPIN BOXES
-      theCommandID == 5103 ||  // MENU TOOLS - CHECK GEOMETRY
-      theCommandID == 5104 ||  // MENU TOOLS - LOAD SCRIPT
-      theCommandID == 8032 ||  // POPUP VIEWER - COLOR
-      theCommandID == 8033 ||  // POPUP VIEWER - TRANSPARENCY
-      theCommandID == 8034 ||  // POPUP VIEWER - ISOS
-      theCommandID == 804  ||  // POPUP VIEWER - ADD IN STUDY
-      theCommandID == 901  ||  // OBJECT BROWSER - RENAME
-      theCommandID == 9024 ) { // OBJECT BROWSER - OPEN
-    library = geomGUI->getLibrary( "libGEOMToolsGUI.so" );
+  if( id == 111  ||  // MENU FILE - IMPORT BREP
+      id == 112  ||  // MENU FILE - IMPORT IGES
+      id == 113  ||  // MENU FILE - IMPORT STEP
+      id == 121  ||  // MENU FILE - EXPORT BREP
+      id == 122  ||  // MENU FILE - EXPORT IGES
+      id == 123  ||  // MENU FILE - EXPORT STEP
+      id == 31   ||  // MENU EDIT - COPY
+      id == 33   ||  // MENU EDIT - DELETE
+      id == 411  ||  // MENU SETTINGS - ADD IN STUDY
+      id == 412  ||  // MENU SETTINGS - SHADING COLOR
+      id == 413  ||  // MENU SETTINGS - ISOS
+      id == 414  ||  // MENU SETTINGS - STEP VALUE FOR SPIN BOXES
+      id == 5103 ||  // MENU TOOLS - CHECK GEOMETRY
+      id == 5104 ||  // MENU TOOLS - LOAD SCRIPT
+      id == 8032 ||  // POPUP VIEWER - COLOR
+      id == 8033 ||  // POPUP VIEWER - TRANSPARENCY
+      id == 8034 ||  // POPUP VIEWER - ISOS
+      id == 804  ||  // POPUP VIEWER - ADD IN STUDY
+      id == 901  ||  // OBJECT BROWSER - RENAME
+      id == 9024 ) { // OBJECT BROWSER - OPEN
+    library = getLibrary( "libGEOMToolsGUI.so" );
   }
-  else if( theCommandID == 211  ||  // MENU VIEW - WIREFRAME/SHADING
-	   theCommandID == 212  ||  // MENU VIEW - DISPLAY ALL
-	   theCommandID == 213  ||  // MENU VIEW - DISPLAY ONLY
-	   theCommandID == 214  ||  // MENU VIEW - ERASE ALL
-	   theCommandID == 215  ||  // MENU VIEW - ERASE
-	   theCommandID == 216  ||  // MENU VIEW - DISPLAY
-	   theCommandID == 80311 ||  // POPUP VIEWER - WIREFRAME
-	   theCommandID == 80312 ) { // POPUP VIEWER - SHADING
-    library = geomGUI->getLibrary( "libDisplayGUI.so" );
+  else if( id == 211  ||  // MENU VIEW - WIREFRAME/SHADING
+	   id == 212  ||  // MENU VIEW - DISPLAY ALL
+	   id == 213  ||  // MENU VIEW - DISPLAY ONLY
+	   id == 214  ||  // MENU VIEW - ERASE ALL
+	   id == 215  ||  // MENU VIEW - ERASE
+	   id == 216  ||  // MENU VIEW - DISPLAY
+	   id == 80311 ||  // POPUP VIEWER - WIREFRAME
+	   id == 80312 ) { // POPUP VIEWER - SHADING
+    library = getLibrary( "libDisplayGUI.so" );
   }
-  else if( theCommandID == 4011 ||  // MENU BASIC - POINT
-	   theCommandID == 4012 ||  // MENU BASIC - LINE
-	   theCommandID == 4013 ||  // MENU BASIC - CIRCLE
-	   theCommandID == 4014 ||  // MENU BASIC - ELLIPSE
-	   theCommandID == 4015 ||  // MENU BASIC - ARC
-	   theCommandID == 4016 ||  // MENU BASIC - VECTOR
-	   theCommandID == 4017 ||  // MENU BASIC - PLANE
-	   theCommandID == 4018 ||  // MENU BASIC - WPLANE
-	   theCommandID == 4019 ||  // MENU BASIC - CURVE
-	   theCommandID == 4020 ) { // MENU BASIC - REPAIR
-    library = geomGUI->getLibrary( "libBasicGUI.so" );
+  else if( id == 4011 ||  // MENU BASIC - POINT
+	   id == 4012 ||  // MENU BASIC - LINE
+	   id == 4013 ||  // MENU BASIC - CIRCLE
+	   id == 4014 ||  // MENU BASIC - ELLIPSE
+	   id == 4015 ||  // MENU BASIC - ARC
+	   id == 4016 ||  // MENU BASIC - VECTOR
+	   id == 4017 ||  // MENU BASIC - PLANE
+	   id == 4018 ||  // MENU BASIC - WPLANE
+	   id == 4019 ||  // MENU BASIC - CURVE
+	   id == 4020 ) { // MENU BASIC - REPAIR
+    library = getLibrary( "libBasicGUI.so" );
   }
-  else if( theCommandID == 4021 ||  // MENU PRIMITIVE - BOX
-	   theCommandID == 4022 ||  // MENU PRIMITIVE - CYLINDER
-	   theCommandID == 4023 ||  // MENU PRIMITIVE - SPHERE
-	   theCommandID == 4024 ||  // MENU PRIMITIVE - TORUS
-	   theCommandID == 4025 ) { // MENU PRIMITIVE - CONE
-    library = geomGUI->getLibrary( "libPrimitiveGUI.so" );
+  else if( id == 4021 ||  // MENU PRIMITIVE - BOX
+	   id == 4022 ||  // MENU PRIMITIVE - CYLINDER
+	   id == 4023 ||  // MENU PRIMITIVE - SPHERE
+	   id == 4024 ||  // MENU PRIMITIVE - TORUS
+	   id == 4025 ) { // MENU PRIMITIVE - CONE
+    library = getLibrary( "libPrimitiveGUI.so" );
   }
-  else if( theCommandID == 4031 ||  // MENU GENERATION - PRISM
-	   theCommandID == 4032 ||  // MENU GENERATION - REVOLUTION
-	   theCommandID == 4033 ||  // MENU GENERATION - FILLING
-	   theCommandID == 4034 ) { // MENU GENERATION - PIPE
-    library = geomGUI->getLibrary( "libGenerationGUI.so" );
+  else if( id == 4031 ||  // MENU GENERATION - PRISM
+	   id == 4032 ||  // MENU GENERATION - REVOLUTION
+	   id == 4033 ||  // MENU GENERATION - FILLING
+	   id == 4034 ) { // MENU GENERATION - PIPE
+    library = getLibrary( "libGenerationGUI.so" );
   }
-  else if( theCommandID == 404 ||   // MENU ENTITY - SKETCHER
-	   theCommandID == 407 ) {  // MENU ENTITY - EXPLODE
-    library = geomGUI->getLibrary( "libEntityGUI.so" );
+  else if( id == 404 ||   // MENU ENTITY - SKETCHER
+	   id == 407 ) {  // MENU ENTITY - EXPLODE
+    library = getLibrary( "libEntityGUI.so" );
   }
-  else if( theCommandID == 4081 ||  // MENU BUILD - EDGE
-	   theCommandID == 4082 ||  // MENU BUILD - WIRE
-	   theCommandID == 4083 ||  // MENU BUILD - FACE
-	   theCommandID == 4084 ||  // MENU BUILD - SHELL
-	   theCommandID == 4085 ||  // MENU BUILD - SOLID
-	   theCommandID == 4086 ) { // MENU BUILD - COMPUND
-    library = geomGUI->getLibrary( "libBuildGUI.so" );
+  else if( id == 4081 ||  // MENU BUILD - EDGE
+	   id == 4082 ||  // MENU BUILD - WIRE
+	   id == 4083 ||  // MENU BUILD - FACE
+	   id == 4084 ||  // MENU BUILD - SHELL
+	   id == 4085 ||  // MENU BUILD - SOLID
+	   id == 4086 ) { // MENU BUILD - COMPUND
+    library = getLibrary( "libBuildGUI.so" );
   }
-  else if( theCommandID == 5011 ||  // MENU BOOLEAN - FUSE
-	   theCommandID == 5012 ||  // MENU BOOLEAN - COMMON
-	   theCommandID == 5013 ||  // MENU BOOLEAN - CUT
-	   theCommandID == 5014 ) { // MENU BOOLEAN - SECTION
-    library = geomGUI->getLibrary( "libBooleanGUI.so" );
+  else if( id == 5011 ||  // MENU BOOLEAN - FUSE
+	   id == 5012 ||  // MENU BOOLEAN - COMMON
+	   id == 5013 ||  // MENU BOOLEAN - CUT
+	   id == 5014 ) { // MENU BOOLEAN - SECTION
+    library = getLibrary( "libBooleanGUI.so" );
   }
-  else if( theCommandID == 5021 ||  // MENU TRANSFORMATION - TRANSLATION
-	   theCommandID == 5022 ||  // MENU TRANSFORMATION - ROTATION
-	   theCommandID == 5023 ||  // MENU TRANSFORMATION - LOCATION
-	   theCommandID == 5024 ||  // MENU TRANSFORMATION - MIRROR
-	   theCommandID == 5025 ||  // MENU TRANSFORMATION - SCALE
-	   theCommandID == 5026 ||  // MENU TRANSFORMATION - OFFSET
-	   theCommandID == 5027 ||  // MENU TRANSFORMATION - MULTI-TRANSLATION
-	   theCommandID == 5028 ) { // MENU TRANSFORMATION - MULTI-ROTATION
-    library = geomGUI->getLibrary( "libTransformationGUI.so" );
+  else if( id == 5021 ||  // MENU TRANSFORMATION - TRANSLATION
+	   id == 5022 ||  // MENU TRANSFORMATION - ROTATION
+	   id == 5023 ||  // MENU TRANSFORMATION - LOCATION
+	   id == 5024 ||  // MENU TRANSFORMATION - MIRROR
+	   id == 5025 ||  // MENU TRANSFORMATION - SCALE
+	   id == 5026 ||  // MENU TRANSFORMATION - OFFSET
+	   id == 5027 ||  // MENU TRANSFORMATION - MULTI-TRANSLATION
+	   id == 5028 ) { // MENU TRANSFORMATION - MULTI-ROTATION
+    library = getLibrary( "libTransformationGUI.so" );
   }
-  else if( theCommandID == 503 ||   // MENU OPERATION - PARTITION
-	   theCommandID == 504 ||   // MENU OPERATION - ARCHIMEDE
-	   theCommandID == 505 ||   // MENU OPERATION - FILLET
-	   theCommandID == 506 ||   // MENU OPERATION - CHAMFER  
-	   theCommandID == 507 ) {  // MENU OPERATION - CLIPPING RANGE
-    library = geomGUI->getLibrary( "libOperationGUI.so" );
+  else if( id == 503 ||   // MENU OPERATION - PARTITION
+	   id == 504 ||   // MENU OPERATION - ARCHIMEDE
+	   id == 505 ||   // MENU OPERATION - FILLET
+	   id == 506 ||   // MENU OPERATION - CHAMFER  
+	   id == 507 ) {  // MENU OPERATION - CLIPPING RANGE
+    library = getLibrary( "libOperationGUI.so" );
   }
-  else if( theCommandID == 601 ||   // MENU REPAIR - SEWING
-	   theCommandID == 603 ||   // MENU REPAIR - SUPPRESS FACES
-	   theCommandID == 604 ||   // MENU REPAIR - SUPPRESS HOLE
-           theCommandID == 605 ||   // MENU REPAIR - SHAPE PROCESSING
-           theCommandID == 606 ||   // MENU REPAIR - CLOSE CONTOUR
-           theCommandID == 607 ||   // MENU REPAIR - REMOVE INTERNAL WIRES
-           theCommandID == 608 ||   // MENU REPAIR - ADD POINT ON EDGE
-           theCommandID == 609 ||   // MENU REPAIR - FREE BOUNDARIES
-           theCommandID == 610 ||   // MENU REPAIR - FREE FACES
-	   theCommandID == 602 ) {  // MENU REPAIR - GLUE FACES
-    library = geomGUI->getLibrary( "libRepairGUI.so" );
+  else if( id == 601 ||   // MENU REPAIR - SEWING
+	   id == 603 ||   // MENU REPAIR - SUPPRESS FACES
+	   id == 604 ||   // MENU REPAIR - SUPPRESS HOLE
+           id == 605 ||   // MENU REPAIR - SHAPE PROCESSING
+           id == 606 ||   // MENU REPAIR - CLOSE CONTOUR
+           id == 607 ||   // MENU REPAIR - REMOVE INTERNAL WIRES
+           id == 608 ||   // MENU REPAIR - ADD POINT ON EDGE
+           id == 609 ||   // MENU REPAIR - FREE BOUNDARIES
+           id == 610 ||   // MENU REPAIR - FREE FACES
+	   id == 602 ) {  // MENU REPAIR - GLUE FACES
+    library = getLibrary( "libRepairGUI.so" );
   }
-  else if( theCommandID == 701   ||  // MENU MEASURE - PROPERTIES
-	   theCommandID == 702   ||  // MENU MEASURE - CDG
-	   theCommandID == 703   ||  // MENU MEASURE - INERTIA
-	   theCommandID == 7041  ||  // MENU MEASURE - BOUNDING BOX
-	   theCommandID == 7042  ||  // MENU MEASURE - MIN DISTANCE
-	   theCommandID == 705   ||  // MENU MEASURE - TOLERANCE
-	   theCommandID == 706   ||  // MENU MEASURE - WHATIS
-	   theCommandID == 707   ||  // MENU MEASURE - CHECK
-	   theCommandID == 7072  ||  // MENU MEASURE - CHECK COMPOUND OF BLOCKS
-	   theCommandID == 708 ) {  // MENU MEASURE - POINT COORDINATES
-    library = geomGUI->getLibrary( "libMeasureGUI.so" );
+  else if( id == 701   ||  // MENU MEASURE - PROPERTIES
+	   id == 702   ||  // MENU MEASURE - CDG
+	   id == 703   ||  // MENU MEASURE - INERTIA
+	   id == 7041  ||  // MENU MEASURE - BOUNDING BOX
+	   id == 7042  ||  // MENU MEASURE - MIN DISTANCE
+	   id == 705   ||  // MENU MEASURE - TOLERANCE
+	   id == 706   ||  // MENU MEASURE - WHATIS
+	   id == 707   ||  // MENU MEASURE - CHECK
+	   id == 7072  ||  // MENU MEASURE - CHECK COMPOUND OF BLOCKS
+	   id == 708 ) {  // MENU MEASURE - POINT COORDINATES
+    library = getLibrary( "libMeasureGUI.so" );
   }
-  else if( theCommandID == 800  ||  // MENU GROUP - CREATE
-	   theCommandID == 801 ) {  // MENU GROUP - EDIT
-    library = geomGUI->getLibrary( "libGroupGUI.so" );
+  else if( id == 800  ||  // MENU GROUP - CREATE
+	   id == 8001 ||  // POPUP MENU - CREATE GROUP
+	   id == 801 ) {  // MENU GROUP - EDIT
+    library = getLibrary( "libGroupGUI.so" );
   }
-  else if( theCommandID == 9999  ||  // MENU BLOCKS - HEXAHEDRAL SOLID
-           theCommandID == 9998  ||  // MENU BLOCKS - MULTI-TRANSFORMATION
-           theCommandID == 9997  ||  // MENU BLOCKS - QUADRANGLE FACE
-           theCommandID == 99991 ||  // MENU BLOCKS - PROPAGATE
-           theCommandID == 9995 ) { // MENU BLOCKS - EXPLODE ON BLOCKS
-    library = geomGUI->getLibrary( "libBlocksGUI.so" );
+  else if( id == 9999  ||  // MENU BLOCKS - HEXAHEDRAL SOLID
+           id == 9998  ||  // MENU BLOCKS - MULTI-TRANSFORMATION
+           id == 9997  ||  // MENU BLOCKS - QUADRANGLE FACE
+           id == 99991 ||  // MENU BLOCKS - PROPAGATE
+           id == 9995 ) { // MENU BLOCKS - EXPLODE ON BLOCKS
+    library = getLibrary( "libBlocksGUI.so" );
   }
 
   // call method of corresponding GUI library
-  if ( library ) {
-    return library->OnGUIEvent( theCommandID, parent );
-  }
-  else {
-    QAD_MessageBox::error1( parent, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
-  }
-  return false;
+  if ( library ) 
+    library->OnGUIEvent( id, desk );
+  else 
+    SUIT_MessageBox::error1( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
 }
 
 
@@ -446,13 +429,12 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 // function : GeometryGUI::OnKeyPress()
 // purpose  : Called when any key is pressed by user [static]
 //=================================================================================
-bool GeometryGUI::OnKeyPress(QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
+bool GeometryGUI::OnKeyPress( QKeyEvent* pe, SUIT_ViewWindow* win )
 {
-  GeometryGUI* geomGUI = GeometryGUI::GetGeomGUI();
   GUIMap::Iterator it;
   bool bOk = true;
-  for ( it = geomGUI->myGUIMap.begin(); it != geomGUI->myGUIMap.end(); ++it )
-    bOk = bOk && it.data()->OnKeyPress( pe, parent, studyFrame );
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
+    bOk = bOk && it.data()->OnKeyPress( pe, application()->desktop(), win );
   return bOk;
 }
 
@@ -461,13 +443,12 @@ bool GeometryGUI::OnKeyPress(QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame*
 // function : GeometryGUI::OnMouseMove()
 // purpose  : Manages mouse move events [static]
 //=================================================================================
-bool GeometryGUI::OnMouseMove(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-{
-  GeometryGUI* geomGUI = GeometryGUI::GetGeomGUI();
+bool GeometryGUI::OnMouseMove( QMouseEvent* pe, SUIT_ViewWindow* win )
+{  
   GUIMap::Iterator it;
   bool bOk = true;
-  for ( it = geomGUI->myGUIMap.begin(); it != geomGUI->myGUIMap.end(); ++it )
-    bOk = bOk && it.data()->OnMouseMove( pe, parent, studyFrame );
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
+    bOk = bOk && it.data()->OnMouseMove( pe, application()->desktop(), win );
   return bOk;
 }
 
@@ -476,34 +457,30 @@ bool GeometryGUI::OnMouseMove(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFra
 // function : GeometryGUI::0nMousePress()
 // purpose  : Manage mouse press events [static]
 //=================================================================================
-bool GeometryGUI::OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
+bool GeometryGUI::OnMousePress( QMouseEvent* pe, SUIT_ViewWindow* win )
 {
-  GeometryGUI* geomGUI = GeometryGUI::GetGeomGUI();
   GUIMap::Iterator it;
   // OnMousePress() should return false if this event should be processed further
   // (see OCCViewer_Viewer3d::onMousePress() for explanation)
   bool processed = false;
-  for ( it = geomGUI->myGUIMap.begin(); it != geomGUI->myGUIMap.end(); ++it )
-    processed = processed || it.data()->OnMousePress( pe, parent, studyFrame );
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
+    processed = processed || it.data()->OnMousePress( pe, application()->desktop(), win );
   return processed;
 }
 
-static void UpdateVtkSelection(QAD_Desktop* parent)
+/*
+static void UpdateVtkSelection()
 {
-  if (!parent->getActiveStudy()) return;
-
-  QList<QAD_StudyFrame> aFrameList = parent->getActiveStudy()->getStudyFrames();
-
-  for (QAD_StudyFrame* aStudyFrame = aFrameList.first(); aStudyFrame; aStudyFrame = aFrameList.next()) {
-    if (aStudyFrame->getTypeView() == VIEW_VTK) {
-      QAD_ViewFrame* aViewFrame = aStudyFrame->getRightFrame()->getViewFrame();
-      VTKViewer_ViewFrame* aVtkViewFrame = dynamic_cast<VTKViewer_ViewFrame*>(aViewFrame);
-      if (!aVtkViewFrame) continue;
-      VTKViewer_RenderWindowInteractor* anInteractor = aVtkViewFrame->getRWInteractor();
-      if (anInteractor) {
+  QPtrList<SUIT_ViewWindow> winList = application()->desktop()->windows();
+  SUIT_ViewWindow* win = 0;
+  for ( win = winList.first(); win; win = winList.next() ) {
+    if ( win->getViewManager()->getTypeView() == VIEW_VTK ) {
+      VTKViewer_ViewWindow* vw = dynamic_cast<VTKViewer_ViewWindow*>( window );
+      if ( vw ) {
+	VTKViewer_RenderWindowInteractor* anInteractor = vw->getRWInteractor();
 	anInteractor->SetSelectionProp();
 	anInteractor->SetSelectionTolerance();
-	VTKViewer_InteractorStyleSALOME* aStyle = anInteractor->GetInteractorStyleSALOME();
+	SVTK_InteractorStyleSALOME* aStyle = anInteractor->GetInteractorStyleSALOME();
 	if (aStyle) {
 	  aStyle->setPreselectionProp();
 	}
@@ -516,50 +493,54 @@ static void UpdateVtkSelection(QAD_Desktop* parent)
 // function : GeometryGUI::SetSettings()
 // purpose  : Called when GEOM module is activated [static]
 //=================================================================================
-bool GeometryGUI::SetSettings(QAD_Desktop* parent)
+bool GeometryGUI::SetSettings()
 {
-  GeometryGUI* geomGUI = GetGeomGUI();
-  QMenuBar*    Mb = parent->getMainMenuBar();
-  QAD_Study*   ActiveStudy = parent->getActiveStudy();
+  QMenuBar*     Mb = parent->getMainMenuBar();
+  SUIT_Study*   ActiveStudy = application()->activeStudy();
     
-  
-
-  /* Wireframe or Shading */
+// Wireframe or Shading
   int DisplayMode = 0;
-  bool ViewOCC = false;
-  if ( ActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)ActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-    DisplayMode = ic->DisplayMode();
-    ViewOCC = true;
+  SUIT_ViewWindow* window = application()->desktop()->activeWindow();
+  bool ViewOCC = ( window && window->getViewManager()->getType() == VIEW_OCC );
+  bool ViewVTK = ( window && window->getViewManager()->getType() == VIEW_VTK );
+  if ( ViewOCC ) {
+    OCCViewer_ViewManager* vm = dynamic_cast<OCCViewer_ViewManager*>( window->getViewManager() );
+    if ( vm ) {
+      Handle(AIS_InteractiveContext) ic = vm->getOCCViewer()->getAISContext();
+      DisplayMode = ic->DisplayMode();
+    }
   }
-  else if (ActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)ActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-    DisplayMode = myRenderInter->GetDisplayMode();
+  else if ( ViewVTK ) {
+    VTKViewer_ViewWindow* vw = dynamic_cast<VTKViewer_ViewWindow*>( window );
+    if ( vw ) {
+      VTKViewer_RenderWindowInteractor* myRenderInter = vw->getRWInteractor();
+      DisplayMode = myRenderInter->GetDisplayMode();
+    }
   }
 
   if( DisplayMode == 1 )
+    getApp()->
     Mb->changeItem( 211, tr( "GEOM_MEN_WIREFRAME" ) );
   else
     Mb->changeItem( 211, tr( "GEOM_MEN_SHADING" ) );
 
 
-  /* Add in Study  - !!!ALWAYS TRUE!!! */ /////// VSR : TO BE REMOVED
+  // Add in Study  - !!!ALWAYS TRUE!!! /////// VSR : TO BE REMOVED
   QString AddInStudy = QAD_CONFIG->getSetting("Geometry:SettingsAddInStudy");
   int Settings_AddInStudy;
-  /*if(!AddInStudy.isEmpty())
-    Settings_AddInStudy = AddInStudy.toInt();
-  else
-  */
+  //  if(!AddInStudy.isEmpty())
+  //    Settings_AddInStudy = AddInStudy.toInt();
+  //  else
+  
   Settings_AddInStudy = 1;
   Mb->setItemChecked(411, Settings_AddInStudy);
 
-  /* step value */
+  // step value 
   QString S = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
   if(S.isEmpty())
     QAD_CONFIG->addSetting("Geometry:SettingsGeomStep", "100");
 
-  /* isos */
+  // isos 
   int count = ActiveStudy->getStudyFramesCount();
   for(int i = 0; i < count; i++) {
     if(ActiveStudy->getStudyFrame(i)->getTypeView() == VIEW_OCC) {
@@ -575,26 +556,13 @@ bool GeometryGUI::SetSettings(QAD_Desktop* parent)
     }
   }
 
-  //Mb->setItemEnabled(404, ViewOCC); // SKETCHER
-  Mb->setItemEnabled(603, ViewOCC); // SuppressFace
-  Mb->setItemEnabled(604, ViewOCC); // SuppressHole
-  Mb->setItemEnabled(606, ViewOCC); // CloseContour
-  Mb->setItemEnabled(607, ViewOCC); // RemoveInternalWires
-  Mb->setItemEnabled(608, ViewOCC); // AddPointOnEdge
-//  Mb->setItemEnabled(609, ViewOCC); // Free boundaries
-  Mb->setItemEnabled(413, ViewOCC); // Isos Settings
+  setActionsEnabled();
 
-  Mb->setItemEnabled( 800, ViewOCC ); // Create Group
-  Mb->setItemEnabled( 801, ViewOCC ); // Edit Group
-
-  Mb->setItemEnabled(9998, ViewOCC); // MENU BLOCKS - MULTI-TRANSFORMATION
-
-      
   // PAL5356: update VTK selection
-  ::UpdateVtkSelection(parent);
+  ::UpdateVtkSelection();
   bool bOk = true;
   GUIMap::Iterator it;
-  for ( it = geomGUI->myGUIMap.begin(); it != geomGUI->myGUIMap.end(); ++it )
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
     bOk = bOk && it.data()->SetSettings( parent );
     
   // MZN: Enable/disable "Clipping range" menu item(from GEOM_CLIPPING variable)	
@@ -607,27 +575,456 @@ bool GeometryGUI::SetSettings(QAD_Desktop* parent)
     
   return bOk;
 }
+*/
+
+//=======================================================================
+// function : createGeomAction
+// purpose  : 
+//=======================================================================
+void GeometryGUI::createGeomAction( const int id, const QString& po_id, const QString& icon_id, const int key, const bool toggle  )
+{
+  QIconSet icon;
+  QWidget* parent = application()->desktop();
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  QPixmap pix;
+  if ( icon_id.length() ) 
+    pix = resMgr->loadPixmap( "GEOM", tr( icon_id ) );
+  else
+    pix = resMgr->loadPixmap( "GEOM", tr( QString( "ICO_" )+po_id ) );
+  if ( !pix.isNull() )
+    icon = QIconSet( pix );
+
+  QString tooltip    = tr( QString( "TOP_" )+po_id ),
+          menu       = tr( QString( "MEN_" )+po_id ),
+          status_bar = tr( QString( "STB_" )+po_id );
+
+  createAction( id, tooltip, icon, menu, status_bar, key, parent, toggle, this, SLOT( OnGUIEvent() )  );
+}
+
+
 
 //=======================================================================
 // function : GeometryGUI::Deactivate()
 // purpose  : Called when GEOM module is deactivated [ static ]
 //=======================================================================
-void GeometryGUI::Deactivate()
+void GeometryGUI::initialize( CAM_Application* app )
 {
-  GeometryGUI* geomGUI = GetGeomGUI();
-  GetGeomGUI()->EmitSignalCloseAllDialogs();
+  SalomeApp_Module::initialize( app );
+
+  // ----- create actions --------------
+
+  createGeomAction( 111, "IMPORT", "", (CTRL + Key_I) );
+  createGeomAction( 121, "EXPORT", "", (CTRL + Key_E) );
+
+  createGeomAction( 33, "DELETE" );
+
+  createGeomAction( 4011, "POINT" );
+  createGeomAction( 4012, "LINE" );
+  createGeomAction( 4013, "CIRCLE" );
+  createGeomAction( 4014, "ELLIPSE" );
+  createGeomAction( 4015, "ARC" );
+  createGeomAction( 4019, "CURVE" );
+  createGeomAction( 4016, "VECTOR" );
+  createGeomAction( 4017, "PLANE" );
+  createGeomAction( 4018, "WORK_PLANE" );
+  createGeomAction( 4020, "LOCAL_CS" );
+
+  createGeomAction( 4021, "BOX" );
+  createGeomAction( 4022, "CYLINDER" );
+  createGeomAction( 4023, "SPHERE" );
+  createGeomAction( 4024, "TORUS" );
+  createGeomAction( 4025, "CONE" );
+
+  createGeomAction( 4031, "EXTRUSION" );
+  createGeomAction( 4032, "REVOLUTION" );
+  createGeomAction( 4033, "FILLING" );
+  createGeomAction( 4034, "PIPE" );
+
+  createGeomAction( 800, "GROUP_CREATE" );
+  createGeomAction( 801, "GROUP_EDIT" );
+
+  createGeomAction( 9997, "Q_FACE" );
+  createGeomAction( 9999, "HEX_SOLID" );
+
+  createGeomAction( 404, "SKETCH" );
+  createGeomAction( 407, "EXPLODE" );
+
+  createGeomAction( 4081, "EDGE" );
+  createGeomAction( 4082, "WIRE" );
+  createGeomAction( 4083, "FACE" );
+  createGeomAction( 4084, "SHELL" );
+  createGeomAction( 4085, "SOLID" );
+  createGeomAction( 4086, "COMPOUND" );
+
+  createGeomAction( 5011, "FUSE" );
+  createGeomAction( 5012, "COMMON" );
+  createGeomAction( 5013, "CUT" );
+  createGeomAction( 50114, "SECTION" );
+
+  createGeomAction( 5021, "TRANSLATION" );
+  createGeomAction( 5022, "ROTATION" );
+  createGeomAction( 5023, "MODIFY_LOCATION" );
+  createGeomAction( 5024, "MIRROR" );
+  createGeomAction( 5025, "SCALE" );
+  createGeomAction( 5026, "OFFSET" );
+  createGeomAction( 5027, "MUL_TRANSLATION" );
+  createGeomAction( 5028, "MUL_ROTATION" );
+
+  createGeomAction( 503, "PARTITION" );
+  createGeomAction( 504, "ARCHIMEDE" );
+  createGeomAction( 505, "FILLET" );
+  createGeomAction( 506, "CHAMFER" );
+  createGeomAction( 507, "CLIPPING" );
+
+  createGeomAction( 9998, "MUL_TRANSFORM" );
+  createGeomAction( 9995, "EXPLODE_BLOCKS" );
+  createGeomAction( 99991, "PROPAGATE" );
+
+  createGeomAction( 601, "SEWING" );
+  createGeomAction( 602, "GLUE_FACES" );
+  createGeomAction( 603, "SUPPRESS_FACES" );
+  createGeomAction( 604, "SUPPERSS_HOLES" );
+  createGeomAction( 605, "SHAPE_PROCESS" );
+  createGeomAction( 606, "CLOSE_CONTOUR" );
+  createGeomAction( 607, "SUPPRESS_INT_WIRES" );
+  createGeomAction( 608, "POINT_ON_EDGE" );
+  createGeomAction( 609, "CHECK_FREE_BNDS" );
+  createGeomAction( 610, "CHECK_FREE_FACES" );
+  
+  createGeomAction( 708, "POINT_COORDS" );
+  createGeomAction( 701, "BASIC_PROPS" );
+  createGeomAction( 702, "MASS_CENTER" );
+  createGeomAction( 703, "INERTIA" );
+  createGeomAction( 7041, "BND_BOX" );
+  createGeomAction( 7042, "MIN_DIST" );
+
+  createGeomAction( 705, "TOLERANCE" );
+  createGeomAction( 706, "WHAT_IS" );
+  createGeomAction( 707, "CHECK" );
+  createGeomAction( 7072, "CHECK_COMPOUND" );
+
+  createGeomAction( 5103, "CHECK_GEOMETRY" );
+  createGeomAction( 5104, "LOAD_SCRIPT" );
+
+  createGeomAction( 412, "SHADING_COLOR" );
+  createGeomAction( 413, "ISOS" );
+  createGeomAction( 414, "STEP_VALUE" );
+
+  createGeomAction( 211, "SHADING" );
+  createGeomAction( 212, "DISPLAY_ALL" );
+  createGeomAction( 214, "ERASE_ALL" );
+  createGeomAction( 216, "DISPLAY" );
+  createGeomAction( 213, "DISPLAY_ONLY" );
+  createGeomAction( 215, "ERASE" );
+
+  createGeomAction( 901, "POP_RENAME" );
+  createGeomAction( 80311, "POP_WIREFRAME", "", 0, true );
+  createGeomAction( 80312, "POP_SHADING", "", 0, true );
+  createGeomAction( 8032, "POP_COLOR" );
+  createGeomAction( 8033, "POP_TRANSPARENCY" );
+  createGeomAction( 8034, "POP_ISOS" );
+  createGeomAction( 8001, "POP_CREATE_GROUP" );
+
+  // make wireframe-shading items to be exclusive (only one at a time is selected)
+  //QActionGroup* dispModeGr = new QActionGroup( this, "", true );
+  //dispModeGr->add( action( 80311 ) );
+  //dispModeGr->add( action( 80312 ) );
+  // ---- create menu --------------------------
+
+  int fileId = createMenu( tr( "MEN_FILE" ), -1, -1 );
+  createMenu( separator(), fileId, 10 );
+  createMenu( 111, fileId, 10 );
+  createMenu( 121, fileId, 10 );
+  createMenu( separator(), fileId, -1 );
+
+  int editId = createMenu( tr( "MEN_EDIT" ), -1, -1 );
+  createMenu( 33, editId, -1 );
+
+  int newEntId = createMenu( tr( "MEN_NEW_ENTITY" ), -1, -1, 10 );
+
+  int basicId = createMenu( tr( "MEN_BASIC" ), newEntId, -1 );
+  createMenu( 4011, basicId, -1 );
+  createMenu( 4012, basicId, -1 );
+  createMenu( 4013, basicId, -1 );
+  createMenu( 4014, basicId, -1 );
+  createMenu( 4015, basicId, -1 );
+  createMenu( 4019, basicId, -1 );
+  createMenu( separator(), basicId, -1 );
+  createMenu( 4016, basicId, -1 );
+  createMenu( 4017, basicId, -1 );
+  createMenu( 4018, basicId, -1 );
+  createMenu( 4020, basicId, -1 );
+
+  int primId = createMenu( tr( "MEN_PRIMITIVES" ), newEntId, -1 );
+  createMenu( 4021, primId, -1 );  
+  createMenu( 4022, primId, -1 );  
+  createMenu( 4023, primId, -1 );  
+  createMenu( 4024, primId, -1 );  
+  createMenu( 4025, primId, -1 );  
+
+  int genId = createMenu( tr( "MEN_GENERATION" ), newEntId, -1 );
+  createMenu( 4031, genId, -1 );  
+  createMenu( 4032, genId, -1 );  
+  createMenu( 4033, genId, -1 );  
+  createMenu( 4034, genId, -1 );  
+  createMenu( separator(), newEntId, -1 );
+
+  int groupId = createMenu( tr( "MEN_GROUP" ), newEntId, -1 );
+  createMenu( 800, groupId, -1 );  
+  createMenu( 801, groupId, -1 );  
+  createMenu( separator(), newEntId, -1 );
+
+  int blocksId = createMenu( tr( "MEN_BLOCKS" ), newEntId, -1 );
+  createMenu( 9997, blocksId, -1 );  
+  createMenu( 9999, blocksId, -1 );  
+
+  createMenu( separator(), newEntId, -1 );
+  createMenu( 404, newEntId, -1 );  
+  createMenu( separator(), newEntId, -1 );
+  createMenu( 407, newEntId, -1 );  
+
+  int buildId = createMenu( tr( "MEN_BUILD" ), newEntId, -1 );
+  createMenu( 4081, buildId, -1 );  
+  createMenu( 4082, buildId, -1 );  
+  createMenu( 4083, buildId, -1 );  
+  createMenu( 4084, buildId, -1 );  
+  createMenu( 4085, buildId, -1 );  
+  createMenu( 4086, buildId, -1 );  
+
+  int operId = createMenu( tr( "MEN_OPERATIONS" ), -1, -1, 10 );
+
+  int boolId = createMenu( tr( "MEN_BOOLEAN" ), operId, -1 );
+  createMenu( 5011, boolId, -1 );  
+  createMenu( 5012, boolId, -1 );  
+  createMenu( 5013, boolId, -1 );  
+  createMenu( 5014, boolId, -1 );  
+
+  int transId = createMenu( tr( "MEN_TRANSFORMATION" ), operId, -1 );
+  createMenu( 5021, transId, -1 );  
+  createMenu( 5022, transId, -1 );  
+  createMenu( 5023, transId, -1 );  
+  createMenu( 5024, transId, -1 );  
+  createMenu( 5025, transId, -1 );  
+  createMenu( 5026, transId, -1 );  
+  createMenu( separator(), transId, -1 );
+  createMenu( 5027, transId, -1 );  
+  createMenu( 5028, transId, -1 );  
+
+  createMenu( 503, operId, -1 );  
+  createMenu( 504, operId, -1 );  
+  createMenu( separator(), operId, -1 );
+  createMenu( 505, transId, -1 );  
+  createMenu( 506, transId, -1 );  
+  createMenu( 507, transId, -1 );  
+
+  int blockId = createMenu( tr( "MEN_BLOCKS" ), operId, -1 );
+  createMenu( 9998, blockId, -1 );  
+  createMenu( 9995, blockId, -1 );  
+  createMenu( 99991, blockId, -1 );  
+
+  int repairId = createMenu( tr( "MEN_REPAIR" ), -1, -1, 10 );
+  createMenu( 605, repairId, -1 );  
+  createMenu( 603, repairId, -1 );  
+  createMenu( 606, repairId, -1 );  
+  createMenu( 607, repairId, -1 );  
+  createMenu( 604, repairId, -1 );  
+  createMenu( 601, repairId, -1 );  
+  createMenu( 602, repairId, -1 );  
+  createMenu( 608, repairId, -1 );  
+  createMenu( 609, repairId, -1 );  
+  createMenu( 610, repairId, -1 );  
+
+  int measurId = createMenu( tr( "MEN_MEASURES" ), -1, -1, 10 );
+  createMenu( 708, measurId, -1 );  
+  createMenu( 701, measurId, -1 );  
+  createMenu( separator(), measurId, -1 );
+  createMenu( 702, measurId, -1 );  
+  createMenu( 703, measurId, -1 );  
+  createMenu( separator(), measurId, -1 );
+
+  int dimId = createMenu( tr( "MEN_DIMENSIONS" ), measurId, -1 );
+  createMenu( 7041, dimId, -1 );  
+  createMenu( 7042, dimId, -1 );
+  createMenu( separator(), measurId, -1 );
+  
+  createMenu( 705, measurId, -1 );  
+  createMenu( separator(), measurId, -1 );
+  createMenu( 706, measurId, -1 );  
+  createMenu( 707, measurId, -1 );  
+  createMenu( 7072, measurId, -1 );  
+
+  int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 10 );
+  createMenu( separator(), toolsId, -1 );
+  createMenu( 5103, toolsId, -1 );  
+  createMenu( 5104, toolsId, -1 );  
+
+  int prefId = createMenu( tr( "MEN_PREFERENCES" ), -1, -1, 10 );
+  createMenu( separator(), prefId, -1 );
+
+  int geomId = createMenu( tr( "MEN_PREFERENCES_GEOM" ), prefId, -1 );
+  createMenu( 412, geomId, -1 );  
+  createMenu( 413, geomId, -1 );  
+  createMenu( 414, geomId, -1 );  
+  createMenu( separator(), prefId, -1 );
+
+  int viewId = createMenu( tr( "MEN_VIEW" ), -1, -1 );
+  createMenu( separator(), viewId, -1 );
+
+  int dispmodeId = createMenu( tr( "MEN_DISPLAY_MODE" ), viewId, -1 );
+  createMenu( 211, dispmodeId, -1 );  
+  
+  createMenu( separator(), viewId, -1 );
+  createMenu( 212, viewId, -1 );  
+  createMenu( 214, viewId, -1 );  
+  createMenu( separator(), viewId, -1 );
+  createMenu( 216, viewId, -1 );  
+  createMenu( 213, viewId, -1 );  
+  createMenu( 215, viewId, -1 );
+
+  // ---- create toolbars --------------------------
+
+  int basicTbId = createTool( tr( "TOOL_BASIC" ) );
+  createTool( 4011, basicTbId );
+  createTool( 4012, basicTbId );
+  createTool( 4013, basicTbId );
+  createTool( 4014, basicTbId );
+  createTool( 4015, basicTbId );
+  createTool( 4019, basicTbId );
+  createTool( 4016, basicTbId );
+  createTool( 4017, basicTbId );
+  createTool( 4018, basicTbId );
+  createTool( 4020, basicTbId );
+
+  int primTbId = createTool( tr( "TOOL_PRIMITIVES" ) );
+  createTool( 4021, primTbId );  
+  createTool( 4022, primTbId );  
+  createTool( 4023, primTbId );  
+  createTool( 4024, primTbId );  
+  createTool( 4025, primTbId );  
+
+  int boolTbId = createTool( tr( "TOOL_BOOLEAN" ) );
+  createTool( 5011, boolTbId );  
+  createTool( 5012, boolTbId );  
+  createTool( 5013, boolTbId );  
+  createTool( 5014, boolTbId );  
+
+  int genTbId = createTool( tr( "TOOL_GENERATION" ) );
+  createTool( 4031, genTbId );  
+  createTool( 4032, genTbId );  
+  createTool( 4033, genTbId );  
+  createTool( 4034, genTbId );  
+
+  int transTbId = createTool( tr( "TOOL_TRANSFORMATION" ) );
+  createTool( 5021, transTbId );  
+  createTool( 5022, transTbId );  
+  createTool( 5023, transTbId );  
+  createTool( 5024, transTbId );  
+  createTool( 5025, transTbId );  
+  createTool( 5026, transTbId );  
+  createTool( separator(), transTbId );
+  createTool( 5027, transTbId );  
+  createTool( 5028, transTbId );
+
+  QtxPopupMgr* mgr = popupMgr();
+  mgr->insert( action(  901 ), -1, -1 ); // rename
+  mgr->setRule( action( 901 ), "$type in {'Shape' 'Group'} and selcount=1", true );
+  mgr->insert( action(  8001 ), -1, -1 ); // create group
+  mgr->setRule( action( 8001 ), "$client in {'ObjectBrowser'} and $type in {'Shape'} and selcount=1 and isOCC", true );
+  mgr->insert( action(  801 ), -1, -1 ); // edit group
+  mgr->setRule( action( 801 ), "$client in {'ObjectBrowser'} and $type in {'Group'} and selcount=1 and isOCC", true );
+  mgr->insert( separator(), -1, -1 );        // -----------
+  mgr->insert( action(  216 ), -1, -1 ); // display
+  mgr->setRule( action( 216 ), "$client in {'ObjectBrowser'} and selcount>0 and (($type in {'Shape' 'Group'} and ($isVisible in {false})) or $type in {'Component'})", true );
+  mgr->insert( action(  215 ), -1, -1 ); // erase
+  mgr->setRule( action( 215 ), "$client in {'ObjectBrowser'} and ((($type in {'Shape' 'Group'}) and ($isVisible in {true})) or ($type in {'Component'} and selcount=1))", true );
+  mgr->insert( action(  213 ), -1, -1 ); // display only
+  mgr->setRule( action( 213 ), "$client in {'ObjectBrowser'} and ($type in {'Shape' 'Group'} or ($type in {'Component'} and selcount=1))", true );
+  mgr->insert( separator(), -1, -1 );
+  dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
+  mgr->insert( action(  80311 ), dispmodeId, -1 ); // wireframe
+  mgr->setRule( action( 80311 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
+  mgr->setRule( action( 80311 ), "$displaymode in {'Wireframe'}", false );
+  mgr->insert( action(  80312 ), dispmodeId, -1 ); // shading
+  mgr->setRule( action( 80312 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
+  mgr->setRule( action( 80312 ), "$displaymode in {'Shading'}", false );
+  mgr->insert( action(  8032 ), -1, -1 ); // color
+  mgr->setRule( action( 8032 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
+  mgr->insert( action(  8033 ), -1, -1 ); // transparency
+  mgr->setRule( action( 8033 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
+  mgr->insert( action(  8034 ), -1, -1 ); // isos
+  mgr->setRule( action( 8034 ), "$client in {'OCCViewer'} and selcount>0", true );
+  mgr->insert( separator(), -1, -1 );        // -----------
+}
+
+//=======================================================================
+// function : GeometryGUI::Deactivate()
+// purpose  : Called when GEOM module is deactivated [ static ]
+//=======================================================================
+void GeometryGUI::activateModule( SUIT_Study* study )
+{
+  SalomeApp_Module::activateModule( study );
+
+  setMenuShown( true );
+  setToolShown( true );
+
+  connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ), 
+	  this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
+  connect( (STD_Application*)application(), SIGNAL( viewManagerAdded( SUIT_ViewManager* ) ),
+           this, SLOT( onViewManagerAdded( SUIT_ViewManager* ) ) ); 
+
   GUIMap::Iterator it;
-  for ( it = geomGUI->myGUIMap.begin(); it != geomGUI->myGUIMap.end(); ++it )
-    it.data()->Deactivate();
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
+    it.data()->activate( application()->desktop() );
+
+  SalomeApp_SelectionMgr* sm = getApp()->selectionMgr();
+  SUIT_ViewManager* vm;
+  ViewManagerList OCCViewManagers, VTKViewManagers;
+  application()->viewManagers( OCCViewer_Viewer::Type(), OCCViewManagers );
+  for ( vm = OCCViewManagers.first(); vm; vm = OCCViewManagers.next() )
+    myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
+  application()->viewManagers( VTKViewer_Viewer::Type(), VTKViewManagers );
+  for ( vm = VTKViewManagers.first(); vm; vm = VTKViewManagers.next() )
+    myVTKSelectors.append( new SalomeApp_VTKSelector( (SVTK_Viewer*)vm->getViewModel(), sm ) );
+
+  // SetSettings() ?????????????
+}
+
+
+//=======================================================================
+// function : GeometryGUI::Deactivate()
+// purpose  : Called when GEOM module is deactivated [ static ]
+//=======================================================================
+void GeometryGUI::deactivateModule( SUIT_Study* study )
+{
+  setMenuShown( false );
+  setToolShown( false );
+
+  disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ), 
+	     this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
+  disconnect( (STD_Application*)application(), SIGNAL( viewManagerAdded( SUIT_ViewManager* ) ),
+	     this, SLOT( onViewManagerAdded( SUIT_ViewManager* ) ) ); 
+
+  EmitSignalCloseAllDialogs();
+
+  GUIMap::Iterator it;
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
+    it.data()->deactivate();  
+
+  myOCCSelectors.clear();
+  getApp()->selectionMgr()->setEnabled( true, OCCViewer_Viewer::Type() );
+
+  myVTKSelectors.clear();
+
+  SalomeApp_Module::deactivateModule( study );
 }
 
 //=================================================================================
 // function : GeometryGUI::DefinePopup()
 // purpose  : Called from desktop to define popup menu [static]
 //=================================================================================
+/*
 void GeometryGUI::DefinePopup(QString& theContext, QString& theParent, QString& theObject)
 {
-  GeometryGUI* geomGUI   = GetGeomGUI();
   QAD_Study* ActiveStudy = QAD_Application::getDesktop()->getActiveStudy();
   SALOME_Selection* Sel  = SALOME_Selection::Selection(ActiveStudy->getSelection());
 
@@ -698,7 +1095,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
   if( nbSel == 0 ) {
     ////// NOTHING SELECTED
     popup->clear();
-  }
+  } 
   else if ( nbSel == 1 ) {
     ////// SINGLE OBJECT SELECTION
     if ( parentComponent != parent->getActiveComponent() )  {
@@ -921,68 +1318,107 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
   return false;
 }
 
-//=================================================================================
-// function : GeometryGUI::ActiveStudyChanged()
-// purpose  : static
-//=================================================================================
-bool GeometryGUI::ActiveStudyChanged(QAD_Desktop* parent)
-{
-  GeometryGUI* geomGUI     = GetGeomGUI();
-  QAD_Study*   ActiveStudy = parent->getActiveStudy();
-  QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
-  int DisplayMode = 0;
-  bool ViewOCC = false;
-
-  if( ActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)ActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-    DisplayMode = ic->DisplayMode();
-    ViewOCC = true;
-  }
-  else if( ActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)ActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-    DisplayMode = myRenderInter->GetDisplayMode();
-  }
-
-  if( DisplayMode == 1 )
-    Mb->changeItem( 211, tr( "GEOM_MEN_WIREFRAME" ) );
-  else
-    Mb->changeItem( 211, tr( "GEOM_MEN_SHADING" ) );
-
-  //Mb->setItemEnabled( 404, ViewOCC ); // SKETCHER
-  Mb->setItemEnabled( 603, ViewOCC ); // SuppressFace
-  Mb->setItemEnabled( 604, ViewOCC ); // SuppressHole
-  Mb->setItemEnabled( 606, ViewOCC ); // CloseContour
-  Mb->setItemEnabled( 413, ViewOCC ); // Isos Settings
-  Mb->setItemEnabled( 800, ViewOCC ); // Create Group
-  Mb->setItemEnabled( 801, ViewOCC ); // Edit Group
-  Mb->setItemEnabled(9998, ViewOCC ); // MENU BLOCKS - MULTI-TRANSFORMATION
-
-  geomGUI->EmitSignalCloseAllDialogs();
-
-  // PAL5356: update VTK selection
-  ::UpdateVtkSelection( parent );
-
-  bool bOk = true;
-  GUIMap::Iterator it;
-  for ( it = geomGUI->myGUIMap.begin(); it != geomGUI->myGUIMap.end(); ++it )
-    bOk = bOk && it.data()->ActiveStudyChanged( parent );
-  return bOk;
-}
+*/
 
 //=======================================================================
 // function : GeometryGUI::BuildPresentation()
-// purpose  : static
+// purpose  : 
 //=======================================================================
-void GeometryGUI::BuildPresentation( const Handle(SALOME_InteractiveObject)& theIO,
-                                     QAD_ViewFrame* theViewFrame )
+void GeometryGUI::BuildPresentation( const Handle(SALOME_InteractiveObject)& io, SUIT_ViewWindow* win )
 {
-  GEOM_Displayer().Display( theIO, false, theViewFrame );
+  //GEOM_Displayer().Display( io, false, win );
 }
 
-void GeometryGUI::SupportedViewType(int* buffer, int bufferSize)
+//=======================================================================
+// function : setCommandsEnabled()
+// purpose  : update menu items' status - disable non-OCC-viewer-compatible actions
+//=======================================================================
+void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
 {
-  if(!buffer || !bufferSize) return;
-  buffer[0] = (int)VIEW_OCC;
-  if (--bufferSize) buffer[1] = (int)VIEW_VTK;
+  if ( !win )
+    return;
+
+  const bool ViewOCC = ( win->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+//  const bool ViewVTK = ( win->getViewManager()->getType() == VTKViewer_Viewer::Type() );
+
+  // disable OCC selectors
+  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+  for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
+    sr->setEnabled(true);
+  
+  // disable non-OCC viewframe menu commands
+//  action( 404 )->setEnabled( ViewOCC ); // SKETCHER
+  action( 603 )->setEnabled( ViewOCC ); // SuppressFace
+  action( 604 )->setEnabled( ViewOCC ); // SuppressHole
+  action( 606 )->setEnabled( ViewOCC ); // CloseContour
+  action( 607 )->setEnabled( ViewOCC ); // RemoveInternalWires
+  action( 608 )->setEnabled( ViewOCC ); // AddPointOnEdge
+//  action( 609 )->setEnabled( ViewOCC ); // Free boundaries
+  action( 413 )->setEnabled( ViewOCC ); // Isos Settings
+
+  action( 800 )->setEnabled( ViewOCC ); // Create Group
+  action( 801 )->setEnabled( ViewOCC ); // Edit Group
+
+  action( 9998 )->setEnabled( ViewOCC ); // MENU BLOCKS - MULTI-TRANSFORMATION
 }
+
+void GeometryGUI::windows( QMap<int, int>& mappa ) const
+{
+  mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::DockLeft );
+  mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::DockBottom );
+}
+
+void GeometryGUI::viewManagers( QStringList& lst ) const
+{
+  lst.append( OCCViewer_Viewer::Type() );
+}
+
+void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
+{
+  if ( vm->getType() == OCCViewer_Viewer::Type() )
+  {
+    SalomeApp_SelectionMgr* sm = getApp()->selectionMgr();
+    myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
+  }
+  else if ( vm->getType() == VTKViewer_Viewer::Type() )
+  {
+    SalomeApp_SelectionMgr* sm = getApp()->selectionMgr();
+    myVTKSelectors.append( new SalomeApp_VTKSelector( (SVTK_Viewer*)vm->getViewModel(), sm ) );
+  }
+}
+
+void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
+{
+  SUIT_ViewModel* viewer = vm->getViewModel();
+  if ( vm->getType() == OCCViewer_Viewer::Type() )
+  {
+    for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
+      if ( sr->viewer() == viewer )
+      {
+	myOCCSelectors.remove( sr );
+	break;
+      }
+  }
+  if ( vm->getType() == VTKViewer_Viewer::Type() )
+  {
+    for ( SalomeApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
+      if ( sr->viewer() == viewer )
+      {
+	myVTKSelectors.remove( sr );
+	break;
+      }
+  }
+}
+
+QString GeometryGUI::engineIOR() const
+{
+  if ( !CORBA::is_nil( GetGeomGen() ) )
+    return QString( getApp()->orb()->object_to_string( GetGeomGen() ) );
+  return QString( "" );
+}
+
+SalomeApp_Selection* GeometryGUI::createSelection() const
+{
+  return new GEOMGUI_Selection();
+}
+

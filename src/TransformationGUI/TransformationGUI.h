@@ -39,15 +39,15 @@
 class TransformationGUI : public GEOMGUI
 {
 protected:
-  TransformationGUI(); // hide constructor to avoid direct creation
+  TransformationGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
 
 public :
   ~TransformationGUI();
 
   // Get the only TransformationGUI object
-  static TransformationGUI* GetTransformationGUI();
+  static TransformationGUI* GetTransformationGUI( GeometryGUI* parent );
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
 
 private:
   static TransformationGUI* myGUIObject;        // the only TransformationGUI object

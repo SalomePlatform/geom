@@ -28,14 +28,16 @@
 
 #include "GEOM_Operation.h"
 
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "SUIT_Application.h"
+#include "SalomeApp_Tools.h"
+
 
 //================================================================
 // Function : GEOM_Operation
 // Purpose  : 
 //================================================================
-GEOM_Operation::GEOM_Operation( QAD_Study* doc, GEOM::GEOM_IOperations_ptr oper )
-: QAD_Operation( doc )
+GEOM_Operation::GEOM_Operation( SUIT_Application* app, GEOM::GEOM_IOperations_ptr oper )
+: SUIT_Operation( app )
 {
   myIOperation = GEOM::GEOM_IOperations::_narrow( oper );
 }
@@ -52,16 +54,16 @@ GEOM_Operation::~GEOM_Operation()
 // Function : onStartOperation()
 // Purpose  : Opens an internal transaction in GEOM engine
 //================================================================
-void GEOM_Operation::onStartOperation()
+void GEOM_Operation::startOperation()
 {
-  QAD_Operation::onStartOperation();
+  SUIT_Operation::startOperation();
 
   if ( !myIOperation->_is_nil() ) {
     try {
       myIOperation->StartOperation();
     }
     catch( const SALOME::SALOME_Exception& e ) {
-      QtCatchCorbaException( e );
+      SalomeApp_Tools:: QtCatchCorbaException( e );
     }
   }
 }
@@ -70,16 +72,16 @@ void GEOM_Operation::onStartOperation()
 // Function : onFinishOperation
 // Purpose  : Commits an internal transaction in GEOM engine
 //================================================================
-void GEOM_Operation::onFinishOperation()
+void GEOM_Operation::commitOperation()
 {
-  QAD_Operation::onFinishOperation();
+  SUIT_Operation::commitOperation();
 
   if ( !myIOperation->_is_nil() ) {
     try {
       myIOperation->FinishOperation();
     }
     catch( const SALOME::SALOME_Exception& e ) {
-      QtCatchCorbaException( e );
+      SalomeApp_Tools:: QtCatchCorbaException( e );
     }
   }
 }
@@ -88,34 +90,34 @@ void GEOM_Operation::onFinishOperation()
 // Function : onSuspendOperation
 // Purpose  : 
 //================================================================
-void GEOM_Operation::onSuspendOperation()
+void GEOM_Operation::suspendOperation()
 {
-  QAD_Operation::onSuspendOperation();
+  SUIT_Operation::suspendOperation();
 }
 
 //================================================================
 // Function : onResumeOperation
 // Purpose  : 
 //================================================================
-void GEOM_Operation::onResumeOperation()
+void GEOM_Operation::resumeOperation()
 {
-  QAD_Operation::onResumeOperation();
+  SUIT_Operation::resumeOperation();
 }
 
 //================================================================
 // Function : onAbortOperation
 // Purpose  : Aborts an internal transaction in GEOM engine
 //================================================================
-void GEOM_Operation::onAbortOperation()
+void GEOM_Operation::abortOperation()
 {
-  QAD_Operation::onAbortOperation();
+  SUIT_Operation::abortOperation();
 
   if ( !myIOperation->_is_nil() ) {
     try {
       myIOperation->AbortOperation();
     }
     catch( const SALOME::SALOME_Exception& e ) {
-      QtCatchCorbaException( e );
+      SalomeApp_Tools::QtCatchCorbaException( e );
     }
   }
 }

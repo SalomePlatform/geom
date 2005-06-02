@@ -29,13 +29,13 @@
 #ifndef  GEOMSPINBOX_H
 #define  GEOMSPINBOX_H
 
-#include "QAD_SpinBoxDbl.h" 
+#include "QtxDblSpinBox.h"
 
 //=================================================================================
 // class    : DlgRef_SpinBox
 // purpose  : Derivated from QSpinBox class and modified to accept floats
 //=================================================================================
-class DlgRef_SpinBox : public QAD_SpinBoxDbl
+class DlgRef_SpinBox : public QtxDblSpinBox
 {
   Q_OBJECT
 

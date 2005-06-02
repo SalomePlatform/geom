@@ -3,6 +3,8 @@ using namespace std;
 #include "GEOMImpl_ILocalOperations.hxx"
 
 #include "GEOM_Function.hxx"
+#include "GEOM_PythonDump.hxx"
+
 #include "GEOMImpl_Types.hxx"
 
 #include "GEOMImpl_FilletDriver.hxx"
@@ -94,14 +96,8 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aFillet->GetEntry(), anEntry);
-  aDescr = anEntry + " = ILocalOperations.MakeFilletAll(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theR)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aFillet << " = geompy.MakeFilletAll("
+                               << theShape << ", " << theR << ")";
 
   SetErrorCode(OK);
   return aFillet;
@@ -158,22 +154,16 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aFillet->GetEntry(), anEntry);
-  aDescr = anEntry + " = ILocalOperations.MakeFilletEdges(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theR)+", [");
-  it = theEdges.begin();
-  aDescr += (TCollection_AsciiString(*it)+", ");
-  it++;
-  for (; it != theEdges.end(); it++) {
-    aDescr += ", ";
-    aDescr += TCollection_AsciiString(*it);
-  }
-  aDescr += "])";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aFillet << " = geompy.MakeFillet(" << theShape
+    << ", " << theR << ", geompy.ShapeType[\"EDGE\"], [";
 
-  aFunction->SetDescription(aDescr);
+  it = theEdges.begin();
+  pd << (*it++);
+  while (it != theEdges.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
 
   SetErrorCode(OK);
   return aFillet;
@@ -230,22 +220,16 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aFillet->GetEntry(), anEntry);
-  aDescr = anEntry + " = ILocalOperations.MakeFilletFaces(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theR)+", [");
-  it = theFaces.begin();
-  aDescr += (TCollection_AsciiString(*it)+", ");
-  it++;
-  for (; it != theFaces.end(); it++) {
-    aDescr += ", ";
-    aDescr += TCollection_AsciiString(*it);
-  }
-  aDescr += "])";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aFillet << " = geompy.MakeFillet(" << theShape
+    << ", " << theR << ", geompy.ShapeType[\"FACE\"], [";
 
-  aFunction->SetDescription(aDescr);
+  it = theFaces.begin();
+  pd << (*it++);
+  while (it != theFaces.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
 
   SetErrorCode(OK);
   return aFillet;
@@ -293,15 +277,8 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferAll (Handle(GEOM_Objec
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ILocalOperations.MakeChamferAll(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theD)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aChamfer << " = geompy.MakeChamferAll("
+                               << theShape << ", " << theD << ")";
 
   SetErrorCode(OK);
   return aChamfer;
@@ -354,18 +331,9 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdge
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ILocalOperations.MakeChamferEdge(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theD1)+", ");
-  aDescr += (TCollection_AsciiString(theD2)+", ");
-  aDescr += (TCollection_AsciiString(theFace1)+", ");
-  aDescr += (TCollection_AsciiString(theFace2)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aChamfer
+    << " = geompy.MakeChamferEdge(" << theShape << ", " << theD1
+      << ", " << theD2 << ", " << theFace1 << ", " << theFace2 << ")";
 
   SetErrorCode(OK);
   return aChamfer;
@@ -424,24 +392,16 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ILocalOperations.MakeChamferFaces(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theD1)+", ");
-  aDescr += (TCollection_AsciiString(theD2)+", [");
-  it = theFaces.begin();
-  aDescr += (TCollection_AsciiString(*it)+", ");
-  it++;
-  for (; it != theFaces.end(); it++) {
-    aDescr += ", ";
-    aDescr += TCollection_AsciiString(*it);
-  }
-  aDescr += "])";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aChamfer << " = geompy.MakeChamferFaces(" << theShape
+    << ", " << theD1 << ", " << theD2 << ", [";
 
-  aFunction->SetDescription(aDescr);
+  it = theFaces.begin();
+  pd << (*it++);
+  while (it != theFaces.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
 
   SetErrorCode(OK);
   return aChamfer;
@@ -493,17 +453,9 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeArchimede (Handle(GEOM_Object
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ILocalOperations.MakeArchimede(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theWeight)+", ");
-  aDescr += (TCollection_AsciiString(theWaterDensity)+", ");
-  aDescr += (TCollection_AsciiString(theMeshingDeflection)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aChamfer
+    << " = geompy.Archimede(" << theShape << ", " << theWeight << ", "
+      << theWaterDensity << ", " << theMeshingDeflection << ")";
 
   SetErrorCode(OK);
   return aChamfer;

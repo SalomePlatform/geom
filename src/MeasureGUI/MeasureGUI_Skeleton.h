@@ -36,7 +36,6 @@ class GeometryGUI;
 class QWidget;
 class QLineEdit;
 class QPushButton;
-class SALOME_Selection;
 class GEOM_Displayer;
 
 class MeasureGUI_Skeleton : public MeasureGUI_Skeleton_QTD,
@@ -45,9 +44,9 @@ class MeasureGUI_Skeleton : public MeasureGUI_Skeleton_QTD,
     Q_OBJECT
 
 public:
-                              MeasureGUI_Skeleton( QWidget*          parent,
-                                                   const char*       name,
-                                                   SALOME_Selection* Sel = 0 );
+                              MeasureGUI_Skeleton( GeometryGUI*      GUI,
+						   QWidget*          parent,
+                                                   const char*       name );
                               ~MeasureGUI_Skeleton();
 
 protected slots:
@@ -61,7 +60,7 @@ protected slots:
 
 protected:
 
-    void                      Init( SALOME_Selection* Sel );
+    void                      Init();
 
     void                      enterEvent( QEvent* e );
     void                      closeEvent( QCloseEvent* e );
@@ -75,13 +74,14 @@ protected:
 
     virtual GEOM::GEOM_IOperations_ptr createOperation();
 
+    virtual SUIT_Desktop* getDesktop() const;
+
 protected:    
     
     QPushButton*              mySelBtn;
     QLineEdit*                mySelEdit;
     GEOM::GEOM_Object_var     myObj;
     
-    SALOME_Selection*         mySelection;              
     GeometryGUI*              myGeomGUI;
     GEOM_Displayer*           myDisplayer;
 };

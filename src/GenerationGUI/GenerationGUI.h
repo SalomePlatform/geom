@@ -38,15 +38,15 @@
 class GenerationGUI : public GEOMGUI
 {
 protected:
-  GenerationGUI(); // hide constructor to avoid direct creation
+  GenerationGUI(GeometryGUI* parent); // hide constructor to avoid direct creation
 
 public :
   ~GenerationGUI();
 
   // Get the only GenerationGUI object
-  static GenerationGUI* GetGenerationGUI();
+  static GenerationGUI* GetGenerationGUI(GeometryGUI* parent);
 
-  bool OnGUIEvent( int theCommandID, QAD_Desktop* parent );
+  bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
 
 private:
   static GenerationGUI* myGUIObject; // the only GenerationGUI object

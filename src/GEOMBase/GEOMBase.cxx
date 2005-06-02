@@ -30,30 +30,32 @@
 #include "GeometryGUI.h"
 #include "GEOMBase_aParameterDlg.h"
 
+#include "GEOM_Client.hxx"
+
 ////  SALOME Includes
 #include "Utils_ORB_INIT.hxx"
 #include "Utils_SINGLETON.hxx"
 
-#include "QAD_Config.h"
-#include "QAD_Desktop.h"
-#include "QAD_RightFrame.h"
-#include "QAD_MessageBox.h"
-#include "QAD_Resource.h"
-#include "QAD_MessageBox.h"
-#include "SALOME_Selection.h"
+#include "SALOME_LifeCycleCORBA.hxx"
 
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_Actor.h"
-#include "VTKViewer_ViewFrame.h"
 #include "VTKViewer_RenderWindowInteractor.h"
+#include "VTKViewer_ViewModel.h"
+#include "VTKViewer_ViewWindow.h"
 #include "OCCViewer_ViewPort3d.h"
-#include "OCCViewer_Viewer3d.h"
-#include "OCCViewer_ViewFrame.h"
+#include "OCCViewer_ViewModel.h"
+#include "OCCViewer_ViewWindow.h"
 
+#include "SALOME_ListIO.hxx"
 #include "SALOME_ListIteratorOfListIO.hxx"
 #include "GEOM_AISTrihedron.hxx"
-#include "SALOMEGUI_ImportOperation.h"
-#include "SALOMEGUI_NameDlg.h"
+
+#include "SUIT_Session.h"
+#include "SUIT_ViewWindow.h"
+#include "SUIT_MessageBox.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_Study.h"
 
 // // Open CASCADE Includes
 #include <BRep_Tool.hxx>
@@ -84,6 +86,11 @@
 
 using namespace std;
 
+#include "SALOMEDSClient.hxx"
+#include "SALOMEDS_SObject.hxx"
+#include "SALOMEDS_Study.hxx"
+
+
 //=======================================================================
 // function : GEOMBase()
 // purpose  : Constructor
@@ -111,14 +118,14 @@ TopoDS_Shape GEOMBase::GetShapeFromIOR(QString IOR)
   if(IOR.stripWhiteSpace().isEmpty())
     return result;
 
-  CORBA::Object_var obj = GeometryGUI::GetORB()->string_to_object((char*)(IOR.latin1()));
+  CORBA::Object_var obj = SalomeApp_Application::orb()->string_to_object((char*)(IOR.latin1()));
   if(CORBA::is_nil(obj))
     return result;
   GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( obj );
   if (GeomObject->_is_nil())
     return result;
-
-  result = GeometryGUI::GetGeomGUI()->GetShapeReader().GetShape(GeometryGUI::GetGeomGUI()->GetGeomGen(), GeomObject);
+  
+  result = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), GeomObject);
   return result;
 }
 
@@ -144,22 +151,24 @@ int GEOMBase::GetIndex(const TopoDS_Shape& subshape, const TopoDS_Shape& shape, 
 // function : GetTopoFromSelection()
 // purpose  : Define tds from a single selection and retuen true
 //=======================================================================
-bool GEOMBase::GetTopoFromSelection(SALOME_Selection *Sel, TopoDS_Shape& tds)
+bool GEOMBase::GetTopoFromSelection(const SALOME_ListIO& aList, TopoDS_Shape& tds)
 {
-  if(Sel->IObjectCount() != 1)
+  if(aList.Extent() != 1)
     return false;
 
-  Handle(SALOME_InteractiveObject) IO = Sel->firstIObject();
+  Handle(SALOME_InteractiveObject) IO = aList.First();
   /* case SObject */
   if(IO->hasEntry()) {
-    SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-    SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
-    SALOMEDS::GenericAttribute_var anAttr;
-    SALOMEDS::AttributeIOR_var anIOR;
-    if(!obj->_is_nil()) {
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+    if ( !appStudy ) return false;
+    _PTR(Study) aStudy = appStudy->studyDS();
+    
+    _PTR(SObject) obj ( aStudy->FindObjectID(IO->getEntry()) );
+    _PTR(GenericAttribute) anAttr;
+    if( obj ) {
       if(obj->FindAttribute(anAttr, "AttributeIOR")) {
-	anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	tds = GetShapeFromIOR(anIOR->Value());
+	_PTR(AttributeIOR) anIOR ( anAttr );
+	tds = GetShapeFromIOR(anIOR->Value().c_str());
 	if(tds.IsNull())
 	  return false;
 	else
@@ -167,7 +176,7 @@ bool GEOMBase::GetTopoFromSelection(SALOME_Selection *Sel, TopoDS_Shape& tds)
       }
     }
   }
-
+  
   return false;
 }
 
@@ -175,35 +184,48 @@ bool GEOMBase::GetTopoFromSelection(SALOME_Selection *Sel, TopoDS_Shape& tds)
 // function : GetNameOfSelectedIObjects()
 // purpose  : Define the name geom++ or other name of mono or multi sel.
 //=======================================================================
-int GEOMBase::GetNameOfSelectedIObjects( SALOME_Selection* theSel,
+int GEOMBase::GetNameOfSelectedIObjects( const SALOME_ListIO& aList,
                                          QString&          theName,
                                          const bool        theShapesOnly )
 {
   if ( !theShapesOnly )
-  {
-    int nbSel = theSel->IObjectCount();
-    if ( nbSel == 1 )
     {
-      Handle(SALOME_InteractiveObject) anIObj = theSel->firstIObject();
-      theName = anIObj->getName();
+      int nbSel = aList.Extent();
+      if ( nbSel == 1 )
+	{
+	  Handle(SALOME_InteractiveObject) anIObj = aList.First();
+	  if(anIObj->hasEntry()) {
+	    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+	    if ( !appStudy ) return nbSel;
+	    _PTR(Study) aStudy = appStudy->studyDS();
+	    
+	    _PTR(SObject) obj ( aStudy->FindObjectID(anIObj->getEntry()) );
+	    
+	    _PTR(GenericAttribute) anAttr;
+	    
+	    if ( obj && obj->FindAttribute( anAttr, "AttributeName") )
+	      {
+		_PTR(AttributeName) aNameAttr ( anAttr );
+		theName = aNameAttr->Value().c_str();        
+	      }
+	  }
+	}
+      else
+	theName = QObject::tr("%1_objects").arg(nbSel);
+
+      return nbSel;
     }
-    else
-      theName = QObject::tr("%1_objects").arg(nbSel);
-
-    return nbSel;
-  }
   else
-  {
-    QStringList aNames;
-    GEOM::ListOfGO anObjs;
-    ConvertListOfIOInListOfGO( theSel->StoredIObjects(), anObjs, theShapesOnly );
-    if ( anObjs.length() == 1 )
-      theName = GetName( anObjs[ 0 ] );
-    else
-      theName = QString( "%1_objects" ).arg( anObjs.length() );
-
-    return anObjs.length();
-  }
+    {
+      GEOM::ListOfGO anObjs;
+      ConvertListOfIOInListOfGO( aList, anObjs, theShapesOnly );
+      if ( anObjs.length() == 1 )
+	theName = GetName( anObjs[ 0 ] );
+      else
+	theName = QString( "%1_objects" ).arg( anObjs.length() );
+      
+      return anObjs.length();
+    }
 }
 
 
@@ -318,18 +340,20 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIORinGEOMAISShape(const char * IOR, Stand
   Handle(GEOM_AISShape) resultShape;
   testResult = false;
 
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  SALOMEDS::SObject_var anObj = aStudy->FindObjectIOR( IOR );
-  if ( anObj->_is_nil() )
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( !appStudy ) return resultShape;
+  _PTR(Study) aStudy = appStudy->studyDS();
+  
+  _PTR(SObject) anObj ( aStudy->FindObjectIOR( IOR ) );
+  if ( !anObj )
     return resultShape;
+  
+  QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
 
-  int nbSf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFramesCount();
-  for(int i = 0; i < nbSf; i++) {
-    QAD_StudyFrame* sf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i);
-    if(sf->getTypeView() == VIEW_OCC) {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getViewer();
-      Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
-
+  for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it ) {
+    if (it.current()->getViewManager()->getType() == OCCViewer_Viewer::Type()) {
+      Handle (AIS_InteractiveContext) ic = ((OCCViewer_Viewer*)it.current()->getViewManager()->getViewModel())->getAISContext();
+      
       AIS_ListOfInteractive List;
       ic->DisplayedObjects(List);
       AIS_ListOfInteractive List1;
@@ -342,9 +366,9 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIORinGEOMAISShape(const char * IOR, Stand
 	  Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
 	  if(aSh->hasIO()) {
 	    Handle(SALOME_InteractiveObject) GIO = Handle(SALOME_InteractiveObject)::DownCast(aSh->getIO());
-	    if(GIO->hasEntry() && strcmp(GIO->getEntry(), anObj->GetID()) == 0) {
+	    if(GIO->hasEntry() && strcmp(GIO->getEntry(), anObj->GetID().c_str()) == 0) {
 	      if(!onlyInActiveView ||
-		 sf == QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()) {
+		 it.current() == SUIT_Session::session()->activeApplication()->desktop()->activeWindow()) {
 		testResult = true;
 		resultShape = aSh;
 		return resultShape;
@@ -368,16 +392,20 @@ GEOM_Actor* GEOMBase::ConvertIORinGEOMActor(const char* IOR, Standard_Boolean& t
 {
   testResult = false;
 
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  SALOMEDS::SObject_var anObj = aStudy->FindObjectIOR( IOR );
-  if ( anObj->_is_nil() )
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( !appStudy ) return GEOM_Actor::New();
+  _PTR(Study) aStudy = appStudy->studyDS();
+  
+  _PTR(SObject) anObj ( aStudy->FindObjectIOR( IOR ) );
+  if ( !anObj )
     return GEOM_Actor::New();
 
-  int nbSf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFramesCount();
-  for(int i = 0; i < nbSf; i++) {
-    QAD_StudyFrame* sf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i);
-    if(sf->getTypeView() == VIEW_VTK) {
-      vtkRenderer* Renderer = ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRenderer();
+  QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
+
+  for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it ) {
+    if (it.current()->getViewManager()->getType() == VTKViewer_Viewer::Type()) {
+      VTKViewer_ViewWindow* aVTKViewWindow = (VTKViewer_ViewWindow*)it.current();
+      vtkRenderer* Renderer = aVTKViewWindow->getRenderer();
       vtkActorCollection* theActors = Renderer->GetActors();
       theActors->InitTraversal();
       vtkActor *ac = theActors->GetNextActor();
@@ -386,9 +414,9 @@ GEOM_Actor* GEOMBase::ConvertIORinGEOMActor(const char* IOR, Standard_Boolean& t
 	  GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(ac);
 	  if(anActor->hasIO()) {
 	    Handle(SALOME_InteractiveObject) GIO = Handle(SALOME_InteractiveObject)::DownCast(anActor->getIO());
-	    if(GIO->hasEntry() && strcmp(GIO->getEntry(), anObj->GetID()) == 0) {
+	    if(GIO->hasEntry() && strcmp(GIO->getEntry(), anObj->GetID().c_str()) == 0) {
 	      if(!onlyInActiveView ||
-		 sf == QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()) {
+		 it.current() == SUIT_Session::session()->activeApplication()->desktop()->activeWindow()) {
 		testResult = true;
 		return anActor;
 	      }
@@ -413,21 +441,13 @@ Handle(AIS_InteractiveObject) GEOMBase::GetAIS( const Handle(SALOME_InteractiveO
   if ( theIO.IsNull() || !theIO->hasEntry() )
     return Handle(AIS_InteractiveObject)();
 
-  int nbSf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFramesCount();
+  QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
 
-  for ( int i = 0; i < nbSf; i++ )
-  {
-    QAD_StudyFrame* aStudyFrame =
-      QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame( i );
-
-    if ( aStudyFrame->getTypeView() != VIEW_OCC )
+  for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it ) {
+    if (it.current()->getViewManager()->getType() != OCCViewer_Viewer::Type())
       continue;
-
-    OCCViewer_Viewer3d* v3d =
-      ((OCCViewer_ViewFrame*)aStudyFrame->getRightFrame()->getViewFrame())->getViewer();
-
-    Handle(AIS_InteractiveContext) anIC = v3d->getAISContext();
-
+    Handle (AIS_InteractiveContext) anIC = ((OCCViewer_Viewer*)it.current()->getViewManager()->getViewModel())->getAISContext();
+    
     AIS_ListOfInteractive aList;
     anIC->DisplayedObjects( aList );
     anIC->ObjectsInCollector( aList );
@@ -442,7 +462,7 @@ Handle(AIS_InteractiveObject) GEOMBase::GetAIS( const Handle(SALOME_InteractiveO
       {
         if( isOnlyInActiveView )
         {
-          if ( aStudyFrame == QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame() )
+          if ( it.current() == SUIT_Session::session()->activeApplication()->desktop()->activeWindow() )
             return anIter.Value();
         }
         else
@@ -469,13 +489,12 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIOinGEOMAISShape(const Handle(SALOME_Inte
     return res;
   }
   
-  int nbSf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFramesCount();
-  for(int i = 0; i < nbSf; i++) {
-    QAD_StudyFrame* sf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i);
-    if(sf->getTypeView() == VIEW_OCC) {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getViewer();
-      Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+  QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
 
+  for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it ) {
+    if (it.current()->getViewManager()->getType() == OCCViewer_Viewer::Type()) {
+      Handle (AIS_InteractiveContext) ic = ((OCCViewer_Viewer*)it.current()->getViewManager()->getViewModel())->getAISContext();
+      
       AIS_ListOfInteractive List;
       ic->DisplayedObjects(List);
       AIS_ListOfInteractive List1;
@@ -494,7 +513,7 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIOinGEOMAISShape(const Handle(SALOME_Inte
             {
               if(onlyInActiveView)
               {
-                if(sf == QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame())
+                if(it.current() == SUIT_Session::session()->activeApplication()->desktop()->activeWindow())
                 {
                   testResult = true;
                   return aSh;
@@ -528,14 +547,16 @@ GEOM::GEOM_Object_ptr GEOMBase::ConvertIOinGEOMShape(const Handle(SALOME_Interac
   
   /* case SObject */
   if(IO->hasEntry()) {
-    SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-    SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
-    SALOMEDS::GenericAttribute_var anAttr;
-    SALOMEDS::AttributeIOR_var anIOR;
-    if(!obj->_is_nil()) {
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+    if ( !appStudy ) return GEOM::GEOM_Object::_nil();
+    _PTR(Study) aStudy = appStudy->studyDS();
+
+    _PTR(SObject) obj ( aStudy->FindObjectID(IO->getEntry()) );
+    _PTR(GenericAttribute) anAttr;
+    if(obj) {
       if(obj->FindAttribute(anAttr, "AttributeIOR")) {
-	anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	aShape = GeometryGUI::GetGeomGUI()->GetGeomGen()->GetIORFromString(anIOR->Value());
+	_PTR(AttributeIOR) anIOR ( anAttr );
+	aShape = GeometryGUI::GetGeomGen()->GetIORFromString(anIOR->Value().c_str());
 	if(!CORBA::is_nil(aShape))
 	  testResult = true;
 	return aShape._retn();
@@ -556,21 +577,20 @@ void GEOMBase::ConvertListOfIOInListOfIOR(const SALOME_ListIO& aList, GEOM::stri
   listIOR.length(nbSel);
   int j=0;
   SALOME_ListIteratorOfListIO It(aList);
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() ); 
+  if ( !appStudy ) return; 
+  _PTR(Study) aStudy = appStudy->studyDS(); 
+
   for(int i=0; It.More(); It.Next(), i++) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
     if(IObject->hasEntry()) {
-      SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-      SALOMEDS::SObject_var obj = aStudy->FindObjectID(IObject->getEntry());
-      SALOMEDS::GenericAttribute_var anAttr;
-      SALOMEDS::AttributeIOR_var anIOR;
-      if(!obj->_is_nil() && obj->FindAttribute(anAttr, "AttributeIOR")) {
-	anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	ORB_INIT &init = *SINGLETON_<ORB_INIT>::Instance();
-	CORBA::ORB_var& _orb = init.orb();
-	CORBA::String_var theValue = anIOR->Value();
-	CORBA::Object_var theObj = _orb->string_to_object(theValue);
+      _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
+      _PTR(GenericAttribute) anAttr;
+      if(obj && obj->FindAttribute(anAttr, "AttributeIOR")) {
+	_PTR(AttributeIOR) anIOR (anAttr);
+        CORBA::Object_var theObj = dynamic_cast<SALOMEDS_Study*>(aStudy.get())->ConvertIORToObject(anIOR->Value());
 	if(theObj->_is_a("IDL:GEOM/GEOM_Object:1.0")) {
-	  listIOR[j] = CORBA::string_dup(theValue);
+	  listIOR[j] = CORBA::string_dup(anIOR->Value().c_str());
 	  j++;
 	}
       }
@@ -592,10 +612,16 @@ GEOM::GEOM_Object_ptr GEOMBase::ConvertIOinGEOMObject( const Handle(SALOME_Inter
   if ( !theIO.IsNull() )
   {
     const char* anEntry = theIO->getEntry();
-    SALOMEDS::SObject_var aSObj = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument()->FindObjectID( anEntry );
-    if ( !CORBA::is_nil( aSObj ) )
+
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+    if ( !appStudy ) return  GEOM::GEOM_Object::_nil();
+    _PTR(Study) aStudy = appStudy->studyDS();
+
+    _PTR(SObject) aSObj ( aStudy->FindObjectID( anEntry ) );
+    
+    if ( aSObj  )
     {
-      aReturnObject = GEOM::GEOM_Object::_narrow( aSObj->GetObject() );
+      aReturnObject = GEOM::GEOM_Object::_narrow( dynamic_cast<SALOMEDS_SObject*>(aSObj.get())->GetObject() );
       theResult = !CORBA::is_nil( aReturnObject );
     }
   }
@@ -614,16 +640,21 @@ void GEOMBase::ConvertListOfIOInListOfGO( const SALOME_ListIO& theList,
   int nbSel = theList.Extent();  
   theListGO.length( nbSel );
   SALOME_ListIteratorOfListIO anIter( theList );
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( !appStudy ) return;
+  _PTR(Study) aStudy = appStudy->studyDS();
+  
   int j = 0;
   for ( int i=0; anIter.More(); anIter.Next(), i++ )
   {
     Handle(SALOME_InteractiveObject) anIObj = anIter.Value();
-    SALOMEDS::SObject_var aSObj = aStudy->FindObjectID( anIObj->getEntry() );
+    _PTR(SObject) aSObj ( aStudy->FindObjectID( anIObj->getEntry() ) );
 
-    if ( !aSObj->_is_nil() )
+    if ( aSObj )
     {
-      GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(aSObj->GetObject());
+      GEOM::GEOM_Object_var aGeomObj = 
+	GEOM::GEOM_Object::_narrow(dynamic_cast<SALOMEDS_SObject*>(aSObj.get())->GetObject());
       if ( !CORBA::is_nil( aGeomObj ) && ( !theShapesOnly || IsShape( aGeomObj ) ) )
         theListGO[ j++ ] = aGeomObj;
     }
@@ -639,11 +670,12 @@ void GEOMBase::ConvertListOfIOInListOfGO( const SALOME_ListIO& theList,
 //=================================================================================
 bool GEOMBase::CreateArrowForLinearEdge(const TopoDS_Shape& tds, TopoDS_Shape& ArrowCone)
 {
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC || tds.ShapeType() != TopAbs_EDGE)
+  if(SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+     != OCCViewer_Viewer::Type() || tds.ShapeType() != TopAbs_EDGE)
     return false;
   
-  OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewPort();
-  Handle( V3d_View) view3d = ((OCCViewer_ViewPort3d*)vp)->getView();
+  OCCViewer_ViewPort3d* vp3d = ((OCCViewer_ViewWindow*)SUIT_Session::session()->activeApplication()->desktop()->activeWindow())->getViewPort();
+  Handle( V3d_View) view3d = vp3d->getView();
   Standard_Real Width, Height;
   view3d->Size(Width, Height);
   const Standard_Real aHeight = (Width + Height) / 50.0;
@@ -744,7 +776,8 @@ bool GEOMBase::LinearEdgeExtremities(const TopoDS_Shape& S,  gp_Pnt& P1, gp_Pnt&
 //=======================================================================
 double GEOMBase::Parameter(Standard_Boolean& res, const char* aValue1, const char* aTitle1, const char* aTitle, const double bottom, const double top, const int decimals)
 {
-  GEOMBase_aParameterDlg * Dialog = new GEOMBase_aParameterDlg(aValue1, aTitle1, QAD_Application::getDesktop(), aTitle, TRUE, 0, bottom, top, decimals);
+  GEOMBase_aParameterDlg * Dialog = new GEOMBase_aParameterDlg(aValue1, aTitle1, SUIT_Session::session()->activeApplication()->desktop(), 
+							       aTitle, TRUE, 0, bottom, top, decimals);
   int r = Dialog->exec();
   float X = 0.0;
   if(r == QDialog::Accepted) {
@@ -764,41 +797,44 @@ double GEOMBase::Parameter(Standard_Boolean& res, const char* aValue1, const cha
 //          : The selection is changed. Dialog box will receive the 
 //          : corresponding signal to manage this event.
 //=======================================================================
-bool GEOMBase::SelectionByNameInDialogs(QWidget* aWidget, const QString& objectUserName, SALOME_Selection* Sel)
+bool GEOMBase::SelectionByNameInDialogs(QWidget* aWidget, const QString& objectUserName, const SALOME_ListIO& aList)
 {
   /* Find SObject with name in component GEOM */
-  SALOMEDS::Study_var ST = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  SALOMEDS::Study::ListOfSObject_var listSO = new SALOMEDS::Study::ListOfSObject;
-  listSO = ST->FindObjectByName(objectUserName, "GEOM");
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( !appStudy ) return false;
+  _PTR(Study) ST = appStudy->studyDS();
   
-  if(listSO->length() < 1) {
+  std::vector<_PTR(SObject)> listSO;
+  listSO = ST->FindObjectByName(objectUserName.latin1(), "GEOM");
+  
+  if(listSO.size() < 1) {
     const QString caption  = QObject::tr("GEOM_WRN_WARNING");
     const QString text = QObject::tr("GEOM_NAME_INCORRECT");
     const QString button0  = QObject::tr("GEOM_BUT_OK");
-    QAD_MessageBox::error1(aWidget, caption, text, button0);
+    SUIT_MessageBox::error1(aWidget, caption, text, button0);
     return false;
   }
   /* More than one object with same name */
-  if(listSO->length() > 1) {
+  if(listSO.size() > 1) {
     const QString caption  = QObject::tr("GEOM_WRN_WARNING");
     const QString text = QObject::tr("GEOM_IDENTICAL_NAMES_SELECT_BY_MOUSE");
     const QString button0  = QObject::tr("GEOM_BUT_OK") ;
-    QAD_MessageBox::error1(aWidget, caption, text, button0) ;
+    SUIT_MessageBox::error1(aWidget, caption, text, button0) ;
+    listSO.clear();
     return false;
   }
 
-  SALOMEDS::SObject_var theObj = listSO[0];
+  _PTR(SObject) theObj ( listSO[0] );
   /* Create a SALOME_InteractiveObject with a SALOME::SObject */
-  Standard_CString anEntry = theObj->GetID();
   char* aCopyobjectUserName = CORBA::string_dup(objectUserName);
-  Handle(SALOME_InteractiveObject) SI = new SALOME_InteractiveObject(anEntry, "GEOM", aCopyobjectUserName);
+  Handle(SALOME_InteractiveObject) SI = new SALOME_InteractiveObject(theObj->GetID().c_str(), "GEOM", aCopyobjectUserName);
   delete(aCopyobjectUserName);
 
   /* Add as a selected object       */
   /* Clear any previous selection : */
   /* Warning the LineEdit is purged because of signal currentSelectionChanged ! */ 
-  Sel->ClearIObjects(); 
-  Sel->AddIObject(SI);
+  // Sel->ClearIObjects(); //mzn
+  // Sel->AddIObject(SI); //mzn
   return true;
 }
 
@@ -810,7 +846,7 @@ bool GEOMBase::SelectionByNameInDialogs(QWidget* aWidget, const QString& objectU
 bool GEOMBase::DefineDlgPosition(QWidget* aDlg, int& x, int& y)
 {
   /* Here the position is on the bottom right corner - 10 */
-  QAD_Desktop* PP = QAD_Application::getDesktop();
+  SUIT_Desktop* PP = SUIT_Session::session()->activeApplication()->desktop();
   x = abs(PP->x() + PP->size().width() - aDlg->size().width() - 10);
   y = abs(PP->y() + PP->size().height() - aDlg->size().height() - 10);
   return true;  
@@ -823,18 +859,21 @@ bool GEOMBase::DefineDlgPosition(QWidget* aDlg, int& x, int& y)
 //=======================================================================
 QString GEOMBase::GetDefaultName(const QString& theOperation)
 {
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  int aNumber = 0;
-  QString aName;
-  SALOMEDS::SObject_var obj;
+  QString aName = "";
 
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( !appStudy ) return aName;
+  _PTR(Study) aStudy = appStudy->studyDS();
+
+  int aNumber = 0;
+  _PTR(SObject) obj;
   do 
     {
       aName = theOperation+"_"+QString::number(++aNumber);
-      obj = aStudy->FindObject(aName);
+      obj = aStudy->FindObject(aName.latin1());
     } 
-  while (!obj->_is_nil());
-
+  while (obj);
+  
   return aName;
 }
 
@@ -854,8 +893,8 @@ void GEOMBase::ShowErrorMessage(const char* theErrorCode, const char* theComment
   if (!aComment.isEmpty())
     aText.append("\n" + QString(theComment));
   
-  QAD_MessageBox::error1( QAD_Application::getDesktop(), QObject::tr( "GEOM_ERROR" ),
-			  QObject::tr("GEOM_PRP_ABORT") + aText, "OK" );
+  SUIT_MessageBox::error1( SUIT_Session::session()->activeApplication()->desktop(), QObject::tr( "GEOM_ERROR" ),
+			   QObject::tr("GEOM_PRP_ABORT") + aText, "OK" );
 }
 
 
@@ -869,7 +908,7 @@ GEOM::GEOM_Object_ptr GEOMBase::GetObjectFromIOR( const char* theIOR )
   if ( theIOR == NULL || strlen( theIOR ) == 0 )
     return anObject._retn(); // returning nil object
 
-  anObject = GEOM::GEOM_Object::_narrow( GeometryGUI::GetORB()->string_to_object( theIOR ) );
+  anObject = GEOM::GEOM_Object::_narrow( SalomeApp_Application::orb()->string_to_object( theIOR ) );
   return anObject._retn();
 }
 
@@ -882,7 +921,7 @@ char* GEOMBase::GetIORFromObject( const GEOM::GEOM_Object_ptr& theObject )
   if ( CORBA::is_nil( theObject ) )
     return NULL;
 
-  return GeometryGUI::GetORB()->object_to_string( theObject );
+  return SalomeApp_Application::orb()->object_to_string( theObject );
 }
 
 //=======================================================================
@@ -893,7 +932,7 @@ bool GEOMBase::GetShape( const GEOM::GEOM_Object_ptr& theObject, TopoDS_Shape& t
 {
   if ( !CORBA::is_nil( theObject ) )
   {
-    TopoDS_Shape aTopoDSShape = GEOM_Client().GetShape( GeometryGUI::GetGeomGUI()->GetGeomGen(), theObject );
+    TopoDS_Shape aTopoDSShape = GEOM_Client().GetShape(  GeometryGUI::GetGeomGen(), theObject );
     if ( !aTopoDSShape.IsNull() && ( theType == TopAbs_SHAPE || theType == aTopoDSShape.ShapeType() ) )
     {
        theShape = aTopoDSShape;
@@ -909,20 +948,21 @@ bool GEOMBase::GetShape( const GEOM::GEOM_Object_ptr& theObject, TopoDS_Shape& t
 //=======================================================================
 const char* GEOMBase::GetName( GEOM::GEOM_Object_ptr theObj )
 {
-  QAD_Study* aStudy = QAD_Application::getDesktop()->getActiveStudy();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
   
-  if ( aStudy )
+  if ( appStudy )
   {
-    string anIOR = GeometryGUI::GetORB()->object_to_string( theObj );
+    string anIOR = SalomeApp_Application::orb()->object_to_string( theObj );
     if ( anIOR != "" )
     {
-      SALOMEDS::SObject_var aSObj = aStudy->getStudyDocument()->FindObjectIOR( anIOR.c_str() );
-      SALOMEDS::GenericAttribute_var anAttr;
+      _PTR(SObject) aSObj ( appStudy->studyDS()->FindObjectIOR( anIOR ) );
+
+      _PTR(GenericAttribute) anAttr;
       
-      if ( !aSObj->_is_nil() && aSObj->FindAttribute( anAttr, "AttributeName") )
+      if ( aSObj && aSObj->FindAttribute( anAttr, "AttributeName") )
       {
-        SALOMEDS::AttributeName_var aNameAttr = SALOMEDS::AttributeName::_narrow( anAttr );
-        return aNameAttr->Value();        
+        _PTR(AttributeName) aNameAttr ( anAttr );
+        return aNameAttr->Value().c_str();        
       }
     }
   }

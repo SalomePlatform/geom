@@ -28,10 +28,8 @@
 
 #include "RepairGUI.h"
 
-#include "QAD_RightFrame.h"
-#include "QAD_Desktop.h"
-#include "OCCViewer_Viewer3d.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
 
 #include "RepairGUI_SewingDlg.h"        // Method SEWING
 #include "RepairGUI_SuppressFacesDlg.h" // Method SUPPRESS FACES
@@ -54,11 +52,11 @@ RepairGUI* RepairGUI::myGUIObject = 0;
 // function : GetRepairGUI()
 // purpose  : Get the only RepairGUI object [ static ]
 //=======================================================================
-RepairGUI* RepairGUI::GetRepairGUI()
+RepairGUI* RepairGUI::GetRepairGUI( GeometryGUI* parent )
 {
   if ( myGUIObject == 0 ) {
     // init RepairGUI only once
-    myGUIObject = new RepairGUI();
+    myGUIObject = new RepairGUI( parent );
   }
   return myGUIObject;
 }
@@ -67,7 +65,7 @@ RepairGUI* RepairGUI::GetRepairGUI()
 // function : RepairGUI()
 // purpose  : Constructor
 //=======================================================================
-RepairGUI::RepairGUI() : GEOMGUI()
+RepairGUI::RepairGUI( GeometryGUI* parent ) : GEOMGUI( parent )
 {
 }
 
@@ -85,45 +83,44 @@ RepairGUI::~RepairGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool RepairGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+bool RepairGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
-
+  getGeometryGUI()->EmitSignalDeactivateDialog();
+  
   QDialog* aDlg = NULL;
   switch (theCommandID) {
     case 601: // SEWING
-      aDlg = new RepairGUI_SewingDlg( parent, "", Sel );
+      aDlg = new RepairGUI_SewingDlg( parent, "" );
       break;
     case 602: // GLUE FACES
-      aDlg = new RepairGUI_GlueDlg( parent, "", Sel );
+      aDlg = new RepairGUI_GlueDlg( parent, "" );
       break;
     case 603: // SUPPRESS FACES
-      aDlg = new RepairGUI_SuppressFacesDlg( parent, "", Sel);
+      aDlg = new RepairGUI_SuppressFacesDlg( parent, "" );
       break;
     case 604: // SUPPRESS HOLES
-      aDlg = new RepairGUI_RemoveHolesDlg( parent, "", Sel );
+      aDlg = new RepairGUI_RemoveHolesDlg( parent, "" );
       break;
     case 605: // SHAPE PROCESSING
-      aDlg = new RepairGUI_ShapeProcessDlg( parent, "", Sel );
+      aDlg = new RepairGUI_ShapeProcessDlg( parent, "" );
       break;
     case 606: // CLOSE CONTOUR
-      aDlg = new RepairGUI_CloseContourDlg( parent, "", Sel );
+      aDlg = new RepairGUI_CloseContourDlg( parent, "" );
       break;
     case 607: // REMOVE INTERNAL WIRES
-      aDlg = new RepairGUI_RemoveIntWiresDlg( parent, "", Sel );
+      aDlg = new RepairGUI_RemoveIntWiresDlg( parent, "" );
       break;
     case 608: // ADD POINT ON EDGE
-      aDlg = new RepairGUI_DivideEdgeDlg( parent, "", Sel );
+      aDlg = new RepairGUI_DivideEdgeDlg( parent, "" );
       break;
     case 609: // FREE BOUNDARIES
-      aDlg = new RepairGUI_FreeBoundDlg( parent, Sel );
+      aDlg = new RepairGUI_FreeBoundDlg( getGeometryGUI(), parent );
       break;    
     case 610: // FREE FACES
-      aDlg = new RepairGUI_FreeFacesDlg( parent, "", Sel );
+      aDlg = new RepairGUI_FreeFacesDlg( getGeometryGUI(), parent, "" );
       break;    
     default:
-      parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;
   }
 
@@ -139,8 +136,8 @@ bool RepairGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return RepairGUI::GetRepairGUI();
+    return RepairGUI::GetRepairGUI( parent );
   }
 }

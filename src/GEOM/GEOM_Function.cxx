@@ -218,10 +218,11 @@ TCollection_AsciiString GEOM_Function::GetDescription()
  *  SetDescription
  */
 //=============================================================================
-void GEOM_Function::SetDescription(TCollection_AsciiString& theDescription)
+void GEOM_Function::SetDescription(const TCollection_AsciiString& theDescription)
 {
   TDF_Label aChild = _label.FindChild(DESCRIPTION_LABEL);
-  Handle(TDataStd_Comment) aComment = TDataStd_Comment::Set(aChild, TCollection_ExtendedString(theDescription));
+  Handle(TDataStd_Comment) aComment =
+    TDataStd_Comment::Set(aChild, TCollection_ExtendedString(theDescription));
 }
 
 //=============================================================================

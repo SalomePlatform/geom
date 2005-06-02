@@ -28,7 +28,8 @@
 
 using namespace std;
 #include "GEOMToolsGUI_NbIsosDlg.h"
-#include "QAD_Tools.h"
+
+#include <SUIT_Tools.h>
 
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -37,18 +38,16 @@ using namespace std;
 #include <qspinbox.h>
 
 //=================================================================================
-// class    : GEOMBase_NbIsosDlg()
-// purpose  : Constructs a GEOMBase_NbIsosDlg which is a child of 'parent', with the 
+// class    : GEOMToolsGUI_NbIsosDlg()
+// purpose  : Constructs a GEOMToolsGUI_NbIsosDlg which is a child of 'parent', with the 
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+GEOMToolsGUI_NbIsosDlg::GEOMToolsGUI_NbIsosDlg(QWidget* parent )
+  :QDialog( parent, "GEOMToolsGUI_NbIsosDlg", true, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  if( !name )
-    setName("GEOMBase_NbIsosDlg");
-  setCaption(name);
+  setCaption( tr( "GEOM_MEN_ISOS" ) );
   setSizeGripEnabled(TRUE);
   QGridLayout* MyDialogLayout = new QGridLayout(this); 
   MyDialogLayout->setSpacing(6);
@@ -64,7 +63,7 @@ GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg(QWidget* parent, const char* name, bool m
   GroupC1Layout->setSpacing( 6 );
   GroupC1Layout->setMargin( 11 );
   
-  TextLabel1 = new QLabel( GroupC1, "TextLabel1" );
+  QLabel* TextLabel1 = new QLabel( GroupC1, "TextLabel1" );
   TextLabel1->setText( tr( "GEOM_MEN_ISOU") );
   GroupC1Layout->addWidget( TextLabel1, 0, 0 );
   
@@ -74,7 +73,7 @@ GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg(QWidget* parent, const char* name, bool m
   SpinBoxU->setValue( 1 );
   GroupC1Layout->addWidget( SpinBoxU, 0, 1 );
 
-  TextLabel2 = new QLabel( GroupC1, "TextLabel2" );
+  QLabel* TextLabel2 = new QLabel( GroupC1, "TextLabel2" );
   TextLabel2->setText( tr( "GEOM_MEN_ISOV") ) ;
   GroupC1Layout->addWidget( TextLabel2, 0, 2 );
 
@@ -94,7 +93,7 @@ GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg(QWidget* parent, const char* name, bool m
   GroupButtonsLayout->setSpacing( 6 );
   GroupButtonsLayout->setMargin( 11 );
   
-  buttonOk = new QPushButton( GroupButtons, "buttonOk" );
+  QPushButton* buttonOk = new QPushButton( GroupButtons, "buttonOk" );
   buttonOk->setText( tr( "GEOM_BUT_OK" ) ) ;
   buttonOk->setAutoDefault( TRUE );
   buttonOk->setDefault( TRUE );
@@ -102,7 +101,7 @@ GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg(QWidget* parent, const char* name, bool m
   
   GroupButtonsLayout->addItem( new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ), 0, 1 );
   
-  buttonCancel = new QPushButton( GroupButtons, "buttonCancel" );
+  QPushButton* buttonCancel = new QPushButton( GroupButtons, "buttonCancel" );
   buttonCancel->setText( tr( "GEOM_BUT_CANCEL" ) ) ;
   buttonCancel->setAutoDefault( TRUE );
   GroupButtonsLayout->addWidget( buttonCancel, 0, 2 );
@@ -117,15 +116,36 @@ GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg(QWidget* parent, const char* name, bool m
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(reject()));
   
   /* Move widget on the botton right corner of main widget */
-  QAD_Tools::centerWidget(this, parent);
+  SUIT_Tools::centerWidget(this, parent);
 }
 
 
 //=================================================================================
-// function : ~GEOMBase_NbIsosDlg()
+// function : ~GEOMToolsGUI_NbIsosDlg()
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
-GEOMBase_NbIsosDlg::~GEOMBase_NbIsosDlg()
+GEOMToolsGUI_NbIsosDlg::~GEOMToolsGUI_NbIsosDlg()
 {
     // no need to delete child widgets, Qt does it all for us
 }
+
+int GEOMToolsGUI_NbIsosDlg::getU() const
+{
+  return SpinBoxU->text().toInt();
+}
+
+int GEOMToolsGUI_NbIsosDlg::getV() const
+{
+  return SpinBoxV->text().toInt();
+}
+
+void GEOMToolsGUI_NbIsosDlg::setU( const int v )
+{
+  SpinBoxU->setValue( v );
+}
+
+void GEOMToolsGUI_NbIsosDlg::setV( const int v )
+{
+  SpinBoxV->setValue( v );
+}
+

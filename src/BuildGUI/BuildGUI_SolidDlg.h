@@ -41,7 +41,7 @@ class BuildGUI_SolidDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_SolidDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_SolidDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_SolidDlg();
 
 protected:

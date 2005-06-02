@@ -43,7 +43,7 @@ class TransformationGUI_MultiRotationDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_MultiRotationDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_MultiRotationDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_MultiRotationDlg();
 
 protected:
@@ -57,6 +57,8 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
+
+    GeometryGUI* myGeometryGUI;
    
     GEOM::GEOM_Object_var myBase, myVector;
     int myNbTimes1;

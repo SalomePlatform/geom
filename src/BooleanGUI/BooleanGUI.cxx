@@ -29,9 +29,10 @@
 using namespace std;
 #include "BooleanGUI.h"
 
-#include "QAD_Desktop.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "SUIT_Desktop.h"
 #include "BooleanGUI_Dialog.h"
+
+#include "GeometryGUI.h"
 
 BooleanGUI* BooleanGUI::myGUIObject = 0;
 
@@ -39,11 +40,11 @@ BooleanGUI* BooleanGUI::myGUIObject = 0;
 // function : GetBooleanGUI()
 // purpose  : Get the only BooleanGUI object [ static ]
 //=======================================================================
-BooleanGUI* BooleanGUI::GetBooleanGUI()
+BooleanGUI* BooleanGUI::GetBooleanGUI( GeometryGUI* parent )
 {
   if ( myGUIObject == 0 ) {
     // init BooleanGUI only once
-    myGUIObject = new BooleanGUI();
+    myGUIObject = new BooleanGUI( parent );
   }
   return myGUIObject;
 }
@@ -52,7 +53,7 @@ BooleanGUI* BooleanGUI::GetBooleanGUI()
 // function : BooleanGUI()
 // purpose  : Constructor
 //=======================================================================
-BooleanGUI::BooleanGUI() : GEOMGUI()
+BooleanGUI::BooleanGUI( GeometryGUI* parent ) : GEOMGUI( parent )
 {
 }
 
@@ -70,10 +71,9 @@ BooleanGUI::~BooleanGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool BooleanGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+bool BooleanGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
+  getGeometryGUI()->EmitSignalDeactivateDialog();
 
   int anOperation = 0;	
   if      ( theCommandID == 5011 )
@@ -87,7 +87,7 @@ bool BooleanGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
   else
     return false;
 
-  QDialog* aDlg = new BooleanGUI_Dialog( anOperation, parent, "", Sel);
+  QDialog* aDlg = new BooleanGUI_Dialog( anOperation, parent, "");
   aDlg->show();
    
   return true;
@@ -98,8 +98,8 @@ bool BooleanGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return BooleanGUI::GetBooleanGUI();
+    return BooleanGUI::GetBooleanGUI( parent );
   }
 }

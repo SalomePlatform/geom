@@ -9,11 +9,12 @@
 #include CORBA_SERVER_HEADER(SALOMEDS)
 #include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
+
 #include "SALOME_Component_i.hxx"
 
 #include "SALOME_NamingService.hxx"
 
-#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+//#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #include "GEOM_IBasicOperations_i.hh"
 #include "GEOM_ITransformOperations_i.hh"
@@ -27,6 +28,7 @@
 #include "GEOM_IInsertOperations_i.hh"
 #include "GEOM_IMeasureOperations_i.hh"
 #include "GEOM_IGroupOperations_i.hh"
+
 
 //=====================================================================
 // GEOM_Gen_i : class definition
@@ -174,6 +176,14 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen, public Engines_Component_i
   virtual  char* GetStringFromIOR(GEOM::GEOM_Object_ptr theObject);
 
   virtual GEOM::GEOM_Object_ptr GetIORFromString(const char* stringIOR);
+
+  virtual Engines::TMPFile* DumpPython(CORBA::Object_ptr theStudy, 
+				       CORBA::Boolean isPublished, 
+				       CORBA::Boolean& isValidScript);
+
+  char* GetDumpName (const char* theStudyEntry);
+
+  GEOM::string_array* GetAllDumpNames();
 
   //********************************************************************************************************//
   //     Internal methods

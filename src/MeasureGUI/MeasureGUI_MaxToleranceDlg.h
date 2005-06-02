@@ -42,8 +42,8 @@ class MeasureGUI_MaxToleranceDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-                                        MeasureGUI_MaxToleranceDlg( QWidget* parent,
-                                                                    SALOME_Selection* );
+                                        MeasureGUI_MaxToleranceDlg( GeometryGUI* GUI,
+								    QWidget*     parent );
                                         ~MeasureGUI_MaxToleranceDlg();
 
 protected:
@@ -53,7 +53,7 @@ protected:
 
 private:
 
-    void                                Init( SALOME_Selection* Sel );
+    void                                Init();
     bool                                getParameters( double& theMinFaceToler,
                                                        double& theMaxFaceToler,
                                                        double& theMinEdgeToler,

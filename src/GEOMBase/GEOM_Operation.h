@@ -29,23 +29,23 @@
 #ifndef GEOM_OPERATION_H
 #define GEOM_OPERATION_H
 
-#include "QAD_Operation.h"
+#include "SUIT_Operation.h"
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 
-class GEOM_Operation : public QAD_Operation
+class GEOM_Operation : public SUIT_Operation
 {
 public:
-  GEOM_Operation( QAD_Study*, GEOM::GEOM_IOperations_ptr );
+  GEOM_Operation( SUIT_Application*, GEOM::GEOM_IOperations_ptr );
   virtual ~GEOM_Operation();
 
 protected:
-  // Reimplemented from QAD_Operation
-  virtual void    onStartOperation();        
-  virtual void    onFinishOperation();
-  virtual void    onSuspendOperation();
-  virtual void    onResumeOperation();
-  virtual void    onAbortOperation();
+  // Reimplemented from SUIT_Operation
+  virtual void    startOperation();        
+  virtual void    commitOperation();
+  virtual void    suspendOperation();
+  virtual void    resumeOperation();
+  virtual void    abortOperation();
 
 private:
   GEOM::GEOM_IOperations_var myIOperation;

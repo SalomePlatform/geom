@@ -36,39 +36,43 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 
 # ressources files
 PO_FILES = \
-	GEOM_icons.po \
+	GEOM_images.po \
 	GEOM_msg_en.po \
 	GEOM_msg_fr.po
 
 # header files 
 EXPORT_HEADERS= GeometryGUI.h \
                 GEOMGUI.h \
+		GEOM_Displayer.h \
+	        GEOMGUI_OCCSelector.h \
+		GEOMGUI_Selection.h \
                 GeometryGUI_Swig.hxx \
-		GeometryGUI_Swig.i \
-	        GEOM_Displayer.h
+		GeometryGUI_Swig.i
 
 # Libraries targets 
-LIB = libGEOMGUI.la
+LIB = libGEOM.la
 LIB_SRC =	GeometryGUI.cxx \
-		GeometryGUI_Swig.cxx \
-                GEOM_Displayer.cxx  \
-                GEOMGUI.cxx
+                GEOMGUI.cxx \
+		GEOM_Displayer.cxx \
+                GEOMGUI_OCCSelector.cxx \
+		GEOMGUI_Selection.cxx \
+		GeometryGUI_Swig.cxx
 
-LIB_MOC = \
-                GeometryGUI.h \
+LIB_MOC = GeometryGUI.h \
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 SALOMEDS.idl \
 		 SALOMEDS_Attributes.idl \
-		 SALOME_GenericObj.idl
+		 SALOME_GenericObj.idl \
+		 SALOME_Component.idl
 
 LIB_SERVER_IDL =  
 
 # additionnal information to compil and link file
 
-CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
+CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) $(BOOST_CPPFLAGS) -I$(KERNEL_ROOT_DIR)/include/salome -I$(GUI_ROOT_DIR)/include/salome
+CXXFLAGS += $(BOOST_CPPFLAGS) -I$(KERNEL_ROOT_DIR)/include/salome -I$(GUI_ROOT_DIR)/include/salome
 
-LDFLAGS += -L$(KERNEL_ROOT_DIR)/lib/salome -lOCCViewer -lVTKViewer -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection
+LDFLAGS += -L$(KERNEL_ROOT_DIR)/lib/salome -L$(GUI_ROOT_DIR)/lib/salome -lOCCViewer -lVTKViewer -lSalomeApp -lCAM -lGEOMClient -lSOCC -lSVTK -lGEOMObject -lToolsGUI
 
 @CONCLUDE@

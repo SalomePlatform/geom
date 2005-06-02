@@ -11,6 +11,7 @@ using namespace std;
 #include "GEOMImpl_Block6Explorer.hxx"
 
 #include "GEOM_Function.hxx"
+#include "GEOM_PythonDump.hxx"
 
 #include "GEOMAlgo_GlueAnalyser.hxx"
 #include "GEOMAlgo_CoupleOfShapes.hxx"
@@ -149,19 +150,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aFace->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.MakeQuad(";
-  TDF_Tool::Entry(theEdge1->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theEdge2->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theEdge3->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theEdge4->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aFace << " = geompy.MakeQuad("
+    << theEdge1 << ", " << theEdge2 << ", " << theEdge3 << ", " << theEdge4 << ")";
 
   SetErrorCode(OK);
   return aFace;
@@ -215,15 +205,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad2Edges
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aFace->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.MakeQuad2Edges(";
-  TDF_Tool::Entry(theEdge1->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theEdge2->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aFace << " = geompy.MakeQuad2Edges("
+                               << theEdge1 << ", " << theEdge2 << ")";
 
   SetErrorCode(OK);
   return aFace;
@@ -284,19 +267,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad4Vertices
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aFace->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.MakeQuad4Vertices(";
-  TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePnt3->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePnt4->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aFace << " = geompy.MakeQuad4Vertices("
+    << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << ", " << thePnt4 << ")";
 
   SetErrorCode(OK);
   return aFace;
@@ -364,23 +336,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aBlock->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.MakeHexa(";
-  TDF_Tool::Entry(theFace1->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theFace2->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theFace3->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theFace4->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theFace5->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theFace6->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aBlock << " = geompy.MakeHexa("
+    << theFace1 << ", " << theFace2 << ", " << theFace3 << ", "
+      << theFace4 << ", " << theFace5 << ", " << theFace6 << ")";
 
   SetErrorCode(OK);
   return aBlock;
@@ -434,15 +392,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa2Faces
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aBlock->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.MakeHexa2Faces(";
-  TDF_Tool::Entry(theFace1->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theFace2->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aBlock << " = geompy.MakeHexa2Faces("
+                               << theFace1 << ", " << theFace2 << ")";
 
   SetErrorCode(OK);
   return aBlock;
@@ -494,13 +445,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeBlockCompound
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aBlockComp->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.MakeBlockCompound(";
-  TDF_Tool::Entry(theCompound->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aBlockComp
+    << " = geompy.MakeBlockCompound(" << theCompound << ")";
 
   SetErrorCode(OK);
   return aBlockComp;
@@ -574,21 +520,12 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetPoint
 
   //The GetPoint() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.GetPoint(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  aDescr += TCollection_AsciiString(theX) + ", ";
-  aDescr += TCollection_AsciiString(theY) + ", ";
-  aDescr += TCollection_AsciiString(theZ) + ", ";
-  aDescr += TCollection_AsciiString(theEpsilon) + ")";
-
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t"
+    << aResult << " = geompy.GetPoint(" << theShape << ", "
+      << theX << ", " << theY << ", " << theZ << ", " << theEpsilon << ")";
 
   SetErrorCode(OK);
   return aResult;
@@ -696,23 +633,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdge
     return NULL;
   }
 
-  //The GetEdge() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.GetEdge(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePoint1->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePoint2->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetEdge("
+    << theShape << ", " << thePoint1 << ", " << thePoint2 << ")";
 
   SetErrorCode(OK);
   return aResult;
@@ -826,21 +751,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdgeNearPoint
     return NULL;
   }
 
-  //The GetEdgeNearPoint() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.GetEdgeNearPoint(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePoint->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetEdgeNearPoint("
+                               << theShape << ", " << thePoint << ")";
 
   SetErrorCode(OK);
   return aResult;
@@ -982,27 +897,12 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByPoints
     return NULL;
   }
 
-  //The GetFaceByPoints() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.GetFaceByPoints(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePoint1->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePoint2->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePoint3->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePoint4->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetFaceByPoints("
+    << theShape << ", " << thePoint1 << ", " << thePoint2
+      << ", " << thePoint3 << ", " << thePoint4 << ")";
 
   SetErrorCode(OK);
   return aResult;
@@ -1125,23 +1025,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByEdges
     return NULL;
   }
 
-  //The GetFaceByEdges() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.GetFaceByEdges(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theEdge1->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theEdge2->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetFaceByEdges("
+    << theShape << ", " << theEdge1 << ", " << theEdge2 << ")";
 
   SetErrorCode(OK);
   return aResult;
@@ -1204,21 +1092,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetOppositeFace
     return NULL;
   }
 
-  //The GetOppositeFace() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.GetOppositeFace(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theFace->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetOppositeFace("
+                               << theShape << ", " << theFace << ")";
 
   SetErrorCode(OK);
   return aResult;
@@ -1233,9 +1111,6 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
                                                 (Handle(GEOM_Object) theShape,
                                                  Handle(GEOM_Object) thePoint)
 {
-//  OSD_Timer timer1, timer2, timer3, timer4, timer5;
-//  timer1.Start();
-
   SetErrorCode(KO);
 
   //New object
@@ -1274,9 +1149,6 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
     gp_Pnt aPnt = BRep_Tool::Pnt(aVert);
     Standard_Real PX, PY, PZ;
     aPnt.Coord(PX, PY, PZ);
-
-//    timer1.Stop();
-//    timer2.Start();
 
     // 1. Classify the point relatively each face
     Standard_Integer nearest = 2, nbFound = 0;
@@ -1327,9 +1199,6 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
         mapShapeDist.Bind(aFace, aDistance);
       } // if (!mapShapeDist.IsBound(aFace))
     }
-
-//    timer2.Stop();
-//    timer3.Start();
 
     // 2. Define face, containing the point or having minimum distance to it
     if (nbFound > 1) {
@@ -1401,9 +1270,6 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
       }
     } // if (nbFound > 1)
 
-//    timer3.Stop();
-//    timer4.Start();
-
     if (nbFound == 0) {
       SetErrorCode("There are no faces near the given point");
       return NULL;
@@ -1414,8 +1280,6 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
       anArray->SetValue(1, anIndices.FindIndex(aShape));
       aResult = GetEngine()->AddSubShape(theShape, anArray);
     }
-
-//    timer4.Stop();
   }
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
@@ -1423,35 +1287,13 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
     return NULL;
   }
 
-//  timer5.Start();
-
-  //The GetFaceNearPoint() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.GetFaceNearPoint(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePoint->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetFaceNearPoint("
+                               << theShape << ", " << thePoint << ")";
 
   SetErrorCode(OK);
-
-//  timer5.Stop();
-//
-//  cout << "Show current face times:" << endl;
-//  timer1.Show();
-//  timer2.Show();
-//  timer3.Show();
-//  timer4.Show();
-//  timer5.Show();
-
   return aResult;
 }
 
@@ -1578,21 +1420,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByNormale
     return NULL;
   }
 
-  //The GetFaceByNormale() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.GetFaceByNormale(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(theVector->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetFaceByNormale("
+    << theShape << ", " << theVector << ")";
 
   SetErrorCode(OK);
   return aResult;
@@ -2226,19 +2058,19 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
 
     switch (errStruct.error) {
     case NOT_BLOCK:
-      aDescr += "\nNot a Blocks: ";
+      aDescr += "\n\tNot a Blocks: ";
       break;
     case EXTRA_EDGE:
-      aDescr += "\nHexahedral solids with degenerated and/or seam edges: ";
+      aDescr += "\n\tHexahedral solids with degenerated and/or seam edges: ";
       break;
     case INVALID_CONNECTION:
-      aDescr += "\nInvalid connection between two blocks: ";
+      aDescr += "\n\tInvalid connection between two blocks: ";
       break;
     case NOT_CONNECTED:
-      aDescr += "\nBlocks, not connected with main body: ";
+      aDescr += "\n\tBlocks, not connected with main body: ";
       break;
     case NOT_GLUED:
-      aDescr += "\nNot glued blocks: ";
+      aDescr += "\n\tNot glued blocks: ";
       break;
     default:
       break;
@@ -2483,13 +2315,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.RemoveExtraEdges(";
-  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCopy
+    << " = geompy.RemoveExtraEdges(" << theObject << ")";
 
   SetErrorCode(OK);
   return aCopy;
@@ -2537,13 +2364,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::CheckAndImprove
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.CheckAndImprove(";
-  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCopy
+    << " = geompy.CheckAndImprove(" << theObject << ")";
 
   SetErrorCode(OK);
   return aCopy;
@@ -2570,7 +2392,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::ExplodeCompound
   Handle(GEOM_Function) aFunction;
 
   TopTools_MapOfShape mapShape;
-  TCollection_AsciiString anAsciiList = "[", anEntry;
+  TCollection_AsciiString anAsciiList, anEntry;
 
   // Map shapes
   TopTools_IndexedMapOfShape anIndices;
@@ -2601,8 +2423,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::ExplodeCompound
 
           //Make a Python command
           TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-          anAsciiList += anEntry;
-          anAsciiList += ",";
+          anAsciiList += anEntry + ", ";
         }
       }
     }
@@ -2618,23 +2439,16 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::ExplodeCompound
     return aBlocks;
   }
 
-  anAsciiList.Trunc(anAsciiList.Length() - 1);
-  anAsciiList += "]";
+  anAsciiList.Trunc(anAsciiList.Length() - 2);
 
   //The explode doesn't change object so no new function is required.
   aFunction = theCompound->GetLastFunction();
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
   //Make a Python command
-  TCollection_AsciiString aDescr (anAsciiList);
-  aDescr += " = IBlocksOperations.ExplodeCompoundOfBlocks(";
-  TDF_Tool::Entry(theCompound->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  aDescr += TCollection_AsciiString(theMinNbFaces) + ", ";
-  aDescr += TCollection_AsciiString(theMaxNbFaces) + ")";
-
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t["
+    << anAsciiList.ToCString() << "] = geompy.MakeBlockExplode("
+      << theCompound << ", " << theMinNbFaces << ", " << theMaxNbFaces << ")";
 
   SetErrorCode(OK);
   return aBlocks;
@@ -2805,21 +2619,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockNearPoint
     return NULL;
   }
 
-  //The GetBlockNearPoint() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theCompound->GetLastFunction();
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.GetBlockNearPoint(";
-  TDF_Tool::Entry(theCompound->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  TDF_Tool::Entry(thePoint->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetBlockNearPoint("
+                               << theCompound << ", " << thePoint << ")";
 
   SetErrorCode(OK);
   return aResult;
@@ -2929,20 +2733,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockByParts
     return NULL;
   }
 
-  //The GetBlockByParts() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theCompound->GetLastFunction();
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
 
   //Make a Python command
-  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  TCollection_AsciiString aDescr (anEntry);
-  aDescr += " = IBlocksOperations.GetBlockByParts(";
-  TDF_Tool::Entry(theCompound->GetEntry(), anEntry);
-  aDescr += anEntry + ", [";
-  aDescr += aPartsDescr + "])";
-
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetBlockByParts("
+    << theCompound << ", [" << aPartsDescr.ToCString() << "])";
 
   SetErrorCode(OK);
   return aResult;
@@ -2970,7 +2765,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::GetBlocksByPart
   //Get the parts
   Standard_Integer argi, aLen = theParts->Length();
   TopTools_Array1OfShape anArgs (1, aLen);
-  TCollection_AsciiString anEntry, aPartsDescr, anAsciiList = "[";
+  TCollection_AsciiString anEntry, aPartsDescr, anAsciiList;
+
   for (argi = 1; argi <= aLen; argi++) {
     Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(theParts->Value(argi));
     Handle(GEOM_Function) aRef = anObj->GetLastFunction();
@@ -2985,8 +2781,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::GetBlocksByPart
 
     // For Python command
     TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    if (argi > 1) aPartsDescr += ", ";
-    aPartsDescr += anEntry;
+    aPartsDescr += anEntry + ", ";
   }
 
   //Get the Blocks
@@ -3049,10 +2844,11 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::GetBlocksByPart
         anObj = GetEngine()->AddSubShape(theCompound, anArray);
         aBlocks->Append(anObj);
 
-        //Make a Python command
+        // For Python command
         TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-        anAsciiList += anEntry;
-        anAsciiList += ",";
+        anAsciiList += anEntry + ", ";
+        if (aFunction.IsNull())
+          aFunction = anObj->GetLastFunction();
       }
     }
   }
@@ -3062,22 +2858,13 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::GetBlocksByPart
     return NULL;
   }
 
-  anAsciiList.Trunc(anAsciiList.Length() - 1);
-  anAsciiList += "]";
-
-  //The GetBlocksByParts() doesn't change object so no new function is required.
-  aFunction = theCompound->GetLastFunction();
-
   //Make a Python command
-  TCollection_AsciiString aDescr (anAsciiList);
-  aDescr += " = IBlocksOperations.GetBlocksByParts(";
-  TDF_Tool::Entry(theCompound->GetEntry(), anEntry);
-  aDescr += anEntry + ", [";
-  aDescr += aPartsDescr + "])";
+  aPartsDescr.Trunc(aPartsDescr.Length() - 2);
+  anAsciiList.Trunc(anAsciiList.Length() - 2);
 
-  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
-  aNewDescr += aDescr;
-  aFunction->SetDescription(aNewDescr);
+  GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
+    << "] = geompy.GetBlocksByParts(" << theCompound
+      << ", [" << aPartsDescr.ToCString() << "])";
 
   SetErrorCode(OK);
   return aBlocks;
@@ -3131,16 +2918,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation1D
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.MakeMultiTransformation1D(";
-  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  aDescr += TCollection_AsciiString(theDirFace1) + ", ";
-  aDescr += TCollection_AsciiString(theDirFace2) + ", ";
-  aDescr += TCollection_AsciiString(theNbTimes)  + ") ";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeMultiTransformation1D("
+    << theObject << ", " << theDirFace1 << ", " << theDirFace2 << ", " << theNbTimes << ")";
 
   SetErrorCode(OK);
   return aCopy;
@@ -3200,19 +2979,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation2D
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBlocksOperations.MakeMultiTransformation2D(";
-  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  aDescr += TCollection_AsciiString(theDirFace1U) + ", ";
-  aDescr += TCollection_AsciiString(theDirFace2U) + ", ";
-  aDescr += TCollection_AsciiString(theNbTimesU)  + ", ";
-  aDescr += TCollection_AsciiString(theDirFace1V) + ", ";
-  aDescr += TCollection_AsciiString(theDirFace2V) + ", ";
-  aDescr += TCollection_AsciiString(theNbTimesV)  + ") ";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeMultiTransformation2D("
+    << theObject << ", " << theDirFace1U << ", " << theDirFace2U << ", " << theNbTimesU
+      << ", " << theDirFace1V << ", " << theDirFace2V << ", " << theNbTimesV << ")";
 
   SetErrorCode(OK);
   return aCopy;
@@ -3245,6 +3014,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
 
   TopTools_MapOfShape mapAcceptedEdges;
+  TCollection_AsciiString aListRes, anEntry;
 
   for (ie = 1; ie <= nbEdges; ie++) {
     TopoDS_Shape curE = MEW.FindKey(ie);
@@ -3329,6 +3099,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
 
     // Add the chain to the result
     aSeq->Append(aChain);
+
+    //Make a Python command
+    TDF_Tool::Entry(aChain->GetEntry(), anEntry);
+    aListRes += anEntry + ", ";
   }
 
   if (aSeq->IsEmpty()) {
@@ -3336,19 +3110,15 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
     return aSeq;
   }
 
+  aListRes.Trunc(aListRes.Length() - 2);
+
   // The Propagation doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
   // Make a Python command
-  TCollection_AsciiString aDescr
-    ("\nlistPropagationChains = IShapesOperations.Propagate(");
-  TCollection_AsciiString anEntry;
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry + ")");
-
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
-  anOldDescr = anOldDescr + aDescr;
-  aFunction->SetDescription(anOldDescr);
+  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t["
+    << aListRes.ToCString() << "] = geompy.Propagate(" << theShape << ")";
 
   SetErrorCode(OK);
   return aSeq;

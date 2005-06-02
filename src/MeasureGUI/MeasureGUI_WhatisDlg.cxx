@@ -28,7 +28,6 @@
 
 #include "MeasureGUI_WhatisDlg.h"
 #include "MeasureGUI_1Sel1TextView_QTD.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
 #include "GEOMBase.h"
 
 #include <TopTools_MapOfShape.hxx>
@@ -41,10 +40,12 @@
 #include <BRep_Tool.hxx>
 
 #include "utilities.h"
-#include "QAD_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Tools.h"
 
 #include <qtextedit.h>
 #include <qlineedit.h>
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -57,12 +58,12 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( QWidget* parent, SALOME_Selection* Sel )
-: MeasureGUI_Skeleton( parent, "MeasureGUI_WhatisDlg", Sel )
+MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( GeometryGUI* GUI, QWidget* parent )
+: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_WhatisDlg" )
 {
-  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_DLG_WHATIS" ) ) );
-  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_SELECT" ) ) );
 
   setCaption( tr( "GEOM_WHATIS_TITLE" ) );
@@ -84,7 +85,7 @@ MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( QWidget* parent, SALOME_Selection* S
   /***************************************************************/
 
   /* Initialisation */
-  Init( Sel );
+  Init();
 }
 
 
@@ -101,11 +102,11 @@ MeasureGUI_WhatisDlg::~MeasureGUI_WhatisDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_WhatisDlg::Init( SALOME_Selection* Sel )
+void MeasureGUI_WhatisDlg::Init()
 {
   mySelBtn = myGrp->PushButton1;
   mySelEdit = myGrp->LineEdit1;
-  MeasureGUI_Skeleton::Init( Sel );
+  MeasureGUI_Skeleton::Init();
 }
 
 //=================================================================================
@@ -135,7 +136,7 @@ bool MeasureGUI_WhatisDlg::getParameters( QString& theText )
     }
     catch( const SALOME::SALOME_Exception& e )
     {
-      QtCatchCorbaException( e );
+      SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 

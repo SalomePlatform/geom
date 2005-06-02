@@ -43,7 +43,7 @@ class GenerationGUI_RevolDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    GenerationGUI_RevolDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~GenerationGUI_RevolDlg();
 
 protected:
@@ -56,6 +56,8 @@ private :
     void Init();
     void enterEvent(QEvent* e);
     double getAngle() const;
+
+    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myBase; /* Base shape */
     GEOM::GEOM_Object_var myAxis; /* Axis of the revolution */

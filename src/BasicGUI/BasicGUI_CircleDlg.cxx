@@ -28,8 +28,12 @@
 
 #include "BasicGUI_CircleDlg.h"
 
-#include "QAD_Desktop.h"
-#include "QAD_Config.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -42,12 +46,13 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_CircleDlg::BasicGUI_CircleDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BasicGUI_CircleDlg::BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu),
+   myGeometryGUI(theGeometryGUI)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PV")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PNTS")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PV")));
+  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PNTS")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_CIRCLE_TITLE"));
 
@@ -110,11 +115,11 @@ void BasicGUI_CircleDlg::Init()
 
   myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 
-  myGeomGUI->SetState( 0 );
+  // myGeometryGUI->SetState( 0 );
 
   /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  double aStep = St.toDouble();
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  double aStep = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
 
   /* min, max, step and decimals for spin boxes & initial values */
   GroupPntVecR->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, aStep, 3);
@@ -122,8 +127,8 @@ void BasicGUI_CircleDlg::Init()
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
   
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -139,9 +144,10 @@ void BasicGUI_CircleDlg::Init()
   connect(GroupPntVecR->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPntVecR->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPntVecR->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPntVecR->SpinBox_DX, SLOT(SetStep(double)));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName( tr( "GEOM_CIRCLE" ) );
 
@@ -155,39 +161,40 @@ void BasicGUI_CircleDlg::Init()
 //=================================================================================
 void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
 {
-  disconnect( mySelection, 0, this, 0 );
+  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
   myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 
   switch ( constructorId )
   {
     case 0:
       {
-				Group3Pnts->hide();
-				resize(0, 0);
-				GroupPntVecR->show();
-
-				myEditCurrentArgument = GroupPntVecR->LineEdit1;
-				GroupPntVecR->LineEdit1->setText("");
- 				GroupPntVecR->LineEdit2->setText("");
-				break;
+	Group3Pnts->hide();
+	resize(0, 0);
+	GroupPntVecR->show();
+	
+	myEditCurrentArgument = GroupPntVecR->LineEdit1;
+	GroupPntVecR->LineEdit1->setText("");
+	GroupPntVecR->LineEdit2->setText("");
+	break;
       }
-    case 1:
-      {
-				GroupPntVecR->hide();
-				resize( 0, 0 );
-				Group3Pnts->show();
-
-				myEditCurrentArgument = Group3Pnts->LineEdit1;
-				Group3Pnts->LineEdit1->setText("");
-				Group3Pnts->LineEdit2->setText("");
-				Group3Pnts->LineEdit3->setText("");
-				break;
+  case 1:
+    {
+      GroupPntVecR->hide();
+      resize( 0, 0 );
+      Group3Pnts->show();
+      
+      myEditCurrentArgument = Group3Pnts->LineEdit1;
+      Group3Pnts->LineEdit1->setText("");
+      Group3Pnts->LineEdit2->setText("");
+      Group3Pnts->LineEdit3->setText("");
+      break;
       }
   }
   
   myEditCurrentArgument->setFocus();
-	globalSelection( GEOM_POINT );
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  globalSelection( GEOM_POINT );
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
 //=================================================================================
@@ -231,7 +238,7 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
   
-  if ( mySelection->IObjectCount() != 1 )  
+  if ( IObjectCount() != 1 )  
   {
     if      ( myEditCurrentArgument == GroupPntVecR->LineEdit1 ) myPoint  = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) myDir    = GEOM::GEOM_Object::_nil();
@@ -243,7 +250,7 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
 
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {  
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
@@ -308,9 +315,10 @@ void BasicGUI_CircleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection( GEOM_POINT );
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  myGeomGUI->SetState( 0 );
+  // myGeometryGUI->SetState( 0 );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -332,7 +340,7 @@ void BasicGUI_CircleDlg::enterEvent(QEvent* e)
 //=================================================================================
 void BasicGUI_CircleDlg::DeactivateActiveDialog()
 {
-  myGeomGUI->SetState( -1 );
+  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -360,7 +368,7 @@ double BasicGUI_CircleDlg::getRadius() const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_CircleDlg::createOperation()
 {
-  return getGeomEngine()->GetICurvesOperations( getStudyId() );
+  return myGeometryGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
 }
 
 //=================================================================================
@@ -369,7 +377,7 @@ GEOM::GEOM_IOperations_ptr BasicGUI_CircleDlg::createOperation()
 //=================================================================================
 static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Object_var& thePnt2 )
 {
-	return thePnt1->_is_equivalent( thePnt2 );
+  return thePnt1->_is_equivalent( thePnt2 );
 }
 
 //=================================================================================
@@ -378,13 +386,13 @@ static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Obje
 //=================================================================================
 bool BasicGUI_CircleDlg::isValid( QString& msg )
 {
-	const int id = getConstructorId();
-	if ( id == 0 )
-		return !myPoint->_is_nil() && !myDir->_is_nil() && getRadius() > 0;
-	else if ( id == 1 )
-		return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
-		       !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
-	return false;
+  const int id = getConstructorId();
+  if ( id == 0 )
+    return !myPoint->_is_nil() && !myDir->_is_nil() && getRadius() > 0;
+  else if ( id == 1 )
+    return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
+      !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
+  return false;
 }
 
 //=================================================================================
@@ -394,9 +402,9 @@ bool BasicGUI_CircleDlg::isValid( QString& msg )
 bool BasicGUI_CircleDlg::execute( ObjectList& objects )
 {
   bool res = false;
-
+  
   GEOM::GEOM_Object_var anObj;
-
+  
   switch ( getConstructorId() )
   {
   case 0 :
@@ -408,10 +416,10 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
     res = true;
     break;
   }
-
+  
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
-
+  
   return res;
 }
 
@@ -421,7 +429,7 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_CircleDlg::closeEvent( QCloseEvent* e )
 {
-  myGeomGUI->SetState( -1 );
+  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 

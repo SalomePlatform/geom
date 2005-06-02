@@ -48,11 +48,11 @@ class GEOMBase_Skeleton : public DlgRef_Skeleton_QTD, public GEOMBase_Helper
     Q_OBJECT
 
 public:
-    GEOMBase_Skeleton(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    GEOMBase_Skeleton(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~GEOMBase_Skeleton();
 
 private :
-    void Init(SALOME_Selection* Sel);
+    void Init();
 
 protected:
     void closeEvent(QCloseEvent* e);
@@ -60,9 +60,9 @@ protected:
     void initName( const char* thePrefix = 0 ); // initialize "Name" field with a string "thePrefix_X" (Vertex_3)
     const char* getNewObjectName() const; // returns contents of "Name" field
     int getConstructorId() const; // returns id of a selected "constructor" radio button or '-1' in case of error
+    virtual SUIT_Desktop* getDesktop() const;
 
     QLineEdit* myEditCurrentArgument;   /* Current LineEdit */
-    SALOME_Selection* mySelection;      /* User shape selection */
     GEOMBase* myGeomBase; // SAN -- TO BE REMOVED !!!
     GeometryGUI* myGeomGUI;             /* reference GEOM GUI */
 

@@ -40,24 +40,24 @@ img_whs19 { border:none; width:244px; height:214px; border-style:none; }
 p.whs20 { font-family:'Times New Roman' , serif; font-size:14pt; }
 img_whs21 { border:none; width:239px; height:214px; border-style:none; }
 img_whs22 { width:20px; height:20px; border-style:none; }
-img_whs23 { border:none; width:263px; height:250px; }
+img_whs23 { border:none; width:263px; height:250px; border-style:none; }
 img_whs24 { border:none; width:150px; height:131px; border-style:none; }
 p.whs25 { font-size:14pt; font-weight:bold; }
 p.whs26 { font-size:12pt; margin-left:40px; font-weight:bold; }
-img_whs27 { border:none; width:186px; height:250px; }
+img_whs27 { border:none; width:186px; height:250px; border-style:none; }
 p.whs28 { font-size:12pt; font-weight:bold; }
-img_whs29 { border:none; width:214px; height:250px; }
+img_whs29 { border:none; width:214px; height:250px; border-style:none; }
 img_whs30 { border:none; width:200px; height:214px; border-style:none; }
 img_whs31 { border:none; width:176px; height:214px; border-style:none; }
-img_whs32 { border:none; width:348px; height:90px; }
+img_whs32 { border:none; width:348px; height:90px; border-style:none; }
 img_whs33 { border:none; width:198px; height:250px; border-style:none; }
 img_whs34 { border:none; width:150px; height:136px; border-style:none; }
-img_whs35 { border:none; width:216px; height:250px; }
+img_whs35 { border:none; width:216px; height:250px; border-style:none; }
 img_whs36 { border:none; width:150px; height:132px; border-style:none; }
 img_whs37 { border:none; width:22px; height:22px; border-style:none; }
 p.whs38 { font-size:12pt; font-weight:normal; }
 p.whs39 { margin-left:40px; font-size:12pt; font-weight:bold; }
-img_whs40 { border:none; width:191px; height:250px; }
+img_whs40 { border:none; width:191px; height:250px; border-style:none; }
 p.whs41 { font-size:12pt; margin-left:40px; text-indent:-40px; }
 p.whs42 { font-size:12pt; margin-left:40px; text-indent:-40px; font-weight:bold; }
 p.whs43 { margin-left:80px; font-size:12pt; text-indent:-40px; }
@@ -65,7 +65,7 @@ img_whs44 { border:none; width:200px; height:231px; border-style:none; }
 img_whs45 { border:none; width:185px; height:231px; border-style:none; }
 p.whs46 { font-size:12pt; text-indent:-68px; margin-left:72px; }
 p.whs47 { font-size:12pt; text-indent:-68px; margin-left:112px; }
-img_whs48 { border:none; width:240px; height:250px; }
+img_whs48 { border:none; width:240px; height:250px; border-style:none; }
 p.whs49 { font-size:12pt; margin-left:112px; text-indent:-112px; }
 p.whs50 { font-size:12pt; text-indent:-112px; margin-left:152px; }
 img_whs51 { border:none; width:200px; height:150px; float:none; border-style:none; }
@@ -73,11 +73,13 @@ img_whs52 { border:none; width:204px; height:150px; border-style:none; }
 p.whs53 { font-size:12pt; text-indent:-40px; margin-left:80px; }
 p.whs54 { font-size:12pt; margin-left:80px; text-indent:-80px; }
 p.whs55 { font-size:12pt; margin-left:80px; text-indent:-68px; }
-img_whs56 { border:none; width:276px; height:192px; }
+img_whs56 { border:none; width:276px; height:192px; border-style:none; }
 p.whs57 { font-size:12pt; margin-left:0px; }
 img_whs58 { border:none; width:209px; height:138px; border-style:none; }
 img_whs59 { border:none; width:192px; height:138px; border-style:none; }
 img_whs60 { border:none; width:191px; height:138px; border-style:none; }
+img_whs61 { border:none; width:23px; height:22px; border-style:none; }
+img_whs62 { border:none; width:320px; height:143px; border-style:none; }
 -->
 </style><script type="text/javascript" language="JavaScript">
 <!--
@@ -192,7 +194,10 @@ else
  point on edge</a></p></li>
 	
 	<li class=kadov-p><p class="whs1">&nbsp;<a 
- href="#CheckFreeBound">Check free boundaries</a><a 
+ href="#CheckFreeBound">Check free boundaries</a></p></li>
+	
+	<li class=kadov-p><p class="whs1">&nbsp;<a 
+ href="#Check_free_faces">Check free faces</a><a 
  HREF="#_Toc57113183">&#9;</a></p></li>
 </ul>
 
@@ -488,8 +493,8 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4)) 
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b>Arguments: <span style="font-weight: normal;">Name 
- + 1 shape + contour</span> <span style="font-weight: normal;">(</span></b>Wire, 
+<p class="whs4"><b style="font-weight: bold;">Arguments: <span 
+ style="font-weight: normal;">Name + 1 shape + contour</span> <span style="font-weight: normal;">(</span></b>Wire, 
  or a set of Edges) + mode of closure (by vertex or by edge)</p>
 
 <p class="whs4">&nbsp;</p>
@@ -532,7 +537,7 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4)) 
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b>Arguments:</b></p>
+<p class="whs4"><b style="font-weight: bold;">Arguments:</b></p>
 
 <ul type="disc" class="whs3">
 	
@@ -600,8 +605,8 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4)) 
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b>Arguments: </b>Name + 1 shape + Wires which 
- should be removed.</p>
+<p class="whs4"><b style="font-weight: bold;">Arguments: </b>Name 
+ + 1 shape + Wires which should be removed.</p>
 
 <p class="whs4"><span style="font-weight: bold;"><B>Remove all 
  holes </B></span>checkbox allows to fill all holes of a definite shape.</p>
@@ -657,8 +662,8 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4)) 
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b>Arguments:</b> Name + 1 or more shapes + 
- 1 value (sew precision).</p>
+<p class="whs4"><b style="font-weight: bold;">Arguments:</b> 
+ Name + 1 or more shapes + 1 value (sew precision).</p>
 
 <p class="whs4"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><span style="font-weight: bold;"><B>Detect 
  </B></span>button allows to display the number of free boundaries in your 
@@ -770,9 +775,9 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4)) 
 
 <p class="whs46"><i><span style="font-style: italic;"><I>&nbsp;</I></span></i></p>
 
-<p class="whs46"><b>Arguments: <span style="font-weight: normal;">Name 
- +</span> </b>1 <i><span style="font-style: normal;">Compound + Tolerance 
- value</span></i></p>
+<p class="whs46"><b style="font-weight: bold;">Arguments: 
+ <span style="font-weight: normal;">Name +</span> </b>1 <i><span style="font-style: normal;">Compound 
+ + Tolerance value</span></i></p>
 
 <p class="whs46">&nbsp;</p>
 
@@ -807,7 +812,7 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4)) 
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
+<p class="whs4"><b>Result:</b> GEOM_Object. </p>
 
 <p class="whs4">&nbsp;</p>
 
@@ -842,6 +847,45 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4)) 
 <p class="whs57">&nbsp;</p>
 
 <p class="whs57">&nbsp;</p>
+
+<p class="whs57">&nbsp;</p>
+
+<p class="whs57"><a name=Check_free_faces><img src="../image10.gif" width="23px" height="22px" border="0" class="img_whs61"> <span style="font-size: 14pt; font-weight: bold;"><font size=4 style="font-size:14pt;"><B>Check free 
+ faces</B></font></span></a></p>
+
+<p class="whs57">&nbsp;</p>
+
+<p class="whs4"><b>Description: </b>Retrieves all free faces 
+ from a given shape.<span> A free face is a face not shared between two 
+ shells of the shape. </span></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><b>Result:</b> GEOM_Object. Returns a list 
+ of IDs of all free faces, contained in the shape.</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><b>TUI Command :</b><i><span style="font-style: italic;"> 
+ <I></i>GetFreeFacesIDs(Shape)</I></span>, where Shape is a shape to be checked.</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><b style="font-weight: bold;">Arguments:</b> 
+ Shape</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs38"><b style="font-weight: bold;">Dialog 
+ Box:</b></p>
+
+<p class="whs38">&nbsp;</p>
+
+<p class="whs16"><img src="../image26.gif" width="320px" height="143px" border="0" class="img_whs62"></p>
+
+<p class="whs41">&nbsp;</p>
+
+<p class="whs41">&nbsp;</p>
 
 <script type="text/javascript" language="javascript1.2">
 <!--

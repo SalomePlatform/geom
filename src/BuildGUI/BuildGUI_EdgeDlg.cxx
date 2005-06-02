@@ -32,8 +32,13 @@
 #include <Precision.hxx>
 
 #include "utilities.h"
-#include "QAD_Desktop.h"
 #include "GEOMImpl_Types.hxx"
+
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BuildGUI_EdgeDlg()
@@ -42,11 +47,11 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_EdgeDlg::BuildGUI_EdgeDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BuildGUI_EdgeDlg::BuildGUI_EdgeDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_EDGE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_EDGE")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_EDGE_TITLE"));
 
@@ -109,7 +114,8 @@ void BuildGUI_EdgeDlg::Init()
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName( tr( "GEOM_EDGE") );
 }
@@ -149,7 +155,7 @@ void BuildGUI_EdgeDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
   
-  if(mySelection->IObjectCount() != 1) {
+  if(IObjectCount() != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkPoint1 = false;
     else if(myEditCurrentArgument == GroupPoints->LineEdit2)
@@ -159,7 +165,7 @@ void BuildGUI_EdgeDlg::SelectionIntoArgument()
   
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), testResult );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
   
   if(!testResult)
     return;
@@ -225,7 +231,8 @@ void BuildGUI_EdgeDlg::SetEditCurrentArgument()
 void BuildGUI_EdgeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   globalSelection( GEOM_POINT );
   displayPreview();
 }

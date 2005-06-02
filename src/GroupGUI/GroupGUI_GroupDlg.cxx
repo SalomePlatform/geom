@@ -28,11 +28,15 @@
 
 #include "GroupGUI_GroupDlg.h"
 
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_Study.h"
+#include "SalomeApp_SelectionMgr.h"
+
 #include "GEOMBase.h"
 
 #include "GEOMImpl_Types.hxx"
-
-#include "QAD_Desktop.h"
 
 #include <qlabel.h>
 #include <qlistbox.h>
@@ -42,23 +46,25 @@
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_MapOfInteger.hxx>
 
+
+
+
 GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, 
 				     QWidget* parent, 
 				     const char* name,
-				     SALOME_Selection* Sel, 
 				     bool modal, 
 				     WFlags fl)
-  :GEOMBase_Skeleton( parent, "GroupGUI_GroupDlg", Sel, false,
-		     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu),
+  :GEOMBase_Skeleton( parent, "GroupGUI_GroupDlg", false,
+		      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu),
    myMode( mode ), 
    myBusy( false )
 {
-  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_VERTEX" ) ) );
-  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_EDGE" ) ) );
-  QPixmap image2( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_FACE" ) ) );
-  QPixmap image3( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_SOLID" ) ) );
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_VERTEX" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_EDGE" ) ) );
+  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_FACE" ) ) );
+  QPixmap image3( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_SOLID" ) ) );
   
-  QPixmap iconSelect( QAD_Desktop::getResourceManager()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap iconSelect( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
   setCaption( myMode == CreateGroup ? tr( "CREATE_GROUP_TITLE" ) : tr( "EDIT_GROUP_TITLE" ) );
 
@@ -110,7 +116,7 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode,
   aMedLayout->addWidget( myAddBtn, 2, 3 );
   aMedLayout->addWidget( myRemBtn, 3, 3 );
 
-  Init( Sel );
+  Init();
 }
 
 GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
@@ -122,10 +128,8 @@ GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void GroupGUI_GroupDlg::Init( SALOME_Selection* Sel )
+void GroupGUI_GroupDlg::Init()
 {
-  mySelection = Sel;
-
   // san -- TODO: clear selected sub-shapes...
 
   if ( myMode == CreateGroup ) {
@@ -137,10 +141,10 @@ void GroupGUI_GroupDlg::Init( SALOME_Selection* Sel )
     connect( GroupConstructors, SIGNAL( clicked( int ) ),            this, SLOT( ConstructorsClicked( int ) ) );
     connect( mySelBtn,          SIGNAL( clicked() ),                 this, SLOT(SetEditCurrentArgument()));
   }
-  else if ( myMode == EditGroup && Sel->IObjectCount() ) {
+  else if ( myMode == EditGroup && IObjectCount() ) {
     Standard_Boolean aResult = Standard_False;
     GEOM::GEOM_Object_var anObj =
-      GEOMBase::ConvertIOinGEOMObject( Sel->firstIObject(), aResult );
+      GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
     
     if ( aResult && !CORBA::is_nil( anObj ) && anObj->GetType() == GEOM_GROUP ) {
       myGroup = anObj;
@@ -170,7 +174,8 @@ void GroupGUI_GroupDlg::Init( SALOME_Selection* Sel )
 
   connect( mySelSubBtn, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( mySelAllBtn, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( mySelection,SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   connect( mySelAllBtn, SIGNAL( clicked() ), this, SLOT( selectAllSubShapes() ) );
   connect( myAddBtn,    SIGNAL( clicked() ), this, SLOT( add() ) );
   connect( myRemBtn,    SIGNAL( clicked() ), this, SLOT( remove() ) );
@@ -223,7 +228,8 @@ void GroupGUI_GroupDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  connect( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
 }
@@ -274,10 +280,10 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
   if ( myEditCurrentArgument ) {  // Selection of a main shape is active
     myEditCurrentArgument->setText( "" );
     
-    if ( mySelection->IObjectCount() == 1 ) {
+    if ( IObjectCount() == 1 ) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
       if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
         myMainObj = anObj;
@@ -297,10 +303,10 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     myIdList->blockSignals( true );
     myIdList->clearSelection();
 
-    if ( mySelection->IObjectCount() == 1 ) {
+    if ( IObjectCount() == 1 ) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-	GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+	GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
       
       if ( aResult && !anObj->_is_nil() ) {
 	QMap<int, int> aMap;
@@ -308,7 +314,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 	  aMap.insert( myIdList->item( i )->text().toInt(), i );
 	
 	TColStd_IndexedMapOfInteger aMapIndex;
-	mySelection->GetIndex( mySelection->firstIObject(), aMapIndex );
+	((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
 	for ( int ii = 1, nn = aMapIndex.Extent(); ii <= nn; ii++ ) {
 	  if ( aMap.contains( aMapIndex( ii ) ) )
 	    myIdList->setSelected( aMap[aMapIndex( ii )], true );
@@ -379,14 +385,14 @@ void GroupGUI_GroupDlg::add()
   for ( int i = 0, n = myIdList->count(); i < n; i++ )
     aMap.Add( myIdList->item( i )->text().toInt() );
 
-  if ( mySelection->IObjectCount() == 1 ) {
+  if ( IObjectCount() == 1 ) {
     Standard_Boolean aResult = Standard_False;
     GEOM::GEOM_Object_var anObj =
-      GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+      GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
     if ( aResult && !anObj->_is_nil() ) {
       TColStd_IndexedMapOfInteger aMapIndex;
-      mySelection->GetIndex( mySelection->firstIObject(), aMapIndex );
+      ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
       QListBoxItem* anItem;
       bool isBlocked = myIdList->signalsBlocked();
       myIdList->blockSignals( true );
@@ -483,14 +489,14 @@ void GroupGUI_GroupDlg::activateSelection()
 void GroupGUI_GroupDlg::updateState()
 {
   bool isAdd = false;
-  if ( mySelection->IObjectCount() == 1 ) {
+  if ( IObjectCount() == 1 ) {
     Standard_Boolean aResult = Standard_False;
     GEOM::GEOM_Object_var anObj =
-      GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+      GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
     if ( aResult && !anObj->_is_nil() ) {
       TColStd_IndexedMapOfInteger aMapIndex;
-      mySelection->GetIndex( mySelection->firstIObject(), aMapIndex );
+      ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
       isAdd = aMapIndex.Extent() > 0;
     }
   }
@@ -535,8 +541,9 @@ void GroupGUI_GroupDlg::highlightSubShapes()
     if ( myIdList->isSelected( ii ) )
       anIds.Add( myIdList->item( ii )->text().toInt() );    
 
-  mySelection->ClearIObjects();
-  mySelection->AddOrRemoveIndex( aSh->getIO(), anIds, false, true );
+  SalomeApp_SelectionMgr* aSelMgr = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+  aSelMgr->clearSelected();
+  aSelMgr->AddOrRemoveIndex( aSh->getIO(), anIds, false );
 
   myBusy = false;
 
@@ -564,9 +571,9 @@ GEOM::GEOM_IOperations_ptr GroupGUI_GroupDlg::createOperation()
 //=================================================================================
 bool GroupGUI_GroupDlg::isValid( QString& theMessage )
 {
-  QAD_Study* study = getStudy();
+  SalomeApp_Study* study = getStudy();
   ASSERT(study);
-  RETURN_WITH_MSG  ( !study->getStudyDocument()->GetProperties()->IsLocked(), tr( "GEOM_STUDY_LOCKED" ) )
+  RETURN_WITH_MSG  ( !study->studyDS()->GetProperties()->IsLocked(), tr( "GEOM_STUDY_LOCKED" ) )
 
   if ( myMode == CreateGroup ) {
     RETURN_WITH_MSG( !CORBA::is_nil( myMainObj ), tr( "NO_MAIN_OBJ" ) )
@@ -615,13 +622,13 @@ bool GroupGUI_GroupDlg::execute( ObjectList& objects )
       return false;
   }
 
-  QAD_Study* study = getStudy();
+  SalomeApp_Study* study = getStudy();
   if ( study ) {
     string IOR = GEOMBase::GetIORFromObject( aGroup );
     if ( IOR != "" ) {
-      SALOMEDS::SObject_var SO = study->getStudyDocument()->FindObjectIOR( IOR.c_str() );
-      if ( !SO->_is_nil() ) { 
-	SALOMEDS::StudyBuilder_var aBuilder = study->getStudyDocument()->NewBuilder();
+      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
+      if ( SO ) { 
+	_PTR(StudyBuilder) aBuilder (study->studyDS()->NewBuilder());
 	aBuilder->SetName( SO, getNewObjectName() );
       }
     }

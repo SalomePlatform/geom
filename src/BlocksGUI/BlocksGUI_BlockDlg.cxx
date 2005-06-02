@@ -27,25 +27,28 @@
 
 #include "BlocksGUI_BlockDlg.h"
 
-#include "QAD_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
 #include "GEOMImpl_Types.hxx"
 
 using namespace std;
+
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BlocksGUI_BlockDlg()
 // purpose  : Constructs a BlocksGUI_BlockDlg which is a child of 'parent'.
 //=================================================================================
 BlocksGUI_BlockDlg::BlocksGUI_BlockDlg (QWidget* parent,
-                                        SALOME_Selection* Sel,
                                         bool modal)
-     : GEOMBase_Skeleton(parent, "BlockDlg", Sel, modal,
+     : GEOMBase_Skeleton(parent, "BlockDlg", modal,
                          WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0 (QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_DLG_BLOCK_2F")));
-  QPixmap image1 (QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_DLG_BLOCK_6F")));
-  QPixmap imageS (QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BLOCK_2F")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BLOCK_6F")));
+  QPixmap imageS (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_BLOCK_TITLE"));
 
@@ -129,7 +132,8 @@ void BlocksGUI_BlockDlg::Init()
   connect(Group6F->PushButton5, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(Group6F->PushButton6, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   // init controls and fields
   initName(tr("GEOM_BLOCK"));
@@ -182,7 +186,8 @@ void BlocksGUI_BlockDlg::ConstructorsClicked (int constructorId)
 
   globalSelection(GEOM_FACE);
   SelectionIntoArgument();
-//  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
 //=================================================================================
@@ -217,7 +222,7 @@ void BlocksGUI_BlockDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
 
-  if (mySelection->IObjectCount() != 1)
+  if (IObjectCount() != 1)
   {
     if (myEditCurrentArgument == Group2F->LineEdit1 ||
         myEditCurrentArgument == Group6F->LineEdit1)
@@ -239,7 +244,7 @@ void BlocksGUI_BlockDlg::SelectionIntoArgument()
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
 
   if (!testResult || CORBA::is_nil( aSelectedObject ))
     return;
@@ -304,7 +309,8 @@ void BlocksGUI_BlockDlg::SetEditCurrentArgument()
 void BlocksGUI_BlockDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   globalSelection(GEOM_FACE);
 

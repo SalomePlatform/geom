@@ -31,6 +31,7 @@
 
 #include "GEOM_Displayer.h"
 #include "SALOME_Prs.h"
+#include "SALOME_ListIO.hxx"
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 
@@ -40,10 +41,11 @@
 
 typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 
+class SalomeApp_Study;
+class SUIT_Desktop;
+class SUIT_ViewWindow;
 class GEOM_Operation;
-class QAD_Study;
 class TopoDS_Shape;
-class QAD_ViewFrame;
 class TColStd_MapOfInteger;
 
 //================================================================
@@ -105,8 +107,8 @@ protected:
 
   void updateObjBrowser() const;
   int  getStudyId      () const;
-  QAD_Study* getStudy  () const;
-  bool checkViewFrame  ();
+  SalomeApp_Study* getStudy  () const;
+  bool checkViewWindow ();
 
   bool onAccept( const bool publish = true, const bool useTransaction = true );
   // This method should be called from "OK" button handler.
@@ -125,6 +127,21 @@ protected:
 
   inline void setPrefix( const QString& prefix ) { myPrefix = prefix; }
   QString getPrefix( GEOM::GEOM_Object_ptr = GEOM::GEOM_Object::_nil() ) const;
+
+  const SALOME_ListIO& selectedIO();
+  // Function returns a list of SALOME_InteractiveObject's from
+  // selection manager in GUI
+
+  int   IObjectCount() ;
+  // Function returns the number of selected objects
+  
+  Handle(SALOME_InteractiveObject) firstIObject() ;
+  // Function returns the first selected object in the list
+  // of selected objects
+
+  Handle(SALOME_InteractiveObject) lastIObject() ;
+  // Function returns the last selected object in the list
+  // of selected objects
 
   ////////////////////////////////////////////////////////////////////////////
   // Virtual methods, to be redefined in dialog classes
@@ -154,6 +171,7 @@ protected:
   bool IsPreview() {return isPreview;}
 
   GEOM_Displayer*             getDisplayer();
+  virtual SUIT_Desktop* getDesktop() const = 0;
 
 private:
   char* getEntry              ( GEOM::GEOM_Object_ptr ) const;
@@ -166,9 +184,10 @@ private:
   GEOM_Displayer*             myDisplayer;
   GEOM_Operation*             myCommand;
   GEOM::GEOM_IOperations_var  myOperation;
-  QAD_ViewFrame*              myViewFrame;
+  SUIT_ViewWindow*            myViewWindow;
   QString                     myPrefix;
   bool                        isPreview;
+  SALOME_ListIO               mySelected;
 
 };
 

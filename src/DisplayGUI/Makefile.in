@@ -44,15 +44,15 @@ LIB_SRC = 	DisplayGUI.cxx
 
 LIB_MOC =
 
-LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl
+LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
 
 LIB_SERVER_IDL = 
 
 # additionnal information to compil and link file
 
-CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
+CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) $(BOOST_CPPFLAGS) -I${KERNEL_ROOT_DIR}/include/salome -I${GUI_ROOT_DIR}/include/salome
+CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome -I${GUI_ROOT_DIR}/include/salome
 
-LDFLAGS += -lGEOMGUI
+LDFLAGS += -lGEOM
 
 @CONCLUDE@

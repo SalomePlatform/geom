@@ -37,15 +37,15 @@
 class BlocksGUI : public GEOMGUI
 {
  protected:
-  BlocksGUI(); // hide constructor to avoid direct creation
+  BlocksGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
 
  public:
   ~BlocksGUI();
 
   // Get the only BuildGUI object
-  static BlocksGUI* GetBlocksGUI();
+  static BlocksGUI* GetBlocksGUI( GeometryGUI* parent );
 
-  bool OnGUIEvent (int theCommandID, QAD_Desktop* parent);
+  bool OnGUIEvent (int theCommandID, SUIT_Desktop* parent);
 
 private:
   static BlocksGUI* myGUIObject;        // the only BlocksGUI object

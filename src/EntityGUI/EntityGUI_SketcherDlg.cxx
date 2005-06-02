@@ -29,11 +29,16 @@
 #include "EntityGUI_SketcherDlg.h"
 #include "Sketcher_Profile.hxx"
 #include "GEOM_Displayer.h"
-#include "QAD_Config.h"
-#include "QAD_Desktop.h"
-#include "QAD_MessageBox.h"
+
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SUIT_MessageBox.h"
+#include "SUIT_ResourceMgr.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
 #include <qpushbutton.h>
+#include <qlabel.h>
 
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>
@@ -56,11 +61,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-:EntityGUI_Skeleton_QTD(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose), GEOMBase_Helper(), myIsAllAdded( false )
+EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent, const char* name, bool modal, WFlags fl)
+  :EntityGUI_Skeleton_QTD(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose), GEOMBase_Helper(), myIsAllAdded( false ),
+   myGeometryGUI( GUI )
 {
-  mySelection = Sel;
-  GeometryGUI::GetGeomGUI()->SetActiveDialogBox(this);
+  myGeometryGUI->SetActiveDialogBox(this);
 
   if ( !name ) setName("EntityGUI_SketcherDlg");
 
@@ -72,9 +77,9 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(QWidget* parent, const char* name, 
   GroupDest2->close(TRUE);
   GroupDest3->close(TRUE);
 
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_UNDO")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_REDO")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_UNDO")));
+  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_REDO")));
 
   setCaption(tr("GEOM_SKETCHER_TITLE"));
 
@@ -191,19 +196,19 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(QWidget* parent, const char* name, 
   connect(Group4Spin->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(Group4Spin->SpinBox_DS, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalDefaultStepValueChanged(double)), Group1Spin->SpinBox_DX, SLOT(SetStep(double)));
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalDefaultStepValueChanged(double)), Group2Spin->SpinBox_DX, SLOT(SetStep(double)));
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalDefaultStepValueChanged(double)), Group2Spin->SpinBox_DY, SLOT(SetStep(double)));
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalDefaultStepValueChanged(double)), Group3Spin->SpinBox_DX, SLOT(SetStep(double)));
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalDefaultStepValueChanged(double)), Group3Spin->SpinBox_DY, SLOT(SetStep(double)));
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalDefaultStepValueChanged(double)), Group3Spin->SpinBox_DZ, SLOT(SetStep(double)));
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DX, SLOT(SetStep(double)));
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DY, SLOT(SetStep(double)));
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DZ, SLOT(SetStep(double)));
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DS, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group1Spin->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group2Spin->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group2Spin->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3Spin->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3Spin->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3Spin->SpinBox_DZ, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DZ, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DS, SLOT(SetStep(double)));
 
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(GeometryGUI::GetGeomGUI(), SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
   Init();
 }
@@ -215,7 +220,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(QWidget* parent, const char* name, 
 //=================================================================================
 EntityGUI_SketcherDlg::~EntityGUI_SketcherDlg()
 {
-	GeometryGUI::GetGeomGUI()->SetActiveDialogBox( 0 );
+	myGeometryGUI->SetActiveDialogBox( 0 );
 }
 
 
@@ -239,8 +244,7 @@ void EntityGUI_SketcherDlg::Init()
   myLastY2 = 0.0;
 
   /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  double step = St.toDouble();
+  double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
   /* min, max, step and decimals for spin boxes */
   Group1Spin->SpinBox_DX->RangeStepAndValidator(-999999.999, 999999.999, step, 3);
@@ -275,7 +279,7 @@ void EntityGUI_SketcherDlg::Init()
 //=================================================================================
 void EntityGUI_SketcherDlg::InitClick()
 {
-  disconnect(mySelection, 0, this, 0);
+  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
 
   Group1Sel->hide();
   Group1Spin->hide();
@@ -383,7 +387,8 @@ void EntityGUI_SketcherDlg::PointClicked(int constructorId)
     {  // Selection
       mySketchType = PT_SEL;
       myEditCurrentArgument = Group1Sel->LineEdit1;
-      connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+      connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	      SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
       Group1Sel->show();
       Group1Sel->buttonApply->setFocus();
       SelectionIntoArgument();
@@ -632,8 +637,8 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
     // Verify validity of commands
     if ( myCommand.count() <= 2 )
     {
-      QAD_MessageBox::error1( QAD_Application::getDesktop(),
-        tr( "GEOM_ERROR_STATUS" ), tr( "CANNOT_CLOSE" ), tr( "BUT_OK" ) );
+      SUIT_MessageBox::error1( SUIT_Session::session()->activeApplication()->desktop(),
+			       tr( "GEOM_ERROR_STATUS" ), tr( "CANNOT_CLOSE" ), tr( "BUT_OK" ) );
       return;
     }
     
@@ -763,16 +768,16 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
   myX = myLastX1;
   myY = myLastY1;
 
-  int nbSel = mySelection->IObjectCount();
+  int nbSel = IObjectCount();
   if ( nbSel == 1 && myEditCurrentArgument == Group1Sel->LineEdit1 )
   {
     Standard_Boolean aRes = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
     if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_VERTEX ) ) {
 	gp_Trsf aTrans;
-	gp_Ax3 aWPlane = GeometryGUI::GetGeomGUI()->GetWorkingPlane();
+	gp_Ax3 aWPlane = myGeometryGUI->GetWorkingPlane();
 
 	aTrans.SetTransformation(aWPlane);
 	BRepBuilderAPI_Transform aTransformation(aShape, aTrans, Standard_False);
@@ -822,7 +827,7 @@ void EntityGUI_SketcherDlg::LineEditReturnPressed()
   	/* so SelectionIntoArgument() is automatically called.           */
   	const QString objectUserName = myEditCurrentArgument->text();
   	QWidget* thisWidget = (QWidget*)this;
-  	if(GEOMBase::SelectionByNameInDialogs(thisWidget, objectUserName, mySelection))
+  	if(GEOMBase::SelectionByNameInDialogs(thisWidget, objectUserName, selectedIO()))
     	myEditCurrentArgument->setText(objectUserName);
   }
 }
@@ -834,12 +839,12 @@ void EntityGUI_SketcherDlg::LineEditReturnPressed()
 //=================================================================================
 void EntityGUI_SketcherDlg::DeactivateActiveDialog()
 {
-  GeometryGUI::GetGeomGUI()->SetState( -1 );
+  //myGeometryGUI->SetState( -1 );
 
   setEnabled( false );
   globalSelection();
-  disconnect(mySelection, 0, this, 0);
-  GeometryGUI::GetGeomGUI()->SetActiveDialogBox(0);
+  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  myGeometryGUI->SetActiveDialogBox(0);
 }
 
 
@@ -849,13 +854,14 @@ void EntityGUI_SketcherDlg::DeactivateActiveDialog()
 //=================================================================================
 void EntityGUI_SketcherDlg::ActivateThisDialog()
 {
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
+  myGeometryGUI->EmitSignalDeactivateDialog();
   setEnabled(true);
-  GeometryGUI::GetGeomGUI()->SetActiveDialogBox((QDialog*)this);
+  myGeometryGUI->SetActiveDialogBox((QDialog*)this);
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  GeometryGUI::GetGeomGUI()->SetState( 0 );
+  //myGeometryGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
 
   myEditCurrentArgument = Group1Sel->LineEdit1;
@@ -882,8 +888,8 @@ void EntityGUI_SketcherDlg::enterEvent(QEvent* e)
 //=================================================================================
 void EntityGUI_SketcherDlg::closeEvent(QCloseEvent* e)
 {
-  GeometryGUI::GetGeomGUI()->SetState( -1 );
-  disconnect(mySelection, 0, this, 0);
+  //myGeometryGUI->SetState( -1 );
+  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
   QDialog::closeEvent( e );
 }
 
@@ -1279,7 +1285,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     }
   }
     
-  gp_Ax3 myWPlane = GeometryGUI::GetGeomGUI()->GetWorkingPlane();
+  gp_Ax3 myWPlane = myGeometryGUI->GetWorkingPlane();
   GEOM::ListOfDouble_var WPlane = new GEOM::ListOfDouble;
   WPlane->length(9);
   WPlane[0] = myWPlane.Location().X();
@@ -1323,7 +1329,7 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
   getDisplayer()->SetToActivate( activate );
 
   // Make a reference to GEOM_Object
-  getDisplayer()->SetName( GeometryGUI::GetORB()->object_to_string( object ) );
+  getDisplayer()->SetName( myGeometryGUI->getApp()->orb()->object_to_string( object ) );
 
   // Create wire from applayed object
   TopoDS_Shape anApplyedWire, aLastSegment;
@@ -1390,30 +1396,14 @@ bool EntityGUI_SketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
   return true;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//=================================================================================
+// function : getDesktop()
+// purpose  :
+//=================================================================================
+SUIT_Desktop* EntityGUI_SketcherDlg::getDesktop() const
+{
+  return dynamic_cast<SUIT_Desktop*>( parentWidget() );
+}
 
 
 

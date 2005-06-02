@@ -37,16 +37,11 @@
 //=================================================================================
 class GEOMToolsGUI : public GEOMGUI
 {
-protected:
-  GEOMToolsGUI(); // hide constructor to avoid direct creation
-
 public :
+  GEOMToolsGUI( GeometryGUI* ); // hide constructor to avoid direct creation
   ~GEOMToolsGUI();
 
-  // Get the only GEOMToolsGUI object
-  static GEOMToolsGUI* GetGEOMToolsGUI();
-
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
 
 private:
   /* Import and export topology methods */
@@ -68,9 +63,6 @@ private:
   void OnTransparency();
   void OnNbIsos();
   void OnOpen();
-
-private:
-  static GEOMToolsGUI* myGUIObject;        // the only GEOMToolsGUI object
 };
 
 #endif

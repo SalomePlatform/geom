@@ -28,13 +28,14 @@
 
 #include "MeasureGUI_CheckShapeDlg.h"
 #include "MeasureGUI_1Sel1TextView_QTD.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
 
 #include "utilities.h"
-#include "QAD_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Tools.h"
 
 #include <qtextedit.h>
 #include <qlineedit.h>
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -50,12 +51,12 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_CheckShapeDlg::MeasureGUI_CheckShapeDlg( QWidget* parent, SALOME_Selection* Sel )
-: MeasureGUI_Skeleton( parent, "MeasureGUI_CheckShapeDlg", Sel )
+MeasureGUI_CheckShapeDlg::MeasureGUI_CheckShapeDlg( GeometryGUI* GUI, QWidget* parent )
+: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_CheckShapeDlg" )
 {
-  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_DLG_CHECKSHAPE" ) ) );
-  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_SELECT" ) ) );
 
   setCaption( tr( "GEOM_CHECK_TITLE" ) );
@@ -81,7 +82,7 @@ MeasureGUI_CheckShapeDlg::MeasureGUI_CheckShapeDlg( QWidget* parent, SALOME_Sele
   /***************************************************************/
 
   /* Initialisation */
-  Init( Sel );
+  Init();
 }
 
 
@@ -98,11 +99,11 @@ MeasureGUI_CheckShapeDlg::~MeasureGUI_CheckShapeDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_CheckShapeDlg::Init( SALOME_Selection* Sel )
+void MeasureGUI_CheckShapeDlg::Init()
 {
   mySelBtn = myGrp->PushButton1;
   mySelEdit = myGrp->LineEdit1;
-  MeasureGUI_Skeleton::Init( Sel );
+  MeasureGUI_Skeleton::Init();
 }
 
 //=================================================================================
@@ -123,7 +124,7 @@ bool MeasureGUI_CheckShapeDlg::getParameters ( bool& theIsValid, QString& theMsg
     }
     catch( const SALOME::SALOME_Exception& e )
     {
-      QtCatchCorbaException( e );
+      SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 

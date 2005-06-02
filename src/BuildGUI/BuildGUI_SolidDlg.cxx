@@ -27,12 +27,15 @@
 //  $Header: 
 
 #include "BuildGUI_SolidDlg.h"
-
-#include "QAD_Desktop.h"
 #include "GEOMImpl_Types.hxx"
+
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
 //Qt includes
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BuildGUI_SolidDlg()
@@ -41,11 +44,11 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_SolidDlg::BuildGUI_SolidDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BuildGUI_SolidDlg::BuildGUI_SolidDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SOLID")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SOLID")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_SOLID_TITLE"));
     
@@ -102,7 +105,8 @@ void BuildGUI_SolidDlg::Init()
   connect(GroupSolid->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupSolid->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(EnableNameField(bool)));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName(tr("GEOM_SOLID"));
 }
@@ -142,13 +146,13 @@ void BuildGUI_SolidDlg::SelectionIntoArgument()
   QString aString = "";
   
   myOkShells = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects(selectedIO(), aString);
   if (nbSel == 0) 
     return;
   if(nbSel != 1)
     aString = tr("%1_objects").arg(nbSel);
   
-  GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(), myShells);
+  GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), myShells);
   if (!myShells.length()) 
     return;
   
@@ -181,7 +185,8 @@ void BuildGUI_SolidDlg::SetEditCurrentArgument()
 void BuildGUI_SolidDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   globalSelection( GEOM_SHELL );
 }
 

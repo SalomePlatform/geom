@@ -7,6 +7,7 @@ using namespace std;
 #include "GEOMImpl_IMeasure.hxx"
 
 #include "GEOM_Function.hxx"
+#include "GEOM_PythonDump.hxx"
 
 #include "utilities.h"
 #include "OpUtil.hxx"
@@ -110,13 +111,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetCentreOfMass
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aCDG->GetEntry(), anEntry);
-  aDescr += anEntry + " = IMeasureOperations.MakeCentreOfMass(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += anEntry + ")";
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCDG << " = geompy.MakeCDG(" << theShape << ")";
 
   SetErrorCode(OK);
   return aCDG;
@@ -810,8 +805,9 @@ void GEOMImpl_IMeasureOperations::GetProblemShapes (const BRepCheck_Analyzer&   
   }
   TopAbs_ShapeEnum styp = theShape.ShapeType();
   BRepCheck_ListIteratorOfListOfStatus itl;
+  TopTools_ListOfShape empty;
   if (!theMap.IsBound(theShape)) {
-    theMap.Bind(theShape,TopTools_ListOfShape());
+    theMap.Bind(theShape,empty);
 
     if (!theAna.Result(theShape).IsNull()) {
       itl.Initialize(theAna.Result(theShape)->Status());

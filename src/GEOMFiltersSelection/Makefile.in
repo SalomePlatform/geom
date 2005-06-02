@@ -37,31 +37,30 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 # Libraries targets
 
 LIB = libGEOMFiltersSelection.la 
-LIB_SRC = GEOM_ShapeTypeFilter.cxx \
-	  GEOM_FaceFilter.cxx \
+LIB_SRC = GEOM_SelectionFilter.cxx \
 	  GEOM_EdgeFilter.cxx \
-	  GEOM_PreviewFilter.cxx \
+	  GEOM_FaceFilter.cxx \
+	  GEOM_TypeFilter.cxx \
+          GEOM_PreviewFilter.cxx \
 	  GEOM_LogicalFilter.cxx \
-	  GEOM_TypeFilter.cxx
-
-LIB_CLIENT_IDL = SALOME_Component.idl SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Exception.idl GEOM_Gen.idl SALOME_GenericObj.idl
+	  GEOM_OCCFilter.cxx
 
 # header files 
-EXPORT_HEADERS= GEOM_ShapeTypeFilter.hxx \
-		Handle_GEOM_ShapeTypeFilter.hxx \
-	        GEOM_FaceFilter.hxx \
-	        Handle_GEOM_FaceFilter.hxx \
-	        GEOM_EdgeFilter.hxx \
-	        Handle_GEOM_EdgeFilter.hxx \
-          GEOM_TypeFilter.hxx \
-          GEOM_LogicalFilter.hxx \
-		GEOM_PreviewFilter.hxx \
-		Handle_GEOM_PreviewFilter.hxx
+EXPORT_HEADERS= GEOM_SelectionFilter.h \
+		GEOM_EdgeFilter.h \
+		GEOM_FaceFilter.h \
+	   	GEOM_TypeFilter.h \
+                GEOM_PreviewFilter.h \
+		GEOM_LogicalFilter.h \
+		GEOM_OCCFilter.h
+
+LIB_CLIENT_IDL= GEOM_Gen.idl SALOMEDS.idl SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
+
 
 # additionnal information to compil and link file
-CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) $(PYTHON_INCLUDES) $(VTK_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -lSalomeGUI -L${KERNEL_ROOT_DIR}/lib/salome
+CPPFLAGS += $(QT_INCLUDES) $(OCC_INCLUDES) $(BOOST_CPPFLAGS) -I$(GUI_ROOT_DIR)/include/salome -I$(KERNEL_ROOT_DIR)/include/salome
+CXXFLAGS += $(QT_INCLUDES) $(BOOST_CPPFLAGS) -I$(GUI_ROOT_DIR)/include/salome -I$(KERNEL_ROOT_DIR)/include/salome
+LDFLAGS  += -L$(GUI_ROOT_DIR)/lib/salome -L$(KERNEL_ROOT_DIR)/lib/salome -lsuit 
 
 # additional file to be cleaned
 MOSTLYCLEAN =

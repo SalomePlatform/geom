@@ -34,10 +34,11 @@
 #include "BlocksGUI_ExplodeDlg.h"
 #include "BlocksGUI_PropagateDlg.h"
 
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "GeometryGUI.h"
 
-#include "QAD_Desktop.h"
-#include "QAD_MessageBox.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_MessageBox.h"
+#include "SUIT_Session.h"
 
 BlocksGUI* BlocksGUI::myGUIObject = 0;
 
@@ -45,10 +46,10 @@ BlocksGUI* BlocksGUI::myGUIObject = 0;
 // function : GetBlocksGUI()
 // purpose  : Get the only BlocksGUI object [ static ]
 //=======================================================================
-BlocksGUI* BlocksGUI::GetBlocksGUI()
+BlocksGUI* BlocksGUI::GetBlocksGUI( GeometryGUI* parent )
 {
   if ( myGUIObject == 0 )
-    myGUIObject = new BlocksGUI();
+    myGUIObject = new BlocksGUI( parent );
 
   return myGUIObject;
 }
@@ -57,8 +58,8 @@ BlocksGUI* BlocksGUI::GetBlocksGUI()
 // function : BlocksGUI()
 // purpose  : Constructor
 //=======================================================================
-BlocksGUI::BlocksGUI()
-     : GEOMGUI()
+BlocksGUI::BlocksGUI( GeometryGUI* parent )
+     : GEOMGUI( parent )
 {
 }
 
@@ -74,46 +75,43 @@ BlocksGUI::~BlocksGUI()
 // function : OnGUIEvent()
 // purpose  :
 //=======================================================================
-bool BlocksGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
+bool BlocksGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
-
-  SALOME_Selection* Sel = SALOME_Selection::Selection
-    (QAD_Application::getDesktop()->getActiveStudy()->getSelection());
+  getGeometryGUI()->EmitSignalDeactivateDialog();
 
   QDialog* aDlg = NULL;
 
   switch (theCommandID)
   {
     case 9999:
-      aDlg = new BlocksGUI_BlockDlg (parent, Sel);
+      aDlg = new BlocksGUI_BlockDlg (parent);
       break;
 
     case 9998:
-      aDlg = new BlocksGUI_TrsfDlg (parent, Sel);
+      aDlg = new BlocksGUI_TrsfDlg (parent);
       break;
 
     case 9997:
-      aDlg = new BlocksGUI_QuadFaceDlg (parent, Sel);
+      aDlg = new BlocksGUI_QuadFaceDlg (parent);
       break;
 
     case 9996:
 //      aDlg = new BlocksGUI_CheckMultiBlockDlg (parent, Sel);
-      QAD_MessageBox::warn1 (parent,
-                             QObject::tr("WRN_WARNING"), 
-                             QObject::tr("WRN_NOT_IMPLEMENTED"),
-                             QObject::tr("BUT_OK"));
+      SUIT_MessageBox::warn1 (parent,
+			      QObject::tr("WRN_WARNING"), 
+			      QObject::tr("WRN_NOT_IMPLEMENTED"),
+			      QObject::tr("BUT_OK"));
       break;
-
+      
     case 9995:
-      aDlg = new BlocksGUI_ExplodeDlg (parent, Sel);
+      aDlg = new BlocksGUI_ExplodeDlg (parent);
       break;
     case 99991:
-      aDlg = new BlocksGUI_PropagateDlg (parent, "", Sel);
+      aDlg = new BlocksGUI_PropagateDlg (parent, "");
       break;
 
     default:
-      parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;
   }
 
@@ -128,8 +126,8 @@ bool BlocksGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return BlocksGUI::GetBlocksGUI();
+    return BlocksGUI::GetBlocksGUI( parent );
   }
 }

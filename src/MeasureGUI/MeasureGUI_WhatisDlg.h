@@ -42,8 +42,8 @@ class MeasureGUI_WhatisDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-                                        MeasureGUI_WhatisDlg( QWidget* parent,
-                                                              SALOME_Selection* Sel );
+                                        MeasureGUI_WhatisDlg( GeometryGUI* GUI,
+							      QWidget*     parent );
                                         ~MeasureGUI_WhatisDlg();
 
 protected:
@@ -53,7 +53,7 @@ protected:
 
 private:
 
-    void                                Init( SALOME_Selection* Sel );
+    void                                Init();
     bool                                getParameters( QString& );
 
 private:

@@ -36,10 +36,34 @@ while step < 50 and g == None:
     step = step + 1
     time.sleep(4)
 geom = g._narrow( GEOM.GEOM_Gen )
-myBuilder = myStudy.NewBuilder()
 
-father = myStudy.FindComponent("GEOM")
-if father is None:
+myBuilder = None
+myStudyId = 0
+father    = None
+
+BasicOp  = None
+CurvesOp = None
+PrimOp   = None
+ShapesOp = None
+HealOp   = None
+InsertOp = None 
+BoolOp   = None 
+TrsfOp   = None
+LocalOp  = None
+MeasuOp  = None
+BlocksOp = None
+GroupOp  = None 
+
+def init_geom(theStudy):
+
+    global myStudy, myBuilder, myStudyId, BasicOp, CurvesOp, PrimOp, ShapesOp, HealOp
+    global InsertOp, BoolOp, TrsfOp, LocalOp, MeasuOp, BlocksOp, GroupOp, father
+    
+    myStudy = theStudy
+    myStudyId = myStudy._get_StudyId()
+    myBuilder = myStudy.NewBuilder()
+    father = myStudy.FindComponent("GEOM")
+    if father is None:
         father = myBuilder.NewComponent("GEOM")
         A1 = myBuilder.FindOrCreateAttribute(father, "AttributeName")
         FName = A1._narrow(SALOMEDS.AttributeName)
@@ -48,6 +72,27 @@ if father is None:
       	aPixmap = A2._narrow(SALOMEDS.AttributePixMap)
 	aPixmap.SetPixMap("ICON_OBJBROWSER_Geometry")
 	myBuilder.DefineComponentInstance(father,geom)
+        pass
+	 
+    # -----------------------------------------------------------------------------
+    # Assign Operations Interfaces
+    # -----------------------------------------------------------------------------
+
+    BasicOp  = geom.GetIBasicOperations    (myStudyId)
+    CurvesOp = geom.GetICurvesOperations   (myStudyId)
+    PrimOp   = geom.GetI3DPrimOperations   (myStudyId)
+    ShapesOp = geom.GetIShapesOperations   (myStudyId)
+    HealOp   = geom.GetIHealingOperations  (myStudyId)
+    InsertOp = geom.GetIInsertOperations   (myStudyId)
+    BoolOp   = geom.GetIBooleanOperations  (myStudyId)
+    TrsfOp   = geom.GetITransformOperations(myStudyId)
+    LocalOp  = geom.GetILocalOperations    (myStudyId)
+    MeasuOp  = geom.GetIMeasureOperations  (myStudyId)
+    BlocksOp = geom.GetIBlocksOperations   (myStudyId)
+    GroupOp  = geom.GetIGroupOperations   (myStudyId) 
+    pass
+
+init_geom(myStudy)
 
 #     *  Get name for sub-shape aSubObj of shape aMainObj
 #
@@ -81,23 +126,6 @@ def addToStudyInFather(aFather, aShape, aName):
 # -----------------------------------------------------------------------------
 
 ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
-
-# -----------------------------------------------------------------------------
-# Get Operations Interfaces
-# -----------------------------------------------------------------------------
-
-BasicOp  = geom.GetIBasicOperations    (myStudyId)
-CurvesOp = geom.GetICurvesOperations   (myStudyId)
-PrimOp   = geom.GetI3DPrimOperations   (myStudyId)
-ShapesOp = geom.GetIShapesOperations   (myStudyId)
-HealOp   = geom.GetIHealingOperations  (myStudyId)
-InsertOp = geom.GetIInsertOperations   (myStudyId)
-BoolOp   = geom.GetIBooleanOperations  (myStudyId)
-TrsfOp   = geom.GetITransformOperations(myStudyId)
-LocalOp  = geom.GetILocalOperations    (myStudyId)
-MeasuOp  = geom.GetIMeasureOperations  (myStudyId)
-BlocksOp = geom.GetIBlocksOperations   (myStudyId)
-GroupOp  = geom.GetIGroupOperations   (myStudyId)
 
 # -----------------------------------------------------------------------------
 # Basic primitives

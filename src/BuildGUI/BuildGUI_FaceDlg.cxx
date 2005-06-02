@@ -28,11 +28,15 @@
 
 using namespace std;
 #include "BuildGUI_FaceDlg.h"
-#include "QAD_Desktop.h"
 #include "GEOMImpl_Types.hxx"
+
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
 //Qt includes
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BuildGUI_FaceDlg()
@@ -41,11 +45,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_FaceDlg::BuildGUI_FaceDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BuildGUI_FaceDlg::BuildGUI_FaceDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_FACE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_FACE")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_FACE_TITLE"));
 
@@ -98,7 +102,8 @@ void BuildGUI_FaceDlg::Init()
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
   connect(GroupWire->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupWire->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));  
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName(tr("GEOM_FACE"));
 }
@@ -138,7 +143,7 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText("");
   QString aName;
   
-  int aNbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aName);
+  int aNbSel = GEOMBase::GetNameOfSelectedIObjects(selectedIO(), aName);
   
   if(aNbSel < 1)
     {
@@ -146,7 +151,7 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
       return;
     }
   
-  GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(), myWires);
+  GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), myWires);
   if (!myWires.length())
     return;
   if(aNbSel != 1)
@@ -183,7 +188,8 @@ void BuildGUI_FaceDlg::SetEditCurrentArgument()
 void BuildGUI_FaceDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   globalSelection( GEOM_WIRE );
 }
 

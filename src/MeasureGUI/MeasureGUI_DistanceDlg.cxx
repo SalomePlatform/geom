@@ -30,11 +30,12 @@
 #include "MeasureGUI_2Sel1LineEdit_QTD.h"
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
-#include "QAD_RightFrame.h"
-#include "QAD_Desktop.h"
-#include "OCCViewer_Viewer3d.h"
-#include "OCCViewer_Prs.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+
+#include "SUIT_Session.h"
+#include "SUIT_ViewWindow.h"
+#include "SOCC_Prs.h"
+#include "SOCC_ViewModel.h"
+#include "SalomeApp_Tools.h"
 
 #include <Geom_Plane.hxx>
 #include <TopoDS_Edge.hxx>
@@ -48,6 +49,7 @@
 #include "utilities.h"
 
 #include <qlineedit.h>
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -60,12 +62,12 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg( QWidget* parent, SALOME_Selection* Sel )
-: MeasureGUI_Skeleton( parent, "MeasureGUI_DistanceDlg", Sel )
+MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg( GeometryGUI* GUI, QWidget* parent )
+: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_DistanceDlg" )
 {
-  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_DLG_MINDIST" ) ) );
-  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
   "GEOM",tr( "ICON_SELECT" ) ) );
 
   setCaption( tr( "GEOM_MINDIST_TITLE" ) );
@@ -91,7 +93,7 @@ MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg( QWidget* parent, SALOME_Selectio
   /***************************************************************/
 
   /* Initialisation */
-  Init( Sel );
+  Init();
 }
 
 
@@ -108,7 +110,7 @@ MeasureGUI_DistanceDlg::~MeasureGUI_DistanceDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_DistanceDlg::Init( SALOME_Selection* Sel )
+void MeasureGUI_DistanceDlg::Init()
 {
   mySelBtn   = myGrp->PushButton1;
   mySelEdit  = myGrp->LineEdit1;
@@ -120,7 +122,7 @@ void MeasureGUI_DistanceDlg::Init( SALOME_Selection* Sel )
   connect( mySelEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( mySelBtn2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  MeasureGUI_Skeleton::Init( Sel );
+  MeasureGUI_Skeleton::Init();
 
 }
 
@@ -133,7 +135,7 @@ void MeasureGUI_DistanceDlg::SelectionIntoArgument()
 {
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
 
   if ( !testResult )
     aSelectedObject = GEOM::GEOM_Object::_nil();
@@ -194,7 +196,7 @@ bool MeasureGUI_DistanceDlg::getParameters( double& theDistance,
     }
     catch( const SALOME::SALOME_Exception& e )
     {
-      QtCatchCorbaException( e );
+      SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 
@@ -239,7 +241,7 @@ void MeasureGUI_DistanceDlg::LineEditReturnPressed()
   else
     myEditCurrentArgument = mySelEdit2;
 
-  if ( GEOMBase::SelectionByNameInDialogs( this, mySelEdit->text(), mySelection ) )
+  if ( GEOMBase::SelectionByNameInDialogs( this, mySelEdit->text(), selectedIO() ) )
     mySelEdit->setText( mySelEdit->text() );
 }
 
@@ -254,7 +256,8 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
   gp_Pnt aPnt1( 0, 0, 0 ), aPnt2( 0, 0, 0 );
   
   if ( myObj->_is_nil() || myObj2->_is_nil() || !getParameters( aDist, aPnt1, aPnt2 ) ||
-       QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC )
+       SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+       != OCCViewer_Viewer::Type() )
     return 0;
   
   try
@@ -293,8 +296,11 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
       Handle( AIS_LengthDimension ) anIO = new AIS_LengthDimension(
         aVert1, aVert2, P, aDist, TCollection_ExtendedString( (Standard_CString)aLabel.latin1() ) );
 
-      QAD_ViewFrame* vf = GEOM_Displayer::GetActiveView();
-      OCCViewer_Prs* aPrs = dynamic_cast<OCCViewer_Prs*>( vf->CreatePrs( 0 ) );
+      SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+      SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>( ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs( 0 ) );
+      
+      //QAD_ViewFrame* vf = GEOM_Displayer::GetActiveView();
+      //OCCViewer_Prs* aPrs = dynamic_cast<OCCViewer_Prs*>( vf->CreatePrs( 0 ) );
 
       if ( aPrs )
         aPrs->AddObject( anIO );

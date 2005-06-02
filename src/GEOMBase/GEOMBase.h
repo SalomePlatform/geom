@@ -42,9 +42,7 @@
 #include <qstring.h>
 
 class GEOM_Actor;
-class SALOME_Selection;
 class SALOME_ListIO;
-class QAD_Desktop;
 class TColStd_MapOfInteger;
 
 class QWidget;
@@ -70,8 +68,8 @@ public :
   static int GetIndex(const TopoDS_Shape& subshape, const TopoDS_Shape& shape, int ShapeType);
   static TopoDS_Shape GetShapeFromIOR(QString IOR);
   static bool GetShape( const GEOM::GEOM_Object_ptr&, TopoDS_Shape&, const TopAbs_ShapeEnum = TopAbs_SHAPE );
-  static bool GetTopoFromSelection(SALOME_Selection *Sel, TopoDS_Shape& tds);
-  static int GetNameOfSelectedIObjects(SALOME_Selection* Sel, QString& aName, const bool theShapesOnly = false );
+  static bool GetTopoFromSelection(const SALOME_ListIO& aList, TopoDS_Shape& tds);
+  static int GetNameOfSelectedIObjects(const SALOME_ListIO& aList, QString& aName, const bool theShapesOnly = false );
   static bool GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& aTypeString);
 
   /* Convertions */
@@ -120,7 +118,7 @@ public :
   static bool CreateArrowForLinearEdge(const TopoDS_Shape& tds, TopoDS_Shape& ArrowCone);
 
   /*  Generates default names */
-  static bool SelectionByNameInDialogs(QWidget* aWidget, const QString& userObjectName, SALOME_Selection *Sel);
+  static bool SelectionByNameInDialogs(QWidget* aWidget, const QString& userObjectName, const SALOME_ListIO& aList);
   /* Shows message box with error code */
   static bool DefineDlgPosition(QWidget* aDlg, int& x, int& y);
 

@@ -27,7 +27,6 @@
 
 #include "MeasureGUI_InertiaDlg.h"
 #include "MeasureGUI_1Sel12LineEdit_QTD.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
 
 #include "GEOMBase.h"
 
@@ -38,9 +37,11 @@
 #include <TopoDS_Shape.hxx>
 
 #include "utilities.h"
-#include "QAD_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Tools.h"
 
 #include <qlineedit.h>
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -54,12 +55,12 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 
-MeasureGUI_InertiaDlg::MeasureGUI_InertiaDlg( QWidget* parent, SALOME_Selection* Sel )
-: MeasureGUI_Skeleton( parent, "MeasureGUI_InertiaDlg", Sel )
+MeasureGUI_InertiaDlg::MeasureGUI_InertiaDlg( GeometryGUI* GUI, QWidget* parent )
+: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_InertiaDlg" )
 {
-  QPixmap image0( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_DLG_INERTIA" ) ) );
-  QPixmap image1( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_SELECT" ) ) );
 
   setCaption( tr( "GEOM_INERTIA_TITLE" ) );
@@ -96,7 +97,7 @@ MeasureGUI_InertiaDlg::MeasureGUI_InertiaDlg( QWidget* parent, SALOME_Selection*
   /***************************************************************/
 
   /* Initialisation */
-  Init( Sel );
+  Init();
 }
 
 
@@ -113,11 +114,11 @@ MeasureGUI_InertiaDlg::~MeasureGUI_InertiaDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_InertiaDlg::Init( SALOME_Selection* Sel )
+void MeasureGUI_InertiaDlg::Init()
 {
   mySelBtn = myGrp->PushButton1;
   mySelEdit = myGrp->LineEdit1;
-  MeasureGUI_Skeleton::Init( Sel );
+  MeasureGUI_Skeleton::Init();
 }
 
 //=================================================================================
@@ -193,7 +194,7 @@ bool MeasureGUI_InertiaDlg::getParameters( gp_Mat& I,
     }
     catch( const SALOME::SALOME_Exception& e )
     {
-      QtCatchCorbaException( e );
+      SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 

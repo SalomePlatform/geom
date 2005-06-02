@@ -28,8 +28,7 @@
 
 using namespace std;
 #include "GEOMBase_aParameterDlg.h"
-#include "QAD_SpinBoxDbl.h"
-#include "QAD_Tools.h"
+#include "QtxDblSpinBox.h"
 
 #include <stdio.h>
 
@@ -85,7 +84,7 @@ GEOMBase_aParameterDlg::GEOMBase_aParameterDlg(const char *aValue1, const char *
   TextLabel1->setText(tr(aTitle1));  
   mainGrpLayout->addWidget(TextLabel1, 0, 0);
 
-  mySpinBox = new QAD_SpinBoxDbl(mainGrp, "mySpinBox");
+  mySpinBox = new QtxDblSpinBox(mainGrp, "mySpinBox");
   mySpinBox->setPrecision(12);
   mySpinBox->setRange(bottom, top);
   ((QDoubleValidator*)(mySpinBox->validator()))->setRange(bottom, top, decimals);
@@ -122,7 +121,7 @@ GEOMBase_aParameterDlg::GEOMBase_aParameterDlg(const char *aValue1, const char *
   connect(myButtonCancel, SIGNAL(clicked()), this, SLOT(reject()));
   
   /* Move widget on the botton right corner of main widget */
-  QAD_Tools::centerWidget(this, parent);
+  //mzn: QAD_Tools::centerWidget(this, parent);
 }
 
 

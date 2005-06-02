@@ -37,7 +37,7 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 # Libraries targets
 LIB = libGEOMSketcher.la 
 LIB_SRC = Sketcher_Profile.cxx
-LIB_CLIENT_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl
+LIB_CLIENT_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl SALOME_GenericObj.idl
 
 # header files 
 EXPORT_HEADERS= Sketcher_Profile.hxx

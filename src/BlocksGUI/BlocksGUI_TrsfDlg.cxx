@@ -29,23 +29,27 @@
 
 #include "DlgRef_SpinBox.h"
 
-#include "QAD_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "OCCViewer_ViewModel.h"
 
 #include <TColStd_IndexedMapOfInteger.hxx>
+
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BlocksGUI_TrsfDlg()
 // purpose  : Constructs a BlocksGUI_TrsfDlg which is a child of 'parent'.
 //=================================================================================
 BlocksGUI_TrsfDlg::BlocksGUI_TrsfDlg (QWidget* parent,
-                                      SALOME_Selection* Sel,
                                       bool modal)
-     : GEOMBase_Skeleton(parent, "TrsfDlg", Sel, modal,
+     : GEOMBase_Skeleton(parent, "TrsfDlg", modal,
                          WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image1 (QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BLOCK_MULTITRSF_SIMPLE")));
-  QPixmap image2 (QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BLOCK_MULTITRSF_DOUBLE")));
-  QPixmap imageS (QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BLOCK_MULTITRSF_SIMPLE")));
+  QPixmap image2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BLOCK_MULTITRSF_DOUBLE")));
+  QPixmap imageS (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_BLOCK_MULTITRSF_TITLE"));
 
@@ -153,7 +157,8 @@ void BlocksGUI_TrsfDlg::Init()
   for (anIterSpin = mySpinBox.begin(); anIterSpin != mySpinBox.end(); ++anIterSpin)
     connect(anIterSpin.data(), SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   // init controls and fields
   initName(tr("GEOM_BLOCK_MULTITRSF"));
@@ -254,10 +259,10 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
 
   // If selection of main object is activated
   if (aCurrFocus == MainObj1 || aCurrFocus == MainObj2) {
-    if (mySelection->IObjectCount() == 1) {
+    if (IObjectCount() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), aResult);
+        GEOMBase::ConvertIOinGEOMObject(firstIObject(), aResult);
 
       if (aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
         myShape = anObj;
@@ -274,14 +279,14 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
   else if (aCurrFocus == Face1  || aCurrFocus == Face2  ||
            aCurrFocus == Face1U || aCurrFocus == Face2U ||
            aCurrFocus == Face1V || aCurrFocus == Face2V) {
-    if (mySelection->IObjectCount() == 1) {
+    if (IObjectCount() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), aResult);
+        GEOMBase::ConvertIOinGEOMObject(firstIObject(), aResult);
 
       if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
         TColStd_IndexedMapOfInteger anIndexes;
-        mySelection->GetIndex(mySelection->firstIObject(), anIndexes);
+	((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), anIndexes );
 
         if (anIndexes.Extent() == 1) {
           int anIndex = anIndexes(1);
@@ -325,7 +330,8 @@ void BlocksGUI_TrsfDlg::SetEditCurrentArgument()
 void BlocksGUI_TrsfDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   activateSelection();
   displayPreview();
@@ -391,7 +397,8 @@ void BlocksGUI_TrsfDlg::activateSelection()
        myEditCurrentArgument == mySelName[ Face2V ])) {
 
     // Local selection is available only in the OCC Viewer
-    if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+    if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+	!= OCCViewer_Viewer::Type()) {
       localSelection(myShape, TopAbs_FACE);
     } else {
       return;

@@ -28,17 +28,20 @@
 
 #include "GEOMGUI.h"
 
-#include "QAD_Desktop.h"
-#include "QAD_StudyFrame.h"
-#include "QAD_Application.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_ViewWindow.h"
+
+#include "GeometryGUI.h"
+
 #include <qevent.h>
 
 //=================================================================================
 // class    : GEOMGUI::GEOMGUI
 // purpose  : Constructor
 //=================================================================================
-GEOMGUI::GEOMGUI( QObject* parent ) : 
-  QObject ( parent )
+GEOMGUI::GEOMGUI( GeometryGUI* parent ) : 
+QObject ( parent ),
+myGeometryGUI( parent )
 {
 }
 
@@ -54,7 +57,7 @@ GEOMGUI::~GEOMGUI()
 // class    : GEOMGUI::OnGUIEvent
 // purpose  : Main/popup menu events processing
 //=================================================================================
-bool GEOMGUI::OnGUIEvent( int /*theCommandID*/, QAD_Desktop* /*parent*/ )
+bool GEOMGUI::OnGUIEvent( int /*theCommandID*/, SUIT_Desktop* /*parent*/ )
 {
   return TRUE;
 }
@@ -64,7 +67,7 @@ bool GEOMGUI::OnGUIEvent( int /*theCommandID*/, QAD_Desktop* /*parent*/ )
 // purpose  : Mouse press event processing. Should return FALSE to let the event 
 //            be processed further.
 //=================================================================================
-bool GEOMGUI::OnMousePress( QMouseEvent* /*pe*/, QAD_Desktop* /*parent*/, QAD_StudyFrame* /*studyFrame*/ )
+bool GEOMGUI::OnMousePress( QMouseEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* /*studyFrame*/ )
 {
   return FALSE;
 }
@@ -73,7 +76,7 @@ bool GEOMGUI::OnMousePress( QMouseEvent* /*pe*/, QAD_Desktop* /*parent*/, QAD_St
 // class    : GEOMGUI::OnMouseMove
 // purpose  : Mouse move event processing
 //=================================================================================
-bool GEOMGUI::OnMouseMove( QMouseEvent* /*pe*/, QAD_Desktop* /*parent*/, QAD_StudyFrame* /*studyFrame*/ )
+bool GEOMGUI::OnMouseMove( QMouseEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* /*studyFrame*/ )
 {
   return TRUE;
 }
@@ -82,7 +85,7 @@ bool GEOMGUI::OnMouseMove( QMouseEvent* /*pe*/, QAD_Desktop* /*parent*/, QAD_Stu
 // class    : GEOMGUI::OnKeyPress
 // purpose  : Key press event processing
 //=================================================================================
-bool GEOMGUI::OnKeyPress( QKeyEvent* /*pe*/, QAD_Desktop* /*parent*/, QAD_StudyFrame* /*studyFrame*/ )
+bool GEOMGUI::OnKeyPress( QKeyEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* /*studyFrame*/ )
 {
   return TRUE;
 }
@@ -91,25 +94,24 @@ bool GEOMGUI::OnKeyPress( QKeyEvent* /*pe*/, QAD_Desktop* /*parent*/, QAD_StudyF
 // class    : GEOMGUI::SetSettings
 // purpose  : Called when GEOM component is activated
 //=================================================================================
-bool GEOMGUI::SetSettings( QAD_Desktop* /*parent*/ )
+void GEOMGUI::activate( SUIT_Desktop* /*parent*/ )
 {
-  return TRUE;
 }
 
 //=================================================================================
 // class    : GEOMGUI::Deactivate
 // purpose  : Called when GEOM component is deactivated
 //=================================================================================
-void GEOMGUI::Deactivate()
+void GEOMGUI::deactivate()
 {
 }
 
 //=================================================================================
-// class    : GEOMGUI::ActiveStudyChanged
-// purpose  : Called when active study changed
+// class    : GEOMGUI::Deactivate
+// purpose  : Called when GEOM component is deactivated
 //=================================================================================
-bool GEOMGUI::ActiveStudyChanged( QAD_Desktop* /*parent*/ )
+GeometryGUI* GEOMGUI::getGeometryGUI()
 {
-  return TRUE;
+  return myGeometryGUI;
 }
 

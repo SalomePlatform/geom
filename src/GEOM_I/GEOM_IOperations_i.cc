@@ -8,7 +8,7 @@ using namespace std;
 
 #include "GEOM_Engine.hxx"
 
-#include "GEOM_Gen_i.hh"
+//#include "GEOM_Gen_i.hh"
 
 #include <TCollection_AsciiString.hxx>
 #include <TDF_Tool.hxx>

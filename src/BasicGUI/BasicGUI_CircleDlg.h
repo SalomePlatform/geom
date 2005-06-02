@@ -35,8 +35,8 @@
 
 #include "BasicGUI.h"
 
-#include "GEOM_EdgeFilter.hxx"
-#include "GEOM_ShapeTypeFilter.hxx"
+//#include "GEOM_EdgeFilter.hxx"
+//#include "GEOM_ShapeTypeFilter.hxx"
 #include <gp_Dir.hxx>
 
 
@@ -49,7 +49,7 @@ class BasicGUI_CircleDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_CircleDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_CircleDlg();
 
 protected:
@@ -64,6 +64,8 @@ private :
     void   Init();
     void   enterEvent(QEvent* e);
     double getRadius() const;
+
+    GeometryGUI*  myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3;
 

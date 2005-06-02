@@ -29,11 +29,8 @@
 using namespace std;
 #include "OperationGUI.h"
 
-#include "QAD_RightFrame.h"
-#include "QAD_Desktop.h"
-#include "OCCViewer_Viewer3d.h"
-#include "OCCViewer_ViewFrame.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "SUIT_Session.h"
+#include "SUIT_Desktop.h"
 
 #include <TopTools_MapOfShape.hxx>
 #include <TopExp_Explorer.hxx>
@@ -52,11 +49,11 @@ OperationGUI* OperationGUI::myGUIObject = 0;
 // function : GetOperationGUI()
 // purpose  : Get the only OperationGUI object [ static ]
 //=======================================================================
-OperationGUI* OperationGUI::GetOperationGUI()
+OperationGUI* OperationGUI::GetOperationGUI( GeometryGUI* parent )
 {
   if ( myGUIObject == 0 ) {
     // init OperationGUI only once
-    myGUIObject = new OperationGUI();
+    myGUIObject = new OperationGUI( parent );
   }
   return myGUIObject;
 }
@@ -65,7 +62,7 @@ OperationGUI* OperationGUI::GetOperationGUI()
 // function : OperationGUI()
 // purpose  : Constructor
 //=======================================================================
-OperationGUI::OperationGUI() : GEOMGUI()
+OperationGUI::OperationGUI(GeometryGUI* parent) : GEOMGUI(parent)
 {
 }
 
@@ -83,32 +80,29 @@ OperationGUI::~OperationGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool OperationGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
+bool OperationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
-  OperationGUI* myOperationGUI = GetOperationGUI();
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(
-    QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
+  getGeometryGUI()->EmitSignalDeactivateDialog();
   
   switch ( theCommandID )
   {
     case 503: // PARTITION
-      ( new OperationGUI_PartitionDlg( parent, "", Sel ) )->show();
+      ( new OperationGUI_PartitionDlg( parent, "" ) )->show();
     break;
     case 504: // ARCHIMEDE
-      new OperationGUI_ArchimedeDlg( parent, Sel );
+      new OperationGUI_ArchimedeDlg( getGeometryGUI(), parent );
     break;
     case 505: // FILLET
-      new OperationGUI_FilletDlg( parent, Sel );	
+      new OperationGUI_FilletDlg( parent );	
     break;
     case 506: // CHAMFER
-      new OperationGUI_ChamferDlg( parent, Sel );
+      new OperationGUI_ChamferDlg( parent );
     break;
     case 507: // CLIPPING RANGE
       ( new OperationGUI_ClippingDlg( parent, "" ) )->show();
     break;
     default:
-      parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;
   }
   
@@ -120,8 +114,8 @@ bool OperationGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI(GeometryGUI* parent)
   {
-    return OperationGUI::GetOperationGUI();
+    return OperationGUI::GetOperationGUI(parent);
   }
 }

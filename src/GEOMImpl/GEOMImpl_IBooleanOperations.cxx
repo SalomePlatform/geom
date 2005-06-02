@@ -3,6 +3,8 @@ using namespace std;
 #include "GEOMImpl_IBooleanOperations.hxx"
 
 #include "GEOM_Function.hxx"
+#include "GEOM_PythonDump.hxx"
+
 #include "GEOMImpl_Types.hxx"
 
 #include "GEOMImpl_BooleanDriver.hxx"
@@ -95,18 +97,15 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
     return NULL;
   }
 
-  //Make a Python command 
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aBool->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = IBooleanOperations.MakeBoolean(";
-  TDF_Tool::Entry(theShape1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(theShape2->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theOp)+")");
-
-  aFunction->SetDescription(aDescr);
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aBool;
+  if      (theOp == 1) pd << " = geompy.MakeCommon(";
+  else if (theOp == 2) pd << " = geompy.MakeCut(";
+  else if (theOp == 3) pd << " = geompy.MakeFuse(";
+  else if (theOp == 4) pd << " = geompy.MakeSection(";
+  else {}
+  pd << theShape1 << ", " << theShape2 << ")";
 
   SetErrorCode(OK);
   return aBool; 
@@ -253,36 +252,24 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
   }
 
   //Make a Python command 
-  TCollection_AsciiString aDescr;
-  TDF_Tool::Entry(aPartition->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = IBooleanOperations.MakePartition([";
-  // Shapes
-  aDescr += aShapesDescr + "], [";
-  // Tools
-  aDescr += aToolsDescr + "], [";
-  // Keep Ins
-  aDescr += aKeepInsDescr + "], [";
-  // Remove Ins
-  aDescr += aRemoveInsDescr + "], ";
-  // Limit
-  aDescr += TCollection_AsciiString(theLimit) + ", ";
-  // Remove Webs
-  if (theRemoveWebs) aDescr += "1, [";
-  else aDescr += "0, [";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aPartition << " = geompy.MakePartition([";
+  // Shapes, Tools
+  pd << aShapesDescr.ToCString() << "], [" << aToolsDescr.ToCString() << "], [";
+  // Keep Ins, Remove Ins
+  pd << aKeepInsDescr.ToCString() << "], [" << aRemoveInsDescr.ToCString() << "], ";
+  // Limit, Remove Webs
+  pd << theLimit << ", " << (int)theRemoveWebs << ", [";
   // Materials
   if (theMaterials->Length() > 0) {
     int i = theMaterials->Lower();
-    aDescr += TCollection_AsciiString(theMaterials->Value(i));
+    pd << theMaterials->Value(i);
     i++;
     for (; i <= theMaterials->Upper(); i++) {
-      aDescr += ", ";
-      aDescr += TCollection_AsciiString(theMaterials->Value(i));
+      pd << ", " << theMaterials->Value(i);
     }
   }
-  aDescr += "])";
-
-  aFunction->SetDescription(aDescr);
+  pd << "])";
 
   SetErrorCode(OK);
   return aPartition; 
@@ -335,16 +322,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
   }
 
   //Make a Python command 
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aPart->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = IBooleanOperations.MakePartition(";
-  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePlane->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aPart << " = geompy.MakeHalfPartition("
+                               << theShape << ", " << thePlane << ")";
 
   SetErrorCode(OK);
   return aPart; 

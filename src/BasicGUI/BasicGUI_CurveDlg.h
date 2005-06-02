@@ -33,7 +33,7 @@
 
 #include "BasicGUI.h"
 
-#include "GEOM_ShapeTypeFilter.hxx"
+//#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
 // class    : BasicGUI_CurveDlg
@@ -44,7 +44,7 @@ class BasicGUI_CurveDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_CurveDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_CurveDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_CurveDlg();
 
 protected:
@@ -58,6 +58,8 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
+
+    GeometryGUI* myGeometryGUI;
 
     DlgRef_1Sel_QTD* GroupPoints;
     GEOM::ListOfGO_var myPoints;

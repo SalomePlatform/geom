@@ -45,8 +45,6 @@
 #include "EntityGUI.h"
 #include "GeometryGUI.h"
 
-#include "GEOM_ShapeTypeFilter.hxx"
-
 #include <gp_Dir.hxx>
 
 #include <qwidget.h>
@@ -65,7 +63,7 @@ class EntityGUI_SketcherDlg : public EntityGUI_Skeleton_QTD, public GEOMBase_Hel
     Q_OBJECT
 
 public:
-    EntityGUI_SketcherDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~EntityGUI_SketcherDlg();
 
 protected:
@@ -75,6 +73,8 @@ protected:
     virtual bool execute( ObjectList& objects );
 
     void closeEvent( QCloseEvent* e );
+
+    virtual SUIT_Desktop* getDesktop() const;
 
 private :
     void Init();
@@ -93,7 +93,6 @@ private :
     bool myIsAllAdded;
     
     QLineEdit* myEditCurrentArgument;   /* Current LineEdit */
-    SALOME_Selection* mySelection;      /* User shape selection */
     
     QStringList myCommand;
     QStringList myUndoCommand;
@@ -112,6 +111,8 @@ private :
     EntityGUI_2Spin* Group2Spin;
     EntityGUI_3Spin* Group3Spin;
     EntityGUI_4Spin* Group4Spin;
+
+    GeometryGUI*  myGeometryGUI;
 
     enum SketchState {FIRST_POINT, NEXT_POINT};
 

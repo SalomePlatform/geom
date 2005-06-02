@@ -26,27 +26,29 @@
 //  $Header$
 
 #include "BlocksGUI_QuadFaceDlg.h"
-
-#include "QAD_Desktop.h"
-
 #include "GEOMImpl_Types.hxx"
 
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
 //using namespace std;
+
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BlocksGUI_QuadFaceDlg()
 // purpose  : Constructs a BlocksGUI_QuadFaceDlg which is a child of 'parent'.
 //=================================================================================
 BlocksGUI_QuadFaceDlg::BlocksGUI_QuadFaceDlg (QWidget* parent,
-                                        SALOME_Selection* Sel,
                                         bool modal)
-     : GEOMBase_Skeleton(parent, "QuadFaceDlg", Sel, modal,
+     : GEOMBase_Skeleton(parent, "QuadFaceDlg", modal,
                          WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image1 (QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_4_VERT")));
-  QPixmap image2 (QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_2_EDGE")));
-  QPixmap image3 (QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_4_EDGE")));
-  QPixmap imageS (QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_4_VERT")));
+  QPixmap image2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_2_EDGE")));
+  QPixmap image3 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_4_EDGE")));
+  QPixmap imageS (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_QUAD_FACE_TITLE"));
 
@@ -127,7 +129,8 @@ void BlocksGUI_QuadFaceDlg::Init()
   for (anIterBtn = mySelBtn.begin(); anIterBtn != mySelBtn.end(); ++anIterBtn)
     connect(anIterBtn.data(), SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   // init controls and fields
   initName(tr("GEOM_QUAD_FACE"));
@@ -226,8 +229,8 @@ void BlocksGUI_QuadFaceDlg::SelectionIntoArgument()
 
   GEOM::GEOM_Object_var anObj;
   Standard_Boolean aResult = Standard_False;
-  if (mySelection->IObjectCount() == 1) {
-    anObj = GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), aResult);
+  if (IObjectCount() == 1) {
+    anObj = GEOMBase::ConvertIOinGEOMObject(firstIObject(), aResult);
     if (aResult) {
       if (anObj->_is_nil()) {
         aResult = Standard_False;
@@ -280,7 +283,8 @@ void BlocksGUI_QuadFaceDlg::SetEditCurrentArgument()
 void BlocksGUI_QuadFaceDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   activateSelection();
   displayPreview();

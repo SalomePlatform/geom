@@ -44,8 +44,8 @@ class MeasureGUI_DistanceDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-                                        MeasureGUI_DistanceDlg( QWidget*          parent,
-                                                                SALOME_Selection* Sel );
+                                        MeasureGUI_DistanceDlg( GeometryGUI* GUI,
+								QWidget*     parent );
                                         ~MeasureGUI_DistanceDlg();
 protected:
 
@@ -59,7 +59,7 @@ protected:
 
 private:
 
-    void                                Init( SALOME_Selection* Sel );
+    void                                Init();
     bool                                getParameters( double& theDistance,
                                                        gp_Pnt& thePnt1,
                                                        gp_Pnt& thePnt2  );

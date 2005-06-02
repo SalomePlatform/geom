@@ -32,13 +32,17 @@ using namespace std;
 
 #include "GEOMImpl_Types.hxx"
 
-#include "QAD_Desktop.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "SUIT_Session.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
 #include "SALOME_ListIO.hxx"
 
 #include <TCollection_AsciiString.hxx>
+#include <TColStd_MapOfInteger.hxx>
 
 #include <qheader.h>
+#include <qlabel.h>
 #include <qmessagebox.h>
 
 
@@ -49,8 +53,8 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_ShapeProcessDlg::RepairGUI_ShapeProcessDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_ShapeProcessDlg::RepairGUI_ShapeProcessDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   init();
 }
@@ -71,7 +75,7 @@ RepairGUI_ShapeProcessDlg::~RepairGUI_ShapeProcessDlg()
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::init()
 {
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
 
   initParamsValues();
   initSelection();
@@ -84,7 +88,7 @@ void RepairGUI_ShapeProcessDlg::init()
   mySelectWdgt = new DlgRef_1Sel_QTD( this, "SelectedObjects" );
   mySelectWdgt->GroupBox1->setTitle( tr("GEOM_SHAPE") );
   mySelectWdgt->TextLabel1->setText( tr("GEOM_SELECTED_OBJECTS") );
-  mySelectWdgt->PushButton1->setPixmap( QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")) );
+  mySelectWdgt->PushButton1->setPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")) );
   mySelectWdgt->LineEdit1->setReadOnly( true );
 
   Layout1->addWidget( mySelectWdgt, 0, 0 );
@@ -127,8 +131,10 @@ void RepairGUI_ShapeProcessDlg::init()
   QFrame* aFrame = new QFrame( myStack );
   QGridLayout* aLay = new QGridLayout( aFrame, 10, 2, 0, 5 );
 
-  myFixShapeTol3D = new QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
-  myFixShapeMaxTol3D = new QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  myFixShapeTol3D = new QtxDblSpinBox( 0, 100, 1e-7, aFrame );//QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  myFixShapeTol3D->setPrecision( 10 );
+  myFixShapeMaxTol3D = new QtxDblSpinBox( 0, 100, 1e-7, aFrame );//QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  myFixShapeMaxTol3D->setPrecision( 10 );
 
   aLay->addWidget( new QLabel( tr("GEOM_3D_TOLERANCE"), aFrame ), 0, 0 );
   aLay->addWidget( myFixShapeTol3D, 0, 1 );
@@ -142,7 +148,8 @@ void RepairGUI_ShapeProcessDlg::init()
   aFrame = new QFrame( myStack );
   aLay = new QGridLayout( aFrame, 10, 2, 0, 5 );
 
-  myFixFaceSizeTol = new QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  myFixFaceSizeTol = new QtxDblSpinBox( 0, 100, 1e-7, aFrame );//QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  myFixFaceSizeTol->setPrecision( 10 );
 
   aLay->addWidget( new QLabel( tr("GEOM_TOLERANCE"), aFrame ), 0, 0 );
   aLay->addWidget( myFixFaceSizeTol, 0, 1 );
@@ -154,7 +161,8 @@ void RepairGUI_ShapeProcessDlg::init()
   aFrame = new QFrame( myStack );
   aLay = new QGridLayout( aFrame, 10, 2, 0, 5 );
 
-  myDropSmallEdgesTol3D = new QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  myDropSmallEdgesTol3D = new QtxDblSpinBox( 0, 100, 1e-7, aFrame );//QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  myDropSmallEdgesTol3D->setPrecision( 10 );
   
   aLay->addWidget( new QLabel( tr("GEOM_3D_TOLERANCE"), aFrame ), 0, 0 );
   aLay->addWidget( myDropSmallEdgesTol3D, 0, 1 );
@@ -166,8 +174,9 @@ void RepairGUI_ShapeProcessDlg::init()
   aFrame = new QFrame( myStack );
   aLay = new QGridLayout( aFrame, 10, 2, 0, 5 );
 
-  mySplitAngleAngle = new QAD_SpinBoxDbl( aFrame, 0, 360, 1 );
-  mySplitAngleMaxTol = new QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  mySplitAngleAngle = new QtxDblSpinBox( 0, 360, 1, aFrame );//QAD_SpinBoxDbl( aFrame, 0, 360, 1 );
+  mySplitAngleMaxTol = new QtxDblSpinBox( 0, 100, 1e-7, aFrame );//QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  mySplitAngleMaxTol->setPrecision( 10 );
 
   aLay->addWidget( new QLabel( tr("GEOM_ANGLE_1"), aFrame ), 0, 0 );
   aLay->addWidget( mySplitAngleAngle, 0, 1 );
@@ -193,7 +202,8 @@ void RepairGUI_ShapeProcessDlg::init()
   aFrame = new QFrame( myStack );
   aLay = new QGridLayout( aFrame, 10, 2, 0, 5 );
 
-  mySplitContTol3D = new QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  mySplitContTol3D = new QtxDblSpinBox( 0, 100, 1e-7, aFrame );//QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  mySplitContTol3D->setPrecision( 10 );
   mySplitContSurfCont = new QComboBox( aFrame );
   mySplitContSurfCont->insertStringList( aContinueties );
   mySplitContCurvCont = new QComboBox( aFrame );
@@ -216,8 +226,13 @@ void RepairGUI_ShapeProcessDlg::init()
   myBSplineSurfModeChk = new QCheckBox( tr("GEOM_SURFACE_MODE"), aFrame );
   myBSpline3DCurveChk = new QCheckBox( tr("GEOM_3D_CURVE_MODE"), aFrame );
   myBSpline2DCurveChk = new QCheckBox( tr("GEOM_2D_CURVE_MODE"), aFrame );
-  myBSplineTol3D = new QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
-  myBSplineTol2D = new QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+
+  myBSplineTol3D = new QtxDblSpinBox( 0, 100, 1e-7, aFrame );//QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  myBSplineTol3D->setPrecision( 10 );
+
+  myBSplineTol2D = new QtxDblSpinBox( 0, 100, 1e-7, aFrame );//QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  myBSplineTol2D->setPrecision( 10 );
+
   myBSplineDegree = new QSpinBox( aFrame );
   myBSplineSegments = new QSpinBox( aFrame );
   myBSpline2DCont = new QComboBox( aFrame );
@@ -255,7 +270,9 @@ void RepairGUI_ShapeProcessDlg::init()
   myToBezierSurfModeChk = new QCheckBox( tr("GEOM_SURFACE_MODE"), aFrame );
   myToBezier3DCurveChk = new QCheckBox( tr("GEOM_3D_CURVE_MODE"), aFrame );
   myToBezier2DCurveChk = new QCheckBox( tr("GEOM_2D_CURVE_MODE"), aFrame );
-  myToBezierMaxTol = new QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  
+  myToBezierMaxTol = new QtxDblSpinBox( 0, 100, 1e-7, aFrame );//QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  myToBezierMaxTol->setPrecision( 10 );
 
   aLay->addWidget( myToBezierSurfModeChk, 0, 0 );
   aLay->addWidget( myToBezier3DCurveChk, 1, 0 );
@@ -270,7 +287,8 @@ void RepairGUI_ShapeProcessDlg::init()
   aFrame = new QFrame( myStack );
   aLay = new QGridLayout( aFrame, 10, 2, 0, 5 );
 
-  mySameParameterTol3D = new QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  mySameParameterTol3D = new QtxDblSpinBox( 0, 100, 1e-7, aFrame );//QAD_SpinBoxDbl( aFrame, 0, 100, 1e-7, 10, 1e-10 );
+  mySameParameterTol3D->setPrecision( 10 );
 
   aLay->addWidget( new QLabel( tr("GEOM_3D_TOLERANCE"), aFrame ), 0, 0 );
   aLay->addWidget( mySameParameterTol3D, 0, 1 );
@@ -286,7 +304,8 @@ void RepairGUI_ShapeProcessDlg::init()
   connect( buttonOk,     SIGNAL(clicked()), this, SLOT(onOk()) );
   connect( buttonApply,  SIGNAL(clicked()), this, SLOT(onApply()) );
 
-  connect( mySelection,  SIGNAL(currentSelectionChanged()), this, SLOT(selectionChanged()) );
+  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),  
+	   SIGNAL(currentSelectionChanged()), this, SLOT(selectionChanged()) );
   connect( myOpList,     SIGNAL(selectionChanged()), this, SLOT(operationChanged()) );
 
   connect( mySelectWdgt->PushButton1, SIGNAL(clicked()), this, SLOT(selectClicked()) );
@@ -368,8 +387,8 @@ void RepairGUI_ShapeProcessDlg::selectionChanged()
 	
   Standard_Boolean aRes = Standard_False;
   int i = 0;
-  myObjects->length( mySelection->IObjectCount() );
-  for ( SALOME_ListIteratorOfListIO anIt( mySelection->StoredIObjects() ); anIt.More(); anIt.Next() )
+  myObjects->length( IObjectCount() );
+  for ( SALOME_ListIteratorOfListIO anIt( selectedIO() ); anIt.More(); anIt.Next() )
   {
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
     if ( !CORBA::is_nil( aSelectedObject ) && aRes )
@@ -411,7 +430,7 @@ void RepairGUI_ShapeProcessDlg::lineEditReturnPressed()
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::deactivate()
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -423,10 +442,11 @@ void RepairGUI_ShapeProcessDlg::deactivate()
 void RepairGUI_ShapeProcessDlg::activate()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(selectionChanged()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(selectionChanged()));
 	
   reset();
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
   initSelection();
 }
 
@@ -448,7 +468,7 @@ void RepairGUI_ShapeProcessDlg::enterEvent(QEvent* e)
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::closeEvent(QCloseEvent* e)
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 
@@ -501,8 +521,7 @@ const char* set_convert( const char* theParam, const char* theValue )
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::loadDefaults()
 {
-  const int aStudyId = QAD_Application::getDesktop()->getActiveStudy()->getStudyId();
-  GEOM::GEOM_IHealingOperations_var anOp = myGeomGUI->GetGeomGen()->GetIHealingOperations( aStudyId );
+  GEOM::GEOM_IHealingOperations_var anOp = myGeomGUI->GetGeomGen()->GetIHealingOperations( getStudyId() );
   GEOM::string_array_var anOperators, aParams, aValues;
   anOp->GetShapeProcessParameters( anOperators, aParams, aValues );
 
@@ -541,8 +560,8 @@ void RepairGUI_ShapeProcessDlg::setValue( QWidget* theControl, const char* theVa
   if ( theControl == NULL || theValue == NULL )
     return;
 
-  if ( theControl->isA( "QAD_SpinBoxDbl" ) )
-    ((QAD_SpinBoxDbl*)theControl)->setValue( QString( theValue ).toDouble() );
+  if ( theControl->isA( "QtxDblSpinBox" ) )
+    ((QtxDblSpinBox*)theControl)->setValue( QString( theValue ).toDouble() );
   else if ( theControl->isA( "QSpinBox" ) )
     ((QSpinBox*)theControl)->setValue( QString( theValue ).toInt() );
   else if ( theControl->isA( "QComboBox" ) )
@@ -560,8 +579,8 @@ const char* RepairGUI_ShapeProcessDlg::getValue( QWidget* theControl ) const
   if ( theControl == NULL )
     return "";
 
-  if ( theControl->isA( "QAD_SpinBoxDbl" ) )
-    return ((QAD_SpinBoxDbl*)theControl)->text().latin1();
+  if ( theControl->isA( "QtxDblSpinBox" ) )
+    return ((QtxDblSpinBox*)theControl)->text().latin1();
   else if ( theControl->isA( "QSpinBox" ) )
     return ((QSpinBox*)theControl)->text().latin1();
   else if ( theControl->isA( "QComboBox" ) )
@@ -824,6 +843,6 @@ void RepairGUI_ShapeProcessDlg::advOptionToggled( bool on )
 {
   QButton* btn = (QButton*)sender();
   if ( on && btn->isToggleButton() &&
-       QMessageBox::warning( QAD_Application::getDesktop(), tr( "GEOM_WRN_WARNING" ), tr( "TIME_CONSUMING" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::No )
+       QMessageBox::warning( SUIT_Session::session()->activeApplication()->desktop(), tr( "GEOM_WRN_WARNING" ), tr( "TIME_CONSUMING" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::No )
     btn->toggle();
 }

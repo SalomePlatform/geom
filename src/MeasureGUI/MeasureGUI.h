@@ -38,12 +38,12 @@
 class MeasureGUI : public GEOMGUI
 {
 protected:
-                              MeasureGUI(); 
+                              MeasureGUI( GeometryGUI* parent ); 
 
 public :
                               ~MeasureGUI();
-  static MeasureGUI*          GetMeasureGUI();
-  bool                        OnGUIEvent( int , QAD_Desktop* );
+  static MeasureGUI*          GetMeasureGUI( GeometryGUI* parent );
+  bool                        OnGUIEvent( int , SUIT_Desktop* );
 
 private:
   static MeasureGUI*          myGUIObject;

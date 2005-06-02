@@ -220,13 +220,15 @@ void GEOM_Object::SetAuxData(const char* theData)
  *  GetAuxData
  */
 //=============================================================================
-char* GEOM_Object::GetAuxData()
+TCollection_AsciiString GEOM_Object::GetAuxData()
 {
+  TCollection_AsciiString aData;
+
   Handle(TDataStd_Comment) aCommentAttr;
-  if(!_label.FindAttribute(TDataStd_Comment::GetID(), aCommentAttr)) return NULL;
-  
-  TCollection_AsciiString aData(aCommentAttr->Get());
-  return aData.ToCString();
+  if (_label.FindAttribute(TDataStd_Comment::GetID(), aCommentAttr))
+    aData = aCommentAttr->Get();
+
+  return aData;
 }
 
 

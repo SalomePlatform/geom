@@ -42,7 +42,7 @@ class PrimitiveGUI_ConeDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    PrimitiveGUI_ConeDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    PrimitiveGUI_ConeDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~PrimitiveGUI_ConeDlg();
 
 protected:
@@ -59,6 +59,8 @@ private:
     double getRadius1() const;
     double getRadius2() const;
     double getHeight() const;
+
+    GeometryGUI* myGeometryGUI;
     
     GEOM::GEOM_Object_var myPoint, myDir;
     

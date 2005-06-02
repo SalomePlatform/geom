@@ -29,8 +29,11 @@
 #include "EntityGUI_SubShapeDlg.h"
 #include "GEOM_Displayer.h"
 
-#include "QAD_RightFrame.h"
-#include "QAD_Desktop.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "OCCViewer_ViewModel.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
 
 #include <TColStd_IndexedMapOfInteger.hxx>
@@ -39,6 +42,8 @@
 #include <TopTools_MapOfShape.hxx>
 
 #include <qmessagebox.h>
+#include <qlabel.h>
+#include <qcombobox.h>
 
 //=================================================================================
 // class    : EntityGUI_SubShapeDlg
@@ -47,11 +52,11 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, fl)
+EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, fl)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SUBSHAPE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUBSHAPE")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_SUBSHAPE_TITLE"));
 
@@ -108,7 +113,8 @@ void EntityGUI_SubShapeDlg::Init()
   GroupPoints->ComboBox1->insertItem("Vertex");
   GroupPoints->ComboBox1->insertItem("Shape");
 
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC)
+  if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+      != OCCViewer_Viewer::Type())
     GroupPoints->CheckButton1->setEnabled(false);
 
   /* signals and slots connections */
@@ -125,8 +131,9 @@ void EntityGUI_SubShapeDlg::Init()
   connect(GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(ComboTextChanged()));
   connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(SubShapeToggled()));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  
   updateButtonState();
 
   SelectionIntoArgument();
@@ -150,7 +157,7 @@ void EntityGUI_SubShapeDlg::ClickOnOk()
 //=================================================================================
 bool EntityGUI_SubShapeDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo(tr(""));
+  SUIT_Session::session()->activeApplication()->putInfo(tr(""));
     
   /* Explode all sub shapes */
   if( isAllSubShapes() ) {
@@ -185,20 +192,20 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
 
   QString aString = ""; /* name of selection */
 
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects( mySelection, aString, true );
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString, true );
   if( nbSel != 1 )
     return;
 
   TopoDS_Shape S;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
+  Handle(SALOME_InteractiveObject) IO = firstIObject();
   if ( !IO->hasEntry() )
   {
-    QAD_Application::getDesktop()->putInfo( tr( "GEOM_PRP_SHAPE_IN_STUDY" ) );
+    SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_SHAPE_IN_STUDY" ) );
     updateButtonState();
     return;
   }
 
-  if ( !myGeomBase->GetTopoFromSelection( mySelection, S ) ||
+  if ( !myGeomBase->GetTopoFromSelection( selectedIO(), S ) ||
        S.IsNull() ||
        S.ShapeType() == TopAbs_VERTEX )
   {
@@ -332,7 +339,8 @@ void EntityGUI_SubShapeDlg::DeactivateActiveDialog()
 void EntityGUI_SubShapeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   SubShapeToggled();
   updateButtonState();
 }
@@ -456,7 +464,7 @@ unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes (const TopoDS_Shape& S,
 //=================================================================================
 void EntityGUI_SubShapeDlg::updateButtonState()
 {
-  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC ||
+  if ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() != OCCViewer_Viewer::Type() ||
        myObject->_is_nil() || shapeType() == TopAbs_SHAPE || shapeType() == TopAbs_COMPOUND ) {
     GroupPoints->CheckButton1->setChecked( FALSE );
     GroupPoints->CheckButton1->setEnabled( FALSE );
@@ -514,14 +522,14 @@ bool EntityGUI_SubShapeDlg::isValid( QString& msg )
   if ( !myObject->_is_nil() ) {
     if ( isAllSubShapes() )
       isOk = true;
-    else if ( mySelection->IObjectCount() == 1 ) {
+    else if ( IObjectCount() == 1 ) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-	GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+	GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
       
       if ( aResult && !anObj->_is_nil() ) {
 	TColStd_IndexedMapOfInteger aMapIndex;
-	mySelection->GetIndex( mySelection->firstIObject(), aMapIndex );
+	((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
 	isOk = aMapIndex.Extent() > 0;
 	if ( !isOk )
 	  msg += tr( "NO_SUBSHAPES_SELECTED" );
@@ -547,14 +555,14 @@ bool EntityGUI_SubShapeDlg::execute( ObjectList& objects )
   // and manual selection is active
   if ( !isAllSubShapes() )
   {
-    if ( mySelection->IObjectCount() == 1 ) {
+    if ( IObjectCount() == 1 ) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-	GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+	GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
       if ( aResult && !anObj->_is_nil() ) {
 	TColStd_IndexedMapOfInteger aMapIndex;
-	mySelection->GetIndex( mySelection->firstIObject(), aMapIndex );
+	((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
 
 	GEOM::GEOM_ILocalOperations_var aLocOp = 
 	  getGeomEngine()->GetILocalOperations( getStudyId() );

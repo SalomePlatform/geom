@@ -29,7 +29,16 @@
 
 #include "OperationGUI_ChamferDlg.h"
 #include "DlgRef_SpinBox.h"
-#include "QAD_Desktop.h"
+
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "OCCViewer_ViewModel.h"
+
+#include <TColStd_MapOfInteger.hxx>
+
+#include <qlabel.h>
 #include "qpixmap.h"
 #include <list>
 
@@ -42,18 +51,16 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_ChamferDlg::OperationGUI_ChamferDlg( QWidget* parent, SALOME_Selection* Sel )
-: GEOMBase_Skeleton(parent, "ChamferDlg", Sel, false,
+OperationGUI_ChamferDlg::OperationGUI_ChamferDlg( QWidget* parent )
+: GEOMBase_Skeleton(parent, "ChamferDlg", false,
     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-
-  mySelection = Sel;
   myConstructorId = -1;
 
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_ALL")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_EDGE")));
-  QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_FACE")));
-  QPixmap iconSelect(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_ALL")));
+  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_EDGE")));
+  QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_FACE")));
+  QPixmap iconSelect(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption( tr( "GEOM_CHAMFER_TITLE" ) );
 
@@ -143,7 +150,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg( QWidget* parent, SALOME_Select
     anIter.data()->RangeStepAndValidator( 0.001, 999.999, SpecificStep, 3 );
 
   /* Initialisations */
-  Init( mySelection );
+  Init();
 }
 
 
@@ -160,9 +167,8 @@ OperationGUI_ChamferDlg::~OperationGUI_ChamferDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void OperationGUI_ChamferDlg::Init( SALOME_Selection* Sel )
+void OperationGUI_ChamferDlg::Init()
 {
-  mySelection = Sel;
   myConstructorId = -1;
   reset();
   RadioButton1->setChecked( true );
@@ -197,8 +203,8 @@ void OperationGUI_ChamferDlg::Init( SALOME_Selection* Sel )
              this, SLOT( ValueChangedInSpinBox( double ) ) );
 
   // selection
-  connect( mySelection, SIGNAL( currentSelectionChanged() ),
-           this, SLOT( SelectionIntoArgument() ) );
+  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_CHAMFER" ) );
 
@@ -217,11 +223,12 @@ void OperationGUI_ChamferDlg::Init( SALOME_Selection* Sel )
 void OperationGUI_ChamferDlg::ConstructorsClicked( int constructorId )
 {
    // Activate next widget
- if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC )
- {
-    RadioButton1->setChecked( true );
-    return;
- }
+  if ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+       != OCCViewer_Viewer::Type() )
+    {
+      RadioButton1->setChecked( true );
+      return;
+    }
   
   if ( myConstructorId == constructorId )
     return;
@@ -334,11 +341,11 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
   // If selection of main object is activated
   if ( aCurrFocus == MainObj1 || aCurrFocus == MainObj2 || aCurrFocus == MainObj3 )
   {
-    if ( mySelection->IObjectCount() == 1 )
+    if ( IObjectCount() == 1 )
     {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
       if ( aResult && !anObj->_is_nil() )
       {
@@ -356,16 +363,16 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
   // If face selection of second tab is activated
   else if ( aCurrFocus == Face1 || aCurrFocus == Face2 )
   {
-    if ( mySelection->IObjectCount() == 1 )
+    if ( IObjectCount() == 1 )
     {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
       if ( aResult && !anObj->_is_nil() )
       {
          TColStd_IndexedMapOfInteger anIndexes;
-         mySelection->GetIndex( mySelection->firstIObject(), anIndexes );
+	 ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), anIndexes );
 
          if ( anIndexes.Extent() == 1 )
          {
@@ -384,16 +391,16 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
   // If face selection of third tab is activated
   else if ( aCurrFocus == Faces )
   {
-    if ( mySelection->IObjectCount() == 1 )
+    if ( IObjectCount() == 1 )
     {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
+        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
       if ( aResult && !anObj->_is_nil() )
       {
          TColStd_IndexedMapOfInteger anIndexes;
-         mySelection->GetIndex( mySelection->firstIObject(), anIndexes );
+	 ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), anIndexes );
 
          if ( anIndexes.Extent() > 0 )
          {
@@ -475,8 +482,8 @@ void OperationGUI_ChamferDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  connect( mySelection, SIGNAL(currentSelectionChanged()),
-           this, SLOT( SelectionIntoArgument() ) );
+  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	   SIGNAL(currentSelectionChanged()), this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
   displayPreview();

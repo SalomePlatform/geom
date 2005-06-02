@@ -28,7 +28,13 @@
 
 #include "BasicGUI_ArcDlg.h"
 
-#include "QAD_Desktop.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
+
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <GC_MakeArcOfCircle.hxx>
 #include <Geom_TrimmedCurve.hxx>
@@ -47,11 +53,12 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_ArcDlg::BasicGUI_ArcDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu),
+   myGeometryGUI()
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_ARC")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ARC")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_ARC_TITLE"));
 
@@ -97,7 +104,7 @@ BasicGUI_ArcDlg::~BasicGUI_ArcDlg()
 void BasicGUI_ArcDlg::Init()
 {
   /* init variables */
-  myGeomGUI->SetState( 0 );
+  // myGeometryGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
 
   myEditCurrentArgument = Group3Pnts->LineEdit1;
@@ -107,8 +114,8 @@ void BasicGUI_ArcDlg::Init()
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -121,7 +128,8 @@ void BasicGUI_ArcDlg::Init()
   connect(Group3Pnts->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(Group3Pnts->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_ARC" ) );
 }
@@ -176,7 +184,7 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
   
-  if ( mySelection->IObjectCount() != 1 )  
+  if ( IObjectCount() != 1 )  
   {
     if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
@@ -186,7 +194,7 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {  
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) ); 
@@ -240,9 +248,10 @@ void BasicGUI_ArcDlg::LineEditReturnPressed()
 void BasicGUI_ArcDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  myGeomGUI->SetState( 0 );
+  // myGeometryGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
 
   myEditCurrentArgument = Group3Pnts->LineEdit1;
@@ -260,7 +269,7 @@ void BasicGUI_ArcDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_ArcDlg::DeactivateActiveDialog()
 {
-  myGeomGUI->SetState( -1 );
+  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -280,7 +289,7 @@ void BasicGUI_ArcDlg::enterEvent(QEvent* e)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_ArcDlg::createOperation()
 {
-  return getGeomEngine()->GetICurvesOperations( getStudyId() );
+  return myGeometryGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
 }
 
 //=================================================================================
@@ -289,7 +298,7 @@ GEOM::GEOM_IOperations_ptr BasicGUI_ArcDlg::createOperation()
 //=================================================================================
 static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Object_var& thePnt2 )
 {
-	return thePnt1->_is_equivalent( thePnt2 );
+  return thePnt1->_is_equivalent( thePnt2 );
 }
 
 //=================================================================================
@@ -299,7 +308,7 @@ static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Obje
 bool BasicGUI_ArcDlg::isValid( QString& msg )
 {
   return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
-		     !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
+    !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
 }
 
 //=================================================================================
@@ -309,8 +318,8 @@ bool BasicGUI_ArcDlg::isValid( QString& msg )
 bool BasicGUI_ArcDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeArc( myPoint1, myPoint2, myPoint3 );
-	if ( !anObj->_is_nil() )
-   	objects.push_back( anObj._retn() );
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
   return true;
 }
 
@@ -320,6 +329,6 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_ArcDlg::closeEvent( QCloseEvent* e )
 {
-  myGeomGUI->SetState( -1 );
+  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }

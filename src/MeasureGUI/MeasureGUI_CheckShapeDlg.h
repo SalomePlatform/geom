@@ -42,8 +42,8 @@ class MeasureGUI_CheckShapeDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-                                        MeasureGUI_CheckShapeDlg( QWidget* parent,
-                                                                  SALOME_Selection* Sel );
+                                        MeasureGUI_CheckShapeDlg( GeometryGUI* GUI,
+								  QWidget*     parent );
                                         ~MeasureGUI_CheckShapeDlg();
 protected:
 
@@ -52,7 +52,7 @@ protected:
 
 private:
 
-    void                                Init( SALOME_Selection* Sel );
+    void                                Init();
     bool                                getParameters( bool& theIsValid,
 						       QString& theMsg);
 

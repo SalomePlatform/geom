@@ -29,15 +29,18 @@
 using namespace std;
 #include "RepairGUI_CloseContourDlg.h"
 
-#include "QAD_RightFrame.h"
-#include "QAD_Desktop.h"
-#include "OCCViewer_Viewer3d.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "SUIT_Session.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
 
 #include "GEOMImpl_Types.hxx"
 
 #include <TopAbs.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TColStd_MapOfInteger.hxx>
 
+#include <qlabel.h>
 
 //=================================================================================
 // class    : RepairGUI_CloseContourDlg()
@@ -46,11 +49,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_CloseContourDlg::RepairGUI_CloseContourDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_CloseContourDlg::RepairGUI_CloseContourDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CLOSECONTOUR")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CLOSECONTOUR")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_CLOSECONTOUR_TITLE"));
 
@@ -123,7 +126,7 @@ void RepairGUI_CloseContourDlg::Init()
   myWiresInd = new GEOM::short_array();
   myWiresInd->length( 0 );
   
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
   initSelection();
 
   /* signals and slots connections */
@@ -139,7 +142,8 @@ void RepairGUI_CloseContourDlg::Init()
   connect(mySelectWiresBtn, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(mySelectWiresEdt, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "CLOSE_CONTOUR_NEW_OBJ_NAME" ) );
 }
@@ -204,9 +208,9 @@ void RepairGUI_CloseContourDlg::SelectionIntoArgument()
   else if ( myEditCurrentArgument == mySelectWiresEdt )
     myWiresInd->length( 0 );
 
-  if ( mySelection->IObjectCount() == 1 )
+  if ( IObjectCount() == 1 )
   {
-    Handle(SALOME_InteractiveObject) anIO = mySelection->firstIObject();
+    Handle(SALOME_InteractiveObject) anIO = firstIObject();
 
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 )  // face selection
     {
@@ -225,7 +229,7 @@ void RepairGUI_CloseContourDlg::SelectionIntoArgument()
     else if ( myEditCurrentArgument == mySelectWiresEdt )
     {
       TColStd_IndexedMapOfInteger aMap;
-      mySelection->GetIndex( anIO, aMap );
+      ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( anIO, aMap );
       const int n = aMap.Extent();
       myWiresInd->length( n );
       for ( int i = 1; i <= n; i++ )
@@ -277,7 +281,7 @@ void RepairGUI_CloseContourDlg::LineEditReturnPressed()
 //=================================================================================
 void RepairGUI_CloseContourDlg::DeactivateActiveDialog()
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -289,7 +293,8 @@ void RepairGUI_CloseContourDlg::DeactivateActiveDialog()
 void RepairGUI_CloseContourDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setText("");
@@ -297,7 +302,7 @@ void RepairGUI_CloseContourDlg::ActivateThisDialog()
   myObject = GEOM::GEOM_Object::_nil();
   myWiresInd->length( 0 );
 
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
   initSelection();
 }
 
@@ -319,7 +324,7 @@ void RepairGUI_CloseContourDlg::enterEvent(QEvent* e)
 //=================================================================================
 void RepairGUI_CloseContourDlg::closeEvent(QCloseEvent* e)
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 

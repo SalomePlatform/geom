@@ -44,7 +44,7 @@ class PrimitiveGUI_BoxDlg : public GEOMBase_Skeleton
     Q_OBJECT
     
     public:
-    PrimitiveGUI_BoxDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    PrimitiveGUI_BoxDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~PrimitiveGUI_BoxDlg();
     
 protected:
@@ -58,6 +58,8 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
+
+    GeometryGUI* myGeometryGUI;
     
     GEOM::GEOM_Object_var myPoint1, myPoint2;   /* Points containing the vector */ 
     

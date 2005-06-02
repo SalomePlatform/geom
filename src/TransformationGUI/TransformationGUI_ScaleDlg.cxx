@@ -28,11 +28,15 @@
 
 #include "TransformationGUI_ScaleDlg.h"
 
-#include "QAD_Desktop.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
+#include <qcheckbox.h>
 
 #include "GEOMImpl_Types.hxx"
-
-#include <qcheckbox.h>
 
 #include "utilities.h"
 
@@ -45,11 +49,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SCALE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SCALE")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_SCALE_TITLE"));
 
@@ -97,10 +101,11 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(QWidget* parent, const ch
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
    
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   Init();
 }
@@ -177,27 +182,25 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
 
   if(myEditCurrentArgument == GroupPoints->LineEdit1)
     {
-      int aNbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aName);
+      int aNbSel = GEOMBase::GetNameOfSelectedIObjects(selectedIO(), aName);
       if(aNbSel < 1)
 	{
 	  myObjects.length(0);
 	  return;
 	}
-      GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(), myObjects);
+      GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), myObjects);
       if (!myObjects.length())
 	return;
-      if(aNbSel != 1)
-	aName = tr("%1_objects").arg(aNbSel);
     }
   else if(myEditCurrentArgument == GroupPoints->LineEdit2)
     {
-      if(mySelection->IObjectCount() != 1)
+      if(IObjectCount() != 1)
 	{
 	  myPoint = GEOM::GEOM_Object::_nil();
 	  return;
 	}
       Standard_Boolean testResult = Standard_False;
-      myPoint = GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), testResult );
+      myPoint = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
       if(!testResult || CORBA::is_nil( myPoint ))
 	return;
       aName = GEOMBase::GetName( myPoint );
@@ -253,7 +256,8 @@ void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
 void TransformationGUI_ScaleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   globalSelection();
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -297,7 +301,7 @@ void TransformationGUI_ScaleDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr  TransformationGUI_ScaleDlg::createOperation()
 {
-  return getGeomEngine()->GetITransformOperations( getStudyId() );
+  return myGeometryGUI->GetGeomGen()->GetITransformOperations( getStudyId() );
 }
 
 //=================================================================================

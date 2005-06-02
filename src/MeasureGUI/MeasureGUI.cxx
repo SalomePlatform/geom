@@ -27,9 +27,10 @@
 //  $Header$
 
 #include "MeasureGUI.h"
-#include "QAD_Desktop.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
 
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "SalomeApp_Tools.h"
 
 #include "MeasureGUI_PropertiesDlg.h"    // Method PROPERTIES
 #include "MeasureGUI_CenterMassDlg.h"    // Method CENTER MASS
@@ -48,11 +49,11 @@ MeasureGUI* MeasureGUI::myGUIObject = 0;
 // function : GetMeasureGUI()
 // purpose  : Get the only MeasureGUI object [ static ]
 //=======================================================================
-MeasureGUI* MeasureGUI::GetMeasureGUI()
+MeasureGUI* MeasureGUI::GetMeasureGUI( GeometryGUI* parent )
 {
   if ( myGUIObject == 0 ) {
     // init MeasureGUI only once
-    myGUIObject = new MeasureGUI();
+    myGUIObject = new MeasureGUI( parent );
   }
   return myGUIObject;
 }
@@ -61,7 +62,7 @@ MeasureGUI* MeasureGUI::GetMeasureGUI()
 // function : MeasureGUI()
 // purpose  : Constructor
 //=======================================================================
-MeasureGUI::MeasureGUI() : GEOMGUI()
+MeasureGUI::MeasureGUI( GeometryGUI* parent ) : GEOMGUI( parent )
 {
 }
 
@@ -79,27 +80,27 @@ MeasureGUI::~MeasureGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool MeasureGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
+bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
-  MeasureGUI* myMeasureGUI = GetMeasureGUI();
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(
-    QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
+  MeasureGUI* myMeasureGUI = GetMeasureGUI( getGeometryGUI() );
+  getGeometryGUI()->EmitSignalDeactivateDialog();
 
   switch ( theCommandID )
   {
-    case 701   : new MeasureGUI_PropertiesDlg  ( parent, Sel ); break;  // LENGTH, AREA AND VOLUME
-    case 702   : new MeasureGUI_CenterMassDlg  ( parent, Sel ); break;  // CENTER MASS
-    case 703   : new MeasureGUI_InertiaDlg     ( parent, Sel ); break;  // INERTIA
-    case 7041  : new MeasureGUI_BndBoxDlg      ( parent, Sel ); break;  // BOUNDING BOX
-    case 7042  : new MeasureGUI_DistanceDlg    ( parent, Sel ); break;  // MIN DISTANCE
-    case 705   : new MeasureGUI_MaxToleranceDlg( parent, Sel ); break;  // MAXTOLERANCE
-    case 706   : new MeasureGUI_WhatisDlg      ( parent, Sel ); break;  // WHATIS
-    case 707   : new MeasureGUI_CheckShapeDlg  ( parent, Sel ); break;  // CHECKSHAPE
-    case 7072  : new MeasureGUI_CheckCompoundOfBlocksDlg  ( parent, Sel ); break;  // CHECKCOMPOUND
-    case 708   : new MeasureGUI_PointDlg       ( parent, Sel ); break;  // POINT COORDINATES
+    case 701   : new MeasureGUI_PropertiesDlg  ( getGeometryGUI(), parent ); break;  // LENGTH, AREA AND VOLUME
+    case 702   : new MeasureGUI_CenterMassDlg  ( parent ); break;  // CENTER MASS
+    case 703   : new MeasureGUI_InertiaDlg     ( getGeometryGUI(), parent ); break;  // INERTIA
+    case 7041  : new MeasureGUI_BndBoxDlg      ( getGeometryGUI(), parent ); break;  // BOUNDING BOX
+    case 7042  : new MeasureGUI_DistanceDlg    ( getGeometryGUI(), parent ); break;  // MIN DISTANCE
+    case 705   : new MeasureGUI_MaxToleranceDlg( getGeometryGUI(), parent ); break;  // MAXTOLERANCE
+    case 706   : new MeasureGUI_WhatisDlg      ( getGeometryGUI(), parent ); break;  // WHATIS
+    case 707   : new MeasureGUI_CheckShapeDlg  ( getGeometryGUI(), parent ); break;  // CHECKSHAPE
+    case 7072  : new MeasureGUI_CheckCompoundOfBlocksDlg  ( getGeometryGUI(), parent ); break;  // CHECKCOMPOUND
+    case 708   : new MeasureGUI_PointDlg       ( getGeometryGUI(), parent ); break;  // POINT COORDINATES
     
-    default: parent->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); break;
+    default: 
+      SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
+      break;
   }
   return true;
 }
@@ -124,7 +125,7 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
       QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
+    SalomeApp_Tools::QtCatchCorbaException(S_ex);
     }
   
   return;
@@ -137,8 +138,8 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, QAD_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return MeasureGUI::GetMeasureGUI();
+    return MeasureGUI::GetMeasureGUI( parent );
   }
 }

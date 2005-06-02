@@ -29,15 +29,14 @@
 #include "OperationGUI_ClippingDlg.h"
 #include "DlgRef_SpinBox.h"
 
-#include "QAD_Application.h"
-#include "QAD_Desktop.h"
-#include "QAD_RightFrame.h"
-#include "VTKViewer_ViewFrame.h"
-#include "OCCViewer_ViewFrame.h"
-#include "QAD_MessageBox.h"
-#include "utilities.h"
+#include "SUIT_Session.h"
+#include "SUIT_ViewWindow.h"
+#include "VTKViewer_ViewWindow.h"
+#include "VTKViewer_ViewModel.h"
+#include "OCCViewer_ViewWindow.h"
 #include "OCCViewer_ViewPort3d.h"
-#include "OCCViewer_Viewer3d.h"
+
+#include "utilities.h"
 #include <V3d_View.hxx>
 #include <V3d.hxx>
 
@@ -58,8 +57,8 @@
 // class    : OperationGUI_ClippingDlg()
 // purpose  : 
 //=================================================================================
-OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl )
-  : GEOMBase_Skeleton( parent, "OperationGUI_ClippingDlg", 0, false,
+OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( QWidget* parent, const char* name, bool modal, WFlags fl )
+  : GEOMBase_Skeleton( parent, "OperationGUI_ClippingDlg", false,
     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   setCaption( tr( "Change clipping range" ) );
@@ -80,7 +79,7 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( QWidget* parent, const char*
   // Controls
   TextLabelNear = new QLabel( GroupArguments, "TextLabelNear" );
   TextLabelNear->setText( tr( "Near"  ) );
-  //mzn TextLabelNear->setFixedWidth(74);
+  TextLabelNear->setFixedWidth(74);
   GroupArgumentsLayout->addWidget( TextLabelNear, 0, 0 );
 
   SpinBox_Near = new DlgRef_SpinBox( GroupArguments, "SpinBox_Near");
@@ -88,7 +87,7 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( QWidget* parent, const char*
 
   TextLabelFar = new QLabel( GroupArguments, "TextLabelFar" );
   TextLabelFar->setText( tr( "Far"  ) );
-  //mzn TextLabelFar->setFixedWidth(74);
+  TextLabelFar->setFixedWidth(74);
   GroupArgumentsLayout->addWidget( TextLabelFar, 0, 2 );
   
   SpinBox_Far = new DlgRef_SpinBox( GroupArguments, "SpinBox_Far");
@@ -142,12 +141,14 @@ OperationGUI_ClippingDlg::~ OperationGUI_ClippingDlg()
 //=================================================================================
 void OperationGUI_ClippingDlg::Init()
 {
-  QAD_ViewFrame* aFrame = QAD_Application::getDesktop()->getActiveApp()->
-    getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame();
+  SUIT_ViewWindow* anActiveWindow =  SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  if (!anActiveWindow)
+    return;
   
-  VTKViewer_ViewFrame* aVTKFrame = dynamic_cast<VTKViewer_ViewFrame*>( aFrame );
-  if ( aVTKFrame )
-    { 
+  if ( anActiveWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() )
+    {
+      VTKViewer_ViewWindow* aVTKFrame = dynamic_cast<VTKViewer_ViewWindow*>( anActiveWindow );
+      
       TextLabelNear->setText( tr( "Near"  ) );
       TextLabelFar->setText( tr( "Far"  ) );
 
@@ -191,10 +192,10 @@ void OperationGUI_ClippingDlg::Init()
       
       return;
     }
-  
-  OCCViewer_ViewFrame* aOCCFrame = dynamic_cast<OCCViewer_ViewFrame*>( aFrame );
-  if ( aOCCFrame )
+  else if ( anActiveWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() )
     {
+      OCCViewer_ViewWindow* aOCCFrame = dynamic_cast<OCCViewer_ViewWindow*>( anActiveWindow );
+
       TextLabelNear->setText( tr( "Depth"  ) );
       TextLabelFar->setText( tr( "Thickness"  ) );
 
@@ -218,12 +219,14 @@ void OperationGUI_ClippingDlg::Init()
 //=================================================================================
 bool OperationGUI_ClippingDlg::ClickOnApply()
 {
-  QAD_ViewFrame* aFrame = QAD_Application::getDesktop()->getActiveApp()->
-    getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame();
+  SUIT_ViewWindow* anActiveWindow =  SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  if (!anActiveWindow)
+    return false;
   
-  VTKViewer_ViewFrame* aVTKFrame = dynamic_cast<VTKViewer_ViewFrame*>( aFrame );
-  if ( aVTKFrame )
+  if ( anActiveWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() )
     {
+      VTKViewer_ViewWindow* aVTKFrame = dynamic_cast<VTKViewer_ViewWindow*>( anActiveWindow );
+      
       vtkRenderer* aRenderer = aVTKFrame->getRenderer();
       if(!aRenderer) return false;
       
@@ -239,10 +242,10 @@ bool OperationGUI_ClippingDlg::ClickOnApply()
       
       return true;
     }
-
-  OCCViewer_ViewFrame* aOCCFrame = dynamic_cast<OCCViewer_ViewFrame*>( aFrame );
-  if ( aOCCFrame )
+  else if ( anActiveWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() )
     {
+      OCCViewer_ViewWindow* aOCCFrame = dynamic_cast<OCCViewer_ViewWindow*>( anActiveWindow );
+
       Handle(V3d_View) view3d = ((OCCViewer_ViewPort3d*)aOCCFrame->getViewPort())->getView();
       
       double depth = SpinBox_Near->GetValue();
@@ -324,12 +327,14 @@ void OperationGUI_ClippingDlg::closeEvent( QCloseEvent* e )
 //=================================================================================
 void OperationGUI_ClippingDlg::onReset()
 {
-  QAD_ViewFrame* aFrame = QAD_Application::getDesktop()->getActiveApp()->
-    getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame();
+  SUIT_ViewWindow* anActiveWindow =  SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  if (!anActiveWindow)
+    return;
   
-  VTKViewer_ViewFrame* aVTKFrame = dynamic_cast<VTKViewer_ViewFrame*>( aFrame );
-  if ( aVTKFrame )
+  if ( anActiveWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() )
     {
+      VTKViewer_ViewWindow* aVTKFrame = dynamic_cast<VTKViewer_ViewWindow*>( anActiveWindow );
+
       vtkRenderer* aRenderer = aVTKFrame->getRenderer();
       if(!aRenderer) return;
       
@@ -368,10 +373,10 @@ void OperationGUI_ClippingDlg::onReset()
       
       return;
     }
-
-  OCCViewer_ViewFrame* aOCCFrame = dynamic_cast<OCCViewer_ViewFrame*>( aFrame );
-  if ( aOCCFrame )
+  else if ( anActiveWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() )
     {
+      OCCViewer_ViewWindow* aOCCFrame = dynamic_cast<OCCViewer_ViewWindow*>( anActiveWindow );
+
       TextLabelNear->setText( tr( "Depth"  ) );
       TextLabelFar->setText( tr( "Thickness"  ) );
       

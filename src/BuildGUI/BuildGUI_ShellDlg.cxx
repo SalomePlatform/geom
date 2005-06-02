@@ -27,9 +27,15 @@
 //  $Header: 
 
 #include "BuildGUI_ShellDlg.h"
-
-#include "QAD_Desktop.h"
 #include "GEOMImpl_Types.hxx"
+
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include "TColStd_MapOfInteger.hxx"
+
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BuildGUI_ShellDlg()
@@ -38,11 +44,11 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_ShellDlg::BuildGUI_ShellDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BuildGUI_ShellDlg::BuildGUI_ShellDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SHELL")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SHELL")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_SHELL_TITLE"));
     
@@ -99,7 +105,8 @@ void BuildGUI_ShellDlg::Init()
 
   connect(GroupShell->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName(tr("GEOM_SHELL"));
 }
@@ -140,13 +147,13 @@ void BuildGUI_ShellDlg::SelectionIntoArgument()
   QString aString;
 
   myOkFacesAndShells = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects( mySelection, aString, true );
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString, true );
   if ( nbSel == 0 )
     return;
   if ( nbSel != 1 )
     aString = QString( "%1_objects ").arg( nbSel );
 
-  GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(),  myFacesAndShells, true );
+  GEOMBase::ConvertListOfIOInListOfGO( selectedIO(),  myFacesAndShells, true );
   if ( !myFacesAndShells.length() )
     return;
 
@@ -183,7 +190,8 @@ void BuildGUI_ShellDlg::SetEditCurrentArgument()
 void BuildGUI_ShellDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   TColStd_MapOfInteger aMap;
   aMap.Add(GEOM_SHELL);
   aMap.Add(GEOM_FACE);

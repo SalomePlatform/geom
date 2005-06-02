@@ -31,7 +31,7 @@
 
 #include "GEOMBase_Skeleton.h"
 
-class QAD_SpinBoxDbl;
+class QtxDblSpinBox;
 class DlgRef_1Sel_Ext;
 
 //=================================================================================
@@ -43,7 +43,7 @@ class RepairGUI_GlueDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    RepairGUI_GlueDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    RepairGUI_GlueDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_GlueDlg();
 
 protected:
@@ -65,7 +65,7 @@ private :
     GEOM::GEOM_Object_var myObject;
 
     DlgRef_1Sel_Ext* GroupPoints;
-    QAD_SpinBoxDbl*  myTolEdt;
+    QtxDblSpinBox*   myTolEdt;
 
 private slots:
     void ClickOnOk();

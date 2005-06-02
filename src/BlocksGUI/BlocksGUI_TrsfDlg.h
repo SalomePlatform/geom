@@ -45,7 +45,6 @@ class BlocksGUI_TrsfDlg : public GEOMBase_Skeleton
 
 public:
   BlocksGUI_TrsfDlg (QWidget* parent,
-		     SALOME_Selection* Sel,
 		     bool modal = FALSE);
   ~BlocksGUI_TrsfDlg();
 

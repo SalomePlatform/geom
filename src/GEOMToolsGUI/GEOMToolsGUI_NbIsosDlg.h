@@ -21,39 +21,40 @@
 //
 //
 //
-//  File   : GEOMBase_NbIsosDlg.h
+//  File   : GEOMToolsGUI_NbIsosDlg.h
 //  Author : 
 //  Module : GEOM
 //  $Header: 
 
-#ifndef GEOMBASE_NBISOSDLG_H
-#define GEOMBASE_NBISOSDLG_H
+#ifndef GEOMTOOLSGUI_NBISOSDLG_H
+#define GEOMTOOLSGUI_NBISOSDLG_H
 
 #include <qdialog.h>
 
-class QLabel;
 class QSpinBox;
-class QPushButton;
 
 //=================================================================================
-// class    : GEOMBase_NbIsosDlg
+// class    : GEOMToolsGUI_NbIsosDlg
 // purpose  :
 //=================================================================================
-class GEOMBase_NbIsosDlg : public QDialog
+class GEOMToolsGUI_NbIsosDlg : public QDialog
 { 
     Q_OBJECT
 
 public:
-    GEOMBase_NbIsosDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
-    ~GEOMBase_NbIsosDlg();
+    GEOMToolsGUI_NbIsosDlg( QWidget* parent );
+    ~GEOMToolsGUI_NbIsosDlg();
+    
+    int       getU() const;
+    int       getV() const;
 
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
-    QLabel* TextLabel1;
-    QLabel* TextLabel2;
+    void      setU( const int );
+    void      setV( const int );
+
+private:
     QSpinBox* SpinBoxU;
     QSpinBox* SpinBoxV;
 
 };
 
-#endif // GEOMETRYGUI_NBISOSDLG_H
+#endif // GEOMTOOLSGUI_NBISOSDLG_H

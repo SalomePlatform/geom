@@ -48,15 +48,17 @@
 typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 
 class TColStd_MapOfInteger;
-class QAD_ViewFrame;
-class SALOME_Selection;
+class SalomeApp_SelectionMgr;
+class SalomeApp_Study;
+class SUIT_SelectionFilter;
+//class SALOME_Selection;
 
 class GEOM_Displayer : public SALOME_Displayer
 {
     
 public:
   /* Constructor */
-  GEOM_Displayer();
+  GEOM_Displayer( SalomeApp_Study* study );
   /* Destructor */
   virtual ~GEOM_Displayer();
 
@@ -64,7 +66,7 @@ public:
 
   void          Display   ( const Handle(SALOME_InteractiveObject)& theIO,
                             const bool updateViewer = true,
-			    QAD_ViewFrame* theViewFrame = 0 );
+			    SALOME_View* theViewFrame = 0 );
 
   // This overloaded Display() method can be useful for operations
   // not using dialog boxes.
@@ -77,7 +79,7 @@ public:
   void          Erase     ( const Handle(SALOME_InteractiveObject)& theIO,
                             const bool forced = false,
                             const bool updateViewer = true,
-			    QAD_ViewFrame* theViewFrame = 0 );
+			    SALOME_View* theViewFrame = 0 );
 
   void          Erase     ( GEOM::GEOM_Object_ptr theObj,
                             const bool forced = false,
@@ -94,6 +96,11 @@ public:
                             
   void          Redisplay ( const SALOME_ListIO& theIOList,
                             const bool updateViewer = true );
+
+  /* Erase all objects displayed in the given or active view */
+  void          EraseAll ( const bool forced = false,
+			   const bool updateViewer = true,
+			   SALOME_View* theViewFrame = 0 );
 
   /* Update current viewer */
   void          UpdateViewer();
@@ -136,13 +143,14 @@ public:
   void         GlobalSelection( const int = GEOM_ALLOBJECTS, const bool = false );
   void         GlobalSelection( const TColStd_MapOfInteger&, const bool = false );
 
-  static QAD_ViewFrame* GetActiveView();
+  static SALOME_View* GetActiveView();
+  SalomeApp_Study* getStudy() const {return myStudy;}
 
 protected:
   /* internal methods */
   /* Builds presentation accordint to the current viewer type */
   SALOME_Prs* buildPresentation( const Handle(SALOME_InteractiveObject)& theIO,
-				 QAD_ViewFrame* theViewFrame = 0 );
+				 SALOME_View* theViewFrame = 0 );
   
   /* Sets interactive object */
   void        setIO( const Handle(SALOME_InteractiveObject)& theIO ) { myIO = theIO; }
@@ -153,20 +161,25 @@ protected:
   /* Resets internal data */
   void        internalReset();
 
-  void        clearTemporary( SALOME_Selection* );
+  void        clearTemporary( SalomeApp_SelectionMgr* theSelMgr );
 
+  SUIT_SelectionFilter* getFilter( const int theMode );
+  
 protected:
   Handle(SALOME_InteractiveObject) myIO;
   TopoDS_Shape                     myShape;
   string                           myName;
   int                              myType;
-  QAD_ViewFrame*                   myViewFrame;
+  SALOME_View*                     myViewFrame;
 
   // Attributes
   Quantity_Color                   myShadingColor;
   int                              myColor;
   double                           myWidth;
   bool                             myToActivate;
+
+private:
+  SalomeApp_Study* myStudy;
 };
 
 #endif // __GEOM_DISPLAYER_H

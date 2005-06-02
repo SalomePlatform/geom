@@ -31,7 +31,10 @@
 
 #include "GEOM_Displayer.h"
 
-#include "QAD_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "OCCViewer_ViewModel.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
 
 #include "utilities.h"
@@ -41,19 +44,19 @@
 #include <qmessagebox.h>
 #include <qtextedit.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BlocksGUI_ExplodeDlg()
 // purpose  : Constructs a BlocksGUI_ExplodeDlg which is a child of 'parent'.
 //=================================================================================
 BlocksGUI_ExplodeDlg::BlocksGUI_ExplodeDlg (QWidget* parent,
-                                            SALOME_Selection* Sel,
                                             bool modal)
-     : GEOMBase_Skeleton(parent, "ExplodeDlg", Sel, modal,
+     : GEOMBase_Skeleton(parent, "ExplodeDlg", modal,
                          WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image1 (QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BLOCK_EXPLODE")));
-  QPixmap imageS (QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BLOCK_EXPLODE")));
+  QPixmap imageS (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_BLOCK_EXPLODE_TITLE"));
 
@@ -129,7 +132,8 @@ void BlocksGUI_ExplodeDlg::Init()
   mySpinBoxMin->RangeStepAndValidator(0.0, 999.0, SpecificStep, 3);
   mySpinBoxMax->RangeStepAndValidator(0.0, 999.0, SpecificStep, 3);
 
-  if (QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC)
+  if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+      != OCCViewer_Viewer::Type())
     myCheckBtn->setEnabled(false);
 
   // signals and slots connections
@@ -143,7 +147,8 @@ void BlocksGUI_ExplodeDlg::Init()
 
   connect(myCheckBtn, SIGNAL(stateChanged(int)), this, SLOT(SubShapeToggled()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   myConstructorId = -1;
   ConstructorsClicked(0);
@@ -194,7 +199,7 @@ void BlocksGUI_ExplodeDlg::ClickOnOk()
 //=================================================================================
 bool BlocksGUI_ExplodeDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo(tr(""));
+  SUIT_Session::session()->activeApplication()->putInfo(tr(""));
 
   // Explode all sub shapes
   if (isAllSubShapes()) {
@@ -230,10 +235,10 @@ void BlocksGUI_ExplodeDlg::SelectionIntoArgument()
   myObject = GEOM::GEOM_Object::_nil();
   mySelName->setText("");
 
-  if (mySelection->IObjectCount() == 1) {
+  if (IObjectCount() == 1) {
     Standard_Boolean aResult = Standard_False;
     GEOM::GEOM_Object_var anObj =
-      GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), aResult);
+      GEOMBase::ConvertIOinGEOMObject(firstIObject(), aResult);
 
     if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
       myObject = anObj;
@@ -268,7 +273,8 @@ void BlocksGUI_ExplodeDlg::SetEditCurrentArgument()
 void BlocksGUI_ExplodeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   activateSelection();
 }
@@ -315,12 +321,14 @@ void BlocksGUI_ExplodeDlg::activateSelection()
   erasePreview(true);
 
   if (isAllSubShapes()) { // Sub-shapes selection disabled
-    disconnect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+    disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	       SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
     globalSelection( GEOM_ALLSHAPES );
     if (myObject->_is_nil()) {
       SelectionIntoArgument();
     }
-    connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+    connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	    SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   } else {
     displayPreview(true, true, false);
     globalSelection(GEOM_PREVIEW);
@@ -333,8 +341,8 @@ void BlocksGUI_ExplodeDlg::activateSelection()
 //=================================================================================
 void BlocksGUI_ExplodeDlg::updateButtonState()
 {
-  if (QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC ||
-      myObject->_is_nil()) {
+  if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+      != OCCViewer_Viewer::Type() || myObject->_is_nil()) {
     myCheckBtn->setChecked(FALSE);
     myCheckBtn->setEnabled(FALSE);
   } else {
@@ -387,7 +395,7 @@ bool BlocksGUI_ExplodeDlg::isValid (QString&)
     if (IsPreview())
       return !myObject->_is_nil();
     else
-      return !myObject->_is_nil() && (isAllSubShapes() || mySelection->IObjectCount());
+      return !myObject->_is_nil() && (isAllSubShapes() || IObjectCount());
   default:
     return false;
   }
@@ -434,7 +442,7 @@ bool BlocksGUI_ExplodeDlg::execute (ObjectList& objects)
     QMap<QString, char> selected;
 
     // Get names of selected objects
-    SALOME_ListIteratorOfListIO it (mySelection->StoredIObjects());
+    SALOME_ListIteratorOfListIO it (selectedIO());
     for (; it.More(); it.Next()) {
       selected.insert(it.Value()->getName(), 0);
     }
@@ -443,7 +451,7 @@ bool BlocksGUI_ExplodeDlg::execute (ObjectList& objects)
     ObjectList toRemoveFromEnggine;
     ObjectList::iterator anIter;
     for (anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter) {
-      if (selected.contains(GeometryGUI::GetORB()->object_to_string(*anIter)))
+      if (selected.contains(myGeomGUI->getApp()->orb()->object_to_string(*anIter)))
         objects.push_back(*anIter);
       else
         toRemoveFromEnggine.push_back(*anIter);

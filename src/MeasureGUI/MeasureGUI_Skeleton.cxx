@@ -27,18 +27,21 @@
 //  $Header$
 
 #include "MeasureGUI_Skeleton.h"
-#include "QAD_Desktop.h"
-#include "QAD_WaitCursor.h"
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
 #include "GeometryGUI.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "SalomeApp_Tools.h"
+#include "SUIT_Session.h"
 
 #include <qlineedit.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
+#include <qapplication.h>
 
 //=================================================================================
 // class    : MeasureGUI_Skeleton()
@@ -47,11 +50,12 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_Skeleton::MeasureGUI_Skeleton( QWidget*          parent,
-                                          const char*       name,
-                                          SALOME_Selection* Sel )
+MeasureGUI_Skeleton::MeasureGUI_Skeleton( GeometryGUI*      GUI,
+					  QWidget*          parent,
+                                          const char*       name )
 : MeasureGUI_Skeleton_QTD( parent, name, false,
-    WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose )
+			   WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ),
+  myGeomGUI( GUI )
 {
 
   mySelBtn = 0;
@@ -85,13 +89,9 @@ MeasureGUI_Skeleton::~MeasureGUI_Skeleton()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_Skeleton::Init( SALOME_Selection* Sel )
+void MeasureGUI_Skeleton::Init()
 {
-  myGeomGUI = GeometryGUI::GetGeomGUI();
-
   /* init variables */
-  mySelection = Sel;
-
   myGeomGUI->SetActiveDialogBox((QDialog*)this);
 
   /* signals and slots connections */
@@ -111,9 +111,10 @@ void MeasureGUI_Skeleton::Init( SALOME_Selection* Sel )
   connect( mySelBtn,    SIGNAL( clicked() ),
            this,        SLOT  ( SetEditCurrentArgument() ) );
 
-  if ( mySelection )
-    connect( mySelection, SIGNAL( currentSelectionChanged() ),
-             this,        SLOT  ( SelectionIntoArgument() ) );
+  SalomeApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+  if ( aSel )
+    connect( aSel, SIGNAL( currentSelectionChanged() ), 
+	     this, SLOT  ( SelectionIntoArgument() ) ) ;
 
   /* displays Dialog */
   RadioButton1->setChecked( TRUE );
@@ -147,7 +148,7 @@ void MeasureGUI_Skeleton::LineEditReturnPressed()
   const QString objectUserName = mySelEdit->text();
   QWidget* thisWidget = ( QWidget* )this;
   
-  if ( GEOMBase::SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) )
+  if ( GEOMBase::SelectionByNameInDialogs( thisWidget, objectUserName, selectedIO() ) )
     mySelEdit->setText( objectUserName );
 }
 
@@ -160,9 +161,10 @@ void MeasureGUI_Skeleton::DeactivateActiveDialog()
 {
   setEnabled( false );
   
-  if ( mySelection )
-    disconnect( mySelection, 0, this, 0 );
-    
+  SalomeApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+  if ( aSel )
+    disconnect( aSel, 0, this, 0 );
+  
   myGeomGUI->SetActiveDialogBox( 0 );
 
   globalSelection();
@@ -181,9 +183,10 @@ void MeasureGUI_Skeleton::ActivateThisDialog()
   
   myGeomGUI->SetActiveDialogBox( ( QDialog* )this );
 
-  if ( mySelection )
-    connect( mySelection, SIGNAL( currentSelectionChanged() ),
-             this,        SLOT  ( SelectionIntoArgument() ) );
+  SalomeApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+  if ( aSel )
+    connect( aSel, SIGNAL( currentSelectionChanged() ), 
+	     this, SLOT  ( SelectionIntoArgument() ) ) ;
   
   redisplayPreview();
   activateSelection();
@@ -209,7 +212,7 @@ void MeasureGUI_Skeleton::SelectionIntoArgument()
   
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
   
   if( !testResult || aSelectedObject->_is_nil() )
   {
@@ -240,7 +243,9 @@ void MeasureGUI_Skeleton::processObject()
 //=================================================================================
 void MeasureGUI_Skeleton::closeEvent( QCloseEvent* e )
 {
-  disconnect( mySelection, 0, this, 0 );
+  SalomeApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+  if ( aSel )
+    disconnect( aSel, 0, this, 0 );
   QDialog::closeEvent( e );
 }
 
@@ -282,7 +287,7 @@ void MeasureGUI_Skeleton::redisplayPreview()
 
   try
   {
-    QAD_WaitCursor wc;
+    QApplication::setOverrideCursor( Qt::waitCursor );
 
     getDisplayer()->SetColor( Quantity_NOC_VIOLET );
     getDisplayer()->SetToActivate( false );
@@ -292,7 +297,7 @@ void MeasureGUI_Skeleton::redisplayPreview()
   }
   catch( const SALOME::SALOME_Exception& e )
   {
-    QtCatchCorbaException( e );
+    SalomeApp_Tools::QtCatchCorbaException( e );
   }
   
 }
@@ -322,7 +327,7 @@ bool MeasureGUI_Skeleton::isValid( QString& )
 GEOM_Displayer* MeasureGUI_Skeleton::getDisplayer()
 {
   if ( !myDisplayer )
-    myDisplayer = new GEOM_Displayer();
+    myDisplayer = new GEOM_Displayer( getStudy() );
   return myDisplayer;
 }
 
@@ -335,26 +340,11 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_Skeleton::createOperation()
   return getGeomEngine()->GetIMeasureOperations( getStudyId() );
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//=================================================================================
+// function : getDesktop()
+// purpose  :
+//=================================================================================
+SUIT_Desktop*  MeasureGUI_Skeleton::getDesktop() const
+{
+  return dynamic_cast<SUIT_Desktop*>( parentWidget() );
+}

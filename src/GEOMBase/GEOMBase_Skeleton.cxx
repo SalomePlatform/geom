@@ -29,7 +29,10 @@
 using namespace std;
 #include "GEOMBase_Skeleton.h"
 #include "GeometryGUI.h"
-#include "SALOME_Selection.h"
+
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
 #include <qpushbutton.h>
 
@@ -40,7 +43,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GEOMBase_Skeleton::GEOMBase_Skeleton(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
+GEOMBase_Skeleton::GEOMBase_Skeleton(QWidget* parent, const char* name, bool modal, WFlags fl)
 :DlgRef_Skeleton_QTD(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ), GEOMBase_Helper()
 {
   if (!name)
@@ -53,7 +56,7 @@ GEOMBase_Skeleton::GEOMBase_Skeleton(QWidget* parent, const char* name, SALOME_S
   GroupMedium->close(TRUE);
   resize(0, 0);
 
-  Init(Sel);
+  Init();
 }
 
 
@@ -63,7 +66,8 @@ GEOMBase_Skeleton::GEOMBase_Skeleton(QWidget* parent, const char* name, SALOME_S
 //=================================================================================
 GEOMBase_Skeleton::~GEOMBase_Skeleton()
 {
-  myGeomGUI->SetActiveDialogBox( 0 );
+  if (myGeomGUI)
+    myGeomGUI->SetActiveDialogBox( 0 );
 }
 
 
@@ -71,21 +75,29 @@ GEOMBase_Skeleton::~GEOMBase_Skeleton()
 // function : Init()
 // purpose  :
 //=================================================================================
-void GEOMBase_Skeleton::Init(SALOME_Selection* Sel)
+void GEOMBase_Skeleton::Init()
 {
-  myGeomGUI = GeometryGUI::GetGeomGUI();
-
+  myGeomGUI = 0;
+  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app)
+    {
+      SalomeApp_Module* module = dynamic_cast<SalomeApp_Module*>(app->loadModule("Geometry"));
+      if (module)
+	myGeomGUI =  dynamic_cast<GeometryGUI*>(module);
+    }
+  
   /* init variables */
-  mySelection = Sel;
-
   myGeomBase = new GEOMBase();  // SAN -- TO BE REMOVED !!!
   myGeomGUI->SetActiveDialogBox(this);
-
+  
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
+  if (myGeomGUI) 
+    {
+      connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+      connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+    }
+  
   /* Move widget on the botton right corner of main widget */
 //   int x, y;
 //   myGeomBase->DefineDlgPosition( this, x, y );
@@ -122,8 +134,9 @@ void GEOMBase_Skeleton::LineEditReturnPressed()
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text();
   QWidget* thisWidget = (QWidget*)this;
-  if(GEOMBase::SelectionByNameInDialogs(thisWidget, objectUserName, mySelection))
-    myEditCurrentArgument->setText(objectUserName);
+  
+  if(GEOMBase::SelectionByNameInDialogs(thisWidget, objectUserName, selectedIO()))
+     myEditCurrentArgument->setText(objectUserName);
 
   return;
 }
@@ -137,9 +150,9 @@ void GEOMBase_Skeleton::DeactivateActiveDialog()
 {
   this->setEnabled(false);
   globalSelection();
-  //myGeomGUI->ResetState();
-  disconnect(mySelection, 0, this, 0);
-  GeometryGUI::GetGeomGUI()->SetActiveDialogBox(0);
+  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  if (myGeomGUI) myGeomGUI->SetActiveDialogBox(0);
+    
   return;
 }
 
@@ -151,9 +164,9 @@ void GEOMBase_Skeleton::DeactivateActiveDialog()
 void GEOMBase_Skeleton::ActivateThisDialog()
 {
   /* Emit a signal to deactivate the active dialog */
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
+  if (myGeomGUI) myGeomGUI->EmitSignalDeactivateDialog();
   this->setEnabled(true);
-  GeometryGUI::GetGeomGUI()->SetActiveDialogBox((QDialog*)this);
+  if (myGeomGUI) myGeomGUI->SetActiveDialogBox((QDialog*)this);
   return;
 }
 
@@ -164,7 +177,7 @@ void GEOMBase_Skeleton::ActivateThisDialog()
 //=================================================================================
 void GEOMBase_Skeleton::closeEvent(QCloseEvent* e)
 {
-  disconnect(mySelection, 0, this, 0);
+  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
   QDialog::closeEvent( e );
 }
 
@@ -197,4 +210,13 @@ int GEOMBase_Skeleton::getConstructorId() const
   if ( GroupConstructors != NULL && GroupConstructors->selected() != NULL )
     return GroupConstructors->id( GroupConstructors->selected() );
   return -1;
+}
+
+//=================================================================================
+// function : getDesktop()
+// purpose  :
+//=================================================================================
+SUIT_Desktop* GEOMBase_Skeleton::getDesktop() const
+{
+  return dynamic_cast<SUIT_Desktop*>( parentWidget() );
 }

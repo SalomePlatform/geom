@@ -29,15 +29,16 @@
 using namespace std;
 #include "RepairGUI_DivideEdgeDlg.h"
 
-#include "QAD_RightFrame.h"
-#include "QAD_Desktop.h"
-#include "OCCViewer_Viewer3d.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "SUIT_Session.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
 
 #include "GEOMImpl_Types.hxx"
 
 #include <TopAbs.hxx>
 
+#include <qlabel.h>
 
 //=================================================================================
 // class    : RepairGUI_DivideEdgeDlg()
@@ -46,11 +47,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_DIVIDE_EDGE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_DIVIDE_EDGE")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_DIVIDE_EDGE_TITLE"));
 
@@ -74,7 +75,8 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg(QWidget* parent, const char* na
   myIsParameterGr->find( 0 )->toggle();
 
   QGridLayout* aLay = new QGridLayout( 0, 1, 2, 0, 6, "aLay" );
-  myValEdt = new QAD_SpinBoxDbl( GroupPoints->GroupBox1, 0., 1., 0.1, 3 );
+  myValEdt = new QtxDblSpinBox(0., 1., 0.1, GroupPoints->GroupBox1);// QAD_SpinBoxDbl( GroupPoints->GroupBox1, 0., 1., 0.1, 3 );
+  myValEdt->setPrecision( 3 );
   myValEdt->setValue( 0.5 );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_VALUE" ), GroupPoints->GroupBox1 );
   aLay->addWidget( aLbl1, 0, 0 );
@@ -110,7 +112,7 @@ void RepairGUI_DivideEdgeDlg::Init()
   myObject = GEOM::GEOM_Object::_nil();
   myIndex = -1;
 
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
   initSelection();
 
   /* signals and slots connections */
@@ -124,7 +126,8 @@ void RepairGUI_DivideEdgeDlg::Init()
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName( tr( "DEVIDE_EDGE_NEW_OBJECT_NAME" ) );
 }
@@ -185,9 +188,9 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
   myObject = GEOM::GEOM_Object::_nil();
   myIndex = -1;
 
-	if ( mySelection->IObjectCount() == 1 )
+  if ( IObjectCount() == 1 )
   {
-  	Handle(SALOME_InteractiveObject) anIO = mySelection->firstIObject();
+    Handle(SALOME_InteractiveObject) anIO = firstIObject();
     Standard_Boolean aRes;
     GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
     if ( !CORBA::is_nil( aSelectedObj ) && aRes )
@@ -196,29 +199,31 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
       if ( myGeomBase->GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) )
       {
       	const int aType = aShape.ShapeType();
-				if ( aType <= TopAbs_EDGE ) // edge, wire, face, shell, solid, compound
-				{
-					GEOM::short_array anIndexes;
-					if ( mySelection->HasIndex( anIO ) ) // subshape selection
-					{
-						TColStd_IndexedMapOfInteger aMap;
-						mySelection->GetIndex( anIO, aMap );
-						myIndex = aMap( 1 );
-						myObject = aSelectedObj;
-						myEditCurrentArgument->setText( tr( "GEOM_EDGE" ) + "_1" );
-					}
-					else if ( aType == TopAbs_EDGE ) // single shape selection
-					{
-						myIndex = -1;
-						myObject = aSelectedObj;
-						myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
-					}
-					else // face, shell, solid or compound was selected, and NOT its subshape.
-					{
-						myIndex = -1;
-						myObject = GEOM::GEOM_Object::_nil();
-					}
-				}
+	if ( aType <= TopAbs_EDGE ) // edge, wire, face, shell, solid, compound
+	  {
+	    GEOM::short_array anIndexes;
+	    
+	    TColStd_IndexedMapOfInteger aMap;
+	    ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( anIO, aMap );
+
+	    if ( !aMap.IsEmpty() ) // subshape selection
+	      {
+	      myIndex = aMap( 1 );
+	      myObject = aSelectedObj;
+	      myEditCurrentArgument->setText( tr( "GEOM_EDGE" ) + "_1" );
+	      }
+	      else if ( aType == TopAbs_EDGE ) // single shape selection
+	      {
+	      myIndex = -1;
+	      myObject = aSelectedObj;
+	      myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+	      }
+	      else // face, shell, solid or compound was selected, and NOT its subshape.
+	      {
+	      myIndex = -1;
+	      myObject = GEOM::GEOM_Object::_nil();
+	      }
+	  }
       }
     }
   }
@@ -259,7 +264,7 @@ void RepairGUI_DivideEdgeDlg::LineEditReturnPressed()
 //=================================================================================
 void RepairGUI_DivideEdgeDlg::DeactivateActiveDialog()
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -271,12 +276,13 @@ void RepairGUI_DivideEdgeDlg::DeactivateActiveDialog()
 void RepairGUI_DivideEdgeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   myObject = GEOM::GEOM_Object::_nil();
   myIndex = -1;
 
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
   initSelection();
 }
 
@@ -298,7 +304,7 @@ void RepairGUI_DivideEdgeDlg::enterEvent(QEvent* e)
 //=================================================================================
 void RepairGUI_DivideEdgeDlg::closeEvent(QCloseEvent* e)
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 

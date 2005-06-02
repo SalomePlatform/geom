@@ -29,8 +29,12 @@
 #include "OperationGUI_ArchimedeDlg.h"
 #include "DlgRef_1Sel3Spin.h"
 
-#include "QAD_Config.h"
-#include "QAD_Desktop.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
 
 //=================================================================================
 // class    : OperationGUI_ArchimedeDlg()
@@ -39,14 +43,12 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_ArchimedeDlg::OperationGUI_ArchimedeDlg( QWidget* parent, SALOME_Selection* Sel )
-: GEOMBase_Skeleton( parent, "ArchimedeDlg", Sel, false,
-    WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+OperationGUI_ArchimedeDlg::OperationGUI_ArchimedeDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
+: GEOMBase_Skeleton( parent, "ArchimedeDlg", false,
+		     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
 {
-  mySelection = Sel;
-
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_ARCHIMEDE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ARCHIMEDE")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
   
   setCaption(tr("GEOM_ARCHIMEDE_TITLE"));
 
@@ -69,7 +71,7 @@ OperationGUI_ArchimedeDlg::OperationGUI_ArchimedeDlg( QWidget* parent, SALOME_Se
   /***************************************************************/
 
   /* Initialisations */
-  Init( mySelection );
+  Init();
 }
 
 
@@ -87,16 +89,14 @@ OperationGUI_ArchimedeDlg::~OperationGUI_ArchimedeDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void OperationGUI_ArchimedeDlg::Init( SALOME_Selection* Sel )
+void OperationGUI_ArchimedeDlg::Init()
 {
-  mySelection = Sel;
-
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
   /* Get setting of myStep value from file configuration */
-  QString St = QAD_CONFIG->getSetting( "Geometry:SettingsGeomStep" );
-  myStep = !St.isEmpty() ? St.toDouble() : 100;
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  double myStep = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
 
   double SpecificStep1 = 0.1;
   double SpecificStep2 = 0.01;
@@ -115,14 +115,15 @@ void OperationGUI_ArchimedeDlg::Init( SALOME_Selection* Sel )
 
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DZ, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DZ, SLOT(SetStep(double)));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
-
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  
   initName( tr( "GEOM_ARCHIMEDE" ) );
-
+  
   globalSelection( GEOM_ALLSHAPES );
 
   SelectionIntoArgument();
@@ -167,11 +168,11 @@ void OperationGUI_ArchimedeDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   myShape = GEOM::GEOM_Object::_nil();
   
-  if ( mySelection->IObjectCount() != 1 )
+  if ( IObjectCount() != 1 )
     return;
 
   Standard_Boolean testResult = Standard_False;
-  myShape = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+  myShape = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
 
   if ( !testResult || myShape->_is_nil() || !GEOMBase::IsShape( myShape ) )
   {
@@ -207,7 +208,8 @@ void OperationGUI_ArchimedeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection( GEOM_ALLSHAPES );
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   return;
 }
 

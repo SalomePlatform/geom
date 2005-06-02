@@ -38,7 +38,7 @@
 class BooleanGUI : public GEOMGUI
 {
 protected:
-  BooleanGUI(); // hide constructor to avoid direct creation
+  BooleanGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
 
 public:
   enum BooleanOperation { COMMON = 1, CUT = 2, FUSE = 3, SECTION = 4 };
@@ -46,9 +46,9 @@ public:
   ~BooleanGUI();
 
   // Get the only BooleanGUI object
-  static BooleanGUI* GetBooleanGUI();
+  static BooleanGUI* GetBooleanGUI( GeometryGUI* parent );
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
 
 private:
   static BooleanGUI* myGUIObject;        // the only BooleanGUI object

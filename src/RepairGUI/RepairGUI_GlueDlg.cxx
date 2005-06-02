@@ -28,21 +28,27 @@
 
 using namespace std;
 #include "RepairGUI_GlueDlg.h"
-
 #include "DlgRef_1Sel_Ext.h"
-
-#include "QAD_Desktop.h"
-#include "QAD_SpinBoxDbl.h"
-#include "QAD_MessageBox.h"
-#include "QAD_WaitCursor.h"
-
-#include "OCCViewer_Viewer3d.h"
-#include "SALOME_ListIteratorOfListIO.hxx"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
-
 #include "GEOMImpl_Types.hxx"
 
+#include "QtxDblSpinBox.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "SalomeApp_Study.h"
+#include "SalomeApp_Tools.h"
+#include "SUIT_Session.h"
+#include "SUIT_MessageBox.h"
+
+#include "SALOME_ListIteratorOfListIO.hxx"
+
+#include <TCollection_AsciiString.hxx>
+
+#include <qapplication.h>
+#include <qlabel.h>
+
 #define DEFAULT_TOLERANCE_VALUE 1e-07
+
+
 
 
 //=================================================================================
@@ -52,11 +58,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_GlueDlg::RepairGUI_GlueDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_GlueDlg::RepairGUI_GlueDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_GLUE_FACES")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_GLUE_FACES")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_GLUE_TITLE"));
 
@@ -76,7 +82,8 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(QWidget* parent, const char* name, SALOME_S
 
   QGridLayout* aLay = new QGridLayout( 0, 2, 2, 0, 6, "aLay" );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->GroupBox1 );
-  myTolEdt = new QAD_SpinBoxDbl( GroupPoints->GroupBox1, 0, 100, 1e-7, 10, 1e-10 );
+  myTolEdt = new QtxDblSpinBox( 0, 100, 1e-7, GroupPoints->GroupBox1 );//QAD_SpinBoxDbl( GroupPoints->GroupBox1, 0, 100, 1e-7, 10, 1e-10 );
+  myTolEdt->setPrecision( 10 );
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
 
   aLay->addWidget( aLbl1, 0, 0 );
@@ -109,7 +116,7 @@ void RepairGUI_GlueDlg::Init()
 
   myObject = GEOM::GEOM_Object::_nil();
 
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
   globalSelection( GEOM_COMPOUND );
 
   /* signals and slots connections */
@@ -123,7 +130,8 @@ void RepairGUI_GlueDlg::Init()
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GLUE_NEW_OBJ_NAME" ) );
 }
@@ -181,8 +189,8 @@ void RepairGUI_GlueDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText("");
   myObject = GEOM::GEOM_Object::_nil();
 
-  if ( mySelection->IObjectCount() == 1 ) {
-    Handle(SALOME_InteractiveObject) anIO = mySelection->firstIObject();
+  if ( IObjectCount() == 1 ) {
+    Handle(SALOME_InteractiveObject) anIO = firstIObject();
     Standard_Boolean aRes;
     myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
     if ( aRes )
@@ -224,7 +232,7 @@ void RepairGUI_GlueDlg::LineEditReturnPressed()
 //=================================================================================
 void RepairGUI_GlueDlg::DeactivateActiveDialog()
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -236,12 +244,13 @@ void RepairGUI_GlueDlg::DeactivateActiveDialog()
 void RepairGUI_GlueDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   GroupPoints->LineEdit1->setText("");
   myObject = GEOM::GEOM_Object::_nil();
 
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
   globalSelection( GEOM_COMPOUND );
 }
 
@@ -263,7 +272,7 @@ void RepairGUI_GlueDlg::enterEvent(QEvent* e)
 //=================================================================================
 void RepairGUI_GlueDlg::closeEvent(QCloseEvent* e)
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 
@@ -310,25 +319,25 @@ void RepairGUI_GlueDlg::clearShapeBufferLocal( GEOM::GEOM_Object_ptr theObj )
   if ( CORBA::is_nil( theObj ) )
     return;
 
-  string IOR = GeometryGUI::GetORB()->object_to_string( theObj );
+  string IOR = myGeomGUI->getApp()->orb()->object_to_string( theObj );
   TCollection_AsciiString asciiIOR( strdup( IOR.c_str() ) );
-  GeometryGUI::GetGeomGUI()->GetShapeReader().RemoveShapeFromBuffer( asciiIOR );
+  myGeomGUI->GetShapeReader().RemoveShapeFromBuffer( asciiIOR );
 
-  if ( !getStudy() || CORBA::is_nil( getStudy()->getStudyDocument() ) )
+  if ( !getStudy() || !( getStudy()->studyDS() ) )
     return;
 
-  SALOMEDS::Study_var aStudy = getStudy()->getStudyDocument();
-  SALOMEDS::SObject_var aSObj = aStudy->FindObjectIOR( IOR.c_str() );
-  if ( CORBA::is_nil( aSObj ) )
+  _PTR(Study) aStudy = getStudy()->studyDS();
+  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( IOR ) );
+  if ( !aSObj )
     return;
 
-  SALOMEDS::ChildIterator_var anIt = aStudy->NewChildIterator( aSObj );
+  _PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
   for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
-    SALOMEDS::GenericAttribute_var anAttr;
+    _PTR(GenericAttribute) anAttr;
     if ( anIt->Value()->FindAttribute(anAttr, "AttributeIOR") ) {
-      SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-      TCollection_AsciiString asciiIOR( anIOR->Value() );
-      GeometryGUI::GetGeomGUI()->GetShapeReader().RemoveShapeFromBuffer( asciiIOR );      
+      _PTR(AttributeIOR) anIOR ( anAttr );
+      TCollection_AsciiString asciiIOR( (char*)anIOR->Value().c_str() );
+      myGeomGUI->GetShapeReader().RemoveShapeFromBuffer( asciiIOR );      
     }
   }
 }
@@ -341,16 +350,18 @@ void RepairGUI_GlueDlg::clearShapeBufferLocal( GEOM::GEOM_Object_ptr theObj )
 //================================================================
 bool RepairGUI_GlueDlg::onAcceptLocal( const bool publish, const bool useTransaction )
 {
-  QAD_Study* aDoc = QAD_Application::getDesktop()->getActiveStudy();
-  SALOMEDS::Study_var aStudy = aDoc->getStudyDocument();
+  if ( !getStudy() || !( getStudy()->studyDS() ) )
+    return false;
+
+  _PTR(Study) aStudy = getStudy()->studyDS();
 
   bool aLocked = aStudy->GetProperties()->IsLocked();
   if ( aLocked ) {
     MESSAGE("GEOMBase_Helper::onAccept - ActiveStudy is locked");
-    QAD_MessageBox::warn1 ( (QWidget*)QAD_Application::getDesktop(),
-			   QObject::tr("WRN_WARNING"), 
-			   QObject::tr("WRN_STUDY_LOCKED"),
-			   QObject::tr("BUT_OK") );
+    SUIT_MessageBox::warn1 ( (QWidget*)(SUIT_Session::session()->activeApplication()->desktop()),
+			     QObject::tr("WRN_WARNING"), 
+			     QObject::tr("WRN_STUDY_LOCKED"),
+			     QObject::tr("BUT_OK") );
     return false;
   }
 
@@ -364,12 +375,13 @@ bool RepairGUI_GlueDlg::onAcceptLocal( const bool publish, const bool useTransac
 
   try {
     if ( ( !publish && !useTransaction ) || openCommand() ) {
-      QAD_WaitCursor wc;
-      QAD_Application::getDesktop()->putInfo( "" );
+      QApplication::setOverrideCursor( Qt::waitCursor );
+      SUIT_Session::session()->activeApplication()->putInfo( "" );
       ObjectList objects;
       // JFA 28.12.2004 if ( !execute( objects ) || !getOperation()->IsDone() ) {
       if ( !execute( objects ) ) { // JFA 28.12.2004 // To enable warnings
-	wc.stop();
+	while( QApplication::overrideCursor() ) 
+	  QApplication::restoreOverrideCursor(); 
 	abortCommand();
 	showError();
       }
@@ -402,7 +414,7 @@ bool RepairGUI_GlueDlg::onAcceptLocal( const bool publish, const bool useTransac
 	if ( nbObjs ) {
 	  commitCommand();
 	  updateObjBrowser();
-	  QAD_Application::getDesktop()->putInfo( QObject::tr("GEOM_PRP_DONE") );
+	  SUIT_Session::session()->activeApplication()->putInfo( QObject::tr("GEOM_PRP_DONE") );
 	}
 	else {
 	  abortCommand();
@@ -411,12 +423,13 @@ bool RepairGUI_GlueDlg::onAcceptLocal( const bool publish, const bool useTransac
         // JFA 28.12.2004 BEGIN // To enable warnings
         if ( !getOperation()->_is_nil() ) {
           if ( !getOperation()->IsDone() ) {
-            wc.stop();
+	    while( QApplication::overrideCursor() ) 
+	      QApplication::restoreOverrideCursor();
             QString msgw = QObject::tr( getOperation()->GetErrorCode() );
-            QAD_MessageBox::warn1(QAD_Application::getDesktop(), 
-                                  QObject::tr( "WRN_WARNING" ), 
-                                  msgw, 
-                                  QObject::tr( "BUT_OK" ));
+            SUIT_MessageBox::warn1((QWidget*)(SUIT_Session::session()->activeApplication()->desktop()),
+				   QObject::tr( "WRN_WARNING" ), 
+				   msgw, 
+				   QObject::tr( "BUT_OK" ));
           }
         }
         // JFA 28.12.2004 END
@@ -424,7 +437,7 @@ bool RepairGUI_GlueDlg::onAcceptLocal( const bool publish, const bool useTransac
     }
   }
   catch( const SALOME::SALOME_Exception& e ) {
-    QtCatchCorbaException( e );
+    SalomeApp_Tools::QtCatchCorbaException( e );
     abortCommand();
   }
 

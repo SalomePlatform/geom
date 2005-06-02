@@ -43,7 +43,7 @@ class PrimitiveGUI_CylinderDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    PrimitiveGUI_CylinderDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0,  bool modal = FALSE, WFlags fl = 0);
+    PrimitiveGUI_CylinderDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~PrimitiveGUI_CylinderDlg();
 
 protected:
@@ -59,6 +59,8 @@ private:
     void enterEvent(QEvent* e);
     double getRadius() const;
     double getHeight() const;
+
+    GeometryGUI* myGeometryGUI;
         
     GEOM::GEOM_Object_var myPoint, myDir;
       

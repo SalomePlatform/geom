@@ -38,15 +38,15 @@
 class BuildGUI : public GEOMGUI
 {
 protected:
-  BuildGUI(); // hide constructor to avoid direct creation
+  BuildGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
 
 public :
   ~BuildGUI();
 
   // Get the only BuildGUI object
-  static BuildGUI* GetBuildGUI();
+  static BuildGUI* GetBuildGUI( GeometryGUI* parent );
 
-  bool OnGUIEvent( int theCommandID, QAD_Desktop* parent );
+  bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
 
 private:
   static BuildGUI* myGUIObject;        // the only BuildGUI object

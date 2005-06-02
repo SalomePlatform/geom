@@ -165,7 +165,7 @@ public:
   TCollection_AsciiString GetDescription();
 
   //Sets aPython description of the function  
-  void SetDescription(TCollection_AsciiString& theDescription);  
+  void SetDescription(const TCollection_AsciiString& theDescription);  
 
   //Access to arguments
 

@@ -28,9 +28,15 @@
 
 #include "TransformationGUI_PositionDlg.h"
 
-#include "QAD_Desktop.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
+#include <qlabel.h>
 #include <qcheckbox.h>
+
+#include "TColStd_MapOfInteger.hxx"
 
 #include "GEOMImpl_Types.hxx"
 
@@ -45,12 +51,12 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_PositionDlg::TransformationGUI_PositionDlg(QWidget* parent,  const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-    :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+TransformationGUI_PositionDlg::TransformationGUI_PositionDlg(QWidget* parent,  const char* name, bool modal, WFlags fl)
+    :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_POSITION")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_POSITION2")));
-  QPixmap imageselect(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POSITION")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POSITION2")));
+  QPixmap imageselect(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_POSITION_TITLE"));
 
@@ -127,7 +133,8 @@ void TransformationGUI_PositionDlg::Init()
   
   connect(Group1->CheckBox1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_POSITION" ) );
   ConstructorsClicked( 0 );
@@ -141,7 +148,7 @@ void TransformationGUI_PositionDlg::Init()
 //=================================================================================
 void TransformationGUI_PositionDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect( mySelection, 0, this, 0 );
+  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
   
   globalSelection();
   myEditCurrentArgument = Group1->LineEdit1;
@@ -167,7 +174,8 @@ void TransformationGUI_PositionDlg::ConstructorsClicked(int constructorId)
 	break;
       }
     }
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   SelectionIntoArgument();
 }
 
@@ -219,29 +227,27 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
   QString aName;
 
   if(myEditCurrentArgument == Group1->LineEdit1) {
-    int aNbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aName);
+    int aNbSel = GEOMBase::GetNameOfSelectedIObjects(selectedIO(), aName);
     if(aNbSel < 1) {
       myObjects.length(0);
       displayPreview();
       return;
     }
-    GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(), myObjects);
+    GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), myObjects);
     if (!myObjects.length()) {
       displayPreview();
       return;
     }
-    if(aNbSel != 1)
-      aName = tr("%1_objects").arg(aNbSel);
   }
   else if(myEditCurrentArgument == Group1->LineEdit2) {
     myStartLCS = GEOM::GEOM_Object::_nil();
-    if(mySelection->IObjectCount() != 1) {
+    if(IObjectCount() != 1) {
       displayPreview();
       return;
     }
 
     Standard_Boolean testResult = Standard_False;
-    myStartLCS = GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), testResult );
+    myStartLCS = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
     if(!testResult || CORBA::is_nil( myStartLCS )) {
       displayPreview();
       return;
@@ -250,13 +256,13 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
   }
   else if(myEditCurrentArgument == Group1->LineEdit3) {
     myEndLCS = GEOM::GEOM_Object::_nil();
-    if(mySelection->IObjectCount() != 1) {
+    if(IObjectCount() != 1) {
       displayPreview();
       return;
     }
     
     Standard_Boolean testResult = Standard_False;
-    myEndLCS = GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), testResult );
+    myEndLCS = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
     if(!testResult || CORBA::is_nil( myEndLCS )) {
       displayPreview();
       return;
@@ -322,7 +328,8 @@ void TransformationGUI_PositionDlg::SetEditCurrentArgument()
 void TransformationGUI_PositionDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   ConstructorsClicked( getConstructorId() );
 }
 

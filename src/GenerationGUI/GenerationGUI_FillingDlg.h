@@ -41,7 +41,7 @@ class GenerationGUI_FillingDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    GenerationGUI_FillingDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~GenerationGUI_FillingDlg();
 
 protected:
@@ -53,6 +53,8 @@ protected:
 private:
     void Init();
     void enterEvent(QEvent* e);
+
+    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myCompound; /* compound of curves */
     Standard_Integer myMinDeg;

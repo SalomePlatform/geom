@@ -1,6 +1,7 @@
 using namespace std;
 
 #include "GEOM_Superv_i.hh"
+#include "SALOME_LifeCycleCORBA.hxx"
 
 //=============================================================================
 //  constructor:

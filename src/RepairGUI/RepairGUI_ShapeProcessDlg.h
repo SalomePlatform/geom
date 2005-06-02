@@ -32,7 +32,7 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_QTD.h"
 #include "RepairGUI.h"
-#include "QAD_SpinBoxDbl.h"
+#include "QtxDblSpinBox.h"
 
 #include <qspinbox.h>
 #include <qcombobox.h>
@@ -52,7 +52,7 @@ class RepairGUI_ShapeProcessDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    RepairGUI_ShapeProcessDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    RepairGUI_ShapeProcessDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_ShapeProcessDlg();
 
 protected:
@@ -90,27 +90,27 @@ private :
     QListView*       myOpList;
     QWidgetStack*    myStack;
 
-    QAD_SpinBoxDbl*  myFixShapeTol3D;
-    QAD_SpinBoxDbl*  myFixShapeMaxTol3D;
+    QtxDblSpinBox*  myFixShapeTol3D;
+    QtxDblSpinBox*  myFixShapeMaxTol3D;
     
-    QAD_SpinBoxDbl*  myFixFaceSizeTol;
+    QtxDblSpinBox*  myFixFaceSizeTol;
 
-    QAD_SpinBoxDbl*  myDropSmallEdgesTol3D;
+    QtxDblSpinBox*  myDropSmallEdgesTol3D;
 
-    QAD_SpinBoxDbl*  mySplitAngleAngle;
-    QAD_SpinBoxDbl*  mySplitAngleMaxTol;
+    QtxDblSpinBox*  mySplitAngleAngle;
+    QtxDblSpinBox*  mySplitAngleMaxTol;
 
     QSpinBox*        mySplitClosedFacesNum;
 
-    QAD_SpinBoxDbl*  mySplitContTol3D;
+    QtxDblSpinBox*  mySplitContTol3D;
     QComboBox*       mySplitContSurfCont;
     QComboBox*       mySplitContCurvCont;
 
     QCheckBox*       myBSplineSurfModeChk;
     QCheckBox*       myBSpline3DCurveChk;
     QCheckBox*       myBSpline2DCurveChk;
-    QAD_SpinBoxDbl*  myBSplineTol3D;
-    QAD_SpinBoxDbl*  myBSplineTol2D;
+    QtxDblSpinBox*  myBSplineTol3D;
+    QtxDblSpinBox*  myBSplineTol2D;
     QSpinBox*        myBSplineDegree;
     QSpinBox*        myBSplineSegments;
     QComboBox*       myBSpline2DCont;
@@ -119,9 +119,9 @@ private :
     QCheckBox*       myToBezierSurfModeChk;
     QCheckBox*       myToBezier3DCurveChk;
     QCheckBox*       myToBezier2DCurveChk;
-    QAD_SpinBoxDbl*  myToBezierMaxTol;
+    QtxDblSpinBox*  myToBezierMaxTol;
 
-    QAD_SpinBoxDbl*  mySameParameterTol3D;
+    QtxDblSpinBox*  mySameParameterTol3D;
     
 private slots:
     void             onOk();

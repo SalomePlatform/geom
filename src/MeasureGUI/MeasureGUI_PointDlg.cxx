@@ -27,9 +27,12 @@
 //  $Header$
 
 #include "MeasureGUI_PointDlg.h"
-#include "utilities.h"
-#include "QAD_Desktop.h"
 #include "GEOMBase.h"
+
+#include "utilities.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
 #include <TColStd_MapOfInteger.hxx>
 #include <TopAbs_ShapeEnum.hxx>
@@ -57,13 +60,13 @@
 // purpose  : Constructs a MeasureGUI_PointDlg which is a child of 'parent'
 //            
 //=================================================================================
-MeasureGUI_PointDlg::MeasureGUI_PointDlg( QWidget* parent, SALOME_Selection* Sel )
-: MeasureGUI_Skeleton( parent, "MeasureGUI_PointDlg", Sel )
+MeasureGUI_PointDlg::MeasureGUI_PointDlg( GeometryGUI* GUI, QWidget* parent )
+: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_PointDlg" )
 {
-  QPixmap iconPnt( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap iconPnt( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_DLG_POINT" ) ) );
   
-  QPixmap iconSelect( QAD_Desktop::getResourceManager()->loadPixmap(
+  QPixmap iconSelect( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_SELECT" ) ) );
 
   setCaption( tr( "CAPTION" ) );
@@ -96,7 +99,7 @@ MeasureGUI_PointDlg::MeasureGUI_PointDlg( QWidget* parent, SALOME_Selection* Sel
 
   Layout1->addWidget( aGrp, 1, 0 );
 
-  Init( Sel );
+  Init();
 }
 
 
@@ -113,11 +116,11 @@ MeasureGUI_PointDlg::~MeasureGUI_PointDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void MeasureGUI_PointDlg::Init( SALOME_Selection* Sel )
+void MeasureGUI_PointDlg::Init()
 {
   QSize aSize( size() );
   resize( (int)(aSize.width() *0.75 ), aSize.height() );
-  MeasureGUI_Skeleton::Init( Sel );
+  MeasureGUI_Skeleton::Init();
 }
 
 //=================================================================================
@@ -145,7 +148,7 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
 
     Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_var aSelectedObject =
-      GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
+      GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
 
     if( !testResult || aSelectedObject->_is_nil() )
       return;
@@ -153,7 +156,8 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     myObj = aSelectedObject;
 
     TColStd_IndexedMapOfInteger anIndexes;
-    mySelection->GetIndex( mySelection->firstIObject(), anIndexes );
+    ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->
+      selectionMgr()->GetIndexes( firstIObject(), anIndexes );
 
     TopoDS_Shape aShape;
     if ( anIndexes.Extent() > 1 || !GEOMBase::GetShape( myObj, aShape ) || aShape.IsNull() )

@@ -43,7 +43,6 @@ class BlocksGUI_BlockDlg : public GEOMBase_Skeleton
 
 public:
   BlocksGUI_BlockDlg (QWidget* parent,
-		      SALOME_Selection* Sel,
 		      bool modal = FALSE);
   ~BlocksGUI_BlockDlg();
 

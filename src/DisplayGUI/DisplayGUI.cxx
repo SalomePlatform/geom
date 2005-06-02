@@ -30,20 +30,32 @@
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
 
-#include "QAD_RightFrame.h"
-#include "QAD_WaitCursor.h"
-#include "QAD_Desktop.h"
-#include "VTKViewer_ViewFrame.h"
-#include "VTKViewer_RenderWindowInteractor.h"
-#include "OCCViewer_ViewFrame.h"
-#include "OCCViewer_Viewer3d.h"
-#include "SALOME_ListIteratorOfListIO.hxx"
-#include "VTKViewer_Prs.h"
-#include "OCCViewer_Prs.h"
+#include <SUIT_Desktop.h>
+#include <SUIT_Session.h>
+#include <SUIT_ViewWindow.h>
+#include <SUIT_OverrideCursor.h>
+
+#include <VTKViewer_ViewWindow.h>
+#include <VTKViewer_RenderWindowInteractor.h>
+#include <OCCViewer_ViewManager.h>
+#include <OCCViewer_ViewModel.h>
+#include <OCCViewer_ViewWindow.h>
+
+#include <SALOME_ListIteratorOfListIO.hxx>
+
+#include <SVTK_ViewModel.h>
+#include <SOCC_ViewModel.h>
+#include <SVTK_Prs.h>
+#include <SOCC_Prs.h>
+
+#include <SalomeApp_Application.h>
+#include <SalomeApp_SelectionMgr.h>
+#include <SalomeApp_Study.h>
 
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 
-using namespace std;
+#include <qmenubar.h>
+
 
 DisplayGUI* DisplayGUI::myGUIObject = 0;
 
@@ -51,11 +63,11 @@ DisplayGUI* DisplayGUI::myGUIObject = 0;
 // function : DisplayGUI::GetDisplayGUI()
 // purpose  : Get the only DisplayGUI object [ static ]
 //=======================================================================
-DisplayGUI* DisplayGUI::GetDisplayGUI()
+DisplayGUI* DisplayGUI::GetDisplayGUI( GeometryGUI* parent )
 {
   if ( myGUIObject == 0 ) {
     // init DisplayGUI only once
-    myGUIObject = new DisplayGUI();
+    myGUIObject = new DisplayGUI( parent );
   }
   return myGUIObject;
 }
@@ -64,7 +76,7 @@ DisplayGUI* DisplayGUI::GetDisplayGUI()
 // function : DisplayGUI::DisplayGUI()
 // purpose  : Constructor
 //=======================================================================
-DisplayGUI::DisplayGUI() : GEOMGUI()
+DisplayGUI::DisplayGUI( GeometryGUI* parent ) : GEOMGUI( parent )
 {
 }
 
@@ -82,16 +94,17 @@ DisplayGUI::~DisplayGUI()
 // function : DisplayGUI::OnGUIEvent()
 // purpose  : Dispatch menu command
 //=======================================================================
-bool DisplayGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
-  DisplayGUI* myDisplayGUI = GetDisplayGUI();
+  DisplayGUI* myDisplayGUI = GetDisplayGUI( getGeometryGUI() );
 
   switch (theCommandID) {
   case 211: // MENU VIEW - WIREFRAME/SHADING
     {
       myDisplayGUI->InvertDisplayMode();
       int newMode = myDisplayGUI->GetDisplayMode();
-      QAD_Application::getDesktop()->menuBar()->changeItem( 211, newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
+      SUIT_Session::session()->activeApplication()->desktop()->menuBar()->
+	changeItem( 211, newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
       break;
     }
   case 212: // MENU VIEW - DISPLAY ALL
@@ -131,7 +144,7 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     }
   default:
     {
-      parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;
     }
   }
@@ -144,24 +157,29 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 //=====================================================================================
 void DisplayGUI::DisplayAll()
 {
-  QAD_WaitCursor wc;
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  SALOMEDS::SComponent_var SC = aStudy->FindComponent( "GEOM" );
-  if ( SC->_is_nil() )
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( !appStudy ) return;
+  _PTR(Study) aStudy = appStudy->studyDS();
+  if ( !aStudy ) return;
+  _PTR(SComponent) SC ( aStudy->FindComponent( "GEOM" ) );
+  if ( !SC )
     return;
 
   SALOME_ListIO listIO;
-  SALOMEDS::ChildIterator_var anIter = aStudy->NewChildIterator( SC );
+  _PTR(ChildIterator) anIter ( aStudy->NewChildIterator( SC ) );
   anIter->InitEx( true );
+
+  SUIT_OverrideCursor();
+
   while( anIter->More() ) {
-    SALOMEDS::SObject_var valSO = anIter->Value();
-    SALOMEDS::SObject_var refSO;
+    _PTR(SObject) valSO ( anIter->Value() );
+    _PTR(SObject) refSO;
     if ( !valSO->ReferencedObject( refSO ) ) {
-      listIO.Append( new SALOME_InteractiveObject( valSO->GetID(), SC->ComponentDataType() ,valSO->GetName()) );
+      listIO.Append( new SALOME_InteractiveObject( valSO->GetID().c_str(), SC->ComponentDataType().c_str() ,valSO->GetName().c_str() ) );
     } 
     anIter->Next();
   }
-  GEOM_Displayer().Display( listIO, true );
+  GEOM_Displayer( appStudy ).Display( listIO, true );
 }
 
 //=====================================================================================
@@ -170,10 +188,20 @@ void DisplayGUI::DisplayAll()
 //=====================================================================================
 void DisplayGUI::EraseAll()
 {
-  QAD_WaitCursor wc;
-  QAD_ViewFrame* vf = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame();
-  if ( vf->getTypeView() == VIEW_OCC || vf->getTypeView() == VIEW_VTK )
-    vf->EraseAll();
+  SUIT_OverrideCursor();
+
+  SUIT_Application* app = SUIT_Session::session()->activeApplication();
+  if ( app ) {
+    SUIT_ViewWindow* vw = app->desktop()->activeWindow();
+    if ( vw ) {
+      SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+      SUIT_ViewManager* vman = vw->getViewManager();
+      if ( vman->getType() == OCCViewer_Viewer::Type() || 
+	   vman->getType() == VTKViewer_Viewer::Type() ) {
+	GEOM_Displayer( appStudy ).EraseAll();
+      }
+    }
+  }
 }
 
 //=====================================================================================
@@ -192,27 +220,39 @@ void DisplayGUI::DisplayOnly()
 //=====================================================================================
 void DisplayGUI::Display()
 {
-  QAD_WaitCursor wc;
   SALOME_ListIO listIO;
+  
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
 
-  QAD_Study* anActiveStudy = QAD_Application::getDesktop()->getActiveStudy();
-  SALOME_Selection* Sel = SALOME_Selection::Selection( anActiveStudy->getSelection() );
-  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+  SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !anActiveStudy ) return;
+  
+  //get SalomeApp selection manager
+  SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  if ( !aSelMgr ) return;
+  
+  SALOME_ListIO aList;
+  aSelMgr->selectedObjects( aList );
+  SALOME_ListIteratorOfListIO It( aList );
+  
+  SUIT_OverrideCursor();
+
   for( ;It.More();It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
     if ( anIObject->hasEntry() ) {
-      SALOMEDS::SObject_var SO = anActiveStudy->getStudyDocument()->FindObjectID( anIObject->getEntry() );
-      if ( !SO->_is_nil() && QString( SO->GetID() ) == QString( SO->GetFatherComponent()->GetID() ) ) {
-	SALOMEDS::SComponent_var SC = SO->GetFatherComponent();
+      _PTR(SObject) SO ( anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
+      if ( SO && QString( SO->GetID().c_str() ) == QString( SO->GetFatherComponent()->GetID().c_str() ) ) {
+	_PTR(SComponent) SC ( SO->GetFatherComponent() );
 	// if component is selected
 	listIO.Clear();
-	SALOMEDS::ChildIterator_var anIter = anActiveStudy->getStudyDocument()->NewChildIterator( SO );
+	_PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
 	anIter->InitEx( true );
 	while( anIter->More() ) {
-	  SALOMEDS::SObject_var valSO = anIter->Value();
-	  SALOMEDS::SObject_var refSO;
+	  _PTR(SObject) valSO ( anIter->Value() );
+	  _PTR(SObject) refSO;
 	  if ( !valSO->ReferencedObject( refSO ) ) {
-	    listIO.Append( new SALOME_InteractiveObject( valSO->GetID(), SC->ComponentDataType() ,valSO->GetName()) );
+	    listIO.Append( new SALOME_InteractiveObject( valSO->GetID().c_str(), SC->ComponentDataType().c_str() ,valSO->GetName().c_str() ) );
 	  } 
 	  anIter->Next();
 	}
@@ -226,7 +266,7 @@ void DisplayGUI::Display()
       listIO.Append( anIObject );
     }
   }
-  GEOM_Displayer().Display( listIO, true );
+  GEOM_Displayer( anActiveStudy ).Display( listIO, true );
 }
 
 
@@ -236,27 +276,39 @@ void DisplayGUI::Display()
 //=====================================================================================
 void DisplayGUI::Erase()
 {
-  QAD_WaitCursor wc;
   SALOME_ListIO listIO;
 
-  QAD_Study* anActiveStudy = QAD_Application::getDesktop()->getActiveStudy();
-  SALOME_Selection* Sel = SALOME_Selection::Selection( anActiveStudy->getSelection() );
-  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
+
+  SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !anActiveStudy ) return;
+  
+  //get SalomeApp selection manager
+  SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  if ( !aSelMgr ) return;
+  
+  SALOME_ListIO aList;
+  aSelMgr->selectedObjects( aList );
+  SALOME_ListIteratorOfListIO It( aList );
+
+  SUIT_OverrideCursor();
+
   for( ;It.More();It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
     if ( anIObject->hasEntry() ) {
-      SALOMEDS::SObject_var SO = anActiveStudy->getStudyDocument()->FindObjectID( anIObject->getEntry() );
-      if ( !SO->_is_nil() && QString( SO->GetID() ) == QString( SO->GetFatherComponent()->GetID() ) ) {
-	SALOMEDS::SComponent_var SC = SO->GetFatherComponent();
+      _PTR(SObject) SO ( anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
+      if ( SO && QString( SO->GetID().c_str() ) == QString( SO->GetFatherComponent()->GetID().c_str() ) ) {
+	_PTR(SComponent) SC ( SO->GetFatherComponent() );
 	// if component is selected
 	listIO.Clear();
-	SALOMEDS::ChildIterator_var anIter = anActiveStudy->getStudyDocument()->NewChildIterator( SO );
+	_PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
 	anIter->InitEx( true );
 	while( anIter->More() ) {
-	  SALOMEDS::SObject_var valSO = anIter->Value();
-	  SALOMEDS::SObject_var refSO;
+	  _PTR(SObject) valSO ( anIter->Value() );
+	  _PTR(SObject) refSO;
 	  if ( !valSO->ReferencedObject( refSO ) ) {
-	    listIO.Append( new SALOME_InteractiveObject( valSO->GetID(), SC->ComponentDataType() ,valSO->GetName()) );
+	    listIO.Append( new SALOME_InteractiveObject( valSO->GetID().c_str(), SC->ComponentDataType().c_str() ,valSO->GetName().c_str() ) );
 	  } 
 	  anIter->Next();
 	}
@@ -270,25 +322,26 @@ void DisplayGUI::Erase()
       listIO.Append( anIObject );
     }
   }
-  GEOM_Displayer().Erase( listIO, true );
-  Sel->ClearIObjects();
+  GEOM_Displayer(anActiveStudy).Erase( listIO, true );
+  ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->clearSelected();
 }
 
 //=====================================================================================
 // function : DisplayGUI::SetDisplayMode()
-// purpose  : Set display mode for the viewer (current viewer if <viewFrame> - 0 )
+// purpose  : Set display mode for the viewer (current viewer if <viewWindow> - 0 )
 //=====================================================================================
-void DisplayGUI::SetDisplayMode( const int mode, QAD_ViewFrame* viewFrame )
+void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
 {
-  QAD_WaitCursor wc;
-  if ( !viewFrame ) 
-    viewFrame = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame();
-  if( viewFrame->getTypeView() == VIEW_VTK ) {
-    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)viewFrame)->getRWInteractor();
+  SUIT_OverrideCursor();
+
+  if ( !viewWindow ) 
+    viewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  if ( viewWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() ) {
+    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewWindow*)viewWindow)->getRWInteractor();
     myRenderInter->SetDisplayMode( mode );
   } 
-  else if( viewFrame->getTypeView() == VIEW_OCC ) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)viewFrame)->getViewer();
+  else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
+    OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
     Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
     AIS_DisplayMode newmode = (mode == 1 ? AIS_Shaded : AIS_WireFrame);
     AIS_ListOfInteractive List;
@@ -312,19 +365,19 @@ void DisplayGUI::SetDisplayMode( const int mode, QAD_ViewFrame* viewFrame )
 
 //=====================================================================================
 // function : DisplayGUI::GetDisplayMode()
-// purpose  : Get display mode of the viewer (current viewer if <viewFrame> - 0 )
+// purpose  : Get display mode of the viewer (current viewer if <viewWindow> - 0 )
 //=====================================================================================
-int DisplayGUI::GetDisplayMode( QAD_ViewFrame* viewFrame )
+int DisplayGUI::GetDisplayMode( SUIT_ViewWindow* viewWindow )
 {
   int dispMode = 0;
-  if ( !viewFrame ) 
-    viewFrame = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame();
-  if( viewFrame->getTypeView() == VIEW_VTK) {
-    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)viewFrame)->getRWInteractor();
+  if ( !viewWindow ) 
+    viewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  if ( viewWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() ) {
+    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewWindow*)viewWindow)->getRWInteractor();
     dispMode = myRenderInter->GetDisplayMode();
   } 
-  else if( viewFrame->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)viewFrame)->getViewer();
+  else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
+    OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
     Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
     AIS_DisplayMode mode = (AIS_DisplayMode)ic->DisplayMode();
     dispMode = (mode == AIS_WireFrame ? 0 : 1 );
@@ -335,29 +388,42 @@ int DisplayGUI::GetDisplayMode( QAD_ViewFrame* viewFrame )
 //=====================================================================================
 // function : DisplayGUI::InvertDisplayMode()
 // purpose  : Invert display mode ( shadin <-> wireframe ) for the viewer 
-//            (current viewer if <viewFrame> = 0 )
+//            (current viewer if <viewWindow> = 0 )
 //=====================================================================================
-void DisplayGUI::InvertDisplayMode( QAD_ViewFrame* viewFrame )
+void DisplayGUI::InvertDisplayMode( SUIT_ViewWindow* viewWindow )
 {
-  SetDisplayMode( 1 - GetDisplayMode( viewFrame ) );
+  SetDisplayMode( 1 - GetDisplayMode( viewWindow ) );
 }
 
 //=====================================================================================
 // function : DisplayGUI::ChangeDisplayMode()
 // purpose  : Set display mode for selected objects in the viewer given
-//            (current viewer if <viewFrame> = 0 )
+//            (current viewer if <viewWindow> = 0 )
 //=====================================================================================
-void DisplayGUI::ChangeDisplayMode( const int mode, QAD_ViewFrame* viewFrame )
+void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
 {
-  QAD_WaitCursor wc;
-  if ( !viewFrame ) 
-    viewFrame = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
-  if ( viewFrame->getTypeView() == VIEW_VTK ) {
-    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)viewFrame)->getRWInteractor();
-    SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+  if ( !viewWindow ) 
+    viewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
+
+  SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  if ( !aSelMgr ) return;
+  
+  SUIT_OverrideCursor();
+
+  SALOME_ListIO aList;
+  
+  if ( viewWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() ) {
+    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewWindow*)viewWindow)->getRWInteractor();
+
+    aSelMgr->selectedObjects( aList );
+    SALOME_ListIteratorOfListIO It( aList );
+
     for( ;It.More(); It.Next() ) {
-      VTKViewer_Prs* vtkPrs = dynamic_cast<VTKViewer_Prs*>( viewFrame->CreatePrs( It.Value()->getEntry() ) );
+      SVTK_Viewer* stvkViewer = (SVTK_Viewer*)(viewWindow->getViewManager()->getViewModel());
+      SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( stvkViewer->CreatePrs( It.Value()->getEntry() ) );
       if ( vtkPrs && !vtkPrs->IsNull() ) {
 	if ( mode == 0 )
 	  myRenderInter->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
@@ -367,12 +433,16 @@ void DisplayGUI::ChangeDisplayMode( const int mode, QAD_ViewFrame* viewFrame )
     }
     myRenderInter->Render();
   }
-  else if ( viewFrame->getTypeView() == VIEW_OCC ) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)viewFrame)->getViewer();
+  else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
+    OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
     Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-    SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+
+    aSelMgr->selectedObjects( aList );
+    SALOME_ListIteratorOfListIO It( aList );
+
     for( ;It.More(); It.Next() ) {
-      OCCViewer_Prs* occPrs = dynamic_cast<OCCViewer_Prs*>( viewFrame->CreatePrs( It.Value()->getEntry() ) );
+      SOCC_Viewer* soccViewer = (SOCC_Viewer*)(viewWindow->getViewManager()->getViewModel());
+      SOCC_Prs* occPrs = dynamic_cast<SOCC_Prs*>( soccViewer->CreatePrs( It.Value()->getEntry() ) );
       if ( occPrs && !occPrs->IsNull() ) {
 	AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
 	AIS_ListIteratorOfListOfInteractive interIter( shapes );
@@ -393,8 +463,8 @@ void DisplayGUI::ChangeDisplayMode( const int mode, QAD_ViewFrame* viewFrame )
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return DisplayGUI::GetDisplayGUI();
+    return DisplayGUI::GetDisplayGUI( parent );
   }
 }

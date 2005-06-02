@@ -31,7 +31,11 @@ using namespace std;
 #include "BooleanGUI.h"
 #include "DlgRef_2Sel_QTD.h"
 
-#include "QAD_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BooleanGUI_Dialog()
@@ -40,8 +44,8 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, fl),
+BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, fl),
    myOperation( theOperation )
 {
   QPixmap image0;
@@ -49,27 +53,27 @@ BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, QWidget* parent, c
   switch ( myOperation )
   {
   	case BooleanGUI::COMMON:
-   	  image0 = QPixmap( QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_COMMON")));
+   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_COMMON")));
 			aTitle = tr("GEOM_COMMON");
 			aCaption = tr("GEOM_COMMON_TITLE");
 			break;
 		case BooleanGUI::CUT:
-   	  image0 = QPixmap( QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CUT")));
+   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CUT")));
 			aTitle = tr("GEOM_CUT");
 			aCaption = tr("GEOM_CUT_TITLE");
 			break;
 		case BooleanGUI::FUSE:
-   	  image0 = QPixmap( QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_FUSE")));
+   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_FUSE")));
 			aTitle = tr("GEOM_FUSE");
 			aCaption = tr("GEOM_FUSE_TITLE");
 			break;
 		case BooleanGUI::SECTION:
-   	  image0 = QPixmap( QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SECTION")));
+   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SECTION")));
 			aTitle = tr("GEOM_SECTION");
 			aCaption = tr("GEOM_SECTION_TITLE");
 			break;
 	}
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption( aCaption );
 
@@ -134,7 +138,8 @@ void BooleanGUI_Dialog::Init()
   connect(myGroup->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(myGroup->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName( GroupConstructors->title() );
 
@@ -175,7 +180,7 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
 
-  if ( mySelection->IObjectCount() != 1 )
+  if ( IObjectCount() != 1 )
   {
     if      ( myEditCurrentArgument == myGroup->LineEdit1 )   myObject1 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == myGroup->LineEdit2 )   myObject2 = GEOM::GEOM_Object::_nil();
@@ -184,7 +189,7 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
 
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes && GEOMBase::IsShape( aSelectedObject ) )
   {
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
@@ -234,7 +239,8 @@ void BooleanGUI_Dialog::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection( GEOM_ALLSHAPES );
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 }
 
 

@@ -44,7 +44,6 @@ class BlocksGUI_QuadFaceDlg : public GEOMBase_Skeleton
 
 public:
   BlocksGUI_QuadFaceDlg (QWidget* parent,
-			 SALOME_Selection* Sel,
 			 bool modal = FALSE);
   ~BlocksGUI_QuadFaceDlg();
 

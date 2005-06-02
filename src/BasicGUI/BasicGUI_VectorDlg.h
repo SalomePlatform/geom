@@ -34,7 +34,7 @@
 #include "DlgRef_3Spin1Check.h"
 
 #include "BasicGUI.h"
-#include "GEOM_ShapeTypeFilter.hxx"
+//#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
 // class    : BasicGUI_VectorDlg
@@ -45,7 +45,7 @@ class BasicGUI_VectorDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_VectorDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_VectorDlg();
     
 protected:
@@ -57,6 +57,8 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
+
+    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint1;   
     GEOM::GEOM_Object_var myPoint2;

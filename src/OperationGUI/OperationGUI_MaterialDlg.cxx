@@ -29,9 +29,13 @@ using namespace std;
 #include "OperationGUI_MaterialDlg.h"
 #include "OperationGUI_PartitionDlg.h"
 
-#include "utilities.h"
-#include "QAD_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
+#include "utilities.h"
+
+#include <qlabel.h>
 #include <qlistview.h>
 #include <qspinbox.h>
 
@@ -43,15 +47,14 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 OperationGUI_MaterialDlg::OperationGUI_MaterialDlg (QWidget* parent, const char* name,
-                                                    SALOME_Selection* Sel,
-                                                    GEOM::ListOfGO ListShapes,
+						    GEOM::ListOfGO ListShapes,
                                                     bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   myListShapes = ListShapes;
   myParentDlg = parent;
 
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_PARTITION")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PARTITION")));
 
   setCaption(tr("GEOM_MATERIAL_TITLE"));
 
@@ -127,7 +130,8 @@ void OperationGUI_MaterialDlg::Init()
 //  connect(GroupPoints->ListView1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 //  connect(GroupPoints->SpinBox1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   /* displays Dialog */
   MESSAGE("GroupPoints->show() ...");
@@ -146,7 +150,7 @@ void OperationGUI_MaterialDlg::Init()
 //=================================================================================
 void OperationGUI_MaterialDlg::ClickOnOk()
 {
-  QAD_Application::getDesktop()->putInfo(tr(""));
+  SUIT_Session::session()->activeApplication()->putInfo(tr(""));
 
   int nbSh = myListShapes.length();  
   myListMaterials.length(nbSh);
@@ -179,12 +183,12 @@ void OperationGUI_MaterialDlg::SelectionIntoArgument()
 {
   QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(selectedIO(), aString);
   if(nbSel < 1) {
     return;
   }
 
-//  myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes);
+  //myGeomBase->ConvertListOfIOInListOfIOR(selectedIO(), myListShapes);
 
   /* no simulation */
   return;
@@ -216,7 +220,8 @@ void OperationGUI_MaterialDlg::SetMaterial()
 void OperationGUI_MaterialDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   return;
 }
 

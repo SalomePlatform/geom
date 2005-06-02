@@ -30,10 +30,8 @@ using namespace std;
 #include "PrimitiveGUI.h"
 #include "GeometryGUI.h"
 
-#include "QAD_Application.h"
-#include "QAD_Desktop.h"
-
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "SUIT_Session.h"
+#include "SUIT_Desktop.h"
 
 #include "PrimitiveGUI_BoxDlg.h"      // Method BOX
 #include "PrimitiveGUI_CylinderDlg.h" // Method CYLINDER
@@ -47,11 +45,11 @@ PrimitiveGUI* PrimitiveGUI::myGUIObject = 0;
 // function : GetPrimitiveGUI()
 // purpose  : Get the only PrimitiveGUI object [ static ]
 //=======================================================================
-PrimitiveGUI* PrimitiveGUI::GetPrimitiveGUI()
+PrimitiveGUI* PrimitiveGUI::GetPrimitiveGUI( GeometryGUI* parent )
 {
   if ( myGUIObject == 0 ) {
     // init PrimitiveGUI only once
-    myGUIObject = new PrimitiveGUI();
+    myGUIObject = new PrimitiveGUI( parent );
   }
   return myGUIObject;
 }
@@ -60,7 +58,7 @@ PrimitiveGUI* PrimitiveGUI::GetPrimitiveGUI()
 // function : PrimitiveGUI()
 // purpose  : Constructor
 //=======================================================================
-PrimitiveGUI::PrimitiveGUI() : GEOMGUI()
+PrimitiveGUI::PrimitiveGUI(GeometryGUI* parent) : GEOMGUI(parent)
 {
 }
 
@@ -78,11 +76,9 @@ PrimitiveGUI::~PrimitiveGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool PrimitiveGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+bool PrimitiveGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
-  PrimitiveGUI* aPrimitiveGUI = GetPrimitiveGUI();
-  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
+  getGeometryGUI()->EmitSignalDeactivateDialog();
   
   QDialog* aDlg = NULL;
 
@@ -90,32 +86,32 @@ bool PrimitiveGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     {
     case 4021: // BOX
       {
-	aDlg = new PrimitiveGUI_BoxDlg(parent, "", Sel);
+	aDlg = new PrimitiveGUI_BoxDlg(getGeometryGUI(), parent, "");
 	break;
       }
     case 4022: // CYLINDER
       {
-	aDlg = new PrimitiveGUI_CylinderDlg(parent, "", Sel);
+	aDlg = new PrimitiveGUI_CylinderDlg(getGeometryGUI(), parent, "");
 	break;
       }
     case 4023: // SPHERE
       {
-	aDlg = new PrimitiveGUI_SphereDlg(parent, "", Sel);
+	aDlg = new PrimitiveGUI_SphereDlg(getGeometryGUI(), parent, "");
 	break;
       }
     case 4024: // TORUS
       {
-	aDlg = new PrimitiveGUI_TorusDlg(parent, "", Sel);
+	aDlg = new PrimitiveGUI_TorusDlg(getGeometryGUI(), parent, "");
 	break;
       }
     case 4025: // CONE
       {
-	aDlg = new PrimitiveGUI_ConeDlg(parent, "", Sel);
+	aDlg = new PrimitiveGUI_ConeDlg(getGeometryGUI(), parent, "");
 	break;
       }
     default:
       {
-	parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+	SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
 	break;
       }
     }
@@ -132,8 +128,8 @@ bool PrimitiveGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 //=====================================================================================
 extern "C"
 {
-  GEOMGUI* GetLibGUI()
+  GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return PrimitiveGUI::GetPrimitiveGUI();
+    return PrimitiveGUI::GetPrimitiveGUI( parent );
   }
 }

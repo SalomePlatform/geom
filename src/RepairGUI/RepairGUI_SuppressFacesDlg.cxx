@@ -29,15 +29,16 @@
 using namespace std;
 #include "RepairGUI_SuppressFacesDlg.h"
 
-#include "QAD_RightFrame.h"
-#include "QAD_Desktop.h"
-#include "OCCViewer_Viewer3d.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "SUIT_Session.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
 
 #include "GEOMImpl_Types.hxx"
 
 #include <TopAbs.hxx>
 
+#include <qlabel.h>
 
 //=================================================================================
 // class    : RepairGUI_SuppressFacesDlg()
@@ -46,11 +47,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SUPRESS_FACE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUPRESS_FACE")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
     
   setCaption(tr("GEOM_SUPRESSFACE_TITLE"));
 
@@ -94,7 +95,7 @@ void RepairGUI_SuppressFacesDlg::Init()
   myObjects = new GEOM::ListOfGO();
   myObjects->length( 0 );
 
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
   initSelection();
 	  
   /* signals and slots connections */
@@ -108,7 +109,8 @@ void RepairGUI_SuppressFacesDlg::Init()
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "SUPRESS_FACE_NEW_OBJ_NAME" ) );
 }
@@ -169,9 +171,9 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
   Standard_Boolean aRes = Standard_False;
   int i = 0;
   int numFaces = 0;
-  myObjects->length( mySelection->IObjectCount() );
+  myObjects->length( IObjectCount() );
   myFaces.clear();
-  for ( SALOME_ListIteratorOfListIO anIt( mySelection->StoredIObjects() ); anIt.More(); anIt.Next() )
+  for ( SALOME_ListIteratorOfListIO anIt( selectedIO() ); anIt.More(); anIt.Next() )
   {
     Handle(SALOME_InteractiveObject) anIO = anIt.Value();
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
@@ -183,10 +185,12 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
 	if ( aShape.ShapeType() <= TopAbs_FACE ) // FACE, SHELL, SOLID, COMPOUND
 	{
 	  GEOM::short_array anIndexes;
-	  if ( mySelection->HasIndex( anIO ) )
+
+	  TColStd_IndexedMapOfInteger aMap;
+	  ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( anIO, aMap );
+	  
+	  if ( !aMap.IsEmpty() )
 	  {
-	    TColStd_IndexedMapOfInteger aMap;
-	    mySelection->GetIndex( anIO, aMap );
 	    Convert( aMap, anIndexes );
 	    myObjects[i++] = aSelectedObject; // append the object
 	    myFaces.append( anIndexes );   // append faces' indexes
@@ -248,7 +252,7 @@ void RepairGUI_SuppressFacesDlg::LineEditReturnPressed()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::DeactivateActiveDialog()
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -260,9 +264,10 @@ void RepairGUI_SuppressFacesDlg::DeactivateActiveDialog()
 void RepairGUI_SuppressFacesDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  myGeomGUI->SetState( 0 );
+  //myGeomGUI->SetState( 0 );
   initSelection();
 }
 
@@ -284,7 +289,7 @@ void RepairGUI_SuppressFacesDlg::enterEvent(QEvent* e)
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::closeEvent(QCloseEvent* e)
 {
-  myGeomGUI->SetState( -1 );
+  //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 

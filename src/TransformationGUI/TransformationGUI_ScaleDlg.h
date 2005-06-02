@@ -42,7 +42,7 @@ class TransformationGUI_ScaleDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_ScaleDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_ScaleDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_ScaleDlg();
 
 protected:
@@ -57,6 +57,8 @@ private :
     void Init();
     void enterEvent(QEvent* e);
     double GetFactor() const;
+
+    GeometryGUI* myGeometryGUI;
     
     GEOM::ListOfGO myObjects;
     GEOM::GEOM_Object_var myPoint;   /* Central Point */

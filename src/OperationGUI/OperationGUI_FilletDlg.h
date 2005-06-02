@@ -45,8 +45,7 @@ class OperationGUI_FilletDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-                                        OperationGUI_FilletDlg( QWidget* parent,
-                                                                SALOME_Selection* Sel );
+                                        OperationGUI_FilletDlg( QWidget* parent );
                                         ~OperationGUI_FilletDlg();
 
 protected:
@@ -69,7 +68,7 @@ private slots:
 
 private :
 
-    void                                Init( SALOME_Selection* );
+    void                                Init();
     void                                enterEvent( QEvent* e );
     void                                reset();
     int                                 getConstructorId() const;

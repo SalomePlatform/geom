@@ -20,28 +20,43 @@ A:link { color:#0000ff; }
 </style><style type="text/css">
 <!--
 p.whs1 { font-size:12pt; }
-img_whs2 { border-style:none; border:none; float:none; width:30px; height:30px; }
+img_whs2 { border:none; float:none; width:30px; height:30px; border-style:none; }
 p.whs3 { margin-left:40px; }
-img_whs4 { border-style:none; border:none; width:21px; height:19px; }
+img_whs4 { border:none; width:21px; height:19px; border-style:none; }
 p.whs5 { font-size:12pt; margin-left:40px; font-weight:bold; }
-img_whs6 { border:none; width:216px; height:250px; }
+img_whs6 { border:none; width:216px; height:250px; border-style:none; }
 p.whs7 { font-family:'Times New Roman' , serif; font-size:14pt; }
-img_whs8 { border-style:none; width:20px; height:20px; }
+img_whs8 { width:20px; height:20px; border-style:none; }
 p.whs9 { font-family:'Times New Roman' , serif; font-size:12pt; }
-img_whs10 { border:none; width:283px; height:250px; }
+img_whs10 { border:none; width:283px; height:250px; border-style:none; }
 p.whs11 { font-size:12pt; margin-left:40px; }
-img_whs12 { border:none; width:199px; height:250px; }
+img_whs12 { border:none; width:199px; height:250px; border-style:none; }
 p.whs13 { font-size:12pt; margin-left:400px; }
-img_whs14 { border:none; width:256px; height:250px; }
+img_whs14 { border:none; width:256px; height:250px; border-style:none; }
 p.whs15 { font-size:12pt; font-weight:bold; }
-img_whs16 { border:none; width:263px; height:250px; }
+img_whs16 { border:none; width:263px; height:250px; border-style:none; }
 p.whs17 { font-size:12pt; font-weight:normal; }
-img_whs18 { border:none; width:310px; height:250px; }
-img_whs19 { border:none; width:262px; height:250px; }
-img_whs20 { border:none; width:268px; height:250px; }
-img_whs21 { border:none; width:266px; height:250px; }
+img_whs18 { border:none; width:310px; height:250px; border-style:none; }
+img_whs19 { border:none; width:262px; height:250px; border-style:none; }
+img_whs20 { border:none; width:268px; height:250px; border-style:none; }
+img_whs21 { border:none; width:266px; height:250px; border-style:none; }
+p.whs22 { font-size:12pt; margin-left:40px; text-indent:-40px; }
+img_whs23 { border:none; width:25px; height:23px; border-style:none; }
+ul.whs24 { list-style:disc; }
+img_whs25 { border:none; width:300px; height:374px; border-style:none; }
 -->
-</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs22 {text-indent:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
 function reDo() {
   if (innerWidth != origWidth || innerHeight != origHeight)
@@ -126,6 +141,9 @@ else
 	<li class=kadov-p><p class="whs1"><a href="#Whatis">WhatIs</a></p></li>
 	
 	<li class=kadov-p><p class="whs1"><a href="#check">Check</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Check_comp_blocks">Check 
+ compound of blocks</a></p></li>
 </ul>
 
 <p class="whs1">&nbsp;</p>
@@ -462,7 +480,7 @@ else
 <p class="whs7">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">Description:</b> 
- Return True if this geometrical object is valid.</p>
+ Returns True if this geometrical object is valid.</p>
 
 <p class="whs1">&nbsp;</p>
 
@@ -486,6 +504,78 @@ else
 <p class="whs1">&nbsp;</p>
 
 <p class="whs11"><img src="../image300.jpg" width="266px" height="250px" border="0" class="img_whs21"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs22">&nbsp;</p>
+
+<p class="whs22">&nbsp;</p>
+
+<p class="whs22"><a name=Check_comp_blocks><img src="../image27.gif" width="25px" height="23px" border="0" class="img_whs23"> <span style="font-size: 14pt; font-weight: bold;"><font size=4 style="font-size:14pt;"><B>Check compound 
+ of blocks</B></font></span></a></p>
+
+<p class="whs22">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Checks whether a shape is a compound of glued blocks. To be considered 
+ as a compound of blocks, the given shape must satisfy the following conditions:</p>
+
+<ul type="disc" class="whs24">
+	
+	<li class=kadov-p><p class="whs1">&nbsp;Each 
+ element of the compound should be a Block (6 faces and 12 edges);</p></li>
+	
+	<li class=kadov-p><p class="whs1">&nbsp;A 
+ connection between two Blocks should be an entire quadrangle face or an 
+ entire edge;</p></li>
+	
+	<li class=kadov-p><p class="whs1">&nbsp;The 
+ compound should be connected;</p></li>
+	
+	<li class=kadov-p><p class="whs1">&nbsp;Two 
+ quadrangle faces should be glued. </p></li>
+</ul>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">Informs of the following possible errors:</p>
+
+<ul type="disc" class="whs24">
+	
+	<li class=kadov-p><p class="whs1">not a block,</p></li>
+	
+	<li class=kadov-p><p class="whs1">not glued,</p></li>
+	
+	<li class=kadov-p><p class="whs1">not connected,</p></li>
+	
+	<li class=kadov-p><p class="whs1"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">extra 
+ or degenerated edge.</font></span></p></li>
+</ul>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> Boolean; 
+ highlight in the viewer.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b>TUI Command:</b><i> </i><span style="font-style: italic;"><I>geompy.CheckCompoundOfBlocks(Compound)</I></span>, 
+ where the Compound is a shape, investigated in order to see, if it is 
+ a valid compound of blocks. Validity flag is returned, encountered errors 
+ are printed in the python console.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ 1 shape.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><img src="../image13.jpg" width="300px" height="374px" border="0" class="img_whs25"></p>
 
 <p class="whs11">&nbsp;</p>
 

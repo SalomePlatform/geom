@@ -44,7 +44,6 @@ class BlocksGUI_ExplodeDlg : public GEOMBase_Skeleton
 
 public:
   BlocksGUI_ExplodeDlg (QWidget* parent,
-			SALOME_Selection* Sel,
 			bool modal = FALSE);
   ~BlocksGUI_ExplodeDlg();
 

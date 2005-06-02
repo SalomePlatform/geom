@@ -44,7 +44,6 @@ class EntityGUI_SubShapeDlg : public GEOMBase_Skeleton
 public:
                                         EntityGUI_SubShapeDlg( QWidget* parent = 0,
                                                                const char* name = 0,
-                                                               SALOME_Selection* Sel = 0,
                                                                bool modal = FALSE,
                                                                WFlags fl = 0 );
                                         ~EntityGUI_SubShapeDlg();

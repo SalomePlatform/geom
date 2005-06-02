@@ -3,6 +3,8 @@ using namespace std;
 #include "GEOMImpl_ICurvesOperations.hxx"
 
 #include "GEOM_Function.hxx"
+#include "GEOM_PythonDump.hxx"
+
 #include "GEOMImpl_Types.hxx"
 
 #include "GEOMImpl_PolylineDriver.hxx"
@@ -97,22 +99,15 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (list<Handle(GEOM_O
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aPolyline->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakePolyline([";
-  it = thePoints.begin();
-  TDF_Tool::Entry((*it)->GetEntry(), anEntry);
-  it++;
-  aDescr += (anEntry+", ");
-  for (; it != thePoints.end(); it++) {
-    aDescr += ", ";
-    TDF_Tool::Entry((*it)->GetEntry(), anEntry);
-    aDescr += anEntry;
-  }
-  aDescr += "])";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aPolyline << " = geompy.MakePolyline([";
 
-  aFunction->SetDescription(aDescr);
+  it = thePoints.begin();
+  pd << (*it++);
+  while (it != thePoints.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
 
   SetErrorCode(OK);
   return aPolyline;
@@ -168,18 +163,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleThreePnt (Handle(GEOM_
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aCircle->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeCircleThreePnt(";
-  TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePnt3->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCircle << " = geompy.MakeCircleThreePnt("
+    << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << ")";
 
   SetErrorCode(OK);
   return aCircle;
@@ -233,17 +218,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aCircle->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeCirclePntVecR(";
-  TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(theVec->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theR)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << aCircle << " = geompy.MakeCircle("
+    << thePnt << ", " << theVec << ", " << theR << ")";
 
   SetErrorCode(OK);
   return aCircle;
@@ -299,18 +275,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(anEll->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeEllipse(";
-  TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(theVec->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theRMajor)+", ");
-  aDescr += (TCollection_AsciiString(theRMinor)+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << anEll << " = geompy.MakeEllipse("
+    << thePnt << ", " << theVec << ", " << theRMajor << ", " << theRMinor << ")";
 
   SetErrorCode(OK);
   return anEll;
@@ -366,18 +332,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(anArc->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeArc(";
-  TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePnt3->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
-
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << anArc << " = geompy.MakeArc("
+    << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << ")";
 
   SetErrorCode(OK);
   return anArc;
@@ -433,22 +389,15 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aSpline->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeSplineBezier([";
-  it = thePoints.begin();
-  TDF_Tool::Entry((*it)->GetEntry(), anEntry);
-  it++;
-  aDescr += (anEntry+", ");
-  for (; it != thePoints.end(); it++) {
-    aDescr += ", ";
-    TDF_Tool::Entry((*it)->GetEntry(), anEntry);
-    aDescr += anEntry;
-  }
-  aDescr += "])";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aSpline << " = geompy.MakeBezier([";
 
-  aFunction->SetDescription(aDescr);
+  it = thePoints.begin();
+  pd << (*it++);
+  while (it != thePoints.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
 
   SetErrorCode(OK);
   return aSpline;
@@ -504,22 +453,15 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aSpline->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeSplineInterpolation([";
-  it = thePoints.begin();
-  TDF_Tool::Entry((*it)->GetEntry(), anEntry);
-  it++;
-  aDescr += (anEntry+", ");
-  for (; it != thePoints.end(); it++) {
-    aDescr += ", ";
-    TDF_Tool::Entry((*it)->GetEntry(), anEntry);
-    aDescr += anEntry;
-  }
-  aDescr += "])";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aSpline << " = geompy.MakeInterpol([";
 
-  aFunction->SetDescription(aDescr);
+  it = thePoints.begin();
+  pd << (*it++);
+  while (it != thePoints.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
 
   SetErrorCode(OK);
   return aSpline;
@@ -573,23 +515,15 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aSketcher->GetEntry(), anEntry);
-  aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeSketcher(";
-  aDescr += aCommand+", [";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aSketcher << " = geompy.MakeSketcher(\"" << theCommand << "\", [";
 
   it = theWorkingPlane.begin();
-  aDescr += TCollection_AsciiString(*it);
-  it++;
-  for (; it != theWorkingPlane.end(); it++) {
-    aDescr += ", ";
-    aDescr += TCollection_AsciiString(*it);
+  pd << (*it++);
+  while (it != theWorkingPlane.end()) {
+    pd << ", " << (*it++);
   }
-
-  aDescr += "])";
-
-  aFunction->SetDescription(aDescr);
+  pd << "])";
 
   SetErrorCode(OK);
   return aSketcher;

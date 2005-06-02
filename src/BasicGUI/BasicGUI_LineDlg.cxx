@@ -28,7 +28,12 @@
 
 #include "BasicGUI_LineDlg.h"
 
-#include "QAD_Desktop.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+
+#include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -43,11 +48,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_LineDlg::BasicGUI_LineDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BasicGUI_LineDlg::BasicGUI_LineDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_LINE_2P")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_DLG_LINE_2P")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_LINE_TITLE"));
 
@@ -94,13 +99,13 @@ void BasicGUI_LineDlg::Init()
 
   myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
 
-  myGeomGUI->SetState( 0 );
+  // myGeometryGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
 	
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -111,8 +116,9 @@ void BasicGUI_LineDlg::Init()
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  
   initName( tr("GEOM_LINE") );
 }
 
@@ -144,7 +150,7 @@ bool BasicGUI_LineDlg::ClickOnApply()
 {
   if ( !onAccept() )
     return false;
-
+  
   initName();
   return true;
 }
@@ -158,7 +164,7 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
 
-  if ( mySelection->IObjectCount() != 1 ) 
+  if ( IObjectCount() != 1 ) 
   {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 )      myPoint1 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = GEOM::GEOM_Object::_nil();
@@ -167,14 +173,14 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
 
   // nbSel == 1 
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint1 = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = aSelectedObject;
   }
-
+  
   displayPreview();
 }
 
@@ -214,9 +220,10 @@ void BasicGUI_LineDlg::LineEditReturnPressed()
 void BasicGUI_LineDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  myGeomGUI->SetState( 0 );
+  // myGeometryGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -233,7 +240,7 @@ void BasicGUI_LineDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_LineDlg::DeactivateActiveDialog()
 {
-  myGeomGUI->SetState( -1 );
+  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -253,7 +260,7 @@ void BasicGUI_LineDlg::enterEvent(QEvent* e)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_LineDlg::createOperation()
 {
-  return getGeomEngine()->GetIBasicOperations( getStudyId() );
+  return myGeometryGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
 }
 
 //=================================================================================
@@ -272,8 +279,8 @@ bool BasicGUI_LineDlg::isValid( QString& msg )
 bool BasicGUI_LineDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeLineTwoPnt( myPoint1, myPoint2 );
-	if ( !anObj->_is_nil() )
-   	objects.push_back( anObj._retn() );
+  if ( !anObj->_is_nil() )
+    objects.push_back( anObj._retn() );
   return true;
 }
 
@@ -283,7 +290,7 @@ bool BasicGUI_LineDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_LineDlg::closeEvent( QCloseEvent* e )
 {
-  myGeomGUI->SetState( -1 );
+  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 

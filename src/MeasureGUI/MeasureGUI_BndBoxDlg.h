@@ -42,8 +42,8 @@ class MeasureGUI_BndBoxDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-                                        MeasureGUI_BndBoxDlg( QWidget* parent,
-                                                              SALOME_Selection* Sel );
+                                        MeasureGUI_BndBoxDlg( GeometryGUI* GUI,
+							      QWidget*     parent );
                                         ~MeasureGUI_BndBoxDlg();
 protected:
 
@@ -53,7 +53,7 @@ protected:
 
 private:
 
-    void                                Init( SALOME_Selection* Sel );
+    void                                Init();
     bool                                getParameters( double& Xmin, double& Xmax,
                                                        double& Ymin, double& Ymax,
                                                        double& Zmin, double& Zmax );

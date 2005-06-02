@@ -1,54 +1,34 @@
-//  GEOM GEOMFiltersSelection : filter selector for the viewer
-//
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
-//
-//
-//
-//  File   : GEOM_FaceFilter.cxx
-//  Author : Nicolas REJNERI
-//  Module : GEOM
-//  $Header$
-
-using namespace std;
-#include "GEOM_FaceFilter.ixx"
+#include "GEOM_FaceFilter.h"
 
 #include <BRepAdaptor_Surface.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS.hxx>
-
+#include <StdSelect_TypeOfFace.hxx>
 
 //=======================================================================
-// function : IsShapeOk
-// purpose  : enumeration TypeOfFace is AnyFace,Plane,Cylinder,Sphere,Torus,Revol,Cone;
+// function : GEOM_FaceFilter
+// purpose  : 
 //=======================================================================
-GEOM_FaceFilter::GEOM_FaceFilter( const StdSelect_TypeOfFace theKind ) 
-: GEOM_ShapeTypeFilter( TopAbs_FACE )
+GEOM_FaceFilter::GEOM_FaceFilter( SalomeApp_Study* study, const int kind )
+: GEOM_SelectionFilter( study ),
+myKind( kind )
 {
-  myKind = theKind;
+  add( TopAbs_FACE );
 }
 
 //=======================================================================
-// function : IsShapeOk
+// function : ~GEOM_SelectionFilter
 // purpose  : 
 //=======================================================================
-Standard_Boolean GEOM_FaceFilter::IsShapeOk( const TopoDS_Shape& theShape ) const
+GEOM_FaceFilter::~GEOM_FaceFilter()
+{
+}
+
+//=======================================================================
+// function : isShapeOk
+// purpose  : 
+//=======================================================================
+bool GEOM_FaceFilter::isShapeOk( const TopoDS_Shape& theShape ) const
 {
   if ( !theShape.IsNull() && theShape.ShapeType() == TopAbs_FACE )
   {
@@ -70,5 +50,6 @@ Standard_Boolean GEOM_FaceFilter::IsShapeOk( const TopoDS_Shape& theShape ) cons
     case StdSelect_Cone:      return ( aType == GeomAbs_Cone);      
     }
   }
-  return Standard_False;
+  return false;
 }
+

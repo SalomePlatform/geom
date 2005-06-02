@@ -212,6 +212,14 @@ CHECK_QT
 
 echo
 echo ---------------------------------------------
+echo testing MSG2QM
+echo ---------------------------------------------
+echo
+
+CHECK_MSG2QM
+
+echo
+echo ---------------------------------------------
 echo testing VTK
 echo ---------------------------------------------
 echo
@@ -233,6 +241,14 @@ echo ---------------------------------------------
 echo
 
 CHECK_MED2
+
+echo
+echo ---------------------------------------------
+echo BOOST Library
+echo ---------------------------------------------
+echo
+
+CHECK_BOOST
 
 echo
 echo ---------------------------------------------
@@ -265,7 +281,7 @@ echo ---------------------------------------------
 echo
 
 echo Configure
-variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok med2_ok omniORB_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
+variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok med2_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
 
 for var in $variables
 do

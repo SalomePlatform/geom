@@ -41,8 +41,8 @@ class MeasureGUI_PropertiesDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-                                        MeasureGUI_PropertiesDlg( QWidget*          parent,
-                                                                  SALOME_Selection* Sel );
+                                        MeasureGUI_PropertiesDlg( GeometryGUI* GUI,
+								  QWidget*     parent );
                                         ~MeasureGUI_PropertiesDlg();
 
 protected:
@@ -54,7 +54,7 @@ protected:
 
 private:
 
-    void                                Init( SALOME_Selection* Sel );
+    void                                Init();
     bool                                getParameters( double& theLength,
                                                        double& theArea,
                                                        double& theVolume );
