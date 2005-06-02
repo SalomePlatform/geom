@@ -1,0 +1,728 @@
+# This is a Qt message file in .po format.  Each msgid starts with
+# a scope.  This scope should *NOT* be translated - eg. translating
+# from French to English, "Foo::Bar" would be translated to "Pub",
+# not "Foo::Pub".
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2001-06-14 09:11:49 PM CEST\n"
+"PO-Revision-Date: 2003-09-22 16:39+0200\n"
+"Last-Translator: FULLNAME <EMAIL@ADDRESS>\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+
+#Select
+msgid "ICON_SELECT"
+msgstr "select1.png"
+
+#: QAD_ObjectBrowser.cxx:140
+msgid "ICON_OBJBROWSER_Geometry"
+msgstr "geometry.png"
+
+#: QAD_ObjectBrowser.cxx:140
+msgid "ICON_OBJBROWSER_COMPOUND"
+msgstr "tree_compound.png"
+
+#: QAD_ObjectBrowser.cxx:140
+msgid "ICON_OBJBROWSER_COMPSOLID"
+msgstr "tree_compsolid.png"
+
+#: QAD_ObjectBrowser.cxx:140
+msgid "ICON_OBJBROWSER_EDGE"
+msgstr "tree_edge.png"
+
+#: QAD_ObjectBrowser.cxx:140
+msgid "ICON_OBJBROWSER_FACE"
+msgstr "tree_face.png"
+
+#: QAD_ObjectBrowser.cxx:140
+msgid "ICON_OBJBROWSER_SHAPE"
+msgstr "tree_shape.png"
+
+#: QAD_ObjectBrowser.cxx:140
+msgid "ICON_OBJBROWSER_SHELL"
+msgstr "tree_shell.png"
+
+#: QAD_ObjectBrowser.cxx:140
+msgid "ICON_OBJBROWSER_SOLID"
+msgstr "tree_solid.png"
+
+#: QAD_ObjectBrowser.cxx:140
+msgid "ICON_OBJBROWSER_VERTEX"
+msgstr "tree_vertex.png"
+
+#: QAD_ObjectBrowser.cxx:140
+msgid "ICON_OBJBROWSER_WIRE"
+msgstr "tree_wire.png"
+
+#: QAD_ObjectBrowser.cxx:140
+msgid "ICON_OBJBROWSER_BLOCK"
+msgstr "tree_block.png"
+
+#BoxDlg
+msgid "ICON_DLG_BOX_2P"
+msgstr "box2points.png"
+
+#BoxDlg
+msgid "ICON_DLG_BOX_DXYZ"
+msgstr "boxdxyz.png"
+
+#CylinderDlg
+msgid "ICON_DLG_CYLINDER_PV"
+msgstr "cylinderpointvector.png"
+
+#CylinderDlg
+msgid "ICON_DLG_CYLINDER_DXYZ"
+msgstr "cylinderdxyz.png"
+
+#SphereDlg
+msgid "ICON_DLG_SPHERE_P"
+msgstr "spherepoint.png"
+
+#SphereDlg
+msgid "ICON_DLG_SPHERE_DXYZ"
+msgstr "spheredxyz.png"
+
+#torusDlg
+msgid "ICON_DLG_TORUS_PV"
+msgstr "toruspointvector.png"
+
+#ConeDlg
+msgid "ICON_DLG_CONE_PV"
+msgstr "conepointvector.png"
+
+#torusDlg
+msgid "ICON_DLG_TORUS_DXYZ"
+msgstr "torusdxyz.png"
+
+#ConeDlg
+msgid "ICON_DLG_CONE_DXYZ"
+msgstr "conedxyz.png"
+
+#LineDlg
+msgid "ICON_DLG_LINE_2P"
+msgstr "line2points.png"
+
+#LineDlg
+msgid "ICON_DLG_LINE_EDGE"
+msgstr "lineedge.png"
+
+#LineDlg
+msgid "ICON_DLG_LINE_PV"
+msgstr "linepointvector.png"
+
+#CircleDlg
+msgid "ICON_DLG_CIRCLE_PV"
+msgstr "circlepointvector.png"
+
+#VectorDlg
+msgid "ICON_DLG_VECTOR_2P"
+msgstr "vector2points.png"
+
+#vectorDlg
+msgid "ICON_DLG_VECTOR_DXYZ"
+msgstr "vectordxyz.png"
+
+#PlaneDlg
+msgid "ICON_DLG_PLANE_DXYZ"
+msgstr "planedxyz.png"
+
+#PlaneDlg
+msgid "ICON_DLG_PLANE_FACE"
+msgstr "planeface.png"
+
+#PlaneDlg
+msgid "ICON_DLG_PLANE_PV"
+msgstr "planepointvector.png"
+
+#WorkingPlaneDlg
+msgid "ICON_DLG_WPLANE_FACE"
+msgstr "planeworkingface.png"
+
+#WorkingPlaneDlg
+msgid "ICON_DLG_WPLANE_VECTOR"
+msgstr "planeworkingvector.png"
+
+#WorkingPlaneDlg
+msgid "ICON_DLG_WPLANE_ORIGIN"
+msgstr "planeworkingorigin.png"
+
+#PointDlg
+msgid "ICON_DLG_POINT"
+msgstr "point2.png"
+
+#PointDlg
+msgid "ICON_DLG_POINT_REF"
+msgstr "point3.png"
+
+#PoinDlg
+msgid "ICON_DLG_POINT_EDGE"
+msgstr "pointonedge.png"
+
+#ArcDlg
+msgid "ICON_DLG_ARC"
+msgstr "arc.png"
+
+#ArchimedeDlg
+msgid "ICON_DLG_ARCHIMEDE"
+msgstr "archimede.png"
+
+#PartitionDlg
+msgid "ICON_DLG_PARTITION"
+msgstr "partition.png"
+
+#PartitionDlg
+msgid "ICON_DLG_PARTITION_KEEP_FACES"
+msgstr "partitionkeep.png"
+
+#PartitionDlg
+msgid "ICON_DLG_PARTITION_PLANE"
+msgstr "partitionplane.png"
+
+#CenterMassDlg
+msgid "ICON_DLG_CENTERMASS"
+msgstr "centergravity.png"
+
+#BoundingBoxDlg
+msgid "ICON_DLG_BOUNDING_BOX"
+msgstr "bounding.png"
+
+#CommonDlg
+msgid "ICON_DLG_COMMON"
+msgstr "common.png"
+
+#CompoundDlg
+msgid "ICON_DLG_BUILD_COMPOUND"
+msgstr "build_compound.png"
+
+#CutDlg
+msgid "ICON_DLG_CUT"
+msgstr "cut.png"
+
+#EdgeDlg
+msgid "ICON_DLG_BUILD_EDGE"
+msgstr "build_edge.png"
+
+#FaceDlg
+msgid "ICON_DLG_BUILD_FACE"
+msgstr "build_face.png"
+
+#ShellDlg
+msgid "ICON_DLG_BUILD_SHELL"
+msgstr "build_shell.png"
+
+#SolidDlg
+msgid "ICON_DLG_BUILD_SOLID"
+msgstr "build_solid.png"
+
+#WireDlg
+msgid "ICON_DLG_BUILD_WIRE"
+msgstr "build_wire.png"
+
+#FillingDlg
+msgid "ICON_DLG_FILLING"
+msgstr "filling.png"
+
+#FuseDlg
+msgid "ICON_DLG_FUSE"
+msgstr "fuse.png"
+
+#InertiaDlg
+msgid "ICON_DLG_INERTIA"
+msgstr "axisinertia.png"
+
+#ToleranceDlg
+msgid "ICON_DLG_TOLERANCE"
+msgstr "tolerance.png"
+
+#BasicPropertiesDlg
+msgid "ICON_DLG_BASICPROPERTIES"
+msgstr "basicproperties.png"
+
+#WhatisDlg
+msgid "ICON_DLG_WHATIS"
+msgstr "whatis.png"
+
+#MinDistDlg
+msgid "ICON_DLG_MINDIST"
+msgstr "mindist.png"
+
+#MirrorDlg (MZN: add icons for point and axe)
+msgid "ICON_DLG_MIRROR_POINT"
+msgstr "mirrorPoint.png"
+
+msgid "ICON_DLG_MIRROR_AXE"
+msgstr "mirrorAxe.png"
+
+msgid "ICON_DLG_MIRROR_PLANE"
+msgstr "mirrorPlane.png"
+
+#TranslationDlg
+msgid "ICON_DLG_TRANSLATION_DXYZ"
+msgstr "translationDxyz.png"
+
+#TranslationDlg
+msgid "ICON_DLG_TRANSLATION_POINTS"
+msgstr "translationPoints.png"
+
+#TranslationDlg
+msgid "ICON_DLG_TRANSLATION_VECTOR"
+msgstr "translationVector.png"
+
+#RotationDlg
+msgid "ICON_DLG_ROTATION"
+msgstr "rotate.png"
+
+#ScaleDlg
+msgid "ICON_DLG_SCALE"
+msgstr "scale.png"
+
+#OffsetDlg
+msgid "ICON_DLG_OFFSET"
+msgstr "offset.png"
+
+#OrientationDlg
+msgid "ICON_DLG_DIVIDE_EDGE"
+msgstr "pointonedge.png"
+
+#SewingDlg
+msgid "ICON_DLG_SEWING"
+msgstr "sewing.png"
+
+#PipeDlg
+msgid "ICON_DLG_PIPE"
+msgstr "pipe.png"
+
+#PrismDlg
+msgid "ICON_DLG_PRISM"
+msgstr "prism.png"
+
+#RevolutionDlg
+msgid "ICON_DLG_REVOL"
+msgstr "revol.png"
+
+#SectionDlg
+msgid "ICON_DLG_SECTION"
+msgstr "section.png"
+
+#SubShapeDlg
+msgid "ICON_DLG_SUBSHAPE"
+msgstr "subshape.png"
+
+#FilletDlg
+msgid "ICON_DLG_FILLET"
+msgstr "fillet.png"
+
+#ChamferDlg
+msgid "ICON_DLG_CHAMFER"
+msgstr "chamfer.png"
+
+#FilletDlg
+msgid "ICON_DLG_FILLET_ALL"
+msgstr "filletall.png"
+
+#ChamferDlg
+msgid "ICON_DLG_CHAMFER_ALL"
+msgstr "chamferall.png"
+
+#FilletDlg
+msgid "ICON_DLG_FILLET_EDGE"
+msgstr "filletedge.png"
+
+#ChamferDlg
+msgid "ICON_DLG_CHAMFER_EDGE"
+msgstr "chamferedge.png"
+
+#FilletDlg
+msgid "ICON_DLG_FILLET_FACE"
+msgstr "filletface.png"
+
+#ChamferDlg
+msgid "ICON_DLG_CHAMFER_FACE"
+msgstr "chamferface.png"
+
+#ChamferDlg
+msgid "ICON_DLG_CHECKSHAPE"
+msgstr "check.png"
+
+msgid "ICON_DLG_CHECK_COMPOUND_OF_BLOCKS"
+msgstr "check_blocks_compound.png"
+
+#SupressFaceDlg
+msgid "ICON_DLG_SUPRESS_FACE"
+msgstr "supressface.png"
+
+msgid "ICON_DLG_CLOSECONTOUR"
+msgstr "closecontour.png"
+
+#SupressHoleDlg	
+msgid "ICON_DLG_SUPRESS_HOLE"
+msgstr "supresshole.png"	
+
+#SupressHoleDlg
+msgid "ICON_DLG_SUPRESS_HOLE_FACE_SHELL"
+msgstr "supressHolesOnFaceShell.png"
+
+#MultiTranslationDlg
+msgid "ICON_DLG_MULTITRANSLATION_SIMPLE"
+msgstr "multitranslationsimple.png"
+
+#MultiTranslationDlg
+msgid "ICON_DLG_MULTITRANSLATION"
+msgstr "multitranslation.png"
+
+#MultiTranslationDlg
+msgid "ICON_DLG_MULTITRANSLATION_DOUBLE"
+msgstr "multitranslationdouble.png"
+
+#MultiRotationDlg
+msgid "ICON_DLG_MULTIROTATION_SIMPLE"
+msgstr "multirotationsimple.png"
+
+#MultiRotationDlg
+msgid "ICON_DLG_MULTIROTATION"
+msgstr "multirotation.png"
+
+#MultiRotationDlg
+msgid "ICON_DLG_MULTIROTATION_DOUBLE"
+msgstr "multirotationdouble.png"
+
+#EllipseDlg
+msgid "ICON_DLG_ELLIPSE_PV"
+msgstr "ellipsepointvector.png"
+
+#SplineDlg
+msgid "ICON_DLG_SPLINE"
+msgstr "spline.png"
+
+#SplineDlg
+msgid "ICON_DLG_BEZIER"
+msgstr "bezier.png"
+
+#SplineDlg
+msgid "ICON_DLG_INTERPOL"
+msgstr "interpol.png"
+
+msgid "ICON_DLG_CIRCLE_PNTS"
+msgstr "circle3points.png"
+
+msgid "ICON_DLG_PLANE_3PNTS"
+msgstr "plane3points.png"
+
+msgid "ICON_DLG_POLYLINE"
+msgstr "polyline.png"
+
+msgid "ICON_DLG_SUPPRESS_INT_WIRES"
+msgstr "suppressintwires.png"
+
+msgid "ICON_DLG_ADD_POINT_ON_EDGE"
+msgstr "pointonedge.png"
+
+msgid "ICON_DLG_SUPPRESS_HOLES"
+msgstr "supressHolesOnFaceShell.png"
+
+msgid "ICON_MARKER"
+msgstr "marker.png"
+
+msgid "ICON_MARKER2"
+msgstr "marker2.png"
+
+msgid "ICON_MARKER3"
+msgstr "marker3.png"
+
+msgid "ICON_DLG_POSITION"
+msgstr "position.png"
+
+msgid "ICON_DLG_POSITION2"
+msgstr "position2.png"
+
+msgid "ICON_DLG_UNDO"
+msgstr "undo.png"
+
+msgid "ICON_DLG_REDO"
+msgstr "redo.png"
+
+msgid "ICON_OBJBROWSER_GROUP_PNT"
+msgstr "tree_group_vertex.png"
+
+msgid "ICON_OBJBROWSER_GROUP_EDGE"
+msgstr "tree_group_edge.png"
+
+msgid "ICON_OBJBROWSER_GROUP_FACE"
+msgstr "tree_group_face.png"
+
+msgid "ICON_OBJBROWSER_GROUP_SOLID"
+msgstr "tree_group_solid.png"
+
+msgid "ICON_OBJBROWSER_LCS"
+msgstr "tree_lcs.png"
+
+msgid "ICON_DLG_SHAPEPROCESS"
+msgstr "shapeprocess.png"
+
+#BlocksGUI_BlockDlg
+msgid "ICON_DLG_BLOCK_2F"
+msgstr "block_2f.png"
+
+msgid "ICON_DLG_BLOCK_6F"
+msgstr "block_6f.png"
+
+#BlocksGUI_ExplodeDlg
+msgid "ICON_DLG_BLOCK_EXPLODE"
+msgstr "subblock.png"
+
+#BlocksGUI_TrsfDlg
+msgid "ICON_DLG_BLOCK_MULTITRSF_SIMPLE"
+msgstr "block_multitrsf_simple.png"
+
+msgid "ICON_DLG_BLOCK_MULTITRSF_DOUBLE"
+msgstr "block_multitrsf_double.png"
+
+#BlocksGUI_QuadFaceDlg
+msgid "ICON_DLG_QUAD_FACE_4_VERT"
+msgstr "block_face_4v.png"
+
+msgid "ICON_DLG_QUAD_FACE_2_EDGE"
+msgstr "block_face_2e.png"
+
+msgid "ICON_DLG_QUAD_FACE_4_EDGE"
+msgstr "block_face_4e.png"
+
+msgid "ICON_DLG_GLUE_FACES"
+msgstr "glue.png"
+
+msgid "ICON_DLG_FREE_FACES"
+msgstr "free_faces.png"
+
+msgid "ICON_DLG_PROPAGATE"
+msgstr "propagate.png"
+
+msgid "ICO_DELETE"
+msgstr "delete.png"
+
+msgid "ICO_POINT"
+msgstr "point2.png"
+
+msgid "ICO_LINE"
+msgstr "line.png"
+
+msgid "ICO_CIRCLE"
+msgstr "circle.png"
+
+msgid "ICO_ELLIPSE"
+msgstr "ellipse.png"
+
+msgid "ICO_ARC"
+msgstr "arc.png"
+
+msgid "ICO_CURVE"
+msgstr "spline.png"
+
+msgid "ICO_VECTOR"
+msgstr "vector.png"
+
+msgid "ICO_PLANE"
+msgstr "plane.png"
+
+msgid "ICO_WORK_PLANE"
+msgstr "planeWorking.png"
+
+msgid "ICO_LOCAL_CS"
+msgstr "marker.png"
+
+msgid "ICO_BOX"
+msgstr "box.png"
+
+msgid "ICO_CYLINDER"
+msgstr "cylinder.png"
+
+msgid "ICO_SPHERE"
+msgstr "sphere.png"
+
+msgid "ICO_TORUS"
+msgstr "torus.png"
+
+msgid "ICO_CONE"
+msgstr "cone.png"
+
+msgid "ICO_EXTRUSION"
+msgstr "prism.png"
+
+msgid "ICO_REVOLUTION"
+msgstr "revol.png"
+
+msgid "ICO_FILLING"
+msgstr "filling.png"
+
+msgid "ICO_PIPE"
+msgstr "pipe.png"
+
+msgid "ICO_GROUP_CREATE"
+msgstr "group_new.png"
+
+msgid "ICO_GROUP_EDIT"
+msgstr "group_edit.png"
+
+msgid "ICO_Q_FACE"
+msgstr "build_face.png"
+
+msgid "ICO_HEX_SOLID"
+msgstr "box.png"
+
+msgid "ICO_SKETCH"
+msgstr "sketch.png"
+
+msgid "ICO_EXPLODE"
+msgstr "subshape.png"
+
+msgid "ICO_EDGE"
+msgstr "build_edge.png"
+
+msgid "ICO_WIRE"
+msgstr "build_wire.png"
+
+msgid "ICO_FACE"
+msgstr "build_face.png"
+
+msgid "ICO_SHELL"
+msgstr "build_shell.png"
+
+msgid "ICO_SOLID"
+msgstr "build_solid.png"
+
+msgid "ICO_COMPOUND"
+msgstr "build_compound.png"
+
+msgid "ICO_FUSE"
+msgstr "fuse.png"
+
+msgid "ICO_COMMON"
+msgstr "common.png"
+
+msgid "ICO_CUT"
+msgstr "cut.png"
+
+msgid "ICO_SECTION"
+msgstr "section.png"
+
+msgid "ICO_TRANSLATION"
+msgstr "translationVector.png"
+
+msgid "ICO_ROTATION"
+msgstr "rotate.png"
+
+msgid "ICO_MODIFY_LOCATION"
+msgstr "position2.png"
+
+msgid "ICO_MIRROR"
+msgstr "mirrorPlane.png"
+
+msgid "ICO_SCALE"
+msgstr "scale.png"
+
+msgid "ICO_OFFSET"
+msgstr "offset.png"
+
+msgid "ICO_MUL_TRANSLATION"
+msgstr "multitranslation.png"
+
+msgid "ICO_MUL_ROTATION"
+msgstr "multirotation.png"
+
+msgid "ICO_PARTITION"
+msgstr "partition.png"
+
+msgid "ICO_ARCHIMEDE"
+msgstr "archimede.png"
+
+msgid "ICO_FILLET"
+msgstr "fillet.png"
+
+msgid "ICO_CHAMFER"
+msgstr "chamfer.png"
+
+msgid "ICO_MUL_TRANSFORM"
+msgstr "multirotation.png"
+
+msgid "ICO_EXPLODE_BLOCKS"
+msgstr "subshape.png"
+
+msgid "ICO_PROPAGATE"
+msgstr "propagate.png"
+
+msgid "ICO_SEWING"
+msgstr "sewing.png"
+
+msgid "ICO_GLUE_FACES"
+msgstr "glue.png"
+
+msgid "ICO_SUPPRESS_FACES"
+msgstr "supressface.png"
+
+msgid "ICO_SUPPERSS_HOLES"
+msgstr "supresshole.png"
+
+msgid "ICO_SHAPE_PROCESS"
+msgstr "shapeprocess.png"
+
+msgid "ICO_CLOSE_CONTOUR"
+msgstr "closecontour.png"
+
+msgid "ICO_SUPPRESS_INT_WIRES"
+msgstr "suppressintwires.png"
+
+msgid "ICO_POINT_ON_EDGE"
+msgstr "pointonedge.png"
+
+msgid "ICO_CHECK_FREE_BNDS"
+msgstr "free_bound.png"
+
+msgid "ICO_CHECK_FREE_FACES"
+msgstr "free_faces.png"
+
+msgid "ICO_POINT_COORDS"
+msgstr "point_coord.png"
+
+msgid "ICO_BASIC_PROPS"
+msgstr "basicproperties.png"
+
+msgid "ICO_MASS_CENTER"
+msgstr "centergravity.png"
+
+msgid "ICO_INERTIA"
+msgstr "axisinertia.png"
+
+msgid "ICO_BND_BOX"
+msgstr "bounding.png"
+
+msgid "ICO_MIN_DIST"
+msgstr "mindist.png"
+
+msgid "ICO_TOLERANCE"
+msgstr "tolerance.png"
+
+msgid "ICO_WHAT_IS"
+msgstr "whatis.png"
+
+msgid "ICO_CHECK"
+msgstr "check.png"
+
+msgid "ICO_CHECK_COMPOUND"
+msgstr "check_blocks_compound.png"
+
+msgid "ICO_SHADING"
+msgstr "shading.png"
+
+msgid "ICO_DISPLAY_ALL"
+msgstr "displayall.png"
+
+msgid "ICO_ERASE_ALL"
+msgstr "eraseall.png"
+
+msgid "ICO_DISPLAY"
+msgstr "display.png"
+
+msgid "ICO_DISPLAY_ONLY"
+msgstr "displayonly.png"
+
+msgid "ICO_ERASE"
+msgstr "erase.png"

@@ -1,0 +1,34 @@
+-- File:	GEOMAlgo_ShellSolid.cdl
+-- Created:	Wed Jan 12 12:45:20 2005
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+---Copyright:	 Matra Datavision 2005
+
+
+class ShellSolid from GEOMAlgo 
+    inherits ShapeSolid from GEOMAlgo
+	---Purpose: 
+
+--uses
+--raises
+
+is 
+    Create   
+    	returns ShellSolid from GEOMAlgo; 
+    ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_ShellSolid();" 
+    
+    Perform (me:out) 
+	is redefined; 
+	 
+    Prepare(me:out)  
+   	 is redefined protected;
+     
+    BuildResult (me:out) 
+	is redefined protected; 	
+    
+    DetectSDFaces(me:out) 
+	is protected;
+     
+--fields
+    
+end ShellSolid;

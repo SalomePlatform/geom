@@ -1,0 +1,3 @@
+#ifndef _GEOMAlgo_WireSolid_HeaderFile
+#include <GEOMAlgo_WireSolid.hxx>
+#endif
