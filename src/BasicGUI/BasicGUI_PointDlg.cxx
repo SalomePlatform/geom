@@ -281,7 +281,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void BasicGUI_PointDlg::ClickOnOk()
 {
-  if ( ClickOnApply() )
+  if ( onAccept() )
     ClickOnCancel();
 }
 
@@ -535,26 +535,29 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
   }
 
   if ( getConstructorId() == 1 || getConstructorId() == 2 )
+  {
+    TopoDS_Shape aShape;
+    if ( GEOMBase::GetShape( anObj, aShape ) && !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
     {
-      TopoDS_Shape aShape;
-      if ( GEOMBase::GetShape( anObj, aShape ) && !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
-	{
-	  gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
-	  myX->setText( QString( "%1" ).arg( aPnt.X() ) );
-	  myY->setText( QString( "%1" ).arg( aPnt.Y() ) );
-	  myZ->setText( QString( "%1" ).arg( aPnt.Z() ) );
-	}
-      else
-	{
-	  myX->setText( "" );
-	  myY->setText( "" );
-	  myZ->setText( "" );
-	}
+      gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
+      myX->setText( QString( "%1" ).arg( aPnt.X() ) );
+      myY->setText( QString( "%1" ).arg( aPnt.Y() ) );
+      myZ->setText( QString( "%1" ).arg( aPnt.Z() ) );
     }
+    else
+    {
+      myX->setText( "" );
+      myY->setText( "" );
+      myZ->setText( "" );
+    }
+  }
   
   if ( !anObj->_is_nil() )
+  {
+    //printf( "--> a valid point is created\n" );
     objects.push_back( anObj._retn() );
-  
+  }
+
   return res;
 }
 
