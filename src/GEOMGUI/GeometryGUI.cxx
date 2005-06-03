@@ -1370,6 +1370,7 @@ void GeometryGUI::windows( QMap<int, int>& mappa ) const
 {
   mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::DockLeft );
   mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::DockBottom );
+  mappa.insert( SalomeApp_Application::WT_LogWindow, Qt::DockBottom );
 }
 
 void GeometryGUI::viewManagers( QStringList& lst ) const
