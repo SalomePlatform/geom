@@ -32,6 +32,7 @@
 #include "GEOMBase.h"
 #include "GEOMToolsGUI_TransparencyDlg.h"
 #include "GEOMToolsGUI_NbIsosDlg.h"        // Method ISOS adjustement
+#include "GEOMToolsGUI_NameDlg.h"
 
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
@@ -49,9 +50,12 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SUIT_OverrideCursor.h>
+#include <SUIT_MessageBox.h>
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_SelectionMgr.h>
+#include <SalomeApp_Study.h>
+#include <SalomeApp_Module.h>
 
 #include <AIS_Drawer.hxx>
 #include <AIS_ListOfInteractive.hxx>
@@ -158,40 +162,46 @@ void GEOMToolsGUI::OnSettingsStep()
 
 void GEOMToolsGUI::OnRename()
 {
-/*
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
-  _PTR(Study) aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  
-  bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
-  if ( aLocked ) {
-    QAD_MessageBox::warn1 ( (QWidget*)QAD_Application::getDesktop(),
-			    QObject::tr("WRN_WARNING"), 
-			    QObject::tr("WRN_STUDY_LOCKED"),
-			    QObject::tr("BUT_OK") );
-    return;
-  }
-  
-  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
-  for(; It.More(); It.Next()) {
-    Handle(SALOME_InteractiveObject) IObject = It.Value();
-    
-    _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
-    _PTR(GenericAttribute) anAttr;
-    if(obj) {
-      if(obj->FindAttribute(anAttr, "AttributeName")) {
-	_PTR(AttributeName) aName (anAttr);
-	
-	QString nm = QString(aName->Value().c_str());
-	nm = SALOMEGUI_NameDlg::getName(QAD_Application::getDesktop(), nm);
-	if(!nm.isEmpty()) {
-	  QApplication::setOverrideCursor(Qt::waitCursor);
-	  QAD_Application::getDesktop()->getActiveStudy()->renameIObject(IObject, nm);
-	  QApplication::restoreOverrideCursor();
+  SALOME_ListIO selected;
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( app ) {
+    SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+    if ( aSelMgr && appStudy ) {
+      aSelMgr->selectedObjects( selected );
+      if ( !selected.IsEmpty() ) {
+	_PTR(Study) aStudy = appStudy->studyDS();
+
+	bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
+	if ( aLocked ) {
+	  SUIT_MessageBox::warn1 ( app->desktop(),
+				   QObject::tr("WRN_WARNING"), 
+				   QObject::tr("WRN_STUDY_LOCKED"),
+				   QObject::tr("BUT_OK") );
+	  return;
 	}
+  
+	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+	  Handle(SALOME_InteractiveObject) IObject = It.Value();
+    
+	  _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
+	  _PTR(GenericAttribute) anAttr;
+	  if ( obj ) {
+	    if( obj->FindAttribute(anAttr, "AttributeName") ) {
+	      _PTR(AttributeName) aName (anAttr);
+	
+	      QString newName = GEOMToolsGUI_NameDlg::getName( app->desktop(), aName->Value().c_str() );
+	      if ( !newName.isEmpty() ) {
+		aName->SetValue( newName.latin1() ); // rename the SObject
+		IObject->setName( newName.latin1() );// rename the InteractiveObject
+		(dynamic_cast<SalomeApp_Module*>(app->activeModule()))->updateObjBrowser( false );
+	      }
+	    } // if ( name attribute )
+	  } // if ( obj )
+	} // iterator
       }
     }
   }
-*/
 }
 
 void GEOMToolsGUI::OnCheckGeometry()

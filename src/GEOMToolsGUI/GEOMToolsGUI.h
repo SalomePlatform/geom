@@ -31,6 +31,11 @@
 
 #include "GEOMGUI.h"
 
+#include <SALOMEDSClient.hxx>
+#include <SALOMEDS_Study.hxx>
+#include <SALOME_ListIO.hxx>
+
+
 //=================================================================================
 // class    : GEOMToolsGUI
 // purpose  :
@@ -44,7 +49,7 @@ public :
   bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
 
 private:
-  /* Import and export topology methods */
+  // Import and export topology methods
   bool Import();
   bool Export(); 
   
@@ -63,6 +68,11 @@ private:
   void OnTransparency();
   void OnNbIsos();
   void OnOpen();
+
+  // returns name of Module (Component) of given objects (usually selected objects)
+  // if objects belong to different Components, a NULL string is returned. 
+  QString getParentComponent( _PTR( Study ), const SALOME_ListIO& );
+  QString getParentComponent( _PTR(SObject) );
 };
 
 #endif
