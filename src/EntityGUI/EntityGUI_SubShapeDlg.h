@@ -54,6 +54,7 @@ protected:
     virtual bool                        isValid( QString& );
     virtual bool                        execute( ObjectList& objects );
     virtual GEOM::GEOM_Object_ptr       getFather( GEOM::GEOM_Object_ptr theObj );
+    virtual const char* getNewObjectName() const;
 
 private slots:
     void                                ClickOnOk();

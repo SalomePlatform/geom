@@ -590,3 +590,7 @@ GEOM::GEOM_Object_ptr EntityGUI_SubShapeDlg::getFather( GEOM::GEOM_Object_ptr )
   return myObject;
 }
 
+const char* EntityGUI_SubShapeDlg::getNewObjectName() const
+{
+  return "";
+}
