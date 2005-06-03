@@ -104,6 +104,7 @@ public:
   virtual void                windows( QMap<int, int>& ) const;
   virtual void                viewManagers( QStringList& ) const;
 
+  virtual void                contextMenuPopup( const QString&, QPopupMenu*, QString& );
 
 public slots:
   virtual void                deactivateModule( SUIT_Study* );

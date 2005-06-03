@@ -1113,17 +1113,15 @@ bool GEOM_Displayer::ToActivate() const
 //=================================================================
 void GEOM_Displayer::clearTemporary( SalomeApp_SelectionMgr* theSelMgr )
 {
-  SALOME_ListIO toBeSelected;
-  theSelMgr->selectedObjects(toBeSelected)
-;
-  SALOME_ListIteratorOfListIO anIter( toBeSelected );
-  for ( ; anIter.More(); anIter.Next() )
-    {
-      Handle(SALOME_InteractiveObject) anIO = anIter.Value();
-      if ( !(anIO->hasEntry()) || ( strncmp( anIO->getEntry(), "TEMP_", 5 ) != 0 ) )
-	toBeSelected.Remove( anIter );
-    }
+  SALOME_ListIO selected, toSelect;
+  theSelMgr->selectedObjects( selected );
   
-  theSelMgr->setSelectedObjects( toBeSelected, true );
+  for (  SALOME_ListIteratorOfListIO it( selected ) ; it.More(); it.Next() ) {
+    Handle(SALOME_InteractiveObject) io = it.Value();
+    if ( !io.IsNull() && io->hasEntry() && strncmp( io->getEntry(), "TEMP_", 5 ) != 0 ) 
+      toSelect.Append( it.Value() );
+  }
+  
+  theSelMgr->setSelectedObjects( toSelect, true );
 }
 

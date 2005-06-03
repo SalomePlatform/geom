@@ -49,7 +49,9 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_SelectionMgr.h>
 #include <SalomeApp_VTKSelector.h>
+#include <SalomeApp_Study.h>
 #include <SALOME_LifeCycleCORBA.hxx>
+#include <SALOME_ListIO.hxx>
 
 // External includes
 #include <qfileinfo.h>
@@ -308,6 +310,7 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 804  ||  // POPUP VIEWER - ADD IN STUDY
       id == 901  ||  // OBJECT BROWSER - RENAME
       id == 9024 ) { // OBJECT BROWSER - OPEN
+    //cout << "id " << id << " received" << endl;
     library = getLibrary( "libGEOMToolsGUI.so" );
   }
   else if( id == 211  ||  // MENU VIEW - WIREFRAME/SHADING
@@ -936,9 +939,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  216 ), -1, -1 ); // display
   mgr->setRule( action( 216 ), "$client in {'ObjectBrowser'} and selcount>0 and (($type in {'Shape' 'Group'} and ($isVisible in {false})) or $type in {'Component'})", true );
   mgr->insert( action(  215 ), -1, -1 ); // erase
-  mgr->setRule( action( 215 ), "$client in {'ObjectBrowser'} and ((($type in {'Shape' 'Group'}) and ($isVisible in {true})) or ($type in {'Component'} and selcount=1))", true );
+  mgr->setRule( action( 215 ), "$client in {'ObjectBrowser'} and selcount>0 and (($type in {'Shape' 'Group'} and $isVisible in {true}) or ($type in {'Component'} and selcount=1))", true );
   mgr->insert( action(  213 ), -1, -1 ); // display only
-  mgr->setRule( action( 213 ), "$client in {'ObjectBrowser'} and ($type in {'Shape' 'Group'} or ($type in {'Component'} and selcount=1))", true );
+  mgr->setRule( action( 213 ), "$client in {'ObjectBrowser'} and selcount>0 and ($type in {'Shape' 'Group'} or ($type in {'Component'} and selcount=1))", true );
   mgr->insert( separator(), -1, -1 );
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  80311 ), dispmodeId, -1 ); // wireframe
@@ -947,6 +950,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  80312 ), dispmodeId, -1 ); // shading
   mgr->setRule( action( 80312 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
   mgr->setRule( action( 80312 ), "$displaymode in {'Shading'}", false );
+  mgr->insert( separator(), -1, -1 );
   mgr->insert( action(  8032 ), -1, -1 ); // color
   mgr->setRule( action( 8032 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
   mgr->insert( action(  8033 ), -1, -1 ); // transparency
@@ -1422,3 +1426,17 @@ SalomeApp_Selection* GeometryGUI::createSelection() const
   return new GEOMGUI_Selection();
 }
 
+void GeometryGUI::contextMenuPopup( const QString& client, QPopupMenu* menu, QString& title )
+{
+  SalomeApp_Module::contextMenuPopup( client, menu, title );
+  SALOME_ListIO lst;
+  getApp()->selectionMgr()->selectedObjects( lst );
+  if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() == 1 ) {
+    Handle(SALOME_InteractiveObject) io = lst.First();
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+    _PTR(Study) study = appStudy->studyDS();
+    _PTR(SObject) obj = study->FindObjectID( io->getEntry() );
+    if ( obj )
+      title = QString( obj->GetName().c_str() );
+  }
+}
