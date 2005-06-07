@@ -471,6 +471,15 @@ bool GEOMToolsGUI::Import()
 
       GEOM_Displayer( stud ).Display( anObj.in() );
 
+      // update data model and object browser
+      SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>(app);
+      if (anApp) {
+	CAM_Module* module = anApp->module( "Geometry" );
+	SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>( module );
+	if ( appMod )
+	  appMod->updateObjBrowser( true );
+      }
+
       anOp->commit();      
     }
     else {
