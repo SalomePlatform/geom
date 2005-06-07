@@ -472,14 +472,8 @@ bool GEOMToolsGUI::Import()
       GEOM_Displayer( stud ).Display( anObj.in() );
 
       // update data model and object browser
-      SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>(app);
-      if (anApp) {
-	CAM_Module* module = anApp->module( "Geometry" );
-	SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>( module );
-	if ( appMod )
-	  appMod->updateObjBrowser( true );
-      }
-
+      getGeometryGUI()->updateObjBrowser( true );
+      
       anOp->commit();      
     }
     else {
@@ -507,9 +501,26 @@ bool GEOMToolsGUI::Import()
 //=====================================================================================
 bool GEOMToolsGUI::Export()
 {
-/*
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  GEOM::GEOM_IInsertOperations_var aInsOp = GeometryGUI::GetGeomGUI()->GetGeomGen()->GetIInsertOperations( aStudy->StudyId() );
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if (!app) return false;
+  
+  SalomeApp_Study* stud = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
+  if ( !stud ) {
+    cout << "FAILED to cast active study to SalomeApp_Study" << endl;
+    return false;
+  }
+  _PTR(Study) aStudy = stud->studyDS();
+  
+  GEOM::GEOM_Gen_var eng = GeometryGUI::GetGeomGen();
+  if ( CORBA::is_nil( eng ) ) {
+    SUIT_MessageBox::error1( app->desktop(), 
+			     QObject::tr("WRN_WARNING"),
+			     QObject::tr( "GEOM Engine is not started" ), 
+			     QObject::tr("BUT_OK") );
+    return false;
+  }
+  
+  GEOM::GEOM_IInsertOperations_var aInsOp = eng->GetIInsertOperations( aStudy->StudyId() );
   if ( aInsOp->_is_nil() )
     return false;
 
@@ -519,10 +530,16 @@ bool GEOMToolsGUI::Export()
   aInsOp->ExportTranslators( aFormats, aPatterns );
   for ( int i = 0, n = aFormats->length(); i < n; i++ ) 
     aMap.insert( (char*)aPatterns[i], (char*)aFormats[i] );
-  
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
-  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
 
+  // Get selected objects
+  SalomeApp_SelectionMgr* sm = app->selectionMgr();
+  if ( !sm )
+    return false;
+
+  SALOME_ListIO selectedObjects;
+  sm->selectedObjects( selectedObjects );
+
+  SALOME_ListIteratorOfListIO It( selectedObjects );
   for(;It.More();It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
     Standard_Boolean found;
@@ -530,39 +547,49 @@ bool GEOMToolsGUI::Export()
 
     if ( !found || anObj->_is_nil() )
       continue;
-
+    
     QString fileType;
-    QString file = getFileName(QAD_Application::getDesktop(), 
-			       QString( IObject->getName() ),
-			       aMap,
-			       tr("GEOM_MEN_EXPORT"),
-			       false,
-			       fileType);
-
+    QString file = getFileName(app->desktop(), QString( IObject->getName() ), aMap, 
+			       tr("GEOM_MEN_EXPORT"), false, fileType);
+    
     // User has pressed "Cancel" --> stop the operation
     if ( file.isEmpty() || fileType.isEmpty() )
       return false;
-
-    //      Standard_Boolean result = BRepTools::Write(Shape->Shape(), strdup(file.latin1()) );
+    
+    GEOM_Operation* anOp = new GEOM_Operation( app, aInsOp.in() );
     try {
-      QAD_WaitCursor wc;
+      SUIT_OverrideCursor wc;
+      
+      app->putInfo( tr("GEOM_PRP_EXPORT").arg(SUIT_Tools::file( file, /*withExten=*/true )) );
+      
+      anOp->start();
+
+
       aInsOp->Export( anObj, file, fileType.latin1() );
-      if ( !aInsOp->IsDone() ) {
-	wc.stop();
-	QAD_MessageBox::error1( QAD_Application::getDesktop(), 
-			       QObject::tr( "GEOM_ERROR" ),
-			       QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ), 
-			       QObject::tr("BUT_OK") );
-	return false;
-      }
+
+      if ( aInsOp->IsDone() )
+	anOp->commit();
+      else
+	{
+	  anOp->abort();
+	  wc.suspend();
+	  SUIT_MessageBox::error1( app->desktop(), 
+				   QObject::tr( "GEOM_ERROR" ),
+				   QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ), 
+				   QObject::tr("BUT_OK") );
+	  return false;
+	}
     }  
     catch (const SALOME::SALOME_Exception& S_ex) {
-      QtCatchCorbaException(S_ex);
+      //QtCatchCorbaException(S_ex);
+      anOp->abort();
+      return false;
     }
   }
-*/
+  
   return true; 
 }
+
 
 QString GEOMToolsGUI::getParentComponent( _PTR( Study ) study, const SALOME_ListIO& iobjs )
 {
