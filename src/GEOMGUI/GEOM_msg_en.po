@@ -2041,22 +2041,22 @@ msgid "STB_CIRCLE"
 msgstr "Create a circle"
 
 msgid "TOP_ELLIPSE"
-msgstr "Create a ellipse"
+msgstr "Create an ellipse"
 
 msgid "MEN_ELLIPSE"
 msgstr "Ellipse"
 
 msgid "STB_ELLIPSE"
-msgstr "Create a ellipse"
+msgstr "Create an ellipse"
 
 msgid "TOP_ARC"
-msgstr "Create a arc"
+msgstr "Create an arc"
 
 msgid "MEN_ARC"
 msgstr "Arc"
 
 msgid "STB_ARC"
-msgstr "Create a arc"
+msgstr "Create an arc"
 
 msgid "TOP_CURVE"
 msgstr "Create a curve"
