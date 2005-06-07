@@ -86,6 +86,9 @@ msgstr "Ready"
 msgid "GEOM_PRP_SELECT_SUBSHAPES"
 msgstr "Select Sub Shapes"
 
+msgid "GEOM_PRP_EXPORT"
+msgstr "Exporting geometry to %1 ..."
+
 msgid "GEOM_CONFIRM"
 msgstr "Confirm operation"
 
