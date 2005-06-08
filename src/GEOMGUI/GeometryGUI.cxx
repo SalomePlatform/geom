@@ -120,7 +120,7 @@ GeometryGUI::GeometryGUI() :
   { 
     SALOME_LifeCycleCORBA* ls = new SALOME_LifeCycleCORBA( getApp()->namingService() );
     Engines::Component_var comp = ls->FindOrLoad_Component( "FactoryServer", "GEOM" );
-    myComponentGeom   = GEOM::GEOM_Gen::_narrow( comp );
+    myComponentGeom  = GEOM::GEOM_Gen::_narrow( comp );
   }
 
   myState           = -1;
@@ -936,13 +936,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  801 ), -1, -1 ); // edit group
   mgr->setRule( action( 801 ), "$client in {'ObjectBrowser'} and $type in {'Group'} and selcount=1 and isOCC", true );
   mgr->insert( separator(), -1, -1 );        // -----------
-  mgr->insert( action(  216 ), -1, -1 ); // display
-  mgr->setRule( action( 216 ), "$client in {'ObjectBrowser'} and selcount>0 and (($type in {'Shape' 'Group'} and ($isVisible in {false})) or $type in {'Component'})", true );
-  mgr->insert( action(  215 ), -1, -1 ); // erase
-  mgr->setRule( action( 215 ), "$client in {'ObjectBrowser'} and selcount>0 and (($type in {'Shape' 'Group'} and $isVisible in {true}) or ($type in {'Component'} and selcount=1))", true );
-  mgr->insert( action(  213 ), -1, -1 ); // display only
-  mgr->setRule( action( 213 ), "$client in {'ObjectBrowser'} and selcount>0 and ($type in {'Shape' 'Group'} or ($type in {'Component'} and selcount=1))", true );
-  mgr->insert( separator(), -1, -1 );
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  80311 ), dispmodeId, -1 ); // wireframe
   mgr->setRule( action( 80311 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
@@ -950,7 +943,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  80312 ), dispmodeId, -1 ); // shading
   mgr->setRule( action( 80312 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
   mgr->setRule( action( 80312 ), "$displaymode in {'Shading'}", false );
-  mgr->insert( separator(), -1, -1 );
+  mgr->insert( separator(), -1, -1 );        // -----------
   mgr->insert( action(  8032 ), -1, -1 ); // color
   mgr->setRule( action( 8032 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
   mgr->insert( action(  8033 ), -1, -1 ); // transparency
@@ -958,15 +951,30 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  8034 ), -1, -1 ); // isos
   mgr->setRule( action( 8034 ), "$client in {'OCCViewer'} and selcount>0", true );
   mgr->insert( separator(), -1, -1 );        // -----------
+  mgr->insert( action(  216 ), -1, -1 ); // display
+  mgr->setRule( action( 216 ), "selcount>0 and (($type in {'Shape' 'Group'} and ($isVisible in {false})) or $type in {'Component'})", true );
+  mgr->insert( action(  215 ), -1, -1 ); // erase
+  mgr->setRule( action( 215 ), "selcount>0 and (($type in {'Shape' 'Group'} and $isVisible in {true}) or ($type in {'Component'} and selcount=1))", true );
+  mgr->insert( action(  214 ), -1, -1 ); // erase All
+  mgr->setRule( action( 214 ), "$client in {'OCCViewer' 'VTKViewer'}", true );
+  mgr->insert( action(  213 ), -1, -1 ); // display only
+  mgr->setRule( action( 213 ), "selcount>0 and ($type in {'Shape' 'Group'} or ($type in {'Component'} and selcount=1))", true );
+  mgr->insert( separator(), -1, -1 );
 }
 
 //=======================================================================
 // function : GeometryGUI::Deactivate()
 // purpose  : Called when GEOM module is deactivated [ static ]
 //=======================================================================
-void GeometryGUI::activateModule( SUIT_Study* study )
+bool GeometryGUI::activateModule( SUIT_Study* study )
 {
-  SalomeApp_Module::activateModule( study );
+  if ( CORBA::is_nil( myComponentGeom ) )
+    return false;
+
+  bool res = SalomeApp_Module::activateModule( study );
+
+  if ( !res )
+    return false;
 
   setMenuShown( true );
   setToolShown( true );
@@ -1000,7 +1008,7 @@ void GeometryGUI::activateModule( SUIT_Study* study )
   for ( SalomeApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
     sr->setEnabled(true);
   
-  // SetSettings() ?????????????
+  return true;
 }
 
 
@@ -1008,7 +1016,7 @@ void GeometryGUI::activateModule( SUIT_Study* study )
 // function : GeometryGUI::Deactivate()
 // purpose  : Called when GEOM module is deactivated [ static ]
 //=======================================================================
-void GeometryGUI::deactivateModule( SUIT_Study* study )
+bool GeometryGUI::deactivateModule( SUIT_Study* study )
 {
   setMenuShown( false );
   setToolShown( false );
@@ -1030,7 +1038,7 @@ void GeometryGUI::deactivateModule( SUIT_Study* study )
   myVTKSelectors.clear();
   getApp()->selectionMgr()->setEnabled( true, VTKViewer_Viewer::Type() );
 
-  SalomeApp_Module::deactivateModule( study );
+  return SalomeApp_Module::deactivateModule( study );
 }
 
 //=================================================================================
