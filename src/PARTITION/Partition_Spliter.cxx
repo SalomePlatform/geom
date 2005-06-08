@@ -223,7 +223,10 @@ void Partition_Spliter::Clear()
   myImagesEdges.Clear();
   myImageShape.Clear();
   
-  myInter3d = Partition_Inter3d(myAsDes);
+  // mpv: porting to gcc 3.4.1 and OCC 5.2.3
+  //myInter3d = Partition_Inter3d(myAsDes);
+  Partition_Inter3d inst(myAsDes);
+  myInter3d = inst;
   
   myAddedFacesMap.Clear();
 
