@@ -990,6 +990,16 @@ void GeometryGUI::activateModule( SUIT_Study* study )
   for ( vm = VTKViewManagers.first(); vm; vm = VTKViewManagers.next() )
     myVTKSelectors.append( new SalomeApp_VTKSelector( (SVTK_Viewer*)vm->getViewModel(), sm ) );
 
+  // disable OCC selectors
+  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+  for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
+    sr->setEnabled(true);
+  
+  // disable VTK selectors
+  getApp()->selectionMgr()->setEnabled( false, VTKViewer_Viewer::Type() );
+  for ( SalomeApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
+    sr->setEnabled(true);
+  
   // SetSettings() ?????????????
 }
 
@@ -1018,6 +1028,7 @@ void GeometryGUI::deactivateModule( SUIT_Study* study )
   getApp()->selectionMgr()->setEnabled( true, OCCViewer_Viewer::Type() );
 
   myVTKSelectors.clear();
+  getApp()->selectionMgr()->setEnabled( true, VTKViewer_Viewer::Type() );
 
   SalomeApp_Module::deactivateModule( study );
 }
@@ -1344,11 +1355,6 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
 
   const bool ViewOCC = ( win->getViewManager()->getType() == OCCViewer_Viewer::Type() );
 //  const bool ViewVTK = ( win->getViewManager()->getType() == VTKViewer_Viewer::Type() );
-
-  // disable OCC selectors
-  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
-  for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
-    sr->setEnabled(true);
   
   // disable non-OCC viewframe menu commands
 //  action( 404 )->setEnabled( ViewOCC ); // SKETCHER
@@ -1384,11 +1390,21 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
   {
     SalomeApp_SelectionMgr* sm = getApp()->selectionMgr();
     myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
+
+    // disable OCC selectors
+    getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+    for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
+      sr->setEnabled(true);
   }
   else if ( vm->getType() == VTKViewer_Viewer::Type() )
   {
     SalomeApp_SelectionMgr* sm = getApp()->selectionMgr();
     myVTKSelectors.append( new SalomeApp_VTKSelector( (SVTK_Viewer*)vm->getViewModel(), sm ) );
+    
+    // disable VTK selectors
+    getApp()->selectionMgr()->setEnabled( false, VTKViewer_Viewer::Type() );
+    for ( SalomeApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
+      sr->setEnabled(true);
   }
 }
 
