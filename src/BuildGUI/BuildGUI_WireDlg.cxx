@@ -30,6 +30,8 @@
 #include "QAD_Desktop.h"
 #include "GEOMImpl_Types.hxx"
 
+#include <qlabel.h>
+
 //=================================================================================
 // class    : BuildGUI_WireDlg()
 // purpose  : Constructs a BuildGUI_WireDlg which is a child of 'parent', with the 

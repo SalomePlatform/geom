@@ -35,6 +35,8 @@
 
 #include "utilities.h"
 
+#include <qlabel.h>
+
 //=================================================================================
 // class    : BasicGUI_CircleDlg()
 // purpose  : Constructs a BasicGUI_CircleDlg which is a child of 'parent', with the 

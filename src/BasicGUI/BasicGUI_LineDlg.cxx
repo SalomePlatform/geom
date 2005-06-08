@@ -34,6 +34,8 @@
 
 #include "utilities.h"
 
+#include <qlabel.h>
+
 using namespace std;
 
 //=================================================================================

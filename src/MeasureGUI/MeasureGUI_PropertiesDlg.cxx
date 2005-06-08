@@ -42,6 +42,7 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
+#include <qlabel.h>
 
 //=================================================================================
 // class    : MeasureGUI_PropertiesDlg()

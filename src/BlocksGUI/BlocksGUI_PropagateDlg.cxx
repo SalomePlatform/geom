@@ -32,6 +32,7 @@ using namespace std;
 #include "QAD_Desktop.h"
 #include "GEOMImpl_Types.hxx"
 
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BlocksGUI_PropagateDlg()

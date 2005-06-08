@@ -34,6 +34,7 @@
 #include "QAD_Desktop.h"
 
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 #include "utilities.h"
 

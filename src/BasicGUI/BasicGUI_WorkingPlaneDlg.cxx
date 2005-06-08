@@ -52,6 +52,7 @@ using namespace std;
 #include "GEOMImpl_Types.hxx"
 
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BasicGUI_WorkingPlaneDlg()

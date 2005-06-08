@@ -35,6 +35,8 @@
 #include "QAD_Desktop.h"
 #include "GEOMImpl_Types.hxx"
 
+#include <qlabel.h>
+
 //=================================================================================
 // class    : BuildGUI_EdgeDlg()
 // purpose  : Constructs a BuildGUI_EdgeDlg which is a child of 'parent', with the 

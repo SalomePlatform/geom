@@ -31,6 +31,7 @@
 #include "DlgRef_SpinBox.h"
 #include "QAD_Desktop.h"
 #include "qpixmap.h"
+#include <qlabel.h>
 #include <list>
 
 #include "GEOMImpl_Types.hxx"

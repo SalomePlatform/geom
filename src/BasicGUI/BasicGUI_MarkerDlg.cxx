@@ -36,6 +36,8 @@
 #include "GEOMImpl_Types.hxx"
 #include "utilities.h"
 
+#include <qlabel.h>
+
 #include <TopExp.hxx>
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>

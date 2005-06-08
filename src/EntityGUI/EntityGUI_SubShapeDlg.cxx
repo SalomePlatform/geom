@@ -39,6 +39,7 @@
 #include <TopTools_MapOfShape.hxx>
 
 #include <qmessagebox.h>
+#include <qlabel.h>
 
 //=================================================================================
 // class    : EntityGUI_SubShapeDlg

@@ -42,6 +42,8 @@ using namespace std;
 
 #include "GEOMImpl_Types.hxx"
 
+#include <qlabel.h>
+
 #define DEFAULT_TOLERANCE_VALUE 1e-07
 
 

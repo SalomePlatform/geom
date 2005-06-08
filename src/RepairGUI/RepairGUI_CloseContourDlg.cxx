@@ -38,6 +38,7 @@ using namespace std;
 
 #include <TopAbs.hxx>
 
+#include <qlabel.h>
 
 //=================================================================================
 // class    : RepairGUI_CloseContourDlg()

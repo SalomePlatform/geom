@@ -33,6 +33,7 @@ using namespace std;
 
 //Qt includes
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BuildGUI_FaceDlg()

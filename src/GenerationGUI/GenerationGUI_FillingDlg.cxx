@@ -47,6 +47,8 @@
 
 #include "utilities.h"
 
+#include <qlabel.h>
+
 //=================================================================================
 // class    : GenerationGUI_FillingDlg()
 // purpose  : Constructs a GenerationGUI_FillingDlg which is a child of 'parent', with the 

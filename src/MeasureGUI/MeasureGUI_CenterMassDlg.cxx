@@ -37,6 +37,8 @@
 #include <TopoDS.hxx>
 #include <gp_Pnt.hxx>
 
+#include <qlabel.h>
+
 //=================================================================================
 // class    : MeasureGUI_CenterMassDlg()
 // purpose  : Constructs a MeasureGUI_CenterMassDlg which is a child of 'parent', with the

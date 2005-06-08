@@ -33,6 +33,8 @@ using namespace std;
 
 #include "QAD_Desktop.h"
 
+#include <qlabel.h>
+
 //=================================================================================
 // class    : BooleanGUI_Dialog()
 // purpose  : Constructs a BooleanGUI_Dialog which is a child of 'parent', with the

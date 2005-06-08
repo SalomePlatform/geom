@@ -31,6 +31,7 @@
 #include "DlgRef_2Sel1Spin.h"
 #include "QAD_Desktop.h"
 #include "qpixmap.h"
+#include <qlabel.h>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <list>
 

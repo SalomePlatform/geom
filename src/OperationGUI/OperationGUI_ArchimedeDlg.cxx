@@ -32,6 +32,8 @@
 #include "QAD_Config.h"
 #include "QAD_Desktop.h"
 
+#include <qlabel.h>
+
 //=================================================================================
 // class    : OperationGUI_ArchimedeDlg()
 // purpose  : Constructs a OperationGUI_ArchimedeDlg which is a child of 'parent', with the 

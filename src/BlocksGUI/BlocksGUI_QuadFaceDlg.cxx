@@ -31,6 +31,8 @@
 
 #include "GEOMImpl_Types.hxx"
 
+#include <qlabel.h>
+
 //using namespace std;
 
 //=================================================================================

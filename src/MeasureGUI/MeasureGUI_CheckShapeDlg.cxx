@@ -39,6 +39,7 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
+#include <qlabel.h>
 
 #define TEXTEDIT_FONT_FAMILY "Courier"
 #define TEXTEDIT_FONT_SIZE 11

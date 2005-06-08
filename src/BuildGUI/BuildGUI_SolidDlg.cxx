@@ -33,6 +33,7 @@
 
 //Qt includes
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BuildGUI_SolidDlg()

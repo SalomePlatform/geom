@@ -31,6 +31,7 @@
 #include "QAD_Desktop.h"
 
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
 

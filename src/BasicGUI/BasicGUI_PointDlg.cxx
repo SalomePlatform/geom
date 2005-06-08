@@ -46,6 +46,7 @@ using namespace std;
 #include <BRep_Tool.hxx>
 
 #include <qapplication.h>
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BasicGUI_PointDlg()

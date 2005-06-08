@@ -31,6 +31,8 @@
 #include "QAD_Desktop.h"
 #include "GEOMImpl_Types.hxx"
 
+#include <qlabel.h>
+
 //=================================================================================
 // class    : BuildGUI_ShellDlg()
 // purpose  : Constructs a BuildGUI_ShellDlg which is a child of 'parent', with the 

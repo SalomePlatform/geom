@@ -33,6 +33,8 @@
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 
+#include <qlabel.h>
+
 //=================================================================================
 // class    : BlocksGUI_TrsfDlg()
 // purpose  : Constructs a BlocksGUI_TrsfDlg which is a child of 'parent'.

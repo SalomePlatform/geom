@@ -34,6 +34,7 @@ using namespace std;
 
 #include <qlistview.h>
 #include <qspinbox.h>
+#include <qlabel.h>
 
 //=================================================================================
 // class    : OperationGUI_MaterialDlg()

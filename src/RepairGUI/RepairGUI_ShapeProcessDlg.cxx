@@ -40,7 +40,7 @@ using namespace std;
 
 #include <qheader.h>
 #include <qmessagebox.h>
-
+#include <qlabel.h>
 
 //=================================================================================
 // class    : RepairGUI_ShapeProcessDlg()

@@ -35,6 +35,7 @@ using namespace std;
 #include "GEOMImpl_Types.hxx"
 
 #include "utilities.h"
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BasicGUI_VectorDlg()

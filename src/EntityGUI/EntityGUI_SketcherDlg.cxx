@@ -34,6 +34,7 @@
 #include "QAD_MessageBox.h"
 
 #include <qpushbutton.h>
+#include <qlabel.h>
 
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>

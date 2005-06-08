@@ -33,6 +33,7 @@
 #include "GEOMImpl_Types.hxx"
 
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 #include "utilities.h"
 

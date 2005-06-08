@@ -42,6 +42,8 @@
 #include "QAD_Desktop.h"
 #include "utilities.h"
 
+#include <qlabel.h>
+
 //=================================================================================
 // class    : GenerationGUI_PipeDlg()
 // purpose  : Constructs a GenerationGUI_PipeDlg which is a child of 'parent', with the 

@@ -41,6 +41,7 @@
 #include <qmessagebox.h>
 #include <qtextedit.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 //=================================================================================
 // class    : BlocksGUI_ExplodeDlg()

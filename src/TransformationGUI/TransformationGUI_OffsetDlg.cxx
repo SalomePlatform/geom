@@ -31,6 +31,7 @@
 #include "utilities.h"
 
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 using namespace std;
 
