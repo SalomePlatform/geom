@@ -811,7 +811,10 @@ void GEOMImpl_IMeasureOperations::GetProblemShapes (const BRepCheck_Analyzer&   
   TopAbs_ShapeEnum styp = theShape.ShapeType();
   BRepCheck_ListIteratorOfListOfStatus itl;
   if (!theMap.IsBound(theShape)) {
-    theMap.Bind(theShape,TopTools_ListOfShape());
+    // mpv: porting to gcc 3.4.1 and OCC 5.2.3
+    //theMap.Bind(theShape,TopTools_ListOfShape());
+    TopTools_ListOfShape empty;
+    theMap.Bind(theShape, empty);
 
     if (!theAna.Result(theShape).IsNull()) {
       itl.Initialize(theAna.Result(theShape)->Status());

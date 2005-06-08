@@ -201,17 +201,18 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       }
 
       // build wire in right order, corresponding to edges connexity
-      BRepBuilderAPI_MakeWire MW;
+      BRepBuilderAPI_MakeWire* MW;
       if (isConnected12)
-        MW = BRepBuilderAPI_MakeWire(anEdge1, anEdge2, anEdge3, anEdge4);
+        MW = new BRepBuilderAPI_MakeWire(anEdge1, anEdge2, anEdge3, anEdge4);
       else
-        MW = BRepBuilderAPI_MakeWire(anEdge1, anEdge3, anEdge2, anEdge4);
+        MW = new BRepBuilderAPI_MakeWire(anEdge1, anEdge3, anEdge2, anEdge4);
 
-      if (!MW.IsDone()) {
+      if (!MW->IsDone()) {
         Standard_ConstructionError::Raise
           ("Impossible to build a connected wire from the given edges");
       }
-      TopoDS_Wire aWire = MW;
+      TopoDS_Wire aWire = *MW;
+      delete MW;
       if (!aWire.Closed()) {
         Standard_ConstructionError::Raise
           ("Impossible to build a closed wire from the given edges");

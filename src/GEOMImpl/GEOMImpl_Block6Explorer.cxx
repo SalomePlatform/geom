@@ -1167,9 +1167,9 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
     BRepOffsetAPI_MakeFilling MF;
 
     Standard_Integer nbEdges = 0;
-    BRepTools_WireExplorer aWE (theWire);
-    for (; aWE.More(); aWE.Next(), nbEdges++) {
-      MF.Add(TopoDS::Edge(aWE.Current()), GeomAbs_C0);
+    BRepTools_WireExplorer* aWE = new BRepTools_WireExplorer (theWire);
+    for (; aWE->More(); aWE->Next(), nbEdges++) {
+      MF.Add(TopoDS::Edge(aWE->Current()), GeomAbs_C0);
     }
 
     MF.Build();
@@ -1181,10 +1181,10 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
       Standard_Real aTol = MF.G0Error();
 
       TColgp_Array1OfPnt aPnts (1,nbEdges); // points of the given wire
-      aWE = BRepTools_WireExplorer(theWire);
+      aWE = new BRepTools_WireExplorer(theWire);
       Standard_Integer vi = 1;
-      for (; aWE.More() && vi <= nbEdges; aWE.Next(), vi++) {
-        aPnts(vi) = BRep_Tool::Pnt(TopoDS::Vertex(aWE.CurrentVertex()));
+      for (; aWE->More() && vi <= nbEdges; aWE->Next(), vi++) {
+        aPnts(vi) = BRep_Tool::Pnt(TopoDS::Vertex(aWE->CurrentVertex()));
       }
 
       // Find maximum deviation in vertices
