@@ -174,7 +174,6 @@
 <menu-item label-id="Tools" item-id="5" pos-id="">
    <separator pos-id=""/>
    <popup-item item-id="5103" pos-id="" label-id="Check Geometry" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="5104" pos-id="" label-id="Load Script" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </menu-item>
 
 <!-- ********************************* Settings  (menubar) ********************************* -->

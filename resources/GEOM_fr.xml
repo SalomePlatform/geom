@@ -154,7 +154,6 @@
 <menu-item label-id="Outils" item-id="5" pos-id="">
    <separator pos-id=""/>
    <popup-item item-id="5103" pos-id="" label-id="Check Géométrie" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <popup-item item-id="5104" pos-id="" label-id="Charger Script" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </menu-item>
 
 <!-- ********************************* Settings	 (menubar) ********************************* -->

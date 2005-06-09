@@ -189,11 +189,6 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 	OnCheckGeometry();
 	break;
       }
-    case 5104: // LOAD SCRIPT
-      {
-	OnLoadScript();
-	break;
-      }
     case 8032: // COLOR - POPUP VIEWER
       {
 	OnColor();

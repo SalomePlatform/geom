@@ -61,7 +61,6 @@ private:
   void OnSettingsStep();
   void OnRename();
   void OnCheckGeometry();
-  void OnLoadScript();
 
   // Popup commands
   void OnColor();

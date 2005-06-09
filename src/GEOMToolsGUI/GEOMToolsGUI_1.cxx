@@ -26,6 +26,8 @@
 //  Module : GEOM
 //  $Header$
 
+#include <PythonConsole_PyConsole.h>
+
 #include "GEOMToolsGUI.h"
 #include "GeometryGUI.h"
 #include "GEOM_Actor.h"
@@ -206,43 +208,11 @@ void GEOMToolsGUI::OnRename()
 
 void GEOMToolsGUI::OnCheckGeometry()
 {
-/*
-  QAD_PyEditor* PyEditor = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getPyEditor();
-  PyEditor->setText("from GEOM_usinggeom import *\n");
-  PyEditor->handleReturn();
-*/
-}
-
-void GEOMToolsGUI::OnLoadScript()
-{
-/*
-  _PTR(Study) aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties())->IsLocked();
-  if ( aLocked ) {
-    QAD_MessageBox::warn1 ( (QWidget*)QAD_Application::getDesktop(),
-			    QObject::tr("WRN_WARNING"), 
-			    QObject::tr("WRN_STUDY_LOCKED"),
-			    QObject::tr("BUT_OK") );
-    return;
-  }
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  PythonConsole* pyConsole = app->pythonConsole();
   
-  QStringList filtersList;
-  filtersList.append(tr("GEOM_MEN_LOAD_SCRIPT"));
-  filtersList.append(tr("GEOM_MEN_ALL_FILES"));
-  
-  QString aFile = QAD_FileDlg::getFileName(QAD_Application::getDesktop(), "", filtersList, tr("GEOM_MEN_IMPORT"), true);
-  if(!aFile.isEmpty()) {
-    QFileInfo file = aFile;
-    QApplication::setOverrideCursor(Qt::waitCursor);
-    QAD_PyEditor* PyEditor = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getPyEditor();
-    
-    QStringList aTextList = QStringList::split(".", file.fileName());
-    
-    PyEditor->setText("import geompy; geompy.addPath('" + file.dirPath() + "'); from " + aTextList.first() + " import *\n" );
-    PyEditor->handleReturn();
-  }
-  QApplication::restoreOverrideCursor();
-*/
+  if(pyConsole)
+    pyConsole->exec("from GEOM_usinggeom import *");
 }
 
 void GEOMToolsGUI::OnColor()

@@ -150,10 +150,6 @@ msgstr "Export"
 msgid "GEOM_MEN_IMPORT"
 msgstr "Import"
 
-#: GeometryGUI.cxx:3763
-msgid "GEOM_MEN_LOAD_SCRIPT"
-msgstr "PYTHON Files ( *.py )"
-
 #: GeometryGUI.cxx:2931
 msgid "GEOM_MEN_ISOS"
 msgstr "Select Number Of Isos"
@@ -2699,15 +2695,6 @@ msgstr "Check Geometry"
 
 msgid "STB_CHECK_GEOMETRY"
 msgstr "Check Geometry"
-
-msgid "TOP_LOAD_SCRIPT"
-msgstr "Load script"
-
-msgid "MEN_LOAD_SCRIPT"
-msgstr "Load script"
-
-msgid "STB_LOAD_SCRIPT"
-msgstr "Load script"
 
 msgid "MEN_PREFERENCES"
 msgstr "Preferences"

@@ -303,7 +303,6 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 413  ||  // MENU SETTINGS - ISOS
       id == 414  ||  // MENU SETTINGS - STEP VALUE FOR SPIN BOXES
       id == 5103 ||  // MENU TOOLS - CHECK GEOMETRY
-      id == 5104 ||  // MENU TOOLS - LOAD SCRIPT
       id == 8032 ||  // POPUP VIEWER - COLOR
       id == 8033 ||  // POPUP VIEWER - TRANSPARENCY
       id == 8034 ||  // POPUP VIEWER - ISOS
@@ -707,8 +706,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 7072, "CHECK_COMPOUND" );
 
   createGeomAction( 5103, "CHECK_GEOMETRY" );
-  createGeomAction( 5104, "LOAD_SCRIPT" );
-
+  
   createGeomAction( 412, "SHADING_COLOR" );
   createGeomAction( 413, "ISOS" );
   createGeomAction( 414, "STEP_VALUE" );
@@ -859,8 +857,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 10 );
   createMenu( separator(), toolsId, -1 );
   createMenu( 5103, toolsId, -1 );  
-  createMenu( 5104, toolsId, -1 );  
-
+  
   int prefId = createMenu( tr( "MEN_PREFERENCES" ), -1, -1, 10 );
   createMenu( separator(), prefId, -1 );
 
