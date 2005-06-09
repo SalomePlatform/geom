@@ -288,6 +288,12 @@ void GeometryGUI::OnGUIEvent( int id )
   if( !ViewOCC && !ViewVTK )
       return;
 
+  // fix for IPAL9103, point 2
+  if ( CORBA::is_nil( GetGeomGen() ) ) {
+    SUIT_MessageBox::error1( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_GET_ENGINE" ), tr( "GEOM_BUT_OK" ) );
+    return;
+  }
+
   GEOMGUI* library = 0;
   // try to get-or-load corresponding GUI library
   if( id == 111  ||  // MENU FILE - IMPORT BREP

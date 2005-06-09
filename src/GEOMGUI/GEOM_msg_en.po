@@ -2873,5 +2873,5 @@ msgstr "Rename"
 msgid "NAME_LBL"
 msgstr "Name: "
 
-msgid "GEOM_ERR_LOAD_ENGINE"
-msgstr "Failed to load GEOM Engine component"
+msgid "GEOM_ERR_GET_ENGINE"
+msgstr "Failed to obtain GEOM Engine component.  Reload Geometry module and try again."
