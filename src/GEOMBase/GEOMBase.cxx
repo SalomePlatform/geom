@@ -219,8 +219,9 @@ int GEOMBase::GetNameOfSelectedIObjects( const SALOME_ListIO& aList,
     {
       GEOM::ListOfGO anObjs;
       ConvertListOfIOInListOfGO( aList, anObjs, theShapesOnly );
-      if ( anObjs.length() == 1 )
+      if ( anObjs.length() == 1 ) {
 	theName = GetName( anObjs[ 0 ] );
+      }
       else
 	theName = QString( "%1_objects" ).arg( anObjs.length() );
       
@@ -946,7 +947,7 @@ bool GEOMBase::GetShape( const GEOM::GEOM_Object_ptr& theObject, TopoDS_Shape& t
 // function : GetName()
 // purpose  : Get name of object
 //=======================================================================
-const char* GEOMBase::GetName( GEOM::GEOM_Object_ptr theObj )
+QString GEOMBase::GetName( GEOM::GEOM_Object_ptr theObj )
 {
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
   
@@ -962,45 +963,15 @@ const char* GEOMBase::GetName( GEOM::GEOM_Object_ptr theObj )
       if ( aSObj && aSObj->FindAttribute( anAttr, "AttributeName") )
       {
         _PTR(AttributeName) aNameAttr ( anAttr );
-        return aNameAttr->Value().c_str();        
+	return QString( aNameAttr->Value().c_str() );        
       }
     }
   }
   
-  return "";  
+  return QString("");  
 }
 
 bool GEOMBase::IsShape( GEOM::GEOM_Object_ptr theObj )
 {
   return !theObj->_is_nil() && theObj->IsShape();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

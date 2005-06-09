@@ -128,7 +128,7 @@ public :
   static void ShowErrorMessage(const char* theErrorCode, const char* theComment = 0);
 
   /* Gets name of object */
-  static const char* GetName( GEOM::GEOM_Object_ptr );
+  static QString GetName( GEOM::GEOM_Object_ptr );
 
   static bool IsShape( GEOM::GEOM_Object_ptr theObj );
 };
