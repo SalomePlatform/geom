@@ -54,6 +54,8 @@ protected:
   virtual bool                       execute (ObjectList& objects);
   virtual GEOM::GEOM_Object_ptr      getFather(GEOM::GEOM_Object_ptr theObj);
 
+  virtual const char*                getNewObjectName() const; 
+
 private:
   void Init();
   void enterEvent (QEvent* e);

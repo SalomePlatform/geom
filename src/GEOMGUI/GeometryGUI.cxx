@@ -682,7 +682,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 504, "ARCHIMEDE" );
   createGeomAction( 505, "FILLET" );
   createGeomAction( 506, "CHAMFER" );
-  createGeomAction( 507, "CLIPPING" );
+  //createGeomAction( 507, "CLIPPING" );
 
   createGeomAction( 9998, "MUL_TRANSFORM" );
   createGeomAction( 9995, "EXPLODE_BLOCKS" );
@@ -822,7 +822,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(), operId, -1 );
   createMenu( 505, transId, -1 );  
   createMenu( 506, transId, -1 );  
-  createMenu( 507, transId, -1 );  
+  //createMenu( 507, transId, -1 );  
 
   int blockId = createMenu( tr( "MEN_BLOCKS" ), operId, -1 );
   createMenu( 9998, blockId, -1 );  

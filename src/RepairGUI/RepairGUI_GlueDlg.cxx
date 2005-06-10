@@ -36,8 +36,10 @@ using namespace std;
 #include "SalomeApp_SelectionMgr.h"
 #include "SalomeApp_Study.h"
 #include "SalomeApp_Tools.h"
+
 #include "SUIT_Session.h"
 #include "SUIT_MessageBox.h"
+#include "SUIT_OverrideCursor.h"
 
 #include "SALOME_ListIteratorOfListIO.hxx"
 
@@ -375,14 +377,15 @@ bool RepairGUI_GlueDlg::onAcceptLocal( const bool publish, const bool useTransac
 
   try {
     if ( ( !publish && !useTransaction ) || openCommand() ) {
-      QApplication::setOverrideCursor( Qt::waitCursor );
+
+      SUIT_OverrideCursor wc;
+
       SUIT_Session::session()->activeApplication()->putInfo( "" );
       ObjectList objects;
       // JFA 28.12.2004 if ( !execute( objects ) || !getOperation()->IsDone() ) {
       if ( !execute( objects ) ) { // JFA 28.12.2004 // To enable warnings
-	while( QApplication::overrideCursor() ) 
-	  QApplication::restoreOverrideCursor(); 
-	abortCommand();
+	wc.suspend();
+        abortCommand();
 	showError();
       }
       else {
@@ -423,9 +426,8 @@ bool RepairGUI_GlueDlg::onAcceptLocal( const bool publish, const bool useTransac
         // JFA 28.12.2004 BEGIN // To enable warnings
         if ( !getOperation()->_is_nil() ) {
           if ( !getOperation()->IsDone() ) {
-	    while( QApplication::overrideCursor() ) 
-	      QApplication::restoreOverrideCursor();
-            QString msgw = QObject::tr( getOperation()->GetErrorCode() );
+            wc.suspend();
+	    QString msgw = QObject::tr( getOperation()->GetErrorCode() );
             SUIT_MessageBox::warn1((QWidget*)(SUIT_Session::session()->activeApplication()->desktop()),
 				   QObject::tr( "WRN_WARNING" ), 
 				   msgw, 

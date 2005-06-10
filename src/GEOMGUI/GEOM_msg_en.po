@@ -2478,13 +2478,13 @@ msgid "STB_MUL_TRANSFORM"
 msgstr "Multi-transformation"
 
 msgid "TOP_EXPLODE_BLOCKS"
-msgstr "Expload on Blocks"
+msgstr "Explode on Blocks"
 
 msgid "MEN_EXPLODE_BLOCKS"
-msgstr "Expload on Blocks"
+msgstr "Explode on Blocks"
 
 msgid "STB_EXPLODE_BLOCKS"
-msgstr "Expload on Blocks"
+msgstr "Explode on Blocks"
 
 msgid "TOP_PROPAGATE"
 msgstr "Propagate"
@@ -2592,13 +2592,13 @@ msgid "MEN_MEASURES"
 msgstr "Measures"
 
 msgid "TOP_POINT_COORDS"
-msgstr "Point corrdinates"
+msgstr "Point coordinates"
 
 msgid "MEN_POINT_COORDS"
-msgstr "Point corrdinates"
+msgstr "Point coordinates"
 
 msgid "STB_POINT_COORDS"
-msgstr "Point corrdinates"
+msgstr "Point coordinates"
 
 msgid "TOP_BASIC_PROPS"
 msgstr "Basic properties"

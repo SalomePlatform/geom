@@ -35,6 +35,7 @@
 #include "SalomeApp_SelectionMgr.h"
 #include "SalomeApp_Tools.h"
 #include "SUIT_Session.h"
+#include "SUIT_OverrideCursor.h"
 
 #include <qlineedit.h>
 #include <qlayout.h>
@@ -287,7 +288,7 @@ void MeasureGUI_Skeleton::redisplayPreview()
 
   try
   {
-    QApplication::setOverrideCursor( Qt::waitCursor );
+    SUIT_OverrideCursor();
 
     getDisplayer()->SetColor( Quantity_NOC_VIOLET );
     getDisplayer()->SetToActivate( false );

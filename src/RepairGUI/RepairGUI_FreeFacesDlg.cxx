@@ -32,7 +32,9 @@ using namespace std;
 #include "SalomeApp_Application.h"
 #include "SalomeApp_SelectionMgr.h"
 #include "SalomeApp_Tools.h"
+
 #include "SUIT_Session.h"
+#include "SUIT_OverrideCursor.h"
 
 #include "SALOME_ListIteratorOfListIO.hxx"
 
@@ -278,11 +280,12 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
       erasePreview( true );
       return false;
     }
+    
+    SUIT_OverrideCursor();
 
     TopExp::MapShapes( aSelShape, anIndices);
     SALOME_Prs* aPrs = 0;
-    QApplication::setOverrideCursor( Qt::waitCursor );
-
+    
     for ( int i = 0, n = aFaceLst->length(); i < n; i++ )
     {
       aFace = anIndices.FindKey( aFaceLst[i] );
