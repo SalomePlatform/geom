@@ -172,7 +172,9 @@ group_edit.png \
 glue.png \
 check_blocks_compound.png \
 free_faces.png \
-propagate.png
+propagate.png \
+redo.png \
+undo.png
 
 
 BIN_SCRIPT= \
