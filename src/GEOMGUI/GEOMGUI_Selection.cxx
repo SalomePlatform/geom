@@ -19,6 +19,9 @@
 #include <SALOME_InteractiveObject.hxx>
 
 #include <SOCC_Prs.h>
+#include <SVTK_Prs.h>
+#include <SALOME_Actor.h>
+#include <vtkActorCollection.h>
 
 #include <OCCViewer_ViewModel.h>
 
@@ -38,13 +41,14 @@ QtxValue GEOMGUI_Selection::param( const int ind, const QString& p ) const
 {
   QtxValue val( SalomeApp_Selection::param( ind, p ) );
   if ( !val.isValid() ) {
-    if      ( p == "isVisible"   )  val = QtxValue( isVisible( ind ) );
-    else if ( p == "isOCC"       )  val = QtxValue( isOCC() );
-    else if ( p == "type"        )  val = QtxValue( typeName( ind ) );
-    else if ( p == "displaymode" )  val = QtxValue( displayMode( ind ) );
+    if      ( p == "isVisible"   )    val = QtxValue( isVisible( ind ) );
+    else if ( p == "isOCC"       )    val = QtxValue( isOCC() );
+    else if ( p == "type"        )    val = QtxValue( typeName( ind ) );
+    else if ( p == "displaymode" )    val = QtxValue( displayMode( ind ) );
+    else if ( p == "isActiveViewer" ) val = QtxValue( isActiveViewer() );
   }
 
-  //printf( "--> param() : [%s] = %s\n", p.latin1(), val.toString ().latin1() );
+  printf( "--> param() : [%s] = %s\n", p.latin1(), val.toString ().latin1() );
 
   return val;
 }
@@ -113,8 +117,23 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 	}
       } 
       else { // assuming VTK
-
-      } 
+	SVTK_Prs* vtkPrs = (SVTK_Prs*) prs;
+	vtkActorCollection* lst = vtkPrs->GetObjects();
+	if ( lst ) {
+	  lst->InitTraversal();
+	  vtkActor* actor = lst->GetNextActor();
+	  if ( actor ) {
+	    SALOME_Actor* salActor = dynamic_cast<SALOME_Actor*>( actor );
+	    if ( salActor ) {
+	      int dm = salActor->getDisplayMode();
+	      if ( dm == 0 )
+		return "Wireframe";
+	      else if ( dm == 1 ) 
+		return "Shading";
+	    } // if ( salome actor )
+	  } // if ( actor )
+	} // if ( lst == vtkPrs->GetObjects() )
+      } // if VTK
     }
   }
   return "";
@@ -156,4 +175,9 @@ GEOM::GEOM_Object_ptr GEOMGUI_Selection::getObject( const int index ) const
     }
   }
   return GEOM::GEOM_Object::_nil();
+}
+
+bool GEOMGUI_Selection::isActiveViewer() const
+{
+  return ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow() != 0 );
 }

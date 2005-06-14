@@ -45,6 +45,7 @@ public:
 private:
   bool                  isVisible( const int ) const;
   bool                  isOCC() const;
+  bool                  isActiveViewer() const;
   QString               typeName( const int ) const;  
   QString               displayMode( const int ) const;
 
