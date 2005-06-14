@@ -136,10 +136,13 @@ void GEOM_IInsertOperations_i::ImportTranslators
   // Get sequences of available formats
   Handle(TColStd_HSequenceOfAsciiString) aFormats  = new TColStd_HSequenceOfAsciiString;
   Handle(TColStd_HSequenceOfAsciiString) aPatterns = new TColStd_HSequenceOfAsciiString;
-  if (!GetOperations()->ImportTranslators(aFormats, aPatterns)) return;
+  if (!GetOperations()->ImportTranslators(aFormats, aPatterns) ||
+      aFormats->Length() != aPatterns->Length())
+  {
+    aFormats->Clear(); aPatterns->Clear();
+  }
 
   const int formSize = aFormats->Length(), pattSize = aPatterns->Length();
-  if (formSize != pattSize) return;
 
   // allocate the CORBA arrays
   GEOM::string_array_var aFormatsArray  = new GEOM::string_array();
