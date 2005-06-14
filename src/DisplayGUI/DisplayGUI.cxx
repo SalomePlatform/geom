@@ -43,6 +43,8 @@
 
 #include <SALOME_ListIteratorOfListIO.hxx>
 
+#include <SVTK_ViewWindow.h>
+#include <SVTK_RenderWindowInteractor.h>
 #include <SVTK_ViewModel.h>
 #include <SOCC_ViewModel.h>
 #include <SVTK_Prs.h>
@@ -416,22 +418,23 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   SALOME_ListIO aList;
   
   if ( viewWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() ) {
-    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewWindow*)viewWindow)->getRWInteractor();
+    SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( viewWindow );
+    SVTK_RenderWindowInteractor* rwi = vw->getRWInteractor();
 
     aSelMgr->selectedObjects( aList );
     SALOME_ListIteratorOfListIO It( aList );
 
     for( ;It.More(); It.Next() ) {
-      SVTK_Viewer* stvkViewer = (SVTK_Viewer*)(viewWindow->getViewManager()->getViewModel());
+      SVTK_Viewer* stvkViewer = (SVTK_Viewer*)(vw->getViewManager()->getViewModel());
       SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( stvkViewer->CreatePrs( It.Value()->getEntry() ) );
       if ( vtkPrs && !vtkPrs->IsNull() ) {
 	if ( mode == 0 )
-	  myRenderInter->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
+	  rwi->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
 	else if ( mode == 1 )
-	  myRenderInter->ChangeRepresentationToSurface( vtkPrs->GetObjects() );
+	  rwi->ChangeRepresentationToSurface( vtkPrs->GetObjects() );
       }
     }
-    myRenderInter->Render();
+    rwi->Render();
   }
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
     OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
