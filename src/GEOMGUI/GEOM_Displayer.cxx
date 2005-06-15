@@ -132,7 +132,7 @@ SUIT_SelectionFilter* GEOM_Displayer::getFilter( const int theMode )
   
   int aTopAbsMode = getTopAbsMode( theMode );
   if ( aTopAbsMode != -1 )
-    aFilter = new GEOM_TypeFilter( getStudy(), theMode ); //@ aFilter = new GEOM_TypeFilter( ( TopAbs_ShapeEnum )aTopAbsMode );
+    aFilter = new GEOM_TypeFilter( getStudy(), aTopAbsMode, true ); //@ aFilter = new GEOM_TypeFilter( ( TopAbs_ShapeEnum )aTopAbsMode );
   else
     switch ( theMode )
       {

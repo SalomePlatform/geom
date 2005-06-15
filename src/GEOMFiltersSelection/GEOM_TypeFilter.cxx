@@ -4,9 +4,10 @@
 // function : GEOM_TypeFilter
 // purpose  : 
 //=======================================================================
-GEOM_TypeFilter::GEOM_TypeFilter( SalomeApp_Study* study, const int type )
+GEOM_TypeFilter::GEOM_TypeFilter( SalomeApp_Study* study, const int type, const bool isShapeType )
 :GEOM_SelectionFilter( study ),
-myType( type )
+ myType( type ),
+ myIsShapeType(isShapeType)
 {
 }
 
@@ -26,7 +27,12 @@ bool GEOM_TypeFilter::isOk( const SUIT_DataOwner* sOwner ) const
 {
   GEOM::GEOM_Object_var obj = getObject( sOwner );
   if ( !CORBA::is_nil( obj ) )
-    return obj->GetType() == type();
+    {
+      if (!myIsShapeType)
+	return obj->GetType() == type();
+      else
+	return obj->GetShapeType() == type();
+    }
   
   return false;
 }

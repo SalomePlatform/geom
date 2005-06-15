@@ -10,7 +10,7 @@
 class GEOM_TypeFilter : public GEOM_SelectionFilter
 {
 public:
-  GEOM_TypeFilter(SalomeApp_Study* study, const int type );
+  GEOM_TypeFilter(SalomeApp_Study* study, const int type, const bool isShapeType = false );
   ~GEOM_TypeFilter();
 
   virtual bool isOk( const SUIT_DataOwner* ) const;
@@ -19,7 +19,7 @@ public:
 
 private:
   int                   myType;
-
+  bool                  myIsShapeType;    
 };
 
 #endif
