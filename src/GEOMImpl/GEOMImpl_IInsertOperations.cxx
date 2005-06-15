@@ -367,11 +367,14 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
 #else
     aUserResDir += "/.salome/resources";
 #endif
-    myResMgr = new Resource_Manager ("ImportExport", aResDir, aUserResDir, Standard_True);
+    myResMgr = new Resource_Manager ("ImportExport", aResDir, aUserResDir, Standard_False);
+
+    if (!myResMgr->Find("Import") && !myResMgr->Find("Export")) {
+      // instead of complains in Resource_Manager
+      INFOS("No valid file \"ImportExport\" found in " << aResDir.ToCString() <<
+            " and in " << aUserResDir.ToCString() );
+    }
   }
 
-  if (myResMgr->Find("Import") || myResMgr->Find("Export"))
-    return Standard_True;
-
-  return Standard_False;
+  return ( myResMgr->Find("Import") || myResMgr->Find("Export") );
 }
