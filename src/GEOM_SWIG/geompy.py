@@ -37,6 +37,7 @@ import GEOM
 g = lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 geom = g._narrow( GEOM.GEOM_Gen )
 gg = ImportComponentGUI("GEOM") 
+gg.initGeomGen()
 
 #SRN: modified on Mar 18, 2005
 
