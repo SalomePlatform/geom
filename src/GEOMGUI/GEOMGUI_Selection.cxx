@@ -48,7 +48,7 @@ QtxValue GEOMGUI_Selection::param( const int ind, const QString& p ) const
     else if ( p == "isActiveViewer" ) val = QtxValue( isActiveViewer() );
   }
 
-  printf( "--> param() : [%s] = %s\n", p.latin1(), val.toString ().latin1() );
+  //printf( "--> param() : [%s] = %s\n", p.latin1(), val.toString ().latin1() );
 
   return val;
 }
