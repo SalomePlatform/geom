@@ -51,6 +51,8 @@ public:
   int  getIndexTopology(const char *SubEntry, const char *Entry);
   const char* getShapeTypeString(const char *Entry);
   const char* getShapeTypeIcon(const char *Ior);
+
+  bool initGeomGen();
 };
 
 

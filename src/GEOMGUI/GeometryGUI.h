@@ -65,6 +65,8 @@ public:
   virtual void                initialize( CAM_Application* );
   virtual QString             engineIOR() const;
 
+  static bool                 InitGeomGen();   //BugID IPAL9186: SRN: To be called by Python scripts 
+
   static GEOM::GEOM_Gen_var   GetGeomGen()        { return myComponentGeom; }
   
   GEOM_Client&                GetShapeReader()    { return myShapeReader; }

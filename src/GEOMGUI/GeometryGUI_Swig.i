@@ -44,4 +44,6 @@ class GEOM_Swig
   void setColor(const char* Entry, int red, int green, int blue);
   void setTransparency(const char* Entry, float transp);
   const char* getShapeTypeIcon(const char *Ior);
+  
+  bool initGeomGen();
 };

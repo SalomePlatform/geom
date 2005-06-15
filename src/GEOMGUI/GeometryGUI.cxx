@@ -74,6 +74,13 @@ extern "C" {
 
 GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil(); 
 
+bool GeometryGUI::InitGeomGen() 
+{
+  GeometryGUI aGG;
+  if( CORBA::is_nil( myComponentGeom ) ) return false;   
+  return true; 
+}			   
+
 //=================================================================================
 // class   : CustomItem
 // purpose : Set Font to a text.
@@ -122,7 +129,7 @@ GeometryGUI::GeometryGUI() :
     Engines::Component_var comp = ls->FindOrLoad_Component( "FactoryServer", "GEOM" );
     myComponentGeom  = GEOM::GEOM_Gen::_narrow( comp );
   }
-
+  
   myState           = -1;
   myActiveDialogBox = 0;
   myFatherior       = "";

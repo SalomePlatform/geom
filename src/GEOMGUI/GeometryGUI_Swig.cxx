@@ -261,6 +261,7 @@ int  GEOM_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
       Exp.Next(); 
     } 
   } 
+   
   return -1;
 }
 
@@ -479,4 +480,10 @@ void GEOM_Swig::setTransparency(const char* theEntry, float transp)
   };
   
   ProcessVoidEvent(new TEvent(app,anIO,transp));
+}
+
+
+bool GEOM_Swig::initGeomGen()
+{
+  return GeometryGUI::InitGeomGen();
 }
