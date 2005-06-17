@@ -287,12 +287,15 @@ void GeometryGUI::OnGUIEvent()
 void GeometryGUI::OnGUIEvent( int id )
 {
   SUIT_Desktop* desk = application()->desktop();
-  // check if current viewframe is of OCC type
+
+  // check type of the active viewframe
   SUIT_ViewWindow* window = desk->activeWindow();
   bool ViewOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool ViewVTK = ( window && window->getViewManager()->getType() == VTKViewer_Viewer::Type() );
   // if current viewframe is not of OCC and not of VTK type - return immediately
-  if( !ViewOCC && !ViewVTK )
+  // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
+  bool NotViewerDependentCommand = ( id == 901 ); 
+  if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommand )
       return;
 
   // fix for IPAL9103, point 2
