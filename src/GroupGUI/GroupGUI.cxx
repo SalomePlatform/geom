@@ -95,6 +95,7 @@ bool GroupGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 
   switch ( theCommandID ) {
   case 800: 
+  case 8001:
     aDlg = new GroupGUI_GroupDlg( GroupGUI_GroupDlg::CreateGroup, parent, ""); 
     break;
   case 801: 
