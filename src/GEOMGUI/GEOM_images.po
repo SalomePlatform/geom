@@ -726,3 +726,6 @@ msgstr "displayonly.png"
 
 msgid "ICO_ERASE"
 msgstr "erase.png"
+
+msgid "ICO_POP_CREATE_GROUP"
+msgstr "group_new.png"

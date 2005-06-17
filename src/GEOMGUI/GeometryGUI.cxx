@@ -945,9 +945,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  901 ), -1, -1 ); // rename
   mgr->setRule( action( 901 ), "$type in {'Shape' 'Group'} and selcount=1", true );
   mgr->insert( action(  8001 ), -1, -1 ); // create group
-  mgr->setRule( action( 8001 ), "$client in {'ObjectBrowser'} and $type in {'Shape'} and selcount=1 and isOCC", true );
+  mgr->setRule( action( 8001 ), "client='ObjectBrowser' and type='Shape' and selcount=1 and isOCC=true", true );
   mgr->insert( action(  801 ), -1, -1 ); // edit group
-  mgr->setRule( action( 801 ), "$client in {'ObjectBrowser'} and $type in {'Group'} and selcount=1 and isOCC", true );
+  mgr->setRule( action( 801 ),  "client='ObjectBrowser' and type='Group' and selcount=1 and isOCC=true", true );
   mgr->insert( separator(), -1, -1 );        // -----------
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  80311 ), dispmodeId, -1 ); // wireframe
@@ -962,16 +962,16 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  8033 ), -1, -1 ); // transparency
   mgr->setRule( action( 8033 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
   mgr->insert( action(  8034 ), -1, -1 ); // isos
-  mgr->setRule( action( 8034 ), "$client in {'OCCViewer'} and selcount>0", true );
+  mgr->setRule( action( 8034 ), "client='OCCViewer' and selcount>0", true );
   mgr->insert( separator(), -1, -1 );        // -----------
   mgr->insert( action(  216 ), -1, -1 ); // display
-  mgr->setRule( action( 216 ), "$isActiveViewer in {true} and selcount>0 and (($type in {'Shape' 'Group'} and ($isVisible in {false})) or $type in {'Component'})", true );
+  mgr->setRule( action( 216 ), "isActiveViewer=true and selcount>0 and (($type in {'Shape' 'Group'} and ($isVisible in {false})) or $type in {'Component'})", true );
   mgr->insert( action(  215 ), -1, -1 ); // erase
-  mgr->setRule( action( 215 ), "$isActiveViewer in {true} and selcount>0 and (($type in {'Shape' 'Group'} and $isVisible in {true}) or ($type in {'Component'} and selcount=1))", true );
+  mgr->setRule( action( 215 ), "isActiveViewer=true and selcount>0 and (($type in {'Shape' 'Group'} and $isVisible in {true}) or ($type in {'Component'} and selcount=1))", true );
   mgr->insert( action(  214 ), -1, -1 ); // erase All
-  mgr->setRule( action( 214 ), "$isActiveViewer in {true} and $client in {'OCCViewer' 'VTKViewer'}", true );
+  mgr->setRule( action( 214 ), "isActiveViewer=true and $client in {'OCCViewer' 'VTKViewer'}", true );
   mgr->insert( action(  213 ), -1, -1 ); // display only
-  mgr->setRule( action( 213 ), "$isActiveViewer in {true} and selcount>0 and ($type in {'Shape' 'Group'} or ($type in {'Component'} and selcount=1))", true );
+  mgr->setRule( action( 213 ), "isActiveViewer=true and selcount>0 and ($type in {'Shape' 'Group'} or ($type in {'Component'} and selcount=1))", true );
   mgr->insert( separator(), -1, -1 );
 }
 
