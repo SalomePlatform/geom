@@ -188,7 +188,8 @@
 
 #define GLUE_FACES 1
 
-#define SKETCHER_COMMAND 1
+#define SKETCHER_NINE_DOUBLS 1
+#define SKETCHER_PLANE 2
 
 #define CDG_MEASURE 1
 

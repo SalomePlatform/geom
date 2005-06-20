@@ -485,7 +485,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
 
   //Add a new Sketcher function
   Handle(GEOM_Function) aFunction =
-    aSketcher->AddFunction(GEOMImpl_SketcherDriver::GetID(), SKETCHER_COMMAND);
+    aSketcher->AddFunction(GEOMImpl_SketcherDriver::GetID(), SKETCHER_NINE_DOUBLS);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
@@ -524,6 +524,60 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
     pd << ", " << (*it++);
   }
   pd << "])";
+
+  SetErrorCode(OK);
+  return aSketcher;
+}
+
+//=============================================================================
+/*!
+ *  MakeSketcherOnPlane
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane (const char* theCommand,
+                                                                     Handle(GEOM_Object) theWorkingPlane)
+{
+  SetErrorCode(KO);
+
+  if (!theCommand) return NULL;
+  if (strcmp(theCommand, "") == 0) return NULL;
+
+  //Add a new Sketcher object
+  Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GetDocID(), GEOM_SKETCHER);
+
+  //Add a new Sketcher function
+  Handle(GEOM_Function) aFunction =
+    aSketcher->AddFunction(GEOMImpl_SketcherDriver::GetID(), SKETCHER_PLANE);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_SketcherDriver::GetID()) return NULL;
+
+  GEOMImpl_ISketcher aCI (aFunction);
+
+  TCollection_AsciiString aCommand ((char*) theCommand);
+  aCI.SetCommand(aCommand);
+
+  Handle(GEOM_Function) aRefPlane = theWorkingPlane->GetLastFunction();
+  if (aRefPlane.IsNull()) return NULL;
+  aCI.SetWorkingPlane( aRefPlane );
+
+  //Compute the Sketcher value
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Sketcher driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump (aFunction) << aSketcher << " = geompy.MakeSketcherOnPlane(\""
+    << theCommand << "\", " << theWorkingPlane << " )";
 
   SetErrorCode(OK);
   return aSketcher;

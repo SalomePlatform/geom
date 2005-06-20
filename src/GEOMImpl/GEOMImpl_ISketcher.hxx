@@ -4,7 +4,8 @@
 #include "GEOM_Function.hxx"
 
 #define SKETCH_ARG_CMD 1
-#define SKETCH_ARG_WPLANE 2
+#define SKETCH_ARG_DOUBLE 2
+#define SKETCH_ARG_WPLANE 12
 
 class GEOMImpl_ISketcher
 {
@@ -18,9 +19,14 @@ class GEOMImpl_ISketcher
   TCollection_AsciiString GetCommand() { return _func->GetString(SKETCH_ARG_CMD); }
 
   void SetWorkingPlane(int theInd, double theValue)
-              { _func->SetReal(SKETCH_ARG_WPLANE + theInd, theValue); }
+              { _func->SetReal(SKETCH_ARG_DOUBLE + theInd, theValue); }
 
-  double GetWorkingPlane(int theInd) { return _func->GetReal(SKETCH_ARG_WPLANE + theInd); }
+  double GetWorkingPlane(int theInd) { return _func->GetReal(SKETCH_ARG_DOUBLE + theInd); }
+
+  void SetWorkingPlane(Handle(GEOM_Function) thePlane)
+              { _func->SetReference(SKETCH_ARG_WPLANE, thePlane); }
+
+  Handle(GEOM_Function) GetWorkingPlane() { return _func->GetReference(SKETCH_ARG_WPLANE); }
 
  private:
 

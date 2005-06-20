@@ -5,10 +5,12 @@ using namespace std;
 #include "GEOMImpl_Types.hxx"
 #include "GEOM_Function.hxx"
 
-#include <TopoDS_Shape.hxx>
-#include <gp_Dir.hxx>
-#include <gp_Ax3.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
+#include <BRep_Tool.hxx>
+#include <Geom_Plane.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Shape.hxx>
+#include <gp_Pln.hxx>
 
 #include <Sketcher_Profile.hxx>
 
@@ -63,12 +65,30 @@ Standard_Integer GEOMImpl_SketcherDriver::Execute(TFunction_Logbook& log) const
   if (aShape.IsNull())
     return 0;
 
+  gp_Ax3 aWPlane;
+  if ( aFunction->GetType() == SKETCHER_NINE_DOUBLS )
+  {
+    gp_Pnt aOrigin =
+      gp_Pnt(aCI.GetWorkingPlane(1), aCI.GetWorkingPlane(2), aCI.GetWorkingPlane(3));
+    gp_Dir aDirZ =
+      gp_Dir(aCI.GetWorkingPlane(4), aCI.GetWorkingPlane(5), aCI.GetWorkingPlane(6));
+    gp_Dir aDirX =
+      gp_Dir(aCI.GetWorkingPlane(7), aCI.GetWorkingPlane(8), aCI.GetWorkingPlane(9));
+    aWPlane = gp_Ax3(aOrigin, aDirZ, aDirX);
+  }
+  else
+  {
+    Handle(GEOM_Function) aRefFace = aCI.GetWorkingPlane();
+    TopoDS_Shape aShape = aRefFace->GetValue();
+    if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_FACE )
+      return 0;
+    Handle(Geom_Surface) aGS = BRep_Tool::Surface( TopoDS::Face( aShape ));
+    if ( aGS.IsNull() || !aGS->IsKind( STANDARD_TYPE( Geom_Plane )))
+      return 0;
+    Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast( aGS );
+    aWPlane = aGPlane->Pln().Position();
+  }
   gp_Trsf aTrans;
-  gp_Pnt aOrigin = gp_Pnt(aCI.GetWorkingPlane(1), aCI.GetWorkingPlane(2), aCI.GetWorkingPlane(3));
-  gp_Dir aDirZ = gp_Dir(aCI.GetWorkingPlane(4), aCI.GetWorkingPlane(5), aCI.GetWorkingPlane(6));
-  gp_Dir aDirX = gp_Dir(aCI.GetWorkingPlane(7), aCI.GetWorkingPlane(8), aCI.GetWorkingPlane(9));
-  gp_Ax3 aWPlane = gp_Ax3(aOrigin, aDirZ, aDirX);
-
   aTrans.SetTransformation(aWPlane);
   aTrans.Invert();
   BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);

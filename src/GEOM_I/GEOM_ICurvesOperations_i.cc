@@ -303,3 +303,28 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher (const char* theCom
 
   return GetObject(anObject);
 }
+
+
+//=============================================================================
+/*!
+ *  MakeSketcherOnPlane
+ */
+//============================================================================= 
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcherOnPlane (const char* theCommand, GEOM::GEOM_Object_ptr theWorkingPlane)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  Handle(GEOM_Object) aWorkingPlane = GetOperations()->GetEngine()->GetObject
+    (theWorkingPlane->GetStudyID(), theWorkingPlane->GetEntry());
+
+  // Make Sketcher
+  Handle(GEOM_Object) anObject =
+      GetOperations()->MakeSketcherOnPlane(theCommand, aWorkingPlane);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
