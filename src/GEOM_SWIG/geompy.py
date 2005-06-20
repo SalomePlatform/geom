@@ -313,6 +313,30 @@ def MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
       print "MakeMarker : ", BasicOp.GetErrorCode()
     return anObj
 
+def MakeMarkerPntTwoVec(theOrigin, theXVec, theYVec):
+    """
+     *  Create a local coordinate system.
+     *  \param theOrigin Point of coordinate system origin.
+     *  \param theXVec Vector of X direction
+     *  \param theYVec Vector of Y direction
+     *  \return New GEOM_Object, containing the created coordinate system.
+    """
+    O = PointCoordinates( theOrigin )
+    OXOY = []
+    for vec in [ theXVec, theYVec ]:
+        v1, v2 = SubShapeAll( vec, ShapeType["VERTEX"] )
+        p1 = PointCoordinates( v1 )
+        p2 = PointCoordinates( v2 )
+        for i in range( 0, 3 ):
+             OXOY.append( p2[i] - p1[i] )
+    #
+    anObj = BasicOp.MakeMarker( O[0], O[1], O[2],
+                                OXOY[0], OXOY[1], OXOY[2],
+                                OXOY[3], OXOY[4], OXOY[5], )
+    if BasicOp.IsDone() == 0:
+      print "MakeMarker : ", BasicOp.GetErrorCode()
+    return anObj
+
 # -----------------------------------------------------------------------------
 # Curves
 # -----------------------------------------------------------------------------
@@ -453,6 +477,21 @@ def MakeSketcher(theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0]):
      *  Example: see GEOM_TestAll.py
     """
     anObj = CurvesOp.MakeSketcher(theCommand, theWorkingPlane)
+    if CurvesOp.IsDone() == 0:
+      print "MakeSketcher : ", CurvesOp.GetErrorCode()
+    return anObj
+
+def MakeSketcherOnPlane(theCommand, theWorkingPlane):
+    """
+     *  Create a sketcher (wire or face), following the textual description,
+     *  passed through \a theCommand argument. \n
+     *  For format of the description string see the previous method.\n
+     *  \param theCommand String, defining the sketcher in local
+     *                    coordinates of the working plane.
+     *  \param theWorkingPlane Planar Face of the working plane.
+     *  \return New GEOM_Object, containing the created wire.
+    """
+    anObj = CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
     if CurvesOp.IsDone() == 0:
       print "MakeSketcher : ", CurvesOp.GetErrorCode()
     return anObj
