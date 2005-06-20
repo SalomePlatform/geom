@@ -35,6 +35,8 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
   Handle(GEOM_Object) MakeSplineInterpolation (list<Handle(GEOM_Object)> thePoints);
 
   Handle(GEOM_Object) MakeSketcher (const char* theCommand, list<double> theWorkingPlane);
+  Handle(GEOM_Object) MakeSketcherOnPlane (const char*         theCommand,
+                                           Handle(GEOM_Object) theWorkingPlane);
 };
 
 #endif
