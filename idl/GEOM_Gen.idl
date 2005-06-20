@@ -1463,6 +1463,17 @@ module GEOM
      *  \return New GEOM_Object, containing the created wire.
      */
     GEOM_Object MakeSketcher (in string theCommand, in ListOfDouble theWorkingPlane);
+
+    /*!
+     *  Create a sketcher (wire or face), following the textual description,
+     *  passed through \a theCommand argument. \n
+     *  For format of the description string see the previous method.\n
+     *  \param theCommand String, defining the sketcher in local
+     *                    coordinates of the working plane.
+     *  \param theWorkingPlane Planar Face of the working plane.
+     *  \return New GEOM_Object, containing the created wire.
+     */
+    GEOM_Object MakeSketcherOnPlane (in string theCommand, in GEOM_Object theWorkingPlane);
   };
 
   /*!

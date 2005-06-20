@@ -44,6 +44,8 @@ class GEOM_ICurvesOperations_i :
 
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane);
 
+  GEOM::GEOM_Object_ptr MakeSketcherOnPlane (const char* theCommand, GEOM::GEOM_Object_ptr theWorkingPlane);
+
   ::GEOMImpl_ICurvesOperations* GetOperations()
   { return (::GEOMImpl_ICurvesOperations*)GetImpl(); }
 };
