@@ -148,12 +148,12 @@ void GEOMToolsGUI::OnSettingsStep()
   SUIT_Session* sess = SUIT_Session::session();
   SUIT_ResourceMgr* resMgr = sess->resourceMgr();
 
-  double step = resMgr->doubleValue( "Geometry:SettingsGeomStep", 100. );
-  
+  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100. );
+
   Standard_Boolean res = false;
-  double dd = GEOMBase::Parameter(res, QString("%1").arg(step), tr("GEOM_MEN_STEP_LABEL"), tr("GEOM_STEP_TITLE"), 0.001, 10000.0, 3);
+  double dd = GEOMBase::Parameter( res, QString("%1").arg(step), tr("GEOM_MEN_STEP_LABEL"), tr("GEOM_STEP_TITLE"), 0.001, 10000.0, 3);
   if(res) {
-    resMgr->setValue( "Geometry:SettingsGeomStep", dd );
+    resMgr->setValue( "Geometry", "SettingsGeomStep", dd );
     
     /* Emit signal to GeometryGUI_SpinBoxes */
     getGeometryGUI()->EmitSignalDefaultStepValueChanged( dd );

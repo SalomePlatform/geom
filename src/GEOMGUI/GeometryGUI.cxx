@@ -1398,7 +1398,6 @@ void GeometryGUI::windows( QMap<int, int>& mappa ) const
 {
   mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::DockLeft );
   mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::DockBottom );
-  mappa.insert( SalomeApp_Application::WT_LogWindow, Qt::DockBottom );
 }
 
 void GeometryGUI::viewManagers( QStringList& lst ) const
@@ -1487,30 +1486,16 @@ void GeometryGUI::createPreferences()
   int genGroup = addPreference( tr( "PREF_GROUP_GENERAL" ), tabId );
   addPreference( tr( "PREF_SHADING_COLOR" ), genGroup,
 		 SalomeApp_Preferences::Color, "Geometry", "shading_color" );
-  //addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
-  //		 SalomeApp_Preferences::IntSpin, "GEOM", "SettingsGeomStep" );
+  int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
+			    SalomeApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
 
-  int occGroup = addPreference( tr( "PREF_GROUP_OCCVIEWER" ), tabId );
-  setPreferenceProperty( occGroup, "columns", 1 );
-  addPreference( tr( "PREF_ISOS_U" ), occGroup,
-		 SalomeApp_Preferences::IntSpin, "Geometry", "isos_u" );
-  addPreference( tr( "PREF_ISOS_V" ), occGroup,
-		 SalomeApp_Preferences::IntSpin, "Geometry", "isos_v" );
+  setPreferenceProperty( genGroup, "columns", 1 );
+
+  setPreferenceProperty( step, "min", 0.001 );
+  setPreferenceProperty( step, "max", 10000 );
+  setPreferenceProperty( step, "precision", 3 );
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )
 {
-  //printf( "\n-------------> %s , %s\n", section.latin1(), param.latin1() );
-  if ( section == QString( "Geometry" ) && 
-       ( param == QString( "isos_u" ) || param == QString( "isos_v" ) ) )
-  {
-    QPtrList<SUIT_ViewManager> lst;
-    application()->viewManagers( OCCViewer_Viewer::Type(), lst );
-    const int u = application()->resourceMgr()->integerValue( section, "isos_u" );
-    const int v = application()->resourceMgr()->integerValue( section, "isos_v" );
-    for ( QPtrListIterator<SUIT_ViewManager> it( lst ); it.current(); ++it )
-    {
-      ((OCCViewer_Viewer*)it.current())->setIsos( u, v );
-    }
-  }
 }

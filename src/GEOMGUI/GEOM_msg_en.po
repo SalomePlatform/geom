@@ -2882,12 +2882,6 @@ msgstr "OCC Viewer 3d"
 msgid "PREF_GROUP_GENERAL"
 msgstr "General"
 
-msgid "PREF_ISOS_U"
-msgstr "Number of isolines along U"
-
-msgid "PREF_ISOS_V"
-msgstr "Number of isolines along V"
-
 msgid "PREF_SHADING_COLOR"
 msgstr "Default shading color"
 
