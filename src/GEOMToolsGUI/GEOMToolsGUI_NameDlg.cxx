@@ -63,14 +63,15 @@ GEOMToolsGUI_NameDlg::GEOMToolsGUI_NameDlg( QWidget* parent )
   GroupButtonsLayout->setMargin( 11 ); GroupButtonsLayout->setSpacing( 6 );
   
   myButtonOk = new QPushButton( GroupButtons, "buttonOk" );
-  myButtonOk->setText( tr( "BUT_OK"  ) );
-  myButtonOk->setAutoDefault( TRUE ); myButtonOk->setDefault( TRUE );
+  myButtonOk->setText( tr( "GEOM_BUT_OK"  ) );
+  myButtonOk->setAutoDefault( TRUE ); 
+  myButtonOk->setDefault( TRUE );
   GroupButtonsLayout->addWidget( myButtonOk );
 
   GroupButtonsLayout->addStretch();
   
   myButtonCancel = new QPushButton( GroupButtons, "buttonCancel" );
-  myButtonCancel->setText( tr( "BUT_CANCEL"  ) );
+  myButtonCancel->setText( tr( "GEOM_BUT_CANCEL"  ) );
   myButtonCancel->setAutoDefault( TRUE );
   GroupButtonsLayout->addWidget( myButtonCancel );
   /***************************************************************/

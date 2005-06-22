@@ -107,6 +107,9 @@ public:
   virtual void                viewManagers( QStringList& ) const;
 
   virtual void                contextMenuPopup( const QString&, QPopupMenu*, QString& );
+  virtual void                createPreferences();
+  virtual void                preferencesChanged( const QString&, const QString& );
+
 
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );

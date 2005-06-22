@@ -53,6 +53,7 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_SelectionMgr.h>
 #include <SalomeApp_TypeFilter.h>
+#include <SalomeApp_Tools.h>
 
 #include <SALOME_ListIteratorOfListIO.hxx>
 #include <SALOMEDSClient.hxx>
@@ -221,11 +222,9 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* study )
   /* Shading Color */
   SUIT_Session* session = SUIT_Session::session();
   SUIT_ResourceMgr* resMgr = session->resourceMgr();
-  QColor col = resMgr->colorValue( "Geometry", "SettingsShadingColor", QColor( "goldenrod" ) );
 
-// TO DO: make some utility method to convert QColor into Quantity_Color
-//  myShadingColor = SUIT_Tools::color( col );
-  myShadingColor = Quantity_NOC_RED;
+  QColor col = resMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
+  myShadingColor = SalomeApp_Tools::color( col );
 
   myColor = -1;
   // This color is used for shape displaying. If it is equal -1 then
@@ -576,15 +575,13 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         AISShape->SetShadingColor( myShadingColor );
         if ( HasColor() )
         {
+	  AISShape->SetColor( (Quantity_NameOfColor)GetColor() );
           if ( myShape.ShapeType() == TopAbs_VERTEX )
           {
-            AISShape->SetColor( (Quantity_NameOfColor)GetColor() );
             Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
             anAspect->SetColor( (Quantity_NameOfColor)GetColor() );
             AISShape->Attributes()->SetPointAspect( anAspect );
           }
-          else
-            AISShape->SetColor( (Quantity_NameOfColor)GetColor() );
         }
 
         if ( HasWidth() )

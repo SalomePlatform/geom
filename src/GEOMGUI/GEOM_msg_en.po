@@ -2875,3 +2875,24 @@ msgstr "Name: "
 
 msgid "GEOM_ERR_GET_ENGINE"
 msgstr "Failed to obtain GEOM Engine component.  Reload Geometry module and try again."
+
+msgid "PREF_GROUP_OCCVIEWER"
+msgstr "OCC Viewer 3d"
+
+msgid "PREF_GROUP_GENERAL"
+msgstr "General"
+
+msgid "PREF_ISOS_U"
+msgstr "Number of isolines along U"
+
+msgid "PREF_ISOS_V"
+msgstr "Number of isolines along V"
+
+msgid "PREF_SHADING_COLOR"
+msgstr "Default shading color"
+
+msgid "PREF_STEP_VALUE"
+msgstr "Step value for spin boxes"
+
+msgid "PREF_TAB_SETTINGS"
+msgstr "Settings"
