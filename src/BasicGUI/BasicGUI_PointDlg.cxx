@@ -271,7 +271,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
   updateGeometry();
   resize( minimumSize() );
 
-  displayPreview();
+  SelectionIntoArgument();
 }
 
 
