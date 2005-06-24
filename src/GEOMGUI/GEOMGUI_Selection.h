@@ -41,6 +41,7 @@ public:
   virtual ~GEOMGUI_Selection();
 
   virtual QtxValue      param( const int, const QString& ) const;
+  virtual QtxValue      globalParam( const QString& ) const;
 
 private:
   bool                  isVisible( const int ) const;

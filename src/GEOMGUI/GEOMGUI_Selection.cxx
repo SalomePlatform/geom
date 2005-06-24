@@ -37,20 +37,21 @@ GEOMGUI_Selection::~GEOMGUI_Selection()
 {
 }
 
+QtxValue GEOMGUI_Selection::globalParam( const QString& p ) const
+{
+  if      ( p == "isOCC"          ) return QtxValue( isOCC() );
+  else if ( p == "isActiveViewer" ) return QtxValue( isActiveViewer() );
+
+  return SalomeApp_Selection::globalParam( p );
+}
+
 QtxValue GEOMGUI_Selection::param( const int ind, const QString& p ) const
 {
-  QtxValue val( SalomeApp_Selection::param( ind, p ) );
-  if ( !val.isValid() ) {
-    if      ( p == "isVisible"   )    val = QtxValue( isVisible( ind ) );
-    else if ( p == "isOCC"       )    val = QtxValue( isOCC() );
-    else if ( p == "type"        )    val = QtxValue( typeName( ind ) );
-    else if ( p == "displaymode" )    val = QtxValue( displayMode( ind ) );
-    else if ( p == "isActiveViewer" ) val = QtxValue( isActiveViewer() );
-  }
+  if      ( p == "isVisible"   )    return QtxValue( isVisible( ind ) );
+  else if ( p == "type"        )    return QtxValue( typeName( ind ) );
+  else if ( p == "displaymode" )    return QtxValue( displayMode( ind ) );
 
-  //printf( "--> param() : [%s] = %s\n", p.latin1(), val.toString ().latin1() );
-
-  return val;
+  return SalomeApp_Selection::param( ind, p );
 }
 
 QString GEOMGUI_Selection::typeName( const int index ) const
@@ -181,3 +182,4 @@ bool GEOMGUI_Selection::isActiveViewer() const
 {
   return ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow() != 0 );
 }
+
