@@ -23,7 +23,8 @@ GEOM_Superv_i::GEOM_Superv_i(CORBA::ORB_ptr orb,
   CORBA::Object_var anObj = _orb->resolve_initial_references("RootPOA");
   myPOA = PortableServer::POA::_narrow(anObj);
 
-  myGeomEngine = GEOM::GEOM_Gen::_nil();
+  setGeomEngine();
+
   myStudyID = -1;
 
   myBasicOp = GEOM::GEOM_IBasicOperations::_nil();
