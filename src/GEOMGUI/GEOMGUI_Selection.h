@@ -52,6 +52,7 @@ private:
 
   bool                  isComponent( const int ) const;
   GEOM::GEOM_Object_ptr getObject( const int ) const;
+  bool                  activeViewType( const QString& ) const;
 };
 
 #endif

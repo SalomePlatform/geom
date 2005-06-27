@@ -953,10 +953,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  80311 ), dispmodeId, -1 ); // wireframe
   mgr->setRule( action( 80311 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
-  mgr->setRule( action( 80311 ), "$displaymode in {'Wireframe'}", false );
+  mgr->setRule( action( 80311 ), "$client in {'OCCViewer' 'VTKViewer'} and $displaymode in {'Wireframe'}", false );
   mgr->insert( action(  80312 ), dispmodeId, -1 ); // shading
   mgr->setRule( action( 80312 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );
-  mgr->setRule( action( 80312 ), "$displaymode in {'Shading'}", false );
+  mgr->setRule( action( 80312 ), "$client in {'OCCViewer' 'VTKViewer'} and $displaymode in {'Shading'}", false );
   mgr->insert( separator(), -1, -1 );        // -----------
   mgr->insert( action(  8032 ), -1, -1 ); // color
   mgr->setRule( action( 8032 ), "$client in {'OCCViewer' 'VTKViewer'} and selcount>0", true );

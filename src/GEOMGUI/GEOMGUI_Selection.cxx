@@ -24,6 +24,7 @@
 #include <vtkActorCollection.h>
 
 #include <OCCViewer_ViewModel.h>
+#include <VTKViewer_ViewModel.h>
 
 #include <AIS.hxx>
 #include <AIS_InteractiveObject.hxx>
@@ -82,14 +83,13 @@ bool GEOMGUI_Selection::isVisible( const int index ) const
 
 bool GEOMGUI_Selection::isOCC() const
 {
-  SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-  return ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+  return activeViewType( OCCViewer_Viewer::Type() );
 }
 
 QString GEOMGUI_Selection::displayMode( const int index ) const
 {
   SALOME_View* view = GEOM_Displayer::GetActiveView();
-  if ( view ) {
+  if ( view /*fix for 9320==>*/&& ( isOCC() || activeViewType( VTKViewer_Viewer::Type() ) ) ) {
     SALOME_Prs* prs = view->CreatePrs( entry( index ) );
     if ( prs ) {
       if ( isOCC() ) { // assuming OCC
@@ -117,7 +117,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 	  }
 	}
       } 
-      else { // assuming VTK
+      else if ( activeViewType( VTKViewer_Viewer::Type() ) ) { // assuming VTK
 	SVTK_Prs* vtkPrs = (SVTK_Prs*) prs;
 	vtkActorCollection* lst = vtkPrs->GetObjects();
 	if ( lst ) {
@@ -178,8 +178,31 @@ GEOM::GEOM_Object_ptr GEOMGUI_Selection::getObject( const int index ) const
   return GEOM::GEOM_Object::_nil();
 }
 
-bool GEOMGUI_Selection::isActiveViewer() const
+SUIT_ViewWindow* activeVW()
 {
-  return ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow() != 0 );
+  SUIT_Session* session = SUIT_Session::session();
+  if ( session ) {
+    SUIT_Application* app = session->activeApplication();
+    if ( app ) {
+      SUIT_Desktop* desk = app->desktop();
+      if ( desk ) 
+	return desk->activeWindow();
+    }
+  }
+  return 0;
 }
 
+bool GEOMGUI_Selection::isActiveViewer() const
+{
+  return ( activeVW != 0 );
+}
+
+bool GEOMGUI_Selection::activeViewType( const QString& type ) const
+{
+  SUIT_ViewWindow* win = activeVW();
+  if ( win ) {
+    SUIT_ViewManager* vm = win->getViewManager();
+    return ( vm && vm->getType() == type );
+  }
+  return false;
+}
