@@ -264,7 +264,7 @@ void GEOMToolsGUI::OnEditDelete()
 				     QObject::tr( "GEOM_WRN_WARNING" ),
 				     QObject::tr( "GEOM_REALLY_DELETE" ),
 				     QObject::tr( "GEOM_BUT_YES" ),
-				     QObject::tr( "GEOM_BUG_NO" ), 1, 0, 0 ) != 1 )
+				     QObject::tr( "GEOM_BUT_NO" ), 1, 0, 0 ) != 1 )
 	  return;
 
 	//	QAD_Operation* op = new SALOMEGUI_ImportOperation(.....);
