@@ -194,7 +194,7 @@ SUIT_ViewWindow* activeVW()
 
 bool GEOMGUI_Selection::isActiveViewer() const
 {
-  return ( activeVW != 0 );
+  return ( activeVW() != 0 );
 }
 
 bool GEOMGUI_Selection::activeViewType( const QString& type ) const
