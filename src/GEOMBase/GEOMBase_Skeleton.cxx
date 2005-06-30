@@ -177,7 +177,11 @@ void GEOMBase_Skeleton::ActivateThisDialog()
 //=================================================================================
 void GEOMBase_Skeleton::closeEvent(QCloseEvent* e)
 {
-  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  if(app) {
+    disconnect( app->selectionMgr(), 0, this, 0);
+    app->updateActions();
+  }
   QDialog::closeEvent( e );
 }
 
