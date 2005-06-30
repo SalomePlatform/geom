@@ -226,8 +226,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     unsigned int ind, nbshapes = aShapes->Length();
     Standard_Integer ish = 0;
     TopoDS_Solid Sol;
-    TopoDS_Compound Res;
-    B.MakeCompound(Res);
+    B.MakeSolid(Sol);
 
     // add shapes
     for (ind = 1; ind <= nbshapes; ind++) {
@@ -237,20 +236,21 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise("Shell for solid construction is null");
       }
       if (aShapeShell.ShapeType() == TopAbs_SHELL) {
-        B.MakeSolid(Sol);
         B.Add(Sol, aShapeShell);
-        BRepClass3d_SolidClassifier SC (Sol);
-        SC.PerformInfinitePoint(Precision::Confusion());
-        if (SC.State() == TopAbs_IN) {
-          B.MakeSolid(Sol);
-          B.Add(Sol, aShapeShell.Reversed());
-        }
-        B.Add(Res, Sol);
         ish++;
       }
     }
-    if (ish == 1) aShape = Sol;
-    else          aShape = Res;
+    if ( ish == 0 ) return 0;
+    BRepClass3d_SolidClassifier SC (Sol);
+    SC.PerformInfinitePoint(Precision::Confusion());
+    switch (SC.State()) {
+    case TopAbs_IN:
+      aShape = Sol.Reversed(); break;
+    case TopAbs_OUT:
+      aShape = Sol; break;
+    default: // not closed shell?
+      return 0;
+    }
 
   } else if (aType == COMPOUND_SHAPES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
