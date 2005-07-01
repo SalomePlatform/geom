@@ -135,8 +135,6 @@ void GEOM_Swig::createAndDisplayGO(const char* Entry)
   _PTR(SComponent) father = aStudy->FindComponent("GEOM");
   aStudyBuilder->DefineComponentInstance( father, SalomeApp_Application::orb()->object_to_string(Geom) );
   father->ComponentIOR(aFatherIOR);
-  
-  _PTR(SObject) fatherSF;
 
   _PTR(SObject) obj = aStudy->FindObjectID(Entry);
   _PTR(GenericAttribute) anAttr;
@@ -155,13 +153,13 @@ void GEOM_Swig::createAndDisplayGO(const char* Entry)
       _PTR(AttributeName) aName ( anAttr );
       string aNameValue = aName->Value();
       // open transaction
-      SUIT_Operation* op = new SalomeApp_ImportOperation( app );
+      /*jfa for bug IPAL9384 3)c):SUIT_Operation* op = new SalomeApp_ImportOperation( app );
       op->start();
       
       _PTR(SObject) newObj1 = aStudyBuilder->NewObject(father);
       aStudyBuilder->Addreference(newObj1, obj);
       // commit transaction
-      op->commit();
+      op->commit();*/
 		  
       Handle(GEOM_InteractiveObject) anIO = new GEOM_InteractiveObject(const_cast<char*>(anIORValue.c_str()),
 								       const_cast<char*>(aFatherIOR.c_str()),
