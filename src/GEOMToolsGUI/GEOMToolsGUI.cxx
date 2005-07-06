@@ -347,8 +347,12 @@ void GEOMToolsGUI::OnEditDelete()
 	getGeometryGUI()->updateObjBrowser();
       } // if ( selected not empty )
     } // if ( selMgr && appStudy )
+ 
+    app->updateActions(); //SRN: BugID IPAL9377, case 1 for GEOM module
+    
   } // if ( app )
 
+ 
   //  if ( deleted )
   //    op->finish();
   //  else
