@@ -2741,6 +2741,9 @@ msgstr "Shading"
 msgid "MEN_SHADING"
 msgstr "Shading"
 
+msgid "MEN_WIREFRAME"
+msgstr "Wireframe"
+
 msgid "STB_SHADING"
 msgstr "Shading"
 
@@ -2887,6 +2890,9 @@ msgstr "Default shading color"
 
 msgid "PREF_STEP_VALUE"
 msgstr "Step value for spin boxes"
+
+msgid "PREF_DISPLAY_MODE"
+msgstr "Default display mode"
 
 msgid "PREF_TAB_SETTINGS"
 msgstr "Settings"

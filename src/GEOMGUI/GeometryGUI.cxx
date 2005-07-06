@@ -1488,12 +1488,26 @@ void GeometryGUI::createPreferences()
 		 SalomeApp_Preferences::Color, "Geometry", "shading_color" );
   int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
 			    SalomeApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
+  int dispmode = addPreference( tr( "PREF_DISPLAY_MODE" ), genGroup,
+			    SalomeApp_Preferences::Selector, "Geometry", "display_mode" );
 
   setPreferenceProperty( genGroup, "columns", 1 );
 
   setPreferenceProperty( step, "min", 0.001 );
   setPreferenceProperty( step, "max", 10000 );
   setPreferenceProperty( step, "precision", 3 );
+
+  // Set property for default display mode
+  QStringList aModesList;
+  aModesList.append( tr("MEN_WIREFRAME") );
+  aModesList.append( tr("MEN_SHADING") );
+  
+  QValueList<QVariant> anIndexesList;
+  anIndexesList.append(0);
+  anIndexesList.append(1);
+  
+  setPreferenceProperty( dispmode, "strings", aModesList );
+  setPreferenceProperty( dispmode, "indexes", anIndexesList );
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )

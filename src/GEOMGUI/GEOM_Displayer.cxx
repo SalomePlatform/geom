@@ -226,6 +226,8 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* study )
   QColor col = resMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
   myShadingColor = SalomeApp_Tools::color( col );
 
+  myDisplayMode = resMgr->integerValue("Geometry", "display_mode", 0);
+
   myColor = -1;
   // This color is used for shape displaying. If it is equal -1 then
   // default color is used.
@@ -572,7 +574,9 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         AISShape->SetInfiniteState( myShape.Infinite() || myShape.ShapeType() == TopAbs_VERTEX );
 
         // Setup shape properties here ..., e.g. display mode, color, transparency, etc
+	AISShape->SetDisplayMode( myDisplayMode );
         AISShape->SetShadingColor( myShadingColor );
+	
         if ( HasColor() )
         {
 	  AISShape->SetColor( (Quantity_NameOfColor)GetColor() );
@@ -691,7 +695,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
   vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
 
   vtkProperty* aProp = 0;
-
+  
   if ( HasColor() || HasWidth() )
   {
     aProp = vtkProperty::New();

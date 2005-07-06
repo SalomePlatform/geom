@@ -177,6 +177,7 @@ protected:
   int                              myColor;
   double                           myWidth;
   bool                             myToActivate;
+  int                              myDisplayMode;
 
 private:
   SalomeApp_Study* myStudy;
