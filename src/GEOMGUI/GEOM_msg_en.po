@@ -28,7 +28,7 @@ msgstr "&Cancel"
 
 #Button Ok
 msgid "GEOM_BUT_OK"
-msgstr "&Ok"
+msgstr "O&k"
 
 #Button Yes
 msgid "GEOM_BUT_YES"
