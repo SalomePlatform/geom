@@ -40,9 +40,8 @@ GEOMGUI_Selection::~GEOMGUI_Selection()
 
 QtxValue GEOMGUI_Selection::globalParam( const QString& p ) const
 {
-  if      ( p == "isOCC"          ) return QtxValue( isOCC() );
-  else if ( p == "isActiveViewer" ) return QtxValue( isActiveViewer() );
-
+  if ( p == "isOCC" ) return QtxValue( activeViewType() == OCCViewer_Viewer::Type() );
+ 
   return SalomeApp_Selection::globalParam( p );
 }
 
@@ -81,18 +80,14 @@ bool GEOMGUI_Selection::isVisible( const int index ) const
   return false;
 }
 
-bool GEOMGUI_Selection::isOCC() const
-{
-  return activeViewType( OCCViewer_Viewer::Type() );
-}
-
 QString GEOMGUI_Selection::displayMode( const int index ) const
 {
   SALOME_View* view = GEOM_Displayer::GetActiveView();
-  if ( view /*fix for 9320==>*/&& ( isOCC() || activeViewType( VTKViewer_Viewer::Type() ) ) ) {
+  QString viewType = activeViewType();
+  if ( view /*fix for 9320==>*/&& ( viewType == OCCViewer_Viewer::Type() || viewType == VTKViewer_Viewer::Type() ) ) {
     SALOME_Prs* prs = view->CreatePrs( entry( index ) );
     if ( prs ) {
-      if ( isOCC() ) { // assuming OCC
+      if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
 	SOCC_Prs* occPrs = (SOCC_Prs*) prs;
 	AIS_ListOfInteractive lst;
 	occPrs->GetObjects( lst );
@@ -117,7 +112,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 	  }
 	}
       } 
-      else if ( activeViewType( VTKViewer_Viewer::Type() ) ) { // assuming VTK
+      else if ( viewType == VTKViewer_Viewer::Type() ) { // assuming VTK
 	SVTK_Prs* vtkPrs = (SVTK_Prs*) prs;
 	vtkActorCollection* lst = vtkPrs->GetObjects();
 	if ( lst ) {
@@ -178,31 +173,3 @@ GEOM::GEOM_Object_ptr GEOMGUI_Selection::getObject( const int index ) const
   return GEOM::GEOM_Object::_nil();
 }
 
-SUIT_ViewWindow* activeVW()
-{
-  SUIT_Session* session = SUIT_Session::session();
-  if ( session ) {
-    SUIT_Application* app = session->activeApplication();
-    if ( app ) {
-      SUIT_Desktop* desk = app->desktop();
-      if ( desk ) 
-	return desk->activeWindow();
-    }
-  }
-  return 0;
-}
-
-bool GEOMGUI_Selection::isActiveViewer() const
-{
-  return ( activeVW() != 0 );
-}
-
-bool GEOMGUI_Selection::activeViewType( const QString& type ) const
-{
-  SUIT_ViewWindow* win = activeVW();
-  if ( win ) {
-    SUIT_ViewManager* vm = win->getViewManager();
-    return ( vm && vm->getType() == type );
-  }
-  return false;
-}

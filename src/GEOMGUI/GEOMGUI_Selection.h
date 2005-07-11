@@ -45,14 +45,11 @@ public:
 
 private:
   bool                  isVisible( const int ) const;
-  bool                  isOCC() const;
-  bool                  isActiveViewer() const;
   QString               typeName( const int ) const;  
   QString               displayMode( const int ) const;
 
   bool                  isComponent( const int ) const;
   GEOM::GEOM_Object_ptr getObject( const int ) const;
-  bool                  activeViewType( const QString& ) const;
 };
 
 #endif
