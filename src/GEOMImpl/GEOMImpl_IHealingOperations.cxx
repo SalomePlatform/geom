@@ -534,9 +534,13 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
   pd << aNewObject << " = geompy.SuppressHoles(" << theObject << ", [";
 
   // list of wire ids
-  int i = theWires->Lower(), nb = theWires->Upper();
-  for ( ; i <= nb; i++)
-    pd << theWires->Value( i ) << (( i < nb ) ? ", " : "])");
+  if ( theWires.IsNull() )
+    pd << "])";
+  else {
+    int i = theWires->Lower(), nb = theWires->Upper();
+    for ( ; i <= nb; i++)
+      pd << theWires->Value( i ) << (( i < nb ) ? ", " : "])");
+  }
 
   SetErrorCode(OK);
   return aNewObject;

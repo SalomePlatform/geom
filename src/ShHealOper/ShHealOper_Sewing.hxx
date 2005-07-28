@@ -28,7 +28,7 @@
 #include <ShHealOper_Tool.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopAbs_ShapeEnum.hxx>
-#include <BRepAlgo_Sewing.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
@@ -125,7 +125,7 @@ class ShHealOper_Sewing : public ShHealOper_Tool
   Standard_Boolean getShells(const TopoDS_Shape& theSewShape) const;
   Standard_Boolean getWires(const TopoDS_Shape& theSewShape) const;
   Standard_Boolean getModifications(const TopoDS_Shape& theShape,
-                                    const Handle(BRepAlgo_Sewing)& theSewing) const;
+                                    const Handle(BRepBuilderAPI_Sewing)& theSewing) const;
   
   Standard_Boolean isSewed(const TopoDS_Shape& theShape) const;
 

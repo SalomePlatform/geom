@@ -94,7 +94,7 @@ Standard_Boolean ShHealOper_Sewing::sewing(const TopTools_SequenceOfShape& theSe
     return myDone;
   }
   //sewing shape
-  Handle(BRepAlgo_Sewing) aSewing = new BRepAlgo_Sewing;
+  Handle(BRepBuilderAPI_Sewing) aSewing = new BRepBuilderAPI_Sewing;
   aSewing->Load(myInitShape);
   aSewing->SetTolerance(myTolerance);
   aSewing->SetFaceMode(myFacesMode);
@@ -221,7 +221,7 @@ Standard_Boolean ShHealOper_Sewing::getWires(const TopoDS_Shape& theSewShape) co
 //=======================================================================
 
 Standard_Boolean ShHealOper_Sewing::getModifications(const TopoDS_Shape& theShape,
-                                                     const Handle(BRepAlgo_Sewing)& theSewing) const
+                                                     const Handle(BRepBuilderAPI_Sewing)& theSewing) const
 {
   if((Standard_Integer)theShape.ShapeType() > (Standard_Integer)myHistoryLevel)
     return Standard_False;

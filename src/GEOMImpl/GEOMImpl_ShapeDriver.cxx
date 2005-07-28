@@ -9,7 +9,7 @@ using namespace std;
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepAlgo_FaceRestrictor.hxx>
-#include <BRepAlgo_Sewing.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepTools_Quilt.hxx>
 #include <BRepCheck.hxx>
@@ -177,7 +177,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     unsigned int ind, nbshapes = aShapes->Length();
 
     // add faces
-    BRepAlgo_Sewing aSewing(Precision::Confusion()*10.0);
+    BRepBuilderAPI_Sewing aSewing(Precision::Confusion()*10.0);
     for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();
