@@ -24,6 +24,70 @@
 #  Module : GEOM
 #  $Header$
 
+import os
+
+def TestExportImport (geompy, shape):
+
+  print "Test Export/Import ...",
+
+  # Files for Export/Import testing
+  fileExportImport = "/tmp/testExportImport.brep"
+  fileExportImportBREP = "/tmp/testExportImportBREP.brep"
+  fileExportImportIGES = "/tmp/testExportImportIGES.iges"
+  fileExportImportSTEP = "/tmp/testExportImportSTEP.step"
+
+  if os.access(fileExportImport, os.F_OK):
+    if os.access(fileExportImport, os.W_OK):
+      os.remove(fileExportImport)
+    else:
+      fileExportImport = "/tmp/testExportImport1.brep"
+
+    if os.access(fileExportImportBREP, os.W_OK):
+      os.remove(fileExportImportBREP)
+    else:
+      fileExportImportBREP = "/tmp/testExportImportBREP1.brep"
+
+    if os.access(fileExportImportIGES, os.W_OK):
+      os.remove(fileExportImportIGES)
+    else:
+      fileExportImportIGES = "/tmp/testExportImportIGES1.iges"
+
+    if os.access(fileExportImportSTEP, os.W_OK):
+      os.remove(fileExportImportSTEP)
+    else:
+      fileExportImportSTEP = "/tmp/testExportImportSTEP1.step"
+
+  # Export
+  geompy.Export(shape, fileExportImport, "BREP")
+
+  # ExportBREP, ExportIGES, ExportSTEP
+  geompy.ExportBREP(shape, fileExportImportBREP)
+  geompy.ExportIGES(shape, fileExportImportIGES)
+  geompy.ExportSTEP(shape, fileExportImportSTEP)
+
+  # Import
+  Import = geompy.Import(fileExportImport, "BREP")
+
+  id_Import = geompy.addToStudy(Import, "Import")
+
+  # ImportBREP, ImportIGES, ImportSTEP
+  ImportBREP = geompy.ImportBREP(fileExportImportBREP)
+  ImportIGES = geompy.ImportIGES(fileExportImportIGES)
+  ImportSTEP = geompy.ImportSTEP(fileExportImportSTEP)
+
+  id_ImportBREP = geompy.addToStudy(ImportBREP, "ImportBREP")
+  id_ImportIGES = geompy.addToStudy(ImportIGES, "ImportIGES")
+  id_ImportSTEP = geompy.addToStudy(ImportSTEP, "ImportSTEP")
+
+  # Remove files for Export/Import testing
+  os.remove(fileExportImport)
+  os.remove(fileExportImportBREP)
+  os.remove(fileExportImportIGES)
+  os.remove(fileExportImportSTEP)
+
+  print "OK"
+
+
 def TestOtherOperations (geompy, math):
 
   # MakeFaces
@@ -57,6 +121,9 @@ def TestOtherOperations (geompy, math):
 
   f12 = geompy.MakeFaces([w1, w2], 0)
   id_f12 = geompy.addToStudy(f12, "MakeFaces WO + WI")
+
+  # Export/Import
+  TestExportImport(geompy, f12)
 
   # OrientationChange
   Box = geompy.MakeBoxDXDYDZ(200, 200, 200)
@@ -118,28 +185,6 @@ def TestOtherOperations (geompy, math):
   MakeChamfer = geompy.MakeChamfer(Box, d1, d2, geompy.ShapeType["FACE"],
                                    [f_ind_1, f_ind_2, f_ind_3])
   id_MakeChamfer = geompy.addToStudy(MakeChamfer, "MakeChamfer")
-
-  # Export
-  geompy.Export(f12, "/tmp/testExportImport.brep", "BREP")
-
-  # ExportBREP, ExportIGES, ExportSTEP
-  geompy.ExportBREP(f12, "/tmp/testExportImportBREP.brep")
-  geompy.ExportIGES(f12, "/tmp/testExportImportIGES.iges")
-  geompy.ExportSTEP(f12, "/tmp/testExportImportSTEP.step")
-
-  # Import
-  Import = geompy.Import("/tmp/testExportImport.brep", "BREP")
-
-  id_Import = geompy.addToStudy(Import, "Import")
-
-  # ImportBREP, ImportIGES, ImportSTEP
-  ImportBREP = geompy.ImportBREP("/tmp/testExportImportBREP.brep")
-  ImportIGES = geompy.ImportIGES("/tmp/testExportImportIGES.iges")
-  ImportSTEP = geompy.ImportSTEP("/tmp/testExportImportSTEP.step")
-
-  id_ImportBREP = geompy.addToStudy(ImportBREP, "ImportBREP")
-  id_ImportIGES = geompy.addToStudy(ImportIGES, "ImportIGES")
-  id_ImportSTEP = geompy.addToStudy(ImportSTEP, "ImportSTEP")
 
   # NumberOfFaces
   NumberOfFaces = geompy.NumberOfFaces(Box)
@@ -317,11 +362,11 @@ def TestOtherOperations (geompy, math):
     geompy.addToStudyInFather(blocksComp, chain, "propagation chain")
 
   # GetPoint(theShape, theX, theY, theZ, theEpsilon)
-  # 
+  #
   # (-50,  50, 50) .-----. (50,  50, 50)
-  #      pb0_top_1 |     | 
+  #      pb0_top_1 |     |
   #                |     . pmidle
-  #                |     | 
+  #                |     |
   # (-50, -50, 50) '-----' (50, -50, 50)
   #
   pb0_top_1 = geompy.GetPoint(blocksComp, -50,  50,  50, 0.01)
