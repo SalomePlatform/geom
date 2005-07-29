@@ -91,7 +91,7 @@ void GEOMToolsGUI::OnSettingsColor()
   SUIT_ResourceMgr* resMgr = sess->resourceMgr();
   SUIT_Desktop* desk = sess->activeApplication()->desktop();
 
-  QColor anInitColor = resMgr->colorValue( "Geometry:SettingsShadingColor", QColor( "yellow" ) );
+  QColor anInitColor = resMgr->colorValue( "Geometry", "SettingsShadingColor", QColor( "yellow" ) );
   
   QColor aDialogColor = QColorDialog::getColor(anInitColor, desk );
   if( aDialogColor.isValid() ) 
@@ -100,7 +100,7 @@ void GEOMToolsGUI::OnSettingsColor()
     if( type != OCCViewer_Viewer::Type() && type != VTKViewer_Viewer::Type() )
       MESSAGE("Settings Color is not supported for current Viewer");
     
-    resMgr->setValue( "Geometry:SettingsShadingColor", aDialogColor );
+    resMgr->setValue( "Geometry", "SettingsShadingColor", aDialogColor );
   }
 }
 
