@@ -15,6 +15,8 @@ using namespace std;
 #include <TopExp.hxx>
 
 #include <gp_Pnt.hxx>
+#include <gp_Lin.hxx>
+#include <gp_Dir.hxx>
 #include <Precision.hxx>
 #include <StdFail_NotDone.hxx>
 #include <Standard_TypeMismatch.hxx>
@@ -73,6 +75,14 @@ Standard_Integer GEOMImpl_RevolutionDriver::Execute(TFunction_Logbook& log) cons
     if (aV.Magnitude() < Precision::Confusion()) {
       Standard_ConstructionError::Raise
         ("End vertices of edge, defining the Revolution Axis, are too close");
+    }
+
+    if (aShapeBase.ShapeType() == TopAbs_VERTEX) {
+      gp_Lin aL(BRep_Tool::Pnt(V1), gp_Dir(aV));
+      Standard_Real d = aL.Distance(BRep_Tool::Pnt(TopoDS::Vertex(aShapeBase)));
+      if (d < Precision::Confusion()) {
+	Standard_ConstructionError::Raise("Vertex to be rotated is too close to Revolution Axis");
+      }
     }
 
     gp_Ax1 anAxis (BRep_Tool::Pnt(V1), aV);
