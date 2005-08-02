@@ -62,7 +62,8 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :EntityGUI_Skeleton_QTD(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose), GEOMBase_Helper(), myIsAllAdded( false ),
+  :EntityGUI_Skeleton_QTD(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose), myIsAllAdded( false ),
+   GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
    myGeometryGUI( GUI )
 {
   myGeometryGUI->SetActiveDialogBox(this);
@@ -1394,15 +1395,6 @@ bool EntityGUI_SketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
     theApplyedWire = aBuilder.Shape();
 
   return true;
-}
-
-//=================================================================================
-// function : getDesktop()
-// purpose  :
-//=================================================================================
-SUIT_Desktop* EntityGUI_SketcherDlg::getDesktop() const
-{
-  return dynamic_cast<SUIT_Desktop*>( parentWidget() );
 }
 
 

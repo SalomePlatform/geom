@@ -74,8 +74,6 @@ protected:
 
     virtual GEOM::GEOM_IOperations_ptr createOperation();
 
-    virtual SUIT_Desktop* getDesktop() const;
-
 protected:    
     
     QPushButton*              mySelBtn;

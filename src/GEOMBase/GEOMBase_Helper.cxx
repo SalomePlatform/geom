@@ -92,8 +92,8 @@ GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine()
 // Function : GEOMBase_Helper
 // Purpose  :
 //================================================================
-GEOMBase_Helper::GEOMBase_Helper() 
-  : myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), isPreview( false )
+GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop ) 
+  : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), isPreview( false )
 {
 }
 
@@ -961,5 +961,14 @@ Handle(SALOME_InteractiveObject) GEOMBase_Helper::lastIObject()
 {
   const SALOME_ListIO& aList = selectedIO();
   return aList.Extent() > 0 ? aList.Last() : Handle(SALOME_InteractiveObject)();
+}
+
+//================================================================
+// Function : getDesktop
+// Purpose  : Returns myDesktop field.  Initialized in constructor, usually as dynamic_cast<SUIT_Desktop*>(parentWidget())
+//================================================================
+SUIT_Desktop* GEOMBase_Helper::getDesktop() const
+{
+  return myDesktop;
 }
 

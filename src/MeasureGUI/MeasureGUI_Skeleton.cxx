@@ -56,6 +56,7 @@ MeasureGUI_Skeleton::MeasureGUI_Skeleton( GeometryGUI*      GUI,
                                           const char*       name )
 : MeasureGUI_Skeleton_QTD( parent, name, false,
 			   WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ),
+  GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
   myGeomGUI( GUI )
 {
 
@@ -341,11 +342,3 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_Skeleton::createOperation()
   return getGeomEngine()->GetIMeasureOperations( getStudyId() );
 }
 
-//=================================================================================
-// function : getDesktop()
-// purpose  :
-//=================================================================================
-SUIT_Desktop*  MeasureGUI_Skeleton::getDesktop() const
-{
-  return dynamic_cast<SUIT_Desktop*>( parentWidget() );
-}

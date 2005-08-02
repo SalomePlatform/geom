@@ -60,7 +60,6 @@ protected:
     void initName( const char* thePrefix = 0 ); // initialize "Name" field with a string "thePrefix_X" (Vertex_3)
     virtual const char* getNewObjectName() const; // returns contents of "Name" field
     int getConstructorId() const; // returns id of a selected "constructor" radio button or '-1' in case of error
-    virtual SUIT_Desktop* getDesktop() const;
 
     QLineEdit* myEditCurrentArgument;   /* Current LineEdit */
     GEOMBase* myGeomBase; // SAN -- TO BE REMOVED !!!

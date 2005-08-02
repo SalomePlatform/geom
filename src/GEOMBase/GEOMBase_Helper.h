@@ -58,7 +58,7 @@ class TColStd_MapOfInteger;
 class GEOMBase_Helper
 {
 public:
-  GEOMBase_Helper();
+  GEOMBase_Helper( SUIT_Desktop* );
   virtual ~GEOMBase_Helper();
 
 protected:
@@ -171,7 +171,7 @@ protected:
   bool IsPreview() {return isPreview;}
 
   GEOM_Displayer*             getDisplayer();
-  virtual SUIT_Desktop* getDesktop() const = 0;
+  SUIT_Desktop*               getDesktop() const;
 
 private:
   char* getEntry              ( GEOM::GEOM_Object_ptr ) const;
@@ -188,6 +188,7 @@ private:
   QString                     myPrefix;
   bool                        isPreview;
   SALOME_ListIO               mySelected;
+  SUIT_Desktop*               myDesktop;
 
 };
 

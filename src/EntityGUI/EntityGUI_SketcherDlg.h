@@ -74,8 +74,6 @@ protected:
 
     void closeEvent( QCloseEvent* e );
 
-    virtual SUIT_Desktop* getDesktop() const;
-
 private :
     void Init();
     void enterEvent(QEvent* e);

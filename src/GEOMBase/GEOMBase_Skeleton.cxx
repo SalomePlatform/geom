@@ -44,7 +44,8 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 GEOMBase_Skeleton::GEOMBase_Skeleton(QWidget* parent, const char* name, bool modal, WFlags fl)
-:DlgRef_Skeleton_QTD(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ), GEOMBase_Helper()
+  :DlgRef_Skeleton_QTD( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ), 
+   GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) )
 {
   if (!name)
     setName("GEOMBase_Skeleton");
@@ -214,13 +215,4 @@ int GEOMBase_Skeleton::getConstructorId() const
   if ( GroupConstructors != NULL && GroupConstructors->selected() != NULL )
     return GroupConstructors->id( GroupConstructors->selected() );
   return -1;
-}
-
-//=================================================================================
-// function : getDesktop()
-// purpose  :
-//=================================================================================
-SUIT_Desktop* GEOMBase_Skeleton::getDesktop() const
-{
-  return dynamic_cast<SUIT_Desktop*>( parentWidget() );
 }

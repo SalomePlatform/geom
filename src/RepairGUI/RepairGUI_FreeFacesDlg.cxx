@@ -67,6 +67,7 @@ using namespace std;
 RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent, const char* name, bool modal, WFlags fl)
 :QDialog( parent, "RepairGUI_FreeBoundDlg", false,
 	  WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ),
+ GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
  myGeomGUI( GUI )
 {
   myDisplayer = 0;
@@ -327,11 +328,3 @@ void RepairGUI_FreeFacesDlg::onSetEditCurrentArgument()
   onSelectionDone();
 }
 
-//=================================================================================
-// function : getDesktop()
-// purpose  :
-//=================================================================================
-SUIT_Desktop* RepairGUI_FreeFacesDlg::getDesktop() const
-{
-  return dynamic_cast<SUIT_Desktop*>( parentWidget() );
-}

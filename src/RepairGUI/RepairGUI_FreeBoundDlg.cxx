@@ -60,6 +60,7 @@
 RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg( GeometryGUI* theGUI, QWidget* theParent )
 : QDialog( theParent, "RepairGUI_FreeBoundDlg", false,
 	   WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ),
+  GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( theParent ) ),
   myGeomGUI ( theGUI )
 {
   setCaption( tr( "CAPTION" ) );
@@ -275,15 +276,6 @@ bool RepairGUI_FreeBoundDlg::execute( ObjectList& objects )
   }
 
   return result;
-}
-
-//=================================================================================
-// function : getDesktop()
-// purpose  :
-//=================================================================================
-SUIT_Desktop* RepairGUI_FreeBoundDlg::getDesktop() const
-{
-  return dynamic_cast<SUIT_Desktop*>( parentWidget() );
 }
 
 

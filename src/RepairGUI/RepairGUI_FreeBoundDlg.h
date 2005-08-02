@@ -67,7 +67,6 @@ private:
   virtual GEOM::GEOM_IOperations_ptr    createOperation();
   virtual bool                          execute( ObjectList& objects );
   virtual bool                          isValid( QString& );
-  virtual SUIT_Desktop*                 getDesktop() const;
 
 private:
 
