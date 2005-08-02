@@ -871,11 +871,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 707, measurId, -1 );  
   createMenu( 7072, measurId, -1 );  
 
-  int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 10 );
+  int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
   createMenu( separator(), toolsId, -1 );
   createMenu( 5103, toolsId, -1 );  
   
-  int prefId = createMenu( tr( "MEN_PREFERENCES" ), -1, -1, 10 );
+  int prefId = createMenu( tr( "MEN_PREFERENCES" ), -1, -1, 50 );
   createMenu( separator(), prefId, -1 );
 
   int geomId = createMenu( tr( "MEN_PREFERENCES_GEOM" ), prefId, -1 );
