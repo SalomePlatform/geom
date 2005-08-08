@@ -1,23 +1,23 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
 //
 //
 //
@@ -52,16 +52,19 @@
 
 //=================================================================================
 // class    : GenerationGUI_FillingDlg()
-// purpose  : Constructs a GenerationGUI_FillingDlg which is a child of 'parent', with the 
+// purpose  : Constructs a GenerationGUI_FillingDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GenerationGUI_FillingDlg::GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+GenerationGUI_FillingDlg::GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                                   const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, modal,
+                     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu),
+   myGeometryGUI(theGeometryGUI)
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_FILLING")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_FILLING")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_FILLING_TITLE"));
 
@@ -89,16 +92,14 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, 
   Init();
 }
 
-
 //=================================================================================
 // function : ~GenerationGUI_FillingDlg()
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 GenerationGUI_FillingDlg::~GenerationGUI_FillingDlg()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
-
 
 //=================================================================================
 // function : Init()
@@ -140,7 +141,7 @@ void GenerationGUI_FillingDlg::Init()
 
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  
+
   connect(GroupPoints->SpinBox_1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupPoints->SpinBox_2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupPoints->SpinBox_3, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
@@ -153,7 +154,7 @@ void GenerationGUI_FillingDlg::Init()
   connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_4, SLOT(SetStep(double)));
   connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_5, SLOT(SetStep(double)));
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName(tr("GEOM_FILLING"));
@@ -193,24 +194,24 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
 {
   erasePreview();
   myEditCurrentArgument->setText("");
- 
+
   if(IObjectCount() != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkCompound = false;
     return;
   }
-  
+
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
-  
+
   if (!testResult)
     return;
-  
+
   if(myEditCurrentArgument == GroupPoints->LineEdit1) {
     TopoDS_Shape S;
     myOkCompound = false;
-    
+
     if ( GEOMBase::GetShape(aSelectedObject, S) &&
 	 S.ShapeType() == TopAbs_COMPOUND)
       {
@@ -222,7 +223,7 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
 	myOkCompound = true;
       }
   }
-  
+
   myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
   displayPreview();
 }
@@ -251,7 +252,7 @@ void GenerationGUI_FillingDlg::SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
 void GenerationGUI_FillingDlg::LineEditReturnPressed()
-{  
+{
   QLineEdit* send = (QLineEdit*)sender();
   if(send == GroupPoints->LineEdit1)
     {
@@ -268,7 +269,8 @@ void GenerationGUI_FillingDlg::LineEditReturnPressed()
 void GenerationGUI_FillingDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+          SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   globalSelection( GEOM_COMPOUND );
   displayPreview();
 }
@@ -341,4 +343,3 @@ bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
 
   return true;
 }
-
