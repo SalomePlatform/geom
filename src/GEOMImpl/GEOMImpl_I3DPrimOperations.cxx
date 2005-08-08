@@ -977,7 +977,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSolidShell (Handle(GEOM_Obje
  *  MakeFilling
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg, double theTol2D, double theTol3D, int theNbIter)
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
+       (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg,
+        double theTol2D, double theTol3D, int theNbIter)
 {
   SetErrorCode(KO);
 
@@ -1009,13 +1011,16 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling (Handle(GEOM_Object)
   //Compute the Solid value
   try {
     if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Fiiling driver failed");
+      SetErrorCode("Filling driver failed");
       return NULL;
     }
   }
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+    if (strcmp(aFail->GetMessageString(), "Geom_BSplineSurface") == 0)
+      SetErrorCode("B-Spline surface construction failed");
+    else
+      SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
 
