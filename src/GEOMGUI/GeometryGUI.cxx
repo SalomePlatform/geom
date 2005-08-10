@@ -295,7 +295,7 @@ void GeometryGUI::OnGUIEvent( int id )
   bool ViewVTK = ( window && window->getViewManager()->getType() == VTKViewer_Viewer::Type() );
   // if current viewframe is not of OCC and not of VTK type - return immediately
   // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
-  bool NotViewerDependentCommand = ( id == 901 ); 
+  bool NotViewerDependentCommand = ( id == 901 || id == 216 || id == 213 ); 
   if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommand )
       return;
 
@@ -875,14 +875,13 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(), toolsId, -1 );
   createMenu( 5103, toolsId, -1 );  
   
-  int prefId = createMenu( tr( "MEN_PREFERENCES" ), -1, -1, 50 );
-  createMenu( separator(), prefId, -1 );
-
-  int geomId = createMenu( tr( "MEN_PREFERENCES_GEOM" ), prefId, -1 );
-  createMenu( 412, geomId, -1 );  
-  createMenu( 413, geomId, -1 );  
-  createMenu( 414, geomId, -1 );  
-  createMenu( separator(), prefId, -1 );
+  //int prefId = createMenu( tr( "MEN_PREFERENCES" ), -1, -1, 50 );
+  //createMenu( separator(), prefId, -1 );
+  //int geomId = createMenu( tr( "MEN_PREFERENCES_GEOM" ), prefId, -1 );
+  //createMenu( 412, geomId, -1 );  
+  //createMenu( 413, geomId, -1 );  
+  //createMenu( 414, geomId, -1 );  
+  //createMenu( separator(), prefId, -1 );
 
   int viewId = createMenu( tr( "MEN_VIEW" ), -1, -1 );
   createMenu( separator(), viewId, -1 );
@@ -966,13 +965,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( 8034 ), "client='OCCViewer' and selcount>0", true );
   mgr->insert( separator(), -1, -1 );        // -----------
   mgr->insert( action(  216 ), -1, -1 ); // display
-  mgr->setRule( action( 216 ), "isActiveView=true and selcount>0 and (($type in {'Shape' 'Group'} and isVisible=false) or type='Component')", true );
+  mgr->setRule( action( 216 ), "(selcount>0) and (((isActiveView=true) and (($type in {'Shape' 'Group'} and isVisible=false) or type='Component'))"
+		               "or ((isActiveView=false) and ($type in {'Shape' 'Group' 'Component'})))", true );
   mgr->insert( action(  215 ), -1, -1 ); // erase
-  mgr->setRule( action( 215 ), "isActiveView=true and selcount>0 and (($type in {'Shape' 'Group'} and isVisible=true) or (type='Component' and selcount=1))", true );
+  mgr->setRule( action( 215 ), "(isActiveView=true) and (($type in {'Shape' 'Group'} and isVisible=true and selcount>0) or (type='Component' and selcount=1))", true );
   mgr->insert( action(  214 ), -1, -1 ); // erase All
   mgr->setRule( action( 214 ), "client='OCCViewer' or client='VTKViewer'", true );
   mgr->insert( action(  213 ), -1, -1 ); // display only
-  mgr->setRule( action( 213 ), "isActiveView=true and selcount>0 and ($type in {'Shape' 'Group'} or (type='Component' and selcount=1))", true );
+  mgr->setRule( action( 213 ), "($type in {'Shape' 'Group'} and selcount>0) or (type='Component' and selcount=1)", true );
   mgr->insert( separator(), -1, -1 );
 }
 

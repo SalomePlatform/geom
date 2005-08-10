@@ -260,25 +260,11 @@ GEOM_Displayer::~GEOM_Displayer()
 SALOME_View* GEOM_Displayer::GetActiveView()
 {
   SUIT_Session* session = SUIT_Session::session();
-  SUIT_Application* app = session->activeApplication();
-  if ( app )
-  {
-    SUIT_Desktop* desk = app->desktop();
-    if ( desk )
-    {
-      SUIT_ViewWindow* win = desk->activeWindow(); 
-      if ( win ) 
-      {
-	SUIT_ViewManager* vman = win->getViewManager();
-	if ( vman )
-	{
-	  SUIT_ViewModel* vmodel = vman->getViewModel();
-	  if ( vmodel )
-	  {
-	    SALOME_View* view = dynamic_cast<SALOME_View*>(vmodel);
-	    return view;
-	  }
-	}
+  if (  SUIT_Application* app = session->activeApplication() ) {
+    if ( SalomeApp_Application* sApp = dynamic_cast<SalomeApp_Application*>( app ) ) {
+      if( SUIT_ViewManager* vman = sApp->activeViewManager() ) {
+	if ( SUIT_ViewModel* vmod = vman->getViewModel() )
+	  return dynamic_cast<SALOME_View*>( vmod );
       }
     }
   }
