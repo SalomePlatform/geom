@@ -10,10 +10,10 @@ class SalomeApp_SelectionMgr;
 class GEOM_OCCFilter : public SelectMgr_Filter
 {
 public:
-  GEOM_OCCFilter( SalomeApp_SelectionMgr* theSelMgr);
-  ~GEOM_OCCFilter();
+  Standard_EXPORT GEOM_OCCFilter( SalomeApp_SelectionMgr* theSelMgr);
+  Standard_EXPORT ~GEOM_OCCFilter();
   
-  virtual Standard_Boolean IsOk( const Handle(SelectMgr_EntityOwner)& anObj ) const;
+  Standard_EXPORT virtual Standard_Boolean IsOk( const Handle(SelectMgr_EntityOwner)& anObj ) const;
     
 private:
   SalomeApp_SelectionMgr* mySelMgr;

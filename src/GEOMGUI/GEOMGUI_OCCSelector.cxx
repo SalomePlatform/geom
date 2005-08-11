@@ -153,7 +153,11 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 
   Handle(AIS_InteractiveContext) ic = vw->getAISContext();
 
+#ifndef WNT
   NCollection_DataMap<TCollection_AsciiString, TColStd_IndexedMapOfInteger> indexesMap; // "entry - list_of_int" map for LOCAL selection
+#else
+  NCollection_DataMap<Standard_CString, TColStd_IndexedMapOfInteger> indexesMap; // "entry - list_of_int" map for LOCAL selection
+#endif
   QMap<QString,int> globalSelMap; // only Key=entry from this map is used.  value(int) is NOT used at all.
   SelectMgr_IndexedMapOfOwner ownersmap; // map of owners to be selected
   
@@ -168,7 +172,11 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
     if ( subOwner )
     {
       QString entry = subOwner->entry();
+#ifndef WNT
       if ( indexesMap.IsBound( TCollection_AsciiString((char*)entry.latin1())))
+#else
+	  if ( indexesMap.IsBound( (char*)entry.latin1()))
+#endif
       {
 	TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind((char*)entry.latin1());
 	subIndexes.Add( subOwner->index() );

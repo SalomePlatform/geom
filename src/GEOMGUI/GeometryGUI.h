@@ -38,6 +38,12 @@
 
 #include "gp_Ax3.hxx"
 
+#ifdef WNT
+#include <SALOME_WNT.hxx>
+#else
+#define SALOME_WNT_EXPORT
+#endif
+
 typedef QMap<QString, GEOMGUI*> GUIMap;
 
 class QDialog;
@@ -51,7 +57,7 @@ class SUIT_ViewManager;
 // class    : GeometryGUI
 // purpose  :
 //=================================================================================
-class GeometryGUI : public SalomeApp_Module
+class SALOME_WNT_EXPORT GeometryGUI : public SalomeApp_Module
 {
   Q_OBJECT;
 

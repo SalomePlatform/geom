@@ -2,8 +2,9 @@
 #define GEOM_PREVIEW_FILTER_H
 
 #include <SalomeApp_Filter.h>
+#include <Standard_Macro.hxx>
 
-class GEOM_PreviewFilter : public SalomeApp_Filter
+class Standard_EXPORT GEOM_PreviewFilter : public SalomeApp_Filter
 {
 public:
   GEOM_PreviewFilter( SalomeApp_Study* study );

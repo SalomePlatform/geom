@@ -1,23 +1,27 @@
-using namespace std;
+#include <Standard_OStream.hxx>
 
-#include "GEOM_Object_i.hh"
-//#include "GEOM_Gen_i.hh"
-#include "GEOM_ISubShape.hxx"
-#include "GEOMImpl_Types.hxx"
+#include <GEOM_Object_i.hh>
+//#include <GEOM_Gen_i.hh>
+#include <GEOM_ISubShape.hxx>
+#include <GEOMImpl_Types.hxx>
 
 #include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <fstream>
+#include <strstream>
+
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 #include <TDF_Tool.hxx>
 #include <TDF_Label.hxx>
 #include <TCollection_AsciiString.hxx>
 
-#include <fstream.h>
-#include <strstream>
-
 #include <BRepTools_ShapeSet.hxx>
 #include <BRepTools.hxx>
 #include <TopAbs.hxx>
+
+#ifdef WNT
+#pragma warning( disable:4786 )
+#endif
 
 //=============================================================================
 /*!
@@ -27,7 +31,9 @@ using namespace std;
 
 GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine,
 			      Handle(GEOM_Object) theImpl)
-:SALOME::GenericObj_i( thePOA ), _engine(theEngine), _impl(theImpl)
+#ifndef WNT
+: SALOME::GenericObj_i( thePOA ), _engine(theEngine), _impl(theImpl)
+#endif
 {
   thePOA->activate_object(this);
 }

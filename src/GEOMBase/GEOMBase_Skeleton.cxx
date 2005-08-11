@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GEOMBase_Skeleton.h"
 #include "GeometryGUI.h"
 
@@ -35,6 +34,8 @@ using namespace std;
 #include "SalomeApp_SelectionMgr.h"
 
 #include <qpushbutton.h>
+
+using namespace std;
 
 //=================================================================================
 // class    : GEOMBase_Skeleton()

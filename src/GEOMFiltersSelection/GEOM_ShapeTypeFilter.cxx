@@ -26,7 +26,8 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
+#include <Standard_Stream.hxx>
+
 #include "GEOM_ShapeTypeFilter.ixx"
 #include "SALOME_InteractiveObject.hxx"
 #include "GEOM_Client.hxx"

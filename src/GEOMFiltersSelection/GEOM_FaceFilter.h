@@ -3,7 +3,7 @@
 
 #include "GEOM_SelectionFilter.h"
 
-class GEOM_FaceFilter : public GEOM_SelectionFilter
+class Standard_EXPORT GEOM_FaceFilter : public GEOM_SelectionFilter
 {
 public:
   GEOM_FaceFilter( SalomeApp_Study* study, const int kind );

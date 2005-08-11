@@ -7,7 +7,7 @@
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
-class GEOM_TypeFilter : public GEOM_SelectionFilter
+class Standard_EXPORT GEOM_TypeFilter : public GEOM_SelectionFilter
 {
 public:
   GEOM_TypeFilter(SalomeApp_Study* study, const int type, const bool isShapeType = false );

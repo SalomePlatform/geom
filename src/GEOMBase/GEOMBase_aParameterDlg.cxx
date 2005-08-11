@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GEOMBase_aParameterDlg.h"
 #include "QtxDblSpinBox.h"
 
@@ -38,6 +37,11 @@ using namespace std;
 #include <qlayout.h>
 #include <qvariant.h>
 #include <qvalidator.h>
+
+#ifndef WNT
+using namespace std;
+#endif
+
 
 //====================================================================================== 
 // function : GEOMBase_aParameterDlg()

@@ -48,10 +48,10 @@ class GEOM_IBlocksOperations_i :
 
   // Extract elements of blocks and blocks compounds
   GEOM::GEOM_Object_ptr GetPoint (GEOM::GEOM_Object_ptr theShape,
-				  const CORBA::Double   theX,
-				  const CORBA::Double   theY,
-				  const CORBA::Double   theZ,
-				  const CORBA::Double   theEpsilon);
+				  CORBA::Double   theX,
+				  CORBA::Double   theY,
+				  CORBA::Double   theZ,
+				  CORBA::Double   theEpsilon);
 
   GEOM::GEOM_Object_ptr GetEdge (GEOM::GEOM_Object_ptr theShape,
 				 GEOM::GEOM_Object_ptr thePoint1,
@@ -81,8 +81,8 @@ class GEOM_IBlocksOperations_i :
 
   // Check blocks compound
   CORBA::Boolean IsCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-				     const CORBA::Long     theMinNbFaces,
-				     const CORBA::Long     theMaxNbFaces,
+				     CORBA::Long     theMinNbFaces,
+				     CORBA::Long     theMaxNbFaces,
 				     CORBA::Long&          theNbBlocks);
 
   CORBA::Boolean CheckCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
@@ -97,8 +97,8 @@ class GEOM_IBlocksOperations_i :
 
   // Extract blocks from blocks compounds
   GEOM::ListOfGO* ExplodeCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-					   const CORBA::Long     theMinNbFaces,
-					   const CORBA::Long     theMaxNbFaces);
+					   CORBA::Long     theMinNbFaces,
+					   CORBA::Long     theMaxNbFaces);
 
   GEOM::GEOM_Object_ptr GetBlockNearPoint (GEOM::GEOM_Object_ptr theCompound,
 					   GEOM::GEOM_Object_ptr thePoint);
@@ -111,17 +111,17 @@ class GEOM_IBlocksOperations_i :
 
   // Operations on blocks with gluing of result
   GEOM::GEOM_Object_ptr MakeMultiTransformation1D (GEOM::GEOM_Object_ptr theBlock,
-						   const CORBA::Long     theDirFace1,
-						   const CORBA::Long     theDirFace2,
-						   const CORBA::Long     theNbTimes);
+						   CORBA::Long     theDirFace1,
+						   CORBA::Long     theDirFace2,
+						   CORBA::Long     theNbTimes);
 
   GEOM::GEOM_Object_ptr MakeMultiTransformation2D (GEOM::GEOM_Object_ptr theBlock,
-						   const CORBA::Long     theDirFace1U,
-						   const CORBA::Long     theDirFace2U,
-						   const CORBA::Long     theNbTimesU,
-						   const CORBA::Long     theDirFace1V,
-						   const CORBA::Long     theDirFace2V,
-						   const CORBA::Long     theNbTimesV);
+						   CORBA::Long     theDirFace1U,
+						   CORBA::Long     theDirFace2U,
+						   CORBA::Long     theNbTimesU,
+						   CORBA::Long     theDirFace1V,
+						   CORBA::Long     theDirFace2V,
+						   CORBA::Long     theNbTimesV);
 
   // Build groups for Propagation of 1D hypotheses
   GEOM::ListOfGO* Propagate (GEOM::GEOM_Object_ptr theShape);

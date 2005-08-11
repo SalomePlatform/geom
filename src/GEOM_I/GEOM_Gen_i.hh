@@ -33,7 +33,7 @@
 //=====================================================================
 // GEOM_Gen_i : class definition
 //=====================================================================
-class GEOM_Gen_i: public POA_GEOM::GEOM_Gen, public Engines_Component_i
+class GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual public Engines_Component_i
 {
  public:
 

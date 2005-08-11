@@ -1,4 +1,4 @@
-using namespace std; 
+#include <Standard_Stream.hxx>
 
 #include "GEOM_ITransformOperations_i.hh"
 

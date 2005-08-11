@@ -1,5 +1,6 @@
+#include <Standard_Stream.hxx>
+
 #include <list>
-using namespace std;
 
 #include "GEOM_IHealingOperations_i.hh"
 #include "GEOM_Engine.hxx"

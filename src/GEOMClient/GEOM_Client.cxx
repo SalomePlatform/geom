@@ -26,17 +26,14 @@
 //  Module : GEOM
 //  $Header$
 
-#include <strstream>
+#include <Standard_Stream.hxx>
 
-using namespace std;
+#include <strstream>
 
 #include "GEOM_Client.hxx"
 #include <SALOMEconfig.h>
 #include "OpUtil.hxx"
 #include "utilities.h"
-
-#include CORBA_SERVER_HEADER(SALOMEDS)
-#include CORBA_SERVER_HEADER(GEOM_Gen)
 
 #include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
@@ -48,7 +45,14 @@ using namespace std;
 #include <TopAbs.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
+#ifdef WNT
+#include <process.h>
+#else
 #include <unistd.h>
+#endif
+
+#include CORBA_SERVER_HEADER(SALOMEDS)
+#include CORBA_SERVER_HEADER(GEOM_Gen)
 
 #define HST_CLIENT_LEN 256
 
@@ -89,7 +93,12 @@ TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr a
 //=======================================================================
 GEOM_Client::GEOM_Client()
 {
-  pid_client = (long)getpid();
+  pid_client = 
+#ifdef WNT
+    (long)_getpid();
+#else
+    (long)getpid();
+#endif
 }
 
 //=======================================================================

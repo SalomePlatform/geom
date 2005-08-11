@@ -3,7 +3,7 @@
 
 #include "GEOM_SelectionFilter.h"
 
-class GEOM_EdgeFilter : public GEOM_SelectionFilter
+class Standard_EXPORT GEOM_EdgeFilter : public GEOM_SelectionFilter
 {
 public:
   GEOM_EdgeFilter( SalomeApp_Study* study, const int kind );

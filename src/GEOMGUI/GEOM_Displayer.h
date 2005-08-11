@@ -53,7 +53,13 @@ class SalomeApp_Study;
 class SUIT_SelectionFilter;
 //class SALOME_Selection;
 
-class GEOM_Displayer : public SALOME_Displayer
+#ifdef WNT
+#include <SALOME_WNT.hxx>
+#else
+#define SALOME_WNT_EXPORT
+#endif
+
+class SALOME_WNT_EXPORT GEOM_Displayer : public SALOME_Displayer
 {
     
 public:

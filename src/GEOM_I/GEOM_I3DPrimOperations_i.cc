@@ -1,4 +1,4 @@
-using namespace std;
+#include <Standard_Stream.hxx>
 
 #include "GEOM_I3DPrimOperations_i.hh"
 

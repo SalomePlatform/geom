@@ -2,10 +2,11 @@
 #define GEOM_LOGICALFILTER_H
 
 #include <SUIT_SelectionFilter.h>
+#include <Standard_Macro.hxx>
 
 #include <qptrlist.h>
 
-class GEOM_LogicalFilter : public SUIT_SelectionFilter
+class Standard_EXPORT GEOM_LogicalFilter : public SUIT_SelectionFilter
 {
 public:
   enum { LO_OR, LO_AND, LO_NOT, LO_UNDEFINED };

@@ -28,8 +28,8 @@ class GEOM_IBooleanOperations_i :
 				       const GEOM::ListOfGO&   theTools,
 				       const GEOM::ListOfGO&   theKeepInside,
 				       const GEOM::ListOfGO&   theRemoveInside,
-				       const CORBA::Short      theLimit,
-				       const CORBA::Boolean    theRemoveWebs,
+				       CORBA::Short      theLimit,
+				       CORBA::Boolean    theRemoveWebs,
 				       const GEOM::ListOfLong& theMaterials);
 
 

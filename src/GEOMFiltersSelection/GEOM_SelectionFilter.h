@@ -11,7 +11,7 @@
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
-class GEOM_SelectionFilter : public SalomeApp_Filter
+class Standard_EXPORT GEOM_SelectionFilter : public SalomeApp_Filter
 {
 public:
   GEOM_SelectionFilter( SalomeApp_Study* study, const bool theAll = false );

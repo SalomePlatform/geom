@@ -1,4 +1,8 @@
-using namespace std; 
+#ifdef WNT
+#pragma warning( disable:4786 )
+#endif
+
+#include <Standard_Stream.hxx>
 
 #include "GEOM_IInsertOperations_i.hh"
 

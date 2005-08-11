@@ -1,3 +1,9 @@
+#ifdef WNT
+#pragma warning( disable:4786 )
+#endif
+
+#include <Standard_Stream.hxx>
+
 #include "GEOM_Gen_i.hh"
 #include "GEOM_Object_i.hh"
 
@@ -24,7 +30,6 @@
 #include <TopAbs_ShapeEnum.hxx>
 
 #include "SALOMEDS_Tool.hxx"
-using namespace std;
 
 //============================================================================
 // function : GEOM_Gen_i()
@@ -493,7 +498,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM:
 //============================================================================
 void GEOM_Gen_i::register_name(char * name)
 {
-  GEOM::GEOM_Gen_ptr g = GEOM::GEOM_Gen::_narrow(POA_GEOM::GEOM_Gen::_this());
+  GEOM::GEOM_Gen_ptr g = GEOM::GEOM_Gen::_narrow(_this());
   name_service->Register(g, strdup(name)); 
 }
 
@@ -525,7 +530,7 @@ GEOM::GEOM_IBasicOperations_ptr GEOM_Gen_i::GetIBasicOperations(CORBA::Long theS
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIBasicOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_IBasicOperations_i* aServant =
     new GEOM_IBasicOperations_i(_poa, engine, _impl->GetIBasicOperations(theStudyID));
@@ -545,7 +550,7 @@ GEOM::GEOM_ITransformOperations_ptr GEOM_Gen_i::GetITransformOperations(CORBA::L
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetITransformOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_ITransformOperations_i* aServant =
     new GEOM_ITransformOperations_i(_poa, engine, _impl->GetITransformOperations(theStudyID));
@@ -565,7 +570,7 @@ GEOM::GEOM_I3DPrimOperations_ptr GEOM_Gen_i::GetI3DPrimOperations(CORBA::Long th
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetI3DPrimOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_I3DPrimOperations_i* aServant =
     new GEOM_I3DPrimOperations_i(_poa, engine, _impl->GetI3DPrimOperations(theStudyID));
@@ -585,7 +590,7 @@ GEOM::GEOM_IShapesOperations_ptr GEOM_Gen_i::GetIShapesOperations(CORBA::Long th
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIShapesOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_IShapesOperations_i* aServant =
     new GEOM_IShapesOperations_i(_poa, engine, _impl->GetIShapesOperations(theStudyID));
@@ -605,7 +610,7 @@ GEOM::GEOM_IBlocksOperations_ptr GEOM_Gen_i::GetIBlocksOperations(CORBA::Long th
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIBlocksOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_IBlocksOperations_i* aServant =
     new GEOM_IBlocksOperations_i(_poa, engine, _impl->GetIBlocksOperations(theStudyID));
@@ -625,7 +630,7 @@ GEOM::GEOM_IBooleanOperations_ptr GEOM_Gen_i::GetIBooleanOperations(CORBA::Long 
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIBooleanOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_IBooleanOperations_i* aServant =
     new GEOM_IBooleanOperations_i(_poa, engine, _impl->GetIBooleanOperations(theStudyID));
@@ -645,7 +650,7 @@ GEOM::GEOM_ICurvesOperations_ptr GEOM_Gen_i::GetICurvesOperations(CORBA::Long th
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetICurvesOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_ICurvesOperations_i* aServant =
     new GEOM_ICurvesOperations_i(_poa, engine, _impl->GetICurvesOperations(theStudyID));
@@ -665,7 +670,7 @@ GEOM::GEOM_ILocalOperations_ptr GEOM_Gen_i::GetILocalOperations(CORBA::Long theS
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetILocalOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_ILocalOperations_i* aServant =
     new GEOM_ILocalOperations_i(_poa, engine, _impl->GetILocalOperations(theStudyID));
@@ -685,7 +690,7 @@ GEOM::GEOM_IHealingOperations_ptr GEOM_Gen_i::GetIHealingOperations(CORBA::Long 
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::IHealingOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_IHealingOperations_i* aServant =
     new GEOM_IHealingOperations_i(_poa, engine, _impl->GetIHealingOperations(theStudyID));
@@ -705,7 +710,7 @@ GEOM::GEOM_IInsertOperations_ptr GEOM_Gen_i::GetIInsertOperations(CORBA::Long th
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIInsertOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_IInsertOperations_i* aServant =
     new GEOM_IInsertOperations_i(_poa, engine, _impl->GetIInsertOperations(theStudyID));
@@ -725,7 +730,7 @@ GEOM::GEOM_IMeasureOperations_ptr GEOM_Gen_i::GetIMeasureOperations(CORBA::Long 
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIMeasureOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_IMeasureOperations_i* aServant =
     new GEOM_IMeasureOperations_i(_poa, engine, _impl->GetIMeasureOperations(theStudyID));
@@ -745,7 +750,7 @@ GEOM::GEOM_IGroupOperations_ptr GEOM_Gen_i::GetIGroupOperations(CORBA::Long theS
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIGroupOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
 
   GEOM_IGroupOperations_i* aServant =
     new GEOM_IGroupOperations_i(_poa, engine, _impl->GetIGroupOperations(theStudyID));
@@ -831,7 +836,7 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject(CORBA::Long theStudyID, const char* 
     return obj._retn();  
    }
 
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this(); 
+  GEOM::GEOM_Gen_ptr engine = _this(); 
   GEOM_Object_i* servant = new GEOM_Object_i(_poa, engine, handle_object);
   
   obj = servant->_this();
