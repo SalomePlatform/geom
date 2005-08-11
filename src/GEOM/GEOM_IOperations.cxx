@@ -1,10 +1,10 @@
-using namespace std; 
+#include <Standard_Stream.hxx>
 
-#include "GEOM_IOperations.hxx"
+#include <GEOM_IOperations.hxx>
 
 #include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 
 #include <TDataStd_TreeNode.hxx>
 #include <TDataStd_ChildNodeIterator.hxx>

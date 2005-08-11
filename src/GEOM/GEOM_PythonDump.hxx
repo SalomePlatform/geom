@@ -37,18 +37,18 @@ namespace GEOM
     Handle(GEOM_Function) myFunction;
 
   public:
-    TPythonDump (Handle(GEOM_Function)& theFunction);
-    virtual ~TPythonDump();
+    Standard_EXPORT TPythonDump (Handle(GEOM_Function)& theFunction);
+    Standard_EXPORT virtual ~TPythonDump();
 
 //    operator TCollection_AsciiString () const;
 
-    TPythonDump& operator<< (long int theArg);
-    TPythonDump& operator<< (int theArg);
-    TPythonDump& operator<< (double theArg);
-    TPythonDump& operator<< (float theArg);
-    TPythonDump& operator<< (const void* theArg);
-    TPythonDump& operator<< (const char* theArg);
-    TPythonDump& operator<< (const Handle(GEOM_Object)& theObject);
+    Standard_EXPORT TPythonDump& operator<< (long int theArg);
+    Standard_EXPORT TPythonDump& operator<< (int theArg);
+    Standard_EXPORT TPythonDump& operator<< (double theArg);
+    Standard_EXPORT TPythonDump& operator<< (float theArg);
+    Standard_EXPORT TPythonDump& operator<< (const void* theArg);
+    Standard_EXPORT TPythonDump& operator<< (const char* theArg);
+    Standard_EXPORT TPythonDump& operator<< (const Handle(GEOM_Object)& theObject);
   };
 }
 

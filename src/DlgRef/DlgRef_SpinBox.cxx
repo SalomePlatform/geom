@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "DlgRef_SpinBox.h"
 
 #include <qvalidator.h>

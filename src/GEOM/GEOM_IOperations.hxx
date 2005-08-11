@@ -17,42 +17,42 @@
 class GEOM_IOperations
 {
  public:
-  GEOM_IOperations(GEOM_Engine* theEngine, int theDocID);
-  ~GEOM_IOperations();
+  Standard_EXPORT GEOM_IOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT ~GEOM_IOperations();
 
   //Starts a new operation (opens a tansaction)
-  void StartOperation();
+  Standard_EXPORT void StartOperation();
  
   //Finishes the previously started operation (closes the transaction)
-  void FinishOperation();
+  Standard_EXPORT void FinishOperation();
 
   //Aborts the operation 
-  void AbortOperation();
+  Standard_EXPORT void AbortOperation();
  
   //Returns true if the last operation succided
-  bool IsDone();
+  Standard_EXPORT bool IsDone();
 
   //Sets Not done error code
-  void SetNotDone() { _errorCode = KO; }
+  Standard_EXPORT void SetNotDone() { _errorCode = KO; }
 
   //Sets an error code of the operation
-  void SetErrorCode(const TCollection_AsciiString& theErrorCode) {
+  Standard_EXPORT void SetErrorCode(const TCollection_AsciiString& theErrorCode) {
     _errorCode = theErrorCode;    
   } 
  
   //Returns an error code of the last operatioin
-  char* GetErrorCode() {
+  Standard_EXPORT char* GetErrorCode() {
     return _errorCode.ToCString();    
   }
   
   //Returns a pointer to  GEOM_Engine which this operation interface is associated
-  GEOM_Engine* GetEngine() { return _engine; }
+  Standard_EXPORT GEOM_Engine* GetEngine() { return _engine; }
 
   //Return a pointer to Solver associated with this operation interface
-  GEOM_Solver* GetSolver() { return _solver; }
+  Standard_EXPORT GEOM_Solver* GetSolver() { return _solver; }
 
   //Returns an ID of the OCAF document where this operation stores the data
-  int GetDocID() { return _docID; }
+  Standard_EXPORT int GetDocID() { return _docID; }
 
  private:
   

@@ -1,3 +1,7 @@
+#ifdef WNT
+#pragma warning( disable:4786 )
+#endif
+
 #include "GEOM_Engine.hxx"
 
 #include "GEOM_Solver.hxx"

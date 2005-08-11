@@ -1,6 +1,6 @@
 
-using namespace std;
-#include "GEOM_Application.ixx"
+#include <Standard_Stream.hxx>
+#include <GEOM_Application.ixx>
 
 //=======================================================================
 //function : GEOM_Application

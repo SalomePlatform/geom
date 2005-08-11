@@ -26,9 +26,11 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
-#include "GEOM_Gen_i.hh"
-#include "SALOME_NamingService.hxx"
+#include <Standard_Stream.hxx>
+
+#include <CORBA.h>
+#include <GEOM_Gen_i.hh>
+#include <SALOME_NamingService.hxx>
 
 //==================================================================================
 // function : main()                      MAIN 
@@ -48,7 +50,11 @@ int main(int argc, char** argv)
     // We allocate the objects on the heap.  Since these are reference
     // counted objects, they will be deleted by the POA when they are no
     // longer needed.    
+#ifdef WNT
+    GEOM_Gen_i * myGEOM_Gen_i = new GEOM_Gen_i((CORBA::ORB_ptr)orb, poa, 0, 0, 0 );
+#else
     GEOM_Gen_i * myGEOM_Gen_i = new GEOM_Gen_i(orb);
+#endif
 
     // Activate the objects.  This tells the POA that the objects are
     // ready to accept requests.

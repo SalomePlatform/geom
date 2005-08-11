@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOM_SubShapeDriver.hxx"
-#include "GEOM_ISubShape.hxx"
-#include "GEOM_Function.hxx"
-#include "GEOM_Object.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOM_SubShapeDriver.hxx>
+#include <GEOM_ISubShape.hxx>
+#include <GEOM_Function.hxx>
+#include <GEOM_Object.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>

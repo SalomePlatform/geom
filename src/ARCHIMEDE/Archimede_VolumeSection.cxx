@@ -26,11 +26,11 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
+#include <Standard_OStream.hxx>
+
 #include "Archimede_VolumeSection.hxx"
 #include "utilities.h"
 
-#include <iostream.h>
 #include <BRepMesh_IncrementalMesh.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopLoc_Location.hxx>
@@ -120,8 +120,8 @@ void VolumeSection::CenterOfGravity()
 	}
     }
   
-  // Creation du point d'initialisation, c'est à dire le centre de gravité 
-  //géométrique de la boite englobante
+  // Creation du point d'initialisation, c'est € dire le centre de gravit‰ 
+  //g‰om‰trique de la boite englobante
   
   InitPoint.SetX(0.5 * (Xmin + Xmax));
   InitPoint.SetY(0.5 * (Ymin + Ymax));
@@ -155,7 +155,7 @@ Standard_Real VolumeSection::CalculateVolume(Standard_Real Elevation)
       const TColgp_Array1OfPnt& Nodes = Tr->Nodes();
       
       // Calcul des volumes de chaque triangle, de chaque face 
-      //en tenant compte des triangles coupés par le plan de section
+      //en tenant compte des triangles coup‰s par le plan de section
       
       for (i=1;i<=nbTriangles;i++) 
 	{
@@ -379,7 +379,7 @@ gp_Pnt VolumeSection::Intersection(gp_Pnt P1,gp_Pnt P2,Standard_Real Hauteur)
   return Point;
 }
 
-//Fonction calculant le volume élémentaire de chaque tétraedre à partir de 3 points
+//Fonction calculant le volume ‰l‰mentaire de chaque t‰traedre € partir de 3 points
 Standard_Real VolumeSection::ElementaryVolume(gp_Pnt P1,gp_Pnt P2,gp_Pnt P3)
 {
   Standard_Real Determinant;

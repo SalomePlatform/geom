@@ -15,64 +15,64 @@
 class GEOM_Engine
 {
  public:
-  GEOM_Engine();
-  ~GEOM_Engine() { _mapIDDocument.Clear(); _objects.Clear(); }
+  Standard_EXPORT GEOM_Engine();
+  Standard_EXPORT ~GEOM_Engine() { _mapIDDocument.Clear(); _objects.Clear(); }
 
   //Retuns the engine    
-  static GEOM_Engine* GetEngine();   
+  Standard_EXPORT static GEOM_Engine* GetEngine();   
 
   //Returns the OCAF document by its ID, if document doesn't exists it will be created
-  Handle(TDocStd_Document) GetDocument(int theDocID);
+  Standard_EXPORT Handle(TDocStd_Document) GetDocument(int theDocID);
 
   //Returns the ID of the given OCAF document
-  int GetDocID(Handle(TDocStd_Document) theDocument);
+  Standard_EXPORT int GetDocID(Handle(TDocStd_Document) theDocument);
   
   //Returns the OCAF appliaction
-  Handle(TDocStd_Application) GetApplication() { return _OCAFApp; }
+  Standard_EXPORT Handle(TDocStd_Application) GetApplication() { return _OCAFApp; }
 
   //Returns a pointer to GEOM_Object defined by a document and the entry
-  Handle(GEOM_Object) GetObject(int theDocID, char* theEntry);
+  Standard_EXPORT Handle(GEOM_Object) GetObject(int theDocID, char* theEntry);
   
   //Adds a new object of the type theType in the OCAF document
-  Handle(GEOM_Object) AddObject(int theDocID, int theType);
+  Standard_EXPORT Handle(GEOM_Object) AddObject(int theDocID, int theType);
 
   //Removes the object from the OCAF document
-  bool RemoveObject(Handle(GEOM_Object) theObject);  
+  Standard_EXPORT bool RemoveObject(Handle(GEOM_Object) theObject);  
 
   //Saves the OCAF document with ID = theDocID with file with name theFileName
-  bool Save(int theDocID, char* theFileName);
+  Standard_EXPORT bool Save(int theDocID, char* theFileName);
   
   //Loads the OCAF document into the application and assigns to it an ID = theDocID
-  bool Load(int theDocID, char* theFileName);
+  Standard_EXPORT bool Load(int theDocID, char* theFileName);
 
   //Closes the document with ID =  theDocID
-  void Close(int theDocID);
+  Standard_EXPORT void Close(int theDocID);
 
   //Sets the number of Undos (default value = 10)
-  void SetUndoLimit(int theLimit) { _UndoLimit = theLimit; }
+  Standard_EXPORT void SetUndoLimit(int theLimit) { _UndoLimit = theLimit; }
 
   //Applies an Undo to document with ID = theDocID
-  void Undo(int theDocID);
+  Standard_EXPORT void Undo(int theDocID);
 
   //Applies an Redo to document with ID = theDocID
-  void Redo(int theDocID);
+  Standard_EXPORT void Redo(int theDocID);
 
   //Adds a new sub shape object of the MainShape object
-  Handle(GEOM_Object) AddSubShape(Handle(GEOM_Object) theMainShape, 
+  Standard_EXPORT Handle(GEOM_Object) AddSubShape(Handle(GEOM_Object) theMainShape, 
 				  Handle(TColStd_HArray1OfInteger) theIndices,
 				  bool isStandaloneOperation = false);
 
-  TCollection_AsciiString DumpPython(int theDocID, 
+  Standard_EXPORT TCollection_AsciiString DumpPython(int theDocID, 
 				     Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
 				     bool isPublished, 
 				     bool& aValidScript);
 
-  const char* GetDumpName (const char* theStudyEntry) const;
+  Standard_EXPORT const char* GetDumpName (const char* theStudyEntry) const;
 
-  Handle(TColStd_HSequenceOfAsciiString) GetAllDumpNames() const;
+  Standard_EXPORT Handle(TColStd_HSequenceOfAsciiString) GetAllDumpNames() const;
 
  protected:
-  static void SetEngine(GEOM_Engine* theEngine);       
+  Standard_EXPORT static void SetEngine(GEOM_Engine* theEngine);       
 
  private:
 

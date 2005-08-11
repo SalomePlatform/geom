@@ -39,36 +39,36 @@ class VolumeSection{
 
 public:
   // Constructeur effectuant le maillage de peau de la shape
-  VolumeSection(TopoDS_Shape , Standard_Real); 
+  Standard_EXPORT VolumeSection(TopoDS_Shape , Standard_Real); 
 
-  //Methode qui affecte à un point,les coordonnées de centre de la boite englobante de la shape 
-  void CenterOfGravity();
+  //Methode qui affecte € un point,les coordonn‰es de centre de la boite englobante de la shape 
+  Standard_EXPORT void CenterOfGravity();
 
   // Methode qui calcule le volume sous un plan Z = h
-  Standard_Real CalculateVolume(Standard_Real); 
+  Standard_EXPORT Standard_Real CalculateVolume(Standard_Real); 
 
   // Methode qui resout l'equation V(h)=constante
-  Standard_Real Archimede(Standard_Real , Standard_Real); 
+  Standard_EXPORT Standard_Real Archimede(Standard_Real , Standard_Real); 
 
-  // Methode permettant de "setter" un plan afin de l'utiliser à l'interieur de la classe
-  void SetPlane(Handle (Geom_Plane));
+  // Methode permettant de "setter" un plan afin de l'utiliser € l'interieur de la classe
+  Standard_EXPORT void SetPlane(Handle (Geom_Plane));
 
-  // Methode permettant de récupérer la shape modifiée à l'extérieur de la classe
-  TopoDS_Shape GetShape();
+  // Methode permettant de r‰cup‰rer la shape modifi‰e € l'ext‰rieur de la classe
+  Standard_EXPORT TopoDS_Shape GetShape();
 
   // Methode effectuant la rotation du plan et de la shape
-  void MakeRotation(gp_Dir);
+  Standard_EXPORT void MakeRotation(gp_Dir);
 
   // Methode effectuant la rotation inverse du plan et de la shape
-  Handle (Geom_RectangularTrimmedSurface) InvMakeRotation(gp_Dir,Handle(Geom_RectangularTrimmedSurface));
+  Standard_EXPORT Handle (Geom_RectangularTrimmedSurface) InvMakeRotation(gp_Dir,Handle(Geom_RectangularTrimmedSurface));
 
-  // Methode permettant de découper le plan selon une projection de la Shape
-  Handle (Geom_RectangularTrimmedSurface) TrimSurf();
+  // Methode permettant de d‰couper le plan selon une projection de la Shape
+  Standard_EXPORT Handle (Geom_RectangularTrimmedSurface) TrimSurf();
 
-  // Methode permmettant de deplacer le plan jusqu'a la position donnée par Archimède
-  Handle (Geom_RectangularTrimmedSurface) AjustePlan(Handle(Geom_RectangularTrimmedSurface),Standard_Real,gp_Pnt);
+  // Methode permmettant de deplacer le plan jusqu'a la position donn‰e par Archimˆde
+  Standard_EXPORT Handle (Geom_RectangularTrimmedSurface) AjustePlan(Handle(Geom_RectangularTrimmedSurface),Standard_Real,gp_Pnt);
 
-  void getZ( double& min, double& max);
+  Standard_EXPORT void getZ( double& min, double& max);
   
 private:
   

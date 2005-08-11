@@ -1,8 +1,9 @@
-using namespace std;
 
-#include "GEOM_Function.hxx"
-#include "GEOM_Object.hxx"
-#include "GEOM_Solver.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOM_Function.hxx>
+#include <GEOM_Object.hxx>
+#include <GEOM_Solver.hxx>
 
 #include "utilities.h"
 

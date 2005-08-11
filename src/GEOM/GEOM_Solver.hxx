@@ -11,19 +11,19 @@
 class GEOM_Solver
 {
  public:
-  GEOM_Solver(GEOM_Engine* theEngine) :_engine(theEngine) {}
-  ~GEOM_Solver() {}
+  Standard_EXPORT GEOM_Solver(GEOM_Engine* theEngine) :_engine(theEngine) {}
+  Standard_EXPORT ~GEOM_Solver() {}
 
   //Update the values of all GEOM_Object in the document theDocID, theSeq will contain a list of touched labels
   //Note: not Implemented
-  bool Update(int theDocID, TDF_LabelSequence& theSeq); 
+  Standard_EXPORT bool Update(int theDocID, TDF_LabelSequence& theSeq); 
  
   //Updates a value of theObject, theSeq will contain a list of touched labels
   //Note: not implemented
-  bool UpdateObject(Handle(GEOM_Object) theObject, TDF_LabelSequence& theSeq);
+  Standard_EXPORT bool UpdateObject(Handle(GEOM_Object) theObject, TDF_LabelSequence& theSeq);
 
   //Recomputes a function
-  bool ComputeFunction(Handle(GEOM_Function) theFunction);
+  Standard_EXPORT bool ComputeFunction(Handle(GEOM_Function) theFunction);
 
  private:
 

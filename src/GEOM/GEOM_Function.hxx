@@ -130,96 +130,96 @@ private:
 public:
 
   //Returns a GUID for a function tree  
-  static const Standard_GUID& GetFunctionTreeID();
+  Standard_EXPORT static const Standard_GUID& GetFunctionTreeID();
 
   //Returns the ID which is associated with a reference to another function  
-  static const Standard_GUID& GetDependencyID();
+  Standard_EXPORT static const Standard_GUID& GetDependencyID();
 
   //Finds and returns a function located on a label theEntry
-  static Handle(GEOM_Function) GetFunction(const TDF_Label& theEntry);
+  Standard_EXPORT static Handle(GEOM_Function) GetFunction(const TDF_Label& theEntry);
 
 
-  GEOM_Function(const TDF_Label& theEntry, const Standard_GUID& theGUID, int theType); 
-  ~GEOM_Function() {;}
+  Standard_EXPORT GEOM_Function(const TDF_Label& theEntry, const Standard_GUID& theGUID, int theType); 
+  Standard_EXPORT ~GEOM_Function() {;}
 
-  TDF_Label GetOwnerEntry();
+  Standard_EXPORT TDF_Label GetOwnerEntry();
 
   //Access to properties 
 
   //Returns a result of the function built by the function Driver
-  TopoDS_Shape GetValue();
+  Standard_EXPORT TopoDS_Shape GetValue();
 
   //Sets the function result
-  void SetValue(TopoDS_Shape& theShape);
+  Standard_EXPORT void SetValue(TopoDS_Shape& theShape);
 
   //Returns a function entry in the OCAF document
-  TDF_Label& GetEntry() { return _label; }
+  Standard_EXPORT TDF_Label& GetEntry() { return _label; }
 
   //Returns the type of the function
-  int GetType();    
+  Standard_EXPORT int GetType();    
 
   //Returns a function Driver GUID
-  Standard_GUID GetDriverGUID();
+  Standard_EXPORT Standard_GUID GetDriverGUID();
 
   //Returns aPython description of the function
-  TCollection_AsciiString GetDescription();
+  Standard_EXPORT TCollection_AsciiString GetDescription();
 
   //Sets aPython description of the function  
-  void SetDescription(const TCollection_AsciiString& theDescription);  
+  Standard_EXPORT void SetDescription(const TCollection_AsciiString& theDescription);  
 
   //Access to arguments
 
   //Sets a real argument at position thePosition
-  void SetReal(int thePosition, double theValue);
+  Standard_EXPORT void SetReal(int thePosition, double theValue);
 
   //Returns a real argument at position thePosition
-  double GetReal(int thePosition);
+  Standard_EXPORT double GetReal(int thePosition);
 
   //Sets a real array argument at position thePosition
-  void SetRealArray(int thePosition, const Handle(TColStd_HArray1OfReal)& theArray);
+  Standard_EXPORT void SetRealArray(int thePosition, const Handle(TColStd_HArray1OfReal)& theArray);
 
   //Returns a real array argument at position thePosition
-  Handle(TColStd_HArray1OfReal) GetRealArray(int thePosition);
+  Standard_EXPORT Handle(TColStd_HArray1OfReal) GetRealArray(int thePosition);
 
   //Sets an integer argument at position thePosition
-  void SetInteger(int thePosition, int theValue);
+  Standard_EXPORT void SetInteger(int thePosition, int theValue);
 
   //Returns an integer argument at position thePosition
-  int GetInteger(int thePosition);  
+  Standard_EXPORT int GetInteger(int thePosition);  
   
   //Sets an integer array argument at position thePosition
-  void SetIntegerArray(int thePosition, const Handle(TColStd_HArray1OfInteger)& theArray);
+  Standard_EXPORT void SetIntegerArray(int thePosition, const Handle(TColStd_HArray1OfInteger)& theArray);
 
   //Returns an integer array argument at position thePosition
-  Handle(TColStd_HArray1OfInteger) GetIntegerArray(int thePosition);
+  Standard_EXPORT Handle(TColStd_HArray1OfInteger) GetIntegerArray(int thePosition);
 
   //Sets a reference to other function argument at position thePosition
-  void SetReference(int thePosition, Handle(GEOM_Function) theReference);
+  Standard_EXPORT void SetReference(int thePosition, Handle(GEOM_Function) theReference);
 
   //Sets a string argument at position thePosition
-  void SetString(int thePosition, const TCollection_AsciiString& theValue);
+  Standard_EXPORT void SetString(int thePosition, const TCollection_AsciiString& theValue);
 
   //Returns a string argument at position thePosition
-  TCollection_AsciiString GetString(int thePosition);  
+  Standard_EXPORT TCollection_AsciiString GetString(int thePosition);  
   
   //Returns a reference to other function argument at position thePosition
-  Handle(GEOM_Function) GetReference(int thePosition); 
+  Standard_EXPORT Handle(GEOM_Function) GetReference(int thePosition); 
 
   //Set an array of ExtendedString
-  void SetStringArray(int thePosition, const Handle(TColStd_HArray1OfExtendedString)& theArray);
+  Standard_EXPORT void SetStringArray(int thePosition, const Handle(TColStd_HArray1OfExtendedString)& theArray);
     
   //Returns the array of ExtendedString
-  Handle(TColStd_HArray1OfExtendedString) GetStringArray(int thePosition);
+  Standard_EXPORT Handle(TColStd_HArray1OfExtendedString) GetStringArray(int thePosition);
 
   //Returns a GUID for a references tree  
-  static const Standard_GUID& GetReferencesTreeID();
+  Standard_EXPORT static const Standard_GUID& GetReferencesTreeID();
 
   //Sets a list of references to other function arguments at position thePosition
-  void SetReferenceList (int thePosition,
+  Standard_EXPORT void SetReferenceList (int thePosition,
                          const Handle(TColStd_HSequenceOfTransient)& theRefList);
 
   //Returns a list of references to other function arguments at position thePosition
-  Handle(TColStd_HSequenceOfTransient) GetReferenceList (int thePosition); 
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetReferenceList (int thePosition); 
 
   //Sets a TopoDS_Shape argument at position thePosition
   //void SetShape(int thePosition, const TopoDS_Shape& theShape);
@@ -228,17 +228,17 @@ public:
   //TopoDS_Shape GetShape(int thePosition);  
   
   //Returns true if the last method succided 
-  bool IsDone() { return _isDone; }
+  Standard_EXPORT bool IsDone() { return _isDone; }
 
   //Returns a sequence of the external dependencies of this function
-  void GetDependency(TDF_LabelSequence& theSeq);
+  Standard_EXPORT void GetDependency(TDF_LabelSequence& theSeq);
 
   //Returns top label of this function's history tree
-  TDF_Label GetHistoryEntry (const Standard_Boolean create = Standard_True);
+  Standard_EXPORT TDF_Label GetHistoryEntry (const Standard_Boolean create = Standard_True);
 
   //Returns history label, corresponding to the label,
   //on which a reference on argument is stored
-  TDF_Label GetArgumentHistoryEntry (const TDF_Label&       theArgumentRefEntry,
+  Standard_EXPORT TDF_Label GetArgumentHistoryEntry (const TDF_Label&       theArgumentRefEntry,
                                      const Standard_Boolean create = Standard_True);
 
 private:

@@ -1,8 +1,8 @@
-using namespace std; 
+#include <Standard_Stream.hxx>
 
-#include "GEOM_Object.hxx"
-#include "GEOM_Engine.hxx"
-#include "GEOM_Solver.hxx"
+#include <GEOM_Object.hxx>
+#include <GEOM_Engine.hxx>
+#include <GEOM_Solver.hxx>
 #include <TDF_Tool.hxx>
 #include <TDF_Data.hxx>
 #include <TDF_Reference.hxx>
