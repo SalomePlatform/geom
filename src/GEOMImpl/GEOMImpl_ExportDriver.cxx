@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_ExportDriver.hxx"
-#include "GEOMImpl_IImportExport.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_ExportDriver.hxx>
+#include <GEOMImpl_IImportExport.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <TopoDS_Shape.hxx>
 #include <TCollection_AsciiString.hxx>

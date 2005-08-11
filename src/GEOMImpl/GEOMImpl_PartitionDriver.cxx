@@ -1,11 +1,12 @@
 
-using namespace std;
-#include "GEOMImpl_PartitionDriver.hxx"
-#include "GEOMImpl_IPartition.hxx"
-#include "GEOMImpl_Types.hxx"
+#include <Standard_Stream.hxx>
 
-#include "GEOM_Object.hxx"
-#include "GEOM_Function.hxx"
+#include <GEOMImpl_PartitionDriver.hxx>
+#include <GEOMImpl_IPartition.hxx>
+#include <GEOMImpl_Types.hxx>
+
+#include <GEOM_Object.hxx>
+#include <GEOM_Function.hxx>
 
 #include <NMTAlgo_Splitter1.hxx>
 

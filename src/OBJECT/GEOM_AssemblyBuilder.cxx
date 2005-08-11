@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 /*!
   \class GEOM_AssemblyBuilder GEOM_AssemblyBuilder.h
   \brief ....
@@ -48,6 +47,7 @@ using namespace std;
 #include <TopTools_ListOfShape.hxx>
 #include <TopoDS_Iterator.hxx>
 
+using namespace std;
 // SALOME
 
 #define MAX2(X, Y)	(  Abs(X) > Abs(Y)? Abs(X) : Abs(Y) )

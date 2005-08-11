@@ -1,10 +1,11 @@
 
-using namespace std;
-#include "GEOMImpl_ShapeDriver.hxx"
-#include "GEOMImpl_IShapes.hxx"
-#include "GEOMImpl_IShapesOperations.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_ShapeDriver.hxx>
+#include <GEOMImpl_IShapes.hxx>
+#include <GEOMImpl_IShapesOperations.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>

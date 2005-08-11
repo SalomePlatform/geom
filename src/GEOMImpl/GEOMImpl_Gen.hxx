@@ -18,7 +18,13 @@
 #include "GEOMImpl_IGroupOperations.hxx"
 #include "GEOM_Engine.hxx"
 
-class GEOMImpl_Gen : public GEOM_Engine
+#ifdef WNT
+#include <SALOME_WNT.hxx>
+#else
+#define SALOME_WNT_EXPORT 
+#endif
+
+class SALOME_WNT_EXPORT GEOMImpl_Gen : public GEOM_Engine
 {
  public:
   GEOMImpl_Gen();

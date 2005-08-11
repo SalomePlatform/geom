@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_PrismDriver.hxx"
-#include "GEOMImpl_IPrism.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_PrismDriver.hxx>
+#include <GEOMImpl_IPrism.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepPrimAPI_MakePrism.hxx>
 #include <BRep_Tool.hxx>

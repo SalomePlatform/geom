@@ -12,6 +12,12 @@
 #include <TCollection_AsciiString.hxx>
 #include <TopoDS_Shape.hxx>
 
+#ifdef WNT
+#include <SALOME_WNT.hxx>
+#else
+#define SALOME_WNT_EXPORT
+#endif
+
 //=============================================================================
 /*!
  *
@@ -20,9 +26,7 @@
 
 extern "C"
 {
-#ifdef WNT
-  __declspec(__dllexport)
-#endif
+SALOME_WNT_EXPORT
   int Export(const TopoDS_Shape& theShape, const TCollection_AsciiString& theFileName)
   {
     MESSAGE("Export IGES into file " << theFileName.ToCString());

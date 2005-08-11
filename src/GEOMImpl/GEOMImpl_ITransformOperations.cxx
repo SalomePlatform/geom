@@ -1,34 +1,34 @@
-using namespace std;
+#include <Standard_Stream.hxx>
 
-#include "GEOMImpl_ITransformOperations.hxx"
+#include <GEOMImpl_ITransformOperations.hxx>
 
 #include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
 #include <TFunction_Logbook.hxx>
 #include <TDF_Tool.hxx>
 
-#include "GEOM_Function.hxx"
-#include "GEOM_PythonDump.hxx"
+#include <GEOM_Function.hxx>
+#include <GEOM_PythonDump.hxx>
 
-#include "GEOMImpl_TranslateDriver.hxx"
-#include "GEOMImpl_MirrorDriver.hxx"
-#include "GEOMImpl_OffsetDriver.hxx"
-#include "GEOMImpl_ScaleDriver.hxx"
-#include "GEOMImpl_RotateDriver.hxx"
-#include "GEOMImpl_PositionDriver.hxx"
+#include <GEOMImpl_TranslateDriver.hxx>
+#include <GEOMImpl_MirrorDriver.hxx>
+#include <GEOMImpl_OffsetDriver.hxx>
+#include <GEOMImpl_ScaleDriver.hxx>
+#include <GEOMImpl_RotateDriver.hxx>
+#include <GEOMImpl_PositionDriver.hxx>
 
-#include "GEOMImpl_ITranslate.hxx"
-#include "GEOMImpl_IMirror.hxx"
-#include "GEOMImpl_IOffset.hxx"
-#include "GEOMImpl_IScale.hxx"
-#include "GEOMImpl_IRotate.hxx"
-#include "GEOMImpl_IPosition.hxx"
+#include <GEOMImpl_ITranslate.hxx>
+#include <GEOMImpl_IMirror.hxx>
+#include <GEOMImpl_IOffset.hxx>
+#include <GEOMImpl_IScale.hxx>
+#include <GEOMImpl_IRotate.hxx>
+#include <GEOMImpl_IPosition.hxx>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 

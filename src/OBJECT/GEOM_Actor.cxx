@@ -185,7 +185,7 @@ void GEOM_Actor::SetShadingProperty(vtkProperty* Prop) {
 // Mapper creating function
 //-------------------------------------------------------------
 void GEOM_Actor::CreateMapper(int theMode) {
-  this->myIsInfinite = myShape.Infinite();  
+  this->myIsInfinite = (bool)myShape.Infinite();  
   if(myShape.ShapeType() == TopAbs_VERTEX) {
     gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(myShape));
     this->SetPosition(aPnt.X(),aPnt.Y(),aPnt.Z());

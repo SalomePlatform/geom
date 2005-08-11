@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_CylinderDriver.hxx"
-#include "GEOMImpl_ICylinder.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_CylinderDriver.hxx>
+#include <GEOMImpl_ICylinder.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRep_Tool.hxx>

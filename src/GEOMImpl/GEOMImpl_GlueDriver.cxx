@@ -1,13 +1,14 @@
 
-using namespace std;
-#include "GEOMImpl_GlueDriver.hxx"
-#include "GEOMImpl_IGlue.hxx"
-#include "GEOMImpl_Types.hxx"
+#include <Standard_Stream.hxx>
 
-#include "GEOM_Object.hxx"
-#include "GEOM_Function.hxx"
+#include <GEOMImpl_GlueDriver.hxx>
+#include <GEOMImpl_IGlue.hxx>
+#include <GEOMImpl_Types.hxx>
 
-#include "GEOMAlgo_Gluer.hxx"
+#include <GEOM_Object.hxx>
+#include <GEOM_Function.hxx>
+
+#include <GEOMAlgo_Gluer.hxx>
 
 #include "utilities.h"
 

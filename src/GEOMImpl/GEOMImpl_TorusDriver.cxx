@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_TorusDriver.hxx"
-#include "GEOMImpl_ITorus.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_TorusDriver.hxx>
+#include <GEOMImpl_ITorus.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepPrimAPI_MakeTorus.hxx>
 #include <BRep_Tool.hxx>

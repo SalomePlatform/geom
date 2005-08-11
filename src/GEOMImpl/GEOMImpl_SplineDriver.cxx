@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_SplineDriver.hxx"
-#include "GEOMImpl_ISpline.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_SplineDriver.hxx>
+#include <GEOMImpl_ISpline.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRep_Tool.hxx>
@@ -95,7 +96,7 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
       GeomAPI_Interpolate GBC (aHCurvePoints, Standard_False, gp::Resolution());
       GBC.Perform();
       if (GBC.IsDone())
-        aShape = BRepBuilderAPI_MakeEdge(GBC).Edge();
+        aShape = BRepBuilderAPI_MakeEdge(GBC.Curve()).Edge();
       else
         return 0;
     }

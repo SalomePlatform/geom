@@ -1,10 +1,11 @@
 
-using namespace std;
-#include "GEOMImpl_MirrorDriver.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_MirrorDriver.hxx>
 
 #include <GEOMImpl_IMirror.hxx>
 #include <GEOMImpl_Types.hxx>
-#include "GEOM_Function.hxx"
+#include <GEOM_Function.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_Transform.hxx>

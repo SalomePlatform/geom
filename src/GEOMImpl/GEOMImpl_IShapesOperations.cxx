@@ -1,28 +1,28 @@
-using namespace std;
+#include <Standard_Stream.hxx>
 
-#include "GEOMImpl_IShapesOperations.hxx"
+#include <GEOMImpl_IShapesOperations.hxx>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
-#include "GEOMImpl_VectorDriver.hxx"
-#include "GEOMImpl_ShapeDriver.hxx"
-#include "GEOMImpl_CopyDriver.hxx"
-#include "GEOMImpl_GlueDriver.hxx"
+#include <GEOMImpl_VectorDriver.hxx>
+#include <GEOMImpl_ShapeDriver.hxx>
+#include <GEOMImpl_CopyDriver.hxx>
+#include <GEOMImpl_GlueDriver.hxx>
 
-#include "GEOMImpl_IVector.hxx"
-#include "GEOMImpl_IShapes.hxx"
-#include "GEOMImpl_IGlue.hxx"
+#include <GEOMImpl_IVector.hxx>
+#include <GEOMImpl_IShapes.hxx>
+#include <GEOMImpl_IGlue.hxx>
 
-#include "GEOMImpl_Block6Explorer.hxx"
+#include <GEOMImpl_Block6Explorer.hxx>
 
-#include "GEOM_Function.hxx"
-#include "GEOM_PythonDump.hxx"
+#include <GEOM_Function.hxx>
+#include <GEOM_PythonDump.hxx>
 
-#include "GEOMAlgo_FinderShapeOn1.hxx"
+#include <GEOMAlgo_FinderShapeOn1.hxx>
 
 #include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>

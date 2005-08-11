@@ -1,27 +1,31 @@
-using namespace std;
+#ifdef WNT
+#pragma warning( disable:4786 )
+#endif
 
-#include "GEOMImpl_IBlocksOperations.hxx"
+#include <Standard_Stream.hxx>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_IBlocksOperations.hxx>
 
-#include "GEOMImpl_BlockDriver.hxx"
-#include "GEOMImpl_IBlocks.hxx"
-#include "GEOMImpl_IBlockTrsf.hxx"
-#include "GEOMImpl_CopyDriver.hxx"
-#include "GEOMImpl_Block6Explorer.hxx"
+#include <GEOMImpl_Types.hxx>
 
-#include "GEOM_Function.hxx"
-#include "GEOM_PythonDump.hxx"
+#include <GEOMImpl_BlockDriver.hxx>
+#include <GEOMImpl_IBlocks.hxx>
+#include <GEOMImpl_IBlockTrsf.hxx>
+#include <GEOMImpl_CopyDriver.hxx>
+#include <GEOMImpl_Block6Explorer.hxx>
 
-#include "GEOMAlgo_GlueAnalyser.hxx"
-#include "GEOMAlgo_CoupleOfShapes.hxx"
-#include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
-#include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
-#include "BlockFix_CheckTool.hxx"
+#include <GEOM_Function.hxx>
+#include <GEOM_PythonDump.hxx>
+
+#include <GEOMAlgo_GlueAnalyser.hxx>
+#include <GEOMAlgo_CoupleOfShapes.hxx>
+#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
+#include <GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx>
+#include <BlockFix_CheckTool.hxx>
 
 #include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>

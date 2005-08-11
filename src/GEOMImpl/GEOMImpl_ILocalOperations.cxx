@@ -1,24 +1,24 @@
-using namespace std;
+#include <Standard_Stream.hxx>
 
-#include "GEOMImpl_ILocalOperations.hxx"
+#include <GEOMImpl_ILocalOperations.hxx>
 
-#include "GEOM_Function.hxx"
-#include "GEOM_PythonDump.hxx"
+#include <GEOM_Function.hxx>
+#include <GEOM_PythonDump.hxx>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
-#include "GEOMImpl_FilletDriver.hxx"
-#include "GEOMImpl_ChamferDriver.hxx"
+#include <GEOMImpl_FilletDriver.hxx>
+#include <GEOMImpl_ChamferDriver.hxx>
 
-#include "GEOMImpl_IFillet.hxx"
-#include "GEOMImpl_IChamfer.hxx"
+#include <GEOMImpl_IFillet.hxx>
+#include <GEOMImpl_IChamfer.hxx>
 
-#include "GEOMImpl_IArchimede.hxx"
-#include "GEOMImpl_ArchimedeDriver.hxx"
+#include <GEOMImpl_IArchimede.hxx>
+#include <GEOMImpl_ArchimedeDriver.hxx>
 
 #include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>

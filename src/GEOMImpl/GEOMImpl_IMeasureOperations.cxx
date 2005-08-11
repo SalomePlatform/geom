@@ -1,17 +1,17 @@
-using namespace std;
+#include <Standard_Stream.hxx>
 
-#include "GEOMImpl_IMeasureOperations.hxx"
+#include <GEOMImpl_IMeasureOperations.hxx>
 
-#include "GEOMImpl_Types.hxx"
-#include "GEOMImpl_MeasureDriver.hxx"
-#include "GEOMImpl_IMeasure.hxx"
+#include <GEOMImpl_Types.hxx>
+#include <GEOMImpl_MeasureDriver.hxx>
+#include <GEOMImpl_IMeasure.hxx>
 
-#include "GEOM_Function.hxx"
-#include "GEOM_PythonDump.hxx"
+#include <GEOM_Function.hxx>
+#include <GEOM_PythonDump.hxx>
 
 #include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>

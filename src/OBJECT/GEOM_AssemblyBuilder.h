@@ -34,7 +34,13 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 
-class GEOM_AssemblyBuilder {
+#ifdef WNT
+#include <SALOME_WNT.hxx>
+#else
+#define SALOME_WNT_EXPORT
+#endif
+
+class SALOME_WNT_EXPORT GEOM_AssemblyBuilder {
 
  private:
 

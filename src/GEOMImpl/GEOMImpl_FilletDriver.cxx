@@ -1,10 +1,11 @@
 
-using namespace std;
-#include "GEOMImpl_FilletDriver.hxx"
-#include "GEOMImpl_IFillet.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOMImpl_ILocalOperations.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_FilletDriver.hxx>
+#include <GEOMImpl_IFillet.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOMImpl_ILocalOperations.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepFilletAPI_MakeFillet.hxx>
 #include <BRepCheck_Analyzer.hxx>

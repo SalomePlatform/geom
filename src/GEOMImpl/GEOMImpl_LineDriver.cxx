@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_LineDriver.hxx"
-#include "GEOMImpl_ILine.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_LineDriver.hxx>
+#include <GEOMImpl_ILine.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>

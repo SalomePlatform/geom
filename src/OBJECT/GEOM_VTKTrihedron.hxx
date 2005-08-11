@@ -33,6 +33,13 @@
 #include "SALOME_Actor.h"
 #include "VTKViewer_Trihedron.h"
 
+#ifdef WNT
+#include <SALOME_WNT.hxx>
+#else
+#define SALOME_WNT_EXPORT
+#endif
+
+
 class vtkActorCollection;
 class vtkRenderer;
 class vtkPolyDataMapper;
@@ -43,7 +50,7 @@ class vtkPolyDataMapper;
                 Placement of trihedron is chahged with SetPlacement() method
 */
 
-class GEOM_VTKTrihedron : public SALOME_Actor
+class SALOME_WNT_EXPORT GEOM_VTKTrihedron : public SALOME_Actor
 {
 
 protected:

@@ -1,9 +1,9 @@
+#include <Standard_Stream.hxx>
 
-using namespace std;
-#include "GEOMImpl_VectorDriver.hxx"
-#include "GEOMImpl_IVector.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <GEOMImpl_VectorDriver.hxx>
+#include <GEOMImpl_IVector.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>

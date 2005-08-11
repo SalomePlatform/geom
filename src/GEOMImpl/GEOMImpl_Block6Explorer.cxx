@@ -1,8 +1,8 @@
-using namespace std;
+#include <Standard_Stream.hxx>
 
 #include <BRepOffsetAPI_MakeFilling.hxx>
 
-#include "GEOMImpl_Block6Explorer.hxx"
+#include <GEOMImpl_Block6Explorer.hxx>
 
 #include "utilities.h"
 
@@ -720,7 +720,8 @@ void GEOMImpl_Block6Explorer::InitByBlockAndVertices (const TopoDS_Shape& theBlo
   TopTools_IndexedMapOfShape aFaceEdges;
   TopExp::MapShapes(myFaces(1), TopAbs_EDGE, aFaceEdges);
 
-  for (Standard_Integer i = 1; i <= 4; i++) {
+  Standard_Integer i = 1;
+  for (; i <= 4; i++) {
     // Get i-th vertex of the face 1
     TopoDS_Shape Vi = myVertices(vertex_id(1, i));
     if (!MB.Contains(Vi)) {
@@ -757,7 +758,7 @@ void GEOMImpl_Block6Explorer::InitByBlockAndVertices (const TopoDS_Shape& theBlo
   }
 
   // 3. Store edges of the second (opposite to the first) face
-  for (Standard_Integer i = 1; i <= 4; i++) {
+  for (i = 1; i <= 4; i++) {
     // Get i-th and (i+1)-th vertices of the face 2
     TopoDS_Shape Vi = myVertices(vertex_id(2, i));
     TopoDS_Shape Vj = myVertices(vertex_id(2, mod4(i + 1)));
@@ -792,7 +793,7 @@ void GEOMImpl_Block6Explorer::InitByBlockAndVertices (const TopoDS_Shape& theBlo
     Standard_TypeMismatch::Raise("Block has wrong number of edges");
   }
 
-  for (Standard_Integer i = 2; i <= NBFACES; i++) {
+  for (i = 2; i <= NBFACES; i++) {
     TopoDS_Shape Ei1 = myEdges(edge_id(i, 1));
     TopoDS_Shape Ei2 = myEdges(edge_id(i, 2));
     const TopTools_ListOfShape& aFacesOfEi1 = MBE.FindFromKey(Ei1);
@@ -915,7 +916,8 @@ void GEOMImpl_Block6Explorer::InitByTwoFaces (const TopoDS_Shape& theFace1,
 
   Standard_Real Dist_min = RealLast();
   // try all possible locations to find the best (with minimum sum distance)
-  for (Standard_Integer i = 1; i <= 4; i++) {
+  Standard_Integer i = 1;
+  for (; i <= 4; i++) {
     // try direct orientation
     Standard_Real Dist_plus = aPnts1(1).Distance(aPnts2(i)) +
                               aPnts1(2).Distance(aPnts2(mod4(i + 1))) +
@@ -941,7 +943,7 @@ void GEOMImpl_Block6Explorer::InitByTwoFaces (const TopoDS_Shape& theFace1,
 
   // 3. Put vertices and edges of the second face to they
   //    permanent location in <myVertices> and <myEdges>
-  for (Standard_Integer i = 1; i <= 4; i++) {
+  for (i = 1; i <= 4; i++) {
     Standard_Integer nb = mod4(i_min + s_min*(i - 1));
 
     if (aPnts1(i).Distance(aPnts2(nb)) < Precision::Confusion()) {

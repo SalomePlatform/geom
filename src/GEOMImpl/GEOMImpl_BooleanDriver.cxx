@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_BooleanDriver.hxx"
-#include "GEOMImpl_IBoolean.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_BooleanDriver.hxx>
+#include <GEOMImpl_IBoolean.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepAlgo.hxx>
 #include <BRepAlgoAPI_Common.hxx>

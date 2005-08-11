@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_RotateDriver.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_RotateDriver.hxx>
 #include <GEOMImpl_IRotate.hxx>
 #include <GEOMImpl_Types.hxx>
-#include "GEOM_Function.hxx"
+#include <GEOM_Function.hxx>
 #include <gp_Trsf.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
@@ -149,7 +150,8 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     }
     
     Handle(Geom_Line) Line = new Geom_Line(AX1);
-    gp_Pnt P2 = GeomAPI_ProjectPointOnCurve( P1, Line ) ;
+    GeomAPI_ProjectPointOnCurve aPrjTool( P1, Line ) ;
+    gp_Pnt P2 = aPrjTool.NearestPoint();
     
     if ( P1.IsEqual(P2, Precision::Confusion() ) ) return 0;
     

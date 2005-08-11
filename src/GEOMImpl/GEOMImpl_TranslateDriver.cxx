@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_TranslateDriver.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_ITranslate.hxx>
 #include <GEOMImpl_Types.hxx>
-#include "GEOM_Function.hxx"
+#include <GEOM_Function.hxx>
 #include <gp_Trsf.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>

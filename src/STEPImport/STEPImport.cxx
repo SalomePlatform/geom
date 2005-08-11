@@ -17,6 +17,12 @@
 
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+#ifdef WNT
+#include <SALOME_WNT.hxx>
+#else
+#define SALOME_WNT_EXPORT
+#endif
+
 //=============================================================================
 /*!
  *  Import()
@@ -25,9 +31,7 @@
 
 extern "C"
 {
-#ifdef WNT
-  __declspec(__dllexport)
-#endif
+SALOME_WNT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        TCollection_AsciiString&       theError)
   {

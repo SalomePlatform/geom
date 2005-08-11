@@ -1,10 +1,11 @@
 
-using namespace std;
-#include "GEOMImpl_MeasureDriver.hxx"
-#include "GEOMImpl_IMeasure.hxx"
-#include "GEOMImpl_IMeasureOperations.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_MeasureDriver.hxx>
+#include <GEOMImpl_IMeasure.hxx>
+#include <GEOMImpl_IMeasureOperations.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRepGProp.hxx>

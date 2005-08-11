@@ -1,27 +1,27 @@
-using namespace std;
+#include <Standard_Stream.hxx>
 
-#include "GEOMImpl_IInsertOperations.hxx"
+#include <GEOMImpl_IInsertOperations.hxx>
 
 #include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
 #include <TFunction_Logbook.hxx>
 #include <TDF_Tool.hxx>
 
-#include "GEOM_Function.hxx"
-#include "GEOM_PythonDump.hxx"
+#include <GEOM_Function.hxx>
+#include <GEOM_PythonDump.hxx>
 
-#include "GEOMImpl_CopyDriver.hxx"
-#include "GEOMImpl_ExportDriver.hxx"
-#include "GEOMImpl_ImportDriver.hxx"
+#include <GEOMImpl_CopyDriver.hxx>
+#include <GEOMImpl_ExportDriver.hxx>
+#include <GEOMImpl_ImportDriver.hxx>
 
-#include "GEOMImpl_ICopy.hxx"
-#include "GEOMImpl_IImportExport.hxx"
+#include <GEOMImpl_ICopy.hxx>
+#include <GEOMImpl_IImportExport.hxx>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 

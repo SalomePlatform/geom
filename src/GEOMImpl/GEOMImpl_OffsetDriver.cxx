@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_OffsetDriver.hxx"
-#include "GEOMImpl_IOffset.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_OffsetDriver.hxx>
+#include <GEOMImpl_IOffset.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepOffsetAPI_MakeOffsetShape.hxx>
 #include <BRep_Tool.hxx>

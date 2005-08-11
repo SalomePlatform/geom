@@ -18,100 +18,100 @@ class Handle(TColStd_HArray1OfInteger);
 
 class GEOMImpl_IShapesOperations : public GEOM_IOperations {
  public:
-  GEOMImpl_IShapesOperations(GEOM_Engine* theEngine, int theDocID);
-  ~GEOMImpl_IShapesOperations();
+  Standard_EXPORT GEOMImpl_IShapesOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT ~GEOMImpl_IShapesOperations();
 
-  Handle(GEOM_Object) MakeEdge (Handle(GEOM_Object) thePoint1,
+  Standard_EXPORT Handle(GEOM_Object) MakeEdge (Handle(GEOM_Object) thePoint1,
                                 Handle(GEOM_Object) thePoint2);
 
-  Handle(GEOM_Object) MakeWire (list<Handle(GEOM_Object)> theEdgesAndWires);
+  Standard_EXPORT Handle(GEOM_Object) MakeWire (list<Handle(GEOM_Object)> theEdgesAndWires);
 
-  Handle(GEOM_Object) MakeFace (Handle(GEOM_Object) theWire, const bool isPlanarWanted);
+  Standard_EXPORT Handle(GEOM_Object) MakeFace (Handle(GEOM_Object) theWire, const bool isPlanarWanted);
 
-  Handle(GEOM_Object) MakeFaceWires (list<Handle(GEOM_Object)> theWires,
+  Standard_EXPORT Handle(GEOM_Object) MakeFaceWires (list<Handle(GEOM_Object)> theWires,
                                      const bool isPlanarWanted);
 
-  Handle(GEOM_Object) MakeShell (list<Handle(GEOM_Object)> theShapes);
+  Standard_EXPORT Handle(GEOM_Object) MakeShell (list<Handle(GEOM_Object)> theShapes);
 
-  Handle(GEOM_Object) MakeSolidShell (Handle(GEOM_Object) theShell);
+  Standard_EXPORT Handle(GEOM_Object) MakeSolidShell (Handle(GEOM_Object) theShell);
 
-  Handle(GEOM_Object) MakeSolidShells (list<Handle(GEOM_Object)> theShells);
+  Standard_EXPORT Handle(GEOM_Object) MakeSolidShells (list<Handle(GEOM_Object)> theShells);
 
-  Handle(GEOM_Object) MakeCompound (list<Handle(GEOM_Object)> theShapes);
+  Standard_EXPORT Handle(GEOM_Object) MakeCompound (list<Handle(GEOM_Object)> theShapes);
 
-  Handle(GEOM_Object) MakeGlueFaces (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueFaces (Handle(GEOM_Object) theShape,
                                      const Standard_Real theTolerance);
 
-  Handle(TColStd_HSequenceOfTransient) MakeExplode (Handle(GEOM_Object)    theShape,
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakeExplode (Handle(GEOM_Object)    theShape,
                                                     const Standard_Integer theShapeType,
                                                     const Standard_Boolean isSorted);
 
-  Handle(TColStd_HSequenceOfInteger) SubShapeAllIDs (Handle(GEOM_Object)    theShape,
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger) SubShapeAllIDs (Handle(GEOM_Object)    theShape,
                                                      const Standard_Integer theShapeType,
                                                      const Standard_Boolean isSorted);
 
-  Handle(GEOM_Object) GetSubShape (Handle(GEOM_Object)    theMainShape,
+  Standard_EXPORT Handle(GEOM_Object) GetSubShape (Handle(GEOM_Object)    theMainShape,
                                    const Standard_Integer theID);
 
-  Standard_Integer NumberOfFaces (Handle(GEOM_Object) theShape);
-  Standard_Integer NumberOfEdges (Handle(GEOM_Object) theShape);
+  Standard_EXPORT Standard_Integer NumberOfFaces (Handle(GEOM_Object) theShape);
+  Standard_EXPORT Standard_Integer NumberOfEdges (Handle(GEOM_Object) theShape);
 
-  Handle(GEOM_Object) ReverseShape(Handle(GEOM_Object) theShapes);
+  Standard_EXPORT Handle(GEOM_Object) ReverseShape(Handle(GEOM_Object) theShapes);
 
-  Handle(TColStd_HSequenceOfInteger) GetFreeFacesIDs (Handle(GEOM_Object) theShape);
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger) GetFreeFacesIDs (Handle(GEOM_Object) theShape);
 
-  Handle(TColStd_HSequenceOfTransient) GetSharedShapes (Handle(GEOM_Object)    theShape1,
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetSharedShapes (Handle(GEOM_Object)    theShape1,
                                                         Handle(GEOM_Object)    theShape2,
                                                         const Standard_Integer theShapeType);
 
-  Handle(TColStd_HSequenceOfTransient) GetShapesOnPlane (const Handle(GEOM_Object)& theShape,
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetShapesOnPlane (const Handle(GEOM_Object)& theShape,
                                                          const Standard_Integer     theShapeType,
                                                          const Handle(GEOM_Object)& theAx1,
                                                          const GEOMAlgo_State       theState);
 
-  Handle(TColStd_HSequenceOfTransient) GetShapesOnCylinder (const Handle(GEOM_Object)& theShape,
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetShapesOnCylinder (const Handle(GEOM_Object)& theShape,
                                                             const Standard_Integer     theShapeType,
                                                             const Handle(GEOM_Object)& theAxis,
                                                             const Standard_Real        theRadius,
                                                             const GEOMAlgo_State       theState);
 
-  Handle(TColStd_HSequenceOfTransient) GetShapesOnSphere (const Handle(GEOM_Object)& theShape,
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetShapesOnSphere (const Handle(GEOM_Object)& theShape,
                                                           const Standard_Integer     theShapeType,
                                                           const Handle(GEOM_Object)& theCenter,
                                                           const Standard_Real        theRadius,
                                                           const GEOMAlgo_State       theState);
 
-  Handle(TColStd_HSequenceOfInteger) GetShapesOnPlaneIDs (const Handle(GEOM_Object)& theShape,
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger) GetShapesOnPlaneIDs (const Handle(GEOM_Object)& theShape,
                                                           const Standard_Integer     theShapeType,
                                                           const Handle(GEOM_Object)& theAx1,
                                                           const GEOMAlgo_State       theState);
 
-  Handle(TColStd_HSequenceOfInteger) GetShapesOnCylinderIDs (const Handle(GEOM_Object)& theShape,
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger) GetShapesOnCylinderIDs (const Handle(GEOM_Object)& theShape,
                                                              const Standard_Integer     theShapeType,
                                                              const Handle(GEOM_Object)& theAxis,
                                                              const Standard_Real        theRadius,
                                                              const GEOMAlgo_State       theState);
 
-  Handle(TColStd_HSequenceOfInteger) GetShapesOnSphereIDs (const Handle(GEOM_Object)& theShape,
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger) GetShapesOnSphereIDs (const Handle(GEOM_Object)& theShape,
                                                            const Standard_Integer     theShapeType,
                                                            const Handle(GEOM_Object)& theCenter,
                                                            const Standard_Real        theRadius,
                                                            const GEOMAlgo_State       theState);
 
-  Handle(GEOM_Object) GetShapesOnCylinderOld (Handle(GEOM_Object)    theShape,
+  Standard_EXPORT Handle(GEOM_Object) GetShapesOnCylinderOld (Handle(GEOM_Object)    theShape,
                                               const Standard_Integer theShapeType,
                                               Handle(GEOM_Object)    theAxis,
                                               const Standard_Real    theRadius);
 
-  Handle(GEOM_Object) GetShapesOnSphereOld (Handle(GEOM_Object)    theShape,
+  Standard_EXPORT Handle(GEOM_Object) GetShapesOnSphereOld (Handle(GEOM_Object)    theShape,
                                             const Standard_Integer theShapeType,
                                             Handle(GEOM_Object)    theCenter,
                                             const Standard_Real    theRadius);
 
-  Handle(GEOM_Object) GetInPlace (Handle(GEOM_Object) theShapeWhere,
+  Standard_EXPORT Handle(GEOM_Object) GetInPlace (Handle(GEOM_Object) theShapeWhere,
                                   Handle(GEOM_Object) theShapeWhat);
 
-  static void SortShapes (TopTools_ListOfShape& SL);
+  Standard_EXPORT static void SortShapes (TopTools_ListOfShape& SL);
 
  private:
   Handle(GEOM_Object) MakeShape (list<Handle(GEOM_Object)>     theShapes,

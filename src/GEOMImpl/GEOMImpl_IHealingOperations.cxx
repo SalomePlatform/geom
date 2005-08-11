@@ -1,19 +1,23 @@
-using namespace std;
+#ifdef WNT
+#pragma warning( disable:4786 )
+#endif
 
-#include "GEOMImpl_IHealingOperations.hxx"
+#include <Standard_Stream.hxx>
 
-#include "GEOM_PythonDump.hxx"
+#include <GEOMImpl_IHealingOperations.hxx>
 
-#include "GEOMImpl_HealingDriver.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOMImpl_IHealing.hxx"
-#include "GEOMImpl_CopyDriver.hxx"
+#include <GEOM_PythonDump.hxx>
 
-#include "ShHealOper_ShapeProcess.hxx"
+#include <GEOMImpl_HealingDriver.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOMImpl_IHealing.hxx>
+#include <GEOMImpl_CopyDriver.hxx>
+
+#include <ShHealOper_ShapeProcess.hxx>
 
 #include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 
 #include <ShapeAnalysis_FreeBounds.hxx>
 

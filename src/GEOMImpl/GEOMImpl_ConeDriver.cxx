@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_ConeDriver.hxx"
-#include "GEOMImpl_ICone.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_ConeDriver.hxx>
+#include <GEOMImpl_ICone.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepPrimAPI_MakeCone.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>

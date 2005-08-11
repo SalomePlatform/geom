@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_ScaleDriver.hxx"
-#include "GEOMImpl_IScale.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_ScaleDriver.hxx>
+#include <GEOMImpl_IScale.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRep_Tool.hxx>

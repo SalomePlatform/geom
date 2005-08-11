@@ -1,10 +1,10 @@
 
-using namespace std;
+#include <Standard_Stream.hxx>
 
-#include "GEOMImpl_FillingDriver.hxx"
-#include "GEOM_Function.hxx"
-#include "GEOMImpl_IFilling.hxx"
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_FillingDriver.hxx>
+#include <GEOM_Function.hxx>
+#include <GEOMImpl_IFilling.hxx>
+#include <GEOMImpl_Types.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRepAlgo.hxx>

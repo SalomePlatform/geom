@@ -1,11 +1,12 @@
 
-using namespace std;
-#include "GEOMImpl_ChamferDriver.hxx"
-#include "GEOMImpl_IChamfer.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOMImpl_ILocalOperations.hxx"
-#include "GEOM_Function.hxx"
-#include "GEOMImpl_Block6Explorer.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_ChamferDriver.hxx>
+#include <GEOMImpl_IChamfer.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOMImpl_ILocalOperations.hxx>
+#include <GEOM_Function.hxx>
+#include <GEOMImpl_Block6Explorer.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>

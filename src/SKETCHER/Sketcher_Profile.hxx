@@ -34,8 +34,8 @@ class Sketcher_Profile
 {
 
 public:
-  Sketcher_Profile();
-  Sketcher_Profile(const char* aCmd);
+  Standard_EXPORT Sketcher_Profile();
+  Standard_EXPORT Sketcher_Profile(const char* aCmd);
 
 private:
   gp_Pnt myLastPoint;
@@ -45,10 +45,10 @@ private:
   bool myOK;
 
 public:
-  gp_Pnt GetLastPoint(){return myLastPoint;};
-  gp_Dir GetLastDir(){return myLastDir;};
+  Standard_EXPORT gp_Pnt GetLastPoint(){return myLastPoint;};
+  Standard_EXPORT gp_Dir GetLastDir(){return myLastDir;};
 
-  const TopoDS_Shape& GetShape(){return myShape;};
-  bool IsDone(){return myOK;};
+  Standard_EXPORT const TopoDS_Shape& GetShape(){return myShape;};
+  Standard_EXPORT bool IsDone(){return myOK;};
 
 };

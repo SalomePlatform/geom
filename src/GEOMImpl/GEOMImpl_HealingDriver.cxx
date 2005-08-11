@@ -1,17 +1,18 @@
 
-using namespace std;
-#include "GEOMImpl_HealingDriver.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOMImpl_IHealing.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
 
-#include "ShHealOper_ShapeProcess.hxx"
-#include "ShHealOper_RemoveFace.hxx"
-#include "ShHealOper_CloseContour.hxx"
-#include "ShHealOper_RemoveInternalWires.hxx"
-#include "ShHealOper_FillHoles.hxx"
-#include "ShHealOper_Sewing.hxx"
-#include "ShHealOper_EdgeDivide.hxx"
+#include <GEOMImpl_HealingDriver.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOMImpl_IHealing.hxx>
+#include <GEOM_Function.hxx>
+
+#include <ShHealOper_ShapeProcess.hxx>
+#include <ShHealOper_RemoveFace.hxx>
+#include <ShHealOper_CloseContour.hxx>
+#include <ShHealOper_RemoveInternalWires.hxx>
+#include <ShHealOper_FillHoles.hxx>
+#include <ShHealOper_Sewing.hxx>
+#include <ShHealOper_EdgeDivide.hxx>
 
 #include <TopoDS.hxx>
 #include <TopExp.hxx>

@@ -1,42 +1,42 @@
-using namespace std;
+#include <Standard_Stream.hxx>
 
-#include "GEOMImpl_I3DPrimOperations.hxx"
+#include <GEOMImpl_I3DPrimOperations.hxx>
 
 #include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
 #include <TFunction_Logbook.hxx>
 #include <TDF_Tool.hxx>
 
-#include "GEOM_Function.hxx"
-#include "GEOM_PythonDump.hxx"
+#include <GEOM_Function.hxx>
+#include <GEOM_PythonDump.hxx>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
-#include "GEOMImpl_BoxDriver.hxx"
-#include "GEOMImpl_CylinderDriver.hxx"
-#include "GEOMImpl_ConeDriver.hxx"
-#include "GEOMImpl_SphereDriver.hxx"
-#include "GEOMImpl_TorusDriver.hxx"
-#include "GEOMImpl_PrismDriver.hxx"
-#include "GEOMImpl_PipeDriver.hxx"
-#include "GEOMImpl_RevolutionDriver.hxx"
-#include "GEOMImpl_ShapeDriver.hxx"
-#include "GEOMImpl_FillingDriver.hxx"
+#include <GEOMImpl_BoxDriver.hxx>
+#include <GEOMImpl_CylinderDriver.hxx>
+#include <GEOMImpl_ConeDriver.hxx>
+#include <GEOMImpl_SphereDriver.hxx>
+#include <GEOMImpl_TorusDriver.hxx>
+#include <GEOMImpl_PrismDriver.hxx>
+#include <GEOMImpl_PipeDriver.hxx>
+#include <GEOMImpl_RevolutionDriver.hxx>
+#include <GEOMImpl_ShapeDriver.hxx>
+#include <GEOMImpl_FillingDriver.hxx>
 
-#include "GEOMImpl_IBox.hxx"
-#include "GEOMImpl_ICylinder.hxx"
-#include "GEOMImpl_ICone.hxx"
-#include "GEOMImpl_ISphere.hxx"
-#include "GEOMImpl_ITorus.hxx"
-#include "GEOMImpl_IPrism.hxx"
-#include "GEOMImpl_IPipe.hxx"
-#include "GEOMImpl_IRevolution.hxx"
-#include "GEOMImpl_IShapes.hxx"
-#include "GEOMImpl_IFilling.hxx"
+#include <GEOMImpl_IBox.hxx>
+#include <GEOMImpl_ICylinder.hxx>
+#include <GEOMImpl_ICone.hxx>
+#include <GEOMImpl_ISphere.hxx>
+#include <GEOMImpl_ITorus.hxx>
+#include <GEOMImpl_IPrism.hxx>
+#include <GEOMImpl_IPipe.hxx>
+#include <GEOMImpl_IRevolution.hxx>
+#include <GEOMImpl_IShapes.hxx>
+#include <GEOMImpl_IFilling.hxx>
 
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 

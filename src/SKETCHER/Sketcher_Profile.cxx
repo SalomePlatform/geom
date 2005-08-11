@@ -26,8 +26,9 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
-#include "Sketcher_Profile.hxx"
+#include <Standard_Stream.hxx>
+
+#include <Sketcher_Profile.hxx>
 
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Face.hxx>
@@ -90,267 +91,272 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
   TCollection_AsciiString aCommand(CORBA::string_dup(aCmd));
   TCollection_AsciiString aToken = aCommand.Token(":", 1);
   int n = 0;
-  TCollection_AsciiString aTab[aCommand.Length()];
-  while(aToken.Length() != 0) {
-    if(aCommand.Token(":", n + 1).Length() > 0)
-      aTab[n] = aCommand.Token(":", n + 1);
-    aToken = aCommand.Token(":", ++n);
-  }
-  n = n - 1;
-  
-  while(i < n) {
-    Standard_Real length = 0, radius = 0, angle = 0;
-    move = point;
-
-    int n1 = 0;
-    TCollection_AsciiString a[aTab[0].Length()];
-    aToken = aTab[i].Token(" ", 1);
+  // porting to WNT
+  TCollection_AsciiString* aTab = 0;
+  if ( aCommand.Length() )
+  {
+    aTab = new TCollection_AsciiString[ aCommand.Length() ];
     while(aToken.Length() != 0) {
-      if(aTab[i].Token(" ", n1 + 1).Length() > 0)
-	a[n1] = aTab[i].Token(" ", n1 + 1);
-      aToken = aTab[i].Token(" ", ++n1);
+      if(aCommand.Token(":", n + 1).Length() > 0)
+        aTab[n] = aCommand.Token(":", n + 1);
+      aToken = aCommand.Token(":", ++n);
     }
-    n1 = n1 - 1;
-
-    switch(a[0].Value(1))
-    {
-    case 'F':
-      {
-	if (n1 != 3) goto badargs;
-	if (!first) {
-	  MESSAGE("profile : The F instruction must precede all moves");
-	  return;
-	}
-	x0 = x = a[1].RealValue();
-	y0 = y = a[2].RealValue();
-	stayfirst = Standard_True;
-	break;
+    n = n - 1;
+  }
+  if ( aTab && aTab[0].Length() )
+    while(i < n) {
+      Standard_Real length = 0, radius = 0, angle = 0;
+      move = point;
+      
+      int n1 = 0;
+      TCollection_AsciiString* a = new TCollection_AsciiString[ aTab[0].Length() ];
+      aToken = aTab[i].Token(" ", 1);
+      while(aToken.Length() != 0) {
+        if(aTab[i].Token(" ", n1 + 1).Length() > 0)
+          a[n1] = aTab[i].Token(" ", n1 + 1);
+        aToken = aTab[i].Token(" ", ++n1);
       }
-    case 'O':
+      n1 = n1 - 1;
+    
+      switch(a[0].Value(1))
       {
-	if (n1 != 4) goto badargs;
-	P.SetLocation(gp_Pnt(a[1].RealValue(), a[2].RealValue(), a[3].RealValue()));
-	stayfirst = Standard_True;
-	break;
-      }
-    case 'P':
-      {
-	if (n1 != 7) goto badargs;
-	gp_Vec vn(a[1].RealValue(), a[2].RealValue(), a[3].RealValue());
-	gp_Vec vx(a[4].RealValue(), a[5].RealValue(), a[6].RealValue());
-	if (vn.Magnitude() <= Precision::Confusion() || vx.Magnitude() <= Precision::Confusion()) {
-	  MESSAGE("profile : null direction");
-	  return;
-	}
-	gp_Ax2 ax(P.Location(), vn, vx);
-	P.SetPosition(ax);
-	stayfirst = Standard_True;
-	break;
-      }
-    case 'X':
-      {
-	if (n1 != 2) goto badargs;
-	length = a[1].RealValue();
-	if (a[0] == "XX")
-	  length -= x;
-	dx = 1; dy = 0;
-	move = line;
-	break;
-      }
-    case 'Y':
-      {
-	if (n1 != 2) goto badargs;
-	length = a[1].RealValue();
-	if (a[0] == "YY")
-	  length -= y;
-	dx = 0; dy = 1;
-	move = line;
-	break;
-      }
-    case 'L':
-      {
-	if (n1 != 2) goto badargs;
-	length = a[1].RealValue();
-	if (Abs(length) > Precision::Confusion())
-	  move = line;
-	else
-	  move = none;
-	break;
-      }
-    case 'T':
-      {
-	if (n1 != 3) goto badargs;
-	Standard_Real vx = a[1].RealValue();
-	Standard_Real vy = a[2].RealValue();
-	if (a[0] == "TT") {
-	  vx -= x;
-	  vy -= y;
-	}
-	length = Sqrt(vx * vx + vy * vy);
-	if (length > Precision::Confusion()) {
-	  move = line;
-	  dx = vx / length;
-	  dy = vy / length;
-	}
-	else
-	  move = none;
-	break;
-      }
-    case 'R':
-      {
-	if (n1 != 2) goto badargs;
-	angle = a[1].RealValue() * PI180;
-	if (a[0] == "RR") {
-	  dx = Cos(angle);
-	  dy = Sin(angle);
-	}
-	else {
-	  Standard_Real c = Cos(angle);
-	  Standard_Real s = Sin(angle);
-	  Standard_Real t = c * dx - s * dy;
-	  dy = s * dx + c * dy;
-	  dx = t;
-	}
-	break;
-      }
-    case 'D':
-      {
-	if (n1 != 3) goto badargs;
-	Standard_Real vx = a[1].RealValue();
-	Standard_Real vy = a[2].RealValue();
-	length = Sqrt(vx * vx + vy * vy);
-	if (length > Precision::Confusion()) {
-	  dx = vx / length;
-	  dy = vy / length;
-	}
-	else
-	  move = none;
-	break;
-      }
-    case 'C':
-      {
-	if (n1 != 3) goto badargs;
-	radius = a[1].RealValue();
-	if (Abs(radius) > Precision::Confusion()) {
-	  angle = a[2].RealValue() * PI180;
-	  move = circle;
-	}
-	else
-	  move = none;
-	break;
-      }
-    case 'I':
-      {
-	if (n1 != 2) goto badargs;
-	length = a[1].RealValue();
-	if (a[0] == "IX") {
-	  if (Abs(dx) < Precision::Confusion()) {
-	    MESSAGE("profile : cannot intersect, arg "<<i-1);
-	    return;
-	  }
-	  length = (length - x) / dx;
-	}
-	else if (a[0] == "IY") {
-	  if (Abs(dy) < Precision::Confusion()) {
-	    MESSAGE("profile : cannot intersect, arg "<<i-1);
-	    return;
-	  }
-	  length = (length - y) / dy;
-	}
-	if (Abs(length) > Precision::Confusion())
-	  move = line;
-	else
-	  move = none;
-	break;
-      }
-    case 'W':
-      {
-	if (a[0] == "WW")
-	  close = Standard_True;
-	else if(a[0] == "WF") {
-	  close = Standard_True;
-	  face = Standard_True;
-	}
-	i = n - 1;
-	break;
-      }
-    default:
-      {
-	MESSAGE("profile : unknown code "<<a[i]);
-	return;
-      }
+      case 'F':
+        {
+          if (n1 != 3) goto badargs;
+          if (!first) {
+            MESSAGE("profile : The F instruction must precede all moves");
+            return;
+          }
+          x0 = x = a[1].RealValue();
+          y0 = y = a[2].RealValue();
+          stayfirst = Standard_True;
+          break;
+        }
+      case 'O':
+        {
+          if (n1 != 4) goto badargs;
+          P.SetLocation(gp_Pnt(a[1].RealValue(), a[2].RealValue(), a[3].RealValue()));
+          stayfirst = Standard_True;
+          break;
+        }
+      case 'P':
+        {
+          if (n1 != 7) goto badargs;
+          gp_Vec vn(a[1].RealValue(), a[2].RealValue(), a[3].RealValue());
+          gp_Vec vx(a[4].RealValue(), a[5].RealValue(), a[6].RealValue());
+          if (vn.Magnitude() <= Precision::Confusion() || vx.Magnitude() <= Precision::Confusion()) {
+            MESSAGE("profile : null direction");
+            return;
+          }
+          gp_Ax2 ax(P.Location(), vn, vx);
+          P.SetPosition(ax);
+          stayfirst = Standard_True;
+          break;
+        }
+      case 'X':
+        {
+          if (n1 != 2) goto badargs;
+          length = a[1].RealValue();
+          if (a[0] == "XX")
+            length -= x;
+          dx = 1; dy = 0;
+          move = line;
+          break;
+        }
+      case 'Y':
+        {
+          if (n1 != 2) goto badargs;
+          length = a[1].RealValue();
+          if (a[0] == "YY")
+            length -= y;
+          dx = 0; dy = 1;
+          move = line;
+          break;
+        }
+      case 'L':
+        {
+          if (n1 != 2) goto badargs;
+          length = a[1].RealValue();
+          if (Abs(length) > Precision::Confusion())
+            move = line;
+          else
+            move = none;
+          break;
+        }
+      case 'T':
+        {
+          if (n1 != 3) goto badargs;
+          Standard_Real vx = a[1].RealValue();
+          Standard_Real vy = a[2].RealValue();
+          if (a[0] == "TT") {
+            vx -= x;
+            vy -= y;
+          }
+          length = Sqrt(vx * vx + vy * vy);
+          if (length > Precision::Confusion()) {
+            move = line;
+            dx = vx / length;
+            dy = vy / length;
+          }
+          else
+            move = none;
+          break;
+        }
+      case 'R':
+        {
+          if (n1 != 2) goto badargs;
+          angle = a[1].RealValue() * PI180;
+          if (a[0] == "RR") {
+            dx = Cos(angle);
+            dy = Sin(angle);
+          }
+          else {
+            Standard_Real c = Cos(angle);
+            Standard_Real s = Sin(angle);
+            Standard_Real t = c * dx - s * dy;
+            dy = s * dx + c * dy;
+            dx = t;
+          }
+          break;
+        }
+      case 'D':
+        {
+          if (n1 != 3) goto badargs;
+          Standard_Real vx = a[1].RealValue();
+          Standard_Real vy = a[2].RealValue();
+          length = Sqrt(vx * vx + vy * vy);
+          if (length > Precision::Confusion()) {
+            dx = vx / length;
+            dy = vy / length;
+          }
+          else
+            move = none;
+          break;
+        }
+      case 'C':
+        {
+          if (n1 != 3) goto badargs;
+          radius = a[1].RealValue();
+          if (Abs(radius) > Precision::Confusion()) {
+            angle = a[2].RealValue() * PI180;
+            move = circle;
+          }
+          else
+            move = none;
+          break;
+        }
+      case 'I':
+        {
+          if (n1 != 2) goto badargs;
+          length = a[1].RealValue();
+          if (a[0] == "IX") {
+            if (Abs(dx) < Precision::Confusion()) {
+              MESSAGE("profile : cannot intersect, arg "<<i-1);
+              return;
+            }
+            length = (length - x) / dx;
+          }
+          else if (a[0] == "IY") {
+            if (Abs(dy) < Precision::Confusion()) {
+              MESSAGE("profile : cannot intersect, arg "<<i-1);
+              return;
+            }
+            length = (length - y) / dy;
+          }
+          if (Abs(length) > Precision::Confusion())
+            move = line;
+          else
+            move = none;
+          break;
+        }
+      case 'W':
+        {
+          if (a[0] == "WW")
+            close = Standard_True;
+          else if(a[0] == "WF") {
+            close = Standard_True;
+            face = Standard_True;
+          }
+          i = n - 1;
+          break;
+        }
+      default:
+        {
+          MESSAGE("profile : unknown code "<<a[i]);
+          return;
+        }
     }
 
-  again :
+again :
     switch (move) 
     {
     case line :
       {
-	if (length < 0) {
-	  length = -length;
-	  dx = -dx;
-	  dy = -dy;
-	}
-	Handle(Geom2d_Line) l = new Geom2d_Line(gp_Pnt2d(x,y),gp_Dir2d(dx,dy));
+        if (length < 0) {
+          length = -length;
+          dx = -dx;
+          dy = -dy;
+        }
+        Handle(Geom2d_Line) l = new Geom2d_Line(gp_Pnt2d(x,y),gp_Dir2d(dx,dy));
         BRepBuilderAPI_MakeEdge ME (GeomAPI::To3d(l,P),0,length);
         if (!ME.IsDone())
           return;
-	MW.Add(ME);
-	x += length*dx;
-	y += length*dy;
-	break;
+        MW.Add(ME);
+        x += length*dx;
+        y += length*dy;
+        break;
       }
     case circle :
       {
-	Standard_Boolean sense = Standard_True;
-	if (radius < 0) {
-	  radius = -radius;
-	  sense = !sense;
-	  dx = -dx;
-	  dy = -dy;
-	}
-	gp_Ax2d ax(gp_Pnt2d(x-radius*dy,y+radius*dx),gp_Dir2d(dy,-dx));
-	if (angle < 0) {
-	  angle = -angle;
-	  sense = !sense;
-	}
-	Handle(Geom2d_Circle) c = new Geom2d_Circle(ax,radius,sense);
+        Standard_Boolean sense = Standard_True;
+        if (radius < 0) {
+          radius = -radius;
+          sense = !sense;
+          dx = -dx;
+          dy = -dy;
+        }
+        gp_Ax2d ax(gp_Pnt2d(x-radius*dy,y+radius*dx),gp_Dir2d(dy,-dx));
+        if (angle < 0) {
+          angle = -angle;
+          sense = !sense;
+        }
+        Handle(Geom2d_Circle) c = new Geom2d_Circle(ax,radius,sense);
         BRepBuilderAPI_MakeEdge ME (GeomAPI::To3d(c,P),0,angle);
         if (!ME.IsDone())
           return;
-	MW.Add(ME);
-	gp_Pnt2d p;
-	gp_Vec2d v;
-	c->D1(angle,p,v);
-	x = p.X();
-	y = p.Y();
-	dx = v.X() / radius;
-	dy = v.Y() / radius;
-	break;
+        MW.Add(ME);
+        gp_Pnt2d p;
+        gp_Vec2d v;
+        c->D1(angle,p,v);
+        x = p.X();
+        y = p.Y();
+        dx = v.X() / radius;
+        dy = v.Y() / radius;
+        break;
       }
     case point:
       {
-	MP = BRepBuilderAPI_MakeVertex(gp_Pnt(x, y, 0.0));
-	break;
+        MP = BRepBuilderAPI_MakeVertex(gp_Pnt(x, y, 0.0));
+        break;
       }
     case none:
       {
-	i = n - 1;
-	break;
+        i = n - 1;
+        break;
       }
     }
-
+    
     // update first
     first = stayfirst;
     stayfirst = Standard_False;
-
+    
     if(!(dx == 0 && dy == 0))
       myLastDir.SetCoord(dx, dy, 0.0);
     else
       return;
     myLastPoint.SetX(x);
     myLastPoint.SetY(y);
-
+    
     // next segment....
     i++;
     if ((i == n) && close) {
@@ -360,13 +366,16 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       length = Sqrt(dx * dx + dy * dy);
       move = line;
       if (length > Precision::Confusion()) {
-	dx = dx / length;
-	dy = dy / length;
-	goto again;
+        dx = dx / length;
+        dy = dy / length;
+        goto again;
       }
     }
+    delete a;
   }
-
+  delete aTab;
+  aTab = 0;
+  
   // get the result, face or wire
   if (move == none) {
     return;

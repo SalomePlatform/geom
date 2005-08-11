@@ -1,22 +1,22 @@
 
-using namespace std;
+#include <Standard_Stream.hxx>
 
 #include <BRepOffsetAPI_MakeFilling.hxx>
 
-#include "GEOMImpl_BlockDriver.hxx"
-#include "GEOMImpl_IBlocks.hxx"
-#include "GEOMImpl_IBlockTrsf.hxx"
-#include "GEOMImpl_GlueDriver.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOMImpl_ILocalOperations.hxx"
-#include "GEOMImpl_Block6Explorer.hxx"
-#include "GEOMImpl_IBlocksOperations.hxx"
+#include <GEOMImpl_BlockDriver.hxx>
+#include <GEOMImpl_IBlocks.hxx>
+#include <GEOMImpl_IBlockTrsf.hxx>
+#include <GEOMImpl_GlueDriver.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOMImpl_ILocalOperations.hxx>
+#include <GEOMImpl_Block6Explorer.hxx>
+#include <GEOMImpl_IBlocksOperations.hxx>
 
-#include "GEOM_Function.hxx"
+#include <GEOM_Function.hxx>
 
-#include "ShHealOper_Sewing.hxx"
-#include "NMTAlgo_Splitter1.hxx"
-#include "BlockFix_BlockFixAPI.hxx"
+#include <ShHealOper_Sewing.hxx>
+#include <NMTAlgo_Splitter1.hxx>
+#include <BlockFix_BlockFixAPI.hxx>
 
 #include "utilities.h"
 

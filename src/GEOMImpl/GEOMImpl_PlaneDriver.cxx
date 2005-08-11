@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_PlaneDriver.hxx"
-#include "GEOMImpl_IPlane.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_PlaneDriver.hxx>
+#include <GEOMImpl_IPlane.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRep_Tool.hxx>

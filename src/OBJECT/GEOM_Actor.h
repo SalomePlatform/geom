@@ -38,13 +38,13 @@
 class vtkCamera;
 class TopoDS_Shape;
 
-#ifdef _WIN_32
-#define VTKOCC_EXPORT __declspec (dllexport)
+#ifdef WNT
+#include <SALOME_WNT.hxx>
 #else
-#define VTKOCC_EXPORT
+#define SALOME_WNT_EXPORT
 #endif
 
-class VTKOCC_EXPORT GEOM_Actor : public SALOME_Actor {
+class SALOME_WNT_EXPORT GEOM_Actor : public SALOME_Actor {
  public:
   vtkTypeMacro(GEOM_Actor,SALOME_Actor);
 

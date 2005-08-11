@@ -1,7 +1,8 @@
 
-using namespace std;
-#include "GEOMImpl_Template.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_Template.hxx>
+#include <GEOM_Function.hxx>
 #include <TopoDS_Shape.hxx>
 
 //=======================================================================

@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 /*!
   \class GEOM_AISShape GEOM_AISShape.hxx
   \brief ....
@@ -58,6 +57,8 @@ using namespace std;
 #include <TopExp.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+
+using namespace std;
 
 static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
 			     const Handle(AIS_InteractiveContext)& theIC,

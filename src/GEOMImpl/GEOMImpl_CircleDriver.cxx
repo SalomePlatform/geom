@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_CircleDriver.hxx"
-#include "GEOMImpl_ICircle.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_CircleDriver.hxx>
+#include <GEOMImpl_ICircle.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRep_Tool.hxx>

@@ -14,14 +14,14 @@ class Handle(TColStd_HArray1OfInteger);
 
 class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
  public:
-  GEOMImpl_IBooleanOperations(GEOM_Engine* theEngine, int theDocID);
-  ~GEOMImpl_IBooleanOperations();
+  Standard_EXPORT GEOMImpl_IBooleanOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT ~GEOMImpl_IBooleanOperations();
 
-  Handle(GEOM_Object) MakeBoolean (Handle(GEOM_Object) theShape1,
+  Standard_EXPORT Handle(GEOM_Object) MakeBoolean (Handle(GEOM_Object) theShape1,
                                    Handle(GEOM_Object) theShape2,
                                    Standard_Integer    theOp);
 
-  Handle(GEOM_Object) MakePartition (const Handle(TColStd_HSequenceOfTransient)& theShapes, 
+  Standard_EXPORT Handle(GEOM_Object) MakePartition (const Handle(TColStd_HSequenceOfTransient)& theShapes, 
                                      const Handle(TColStd_HSequenceOfTransient)& theTools,
                                      const Handle(TColStd_HSequenceOfTransient)& theKeepInside,
                                      const Handle(TColStd_HSequenceOfTransient)& theRemoveInside,
@@ -29,7 +29,7 @@ class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
                                      const Standard_Boolean           theRemoveWebs,
                                      const Handle(TColStd_HArray1OfInteger)& theMaterials);
 
-  Handle(GEOM_Object) MakeHalfPartition (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) MakeHalfPartition (Handle(GEOM_Object) theShape,
                                          Handle(GEOM_Object) thePlane);
 };
 

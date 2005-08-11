@@ -13,25 +13,25 @@
 
 class GEOMImpl_IInsertOperations : public GEOM_IOperations {
  public:
-  GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, int theDocID);
-  ~GEOMImpl_IInsertOperations();
+  Standard_EXPORT GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT ~GEOMImpl_IInsertOperations();
 
 
-  Handle(GEOM_Object) MakeCopy (Handle(GEOM_Object) theOriginal);
+  Standard_EXPORT Handle(GEOM_Object) MakeCopy (Handle(GEOM_Object) theOriginal);
   
-  Handle(GEOM_Object) Import (const char* theFileName, const char* theFormatType);
+  Standard_EXPORT Handle(GEOM_Object) Import (const char* theFileName, const char* theFormatType);
   
-  void Export (const Handle(GEOM_Object) theOriginal,
+  Standard_EXPORT void Export (const Handle(GEOM_Object) theOriginal,
 	       const char*               theFileName,
 	       const char*               theFormatType);
 
-  Standard_Boolean ImportTranslators (Handle(TColStd_HSequenceOfAsciiString)& theFormats,
+  Standard_EXPORT Standard_Boolean ImportTranslators (Handle(TColStd_HSequenceOfAsciiString)& theFormats,
                                       Handle(TColStd_HSequenceOfAsciiString)& thePatterns);
 
-  Standard_Boolean ExportTranslators (Handle(TColStd_HSequenceOfAsciiString)& theFormats,
+  Standard_EXPORT Standard_Boolean ExportTranslators (Handle(TColStd_HSequenceOfAsciiString)& theFormats,
                                       Handle(TColStd_HSequenceOfAsciiString)& thePatterns);
 
-  Standard_Boolean IsSupported (const Standard_Boolean isImport,
+  Standard_EXPORT Standard_Boolean IsSupported (const Standard_Boolean isImport,
                                 const TCollection_AsciiString theFormat,
                                 Handle(TCollection_HAsciiString)& theLibName);
 

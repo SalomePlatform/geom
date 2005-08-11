@@ -206,7 +206,7 @@
     aDEP.Do();
     //
   }
-  catch (BOPTColStd_Failure& x) {
+  catch (BOPTColStd_Failure& /*x*/) {
     //QQ MESSAGE(x.Message() << flush);
   }
 }

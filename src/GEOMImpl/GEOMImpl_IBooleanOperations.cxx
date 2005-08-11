@@ -1,17 +1,17 @@
-using namespace std; 
+#include <Standard_Stream.hxx>
 
-#include "GEOMImpl_IBooleanOperations.hxx"
+#include <GEOMImpl_IBooleanOperations.hxx>
 
-#include "GEOM_Function.hxx"
-#include "GEOM_PythonDump.hxx"
+#include <GEOM_Function.hxx>
+#include <GEOM_PythonDump.hxx>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
-#include "GEOMImpl_BooleanDriver.hxx"
-#include "GEOMImpl_IBoolean.hxx"
+#include <GEOMImpl_BooleanDriver.hxx>
+#include <GEOMImpl_IBoolean.hxx>
 
-#include "GEOMImpl_PartitionDriver.hxx"
-#include "GEOMImpl_IPartition.hxx"
+#include <GEOMImpl_PartitionDriver.hxx>
+#include <GEOMImpl_IPartition.hxx>
 
 #include <TDF_Tool.hxx>
 

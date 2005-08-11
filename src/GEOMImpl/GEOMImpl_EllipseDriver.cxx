@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_EllipseDriver.hxx"
-#include "GEOMImpl_IEllipse.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_EllipseDriver.hxx>
+#include <GEOMImpl_IEllipse.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRep_Tool.hxx>

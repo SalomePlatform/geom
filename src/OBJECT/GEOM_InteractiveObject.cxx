@@ -26,13 +26,14 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 /*!
   \class GEOM_InteractiveObject GEOM_InteractiveObject.hxx
   \brief ....
 */
 
 #include "GEOM_InteractiveObject.ixx"
+
+using namespace std;
 
 GEOM_InteractiveObject::GEOM_InteractiveObject()
   : SALOME_InteractiveObject()

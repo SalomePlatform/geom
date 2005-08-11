@@ -13,32 +13,32 @@
 
 class GEOMImpl_IGroupOperations : public GEOM_IOperations {
  public:
-  GEOMImpl_IGroupOperations(GEOM_Engine* theEngine, int theDocID);
-  ~GEOMImpl_IGroupOperations();
+  Standard_EXPORT GEOMImpl_IGroupOperations(GEOM_Engine* theEngine, int theDocID);
+  Standard_EXPORT ~GEOMImpl_IGroupOperations();
 
-  Handle(GEOM_Object) CreateGroup(Handle(GEOM_Object) theMainShape, TopAbs_ShapeEnum  theShapeType);
+  Standard_EXPORT Handle(GEOM_Object) CreateGroup(Handle(GEOM_Object) theMainShape, TopAbs_ShapeEnum  theShapeType);
 
-  void AddObject(Handle(GEOM_Object) theGroup, int theSubShapeID);
+  Standard_EXPORT void AddObject(Handle(GEOM_Object) theGroup, int theSubShapeID);
 
-  void RemoveObject(Handle(GEOM_Object) theGroup, int theSubShapeID);
+  Standard_EXPORT void RemoveObject(Handle(GEOM_Object) theGroup, int theSubShapeID);
 
-  void UnionList (Handle(GEOM_Object) theGroup,
+  Standard_EXPORT void UnionList (Handle(GEOM_Object) theGroup,
                   const Handle(TColStd_HSequenceOfTransient)& theSubShapes);
 
-  void DifferenceList (Handle(GEOM_Object) theGroup,
+  Standard_EXPORT void DifferenceList (Handle(GEOM_Object) theGroup,
                        const Handle(TColStd_HSequenceOfTransient)& theSubShapes);
 
-  void UnionIDs (Handle(GEOM_Object) theGroup,
+  Standard_EXPORT void UnionIDs (Handle(GEOM_Object) theGroup,
                  const Handle(TColStd_HSequenceOfInteger)& theSubShapes);
 
-  void DifferenceIDs (Handle(GEOM_Object) theGroup,
+  Standard_EXPORT void DifferenceIDs (Handle(GEOM_Object) theGroup,
                       const Handle(TColStd_HSequenceOfInteger)& theSubShapes);
 
-  TopAbs_ShapeEnum GetType(Handle(GEOM_Object) theGroup);
+  Standard_EXPORT TopAbs_ShapeEnum GetType(Handle(GEOM_Object) theGroup);
 
-  Handle(GEOM_Object) GetMainShape(Handle(GEOM_Object) theGroup);
+  Standard_EXPORT Handle(GEOM_Object) GetMainShape(Handle(GEOM_Object) theGroup);
 
-  Handle(TColStd_HArray1OfInteger) GetObjects(Handle(GEOM_Object) theGroup);
+  Standard_EXPORT Handle(TColStd_HArray1OfInteger) GetObjects(Handle(GEOM_Object) theGroup);
 
 };
 

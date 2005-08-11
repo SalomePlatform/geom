@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_SphereDriver.hxx"
-#include "GEOMImpl_ISphere.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_SphereDriver.hxx>
+#include <GEOMImpl_ISphere.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <BRep_Tool.hxx>

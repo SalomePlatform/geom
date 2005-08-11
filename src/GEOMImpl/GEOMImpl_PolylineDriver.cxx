@@ -1,9 +1,10 @@
 
-using namespace std;
-#include "GEOMImpl_PolylineDriver.hxx"
-#include "GEOMImpl_IPolyline.hxx"
-#include "GEOMImpl_Types.hxx"
-#include "GEOM_Function.hxx"
+#include <Standard_Stream.hxx>
+
+#include <GEOMImpl_PolylineDriver.hxx>
+#include <GEOMImpl_IPolyline.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOM_Function.hxx>
 
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRep_Tool.hxx>
