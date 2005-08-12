@@ -183,29 +183,29 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShape (GEOM::GEOM_Object_ptr theS
   GetOperations()->SetNotDone();
 
   if (theShape == NULL)
-    {
-      theDescription = CORBA::string_dup("null");
-      return 0;
-    }
+  {
+    theDescription = CORBA::string_dup("null");
+    return 0;
+  }
 
   //Get the reference shape
   Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
     (theShape->GetStudyID(), theShape->GetEntry());
 
   if (aShape.IsNull())
-    {
-      theDescription = CORBA::string_dup("null2");
-      return 0;
-    }
+  {
+    theDescription = CORBA::string_dup("null2");
+    return 0;
+  }
 
   // Get shape parameters
   TCollection_AsciiString aDump;
   if (GetOperations()->CheckShape(aShape, aDump))
-    {
-      theDescription = CORBA::string_dup(aDump.ToCString());
-      return 1;
-    }
-  theDescription = CORBA::string_dup("checkShape 0");
+  {
+    theDescription = CORBA::string_dup("OK");
+    return 1;
+  }
+  theDescription = CORBA::string_dup(aDump.ToCString());
   return 0;
 }
 
