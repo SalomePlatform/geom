@@ -31,7 +31,11 @@
 
 #include "GEOMGUI.h"
 #include "GEOMBase.h"
-
+#ifdef WNT
+#include <SALOME_WNT.hxx>
+#else
+#define SALOME_WNT_EXPORT
+#endif
 //=================================================================================
 // class    : GEOMBase_Display
 // purpose  :
