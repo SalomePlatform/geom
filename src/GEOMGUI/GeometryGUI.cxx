@@ -678,7 +678,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 5011, "FUSE" );
   createGeomAction( 5012, "COMMON" );
   createGeomAction( 5013, "CUT" );
-  createGeomAction( 50114, "SECTION" );
+  createGeomAction( 5014, "SECTION" );
 
   createGeomAction( 5021, "TRANSLATION" );
   createGeomAction( 5022, "ROTATION" );
