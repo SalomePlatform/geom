@@ -54,9 +54,11 @@ LIB_SRC = \
 	GEOM_Gen_i.cc \
 	GEOM_DumpPython.cc
 
+# SALOME_Component.idl
+LIB_CLIENT_IDL = SALOMEDS.idl SALOMEDS_Attributes.idl #\
+                 #SALOME_Exception.idl SALOME_GenericObj.idl
 
-LIB_SERVER_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl \
-		 GEOM_Gen.idl SALOME_GenericObj.idl
+LIB_SERVER_IDL = GEOM_Gen.idl
 
 # Executables targets
 BIN = 
@@ -84,7 +86,9 @@ EXPORT_HEADERS = GEOM_Object_i.hh \
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(BOOST_CPPFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_INCLUDES) $(BOOST_CPPFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -lTOOLSDS -lSalomeNS -lSalomeContainer -lGEOMArchimede -lGEOMbasic -lGEOMimpl $(CAS_LDPATH) -lTKIGES -lTKSTEP -lTKFillet -lTKOffset -lGEOMSketcher -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeGenericObj 
+LDFLAGS  += -lGEOMArchimede -lGEOMbasic -lGEOMimpl -lGEOMSketcher \
+            $(CAS_LDPATH) -lTKIGES -lTKSTEP -lTKFillet -lTKOffset \
+            -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeNS -lSalomeContainer -lSalomeGenericObj 
 
 # additional file to be cleaned
 MOSTLYCLEAN =
@@ -92,4 +96,3 @@ CLEAN =
 DISTCLEAN =
 
 @CONCLUDE@
-

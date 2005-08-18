@@ -36,7 +36,7 @@ GEOM_ICurvesOperations_i::~GEOM_ICurvesOperations_i()
 /*!
  *  MakeCirclePntVecR
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCirclePntVecR
                       (GEOM::GEOM_Object_ptr thePnt, GEOM::GEOM_Object_ptr theVec,
 		       CORBA::Double theR)
@@ -69,7 +69,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCirclePntVecR
 /*!
  *  MakeCircleThreePnt
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCircleThreePnt
                       (GEOM::GEOM_Object_ptr thePnt1, GEOM::GEOM_Object_ptr thePnt2,
 		       GEOM::GEOM_Object_ptr thePnt3)
@@ -104,7 +104,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCircleThreePnt
 /*!
  *  MakeEllipse
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipse
                       (GEOM::GEOM_Object_ptr thePnt, GEOM::GEOM_Object_ptr theVec,
 		       CORBA::Double theRMajor, double theRMinor)
@@ -137,7 +137,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipse
 /*!
  *  MakeArc
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeArc
                                                 (GEOM::GEOM_Object_ptr thePnt1,
 						 GEOM::GEOM_Object_ptr thePnt2,
@@ -173,7 +173,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeArc
 /*!
  *  MakePolyline
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline
                                     (const GEOM::ListOfGO& thePoints)
 {
@@ -209,7 +209,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline
 /*!
  *  MakeSplineBezier
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineBezier
                                               (const GEOM::ListOfGO& thePoints)
 {
@@ -245,7 +245,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineBezier
 /*!
  *  MakeSplineInterpolation
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
                                               (const GEOM::ListOfGO& thePoints)
 {
@@ -281,10 +281,11 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
 /*!
  *  MakeSketcher
  */
-//============================================================================= 
-GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane)
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
+            (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
+  GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_nil();
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -297,9 +298,10 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher (const char* theCom
 
   // Make Sketcher
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakeSketcher(theCommand, aWorkingPlane);
+    GetOperations()->MakeSketcher(strdup(theCommand), aWorkingPlane);
   if (!GetOperations()->IsDone() || anObject.IsNull())
-    return aGEOMObject._retn();
+    //return aGEOMObject._retn();
+    return GEOM::GEOM_Object::_nil();
 
   return GetObject(anObject);
 }
@@ -309,10 +311,11 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher (const char* theCom
 /*!
  *  MakeSketcherOnPlane
  */
-//============================================================================= 
-GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcherOnPlane (const char* theCommand, GEOM::GEOM_Object_ptr theWorkingPlane)
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcherOnPlane
+                (const char* theCommand, GEOM::GEOM_Object_ptr theWorkingPlane)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
+  GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_nil();
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -322,7 +325,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcherOnPlane (const char*
 
   // Make Sketcher
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakeSketcherOnPlane(theCommand, aWorkingPlane);
+      GetOperations()->MakeSketcherOnPlane(strdup(theCommand), aWorkingPlane);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

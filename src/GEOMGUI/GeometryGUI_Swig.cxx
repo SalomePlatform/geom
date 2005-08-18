@@ -59,8 +59,6 @@
 #include "utilities.h"
 
 #include "SALOMEDSClient.hxx"
-#include "SALOMEDS_SObject.hxx"
-#include "SALOMEDS_Study.hxx"
 
 // OCCT Includes
 #include <TopExp_Explorer.hxx>

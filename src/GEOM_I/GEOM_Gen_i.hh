@@ -6,15 +6,13 @@
 // IDL headers
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
-#include CORBA_SERVER_HEADER(SALOMEDS)
-#include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
+
+#include CORBA_CLIENT_HEADER(SALOMEDS)
+#include CORBA_CLIENT_HEADER(SALOMEDS_Attributes)
 
 
 #include "SALOME_Component_i.hxx"
-
 #include "SALOME_NamingService.hxx"
-
-//#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #include "GEOM_IBasicOperations_i.hh"
 #include "GEOM_ITransformOperations_i.hh"
@@ -29,6 +27,8 @@
 #include "GEOM_IMeasureOperations_i.hh"
 #include "GEOM_IGroupOperations_i.hh"
 
+//#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+
 
 //=====================================================================
 // GEOM_Gen_i : class definition
@@ -40,12 +40,13 @@ class GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual public Engines_Comp
   //-----------------------------------------------------------------------//
   // Constructor / Destructor                                              //
   //-----------------------------------------------------------------------//
-  // constructor to be called for servant creation. 
+
+  // constructor to be called for servant creation.
   GEOM_Gen_i();
   GEOM_Gen_i(CORBA::ORB_ptr orb,
 	     PortableServer::POA_ptr poa,
-	     PortableServer::ObjectId * contId, 
-	     const char *instanceName, 
+	     PortableServer::ObjectId * contId,
+	     const char *instanceName,
 	     const char *interfaceName);
 
   // destructor, doing nothing (for now)
@@ -57,7 +58,7 @@ class GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual public Engines_Comp
 
   //-----------------------------------------------------------------------//
   // Inherited methods from SALOMEDS::Driver                               //
-  //-----------------------------------------------------------------------//    
+  //-----------------------------------------------------------------------//
 
   SALOMEDS::TMPFile* Save(SALOMEDS::SComponent_ptr theComponent,
 			  const char* theURL,
@@ -66,7 +67,7 @@ class GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual public Engines_Comp
   SALOMEDS::TMPFile* SaveASCII(SALOMEDS::SComponent_ptr theComponent,
 			       const char* theURL,
 			       bool isMultiFile);
-  
+
   CORBA::Boolean Load(SALOMEDS::SComponent_ptr theComponent,
 		      const SALOMEDS::TMPFile& theStream,
 		      const char* theURL,
@@ -103,13 +104,18 @@ class GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual public Engines_Comp
 				  CORBA::Long theObjectID,
 				  SALOMEDS::SObject_ptr theObject);
 
-  //Adds theObject in the study with a name = theName, if theFather is not null the object is placed under theFather
-  SALOMEDS::SObject_ptr AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM::GEOM_Object_ptr theObject, const char* theName, GEOM::GEOM_Object_ptr theFather);
+  /*! \brief Adds theObject in the study with a name = theName, if
+   *         theFather is not null the object is placed under theFather
+   */
+  SALOMEDS::SObject_ptr AddInStudy (SALOMEDS::Study_ptr theStudy,
+				    GEOM::GEOM_Object_ptr theObject,
+				    const char* theName,
+				    GEOM::GEOM_Object_ptr theFather);
 
   //-----------------------------------------------------------------------//
-  // Transaction methods                                                    //
-  //-----------------------------------------------------------------------// 
- 
+  // Transaction methods                                                   //
+  //-----------------------------------------------------------------------//
+
   //Undos one transaction in the document associated with theStudyID
   virtual void Undo(CORBA::Long theStudyID);
 
@@ -118,12 +124,12 @@ class GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual public Engines_Comp
 
   //-----------------------------------------------------------------------//
   // Operations methods                                                    //
-  //-----------------------------------------------------------------------// 
+  //-----------------------------------------------------------------------//
 
   //Returns a pointer to BasicOperations interface
   virtual GEOM::GEOM_IBasicOperations_ptr GetIBasicOperations (CORBA::Long theStudyID)
     throw (SALOME::SALOME_Exception);
-  
+
   //Returns a pointer to TransformOperations interface
   virtual GEOM::GEOM_ITransformOperations_ptr GetITransformOperations (CORBA::Long theStudyID)
     throw (SALOME::SALOME_Exception);
@@ -169,7 +175,8 @@ class GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual public Engines_Comp
     throw (SALOME::SALOME_Exception);
 
   //Adds a new sub shape
-  virtual GEOM::GEOM_Object_ptr AddSubShape(GEOM::GEOM_Object_ptr theMainShape, const GEOM::ListOfLong& theIndices);
+  virtual GEOM::GEOM_Object_ptr AddSubShape (GEOM::GEOM_Object_ptr theMainShape,
+					     const GEOM::ListOfLong& theIndices);
 
   virtual void RemoveObject(GEOM::GEOM_Object_ptr theObject);
 
@@ -177,25 +184,25 @@ class GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual public Engines_Comp
 
   virtual GEOM::GEOM_Object_ptr GetIORFromString(const char* stringIOR);
 
-  virtual Engines::TMPFile* DumpPython(CORBA::Object_ptr theStudy, 
-				       CORBA::Boolean isPublished, 
+  virtual Engines::TMPFile* DumpPython(CORBA::Object_ptr theStudy,
+				       CORBA::Boolean isPublished,
 				       CORBA::Boolean& isValidScript);
 
   char* GetDumpName (const char* theStudyEntry);
 
   GEOM::string_array* GetAllDumpNames();
 
-  //********************************************************************************************************//
-  //     Internal methods
-  //********************************************************************************************************//
+  //-----------------------------------------------------------------------//
+  // Internal methods                                                      //
+  //-----------------------------------------------------------------------//
+
   virtual GEOM::GEOM_Object_ptr GetObject(CORBA::Long theStudyID, const char* theEntry);
 
  private:
- 
+
    ::GEOMImpl_Gen* _impl;
    SALOME_NamingService * name_service;
-   char * _name; 
-
+   char * _name;
 };
 
-#endif 
+#endif

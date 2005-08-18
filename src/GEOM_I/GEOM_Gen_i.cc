@@ -7,7 +7,7 @@
 #include "GEOM_Gen_i.hh"
 #include "GEOM_Object_i.hh"
 
-#include <strstream> 
+#include <strstream>
 
 #include "Utils_CorbaException.hxx"
 #include "OpUtil.hxx"
@@ -33,16 +33,16 @@
 
 //============================================================================
 // function : GEOM_Gen_i()
-// purpose  : constructor to be called for servant creation. 
+// purpose  : constructor to be called for servant creation.
 //============================================================================
 GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr orb,
 		       PortableServer::POA_ptr poa,
-		       PortableServer::ObjectId * contId, 
-		       const char *instanceName, 
+		       PortableServer::ObjectId * contId,
+		       const char *instanceName,
 		       const char *interfaceName) :
   Engines_Component_i(orb, poa, contId, instanceName, interfaceName)
 {
-  _thisObj = this ;
+  _thisObj = this;
   _id = _poa->activate_object(_thisObj);
   name_service = new SALOME_NamingService(_orb);
 
@@ -88,13 +88,13 @@ char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
 					 const char* aLocalPersistentID,
 					 CORBA::Boolean isMultiFile,
-					 CORBA::Boolean isASCII) 
-{ 
+					 CORBA::Boolean isASCII)
+{
   SALOMEDS::Study_var aStudy = theSObject->GetStudy();
 
   Handle(GEOM_Object) anObject = _impl->GetObject(aStudy->StudyId(), const_cast<char*>(aLocalPersistentID));
-  TCollection_AsciiString anEntry;  
-  TDF_Tool::Entry(anObject->GetEntry(), anEntry);  
+  TCollection_AsciiString anEntry;
+  TDF_Tool::Entry(anObject->GetEntry(), anEntry);
   GEOM::GEOM_Object_var obj = GetObject(anObject->GetDocID(), anEntry.ToCString());
 
   CORBA::String_var aPersRefString = _orb->object_to_string(obj);
@@ -103,7 +103,7 @@ char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
 
 //============================================================================
 // function : CanPublishInStudy
-// purpose  : 
+// purpose  :
 //============================================================================
 bool GEOM_Gen_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
 {
@@ -114,7 +114,7 @@ bool GEOM_Gen_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
 
 //============================================================================
 // function : PublishInStudy
-// purpose  : 
+// purpose  :
 //============================================================================
 SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
 						 SALOMEDS::SObject_ptr theSObject,
@@ -129,9 +129,9 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   if(aShape->_is_nil()) return aResultSO;
 
   SALOMEDS::GenericAttribute_var anAttr;
-  SALOMEDS::StudyBuilder_var     aStudyBuilder = theStudy->NewBuilder(); 
+  SALOMEDS::StudyBuilder_var     aStudyBuilder = theStudy->NewBuilder();
 
-  SALOMEDS::SComponent_var       aFather = theStudy->FindComponent("GEOM"); 
+  SALOMEDS::SComponent_var       aFather = theStudy->FindComponent("GEOM");
   if (aFather->_is_nil()) {
     aFather = aStudyBuilder->NewComponent("GEOM");
     anAttr = aStudyBuilder->FindOrCreateAttribute(aFather, "AttributeName");
@@ -142,11 +142,11 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     aStudyBuilder->DefineComponentInstance(aFather, GEOM_Gen::_this());
   }
   if (aFather->_is_nil()) return aResultSO;
-  
+
   if (CORBA::is_nil(theSObject)) {
     aResultSO = aStudyBuilder->NewObject(aFather);
   } else {
-    if (!theSObject->ReferencedObject(aResultSO)) 
+    if (!theSObject->ReferencedObject(aResultSO))
       aResultSO = SALOMEDS::SObject::_duplicate(theSObject); //SRN: Added Aug 24,2004 : for  the method AddInStudy with theFather argumenet != NULL
       //THROW_SALOME_CORBA_EXCEPTION("Publish in study supervision graph error",SALOME::BAD_PARAM);
   }
@@ -157,7 +157,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
 
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributePixMap");
   SALOMEDS::AttributePixMap_var aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
-  TCollection_AsciiString aShapeName("Shape_");  
+  TCollection_AsciiString aShapeName("Shape_");
 
   if ( aShape->GetType() == GEOM_GROUP ) {
     GEOM::GEOM_IGroupOperations_var anOp = GetIGroupOperations( theStudy->StudyId() );
@@ -206,7 +206,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   } else if ( aShape->GetShapeType() == GEOM::VERTEX ) {
     aPixmap->SetPixMap( "ICON_OBJBROWSER_VERTEX" );
     aShapeName = "Vertex_";
-  }                                          
+  }
   //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
   //else aShapeName = TCollection_AsciiString(strdup(theName));
 
@@ -221,7 +221,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     do {
       aNewShapeName = aShapeName + TCollection_AsciiString(++i);
       obj = theStudy->FindObject( aNewShapeName.ToCString() );
-    } 
+    }
     while ( !obj->_is_nil() );
     aShapeName = aNewShapeName;
   }
@@ -239,7 +239,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   return aResultSO._retn();
 }
 
- 
+
 //============================================================================
 // function : Save()
 // purpose  : save OCAF/Geom document
@@ -276,7 +276,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
 //============================================================================
 // function : SaveASCII()
 // purpose  :
-//============================================================================ 
+//============================================================================
 SALOMEDS::TMPFile* GEOM_Gen_i::SaveASCII(SALOMEDS::SComponent_ptr theComponent,
 					 const char* theURL,
 					 bool isMultiFile) {
@@ -288,7 +288,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::SaveASCII(SALOMEDS::SComponent_ptr theComponent,
 //============================================================================
 // function : Load()
 // purpose  :
-//============================================================================ 
+//============================================================================
 CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
 				const SALOMEDS::TMPFile& theStream,
 				const char* theURL,
@@ -327,7 +327,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
 //============================================================================
 // function : LoadASCII()
 // purpose  :
-//============================================================================ 
+//============================================================================
 CORBA::Boolean GEOM_Gen_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 				     const SALOMEDS::TMPFile& theStream,
 				     const char* theURL,
@@ -377,7 +377,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::CopyFrom(SALOMEDS::SObject_ptr theObject, CORBA::
   if (anObject->_is_nil()) return aStreamFile._retn();
 
   aStreamFile = anObject->GetShapeStream();
-  
+
   // Assign an ID  the type of  GEOM_Object
   theObjectID = anObject->GetType();
 
@@ -416,21 +416,21 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   } catch (Standard_Failure) {
     return false;
   }
-  
+
   // SObject of the created shape is theObject or new Child of Component if theObject == geom component
   SALOMEDS::SObject_var aNewSO;
   if (strcmp(theObject->GetFatherComponent()->GetID(),theObject->GetID()) == 0) {
     aNewSO = aStudyBuilder->NewObject(theObject);
   } else aNewSO = SALOMEDS::SObject::_duplicate(theObject);
 
-  
-  //Create a new GEOM_Object 
-  Handle(GEOM_Object) anObj = _impl->AddObject(aNewSO->GetStudy()->StudyId(), theObjectID);  
-  Handle(GEOM_Function) aFunction = anObj->AddFunction(GEOMImpl_CopyDriver::GetID(), COPY_WITHOUT_REF);  
+
+  //Create a new GEOM_Object
+  Handle(GEOM_Object) anObj = _impl->AddObject(aNewSO->GetStudy()->StudyId(), theObjectID);
+  Handle(GEOM_Function) aFunction = anObj->AddFunction(GEOMImpl_CopyDriver::GetID(), COPY_WITHOUT_REF);
   aFunction->SetValue(aTopology);
 
-  TCollection_AsciiString anEntry;  
-  TDF_Tool::Entry(anObj->GetEntry(), anEntry);  
+  TCollection_AsciiString anEntry;
+  TDF_Tool::Entry(anObj->GetEntry(), anEntry);
   GEOM::GEOM_Object_var obj = GetObject(anObj->GetDocID(), anEntry.ToCString());
 
   // Add IORAttribute to the Study and set IOR of the created GEOM_Object to it
@@ -459,26 +459,26 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM:
 {
   SALOMEDS::SObject_var aResultSO;
   if(theObject->_is_nil() || theStudy->_is_nil()) return aResultSO;
-    
-  SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder(); 
+
+  SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
   char* IOR;
 
   if(!theFather->_is_nil()) {
-    IOR = _orb->object_to_string(theFather); 
+    IOR = _orb->object_to_string(theFather);
     SALOMEDS::SObject_var aFatherSO = theStudy->FindObjectIOR(IOR);
     if(aFatherSO->_is_nil()) return aResultSO._retn();
     aResultSO = aStudyBuilder->NewObject(aFatherSO);
     //aStudyBuilder->Addreference(aResultSO, aResultSO);
-  }   
+  }
 
   aResultSO = PublishInStudy(theStudy, aResultSO, theObject, theName);
   if(aResultSO->_is_nil()) return aResultSO._retn();
 
   GEOM::ListOfGO_var aList = theObject->GetDependency();
-  Standard_Integer aLength = aList->length(); 
+  Standard_Integer aLength = aList->length();
   if(aLength < 1) return aResultSO._retn();
 
-  //Publish the arguments  
+  //Publish the arguments
   for(Standard_Integer i = 0; i< aLength; i++) {
     GEOM::GEOM_Object_var anObject = aList[i];
     if(anObject->_is_nil()) continue;
@@ -488,18 +488,18 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM:
     SALOMEDS::SObject_var aSubSO = aStudyBuilder->NewObject(aResultSO);
     aStudyBuilder->Addreference(aSubSO, aSO);
   }
-  
+
   return aResultSO._retn();
 }
 
 //============================================================================
-// function : register() 
+// function : register()
 // purpose  : register 'name' in 'name_service'
 //============================================================================
 void GEOM_Gen_i::register_name(char * name)
 {
   GEOM::GEOM_Gen_ptr g = GEOM::GEOM_Gen::_narrow(_this());
-  name_service->Register(g, strdup(name)); 
+  name_service->Register(g, strdup(name));
 }
 
 //============================================================================
@@ -522,7 +522,7 @@ void GEOM_Gen_i::Redo(CORBA::Long theStudyID)
 
 //============================================================================
 // function : GetIBasicOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_IBasicOperations_ptr GEOM_Gen_i::GetIBasicOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -530,19 +530,19 @@ GEOM::GEOM_IBasicOperations_ptr GEOM_Gen_i::GetIBasicOperations(CORBA::Long theS
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIBasicOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_IBasicOperations_i* aServant =
     new GEOM_IBasicOperations_i(_poa, engine, _impl->GetIBasicOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_IBasicOperations_var operations = aServant->_this();
   return operations._retn();
 }
 
 //============================================================================
 // function : GetITransformOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_ITransformOperations_ptr GEOM_Gen_i::GetITransformOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -550,19 +550,19 @@ GEOM::GEOM_ITransformOperations_ptr GEOM_Gen_i::GetITransformOperations(CORBA::L
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetITransformOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_ITransformOperations_i* aServant =
     new GEOM_ITransformOperations_i(_poa, engine, _impl->GetITransformOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_ITransformOperations_var operations = aServant->_this();
   return operations._retn();
 }
 
 //============================================================================
 // function : GetI3DPrimOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_I3DPrimOperations_ptr GEOM_Gen_i::GetI3DPrimOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -570,19 +570,19 @@ GEOM::GEOM_I3DPrimOperations_ptr GEOM_Gen_i::GetI3DPrimOperations(CORBA::Long th
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetI3DPrimOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_I3DPrimOperations_i* aServant =
     new GEOM_I3DPrimOperations_i(_poa, engine, _impl->GetI3DPrimOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_I3DPrimOperations_var operations = aServant->_this();
   return operations._retn();
 }
 
 //============================================================================
 // function : GetIShapesOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_IShapesOperations_ptr GEOM_Gen_i::GetIShapesOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -590,19 +590,19 @@ GEOM::GEOM_IShapesOperations_ptr GEOM_Gen_i::GetIShapesOperations(CORBA::Long th
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIShapesOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_IShapesOperations_i* aServant =
     new GEOM_IShapesOperations_i(_poa, engine, _impl->GetIShapesOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_IShapesOperations_var operations = aServant->_this();
   return operations._retn();
 }
 
 //============================================================================
 // function : GetIBlocksOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_IBlocksOperations_ptr GEOM_Gen_i::GetIBlocksOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -610,19 +610,19 @@ GEOM::GEOM_IBlocksOperations_ptr GEOM_Gen_i::GetIBlocksOperations(CORBA::Long th
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIBlocksOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_IBlocksOperations_i* aServant =
     new GEOM_IBlocksOperations_i(_poa, engine, _impl->GetIBlocksOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_IBlocksOperations_var operations = aServant->_this();
   return operations._retn();
 }
 
 //============================================================================
 // function : GetIBooleanOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_IBooleanOperations_ptr GEOM_Gen_i::GetIBooleanOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -630,19 +630,19 @@ GEOM::GEOM_IBooleanOperations_ptr GEOM_Gen_i::GetIBooleanOperations(CORBA::Long 
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIBooleanOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_IBooleanOperations_i* aServant =
     new GEOM_IBooleanOperations_i(_poa, engine, _impl->GetIBooleanOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_IBooleanOperations_var operations = aServant->_this();
   return operations._retn();
 }
 
 //============================================================================
 // function : GetICurvesOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_ICurvesOperations_ptr GEOM_Gen_i::GetICurvesOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -650,19 +650,19 @@ GEOM::GEOM_ICurvesOperations_ptr GEOM_Gen_i::GetICurvesOperations(CORBA::Long th
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetICurvesOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_ICurvesOperations_i* aServant =
     new GEOM_ICurvesOperations_i(_poa, engine, _impl->GetICurvesOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_ICurvesOperations_var operations = aServant->_this();
   return operations._retn();
 }
 
 //============================================================================
 // function : GetILocalOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_ILocalOperations_ptr GEOM_Gen_i::GetILocalOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -670,19 +670,19 @@ GEOM::GEOM_ILocalOperations_ptr GEOM_Gen_i::GetILocalOperations(CORBA::Long theS
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetILocalOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_ILocalOperations_i* aServant =
     new GEOM_ILocalOperations_i(_poa, engine, _impl->GetILocalOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_ILocalOperations_var operations = aServant->_this();
   return operations._retn();
 }
 
 //============================================================================
 // function : GetIHealingOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_IHealingOperations_ptr GEOM_Gen_i::GetIHealingOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -690,19 +690,19 @@ GEOM::GEOM_IHealingOperations_ptr GEOM_Gen_i::GetIHealingOperations(CORBA::Long 
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::IHealingOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_IHealingOperations_i* aServant =
     new GEOM_IHealingOperations_i(_poa, engine, _impl->GetIHealingOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_IHealingOperations_var operations = aServant->_this();
   return operations._retn();
 }
 
 //============================================================================
 // function : GetIInsertOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_IInsertOperations_ptr GEOM_Gen_i::GetIInsertOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -710,19 +710,19 @@ GEOM::GEOM_IInsertOperations_ptr GEOM_Gen_i::GetIInsertOperations(CORBA::Long th
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIInsertOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_IInsertOperations_i* aServant =
     new GEOM_IInsertOperations_i(_poa, engine, _impl->GetIInsertOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_IInsertOperations_var operations = aServant->_this();
   return operations._retn();
 }
 
 //============================================================================
 // function : GetIMeasureOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_IMeasureOperations_ptr GEOM_Gen_i::GetIMeasureOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -730,19 +730,19 @@ GEOM::GEOM_IMeasureOperations_ptr GEOM_Gen_i::GetIMeasureOperations(CORBA::Long 
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIMeasureOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_IMeasureOperations_i* aServant =
     new GEOM_IMeasureOperations_i(_poa, engine, _impl->GetIMeasureOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_IMeasureOperations_var operations = aServant->_this();
   return operations._retn();
 }
 
 //============================================================================
 // function : GetIGroupOperations
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::GEOM_IGroupOperations_ptr GEOM_Gen_i::GetIGroupOperations(CORBA::Long theStudyID)
      throw ( SALOME::SALOME_Exception )
@@ -750,12 +750,12 @@ GEOM::GEOM_IGroupOperations_ptr GEOM_Gen_i::GetIGroupOperations(CORBA::Long theS
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIGroupOperations" );
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
+  GEOM::GEOM_Gen_ptr engine = _this();
 
   GEOM_IGroupOperations_i* aServant =
     new GEOM_IGroupOperations_i(_poa, engine, _impl->GetIGroupOperations(theStudyID));
 
-  // activate the CORBA servant 
+  // activate the CORBA servant
   GEOM::GEOM_IGroupOperations_var operations = aServant->_this();
   return operations._retn();
 }
@@ -771,7 +771,7 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr theMainShap
   if(theMainShape == NULL || theIndices.length() < 1) return GEOM::GEOM_Object::_nil();
   Handle(GEOM_Object) aMainsShape = _impl->GetObject(theMainShape->GetStudyID(), theMainShape->GetEntry());
   if (aMainsShape.IsNull()) return GEOM::GEOM_Object::_nil();
-  
+
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1, theIndices.length());
   for(Standard_Integer i = 0; i<theIndices.length(); i++) anArray->SetValue(i+1, theIndices[i]);
 
@@ -788,13 +788,13 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr theMainShap
  *  RemoveObject
  */
 //=============================================================================
-void GEOM_Gen_i::RemoveObject(GEOM::GEOM_Object_ptr theObject)         
+void GEOM_Gen_i::RemoveObject(GEOM::GEOM_Object_ptr theObject)
 {
   Handle(GEOM_Object) anObject = _impl->GetObject(theObject->GetStudyID(), theObject->GetEntry());
   if (anObject.IsNull()) return;
   _impl->RemoveObject(anObject);
-  return; 
-}  
+  return;
+}
 
 
 //=================================================================================
@@ -815,34 +815,35 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetIORFromString(const char* stringIOR) {
   if(strcmp(stringIOR,"") != 0){
     CORBA::Object_var anObject = _orb->string_to_object(stringIOR);
     if(!CORBA::is_nil(anObject))
-      aGeomObject =  GEOM::GEOM_Object::_narrow(anObject.in()) ;
+      aGeomObject =  GEOM::GEOM_Object::_narrow(anObject.in());
   }
-  return aGeomObject._retn() ;
+  return aGeomObject._retn();
 }
 
 //=================================================================================
 // function : GetObject()
-// purpose  : 
+// purpose  :
 //=================================================================================
-GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject(CORBA::Long theStudyID, const char* theEntry)
+GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject (CORBA::Long theStudyID, const char* theEntry)
 {
   GEOM::GEOM_Object_var obj;
   Handle(GEOM_Object) handle_object = _impl->GetObject(theStudyID, (char*)theEntry);
-  if(handle_object.IsNull()) return NULL;
-  TCollection_AsciiString stringIOR = handle_object->GetIOR();
-  if(stringIOR.Length() > 1) {
-    CORBA::Object_var corba_object = _orb->string_to_object(stringIOR.ToCString());
-    if(!CORBA::is_nil(corba_object)) obj = GEOM::GEOM_Object::_narrow(corba_object);
-    return obj._retn();  
-   }
+  if (handle_object.IsNull()) return NULL;
 
-  GEOM::GEOM_Gen_ptr engine = _this(); 
-  GEOM_Object_i* servant = new GEOM_Object_i(_poa, engine, handle_object);
-  
+  TCollection_AsciiString stringIOR = handle_object->GetIOR();
+  if (stringIOR.Length() > 1) {
+    CORBA::Object_var corba_object = _orb->string_to_object(stringIOR.ToCString());
+    if (!CORBA::is_nil(corba_object)) obj = GEOM::GEOM_Object::_narrow(corba_object);
+    return obj._retn();
+  }
+
+  GEOM::GEOM_Gen_ptr engine = _this();
+  GEOM_Object_i* servant = new GEOM_Object_i (_poa, engine, handle_object);
+
   obj = servant->_this();
-  stringIOR =  _orb->object_to_string(obj);
+  stringIOR = _orb->object_to_string(obj);
   handle_object->SetIOR(stringIOR);
-  return obj._retn(); 
+  return obj._retn();
 }
 
 
@@ -852,14 +853,13 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject(CORBA::Long theStudyID, const char* 
 extern "C"
 {
   PortableServer::ObjectId * GEOMEngine_factory(CORBA::ORB_ptr orb,
-						PortableServer::POA_ptr poa, 
+						PortableServer::POA_ptr poa,
 						PortableServer::ObjectId * contId,
-						const char *instanceName, 
+						const char *instanceName,
 						const char * interfaceName)
   {
    GEOM_Gen_i * myGEOM_Gen_i = new GEOM_Gen_i(orb, poa, contId, instanceName, interfaceName);
-   myGEOM_Gen_i->register_name("/myGEOM_Gen"); // NRI : 11/07/2002 : Add for Supervision example 
-   return myGEOM_Gen_i->getId() ;
+   myGEOM_Gen_i->register_name("/myGEOM_Gen"); // NRI : 11/07/2002 : Add for Supervision example
+   return myGEOM_Gen_i->getId();
   }
 }
-

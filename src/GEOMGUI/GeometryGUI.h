@@ -1,23 +1,23 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
 //
 //
 //
@@ -34,9 +34,18 @@
 #include "GEOMGUI.h"
 #include "GEOM_Client.hxx"
 #include "SALOME_InteractiveObject.hxx"
+
+#include "SALOMEDSClient.hxx"
+
+// QT Includes
 #include <qmap.h>
 
-#include "gp_Ax3.hxx"
+// OCCT Includes
+#include <gp_Ax3.hxx>
+
+// IDL headers
+#include "SALOMEconfig.h"
+#include CORBA_CLIENT_HEADER(SALOMEDS)
 
 #ifdef WNT
 #include <SALOME_WNT.hxx>
@@ -63,7 +72,7 @@ class SALOME_WNT_EXPORT GeometryGUI : public SalomeApp_Module
 
 public:
   // Constructor
-  GeometryGUI(); 
+  GeometryGUI();
 
   // Destructor
   ~GeometryGUI();
@@ -71,15 +80,18 @@ public:
   virtual void                initialize( CAM_Application* );
   virtual QString             engineIOR() const;
 
-  static bool                 InitGeomGen();   //BugID IPAL9186: SRN: To be called by Python scripts 
+  static bool                 InitGeomGen();   //BugID IPAL9186: SRN: To be called by Python scripts
 
   static GEOM::GEOM_Gen_var   GetGeomGen()        { return myComponentGeom; }
-  
+
+  static CORBA::Object_var    ClientSObjectToObject (_PTR(SObject) theSObject);
+  static SALOMEDS::Study_var  ClientStudyToStudy (_PTR(Study) theStudy);
+
   GEOM_Client&                GetShapeReader()    { return myShapeReader; }
   Standard_CString&           GetFatherior()      { return myFatherior; }
   //void                        SetState( const int state ) { myState = state; }
   //int                         GetState() const    { return myState; }
-  
+
   // Get active dialog box
   QDialog*                    GetActiveDialogBox(){ return myActiveDialogBox; }
   // Set active dialog box
@@ -91,7 +103,7 @@ public:
   void                        EmitSignalDefaultStepValueChanged( double newVal );
 
   void                        OnGUIEvent( int id );
-  
+
   virtual bool                OnKeyPress( QKeyEvent*, SUIT_ViewWindow* );
   virtual bool                OnMousePress( QMouseEvent*, SUIT_ViewWindow* );
   virtual bool                OnMouseMove( QMouseEvent*, SUIT_ViewWindow* );
@@ -137,10 +149,13 @@ protected:
 
 private:
   GEOMGUI*                    getLibrary( const QString& libraryName );
-  void                        createGeomAction( const int id, const QString& po_id, const QString& icon_id = QString(""), const int key = 0, const bool toggle = false );
-  void                        createPopupItem( const int, const QString& clients, const QString& types, 
-					       const bool isSingle = false, const int isVisible = -1, 
-					       const bool isExpandAll = false, const bool isOCC = false, const int parentId = -1 );
+  void                        createGeomAction( const int id, const QString& po_id,
+						const QString& icon_id = QString(""),
+						const int key = 0, const bool toggle = false );
+  void                        createPopupItem( const int, const QString& clients, const QString& types,
+					       const bool isSingle = false, const int isVisible = -1,
+					       const bool isExpandAll = false, const bool isOCC = false,
+					       const int parentId = -1 );
 
 private:
   static GEOM::GEOM_Gen_var   myComponentGeom;   // GEOM engine
@@ -158,4 +173,3 @@ private:
 };
 
 #endif
-

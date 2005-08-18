@@ -1,23 +1,23 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2004  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-//  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org
 //
 //
 //
@@ -59,10 +59,6 @@
 using namespace std;
 
 #include <SALOMEDSClient.hxx>
-#include <SALOMEDS_SObject.hxx>
-#include <SALOMEDS_Study.hxx>
-
-
 
 
 //================================================================
@@ -74,7 +70,7 @@ static SUIT_ViewWindow* getActiveView()
   SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
   if ( activeStudy )
     return SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-  
+
   return 0;
 }
 
@@ -92,14 +88,14 @@ GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine()
 // Function : GEOMBase_Helper
 // Purpose  :
 //================================================================
-GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop ) 
+GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
   : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), isPreview( false )
 {
 }
 
 //================================================================
 // Function : ~GEOMBase_Helper
-// Purpose  : 
+// Purpose  :
 //================================================================
 GEOMBase_Helper::~GEOMBase_Helper()
 {
@@ -118,7 +114,7 @@ GEOMBase_Helper::~GEOMBase_Helper()
 
 //================================================================
 // Function : display
-// Purpose  : 
+// Purpose  :
 //================================================================
 void GEOMBase_Helper::display( const ObjectList& objList, const bool updateView )
 {
@@ -151,7 +147,7 @@ void GEOMBase_Helper::display( GEOM::GEOM_Object_ptr object, const bool updateVi
 
 //================================================================
 // Function : erase
-// Purpose  : 
+// Purpose  :
 //================================================================
 void GEOMBase_Helper::erase( const ObjectList& objList, const bool updateView )
 {
@@ -165,7 +161,7 @@ void GEOMBase_Helper::erase( const ObjectList& objList, const bool updateView )
 
 //================================================================
 // Function : erase
-// Purpose  : 
+// Purpose  :
 //================================================================
 void GEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateView )
 {
@@ -178,9 +174,9 @@ void GEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateView
 
 //================================================================
 // Function : redisplay
-// Purpose  : 
+// Purpose  :
 //================================================================
-void GEOMBase_Helper::redisplay( const ObjectList& objList, 
+void GEOMBase_Helper::redisplay( const ObjectList& objList,
 				 const bool withChildren,
 				 const bool updateView )
 {
@@ -194,9 +190,9 @@ void GEOMBase_Helper::redisplay( const ObjectList& objList,
 
 //================================================================
 // Function : redisplay
-// Purpose  : 
+// Purpose  :
 //================================================================
-void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object, 
+void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 				 const bool withChildren,
 				 const bool updateView )
 {
@@ -205,23 +201,25 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
     // Default color will be used
     getDisplayer()->UnsetColor();
     getDisplayer()->UnsetWidth();
-    
+
     // Enable activisation of selection
     getDisplayer()->SetToActivate( true );
-    
+
     string entry = getEntry( object );
-    getDisplayer()->Redisplay( new SALOME_InteractiveObject( entry.c_str(), "GEOM", strdup( GEOMBase::GetName( object ) ) ), false );
+    getDisplayer()->Redisplay(new SALOME_InteractiveObject
+                              (entry.c_str(), "GEOM", strdup(GEOMBase::GetName(object))), false);
   }
-  
+
   if ( withChildren ) {
     SalomeApp_Study* aDoc = getStudy();
     if ( aDoc && aDoc->studyDS() ) {
       _PTR(Study) aStudy = aDoc->studyDS();
-      _PTR(SObject) aSObj ( aStudy->FindObjectIOR( SalomeApp_Application::orb()->object_to_string( object ) ) );
+      _PTR(SObject) aSObj (aStudy->FindObjectIOR(SalomeApp_Application::orb()->object_to_string(object)));
       if ( aSObj  ) {
 	_PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
 	for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
-	  GEOM::GEOM_Object_var aChild = GEOM::GEOM_Object::_narrow( dynamic_cast<SALOMEDS_SObject*>(anIt->Value().get())->GetObject() );
+	  GEOM::GEOM_Object_var aChild = GEOM::GEOM_Object::_narrow
+            (GeometryGUI::ClientSObjectToObject(anIt->Value()));
 	  if ( !CORBA::is_nil( aChild ) ) {
 	    if ( !aChild->_is_nil() ) {
 	      string entry = getEntry( aChild );
@@ -230,10 +228,10 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 	    }
 	  }
 	}
-      }    
+      }
     }
   }
-  
+
   if ( updateView )
     getDisplayer()->UpdateViewer();
 }
@@ -247,12 +245,12 @@ void GEOMBase_Helper::displayPreview( const bool   activate,
                                       const bool   toRemoveFromEngine,
                                       const double lineWidth )
 {
-  isPreview = true; 
+  isPreview = true;
   QString msg;
   if ( !isValid( msg ) )
   {
     erasePreview( update );
-    isPreview = false; 
+    isPreview = false;
     return;
   }
 
@@ -289,7 +287,7 @@ void GEOMBase_Helper::displayPreview( const bool   activate,
 //================================================================
 void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
                                       const bool            append,
-                                      const bool            activate, 
+                                      const bool            activate,
                                       const bool            update,
                                       const double          lineWidth )
 {
@@ -304,7 +302,7 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
 
   // Make a reference to GEOM_Object
   getDisplayer()->SetName( SalomeApp_Application::orb()->object_to_string( object ) );
-  
+
   // Build prs
   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( object );
   if ( aPrs == 0 || aPrs->IsNull() )
@@ -345,8 +343,8 @@ void GEOMBase_Helper::displayPreview( const SALOME_Prs* prs,
       SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
       if (aView)
 	aView->Display( prs );
-    } 
-  
+    }
+
   // Add prs to the preview list
   myPreview.push_back( (SALOME_Prs*)prs );
 
@@ -357,7 +355,7 @@ void GEOMBase_Helper::displayPreview( const SALOME_Prs* prs,
 
 //================================================================
 // Function : erasePreview
-// Purpose  : 
+// Purpose  :
 //================================================================
 void GEOMBase_Helper::erasePreview( const bool update )
 {
@@ -375,7 +373,7 @@ void GEOMBase_Helper::erasePreview( const bool update )
 	     SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
 	     if (aView)
 	       aView->Erase( *anIter, true );
-	   } 
+	   }
       }
     delete *anIter;
   }
@@ -409,7 +407,8 @@ void GEOMBase_Helper::activate( const int theType )
       _PTR(SObject) aRefSO;
       if ( !aSO->ReferencedObject( aRefSO ) )
       {
-        GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_narrow( dynamic_cast<SALOMEDS_SObject*>(aSO.get())->GetObject() );
+        GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_narrow
+          (GeometryGUI::ClientSObjectToObject(aSO));
         if ( !anObj->_is_nil() && anObj->GetType() == theType )
           aList.Append( new SALOME_InteractiveObject( aSO->GetID().c_str(), "GEOM", aSO->GetName().c_str()) );
       }
@@ -427,7 +426,7 @@ void GEOMBase_Helper::activate( const int theType )
 void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMode )
 {
   SALOME_ListIO aListOfIO;
-  
+
   ObjectList::const_iterator anIter = theObjs.begin();
   for ( ; anIter != theObjs.end(); ++anIter )
   {
@@ -498,7 +497,8 @@ void GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theN
 
   GEOM::GEOM_Object_ptr aFatherObj = getFather( theObj );
 
-  getGeomEngine()->AddInStudy( dynamic_cast<SALOMEDS_Study*>(aStudy.get())->GetStudy(), theObj, theName, aFatherObj );
+  getGeomEngine()->AddInStudy(GeometryGUI::ClientStudyToStudy(aStudy),
+                              theObj, theName, aFatherObj);
 }
 
 //================================================================
@@ -540,7 +540,7 @@ int GEOMBase_Helper::getStudyId() const
 
 //================================================================
 // Function : getStudy
-// Purpose  : Returns the active study. It is recommended to use 
+// Purpose  : Returns the active study. It is recommended to use
 //            this method instead of direct desktop->getActiveStudy() calls
 //================================================================
 SalomeApp_Study* GEOMBase_Helper::getStudy() const
@@ -548,14 +548,14 @@ SalomeApp_Study* GEOMBase_Helper::getStudy() const
   SUIT_Desktop* aDesktop = getDesktop();
   if (!aDesktop)
     return 0;
-  
-  QPtrList<SUIT_Application> anAppList = SUIT_Session::session()->applications(); 
-  
+
+  QPtrList<SUIT_Application> anAppList = SUIT_Session::session()->applications();
+
   SUIT_Application* anApp = 0;
   for ( QPtrListIterator<SUIT_Application> it( anAppList ); it.current() ; ++it )
     {
       anApp = it.current();
-      if ( anApp->desktop() == aDesktop ) 
+      if ( anApp->desktop() == aDesktop )
 	break;
     }
 
@@ -564,7 +564,7 @@ SalomeApp_Study* GEOMBase_Helper::getStudy() const
 
 //================================================================
 // Function : getEntry
-// Purpose  : 
+// Purpose  :
 //================================================================
 char* GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
 {
@@ -583,7 +583,7 @@ char* GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
 
 //================================================================
 // Function : getDisplayer
-// Purpose  : 
+// Purpose  :
 //================================================================
 GEOM_Displayer* GEOMBase_Helper::getDisplayer()
 {
@@ -594,7 +594,7 @@ GEOM_Displayer* GEOMBase_Helper::getDisplayer()
 
 //================================================================
 // Function : clearShapeBuffer
-// Purpose  : 
+// Purpose  :
 //================================================================
 void GEOMBase_Helper::clearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
 {
@@ -619,34 +619,34 @@ void GEOMBase_Helper::clearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
     if ( anIt->Value()->FindAttribute(anAttr, "AttributeIOR") ) {
       _PTR(AttributeIOR) anIOR ( anAttr );
       TCollection_AsciiString asciiIOR( (char*)anIOR->Value().c_str() );
-      GEOM_Client().RemoveShapeFromBuffer( asciiIOR );      
+      GEOM_Client().RemoveShapeFromBuffer( asciiIOR );
     }
   }
 }
 
 //================================================================
 // Function : openCommand
-// Purpose  : 
+// Purpose  :
 //================================================================
-bool GEOMBase_Helper::openCommand() 
+bool GEOMBase_Helper::openCommand()
 {
   bool res = false;
   if ( !getStudy() || hasCommand() )
     return res;
-  
+
   GEOM::GEOM_IOperations_var anOp = GEOM::GEOM_IOperations::_narrow( getOperation() );
   if ( !anOp->_is_nil() ) {
     myCommand = new GEOM_Operation( SUIT_Session::session()->activeApplication(), anOp.in() );
     myCommand->start();
     res = true;
   }
- 
+
   return res;
 }
 
 //================================================================
 // Function : abortCommand
-// Purpose  : 
+// Purpose  :
 //================================================================
 bool GEOMBase_Helper::abortCommand()
 {
@@ -655,13 +655,13 @@ bool GEOMBase_Helper::abortCommand()
 
   myCommand->abort();
   myCommand = 0;
- 
-  return true;  
+
+  return true;
 }
 
 //================================================================
 // Function : commitCommand
-// Purpose  : 
+// Purpose  :
 //================================================================
 bool GEOMBase_Helper::commitCommand( const char* )
 {
@@ -671,12 +671,12 @@ bool GEOMBase_Helper::commitCommand( const char* )
   myCommand->commit();
   myCommand = 0;
 
-  return true;  
+  return true;
 }
 
 //================================================================
 // Function : hasCommand
-// Purpose  : 
+// Purpose  :
 //================================================================
 bool GEOMBase_Helper::hasCommand() const
 {
@@ -685,7 +685,7 @@ bool GEOMBase_Helper::hasCommand() const
 
 //================================================================
 // Function : getOperation
-// Purpose  : 
+// Purpose  :
 //================================================================
 GEOM::GEOM_IOperations_ptr GEOMBase_Helper::getOperation()
 {
@@ -699,13 +699,13 @@ GEOM::GEOM_IOperations_ptr GEOMBase_Helper::getOperation()
 
 //================================================================
 // Function : checkViewWindow
-// Purpose  : 
+// Purpose  :
 //================================================================
 bool GEOMBase_Helper::checkViewWindow()
 {
   if ( myViewWindow ){
     QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
-    for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it ) 
+    for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it )
       {
 	if ( myViewWindow == it.current() )
 	  return true;
@@ -718,7 +718,7 @@ bool GEOMBase_Helper::checkViewWindow()
 //================================================================
 // Function : onAccept
 // Purpose  : This method should be called from dialog's slots onOk() and onApply()
-//            It perfroms user input validation, then it 
+//            It perfroms user input validation, then it
 //            performs a proper operation and manages transactions, etc.
 //================================================================
 bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
@@ -726,12 +726,12 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
   if ( !appStudy ) return false;
   _PTR(Study) aStudy = appStudy->studyDS();
-  
+
   bool aLocked = (_PTR(AttributeStudyProperties) (aStudy->GetProperties()))->IsLocked();
   if ( aLocked ) {
     MESSAGE("GEOMBase_Helper::onAccept - ActiveStudy is locked");
     SUIT_MessageBox::warn1 ( (QWidget*)SUIT_Session::session()->activeApplication()->desktop(),
-			   QObject::tr("WRN_WARNING"), 
+			   QObject::tr("WRN_WARNING"),
 			   QObject::tr("WRN_STUDY_LOCKED"),
 			   QObject::tr("BUT_OK") );
     return false;
@@ -773,7 +773,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 	    withChildren = false;
 	    display( *it, false );
 	  }
-	  else { // asv : fix of PAL6454. If publish==false, then the original shape was modified, and need to be re-cached in GEOM_Client 
+	  else { // asv : fix of PAL6454. If publish==false, then the original shape was modified, and need to be re-cached in GEOM_Client
 	         // before redisplay
 	    clearShapeBuffer( *it );
 	    withChildren = true;
@@ -816,8 +816,8 @@ void GEOMBase_Helper::showError()
     msg = QObject::tr( "GEOM_PRP_ABORT" );
 
   SUIT_MessageBox::error1( SUIT_Session::session()->activeApplication()->desktop(),
-			   QObject::tr( "GEOM_ERROR_STATUS" ), 
-			   msg, 
+			   QObject::tr( "GEOM_ERROR_STATUS" ),
+			   msg,
 			   QObject::tr( "BUT_OK" ) );
 }
 
@@ -858,8 +858,8 @@ bool GEOMBase_Helper::isValid( QString& )
 
 //================================================================
 // Function : execute
-// Purpose  : This method is called by onAccept(). 
-//            It should perform the required operation and put all new or modified objects into 
+// Purpose  : This method is called by onAccept().
+//            It should perform the required operation and put all new or modified objects into
 //            <objects> argument.Should return <false> if some error occurs during its execution.
 //================================================================
 bool GEOMBase_Helper::execute( ObjectList& objects )
@@ -899,9 +899,9 @@ QString GEOMBase_Helper::getPrefix( GEOM::GEOM_Object_ptr theObj ) const
   TopoDS_Shape aShape;
   if ( !GEOMBase::GetShape( theObj, aShape ) )
     return "";
-  
+
   long aType = aShape.ShapeType();
-  
+
   switch ( aType )
   {
     case TopAbs_VERTEX   : return QObject::tr( "GEOM_VERTEX" );
@@ -923,14 +923,14 @@ QString GEOMBase_Helper::getPrefix( GEOM::GEOM_Object_ptr theObj ) const
 const SALOME_ListIO& GEOMBase_Helper::selectedIO()
 {
   mySelected.Clear();
-  
+
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( app ) {
     SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
     if ( aSelMgr )
       aSelMgr->selectedObjects( mySelected );
   }
-  
+
   return mySelected;
 }
 

@@ -82,6 +82,40 @@ bool GeometryGUI::InitGeomGen()
   return true; 
 }			   
 
+//=======================================================================
+// function : ClientSObjectToObject
+// purpose  : 
+//=======================================================================
+CORBA::Object_var GeometryGUI::ClientSObjectToObject (_PTR(SObject) theSObject)
+{
+  _PTR(GenericAttribute) anAttr;
+  CORBA::Object_var anObj;
+  try {
+    std::string aValue = theSObject->GetIOR();
+    if (strcmp(aValue.c_str(), "") != 0) {
+      CORBA::ORB_ptr anORB = SalomeApp_Application::orb();
+      anObj = anORB->string_to_object(aValue.c_str());
+    }
+  } catch(...) {
+    INFOS("ClientSObjectToObject - Unknown exception was occured!!!");
+  }
+  return anObj._retn();
+}
+
+//=======================================================================
+// function : ClientStudyToStudy
+// purpose  : 
+//=======================================================================
+SALOMEDS::Study_var GeometryGUI::ClientStudyToStudy (_PTR(Study) theStudy)
+{
+  SALOME_NamingService *aNamingService = SalomeApp_Application::namingService();
+  CORBA::Object_var aSMObject = aNamingService->Resolve("/myStudyManager");
+  SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow(aSMObject);
+  int aStudyID = theStudy->StudyId();
+  SALOMEDS::Study_var aDSStudy = aStudyManager->GetStudyByID(aStudyID);
+  return aDSStudy._retn();
+}
+
 //=================================================================================
 // class   : CustomItem
 // purpose : Set Font to a text.

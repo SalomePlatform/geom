@@ -1,25 +1,25 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2004  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-//  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//            
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org
+//
+//
 //
 //  File   : GEOMToolsGUI_1.cxx
 //  Author : Sergey ANIKIN
@@ -29,12 +29,14 @@
 #include <PythonConsole_PyConsole.h>
 
 #include "GEOMToolsGUI.h"
+
 #include "GeometryGUI.h"
-#include "GEOM_Actor.h"
-#include "GEOMBase.h"
 #include "GEOMToolsGUI_TransparencyDlg.h"
 #include "GEOMToolsGUI_NbIsosDlg.h"        // Method ISOS adjustement
 #include "GEOMToolsGUI_NameDlg.h"
+
+#include "GEOM_Actor.h"
+#include "GEOMBase.h"
 
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
@@ -59,11 +61,17 @@
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Module.h>
 
+#include "SALOMEDSClient.hxx"
+
+#include "utilities.h"
+
+// OCCT Includes
 #include <AIS_Drawer.hxx>
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <Prs3d_IsoAspect.hxx>
 
+// VTK Includes
 #include <vtkBMPReader.h>
 #include <vtkTexture.h>
 #include <vtkTextureMapToPlane.h>
@@ -71,18 +79,13 @@
 #include <vtkDataSetMapper.h>
 #include <vtkRenderer.h>
 
+// QT Includes
 #include <qfileinfo.h>
 #include <qcolordialog.h>
 #include <qspinbox.h>
 #include <qapplication.h>
 
-#include "utilities.h"
-
 using namespace std;
-
-#include "SALOMEDSClient.hxx"
-#include "SALOMEDS_Study.hxx"
-
 
 
 void GEOMToolsGUI::OnSettingsColor()
@@ -92,14 +95,14 @@ void GEOMToolsGUI::OnSettingsColor()
   SUIT_Desktop* desk = sess->activeApplication()->desktop();
 
   QColor anInitColor = resMgr->colorValue( "Geometry", "SettingsShadingColor", QColor( "yellow" ) );
-  
+
   QColor aDialogColor = QColorDialog::getColor(anInitColor, desk );
-  if( aDialogColor.isValid() ) 
+  if( aDialogColor.isValid() )
   {
     QString type = desk->activeWindow()->getViewManager()->getType();
     if( type != OCCViewer_Viewer::Type() && type != VTKViewer_Viewer::Type() )
       MESSAGE("Settings Color is not supported for current Viewer");
-    
+
     resMgr->setValue( "Geometry", "SettingsShadingColor", aDialogColor );
   }
 }
@@ -116,25 +119,25 @@ void GEOMToolsGUI::OnSettingsIsos()
 
   if ( type != OCCViewer_Viewer::Type() )
     return;
-  
+
   OCCViewer_Viewer* vm = (OCCViewer_Viewer*)vman->getViewModel();
   Handle (AIS_InteractiveContext) ic = vm->getAISContext();
-  
+
   int IsoU = resMgr->integerValue( "Geometry:SettingsIsoU", 1 );
   int IsoV = resMgr->integerValue( "Geometry:SettingsIsoV", 1 );
-  
+
   ic->DefaultDrawer()->UIsoAspect()->SetNumber( IsoU );
   ic->DefaultDrawer()->VIsoAspect()->SetNumber( IsoV );
-  
-  GEOMBase_NbIsosDlg* NbIsosDlg = new GEOMBase_NbIsosDlg(desk, tr("GEOM_MEN_ISOS"), TRUE);	
-  
+
+  GEOMBase_NbIsosDlg* NbIsosDlg = new GEOMBase_NbIsosDlg(desk, tr("GEOM_MEN_ISOS"), TRUE);
+
   NbIsosDlg->SpinBoxU->setValue(IsoU);
   NbIsosDlg->SpinBoxV->setValue(IsoV);
-  
+
   if(NbIsosDlg->exec()) {
     IsoU = NbIsosDlg->SpinBoxU->text().toInt();
     IsoV = NbIsosDlg->SpinBoxV->text().toInt();
-    
+
     ic->DefaultDrawer()->UIsoAspect()->SetNumber(UIso);
     ic->DefaultDrawer()->VIsoAspect()->SetNumber(VIso);
     resMgr->setValue("Geometry:SettingsIsoU", isoU);
@@ -154,7 +157,7 @@ void GEOMToolsGUI::OnSettingsStep()
   double dd = GEOMBase::Parameter( res, QString("%1").arg(step), tr("GEOM_MEN_STEP_LABEL"), tr("GEOM_STEP_TITLE"), 0.001, 10000.0, 3);
   if(res) {
     resMgr->setValue( "Geometry", "SettingsGeomStep", dd );
-    
+
     /* Emit signal to GeometryGUI_SpinBoxes */
     getGeometryGUI()->EmitSignalDefaultStepValueChanged( dd );
   }
@@ -177,21 +180,21 @@ void GEOMToolsGUI::OnRename()
 	bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
 	if ( aLocked ) {
 	  SUIT_MessageBox::warn1 ( app->desktop(),
-				   QObject::tr("WRN_WARNING"), 
+				   QObject::tr("WRN_WARNING"),
 				   QObject::tr("WRN_STUDY_LOCKED"),
 				   QObject::tr("BUT_OK") );
 	  return;
 	}
-  
+
 	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
 	  Handle(SALOME_InteractiveObject) IObject = It.Value();
-    
+
 	  _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
 	  _PTR(GenericAttribute) anAttr;
 	  if ( obj ) {
 	    if( obj->FindAttribute(anAttr, "AttributeName") ) {
 	      _PTR(AttributeName) aName (anAttr);
-	
+
 	      QString newName = GEOMToolsGUI_NameDlg::getName( app->desktop(), aName->Value().c_str() );
 	      if ( !newName.isEmpty() ) {
 		aName->SetValue( newName.latin1() ); // rename the SObject
@@ -210,7 +213,7 @@ void GEOMToolsGUI::OnCheckGeometry()
 {
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   PythonConsole* pyConsole = app->pythonConsole();
-  
+
   if(pyConsole)
     pyConsole->exec("from GEOM_usinggeom import *");
 }
@@ -282,36 +285,36 @@ void GEOMToolsGUI::OnNbIsos()
 
   if ( !isOCC )
     return;
-  
+
   OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
   Handle (AIS_InteractiveContext) ic = vm->getAISContext();
-  
+
   ic->InitCurrent();
   if ( ic->MoreCurrent() ) {
     Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
     Handle(AIS_Drawer)    CurDrawer = CurObject->Attributes();
-    
+
     int UIso = CurDrawer->UIsoAspect()->Number();
     int VIso = CurDrawer->VIsoAspect()->Number();
-    
+
     GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
       new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
-    
+
     NbIsosDlg->setU( UIso );
     NbIsosDlg->setV( VIso );
-    
+
     if ( NbIsosDlg->exec() ) {
       SUIT_OverrideCursor();
       for(; ic->MoreCurrent(); ic->NextCurrent()) {
         CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
 	Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
-	
+
 	int nbUIso = NbIsosDlg->getU();
 	int nbVIso = NbIsosDlg->getV();
-	
+
 	CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbUIso) );
 	CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbVIso) );
-	
+
 	ic->SetLocalAttributes(CurObject, CurDrawer);
 	ic->Redisplay(CurObject);
       }
@@ -343,12 +346,12 @@ void GEOMToolsGUI::OnOpen()
 	  useSubItems = true;
 	  obj =  subobj;
 	}
-	else 
+	else
 	  anIter->Next();
       }
       obj->FindAttribute(anAttr, "AttributePersistentRef");
-	      
-      while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
+
+      while(useSubItems?anIter->More():!anAttr->_is_nil()) {
 	if(!obj->FindAttribute(anAttr, "AttributeIOR") &&
 	   obj->FindAttribute(anAttr, "AttributePersistentRef")) {
 	  _PTR(SComponent) FComp ( obj->GetFatherComponent() );
@@ -376,7 +379,7 @@ void GEOMToolsGUI::OnOpen()
 		  } else {
 		    return;
 		  }
-		} 
+		}
 		else {
 		  MESSAGE("loadComponentData(): Driver is null");
 		  return;
@@ -394,7 +397,7 @@ void GEOMToolsGUI::OnOpen()
 		// 		  SALOMEDS::SComponent_var SC = aStudy->FindComponent("GEOM");
 		// 		  if (!CORBA::is_nil(SC))
 		// 		    aStudyBuilder->LoadWith(SC,driver);
-	    } 
+	    }
 	  }
 	  else {
 	    MESSAGE("Component is null");
@@ -403,8 +406,8 @@ void GEOMToolsGUI::OnOpen()
 	if(useSubItems) {
 	  anIter->Next();
 	  obj.reset( anIter->Value() );
-	} 
-	else 
+	}
+	else
 	  anAttr = NULL;
       }
     }

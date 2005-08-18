@@ -1,11 +1,12 @@
-#include <OCCViewer_ViewModel.h>
-
 #include "GEOMGUI_Selection.h"
+
+#include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
-#include "GEOMImpl_Types.hxx"
 
 #include <SalomeApp_DataOwner.h>
 #include <SalomeApp_Study.h>
+
+#include <OCCViewer_ViewModel.h>
 
 #include <SUIT_Session.h>
 #include <SUIT_ViewWindow.h>
@@ -14,21 +15,26 @@
 
 #include <SALOMEDSClient_SObject.hxx>
 #include <SALOMEDSClient_Study.hxx>
-#include <SALOMEDS_SObject.hxx>
+
 #include <SALOME_Prs.h>
 #include <SALOME_InteractiveObject.hxx>
 
 #include <SOCC_Prs.h>
 #include <SVTK_Prs.h>
 #include <SALOME_Actor.h>
-#include <vtkActorCollection.h>
 
 #include <OCCViewer_ViewModel.h>
 #include <VTKViewer_ViewModel.h>
 
+#include "GEOMImpl_Types.hxx"
+
+// OCCT Includes
 #include <AIS.hxx>
 #include <AIS_InteractiveObject.hxx>
 #include <AIS_ListOfInteractive.hxx>
+
+// VTK Includes
+#include <vtkActorCollection.h>
 
 GEOMGUI_Selection::GEOMGUI_Selection()
 {
@@ -41,7 +47,7 @@ GEOMGUI_Selection::~GEOMGUI_Selection()
 QtxValue GEOMGUI_Selection::globalParam( const QString& p ) const
 {
   if ( p == "isOCC" ) return QtxValue( activeViewType() == OCCViewer_Viewer::Type() );
- 
+
   return SalomeApp_Selection::globalParam( p );
 }
 
@@ -111,7 +117,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 	    }
 	  }
 	}
-      } 
+      }
       else if ( viewType == VTKViewer_Viewer::Type() ) { // assuming VTK
 	SVTK_Prs* vtkPrs = (SVTK_Prs*) prs;
 	vtkActorCollection* lst = vtkPrs->GetObjects();
@@ -124,7 +130,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 	      int dm = salActor->getDisplayMode();
 	      if ( dm == 0 )
 		return "Wireframe";
-	      else if ( dm == 1 ) 
+	      else if ( dm == 1 )
 		return "Shading";
 	    } // if ( salome actor )
 	  } // if ( actor )
@@ -144,9 +150,9 @@ bool GEOMGUI_Selection::isComponent( const int index ) const
     _PTR(Study) study = appStudy->studyDS();
     QString anEntry = entry( index );
 
-    if ( study && !anEntry.isNull() ) { 
+    if ( study && !anEntry.isNull() ) {
       _PTR(SObject) aSO( study->FindObjectID( anEntry.latin1() ) );
-      if ( aSO && aSO->GetFatherComponent() ) 
+      if ( aSO && aSO->GetFatherComponent() )
 	return aSO->GetFatherComponent()->GetIOR() == aSO->GetIOR();
     }
   }
@@ -158,18 +164,17 @@ GEOM::GEOM_Object_ptr GEOMGUI_Selection::getObject( const int index ) const
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>
     (SUIT_Session::session()->activeApplication()->activeStudy());
 
-  if ( appStudy && index >= 0 && index < count() )  {
+  if (appStudy && index >= 0 && index < count()) {
     _PTR(Study) study = appStudy->studyDS();
-    QString anEntry = entry( index );
+    QString anEntry = entry(index);
 
-    if ( study && !anEntry.isNull() ) { 
-      _PTR(SObject) aSO( study->FindObjectID( anEntry.latin1() ) );
-      if ( aSO ) {
-	SALOMEDS_SObject* aDSObj = dynamic_cast<SALOMEDS_SObject*>( aSO.get() );
-	return GEOM::GEOM_Object::_narrow( aDSObj->GetObject() );
+    if (study && !anEntry.isNull()) {
+      _PTR(SObject) aSO (study->FindObjectID(anEntry.latin1()));
+      if (aSO) {
+        CORBA::Object_var anObj = GeometryGUI::ClientSObjectToObject(aSO);
+	return GEOM::GEOM_Object::_narrow(anObj);
       }
     }
   }
   return GEOM::GEOM_Object::_nil();
 }
-
