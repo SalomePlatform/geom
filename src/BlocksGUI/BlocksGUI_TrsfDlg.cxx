@@ -398,7 +398,7 @@ void BlocksGUI_TrsfDlg::activateSelection()
 
     // Local selection is available only in the OCC Viewer
     if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
-	!= OCCViewer_Viewer::Type()) {
+	== OCCViewer_Viewer::Type()) {
       localSelection(myShape, TopAbs_FACE);
     } else {
       return;
