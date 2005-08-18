@@ -36,7 +36,7 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 
 # Libraries targets
 
-LIB = libGEOMFiltersSelection.la 
+LIB = libGEOMFiltersSelection.la
 LIB_SRC = GEOM_SelectionFilter.cxx \
 	  GEOM_EdgeFilter.cxx \
 	  GEOM_FaceFilter.cxx \
@@ -45,7 +45,7 @@ LIB_SRC = GEOM_SelectionFilter.cxx \
 	  GEOM_LogicalFilter.cxx \
 	  GEOM_OCCFilter.cxx
 
-# header files 
+# header files
 EXPORT_HEADERS= GEOM_SelectionFilter.h \
 		GEOM_EdgeFilter.h \
 		GEOM_FaceFilter.h \
@@ -60,7 +60,7 @@ LIB_CLIENT_IDL= GEOM_Gen.idl SALOMEDS.idl SALOME_Exception.idl SALOME_GenericObj
 # additionnal information to compil and link file
 CPPFLAGS += $(QT_INCLUDES) $(OCC_INCLUDES) $(BOOST_CPPFLAGS) -I$(GUI_ROOT_DIR)/include/salome -I$(KERNEL_ROOT_DIR)/include/salome
 CXXFLAGS += $(QT_INCLUDES) $(BOOST_CPPFLAGS) -I$(GUI_ROOT_DIR)/include/salome -I$(KERNEL_ROOT_DIR)/include/salome
-LDFLAGS  += -L$(GUI_ROOT_DIR)/lib/salome -L$(KERNEL_ROOT_DIR)/lib/salome -lsuit -lSalomeApp -lSalomeDS
+LDFLAGS  += -L$(GUI_ROOT_DIR)/lib/salome -L$(KERNEL_ROOT_DIR)/lib/salome -lsuit -lSalomeApp
 
 # additional file to be cleaned
 MOSTLYCLEAN =
@@ -68,4 +68,3 @@ CLEAN =
 DISTCLEAN =
 
 @CONCLUDE@
-

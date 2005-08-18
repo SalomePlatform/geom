@@ -10,13 +10,12 @@
 
 #include <SUIT_Session.h>
 
-#include <SALOMEDS_SObject.hxx>
-
+#include <SALOMEDSClient.hxx>
 
 
 //=======================================================================
 // function : GEOM_SelectionFilter
-// purpose  : 
+// purpose  :
 //=======================================================================
 GEOM_SelectionFilter::GEOM_SelectionFilter( SalomeApp_Study* study, const bool theAll )
   : SalomeApp_Filter(study)
@@ -26,7 +25,7 @@ GEOM_SelectionFilter::GEOM_SelectionFilter( SalomeApp_Study* study, const bool t
 
 //=======================================================================
 // function : ~GEOM_SelectionFilter
-// purpose  : 
+// purpose  :
 //=======================================================================
 GEOM_SelectionFilter::~GEOM_SelectionFilter()
 {
@@ -34,7 +33,7 @@ GEOM_SelectionFilter::~GEOM_SelectionFilter()
 
 //=======================================================================
 // function : isOk
-// purpose  : 
+// purpose  :
 //=======================================================================
 bool GEOM_SelectionFilter::isOk( const SUIT_DataOwner* sOwner ) const
 {
@@ -53,48 +52,56 @@ bool GEOM_SelectionFilter::isOk( const SUIT_DataOwner* sOwner ) const
 
 //=======================================================================
 // function : getObject
-// purpose  : 
+// purpose  :
 //=======================================================================
-GEOM::GEOM_Object_ptr GEOM_SelectionFilter::getObject( const SUIT_DataOwner* sOwner ) const
+GEOM::GEOM_Object_ptr GEOM_SelectionFilter::getObject (const SUIT_DataOwner* sOwner) const
 {
   GEOM::GEOM_Object_var anObj;
 
-  const SalomeApp_DataOwner* owner = dynamic_cast<const SalomeApp_DataOwner*> ( sOwner );
+  const SalomeApp_DataOwner* owner = dynamic_cast<const SalomeApp_DataOwner*>(sOwner);
   SalomeApp_Study* appStudy = getStudy();
-  if ( owner && appStudy ) 
+  if (owner && appStudy)
   {
     _PTR(Study) study = appStudy->studyDS();
     QString entry = owner->entry();
 
-    _PTR(SObject) aSO( study->FindObjectID( entry.latin1() ) );
-    if ( aSO )
-      anObj = GEOM::GEOM_Object::_narrow(dynamic_cast<SALOMEDS_SObject*>(aSO.get())->GetObject());
+    _PTR(SObject) aSO (study->FindObjectID(entry.latin1()));
+    if (aSO) {
+      std::string aValue = aSO->GetIOR();
+      if (strcmp(aValue.c_str(), "") != 0) {
+        CORBA::ORB_ptr anORB = SalomeApp_Application::orb();
+        CORBA::Object_var aCorbaObj = anORB->string_to_object(aValue.c_str());
+        anObj = GEOM::GEOM_Object::_narrow(aCorbaObj);
+      }
+    }
   }
-  
-  if ( !CORBA::is_nil( anObj ) )
+
+  if (!CORBA::is_nil(anObj))
     return anObj._retn();
-    
+
   return GEOM::GEOM_Object::_nil();
 }
 
 //=======================================================================
 // function : getShape
-// purpose  : 
+// purpose  :
 //=======================================================================
-bool GEOM_SelectionFilter::getShape( const GEOM::GEOM_Object_ptr& theObject, TopoDS_Shape& theShape ) const
+bool GEOM_SelectionFilter::getShape (const GEOM::GEOM_Object_ptr& theObject,
+                                     TopoDS_Shape&                theShape) const
 {
   if ( !CORBA::is_nil( theObject ) )
   {
-    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
+    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>
+      ( SUIT_Session::session()->activeApplication() );
     if ( app )
     {
       SALOME_LifeCycleCORBA* ls = new SALOME_LifeCycleCORBA( app->namingService() );
       Engines::Component_var comp = ls->FindOrLoad_Component( "FactoryServer", "GEOM" );
       GEOM::GEOM_Gen_var geomGen = GEOM::GEOM_Gen::_narrow( comp );
-      if ( !CORBA::is_nil( geomGen ) ) 
+      if ( !CORBA::is_nil( geomGen ) )
       {
 	TopoDS_Shape aTopoDSShape = GEOM_Client().GetShape( geomGen, theObject );
-        
+
 	if ( !aTopoDSShape.IsNull() )
 	{
 	  theShape = aTopoDSShape;
@@ -108,7 +115,7 @@ bool GEOM_SelectionFilter::getShape( const GEOM::GEOM_Object_ptr& theObject, Top
 
 //=======================================================================
 // function : contains
-// purpose  : 
+// purpose  :
 //=======================================================================
 bool GEOM_SelectionFilter::contains( const int type ) const
 {
@@ -117,7 +124,7 @@ bool GEOM_SelectionFilter::contains( const int type ) const
 
 //=======================================================================
 // function : add
-// purpose  : 
+// purpose  :
 //=======================================================================
 void GEOM_SelectionFilter::add( const int type )
 {
@@ -127,7 +134,7 @@ void GEOM_SelectionFilter::add( const int type )
 
 //=======================================================================
 // function : remove
-// purpose  : 
+// purpose  :
 //=======================================================================
 void GEOM_SelectionFilter::remove( const int type )
 {
@@ -137,7 +144,7 @@ void GEOM_SelectionFilter::remove( const int type )
 
 //=======================================================================
 // function : setAll
-// purpose  : 
+// purpose  :
 //=======================================================================
 void GEOM_SelectionFilter::setAll( const bool all )
 {
@@ -146,7 +153,7 @@ void GEOM_SelectionFilter::setAll( const bool all )
 
 //=======================================================================
 // function : isAll
-// purpose  : 
+// purpose  :
 //=======================================================================
 bool GEOM_SelectionFilter::isAll() const
 {
@@ -155,10 +162,9 @@ bool GEOM_SelectionFilter::isAll() const
 
 //=======================================================================
 // function : isShapeOk
-// purpose  : 
+// purpose  :
 //=======================================================================
 bool GEOM_SelectionFilter::isShapeOk( const TopoDS_Shape& ) const
 {
   return true;
 }
-
