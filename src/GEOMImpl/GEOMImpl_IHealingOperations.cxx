@@ -365,7 +365,10 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
   SetErrorCode(KO);
 
   if (theObject.IsNull())
+  {
+    SetErrorCode("NULL object given");
     return NULL;
+  }
 
   Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
@@ -408,11 +411,14 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
   pd << aNewObject << " = geompy.CloseContour(" << theObject << ", [";
 
   // list of wire ids
-  int i = theWires->Lower(), nb = theWires->Upper();
-  for ( ; i <= nb; i++)
-    pd << theWires->Value( i ) << (( i < nb ) ? ", " : "], ");
-
-  pd << (int)isCommonVertex << ")";
+  if (!theWires.IsNull())
+  {
+    int i = theWires->Lower(), nb = theWires->Upper();
+    pd << theWires->Value(i++);
+    while (i <= nb)
+      pd << ", " << theWires->Value(i++);
+  }
+  pd << "], " << (int)isCommonVertex << ")";
 
   SetErrorCode(OK);
   return aNewObject;
