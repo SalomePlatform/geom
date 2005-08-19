@@ -32,7 +32,11 @@
 #include "DlgRef_1Sel_QTD.h"
 
 #include "BasicGUI.h"
-
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define BASICGUI_WNT_EXPORT __declspec( dllexport )
+#else
+#define BASICGUI_WNT_EXPORT
+#endif
 //#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================

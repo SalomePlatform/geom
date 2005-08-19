@@ -28,6 +28,8 @@
 
 #include <Standard_Stream.hxx>
 
+#include <Standard_Stream.hxx>
+
 #include <strstream>
 
 #include "GEOM_Client.hxx"

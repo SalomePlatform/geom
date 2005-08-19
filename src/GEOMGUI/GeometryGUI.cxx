@@ -67,13 +67,18 @@
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
 
+
 extern "C" {
   Standard_EXPORT CAM_Module* createModule() {
     return new GeometryGUI();
   }
 }
 
+
+
 GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil(); 
+
+GEOM::GEOM_Gen_var   GeometryGUI::GetGeomGen()        { return GeometryGUI::myComponentGeom; }
 
 bool GeometryGUI::InitGeomGen() 
 {

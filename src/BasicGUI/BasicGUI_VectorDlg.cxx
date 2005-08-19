@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BasicGUI_VectorDlg.h"
 
 #include "SUIT_Desktop.h"
@@ -39,6 +38,8 @@ using namespace std;
 #include "GEOMImpl_Types.hxx"
 
 #include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : BasicGUI_VectorDlg()

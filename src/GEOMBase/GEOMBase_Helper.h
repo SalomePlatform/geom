@@ -38,7 +38,16 @@
 #include <qstring.h>
 
 #include <list>
-
+//#if defined WNT 
+//#include <SALOME_WNT.hxx>
+//#else
+//#define SALOME_WNT_EXPORT
+//#endif
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define GEOMBASE_WNT_EXPORT __declspec( dllexport )
+#else
+#define GEOMBASE_WNT_EXPORT
+#endif
 typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 
 class SalomeApp_Study;
@@ -55,7 +64,7 @@ class TColStd_MapOfInteger;
 //               performing common operations (display/erase, selection activation,
 //               publication in a study, transaction management)
 //================================================================
-class GEOMBase_Helper
+class GEOMBASE_WNT_EXPORT GEOMBase_Helper
 {
 public:
   GEOMBase_Helper( SUIT_Desktop* );

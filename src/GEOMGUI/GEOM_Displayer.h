@@ -52,14 +52,18 @@ class SalomeApp_SelectionMgr;
 class SalomeApp_Study;
 class SUIT_SelectionFilter;
 //class SALOME_Selection;
-
-#ifdef WNT
-#include <SALOME_WNT.hxx>
+//#ifdef WNT
+//#include <SALOME_WNT.hxx>
+//#else
+//#define SALOME_WNT_EXPORT
+//#endif
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define GEOMGUI_WNT_EXPORT __declspec( dllexport )
 #else
-#define SALOME_WNT_EXPORT
+#define GEOMGUI_WNT_EXPORT
 #endif
 
-class SALOME_WNT_EXPORT GEOM_Displayer : public SALOME_Displayer
+class GEOMGUI_WNT_EXPORT GEOM_Displayer : public SALOME_Displayer
 {
     
 public:

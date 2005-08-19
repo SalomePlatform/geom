@@ -51,11 +51,16 @@ class TopoDS_Shape;
 #ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
 #endif
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define GEOMCLIENT_WNT_EXPORT __declspec( dllexport )
+#else
+#define GEOMCLIENT_WNT_EXPORT
+#endif
 
 //=====================================================================
 // GEOM_Client : class definition
 //=====================================================================
-class GEOM_Client  {
+class GEOMCLIENT_WNT_EXPORT GEOM_Client  {
 
 public:
   
@@ -73,15 +78,24 @@ public:
   }
   // Methods PUBLIC
   // 
-  Standard_EXPORT   GEOM_Client();
-  Standard_EXPORT   GEOM_Client(Engines::Container_ptr client);
-  Standard_EXPORT   Standard_Integer Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S ) ;
-  Standard_EXPORT   Standard_Integer Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR ) ;
-  Standard_EXPORT   void Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& S ) ;
-  Standard_EXPORT   TopoDS_Shape GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape );
-  Standard_EXPORT   void RemoveShapeFromBuffer( const TCollection_AsciiString& IOR ) ;
-  Standard_EXPORT   void ClearClientBuffer() ;
-  Standard_EXPORT   unsigned int BufferLength() ;
+   //Standard_EXPORT   
+  GEOM_Client();
+  //Standard_EXPORT   
+  GEOM_Client(Engines::Container_ptr client);
+  //Standard_EXPORT   
+  Standard_Integer Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S ) ;
+  //Standard_EXPORT   
+  Standard_Integer Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR ) ;
+  //Standard_EXPORT   
+  void Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& S ) ;
+  //Standard_EXPORT   
+  TopoDS_Shape GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape );
+  //Standard_EXPORT   
+  void RemoveShapeFromBuffer( const TCollection_AsciiString& IOR ) ;
+  //Standard_EXPORT   
+  void ClearClientBuffer() ;
+  //Standard_EXPORT   
+  unsigned int BufferLength() ;
   TopoDS_Shape Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape);
 
 private: 

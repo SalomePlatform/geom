@@ -33,19 +33,22 @@
 #include "DlgRef_2Sel_QTD.h"
 #include "DlgRef_3Check_QTD.h"
 
-
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define BASICGUI_WNT_EXPORT __declspec( dllexport )
+#else
+#define BASICGUI_WNT_EXPORT
+#endif
 //=================================================================================
 // class    : BasicGUI_WorkingPlaneDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
+class BASICGUI_WNT_EXPORT BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
     BasicGUI_WorkingPlaneDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~BasicGUI_WorkingPlaneDlg();
-    
     virtual void closeEvent( QCloseEvent* e );
 
 private:

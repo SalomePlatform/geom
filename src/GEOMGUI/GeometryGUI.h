@@ -53,6 +53,18 @@
 #define SALOME_WNT_EXPORT
 #endif
 
+//#if defined WNT 
+//#include <SALOME_WNT.hxx>
+//#else
+//#define SALOME_WNT_EXPORT
+//#endif
+
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define GEOMGUI_WNT_EXPORT __declspec( dllexport )
+#else
+#define GEOMGUI_WNT_EXPORT
+#endif
+
 typedef QMap<QString, GEOMGUI*> GUIMap;
 
 class QDialog;
@@ -61,12 +73,11 @@ class GEOMGUI_OCCSelector;
 class SalomeApp_VTKSelector;
 class SUIT_ViewManager;
 
-
 //=================================================================================
 // class    : GeometryGUI
 // purpose  :
 //=================================================================================
-class SALOME_WNT_EXPORT GeometryGUI : public SalomeApp_Module
+class  GEOMGUI_WNT_EXPORT GeometryGUI : public SalomeApp_Module
 {
   Q_OBJECT;
 
@@ -82,7 +93,7 @@ public:
 
   static bool                 InitGeomGen();   //BugID IPAL9186: SRN: To be called by Python scripts
 
-  static GEOM::GEOM_Gen_var   GetGeomGen()        { return myComponentGeom; }
+  static  GEOM::GEOM_Gen_var  GetGeomGen();//        { return GeometryGUI::myComponentGeom; }
 
   static CORBA::Object_var    ClientSObjectToObject (_PTR(SObject) theSObject);
   static SALOMEDS::Study_var  ClientStudyToStudy (_PTR(Study) theStudy);
@@ -157,9 +168,9 @@ private:
 					       const bool isExpandAll = false, const bool isOCC = false,
 					       const int parentId = -1 );
 
-private:
-  static GEOM::GEOM_Gen_var   myComponentGeom;   // GEOM engine
-
+public:
+  static GEOM::GEOM_Gen_var   myComponentGeom;   // GEOM engine!!!
+private:  
   GUIMap                      myGUIMap;          // GUI libraries map
   QDialog*                    myActiveDialogBox; // active dialog box
   GEOM_Client                 myShapeReader;     // geom shape reader

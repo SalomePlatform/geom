@@ -25,7 +25,6 @@
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
 
-using namespace std;
 #include "BasicGUI_WorkingPlaneDlg.h"
 
 #include "GEOMBase.h"
@@ -52,6 +51,8 @@ using namespace std;
 
 #include <qcheckbox.h>
 #include <qlabel.h>
+
+using namespace std;
 
 //=================================================================================
 // class    : BasicGUI_WorkingPlaneDlg()

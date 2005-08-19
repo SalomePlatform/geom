@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BasicGUI.h"
 #include "GeometryGUI.h"
 
@@ -55,6 +54,8 @@ using namespace std;
 #include "BasicGUI_PlaneDlg.h"        // Method PLANE
 #include "BasicGUI_WorkingPlaneDlg.h" // Method WORKING PLANE
 #include "BasicGUI_MarkerDlg.h"       // Method REPAIR
+
+using namespace std;
 
 BasicGUI* BasicGUI::myGUIObject = 0;
 

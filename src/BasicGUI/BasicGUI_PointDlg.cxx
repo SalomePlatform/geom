@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BasicGUI_PointDlg.h"
 
 #include "SUIT_Session.h"
@@ -47,7 +46,7 @@ using namespace std;
 #include <BRep_Tool.hxx>
 
 #include <qapplication.h>
-
+using namespace std;
 //=================================================================================
 // class    : BasicGUI_PointDlg()
 // purpose  : Constructs a BasicGUI_PointDlg which is a child of 'parent', with the 

@@ -36,7 +36,11 @@
 //#include "GEOM_ShapeTypeFilter.hxx"
 //#include "GEOM_EdgeFilter.hxx"
 #include <gp_Dir.hxx>
-
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define BASICGUI_WNT_EXPORT __declspec( dllexport )
+#else
+#define BASICGUI_WNT_EXPORT
+#endif
 //=================================================================================
 // class    : BasicGUI_EllipseDlg
 // purpose  :
