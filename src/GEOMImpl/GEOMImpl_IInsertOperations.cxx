@@ -103,9 +103,9 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy(Handle(GEOM_Object) the
  */
 //=============================================================================
 void GEOMImpl_IInsertOperations::Export
-                     (const Handle(GEOM_Object) theOriginal,
-		      const char*               theFileName,
-		      const char*               theFormatName)
+                     (const Handle(GEOM_Object)      theOriginal,
+		      const TCollection_AsciiString& theFileName,
+		      const TCollection_AsciiString& theFormatName)
 {
   SetErrorCode(KO);
 
@@ -124,12 +124,10 @@ void GEOMImpl_IInsertOperations::Export
   //Set parameters
   GEOMImpl_IImportExport aCI (aFunction);
   aCI.SetOriginal(aRefFunction);
-  char* aFileName = (char*)theFileName;
-  aCI.SetFileName(aFileName);
+  aCI.SetFileName(theFileName);
 
-  char* aFormatName = (char*)theFormatName;
   Handle(TCollection_HAsciiString) aHLibName;
-  if (!IsSupported(Standard_False, aFormatName, aHLibName)) {
+  if (!IsSupported(Standard_False, theFormatName, aHLibName)) {
     return;
   }
   TCollection_AsciiString aLibName = aHLibName->String();
@@ -149,8 +147,8 @@ void GEOMImpl_IInsertOperations::Export
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.Export(" << theOriginal
-    << ", \"" << theFileName << "\", \"" << theFormatName << "\")";
+  GEOM::TPythonDump(aFunction) << "geompy.Export(" << theOriginal << ", \""
+    << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
 
   SetErrorCode(OK);
 }
@@ -161,12 +159,12 @@ void GEOMImpl_IInsertOperations::Export
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
-                     (const char* theFileName,
-		      const char* theFormatName)
+                                 (const TCollection_AsciiString& theFileName,
+		                  const TCollection_AsciiString& theFormatName)
 {
   SetErrorCode(KO);
 
-  if (!theFileName || !theFormatName) return NULL;
+  if (theFileName.IsEmpty() || theFormatName.IsEmpty()) return NULL;
 
   //Add a new result object
   Handle(GEOM_Object) result = GetEngine()->AddObject(GetDocID(), GEOM_IMPORT);
@@ -180,12 +178,10 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
 
   //Set parameters
   GEOMImpl_IImportExport aCI (aFunction);
-  char* aFileName = (char*)theFileName;
-  aCI.SetFileName(aFileName);
+  aCI.SetFileName(theFileName);
 
-  char* aFormatName = (char*)theFormatName;
   Handle(TCollection_HAsciiString) aHLibName;
-  if (!IsSupported(Standard_True, aFormatName, aHLibName)) {
+  if (!IsSupported(Standard_True, theFormatName, aHLibName)) {
     return result;
   }
   TCollection_AsciiString aLibName = aHLibName->String();
@@ -206,7 +202,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << result << " = geompy.Import(\""
-    << theFileName << "\", \"" << theFormatName << "\")";
+    << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
 
   SetErrorCode(OK);
   return result;
@@ -317,19 +313,20 @@ Standard_Boolean GEOMImpl_IInsertOperations::ExportTranslators
 //=============================================================================
 Standard_Boolean GEOMImpl_IInsertOperations::IsSupported
                             (const Standard_Boolean isImport,
-                             const TCollection_AsciiString theFormat,
+                             const TCollection_AsciiString& theFormat,
                              Handle(TCollection_HAsciiString)& theLibName)
 {
   if (!InitResMgr()) return Standard_False;
 
   // Import/Export mode
-  Standard_CString aMode;
+  TCollection_AsciiString aMode;
+  //Standard_CString aMode;
   if (isImport) aMode = "Import";
   else aMode = "Export";
 
   // Read supported formats for the certain mode
-  if (myResMgr->Find(aMode)) {
-    TCollection_AsciiString aFormats (myResMgr->Value(aMode));
+  if (myResMgr->Find(aMode.ToCString())) {
+    TCollection_AsciiString aFormats (myResMgr->Value(aMode.ToCString()));
     if (aFormats.Search(theFormat) > -1) {
       // Read library name for the supported format
       TCollection_AsciiString aKey (theFormat);

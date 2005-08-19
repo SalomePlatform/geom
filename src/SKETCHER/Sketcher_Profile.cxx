@@ -1,30 +1,30 @@
 //  GEOM SKETCHER : basic sketcher
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
 //
 //
 //
 //  File   : Sketcher_Profile.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header:
 
 #include <Standard_Stream.hxx>
 
@@ -32,23 +32,23 @@
 
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Face.hxx>
-#include <gp_Pln.hxx>
-#include <gp_Ax2.hxx>
 #include <BRepLib.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+
+#include <GeomAPI.hxx>
 #include <Geom2d_Line.hxx>
 #include <Geom2d_Circle.hxx>
 #include <Geom_Surface.hxx>
+
 #include <Precision.hxx>
-#include <GeomAPI.hxx>
+#include <gp_Pln.hxx>
+#include <gp_Ax2.hxx>
 
 #include <TCollection_AsciiString.hxx>
-
-#include <SALOMEconfig.h>
-#include CORBA_SERVER_HEADER(SALOMEDS)
+#include <TColStd_Array1OfAsciiString.hxx>
 
 #include "utilities.h"
 
@@ -88,37 +88,37 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
 
   myOK = Standard_False;
 
-  TCollection_AsciiString aCommand(CORBA::string_dup(aCmd));
+  //TCollection_AsciiString aCommand(CORBA::string_dup(aCmd));
+  TCollection_AsciiString aCommand ((char*)aCmd);
   TCollection_AsciiString aToken = aCommand.Token(":", 1);
   int n = 0;
   // porting to WNT
-  TCollection_AsciiString* aTab = 0;
+  TColStd_Array1OfAsciiString aTab (0, aCommand.Length() - 1);
   if ( aCommand.Length() )
   {
-    aTab = new TCollection_AsciiString[ aCommand.Length() ];
     while(aToken.Length() != 0) {
       if(aCommand.Token(":", n + 1).Length() > 0)
-        aTab[n] = aCommand.Token(":", n + 1);
+        aTab(n) = aCommand.Token(":", n + 1);
       aToken = aCommand.Token(":", ++n);
     }
     n = n - 1;
   }
-  if ( aTab && aTab[0].Length() )
+  if ( aTab.Length() && aTab(0).Length() )
     while(i < n) {
       Standard_Real length = 0, radius = 0, angle = 0;
       move = point;
-      
+
       int n1 = 0;
-      TCollection_AsciiString* a = new TCollection_AsciiString[ aTab[0].Length() ];
-      aToken = aTab[i].Token(" ", 1);
-      while(aToken.Length() != 0) {
-        if(aTab[i].Token(" ", n1 + 1).Length() > 0)
-          a[n1] = aTab[i].Token(" ", n1 + 1);
-        aToken = aTab[i].Token(" ", ++n1);
+      TColStd_Array1OfAsciiString a (0, aTab(0).Length());
+      aToken = aTab(i).Token(" ", 1);
+      while (aToken.Length() != 0) {
+        if (aTab(i).Token(" ", n1 + 1).Length() > 0)
+          a(n1) = aTab(i).Token(" ", n1 + 1);
+        aToken = aTab(i).Token(" ", ++n1);
       }
       n1 = n1 - 1;
-    
-      switch(a[0].Value(1))
+
+      switch(a(0).Value(1))
       {
       case 'F':
         {
@@ -127,23 +127,23 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
             MESSAGE("profile : The F instruction must precede all moves");
             return;
           }
-          x0 = x = a[1].RealValue();
-          y0 = y = a[2].RealValue();
+          x0 = x = a(1).RealValue();
+          y0 = y = a(2).RealValue();
           stayfirst = Standard_True;
           break;
         }
       case 'O':
         {
           if (n1 != 4) goto badargs;
-          P.SetLocation(gp_Pnt(a[1].RealValue(), a[2].RealValue(), a[3].RealValue()));
+          P.SetLocation(gp_Pnt(a(1).RealValue(), a(2).RealValue(), a(3).RealValue()));
           stayfirst = Standard_True;
           break;
         }
       case 'P':
         {
           if (n1 != 7) goto badargs;
-          gp_Vec vn(a[1].RealValue(), a[2].RealValue(), a[3].RealValue());
-          gp_Vec vx(a[4].RealValue(), a[5].RealValue(), a[6].RealValue());
+          gp_Vec vn(a(1).RealValue(), a(2).RealValue(), a(3).RealValue());
+          gp_Vec vx(a(4).RealValue(), a(5).RealValue(), a(6).RealValue());
           if (vn.Magnitude() <= Precision::Confusion() || vx.Magnitude() <= Precision::Confusion()) {
             MESSAGE("profile : null direction");
             return;
@@ -156,8 +156,8 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       case 'X':
         {
           if (n1 != 2) goto badargs;
-          length = a[1].RealValue();
-          if (a[0] == "XX")
+          length = a(1).RealValue();
+          if (a(0) == "XX")
             length -= x;
           dx = 1; dy = 0;
           move = line;
@@ -166,8 +166,8 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       case 'Y':
         {
           if (n1 != 2) goto badargs;
-          length = a[1].RealValue();
-          if (a[0] == "YY")
+          length = a(1).RealValue();
+          if (a(0) == "YY")
             length -= y;
           dx = 0; dy = 1;
           move = line;
@@ -176,7 +176,7 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       case 'L':
         {
           if (n1 != 2) goto badargs;
-          length = a[1].RealValue();
+          length = a(1).RealValue();
           if (Abs(length) > Precision::Confusion())
             move = line;
           else
@@ -186,9 +186,9 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       case 'T':
         {
           if (n1 != 3) goto badargs;
-          Standard_Real vx = a[1].RealValue();
-          Standard_Real vy = a[2].RealValue();
-          if (a[0] == "TT") {
+          Standard_Real vx = a(1).RealValue();
+          Standard_Real vy = a(2).RealValue();
+          if (a(0) == "TT") {
             vx -= x;
             vy -= y;
           }
@@ -205,8 +205,8 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       case 'R':
         {
           if (n1 != 2) goto badargs;
-          angle = a[1].RealValue() * PI180;
-          if (a[0] == "RR") {
+          angle = a(1).RealValue() * PI180;
+          if (a(0) == "RR") {
             dx = Cos(angle);
             dy = Sin(angle);
           }
@@ -222,8 +222,8 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       case 'D':
         {
           if (n1 != 3) goto badargs;
-          Standard_Real vx = a[1].RealValue();
-          Standard_Real vy = a[2].RealValue();
+          Standard_Real vx = a(1).RealValue();
+          Standard_Real vy = a(2).RealValue();
           length = Sqrt(vx * vx + vy * vy);
           if (length > Precision::Confusion()) {
             dx = vx / length;
@@ -236,9 +236,9 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       case 'C':
         {
           if (n1 != 3) goto badargs;
-          radius = a[1].RealValue();
+          radius = a(1).RealValue();
           if (Abs(radius) > Precision::Confusion()) {
-            angle = a[2].RealValue() * PI180;
+            angle = a(2).RealValue() * PI180;
             move = circle;
           }
           else
@@ -248,15 +248,15 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       case 'I':
         {
           if (n1 != 2) goto badargs;
-          length = a[1].RealValue();
-          if (a[0] == "IX") {
+          length = a(1).RealValue();
+          if (a(0) == "IX") {
             if (Abs(dx) < Precision::Confusion()) {
               MESSAGE("profile : cannot intersect, arg "<<i-1);
               return;
             }
             length = (length - x) / dx;
           }
-          else if (a[0] == "IY") {
+          else if (a(0) == "IY") {
             if (Abs(dy) < Precision::Confusion()) {
               MESSAGE("profile : cannot intersect, arg "<<i-1);
               return;
@@ -271,9 +271,9 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
         }
       case 'W':
         {
-          if (a[0] == "WW")
+          if (a(0) == "WW")
             close = Standard_True;
-          else if(a[0] == "WF") {
+          else if(a(0) == "WF") {
             close = Standard_True;
             face = Standard_True;
           }
@@ -282,13 +282,13 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
         }
       default:
         {
-          MESSAGE("profile : unknown code "<<a[i]);
+          MESSAGE("profile : unknown code " << a(i));
           return;
         }
     }
 
 again :
-    switch (move) 
+    switch (move)
     {
     case line :
       {
@@ -345,18 +345,18 @@ again :
         break;
       }
     }
-    
+
     // update first
     first = stayfirst;
     stayfirst = Standard_False;
-    
+
     if(!(dx == 0 && dy == 0))
       myLastDir.SetCoord(dx, dy, 0.0);
     else
       return;
     myLastPoint.SetX(x);
     myLastPoint.SetY(y);
-    
+
     // next segment....
     i++;
     if ((i == n) && close) {
@@ -371,11 +371,8 @@ again :
         goto again;
       }
     }
-    delete a;
   }
-  delete aTab;
-  aTab = 0;
-  
+
   // get the result, face or wire
   if (move == none) {
     return;
@@ -396,7 +393,7 @@ again :
     }
     S = MW;
   }
-  
+
   if(!TheLocation.IsIdentity())
     S.Move(TheLocation);
 

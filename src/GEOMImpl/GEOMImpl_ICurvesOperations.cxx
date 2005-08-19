@@ -472,13 +472,13 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
  *  MakeSketcher
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCommand,
-                                                              list<double> theWorkingPlane)
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher
+                               (const TCollection_AsciiString& theCommand,
+                                list<double>                   theWorkingPlane)
 {
   SetErrorCode(KO);
 
-  if (!theCommand) return NULL;
-  if (strcmp(theCommand, "") == 0) return NULL;
+  if (theCommand.IsEmpty()) return NULL;
 
   //Add a new Sketcher object
   Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GetDocID(), GEOM_SKETCHER);
@@ -493,8 +493,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
 
   GEOMImpl_ISketcher aCI (aFunction);
 
-  TCollection_AsciiString aCommand ((char*) theCommand);
-  aCI.SetCommand(aCommand);
+  aCI.SetCommand(theCommand);
 
   int ind = 1;
   list<double>::iterator it = theWorkingPlane.begin();
@@ -516,7 +515,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
 
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
-  pd << aSketcher << " = geompy.MakeSketcher(\"" << theCommand << "\", [";
+  pd << aSketcher << " = geompy.MakeSketcher(\"" << theCommand.ToCString() << "\", [";
 
   it = theWorkingPlane.begin();
   pd << (*it++);
@@ -534,13 +533,13 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
  *  MakeSketcherOnPlane
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane (const char* theCommand,
-                                                                     Handle(GEOM_Object) theWorkingPlane)
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
+                               (const TCollection_AsciiString& theCommand,
+                                Handle(GEOM_Object)            theWorkingPlane)
 {
   SetErrorCode(KO);
 
-  if (!theCommand) return NULL;
-  if (strcmp(theCommand, "") == 0) return NULL;
+  if (theCommand.IsEmpty()) return NULL;
 
   //Add a new Sketcher object
   Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GetDocID(), GEOM_SKETCHER);
@@ -554,9 +553,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane (const char*
   if (aFunction->GetDriverGUID() != GEOMImpl_SketcherDriver::GetID()) return NULL;
 
   GEOMImpl_ISketcher aCI (aFunction);
-
-  TCollection_AsciiString aCommand ((char*) theCommand);
-  aCI.SetCommand(aCommand);
+  aCI.SetCommand(theCommand);
 
   Handle(GEOM_Function) aRefPlane = theWorkingPlane->GetLastFunction();
   if (aRefPlane.IsNull()) return NULL;
@@ -577,7 +574,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane (const char*
 
   //Make a Python command
   GEOM::TPythonDump (aFunction) << aSketcher << " = geompy.MakeSketcherOnPlane(\""
-    << theCommand << "\", " << theWorkingPlane << " )";
+    << theCommand.ToCString() << "\", " << theWorkingPlane << " )";
 
   SetErrorCode(OK);
   return aSketcher;

@@ -114,10 +114,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
   Standard_EXPORT static void SortShapes (TopTools_ListOfShape& SL);
 
  private:
-  Handle(GEOM_Object) MakeShape (list<Handle(GEOM_Object)>     theShapes,
-                                 const Standard_Integer        theObjectType,
-                                 const Standard_Integer        theFunctionType,
-                                 const TCollection_AsciiString theMethodName);
+  Handle(GEOM_Object) MakeShape (list<Handle(GEOM_Object)>      theShapes,
+                                 const Standard_Integer         theObjectType,
+                                 const Standard_Integer         theFunctionType,
+                                 const TCollection_AsciiString& theMethodName);
 
   bool CheckTriangulation (const TopoDS_Shape& aShape);
 };

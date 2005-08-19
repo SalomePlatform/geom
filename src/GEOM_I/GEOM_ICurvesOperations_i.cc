@@ -285,8 +285,6 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
             (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane)
 {
-  GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_nil();
-
   //Set a not done flag
   GetOperations()->SetNotDone();
 
@@ -298,9 +296,8 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
 
   // Make Sketcher
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeSketcher(strdup(theCommand), aWorkingPlane);
+    GetOperations()->MakeSketcher((char*)theCommand, aWorkingPlane);
   if (!GetOperations()->IsDone() || anObject.IsNull())
-    //return aGEOMObject._retn();
     return GEOM::GEOM_Object::_nil();
 
   return GetObject(anObject);
@@ -315,8 +312,6 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcherOnPlane
                 (const char* theCommand, GEOM::GEOM_Object_ptr theWorkingPlane)
 {
-  GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_nil();
-
   //Set a not done flag
   GetOperations()->SetNotDone();
 
@@ -325,9 +320,9 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcherOnPlane
 
   // Make Sketcher
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakeSketcherOnPlane(strdup(theCommand), aWorkingPlane);
+      GetOperations()->MakeSketcherOnPlane((char*)theCommand, aWorkingPlane);
   if (!GetOperations()->IsDone() || anObject.IsNull())
-    return aGEOMObject._retn();
+    return GEOM::GEOM_Object::_nil();
 
   return GetObject(anObject);
 }

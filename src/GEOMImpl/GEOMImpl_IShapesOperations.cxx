@@ -375,10 +375,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeCompound
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
-                             (list<Handle(GEOM_Object)>     theShapes,
-                              const Standard_Integer        theObjectType,
-                              const Standard_Integer        theFunctionType,
-                              const TCollection_AsciiString theMethodName)
+                             (list<Handle(GEOM_Object)>      theShapes,
+                              const Standard_Integer         theObjectType,
+                              const Standard_Integer         theFunctionType,
+                              const TCollection_AsciiString& theMethodName)
 {
   SetErrorCode(KO);
 

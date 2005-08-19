@@ -1,9 +1,11 @@
-using namespace std; 
+using namespace std;
 
 #ifndef _GEOMImpl_ICurvesOperations_HXX_
 #define _GEOMImpl_ICurvesOperations_HXX_
 
 #include "GEOM_IOperations.hxx"
+
+#include <TCollection_AsciiString.hxx>
 
 #include <list>
 
@@ -18,25 +20,26 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakePolyline (list<Handle(GEOM_Object)> thePoints);
 
   Standard_EXPORT Handle(GEOM_Object) MakeCircleThreePnt (Handle(GEOM_Object) thePnt1,
-                                          Handle(GEOM_Object) thePnt2,
-                                          Handle(GEOM_Object) thePnt3);
+                                                          Handle(GEOM_Object) thePnt2,
+                                                          Handle(GEOM_Object) thePnt3);
   Standard_EXPORT Handle(GEOM_Object) MakeCirclePntVecR  (Handle(GEOM_Object) thePnt,
-                                          Handle(GEOM_Object) theVec, double theR);
+                                                          Handle(GEOM_Object) theVec, double theR);
 
   Standard_EXPORT Handle(GEOM_Object) MakeEllipse (Handle(GEOM_Object) thePnt,
-                                   Handle(GEOM_Object) theVec,
-                                   double theRMajor, double theRMinor);
+                                                   Handle(GEOM_Object) theVec,
+                                                   double theRMajor, double theRMinor);
 
   Standard_EXPORT Handle(GEOM_Object) MakeArc (Handle(GEOM_Object) thePnt1,
-                               Handle(GEOM_Object) thePnt2,
-                               Handle(GEOM_Object) thePnt3);
+                                               Handle(GEOM_Object) thePnt2,
+                                               Handle(GEOM_Object) thePnt3);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSplineBezier        (list<Handle(GEOM_Object)> thePoints);
   Standard_EXPORT Handle(GEOM_Object) MakeSplineInterpolation (list<Handle(GEOM_Object)> thePoints);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeSketcher (const char* theCommand, list<double> theWorkingPlane);
-  Standard_EXPORT Handle(GEOM_Object) MakeSketcherOnPlane (const char*         theCommand,
-                                           Handle(GEOM_Object) theWorkingPlane);
+  Standard_EXPORT Handle(GEOM_Object) MakeSketcher (const TCollection_AsciiString& theCommand,
+                                                    list<double> theWorkingPlane);
+  Standard_EXPORT Handle(GEOM_Object) MakeSketcherOnPlane (const TCollection_AsciiString& theCommand,
+                                                           Handle(GEOM_Object) theWorkingPlane);
 };
 
 #endif
