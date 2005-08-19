@@ -19,7 +19,13 @@ class QLabel;
 class QRadioButton;
 class QSpinBox;
 
-class DlgRef_3Spin1Check_QTD : public QWidget
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define DLGREF_WNT_EXPORT __declspec( dllexport )
+#else
+#define DLGREF_WNT_EXPORT
+#endif
+
+class DLGREF_WNT_EXPORT DlgRef_3Spin1Check_QTD : public QWidget
 { 
     Q_OBJECT
 

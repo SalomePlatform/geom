@@ -32,7 +32,12 @@
 #include "DlgRef_3Spin1Check_QTD.h"
 #include "DlgRef_SpinBox.h"
 
-class DlgRef_3Spin1Check : public DlgRef_3Spin1Check_QTD
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define DLGREF_WNT_EXPORT __declspec( dllexport )
+#else
+#define DLGREF_WNT_EXPORT
+#endif
+class DLGREF_WNT_EXPORT DlgRef_3Spin1Check : public DlgRef_3Spin1Check_QTD
 { 
     Q_OBJECT
 
