@@ -349,7 +349,7 @@ void GEOMToolsGUI::OnEditDelete()
       } // if ( selected not empty )
     } // if ( selMgr && appStudy )
 
-    app->updateActions(); //SRN: BugID IPAL9377, case 1 for GEOM module
+    app->updateActions(); //SRN: To update a Save button in the toolbar 
 
   } // if ( app )
 
@@ -403,7 +403,8 @@ void GEOMToolsGUI::OnEditCopy()
 //=====================================================================================
 bool GEOMToolsGUI::Import()
 {
-  SUIT_Application* app = getGeometryGUI()->getApp();
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( getGeometryGUI()->getApp() ); 
+  //SUIT_Application* app = getGeometryGUI()->getApp();
   if (! app) return false;
 
   SalomeApp_Study* stud = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
@@ -492,6 +493,8 @@ bool GEOMToolsGUI::Import()
     anOp->abort();
     return false;
   }
+
+  app->updateActions(); //SRN: To update a Save button in the toolbar
 
   return true;
 }
