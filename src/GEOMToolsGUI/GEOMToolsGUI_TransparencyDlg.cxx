@@ -25,7 +25,7 @@
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
 
-using namespace std;
+
 #include "GEOMToolsGUI_TransparencyDlg.h"
 #include "GEOMBase.h"
 #include "GEOM_AISShape.hxx"
@@ -62,7 +62,7 @@ using namespace std;
 #include <qgroupbox.h>
 
 #include <AIS_InteractiveContext.hxx>
-
+using namespace std;
 
 //=================================================================================
 // class    : GEOMBase_TransparencyDlg()

@@ -26,9 +26,8 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
-#include "GEOMToolsGUI_NbIsosDlg.h"
 
+#include "GEOMToolsGUI_NbIsosDlg.h"
 #include <SUIT_Tools.h>
 
 #include <qlabel.h>
@@ -36,6 +35,7 @@ using namespace std;
 #include <qgroupbox.h>
 #include <qlayout.h>
 #include <qspinbox.h>
+//using namespace std;
 
 //=================================================================================
 // class    : GEOMToolsGUI_NbIsosDlg()

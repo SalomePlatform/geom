@@ -9,8 +9,8 @@
 //  Module : SALOME
 //  $Header$
 
-#include "GEOMToolsGUI_NameDlg.h"
 
+#include "GEOMToolsGUI_NameDlg.h"
 #include <SUIT_Session.h>
 #include <SUIT_Application.h>
 #include <SUIT_Desktop.h>
@@ -21,8 +21,8 @@
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
-using namespace std;
 
+//using namespace std;
 /*!
   Constructor
 */

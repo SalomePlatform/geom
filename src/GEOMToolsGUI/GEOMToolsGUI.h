@@ -35,12 +35,16 @@
 #include <SALOME_ListIO.hxx>
 
 #include <CORBA.h>
-
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define GEOMTOOLSGUI_WNT_EXPORT __declspec( dllexport )
+#else
+#define GEOMTOOLSGUI_WNT_EXPORT
+#endif
 //=================================================================================
 // class    : GEOMToolsGUI
 // purpose  :
 //=================================================================================
-class GEOMToolsGUI : public GEOMGUI
+class GEOMTOOLSGUI_WNT_EXPORT GEOMToolsGUI : public GEOMGUI
 {
 public :
   GEOMToolsGUI( GeometryGUI* ); // hide constructor to avoid direct creation

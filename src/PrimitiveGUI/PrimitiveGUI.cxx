@@ -26,7 +26,7 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
+
 #include "PrimitiveGUI.h"
 #include "GeometryGUI.h"
 
@@ -38,7 +38,7 @@ using namespace std;
 #include "PrimitiveGUI_SphereDlg.h"   // Method SPHERE
 #include "PrimitiveGUI_TorusDlg.h"    // Method TORUS
 #include "PrimitiveGUI_ConeDlg.h"     // Method CONE
-
+using namespace std;
 PrimitiveGUI* PrimitiveGUI::myGUIObject = 0;
 
 //=======================================================================

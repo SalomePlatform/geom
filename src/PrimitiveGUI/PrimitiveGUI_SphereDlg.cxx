@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "PrimitiveGUI_SphereDlg.h"
 
 #include "SUIT_Desktop.h"

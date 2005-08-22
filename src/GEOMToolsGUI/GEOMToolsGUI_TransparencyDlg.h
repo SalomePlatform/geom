@@ -30,7 +30,11 @@
 #define DIALOGBOX_TRANSPARENCYDLG_H
 
 #include <qdialog.h>
-
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define GEOMTOOLSGUI_WNT_EXPORT __declspec( dllexport )
+#else
+#define GEOMTOOLSGUI_WNT_EXPORT
+#endif
 class QSlider;
 
 //=================================================================================
@@ -38,7 +42,7 @@ class QSlider;
 // purpose  :
 //          : WARNING : that is a MODAL dialog.
 //=================================================================================
-class GEOMToolsGUI_TransparencyDlg : public QDialog
+class GEOMTOOLSGUI_WNT_EXPORT GEOMToolsGUI_TransparencyDlg : public QDialog
 { 
     Q_OBJECT
 
@@ -50,7 +54,7 @@ private :
   bool      myFirstInit ;   /* Inform for the first init  */
   QSlider*  mySlider; 
 
-private slots:      
+private slots: 
   void      ClickOnOk();
   void      ClickOnClose();
   void      ValueHasChanged( int ) ;
