@@ -207,6 +207,8 @@ void GEOMToolsGUI::OnRename()
       }
     }
   }
+  
+  app->updateActions(); //SRN: To update a Save button in the toolbar
 }
 
 void GEOMToolsGUI::OnCheckGeometry()
@@ -270,6 +272,8 @@ void GEOMToolsGUI::OnColor()
       } // if ( selection not empty )
     }
   }
+  
+  app->updateActions(); //SRN: To update a Save button in the toolbar
 }
 
 void GEOMToolsGUI::OnTransparency()
