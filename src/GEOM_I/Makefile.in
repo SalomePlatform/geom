@@ -88,7 +88,7 @@ CPPFLAGS += $(OCC_INCLUDES) $(BOOST_CPPFLAGS) -I${KERNEL_ROOT_DIR}/include/salom
 CXXFLAGS += $(OCC_INCLUDES) $(BOOST_CPPFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
 LDFLAGS  += -lGEOMArchimede -lGEOMbasic -lGEOMimpl -lGEOMSketcher \
             $(CAS_LDPATH) -lTKIGES -lTKSTEP -lTKFillet -lTKOffset \
-            -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeNS -lSalomeContainer -lSalomeGenericObj 
+            -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeNS -lSalomeContainer -lSalomeGenericObj -lTOOLSDS
 
 # additional file to be cleaned
 MOSTLYCLEAN =
