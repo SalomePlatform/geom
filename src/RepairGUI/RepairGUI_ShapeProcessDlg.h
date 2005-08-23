@@ -134,7 +134,6 @@ private slots:
     void             lineEditReturnPressed();
     void             selectionChanged();
     void             selectClicked();
-    void             activateSelection();
     void             operationChanged();
     void             advOptionToggled(bool);
 };             

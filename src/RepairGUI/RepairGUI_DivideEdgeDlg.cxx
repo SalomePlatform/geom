@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "RepairGUI_DivideEdgeDlg.h"
 
 #include "SalomeApp_Application.h"
@@ -39,6 +38,8 @@ using namespace std;
 #include <TopAbs.hxx>
 
 #include <qlabel.h>
+
+using namespace std;
 
 //=================================================================================
 // class    : RepairGUI_DivideEdgeDlg()

@@ -26,8 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
-
 #include "RepairGUI_ShapeProcessDlg.h"
 
 #include "GEOMImpl_Types.hxx"
@@ -45,6 +43,7 @@ using namespace std;
 #include <qlabel.h>
 #include <qmessagebox.h>
 
+using namespace std;
 
 //=================================================================================
 // class    : RepairGUI_ShapeProcessDlg()

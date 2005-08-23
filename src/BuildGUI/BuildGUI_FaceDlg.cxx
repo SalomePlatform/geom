@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BuildGUI_FaceDlg.h"
 #include "GEOMImpl_Types.hxx"
 
@@ -37,6 +36,8 @@ using namespace std;
 //Qt includes
 #include <qcheckbox.h>
 #include <qlabel.h>
+
+using namespace std;
 
 //=================================================================================
 // class    : BuildGUI_FaceDlg()

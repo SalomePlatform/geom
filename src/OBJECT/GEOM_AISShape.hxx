@@ -58,8 +58,12 @@ class Prs3d_Presentation;
 class SALOME_InteractiveObject;
 class TopoDS_Shape;
 
-
-class GEOM_AISShape : public SALOME_AISShape {
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define OBJECT_WNT_EXPORT __declspec( dllexport )
+#else
+#define OBJECT_WNT_EXPORT
+#endif
+class  OBJECT_WNT_EXPORT GEOM_AISShape : public SALOME_AISShape {
 
 public:
 
@@ -81,27 +85,27 @@ public:
 //      }
  // Methods PUBLIC
  // 
-Standard_EXPORT   GEOM_AISShape(const TopoDS_Shape& shape, const Standard_CString aName);
-Standard_EXPORT   Standard_Boolean hasIO() ;
-Standard_EXPORT   void setIO(const Handle(SALOME_InteractiveObject)& name) ;
-Standard_EXPORT   void setName(const Standard_CString aName) ;
-Standard_EXPORT   Standard_CString getName() ;
-Standard_EXPORT   Handle_SALOME_InteractiveObject getIO() ;
-Standard_EXPORT   void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
-Standard_EXPORT   ~GEOM_AISShape();
+	GEOM_AISShape(const TopoDS_Shape& shape, const Standard_CString aName);
+	Standard_Boolean hasIO() ;
+	void setIO(const Handle(SALOME_InteractiveObject)& name) ;
+	void setName(const Standard_CString aName) ;
+	Standard_CString getName() ;
+	Handle_SALOME_InteractiveObject getIO() ;
+	void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
+	~GEOM_AISShape();
 
-Standard_EXPORT   void SetTransparency(const Standard_Real aValue);
-Standard_EXPORT   void SetShadingColor(const Quantity_Color &aCol);
+	void SetTransparency(const Standard_Real aValue);
+	void SetShadingColor(const Quantity_Color &aCol);
 
-Standard_EXPORT virtual  void Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
+	virtual  void Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
 				      const Handle(Prs3d_Presentation)& aPresentation,
 				      const Standard_Integer aMode = 0) ;
 
  // Type management
  //
- Standard_EXPORT friend Handle_Standard_Type& GEOM_AISShape_Type_();
- Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- Standard_EXPORT Standard_Boolean	      IsKind(const Handle(Standard_Type)&) const;
+	friend Handle_Standard_Type& GEOM_AISShape_Type_();
+	const Handle(Standard_Type)& DynamicType() const;
+	Standard_Boolean	      IsKind(const Handle(Standard_Type)&) const;
 
 protected:
 

@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "RepairGUI_SewingDlg.h"
 
 #include "SalomeApp_Application.h"
@@ -42,6 +41,7 @@ using namespace std;
 
 #define DEFAULT_TOLERANCE_VALUE 1e-07
 
+using namespace std;
 
 //=================================================================================
 // class    : RepairGUI_SewingDlg()

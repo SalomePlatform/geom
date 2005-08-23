@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "RepairGUI_GlueDlg.h"
 #include "DlgRef_1Sel_Ext.h"
 #include "GEOMImpl_Types.hxx"
@@ -48,10 +47,9 @@ using namespace std;
 #include <qapplication.h>
 #include <qlabel.h>
 
+using namespace std;
+
 #define DEFAULT_TOLERANCE_VALUE 1e-07
-
-
-
 
 //=================================================================================
 // class    : RepairGUI_GlueDlg()

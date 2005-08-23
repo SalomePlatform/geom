@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "RepairGUI_RemoveIntWiresDlg.h"
 
 #include "SalomeApp_Application.h"
@@ -39,6 +38,7 @@ using namespace std;
 #include <TopAbs.hxx>
 #include <TColStd_MapOfInteger.hxx>
 
+using namespace std;
 
 //=================================================================================
 // class    : RepairGUI_RemoveIntWiresDlg()

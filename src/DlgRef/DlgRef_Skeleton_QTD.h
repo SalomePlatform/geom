@@ -21,22 +21,13 @@ class QLineEdit;
 class QPushButton;
 class QRadioButton;
 
-
-#if defined DLGREF_EXPORTS
-#if defined WIN32
-#define DLGREF_EXPORT __declspec( dllexport )
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define DLGREF_WNT_EXPORT __declspec( dllexport )
 #else
-#define DLGREF_EXPORT
-#endif
-#else
-#if defined WNT
-#define DLGREF_EXPORT __declspec( dllimport )
-#else
-#define DLGREF_EXPORT
-#endif
+#define DLGREF_WNT_EXPORT
 #endif
 
-class DLGREF_EXPORT DlgRef_Skeleton_QTD : public QDialog
+class DLGREF_WNT_EXPORT DlgRef_Skeleton_QTD : public QDialog
 { 
     Q_OBJECT
 

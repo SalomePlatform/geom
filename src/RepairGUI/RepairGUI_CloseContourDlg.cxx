@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "RepairGUI_CloseContourDlg.h"
 
 #include "SalomeApp_Application.h"
@@ -41,6 +40,8 @@ using namespace std;
 #include <TColStd_MapOfInteger.hxx>
 
 #include <qlabel.h>
+
+using namespace std;
 
 //=================================================================================
 // class    : RepairGUI_CloseContourDlg()

@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "TransformationGUI.h"
 #include "GeometryGUI.h"
 
@@ -41,6 +40,8 @@ using namespace std;
 #include "TransformationGUI_ScaleDlg.h"              // Method SCALE
 #include "TransformationGUI_OffsetDlg.h"             // Method OFFSET
 #include "TransformationGUI_PositionDlg.h"           // Method POSITION
+
+using namespace std;
 
 TransformationGUI* TransformationGUI::myGUIObject = 0;
 

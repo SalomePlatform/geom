@@ -64,7 +64,6 @@ private slots:
     void ClickOnOk();
     bool ClickOnApply();
     void SetEditCurrentArgument();
-    void LineEditReturnPressed();
     void SelectionIntoArgument();
     void ActivateThisDialog();
     void EnableNameField(bool toEnable);

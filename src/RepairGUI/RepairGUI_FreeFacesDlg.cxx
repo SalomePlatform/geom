@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "RepairGUI_FreeFacesDlg.h"
 
 #include "SalomeApp_Application.h"
@@ -56,6 +55,7 @@ using namespace std;
 #define MARGIN 10
 #define MIN_WIDTH 200
 
+using namespace std;
 
 //=================================================================================
 // class    : RepairGUI_FreeFacesDlg()

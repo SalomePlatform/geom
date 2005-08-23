@@ -13,7 +13,13 @@
 
 class QGridLayout;
 
-class DlgRef_1Sel_Ext : public DlgRef_1Sel_QTD
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define DLGREF_WNT_EXPORT __declspec( dllexport )
+#else
+#define DLGREF_WNT_EXPORT
+#endif
+
+class DLGREF_WNT_EXPORT DlgRef_1Sel_Ext : public DlgRef_1Sel_QTD
 { 
     Q_OBJECT
 

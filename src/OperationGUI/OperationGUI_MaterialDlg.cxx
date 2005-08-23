@@ -25,7 +25,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "OperationGUI_MaterialDlg.h"
 #include "OperationGUI_PartitionDlg.h"
 
@@ -38,6 +37,8 @@ using namespace std;
 #include <qlabel.h>
 #include <qlistview.h>
 #include <qspinbox.h>
+
+using namespace std;
 
 //=================================================================================
 // class    : OperationGUI_MaterialDlg()

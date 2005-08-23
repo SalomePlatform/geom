@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "OperationGUI.h"
 
 #include "SUIT_Session.h"
@@ -42,6 +41,8 @@ using namespace std;
 #include "OperationGUI_ChamferDlg.h"     // Method CHAMFER
 
 #include "OperationGUI_ClippingDlg.h"
+
+using namespace std;
 
 OperationGUI* OperationGUI::myGUIObject = 0;
 
