@@ -212,8 +212,8 @@ public:
 				       GEOM::GEOM_List_ptr   theTools,
 				       GEOM::GEOM_List_ptr   theKeepInside,
 				       GEOM::GEOM_List_ptr   theRemoveInside,
-				       const CORBA::Short      theLimit,
-				       const CORBA::Boolean    theRemoveWebs,
+				       CORBA::Short      theLimit,
+				       CORBA::Boolean    theRemoveWebs,
 				       GEOM::GEOM_List_ptr theMaterials);
   GEOM::GEOM_Object_ptr MakeHalfPartition (GEOM::GEOM_Object_ptr theShape,
 					   GEOM::GEOM_Object_ptr thePlane);
@@ -323,10 +323,10 @@ public:
   GEOM::GEOM_Object_ptr MakeSolidShells (GEOM::GEOM_List_ptr theShells);
   GEOM::GEOM_Object_ptr MakeCompound (GEOM::GEOM_List_ptr theShapes);
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-				       const CORBA::Double   theTolerance);
+						CORBA::Double   theTolerance);
   GEOM::GEOM_List_ptr MakeExplode (GEOM::GEOM_Object_ptr theShape,
-				       const CORBA::Long theShapeType,
-				       const CORBA::Boolean isSorted);
+				       CORBA::Long theShapeType,
+				       CORBA::Boolean isSorted);
   CORBA::Long NumberOfFaces (GEOM::GEOM_Object_ptr theShape);
   CORBA::Long NumberOfEdges (GEOM::GEOM_Object_ptr theShape);
   GEOM::GEOM_Object_ptr ChangeOrientation (GEOM::GEOM_Object_ptr theShape);
@@ -353,10 +353,10 @@ public:
   GEOM::GEOM_Object_ptr MakeHexa2Faces (GEOM::GEOM_Object_ptr theFace1,
 					GEOM::GEOM_Object_ptr theFace2);
   GEOM::GEOM_Object_ptr GetPoint (GEOM::GEOM_Object_ptr theShape,
-				  const CORBA::Double   theX,
-				  const CORBA::Double   theY,
-				  const CORBA::Double   theZ,
-				  const CORBA::Double   theEpsilon);
+				  CORBA::Double   theX,
+				  CORBA::Double   theY,
+				  CORBA::Double   theZ,
+				  CORBA::Double   theEpsilon);
   GEOM::GEOM_Object_ptr GetEdge (GEOM::GEOM_Object_ptr theShape,
 				 GEOM::GEOM_Object_ptr thePoint1,
 				 GEOM::GEOM_Object_ptr thePoint2);
@@ -377,16 +377,16 @@ public:
   GEOM::GEOM_Object_ptr GetFaceByNormale (GEOM::GEOM_Object_ptr theBlock,
 					  GEOM::GEOM_Object_ptr theVector);
   CORBA::Boolean IsCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-				     const CORBA::Long     theMinNbFaces,
-				     const CORBA::Long     theMaxNbFaces,
+				     CORBA::Long     theMinNbFaces,
+				     CORBA::Long     theMaxNbFaces,
 				     CORBA::Long&          theNbBlocks);
   CORBA::Boolean CheckCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
 					GEOM::GEOM_IBlocksOperations::BCErrors_out theErrors);
   char* PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
 		       const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors);
   GEOM::GEOM_List_ptr ExplodeCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-						   const CORBA::Long     theMinNbFaces,
-						   const CORBA::Long     theMaxNbFaces);
+						   CORBA::Long     theMinNbFaces,
+						   CORBA::Long     theMaxNbFaces);
   GEOM::GEOM_Object_ptr GetBlockNearPoint (GEOM::GEOM_Object_ptr theCompound,
 					   GEOM::GEOM_Object_ptr thePoint);
   GEOM::GEOM_Object_ptr GetBlockByParts (GEOM::GEOM_Object_ptr theCompound,
@@ -394,16 +394,16 @@ public:
   GEOM::GEOM_List_ptr GetBlocksByParts (GEOM::GEOM_Object_ptr theCompound,
 					    GEOM::GEOM_List_ptr theParts);
   GEOM::GEOM_Object_ptr MakeMultiTransformation1D (GEOM::GEOM_Object_ptr theBlock,
-						   const CORBA::Long     theDirFace1,
-						   const CORBA::Long     theDirFace2,
-						   const CORBA::Long     theNbTimes);
+						   CORBA::Long     theDirFace1,
+						   CORBA::Long     theDirFace2,
+						   CORBA::Long     theNbTimes);
   GEOM::GEOM_Object_ptr MakeMultiTransformation2D (GEOM::GEOM_Object_ptr theBlock,
-						   const CORBA::Long     theDirFace1U,
-						   const CORBA::Long     theDirFace2U,
-						   const CORBA::Long     theNbTimesU,
-						   const CORBA::Long     theDirFace1V,
-						   const CORBA::Long     theDirFace2V,
-						   const CORBA::Long     theNbTimesV);
+						   CORBA::Long     theDirFace1U,
+						   CORBA::Long     theDirFace2U,
+						   CORBA::Long     theNbTimesU,
+						   CORBA::Long     theDirFace1V,
+						   CORBA::Long     theDirFace2V,
+						   CORBA::Long     theNbTimesV);
 
   //-----------------------------------------------------------//
   // CurvesOperations                                          //
@@ -424,7 +424,7 @@ public:
   GEOM::GEOM_Object_ptr MakeSplineBezier (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, 
-				      const GEOM::GEOM_List_ptr theWorkingPlane);
+						GEOM::GEOM_List_ptr theWorkingPlane);
 
   //-----------------------------------------------------------//
   // LocalOperations                                           //

@@ -1,8 +1,7 @@
-using namespace std;
 
 #include "GEOM_Superv_i.hh"
 #include "SALOME_LifeCycleCORBA.hxx"
-
+using namespace std;
 //=============================================================================
 //  constructor:
 //=============================================================================
@@ -791,8 +790,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theSha
 						    GEOM::GEOM_List_ptr   theTools,
 						    GEOM::GEOM_List_ptr   theKeepInside,
 						    GEOM::GEOM_List_ptr   theRemoveInside,
-						    const CORBA::Short      theLimit,
-						    const CORBA::Boolean    theRemoveWebs,
+						    CORBA::Short      theLimit,
+						    CORBA::Boolean    theRemoveWebs,
 						    GEOM::GEOM_List_ptr theMaterials)
 {
   MESSAGE("GEOM_Superv_i::MakePartition");
@@ -1280,7 +1279,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (GEOM::GEOM_List_ptr theShapes
 //  MakeGlueFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-						    const CORBA::Double   theTolerance)
+								CORBA::Double   theTolerance)
 {
   MESSAGE("GEOM_Superv_i::MakeGlueFaces");
   if (CORBA::is_nil(myShapesOp)) getShapesOp();
@@ -1291,8 +1290,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theSha
 //  MakeExplode:
 //=============================================================================
 GEOM::GEOM_List_ptr GEOM_Superv_i::MakeExplode (GEOM::GEOM_Object_ptr theShape,
-						    const CORBA::Long theShapeType,
-						    const CORBA::Boolean isSorted)
+						    CORBA::Long theShapeType,
+						    CORBA::Boolean isSorted)
 {
   MESSAGE("GEOM_Superv_i::MakeExplode");
   if (CORBA::is_nil(myShapesOp)) getShapesOp();
@@ -1402,10 +1401,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeHexa2Faces (GEOM::GEOM_Object_ptr theFa
 //  GetPoint:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetPoint (GEOM::GEOM_Object_ptr theShape,
-					       const CORBA::Double   theX,
-					       const CORBA::Double   theY,
-					       const CORBA::Double   theZ,
-					       const CORBA::Double   theEpsilon)
+					       CORBA::Double   theX,
+					       CORBA::Double   theY,
+					       CORBA::Double   theZ,
+					       CORBA::Double   theEpsilon)
 {
   MESSAGE("GEOM_Superv_i::GetPoint");
   if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
@@ -1498,8 +1497,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceByNormale (GEOM::GEOM_Object_ptr the
 //  IsCompoundOfBlocks:
 //=============================================================================
 CORBA::Boolean GEOM_Superv_i::IsCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-						  const CORBA::Long     theMinNbFaces,
-						  const CORBA::Long     theMaxNbFaces,
+						  CORBA::Long     theMinNbFaces,
+						  CORBA::Long     theMaxNbFaces,
 						  CORBA::Long&          theNbBlocks)
 {
   MESSAGE("GEOM_Superv_i::IsCompoundOfBlocks");
@@ -1534,8 +1533,8 @@ char* GEOM_Superv_i::PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
 //  ExplodeCompoundOfBlocks:
 //=============================================================================
 GEOM::GEOM_List_ptr GEOM_Superv_i::ExplodeCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-								const CORBA::Long     theMinNbFaces,
-								const CORBA::Long     theMaxNbFaces)
+								CORBA::Long     theMinNbFaces,
+								CORBA::Long     theMaxNbFaces)
 {
   MESSAGE("GEOM_Superv_i::ExplodeCompoundOfBlocks");
   if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
@@ -1592,9 +1591,9 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetBlocksByParts (GEOM::GEOM_Object_ptr theCo
 //  MakeMultiTransformation1D:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMultiTransformation1D (GEOM::GEOM_Object_ptr theBlock,
-								const CORBA::Long     theDirFace1,
-								const CORBA::Long     theDirFace2,
-								const CORBA::Long     theNbTimes)
+								CORBA::Long     theDirFace1,
+								CORBA::Long     theDirFace2,
+								CORBA::Long     theNbTimes)
 {
   MESSAGE("GEOM_Superv_i::MakeMultiTransformation1D");
   if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
@@ -1606,12 +1605,12 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMultiTransformation1D (GEOM::GEOM_Objec
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMultiTransformation2D 
 (GEOM::GEOM_Object_ptr theBlock,
- const CORBA::Long     theDirFace1U,
- const CORBA::Long     theDirFace2U,
- const CORBA::Long     theNbTimesU,
- const CORBA::Long     theDirFace1V,
- const CORBA::Long     theDirFace2V,
- const CORBA::Long     theNbTimesV)
+ CORBA::Long     theDirFace1U,
+ CORBA::Long     theDirFace2U,
+ CORBA::Long     theNbTimesU,
+ CORBA::Long     theDirFace1V,
+ CORBA::Long     theDirFace2V,
+ CORBA::Long     theNbTimesV)
 {
   MESSAGE("GEOM_Superv_i::MakeMultiTransformation2D");
   if (CORBA::is_nil(myBlocksOp)) getBlocksOp();

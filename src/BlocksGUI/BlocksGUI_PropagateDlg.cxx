@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BlocksGUI_PropagateDlg.h"
 #include "GEOMImpl_Types.hxx"
 
@@ -37,6 +36,8 @@ using namespace std;
 #include <TColStd_MapOfInteger.hxx>
 
 #include <qlabel.h>
+
+using namespace std;
 
 //=================================================================================
 // class    : BlocksGUI_PropagateDlg()
