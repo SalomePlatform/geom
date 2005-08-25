@@ -35,9 +35,15 @@
 #include CORBA_SERVER_HEADER(SALOMEDS)
 #include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
+#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
+#define GEOMGUI_WNT_EXPORT __declspec( dllexport )
+#else
+#define GEOMGUI_WNT_EXPORT
+#endif
+
 class GEOM_Client;
 
-class GEOM_Swig
+class GEOMGUI_WNT_EXPORT GEOM_Swig
 {
 public:
   GEOM_Swig();
