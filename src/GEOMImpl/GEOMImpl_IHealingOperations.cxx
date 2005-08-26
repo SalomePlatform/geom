@@ -719,34 +719,37 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject
     theOpen->Append(anObj);
   }
 
-  //Make a Python command
-  GEOM::TPythonDump pd (aFunction);
+  if(!aFunction.IsNull()) {
 
-  Standard_Integer i, aLen = theClosed->Length();
-  if (aLen > 0) {
-    pd << "(isDone, [";
-    for (i = 1; i <= aLen; i++) {
-      Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theClosed->Value(i));
-      pd << anObj_i << ((i < aLen) ? ", " : "");
+    //Make a Python command
+    GEOM::TPythonDump pd (aFunction);
+
+    Standard_Integer i, aLen = theClosed->Length();
+    if (aLen > 0) {
+      pd << "(isDone, [";
+      for (i = 1; i <= aLen; i++) {
+        Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theClosed->Value(i));
+        pd << anObj_i << ((i < aLen) ? ", " : "");
+      }
+      pd << "], ";
+    } else {
+      pd << "(isDone, empty_list, ";
     }
-    pd << "], ";
-  } else {
-    pd << "(isDone, empty_list, ";
-  }
 
-  aLen = theOpen->Length();
-  if (aLen > 0) {
-    pd << "[";
-    for (i = 1; i <= aLen; i++) {
-      Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theOpen->Value(i));
-      pd << anObj_i << ((i < aLen) ? ", " : "");
+    aLen = theOpen->Length();
+    if (aLen > 0) {
+      pd << "[";
+      for (i = 1; i <= aLen; i++) {
+        Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theOpen->Value(i));
+        pd << anObj_i << ((i < aLen) ? ", " : "");
+      }
+      pd << "]";
+    } else {
+      pd << "empty_list";
     }
-    pd << "]";
-  } else {
-    pd << "empty_list";
-  }
 
-  pd << ") = geompy.GetFreeBoundary(" << theObject << ")";
+    pd << ") = geompy.GetFreeBoundary(" << theObject << ")";
+  }
 
   SetErrorCode(OK);
   return true;
