@@ -26,13 +26,15 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
+
 #include "BooleanGUI.h"
 
 #include "SUIT_Desktop.h"
 #include "BooleanGUI_Dialog.h"
 
 #include "GeometryGUI.h"
+
+using namespace std;
 
 BooleanGUI* BooleanGUI::myGUIObject = 0;
 

@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BooleanGUI_Dialog.h"
 #include "BooleanGUI.h"
 #include "DlgRef_2Sel_QTD.h"
@@ -36,6 +35,8 @@ using namespace std;
 #include "SalomeApp_SelectionMgr.h"
 
 #include <qlabel.h>
+
+using namespace std;
 
 //=================================================================================
 // class    : BooleanGUI_Dialog()
