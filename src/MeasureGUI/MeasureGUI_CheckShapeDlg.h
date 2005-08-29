@@ -33,11 +33,17 @@
 
 class MeasureGUI_1Sel1TextView_QTD;
 
+#if defined WNT && defined MEASUREGUI_EXPORTS
+#define MEASUREGUI_EXPORT __declspec( dllexport )
+#else
+#define MEASUREGUI_EXPORT
+#endif
+
 //=================================================================================
 // class    : MeasureGUI_CheckShapeDlg
 // purpose  :
 //=================================================================================
-class MeasureGUI_CheckShapeDlg : public MeasureGUI_Skeleton
+class MEASUREGUI_EXPORT MeasureGUI_CheckShapeDlg : public MeasureGUI_Skeleton
 {
     Q_OBJECT
 

@@ -466,6 +466,9 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
 //=====================================================================================
 extern "C"
 {
+#ifdef WNT
+	__declspec( dllexport )
+#endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return DisplayGUI::GetDisplayGUI( parent );

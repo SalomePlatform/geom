@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GenerationGUI.h"
 
 #include "SUIT_Session.h"
@@ -36,6 +35,8 @@ using namespace std;
 #include "GenerationGUI_RevolDlg.h"     // Method REVOL
 #include "GenerationGUI_FillingDlg.h"   // Method FILLING
 #include "GenerationGUI_PipeDlg.h"      // Method PIPE
+
+using namespace std;
 
 GenerationGUI* GenerationGUI::myGUIObject = 0;
 
@@ -101,6 +102,9 @@ bool GenerationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
+#ifdef WNT
+	__declspec( dllexport )
+#endif
   GEOMGUI* GetLibGUI(GeometryGUI* parent)
   {
     return GenerationGUI::GetGenerationGUI(parent);

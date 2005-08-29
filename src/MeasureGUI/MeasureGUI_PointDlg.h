@@ -32,12 +32,18 @@
 
 class QLineEdit;
 
+#if defined WNT && defined MEASUREGUI_EXPORTS
+#define MEASUREGUI_EXPORT __declspec( dllexport )
+#else
+#define MEASUREGUI_EXPORT
+#endif
+
 //=================================================================================
 // class    : MeasureGUI_PointDlg
 // purpose  : Dialog for displaying point coordinates
 //=================================================================================
 
-class MeasureGUI_PointDlg : public MeasureGUI_Skeleton
+class MEASUREGUI_EXPORT MeasureGUI_PointDlg : public MeasureGUI_Skeleton
 { 
   Q_OBJECT
 

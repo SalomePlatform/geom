@@ -33,11 +33,17 @@
 
 class MeasureGUI_1Sel6LineEdit_QTD;
 
+#if defined WNT && defined MEASUREGUI_EXPORTS
+#define MEASUREGUI_EXPORT __declspec( dllexport )
+#else
+#define MEASUREGUI_EXPORT
+#endif
+
 //=================================================================================
 // class    : DialogBox_PROPERTIES
 // purpose  :
 //=================================================================================
-class MeasureGUI_BndBoxDlg : public MeasureGUI_Skeleton
+class MEASUREGUI_EXPORT MeasureGUI_BndBoxDlg : public MeasureGUI_Skeleton
 { 
     Q_OBJECT
 

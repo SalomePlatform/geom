@@ -639,6 +639,9 @@ QString GEOMToolsGUI::getParentComponent( _PTR( SObject ) obj )
 //=====================================================================================
 extern "C"
 {
+#ifdef WNT
+	__declspec( dllexport )
+#endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return new GEOMToolsGUI( parent );

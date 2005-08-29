@@ -32,11 +32,17 @@
 
 class MeasureGUI_1Sel3LineEdit_QTD;
 
+#if defined WNT && defined MEASUREGUI_EXPORTS
+#define MEASUREGUI_EXPORT __declspec( dllexport )
+#else
+#define MEASUREGUI_EXPORT
+#endif
+
 //=================================================================================
 // class    : MeasureGUI_CenterMassDlg
 // purpose  :
 //=================================================================================
-class MeasureGUI_CenterMassDlg : public GEOMBase_Skeleton
+class MEASUREGUI_EXPORT MeasureGUI_CenterMassDlg : public GEOMBase_Skeleton
 {
     Q_OBJECT
 

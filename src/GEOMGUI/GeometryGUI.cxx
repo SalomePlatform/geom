@@ -200,8 +200,13 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
   if ( !myGUIMap.contains( libraryName ) ) {
     // try to load library if it is not loaded yet
     QCString libs;
+#ifndef WNT
     if( ( libs = getenv( "LD_LIBRARY_PATH" ) ) ) {
-      QStringList dirList = QStringList::split( ":", libs, false ); // skip empty entries
+	  QStringList dirList = QStringList::split( ":", libs, false ); // skip empty entries
+#else
+	if( ( libs = getenv( "PATH" ) ) ) {
+	  QStringList dirList = QStringList::split( ";", libs, false ); // skip empty entries
+#endif
       for( int i = dirList.count()-1; i >= 0; i-- ) {
 	QString dir = dirList[ i ];
 	QFileInfo fi( Qtx::addSlash( dirList[ i ] ) + libraryName );
@@ -366,7 +371,11 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 901  ||  // OBJECT BROWSER - RENAME
       id == 9024 ) { // OBJECT BROWSER - OPEN
     //cout << "id " << id << " received" << endl;
-    library = getLibrary( "libGEOMToolsGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libGEOMToolsGUI.so" );
+#else
+	library = getLibrary( "GEOMToolsGUI.dll" );
+#endif
   }
   else if( id == 211  ||  // MENU VIEW - WIREFRAME/SHADING
 	   id == 212  ||  // MENU VIEW - DISPLAY ALL
@@ -376,7 +385,11 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 216  ||  // MENU VIEW - DISPLAY
 	   id == 80311 ||  // POPUP VIEWER - WIREFRAME
 	   id == 80312 ) { // POPUP VIEWER - SHADING
-    library = getLibrary( "libDisplayGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libDisplayGUI.so" );
+#else
+	library = getLibrary( "DisplayGUI.dll" );
+#endif
   }
   else if( id == 4011 ||  // MENU BASIC - POINT
 	   id == 4012 ||  // MENU BASIC - LINE
@@ -388,24 +401,40 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 4018 ||  // MENU BASIC - WPLANE
 	   id == 4019 ||  // MENU BASIC - CURVE
 	   id == 4020 ) { // MENU BASIC - REPAIR
-    library = getLibrary( "libBasicGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libBasicGUI.so" );
+#else
+	library = getLibrary( "BasicGUI.dll" );
+#endif
   }
   else if( id == 4021 ||  // MENU PRIMITIVE - BOX
 	   id == 4022 ||  // MENU PRIMITIVE - CYLINDER
 	   id == 4023 ||  // MENU PRIMITIVE - SPHERE
 	   id == 4024 ||  // MENU PRIMITIVE - TORUS
 	   id == 4025 ) { // MENU PRIMITIVE - CONE
-    library = getLibrary( "libPrimitiveGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libPrimitiveGUI.so" );
+#else
+	library = getLibrary( "PrimitiveGUI.dll" );
+#endif
   }
   else if( id == 4031 ||  // MENU GENERATION - PRISM
 	   id == 4032 ||  // MENU GENERATION - REVOLUTION
 	   id == 4033 ||  // MENU GENERATION - FILLING
 	   id == 4034 ) { // MENU GENERATION - PIPE
-    library = getLibrary( "libGenerationGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libGenerationGUI.so" );
+#else
+	library = getLibrary( "GenerationGUI.dll" );
+#endif
   }
   else if( id == 404 ||   // MENU ENTITY - SKETCHER
 	   id == 407 ) {  // MENU ENTITY - EXPLODE
-    library = getLibrary( "libEntityGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libEntityGUI.so" );
+#else
+	library = getLibrary( "EntityGUI.dll" );
+#endif
   }
   else if( id == 4081 ||  // MENU BUILD - EDGE
 	   id == 4082 ||  // MENU BUILD - WIRE
@@ -413,13 +442,21 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 4084 ||  // MENU BUILD - SHELL
 	   id == 4085 ||  // MENU BUILD - SOLID
 	   id == 4086 ) { // MENU BUILD - COMPUND
-    library = getLibrary( "libBuildGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libBuildGUI.so" );
+#else
+	library = getLibrary( "BuildGUI.dll" );
+#endif
   }
   else if( id == 5011 ||  // MENU BOOLEAN - FUSE
 	   id == 5012 ||  // MENU BOOLEAN - COMMON
 	   id == 5013 ||  // MENU BOOLEAN - CUT
 	   id == 5014 ) { // MENU BOOLEAN - SECTION
-    library = getLibrary( "libBooleanGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libBooleanGUI.so" );
+#else
+	library = getLibrary( "BooleanGUI.dll" );
+#endif
   }
   else if( id == 5021 ||  // MENU TRANSFORMATION - TRANSLATION
 	   id == 5022 ||  // MENU TRANSFORMATION - ROTATION
@@ -429,14 +466,22 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 5026 ||  // MENU TRANSFORMATION - OFFSET
 	   id == 5027 ||  // MENU TRANSFORMATION - MULTI-TRANSLATION
 	   id == 5028 ) { // MENU TRANSFORMATION - MULTI-ROTATION
-    library = getLibrary( "libTransformationGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libTransformationGUI.so" );
+#else
+	library = getLibrary( "TransformationGUI.dll" );
+#endif
   }
   else if( id == 503 ||   // MENU OPERATION - PARTITION
 	   id == 504 ||   // MENU OPERATION - ARCHIMEDE
 	   id == 505 ||   // MENU OPERATION - FILLET
 	   id == 506 ||   // MENU OPERATION - CHAMFER  
 	   id == 507 ) {  // MENU OPERATION - CLIPPING RANGE
-    library = getLibrary( "libOperationGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libOperationGUI.so" );
+#else
+	library = getLibrary( "OperationGUI.dll" );
+#endif
   }
   else if( id == 601 ||   // MENU REPAIR - SEWING
 	   id == 603 ||   // MENU REPAIR - SUPPRESS FACES
@@ -448,7 +493,11 @@ void GeometryGUI::OnGUIEvent( int id )
            id == 609 ||   // MENU REPAIR - FREE BOUNDARIES
            id == 610 ||   // MENU REPAIR - FREE FACES
 	   id == 602 ) {  // MENU REPAIR - GLUE FACES
-    library = getLibrary( "libRepairGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libRepairGUI.so" );
+#else
+	library = getLibrary( "RepairGUI.dll" );
+#endif
   }
   else if( id == 701   ||  // MENU MEASURE - PROPERTIES
 	   id == 702   ||  // MENU MEASURE - CDG
@@ -460,19 +509,31 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 707   ||  // MENU MEASURE - CHECK
 	   id == 7072  ||  // MENU MEASURE - CHECK COMPOUND OF BLOCKS
 	   id == 708 ) {  // MENU MEASURE - POINT COORDINATES
-    library = getLibrary( "libMeasureGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libMeasureGUI.so" );
+#else
+	library = getLibrary( "MeasureGUI.dll" );
+#endif
   }
   else if( id == 800  ||  // MENU GROUP - CREATE
 	   id == 8001 ||  // POPUP MENU - CREATE GROUP
 	   id == 801 ) {  // MENU GROUP - EDIT
-    library = getLibrary( "libGroupGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libGroupGUI.so" );
+#else
+	library = getLibrary( "GroupGUI.dll" );
+#endif
   }
   else if( id == 9999  ||  // MENU BLOCKS - HEXAHEDRAL SOLID
            id == 9998  ||  // MENU BLOCKS - MULTI-TRANSFORMATION
            id == 9997  ||  // MENU BLOCKS - QUADRANGLE FACE
            id == 99991 ||  // MENU BLOCKS - PROPAGATE
            id == 9995 ) { // MENU BLOCKS - EXPLODE ON BLOCKS
-    library = getLibrary( "libBlocksGUI.so" );
+#ifndef WNT
+	library = getLibrary( "libBlocksGUI.so" );
+#else
+	library = getLibrary( "BlocksGUI.dll" );
+#endif
   }
 
   // call method of corresponding GUI library

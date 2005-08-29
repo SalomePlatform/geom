@@ -35,11 +35,17 @@ class MeasureGUI_1Sel1TextView_QTD;
 class QListBox;
 class QLabel;
 
+#if defined WNT && defined MEASUREGUI_EXPORTS
+#define MEASUREGUI_EXPORT __declspec( dllexport )
+#else
+#define MEASUREGUI_EXPORT
+#endif
+
 //=================================================================================
 // class    : MeasureGUI_CheckCompoundOfBlocksDlg
 // purpose  :
 //=================================================================================
-class MeasureGUI_CheckCompoundOfBlocksDlg : public MeasureGUI_Skeleton
+class MEASUREGUI_EXPORT MeasureGUI_CheckCompoundOfBlocksDlg : public MeasureGUI_Skeleton
 {
     Q_OBJECT
 
