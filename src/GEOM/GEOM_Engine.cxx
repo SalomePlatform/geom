@@ -311,8 +311,6 @@ bool GEOM_Engine::Load(int theDocID, char* theFileName)
 
   TDataStd_Integer::Set(aDoc->Main(), theDocID);
 
-  _OCAFApp->SaveAs(aDoc, "/dn05/salome/srn/Test.sdg");
-
   return true;
 }
 
