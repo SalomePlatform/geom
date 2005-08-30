@@ -358,12 +358,21 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
 #else
     aResDir += "/share/salome/resources";
 #endif
-    TCollection_AsciiString aUserResDir (getenv("HOME"));
+    char * dir = getenv("GEOM_ENGINE_RESOURCES_DIR");
+    TCollection_AsciiString aUserResDir;
+    if ( dir )
+    {
+      aUserResDir = dir;
+    }
+    else
+    {
+      aUserResDir = getenv("HOME");
 #ifdef WNT
-    aUserResDir += "\\.salome\\resources";
+      aUserResDir += "\\.salome\\resources";
 #else
-    aUserResDir += "/.salome/resources";
+      aUserResDir += "/.salome/resources";
 #endif
+    }
     myResMgr = new Resource_Manager ("ImportExport", aResDir, aUserResDir, Standard_False);
 
     if (!myResMgr->Find("Import") && !myResMgr->Find("Export")) {
