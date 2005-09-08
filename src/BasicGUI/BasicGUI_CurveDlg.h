@@ -32,6 +32,7 @@
 #include "DlgRef_1Sel_QTD.h"
 
 #include "BasicGUI.h"
+#include <list>
 #if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
 #define BASICGUI_WNT_EXPORT __declspec( dllexport )
 #else
@@ -67,6 +68,7 @@ private :
 
     DlgRef_1Sel_QTD* GroupPoints;
     GEOM::ListOfGO_var myPoints;
+    list<GEOM::GEOM_Object_var> myOrderedSel;//!< This list used for managing orderes selection
 
 private slots:
     void ClickOnOk();

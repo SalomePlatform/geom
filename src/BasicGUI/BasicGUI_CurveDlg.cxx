@@ -42,6 +42,7 @@
 #include "GEOMImpl_Types.hxx"
 
 using namespace std;
+#include <string>
 
 //=================================================================================
 // class    : BasicGUI_CurveDlg()
@@ -199,6 +200,54 @@ void BasicGUI_CurveDlg::ClickOnCancel()
 }
 
 //=================================================================================
+/*! function : isPointInList()
+ *  purpose  : Check is point (theObject) in the list \a thePoints.
+ * \author enk
+ * \retval -1, if point not in list, else 1 in list
+ */
+//=================================================================================
+static int isPointInList(list<GEOM::GEOM_Object_var>& thePoints,
+		 	 GEOM::GEOM_Object_var& theObject)
+{
+  int len = thePoints.size();
+  
+  if(len<1){
+    return -1;
+  }
+  
+  for(list<GEOM::GEOM_Object_var>::iterator i=thePoints.begin();i!=thePoints.end();i++)
+    if (string((*i)->GetEntry()) == string(theObject->GetEntry())){
+      return 1;
+    }
+
+  return -1;
+}
+//=================================================================================
+/*! function : removeUnnecessaryPnt()
+ *  purpose  : Remove unnecessary point from list \a theOldPoints
+ * \author enk
+ * \li \a theOldPoints - ordered sequence with unnecessary point
+ * \li \a theNewPoints - not ordered sequence with necessary points
+ */
+//=================================================================================
+static void removeUnnecessaryPnt(list<GEOM::GEOM_Object_var>& theOldPoints,
+				 GEOM::ListOfGO_var& theNewPoints)
+{
+  for(list<GEOM::GEOM_Object_var>::iterator i=theOldPoints.begin();i!=theOldPoints.end();i++){
+    bool found = false;
+    for (int j=0;j<theNewPoints->length() && !found ; j++){
+      if(string((*i)->GetEntry()) == string(theNewPoints[j]->GetEntry())){
+	found = true;
+      }
+    }
+    if(!found){
+      theOldPoints.remove(*i);
+      return;
+    }
+  }
+}
+
+//=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
 //=================================================================================
@@ -208,19 +257,37 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
 
   Standard_Boolean aRes = Standard_False;
   int i = 0;
-  myPoints->length( IObjectCount() ); // this length may be greater than number of objects,
-                                                   // that will actually be put into myPoints
+  int IOC = IObjectCount();
+  bool is_append = myPoints->length() < IOC; // if true - add point, else remove
+  myPoints->length( IOC ); // this length may be greater than number of objects,
+                           // that will actually be put into myPoints
   for ( SALOME_ListIteratorOfListIO anIt( selectedIO() ); anIt.More(); anIt.Next() )
-  {
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
-    if ( !CORBA::is_nil( aSelectedObject ) && aRes )
     {
-      //TopoDS_Shape aPointShape;
-      //if ( myGeomBase->GetShape( aSelectedObject, aPointShape, TopAbs_VERTEX ) )
-      myPoints[i++] = aSelectedObject;
+      GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
+      if ( !CORBA::is_nil( aSelectedObject ) && aRes )
+	{
+	  //TopoDS_Shape aPointShape;
+	  //if ( myGeomBase->GetShape( aSelectedObject, aPointShape, TopAbs_VERTEX ) )
+	  int pos = isPointInList(myOrderedSel,aSelectedObject);
+	  if(is_append && pos==-1)
+	    myOrderedSel.push_back(aSelectedObject);
+	  myPoints[i++] = aSelectedObject;
+	}
     }
-  }
+
   myPoints->length( i ); // this is the right length, smaller of equal to the previously set
+  if(IOC == 0)
+    myOrderedSel.clear();
+  else
+    removeUnnecessaryPnt(myOrderedSel,myPoints);
+
+  if(myOrderedSel.size() == myPoints->length()){
+    int k=0;
+    for (list<GEOM::GEOM_Object_var>::iterator j=myOrderedSel.begin();j!=myOrderedSel.end();j++)
+      myPoints[k++] = *j;
+  } else {
+    cout << "ERROR: Ordered sequence size != selection sequence size! ("<<myOrderedSel.size()<<"!="<<myPoints->length()<<")"<<endl;
+  }
   if ( i )
     GroupPoints->LineEdit1->setText( QString::number( i ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
   
