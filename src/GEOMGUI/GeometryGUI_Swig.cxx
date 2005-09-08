@@ -155,7 +155,6 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 
       GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(anIORValue.c_str());
       TopoDS_Shape Shape = ShapeReader.GetShape(Geom,aShape);
-
       if (obj) {
         if (obj->FindAttribute(anAttr, "AttributeName")) {
           _PTR(AttributeName) aName (anAttr);
@@ -168,7 +167,6 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
           aStudyBuilder->Addreference(newObj1, obj);
           // commit transaction
           op->commit();*/
-
           Handle(GEOM_InteractiveObject) anIO =
             new GEOM_InteractiveObject (const_cast<char*>(anIORValue.c_str()),
                                         const_cast<char*>(aFatherIOR.c_str()),
@@ -176,6 +174,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
                                         const_cast<char*>( obj->GetID().c_str()));
 
 	  if (SVTK_ViewWindow* svtkViewWindow = GetSVTKViewWindow(app)) {
+
 	    SVTK_RenderWindowInteractor* aRenderInter= svtkViewWindow->getRWInteractor();
 	    int aMode = aRenderInter->GetDisplayMode();
 
@@ -189,6 +188,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 	      aRenderInter->Display(GActor);
 	    }
 	    aRenderInter->Update();
+	    cout << 8.2 << endl;   
 	  } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(app)) {
 	    Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
 	    Handle(GEOM_AISShape) aSh =
@@ -199,7 +199,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 	    ic->AddOrRemoveCurrentObject(aSh,true);
 	  }
 	  // update object browser
-	  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>(app);
+	  SalomeApp_Application* app = NULL; //dynamic_cast<SalomeApp_Application*>(app);
 	  if (app) {
 	    CAM_Module* module = app->module("Geometry");
 	    SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>(module);
@@ -213,6 +213,22 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 
   // MESSAGE("createAndDisplayGO");
   ProcessVoidEvent(new TEvent (Entry));
+
+  class TEventUpdateBrowser: public SALOME_Event
+    {
+      public:
+	TEventUpdateBrowser() {}
+	virtual void Execute() {  
+          SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>(SUIT_Session::session()->activeApplication());
+          if (app) {
+	    CAM_Module* module = app->module("Geometry");
+	    SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>(module);
+	    if (appMod) appMod->updateObjBrowser(true);
+	  }  
+        }
+    };
+    
+  ProcessVoidEvent(new TEventUpdateBrowser ());      	
 }
 
 
