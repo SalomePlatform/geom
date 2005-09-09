@@ -31,9 +31,7 @@
 
 GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine,
 			      Handle(GEOM_Object) theImpl)
-#ifndef WNT
 : SALOME::GenericObj_i( thePOA ), _engine(theEngine), _impl(theImpl)
-#endif
 {
   thePOA->activate_object(this);
 }
