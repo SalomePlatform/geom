@@ -224,7 +224,7 @@ static int isPointInList(list<GEOM::GEOM_Object_var>& thePoints,
 }
 //=================================================================================
 /*! function : removeUnnecessaryPnt()
- *  purpose  : Remove unnecessary point from list \a theOldPoints
+ *  purpose  : Remove unnecessary points from list \a theOldPoints
  * \author enk
  * \li \a theOldPoints - ordered sequence with unnecessary point
  * \li \a theNewPoints - not ordered sequence with necessary points
@@ -233,6 +233,7 @@ static int isPointInList(list<GEOM::GEOM_Object_var>& thePoints,
 static void removeUnnecessaryPnt(list<GEOM::GEOM_Object_var>& theOldPoints,
 				 GEOM::ListOfGO_var& theNewPoints)
 {
+  list<GEOM::GEOM_Object_var> objs_to_remove;
   for(list<GEOM::GEOM_Object_var>::iterator i=theOldPoints.begin();i!=theOldPoints.end();i++){
     bool found = false;
     for (int j=0;j<theNewPoints->length() && !found ; j++){
@@ -241,9 +242,12 @@ static void removeUnnecessaryPnt(list<GEOM::GEOM_Object_var>& theOldPoints,
       }
     }
     if(!found){
-      theOldPoints.remove(*i);
-      return;
+      objs_to_remove.push_back(*i);
+      //cout << "removed: " << (*i)->GetEntry() << endl;
     }
+  }
+  for(list<GEOM::GEOM_Object_var>::iterator i=objs_to_remove.begin();i!=objs_to_remove.end();i++){
+    theOldPoints.remove(*i);
   }
 }
 
@@ -286,7 +290,7 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
     for (list<GEOM::GEOM_Object_var>::iterator j=myOrderedSel.begin();j!=myOrderedSel.end();j++)
       myPoints[k++] = *j;
   } else {
-    cout << "ERROR: Ordered sequence size != selection sequence size! ("<<myOrderedSel.size()<<"!="<<myPoints->length()<<")"<<endl;
+    //cout << "ERROR: Ordered sequence size != selection sequence size! ("<<myOrderedSel.size()<<"!="<<myPoints->length()<<")"<<endl;
   }
   if ( i )
     GroupPoints->LineEdit1->setText( QString::number( i ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
