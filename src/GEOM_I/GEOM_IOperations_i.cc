@@ -1,15 +1,12 @@
-#include <Standard_Stream.hxx>
-
 #include "GEOM_IOperations_i.hh"
+
+#include "GEOM_Engine.hxx"
 
 #include "utilities.h"
 #include "OpUtil.hxx"
 #include "Utils_ExceptHandlers.hxx"
 
-#include "GEOM_Engine.hxx"
-
-//#include "GEOM_Gen_i.hh"
-
+#include <Standard_Stream.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TDF_Tool.hxx>
 
@@ -36,46 +33,46 @@ GEOM_IOperations_i::~GEOM_IOperations_i()
 
 
 //=============================================================================
-/*!  
+/*!
  *  IsDone
  */
-//============================================================================= 
+//=============================================================================
 CORBA::Boolean GEOM_IOperations_i::IsDone()
 {
   return _impl->IsDone();
-}  
+}
 
 
 //=============================================================================
-/*!    
+/*!
  *  SetErrorCode
  */
-//============================================================================= 
+//=============================================================================
 void GEOM_IOperations_i::SetErrorCode(const char* theErrorCode)
 {
   _impl->SetErrorCode((char*)theErrorCode);
 }
- 
+
 //=============================================================================
 /*!
  *  GetErrorCode
  */
-//============================================================================= 
-char* GEOM_IOperations_i::GetErrorCode() 
+//=============================================================================
+char* GEOM_IOperations_i::GetErrorCode()
 {
-  return _impl->GetErrorCode();    
+  return CORBA::string_dup(_impl->GetErrorCode());
 }
-   
+
 //=============================================================================
 /*!
  *  GetStudyID
  */
-//============================================================================= 
-CORBA::Long GEOM_IOperations_i::GetStudyID() 
+//=============================================================================
+CORBA::Long GEOM_IOperations_i::GetStudyID()
 {
-  return _impl->GetDocID();    
+  return _impl->GetDocID();
 }
-   
+
 //=============================================================================
 /*!
  *  StartOperation
@@ -112,12 +109,11 @@ void GEOM_IOperations_i::AbortOperation()
  *  GetObject
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObject)         
+GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObject)
 {
   if(theObject.IsNull()) return NULL;
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   GEOM::GEOM_Object_var GO = GEOM::GEOM_Object::_duplicate(_engine->GetObject(theObject->GetDocID(), anEntry.ToCString()));
   return GO._retn();
-}  
-
+}
