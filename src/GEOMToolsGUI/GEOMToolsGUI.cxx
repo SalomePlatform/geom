@@ -349,7 +349,7 @@ void GEOMToolsGUI::OnEditDelete()
       } // if ( selected not empty )
     } // if ( selMgr && appStudy )
 
-    app->updateActions(); //SRN: To update a Save button in the toolbar 
+    app->updateActions(); //SRN: To update a Save button in the toolbar
 
   } // if ( app )
 
@@ -403,7 +403,7 @@ void GEOMToolsGUI::OnEditCopy()
 //=====================================================================================
 bool GEOMToolsGUI::Import()
 {
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( getGeometryGUI()->getApp() ); 
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( getGeometryGUI()->getApp() );
   //SUIT_Application* app = getGeometryGUI()->getApp();
   if (! app) return false;
 
@@ -448,23 +448,27 @@ bool GEOMToolsGUI::Import()
 
   QString fileType;
 
-  QString file = getFileName(app->desktop(), "", aMap, tr("GEOM_MEN_IMPORT"), true, fileType );
-  if( file.isEmpty() || fileType.isEmpty() )
+  QString fileName = getFileName(app->desktop(), "", aMap,
+                                 tr("GEOM_MEN_IMPORT"), true, fileType);
+  if (fileName.isEmpty() || fileType.isEmpty())
     return false;
 
-  GEOM_Operation* anOp = new GEOM_Operation( app, aInsOp.in() );
+  GEOM_Operation* anOp = new GEOM_Operation (app, aInsOp.in());
   try {
     SUIT_OverrideCursor wc;
 
-    app->putInfo( tr("GEOM_PRP_LOADING").arg(SUIT_Tools::file( file, /*withExten=*/true )) );
+    app->putInfo(tr("GEOM_PRP_LOADING").arg(SUIT_Tools::file(fileName, /*withExten=*/true)));
 
     anOp->start();
 
-    anObj = aInsOp->Import( file.latin1(), fileType.latin1() );
+    CORBA::String_var fileN = fileName.latin1();
+    CORBA::String_var fileT = fileType.latin1();
+    anObj = aInsOp->Import(fileN, fileT);
 
     if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
-      anObj->SetName( GEOMBase::GetDefaultName( QObject::tr( "GEOM_IMPORT" ) ).latin1() );
-      QString aPublishObjName = GEOMBase::GetDefaultName( SUIT_Tools::file( file, /*withExten=*/true ));
+      anObj->SetName(GEOMBase::GetDefaultName(QObject::tr("GEOM_IMPORT")).latin1());
+      QString aPublishObjName =
+        GEOMBase::GetDefaultName(SUIT_Tools::file(fileName, /*withExten=*/true));
 
       SALOMEDS::Study_var aDSStudy = GeometryGUI::ClientStudyToStudy(aStudy);
       GeometryGUI::GetGeomGen()->PublishInStudy(aDSStudy,

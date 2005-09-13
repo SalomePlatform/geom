@@ -167,7 +167,7 @@ SUIT_SelectionFilter* GEOM_Displayer::getFilter( const int theMode )
 // Function : getEntry
 // Purpose  :
 //================================================================
-static char* getEntry( GEOM::GEOM_Object_ptr object )
+static string getEntry( GEOM::GEOM_Object_ptr object )
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -179,7 +179,7 @@ static char* getEntry( GEOM::GEOM_Object_ptr object )
       SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
       if ( SO )
-	return (char*)(SO->GetID().c_str());
+	return SO->GetID();
     }
   }
   return "";
@@ -189,7 +189,7 @@ static char* getEntry( GEOM::GEOM_Object_ptr object )
 // Function : getName
 // Purpose  :
 //================================================================
-static const char* getName( GEOM::GEOM_Object_ptr object )
+static string getName( GEOM::GEOM_Object_ptr object )
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -206,7 +206,7 @@ static const char* getName( GEOM::GEOM_Object_ptr object )
       if ( aSObj && aSObj->FindAttribute( anAttr, "AttributeName") )
       {
         _PTR(AttributeName) aNameAttr( anAttr );
-        return aNameAttr->Value().c_str();
+        return aNameAttr->Value();
       }
     }
   }
@@ -319,8 +319,8 @@ void GEOM_Displayer::Display( GEOM::GEOM_Object_ptr theObj, const bool updateVie
 
   string entry = getEntry( theObj );
   if ( entry != "" ) {
-    Display( new SALOME_InteractiveObject(
-      entry.c_str(), "GEOM", strdup( getName( theObj ) ) ), updateViewer );
+    Display(new SALOME_InteractiveObject(entry.c_str(), "GEOM", getName(theObj).c_str()),
+            updateViewer);
   }
 }
 
@@ -364,8 +364,8 @@ void GEOM_Displayer::Erase( GEOM::GEOM_Object_ptr theObj,
   string entry = getEntry( theObj );
   if ( entry != "" )
   {
-    Erase( new SALOME_InteractiveObject(
-      entry.c_str(), "GEOM", strdup( getName( theObj ) ) ), forced, updateViewer );
+    Erase(new SALOME_InteractiveObject(entry.c_str(), "GEOM", getName(theObj).c_str()),
+          forced, updateViewer);
   }
 }
 
@@ -1116,4 +1116,3 @@ void GEOM_Displayer::clearTemporary( SalomeApp_SelectionMgr* theSelMgr )
 
   theSelMgr->setSelectedObjects( toSelect, true );
 }
-

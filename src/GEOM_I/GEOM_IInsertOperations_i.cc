@@ -137,32 +137,30 @@ GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::Import
 void GEOM_IInsertOperations_i::ImportTranslators
   (GEOM::string_array_out theFormats, GEOM::string_array_out thePatterns)
 {
-  // Get sequences of available formats
-  Handle(TColStd_HSequenceOfAsciiString) aFormats  = new TColStd_HSequenceOfAsciiString;
-  Handle(TColStd_HSequenceOfAsciiString) aPatterns = new TColStd_HSequenceOfAsciiString;
-  if (!GetOperations()->ImportTranslators(aFormats, aPatterns) ||
-      aFormats->Length() != aPatterns->Length())
-  {
-    aFormats->Clear(); aPatterns->Clear();
-  }
-
-  const int formSize = aFormats->Length(), pattSize = aPatterns->Length();
-
   // allocate the CORBA arrays
   GEOM::string_array_var aFormatsArray  = new GEOM::string_array();
   GEOM::string_array_var aPatternsArray = new GEOM::string_array();
-  aFormatsArray->length(formSize);
-  aPatternsArray->length(formSize);
 
-  // fill the local CORBA arrays with values from sequences
-  CORBA::Long i = 1;
-  for (; i <= formSize; i++) {
-    aFormatsArray[i-1]  = CORBA::string_dup(aFormats->Value(i).ToCString());
-    aPatternsArray[i-1] = CORBA::string_dup(aPatterns->Value(i).ToCString());
+  // Get sequences of available formats
+  Handle(TColStd_HSequenceOfAsciiString) aFormats  = new TColStd_HSequenceOfAsciiString;
+  Handle(TColStd_HSequenceOfAsciiString) aPatterns = new TColStd_HSequenceOfAsciiString;
+  if (GetOperations()->ImportTranslators(aFormats, aPatterns)) {
+    const int formSize = aFormats->Length();
+    if (formSize == aPatterns->Length()) {
+      aFormatsArray->length(formSize);
+      aPatternsArray->length(formSize);
+
+      // fill the local CORBA arrays with values from sequences
+      CORBA::Long i = 1;
+      for (; i <= formSize; i++) {
+	aFormatsArray[i-1]  = CORBA::string_dup(aFormats->Value(i).ToCString());
+	aPatternsArray[i-1] = CORBA::string_dup(aPatterns->Value(i).ToCString());
+      }
+    }
   }
 
   // initialize out-parameters with local arrays
-  theFormats = aFormatsArray._retn();
+  theFormats  = aFormatsArray._retn();
   thePatterns = aPatternsArray._retn();
 }
 
@@ -174,28 +172,29 @@ void GEOM_IInsertOperations_i::ImportTranslators
 void GEOM_IInsertOperations_i::ExportTranslators
   (GEOM::string_array_out theFormats, GEOM::string_array_out thePatterns)
 {
-  // Get sequences of available formats
-  Handle(TColStd_HSequenceOfAsciiString) aFormats  = new TColStd_HSequenceOfAsciiString;
-  Handle(TColStd_HSequenceOfAsciiString) aPatterns = new TColStd_HSequenceOfAsciiString;
-  if (!GetOperations()->ExportTranslators(aFormats, aPatterns)) return;
-
-  const int formSize = aFormats->Length(), pattSize = aPatterns->Length();
-  if (formSize != pattSize) return;
-
   // allocate the CORBA arrays
   GEOM::string_array_var aFormatsArray  = new GEOM::string_array();
   GEOM::string_array_var aPatternsArray = new GEOM::string_array();
-  aFormatsArray->length(formSize);
-  aPatternsArray->length(formSize);
 
-  // fill the local CORBA arrays with values from sequences
-  CORBA::Long i = 1;
-  for (; i <= formSize; i++) {
-    aFormatsArray[i-1]  = CORBA::string_dup(aFormats->Value(i).ToCString());
-    aPatternsArray[i-1] = CORBA::string_dup(aPatterns->Value(i).ToCString());
+  // Get sequences of available formats
+  Handle(TColStd_HSequenceOfAsciiString) aFormats  = new TColStd_HSequenceOfAsciiString;
+  Handle(TColStd_HSequenceOfAsciiString) aPatterns = new TColStd_HSequenceOfAsciiString;
+  if (GetOperations()->ExportTranslators(aFormats, aPatterns)) {
+    const int formSize = aFormats->Length();
+    if (formSize == aPatterns->Length()) {
+      aFormatsArray->length(formSize);
+      aPatternsArray->length(formSize);
+
+      // fill the local CORBA arrays with values from sequences
+      CORBA::Long i = 1;
+      for (; i <= formSize; i++) {
+	aFormatsArray[i-1]  = CORBA::string_dup(aFormats->Value(i).ToCString());
+	aPatternsArray[i-1] = CORBA::string_dup(aPatterns->Value(i).ToCString());
+      }
+    }
   }
 
   // initialize out-parameters with local arrays
-  theFormats = aFormatsArray._retn();
+  theFormats  = aFormatsArray._retn();
   thePatterns = aPatternsArray._retn();
 }
