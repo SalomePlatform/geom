@@ -5,6 +5,8 @@
 #include <GEOMImpl_IShapes.hxx>
 #include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_Types.hxx>
+#include <GEOMImpl_Block6Explorer.hxx>
+
 #include <GEOM_Function.hxx>
 
 #include <BRep_Tool.hxx>
@@ -18,7 +20,6 @@
 #include <BRepCheck_Shell.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
-#include <BRepBuilderAPI_MakeFace.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
@@ -106,14 +107,22 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         ("Shape for face construction is null or not a wire");
     }
     TopoDS_Wire W = TopoDS::Wire(aShapeBase);
-    BRepBuilderAPI_MakeFace MF (W, aCI.GetIsPlanar());
-    if (!MF.IsDone()) {
+    //BRepBuilderAPI_MakeFace MF (W, aCI.GetIsPlanar());
+    //if (!MF.IsDone()) {
+    //  Standard_ConstructionError::Raise("Face construction failed");
+    //}
+    //aShape = MF.Shape();
+    GEOMImpl_Block6Explorer::MakeFace(W, aCI.GetIsPlanar(), aShape);
+    if (aShape.IsNull()) {
       Standard_ConstructionError::Raise("Face construction failed");
     }
-    aShape = MF.Shape();
 
   } else if (aType == FACE_WIRES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
+    int nbshapes = aShapes->Length();
+    if (nbshapes < 1) {
+      Standard_ConstructionError::Raise("No wires given");
+    }
 
     // first wire
     Handle(GEOM_Function) aRefWire = Handle(GEOM_Function)::DownCast(aShapes->Value(1));
@@ -124,53 +133,56 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     TopoDS_Wire W = TopoDS::Wire(aWire);
 
     // basic face
-    BRepBuilderAPI_MakeFace MF (W, aCI.GetIsPlanar());
-    if (!MF.IsDone()) {
+    //BRepBuilderAPI_MakeFace MF (W, aCI.GetIsPlanar());
+    //if (!MF.IsDone()) {
+    //  Standard_ConstructionError::Raise("Face construction failed");
+    //}
+    //TopoDS_Shape FFace = MF.Shape();
+    TopoDS_Shape FFace;
+    GEOMImpl_Block6Explorer::MakeFace(W, aCI.GetIsPlanar(), FFace);
+    if (FFace.IsNull()) {
       Standard_ConstructionError::Raise("Face construction failed");
     }
-    TopoDS_Shape FFace = MF.Shape();
-    if (!FFace.IsNull()) {
-      unsigned int ind, nbshapes = aShapes->Length();
-      if (nbshapes == 1) {
-	aShape = FFace;
 
-      } else if (nbshapes >= 2) {
-	TopoDS_Compound C;
-	BRep_Builder aBuilder;
-	aBuilder.MakeCompound(C);
-	BRepAlgo_FaceRestrictor FR;
+    if (nbshapes == 1) {
+      aShape = FFace;
 
-	TopAbs_Orientation OriF = FFace.Orientation();
-	TopoDS_Shape aLocalS = FFace.Oriented(TopAbs_FORWARD);
-	FR.Init(TopoDS::Face(aLocalS), Standard_False, Standard_True);
+    } else {
+      TopoDS_Compound C;
+      BRep_Builder aBuilder;
+      aBuilder.MakeCompound(C);
+      BRepAlgo_FaceRestrictor FR;
 
-	for (ind = 1; ind <= nbshapes; ind++) {
-          Handle(GEOM_Function) aRefWire_i =
-            Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
-          TopoDS_Shape aWire_i = aRefWire_i->GetValue();
-          if (aWire_i.IsNull() || aWire_i.ShapeType() != TopAbs_WIRE) {
-            Standard_NullObject::Raise("Shape for face construction is null or not a wire");
-          }
+      TopAbs_Orientation OriF = FFace.Orientation();
+      TopoDS_Shape aLocalS = FFace.Oriented(TopAbs_FORWARD);
+      FR.Init(TopoDS::Face(aLocalS), Standard_False, Standard_True);
 
-	  FR.Add(TopoDS::Wire(aWire_i));
-	}
+      for (int ind = 1; ind <= nbshapes; ind++) {
+        Handle(GEOM_Function) aRefWire_i =
+          Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
+        TopoDS_Shape aWire_i = aRefWire_i->GetValue();
+        if (aWire_i.IsNull() || aWire_i.ShapeType() != TopAbs_WIRE) {
+          Standard_NullObject::Raise("Shape for face construction is null or not a wire");
+        }
 
-	FR.Perform();
+        FR.Add(TopoDS::Wire(aWire_i));
+      }
 
-	if (FR.IsDone()) {
-	  int k = 0;
-	  TopoDS_Shape aFace;
-	  for (; FR.More(); FR.Next()) {
-	    aFace = FR.Current().Oriented(OriF);
-	    aBuilder.Add(C, aFace);
-	    k++;
-	  }
-	  if (k == 1) {
-	    aShape = aFace;
-	  } else {
-	    aShape = C;
-	  }
-	}
+      FR.Perform();
+
+      if (FR.IsDone()) {
+        int k = 0;
+        TopoDS_Shape aFace;
+        for (; FR.More(); FR.Next()) {
+          aFace = FR.Current().Oriented(OriF);
+          aBuilder.Add(C, aFace);
+          k++;
+        }
+        if (k == 1) {
+          aShape = aFace;
+        } else {
+          aShape = C;
+        }
       }
     }
   } else if (aType == SHELL_FACES) {
