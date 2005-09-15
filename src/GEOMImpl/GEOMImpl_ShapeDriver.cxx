@@ -9,7 +9,18 @@ using namespace std;
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepAlgo_FaceRestrictor.hxx>
+
+#include <Standard_Version.hxx>
+#ifdef OCC_VERSION_MAINTENANCE 
+#if (OCC_VERSION_MAJOR >= 5 && OCC_VERSION_MINOR >= 2 && OCC_VERSION_MAINTENANCE >= 4)
+#include <BRepBuilderAPI_Sewing.hxx>
+#define BRepAlgo_Sewing BRepBuilderAPI_Sewing
+#else 
 #include <BRepAlgo_Sewing.hxx>
+#endif 
+#else #include <BRepAlgo_Sewing.hxx>
+#endif 
+
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepTools_Quilt.hxx>
 #include <BRepCheck.hxx>

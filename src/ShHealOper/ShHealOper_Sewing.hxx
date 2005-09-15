@@ -28,7 +28,18 @@
 #include <ShHealOper_Tool.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopAbs_ShapeEnum.hxx>
+#include <Standard_Version.hxx>
+#ifdef OCC_VERSION_MAINTENANCE
+#if (OCC_VERSION_MAJOR >= 5 && OCC_VERSION_MINOR >= 2 && OCC_VERSION_MAINTENANCE >= 4)
+#include <BRepBuilderAPI_Sewing.hxx>
+#define __OCC_5_2_4__
+#else
 #include <BRepAlgo_Sewing.hxx>
+#endif
+#else
+#include <BRepAlgo_Sewing.hxx>
+#endif
+
 #include <TopoDS_Compound.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
@@ -125,7 +136,12 @@ class ShHealOper_Sewing : public ShHealOper_Tool
   Standard_Boolean getShells(const TopoDS_Shape& theSewShape) const;
   Standard_Boolean getWires(const TopoDS_Shape& theSewShape) const;
   Standard_Boolean getModifications(const TopoDS_Shape& theShape,
-                                    const Handle(BRepAlgo_Sewing)& theSewing) const;
+#ifdef __OCC_5_2_4__
+                                    const Handle(BRepBuilderAPI_Sewing)& 
+#else
+				    const Handle(BRepAlgo_Sewing)&
+#endif
+theSewing) const;
   
   Standard_Boolean isSewed(const TopoDS_Shape& theShape) const;
 
