@@ -18,7 +18,8 @@ using namespace std;
 #else 
 #include <BRepAlgo_Sewing.hxx>
 #endif 
-#else #include <BRepAlgo_Sewing.hxx>
+#else 
+#include <BRepAlgo_Sewing.hxx>
 #endif 
 
 #include <BRepBuilderAPI_Copy.hxx>
