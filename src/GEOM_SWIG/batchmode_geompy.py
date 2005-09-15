@@ -46,19 +46,19 @@ CurvesOp = None
 PrimOp   = None
 ShapesOp = None
 HealOp   = None
-InsertOp = None 
-BoolOp   = None 
+InsertOp = None
+BoolOp   = None
 TrsfOp   = None
 LocalOp  = None
 MeasuOp  = None
 BlocksOp = None
-GroupOp  = None 
+GroupOp  = None
 
 def init_geom(theStudy):
 
     global myStudy, myBuilder, myStudyId, BasicOp, CurvesOp, PrimOp, ShapesOp, HealOp
     global InsertOp, BoolOp, TrsfOp, LocalOp, MeasuOp, BlocksOp, GroupOp, father
-    
+
     myStudy = theStudy
     myStudyId = myStudy._get_StudyId()
     myBuilder = myStudy.NewBuilder()
@@ -73,7 +73,7 @@ def init_geom(theStudy):
 	aPixmap.SetPixMap("ICON_OBJBROWSER_Geometry")
 	myBuilder.DefineComponentInstance(father,geom)
         pass
-	 
+
     # -----------------------------------------------------------------------------
     # Assign Operations Interfaces
     # -----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ def init_geom(theStudy):
     LocalOp  = geom.GetILocalOperations    (myStudyId)
     MeasuOp  = geom.GetIMeasureOperations  (myStudyId)
     BlocksOp = geom.GetIBlocksOperations   (myStudyId)
-    GroupOp  = geom.GetIGroupOperations   (myStudyId) 
+    GroupOp  = geom.GetIGroupOperations   (myStudyId)
     pass
 
 init_geom(myStudy)
@@ -478,16 +478,34 @@ def GetShapesOnPlane(theShape, theShapeType, theAx1, theState):
       print "GetShapesOnPlane : ", ShapesOp.GetErrorCode()
     return aList
 
+def GetShapesOnPlaneIDs(theShape, theShapeType, theAx1, theState):
+    aList = ShapesOp.GetShapesOnPlaneIDs(theShape, theShapeType, theAx1, theState)
+    if ShapesOp.IsDone() == 0:
+        print "GetShapesOnPlaneIDs : ", ShapesOp.GetErrorCode()
+    return aList
+
 def GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState):
     aList = ShapesOp.GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState)
     if ShapesOp.IsDone() == 0:
       print "GetShapesOnCylinder : ", ShapesOp.GetErrorCode()
     return aList
 
+def GetShapesOnCylinderIDs(theShape, theShapeType, theAxis, theRadius, theState):
+    aList = ShapesOp.GetShapesOnCylinderIDs(theShape, theShapeType, theAxis, theRadius, theState)
+    if ShapesOp.IsDone() == 0:
+        print "GetShapesOnCylinderIDs : ", ShapesOp.GetErrorCode()
+    return aList
+
 def GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState):
     aList = ShapesOp.GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState)
     if ShapesOp.IsDone() == 0:
       print "GetShapesOnSphere : ", ShapesOp.GetErrorCode()
+    return aList
+
+def GetShapesOnSphereIDs(theShape, theShapeType, theCenter, theRadius, theState):
+    aList = ShapesOp.GetShapesOnSphereIDs(theShape, theShapeType, theCenter, theRadius, theState)
+    if ShapesOp.IsDone() == 0:
+        print "GetShapesOnSphereIDs : ", ShapesOp.GetErrorCode()
     return aList
 
 def GetInPlace(theShapeWhere, theShapeWhat):
@@ -1105,10 +1123,20 @@ def UnionList (theGroup, theSubShapes):
     if GroupOp.IsDone() == 0:
       print "UnionList : ", GroupOp.GetErrorCode()
 
+def UnionIDs(theGroup, theSubShapes):
+    GroupOp.UnionIDs(theGroup, theSubShapes)
+    if GroupOp.IsDone() == 0:
+        print "UnionIDs : ", GroupOp.GetErrorCode()
+
 def DifferenceList (theGroup, theSubShapes):
     GroupOp.DifferenceList(theGroup, theSubShapes)
     if GroupOp.IsDone() == 0:
       print "DifferenceList : ", GroupOp.GetErrorCode()
+
+def DifferenceIDs(theGroup, theSubShapes):
+    GroupOp.DifferenceIDs(theGroup, theSubShapes)
+    if GroupOp.IsDone() == 0:
+        print "DifferenceIDs : ", GroupOp.GetErrorCode()
 
 def GetObjectIDs(Group):
     ListIDs = GroupOp.GetObjects(Group)
