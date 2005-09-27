@@ -258,26 +258,6 @@ GEOM_Displayer::~GEOM_Displayer()
 
 //=================================================================
 /*!
- *  GetActiveView
- *  Get active study frame, returns 0 if no open study frame
- */
-//=================================================================
-SALOME_View* GEOM_Displayer::GetActiveView()
-{
-  SUIT_Session* session = SUIT_Session::session();
-  if (  SUIT_Application* app = session->activeApplication() ) {
-    if ( SalomeApp_Application* sApp = dynamic_cast<SalomeApp_Application*>( app ) ) {
-      if( SUIT_ViewManager* vman = sApp->activeViewManager() ) {
-	if ( SUIT_ViewModel* vmod = vman->getViewModel() )
-	  return dynamic_cast<SALOME_View*>( vmod );
-      }
-    }
-  }
-  return 0;
-}
-
-//=================================================================
-/*!
  *  GEOM_Displayer::Display
  *  Display interactive object in the current viewer
  */
@@ -289,7 +269,7 @@ void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO,
   SALOME_View* vf = theViewFrame ? theViewFrame : GetActiveView();
   if ( vf )
   {
-    SALOME_Prs* prs = buildPresentation( theIO, vf );
+    SALOME_Prs* prs = buildPresentation( theIO->getEntry(), vf );
 
     if ( prs )
     {
@@ -366,25 +346,6 @@ void GEOM_Displayer::Erase( GEOM::GEOM_Object_ptr theObj,
   {
     Erase(new SALOME_InteractiveObject(entry.c_str(), "GEOM", getName(theObj).c_str()),
           forced, updateViewer);
-  }
-}
-
-//=================================================================
-/*!
- *  GEOM_Displayer::EraseAll
- *  Erase all objects in the current viewer
- */
-//=================================================================
-void GEOM_Displayer::EraseAll ( const bool forced,
-				const bool updateViewer,
-				SALOME_View* theViewFrame )
-{
-  SALOME_View* vf = theViewFrame ? theViewFrame : GetActiveView();
-
-  if ( vf ) {
-    vf->EraseAll( forced );
-    if ( updateViewer )
-      vf->Repaint();
   }
 }
 
@@ -477,19 +438,6 @@ void GEOM_Displayer::Redisplay( const SALOME_ListIO& theIOList, const bool updat
 
   if ( updateViewer )
     UpdateViewer();
-}
-
-//=================================================================
-/*!
- *  GEOM_Displayer::UpdateViewer
- *  Update current viewer
- */
-//=================================================================
-void GEOM_Displayer::UpdateViewer()
-{
-  SALOME_View* vf = GetActiveView();
-  if ( vf )
-    vf->Repaint();
 }
 
 //=================================================================
@@ -801,7 +749,7 @@ SALOME_Prs* GEOM_Displayer::BuildPrs( const TopoDS_Shape& theShape )
  *  [ internal ]
  */
 //=================================================================
-SALOME_Prs* GEOM_Displayer::buildPresentation( const Handle(SALOME_InteractiveObject)& theIO,
+SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
 					       SALOME_View* theViewFrame )
 {
   SALOME_Prs* prs = 0;
@@ -811,9 +759,11 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const Handle(SALOME_InteractiveOb
 
   if ( myViewFrame )
   {
-    prs = myViewFrame->CreatePrs( !theIO.IsNull() ? theIO->getEntry() : 0 );
+    prs = SalomeApp_Displayer::buildPresentation( entry, theViewFrame );
     if ( prs )
     {
+      Handle( SALOME_InteractiveObject ) theIO = new SALOME_InteractiveObject();
+      theIO->setEntry( entry.latin1() );
       if ( !theIO.IsNull() )
       {
 	// set interactive object

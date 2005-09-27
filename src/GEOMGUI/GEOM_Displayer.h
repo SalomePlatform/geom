@@ -34,6 +34,7 @@
 #include "SALOME_ListIO.hxx"
 #include <TopoDS_Shape.hxx>
 #include <Quantity_Color.hxx>
+#include <SalomeApp_Displayer.h>
 
 #include <list>
 
@@ -63,7 +64,7 @@ class SUIT_SelectionFilter;
 #define GEOMGUI_WNT_EXPORT
 #endif
 
-class GEOMGUI_WNT_EXPORT GEOM_Displayer : public SALOME_Displayer
+class GEOMGUI_WNT_EXPORT GEOM_Displayer : public SalomeApp_Displayer
 {
     
 public:
@@ -107,14 +108,6 @@ public:
   void          Redisplay ( const SALOME_ListIO& theIOList,
                             const bool updateViewer = true );
 
-  /* Erase all objects displayed in the given or active view */
-  void          EraseAll ( const bool forced = false,
-			   const bool updateViewer = true,
-			   SALOME_View* theViewFrame = 0 );
-
-  /* Update current viewer */
-  void          UpdateViewer();
-
   /* build presentation accordint to the current viewer type*/
   SALOME_Prs*   BuildPrs  ( GEOM::GEOM_Object_ptr );
   SALOME_Prs*   BuildPrs  ( const TopoDS_Shape& );
@@ -153,14 +146,12 @@ public:
   void         GlobalSelection( const int = GEOM_ALLOBJECTS, const bool = false );
   void         GlobalSelection( const TColStd_MapOfInteger&, const bool = false );
 
-  static SALOME_View* GetActiveView();
   SalomeApp_Study* getStudy() const {return myStudy;}
 
 protected:
   /* internal methods */
   /* Builds presentation accordint to the current viewer type */
-  SALOME_Prs* buildPresentation( const Handle(SALOME_InteractiveObject)& theIO,
-				 SALOME_View* theViewFrame = 0 );
+  virtual SALOME_Prs* buildPresentation( const QString&, SALOME_View* = 0 );
   
   /* Sets interactive object */
   void        setIO( const Handle(SALOME_InteractiveObject)& theIO ) { myIO = theIO; }

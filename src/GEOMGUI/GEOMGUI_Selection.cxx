@@ -53,11 +53,15 @@ QtxValue GEOMGUI_Selection::globalParam( const QString& p ) const
 
 QtxValue GEOMGUI_Selection::param( const int ind, const QString& p ) const
 {
-  if      ( p == "isVisible"   )    return QtxValue( isVisible( ind ) );
-  else if ( p == "type"        )    return QtxValue( typeName( ind ) );
-  else if ( p == "displaymode" )    return QtxValue( displayMode( ind ) );
-
-  return SalomeApp_Selection::param( ind, p );
+//  if      ( p == "isVisible"   )    return QtxValue( isVisible( ind ) );
+// parameter isVisible is calculated in base SalomeApp_Selection
+//  else
+  if( p == "type" )
+    return QtxValue( typeName( ind ) );
+  else if ( p == "displaymode" )
+    return QtxValue( displayMode( ind ) );
+  else
+    return SalomeApp_Selection::param( ind, p );
 }
 
 QString GEOMGUI_Selection::typeName( const int index ) const

@@ -88,6 +88,7 @@ public:
   // Destructor
   ~GeometryGUI();
 
+  virtual SalomeApp_Displayer* displayer();
   virtual void                initialize( CAM_Application* );
   virtual QString             engineIOR() const;
 
@@ -181,6 +182,8 @@ private:
 
   QPtrList<GEOMGUI_OCCSelector>   myOCCSelectors;
   QPtrList<SalomeApp_VTKSelector> myVTKSelectors;
+
+  SalomeApp_Displayer*        myDisplayer;
 };
 
 #endif
