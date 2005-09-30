@@ -184,6 +184,8 @@ private:
   QPtrList<SalomeApp_VTKSelector> myVTKSelectors;
 
   SalomeApp_Displayer*        myDisplayer;
+
+friend class DisplayGUI;
 };
 
 #endif

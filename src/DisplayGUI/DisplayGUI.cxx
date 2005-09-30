@@ -105,8 +105,10 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     {
       myDisplayGUI->InvertDisplayMode();
       int newMode = myDisplayGUI->GetDisplayMode();
-      SUIT_Session::session()->activeApplication()->desktop()->menuBar()->
-	changeItem( 211, newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
+      getGeometryGUI()->action( 211 )->setMenuText( newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
+      getGeometryGUI()->menuMgr()->update();
+//      SUIT_Session::session()->activeApplication()->desktop()->menuBar()->
+//	changeItem( 211, newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
       break;
     }
   case 212: // MENU VIEW - DISPLAY ALL
