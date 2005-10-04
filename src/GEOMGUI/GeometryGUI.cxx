@@ -1068,14 +1068,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( 8034 ), "client='OCCViewer' and selcount>0", true );
   mgr->insert( separator(), -1, -1 );        // -----------
   mgr->insert( action(  216 ), -1, -1 ); // display
-  mgr->setRule( action( 216 ), "(selcount>0) and (((isActiveView=true) and (($type in {'Shape' 'Group'} and (not isVisible)) or type='Component'))"
-		               "or ((isActiveView=false) and ($type in {'Shape' 'Group' 'Component'})))", true );
+  mgr->setRule( action( 216 ), "$component={'GEOM'} and ( (selcount>0) and (((isActiveView=true) and (($type in {'Shape' 'Group'} and (not isVisible)) or type='Component'))"
+		               "or ((isActiveView=false) and ($type in {'Shape' 'Group' 'Component'}))))", true );
   mgr->insert( action(  215 ), -1, -1 ); // erase
-  mgr->setRule( action( 215 ), "(isActiveView=true) and (($type in {'Shape' 'Group'} and isVisible and selcount>0) or (type='Component' and selcount=1))", true );
+  mgr->setRule( action( 215 ), "$component={'GEOM'} and ((isActiveView=true) and (($type in {'Shape' 'Group'} and isVisible and selcount>0) or (type='Component' and selcount=1)))", true );
   mgr->insert( action(  214 ), -1, -1 ); // erase All
   mgr->setRule( action( 214 ), "client='OCCViewer' or client='VTKViewer'", true );
   mgr->insert( action(  213 ), -1, -1 ); // display only
-  mgr->setRule( action( 213 ), "($type in {'Shape' 'Group'} and selcount>0) or (type='Component' and selcount=1)", true );
+  mgr->setRule( action( 213 ), "$component={'GEOM'} and (($type in {'Shape' 'Group'} and selcount>0) or (type='Component' and selcount=1))", true );
   mgr->insert( separator(), -1, -1 );
 }
 
