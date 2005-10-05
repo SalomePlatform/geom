@@ -33,12 +33,12 @@
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
 
-#include <VTKViewer_ViewModel.h>
-#include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
-
+#include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>
 #include <SVTK_RenderWindowInteractor.h>
+
+#include <OCCViewer_ViewModel.h>
+#include <OCCViewer_ViewWindow.h>
 
 #include <SUIT_ViewManager.h>
 #include <SUIT_Application.h>
@@ -199,7 +199,7 @@ void GEOMToolsGUI_TransparencyDlg::ValueHasChanged( int newValue )
 	
   SUIT_ViewWindow* window = app->desktop()->activeWindow();
   bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-  bool isVTK = ( window && window->getViewManager()->getType() == VTKViewer_Viewer::Type() );
+  bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
 
   if ( isVTK ) {
     SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );

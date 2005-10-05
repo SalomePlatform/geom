@@ -24,7 +24,7 @@
 #include <SALOME_Actor.h>
 
 #include <OCCViewer_ViewModel.h>
-#include <VTKViewer_ViewModel.h>
+#include <SVTK_ViewModel.h>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -94,7 +94,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 {
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   QString viewType = activeViewType();
-  if ( view /*fix for 9320==>*/&& ( viewType == OCCViewer_Viewer::Type() || viewType == VTKViewer_Viewer::Type() ) ) {
+  if ( view /*fix for 9320==>*/&& ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
     SALOME_Prs* prs = view->CreatePrs( entry( index ) );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
@@ -122,9 +122,9 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 	  }
 	}
       }
-      else if ( viewType == VTKViewer_Viewer::Type() ) { // assuming VTK
-	SVTK_Prs* vtkPrs = (SVTK_Prs*) prs;
-	vtkActorCollection* lst = vtkPrs->GetObjects();
+      else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
+	SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
+	vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
 	if ( lst ) {
 	  lst->InitTraversal();
 	  vtkActor* actor = lst->GetNextActor();

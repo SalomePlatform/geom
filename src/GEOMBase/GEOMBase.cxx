@@ -40,9 +40,9 @@
 
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_Actor.h"
-#include "VTKViewer_RenderWindowInteractor.h"
-#include "VTKViewer_ViewModel.h"
-#include "VTKViewer_ViewWindow.h"
+#include "SVTK_RenderWindowInteractor.h"
+#include "SVTK_ViewModel.h"
+#include "SVTK_ViewWindow.h"
 #include "OCCViewer_ViewPort3d.h"
 #include "OCCViewer_ViewModel.h"
 #include "OCCViewer_ViewWindow.h"
@@ -402,8 +402,10 @@ GEOM_Actor* GEOMBase::ConvertIORinGEOMActor(const char* IOR, Standard_Boolean& t
   QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
 
   for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it ) {
-    if (it.current()->getViewManager()->getType() == VTKViewer_Viewer::Type()) {
-      VTKViewer_ViewWindow* aVTKViewWindow = (VTKViewer_ViewWindow*)it.current();
+    if (it.current()->getViewManager()->getType() == SVTK_Viewer::Type()) {
+      SVTK_ViewWindow* aVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>( it.current() );
+      if( !aVTKViewWindow )
+	continue;
       vtkRenderer* Renderer = aVTKViewWindow->getRenderer();
       vtkActorCollection* theActors = Renderer->GetActors();
       theActors->InitTraversal();

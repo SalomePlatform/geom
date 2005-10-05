@@ -49,7 +49,7 @@
 #include <SalomeApp_Module.h>
 
 #include <OCCViewer_ViewModel.h>
-#include <VTKViewer_ViewModel.h>
+#include <SVTK_ViewModel.h>
 
 #include <OB_Browser.h>
 
@@ -337,7 +337,7 @@ void GEOMBase_Helper::displayPreview( const SALOME_Prs* prs,
   // Display prs
   SUIT_ViewManager* aViewManager = myViewWindow->getViewManager();
   if ( aViewManager->getType() == OCCViewer_Viewer::Type() ||
-       aViewManager->getType() == VTKViewer_Viewer::Type() )
+       aViewManager->getType() == SVTK_Viewer::Type() )
     {
       SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
       SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
@@ -367,7 +367,7 @@ void GEOMBase_Helper::erasePreview( const bool update )
       {
 	 SUIT_ViewManager* aViewManager = myViewWindow->getViewManager();
 	 if ( aViewManager->getType() == OCCViewer_Viewer::Type() ||
-	      aViewManager->getType() == VTKViewer_Viewer::Type() )
+	      aViewManager->getType() == SVTK_Viewer::Type() )
 	   {
 	     SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
 	     SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);

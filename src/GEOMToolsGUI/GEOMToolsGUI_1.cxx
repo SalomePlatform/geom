@@ -41,12 +41,12 @@
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
 
-#include <VTKViewer_ViewModel.h>
-#include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
-
+#include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>
 #include <SVTK_RenderWindowInteractor.h>
+
+#include <OCCViewer_ViewModel.h>
+#include <OCCViewer_ViewWindow.h>
 
 #include <SUIT_ViewManager.h>
 #include <SUIT_Application.h>
@@ -100,7 +100,7 @@ void GEOMToolsGUI::OnSettingsColor()
   if( aDialogColor.isValid() )
   {
     QString type = desk->activeWindow()->getViewManager()->getType();
-    if( type != OCCViewer_Viewer::Type() && type != VTKViewer_Viewer::Type() )
+    if( type != OCCViewer_Viewer::Type() && type != SVTK_Viewer::Type() )
       MESSAGE("Settings Color is not supported for current Viewer");
 
     resMgr->setValue( "Geometry", "SettingsShadingColor", aDialogColor );
@@ -231,7 +231,7 @@ void GEOMToolsGUI::OnColor()
       if ( !selected.IsEmpty() ) {
 	SUIT_ViewWindow* window = app->desktop()->activeWindow();
 	bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-	bool isVTK = ( window && window->getViewManager()->getType() == VTKViewer_Viewer::Type() );
+	bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
 	if ( isVTK ) {
 	  SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
 	  if ( !vtkVW )

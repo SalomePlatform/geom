@@ -31,8 +31,8 @@
 
 #include "SUIT_Session.h"
 #include "SUIT_ViewWindow.h"
-#include "VTKViewer_ViewWindow.h"
-#include "VTKViewer_ViewModel.h"
+#include "SVTK_ViewWindow.h"
+#include "SVTK_ViewModel.h"
 #include "OCCViewer_ViewWindow.h"
 #include "OCCViewer_ViewPort3d.h"
 
@@ -145,9 +145,11 @@ void OperationGUI_ClippingDlg::Init()
   if (!anActiveWindow)
     return;
   
-  if ( anActiveWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() )
+  if ( anActiveWindow->getViewManager()->getType() == SVTK_Viewer::Type() )
     {
-      VTKViewer_ViewWindow* aVTKFrame = dynamic_cast<VTKViewer_ViewWindow*>( anActiveWindow );
+      SVTK_ViewWindow* aVTKFrame = dynamic_cast<SVTK_ViewWindow*>( anActiveWindow );
+      if( !aVTKFrame )
+	return;
       
       TextLabelNear->setText( tr( "Near"  ) );
       TextLabelFar->setText( tr( "Far"  ) );
@@ -223,9 +225,11 @@ bool OperationGUI_ClippingDlg::ClickOnApply()
   if (!anActiveWindow)
     return false;
   
-  if ( anActiveWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() )
+  if ( anActiveWindow->getViewManager()->getType() == SVTK_Viewer::Type() )
     {
-      VTKViewer_ViewWindow* aVTKFrame = dynamic_cast<VTKViewer_ViewWindow*>( anActiveWindow );
+      SVTK_ViewWindow* aVTKFrame = dynamic_cast<SVTK_ViewWindow*>( anActiveWindow );
+      if( !aVTKFrame )
+	return false;
       
       vtkRenderer* aRenderer = aVTKFrame->getRenderer();
       if(!aRenderer) return false;
@@ -331,9 +335,11 @@ void OperationGUI_ClippingDlg::onReset()
   if (!anActiveWindow)
     return;
   
-  if ( anActiveWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() )
+  if ( anActiveWindow->getViewManager()->getType() == SVTK_Viewer::Type() )
     {
-      VTKViewer_ViewWindow* aVTKFrame = dynamic_cast<VTKViewer_ViewWindow*>( anActiveWindow );
+      SVTK_ViewWindow* aVTKFrame = dynamic_cast<SVTK_ViewWindow*>( anActiveWindow );
+      if( !aVTKFrame )
+	return;
 
       vtkRenderer* aRenderer = aVTKFrame->getRenderer();
       if(!aRenderer) return;

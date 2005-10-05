@@ -41,11 +41,11 @@
 #include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewManager.h>
 
-#include <VTKViewer_ViewWindow.h>
+#include <SVTK_ViewWindow.h>
 #include <SVTK_RenderWindowInteractor.h>
 #include <SVTK_InteractorStyle.h>
 #include <SVTK_ViewModel.h>
-#include <VTKViewer_ViewManager.h>
+#include <SVTK_ViewManager.h>
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_SelectionMgr.h>
@@ -250,7 +250,7 @@ void GeometryGUI::ActiveWorkingPlane()
 
   SUIT_ViewWindow* window = application()->desktop()->activeWindow();
   bool ViewOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-  bool ViewVTK = ( window && window->getViewManager()->getType() == VTKViewer_Viewer::Type() );
+  bool ViewVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
 
   if( ViewOCC ) {
     OCCViewer_ViewWindow* vw = dynamic_cast<OCCViewer_ViewWindow*>( window );
@@ -264,7 +264,7 @@ void GeometryGUI::ActiveWorkingPlane()
     }
   }
   else if( ViewVTK ) {
-    VTKViewer_ViewWindow* vw = dynamic_cast<VTKViewer_ViewWindow*>( window );
+    SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( window );
     if ( vw ) {
       vtkCamera* camera = vw->getRenderer()->GetActiveCamera();
 
@@ -339,7 +339,7 @@ void GeometryGUI::OnGUIEvent( int id )
   // check type of the active viewframe
   SUIT_ViewWindow* window = desk->activeWindow();
   bool ViewOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-  bool ViewVTK = ( window && window->getViewManager()->getType() == VTKViewer_Viewer::Type() );
+  bool ViewVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
   // if current viewframe is not of OCC and not of VTK type - return immediately
   // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
   bool NotViewerDependentCommand = ( id == 901 || id == 216 || id == 213 ); 
@@ -597,9 +597,9 @@ static void UpdateVtkSelection()
   SUIT_ViewWindow* win = 0;
   for ( win = winList.first(); win; win = winList.next() ) {
     if ( win->getViewManager()->getTypeView() == VIEW_VTK ) {
-      VTKViewer_ViewWindow* vw = dynamic_cast<VTKViewer_ViewWindow*>( window );
+      SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( window );
       if ( vw ) {
-	VTKViewer_RenderWindowInteractor* anInteractor = vw->getRWInteractor();
+	SVTK_RenderWindowInteractor* anInteractor = vw->getRWInteractor();
 	anInteractor->SetSelectionProp();
 	anInteractor->SetSelectionTolerance();
 	SVTK_InteractorStyleSALOME* aStyle = anInteractor->GetInteractorStyleSALOME();
@@ -633,9 +633,9 @@ bool GeometryGUI::SetSettings()
     }
   }
   else if ( ViewVTK ) {
-    VTKViewer_ViewWindow* vw = dynamic_cast<VTKViewer_ViewWindow*>( window );
+    SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( window );
     if ( vw ) {
-      VTKViewer_RenderWindowInteractor* myRenderInter = vw->getRWInteractor();
+      SVTK_RenderWindowInteractor* myRenderInter = vw->getRWInteractor();
       DisplayMode = myRenderInter->GetDisplayMode();
     }
   }
@@ -1111,9 +1111,9 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   application()->viewManagers( OCCViewer_Viewer::Type(), OCCViewManagers );
   for ( vm = OCCViewManagers.first(); vm; vm = OCCViewManagers.next() )
     myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
-  application()->viewManagers( VTKViewer_Viewer::Type(), VTKViewManagers );
+  application()->viewManagers( SVTK_Viewer::Type(), VTKViewManagers );
   for ( vm = VTKViewManagers.first(); vm; vm = VTKViewManagers.next() )
-    myVTKSelectors.append( new SalomeApp_VTKSelector( (SVTK_Viewer*)vm->getViewModel(), sm ) );
+    myVTKSelectors.append( new SalomeApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
 
   // disable OCC selectors
   getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
@@ -1121,7 +1121,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     sr->setEnabled(true);
   
   // disable VTK selectors
-  getApp()->selectionMgr()->setEnabled( false, VTKViewer_Viewer::Type() );
+  getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
   for ( SalomeApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
     sr->setEnabled(true);
   
@@ -1153,7 +1153,7 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   getApp()->selectionMgr()->setEnabled( true, OCCViewer_Viewer::Type() );
 
   myVTKSelectors.clear();
-  getApp()->selectionMgr()->setEnabled( true, VTKViewer_Viewer::Type() );
+  getApp()->selectionMgr()->setEnabled( true, SVTK_Viewer::Type() );
 
   return SalomeApp_Module::deactivateModule( study );
 }
@@ -1228,7 +1228,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
   if ( aViewFrame->getTypeView() == VIEW_OCC )
     aDisplayMode = ((OCCViewer_ViewFrame*)aViewFrame)->getViewer()->getAISContext()->DisplayMode();
   else if ( aViewFrame->getTypeView() == VIEW_VTK )
-    aDisplayMode = ((VTKViewer_ViewFrame*)aViewFrame)->getRWInteractor()->GetDisplayMode();
+    aDisplayMode = (dynamic_cast<SVTK_ViewFrame*>( aViewFrame )->getRWInteractor()->GetDisplayMode();
 
   int nbSel = Sel->IObjectCount();
 
@@ -1312,7 +1312,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 	    else {
 	      ////// VTK viewer only
 	      popup->removeItem( 8034 ); // "Isos"
-	      VTKViewer_Prs* vtkPrs = dynamic_cast<VTKViewer_Prs*>( prs );
+	      SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
 	      if ( vtkPrs && !vtkPrs->IsNull() ) {
 		vtkActorCollection* actorList = vtkPrs->GetObjects();
 		actorList->InitTraversal();
@@ -1479,7 +1479,7 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
     return;
 
   const bool ViewOCC = ( win->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-//  const bool ViewVTK = ( win->getViewManager()->getType() == VTKViewer_Viewer::Type() );
+//  const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
   
   // disable non-OCC viewframe menu commands
 //  action( 404 )->setEnabled( ViewOCC ); // SKETCHER
@@ -1520,13 +1520,13 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
     for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
       sr->setEnabled(true);
   }
-  else if ( vm->getType() == VTKViewer_Viewer::Type() )
+  else if ( vm->getType() == SVTK_Viewer::Type() )
   {
     SalomeApp_SelectionMgr* sm = getApp()->selectionMgr();
-    myVTKSelectors.append( new SalomeApp_VTKSelector( (SVTK_Viewer*)vm->getViewModel(), sm ) );
+    myVTKSelectors.append( new SalomeApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
     
     // disable VTK selectors
-    getApp()->selectionMgr()->setEnabled( false, VTKViewer_Viewer::Type() );
+    getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
     for ( SalomeApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
       sr->setEnabled(true);
   }
@@ -1544,7 +1544,7 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
 	break;
       }
   }
-  if ( vm->getType() == VTKViewer_Viewer::Type() )
+  if ( vm->getType() == SVTK_Viewer::Type() )
   {
     for ( SalomeApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
       if ( sr->viewer() == viewer )

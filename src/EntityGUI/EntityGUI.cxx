@@ -35,7 +35,7 @@
 #include "SUIT_ViewWindow.h"
 #include "OCCViewer_ViewModel.h"
 #include "OCCViewer_ViewManager.h"
-#include "VTKViewer_ViewModel.h"
+//#include "SVTK_ViewModel.h"
 #include "SalomeApp_Study.h"
 #include "SalomeApp_Tools.h"
 //#include "SALOMEGUI_ImportOperation.h"
@@ -399,10 +399,11 @@ bool EntityGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Shap
       
     }
     else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
-      VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+      SVTK_ViewFrame* vf = dynamic_cast<SVTK_ViewFrame*>( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame() );
+      SVTK_RenderWindowInteractor* myRenderInter= vf ? vf->getRWInteractor() : 0;
       
       int themode = myRenderInter->GetDisplayMode();
-      vtkRenderer *theRenderer = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+      vtkRenderer *theRenderer = vf->getRenderer();
       vtkRenderWindow *renWin = theRenderer->GetRenderWindow();
       
       Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(aResult->Name(), myGeomGUI->GetFatherior(), "GEOM");

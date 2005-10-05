@@ -42,9 +42,7 @@
 #include <OCCViewer_ViewManager.h>
 #include <SOCC_ViewModel.h>
 
-#include <VTKViewer_ViewWindow.h>
-#include <VTKViewer_ViewModel.h>
-#include <VTKViewer_RenderWindowInteractor.h>
+#include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>
 #include <SVTK_RenderWindowInteractor.h>
 
@@ -98,7 +96,7 @@ inline OCCViewer_Viewer* GetOCCViewer(SUIT_Application* theApp){
 
 inline SVTK_ViewWindow* GetSVTKViewWindow(SUIT_Application* theApp){
   SUIT_ViewWindow* window = theApp->desktop()->activeWindow();
-  if(window && window->getViewManager()->getType() == VTKViewer_Viewer::Type())
+  if(window && window->getViewManager()->getType() == SVTK_Viewer::Type())
     return dynamic_cast<SVTK_ViewWindow*>( window );
 
   return 0;
