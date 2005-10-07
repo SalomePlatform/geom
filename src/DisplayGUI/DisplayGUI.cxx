@@ -111,11 +111,13 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     }
   case 212: // MENU VIEW - DISPLAY ALL
     {
+      getGeometryGUI()->EmitSignalDeactivateDialog();
       myDisplayGUI->DisplayAll();
       break;
     }
   case 213: // MENU VIEW - DISPLAY ONLY
     {
+      getGeometryGUI()->EmitSignalDeactivateDialog();
       myDisplayGUI->DisplayOnly();
       break;
     }
@@ -131,6 +133,7 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     }
   case 216: // MENU VIEW - DISPLAY
     {
+      getGeometryGUI()->EmitSignalDeactivateDialog();
       myDisplayGUI->Display();
       break;
     }

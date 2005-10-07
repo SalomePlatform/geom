@@ -111,7 +111,7 @@ bool RepairGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
       aDlg = new RepairGUI_RemoveIntWiresDlg( parent, "" );
       break;
     case 608: // ADD POINT ON EDGE
-      aDlg = new RepairGUI_DivideEdgeDlg( parent, "" );
+      aDlg = new RepairGUI_DivideEdgeDlg( getGeometryGUI(), parent, "" );
       break;
     case 609: // FREE BOUNDARIES
       aDlg = new RepairGUI_FreeBoundDlg( getGeometryGUI(), parent );
