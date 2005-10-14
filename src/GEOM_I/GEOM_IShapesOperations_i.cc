@@ -701,6 +701,67 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnSphere
 
 //=============================================================================
 /*!
+ *  GetShapesOnQuadrangle
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnQuadrangle
+                                                (GEOM::GEOM_Object_ptr theShape,
+                                                 CORBA::Long           theShapeType,
+                                                 GEOM::GEOM_Object_ptr theTopLeftPoint,
+                                                 GEOM::GEOM_Object_ptr theTopRigthPoint,
+                                                 GEOM::GEOM_Object_ptr theBottomLeftPoint,
+                                                 GEOM::GEOM_Object_ptr theBottomRigthPoint,
+                                                 GEOM::shape_state     theState)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape            == NULL ||
+      theTopLeftPoint     == NULL ||   
+      theTopRigthPoint    == NULL || 
+      theBottomLeftPoint  == NULL ||
+      theBottomRigthPoint == NULL )
+    return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aTopLeftPoint = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theTopLeftPoint->GetEntry());
+  Handle(GEOM_Object) aTopRigthPoint = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theTopRigthPoint->GetEntry());
+  Handle(GEOM_Object) aBottomLeftPoint = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theBottomLeftPoint->GetEntry());
+  Handle(GEOM_Object) aBottomRigthPoint = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theBottomRigthPoint->GetEntry());
+
+  if (aShape.IsNull() ||
+      aTopLeftPoint.IsNull() ||
+      aTopRigthPoint.IsNull() ||
+      aBottomLeftPoint.IsNull() ||
+      aBottomRigthPoint.IsNull() )
+    return aSeq._retn();
+
+  //Get Shapes On Quadrangle
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->GetShapesOnQuadrangle
+    (aShape, theShapeType,
+     aTopLeftPoint, aTopRigthPoint, aBottomLeftPoint, aBottomRigthPoint,
+     ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
  *  GetShapesOnPlaneIDs
  */
 //=============================================================================
@@ -810,6 +871,67 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnSphereIDs
   //Get Shapes On Sphere
   Handle(TColStd_HSequenceOfInteger) aHSeq = GetOperations()->GetShapesOnSphereIDs
     (aShape, theShapeType, aCenter, theRadius, ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnQuadrangleIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnQuadrangleIDs
+                                                (GEOM::GEOM_Object_ptr theShape,
+                                                 CORBA::Long           theShapeType,
+                                                 GEOM::GEOM_Object_ptr theTopLeftPoint,
+                                                 GEOM::GEOM_Object_ptr theTopRigthPoint,
+                                                 GEOM::GEOM_Object_ptr theBottomLeftPoint,
+                                                 GEOM::GEOM_Object_ptr theBottomRigthPoint,
+                                                 GEOM::shape_state     theState)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape            == NULL ||
+      theTopLeftPoint     == NULL ||   
+      theTopRigthPoint    == NULL || 
+      theBottomLeftPoint  == NULL ||
+      theBottomRigthPoint == NULL )
+    return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aTopLeftPoint = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theTopLeftPoint->GetEntry());
+  Handle(GEOM_Object) aTopRigthPoint = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theTopRigthPoint->GetEntry());
+  Handle(GEOM_Object) aBottomLeftPoint = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theBottomLeftPoint->GetEntry());
+  Handle(GEOM_Object) aBottomRigthPoint = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theBottomRigthPoint->GetEntry());
+
+  if (aShape.IsNull() ||
+      aTopLeftPoint.IsNull() ||
+      aTopRigthPoint.IsNull() ||
+      aBottomLeftPoint.IsNull() ||
+      aBottomRigthPoint.IsNull() )
+    return aSeq._retn();
+
+  //Get Shapes On Quadrangle
+  Handle(TColStd_HSequenceOfInteger) aHSeq = GetOperations()->GetShapesOnQuadrangleIDs
+    (aShape, theShapeType,
+     aTopLeftPoint, aTopRigthPoint, aBottomLeftPoint, aBottomRigthPoint,
+     ShapeState(theState));
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 
