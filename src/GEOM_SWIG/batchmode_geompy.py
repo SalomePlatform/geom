@@ -508,6 +508,18 @@ def GetShapesOnSphereIDs(theShape, theShapeType, theCenter, theRadius, theState)
         print "GetShapesOnSphereIDs : ", ShapesOp.GetErrorCode()
     return aList
 
+def GetShapesOnQuadrangle(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState):
+    aList = ShapesOp.GetShapesOnQuadrangle(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState)
+    if ShapesOp.IsDone() == 0:
+      print "GetShapesOnQuadrangle : ", ShapesOp.GetErrorCode()
+    return aList
+
+def GetShapesOnQuadrangleIDs(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState):
+    aList = ShapesOp.GetShapesOnQuadrangleIDs(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState)
+    if ShapesOp.IsDone() == 0:
+        print "GetShapesOnQuadrangleIDs : ", ShapesOp.GetErrorCode()
+    return aList
+
 def GetInPlace(theShapeWhere, theShapeWhat):
     anObj = ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
     if ShapesOp.IsDone() == 0:

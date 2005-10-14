@@ -403,6 +403,30 @@ def TestOtherOperations (geompy, math):
                                              p0, 100, geompy.GEOM.ST_ON)
   for vertex_i in vertices_on_sph:
     geompy.addToStudy(vertex_i, "Vertex on Sphere (center = (0, 0, 0), r = 100)")
+    pass
+
+  # GetShapesOnQuadrangle
+
+  geompy.addToStudy(f12, "F12" )
+
+  bl = geompy.MakeVertex(10,-10, 0)
+  br = geompy.MakeVertex(40,-10, 0)
+  tr = geompy.MakeVertex(40, 20, 0)
+  tl = geompy.MakeVertex(10, 20, 0)
+  qe1 = geompy.MakeEdge(bl, br)
+  qe2 = geompy.MakeEdge(br, tr)
+  qe3 = geompy.MakeEdge(tr, tl)
+  qe4 = geompy.MakeEdge(tl, bl)
+  quadrangle = geompy.MakeWire([qe1, qe2, qe3, qe4])
+  geompy.addToStudy(quadrangle, "Quadrangle")
+
+  edges_onin_quad = geompy.GetShapesOnQuadrangle( f12, geompy.ShapeType["EDGE"],
+                                                  tl, tr, bl, br, geompy.GEOM.ST_ONIN)
+  comp = geompy.MakeCompound(edges_onin_quad)
+  geompy.addToStudy(comp, "Edges of F12 ONIN Quadrangle")
+  if len( edges_onin_quad ) != 4:
+    print "Error in GetShapesOnQuadrangle()"
+    pass
 
   # GetInPlace(theShapeWhere, theShapeWhat)
   box5 = geompy.MakeBoxDXDYDZ(100, 100, 100)

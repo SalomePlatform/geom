@@ -1017,6 +1017,34 @@ def GetShapesOnSphereIDs(theShape, theShapeType, theCenter, theRadius, theState)
         print "GetShapesOnSphereIDs : ", ShapesOp.GetErrorCode()
     return aList
 
+def GetShapesOnQuadrangle(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState):
+    """
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified quadrangle by the certain way, defined through \a theState parameter.
+     *  \param theShape Shape to find sub-shapes of.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param theCenter Point, specifying center of the sphere to find shapes on.
+     *  \param theRadius Radius of the sphere to find shapes on.
+     *  \param theState The state of the subshapes to find. It can be one of
+     *   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
+     *  \return List of all found sub-shapes.
+
+     *  Example: see GEOM_TestOthers.py
+    """
+    aList = ShapesOp.GetShapesOnQuadrangle(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState)
+    if ShapesOp.IsDone() == 0:
+      print "GetShapesOnQuadrangle : ", ShapesOp.GetErrorCode()
+    return aList
+
+def GetShapesOnQuadrangleIDs(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState):
+    """
+     *  Works like the above method, but returns list of sub-shapes indices
+    """
+    aList = ShapesOp.GetShapesOnQuadrangleIDs(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState)
+    if ShapesOp.IsDone() == 0:
+        print "GetShapesOnQuadrangleIDs : ", ShapesOp.GetErrorCode()
+    return aList
+
 def GetInPlace(theShapeWhere, theShapeWhat):
     """
      *  Get sub-shape(s) of theShapeWhere, which are
