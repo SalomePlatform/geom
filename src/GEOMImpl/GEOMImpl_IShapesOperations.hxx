@@ -11,6 +11,7 @@
 #include <TColStd_HSequenceOfInteger.hxx>
 
 #include <list>
+#include <Handle_Geom_Surface.hxx>
 
 class GEOM_Engine;
 class Handle(GEOM_Object);
@@ -98,6 +99,46 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
                                                            const Standard_Real        theRadius,
                                                            const GEOMAlgo_State       theState);
 
+  /*!
+   * \brief Find subshapes complying with given status about quadrangle
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theTopLeftPoint - top left quadrangle corner
+    * \param theTopRigthPoint - top right quadrangle corner
+    * \param theBottomLeftPoint - bottom left quadrangle corner
+    * \param theBottomRigthPoint - bottom right quadrangle corner
+    * \param theState - required state
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+   */
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
+    GetShapesOnQuadrangle (const Handle(GEOM_Object)& theShape,
+                           const Standard_Integer     theShapeType,
+                           const Handle(GEOM_Object)& theTopLeftPoint,
+                           const Handle(GEOM_Object)& theTopRigthPoint,
+                           const Handle(GEOM_Object)& theBottomLeftPoint,
+                           const Handle(GEOM_Object)& theBottomRigthPoint,
+                           const GEOMAlgo_State       theState);
+
+  /*!
+   * \brief Find IDs of subshapes complying with given status about quadrangle
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theTopLeftPoint - top left quadrangle corner
+    * \param theTopRigthPoint - top right quadrangle corner
+    * \param theBottomLeftPoint - bottom left quadrangle corner
+    * \param theBottomRigthPoint - bottom right quadrangle corner
+    * \param theState - required state
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+   */
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger)
+    GetShapesOnQuadrangleIDs (const Handle(GEOM_Object)& theShape,
+                              const Standard_Integer     theShapeType,
+                              const Handle(GEOM_Object)& theTopLeftPoint,
+                              const Handle(GEOM_Object)& theTopRigthPoint,
+                              const Handle(GEOM_Object)& theBottomLeftPoint,
+                              const Handle(GEOM_Object)& theBottomRigthPoint,
+                              const GEOMAlgo_State       theState);
+
   Standard_EXPORT Handle(GEOM_Object) GetShapesOnCylinderOld (Handle(GEOM_Object)    theShape,
                                               const Standard_Integer theShapeType,
                                               Handle(GEOM_Object)    theAxis,
@@ -119,7 +160,98 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
                                  const Standard_Integer         theFunctionType,
                                  const TCollection_AsciiString& theMethodName);
 
+// ----------------------------------------------------
+  // methods common for all GetShapesOnXXX() functions
+// ----------------------------------------------------
+
   bool CheckTriangulation (const TopoDS_Shape& aShape);
+
+  /*!
+   * \brief Checks if theShapeType parameter of GetShapesOnXXX() is OK
+    * \param theShapeType - the shape type to check
+    * \retval bool  - result of the check
+   */
+  bool checkTypeShapesOn(const Standard_Integer theShapeType);
+
+  /*!
+   * \brief Creates Geom_Plane
+    * \param theAx1 - edge defining plane normal
+    * \retval Handle(Geom_Surface) - resulting surface
+   */
+  Handle(Geom_Surface) makePlane(const TopoDS_Shape& theAx1);
+
+  /*!
+   * \brief Creates Geom_CylindricalSurface
+    * \param theAx1 - edge defining cylinder axis
+    * \param theRadius - cylinder radius
+    * \retval Handle(Geom_Surface) - resulting surface
+   */
+  Handle(Geom_Surface) makeCylinder(const TopoDS_Shape& theAx1,
+                                    const Standard_Real theRadius);
+
+  /*!
+   * \brief Find IDs of subshapes complying with given status about surface
+    * \param theSurface - the surface to check state of subshapes against
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theState - required state
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+   */
+  Handle(TColStd_HSequenceOfInteger)
+    getShapesOnSurfaceIDs(const Handle(Geom_Surface)& theSurface,
+                          const TopoDS_Shape&         theShape,
+                          TopAbs_ShapeEnum            theShapeType,
+                          GEOMAlgo_State              theState);
+
+  /*!
+   * \brief Find subshapes complying with given status about surface
+    * \param theSurface - the surface to check state of subshapes against
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theState - required state
+    * \param theShapeEntries - outgoing entries like "entry1, entry2, ..."
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+   */
+  Handle(TColStd_HSequenceOfTransient)
+    getShapesOnSurface(const Handle(Geom_Surface)& theSurface,
+                       const Handle(GEOM_Object)&  theShape,
+                       TopAbs_ShapeEnum            theShapeType,
+                       GEOMAlgo_State              theState,
+                       TCollection_AsciiString &   theShapeEntries
+                       );
+
+  /*!
+   * \brief Find IDs of subshapes complying with given status about quadrangle
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theTopLeftPoint - top left quadrangle corner
+    * \param theTopRigthPoint - top right quadrangle corner
+    * \param theBottomLeftPoint - bottom left quadrangle corner
+    * \param theBottomRigthPoint - bottom right quadrangle corner
+    * \param theState - required state
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+   */
+  Handle(TColStd_HSequenceOfInteger)
+    getShapesOnQuadrangleIDs (const Handle(GEOM_Object)& theShape,
+                              const Standard_Integer     theShapeType,
+                              const Handle(GEOM_Object)& theTopLeftPoint,
+                              const Handle(GEOM_Object)& theTopRigthPoint,
+                              const Handle(GEOM_Object)& theBottomLeftPoint,
+                              const Handle(GEOM_Object)& theBottomRigthPoint,
+                              const GEOMAlgo_State       theState);
+
+  /*!
+   * \brief Find shape objects and their entries by their ids
+    * \param theShape - the main shape
+    * \param theShapeIDs - theShapeIDs - incoming shape ids
+    * \param theShapeEntries - outgoing entries like "entry1, entry2, ..."
+    * \retval Handle(TColStd_HSequenceOfTransient) - found shape objects
+   */
+  Handle(TColStd_HSequenceOfTransient)
+    getObjectsShapesOn(const Handle(GEOM_Object)&                theShape,
+                       const Handle(TColStd_HSequenceOfInteger)& theShapeIDs,
+                       TCollection_AsciiString &                 theShapeEntries);
+                      
 };
 
 #endif
