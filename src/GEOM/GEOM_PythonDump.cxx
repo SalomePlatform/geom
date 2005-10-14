@@ -25,16 +25,21 @@ namespace GEOM
 {
   size_t TPythonDump::myCounter = 0;
 
-  TPythonDump::TPythonDump (Handle(GEOM_Function)& theFunction)
+  TPythonDump::TPythonDump (Handle(GEOM_Function)& theFunction, bool theAppend)
   {
     myFunction = theFunction;
     myCounter++;
+    myAppend = theAppend;
   }
 
   TPythonDump::~TPythonDump()
   {
     if (--myCounter == 0) {
-      myFunction->SetDescription((char *)myStream.str().c_str());
+      TCollection_AsciiString aDescr;
+      if ( myAppend )
+        aDescr = myFunction->GetDescription() + "\n\t";
+      aDescr += (char *)myStream.str().c_str();
+      myFunction->SetDescription( aDescr );
     }
   }
 

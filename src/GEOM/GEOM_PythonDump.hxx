@@ -32,12 +32,13 @@ namespace GEOM
   class TPythonDump
   {
     std::ostringstream myStream;
-    static size_t myCounter;
+    static size_t      myCounter;
+    bool               myAppend;
 
     Handle(GEOM_Function) myFunction;
 
   public:
-    Standard_EXPORT TPythonDump (Handle(GEOM_Function)& theFunction);
+    Standard_EXPORT TPythonDump (Handle(GEOM_Function)& theFunction, bool theAppend=false);
     Standard_EXPORT virtual ~TPythonDump();
 
 //    operator TCollection_AsciiString () const;
