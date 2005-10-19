@@ -55,8 +55,8 @@ Chamfer_2 = geompy.MakeChamferEdge(Chamfer_1, 10, 10, 21, 31 )
 geompy.addToStudy(Chamfer_2, "Chamfer_2")
 
 #Import of the shape from "slots.brep"
-thePath = os.getenv("KERNEL_ROOT_DIR")
-theFileName = thePath + "/examples/slots.brep"
+thePath = os.getenv("DATA_DIR")
+theFileName = thePath + "/Shapes/Brep/slots.brep"
 theShapeForCut = geompy.ImportBREP(theFileName)
 geompy.addToStudy(theShapeForCut, "slot.brep_1")
 
