@@ -1,0 +1,330 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Building by Blocks</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nCreation of Geometric Objects\nBuilding by Blocks");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Building by Blocks</h1>
+
+<h3>Quadrangle Face</h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p1 = geompy.MakeVertex( 
+ &nbsp;0., &nbsp;&nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(150., 
+ &nbsp;30., &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p3 = geompy.MakeVertex( 
+ &nbsp;0., 120., 
+ &nbsp;50.)</p>
+
+<p class="whs1">p4 = geompy.MakeVertex( 
+ &nbsp;0., &nbsp;40., 
+ &nbsp;70.)</p>
+
+<p>&nbsp;</p>
+
+<p># create edges</p>
+
+<p class="whs1">edge1 = geompy.MakeEdge(p1, 
+ p2)</p>
+
+<p class="whs1">edge2 = geompy.MakeEdge(p2, 
+ p3)</p>
+
+<p class="whs1">edge3 = geompy.MakeEdge(p3, 
+ p4)</p>
+
+<p class="whs1">edge4 = geompy.MakeEdge(p4, 
+ p1)</p>
+
+<p>&nbsp;</p>
+
+<p># create quadrangle face from four edges</p>
+
+<p class="whs1">qface1 = geompy.MakeQuad(edge1, 
+ edge2, edge3, edge4)</p>
+
+<p>&nbsp;</p>
+
+<p># create quadrangle face on two edges</p>
+
+<p class="whs1">qface2 = geompy.MakeQuad2Edges(edge1, 
+ edge3)</p>
+
+<p>&nbsp;</p>
+
+<p># create quadrangle with specified corners</p>
+
+<p class="whs1">qface3 = geompy.MakeQuad4Vertices(p1, 
+ p2, p3, p4)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_p1 = geompy.addToStudy(p1,&quot;Point1&quot;)</p>
+
+<p class="whs1">id_p2 = geompy.addToStudy(p2,&quot;Point2&quot;)</p>
+
+<p class="whs1">id_p3 = geompy.addToStudy(p3,&quot;Point3&quot;)</p>
+
+<p class="whs1">id_p4 = geompy.addToStudy(p4,&quot;Point4&quot;)</p>
+
+<p class="whs1">id_edge1 = geompy.addToStudy(edge1,&quot;Edge1&quot;)</p>
+
+<p class="whs1">id_edge2 = geompy.addToStudy(edge2,&quot;Edge2&quot;)</p>
+
+<p class="whs1">id_edge3 = geompy.addToStudy(edge3,&quot;Edge3&quot;)</p>
+
+<p class="whs1">id_edge4 = geompy.addToStudy(edge4,&quot;Edge4&quot;)</p>
+
+<p class="whs1">id_qface1 = geompy.addToStudy(qface1,&quot;Qface1&quot;)</p>
+
+<p class="whs1">id_qface2 = geompy.addToStudy(qface2,&quot;Qface2&quot;)</p>
+
+<p class="whs1">id_qface3 = geompy.addToStudy(qface3,&quot;Qface3&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display vertices, edges and quadrangle faces</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p2)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p3)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p4)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_edge1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_edge2)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_edge3)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_edge4)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_qface1)</p>
+
+<p class="whs1">gg.setDisplayMode(id_qface1,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_qface2)</p>
+
+<p class="whs1">gg.setDisplayMode(id_qface2,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_qface3)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_qface3,1)</span> 
+ </p>
+
+<h3>&nbsp;</h3>
+
+<h3>Hexagonal Solid</h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p1 = geompy.MakeVertex( 
+ &nbsp;0., &nbsp;&nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(150., 
+ &nbsp;30., &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p3 = geompy.MakeVertex( 
+ &nbsp;0., 120., 
+ &nbsp;50.)</p>
+
+<p class="whs1">p4 = geompy.MakeVertex( 
+ &nbsp;0., &nbsp;40., 
+ &nbsp;70.)</p>
+
+<p class="whs1">p5 = geompy.MakeVertex(100., 
+ &nbsp;20., &nbsp;45.)</p>
+
+<p class="whs1">p6 = geompy.MakeVertex( 
+ &nbsp;0., 70., 
+ &nbsp;40.)</p>
+
+<p class="whs1">p7 = geompy.MakeVertex( 
+ 70., 70., &nbsp;70.)</p>
+
+<p class="whs1">p8 = geompy.MakeVertex( 
+ 70.,-15., &nbsp;70.)</p>
+
+<p class="whs1">p9 = geompy.MakeVertex( 
+ &nbsp;0., &nbsp;0., 
+ &nbsp;40.)</p>
+
+<p class="whs1">p10 = geompy.MakeVertex( 
+ &nbsp;0., 70., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p11 = geompy.MakeVertex( 
+ 70., 70., &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p12 = geompy.MakeVertex( 
+ 70., -15., &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p13 = geompy.MakeVertex( 
+ &nbsp;0., &nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p>&nbsp;</p>
+
+<p># create faces</p>
+
+<p class="whs1">qface1 = geompy.MakeQuad4Vertices(p1, 
+ p2, p3, p4)</p>
+
+<p class="whs1">qface2 = geompy.MakeQuad4Vertices(p1, 
+ p2, p5, p4)</p>
+
+<p class="whs1">qface3 = geompy.MakeQuad4Vertices(p13, 
+ p12, p11, p10)</p>
+
+<p class="whs1">qface4 = geompy.MakeQuad4Vertices(p9, 
+ p8, p7, p6)</p>
+
+<p class="whs1">qface5 = geompy.MakeQuad4Vertices(p13, 
+ p9, p6, p10)</p>
+
+<p class="whs1">qface6 = geompy.MakeQuad4Vertices(p13, 
+ p9, p8, p12)</p>
+
+<p class="whs1">qface7 = geompy.MakeQuad4Vertices(p12, 
+ p8, p7, p11)</p>
+
+<p class="whs1">qface8 = geompy.MakeQuad4Vertices(p11, 
+ p7, p6, p10)</p>
+
+<p>&nbsp;</p>
+
+<p># create hexahedral solid between two given faces</p>
+
+<p class="whs1">solid1 = geompy.MakeHexa2Faces(qface1, 
+ qface2)</p>
+
+<p>&nbsp;</p>
+
+<p># create hexahedral solids, bounded by the six given faces</p>
+
+<p class="whs1">solid2 = geompy.MakeHexa(qface3, 
+ qface4, qface5, qface6, qface7, qface8)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_solid1 = geompy.addToStudy(solid1,&quot;Solid1&quot;)</p>
+
+<p class="whs1">id_solid2 = geompy.addToStudy(solid2,&quot;Solid2&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display solids</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_solid1)</p>
+
+<p class="whs1">gg.setDisplayMode(id_solid1,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_solid2)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_solid2,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

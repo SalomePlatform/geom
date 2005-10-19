@@ -1,0 +1,597 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Titre</title>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="../default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='../default.css'>");}
+//-->
+</script>
+<style>
+<!--
+A:visited { color:#800080; }
+A:link { color:#0000ff; }
+-->
+</style><style type="text/css">
+<!--
+p.whs1 { font-size:12pt; }
+img_whs2 { border:none; float:none; width:30px; height:30px; border-style:none; }
+p.whs3 { margin-left:40px; }
+img_whs4 { border:none; width:21px; height:19px; border-style:none; }
+p.whs5 { font-size:12pt; margin-left:40px; font-weight:bold; }
+img_whs6 { border:none; width:272px; height:303px; float:none; border-style:none; }
+p.whs7 { font-family:'Times New Roman' , serif; font-size:14pt; }
+img_whs8 { width:20px; height:20px; border-style:none; }
+p.whs9 { font-family:'Times New Roman' , serif; font-size:12pt; }
+img_whs10 { border:none; border-style:none; width:360px; height:307px; float:none; }
+p.whs11 { font-size:12pt; margin-left:40px; }
+img_whs12 { border:none; width:312px; height:367px; float:none; border-style:none; }
+p.whs13 { font-size:12pt; margin-left:400px; }
+img_whs14 { border:none; width:360px; height:333px; float:none; border-style:none; }
+p.whs15 { font-size:12pt; font-weight:bold; }
+img_whs16 { border:none; width:360px; height:328px; float:none; border-style:none; }
+p.whs17 { font-size:12pt; font-weight:normal; }
+img_whs18 { border:none; border-style:none; width:360px; height:290px; float:none; }
+img_whs19 { border:none; border-style:none; width:360px; height:328px; float:none; }
+img_whs20 { border:none; width:360px; height:405px; float:none; border-style:none; }
+img_whs21 { border:none; width:360px; height:309px; float:none; border-style:none; }
+p.whs22 { font-size:12pt; margin-left:40px; text-indent:-40px; }
+img_whs23 { border:none; width:25px; height:23px; border-style:none; }
+ul.whs24 { list-style:disc; }
+img_whs25 { border:none; width:329px; height:436px; float:none; border-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs22 {text-indent:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="../whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="../whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nUsing measurement tools");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("../geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Using measurement tools</h1>
+
+<p class="whs1"><b style="font-weight: normal;"><img src="../i_blue.jpg" x-maintain-ratio="TRUE" x-save-file="TRUE" x-save-method="compute-relative" width="30px" height="30px" border="0" class="img_whs2">Measurement tools in GEOM are necessary for getting</b> different 
+ data concerning created or imported geometrical objects. They are:</p>
+
+<p class="whs1">&nbsp;</p>
+
+<ul>
+	
+	<li class=kadov-p><p class="whs1"><a href="#PointCoord">Point 
+ coordinates</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Basic_properties">Basic 
+ properties</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Center_gravity">Center 
+ of mass</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Inertia_axis">Inertia</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Bounding_box">Bounding 
+ box</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Min_distance">Min. 
+ distance</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Tolerance">Tolerance</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Whatis">WhatIs</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#check">Check</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Check_comp_blocks">Check 
+ compound of blocks</a></p></li>
+</ul>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">Our <span style="font-weight: bold;"><B>TUI Scripts</B></span> 
+ show how to use <a href="../measurement_tools.htm">Measurement Tools</a> 
+ with &nbsp;<span style="font-weight: bold;"><B>TUI 
+ commands</B></span>. </p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class=TODO>To use measurement tools:</p>
+
+<p class=TODO>&nbsp;</p>
+
+<p class="whs3">In the main menu select <span style="font-weight: bold;"><B>Measures 
+ </B></span>submenu.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><a name=PointCoord>&nbsp;<img src="../image49.gif" width="21px" height="19px" border="0" class="img_whs4"> <span style="font-weight: bold; font-size: 14pt;"><font size=4 style="font-size:14pt;"><B>Point coordinates</B></font></span></a></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Description:</b> 
+ Returns the coordinates of a point.</font></span></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> Point 
+ coordinates (X, Y, Z) in 3D space in the form of Python Tuple.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><span style="font-weight: bold;"><B>TUI command:</B></span> 
+ <span style="font-style: italic;"><I>geompy.PointCoordinates(Point)</I></span>, 
+ where Point is a point whose coordinates are inquired.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ 1 point.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs5"><img src="../pics/measures1.png" x-maintain-ratio="TRUE" width="272px" height="303px" border="0" class="img_whs6"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs7"><b style="font-weight: bold;"><a 
+ NAME=Basic_properties
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image71.gif" width="20px" height="20px" border="0" class="img_whs8"> Basic properties</a></b> 
+ </p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Return the properties (Length, Surface &amp; Volume) of a definite geometrical 
+ object.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> Display 
+ Length, Surface &amp; Volume in the form of Python Tuple.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><span style="font-weight: bold;"><B>TUI command:</B></span> 
+ <span style="font-style: italic;"><I>geompy.BasicProperties(Shape)</I></span>, 
+ where Shape is a shape whose properties are inquired.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ 1 shape.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs3"><img src="../pics/neo-basicprop.png" x-maintain-ratio="TRUE" width="360px" height="307px" border="0" class="img_whs10"></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p class="whs7"><a name=Center_gravity
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image72.gif" width="20px" height="20px" border="0" class="img_whs8"><b style="font-size: 14pt;"> 
+ Center of mass</b></a></p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Creates a gravity center of a shape and returns its coordinates.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Object 
+ (vertex).</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeCDG(Shape)</I></span>, where 
+ Shape is the shape for which a center of gravity is computed.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ 1 shape.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs11"><img src="../pics/measures3.png" x-maintain-ratio="TRUE" width="312px" height="367px" border="0" class="img_whs12"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs7"><a NAME=Inertia_axis
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image73.gif" width="20px" height="20px" border="0" class="img_whs8"><b><font style="font-size: 14pt;"
+														size=4> Inertia</font></b></a> 
+ </p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Returns the inertia axis of a geometrical object.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> Display 
+ the matrix and moments of inretia in the form of Python Tuple (I11, I12, 
+ I13, </p>
+
+<p class="whs13">&nbsp;I21, 
+ I22, I23, </p>
+
+<p class="whs13">&nbsp;I31, 
+ I32, I33,</p>
+
+<p class="whs13"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">&nbsp;Ix, 
+ Iy, Iz)</font></span>.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><span style="font-weight: bold;"><B>TUI command:</B></span> 
+ <span style="font-style: italic;"><I>geompy.Inertia(Shape)</I></span>, where 
+ Shape is a shape for which a matrix of inertia and moment of inertia are 
+ returned.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ 1 shape.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><img src="../pics/measures4.png" x-maintain-ratio="TRUE" width="360px" height="333px" border="0" class="img_whs14"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs7"><a NAME=Bounding_box
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image74.gif" width="20px" height="20px" border="0" class="img_whs8"><b><font style="font-size: 14pt;"
+														size=4> Bounding 
+ box</font></b></a> </p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Returns the dimensions of the bounding box of a geometrical object.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> Displays 
+ the dimensions of the bounding box of a geometrical object in the form 
+ of Python Tuple (Xmin, Xmax, Ymin, Ymax, Zmin, Zmax).</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs15">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.BoundingBox(Shape)</I></span><span 
+ style="font-weight: normal;">, where Shape is a shape for which a bounding 
+ box is computed.</span></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ 1 shape.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs11"><img src="../pics/measures5.png" x-maintain-ratio="TRUE" width="360px" height="328px" border="0" class="img_whs16"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs7"><a NAME=Min_distance
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image75.gif" width="20px" height="20px" border="0" class="img_whs8"><b><font style="font-size: 14pt;"
+														size=4> Min. distance</font></b></a></p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Returns the min. distance between 2 geometrical objects.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> Displays 
+ the min. distance.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs15">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.MinDistance(Shape1, 
+ Shape2)</I></span><span style="font-weight: normal;">, where Shape1 and Shape2 
+ are shapes between which the minimal distance computed.</span></p>
+
+<p class="whs17">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ 2 shapes.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs11"><img src="../pics/distance.png" x-maintain-ratio="TRUE" width="360px" height="290px" border="0" class="img_whs18"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs7"><a NAME=Tolerance
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image76.gif" width="20px" height="20px" border="0" class="img_whs8"><b style="font-size: 14pt;"> 
+ Tolerance</b></a> </p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Returns the tolerance of a geometrical object.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> Displays 
+ the tolerance values (FaceMinTol, FaceMaxTol, EgdeMinTol, EgdeMaxTol, 
+ VertexMinTol, VertexMaxTol).</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs15">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.Tolerance(Shape)</I></span><span 
+ style="font-weight: normal;">, where Shape is a shape for which minimal 
+ and maximal tolerances are returned.</span></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ 1 shape.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs11"><img src="../pics/new-tolerance.png" x-maintain-ratio="TRUE" width="360px" height="328px" border="0" class="img_whs19"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs7"><a NAME=Whatis><span 
+ style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image77.gif" width="20px" height="20px" border="0" class="img_whs8"><b style="font-size: 14pt;"> WhatIs</b></a> 
+ </font></span></p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Returns the type of a geometrical object.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> Displays 
+ all elements composing your geometrical object.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><span style="font-weight: bold;"><B>TUI command:</B></span> 
+ <span style="font-style: italic;"><I>geompy.WhatIs(Shape)</I></span>, where Shape 
+ is a shape from which a description is returned.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ 1 shape.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs11"><img src="../pics/measures8.png" x-maintain-ratio="TRUE" width="360px" height="405px" border="0" class="img_whs20"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs7"><a NAME=check
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image78.gif" width="20px" height="20px" border="0" class="img_whs8"><b><font style="font-size: 14pt;"
+														size=4> Check</font></b></a> 
+ </p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Returns True if this geometrical object is valid.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> Boolean.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.CheckShape(Shape)</I></span>, 
+ where is shape which is checked for validity.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ 1 shape.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs11"><img src="../pics/measures9.png" x-maintain-ratio="TRUE" width="360px" height="309px" border="0" class="img_whs21"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs22">&nbsp;</p>
+
+<p class="whs22">&nbsp;</p>
+
+<p class="whs22"><a name=Check_comp_blocks><img src="../image27.gif" width="25px" height="23px" border="0" class="img_whs23"> <span style="font-size: 14pt; font-weight: bold;"><font size=4 style="font-size:14pt;"><B>Check compound 
+ of blocks</B></font></span></a></p>
+
+<p class="whs22">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Checks whether a shape is a compound of glued blocks. To be considered 
+ as a compound of blocks, the given shape must satisfy the following conditions:</p>
+
+<ul type="disc" class="whs24">
+	
+	<li class=kadov-p><p class="whs1">&nbsp;Each 
+ element of the compound should be a Block (6 faces and 12 edges);</p></li>
+	
+	<li class=kadov-p><p class="whs1">&nbsp;A 
+ connection between two Blocks should be an entire quadrangle face or an 
+ entire edge;</p></li>
+	
+	<li class=kadov-p><p class="whs1">&nbsp;The 
+ compound should be connected;</p></li>
+	
+	<li class=kadov-p><p class="whs1">&nbsp;Two 
+ quadrangle faces should be glued. </p></li>
+</ul>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">Informs of the following possible errors:</p>
+
+<ul type="disc" class="whs24">
+	
+	<li class=kadov-p><p class="whs1">not a block,</p></li>
+	
+	<li class=kadov-p><p class="whs1">not glued,</p></li>
+	
+	<li class=kadov-p><p class="whs1">not connected,</p></li>
+	
+	<li class=kadov-p><p class="whs1"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">extra 
+ or degenerated edge.</font></span></p></li>
+</ul>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> Boolean; 
+ highlight in the viewer.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.CheckCompoundOfBlocks(Compound)</I></span>, 
+ where the Compound is a shape, investigated in order to see, if it is 
+ a valid compound of blocks. Validity flag is returned, encountered errors 
+ are printed in the python console.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ 1 shape.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><img src="../pics/measures10.png" x-maintain-ratio="TRUE" width="329px" height="436px" border="0" class="img_whs25"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

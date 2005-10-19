@@ -1,0 +1,256 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Changing displaying parameters</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Times New Roman' , serif; font-size:12pt; font-weight:normal; }
+img_whs2 { border:none; float:none; width:30px; height:30px; border-style:none; }
+p.whs3 { font-family:'Times New Roman' , serif; font-size:12pt; }
+p.whs4 { margin-left:40px; }
+p.whs5 { font-family:'Times New Roman' , serif; font-size:14pt; }
+img_whs6 { width:20px; height:20px; border-style:none; }
+p.whs7 { font-size:12pt; margin-left:40px; }
+img_whs8 { border:none; width:403px; height:422px; float:none; border-style:none; }
+img_whs9 { border:none; width:400px; height:424px; float:none; border-style:none; }
+p.whs10 { font-size:12pt; font-family:'Times New Roman' , serif; }
+p.whs11 { font-size:12pt; }
+img_whs12 { border:none; float:none; width:393px; height:423px; border-style:none; }
+p.whs13 { font-size:14pt; }
+img_whs14 { border:none; width:354px; height:177px; float:none; border-style:none; }
+p.whs15 { margin-left:40px; font-size:12pt; }
+img_whs16 { border:none; width:397px; height:428px; float:none; border-style:none; }
+img_whs17 { border:none; width:401px; height:429px; float:none; border-style:none; }
+img_whs18 { border:none; width:255px; height:150px; float:none; border-style:none; }
+img_whs19 { border:none; width:377px; height:426px; float:none; border-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nManaging geometrical objects\nChanging displaying parameters");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Changing displaying parameters</h1>
+
+<p class="whs1"><b style="font-weight: bold;"><img src="i_blue.jpg" x-maintain-ratio="TRUE" x-save-file="TRUE" x-save-method="compute-relative" width="30px" height="30px" border="0" class="img_whs2"> <span style="font-weight: normal;">In GEOM you can set different 
+ displaying parameters for visualization of geometrical objects in the 
+ viewer:</span></b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<ul>
+	
+	<li class=kadov-p><p class="whs3"><a 
+ href="#W_S">Wireframe/Shading</a></p></li>
+	
+	<li class=kadov-p><p class="whs3"><a 
+ href="#Color">Color</a></p></li>
+	
+	<li class=kadov-p><p class="whs3"><a 
+ href="#Transparency">Transparency</a> </p></li>
+	
+	<li class=kadov-p><p class="whs3"><a 
+ href="#Isos">Isos</a> (in OCC viewer only)</p></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p class=TODO>To set displaying parameters of a geometrical object:</p>
+
+<p class=TODO>&nbsp;</p>
+
+<p class="whs4">Right-click on this geometrical object in 
+ the viewer and from the pop-up menu select <span style="font-weight: bold;"><B>Properties</B></span>.</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;"><a 
+ NAME=W_S><img src="files/salome2_sp3_displaygui_functions_salome2_sp3_displaygui_functions_image51.gif" width="20px" height="20px" border="0" class="img_whs6">Wireframe/Shading</a></b> </p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Description:</b> 
+ Set the display mode of the selected shape.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI 
+ Command:</b><i> gg.setDisplayMode(ID, Short)</i></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs7"><img src="pics/disp_mode1sn.png" x-maintain-ratio="TRUE" width="403px" height="422px" border="0" class="img_whs8"> &nbsp;<img src="pics/disp_mode2sn.png" x-maintain-ratio="TRUE" width="400px" height="424px" border="0" class="img_whs9"></p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;"><a 
+ NAME=Color
+	style="font-size: 14pt;">Color</a></b></p>
+
+<p class="whs10">&nbsp;</p>
+
+<p class="whs11"><b style="font-weight: bold;">Description:</b> 
+ Change the color of a shape.</p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><b style="font-weight: bold;">TUI Command:</b><i> 
+ gg.setColor(ID, Short, Short, Short)</i></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Example</b></font></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b>:</b></font></span></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs7"><img src="pics/disp_mode2sn.png" x-maintain-ratio="TRUE" width="400px" height="424px" border="0" class="img_whs9"> &nbsp;<img src="pics/colorsn.png" x-maintain-ratio="TRUE" width="393px" height="423px" border="0" class="img_whs12"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs13"><b style="font-weight: bold;"><a NAME=Transparency><span 
+ style="font-size: 14pt;"><font size=4 style="font-size:14pt;">Transparency</font></span></a></b></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><b style="font-weight: bold;">Description:</b> 
+ Change the transparency (between 0 &amp; 1) of a shape.</p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><b style="font-weight: bold;">TUI Command:</b><i> 
+ gg.setTransparency(ID, Double)</i></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs7"><img src="pics/neo-transparency.png" x-maintain-ratio="TRUE" width="354px" height="177px" border="0" class="img_whs14"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Example:</b></font></span></p>
+
+<p>&nbsp;</p>
+
+<p class="whs15"><img src="pics/colorsn.png" x-maintain-ratio="TRUE" width="397px" height="428px" border="0" class="img_whs16"> &nbsp;<img src="pics/transparencysn.png" x-maintain-ratio="TRUE" width="401px" height="429px" border="0" class="img_whs17"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;"><a 
+ NAME=Isos><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;">Isos</font></span></a></b></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs11"><b style="font-weight: bold;">Description:</b> 
+ Changes the number of isolines displayed within a shape.</p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><b style="font-weight: bold;">Arguments:</b> 
+ 2 values (number of isolines).</p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs7"><img src="pics/neo-isos.png" x-maintain-ratio="TRUE" width="255px" height="150px" border="0" class="img_whs18"></p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs11"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs7"><img src="pics/colorsn.png" x-maintain-ratio="TRUE" width="397px" height="428px" border="0" class="img_whs16"> &nbsp;<img src="pics/isos_u12_v12sn.png" x-maintain-ratio="TRUE" width="377px" height="426px" border="0" class="img_whs19"></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs11">Our TUI Scripts provide you with useful examples 
+ of <a href="changing_display_parameters.htm">Changing Displaying Parameters</a>. 
+ </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

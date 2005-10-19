@@ -1,0 +1,149 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Close Contour</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+ul.whs3 { list-style:disc; }
+p.whs4 { font-size:12pt; margin-left:40px; font-weight:bold; }
+img_whs5 { border:none; width:312px; height:397px; float:none; border-style:none; }
+p.whs6 { font-size:12pt; font-weight:bold; }
+p.whs7 { font-weight:bold; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTransforming geometrical objects\nRepairing Operations\nClose Contour");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_repairgui_functions_salome2_sp3_repairgui_functions_image121.gif" width="20px" height="20px" border="0" class="img_whs1"> </font></span>Close Contour</h1>
+
+<p class="whs2"><b style="font-weight: normal;">T</b>o produce 
+ a <span style="font-weight: bold;"><B>Close Contour</B></span> operation in the 
+ Main Menu select <span style="font-weight: bold;"><B>Repair - &gt; Close 
+ Contour.</B></span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">This operation closes an open contour and modifies 
+ the underlying face (if needed) in accordance with user specified mode:</p>
+
+<ul type="disc" class="whs3">
+	
+	<li class=kadov-p><p class="whs2">By common vertex – a 
+ vertex is created between the end points of the contour and its tolerance 
+ is increased to a value of the gap between the ends of the contour;</p></li>
+	
+	<li class=kadov-p><p class="whs2">By new edge – a new edge 
+ is inserted between the end points of the contour.</p></li>
+</ul>
+
+<p class="whs2">This operation is available in <span style="font-weight: bold;"><B>OCC 
+ Viewer</B></span> only. </p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.CloseContour(Shape, Wires, 
+ IsCommonVertex)</I></span>, where Shape is a shape to be processed, Wires 
+ is a list of edges or wires ID’s which has to be closed within the shape 
+ (if the list contains only one element = -1, the shape itself is considered 
+ as a wire), &nbsp;IsCommonVertex 
+ if this parameter is True a closure has to be done by creation of a common 
+ vertex, otherwise an edge is added between the end vertices.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments: <span 
+ style="font-weight: normal;">Name + 1 shape + contour</span> <span style="font-weight: normal;">(</span></b>Wire, 
+ or a set of Edges) + mode of closure (by vertex or by edge)</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs4"><img src="pics/repair3.png" x-maintain-ratio="TRUE" width="312px" height="397px" border="0" class="img_whs5"></p>
+
+<p class="whs6">&nbsp;</p>
+
+<p class="whs7"><span style="font-weight: normal;">Our</span> 
+ TUI Scripts <span style="font-weight: normal;">provide you with useful 
+ examples of the use of</span> <a href="repairing_operations.htm#bookmark2">Repairing 
+ Operations</a>. </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

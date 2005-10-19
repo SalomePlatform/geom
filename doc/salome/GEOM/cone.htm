@@ -1,0 +1,169 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Cone</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+p.whs3 { font-weight:bold; }
+img_whs4 { border:none; width:312px; height:402px; float:none; border-style:none; }
+p.whs5 { margin-left:0px; }
+p.whs6 { font-size:12pt; margin-left:40px; }
+img_whs7 { border:none; width:276px; height:282px; float:none; border-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs5 {margin-left:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Primitives\nCone");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image103.gif" width="20px" height="20px" border="0" class="img_whs1"> &nbsp;</font></span>Cone</h1>
+
+<p><b><span style="font-weight: normal;">T</b>o</span> create a <span style="font-weight: bold;"><B>Cone</B></span> 
+ in the <span style="font-weight: bold;"><B>Main Menu</B></span> select <span 
+ style="font-weight: bold;"><B>New Entity - &gt; Primitives - &gt; Cone</B></span></p>
+
+<p>&nbsp;</p>
+
+<p>There are two algorithms for creation of a <span style="font-weight: bold;"><B>Torus</B></span>. 
+ </p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
+ Result <span style="font-weight: normal;">of each operation will be a</span></b> 
+ GEOM_Object (SOLID).</p>
+
+<p>&nbsp;</p>
+
+<p>Firstly, you can define a <span style="font-weight: bold;"><B>Cone</B></span> 
+ by the <span style="font-weight: bold;"><B>Base Point</B></span> (the central 
+ point of the cone base), the <span style="font-weight: bold;"><B>Axis</B></span>, 
+ the <span style="font-weight: bold;"><B>Height</B></span> and the first and the 
+ second <span style="font-weight: bold;"><B>Radiuses</B></span>. </p>
+
+<p><b style="font-weight: bold;">TUI Command:</b> <span style="font-style: italic;"><I>geompy.MakeCone(Point, 
+ Axis, Radius1, Radius2)</I></span></p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments: 
+ </b><span style="font-size: 12pt; font-weight: normal;"><font size=3 style="font-size:12pt;">Name + 1 vertex 
+ + 1 vector (for direction) + 3 values (Radius of the base part, radius 
+ of the upper part, height).</font></span></p>
+
+<p><img src="pics/cone1.png" x-maintain-ratio="TRUE" width="312px" height="402px" border="0" class="img_whs4"></p>
+
+<p>&nbsp;</p>
+
+<p>Secondly, you can define a <span style="font-weight: bold;"><B>Cone</B></span> 
+ with the centre at the origin of coordinates by its <span style="font-weight: bold;"><B>Height</B></span> 
+ and <span style="font-weight: bold;"><B>Radiuses</B></span>. The <span style="font-weight: bold;"><B>Axis</B></span> 
+ of the <span style="font-weight: bold;"><B>Cone</B></span> will be collinear 
+ to the OZ axis of the coordinate system. </p>
+
+<p><b style="font-weight: bold;">TUI Command:</b> <span style="font-weight: bold;"><B>geompy.MakeConeR1R2H(Radius1, 
+ Radius2, Height)</B></span> </p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments: 
+ </b><span style="font-size: 12pt; font-weight: normal;"><font size=3 style="font-size:12pt;">Name + 3 values 
+ (Radius of the base part, radius of the upper part, height).</font></span></p>
+
+<p class="whs5">&nbsp;&nbsp;<img src="pics/cone2.png" x-maintain-ratio="TRUE" width="312px" height="402px" border="0" class="img_whs4"></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-weight: bold;"><B>Note:</B></span> If both radiuses are non-zero, 
+ the <span style="font-weight: bold;"><B>Cone</B></span> will be truncated. If 
+ the radiuses are equal, a <span style="font-weight: bold;"><B>Cylinder</B></span> 
+ will be created instead. </p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Example:</b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs6"><img src="pics/cones.png" x-maintain-ratio="TRUE" width="276px" height="282px" border="0" class="img_whs7"></p>
+
+<p class="whs6">&nbsp;</p>
+
+<p class="whs2">Our TUI Scripts provide you with useful examples 
+ of creation of <a href="primitives.htm#bookmark4">Primitives</a>. </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

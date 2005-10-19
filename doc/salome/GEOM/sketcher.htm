@@ -1,0 +1,215 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Sketcher</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { border:none; float:none; width:30px; height:30px; border-style:none; }
+p.whs2 { font-size:12pt; }
+p.whs3 { margin-left:108px; font-size:12pt; }
+ul.whs4 { list-style:disc; }
+p.whs5 { margin-left:40px; font-size:12pt; }
+img_whs6 { border:none; width:321px; height:496px; float:none; border-style:none; }
+p.whs7 { font-size:12pt; margin-left:40px; text-indent:-40px; }
+p.whs8 { font-size:12pt; margin-left:40px; text-indent:-40px; font-weight:bold; }
+p.whs9 { font-size:12pt; text-indent:-40px; font-weight:bold; margin-left:80px; }
+img_whs10 { border:none; width:200px; height:200px; border-style:none; }
+img_whs11 { border:none; width:200px; height:195px; border-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs7 {text-indent:1pt; }";
+  strNSS += "p.whs8 {text-indent:1pt; }";
+  strNSS += "p.whs9 {text-indent:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nSketcher");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Sketcher</h1>
+
+<p><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;"><img src="i_blue.jpg" x-maintain-ratio="TRUE" x-save-file="TRUE" x-save-method="compute-relative" width="30px" height="30px" border="0" class="img_whs1"></b></font></span>Sketcher allows to create curves of 2 types: line 
+ segment and arc. &nbsp;The 
+ curve is created from the current point (center of coordinates when the 
+ sketcher is started). &nbsp;The 
+ end of the curve is defined by means of &quot;destination&quot;, which 
+ can be a destination point (for segment only) or destination direction 
+ coupled with length of a segment or angle and radius of an arc.</p>
+
+<p>&nbsp;</p>
+
+<p>Sketcher is able to create planar curves only. Therefore, it is necessary 
+ to select a working plane before starting a sketch (by default, XOY plane 
+ is used). Sketcher creates curves lying in the current working plane (New 
+ Entity -&gt; Basic -&gt; Working Plane).</p>
+
+<p>&nbsp;</p>
+
+<p>This functionality is available from the main menu via <span style="font-style: italic;"><I>New 
+ Entity / Sketch.</I></span></p>
+
+<p>&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeSketcher(Command, WorkingPlane)</I></span></p>
+
+<p class="whs3">This algorithm creates 
+ a sketcher (wire or face), following the textual description, passed through 
+ the Command argument. The edges of the resulting wire or face will be 
+ arcs of circles and/or linear segments.</p>
+
+<p class="whs3"><span style="margin-left: 120px; font-style: italic;"><I>Command</I></span><span 
+ style="margin-left: 120px;"> is a string, defining the sketcher by </span>the 
+ coordinates of points in the local working plane.</p>
+
+<p class="whs3"><span style="font-style: italic;"><I>WorkingPlane</I></span> 
+ is a planar face of the working plane (a list of 9 doubles which are coordinates 
+ of OZ and OX of the local working plane).</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments:</b> 
+ </p>
+
+<p class="whs2"><span><font size=3 style="font-size:12pt;">1. Element type (segment or arc).</font></span></p>
+
+<p class="whs2">2. Destination type (point or direction).</p>
+
+<p class="whs2">3. <span>Destination point by means of:</span></p>
+
+<ul type="disc" class="whs4">
+	
+	<li class=kadov-p><p class="whs2">absolute coordinates 
+ X,Y;</p></li>
+	
+	<li class=kadov-p><p class="whs2">relative coordinates 
+ DX, DY (with respect to the current point);</p></li>
+	
+	<li class=kadov-p><p class="whs2">selection of an existing 
+ point.</p></li>
+</ul>
+
+<p class="whs2">4. Destination direction by means of:</p>
+
+<ul type="disc" class="whs4">
+	
+	<li class=kadov-p><p class="whs2">angle between the new 
+ segment and the previous one;</p></li>
+	
+	<li class=kadov-p><p class="whs2">perpendicular to the 
+ previous segment (same as previous, but angle is predefined and is equal 
+ to 90 degrees);</p></li>
+	
+	<li class=kadov-p><p class="whs2">tangent to the previous 
+ segment;</p></li>
+	
+	<li class=kadov-p><p class="whs2">vector components VX, 
+ DY.</p></li>
+</ul>
+
+<p class="whs2">5. Parameters of an element (for segment : 
+ length or target X or Y coordinate value, for arc : radius and angle).</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs5"><img src="pics/neo-scetcher1.png" x-maintain-ratio="TRUE" width="321px" height="496px" border="0" class="img_whs6"> &nbsp;&nbsp;<img src="pics/neo-scetcher2.png" x-maintain-ratio="TRUE" width="321px" height="496px" border="0" class="img_whs6"></p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs8">Example:</p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs9"><img src="image204.jpg" width="200px" height="200px" border="0" class="img_whs10"> &nbsp;&nbsp;<img src="image206.jpg" width="200px" height="195px" border="0" class="img_whs11"></p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs2">Our <span style="font-weight: bold;"><B>TUI Scripts</B></span> 
+ provide you with useful examples of the use of <a href="sketcher_tui.htm">Sketcher</a>. 
+ </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

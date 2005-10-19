@@ -1,0 +1,258 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Blocks Operations</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nTransformation\nBlocks Operations");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Blocks Operations</h1>
+
+<h3><a name=bookmark4>Multi Transformation</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p_25_25_50 = geompy.MakeVertex(25., 
+ 25., 50.)</p>
+
+<p class="whs1">p_50_25_25 = geompy.MakeVertex(50., 
+ 25., 25.)</p>
+
+<p class="whs1">p_25_50_25 = geompy.MakeVertex(25., 
+ 50., 25.)</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(50, 
+ 50, 50)</p>
+
+<p class="whs1">top_face = geompy.GetFaceNearPoint(box, 
+ p_25_25_50)</p>
+
+<p class="whs1">yz_face = geompy.GetFaceNearPoint(box, 
+ p_50_25_25)</p>
+
+<p class="whs1">xz_face = geompy.GetFaceNearPoint(box, 
+ p_25_50_25)</p>
+
+<p class="whs1">top_face_ind = geompy.LocalOp.GetSubShapeIndex(box, 
+ top_face)</p>
+
+<p class="whs1">yz_face_ind = geompy.LocalOp.GetSubShapeIndex(box, 
+ yz_face)</p>
+
+<p class="whs1">xz_face_ind = geompy.LocalOp.GetSubShapeIndex(box, 
+ xz_face)</p>
+
+<p>&nbsp;</p>
+
+<p># Multi-transformate block and glue the result</p>
+
+<p class="whs1">box_tr1 = geompy.MakeMultiTransformation1D(box, 
+ yz_face_ind, top_face_ind, 3)</p>
+
+<p class="whs1">box_tr2 = geompy.MakeMultiTransformation2D(box, 
+ xz_face_ind, yz_face_ind, 3, top_face_ind, 0, 2)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_box = geompy.addToStudy(box, 
+ &quot;Box&quot;)</p>
+
+<p class="whs1">id_box_tr1 = geompy.addToStudy(box_tr1, 
+ &quot;Multi-transformed Block 1D&quot;)</p>
+
+<p class="whs1">id_box_tr2 = geompy.addToStudy(box_tr2, 
+ &quot;Multi-transformed Block 2D&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_box)</p>
+
+<p class="whs1">gg.setDisplayMode(id_box,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_box_tr1)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_box_tr2)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark5>Explode on Blocks</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create box and sphere</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(200, 
+ 200, 200)</p>
+
+<p class="whs1">sphere = geompy.MakeSphereR(100)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p># make compound</p>
+
+<p class="whs1">compound = geompy.MakeCompound([box, 
+ sphere])</p>
+
+<p>&nbsp;</p>
+
+<p># get all the blocks, contained in the given compound</p>
+
+<p class="whs1">make_block_explode 
+ = geompy.MakeBlockExplode(compound, 1, 1)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_compound = geompy.addToStudy(compound, 
+ &quot;Compound&quot;)</p>
+
+<p class="whs1">id_make_block_explode 
+ = geompy.addToStudy(make_block_explode[0], &quot;MakeBlockExplode&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_compound)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_make_block_explode)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_make_block_explode,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark6>Propagate</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p>&nbsp;</p>
+
+<p># create box and sphere</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(200, 
+ 200, 200)</p>
+
+<p>&nbsp;</p>
+
+<p># check and improve</p>
+
+<p class="whs1">check_box = geompy.CheckAndImprove(box)</p>
+
+<p>&nbsp;&nbsp;</p>
+
+<p># build all possible propagation groups</p>
+
+<p class="whs1">listChains = geompy.Propagate(check_box)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">geompy.addToStudy(check_box, 
+ &quot;Box&quot;)</p>
+
+<p class="whs1">for chain in listChains:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudyInFather(check_box, 
+ chain, &quot;propagation chain&quot;)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">salome.sg.updateObjBrowser(1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

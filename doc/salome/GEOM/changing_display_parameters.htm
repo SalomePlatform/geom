@@ -1,0 +1,176 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Changing Display Parameters</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nChanging Displaying Parameters");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Changing Displaying Parameters</h1>
+
+<h3>Changing Color</h3>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">box = geompy.MakeBox(0,0,0, 
+ 50,50,50)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">sphere = geompy.MakeSphere(50,50,50, 
+ 30)</p>
+
+<p class="whs1">fuse = geompy.MakeBoolean(box,sphere,3)</p>
+
+<p class="whs1">fuse_id = geompy.addToStudy(fuse,&quot;Fuse&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">gg.createAndDisplayGO(fuse_id)</p>
+
+<p class="whs1">gg.setDisplayMode(fuse_id,1)</p>
+
+<p class="whs1">gg.setColor(fuse_id,218,165,31) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3>Changing Display Mode</h3>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ salome</span></p>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">box = geompy.MakeBox(0,0,0, 
+ 50,50,50)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">sphere = geompy.MakeSphere(50,50,50, 
+ 30)</p>
+
+<p class="whs1">fuse = geompy.MakeBoolean(box,sphere,3)</p>
+
+<p class="whs1">fuse_id = geompy.addToStudy(fuse,&quot;Fuse&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">gg.createAndDisplayGO(fuse_id)</p>
+
+<p class="whs1">gg.setDisplayMode(fuse_id,1) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3>Changing Transparency</h3>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">box = geompy.MakeBox(0,0,0, 
+ 50,50,50)</p>
+
+<p class="whs1">sphere = geompy.MakeSphere(50,50,50, 
+ 30)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">fuse = geompy.MakeBoolean(box,sphere,3)</p>
+
+<p class="whs1">fuse_id = geompy.addToStudy(fuse,&quot;Fuse&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">gg.createAndDisplayGO(fuse_id)</p>
+
+<p class="whs1">gg.setDisplayMode(fuse_id,1)</p>
+
+<p class="whs1">gg.setColor(fuse_id,218,165,31)</p>
+
+<p class="whs1">gg.setTransparency(fuse_id,0.5) 
+ </p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

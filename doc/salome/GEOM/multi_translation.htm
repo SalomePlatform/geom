@@ -1,0 +1,168 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Multi Translation</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+img_whs3 { border:none; width:312px; height:398px; float:none; border-style:none; }
+img_whs4 { border:none; height:203px; float:none; width:282px; border-style:none; }
+img_whs5 { border:none; width:291px; height:202px; float:none; border-style:none; }
+img_whs6 { border:none; width:312px; height:509px; float:none; border-style:none; }
+img_whs7 { border:none; float:none; width:292px; height:209px; border-style:none; }
+img_whs8 { border:none; width:288px; height:209px; float:none; border-style:none; }
+p.whs9 { list-style:disc; margin-left:0in; margin-right:0in; margin-top:0px; margin-bottom:0px; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs9 {margin-left:1pt;margin-right:1pt;margin-top:1pt;margin-bottom:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTransforming geometrical objects\nTransformation Operations\nMulti Translation");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_transformationgui_functions_salome2_sp3_transformationgui_functions_image132.gif" width="20px" height="20px" border="0" class="img_whs1"> </font></span>Multi Translation</h1>
+
+<p class="whs2"><b style="font-weight: normal;">T</b>o produce 
+ a <span style="font-weight: bold;"><B>Multi Translation</B></span> in the Main 
+ Menu select <span style="font-weight: bold;"><B>Operations - &gt; Transformation 
+ - &gt; Multi Translation</B></span> </p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: normal;">This operation</b> 
+ makes several translations of a shape in <span style="font-weight: bold;"><B>one</B></span> 
+ or <span style="font-weight: bold;"><B>two</B></span> directions.</p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
+ Result <span style="font-weight: normal;">will be one or several</span></b> 
+ GEOM_Objects (compound).</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">To produce a <span style="font-weight: bold;"><B>Simple 
+ Multi Translation</B></span> (in one direction) you need to indicate a <span 
+ style="font-weight: bold;"><B>Shape</B></span> to be translated, a <span style="font-weight: bold;"><B>Vector</B></span> 
+ of translation, a <span style="font-weight: bold;"><B>Step</B></span> of translation 
+ and a <span style="font-weight: bold;"><B>Number of Times</B></span> the shape 
+ must be moved.</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command: 
+ </b><span style="font-style: italic;"><I>geompy.MakeMultiTranslation1D(Shape, 
+ Dir, Step, NbTimes)</I></span></p>
+
+<p class="whs2"><b style="font-weight: bold;">A<span style="font-weight: bold;"><B>rguments: 
+ </B></span></b>Name + 1 shape + 1 vector (for direction) + 1 step value + 
+ 1 value (repetition).</p>
+
+<p class="whs2">&nbsp;<img src="pics/mtrans1.png" x-maintain-ratio="TRUE" width="312px" height="398px" border="0" class="img_whs3"> &nbsp;<img src="pics/multi_translation_initialsn.png" x-maintain-ratio="TRUE" height="203px" width="282px" border="0" class="img_whs4"> &nbsp;<img src="pics/multi_translation1dsn.png" x-maintain-ratio="TRUE" width="291px" height="202px" border="0" class="img_whs5"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">To produce a <span style="font-weight: bold;"><B>Double 
+ Multi Translation</B></span> (in two directions) you need to indicate a <span 
+ style="font-weight: bold;"><B>Shape</B></span> to be translated and a <span style="font-weight: bold;"><B>Vector</B></span> 
+ of translation, a <span style="font-weight: bold;"><B>Step</B></span> of translation 
+ and a <span style="font-weight: bold;"><B>Number of Times</B></span> the shape 
+ must be moved along each axis.</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command: 
+ <span style="font-style: italic; font-weight: normal;"><I>g</I></span></b><span 
+ style="font-style: italic;"><I>eompy.MakeMultiTranslation2D(Shape, Dir1, 
+ Step1, NbTimes1, Dir2, Step2, NbTimes2)</I></span>, where Shape is a shape 
+ to be translated, Dir1 is the first direction of translation, Step1 of 
+ the first translation, NbTimes1 is a number of translations to be done 
+ along, Dir2 is the second direction of translation, Step2 of the second 
+ translation, NbTimes2 is a number of translations to be done along Dir2.</p>
+
+<p class="whs2"><b style="font-weight: bold;">A<span style="font-weight: bold;"><B>rguments: 
+ </B></span></b>Name + 1 shape + 2 vectors defining the direction + 2 step 
+ values + 2 values (repetitions).</p>
+
+<p class="whs2"><img src="pics/mtrans2.png" x-maintain-ratio="TRUE" width="312px" height="509px" border="0" class="img_whs6"> <img src="pics/multi_translation_initialsn.png" x-maintain-ratio="TRUE" width="292px" height="209px" border="0" class="img_whs7"> &nbsp;<img src="pics/multi_translation2dsn.png" x-maintain-ratio="TRUE" width="288px" height="209px" border="0" class="img_whs8"></p>
+
+<p class="whs9">&nbsp;&nbsp;</p>
+
+<p class="whs9"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Our </font></span><span 
+ style="font-weight: bold;"><B>TUI Scripts</B></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> 
+ provide you with useful examples of the use of <a href="transformation_operations.htm#bookmark8">Transformation 
+ Operations</a>. </font></span></p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

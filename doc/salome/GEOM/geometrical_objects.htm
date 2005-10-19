@@ -1,0 +1,571 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Geometrical Objects</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+p.whs2 { font-family:'Times New Roman' , serif; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nCreation of Geometric Objects\nAdvanced Geometrical Objects");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Advanced Geometrical Objects</h1>
+
+<h3><a name=bookmark>Creation of an Edge</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p0 &nbsp;&nbsp;= 
+ geompy.MakeVertex(0. &nbsp;, 
+ 0. &nbsp;, 0. 
+ &nbsp;)</p>
+
+<p class="whs1">pxyz = geompy.MakeVertex(100., 
+ 100., 100.)</p>
+
+<p>&nbsp;</p>
+
+<p># create edge</p>
+
+<p class="whs1">edge = geompy.MakeEdge(p0, 
+ pxyz)</p>
+
+<p>&nbsp;</p>
+
+<p># add object in study</p>
+
+<p class="whs1">id_edge = geompy.addToStudy(edge,&quot;Edge&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display edge</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_edge) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3><a name=Creation>Creation of a Wire</a></h3>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># create vertices</p>
+
+<p class="whs1">px &nbsp;&nbsp;= 
+ geompy.MakeVertex(100., 0. &nbsp;, 
+ 0. &nbsp;)</p>
+
+<p class="whs1">py &nbsp;&nbsp;= 
+ geompy.MakeVertex(0. &nbsp;, 
+ 100., 0. &nbsp;)</p>
+
+<p class="whs1">pz &nbsp;&nbsp;= 
+ geompy.MakeVertex(0. &nbsp;, 
+ 0. &nbsp;, 100.)</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># create vector on two 
+ points</p>
+
+<p class="whs1">vxy = geompy.MakeVector(px, 
+ py)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create arc with three 
+ points</p>
+
+<p class="whs1">arc = geompy.MakeArc(py, 
+ pz, px)</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># create wire</p>
+
+<p class="whs1">wire = geompy.MakeWire([vxy, 
+ arc])</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># add object in study</p>
+
+<p class="whs1">id_wire = geompy.addToStudy(wire,&quot;Wire&quot;)</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># display wire</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_wire) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3><a name=bookmark1>Creation of a Face</a></h3>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create vertices</p>
+
+<p class="whs1">p0 &nbsp;&nbsp;= 
+ geompy.MakeVertex(0. &nbsp;, 
+ 0. &nbsp;, 0. 
+ &nbsp;)</p>
+
+<p class="whs1">px &nbsp;&nbsp;= 
+ geompy.MakeVertex(100., 0. &nbsp;, 
+ 0. &nbsp;)</p>
+
+<p class="whs1">py &nbsp;&nbsp;= 
+ geompy.MakeVertex(0. &nbsp;, 
+ 100., 0. &nbsp;)</p>
+
+<p class="whs1">pz &nbsp;&nbsp;= 
+ geompy.MakeVertex(0. &nbsp;, 
+ 0. &nbsp;, 100.)</p>
+
+<p class="whs1">pxyz = geompy.MakeVertex(100., 
+ 100., 100.)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create vector on two 
+ points</p>
+
+<p class="whs1">vxy = geompy.MakeVector(px, 
+ py)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create arc with three 
+ points</p>
+
+<p class="whs1">arc = geompy.MakeArc(py, 
+ pz, px)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create wire</p>
+
+<p class="whs1">wire = geompy.MakeWire([vxy, 
+ arc])</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create sketchers</p>
+
+<p class="whs1">sketcher1 = geompy.MakeSketcher(&quot;Sketcher:F 
+ -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WW&quot;,</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[100,0,0, 
+ 1,1,1, -1,1,0])</p>
+
+<p class="whs1">sketcher2 = geompy.MakeSketcher(&quot;Sketcher:F 
+ 0 0:TT 70 0:TT 70 70:TT 0 70:WW&quot;)</p>
+
+<p class="whs1">sketcher3 = geompy.MakeSketcher(&quot;Sketcher:F 
+ 20 20:TT 50 20:TT 50 50:TT 20 50:WW&quot;)</p>
+
+<p class="whs1">isPlanarFace = 1</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create face from wire</p>
+
+<p class="whs1">face1 = geompy.MakeFace(wire, 
+ isPlanarFace)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create faces from two 
+ wires</p>
+
+<p class="whs1">face2 = geompy.MakeFaceWires([wire, 
+ sketcher1],isPlanarFace)</p>
+
+<p class="whs1">face3 = geompy.MakeFaces([sketcher2, 
+ sketcher3],isPlanarFace)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># add objects in study</p>
+
+<p class="whs1">id_face1 = geompy.addToStudy(face1,&quot;Face1&quot;)</p>
+
+<p class="whs1">id_face2 = geompy.addToStudy(face2,&quot;Face2&quot;)</p>
+
+<p class="whs1">id_face3 = geompy.addToStudy(face3,&quot;Face3&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># display faces</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_face1)</p>
+
+<p class="whs1">gg.setDisplayMode(id_face1,1)</p>
+
+<p class="whs1">gg.setTransparency(id_face1,0.2)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_face2)</p>
+
+<p class="whs1">gg.setDisplayMode(id_face2,1)</p>
+
+<p class="whs1">gg.setTransparency(id_face2,0.2)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_face3)</p>
+
+<p class="whs1">gg.setDisplayMode(id_face3,1)</p>
+
+<p class="whs1">gg.setTransparency(id_face3,0.2) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3><a name=bookmark2>Creation of a Shell</a></h3>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2">#create vertices</p>
+
+<p class="whs1">p0 &nbsp;&nbsp;= 
+ geompy.MakeVertex( 0., &nbsp;0., 
+ &nbsp;0.)</p>
+
+<p class="whs1">pxyz = geompy.MakeVertex( 
+ 5., &nbsp;5., 
+ 40.)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create sketchers</p>
+
+<p class="whs1">sketcher1 = geompy.MakeSketcher(&quot;Sketcher:F 
+ 0 0:TT 70 0:TT 70 70:TT 0 70:WW&quot;)</p>
+
+<p class="whs1">sketcher2 = geompy.MakeSketcher(&quot;Sketcher:F 
+ 20 20:TT 50 20:TT 50 50:TT 20 50:WW&quot;)</p>
+
+<p class="whs1">isPlanarFace = 1</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create face from two 
+ wires</p>
+
+<p class="whs1">face = geompy.MakeFaces([sketcher1, 
+ sketcher2],isPlanarFace)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create prism</p>
+
+<p class="whs1">prism = geompy.MakePrism(face, 
+ p0, pxyz)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># explode prism on faces</p>
+
+<p class="whs1">prism_faces = geompy.SubShapeAllSorted(prism, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create shell from the 
+ set of faces</p>
+
+<p class="whs1">shell = geompy.MakeShell([prism_faces[0], 
+ prism_faces[2], prism_faces[3],</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prism_faces[7], 
+ prism_faces[9]])</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># add objects in study</p>
+
+<p class="whs1">id_shell = geompy.addToStudy(shell,&quot;Shell&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># display shell</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_shell)</p>
+
+<p class="whs1">gg.setDisplayMode(id_shell,1) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3><a name=bookmark3>Creation of a Solid</a></h3>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2">#create vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex( 
+ 0., &nbsp;0., 
+ &nbsp;0.)</p>
+
+<p class="whs1">pz = geompy.MakeVertex( 
+ 0., &nbsp;0., 
+ 40.)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create sketchers</p>
+
+<p class="whs1">sketcher = geompy.MakeSketcher(&quot;Sketcher:F 
+ -50 -50:TT 100 -50:R 0:C 50 70:R 0:L 100:WW&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create faces from two 
+ wires</p>
+
+<p class="whs1">face = geompy.MakeFace(sketcher,1)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create prism</p>
+
+<p class="whs1">prism = geompy.MakePrism(face, 
+ p0, pz)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># explode prism on faces</p>
+
+<p class="whs1">prism_faces = geompy.SubShapeAllSorted(prism, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create shell from the 
+ set of faces</p>
+
+<p class="whs1">shell = geompy.MakeShell([prism_faces[0], 
+ prism_faces[1],</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prism_faces[3], 
+ prism_faces[4],</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prism_faces[5], 
+ prism_faces[2]])</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create solid, bounded 
+ by the given shells</p>
+
+<p class="whs1">solid = geompy.MakeSolid([shell])</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># add objects in study</p>
+
+<p class="whs1">id_solid = geompy.addToStudy(solid,&quot;Solid&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># display solid</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_solid)</p>
+
+<p class="whs1">gg.setDisplayMode(id_solid,1) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3><a name=bookmark4>Creation of a Compound</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2">#create vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex( 
+ 0., &nbsp;0., 
+ &nbsp;0.)</p>
+
+<p class="whs1">pz = geompy.MakeVertex( 
+ 0., &nbsp;0., 
+ 40.)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create sketchers</p>
+
+<p class="whs1">sketcher = geompy.MakeSketcher(&quot;Sketcher:F 
+ -50 -50:TT 100 -50:R 0:C 50 70:R 0:L 100:WW&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create faces from two 
+ wires</p>
+
+<p class="whs1">face = geompy.MakeFace(sketcher,1)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create prism</p>
+
+<p class="whs1">prism = geompy.MakePrism(face, 
+ p0, pz)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># explode prism on faces</p>
+
+<p class="whs1">prism_faces = geompy.SubShapeAllSorted(prism, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create shell from the 
+ set of faces</p>
+
+<p class="whs1">shell = geompy.MakeShell([prism_faces[0], 
+ prism_faces[1],</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prism_faces[3], 
+ prism_faces[4],</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prism_faces[5], 
+ prism_faces[2]])</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create solid, bounded 
+ by the given shells</p>
+
+<p class="whs1">solid = geompy.MakeSolid([shell])</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># add objects in study</p>
+
+<p class="whs1">id_solid = geompy.addToStudy(solid,&quot;Solid&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># display solid</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_solid)</p>
+
+<p class="whs1">gg.setDisplayMode(id_solid,1) 
+ </p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

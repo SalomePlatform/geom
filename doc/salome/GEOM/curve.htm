@@ -1,0 +1,162 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Curve</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { border:none; width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+ul.whs3 { list-style:disc; }
+p.whs4 { font-size:12pt; font-style:italic; }
+img_whs5 { border:none; width:312px; height:289px; float:none; border-style:none; }
+p.whs6 { font-size:12pt; font-style:normal; font-weight:bold; }
+p.whs7 { font-size:12pt; font-weight:bold; font-style:italic; x-text-underline:off; text-decoration:none; }
+img_whs8 { border:none; float:none; width:310px; height:308px; border-style:none; }
+img_whs9 { border:none; width:313px; height:310px; float:none; border-style:none; }
+img_whs10 { border:none; float:none; width:291px; height:313px; border-style:none; }
+p.whs11 { font-size:12pt; margin-left:40px; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Basic Geometric Objects\nCurve");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><b style="font-weight: bold;"><img src="image32.gif" width="20px" height="20px" border="0" class="img_whs1"> &nbsp;</b></font></span>Curve</h1>
+
+<p>To create a <span style="font-weight: bold;"><B>Curve</B></span> in the <span 
+ style="font-weight: bold;"><B>Main Menu</B></span> select <span style="font-weight: bold;"><B>New 
+ Entity - &gt; Basic - &gt; Curve</B></span></p>
+
+<p>&nbsp;</p>
+
+<p>There are three algorithms to <span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">create 
+ a </font></span><span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>Curve</B></font></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> in the 3D space. Each time you define it by 
+ a list of </font></span><span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>Points</B></font></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> through which the curve passes. The three </font></span><span 
+ style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>Curve Construction</B></font></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> menu choices correspond to the three possible 
+ types of curves: Polyline, Besier or B-spline (Interpolated) curve. </font></span></p>
+
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;"><span 
+ style="font-weight: normal;">The</span> Result <span style="font-weight: normal;">of 
+ each operation will be a</span></b> GEOM_Object (edge).</font></span></p>
+
+<p>&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Commands:</b> 
+ </p>
+
+<ul type="disc" class="whs3">
+	
+	<li class=kadov-p><p class="whs2"><span style="font-style: italic;"><I>geompy.MakePolyline(ListOfShapes)</I></span></p></li>
+	
+	<li class=kadov-p><p class="whs2"><span style="font-style: italic;"><I>geompy.MakeBezier(ListOfShapes)</I></span></p></li>
+	
+	<li class=kadov-p><p class="whs2"><span style="font-style: italic;"><I>geompy.MakeInterpol(ListOfShapes)</I></span></p></li>
+</ul>
+
+<p class="whs2">ListOfShape is a list of points through which 
+ the curve passes.</p>
+
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Arguments:</b> 
+ Name + at least 2 points which will serve as nodes on the curve.</font></span></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><img src="pics/curve.png" x-maintain-ratio="TRUE" width="312px" height="289px" border="0" class="img_whs5"> </p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs6">Examples:</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs7">Polyline 
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span 
+ style="font-size: 12pt;
+		font-weight: bold;
+		font-style: italic;
+		x-text-underline: off;
+		/*begin!kadov{{*/ text-decoration: none; /*}}end!kadov*/ "><font size=3 style="font-size:12pt;"><I><B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bezier 
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B-Spline</B></I></font></span></p>
+
+<p class="whs2"><img src="pics/polyline.png" x-maintain-ratio="TRUE" width="310px" height="308px" border="0" class="img_whs8"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="pics/bezier.png" x-maintain-ratio="TRUE" width="313px" height="310px" border="0" class="img_whs9"> &nbsp;&nbsp;&nbsp;&nbsp;<img src="pics/interpol.png" x-maintain-ratio="TRUE" width="291px" height="313px" border="0" class="img_whs10"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs2">Our TUI Scripts provide you with useful examples 
+ of creation of <a href="basic_geometrical_objects.htm#bookmark4">Basic 
+ Geometric Objects</a>. </p>
+
+<p>&nbsp;</p>
+
+<p class="whs2">&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

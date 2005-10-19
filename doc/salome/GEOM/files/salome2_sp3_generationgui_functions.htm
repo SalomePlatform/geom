@@ -1,0 +1,307 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Titre</title>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="../default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='../default.css'>");}
+//-->
+</script>
+<style>
+<!--
+A:link { color:#0000ff; }
+-->
+</style><style type="text/css">
+<!--
+p.whs1 { font-size:12pt; }
+img_whs2 { border:none; float:none; width:30px; height:30px; border-style:none; }
+p.whs3 { margin-left:40px; }
+h3.whs4 { font-size:14pt; }
+img_whs5 { width:20px; height:20px; border-style:none; }
+p.whs6 { font-size:12pt; margin-left:40px; }
+img_whs7 { border:none; border-style:none; width:312px; height:350px; float:none; }
+img_whs8 { border:none; width:150px; height:116px; border-style:none; }
+p.whs9 { font-family:'Times New Roman' , serif; font-size:14pt; }
+img_whs10 { border:none; width:150px; height:153px; border-style:none; }
+img_whs11 { border:none; border-style:none; width:312px; height:367px; float:none; }
+img_whs12 { border:none; width:150px; height:103px; border-style:none; }
+p.whs13 { font-family:'Times New Roman' , serif; font-size:12pt; }
+img_whs14 { border:none; border-style:none; width:312px; height:324px; float:none; }
+img_whs15 { border:none; width:150px; height:117px; border-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="../whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="../whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("../geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Generating complex objects</h1>
+
+<p class="whs1"><b style="font-weight: normal;"><img src="../i_blue.jpg" x-maintain-ratio="TRUE" x-save-file="TRUE" x-save-method="compute-relative" width="30px" height="30px" border="0" class="img_whs2"> </b>Generation operations in GEOM are used to create advanced 
+ geometrical objects (3D elements). They are:</p>
+
+<p class="whs1">&nbsp;</p>
+
+<ul>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Prism">Extrusion</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Revolution">Revolution</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Filling">Filling</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Pipe">Pipe 
+ creation</a></p></li>
+</ul>
+
+<p class="whs1">&nbsp;</p>
+
+<p class=TODO>To use generation operations:</p>
+
+<p class=TODO>&nbsp;</p>
+
+<p class="whs3">In the main menu select <span style="font-weight: bold;"><B>New 
+ Entity &gt; Generation</B></span><span>.</span></p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3 class="whs4"><b style="font-weight: bold;"><a NAME=Prism><img src="salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image56.gif" width="20px" height="20px" border="0" class="img_whs5"> Extrusion</a></b> </h3>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Creates an extruded shape.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Object 
+ (edge, face, solid or compsolid).</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command :</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakePrism(baseShape, Vector, 
+ Height)</I></span>, where baseShape is a basis of the prism, Vector is a normal 
+ of the prism and Height is a height of the prism.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ Name + 1 shape (vertex, edge, wire, face or shell) serving as base object 
+ + 1 vector (for direction) + 1 value (dimension).</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs6"><img src="../pics/extrusion.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs7"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs6"><img src="../image14.gif" width="150px" height="116px" border="0" class="img_whs8"> &nbsp;<img src="../image27.jpg" width="150px" height="116px" border="0" class="img_whs8"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs9"><a NAME=Revolution><img src="salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image57.gif" width="20px" height="20px" border="0" class="img_whs5"><b> Revolution</b></a></p>
+
+<p class="whs9"><span><font size=4 style="font-size:14pt;"><b 
+ style="font-weight: bold;"><font style="font-size: 14pt;"
+									size=4>&#9;</font></b></font></span></p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Creates an extruded shape by revolution.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Object 
+ (edge, face, solid or compsolid).</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeRevolution(Shape, Axis, 
+ Angle)</I></span>, where Shape is a shape to rotate, Axis is the axis of the 
+ revolution and Angle is an angle by which Shape has to be rotated around 
+ Axis.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ Name + 1 shape (vertex, edge, wire, face or shell) serving as base object 
+ + 1 vector (for direction) + 1 value (angle).</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs6"><img src="../pics/revolution.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs7"></p>
+
+<p class="whs6">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs6"><img src="../image15.gif" width="150px" height="153px" border="0" class="img_whs10"> &nbsp;<img src="../image52.jpg" width="150px" height="153px" border="0" class="img_whs10"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs9"><a NAME=Filling><img src="salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image58.gif" width="20px" height="20px" border="0" class="img_whs5"><b> Filling</b></a></p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Creates a curving face using several curves.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Object 
+ (face).</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeFilling(Shape, MinDegree, 
+ MaxDegree, Tol2D, Tol3D, NbIter)</I></span>, where Shape is a shape to fill, 
+ MinDegree and MaxDegree are correspondingly maximal and minimal degree, 
+ Tol2D is a tolerance for 2D and Tol3D is a tolerance for 3D, NbIter is 
+ a number of iterations.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ Name + 1 List of edges + 5 Parameters (Min. degree, Max. degree, Number 
+ of iterations, 2D tolerance, 3D tolerance).</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs6"><img src="../pics/filling.png" x-maintain-ratio="TRUE" width="312px" height="367px" border="0" class="img_whs11"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs6"><img src="../image7.gif" width="150px" height="103px" border="0" class="img_whs12"> &nbsp;<img src="../image11.jpg" width="150px" height="103px" border="0" class="img_whs12"></p>
+
+<p class="whs13">&nbsp;</p>
+
+<p class="whs9"><a NAME=Pipe><img src="salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image59.gif" width="20px" height="20px" border="0" class="img_whs5"><b> Pipe</b></a></p>
+
+<p class="whs13"><span><font size=3 style="font-size:12pt;"><b 
+ style="font-weight: bold;"><font style="font-family: 'Times New Roman', serif; font-size: 12pt;"
+									face="Times New Roman"
+									size=4>&#9;</font></b></font></span></p>
+
+<p class="whs1"><b style="font-weight: bold;">Description:</b> 
+ Creates an extruded shape.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Object 
+ (edge, face, solid or compsolid).</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakePipe(baseShape, pathShape)</I></span>, 
+ where baseShape is a shape to be extruded, pathShape is a path along which 
+ baseShape is extruded.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ Name + 1 shape (vertex, edge, wire, face or shell) serving as base object 
+ + 1 shape (edge, face or shell) for definition of the path.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs6"><img src="../pics/pipe.png" x-maintain-ratio="TRUE" width="312px" height="324px" border="0" class="img_whs14"></p>
+
+<p class="whs6">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs6"><img src="../image8.gif" width="150px" height="117px" border="0" class="img_whs15"> &nbsp;<img src="../image12.jpg" width="150px" height="117px" border="0" class="img_whs15"></p>
+
+<p class="whs6">&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Primitives</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nCreation of Geometric Objects\nPrimitives");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Primitives</h1>
+
+<h3><a name=bookmark>Creation of a Box</a></h3>
+
+<p>i<span style="font-family: 'Lucida Console', monospace;">mport geompy</span></p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex(15, 
+ 25, 35)</p>
+
+<p class="whs1">p70 = geompy.MakeVertex(70, 
+ 70, 70)</p>
+
+<p>&nbsp;</p>
+
+<p># create boxes</p>
+
+<p class="whs1">box1 = geompy.MakeBoxDXDYDZ(10, 
+ 20, 30)</p>
+
+<p class="whs1">box2 = geompy.MakeBox(10,20,30, 
+ 15,25,35)</p>
+
+<p class="whs1">box3 = geompy.MakeBoxTwoPnt(p0, 
+ p70)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_box1 = geompy.addToStudy(box1,&quot;Box1&quot;)</p>
+
+<p class="whs1">id_box2 = geompy.addToStudy(box2,&quot;Box2&quot;)</p>
+
+<p class="whs1">id_box3 = geompy.addToStudy(box3,&quot;Box3&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display boxes</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_box1)</p>
+
+<p class="whs1">gg.setDisplayMode(id_box1,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_box2)</p>
+
+<p class="whs1">gg.setDisplayMode(id_box2,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_box3)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_box3,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark1>Creation of a Cylinder</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(35, 
+ 35, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(35, 
+ 35, 70)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create cones</p>
+
+<p class="whs1">cone1 = geompy.MakeCone(p1, 
+ v, 17, 1, 20)</p>
+
+<p class="whs1">cone2 = geompy.MakeConeR1R2H(30, 
+ 10, 30)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_cone1 = geompy.addToStudy(cone1,&quot;Cone1&quot;)</p>
+
+<p class="whs1">id_cone2 = geompy.addToStudy(cone2,&quot;Cone2&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display cones</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cone1)</p>
+
+<p class="whs1">gg.setDisplayMode(id_cone1,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cone2)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_cone2,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark2>Creation of a Sphere</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex</p>
+
+<p class="whs1">p = geompy.MakeVertex(55, 
+ 45, 25)</p>
+
+<p>&nbsp;</p>
+
+<p># create spheres</p>
+
+<p class="whs1">radius1 = 20</p>
+
+<p class="whs1">sphere1 = geompy.MakeSpherePntR(p, 
+ radius1)</p>
+
+<p class="whs1">radius2 = 15</p>
+
+<p class="whs1">sphere2 = geompy.MakeSphere(0, 
+ 0, 45, radius2)</p>
+
+<p class="whs1">radius3 = 30</p>
+
+<p class="whs1">sphere3 = geompy.MakeSphereR(radius3)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_sphere1 = geompy.addToStudy(sphere1,&quot;Sphere1&quot;)</p>
+
+<p class="whs1">id_sphere2 = geompy.addToStudy(sphere2,&quot;Sphere2&quot;)</p>
+
+<p class="whs1">id_sphere3 = geompy.addToStudy(sphere3,&quot;Sphere3&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display spheres</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_sphere1)</p>
+
+<p class="whs1">gg.setDisplayMode(id_sphere1,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_sphere2)</p>
+
+<p class="whs1">gg.setDisplayMode(id_sphere2,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_sphere3)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_sphere3,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark3>Creation of a Torus</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(35, 
+ 40, 45)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(35, 
+ 45, 70)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create toruses</p>
+
+<p class="whs1">torus1 = geompy.MakeTorus(p1, 
+ v, 20, 10)</p>
+
+<p class="whs1">torus2 = geompy.MakeTorusRR(30, 
+ 15)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_torus1 = geompy.addToStudy(torus1,&quot;Torus1&quot;)</p>
+
+<p class="whs1">id_torus2 = geompy.addToStudy(torus2,&quot;Torus2&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display toruses</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_torus1)</p>
+
+<p class="whs1">gg.setDisplayMode(id_torus1,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_torus2)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_torus2,1)</span> 
+ </p>
+
+<h3><a name=bookmark4>Creation of a Cone</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(35, 
+ 35, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(35, 
+ 35, 70)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create cones</p>
+
+<p class="whs1">cone1 = geompy.MakeCone(p1, 
+ v, 17, 1, 20)</p>
+
+<p class="whs1">cone2 = geompy.MakeConeR1R2H(30, 
+ 10, 30)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_cone1 = geompy.addToStudy(cone1,&quot;Cone1&quot;)</p>
+
+<p class="whs1">id_cone2 = geompy.addToStudy(cone2,&quot;Cone2&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display cones</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cone1)</p>
+
+<p class="whs1">gg.setDisplayMode(id_cone1,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cone2)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_cone2,1)</span> 
+ </p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

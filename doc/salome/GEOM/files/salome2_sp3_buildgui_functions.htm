@@ -1,0 +1,458 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Titre</title>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="../default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='../default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-size:12pt; font-weight:normal; }
+img_whs2 { border:none; float:none; width:30px; height:30px; border-style:none; }
+p.whs3 { font-size:12pt; }
+p.whs4 { margin-left:40px; }
+p.whs5 { font-family:'Times New Roman' , serif; font-size:14pt; }
+img_whs6 { width:20px; height:20px; border-style:none; }
+ul.whs7 { list-style:disc; }
+p.whs8 { font-size:12pt; margin-left:40px; }
+img_whs9 { border:none; border-style:none; width:312px; height:283px; float:none; }
+p.whs10 { font-family:'Times New Roman' , serif; font-size:14pt; font-style:italic; font-weight:bold; }
+img_whs11 { border:none; border-style:none; width:312px; height:324px; float:none; }
+img_whs12 { border:none; width:150px; height:102px; border-style:none; }
+img_whs13 { border:none; border-style:none; width:312px; height:289px; float:none; }
+img_whs14 { border:none; width:150px; height:120px; border-style:none; }
+p.whs15 { font-family:'Times New Roman' , serif; font-size:12pt; }
+img_whs16 { border:none; border-style:none; width:312px; height:315px; float:none; }
+img_whs17 { border:none; width:150px; height:116px; border-style:none; }
+img_whs18 { border:none; width:150px; height:131px; border-style:none; }
+img_whs19 { border:none; width:150px; height:105px; border-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="../whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="../whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("../geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><b><span style="font-weight: bold;"><B>B</B></span>uilding geometrical objects</b></h1>
+
+<p class="whs1"><b><span style="font-weight: normal;"><img src="../i_blue.jpg" x-maintain-ratio="TRUE" x-save-file="TRUE" x-save-method="compute-relative" width="30px" height="30px" border="0" class="img_whs2">In GEOM you can create basic and advanced geometrical objects 
+ (2D &amp; 3D elements) using the following building functions:</span></b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<ul>
+	
+	<li class=kadov-p><p class="whs3"><a href="#explode">Explode</a></p></li>
+	
+	<li class=kadov-p><p class="whs3">Build</p></li>
+	
+	<ul>
+		
+		<li class=kadov-p><p class="whs3"><a href="#edge">Edge</a></p></li>
+		
+		<li class=kadov-p><p class="whs3"><a href="#wire">Wire</a></p></li>
+		
+		<li class=kadov-p><p class="whs3"><a href="#face">Face</a></p></li>
+		
+		<li class=kadov-p><p class="whs3"><a href="#shell">Shell</a></p></li>
+		
+		<li class=kadov-p><p class="whs3"><a href="#solid">Solid</a></p></li>
+		
+		<li class=kadov-p><p class="whs3"><a href="#compound">Compound</a></p></li>
+	</ul>
+</ul>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class=TODO>&nbsp;</p>
+
+<p class=TODO
+	style="font-family: 'Times New Roman', serif;
+			font-size: 14pt;
+			font-weight: bold;">To use Explode:</p>
+
+<p class=TODO
+	style="font-family: 'Times New Roman', serif;
+			font-size: 14pt;
+			font-weight: bold;">&nbsp;</p>
+
+<p class="whs4">In the main menu select <span style="font-weight: bold;"><B>New 
+ Entity &gt; Explode</B></span>.</p>
+
+<p>&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;"><a 
+ NAME=explode><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="../salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image13.gif" width="20px" height="20px" border="0" class="img_whs6"> Explode</font></span></a></b></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Description:</b> 
+ Returns a list of subshapes (vertices, edges, wires etc.) of the given 
+ shape.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Result :</b> 
+ List of GEOM_Objects.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI Command: 
+ </b></p>
+
+<ul type="disc" class="whs7">
+	
+	<li class=kadov-p><p class="whs3"><span style="font-style: italic;"><I>geompy.SubShape(Shape, 
+ ListOfID)</I></span>, where Shape is a shape whose subshape(s) is (are) retrieved, 
+ ListOfID is a list of requested sub shapes IDs. To get a subshape ID use 
+ method GetSubShapeID().</p></li>
+	
+	<li class=kadov-p><p class="whs3"><span style="font-style: italic;"><I>geompy.SubShapeAll(Shape, 
+ TypeOfShape)</I></span>, where Shape is a shape to be exploded on sub shapes 
+ of type TypeOfShape.</p></li>
+</ul>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments:</b> 
+ 1 SHAPE + 1 type of SubShape.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../pics/neo-obj1.png" x-maintain-ratio="TRUE" width="312px" height="283px" border="0" class="img_whs9"></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs10">To use building functions:</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs8">In the main menu select 
+ <span style="font-weight: bold;"><B>New Entity &gt; </B></span><span style="font-weight: bold;"><B>Build 
+ </B></span>submenu.</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><a NAME=edge><img src="../salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image14.gif" width="20px" height="20px" border="0" class="img_whs6"><b> Edge</b></a></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Description:</b> 
+ Creates an edge.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object 
+ (EDGE).</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeEdge(Vertex1, Vertex2)</I></span>, 
+ where Vertex1 and Vertex2 are correspondingly the first and the last vertex 
+ of the edge.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments:</b> 
+ Name + 2 vertices.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../pics/neo-obj2.png" x-maintain-ratio="TRUE" width="312px" height="324px" border="0" class="img_whs11"></p>
+
+<p class="whs8">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../image9.gif" width="150px" height="102px" border="0" class="img_whs12"></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs5"><a NAME=wire><span 
+ style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="../salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image15.gif" width="20px" height="20px" border="0" class="img_whs6"><b style="font-size: 14pt;"> Wire</b></font></span></a></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Description:</b> 
+ Creates a wire.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object 
+ (WIRE).</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI Command :</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeWire(ListOfShape)</I></span>, 
+ where ListOfShape is a list of edges and/or wires from which the wire 
+ to be constructed.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments:</b> 
+ Name + List of connected wires or edges..</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../pics/neo-obj3.png" x-maintain-ratio="TRUE" width="312px" height="289px" border="0" class="img_whs13"></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../image11.gif" width="150px" height="120px" border="0" class="img_whs14"></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs5"><a NAME=face><span 
+ style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="../salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image16.gif" width="20px" height="20px" border="0" class="img_whs6"><b style="font-size: 14pt;"> Face</b></font></span></a></p>
+
+<p class="whs15">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Description:</b> 
+ Creates a face.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object 
+ (FACE).</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeFace(Wire, WantPlanarFace)</I></span>, 
+ where Wire is a wire and if boolean parameter WantPlanarFace is planar 
+ then only a planar face or no face is constructed.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments:</b> 
+ Name + 1 wire.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../pics/neo-obj4.png" x-maintain-ratio="TRUE" width="312px" height="315px" border="0" class="img_whs16"></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../image12.gif" width="150px" height="116px" border="0" class="img_whs17"></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs5"><a NAME=shell><span 
+ style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="../salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image17.gif" width="20px" height="20px" border="0" class="img_whs6"><b style="font-size: 14pt;"> Shell</b></font></span></a></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Description:</b> 
+ Creates a shell.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object 
+ (SHELL).</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeShell(ListOfShape)</I></span>, 
+ where ListOfShape is a list of faces and (or) shells from which the shell 
+ is constructed.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments:</b> 
+ Name + <span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">List of faces having connected edges.</font></span></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../pics/neo-obj5.png" x-maintain-ratio="TRUE" width="312px" height="289px" border="0" class="img_whs13"></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../image18.jpg" width="150px" height="131px" border="0" class="img_whs18"></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs5"><a NAME=solid><span 
+ style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="../salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image18.gif" width="20px" height="20px" border="0" class="img_whs6"><b style="font-size: 14pt;"> Solid</b></font></span></a></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Description:</b> 
+ Creates a solid - closed geometrical 3D element.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_<span>Object 
+ (SOLID).</span></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeSolid(ListOfShape)</I></span>, 
+ where ListOfShape is a list of shells from which the solid is constructed.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments:</b> 
+ Name + A closed shell or a list of shells.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../pics/neo-obj6.png" x-maintain-ratio="TRUE" width="312px" height="315px" border="0" class="img_whs16"></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs5"><a NAME=compound><span 
+ style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="../salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image19.gif" width="20px" height="20px" border="0" class="img_whs6"><b style="font-size: 14pt;"> Compound</b></font></span></a></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Description:</b> 
+ Creates a compound.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object 
+ (COMPOUND).</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeCompound(ListOfShape)</I></span>, 
+ where ListOfShape is a list of shapes from which the compound is constructed.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments:</b> 
+ Name + List of shapes.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../pics/neo-obj7.png" x-maintain-ratio="TRUE" width="312px" height="289px" border="0" class="img_whs13"></p>
+
+<p class="whs8">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs8"><img src="../image13.gif" width="150px" height="105px" border="0" class="img_whs19"></p>
+
+<p class="whs8">&nbsp;</p>
+
+<p class="whs8">&nbsp;</p>
+
+<p class="whs3">&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

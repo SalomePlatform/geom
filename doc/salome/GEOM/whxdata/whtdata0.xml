@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='windows-1252' ?>
+<tocdata>
+<book name="GEOM module" >
+  <item name="Introduction to GEOM" url="files/introduction_to_geom.htm" />
+  <item name="Importing\exporting geometrical objects" url="files/salome2_sp3_geomtoolsgui_functions.htm" />
+  <book name="Managing geometrical objects" >
+    <item name="Changing displaying parameters" url="changing_displaying_parameters.htm" />
+    <item name="Displaying\hiding objects" url="files/salome2_sp3_displaygui_functions.htm" />
+  </book>
+  <book name="Creating geometrical objects" >
+    <book name="Creation of Basic Geometric Objects" >
+      <item name="Point" url="point.htm" />
+      <item name="Line" url="line.htm" />
+      <item name="Circle" url="circle.htm" />
+      <item name="Ellipse" url="ellipse.htm" />
+      <item name="Arc" url="arc.htm" />
+      <item name="Curve" url="curve.htm" />
+      <item name="Vector" url="vector.htm" />
+      <item name="Plane" url="plane.htm" />
+      <item name="Working Plane" url="working_plane.htm" />
+      <item name="Local Coordinate System" url="local_coordinate_system.htm" />
+    </book>
+    <book name="Creation of Primitives" >
+      <item name="Box" url="box.htm" />
+      <item name="Cylinder" url="cylinder.htm" />
+      <item name="Sphere" url="sphere.htm" />
+      <item name="Torus" url="turus.htm" />
+      <item name="Cone" url="cone.htm" />
+    </book>
+    <book name="Generation of Complex Objects" >
+      <item name="Extrusion" url="extrusion.htm" />
+      <item name="Revolution" url="revolution.htm" />
+      <item name="Filling" url="filling.htm" />
+      <item name="Pipe" url="pipe_creation.htm" />
+    </book>
+    <item name="Working with groups" url="working_with_groups.htm" />
+    <item name="Building by blocks" url="newentity_blocks.htm" />
+    <item name="Sketcher" url="sketcher.htm" />
+    <book name="Creation of Advanced Geometrical Objects" >
+      <item name="Explode" url="explode.htm" />
+      <item name="Edge" url="edge.htm" />
+      <item name="Wire" url="wire.htm" />
+      <item name="Face" url="face.htm" />
+      <item name="Shell" url="shell.htm" />
+      <item name="Solid" url="solid.htm" />
+      <item name="Compound" url="compound.htm" />
+    </book>
+  </book>
+  <book name="Transforming geometrical objects" >
+    <book name="Basic Operations" >
+      <item name="Partition" url="partition.htm" />
+      <item name="Archimede" url="archimede.htm" />
+    </book>
+    <book name="Boolean Operations" >
+      <item name="Using boolean operations" url="files/salome2_sp3_booleangui_functions.htm" />
+      <item name="Fuse" url="fuse.htm" />
+      <item name="Common" url="common.htm" />
+      <item name="Cut" url="cut.htm" />
+      <item name="Section" url="section.htm" />
+    </book>
+    <book name="Transformation Operations" >
+      <item name="Translation" url="translation.htm" />
+      <item name="Rotation" url="rotation.htm" />
+      <item name="Modify the Location" url="modify_the_location.htm" />
+      <item name="Mirror Image" url="mirror_image.htm" />
+      <item name="Scale Transform" url="scale_transform.htm" />
+      <item name="Offset Surface" url="offset_surface.htm" />
+      <item name="Multi Translation" url="multi_translation.htm" />
+      <item name="Multi Rotation" url="multi_rotation.htm" />
+      <item name="Fillet" url="fillet.htm" />
+      <item name="Chamfer" url="chamfer.htm" />
+    </book>
+    <book name="Blocks Operations" >
+      <item name="Multi Transformation" url="multi_transformation.htm" />
+      <item name="Explode on Blocks" url="explode_on_blocks.htm" />
+      <item name="Propagate" url="propagate.htm" />
+    </book>
+    <book name="Repairing Operations" >
+      <item name="Shape Processing" url="shape_processing.htm" />
+      <item name="Suppress Faces" url="suppress_faces.htm" />
+      <item name="Close Contour" url="close_contour.htm" />
+      <item name="Suppress Internal Wires" url="suppress_internal_wires.htm" />
+      <item name="Suppress Holes" url="suppress_holes.htm" />
+      <item name="Sewing" url="sewing.htm" />
+      <item name="Glue Faces" url="glue_faces.htm" />
+      <item name="Add Point on Edge" url="add_point_on_edge.htm" />
+      <item name="Check Free Boundaries" url="check_free_boundaries.htm" />
+      <item name="Check Free Faces" url="check_free_faces.htm" />
+    </book>
+  </book>
+  <item name="Using measurement tools" url="files/salome2_sp3_measuregui_functions.htm" />
+  <book name="TUI Scripts" >
+    <item name="Changing Displaying Parameters" url="changing_display_parameters.htm" />
+    <book name="Creation of Geometric Objects" >
+      <item name="Basic Geometrical Objects" url="basic_geometrical_objects.htm" />
+      <item name="Primitives" url="primitives.htm" />
+      <item name="Complex Objects" url="complex_objects.htm" />
+      <item name="Working with Groups" url="groups.htm" />
+      <item name="Building by Blocks" url="building_by_blocks.htm" />
+      <item name="Sketcher" url="sketcher_tui.htm" />
+      <item name="Advanced Geometrical Objects" url="geometrical_objects.htm" />
+    </book>
+    <book name="Transformation" >
+      <item name="Basic Operations" url="basic_operations.htm" />
+      <item name="Boolean Operations" url="boolean_operations.htm" />
+      <item name="Transformation Operations" url="transformation_operations.htm" />
+      <item name="Blocks Operations" url="blocks_operations.htm" />
+      <item name="Repairing Operations" url="repairing_operations.htm" />
+    </book>
+    <item name="Measurement Tools" url="measurement_tools.htm" />
+    <item name="Module geompy" url="geompy_doc/namespacegeompy.html" />
+  </book>
+</book>
+
+</tocdata>

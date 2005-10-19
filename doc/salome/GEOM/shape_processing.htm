@@ -1,0 +1,302 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Shape Processing</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { border:none; width:25px; height:24px; border-style:none; }
+p.whs2 { font-size:12pt; }
+table.whs3 { x-cell-content-align:top; width:100%; border-spacing:0px; }
+col.whs4 { width:8.851%; }
+col.whs5 { width:91.149%; }
+tr.whs6 { x-cell-content-align:top; }
+td.whs7 { width:8.851%; border-left-width:1px; border-left-color:#000000; border-left-style:Solid; border-top-style:Solid; border-top-color:#000000; border-top-width:1px; border-right-width:1px; border-right-color:#000000; border-right-style:Solid; border-bottom-style:Solid; border-bottom-color:#000000; border-bottom-width:1px; padding-right:10px; padding-left:10px; }
+td.whs8 { width:91.149%; border-top-style:Solid; border-top-color:#000000; border-top-width:1px; border-right-width:1px; border-right-color:#000000; border-right-style:Solid; border-bottom-style:Solid; border-bottom-color:#000000; border-bottom-width:1px; padding-right:10px; padding-left:10px; }
+td.whs9 { width:8.851%; border-left-width:1px; border-left-color:#000000; border-left-style:Solid; border-right-width:1px; border-right-color:#000000; border-right-style:Solid; border-bottom-style:Solid; border-bottom-color:#000000; border-bottom-width:1px; padding-right:10px; padding-left:10px; }
+td.whs10 { width:91.149%; border-right-width:1px; border-right-color:#000000; border-right-style:Solid; border-bottom-style:Solid; border-bottom-color:#000000; border-bottom-width:1px; padding-right:10px; padding-left:10px; }
+p.whs11 { font-size:12pt; margin-left:40px; }
+img_whs12 { border:none; width:403px; height:469px; float:none; border-style:none; }
+img_whs13 { border:none; width:300px; height:214px; border-style:none; }
+img_whs14 { border:none; width:244px; height:214px; border-style:none; }
+p.whs15 { font-family:'Times New Roman' , serif; font-size:14pt; }
+p.whs16 { font-family:'Times New Roman' , serif; font-size:12pt; }
+img_whs17 { border:none; width:239px; height:214px; border-style:none; }
+p.whs18 { font-weight:bold; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTransforming geometrical objects\nRepairing Operations\nShape Processing");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><img src="image41.gif" width="25px" height="24px" border="0" class="img_whs1"></font></span>Shape Processing</h1>
+
+<p class="whs2"><b style="font-weight: normal;">T</b>o produce 
+ a <span style="font-weight: bold;"><B>Shape Processing</B></span> operation in 
+ the Main Menu select <span style="font-weight: bold;"><B>Repair - &gt;</B></span> 
+ <span style="font-weight: bold;"><B>Shape Processing.</B></span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">This operation processes a shape using various 
+ operators.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.ProcessShape(Shape, Operators, 
+ Parameters, Values)</I></span>, where Shape is a processed shape, Operators 
+ is a list of names of operators (&quot;FixShape&quot;, &quot;SplitClosedFaces&quot;, 
+ etc.), Parameters is a list of names of parameters (“FixShape.Tolerance3d”, 
+ etc), Values is a list of values of parameters in the same order as the 
+ Parameters list.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments:</b> 
+ 1 or more shapes.</p>
+
+<table x-use-null-cells cellspacing="0" width="100%" class="whs3">
+<script language='JavaScript'><!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4)) document.write("</table><table x-use-null-cells cellspacing='0' width='100%' border='1' bordercolor='black' bordercolorlight='black' bordercolordark='black'>");
+//--></script>
+<col class="whs4">
+<col class="whs5">
+
+<tr valign="top" class="whs6">
+<td width="8.851%" class="whs7">
+<p>1</td>
+<td width="91.149%" class="whs8">
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">SplitAngle – 
+ this operator is intended for splitting faces based on conical surfaces, 
+ surfaces of revolution and cylindrical surfaces by angle</font></span></p>
+<p class="whs2">SplitAngle.Angle – angle (in radians) defining 
+ size of result segments.</p>
+<p class="whs2">SplitAngle.MaxTolerance – maximal possible 
+ tolerance on result shape</td></tr>
+
+<tr valign="top" class="whs6">
+<td width="8.851%" class="whs9">
+<p>2</td>
+<td width="91.149%" class="whs10">
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">SplitClosedFaces 
+ – this operator is intended for dividing all closed faces in the shape 
+ according to the number of points.</font></span></p>
+<p class="whs2">SplitClosedFaces.NbSplitPoints – number of 
+ points for cutting each closed faces.</td></tr>
+
+<tr valign="top" class="whs6">
+<td width="8.851%" class="whs9">
+<p>3</td>
+<td width="91.149%" class="whs10">
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">FixFaceSize 
+ – this operator is intended for removing small faces (case of the spot 
+ face and strip face)</font></span></p>
+<p class="whs2">FixFaceSize.Tolerance – work tolerance defining 
+ which faces will be removed.</td></tr>
+
+<tr valign="top" class="whs6">
+<td width="8.851%" class="whs9">
+<p>4</td>
+<td width="91.149%" class="whs10">
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">DropSmallEdges 
+ – this operator is intended for removing small edges or merging with neigbour. 
+ &nbsp;</font></span></p>
+<p class="whs2">DropSmallEdges.Tolerance3d – work tolerance 
+ for detection and removing small edges.</td></tr>
+
+<tr valign="top" class="whs6">
+<td width="8.851%" class="whs9">
+<p>5</td>
+<td width="91.149%" class="whs10">
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">BsplineRestriction 
+ –this operator is intended for re-approximation BSplines curves and surfaces 
+ or conversion of the curves and surfaces to BSplines with specified parameters. 
+ </font></span></p>
+<p class="whs2">BSplineRestriction.SurfaceMode - mode of approximation 
+ of surfaces if restriction is necessary</p>
+<p class="whs2">BSplineRestriction.Curve3dMode -mode of conversion 
+ of any 3D curve to BSpline and approximation.</p>
+<p class="whs2">BSplineRestriction.Curve2dMode - mode of conversion 
+ of any 2D curve to BSpline and approximation</p>
+<p class="whs2">BSplineRestriction.Tolerance3d – work tolerance 
+ for definition of the possibility of the approximation of the surfaces 
+ and 3D curves with specified parameters.</p>
+<p class="whs2">BSplineRestriction.Tolerance2d - work tolerance 
+ for definition of the possibility of the approximation of the 2D curves 
+ with specified parameters.</p>
+<p class="whs2">BSplineRestriction.Continuity3d – desired continuity 
+ of the resultant surfaces and 3D curves.</p>
+<p class="whs2">BSplineRestriction.Continuity2d – desired continuity 
+ of the resultant 2D curves.</p>
+<p class="whs2">BSplineRestriction.RequiredDegree - required 
+ degree of the resultant BSplines</p>
+<p class="whs2">BSplineRestriction.RequiredNbSegments - required 
+ maximum number of segments of resultant BSp<span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">lines.</font></span></td></tr>
+
+<tr valign="top" class="whs6">
+<td width="8.851%" class="whs9">
+<p>6</td>
+<td width="91.149%" class="whs10">
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">SplitContinuity 
+ – this operator is intended for splitting shapes to achieve continuities 
+ of curves and surfaces less than specified ones. </font></span></p>
+<p class="whs2">SplitContinuity.Tolerance3d - 3D tolerance 
+ for correction of geometry.</p>
+<p class="whs2">SplitContinuity.SurfaceContinuity - required 
+ continuity for surfaces.</p>
+<p class="whs2">SplitContinuity.CurveContinuity - required 
+ continuity for curves.</td></tr>
+
+<tr valign="top" class="whs6">
+<td width="8.851%" class="whs9">
+<p>7</td>
+<td width="91.149%" class="whs10">
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">ToBezier - this 
+ operator is intended for conversion of the curves and surfaces of the 
+ all types into Bezier curves and surfaces. </font></span></p>
+<p class="whs2">ToBezier.SurfaceMode - mode of conversion of 
+ the surfaces.</p>
+<p class="whs2">ToBezier.Curve3dMode – mode for conversion 
+ of the 3D curves.</p>
+<p class="whs2">ToBezier.Curve2dMode – mode for conversion 
+ of the 2D curves.</p>
+<p class="whs2">ToBezier.MaxTolerance – max possible tolerance 
+ on the resultant shape.</td></tr>
+
+<tr valign="top" class="whs6">
+<td width="8.851%" class="whs9">
+<p>8</td>
+<td width="91.149%" class="whs10">
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">FixShape – this 
+ operator is intended for correction of the invalid shapes </font></span></p>
+<p class="whs2">FixShape.Tolerance3d – work tolerance for detection 
+ of the problems and correction of them.</p>
+<p class="whs2">FixShape.MaxTolerance3d - maximal possible 
+ tolerance of the shape after correction.</td></tr>
+
+<tr valign="top" class="whs6">
+<td width="8.851%" class="whs9">
+<p>9</td>
+<td width="91.149%" class="whs10">
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">SameParameter 
+ – this operator is intended for fixing edges having not same parameter 
+ 2D and 3D curves. </font></span></p>
+<p class="whs2">SameParameter.Tolerance3d – tolerance for detection 
+ and fix problems. </td></tr>
+<script language='JavaScript'><!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4)) document.write("</table></table><table>");
+//--></script>
+</table>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs11"><img src="pics/repair1.png" x-maintain-ratio="TRUE" width="403px" height="469px" border="0" class="img_whs12"> &nbsp;</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Example:</b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs2">Shape before applying Shape Processing (FixShape 
+ operator).</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs11"><img src="image154.jpg" width="300px" height="214px" border="0" class="img_whs13"> &nbsp;&nbsp;&nbsp;<img src="image156.jpg" width="244px" height="214px" border="0" class="img_whs14"></p>
+
+<p class="whs15">&nbsp;</p>
+
+<p class="whs16">The 
+ same shape after applying Shape Processing.</p>
+
+<p class="whs15">&nbsp;</p>
+
+<p class="whs11"><img src="image160.jpg" width="239px" height="214px" border="0" class="img_whs17"></p>
+
+<p class="whs18">&nbsp;</p>
+
+<p class="whs18"><span style="font-weight: normal;">Our</span> 
+ TUI Scripts<span style="font-weight: normal;"> provide you with useful 
+ examples of the use of</span> <a href="repairing_operations.htm#bookmark">Repairing 
+ Operations</a>. </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

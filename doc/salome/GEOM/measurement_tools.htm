@@ -1,0 +1,459 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Measurement Tools</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+p.whs2 { font-family:'Times New Roman' , serif; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nMeasurement Tools");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Measurement Tools</h1>
+
+<h3>Point Coordinates</h3>
+
+<p class="whs1">import geompy</p>
+
+<p>&nbsp;</p>
+
+<p># create a point</p>
+
+<p class="whs1">point = geompy.MakeVertex(15, 
+ 23, 80)</p>
+
+<p>&nbsp;</p>
+
+<p># get point's coordinates and check its values</p>
+
+<p class="whs1">coords = geompy.PointCoordinates(point)</p>
+
+<p class="whs1">if coords[0] != 15 
+ or coords[1] != 23 or coords[2] != 80 :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Coordinates of point must be (15, 23, 80), but returned (&quot;, 
+ coords[0], &quot;, &quot;, coords[1], &quot;, &quot;, coords[2], &quot;)&quot;</p>
+
+<p class="whs1">else :</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;All values are OK.&quot;</span> </p>
+
+<h3>Basic Properties</h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import math</p>
+
+<p>&nbsp;</p>
+
+<p># create a box</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(100,30,100)</p>
+
+<p class="whs1">props = geompy.BasicProperties(box)</p>
+
+<p class="whs1">print &quot;\nBox 
+ 100x30x100 Basic Properties:&quot;</p>
+
+<p class="whs1">print &quot; Wires 
+ length: &quot;, props[0]</p>
+
+<p class="whs1">print &quot; Surface 
+ area: &quot;, props[1]</p>
+
+<p class="whs1">print &quot; Volume 
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 
+ &quot;, props[2]</p>
+
+<p class="whs1">length = math.sqrt((props[0] 
+ - 1840)*(props[0] - 1840))</p>
+
+<p class="whs1">area = math.sqrt((props[1] 
+ - 32000)*(props[1] - 32000))</p>
+
+<p class="whs1">volume = math.sqrt((props[2] 
+ - 300000)*(props[2] - 300000))</p>
+
+<p class="whs1">if length &gt; 1e-7 
+ or area &gt; 1e-7 or volume &gt; 1e-7:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;While must be:&quot;</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot; Wires length: &quot;, 1840</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot; Surface area: &quot;, 32000</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot; Volume &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 
+ &quot;, 300000.</p>
+
+<h3>Center of masses</h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import math</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create a box</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(100,30,100)</p>
+
+<p class="whs1">cm = geompy.MakeCDG(box)</p>
+
+<p class="whs1">if cm is None:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;raise 
+ RuntimeError, &quot;MakeCDG(box) failed&quot;</p>
+
+<p class="whs1">else:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;\nCentre of gravity of box has been successfully obtained:&quot;</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;coords 
+ = geompy.PointCoordinates(cm)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;(&quot;, coords[0], &quot;, &quot;, coords[1], &quot;, &quot;, coords[2], 
+ &quot;)&quot;</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;dx 
+ = math.sqrt((coords[0] - 50)*(coords[0] - 50))</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;dy 
+ = math.sqrt((coords[1] - 15)*(coords[1] - 15))</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;dz 
+ = math.sqrt((coords[2] - 50)*(coords[2] - 50))</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;if 
+ dx &gt; 1e-7 or dy &gt; 1e-7 or dz &gt; 1e-7:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;But must be (50, 15, 50)&quot; </p>
+
+<h3>Inertia</h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import math</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create a box</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(100,30,100)</p>
+
+<p class="whs1">In = geompy.Inertia(box)</p>
+
+<p class="whs1">print &quot;\nInertia 
+ matrix of box 100x30x100:&quot;</p>
+
+<p class="whs1">print &quot; (&quot;, 
+ In[0], &quot;, &quot;, In[1], &quot;, &quot;, In[2], &quot;)&quot;</p>
+
+<p class="whs1">print &quot; (&quot;, 
+ In[3], &quot;, &quot;, In[4], &quot;, &quot;, In[5], &quot;)&quot;</p>
+
+<p class="whs1">print &quot; (&quot;, 
+ In[6], &quot;, &quot;, In[7], &quot;, &quot;, In[8], &quot;)&quot;</p>
+
+<p class="whs1">print &quot;Main moments 
+ of inertia of box 100x30x100:&quot;</p>
+
+<p class="whs1">print &quot; Ix = 
+ &quot;, In[9], &quot;, Iy = &quot;, In[10], &quot;, Iz = &quot;, In[11] 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3>Bounding Box</h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create a box</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(100,30,100)</p>
+
+<p class="whs1">bb = geompy.BoundingBox(box)</p>
+
+<p class="whs1">print &quot;\nBounding 
+ Box of box 100x30x100:&quot;</p>
+
+<p class="whs1">print &quot; Xmin 
+ = &quot;, bb[0], &quot;, Xmax = &quot;, bb[1]</p>
+
+<p class="whs1">print &quot; Ymin 
+ = &quot;, bb[2], &quot;, Ymax = &quot;, bb[3]</p>
+
+<p class="whs1">print &quot; Zmin 
+ = &quot;, bb[4], &quot;, Zmax = &quot;, bb[5] </p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3>Minimal Distance </h3>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create boxes</p>
+
+<p class="whs1">box1 = geompy.MakeBoxDXDYDZ(100,30,100)</p>
+
+<p class="whs1">box2 = geompy.MakeBox(105,0,0,200,30,100)</p>
+
+<p class="whs1">min_dist = geompy.MinDistance(box1,box2)</p>
+
+<p class="whs1">print &quot;\nMinimal 
+ distance between box1 and box2 = &quot;, min_dist </p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">Point Coordinates</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
+
+<p class="whs1"># create a point</p>
+
+<p class="whs1">point = geompy.MakeVertex(15, 
+ 23, 80)</p>
+
+<p class="whs1"># get point's coordinates 
+ and check its values</p>
+
+<p class="whs1">coords = geompy.PointCoordinates(point)</p>
+
+<p class="whs1">if coords[0] != 15 
+ or coords[1] != 23 or coords[2] != 80 :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Coordinates of point must be (15, 23, 80), but returned (&quot;, 
+ coords[0], &quot;, &quot;, coords[1], &quot;, &quot;, coords[2], &quot;)&quot;</p>
+
+<p class="whs1">else :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;All values are OK.&quot; </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3>Tolerance</h3>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create a box</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(100,30,100)</p>
+
+<p class="whs1">Toler = geompy.Tolerance(box)</p>
+
+<p class="whs1">print &quot;\nBox 
+ 100x30x100 tolerance:&quot;</p>
+
+<p class="whs1">print &quot; Face 
+ min. tolerance: &quot;, Toler[0]</p>
+
+<p class="whs1">print &quot; Face 
+ max. tolerance: &quot;, Toler[1]</p>
+
+<p class="whs1">print &quot; Edge 
+ min. tolerance: &quot;, Toler[2]</p>
+
+<p class="whs1">print &quot; Edge 
+ max. tolerance: &quot;, Toler[3]</p>
+
+<p class="whs1">print &quot; Vertex 
+ min. tolerance: &quot;, Toler[4]</p>
+
+<p class="whs1">print &quot; Vertex 
+ max. tolerance: &quot;, Toler[5] </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3>What Is</h3>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create a box</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(100,30,100)</p>
+
+<p class="whs1">Descr = geompy.WhatIs(box)</p>
+
+<p class="whs1">print &quot;\nBox 
+ 100x30x100 description:&quot;</p>
+
+<p class="whs1">print Descr </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3>Check Shape</h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create a box</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(100,30,100)</p>
+
+<p class="whs1">IsValid = geompy.CheckShape(box)</p>
+
+<p class="whs1">if IsValid == 0:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;raise 
+ RuntimeError, &quot;Invalid box created&quot;</p>
+
+<p class="whs1">else:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;\nBox is valid&quot; </p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3>Check Compound of Blocks</h3>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create boxes</p>
+
+<p class="whs1">box1 = geompy.MakeBox(0,0,0,100,50,100)</p>
+
+<p class="whs1">box2 = geompy.MakeBox(100,0,0,250,50,100)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># make compound</p>
+
+<p class="whs1">compound = geompy.MakeCompound([box1, 
+ box2])</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># glue compound's faces</p>
+
+<p class="whs1">tolerance = 1e-5</p>
+
+<p class="whs1">glue = geompy.MakeGlueFaces(compound, 
+ tolerance)</p>
+
+<p class="whs1">IsValid = geompy.CheckCompoundOfBlocks(glue)</p>
+
+<p class="whs1">if IsValid == 0:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;raise 
+ RuntimeError, &quot;Invalid compound created&quot;</p>
+
+<p class="whs1">else:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;\nCompound is valid&quot; </p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>
