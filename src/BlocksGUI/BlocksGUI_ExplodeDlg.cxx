@@ -125,6 +125,8 @@ BlocksGUI_ExplodeDlg::~BlocksGUI_ExplodeDlg()
 //=================================================================================
 void BlocksGUI_ExplodeDlg::Init()
 {
+  ResultName->setText("");
+
   // Set range of spinboxes
   double SpecificStep = 1.0;
   mySpinBoxMin->RangeStepAndValidator(0.0, 999.0, SpecificStep, 3);
