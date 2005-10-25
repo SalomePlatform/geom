@@ -232,7 +232,7 @@ void GEOMToolsGUI::OnEditDelete()
     SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
     SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
     if ( aSelMgr && appStudy ) {
-      aSelMgr->selectedObjects( selected );
+      aSelMgr->selectedObjects( selected, QString::null, false );
       if ( !selected.IsEmpty() ) {
 	_PTR(Study) aStudy = appStudy->studyDS();
 

@@ -54,7 +54,7 @@ bool GEOM_SelectionFilter::isOk( const SUIT_DataOwner* sOwner ) const
 // function : getObject
 // purpose  :
 //=======================================================================
-GEOM::GEOM_Object_ptr GEOM_SelectionFilter::getObject (const SUIT_DataOwner* sOwner) const
+GEOM::GEOM_Object_ptr GEOM_SelectionFilter::getObject( const SUIT_DataOwner* sOwner, const bool extractReference ) const
 {
   GEOM::GEOM_Object_var anObj;
 
@@ -65,7 +65,10 @@ GEOM::GEOM_Object_ptr GEOM_SelectionFilter::getObject (const SUIT_DataOwner* sOw
     _PTR(Study) study = appStudy->studyDS();
     QString entry = owner->entry();
 
-    _PTR(SObject) aSO (study->FindObjectID(entry.latin1()));
+    _PTR(SObject) aSO (study->FindObjectID(entry.latin1())), aRefSO;
+    if( extractReference && aSO && aSO->ReferencedObject( aRefSO ) )
+      aSO = aRefSO;
+
     if (aSO) {
       std::string aValue = aSO->GetIOR();
       if (strcmp(aValue.c_str(), "") != 0) {

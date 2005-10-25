@@ -20,7 +20,7 @@ public:
   virtual bool isOk( const SUIT_DataOwner* ) const;
 
 protected:
-  GEOM::GEOM_Object_ptr getObject( const SUIT_DataOwner* ) const;
+  GEOM::GEOM_Object_ptr getObject( const SUIT_DataOwner*, const bool = true ) const;
   bool                  getShape( const GEOM::GEOM_Object_ptr&, TopoDS_Shape& ) const;
   
   bool                  contains( const int ) const;
