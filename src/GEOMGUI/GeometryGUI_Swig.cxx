@@ -111,13 +111,20 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 
       CORBA::String_var aFatherIOR;
       SALOMEDS::SComponent_var father = aStudy->FindComponent("GEOM");
-      aStudyBuilder->DefineComponentInstance(father, Geom);
-      father->ComponentIOR(aFatherIOR);
+      if (father->_is_nil())
+        return;
+      if (!father->ComponentIOR(aFatherIOR)) {
+        aStudyBuilder->LoadWith(father, Geom);
+        father->ComponentIOR(aFatherIOR);
+      }
 
       SALOMEDS::SObject_var fatherSF =
         aStudy->FindObjectID(ActiveStudy->getActiveStudyFrame()->entry());
 
       SALOMEDS::SObject_var obj = aStudy->FindObjectID(myEntry.c_str());
+      if (obj->_is_nil())
+        return;
+
       SALOMEDS::GenericAttribute_var anAttr;
       SALOMEDS::AttributeIOR_var     anIOR;
       // Create new actor
@@ -129,7 +136,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
       GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(anIORValue);
       TopoDS_Shape Shape = ShapeReader.GetShape(Geom,aShape);
 
-      if (!obj->_is_nil()) {
+      if (!Shape.IsNull()) {
         if (obj->FindAttribute(anAttr, "AttributeName")) {
           SALOMEDS::AttributeName_var aName = SALOMEDS::AttributeName::_narrow(anAttr);
           CORBA::String_var aNameValue = aName->Value();
