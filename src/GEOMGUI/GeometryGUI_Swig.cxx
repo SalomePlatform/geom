@@ -133,19 +133,28 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
       _PTR(StudyBuilder) aStudyBuilder = aStudy->NewBuilder();
 
       GEOM::GEOM_Gen_var Geom = GeometryGUI::GetGeomGen();
+      if (CORBA::is_nil(Geom)) {
+        GeometryGUI::InitGeomGen();
+        Geom = GeometryGUI::GetGeomGen();
+      }
       if (CORBA::is_nil(Geom))
         return;
 
       string aFatherIOR;
       _PTR(SComponent) father = aStudy->FindComponent("GEOM");
-      aStudyBuilder->DefineComponentInstance
-        (father, SalomeApp_Application::orb()->object_to_string(Geom));
-      father->ComponentIOR(aFatherIOR);
+      if (!father)
+        return;
+      if (!father->ComponentIOR(aFatherIOR)) {
+        aStudyBuilder->LoadWith(father, SalomeApp_Application::orb()->object_to_string(Geom));
+        father->ComponentIOR(aFatherIOR);
+      }
 
       _PTR(SObject) obj = aStudy->FindObjectID(myEntry);
-      _PTR(GenericAttribute) anAttr;
+      if (!obj)
+        return;
 
       // Create new actor
+      _PTR(GenericAttribute) anAttr;
       if (!obj->FindAttribute(anAttr, "AttributeIOR"))
         return;
       _PTR(AttributeIOR) anIOR(anAttr);
@@ -153,7 +162,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 
       GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(anIORValue.c_str());
       TopoDS_Shape Shape = ShapeReader.GetShape(Geom,aShape);
-      if (obj) {
+      if (!Shape.IsNull()) {
         if (obj->FindAttribute(anAttr, "AttributeName")) {
           _PTR(AttributeName) aName (anAttr);
           string aNameValue = aName->Value();
@@ -186,7 +195,6 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 	      aRenderInter->Display(GActor);
 	    }
 	    aRenderInter->Update();
-	    cout << 8.2 << endl;   
 	  } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(app)) {
 	    Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
 	    Handle(GEOM_AISShape) aSh =
@@ -216,17 +224,17 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
     {
       public:
 	TEventUpdateBrowser() {}
-	virtual void Execute() {  
+	virtual void Execute() {
           SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>(SUIT_Session::session()->activeApplication());
           if (app) {
 	    CAM_Module* module = app->module("Geometry");
 	    SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>(module);
 	    if (appMod) appMod->updateObjBrowser(true);
-	  }  
+	  }
         }
     };
-    
-  ProcessVoidEvent(new TEventUpdateBrowser ());      	
+
+  ProcessVoidEvent(new TEventUpdateBrowser ());
 }
 
 
