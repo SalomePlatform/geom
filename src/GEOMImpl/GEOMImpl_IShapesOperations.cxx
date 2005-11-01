@@ -1,28 +1,29 @@
 #include <Standard_Stream.hxx>
 
-#include <GEOMImpl_IShapesOperations.hxx>
+#include "GEOMImpl_IShapesOperations.hxx"
 
-#include <GEOMImpl_Types.hxx>
+#include "GEOMImpl_Types.hxx"
 
-#include <GEOMImpl_VectorDriver.hxx>
-#include <GEOMImpl_ShapeDriver.hxx>
-#include <GEOMImpl_CopyDriver.hxx>
-#include <GEOMImpl_GlueDriver.hxx>
+#include "GEOMImpl_VectorDriver.hxx"
+#include "GEOMImpl_ShapeDriver.hxx"
+#include "GEOMImpl_CopyDriver.hxx"
+#include "GEOMImpl_GlueDriver.hxx"
 
-#include <GEOMImpl_IVector.hxx>
-#include <GEOMImpl_IShapes.hxx>
-#include <GEOMImpl_IGlue.hxx>
+#include "GEOMImpl_IVector.hxx"
+#include "GEOMImpl_IShapes.hxx"
+#include "GEOMImpl_IGlue.hxx"
 
-#include <GEOMImpl_Block6Explorer.hxx>
+#include "GEOMImpl_Block6Explorer.hxx"
 
-#include <GEOM_Function.hxx>
-#include <GEOM_PythonDump.hxx>
+#include "GEOM_Function.hxx"
+#include "GEOM_PythonDump.hxx"
 
-#include <GEOMAlgo_FinderShapeOn1.hxx>
+#include "GEOMAlgo_FinderShapeOn1.hxx"
+#include "GEOMAlgo_FinderShapeOnQuad.hxx"
 
 #include "utilities.h"
-#include <OpUtil.hxx>
-#include <Utils_ExceptHandlers.hxx>
+#include "OpUtil.hxx"
+#include "Utils_ExceptHandlers.hxx"
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
@@ -69,10 +70,6 @@
 #include <gp_Lin.hxx>
 #include <TColStd_Array1OfReal.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
-#include <TColStd_ListOfInteger.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <TColStd_DataMapOfIntegerInteger.hxx>
-#include <TColStd_DataMapIteratorOfDataMapOfIntegerInteger.hxx>
 
 #include <vector>
 //#include <iostream>
@@ -1381,6 +1378,25 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnSphe
   SetErrorCode(OK);
   return aSeq;
 }
+
+//=======================================================================
+//function : getCreatedLast
+  /*!
+   * \brief Select the object created last
+    * \param theObj1 - Object 1
+    * \param theObj2 - Object 2
+    * \retval Handle(GEOM_Object) - selected object
+   */
+//=======================================================================
+
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::getCreatedLast(const Handle(GEOM_Object)& theObj1,
+                                                               const Handle(GEOM_Object)& theObj2)
+{
+  if ( theObj1.IsNull() ) return theObj2;
+  if ( theObj2.IsNull() ) return theObj1;
+  return ( theObj1->GetEntry().Tag() > theObj2->GetEntry().Tag() ) ? theObj1 : theObj2;
+}
+
 //=============================================================================
 /*!
  *  GetShapesOnPlaneIDs
@@ -1415,12 +1431,12 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnPlaneI
   aSeq = getShapesOnSurfaceIDs( aPlane, aShape, aShapeType, theState );
 
   // The GetShapesOnPlaneIDs() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = getCreatedLast(theShape,theAx1)->GetLastFunction();
 
   // Make a Python command
   const bool append = true;
   GEOM::TPythonDump(aFunction,append)
-    << "listShapesOnPlane = IShapesOperations.GetShapesOnPlaneIDs"
+    << "listShapesOnPlane = geompy.GetShapesOnPlaneIDs"
     << "(" << theShape << "," << theShapeType << "," << theAx1 << "," << theState << ")";
 
   SetErrorCode(OK);
@@ -1462,12 +1478,12 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylind
   aSeq = getShapesOnSurfaceIDs( aCylinder, aShape, aShapeType, theState );
 
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = getCreatedLast(theShape,theAxis)->GetLastFunction();
 
   // Make a Python command
   const bool append = true;
   GEOM::TPythonDump(aFunction,append)
-    << "listShapesOnCylinder = IShapesOperations.GetShapesOnCylinderIDs"
+    << "listShapesOnCylinder = geompy.GetShapesOnCylinderIDs"
     << "(" << theShape << ", " << theShapeType << ", " << theAxis << ", "
     << theRadius << ", " << theState << ")";
 
@@ -1513,12 +1529,12 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnSphere
   aSeq = getShapesOnSurfaceIDs( aSphere, aShape, aShapeType, theState );
   
   // The GetShapesOnSphere() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = getCreatedLast(theShape,theCenter)->GetLastFunction();
 
   // Make a Python command
   const bool append = true;
   GEOM::TPythonDump(aFunction,append)
-    << "listShapesOnCylinder = IShapesOperations.GetShapesOnCylinderIDs"
+    << "listShapesOnCylinder = geompy.GetShapesOnCylinderIDs"
     << "(" << theShape << ", " << theShapeType << ", " << theCenter << ", "
     << theRadius << ", " << theState << ")";
 
@@ -1580,109 +1596,75 @@ Handle(TColStd_HSequenceOfInteger)
   if ( !checkTypeShapesOn( aShapeType ))
     return NULL;
 
-  vector< gp_Pnt > points(4);
-  points[0] = BRep_Tool::Pnt(TopoDS::Vertex(aTL));
-  points[1] = BRep_Tool::Pnt(TopoDS::Vertex(aTR));
-  points[2] = BRep_Tool::Pnt(TopoDS::Vertex(aBR));
-  points[3] = BRep_Tool::Pnt(TopoDS::Vertex(aBL));
+  Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
 
-  // Algo: for each pair of neighboring point of a quadrangle, make a plane
-  // and find subshape indices having theState. Then
-  // - for IN state, find indices common for all pairs.
-  // - else, keep IDs that are OK for any plane
-  const bool keepOkOnAllPlanes = ( theState == GEOMAlgo_ST_IN ||
-                                   theState == GEOMAlgo_ST_ONIN ||
-                                   theState == GEOMAlgo_ST_INOUT );
+  // Check presence of triangulation, build if need
+  if (!CheckTriangulation(aShape))
+    return aSeqOfIDs;
 
-  // Find plane normal defined by corner points, it will be used to define a plane
-  // for each pair of points. For that, find non coincident corner points
-  vector< gp_Pnt > farPoints;
-  farPoints.reserve( 5 );
-  farPoints.push_back( points[0] );
-  for ( int i = 1; i < 4; ++i )
-  {
-    // check if i-th point is far from all farPoints
-    bool tooClose = false;
-    vector< gp_Pnt >::iterator p = farPoints.begin();
-    for ( ; p != farPoints.end(); ++p )
-      if ( p->SquareDistance( points[ i ]) <= DBL_MIN )
-        tooClose = true;
-    if ( !tooClose )
-      farPoints.push_back( points[ i ]);
+  // Call algo
+  gp_Pnt aPntTL = BRep_Tool::Pnt(TopoDS::Vertex(aTL));
+  gp_Pnt aPntTR = BRep_Tool::Pnt(TopoDS::Vertex(aTR));
+  gp_Pnt aPntBL = BRep_Tool::Pnt(TopoDS::Vertex(aBL));
+  gp_Pnt aPntBR = BRep_Tool::Pnt(TopoDS::Vertex(aBR));
+
+  GEOMAlgo_FinderShapeOnQuad aFinder( aPntTL, aPntTR, aPntBL, aPntBR );
+  Standard_Real aTol = 0.0001; // default value
+
+  aFinder.SetShape(aShape);
+  aFinder.SetTolerance(aTol);
+  //aFinder.SetSurface(theSurface);
+  aFinder.SetShapeType(aShapeType);
+  aFinder.SetState(theState);
+
+  // Sets the minimal number of inner points for the faces that do not have own
+  // inner points at all (for e.g. rectangular planar faces have just 2 triangles).
+  // Default value=3
+  aFinder.SetNbPntsMin(3);
+  // Sets the maximal number of inner points for edges or faces.
+  // It is usefull for the cases when this number is very big (e.g =2000) to improve
+  // the performance. If this value =0, all inner points will be taken into account.
+  // Default value=0
+  aFinder.SetNbPntsMax(100);
+
+  aFinder.Perform();
+
+  // Interprete results
+  Standard_Integer iErr = aFinder.ErrorStatus();
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iErr) {
+    MESSAGE(" iErr : " << iErr);
+    TCollection_AsciiString aMsg (" iErr : ");
+    aMsg += TCollection_AsciiString(iErr);
+    SetErrorCode(aMsg);
+    return aSeqOfIDs;
   }
-  if ( farPoints.size() < 3 ) {
-    SetErrorCode("Coincident input points");
-    return NULL;
-  }
-  gp_Vec aVecX =
-    gp_Vec( farPoints[0], farPoints[1] ) ^ gp_Vec( farPoints[0], farPoints[2] );
-  //std::cout << " X Vec : " << aVecX.X() << " " <<aVecX.Y() << " " <<aVecX.Z() << " " << endl;
-
-  // Use datamap to find IDs which have good state with all planes:
-  // count nb of OK states for each ID
-  TColStd_DataMapOfIntegerInteger nbOkStatesOfID;
-
-  // loop on point pairs
-  int nbPlanes = 0;
-  farPoints[ farPoints.size() ] = farPoints[ 0 ];
-  for ( int i = 0; i < farPoints.size(); ++i )
-  {
-    // point1 -> point2 vector
-    gp_Vec aVecY( farPoints[ i ], farPoints[ i + 1 ]);
-    //std::cout << " Y Vec : " << aVecY.X() << " " <<aVecY.Y() << " " <<aVecY.Z() << " " << endl;
-
-  // plane normal
-    gp_Vec aVecZ = aVecX ^ aVecY;
-    //std::cout << " Z Vec : " << aVecZ.X() << " " <<aVecZ.Y() << " " <<aVecZ.Z() << " " << endl;
-    if ( aVecZ.SquareMagnitude() <= DBL_MIN )
-      continue;
-
-    // Check that normal direction is outside a quadrangle
-    // (Suppose there are no concave corners in a quadrangle)
-    int iPrev = i ? i - 1 : farPoints.size() - 1;
-    if ( aVecZ * gp_Vec( farPoints[ i ], farPoints[ iPrev ]) >= 0. )
-      aVecZ.Reverse();
-
-    ++nbPlanes;
-    Handle(Geom_Plane) aPlane = new Geom_Plane( farPoints[ i ], aVecZ );
-  
-    // Find subshape indices
-    Handle(TColStd_HSequenceOfInteger) aSeq;
-    aSeq = getShapesOnSurfaceIDs( aPlane, aShape, aShapeType, theState );
-
-    if ( aSeq.IsNull() || aSeq->Length() == 0 )
-    {
-      if ( keepOkOnAllPlanes )
-        return NULL;
-    }
-    else
-    {
-      // put IDs to the datamap
-      //std::cout << " IDS in plane " << nbPlanes << " : ";
-      for ( int iID = 1; iID <= aSeq->Length(); ++iID )
-      {
-        int id = aSeq->Value( iID );
-        //std::cout << id << " ";
-        if ( nbOkStatesOfID.IsBound( id ))
-          nbOkStatesOfID( id )++;
-        else
-          nbOkStatesOfID.Bind( id, 1 );
-      }
-      //std::cout << endl;
-    }
+  Standard_Integer iWrn = aFinder.WarningStatus();
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iWrn) {
+    MESSAGE(" *** iWrn : " << iWrn);
   }
 
-  // select IDs that are OK with all planes
-  Handle(TColStd_HSequenceOfInteger) aSeq = new TColStd_HSequenceOfInteger;
-  TColStd_DataMapIteratorOfDataMapOfIntegerInteger id_nb;
-  for ( id_nb.Initialize( nbOkStatesOfID ); id_nb.More(); id_nb.Next() )
-  {
-    //std::cout << id_nb.Key() << " in " << id_nb.Value() << " planes " << endl;
-    if ( !keepOkOnAllPlanes || id_nb.Value() == nbPlanes )
-      aSeq->Append( id_nb.Key() );
+  const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
+
+  if (listSS.Extent() < 1) {
+    SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    return aSeqOfIDs;
   }
-  return aSeq;
-}    
+
+  // Fill sequence of object IDs
+  aSeqOfIDs = new TColStd_HSequenceOfInteger;
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+
+  TopTools_ListIteratorOfListOfShape itSub (listSS);
+  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+    int id = anIndices.FindIndex(itSub.Value());
+    aSeqOfIDs->Append(id);
+  }
+  return aSeqOfIDs;
+}
 
 //=======================================================================
 //function : GetShapesOnQuadrangle
@@ -1785,7 +1767,11 @@ Handle(TColStd_HSequenceOfInteger)
   // Make a Python command
 
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Object) lastObj = getCreatedLast(theShape,theTopLeftPoint);
+  lastObj = getCreatedLast(lastObj,theTopRigthPoint);
+  lastObj = getCreatedLast(lastObj,theBottomRigthPoint);
+  lastObj = getCreatedLast(lastObj,theBottomLeftPoint);
+  Handle(GEOM_Function) aFunction = lastObj->GetLastFunction();
 
   const bool append = true;
   GEOM::TPythonDump(aFunction,append)

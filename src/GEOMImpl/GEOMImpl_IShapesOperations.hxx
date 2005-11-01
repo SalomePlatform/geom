@@ -251,7 +251,15 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
     getObjectsShapesOn(const Handle(GEOM_Object)&                theShape,
                        const Handle(TColStd_HSequenceOfInteger)& theShapeIDs,
                        TCollection_AsciiString &                 theShapeEntries);
-                      
+
+  /*!
+   * \brief Select the object created last
+    * \param theObj1 - Object 1
+    * \param theObj2 - Object 2
+    * \retval Handle(GEOM_Object) - selected object
+   */
+  static Handle(GEOM_Object) getCreatedLast(const Handle(GEOM_Object)& theObj1,
+                                            const Handle(GEOM_Object)& theObj2);
 };
 
 #endif
