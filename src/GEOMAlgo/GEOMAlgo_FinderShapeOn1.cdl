@@ -15,6 +15,7 @@ uses
     Surface from GeomAdaptor, 
      
     ShapeEnum from TopAbs, 
+    State from TopAbs,
     Face from TopoDS, 
     Edge from TopoDS, 
     ListOfShape from TopTools,  
@@ -105,6 +106,9 @@ is
     	returns IndexedDataMapOfShapeState from GEOMAlgo; 
     ---C++:return const &  	
     
+    GetPointState(me:out; aP: Pnt from gp)
+        returns State from TopAbs is virtual protected;
+
 fields
     mySurface   : Surface from Geom is protected;  
     myShapeType : ShapeEnum from TopAbs is protected;  

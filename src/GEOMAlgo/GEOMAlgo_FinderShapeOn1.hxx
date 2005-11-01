@@ -111,6 +111,7 @@ Standard_EXPORT   void ProcessSolids() ;
 Standard_EXPORT   void InnerPoints(const TopoDS_Face& aF,GEOMAlgo_ListOfPnt& aLP) ;
 Standard_EXPORT   void InnerPoints(const TopoDS_Edge& aE,GEOMAlgo_ListOfPnt& aLP) ;
 Standard_EXPORT   void InnerPoints(const TopoDS_Edge& aE,const Standard_Integer aNbPnts,GEOMAlgo_ListOfPnt& aLP) ;
+Standard_EXPORT virtual TopAbs_State GetPointState(const gp_Pnt& aP) ;
 
 
  // Fields PROTECTED

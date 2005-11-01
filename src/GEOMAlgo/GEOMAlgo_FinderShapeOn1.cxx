@@ -252,7 +252,7 @@ void GEOMAlgo_FinderShapeOn1::ProcessVertices()
     const TopoDS_Vertex& aV=TopoDS::Vertex(aM(i));
     aP=BRep_Tool::Pnt(aV);
     //
-    GEOMAlgo_SurfaceTools::GetState(aP, myGAS, myTolerance, aSt);
+    aSt = GetPointState( aP );
     bIsConformState=GEOMAlgo_SurfaceTools::IsConformState(aSt, myState);
     //
     if (myShapeType==TopAbs_VERTEX){
@@ -344,7 +344,7 @@ void GEOMAlgo_FinderShapeOn1::ProcessEdges()
       }
       //
       const gp_Pnt& aP=aIt.Value();
-      GEOMAlgo_SurfaceTools::GetState(aP, myGAS, myTolerance, aSt);
+      aSt = GetPointState( aP );
       bIsToBreak=aSC.AppendState(aSt);
       if (bIsToBreak) {
 	break;
@@ -434,7 +434,7 @@ void GEOMAlgo_FinderShapeOn1::ProcessFaces()
       }
       //
       const gp_Pnt& aP=aIt.Value();
-      GEOMAlgo_SurfaceTools::GetState(aP, myGAS, myTolerance, aSt);
+      aSt = GetPointState( aP );
       bIsToBreak=aSC.AppendState(aSt);
       if (bIsToBreak) {
 	break;
@@ -754,6 +754,19 @@ void GEOMAlgo_FinderShapeOn1::CheckData()
     myErrorStatus=14; // unallowed surface type
   }
 }
+
+//=======================================================================
+//function : GetPointState
+//purpose  : 
+//=======================================================================
+
+TopAbs_State GEOMAlgo_FinderShapeOn1::GetPointState(const gp_Pnt& aP) 
+{
+  TopAbs_State aSt;
+  GEOMAlgo_SurfaceTools::GetState(aP, myGAS, myTolerance, aSt);
+  return aSt;
+}
+
 
 //
 // myErrorStatus :
