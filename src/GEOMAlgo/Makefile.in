@@ -49,6 +49,7 @@ LIB_SRC = \
 	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_0.cxx \
 	GEOMAlgo_DataMapOfPassKeyInteger_0.cxx \
 	GEOMAlgo_FinderShapeOn1.cxx \
+	GEOMAlgo_FinderShapeOnQuad.cxx \
 	GEOMAlgo_GlueAnalyser.cxx \
 	GEOMAlgo_Gluer.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape_0.cxx \
@@ -87,6 +88,7 @@ EXPORT_HEADERS = \
 	GEOMAlgo_GlueAnalyser.hxx \
 	GEOMAlgo_Gluer.hxx \
 	GEOMAlgo_FinderShapeOn1.hxx \
+	GEOMAlgo_FinderShapeOnQuad.hxx \
 	GEOMAlgo_IndexedDataMapOfShapeState.hxx \
 	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx \
 	GEOMAlgo_ListOfCoupleOfShapes.hxx \
