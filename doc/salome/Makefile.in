@@ -25,9 +25,9 @@ distclean: clean
 	rm -fr GEOM
 
 install:
+	$(MAKE) docs
 	mkdir -p $(docdir)
 	cp -rf GEOM $(docdir)
-	-find $(PWD) -name CVS -exec rm -rf {} \;
 
 uninstall:
 	rm -rf $(docdir)/GEOM
