@@ -1,7 +1,7 @@
 #include "GEOM_OCCFilter.h"
 
-#include <SalomeApp_SelectionMgr.h> 
-#include <SalomeApp_DataOwner.h>
+#include <LightApp_SelectionMgr.h> 
+#include <LightApp_DataOwner.h>
 
 #include <SALOME_InteractiveObject.hxx>
 
@@ -15,7 +15,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOM_OCCFilter, SelectMgr_Filter)
 // function : GEOM_OCCFilter
 // purpose  : 
 //=======================================================================
-GEOM_OCCFilter::GEOM_OCCFilter( SalomeApp_SelectionMgr* theSelMgr )
+GEOM_OCCFilter::GEOM_OCCFilter( LightApp_SelectionMgr* theSelMgr )
   : SelectMgr_Filter()
 {
   mySelMgr = theSelMgr;
@@ -42,5 +42,5 @@ Standard_Boolean GEOM_OCCFilter::IsOk( const Handle(SelectMgr_EntityOwner)& anOb
   Handle(SALOME_InteractiveObject) anIO = Handle(SALOME_InteractiveObject)::DownCast(anAIS->GetOwner()); 
   if ( anIO.IsNull() ) return false;
   
-  return mySelMgr->isOk( new SalomeApp_DataOwner( QString( anIO->getEntry() ) ) );
+  return mySelMgr->isOk( new LightApp_DataOwner( QString( anIO->getEntry() ) ) );
 }

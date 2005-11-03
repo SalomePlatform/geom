@@ -33,7 +33,7 @@
 #include "SUIT_Session.h"
 #include "OCCViewer_ViewModel.h"
 #include "SalomeApp_Application.h"
-#include "SalomeApp_SelectionMgr.h"
+#include "LightApp_SelectionMgr.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
 
 #include <TColStd_IndexedMapOfInteger.hxx>

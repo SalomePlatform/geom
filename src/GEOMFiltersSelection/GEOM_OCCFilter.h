@@ -5,18 +5,18 @@
 
 #include <Standard_DefineHandle.hxx>
 
-class SalomeApp_SelectionMgr;
+class LightApp_SelectionMgr;
 
 class GEOM_OCCFilter : public SelectMgr_Filter
 {
 public:
-  Standard_EXPORT GEOM_OCCFilter( SalomeApp_SelectionMgr* theSelMgr);
+  Standard_EXPORT GEOM_OCCFilter( LightApp_SelectionMgr* theSelMgr);
   Standard_EXPORT ~GEOM_OCCFilter();
   
   Standard_EXPORT virtual Standard_Boolean IsOk( const Handle(SelectMgr_EntityOwner)& anObj ) const;
     
 private:
-  SalomeApp_SelectionMgr* mySelMgr;
+  LightApp_SelectionMgr* mySelMgr;
 
 public:
   

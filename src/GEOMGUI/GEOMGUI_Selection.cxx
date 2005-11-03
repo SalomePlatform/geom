@@ -3,7 +3,7 @@
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
 
-#include <SalomeApp_DataOwner.h>
+#include <LightApp_DataOwner.h>
 #include <SalomeApp_Study.h>
 
 #include <OCCViewer_ViewModel.h>
@@ -47,8 +47,8 @@ GEOMGUI_Selection::~GEOMGUI_Selection()
 QtxValue GEOMGUI_Selection::globalParam( const QString& p ) const
 {
   if ( p == "isOCC" ) return QtxValue( activeViewType() == OCCViewer_Viewer::Type() );
-
-  return SalomeApp_Selection::globalParam( p );
+ 
+  return LightApp_Selection::globalParam( p );
 }
 
 QtxValue GEOMGUI_Selection::param( const int ind, const QString& p ) const
@@ -61,7 +61,7 @@ QtxValue GEOMGUI_Selection::param( const int ind, const QString& p ) const
   else if ( p == "displaymode" )
     return QtxValue( displayMode( ind ) );
   else
-    return SalomeApp_Selection::param( ind, p );
+    return LightApp_Selection::param( ind, p );
 }
 
 QString GEOMGUI_Selection::typeName( const int index ) const

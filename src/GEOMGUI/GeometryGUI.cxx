@@ -48,10 +48,10 @@
 #include <SVTK_ViewManager.h>
 
 #include <SalomeApp_Application.h>
-#include <SalomeApp_SelectionMgr.h>
-#include <SalomeApp_VTKSelector.h>
+#include <LightApp_SelectionMgr.h>
+#include <LightApp_VTKSelector.h>
 #include <SalomeApp_Study.h>
-#include <SalomeApp_Preferences.h>
+#include <LightApp_Preferences.h>
 #include <SALOME_LifeCycleCORBA.hxx>
 #include <SALOME_ListIO.hxx>
 
@@ -1105,7 +1105,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
     it.data()->activate( application()->desktop() );
 
-  SalomeApp_SelectionMgr* sm = getApp()->selectionMgr();
+  LightApp_SelectionMgr* sm = getApp()->selectionMgr();
   SUIT_ViewManager* vm;
   ViewManagerList OCCViewManagers, VTKViewManagers;
   application()->viewManagers( OCCViewer_Viewer::Type(), OCCViewManagers );
@@ -1113,7 +1113,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
   application()->viewManagers( SVTK_Viewer::Type(), VTKViewManagers );
   for ( vm = VTKViewManagers.first(); vm; vm = VTKViewManagers.next() )
-    myVTKSelectors.append( new SalomeApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
+    myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
 
   // disable OCC selectors
   getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
@@ -1122,7 +1122,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   
   // disable VTK selectors
   getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
-  for ( SalomeApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
+  for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
     sr->setEnabled(true);
   
   return true;
@@ -1512,7 +1512,7 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
 {
   if ( vm->getType() == OCCViewer_Viewer::Type() )
   {
-    SalomeApp_SelectionMgr* sm = getApp()->selectionMgr();
+    LightApp_SelectionMgr* sm = getApp()->selectionMgr();
     myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
 
     // disable OCC selectors
@@ -1522,12 +1522,12 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
   }
   else if ( vm->getType() == SVTK_Viewer::Type() )
   {
-    SalomeApp_SelectionMgr* sm = getApp()->selectionMgr();
-    myVTKSelectors.append( new SalomeApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
-    
+    LightApp_SelectionMgr* sm = getApp()->selectionMgr();
+    myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
+
     // disable VTK selectors
     getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
-    for ( SalomeApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
+    for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
       sr->setEnabled(true);
   }
 }
@@ -1546,7 +1546,7 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
   }
   if ( vm->getType() == SVTK_Viewer::Type() )
   {
-    for ( SalomeApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
+    for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
       if ( sr->viewer() == viewer )
       {
 	myVTKSelectors.remove( sr );
@@ -1562,7 +1562,7 @@ QString GeometryGUI::engineIOR() const
   return QString( "" );
 }
 
-SalomeApp_Selection* GeometryGUI::createSelection() const
+LightApp_Selection* GeometryGUI::createSelection() const
 {
   return new GEOMGUI_Selection();
 }
@@ -1588,11 +1588,11 @@ void GeometryGUI::createPreferences()
 
   int genGroup = addPreference( tr( "PREF_GROUP_GENERAL" ), tabId );
   addPreference( tr( "PREF_SHADING_COLOR" ), genGroup,
-		 SalomeApp_Preferences::Color, "Geometry", "shading_color" );
+		 LightApp_Preferences::Color, "Geometry", "shading_color" );
   int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
-			    SalomeApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
+			    LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
   int dispmode = addPreference( tr( "PREF_DISPLAY_MODE" ), genGroup,
-			    SalomeApp_Preferences::Selector, "Geometry", "display_mode" );
+			    LightApp_Preferences::Selector, "Geometry", "display_mode" );
 
   setPreferenceProperty( genGroup, "columns", 1 );
 
@@ -1617,7 +1617,7 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
 {
 }
 
-SalomeApp_Displayer* GeometryGUI::displayer()
+LightApp_Displayer* GeometryGUI::displayer()
 {
   if( !myDisplayer )
     myDisplayer = new GEOM_Displayer( dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) );

@@ -31,7 +31,7 @@
 #include "SUIT_Desktop.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
-#include "SalomeApp_SelectionMgr.h"
+#include "LightApp_SelectionMgr.h"
 
 #include <GeomFill_SectionGenerator.hxx>
 #include <GeomFill_Line.hxx>

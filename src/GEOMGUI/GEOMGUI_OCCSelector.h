@@ -1,9 +1,9 @@
 #ifndef GEOMGUI_OCCSELECTOR_H
 #define GEOMGUI_OCCSELECTOR_H
 
-#include <SalomeApp_OCCSelector.h>
+#include <LightApp_OCCSelector.h>
 
-class GEOMGUI_OCCSelector : public SalomeApp_OCCSelector
+class GEOMGUI_OCCSelector : public LightApp_OCCSelector
 {
 public:
   GEOMGUI_OCCSelector( OCCViewer_Viewer*, SUIT_SelectionMgr* );

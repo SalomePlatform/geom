@@ -36,7 +36,7 @@
 #include "SUIT_MessageBox.h"
 #include "SalomeApp_Application.h"
 #include "SalomeApp_Study.h"
-#include "SalomeApp_SelectionMgr.h"
+#include "LightApp_SelectionMgr.h"
 
 GroupGUI* GroupGUI::myGUIObject = 0;
 
@@ -105,7 +105,7 @@ bool GroupGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   
       SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
       if ( app ) {
-	SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+	LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
 	if ( aSelMgr )
 	  aSelMgr->selectedObjects( aList );
       }

@@ -43,7 +43,7 @@
 #include <SalomeApp_Module.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
-#include <SalomeApp_SelectionMgr.h>
+#include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Tools.h>
 #include <SalomeApp_DataModel.h>
 #include <SalomeApp_Module.h>
@@ -926,7 +926,7 @@ const SALOME_ListIO& GEOMBase_Helper::selectedIO()
 
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( app ) {
-    SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
     if ( aSelMgr )
       aSelMgr->selectedObjects( mySelected );
   }

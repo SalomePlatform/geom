@@ -70,7 +70,8 @@ typedef QMap<QString, GEOMGUI*> GUIMap;
 class QDialog;
 class QPopupMenu;
 class GEOMGUI_OCCSelector;
-class SalomeApp_VTKSelector;
+class LightApp_VTKSelector;
+class LightApp_Selection;
 class SUIT_ViewManager;
 
 //=================================================================================
@@ -88,7 +89,7 @@ public:
   // Destructor
   ~GeometryGUI();
 
-  virtual SalomeApp_Displayer* displayer();
+  virtual LightApp_Displayer* displayer();
   virtual void                initialize( CAM_Application* );
   virtual QString             engineIOR() const;
 
@@ -157,7 +158,7 @@ signals :
   void                        SignalDefaultStepValueChanged( double newVal );
 
 protected:
-  virtual SalomeApp_Selection* createSelection() const;
+  virtual LightApp_Selection* createSelection() const;
 
 private:
   GEOMGUI*                    getLibrary( const QString& libraryName );
@@ -181,9 +182,9 @@ private:
   QMap<int,QString>           myRules;           // popup rules
 
   QPtrList<GEOMGUI_OCCSelector>   myOCCSelectors;
-  QPtrList<SalomeApp_VTKSelector> myVTKSelectors;
+  QPtrList<LightApp_VTKSelector> myVTKSelectors;
 
-  SalomeApp_Displayer*        myDisplayer;
+  LightApp_Displayer*         myDisplayer;
 
 friend class DisplayGUI;
 };

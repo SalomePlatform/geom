@@ -33,7 +33,7 @@
 #include "GEOMImpl_Types.hxx"
 
 #include "SalomeApp_Application.h"
-#include "SalomeApp_SelectionMgr.h"
+#include "LightApp_SelectionMgr.h"
 #include "SUIT_Session.h"
 
 #include <TColStd_MapOfInteger.hxx>

@@ -32,7 +32,7 @@
 #include "GeometryGUI.h"
 
 #include "SalomeApp_Application.h"
-#include "SalomeApp_SelectionMgr.h"
+#include "LightApp_SelectionMgr.h"
 #include "SalomeApp_Tools.h"
 #include "SUIT_Session.h"
 #include "SUIT_OverrideCursor.h"
@@ -113,7 +113,7 @@ void MeasureGUI_Skeleton::Init()
   connect( mySelBtn,    SIGNAL( clicked() ),
            this,        SLOT  ( SetEditCurrentArgument() ) );
 
-  SalomeApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+  LightApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
   if ( aSel )
     connect( aSel, SIGNAL( currentSelectionChanged() ), 
 	     this, SLOT  ( SelectionIntoArgument() ) ) ;
@@ -163,7 +163,7 @@ void MeasureGUI_Skeleton::DeactivateActiveDialog()
 {
   setEnabled( false );
   
-  SalomeApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+  LightApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
   if ( aSel )
     disconnect( aSel, 0, this, 0 );
   
@@ -185,7 +185,7 @@ void MeasureGUI_Skeleton::ActivateThisDialog()
   
   myGeomGUI->SetActiveDialogBox( ( QDialog* )this );
 
-  SalomeApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+  LightApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
   if ( aSel )
     connect( aSel, SIGNAL( currentSelectionChanged() ), 
 	     this, SLOT  ( SelectionIntoArgument() ) ) ;
@@ -245,7 +245,7 @@ void MeasureGUI_Skeleton::processObject()
 //=================================================================================
 void MeasureGUI_Skeleton::closeEvent( QCloseEvent* e )
 {
-  SalomeApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+  LightApp_SelectionMgr* aSel = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
   if ( aSel )
     disconnect( aSel, 0, this, 0 );
   QDialog::closeEvent( e );

@@ -32,7 +32,7 @@
 #include "utilities.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
-#include "SalomeApp_SelectionMgr.h"
+#include "LightApp_SelectionMgr.h"
 
 #include <TColStd_MapOfInteger.hxx>
 #include <TopAbs_ShapeEnum.hxx>

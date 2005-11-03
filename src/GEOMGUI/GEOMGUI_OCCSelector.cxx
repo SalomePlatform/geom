@@ -1,6 +1,6 @@
 #include "GEOMGUI_OCCSelector.h"
 
-#include <SalomeApp_DataSubOwner.h>
+#include <LightApp_DataSubOwner.h>
 
 #include <OCCViewer_ViewModel.h>
 
@@ -26,7 +26,7 @@
 // Purpose  : 
 //================================================================
 GEOMGUI_OCCSelector::GEOMGUI_OCCSelector( OCCViewer_Viewer* viewer, SUIT_SelectionMgr* mgr )
-: SalomeApp_OCCSelector( viewer, mgr )
+: LightApp_OCCSelector( viewer, mgr )
 {
 }
 
@@ -79,11 +79,11 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
 	  
 	  if ( !entryStr.isEmpty() )
 	    {
-	      SalomeApp_DataOwner* owner;
+	      LightApp_DataOwner* owner;
 	      if ( index > -1 ) // Local Selection
-		owner = new SalomeApp_DataSubOwner( entryStr, index );
+		owner = new LightApp_DataSubOwner( entryStr, index );
 	      else // Global Selection
-		owner = new SalomeApp_DataOwner( entryStr );
+		owner = new LightApp_DataOwner( entryStr );
 
 	      aList.append( SUIT_DataOwnerPtr( owner ) );
 	    }
@@ -99,7 +99,7 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
 	  
 	  if ( !entryStr.isEmpty() )
 	    {
-	      SalomeApp_DataOwner* owner = new SalomeApp_DataOwner( entryStr );
+	      LightApp_DataOwner* owner = new LightApp_DataOwner( entryStr );
 	      aList.append( SUIT_DataOwnerPtr( owner ) );
 	    }
 	}
@@ -168,7 +168,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
   // "entry - to - list_of_ids" map
   for ( SUIT_DataOwnerPtrList::const_iterator itr = aList.begin(); itr != aList.end(); ++itr )
   {
-    const SalomeApp_DataSubOwner* subOwner = dynamic_cast<const SalomeApp_DataSubOwner*>( (*itr).operator->() );
+    const LightApp_DataSubOwner* subOwner = dynamic_cast<const LightApp_DataSubOwner*>( (*itr).operator->() );
     if ( subOwner )
     {
       QString entry = subOwner->entry();
@@ -191,7 +191,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
     } 
     else // the owner is NOT a sub owner, maybe it is a DataOwner == GLOBAL selection
     {
-      const SalomeApp_DataOwner* owner = dynamic_cast<const SalomeApp_DataOwner*>( (*itr).operator->() );
+      const LightApp_DataOwner* owner = dynamic_cast<const LightApp_DataOwner*>( (*itr).operator->() );
       if ( owner )
       {
 	globalSelMap[owner->entry()] = 1;

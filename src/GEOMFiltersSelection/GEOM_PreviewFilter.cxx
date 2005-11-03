@@ -1,6 +1,6 @@
 #include "GEOM_PreviewFilter.h"
 
-#include <SalomeApp_DataOwner.h>
+#include <LightApp_DataOwner.h>
 
 //=======================================================================
 // function : GEOM_SelectionFilter
@@ -25,7 +25,7 @@ GEOM_PreviewFilter::~GEOM_PreviewFilter()
 //=======================================================================
 bool GEOM_PreviewFilter::isOk( const SUIT_DataOwner* sOwner ) const
 {
-  const SalomeApp_DataOwner* owner = dynamic_cast<const SalomeApp_DataOwner*> ( sOwner );
+  const LightApp_DataOwner* owner = dynamic_cast<const LightApp_DataOwner*> ( sOwner );
   return ( owner && strstr( owner->entry(), "TEMP" ) );
 }
 

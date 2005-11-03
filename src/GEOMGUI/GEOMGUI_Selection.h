@@ -29,12 +29,12 @@
 #ifndef GEOMGUI_SELECTION_HeaderFile
 #define GEOMGUI_SELECTION_HeaderFile
 
-#include <SalomeApp_Selection.h>
+#include <LightApp_Selection.h>
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
-class GEOMGUI_Selection : public SalomeApp_Selection
+class GEOMGUI_Selection : public LightApp_Selection
 {
 public:
   GEOMGUI_Selection();

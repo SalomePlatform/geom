@@ -32,7 +32,7 @@
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "SalomeApp_Study.h"
-#include "SalomeApp_SelectionMgr.h"
+#include "LightApp_SelectionMgr.h"
 
 #include "GEOMBase.h"
 
@@ -541,7 +541,7 @@ void GroupGUI_GroupDlg::highlightSubShapes()
     if ( myIdList->isSelected( ii ) )
       anIds.Add( myIdList->item( ii )->text().toInt() );    
 
-  SalomeApp_SelectionMgr* aSelMgr = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+  LightApp_SelectionMgr* aSelMgr = ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
   aSelMgr->clearSelected();
   aSelMgr->AddOrRemoveIndex( aSh->getIO(), anIds, false );
 

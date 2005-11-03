@@ -29,7 +29,7 @@
 #include "RepairGUI_FreeFacesDlg.h"
 
 #include "SalomeApp_Application.h"
-#include "SalomeApp_SelectionMgr.h"
+#include "LightApp_SelectionMgr.h"
 #include "SalomeApp_Tools.h"
 
 #include "SUIT_Session.h"

@@ -35,7 +35,7 @@
 #include "SUIT_MessageBox.h"
 #include "SUIT_ResourceMgr.h"
 #include "SalomeApp_Application.h"
-#include "SalomeApp_SelectionMgr.h"
+#include "LightApp_SelectionMgr.h"
 
 #include <qpushbutton.h>
 #include <qlabel.h>

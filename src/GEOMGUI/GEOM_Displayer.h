@@ -34,7 +34,7 @@
 #include "SALOME_ListIO.hxx"
 #include <TopoDS_Shape.hxx>
 #include <Quantity_Color.hxx>
-#include <SalomeApp_Displayer.h>
+#include <LightApp_Displayer.h>
 
 #include <list>
 
@@ -49,7 +49,7 @@
 typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 
 class TColStd_MapOfInteger;
-class SalomeApp_SelectionMgr;
+class LightApp_SelectionMgr;
 class SalomeApp_Study;
 class SUIT_SelectionFilter;
 //class SALOME_Selection;
@@ -64,7 +64,7 @@ class SUIT_SelectionFilter;
 #define GEOMGUI_WNT_EXPORT
 #endif
 
-class GEOMGUI_WNT_EXPORT GEOM_Displayer : public SalomeApp_Displayer
+class GEOMGUI_WNT_EXPORT GEOM_Displayer : public LightApp_Displayer
 {
     
 public:
@@ -162,7 +162,7 @@ protected:
   /* Resets internal data */
   void        internalReset();
 
-  void        clearTemporary( SalomeApp_SelectionMgr* theSelMgr );
+  void        clearTemporary( LightApp_SelectionMgr* theSelMgr );
 
   SUIT_SelectionFilter* getFilter( const int theMode );
   

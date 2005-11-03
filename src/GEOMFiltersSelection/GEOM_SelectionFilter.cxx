@@ -2,7 +2,7 @@
 
 #include "GEOM_Client.hxx"
 
-#include <SalomeApp_DataOwner.h>
+#include <LightApp_DataOwner.h>
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>
 
@@ -58,7 +58,7 @@ GEOM::GEOM_Object_ptr GEOM_SelectionFilter::getObject( const SUIT_DataOwner* sOw
 {
   GEOM::GEOM_Object_var anObj;
 
-  const SalomeApp_DataOwner* owner = dynamic_cast<const SalomeApp_DataOwner*>(sOwner);
+  const LightApp_DataOwner* owner = dynamic_cast<const LightApp_DataOwner*>(sOwner);
   SalomeApp_Study* appStudy = getStudy();
   if (owner && appStudy)
   {

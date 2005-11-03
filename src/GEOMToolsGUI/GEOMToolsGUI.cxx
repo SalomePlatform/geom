@@ -45,7 +45,7 @@
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
-#include <SalomeApp_SelectionMgr.h>
+#include <LightApp_SelectionMgr.h>
 
 #include <SALOME_ListIteratorOfListIO.hxx>
 #include <SALOME_Prs.h>
@@ -229,7 +229,7 @@ void GEOMToolsGUI::OnEditDelete()
   SALOME_ListIO selected;
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( app ) {
-    SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
     SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
     if ( aSelMgr && appStudy ) {
       aSelMgr->selectedObjects( selected, QString::null, false );
@@ -541,7 +541,7 @@ bool GEOMToolsGUI::Export()
     aMap.insert( (char*)aPatterns[i], (char*)aFormats[i] );
 
   // Get selected objects
-  SalomeApp_SelectionMgr* sm = app->selectionMgr();
+  LightApp_SelectionMgr* sm = app->selectionMgr();
   if ( !sm )
     return false;
 

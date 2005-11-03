@@ -32,7 +32,7 @@
 
 #include "QtxDblSpinBox.h"
 #include "SalomeApp_Application.h"
-#include "SalomeApp_SelectionMgr.h"
+#include "LightApp_SelectionMgr.h"
 #include "SalomeApp_Study.h"
 #include "SalomeApp_Tools.h"
 
