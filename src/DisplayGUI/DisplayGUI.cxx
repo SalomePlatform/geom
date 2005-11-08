@@ -99,6 +99,9 @@ DisplayGUI::~DisplayGUI()
 bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
   DisplayGUI* myDisplayGUI = GetDisplayGUI( getGeometryGUI() );
+  LightApp_SelectionMgr *Sel = getGeometryGUI()->getApp()->selectionMgr();
+  SALOME_ListIO selected;
+  Sel->selectedObjects( selected );
 
   switch (theCommandID) {
   case 211: // MENU VIEW - WIREFRAME/SHADING
@@ -155,6 +158,7 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
       break;
     }
   }
+  Sel->setSelectedObjects( selected );
   return true;
 }
 
