@@ -1077,6 +1077,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  213 ), -1, -1 ); // display only
   mgr->setRule( action( 213 ), "$component={'GEOM'} and (($type in {'Shape' 'Group'} and selcount>0) or (type='Component' and selcount=1))", true );
   mgr->insert( separator(), -1, -1 );
+
+  mgr->hide( mgr->actionId( action( myEraseAll ) ) );
 }
 
 //=======================================================================
