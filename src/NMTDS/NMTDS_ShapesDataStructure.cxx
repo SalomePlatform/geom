@@ -20,7 +20,19 @@
   NMTDS_ShapesDataStructure::NMTDS_ShapesDataStructure()
 :
   BooleanOperations_ShapesDataStructure()
-{}
+{
+  //printf(" NMTDS_ShapesDataStructure CREATE:%x\n", (int)this);
+}
+//modified by NIZNHY-PKV Wed Feb  2 11:45:04 2005f
+//===========================================================================
+//function : ~
+//purpose  : 
+//===========================================================================
+  NMTDS_ShapesDataStructure::~NMTDS_ShapesDataStructure()
+{
+  //printf(" NMTDS_ShapesDataStructure DELETE:%x\n", (int)this);
+}
+//modified by NIZNHY-PKV Wed Feb  2 11:45:06 2005t
 //===========================================================================
 //function : SetCompositeShape
 //purpose  : 

@@ -19,7 +19,9 @@ uses
 is 
     Create 
     	returns ShapesDataStructure from NMTDS; 
-	 
+    ---C++: alias "Standard_EXPORT virtual ~NMTDS_ShapesDataStructure();" 
+--modified by NIZNHY-PKV Wed Feb  2 11:44:38 2005ft 
+
     SetCompositeShape(me:out; 
     	    aS:Shape from TopoDS);   
     	 
