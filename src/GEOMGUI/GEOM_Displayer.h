@@ -51,8 +51,10 @@ typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 class TColStd_MapOfInteger;
 class LightApp_SelectionMgr;
 class SalomeApp_Study;
+class SalomeApp_Application;
 class SUIT_SelectionFilter;
 //class SALOME_Selection;
+
 //#ifdef WNT
 //#include <SALOME_WNT.hxx>
 //#else
@@ -69,7 +71,7 @@ class GEOMGUI_WNT_EXPORT GEOM_Displayer : public LightApp_Displayer
     
 public:
   /* Constructor */
-  GEOM_Displayer( SalomeApp_Study* study );
+  GEOM_Displayer( SalomeApp_Study* app );
   /* Destructor */
   virtual ~GEOM_Displayer();
 
@@ -127,8 +129,8 @@ public:
 
 
   /* Sets name - for temporary objects only */
-  void          SetName( const char* theName ) { myName = theName; }
-  void          UnsetName() { myName = ""; }
+  void          SetName( const char* theName );
+  void          UnsetName();
 
   /* Reimplemented from SALOME_Displayer */
   virtual void  Update( SALOME_OCCPrs* );
@@ -146,7 +148,7 @@ public:
   void         GlobalSelection( const int = GEOM_ALLOBJECTS, const bool = false );
   void         GlobalSelection( const TColStd_MapOfInteger&, const bool = false );
 
-  SalomeApp_Study* getStudy() const {return myStudy;}
+  SalomeApp_Study* getStudy() const;
 
 protected:
   /* internal methods */
@@ -154,10 +156,10 @@ protected:
   virtual SALOME_Prs* buildPresentation( const QString&, SALOME_View* = 0 );
   
   /* Sets interactive object */
-  void        setIO( const Handle(SALOME_InteractiveObject)& theIO ) { myIO = theIO; }
+  void        setIO( const Handle(SALOME_InteractiveObject)& theIO );
   
   /* Sets shape */
-  void        setShape( const TopoDS_Shape& theShape ) { myShape = theShape; }
+  void        setShape( const TopoDS_Shape& theShape );
   
   /* Resets internal data */
   void        internalReset();
@@ -181,7 +183,7 @@ protected:
   int                              myDisplayMode;
 
 private:
-  SalomeApp_Study* myStudy;
+  SalomeApp_Application* myApp;
 };
 
 #endif // __GEOM_DISPLAYER_H

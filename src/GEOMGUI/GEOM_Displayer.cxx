@@ -220,9 +220,12 @@ static string getName( GEOM::GEOM_Object_ptr object )
  *  Constructor
  */
 //=================================================================
-GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* study )
+GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
 {
-  myStudy = study;
+  if( st )
+    myApp = dynamic_cast<SalomeApp_Application*>( st->application() );
+  else
+    myApp = 0;
 
   /* Shading Color */
   SUIT_Session* session = SUIT_Session::session();
@@ -1065,4 +1068,29 @@ void GEOM_Displayer::clearTemporary( LightApp_SelectionMgr* theSelMgr )
   }
 
   theSelMgr->setSelectedObjects( toSelect, true );
+}
+
+void GEOM_Displayer::SetName( const char* theName )
+{
+  myName = theName;
+}
+
+void GEOM_Displayer::UnsetName()
+{
+  myName = "";
+}
+
+SalomeApp_Study* GEOM_Displayer::getStudy() const
+{
+  return dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
+}
+
+void GEOM_Displayer::setIO( const Handle(SALOME_InteractiveObject)& theIO )
+{
+  myIO = theIO;
+}
+
+void GEOM_Displayer::setShape( const TopoDS_Shape& theShape )
+{
+  myShape = theShape;
 }
