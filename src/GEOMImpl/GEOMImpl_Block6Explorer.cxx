@@ -8,9 +8,13 @@
 
 #include <BRep_Tool.hxx>
 #include <BRep_TFace.hxx>
+#include <BRep_Builder.hxx>
+#include <BRepLib.hxx>
+#include <BRepLib_FindSurface.hxx>
 #include <BRepTools.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -1164,8 +1168,8 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
     return;
   }
 
-  // try to construct filling surface
   if (!isPlanarWanted) {
+    // try to construct filling surface
     BRepOffsetAPI_MakeFilling MF;
 
     Standard_Integer nbEdges = 0;
@@ -1211,5 +1215,54 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
       }
       theResult = aFace;
     }
+  } else {
+    // try to update wire tolerances to build a planar face
+
+    // With OCCT6.0 or lower
+
+    // Find a deviation
+    Standard_Real aToleranceReached, aTol;
+    BRepLib_FindSurface aFS;
+    aFS.Init(theWire, -1., isPlanarWanted);
+    aToleranceReached = aFS.ToleranceReached();
+    aTol = aFS.Tolerance();
+
+    if (!aFS.Found()) {
+      aFS.Init(theWire, aToleranceReached, isPlanarWanted);
+      if (!aFS.Found()) return;
+      aToleranceReached = aFS.ToleranceReached();
+      aTol = aFS.Tolerance();
+    }
+    aTol = Max(1.2 * aToleranceReached, aTol);
+
+    // Copy the wire, bacause it can be updated with very-very big tolerance here
+    BRepBuilderAPI_Copy aMC (theWire);
+    if (!aMC.IsDone()) return;
+    TopoDS_Wire aWire = TopoDS::Wire(aMC.Shape());
+    // Update tolerances to <aTol>
+    BRep_Builder B;
+    for (TopExp_Explorer expE (aWire, TopAbs_EDGE); expE.More(); expE.Next()) {
+      TopoDS_Edge anE = TopoDS::Edge(expE.Current());
+      B.UpdateEdge(anE, aTol);
+    }
+    for (TopExp_Explorer expV (aWire, TopAbs_VERTEX); expV.More(); expV.Next()) {
+      TopoDS_Vertex aV = TopoDS::Vertex(expV.Current());
+      B.UpdateVertex(aV, aTol);
+    }
+    //BRepLib::UpdateTolerances(aWire);
+    // Build face
+    BRepBuilderAPI_MakeFace MK1 (aWire, isPlanarWanted);
+    if (MK1.IsDone()) {
+      theResult = MK1.Shape();
+      return;
+    }
+
+    // After migration on OCCT version higher than 6.0
+    //BRepLib_MakeFace aBMF;
+    //aBMF.Init(theWire, isPlanarWanted, Standard_True);
+    //if (aBMF.Error() == BRepLib_FaceDone) {
+    //  theResult = aBMF.Shape();
+    //  return;
+    //}
   }
 }
