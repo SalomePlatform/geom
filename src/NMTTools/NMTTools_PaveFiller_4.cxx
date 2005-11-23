@@ -72,9 +72,6 @@ static
 			    const IntTools_Range& aRange,
 			    const Standard_Real& aTolerance);
 static
-  void EECommonBlocks(const BOPTools_IDMapOfPaveBlockIMapOfPaveBlock& aMapCB);
-
-static
   void ProcessBlock(const BOPTools_PaveBlock& aPB,
 		    const BOPTools_IDMapOfPaveBlockIMapOfPaveBlock& aMapCB,
 		    BOPTools_IMapOfPaveBlock& aProcessedBlocks,
