@@ -134,8 +134,8 @@ void GEOM_Object_i::SetStudyEntry(const char* theEntry)
 char* GEOM_Object_i::GetStudyEntry()
 {
   TCollection_AsciiString anEntry = _impl->GetAuxData();
-  if(!anEntry.IsEmpty()) return strdup(anEntry.ToCString());
-  return strdup("");
+  if(!anEntry.IsEmpty()) return CORBA::string_dup(anEntry.ToCString());
+  return CORBA::string_dup("");
 }
 
 
