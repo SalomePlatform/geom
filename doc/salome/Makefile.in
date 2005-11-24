@@ -12,22 +12,34 @@ top_builddir=../..
 srcdir=@srcdir@
 VPATH=.:@srcdir@
 
+SUBDIRS= tui gui
+
 @COMMENCE@
 
 docs:
-	cp -fr $(srcdir)/GEOM ./
-	-find $(PWD) -name CVS -exec rm -rf {} \;
+	@@SETX@; for d in $(SUBDIRS); do 	\
+	   (cd $$d && $(MAKE) $@) || exit 1; 	\
+	done; \
+	cp -f $(srcdir)/GEOM_index.html GEOM_index.html
 
 clean:
-	rm -fr `ls | grep -v "Makefile"`
+	@@SETX@; for d in $(SUBDIRS); do 	\
+	   (cd $$d && $(MAKE) $@) || exit 1; 	\
+	done
 
 distclean: clean
-	rm -fr GEOM
+	@@SETX@; for d in $(SUBDIRS); do 	\
+	   (cd $$d && $(MAKE) $@) || exit 1; 	\
+	done
 
 install:
 	$(MAKE) docs
-	mkdir -p $(docdir)
-	cp -rf GEOM $(docdir)
+	(cd tui && $(MAKE) install);
+	(cd gui && $(MAKE) install);
+	cp -f GEOM_index.html $(docdir)
 
 uninstall:
-	rm -rf $(docdir)/GEOM
+	@@SETX@; for d in $(SUBDIRS); do 	\
+	   (cd $$d && $(MAKE) $@) || exit 1; 	\
+	done; \
+	rm -fr $(docdir)/GEOM_index.html
