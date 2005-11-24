@@ -14,12 +14,12 @@ if (navigator.appName !="Netscape")
 </script>
 <style type="text/css">
 <!--
-img_whs1 { border-style:none; border:none; float:none; width:30px; height:30px; }
+img_whs1 { border:none; float:none; width:30px; height:30px; border-style:none; }
 p.whs2 { font-size:12pt; }
-ul.whs3 { list-style:disc; }
-p.whs4 { margin-left:40px; font-size:12pt; }
-img_whs5 { border:none; width:200px; height:277px; border-style:none; }
-img_whs6 { border:none; width:200px; height:276px; border-style:none; }
+p.whs3 { margin-left:108px; font-size:12pt; }
+ul.whs4 { list-style:disc; }
+p.whs5 { margin-left:40px; font-size:12pt; }
+img_whs6 { border:none; width:321px; height:496px; float:none; border-style:none; }
 p.whs7 { font-size:12pt; margin-left:40px; text-indent:-40px; }
 p.whs8 { font-size:12pt; margin-left:40px; text-indent:-40px; font-weight:bold; }
 p.whs9 { font-size:12pt; text-indent:-40px; font-weight:bold; margin-left:80px; }
@@ -117,20 +117,25 @@ else
 
 <p>&nbsp;</p>
 
-<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Description:</b> 
- Creates curves (line segment and arc).</font></span></p>
-
-<p class="whs2">&nbsp;</p>
-
 <p class="whs2"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
 
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
- </i><span style="font-style: italic;"><I>geompy.MakeSketcher(Command, LWP)</I></span>, 
- where Command is a string containing the coordinates of points in the 
- local working plane, LWP is a list of 9 doubles which are coordinates 
- of OZ and OX of the local working plane.</p>
+ </i><span style="font-style: italic;"><I>geompy.MakeSketcher(Command, WorkingPlane)</I></span></p>
+
+<p class="whs3">This algorithm creates 
+ a sketcher (wire or face), following the textual description, passed through 
+ the Command argument. The edges of the resulting wire or face will be 
+ arcs of circles and/or linear segments.</p>
+
+<p class="whs3"><span style="margin-left: 120px; font-style: italic;"><I>Command</I></span><span 
+ style="margin-left: 120px;"> is a string, defining the sketcher by </span>the 
+ coordinates of points in the local working plane.</p>
+
+<p class="whs3"><span style="font-style: italic;"><I>WorkingPlane</I></span> 
+ is a planar face of the working plane (a list of 9 doubles which are coordinates 
+ of OZ and OX of the local working plane).</p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -143,7 +148,7 @@ else
 
 <p class="whs2">3. <span>Destination point by means of:</span></p>
 
-<ul type="disc" class="whs3">
+<ul type="disc" class="whs4">
 	
 	<li class=kadov-p><p class="whs2">absolute coordinates 
  X,Y;</p></li>
@@ -157,7 +162,7 @@ else
 
 <p class="whs2">4. Destination direction by means of:</p>
 
-<ul type="disc" class="whs3">
+<ul type="disc" class="whs4">
 	
 	<li class=kadov-p><p class="whs2">angle between the new 
  segment and the previous one;</p></li>
@@ -182,7 +187,7 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs4"><img src="image203.jpg" width="200px" height="277px" border="0" class="img_whs5"> &nbsp;&nbsp;<img src="image205.jpg" width="200px" height="276px" border="0" class="img_whs6"></p>
+<p class="whs5"><img src="pics/neo-scetcher1.png" x-maintain-ratio="TRUE" width="321px" height="496px" border="0" class="img_whs6"> &nbsp;&nbsp;<img src="pics/neo-scetcher2.png" x-maintain-ratio="TRUE" width="321px" height="496px" border="0" class="img_whs6"></p>
 
 <p class="whs7">&nbsp;</p>
 
@@ -191,6 +196,14 @@ else
 <p class="whs9">&nbsp;</p>
 
 <p class="whs9"><img src="image204.jpg" width="200px" height="200px" border="0" class="img_whs10"> &nbsp;&nbsp;<img src="image206.jpg" width="200px" height="195px" border="0" class="img_whs11"></p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs2">Our <span style="font-weight: bold;"><B>TUI Scripts</B></span> 
+ provide you with useful examples of the use of <a href="sketcher_tui.htm">Sketcher</a>. 
+ </p>
+
+<p>&nbsp;</p>
 
 <script type="text/javascript" language="javascript1.2">
 <!--

@@ -1,0 +1,182 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Multi Rotation</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+p.whs3 { font-size:12pt; font-weight:bold; }
+p.whs4 { font-size:12pt; font-weight:normal; }
+img_whs5 { border:none; width:312px; height:346px; float:none; border-style:none; }
+img_whs6 { border:none; float:none; width:315px; height:259px; border-style:none; }
+img_whs7 { border:none; float:none; width:301px; height:258px; border-style:none; }
+img_whs8 { border:none; width:312px; height:450px; float:none; border-style:none; }
+img_whs9 { border:none; float:none; width:341px; height:446px; border-style:none; }
+img_whs10 { border:none; float:none; width:369px; height:447px; border-style:none; }
+p.whs11 { font-size:12pt; margin-left:40px; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTransforming geometrical objects\nTransformation Operations\nMulti Rotation");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_transformationgui_functions_salome2_sp3_transformationgui_functions_image133.gif" width="20px" height="20px" border="0" class="img_whs1"> &nbsp;</font></span>Multi 
+ Rotation</h1>
+
+<p class="whs2"><b style="font-weight: normal;">T</b>o produce 
+ a <span style="font-weight: bold;"><B>Multi Rotation</B></span> in the Main Menu 
+ select <span style="font-weight: bold;"><B>Operations - &gt; Transformation 
+ - &gt; Multi Rotation</B></span> </p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">This operation creates several geometrical 
+ objects rotated in <span style="font-weight: bold;"><B>one </B></span>or <span 
+ style="font-weight: bold;"><B>two </B></span>dimentions basing on the initial 
+ geometrical object. </p>
+
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;"><span 
+ style="font-weight: normal;">The</span> Result <span style="font-weight: normal;">will 
+ be one or several</span></b> GEOM_Objects (compound).</font></span></p>
+
+<p>&nbsp;</p>
+
+<p class="whs2">To produce a <span style="font-weight: bold;"><B>Simple 
+ Multi Rotation</B></span> (in one dimension) you need to define a <span style="font-weight: bold;"><B>Shape</B></span> 
+ to be rotated, an <span style="font-weight: bold;"><B>Axis</B></span> of rotation 
+ and a <span style="font-weight: bold;"><B>Number of Times</B></span> the shape 
+ must be rotated. <span style="font-weight: bold;"><B>Rotation Angle</B></span> 
+ will be 2*PI/NbTimes</p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI 
+ Command: </b><span style="font-style: italic; font-weight: normal;"><I>geompy.MakeMultiRotation1D(Shape, 
+ Axis, NbTimes)</I></span></p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments: 
+ </b><span style="font-weight: normal;">Name + 1 shape + 1 vector for direction 
+ + 1 value (repetition).</span></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs4">There is a <span style="font-weight: bold;"><B>TUI 
+ Command</B></span> <span style="font-style: italic;"><I>geompy.MakeMultiRotation1D(Shape, 
+ Dir, Point, NbTimes)</I></span><span style="font-size: 12pt; font-weight: normal;"><font size=3 style="font-size:12pt;"> 
+ which works in the same way, but the Axis is defined &nbsp;by 
+ direction and point. </font></span></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs2"><img src="pics/neo-mrot1.png" x-maintain-ratio="TRUE" width="312px" height="346px" border="0" class="img_whs5"> <img src="pics/multi_rotation1d1.png" x-maintain-ratio="TRUE" width="315px" height="259px" border="0" class="img_whs6"> &nbsp;<img src="pics/multi_rotation1d2.png" x-maintain-ratio="TRUE" width="301px" height="258px" border="0" class="img_whs7"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><span style="font-weight: bold;"><B>Double Multi 
+ Rotation</B></span> (in two dimensions) rotates the given <span style="font-weight: bold;"><B>Object</B></span> 
+ around the given <span style="font-weight: bold;"><B>Axis</B></span> on the given 
+ <span style="font-weight: bold;"><B>Angle</B></span> a given <span style="font-weight: bold;"><B>Number 
+ of Times</B></span> and multi-translates each rotation result. &nbsp;Translation 
+ direction passes through the center of gravity of the rotated shape and 
+ its projection on the rotation axis. <span style="font-weight: bold;"><B>Reverse 
+ </B></span>checkbox allows to set the direction of rotation.</p>
+
+<p class="whs2"><b style="font-weight: bold;">T<span style="font-weight: bold;"><B>UI 
+ Command: </B></span><span style="font-weight: normal;">g</span></b><span style="font-style: italic;"><I>eompy.MakeMultiRotation2D(Shape, 
+ Axis, Angle, NbTimes1, Step, NbTimes2)</I></span></p>
+
+<p class="whs2"><span style="font-style: italic;"><I><b style="font-weight: bold;">A</I></span><span 
+ style="font-weight: bold;"><B>rguments: </B></span></b>Name + 1 shape + 1 vector 
+ for direction + 1 angle + 1 value (repetition) + 1 step value + 1 value 
+ (repetition);</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">There is a <span style="font-weight: bold;"><B>TUI 
+ Command</B></span> <span style="font-style: italic;"><I>geompy.MakeMultiRotation2D(Shape, 
+ Dir, Point, Angle, nbtimes1, Step, nbtimes2</I></span><span style="font-style: italic;"><I>)</I></span> 
+ which works in the same way, but the Axis is defined &nbsp;by 
+ direction and point. </p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="pics/neo-mrot2.png" x-maintain-ratio="TRUE" width="312px" height="450px" border="0" class="img_whs8"></p>
+
+<p class="whs2">&nbsp;&nbsp;</p>
+
+<p class="whs2">&nbsp;<img src="pics/multi_rotation2d1.png" x-maintain-ratio="TRUE" width="341px" height="446px" border="0" class="img_whs9"> &nbsp;&nbsp;&nbsp;<img src="pics/multi_rotation2d2.png" x-maintain-ratio="TRUE" width="369px" height="447px" border="0" class="img_whs10"></p>
+
+<p class="whs11">&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<p class="whs11">Our <span style="font-weight: bold;"><B>TUI 
+ Scripts</B></span> provide you with useful examples of the use of <a href="transformation_operations.htm#bookmark9">Transformation 
+ Operations</a>. </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

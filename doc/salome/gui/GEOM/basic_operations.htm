@@ -1,0 +1,242 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Basic Operations</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nTransformation\nBasic Operations");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Basic Operations</h1>
+
+<h3><a name=bookmark>Partition</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p0 &nbsp;&nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;&nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p200 = geompy.MakeVertex(200., 
+ 200., 200.)</p>
+
+<p class="whs1">pz &nbsp;&nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;&nbsp;0., 
+ 100.)</p>
+
+<p>&nbsp;</p>
+
+<p># create vector</p>
+
+<p class="whs1">vxyz = geompy.MakeVectorDXDYDZ(100., 
+ 100., 100.)</p>
+
+<p>&nbsp;</p>
+
+<p># create box with two points</p>
+
+<p class="whs1">box = geompy.MakeBoxTwoPnt(p0, 
+ p200)</p>
+
+<p>&nbsp;</p>
+
+<p># create plane</p>
+
+<p class="whs1">trimsize &nbsp;= 
+ 500.</p>
+
+<p class="whs1">plane = geompy.MakePlane(pz, 
+ vxyz, trimsize)</p>
+
+<p>&nbsp;</p>
+
+<p># create partition objects</p>
+
+<p class="whs1">partition1 = geompy.MakePartition([box], 
+ [plane])</p>
+
+<p class="whs1">partition2 = geompy.Partition([box], 
+ [plane])</p>
+
+<p class="whs1">partition3 = geompy.MakeHalfPartition(box, 
+ plane)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_box = geompy.addToStudy(box,&quot;Box&quot;)</p>
+
+<p class="whs1">id_plane = geompy.addToStudy(plane,&quot;Plane&quot;)</p>
+
+<p class="whs1">id_partition1 = geompy.addToStudy(partition1,&quot;MakePartition&quot;)</p>
+
+<p class="whs1">id_partition2 = geompy.addToStudy(partition2,&quot;Partition&quot;)</p>
+
+<p class="whs1">id_partition3 = geompy.addToStudy(partition3,&quot;MakeHalfPartition&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display partition objects and plane</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_box)</p>
+
+<p class="whs1">gg.setDisplayMode(id_box,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_plane)</p>
+
+<p class="whs1">gg.setDisplayMode(id_plane,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_partition1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_partition2)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_partition3)</span> 
+ </p>
+
+<h3><a name=bookmark1>Archimede</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p0 &nbsp;&nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;&nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p200 = geompy.MakeVertex(200., 
+ 200., 200.)</p>
+
+<p>&nbsp;</p>
+
+<p># create box with two points</p>
+
+<p class="whs1">box = geompy.MakeBoxTwoPnt(p0, 
+ p200)</p>
+
+<p>&nbsp;</p>
+
+<p># perform an Archimede operation on the given shape with given parameters</p>
+
+<p class="whs1">weight &nbsp;= 
+ 1000000.</p>
+
+<p class="whs1">waterdensity = 1.</p>
+
+<p class="whs1">meshingdeflection 
+ = 0.01</p>
+
+<p class="whs1">archimede &nbsp;= 
+ geompy.Archimede(box, weight, waterdensity, meshingdeflection)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_box = geompy.addToStudy(box,&quot;Box&quot;)</p>
+
+<p class="whs1">id_archimede = geompy.addToStudy(archimede,&quot;Archimede&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display box and result of Archimede operation</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_box)</p>
+
+<p class="whs1">gg.setDisplayMode(id_box,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_archimede)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_archimede,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

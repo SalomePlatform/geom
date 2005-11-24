@@ -1,0 +1,348 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Boolean Operations</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nTransformation\nBoolean Operations");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Boolean Operations</h1>
+
+<h3><a name=bookmark>Fuse</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(25, 
+ 55, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex( 
+ 0, &nbsp;0, 0)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create cylinder</p>
+
+<p class="whs1">height = 35</p>
+
+<p class="whs1">radius1 = 20</p>
+
+<p class="whs1">cylinder = geompy.MakeCylinder(p1, 
+ v, radius1, height)</p>
+
+<p>&nbsp;</p>
+
+<p># create sphere</p>
+
+<p class="whs1">sphere = geompy.MakeSphereR(40)</p>
+
+<p>&nbsp;</p>
+
+<p># make fuse</p>
+
+<p class="whs1">fuse = geompy.MakeFuse(cylinder, 
+ sphere)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_cylinder = geompy.addToStudy(cylinder, 
+ &quot;Cylinder&quot;)</p>
+
+<p class="whs1">id_sphere = geompy.addToStudy(sphere, 
+ &quot;Sphere&quot;)</p>
+
+<p class="whs1">id_fuse = geompy.addToStudy(fuse, 
+ &quot;Fuse&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cylinder)</p>
+
+<p class="whs1">gg.setDisplayMode(id_cylinder,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_sphere)</p>
+
+<p class="whs1">gg.setDisplayMode(id_sphere,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_fuse)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_fuse,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark1>Common</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(25, 
+ 55, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex( 
+ 0, &nbsp;0, 0)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create cylinder</p>
+
+<p class="whs1">height = 35</p>
+
+<p class="whs1">radius1 = 20</p>
+
+<p class="whs1">cylinder = geompy.MakeCylinder(p1, 
+ v, radius1, height)</p>
+
+<p>&nbsp;</p>
+
+<p># create sphere</p>
+
+<p class="whs1">sphere = geompy.MakeSphereR(40)</p>
+
+<p>&nbsp;</p>
+
+<p># make common</p>
+
+<p class="whs1">common = geompy.MakeCommon(cylinder, 
+ sphere)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_common = geompy.addToStudy(common, 
+ &quot;Common&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_common)</p>
+
+<p class="whs1">gg.setDisplayMode(id_common,1) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3><a name=bookmark2>Cut </a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(25, 
+ 55, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex( 
+ 0, &nbsp;0, 0)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create cylinder</p>
+
+<p class="whs1">height = 35</p>
+
+<p class="whs1">radius1 = 20</p>
+
+<p class="whs1">cylinder = geompy.MakeCylinder(p1, 
+ v, radius1, height)</p>
+
+<p>&nbsp;</p>
+
+<p># create sphere</p>
+
+<p class="whs1">sphere = geompy.MakeSphereR(40)</p>
+
+<p>&nbsp;</p>
+
+<p># make cut</p>
+
+<p class="whs1">cut = geompy.MakeCut(cylinder, 
+ sphere)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_cut = geompy.addToStudy(cut, 
+ &quot;Cut&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cut)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_cut,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark3>Section</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(25, 
+ 55, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex( 
+ 0, &nbsp;0, 0)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create cylinder</p>
+
+<p class="whs1">height = 35</p>
+
+<p class="whs1">radius1 = 20</p>
+
+<p class="whs1">cylinder = geompy.MakeCylinder(p1, 
+ v, radius1, height)</p>
+
+<p>&nbsp;</p>
+
+<p># create sphere</p>
+
+<p class="whs1">sphere = geompy.MakeSphereR(40)</p>
+
+<p>&nbsp;</p>
+
+<p># make section</p>
+
+<p class="whs1">section = geompy.MakeSection(cylinder, 
+ sphere)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_section = geompy.addToStudy(section, 
+ &quot;Section&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_section)</p>
+
+<p class="whs1">gg.setDisplayMode(id_section,1) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

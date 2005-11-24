@@ -1,0 +1,178 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Mirror Image</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-size:12pt; }
+img_whs2 { border:none; width:312px; height:350px; float:none; border-style:none; }
+img_whs3 { border:none; float:none; width:250px; height:350px; border-style:none; }
+img_whs4 { border:none; float:none; width:248px; height:349px; border-style:none; }
+img_whs5 { border:none; width:227px; height:176px; float:none; border-style:none; }
+img_whs6 { border:none; float:none; width:199px; height:177px; border-style:none; }
+img_whs7 { border:none; width:174px; height:233px; float:none; border-style:none; }
+img_whs8 { border:none; float:none; width:174px; height:233px; border-style:none; }
+p.whs9 { font-size:12pt; margin-left:40px; }
+p.whs10 { list-style:disc; margin-left:0in; margin-right:0in; margin-top:0px; margin-bottom:0px; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs10 {margin-left:1pt;margin-right:1pt;margin-top:1pt;margin-bottom:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTransforming geometrical objects\nTransformation Operations\nMirror Image");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Mirror Image</h1>
+
+<p class="whs1"><b style="font-weight: normal;">T</b>o produce 
+ a <span style="font-weight: bold;"><B>Mirror Image</B></span> in the Main Menu 
+ select <span style="font-weight: bold;"><B>Operations - &gt; Transformation 
+ - &gt; Mirror Image</B></span></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">This operation creates a symmetrical copy of 
+ an <span style="font-weight: bold;"><B>Object, </B></span>which can be mirrored 
+ in three different ways.<span style="font-weight: bold;"><B> Create a copy 
+ </B></span>checkbox allows to keep the initial object, otherwise it will be 
+ removed.</p>
+
+<p class="whs1"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
+ Result <span style="font-weight: normal;">will be a</span></b> GEOM_Object.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">Firstly an <span style="font-weight: bold;"><B>Object</B></span> 
+ can be mirrored through a <span style="font-weight: bold;"><B>Plane</B></span> 
+ of symmetry </p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeMirrorByPlane(Shape, 
+ Plane)</I></span>, </p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments:</b> 
+ <b><span style="font-weight: normal;">Name + </span></b>1 shape + 1 plane</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><img src="pics/transformation9.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs2"> &nbsp;<img src="pics/mirror_planesn1.png" x-maintain-ratio="TRUE" width="250px" height="350px" border="0" class="img_whs3"> &nbsp;<img src="pics/mirror_planesn2.png" x-maintain-ratio="TRUE" width="248px" height="349px" border="0" class="img_whs4"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Secondly an 
+ Object can be mirrored through an Axis of symmetry </font></span></p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command: 
+ </b><span style="font-style: italic;"><I>geompy.MakeMirrorByAxis(Object, 
+ Axis)</I></span> </p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments: <span 
+ style="font-weight: normal;">Name + </span></b>1 shape + 1 vector.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><img src="pics/transformation8.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs2"> &nbsp;<img src="pics/mirror_axissn1.png" x-maintain-ratio="TRUE" width="227px" height="176px" border="0" class="img_whs5"> &nbsp;<img src="pics/mirror_axissn2.png" x-maintain-ratio="TRUE" width="199px" height="177px" border="0" class="img_whs6"></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">Finally an <span style="font-weight: bold;"><B>Object</B></span> 
+ can be mirrored through a <span style="font-weight: bold;"><B>Point</B></span> 
+ of symmetry</p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command: 
+ </b><span style="font-style: italic;"><I>geompy.MakeMirrorByPoint(Object, 
+ Point)</I></span> </p>
+
+<p class="whs1"><b style="font-weight: bold;">Arguments: <span 
+ style="font-weight: normal;">Name + </span></b>1 shape + 1 vertex.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><img src="pics/transformation7.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs2"> &nbsp;<img src="pics/mirror_pointsn1.png" x-maintain-ratio="TRUE" width="174px" height="233px" border="0" class="img_whs7"> &nbsp;<img src="pics/mirror_pointsn2.png" x-maintain-ratio="TRUE" width="174px" height="233px" border="0" class="img_whs8"></p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs10">&nbsp;&nbsp;<span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Our </font></span><span 
+ style="font-weight: bold;"><B>TUI Scripts</B></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> 
+ provide you with useful examples of the use of <a href="transformation_operations.htm#bookmark5">Transformation 
+ Operations</a>. </font></span></p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

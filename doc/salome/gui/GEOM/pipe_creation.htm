@@ -1,0 +1,140 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Pipe Creation</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+img_whs3 { border:none; width:312px; height:324px; float:none; border-style:none; }
+p.whs4 { font-size:12pt; margin-left:40px; }
+img_whs5 { border:none; width:258px; height:201px; float:none; border-style:none; }
+img_whs6 { border:none; float:none; width:266px; height:201px; border-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nGeneration of Complex Objects\nPipe");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image59.gif" width="20px" height="20px" border="0" class="img_whs1"> </font></span>Pipe Construction</h1>
+
+<p><b><span style="font-weight: normal;">T</b>o</span> <span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">generate 
+ a </font></span><span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>Pipe</B></font></span> 
+ in the <span style="font-weight: bold;"><B>Main Menu</B></span> select <span 
+ style="font-weight: bold;"><B>New Entity - &gt; Generation &nbsp;- 
+ &gt; Pipe</B></span></p>
+
+<p>&nbsp;</p>
+
+<p>To create an extruded <span style="font-weight: bold;"><B>Pipe</B></span> shape, 
+ you need to define the <span style="font-weight: bold;"><B>Base Object </B></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;">(vertex, edge, wire, face or shell)</font></span><span 
+ style="font-weight: bold;"><B>,</B></span> which will be extruded and the <span 
+ style="font-weight: bold;"><B>Path Object</B></span> <span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">(edge, 
+ face or shell) </font></span>along which the Base Object will be extruded. </p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
+ Result <span style="font-weight: normal;">of the operation will be a</span></b> 
+ GEOM_Object (edge, face, solid or compsolid).</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakePipe(baseShape, pathShape)</I></span> 
+ </p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments:</b> 
+ Name + 1 shape (vertex, edge, wire, face or shell) serving as base object 
+ + 1 shape (edge, face or shell) for definition of the path.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="pics/pipe.png" x-maintain-ratio="TRUE" width="312px" height="324px" border="0" class="img_whs3"></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs4"><img src="pics/pipe_wire_edgesn.png" x-maintain-ratio="TRUE" width="258px" height="201px" border="0" class="img_whs5"> &nbsp;<img src="pics/pipesn.png" x-maintain-ratio="TRUE" width="266px" height="201px" border="0" class="img_whs6"></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs2">Our TUI Scripts provide you with useful examples 
+ of creation of <a href="complex_objects.htm#bookmark3">Complex Geometric 
+ Objects</a>. </p>
+
+<p>&nbsp;</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4">&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Translation</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+p.whs3 { font-size:12pt; font-weight:bold; }
+img_whs4 { border:none; width:312px; height:393px; float:none; border-style:none; }
+img_whs5 { border:none; width:312px; height:385px; float:none; border-style:none; }
+p.whs6 { font-size:12pt; margin-left:40px; }
+p.whs7 { margin-left:40px; }
+img_whs8 { border:none; width:331px; height:334px; float:none; border-style:none; }
+img_whs9 { border:none; width:320px; height:333px; float:none; border-style:none; }
+p.whs10 { list-style:disc; margin-left:0in; margin-right:0in; margin-top:0px; margin-bottom:0px; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs10 {margin-left:1pt;margin-right:1pt;margin-top:1pt;margin-bottom:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTransforming geometrical objects\nTransformation Operations\nTranslation");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><b style="font-weight: bold;"><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_transformationgui_functions_salome2_sp3_transformationgui_functions_image128.gif" width="20px" height="20px" border="0" class="img_whs1"> </font></span></b>Translation</h1>
+
+<p class="whs2"><b style="font-weight: normal;">T</b>o produce 
+ a <span style="font-weight: bold;"><B>Translation</B></span> in the Main Menu 
+ select <span style="font-weight: bold;"><B>Operations - &gt; Transformation 
+ - &gt; Translation</B></span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">This Operation makes a translation of an <span 
+ style="font-weight: bold;"><B>Object</B></span>. To translate a shape you need 
+ to define the base shape and the coordinates of the vector of translation. 
+ <span style="font-weight: bold;"><B>Create a copy </B></span>checkbox allows 
+ to keep the initial object, otherwise it will be removed.</p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
+ Result <span style="font-weight: normal;">of all operations will be any</span></b> 
+ GEOM_Object.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">Firstly you can define an <span style="font-weight: bold;"><B>Object</B></span> 
+ and the vector coordinates along the axes. </p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeTranslation(Shape, DX, 
+ DY, DZ)</I></span>, where Shape is a shape to be translated, DX, DY, DZ are 
+ components of translation vector.</p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments:</b> 
+ <b><span style="font-weight: normal;">Name + </b>1 shape + 3 values (coordinates).</span></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs2"><img src="pics/transformation1.png" x-maintain-ratio="TRUE" width="312px" height="393px" border="0" class="img_whs4"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">Secondly you can define an <span style="font-weight: bold;"><B>Object</B></span> 
+ and the start and the end points of the vector &nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command: 
+ </b><span style="font-style: italic;"><I>geompy.MakeTranslationTwoPoints(Object, 
+ Point1, Point2)</I></span> </p>
+
+<p class="whs2"><span><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Arguments</font></span>: 
+ <span style="font-weight: normal;">Name + </span></b>1 shape + 2 vertices</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="pics/transformation2.png" x-maintain-ratio="TRUE" width="312px" height="393px" border="0" class="img_whs4"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><span><font size=3 style="font-size:12pt;">Finally you can define an Object and 
+ the vector &nbsp;</font></span></p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command: 
+ </b>geompy.MakeTranslationVector(Object, Vector)</p>
+
+<p class="whs2"><span><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Arguments</font></span>: 
+ <span style="font-weight: normal;">Name + </span></b>1 shape + 1 vector.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="pics/transformation3.png" x-maintain-ratio="TRUE" width="312px" height="385px" border="0" class="img_whs5"></p>
+
+<p class="whs6">&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<p class="whs6">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs7"><img src="pics/translationsn1.png" x-maintain-ratio="TRUE" width="331px" height="334px" border="0" class="img_whs8"> &nbsp;<img src="pics/translationsn2.png" x-maintain-ratio="TRUE" width="320px" height="333px" border="0" class="img_whs9"></p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs10">&nbsp;&nbsp;<span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Our </font></span><span 
+ style="font-weight: bold;"><B>TUI Scripts</B></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> 
+ provide you with useful examples of the use of <a href="transformation_operations.htm#bookmark">Transformation 
+ Operations</a>. </font></span></p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

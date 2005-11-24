@@ -1,0 +1,1069 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Repairing Operations</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+p.whs2 { font-family:'Times New Roman' , serif; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nTransformation\nRepairing Operations");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Repairing Operations</h1>
+
+<h3><a name=bookmark>Shape Processing</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices, edge, arc, wire, face and prism</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(0,0,0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(200,0,0)</p>
+
+<p class="whs1">p3 = geompy.MakeVertex(100,150,0)</p>
+
+<p class="whs1">edge = geompy.MakeEdge(p1,p2)</p>
+
+<p class="whs1">arc &nbsp;= 
+ geompy.MakeArc(p1,p3,p2)</p>
+
+<p class="whs1">wire = geompy.MakeWire([edge,arc])</p>
+
+<p class="whs1">face = geompy.MakeFace(wire, 
+ 1)</p>
+
+<p class="whs1">theShape = geompy.MakePrismVecH(face, 
+ edge, 130)</p>
+
+<p>&nbsp;</p>
+
+<p># check shape at the beginning</p>
+
+<p class="whs1">print &quot;Before 
+ ProcessShape:&quot;</p>
+
+<p class="whs1">isValid = geompy.CheckShape(theShape)</p>
+
+<p class="whs1">if isValid == 0:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;The shape is not valid&quot;</p>
+
+<p class="whs1">else:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;The shape seems to be valid&quot;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p># process Shape</p>
+
+<p class="whs1">Operators = [&quot;FixShape&quot;]</p>
+
+<p class="whs1">Parameters = [&quot;FixShape.Tolerance3d&quot;]</p>
+
+<p class="whs1">Values = [&quot;1e-7&quot;]</p>
+
+<p class="whs1">PS = geompy.ProcessShape(theShape, 
+ Operators, Parameters, Values)</p>
+
+<p>&nbsp;</p>
+
+<p># check shape at the end</p>
+
+<p class="whs1">print &quot;After 
+ ProcessShape:&quot;</p>
+
+<p class="whs1">isValid = geompy.CheckShape(PS)</p>
+
+<p class="whs1">if isValid == 0:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;The shape is not valid&quot;</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;raise 
+ RuntimeError, &quot;It seems, that the ProcessShape() has failed&quot;</p>
+
+<p class="whs1">else:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;The shape seems to be valid&quot;</p>
+
+<p>&nbsp;</p>
+
+<p># add in study and display</p>
+
+<p class="whs1">Id_Shape = geompy.addToStudy(theShape, 
+ &quot;Invalid Shape&quot;)</p>
+
+<p class="whs1">Id_PS &nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(PS, &quot;Processed Shape&quot;)</p>
+
+<p class="whs1">gg.createAndDisplayGO(Id_Shape)</p>
+
+<p class="whs1">gg.setDisplayMode(Id_Shape,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(Id_PS)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(Id_PS,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark1>Suppress Faces</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create box</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(200, 
+ 200, 200)</p>
+
+<p>&nbsp;</p>
+
+<p># IDList for suppress faces</p>
+
+<p class="whs1">sup_faces = []</p>
+
+<p class="whs1">sup_faces = geompy.SubShapeAllSorted(box, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p>&nbsp;</p>
+
+<p># get sub-shape indexes</p>
+
+<p class="whs1">f1_id = geompy.GetSubShapeID(box, 
+ sup_faces[3])</p>
+
+<p>&nbsp;</p>
+
+<p># remove faces from the given object (shape)</p>
+
+<p class="whs1">result = geompy.SuppressFaces(box, 
+ [f1_id])</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_box = geompy.addToStudy(box, 
+ &quot;Box&quot;)</p>
+
+<p class="whs1">id_result = geompy.addToStudy(result, 
+ &quot;Result&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_box)</p>
+
+<p class="whs1">gg.setDisplayMode(id_box,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_result)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_result,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark2>Close Contour</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices and vectors</p>
+
+<p class="whs1">p0 &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;&nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">px &nbsp;= 
+ geompy.MakeVertex(100., &nbsp;&nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">py &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ 100., &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">py1 = geompy.MakeVertex( 
+ &nbsp;0., 140., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">pz &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;&nbsp;0., 
+ 100.)</p>
+
+<p class="whs1">vxy = geompy.MakeVector(px, 
+ py)</p>
+
+<p>&nbsp;&nbsp;</p>
+
+<p># create arc</p>
+
+<p class="whs1">arc = geompy.MakeArc(py1, 
+ pz, px)</p>
+
+<p>&nbsp;</p>
+
+<p># create wire</p>
+
+<p class="whs1">wire = geompy.MakeWire([vxy, 
+ arc])</p>
+
+<p>&nbsp;</p>
+
+<p># close an open wire by creation of an edge between ends</p>
+
+<p class="whs1">wire_close = geompy.CloseContour(wire, 
+ [1], 0)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_wire = geompy.addToStudy(wire, 
+ &quot;Wire&quot;)</p>
+
+<p class="whs1">id_wire_close = geompy.addToStudy(wire_close, 
+ &quot;Wire close&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_wire)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_wire_close)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark3>Suppress Internal Wires</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(55, 
+ 65, 50)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(55, 
+ &nbsp;0, 50)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create cylinder</p>
+
+<p class="whs1">height = 100</p>
+
+<p class="whs1">radius1 = 40</p>
+
+<p class="whs1">cylinder = geompy.MakeCylinder(p1, 
+ v, radius1, height)</p>
+
+<p>&nbsp;</p>
+
+<p># create box</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(100, 
+ 100, 100)</p>
+
+<p>&nbsp;</p>
+
+<p># make cut</p>
+
+<p class="whs1">cut = geompy.MakeCut(box, 
+ cylinder)</p>
+
+<p>&nbsp;</p>
+
+<p># suppress all internal wires</p>
+
+<p class="whs1">result = geompy.SuppressInternalWires(cut, 
+ [])</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_cut = geompy.addToStudy(cut, 
+ &quot;Cut&quot;)</p>
+
+<p class="whs1">id_result = geompy.addToStudy(result, 
+ &quot;Result&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cut)</p>
+
+<p class="whs1">gg.setDisplayMode(id_cut,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_result)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_result,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark4>Suppress Holes</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(35, 
+ 35, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(35, 
+ 35, 50)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create cylinder</p>
+
+<p class="whs1">height = 20</p>
+
+<p class="whs1">radius1 = 20</p>
+
+<p class="whs1">cylinder = geompy.MakeCylinder(p1, 
+ v, radius1, height)</p>
+
+<p>&nbsp;</p>
+
+<p># create cone</p>
+
+<p class="whs1">cone = geompy.MakeCone(p1, 
+ v, 70, 0, 80)</p>
+
+<p>&nbsp;</p>
+
+<p># make cut</p>
+
+<p class="whs1">cut = geompy.MakeCut(cone, 
+ cylinder)</p>
+
+<p>&nbsp;</p>
+
+<p># get faces as sub-shapes</p>
+
+<p class="whs1">faces = []</p>
+
+<p class="whs1">faces = geompy.SubShapeAllSorted(cut, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs1">f_2 = geompy.GetSubShapeID(cut, 
+ faces[2])</p>
+
+<p>&nbsp;</p>
+
+<p># remove one face from the shape</p>
+
+<p class="whs1">cut_without_f_2 = 
+ geompy.SuppressFaces(cut, [f_2])</p>
+
+<p>&nbsp;</p>
+
+<p># get wires as sub-shapes</p>
+
+<p class="whs1">wires = []</p>
+
+<p class="whs1">wires = geompy.SubShapeAllSorted(cut_without_f_2, 
+ geompy.ShapeType[&quot;WIRE&quot;])</p>
+
+<p class="whs1">w_0 = geompy.GetSubShapeID(cut_without_f_2, 
+ wires[0])</p>
+
+<p>&nbsp;</p>
+
+<p># suppress the selected wire</p>
+
+<p class="whs1">result = geompy.SuppressHoles(cut_without_f_2, 
+ [w_0])</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_cut = geompy.addToStudy(cut, 
+ &quot;Cut&quot;)</p>
+
+<p class="whs1">id_cut_without_f_2 
+ = geompy.addToStudy(cut_without_f_2, &quot;Cut without f_2&quot;)</p>
+
+<p class="whs1">id_result = geompy.addToStudy(result, 
+ &quot;Result&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cut)</p>
+
+<p class="whs1">gg.setDisplayMode(id_cut,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cut_without_f_2)</p>
+
+<p class="whs1">gg.setDisplayMode(id_cut_without_f_2,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_result)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_result,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark5>Sewing</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">import math</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create base points</p>
+
+<p class="whs1">px = geompy.MakeVertex(100., 
+ 0., 0.)</p>
+
+<p class="whs1">py = geompy.MakeVertex(0., 
+ 100., 0.)</p>
+
+<p class="whs1">pz = geompy.MakeVertex(0., 
+ 0., 100.)</p>
+
+<p>&nbsp;</p>
+
+<p># create base geometry 2D &amp; 3D</p>
+
+<p class="whs1">vector = geompy.MakeVector(px, 
+ py)</p>
+
+<p class="whs1">arc = geompy.MakeArc(py, 
+ pz, px)</p>
+
+<p>&nbsp;</p>
+
+<p># create base objects</p>
+
+<p class="whs1">angle = 45. * math.pi 
+ / 180</p>
+
+<p class="whs1">WantPlanarFace = 1 
+ #True</p>
+
+<p class="whs1">wire = geompy.MakeWire([vector, 
+ arc])</p>
+
+<p class="whs1">face = geompy.MakeFace(wire, 
+ WantPlanarFace)</p>
+
+<p class="whs1">face_rot = geompy.MakeRotation(face, 
+ vector, angle)</p>
+
+<p>&nbsp;</p>
+
+<p># make sewing</p>
+
+<p class="whs1">precision = 0.00001</p>
+
+<p class="whs1">sewing = geompy.MakeSewing([face, 
+ face_rot], precision)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_face = geompy.addToStudy(face, 
+ &quot;Face&quot;)</p>
+
+<p class="whs1">id_face_rot = geompy.addToStudy(face_rot, 
+ &quot;Face rotation&quot;)</p>
+
+<p class="whs1">id_sewing = geompy.addToStudy(sewing, 
+ &quot;Sewing&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_face)</p>
+
+<p class="whs1">gg.setDisplayMode(id_face,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_face_rot)</p>
+
+<p class="whs1">gg.setDisplayMode(id_face_rot,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_sewing)</p>
+
+<p class="whs1">gg.setDisplayMode(id_sewing,1) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3><a name=bookmark6>Glue Faces</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">import math</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create base points</p>
+
+<p class="whs1">px = geompy.MakeVertex(100., 
+ 0., 0.)</p>
+
+<p class="whs1">py = geompy.MakeVertex(0., 
+ 100., 0.)</p>
+
+<p class="whs1">pz = geompy.MakeVertex(0., 
+ 0., 100.)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create base geometry 
+ 2D &amp; 3D</p>
+
+<p class="whs1">vector = geompy.MakeVector(px, 
+ py)</p>
+
+<p class="whs1">arc = geompy.MakeArc(py, 
+ pz, px)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create base objects</p>
+
+<p class="whs1">angle = 45. * math.pi 
+ / 180</p>
+
+<p class="whs1">WantPlanarFace = 1 
+ #True</p>
+
+<p class="whs1">wire = geompy.MakeWire([vector, 
+ arc])</p>
+
+<p class="whs1">face = geompy.MakeFace(wire, 
+ WantPlanarFace)</p>
+
+<p class="whs1">face_rot = geompy.MakeRotation(face, 
+ vector, angle)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># make sewing</p>
+
+<p class="whs1">precision = 0.00001</p>
+
+<p class="whs1">sewing = geompy.MakeSewing([face, 
+ face_rot], precision)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># add objects in study</p>
+
+<p class="whs1">id_face = geompy.addToStudy(face, 
+ &quot;Face&quot;)</p>
+
+<p class="whs1">id_face_rot = geompy.addToStudy(face_rot, 
+ &quot;Face rotation&quot;)</p>
+
+<p class="whs1">id_sewing = geompy.addToStudy(sewing, 
+ &quot;Sewing&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_face)</p>
+
+<p class="whs1">gg.setDisplayMode(id_face,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_face_rot)</p>
+
+<p class="whs1">gg.setDisplayMode(id_face_rot,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_sewing)</p>
+
+<p class="whs1">gg.setDisplayMode(id_sewing,1) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3><a name=bookmark7>Add Point on Edge</a></h3>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># create vertices</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(0,0,50)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(60,0,50)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># make edge</p>
+
+<p class="whs1">edge = geompy.MakeEdge(p1, 
+ p2) #geompy.GetSubShape(box, edge_ind)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># divide edge</p>
+
+<p class="whs1">divide = geompy.DivideEdge(edge, 
+ -1, 0.5, 0)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># add objects in study</p>
+
+<p class="whs1">id_edge = geompy.addToStudy(edge, 
+ &quot;Edge&quot;)</p>
+
+<p class="whs1">edge_points = geompy.SubShapeAllSorted(edge, 
+ geompy.ShapeType[&quot;VERTEX&quot;])</p>
+
+<p class="whs1">for point in edge_points:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudyInFather(edge, 
+ point, &quot;Edge's point&quot;)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<p class="whs1">id_divide = geompy.addToStudy(divide, 
+ &quot;Divided edge&quot;)</p>
+
+<p class="whs1">edge_points = geompy.SubShapeAllSorted(divide, 
+ geompy.ShapeType[&quot;VERTEX&quot;])</p>
+
+<p class="whs1">for point in edge_points:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudyInFather(divide, 
+ point, &quot;Edge's point after divide&quot;)</p>
+
+<p class="whs1">&nbsp;&nbsp;</p>
+
+<p class="whs1">salome.sg.updateObjBrowser(1) 
+ </p>
+
+<p class="whs2">&nbsp;</p>
+
+<h3><a name=bookmark8>Check Free Boundaries</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># create boxes</p>
+
+<p class="whs1">box1 = geompy.MakeBox(0,0,0,100,50,100)</p>
+
+<p class="whs1">box2 = geompy.MakeBox(100,0,0,250,50,100)</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># make compound</p>
+
+<p class="whs1">compound = geompy.MakeCompound([box1, 
+ box2])</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># import from *.brep</p>
+
+<p class="whs1">ImportBREP = geompy.ImportBREP(&quot;/tmp/flight_solid.brep&quot;)</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># get face</p>
+
+<p class="whs1">faces = geompy.SubShapeAllSorted(ImportBREP, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># get free boundary for 
+ face 32</p>
+
+<p class="whs1">Res = geompy.GetFreeBoundary(faces[32])</p>
+
+<p class="whs1">isSuccess &nbsp;&nbsp;= 
+ Res[0]</p>
+
+<p class="whs1">ClosedWires = Res[1]</p>
+
+<p class="whs1">OpenWires &nbsp;&nbsp;= 
+ Res[2]</p>
+
+<p class="whs2">&nbsp;&nbsp;</p>
+
+<p class="whs2">i<span style="font-family: 'Lucida Console', monospace;">f 
+ isSuccess == 1 :</span></p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Checking free boudaries is OK.&quot;</p>
+
+<p class="whs1">else :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Checking free boudaries is KO!&quot;</p>
+
+<p class="whs1">print &quot;len(ClosedWires) 
+ = &quot;, len(ClosedWires)</p>
+
+<p class="whs1">i = 0</p>
+
+<p class="whs1">for wire in ClosedWires 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;wire_name 
+ = &quot;Face 32 -&gt; Close wires : WIRE %d&quot;%(i+1)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudy(ClosedWires[i], 
+ wire_name)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;if 
+ i &lt; len(ClosedWires) :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i 
+ = i+ 1</p>
+
+<p class="whs1">print &quot;len(OpenWires) 
+ = &quot;, len(OpenWires)</p>
+
+<p class="whs1">i = 0</p>
+
+<p class="whs1">for wire in OpenWires 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;wire_name 
+ = &quot;Face 32 -&gt; Open wires : WIRE %d&quot;%(i+1)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudy(OpenWires[i], 
+ wire_name)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;if 
+ i &lt; len(OpenWires) :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i 
+ = i+ 1</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># get free boundary for 
+ face 41</p>
+
+<p class="whs1">Res = geompy.GetFreeBoundary(faces[41])</p>
+
+<p class="whs1">isSuccess &nbsp;&nbsp;= 
+ Res[0]</p>
+
+<p class="whs1">ClosedWires = Res[1]</p>
+
+<p class="whs1">OpenWires &nbsp;&nbsp;= 
+ Res[2]</p>
+
+<p class="whs1">&nbsp;&nbsp;</p>
+
+<p class="whs1">if isSuccess == 1 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Checking free boudaries is OK.&quot;</p>
+
+<p class="whs1">else :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Checking free boudaries is KO!&quot;</p>
+
+<p class="whs1">print &quot;len(ClosedWires) 
+ = &quot;, len(ClosedWires)</p>
+
+<p class="whs1">i = 0</p>
+
+<p class="whs1">for wire in ClosedWires 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;wire_name 
+ = &quot;Face 41 -&gt; Close wires : WIRE %d&quot;%(i+1)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudy(ClosedWires[i], 
+ wire_name)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;if 
+ i &lt; len(ClosedWires) :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i 
+ = i+ 1</p>
+
+<p class="whs1">print &quot;len(OpenWires) 
+ = &quot;, len(OpenWires)</p>
+
+<p class="whs1">i = 0</p>
+
+<p class="whs1">for wire in OpenWires 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;wire_name 
+ = &quot;Face 41 -&gt; Open wires : WIRE %d&quot;%(i+1)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudy(OpenWires[i], 
+ wire_name)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;if 
+ i &lt; len(OpenWires) :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i 
+ = i+ 1</p>
+
+<p class="whs2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<p class="whs2"># add imported object 
+ in study</p>
+
+<p class="whs1">id_ImportBREP = geompy.addToStudy(ImportBREP, 
+ &quot;ImportBREP&quot;)</p>
+
+<p class="whs2"><span style="font-family: 'Lucida Console', monospace;">salome.sg.updateObjBrowser(1)</span> 
+ </p>
+
+<p class="whs2">&nbsp;</p>
+
+<h3><a name=bookmark9>Check Free Faces</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(35, 
+ 35, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(35, 
+ 35, 50)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create cylinder</p>
+
+<p class="whs1">cylinder = geompy.MakeCone(p1, 
+ v, 30, 20, 20)</p>
+
+<p>&nbsp;</p>
+
+<p># create cone</p>
+
+<p class="whs1">cone = geompy.MakeCone(p1, 
+ v, 70, 40, 60)</p>
+
+<p>&nbsp;</p>
+
+<p># make cut</p>
+
+<p class="whs1">cut = geompy.MakeCut(cone, 
+ cylinder)</p>
+
+<p>&nbsp;</p>
+
+<p># get faces as sub-shapes</p>
+
+<p class="whs1">faces = []</p>
+
+<p class="whs1">faces = geompy.SubShapeAllSorted(cut, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs1">f_2 = geompy.GetSubShapeID(cut, 
+ faces[0])</p>
+
+<p>&nbsp;</p>
+
+<p># remove one face from the shape</p>
+
+<p class="whs1">cut_without_f_2 = 
+ geompy.SuppressFaces(cut, [f_2])</p>
+
+<p>&nbsp;</p>
+
+<p># suppress specified wire</p>
+
+<p class="whs1">result = geompy.GetFreeFacesIDs(cut_without_f_2)</p>
+
+<p class="whs1">print &quot;A number 
+ of free faces is &quot;, len(result)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">all_faces = geompy.SubShapeAllSorted(cut_without_f_2, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs1">for face in all_faces 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;sub_shape_id 
+ = geompy.GetSubShapeID(cut_without_f_2, face)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;if 
+ result.count(sub_shape_id) &gt; 0 :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;face_name 
+ = &quot;Free face %d&quot;%(sub_shape_id)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudy(face, 
+ face_name)</p>
+
+<p>&nbsp;</p>
+
+<p># in this example all faces from cut_without_f_2 are free</p>
+
+<p class="whs1">id_cut_without_f_2 
+ = geompy.addToStudy(cut_without_f_2, &quot;Cut without f_2&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cut_without_f_2)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_cut_without_f_2,1)</span> 
+ </p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Chamfer</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+img_whs3 { border:none; width:312px; height:319px; float:none; border-style:none; }
+img_whs4 { border:none; width:225px; height:239px; float:none; border-style:none; }
+img_whs5 { border:none; width:312px; height:381px; float:none; border-style:none; }
+img_whs6 { border:none; width:230px; height:245px; float:none; border-style:none; }
+img_whs7 { border:none; width:221px; height:238px; float:none; border-style:none; }
+p.whs8 { font-size:12pt; margin-left:40px; }
+p.whs9 { list-style:disc; margin-left:0in; margin-right:0in; margin-top:0px; margin-bottom:0px; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs9 {margin-left:1pt;margin-right:1pt;margin-top:1pt;margin-bottom:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTransforming geometrical objects\nTransformation Operations\nChamfer");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_operationgui_functions_salome2_sp3_operationgui_functions_image90.gif" width="20px" height="20px" border="0" class="img_whs1"> </font></span>Chamfer</h1>
+
+<p class="whs2"><b style="font-weight: normal;">T</b>o produce 
+ a <span style="font-weight: bold;"><B>Fillet</B></span> in the Main Menu select 
+ <span style="font-weight: bold;"><B>Operations - &gt; Transformation - &gt; 
+ Fillet</B></span> </p>
+
+<p>&nbsp;</p>
+
+<p>This operation allows you to <span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">make chamfer 
+ of the edges of a Shape.</font></span></p>
+
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;"><span 
+ style="font-weight: normal;">The</span> Result <span style="font-weight: normal;">will 
+ be a</span></b> GEOM_Object.</font></span></p>
+
+<p>&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: normal;">T</b>o create 
+ chamfer on all edges of the given shape, you need to define the <span 
+ style="font-weight: bold;"><B>Main Object</B></span> to create a chamfer on and 
+ the <span style="font-weight: bold;"><B>Dimension</B></span> (radius) of the 
+ chamfer. &nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeChamferAll(Shape, D)</I></span> 
+ </p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments: </b>Name 
+ + 1 SHAPE + 1 value (Chamfer dimension).</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="pics/chamfer1.png" x-maintain-ratio="TRUE" width="312px" height="319px" border="0" class="img_whs3"> &nbsp;<img src="pics/chamfer_all.png" x-maintain-ratio="TRUE" width="225px" height="239px" border="0" class="img_whs4"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">To create chamfer on the specified edges of 
+ the given shape, &nbsp;you 
+ need to define the <span style="font-weight: bold;"><B>Main Object</B></span> 
+ to create a fillet on, select the necessary edges in the object browser 
+ or in the viewer and define the <span style="font-weight: bold;"><B>Dimension</B></span> 
+ of the Chamfer.</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeChamferEdge(Shape, D1, 
+ D2, Face1, Face2)</I></span>, where Shape is a shape to create a chamfer on, 
+ D1 is a chamfer size along Face1, D2 is a chamfer size along Face2, Face1 
+ and Face2 are indices of faces in Shape.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="pics/chamfer2.png" x-maintain-ratio="TRUE" width="312px" height="381px" border="0" class="img_whs5"> &nbsp;<img src="pics/chamfer_edge.png" x-maintain-ratio="TRUE" width="230px" height="245px" border="0" class="img_whs6"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">To create chamfer on the specified faces of 
+ the given shape, &nbsp;you 
+ need to define the <span style="font-weight: bold;"><B>Main Object</B></span> 
+ to create a fillet on, select the necessary faces in the object browser 
+ or in the viewer and define the <span style="font-weight: bold;"><B>Dimension</B></span> 
+ of the Chamfer.</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeChamferFace(Shape, D1, 
+ D2, ListOfFaceID)</I></span>, where Shape is a shape to create chamfer on, 
+ D1 is a chamfer size along a face from &nbsp;ListOfFaceID, 
+ &nbsp;D2 is a 
+ chamfer size along two faces connected to the edge to which the chamfer 
+ is applied, ListOfFaceID is a list of indices of faces in Shape.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="pics/chamfer3.png" x-maintain-ratio="TRUE" width="312px" height="381px" border="0" class="img_whs5"> &nbsp;<img src="pics/chamfer_faces.png" x-maintain-ratio="TRUE" width="221px" height="238px" border="0" class="img_whs7"></p>
+
+<p class="whs8">&nbsp;</p>
+
+<p class="whs9">&nbsp;&nbsp;<span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Our </font></span><span 
+ style="font-weight: bold;"><B>TUI Scripts</B></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> 
+ provide you with useful examples of the use of <a href="transformation_operations.htm#bookmark4">Transformation 
+ Operations</a>. </font></span></p>
+
+<p>&nbsp;</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

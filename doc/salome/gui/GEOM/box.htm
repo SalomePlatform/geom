@@ -1,0 +1,172 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Box</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+p.whs3 { font-style:italic; }
+img_whs4 { border:none; width:312px; height:324px; float:none; border-style:none; }
+p.whs5 { font-weight:normal; }
+img_whs6 { border:none; width:312px; height:332px; float:none; border-style:none; }
+p.whs7 { font-size:12pt; font-weight:bold; }
+p.whs8 { font-size:12pt; font-weight:bold; font-style:normal; }
+p.whs9 { font-size:12pt; font-style:normal; font-weight:bold; }
+p.whs10 { font-size:12pt; font-style:normal; font-weight:normal; }
+img_whs11 { border:none; width:267px; height:280px; float:none; border-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Primitives\nBox");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><b style="font-weight: bold;"><img src="files/salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image99.gif" width="20px" height="20px" border="0" class="img_whs1"> </b></font></span>Box</h1>
+
+<p><b><span style="font-weight: normal;">T</b>o</span> create a <span style="font-weight: bold;"><B>Box</B></span> 
+ in the <span style="font-weight: bold;"><B>Main Menu</B></span> select <span 
+ style="font-weight: bold;"><B>New Entity - &gt; Primitives - &gt; Box</B></span></p>
+
+<p>&nbsp;</p>
+
+<p>There are 2 algorithms for creation of a <span style="font-weight: bold;"><B>Box</B></span>. 
+ </p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
+ Result <span style="font-weight: normal;">of each operation will be a</span></b> 
+ GEOM_Object (SOLID).</p>
+
+<p>&nbsp;</p>
+
+<p>Firstly, you can define a <span style="font-weight: bold;"><B>Box</B></span> 
+ by two specified <span style="font-weight: bold;"><B>Vertices (</B></span>its 
+ opposite corners), and with edges, parallel to the coordinate axes. </p>
+
+<p><span style="font-weight: bold;"><B><b style="font-weight: bold;">TUI Command 
+ :</b> </B></span><span style="font-style: italic;"><I>geompy.MakeBoxTwoPnt(Point1, 
+ Point2)</I></span></p>
+
+<p><b style="font-weight: bold;">Arguments: </b><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Name 
+ + </font></span>2 vertices (opposite corners of the box).</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p><b style="font-weight: bold;"><img src="pics/box1.png" x-maintain-ratio="TRUE" width="312px" height="324px" border="0" class="img_whs4"></b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: normal;"><span style="font-weight: normal;">Secondly, 
+ you can define a </span><span style="font-weight: bold;"><B>Box</B></span><span 
+ style="font-weight: normal;"> by </b>specified dimensions along the coordinate 
+ axes</span> and with edges, parallel to them. &nbsp;The 
+ center of the box will be at point (DX/2, DY/2, DZ/2). </p>
+
+<p><span style="font-weight: bold;"><B><b style="font-weight: bold;">TUI Command 
+ :</b> </B></span><span style="font-style: italic;"><I>geompy.MakeBoxDXDYDZ(DX, 
+ DY, DZ)</I></span></p>
+
+<p><span><b style="font-weight: bold;">Arguments: </b></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Name 
+ + 3 values (dimensions at origin).</font></span></p>
+
+<p class="whs2"><b style="font-weight: bold;"><img src="pics/box2.png" x-maintain-ratio="TRUE" width="312px" height="332px" border="0" class="img_whs6"></b></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>NB! </B></font></span>The is 
+ a third way to create a Box, which is currently accessible only via<span 
+ style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B> TUI </B></font></span>commands.</p>
+
+<p class="whs7"><span style="font-weight: normal;">You 
+ can define a </span>Box<span style="font-weight: normal;"> by the coordinates 
+ of two </span>Vertices<span style="font-weight: normal;"> (in this way 
+ you don't need to create them in advance). </span></p>
+
+<p class="whs8"><b style="font-weight: bold;">TUI Command:</b> 
+ <span style="font-weight: normal; font-style: italic;"><I>geompy.MakeBox(x1,y1,z1,x2,y2,z2)</I></span> 
+ </p>
+
+<p class="whs8"><b style="font-weight: bold;">Arguments:<span 
+ style="font-weight: normal;"> </b>Name</span> + <span style="font-weight: normal;">X, 
+ Y and Z coordinates of both points.</span></p>
+
+<p class="whs8">&nbsp;</p>
+
+<p class="whs9">Example:</p>
+
+<p class="whs10"><img src="pics/boxes.png" x-maintain-ratio="TRUE" width="267px" height="280px" border="0" class="img_whs11"></p>
+
+<p>&nbsp;</p>
+
+<p class="whs2">Our <span style="font-weight: bold;"><B>TUI Scripts</B></span> 
+ provide you with useful examples of creation of <a href="primitives.htm#bookmark">Primitives</a>. 
+ </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

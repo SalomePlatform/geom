@@ -1,0 +1,193 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Point</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+img_whs3 { border:none; width:312px; height:332px; float:none; border-style:none; }
+p.whs4 { font-size:12pt; margin-left:120px; }
+img_whs5 { border:none; width:312px; height:473px; float:none; border-style:none; }
+p.whs6 { font-size:12pt; margin-left:0px; }
+p.whs7 { font-size:12pt; font-style:italic; margin-left:0px; }
+img_whs8 { border:none; width:312px; height:421px; float:none; border-style:none; }
+p.whs9 { font-size:12pt; color:#000000; }
+p.whs10 { color:#808080; font-size:12pt; }
+img_whs11 { border:none; width:354px; height:326px; float:none; border-style:none; }
+p.whs12 { color:#808080; font-size:12pt; margin-left:40px; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs6 {margin-left:1pt; }";
+  strNSS += "p.whs7 {margin-left:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Basic Geometric Objects\nPoint");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><b style="font-weight: bold;"><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image27.gif" width="20px" height="20px" border="0" class="img_whs1"> </font></span></b>Point</h1>
+
+<p>To create a <span style="font-weight: bold;"><B>Point</B></span> in the <span 
+ style="font-weight: bold;"><B>Main Menu</B></span> select <span style="font-weight: bold;"><B>New 
+ Entity - &gt; Basic - &gt; Point</B></span></p>
+
+<p>&nbsp;</p>
+
+<p>There are three algorithms to <span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">create 
+ a </font></span><span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>Point</B></font></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> in the 3D space.</font></span></p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">Each 
+ time the</span> Result <span style="font-weight: normal;">of the operation 
+ will be a</span></b> GEOM_Object (vertex).</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">Firstly, 
+ we can define a point by </span><span style="font-weight: normal;">and 
+ setting its X, Y and Z </span><span style="font-weight: bold;"><B>C</B></span></b><b><span 
+ style="font-weight: bold;"><B>oordinates</B></span><span style="font-weight: normal;">.</span> 
+ </b></p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command :</b> 
+ &nbsp;&nbsp;<span style="font-style: italic;"><I>g</I></span>eompy.MakeVertex(X, 
+ Y, Z) </p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments: </b>Name 
+ <b><span style="font-weight: normal;">(Vertex_n by default) </span></b>+ 
+ X, Y and Z coordinates of the point.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="pics/point1.png" x-maintain-ratio="TRUE" width="312px" height="332px" border="0" class="img_whs3"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">Secondly, &nbsp;we 
+ can define a point by a <span style="font-weight: bold;"><B>Reference</B></span> 
+ to another point and the shift of the coordinates of the new point regarding 
+ the coordinates of the old one. </p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command :</b> 
+ &nbsp;&nbsp;<span style="font-style: italic;"><I>g</I></span><span 
+ style="margin-left: 120px;">eompy.MakeVertexWithRef(Reference, X, Y, Z)</span></p>
+
+<p class="whs2"><span style="margin-left: 120px;"><b style="font-weight: bold;">A</span>rguments: 
+ </b>Name + 1 reference point + 3 coordinates defining the position of 
+ this point regarding the reference one</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs2"><span style="font-size: 12pt; margin-left: 120px;"><font size=3 style="font-size:12pt;"><img src="pics/neo-point2.png" x-maintain-ratio="TRUE" width="312px" height="473px" border="0" class="img_whs5"></font></span></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs6">Finally, we can define a 
+ point by an <span style="font-weight: bold;"><B>Edge</B></span> and a <span style="font-weight: bold;"><B>Parameter</B></span> 
+ &nbsp;indicating 
+ its position on the Edge. For example, 0.5 means that the point is located 
+ in the middle of the edge. </p>
+
+<p class="whs7"><b style="font-weight: bold; font-style: normal;">TUI 
+ Command :</b> &nbsp;&nbsp;geompy.MakeVertexOnCurve(Edge, 
+ Parameter) </p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments:<span> 
+ N</b>ame + 1 edge &nbsp;+ 
+ 1 Parameter defining the position of the point on the given edge.</span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;"><img src="pics/point3.png" x-maintain-ratio="TRUE" width="312px" height="421px" border="0" class="img_whs8"></b></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs9"><span style="font-size: 12pt; color: #000000;"><font size=3 color=black style="font-size:12.000000pt;"><b 
+ style="font-weight: bold;"><b style="font-weight: bold;">E</b>xample:</b></font></span></p>
+
+<p class="whs10">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;"><img src="pics/points.png" x-maintain-ratio="TRUE" width="354px" height="326px" border="0" class="img_whs11"></b></p>
+
+<p class="whs12">&nbsp;</p>
+
+<p class="whs2">Our <span style="font-weight: bold;"><B>TUI Scripts</B></span> 
+ provide you with useful examples of creation of <a href="basic_geometrical_objects.htm#bookmark">Basic 
+ Geometric Objects</a>. </p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

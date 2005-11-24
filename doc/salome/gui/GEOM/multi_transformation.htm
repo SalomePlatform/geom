@@ -1,0 +1,192 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Multi Transformation</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { border:none; width:24px; height:22px; border-style:none; }
+p.whs2 { font-size:12pt; }
+p.whs3 { font-size:12pt; font-weight:bold; }
+img_whs4 { border:none; width:312px; height:381px; float:none; border-style:none; }
+img_whs5 { border:none; width:301px; height:306px; float:none; border-style:none; }
+ol.whs6 { list-style:disc; }
+ul.whs7 { list-style:circle; }
+p.whs8 { font-size:12pt; font-weight:normal; }
+img_whs9 { border:none; width:312px; height:494px; float:none; border-style:none; }
+img_whs10 { border:none; width:277px; height:304px; float:none; border-style:none; }
+p.whs11 { font-weight:bold; }
+p.whs12 { font-size:12pt; text-indent:-40px; font-weight:bold; margin-left:80px; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs12 {text-indent:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTransforming geometrical objects\nBlocks Operations\nMulti Transformation");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><img src="image52.gif" width="24px" height="22px" border="0" class="img_whs1"> Block Multi Transformation</h1>
+
+<p class="whs2"><b style="font-weight: normal;">T</b>o produce 
+ a <span style="font-weight: bold;"><B>Multi Translation</B></span> operation 
+ in the Main Menu select <span style="font-weight: bold;"><B>Operations - 
+ &gt; Blocks - &gt; Multi Translation</B></span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">This operation makes several translations of 
+ a block (solid) in <span style="font-weight: bold;"><B>one</B></span> or <span 
+ style="font-weight: bold;"><B>two</B></span> directions depending on the arguments 
+ specified by the user.</p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
+ Result<span style="font-weight: normal;"> in both cases will be a</span></b> 
+ GEOM_Object.</p>
+
+<p>&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Simple Multi 
+ Transformation (in one direction).</b></p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI 
+ Command:</b><i> </i><span style="font-style: italic; font-weight: normal;"><I>geompy. 
+ MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes), </I></span><span 
+ style="font-weight: normal;">where</span><span style="font-style: italic; font-weight: normal;"><I> 
+ Block </I></span><span style="font-weight: normal;">is a block to be transformed,</span><span 
+ style="font-style: italic; font-weight: normal;"><I> DirFaceID1 </I></span><span 
+ style="font-weight: normal;">is an ID of the face which defines the first 
+ direction of transformation,</span><span style="font-style: italic; font-weight: normal;"><I> 
+ DirFaceID2 </I></span><span style="font-weight: normal;">is an ID of the face 
+ which defines the second direction of transformation,</span><span style="font-style: italic; font-weight: normal;"><I> 
+ NbTimes </I></span><span style="font-weight: normal;">is a number of transformations.</span></p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments: </b>Name 
+ + 1 hexahedral solid + 1 or 2 faces + 1 integer (number of blocks).</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="pics/mtransf1.png" x-maintain-ratio="TRUE" width="312px" height="381px" border="0" class="img_whs4"> &nbsp;&nbsp;<img src="pics/multi_transformationsn1d.png" x-maintain-ratio="TRUE" width="301px" height="306px" border="0" class="img_whs5"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Double 
+ Multi Transformation (in two directions).</b></font></span></p>
+
+<p class="whs2"><span style="font-weight: bold;"><B><b style="font-weight: bold;">TUI 
+ Command:</b><i> </i></B></span><span style="font-size: 12pt; font-style: italic;"><font size=3 style="font-size:12pt;"><I>geompy. 
+ MakeMultiTransformation2D(Block, DirFaceID1U, DirFaceID2U, NbTimesU, DirFaceID1V, 
+ DirFaceID2V, NbTimesV)</I></font></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">, where Block 
+ is a block to be transformed, DirFaceID1U and DirFace1V are ID’s of the 
+ faces, which define directions of the first transformation, DirFaceID1V 
+ and DirFaceID2V are ID’s of the faces which define directions of the second 
+ transformation, NbTimesU and NbTimesV are numbers of transformations.</font></span></p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments: &nbsp;</b><span 
+ style="font-size: 12pt; font-weight: normal;"><font size=3 style="font-size:12pt;">Name 
+ + 1 hexahedral solid + </font></span></p>
+
+<ol type="disc" class="whs6">
+	
+	<ul type="circle" class="whs7">
+		
+		<li class=kadov-p><p class="whs8">2 
+ faces and 1 integer, or</p></li>
+		
+		<li class=kadov-p><p class="whs8">3 
+ or 4 faces and 2 integers </p></li>
+	</ul>
+</ol>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="pics/mtransf2.png" x-maintain-ratio="TRUE" width="312px" height="494px" border="0" class="img_whs9"> &nbsp;<img src="pics/multi_transformationsn2d.png" x-maintain-ratio="TRUE" width="277px" height="304px" border="0" class="img_whs10"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs11">&nbsp;&nbsp;&nbsp;<span 
+ style="font-size: 12pt; font-weight: normal;"><font size=3 style="font-size:12pt;">Our</font></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> TUI Scripts</font></span><span style="font-size: 12pt; font-weight: normal;"><font size=3 style="font-size:12pt;"> 
+ provide you with useful examples of the use of</font></span><span style="font-size: 12pt;"> 
+ <font size=3 style="font-size:12pt;"><a href="blocks_operations.htm#bookmark4">Blocks Operations</a>. </font></span></p>
+
+<p class="whs11">&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p class="whs12">&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

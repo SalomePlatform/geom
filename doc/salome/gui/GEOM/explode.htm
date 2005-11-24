@@ -1,0 +1,180 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Explode</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { margin-left:0px; }
+p.whs3 { font-family:'Times New Roman' , serif; font-size:12pt; font-weight:normal; }
+p.whs4 { font-family:'Times New Roman' , serif; font-size:14pt; }
+p.whs5 { font-size:12pt; }
+ul.whs6 { list-style:disc; }
+p.whs7 { font-size:12pt; font-style:italic; }
+p.whs8 { font-size:12pt; font-style:normal; }
+p.whs9 { font-size:12pt; margin-left:40px; }
+img_whs10 { border:none; width:312px; height:283px; float:none; border-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs2 {margin-left:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Advanced Geometrical Objects\nExplode");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><b style="font-weight: bold;"><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image13.gif" width="20px" height="20px" border="0" class="img_whs1"> &nbsp;</font></span></b>Explode</h1>
+
+<p class="whs2">To<span style="font-weight: bold;"><B> Explode</B></span> 
+ an object into subshapes, in the main menu select <span style="font-weight: bold;"><B>New 
+ Entity &gt; Explode</B></span>.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs4"><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;">To create a list of &nbsp;subshapes 
+ (vertices, edges, wires etc.) of the given shape using the </font></span><span 
+ style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>Explode</B></font></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> 
+ operation, you need to define the </font></span><span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>Main 
+ Object,</B></font></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> which will be exploded and 
+ the </font></span><span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>Type of Subshapes</B></font></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> you wish to obtain from it</font></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">.</font></span></p>
+
+<p class="whs5"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
+ Result <span style="font-weight: normal;">of the operation will be a List</span> 
+ of</b> GEOM_Objects (edges, faces, solids or compsolids).</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;"><span style="font-weight: normal;">Using</span> 
+ TUI Commands<span style="font-weight: normal;"> you can perform this operation 
+ in a variety of ways:</span> </b></p>
+
+<ul type="disc" class="whs6">
+	
+	<li class=kadov-p><p class="whs5"><span style="font-style: italic;"><I>geompy.SubShapeAll(Shape, 
+ Type)</I></span> explodes a Shape on subshapes of a given Type and returns 
+ a <span style="font-weight: bold;"><B>List</B></span> of sub-shapes. </p></li>
+	
+	<li class=kadov-p><p class="whs5"><span style="font-style: italic;"><I>geompy.SubShapeAllIDs(Shape, 
+ Type)</I></span> &nbsp;explodes 
+ a Shape on subshapes of a given Type and returns a List of IDs of sub-shapes. 
+ </p></li>
+	
+	<li class=kadov-p><p class="whs5"><span style="font-style: italic;"><I>geompy.SubShapeAllSorted(Shape, 
+ Type)</I></span> &nbsp;explodes 
+ a shape on subshapes of a given type and <span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">sorts 
+ them by coordinates of their gravity centers, returning &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a 
+ list of sub-shapes. </font></span></p></li>
+	
+	<li class=kadov-p><p class="whs7">geompy.SubShapeAllSortedIDs(Shape, 
+ Type) &nbsp;<span style="font-style: normal;">explodes 
+ a shape on subshapes of a given type</span> <span style="font-style: normal;">and 
+ sorts them by coordinates of their gravity centers, &nbsp;returning 
+ a List of IDs of sub-shapes.</span></p></li>
+	
+	<li class=kadov-p><p class="whs7"><span 
+ style="font-style: normal;">g</span>eompy.SubShape(Shape, Type, ListOfInd) 
+ &nbsp;<span style="font-style: normal;">allows 
+ to obtain a compound of sub-shapes of &nbsp;the 
+ Shape, &nbsp;selected 
+ by they indices in a list of all sub-shapes of the given Type. Each index 
+ is in the range [1, Nb_Sub-Shapes_Of_Given_Type].</span> </p></li>
+	
+	<li class=kadov-p><p class="whs8"><span 
+ style="font-size: 12pt; font-style: normal;"><font size=3 style="font-size:12pt;">geompy.SubShapeSorted(Shape, 
+ Type, ListOfInd) allows to obtain a compound of sub-shapes of the Shape, 
+ selected by they indices in sorted list of all sub-shapes of the given 
+ Type. Each index is in the range [1, Nb_Sub-Shapes_Of_Given_Type] </font></span></p></li>
+</ul>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><b style="font-weight: bold;">Arguments:</b> 
+ 1 SHAPE + 1 type of SubShape.</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs9"><img src="pics/neo-obj1.png" x-maintain-ratio="TRUE" width="312px" height="283px" border="0" class="img_whs10"></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

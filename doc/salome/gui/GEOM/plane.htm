@@ -1,0 +1,196 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Plane</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+img_whs3 { border:none; width:312px; height:346px; float:none; border-style:none; }
+p.whs4 { font-size:12pt; font-weight:bold; }
+img_whs5 { border:none; width:312px; height:385px; float:none; border-style:none; }
+table.whs6 { x-cell-content-align:top; width:72.604%; border-spacing:0px; }
+col.whs7 { width:32.089%; }
+col.whs8 { width:32.008%; }
+col.whs9 { width:35.903%; }
+tr.whs10 { x-cell-content-align:top; }
+td.whs11 { width:32.089%; padding-right:10px; padding-left:10px; border-right-style:none; border-left-style:none; border-top-style:none; border-bottom-style:none; }
+img_whs12 { border:none; width:258px; height:249px; float:none; border-style:none; }
+td.whs13 { width:32.008%; padding-right:10px; padding-left:10px; border-right-style:none; border-top-style:none; border-bottom-style:none; }
+img_whs14 { border:none; width:291px; height:181px; float:none; border-style:none; }
+td.whs15 { width:35.903%; padding-right:10px; padding-left:10px; border-top-style:none; border-bottom-style:none; border-right-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Basic Geometric Objects\nPlane");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><b style="font-weight: bold;"><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image33.gif" width="20px" height="20px" border="0" class="img_whs1"> </font></span></b>Plane</h1>
+
+<p>To create a <span style="font-weight: bold;"><B>Plane</B></span> in the <span 
+ style="font-weight: bold;"><B>Main Menu</B></span> select <span style="font-weight: bold;"><B>New 
+ Entity - &gt; Basic - &gt; Plane</B></span></p>
+
+<p>&nbsp;</p>
+
+<p>There are three algorithms to <span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">create 
+ a point in the 3D space.</font></span></p>
+
+<p><b style="font-weight: bold;"><span style="font-weight: normal;">The</span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> Result </font></span><span style="font-weight: normal;">of 
+ each operation will be a</span></b><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> GEOM_Object 
+ (face).</font></span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">Firstly, you can define a <span style="font-weight: bold;"><B>Plane</B></span> 
+ by a <span style="font-weight: bold;"><B>Point </B></span>through which &nbsp;the 
+ plane passes, a <span style="font-weight: bold;"><B>Vector </B></span>giving 
+ a normal of the plane and a <span style="font-weight: bold;"><B>Size of the 
+ Plane</B></span> (size of a side of quadrangle face, representing the plane).</p>
+
+<p class="whs2"><span style="font-weight: bold;"><B><b style="font-weight: bold;">TUI 
+ Command:</b> </B></span><span style="font-style: italic;"><I>geompy.MakePlane(Point, 
+ Vector, TrimSize)</I></span></p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments: </b>Name 
+ + 1 vertex + 1 vector &nbsp;+ 
+ 1 value (to define the size of the plane).</p>
+
+<p class="whs2"><b style="font-weight: bold;"><img src="pics/plane1.png" x-maintain-ratio="TRUE" width="312px" height="346px" border="0" class="img_whs3"></b></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">Secondly, you can define a <span style="font-weight: bold;"><B>Plane</B></span> 
+ by three <span style="font-weight: bold;"><B>Points </B></span>through which 
+ &nbsp;the plane 
+ passes.</p>
+
+<p class="whs4"><b style="font-weight: bold;">TUI 
+ Command:</b> <span style="font-weight: normal; font-style: italic;"><I>geompy.MakePlaneThreePnt(Point1, 
+ Point2, Point3, TrimSize)</I></span> </p>
+
+<p class="whs4"><b style="font-weight: bold;">Arguments: 
+ </b><span style="font-weight: normal;">Name + 1 vertex + 3 points (for 
+ the direction) + 1 value (to define the size of the plane).</span></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs2"><img src="pics/plane2.png" x-maintain-ratio="TRUE" width="312px" height="385px" border="0" class="img_whs5"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">Finally, you can define a <span style="font-weight: bold;"><B>Plane</B></span>, 
+ similar to the existing one, but with another size of representing face. 
+ </p>
+
+<p class="whs2"><span style="font-weight: bold;"><B><b style="font-weight: bold;">TUI 
+ Command:</b> </B></span>geompy.MakePlaneFace(Face, TrimSize) </p>
+
+<p class="whs2"><span><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Arguments: 
+ </b></font></span>Name + 1 selection + 1 value (to define the size of the plane).</p>
+
+<span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><img src="pics/plane3.png" x-maintain-ratio="TRUE" width="312px" height="385px" border="0" class="img_whs5"></font></span> 
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs4">Examples:</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs4"><span style="font-weight: normal; font-style: italic;"><I>Planes</I></span> 
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span 
+ style="font-weight: normal; font-style: italic;"><I>A 
+ Plane created on a Plane of another size</I></span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<table x-use-null-cells cellspacing="0" width="72.604%" class="whs6">
+<col class="whs7">
+<col class="whs8">
+<col class="whs9">
+
+<tr valign="top" class="whs10">
+<td width="32.089%" class="whs11">
+<p class="whs2"><img src="pics/planes1.png" x-maintain-ratio="TRUE" width="258px" height="249px" border="0" class="img_whs12"></td>
+<td width="32.008%" class="whs13">
+<p class="whs2"><img src="pics/plane_on_face.png" x-maintain-ratio="TRUE" width="291px" height="181px" border="0" class="img_whs14"></td>
+<td width="35.903%" class="whs15">
+<p class="whs2">&nbsp;</td></tr>
+</table>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">Our TUI Scripts provide you with useful examples 
+ of creation of <a href="basic_geometrical_objects.htm#bookmark6">Basic 
+ Geometric Objects</a>. </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

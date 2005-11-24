@@ -1,0 +1,158 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Glue Faces</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { border:none; width:25px; height:24px; border-style:none; }
+p.whs2 { font-size:12pt; }
+p.whs3 { font-size:12pt; text-indent:-68px; margin-left:72px; font-weight:normal; }
+p.whs4 { font-size:12pt; text-indent:-68px; margin-left:72px; }
+p.whs5 { font-size:12pt; text-indent:-68px; margin-left:112px; }
+img_whs6 { border:none; width:312px; height:315px; float:none; border-style:none; }
+p.whs7 { font-size:12pt; margin-left:112px; text-indent:-112px; }
+p.whs8 { font-size:12pt; text-indent:-112px; margin-left:152px; }
+img_whs9 { border:none; float:none; width:292px; height:239px; border-style:none; }
+img_whs10 { border:none; float:none; width:275px; height:239px; border-style:none; }
+p.whs11 { font-size:12pt; text-indent:-40px; margin-left:80px; }
+p.whs12 { font-weight:bold; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs3 {text-indent:1pt; }";
+  strNSS += "p.whs4 {text-indent:1pt; }";
+  strNSS += "p.whs5 {text-indent:1pt; }";
+  strNSS += "p.whs7 {text-indent:1pt; }";
+  strNSS += "p.whs8 {text-indent:1pt; }";
+  strNSS += "p.whs11 {text-indent:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTransforming geometrical objects\nRepairing Operations\nGlue Faces");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><img src="image61.gif" width="25px" height="24px" border="0" class="img_whs1"> </font></span>Glue Faces</h1>
+
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: normal;">T</b>o 
+ Glue Faces in the Main Menu select Repair - &gt; Glue Faces.</font></span></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs4"><b style="font-weight: normal;">This operation 
+ g</b>lues faces that are coincident with respect to the given tolerance 
+ value.</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Result:</b> 
+ GEOM_Object.</font></span></p>
+
+<p class="whs4"><b style="font-weight: bold;">TUI Command 
+ : </b><span style="font-style: italic;"><I>geompy.MakeGlueFaces(theShape, 
+ theTolerance)</I></span>, where theShape is a compound of shapesto be glued, 
+ theTolerance is a maximum distance between two faces, which can be considered 
+ as coincident.</p>
+
+<p class="whs4"><b style="font-weight: bold;">Arguments: 
+ <span style="font-weight: normal;">Name +</span> </b>1 <i><span style="font-style: normal;">Compound 
+ + Tolerance value</span></i></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs5"><img src="pics/repair7.png" x-maintain-ratio="TRUE" width="312px" height="315px" border="0" class="img_whs6"></p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs7"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs8"><img src="pics/glue_faces1.png" x-maintain-ratio="TRUE" width="292px" height="239px" border="0" class="img_whs9"> &nbsp;&nbsp;<img src="pics/glue_faces2.png" x-maintain-ratio="TRUE" width="275px" height="239px" border="0" class="img_whs10"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs12"><span style="font-weight: normal;">Our</span> 
+ TUI Scripts <span style="font-weight: normal;">provide you with useful 
+ examples of the use of</span> <a href="repairing_operations.htm#bookmark6">Repairing 
+ Operations</a>. </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Groups</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nCreation of Geometric Objects\nWorking with Groups");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Groups</h1>
+
+<h3>Creation of a group</h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create two vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex(0. 
+ &nbsp;, 0. &nbsp;, 
+ 0. &nbsp;)</p>
+
+<p class="whs1">p200 = geompy.MakeVertex(200., 
+ 200., 200.)</p>
+
+<p>&nbsp;</p>
+
+<p># create a box on two points</p>
+
+<p class="whs1">Box = geompy.MakeBoxTwoPnt(p0, 
+ p200)</p>
+
+<p>&nbsp;</p>
+
+<p># create group on box's faces</p>
+
+<p class="whs1">group = geompy.CreateGroup(Box, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p>&nbsp;</p>
+
+<p># add objects to the group</p>
+
+<p class="whs1">SubFaceList = geompy.SubShapeAllSorted(Box, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs1">for i in [0, 3, 5] 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;FaceID 
+ = geompy.GetSubShapeID(Box, SubFaceList[i])</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.AddObject(group, 
+ FaceID)</p>
+
+<p>&nbsp;</p>
+
+<p># add to the group all the given shapes from the list</p>
+
+<p># (no errors, if some shapes are already included)</p>
+
+<p class="whs1">geompy.UnionList(group, 
+ [SubFaceList[0], SubFaceList[2], SubFaceList[5]])</p>
+
+<p>&nbsp;</p>
+
+<p># remove object from the group</p>
+
+<p class="whs1">geompy.RemoveObject(group, 
+ FaceID)</p>
+
+<p>&nbsp;</p>
+
+<p># remove from the group all the given shapes</p>
+
+<p># (no errors, if some shapes are not included)</p>
+
+<p class="whs1">geompy.DifferenceList(group, 
+ [SubFaceList[2], SubFaceList[3], SubFaceList[4]])</p>
+
+<p class="whs1">id_group1 = geompy.addToStudy(group, 
+ &quot;Group1&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display group's contents</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_group1)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">salome.sg.updateObjBrowser(1)</span> 
+ </p>
+
+<h3>&nbsp;</h3>
+
+<h3>&nbsp;</h3>
+
+<h3>Adding an object in a group.</h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create two vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex(0. 
+ &nbsp;, 0. &nbsp;, 
+ 0. &nbsp;)</p>
+
+<p class="whs1">p200 = geompy.MakeVertex(200., 
+ 200., 200.)</p>
+
+<p>&nbsp;</p>
+
+<p># create a box on two points</p>
+
+<p class="whs1">Box = geompy.MakeBoxTwoPnt(p0, 
+ p200)</p>
+
+<p>&nbsp;</p>
+
+<p># create group on box's faces</p>
+
+<p class="whs1">group = geompy.CreateGroup(Box, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p>&nbsp;</p>
+
+<p># add objects to the group</p>
+
+<p class="whs1">SubFaceList = geompy.SubShapeAllSorted(Box, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs1">for i in [0, 3, 5] 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;FaceID 
+ = geompy.GetSubShapeID(Box, SubFaceList[i])</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.AddObject(group, 
+ FaceID)</p>
+
+<p class="whs1">id_group1 = geompy.addToStudy(group, 
+ &quot;Group1&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display group's contents</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_group1)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">salome.sg.updateObjBrowser(1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3>Removing an object from a group</h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create two vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex(0. 
+ &nbsp;, 0. &nbsp;, 
+ 0. &nbsp;)</p>
+
+<p class="whs1">p200 = geompy.MakeVertex(200., 
+ 200., 200.)</p>
+
+<p>&nbsp;</p>
+
+<p># create a box on two points</p>
+
+<p class="whs1">Box = geompy.MakeBoxTwoPnt(p0, 
+ p200)</p>
+
+<p>&nbsp;</p>
+
+<p># create group on box's faces</p>
+
+<p class="whs1">group = geompy.CreateGroup(Box, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p>&nbsp;</p>
+
+<p># add objects to the group</p>
+
+<p class="whs1">SubFaceList = geompy.SubShapeAllSorted(Box, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs1">for i in [0, 3, 5] 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;FaceID 
+ = geompy.GetSubShapeID(Box, SubFaceList[i])</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.AddObject(group, 
+ FaceID)</p>
+
+<p>&nbsp;</p>
+
+<p># add to the group all the given shapes from the list</p>
+
+<p># (no errors, if some shapes are already included)</p>
+
+<p class="whs1">geompy.UnionList(group, 
+ [SubFaceList[0], SubFaceList[2], SubFaceList[5]])</p>
+
+<p>&nbsp;</p>
+
+<p># remove object from the group</p>
+
+<p class="whs1">geompy.RemoveObject(group, 
+ FaceID)</p>
+
+<p class="whs1">id_group1 = geompy.addToStudy(group, 
+ &quot;Group1&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display group's contents</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_group1)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">salome.sg.updateObjBrowser(1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

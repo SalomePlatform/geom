@@ -1,0 +1,150 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Circle</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+p.whs3 { font-size:12pt; font-weight:bold; }
+img_whs4 { border:none; width:312px; height:346px; float:none; border-style:none; }
+img_whs5 { border:none; width:312px; height:359px; float:none; border-style:none; }
+img_whs6 { border:none; width:348px; height:321px; float:none; border-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Basic Geometric Objects\nCircle");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><b style="font-weight: bold;"><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image29.gif" width="20px" height="20px" border="0" class="img_whs1"> </font></span></b>Circle</h1>
+
+<p><b><span style="font-weight: normal;">T</span></b>o create a <span style="font-weight: bold;"><B>Circle</B></span> 
+ in the <span style="font-weight: bold;"><B>Main Menu</B></span> select <span 
+ style="font-weight: bold;"><B>New Entity - &gt; Basic - &gt; Circle</B></span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">There 
+ are 2 algorithms to create a</span> Circle <span style="font-weight: normal;">in 
+ the 3D space.</span> </b></p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
+ Result <span style="font-weight: normal;">of each operation will be a</span></b> 
+ GEOM_Object (edge).</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">Firstly, 
+ you can define a </span><span style="font-weight: bold;"><B>Circle</B></span><span 
+ style="font-weight: normal;"> by a</span> Center Point, <span style="font-weight: normal;">a</span> 
+ Vector <span style="font-weight: normal;">giving the </b>circl</span>e’s 
+ normal and a <span style="font-weight: bold;"><B>Radius</B></span>.</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b> 
+ <span style="font-style: italic;"><I>geompy.MakeCircle(Point, Vector, Radius)</I></span></p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments: 
+ </b><span style="font-weight: normal;">Name + 1 vertex (for the center) 
+ + 1 edge (for the direction) + Radius.</span></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs2"><img src="pics/circle1.png" x-maintain-ratio="TRUE" width="312px" height="346px" border="0" class="img_whs4"> </p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs3"><span style="font-weight: normal;">Secondly, 
+ you can define a</span> Circle<span style="font-weight: normal;"> by three</span> 
+ Points <span style="font-weight: normal;">that lie on it.</span> </p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI 
+ Command:</b> &nbsp;<span style="font-weight: normal; font-style: italic;"><I>geompy.MakeCircleThreePnt(Point1, 
+ Point2, Point3)</I></span> </p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments: 
+ </b><span style="font-weight: normal;">Name + 3 points which will form 
+ the circle.</span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;"><img src="pics/circle2.png" x-maintain-ratio="TRUE" width="312px" height="359px" border="0" class="img_whs5"></b></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;"><img src="pics/circles.png" x-maintain-ratio="TRUE" width="348px" height="321px" border="0" class="img_whs6"></b></p>
+
+<p>&nbsp;</p>
+
+<p class="whs2">Our TUI Scripts provide you with useful examples 
+ of creation of <a href="basic_geometrical_objects.htm#bookmark2">Basic 
+ Geometric Objects</a>. </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

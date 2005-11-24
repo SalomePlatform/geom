@@ -1,0 +1,176 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Sketcher</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+p.whs2 { font-family:'MS Sans Serif' , sans-serif; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nCreation of Geometric Objects\nSketcher");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Sketcher</h1>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(70., 
+ &nbsp;0., &nbsp;0.)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(70., 
+ 70., 80.)</p>
+
+<p class="whs1">p3 = geompy.MakeVertex( 
+ 0., 70., &nbsp;0.)</p>
+
+<p>&nbsp;</p>
+
+<p>#create vector with two points</p>
+
+<p class="whs1">vector_arc = geompy.MakeVector(p1, 
+ p3)</p>
+
+<p>&nbsp;</p>
+
+<p># create arc with three points</p>
+
+<p class="whs1">arc = geompy.MakeArc(p1, 
+ p2, p3)</p>
+
+<p>&nbsp;</p>
+
+<p># create wire</p>
+
+<p class="whs1">wire = geompy.MakeWire([vector_arc, 
+ arc])</p>
+
+<p>&nbsp;</p>
+
+<p># create planar face</p>
+
+<p class="whs1">isPlanarWanted = 1</p>
+
+<p class="whs1">face = geompy.MakeFace(wire, 
+ isPlanarWanted)</p>
+
+<p>&nbsp;</p>
+
+<p># create sketcher (face), following the textual description</p>
+
+<p class="whs1">sketcher1 = geompy.MakeSketcher(&quot;Sketcher:F 
+ -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WF&quot;,</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[100,0,0, 
+ 1,1,1, -1,1,0])</p>
+
+<p>&nbsp;</p>
+
+<p># create sketcher (wire) on the given face</p>
+
+<p class="whs1">sketcher2 = geompy.MakeSketcherOnPlane(&quot;Sketcher:F 
+ 10 -30:R 10:C 20 180:R 15:L 50:WW&quot;,</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;face)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs2">id_face = geompy.addToStudy(face,&quot;Face&quot;)</p>
+
+<p class="whs2">id_sketcher1 = geompy.addToStudy(sketcher1,&quot;Sketcher1&quot;)</p>
+
+<p class="whs2">id_sketcher2 = geompy.addToStudy(sketcher2,&quot;Sketcher2&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display first sketcher and second sketcher with its planar face</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_face)</p>
+
+<p class="whs1">gg.setDisplayMode(id_face,1)</p>
+
+<p class="whs1">gg.setTransparency(id_face,0.5)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_sketcher1)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_sketcher2)</span> 
+ </p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

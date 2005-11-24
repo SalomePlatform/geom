@@ -1,0 +1,1069 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Transformation Operations</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nTransformation\nTransformation Operations");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Transformation Operations</h1>
+
+<h3><a name=bookmark>Translation</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(10, 
+ 40, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex( 
+ 0, &nbsp;0, 50)</p>
+
+<p class="whs1">p3 = geompy.MakeVertex(50, 
+ 80, 0)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p class="whs1">vt = geompy.MakeVector(p1, 
+ p3)</p>
+
+<p>&nbsp;</p>
+
+<p># create cylinder</p>
+
+<p class="whs1">height = 35</p>
+
+<p class="whs1">radius1 = 20</p>
+
+<p class="whs1">cylinder = geompy.MakeCylinder(p1, 
+ v, radius1, height)</p>
+
+<p>&nbsp;</p>
+
+<p># translate the given object along the vector, specified by its end 
+ points</p>
+
+<p># (all three functions produce the same result)</p>
+
+<p class="whs1">translation1 = geompy.MakeTranslationTwoPoints(cylinder, 
+ p1, p3)</p>
+
+<p class="whs1">translation2 = geompy.MakeTranslation(cylinder, 
+ 40, 40, 0)</p>
+
+<p class="whs1">translation3 = geompy.MakeTranslationVector(cylinder, 
+ vt)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_cylinder = geompy.addToStudy(cylinder, 
+ &quot;Cylinder&quot;)</p>
+
+<p class="whs1">id_translation1 = 
+ geompy.addToStudy(translation1, &quot;Translation1&quot;)</p>
+
+<p class="whs1">id_translation2 = 
+ geompy.addToStudy(translation2, &quot;Translation2&quot;)</p>
+
+<p class="whs1">id_translation3 = 
+ geompy.addToStudy(translation3, &quot;Translation3&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cylinder)</p>
+
+<p class="whs1">gg.setDisplayMode(id_cylinder,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_translation1)</p>
+
+<p class="whs1">gg.setDisplayMode(id_translation1,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_translation2)</p>
+
+<p class="whs1">gg.setDisplayMode(id_translation2,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_translation3)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_translation3,1)</span> 
+ </p>
+
+<h3><a name=bookmark1>Rotation</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">import math</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(10, 
+ 40, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex( 
+ 0, &nbsp;0, 50)</p>
+
+<p class="whs1">p3 = geompy.MakeVertex(10, 
+ 50,-20)</p>
+
+<p class="whs1">p4 = geompy.MakeVertex(10, 
+ 50, 60)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p class="whs1">vr = geompy.MakeVector(p3, 
+ p4)</p>
+
+<p>&nbsp;</p>
+
+<p># create cylinder</p>
+
+<p class="whs1">height = 35</p>
+
+<p class="whs1">radius1 = 20</p>
+
+<p class="whs1">cylinder = geompy.MakeCylinder(p1, 
+ v, radius1, height)</p>
+
+<p>&nbsp;</p>
+
+<p># rotate the given object around the given axis on the given angle</p>
+
+<p class="whs1">rotation = geompy.MakeRotation(cylinder, 
+ vr, math.pi)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_vr = geompy.addToStudy(vr, 
+ &quot;Rotation axis&quot;)</p>
+
+<p class="whs1">id_cylinder = geompy.addToStudy(cylinder, 
+ &quot;Cylinder&quot;)</p>
+
+<p class="whs1">id_rotation = geompy.addToStudy(rotation, 
+ &quot;Rotation&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_vr)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cylinder)</p>
+
+<p class="whs1">gg.setDisplayMode(id_cylinder,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_rotation)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_rotation,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark4>Modify Location</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">import math</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertex and vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(10, 
+ 40, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex( 
+ 0, &nbsp;0, 50)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create cylinder</p>
+
+<p class="whs1">height = 35</p>
+
+<p class="whs1">radius1 = 20</p>
+
+<p class="whs1">cylinder = geompy.MakeCylinder(p1, 
+ v, radius1, height)</p>
+
+<p>&nbsp;</p>
+
+<p># create local coordinate systems</p>
+
+<p class="whs1">cs1 = geompy.MakeMarker( 
+ 0, 0, 0, 1,0,0, 0,1,0)</p>
+
+<p class="whs1">cs2 = geompy.MakeMarker(30,40,40, 
+ 1,0,0, 0,1,0)</p>
+
+<p>&nbsp;</p>
+
+<p># modify the location of the given object</p>
+
+<p class="whs1">position = geompy.MakePosition(cylinder, 
+ cs1, cs2)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_cs1 = geompy.addToStudy(cs1, 
+ &quot;Coordinate system 1&quot;)</p>
+
+<p class="whs1">id_cs2 = geompy.addToStudy(cs2, 
+ &quot;Coordinate system 2&quot;)</p>
+
+<p class="whs1">id_cylinder = geompy.addToStudy(cylinder, 
+ &quot;Cylinder&quot;)</p>
+
+<p class="whs1">id_position = geompy.addToStudy(position, 
+ &quot;Position&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cylinder)</p>
+
+<p class="whs1">gg.setDisplayMode(id_cylinder,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_position)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_position,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark5>Mirror Image</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create box</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(200, 
+ 200, 200)</p>
+
+<p>&nbsp;</p>
+
+<p># create an object, symmetrical to the given one relatively the given 
+ plane</p>
+
+<p class="whs1">p1 = geompy.MakeVertex( 
+ 0, 25, &nbsp;0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex( 
+ 5, 25, &nbsp;0)</p>
+
+<p class="whs1">p3 = geompy.MakeVertex( 
+ 0,-30, 40)</p>
+
+<p class="whs1">plane = geompy.MakePlaneThreePnt(p1, 
+ p2, p3, 1000.)</p>
+
+<p class="whs1">mirror1 = geompy.MakeMirrorByPlane(box, 
+ plane)</p>
+
+<p>&nbsp;</p>
+
+<p># create an object, symmetrical to the given one relatively the given 
+ axis</p>
+
+<p class="whs1">p4 = geompy.MakeVertex( 
+ 210, 210, -20)</p>
+
+<p class="whs1">p5 = geompy.MakeVertex( 
+ 210, 210, 220)</p>
+
+<p class="whs1">axis = geompy.MakeVector(p4, 
+ p5)</p>
+
+<p class="whs1">mirror2 = geompy.MakeMirrorByAxis(box, 
+ axis)</p>
+
+<p>&nbsp;</p>
+
+<p># create an object, symmetrical to the given one relatively the given 
+ point</p>
+
+<p class="whs1">mirror3 = geompy.MakeMirrorByPoint(box, 
+ p4)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_box = geompy.addToStudy(box, 
+ &quot;Box&quot;)</p>
+
+<p class="whs1">id_plane = geompy.addToStudy(plane, 
+ &quot;Plane&quot;)</p>
+
+<p class="whs1">id_mirror1 = geompy.addToStudy(mirror1, 
+ &quot;Mirror plane&quot;)</p>
+
+<p class="whs1">id_axis = geompy.addToStudy(axis, 
+ &quot;Axis&quot;)</p>
+
+<p class="whs1">id_mirror2 = geompy.addToStudy(mirror2, 
+ &quot;Mirror axis&quot;)</p>
+
+<p class="whs1">id_p4 = geompy.addToStudy(p4, 
+ &quot;Point&quot;)</p>
+
+<p class="whs1">id_mirror3 = geompy.addToStudy(mirror3, 
+ &quot;Mirror point&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_box)</p>
+
+<p class="whs1">gg.setDisplayMode(id_box,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_plane)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_mirror1)</p>
+
+<p class="whs1">gg.setDisplayMode(id_mirror1,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_axis)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_mirror2)</p>
+
+<p class="whs1">gg.setDisplayMode(id_mirror2,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p4)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_mirror3)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_mirror3,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark6>Scale Transform </a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create box and sphere</p>
+
+<p class="whs1">box = geompy.MakeBoxDXDYDZ(200, 
+ 200, 200)</p>
+
+<p>&nbsp;</p>
+
+<p># scale the given object by the factor</p>
+
+<p class="whs1">p0 = geompy.MakeVertex(100, 
+ 100, 100)</p>
+
+<p class="whs1">factor = 0.5</p>
+
+<p class="whs1">scale = geompy.MakeScaleTransform(box, 
+ p0, factor)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_box = geompy.addToStudy(box, 
+ &quot;Box&quot;)</p>
+
+<p class="whs1">id_scale = geompy.addToStudy(scale, 
+ &quot;Scale&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_box)</p>
+
+<p class="whs1">gg.setDisplayMode(id_box,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_scale)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_scale,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark7>Offset Surface</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create box and sphere</p>
+
+<p class="whs1">box = geompy.MakeBox(20, 
+ 20, 20, 200, 200, 200)</p>
+
+<p>&nbsp;</p>
+
+<p># create new object as offset of the given one</p>
+
+<p class="whs1">offset = geompy.MakeOffset(box, 
+ 70.)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_box = geompy.addToStudy(box, 
+ &quot;Box&quot;)</p>
+
+<p class="whs1">id_offset = geompy.addToStudy(offset, 
+ &quot;Offset&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p># display results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_box)</p>
+
+<p class="whs1">gg.setDisplayMode(id_box,1)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_offset)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark8>Multi Translation</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices and vectors</p>
+
+<p class="whs1">p0 &nbsp;= 
+ geompy.MakeVertex( 0., &nbsp;0., 
+ &nbsp;0.)</p>
+
+<p class="whs1">px &nbsp;= 
+ geompy.MakeVertex(20., &nbsp;0., 
+ &nbsp;0.)</p>
+
+<p class="whs1">py &nbsp;= 
+ geompy.MakeVertex( 0., 20., &nbsp;0.)</p>
+
+<p class="whs1">pz &nbsp;= 
+ geompy.MakeVertex( 0., &nbsp;0., 
+ 20.)</p>
+
+<p class="whs1">pxy = geompy.MakeVertex( 
+ 50., 0., 0.)</p>
+
+<p class="whs1">pxyz = geompy.MakeVertex( 
+ 50., 50., 50.)</p>
+
+<p class="whs1">vz &nbsp;= 
+ geompy.MakeVector(p0, pz)</p>
+
+<p class="whs1">vxy = geompy.MakeVector(px, 
+ py)</p>
+
+<p class="whs1">vtr1d = geompy.MakeVector(p0, 
+ pxyz)</p>
+
+<p class="whs1">vtr2d = geompy.MakeVector(p0, 
+ pxy)</p>
+
+<p>&nbsp;&nbsp;</p>
+
+<p># create arc</p>
+
+<p class="whs1">arc = geompy.MakeArc(py, 
+ pz, px)</p>
+
+<p>&nbsp;</p>
+
+<p># create wire</p>
+
+<p class="whs1">wire = geompy.MakeWire([vxy, 
+ arc])</p>
+
+<p>&nbsp;</p>
+
+<p># create planar face</p>
+
+<p class="whs1">face = geompy.MakeFace(wire, 
+ 1)</p>
+
+<p>&nbsp;</p>
+
+<p># create prism</p>
+
+<p class="whs1">prism = geompy.MakePrismVecH(face, 
+ vz, 20.0)</p>
+
+<p>&nbsp;</p>
+
+<p># translate the given object along the given vector a given number times</p>
+
+<p class="whs1">tr1d = geompy.MakeMultiTranslation1D(prism, 
+ vtr1d, 20, 4)</p>
+
+<p>&nbsp;</p>
+
+<p># consequently apply two specified translations to the object specified 
+ number of times</p>
+
+<p class="whs1">tr2d = geompy.MakeMultiTranslation2D(prism, 
+ vtr1d, 20, 4, vtr2d, 80, 3)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_prism = geompy.addToStudy(prism,&quot;Prism&quot;)</p>
+
+<p class="whs1">id_tr1d = geompy.addToStudy(tr1d,&quot;Translation 
+ 1D&quot;)</p>
+
+<p class="whs1">id_tr2d = geompy.addToStudy(tr2d,&quot;Translation 
+ 2D&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display prism and results of fillet operation</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_prism)</p>
+
+<p class="whs1">gg.setDisplayMode(id_prism,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_tr1d)</p>
+
+<p class="whs1">gg.setDisplayMode(id_tr1d,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_tr2d)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_tr2d,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark9>Multi Rotation</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices and vectors</p>
+
+<p class="whs1">p0 &nbsp;= 
+ geompy.MakeVertex( 0., &nbsp;0., 
+ &nbsp;0.)</p>
+
+<p class="whs1">px &nbsp;= 
+ geompy.MakeVertex(20., &nbsp;0., 
+ &nbsp;0.)</p>
+
+<p class="whs1">py &nbsp;= 
+ geompy.MakeVertex( 0., 20., &nbsp;0.)</p>
+
+<p class="whs1">pz &nbsp;= 
+ geompy.MakeVertex( 0., &nbsp;0., 
+ 20.)</p>
+
+<p class="whs1">pxyz = geompy.MakeVertex( 
+ 50., 50., 10.)</p>
+
+<p class="whs1">vz &nbsp;= 
+ geompy.MakeVector(p0, pz)</p>
+
+<p class="whs1">vxy = geompy.MakeVector(px, 
+ py)</p>
+
+<p class="whs1">vrot1d = geompy.MakeVector(p0, 
+ pxyz)</p>
+
+<p>&nbsp;&nbsp;</p>
+
+<p># create arc</p>
+
+<p class="whs1">arc = geompy.MakeArc(py, 
+ pz, px)</p>
+
+<p>&nbsp;</p>
+
+<p># create wire</p>
+
+<p class="whs1">wire = geompy.MakeWire([vxy, 
+ arc])</p>
+
+<p>&nbsp;</p>
+
+<p># create planar face</p>
+
+<p class="whs1">face = geompy.MakeFace(wire, 
+ 1)</p>
+
+<p>&nbsp;</p>
+
+<p># create prism</p>
+
+<p class="whs1">prism = geompy.MakePrismVecH(face, 
+ vz, 20.0)</p>
+
+<p>&nbsp;</p>
+
+<p># rotate the given object around the given axis on the given angle a 
+ given number times</p>
+
+<p class="whs1">rot1d = geompy.MultiRotate1D(prism, 
+ vrot1d, 4)</p>
+
+<p>&nbsp;</p>
+
+<p># rotate the given object around the given axis on the given angle a 
+ given number times</p>
+
+<p># and multi-translate each rotation result</p>
+
+<p class="whs1">rot2d = geompy.MultiRotate2D(prism, 
+ vrot1d, 60, 4, 50, 5)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_prism = geompy.addToStudy(prism,&quot;Prism&quot;)</p>
+
+<p class="whs1">id_rot1d = geompy.addToStudy(rot1d,&quot;Rotation 
+ 1D&quot;)</p>
+
+<p class="whs1">id_rot2d = geompy.addToStudy(rot2d,&quot;Rotation 
+ 2D&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display prism and results of fillet operation</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_prism)</p>
+
+<p class="whs1">gg.setDisplayMode(id_prism,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_rot1d)</p>
+
+<p class="whs1">gg.setDisplayMode(id_rot1d,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_rot2d)</p>
+
+<p class="whs1">gg.setDisplayMode(id_rot2d,1) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3><a name=bookmark2>Fillet</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">radius &nbsp;= 
+ 10.</p>
+
+<p class="whs1">ShapeTypeEdge = geompy.ShapeType[&quot;EDGE&quot;]</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p># create vertices and vectors</p>
+
+<p class="whs1">p0 &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;&nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">px &nbsp;= 
+ geompy.MakeVertex(100., &nbsp;&nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">py &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ 100., &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">pz &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;&nbsp;0., 
+ 100.)</p>
+
+<p class="whs1">vz &nbsp;= 
+ geompy.MakeVector(p0, pz)</p>
+
+<p class="whs1">vxy = geompy.MakeVector(px, 
+ py)</p>
+
+<p>&nbsp;&nbsp;</p>
+
+<p># create arc</p>
+
+<p class="whs1">arc = geompy.MakeArc(py, 
+ pz, px)</p>
+
+<p>&nbsp;</p>
+
+<p># create wire</p>
+
+<p class="whs1">wire = geompy.MakeWire([vxy, 
+ arc])</p>
+
+<p>&nbsp;</p>
+
+<p># create planar face</p>
+
+<p class="whs1">face = geompy.MakeFace(wire, 
+ 1)</p>
+
+<p>&nbsp;</p>
+
+<p># create prism</p>
+
+<p class="whs1">prism = geompy.MakePrismVecH(face, 
+ vz, 100.0)</p>
+
+<p>&nbsp;</p>
+
+<p># get IDList for fillet</p>
+
+<p class="whs1">prism_edges = geompy.SubShapeAllSorted(prism, 
+ ShapeTypeEdge)</p>
+
+<p class="whs1">IDlist_e = []</p>
+
+<p class="whs1">IDlist_e.append(geompy.GetSubShapeID(prism, 
+ prism_edges[0]))</p>
+
+<p class="whs1">IDlist_e.append(geompy.GetSubShapeID(prism, 
+ prism_edges[1]))</p>
+
+<p class="whs1">IDlist_e.append(geompy.GetSubShapeID(prism, 
+ prism_edges[2]))</p>
+
+<p>&nbsp;</p>
+
+<p># make fillet on the specified edges of the given shape</p>
+
+<p class="whs1">fillet = geompy.MakeFillet(prism, 
+ radius, ShapeTypeEdge, IDlist_e)</p>
+
+<p>&nbsp;</p>
+
+<p># make fillet on all edges of the given shape</p>
+
+<p class="whs1">filletall = geompy.MakeFilletAll(prism, 
+ radius)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_prism = geompy.addToStudy(prism,&quot;Prism&quot;)</p>
+
+<p class="whs1">id_fillet = geompy.addToStudy(fillet,&quot;Fillet&quot;)</p>
+
+<p class="whs1">id_filletall = geompy.addToStudy(filletall,&quot;Fillet 
+ all&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display prism and results of fillet operation</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_prism)</p>
+
+<p class="whs1">gg.setDisplayMode(id_prism,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_fillet)</p>
+
+<p class="whs1">gg.setDisplayMode(id_fillet,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_filletall)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_filletall,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark3>Chamfer</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">d1 = 10.</p>
+
+<p class="whs1">d2 = 10.</p>
+
+<p class="whs1">ShapeTypeFace = geompy.ShapeType[&quot;FACE&quot;]</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices and vectors</p>
+
+<p class="whs1">p0 &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;&nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">px &nbsp;= 
+ geompy.MakeVertex(100., &nbsp;&nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">py &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ 100., &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">pz &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;&nbsp;0., 
+ 100.)</p>
+
+<p class="whs1">vz &nbsp;= 
+ geompy.MakeVector(p0, pz)</p>
+
+<p class="whs1">vxy = geompy.MakeVector(px, 
+ py)</p>
+
+<p>&nbsp;&nbsp;</p>
+
+<p># create arc</p>
+
+<p class="whs1">arc = geompy.MakeArc(py, 
+ pz, px)</p>
+
+<p>&nbsp;</p>
+
+<p># create wire</p>
+
+<p class="whs1">wire = geompy.MakeWire([vxy, 
+ arc])</p>
+
+<p>&nbsp;</p>
+
+<p># create planar face</p>
+
+<p class="whs1">face = geompy.MakeFace(wire, 
+ 1)</p>
+
+<p>&nbsp;</p>
+
+<p># create prism</p>
+
+<p class="whs1">prism = geompy.MakePrismVecH(face, 
+ vz, 100.0)</p>
+
+<p>&nbsp;</p>
+
+<p># get IDList for chamfer</p>
+
+<p class="whs1">prism_faces = geompy.SubShapeAllSorted(prism, 
+ ShapeTypeFace)</p>
+
+<p class="whs1">f_ind_1 = geompy.GetSubShapeID(prism, 
+ prism_faces[0])</p>
+
+<p class="whs1">f_ind_2 = geompy.GetSubShapeID(prism, 
+ prism_faces[1])</p>
+
+<p class="whs1">IDlist_f = [f_ind_1, 
+ f_ind_2]</p>
+
+<p>&nbsp;</p>
+
+<p># perform a chamfer on edges, common to the specified faces</p>
+
+<p class="whs1">chamfer_e = geompy.MakeChamferEdge(prism, 
+ d1, d2, f_ind_1, f_ind_2)</p>
+
+<p>&nbsp;</p>
+
+<p># perform a chamfer on all edges of the specified faces</p>
+
+<p class="whs1">chamfer_f = geompy.MakeChamferFaces(prism, 
+ d1, d2, IDlist_f)</p>
+
+<p class="whs1">chamfer_f1 = geompy.MakeChamfer(prism, 
+ d1, d2, ShapeTypeFace, IDlist_f)</p>
+
+<p>&nbsp;</p>
+
+<p># perform a symmetric chamfer on all edges of the given shape</p>
+
+<p class="whs1">chamfer_all = geompy.MakeChamferAll(prism, 
+ d1)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_prism = geompy.addToStudy(prism,&quot;Prism&quot;)</p>
+
+<p class="whs1">id_chamfer_e = geompy.addToStudy(chamfer_e,&quot;Chamfer 
+ edge&quot;)</p>
+
+<p class="whs1">id_chamfer_f = geompy.addToStudy(chamfer_f,&quot;Chamfer 
+ faces&quot;)</p>
+
+<p class="whs1">id_chamfer_f1 = geompy.addToStudy(chamfer_f1,&quot;Chamfer 
+ faces 1&quot;)</p>
+
+<p class="whs1">id_chamfer_all = geompy.addToStudy(chamfer_all,&quot;Chamfer 
+ all&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display prism and results of chamfer operation</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_prism)</p>
+
+<p class="whs1">gg.setDisplayMode(id_prism,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_chamfer_e)</p>
+
+<p class="whs1">gg.setDisplayMode(id_chamfer_e,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_chamfer_f)</p>
+
+<p class="whs1">gg.setDisplayMode(id_chamfer_f,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_chamfer_f1)</p>
+
+<p class="whs1">gg.setDisplayMode(id_chamfer_f1,1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_chamfer_all)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_chamfer_all,1)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

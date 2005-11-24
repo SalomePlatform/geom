@@ -1,0 +1,147 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Turus</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { font-size:12pt; }
+p.whs3 { font-weight:bold; }
+img_whs4 { border:none; width:312px; height:376px; float:none; border-style:none; }
+p.whs5 { margin-left:40px; }
+img_whs6 { border:none; width:272px; height:275px; float:none; border-style:none; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Primitives\nTorus");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image102.gif" width="20px" height="20px" border="0" class="img_whs1"> </font></span>Torus</h1>
+
+<p><b><span style="font-weight: normal;">T</b>o</span> create a <span style="font-weight: bold;"><B>Torus</B></span> 
+ in the <span style="font-weight: bold;"><B>Main Menu</B></span> select <span 
+ style="font-weight: bold;"><B>New Entity - &gt; Primitives - &gt; Torus</B></span></p>
+
+<p>&nbsp;</p>
+
+<p>There are two algorithms for creation of a <span style="font-weight: bold;"><B>Torus</B></span>. 
+ </p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
+ Result <span style="font-weight: normal;">of each operation will be a</span></b> 
+ GEOM_Object (SOLID).</p>
+
+<p>&nbsp;</p>
+
+<p>Firstly, you can define a <span style="font-weight: bold;"><B>Torus</B></span> 
+ by the given <span style="font-weight: bold;"><B>Base Point</B></span>, the normal 
+ <span style="font-weight: bold;"><B>Vector</B></span> and the Major and Minor 
+ <span style="font-weight: bold;"><B>Radiuses</B></span>. </p>
+
+<p><b style="font-weight: bold;">TUI Command:</b> <span style="font-style: italic;"><I>geompy.MakeTorus(Point, 
+ Vector, RadiusMajor, RadiusMinor) </I></span>, </p>
+
+<p class="whs3"><b style="font-weight: bold;">Arguments: 
+ </b><span style="font-size: 12pt; font-weight: normal;"><font size=3 style="font-size:12pt;">Name + 1 vertex 
+ + 1 vector (for direction) + 2 values (1 &amp; 2 Radius).</font></span></p>
+
+<p class="whs3"><b style="font-weight: bold;"><img src="pics/torus1.png" x-maintain-ratio="TRUE" width="312px" height="376px" border="0" class="img_whs4"></b></p>
+
+<p>&nbsp;</p>
+
+<p>Secondly, you can define a Torus with the centre at the origin of coordinates 
+ by its Major and Minor <span style="font-weight: bold;"><B>Radiuses</B></span>. 
+ </p>
+
+<p><b style="font-weight: bold;">TUI Command:</b> g<span style="font-style: italic;"><I>eompy.MakeTorusRR(RadiusMajor, 
+ RadiusMinor)</I></span> </p>
+
+<p><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Arguments: 
+ </b>Name + </font></span>2 values (1 &amp; 2 Radius from the origin).</p>
+
+<p><img src="pics/torus2.png" x-maintain-ratio="TRUE" width="312px" height="376px" border="0" class="img_whs4"></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs5"><img src="pics/toruses.png" x-maintain-ratio="TRUE" width="272px" height="275px" border="0" class="img_whs6"></p>
+
+<p class="whs5">&nbsp;</p>
+
+<p class="whs2">Our TUI Scripts provide you with useful examples 
+ of creation of <a href="primitives.htm#bookmark3">Primitives</a>. </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

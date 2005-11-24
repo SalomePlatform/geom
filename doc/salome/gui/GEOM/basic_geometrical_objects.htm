@@ -1,0 +1,656 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Basic Geometrical Objects</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+p.whs1 { font-family:'Lucida Console' , monospace; }
+-->
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nTUI Scripts\nCreation of Geometric Objects\nBasic Geometrical Objects");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1>Basic Geometrical Objects</h1>
+
+<h3><a name=bookmark>Creation of a Point</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex(0., 
+ 0., 0.)</p>
+
+<p class="whs1">p100 = geompy.MakeVertexWithRef(p0, 
+ 100., 100., 100.)</p>
+
+<p class="whs1">px = geompy.MakeVertex(100., 
+ 0., 0.)</p>
+
+<p class="whs1">py = geompy.MakeVertex(0., 
+ 100., 0.)</p>
+
+<p class="whs1">pz = geompy.MakeVertex(0., 
+ 0., 100.)</p>
+
+<p>&nbsp;</p>
+
+<p># create a curve and a vertex on it</p>
+
+<p class="whs1">Arc = geompy.MakeArc(py, 
+ pz, px)</p>
+
+<p class="whs1">p_on_arc = geompy.MakeVertexOnCurve(Arc, 
+ 0.25)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in the study</p>
+
+<p class="whs1">id_p0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(p0, &nbsp;&nbsp;&quot;Vertex 
+ 0&quot;)</p>
+
+<p class="whs1">id_p100 &nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(p100, &quot;Vertex 100&quot;)</p>
+
+<p class="whs1">id_px &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(px, &nbsp;&nbsp;&quot;Vertex 
+ X&quot;)</p>
+
+<p class="whs1">id_py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(py, &nbsp;&nbsp;&quot;Vertex 
+ Y&quot;)</p>
+
+<p class="whs1">id_pz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(pz, &nbsp;&nbsp;&quot;Vertex 
+ Z&quot;)</p>
+
+<p class="whs1">id_Arc &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(Arc, &nbsp;&quot;Arc&quot;)</p>
+
+<p class="whs1">id_p_on_arc = geompy.addToStudy(p_on_arc, 
+ &quot;Vertex on Arc&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display vertices</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p0)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p100)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_Arc)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_p_on_arc)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark1>Creation of a Line</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex(0., 
+ 0., 0.)</p>
+
+<p class="whs1">p100 = geompy.MakeVertexWithRef(p0, 
+ 100., 100., 100.)</p>
+
+<p class="whs1">px = geompy.MakeVertex(100., 
+ 0. &nbsp;, 0. 
+ &nbsp;)</p>
+
+<p class="whs1">py = geompy.MakeVertex(0. 
+ &nbsp;, 100., 
+ 0. &nbsp;)</p>
+
+<p class="whs1">pz = geompy.MakeVertex(0. 
+ &nbsp;, 0. &nbsp;, 
+ 100.)</p>
+
+<p>&nbsp;</p>
+
+<p># create a vector on two points</p>
+
+<p class="whs1">vxy &nbsp;= 
+ geompy.MakeVector(px, py)</p>
+
+<p>&nbsp;</p>
+
+<p># create a line with a point and a vector</p>
+
+<p class="whs1">line1 = geompy.MakeLine(pz, 
+ vxy)</p>
+
+<p>&nbsp;</p>
+
+<p>#create a line on two points</p>
+
+<p class="whs1">line2 = geompy.MakeLineTwoPnt(p0, 
+ p100)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in the study</p>
+
+<p class="whs1">id_vxy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(vxy, &nbsp;&quot;Vector&quot;)</p>
+
+<p class="whs1">id_line1 &nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(line1,&quot;Line1&quot;)</p>
+
+<p class="whs1">id_line2 &nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(line2,&quot;Line2&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display lines</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_vxy)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_line1)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_line2)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark2>Creation of &nbsp;a 
+ Circle</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex(0., 
+ 0., 0.)</p>
+
+<p class="whs1">px = geompy.MakeVertex(100., 
+ 0. &nbsp;, 0. 
+ &nbsp;)</p>
+
+<p class="whs1">py = geompy.MakeVertex(0. 
+ &nbsp;, 100., 
+ 0. &nbsp;)</p>
+
+<p class="whs1">pz = geompy.MakeVertex(0. 
+ &nbsp;, 0. &nbsp;, 
+ 100.)</p>
+
+<p>&nbsp;</p>
+
+<p># create vector on two points</p>
+
+<p class="whs1">vxy &nbsp;= 
+ geompy.MakeVector(px, py)</p>
+
+<p>&nbsp;</p>
+
+<p># create circle with point, vector and radius</p>
+
+<p class="whs1">circle1 = geompy.MakeCircle(pz, 
+ vxy, 30)</p>
+
+<p>&nbsp;</p>
+
+<p>#create circle on three points</p>
+
+<p class="whs1">circle2 = geompy.MakeCircleThreePnt(p0, 
+ px, py)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_vxy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(vxy, &nbsp;&nbsp;&nbsp;&quot;Vector&quot;)</p>
+
+<p class="whs1">id_circle1 &nbsp;= 
+ geompy.addToStudy(circle1,&quot;Circle1&quot;)</p>
+
+<p class="whs1">id_circle2 &nbsp;= 
+ geompy.addToStudy(circle2,&quot;Circle2&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display circles</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_vxy)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_circle1)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_circle2)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark3>Creation of an Ellipse</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex(0., 
+ 0., 0.)</p>
+
+<p class="whs1">p50 = geompy.MakeVertex(50., 
+ 50., 50.)</p>
+
+<p>&nbsp;</p>
+
+<p># create vector on two points</p>
+
+<p class="whs1">vector &nbsp;= 
+ geompy.MakeVector(p0, p50)</p>
+
+<p>&nbsp;</p>
+
+<p># create ellipse with point, vector and radiuses</p>
+
+<p class="whs1">ellipse = geompy.MakeEllipse(p50, 
+ vector, 50, 25)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_vector &nbsp;= 
+ geompy.addToStudy(vector, &quot;Vector&quot;)</p>
+
+<p class="whs1">id_ellipse = geompy.addToStudy(ellipse,&quot;Ellipse&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display normal vector and ellipse</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_vector)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_ellipse)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark4>Creation of a Curve</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex(0. 
+ &nbsp;, 0. &nbsp;, 
+ 0. &nbsp;)</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(50. 
+ , 100., 200.)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(150., 
+ &nbsp;50., 100.)</p>
+
+<p class="whs1">p3 = geompy.MakeVertex(100., 
+ 150., 170.)</p>
+
+<p class="whs1">p4 = geompy.MakeVertex(200., 
+ 200., 150.)</p>
+
+<p>&nbsp;</p>
+
+<p># create polyline on list of points</p>
+
+<p class="whs1">polyline = geompy.MakePolyline([p0, 
+ p1, p2, p3, p4])</p>
+
+<p>&nbsp;</p>
+
+<p># create bezier on list of points</p>
+
+<p class="whs1">bezier = geompy.MakeBezier([p0, 
+ p1, p2, p3, p4])</p>
+
+<p>&nbsp;</p>
+
+<p>#create interpolation curve on list of points</p>
+
+<p class="whs1">interpol = geompy.MakeInterpol([p0, 
+ p1, p2, p3, p4])</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_p0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(p0, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Point1&quot;)</p>
+
+<p class="whs1">id_p1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(p1, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Point2&quot;)</p>
+
+<p class="whs1">id_p2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(p2, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Point3&quot;)</p>
+
+<p class="whs1">id_p3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(p3, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Point4&quot;)</p>
+
+<p class="whs1">id_p4 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(p4, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Point5&quot;)</p>
+
+<p class="whs1">id_polyline = geompy.addToStudy(polyline, 
+ &quot;Polyline&quot;)</p>
+
+<p class="whs1">id_bezier &nbsp;&nbsp;= 
+ geompy.addToStudy(bezier, &nbsp;&nbsp;&quot;Bezier&quot;)</p>
+
+<p class="whs1">id_interpol = geompy.addToStudy(interpol, 
+ &quot;Interpol&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p># display points and curves</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p0)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p2)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p3)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p4)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_polyline)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_bezier)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_interpol)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark5>Creation of a Vector</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(10., 
+ 50., 20.)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(70., 
+ 70., 70.)</p>
+
+<p>&nbsp;</p>
+
+<p># create vector on two points</p>
+
+<p class="whs1">vector1 = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create vector with the given components</p>
+
+<p class="whs1">vector2 = geompy.MakeVectorDXDYDZ(30, 
+ 30, 100)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_p1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(p1, &nbsp;&nbsp;&nbsp;&nbsp;&quot;Point1&quot;)</p>
+
+<p class="whs1">id_p2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(p2, &nbsp;&nbsp;&nbsp;&nbsp;&quot;Point2&quot;)</p>
+
+<p class="whs1">id_vector1 = geompy.addToStudy(vector1,&quot;Vector1&quot;)</p>
+
+<p class="whs1">id_vector2 = geompy.addToStudy(vector2,&quot;Vector2&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display points and vectors</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p2)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_vector1)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_vector2)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark6>Creation of a Plane</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p1 = geompy.MakeVertex( 
+ &nbsp;0., &nbsp;&nbsp;0., 
+ 100.)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(100., 
+ &nbsp;&nbsp;0., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p3 = geompy.MakeVertex(200., 
+ 200., 200.)</p>
+
+<p class="whs1">p4 = geompy.MakeVertex(100., 
+ 100., &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p5 = geompy.MakeVertex(0. 
+ &nbsp;, 100., 
+ &nbsp;&nbsp;0.)</p>
+
+<p>&nbsp;</p>
+
+<p># create vector with the given components</p>
+
+<p class="whs1">vector = geompy.MakeVectorDXDYDZ(100., 
+ 100., 100.)</p>
+
+<p>&nbsp;</p>
+
+<p># create vector with two points</p>
+
+<p class="whs1">vector_arc = geompy.MakeVector(p2, 
+ p5)</p>
+
+<p>&nbsp;</p>
+
+<p># create arc with three points</p>
+
+<p class="whs1">arc = geompy.MakeArc(p2, 
+ p4, p5)</p>
+
+<p>&nbsp;</p>
+
+<p># create wire</p>
+
+<p class="whs1">wire = geompy.MakeWire([vector_arc, 
+ arc])</p>
+
+<p>&nbsp;</p>
+
+<p># create face</p>
+
+<p class="whs1">isPlanarWanted = 1</p>
+
+<p class="whs1">face = geompy.MakeFace(wire, 
+ isPlanarWanted)</p>
+
+<p class="whs1">trimsize = 1000.</p>
+
+<p>&nbsp;</p>
+
+<p># create plane with point, vector and trimsize</p>
+
+<p class="whs1">plane1 = geompy.MakePlane(p1, 
+ vector, trimsize)</p>
+
+<p>&nbsp;</p>
+
+<p># create plane with three points and trimsize</p>
+
+<p class="whs1">plane2 = geompy.MakePlaneThreePnt(p1, 
+ p2, p3, trimsize)</p>
+
+<p>&nbsp;</p>
+
+<p># create plane with given face</p>
+
+<p class="whs1">plane3 = geompy.MakePlaneFace(face, 
+ trimsize)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in study</p>
+
+<p class="whs1">id_face &nbsp;&nbsp;= 
+ geompy.addToStudy(face, &nbsp;&quot;Face&quot;)</p>
+
+<p class="whs1">id_plane1 = geompy.addToStudy(plane1,&quot;Plane1&quot;)</p>
+
+<p class="whs1">id_plane2 = geompy.addToStudy(plane2,&quot;Plane2&quot;)</p>
+
+<p class="whs1">id_plane3 = geompy.addToStudy(plane3,&quot;Plane3&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display points and vectors</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_face)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_plane1)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_plane2)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_plane3)</p>
+
+<p class="whs1">gg.setDisplayMode(id_plane1,1)</p>
+
+<p class="whs1">gg.setTransparency(id_plane1,0.5)</p>
+
+<p class="whs1">gg.setDisplayMode(id_plane2,1)</p>
+
+<p class="whs1">gg.setTransparency(id_plane2,0.5)</p>
+
+<p class="whs1">gg.setDisplayMode(id_plane3,1)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setTransparency(id_plane3,0.5)</span> 
+ </p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>
