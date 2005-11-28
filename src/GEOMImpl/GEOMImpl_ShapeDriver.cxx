@@ -9,6 +9,9 @@
 
 #include <GEOM_Function.hxx>
 
+// OCCT Includes
+#include <ShapeFix_Wire.hxx>
+
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepAlgo_FaceRestrictor.hxx>
@@ -77,8 +80,10 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
 
+    TopoDS_Wire aWire;
+    B.MakeWire(aWire);
+
     // add edges
-    BRepBuilderAPI_MakeWire MW;
     for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();
@@ -86,18 +91,28 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise("Shape for wire construction is null");
       }
       if (aShape_i.ShapeType() == TopAbs_EDGE)
-	MW.Add(TopoDS::Edge(aShape_i));
+	B.Add(aWire, TopoDS::Edge(aShape_i));
       else if (aShape_i.ShapeType() == TopAbs_WIRE)
-	MW.Add(TopoDS::Wire(aShape_i));
+	B.Add(aWire, TopoDS::Wire(aShape_i));
       else
         Standard_TypeMismatch::Raise
           ("Shape for wire construction is neither an edge nor a wire");
     }
 
-    if (!MW.IsDone()) {
+    // fix edges order
+    Handle(ShapeFix_Wire) aFW = new ShapeFix_Wire;
+    aFW->Load(aWire);
+    aFW->FixReorder();
+
+    if (aFW->StatusReorder(ShapeExtend_FAIL1)) {
+      Standard_ConstructionError::Raise("Wire construction failed: several loops detected");
+    } else if (aFW->StatusReorder(ShapeExtend_FAIL)) {
       Standard_ConstructionError::Raise("Wire construction failed");
+    } else if (aFW->StatusReorder(ShapeExtend_DONE2)) {
+      Standard_ConstructionError::Raise("Wire construction failed: some gaps detected");
+    } else {
     }
-    aShape = MW;
+    aShape = aFW->Wire();
 
   } else if (aType == FACE_WIRE) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
