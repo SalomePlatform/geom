@@ -20,7 +20,7 @@ docs:
 	@@SETX@; for d in $(SUBDIRS); do 	\
 	   (cd $$d && $(MAKE) $@) || exit 1; 	\
 	done; \
-	cp -f $(srcdir)/GEOM_index.html GEOM_index.html
+	cp -f $(srcdir)/GEOM_index_v3.1.0.html GEOM_index_v3.1.0.html
 
 clean:
 	@@SETX@; for d in $(SUBDIRS); do 	\
@@ -36,10 +36,10 @@ install:
 	$(MAKE) docs
 	(cd tui && $(MAKE) install);
 	(cd gui && $(MAKE) install);
-	cp -f GEOM_index.html $(docdir)
+	cp -f GEOM_index_v3.1.0.html $(docdir)
 
 uninstall:
 	@@SETX@; for d in $(SUBDIRS); do 	\
 	   (cd $$d && $(MAKE) $@) || exit 1; 	\
 	done; \
-	rm -fr $(docdir)/GEOM_index.html
+	rm -fr $(docdir)/GEOM_index_v3.1.0.html
