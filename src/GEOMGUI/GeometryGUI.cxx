@@ -1101,7 +1101,9 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ), 
 	  this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
   connect( (STD_Application*)application(), SIGNAL( viewManagerAdded( SUIT_ViewManager* ) ),
-           this, SLOT( onViewManagerAdded( SUIT_ViewManager* ) ) ); 
+          this, SLOT( onViewManagerAdded( SUIT_ViewManager* ) ) );
+  connect( (STD_Application*)application(), SIGNAL( viewManagerRemoved( SUIT_ViewManager* ) ),
+          this, SLOT( onViewManagerRemoved( SUIT_ViewManager* ) ) );
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
@@ -1143,7 +1145,9 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ), 
 	     this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
   disconnect( (STD_Application*)application(), SIGNAL( viewManagerAdded( SUIT_ViewManager* ) ),
-	     this, SLOT( onViewManagerAdded( SUIT_ViewManager* ) ) ); 
+	     this, SLOT( onViewManagerAdded( SUIT_ViewManager* ) ) );
+  disconnect( (STD_Application*)application(), SIGNAL( viewManagerRemoved( SUIT_ViewManager* ) ),
+	     this, SLOT( onViewManagerRemoved( SUIT_ViewManager* ) ) );
 
   EmitSignalCloseAllDialogs();
 
