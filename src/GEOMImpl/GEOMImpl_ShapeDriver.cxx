@@ -82,6 +82,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     TopoDS_Wire aWire;
     B.MakeWire(aWire);
+    BRepBuilderAPI_MakeWire MW;
+    bool isMWDone = true;
 
     // add edges
     for (ind = 1; ind <= nbshapes; ind++) {
@@ -90,31 +92,41 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       if (aShape_i.IsNull()) {
         Standard_NullObject::Raise("Shape for wire construction is null");
       }
-      if (aShape_i.ShapeType() == TopAbs_EDGE)
-	B.Add(aWire, TopoDS::Edge(aShape_i));
-      else if (aShape_i.ShapeType() == TopAbs_WIRE)
-	B.Add(aWire, TopoDS::Wire(aShape_i));
-      else
+      if (aShape_i.ShapeType() == TopAbs_EDGE) {
+        B.Add(aWire, TopoDS::Edge(aShape_i));
+        MW.Add(TopoDS::Edge(aShape_i));
+      } else if (aShape_i.ShapeType() == TopAbs_WIRE) {
+        B.Add(aWire, TopoDS::Wire(aShape_i));
+        MW.Add(TopoDS::Wire(aShape_i));
+      } else {
         Standard_TypeMismatch::Raise
           ("Shape for wire construction is neither an edge nor a wire");
+      }
+      if (!MW.IsDone()) {
+        // check status after each edge/wire addition, because the final status
+        // can be OK even in case, when some edges/wires was not accepted.
+        isMWDone = false;
+      }
     }
 
-    // fix edges order
-    Handle(ShapeFix_Wire) aFW = new ShapeFix_Wire;
-    aFW->Load(aWire);
-    aFW->FixReorder();
-
-    if (aFW->StatusReorder(ShapeExtend_FAIL1)) {
-      Standard_ConstructionError::Raise("Wire construction failed: several loops detected");
-    } else if (aFW->StatusReorder(ShapeExtend_FAIL)) {
-      Standard_ConstructionError::Raise("Wire construction failed");
-    } else if (aFW->StatusReorder(ShapeExtend_DONE2)) {
-      Standard_ConstructionError::Raise("Wire construction failed: some gaps detected");
+    if (isMWDone) {
+      aShape = MW;
     } else {
+      // fix edges order
+      Handle(ShapeFix_Wire) aFW = new ShapeFix_Wire;
+      aFW->Load(aWire);
+      aFW->FixReorder();
+
+      if (aFW->StatusReorder(ShapeExtend_FAIL1)) {
+        Standard_ConstructionError::Raise("Wire construction failed: several loops detected");
+      } else if (aFW->StatusReorder(ShapeExtend_FAIL)) {
+        Standard_ConstructionError::Raise("Wire construction failed");
+      } else if (aFW->StatusReorder(ShapeExtend_DONE2)) {
+        Standard_ConstructionError::Raise("Wire construction failed: some gaps detected");
+      } else {
+      }
+      aShape = aFW->WireAPIMake();
     }
-    aShape = aFW->WireAPIMake();
-    if (aShape.IsNull())
-      Standard_ConstructionError::Raise("Wire construction failed");
 
   } else if (aType == FACE_WIRE) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
@@ -306,7 +318,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     if (aShape_i.IsNull()) {
        Standard_NullObject::Raise("Shape for reverse is null");
     }
-  
+
     BRepBuilderAPI_Copy Copy(aShape_i);
     if( Copy.IsDone() ) {
       TopoDS_Shape tds = Copy.Shape();
@@ -320,7 +332,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 	tds.Orientation(TopAbs_FORWARD) ;
 
       aShape = tds;
-    } 
+    }
   }
 
   if (aShape.IsNull()) return 0;
