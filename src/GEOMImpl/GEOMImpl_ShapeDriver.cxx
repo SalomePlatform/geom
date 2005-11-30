@@ -112,7 +112,9 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       Standard_ConstructionError::Raise("Wire construction failed: some gaps detected");
     } else {
     }
-    aShape = aFW->Wire();
+    aShape = aFW->WireAPIMake();
+    if (aShape.IsNull())
+      Standard_ConstructionError::Raise("Wire construction failed");
 
   } else if (aType == FACE_WIRE) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
