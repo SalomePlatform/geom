@@ -44,6 +44,9 @@
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopoDS.hxx>
 #include <BRep_Tool.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 #include <qapplication.h>
 using namespace std;
@@ -330,15 +333,31 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
   if ( IObjectCount() == 1 )
     {
       Standard_Boolean aRes = Standard_False;
-      GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
+      Handle(SALOME_InteractiveObject) anIO = firstIObject();
+      GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
       if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   	{
 	  if ( id == 0 )
 	    {
 	      // get CORBA reference to data object
 	      TopoDS_Shape aShape = myGeometryGUI->GetShapeReader().GetShape( myGeometryGUI->GetGeomGen(), aSelectedObject );
-	      if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
+	      if ( aShape.IsNull() )
+		return;
+		
+	      TColStd_IndexedMapOfInteger aMap;
+	      
+	      ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( anIO, aMap );
+	      
+	      if ( aMap.Extent() == 1 )
 		{
+		  int anIndex = aMap( 1 );
+		  TopTools_IndexedMapOfShape aShapes;
+		  TopExp::MapShapes( aShape, aShapes );
+		  aShape = aShapes.FindKey( anIndex );
+		  
+		  if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_VERTEX )
+		    return;
+		  
 		  gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
 		  GroupXYZ->SpinBox_DX->SetValue( aPnt.X() );
 		  GroupXYZ->SpinBox_DY->SetValue( aPnt.Y() );
