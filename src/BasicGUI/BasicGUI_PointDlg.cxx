@@ -343,26 +343,31 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
 	      TopoDS_Shape aShape = myGeometryGUI->GetShapeReader().GetShape( myGeometryGUI->GetGeomGen(), aSelectedObject );
 	      if ( aShape.IsNull() )
 		return;
-		
-	      TColStd_IndexedMapOfInteger aMap;
 	      
-	      ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( anIO, aMap );
-	      
-	      if ( aMap.Extent() == 1 )
+	      if ( aShape.ShapeType() != TopAbs_VERTEX )
 		{
-		  int anIndex = aMap( 1 );
-		  TopTools_IndexedMapOfShape aShapes;
-		  TopExp::MapShapes( aShape, aShapes );
-		  aShape = aShapes.FindKey( anIndex );
+		  TColStd_IndexedMapOfInteger aMap;
 		  
-		  if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_VERTEX )
+		  ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( anIO, aMap );
+		  
+		  if ( aMap.Extent() == 1 )
+		    {
+		      int anIndex = aMap( 1 );
+		      TopTools_IndexedMapOfShape aShapes;
+		      TopExp::MapShapes( aShape, aShapes );
+		      aShape = aShapes.FindKey( anIndex );
+
+		      if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_VERTEX )
+			return;
+		    }
+		  else
 		    return;
-		  
-		  gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
-		  GroupXYZ->SpinBox_DX->SetValue( aPnt.X() );
-		  GroupXYZ->SpinBox_DY->SetValue( aPnt.Y() );
-		  GroupXYZ->SpinBox_DZ->SetValue( aPnt.Z() );
 		}
+
+	      gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
+	      GroupXYZ->SpinBox_DX->SetValue( aPnt.X() );
+	      GroupXYZ->SpinBox_DY->SetValue( aPnt.Y() );
+	      GroupXYZ->SpinBox_DZ->SetValue( aPnt.Z() );
 	    }
 	  else if ( id == 1 )
 	    {
