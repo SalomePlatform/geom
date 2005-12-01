@@ -996,9 +996,16 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 212, viewId, -1 );  
   createMenu( 214, viewId, -1 );  
   createMenu( separator(), viewId, -1 );
+
+/*
+  PAL9111:
+  because of these items are accessible through object browser and viewers
+  we have removed they from main menu
+
   createMenu( 216, viewId, -1 );  
   createMenu( 213, viewId, -1 );  
   createMenu( 215, viewId, -1 );
+*/
 
   // ---- create toolbars --------------------------
 
@@ -1067,15 +1074,25 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  8034 ), -1, -1 ); // isos
   mgr->setRule( action( 8034 ), "client='OCCViewer' and selcount>0 and isVisible", true );
   mgr->insert( separator(), -1, -1 );        // -----------
+  
+
+
+  QString canDisplay = "($component={'GEOM'}) and (selcount>0) and ({true} in $canBeDisplayed) ",
+          onlyComponent = "((type='Component') and selcount=1)",
+          rule = canDisplay + "and ((($type in {%1}) and( %2 )) or " + onlyComponent + ")",
+          types = "'Shape' 'Group'";
+
   mgr->insert( action(  216 ), -1, -1 ); // display
-  mgr->setRule( action( 216 ), "$component={'GEOM'} and ( (selcount>0) and (((isActiveView=true) and (($type in {'Shape' 'Group'} and (not isVisible)) or type='Component'))"
-		               "or ((isActiveView=false) and ($type in {'Shape' 'Group' 'Component'}))))", true );
+  mgr->setRule( action( 216 ), rule.arg( types ).arg( "not isVisible" ), true );
+
   mgr->insert( action(  215 ), -1, -1 ); // erase
-  mgr->setRule( action( 215 ), "$component={'GEOM'} and ((isActiveView=true) and (($type in {'Shape' 'Group'} and isVisible and selcount>0) or (type='Component' and selcount=1)))", true );
+  mgr->setRule( action( 215 ), rule.arg( types ).arg( "isVisible" ), true );
+
   mgr->insert( action(  214 ), -1, -1 ); // erase All
   mgr->setRule( action( 214 ), "client='OCCViewer' or client='VTKViewer'", true );
+
   mgr->insert( action(  213 ), -1, -1 ); // display only
-  mgr->setRule( action( 213 ), "$component={'GEOM'} and (($type in {'Shape' 'Group'} and selcount>0) or (type='Component' and selcount=1))", true );
+  mgr->setRule( action( 213 ), rule.arg( types ).arg( "true" ), true );
   mgr->insert( separator(), -1, -1 );
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );

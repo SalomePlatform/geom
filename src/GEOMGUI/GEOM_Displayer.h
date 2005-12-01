@@ -75,8 +75,9 @@ public:
   /* Destructor */
   virtual ~GEOM_Displayer();
 
-  /* Display/Erase object methods */
+  virtual bool canBeDisplayed( const QString& /*entry*/, const QString& /*viewer_type*/ ) const;
 
+  /* Display/Erase object methods */
   void          Display   ( const Handle(SALOME_InteractiveObject)& theIO,
                             const bool updateViewer = true,
 			    SALOME_View* theViewFrame = 0 );

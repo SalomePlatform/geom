@@ -1094,3 +1094,8 @@ void GEOM_Displayer::setShape( const TopoDS_Shape& theShape )
 {
   myShape = theShape;
 }
+
+bool GEOM_Displayer::canBeDisplayed( const QString& /*entry*/, const QString& viewer_type ) const
+{
+  return viewer_type==SOCC_Viewer::Type() || viewer_type==SVTK_Viewer::Type();
+}
