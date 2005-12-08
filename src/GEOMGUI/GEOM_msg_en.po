@@ -2115,10 +2115,10 @@ msgid "STB_BOX"
 msgstr "Create a box"
 
 msgid "TOP_CYLINDER"
-msgstr "Create a cyliner"
+msgstr "Create a cylinder"
 
 msgid "MEN_CYLINDER"
-msgstr "Cyliner"
+msgstr "Cylinder"
 
 msgid "STB_CYLINDER"
 msgstr "Create a cylinder"
