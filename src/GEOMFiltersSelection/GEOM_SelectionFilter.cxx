@@ -118,8 +118,11 @@ bool GEOM_SelectionFilter::getShape (const GEOM::GEOM_Object_ptr& theObject,
     if ( app )
     {
       SALOME_LifeCycleCORBA* ls = new SALOME_LifeCycleCORBA( app->namingService() );
-      Engines::Component_var comp = ls->FindOrLoad_Component( "FactoryServer", "GEOM" );
-      GEOM::GEOM_Gen_var geomGen = GEOM::GEOM_Gen::_narrow( comp );
+      static GEOM::GEOM_Gen_var geomGen;
+      if(CORBA::is_nil( geomGen )) {
+	Engines::Component_var comp = ls->FindOrLoad_Component( "FactoryServer", "GEOM" );
+	geomGen = GEOM::GEOM_Gen::_narrow( comp );
+      }
       if ( !CORBA::is_nil( geomGen ) )
       {
 	TopoDS_Shape aTopoDSShape = GEOM_Client().GetShape( geomGen, theObject );
