@@ -303,25 +303,46 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     myIdList->blockSignals( true );
     myIdList->clearSelection();
 
+    TColStd_IndexedMapOfInteger aMapIndex;
+
     if ( IObjectCount() == 1 ) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
 	GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
       
-      if ( aResult && !anObj->_is_nil() ) {
-	QMap<int, int> aMap;
-	for ( int i = 0, n = myIdList->count(); i < n; i++ )
-	  aMap.insert( myIdList->item( i )->text().toInt(), i );
-	
-	TColStd_IndexedMapOfInteger aMapIndex;
+      if ( aResult && !anObj->_is_nil() )
 	((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
-	for ( int ii = 1, nn = aMapIndex.Extent(); ii <= nn; ii++ ) {
+    }
+    
+    if ( !aMapIndex.Extent() ) // try to find out and process the object browser selection
+      {
+	GEOM::ListOfGO anObjects;
+	GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
+	GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
+	for (int i = 0; i < anObjects.length(); i++)
+	  {
+	    TopoDS_Shape aShape;
+	    if ( GEOMBase::GetShape(anObjects[i], aShape, getShapeType()) )
+	      {
+		CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, anObjects[i] );
+		if ( anIndex >= 0 )
+		  aMapIndex.Add( anIndex );
+	      }
+	  }
+      }
+    
+    if ( aMapIndex.Extent()>=1 )
+    {
+      QMap<int, int> aMap;
+      for ( int i = 0, n = myIdList->count(); i < n; i++ )
+	aMap.insert( myIdList->item( i )->text().toInt(), i );
+      
+      for ( int ii = 1, nn = aMapIndex.Extent(); ii <= nn; ii++ )
+	{
 	  if ( aMap.contains( aMapIndex( ii ) ) )
 	    myIdList->setSelected( aMap[aMapIndex( ii )], true );
 	}
-      }
     }
-
     myIdList->blockSignals( isBlocked );
   }
 
@@ -384,15 +405,37 @@ void GroupGUI_GroupDlg::add()
   TColStd_MapOfInteger aMap;
   for ( int i = 0, n = myIdList->count(); i < n; i++ )
     aMap.Add( myIdList->item( i )->text().toInt() );
-
+  
+  TColStd_IndexedMapOfInteger aMapIndex;
+  
   if ( IObjectCount() == 1 ) {
     Standard_Boolean aResult = Standard_False;
     GEOM::GEOM_Object_var anObj =
       GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
-
-    if ( aResult && !anObj->_is_nil() ) {
-      TColStd_IndexedMapOfInteger aMapIndex;
+    
+    if ( aResult && !anObj->_is_nil() )
       ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
+  }
+  
+  if ( !aMapIndex.Extent() ) // try to find out and process the object browser selection
+    {
+      GEOM::ListOfGO anObjects;
+      GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
+      GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
+      for (int i = 0; i < anObjects.length(); i++)
+	{
+	  TopoDS_Shape aShape;
+	  if ( GEOMBase::GetShape(anObjects[i], aShape, getShapeType()) )
+	    {
+	      CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, anObjects[i] );
+	      if ( anIndex >= 0 )
+		aMapIndex.Add( anIndex );
+	    }
+	}
+    }
+  
+  if ( aMapIndex.Extent()>=1 )
+    {
       QListBoxItem* anItem;
       bool isBlocked = myIdList->signalsBlocked();
       myIdList->blockSignals( true );
@@ -408,7 +451,7 @@ void GroupGUI_GroupDlg::add()
 
       myIdList->blockSignals( isBlocked );
     }
-  }
+  
   updateState();
 }
 
@@ -489,17 +532,48 @@ void GroupGUI_GroupDlg::activateSelection()
 void GroupGUI_GroupDlg::updateState()
 {
   bool isAdd = false;
+
+  TColStd_IndexedMapOfInteger aMapIndex;
+  
   if ( IObjectCount() == 1 ) {
     Standard_Boolean aResult = Standard_False;
     GEOM::GEOM_Object_var anObj =
       GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
-    if ( aResult && !anObj->_is_nil() ) {
-      TColStd_IndexedMapOfInteger aMapIndex;
+    if ( aResult && !anObj->_is_nil() )
       ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
-      isAdd = aMapIndex.Extent() > 0;
-    }
   }
+  
+  if ( !aMapIndex.Extent() ) // try to find out and process the object browser selection
+    {
+      isAdd = true;
+      GEOM::ListOfGO anObjects;
+      GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
+      GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
+      for (int i = 0; i < anObjects.length(); i++)
+	{
+	  TopoDS_Shape aShape;
+	  if ( GEOMBase::GetShape(anObjects[i], aShape, getShapeType()) )
+	    {
+	      CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, anObjects[i] );
+	      if ( anIndex >= 0 )
+		aMapIndex.Add( anIndex );
+	      else
+		isAdd = false;
+	    }
+	  else
+	    isAdd = false;
+	  
+	  if ( !isAdd )
+	    {
+	      aMapIndex.Clear();
+	      break;
+	    }
+	}
+    }
+  
+  isAdd = aMapIndex.Extent() > 0;
+  
   myAddBtn->setEnabled( !myEditCurrentArgument && !CORBA::is_nil( myMainObj ) && isAdd );
   bool hasSel = false;
   for ( int ii = 0, nn = myIdList->count(); !hasSel && ii < nn; ii++ )
