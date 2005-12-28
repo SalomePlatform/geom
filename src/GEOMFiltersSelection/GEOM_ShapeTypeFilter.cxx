@@ -45,8 +45,11 @@ static bool getShape( const GEOM::GEOM_Object_ptr& theObject, TopoDS_Shape& theS
 {
   if ( !CORBA::is_nil( theObject ) )
   {
-    Engines::Component_var comp = QAD_Application::getDesktop()->getEngine( "FactoryServer", "GEOM" );
-    GEOM::GEOM_Gen_var myGeom   = GEOM::GEOM_Gen::_narrow( comp );
+    static GEOM::GEOM_Gen_var myGeom;
+    if(CORBA::is_nil(myGeom) {
+      Engines::Component_var comp = QAD_Application::getDesktop()->getEngine( "FactoryServer", "GEOM" );
+      myGeom = GEOM::GEOM_Gen::_narrow( comp );
+    }
     TopoDS_Shape aTopoDSShape = GEOM_Client().GetShape( myGeom, theObject );
         
     if ( !aTopoDSShape.IsNull() )
