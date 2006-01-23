@@ -840,6 +840,8 @@ void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& the
   QAD_ViewFrame* vf = GetActiveView();
   if ( vf )
   {
+    if (!theIO.IsNull() && !vf->isVisible(theIO))
+      Display(theIO);
     SALOME_Prs* prs = vf->CreatePrs( theIO.IsNull() ? 0 : theIO->getEntry() );
     ((SALOME_View*)vf)->LocalSelection( prs, theMode );
     delete prs;  // delete presentation because displayer is its owner

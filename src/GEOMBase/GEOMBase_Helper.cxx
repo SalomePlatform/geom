@@ -98,7 +98,8 @@ GEOMBase_Helper::~GEOMBase_Helper()
 
   globalSelection( GEOM_ALLOBJECTS, true );
 
-  delete myDisplayer;
+  if (myDisplayer)
+    delete myDisplayer;
 }
 
 //================================================================
@@ -382,7 +383,7 @@ void GEOMBase_Helper::activate( const int theType )
     }
   }
 
-  myDisplayer->LocalSelection( aList, 0 );
+  getDisplayer()->LocalSelection( aList, 0 );
 }
 
 //================================================================
@@ -406,7 +407,7 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
         aEntry.c_str(), "GEOM", strdup( GEOMBase::GetName( anObj ) ) ) );
   }
 
-  myDisplayer->LocalSelection( aListOfIO, theMode );
+  getDisplayer()->LocalSelection( aListOfIO, theMode );
 }
 
 //================================================================
@@ -418,7 +419,7 @@ void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const int mode 
 {
   // If object is null local selection for all objects is activated
   if ( obj->_is_nil() ) {
-    myDisplayer->LocalSelection( Handle(SALOME_InteractiveObject)(), mode );
+    getDisplayer()->LocalSelection( Handle(SALOME_InteractiveObject)(), mode );
     return;
   }
 
@@ -435,7 +436,7 @@ void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const int mode 
 //================================================================
 void GEOMBase_Helper::globalSelection( const int theMode, const bool update )
 {
-  myDisplayer->GlobalSelection( theMode, update );
+  getDisplayer()->GlobalSelection( theMode, update );
 }
 
 //================================================================
@@ -446,7 +447,7 @@ void GEOMBase_Helper::globalSelection( const int theMode, const bool update )
 void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
 				       const bool update )
 {
-  myDisplayer->GlobalSelection( theModes, update );
+  getDisplayer()->GlobalSelection( theModes, update );
 }
 
 //================================================================
