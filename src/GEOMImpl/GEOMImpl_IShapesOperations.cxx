@@ -1394,6 +1394,68 @@ static void SimplifyWhat (TopoDS_Shape& theWhat,
   }
 }
 
+static bool GetInPlaceOfCompound (Handle(GEOM_Function)& theWhereFunction,
+                                  TopoDS_Shape& theWhat,
+                                  TColStd_ListOfInteger& theModifiedArray)
+{
+  bool isFoundAny = false;
+  TopTools_MapOfShape mapShape;
+  TopoDS_Iterator It (theWhat, Standard_True, Standard_True);
+  for (; It.More(); It.Next()) {
+    if (mapShape.Add(It.Value())) {
+      TopoDS_Shape curWhat = It.Value();
+      if (curWhat.ShapeType() == TopAbs_COMPOUND ||
+          curWhat.ShapeType() == TopAbs_COMPSOLID) {
+        // Recursive call for compound or compsolid
+        if (GetInPlaceOfCompound(theWhereFunction, curWhat, theModifiedArray))
+          isFoundAny = true;
+      } else {
+        // Try to find for "simple" shape
+        bool isFound = false;
+
+        TDF_LabelSequence aLabelSeq;
+        theWhereFunction->GetDependency(aLabelSeq);
+        Standard_Integer nbArg = aLabelSeq.Length();
+
+        for (Standard_Integer iarg = 1; iarg <= nbArg && !isFound; iarg++) {
+
+          TDF_Label anArgumentRefLabel = aLabelSeq.Value(iarg);
+
+          Handle(GEOM_Object) anArgumentObject = GEOM_Object::GetReferencedObject(anArgumentRefLabel);
+          TopoDS_Shape anArgumentShape = anArgumentObject->GetValue();
+
+          TopTools_IndexedMapOfShape anArgumentIndices;
+          TopExp::MapShapes(anArgumentShape, anArgumentIndices);
+
+          if (anArgumentIndices.Contains(curWhat)) {
+            isFound = Standard_True;
+            Standard_Integer aWhatIndex = anArgumentIndices.FindIndex(curWhat);
+
+            // Find corresponding label in history
+            TDF_Label anArgumentHistoryLabel =
+              theWhereFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_False);
+            if (!anArgumentHistoryLabel.IsNull()) {
+              TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(aWhatIndex, Standard_False);
+              if (!aWhatHistoryLabel.IsNull()) {
+                Handle(TDataStd_IntegerArray) anIntegerArray;
+                if (aWhatHistoryLabel.FindAttribute(TDataStd_IntegerArray::GetID(), anIntegerArray)) {
+                  Standard_Integer imod, aModifLen = anIntegerArray->Array()->Length();
+                  for (imod = 1; imod <= aModifLen; imod++) {
+                    theModifiedArray.Append(anIntegerArray->Array()->Value(imod));
+                  }
+                }
+              }
+            }
+          }
+        }
+        if (isFound)
+          isFoundAny = true;
+      }
+    }
+  }
+  return isFoundAny;
+}
+
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
                                           (Handle(GEOM_Object) theShapeWhere,
                                            Handle(GEOM_Object) theShapeWhat)
@@ -1517,8 +1579,23 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
     }
 
     if (!isFound) {
-      SetErrorCode("The sought shape does not belong to any operation argument.");
-      return NULL;
+      // try compound element by element
+      if (aWhat.ShapeType() == TopAbs_COMPOUND ||
+          aWhat.ShapeType() == TopAbs_COMPSOLID) {
+        TColStd_ListOfInteger aModifiedList;
+        isFound = GetInPlaceOfCompound(aWhereFunction, aWhat, aModifiedList);
+        if (isFound) {
+          aModifiedArray = new TColStd_HArray1OfInteger (1, aModifiedList.Extent());
+          TColStd_ListIteratorOfListOfInteger anIterModif (aModifiedList);
+          for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++) {
+            aModifiedArray->SetValue(imod, anIterModif.Value());
+          }
+        }
+      }
+      if (!isFound) {
+        SetErrorCode("The sought shape does not belong to any operation argument.");
+        return NULL;
+      }
     }
   }
 
