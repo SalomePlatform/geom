@@ -78,13 +78,11 @@ static
   void RefineSolids(const TopoDS_Shape& ,
 		    TopTools_ListOfShape&);
 
-//modified by NIZNHY-PKV Fri Feb 25 17:19:39 2005f XX
 static
   void GetPlanes (const TopoDS_Edge& anEx,
 		const TopTools_IndexedDataMapOfShapeListOfShape& anEFMapx,
 		const TopoDS_Face& aF1,
 		TopAbs_State& aStPF1);
-//modified by NIZNHY-PKV Fri Feb 25 17:19:44 2005t XX
 
 //=======================================================================
 //function : ShellsAndSolids
@@ -100,9 +98,8 @@ static
   myAddedFacesMap.Clear();
   bMakeSolids=(myLimit==TopAbs_SHAPE || myLimit<TopAbs_SHELL);
   //
-  //modified by NIZNHY-PKV Thu Feb 24 17:22:32 2005 f XX
   myInternalFaces.Clear(); // remove it after all modifs
-  //modified by NIZNHY-PKV Thu Feb 24 17:22:56 2005 t XX
+  //
   aItS.Initialize(myListShapes);
   for ( ;aItS.More(); aItS.Next()) {
     const TopoDS_Shape& aS=aItS.Value();
@@ -164,10 +161,11 @@ void NMTAlgo_Splitter::MakeShells(const TopoDS_Shape& aS,
   aShellMaker.AddConstFaces(aFC);
   //
   // add split faces inside aS
+  TopoDS_Shape aIFC;
   if (myClosedShapes.Contains(aS)) {
     //
     // internal faces compound  
-    TopoDS_Shape aIFC=FindFacesInside(aS, Standard_True);
+    aIFC=FindFacesInside(aS, Standard_True);
     aShellMaker.AddSectionFaces(aIFC);
   }
   //
@@ -177,17 +175,16 @@ void NMTAlgo_Splitter::MakeShells(const TopoDS_Shape& aS,
   //
   // Add faces added to new shell to myAddedFacesMap:
   // avoid rebuilding twice common part of 2 solids.
-  
   TopTools_ListIteratorOfListOfShape itS(aLNS);
   TopExp_Explorer expF;
   for (; itS.More(); itS.Next()) {
     const TopoDS_Shape& aSh=itS.Value();
     expF.Init (aSh, TopAbs_FACE);
     for (; expF.More(); expF.Next()){
-      myAddedFacesMap.Add (expF.Current());
+      const TopoDS_Shape& aFx=expF.Current();
+      myAddedFacesMap.Add (aFx);
     }
   }
-  
 }
 //=======================================================================
 //function : MakeSolids
@@ -320,11 +317,15 @@ void NMTAlgo_Splitter::MakeSolids(const TopoDS_Shape&   theSolid,
   const TopoDS_Shape& CSF = myImageShape.Image(theShape).First();
   //
   TopTools_MapOfShape MSE, MFP;
+  //xf
+  TopTools_IndexedMapOfShape  aMFCSF;
+  //xt
   TopTools_DataMapOfShapeListOfShape DMSEFP;
   TopTools_MapIteratorOfMapOfShape itm;
   TopTools_ListOfShape EmptyL;
   TopTools_ListIteratorOfListOfShape itl;
-
+  TopTools_IndexedDataMapOfShapeListOfShape DMEF;
+  //
   // MSE filling: map of new section edges of CSF
   expl.Init(CSF, TopAbs_EDGE);
   for (; expl.More(); expl.Next()) {
@@ -333,8 +334,10 @@ void NMTAlgo_Splitter::MakeSolids(const TopoDS_Shape&   theSolid,
   }
   //
   // DMEF: map edge of CSF - faces of CSF
-  TopTools_IndexedDataMapOfShapeListOfShape DMEF;
   TopExp::MapShapesAndAncestors(CSF, TopAbs_EDGE, TopAbs_FACE, DMEF);
+  //xf
+  TopExp::MapShapes(CSF, TopAbs_FACE, aMFCSF);
+  //xt
   //
   // Fill
   // 1.  MFP - a map of faces to process: map of resulting faces except
@@ -400,8 +403,9 @@ void NMTAlgo_Splitter::MakeSolids(const TopoDS_Shape&   theSolid,
       TopoDS_Face aFace1 = TopoDS::Face(itl.Value());
       // remove aFace1 form DMSEFP and MFP
       LSF.Remove( itl ); // == itl.Next();
-      if (!MFP.Remove(aFace1))
+      if (!MFP.Remove(aFace1)) {
 	continue; // was not is MFP (i.e already checked)
+      }      
       //
       // check if aFace1 was already added to 2 shells
       if (!All &&
@@ -409,6 +413,14 @@ void NMTAlgo_Splitter::MakeSolids(const TopoDS_Shape&   theSolid,
 	  myAddedFacesMap.Contains(aFace1.Reversed())) {
 	skipAlreadyAdded = Standard_True;
       }
+      //
+      //xf 
+      if (aMFCSF.Contains(aFace1)) {
+	// the face aFace1 can not be inside CSF 
+	// if CSF contains the aFace1
+	continue;
+      }
+      //xt
       //
       TopoDS_Shape anOrigFace = aFace1;
       if (myImagesFaces.IsImage(aFace1)){
@@ -805,7 +817,6 @@ void RefineSolids(const TopoDS_Shape& aSolidOr,
   aLNS.Clear();
   aLNS.Append(aSolidOr);
 }
-//modified by NIZNHY-PKV Fri Feb 25 16:59:57 2005f XX
 //=======================================================================
 //function : GetPlanes
 //purpose  :
@@ -899,6 +910,7 @@ void GetPlanes (const TopoDS_Edge& anEx,
     }
   }
 }
+
 //modified by NIZNHY-PKV Fri Feb 25 17:00:03 2005t XX 
 /*
 	 A

@@ -94,28 +94,28 @@ else
 
 <p>&nbsp;</p>
 
-<p>#create vector with two points</p>
+<p>#create a vector from two points</p>
 
 <p class="whs1">vector_arc = geompy.MakeVector(p1, 
  p3)</p>
 
 <p>&nbsp;</p>
 
-<p># create arc with three points</p>
+<p># create an arc from three points</p>
 
 <p class="whs1">arc = geompy.MakeArc(p1, 
  p2, p3)</p>
 
 <p>&nbsp;</p>
 
-<p># create wire</p>
+<p># create a wire</p>
 
 <p class="whs1">wire = geompy.MakeWire([vector_arc, 
  arc])</p>
 
 <p>&nbsp;</p>
 
-<p># create planar face</p>
+<p># create a planar face</p>
 
 <p class="whs1">isPlanarWanted = 1</p>
 
@@ -124,7 +124,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create sketcher (face), following the textual description</p>
+<p># create a sketcher (face), following the textual description</p>
 
 <p class="whs1">sketcher1 = geompy.MakeSketcher(&quot;Sketcher:F 
  -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WF&quot;,</p>
@@ -134,7 +134,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create sketcher (wire) on the given face</p>
+<p># create a sketcher (wire) on the given face</p>
 
 <p class="whs1">sketcher2 = geompy.MakeSketcherOnPlane(&quot;Sketcher:F 
  10 -30:R 10:C 20 180:R 15:L 50:WW&quot;,</p>
@@ -143,7 +143,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs2">id_face = geompy.addToStudy(face,&quot;Face&quot;)</p>
 
@@ -153,7 +153,8 @@ else
 
 <p>&nbsp;</p>
 
-<p># display first sketcher and second sketcher with its planar face</p>
+<p># display the first sketcher and the second sketcher with its planar 
+ face</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_face)</p>
 

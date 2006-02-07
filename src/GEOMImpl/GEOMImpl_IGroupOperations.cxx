@@ -117,7 +117,25 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
   Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
   if(aFunction.IsNull()) return;
 
-  GEOM_ISubShape aSSI(aFunction);
+  GEOM_ISubShape aSSI (aFunction);
+
+  // Check sub-shape index validity
+  TDF_Label aLabel = aSSI.GetMainShape()->GetOwnerEntry();
+  if (aLabel.IsRoot()) return;
+  Handle(GEOM_Object) anObj = GEOM_Object::GetObject(aLabel);
+  if (anObj.IsNull()) return;
+  TopoDS_Shape aMainShape = anObj->GetValue();
+  if (aMainShape.IsNull()) return;
+
+  TopTools_IndexedMapOfShape aMapOfShapes;
+  TopExp::MapShapes(aMainShape, aMapOfShapes);
+
+  if (theSubShapeID < 1 || aMapOfShapes.Extent() < theSubShapeID) {
+    SetErrorCode("Invalid sub-shape index: out of range");
+    return;
+  }
+
+  // Add sub-shape index
   Handle(TColStd_HArray1OfInteger) aSeq = aSSI.GetIndices();
   if(aSeq.IsNull()) return;
   if(aSeq->Length() == 1 && aSeq->Value(1) == -1) {
@@ -137,14 +155,14 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
     aSSI.SetIndices(aNewSeq);
   }
 
-  //Make a Python command 
+  //Make a Python command
   TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
   GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t"
     << "geompy.AddObject(" << theGroup << ", " << theSubShapeID << ")";
 
   SetErrorCode(OK);
-  return; 
+  return;
 }
 
 //=============================================================================

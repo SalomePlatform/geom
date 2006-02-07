@@ -82,7 +82,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vertex and vector</p>
+<p># create a vertex and a vector</p>
 
 <p class="whs1">p1 = geompy.MakeVertex( 
  &nbsp;&nbsp;0., 
@@ -118,14 +118,14 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vector with the given components</p>
+<p># create a vector from the given components</p>
 
 <p class="whs1">vector = geompy.MakeVectorDXDYDZ(50., 
  50., 50.)</p>
 
 <p>&nbsp;</p>
 
-<p>#create vectors with two points</p>
+<p>#create vectors from two points</p>
 
 <p class="whs1">vector1_arc1 = geompy.MakeVector(p1, 
  p2)</p>
@@ -141,7 +141,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create arcs with three points</p>
+<p># create arcs from three points</p>
 
 <p class="whs1">arc1 = geompy.MakeArc(p2, 
  p3, p4)</p>
@@ -183,7 +183,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_face1 &nbsp;&nbsp;= 
  geompy.addToStudy(face1,&quot;Face1&quot;)</p>
@@ -226,7 +226,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vertex and vector</p>
+<p># create a vertex and a vector</p>
 
 <p class="whs1">p1 = geompy.MakeVertex( 
  &nbsp;10., &nbsp;10., 
@@ -242,7 +242,7 @@ else
 
 <p>&nbsp;</p>
 
-<p>#create vectors with two points</p>
+<p>#create vectors from two points</p>
 
 <p class="whs1">vector1 = geompy.MakeVector(p1, 
  p2)</p>
@@ -252,28 +252,28 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vector with the given components</p>
+<p># create a vector from the given components</p>
 
 <p class="whs1">vector3 = geompy.MakeVectorDXDYDZ(-20., 
  -20., 100.)</p>
 
 <p>&nbsp;</p>
 
-<p># create wire</p>
+<p># create a wire</p>
 
 <p class="whs1">wire = geompy.MakeWire([vector1, 
  vector2])</p>
 
 <p>&nbsp;</p>
 
-<p># create revolution</p>
+<p># create a revolution</p>
 
 <p class="whs1">revolution = geompy.MakeRevolution(wire, 
  vector3, 2.3)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_vector3 &nbsp;&nbsp;&nbsp;= 
  geompy.addToStudy(vector3,&quot;Axis&quot;)</p>
@@ -285,7 +285,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display vector, wire and revolution</p>
+<p># display the vector, the wire and the revolution</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_vector3)</p>
 
@@ -318,7 +318,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vertex and vector</p>
+<p># create a vertex and a vector</p>
 
 <p class="whs1">p1 = geompy.MakeVertex( 
  &nbsp;-30., &nbsp;-30., 
@@ -334,7 +334,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create arc with three points</p>
+<p># create an arc from three points</p>
 
 <p class="whs1">arc = geompy.MakeArc(p1, 
  p2, p3)</p>
@@ -358,14 +358,14 @@ else
 
 <p>&nbsp;</p>
 
-<p># create filling</p>
+<p># create a filling</p>
 
 <p class="whs1">filling = geompy.MakeFilling(compound, 
  mindeg, maxdeg, tol3d, tol2d, nbiter)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_compound = geompy.addToStudy(compound,&quot;Compound&quot;)</p>
 
@@ -373,7 +373,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display compound and filling</p>
+<p># display the compound and the filling</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_compound)</p>
 
@@ -418,42 +418,42 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vector on two points</p>
+<p># create a vector from two points</p>
 
 <p class="whs1">vxy = geompy.MakeVector(px, 
  py)</p>
 
 <p>&nbsp;</p>
 
-<p># create arc with three points</p>
+<p># create an arc from three points</p>
 
 <p class="whs1">arc = geompy.MakeArc(py, 
  pz, px)</p>
 
 <p>&nbsp;</p>
 
-<p># create wire</p>
+<p># create a wire</p>
 
 <p class="whs1">wire = geompy.MakeWire([vxy, 
  arc])</p>
 
 <p>&nbsp;</p>
 
-<p># create edge</p>
+<p># create an edge</p>
 
 <p class="whs1">edge = geompy.MakeEdge(p0, 
  pxyz)</p>
 
 <p>&nbsp;</p>
 
-<p># create pipe</p>
+<p># create a pipe</p>
 
 <p class="whs1">pipe = geompy.MakePipe(wire, 
  edge)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_wire = geompy.addToStudy(wire,&quot;Wire&quot;)</p>
 
@@ -463,7 +463,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display wire, edge (path) and pipe</p>
+<p># display the wire, the edge (path) and the pipe</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_wire)</p>
 

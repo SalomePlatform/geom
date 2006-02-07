@@ -14,18 +14,34 @@ if (navigator.appName !="Netscape")
 </script>
 <style type="text/css">
 <!--
-p.whs1 { margin-left:40px; }
-img_whs2 { border:none; width:24px; height:22px; border-style:none; }
-p.whs3 { font-size:12pt; }
-p.whs4 { font-size:12pt; margin-left:40px; font-weight:bold; }
-img_whs5 { border:none; border-style:none; width:312px; height:379px; float:none; }
-p.whs6 { font-size:12pt; font-weight:bold; }
-p.whs7 { font-size:12pt; margin-left:40px; }
-img_whs8 { border:none; width:250px; height:307px; border-style:none; }
-img_whs9 { border:none; width:22px; height:22px; border-style:none; }
-ul.whs10 { list-style:disc; }
+img_whs1 { border:none; width:24px; height:22px; border-style:none; }
+p.whs2 { font-size:12pt; }
+p.whs3 { font-size:12pt; font-weight:bold; margin-left:40px; }
+img_whs4 { border:none; width:312px; height:379px; float:none; border-style:none; }
+p.whs5 { font-size:12pt; margin-left:0px; font-weight:normal; }
+ul.whs6 { list-style:disc; }
+img_whs7 { border:none; width:50px; height:31px; border-style:none; }
+p.whs8 { font-size:12pt; margin-left:48px; }
+p.whs9 { font-size:12pt; margin-left:0px; }
+p.whs10 { font-size:12pt; font-weight:bold; }
+p.whs11 { font-size:12pt; margin-left:40px; }
+img_whs12 { border:none; width:250px; height:307px; border-style:none; }
+img_whs13 { border:none; width:22px; height:22px; border-style:none; }
+p.whs14 { font-size:12pt; margin-left:40px; font-weight:bold; }
 -->
-</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs5 {margin-left:1pt; }";
+  strNSS += "p.whs9 {margin-left:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
 function reDo() {
   if (innerWidth != origWidth || innerHeight != origHeight)
@@ -84,118 +100,155 @@ else
 <p>The <span style="font-style: italic;"><I>Salome</I></span> platform offers 
  such a useful functionality as creation and editing groups of subshapes 
  of a geometrical object which makes handling subshapes much easier. However 
- the functionality is available in the OCC viewer only. If other viewer 
- is used in your project by default, you can toggle the OCC viewer via 
- Preferences / Viewer background / OCC viewer. &nbsp;</p>
+ the functionality is available in the OCC viewer only.</p>
 
 <p>&nbsp;</p>
 
-<p class=TODO>To perform operations with groups:</p>
-
-<p class=TODO>&nbsp;</p>
-
-<p class="whs1">In the main menu select <span style="font-weight: bold;"><B>New 
- entity &gt; Group</B></span>.</p>
-
-<p>&nbsp;</p>
-
-<p><img src="image56.gif" width="24px" height="22px" border="0" class="img_whs2"> <span style="font-weight: bold; font-size: 14pt;"><font size=4 style="font-size:14pt;"><B>Create 
+<p><img src="image56.gif" width="24px" height="22px" border="0" class="img_whs1"> <span style="font-weight: bold; font-size: 14pt;"><font size=4 style="font-size:14pt;"><B>Create 
  a group</B></font></span></p>
 
 <p>&nbsp;</p>
 
-<p class="whs3"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Description:</b> 
- Creates a group of subshapes of a geometrical object.</font></span></p>
+<p class="whs2">To create a group of subshapes of a geometrical 
+ object in the main menu select <span style="font-weight: bold;"><B>New entity 
+ &gt; Group &gt; Create</B></span>. </p>
+
+<p class="whs2">The following menu will appear. </p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;"><img src="pics/creategroup.png" x-maintain-ratio="TRUE" width="312px" height="379px" border="0" class="img_whs4"></b></p>
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
+<p class="whs5">In this Menu: </p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs5">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
+<ul type="disc" class="whs6">
+	
+	<li class=kadov-p><p class="whs5"><span style="font-weight: bold;"><B>Shape 
+ Type</B></span> radio button define the type of elements for the group (points, 
+ lines, planes or shapes). </p></li>
+	
+	<li class=kadov-p><p class="whs5"><span style="font-weight: bold;"><B>Group 
+ Name</B></span> - here you can enter the name of the group, by default, it 
+ is Group_n.</p></li>
+	
+	<li class=kadov-p><p class="whs5">Then, using the <img src="image28.gif" width="50px" height="31px" border="0" class="img_whs7"> button, select the <span style="font-weight: bold;"><B>Main 
+ Shape</B></span> (a geometrical object on which the group will be created). 
+ You can select the elements of your group in two ways:</p></li>
+	
+	<li class=kadov-p><p class="whs8">Clicking 
+ <span style="font-weight: bold;"><B>Select Sub-Shapes</B></span> button you can 
+ select them manually in the 3D Viewer, and add to the group by clicking 
+ the <span style="font-weight: bold;"><B>Add</B></span> button (keep down the 
+ Shift button on the keyboard to select several elements and add all them 
+ together). The indexes of the selected elements will be displayed in the 
+ list. To delete elements from the list, select them and click <span style="font-weight: bold;"><B>Remove</B></span> 
+ button. &nbsp;</p></li>
+	
+	<li class=kadov-p><p class="whs8">Clicking 
+ <span style="font-weight: bold;"><B>Select All</B></span> button you can add 
+ all object's elements of a certain type in the list of the elements of 
+ the group. To delete elements from the list, select them and click <span 
+ style="font-weight: bold;"><B>Remove</B></span> button. &nbsp;</p></li>
+	
+	<li class=kadov-p><p class="whs9">Finally, 
+ confirm your selection by clicking <span style="font-weight: bold;"><B>OK 
+ </B></span>(also closes the Menu) or <span style="font-weight: bold;"><B>Apply</B></span> 
+ (leaves the Menu open for creation of other groups), or skip it by clicking 
+ <span style="font-weight: bold;"><B>Close</B></span> button. </p></li>
+</ul>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b><span style="font-weight: normal;">The</span> 
+ Result <span style="font-weight: normal;">of the operation will be a</span></b><b> 
+ GEOM_Object<span style="font-weight: normal;">.</span></b></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
  </i><span style="font-style: italic;"><I>geompy.CreateGroup(MainShape, ShapeType)</I></span>, 
  where MainShape is a shape for which the group is created, ShapeType is 
  a type of shapes in the created group.</p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Arguments:</b> 
+<p class="whs2"><b style="font-weight: bold;">Arguments:</b> 
  1 Shape + Type of subshape.</p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Dialog Box:</b></p>
+<p class="whs10">Example:</p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
-<p class="whs4"><b style="font-weight: bold;"><img src="pics/creategroup.png" x-maintain-ratio="TRUE" width="312px" height="379px" border="0" class="img_whs5"></b></p>
+<p class="whs11"><img src="image193.jpg" width="250px" height="307px" border="0" class="img_whs12"></p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs6">Example:</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs6">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs7"><img src="image193.jpg" width="250px" height="307px" border="0" class="img_whs8"></p>
-
-<p class="whs3">&nbsp;</p>
-
-<p class="whs3">&nbsp;</p>
-
-<p class="whs3">&nbsp;</p>
-
-<p class="whs3"><img src="image57.gif" width="22px" height="22px" border="0" class="img_whs9"> <span style="font-weight: bold; font-size: 14pt;"><font size=4 style="font-size:14pt;"><B>Edit 
+<p class="whs2"><img src="image57.gif" width="22px" height="22px" border="0" class="img_whs13"> <span style="font-weight: bold; font-size: 14pt;"><font size=4 style="font-size:14pt;"><B>Edit 
  a group</B></font></span></p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs3"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Description:</b> 
- Allows to edit the existing group.</font></span></p>
+<p class="whs2">To<span style="font-weight: bold;"><B> Edit </B></span>an 
+ existing group in the main menu select <span style="font-weight: bold;"><B>New 
+ entity &gt; Group &gt; Edit</B></span>. This menu is designed in the same 
+ way as the <span style="font-weight: bold;"><B>Create a group</B></span> menu. 
+ </p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
+<p class="whs2"><b><span style="font-weight: normal;">The</span> 
+ Result <span style="font-weight: normal;">of the operation will be a</span></b><b> 
+ GEOM_Object<span style="font-weight: normal;">.</span></b></p>
 
-<p class="whs3">&nbsp;</p>
+<p>&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">TUI Command:</b><i> 
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
  </i></p>
 
-<ul type="disc" class="whs10">
+<ul type="disc" class="whs6">
 	
-	<li class=kadov-p><p class="whs3"><i><span style="font-style: italic;"><I>g</i>eompy.AddObject(Group, 
+	<li class=kadov-p><p class="whs2"><i><span style="font-style: italic;"><I>g</i>eompy.AddObject(Group, 
  SubShapeID)</I></span>, where Group is a group to which a sub shape has to 
  be added, SubShapeID is an ID of the sub shape to be added to the group</p></li>
 	
-	<li class=kadov-p><p class="whs3"><span style="font-style: italic;"><I>geompy.RemoveObject(Group, 
+	<li class=kadov-p><p class="whs2"><span style="font-style: italic;"><I>geompy.RemoveObject(Group, 
  SubShapeID)</I></span>, where Group is a group from which a sub shape has 
  to be removed, SubShapeID is an ID of the sub shape to be removed from 
  the group</p></li>
 	
-	<li class=kadov-p><p class="whs3"><span style="font-style: italic;"><I>geompy.GetObjectIDs(Group)</I></span>, 
+	<li class=kadov-p><p class="whs2"><span style="font-style: italic;"><I>geompy.GetObjectIDs(Group)</I></span>, 
  where Group is a group for which its object ID’s are returned. </p></li>
 </ul>
 
-<p class="whs7"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Returns: 
+<p class="whs11"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Returns: 
  List of IDs.</font></span></p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Arguments:</b> 
+<p class="whs2"><b style="font-weight: bold;">Arguments:</b> 
  1 Shape + its subshapes.</p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Dialog Box:</b></p>
+<p class="whs2"><b style="font-weight: bold;">Dialog Box:</b></p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs4"><b><img src="pics/editgroup.png" x-maintain-ratio="TRUE" width="312px" height="379px" border="0" class="img_whs5"></b></p>
+<p class="whs14"><b style="font-weight: bold;"><img src="pics/editgroup.png" x-maintain-ratio="TRUE" width="312px" height="379px" border="0" class="img_whs4"></b></p>
 
-<p class="whs4">&nbsp;</p>
+<p class="whs14">&nbsp;</p>
 
-<p class="whs3">Our <span style="font-weight: bold;"><B>TUI Scripts</B></span> 
+<p class="whs2">Our <span style="font-weight: bold;"><B>TUI Scripts</B></span> 
  provide you with useful examples of <a href="working_with_groups.htm">Working 
  with Groups</a>. </p>
 

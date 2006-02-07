@@ -15,11 +15,11 @@ if (navigator.appName !="Netscape")
 <style type="text/css">
 <!--
 p.whs1 { font-family:'Times New Roman' , serif; font-size:12pt; font-weight:normal; }
-img_whs2 { border-style:none; border:none; float:none; width:30px; height:30px; }
+img_whs2 { border:none; float:none; width:30px; height:30px; border-style:none; }
 p.whs3 { font-family:'Times New Roman' , serif; font-size:12pt; }
 p.whs4 { margin-left:40px; }
 p.whs5 { font-family:'Times New Roman' , serif; font-size:14pt; }
-img_whs6 { border-style:none; width:20px; height:20px; }
+img_whs6 { width:20px; height:20px; border-style:none; }
 -->
 </style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
@@ -51,7 +51,7 @@ if (window.gbWhTopic)
 {
 	if (window.addTocInfo)
 	{
-	addTocInfo("GEOM module\nManaging geometrical objects\nDisplaying\\hiding objects");
+	addTocInfo("GEOM module\nManaging geometrical objects\nDisplaying/hiding objects");
 addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	}
@@ -75,13 +75,12 @@ else
 		document.location.reload();
 //-->
 </script>
-<h1>Displaying\hiding objects</h1>
+<h1>Displaying/hiding objects</h1>
 
-<p class="whs1"><b style="font-weight: normal;"><img src="../i_blue.jpg" x-maintain-ratio="TRUE" x-save-file="TRUE" x-save-method="compute-relative" width="30px" height="30px" border="0" class="img_whs2"> </b>Visualization is available in both, OCC and VTK viewers. 
- These viewers work independently, i.e. visibility of objects and their 
- graphic attributes may differ in OCC and VTK viewer. It<b style="font-weight: normal;"><span 
- style="font-weight: normal;"> is reasonable to use the OCC viewer for 
- GEOM module.</span></b></p>
+<p class="whs1"><b style="font-weight: normal;"><img src="../i_blue.jpg" x-maintain-ratio="TRUE" x-save-file="TRUE" x-save-method="compute-relative" width="30px" height="30px" border="0" class="img_whs2"> </b>Visualization is available in both viewers, OCC and VTK 
+ . These viewers work independently, i.e. visibility of objects and their 
+ graphic attributes may differ in OCC and VTK viewer. It<b><span style="font-weight: normal;"> 
+ is reasonable to use the OCC viewer for GEOM module.</span></b></p>
 
 <p class="whs1">&nbsp;</p>
 
@@ -154,7 +153,7 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs3"><b>TUI 
+<p class="whs3"><b style="font-weight: bold;">TUI 
  Command:</b><i> sg.EraseAll()</i></p>
 
 <p class="whs3">&nbsp;</p>
@@ -173,7 +172,7 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs3"><b>TUI 
+<p class="whs3"><b style="font-weight: bold;">TUI 
  Command:</b><i> </i></p>
 
 <p class="whs3">&nbsp;</p>

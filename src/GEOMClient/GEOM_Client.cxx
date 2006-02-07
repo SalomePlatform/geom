@@ -198,47 +198,46 @@ unsigned int GEOM_Client::BufferLength()
 // function : GetShape()
 // purpose  : 
 //=======================================================================
+TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape )
+{
+  TopoDS_Shape S;
+  TCollection_AsciiString IOR = geom->GetStringFromIOR(aShape);
+  Standard_Integer anIndex = Find(IOR, S);
 
-TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape ) 
-{ 
-  TopoDS_Shape            S; 
-  TCollection_AsciiString IOR = geom->GetStringFromIOR(aShape); 
-  Standard_Integer anIndex = Find(IOR, S); 
-  
-  if (anIndex !=0 ) return S ;  
+  if (anIndex != 0) return S;
 
-  /******* in case of a MAIN GEOM::SHAPE ********/ 
-  if (aShape->IsMainShape()) { 
-    S = Load(geom, aShape); 
-    Bind(IOR, S); 
-    return S; 
-  } 
+  /******* in case of a MAIN GEOM::SHAPE ********/
+  if (aShape->IsMainShape()) {
+    S = Load(geom, aShape);
+    Bind(IOR, S);
+    return S;
+  }
 
-  /******* in case of SUB GEOM::SHAPE ***********/ 
-  // Load and Explore the Main Shape 
-  TopoDS_Shape aMainShape = GetShape (geom, aShape->GetMainShape()); 
-  GEOM::ListOfLong_var list = aShape->GetSubShapeIndices(); 
+  /******* in case of SUB GEOM::SHAPE ***********/
+  // Load and Explore the Main Shape
+  TopoDS_Shape aMainShape = GetShape (geom, aShape->GetMainShape());
+  GEOM::ListOfLong_var list = aShape->GetSubShapeIndices();
 
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aMainShape, anIndices);
 
-  /* Case of only one subshape */ 
-  if (list->length() == 1) 
-  { 
-    S = anIndices.FindKey(list[0]); 
-  } 
+  /* Case of only one subshape */
+  if (list->length() == 1) {
+    S = anIndices.FindKey(list[0]);
+  }
   else {
     BRep_Builder B;
     TopoDS_Compound aCompound;
     B.MakeCompound(aCompound);
-    for(int i=0; i<list->length(); i++) {
-      TopoDS_Shape aSubShape = anIndices.FindKey(list[i]); 
-      B.Add(aCompound, aSubShape);
+    for (int i = 0; i < list->length(); i++) {
+      if (0 < list[i] && list[i] <= anIndices.Extent()) {
+        TopoDS_Shape aSubShape = anIndices.FindKey(list[i]);
+        B.Add(aCompound, aSubShape);
+      }
     }
 
     S = aCompound;
   }
-  Bind(IOR, S); 
-  return S; 
-} 
-
+  Bind(IOR, S);
+  return S;
+}

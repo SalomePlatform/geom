@@ -46,7 +46,7 @@ if (window.gbWhTopic)
 {
 	if (window.addTocInfo)
 	{
-	addTocInfo("GEOM module\nTUI Scripts\nChanging Displaying Parameters");
+	addTocInfo("GEOM module\nTUI Scripts\nChanging Display Parameters");
 addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	}
@@ -70,9 +70,39 @@ else
 		document.location.reload();
 //-->
 </script>
-<h1>Changing Displaying Parameters</h1>
+<h1>Changing Display Parameters</h1>
 
-<h3>Changing Color</h3>
+<h3><a name=bookmark>Changing Display Mode</a></h3>
+
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ salome</span></p>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">box = geompy.MakeBox(0,0,0, 
+ 50,50,50)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">sphere = geompy.MakeSphere(50,50,50, 
+ 30)</p>
+
+<p class="whs1">fuse = geompy.MakeBoolean(box,sphere,3)</p>
+
+<p class="whs1">fuse_id = geompy.addToStudy(fuse,&quot;Fuse&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs1">gg.createAndDisplayGO(fuse_id)</p>
+
+<p class="whs1">gg.setDisplayMode(fuse_id,1) 
+ </p>
+
+<p class="whs1">&nbsp;</p>
+
+<h3><a name=bookmark1>Changing Color</a></h3>
 
 <p class="whs1">import salome</p>
 
@@ -103,37 +133,9 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<h3>Changing Display Mode</h3>
-
-<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
- salome</span></p>
-
-<p class="whs1">import geompy</p>
-
-<p class="whs1">box = geompy.MakeBox(0,0,0, 
- 50,50,50)</p>
-
 <p class="whs1">&nbsp;</p>
 
-<p class="whs1">sphere = geompy.MakeSphere(50,50,50, 
- 30)</p>
-
-<p class="whs1">fuse = geompy.MakeBoolean(box,sphere,3)</p>
-
-<p class="whs1">fuse_id = geompy.addToStudy(fuse,&quot;Fuse&quot;)</p>
-
-<p class="whs1">&nbsp;</p>
-
-<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
-
-<p class="whs1">gg.createAndDisplayGO(fuse_id)</p>
-
-<p class="whs1">gg.setDisplayMode(fuse_id,1) 
- </p>
-
-<p class="whs1">&nbsp;</p>
-
-<h3>Changing Transparency</h3>
+<h3><a name=bookmark2>Changing Transparency</a></h3>
 
 <p class="whs1">import salome</p>
 

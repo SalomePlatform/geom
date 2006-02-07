@@ -95,20 +95,20 @@ else
 
 <p>&nbsp;</p>
 
-<p># create edge</p>
+<p># create an edge</p>
 
 <p class="whs1">edge = geompy.MakeEdge(p0, 
  pxyz)</p>
 
 <p>&nbsp;</p>
 
-<p># add object in study</p>
+<p># add object in the study</p>
 
 <p class="whs1">id_edge = geompy.addToStudy(edge,&quot;Edge&quot;)</p>
 
 <p>&nbsp;</p>
 
-<p># display edge</p>
+<p># display an edge</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_edge) 
  </p>
@@ -142,36 +142,37 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"># create vector on two 
- points</p>
+<p class="whs2"># create a vector from 
+ two points</p>
 
 <p class="whs1">vxy = geompy.MakeVector(px, 
  py)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create arc with three 
- points</p>
+<p class="whs2"># create an arc from 
+ three points</p>
 
 <p class="whs1">arc = geompy.MakeArc(py, 
  pz, px)</p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"># create wire</p>
+<p class="whs2"># create a wire</p>
 
 <p class="whs1">wire = geompy.MakeWire([vxy, 
  arc])</p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"># add object in study</p>
+<p class="whs2"># add an object in the 
+ study</p>
 
 <p class="whs1">id_wire = geompy.addToStudy(wire,&quot;Wire&quot;)</p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"># display wire</p>
+<p class="whs2"># display the wire</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_wire) 
  </p>
@@ -215,23 +216,23 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create vector on two 
- points</p>
+<p class="whs2"># create a vector from 
+ two points</p>
 
 <p class="whs1">vxy = geompy.MakeVector(px, 
  py)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create arc with three 
- points</p>
+<p class="whs2"># create an arc from 
+ three points</p>
 
 <p class="whs1">arc = geompy.MakeArc(py, 
  pz, px)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create wire</p>
+<p class="whs2"># create a wire</p>
 
 <p class="whs1">wire = geompy.MakeWire([vxy, 
  arc])</p>
@@ -256,7 +257,8 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create face from wire</p>
+<p class="whs2"># create a face from 
+ the wire</p>
 
 <p class="whs1">face1 = geompy.MakeFace(wire, 
  isPlanarFace)</p>
@@ -274,7 +276,8 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># add objects in study</p>
+<p class="whs2"># add objects in the 
+ study</p>
 
 <p class="whs1">id_face1 = geompy.addToStudy(face1,&quot;Face1&quot;)</p>
 
@@ -284,7 +287,7 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># display faces</p>
+<p class="whs2"># display the faces</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_face1)</p>
 
@@ -342,30 +345,31 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create face from two 
- wires</p>
+<p class="whs2"># create a face from 
+ two wires</p>
 
 <p class="whs1">face = geompy.MakeFaces([sketcher1, 
  sketcher2],isPlanarFace)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create prism</p>
+<p class="whs2"># create a prism</p>
 
 <p class="whs1">prism = geompy.MakePrism(face, 
  p0, pxyz)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># explode prism on faces</p>
+<p class="whs2"># explode the prism into 
+ faces</p>
 
 <p class="whs1">prism_faces = geompy.SubShapeAllSorted(prism, 
  geompy.ShapeType[&quot;FACE&quot;])</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create shell from the 
- set of faces</p>
+<p class="whs2"># create a shell from 
+ a set of faces</p>
 
 <p class="whs1">shell = geompy.MakeShell([prism_faces[0], 
  prism_faces[2], prism_faces[3],</p>
@@ -375,13 +379,14 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># add objects in study</p>
+<p class="whs2"># add objects in the 
+ study</p>
 
 <p class="whs1">id_shell = geompy.addToStudy(shell,&quot;Shell&quot;)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># display shell</p>
+<p class="whs2"># display the shell</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_shell)</p>
 
@@ -427,22 +432,23 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create prism</p>
+<p class="whs2"># create a prism</p>
 
 <p class="whs1">prism = geompy.MakePrism(face, 
  p0, pz)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># explode prism on faces</p>
+<p class="whs2"># explode the prism into 
+ faces</p>
 
 <p class="whs1">prism_faces = geompy.SubShapeAllSorted(prism, 
  geompy.ShapeType[&quot;FACE&quot;])</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create shell from the 
- set of faces</p>
+<p class="whs2"># create a shell from 
+ a set of faces</p>
 
 <p class="whs1">shell = geompy.MakeShell([prism_faces[0], 
  prism_faces[1],</p>
@@ -455,20 +461,21 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create solid, bounded 
+<p class="whs2"># create a solid, bounded 
  by the given shells</p>
 
 <p class="whs1">solid = geompy.MakeSolid([shell])</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># add objects in study</p>
+<p class="whs2"># add objects in the 
+ study</p>
 
 <p class="whs1">id_solid = geompy.addToStudy(solid,&quot;Solid&quot;)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># display solid</p>
+<p class="whs2"># display the solid</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_solid)</p>
 
@@ -513,22 +520,23 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create prism</p>
+<p class="whs2"># create a prism</p>
 
 <p class="whs1">prism = geompy.MakePrism(face, 
  p0, pz)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># explode prism on faces</p>
+<p class="whs2"># explode the prism into 
+ faces</p>
 
 <p class="whs1">prism_faces = geompy.SubShapeAllSorted(prism, 
  geompy.ShapeType[&quot;FACE&quot;])</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create shell from the 
- set of faces</p>
+<p class="whs2"># create a shell from 
+ a set of faces</p>
 
 <p class="whs1">shell = geompy.MakeShell([prism_faces[0], 
  prism_faces[1],</p>
@@ -541,20 +549,21 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create solid, bounded 
+<p class="whs2"># create a solid, bounded 
  by the given shells</p>
 
 <p class="whs1">solid = geompy.MakeSolid([shell])</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># add objects in study</p>
+<p class="whs2"># add objects in the 
+ study</p>
 
 <p class="whs1">id_solid = geompy.addToStudy(solid,&quot;Solid&quot;)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># display solid</p>
+<p class="whs2"># display the solid</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_solid)</p>
 

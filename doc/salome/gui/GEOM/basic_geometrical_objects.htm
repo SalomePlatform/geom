@@ -185,21 +185,21 @@ else
 
 <p>&nbsp;</p>
 
-<p># create a vector on two points</p>
+<p># create a vector from two points</p>
 
 <p class="whs1">vxy &nbsp;= 
  geompy.MakeVector(px, py)</p>
 
 <p>&nbsp;</p>
 
-<p># create a line with a point and a vector</p>
+<p># create a line from a point and a vector</p>
 
 <p class="whs1">line1 = geompy.MakeLine(pz, 
  vxy)</p>
 
 <p>&nbsp;</p>
 
-<p>#create a line on two points</p>
+<p>#create a line from two points</p>
 
 <p class="whs1">line2 = geompy.MakeLineTwoPnt(p0, 
  p100)</p>
@@ -260,28 +260,28 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vector on two points</p>
+<p># create a vector on two points</p>
 
 <p class="whs1">vxy &nbsp;= 
  geompy.MakeVector(px, py)</p>
 
 <p>&nbsp;</p>
 
-<p># create circle with point, vector and radius</p>
+<p># create a circle from a point, a vector and a radius</p>
 
 <p class="whs1">circle1 = geompy.MakeCircle(pz, 
  vxy, 30)</p>
 
 <p>&nbsp;</p>
 
-<p>#create circle on three points</p>
+<p>#create a circle from three points</p>
 
 <p class="whs1">circle2 = geompy.MakeCircleThreePnt(p0, 
  px, py)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_vxy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
  geompy.addToStudy(vxy, &nbsp;&nbsp;&nbsp;&quot;Vector&quot;)</p>
@@ -325,21 +325,21 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vector on two points</p>
+<p># create a vector from two points</p>
 
 <p class="whs1">vector &nbsp;= 
  geompy.MakeVector(p0, p50)</p>
 
 <p>&nbsp;</p>
 
-<p># create ellipse with point, vector and radiuses</p>
+<p># create an ellipse from a point, a vector and radiuses</p>
 
 <p class="whs1">ellipse = geompy.MakeEllipse(p50, 
  vector, 50, 25)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_vector &nbsp;= 
  geompy.addToStudy(vector, &quot;Vector&quot;)</p>
@@ -348,7 +348,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display normal vector and ellipse</p>
+<p># display the ellipse and its normal vector</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_vector)</p>
 
@@ -387,28 +387,28 @@ else
 
 <p>&nbsp;</p>
 
-<p># create polyline on list of points</p>
+<p># create a polyline from a list of points</p>
 
 <p class="whs1">polyline = geompy.MakePolyline([p0, 
  p1, p2, p3, p4])</p>
 
 <p>&nbsp;</p>
 
-<p># create bezier on list of points</p>
+<p># create a bezier curve from a list of points</p>
 
 <p class="whs1">bezier = geompy.MakeBezier([p0, 
  p1, p2, p3, p4])</p>
 
 <p>&nbsp;</p>
 
-<p>#create interpolation curve on list of points</p>
+<p>#create a b-spline curve from a list of points</p>
 
 <p class="whs1">interpol = geompy.MakeInterpol([p0, 
  p1, p2, p3, p4])</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_p0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
  geompy.addToStudy(p0, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Point1&quot;)</p>
@@ -436,7 +436,7 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p># display points and curves</p>
+<p># display the points and the curves</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_p0)</p>
 
@@ -477,21 +477,21 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vector on two points</p>
+<p># create a vector from two points</p>
 
 <p class="whs1">vector1 = geompy.MakeVector(p1, 
  p2)</p>
 
 <p>&nbsp;</p>
 
-<p># create vector with the given components</p>
+<p># create a vector from the given components</p>
 
 <p class="whs1">vector2 = geompy.MakeVectorDXDYDZ(30, 
  30, 100)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_p1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
  geompy.addToStudy(p1, &nbsp;&nbsp;&nbsp;&nbsp;&quot;Point1&quot;)</p>
@@ -505,7 +505,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display points and vectors</p>
+<p># display the points and the vectors</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_p1)</p>
 
@@ -550,35 +550,35 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vector with the given components</p>
+<p># create a vector from the given components</p>
 
 <p class="whs1">vector = geompy.MakeVectorDXDYDZ(100., 
  100., 100.)</p>
 
 <p>&nbsp;</p>
 
-<p># create vector with two points</p>
+<p># create a vector from two points</p>
 
 <p class="whs1">vector_arc = geompy.MakeVector(p2, 
  p5)</p>
 
 <p>&nbsp;</p>
 
-<p># create arc with three points</p>
+<p># create an arc from three points</p>
 
 <p class="whs1">arc = geompy.MakeArc(p2, 
  p4, p5)</p>
 
 <p>&nbsp;</p>
 
-<p># create wire</p>
+<p># create a wire</p>
 
 <p class="whs1">wire = geompy.MakeWire([vector_arc, 
  arc])</p>
 
 <p>&nbsp;</p>
 
-<p># create face</p>
+<p># create a face</p>
 
 <p class="whs1">isPlanarWanted = 1</p>
 
@@ -589,28 +589,28 @@ else
 
 <p>&nbsp;</p>
 
-<p># create plane with point, vector and trimsize</p>
+<p># create a plane from a point, a vector and a trimsize</p>
 
 <p class="whs1">plane1 = geompy.MakePlane(p1, 
  vector, trimsize)</p>
 
 <p>&nbsp;</p>
 
-<p># create plane with three points and trimsize</p>
+<p># create a plane from three points and a trimsize</p>
 
 <p class="whs1">plane2 = geompy.MakePlaneThreePnt(p1, 
  p2, p3, trimsize)</p>
 
 <p>&nbsp;</p>
 
-<p># create plane with given face</p>
+<p># create a plane from the given face</p>
 
 <p class="whs1">plane3 = geompy.MakePlaneFace(face, 
  trimsize)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_face &nbsp;&nbsp;= 
  geompy.addToStudy(face, &nbsp;&quot;Face&quot;)</p>
@@ -623,7 +623,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display points and vectors</p>
+<p># display the points and the vectors</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_face)</p>
 

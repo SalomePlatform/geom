@@ -148,6 +148,7 @@ check_free_boundaries.htm
 check_free_faces.htm
 circle.htm
 close_contour.htm
+color.htm
 common.htm
 complex_objects.htm
 compound.htm
@@ -179,6 +180,7 @@ fuse.htm
 geometrical_objects.htm
 glue_faces.htm
 groups.htm
+isos.htm
 line.htm
 local_coordinate_system.htm
 measurement_tools.htm
@@ -212,9 +214,11 @@ suppress_holes.htm
 suppress_internal_wires.htm
 transformation_operations.htm
 translation.htm
+transparency.htm
 turus.htm
 vector.htm
 wire.htm
+wireframe_and_shading.htm
 working_plane.htm
 working_with_groups.htm
 ehelp.xml
@@ -310,6 +314,8 @@ files\salome2_sp3_repairgui_functions_salome2_sp3_repairgui_functions_image119.g
 files\salome2_sp3_operationgui_functions_salome2_sp3_operationgui_functions_image88.gif
 files\salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image77.gif
 files\salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image32.gif
+image28.gif
+selectcolor.png
 pics\glue_faces1.png
 pics\supp_int_wires1.png
 pics\fusesn1.png
@@ -331,6 +337,7 @@ files\salome2_sp3_operationgui_functions_salome2_sp3_operationgui_functions_imag
 files\salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image78.gif
 image3.jpg
 files\salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image33.gif
+pics\neo-isos.png
 pics\glue_faces2.png
 pics\supp_int_wires2.png
 pics\sectionsn.png
@@ -340,7 +347,6 @@ pics\circles.png
 pics\neo-materials.png
 pics\neo-obj3.png
 pics\neo-localcs2.png
-pics\neo-isos.png
 pics\measures1.png
 pics\repair3.png
 pics\transformation9.png
@@ -377,7 +383,6 @@ image172.jpg
 image150.jpg
 image82.jpg
 image19.gif
-image5.jpg
 pics\rotationsn2.png
 pics\disp_mode2sn.png
 pics\neo-detect2.png
@@ -397,11 +402,11 @@ image151.jpg
 image94.jpg
 image83.jpg
 files\salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image56.gif
+pics\isos_u12_v12sn.png
 pics\free_boudaries1.png
 pics\multi_rotation1d1.png
 pics\multi_translation2dsn.png
 pics\offsetsn.png
-pics\isos_u12_v12sn.png
 pics\compoundsn.png
 pics\prisms_basessn.png
 pics\cylinders.png
@@ -418,7 +423,6 @@ image163.jpg
 image130.jpg
 image95.jpg
 image84.jpg
-image4.gif
 files\salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image57.gif
 pics\free_boudaries2.png
 pics\multi_rotation2d1.png
@@ -483,6 +487,7 @@ files\salome2_sp3_repairgui_functions_salome2_sp3_repairgui_functions_image121.g
 files\salome2_sp3_operationgui_functions_salome2_sp3_operationgui_functions_image90.gif
 files\salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image29.gif
 i_blue.jpg
+image30.gif
 pics\free_faces1.png
 pics\fillet_all.png
 pics\translationsn2.png
@@ -509,6 +514,8 @@ files\salome2_sp3_repairgui_functions_salome2_sp3_repairgui_functions_image122.g
 files\salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image100.gif
 files\salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image99.gif
 salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image13.gif
+image31.gif
+pics\commonsn.png
 pics\free_faces2.png
 pics\mirror_planesn1.png
 pics\block_explodesn.png
@@ -600,6 +607,7 @@ whgdata\whlstt13.htm
 whgdata\whlstt14.htm
 whgdata\whlstt15.htm
 whgdata\whlstt16.htm
+whgdata\whlstt17.htm
 whgdata\whlsti0.htm
 whgdata\whlstfl0.htm
 whgdata\whlstfl1.htm
@@ -642,6 +650,7 @@ whgdata\whlstf11.htm
 whgdata\whlstf12.htm
 whgdata\whlstf13.htm
 whgdata\whlstf14.htm
+whgdata\whlstf15.htm
 whgdata\whlstg0.htm
 geom.htm
 geom_csh.htm

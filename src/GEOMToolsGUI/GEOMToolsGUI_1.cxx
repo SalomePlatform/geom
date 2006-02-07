@@ -38,12 +38,12 @@
 #include "GEOM_Actor.h"
 #include "GEOMBase.h"
 
-#include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include "SALOME_ListIO.hxx"
+#include "SALOME_ListIteratorOfListIO.hxx"
 
 #include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>
-#include <SVTK_RenderWindowInteractor.h>
+#include <SVTK_View.h>
 
 #include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewWindow.h>
@@ -236,13 +236,13 @@ void GEOMToolsGUI::OnColor()
 	  SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
 	  if ( !vtkVW )
 	    return;
-	  SVTK_RenderWindowInteractor* rwi = vtkVW->getRWInteractor();
-	  QColor initcolor = rwi->GetColor( selected.First()  );
+	  SVTK_View* aView = vtkVW->getView();
+	  QColor initcolor = aView->GetColor( selected.First()  );
 	  QColor c = QColorDialog::getColor( QColor(), app->desktop() );
 	  if ( c.isValid() ) {
 	    SUIT_OverrideCursor();
 	    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-	      rwi->SetColor( It.Value(), c );
+	      aView->SetColor( It.Value(), c );
 	    }
 	  }
 	} // if ( isVTK )

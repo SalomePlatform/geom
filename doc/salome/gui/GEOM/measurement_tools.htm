@@ -86,7 +86,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># get point's coordinates and check its values</p>
+<p># get the coordinates of the point and check its values</p>
 
 <p class="whs1">coords = geompy.PointCoordinates(point)</p>
 
@@ -283,39 +283,6 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs1">Point Coordinates</p>
-
-<p class="whs1">&nbsp;</p>
-
-<p class="whs1">&nbsp;</p>
-
-<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
- geompy</span></p>
-
-<p class="whs1"># create a point</p>
-
-<p class="whs1">point = geompy.MakeVertex(15, 
- 23, 80)</p>
-
-<p class="whs1"># get point's coordinates 
- and check its values</p>
-
-<p class="whs1">coords = geompy.PointCoordinates(point)</p>
-
-<p class="whs1">if coords[0] != 15 
- or coords[1] != 23 or coords[2] != 80 :</p>
-
-<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
- &quot;Coordinates of point must be (15, 23, 80), but returned (&quot;, 
- coords[0], &quot;, &quot;, coords[1], &quot;, &quot;, coords[2], &quot;)&quot;</p>
-
-<p class="whs1">else :</p>
-
-<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
- &quot;All values are OK.&quot; </p>
-
-<p class="whs1">&nbsp;</p>
-
 <h3>Tolerance</h3>
 
 <p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
@@ -417,14 +384,15 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># make compound</p>
+<p class="whs2"># make a compound</p>
 
 <p class="whs1">compound = geompy.MakeCompound([box1, 
  box2])</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># glue compound's faces</p>
+<p class="whs2"># glue the faces of the 
+ compound</p>
 
 <p class="whs1">tolerance = 1e-5</p>
 

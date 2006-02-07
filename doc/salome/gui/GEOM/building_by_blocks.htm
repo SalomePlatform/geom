@@ -117,28 +117,28 @@ else
 
 <p>&nbsp;</p>
 
-<p># create quadrangle face from four edges</p>
+<p># create a quadrangle face from four edges</p>
 
 <p class="whs1">qface1 = geompy.MakeQuad(edge1, 
  edge2, edge3, edge4)</p>
 
 <p>&nbsp;</p>
 
-<p># create quadrangle face on two edges</p>
+<p># create a quadrangle face from two edges</p>
 
 <p class="whs1">qface2 = geompy.MakeQuad2Edges(edge1, 
  edge3)</p>
 
 <p>&nbsp;</p>
 
-<p># create quadrangle with specified corners</p>
+<p># create a quadrangle from four points in its corners</p>
 
 <p class="whs1">qface3 = geompy.MakeQuad4Vertices(p1, 
  p2, p3, p4)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_p1 = geompy.addToStudy(p1,&quot;Point1&quot;)</p>
 
@@ -164,7 +164,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display vertices, edges and quadrangle faces</p>
+<p># display the vertices, the edges and the quadrangle faces</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_p1)</p>
 
@@ -195,7 +195,7 @@ else
 <p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_qface3,1)</span> 
  </p>
 
-<h3>&nbsp;</h3>
+<p>&nbsp;</p>
 
 <h3>Hexagonal Solid</h3>
 
@@ -285,21 +285,21 @@ else
 
 <p>&nbsp;</p>
 
-<p># create hexahedral solid between two given faces</p>
+<p># create a hexahedral solid between two given faces</p>
 
 <p class="whs1">solid1 = geompy.MakeHexa2Faces(qface1, 
  qface2)</p>
 
 <p>&nbsp;</p>
 
-<p># create hexahedral solids, bounded by the six given faces</p>
+<p># create a hexahedral solids, bounded by six given faces</p>
 
 <p class="whs1">solid2 = geompy.MakeHexa(qface3, 
  qface4, qface5, qface6, qface7, qface8)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_solid1 = geompy.addToStudy(solid1,&quot;Solid1&quot;)</p>
 

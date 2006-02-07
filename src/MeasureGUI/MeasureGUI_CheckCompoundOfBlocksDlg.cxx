@@ -344,6 +344,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
       try
       {
         getDisplayer()->SetColor( Quantity_NOC_RED );
+        getDisplayer()->SetWidth( 3 );
         getDisplayer()->SetToActivate( false );
         aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs( aSubShape ) : 0;
         if ( aPrs )

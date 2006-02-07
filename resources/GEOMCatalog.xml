@@ -20,6 +20,7 @@
         <component-comment>Geometry component</component-comment>
         <component-multistudy>1</component-multistudy>
         <component-icone>ModuleGeom.png</component-icone>
+	<component-impltype>1</component-impltype>
 
         <!-- component interface list -->
         <component-interface-list>
@@ -529,6 +530,7 @@
             <component-version>3.1.0</component-version>
             <component-comment>Supervision wrapper for Geometry component</component-comment>
             <component-multistudy>1</component-multistudy>
+	    <component-impltype>1</component-impltype>
             <component-icone></component-icone>
             <constraint></constraint>
             <component-interface-list>

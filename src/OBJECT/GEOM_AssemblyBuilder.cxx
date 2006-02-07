@@ -33,7 +33,8 @@
 
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_Actor.h"
-#include "utilities.h"
+
+#include <vtkProperty.h>
 
 // Open CASCADE Includes
 #include <TopExp_Explorer.hxx>
@@ -46,6 +47,8 @@
 #include <TopExp.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopoDS_Iterator.hxx>
+
+#include "utilities.h"
 
 using namespace std;
 // SALOME

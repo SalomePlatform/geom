@@ -1,0 +1,146 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<head>
+<title>Wireframe and Shading</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
+<link rel="stylesheet" href="default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 { width:20px; height:20px; border-style:none; }
+p.whs2 { margin-left:0px; }
+p.whs3 { font-family:'Times New Roman' , serif; font-size:12pt; }
+p.whs4 { font-family:'Times New Roman' , serif; font-size:12pt; font-style:italic; }
+img_whs5 { border:none; width:400px; height:420px; float:none; border-style:none; }
+img_whs6 { border:none; float:none; width:400px; height:420px; border-style:none; }
+p.whs7 { font-size:12pt; margin-left:40px; }
+p.whs8 { font-size:12pt; }
+-->
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs2 {margin-left:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nManaging geometrical objects\nChanging Display Parameters\nDisplay Mode");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><b style="font-weight: bold;"><img src="files/salome2_sp3_displaygui_functions_salome2_sp3_displaygui_functions_image51.gif" width="20px" height="20px" border="0" class="img_whs1"> </b></font></span>Display Mode</h1>
+
+<p class=TODO
+	style="font-family: 'Times New Roman', serif;
+			font-size: 12pt;
+			font-style: normal;">This option is relevant for viewing 3D 
+ objects. <span style="font-weight: bold;"><B>Wireframe</B></span> mode means 
+ that you can see only &nbsp;edges 
+ of the object, while its shells remain transparent. <span style="font-weight: bold;"><B>Shading</B></span> 
+ mode means that the shells are filled with color.</p>
+
+<p class=TODO
+	style="font-family: 'Times New Roman', serif;
+			font-size: 12pt;
+			font-style: normal;">&nbsp;</p>
+
+<p class="whs2">To change the display mode right-click on 
+ this geometrical object in the viewer and from the pop-up menu select 
+ <span style="font-weight: bold;"><B>Display mode --&gt; Wireframe</B></span> 
+ or<span style="font-weight: bold;"><B> Shading</B></span>.</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">TUI 
+ Command:</b><i> gg.setDisplayMode(ID, Short)</i></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><b style="font-weight: bold;">Examples:</b></p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs4">Wireframe &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<p class="whs3"><img src="pics/disp_mode1sn.png" x-maintain-ratio="TRUE" width="400px" height="420px" border="0" class="img_whs5"> &nbsp;</p>
+
+<p class="whs4">Shading</p>
+
+<p class="whs3"><img src="pics/disp_mode2sn.png" x-maintain-ratio="TRUE" width="400px" height="420px" border="0" class="img_whs6"></p>
+
+<p class="whs7">&nbsp;&nbsp;</p>
+
+<p class="whs8">Our TUI Scripts provide you with useful examples 
+ of <a href="changing_display_parameters.htm#bookmark">Changing Display 
+ Parameters</a>. </p>
+
+<p>&nbsp;</p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+</html>

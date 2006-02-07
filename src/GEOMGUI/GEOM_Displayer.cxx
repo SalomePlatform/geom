@@ -83,6 +83,7 @@
 
 // VTK Includes
 #include <vtkActorCollection.h>
+#include <vtkProperty.h>
 
 // STL Includes
 #include <cstring>
@@ -838,12 +839,13 @@ void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& the
   sm->clearFilters();
 
   SALOME_View* vf = GetActiveView();
-  if ( vf )
-    {
-      SALOME_Prs* prs = vf->CreatePrs( theIO.IsNull() ? 0 : theIO->getEntry() );
-      vf->LocalSelection( prs, theMode );
-      delete prs;  // delete presentation because displayer is its owner
-    }
+  if ( vf ) {
+    if (!theIO.IsNull() && !vf->isVisible(theIO))
+      Display(theIO);
+    SALOME_Prs* prs = vf->CreatePrs( theIO.IsNull() ? 0 : theIO->getEntry() );
+    vf->LocalSelection( prs, theMode );
+    delete prs;  // delete presentation because displayer is its owner
+  }
 }
 
 //=================================================================

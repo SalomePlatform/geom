@@ -42,6 +42,7 @@
 #include <vtkMatrix4x4.h>
 #include <vtkMath.h>
 
+#include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkCamera.h>
 

@@ -92,9 +92,9 @@ else
 <h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_operationgui_functions_salome2_sp3_operationgui_functions_image90.gif" width="20px" height="20px" border="0" class="img_whs1"> </font></span>Chamfer</h1>
 
 <p class="whs2"><b style="font-weight: normal;">T</b>o produce 
- a <span style="font-weight: bold;"><B>Fillet</B></span> in the Main Menu select 
+ a <span style="font-weight: bold;"><B>Chamfer</B></span> in the Main Menu select 
  <span style="font-weight: bold;"><B>Operations - &gt; Transformation - &gt; 
- Fillet</B></span> </p>
+ Chamfer</B></span> </p>
 
 <p>&nbsp;</p>
 
@@ -129,9 +129,8 @@ else
 <p class="whs2">To create chamfer on the specified edges of 
  the given shape, &nbsp;you 
  need to define the <span style="font-weight: bold;"><B>Main Object</B></span> 
- to create a fillet on, select the necessary edges in the object browser 
- or in the viewer and define the <span style="font-weight: bold;"><B>Dimension</B></span> 
- of the Chamfer.</p>
+ to create a fillet on, select the necessary edges in the viewer and define 
+ the <span style="font-weight: bold;"><B>Dimension</B></span> of the Chamfer.</p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
  </i><span style="font-style: italic;"><I>geompy.MakeChamferEdge(Shape, D1, 
@@ -148,12 +147,12 @@ else
 <p class="whs2">To create chamfer on the specified faces of 
  the given shape, &nbsp;you 
  need to define the <span style="font-weight: bold;"><B>Main Object</B></span> 
- to create a fillet on, select the necessary faces in the object browser 
- or in the viewer and define the <span style="font-weight: bold;"><B>Dimension</B></span> 
+ to create a fillet on, select the two faces to which belongs the necessary 
+ common edge in the OCC Viewer and define the <span style="font-weight: bold;"><B>Dimension</B></span> 
  of the Chamfer.</p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
- </i><span style="font-style: italic;"><I>geompy.MakeChamferFace(Shape, D1, 
+ </i><span style="font-style: italic;"><I>geompy.MakeChamferFaces(Shape, D1, 
  D2, ListOfFaceID)</I></span>, where Shape is a shape to create chamfer on, 
  D1 is a chamfer size along a face from &nbsp;ListOfFaceID, 
  &nbsp;D2 is a 

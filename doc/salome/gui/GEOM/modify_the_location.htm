@@ -16,22 +16,18 @@ if (navigator.appName !="Netscape")
 <!--
 img_whs1 { border:none; width:25px; height:22px; border-style:none; }
 p.whs2 { font-size:12pt; }
-p.whs3 { font-size:12pt; margin-left:40px; }
-img_whs4 { border:none; width:312px; height:350px; float:none; border-style:none; }
+img_whs3 { border:none; width:312px; height:350px; float:none; border-style:none; }
+img_whs4 { border:none; width:431px; height:233px; border-style:none; }
 img_whs5 { border:none; width:312px; height:385px; float:none; border-style:none; }
-p.whs6 { font-size:12pt; margin-left:40px; text-indent:-40px; }
-p.whs7 { font-size:12pt; text-indent:-40px; margin-left:80px; }
-img_whs8 { border:none; width:200px; height:209px; border-style:none; }
-p.whs9 { list-style:disc; margin-left:0in; margin-right:0in; margin-top:0px; margin-bottom:0px; }
+img_whs6 { border:none; width:326px; height:377px; border-style:none; }
+p.whs7 { list-style:disc; margin-left:0in; margin-right:0in; margin-top:0px; margin-bottom:0px; }
 -->
 </style><script type="text/javascript" language="JavaScript">
 <!--
 if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
 {
   var strNSS = "<style type='text/css'>";
-  strNSS += "p.whs6 {text-indent:1pt; }";
-  strNSS += "p.whs7 {text-indent:1pt; }";
-  strNSS += "p.whs9 {margin-left:1pt;margin-right:1pt;margin-top:1pt;margin-bottom:1pt; }";
+  strNSS += "p.whs7 {margin-left:1pt;margin-right:1pt;margin-top:1pt;margin-bottom:1pt; }";
   strNSS +="</style>";
   document.write(strNSS);
 }
@@ -96,15 +92,70 @@ else
 <p class="whs2"><b style="font-weight: normal;">T</b>o<span 
  style="font-weight: bold;"><B> Modify the Location</B></span> in the Main Menu 
  select <span style="font-weight: bold;"><B>Operations - &gt; Transformation 
- - &gt; Modify the Location</B></span></p>
+ - &gt; Modify the Location.</B></span></p>
 
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2">This operation modifies the <span style="font-weight: bold;"><B>Location</B></span> 
- of an <span style="font-weight: bold;"><B>Object.</B></span> </p>
+ of an <span style="font-weight: bold;"><B>Object </B></span></p>
 
-<p class="whs2">The <b>Result <span style="font-weight: bold;"><B>will 
- be a</B></span> </b>&nbsp;GEOM_Object.</p>
+<p class="whs2">The first algorithm places the object so that 
+ its center coincides with the center of an End Local Coordinate System.</p>
+
+<p class="whs2"><span style="font-weight: bold;"><B>Create a copy 
+ </B></span>checkbox allows to keep the initial object, otherwise it will be 
+ removed.</p>
+
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><span><b style="font-weight: bold;">A</span>rguments:</b> 
+ Name + 1 GEOM_Object + End Coordinate System.</font></span></p>
+
+<p>&nbsp;</p>
+
+<p class="whs2"><img src="pics/transformation5.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs3"> &nbsp;&nbsp;</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">In the picture the initial cube with the global 
+ coordinate system is &nbsp;to 
+ the right and the modified cube with the Local Coordinate System in the 
+ center of it is to the left . </p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="image30.gif" width="431px" height="233px" border="0" class="img_whs4"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">The second algorithm &nbsp;modifies 
+ the location of an object using Start and End LSC, however, it does not 
+ place the object in the center of any of the two systems. &nbsp;</p>
+
+<p class="whs2"><span style="font-weight: bold;"><B>Create a copy 
+ </B></span>checkbox allows to keep the initial object, otherwise it will be 
+ removed.</p>
+
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Arguments:</b> 
+ Name + 1 GEOM_Object + Start Coordinate System + End Coordinate System.</font></span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="pics/transformation6.png" x-maintain-ratio="TRUE" width="312px" height="385px" border="0" class="img_whs5"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">In this picture the initial cube with the global 
+ coordinate system is above, the modified cube is below and the End Local 
+ Coordinate System is the big one. </p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><img src="image31.gif" width="326px" height="377px" border="0" class="img_whs6"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">The <span style="font-weight: bold;"><B>R</B></span><b><span 
+ style="font-weight: bold;"><B>esult</B></span><span style="font-weight: normal;"> 
+ of this operation will be a</span> </b>&nbsp;GEOM_Object.</p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -113,29 +164,9 @@ else
  is a shape, location of which is modified, theStartLCS is a location to 
  move the shape from, theEndLCS is a location to move the shape to.</p>
 
-<p class="whs2"><b style="font-weight: bold;">Arguments:</b> 
- Name + 1 GEOM_Object + [Starting Coordinate System] + End Coordinate System.</p>
-
-<p class="whs2"><span style="font-weight: bold;"><B>Create a copy 
- </B></span>checkbox allows to keep the initial object, otherwise it will be 
- removed.</p>
-
 <p class="whs2">&nbsp;</p>
 
-<p class="whs3"><img src="pics/transformation5.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs4"> &nbsp;&nbsp;<img src="pics/transformation6.png" x-maintain-ratio="TRUE" width="312px" height="385px" border="0" class="img_whs5"></p>
-
-<p class="whs6">&nbsp;</p>
-
-<p class="whs6"><b style="font-weight: bold;">Example:</b></p>
-
-<p class="whs6">&nbsp;</p>
-
-<p class="whs7"><img src="image197.jpg" width="200px" height="209px" border="0" class="img_whs8"></p>
-
-<p class="whs6">&nbsp;</p>
-
-<p class="whs9">&nbsp;&nbsp;<span 
- style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Our </font></span><span 
+<p class="whs7"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Our </font></span><span 
  style="font-weight: bold;"><B>TUI Scripts</B></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> 
  provide you with useful examples of the use of <a href="transformation_operations.htm#bookmark2">Transformation 
  Operations</a>. </font></span></p>

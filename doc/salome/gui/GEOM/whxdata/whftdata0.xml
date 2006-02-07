@@ -17,6 +17,7 @@
 <topic name="Check Free Faces" url="check_free_faces.htm" />
 <topic name="Circle" url="circle.htm" />
 <topic name="Close Contour" url="close_contour.htm" />
+<topic name="Color" url="color.htm" />
 <topic name="Common" url="common.htm" />
 <topic name="Complex Objects" url="complex_objects.htm" />
 <topic name="Compound" url="compound.htm" />
@@ -48,6 +49,7 @@
 <topic name="Geometrical Objects" url="geometrical_objects.htm" />
 <topic name="Glue Faces" url="glue_faces.htm" />
 <topic name="Groups" url="groups.htm" />
+<topic name="Isos" url="isos.htm" />
 <topic name="Line" url="line.htm" />
 <topic name="Local Coordinate System" url="local_coordinate_system.htm" />
 <topic name="Measurement Tools" url="measurement_tools.htm" />
@@ -81,9 +83,11 @@
 <topic name="Suppress Internal Wires" url="suppress_internal_wires.htm" />
 <topic name="Transformation Operations" url="transformation_operations.htm" />
 <topic name="Translation" url="translation.htm" />
+<topic name="Transparency" url="transparency.htm" />
 <topic name="Turus" url="turus.htm" />
 <topic name="Vector" url="vector.htm" />
 <topic name="Wire" url="wire.htm" />
+<topic name="Wireframe and Shading" url="wireframe_and_shading.htm" />
 <topic name="Working Plane" url="working_plane.htm" />
 <topic name="Working with groups" url="working_with_groups.htm" />
 

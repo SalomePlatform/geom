@@ -89,7 +89,6 @@ public:
   virtual bool                      hasHighlight() { return false; } 
 
 protected:
-  vtkActorCollection*               myPresent;
   VTKViewer_Axis*                   myAxis[3];
   vtkPolyDataMapper*                myMapper;
   float                             mySize;

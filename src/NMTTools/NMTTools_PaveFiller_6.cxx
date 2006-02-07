@@ -30,6 +30,7 @@
 #include <TColStd_MapOfInteger.hxx>
 
 #include <Geom2d_Curve.hxx>
+#include <Geom2d_TrimmedCurve.hxx>
 #include <Geom_TrimmedCurve.hxx>
 
 #include <GeomAdaptor_Curve.hxx>
@@ -44,6 +45,7 @@
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBndLib.hxx>
+#include <BRepLib.hxx>
 
 #include <TopTools_IndexedMapOfShape.hxx>
 
@@ -79,10 +81,7 @@
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTTools_IndexedDataMapOfShapePaveBlock.hxx>
 #include <NMTTools_CommonBlockAPI.hxx>
-#include <Geom2d_Curve.hxx>
 #include <NMTTools_Tools.hxx>
-#include <BRepLib.hxx>
-#include <Geom2d_TrimmedCurve.hxx>
 
 static 
   Standard_Boolean IsPairFound(const Standard_Integer nF1,
@@ -260,7 +259,6 @@ static
     //
     BOPTools_ListOfPaveBlock aLPB, aLPBC;
     //
-    //modified by NIZNHY-PKV Fri Mar 11 15:43:02 2005 f
     {
       Standard_Integer nFj1, nFj2, nE;
       TColStd_IndexedMapOfInteger aMFence;
@@ -292,7 +290,6 @@ static
       }
     }
     //
-    //modified by NIZNHY-PKV Fri Apr  1 09:49:57 2005t
     //
     RealSplitsInFace (aBid, nF1, nF2, aLPB);
     RealSplitsInFace (aBid, nF2, nF1, aLPB);
@@ -315,10 +312,8 @@ static
     //
     BOPTools_PaveSet aPSF;
     //
-    //modified by NIZNHY-PKV Fri Apr  1 10:53:09 2005f
     PrepareSetForFace (nF1, nF2, aLPBC, aPSF);
     //PrepareSetForFace (nF1, nF2, aPSF);
-    //modified by NIZNHY-PKV Thu Mar 31 16:16:47 2005t
     //
     // Put Paves On Curves
     for (j=1; j<=aNbCurves; ++j) {
@@ -358,7 +353,6 @@ static
 	  continue;// mkk ft
 	}
 	//
-	//modified by NIZNHY-PKV Fri Apr  1 09:56:11 2005f
 	// 1
 	const BOPTools_ListOfPaveBlock& aLPBFF=aFFi.PaveBlocks();
 	bIsExistingPaveBlock=IsExistingPaveBlock(aPBNew, aLPBFF, aTolR3D);
@@ -371,7 +365,6 @@ static
 	if (bIsExistingPaveBlock) {
 	  continue;
 	}
-	//modified by NIZNHY-PKV Fri Apr  1 09:56:14 2005t
 	// Checking of validity in 2D
 	//
 	bIsValidIn2D=myContext.IsValidBlockForFaces(aT1, aT2, aIC, aF1, aF2, aTol2D);
@@ -573,8 +566,11 @@ static
     //
     nF1=aPBSE.Face1();
     nF2=aPBSE.Face2();
-    const TopoDS_Face& aF1=TopoDS::Face(myDS->Shape(nF1));
-    const TopoDS_Face& aF2=TopoDS::Face(myDS->Shape(nF2));
+    //
+    //modified by NIZNHY-PKV Thu Jan 26 10:17:04 2006f
+    //const TopoDS_Face& aF1=TopoDS::Face(myDS->Shape(nF1));
+    //const TopoDS_Face& aF2=TopoDS::Face(myDS->Shape(nF2));
+    //modified by NIZNHY-PKV Thu Jan 26 10:17:08 2006t
     //
     const NMTTools_ListOfCommonBlock& aLCB=aCBP(tDS.RefEdge(i));
     NMTTools_CommonBlockAPI aCBAPI(aLCB);
@@ -582,6 +578,11 @@ static
     aIt.Initialize(aLPB);
     for (; aIt.More(); aIt.Next()) {
       BOPTools_PaveBlock aPB=aIt.Value();
+      //
+      ////modified by NIZNHY-PKV Thu Jan 26 10:16:36 2006f
+      const TopoDS_Face& aF1=TopoDS::Face(myDS->Shape(nF1));
+      const TopoDS_Face& aF2=TopoDS::Face(myDS->Shape(nF2));
+      ////modified by NIZNHY-PKV Thu Jan 26 10:16:39 2006t
       //
       if (aCBAPI.IsCommonBlock(aPB)) {
 	// it can be Common Block
@@ -597,59 +598,8 @@ static
 	const TopoDS_Edge& aEx=TopoDS::Edge(tDS.Shape(mE));
 	aTolEx=BRep_Tool::Tolerance(aEx);
         //
-        // Commented out by EAP in the frame of PAL9151
-        //
-// 	Standard_Boolean bHasPCOnF, bFound;
-// 	Standard_Integer nF, k, nEOrx, nF1x, nF2x;
-// 	Standard_Real aTolEx, aT1x, aT2x;
-// 	BOPTools_ListIteratorOfListOfPaveBlock aItPBx;
+	// <- Block A was here
 	//
-// 	for (k=0; k<2; ++k) {	
-// 	  nF=(!k) ? nF1 : nF2;
-// 	  const TopoDS_Face& aF=TopoDS::Face(myDS->Shape(nF));
-// 	  //
-// 	  bHasPCOnF=BOPTools_Tools2D::HasCurveOnSurface(aEx, aF); 
-// 	  if (bHasPCOnF) {
-// 	    continue;
-// 	  }
-// 	  //
-// 	  bFound=Standard_False;
-// 	  aItPBx.Initialize(aLPBx);
-// 	  for (; aItPBx.More(); aItPBx.Next()) {
-// 	    BOPTools_PaveBlock& aPBx=aIt.Value();
-// 	    nEOrx=aPBx.OriginalEdge();
-// 	    const TopoDS_Shape& aEOrx=tDS.Shape(nEOrx);
-// 	    BOPTools_PaveBlock& aPBSEx=aMEPB.ChangeFromKey(aEOrx);
-// 	    aT1x=aPBSEx.Pave1().Param();
-// 	    aT2x=aPBSEx.Pave2().Param();
-// 	    const IntTools_Curve& aICx=aPBSEx.Curve();
-// 	    //
-// 	    nF1x=aPBSEx.Face1();
-// 	    nF2x=aPBSEx.Face2();
-// 	    //
-// 	    if (nF1x==nF) {
-// 	      Handle(Geom2d_Curve) aC2D1x=aICx.FirstCurve2d();
-// 	      Handle(Geom2d_TrimmedCurve)aC2D1xT =new Geom2d_TrimmedCurve(aC2D1x, aT1x, aT2x);
-// 	      aBB.UpdateEdge(aEx, aC2D1xT, aF, aTolEx);
-// 	      bFound=!bFound;
-// 	      break;
-// 	    }
-// 	    //
-// 	    if (nF2x==nF) {
-// 	      Handle(Geom2d_Curve) aC2D2x=aICx.SecondCurve2d();
-// 	      Handle(Geom2d_TrimmedCurve)aC2D2xT =new Geom2d_TrimmedCurve(aC2D2x, aT1x, aT2x);
-// 	      aBB.UpdateEdge(aEx, aC2D2xT, aF, aTolEx);
-// 	      bFound=!bFound;
-// 	      break;
-// 	    }
-// 	  }
-// 	  if (bFound){
-// 	    BRepLib::SameParameter(aEx, aTolEx, Standard_True);
-// 	  }
-// 	}
-        //
-        // The code till the if block end is restored from V2_2_2 revision
-        //
 	aF1FWD=aF1;
 	aF1FWD.Orientation(TopAbs_FORWARD);
 	NMTTools_Tools::MakePCurve(aEx, aF1FWD, aC2D1, aTolEx);
@@ -756,7 +706,6 @@ static
     }
   } 
 }
-//modified by NIZNHY-PKV Fri Apr  1 09:36:06 2005f
 //=======================================================================
 // function: IsExistingPaveBlock
 // purpose: 
@@ -788,7 +737,6 @@ static
   }
   return bFlag;
 }
-//modified by NIZNHY-PKV Fri Apr  1 09:36:06 2005t
 //=======================================================================
 // function: CheckIntermediatePoint
 // purpose: 
@@ -1162,59 +1110,60 @@ Standard_Boolean IsFound(const TColStd_IndexedMapOfInteger& aMapWhat,
   }
   return bFlag;
 }
-/*
-//=======================================================================
-// function: PrepareSetForFace
-// purpose: 
-//=======================================================================
-  void NMTTools_PaveFiller::PrepareSetForFace(const Standard_Integer nF1,
-					      const Standard_Integer nF2,
-					      BOPTools_PaveSet& aPSF)
-{
-  Standard_Integer nV1, nV2; 
-  TColStd_MapOfInteger aMap;
-  BOPTools_ListOfPaveBlock aLPB1, aLPB2;
-  BOPTools_ListIteratorOfListOfPaveBlock anIt;
-  //
-  RealSplitsFace(nF1, aLPB1);
-  RealSplitsFace(nF2, aLPB2);
-  //
-  aLPB1.Append(aLPB2);
-  //
-  anIt.Initialize(aLPB1);
-  for (; anIt.More(); anIt.Next()) {
-    const BOPTools_PaveBlock& aPB=anIt.Value();
-    const BOPTools_Pave& aPave1=aPB.Pave1();
-    nV1=aPave1.Index();
-    if (!aMap.Contains(nV1)) {
-      aMap.Add(nV1);
-      aPSF.Append(aPave1);
-    }
-    const BOPTools_Pave& aPave2=aPB.Pave2();
-    nV2=aPave2.Index();
-    if (!aMap.Contains(nV2)) {
-      aMap.Add(nV2);
-      aPSF.Append(aPave2);
-    }
-  }
-}
-*/
-/*
-//=======================================================================
-// function: IsExistingPaveBlock
-// purpose: 
-//=======================================================================
-   Standard_Boolean NMTTools_PaveFiller::IsExistingPaveBlock(const BOPTools_PaveBlock& aPBNew,
-							     const BOPTools_SSInterference& aFFi)
-{
-  Standard_Boolean bFlag;
-  Standard_Real aTolR3D;
-  //
-  aTolR3D=aFFi.TolR3D();
-  const BOPTools_ListOfPaveBlock& aLPBR=aFFi.PaveBlocks();
-  //
-  bFlag=IsExistingPaveBlock(aPBNew, aLPBR, aTolR3D);
-  //
-  return bFlag;
-}
-*/
+//
+//   Block A
+//
+      //
+        // Commented out by EAP in the frame of PAL9151
+        //
+// 	Standard_Boolean bHasPCOnF, bFound;
+// 	Standard_Integer nF, k, nEOrx, nF1x, nF2x;
+// 	Standard_Real aTolEx, aT1x, aT2x;
+// 	BOPTools_ListIteratorOfListOfPaveBlock aItPBx;
+	//
+// 	for (k=0; k<2; ++k) {	
+// 	  nF=(!k) ? nF1 : nF2;
+// 	  const TopoDS_Face& aF=TopoDS::Face(myDS->Shape(nF));
+// 	  //
+// 	  bHasPCOnF=BOPTools_Tools2D::HasCurveOnSurface(aEx, aF); 
+// 	  if (bHasPCOnF) {
+// 	    continue;
+// 	  }
+// 	  //
+// 	  bFound=Standard_False;
+// 	  aItPBx.Initialize(aLPBx);
+// 	  for (; aItPBx.More(); aItPBx.Next()) {
+// 	    BOPTools_PaveBlock& aPBx=aIt.Value();
+// 	    nEOrx=aPBx.OriginalEdge();
+// 	    const TopoDS_Shape& aEOrx=tDS.Shape(nEOrx);
+// 	    BOPTools_PaveBlock& aPBSEx=aMEPB.ChangeFromKey(aEOrx);
+// 	    aT1x=aPBSEx.Pave1().Param();
+// 	    aT2x=aPBSEx.Pave2().Param();
+// 	    const IntTools_Curve& aICx=aPBSEx.Curve();
+// 	    //
+// 	    nF1x=aPBSEx.Face1();
+// 	    nF2x=aPBSEx.Face2();
+// 	    //
+// 	    if (nF1x==nF) {
+// 	      Handle(Geom2d_Curve) aC2D1x=aICx.FirstCurve2d();
+// 	      Handle(Geom2d_TrimmedCurve)aC2D1xT =new Geom2d_TrimmedCurve(aC2D1x, aT1x, aT2x);
+// 	      aBB.UpdateEdge(aEx, aC2D1xT, aF, aTolEx);
+// 	      bFound=!bFound;
+// 	      break;
+// 	    }
+// 	    //
+// 	    if (nF2x==nF) {
+// 	      Handle(Geom2d_Curve) aC2D2x=aICx.SecondCurve2d();
+// 	      Handle(Geom2d_TrimmedCurve)aC2D2xT =new Geom2d_TrimmedCurve(aC2D2x, aT1x, aT2x);
+// 	      aBB.UpdateEdge(aEx, aC2D2xT, aF, aTolEx);
+// 	      bFound=!bFound;
+// 	      break;
+// 	    }
+// 	  }
+// 	  if (bFound){
+// 	    BRepLib::SameParameter(aEx, aTolEx, Standard_True);
+// 	  }
+// 	}
+        //
+        // The code till the if block end is restored from V2_2_2 revision
+

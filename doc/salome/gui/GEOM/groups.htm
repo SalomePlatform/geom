@@ -93,14 +93,14 @@ else
 
 <p>&nbsp;</p>
 
-<p># create a box on two points</p>
+<p># create a box from two points</p>
 
 <p class="whs1">Box = geompy.MakeBoxTwoPnt(p0, 
  p200)</p>
 
 <p>&nbsp;</p>
 
-<p># create group on box's faces</p>
+<p># create a group from the faces of the box</p>
 
 <p class="whs1">group = geompy.CreateGroup(Box, 
  geompy.ShapeType[&quot;FACE&quot;])</p>
@@ -123,25 +123,25 @@ else
 
 <p>&nbsp;</p>
 
-<p># add to the group all the given shapes from the list</p>
+<p># add all selected shapes from the list to the group </p>
 
-<p># (no errors, if some shapes are already included)</p>
+<p># (the program doesn't raise error, if some shapes are already included)</p>
 
 <p class="whs1">geompy.UnionList(group, 
  [SubFaceList[0], SubFaceList[2], SubFaceList[5]])</p>
 
 <p>&nbsp;</p>
 
-<p># remove object from the group</p>
+<p># remove an object from the group</p>
 
 <p class="whs1">geompy.RemoveObject(group, 
  FaceID)</p>
 
 <p>&nbsp;</p>
 
-<p># remove from the group all the given shapes</p>
+<p># remove all selected shapes from the group </p>
 
-<p># (no errors, if some shapes are not included)</p>
+<p># (the program doesn't raise error, if some shapes are not included)</p>
 
 <p class="whs1">geompy.DifferenceList(group, 
  [SubFaceList[2], SubFaceList[3], SubFaceList[4]])</p>
@@ -151,18 +151,14 @@ else
 
 <p>&nbsp;</p>
 
-<p># display group's contents</p>
+<p># display the contents of the group</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_group1)</p>
 
 <p><span style="font-family: 'Lucida Console', monospace;">salome.sg.updateObjBrowser(1)</span> 
  </p>
 
-<h3>&nbsp;</h3>
-
-<h3>&nbsp;</h3>
-
-<h3>Adding an object in a group.</h3>
+<h3>Adding an object to the group.</h3>
 
 <p class="whs1">import geompy</p>
 
@@ -183,14 +179,14 @@ else
 
 <p>&nbsp;</p>
 
-<p># create a box on two points</p>
+<p># create a box from two points</p>
 
 <p class="whs1">Box = geompy.MakeBoxTwoPnt(p0, 
  p200)</p>
 
 <p>&nbsp;</p>
 
-<p># create group on box's faces</p>
+<p># create a group from the faces of the box</p>
 
 <p class="whs1">group = geompy.CreateGroup(Box, 
  geompy.ShapeType[&quot;FACE&quot;])</p>
@@ -216,7 +212,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display group's contents</p>
+<p># display the contents of the group</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_group1)</p>
 
@@ -225,7 +221,7 @@ else
 
 <p>&nbsp;</p>
 
-<h3>Removing an object from a group</h3>
+<h3>Removing an object from the group</h3>
 
 <p class="whs1">import geompy</p>
 
@@ -246,14 +242,14 @@ else
 
 <p>&nbsp;</p>
 
-<p># create a box on two points</p>
+<p># create a box from two points</p>
 
 <p class="whs1">Box = geompy.MakeBoxTwoPnt(p0, 
  p200)</p>
 
 <p>&nbsp;</p>
 
-<p># create group on box's faces</p>
+<p># create a group from the faces of the box</p>
 
 <p class="whs1">group = geompy.CreateGroup(Box, 
  geompy.ShapeType[&quot;FACE&quot;])</p>
@@ -276,16 +272,16 @@ else
 
 <p>&nbsp;</p>
 
-<p># add to the group all the given shapes from the list</p>
+<p># add all selected shapes from the list to the group </p>
 
-<p># (no errors, if some shapes are already included)</p>
+<p># (the program doesn't raise errors, if some shapes are already included)</p>
 
 <p class="whs1">geompy.UnionList(group, 
  [SubFaceList[0], SubFaceList[2], SubFaceList[5]])</p>
 
 <p>&nbsp;</p>
 
-<p># remove object from the group</p>
+<p># remove an object from the group</p>
 
 <p class="whs1">geompy.RemoveObject(group, 
  FaceID)</p>
@@ -295,7 +291,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display group's contents</p>
+<p># display the contents of the group</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_group1)</p>
 

@@ -17,8 +17,8 @@ if (navigator.appName !="Netscape")
 img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
 img_whs3 { border:none; width:312px; height:332px; float:none; border-style:none; }
-p.whs4 { font-size:12pt; margin-left:120px; }
-img_whs5 { border:none; width:312px; height:473px; float:none; border-style:none; }
+img_whs4 { border:none; width:312px; height:473px; float:none; border-style:none; }
+p.whs5 { font-size:12pt; margin-left:120px; }
 p.whs6 { font-size:12pt; margin-left:0px; }
 p.whs7 { font-size:12pt; font-style:italic; margin-left:0px; }
 img_whs8 { border:none; width:312px; height:421px; float:none; border-style:none; }
@@ -112,8 +112,7 @@ else
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">Firstly, 
- we can define a point by </span><span style="font-weight: normal;">and 
- setting its X, Y and Z </span><span style="font-weight: bold;"><B>C</B></span></b><b><span 
+ we can define a point by setting its X, Y and Z </span><span style="font-weight: bold;"><B>C</B></span></b><b><span 
  style="font-weight: bold;"><B>oordinates</B></span><span style="font-weight: normal;">.</span> 
  </b></p>
 
@@ -137,50 +136,51 @@ else
  the coordinates of the old one. </p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command :</b> 
- &nbsp;&nbsp;<span style="font-style: italic;"><I>g</I></span><span 
- style="margin-left: 120px;">eompy.MakeVertexWithRef(Reference, X, Y, Z)</span></p>
+ &nbsp;&nbsp;<span style="font-style: italic;"><I>geompy.MakeVertexWithRef(Reference, 
+ X, Y, Z).</I></span></p>
 
-<p class="whs2"><span style="margin-left: 120px;"><b style="font-weight: bold;">A</span>rguments: 
- </b>Name + 1 reference point + 3 coordinates defining the position of 
- this point regarding the reference one</p>
+<p class="whs2"><b style="font-weight: bold;">Arguments: </b>Name 
+ + 1 reference point + 3 coordinates defining the position of this point 
+ regarding the reference one.</p>
 
-<p class="whs4">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs2"><span style="font-size: 12pt; margin-left: 120px;"><font size=3 style="font-size:12pt;"><img src="pics/neo-point2.png" x-maintain-ratio="TRUE" width="312px" height="473px" border="0" class="img_whs5"></font></span></p>
+<p class="whs2"><span style="font-style: italic;"><I><img src="pics/neo-point2.png" x-maintain-ratio="TRUE" width="312px" height="473px" border="0" class="img_whs4"></I></span></p>
 
-<p class="whs4">&nbsp;</p>
+<p class="whs5">&nbsp;</p>
 
 <p class="whs6">Finally, we can define a 
  point by an <span style="font-weight: bold;"><B>Edge</B></span> and a <span style="font-weight: bold;"><B>Parameter</B></span> 
  &nbsp;indicating 
  its position on the Edge. For example, 0.5 means that the point is located 
- in the middle of the edge. </p>
+ in the middle of the edge.<span style="font-style: italic;"> <I></I></span></p>
 
-<p class="whs7"><b style="font-weight: bold; font-style: normal;">TUI 
+<p class="whs7"><span style="font-style: italic;"><I><b style="font-weight: bold; font-style: normal;">TUI 
  Command :</b> &nbsp;&nbsp;geompy.MakeVertexOnCurve(Edge, 
- Parameter) </p>
+ Parameter).</I></span></p>
 
-<p class="whs2"><b style="font-weight: bold;">Arguments:<span> 
- N</b>ame + 1 edge &nbsp;+ 
- 1 Parameter defining the position of the point on the given edge.</span></p>
-
-<p class="whs2">&nbsp;</p>
-
-<p class="whs2"><b style="font-weight: bold;"><img src="pics/point3.png" x-maintain-ratio="TRUE" width="312px" height="421px" border="0" class="img_whs8"></b></p>
+<p class="whs2"><b style="font-weight: bold;">Arguments: N</b>ame 
+ + 1 edge &nbsp;+ 
+ 1 Parameter defining the position of the point on the given edge.</p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs9"><span style="font-size: 12pt; color: #000000;"><font size=3 color=black style="font-size:12.000000pt;"><b 
- style="font-weight: bold;"><b style="font-weight: bold;">E</b>xample:</b></font></span></p>
+<p class="whs2"><span style="font-style: italic;"><I><b style="font-weight: bold;"><img src="pics/point3.png" x-maintain-ratio="TRUE" width="312px" height="421px" border="0" class="img_whs8"></b></I></span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs9"><span style="font-style: italic;"><I><span 
+ style="font-size: 12pt; color: #000000;"><font size=3 color=black style="font-size:12.000000pt;"><b style="font-weight: bold;"><b 
+ style="font-weight: bold;">E</b>xample:</b></font></span></I></span></p>
 
 <p class="whs10">&nbsp;</p>
 
-<p class="whs2"><b style="font-weight: bold;"><img src="pics/points.png" x-maintain-ratio="TRUE" width="354px" height="326px" border="0" class="img_whs11"></b></p>
+<p class="whs2"><span style="font-style: italic;"><I><b style="font-weight: bold;"><img src="pics/points.png" x-maintain-ratio="TRUE" width="354px" height="326px" border="0" class="img_whs11"></b></I></span></p>
 
 <p class="whs12">&nbsp;</p>
 
 <p class="whs2">Our <span style="font-weight: bold;"><B>TUI Scripts</B></span> 
- provide you with useful examples of creation of <a href="basic_geometrical_objects.htm#bookmark">Basic 
+ provide you with useful examples of creation of <a href="basic_geometrical_objects.htm#bookmark" style="font-style: normal;">Basic 
  Geometric Objects</a>. </p>
 
 <script type="text/javascript" language="javascript1.2">

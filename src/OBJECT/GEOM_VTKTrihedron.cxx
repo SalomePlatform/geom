@@ -207,7 +207,6 @@ GEOM_VTKTrihedron::GEOM_VTKTrihedron()
 {
   myMapper = vtkPolyDataMapper::New();
   myAxis[ 0 ] = myAxis[ 1 ] = myAxis[ 2 ] = 0;
-  myPresent = vtkActorCollection::New();
   mySize = 100;
   SetInfinitive( true );
   myColor[ 0 ] = myColor[ 1 ] = myColor[ 1 ] = -1;
@@ -216,8 +215,6 @@ GEOM_VTKTrihedron::GEOM_VTKTrihedron()
 
 GEOM_VTKTrihedron::~GEOM_VTKTrihedron()
 {
-  myPresent->RemoveAllItems();
-  myPresent->Delete();
   for ( int i = 0; i < 3; i++ )
     myAxis[i]->Delete();
 
@@ -285,9 +282,12 @@ void GEOM_VTKTrihedron::AddToRender( vtkRenderer* theRenderer )
 
 void GEOM_VTKTrihedron::RemoveFromRender( vtkRenderer* theRenderer )
 {
-  myPresent->InitTraversal();
-  while(vtkActor* anActor = myPresent->GetNextActor())
-    theRenderer->RemoveActor(anActor);
+  for(int i = 0; i < 3; i++)
+  {
+    myAxis[i]->RemoveFromRender(theRenderer);
+  }
+
+  theRenderer->RemoveActor( this );
 }
 
 int GEOM_VTKTrihedron::GetVisibleActorCount(vtkRenderer* theRenderer)

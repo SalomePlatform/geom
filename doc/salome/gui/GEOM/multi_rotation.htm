@@ -19,11 +19,11 @@ p.whs2 { font-size:12pt; }
 p.whs3 { font-size:12pt; font-weight:bold; }
 p.whs4 { font-size:12pt; font-weight:normal; }
 img_whs5 { border:none; width:312px; height:346px; float:none; border-style:none; }
-img_whs6 { border:none; float:none; width:315px; height:259px; border-style:none; }
-img_whs7 { border:none; float:none; width:301px; height:258px; border-style:none; }
+img_whs6 { border:none; float:none; width:315px; height:260px; border-style:none; }
+img_whs7 { border:none; float:none; width:301px; height:260px; border-style:none; }
 img_whs8 { border:none; width:312px; height:450px; float:none; border-style:none; }
-img_whs9 { border:none; float:none; width:341px; height:446px; border-style:none; }
-img_whs10 { border:none; float:none; width:369px; height:447px; border-style:none; }
+img_whs9 { border:none; float:none; width:310px; height:405px; border-style:none; }
+img_whs10 { border:none; float:none; width:337px; height:405px; border-style:none; }
 p.whs11 { font-size:12pt; margin-left:40px; }
 -->
 </style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
@@ -109,7 +109,7 @@ else
  will be 2*PI/NbTimes</p>
 
 <p class="whs3"><b style="font-weight: bold;">TUI 
- Command: </b><span style="font-style: italic; font-weight: normal;"><I>geompy.MakeMultiRotation1D(Shape, 
+ Command: </b><span style="font-style: italic; font-weight: normal;"><I>geompy.MakeMultiRotate1D(Shape, 
  Axis, NbTimes)</I></span></p>
 
 <p class="whs3"><b style="font-weight: bold;">Arguments: 
@@ -118,15 +118,17 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs4">There is a <span style="font-weight: bold;"><B>TUI 
- Command</B></span> <span style="font-style: italic;"><I>geompy.MakeMultiRotation1D(Shape, 
- Dir, Point, NbTimes)</I></span><span style="font-size: 12pt; font-weight: normal;"><font size=3 style="font-size:12pt;"> 
- which works in the same way, but the Axis is defined &nbsp;by 
- direction and point. </font></span></p>
+<p class="whs4">There is a <span style="font-weight: bold;"><B>TUI</B></span>-only<span 
+ style="font-weight: bold;"> <B></B></span>command <span style="font-style: italic;"><I>geompy.MakeMultiRotation1D(Shape, 
+ Dir, Point, NbTimes)</I></span> which works in the same way, but the Axis 
+ is defined &nbsp;by 
+ direction and point. </p>
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs2"><img src="pics/neo-mrot1.png" x-maintain-ratio="TRUE" width="312px" height="346px" border="0" class="img_whs5"> <img src="pics/multi_rotation1d1.png" x-maintain-ratio="TRUE" width="315px" height="259px" border="0" class="img_whs6"> &nbsp;<img src="pics/multi_rotation1d2.png" x-maintain-ratio="TRUE" width="301px" height="258px" border="0" class="img_whs7"></p>
+<p class="whs2"><img src="pics/neo-mrot1.png" x-maintain-ratio="TRUE" width="312px" height="346px" border="0" class="img_whs5"> </p>
+
+<p class="whs2"><img src="pics/multi_rotation1d1.png" x-maintain-ratio="TRUE" width="315px" height="260px" border="0" class="img_whs6"> &nbsp;<img src="pics/multi_rotation1d2.png" x-maintain-ratio="TRUE" width="301px" height="260px" border="0" class="img_whs7"></p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -140,7 +142,7 @@ else
  </B></span>checkbox allows to set the direction of rotation.</p>
 
 <p class="whs2"><b style="font-weight: bold;">T<span style="font-weight: bold;"><B>UI 
- Command: </B></span><span style="font-weight: normal;">g</span></b><span style="font-style: italic;"><I>eompy.MakeMultiRotation2D(Shape, 
+ Command: </B></span><span style="font-weight: normal;">g</span></b><span style="font-style: italic;"><I>eompy.MakeMultiRotate2D(Shape, 
  Axis, Angle, NbTimes1, Step, NbTimes2)</I></span></p>
 
 <p class="whs2"><span style="font-style: italic;"><I><b style="font-weight: bold;">A</I></span><span 
@@ -150,10 +152,10 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2">There is a <span style="font-weight: bold;"><B>TUI 
- Command</B></span> <span style="font-style: italic;"><I>geompy.MakeMultiRotation2D(Shape, 
- Dir, Point, Angle, nbtimes1, Step, nbtimes2</I></span><span style="font-style: italic;"><I>)</I></span> 
- which works in the same way, but the Axis is defined &nbsp;by 
+<p class="whs2">There is a <span style="font-weight: bold;"><B>TUI</B></span>-only 
+ command <span style="font-style: italic;"><I>geompy.MakeMultiRotation2D(Shape, 
+ Dir, Point, Angle, nbtimes1, Step, nbtimes2)</I></span> which works in the 
+ same way, but the Axis is defined &nbsp;by 
  direction and point. </p>
 
 <p class="whs2">&nbsp;</p>
@@ -162,7 +164,7 @@ else
 
 <p class="whs2">&nbsp;&nbsp;</p>
 
-<p class="whs2">&nbsp;<img src="pics/multi_rotation2d1.png" x-maintain-ratio="TRUE" width="341px" height="446px" border="0" class="img_whs9"> &nbsp;&nbsp;&nbsp;<img src="pics/multi_rotation2d2.png" x-maintain-ratio="TRUE" width="369px" height="447px" border="0" class="img_whs10"></p>
+<p class="whs2">&nbsp;<img src="pics/multi_rotation2d1.png" x-maintain-ratio="TRUE" width="310px" height="405px" border="0" class="img_whs9"> <img src="pics/multi_rotation2d2.png" x-maintain-ratio="TRUE" width="337px" height="405px" border="0" class="img_whs10"></p>
 
 <p class="whs11">&nbsp;&nbsp;&nbsp;&nbsp;</p>
 

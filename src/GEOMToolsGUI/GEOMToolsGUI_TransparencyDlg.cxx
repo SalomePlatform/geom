@@ -30,12 +30,12 @@
 #include "GEOMBase.h"
 #include "GEOM_AISShape.hxx"
 
-#include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include "SALOME_ListIO.hxx"
+#include "SALOME_ListIteratorOfListIO.hxx"
 
 #include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>
-#include <SVTK_RenderWindowInteractor.h>
+#include <SVTK_View.h>
 
 #include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewWindow.h>
@@ -205,19 +205,19 @@ void GEOMToolsGUI_TransparencyDlg::ValueHasChanged( int newValue )
     SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
     if ( !vtkVW )
       return;
-    SVTK_RenderWindowInteractor* rwi = vtkVW->getRWInteractor();
+    SVTK_View* aView = vtkVW->getView();
     if ( myFirstInit ) {	
       myFirstInit = false;
-      float transp = (rwi->GetTransparency(FirstIOS))*10.0;
+      float transp = (aView->GetTransparency(FirstIOS))*10.0;
       mySlider->setValue(int(transp));
       return;
     }
 
     SUIT_OverrideCursor();
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-      rwi->SetTransparency( It.Value(), newValue/10.0 );
+      aView->SetTransparency( It.Value(), newValue/10.0 );
     }
-    rwi->Render();
+    aView->Repaint();
   } // if ( isVTK )
 	
   else if ( isOCC ) {

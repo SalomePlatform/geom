@@ -82,7 +82,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vertex and vector</p>
+<p># create a vertex and a vector</p>
 
 <p class="whs1">p1 = geompy.MakeVertex(10, 
  40, 0)</p>
@@ -101,7 +101,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create cylinder</p>
+<p># create a cylinder</p>
 
 <p class="whs1">height = 35</p>
 
@@ -128,7 +128,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_cylinder = geompy.addToStudy(cylinder, 
  &quot;Cylinder&quot;)</p>
@@ -144,7 +144,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display results</p>
+<p># display the results</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_cylinder)</p>
 
@@ -175,7 +175,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vertex and vector</p>
+<p># create a vertex and a vector</p>
 
 <p class="whs1">p1 = geompy.MakeVertex(10, 
  40, 0)</p>
@@ -197,7 +197,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create cylinder</p>
+<p># create a cylinder</p>
 
 <p class="whs1">height = 35</p>
 
@@ -208,14 +208,14 @@ else
 
 <p>&nbsp;</p>
 
-<p># rotate the given object around the given axis on the given angle</p>
+<p># rotate the given object around the given axis by the given angle</p>
 
 <p class="whs1">rotation = geompy.MakeRotation(cylinder, 
  vr, math.pi)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_vr = geompy.addToStudy(vr, 
  &quot;Rotation axis&quot;)</p>
@@ -228,7 +228,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display results</p>
+<p># display the results</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_vr)</p>
 
@@ -255,7 +255,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create vertex and vector</p>
+<p># create a vertex and a vector</p>
 
 <p class="whs1">p1 = geompy.MakeVertex(10, 
  40, 0)</p>
@@ -268,7 +268,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create cylinder</p>
+<p># create a cylinder</p>
 
 <p class="whs1">height = 35</p>
 
@@ -296,7 +296,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_cs1 = geompy.addToStudy(cs1, 
  &quot;Coordinate system 1&quot;)</p>
@@ -312,7 +312,7 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p># display results</p>
+<p># display the results</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_cylinder)</p>
 
@@ -335,7 +335,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create box</p>
+<p># create a box</p>
 
 <p class="whs1">box = geompy.MakeBoxDXDYDZ(200, 
  200, 200)</p>
@@ -387,7 +387,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_box = geompy.addToStudy(box, 
  &quot;Box&quot;)</p>
@@ -412,7 +412,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display results</p>
+<p># display the results</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_box)</p>
 
@@ -449,7 +449,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># create box and sphere</p>
+<p># create a box and a sphere</p>
 
 <p class="whs1">box = geompy.MakeBoxDXDYDZ(200, 
  200, 200)</p>
@@ -468,7 +468,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_box = geompy.addToStudy(box, 
  &quot;Box&quot;)</p>
@@ -478,7 +478,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display results</p>
+<p># display the results</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_box)</p>
 
@@ -501,21 +501,21 @@ else
 
 <p>&nbsp;</p>
 
-<p># create box and sphere</p>
+<p># create a box and a sphere</p>
 
 <p class="whs1">box = geompy.MakeBox(20, 
  20, 20, 200, 200, 200)</p>
 
 <p>&nbsp;</p>
 
-<p># create new object as offset of the given one</p>
+<p># create a new object as offset of the given object</p>
 
 <p class="whs1">offset = geompy.MakeOffset(box, 
  70.)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_box = geompy.addToStudy(box, 
  &quot;Box&quot;)</p>
@@ -525,7 +525,7 @@ else
 
 <p class="whs1">&nbsp;</p>
 
-<p># display results</p>
+<p># display the results</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_box)</p>
 
@@ -583,42 +583,43 @@ else
 
 <p>&nbsp;&nbsp;</p>
 
-<p># create arc</p>
+<p># create an arc</p>
 
 <p class="whs1">arc = geompy.MakeArc(py, 
  pz, px)</p>
 
 <p>&nbsp;</p>
 
-<p># create wire</p>
+<p># create a wire</p>
 
 <p class="whs1">wire = geompy.MakeWire([vxy, 
  arc])</p>
 
 <p>&nbsp;</p>
 
-<p># create planar face</p>
+<p># create a planar face</p>
 
 <p class="whs1">face = geompy.MakeFace(wire, 
  1)</p>
 
 <p>&nbsp;</p>
 
-<p># create prism</p>
+<p># create a prism</p>
 
 <p class="whs1">prism = geompy.MakePrismVecH(face, 
  vz, 20.0)</p>
 
 <p>&nbsp;</p>
 
-<p># translate the given object along the given vector a given number times</p>
+<p># translate the given object along the given vector a given number of 
+ times</p>
 
 <p class="whs1">tr1d = geompy.MakeMultiTranslation1D(prism, 
  vtr1d, 20, 4)</p>
 
 <p>&nbsp;</p>
 
-<p># consequently apply two specified translations to the object specified 
+<p># consequently apply two specified translations to the object a given 
  number of times</p>
 
 <p class="whs1">tr2d = geompy.MakeMultiTranslation2D(prism, 
@@ -626,7 +627,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_prism = geompy.addToStudy(prism,&quot;Prism&quot;)</p>
 
@@ -638,7 +639,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display prism and results of fillet operation</p>
+<p># display the prism and the results of fillet operation</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_prism)</p>
 
@@ -696,53 +697,53 @@ else
 
 <p>&nbsp;&nbsp;</p>
 
-<p># create arc</p>
+<p># create an arc</p>
 
 <p class="whs1">arc = geompy.MakeArc(py, 
  pz, px)</p>
 
 <p>&nbsp;</p>
 
-<p># create wire</p>
+<p># create a wire</p>
 
 <p class="whs1">wire = geompy.MakeWire([vxy, 
  arc])</p>
 
 <p>&nbsp;</p>
 
-<p># create planar face</p>
+<p># create a planar face</p>
 
 <p class="whs1">face = geompy.MakeFace(wire, 
  1)</p>
 
 <p>&nbsp;</p>
 
-<p># create prism</p>
+<p># create a prism</p>
 
 <p class="whs1">prism = geompy.MakePrismVecH(face, 
  vz, 20.0)</p>
 
 <p>&nbsp;</p>
 
-<p># rotate the given object around the given axis on the given angle a 
- given number times</p>
+<p># rotate the given object around the given axis by the given angle a 
+ given number of times</p>
 
 <p class="whs1">rot1d = geompy.MultiRotate1D(prism, 
  vrot1d, 4)</p>
 
 <p>&nbsp;</p>
 
-<p># rotate the given object around the given axis on the given angle a 
- given number times</p>
+<p># rotate the given object around the given axis by the given angle a 
+ given number of times</p>
 
-<p># and multi-translate each rotation result</p>
+<p># and multi-translate the result of each rotation</p>
 
 <p class="whs1">rot2d = geompy.MultiRotate2D(prism, 
  vrot1d, 60, 4, 50, 5)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_prism = geompy.addToStudy(prism,&quot;Prism&quot;)</p>
 
@@ -754,7 +755,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display prism and results of fillet operation</p>
+<p># display the prism and the results of fillet operation</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_prism)</p>
 
@@ -814,35 +815,35 @@ else
 
 <p>&nbsp;&nbsp;</p>
 
-<p># create arc</p>
+<p># create an arc</p>
 
 <p class="whs1">arc = geompy.MakeArc(py, 
  pz, px)</p>
 
 <p>&nbsp;</p>
 
-<p># create wire</p>
+<p># create a wire</p>
 
 <p class="whs1">wire = geompy.MakeWire([vxy, 
  arc])</p>
 
 <p>&nbsp;</p>
 
-<p># create planar face</p>
+<p># create a planar face</p>
 
 <p class="whs1">face = geompy.MakeFace(wire, 
  1)</p>
 
 <p>&nbsp;</p>
 
-<p># create prism</p>
+<p># create a prism</p>
 
 <p class="whs1">prism = geompy.MakePrismVecH(face, 
  vz, 100.0)</p>
 
 <p>&nbsp;</p>
 
-<p># get IDList for fillet</p>
+<p># get the list of IDs (IDList) for the fillet</p>
 
 <p class="whs1">prism_edges = geompy.SubShapeAllSorted(prism, 
  ShapeTypeEdge)</p>
@@ -860,21 +861,21 @@ else
 
 <p>&nbsp;</p>
 
-<p># make fillet on the specified edges of the given shape</p>
+<p># make a fillet on the specified edges of the given shape</p>
 
 <p class="whs1">fillet = geompy.MakeFillet(prism, 
  radius, ShapeTypeEdge, IDlist_e)</p>
 
 <p>&nbsp;</p>
 
-<p># make fillet on all edges of the given shape</p>
+<p># make a fillet on all edges of the given shape</p>
 
 <p class="whs1">filletall = geompy.MakeFilletAll(prism, 
  radius)</p>
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_prism = geompy.addToStudy(prism,&quot;Prism&quot;)</p>
 
@@ -885,7 +886,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display prism and results of fillet operation</p>
+<p># display the prism and the results of fillet operation</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_prism)</p>
 
@@ -946,35 +947,35 @@ else
 
 <p>&nbsp;&nbsp;</p>
 
-<p># create arc</p>
+<p># create an arc</p>
 
 <p class="whs1">arc = geompy.MakeArc(py, 
  pz, px)</p>
 
 <p>&nbsp;</p>
 
-<p># create wire</p>
+<p># create a wire</p>
 
 <p class="whs1">wire = geompy.MakeWire([vxy, 
  arc])</p>
 
 <p>&nbsp;</p>
 
-<p># create planar face</p>
+<p># create a planar face</p>
 
 <p class="whs1">face = geompy.MakeFace(wire, 
  1)</p>
 
 <p>&nbsp;</p>
 
-<p># create prism</p>
+<p># create a prism</p>
 
 <p class="whs1">prism = geompy.MakePrismVecH(face, 
  vz, 100.0)</p>
 
 <p>&nbsp;</p>
 
-<p># get IDList for chamfer</p>
+<p># get the list of IDs (IDList) for the chamfer</p>
 
 <p class="whs1">prism_faces = geompy.SubShapeAllSorted(prism, 
  ShapeTypeFace)</p>
@@ -990,7 +991,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># perform a chamfer on edges, common to the specified faces</p>
+<p># perform a chamfer on the edges common to the specified faces</p>
 
 <p class="whs1">chamfer_e = geompy.MakeChamferEdge(prism, 
  d1, d2, f_ind_1, f_ind_2)</p>
@@ -1014,7 +1015,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># add objects in study</p>
+<p># add objects in the study</p>
 
 <p class="whs1">id_prism = geompy.addToStudy(prism,&quot;Prism&quot;)</p>
 
@@ -1032,7 +1033,7 @@ else
 
 <p>&nbsp;</p>
 
-<p># display prism and results of chamfer operation</p>
+<p># display the prism and the results of chamfer operation</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_prism)</p>
 
