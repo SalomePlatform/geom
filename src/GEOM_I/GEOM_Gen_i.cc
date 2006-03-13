@@ -47,6 +47,7 @@
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TopAbs_ShapeEnum.hxx>
+#include <OSD.hxx>
 
 #include "SALOMEDS_Tool.hxx"
 
@@ -67,6 +68,7 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr orb,
 
   _impl = new ::GEOMImpl_Gen;
 
+  OSD::SetSignal( true );
 }
 
 

@@ -242,15 +242,19 @@ def TestOtherOperations (geompy, math):
   geompy.AddObject(CreateGroup, f_ind_6) # box_faces[5]
   geompy.AddObject(CreateGroup, f_ind_1) # box_faces[0]
   geompy.AddObject(CreateGroup, f_ind_4) # box_faces[3]
+  # Now contains f_ind_6, f_ind_1, f_ind_4
 
   # UnionList
   geompy.UnionList(CreateGroup, [box_faces[2], box_faces[4], box_faces[5]])
+  # Now contains f_ind_6, f_ind_1, f_ind_4, f_ind_3, f_ind_5
 
   # RemoveObject(theGroup, theSubShapeID)
   geompy.RemoveObject(CreateGroup, f_ind_1) # box_faces[0]
+  # Now contains f_ind_6, f_ind_4, f_ind_3, f_ind_5
 
   # DifferenceList
   geompy.DifferenceList(CreateGroup, [box_faces[1], box_faces[0], box_faces[3]])
+  # Now contains f_ind_6, f_ind_3, f_ind_5
 
   # GetObjectIDs
   GetObjectIDs = geompy.GetObjectIDs(CreateGroup)
@@ -261,6 +265,21 @@ def TestOtherOperations (geompy, math):
     print " ", ObjectID
 
   BoxCopy = geompy.GetMainShape(CreateGroup)
+
+  # DifferenceIDs
+  geompy.DifferenceIDs(CreateGroup, [f_ind_3, f_ind_5])
+  # Now contains f_ind_6
+
+  # UnionIDs
+  geompy.UnionIDs(CreateGroup, [f_ind_1, f_ind_2, f_ind_6])
+  # Now contains f_ind_6, f_ind_1, f_ind_2
+
+  # Check
+  GetObjectIDs = geompy.GetObjectIDs(CreateGroup)
+  print "Group of Box's faces includes the following IDs:"
+  print "(must be ", f_ind_6, ", ", f_ind_1, " and ", f_ind_2, ")"
+  for ObjectID in GetObjectIDs:
+    print " ", ObjectID
 
   # -----------------------------------------------------------------------------
   # enumeration ShapeTypeString as a dictionary
@@ -392,11 +411,25 @@ def TestOtherOperations (geompy, math):
   for face_i in faces_on_pln:
     geompy.addToStudy(face_i, "Face on Plane (N = (0, 1, 1)) or below it")
 
+  # GetShapesOnPlaneIDs
+  faces_above_pln_ids = geompy.GetShapesOnPlaneIDs(blocksComp, geompy.ShapeType["FACE"],
+                                                   v_0pp, geompy.GEOM.ST_OUT)
+  faces_above = geompy.CreateGroup(blocksComp, geompy.ShapeType["FACE"])
+  geompy.UnionIDs(faces_above, faces_above_pln_ids)
+  geompy.addToStudy(faces_above, "Group of faces above Plane (N = (0, 1, 1))")
+
   # GetShapesOnCylinder
-  edges_on_cyl = geompy.GetShapesOnCylinder(blocksComp, geompy.ShapeType["EDGE"],
-                                            vy, 55, geompy.GEOM.ST_OUT)
-  for edge_i in edges_on_cyl:
+  edges_out_cyl = geompy.GetShapesOnCylinder(blocksComp, geompy.ShapeType["EDGE"],
+                                             vy, 55, geompy.GEOM.ST_OUT)
+  for edge_i in edges_out_cyl:
     geompy.addToStudy(edge_i, "Edge out of Cylinder (axis = (0, 1, 0), r = 55)")
+
+  # GetShapesOnCylinderIDs
+  edges_in_cyl_ids = geompy.GetShapesOnCylinderIDs(blocksComp, geompy.ShapeType["EDGE"],
+                                                   vy, 55, geompy.GEOM.ST_IN)
+  edges_in = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
+  geompy.UnionIDs(edges_in, edges_in_cyl_ids)
+  geompy.addToStudy(edges_in, "Group of edges inside Cylinder (axis = (0, 1, 0), r = 55)")
 
   # GetShapesOnSphere
   vertices_on_sph = geompy.GetShapesOnSphere(blocksComp, geompy.ShapeType["VERTEX"],
@@ -404,6 +437,13 @@ def TestOtherOperations (geompy, math):
   for vertex_i in vertices_on_sph:
     geompy.addToStudy(vertex_i, "Vertex on Sphere (center = (0, 0, 0), r = 100)")
     pass
+
+  # GetShapesOnSphereIDs
+  vertices_on_sph_ids = geompy.GetShapesOnSphereIDs(blocksComp, geompy.ShapeType["VERTEX"],
+                                                    p0, 100, geompy.GEOM.ST_ON)
+  vertices_on = geompy.CreateGroup(blocksComp, geompy.ShapeType["VERTEX"])
+  geompy.UnionIDs(vertices_on, vertices_on_sph_ids)
+  geompy.addToStudy(vertices_on, "Group of vertices on Sphere (center = (0, 0, 0), r = 100)")
 
   # GetShapesOnQuadrangle
 
@@ -427,6 +467,13 @@ def TestOtherOperations (geompy, math):
   if len( edges_onin_quad ) != 4:
     print "Error in GetShapesOnQuadrangle()"
     pass
+
+  # GetShapesOnQuadrangleIDs
+  vertices_on_quad_ids = geompy.GetShapesOnQuadrangleIDs(f12, geompy.ShapeType["VERTEX"],
+                                                         tl, tr, bl, br, geompy.GEOM.ST_ON)
+  vertices_on_quad = geompy.CreateGroup(f12, geompy.ShapeType["VERTEX"])
+  geompy.UnionIDs(vertices_on_quad, vertices_on_quad_ids)
+  geompy.addToStudy(vertices_on_quad, "Group of vertices on Quadrangle F12")
 
   # GetInPlace(theShapeWhere, theShapeWhat)
   box5 = geompy.MakeBoxDXDYDZ(100, 100, 100)

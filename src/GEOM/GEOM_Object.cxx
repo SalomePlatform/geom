@@ -259,7 +259,7 @@ TCollection_AsciiString GEOM_Object::GetAuxData()
 bool GEOM_Object::IsMainShape()
 {
   Handle(GEOM_Function) aFunction = GetFunction(1);
-  if(aFunction == NULL || aFunction->GetDriverGUID() != GetSubShapeID()) return true;
+  if(aFunction.IsNull() || aFunction->GetDriverGUID() != GetSubShapeID()) return true; // mkr : IPAL9921
   return false;
 }
 

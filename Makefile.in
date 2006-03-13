@@ -14,7 +14,7 @@ VPATH=.:@srcdir@:@top_srcdir@/bin:@top_srcdir@/resources:./bin:@top_srcdir@/idl
 
 @COMMENCE@
 
-SUBDIRS = idl src doc
+SUBDIRS = idl src doc adm_local
 
 RESOURCES_FILES = \
 GEOM_en.xml \

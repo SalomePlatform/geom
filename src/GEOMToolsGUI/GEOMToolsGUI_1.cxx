@@ -33,7 +33,6 @@
 #include "GeometryGUI.h"
 #include "GEOMToolsGUI_TransparencyDlg.h"
 #include "GEOMToolsGUI_NbIsosDlg.h"        // Method ISOS adjustement
-#include "GEOMToolsGUI_NameDlg.h"
 
 #include "GEOM_Actor.h"
 #include "GEOMBase.h"
@@ -57,9 +56,11 @@
 #include <SUIT_MessageBox.h>
 
 #include <SalomeApp_Application.h>
-#include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Module.h>
+
+#include <LightApp_SelectionMgr.h>
+#include <LightApp_NameDlg.h>
 
 #include "SALOMEDSClient.hxx"
 
@@ -195,7 +196,7 @@ void GEOMToolsGUI::OnRename()
 	    if( obj->FindAttribute(anAttr, "AttributeName") ) {
 	      _PTR(AttributeName) aName (anAttr);
 
-	      QString newName = GEOMToolsGUI_NameDlg::getName( app->desktop(), aName->Value().c_str() );
+	      QString newName = LightApp_NameDlg::getName( app->desktop(), aName->Value().c_str() );
 	      if ( !newName.isEmpty() ) {
 		aName->SetValue( newName.latin1() ); // rename the SObject
 		IObject->setName( newName.latin1() );// rename the InteractiveObject

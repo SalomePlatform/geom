@@ -537,12 +537,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetPoint
 
   //The GetPoint() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t"
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << aResult << " = geompy.GetPoint(" << theShape << ", "
-      << theX << ", " << theY << ", " << theZ << ", " << theEpsilon << ")";
+    << theX << ", " << theY << ", " << theZ << ", " << theEpsilon << ")";
 
   SetErrorCode(OK);
   return aResult;
@@ -2447,12 +2446,11 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::ExplodeCompound
 
   //The explode doesn't change object so no new function is required.
   aFunction = theCompound->GetLastFunction();
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t["
-    << anAsciiList.ToCString() << "] = geompy.MakeBlockExplode("
-      << theCompound << ", " << theMinNbFaces << ", " << theMaxNbFaces << ")";
+  GEOM::TPythonDump(aFunction, /*append=*/true)
+    << "[" << anAsciiList.ToCString() << "] = geompy.MakeBlockExplode("
+    << theCompound << ", " << theMinNbFaces << ", " << theMaxNbFaces << ")";
 
   SetErrorCode(OK);
   return aBlocks;
@@ -3118,11 +3116,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
 
   // The Propagation doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
   // Make a Python command
-  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t["
-    << aListRes.ToCString() << "] = geompy.Propagate(" << theShape << ")";
+  GEOM::TPythonDump(aFunction, /*append=*/true)
+    << "[" << aListRes.ToCString() << "] = geompy.Propagate(" << theShape << ")";
 
   SetErrorCode(OK);
   return aSeq;

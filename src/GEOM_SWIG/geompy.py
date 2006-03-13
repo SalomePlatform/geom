@@ -954,6 +954,8 @@ def GetShapesOnPlane(theShape, theShapeType, theAx1, theState):
 def GetShapesOnPlaneIDs(theShape, theShapeType, theAx1, theState):
     """
      *  Works like the above method, but returns list of sub-shapes indices
+
+     *  Example: see GEOM_TestOthers.py
     """
     aList = ShapesOp.GetShapesOnPlaneIDs(theShape, theShapeType, theAx1, theState)
     if ShapesOp.IsDone() == 0:
@@ -983,6 +985,8 @@ def GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState):
 def GetShapesOnCylinderIDs(theShape, theShapeType, theAxis, theRadius, theState):
     """
      *  Works like the above method, but returns list of sub-shapes indices
+
+     *  Example: see GEOM_TestOthers.py
     """
     aList = ShapesOp.GetShapesOnCylinderIDs(theShape, theShapeType, theAxis, theRadius, theState)
     if ShapesOp.IsDone() == 0:
@@ -1011,6 +1015,8 @@ def GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState):
 def GetShapesOnSphereIDs(theShape, theShapeType, theCenter, theRadius, theState):
     """
      *  Works like the above method, but returns list of sub-shapes indices
+
+     *  Example: see GEOM_TestOthers.py
     """
     aList = ShapesOp.GetShapesOnSphereIDs(theShape, theShapeType, theCenter, theRadius, theState)
     if ShapesOp.IsDone() == 0:
@@ -1039,6 +1045,8 @@ def GetShapesOnQuadrangle(theShape, theShapeType, theTopLeftPoint, theTopRigthPo
 def GetShapesOnQuadrangleIDs(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState):
     """
      *  Works like the above method, but returns list of sub-shapes indices
+
+     *  Example: see GEOM_TestOthers.py
     """
     aList = ShapesOp.GetShapesOnQuadrangleIDs(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState)
     if ShapesOp.IsDone() == 0:
@@ -2473,6 +2481,8 @@ def UnionIDs(theGroup, theSubShapes):
     """
      *  Works like the above method, but argument
      *  theSubShapes here is a list of sub-shapes indices
+
+     *  Example: see GEOM_TestOthers.py
     """
     GroupOp.UnionIDs(theGroup, theSubShapes)
     if GroupOp.IsDone() == 0:
@@ -2494,6 +2504,8 @@ def DifferenceIDs(theGroup, theSubShapes):
     """
      *  Works like the above method, but argument
      *  theSubShapes here is a list of sub-shapes indices
+
+     *  Example: see GEOM_TestOthers.py
     """
     GroupOp.DifferenceIDs(theGroup, theSubShapes)
     if GroupOp.IsDone() == 0:

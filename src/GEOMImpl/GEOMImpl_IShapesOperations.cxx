@@ -93,9 +93,6 @@
 #include <TColStd_HArray1OfInteger.hxx>
 
 #include <vector>
-//#include <iostream>
-
-//#include <OSD_Timer.hxx>
 
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -533,9 +530,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
                                            const Standard_Integer theShapeType,
                                            const Standard_Boolean isSorted)
 {
-//  OSD_Timer timer1, timer2, timer3, timer4;
-//  timer1.Start();
-
   SetErrorCode(KO);
 
   if (theShape.IsNull()) return NULL;
@@ -573,14 +567,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
     return aSeq;
   }
 
-//  timer1.Stop();
-//  timer2.Start();
-
   if (isSorted)
     SortShapes(listShape);
-
-//  timer2.Stop();
-//  timer3.Start();
 
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aShape, anIndices);
@@ -605,25 +593,13 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   anAsciiList.Trunc(anAsciiList.Length() - 1);
 
   aFunction = theShape->GetLastFunction();
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
-  GEOM::TPythonDump pd (aFunction);
-  pd << anOldDescr.ToCString() << "\n\t[" << anAsciiList.ToCString();
+  GEOM::TPythonDump pd (aFunction, /*append=*/true);
+  pd << "[" << anAsciiList.ToCString();
   pd << "] = geompy.SubShapeAll" << (isSorted ? "Sorted(" : "(");
-  pd << theShape << ", " << theShapeType << ")";
+  pd << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
 
   SetErrorCode(OK);
-
-//  timer4.Stop();
-
-//  cout << "Explosure takes:" << endl;
-//  timer1.Show();
-//  cout << "Sorting takes:" << endl;
-//  timer2.Show();
-//  cout << "Sub-shapes addition takes:" << endl;
-//  timer3.Show();
-//  cout << "Update Description takes:" << endl;
-//  timer4.Show();
 
   return aSeq;
 }
@@ -687,13 +663,12 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
   }
 
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
   //Make a Python command
-  GEOM::TPythonDump pd (aFunction);
-  pd << anOldDescr.ToCString() << "\n\tlistSubShapeIDs = geompy.SubShapeAll";
+  GEOM::TPythonDump pd (aFunction, /*append=*/true);
+  pd << "listSubShapeIDs = geompy.SubShapeAll";
   pd << (isSorted ? "SortedIDs(" : "IDs(");
-  pd << theShape << ", " << theShapeType << ")";
+  pd << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
 
   SetErrorCode(OK);
   return aSeq;
@@ -873,11 +848,10 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetFreeFacesIDs
 
   //The explode doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString()
-    << "\n\tlistFreeFacesIDs = geompy.GetFreeFacesIDs(" << theShape << ")";
+  GEOM::TPythonDump(aFunction, /*append=*/true)
+    << "listFreeFacesIDs = geompy.GetFreeFacesIDs(" << theShape << ")";
 
   SetErrorCode(OK);
   return aSeq;
@@ -942,7 +916,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
 
   GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
     << "] = geompy.GetSharedShapes(" << theShape1 << ", "
-      << theShape2 << ", " << theShapeType << ")";
+      << theShape2 << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
 
   SetErrorCode(OK);
   return aSeq;
@@ -1084,9 +1058,6 @@ Handle(TColStd_HSequenceOfInteger)
                                                     GEOMAlgo_State              theState)
 {
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
-//  MESSAGE("--------------------------- GetShapesOnPlane phase 1 takes:");
-//  OSD_Timer timer1;
-//  timer1.Start();
 
   // Check presence of triangulation, build if need
   if (!CheckTriangulation(theShape))
@@ -1112,19 +1083,7 @@ Handle(TColStd_HSequenceOfInteger)
   // Default value=0
   aFinder.SetNbPntsMax(100);
 
-//  timer1.Stop();
-//  timer1.Show();
-
-//  MESSAGE("--------------------------- Perform on Plane takes:");
-//  timer1.Reset();
-//  timer1.Start();
   aFinder.Perform();
-//  timer1.Stop();
-//  timer1.Show();
-
-//  MESSAGE("--------------------------- GetShapesOnPlane phase 3 takes:");
-//  timer1.Reset();
-//  timer1.Start();
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
@@ -1149,13 +1108,6 @@ Handle(TColStd_HSequenceOfInteger)
     return aSeqOfIDs;
   }
 
-//  timer1.Stop();
-//  timer1.Show();
-
-//  MESSAGE("--------------------------- GetShapesOnPlane phase 4 takes:");
-//  timer1.Reset();
-//  timer1.Start();
-
   // Fill sequence of object IDs
   aSeqOfIDs = new TColStd_HSequenceOfInteger;
 
@@ -1167,8 +1119,7 @@ Handle(TColStd_HSequenceOfInteger)
     int id = anIndices.FindIndex(itSub.Value());
     aSeqOfIDs->Append(id);
   }
-//  timer1.Stop();
-//  timer1.Show();
+
   return aSeqOfIDs;
 }
 
@@ -1250,10 +1201,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
 {
   SetErrorCode(KO);
 
-//  MESSAGE("--------------------------- GetShapesOnPlane phase 1 takes:");
-//  OSD_Timer timer1;
-//  timer1.Start();
-
   if (theShape.IsNull() || theAx1.IsNull()) return NULL;
 
   TopoDS_Shape aShape = theShape->GetValue();
@@ -1277,13 +1224,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
   if ( aSeq.IsNull() || aSeq->Length() == 0 )
     return NULL;
 
-//  timer1.Stop();
-//  timer1.Show();
-
-//  MESSAGE("--------------------------- GetShapesOnPlane phase 5 takes:");
-//  timer1.Reset();
-//  timer1.Start();
-
   // Make a Python command
 
   Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast( aSeq->Value( 1 ));
@@ -1291,7 +1231,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
 
   GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
     << "] = geompy.GetShapesOnPlane(" << theShape << ", "
-      << theShapeType << ", " << theAx1 << ", " << theState << ")";
+      << aShapeType << ", " << theAx1 << ", " << theState << ")";
 
   SetErrorCode(OK);
   return aSeq;
@@ -1340,7 +1280,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnCyli
   Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
 
   GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
-    << "] = geompy.GetShapesOnCylinder(" << theShape << ", " << theShapeType
+    << "] = geompy.GetShapesOnCylinder(" << theShape << ", " << aShapeType
       << ", " << theAxis << ", " << theRadius << ", " << theState << ")";
 
   SetErrorCode(OK);
@@ -1393,29 +1333,11 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnSphe
   Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
 
   GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
-    << "] = geompy.GetShapesOnSphere(" << theShape << ", " << theShapeType
+    << "] = geompy.GetShapesOnSphere(" << theShape << ", " << aShapeType
       << ", " << theCenter << ", " << theRadius << ", " << theState << ")";
 
   SetErrorCode(OK);
   return aSeq;
-}
-
-//=======================================================================
-//function : getCreatedLast
-  /*!
-   * \brief Select the object created last
-    * \param theObj1 - Object 1
-    * \param theObj2 - Object 2
-    * \retval Handle(GEOM_Object) - selected object
-   */
-//=======================================================================
-
-Handle(GEOM_Object) GEOMImpl_IShapesOperations::getCreatedLast(const Handle(GEOM_Object)& theObj1,
-                                                               const Handle(GEOM_Object)& theObj2)
-{
-  if ( theObj1.IsNull() ) return theObj2;
-  if ( theObj2.IsNull() ) return theObj1;
-  return ( theObj1->GetEntry().Tag() > theObj2->GetEntry().Tag() ) ? theObj1 : theObj2;
 }
 
 //=============================================================================
@@ -1452,13 +1374,12 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnPlaneI
   aSeq = getShapesOnSurfaceIDs( aPlane, aShape, aShapeType, theState );
 
   // The GetShapesOnPlaneIDs() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = getCreatedLast(theShape,theAx1)->GetLastFunction();
+  Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theAx1)->GetLastFunction();
 
   // Make a Python command
-  const bool append = true;
-  GEOM::TPythonDump(aFunction,append)
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnPlane = geompy.GetShapesOnPlaneIDs"
-    << "(" << theShape << "," << theShapeType << "," << theAx1 << "," << theState << ")";
+    << "(" << theShape << "," << aShapeType << "," << theAx1 << "," << theState << ")";
 
   SetErrorCode(OK);
   return aSeq;
@@ -1499,13 +1420,12 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylind
   aSeq = getShapesOnSurfaceIDs( aCylinder, aShape, aShapeType, theState );
 
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = getCreatedLast(theShape,theAxis)->GetLastFunction();
+  Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theAxis)->GetLastFunction();
 
   // Make a Python command
-  const bool append = true;
-  GEOM::TPythonDump(aFunction,append)
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnCylinder = geompy.GetShapesOnCylinderIDs"
-    << "(" << theShape << ", " << theShapeType << ", " << theAxis << ", "
+    << "(" << theShape << ", " << aShapeType << ", " << theAxis << ", "
     << theRadius << ", " << theState << ")";
 
   SetErrorCode(OK);
@@ -1550,13 +1470,12 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnSphere
   aSeq = getShapesOnSurfaceIDs( aSphere, aShape, aShapeType, theState );
   
   // The GetShapesOnSphere() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = getCreatedLast(theShape,theCenter)->GetLastFunction();
+  Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theCenter)->GetLastFunction();
 
   // Make a Python command
-  const bool append = true;
-  GEOM::TPythonDump(aFunction,append)
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnCylinder = geompy.GetShapesOnCylinderIDs"
-    << "(" << theShape << ", " << theShapeType << ", " << theCenter << ", "
+    << "(" << theShape << ", " << aShapeType << ", " << theCenter << ", "
     << theRadius << ", " << theState << ")";
 
   SetErrorCode(OK);
@@ -1738,7 +1657,7 @@ Handle(TColStd_HSequenceOfTransient)
   GEOM::TPythonDump(aFunction)
     << "[" << anAsciiList.ToCString() << "] = geompy.GetShapesOnQuadrangle("
     << theShape << ", "
-    << theShapeType << ", "
+    << TopAbs_ShapeEnum(theShapeType) << ", "
     << theTopLeftPoint << ", "
     << theTopRigthPoint << ", "
     << theBottomLeftPoint << ", "
@@ -1788,17 +1707,16 @@ Handle(TColStd_HSequenceOfInteger)
   // Make a Python command
 
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
-  Handle(GEOM_Object) lastObj = getCreatedLast(theShape,theTopLeftPoint);
-  lastObj = getCreatedLast(lastObj,theTopRigthPoint);
-  lastObj = getCreatedLast(lastObj,theBottomRigthPoint);
-  lastObj = getCreatedLast(lastObj,theBottomLeftPoint);
+  Handle(GEOM_Object) lastObj = GEOM::GetCreatedLast(theShape,theTopLeftPoint);
+  lastObj = GEOM::GetCreatedLast(lastObj,theTopRigthPoint);
+  lastObj = GEOM::GetCreatedLast(lastObj,theBottomRigthPoint);
+  lastObj = GEOM::GetCreatedLast(lastObj,theBottomLeftPoint);
   Handle(GEOM_Function) aFunction = lastObj->GetLastFunction();
 
-  const bool append = true;
-  GEOM::TPythonDump(aFunction,append)
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnQuadrangle = geompy.GetShapesOnQuadrangleIDs("
     << theShape << ", "
-    << theShapeType << ", "
+    << TopAbs_ShapeEnum(theShapeType) << ", "
     << theTopLeftPoint << ", "
     << theTopRigthPoint << ", "
     << theBottomLeftPoint << ", "
@@ -2099,6 +2017,7 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
     MidXYZ.SetValue(Index,
 		    GPoint.X()*999 + GPoint.Y()*99 + GPoint.Z()*0.9);
   }
+
   // Sorting
   Standard_Integer aTemp;
   Standard_Boolean exchange, Sort = Standard_True;
@@ -2133,11 +2052,6 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
 //=======================================================================
 bool GEOMImpl_IShapesOperations::CheckTriangulation (const TopoDS_Shape& aShape)
 {
-//  MESSAGE("CheckTriangulation");
-//
-//  OSD_Timer timer1;
-//  timer1.Start();
-
   TopExp_Explorer exp (aShape, TopAbs_FACE);
   if (!exp.More()) {
     SetErrorCode("Shape without faces given");
@@ -2158,15 +2072,10 @@ bool GEOMImpl_IShapesOperations::CheckTriangulation (const TopoDS_Shape& aShape)
 
     Standard_Real dx = aXmax - aXmin, dy = aYmax - aYmin, dz = aZmax - aZmin;
     Standard_Real aDeflection = Max(Max(dx, dy), dz) * aDeviationCoefficient * 4;
-
-//    MESSAGE("Deflection = " << aDeflection);
-
     Standard_Real aHLRAngle = 0.349066;
 
     BRepMesh_IncrementalMesh Inc (aShape, aDeflection, Standard_False, aHLRAngle);
   }
-//  timer1.Stop();
-//  timer1.Show();
 
   return true;
 }

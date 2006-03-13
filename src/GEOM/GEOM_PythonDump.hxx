@@ -49,8 +49,18 @@ namespace GEOM
     Standard_EXPORT TPythonDump& operator<< (float theArg);
     Standard_EXPORT TPythonDump& operator<< (const void* theArg);
     Standard_EXPORT TPythonDump& operator<< (const char* theArg);
+    Standard_EXPORT TPythonDump& operator<< (const TopAbs_ShapeEnum theArg);
     Standard_EXPORT TPythonDump& operator<< (const Handle(GEOM_Object)& theObject);
   };
+
+  /*! Returns an object from two given, which has the latest entry
+   */
+  Handle(GEOM_Object) GetCreatedLast (const Handle(GEOM_Object)& theObj1,
+                                      const Handle(GEOM_Object)& theObj2);
+
+  /*! Returns an object from \a theObjects, which has the latest entry
+   */
+  Handle(GEOM_Object) GetCreatedLast (const Handle(TColStd_HSequenceOfTransient)& theObjects);
 }
 
 #endif

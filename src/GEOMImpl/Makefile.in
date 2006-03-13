@@ -93,7 +93,7 @@ EXPORT_HEADERS= GEOMImpl_Gen.hxx \
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome $(BOOST_CPPFLAGS)
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -L${KERNEL_ROOT_DIR}/lib/salome $(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset -lCASCatch -lGEOMbasic -lNMTAlgo -lGEOMAlgo -lShHealOper
+LDFLAGS  += -L${KERNEL_ROOT_DIR}/lib/salome $(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset -lGEOMbasic -lNMTAlgo -lGEOMAlgo -lShHealOper
 
 
 # additional file to be cleaned

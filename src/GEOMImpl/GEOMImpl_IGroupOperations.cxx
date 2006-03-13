@@ -75,7 +75,7 @@ GEOMImpl_IGroupOperations::~GEOMImpl_IGroupOperations()
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IGroupOperations::CreateGroup
-       (Handle(GEOM_Object) theMainShape, TopAbs_ShapeEnum  theShapeType)
+       (Handle(GEOM_Object) theMainShape, TopAbs_ShapeEnum theShapeType)
 {
   SetErrorCode(KO);
 
@@ -94,14 +94,12 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::CreateGroup
 
   //Make a Python command
   Handle(GEOM_Function) aFunction = aGroup->GetFunction(1);
-  //TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
-  //GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t" << aGroup
   GEOM::TPythonDump(aFunction) << aGroup
-    << " = geompy.CreateGroup(" << theMainShape << ", " << (int)theShapeType << ")";
+    << " = geompy.CreateGroup(" << theMainShape << ", " << theShapeType << ")";
 
   SetErrorCode(OK);
-  return aGroup; 
+  return aGroup;
 }
 
 //=============================================================================
@@ -156,9 +154,7 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
   }
 
   //Make a Python command
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
-
-  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t"
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "geompy.AddObject(" << theGroup << ", " << theSubShapeID << ")";
 
   SetErrorCode(OK);
@@ -222,9 +218,7 @@ void GEOMImpl_IGroupOperations::RemoveObject (Handle(GEOM_Object) theGroup, int 
   }
 
   //Make a Python command 
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
-
-  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t"
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "geompy.RemoveObject(" << theGroup << ", " << theSubShapeID << ")";
 
   SetErrorCode(OK);
@@ -241,6 +235,12 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
 {
   SetErrorCode(KO);
   if (theGroup.IsNull()) return;
+
+  Standard_Integer aLen = theSubShapes->Length();
+  if (aLen < 1) {
+    SetErrorCode("The list is empty");
+    return;
+  }
 
   Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
   if (aFunction.IsNull()) return;
@@ -277,7 +277,7 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
   TopExp::MapShapes(aMainShape, mapIndices);
 
   // Get IDs of sub-shapes to add
-  Standard_Integer i, new_id, aLen = theSubShapes->Length();
+  Standard_Integer i, new_id;
   for (i = 1; i <= aLen; i++) {
     Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
 
@@ -363,11 +363,13 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
     aSSI.SetIndices(aNewSeq);
   }
 
-  //Make a Python command 
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
+  //Make a Python command
+  Handle(GEOM_Object) aLatest = GEOM::GetCreatedLast(theSubShapes);
+  aLatest = GEOM::GetCreatedLast(aLatest, theGroup);
+  Handle(GEOM_Function) aLastFunc = aLatest->GetLastFunction();
 
-  GEOM::TPythonDump pd (aFunction);
-  pd << anOldDescr.ToCString() << "\n\t" << "geompy.UnionList(" << theGroup << ", [";
+  GEOM::TPythonDump pd (aLastFunc, /*append=*/true);
+  pd << "geompy.UnionList(" << theGroup << ", [";
 
   for (i = 1; i <= aLen; i++) {
     Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
@@ -387,6 +389,12 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
 {
   SetErrorCode(KO);
   if (theGroup.IsNull()) return;
+
+  Standard_Integer aLen = theSubShapes->Length();
+  if (aLen < 1) {
+    SetErrorCode("The list is empty");
+    return;
+  }
 
   Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
   if (aFunction.IsNull()) return;
@@ -424,7 +432,7 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
   TopExp::MapShapes(aMainShape, mapIndices);
 
   // Get IDs of sub-shapes to be removed
-  Standard_Integer i, rem_id, aLen = theSubShapes->Length();
+  Standard_Integer i, rem_id;
   for (i = 1; i <= aLen; i++) {
     Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
 
@@ -514,10 +522,12 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
   }
 
   //Make a Python command
-  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
+  Handle(GEOM_Object) aLatest = GEOM::GetCreatedLast(theSubShapes);
+  aLatest = GEOM::GetCreatedLast(aLatest, theGroup);
+  Handle(GEOM_Function) aLastFunc = aLatest->GetLastFunction();
 
-  GEOM::TPythonDump pd (aFunction);
-  pd << anOldDescr.ToCString() << "\n\t" << "geompy.DifferenceList(" << theGroup << ", [";
+  GEOM::TPythonDump pd (aLastFunc, /*append=*/true);
+  pd << "geompy.DifferenceList(" << theGroup << ", [";
 
   for (i = 1; i <= aLen; i++) {
     Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
@@ -526,6 +536,7 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
 
   SetErrorCode(OK);
 }
+
 //=============================================================================
 /*!
  *  UnionIDs
@@ -536,6 +547,12 @@ void GEOMImpl_IGroupOperations::UnionIDs (Handle(GEOM_Object) theGroup,
 {
   SetErrorCode(KO);
   if (theGroup.IsNull()) return;
+
+  Standard_Integer aLen = theSubShapes->Length();
+  if (aLen < 1) {
+    SetErrorCode("The list is empty");
+    return;
+  }
 
   Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
   if (aFunction.IsNull()) return;
@@ -572,7 +589,7 @@ void GEOMImpl_IGroupOperations::UnionIDs (Handle(GEOM_Object) theGroup,
   TopExp::MapShapes(aMainShape, mapIndices);
 
   // Get IDs of sub-shapes to add
-  Standard_Integer i, new_id, aLen = theSubShapes->Length();
+  Standard_Integer i, new_id;
   for (i = 1; i <= aLen; i++) {
     new_id = theSubShapes->Value(i);
 
@@ -594,6 +611,13 @@ void GEOMImpl_IGroupOperations::UnionIDs (Handle(GEOM_Object) theGroup,
     aSSI.SetIndices(aNewSeq);
   }
 
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction, /*append=*/true);
+  pd << "geompy.UnionIDs(" << theGroup << ", [";
+  for (i = 1; i < aLen; i++)
+    pd << theSubShapes->Value(i) << ", ";
+  pd << theSubShapes->Value(aLen) << "])";
+
   SetErrorCode(OK);
 }
 
@@ -607,6 +631,12 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
 {
   SetErrorCode(KO);
   if (theGroup.IsNull()) return;
+
+  Standard_Integer aLen = theSubShapes->Length();
+  if (aLen < 1) {
+    SetErrorCode("The list is empty");
+    return;
+  }
 
   Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
   if (aFunction.IsNull()) return;
@@ -644,7 +674,7 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
   TopExp::MapShapes(aMainShape, mapIndices);
 
   // Get IDs of sub-shapes to be removed
-  Standard_Integer i, rem_id, aLen = theSubShapes->Length();
+  Standard_Integer i, rem_id;
   for (i = 1; i <= aLen; i++) {
     rem_id = theSubShapes->Value(i);
     if (mapIDsCurrent.Contains(rem_id)) {
@@ -665,6 +695,13 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
 
     aSSI.SetIndices(aNewSeq);
   }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction, /*append=*/true);
+  pd << "geompy.DifferenceIDs(" << theGroup << ", [";
+  for (i = 1; i < aLen; i++)
+    pd << theSubShapes->Value(i) << ", ";
+  pd << theSubShapes->Value(aLen) << "])";
 
   SetErrorCode(OK);
 }
@@ -709,9 +746,7 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::GetMainShape (Handle(GEOM_Object)
   if (aMainShape.IsNull()) return NULL;
 
   //Make a Python command
-  TCollection_AsciiString anOldDescr = aGroupFunction->GetDescription();
-
-  GEOM::TPythonDump(aGroupFunction) << anOldDescr.ToCString() << "\n\t"
+  GEOM::TPythonDump(aGroupFunction, /*append=*/true)
     << aMainShape << " = geompy.GetMainShape(" << theGroup << ")";
 
   SetErrorCode(OK);
@@ -726,12 +761,12 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::GetMainShape (Handle(GEOM_Object)
 Handle(TColStd_HArray1OfInteger) GEOMImpl_IGroupOperations::GetObjects(Handle(GEOM_Object) theGroup)
 {
   SetErrorCode(KO);
-  
-   if(theGroup.IsNull()) return NULL;
+
+  if(theGroup.IsNull()) return NULL;
 
   Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
   if(aFunction.IsNull()) return NULL;
-  
+
   GEOM_ISubShape aSSI(aFunction);
   Handle(TColStd_HArray1OfInteger) aSeq = aSSI.GetIndices();
   if(aSeq.IsNull()) return NULL;

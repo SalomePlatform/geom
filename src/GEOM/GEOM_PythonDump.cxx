@@ -21,6 +21,11 @@
 
 #include <TDF_Tool.hxx>
 
+#include <TopAbs.hxx>
+
+#include <TColStd_ListOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+
 namespace GEOM
 {
   size_t TPythonDump::myCounter = 0;
@@ -89,11 +94,55 @@ namespace GEOM
     return *this;
   }
 
+  TPythonDump& TPythonDump::operator<< (const TopAbs_ShapeEnum theArg)
+  {
+    myStream<<"geompy.ShapeType[\"";
+    TopAbs::Print(theArg, myStream);
+    myStream<<"\"]";
+    return *this;
+  }
+
   TPythonDump& TPythonDump::operator<< (const Handle(GEOM_Object)& theObject)
   {
     TCollection_AsciiString anEntry;
     TDF_Tool::Entry(theObject->GetEntry(), anEntry);
     myStream << anEntry.ToCString();
     return *this;
+  }
+
+  Handle(GEOM_Object) GetCreatedLast(const Handle(GEOM_Object)& theObj1,
+                                     const Handle(GEOM_Object)& theObj2)
+  {
+    if (theObj1.IsNull()) return theObj2;
+    if (theObj2.IsNull()) return theObj1;
+
+    TColStd_ListOfInteger aTags1, aTags2;
+    TDF_Tool::TagList(theObj1->GetEntry(), aTags1);
+    TDF_Tool::TagList(theObj2->GetEntry(), aTags2);
+    TColStd_ListIteratorOfListOfInteger aListIter1(aTags1), aListIter2(aTags2);
+    for (; aListIter1.More(); aListIter1.Next()) {
+      if (!aListIter2.More())
+        return theObj1; // anObj1 is stored under anObj2
+
+      if (aListIter1.Value() > aListIter2.Value())
+        return theObj1;
+      else if (aListIter1.Value() < aListIter2.Value())
+        return theObj2;
+    }
+    return theObj1;
+  }
+
+  Handle(GEOM_Object) GetCreatedLast(const Handle(TColStd_HSequenceOfTransient)& theObjects)
+  {
+    Handle(GEOM_Object) anObject, aLatest;
+    int i, aLen = theObjects->Length();
+    if (aLen < 1)
+      return aLatest;
+
+    for (i = 1; i <= aLen; i++) {
+      anObject = Handle(GEOM_Object)::DownCast(theObjects->Value(i));
+      aLatest = GetCreatedLast(aLatest, anObject);
+    }
+    return aLatest;
   }
 }

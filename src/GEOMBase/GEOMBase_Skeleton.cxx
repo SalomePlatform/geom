@@ -81,12 +81,8 @@ void GEOMBase_Skeleton::Init()
 {
   myGeomGUI = 0;
   SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
-  if (app)
-    {
-      SalomeApp_Module* module = dynamic_cast<SalomeApp_Module*>(app->loadModule("Geometry"));
-      if (module)
-	myGeomGUI =  dynamic_cast<GeometryGUI*>(module);
-    }
+  if( app )
+    myGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
   
   /* init variables */
   myGeomBase = new GEOMBase();  // SAN -- TO BE REMOVED !!!
@@ -95,10 +91,10 @@ void GEOMBase_Skeleton::Init()
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
   if (myGeomGUI) 
-    {
-      connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-      connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-    }
+  {
+    connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+    connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  }
   
   /* Move widget on the botton right corner of main widget */
 //   int x, y;

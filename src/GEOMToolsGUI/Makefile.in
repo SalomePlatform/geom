@@ -38,17 +38,15 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 LIB = libGEOMToolsGUI.la
 
 # header files 
-EXPORT_HEADERS= 
+EXPORT_HEADERS = 
 
 LIB_SRC = 	GEOMToolsGUI.cxx \
 		GEOMToolsGUI_1.cxx \
 		GEOMToolsGUI_TransparencyDlg.cxx \
-		GEOMToolsGUI_NbIsosDlg.cxx \
-		GEOMToolsGUI_NameDlg.cxx
+		GEOMToolsGUI_NbIsosDlg.cxx
 
 LIB_MOC = 	GEOMToolsGUI_TransparencyDlg.h \
-		GEOMToolsGUI_NbIsosDlg.h \
-		GEOMToolsGUI_NameDlg.h
+		GEOMToolsGUI_NbIsosDlg.h
 
 LIB_CLIENT_IDL = SALOMEDS_Attributes.idl \
 		 SALOME_GenericObj.idl \

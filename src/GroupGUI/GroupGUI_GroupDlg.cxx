@@ -323,6 +323,8 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 
     // try to find out and process the object browser selection
     if ( !aMapIndex.Extent() ) {
+      globalSelection( GEOM_ALLSHAPES );
+      
       GEOM::ListOfGO anObjects;
       GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
       GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
@@ -334,6 +336,9 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
             aMapIndex.Add( anIndex );
         }
       }
+      
+      if ( !myMainObj->_is_nil() )
+      	localSelection( myMainObj, getShapeType() );
     }
 
     if (aMapIndex.Extent() >= 1) {
@@ -656,8 +661,8 @@ bool GroupGUI_GroupDlg::isValid( QString& theMessage )
     RETURN_WITH_MSG( !CORBA::is_nil( myMainObj ), tr( "NO_GROUP" ) )
   }
 
-  const char* aName = getNewObjectName();
-  RETURN_WITH_MSG  ( aName && strlen( aName ), tr( "EMPTY_NAME" ) )
+  QString aName (getNewObjectName());
+  RETURN_WITH_MSG  ( !aName.stripWhiteSpace().isEmpty(), tr( "EMPTY_NAME" ) )
 
   RETURN_WITH_MSG  ( myIdList->count(), tr( "EMPTY_LIST" ) )
   return true;

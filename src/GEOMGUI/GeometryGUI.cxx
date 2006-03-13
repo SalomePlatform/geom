@@ -551,13 +551,13 @@ void GeometryGUI::OnGUIEvent( int id )
 // function : GeometryGUI::OnKeyPress()
 // purpose  : Called when any key is pressed by user [static]
 //=================================================================================
-bool GeometryGUI::OnKeyPress( QKeyEvent* pe, SUIT_ViewWindow* win )
+void GeometryGUI::OnKeyPress( SUIT_ViewWindow* win, QKeyEvent* pe )
 {
   GUIMap::Iterator it;
   bool bOk = true;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
     bOk = bOk && it.data()->OnKeyPress( pe, application()->desktop(), win );
-  return bOk;
+//  return bOk;
 }
 
 
@@ -565,13 +565,13 @@ bool GeometryGUI::OnKeyPress( QKeyEvent* pe, SUIT_ViewWindow* win )
 // function : GeometryGUI::OnMouseMove()
 // purpose  : Manages mouse move events [static]
 //=================================================================================
-bool GeometryGUI::OnMouseMove( QMouseEvent* pe, SUIT_ViewWindow* win )
+void GeometryGUI::OnMouseMove( SUIT_ViewWindow* win, QMouseEvent* pe )
 {  
   GUIMap::Iterator it;
   bool bOk = true;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
     bOk = bOk && it.data()->OnMouseMove( pe, application()->desktop(), win );
-  return bOk;
+//  return bOk;
 }
 
 
@@ -579,7 +579,7 @@ bool GeometryGUI::OnMouseMove( QMouseEvent* pe, SUIT_ViewWindow* win )
 // function : GeometryGUI::0nMousePress()
 // purpose  : Manage mouse press events [static]
 //=================================================================================
-bool GeometryGUI::OnMousePress( QMouseEvent* pe, SUIT_ViewWindow* win )
+void GeometryGUI::OnMousePress( SUIT_ViewWindow* win, QMouseEvent* pe )
 {
   GUIMap::Iterator it;
   // OnMousePress() should return false if this event should be processed further
@@ -587,7 +587,7 @@ bool GeometryGUI::OnMousePress( QMouseEvent* pe, SUIT_ViewWindow* win )
   bool processed = false;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
     processed = processed || it.data()->OnMousePress( pe, application()->desktop(), win );
-  return processed;
+//  return processed;
 }
 
 /*
@@ -1117,10 +1117,6 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ), 
 	  this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
-  connect( (STD_Application*)application(), SIGNAL( viewManagerAdded( SUIT_ViewManager* ) ),
-          this, SLOT( onViewManagerAdded( SUIT_ViewManager* ) ) );
-  connect( (STD_Application*)application(), SIGNAL( viewManagerRemoved( SUIT_ViewManager* ) ),
-          this, SLOT( onViewManagerRemoved( SUIT_ViewManager* ) ) );
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
@@ -1161,10 +1157,6 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
 
   disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ), 
 	     this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
-  disconnect( (STD_Application*)application(), SIGNAL( viewManagerAdded( SUIT_ViewManager* ) ),
-	     this, SLOT( onViewManagerAdded( SUIT_ViewManager* ) ) );
-  disconnect( (STD_Application*)application(), SIGNAL( viewManagerRemoved( SUIT_ViewManager* ) ),
-	     this, SLOT( onViewManagerRemoved( SUIT_ViewManager* ) ) );
 
   EmitSignalCloseAllDialogs();
 
@@ -1535,6 +1527,15 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
 {
   if ( vm->getType() == OCCViewer_Viewer::Type() )
   {
+    qDebug( "connect" );
+    connect( vm, SIGNAL( keyPress  ( SUIT_ViewWindow*, QKeyEvent* ) ),
+	     this, SLOT( OnKeyPress( SUIT_ViewWindow*, QKeyEvent* ) ) );
+    connect( vm, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
+	     this, SLOT( OnMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
+    connect( vm, SIGNAL( mouseMove ( SUIT_ViewWindow*, QMouseEvent* ) ),
+	     this, SLOT( OnMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
+
+
     LightApp_SelectionMgr* sm = getApp()->selectionMgr();
     myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
 
