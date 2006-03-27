@@ -23,6 +23,7 @@ extern "C"
   __declspec(__dllexport)
 #endif
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
+                       const TCollection_AsciiString& /*theFormatName*/,
                        TCollection_AsciiString&       theError)
   {
     IGESControl_Reader aReader;

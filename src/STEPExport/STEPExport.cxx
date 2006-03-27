@@ -23,7 +23,9 @@ extern "C"
 #ifdef WNT
   __declspec(__dllexport)
 #endif
-  int Export(const TopoDS_Shape& theShape, const TCollection_AsciiString& theFileName)
+  int Export(const TopoDS_Shape& theShape,
+             const TCollection_AsciiString& theFileName,
+             const TCollection_AsciiString& /*theFormatName*/)
   {
     MESSAGE("Export STEP into file " << theFileName.ToCString());
 

@@ -23,26 +23,35 @@ extern "C"
 #ifdef WNT
   __declspec(__dllexport)
 #endif
-  int Export(const TopoDS_Shape& theShape, const TCollection_AsciiString& theFileName)
+  int Export(const TopoDS_Shape& theShape,
+             const TCollection_AsciiString& theFileName,
+             const TCollection_AsciiString& theFormatName)
   {
     MESSAGE("Export IGES into file " << theFileName.ToCString());
     try 
-      {
-	//VRV: OCC 4.0 migration
-	IGESControl_Controller::Init();
-	IGESControl_Writer ICW (Interface_Static::CVal("XSTEP.iges.unit"),
-				Interface_Static::IVal("XSTEP.iges.writebrep.mode"));
-	//VRV: OCC 4.0 migration
+    {
+      // define, whether to write only faces (5.1 IGES format)
+      // or shells and solids also (5.3 IGES format)
+      int aBrepMode = 0;
+      if (theFormatName.IsEqual("IGES_5_3"))
+        aBrepMode = 1;
+
+      // initialize writer
+      IGESControl_Controller::Init();
+      //IGESControl_Writer ICW (Interface_Static::CVal("write.iges.unit"),
+      //			Interface_Static::IVal("write.iges.brep.mode"));
+      IGESControl_Writer ICW (Interface_Static::CVal("write.iges.unit"), aBrepMode);
 	
-	ICW.AddShape( theShape );
-	ICW.ComputeModel();
-	if ( ICW.Write( theFileName.ToCString() ) )
-	  return 1;
-      }
+      // perform shape writing
+      ICW.AddShape( theShape );
+      ICW.ComputeModel();
+      if ( ICW.Write( theFileName.ToCString() ) )
+        return 1;
+    }
     catch(Standard_Failure) 
-      {
-	//THROW_SALOME_CORBA_EXCEPTION("Exception catched in IGESExport", SALOME::BAD_PARAM);
-      }
+    {
+      //THROW_SALOME_CORBA_EXCEPTION("Exception catched in IGESExport", SALOME::BAD_PARAM);
+    }
     return 0;
   }
 }
