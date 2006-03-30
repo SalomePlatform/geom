@@ -12,7 +12,7 @@ using namespace std;
 
 #include <Standard_Version.hxx>
 #ifdef OCC_VERSION_MAINTENANCE 
-#if (OCC_VERSION_MAJOR >= 5 && OCC_VERSION_MINOR >= 2 && OCC_VERSION_MAINTENANCE >= 4)
+#if (OCC_VERSION_MAJOR >= 5 && OCC_VERSION_MINOR >= 2 && OCC_VERSION_MAINTENANCE >= 4) || (OCC_VERSION_MAJOR >= 6)
 #include <BRepBuilderAPI_Sewing.hxx>
 #define BRepAlgo_Sewing BRepBuilderAPI_Sewing
 #else 
