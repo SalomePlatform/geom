@@ -24,7 +24,6 @@
 //  File   : BasicGUI_VectorDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_VECTOR_H
 #define DIALOGBOX_VECTOR_H
@@ -34,13 +33,13 @@
 #include "DlgRef_3Spin1Check.h"
 
 #include "BasicGUI.h"
-//#include "GEOM_ShapeTypeFilter.hxx"
 
 #if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
 #define BASICGUI_WNT_EXPORT __declspec( dllexport )
 #else
 #define BASICGUI_WNT_EXPORT
 #endif
+
 //=================================================================================
 // class    : BasicGUI_VectorDlg
 // purpose  :
@@ -50,9 +49,10 @@ class BasicGUI_VectorDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_VectorDlg();
-    
+
 protected:
     // redefined from GEOMBase_Helper
     virtual GEOM::GEOM_IOperations_ptr createOperation();
@@ -62,8 +62,6 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
-
-    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint1;   
     GEOM::GEOM_Object_var myPoint2;
@@ -75,7 +73,7 @@ private slots:
     void ClickOnOk();
     void ClickOnCancel();
     bool ClickOnApply();
-    
+
     void ActivateThisDialog();
     void DeactivateActiveDialog();
     

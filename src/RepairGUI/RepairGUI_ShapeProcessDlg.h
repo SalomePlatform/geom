@@ -24,7 +24,6 @@
 //  File   : RepairGUI_ShapeProcessDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_ShapeProcess_H
 #define DIALOGBOX_ShapeProcess_H
@@ -52,7 +51,8 @@ class RepairGUI_ShapeProcessDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    RepairGUI_ShapeProcessDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    RepairGUI_ShapeProcessDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_ShapeProcessDlg();
 
 protected:
@@ -63,14 +63,15 @@ protected:
 
     virtual void closeEvent( QCloseEvent* e );        
 
-private :
+private:
     void             init();
     void             reset();
     void             loadDefaults(); // initialize all controls with default values (from resource file)
-		GEOM::string_array* getActiveOperators();
-		GEOM::string_array* getParameters( const GEOM::string_array& theOperators );
-		GEOM::string_array* getValues( const GEOM::string_array& theParameters );
-		
+
+    GEOM::string_array* getActiveOperators();
+    GEOM::string_array* getParameters( const GEOM::string_array& theOperators );
+    GEOM::string_array* getValues( const GEOM::string_array& theParameters );
+
     void             enterEvent(QEvent* e);
 
     QWidget*         getControl( const char* );
@@ -78,7 +79,7 @@ private :
                                                         // (analize its class and convert the value string)
     const char*      getValue( QWidget* theControl ) const; // retrieve value of the control in the proper way
 
-    QStringList      myOpLst;				 	  // list of available Shape Healing Operators
+    QStringList      myOpLst; // list of available Shape Healing Operators
     QMap<QString,QStringList> myValMap; // map of parameters of operators
     //QDict<QString,QWidget*> myCtrlMap;  // map of controls (values) of parameters
     void             initParamsValues(); // initialize the data structures
@@ -90,27 +91,27 @@ private :
     QListView*       myOpList;
     QWidgetStack*    myStack;
 
-    QtxDblSpinBox*  myFixShapeTol3D;
-    QtxDblSpinBox*  myFixShapeMaxTol3D;
-    
-    QtxDblSpinBox*  myFixFaceSizeTol;
+    QtxDblSpinBox*   myFixShapeTol3D;
+    QtxDblSpinBox*   myFixShapeMaxTol3D;
 
-    QtxDblSpinBox*  myDropSmallEdgesTol3D;
+    QtxDblSpinBox*   myFixFaceSizeTol;
 
-    QtxDblSpinBox*  mySplitAngleAngle;
-    QtxDblSpinBox*  mySplitAngleMaxTol;
+    QtxDblSpinBox*   myDropSmallEdgesTol3D;
+
+    QtxDblSpinBox*   mySplitAngleAngle;
+    QtxDblSpinBox*   mySplitAngleMaxTol;
 
     QSpinBox*        mySplitClosedFacesNum;
 
-    QtxDblSpinBox*  mySplitContTol3D;
+    QtxDblSpinBox*   mySplitContTol3D;
     QComboBox*       mySplitContSurfCont;
     QComboBox*       mySplitContCurvCont;
 
     QCheckBox*       myBSplineSurfModeChk;
     QCheckBox*       myBSpline3DCurveChk;
     QCheckBox*       myBSpline2DCurveChk;
-    QtxDblSpinBox*  myBSplineTol3D;
-    QtxDblSpinBox*  myBSplineTol2D;
+    QtxDblSpinBox*   myBSplineTol3D;
+    QtxDblSpinBox*   myBSplineTol2D;
     QSpinBox*        myBSplineDegree;
     QSpinBox*        myBSplineSegments;
     QComboBox*       myBSpline2DCont;
@@ -119,17 +120,15 @@ private :
     QCheckBox*       myToBezierSurfModeChk;
     QCheckBox*       myToBezier3DCurveChk;
     QCheckBox*       myToBezier2DCurveChk;
-    QtxDblSpinBox*  myToBezierMaxTol;
+    QtxDblSpinBox*   myToBezierMaxTol;
 
-    QtxDblSpinBox*  mySameParameterTol3D;
+    QtxDblSpinBox*   mySameParameterTol3D;
     
 private slots:
     void             onOk();
     bool             onApply();
-    void             onCancel();
-    
+
     void             activate();
-    void             deactivate();
 
     void             lineEditReturnPressed();
     void             selectionChanged();

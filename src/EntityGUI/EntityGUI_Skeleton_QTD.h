@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/
@@ -20,26 +20,29 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'EntityGUI_Skeleton_QTD.ui'
 **
-** Created: ven déc 12 11:17:07 2003
-**      by:  The User Interface Compiler (uic)
+** Created: Fri Mar 17 15:47:13 2006
+**      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
+
 #ifndef ENTITYGUI_SKELETON_QTD_H
 #define ENTITYGUI_SKELETON_QTD_H
 
 #include <qvariant.h>
 #include <qdialog.h>
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
+
+class QVBoxLayout;
+class QHBoxLayout;
+class QGridLayout;
+class QSpacerItem;
 class QGroupBox;
-class QPushButton;
+class QButtonGroup;
 class QRadioButton;
+class QPushButton;
 
 class EntityGUI_Skeleton_QTD : public QDialog
-{ 
+{
     Q_OBJECT
 
 public:
@@ -60,7 +63,7 @@ public:
     QPushButton* buttonEnd;
     QPushButton* buttonClose;
     QPushButton* buttonCancel;
-
+    QPushButton* buttonHelp;
 
 protected:
     QGridLayout* EntityGUI_Skeleton_QTDLayout;
@@ -75,6 +78,11 @@ protected:
     QGridLayout* GroupDest3Layout;
     QHBoxLayout* GroupButtonsLayout;
     QHBoxLayout* Layout3;
+    QSpacerItem* Spacer1;
+
+protected slots:
+    virtual void languageChange();
+
 };
 
 #endif // ENTITYGUI_SKELETON_QTD_H

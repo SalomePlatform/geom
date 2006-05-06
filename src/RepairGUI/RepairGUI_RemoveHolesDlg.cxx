@@ -49,8 +49,10 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_RemoveHolesDlg::RepairGUI_RemoveHolesDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_RemoveHolesDlg::RepairGUI_RemoveHolesDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                                   const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUPPRESS_HOLES")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -103,6 +105,8 @@ RepairGUI_RemoveHolesDlg::RepairGUI_RemoveHolesDlg(QWidget* parent, const char* 
   GroupPoints->getGroupBoxLayout()->addLayout( aDetectLay, 3, 0 );
   /***************************************************************/
 
+  setHelpFileName("suppress_holes.htm");
+
   Init();
 }
 
@@ -136,10 +140,6 @@ void RepairGUI_RemoveHolesDlg::Init()
   myOpen = -1;
   
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
@@ -168,8 +168,6 @@ void RepairGUI_RemoveHolesDlg::ClickOnOk()
     ClickOnCancel();
 }
 
-
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
@@ -190,16 +188,6 @@ bool RepairGUI_RemoveHolesDlg::ClickOnApply()
   initSelection();
 
   return true;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void RepairGUI_RemoveHolesDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -273,17 +261,6 @@ void RepairGUI_RemoveHolesDlg::LineEditReturnPressed()
     myEditCurrentArgument = (QLineEdit*)send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void RepairGUI_RemoveHolesDlg::DeactivateActiveDialog()
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 

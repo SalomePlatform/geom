@@ -24,7 +24,6 @@
 //  File   : TransformationGUI_OffsetDlg.h
 //  Author : Michael Zorin
 //  Module : GEOM
-//  $Header: /dn05/salome/PAL/GEOM/GEOM_SRC/src/TransformationGUI/TransformationGUI_Offset.h
 
 #ifndef DIALOGBOX_OFFSET_H
 #define DIALOGBOX_OFFSET_H
@@ -42,7 +41,8 @@ class TransformationGUI_OffsetDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_OffsetDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_OffsetDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+				const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_OffsetDlg();
 
 protected:
@@ -53,7 +53,7 @@ protected:
 
     virtual void closeEvent( QCloseEvent* e );
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     double GetOffset() const;
@@ -62,12 +62,10 @@ private :
     
     DlgRef_1Sel1Spin1Check* GroupPoints;
     
-private slots :
+private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
     void SelectionIntoArgument();
     void LineEditReturnPressed();
     void SetEditCurrentArgument();
@@ -76,4 +74,3 @@ private slots :
 };
 
 #endif // DIALOGBOX_OFFSET_H
-

@@ -27,11 +27,13 @@
 
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepAlgo.hxx>
+#include <TopAbs.hxx>
+#include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <TopAbs.hxx>
-#include <TopExp.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
@@ -77,6 +79,21 @@ Standard_Integer GEOMImpl_ScaleDriver::Execute(TFunction_Logbook& log) const
     if (aShapeBase.IsNull() || aShapePnt.IsNull()) return 0;
     if (aShapePnt.ShapeType() != TopAbs_VERTEX) return 0;
 
+    // Bug 6839: Check for standalone (not included in faces) degenerated edges
+    TopTools_IndexedDataMapOfShapeListOfShape aEFMap;
+    TopExp::MapShapesAndAncestors(aShapeBase, TopAbs_EDGE, TopAbs_FACE, aEFMap);
+    Standard_Integer i, nbE = aEFMap.Extent();
+    for (i = 1; i <= nbE; i++) {
+      TopoDS_Shape anEdgeSh = aEFMap.FindKey(i);
+      if (BRep_Tool::Degenerated(TopoDS::Edge(anEdgeSh))) {
+        const TopTools_ListOfShape& aFaces = aEFMap.FindFromIndex(i);
+        if (aFaces.IsEmpty())
+          Standard_ConstructionError::Raise
+            ("Scaling aborted : cannot scale standalone degenerated edge");
+      }
+    }
+
+    // Perform Scaling
     gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
     gp_Trsf aTrsf;
     aTrsf.SetScale(aP, aCI.GetFactor());
@@ -86,6 +103,9 @@ Standard_Integer GEOMImpl_ScaleDriver::Execute(TFunction_Logbook& log) const
   }
 
   if (aShape.IsNull()) return 0;
+
+  if (!BRepAlgo::IsValid(aShape))
+    Standard_ConstructionError::Raise("Scaling aborted : non valid shape result");
 
   aFunction->SetValue(aShape);
 

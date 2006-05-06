@@ -24,14 +24,12 @@
 //  File   : OperationGUI_PartitionDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_PARTITION_H
 #define DIALOGBOX_PARTITION_H
 
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_4Sel1List1Check_QTD.h"
-
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg
@@ -42,7 +40,7 @@ class OperationGUI_PartitionDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    OperationGUI_PartitionDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    OperationGUI_PartitionDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0);
     ~OperationGUI_PartitionDlg();
 
     void SetListMaterials(GEOM::ListOfLong ListMaterials)
@@ -64,21 +62,19 @@ private:
     void enterEvent(QEvent* e);
     bool toRemoveWebs() const;
     int GetLimit() const;
-    
-    GEOM::ListOfGO myListShapes;
-    GEOM::ListOfLong   myListMaterials;
-    GEOM::ListOfGO     myListTools;
-    GEOM::ListOfGO     myListRemoveInside;
-    GEOM::ListOfGO     myListKeepInside;
-          
+
+    GEOM::ListOfGO   myListShapes;
+    GEOM::ListOfLong myListMaterials;
+    GEOM::ListOfGO   myListTools;
+    GEOM::ListOfGO   myListRemoveInside;
+    GEOM::ListOfGO   myListKeepInside;
+
     DlgRef_4Sel1List1Check_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

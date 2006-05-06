@@ -52,6 +52,7 @@ public:
 protected slots:
 
     virtual void              ClickOnCancel();
+    virtual void              ClickOnHelp(); 
     virtual void              DeactivateActiveDialog();
     virtual void              ActivateThisDialog();
     virtual void              SelectionIntoArgument();
@@ -82,6 +83,8 @@ protected:
     
     GeometryGUI*              myGeomGUI;
     GEOM_Displayer*           myDisplayer;
+
+    QString                   myHelpFileName;
 };
 
 #endif // MEASUREGUI_SKELETON_H

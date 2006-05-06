@@ -51,9 +51,13 @@ public:
     void      setU( const int );
     void      setV( const int );
 
+private slots:
+    void ClickOnHelp();
+
 private:
     QSpinBox* SpinBoxU;
     QSpinBox* SpinBoxV;
+    QString   myHelpFileName;
 
 };
 

@@ -52,6 +52,7 @@ extern "C"
 {
 SALOME_WNT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
+                       const TCollection_AsciiString& /*theFormatName*/,
                        TCollection_AsciiString&       theError)
   {
     MESSAGE("Import STEP model from file " << theFileName.ToCString());

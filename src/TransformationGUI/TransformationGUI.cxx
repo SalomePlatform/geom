@@ -86,53 +86,35 @@ bool TransformationGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   QDialog* aDlg = NULL;
 
   switch (theCommandID)
-    {
-    case 5021: // TRANSLATION
-      {	
-  	aDlg = new TransformationGUI_TranslationDlg( getGeometryGUI(), parent, "" );
-	break;
-      }
-    case 5022: // ROTATION
-      {	
-  	aDlg = new TransformationGUI_RotationDlg( parent, "" );
-	break;
-      }
-    case 5023: // POSITION
-      {	
-	aDlg = new TransformationGUI_PositionDlg( parent, "" );
-	break;
-      }
-    case 5024: // MIRROR
-      {	
-	aDlg = new TransformationGUI_MirrorDlg( parent, "" );
-	break;
-      }
-    case 5025: // SCALE
-      {	
-  	aDlg = new TransformationGUI_ScaleDlg( getGeometryGUI(), parent, "" );
-	break;
-      }
-    case 5026: // OFFSET
-      {	
-  	aDlg = new TransformationGUI_OffsetDlg( parent, "" );
-	break;
-      }  
-    case 5027: // MULTI TRANSLATION
-      {	
-  	aDlg = new TransformationGUI_MultiTranslationDlg( getGeometryGUI(), parent, "" );
-	break;
-      }
-    case 5028: // MULTI ROTATION
-      {	
-  	aDlg = new TransformationGUI_MultiRotationDlg( getGeometryGUI(), parent, "" );
-	break;
-      }
-    default:
-      {
-	SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-	break;
-      }
-    }
+  {
+  case 5021: // TRANSLATION
+    aDlg = new TransformationGUI_TranslationDlg( getGeometryGUI(), parent, "" );
+    break;
+  case 5022: // ROTATION
+    aDlg = new TransformationGUI_RotationDlg( getGeometryGUI(), parent, "" );
+    break;
+  case 5023: // POSITION
+    aDlg = new TransformationGUI_PositionDlg( getGeometryGUI(), parent, "" );
+    break;
+  case 5024: // MIRROR
+    aDlg = new TransformationGUI_MirrorDlg( getGeometryGUI(), parent, "" );
+    break;
+  case 5025: // SCALE
+    aDlg = new TransformationGUI_ScaleDlg( getGeometryGUI(), parent, "" );
+    break;
+  case 5026: // OFFSET
+    aDlg = new TransformationGUI_OffsetDlg( getGeometryGUI(), parent, "" );
+    break;
+  case 5027: // MULTI TRANSLATION
+    aDlg = new TransformationGUI_MultiTranslationDlg( getGeometryGUI(), parent, "" );
+    break;
+  case 5028: // MULTI ROTATION
+    aDlg = new TransformationGUI_MultiRotationDlg( getGeometryGUI(), parent, "" );
+    break;
+  default:
+    SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+    break;
+  }
 
   if ( aDlg != NULL )
     aDlg->show();

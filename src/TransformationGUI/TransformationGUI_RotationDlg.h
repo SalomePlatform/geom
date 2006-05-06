@@ -24,7 +24,6 @@
 //  File   : TransformationGUI_RotationDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_ROTATION_H
 #define DIALOGBOX_ROTATION_H
@@ -41,7 +40,8 @@ class TransformationGUI_RotationDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_RotationDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_RotationDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+				  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_RotationDlg();
 
 protected:
@@ -52,7 +52,7 @@ protected:
 
     virtual void closeEvent( QCloseEvent* e );
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     double GetAngle() const;
@@ -65,9 +65,7 @@ private :
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

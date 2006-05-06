@@ -474,7 +474,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   }
 
   //Add final part of the script
-  if(aSeq->Value(aLen) < aScriptLength)  anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength);
+  if(aLen && aSeq->Value(aLen) < aScriptLength)  anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength); // mkr : IPAL11865
  
   // Make script to publish in study
   if ( isPublished )

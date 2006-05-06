@@ -51,18 +51,19 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_CurveDlg::BasicGUI_CurveDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), 
-   myGeometryGUI(theGeometryGUI)
+BasicGUI_CurveDlg::BasicGUI_CurveDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                     const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POLYLINE")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SPLINE")));
   QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BEZIER")));
-  
+
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_CURVE_TITLE"));
-  
+
   /***************************************************************/
   RadioButton1->setPixmap( image0 );
   RadioButton2->setPixmap( image3 );
@@ -72,11 +73,13 @@ BasicGUI_CurveDlg::BasicGUI_CurveDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_NODES" ) );
   GroupPoints->TextLabel1->setText( tr("GEOM_POINTS") );
   GroupPoints->PushButton1->setPixmap(image1);
-  
+
   GroupPoints->LineEdit1->setReadOnly( true );
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("curve.htm");
 
   Init();
 }
@@ -107,8 +110,8 @@ void BasicGUI_CurveDlg::Init()
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
   
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -309,7 +312,7 @@ void BasicGUI_CurveDlg::ActivateThisDialog()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  // myGeometryGUI->SetState( 0 );
+  // myGeomGUI->SetState( 0 );
 
   globalSelection( GEOM_POINT );
   ConstructorsClicked( getConstructorId() );
@@ -321,7 +324,7 @@ void BasicGUI_CurveDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_CurveDlg::DeactivateActiveDialog()
 {
-  // myGeometryGUI->SetState( -1 );
+  // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -341,7 +344,7 @@ void BasicGUI_CurveDlg::enterEvent(QEvent* e)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_CurveDlg::createOperation()
 {
-  return myGeometryGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
 }
 
 //=================================================================================
@@ -391,7 +394,6 @@ bool BasicGUI_CurveDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_CurveDlg::closeEvent( QCloseEvent* e )
 {
-  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 

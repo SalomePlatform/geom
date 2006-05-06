@@ -24,7 +24,6 @@
 //  File   : TransformationGUI_ScaleDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_SCALE_H
 #define DIALOGBOX_SCALE_H
@@ -42,7 +41,8 @@ class TransformationGUI_ScaleDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_ScaleDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_ScaleDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_ScaleDlg();
 
 protected:
@@ -58,19 +58,15 @@ private :
     void enterEvent(QEvent* e);
     double GetFactor() const;
 
-    GeometryGUI* myGeometryGUI;
-    
     GEOM::ListOfGO myObjects;
     GEOM::GEOM_Object_var myPoint;   /* Central Point */
     
     DlgRef_2Sel1Spin2Check* GroupPoints;
 
-private slots :
+private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

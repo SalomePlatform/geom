@@ -25,6 +25,7 @@
 #define EXP_ARG_REF  1
 #define EXP_ARG_FILE 2
 #define EXP_ARG_PLUG 3
+#define EXP_ARG_FORM 4
 
 class GEOMImpl_IImportExport
 {
@@ -36,14 +37,20 @@ class GEOMImpl_IImportExport
 
   Handle(GEOM_Function) GetOriginal() { return _func->GetReference(EXP_ARG_REF); }
 
-  void SetFileName(const TCollection_AsciiString& theFileName) { _func->SetString(EXP_ARG_FILE, theFileName); }
+  void SetFileName(const TCollection_AsciiString& theFileName)
+  { _func->SetString(EXP_ARG_FILE, theFileName); }
 
   TCollection_AsciiString GetFileName() { return _func->GetString(EXP_ARG_FILE); }
 
-  void SetPluginName(const TCollection_AsciiString& theFormatName)
-  { _func->SetString(EXP_ARG_PLUG, theFormatName); }
+  void SetPluginName(const TCollection_AsciiString& thePluginLibName)
+  { _func->SetString(EXP_ARG_PLUG, thePluginLibName); }
 
   TCollection_AsciiString GetPluginName() { return _func->GetString(EXP_ARG_PLUG); }
+
+  void SetFormatName(const TCollection_AsciiString& theFormatName)
+  { _func->SetString(EXP_ARG_FORM, theFormatName); }
+
+  TCollection_AsciiString GetFormatName() { return _func->GetString(EXP_ARG_FORM); }
 
  private:
 

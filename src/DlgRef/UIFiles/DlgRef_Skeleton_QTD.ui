@@ -105,7 +105,7 @@
                                 <property name="spacing">
                                     <number>6</number>
                                 </property>
-                                <widget class="QPushButton">
+				<widget class="QPushButton">
                                     <property name="name">
                                         <cstring>buttonOk</cstring>
                                     </property>
@@ -144,6 +144,14 @@
                                     </property>
                                     <property name="text">
                                         <string>&amp;Cancel</string>
+                                    </property>
+                                </widget>
+				<widget class="QPushButton">
+                                    <property name="name">
+                                        <cstring>buttonHelp</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Help</string>
                                     </property>
                                 </widget>
                             </hbox>

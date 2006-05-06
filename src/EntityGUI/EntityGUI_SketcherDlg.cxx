@@ -29,12 +29,14 @@
 #include "EntityGUI_SketcherDlg.h"
 #include "Sketcher_Profile.hxx"
 #include "GEOM_Displayer.h"
+#include "GEOMBase.h"
 
 #include "SUIT_Desktop.h"
 #include "SUIT_Session.h"
 #include "SUIT_MessageBox.h"
 #include "SUIT_ResourceMgr.h"
 #include "SalomeApp_Application.h"
+#include "LightApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
 #include <qpushbutton.h>
@@ -61,8 +63,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :EntityGUI_Skeleton_QTD(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose), myIsAllAdded( false ),
+EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
+                                             const char* name, bool modal, WFlags fl)
+  :EntityGUI_Skeleton_QTD(parent, name, modal, WStyle_Customize |
+                          WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose),
+   myIsAllAdded( false ),
    GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
    myGeometryGUI( GUI )
 {
@@ -73,6 +78,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent, 
   buttonCancel->setText(tr("GEOM_BUT_CANCEL"));
   buttonEnd->setText(tr("GEOM_BUT_END_SKETCH"));
   buttonClose->setText(tr("GEOM_BUT_CLOSE_SKETCH"));
+  buttonHelp->setText(tr("GEOM_BUT_HELP"));
 
   GroupVal->close(TRUE);        
   GroupDest2->close(TRUE);
@@ -160,6 +166,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent, 
   connect(buttonEnd, SIGNAL(clicked()), this, SLOT(ClickOnEnd()));
   connect(buttonClose, SIGNAL(clicked()), this, SLOT(ClickOnEnd()));
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(buttonHelp, SIGNAL( clicked() ), this, SLOT( ClickOnHelp()));
 
   connect(Group1Sel->buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
   connect(Group1Sel->buttonUndo, SIGNAL(clicked()), this, SLOT(ClickOnUndo()));
@@ -210,7 +217,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent, 
 
   connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
   connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
+  
   Init();
 }
 
@@ -243,6 +250,8 @@ void EntityGUI_SketcherDlg::Init()
   myLastY1 = 0.0;
   myLastX2 = 0.0;
   myLastY2 = 0.0;
+
+  myHelpFileName = "sketcher.htm";
 
   /* Get setting of step value from file configuration */
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
@@ -671,6 +680,8 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
 //=================================================================================
 bool EntityGUI_SketcherDlg::ClickOnApply()
 {
+  ((QPushButton*)sender())->setFocus();
+
   myCommand.append( GetNewCommand() );
   mySketchState = NEXT_POINT;
 
@@ -685,6 +696,23 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
   GEOMBase_Helper::displayPreview();
 
   return true;
+}
+
+//=================================================================================
+// function : ClickOnHelp()
+// purpose  :
+//=================================================================================
+void EntityGUI_SketcherDlg::ClickOnHelp()
+{
+  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app) 
+    app->onHelpContextModule(myGeometryGUI ? app->moduleName(myGeometryGUI->moduleName()) : QString(""), myHelpFileName);
+  else {
+    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
+			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+			   arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
+			   QObject::tr("BUT_OK"));
+  }
 }
 
 //=================================================================================
@@ -1396,7 +1424,6 @@ bool EntityGUI_SketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
 
   return true;
 }
-
 
 
 

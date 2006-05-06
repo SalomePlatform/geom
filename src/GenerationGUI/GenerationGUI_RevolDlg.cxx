@@ -52,8 +52,10 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                               const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_REVOL")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -80,6 +82,8 @@ GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWid
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("revolution.htm");
 
   /* Initialisations */
   Init();
@@ -127,10 +131,10 @@ void GenerationGUI_RevolDlg::Init()
   connect(GroupPoints->SpinBox_DX,   SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)),        this, SLOT(onReverse()));
 
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-   
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName(tr("GEOM_REVOLUTION"));
 

@@ -53,10 +53,12 @@ public:
 private :
   bool      myFirstInit ;   /* Inform for the first init  */
   QSlider*  mySlider; 
+  QString   myHelpFileName;
 
 private slots: 
   void      ClickOnOk();
   void      ClickOnClose();
+  void      ClickOnHelp();
   void      ValueHasChanged( int ) ;
     
 };

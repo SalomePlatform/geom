@@ -48,8 +48,10 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                                       const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUPRESS_FACE")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -70,6 +72,8 @@ RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(QWidget* parent, const ch
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
+  
+  setHelpFileName("suppress_faces.htm");
 
   Init();
 }
@@ -100,10 +104,6 @@ void RepairGUI_SuppressFacesDlg::Init()
   initSelection();
 	  
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
@@ -127,8 +127,6 @@ void RepairGUI_SuppressFacesDlg::ClickOnOk()
     ClickOnCancel();
 }
 
-
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
@@ -147,16 +145,6 @@ bool RepairGUI_SuppressFacesDlg::ClickOnApply()
   initSelection();
   
   return true;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void RepairGUI_SuppressFacesDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -181,14 +169,14 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
     if ( !CORBA::is_nil( aSelectedObject ) && aRes )
     {
       TopoDS_Shape aShape;
-      if ( myGeomBase->GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) )
+      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) )
       {
 	if ( aShape.ShapeType() <= TopAbs_FACE ) // FACE, SHELL, SOLID, COMPOUND
 	{
 	  GEOM::short_array anIndexes;
 
 	  TColStd_IndexedMapOfInteger aMap;
-	  ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( anIO, aMap );
+	  myGeomGUI->getApp()->selectionMgr()->GetIndexes( anIO, aMap );
 	  
 	  if ( !aMap.IsEmpty() )
 	  {
@@ -244,17 +232,6 @@ void RepairGUI_SuppressFacesDlg::LineEditReturnPressed()
     myEditCurrentArgument = GroupPoints->LineEdit1;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void RepairGUI_SuppressFacesDlg::DeactivateActiveDialog()
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 

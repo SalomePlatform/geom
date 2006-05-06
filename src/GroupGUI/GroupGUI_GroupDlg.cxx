@@ -47,12 +47,8 @@
 #include <TColStd_MapOfInteger.hxx>
 
 
-GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode,
-                                     QWidget* parent,
-                                     const char* name,
-                                     bool modal,
-                                     WFlags fl)
-  :GEOMBase_Skeleton( parent, "GroupGUI_GroupDlg", false,
+GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWidget* parent)
+  :GEOMBase_Skeleton( theGeometryGUI, parent, "GroupGUI_GroupDlg", false,
                       WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu),
    myMode( mode ),
    myBusy( false )
@@ -114,6 +110,8 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode,
   aMedLayout->addMultiCellWidget( myIdList, 2, 3, 0, 2 );
   aMedLayout->addWidget( myAddBtn, 2, 3 );
   aMedLayout->addWidget( myRemBtn, 3, 3 );
+
+  setHelpFileName("working_with_groups.htm");
 
   Init();
 }
@@ -205,7 +203,6 @@ void GroupGUI_GroupDlg::ClickOnOk()
     ClickOnCancel();
 }
 
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
@@ -216,7 +213,10 @@ bool GroupGUI_GroupDlg::ClickOnApply()
     return false;
 
   if ( myMode == CreateGroup )
-    initName();
+    {
+      initName();
+      myIdList->clear();
+    }
   return true;
 }
 

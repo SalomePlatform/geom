@@ -40,7 +40,7 @@ LIB_SRC = \
 	GEOM_Superv_i.cc
 
 LIB_SERVER_IDL = SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Component.idl SALOME_Exception.idl \
-                 SALOME_GenericObj.idl SALOME_ModuleCatalog.idl GEOM_Gen.idl GEOM_Superv.idl \
+                 SALOME_GenericObj.idl SALOME_ModuleCatalog.idl SALOME_Session.idl GEOM_Gen.idl GEOM_Superv.idl \
 
 # Executables targets
 BIN =
@@ -53,7 +53,7 @@ EXPORT_HEADERS =
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome $(BOOST_CPPFLAGS) 
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -lGEOMEngine -lSalomeNS -lSalomeLifeCycleCORBA -lSalomeContainer -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeGenericObj 
+LDFLAGS  += -lGEOMEngine -lSalomeNS -lSalomeLifeCycleCORBA -lSalomeContainer -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeGenericObj
 
 # additional file to be cleaned
 MOSTLYCLEAN =

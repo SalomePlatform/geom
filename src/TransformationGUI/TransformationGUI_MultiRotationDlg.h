@@ -24,7 +24,6 @@
 //  File   : TransformationGUI_MultiRotationDlg.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_MULTIROTATION_H
 #define DIALOGBOX_MULTIROTATION_H
@@ -43,7 +42,8 @@ class TransformationGUI_MultiRotationDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_MultiRotationDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_MultiRotationDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+				       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_MultiRotationDlg();
 
 protected:
@@ -58,8 +58,6 @@ private :
     void Init();
     void enterEvent(QEvent* e);
 
-    GeometryGUI* myGeometryGUI;
-   
     GEOM::GEOM_Object_var myBase, myVector;
     int myNbTimes1;
     int myNbTimes2;
@@ -72,16 +70,13 @@ private :
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
     void ReverseAngle();
     void ValueChangedInSpinBox(double newValue);
     void ConstructorsClicked(int constructorId);
-
 };
 
 #endif // DIALOGBOX_MULTIROTATION_H

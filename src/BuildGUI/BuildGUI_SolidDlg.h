@@ -24,7 +24,6 @@
 //  File   : BuildGUI_SolidDlg.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
 
 #ifndef DIALOGBOX_SOLID_H
 #define DIALOGBOX_SOLID_H
@@ -41,7 +40,8 @@ class BuildGUI_SolidDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_SolidDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_SolidDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_SolidDlg();
 
 protected:
@@ -67,7 +67,6 @@ private slots:
     void SelectionIntoArgument();
     void ActivateThisDialog();
     void EnableNameField(bool toEnable);
-
 };
 
 #endif // DIALOGBOX_SOLID_H

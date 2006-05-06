@@ -1,0 +1,17 @@
+<document>
+  <section name="GEOM">
+    <!-- Major module parameters -->
+    <parameter name="name" value="Geometry"/>
+    <parameter name="icon" value="ModuleGeom.png"/>
+  </section>
+  <section name="resources">
+    <!-- Module resources -->
+    <parameter name="GEOM" value="${GEOM_ROOT_DIR}/share/salome/resources"/>
+  </section>
+  <section name="Geometry" >
+    <!-- Other module preferences -->
+    <parameter name="SettingsGeomStep" value="10" />
+    <parameter name="display_mode"     value="0"  />
+    <parameter name="shading_color"    value="255, 255, 0" />
+  </section>
+</document>

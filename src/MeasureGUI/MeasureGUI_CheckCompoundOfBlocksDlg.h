@@ -24,12 +24,11 @@
 //  File   : MeasureGUI_CheckCompoundOfBlocksDlg.h
 //  Author : VKN
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_CHECKCOMPOUNDOFBLOCKSDLG_H
 #define DIALOGBOX_CHECKCOMPOUNDOFBLOCKSDLG_H
 
-#include "MeasureGUI_Skeleton.h"
+#include "GEOMBase_Skeleton.h"
 
 class MeasureGUI_1Sel1TextView_QTD;
 class QListBox;
@@ -45,40 +44,47 @@ class QLabel;
 // class    : MeasureGUI_CheckCompoundOfBlocksDlg
 // purpose  :
 //=================================================================================
-class MEASUREGUI_EXPORT MeasureGUI_CheckCompoundOfBlocksDlg : public MeasureGUI_Skeleton
+class MEASUREGUI_EXPORT MeasureGUI_CheckCompoundOfBlocksDlg : public GEOMBase_Skeleton
 {
     Q_OBJECT
 
 public:
-                                        MeasureGUI_CheckCompoundOfBlocksDlg( GeometryGUI* GUI,
-									     QWidget*     theParent );
-                                        ~MeasureGUI_CheckCompoundOfBlocksDlg();
-protected:
+    MeasureGUI_CheckCompoundOfBlocksDlg(GeometryGUI* GUI, QWidget* theParent);
+    ~MeasureGUI_CheckCompoundOfBlocksDlg();
 
-    // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
+protected:
+    // redefined from GEOMBase_Helper and GEOMBase_Skeleton
     virtual GEOM::GEOM_IOperations_ptr  createOperation();
+    virtual bool                        isValid( QString& msg );
+    virtual bool                        execute( ObjectList& objects );
     virtual void                        processObject();
 
 private slots:
+    void ClickOnOk();
+    bool ClickOnApply();
+    void ActivateThisDialog();
+    void LineEditReturnPressed();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
 
     void onErrorsListSelectionChanged();
     void onSubShapesListSelectionChanged();
 
 private:
-
-    void                                Init();
-    bool                                getBCErrors( bool& theIsCompoundOfBlocks,
-						     GEOM::GEOM_IBlocksOperations::BCErrors& theErrors);
-    void                                activateSelection();
+    void                          Init();
+    void                          enterEvent( QEvent* e );
+    bool                          getBCErrors( bool& theIsCompoundOfBlocks,
+					       GEOM::GEOM_IBlocksOperations::BCErrors& theErrors);
+    void                          activateSelection();
 
 private:
+    GEOM::GEOM_Object_var         myObj;
+    MeasureGUI_1Sel1TextView_QTD* myGrp;
 
-    MeasureGUI_1Sel1TextView_QTD*        myGrp;
-    QLabel*                              myErrorsLbl;
-    QListBox*                            myErrorsLBox;
-    QLabel*                              mySubShapesLbl;
-    QListBox*                            mySubShapesLBox;
-
+    QLabel*                       myErrorsLbl;
+    QListBox*                     myErrorsLBox;
+    QLabel*                       mySubShapesLbl;
+    QListBox*                     mySubShapesLBox;
 };
 
 #endif // DIALOGBOX_CHECKCOMPOUNDOFBLOCKSDLG_H

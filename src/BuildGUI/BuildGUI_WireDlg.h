@@ -24,7 +24,6 @@
 //  File   : BuildGUI_WireDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_WIRE_H
 #define DIALOGBOX_WIRE_H
@@ -41,7 +40,8 @@ class BuildGUI_WireDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_WireDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_WireDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_WireDlg();
 
 protected:
@@ -65,7 +65,6 @@ private slots:
     void ActivateThisDialog();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-
 };
 
 #endif // DIALOGBOX_WIRE_H

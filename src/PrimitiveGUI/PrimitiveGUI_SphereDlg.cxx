@@ -48,8 +48,10 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg(GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                               const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SPHERE_P")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SPHERE_DXYZ")));
@@ -76,6 +78,8 @@ PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg(GeometryGUI* theGeometryGUI, QWid
   Layout1->addWidget(GroupPoints, 2, 0);
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("sphere.htm");
 
   Init();
 }
@@ -124,9 +128,9 @@ void PrimitiveGUI_SphereDlg::Init()
   connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
-  
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
+
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 

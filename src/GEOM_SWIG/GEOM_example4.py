@@ -34,7 +34,7 @@ import geompy
 
 geom = salome.lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 myBuilder = salome.myStudy.NewBuilder()
-from geompy import gg
+#from geompy import gg
 
 #smeshgui = salome.ImportComponentGUI("SMESH")
 #smeshgui.Init(salome.myStudyId);

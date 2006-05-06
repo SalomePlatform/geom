@@ -51,12 +51,15 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_PositionDlg::TransformationGUI_PositionDlg(QWidget* parent,  const char* name, bool modal, WFlags fl)
-    :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
+  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                      WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POSITION")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POSITION2")));
-  QPixmap imageselect(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
+  QPixmap image0(aResMgr->loadPixmap("GEOM",tr("ICON_DLG_POSITION")));
+  QPixmap image1(aResMgr->loadPixmap("GEOM",tr("ICON_DLG_POSITION2")));
+  QPixmap imageselect(aResMgr->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_POSITION_TITLE"));
 
@@ -85,6 +88,8 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg(QWidget* parent,  c
   Layout1->addWidget(Group1, 2, 0);
   
   /***************************************************************/
+
+  setHelpFileName("modify_the_location.htm");  
   
   Init();
 }
@@ -133,7 +138,7 @@ void TransformationGUI_PositionDlg::Init()
   
   connect(Group1->CheckBox1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_POSITION" ) );
@@ -148,7 +153,7 @@ void TransformationGUI_PositionDlg::Init()
 //=================================================================================
 void TransformationGUI_PositionDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   
   globalSelection();
   myEditCurrentArgument = Group1->LineEdit1;
@@ -174,11 +179,10 @@ void TransformationGUI_PositionDlg::ConstructorsClicked(int constructorId)
 	break;
       }
     }
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   SelectionIntoArgument();
 }
-
 
 
 //=================================================================================
@@ -204,16 +208,6 @@ bool TransformationGUI_PositionDlg::ClickOnApply()
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
-}
-
-
-//=======================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=======================================================================
-void TransformationGUI_PositionDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -328,19 +322,9 @@ void TransformationGUI_PositionDlg::SetEditCurrentArgument()
 void TransformationGUI_PositionDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   ConstructorsClicked( getConstructorId() );
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-void TransformationGUI_PositionDlg::DeactivateActiveDialog()
-{
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 

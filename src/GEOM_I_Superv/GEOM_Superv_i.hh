@@ -66,21 +66,21 @@ public:
   //-----------------------------------------------------------//
   GEOM::GEOM_List_ptr CreateListOfGO();
   void AddItemToListOfGO(GEOM::GEOM_List_ptr& theList, 
-			 GEOM::GEOM_Object_ptr    theObject);
+			 GEOM::GEOM_Object_ptr theObject);
 
   //-----------------------------------------------------------//
   // Create ListOfLong and add items to it                     // 
   //-----------------------------------------------------------//
   GEOM::GEOM_List_ptr CreateListOfLong();
   void AddItemToListOfLong(GEOM::GEOM_List_ptr& theList, 
-			   long    theObject);
+			   CORBA::Long theObject);
   
   //-----------------------------------------------------------//
   // Create ListOfDouble and add items to it                   // 
   //-----------------------------------------------------------//
   GEOM::GEOM_List_ptr CreateListOfDouble();
   void AddItemToListOfDouble(GEOM::GEOM_List_ptr& theList, 
-			     double    theObject);
+			     CORBA::Double theObject);
 
   //-----------------------------------------------------------------------//
   // Inherited methods from SALOMEDS::Driver                               //
@@ -88,21 +88,21 @@ public:
 
   SALOMEDS::TMPFile* Save(SALOMEDS::SComponent_ptr theComponent,
 			  const char* theURL,
-			  bool isMultiFile);
+			  CORBA::Boolean isMultiFile);
 
   SALOMEDS::TMPFile* SaveASCII(SALOMEDS::SComponent_ptr theComponent,
 			       const char* theURL,
-			       bool isMultiFile);
+			       CORBA::Boolean isMultiFile);
   
   CORBA::Boolean Load(SALOMEDS::SComponent_ptr theComponent,
 		      const SALOMEDS::TMPFile& theStream,
 		      const char* theURL,
-		      bool isMultiFile);
+		      CORBA::Boolean isMultiFile);
 
   CORBA::Boolean LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 			   const SALOMEDS::TMPFile& theStream,
 			   const char* theURL,
-			   bool isMultiFile);
+			   CORBA::Boolean isMultiFile);
 
   void Close(SALOMEDS::SComponent_ptr theComponent);
   char* ComponentDataType();
@@ -117,7 +117,7 @@ public:
 			       CORBA::Boolean isMultiFile,
 			       CORBA::Boolean isASCII);
 
-  bool CanPublishInStudy(CORBA::Object_ptr theIOR);
+  CORBA::Boolean CanPublishInStudy(CORBA::Object_ptr theIOR);
   SALOMEDS::SObject_ptr PublishInStudy(SALOMEDS::Study_ptr theStudy,
 				       SALOMEDS::SObject_ptr theSObject,
 				       CORBA::Object_ptr theObject,
@@ -485,6 +485,7 @@ private:
   SALOME_NamingService *  name_service; 
   GEOM::GEOM_Gen_ptr      myGeomEngine;
   CORBA::Long             myStudyID;
+  CORBA::Long             myLastStudyID; // mkr : PAL10770
   PortableServer::POA_var myPOA;
   
   GEOM::GEOM_IBasicOperations_ptr     myBasicOp;

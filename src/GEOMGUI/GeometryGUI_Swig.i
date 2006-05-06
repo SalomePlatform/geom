@@ -37,6 +37,7 @@ class GEOM_Swig
   ~GEOM_Swig();
 
   void createAndDisplayGO(const char* Entry);
+  void createAndDisplayFitAllGO(const char* Entry);
   int  getIndexTopology(const char *SubEntry, const char *Entry);
   const char* getShapeTypeString(const char *Entry);
 

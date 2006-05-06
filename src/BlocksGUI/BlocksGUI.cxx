@@ -30,7 +30,6 @@
 #include "BlocksGUI_QuadFaceDlg.h"
 #include "BlocksGUI_BlockDlg.h"
 #include "BlocksGUI_TrsfDlg.h"
-//#include "BlocksGUI_CheckMultiBlockDlg.h"
 #include "BlocksGUI_ExplodeDlg.h"
 #include "BlocksGUI_PropagateDlg.h"
 
@@ -39,6 +38,8 @@
 #include "SUIT_Desktop.h"
 #include "SUIT_MessageBox.h"
 #include "SUIT_Session.h"
+
+#include "SalomeApp_Application.h"
 
 BlocksGUI* BlocksGUI::myGUIObject = 0;
 
@@ -83,35 +84,13 @@ bool BlocksGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 
   switch (theCommandID)
   {
-    case 9999:
-      aDlg = new BlocksGUI_BlockDlg (parent);
-      break;
-
-    case 9998:
-      aDlg = new BlocksGUI_TrsfDlg (parent);
-      break;
-
-    case 9997:
-      aDlg = new BlocksGUI_QuadFaceDlg (parent);
-      break;
-
-    case 9996:
-//      aDlg = new BlocksGUI_CheckMultiBlockDlg (parent, Sel);
-      SUIT_MessageBox::warn1 (parent,
-			      QObject::tr("WRN_WARNING"), 
-			      QObject::tr("WRN_NOT_IMPLEMENTED"),
-			      QObject::tr("BUT_OK"));
-      break;
-      
-    case 9995:
-      aDlg = new BlocksGUI_ExplodeDlg (parent);
-      break;
-    case 99991:
-      aDlg = new BlocksGUI_PropagateDlg (parent, "");
-      break;
-
+    case 9999:  aDlg = new BlocksGUI_BlockDlg     (getGeometryGUI(), parent); break;
+    case 9998:  aDlg = new BlocksGUI_TrsfDlg      (getGeometryGUI(), parent); break;
+    case 9997:  aDlg = new BlocksGUI_QuadFaceDlg  (getGeometryGUI(), parent); break;
+    case 9995:  aDlg = new BlocksGUI_ExplodeDlg   (getGeometryGUI(), parent); break;
+    case 99991: aDlg = new BlocksGUI_PropagateDlg (getGeometryGUI(), parent); break;
     default:
-      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      getGeometryGUI()->getApp()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;
   }
 

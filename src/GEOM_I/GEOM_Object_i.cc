@@ -253,9 +253,9 @@ SALOMEDS::TMPFile* GEOM_Object_i::GetShapeStream()
 //function : getShape
 //purpose  : return the TopoDS_Shape when client and servant are colocated, be careful
 //=======================================================================
-long GEOM_Object_i::getShape() {
+CORBA::Long GEOM_Object_i::getShape() {
   _geom = _impl->GetValue();
-  return((long)(&_geom));
+  return CORBA::Long(size_t(&_geom));
 }
 
 //=============================================================================

@@ -89,7 +89,7 @@ bool BooleanGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   else
     return false;
 
-  QDialog* aDlg = new BooleanGUI_Dialog( anOperation, parent, "");
+  QDialog* aDlg = new BooleanGUI_Dialog( anOperation, getGeometryGUI(), parent, "");
   aDlg->show();
    
   return true;

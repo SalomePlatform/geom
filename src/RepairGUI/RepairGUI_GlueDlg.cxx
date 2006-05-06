@@ -58,11 +58,13 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_GlueDlg::RepairGUI_GlueDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_GlueDlg::RepairGUI_GlueDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                     const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_GLUE_FACES")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_GLUE_FACES")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_GLUE_TITLE"));
 
@@ -82,7 +84,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(QWidget* parent, const char* name, bool mod
 
   QGridLayout* aLay = new QGridLayout( 0, 2, 2, 0, 6, "aLay" );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->GroupBox1 );
-  myTolEdt = new QtxDblSpinBox( 0, 100, 1e-7, GroupPoints->GroupBox1 );//QAD_SpinBoxDbl( GroupPoints->GroupBox1, 0, 100, 1e-7, 10, 1e-10 );
+  myTolEdt = new QtxDblSpinBox( 0, 100, 1e-7, GroupPoints->GroupBox1 );
   myTolEdt->setPrecision( 10 );
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
 
@@ -91,6 +93,8 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(QWidget* parent, const char* name, bool mod
 
   GroupPoints->getGroupBoxLayout()->addLayout( aLay, 3, 0 );
   /***************************************************************/
+
+  setHelpFileName("glue_faces.htm");
 
   Init();
 }
@@ -120,10 +124,6 @@ void RepairGUI_GlueDlg::Init()
   globalSelection( GEOM_COMPOUND );
 
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
@@ -148,7 +148,6 @@ void RepairGUI_GlueDlg::ClickOnOk()
 }
 
 
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
@@ -166,16 +165,6 @@ bool RepairGUI_GlueDlg::ClickOnApply()
   globalSelection( GEOM_COMPOUND );
 
   return true;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void RepairGUI_GlueDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -223,17 +212,6 @@ void RepairGUI_GlueDlg::LineEditReturnPressed()
     myEditCurrentArgument = GroupPoints->LineEdit1;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void RepairGUI_GlueDlg::DeactivateActiveDialog()
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 

@@ -36,8 +36,8 @@ import GEOM
 
 g = lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 geom = g._narrow( GEOM.GEOM_Gen )
-gg = ImportComponentGUI("GEOM")
-gg.initGeomGen()
+#gg = ImportComponentGUI("GEOM")
+#gg.initGeomGen()
 
 #SRN: modified on Mar 18, 2005
 
@@ -106,10 +106,12 @@ def SubShapeName(aSubObj, aMainObj):
 
      *  Example: see GEOM_TestAll.py
     """
-    aSubId  = orb.object_to_string(aSubObj)
-    aMainId = orb.object_to_string(aMainObj)
-    index = gg.getIndexTopology(aSubId, aMainId)
-    name = gg.getShapeTypeString(aSubId) + "_%d"%(index)
+    #aSubId  = orb.object_to_string(aSubObj)
+    #aMainId = orb.object_to_string(aMainObj)
+    #index = gg.getIndexTopology(aSubId, aMainId)
+    #name = gg.getShapeTypeString(aSubId) + "_%d"%(index)
+    index = ShapesOp.GetTopologyIndex(aMainObj, aSubObj)
+    name = ShapesOp.GetShapeTypeString(aSubObj) + "_%d"%(index)
     return name
 
 def addToStudy(aShape, aName):

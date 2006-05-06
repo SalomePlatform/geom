@@ -5,14 +5,12 @@
 <topic name="Archimede" url="archimede.htm" />
 <topic name="Basic Geometrical Objects" url="basic_geometrical_objects.htm" />
 <topic name="Basic Operations" url="basic_operations.htm" />
-<topic name="Building of blocks" url="blocks.htm" />
 <topic name="Blocks Operations" url="blocks_operations.htm" />
 <topic name="Boolean Operations" url="boolean_operations.htm" />
 <topic name="Box" url="box.htm" />
 <topic name="Building by Blocks" url="building_by_blocks.htm" />
 <topic name="Chamfer" url="chamfer.htm" />
 <topic name="Changing Display Parameters" url="changing_display_parameters.htm" />
-<topic name="Changing displaying parameters" url="changing_displaying_parameters.htm" />
 <topic name="Check Free Boundaries" url="check_free_boundaries.htm" />
 <topic name="Check Free Faces" url="check_free_faces.htm" />
 <topic name="Circle" url="circle.htm" />
@@ -32,17 +30,9 @@
 <topic name="Extrusion" url="extrusion.htm" />
 <topic name="Face" url="face.htm" />
 <topic name="Introduction to GEOM" url="files/introduction_to_geom.htm" />
-<topic name="Titre" url="files/salome2_sp3_basicgui_functions.htm" />
 <topic name="Titre" url="files/salome2_sp3_booleangui_functions.htm" />
-<topic name="Titre" url="files/salome2_sp3_buildgui_functions.htm" />
-<topic name="Titre" url="files/salome2_sp3_displaygui_functions.htm" />
-<topic name="Titre" url="files/salome2_sp3_generationgui_functions.htm" />
 <topic name="Titre" url="files/salome2_sp3_geomtoolsgui_functions.htm" />
 <topic name="Titre" url="files/salome2_sp3_measuregui_functions.htm" />
-<topic name="Titre" url="files/salome2_sp3_operationgui_functions.htm" />
-<topic name="Titre" url="files/salome2_sp3_primitivegui_functions.htm" />
-<topic name="Titre" url="files/salome2_sp3_repairgui_functions.htm" />
-<topic name="Titre" url="files/salome2_sp3_transformationgui_functions.htm" />
 <topic name="Fillet" url="fillet.htm" />
 <topic name="Filling" url="filling.htm" />
 <topic name="Fuse" url="fuse.htm" />
@@ -59,6 +49,7 @@
 <topic name="Multi Transformation" url="multi_transformation.htm" />
 <topic name="Multi Translation" url="multi_translation.htm" />
 <topic name="Blocks" url="newentity_blocks.htm" />
+<topic name="OCC_Viewer" url="occ_viewer.htm" />
 <topic name="Offset Surface" url="offset_surface.htm" />
 <topic name="Partition" url="partition.htm" />
 <topic name="Pipe Creation" url="pipe_creation.htm" />
@@ -86,6 +77,7 @@
 <topic name="Transparency" url="transparency.htm" />
 <topic name="Turus" url="turus.htm" />
 <topic name="Vector" url="vector.htm" />
+<topic name="Viewing Geometrical Objects" url="viewing_geometrical_objects.htm" />
 <topic name="Wire" url="wire.htm" />
 <topic name="Wireframe and Shading" url="wireframe_and_shading.htm" />
 <topic name="Working Plane" url="working_plane.htm" />

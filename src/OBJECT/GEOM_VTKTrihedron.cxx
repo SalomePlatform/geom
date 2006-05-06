@@ -78,15 +78,15 @@ public:
                                 vtkTypeMacro( GEOM_VTKTrihedronAxis, VTKViewer_Axis );
   static GEOM_VTKTrihedronAxis* New();
 
-  void                          SetAxis( const gp_Ax1& theAxis, const int theRot, float theColor[ 3 ] );
+  void                          SetAxis( const gp_Ax1& theAxis, const int theRot, vtkFloatingPointType theColor[ 3 ] );
   virtual void                  Render( vtkRenderer* theRenderer );
-  virtual void                  SetSize( float theSize );
+  virtual void                  SetSize( vtkFloatingPointType theSize );
   gp_Pnt                        GetOri() const;
-  void                          SetColor( const float theColor[ 3 ] );
+  void                          SetColor( const vtkFloatingPointType theColor[ 3 ] );
 
 private:
 
-  float                         myOri[ 3 ];
+  vtkFloatingPointType          myOri[ 3 ];
   vtkMatrix4x4*                 myMatrix;
   vtkTransform*                 myTrsf;
 };
@@ -109,11 +109,11 @@ GEOM_VTKTrihedronAxis::~GEOM_VTKTrihedronAxis()
   myTrsf->Delete();
 }
 
-void GEOM_VTKTrihedronAxis::SetSize( float theSize )
+void GEOM_VTKTrihedronAxis::SetSize( vtkFloatingPointType theSize )
 {
-  float aPosition[ 3 ] = { myOri[ 0 ] + myDir[ 0 ] * theSize,
-                           myOri[ 1 ] + myDir[ 1 ] * theSize,
-                           myOri[ 2 ] + myDir[ 2 ] * theSize };
+  vtkFloatingPointType aPosition[ 3 ] = { myOri[ 0 ] + myDir[ 0 ] * theSize,
+					  myOri[ 1 ] + myDir[ 1 ] * theSize,
+					  myOri[ 2 ] + myDir[ 2 ] * theSize };
                            
   myLineSource->SetPoint1( myOri[ 0 ], myOri[ 1 ], myOri[ 2 ] );
   myLineSource->SetPoint2( aPosition );
@@ -158,7 +158,7 @@ gp_Pnt GEOM_VTKTrihedronAxis::GetOri() const
 
 void GEOM_VTKTrihedronAxis::SetAxis( const gp_Ax1& theAxis,
                                      const int     theRot,
-                                     float         theColor[ 3 ] )
+                                     vtkFloatingPointType theColor[ 3 ] )
 {
   gp_Pnt aLoc = theAxis.Location();
   gp_Dir aDir = theAxis.Direction();
@@ -171,7 +171,7 @@ void GEOM_VTKTrihedronAxis::SetAxis( const gp_Ax1& theAxis,
   myDir[ 1 ] = aDir.Y();
   myDir[ 2 ] = aDir.Z();
 
-  float aColor[ 3 ] = { 0, 0, 0 };
+  vtkFloatingPointType aColor[ 3 ] = { 0, 0, 0 };
   aColor[ theRot ] = 1;
   vtkProperty* aProperty = vtkProperty::New();
   if ( theColor[ 0 ] == -1 )
@@ -186,7 +186,7 @@ void GEOM_VTKTrihedronAxis::SetAxis( const gp_Ax1& theAxis,
   else if ( theRot == 2 ) myVectorText->SetText( "Z" );
 }
 
-void GEOM_VTKTrihedronAxis::SetColor( const float theColor[ 3 ] )
+void GEOM_VTKTrihedronAxis::SetColor( const vtkFloatingPointType theColor[ 3 ] )
 {
   vtkProperty* aProperty = vtkProperty::New();
   aProperty->SetColor( theColor[ 0 ], theColor[ 1 ], theColor[ 2 ] );
@@ -222,7 +222,7 @@ GEOM_VTKTrihedron::~GEOM_VTKTrihedron()
     myMapper->Delete();
 }
 
-void GEOM_VTKTrihedron::SetSize( float theSize )
+void GEOM_VTKTrihedron::SetSize( vtkFloatingPointType theSize )
 {
   mySize = theSize;
   for ( int i = 0; i < 3; i++ )
@@ -351,7 +351,7 @@ void GEOM_VTKTrihedron::Render(vtkRenderer* r, vtkMapper *)
   ( (GEOM_VTKTrihedronAxis*)myAxis[ 2 ] )->Render( r );
 }
 
-void GEOM_VTKTrihedron::SetColor( float r, float g, float b )
+void GEOM_VTKTrihedron::SetColor( vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b )
 {
   myColor[ 0 ] = r;
   myColor[ 1 ] = g;
@@ -362,7 +362,7 @@ void GEOM_VTKTrihedron::SetColor( float r, float g, float b )
   if ( myAxis[ 2 ] ) ( (GEOM_VTKTrihedronAxis*)myAxis[ 2 ] )->SetColor( myColor );
 }
 
-void GEOM_VTKTrihedron::GetColor( float& r, float& g, float& b )
+void GEOM_VTKTrihedron::GetColor( vtkFloatingPointType& r, vtkFloatingPointType& g, vtkFloatingPointType& b )
 {
   r = myColor[ 0 ];
   g = myColor[ 1 ];

@@ -16,12 +16,12 @@ if (navigator.appName !="Netscape")
 <!--
 img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
-img_whs3 { border:none; width:312px; height:319px; float:none; border-style:none; }
-img_whs4 { border:none; width:225px; height:239px; float:none; border-style:none; }
-img_whs5 { border:none; width:312px; height:381px; float:none; border-style:none; }
-img_whs6 { border:none; width:230px; height:245px; float:none; border-style:none; }
-img_whs7 { border:none; width:221px; height:238px; float:none; border-style:none; }
-p.whs8 { font-size:12pt; margin-left:40px; }
+p.whs3 { font-size:12pt; margin-left:40px; }
+img_whs4 { border:none; width:312px; height:319px; float:none; border-style:none; }
+img_whs5 { border:none; width:225px; height:239px; float:none; border-style:none; }
+img_whs6 { border:none; width:312px; height:381px; float:none; border-style:none; }
+img_whs7 { border:none; width:230px; height:245px; float:none; border-style:none; }
+img_whs8 { border:none; width:221px; height:238px; float:none; border-style:none; }
 p.whs9 { list-style:disc; margin-left:0in; margin-right:0in; margin-top:0px; margin-bottom:0px; }
 -->
 </style><script type="text/javascript" language="JavaScript">
@@ -65,7 +65,7 @@ if (window.gbWhTopic)
 {
 	if (window.addTocInfo)
 	{
-	addTocInfo("GEOM module\nTransforming geometrical objects\nTransformation Operations\nChamfer");
+	addTocInfo("Geometry module\nTransforming geometrical objects\nTransformation Operations\nChamfer");
 addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	}
@@ -122,15 +122,17 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"><img src="pics/chamfer1.png" x-maintain-ratio="TRUE" width="312px" height="319px" border="0" class="img_whs3"> &nbsp;<img src="pics/chamfer_all.png" x-maintain-ratio="TRUE" width="225px" height="239px" border="0" class="img_whs4"></p>
+<p class="whs3"><img src="pics/chamfer1.png" x-maintain-ratio="TRUE" width="312px" height="319px" border="0" class="img_whs4"> &nbsp;<img src="pics/chamfer_all.png" x-maintain-ratio="TRUE" width="225px" height="239px" border="0" class="img_whs5"></p>
 
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2">To create chamfer on the specified edges of 
  the given shape, &nbsp;you 
  need to define the <span style="font-weight: bold;"><B>Main Object</B></span> 
- to create a fillet on, select the necessary edges in the viewer and define 
- the <span style="font-weight: bold;"><B>Dimension</B></span> of the Chamfer.</p>
+ to create a fillet on, select the two faces to which belongs the <span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;">necessary common edge in the viewer and define 
+ the </font></span><span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>Dimension</B></font></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> of the Chamfer.</font></span></p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
  </i><span style="font-style: italic;"><I>geompy.MakeChamferEdge(Shape, D1, 
@@ -140,16 +142,15 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"><img src="pics/chamfer2.png" x-maintain-ratio="TRUE" width="312px" height="381px" border="0" class="img_whs5"> &nbsp;<img src="pics/chamfer_edge.png" x-maintain-ratio="TRUE" width="230px" height="245px" border="0" class="img_whs6"></p>
+<p class="whs3"><img src="pics/chamfer2.png" x-maintain-ratio="TRUE" width="312px" height="381px" border="0" class="img_whs6"> &nbsp;<img src="pics/chamfer_edge.png" x-maintain-ratio="TRUE" width="230px" height="245px" border="0" class="img_whs7"></p>
 
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2">To create chamfer on the specified faces of 
  the given shape, &nbsp;you 
  need to define the <span style="font-weight: bold;"><B>Main Object</B></span> 
- to create a fillet on, select the two faces to which belongs the necessary 
- common edge in the OCC Viewer and define the <span style="font-weight: bold;"><B>Dimension</B></span> 
- of the Chamfer.</p>
+ to create a fillet on, select the necessary faces the OCC Viewer and define 
+ the <span style="font-weight: bold;"><B>Dimension</B></span> of the Chamfer.</p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
  </i><span style="font-style: italic;"><I>geompy.MakeChamferFaces(Shape, D1, 
@@ -161,9 +162,9 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"><img src="pics/chamfer3.png" x-maintain-ratio="TRUE" width="312px" height="381px" border="0" class="img_whs5"> &nbsp;<img src="pics/chamfer_faces.png" x-maintain-ratio="TRUE" width="221px" height="238px" border="0" class="img_whs7"></p>
+<p class="whs3"><img src="pics/chamfer3.png" x-maintain-ratio="TRUE" width="312px" height="381px" border="0" class="img_whs6"> &nbsp;<img src="pics/chamfer_faces.png" x-maintain-ratio="TRUE" width="221px" height="238px" border="0" class="img_whs8"></p>
 
-<p class="whs8">&nbsp;</p>
+<p class="whs3">&nbsp;</p>
 
 <p class="whs9">&nbsp;&nbsp;<span 
  style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Our </font></span><span 

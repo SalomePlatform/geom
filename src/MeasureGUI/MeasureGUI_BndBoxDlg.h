@@ -24,7 +24,6 @@
 //  File   : MeasureGUI_BndBoxDlg.h
 //  Author : Nicolas REJNERI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_BNDBOX_H
 #define DIALOGBOX_BNDBOX_H
@@ -48,39 +47,23 @@ class MEASUREGUI_EXPORT MeasureGUI_BndBoxDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-                                        MeasureGUI_BndBoxDlg( GeometryGUI* GUI,
-							      QWidget*     parent );
-                                        ~MeasureGUI_BndBoxDlg();
-protected:
+    MeasureGUI_BndBoxDlg(GeometryGUI* GUI,
+			 QWidget*     parent);
+    ~MeasureGUI_BndBoxDlg();
 
+protected:
     // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
     virtual void                        processObject();
     virtual SALOME_Prs*                 buildPrs();
 
 private:
-
     void                                Init();
     bool                                getParameters( double& Xmin, double& Xmax,
                                                        double& Ymin, double& Ymax,
                                                        double& Zmin, double& Zmax );
 
 private:
-
     MeasureGUI_1Sel6LineEdit_QTD*       myGrp;
 };
 
 #endif // DIALOGBOX_BNDBOX_H
-
-
-
-
-
-
-
-
-
-
-
-
-
-

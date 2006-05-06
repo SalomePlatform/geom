@@ -33,7 +33,9 @@
 #include "GEOMImpl_Types.hxx"
 
 #include "SalomeApp_Application.h"
+#include "LightApp_Application.h"
 #include "LightApp_SelectionMgr.h"
+#include "SUIT_MessageBox.h"
 #include "SUIT_Session.h"
 
 #include <TColStd_MapOfInteger.hxx>
@@ -47,21 +49,20 @@
 #define SPACING 5
 #define MARGIN 10
 
-/*
-  Calss       : RepairGUI_FreeBoundDlg
+/*!
+  Class       : RepairGUI_FreeBoundDlg
   Description : Dialog for displaying free boundaries of selected face, shell or solid
 */
-
 
 //=================================================================================
 // function : RepairGUI_FreeBoundDlg
 // purpose  : Constructor
 //=================================================================================
-RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg( GeometryGUI* theGUI, QWidget* theParent )
+RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg(GeometryGUI* theGUI, QWidget* theParent, const char*)
 : QDialog( theParent, "RepairGUI_FreeBoundDlg", false,
 	   WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ),
   GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( theParent ) ),
-  myGeomGUI ( theGUI )
+  myGeomGUI( theGUI )
 {
   setCaption( tr( "CAPTION" ) );
 
@@ -84,10 +85,11 @@ RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg( GeometryGUI* theGUI, QWidget* th
   QFrame* aFrame = new QFrame( this );
   aFrame->setFrameStyle( QFrame::Box | QFrame::Sunken );
   QPushButton* aCloseBtn = new QPushButton( tr( "GEOM_BUT_CLOSE" ), aFrame );
+  QPushButton* aHelpBtn = new QPushButton( tr( "GEOM_BUT_HELP" ), aFrame );
   QHBoxLayout* aBtnLay = new QHBoxLayout( aFrame, MARGIN, SPACING );
-  aBtnLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
   aBtnLay->addWidget( aCloseBtn );
   aBtnLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
+  aBtnLay->addWidget( aHelpBtn );
 
   QVBoxLayout* aLay = new QVBoxLayout( this );
   aLay->setSpacing( SPACING );
@@ -95,7 +97,10 @@ RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg( GeometryGUI* theGUI, QWidget* th
   aLay->addWidget( aMainGrp );
   aLay->addWidget( aFrame );
   
+  myHelpFileName = "check_free_boundaries.htm";
+
   connect( aCloseBtn, SIGNAL( clicked() ), SLOT( onClose() ) );
+  connect( aHelpBtn, SIGNAL( clicked() ), SLOT( onHelp() ) );
 
   Init();
 }
@@ -122,6 +127,23 @@ void RepairGUI_FreeBoundDlg::onClose()
 }
 
 //=================================================================================
+// function : onHelp()
+// purpose  :
+//=================================================================================
+void RepairGUI_FreeBoundDlg::onHelp()
+{
+  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app)
+    app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
+  else {
+    SUIT_MessageBox::warn1
+      (0, tr("WRN_WARNING"), tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+       arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
+       tr("BUT_OK"));
+  }
+}
+
+//=================================================================================
 // function : onDeactivate
 // purpose  : Deactivate this dialog
 //=================================================================================
@@ -129,7 +151,7 @@ void RepairGUI_FreeBoundDlg::onDeactivate()
 {
   setEnabled(false);
   globalSelection();
-  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   myGeomGUI->SetActiveDialogBox( 0 );
 }
 
@@ -168,7 +190,6 @@ void RepairGUI_FreeBoundDlg::onSelectionDone()
     myObj = anObj;
     displayPreview( false, true, true, 3 );
   }
-
 }
 
 //=================================================================================
@@ -277,6 +298,3 @@ bool RepairGUI_FreeBoundDlg::execute( ObjectList& objects )
 
   return result;
 }
-
-
-

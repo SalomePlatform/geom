@@ -248,7 +248,7 @@ char* GEOM_IMeasureOperations_i::WhatIs (GEOM::GEOM_Object_ptr theShape)
 
   // Get shape parameters
   TCollection_AsciiString aDescription = GetOperations()->WhatIs(aShape);
-  return strdup(aDescription.ToCString());
+  return CORBA::string_dup(aDescription.ToCString());
 }
 
 //=============================================================================

@@ -52,12 +52,14 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_ShapeProcessDlg::RepairGUI_ShapeProcessDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_ShapeProcessDlg::RepairGUI_ShapeProcessDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                                     const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
+  setHelpFileName("shape_processing.htm");
   init();
 }
-
 
 //=================================================================================
 // function : ~RepairGUI_ShapeProcessDlg()
@@ -66,7 +68,6 @@ RepairGUI_ShapeProcessDlg::RepairGUI_ShapeProcessDlg(QWidget* parent, const char
 RepairGUI_ShapeProcessDlg::~RepairGUI_ShapeProcessDlg()
 {
 }
-
 
 //=================================================================================
 // function : Init()
@@ -296,10 +297,6 @@ void RepairGUI_ShapeProcessDlg::init()
   myStack->addWidget( aFrame, myOpLst.findIndex( "SameParameter" ) );
 
   // signals and slots connections
-  connect( myGeomGUI,    SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(deactivate()) );
-  connect( myGeomGUI,    SIGNAL(SignalCloseAllDialogs()), this, SLOT(onCancel()) );
-
-  connect( buttonCancel, SIGNAL(clicked()), this, SLOT(onCancel()) );
   connect( buttonOk,     SIGNAL(clicked()), this, SLOT(onOk()) );
   connect( buttonApply,  SIGNAL(clicked()), this, SLOT(onApply()) );
 
@@ -341,11 +338,9 @@ void RepairGUI_ShapeProcessDlg::operationChanged()
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::onOk()
 {
-  if ( onApply() )
-  	onCancel();
+  if (onApply())
+    ClickOnCancel();
 }
-
-
 
 //=================================================================================
 // function : onApply()
@@ -362,16 +357,6 @@ bool RepairGUI_ShapeProcessDlg::onApply()
   initSelection();
   
   return true;
-}
-
-
-//=================================================================================
-// function : onCancel()
-// purpose  :
-//=================================================================================
-void RepairGUI_ShapeProcessDlg::onCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -420,17 +405,6 @@ void RepairGUI_ShapeProcessDlg::selectClicked()
 void RepairGUI_ShapeProcessDlg::lineEditReturnPressed()
 {
   GEOMBase_Skeleton::LineEditReturnPressed();
-}
-
-
-//=================================================================================
-// function : deactivate()
-// purpose  :
-//=================================================================================
-void RepairGUI_ShapeProcessDlg::deactivate()
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -842,6 +816,8 @@ void RepairGUI_ShapeProcessDlg::advOptionToggled( bool on )
 {
   QButton* btn = (QButton*)sender();
   if ( on && btn->isToggleButton() &&
-       QMessageBox::warning( SUIT_Session::session()->activeApplication()->desktop(), tr( "GEOM_WRN_WARNING" ), tr( "TIME_CONSUMING" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::No )
+       QMessageBox::warning(myGeomGUI->getApp()->desktop(),
+                            tr( "GEOM_WRN_WARNING" ), tr( "TIME_CONSUMING" ),
+                            QMessageBox::Yes, QMessageBox::No ) == QMessageBox::No )
     btn->toggle();
 }

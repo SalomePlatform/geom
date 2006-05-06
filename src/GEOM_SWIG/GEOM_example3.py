@@ -30,7 +30,7 @@ import salome
 import geompy
 import math
 from time import sleep
-
+import salome_ComponentGUI
 geom = salome.lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 myBuilder = salome.myStudy.NewBuilder()
 
@@ -47,14 +47,16 @@ dirz = BasicOp.MakeVectorTwoPnt(point0,pointz1)
 
 torus1 = PrimOp.MakeTorusPntVecRR(point0,dirz,150.,25.)
 id_torus1 = geompy.addToStudy(torus1,"torus1")
-gg.createAndDisplayGO(id_torus1)
+if not isinstance(gg, type(salome_ComponentGUI)):
+    gg.createAndDisplayGO(id_torus1)
 
 torus2 = InsertOp.MakeCopy(torus1)
 
 vec1 = BasicOp.MakeVectorDXDYDZ(0.,0.,100.)
 torus2 = TrsfOp.TranslateVectorCopy(torus2,vec1)
 id_torus2 = geompy.addToStudy(torus2,"torus2")
-gg.createAndDisplayGO(id_torus2)
+if not isinstance(gg, type(salome_ComponentGUI)):
+    gg.createAndDisplayGO(id_torus2)
 
 cylz1 = PrimOp.MakeCylinderPntVecRH(point0,dirz,25.,100.)
 
@@ -70,7 +72,8 @@ while ind < 6:
     name = "cyl%d"%(ind)
     acyl = TrsfOp.TranslateVectorCopy(acyl,vec_i)
     id_acyl = geompy.addToStudy(acyl,name)
-    gg.createAndDisplayGO(id_acyl)
+    if not isinstance(gg, type(salome_ComponentGUI)):
+        gg.createAndDisplayGO(id_acyl)
     shapeList.append(acyl)
     idList.append(id_acyl)
     ind = ind +1
@@ -82,7 +85,8 @@ idList.append(id_torus2)
 
 cage = geompy.MakeCompound(shapeList)
 id_cage = geompy.addToStudy(cage,"cage")
-gg.createAndDisplayGO(id_cage)
+if not isinstance(gg, type(salome_ComponentGUI)):
+    gg.createAndDisplayGO(id_cage)
 
 from salome import sg
 sleep(1)
@@ -102,15 +106,15 @@ for id in idList:
 sg.Display(id_torus1)
 sg.Display(id_torus2)
 sg.Display(id_acyl)
-
-gg.setTransparency(id_torus1,0.5)
-
-gg.setDisplayMode(id_torus1,1)
-gg.setDisplayMode(id_torus2,1)
-gg.setDisplayMode(id_acyl,1)
-#gg.setDisplayMode(id_cage,1)
-
-gg.setColor(id_torus1,0,0,255)
-gg.setColor(id_torus2,255,0,0)
-gg.setColor(id_acyl,0,255,0)
-#gg.setColor(id_cage,255,255,0)
+if not isinstance(gg, type(salome_ComponentGUI)):
+    gg.setTransparency(id_torus1,0.5)
+    
+    gg.setDisplayMode(id_torus1,1)
+    gg.setDisplayMode(id_torus2,1)
+    gg.setDisplayMode(id_acyl,1)
+    #gg.setDisplayMode(id_cage,1)
+    
+    gg.setColor(id_torus1,0,0,255)
+    gg.setColor(id_torus2,255,0,0)
+    gg.setColor(id_acyl,0,255,0)
+    #gg.setColor(id_cage,255,255,0)

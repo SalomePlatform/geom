@@ -23,7 +23,6 @@
 //  File   : BlocksGUI_TrsfDlg.h
 //  Author : Julia DOROVSKIKH
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_BLOCK_MULTITRSF_H
 #define DIALOGBOX_BLOCK_MULTITRSF_H
@@ -44,8 +43,7 @@ class BlocksGUI_TrsfDlg : public GEOMBase_Skeleton
   enum { SpinBox1, SpinBox2U, SpinBox2V };
 
 public:
-  BlocksGUI_TrsfDlg (QWidget* parent,
-		     bool modal = FALSE);
+  BlocksGUI_TrsfDlg (GeometryGUI*, QWidget* parent, bool modal = FALSE);
   ~BlocksGUI_TrsfDlg();
 
 protected:
@@ -79,7 +77,6 @@ private slots:
   void ClickOnOk();
   bool ClickOnApply();
   void ActivateThisDialog();
-//  void DeactivateActiveDialog();
   void ConstructorsClicked (int constructorId);
 
   void SelectionIntoArgument();

@@ -96,6 +96,8 @@ MeasureGUI_InertiaDlg::MeasureGUI_InertiaDlg( GeometryGUI* GUI, QWidget* parent 
   
   /***************************************************************/
 
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Inertia_axis";
+
   /* Initialisation */
   Init();
 }

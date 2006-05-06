@@ -275,10 +275,10 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
   if(myShape.ShapeType() == TopAbs_VERTEX) {
     if(ren){
       //The parameter determine size of vertex actor relate to diagonal of RendererWindow
-      static float delta = 0.01;
-      float X1 = -1, Y1 = -1, Z1 = 0;
+      static vtkFloatingPointType delta = 0.01;
+      vtkFloatingPointType X1 = -1, Y1 = -1, Z1 = 0;
       ren->ViewToWorld(X1,Y1,Z1);
-      float X2 = +1, Y2 = +1, Z2 = 0;
+      vtkFloatingPointType X2 = +1, Y2 = +1, Z2 = 0;
       ren->ViewToWorld(X2,Y2,Z2);
       Z2 = sqrt((X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) + (Z2-Z1)*(Z2-Z1));
       this->SetScale(Z2*delta);
@@ -308,26 +308,26 @@ void GEOM_Actor::SubShapeOff()
 // Opacity methods
 //-------------------------------------------------------------
 
-void GEOM_Actor::SetOpacity(float opa)
+void GEOM_Actor::SetOpacity(vtkFloatingPointType opa)
 {
   //HighlightProperty->SetOpacity(opa);
   SALOME_Actor::SetOpacity(opa);
   ShadingProperty->SetOpacity(opa);
 }
 
-float GEOM_Actor::GetOpacity() {
+vtkFloatingPointType GEOM_Actor::GetOpacity() {
   return ShadingProperty->GetOpacity();
 }
 
 //-------------------------------------------------------------
 // Color methods
 //-------------------------------------------------------------
-void GEOM_Actor::SetColor(float r,float g,float b) {
+void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b) {
   ShadingProperty->SetColor(r,g,b);  
 }
 
-void GEOM_Actor::GetColor(float& r,float& g,float& b) {
-  float color[3];
+void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b) {
+  vtkFloatingPointType color[3];
   ShadingProperty->GetColor(color);
   r = color[0];
   g = color[1];

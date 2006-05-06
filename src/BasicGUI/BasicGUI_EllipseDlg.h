@@ -23,7 +23,6 @@
 //  File   : BasicGUI_EllipseDlg.h
 //  Author : Nicolas REJNERI
 //  Module : GEOM
-//  $Header$
 
 #ifndef BASICGUI_ELLIPSE_H
 #define BASICGUI_ELLIPSE_H
@@ -33,14 +32,14 @@
 
 #include "BasicGUI.h"
 
-//#include "GEOM_ShapeTypeFilter.hxx"
-//#include "GEOM_EdgeFilter.hxx"
 #include <gp_Dir.hxx>
+
 #if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
 #define BASICGUI_WNT_EXPORT __declspec( dllexport )
 #else
 #define BASICGUI_WNT_EXPORT
 #endif
+
 //=================================================================================
 // class    : BasicGUI_EllipseDlg
 // purpose  :
@@ -50,7 +49,8 @@ class BasicGUI_EllipseDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_EllipseDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_EllipseDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_EllipseDlg();
 
 protected:
@@ -64,8 +64,6 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
-
-    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint, myDir;
 

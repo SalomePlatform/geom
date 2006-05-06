@@ -92,6 +92,8 @@ MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg( GeometryGUI* GUI, QWidget* paren
 
   /***************************************************************/
 
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Min_distance";
+
   /* Initialisation */
   Init();
 }

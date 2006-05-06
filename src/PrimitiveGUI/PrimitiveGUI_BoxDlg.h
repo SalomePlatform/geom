@@ -24,7 +24,6 @@
 //  File   : PrimitiveGUI_BoxDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_BOX_H
 #define DIALOGBOX_BOX_H
@@ -43,8 +42,9 @@ class PrimitiveGUI_BoxDlg : public GEOMBase_Skeleton
 {
     Q_OBJECT
     
-    public:
-    PrimitiveGUI_BoxDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+public:
+    PrimitiveGUI_BoxDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~PrimitiveGUI_BoxDlg();
     
 protected:
@@ -59,8 +59,6 @@ private :
     void Init();
     void enterEvent(QEvent* e);
 
-    GeometryGUI* myGeometryGUI;
-    
     GEOM::GEOM_Object_var myPoint1, myPoint2;   /* Points containing the vector */ 
     
     DlgRef_2Sel_QTD* GroupPoints;
@@ -69,15 +67,12 @@ private :
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
     void ConstructorsClicked(int);
     void ValueChangedInSpinBox();
-    
 };
 
 #endif // DIALOGBOX_BOX_H

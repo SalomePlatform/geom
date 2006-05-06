@@ -49,8 +49,10 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(QWidget* parent,  const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                                         const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_MIRROR_POINT")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_MIRROR_AXE")));
@@ -77,8 +79,9 @@ TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(QWidget* parent,  const
   GroupPoints->PushButton2->setPixmap(image3);
   GroupPoints->CheckButton1->setText(tr("GEOM_CREATE_COPY"));
   Layout1->addWidget(GroupPoints, 2, 0);
-  
   /***************************************************************/
+
+  setHelpFileName("mirror_image.htm");  
   
   Init();
 }
@@ -124,13 +127,12 @@ void TransformationGUI_MirrorDlg::Init()
   
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_MIRROR" ) );
   ConstructorsClicked( 0 );
 }
-
 
 
 //=================================================================================
@@ -139,7 +141,7 @@ void TransformationGUI_MirrorDlg::Init()
 //=================================================================================
 void TransformationGUI_MirrorDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
   
   globalSelection();
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -164,7 +166,7 @@ void TransformationGUI_MirrorDlg::ConstructorsClicked(int constructorId)
 	break;
       }
     }
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
@@ -193,16 +195,6 @@ bool TransformationGUI_MirrorDlg::ClickOnApply()
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
-}
-
-
-//=======================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=======================================================================
-void TransformationGUI_MirrorDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -310,19 +302,9 @@ void TransformationGUI_MirrorDlg::SetEditCurrentArgument()
 void TransformationGUI_MirrorDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   ConstructorsClicked( getConstructorId() );
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-void TransformationGUI_MirrorDlg::DeactivateActiveDialog()
-{
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 

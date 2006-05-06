@@ -85,12 +85,12 @@ bool BuildGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 
   switch ( theCommandID )
   {
-    case 4081: aDlg = new BuildGUI_EdgeDlg    ( parent, "" ); break;
-    case 4082: aDlg = new BuildGUI_WireDlg    ( parent, "" ); break;
-    case 4083: aDlg = new BuildGUI_FaceDlg    ( parent, "" ); break;
-    case 4084: aDlg = new BuildGUI_ShellDlg   ( parent, "" ); break;
-    case 4085: aDlg = new BuildGUI_SolidDlg   ( parent, "" ); break;
-    case 4086: aDlg = new BuildGUI_CompoundDlg( parent, "" ); break;
+    case 4081: aDlg = new BuildGUI_EdgeDlg    ( getGeometryGUI(), parent, "" ); break;
+    case 4082: aDlg = new BuildGUI_WireDlg    ( getGeometryGUI(), parent, "" ); break;
+    case 4083: aDlg = new BuildGUI_FaceDlg    ( getGeometryGUI(), parent, "" ); break;
+    case 4084: aDlg = new BuildGUI_ShellDlg   ( getGeometryGUI(), parent, "" ); break;
+    case 4085: aDlg = new BuildGUI_SolidDlg   ( getGeometryGUI(), parent, "" ); break;
+    case 4086: aDlg = new BuildGUI_CompoundDlg( getGeometryGUI(), parent, "" ); break;
     
     default: 
       SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 

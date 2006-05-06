@@ -24,7 +24,7 @@
 //  File   : BuildGUI_SolidDlg.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #include "BuildGUI_SolidDlg.h"
 #include "GEOMImpl_Types.hxx"
@@ -44,8 +44,10 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_SolidDlg::BuildGUI_SolidDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BuildGUI_SolidDlg::BuildGUI_SolidDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                     const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SOLID")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
@@ -67,6 +69,8 @@ BuildGUI_SolidDlg::BuildGUI_SolidDlg(QWidget* parent, const char* name, bool mod
   
   Layout1->addWidget(GroupSolid, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("solid.htm");
 
   /* Initialisations */
   Init();

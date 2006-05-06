@@ -171,6 +171,8 @@ CXXFLAGS+= $(CORBA_CXXFLAGS)
 LIBS+=$(CORBA_LIBS)
 
 DOXYGEN = @DOXYGEN@
+DOXYGEN_WITH_PYTHON = @DOXYGEN_WITH_PYTHON@
+DOXYGEN_WITH_STL = @DOXYGEN_WITH_STL@
 
 ## Shared libraries
 LT_STATIC_EXEC=@LT_STATIC_EXEC@
@@ -229,7 +231,13 @@ all:
 Makefile: $(top_builddir)/config.status $(srcdir)/Makefile.in
 	cd $(top_builddir) ; ./config.status
 
-$(top_builddir)/config.status: $(top_srcdir)/configure
+LOCAL_MAKE = make_commence make_omniorb
+
+KERNEL_MAKE = make_module make_conclude depend SALOMEconfig.h F77config.h sstream envScript
+
+$(top_builddir)/config.status: $(top_srcdir)/configure \
+			       $(LOCAL_MAKE:%=$(top_srcdir)/adm_local/unix/%.in) \
+			       $(KERNEL_MAKE:%=$(KERNEL_ROOT_DIR)/salome_adm/unix/%.in)
 	cd $(top_builddir) ; ./config.status --recheck
 
 # VPATH contain $(srcdir), so make configure is good in top_srcdir and we must add target configure otherwise :-)
@@ -244,7 +252,7 @@ $(top_srcdir)/configure.in: $(top_srcdir)/configure.in.base
 	cd $(top_srcdir) && ./build_configure
 
 
-ACLOCAL_SRC = \
+ACLOCAL_KERNEL = \
 ac_cxx_bool.m4                    check_corba.m4			\
 ac_cxx_depend_flag.m4             check_hdf5.m4      enable_pthreads.m4	\
 ac_cxx_mutable.m4                 check_mico.m4      libtool.m4		\
@@ -257,7 +265,7 @@ ACLOCAL_GUI = \
 check_vtk.m4	                  check_opengl.m4    check_qt.m4        \
 check_GUI.m4	                  check_corba_in_GUI.m4
 
-$(top_srcdir)/aclocal.m4: $(ACLOCAL_SRC:%=@KERNEL_ROOT_DIR@/salome_adm/unix/config_files/%) \
+$(top_srcdir)/aclocal.m4: $(ACLOCAL_KERNEL:%=@KERNEL_ROOT_DIR@/salome_adm/unix/config_files/%) \
                           $(ACLOCAL_GUI:%=@GUI_ROOT_DIR@/adm_local/unix/config_files/%)
-	cd $(top_srcdir) ; aclocal --acdir=adm_local/unix/config_files -I @KERNEL_ROOT_DIR@/salome_adm/unix/config_files \
+	cd $(top_srcdir) ; aclocal -I adm_local/unix/config_files -I @KERNEL_ROOT_DIR@/salome_adm/unix/config_files \
 	                                                               -I @GUI_ROOT_DIR@/adm_local/unix/config_files

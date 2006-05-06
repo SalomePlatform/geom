@@ -28,6 +28,10 @@
 
 
 #include "GEOMToolsGUI_NbIsosDlg.h"
+#include "GeometryGUI.h"
+#include <LightApp_Application.h>
+#include <SUIT_MessageBox.h>
+#include <SUIT_Session.h>
 #include <SUIT_Tools.h>
 
 #include <qlabel.h>
@@ -104,21 +108,27 @@ GEOMToolsGUI_NbIsosDlg::GEOMToolsGUI_NbIsosDlg(QWidget* parent )
   QPushButton* buttonCancel = new QPushButton( GroupButtons, "buttonCancel" );
   buttonCancel->setText( tr( "GEOM_BUT_CANCEL" ) ) ;
   buttonCancel->setAutoDefault( TRUE );
-  GroupButtonsLayout->addWidget( buttonCancel, 0, 2 );
+  GroupButtonsLayout->addWidget( buttonCancel, 0, 1 );
+
+  QPushButton* buttonHelp = new QPushButton( GroupButtons, "buttonHelp" );
+  buttonHelp->setText( tr( "GEOM_BUT_HELP" ) ) ;
+  buttonHelp->setAutoDefault( TRUE );
+  GroupButtonsLayout->addWidget( buttonHelp, 0, 2 );
   /***************************************************************/
   
   MyDialogLayout->addWidget(GroupC1, 0, 0);
   MyDialogLayout->addWidget(GroupButtons, 1, 0);
- 
+
+  myHelpFileName = "isos.htm";
   
   // signals and slots connections
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(accept()));
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(buttonHelp, SIGNAL(clicked()), this, SLOT(ClickOnHelp()));
   
   /* Move widget on the botton right corner of main widget */
   SUIT_Tools::centerWidget(this, parent);
 }
-
 
 //=================================================================================
 // function : ~GEOMToolsGUI_NbIsosDlg()
@@ -149,3 +159,21 @@ void GEOMToolsGUI_NbIsosDlg::setV( const int v )
   SpinBoxV->setValue( v );
 }
 
+//=================================================================================
+// function : ClickOnHelp()
+// purpose  :
+//=================================================================================
+void GEOMToolsGUI_NbIsosDlg::ClickOnHelp()
+{
+  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app) {
+    GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
+    app->onHelpContextModule(aGeomGUI ? app->moduleName(aGeomGUI->moduleName()) : QString(""), myHelpFileName);
+  }
+  else {
+    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
+			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+			   arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
+			   QObject::tr("BUT_OK"));
+  }
+}

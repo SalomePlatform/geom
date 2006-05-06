@@ -56,6 +56,7 @@
 #include <BRep_Tool.hxx>
 #include <BRepGProp.hxx>
 #include <BRepAdaptor_Curve.hxx>
+#include <BRepAdaptor_Surface.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -703,6 +704,163 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSubShape
 
   SetErrorCode(OK);
   return anObj;
+}
+
+//=============================================================================
+/*!
+ *  GetSubShapeIndex
+ */
+//=============================================================================
+Standard_Integer GEOMImpl_IShapesOperations::GetSubShapeIndex (Handle(GEOM_Object) theMainShape,
+                                                               Handle(GEOM_Object) theSubShape)
+{
+  SetErrorCode(KO);
+
+  TopoDS_Shape aMainShape = theMainShape->GetValue();
+  TopoDS_Shape aSubShape = theSubShape->GetValue();
+
+  if (aMainShape.IsNull() || aSubShape.IsNull()) return -1;
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aMainShape, anIndices);
+  if (anIndices.Contains(aSubShape)) {
+    SetErrorCode(OK);
+    return anIndices.FindIndex(aSubShape);
+  }
+
+  return -1;
+}
+
+//=============================================================================
+/*!
+ *  GetTopologyIndex
+ */
+//=============================================================================
+Standard_Integer GEOMImpl_IShapesOperations::GetTopologyIndex (Handle(GEOM_Object) theMainShape,
+                                                               Handle(GEOM_Object) theSubShape)
+{
+  SetErrorCode(OK);
+
+  TopoDS_Shape aMainShape = theMainShape->GetValue();
+  TopoDS_Shape aSubShape = theSubShape->GetValue();
+
+  if (aMainShape.IsNull() || aSubShape.IsNull()) {
+    SetErrorCode("Null argument shape given");
+    return -1;
+  }
+
+  int index = 1;
+  if (aSubShape.ShapeType() == TopAbs_COMPOUND) {
+    TopoDS_Iterator it;
+    TopTools_ListOfShape CL;
+    CL.Append(aMainShape);
+    TopTools_ListIteratorOfListOfShape itC;
+    for (itC.Initialize(CL); itC.More(); itC.Next()) {
+      for (it.Initialize(itC.Value()); it.More(); it.Next()) {
+	if (it.Value().ShapeType() == TopAbs_COMPOUND) {
+	  if (it.Value().IsSame(aSubShape))
+	    return index;
+	  else
+	    index++;
+	  CL.Append(it.Value());
+	}
+      }
+    }
+  } else {
+    TopExp_Explorer anExp (aMainShape, aSubShape.ShapeType());
+    TopTools_MapOfShape M;
+    for (; anExp.More(); anExp.Next()) {
+      if (M.Add(anExp.Current())) {
+	if (anExp.Current().IsSame(aSubShape))
+	  return index;
+	index++;
+      }
+    }
+  }
+
+  SetErrorCode("The sub-shape does not belong to the main shape");
+  return -1;
+}
+
+//=============================================================================
+/*!
+ *  GetShapeTypeString
+ */
+//=============================================================================
+TCollection_AsciiString GEOMImpl_IShapesOperations::GetShapeTypeString (Handle(GEOM_Object) theShape)
+{
+  SetErrorCode(KO);
+
+  TCollection_AsciiString aTypeName ("Null Shape");
+
+  TopoDS_Shape aShape = theShape->GetValue();
+  if (aShape.IsNull())
+    return aTypeName;
+
+  switch (aShape.ShapeType() )
+  {
+  case TopAbs_COMPOUND:
+    aTypeName = "Compound";
+    break;
+  case  TopAbs_COMPSOLID:
+    aTypeName = "Compound Solid";
+    break;
+  case TopAbs_SOLID:
+    aTypeName = "Solid";
+    break;
+  case TopAbs_SHELL:
+    aTypeName = "Shell";
+    break;
+  case TopAbs_FACE:
+    {
+      BRepAdaptor_Surface surf (TopoDS::Face(aShape));
+      if (surf.GetType() == GeomAbs_Plane)
+	aTypeName = "Plane";
+      else if (surf.GetType() == GeomAbs_Cylinder)
+	aTypeName = "Cylindrical Face";
+      else if (surf.GetType() == GeomAbs_Sphere)
+	aTypeName = "Spherical Face";
+      else if (surf.GetType() == GeomAbs_Torus)
+	aTypeName = "Toroidal Face";
+      else if (surf.GetType() == GeomAbs_Cone)
+	aTypeName = "Conical Face";
+      else
+	aTypeName = "GEOM::FACE";
+    }
+    break;
+  case TopAbs_WIRE:
+    aTypeName = "Wire";
+    break;
+  case TopAbs_EDGE:
+    {
+      BRepAdaptor_Curve curv (TopoDS::Edge(aShape));
+      if (curv.GetType() == GeomAbs_Line) {
+	if ((Abs(curv.FirstParameter()) >= 1E6) ||
+            (Abs(curv.LastParameter()) >= 1E6))
+          aTypeName = "Line";
+	else
+	  aTypeName = "Edge" ;
+      } else if (curv.GetType() == GeomAbs_Circle) {
+	if (curv.IsClosed())
+          aTypeName = "Circle";
+	else
+          aTypeName = "Arc";
+      } else {
+        aTypeName = "Edge";
+      }
+    }
+    break;
+  case TopAbs_VERTEX:
+    aTypeName = "Vertex";
+    break;
+  case TopAbs_SHAPE:
+    aTypeName = "Shape";
+    break;
+  default:
+    aTypeName = "Shape of unknown type";
+  }
+
+  return aTypeName;
 }
 
 

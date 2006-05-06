@@ -50,8 +50,10 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                               const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PRISM")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -78,6 +80,8 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWid
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("extrusion.htm");
 
   /* Initialisations */
   Init();
@@ -126,10 +130,10 @@ void GenerationGUI_PrismDlg::Init()
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
 
   connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)),      this, SLOT(onReverse()));
-   
+
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
@@ -173,39 +177,38 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
   
-  if(IObjectCount() != 1) 
-    {
-      if(myEditCurrentArgument == GroupPoints->LineEdit1)
-	myOkBase = false;
-      else if(myEditCurrentArgument == GroupPoints->LineEdit2)
-	myOkVec = false;
-      return;
-    }
-  
+  if (IObjectCount() != 1) {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1)
+      myOkBase = false;
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
+      myOkVec = false;
+    return;
+  }
+
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
-  
+  GEOM::GEOM_Object_ptr aSelectedObject =
+    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+
   if (!testResult)
     return;
 
-  if(myEditCurrentArgument == GroupPoints->LineEdit1) {
+  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
     myOkBase = false;
     TopoDS_Shape S;
     
-    if ( !GEOMBase::GetShape(aSelectedObject, S) ||
+    if (!GEOMBase::GetShape(aSelectedObject, S) ||
 	 S.ShapeType() <= 2)
       return;
-    
+
     myBase = aSelectedObject;
     myOkBase = true;
-  }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
+  } else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
     myVec = aSelectedObject;
     myOkVec = true;
   }
   myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
-  
+
   displayPreview();
 }
 
@@ -284,7 +287,6 @@ void GenerationGUI_PrismDlg::ValueChangedInSpinBox()
 }
 
 
-
 //=================================================================================
 // function : getHeight()
 // purpose  :
@@ -319,9 +321,10 @@ bool GenerationGUI_PrismDlg::isValid( QString& )
 bool GenerationGUI_PrismDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj;
-  
-  anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation() )->MakePrismVecH ( myBase, myVec, getHeight() );
-  
+
+  anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
+    MakePrismVecH(myBase, myVec, getHeight());
+
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
 
@@ -338,6 +341,3 @@ void GenerationGUI_PrismDlg::onReverse()
   double anOldValue = GroupPoints->SpinBox_DX->GetValue();
   GroupPoints->SpinBox_DX->SetValue( -anOldValue );
 }
-
-
-

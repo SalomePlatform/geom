@@ -24,7 +24,6 @@
 //  File   : EntityGUI_SubShapeDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_SUBSHAPE_H
 #define DIALOGBOX_SUBSHAPE_H
@@ -42,11 +41,9 @@ class EntityGUI_SubShapeDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-                                        EntityGUI_SubShapeDlg( QWidget* parent = 0,
-                                                               const char* name = 0,
-                                                               bool modal = FALSE,
-                                                               WFlags fl = 0 );
-                                        ~EntityGUI_SubShapeDlg();
+    EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    ~EntityGUI_SubShapeDlg();
 
 protected:
     // redefined from GEOMBase_Helper

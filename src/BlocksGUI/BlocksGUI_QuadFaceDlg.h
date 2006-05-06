@@ -23,7 +23,6 @@
 //  File   : BlocksGUI_QuadFaceDlg.h
 //  Author : Julia DOROVSKIKH
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_QUAD_FACE_H
 #define DIALOGBOX_QUAD_FACE_H
@@ -43,15 +42,14 @@ class BlocksGUI_QuadFaceDlg : public GEOMBase_Skeleton
 	 Edge14, Edge24, Edge34, Edge44 };
 
 public:
-  BlocksGUI_QuadFaceDlg (QWidget* parent,
-			 bool modal = FALSE);
+  BlocksGUI_QuadFaceDlg (GeometryGUI*, QWidget* parent, bool modal = FALSE);
   ~BlocksGUI_QuadFaceDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual                            bool isValid (QString& msg);
-  virtual                            bool execute (ObjectList& objects);
+  virtual                       bool isValid (QString& msg);
+  virtual                       bool execute (ObjectList& objects);
 
 private:
   void Init();
@@ -79,7 +77,6 @@ private slots:
   void ClickOnOk();
   bool ClickOnApply();
   void ActivateThisDialog();
-//  void DeactivateActiveDialog();
   void ConstructorsClicked( int constructorId );
 
   void SelectionIntoArgument();

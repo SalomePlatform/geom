@@ -24,7 +24,6 @@
 //  File   : RepairGUI_RemoveHolesDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_RemoveHoles_H
 #define DIALOGBOX_RemoveHoles_H
@@ -48,7 +47,8 @@ class RepairGUI_RemoveHolesDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    RepairGUI_RemoveHolesDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    RepairGUI_RemoveHolesDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_RemoveHolesDlg();
 
 protected:
@@ -57,7 +57,7 @@ protected:
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
@@ -73,16 +73,14 @@ private :
     QLineEdit*       mySelectWiresEdt;
     QPushButton*     myFreeBoundBtn;
 
-    int myClosed; // number of free closed boundaries detected.  calculated in execute(), used in onDetect().    
-    int myOpen; // number of free open boundaries detected.  calculated in execute(), used in onDetect().    
+    int myClosed; // Number of free closed boundaries detected. Calculated in execute(), used in onDetect().
+    int myOpen;   // Number of free open   boundaries detected. Calculated in execute(), used in onDetect().
 
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
 
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
 
     void LineEditReturnPressed();
     void SelectionIntoArgument();

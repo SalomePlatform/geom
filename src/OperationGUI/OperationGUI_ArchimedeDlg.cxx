@@ -44,8 +44,8 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 OperationGUI_ArchimedeDlg::OperationGUI_ArchimedeDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
-: GEOMBase_Skeleton( parent, "ArchimedeDlg", false,
-		     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, "ArchimedeDlg", false,
+                      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ARCHIMEDE")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -69,6 +69,8 @@ OperationGUI_ArchimedeDlg::OperationGUI_ArchimedeDlg( GeometryGUI* theGeometryGU
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("archimede.htm");
 
   /* Initialisations */
   Init();
@@ -115,22 +117,18 @@ void OperationGUI_ArchimedeDlg::Init()
 
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DZ, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DZ, SLOT(SetStep(double)));
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+	  this, SLOT(SelectionIntoArgument()));
   
   initName( tr( "GEOM_ARCHIMEDE" ) );
   
   globalSelection( GEOM_ALLSHAPES );
 
   SelectionIntoArgument();
-  
-  /* displays Dialog */
-  GroupPoints->show();
-  this->show();
 }
 
 
@@ -208,7 +206,7 @@ void OperationGUI_ArchimedeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection( GEOM_ALLSHAPES );
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   return;
 }

@@ -24,7 +24,6 @@
 //  File   : OperationGUI_ChamferDlg.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_CHAMFER_H
 #define DIALOGBOX_CHAMFER_H
@@ -46,8 +45,8 @@ class OperationGUI_ChamferDlg : public GEOMBase_Skeleton
   enum { SpinBox1, SpinBox21, SpinBox22, SpinBox31, SpinBox32 };
 
 public:
-                                        OperationGUI_ChamferDlg( QWidget* parent );
-    virtual                             ~OperationGUI_ChamferDlg();
+  OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QWidget* parent);
+  virtual ~OperationGUI_ChamferDlg();
 
 protected:
     // redefined from GEOMBase_Helper
@@ -56,19 +55,16 @@ protected:
     virtual                             bool execute( ObjectList& objects );    
 
 private slots:
-
     void                                ClickOnOk();
     bool                                ClickOnApply();
     void                                ActivateThisDialog();
-    void                                DeactivateActiveDialog();
     void                                LineEditReturnPressed();
     void                                SelectionIntoArgument();
     void                                SetEditCurrentArgument();
     void                                ValueChangedInSpinBox( double newValue );
     void                                ConstructorsClicked( int constructorId );
 
-private :
-
+private:
     void                                Init();
     void                                enterEvent( QEvent* e );
     void                                reset();
@@ -78,7 +74,6 @@ private :
     void                                enableWidgets();
 
 private:
-
     int                                 myConstructorId;
 
     GEOM::GEOM_Object_var               myShape; 
@@ -95,4 +90,3 @@ private:
 };
 
 #endif // DIALOGBOX_CHAMFER_H
-

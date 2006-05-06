@@ -49,12 +49,15 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg(GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg
+  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_MULTIROTATION_SIMPLE")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_MULTIROTATION_DOUBLE")));
-  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
+  QPixmap image0(aResMgr->loadPixmap("GEOM",tr("ICON_DLG_MULTIROTATION_SIMPLE")));
+  QPixmap image1(aResMgr->loadPixmap("GEOM",tr("ICON_DLG_MULTIROTATION_DOUBLE")));
+  QPixmap image2(aResMgr->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_MULTIROTATION_TITLE"));
 
@@ -91,6 +94,8 @@ TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg(GeometryG
   Layout1->addWidget(GroupPoints, 2, 0);
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("multi_rotation.htm");
 
   Init();
 }
@@ -152,15 +157,15 @@ void TransformationGUI_MultiRotationDlg::Init()
   connect(GroupDimensions->SpinBox_DX2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DY2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX1, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY1, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX2, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY2, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX1, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY1, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX2, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY2, SLOT(SetStep(double)));
 
   connect(GroupDimensions->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(ReverseAngle()));
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_MULTIROTATION" ) );
@@ -174,12 +179,12 @@ void TransformationGUI_MultiRotationDlg::Init()
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
-  
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+
   myAng = 45.0;
   myStep = 50.0;
   myNbTimes1 = myNbTimes2 = 2;
-  
+
   globalSelection( GEOM_ALLSHAPES );
 
   switch (constructorId)
@@ -219,7 +224,8 @@ void TransformationGUI_MultiRotationDlg::ConstructorsClicked(int constructorId)
 
   myEditCurrentArgument->setFocus();
   myBase = myVector = GEOM::GEOM_Object::_nil();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 }
 
 
@@ -249,16 +255,6 @@ bool TransformationGUI_MultiRotationDlg::ClickOnApply()
 }
 
 
-//=======================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=======================================================================
-void TransformationGUI_MultiRotationDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
-}
-
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
@@ -266,28 +262,32 @@ void TransformationGUI_MultiRotationDlg::ClickOnCancel()
 void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
-  
-  if(IObjectCount() != 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1 || myEditCurrentArgument == GroupDimensions->LineEdit1)
+
+  if (IObjectCount() != 1) {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1 ||
+        myEditCurrentArgument == GroupDimensions->LineEdit1)
       myBase = GEOM::GEOM_Object::_nil();
-    else if(myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupDimensions->LineEdit2)
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2 ||
+             myEditCurrentArgument == GroupDimensions->LineEdit2)
       myVector = GEOM::GEOM_Object::_nil();
     return;
   }
-  
+
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
+  GEOM::GEOM_Object_var aSelectedObject =
+    GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
 
-  if ( !testResult || CORBA::is_nil( aSelectedObject ) || !GEOMBase::IsShape( aSelectedObject ) )
+  if (!testResult || CORBA::is_nil(aSelectedObject) || !GEOMBase::IsShape(aSelectedObject))
     return;
 
-
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 || myEditCurrentArgument == GroupDimensions->LineEdit1)
+  if (myEditCurrentArgument == GroupPoints->LineEdit1 ||
+      myEditCurrentArgument == GroupDimensions->LineEdit1)
     myBase = aSelectedObject;
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupDimensions->LineEdit2)
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2 ||
+           myEditCurrentArgument == GroupDimensions->LineEdit2)
     myVector = aSelectedObject;
-    
+
   myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
 
   displayPreview();
@@ -347,20 +347,10 @@ void TransformationGUI_MultiRotationDlg::LineEditReturnPressed()
 void TransformationGUI_MultiRotationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   
   ConstructorsClicked( getConstructorId() );
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-void TransformationGUI_MultiRotationDlg::DeactivateActiveDialog()
-{
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -421,7 +411,7 @@ void TransformationGUI_MultiRotationDlg::ReverseAngle()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_MultiRotationDlg::createOperation()
 {
-  return myGeometryGUI->GetGeomGen()->GetITransformOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetITransformOperations( getStudyId() );
 }
 
 
@@ -449,7 +439,8 @@ bool TransformationGUI_MultiRotationDlg::execute( ObjectList& objects )
     case 0 :
       {
 	if ( !CORBA::is_nil( myBase ) && !CORBA::is_nil( myVector ) ) {
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MultiRotate1D( myBase, myVector, myNbTimes1 );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+            MultiRotate1D( myBase, myVector, myNbTimes1 );
 	  res = true;
 	}
 	break;
@@ -458,7 +449,8 @@ bool TransformationGUI_MultiRotationDlg::execute( ObjectList& objects )
       {
 	if ( !CORBA::is_nil( myBase ) && !CORBA::is_nil( myVector ) )
 	  {
-	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MultiRotate2D( myBase, myVector, myAng, myNbTimes1, myStep, myNbTimes2 );
+	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+              MultiRotate2D( myBase, myVector, myAng, myNbTimes1, myStep, myNbTimes2 );
 	    res = true;
 	  }
 	break;

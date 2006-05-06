@@ -426,7 +426,7 @@ def TestOtherOperations (geompy, math):
 
   # GetShapesOnCylinderIDs
   edges_in_cyl_ids = geompy.GetShapesOnCylinderIDs(blocksComp, geompy.ShapeType["EDGE"],
-                                                   vy, 55, geompy.GEOM.ST_IN)
+                                                   vy, 80, geompy.GEOM.ST_IN)
   edges_in = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(edges_in, edges_in_cyl_ids)
   geompy.addToStudy(edges_in, "Group of edges inside Cylinder (axis = (0, 1, 0), r = 55)")

@@ -1,19 +1,10 @@
 <?xml version='1.0' encoding='windows-1252' ?>
 <tocdata>
-<book name="GEOM module" >
-  <item name="Introduction to GEOM" url="files/introduction_to_geom.htm" />
+<book name="Geometry module" >
+  <item name="Introduction to Geometry" url="files/introduction_to_geom.htm" />
   <item name="Importing/exporting geometrical objects" url="files/salome2_sp3_geomtoolsgui_functions.htm" />
-  <book name="Managing geometrical objects" >
-    <item name="Displaying/hiding objects" url="files/salome2_sp3_displaygui_functions.htm" />
-    <book name="Changing Display Parameters" >
-      <item name="Display Mode" url="wireframe_and_shading.htm" />
-      <item name="Color" url="color.htm" />
-      <item name="Transparency" url="transparency.htm" />
-      <item name="Isolines" url="isos.htm" />
-    </book>
-  </book>
   <book name="Creating geometrical objects" >
-    <book name="Creation of Basic Geometric Objects" >
+    <book name="Creating Basic Geometric Objects" >
       <item name="Point" url="point.htm" />
       <item name="Line" url="line.htm" />
       <item name="Circle" url="circle.htm" />
@@ -25,14 +16,14 @@
       <item name="Working Plane" url="working_plane.htm" />
       <item name="Local Coordinate System" url="local_coordinate_system.htm" />
     </book>
-    <book name="Creation of Primitives" >
+    <book name="Creating Primitives" >
       <item name="Box" url="box.htm" />
       <item name="Cylinder" url="cylinder.htm" />
       <item name="Sphere" url="sphere.htm" />
       <item name="Torus" url="turus.htm" />
       <item name="Cone" url="cone.htm" />
     </book>
-    <book name="Generation of Complex Objects" >
+    <book name="Creating Complex Objects" >
       <item name="Extrusion" url="extrusion.htm" />
       <item name="Revolution" url="revolution.htm" />
       <item name="Filling" url="filling.htm" />
@@ -41,7 +32,7 @@
     <item name="Working with groups" url="working_with_groups.htm" />
     <item name="Building by blocks" url="newentity_blocks.htm" />
     <item name="Sketcher" url="sketcher.htm" />
-    <book name="Creation of Advanced Geometrical Objects" >
+    <book name="Creating Advanced Geometrical Objects" >
       <item name="Explode" url="explode.htm" />
       <item name="Edge" url="edge.htm" />
       <item name="Wire" url="wire.htm" />
@@ -50,6 +41,14 @@
       <item name="Solid" url="solid.htm" />
       <item name="Compound" url="compound.htm" />
     </book>
+  </book>
+  <book name="Viewing geometrical objects" >
+    <item name="Viewing Geometrical Objects" url="viewing_geometrical_objects.htm" />
+    <item name="OCC 3D Viewer" url="occ_viewer.htm" />
+    <item name="Display Mode" url="wireframe_and_shading.htm" />
+    <item name="Color" url="color.htm" />
+    <item name="Transparency" url="transparency.htm" />
+    <item name="Isolines" url="isos.htm" />
   </book>
   <book name="Transforming geometrical objects" >
     <book name="Basic Operations" >
@@ -95,8 +94,8 @@
   </book>
   <item name="Using measurement tools" url="files/salome2_sp3_measuregui_functions.htm" />
   <book name="TUI Scripts" >
-    <item name="Changing Display Parameters" url="changing_display_parameters.htm" />
-    <book name="Creation of Geometric Objects" >
+    <item name="Viewing Geometrical Objects" url="changing_display_parameters.htm" />
+    <book name="Creating Geometric Objects" >
       <item name="Basic Geometrical Objects" url="basic_geometrical_objects.htm" />
       <item name="Primitives" url="primitives.htm" />
       <item name="Complex Objects" url="complex_objects.htm" />

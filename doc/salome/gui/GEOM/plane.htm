@@ -16,19 +16,21 @@ if (navigator.appName !="Netscape")
 <!--
 img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
-img_whs3 { border:none; width:312px; height:346px; float:none; border-style:none; }
-p.whs4 { font-size:12pt; font-weight:bold; }
-img_whs5 { border:none; width:312px; height:385px; float:none; border-style:none; }
-table.whs6 { x-cell-content-align:top; width:72.604%; border-spacing:0px; }
-col.whs7 { width:32.089%; }
-col.whs8 { width:32.008%; }
-col.whs9 { width:35.903%; }
-tr.whs10 { x-cell-content-align:top; }
-td.whs11 { width:32.089%; padding-right:10px; padding-left:10px; border-right-style:none; border-left-style:none; border-top-style:none; border-bottom-style:none; }
-img_whs12 { border:none; width:258px; height:249px; float:none; border-style:none; }
-td.whs13 { width:32.008%; padding-right:10px; padding-left:10px; border-right-style:none; border-top-style:none; border-bottom-style:none; }
-img_whs14 { border:none; width:291px; height:181px; float:none; border-style:none; }
-td.whs15 { width:35.903%; padding-right:10px; padding-left:10px; border-top-style:none; border-bottom-style:none; border-right-style:none; }
+p.whs3 { font-size:12pt; margin-left:40px; }
+img_whs4 { border:none; width:312px; height:346px; float:none; border-style:none; }
+p.whs5 { font-size:12pt; font-weight:bold; }
+img_whs6 { border:none; width:312px; height:385px; float:none; border-style:none; }
+p.whs7 { margin-left:40px; }
+table.whs8 { x-cell-content-align:top; width:72.604%; border-spacing:0px; }
+col.whs9 { width:32.089%; }
+col.whs10 { width:32.008%; }
+col.whs11 { width:35.903%; }
+tr.whs12 { x-cell-content-align:top; }
+td.whs13 { width:32.089%; padding-right:10px; padding-left:10px; border-right-style:none; border-left-style:none; border-top-style:none; border-bottom-style:none; }
+img_whs14 { border:none; width:258px; height:249px; float:none; border-style:none; }
+td.whs15 { width:32.008%; padding-right:10px; padding-left:10px; border-right-style:none; border-top-style:none; border-bottom-style:none; }
+img_whs16 { border:none; width:291px; height:181px; float:none; border-style:none; }
+td.whs17 { width:35.903%; padding-right:10px; padding-left:10px; border-top-style:none; border-bottom-style:none; border-right-style:none; }
 -->
 </style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
@@ -60,7 +62,7 @@ if (window.gbWhTopic)
 {
 	if (window.addTocInfo)
 	{
-	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Basic Geometric Objects\nPlane");
+	addTocInfo("Geometry module\nCreating geometrical objects\nCreating Basic Geometric Objects\nPlane");
 addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	}
@@ -116,7 +118,7 @@ else
  + 1 vertex + 1 vector &nbsp;+ 
  1 value (to define the size of the plane).</p>
 
-<p class="whs2"><b style="font-weight: bold;"><img src="pics/plane1.png" x-maintain-ratio="TRUE" width="312px" height="346px" border="0" class="img_whs3"></b></p>
+<p class="whs3"><b style="font-weight: bold;"><img src="pics/plane1.png" x-maintain-ratio="TRUE" width="312px" height="346px" border="0" class="img_whs4"></b></p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -125,17 +127,17 @@ else
  &nbsp;the plane 
  passes.</p>
 
-<p class="whs4"><b style="font-weight: bold;">TUI 
+<p class="whs5"><b style="font-weight: bold;">TUI 
  Command:</b> <span style="font-weight: normal; font-style: italic;"><I>geompy.MakePlaneThreePnt(Point1, 
  Point2, Point3, TrimSize)</I></span> </p>
 
-<p class="whs4"><b style="font-weight: bold;">Arguments: 
- </b><span style="font-weight: normal;">Name + 3 points + 1 value (to define 
- the size of the plane).</span></p>
+<p class="whs5"><b style="font-weight: bold;">Arguments: 
+ </b><span style="font-weight: normal;">Name + 3 vertices + 1 value (to 
+ define the size of the plane).</span></p>
 
-<p class="whs4">&nbsp;</p>
+<p class="whs5">&nbsp;</p>
 
-<p class="whs2"><img src="pics/plane2.png" x-maintain-ratio="TRUE" width="312px" height="385px" border="0" class="img_whs5"></p>
+<p class="whs3"><img src="pics/plane2.png" x-maintain-ratio="TRUE" width="312px" height="385px" border="0" class="img_whs6"></p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -151,32 +153,32 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><img src="pics/plane3.png" x-maintain-ratio="TRUE" width="312px" height="385px" border="0" class="img_whs5"></font></span> 
+<p class="whs7"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><img src="pics/plane3.png" x-maintain-ratio="TRUE" width="312px" height="385px" border="0" class="img_whs6"></font></span> </p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs4">Examples:</p>
+<p class="whs5">Examples:</p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs4"><span style="font-weight: normal; font-style: italic;"><I>Planes</I></span> 
+<p class="whs5"><span style="font-weight: normal; font-style: italic;"><I>Planes</I></span> 
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span 
  style="font-weight: normal; font-style: italic;"><I>A 
  Plane created on a Plane of another size</I></span></p>
 
 <p class="whs2">&nbsp;</p>
 
-<table x-use-null-cells cellspacing="0" width="72.604%" class="whs6">
-<col class="whs7">
-<col class="whs8">
+<table x-use-null-cells cellspacing="0" width="72.604%" class="whs8">
 <col class="whs9">
+<col class="whs10">
+<col class="whs11">
 
-<tr valign="top" class="whs10">
-<td width="32.089%" class="whs11">
-<p class="whs2"><img src="pics/planes1.png" x-maintain-ratio="TRUE" width="258px" height="249px" border="0" class="img_whs12"></td>
-<td width="32.008%" class="whs13">
-<p class="whs2"><img src="pics/plane_on_face.png" x-maintain-ratio="TRUE" width="291px" height="181px" border="0" class="img_whs14"></td>
-<td width="35.903%" class="whs15">
+<tr valign="top" class="whs12">
+<td width="32.089%" class="whs13">
+<p class="whs2"><img src="pics/planes1.png" x-maintain-ratio="TRUE" width="258px" height="249px" border="0" class="img_whs14"></td>
+<td width="32.008%" class="whs15">
+<p class="whs2"><img src="pics/plane_on_face.png" x-maintain-ratio="TRUE" width="291px" height="181px" border="0" class="img_whs16"></td>
+<td width="35.903%" class="whs17">
 <p class="whs2">&nbsp;</td></tr>
 </table>
 

@@ -86,12 +86,12 @@ class SALOME_WNT_EXPORT GEOM_Actor : public SALOME_Actor {
   void SetShadingProperty(vtkProperty* Prop);
 
   // Opacity
-  void SetOpacity(float opa);
-  float GetOpacity();
+  void SetOpacity(vtkFloatingPointType opa);
+  vtkFloatingPointType GetOpacity();
 
   // Color
-  void SetColor(float r,float g,float b);
-  void GetColor(float& r,float& g,float& b);
+  void SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
+  void GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b);
 
   virtual bool IsInfinite() {return myIsInfinite;}  
  protected:

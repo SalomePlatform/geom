@@ -32,23 +32,21 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-//using namespace std;
-
 #include <qlabel.h>
 
 //=================================================================================
 // class    : BlocksGUI_QuadFaceDlg()
 // purpose  : Constructs a BlocksGUI_QuadFaceDlg which is a child of 'parent'.
 //=================================================================================
-BlocksGUI_QuadFaceDlg::BlocksGUI_QuadFaceDlg (QWidget* parent,
-                                        bool modal)
-     : GEOMBase_Skeleton(parent, "QuadFaceDlg", modal,
+BlocksGUI_QuadFaceDlg::BlocksGUI_QuadFaceDlg (GeometryGUI* theGeometryGUI, QWidget* parent, bool modal)
+     : GEOMBase_Skeleton(theGeometryGUI, parent, "QuadFaceDlg", modal,
                          WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_4_VERT")));
-  QPixmap image2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_2_EDGE")));
-  QPixmap image3 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_4_EDGE")));
-  QPixmap imageS (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
+  QPixmap image1 (aResMgr->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_4_VERT")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_2_EDGE")));
+  QPixmap image3 (aResMgr->loadPixmap("GEOM",tr("ICON_DLG_QUAD_FACE_4_EDGE")));
+  QPixmap imageS (aResMgr->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_QUAD_FACE_TITLE"));
 
@@ -101,6 +99,8 @@ BlocksGUI_QuadFaceDlg::BlocksGUI_QuadFaceDlg (QWidget* parent,
   Layout1->addWidget(myGrp2, 2, 0);
   Layout1->addWidget(myGrp3, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("newentity_blocks.htm#QuadrangleFace");
 
   Init();
 }

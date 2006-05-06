@@ -30,12 +30,13 @@
 #include <BRepBuilderAPI_Transform.hxx>
 
 #include <TopAbs.hxx>
+#include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <TopExp.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
 #include <Geom_Plane.hxx>
 
@@ -86,6 +87,21 @@ Standard_Integer GEOMImpl_MirrorDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape anOriginal = anOriginalFunction->GetValue();
   if (anOriginal.IsNull()) return 0;
 
+  // Bug 12158: Check for standalone (not included in faces) degenerated edges
+  TopTools_IndexedDataMapOfShapeListOfShape aEFMap;
+  TopExp::MapShapesAndAncestors(anOriginal, TopAbs_EDGE, TopAbs_FACE, aEFMap);
+  Standard_Integer i, nbE = aEFMap.Extent();
+  for (i = 1; i <= nbE; i++) {
+    TopoDS_Shape anEdgeSh = aEFMap.FindKey(i);
+    if (BRep_Tool::Degenerated(TopoDS::Edge(anEdgeSh))) {
+      const TopTools_ListOfShape& aFaces = aEFMap.FindFromIndex(i);
+      if (aFaces.IsEmpty())
+        Standard_ConstructionError::Raise
+          ("Mirror aborted : cannot process standalone degenerated edge");
+    }
+  }
+
+  // Perform Mirror
   if (aType == MIRROR_PLANE || aType == MIRROR_PLANE_COPY) {
     Handle(GEOM_Function) aPlane = TI.GetPlane();
     if (aPlane.IsNull()) return 0;

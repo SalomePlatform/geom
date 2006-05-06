@@ -73,6 +73,14 @@ class GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr GetSubShape (GEOM::GEOM_Object_ptr theMainShape,
 				     CORBA::Long           theID);
 
+  CORBA::Long GetSubShapeIndex (GEOM::GEOM_Object_ptr theMainShape,
+				GEOM::GEOM_Object_ptr theSubShape);
+
+  CORBA::Long GetTopologyIndex (GEOM::GEOM_Object_ptr theMainShape,
+				GEOM::GEOM_Object_ptr theSubShape);
+
+  char* GetShapeTypeString (GEOM::GEOM_Object_ptr theShape);
+
   CORBA::Long NumberOfFaces (GEOM::GEOM_Object_ptr theShape);
   CORBA::Long NumberOfEdges (GEOM::GEOM_Object_ptr theShape);
 

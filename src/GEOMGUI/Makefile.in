@@ -64,7 +64,8 @@ LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 SALOMEDS.idl \
 		 SALOMEDS_Attributes.idl \
 		 SALOME_GenericObj.idl \
-		 SALOME_Component.idl
+		 SALOME_Component.idl \
+		 GEOM_Gen.idl
 
 LIB_SERVER_IDL =  
 

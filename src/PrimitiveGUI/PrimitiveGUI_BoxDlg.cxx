@@ -49,8 +49,10 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-PrimitiveGUI_BoxDlg::PrimitiveGUI_BoxDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+PrimitiveGUI_BoxDlg::PrimitiveGUI_BoxDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                         const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BOX_2P")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BOX_DXYZ")));
@@ -80,6 +82,8 @@ PrimitiveGUI_BoxDlg::PrimitiveGUI_BoxDlg(GeometryGUI* theGeometryGUI, QWidget* p
   Layout1->addWidget(GroupPoints, 2, 0);
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("box.htm");
   
   Init();
 }
@@ -125,6 +129,7 @@ void PrimitiveGUI_BoxDlg::Init()
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+
   connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
 
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
@@ -137,9 +142,9 @@ void PrimitiveGUI_BoxDlg::Init()
   connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupDimensions->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
@@ -212,16 +217,6 @@ bool PrimitiveGUI_BoxDlg::ClickOnApply()
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  : 
-//=================================================================================
-void PrimitiveGUI_BoxDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -320,16 +315,6 @@ void PrimitiveGUI_BoxDlg::enterEvent(QEvent* e)
 {
   if ( !GroupConstructors->isEnabled() )
     ActivateThisDialog();
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-void PrimitiveGUI_BoxDlg::DeactivateActiveDialog()
-{
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 

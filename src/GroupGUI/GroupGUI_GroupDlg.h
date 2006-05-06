@@ -24,7 +24,6 @@
 //  File   : GroupGUI_GroupDlg.h
 //  Author : Sergey ANIKIN
 //  Module : GEOM
-//  $Header$
 
 #ifndef GROUPGUI_GROUPDLG_H
 #define GROUPGUI_GROUPDLG_H
@@ -50,7 +49,7 @@ public:
       EditGroup
     } Mode;
 
-    GroupGUI_GroupDlg(Mode mode, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    GroupGUI_GroupDlg(Mode mode, GeometryGUI*, QWidget* parent = 0);
     ~GroupGUI_GroupDlg();
 
 protected:
@@ -60,7 +59,6 @@ protected:
     virtual bool execute( ObjectList& objects );
     virtual GEOM::GEOM_Object_ptr getFather( GEOM::GEOM_Object_ptr theObj );
 
-    
 private slots:
     void                                ClickOnOk();
     bool                                ClickOnApply();
@@ -90,7 +88,7 @@ private:
     bool                  myBusy;
     GEOM::GEOM_Object_var myMainObj;
     GEOM::GEOM_Object_var myGroup;
-    
+
     QPushButton*          mySelBtn;
     QLineEdit*            myMainName;
     QPushButton*          mySelSubBtn;

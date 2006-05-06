@@ -1,3 +1,22 @@
+#  Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+#  See http://www.salome-platform.org/
+#
 #==============================================================================
 #  Info.
 #  Bug (from script, bug)   : tube_geom_gg2_corrected.py, PAL5243
@@ -142,16 +161,19 @@ assemblageId = addToStudy(assemblage, "assemblage")
 #
 # Display
 #
-gg.createAndDisplayGO(baseId)
-gg.setTransparency(baseId,0.5)
-gg.setDisplayMode(baseId,1)
-gg.setColor(baseId,255,0,0)
-gg.createAndDisplayGO(travId)
-gg.setTransparency(travId,0.5)
-gg.setDisplayMode(travId,1)
-gg.setColor(travId,255,0,0)
-gg.createAndDisplayGO(weldId)
-gg.setTransparency(weldId,0.5)
-gg.setDisplayMode(weldId,1)
-gg.setColor(weldId,0,0,255)
-
+gg = ImportComponentGUI("GEOM")
+import salome_ComponentGUI
+if not isinstance(gg, type(salome_ComponentGUI)):
+    gg.initGeomGen()
+    gg.createAndDisplayGO(baseId)
+    gg.setTransparency(baseId,0.5)
+    gg.setDisplayMode(baseId,1)
+    gg.setColor(baseId,255,0,0)
+    gg.createAndDisplayGO(travId)
+    gg.setTransparency(travId,0.5)
+    gg.setDisplayMode(travId,1)
+    gg.setColor(travId,255,0,0)
+    gg.createAndDisplayGO(weldId)
+    gg.setTransparency(weldId,0.5)
+    gg.setDisplayMode(weldId,1)
+    gg.setColor(weldId,0,0,255)

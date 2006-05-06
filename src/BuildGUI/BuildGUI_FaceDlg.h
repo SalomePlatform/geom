@@ -24,7 +24,6 @@
 //  File   : BuildGUI_FaceDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_FACE_H
 #define DIALOGBOX_FACE_H
@@ -41,7 +40,8 @@ class BuildGUI_FaceDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_FaceDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_FaceDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_FaceDlg();
 
 protected:
@@ -64,7 +64,6 @@ private slots:
     void ActivateThisDialog();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-
 };
 
 #endif // DIALOGBOX_FACE_H

@@ -24,7 +24,6 @@
 //  File   : BasicGUI_MarkerDlg.h
 //  Author : Sergey LITONIN
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_Marker_H
 #define DIALOGBOX_Marker_H
@@ -66,11 +65,9 @@ protected:
                                                  const bool   toRemoveFromEngine = true,
                                                  const double lineWidth = -1 );
 
-private :
+private:
   void                          enterEvent( QEvent* e );
   void                          onSelectionDone0();
-
-  GeometryGUI* myGeometryGUI;
 
 private slots:
   void                          onOk();

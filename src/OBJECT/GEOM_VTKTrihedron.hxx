@@ -62,7 +62,7 @@ public:
                                     vtkTypeMacro( GEOM_VTKTrihedron, SALOME_Actor );
   static GEOM_VTKTrihedron*         New();
 
-  virtual float                     GetSize() { return mySize;}
+  virtual vtkFloatingPointType      GetSize() { return mySize;}
 
   virtual void                      SetVisibility( VTKViewer_Trihedron::TVisibility theVis );
   virtual void                      VisibilityOff() { SetVisibility( VTKViewer_Trihedron::eOff ); }
@@ -80,21 +80,21 @@ public:
   virtual void                      Render(vtkRenderer *, vtkMapper *);
   virtual bool                      IsSetCamera() const;
   virtual bool                      IsResizable() const;
-  virtual void                      SetSize( float );
+  virtual void                      SetSize( vtkFloatingPointType );
   virtual void                      SetCamera( vtkCamera* );
 
-  void                              SetColor( float r, float g, float b );
-  void                              GetColor( float& r, float& g, float& b );
+  void                              SetColor( vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b );
+  void                              GetColor( vtkFloatingPointType& r, vtkFloatingPointType& g, vtkFloatingPointType& b );
 
   virtual bool                      hasHighlight() { return false; } 
 
 protected:
   VTKViewer_Axis*                   myAxis[3];
   vtkPolyDataMapper*                myMapper;
-  float                             mySize;
+  vtkFloatingPointType              mySize;
   gp_Pnt                            myLocation;
   gp_Dir                            myDirX, myDirY, myDirZ;
-  float                             myColor[ 3 ];
+  vtkFloatingPointType              myColor[ 3 ];
 };
 
 #endif

@@ -52,8 +52,9 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, fl)
+EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                             const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, fl)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUBSHAPE")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -76,6 +77,8 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(QWidget* parent, const char* name, 
 
   Layout1->addWidget(GroupPoints, 1, 0);
   /***************************************************************/
+
+  setHelpFileName("explode.htm");
 
   Init();
 }
@@ -118,9 +121,7 @@ void EntityGUI_SubShapeDlg::Init()
     GroupPoints->CheckButton1->setEnabled(false);
 
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
   connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -130,10 +131,10 @@ void EntityGUI_SubShapeDlg::Init()
 
   connect(GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(ComboTextChanged()));
   connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(SubShapeToggled()));
-  
+
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
-  
+
   updateButtonState();
 
   SelectionIntoArgument();
@@ -205,7 +206,7 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
     return;
   }
 
-  if ( !myGeomBase->GetTopoFromSelection( selectedIO(), S ) ||
+  if ( !GEOMBase::GetTopoFromSelection( selectedIO(), S ) ||
        S.IsNull() ||
        S.ShapeType() == TopAbs_VERTEX )
   {
@@ -326,7 +327,7 @@ void EntityGUI_SubShapeDlg::LineEditReturnPressed()
 //=================================================================================
 void EntityGUI_SubShapeDlg::DeactivateActiveDialog()
 {
-  if(GroupConstructors->isEnabled()) {
+  if (GroupConstructors->isEnabled()) {
     GEOMBase_Skeleton::DeactivateActiveDialog();
   }
 }
@@ -352,9 +353,8 @@ void EntityGUI_SubShapeDlg::ActivateThisDialog()
 //=================================================================================
 void EntityGUI_SubShapeDlg::enterEvent(QEvent* e)
 {
-  if(GroupConstructors->isEnabled())
-    return;
-  ActivateThisDialog();
+  if (!GroupConstructors->isEnabled())
+    ActivateThisDialog();
 }
 
 //=================================================================================

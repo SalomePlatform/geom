@@ -49,8 +49,10 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_RotationDlg::TransformationGUI_RotationDlg(QWidget* parent,  const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+TransformationGUI_RotationDlg::TransformationGUI_RotationDlg
+  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ROTATION")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -101,8 +103,10 @@ TransformationGUI_RotationDlg::TransformationGUI_RotationDlg(QWidget* parent,  c
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
   connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)), this, SLOT(onReverse()));
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+
+  setHelpFileName("rotation.htm");
 
   Init();
 }
@@ -156,16 +160,6 @@ bool TransformationGUI_RotationDlg::ClickOnApply()
   
   Init();
   return true;
-}
-
-
-//=======================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=======================================================================
-void TransformationGUI_RotationDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -254,23 +248,13 @@ void TransformationGUI_RotationDlg::LineEditReturnPressed()
 void TransformationGUI_RotationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   globalSelection();
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit2->clear();
   myAxis = GEOM::GEOM_Object::_nil();
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-void TransformationGUI_RotationDlg::DeactivateActiveDialog()
-{
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 

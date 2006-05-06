@@ -16,18 +16,28 @@ if (navigator.appName !="Netscape")
 <!--
 img_whs1 { border:none; width:25px; height:22px; border-style:none; }
 p.whs2 { font-size:12pt; }
-img_whs3 { border:none; width:312px; height:350px; float:none; border-style:none; }
-img_whs4 { border:none; width:431px; height:233px; border-style:none; }
-img_whs5 { border:none; width:312px; height:385px; float:none; border-style:none; }
-img_whs6 { border:none; width:326px; height:377px; border-style:none; }
-p.whs7 { list-style:disc; margin-left:0in; margin-right:0in; margin-top:0px; margin-bottom:0px; }
+p.whs3 { font-size:12pt; margin-left:40px; }
+img_whs4 { border:none; width:312px; height:350px; float:none; border-style:none; }
+img_whs5 { border:none; width:431px; height:233px; border-style:none; }
+img_whs6 { border:none; width:312px; height:385px; float:none; border-style:none; }
+img_whs7 { border:none; width:214px; height:222px; border-style:none; }
+table.whs8 { x-cell-content-align:top; width:100%; border-spacing:0px; }
+col.whs9 { width:50%; }
+tr.whs10 { x-cell-content-align:top; }
+td.whs11 { width:50%; padding-right:10px; padding-left:10px; border-bottom-style:none; border-right-style:none; border-left-style:none; border-top-style:none; }
+td.whs12 { width:50%; padding-right:10px; padding-left:10px; border-bottom-style:none; border-top-style:none; border-right-style:none; }
+td.whs13 { width:50%; padding-right:10px; padding-left:10px; border-right-style:none; border-left-style:none; border-bottom-style:none; }
+img_whs14 { border:none; width:238px; height:218px; border-style:none; }
+td.whs15 { width:50%; padding-right:10px; padding-left:10px; border-bottom-style:none; border-right-style:none; }
+img_whs16 { border:none; width:316px; height:215px; border-style:none; }
+p.whs17 { list-style:disc; margin-left:0in; margin-right:0in; margin-top:0px; margin-bottom:0px; }
 -->
 </style><script type="text/javascript" language="JavaScript">
 <!--
 if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
 {
   var strNSS = "<style type='text/css'>";
-  strNSS += "p.whs7 {margin-left:1pt;margin-right:1pt;margin-top:1pt;margin-bottom:1pt; }";
+  strNSS += "p.whs17 {margin-left:1pt;margin-right:1pt;margin-top:1pt;margin-bottom:1pt; }";
   strNSS +="</style>";
   document.write(strNSS);
 }
@@ -63,7 +73,7 @@ if (window.gbWhTopic)
 {
 	if (window.addTocInfo)
 	{
-	addTocInfo("GEOM module\nTransforming geometrical objects\nTransformation Operations\nModify the Location");
+	addTocInfo("Geometry module\nTransforming geometrical objects\nTransformation Operations\nModify the Location");
 addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	}
@@ -97,7 +107,9 @@ else
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2">This operation modifies the <span style="font-weight: bold;"><B>Location</B></span> 
- of an <span style="font-weight: bold;"><B>Object </B></span></p>
+ of an <span style="font-weight: bold;"><B>Object. </B></span></p>
+
+<p class="whs2">&nbsp;</p>
 
 <p class="whs2">The first algorithm places the object so that 
  its center coincides with the center of an End Local Coordinate System.</p>
@@ -107,11 +119,11 @@ else
  removed.</p>
 
 <p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><span><b style="font-weight: bold;">A</span>rguments:</b> 
- Name + 1 GEOM_Object + End Coordinate System.</font></span></p>
+ Name + 1 Object + End Coordinate System.</font></span></p>
 
 <p>&nbsp;</p>
 
-<p class="whs2"><img src="pics/transformation5.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs3"> &nbsp;&nbsp;</p>
+<p class="whs3"><img src="pics/transformation5.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs4"> &nbsp;&nbsp;</p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -122,40 +134,59 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"><img src="image30.gif" width="431px" height="233px" border="0" class="img_whs4"></p>
+<p class="whs3"><img src="image30.gif" width="431px" height="233px" border="0" class="img_whs5"></p>
 
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2">The second algorithm &nbsp;modifies 
- the location of an object using Start and End LSC, however, it does not 
- place the object in the center of any of the two systems. &nbsp;</p>
+ the location of an object using Start and End LSC, although the final 
+ position of the object will not coincide with the center of &nbsp;either 
+ of the two systems. In this method the object is shifted from its initial 
+ position by the value of the remainder after subtraction of the coordinates 
+ of the Start LSC from the coordinates of the End LSC. </p>
 
 <p class="whs2"><span style="font-weight: bold;"><B>Create a copy 
  </B></span>checkbox allows to keep the initial object, otherwise it will be 
  removed.</p>
 
 <p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Arguments:</b> 
- Name + 1 GEOM_Object + Start Coordinate System + End Coordinate System.</font></span></p>
+ Name + 1 Object + Start Coordinate System + End Coordinate System.</font></span></p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"><img src="pics/transformation6.png" x-maintain-ratio="TRUE" width="312px" height="385px" border="0" class="img_whs5"></p>
+<p class="whs3"><img src="pics/transformation6.png" x-maintain-ratio="TRUE" width="312px" height="385px" border="0" class="img_whs6"></p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2">In this picture the initial cube with the global 
- coordinate system is above, the modified cube is below and the End Local 
- Coordinate System is the big one. </p>
+<p class="whs2">In this picture we see the initial cube with 
+ the global coordinate system and two LCS: LocalCS1 (GCS+100 along x-axis) 
+ and LocalCS2 (GCS+200 along x-axis) &nbsp;</p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"><img src="image31.gif" width="326px" height="377px" border="0" class="img_whs6"></p>
+<p class="whs3"><img src="image1.gif" width="214px" height="222px" border="0" class="img_whs7"></p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2">The <span style="font-weight: bold;"><B>R</B></span><b><span 
- style="font-weight: bold;"><B>esult</B></span><span style="font-weight: normal;"> 
- of this operation will be a</span> </b>&nbsp;GEOM_Object.</p>
+<table x-use-null-cells cellspacing="0" width="100%" class="whs8">
+<col class="whs9">
+<col class="whs9">
+
+<tr valign="top" class="whs10">
+<td width="50%" class="whs11">
+<p class="whs2">Selecting Start LCS = LCS1 and End LCS = LCS2, 
+ we obtain the translated cube at the position (100;0;0)</p>
+<p>&nbsp;</td>
+<td width="50%" class="whs12">
+<p class="whs2">Selecting Start LCS = LCS2 and End LCS = LCS1, 
+ we obtain the translated cube at the position (-100;0;0)</td></tr>
+
+<tr valign="top" class="whs10">
+<td width="50%" class="whs13">
+<p><img src="image2.gif" width="238px" height="218px" border="0" class="img_whs14"></td>
+<td width="50%" class="whs15">
+<p><img src="image4.gif" width="316px" height="215px" border="0" class="img_whs16"></td></tr>
+</table>
 
 <p class="whs2">&nbsp;</p>
 
@@ -166,7 +197,7 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs7"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Our </font></span><span 
+<p class="whs17"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Our </font></span><span 
  style="font-weight: bold;"><B>TUI Scripts</B></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> 
  provide you with useful examples of the use of <a href="transformation_operations.htm#bookmark2">Transformation 
  Operations</a>. </font></span></p>

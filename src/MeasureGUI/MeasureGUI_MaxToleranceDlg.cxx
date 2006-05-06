@@ -83,6 +83,8 @@ MeasureGUI_MaxToleranceDlg::MeasureGUI_MaxToleranceDlg( GeometryGUI* GUI, QWidge
   
   /***************************************************************/
 
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Tolerance";
+  
   /* Initialisation */
   Init();
 }

@@ -38,6 +38,7 @@
 #else
 #define BASICGUI_WNT_EXPORT
 #endif
+
 //=================================================================================
 // class    : BasicGUI_WorkingPlaneDlg
 // purpose  :
@@ -47,15 +48,14 @@ class BASICGUI_WNT_EXPORT BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_WorkingPlaneDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+    BasicGUI_WorkingPlaneDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			      const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~BasicGUI_WorkingPlaneDlg();
     virtual void closeEvent( QCloseEvent* e );
 
 private:
     void Init();
     void enterEvent(QEvent* e);
-
-    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myFace;
     GEOM::GEOM_Object_var myVectX;

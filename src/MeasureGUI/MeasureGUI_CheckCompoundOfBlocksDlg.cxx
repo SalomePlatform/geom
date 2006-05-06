@@ -31,7 +31,9 @@
 
 #include "utilities.h"
 #include "SUIT_Session.h"
+#include "LightApp_SelectionMgr.h"
 #include "SalomeApp_Tools.h"
+#include "SalomeApp_Application.h"
 
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopExp.hxx>
@@ -67,31 +69,32 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( GeometryGUI* GUI, QWidget* parent )
-: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_CheckCompoundOfBlocksDlg" )
+  : GEOMBase_Skeleton(GUI, parent, "MeasureGUI_CheckCompoundOfBlocksDlg", false, WStyle_Customize |
+                      WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose)
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
-    "GEOM",tr( "ICON_DLG_CHECK_COMPOUND_OF_BLOCKS" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
-    "GEOM",tr( "ICON_SELECT" ) ) );
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+  QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_CHECK_COMPOUND_OF_BLOCKS")));
+  QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setCaption( tr( "GEOM_CHECK_BLOCKS_COMPOUND" ) );
 
   /***************************************************************/
-
   GroupConstructors->setTitle( tr( "GEOM_CHECK_BLOCKS_COMPOUND" ) );
   RadioButton1->setPixmap( image0 );
+  RadioButton2->close( TRUE );
+  RadioButton3->close( TRUE );
 
   myGrp = new MeasureGUI_1Sel1TextView_QTD( this, "myGrp" );
   myGrp->GroupBox1->setTitle( tr( "GEOM_CHECK_INFOS" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
+
   myGrp->TextEdit1->setReadOnly( TRUE );
-  
   QFont aFont( TEXTEDIT_FONT_FAMILY, TEXTEDIT_FONT_SIZE );
   aFont.setStyleHint( QFont::TypeWriter, QFont::PreferAntialias );
   myGrp->TextEdit1->setFont( aFont );
+
   myGrp->PushButton1->setPixmap( image1 );
   myGrp->LineEdit1->setReadOnly( true );
-
 
   /***************************************************************/
   QGridLayout* aGBLayout = new QGridLayout( myGrp->GroupBox1->layout() );
@@ -104,8 +107,8 @@ MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( Geomet
   myErrorsLBox->setMinimumSize( 100, 100 );
   Layout2->addWidget( myErrorsLBox, 1, 0 );
 
-
-  mySubShapesLbl = new QLabel( tr( "GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES" ), myGrp, "BlockCompoundSubShapes" );
+  mySubShapesLbl = new QLabel( tr( "GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES" ),
+                               myGrp, "BlockCompoundSubShapes" );
   Layout2->addWidget( mySubShapesLbl, 0, 1 );
 
   mySubShapesLBox = new QListBox( myGrp, "ListSubShapes" );
@@ -114,13 +117,17 @@ MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( Geomet
   Layout2->addWidget( mySubShapesLBox, 1, 1 );
   aGBLayout->addLayout( Layout2, 1, 0 );
 
-  Layout1->addWidget( myGrp, 1, 0 );
+  Layout1->addWidget( myGrp, 2, 0 );
+
   connect( myErrorsLBox, SIGNAL( selectionChanged() ), SLOT( onErrorsListSelectionChanged() ) );
   connect( mySubShapesLBox, SIGNAL( selectionChanged() ), SLOT( onSubShapesListSelectionChanged() ) );
+  /***************************************************************/
+
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Check_comp_blocks";
+
   /* Initialisation */
   Init();
 }
-
 
 //=================================================================================
 // function : ~MeasureGUI_CheckCompoundOfBlocksDlg()
@@ -130,17 +137,126 @@ MeasureGUI_CheckCompoundOfBlocksDlg::~MeasureGUI_CheckCompoundOfBlocksDlg()
 {
 }
 
-
 //=================================================================================
 // function : Init()
 // purpose  :
 //=================================================================================
 void MeasureGUI_CheckCompoundOfBlocksDlg::Init()
 {
+  myEditCurrentArgument = myGrp->LineEdit1;
+
+  // signals and slots connections
+  connect( buttonOk, SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply, SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+
+  connect( myGrp->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( myGrp->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+
+  connect(myGeomGUI->getApp()->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+  initName( tr( "GEOM_BLOCKS_COMPOUND") );
+  buttonOk->setEnabled(false);
+  buttonApply->setEnabled(false);
   activateSelection();
-  mySelBtn = myGrp->PushButton1;
-  mySelEdit = myGrp->LineEdit1;
-  MeasureGUI_Skeleton::Init();
+  SelectionIntoArgument();
+
+  // displays Dialog
+  this->show();
+}
+
+//=================================================================================
+// function : ClickOnOk()
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckCompoundOfBlocksDlg::ClickOnOk()
+{
+  if (ClickOnApply())
+    ClickOnCancel();
+}
+
+//=================================================================================
+// function : ClickOnApply()
+// purpose  :
+//=================================================================================
+bool MeasureGUI_CheckCompoundOfBlocksDlg::ClickOnApply()
+{
+  if ( !onAccept() )
+    return false;
+
+  initName();
+  return true;
+}
+
+//=================================================================================
+// function : SelectionIntoArgument
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckCompoundOfBlocksDlg::SelectionIntoArgument()
+{
+  erasePreview();
+  myObj = GEOM::GEOM_Object::_nil();
+
+  if (IObjectCount() != 1) {
+    myGrp->LineEdit1->setText("");
+    processObject();
+    return;
+  }
+
+  Standard_Boolean testResult = Standard_False;
+  GEOM::GEOM_Object_var aSelectedObject =
+    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+
+  if (!testResult || aSelectedObject->_is_nil()) {
+    myGrp->LineEdit1->setText("");
+    processObject();
+    return;
+  }
+
+  myObj = aSelectedObject;
+  myGrp->LineEdit1->setText(GEOMBase::GetName(myObj));
+  processObject();
+  displayPreview();
+}
+
+//=================================================================================
+// function : SetEditCurrentArgument
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckCompoundOfBlocksDlg::SetEditCurrentArgument()
+{
+  myGrp->LineEdit1->setFocus();
+  myEditCurrentArgument = myGrp->LineEdit1;
+  SelectionIntoArgument();
+}
+
+//=================================================================================
+// function : LineEditReturnPressed()
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckCompoundOfBlocksDlg::LineEditReturnPressed()
+{
+  QLineEdit* send = (QLineEdit*)sender();
+  if (send == myGrp->LineEdit1) {
+    myEditCurrentArgument = myGrp->LineEdit1;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
+}
+
+//=================================================================================
+// function : ActivateThisDialog()
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckCompoundOfBlocksDlg::ActivateThisDialog()
+{
+  GEOMBase_Skeleton::ActivateThisDialog();
+
+  LightApp_SelectionMgr* aSel = myGeomGUI->getApp()->selectionMgr();
+  if (aSel)
+    connect(aSel, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+  activateSelection();
+  displayPreview();
 }
 
 //=================================================================================
@@ -191,10 +307,15 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
 
   if (isCompoundOfBlocks) {
     aMsg += tr( "GEOM_CHECK_BLOCKS_COMPOUND_HAS_NO_ERRORS" );
+    buttonOk->setEnabled(false);
+    buttonApply->setEnabled(false);
   } else {
     aMsg += tr( "GEOM_CHECK_BLOCKS_COMPOUND_HAS_ERRORS" );
+    buttonOk->setEnabled(true);
+    buttonApply->setEnabled(true);
   }
   myGrp->TextEdit1->setText(aMsg);
+
   QStringList aErrList;
   QString aErrStr( "" );
   QString aConSfx( " # " );
@@ -234,10 +355,10 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
     if ( !aErrStr.isEmpty() )
       aErrList.append(aErrStr);
   }
+
   myErrorsLBox->clear();
   mySubShapesLBox->clear();
   myErrorsLBox->insertStringList(aErrList);
-  return;
 }
 
 //=================================================================================
@@ -292,7 +413,6 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
   }
   mySubShapesLBox->clear();
   mySubShapesLBox->insertStringList(aSubShapeList);
-  return;
 }
 
 //=================================================================================
@@ -356,7 +476,6 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
       }
     }
   }
-  return;
 }
 
 //=================================================================================
@@ -369,4 +488,39 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::activateSelection()
   aMap.Add( GEOM_SOLID );
   aMap.Add( GEOM_COMPOUND );
   globalSelection( aMap );
+}
+
+//=================================================================================
+// function : enterEvent()
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckCompoundOfBlocksDlg::enterEvent(QEvent* e)
+{
+  if (!GroupConstructors->isEnabled())
+    ActivateThisDialog();
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool MeasureGUI_CheckCompoundOfBlocksDlg::isValid( QString& )
+{
+  return !myObj->_is_nil();
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool MeasureGUI_CheckCompoundOfBlocksDlg::execute( ObjectList& objects )
+{
+  GEOM::GEOM_Object_var anObj;
+
+  anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->CheckAndImprove(myObj);
+
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
+
+  return true;
 }

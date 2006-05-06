@@ -24,15 +24,16 @@
 //  File   : EntityGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef ENTITYGUI_H
 #define ENTITYGUI_H
 
 #include "GEOMGUI.h"
-#include "GEOMBase.h"
 
 #include "SALOMEDSClient.hxx"
+
+#include <TopoDS_Shape.hxx>
+#include <AIS_Shape.hxx>
 
 //=================================================================================
 // class    : EntityGUI
@@ -51,29 +52,15 @@ public :
 
   bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
 
-  void OnSketchEnd(const char *Cmd);
-
   void DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shape& S2); 
   void EraseSimulationShape();
 
-  void MakeInterpolAndDisplay(GEOM::string_array& listShapesIOR);
-  void MakeBezierAndDisplay(GEOM::string_array& listShapesIOR);
-
-    /* Methods for sub shapes explode */
+  // Methods for sub shapes explode
   bool SObjectExist(const _PTR(SObject)& theFatherObject, const char* IOR);
-  bool OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType);  
-  bool OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType,
-			     Standard_Integer& aLocalContextId, bool& myUseLocalContext);
 
-  /* AIS shape used only during topo/geom simulations */
+  // AIS shape used only during topo/geom simulations
   Handle(AIS_Shape) mySimulationShape1;
   Handle(AIS_Shape) mySimulationShape2;
-
-  GEOMBase* myGeomBase;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
-
-private:
-  static EntityGUI* myGUIObject;    // the only EntityGUI object
 };
 
 #endif

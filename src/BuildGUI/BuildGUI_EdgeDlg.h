@@ -24,7 +24,6 @@
 //  File   : BuildGUI_EdgeDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_EDGE_H
 #define DIALOGBOX_EDGE_H
@@ -41,7 +40,8 @@ class BuildGUI_EdgeDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_EdgeDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_EdgeDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_EdgeDlg();
 
 protected:
@@ -50,7 +50,7 @@ protected:
     virtual bool isValid( QString& msg );
     virtual bool execute( ObjectList& objects );    
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     
@@ -67,7 +67,6 @@ private slots:
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-
 };
 
 #endif // DIALOGBOX_EDGE_H

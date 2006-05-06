@@ -24,7 +24,6 @@
 //  File   : TransformationGUI_MultiTranslationDlg.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_MULTITRANSLATION_H
 #define DIALOGBOX_MULTITRANSLATION_H
@@ -43,7 +42,8 @@ class TransformationGUI_MultiTranslationDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_MultiTranslationDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_MultiTranslationDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+					  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_MultiTranslationDlg();
 
 protected:
@@ -58,8 +58,6 @@ private :
     void Init();
     void enterEvent(QEvent* e);
 
-    GeometryGUI* myGeometryGUI;
-        
     GEOM::GEOM_Object_var myBase, myVectorU, myVectorV ;
     int myNbTimesU;
     int myNbTimesV;
@@ -72,9 +70,7 @@ private :
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
@@ -82,7 +78,6 @@ private slots:
     void ReverseStepV();
     void ValueChangedInSpinBox(double newValue);
     void ConstructorsClicked(int constructorId);
-
 };
 
 #endif // DIALOGBOX_MULTITRANSLATION_H

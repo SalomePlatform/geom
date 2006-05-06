@@ -48,8 +48,10 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_LineDlg::BasicGUI_LineDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+BasicGUI_LineDlg::BasicGUI_LineDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                   const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_DLG_LINE_2P")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_SELECT")));
@@ -75,6 +77,8 @@ BasicGUI_LineDlg::BasicGUI_LineDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("line.htm");
+
   Init();
 }
 
@@ -99,13 +103,13 @@ void BasicGUI_LineDlg::Init()
 
   myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
 
-  // myGeometryGUI->SetState( 0 );
+  // myGeomGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
 	
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -223,7 +227,7 @@ void BasicGUI_LineDlg::ActivateThisDialog()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  // myGeometryGUI->SetState( 0 );
+  // myGeomGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -240,7 +244,7 @@ void BasicGUI_LineDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_LineDlg::DeactivateActiveDialog()
 {
-  // myGeometryGUI->SetState( -1 );
+  // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -260,7 +264,7 @@ void BasicGUI_LineDlg::enterEvent(QEvent* e)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_LineDlg::createOperation()
 {
-  return myGeometryGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
 }
 
 //=================================================================================
@@ -290,7 +294,6 @@ bool BasicGUI_LineDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_LineDlg::closeEvent( QCloseEvent* e )
 {
-  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 

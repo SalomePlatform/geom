@@ -24,7 +24,6 @@
 //  File   : TransformationGUI_TranslationDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_TRANSLATION_H
 #define DIALOGBOX_TRANSLATION_H
@@ -42,7 +41,8 @@ class TransformationGUI_TranslationDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_TranslationDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_TranslationDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+				     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_TranslationDlg();
 
 protected:
@@ -57,8 +57,6 @@ private :
     void Init();
     void enterEvent(QEvent* e);
 
-    GeometryGUI* myGeometryGUI;
-    
     GEOM::GEOM_Object_var myVector, myPoint1, myPoint2;
     GEOM::ListOfGO        myObjects;
 
@@ -67,9 +65,7 @@ private :
 private slots :
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

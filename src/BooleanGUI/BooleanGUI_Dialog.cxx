@@ -45,8 +45,9 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, fl),
+BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGeometryGUI,
+                                      QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, fl),
    myOperation( theOperation )
 {
   QPixmap image0;
@@ -57,21 +58,25 @@ BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, QWidget* parent, c
    	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_COMMON")));
 			aTitle = tr("GEOM_COMMON");
 			aCaption = tr("GEOM_COMMON_TITLE");
+			setHelpFileName("common.htm");
 			break;
 		case BooleanGUI::CUT:
    	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CUT")));
 			aTitle = tr("GEOM_CUT");
 			aCaption = tr("GEOM_CUT_TITLE");
+			setHelpFileName("cut.htm");
 			break;
 		case BooleanGUI::FUSE:
    	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_FUSE")));
 			aTitle = tr("GEOM_FUSE");
 			aCaption = tr("GEOM_FUSE_TITLE");
+			setHelpFileName("fuse.htm");
 			break;
 		case BooleanGUI::SECTION:
    	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SECTION")));
 			aTitle = tr("GEOM_SECTION");
 			aCaption = tr("GEOM_SECTION_TITLE");
+			setHelpFileName("section.htm");
 			break;
 	}
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -117,7 +122,6 @@ BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, QWidget* parent, c
 BooleanGUI_Dialog::~BooleanGUI_Dialog()
 {
 }
-
 
 
 //=================================================================================
@@ -214,7 +218,6 @@ void BooleanGUI_Dialog::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
-
 
 
 //=================================================================================

@@ -50,7 +50,9 @@
 #define UnLoadLib( handle ) dlclose( handle );
 #endif
 
-typedef TopoDS_Shape (*funcPoint)(const TCollection_AsciiString&, TCollection_AsciiString&);
+typedef TopoDS_Shape (*funcPoint)(const TCollection_AsciiString&,
+                                  const TCollection_AsciiString&,
+                                  TCollection_AsciiString&);
 
 //=======================================================================
 //function : GetID
@@ -84,9 +86,10 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(TFunction_Logbook& log) const
   //Standard_Integer aType = aFunction->GetType();
 
   // retrieve the file and plugin library names
-  TCollection_AsciiString aFileName = aCI.GetFileName();
-  TCollection_AsciiString aLibName  = aCI.GetPluginName();
-  if (aFileName.IsEmpty() || aLibName.IsEmpty())
+  TCollection_AsciiString aFileName   = aCI.GetFileName();
+  TCollection_AsciiString aFormatName = aCI.GetFormatName();
+  TCollection_AsciiString aLibName    = aCI.GetPluginName();
+  if (aFileName.IsEmpty() || aFormatName.IsEmpty() || aLibName.IsEmpty())
     return 0;
 
   // load plugin library
@@ -100,7 +103,7 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(TFunction_Logbook& log) const
 
   // perform the import
   TCollection_AsciiString anError;
-  TopoDS_Shape aShape = fp( aFileName, anError );
+  TopoDS_Shape aShape = fp( aFileName, aFormatName, anError );
 
   // unload plugin library
   UnLoadLib( anImportLib );

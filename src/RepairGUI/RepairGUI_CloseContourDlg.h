@@ -24,7 +24,6 @@
 //  File   : RepairGUI_CloseContourDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_CloseContour_H
 #define DIALOGBOX_CloseContour_H
@@ -46,7 +45,8 @@ class RepairGUI_CloseContourDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    RepairGUI_CloseContourDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    RepairGUI_CloseContourDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_CloseContourDlg();
 
 protected:
@@ -55,7 +55,7 @@ protected:
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
@@ -75,10 +75,8 @@ private :
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
 
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
 
     void LineEditReturnPressed();
     void SelectionIntoArgument();

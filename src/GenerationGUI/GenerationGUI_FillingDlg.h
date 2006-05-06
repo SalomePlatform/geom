@@ -24,7 +24,6 @@
 //  File   : GenerationGUI_FillingDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_FILLING_H
 #define DIALOGBOX_FILLING_H
@@ -41,7 +40,8 @@ class GenerationGUI_FillingDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~GenerationGUI_FillingDlg();
 
 protected:
@@ -53,8 +53,6 @@ protected:
 private:
     void Init();
     void enterEvent(QEvent* e);
-
-    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myCompound; /* compound of curves */
     Standard_Integer myMinDeg;
@@ -74,7 +72,6 @@ private slots:
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
     void ValueChangedInSpinBox(double newValue);
-
 };
 
 #endif // DIALOGBOX_FILLING_H

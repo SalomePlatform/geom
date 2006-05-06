@@ -42,14 +42,14 @@
 // class    : BlocksGUI_TrsfDlg()
 // purpose  : Constructs a BlocksGUI_TrsfDlg which is a child of 'parent'.
 //=================================================================================
-BlocksGUI_TrsfDlg::BlocksGUI_TrsfDlg (QWidget* parent,
-                                      bool modal)
-     : GEOMBase_Skeleton(parent, "TrsfDlg", modal,
+BlocksGUI_TrsfDlg::BlocksGUI_TrsfDlg (GeometryGUI* theGeometryGUI, QWidget* parent, bool modal)
+     : GEOMBase_Skeleton(theGeometryGUI, parent, "TrsfDlg", modal,
                          WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BLOCK_MULTITRSF_SIMPLE")));
-  QPixmap image2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BLOCK_MULTITRSF_DOUBLE")));
-  QPixmap imageS (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
+  QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_BLOCK_MULTITRSF_SIMPLE")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_BLOCK_MULTITRSF_DOUBLE")));
+  QPixmap imageS (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_BLOCK_MULTITRSF_TITLE"));
 
@@ -118,6 +118,8 @@ BlocksGUI_TrsfDlg::BlocksGUI_TrsfDlg (QWidget* parent,
   Layout1->addWidget( myGrp1, 2, 0 );
   Layout1->addWidget( myGrp2, 2, 0 );
   /***************************************************************/
+
+  setHelpFileName("multi_transformation.htm");
 
   Init();
 }
@@ -346,16 +348,6 @@ void BlocksGUI_TrsfDlg::enterEvent (QEvent* e)
   if (!GroupConstructors->isEnabled())
     this->ActivateThisDialog();
 }
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-//void BlocksGUI_TrsfDlg::DeactivateActiveDialog()
-//{
-//  // disconnect selection
-//  GEOMBase_Skeleton::DeactivateActiveDialog();
-//}
 
 //=================================================================================
 // function : ValueChangedInSpinBox()

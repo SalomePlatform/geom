@@ -41,9 +41,8 @@ using namespace std;
 // class    : BlocksGUI_BlockDlg()
 // purpose  : Constructs a BlocksGUI_BlockDlg which is a child of 'parent'.
 //=================================================================================
-BlocksGUI_BlockDlg::BlocksGUI_BlockDlg (QWidget* parent,
-                                        bool modal)
-     : GEOMBase_Skeleton(parent, "BlockDlg", modal,
+BlocksGUI_BlockDlg::BlocksGUI_BlockDlg (GeometryGUI* theGeometryGUI, QWidget* parent, bool modal)
+     : GEOMBase_Skeleton(theGeometryGUI, parent, "BlockDlg", modal,
                          WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BLOCK_2F")));
@@ -87,6 +86,8 @@ BlocksGUI_BlockDlg::BlocksGUI_BlockDlg (QWidget* parent,
   Layout1->addWidget(Group2F, 2, 0);
   Layout1->addWidget(Group6F, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("newentity_blocks.htm#HexahedralSolid");
 
   Init();
 }
@@ -326,15 +327,6 @@ void BlocksGUI_BlockDlg::enterEvent (QEvent* e)
   if (!GroupConstructors->isEnabled())
     ActivateThisDialog();
 }
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-//void BlocksGUI_BlockDlg::DeactivateActiveDialog()
-//{
-//  GEOMBase_Skeleton::DeactivateActiveDialog();
-//}
 
 //=================================================================================
 // function : createOperation

@@ -47,11 +47,13 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_RemoveIntWiresDlg::RepairGUI_RemoveIntWiresDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_RemoveIntWiresDlg::RepairGUI_RemoveIntWiresDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                                         const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUPPRESS_INT_WIRES")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0 (myGeomGUI->getApp()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUPPRESS_INT_WIRES")));
+  QPixmap image1 (myGeomGUI->getApp()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_REMOVE_INTERNAL_WIRES_TITLE"));
 
@@ -94,6 +96,8 @@ RepairGUI_RemoveIntWiresDlg::RepairGUI_RemoveIntWiresDlg(QWidget* parent, const 
   GroupPoints->getGroupBoxLayout()->addLayout( aSelectWiresLay, 2, 0 );  
   /***************************************************************/
 
+  setHelpFileName("suppress_internal_wires.htm");
+
   Init();
 }
 
@@ -124,10 +128,6 @@ void RepairGUI_RemoveIntWiresDlg::Init()
   initSelection(); 
 
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
@@ -155,8 +155,6 @@ void RepairGUI_RemoveIntWiresDlg::ClickOnOk()
     ClickOnCancel();
 }
 
-
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
@@ -177,16 +175,6 @@ bool RepairGUI_RemoveIntWiresDlg::ClickOnApply()
 	initSelection();
 
   return true;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void RepairGUI_RemoveIntWiresDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -264,17 +252,6 @@ void RepairGUI_RemoveIntWiresDlg::LineEditReturnPressed()
 
 
 //=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void RepairGUI_RemoveIntWiresDlg::DeactivateActiveDialog()
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::DeactivateActiveDialog();
-}
-
-
-//=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
@@ -294,7 +271,6 @@ void RepairGUI_RemoveIntWiresDlg::ActivateThisDialog()
   initSelection();
 }
 
-
 //=================================================================================
 // function : enterEvent()
 // purpose  : Mouse enter onto the dialog to activate it
@@ -304,7 +280,6 @@ void RepairGUI_RemoveIntWiresDlg::enterEvent(QEvent* e)
   if ( !GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
-
 
 //=================================================================================
 // function : closeEvent()
@@ -340,12 +315,13 @@ bool RepairGUI_RemoveIntWiresDlg::isValid( QString& msg )
 //=================================================================================
 bool RepairGUI_RemoveIntWiresDlg::execute( ObjectList& objects )
 {
-	GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->RemoveIntWires( myObject, myWiresInd );
-	bool aResult = !anObj->_is_nil();
-	if ( aResult )
-		objects.push_back( anObj._retn() );
+  GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->
+    RemoveIntWires( myObject, myWiresInd );
+  bool aResult = !anObj->_is_nil();
+  if ( aResult )
+    objects.push_back( anObj._retn() );
 
-	return aResult;
+  return aResult;
 }
 
 //=================================================================================
@@ -354,7 +330,7 @@ bool RepairGUI_RemoveIntWiresDlg::execute( ObjectList& objects )
 //=================================================================================
 void RepairGUI_RemoveIntWiresDlg::onRemoveAllClicked()
 {
-	bool b = myAllChk->isOn();
+  bool b = myAllChk->isOn();
   mySelectWiresLbl->setEnabled( !b );
   mySelectWiresBtn->setEnabled( !b );
   mySelectWiresEdt->setEnabled( !b );
@@ -387,5 +363,3 @@ void RepairGUI_RemoveIntWiresDlg::initSelection()
     localSelection( myObject, TopAbs_WIRE );
   }
 }
-
-

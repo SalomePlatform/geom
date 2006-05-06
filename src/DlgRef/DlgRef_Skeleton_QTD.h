@@ -20,34 +20,31 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
 **
-** Created: Wed Aug 11 18:42:51 2004
-**      by:  The User Interface Compiler (uic)
+** Created: Fri Mar 17 11:18:06 2006
+**      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
+
 #ifndef DLGREF_SKELETON_QTD_H
 #define DLGREF_SKELETON_QTD_H
 
 #include <qvariant.h>
 #include <qdialog.h>
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
+
+class QVBoxLayout;
+class QHBoxLayout;
+class QGridLayout;
+class QSpacerItem;
 class QGroupBox;
-class QLabel;
-class QLineEdit;
 class QPushButton;
+class QButtonGroup;
 class QRadioButton;
+class QLineEdit;
+class QLabel;
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define DLGREF_WNT_EXPORT __declspec( dllexport )
-#else
-#define DLGREF_WNT_EXPORT
-#endif
-
-class DLGREF_WNT_EXPORT DlgRef_Skeleton_QTD : public QDialog
-{ 
+class DlgRef_Skeleton_QTD : public QDialog
+{
     Q_OBJECT
 
 public:
@@ -59,6 +56,7 @@ public:
     QPushButton* buttonOk;
     QPushButton* buttonApply;
     QPushButton* buttonCancel;
+    QPushButton* buttonHelp;
     QButtonGroup* GroupConstructors;
     QRadioButton* RadioButton1;
     QRadioButton* RadioButton2;
@@ -68,16 +66,20 @@ public:
     QLineEdit* ResultName;
     QLabel* NameLabel;
 
-
 protected:
     QGridLayout* DlgRef_Skeleton_QTDLayout;
     QGridLayout* Layout1;
     QHBoxLayout* GroupButtonsLayout;
     QHBoxLayout* Layout3;
+    QSpacerItem* Spacer1;
     QHBoxLayout* GroupConstructorsLayout;
     QHBoxLayout* Layout2;
     QGridLayout* GroupBoxNameLayout;
     QGridLayout* Layout66;
+
+protected slots:
+    virtual void languageChange();
+
 };
 
 #endif // DLGREF_SKELETON_QTD_H

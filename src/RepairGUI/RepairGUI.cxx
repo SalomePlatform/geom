@@ -86,39 +86,19 @@ RepairGUI::~RepairGUI()
 bool RepairGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
   getGeometryGUI()->EmitSignalDeactivateDialog();
-  
+
   QDialog* aDlg = NULL;
   switch (theCommandID) {
-    case 601: // SEWING
-      aDlg = new RepairGUI_SewingDlg( parent, "" );
-      break;
-    case 602: // GLUE FACES
-      aDlg = new RepairGUI_GlueDlg( parent, "" );
-      break;
-    case 603: // SUPPRESS FACES
-      aDlg = new RepairGUI_SuppressFacesDlg( parent, "" );
-      break;
-    case 604: // SUPPRESS HOLES
-      aDlg = new RepairGUI_RemoveHolesDlg( parent, "" );
-      break;
-    case 605: // SHAPE PROCESSING
-      aDlg = new RepairGUI_ShapeProcessDlg( parent, "" );
-      break;
-    case 606: // CLOSE CONTOUR
-      aDlg = new RepairGUI_CloseContourDlg( parent, "" );
-      break;
-    case 607: // REMOVE INTERNAL WIRES
-      aDlg = new RepairGUI_RemoveIntWiresDlg( parent, "" );
-      break;
-    case 608: // ADD POINT ON EDGE
-      aDlg = new RepairGUI_DivideEdgeDlg( getGeometryGUI(), parent, "" );
-      break;
-    case 609: // FREE BOUNDARIES
-      aDlg = new RepairGUI_FreeBoundDlg( getGeometryGUI(), parent );
-      break;    
-    case 610: // FREE FACES
-      aDlg = new RepairGUI_FreeFacesDlg( getGeometryGUI(), parent, "" );
-      break;    
+    case 601: aDlg = new RepairGUI_SewingDlg        (getGeometryGUI(), parent, ""); break;
+    case 602: aDlg = new RepairGUI_GlueDlg          (getGeometryGUI(), parent, ""); break;
+    case 603: aDlg = new RepairGUI_SuppressFacesDlg (getGeometryGUI(), parent, ""); break;
+    case 604: aDlg = new RepairGUI_RemoveHolesDlg   (getGeometryGUI(), parent, ""); break;
+    case 605: aDlg = new RepairGUI_ShapeProcessDlg  (getGeometryGUI(), parent, ""); break;
+    case 606: aDlg = new RepairGUI_CloseContourDlg  (getGeometryGUI(), parent, ""); break;
+    case 607: aDlg = new RepairGUI_RemoveIntWiresDlg(getGeometryGUI(), parent, ""); break;
+    case 608: aDlg = new RepairGUI_DivideEdgeDlg    (getGeometryGUI(), parent, ""); break;
+    case 609: aDlg = new RepairGUI_FreeBoundDlg     (getGeometryGUI(), parent, ""); break;    
+    case 610: aDlg = new RepairGUI_FreeFacesDlg     (getGeometryGUI(), parent, ""); break;    
     default:
       SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;
@@ -126,7 +106,7 @@ bool RepairGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 
   if ( aDlg )
     aDlg->show();
-    
+
   return true;
 }
 

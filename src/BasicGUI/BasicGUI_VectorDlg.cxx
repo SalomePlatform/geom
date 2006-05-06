@@ -48,15 +48,16 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_VectorDlg::BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, fl ), myGeometryGUI(theGeometryGUI)
+BasicGUI_VectorDlg::BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                       const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, fl)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_2P")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_DXYZ")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_VECTOR_TITLE"));
-  
+
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_VECTOR"));
   RadioButton1->setPixmap(image0);
@@ -84,6 +85,8 @@ BasicGUI_VectorDlg::BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* par
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("vector.htm");
+  
   /* Initialisations */
   Init();
 }
@@ -128,8 +131,8 @@ void BasicGUI_VectorDlg::Init()
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
   
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -145,9 +148,9 @@ void BasicGUI_VectorDlg::Init()
   connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
 
   connect(GroupDimensions->CheckBox1, SIGNAL(stateChanged(int)), this, SLOT(ReverseVector(int)));
 
@@ -323,7 +326,7 @@ void BasicGUI_VectorDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_VectorDlg::DeactivateActiveDialog()
 {
-  // myGeometryGUI->SetState( -1 );
+  // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -369,7 +372,7 @@ void BasicGUI_VectorDlg::ReverseVector(int state)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_VectorDlg::createOperation()
 {
-  return myGeometryGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
 }
 
 //=================================================================================

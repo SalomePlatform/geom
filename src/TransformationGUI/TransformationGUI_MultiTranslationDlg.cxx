@@ -50,12 +50,15 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg(GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg
+  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_DLG_MULTITRANSLATION_SIMPLE")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_DLG_MULTITRANSLATION_DOUBLE")));
-  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_SELECT")));
+  SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
+  QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_MULTITRANSLATION_SIMPLE")));
+  QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_MULTITRANSLATION_DOUBLE")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_MULTITRANSLATION_TITLE"));
 
@@ -98,6 +101,8 @@ TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg(Geo
   Layout1->addWidget(GroupPoints, 2, 0);
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("multi_translation.htm");
 
   Init();
 }
@@ -163,18 +168,18 @@ void TransformationGUI_MultiTranslationDlg::Init()
   connect(GroupDimensions->SpinBox_DX2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DY2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX1, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY1, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX2, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY2, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX1, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY1, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX2, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY2, SLOT(SetStep(double)));
 
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(ReverseStepU()));
   connect(GroupDimensions->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(ReverseStepU()));
   connect(GroupDimensions->CheckButton2, SIGNAL(toggled(bool)), this, SLOT(ReverseStepV()));
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   
@@ -189,7 +194,7 @@ void TransformationGUI_MultiTranslationDlg::Init()
 //=================================================================================
 void TransformationGUI_MultiTranslationDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   
   myStepU = myStepV = 50.0;
   myNbTimesU = myNbTimesV = 2;
@@ -236,7 +241,7 @@ void TransformationGUI_MultiTranslationDlg::ConstructorsClicked(int constructorI
   
   myEditCurrentArgument->setFocus();
   myBase = myVectorU = GEOM::GEOM_Object::_nil();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
@@ -264,16 +269,6 @@ bool TransformationGUI_MultiTranslationDlg::ClickOnApply()
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
-}
-
-
-//=======================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=======================================================================
-void TransformationGUI_MultiTranslationDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -374,20 +369,10 @@ void TransformationGUI_MultiTranslationDlg::LineEditReturnPressed()
 void TransformationGUI_MultiTranslationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   ConstructorsClicked( getConstructorId() );
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-void TransformationGUI_MultiTranslationDlg::DeactivateActiveDialog()
-{
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -477,7 +462,7 @@ void TransformationGUI_MultiTranslationDlg::ReverseStepV()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_MultiTranslationDlg::createOperation()
 {
-  return myGeometryGUI->GetGeomGen()->GetITransformOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetITransformOperations( getStudyId() );
 }
 
 

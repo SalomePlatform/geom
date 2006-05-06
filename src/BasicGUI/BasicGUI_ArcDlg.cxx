@@ -55,9 +55,8 @@ using namespace std;
 //=================================================================================
 BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
                                  const char* name, bool modal, WFlags fl)
-  : GEOMBase_Skeleton(parent, name, modal, WStyle_Customize |
-                      WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu),
-    myGeometryGUI(theGeometryGUI)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                      WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ARC")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -86,6 +85,8 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
 
   Layout1->addWidget( Group3Pnts, 2, 0 );
 
+  setHelpFileName("arc.htm");
+
   Init();
 }
 
@@ -106,7 +107,7 @@ BasicGUI_ArcDlg::~BasicGUI_ArcDlg()
 void BasicGUI_ArcDlg::Init()
 {
   /* init variables */
-  // myGeometryGUI->SetState( 0 );
+  // myGeomGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
 
   myEditCurrentArgument = Group3Pnts->LineEdit1;
@@ -116,8 +117,8 @@ void BasicGUI_ArcDlg::Init()
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -253,7 +254,7 @@ void BasicGUI_ArcDlg::ActivateThisDialog()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  // myGeometryGUI->SetState( 0 );
+  // myGeomGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
 
   myEditCurrentArgument = Group3Pnts->LineEdit1;
@@ -271,7 +272,7 @@ void BasicGUI_ArcDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_ArcDlg::DeactivateActiveDialog()
 {
-  // myGeometryGUI->SetState( -1 );
+  // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -291,7 +292,7 @@ void BasicGUI_ArcDlg::enterEvent(QEvent* e)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_ArcDlg::createOperation()
 {
-  return myGeometryGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
 }
 
 //=================================================================================
@@ -332,6 +333,5 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_ArcDlg::closeEvent( QCloseEvent* e )
 {
-  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }

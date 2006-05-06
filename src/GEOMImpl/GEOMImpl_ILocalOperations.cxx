@@ -35,6 +35,9 @@
 #include <GEOMImpl_IArchimede.hxx>
 #include <GEOMImpl_ArchimedeDriver.hxx>
 
+#include <GEOMImpl_Gen.hxx>
+#include <GEOMImpl_IShapesOperations.hxx>
+
 #include "utilities.h"
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
@@ -509,17 +512,17 @@ Standard_Integer GEOMImpl_ILocalOperations::GetSubShapeIndex (Handle(GEOM_Object
 {
   SetErrorCode(KO);
 
-  TopoDS_Shape aShape = theShape->GetValue();
-  TopoDS_Shape aSubShape = theSubShape->GetValue();
+  Standard_Integer anInd = -1;
+  GEOM_Engine* anEngine = GetEngine();
+  //GEOMImpl_Gen* aGen = dynamic_cast<GEOMImpl_Gen*>(anEngine);
+  GEOMImpl_Gen* aGen = (GEOMImpl_Gen*)anEngine;
 
-  if (aShape.IsNull() || aSubShape.IsNull()) return -1;
-
-  TopTools_IndexedMapOfShape anIndices;
-  TopExp::MapShapes(aShape, anIndices);
-  if (anIndices.Contains(aSubShape)) {
-    SetErrorCode(OK);
-    return anIndices.FindIndex(aSubShape);
+  if (aGen) {
+    GEOMImpl_IShapesOperations* anIShapesOperations =
+      aGen->GetIShapesOperations(GetDocID());
+    anInd = anIShapesOperations->GetSubShapeIndex(theShape, theSubShape);
+    SetErrorCode(anIShapesOperations->GetErrorCode());
   }
 
-  return -1;
+  return anInd;
 }

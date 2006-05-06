@@ -83,6 +83,8 @@ MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg( GeometryGUI* GUI, QWidget* p
   
   /***************************************************************/
 
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Basic_properties";
+
   /* Initialisation */
   Init();
 }

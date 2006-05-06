@@ -24,7 +24,6 @@
 //  File   : BlocksGUI_PropagateDlg.h
 //  Author : VKN
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_BlocksGUI_PropagateDlg_H
 #define DIALOGBOX_BlocksGUI_PropagateDlg_H
@@ -41,7 +40,8 @@ class BlocksGUI_PropagateDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BlocksGUI_PropagateDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BlocksGUI_PropagateDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			   const char* name = "", bool modal = FALSE, WFlags fl = 0);
     ~BlocksGUI_PropagateDlg();
 
 protected:
@@ -54,27 +54,23 @@ protected:
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
 
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
 
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
     void activateSelection();
 
-private :
-
+private:
     GEOM::GEOM_Object_var      myObject;
     QPushButton*               mySelBtn;
     QLineEdit*                 mySelName;
-
 };
 
 #endif // DIALOGBOX_BlocksGUI_PropagateDlg_H

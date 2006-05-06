@@ -23,7 +23,6 @@
 //  File   : BlocksGUI_BlockDlg.h
 //  Author : Julia DOROVSKIKH
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_BLOCK_H
 #define DIALOGBOX_BLOCK_H
@@ -42,7 +41,7 @@ class BlocksGUI_BlockDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BlocksGUI_BlockDlg (QWidget* parent,
+  BlocksGUI_BlockDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
 		      bool modal = FALSE);
   ~BlocksGUI_BlockDlg();
 
@@ -69,7 +68,6 @@ private slots:
   void ClickOnOk();
   bool ClickOnApply();
   void ActivateThisDialog();
-//  void DeactivateActiveDialog();
   void ConstructorsClicked (int constructorId);
 
   void SelectionIntoArgument();

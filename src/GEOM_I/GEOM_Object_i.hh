@@ -60,7 +60,7 @@ class GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual SALOM
 
   virtual SALOMEDS::TMPFile* GetShapeStream();
 
-  long getShape();
+  virtual CORBA::Long getShape();
 
   virtual bool IsMainShape() { return _impl->IsMainShape(); }
 

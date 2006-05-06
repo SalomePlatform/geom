@@ -50,11 +50,9 @@ using namespace std;
 //=================================================================================
 RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
                                                   const char* name, bool modal, WFlags fl)
-  : GEOMBase_Skeleton(parent, name, modal, WStyle_Customize |
+  : GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
                       WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  myGeomGUI = theGeometryGUI;
-
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_DIVIDE_EDGE")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
@@ -92,9 +90,10 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg (GeometryGUI* theGeometryGUI, Q
   GroupPoints->getGroupBoxLayout()->addLayout( aLay, 2, 0 );
   /***************************************************************/
 
+  setHelpFileName("add_point_on_edge.htm");
+
   Init();
 }
-
 
 //=================================================================================
 // function : ~RepairGUI_DivideEdgeDlg()
@@ -103,7 +102,6 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg (GeometryGUI* theGeometryGUI, Q
 RepairGUI_DivideEdgeDlg::~RepairGUI_DivideEdgeDlg()
 {
 }
-
 
 //=================================================================================
 // function : Init()
@@ -121,10 +119,6 @@ void RepairGUI_DivideEdgeDlg::Init()
   initSelection();
 
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
@@ -171,16 +165,6 @@ bool RepairGUI_DivideEdgeDlg::ClickOnApply()
 
 
 //=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void RepairGUI_DivideEdgeDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
-}
-
-
-//=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
 //          : used only by SelectButtonC1A1 (LineEditC1A1)
@@ -200,7 +184,7 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
     if ( !CORBA::is_nil( aSelectedObj ) && aRes )
     {
       TopoDS_Shape aShape;
-      if ( myGeomBase->GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) )
+      if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) )
       {
         const int aType = aShape.ShapeType();
         if ( aType <= TopAbs_EDGE ) // edge, wire, face, shell, solid, compound
@@ -263,16 +247,6 @@ void RepairGUI_DivideEdgeDlg::LineEditReturnPressed()
   }
 }
 
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void RepairGUI_DivideEdgeDlg::DeactivateActiveDialog()
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::DeactivateActiveDialog();
-}
 
 //=================================================================================
 // function : ActivateThisDialog()

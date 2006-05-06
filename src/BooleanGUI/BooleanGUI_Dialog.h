@@ -24,7 +24,6 @@
 //  File   : BooleanGUI_Dialog.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef BooleanGUI_Dialog_H
 #define BooleanGUI_Dialog_H
@@ -42,7 +41,8 @@ class BooleanGUI_Dialog : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BooleanGUI_Dialog( const int theOperation, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BooleanGUI_Dialog();
 
 protected:
@@ -69,7 +69,6 @@ private slots:
     void SelectionIntoArgument();
     void LineEditReturnPressed();
     void ActivateThisDialog();
-
 };
 
 #endif // BooleanGUI_Dialog_H

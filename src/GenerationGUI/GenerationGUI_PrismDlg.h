@@ -24,7 +24,6 @@
 //  File   : GenerationGUI_PrismDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_PRISM_H
 #define DIALOGBOX_PRISM_H
@@ -41,7 +40,8 @@ class GenerationGUI_PrismDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			   const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~GenerationGUI_PrismDlg();
 
 protected:
@@ -55,8 +55,6 @@ private :
     void enterEvent(QEvent* e);
     double getHeight() const;
     
-    GeometryGUI* myGeometryGUI;
-
     GEOM::GEOM_Object_var myBase; /* Base shape */
     GEOM::GEOM_Object_var myVec;  /* Vector, defining the direction */
 

@@ -24,7 +24,6 @@
 //  File   : TransformationGUI_MirrorDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_MIRROR_H
 #define DIALOGBOX_MIRROR_H
@@ -44,7 +43,8 @@ class TransformationGUI_MirrorDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_MirrorDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_MirrorDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+				const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_MirrorDlg();
 
 protected:
@@ -55,7 +55,7 @@ protected:
 
     virtual void closeEvent( QCloseEvent* e );
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     
@@ -67,9 +67,7 @@ private :
 private slots :
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

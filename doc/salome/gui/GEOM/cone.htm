@@ -17,23 +17,14 @@ if (navigator.appName !="Netscape")
 img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
 p.whs3 { font-weight:bold; }
-img_whs4 { border:none; width:312px; height:402px; float:none; border-style:none; }
-p.whs5 { margin-left:0px; }
-p.whs6 { font-size:12pt; margin-left:40px; }
-img_whs7 { border:none; width:276px; height:282px; float:none; border-style:none; }
+p.whs4 { margin-left:40px; }
+img_whs5 { border:none; width:312px; height:402px; float:none; border-style:none; }
+p.whs6 { font-weight:bold; margin-left:40px; }
+img_whs7 { border:none; width:312px; height:402px; float:none; border-style:none; }
+p.whs8 { font-size:12pt; margin-left:40px; }
+img_whs9 { border:none; width:276px; height:282px; float:none; border-style:none; }
 -->
-</style><script type="text/javascript" language="JavaScript">
-<!--
-if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
-{
-  var strNSS = "<style type='text/css'>";
-  strNSS += "p.whs5 {margin-left:1pt; }";
-  strNSS +="</style>";
-  document.write(strNSS);
-}
-//-->
-</script>
-<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
 function reDo() {
   if (innerWidth != origWidth || innerHeight != origHeight)
@@ -63,7 +54,7 @@ if (window.gbWhTopic)
 {
 	if (window.addTocInfo)
 	{
-	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Primitives\nCone");
+	addTocInfo("Geometry module\nCreating geometrical objects\nCreating Primitives\nCone");
 addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	}
@@ -118,7 +109,9 @@ else
  + 1 vector (for direction) + 3 values (Radius of the base part, radius 
  of the upper part, height).</font></span></p>
 
-<p><img src="pics/cone1.png" x-maintain-ratio="TRUE" width="312px" height="402px" border="0" class="img_whs4"></p>
+<p class="whs3">&nbsp;</p>
+
+<p class="whs4"><img src="pics/cone1.png" x-maintain-ratio="TRUE" width="312px" height="402px" border="0" class="img_whs5"></p>
 
 <p>&nbsp;</p>
 
@@ -128,16 +121,15 @@ else
  of the <span style="font-weight: bold;"><B>Cone</B></span> will be collinear 
  to the OZ axis of the coordinate system. </p>
 
-<p><b style="font-weight: bold;">TUI Command:</b> <span style="font-weight: bold;"><B>geompy.MakeConeR1R2H(Radius1, 
- Radius2, Height)</B></span> </p>
+<p><b style="font-weight: bold;">TUI Command:</b> <span style="font-style: italic;"><I>geompy.MakeConeR1R2H(Radius1, 
+ Radius2, Height)</I></span> </p>
 
-<p class="whs3"><b style="font-weight: bold;">Arguments: 
- </b><span style="font-size: 12pt; font-weight: normal;"><font size=3 style="font-size:12pt;">Name + 3 values 
- (Radius of the base part, radius of the upper part, height).</font></span></p>
+<p class="whs3"><b>Arguments: </b><span style="font-size: 12pt; font-weight: normal;"><font size=3 style="font-size:12pt;">Name 
+ + 3 values (Radius of the base part, radius of the upper part, height).</font></span></p>
 
-<p class="whs5">&nbsp;&nbsp;<img src="pics/cone2.png" x-maintain-ratio="TRUE" width="312px" height="402px" border="0" class="img_whs4"></p>
+<p class="whs6"><img src="pics/cone2.png" x-maintain-ratio="TRUE" width="312px" height="402px" border="0" class="img_whs7"></p>
 
-<p>&nbsp;</p>
+<p class="whs3">&nbsp;</p>
 
 <p><span style="font-weight: bold;"><B>Note:</B></span> If both radiuses are non-zero, 
  the <span style="font-weight: bold;"><B>Cone</B></span> will be truncated. If 
@@ -150,9 +142,9 @@ else
 
 <p>&nbsp;</p>
 
-<p class="whs6"><img src="pics/cones.png" x-maintain-ratio="TRUE" width="276px" height="282px" border="0" class="img_whs7"></p>
+<p class="whs8"><img src="pics/cones.png" x-maintain-ratio="TRUE" width="276px" height="282px" border="0" class="img_whs9"></p>
 
-<p class="whs6">&nbsp;</p>
+<p class="whs8">&nbsp;</p>
 
 <p class="whs2">Our TUI Scripts provide you with useful examples 
  of creation of <a href="primitives.htm#bookmark4">Primitives</a>. </p>

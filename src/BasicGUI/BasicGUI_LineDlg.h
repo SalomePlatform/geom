@@ -24,7 +24,6 @@
 //  File   : BasicGUI_LineDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_LINE_H
 #define DIALOGBOX_LINE_H
@@ -47,7 +46,8 @@ class BasicGUI_LineDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_LineDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_LineDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_LineDlg();
 
 protected:
@@ -61,8 +61,6 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
-
-    GeometryGUI*  myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint1;   
     GEOM::GEOM_Object_var myPoint2;

@@ -24,7 +24,6 @@
 //  File   : TransformationGUI_PositionDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_POSITION_H
 #define DIALOGBOX_POSITION_H
@@ -44,7 +43,8 @@ class TransformationGUI_PositionDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    TransformationGUI_PositionDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    TransformationGUI_PositionDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+				  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_PositionDlg();
 
 protected:
@@ -55,7 +55,7 @@ protected:
 
     virtual void closeEvent( QCloseEvent* e );
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     
@@ -65,12 +65,10 @@ private :
         
     DlgRef_3Sel3Spin1Check* Group1;
     
-private slots :
+private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

@@ -84,6 +84,8 @@ MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( GeometryGUI* GUI, QWidget* parent )
 
   /***************************************************************/
 
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Whatis";
+
   /* Initialisation */
   Init();
 }

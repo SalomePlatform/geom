@@ -33,6 +33,7 @@
 #include "SUIT_ViewWindow.h"
 #include "SVTK_ViewWindow.h"
 #include "SVTK_ViewModel.h"
+
 #include "OCCViewer_ViewWindow.h"
 #include "OCCViewer_ViewPort3d.h"
 
@@ -50,6 +51,7 @@
 #include <qcombobox.h>
 
 // VTK Includes
+#include "VTKViewer.h"
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
 
@@ -57,12 +59,12 @@
 // class    : OperationGUI_ClippingDlg()
 // purpose  : 
 //=================================================================================
-OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( QWidget* parent, const char* name, bool modal, WFlags fl )
-  : GEOMBase_Skeleton( parent, "OperationGUI_ClippingDlg", false,
-    WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+OperationGUI_ClippingDlg::OperationGUI_ClippingDlg(GeometryGUI* theGeometryGUI, QWidget* parent)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, "OperationGUI_ClippingDlg", false,
+                      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   setCaption( tr( "Change clipping range" ) );
-  
+
   GroupConstructors->close();
   GroupBoxName->close();
 
@@ -75,7 +77,7 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( QWidget* parent, const char*
   GroupArgumentsLayout->setAlignment( Qt::AlignTop );
   GroupArgumentsLayout->setSpacing( 6 );
   GroupArgumentsLayout->setMargin( 11 );
-  
+
   // Controls
   TextLabelNear = new QLabel( GroupArguments, "TextLabelNear" );
   TextLabelNear->setText( tr( "Near"  ) );
@@ -89,10 +91,10 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( QWidget* parent, const char*
   TextLabelFar->setText( tr( "Far"  ) );
   TextLabelFar->setFixedWidth(74);
   GroupArgumentsLayout->addWidget( TextLabelFar, 0, 2 );
-  
+
   SpinBox_Far = new DlgRef_SpinBox( GroupArguments, "SpinBox_Far");
   GroupArgumentsLayout->addWidget( SpinBox_Far, 0, 3 );
-  
+
   resetButton  = new QPushButton( GroupArguments, "resetButton" );
   resetButton->setText( tr( "Reset"  ) );
   GroupArgumentsLayout->addWidget( resetButton, 0, 4 );
@@ -103,24 +105,20 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( QWidget* parent, const char*
   TypeCB->insertItem(tr("FRONT"));
   TypeCB->insertItem(tr("SLICE"));
   GroupArgumentsLayout->addMultiCellWidget( TypeCB, 1, 1, 0, 4 );
-  
+
   Layout1->addWidget( GroupArguments, 2, 0 );
-  
+
   /* Initialisations */
   SpinBox_Near->RangeStepAndValidator( -999999.999, +999999.999, 10.0, 3 );
   SpinBox_Far->RangeStepAndValidator( -999999.999, +999999.999, 10.0, 3 );
-  
-  //GeometryGUI* aGeomGUI = GeometryGUI::GetGeomGUI();
-  
+
   /* signals and slots connections */
-  connect( buttonOk, SIGNAL( clicked() ),     this, SLOT( ClickOnOk() ) );
-  connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) ) ;
-  connect( buttonApply, SIGNAL( clicked() ),  this, SLOT( ClickOnApply() ) );
-  
+  connect( buttonOk   , SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply, SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+
   connect( resetButton, SIGNAL (clicked() ), this, SLOT( onReset() ) ) ;
-  
-  //  connect( aGeomGUI, SIGNAL ( SignalDeactivateActiveDialog() ), this, SLOT( onDeactivate() ) ) ;
-  //connect( aGeomGUI, SIGNAL ( SignalCloseAllDialogs() ), this, SLOT( ClickOnCancel() ) ) ;
+
+  setHelpFileName("none.htm");
 
   Init();
 }
@@ -133,7 +131,6 @@ OperationGUI_ClippingDlg::~ OperationGUI_ClippingDlg()
 {
   // no need to delete child widgets, Qt does it all for us
 }
-
 
 //=================================================================================
 // function : Init()
@@ -171,7 +168,7 @@ void OperationGUI_ClippingDlg::Init()
       double  position[3];
       anActiveCamera->GetPosition(position);
       
-      float bounds[6];
+      vtkFloatingPointType bounds[6];
       aRenderer->ComputeVisiblePropBounds(bounds);
       
       double center[3];
@@ -187,7 +184,7 @@ void OperationGUI_ClippingDlg::Init()
 			     (position[1]-center[1])*(position[1]-center[1]) +
 			     (position[2]-center[2])*(position[2]-center[2]));
       
-      float range[2] = {distance - width/2.0, distance + width/2.0};
+      vtkFloatingPointType range[2] = {distance - width/2.0, distance + width/2.0};
       
       SpinBox_Near->SetValue(range[0]);
       SpinBox_Far->SetValue(range[1]);
@@ -240,7 +237,7 @@ bool OperationGUI_ClippingDlg::ClickOnApply()
 	return false;
       }
       
-      float range[2] = { SpinBox_Near->GetValue(), SpinBox_Far->GetValue() };
+      vtkFloatingPointType range[2] = { SpinBox_Near->GetValue(), SpinBox_Far->GetValue() };
       if (range[0] < 0.0) range[0] = 0.0;
       anActiveCamera->SetClippingRange( range );
       
@@ -274,17 +271,6 @@ void OperationGUI_ClippingDlg::ClickOnOk()
   ClickOnCancel();
 }
 
-	
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void OperationGUI_ClippingDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
-}
-
-
 //=================================================================================
 // function : onActivate()
 // purpose  :
@@ -294,26 +280,15 @@ void OperationGUI_ClippingDlg::onActivate()
   GEOMBase_Skeleton::ActivateThisDialog();
 }
 
-
-//=================================================================================
-// function : onDeactivate()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-void OperationGUI_ClippingDlg::DeactivateActiveDialog()
-{
-  return;
-}
-
 //=================================================================================
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void OperationGUI_ClippingDlg::enterEvent(QEvent* e)
+void OperationGUI_ClippingDlg::enterEvent(QEvent*)
 {
   this->setEnabled(true);
   return;
 }
-
 
 //=================================================================================
 // function : closeEvent
@@ -324,14 +299,14 @@ void OperationGUI_ClippingDlg::closeEvent( QCloseEvent* e )
   QDialog::closeEvent( e );
 }
 
-
 //=================================================================================
 // function : onReset()
 // purpose  :
 //=================================================================================
 void OperationGUI_ClippingDlg::onReset()
 {
-  SUIT_ViewWindow* anActiveWindow =  SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  SUIT_ViewWindow* anActiveWindow =
+    SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   if (!anActiveWindow)
     return;
   
@@ -356,7 +331,7 @@ void OperationGUI_ClippingDlg::onReset()
       double  position[3];
       anActiveCamera->GetPosition(position);
       
-      float bounds[6];
+      vtkFloatingPointType bounds[6];
       aRenderer->ComputeVisiblePropBounds(bounds);
       
       double center[3];
@@ -372,7 +347,7 @@ void OperationGUI_ClippingDlg::onReset()
 			     (position[1]-center[1])*(position[1]-center[1]) +
 			     (position[2]-center[2])*(position[2]-center[2]));
       
-      float range[2] = {distance - width/2.0, distance + width/2.0};
+      vtkFloatingPointType range[2] = {distance - width/2.0, distance + width/2.0};
       
       SpinBox_Near->SetValue(range[0]);
       SpinBox_Far->SetValue(range[1]);
@@ -396,8 +371,6 @@ void OperationGUI_ClippingDlg::onReset()
       SpinBox_Far->SetValue(1000);
       TypeCB->setCurrentItem(ztype);
     }
-
-
 
   return;
 }

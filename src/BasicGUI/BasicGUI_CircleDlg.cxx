@@ -46,9 +46,10 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_CircleDlg::BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu),
-   myGeometryGUI(theGeometryGUI)
+BasicGUI_CircleDlg::BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                       const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PV")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PNTS")));
@@ -91,6 +92,8 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* par
   Layout1->addWidget( Group3Pnts, 2, 0 );
   /***************************************************************/
 
+  setHelpFileName("circle.htm");
+
   Init();
 }
 
@@ -115,7 +118,7 @@ void BasicGUI_CircleDlg::Init()
 
   myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 
-  // myGeometryGUI->SetState( 0 );
+  // myGeomGUI->SetState( 0 );
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -127,8 +130,8 @@ void BasicGUI_CircleDlg::Init()
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
   
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -144,7 +147,7 @@ void BasicGUI_CircleDlg::Init()
   connect(GroupPntVecR->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPntVecR->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPntVecR->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPntVecR->SpinBox_DX, SLOT(SetStep(double)));
   
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
@@ -318,7 +321,7 @@ void BasicGUI_CircleDlg::ActivateThisDialog()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  // myGeometryGUI->SetState( 0 );
+  // myGeomGUI->SetState( 0 );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -340,7 +343,7 @@ void BasicGUI_CircleDlg::enterEvent(QEvent* e)
 //=================================================================================
 void BasicGUI_CircleDlg::DeactivateActiveDialog()
 {
-  // myGeometryGUI->SetState( -1 );
+  // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -368,7 +371,7 @@ double BasicGUI_CircleDlg::getRadius() const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_CircleDlg::createOperation()
 {
-  return myGeometryGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
 }
 
 //=================================================================================
@@ -429,7 +432,6 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_CircleDlg::closeEvent( QCloseEvent* e )
 {
-  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 

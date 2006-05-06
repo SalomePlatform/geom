@@ -109,7 +109,8 @@ GEOMBase_Helper::~GEOMBase_Helper()
 
   globalSelection( GEOM_ALLOBJECTS, true );
 
-  delete myDisplayer;
+  if (myDisplayer)
+    delete myDisplayer;
 }
 
 //================================================================

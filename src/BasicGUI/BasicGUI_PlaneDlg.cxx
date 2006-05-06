@@ -46,8 +46,10 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                     const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PLANE_PV")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PLANE_3PNTS")));
@@ -99,6 +101,8 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   Layout1->addWidget(GroupFace, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("plane.htm");
+  
   Init();
 }
 
@@ -123,7 +127,7 @@ void BasicGUI_PlaneDlg::Init()
 
   myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = myFace = GEOM::GEOM_Object::_nil();
 
-  // myGeometryGUI->SetState( 0 );
+  // myGeomGUI->SetState( 0 );
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -141,8 +145,8 @@ void BasicGUI_PlaneDlg::Init()
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -166,9 +170,9 @@ void BasicGUI_PlaneDlg::Init()
   connect(Group3Pnts->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupFace->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPntDir->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3Pnts->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupFace->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPntDir->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3Pnts->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupFace->SpinBox_DX, SLOT(SetStep(double)));
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
@@ -373,7 +377,7 @@ void BasicGUI_PlaneDlg::ActivateThisDialog()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  // myGeometryGUI->SetState( 0 );
+  // myGeomGUI->SetState( 0 );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -384,7 +388,7 @@ void BasicGUI_PlaneDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_PlaneDlg::DeactivateActiveDialog()
 {
-  // myGeometryGUI->SetState( -1 );
+  // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -429,7 +433,7 @@ double BasicGUI_PlaneDlg::getSize() const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_PlaneDlg::createOperation()
 {
-  return myGeometryGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
 }
 
 //=================================================================================
@@ -501,7 +505,6 @@ bool BasicGUI_PlaneDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_PlaneDlg::closeEvent( QCloseEvent* e )
 {
-  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }
 

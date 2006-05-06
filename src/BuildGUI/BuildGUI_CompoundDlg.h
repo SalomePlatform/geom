@@ -24,7 +24,6 @@
 //  File   : GEOMBase_CompoundDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_COMPOUND_H
 #define DIALOGBOX_COMPOUND_H
@@ -41,7 +40,8 @@ class BuildGUI_CompoundDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_CompoundDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_CompoundDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			 const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_CompoundDlg();
 
 protected:
@@ -65,7 +65,6 @@ private slots:
     void ActivateThisDialog();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-
 };
 
 #endif // DIALOGBOX_COMPOUND_H

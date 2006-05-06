@@ -50,8 +50,10 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_SewingDlg::RepairGUI_SewingDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_SewingDlg::RepairGUI_SewingDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                         const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SEWING")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -87,6 +89,8 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg(QWidget* parent, const char* name, bool
   GroupPoints->getGroupBoxLayout()->addLayout( aLay, 3, 0 );
   /***************************************************************/
 
+  setHelpFileName("sewing.htm");
+
   Init();
 }
 
@@ -118,10 +122,6 @@ void RepairGUI_SewingDlg::Init()
   myOpen = -1;
 	
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
@@ -147,8 +147,6 @@ void RepairGUI_SewingDlg::ClickOnOk()
     ClickOnCancel();
 }
 
-
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
@@ -166,16 +164,6 @@ bool RepairGUI_SewingDlg::ClickOnApply()
   initSelection();
 
   return true;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void RepairGUI_SewingDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -226,17 +214,6 @@ void RepairGUI_SewingDlg::LineEditReturnPressed()
     myEditCurrentArgument = GroupPoints->LineEdit1;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void RepairGUI_SewingDlg::DeactivateActiveDialog()
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 

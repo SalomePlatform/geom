@@ -19,9 +19,9 @@
 //
 #include <Standard_Stream.hxx>
 
-#include <BRepOffsetAPI_MakeFilling.hxx>
-
 #include <GEOMImpl_Block6Explorer.hxx>
+
+#include <ShHealOper_ShapeProcess.hxx>
 
 #include "utilities.h"
 
@@ -33,6 +33,8 @@
 #include <BRepTools.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
+#include <BRepOffsetAPI_MakeFilling.hxx>
+#include <BRepCheck_Analyzer.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
@@ -1202,43 +1204,61 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
       // Result of filling
       TopoDS_Shape aFace = MF.Shape();
 
-      // Update tolerance
-      Standard_Real aTol = MF.G0Error();
+      // 12.04.2006 for PAL12149 begin
+      Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(aFace));
+      BRepBuilderAPI_MakeFace MK1 (aGS, theWire);
+      if (MK1.IsDone()) {
+        TopoDS_Shape aFace1 = MK1.Shape();
 
-      TColgp_Array1OfPnt aPnts (1,nbEdges); // points of the given wire
-      BRepTools_WireExplorer aWE1 (theWire);
-      Standard_Integer vi = 1;
-      for (; aWE1.More() && vi <= nbEdges; aWE1.Next(), vi++) {
-        aPnts(vi) = BRep_Tool::Pnt(TopoDS::Vertex(aWE1.CurrentVertex()));
-      }
-
-      // Find maximum deviation in vertices
-      TopExp_Explorer exp (aFace, TopAbs_VERTEX);
-      TopTools_MapOfShape mapShape;
-      for (; exp.More(); exp.Next()) {
-        if (mapShape.Add(exp.Current())) {
-          TopoDS_Vertex aV = TopoDS::Vertex(exp.Current());
-          Standard_Real aTolV = BRep_Tool::Tolerance(aV);
-          gp_Pnt aP = BRep_Tool::Pnt(aV);
-          Standard_Real min_dist = aP.Distance(aPnts(1));
-          for (vi = 2; vi <= nbEdges; vi++) {
-            min_dist = Min(min_dist, aP.Distance(aPnts(vi)));
-          }
-          aTol = Max(aTol, aTolV);
-          aTol = Max(aTol, min_dist);
+        BRepCheck_Analyzer ana (aFace1, false);
+        if (!ana.IsValid()) {
+          TopoDS_Shape aFace2;
+          ShHealOper_ShapeProcess aHealer;
+          aHealer.Perform(aFace1, aFace2);
+          if (aHealer.isDone())
+            theResult = aFace2;
         }
       }
+      // 12.04.2006 for PAL12149 end
 
-      if ((*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance() < aTol) {
-        (*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance(aTol);
+      if (theResult.IsNull()) { // try to deal with pure result of filling
+        // Update tolerance
+        Standard_Real aTol = MF.G0Error();
+
+        TColgp_Array1OfPnt aPnts (1,nbEdges); // points of the given wire
+        BRepTools_WireExplorer aWE1 (theWire);
+        Standard_Integer vi = 1;
+        for (; aWE1.More() && vi <= nbEdges; aWE1.Next(), vi++) {
+          aPnts(vi) = BRep_Tool::Pnt(TopoDS::Vertex(aWE1.CurrentVertex()));
+        }
+
+        // Find maximum deviation in vertices
+        TopExp_Explorer exp (aFace, TopAbs_VERTEX);
+        TopTools_MapOfShape mapShape;
+        for (; exp.More(); exp.Next()) {
+          if (mapShape.Add(exp.Current())) {
+            TopoDS_Vertex aV = TopoDS::Vertex(exp.Current());
+            Standard_Real aTolV = BRep_Tool::Tolerance(aV);
+            gp_Pnt aP = BRep_Tool::Pnt(aV);
+            Standard_Real min_dist = aP.Distance(aPnts(1));
+            for (vi = 2; vi <= nbEdges; vi++) {
+              min_dist = Min(min_dist, aP.Distance(aPnts(vi)));
+            }
+            aTol = Max(aTol, aTolV);
+            aTol = Max(aTol, min_dist);
+          }
+        }
+
+        if ((*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance() < aTol) {
+          (*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance(aTol);
+        }
+        theResult = aFace;
       }
-      theResult = aFace;
     }
   } else {
     // try to update wire tolerances to build a planar face
 
-    // With OCCT6.0 or lower
-
+#if 1 //(OCC_VERSION_MAJOR < 6) || (OCC_VERSION_MAJOR == 6 && OCC_VERSION_MINOR <= 1)
     // Find a deviation
     Standard_Real aToleranceReached, aTol;
     BRepLib_FindSurface aFS;
@@ -1276,12 +1296,13 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
       return;
     }
 
-    // After migration on OCCT version higher than 6.0
-    //BRepLib_MakeFace aBMF;
-    //aBMF.Init(theWire, isPlanarWanted, Standard_True);
-    //if (aBMF.Error() == BRepLib_FaceDone) {
-    //  theResult = aBMF.Shape();
-    //  return;
-    //}
+#else // After migration on OCCT version, containing PKV's fix. See bug 8293
+    BRepLib_MakeFace aBMF;
+    aBMF.Init(theWire, isPlanarWanted, Standard_True);
+    if (aBMF.Error() == BRepLib_FaceDone) {
+      theResult = aBMF.Shape();
+      return;
+    }
+#endif
   }
 }

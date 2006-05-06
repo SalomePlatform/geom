@@ -24,7 +24,6 @@
 //  File   : OperationGUI_ArchimedeDlg.h
 //  Author : Nicolas REJNERI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_ARCHIMEDE_H
 #define DIALOGBOX_ARCHIMEDE_H
@@ -42,13 +41,11 @@ class OperationGUI_ArchimedeDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    OperationGUI_ArchimedeDlg( GeometryGUI* theGeometryGUI, QWidget* parent );
+    OperationGUI_ArchimedeDlg(GeometryGUI* theGeometryGUI, QWidget* parent);
     ~OperationGUI_ArchimedeDlg();
 
 protected:
-
     // redefined from GEOMBase_Helper
-    
     virtual GEOM::GEOM_IOperations_ptr  createOperation();
     virtual bool                        isValid( QString& msg );
     virtual bool                        execute( ObjectList& objects );    
@@ -61,7 +58,6 @@ private:
     GEOM::GEOM_Object_var               myShape;
     DlgRef_1Sel3Spin*                   GroupPoints;
     double                              myStep;
-    GeometryGUI*                        myGeometryGUI;
 
 private slots:
     void                                ClickOnOk();

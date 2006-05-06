@@ -24,7 +24,6 @@
 //  File   : GEOMBase_Skeleton.h
 //  Author : Damine COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef GEOMBASE_SKELETON_H
 #define GEOMBASE_SKELETON_H
@@ -54,34 +53,44 @@
 #endif
 
 class GEOMBASE_WNT_EXPORT GEOMBase_Skeleton : public DlgRef_Skeleton_QTD, public GEOMBase_Helper
-{ 
+{
     Q_OBJECT
 
 public:
-    GEOMBase_Skeleton(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    GEOMBase_Skeleton(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~GEOMBase_Skeleton();
-//    int getConstructorId() const; // returns id of a selected "constructor" radio button or '-1' in case of error
 
-private :
+private:
     void Init();
 
 protected:
     void closeEvent(QCloseEvent* e);
 
-    void initName( const char* thePrefix = 0 ); // initialize "Name" field with a string "thePrefix_X" (Vertex_3)
-    virtual const char* getNewObjectName() const; // returns contents of "Name" field
-    int getConstructorId() const; // returns id of a selected "constructor" radio button or '-1' in case of error
+    /*! initialize "Name" field with a string "thePrefix_X" (Vertex_3)
+     */
+    void initName( const char* thePrefix = 0 );
 
-    QLineEdit* myEditCurrentArgument;   /* Current LineEdit */
-    GEOMBase* myGeomBase; // SAN -- TO BE REMOVED !!!
-    GeometryGUI* myGeomGUI;             /* reference GEOM GUI */
+    /*! returns contents of "Name" field
+     */
+    virtual const char* getNewObjectName() const;
+
+    /*! returns id of a selected "constructor" radio button or '-1' in case of error
+     */
+    int getConstructorId() const;
+
+    void setHelpFileName( const QString& );
+
+    QLineEdit* myEditCurrentArgument; //!< Current LineEdit
+    GeometryGUI* myGeomGUI;           //!< reference GEOM GUI
+    QString myHelpFileName;
 
 protected slots:
     void ClickOnCancel();
     void LineEditReturnPressed();
     void DeactivateActiveDialog();
     void ActivateThisDialog();
-
+    void ClickOnHelp();
 };
 
 #endif // GEOMBASE_SKELETON_H

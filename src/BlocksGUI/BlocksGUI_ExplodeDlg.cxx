@@ -50,9 +50,8 @@
 // class    : BlocksGUI_ExplodeDlg()
 // purpose  : Constructs a BlocksGUI_ExplodeDlg which is a child of 'parent'.
 //=================================================================================
-BlocksGUI_ExplodeDlg::BlocksGUI_ExplodeDlg (QWidget* parent,
-                                            bool modal)
-     : GEOMBase_Skeleton(parent, "ExplodeDlg", modal,
+BlocksGUI_ExplodeDlg::BlocksGUI_ExplodeDlg (GeometryGUI* theGeometryGUI, QWidget* parent, bool modal)
+     : GEOMBase_Skeleton(theGeometryGUI, parent, "ExplodeDlg", modal,
                          WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BLOCK_EXPLODE")));
@@ -107,6 +106,8 @@ BlocksGUI_ExplodeDlg::BlocksGUI_ExplodeDlg (QWidget* parent,
   // Add groups to layout
   Layout1->addWidget(myGrp1, 1, 0);
   /***************************************************************/
+
+  setHelpFileName("explode_on_blocks.htm");
 
   Init();
 }

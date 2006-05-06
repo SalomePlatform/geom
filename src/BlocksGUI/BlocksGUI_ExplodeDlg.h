@@ -23,7 +23,6 @@
 //  File   : BlocksGUI_ExplodeDlg.h
 //  Author : Julia DOROVSKIKH
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_BLOCK_EXPLODE_H
 #define DIALOGBOX_BLOCK_EXPLODE_H
@@ -43,8 +42,7 @@ class BlocksGUI_ExplodeDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BlocksGUI_ExplodeDlg (QWidget* parent,
-			bool modal = FALSE);
+  BlocksGUI_ExplodeDlg (GeometryGUI*, QWidget* parent, bool modal = FALSE);
   ~BlocksGUI_ExplodeDlg();
 
 protected:

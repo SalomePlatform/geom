@@ -49,17 +49,16 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg( QWidget* parent )
-: GEOMBase_Skeleton( parent, "MeasureGUI_CenterMassDlg", false,
-    WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
+  : GEOMBase_Skeleton(theGeometryGUI, parent, "MeasureGUI_CenterMassDlg", false,
+                      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr( "ICON_DLG_CENTERMASS" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr( "ICON_SELECT" ) ) );
+  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_CENTERMASS")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setCaption( tr( "GEOM_CMASS_TITLE" ) );
 
   /***************************************************************/
-  
   GroupConstructors->setTitle( tr( "GEOM_CMASS" ) );
   RadioButton1->setPixmap( image0 );
   RadioButton2->close( TRUE );
@@ -79,6 +78,8 @@ MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg( QWidget* parent )
 
   Layout1->addWidget( myGrp, 2, 0 );
   /***************************************************************/
+
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Center_gravity";
 
   /* Initialisation */
   Init();
@@ -337,5 +338,3 @@ bool MeasureGUI_CenterMassDlg::execute( ObjectList& objects )
 
   return true;
 }
-
-

@@ -49,13 +49,16 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg(GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg
+  (GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_TRANSLATION_DXYZ")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_TRANSLATION_POINTS")));
-  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_TRANSLATION_VECTOR")));
-  QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
+  QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_TRANSLATION_DXYZ")));
+  QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_TRANSLATION_POINTS")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_TRANSLATION_VECTOR")));
+  QPixmap image3 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_TRANSLATION_TITLE"));
 
@@ -81,6 +84,8 @@ TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg(GeometryGUI* 
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
+  
+  setHelpFileName("translation.htm");
   
   Init();
 }
@@ -142,13 +147,13 @@ void TransformationGUI_TranslationDlg::Init()
   connect(GroupPoints->SpinBox2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->SpinBox3, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox1, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox2, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox3, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox1, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox2, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox3, SLOT(SetStep(double)));
   
   connect(GroupPoints->CheckBox1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName( tr( "GEOM_TRANSLATION" ) );
@@ -162,7 +167,7 @@ void TransformationGUI_TranslationDlg::Init()
 //=================================================================================
 void TransformationGUI_TranslationDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   
   myEditCurrentArgument = GroupPoints->LineEdit1;
   globalSelection();
@@ -200,7 +205,7 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked(int constructorId)
     }
   
   myEditCurrentArgument->setFocus();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
@@ -228,16 +233,6 @@ bool TransformationGUI_TranslationDlg::ClickOnApply()
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
-}
-
-
-//=======================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=======================================================================
-void TransformationGUI_TranslationDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -349,20 +344,10 @@ void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
 void TransformationGUI_TranslationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  
+
   ConstructorsClicked( getConstructorId() );
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-void  TransformationGUI_TranslationDlg::DeactivateActiveDialog()
-{
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -393,7 +378,7 @@ void TransformationGUI_TranslationDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr  TransformationGUI_TranslationDlg::createOperation()
 {
-  return myGeometryGUI->GetGeomGen()->GetITransformOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetITransformOperations( getStudyId() );
 }
 
 

@@ -358,6 +358,14 @@
                                         <string>&amp;Cancel</string>
                                     </property>
                                 </widget>
+				<widget class="QPushButton">
+                                    <property name="name">
+                                        <cstring>buttonHelp</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Help</string>
+                                    </property>
+                                </widget>
                             </hbox>
                         </widget>
                     </hbox>

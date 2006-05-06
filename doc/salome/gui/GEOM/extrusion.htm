@@ -16,26 +16,14 @@ if (navigator.appName !="Netscape")
 <!--
 img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
-img_whs3 { border:none; width:312px; height:350px; float:none; border-style:none; }
-p.whs4 { font-size:12pt; font-weight:bold; }
-p.whs5 { font-size:12pt; margin-left:40px; }
-p.whs6 { font-size:12pt; font-style:italic; }
-p.whs7 { font-size:12pt; margin-left:0px; }
-img_whs8 { border:none; float:none; width:300px; height:175px; border-style:none; }
-img_whs9 { border:none; width:350px; height:175px; float:none; border-style:none; }
+p.whs3 { font-size:12pt; margin-left:40px; }
+img_whs4 { border:none; width:312px; height:350px; float:none; border-style:none; }
+p.whs5 { font-size:12pt; font-weight:bold; }
+p.whs6 { font-size:12pt; font-style:italic; margin-left:40px; }
+img_whs7 { border:none; float:none; width:300px; height:175px; border-style:none; }
+img_whs8 { border:none; width:350px; height:175px; float:none; border-style:none; }
 -->
-</style><script type="text/javascript" language="JavaScript">
-<!--
-if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
-{
-  var strNSS = "<style type='text/css'>";
-  strNSS += "p.whs7 {margin-left:1pt; }";
-  strNSS +="</style>";
-  document.write(strNSS);
-}
-//-->
-</script>
-<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
 function reDo() {
   if (innerWidth != origWidth || innerHeight != origHeight)
@@ -65,7 +53,7 @@ if (window.gbWhTopic)
 {
 	if (window.addTocInfo)
 	{
-	addTocInfo("GEOM module\nCreating geometrical objects\nGeneration of Complex Objects\nExtrusion");
+	addTocInfo("Geometry module\nCreating geometrical objects\nCreating Complex Objects\nExtrusion");
 addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	}
@@ -102,7 +90,7 @@ else
 <p class="whs2">To create an Extrusion (Prism) you should define 
  the <span style="font-weight: bold;"><B>Base Shape </B></span>(a basis of the 
  extrusion)<span style="font-weight: bold;"><B>, </B></span>the <span style="font-weight: bold;"><B>Vector</B></span> 
- (a normal of the extrusion) and the <span style="font-weight: bold;"><B>Height</B></span> 
+ (a direction of the extrusion) and the <span style="font-weight: bold;"><B>Height</B></span> 
  of extrusion. &nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
@@ -119,28 +107,28 @@ else
 
 <p>&nbsp;</p>
 
-<p class="whs2"><img src="pics/extrusion.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs3"></p>
+<p class="whs3"><img src="pics/extrusion.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs4"></p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs4">NB! <span style="font-weight: normal;">The 
+<p class="whs5">NB! <span style="font-weight: normal;">The 
  is another way to create an</span> Extrusion, <span style="font-weight: normal;">which 
  is currently accessible only via</span> TUI commands.</p>
 
-<p class="whs4"><span style="font-weight: normal;">You 
+<p class="whs5"><span style="font-weight: normal;">You 
  can define the</span> Extrusion <span style="font-weight: normal;">by 
  the </span>Base Shape<span style="font-weight: normal;"> and the </span>Start<span 
  style="font-weight: normal;"> and </span>End Point<span style="font-weight: normal;"> 
  of the </span>Vector<span style="font-weight: normal;"> &nbsp;(in 
  this way you don't need to create it in advance).</span> </p>
 
-<p class="whs4"><b style="font-weight: bold;">TUI 
+<p class="whs5"><b style="font-weight: bold;">TUI 
  Command:</b> <span style="font-weight: normal; font-style: italic;"><I>geompy.MakePrism(Base, 
  Point1, Point2) </I></span></p>
 
 <p>&nbsp;</p>
 
-<p class="whs5">&nbsp;</p>
+<p class="whs3">&nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">Examples:</b></p>
 
@@ -148,7 +136,7 @@ else
 
 <p class="whs6">Base Shape &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prisms</p>
 
-<p class="whs7"><img src="pics/prisms_basessn.png" x-maintain-ratio="TRUE" width="300px" height="175px" border="0" class="img_whs8"> <img src="pics/prismssn.png" x-maintain-ratio="TRUE" width="350px" height="175px" border="0" class="img_whs9"> &nbsp;</p>
+<p class="whs3"><img src="pics/prisms_basessn.png" x-maintain-ratio="TRUE" width="300px" height="175px" border="0" class="img_whs7"> <img src="pics/prismssn.png" x-maintain-ratio="TRUE" width="350px" height="175px" border="0" class="img_whs8"> &nbsp;</p>
 
 <p class="whs2">&nbsp;</p>
 

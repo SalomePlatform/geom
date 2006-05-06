@@ -46,8 +46,10 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BlocksGUI_PropagateDlg::BlocksGUI_PropagateDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BlocksGUI_PropagateDlg::BlocksGUI_PropagateDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                               const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PROPAGATE")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
@@ -75,9 +77,10 @@ BlocksGUI_PropagateDlg::BlocksGUI_PropagateDlg(QWidget* parent, const char* name
 
   /***************************************************************/
 
+  setHelpFileName("propagate.htm");
+
   Init();
 }
-
 
 //=================================================================================
 // function : ~BlocksGUI_PropagateDlg()
@@ -86,7 +89,6 @@ BlocksGUI_PropagateDlg::BlocksGUI_PropagateDlg(QWidget* parent, const char* name
 BlocksGUI_PropagateDlg::~BlocksGUI_PropagateDlg()
 {
 }
-
 
 //=================================================================================
 // function : Init()
@@ -102,10 +104,6 @@ void BlocksGUI_PropagateDlg::Init()
   //myGeomGUI->SetState( 0 );
 
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
@@ -126,8 +124,6 @@ void BlocksGUI_PropagateDlg::ClickOnOk()
     ClickOnCancel();
 }
 
-
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
@@ -145,16 +141,6 @@ bool BlocksGUI_PropagateDlg::ClickOnApply()
   activateSelection();
 
   return true;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void BlocksGUI_PropagateDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -200,17 +186,6 @@ void BlocksGUI_PropagateDlg::LineEditReturnPressed()
   if( send == mySelName ) {
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void BlocksGUI_PropagateDlg::DeactivateActiveDialog()
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -316,4 +291,3 @@ GEOM::GEOM_Object_ptr BlocksGUI_PropagateDlg::getFather (GEOM::GEOM_Object_ptr)
 {
   return myObject;
 }
-

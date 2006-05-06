@@ -29,6 +29,7 @@
 #include "GEOMToolsGUI_TransparencyDlg.h"
 #include "GEOMBase.h"
 #include "GEOM_AISShape.hxx"
+#include "GeometryGUI.h"
 
 #include "SALOME_ListIO.hxx"
 #include "SALOME_ListIteratorOfListIO.hxx"
@@ -43,11 +44,13 @@
 #include <SUIT_ViewManager.h>
 #include <SUIT_Application.h>
 #include <SUIT_Desktop.h>
+#include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SUIT_OverrideCursor.h>
 
 #include <SalomeApp_Application.h>
+#include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <qframe.h>
@@ -96,9 +99,15 @@ GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
   buttonOk->setText( tr( "GEOM_BUT_OK" ) );
   buttonOk->setAutoDefault( TRUE );
   buttonOk->setDefault( TRUE );
-  GroupButtonsLayout->addItem( new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 0 );
-  GroupButtonsLayout->addWidget( buttonOk, 0, 1 );
-  GroupButtonsLayout->addItem( new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 2 );
+
+  QPushButton* buttonHelp = new QPushButton( GroupButtons, "buttonHelp" );
+  buttonHelp->setText( tr( "GEOM_BUT_HELP" ) );
+  buttonHelp->setAutoDefault( TRUE );
+  buttonHelp->setDefault( TRUE );
+  
+  GroupButtonsLayout->addWidget( buttonOk, 0, 0 );
+  GroupButtonsLayout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 1 );
+  GroupButtonsLayout->addWidget( buttonHelp, 0, 2 );
 
   /*************************************************************************/
   QGroupBox* GroupC1 = new QGroupBox( this, "GroupC1" );
@@ -137,8 +146,11 @@ GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
   //  mySlider->setValue( 5 ) ;
   ValueHasChanged(mySlider->value());
   
+  myHelpFileName = "transparency.htm";
+
   // signals and slots connections : after ValueHasChanged()
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonHelp, SIGNAL(clicked()), this, SLOT(ClickOnHelp()));
   connect(mySlider, SIGNAL(valueChanged(int)), this, SLOT(ValueHasChanged(int)));
 }
 
@@ -174,6 +186,24 @@ void GEOMToolsGUI_TransparencyDlg::ClickOnClose()
   return;
 }
 
+//=================================================================================
+// function : ClickOnHelp()
+// purpose  :
+//=================================================================================
+void GEOMToolsGUI_TransparencyDlg::ClickOnHelp()
+{
+  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app) {
+    GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
+    app->onHelpContextModule(aGeomGUI ? app->moduleName(aGeomGUI->moduleName()) : QString(""), myHelpFileName);
+  }
+  else {
+    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
+			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+			   arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
+			   QObject::tr("BUT_OK"));
+  }
+}
 
 //=================================================================================
 // function : ValueHasChanged()

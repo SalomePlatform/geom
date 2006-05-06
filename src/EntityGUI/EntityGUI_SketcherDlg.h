@@ -24,7 +24,6 @@
 //  File   : EntityGUI_SketcherDlg.h
 //  Author : Damine COQUERET
 //  Module : GEOM
-//  $Header: 
 
 #ifndef ENTITYGUI_SKETCHERDLG_H
 #define ENTITYGUI_SKETCHERDLG_H
@@ -63,7 +62,8 @@ class EntityGUI_SketcherDlg : public EntityGUI_Skeleton_QTD, public GEOMBase_Hel
     Q_OBJECT
 
 public:
-    EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent = 0,
+			  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~EntityGUI_SketcherDlg();
 
 protected:
@@ -89,9 +89,9 @@ private :
     int mySketchState;
 
     bool myIsAllAdded;
-    
+
     QLineEdit* myEditCurrentArgument;   /* Current LineEdit */
-    
+
     QStringList myCommand;
     QStringList myUndoCommand;
 
@@ -112,6 +112,8 @@ private :
 
     GeometryGUI*  myGeometryGUI;
 
+    QString myHelpFileName;
+
     enum SketchState {FIRST_POINT, NEXT_POINT};
 
     enum SketchType {PT_ABS, PT_RELATIVE, PT_SEL,
@@ -129,12 +131,14 @@ private :
   bool createShapes( GEOM::GEOM_Object_ptr theObject,
                      TopoDS_Shape&         theApplyedWire,
                      TopoDS_Shape&         theLastSegment );
+
 private slots:
     void ClickOnEnd();
     void ClickOnCancel();
     bool ClickOnApply();
     void ClickOnUndo();
     void ClickOnRedo();
+    void ClickOnHelp();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
@@ -146,7 +150,6 @@ private slots:
     void Dir1Clicked(int constructorId);
     void Dir2Clicked(int constructorId);
     void ValueChangedInSpinBox(double newValue);
-
 };
 
 #endif // ENTITYGUI_SKETCHERDLG_H

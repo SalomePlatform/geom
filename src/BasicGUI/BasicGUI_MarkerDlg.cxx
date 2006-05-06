@@ -58,8 +58,8 @@
 // purpose  : Constructor
 //=================================================================================
 BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* theParent )
-: GEOMBase_Skeleton( theParent, "BasicGUI_MarkerDlg", false,
-		     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+  : GEOMBase_Skeleton(theGeometryGUI, theParent, "BasicGUI_MarkerDlg", false,
+                      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap iconCS1   ( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_MARKER" ) ) );
   QPixmap iconCS2   ( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_MARKER2" ) ) );
@@ -119,6 +119,8 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   Layout1->addWidget( Group1, 2, 0 );
   Layout1->addWidget( Group2, 2, 0 );
 
+  setHelpFileName("local_coordinate_system.htm");
+  
   Init();
 }
 
@@ -158,8 +160,8 @@ void BasicGUI_MarkerDlg::Init()
   connect(Group2->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( onClose() ) );
-  connect( myGeometryGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( onDeactivate() ) );
-  connect( myGeometryGUI, SIGNAL( SignalCloseAllDialogs() ), this, SLOT( onClose() ) );
+  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( onDeactivate() ) );
+  connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ), this, SLOT( onClose() ) );
 
   connect( buttonOk, SIGNAL( clicked() ), this, SLOT( onOk() ) );
   connect( buttonApply, SIGNAL( clicked() ), this, SLOT( onApply() ) );
@@ -320,7 +322,7 @@ void BasicGUI_MarkerDlg::onSelectionDone0()
     if ( aRes && !aSelectedObj->_is_nil() )
     {
       TopoDS_Shape aShape;
-      if ( myGeomBase->GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+      if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
       {
         if ( aSelectedObj->GetType() == GEOM_MARKER && aShape.ShapeType() == TopAbs_FACE )
         {
@@ -402,7 +404,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
     if ( !CORBA::is_nil( aSelectedObj ) && aRes ) {
       aName = GEOMBase::GetName( aSelectedObj );
       TopoDS_Shape aShape;
-      if ( myGeomBase->GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) ) {
+      if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) ) {
 	GEOM::short_array anIndexes;
 
 	TColStd_IndexedMapOfInteger aMap;
@@ -643,7 +645,7 @@ void BasicGUI_MarkerDlg::enterEvent(QEvent* e)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_MarkerDlg::createOperation()
 {
-  return myGeometryGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
 }
 
 //=================================================================================

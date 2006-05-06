@@ -24,7 +24,6 @@
 //  File   : OperationGUI_FilletDlg.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_FILLET_H
 #define DIALOGBOX_FILLET_H
@@ -45,8 +44,8 @@ class OperationGUI_FilletDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-                                        OperationGUI_FilletDlg( QWidget* parent );
-                                        ~OperationGUI_FilletDlg();
+    OperationGUI_FilletDlg(GeometryGUI* theGeometryGUI, QWidget* parent);
+    ~OperationGUI_FilletDlg();
 
 protected:
     // redefined from GEOMBase_Helper
@@ -55,19 +54,16 @@ protected:
     virtual                             bool execute( ObjectList& objects );
 
 private slots:
-
     void                                ClickOnOk();
     bool                                ClickOnApply();
     void                                ActivateThisDialog();
-    void                                DeactivateActiveDialog();
     void                                LineEditReturnPressed();
     void                                SelectionIntoArgument();
     void                                SetEditCurrentArgument();
     void                                ValueChangedInSpinBox( double newValue );
     void                                ConstructorsClicked( int constructorId );
 
-private :
-
+private:
     void                                Init();
     void                                enterEvent( QEvent* e );
     void                                reset();
@@ -76,18 +72,16 @@ private :
     void                                enableWidgets();
     double                              getRadius() const;
 
-private :
-
+private:
     int                                 myConstructorId;
 
     GEOM::GEOM_Object_var               myShape;
     TColStd_IndexedMapOfInteger         myEdges;
     TColStd_IndexedMapOfInteger         myFaces;
-    
+
     DlgRef_1Sel1Spin*                   Group1;
     DlgRef_2Sel1Spin*                   Group2;
     DlgRef_2Sel1Spin*                   Group3;
 };
 
 #endif // DIALOGBOX_FILLET_H
-

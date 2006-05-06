@@ -23,7 +23,6 @@
 //  File   : BasicGUI_CurveDlg.h
 //  Author : Alexander SLADKOV
 //  Module : GEOM
-//  $Header$
 
 #ifndef BASICGUI_CURVE_H
 #define BASICGUI_CURVE_H
@@ -32,13 +31,14 @@
 #include "DlgRef_1Sel_QTD.h"
 
 #include "BasicGUI.h"
+
 #include <list>
+
 #if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
 #define BASICGUI_WNT_EXPORT __declspec( dllexport )
 #else
 #define BASICGUI_WNT_EXPORT
 #endif
-//#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
 // class    : BasicGUI_CurveDlg
@@ -49,7 +49,8 @@ class BasicGUI_CurveDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_CurveDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_CurveDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_CurveDlg();
 
 protected:
@@ -63,8 +64,6 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
-
-    GeometryGUI* myGeometryGUI;
 
     DlgRef_1Sel_QTD* GroupPoints;
     GEOM::ListOfGO_var myPoints;

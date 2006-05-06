@@ -24,7 +24,6 @@
 //  File   : BuildGUI_ShellDlg.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
 
 #ifndef DIALOGBOX_SHELL_H
 #define DIALOGBOX_SHELL_H
@@ -41,7 +40,8 @@ class BuildGUI_ShellDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_ShellDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_ShellDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_ShellDlg();
 
 protected:
@@ -65,7 +65,6 @@ private slots:
     void SetEditCurrentArgument();
     void SelectionIntoArgument();
     void ActivateThisDialog();
-
 };
 
 #endif // DIALOGBOX_SHELL_H

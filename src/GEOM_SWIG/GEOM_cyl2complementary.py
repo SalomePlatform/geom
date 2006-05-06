@@ -1,3 +1,22 @@
+#  Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+#  See http://www.salome-platform.org/
+#
 #==============================================================================
 #  Info.
 #  Bug (from script, bug)   : cyl2complementary_modified.py, PAL6700
@@ -12,11 +31,12 @@
 import salome
 import geompy
 geomgui = salome.ImportComponentGUI("GEOM") 
-
+import salome_ComponentGUI
 def addToStudy(shape, name):
     i = geompy.addToStudy(shape, name)
     salome.sg.updateObjBrowser(0)
-    geomgui.createAndDisplayGO(i)
+    if not isinstance(geomgui, type(salome_ComponentGUI)):
+        geomgui.createAndDisplayGO(i)
     return i
 
 # Piece

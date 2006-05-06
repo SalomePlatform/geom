@@ -440,6 +440,76 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetSubShape
 
 //=============================================================================
 /*!
+ *  GetSubShapeIndex
+ */
+//=============================================================================
+CORBA::Long GEOM_IShapesOperations_i::GetSubShapeIndex
+  (GEOM::GEOM_Object_ptr theMainShape, GEOM::GEOM_Object_ptr theSubShape)
+{
+  if (theMainShape == NULL || theSubShape == NULL) return -1;
+
+  //Get the reference shapes
+  Handle(GEOM_Object) aMainShapeRef = GetOperations()->GetEngine()->GetObject
+    (theMainShape->GetStudyID(), theMainShape->GetEntry());
+  Handle(GEOM_Object) aSubShapeRef = GetOperations()->GetEngine()->GetObject
+    (theSubShape->GetStudyID(), theSubShape->GetEntry());
+  if (aMainShapeRef.IsNull() || aSubShapeRef.IsNull()) return -1;
+
+  //Get the unique ID of <theSubShape> inside <theMainShape>
+  CORBA::Long anID = GetOperations()->GetSubShapeIndex(aMainShapeRef, aSubShapeRef);
+  if (!GetOperations()->IsDone())
+    return -1;
+
+  return anID;
+}
+
+//=============================================================================
+/*!
+ *  GetTopologyIndex
+ */
+//=============================================================================
+CORBA::Long GEOM_IShapesOperations_i::GetTopologyIndex
+  (GEOM::GEOM_Object_ptr theMainShape, GEOM::GEOM_Object_ptr theSubShape)
+{
+  if (theMainShape == NULL || theSubShape == NULL) return -1;
+
+  //Get the reference shapes
+  Handle(GEOM_Object) aMainShapeRef = GetOperations()->GetEngine()->GetObject
+    (theMainShape->GetStudyID(), theMainShape->GetEntry());
+  Handle(GEOM_Object) aSubShapeRef = GetOperations()->GetEngine()->GetObject
+    (theSubShape->GetStudyID(), theSubShape->GetEntry());
+  if (aMainShapeRef.IsNull() || aSubShapeRef.IsNull()) return -1;
+
+  //Get an ID of <theSubShape>, unique among all sub-shapes of <theMainShape> of the same type
+  CORBA::Long anID = GetOperations()->GetTopologyIndex(aMainShapeRef, aSubShapeRef);
+  if (!GetOperations()->IsDone())
+    return -1;
+
+  return anID;
+}
+
+//=============================================================================
+/*!
+ *  GetShapeTypeString
+ */
+//=============================================================================
+char* GEOM_IShapesOperations_i::GetShapeTypeString (GEOM::GEOM_Object_ptr theShape)
+{
+  if (theShape == NULL) return NULL;
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+
+  if (aShape.IsNull()) return NULL;
+
+  // Get shape parameters
+  TCollection_AsciiString aDescription = GetOperations()->GetShapeTypeString(aShape);
+  return CORBA::string_dup(aDescription.ToCString());
+}
+
+//=============================================================================
+/*!
  *  NumberOfFaces
  */
 //=============================================================================

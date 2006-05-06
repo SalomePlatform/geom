@@ -71,7 +71,15 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
                                                      const Standard_Boolean isSorted);
 
   Standard_EXPORT Handle(GEOM_Object) GetSubShape (Handle(GEOM_Object)    theMainShape,
-                                   const Standard_Integer theID);
+                                                   const Standard_Integer theID);
+
+  Standard_EXPORT Standard_Integer GetSubShapeIndex (Handle(GEOM_Object) theMainShape,
+                                                     Handle(GEOM_Object) theSubShape);
+
+  Standard_EXPORT Standard_Integer GetTopologyIndex (Handle(GEOM_Object) theMainShape,
+                                                     Handle(GEOM_Object) theSubShape);
+
+  Standard_EXPORT TCollection_AsciiString GetShapeTypeString (Handle(GEOM_Object) theShape);
 
   Standard_EXPORT Standard_Integer NumberOfFaces (Handle(GEOM_Object) theShape);
   Standard_EXPORT Standard_Integer NumberOfEdges (Handle(GEOM_Object) theShape);

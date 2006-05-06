@@ -24,7 +24,6 @@
 //  File   : BasicGUI_CircleDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_CIRCLE_H
 #define DIALOGBOX_CIRCLE_H
@@ -35,9 +34,8 @@
 
 #include "BasicGUI.h"
 
-//#include "GEOM_EdgeFilter.hxx"
-//#include "GEOM_ShapeTypeFilter.hxx"
 #include <gp_Dir.hxx>
+
 #if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
 #define BASICGUI_WNT_EXPORT __declspec( dllexport )
 #else
@@ -49,11 +47,12 @@
 // purpose  :
 //=================================================================================
 class BasicGUI_CircleDlg : public GEOMBase_Skeleton
-{ 
+{
     Q_OBJECT
 
 public:
-    BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_CircleDlg();
 
 protected:
@@ -64,12 +63,10 @@ protected:
 
     virtual void closeEvent( QCloseEvent* e );    
 
-private :
+private:
     void   Init();
     void   enterEvent(QEvent* e);
     double getRadius() const;
-
-    GeometryGUI*  myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3;
 
@@ -90,7 +87,6 @@ private slots:
     void LineEditReturnPressed();
     void SetEditCurrentArgument();
     void ValueChangedInSpinBox();
-
 };
 
 #endif // DIALOGBOX_CIRCLE_H

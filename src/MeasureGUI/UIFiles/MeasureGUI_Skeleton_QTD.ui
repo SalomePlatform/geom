@@ -89,24 +89,7 @@
                                 <property name="spacing">
                                     <number>6</number>
                                 </property>
-                                <spacer row="0" column="2">
-                                    <property name="name">
-                                        <cstring>Spacer2</cstring>
-                                    </property>
-                                    <property name="orientation">
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property name="sizeType">
-                                        <enum>Expanding</enum>
-                                    </property>
-                                    <property name="sizeHint">
-                                        <size>
-                                            <width>120</width>
-                                            <height>0</height>
-                                        </size>
-                                    </property>
-                                </spacer>
-                                <spacer row="0" column="0">
+                                <spacer row="0" column="1">
                                     <property name="name">
                                         <cstring>Spacer1</cstring>
                                     </property>
@@ -123,12 +106,20 @@
                                         </size>
                                     </property>
                                 </spacer>
-                                <widget class="QPushButton" row="0" column="1">
+                                <widget class="QPushButton" row="0" column="0">
                                     <property name="name">
                                         <cstring>buttonClose</cstring>
                                     </property>
                                     <property name="text">
                                         <string>&amp;Close</string>
+                                    </property>
+                                </widget>
+				<widget class="QPushButton" row="0" column="2">
+                                    <property name="name">
+                                        <cstring>buttonHelp</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Help</string>
                                     </property>
                                 </widget>
                             </grid>

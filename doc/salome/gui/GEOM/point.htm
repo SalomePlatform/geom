@@ -16,24 +16,25 @@ if (navigator.appName !="Netscape")
 <!--
 img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
-img_whs3 { border:none; width:312px; height:332px; float:none; border-style:none; }
-img_whs4 { border:none; width:312px; height:473px; float:none; border-style:none; }
-p.whs5 { font-size:12pt; margin-left:120px; }
-p.whs6 { font-size:12pt; margin-left:0px; }
-p.whs7 { font-size:12pt; font-style:italic; margin-left:0px; }
-img_whs8 { border:none; width:312px; height:421px; float:none; border-style:none; }
-p.whs9 { font-size:12pt; color:#000000; }
-p.whs10 { color:#808080; font-size:12pt; }
-img_whs11 { border:none; width:354px; height:326px; float:none; border-style:none; }
-p.whs12 { color:#808080; font-size:12pt; margin-left:40px; }
+p.whs3 { font-size:12pt; margin-left:40px; }
+img_whs4 { border:none; width:312px; height:332px; float:none; border-style:none; }
+img_whs5 { border:none; width:312px; height:473px; float:none; border-style:none; }
+p.whs6 { font-size:12pt; margin-left:120px; }
+p.whs7 { font-size:12pt; margin-left:0px; }
+p.whs8 { font-size:12pt; font-style:italic; margin-left:0px; }
+img_whs9 { border:none; width:312px; height:421px; float:none; border-style:none; }
+p.whs10 { font-size:12pt; color:#000000; }
+p.whs11 { color:#808080; font-size:12pt; }
+img_whs12 { border:none; width:354px; height:326px; float:none; border-style:none; }
+p.whs13 { color:#808080; font-size:12pt; margin-left:40px; }
 -->
 </style><script type="text/javascript" language="JavaScript">
 <!--
 if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
 {
   var strNSS = "<style type='text/css'>";
-  strNSS += "p.whs6 {margin-left:1pt; }";
   strNSS += "p.whs7 {margin-left:1pt; }";
+  strNSS += "p.whs8 {margin-left:1pt; }";
   strNSS +="</style>";
   document.write(strNSS);
 }
@@ -69,7 +70,7 @@ if (window.gbWhTopic)
 {
 	if (window.addTocInfo)
 	{
-	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Basic Geometric Objects\nPoint");
+	addTocInfo("Geometry module\nCreating geometrical objects\nCreating Basic Geometric Objects\nPoint");
 addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	}
@@ -126,7 +127,7 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"><img src="pics/point1.png" x-maintain-ratio="TRUE" width="312px" height="332px" border="0" class="img_whs3"></p>
+<p class="whs3"><img src="pics/point1.png" x-maintain-ratio="TRUE" width="312px" height="332px" border="0" class="img_whs4"></p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -145,17 +146,17 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"><span style="font-style: italic;"><I><img src="pics/neo-point2.png" x-maintain-ratio="TRUE" width="312px" height="473px" border="0" class="img_whs4"></I></span></p>
+<p class="whs3"><span style="font-style: italic;"><I><img src="pics/neo-point2.png" x-maintain-ratio="TRUE" width="312px" height="473px" border="0" class="img_whs5"></I></span></p>
 
-<p class="whs5">&nbsp;</p>
+<p class="whs6">&nbsp;</p>
 
-<p class="whs6">Finally, we can define a 
+<p class="whs7">Finally, we can define a 
  point by an <span style="font-weight: bold;"><B>Edge</B></span> and a <span style="font-weight: bold;"><B>Parameter</B></span> 
  &nbsp;indicating 
  its position on the Edge. For example, 0.5 means that the point is located 
  in the middle of the edge.<span style="font-style: italic;"> <I></I></span></p>
 
-<p class="whs7"><span style="font-style: italic;"><I><b style="font-weight: bold; font-style: normal;">TUI 
+<p class="whs8"><span style="font-style: italic;"><I><b style="font-weight: bold; font-style: normal;">TUI 
  Command :</b> &nbsp;&nbsp;geompy.MakeVertexOnCurve(Edge, 
  Parameter).</I></span></p>
 
@@ -165,19 +166,21 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2"><span style="font-style: italic;"><I><b style="font-weight: bold;"><img src="pics/point3.png" x-maintain-ratio="TRUE" width="312px" height="421px" border="0" class="img_whs8"></b></I></span></p>
+<p class="whs3"><span style="font-style: italic;"><I><b 
+ style="font-weight: bold;"><img src="pics/point3.png" x-maintain-ratio="TRUE" width="312px" height="421px" border="0" class="img_whs9"></b></I></span></p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs9"><span style="font-style: italic;"><I><span 
+<p class="whs10"><span style="font-style: italic;"><I><span 
  style="font-size: 12pt; color: #000000;"><font size=3 color=black style="font-size:12.000000pt;"><b style="font-weight: bold;"><b 
  style="font-weight: bold;">E</b>xample:</b></font></span></I></span></p>
 
-<p class="whs10">&nbsp;</p>
+<p class="whs11">&nbsp;</p>
 
-<p class="whs2"><span style="font-style: italic;"><I><b style="font-weight: bold;"><img src="pics/points.png" x-maintain-ratio="TRUE" width="354px" height="326px" border="0" class="img_whs11"></b></I></span></p>
+<p class="whs3"><span style="font-style: italic;"><I><b 
+ style="font-weight: bold;"><img src="pics/points.png" x-maintain-ratio="TRUE" width="354px" height="326px" border="0" class="img_whs12"></b></I></span></p>
 
-<p class="whs12">&nbsp;</p>
+<p class="whs13">&nbsp;</p>
 
 <p class="whs2">Our <span style="font-weight: bold;"><B>TUI Scripts</B></span> 
  provide you with useful examples of creation of <a href="basic_geometrical_objects.htm#bookmark" style="font-style: normal;">Basic 

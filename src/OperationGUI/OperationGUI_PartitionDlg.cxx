@@ -49,12 +49,14 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_PartitionDlg::OperationGUI_PartitionDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+OperationGUI_PartitionDlg::OperationGUI_PartitionDlg(GeometryGUI* theGeometryGUI, QWidget* parent)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, "OperationGUI_PartitionDlg", false,
+                     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PARTITION")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PARTITION_PLANE")));
-  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
+  QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_PARTITION")));
+  QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_PARTITION_PLANE")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_PARTITION_TITLE"));
 
@@ -86,6 +88,8 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg(QWidget* parent, const char
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("partition.htm"); 
  
   Init();
 }
@@ -135,7 +139,7 @@ void OperationGUI_PartitionDlg::Init()
   
   connect(GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(ComboTextChanged()));
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   
   initName( tr( "GEOM_PARTITION" ) );
@@ -149,7 +153,7 @@ void OperationGUI_PartitionDlg::Init()
 //=================================================================================
 void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   globalSelection();
   
   myListShapes.length(0);
@@ -186,14 +190,14 @@ void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
 	break;
       } 
     }
-  
+
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->clear();
   GroupPoints->LineEdit2->clear();
   onRemoveWebs(false);
 
   myEditCurrentArgument->setFocus();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   MESSAGE(width()<<" "<<height());
 }
@@ -222,16 +226,6 @@ bool OperationGUI_PartitionDlg::ClickOnApply()
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
-}
-
-
-//=======================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=======================================================================
-void OperationGUI_PartitionDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 
@@ -334,7 +328,7 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
 void OperationGUI_PartitionDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  
+
   if(send == GroupPoints->LineEdit1 || 
      send == GroupPoints->LineEdit2 ||
      send == GroupPoints->LineEdit3 ||
@@ -353,20 +347,10 @@ void OperationGUI_PartitionDlg::LineEditReturnPressed()
 void OperationGUI_PartitionDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   ConstructorsClicked( getConstructorId() ); 
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-void OperationGUI_PartitionDlg::DeactivateActiveDialog()
-{
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -376,7 +360,7 @@ void OperationGUI_PartitionDlg::DeactivateActiveDialog()
 //=================================================================================
 void OperationGUI_PartitionDlg::enterEvent(QEvent* e)
 {
-  if(!GroupConstructors->isEnabled())
+  if (!GroupConstructors->isEnabled())
     this->ActivateThisDialog();
 }
 
@@ -397,8 +381,8 @@ GEOM::GEOM_IOperations_ptr OperationGUI_PartitionDlg::createOperation()
 //=================================================================================
 bool OperationGUI_PartitionDlg::isValid( QString& msg )
 {
-  return (myListShapes.length()      || myListTools.length() ||
-	  myListKeepInside.length()  || myListRemoveInside.length());
+  return (myListShapes.length()     || myListTools.length() ||
+	  myListKeepInside.length() || myListRemoveInside.length());
 }
 
 
@@ -409,35 +393,30 @@ bool OperationGUI_PartitionDlg::isValid( QString& msg )
 bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
 {
   bool res = false;
-  
+
   GEOM::GEOM_Object_var anObj;
   QString msg;
-  
+
   int aLimit = GetLimit();
   int aConstructorId = getConstructorId();
-  
-  if (aConstructorId==1)
+
+  if (aConstructorId == 1)
     aLimit = GEOM::SHAPE;
-  
-  if (isValid( msg ))    
-    {
-      
-      if ( aConstructorId==0 && !toRemoveWebs() )
-	myListMaterials.length(0);
-      
-      anObj = GEOM::GEOM_IBooleanOperations::_narrow( getOperation() )->MakePartition(myListShapes,
-										      myListTools,
-										      myListKeepInside,
-										      myListRemoveInside,
-										      aLimit,
-										      toRemoveWebs(),
-										      myListMaterials);
-      res = true;
-    }
-  
-  if ( !anObj->_is_nil() )
+
+  if (isValid( msg )) {
+    if (aConstructorId == 0 && !toRemoveWebs())
+      myListMaterials.length(0);
+
+    anObj = GEOM::GEOM_IBooleanOperations::_narrow(getOperation())->
+      MakePartition(myListShapes, myListTools,
+                    myListKeepInside, myListRemoveInside,
+                    aLimit, toRemoveWebs(), myListMaterials);
+    res = true;
+  }
+
+  if (!anObj->_is_nil())
     objects.push_back( anObj._retn() );
-  
+
   return res;
 }
 
@@ -456,7 +435,6 @@ void OperationGUI_PartitionDlg::closeEvent( QCloseEvent* e )
 //function : ComboTextChanged
 //purpose  : 
 //=======================================================================
-
 void OperationGUI_PartitionDlg::ComboTextChanged()
 {
   bool IsEnabled = GroupPoints->ComboBox1->currentItem() < 3;
@@ -475,11 +453,9 @@ void OperationGUI_PartitionDlg::ComboTextChanged()
 //=================================================================================
 void OperationGUI_PartitionDlg::SetMaterials()
 {
-  MESSAGE("OperationGUI_MaterialDlg ...");
-  OperationGUI_MaterialDlg *aDlg =
-    new OperationGUI_MaterialDlg(this, "", myListShapes, true);	
-  MESSAGE("OperationGUI_MaterialDlg");
-  return;
+  OperationGUI_MaterialDlg* aDlg =
+    new OperationGUI_MaterialDlg(myGeomGUI, this, "", myListShapes, true);
+  aDlg->show();
 }
 
 
@@ -513,42 +489,17 @@ bool OperationGUI_PartitionDlg::toRemoveWebs() const
 int OperationGUI_PartitionDlg::GetLimit() const
 {
   int aLimit = GroupPoints->ComboBox1->currentItem();
-  
+
   switch(aLimit)
-    {
-    case 0 : 
-      {
-	aLimit = GEOM::SOLID;
-	break;
-      }
-    case 1 :
-      {
-	aLimit = GEOM::SHELL;
-	break;
-      }
-    case 2 :
-      {
-	aLimit = GEOM::FACE;
-	break;
-      }
-    case 3 :
-      {
-	aLimit = GEOM::WIRE;
-	break;
-      }
-    case 4 :
-      {
-	aLimit = GEOM::EDGE;
-	break;
-      }
-    case 5 :
-      {
-	aLimit = GEOM::VERTEX;
-	break;
-      }
-    default :
-      aLimit = GEOM::SHAPE;
-    }
-  
+  {
+  case 0:  aLimit = GEOM::SOLID ; break;
+  case 1:  aLimit = GEOM::SHELL ; break;
+  case 2:  aLimit = GEOM::FACE  ; break;
+  case 3:  aLimit = GEOM::WIRE  ; break;
+  case 4:  aLimit = GEOM::EDGE  ; break;
+  case 5:  aLimit = GEOM::VERTEX; break;
+  default: aLimit = GEOM::SHAPE ;
+  }
+
   return aLimit;
 }

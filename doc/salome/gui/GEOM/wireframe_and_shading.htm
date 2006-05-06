@@ -14,21 +14,20 @@ if (navigator.appName !="Netscape")
 </script>
 <style type="text/css">
 <!--
-img_whs1 { width:20px; height:20px; border-style:none; }
-p.whs2 { margin-left:0px; }
-p.whs3 { font-family:'Times New Roman' , serif; font-size:12pt; }
-p.whs4 { font-family:'Times New Roman' , serif; font-size:12pt; font-style:italic; }
+p.whs1 { margin-left:0px; }
+p.whs2 { font-family:'Times New Roman' , serif; font-size:12pt; }
+p.whs3 { font-family:'Times New Roman' , serif; font-size:12pt; font-style:italic; }
+p.whs4 { font-size:12pt; margin-left:40px; }
 img_whs5 { border:none; width:400px; height:420px; float:none; border-style:none; }
 img_whs6 { border:none; float:none; width:400px; height:420px; border-style:none; }
-p.whs7 { font-size:12pt; margin-left:40px; }
-p.whs8 { font-size:12pt; }
+p.whs7 { font-size:12pt; }
 -->
 </style><script type="text/javascript" language="JavaScript">
 <!--
 if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
 {
   var strNSS = "<style type='text/css'>";
-  strNSS += "p.whs2 {margin-left:1pt; }";
+  strNSS += "p.whs1 {margin-left:1pt; }";
   strNSS +="</style>";
   document.write(strNSS);
 }
@@ -64,7 +63,7 @@ if (window.gbWhTopic)
 {
 	if (window.addTocInfo)
 	{
-	addTocInfo("GEOM module\nManaging geometrical objects\nChanging Display Parameters\nDisplay Mode");
+	addTocInfo("Geometry module\nViewing geometrical objects\nDisplay Mode");
 addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	}
@@ -88,7 +87,7 @@ else
 		document.location.reload();
 //-->
 </script>
-<h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><b style="font-weight: bold;"><img src="files/salome2_sp3_displaygui_functions_salome2_sp3_displaygui_functions_image51.gif" width="20px" height="20px" border="0" class="img_whs1"> </b></font></span>Display Mode</h1>
+<h1>Display Mode</h1>
 
 <p class=TODO
 	style="font-family: 'Times New Roman', serif;
@@ -104,33 +103,33 @@ else
 			font-size: 12pt;
 			font-style: normal;">&nbsp;</p>
 
-<p class="whs2">To change the display mode right-click on 
+<p class="whs1">To change the display mode right-click on 
  this geometrical object in the viewer and from the pop-up menu select 
  <span style="font-weight: bold;"><B>Display mode --&gt; Wireframe</B></span> 
  or<span style="font-weight: bold;"><B> Shading</B></span>.</p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">TUI 
+<p class="whs2"><b style="font-weight: bold;">TUI 
  Command:</b><i> gg.setDisplayMode(ID, Short)</i></p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs3"><b style="font-weight: bold;">Examples:</b></p>
+<p class="whs2"><b style="font-weight: bold;">Examples:</b></p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p class="whs4">Wireframe &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="whs3">Wireframe &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
 
-<p class="whs3"><img src="pics/disp_mode1sn.png" x-maintain-ratio="TRUE" width="400px" height="420px" border="0" class="img_whs5"> &nbsp;</p>
+<p class="whs4"><img src="pics/disp_mode1sn.png" x-maintain-ratio="TRUE" width="400px" height="420px" border="0" class="img_whs5"> &nbsp;</p>
 
-<p class="whs4">Shading</p>
+<p class="whs3">Shading</p>
 
-<p class="whs3"><img src="pics/disp_mode2sn.png" x-maintain-ratio="TRUE" width="400px" height="420px" border="0" class="img_whs6"></p>
+<p class="whs4"><img src="pics/disp_mode2sn.png" x-maintain-ratio="TRUE" width="400px" height="420px" border="0" class="img_whs6"></p>
 
-<p class="whs7">&nbsp;&nbsp;</p>
+<p class="whs4">&nbsp;&nbsp;</p>
 
-<p class="whs8">Our TUI Scripts provide you with useful examples 
+<p class="whs7">Our TUI Scripts provide you with useful examples 
  of <a href="changing_display_parameters.htm#bookmark">Changing Display 
  Parameters</a>. </p>
 

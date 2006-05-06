@@ -23,7 +23,6 @@
 //  File   : OperationGUI_MaterialDlg.h
 //  Author : Julia DOROVSKIKH
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_MATERIAL_H
 #define DIALOGBOX_MATERIAL_H
@@ -41,8 +40,8 @@ class OperationGUI_MaterialDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    OperationGUI_MaterialDlg (QWidget* parent, const char* name,			     
-			      GEOM::ListOfGO ListShapes,
+    OperationGUI_MaterialDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
+			      const char* name, GEOM::ListOfGO ListShapes,
 			      bool modal = FALSE, WFlags fl = 0);
     ~OperationGUI_MaterialDlg();
 
@@ -52,8 +51,8 @@ private:
 
     QWidget* myParentDlg;
 
-    GEOM::ListOfGO myListShapes;
-    GEOM::ListOfLong   myListMaterials;
+    GEOM::ListOfGO   myListShapes;
+    GEOM::ListOfLong myListMaterials;
 
     DlgRef_1List1Spin1Btn_QTD* GroupPoints;
 
@@ -65,7 +64,6 @@ private slots:
     void ActivateThisDialog();
     void SelectionIntoArgument();
     void SetMaterial();
-
 };
 
 #endif // DIALOGBOX_MATERIAL_H

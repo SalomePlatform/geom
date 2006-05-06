@@ -51,19 +51,20 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_FilletDlg::OperationGUI_FilletDlg( QWidget* parent )
-  :GEOMBase_Skeleton( parent, "OperationGUI_FilletDlg", false,
-		      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+OperationGUI_FilletDlg::OperationGUI_FilletDlg(GeometryGUI* theGeometryGUI, QWidget* parent)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, "OperationGUI_FilletDlg", false,
+                     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   myConstructorId = -1;
-  
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_ALL" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_EDGE" ) ) );
-  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_FACE" ) ) );
-  
-  QPixmap iconSelect( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption( tr( "GEOM_FILLET_TITLE" ) );
+  SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
+  QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_FILLET_ALL")));
+  QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_FILLET_EDGE")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_FILLET_FACE")));
+
+  QPixmap iconSelect(aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
+
+  setCaption(tr("GEOM_FILLET_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle( tr( "GEOM_FILLET" ) );
@@ -107,6 +108,8 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg( QWidget* parent )
   Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
   Group2->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
   Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
+
+  setHelpFileName("fillet.htm");
 
   /* Initialisations */
   Init();
@@ -158,17 +161,14 @@ void OperationGUI_FilletDlg::Init()
   connect(Group3->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
     // selection
-  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  
+  connect(myGeomGUI->getApp()->selectionMgr(), 
+          SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_FILLET" ) );
 
   Group2->hide();
   Group3->hide();
   Group1->show();
-
-  this->show();
 }
 
 
@@ -308,31 +308,31 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
 
       if ( aResult && !anObj->_is_nil() )
       {
-         TColStd_IndexedMapOfInteger anIndexes;
-	 ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), anIndexes );
+        TColStd_IndexedMapOfInteger anIndexes;
+        myGeomGUI->getApp()->selectionMgr()->GetIndexes( firstIObject(), anIndexes );
 
-         if ( anIndexes.Extent() > 0 )
-         {
-           QString aName;
-           if ( anIndexes.Extent() == 1 )
-           {
-             int anIndex = anIndexes( 1 );
+        if ( anIndexes.Extent() > 0 )
+        {
+          QString aName;
+          if ( anIndexes.Extent() == 1 )
+          {
+            int anIndex = anIndexes( 1 );
 
-             aName = QString( GEOMBase::GetName( anObj ) ) + QString( ":%1" ).arg( anIndex );
-           }
-           else
-             aName = tr( "GEOM_MEN_POPUP_NAME" ).arg( anIndexes.Extent() );
+            aName = QString( GEOMBase::GetName( anObj ) ) + QString( ":%1" ).arg( anIndex );
+          }
+          else
+            aName = tr( "GEOM_MEN_POPUP_NAME" ).arg( anIndexes.Extent() );
 
-           myEditCurrentArgument->setText( aName );
+          myEditCurrentArgument->setText( aName );
 
-           if ( myConstructorId == 1 )
-             myEdges = anIndexes;
-           else
-             myFaces = anIndexes;
-           
-           displayPreview();
-           return;
-         }
+          if ( myConstructorId == 1 )
+            myEdges = anIndexes;
+          else
+            myFaces = anIndexes;
+
+          displayPreview();
+          return;
+        }
       }
     }
     myFaces.Clear();
@@ -401,17 +401,6 @@ void OperationGUI_FilletDlg::SetEditCurrentArgument()
 
 
 //=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void OperationGUI_FilletDlg::DeactivateActiveDialog()
-{
-  GEOMBase_Skeleton::DeactivateActiveDialog();
-  return;
-}
-
-
-//=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
@@ -419,8 +408,8 @@ void OperationGUI_FilletDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	   SIGNAL(currentSelectionChanged()), this, SLOT( SelectionIntoArgument() ) );
+  connect(myGeomGUI->getApp()->selectionMgr(), 
+          SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   activateSelection();
   displayPreview();
@@ -626,10 +615,3 @@ double OperationGUI_FilletDlg::getRadius() const
   else if ( anId == 1 ) return Group2->SpinBox_DX->GetValue();
   else                  return Group3->SpinBox_DX->GetValue();
 }
-
-
-
-
-
-
-

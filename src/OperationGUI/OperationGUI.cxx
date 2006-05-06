@@ -30,6 +30,7 @@
 
 #include "SUIT_Session.h"
 #include "SUIT_Desktop.h"
+#include "SalomeApp_Application.h"
 
 #include <TopTools_MapOfShape.hxx>
 #include <TopExp_Explorer.hxx>
@@ -84,29 +85,18 @@ OperationGUI::~OperationGUI()
 bool OperationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
   getGeometryGUI()->EmitSignalDeactivateDialog();
-  
-  switch ( theCommandID )
+
+  switch (theCommandID)
   {
-    case 503: // PARTITION
-      ( new OperationGUI_PartitionDlg( parent, "" ) )->show();
-    break;
-    case 504: // ARCHIMEDE
-      new OperationGUI_ArchimedeDlg( getGeometryGUI(), parent );
-    break;
-    case 505: // FILLET
-      new OperationGUI_FilletDlg( parent );	
-    break;
-    case 506: // CHAMFER
-      new OperationGUI_ChamferDlg( parent );
-    break;
-    case 507: // CLIPPING RANGE
-      ( new OperationGUI_ClippingDlg( parent, "" ) )->show();
-    break;
-    default:
-      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-    break;
+  case 503: (new OperationGUI_PartitionDlg(getGeometryGUI(), parent))->show(); break;
+  case 504: (new OperationGUI_ArchimedeDlg(getGeometryGUI(), parent))->show(); break;
+  case 505: (new OperationGUI_FilletDlg   (getGeometryGUI(), parent))->show(); break;
+  case 506: (new OperationGUI_ChamferDlg  (getGeometryGUI(), parent))->show(); break;
+  case 507: (new OperationGUI_ClippingDlg (getGeometryGUI(), parent))->show(); break;
+  default:
+    getGeometryGUI()->getApp()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
   }
-  
+
   return true;
 }
 

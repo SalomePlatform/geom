@@ -17,14 +17,15 @@ if (navigator.appName !="Netscape")
 img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
 p.whs3 { font-style:italic; }
-img_whs4 { border:none; width:312px; height:324px; float:none; border-style:none; }
-p.whs5 { font-weight:normal; }
-img_whs6 { border:none; width:312px; height:332px; float:none; border-style:none; }
-p.whs7 { font-size:12pt; font-weight:bold; }
-p.whs8 { font-size:12pt; font-weight:bold; font-style:normal; }
-p.whs9 { font-size:12pt; font-style:normal; font-weight:bold; }
-p.whs10 { font-size:12pt; font-style:normal; font-weight:normal; }
-img_whs11 { border:none; width:267px; height:280px; float:none; border-style:none; }
+p.whs4 { margin-left:40px; }
+img_whs5 { border:none; width:312px; height:324px; float:none; border-style:none; }
+p.whs6 { font-weight:normal; }
+p.whs7 { font-size:12pt; margin-left:40px; }
+img_whs8 { border:none; width:312px; height:332px; float:none; border-style:none; }
+p.whs9 { font-size:12pt; font-weight:bold; }
+p.whs10 { font-size:12pt; font-weight:bold; font-style:normal; }
+p.whs11 { font-size:12pt; font-style:normal; font-weight:bold; }
+img_whs12 { border:none; width:267px; height:280px; float:none; border-style:none; }
 -->
 </style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
@@ -56,7 +57,7 @@ if (window.gbWhTopic)
 {
 	if (window.addTocInfo)
 	{
-	addTocInfo("GEOM module\nCreating geometrical objects\nCreation of Primitives\nBox");
+	addTocInfo("Geometry module\nCreating geometrical objects\nCreating Primitives\nBox");
 addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	}
@@ -110,11 +111,11 @@ else
 
 <p class="whs3">&nbsp;</p>
 
-<p><b style="font-weight: bold;"><img src="pics/box1.png" x-maintain-ratio="TRUE" width="312px" height="324px" border="0" class="img_whs4"></b></p>
+<p class="whs4"><b style="font-weight: bold;"><img src="pics/box1.png" x-maintain-ratio="TRUE" width="312px" height="324px" border="0" class="img_whs5"></b></p>
 
 <p>&nbsp;</p>
 
-<p class="whs5"><b style="font-weight: normal;"><span style="font-weight: normal;">Secondly, 
+<p class="whs6"><b style="font-weight: normal;"><span style="font-weight: normal;">Secondly, 
  you can define a </span><span style="font-weight: bold;"><B>Box</B></span><span 
  style="font-weight: normal;"> by </b>specified dimensions along the coordinate 
  axes</span> and with edges, parallel to them. &nbsp;The 
@@ -127,32 +128,31 @@ else
 <p><span><b style="font-weight: bold;">Arguments: </b></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Name 
  + 3 values (dimensions at origin).</font></span></p>
 
-<p class="whs2"><b style="font-weight: bold;"><img src="pics/box2.png" x-maintain-ratio="TRUE" width="312px" height="332px" border="0" class="img_whs6"></b></p>
+<p class="whs7"><b style="font-weight: bold;"><img src="pics/box2.png" x-maintain-ratio="TRUE" width="312px" height="332px" border="0" class="img_whs8"></b></p>
 
 <p>&nbsp;</p>
 
-<p><span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>NB! </B></font></span>The is 
+<p><span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>NB! </B></font></span>There is 
  a third way to create a Box, which is currently accessible only via<span 
  style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B> TUI </B></font></span>commands.</p>
 
-<p class="whs7"><span style="font-weight: normal;">You 
+<p class="whs9"><span style="font-weight: normal;">You 
  can define a </span>Box<span style="font-weight: normal;"> by the coordinates 
  of two </span>Vertices<span style="font-weight: normal;"> (in this way 
  you don't need to create them in advance). </span></p>
 
-<p class="whs8"><b style="font-weight: bold;">TUI Command:</b> 
+<p class="whs10"><b style="font-weight: bold;">TUI Command:</b> 
  <span style="font-weight: normal; font-style: italic;"><I>geompy.MakeBox(x1,y1,z1,x2,y2,z2)</I></span> 
  </p>
 
-<p class="whs8"><b>Arguments:<span style="font-weight: normal;"> 
- </b>Name</span> + <span style="font-weight: normal;">X, Y and Z coordinates 
- of both points.</span></p>
+<span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>Arguments: </B></font></span>Name 
+ + X, Y and Z coordinates of both points. 
 
-<p class="whs8">&nbsp;</p>
+<p>&nbsp;</p>
 
-<p class="whs9">Example:</p>
+<p class="whs11">Example:</p>
 
-<p class="whs10"><img src="pics/boxes.png" x-maintain-ratio="TRUE" width="267px" height="280px" border="0" class="img_whs11"></p>
+<p class="whs7"><img src="pics/boxes.png" x-maintain-ratio="TRUE" width="267px" height="280px" border="0" class="img_whs12"></p>
 
 <p>&nbsp;</p>
 

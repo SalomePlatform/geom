@@ -77,16 +77,22 @@ extern "C" {
 
 
 
-GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil(); 
+GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil();
 
-GEOM::GEOM_Gen_var   GeometryGUI::GetGeomGen()        { return GeometryGUI::myComponentGeom; }
+GEOM::GEOM_Gen_var GeometryGUI::GetGeomGen()
+{
+  // Bug 12290: exception in Mesh GUI on GEOMBase::GetShape() if Geometry GUI hasn't been loaded
+  if (CORBA::is_nil(myComponentGeom))
+    InitGeomGen();
+  return GeometryGUI::myComponentGeom;
+}
 
-bool GeometryGUI::InitGeomGen() 
+bool GeometryGUI::InitGeomGen()
 {
   GeometryGUI aGG;
-  if( CORBA::is_nil( myComponentGeom ) ) return false;   
-  return true; 
-}			   
+  if( CORBA::is_nil( myComponentGeom ) ) return false;
+  return true;
+}
 
 //=======================================================================
 // function : ClientSObjectToObject

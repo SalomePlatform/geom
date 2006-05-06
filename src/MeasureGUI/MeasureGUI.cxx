@@ -87,50 +87,23 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 
   switch ( theCommandID )
   {
-    case 701   : new MeasureGUI_PropertiesDlg  ( getGeometryGUI(), parent ); break;  // LENGTH, AREA AND VOLUME
-    case 702   : new MeasureGUI_CenterMassDlg  ( parent ); break;  // CENTER MASS
-    case 703   : new MeasureGUI_InertiaDlg     ( getGeometryGUI(), parent ); break;  // INERTIA
-    case 7041  : new MeasureGUI_BndBoxDlg      ( getGeometryGUI(), parent ); break;  // BOUNDING BOX
-    case 7042  : new MeasureGUI_DistanceDlg    ( getGeometryGUI(), parent ); break;  // MIN DISTANCE
-    case 705   : new MeasureGUI_MaxToleranceDlg( getGeometryGUI(), parent ); break;  // MAXTOLERANCE
-    case 706   : new MeasureGUI_WhatisDlg      ( getGeometryGUI(), parent ); break;  // WHATIS
-    case 707   : new MeasureGUI_CheckShapeDlg  ( getGeometryGUI(), parent ); break;  // CHECKSHAPE
-    case 7072  : new MeasureGUI_CheckCompoundOfBlocksDlg  ( getGeometryGUI(), parent ); break;  // CHECKCOMPOUND
-    case 708   : new MeasureGUI_PointDlg       ( getGeometryGUI(), parent ); break;  // POINT COORDINATES
-    
+    case 701 : new MeasureGUI_PropertiesDlg  (getGeometryGUI(), parent); break; // LENGTH, AREA AND VOLUME
+    case 702 : new MeasureGUI_CenterMassDlg  (getGeometryGUI(), parent); break; // CENTER MASS
+    case 703 : new MeasureGUI_InertiaDlg     (getGeometryGUI(), parent); break; // INERTIA
+    case 7041: new MeasureGUI_BndBoxDlg      (getGeometryGUI(), parent); break; // BOUNDING BOX
+    case 7042: new MeasureGUI_DistanceDlg    (getGeometryGUI(), parent); break; // MIN DISTANCE
+    case 705 : new MeasureGUI_MaxToleranceDlg(getGeometryGUI(), parent); break; // MAXTOLERANCE
+    case 706 : new MeasureGUI_WhatisDlg      (getGeometryGUI(), parent); break; // WHATIS
+    case 707 : new MeasureGUI_CheckShapeDlg  (getGeometryGUI(), parent); break; // CHECKSHAPE
+    case 7072: new MeasureGUI_CheckCompoundOfBlocksDlg  (getGeometryGUI(), parent); break; // CHECKCOMPOUND
+    case 708 : new MeasureGUI_PointDlg       (getGeometryGUI(), parent); break; // POINT COORDINATES
+
     default: 
       SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
       break;
   }
   return true;
 }
-
-
-//=====================================================================================
-// function : MakeCDGAndDisplay()
-// purpose  :
-//=====================================================================================
-/*void MeasureGUI::MakeCDGAndDisplay(GEOM::GEOM_Shape_ptr Shape)
-{
-  QAD_Application::getDesktop()->putInfo("MakeCDGAndDisplay method from MeasureGUI should be reimplemented ...");
-  
-  try {
-    GEOM::GEOM_Shape_var result = myGeom->MakeCDG(Shape);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-      return;
-    }
-    result->NameType(tr("GEOM_POINT"));
-    if(myGeomBase->Display(result))
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
-  }  
-  catch(const SALOME::SALOME_Exception& S_ex) {
-    SalomeApp_Tools::QtCatchCorbaException(S_ex);
-    }
-  
-  return;
-}
-*/
 
 
 //=====================================================================================

@@ -24,7 +24,6 @@
 //  File   : BasicGUI_PlaneDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_PLANE_H
 #define DIALOGBOX_PLANE_H
@@ -49,9 +48,10 @@ class BasicGUI_PlaneDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_PlaneDlg();
-    
+
 protected:
     // redefined from GEOMBase_Helper
     virtual GEOM::GEOM_IOperations_ptr createOperation();
@@ -64,8 +64,6 @@ private :
     void Init();
     void enterEvent(QEvent* e);
     double getSize() const;
-
-    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3, myFace;
 

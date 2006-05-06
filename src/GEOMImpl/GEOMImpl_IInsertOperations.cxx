@@ -140,16 +140,17 @@ void GEOMImpl_IInsertOperations::Export
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ExportDriver::GetID()) return;
 
-  //Set parameters
-  GEOMImpl_IImportExport aCI (aFunction);
-  aCI.SetOriginal(aRefFunction);
-  aCI.SetFileName(theFileName);
-
   Handle(TCollection_HAsciiString) aHLibName;
   if (!IsSupported(Standard_False, theFormatName, aHLibName)) {
     return;
   }
   TCollection_AsciiString aLibName = aHLibName->String();
+
+  //Set parameters
+  GEOMImpl_IImportExport aCI (aFunction);
+  aCI.SetOriginal(aRefFunction);
+  aCI.SetFileName(theFileName);
+  aCI.SetFormatName(theFormatName);
   aCI.SetPluginName(aLibName);
 
   //Perform the Export
@@ -195,15 +196,16 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ImportDriver::GetID()) return result;
 
-  //Set parameters
-  GEOMImpl_IImportExport aCI (aFunction);
-  aCI.SetFileName(theFileName);
-
   Handle(TCollection_HAsciiString) aHLibName;
   if (!IsSupported(Standard_True, theFormatName, aHLibName)) {
     return result;
   }
   TCollection_AsciiString aLibName = aHLibName->String();
+
+  //Set parameters
+  GEOMImpl_IImportExport aCI (aFunction);
+  aCI.SetFileName(theFileName);
+  aCI.SetFormatName(theFormatName);
   aCI.SetPluginName(aLibName);
 
   //Perform the Import
@@ -261,14 +263,18 @@ Standard_Boolean GEOMImpl_IInsertOperations::ImportTranslators
   // Read Patterns for each supported format
   int j = 1, len = theFormats->Length();
   for (; j <= len; j++) {
-    TCollection_AsciiString aPattern;
-    TCollection_AsciiString aKey (theFormats->Value(j));
-    aKey += ".Pattern";
+    TCollection_AsciiString aKey, aPattern;
+    aKey = theFormats->Value(j) + ".ImportPattern";
     if (myResMgr->Find(aKey.ToCString()))
       aPattern = myResMgr->Value(aKey.ToCString());
     else {
-      aPattern = theFormats->Value(j);
-      aPattern += " Files ( *.* )";
+      aKey = theFormats->Value(j) + ".Pattern";
+      if (myResMgr->Find(aKey.ToCString()))
+        aPattern = myResMgr->Value(aKey.ToCString());
+      else {
+        aPattern = theFormats->Value(j);
+        aPattern += " Files ( *.* )";
+      }
     }
     thePatterns->Append(aPattern);
   }
@@ -310,14 +316,18 @@ Standard_Boolean GEOMImpl_IInsertOperations::ExportTranslators
   // Read Patterns for each supported format
   int j = 1, len = theFormats->Length();
   for (; j <= len; j++) {
-    TCollection_AsciiString aPattern;
-    TCollection_AsciiString aKey (theFormats->Value(j));
-    aKey += ".Pattern";
+    TCollection_AsciiString aKey, aPattern;
+    aKey = theFormats->Value(j) + ".ExportPattern";
     if (myResMgr->Find(aKey.ToCString()))
       aPattern = myResMgr->Value(aKey.ToCString());
     else {
-      aPattern = theFormats->Value(j);
-      aPattern += " Files ( *.* )";
+      aKey = theFormats->Value(j) + ".Pattern";
+      if (myResMgr->Find(aKey.ToCString()))
+        aPattern = myResMgr->Value(aKey.ToCString());
+      else {
+        aPattern = theFormats->Value(j);
+        aPattern += " Files ( *.* )";
+      }
     }
     thePatterns->Append(aPattern);
   }
