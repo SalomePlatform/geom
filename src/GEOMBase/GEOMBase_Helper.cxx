@@ -759,13 +759,21 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
       else {
 	const int nbObjs = objects.size();
 	bool withChildren = false;
+        int aNumber = 1;
 	for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
 	  if ( publish ) {
-	    QString aName("");
-	    if ( nbObjs > 1 )
-	      aName = strlen( getNewObjectName() ) ? GEOMBase::GetDefaultName( getNewObjectName() ) : GEOMBase::GetDefaultName( getPrefix( *it ) );
-	    else {
-	      aName = getNewObjectName();
+	    QString aName = getNewObjectName();
+	    if ( nbObjs > 1 ) {
+              if (aName.isEmpty())
+                aName = getPrefix(*it);
+              if (nbObjs <= 30) {
+                // Try to find a unique name
+                aName = GEOMBase::GetDefaultName(aName);
+              } else {
+                // Don't check name uniqueness in case of numerous objects
+                aName = aName + "_" + QString::number(aNumber++);
+              }
+	    } else {
 	      // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
 	      if ( aName.isEmpty() )
 		aName = GEOMBase::GetDefaultName( getPrefix( *it ) );
