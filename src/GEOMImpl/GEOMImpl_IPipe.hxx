@@ -15,10 +15,12 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //NOTE: This is an intreface to a function for the Pipe creation.
 
+#ifndef _GEOMImpl_IPIPE_HXX_
+#define _GEOMImpl_IPIPE_HXX_
 
 #include "GEOM_Function.hxx"
 
@@ -37,7 +39,9 @@ class GEOMImpl_IPipe
   Handle(GEOM_Function) GetBase() { return _func->GetReference(PIPE_ARG_BASE); }
   Handle(GEOM_Function) GetPath() { return _func->GetReference(PIPE_ARG_PATH); }
 
- private:
+ protected:
 
   Handle(GEOM_Function) _func;
 };
+
+#endif

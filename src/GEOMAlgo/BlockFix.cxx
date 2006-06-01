@@ -15,12 +15,11 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:	BlockFix.cxx
 // Created:	Tue Dec  7 11:59:05 2004
 // Author:	Pavel DURANDIN
-// Copyright:	Open CASCADE SA 2004
 
 
 #include <BlockFix.hxx>

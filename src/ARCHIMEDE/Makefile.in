@@ -17,7 +17,7 @@
 #  License along with this library; if not, write to the Free Software 
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 # 
-#  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 #
 #
@@ -44,9 +44,9 @@ LIB_CLIENT_IDL =
 EXPORT_HEADERS = Archimede_VolumeSection.hxx
 
 # additionnal information to compil and link file
-CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += $(CAS_KERNEL) $(CAS_MODELER) -L${KERNEL_ROOT_DIR}/lib/salome
+CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) $(KERNEL_CXXFLAGS)
+CXXFLAGS += $(OCC_CXXFLAGS) $(KERNEL_CXXFLAGS)
+LDFLAGS  += $(CAS_KERNEL) $(CAS_MODELER) $(KERNEL_LDFLAGS)
 
 # additional file to be cleaned
 MOSTLYCLEAN =

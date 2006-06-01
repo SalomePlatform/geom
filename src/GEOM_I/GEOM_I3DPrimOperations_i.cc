@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
@@ -479,6 +479,104 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_pt
 
   //Create the Solid
   Handle(GEOM_Object) anObject = GetOperations()->MakeFilling(aShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeThruSections
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThruSections(const GEOM::ListOfGO& theSeqSections,
+								 CORBA::Boolean theModeSolid,
+								 CORBA::Double thePreci,
+								 CORBA::Boolean theRuled)
+{
+   GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+  Handle(TColStd_HSequenceOfTransient) aSeqSections = new TColStd_HSequenceOfTransient;
+  int ind, aLen;
+
+  //Get the shapes
+  aLen = theSeqSections.length();
+  for (ind = 0; ind < aLen; ind++) {
+    if (theSeqSections[ind] == NULL) continue;
+    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
+      (theSeqSections[ind]->GetStudyID(), theSeqSections[ind]->GetEntry());
+    if (!aSh.IsNull())
+      aSeqSections->Append(aSh);
+  }
+  if(!aSeqSections->Length())
+    return aGEOMObject._retn();
+
+  // Make shell or solid
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeThruSections(aSeqSections,theModeSolid,thePreci,theRuled);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakePipeWithDifferentSections
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithDifferentSections(const GEOM::ListOfGO& theBases,
+									      const GEOM::ListOfGO& theLocations,
+									      GEOM::GEOM_Object_ptr thePath,
+									      CORBA::Boolean theWithContact,
+									      CORBA::Boolean theWithCorrections)
+{
+   GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+  Handle(TColStd_HSequenceOfTransient) aSeqBases = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aSeqLocations = new TColStd_HSequenceOfTransient;
+  int ind=0, aNbBases =0,aNbLocs=0;
+  
+  //Get the shapes
+  aNbBases = theBases.length();
+  aNbLocs = theLocations.length();
+
+  if( aNbLocs &&  aNbBases != aNbLocs)
+    return aGEOMObject._retn();
+  
+   Handle(GEOM_Object) aPath = GetOperations()->GetEngine()->GetObject
+      (thePath->GetStudyID(), thePath->GetEntry());
+   if(aPath.IsNull())
+     return aGEOMObject._retn();
+
+  for (ind = 0; ind < aNbBases; ind++) {
+    if (theBases[ind] == NULL) continue;
+    Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject(theBases[ind]->GetStudyID(), 
+			theBases[ind]->GetEntry());
+    if(aBase.IsNull())
+      continue;
+    if(aNbLocs)
+    {
+      Handle(GEOM_Object) aLoc = GetOperations()->GetEngine()->GetObject
+	(theLocations[ind]->GetStudyID(), theLocations[ind]->GetEntry());
+      if(aLoc.IsNull())
+	continue;
+      aSeqLocations->Append(aLoc);
+    }
+    aSeqBases->Append(aBase);
+  }
+  if(!aSeqBases->Length())
+    return aGEOMObject._retn();
+
+  // Make pipe
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePipeWithDifferentSections(aSeqBases,aSeqLocations ,aPath,
+						   theWithContact,theWithCorrections);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -50,10 +50,12 @@ public:
   ~GEOM_Swig();
 
   void createAndDisplayGO(const char* Entry);
+  void eraseGO(const char* Entry, bool allWindows);
   void createAndDisplayFitAllGO(const char* Entry);
   void setDisplayMode(const char* Entry, int mode);
   void setColor(const char* Entry, int red, int green, int blue);
   void setTransparency(const char* Entry, float transp);
+  void setDeflection(const char* Entry, float deflect);
 
   int  getIndexTopology(const char *SubEntry, const char *Entry);
   const char* getShapeTypeString(const char *Entry);

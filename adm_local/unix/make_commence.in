@@ -10,7 +10,7 @@ HAVE_SSTREAM=@HAVE_SSTREAM@
 
 
 LIBS=@LIBS@ 
-LDFLAGS=@LDFLAGS@ -L$(top_builddir)/lib/salome -Xlinker -rpath-link -Xlinker -L$(top_builddir)/lib/salome
+LDFLAGS=@LDFLAGS@ -L$(top_builddir)/lib@LIB_LOCATION_SUFFIX@/salome -Xlinker -rpath-link -Xlinker
 # add libstdc++ to link c++ library with libtool !
 LDFLAGS+= -lstdc++
 
@@ -51,8 +51,8 @@ PYTHONHOME = @PYTHONHOME@
 PYTHON_INCLUDES = @PYTHON_INCLUDES@
 PYTHON_LIBS = @PYTHON_LIBS@
 PYTHON_VERSION = @PYTHON_VERSION@
-PYTHON_SITE = $(prefix)/lib/python$(PYTHON_VERSION)/site-packages
-PYTHON_SITE_INSTALL = $(prefix)/lib/python$(PYTHON_VERSION)/site-packages/salome
+PYTHON_SITE = $(prefix)/lib@LIB_LOCATION_SUFFIX@/python$(PYTHON_VERSION)/site-packages
+PYTHON_SITE_INSTALL = $(prefix)/lib@LIB_LOCATION_SUFFIX@/python$(PYTHON_VERSION)/site-packages/salome
 # QT
 
 QT_ROOT = @QT_ROOT@
@@ -99,12 +99,6 @@ HDF5_MT_LIBS=@HDF5_MT_LIBS@
 OCC_INCLUDES=@CAS_CPPFLAGS@
 OCC_CXXFLAGS=@CAS_CXXFLAGS@
 
-#OCC_KERNEL_LIBS=@CAS_KERNEL@
-#OCC_OCAF_LIBS=@CAS_OCAF@
-#OCC_VIEWER_LIBS=@CAS_VIEWER@
-#OCC_MODELER_LIBS=@CAS_MODELER@
-#OCC_DATAEXCHANGE_LIBS=@CAS_DATAEXCHANGE@
-#OCC_LIBS=@CAS_LDFLAGS@
 CAS_KERNEL=@CAS_KERNEL@
 CAS_MATH=@CAS_MATH@
 CAS_OCAF=@CAS_OCAF@
@@ -194,16 +188,25 @@ INSTALL_DATA=@INSTALL_DATA@
 # create a symbolic link (or a copie ?)
 LN_S=@LN_S@
 
+KERNEL_ROOT_DIR=@KERNEL_ROOT_DIR@
+KERNEL_SITE_DIR=@KERNEL_SITE_DIR@
+KERNEL_LDFLAGS=@KERNEL_LDFLAGS@
+KERNEL_CXXFLAGS=@KERNEL_CXXFLAGS@
+
+GUI_ROOT_DIR=@GUI_ROOT_DIR@
+GUI_LDFLAGS=@GUI_LDFLAGS@
+GUI_CXXFLAGS=@GUI_CXXFLAGS@
+
 ## Installation points
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-bindir=@bindir@/salome
-libdir=@libdir@/salome
+bindir=@exec_prefix@/bin/salome
+libdir=@exec_prefix@/lib@LIB_LOCATION_SUFFIX@/salome
 # warning : if user give this path in configure we could have salome/salome :-(
 includedir=@includedir@/salome
 datadir=@datadir@/salome
 idldir=${prefix}/idl/salome
-sharedpydir=@libdir@/python$(PYTHON_VERSION)/site-packages/salome/shared_modules
+sharedpydir=@exec_prefix@/lib@LIB_LOCATION_SUFFIX@/python$(PYTHON_VERSION)/site-packages/salome/shared_modules
 incmakedir=${prefix}/salome_adm/unix
 
 docdir=${prefix}/doc/salome

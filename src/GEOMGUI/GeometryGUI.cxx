@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -340,7 +340,9 @@ void GeometryGUI::OnGUIEvent()
 //=======================================================================
 void GeometryGUI::OnGUIEvent( int id )
 {
-  SUIT_Desktop* desk = application()->desktop();
+  SUIT_Application* anApp = application();
+  if (!anApp) return;
+  SUIT_Desktop* desk = anApp->desktop();
 
   // check type of the active viewframe
   SUIT_ViewWindow* window = desk->activeWindow();
@@ -561,8 +563,11 @@ void GeometryGUI::OnKeyPress( SUIT_ViewWindow* win, QKeyEvent* pe )
 {
   GUIMap::Iterator it;
   bool bOk = true;
-  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
-    bOk = bOk && it.data()->OnKeyPress( pe, application()->desktop(), win );
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it ) {
+    SUIT_Application* anApp = application();
+    if (!anApp) return;
+    bOk = bOk && it.data()->OnKeyPress( pe, anApp->desktop(), win );
+  }
 //  return bOk;
 }
 
@@ -575,8 +580,11 @@ void GeometryGUI::OnMouseMove( SUIT_ViewWindow* win, QMouseEvent* pe )
 {  
   GUIMap::Iterator it;
   bool bOk = true;
-  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
-    bOk = bOk && it.data()->OnMouseMove( pe, application()->desktop(), win );
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it ) {
+    SUIT_Application* anApp = application();
+    if (!anApp) return;
+    bOk = bOk && it.data()->OnMouseMove( pe, anApp->desktop(), win );
+  }
 //  return bOk;
 }
 
@@ -591,8 +599,11 @@ void GeometryGUI::OnMousePress( SUIT_ViewWindow* win, QMouseEvent* pe )
   // OnMousePress() should return false if this event should be processed further
   // (see OCCViewer_Viewer3d::onMousePress() for explanation)
   bool processed = false;
-  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
-    processed = processed || it.data()->OnMousePress( pe, application()->desktop(), win );
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it ) {
+    SUIT_Application* anApp = application();
+    if (!anApp) return;
+    processed = processed || it.data()->OnMousePress( pe, anApp->desktop(), win );
+  }
 //  return processed;
 }
 

@@ -9,6 +9,9 @@ AC_CHECKING(for Geom)
 
 Geom_ok=no
 
+GEOM_LDFLAGS=""
+GEOM_CXXFLAGS=""
+
 AC_ARG_WITH(geom,
 	    [  --with-geom=DIR root directory path of GEOM installation ],
 	    GEOM_DIR="$withval",GEOM_DIR="")
@@ -43,6 +46,12 @@ if test -f ${GEOM_DIR}/bin/salome/libGEOM_Swig.py ; then
       GEOM_ROOT_DIR=${GEOM_DIR}
    fi
    AC_SUBST(GEOM_ROOT_DIR)
+
+   GEOM_LDFLAGS=-L${GEOM_DIR}/lib${LIB_LOCATION_SUFFIX}/salome
+   GEOM_CXXFLAGS=-I${GEOM_DIR}/include/salome
+
+   AC_SUBST(GEOM_LDFLAGS)
+   AC_SUBST(GEOM_CXXFLAGS)
 
 else
    AC_MSG_WARN("Cannot find compiled Geom module distribution")

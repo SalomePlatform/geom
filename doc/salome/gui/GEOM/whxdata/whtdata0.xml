@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='windows-1252' ?>
 <tocdata>
 <book name="Geometry module" >
-  <item name="Introduction to Geometry" url="files/introduction_to_geom.htm" />
+  <item name="Introduction to Geometry" url="geometry.htm" />
   <item name="Importing/exporting geometrical objects" url="files/salome2_sp3_geomtoolsgui_functions.htm" />
   <book name="Creating geometrical objects" >
     <book name="Creating Basic Geometric Objects" >
@@ -93,6 +93,7 @@
     </book>
   </book>
   <item name="Using measurement tools" url="files/salome2_sp3_measuregui_functions.htm" />
+  <item name="Access to Geometry module functionality from Python (using geompy.py)" url="geompy_doc/namespacegeompy.html" />
   <book name="TUI Scripts" >
     <item name="Viewing Geometrical Objects" url="changing_display_parameters.htm" />
     <book name="Creating Geometric Objects" >

@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -48,6 +48,7 @@
 #include <GEOMImpl_CylinderDriver.hxx>
 #include <GEOMImpl_PrismDriver.hxx>
 #include <GEOMImpl_PipeDriver.hxx>
+#include <GEOMImpl_ThruSectionsDriver.hxx>
 #include <GEOMImpl_RevolutionDriver.hxx>
 #include <GEOMImpl_ShapeDriver.hxx>
 #include <GEOMImpl_BlockDriver.hxx>
@@ -104,6 +105,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_CylinderDriver::GetID(), new GEOMImpl_CylinderDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PrismDriver::GetID(), new GEOMImpl_PrismDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PipeDriver::GetID(), new GEOMImpl_PipeDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ThruSectionsDriver::GetID(), new GEOMImpl_ThruSectionsDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_RevolutionDriver::GetID(), new GEOMImpl_RevolutionDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_SphereDriver::GetID(), new GEOMImpl_SphereDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_TorusDriver::GetID(), new GEOMImpl_TorusDriver());

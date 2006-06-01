@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //GEOM_Object types
 
@@ -79,6 +79,8 @@
 
 #define GEOM_MARKER 39
 
+#define GEOM_THRUSECTIONS 40
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -90,13 +92,16 @@
 #define POINT_XYZ       1
 #define POINT_XYZ_REF   2
 #define POINT_CURVE_PAR 3
+//#define POINT_FACE_PAR 4
 
 #define VECTOR_TWO_PNT  1
 #define VECTOR_DX_DY_DZ 2
+#define VECTOR_TANGENT_CURVE_PAR 3
 
 #define PLANE_PNT_VEC   1
 #define PLANE_FACE      2
 #define PLANE_THREE_PNT 3
+#define PLANE_TANGENT_FACE 4
 
 #define LINE_TWO_PNT 1
 #define LINE_PNT_DIR 2
@@ -152,6 +157,10 @@
 #define REVOLUTION_BASE_AXIS_ANGLE 1
 
 #define PIPE_BASE_PATH 1
+#define PIPE_DIFFERENT_SECTIONS 2
+
+#define THRUSECTIONS_RULED 1
+#define THRUSECTIONS_SMOOTHED 2
 
 #define BOOLEAN_COMMON  1
 #define BOOLEAN_CUT     2

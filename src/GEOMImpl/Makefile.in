@@ -1,22 +1,23 @@
-#  Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#  GEOM GEOM : implementaion of GEOM_Gen.idl
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
-#
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
-#
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-#
-#  See http://www.salome-platform.org/
-#
+#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+# 
+#  This library is free software; you can redistribute it and/or 
+#  modify it under the terms of the GNU Lesser General Public 
+#  License as published by the Free Software Foundation; either 
+#  version 2.1 of the License. 
+# 
+#  This library is distributed in the hope that it will be useful, 
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+#  Lesser General Public License for more details. 
+# 
+#  You should have received a copy of the GNU Lesser General Public 
+#  License along with this library; if not, write to the Free Software 
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+# 
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
 top_srcdir=@top_srcdir@
 top_builddir=../..
@@ -59,6 +60,7 @@ LIB_SRC = GEOMImpl_IBasicOperations.cxx \
 	  GEOMImpl_TorusDriver.cxx \
 	  GEOMImpl_PrismDriver.cxx \
 	  GEOMImpl_PipeDriver.cxx \
+	  GEOMImpl_ThruSectionsDriver.cxx \
 	  GEOMImpl_RevolutionDriver.cxx \
 	  GEOMImpl_ShapeDriver.cxx \
 	  GEOMImpl_BlockDriver.cxx \
@@ -110,9 +112,9 @@ EXPORT_HEADERS= GEOMImpl_Gen.hxx \
 		GEOMImpl_Types.hxx
 
 # additionnal information to compil and link file
-CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome $(BOOST_CPPFLAGS)
-CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -L${KERNEL_ROOT_DIR}/lib/salome $(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset -lGEOMbasic -lNMTAlgo -lGEOMAlgo -lShHealOper
+CPPFLAGS += $(OCC_INCLUDES) $(KERNEL_CXXFLAGS) $(BOOST_CPPFLAGS)
+CXXFLAGS += $(OCC_CXXFLAGS) $(KERNEL_CXXFLAGS)
+LDFLAGS  += $(KERNEL_LDFLAGS) $(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset -lGEOMbasic -lNMTAlgo -lGEOMAlgo -lShHealOper
 
 
 # additional file to be cleaned

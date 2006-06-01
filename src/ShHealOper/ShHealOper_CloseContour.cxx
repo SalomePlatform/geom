@@ -15,12 +15,11 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:      ShHealOper_CloseContour.cxx
 // Created:   20.04.04 11:36:01
 // Author:    Galina KULIKOVA
-// Copyright: Airbus Industries 2004
 
 
 #include <ShHealOper_CloseContour.hxx>
@@ -54,20 +53,20 @@
 #include <BRep_Tool.hxx>
 #include <ShapeBuild_Edge.hxx>
 #include <TopExp_Explorer.hxx>
+
 //=======================================================================
 //function : ShHealOper_CloseContour()
 //purpose  : Constructor
 //=======================================================================
-
 ShHealOper_CloseContour::ShHealOper_CloseContour (const TopoDS_Shape& theShape  ) 
 {
   Init(theShape);
 }
+
 //=======================================================================
 //function : Init
 //purpose  : 
 //=======================================================================
-
 void ShHealOper_CloseContour::Init(const TopoDS_Shape& theShape)
 {
   ShHealOper_Tool::Init(theShape);
@@ -75,11 +74,11 @@ void ShHealOper_CloseContour::Init(const TopoDS_Shape& theShape)
   myMaxTolerance = 1.0;
   TopExp::MapShapesAndAncestors(theShape,TopAbs_EDGE,TopAbs_FACE,myMapEdgesFace);
 }
+
 //=======================================================================
 //function : Perform
 //purpose  : 
 //=======================================================================
-
 Standard_Boolean ShHealOper_CloseContour::Perform(const TopTools_SequenceOfShape& theSeqEdges,
                                                   const Standard_Boolean theModeVertex,
                                                   const Standard_Boolean theModeFixGapsCurves)
@@ -103,11 +102,11 @@ Standard_Boolean ShHealOper_CloseContour::Perform(const TopTools_SequenceOfShape
   
   return myDone;
 }
+
 //=======================================================================
 //function : Perform
 //purpose  : 
 //=======================================================================
-
 Standard_Boolean ShHealOper_CloseContour::Perform(const TopoDS_Wire& theWire,
                                                   const Standard_Boolean theModeVertex,
                                                   const Standard_Boolean theModeFixGapsCurves)
@@ -124,11 +123,11 @@ Standard_Boolean ShHealOper_CloseContour::Perform(const TopoDS_Wire& theWire,
   build(asewd);
   return myDone;
 }
+
 //=======================================================================
 //function : Build
 //purpose  : 
 //=======================================================================
-
 void ShHealOper_CloseContour::build(Handle(ShapeExtend_WireData)& theSewd)
 {
   TopTools_SequenceOfShape aCommonFaces;
@@ -229,11 +228,11 @@ void ShHealOper_CloseContour::build(Handle(ShapeExtend_WireData)& theSewd)
   }
   return;
 }
+
 //=======================================================================
 //function : checkGaps
 //purpose  : 
 //=======================================================================
-
 Standard_Boolean ShHealOper_CloseContour::fixGaps(const Handle(ShapeExtend_WireData)& theWire,
                                                   const TopTools_SequenceOfShape& theCommonFaces) 
 {
@@ -267,11 +266,9 @@ Standard_Boolean ShHealOper_CloseContour::fixGaps(const Handle(ShapeExtend_WireD
 //function : checkOneFace
 //purpose  : 
 //=======================================================================
-
 Standard_Boolean ShHealOper_CloseContour::checkOneFace(const Handle(ShapeExtend_WireData)& theSewd,
                                                        TopTools_SequenceOfShape& theCommonFaces) const
 {
-  
   TopTools_IndexedMapOfShape amapfaces;
   TopoDS_Edge aEdge1 = theSewd->Edge(1);
   Standard_Boolean isOneFace = myMapEdgesFace.Contains(aEdge1 );
@@ -329,13 +326,13 @@ Standard_Boolean ShHealOper_CloseContour::checkOneFace(const Handle(ShapeExtend_
       theCommonFaces.Append(aF);
     }
   }
-  return isOneFace;  
+  return isOneFace;
 }
+
 //=======================================================================
 //function : buildEdge
 //purpose  : 
 //=======================================================================
-
 void ShHealOper_CloseContour::buildEdge(const TopoDS_Edge& aE1, 
                                         const TopoDS_Edge& aE2,
                                         const TopTools_SequenceOfShape& theCommonFaces) 
@@ -404,11 +401,11 @@ void ShHealOper_CloseContour::buildEdge(const TopoDS_Edge& aE1,
     myFreeEdges.Append(edge);
   }
 }
+
 //=======================================================================
 //function : UpdateWire
 //purpose  : 
 //=======================================================================
-
 void ShHealOper_CloseContour::updateWire (Handle(ShapeExtend_WireData)& sbwd) 
 {
   Standard_Integer i=1;

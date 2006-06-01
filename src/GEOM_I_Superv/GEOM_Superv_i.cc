@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #include "GEOM_Superv_i.hh"
@@ -537,6 +537,17 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurve (GEOM::GEOM_Object_ptr the
 }
 
 //=============================================================================
+//  MakeTangentOnCurve:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
+							 CORBA::Double theParameter)
+{
+  MESSAGE("GEOM_Superv_i::MakeTangentOnCurve");
+  getBasicOp();
+  return myBasicOp->MakeTangentOnCurve(theRefCurve, theParameter);
+}
+
+//=============================================================================
 //  MakeVectorDXDYDZ:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeVectorDXDYDZ (CORBA::Double theDX,
@@ -617,6 +628,19 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMarker
   MESSAGE("GEOM_Superv_i::MakeMarker");
   getBasicOp();
   return myBasicOp->MakeMarker(theOX, theOY, theOZ, theXDX, theXDY, theXDZ, theYDX, theYDY, theYDZ);
+}
+
+//=============================================================================
+//  MakeTangentPlaneOnFace:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTangentPlaneOnFace (GEOM::GEOM_Object_ptr theFace, 
+						 CORBA::Double theParameterU,
+						 CORBA::Double theParameterV,
+						 CORBA::Double theTrimSize)
+{
+  MESSAGE("GEOM_Superv_i::MakeTangentPlaneOnFace");
+  getBasicOp();
+  return myBasicOp->MakeTangentPlaneOnFace(theFace, theParameterU,theParameterV,theTrimSize);
 }
 
 //================= Primitives Construction : 3DPrimOperations ================
@@ -845,6 +869,32 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoolean (GEOM::GEOM_Object_ptr theShape
   return myBoolOp->MakeBoolean(theShape1, theShape2, theOperation);
 }
 
+//=============================================================================
+//  MakeThruSections:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeThruSections(const GEOM::ListOfGO& theSeqSections,
+					 CORBA::Boolean theModeSolid,
+					 CORBA::Double thePreci,
+					 CORBA::Boolean theRuled)
+{
+  MESSAGE("GEOM_Superv_i::MakeThruSections");
+  get3DPrimOp();
+  return my3DPrimOp->MakeThruSections(theSeqSections, theModeSolid,thePreci,theRuled);
+}
+
+//=============================================================================
+//  MakePipe:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections(const GEOM::ListOfGO& theBases,
+						      const GEOM::ListOfGO& theLocations,
+						      GEOM::GEOM_Object_ptr thePath,
+						      CORBA::Boolean theWithContact,
+						      CORBA::Boolean theWithCorrections)
+{
+  MESSAGE("GEOM_Superv_i::MakePipeWithDifferentSections");
+  get3DPrimOp();
+  return my3DPrimOp->MakePipeWithDifferentSections(theBases,theLocations, thePath,theWithContact,theWithCorrections);
+}
 //=============================================================================
 //  MakeFuse:
 //=============================================================================

@@ -15,7 +15,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -72,6 +72,10 @@ module GEOM
 					in double theZ) ;
     GEOM_Object MakePointOnCurve (in GEOM_Object theRefCurve,
 				  in double theParameter) ;
+
+    GEOM_Object MakeTangentOnCurve (in GEOM_Object theRefCurve,
+				     in double theParameter);
+
     GEOM_Object MakeVectorDXDYDZ (in double theDX,
 				  in double theDY,
 				  in double theDZ) ;
@@ -91,6 +95,20 @@ module GEOM
     GEOM_Object MakeMarker (in double theOX , in double theOY , in double theOZ,
 			    in double theXDX, in double theXDY, in double theXDZ,
 			    in double theYDX, in double theYDY, in double theYDZ) ;
+
+    /*!
+     *  Create a tangent plane to specified face in the point with specified parameters.
+     *  Values of parameters should be between 0. and 1.0
+     *  \param theFace - face for which tangent plane shuold be built. 
+     *  \param theParameterU - value of parameter by U
+     *  \param theParameterV - value of parameter Vthe
+     *  \param theTrimSize - defines sizes of created face
+     *  \return New GEOM_Object, containing the face built on tangent plane.
+     */
+    GEOM_Object MakeTangentPlaneOnFace(in GEOM_Object theFace,
+				       in double theParameterU,
+				       in double theParameterV,
+				       in double theTrimSize);
 
     //-----------------------------------------------------------//
     // Primitives Construction : 3DPrimOperations                //
@@ -148,7 +166,17 @@ module GEOM
 			     in long theMinDeg, in long theMaxDeg,
 			     in double theTol2D, in double theTol3D,
 			     in long theNbIter) ;
+    GEOM_Object MakeThruSections(in ListOfGO theSeqSections,
+				 in boolean theModeSolid,
+				 in double thePreci,
+                                 in boolean theRuled);
 
+    GEOM_Object MakePipeWithDifferentSections (in ListOfGO theSeqBases,
+					       in ListOfGO theLocations,
+					       in GEOM_Object thePath,
+					       in boolean theWithContact ,
+					       in boolean theWithCorrection );
+    
     //-----------------------------------------------------------//
     // BooleanOperations                                         //
     //-----------------------------------------------------------//

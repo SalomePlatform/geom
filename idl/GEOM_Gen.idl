@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //  File   : GEOM_Gen.idl
 //  Author : Sergey RUIN
@@ -264,6 +264,18 @@ module GEOM
     GEOM_Object MakePointOnCurve (in GEOM_Object theRefCurve,
 				  in double theParameter);
 
+    
+     /*!
+     *  Create a vector, corresponding to tangent to the given parameter on the given curve.
+     *  \param theRefCurve The referenced curve.
+     *  \param theParameter Value of parameter on the referenced curve.This value should be have value
+     *  \between 0. and 1.. Value of 0. corresponds first parameter of curve value 1. corresponds
+     *  \last parameter of curve. 
+     *  \return New GEOM_Object, containing the created point.
+     */
+     GEOM_Object MakeTangentOnCurve (in GEOM_Object theRefCurve,
+				     in double theParameter);
+
     /*!
      *  Create a vector with the given components.
      *  \param theDX X component of the vector.
@@ -344,6 +356,20 @@ module GEOM
     GEOM_Object MakeMarker (in double theOX , in double theOY , in double theOZ,
 			    in double theXDX, in double theXDY, in double theXDZ,
 			    in double theYDX, in double theYDY, in double theYDZ);
+     
+    /*!
+     *  Create a tangent plane to specified face in the point with specified parameters.
+     *  Values of parameters should be between 0. and 1.0
+     *  \param theFace - face for which tangent plane shuold be built. 
+     *  \param theParameterU - value of parameter by U
+     *  \param theParameterV - value of parameter Vthe
+     *  \param theTrimSize - defines sizes of created face
+     *  \return New GEOM_Object, containing the face built on tangent plane.
+     */
+    GEOM_Object MakeTangentPlaneOnFace(in GEOM_Object theFace,
+				       in double theParameterU,
+				       in double theParameterV,
+				       in double theTrimSize);
   };
 
   interface GEOM_ITransformOperations : GEOM_IOperations
@@ -781,6 +807,41 @@ module GEOM
 			     in long theMinDeg, in long theMaxDeg,
 			     in double theTol2D, in double theTol3D,
 			     in long theNbIter);
+
+    /*!
+     *  Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.
+     *  \param theSeqSections - set of specified sections.
+     *  \param theModeSolid - mode defining building solid or shell
+     *  \param thePreci - precision 3D used for smoothing by default 1.e-6
+     *  \param theRuled - mode defining type of the result surfaces (ruled or smoothed).
+     *  \return New GEOM_Object, containing the created shell or solid.
+     */
+    GEOM_Object MakeThruSections(in ListOfGO theSeqSections,
+				 in boolean theModeSolid,
+				 in double thePreci,
+                                 in boolean theRuled);
+
+      /*!
+     *  Create a shape by extrusion of the profile shape along
+     *  the path shape. The path shape can be a wire or an edge.
+     *  the several profiles can be specified in the several locations of path.	
+     *  \param theSeqBases - list of  Bases shape to be extruded.
+     *  \param theLocations - list of locations on the path corresponding
+     *                        specified list of the Bases shapes. Number of locations
+     *                        should be equal to number of bases or list of locations can be empty.
+     *  \param thePath - Path shape to extrude the base shape along it.
+     *  \param theWithContact - the mode defining that the section is translated to be in
+     *                          contact with the spine.
+     *  \param - WithCorrection - defining that the section is rotated to be
+     *	                         orthogonal to the spine tangent in the correspondent point
+     *  \return New GEOM_Object, containing the created pipe.
+     */
+    GEOM_Object MakePipeWithDifferentSections (in ListOfGO theSeqBases,
+					       in ListOfGO theLocations,
+					       in GEOM_Object thePath,
+					       in boolean theWithContact ,
+					       in boolean theWithCorrection );
+    
   };
 
   /*!

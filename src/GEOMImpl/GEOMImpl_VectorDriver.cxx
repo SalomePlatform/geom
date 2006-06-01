@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
@@ -34,6 +34,8 @@
 
 #include <gp_Pnt.hxx>
 #include <Precision.hxx>
+#include <Geom_Curve.hxx>
+#include <gp_Vec.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <Standard_ConstructionError.hxx>
 
@@ -67,7 +69,7 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
 
   GEOMImpl_IVector aPI (aFunction);
   Standard_Integer aType = aFunction->GetType();
-  if (aType != VECTOR_DX_DY_DZ && aType != VECTOR_TWO_PNT) return 0;
+  if (aType != VECTOR_DX_DY_DZ && aType != VECTOR_TWO_PNT && aType != VECTOR_TANGENT_CURVE_PAR) return 0;
 
   TopoDS_Shape aShape;
 
@@ -98,7 +100,32 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
       Standard_ConstructionError::Raise("The end points are too close");
     }
     aShape = BRepBuilderAPI_MakeEdge(V1, V2).Shape();
-  } else {
+  } 
+  else if(aType == VECTOR_TANGENT_CURVE_PAR) {
+    Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
+    TopoDS_Shape aRefShape = aRefCurve->GetValue();
+    if (aRefShape.ShapeType() != TopAbs_EDGE) {
+      Standard_TypeMismatch::Raise
+        ("Tangent On Curve creation aborted : curve shape is not an edge");
+    }
+    Standard_Real aFParam =0., aLParam =0., aParam =0.;
+    Handle(Geom_Curve) aCurve = BRep_Tool::Curve(TopoDS::Edge(aRefShape), aFParam, aLParam);
+    if(aCurve.IsNull()) {
+      Standard_TypeMismatch::Raise
+        ("Tangent On Curve creation aborted : curve is null");
+    }
+
+    aParam = aFParam + (aLParam - aFParam) * aPI.GetParameter();
+    gp_Pnt aPoint1,aPoint2;
+    gp_Vec aVec;
+    aCurve->D1(aParam,aPoint1,aVec);
+    if(aVec.Magnitude() < gp::Resolution())
+      Standard_TypeMismatch::Raise
+        ("Tangent On Curve creation aborted : invalid value of tangent");
+    aPoint2.SetXYZ(aPoint1.XYZ() + aVec.XYZ());
+    BRepBuilderAPI_MakeEdge aBuilder(aPoint1,aPoint2);
+    if(aBuilder.IsDone())
+      aShape = aBuilder.Shape();
   }
 
   if (aShape.IsNull()) return 0;

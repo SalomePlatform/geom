@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -52,6 +52,7 @@
 #include "GEOM_AISShape.hxx"
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_InteractiveObject.hxx"
+#include "GEOM_Displayer.h"
 
 #include "SALOME_Event.hxx"
 
@@ -64,10 +65,13 @@
 #include <TopoDS_Shape.hxx>
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
+#include <AIS_Drawer.hxx>
 
 // IDL Headers
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
+
+#include <vtkRenderer.h>
 
 using namespace std;
 
@@ -174,7 +178,8 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
                                         "GEOM",
                                         const_cast<char*>( obj->GetID().c_str()));
 
-	  if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
+	  GEOM_Displayer(ActiveStudy).Display(anIO, true);
+	  /*if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
 	    SVTK_View* aView = aViewWindow->getView();
 	    int aMode = aView->GetDisplayMode();
 
@@ -196,7 +201,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 	    aSh->setIO(anIO);
 	    ic->Display(aSh);
 	    ic->AddOrRemoveCurrentObject(aSh,true);
-	  }
+	    }*/
 	  // update object browser
 	  SalomeApp_Application* app = NULL; //dynamic_cast<SalomeApp_Application*>(app);
 	  if (app) {
@@ -464,3 +469,136 @@ bool GEOM_Swig::initGeomGen()
 {
   return ProcessEvent(new TInitGeomGenEvent());
 }
+
+
+
+void GEOM_Swig::eraseGO (const char* Entry, bool allWindows)
+{
+  class TEvent: public SALOME_Event
+  {
+    std::string myEntry;
+    bool myFromAllWindows;
+  public:
+    TEvent(const char* theEntry, bool fromAllWindows):
+      myEntry(theEntry), myFromAllWindows(fromAllWindows)
+    {}
+    virtual void Execute()
+    {
+      SUIT_Application* app = SUIT_Session::session()->activeApplication();
+      if (!app) return;
+      SalomeApp_Study* ActiveStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+      if (!ActiveStudy) return;
+
+      Handle (SALOME_InteractiveObject) aIO = new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
+
+      GEOM_Displayer(ActiveStudy).Erase(aIO, true);
+      /*      if (myFromAllWindows) {
+	QPtrList<SUIT_ViewWindow> aWindows = app->desktop()->windows();
+	SUIT_ViewWindow* aWin = 0;
+	for (aWin = aWindows.first(); aWin; aWin = aWindows.next()) {
+	  EraseObject(aWin, aIO);
+	}
+      } else {
+	SUIT_ViewWindow* aWin = app->desktop()->activeWindow();
+	if (aWin)
+	  EraseObject(aWin, aIO);
+	  }*/
+    }
+
+    /*  private:
+    void EraseObject(SUIT_ViewWindow* theWin, Handle (SALOME_InteractiveObject) theIO)
+    {
+      if (theWin->getViewManager()->getType() == OCCViewer_Viewer::Type()){
+	OCCViewer_ViewWindow* vw = dynamic_cast<OCCViewer_ViewWindow*>( theWin );
+	if ( vw ) {
+	  OCCViewer_ViewManager* vm = dynamic_cast<OCCViewer_ViewManager*>( vw->getViewManager() );
+	  if ( vm ) {
+	    SOCC_Viewer* aViewer = dynamic_cast<SOCC_Viewer*>(vm->getOCCViewer());
+	    if (aViewer) {
+	      SALOME_Prs* aPrs = aViewer->CreatePrs(myEntry.c_str());
+	      if (aPrs) {
+		SALOME_OCCPrs* aOccPrs =  dynamic_cast<SALOME_OCCPrs*>(aPrs);
+		if (aOccPrs) {
+		  aViewer->Erase(aOccPrs);
+		  aViewer->Repaint();
+		}
+	      }
+	    }
+	  }
+	}
+      } else if (theWin->getViewManager()->getType() == SVTK_Viewer::Type()){
+	SVTK_ViewWindow* aViewWindow = dynamic_cast<SVTK_ViewWindow*>( theWin );
+	if (aViewWindow) {
+	  aViewWindow->Erase(theIO);
+	}
+      }
+      }*/
+
+  };
+  ProcessVoidEvent(new TEvent(Entry, allWindows));
+}
+
+
+
+void GEOM_Swig::setDeflection(const char* theEntry, float theDeflect)
+{
+  class TEvent: public SALOME_Event {
+    std::string myEntry;
+    float myParam;
+  public:
+    TEvent(const char* theEntryArg, float theParam):
+      myEntry(theEntryArg), myParam(theParam)
+    {}
+    virtual void Execute() {
+      SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
+      if (!anApp) return;
+
+      Handle(SALOME_InteractiveObject) anIO =
+        new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
+
+      if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)) {
+	vtkActorCollection* aActors = aViewWindow->getRenderer()->GetActors();
+	aActors->InitTraversal();
+	while (vtkActor* aAct = aActors->GetNextActor()) {
+	  if (GEOM_Actor* aGeomActor = dynamic_cast<GEOM_Actor*>(aAct)) {
+	    if (aGeomActor->hasIO()) {
+	      Handle(SALOME_InteractiveObject) aNextIO = aGeomActor->getIO();
+	      if (aNextIO->isSame(anIO)) {
+		aGeomActor->setDeflection(myParam);
+		aViewWindow->Repaint();
+		return;
+	      }
+	    }
+	  }
+	}
+	//	aView->SetTransparency(anIO, myParam);
+	//aView->Repaint();
+      } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
+	Handle(AIS_InteractiveContext) aContext = occViewer->getAISContext();
+	AIS_ListOfInteractive aAISList;
+	aContext->DisplayedObjects(aAISList);
+	AIS_ListIteratorOfListOfInteractive it(aAISList);
+	for (; it.More(); it.Next()) {
+	  Handle(SALOME_InteractiveObject) aObj = 
+	    Handle(SALOME_InteractiveObject)::DownCast(it.Value()->GetOwner());
+	  if ((!aObj.IsNull()) && aObj->hasEntry() && aObj->isSame(anIO)) {
+	    Handle(AIS_Shape) aShape = Handle(AIS_Shape)::DownCast(it.Value());
+	    if (!aShape.IsNull()) {
+	      Handle(AIS_Drawer) aDrawer = aShape->Attributes();
+	      if (aDrawer.IsNull())
+		aDrawer = new AIS_Drawer();
+	      aDrawer->SetDeviationCoefficient(myParam);
+	      aShape->SetAttributes(aDrawer);
+	      aContext->Redisplay(aShape, true, true);
+	      aContext->UpdateCurrentViewer();
+	      return;
+	    }
+	  }
+	}
+      }
+    }
+  };
+
+  ProcessVoidEvent(new TEvent (theEntry, theDeflect));
+}
+

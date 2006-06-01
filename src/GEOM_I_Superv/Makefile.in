@@ -17,7 +17,7 @@
 #  License along with this library; if not, write to the Free Software 
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 # 
-#  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 #
 #
@@ -51,9 +51,9 @@ BIN_SERVER_IDL =
 EXPORT_HEADERS =
 
 # additionnal information to compil and link file
-CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome $(BOOST_CPPFLAGS) 
-CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -lGEOMEngine -lSalomeNS -lSalomeLifeCycleCORBA -lSalomeContainer -L${KERNEL_ROOT_DIR}/lib/salome -lSalomeGenericObj
+CPPFLAGS += $(OCC_INCLUDES) $(QT_INCLUDES) $(KERNEL_CXXFLAGS) $(BOOST_CPPFLAGS) 
+CXXFLAGS += $(OCC_CXXFLAGS) $(KERNEL_CXXFLAGS)
+LDFLAGS  += -lGEOMEngine -lSalomeNS -lSalomeLifeCycleCORBA -lSalomeContainer $(KERNEL_LDFLAGS) -lSalomeGenericObj
 
 # additional file to be cleaned
 MOSTLYCLEAN =

@@ -17,7 +17,7 @@
 #  License along with this library; if not, write to the Free Software 
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 # 
-#  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 #
 #
@@ -53,9 +53,9 @@ BIN_CLIENT_IDL =
 BIN_SERVER_IDL =
 
 # additionnal information to compil and link file
-CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += $(CAS_TKTopAlgo) -L${KERNEL_ROOT_DIR}/lib/salome
+CPPFLAGS += $(OCC_INCLUDES) $(KERNEL_CXXFLAGS)
+CXXFLAGS += $(OCC_CXXFLAGS) $(KERNEL_CXXFLAGS)
+LDFLAGS  += $(CAS_TKTopAlgo) $(KERNEL_LDFLAGS)
 
 
 @CONCLUDE@

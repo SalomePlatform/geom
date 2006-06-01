@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #include <Standard_Stream.hxx>
@@ -27,6 +27,8 @@
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepTopAdaptor_FClass2d.hxx>
+#include <ShapeAnalysis.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
@@ -42,6 +44,8 @@
 #include <gp_Pnt.hxx>
 #include <gp_Pln.hxx>
 #include <gp_Vec.hxx>
+#include <gp_Dir.hxx>
+#include <gp_Ax3.hxx>
 
 #include <Standard_ConstructionError.hxx>
 #include <Standard_TypeMismatch.hxx>
@@ -126,7 +130,45 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
       Standard_TypeMismatch::Raise("Plane creation aborted: non-planar face given as argument");
     }
     aShape = BRepBuilderAPI_MakeFace(aGS, -aSize, +aSize, -aSize, +aSize).Shape();
-  } else {
+  } 
+  else if (aType == PLANE_TANGENT_FACE)
+  {
+    Handle(GEOM_Function) aRefFace = aPI.GetFace();
+    TopoDS_Shape aShape1 = aRefFace->GetValue();
+    if(aShape1.IsNull())
+      Standard_TypeMismatch::Raise("Plane was not created.Basis face was not specified");
+    TopoDS_Face aFace = TopoDS::Face(aShape1);
+    
+    Standard_Real aKoefU = aPI.GetParameterU();
+    Standard_Real aKoefV = aPI.GetParameterV();
+    Standard_Real aUmin,aUmax,aVmin,aVmax;
+    ShapeAnalysis::GetFaceUVBounds(aFace,aUmin,aUmax,aVmin,aVmax);
+    Standard_Real aDeltaU = aUmax - aUmin;
+    Standard_Real aDeltaV = aVmax - aVmin;
+    Standard_Real aParamU =  aUmin + aDeltaU*aKoefU;
+    Standard_Real aParamV =  aVmin + aDeltaV*aKoefV;
+    Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
+    if(aSurf.IsNull())
+      Standard_TypeMismatch::Raise("Plane was not created.Base surface is absent");
+    gp_Vec aVecU,aVecV;
+    gp_Pnt aPLoc;
+    aSurf->D1(aParamU,aParamV,aPLoc,aVecU,aVecV);
+    BRepTopAdaptor_FClass2d clas(aFace,Precision::PConfusion());
+    
+    TopAbs_State stOut= clas.PerformInfinitePoint();
+    gp_Pnt2d aP2d(aParamU,aParamV);
+    TopAbs_State st= clas.Perform(aP2d);
+    if(st == stOut)
+      Standard_TypeMismatch::Raise("Plane was not created.Point lies outside the face");
+    gp_Vec aNorm = aVecU^aVecV;
+    gp_Ax3 anAxis(aPLoc,gp_Dir(aNorm),gp_Dir(aVecU));
+    gp_Pln aPlane(anAxis);
+    BRepBuilderAPI_MakeFace aTool(aPlane, -aSize, +aSize, -aSize, +aSize);
+    if(aTool.IsDone())
+      aShape = aTool.Shape();
+  }
+
+  else {
   }
 
   if (aShape.IsNull()) return 0;

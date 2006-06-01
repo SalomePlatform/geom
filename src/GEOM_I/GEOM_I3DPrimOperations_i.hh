@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #ifndef _GEOM_I3DPrimOperations_i_HeaderFile
@@ -93,6 +93,17 @@ class GEOM_I3DPrimOperations_i :
 						 CORBA::Double theAngle);
 
   GEOM::GEOM_Object_ptr MakeFilling(GEOM::GEOM_Object_ptr theShape, CORBA::Long theMinDeg, CORBA::Long theMaxDeg, CORBA::Double theTol2D, CORBA::Double theTol3D, CORBA::Long theNbIter);
+
+  GEOM::GEOM_Object_ptr MakeThruSections(const GEOM::ListOfGO& theSeqSections,
+					 CORBA::Boolean theModeSolid,
+					 CORBA::Double thePreci,
+					 CORBA::Boolean theRuled);
+  
+  GEOM::GEOM_Object_ptr MakePipeWithDifferentSections(const GEOM::ListOfGO& theBases,
+						      const GEOM::ListOfGO& theLocations,
+						      GEOM::GEOM_Object_ptr thePath,
+						      CORBA::Boolean theWithContact,
+						      CORBA::Boolean theWithCorrections);
 
   ::GEOMImpl_I3DPrimOperations* GetOperations()
   { return (::GEOMImpl_I3DPrimOperations*)GetImpl(); }

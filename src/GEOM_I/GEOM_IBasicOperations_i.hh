@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #ifndef _GEOM_IBasicOperations_i_HeaderFile
@@ -52,6 +52,9 @@ class GEOM_IBasicOperations_i :
    GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theCurve,
 					   CORBA::Double theParameter);
 
+   GEOM::GEOM_Object_ptr MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
+					     CORBA::Double theParameter);
+
    GEOM::GEOM_Object_ptr MakeVectorDXDYDZ (CORBA::Double theDX,
 					   CORBA::Double theDY,
 					   CORBA::Double theDZ);
@@ -80,6 +83,11 @@ class GEOM_IBasicOperations_i :
    GEOM::GEOM_Object_ptr MakeMarker (CORBA::Double theOX , CORBA::Double theOY , CORBA::Double theOZ,
 				     CORBA::Double theXDX, CORBA::Double theXDY, CORBA::Double theXDZ,
 				     CORBA::Double theYDX, CORBA::Double theYDY, CORBA::Double theYDZ);
+
+   GEOM::GEOM_Object_ptr MakeTangentPlaneOnFace (GEOM::GEOM_Object_ptr theFace, 
+						 CORBA::Double theParameterU,
+						 CORBA::Double theParameterV,
+						 CORBA::Double theTrimSize);
 
    ::GEOMImpl_IBasicOperations* GetOperations() { return (::GEOMImpl_IBasicOperations*)GetImpl(); }
 };

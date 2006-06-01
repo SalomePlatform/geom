@@ -16,7 +16,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -72,6 +72,7 @@ OperationGUI_MaterialDlg::OperationGUI_MaterialDlg (GeometryGUI* theGeometryGUI,
   myShapeCol = GroupPoints->ListView1->addColumn(tr("GEOM_MATERIAL_SHAPE"));
   myMaterCol = GroupPoints->ListView1->addColumn(tr("GEOM_MATERIAL_MATERIAL"));
   GroupPoints->ListView1->setSelectionMode(QListView::Extended);
+  GroupPoints->ListView1->setSorting(-1);
 
   GroupPoints->TextLabel1->setText(tr("GEOM_MATERIAL_ID"));
   GroupPoints->PushButton1->setText(tr("GEOM_MATERIAL_SET"));
@@ -104,10 +105,11 @@ void OperationGUI_MaterialDlg::Init()
     dynamic_cast<OperationGUI_PartitionDlg*>(myParentDlg);
   if (aParentDlg)
     myListMaterials = aParentDlg->GetListMaterials();
-  
+
   /* list filling */
   MESSAGE("Filling list with " << myListShapes.length() << " objects");
   QString aMaterialId;
+  QListViewItem *anItem = NULL;
   for (int ind = 0; ind < myListShapes.length(); ind++) {
     GEOM::GEOM_Object_var anObject = myListShapes[ind];
     if (!anObject->_is_nil()) {
@@ -116,8 +118,14 @@ void OperationGUI_MaterialDlg::Init()
 	aMaterialId = QString::number(myListMaterials[ind]);
       else 
 	aMaterialId = "0";
-      QListViewItem* aItem =
-        new QListViewItem(GroupPoints->ListView1, GEOMBase::GetName( anObject ), aMaterialId);
+      if (anItem)
+        // insert after aPrevItem
+        anItem = new QListViewItem(GroupPoints->ListView1, anItem,
+                                   GEOMBase::GetName( anObject ), aMaterialId);
+      else
+        // the first item creation
+        anItem = new QListViewItem(GroupPoints->ListView1,
+                                   GEOMBase::GetName( anObject ), aMaterialId);
     }
   }
   MESSAGE("Filled");

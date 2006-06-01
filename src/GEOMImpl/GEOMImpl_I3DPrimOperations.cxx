@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
@@ -45,6 +45,7 @@
 #include <GEOMImpl_RevolutionDriver.hxx>
 #include <GEOMImpl_ShapeDriver.hxx>
 #include <GEOMImpl_FillingDriver.hxx>
+#include <GEOMImpl_ThruSectionsDriver.hxx>
 
 #include <GEOMImpl_IBox.hxx>
 #include <GEOMImpl_ICylinder.hxx>
@@ -56,6 +57,8 @@
 #include <GEOMImpl_IRevolution.hxx>
 #include <GEOMImpl_IShapes.hxx>
 #include <GEOMImpl_IFilling.hxx>
+#include <GEOMImpl_IThruSections.hxx>
+#include <GEOMImpl_IPipeDiffSect.hxx>
 
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -932,4 +935,243 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
 
   SetErrorCode(OK);
   return aFilling;
+}
+
+//=============================================================================
+/*!
+ *  MakeThruSections
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
+						const Handle(TColStd_HSequenceOfTransient)& theSeqSections,
+						bool theModeSolid,
+						double thePreci,
+						bool theRuled)
+{
+  Handle(GEOM_Object) anObj;
+  SetErrorCode(KO);
+  if(theSeqSections.IsNull())
+    return anObj;
+
+  Standard_Integer nbObj = theSeqSections->Length();
+  if (!nbObj) 
+    return anObj;
+
+  //Add a new ThruSections object
+  Handle(GEOM_Object) aThruSect = GetEngine()->AddObject(GetDocID(), GEOM_THRUSECTIONS);
+
+ 
+  //Add a new ThruSections function
+
+  int aTypeFunc = (theRuled ? THRUSECTIONS_RULED : THRUSECTIONS_SMOOTHED);
+  Handle(GEOM_Function) aFunction =
+    aThruSect->AddFunction(GEOMImpl_ThruSectionsDriver::GetID(), aTypeFunc);
+  if (aFunction.IsNull()) return anObj;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ThruSectionsDriver::GetID()) return NULL;
+
+  GEOMImpl_IThruSections aCI (aFunction);
+
+  Handle(TColStd_HSequenceOfTransient) aSeqSections = new TColStd_HSequenceOfTransient;
+
+  Standard_Integer i =1;
+  for( ; i <= nbObj; i++) {
+
+    Handle(Standard_Transient) anItem = theSeqSections->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) aSectObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!aSectObj.IsNull())
+    {
+      Handle(GEOM_Function) aRefSect = aSectObj->GetLastFunction();
+      if(!aRefSect.IsNull())
+        aSeqSections->Append(aRefSect);
+    }
+  }
+
+  if(!aSeqSections->Length())
+    return anObj;
+
+  aCI.SetSections(aSeqSections);
+  aCI.SetSolidMode(theModeSolid);
+  aCI.SetPrecision(thePreci);
+
+  //Compute the ThruSections value
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("ThruSections driver failed");
+      return anObj;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return anObj;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pyDump(aFunction);
+  pyDump << aThruSect << " = geompy.MakeThruSections([";
+
+  for(i =1 ; i <= nbObj; i++) {
+
+    Handle(Standard_Transient) anItem = theSeqSections->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) aSectObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!aSectObj.IsNull()) {
+      pyDump<< aSectObj;
+      if(i < nbObj)
+	pyDump<<", ";
+    }
+  }
+  
+  pyDump<< "],"<<theModeSolid << "," << thePreci <<","<< theRuled <<")";
+
+  SetErrorCode(OK);
+  return aThruSect;
+  
+   
+}
+
+//=============================================================================
+/*!
+ *  MakePipeWithDifferentSections
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
+					        const Handle(TColStd_HSequenceOfTransient)& theBases,
+					        const Handle(TColStd_HSequenceOfTransient)& theLocations,
+					        const Handle(GEOM_Object)& thePath,
+					        bool theWithContact,
+                                                bool theWithCorrections)
+{
+  Handle(GEOM_Object) anObj;
+  SetErrorCode(KO);
+  if(theBases.IsNull())
+    return anObj;
+
+  Standard_Integer nbBases = theBases->Length();
+  
+  if (!nbBases)
+    return anObj;
+  
+  Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
+  //Add a new Pipe object
+  Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
+ 
+  //Add a new Pipe function
+
+  Handle(GEOM_Function) aFunction =
+    aPipeDS->AddFunction(GEOMImpl_PipeDriver::GetID(), PIPE_DIFFERENT_SECTIONS);
+  if (aFunction.IsNull()) return anObj;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PipeDriver::GetID()) return anObj;
+
+  GEOMImpl_IPipeDiffSect aCI (aFunction);
+
+  Handle(GEOM_Function) aRefPath = thePath->GetLastFunction();
+  if(aRefPath.IsNull())
+    return anObj;
+
+  Handle(TColStd_HSequenceOfTransient) aSeqBases = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aSeqLocs = new TColStd_HSequenceOfTransient;
+
+  Standard_Integer i =1;
+  for( ; i <= nbBases; i++) {
+
+    Handle(Standard_Transient) anItem = theBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) aBase = Handle(GEOM_Object)::DownCast(anItem);
+    if(aBase.IsNull())
+      continue;
+    Handle(GEOM_Function) aRefBase = aBase->GetLastFunction();
+    if(aRefBase.IsNull())
+      continue;
+    if(nbLocs)
+    {
+      Handle(Standard_Transient) anItemLoc = theLocations->Value(i);
+      if(anItemLoc.IsNull())
+	continue;
+    
+      Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
+      if(aLoc.IsNull())
+	continue;
+      Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
+      if(aRefLoc.IsNull())
+	continue;
+      aSeqLocs->Append(aRefLoc);
+    }
+    aSeqBases->Append(aRefBase);
+  }
+
+  if(!aSeqBases->Length())
+    return anObj;
+
+  aCI.SetBases(aSeqBases);
+  aCI.SetLocations(aSeqLocs);
+  aCI.SetPath(aRefPath);
+  aCI.SetWithContactMode(theWithContact);
+  aCI.SetWithCorrectionMode(theWithCorrections);
+  
+  //Compute the Pipe value
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Pipe with defferent section driver failed");
+      return anObj;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return anObj;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pyDump(aFunction);
+  pyDump << aPipeDS << " = geompy.MakePipeWithDifferentSections([";
+
+  for(i =1 ; i <= nbBases; i++) {
+
+    Handle(Standard_Transient) anItem = theBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbBases)
+	pyDump<<", ";
+    }
+    
+  }
+  
+  pyDump<< "], [";
+   
+  for(i =1 ; i <= nbLocs; i++) {
+
+    Handle(Standard_Transient) anItem = theLocations->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbLocs)
+	pyDump<<", ";
+    }
+  }  
+
+  pyDump<< "], "<<thePath<<","<<theWithContact << "," << theWithCorrections<<")";
+
+  SetErrorCode(OK);
+  return aPipeDS;
+  
+   
 }

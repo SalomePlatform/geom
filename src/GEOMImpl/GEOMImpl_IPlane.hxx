@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //NOTE: This is an intreface to a function for the vector creation.
 
@@ -31,6 +31,10 @@
 #define PLN_ARG_VEC 5
 
 #define PLN_ARG_REF 6
+
+#define PLN_ARG_PARAM_U 7
+
+#define PLN_ARG_PARAM_V 8
 
 class GEOMImpl_IPlane
 {
@@ -59,6 +63,12 @@ class GEOMImpl_IPlane
   Handle(GEOM_Function) GetPoint1() { return _func->GetReference(PLN_ARG_PNT1); }
   Handle(GEOM_Function) GetPoint2() { return _func->GetReference(PLN_ARG_PNT2); }
   Handle(GEOM_Function) GetPoint3() { return _func->GetReference(PLN_ARG_PNT3); }
+  
+  void SetParameterU(double theParamU) { _func->SetReal(PLN_ARG_PARAM_U, theParamU); }
+  double GetParameterU() { return _func->GetReal(PLN_ARG_PARAM_U); }
+
+  void SetParameterV(double theParamV) { _func->SetReal(PLN_ARG_PARAM_V, theParamV); }
+  double GetParameterV() { return _func->GetReal(PLN_ARG_PARAM_V); }
 
  private:
 

@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
@@ -221,6 +221,55 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
   return aPoint;
 }
 
+//=============================================================================
+/*!
+ *  MakeTangentOnCurve
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentOnCurve
+                            (const Handle(GEOM_Object)& theCurve, double theParameter)
+{
+  SetErrorCode(KO);
+
+  if (theCurve.IsNull()) return NULL;
+
+  //Add a new Vector object
+  Handle(GEOM_Object) aVec = GetEngine()->AddObject(GetDocID(), GEOM_VECTOR);
+
+  //Add a new Point function for creation a point relativley another point
+  Handle(GEOM_Function) aFunction = aVec->AddFunction(GEOMImpl_VectorDriver::GetID(), VECTOR_TANGENT_CURVE_PAR);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_VectorDriver::GetID()) return NULL;
+
+  GEOMImpl_IVector aVI (aFunction);
+
+  Handle(GEOM_Function) aRefFunction = theCurve->GetLastFunction();
+  if (aRefFunction.IsNull()) return NULL;
+
+  aVI.SetCurve(aRefFunction);
+  aVI.SetParameter(theParameter);
+
+  //Compute the vector value
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Vector driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aVec << " = geompy.MakeTangentOnCurve("
+                               << theCurve << ", " << theParameter << ")";
+
+  SetErrorCode(OK);
+  return aVec;
+}
 
 //=============================================================================
 /*!
@@ -641,3 +690,61 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarker
   SetErrorCode(OK);
   return aMarker;
 }
+
+//=============================================================================
+/*!
+ *  MakeTangentPlaneOnFace
+ */
+//=============================================================================
+
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentPlaneOnFace(const Handle(GEOM_Object)& theFace,
+							              double theParamU,
+								      double theParamV,
+								      double theSize)
+{
+   SetErrorCode(KO);
+
+  if (theFace.IsNull()) return NULL;
+
+  //Add a new Plane object
+  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GetDocID(), GEOM_PLANE);
+
+  //Add a new Plane function
+  Handle(GEOM_Function) aFunction =
+    aPlane->AddFunction(GEOMImpl_PlaneDriver::GetID(), PLANE_TANGENT_FACE);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PlaneDriver::GetID()) return NULL;
+
+  GEOMImpl_IPlane aPI (aFunction);
+
+  Handle(GEOM_Function) aRef = theFace->GetLastFunction();
+  if (aRef.IsNull()) return NULL;
+
+  aPI.SetFace(aRef);
+  aPI.SetSize(theSize);
+  aPI.SetParameterU(theParamU);
+  aPI.SetParameterV(theParamV);
+
+  //Compute the Plane value
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Plane driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPlane << " = geompy.MakeTangentPlaneOnFace("
+                               << theFace << ", " <<theParamU <<", "<<theParamV <<", "<< theSize << ")";
+
+  SetErrorCode(OK);
+  return aPlane;
+}
+
+
