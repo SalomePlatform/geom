@@ -114,17 +114,25 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       if (aShape_i.ShapeType() == TopAbs_EDGE) {
         B.Add(aWire, TopoDS::Edge(aShape_i));
         MW.Add(TopoDS::Edge(aShape_i));
+        if (!MW.IsDone()) {
+          // check status after each edge/wire addition, because the final status
+          // can be OK even in case, when some edges/wires was not accepted.
+          isMWDone = false;
+        }
       } else if (aShape_i.ShapeType() == TopAbs_WIRE) {
-        B.Add(aWire, TopoDS::Wire(aShape_i));
-        MW.Add(TopoDS::Wire(aShape_i));
+        TopExp_Explorer exp (aShape_i, TopAbs_EDGE);
+        for (; exp.More(); exp.Next()) {
+          B.Add(aWire, TopoDS::Edge(exp.Current()));
+          MW.Add(TopoDS::Edge(exp.Current()));
+          if (!MW.IsDone()) {
+            // check status after each edge/wire addition, because the final status
+            // can be OK even in case, when some edges/wires was not accepted.
+            isMWDone = false;
+          }
+        }
       } else {
         Standard_TypeMismatch::Raise
           ("Shape for wire construction is neither an edge nor a wire");
-      }
-      if (!MW.IsDone()) {
-        // check status after each edge/wire addition, because the final status
-        // can be OK even in case, when some edges/wires was not accepted.
-        isMWDone = false;
       }
     }
 
