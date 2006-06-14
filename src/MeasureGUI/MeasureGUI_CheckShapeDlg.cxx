@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -27,7 +27,6 @@
 //  $Header$
 
 #include "MeasureGUI_CheckShapeDlg.h"
-#include "MeasureGUI_1Sel1TextView_QTD.h"
 
 #include "utilities.h"
 #include "SUIT_Session.h"
@@ -40,9 +39,26 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
+#include <qcheckbox.h>
 
 #define TEXTEDIT_FONT_FAMILY "Courier"
 #define TEXTEDIT_FONT_SIZE 11
+
+MeasureGUI_1Sel1TextView1Check_QTD::MeasureGUI_1Sel1TextView1Check_QTD(QWidget* parent,
+                                                                       const char* name, WFlags fl)
+  : MeasureGUI_1Sel1TextView_QTD(parent, name, fl)
+{
+  CheckBoxGeom = new QCheckBox(GroupBox1, "CheckBoxGeom");
+  CheckBoxGeom->setText(tr("CHECK_SHAPE_GEOMETRY"));
+  Layout1->addMultiCellWidget(CheckBoxGeom, 2, 2, 0, 2);
+
+  CheckBoxGeom->setChecked(false);
+}
+
+MeasureGUI_1Sel1TextView1Check_QTD::~MeasureGUI_1Sel1TextView1Check_QTD()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
 
 //=================================================================================
 // class    : MeasureGUI_CheckShapeDlg()
@@ -66,11 +82,11 @@ MeasureGUI_CheckShapeDlg::MeasureGUI_CheckShapeDlg( GeometryGUI* GUI, QWidget* p
   GroupConstructors->setTitle( tr( "GEOM_CHECK_SHAPE" ) );
   RadioButton1->setPixmap( image0 );
 
-  myGrp = new MeasureGUI_1Sel1TextView_QTD( this, "myGrp" );
+  myGrp = new MeasureGUI_1Sel1TextView1Check_QTD( this, "myGrp" );
   myGrp->GroupBox1->setTitle( tr( "GEOM_CHECK_INFOS" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
   myGrp->TextEdit1->setReadOnly( TRUE );
-  
+
   QFont aFont( TEXTEDIT_FONT_FAMILY, TEXTEDIT_FONT_SIZE );
   aFont.setStyleHint( QFont::TypeWriter, QFont::PreferAntialias );
   myGrp->TextEdit1->setFont( aFont );
@@ -86,7 +102,6 @@ MeasureGUI_CheckShapeDlg::MeasureGUI_CheckShapeDlg( GeometryGUI* GUI, QWidget* p
   /* Initialisation */
   Init();
 }
-
 
 //=================================================================================
 // function : ~MeasureGUI_CheckShapeDlg()
@@ -106,6 +121,9 @@ void MeasureGUI_CheckShapeDlg::Init()
   mySelBtn = myGrp->PushButton1;
   mySelEdit = myGrp->LineEdit1;
   MeasureGUI_Skeleton::Init();
+
+  connect(myGrp->CheckBoxGeom, SIGNAL(toggled(bool)), 
+          this, SLOT(SelectionIntoArgument()));
 }
 
 //=================================================================================
@@ -121,7 +139,13 @@ bool MeasureGUI_CheckShapeDlg::getParameters ( bool& theIsValid, QString& theMsg
     try
     {
       char* aMsg;
-      theIsValid = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->CheckShape( myObj, aMsg );
+      bool isCheckGeometry = myGrp->CheckBoxGeom->isChecked();
+      GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
+        GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
+      if (isCheckGeometry)
+        theIsValid = aMeasureOp->CheckShapeWithGeometry(myObj, aMsg);
+      else
+        theIsValid = aMeasureOp->CheckShape(myObj, aMsg);
       theMsg = aMsg;
     }
     catch( const SALOME::SALOME_Exception& e )

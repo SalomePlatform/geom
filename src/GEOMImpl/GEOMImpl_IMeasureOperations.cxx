@@ -361,6 +361,7 @@ void GEOMImpl_IMeasureOperations::GetTolerance
  */
 //=============================================================================
 bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)      theShape,
+                                              const Standard_Boolean   theIsCheckGeom,
                                               TCollection_AsciiString& theDump)
 {
   SetErrorCode(KO);
@@ -379,7 +380,7 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)      theShape,
   //Compute the parameters
   bool isValid = false;
   try {
-    BRepCheck_Analyzer ana (aShape, false);
+    BRepCheck_Analyzer ana (aShape, theIsCheckGeom);
     if (ana.IsValid()) {
       theDump.Clear();
       isValid = true;

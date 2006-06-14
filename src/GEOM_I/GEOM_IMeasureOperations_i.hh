@@ -65,6 +65,9 @@ class GEOM_IMeasureOperations_i :
   CORBA::Boolean CheckShape (GEOM::GEOM_Object_ptr theShape,
 			     CORBA::String_out     theDescription);
 
+  CORBA::Boolean CheckShapeWithGeometry (GEOM::GEOM_Object_ptr theShape,
+					 CORBA::String_out     theDescription);
+
   char* WhatIs (GEOM::GEOM_Object_ptr theShape);
 
   CORBA::Double GetMinDistance (GEOM::GEOM_Object_ptr theShape1,

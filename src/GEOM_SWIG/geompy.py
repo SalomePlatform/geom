@@ -1775,12 +1775,18 @@ def MakeCDG(theShape):
 
 ## Check a topology of the given shape.
 #  @param theShape Shape to check validity of.
-#  @return TRUE, if the shape "seems to be valid" from the topological point of view.
+#  @param theIsCheckGeom If FALSE, only the shape's topology will be checked,
+#                        if TRUE, the shape's geometry will be checked also.
+#  @return TRUE, if the shape "seems to be valid".
 #  If theShape is invalid, prints a description of problem.
 #
 #  Example: see GEOM_TestMeasures.py
-def CheckShape(theShape):
-    (IsValid, Status) = MeasuOp.CheckShape(theShape)
+def CheckShape(theShape, theIsCheckGeom = 0):
+    if theIsCheckGeom:
+        (IsValid, Status) = MeasuOp.CheckShapeWithGeometry(theShape)
+    else:
+        (IsValid, Status) = MeasuOp.CheckShape(theShape)
+
     if MeasuOp.IsDone() == 0:
       print "CheckShape : ", MeasuOp.GetErrorCode()
     else:

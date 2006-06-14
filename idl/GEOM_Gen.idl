@@ -2022,6 +2022,15 @@ module GEOM
 			out string     theDescription);
 
     /*!
+     *  Check a topology and a geometry of the given shape.
+     *  \param theShape Shape to check validity of.
+     *  \param theDescription Output. Description of problems in the shape, if they are.
+     *  \return TRUE, if the shape "seems to be valid".
+     */
+    boolean CheckShapeWithGeometry (in GEOM_Object theShape,
+				    out string     theDescription);
+
+    /*!
      *  Obtain description of the given shape
      *  \param theShape Shape to be described.
      *  \return Description of the given shape.
