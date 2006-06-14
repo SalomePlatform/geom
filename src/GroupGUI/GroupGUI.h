@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : GroupGUI.h
 //  Author : Sergey ANIKIN
 //  Module : GEOM
-//  $Header$
 
 #ifndef GROUPGUI_H
 #define GROUPGUI_H
@@ -39,19 +38,11 @@ class GroupGUI : public GEOMGUI
 {
   Q_OBJECT
 
-protected:
-  GroupGUI(GeometryGUI* parent); // hide constructor to avoid direct creation
-
-public :
+public:
+  GroupGUI(GeometryGUI* parent);
   ~GroupGUI();
 
-  // Get the only GroupGUI object
-  static GroupGUI* GetGroupGUI(GeometryGUI* parent);
-
   bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
-
-private:
-  static GroupGUI* myGUIObject;        // the only GroupGUI object
 };
 
 #endif

@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -59,21 +59,6 @@
 #include <qmenubar.h>
 
 
-DisplayGUI* DisplayGUI::myGUIObject = 0;
-
-//=======================================================================
-// function : DisplayGUI::GetDisplayGUI()
-// purpose  : Get the only DisplayGUI object [ static ]
-//=======================================================================
-DisplayGUI* DisplayGUI::GetDisplayGUI( GeometryGUI* parent )
-{
-  if ( myGUIObject == 0 ) {
-    // init DisplayGUI only once
-    myGUIObject = new DisplayGUI( parent );
-  }
-  return myGUIObject;
-}
-
 //=======================================================================
 // function : DisplayGUI::DisplayGUI()
 // purpose  : Constructor
@@ -81,7 +66,6 @@ DisplayGUI* DisplayGUI::GetDisplayGUI( GeometryGUI* parent )
 DisplayGUI::DisplayGUI( GeometryGUI* parent ) : GEOMGUI( parent )
 {
 }
-
 
 //=======================================================================
 // function : DisplayGUI::~DisplayGUI()
@@ -98,63 +82,64 @@ DisplayGUI::~DisplayGUI()
 //=======================================================================
 bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
-  DisplayGUI* myDisplayGUI = GetDisplayGUI( getGeometryGUI() );
-  LightApp_SelectionMgr *Sel = getGeometryGUI()->getApp()->selectionMgr();
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if (!app) return false;
+
+  LightApp_SelectionMgr *Sel = app->selectionMgr();
   SALOME_ListIO selected;
   Sel->selectedObjects( selected );
 
   switch (theCommandID) {
   case 211: // MENU VIEW - WIREFRAME/SHADING
     {
-      myDisplayGUI->InvertDisplayMode();
-      int newMode = myDisplayGUI->GetDisplayMode();
-      getGeometryGUI()->action( 211 )->setMenuText( newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
+      InvertDisplayMode();
+      int newMode = GetDisplayMode();
+      getGeometryGUI()->action( 211 )->setMenuText
+        ( newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
       getGeometryGUI()->menuMgr()->update();
-//      SUIT_Session::session()->activeApplication()->desktop()->menuBar()->
-//	changeItem( 211, newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
       break;
     }
   case 212: // MENU VIEW - DISPLAY ALL
     {
       getGeometryGUI()->EmitSignalDeactivateDialog();
-      myDisplayGUI->DisplayAll();
+      DisplayAll();
       break;
     }
   case 213: // MENU VIEW - DISPLAY ONLY
     {
       getGeometryGUI()->EmitSignalDeactivateDialog();
-      myDisplayGUI->DisplayOnly();
+      DisplayOnly();
       break;
     }
   case 214: // MENU VIEW - ERASE ALL
     {
-      myDisplayGUI->EraseAll();
+      EraseAll();
       break;
     }
   case 215: // MENU VIEW - ERASE
     {
-      myDisplayGUI->Erase();
+      Erase();
       break;
     }
   case 216: // MENU VIEW - DISPLAY
     {
       getGeometryGUI()->EmitSignalDeactivateDialog();
-      myDisplayGUI->Display();
+      Display();
       break;
     }
   case 80311: // POPUP VIEWER - WIREFRAME
     {
-      myDisplayGUI->ChangeDisplayMode( 0 );
+      ChangeDisplayMode( 0 );
       break;
     }
   case 80312: // POPUP VIEWER - SHADING
     {
-      myDisplayGUI->ChangeDisplayMode( 1 );
+      ChangeDisplayMode( 1 );
       break;
     }
   default:
     {
-      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;
     }
   }
@@ -168,7 +153,10 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 //=====================================================================================
 void DisplayGUI::DisplayAll()
 {
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return;
+
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
   if ( !appStudy ) return;
   _PTR(Study) aStudy = appStudy->studyDS();
   if ( !aStudy ) return;
@@ -186,7 +174,9 @@ void DisplayGUI::DisplayAll()
     _PTR(SObject) valSO ( anIter->Value() );
     _PTR(SObject) refSO;
     if ( !valSO->ReferencedObject( refSO ) ) {
-      listIO.Append( new SALOME_InteractiveObject( valSO->GetID().c_str(), SC->ComponentDataType().c_str() ,valSO->GetName().c_str() ) );
+      listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
+                                                  SC->ComponentDataType().c_str(),
+                                                  valSO->GetName().c_str()) );
     } 
     anIter->Next();
   }
@@ -201,7 +191,7 @@ void DisplayGUI::EraseAll()
 {
   SUIT_OverrideCursor();
 
-  SUIT_Application* app = SUIT_Session::session()->activeApplication();
+  SUIT_Application* app = getGeometryGUI()->getApp();
   if ( app ) {
     SUIT_ViewWindow* vw = app->desktop()->activeWindow();
     if ( vw ) {
@@ -232,28 +222,28 @@ void DisplayGUI::DisplayOnly()
 void DisplayGUI::Display()
 {
   SALOME_ListIO listIO;
-  
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
 
   SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
   if ( !anActiveStudy ) return;
-  
+
   //get SalomeApp selection manager
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr ) return;
-  
+
   SALOME_ListIO aList;
   aSelMgr->selectedObjects( aList );
   SALOME_ListIteratorOfListIO It( aList );
-  
+
   SUIT_OverrideCursor();
 
   for( ;It.More();It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
     if ( anIObject->hasEntry() ) {
       _PTR(SObject) SO ( anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
-      if ( SO && QString( SO->GetID().c_str() ) == QString( SO->GetFatherComponent()->GetID().c_str() ) ) {
+      if ( SO && QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str()) ) {
 	_PTR(SComponent) SC ( SO->GetFatherComponent() );
 	// if component is selected
 	listIO.Clear();
@@ -263,8 +253,10 @@ void DisplayGUI::Display()
 	  _PTR(SObject) valSO ( anIter->Value() );
 	  _PTR(SObject) refSO;
 	  if ( !valSO->ReferencedObject( refSO ) ) {
-	    listIO.Append( new SALOME_InteractiveObject( valSO->GetID().c_str(), SC->ComponentDataType().c_str() ,valSO->GetName().c_str() ) );
-	  } 
+	    listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
+                                                        SC->ComponentDataType().c_str(),
+                                                        valSO->GetName().c_str()) );
+	  }
 	  anIter->Next();
 	}
 	break;
@@ -289,27 +281,27 @@ void DisplayGUI::Erase()
 {
   SALOME_ListIO listIO;
 
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
 
   SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
   if ( !anActiveStudy ) return;
-  
+
   //get SalomeApp selection manager
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr ) return;
-  
+
   SALOME_ListIO aList;
   aSelMgr->selectedObjects( aList );
   SALOME_ListIteratorOfListIO It( aList );
 
   SUIT_OverrideCursor();
 
-  for( ;It.More();It.Next() ) {
+  for( ; It.More(); It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
     if ( anIObject->hasEntry() ) {
       _PTR(SObject) SO ( anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
-      if ( SO && QString( SO->GetID().c_str() ) == QString( SO->GetFatherComponent()->GetID().c_str() ) ) {
+      if ( SO && QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str()) ) {
 	_PTR(SComponent) SC ( SO->GetFatherComponent() );
 	// if component is selected
 	listIO.Clear();
@@ -319,8 +311,10 @@ void DisplayGUI::Erase()
 	  _PTR(SObject) valSO ( anIter->Value() );
 	  _PTR(SObject) refSO;
 	  if ( !valSO->ReferencedObject( refSO ) ) {
-	    listIO.Append( new SALOME_InteractiveObject( valSO->GetID().c_str(), SC->ComponentDataType().c_str() ,valSO->GetName().c_str() ) );
-	  } 
+	    listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
+                                                        SC->ComponentDataType().c_str(),
+                                                        valSO->GetName().c_str()) );
+	  }
 	  anIter->Next();
 	}
 	break;
@@ -334,7 +328,7 @@ void DisplayGUI::Erase()
     }
   }
   GEOM_Displayer(anActiveStudy).Erase( listIO, true );
-  ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->clearSelected();
+  getGeometryGUI()->getApp()->selectionMgr()->clearSelected();
 }
 
 //=====================================================================================
@@ -346,7 +340,7 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
   SUIT_OverrideCursor();
 
   if ( !viewWindow ) 
-    viewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+    viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
   if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
     SVTK_View* aView = ((SVTK_ViewWindow*)viewWindow)->getView();
     aView->SetDisplayMode( mode );
@@ -360,7 +354,7 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
     AIS_ListOfInteractive List1;
     ic->ObjectsInCollector( List1 );
     List.Append( List1 );
-    
+
     AIS_ListIteratorOfListOfInteractive ite( List );
     while( ite.More() ) {
       if( ite.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
@@ -369,7 +363,7 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
       }
       ite.Next();
     }
-    
+
     ic->SetDisplayMode( newmode, Standard_False );
   }
 }
@@ -382,7 +376,7 @@ int DisplayGUI::GetDisplayMode( SUIT_ViewWindow* viewWindow )
 {
   int dispMode = 0;
   if ( !viewWindow ) 
-    viewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+    viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
   if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
     SVTK_View* aView = ((SVTK_ViewWindow*)viewWindow)->getView();
     dispMode = aView->GetDisplayMode();
@@ -413,19 +407,19 @@ void DisplayGUI::InvertDisplayMode( SUIT_ViewWindow* viewWindow )
 //=====================================================================================
 void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
 {
-  if ( !viewWindow ) 
-    viewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
+
+  if ( !viewWindow ) 
+    viewWindow = app->desktop()->activeWindow();
 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr ) return;
-  
+
   SUIT_OverrideCursor();
 
   SALOME_ListIO aList;
-  
+
   if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
     SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( viewWindow );
     SVTK_View* aView = vw->getView();
@@ -435,7 +429,8 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
 
     for( ;It.More(); It.Next() ) {
       SVTK_Viewer* stvkViewer = dynamic_cast<SVTK_Viewer*>(vw->getViewManager()->getViewModel());
-      SVTK_Prs* vtkPrs = stvkViewer ? dynamic_cast<SVTK_Prs*>( stvkViewer->CreatePrs( It.Value()->getEntry() ) ) : 0;
+      SVTK_Prs* vtkPrs =
+        stvkViewer ? dynamic_cast<SVTK_Prs*>( stvkViewer->CreatePrs( It.Value()->getEntry() ) ) : 0;
       if ( vtkPrs && !vtkPrs->IsNull() ) {
 	if ( mode == 0 )
 	  aView->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
@@ -480,6 +475,6 @@ extern "C"
 #endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return DisplayGUI::GetDisplayGUI( parent );
+    return new DisplayGUI( parent );
   }
 }

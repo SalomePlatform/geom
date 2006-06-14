@@ -44,14 +44,9 @@
 //=================================================================================
 class BasicGUI : public GEOMGUI
 {
-protected:
-  BasicGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
-
 public:
+  BasicGUI( GeometryGUI* parent );
   ~BasicGUI();
-
-  // Get the only BasicGUI object
-  static BasicGUI* GetBasicGUI( GeometryGUI* parent );
 
   bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
   bool OnMousePress(QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow);

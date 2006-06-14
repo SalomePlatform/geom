@@ -58,15 +58,6 @@
 using namespace std;
 
 //=======================================================================
-// function : GetBasicGUI()
-// purpose  : Get the only BasicGUI object [ static ]
-//=======================================================================
-BasicGUI* BasicGUI::GetBasicGUI( GeometryGUI* parent )
-{
-  return new BasicGUI( parent );
-}
-
-//=======================================================================
 // function : BasicGUI()
 // purpose  : Constructor
 //=======================================================================
@@ -146,38 +137,41 @@ bool BasicGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWin
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
 
   // Create Point dialog, OCC viewer 
-  if ( aDlg && aDlg->isA( "BasicGUI_PointDlg" ) && theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&  pe->state() != Qt::ControlButton )
+  if ( aDlg && aDlg->isA( "BasicGUI_PointDlg" ) &&
+       theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
+       pe->state() != Qt::ControlButton )
   {
     BasicGUI_PointDlg* aPntDlg = (BasicGUI_PointDlg*) aDlg;
     if ( aPntDlg->acceptMouseEvent() )
+    {
+      OCCViewer_Viewer* anOCCViewer =
+        ((OCCViewer_ViewManager*)(theViewWindow->getViewManager()))->getOCCViewer();
+      Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();
+
+      gp_Pnt aPnt;    
+
+      ic->InitSelected();
+      if ( pe->state() == Qt::ShiftButton )
+        ic->ShiftSelect();  // Append selection
+      else
+        ic->Select();       // New selection
+
+      ic->InitSelected();
+      if ( ic->MoreSelected() )
       {
-	OCCViewer_Viewer* anOCCViewer = ((OCCViewer_ViewManager*)(theViewWindow->getViewManager()))->getOCCViewer();
-	Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();
-	
-    	gp_Pnt aPnt;    
+        TopoDS_Shape aShape = ic->SelectedShape();
+        if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
+          aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
+      }
+      else
+      {
+        OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+        aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+      }
 
-    	ic->InitSelected();
-    	if( pe->state() == Qt::ShiftButton )
-	  ic->ShiftSelect();  // Append selection
-    	else
-	  ic->Select();       // New selection
-
-    	ic->InitSelected();
-    	if( ic->MoreSelected() )
-	  {
-	    TopoDS_Shape aShape = ic->SelectedShape();
-	    if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
-	      aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
-	  }
-    	else
-	  {
-	    OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
-	    aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
-	  }
-
-    	aPntDlg->OnPointSelected( aPnt );  // "feed" the point to point construction dialog
-      } // acceptMouseEvent()
-  } 
+      aPntDlg->OnPointSelected( aPnt );  // "feed" the point to point construction dialog
+    } // acceptMouseEvent()
+  }
   return false;
 }
 
@@ -218,6 +212,6 @@ extern "C"
 #endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return BasicGUI::GetBasicGUI( parent );
+    return new BasicGUI( parent );
   }
 }

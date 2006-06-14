@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -45,21 +45,6 @@
 
 using namespace std;
 
-OperationGUI* OperationGUI::myGUIObject = 0;
-
-//=======================================================================
-// function : GetOperationGUI()
-// purpose  : Get the only OperationGUI object [ static ]
-//=======================================================================
-OperationGUI* OperationGUI::GetOperationGUI( GeometryGUI* parent )
-{
-  if ( myGUIObject == 0 ) {
-    // init OperationGUI only once
-    myGUIObject = new OperationGUI( parent );
-  }
-  return myGUIObject;
-}
-
 //=======================================================================
 // function : OperationGUI()
 // purpose  : Constructor
@@ -67,7 +52,6 @@ OperationGUI* OperationGUI::GetOperationGUI( GeometryGUI* parent )
 OperationGUI::OperationGUI(GeometryGUI* parent) : GEOMGUI(parent)
 {
 }
-
 
 //=======================================================================
 // function : ~OperationGUI()
@@ -84,6 +68,9 @@ OperationGUI::~OperationGUI()
 //=======================================================================
 bool OperationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if (!app) return false;
+
   getGeometryGUI()->EmitSignalDeactivateDialog();
 
   switch (theCommandID)
@@ -94,7 +81,7 @@ bool OperationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case 506: (new OperationGUI_ChamferDlg  (getGeometryGUI(), parent))->show(); break;
   case 507: (new OperationGUI_ClippingDlg (getGeometryGUI(), parent))->show(); break;
   default:
-    getGeometryGUI()->getApp()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+    app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
   }
 
   return true;
@@ -110,6 +97,6 @@ extern "C"
 #endif
   GEOMGUI* GetLibGUI(GeometryGUI* parent)
   {
-    return OperationGUI::GetOperationGUI(parent);
+    return new OperationGUI(parent);
   }
 }

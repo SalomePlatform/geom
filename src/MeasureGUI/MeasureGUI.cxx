@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -31,6 +31,7 @@
 #include "SUIT_Session.h"
 
 #include "SalomeApp_Tools.h"
+#include "SalomeApp_Application.h"
 
 #include "MeasureGUI_PropertiesDlg.h"    // Method PROPERTIES
 #include "MeasureGUI_CenterMassDlg.h"    // Method CENTER MASS
@@ -43,21 +44,6 @@
 #include "MeasureGUI_CheckCompoundOfBlocksDlg.h" // Method CHECKCOMPOUND
 #include "MeasureGUI_PointDlg.h"         // Method POINTCOORDINATES
 
-MeasureGUI* MeasureGUI::myGUIObject = 0;
-
-//=======================================================================
-// function : GetMeasureGUI()
-// purpose  : Get the only MeasureGUI object [ static ]
-//=======================================================================
-MeasureGUI* MeasureGUI::GetMeasureGUI( GeometryGUI* parent )
-{
-  if ( myGUIObject == 0 ) {
-    // init MeasureGUI only once
-    myGUIObject = new MeasureGUI( parent );
-  }
-  return myGUIObject;
-}
-
 //=======================================================================
 // function : MeasureGUI()
 // purpose  : Constructor
@@ -65,7 +51,6 @@ MeasureGUI* MeasureGUI::GetMeasureGUI( GeometryGUI* parent )
 MeasureGUI::MeasureGUI( GeometryGUI* parent ) : GEOMGUI( parent )
 {
 }
-
 
 //=======================================================================
 // function : ~MeasureGUI()
@@ -82,7 +67,9 @@ MeasureGUI::~MeasureGUI()
 //=======================================================================
 bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
-  MeasureGUI* myMeasureGUI = GetMeasureGUI( getGeometryGUI() );
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return false;
+
   getGeometryGUI()->EmitSignalDeactivateDialog();
 
   switch ( theCommandID )
@@ -99,7 +86,7 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     case 708 : new MeasureGUI_PointDlg       (getGeometryGUI(), parent); break; // POINT COORDINATES
 
     default: 
-      SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
+      app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
       break;
   }
   return true;
@@ -116,6 +103,6 @@ extern "C"
 #endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return MeasureGUI::GetMeasureGUI( parent );
+    return new MeasureGUI( parent );
   }
 }

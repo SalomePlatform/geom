@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -36,21 +36,6 @@
 
 using namespace std;
 
-BooleanGUI* BooleanGUI::myGUIObject = 0;
-
-//=======================================================================
-// function : GetBooleanGUI()
-// purpose  : Get the only BooleanGUI object [ static ]
-//=======================================================================
-BooleanGUI* BooleanGUI::GetBooleanGUI( GeometryGUI* parent )
-{
-  if ( myGUIObject == 0 ) {
-    // init BooleanGUI only once
-    myGUIObject = new BooleanGUI( parent );
-  }
-  return myGUIObject;
-}
-
 //=======================================================================
 // function : BooleanGUI()
 // purpose  : Constructor
@@ -58,7 +43,6 @@ BooleanGUI* BooleanGUI::GetBooleanGUI( GeometryGUI* parent )
 BooleanGUI::BooleanGUI( GeometryGUI* parent ) : GEOMGUI( parent )
 {
 }
-
 
 //=======================================================================
 // function : ~BooleanGUI()
@@ -91,7 +75,7 @@ bool BooleanGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 
   QDialog* aDlg = new BooleanGUI_Dialog( anOperation, getGeometryGUI(), parent, "");
   aDlg->show();
-   
+
   return true;
 }
 
@@ -105,6 +89,6 @@ extern "C"
 #endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return BooleanGUI::GetBooleanGUI( parent );
+    return new BooleanGUI( parent );
   }
 }

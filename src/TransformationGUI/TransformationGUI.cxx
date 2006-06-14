@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -32,6 +32,8 @@
 #include "SUIT_Session.h"
 #include "SUIT_Desktop.h"
 
+#include "SalomeApp_Application.h"
+
 #include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
 #include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION
 #include "TransformationGUI_TranslationDlg.h"        // Method TRANSLATION
@@ -43,21 +45,6 @@
 
 using namespace std;
 
-TransformationGUI* TransformationGUI::myGUIObject = 0;
-
-//=======================================================================
-// function : GetTransformationGUI()
-// purpose  : Get the only TransformationGUI object [ static ]
-//=======================================================================
-TransformationGUI* TransformationGUI::GetTransformationGUI( GeometryGUI* parent )
-{
-  if ( myGUIObject == 0 ) {
-    // init TransformationGUI only once
-    myGUIObject = new TransformationGUI( parent );
-  }
-  return myGUIObject;
-}
-
 //=======================================================================
 // function : TransformationGUI()
 // purpose  : Constructor
@@ -65,7 +52,6 @@ TransformationGUI* TransformationGUI::GetTransformationGUI( GeometryGUI* parent 
 TransformationGUI::TransformationGUI(GeometryGUI* parent) : GEOMGUI(parent)
 {
 }
-
 
 //=======================================================================
 // function : ~TransformationGUI()
@@ -82,6 +68,9 @@ TransformationGUI::~TransformationGUI()
 //=======================================================================
 bool TransformationGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if (!app) return false;
+
   getGeometryGUI()->EmitSignalDeactivateDialog();
   QDialog* aDlg = NULL;
 
@@ -112,11 +101,11 @@ bool TransformationGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     aDlg = new TransformationGUI_MultiRotationDlg( getGeometryGUI(), parent, "" );
     break;
   default:
-    SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+    app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;
   }
 
-  if ( aDlg != NULL )
+  if (aDlg != NULL)
     aDlg->show();
 
   return true;
@@ -133,6 +122,6 @@ extern "C"
 #endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return TransformationGUI::GetTransformationGUI( parent );
+    return new TransformationGUI( parent );
   }
 }

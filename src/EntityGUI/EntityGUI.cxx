@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -37,6 +37,7 @@
 #include "OCCViewer_ViewManager.h"
 #include "SalomeApp_Study.h"
 #include "SalomeApp_Tools.h"
+#include "SalomeApp_Application.h"
 
 #include <TopoDS_Compound.hxx>
 #include <BRep_Builder.hxx>
@@ -49,15 +50,6 @@
 
 using namespace boost;
 using namespace std;
-
-//=======================================================================
-// function : GetEntityGUI()
-// purpose  : Get the only EntityGUI object [ static ]
-//=======================================================================
-EntityGUI* EntityGUI::GetEntityGUI( GeometryGUI* parent )
-{
-  return new EntityGUI( parent );
-}
 
 //=======================================================================
 // function : EntityGUI()
@@ -84,6 +76,9 @@ EntityGUI::~EntityGUI()
 //=======================================================================
 bool EntityGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return false;
+
   getGeometryGUI()->EmitSignalDeactivateDialog();
   QDialog* aDlg = NULL;
 
@@ -97,7 +92,7 @@ bool EntityGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
       aDlg = new EntityGUI_SubShapeDlg(getGeometryGUI(), parent, "");
       break;
     default:
-      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;
   }
   if ( aDlg )
@@ -113,8 +108,10 @@ bool EntityGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 //=====================================================================================
 void EntityGUI::DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shape& S2) 
 {
-  SUIT_ViewManager* aVM =
-    SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager();
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return;
+
+  SUIT_ViewManager* aVM = app->desktop()->activeWindow()->getViewManager();
   if (aVM->getType() != OCCViewer_Viewer::Type())
     return;
 
@@ -129,7 +126,7 @@ void EntityGUI::DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shap
       mySimulationShape1 = new AIS_Shape(TopoDS_Shape());
       mySimulationShape1->Set(S1);
       mySimulationShape1->SetColor(Quantity_NOC_RED);
-    
+
       ic->Deactivate(mySimulationShape1);
       ic->Display(mySimulationShape1, Standard_False);
       mySimulationShape1->UnsetColor();
@@ -160,15 +157,18 @@ void EntityGUI::DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shap
 //==================================================================================
 void EntityGUI::EraseSimulationShape()
 {
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return;
+
   // get all view windows at the desktop
-  QPtrList<SUIT_ViewWindow> aWndLst = SUIT_Session::session()->activeApplication()->desktop()->windows();
+  QPtrList<SUIT_ViewWindow> aWndLst = app->desktop()->windows();
   //get all view windows, which belong to the active study
   QPtrList<SUIT_ViewWindow> aWndLstAS;
   SUIT_ViewWindow* vw;
   for ( vw = aWndLst.first(); vw; vw = aWndLst.next() )
-    if ( vw->getViewManager()->study() == SUIT_Session::session()->activeApplication()->activeStudy() )
+    if ( vw->getViewManager()->study() == app->activeStudy() )
       aWndLstAS.append( vw );
-  
+
   for ( vw = aWndLstAS.first(); vw; vw = aWndLstAS.next() ) {
     if ( vw->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
       OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(vw->getViewManager()))->getOCCViewer();
@@ -188,9 +188,11 @@ void EntityGUI::EraseSimulationShape()
 //=====================================================================================
 bool EntityGUI::SObjectExist(const _PTR(SObject)& theFatherObject, const char* IOR)
 {
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>
-    ( SUIT_Session::session()->activeApplication()->activeStudy() );
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return false;
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
   if ( !appStudy ) return false;
+
   _PTR(Study) aStudy = appStudy->studyDS();
   _PTR(ChildIterator) it ( aStudy->NewChildIterator(theFatherObject) );
   _PTR(SObject) RefSO;
@@ -224,6 +226,6 @@ extern "C"
 #endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return EntityGUI::GetEntityGUI( parent );
+    return new EntityGUI( parent );
   }
 }

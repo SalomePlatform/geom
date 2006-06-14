@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : BooleanGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef BOOLEANGUI_H
 #define BOOLEANGUI_H
@@ -37,21 +36,13 @@
 //=================================================================================
 class BooleanGUI : public GEOMGUI
 {
-protected:
-  BooleanGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
-
 public:
   enum BooleanOperation { COMMON = 1, CUT = 2, FUSE = 3, SECTION = 4 };
 
+  BooleanGUI( GeometryGUI* parent );
   ~BooleanGUI();
 
-  // Get the only BooleanGUI object
-  static BooleanGUI* GetBooleanGUI( GeometryGUI* parent );
-
   bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
-
-private:
-  static BooleanGUI* myGUIObject;        // the only BooleanGUI object
 };
 
 #endif

@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : OperationGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef OPERATIONGUI_H
 #define OPERATIONGUI_H
@@ -38,19 +37,11 @@
 //=================================================================================
 class OperationGUI : public GEOMGUI
 {
-protected:
-  OperationGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
-
 public :
+  OperationGUI( GeometryGUI* parent );
   ~OperationGUI();
 
-  // Get the only OperationGUI object
-  static OperationGUI* GetOperationGUI( GeometryGUI* parent  );
-
   bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
-
-private:
-  static OperationGUI* myGUIObject;        // the only OperationGUI object
 };
 
 #endif
