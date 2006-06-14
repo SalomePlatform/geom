@@ -1711,6 +1711,9 @@ msgstr "Point Coordinates"
 msgid "MeasureGUI_PointDlg::COORDINATES"
 msgstr "Point and its coordinates"
 
+msgid "MeasureGUI_1Sel1TextView1Check_QTD::CHECK_SHAPE_GEOMETRY"
+msgstr "Check also geometry"
+
 msgid "GroupGUI_GroupDlg::CREATE_GROUP_TITLE"
 msgstr "Create Group"
 
@@ -2200,13 +2203,13 @@ msgid "STB_FILLING"
 msgstr "Create a filling"
 
 msgid "TOP_PIPE"
-msgstr "Create a pipe"
+msgstr "Extrusion along a path"
 
 msgid "MEN_PIPE"
-msgstr "Pipe"
+msgstr "Extrusion along a path"
 
 msgid "STB_PIPE"
-msgstr "Create a pipe"
+msgstr "Create a shape by Extrusion along a path"
 
 msgid "MEN_GROUP"
 msgstr "Group"
