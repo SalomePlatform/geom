@@ -224,8 +224,10 @@
     NMTTools_DEProcessor aDEP(*this);
     aDEP.Do();
     //
+    myIsDone = Standard_True;
   }
   catch (BOPTColStd_Failure& /*x*/) {
     //QQ MESSAGE(x.Message() << flush);
+    myIsDone = Standard_False;
   }
 }
