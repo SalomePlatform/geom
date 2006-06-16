@@ -68,10 +68,19 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr orb,
 
   _impl = new ::GEOMImpl_Gen;
 
-  OSD::SetSignal( true );
+  //work around PAL12004, PAL12628
+  //OSD::SetSignal( true );
+  bool raiseFPE;
+#ifdef _DEBUG_
+  raiseFPE = true;
+  char* envDisableFPE = getenv("DISABLE_FPE");
+  if (envDisableFPE && atoi(envDisableFPE))
+    raiseFPE = false;
+#else
+  raiseFPE = false;
+#endif
+  OSD::SetSignal( raiseFPE );
 }
-
-
 
 //============================================================================
 // function : ~GEOM_Gen_i()
