@@ -93,7 +93,7 @@
     </book>
   </book>
   <item name="Using measurement tools" url="files/salome2_sp3_measuregui_functions.htm" />
-  <item name="Access to Geometry module functionality from Python (using geompy.py)" url="geompy_doc/namespacegeompy.html" />
+  <item name="Python interface geompy.py" url="geompy_doc/namespacegeompy.html" />
   <book name="TUI Scripts" >
     <item name="Viewing Geometrical Objects" url="changing_display_parameters.htm" />
     <book name="Creating Geometric Objects" >
