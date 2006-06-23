@@ -992,6 +992,10 @@ msgstr "Prism Construction"
 msgid "GEOM_PRISM_BSV"
 msgstr "Base Shape + Vector"
 
+#: GeometryGUI_PrismDlg.cxx:83
+msgid "GEOM_PRISM_BSV_2P"
+msgstr "Base Shape + 2 Points"
+
 #: GeometryGUI_PropertiesDlg.cxx:56
 msgid "GEOM_PROPERTIES_TITLE"
 msgstr "Basic Properties Informations"

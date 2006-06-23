@@ -994,6 +994,10 @@ msgstr "Extruder une Shape de base"
 msgid "GEOM_PRISM_BSV"
 msgstr "Shape de base + Vecteur"
 
+#: GeometryGUI_PrismDlg.cxx:83
+msgid "GEOM_PRISM_BSV_2P"
+msgstr "Shape de base + 2 Points"
+
 #: GeometryGUI_PropertiesDlg.cxx:56
 msgid "GEOM_PROPERTIES_TITLE"
 msgstr "Proprietes Basiques"

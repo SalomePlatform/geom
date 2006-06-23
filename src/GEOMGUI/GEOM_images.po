@@ -315,6 +315,9 @@ msgstr "pipe.png"
 msgid "ICON_DLG_PRISM"
 msgstr "prism.png"
 
+msgid "ICON_DLG_PRISM_2P"
+msgstr "prism2.png"
+
 #RevolutionDlg
 msgid "ICON_DLG_REVOL"
 msgstr "revol.png"
