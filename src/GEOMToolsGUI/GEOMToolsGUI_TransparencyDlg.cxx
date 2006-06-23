@@ -279,3 +279,20 @@ void GEOMToolsGUI_TransparencyDlg::ValueHasChanged( int newValue )
     ic->UpdateCurrentViewer();
   } // if ( isOCC )
 }
+
+//=================================================================================
+// function : keyPressEvent()
+// purpose  :
+//=================================================================================
+void GEOMToolsGUI_TransparencyDlg::keyPressEvent( QKeyEvent* e )
+{
+  QDialog::keyPressEvent( e );
+  if ( e->isAccepted() )
+    return;
+
+  if ( e->key() == Key_F1 )
+    {
+      e->accept();
+      ClickOnHelp();
+    }
+}

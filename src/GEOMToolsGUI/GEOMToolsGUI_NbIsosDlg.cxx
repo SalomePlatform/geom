@@ -177,3 +177,20 @@ void GEOMToolsGUI_NbIsosDlg::ClickOnHelp()
 			   QObject::tr("BUT_OK"));
   }
 }
+
+//=================================================================================
+// function : keyPressEvent()
+// purpose  :
+//=================================================================================
+void GEOMToolsGUI_NbIsosDlg::keyPressEvent( QKeyEvent* e )
+{
+  QDialog::keyPressEvent( e );
+  if ( e->isAccepted() )
+    return;
+
+  if ( e->key() == Key_F1 )
+    {
+      e->accept();
+      ClickOnHelp();
+    }
+}

@@ -60,6 +60,7 @@ private:
     void Init();
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
+    void keyPressEvent(QKeyEvent* e);
     void activateSelection();
     GEOM_Displayer* getDisplayer();
 

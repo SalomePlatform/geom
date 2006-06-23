@@ -80,7 +80,7 @@ OperationGUI_MaterialDlg::OperationGUI_MaterialDlg (GeometryGUI* theGeometryGUI,
   Layout1->addWidget(GroupPoints, 1, 0);
   /***************************************************************/
 
-  setHelpFileName("none.htm"); 
+  setHelpFileName("partition.htm"); 
 
   Init();
 }

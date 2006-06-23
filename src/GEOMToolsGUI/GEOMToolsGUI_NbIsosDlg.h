@@ -51,6 +51,9 @@ public:
     void      setU( const int );
     void      setV( const int );
 
+private:
+    void      keyPressEvent(QKeyEvent*);
+
 private slots:
     void ClickOnHelp();
 

@@ -73,6 +73,7 @@ protected:
     virtual bool execute( ObjectList& objects );
 
     void closeEvent( QCloseEvent* e );
+    void keyPressEvent( QKeyEvent* e );    
 
 private :
     void Init();

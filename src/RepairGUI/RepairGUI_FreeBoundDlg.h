@@ -60,6 +60,7 @@ private:
   void                                  Init();
   void                                  enterEvent( QEvent* e );
   void                                  closeEvent( QCloseEvent* e );
+  void                                  keyPressEvent( QKeyEvent* e );
   void                                  activateSelection();
   
   virtual GEOM::GEOM_IOperations_ptr    createOperation();

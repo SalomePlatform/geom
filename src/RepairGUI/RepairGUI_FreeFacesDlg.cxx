@@ -352,3 +352,19 @@ void RepairGUI_FreeFacesDlg::onSetEditCurrentArgument()
   onSelectionDone();
 }
 
+//=================================================================================
+// function : keyPressEvent()
+// purpose  :
+//=================================================================================
+void RepairGUI_FreeFacesDlg::keyPressEvent( QKeyEvent* e )
+{
+  QDialog::keyPressEvent( e );
+  if ( e->isAccepted() )
+    return;
+
+  if ( e->key() == Key_F1 )
+    {
+      e->accept();
+      onHelp();
+    }
+}

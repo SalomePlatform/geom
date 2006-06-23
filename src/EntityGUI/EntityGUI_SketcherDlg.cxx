@@ -1425,8 +1425,22 @@ bool EntityGUI_SketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
   return true;
 }
 
+//=================================================================================
+// function : keyPressEvent()
+// purpose  :
+//=================================================================================
+void  EntityGUI_SketcherDlg::keyPressEvent( QKeyEvent* e )
+{
+  QDialog::keyPressEvent( e );
+  if ( e->isAccepted() )
+    return;
 
-
+  if ( e->key() == Key_F1 )
+    {
+      e->accept();
+      ClickOnHelp();
+    }
+}
 
 
 

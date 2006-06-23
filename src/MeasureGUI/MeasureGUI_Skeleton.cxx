@@ -365,3 +365,19 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_Skeleton::createOperation()
   return getGeomEngine()->GetIMeasureOperations( getStudyId() );
 }
 
+//=================================================================================
+// function : keyPressEvent()
+// purpose  :
+//=================================================================================
+void MeasureGUI_Skeleton::keyPressEvent( QKeyEvent* e )
+{
+  QDialog::keyPressEvent( e );
+  if ( e->isAccepted() )
+    return;
+
+  if ( e->key() == Key_F1 )
+    {
+      e->accept();
+      ClickOnHelp();
+    }
+}

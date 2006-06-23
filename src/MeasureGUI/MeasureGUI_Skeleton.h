@@ -65,6 +65,7 @@ protected:
 
     void                      enterEvent( QEvent* e );
     void                      closeEvent( QCloseEvent* e );
+    void                      keyPressEvent( QKeyEvent* e );
     void                      redisplayPreview();
     GEOM_Displayer*           getDisplayer();
 

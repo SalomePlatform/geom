@@ -243,3 +243,20 @@ void GEOMBase_Skeleton::setHelpFileName(const QString& theName)
 {
     myHelpFileName = theName;
 }
+
+//=================================================================================
+// function : keyPressEvent()
+// purpose  :
+//=================================================================================
+void GEOMBase_Skeleton::keyPressEvent( QKeyEvent* e )
+{
+  QDialog::keyPressEvent( e );
+  if ( e->isAccepted() )
+    return;
+
+  if ( e->key() == Key_F1 )
+    {
+      e->accept();
+      ClickOnHelp();
+    }
+}
