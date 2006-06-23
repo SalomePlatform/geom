@@ -30,6 +30,7 @@
 
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel1Spin2Check.h"
+#include "DlgRef_3Sel_QTD.h"
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg
@@ -57,11 +58,15 @@ private :
     
     GEOM::GEOM_Object_var myBase; /* Base shape */
     GEOM::GEOM_Object_var myVec;  /* Vector, defining the direction */
-
+    GEOM::GEOM_Object_var myPoint1, myPoint2;   /* Points for extrusion */ 
+ 
     bool myOkBase;
     bool myOkVec;
+    bool myOkPnt1;
+    bool myOkPnt2;
 
     DlgRef_2Sel1Spin2Check* GroupPoints;
+    DlgRef_3Sel_QTD* GroupPoints2; // for second layout for extrusion using 2 points
 
 private slots:
     void ClickOnOk();
@@ -70,6 +75,7 @@ private slots:
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
+    void ConstructorsClicked(int);
     void ValueChangedInSpinBox();
     void onReverse();
 };
