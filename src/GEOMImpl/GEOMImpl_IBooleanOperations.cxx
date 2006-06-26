@@ -280,7 +280,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
   // Limit, Remove Webs
   pd << theLimit << ", " << (int)theRemoveWebs << ", [";
   // Materials
-  if (theMaterials->Length() > 0) {
+  if (!theMaterials.IsNull() && theMaterials->Length() > 0) {
     int i = theMaterials->Lower();
     pd << theMaterials->Value(i);
     i++;
