@@ -48,6 +48,7 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Wire.hxx>
+#include <TopoDS_Shell.hxx>
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
@@ -155,7 +156,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       aShape = aFW->WireAPIMake();
     }
 
-  } else if (aType == FACE_WIRE) {
+  }
+  else if (aType == FACE_WIRE) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
     if (aShapeBase.IsNull() || aShapeBase.ShapeType() != TopAbs_WIRE) {
@@ -173,7 +175,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       Standard_ConstructionError::Raise("Face construction failed");
     }
 
-  } else if (aType == FACE_WIRES) {
+  }
+  else if (aType == FACE_WIRES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     int nbshapes = aShapes->Length();
     if (nbshapes < 1) {
@@ -241,7 +244,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         }
       }
     }
-  } else if (aType == SHELL_FACES) {
+  }
+  else if (aType == SHELL_FACES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
 
@@ -258,17 +262,29 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     aSewing.Perform();
 
-    TopExp_Explorer exp (aSewing.SewedShape(), TopAbs_SHELL);
-    Standard_Integer ish = 0;
-    for (; exp.More(); exp.Next()) {
-      aShape = exp.Current();
-      ish++;
+    TopoDS_Shape sh = aSewing.SewedShape();
+    if( sh.ShapeType()==TopAbs_FACE && nbshapes==1 ) {
+      // case for creation of shell from one face - PAL12722 (skl 26.06.2006)
+      TopoDS_Shell ss;
+      B.MakeShell(ss);
+      B.Add(ss,sh);
+      aShape = ss;
+    }
+    else {
+      //TopExp_Explorer exp (aSewing.SewedShape(), TopAbs_SHELL);
+      TopExp_Explorer exp (sh, TopAbs_SHELL);
+      Standard_Integer ish = 0;
+      for (; exp.More(); exp.Next()) {
+        aShape = exp.Current();
+        ish++;
+      }
+
+      if (ish != 1)
+        aShape = aSewing.SewedShape();
     }
 
-    if (ish != 1)
-      aShape = aSewing.SewedShape();
-
-  } else if (aType == SOLID_SHELL) {
+  }
+  else if (aType == SOLID_SHELL) {
     Handle(GEOM_Function) aRefShell = aCI.GetBase();
     TopoDS_Shape aShapeShell = aRefShell->GetValue();
     if (aShapeShell.IsNull() || aShapeShell.ShapeType() != TopAbs_SHELL) {
@@ -290,7 +306,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     aShape = Sol;
 
-  } else if (aType == SOLID_SHELLS) {
+  }
+  else if (aType == SOLID_SHELLS) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
     Standard_Integer ish = 0;
@@ -321,7 +338,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       return 0;
     }
 
-  } else if (aType == COMPOUND_SHAPES) {
+  }
+  else if (aType == COMPOUND_SHAPES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
 
@@ -339,7 +357,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     aShape = C;
 
-  } else if (aType == REVERSE_ORIENTATION) {
+  }
+  else if (aType == REVERSE_ORIENTATION) {
     Handle(GEOM_Function) aRefShape = aCI.GetBase();
     TopoDS_Shape aShape_i = aRefShape->GetValue();
     if (aShape_i.IsNull()) {
