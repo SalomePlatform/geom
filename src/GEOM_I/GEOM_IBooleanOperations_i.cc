@@ -154,9 +154,11 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
 
   //Get the materials
   aLen = theMaterials.length();
-  aMaterials = new TColStd_HArray1OfInteger (1, aLen);
-  for (ind = 0; ind < aLen; ind++) {
-    aMaterials->SetValue(ind+1, theMaterials[ind]);
+  if ( aLen ) {
+    aMaterials = new TColStd_HArray1OfInteger (1, aLen);
+    for (ind = 0; ind < aLen; ind++) {
+      aMaterials->SetValue(ind+1, theMaterials[ind]);
+    }
   }
 
   // Make Partition
