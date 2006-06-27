@@ -114,8 +114,8 @@ void BasicGUI_EllipseDlg::Init()
   double aMajorR( 200. ), aMinorR( 100. );
 
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator( 0.001, 999.999, step, 3 );
-  GroupPoints->SpinBox_DY->RangeStepAndValidator( 0.001, 999.999, step, 3 );
+  GroupPoints->SpinBox_DX->RangeStepAndValidator( 0.001, COORD_MAX, step, 3 );
+  GroupPoints->SpinBox_DY->RangeStepAndValidator( 0.001, COORD_MAX, step, 3 );
   GroupPoints->SpinBox_DX->SetValue( aMajorR );
   GroupPoints->SpinBox_DY->SetValue( aMinorR );
 

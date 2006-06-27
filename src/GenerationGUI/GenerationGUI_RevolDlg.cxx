@@ -115,7 +115,7 @@ void GenerationGUI_RevolDlg::Init()
 
   double SpecificStep = 5;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, SpecificStep, 3);
   GroupPoints->SpinBox_DX->SetValue(45.0);
 
   /* signals and slots connections */

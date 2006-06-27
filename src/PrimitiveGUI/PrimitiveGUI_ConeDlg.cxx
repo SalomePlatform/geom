@@ -119,12 +119,12 @@ void PrimitiveGUI_ConeDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
   
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.000, 999.999, step, 3);
-  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.000, 999.999, step, 3);
-  GroupPoints->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.000, 999.999, step, 3);
-  GroupDimensions->SpinBox_DY->RangeStepAndValidator(0.000, 999.999, step, 3);
-  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.000, COORD_MAX, step, 3);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.000, COORD_MAX, step, 3);
+  GroupPoints->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.000, COORD_MAX, step, 3);
+  GroupDimensions->SpinBox_DY->RangeStepAndValidator(0.000, COORD_MAX, step, 3);
+  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
 
   double aRadius1(100.0), aRadius2(0.0), aHeight(300.0); 
   GroupPoints->SpinBox_DX->SetValue(aRadius1);

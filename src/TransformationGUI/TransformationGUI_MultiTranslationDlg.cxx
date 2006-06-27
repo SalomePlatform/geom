@@ -130,15 +130,15 @@ void TransformationGUI_MultiTranslationDlg::Init()
   
   double SpecificStep = 1;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupPoints->SpinBox_DY->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(1.0, COORD_MAX, SpecificStep, 3);
   GroupPoints->SpinBox_DX->SetValue(myStepU);
   GroupPoints->SpinBox_DY->SetValue(myNbTimesU);
 
-  GroupDimensions->SpinBox_DX1->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupDimensions->SpinBox_DY1->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
-  GroupDimensions->SpinBox_DX2->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupDimensions->SpinBox_DY2->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
+  GroupDimensions->SpinBox_DX1->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupDimensions->SpinBox_DY1->RangeStepAndValidator(1.0, COORD_MAX, SpecificStep, 3);
+  GroupDimensions->SpinBox_DX2->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupDimensions->SpinBox_DY2->RangeStepAndValidator(1.0, COORD_MAX, SpecificStep, 3);
   GroupDimensions->SpinBox_DX1->SetValue(myStepU);
   GroupDimensions->SpinBox_DY1->SetValue(myNbTimesU);
   GroupDimensions->SpinBox_DX2->SetValue(myStepV);

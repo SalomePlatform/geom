@@ -157,16 +157,16 @@ void BasicGUI_PointDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
   
   /* min, max, step and decimals for spin boxes */
-  GroupXYZ->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupXYZ->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupXYZ->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupXYZ->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupXYZ->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupXYZ->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
   GroupXYZ->SpinBox_DX->SetValue(0.0);
   GroupXYZ->SpinBox_DY->SetValue(0.0);
   GroupXYZ->SpinBox_DZ->SetValue(0.0);
 
-  GroupRefPoint->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupRefPoint->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupRefPoint->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupRefPoint->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupRefPoint->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupRefPoint->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
   GroupRefPoint->SpinBox_DX->SetValue(0.0);
   GroupRefPoint->SpinBox_DY->SetValue(0.0);
   GroupRefPoint->SpinBox_DZ->SetValue(0.0);

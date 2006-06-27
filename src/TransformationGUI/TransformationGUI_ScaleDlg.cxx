@@ -85,7 +85,7 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryG
   double aFactor = 2.0;
   double SpecificStep = 0.5;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, SpecificStep, 3);
   GroupPoints->SpinBox_DX->SetValue(aFactor);
   
   // Activate Create a Copy mode

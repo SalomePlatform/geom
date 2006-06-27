@@ -105,9 +105,9 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg(GeometryGUI* theGeometryGUI, QWid
   /***************************************************************/
 
   double SpecificStep = 10.0;
-  Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-  Group2->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-  Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
+  Group1->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, SpecificStep, 3);
+  Group2->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, SpecificStep, 3);
+  Group3->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, SpecificStep, 3);
 
   setHelpFileName("fillet.htm");
 

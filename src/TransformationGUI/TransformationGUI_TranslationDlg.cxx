@@ -124,9 +124,9 @@ void TransformationGUI_TranslationDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
   
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox1->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupPoints->SpinBox2->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupPoints->SpinBox3->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupPoints->SpinBox1->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupPoints->SpinBox2->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupPoints->SpinBox3->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
   
   GroupPoints->SpinBox1->SetValue(0.0);
   GroupPoints->SpinBox2->SetValue(0.0);

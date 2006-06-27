@@ -112,8 +112,8 @@ void PrimitiveGUI_SphereDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
 
   /* min, max, step and decimals for spin boxes */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, step, 3);
+  GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, step, 3);
   GroupPoints->SpinBox_DX->SetValue(100.0);
   GroupDimensions->SpinBox_DX->SetValue(100.0);
   

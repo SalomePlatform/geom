@@ -133,7 +133,7 @@ void GenerationGUI_PrismDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
 
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, +999.999, step, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
   GroupPoints->SpinBox_DX->SetValue(100.0);
 
   /* signals and slots connections */

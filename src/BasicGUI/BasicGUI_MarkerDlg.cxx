@@ -176,7 +176,7 @@ void BasicGUI_MarkerDlg::Init()
   
   for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter )
   {
-    anIter.data()->RangeStepAndValidator( -999.999, 999.999, step, 3 );
+    anIter.data()->RangeStepAndValidator( COORD_MIN, COORD_MAX, step, 3 );
     connect( anIter.data(), SIGNAL( valueChanged( double ) ),
              this, SLOT( onValueChanged( double ) ) );
   }

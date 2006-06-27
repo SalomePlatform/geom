@@ -40,6 +40,10 @@
 #else
 #define DLGREF_WNT_EXPORT
 #endif
+
+#define COORD_MIN -1e+15
+#define COORD_MAX +1e+15
+
 //=================================================================================
 // class    : DlgRef_SpinBox
 // purpose  : Derivated from QSpinBox class and modified to accept floats

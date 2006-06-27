@@ -103,9 +103,9 @@ void OperationGUI_ArchimedeDlg::Init()
   double SpecificStep1 = 0.1;
   double SpecificStep2 = 0.01;
   /* min, max, myStep and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, myStep, 3);
-  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, SpecificStep1, 3);
-  GroupPoints->SpinBox_DZ->RangeStepAndValidator(0.001, 999.999, SpecificStep2, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, myStep, 3);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, COORD_MAX, SpecificStep1, 3);
+  GroupPoints->SpinBox_DZ->RangeStepAndValidator(0.001, COORD_MAX, SpecificStep2, 3);
 
   GroupPoints->SpinBox_DX->SetValue( 100.0 );
   GroupPoints->SpinBox_DY->SetValue( 1.0 );
