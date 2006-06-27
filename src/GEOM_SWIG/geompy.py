@@ -954,8 +954,10 @@ def GetShapesOnSphereIDs(theShape, theShapeType, theCenter, theRadius, theState)
 #  the specified quadrangle by the certain way, defined through \a theState parameter.
 #  @param theShape Shape to find sub-shapes of.
 #  @param theShapeType Type of sub-shapes to be retrieved.
-#  @param theCenter Point, specifying center of the sphere to find shapes on.
-#  @param theRadius Radius of the sphere to find shapes on.
+#  @param theTopLeftPoint Point, specifying top left corner of a quadrangle
+#  @param theTopRigthPoint Point, specifying top right corner of a quadrangle
+#  @param theBottomLeftPoint Point, specifying bottom left corner of a quadrangle
+#  @param theBottomRigthPoint Point, specifying bottom right corner of a quadrangle
 #  @param theState The state of the subshapes to find. It can be one of
 #   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
 #  @return List of all found sub-shapes.
