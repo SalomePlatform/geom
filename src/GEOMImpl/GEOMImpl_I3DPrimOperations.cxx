@@ -638,7 +638,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
   //Compute the Prism value
   try {
     if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Prism driver failed");
+      //SetErrorCode("Prism driver failed");
+      SetErrorCode("Extrusion can not be created, check input data");
       return NULL;
     }
   }
@@ -695,7 +696,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt
   //Compute the Prism value
   try {
     if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Prism driver failed");
+      //SetErrorCode("Prism driver failed");
+      SetErrorCode("Extrusion can not be created, check input data");
       return NULL;
     }
   }

@@ -195,6 +195,15 @@ void GenerationGUI_PrismDlg::ConstructorsClicked(int constructorId)
         //myEditCurrentArgument = GroupPoints->LineEdit1;
         //displayPreview();
 
+	myEditCurrentArgument = GroupPoints->LineEdit1;
+	GroupPoints->LineEdit1->setText("");
+ 	GroupPoints->LineEdit2->setText("");
+	GroupPoints2->LineEdit1->setText("");
+ 	GroupPoints2->LineEdit2->setText("");
+ 	GroupPoints2->LineEdit3->setText("");
+	myPoint1 = myPoint2 = myBase = myVec = GEOM::GEOM_Object::_nil();
+        myOkBase = myOkVec = myOkPnt1 = myOkPnt2 = false;
+
 	break;
       }
     case 1:
@@ -207,7 +216,10 @@ void GenerationGUI_PrismDlg::ConstructorsClicked(int constructorId)
 	GroupPoints2->LineEdit1->setText("");
  	GroupPoints2->LineEdit2->setText("");
  	GroupPoints2->LineEdit3->setText("");
-	myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
+	myPoint1 = myPoint2 = myBase = myVec = GEOM::GEOM_Object::_nil();
+        myOkBase = myOkVec = myOkPnt1 = myOkPnt2 = false;
+	GroupPoints->LineEdit1->setText("");
+ 	GroupPoints->LineEdit2->setText("");
 	
 	break;
       }
