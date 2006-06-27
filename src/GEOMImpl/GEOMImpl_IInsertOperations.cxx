@@ -383,9 +383,9 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
     // Initialize the Resource Manager
     TCollection_AsciiString aResDir (getenv("GEOM_ROOT_DIR"));
 #ifdef WNT
-    aResDir += "\\share\\salome\\resources";
+    aResDir += "\\share\\salome\\resources\\geom";
 #else
-    aResDir += "/share/salome/resources";
+    aResDir += "/share/salome/resources/geom";
 #endif
     char * dir = getenv("GEOM_ENGINE_RESOURCES_DIR");
     TCollection_AsciiString aUserResDir;

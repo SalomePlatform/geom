@@ -6,7 +6,7 @@
   </section>
   <section name="resources">
     <!-- Module resources -->
-    <parameter name="GEOM" value="${GEOM_ROOT_DIR}/share/salome/resources"/>
+    <parameter name="GEOM" value="${GEOM_ROOT_DIR}/share/salome/resources/geom"/>
   </section>
   <section name="Geometry" >
     <!-- Other module preferences -->
