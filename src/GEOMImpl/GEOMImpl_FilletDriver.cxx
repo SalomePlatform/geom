@@ -110,7 +110,7 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
   }
 
   for (int i = 1; i <= fill.NbContours(); i++) {
-    fill.SetRadius(aCI.GetR(), i, i);
+    fill.SetRadius(aCI.GetR(), i, 1);
   }
   fill.Build();
   if (!fill.IsDone()) {
