@@ -1068,30 +1068,34 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( 5027, transTbId );  
   createTool( 5028, transTbId );
 
+  // ---- create popup menus --------------------------
+
+  QString clientOCCorVTK = "(client='OCCViewer' or client='VTKViewer')";
+  QString clientOCCorVTK_AndSomeVisible = clientOCCorVTK + " and selcount>0 and isVisible";
+
   QtxPopupMgr* mgr = popupMgr();
-  mgr->insert( action(  901 ), -1, -1 ); // rename
+  mgr->insert( action(  901 ), -1, -1 );  // rename
   mgr->setRule( action( 901 ), "$type in {'Shape' 'Group'} and selcount=1", true );
   mgr->insert( action(  8001 ), -1, -1 ); // create group
   mgr->setRule( action( 8001 ), "client='ObjectBrowser' and type='Shape' and selcount=1 and isOCC=true", true );
-  mgr->insert( action(  801 ), -1, -1 ); // edit group
+  mgr->insert( action(  801 ), -1, -1 );  // edit group
   mgr->setRule( action( 801 ),  "client='ObjectBrowser' and type='Group' and selcount=1 and isOCC=true", true );
-  mgr->insert( separator(), -1, -1 );        // -----------
+  mgr->insert( separator(), -1, -1 );     // -----------
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  80311 ), dispmodeId, -1 ); // wireframe
-  mgr->setRule( action( 80311 ), "(client='OCCViewer' or client='VTKViewer') and selcount>0 and isVisible", true );
-  mgr->setRule( action( 80311 ), "(client='OCCViewer' or client='VTKViewer') and displaymode='Wireframe'", false );
+  mgr->setRule( action( 80311 ), clientOCCorVTK_AndSomeVisible, true );
+  mgr->setRule( action( 80311 ), clientOCCorVTK + " and displaymode='Wireframe'", false );
   mgr->insert( action(  80312 ), dispmodeId, -1 ); // shading
-  mgr->setRule( action( 80312 ), "(client='OCCViewer' or client='VTKViewer') and selcount>0 and isVisible", true );
-  mgr->setRule( action( 80312 ), "(client='OCCViewer' or client='VTKViewer') and displaymode='Shading'", false );
-  mgr->insert( separator(), -1, -1 );        // -----------
+  mgr->setRule( action( 80312 ), clientOCCorVTK_AndSomeVisible, true );
+  mgr->setRule( action( 80312 ), clientOCCorVTK + " and displaymode='Shading'", false );
+  mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  8032 ), -1, -1 ); // color
-  mgr->setRule( action( 8032 ), "(client='OCCViewer' or client='VTKViewer') and selcount>0 and isVisible", true );
+  mgr->setRule( action( 8032 ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", true );
   mgr->insert( action(  8033 ), -1, -1 ); // transparency
-  mgr->setRule( action( 8033 ), "(client='OCCViewer' or client='VTKViewer') and selcount>0 and isVisible", true );
+  mgr->setRule( action( 8033 ), clientOCCorVTK_AndSomeVisible, true );
   mgr->insert( action(  8034 ), -1, -1 ); // isos
   mgr->setRule( action( 8034 ), "client='OCCViewer' and selcount>0 and isVisible", true );
-  mgr->insert( separator(), -1, -1 );        // -----------
-  
+  mgr->insert( separator(), -1, -1 );     // -----------
 
 
   QString canDisplay = "($component={'GEOM'}) and (selcount>0) and ({true} in $canBeDisplayed) ",
@@ -1106,7 +1110,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( 215 ), rule.arg( types ).arg( "isVisible" ), true );
 
   mgr->insert( action(  214 ), -1, -1 ); // erase All
-  mgr->setRule( action( 214 ), "client='OCCViewer' or client='VTKViewer'", true );
+  mgr->setRule( action( 214 ), clientOCCorVTK, true );
 
   mgr->insert( action(  213 ), -1, -1 ); // display only
   mgr->setRule( action( 213 ), rule.arg( types ).arg( "true" ), true );
