@@ -69,7 +69,7 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWid
   RadioButton3->close(TRUE);
 
   GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
-  //GroupPoints->CheckButton1->hide();
+  GroupPoints->CheckButton1->hide();
   GroupPoints->GroupBox1->setTitle(tr("GEOM_PRISM_BSV"));
   GroupPoints->TextLabel1->setText(tr("GEOM_BASE"));
   GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
