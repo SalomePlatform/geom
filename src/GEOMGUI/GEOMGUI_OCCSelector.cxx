@@ -39,6 +39,9 @@
 #include <SelectMgr_IndexedMapOfOwner.hxx>
 #include <NCollection_DataMap.hxx>
 
+#include <SUIT_Session.h>
+#include <SalomeApp_Study.h>
+
 
 //================================================================
 // Function : GEOMGUI_OCCSelector
@@ -213,7 +216,10 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       const LightApp_DataOwner* owner = dynamic_cast<const LightApp_DataOwner*>( (*itr).operator->() );
       if ( owner )
       {
-	globalSelMap[owner->entry()] = 1;
+	SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+	QString anEntry = appStudy->referencedToEntry( owner->entry() );
+	
+	globalSelMap[anEntry] = 1;
       }
     }
   }
