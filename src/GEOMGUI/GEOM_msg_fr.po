@@ -481,7 +481,7 @@ msgstr "Distance"
 
 #Filling
 msgid "GEOM_FILLING"
-msgstr "Surface Par Courbes"
+msgstr "Surface Par Edges"
 
 #Fuse
 msgid "GEOM_FUSE"
@@ -512,7 +512,7 @@ msgid "GEOM_MIRROR"
 msgstr "Miroir"
 
 #Prism
-msgid "GEOM_PRISM"
+msgid "GEOM_EXTRUSION"
 msgstr "Extrusion"
 
 #Sub Shapes
@@ -891,7 +891,7 @@ msgstr "Création d'une Face plane"
 
 #: GeometryGUI_FillingDlg.cxx:53
 msgid "GEOM_FILLING_TITLE"
-msgstr "Surface Par Courbes"
+msgstr "Surface Par Edges"
 
 #: GeometryGUI_FillingDlg.cxx:112
 msgid "GEOM_FILLING_ARG"
@@ -911,7 +911,7 @@ msgstr "Tol. 2D"
 
 #: GeometryGUI_FillingDlg.cxx:170
 msgid "GEOM_FILLING_COMPOUND"
-msgstr "Compound de Courbes"
+msgstr "Compound de Edges"
 
 #: GeometryGUI_FillingDlg.cxx:184
 msgid "GEOM_FILLING_TOL_3D"
@@ -1036,14 +1036,14 @@ msgid "GEOM_PLANE_PV"
 msgstr "Point + Vecteur"
 
 #: GeometryGUI_PrismDlg.cxx:54
-msgid "GEOM_PRISM_TITLE"
+msgid "GEOM_EXTRUSION_TITLE"
 msgstr "Extruder une Shape de base"
 
 #: GeometryGUI_PrismDlg.cxx:83
-msgid "GEOM_PRISM_BSV"
+msgid "GEOM_EXTRUSION_BSV"
 msgstr "Shape de base + Vecteur"
 
-msgid "GEOM_PRISM_BSV_2P"
+msgid "GEOM_EXTRUSION_BSV_2P"
 msgstr "Shape de base + 2 Points"
 
 #: GeometryGUI_PropertiesDlg.cxx:56
