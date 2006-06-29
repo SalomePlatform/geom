@@ -59,10 +59,10 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWid
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PRISM_2P")));
 
-  setCaption(tr("GEOM_PRISM_TITLE"));
+  setCaption(tr("GEOM_EXTRUSION_TITLE"));
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_PRISM"));
+  GroupConstructors->setTitle(tr("GEOM_EXTRUSION"));
   RadioButton1->setPixmap(image0);
   RadioButton2->setPixmap(image2);
   //RadioButton2->close(TRUE);
@@ -70,7 +70,7 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWid
 
   GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
   GroupPoints->CheckButton1->hide();
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_PRISM_BSV"));
+  GroupPoints->GroupBox1->setTitle(tr("GEOM_EXTRUSION_BSV"));
   GroupPoints->TextLabel1->setText(tr("GEOM_BASE"));
   GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
   GroupPoints->TextLabel3->setText(tr("GEOM_HEIGHT"));
@@ -81,7 +81,7 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWid
   GroupPoints->CheckButton2->setText(tr("GEOM_REVERSE"));
 
   GroupPoints2 = new DlgRef_3Sel_QTD(this, "GroupPoints2");
-  GroupPoints2->GroupBox1->setTitle(tr("GEOM_PRISM_BSV_2P"));
+  GroupPoints2->GroupBox1->setTitle(tr("GEOM_EXTRUSION_BSV_2P"));
   GroupPoints2->TextLabel1->setText(tr("GEOM_BASE"));
   GroupPoints2->TextLabel2->setText(tr("GEOM_POINT_I").arg("1"));
   GroupPoints2->TextLabel3->setText(tr("GEOM_POINT_I").arg("2"));
@@ -166,7 +166,7 @@ void GenerationGUI_PrismDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName(tr("GEOM_PRISM"));
+  initName(tr("GEOM_EXTRUSION"));
 
   globalSelection( GEOM_ALLSHAPES );
   ConstructorsClicked(0);
