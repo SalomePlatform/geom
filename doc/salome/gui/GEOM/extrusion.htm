@@ -17,11 +17,13 @@ if (navigator.appName !="Netscape")
 img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
 p.whs3 { font-size:12pt; margin-left:40px; }
-img_whs4 { border:none; width:312px; height:350px; float:none; border-style:none; }
+img_whs4 { border:none; width:400px; height:350px; float:none; }
 p.whs5 { font-size:12pt; font-weight:bold; }
-p.whs6 { font-size:12pt; font-style:italic; margin-left:40px; }
-img_whs7 { border:none; float:none; width:300px; height:175px; border-style:none; }
-img_whs8 { border:none; width:350px; height:175px; float:none; border-style:none; }
+p.whs6 { font-size:12pt; margin-left:40px; font-weight:normal; font-style:italic; }
+img_whs7 { border:none; width:400px; height:359px; float:none; }
+p.whs8 { font-size:12pt; font-style:italic; margin-left:40px; }
+img_whs9 { border:none; float:none; width:300px; height:175px; border-style:none; }
+img_whs10 { border:none; width:350px; height:175px; float:none; border-style:none; }
 -->
 </style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
@@ -92,10 +94,13 @@ if (window.writeIntopicBar)
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2">To create an Extrusion (Prism) you should define 
- the <span style="font-weight: bold;"><B>Base Shape </B></span>(a basis of the 
- extrusion)<span style="font-weight: bold;"><B>, </B></span>the <span style="font-weight: bold;"><B>Vector</B></span> 
- (a direction of the extrusion) and the <span style="font-weight: bold;"><B>Height</B></span> 
+<p>There are 2 algorithms for creation of <span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">an 
+ Extrusion (Prism)</font></span>. </p>
+
+<p class="whs2">Firstly, you can define the <span style="font-weight: bold;"><B>Base 
+ Shape </B></span>(a basis of the extrusion)<span style="font-weight: bold;"><B>, 
+ </B></span>the <span style="font-weight: bold;"><B>Vector</B></span> (a direction 
+ of the extrusion) and the <span style="font-weight: bold;"><B>Height</B></span> 
  of extrusion. &nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
@@ -112,36 +117,37 @@ if (window.writeIntopicBar)
 
 <p>&nbsp;</p>
 
-<p class="whs3"><img src="pics/extrusion.png" x-maintain-ratio="TRUE" width="312px" height="350px" border="0" class="img_whs4"></p>
+<p class="whs3"><img src="pics/extrusion1.png" x-maintain-ratio="TRUE" width="400px" height="350px" border="0" class="img_whs4"></p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs5">NB! <span style="font-weight: normal;">The 
- is another way to create an</span> Extrusion, <span style="font-weight: normal;">which 
- is currently accessible only via</span> TUI commands.</p>
-
-<p class="whs5"><span style="font-weight: normal;">You 
- can define the</span> Extrusion <span style="font-weight: normal;">by 
+<p class="whs5"><span style="font-weight: normal;">Secondly, 
+ you can define the</span> Extrusion <span style="font-weight: normal;">by 
  the </span>Base Shape<span style="font-weight: normal;"> and the </span>Start<span 
  style="font-weight: normal;"> and </span>End Point<span style="font-weight: normal;"> 
  of the </span>Vector<span style="font-weight: normal;"> &nbsp;(in 
  this way you don't need to create it in advance).</span> </p>
 
-<p class="whs5"><b style="font-weight: bold;">TUI 
- Command:</b> <span style="font-weight: normal; font-style: italic;"><I>geompy.MakePrism(Base, 
+<p class="whs5"><b>TUI Command:</b> <span 
+ style="font-weight: normal; font-style: italic;"><I>geompy.MakePrism(Base, 
  Point1, Point2) </I></span></p>
+
+<p class="whs2"><b>Arguments:</b> Name + 1 shape (vertex, edge, 
+ wire, face or shell) serving as base object + 2 vertices.</p>
 
 <p>&nbsp;</p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs6"><img src="pics/extrusion2.png" x-maintain-ratio="TRUE" width="400px" height="359px" border="0" class="img_whs7"></p>
+
+<p class="whs6">&nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">Examples:</b></p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs6">Base Shape &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prisms</p>
+<p class="whs8">Base Shape &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prisms</p>
 
-<p class="whs3"><img src="pics/prisms_basessn.png" x-maintain-ratio="TRUE" width="300px" height="175px" border="0" class="img_whs7"> <img src="pics/prismssn.png" x-maintain-ratio="TRUE" width="350px" height="175px" border="0" class="img_whs8"> &nbsp;</p>
+<p class="whs3"><img src="pics/prisms_basessn.png" x-maintain-ratio="TRUE" width="300px" height="175px" border="0" class="img_whs9"> <img src="pics/prismssn.png" x-maintain-ratio="TRUE" width="350px" height="175px" border="0" class="img_whs10"> &nbsp;</p>
 
 <p class="whs2">&nbsp;</p>
 
