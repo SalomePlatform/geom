@@ -96,6 +96,8 @@ QString DlgRef_SpinBox::GetString()
 void DlgRef_SpinBox::RangeStepAndValidator(double min, double max,double step,
 					   unsigned short decimals)
 {
+  setPrecision(-decimals); // PAL12789. Minus is for using 'g' double->string conversion specifier,
+  //                          see QtxDblSpinBox::mapValueToText( double v )
   setRange(min, max);
   setLineStep(step);
   ((QDoubleValidator*)validator())->setRange(min, max, decimals);
