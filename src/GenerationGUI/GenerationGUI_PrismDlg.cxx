@@ -261,7 +261,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 {
   erasePreview();
   myEditCurrentArgument->setText("");
-  
+
   if ( getConstructorId()==0 ) {
 
     if (IObjectCount() != 1) {
@@ -281,13 +281,6 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
       return;
 
     if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-      myOkBase = false;
-      TopoDS_Shape S;
-    
-      if (!GEOMBase::GetShape(aSelectedObject, S) ||
-          S.ShapeType() <= 2)
-        return;
-
       myBase = aSelectedObject;
       myOkBase = true;
     }
@@ -320,25 +313,25 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_var aSelectedObject =
       GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
-  
-    if(!testResult || CORBA::is_nil( aSelectedObject ))
+
+    if (!testResult || CORBA::is_nil( aSelectedObject ))
       return;
-    
-    if(myEditCurrentArgument == GroupPoints2->LineEdit1) {
+
+    if (myEditCurrentArgument == GroupPoints2->LineEdit1) {
       myBase = aSelectedObject;
       myOkBase = true;
     }
-    else if(myEditCurrentArgument == GroupPoints2->LineEdit2) {
+    else if (myEditCurrentArgument == GroupPoints2->LineEdit2) {
       myPoint1 = aSelectedObject;
       myOkPnt1 = true;
     }
-    else if(myEditCurrentArgument == GroupPoints2->LineEdit3) {
+    else if (myEditCurrentArgument == GroupPoints2->LineEdit3) {
       myPoint2 = aSelectedObject;
       myOkPnt2 = true;
     }
-  
+
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
-  
+
     displayPreview();
   }
 }
