@@ -2047,7 +2047,8 @@ def CheckCompoundOfBlocks(theCompound):
     return IsValid
 
 ## Remove all seam and degenerated edges from \a theShape.
-#  Unite faces and edges, sharing one surface.
+#  Unite faces and edges, sharing one surface. It means that
+#  this faces must have references to one C++ surface object (handle).
 #  @param theShape The compound or single solid to remove irregular edges from.
 #  @return Improved shape.
 #
