@@ -38,6 +38,7 @@
 #include <TDataStd_Integer.hxx>
 
 #include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <TColStd_HArray1OfInteger.hxx>
@@ -276,78 +277,66 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
   TopTools_IndexedMapOfShape mapIndices;
   TopExp::MapShapes(aMainShape, mapIndices);
 
+  // Get group type
+  TopAbs_ShapeEnum aType = GetType(theGroup);
+
   // Get IDs of sub-shapes to add
   Standard_Integer i, new_id;
   for (i = 1; i <= aLen; i++) {
     Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
 
+    TopoDS_Shape aShape_i = anObj_i->GetValue();
+    TopAbs_ShapeEnum aType_i = aShape_i.ShapeType();
+
+    // 1. If aShape_i is sub-shape of aMainShape - add it
     if (anObj_i->IsMainShape()) {
-      TopoDS_Shape aShape_i = anObj_i->GetValue();
-      if (mapIndices.Contains(aShape_i)) {
-        new_id = mapIndices.FindIndex(aShape_i);
+      if (aType_i != aType && aType != TopAbs_SHAPE && aType != TopAbs_COMPOUND) {
+        SetErrorCode("Operation aborted: one of given objects has a wrong type");
+        return;
+      }
+      if (!mapIndices.Contains(aShape_i)) {
+        SetErrorCode("Operation aborted: not a sub-shape given");
+        return;
+      }
+      new_id = mapIndices.FindIndex(aShape_i);
+      if (mapIDs.Add(new_id)) {
+        aNewIDs.Append(new_id);
+      }
+    }
+    // 2. If type of group is not defined - add all sub-shapes of aShape_i
+    else if (aType == TopAbs_SHAPE || aType == TopAbs_COMPOUND) {
+      TopTools_IndexedMapOfShape mapIndices_i;
+      TopExp::MapShapes(aShape_i, mapIndices_i);
+      Standard_Integer ii = 1, nbSubSh = mapIndices_i.Extent();
+      Standard_Boolean someGood = Standard_False;
+      for (; ii <= nbSubSh; ii++) {
+        TopoDS_Shape aSubShape_i = mapIndices_i.FindKey(ii);
+        if (mapIndices.Contains(aSubShape_i)) {
+          someGood = Standard_True;
+          new_id = mapIndices.FindIndex(aSubShape_i);
+          if (mapIDs.Add(new_id)) {
+            aNewIDs.Append(new_id);
+          }
+        }
+      }
+      if (!someGood) {
+        SetErrorCode("Operation aborted: not a sub-shape given");
+        return;
+      }
+    }
+    // 3. If type of group is defined - add all sub-shapes of aShape_i of that type
+    else {
+      TopExp_Explorer aSubShapes_i (aShape_i, aType);
+      for (; aSubShapes_i.More(); aSubShapes_i.Next()) {
+        TopoDS_Shape aSubShape_i = aSubShapes_i.Current();
+        if (!mapIndices.Contains(aSubShape_i)) {
+          SetErrorCode("Operation aborted: not a sub-shape given");
+          return;
+        }
+        new_id = mapIndices.FindIndex(aSubShape_i);
         if (mapIDs.Add(new_id)) {
           aNewIDs.Append(new_id);
         }
-      } else {
-        SetErrorCode("One of given objects can not be added to the group, because it is not a sub-shape of the group's main shape");
-        return;
-      }
-    } else {
-      // Check main shape of sub-shape to add
-      Handle(GEOM_Function) aFunc_i = anObj_i->GetFunction(1);
-      if (aFunc_i.IsNull()) return;
-
-      GEOM_ISubShape aSSI_i (aFunc_i);
-
-      Handle(GEOM_Function) aMainShapeFunc_i = aSSI_i.GetMainShape();
-      if (aMainShapeFunc_i.IsNull()) return;
-      TDF_Label aLabel_i = aMainShapeFunc_i->GetOwnerEntry();
-      if (aLabel_i.IsRoot()) return;
-      Handle(GEOM_Object) aMainObj_i = GEOM_Object::GetObject(aLabel);
-      if (aMainObj_i.IsNull()) return;
-      TopoDS_Shape aMainShape_i = aMainObj_i->GetValue();
-      if (aMainShape_i.IsNull()) return;
-
-      if (aMainShape_i.IsSame(aMainShape)) {
-        // add all sub-shape IDs to the list
-
-        // Get IDs
-        Handle(TColStd_HArray1OfInteger) aSeq_i = aSSI_i.GetIndices();
-        if (aSeq_i.IsNull()) return;
-        Standard_Integer aLength_i = aSeq_i->Length();
-
-        for (Standard_Integer i_j = 1; i_j <= aLength_i; i_j++) {
-          new_id = aSeq_i->Value(i_j);
-          if (new_id > 0) {
-            if (mapIDs.Add(new_id)) {
-              aNewIDs.Append(new_id);
-            }
-          }
-        }
-
-      } else if (mapIndices.Contains(aMainShape_i)) {
-        // compute new IDs and add them to the list
-        TopTools_IndexedMapOfShape mapIndices_i;
-        TopExp::MapShapes(aMainShape_i, mapIndices_i);
-
-        // Get IDs
-        Handle(TColStd_HArray1OfInteger) aSeq_i = aSSI_i.GetIndices();
-        if (aSeq_i.IsNull()) return;
-        Standard_Integer aLength_i = aSeq_i->Length();
-
-        for (Standard_Integer i_j = 1; i_j <= aLength_i; i_j++) {
-          if (aSeq_i->Value(i_j) > 0) {
-            TopoDS_Shape aShape_i_j = mapIndices_i.FindKey(i_j);
-            new_id = mapIndices.FindIndex(aShape_i_j);
-            if (mapIDs.Add(new_id)) {
-              aNewIDs.Append(new_id);
-            }
-          }
-        }
-
-      } else {
-        SetErrorCode("One of given objects can not be added to the group, because it is not a sub-shape of the group's main shape");
-        return;
       }
     }
   }
@@ -431,78 +420,50 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
   TopTools_IndexedMapOfShape mapIndices;
   TopExp::MapShapes(aMainShape, mapIndices);
 
+  // Get group type
+  TopAbs_ShapeEnum aType = GetType(theGroup);
+
   // Get IDs of sub-shapes to be removed
   Standard_Integer i, rem_id;
   for (i = 1; i <= aLen; i++) {
     Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
 
-    if (anObj_i->IsMainShape()) {
-      TopoDS_Shape aShape_i = anObj_i->GetValue();
-      if (mapIndices.Contains(aShape_i)) {
-        rem_id = mapIndices.FindIndex(aShape_i);
-        if (mapIDsCurrent.Contains(rem_id)) {
-          mapIDsToRemove.Add(rem_id);
-        }
-      } else {
-        SetErrorCode("One of given objects can not be removed from the group, because it is not a sub-shape of the group's main shape");
-        return;
+    TopoDS_Shape aShape_i = anObj_i->GetValue();
+
+    // 1. If aShape_i is sub-shape of aMainShape - remove it
+    if (mapIndices.Contains(aShape_i)) {
+      rem_id = mapIndices.FindIndex(aShape_i);
+      if (mapIDsCurrent.Contains(rem_id)) {
+        mapIDsToRemove.Add(rem_id);
       }
-    } else {
-      // Check main shape of sub-shape to be removed
-      Handle(GEOM_Function) aFunc_i = anObj_i->GetFunction(1);
-      if (aFunc_i.IsNull()) return;
-
-      GEOM_ISubShape aSSI_i (aFunc_i);
-
-      Handle(GEOM_Function) aMainShapeFunc_i = aSSI_i.GetMainShape();
-      if (aMainShapeFunc_i.IsNull()) return;
-      TDF_Label aLabel_i = aMainShapeFunc_i->GetOwnerEntry();
-      if (aLabel_i.IsRoot()) return;
-      Handle(GEOM_Object) aMainObj_i = GEOM_Object::GetObject(aLabel);
-      if (aMainObj_i.IsNull()) return;
-      TopoDS_Shape aMainShape_i = aMainObj_i->GetValue();
-      if (aMainShape_i.IsNull()) return;
-
-      if (aMainShape_i.IsSame(aMainShape)) {
-        // remove all sub-shapes
-
-        // Get IDs
-        Handle(TColStd_HArray1OfInteger) aSeq_i = aSSI_i.GetIndices();
-        if (aSeq_i.IsNull()) return;
-        Standard_Integer aLength_i = aSeq_i->Length();
-
-        for (Standard_Integer i_j = 1; i_j <= aLength_i; i_j++) {
-          rem_id = aSeq_i->Value(i_j);
-          if (rem_id > 0) {
-            if (mapIDsCurrent.Contains(rem_id)) {
-              mapIDsToRemove.Add(rem_id);
-            }
+    }
+    // 2. If type of group is not defined - remove all sub-shapes of aShape_i
+    else if (aType == TopAbs_SHAPE || aType == TopAbs_COMPOUND) {
+      TopTools_IndexedMapOfShape mapIndices_i;
+      TopExp::MapShapes(aShape_i, mapIndices_i);
+      Standard_Integer nbSubSh = mapIndices_i.Extent();
+      Standard_Integer ii = 1;
+      for (; ii <= nbSubSh; ii++) {
+        TopoDS_Shape aSubShape_i = mapIndices_i.FindKey(ii);
+        if (mapIndices.Contains(aSubShape_i)) {
+          rem_id = mapIndices.FindIndex(aSubShape_i);
+          if (mapIDsCurrent.Contains(rem_id)) {
+            mapIDsToRemove.Add(rem_id);
           }
         }
-
-      } else if (mapIndices.Contains(aMainShape_i)) {
-        // compute new IDs and add them to the map of ids to be removed
-        TopTools_IndexedMapOfShape mapIndices_i;
-        TopExp::MapShapes(aMainShape_i, mapIndices_i);
-
-        // Get IDs
-        Handle(TColStd_HArray1OfInteger) aSeq_i = aSSI_i.GetIndices();
-        if (aSeq_i.IsNull()) return;
-        Standard_Integer aLength_i = aSeq_i->Length();
-
-        for (Standard_Integer i_j = 1; i_j <= aLength_i; i_j++) {
-          if (aSeq_i->Value(i_j) > 0) {
-            TopoDS_Shape aShape_i_j = mapIndices_i.FindKey(i_j);
-            rem_id = mapIndices.FindIndex(aShape_i_j);
-            if (mapIDsCurrent.Contains(rem_id)) {
-              mapIDsToRemove.Add(rem_id);
-            }
+      }
+    }
+    // 3. If type of group is defined - remove all sub-shapes of aShape_i of that type
+    else {
+      TopExp_Explorer aSubShapes_i (aShape_i, aType);
+      for (; aSubShapes_i.More(); aSubShapes_i.Next()) {
+        TopoDS_Shape aSubShape_i = aSubShapes_i.Current();
+        if (mapIndices.Contains(aSubShape_i)) {
+          rem_id = mapIndices.FindIndex(aSubShape_i);
+          if (mapIDsCurrent.Contains(rem_id)) {
+            mapIDsToRemove.Add(rem_id);
           }
         }
-
-      } else {
-        SetErrorCode("One of given objects can not be removed from the group, because it is not a sub-shape of the group's main shape");
-        return;
       }
     }
   }
@@ -718,7 +679,7 @@ TopAbs_ShapeEnum GEOMImpl_IGroupOperations::GetType(Handle(GEOM_Object) theGroup
   TDF_Label aFreeLabel = theGroup->GetFreeLabel();
   Handle(TDataStd_Integer) anAttrib;
   if(!aFreeLabel.FindAttribute(TDataStd_Integer::GetID(), anAttrib)) return TopAbs_SHAPE;
- 
+
   SetErrorCode(OK);
   return (TopAbs_ShapeEnum) anAttrib->Get(); 
 }
