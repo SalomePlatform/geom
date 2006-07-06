@@ -71,6 +71,8 @@
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <Prs3d_IsoAspect.hxx>
+#include <Prs3d_PointAspect.hxx>
+#include <Graphic3d_AspectMarker3d.hxx>
 
 // VTK Includes
 #include <vtkBMPReader.h>
@@ -260,6 +262,18 @@ void GEOMToolsGUI::OnColor()
 	      for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
 		io = GEOMBase::GetAIS( It.Value(), true );
 		if ( !io.IsNull() ) {
+		  // Set color for a point
+		  OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
+		  Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+		  Handle(AIS_Drawer) aCurDrawer = io->Attributes();
+		  Handle(Prs3d_PointAspect) aCurPointAspect =  aCurDrawer->PointAspect();
+		  Quantity_Color aCurColor;
+		  Standard_Real aCurScale;
+		  Aspect_TypeOfMarker aCurTypeOfMarker;
+		  aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
+		  aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aColor, aCurScale) );
+		  ic->SetLocalAttributes(io, aCurDrawer);
+		  
 		  io->SetColor( aColor );
 		  if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
 		    Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aColor );
