@@ -243,7 +243,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       {
 	Group2->hide();
 	aMainGrp->hide();
-	resize(0, 0);
+	//PAL6669: resize(0, 0);
 	Group1->show();
 
 	globalSelection( GEOM_ALLGEOM );
