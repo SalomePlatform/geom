@@ -255,7 +255,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       {
 	aMainGrp->hide();
 	Group1->show();
-	resize(0, 0);
+	//PAL6669: resize(0, 0);
 	Group2->show();
 
 	globalSelection( GEOM_POINT );
