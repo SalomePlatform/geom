@@ -43,6 +43,7 @@
 #include "RepairGUI_FreeBoundDlg.h"     // Method FREE BOUNDARIES
 #include "RepairGUI_FreeFacesDlg.h"     // Method FREE FACES
 #include "RepairGUI_GlueDlg.h"          // Method GLUE FACES
+#include "RepairGUI_ChangeOrientationDlg.h" // Method CHANGE ORIENTATION
 
 #include "utilities.h"
 
@@ -86,8 +87,9 @@ bool RepairGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     case 606: aDlg = new RepairGUI_CloseContourDlg  (getGeometryGUI(), parent, ""); break;
     case 607: aDlg = new RepairGUI_RemoveIntWiresDlg(getGeometryGUI(), parent, ""); break;
     case 608: aDlg = new RepairGUI_DivideEdgeDlg    (getGeometryGUI(), parent, ""); break;
-    case 609: aDlg = new RepairGUI_FreeBoundDlg     (getGeometryGUI(), parent, ""); break;    
-    case 610: aDlg = new RepairGUI_FreeFacesDlg     (getGeometryGUI(), parent, ""); break;    
+    case 609: aDlg = new RepairGUI_FreeBoundDlg     (getGeometryGUI(), parent, ""); break;
+    case 610: aDlg = new RepairGUI_FreeFacesDlg     (getGeometryGUI(), parent, ""); break;
+    case 611: aDlg = new RepairGUI_ChangeOrientationDlg (getGeometryGUI(), parent, ""); break;
     default:
       app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;

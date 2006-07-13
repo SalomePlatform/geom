@@ -32,6 +32,7 @@
 #include <ShHealOper_FillHoles.hxx>
 #include <ShHealOper_Sewing.hxx>
 #include <ShHealOper_EdgeDivide.hxx>
+#include <ShHealOper_ChangeOrientation.hxx>
 
 #include <TopoDS.hxx>
 #include <TopExp.hxx>
@@ -114,6 +115,9 @@ Standard_Integer GEOMImpl_HealingDriver::Execute(TFunction_Logbook& log) const
     break;
   case DIVIDE_EDGE:
     AddPointOnEdge(&HI, anOriginalShape, aShape);
+    break;
+  case CHANGE_ORIENTATION:
+    ChangeOrientation(&HI, anOriginalShape, aShape);
     break;
   default:
     return 0;
@@ -369,6 +373,27 @@ Standard_Boolean GEOMImpl_HealingDriver::AddPointOnEdge (GEOMImpl_IHealing* theH
     if (aEdgeShape.ShapeType() == TopAbs_EDGE)
       aResult = aHealer.Perform(TopoDS::Edge(aEdgeShape), aValue, isByParameter);
   }
+
+  if (aResult)
+    theOutShape = aHealer.GetResultShape();
+  else
+    raiseNotDoneExeption( aHealer.GetErrorStatus() );
+
+  return aResult;
+}
+
+
+//=======================================================================
+//function :  ChangeOrientation
+//purpose  :
+//=======================================================================
+Standard_Boolean GEOMImpl_HealingDriver::ChangeOrientation (GEOMImpl_IHealing* theHI,
+                                                            const TopoDS_Shape& theOriginalShape,
+                                                            TopoDS_Shape& theOutShape) const
+{
+  ShHealOper_ChangeOrientation aHealer (theOriginalShape);
+
+  Standard_Boolean aResult = aHealer.Perform();
 
   if (aResult)
     theOutShape = aHealer.GetResultShape();
