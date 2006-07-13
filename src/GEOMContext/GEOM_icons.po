@@ -337,6 +337,10 @@ msgstr "supresshole.png"
 msgid "ICON_DLG_SUPRESS_HOLE_FACE_SHELL"
 msgstr "supressHolesOnFaceShell.png"
 
+#ChangeOrientationDlg
+msgid "ICON_DLG_CHANGE_ORIENTATION"
+msgstr "change_orientation.png"
+
 #MultiTranslationDlg
 msgid "ICON_DLG_MULTITRANSLATION_SIMPLE"
 msgstr "multitranslationsimple.png"

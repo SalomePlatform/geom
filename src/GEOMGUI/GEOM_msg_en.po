@@ -1642,6 +1642,12 @@ msgstr "Free boundaries"
 msgid "GEOM_FREE_FACES"
 msgstr "Free faces"
 
+msgid "GEOM_CHANGE_ORIENTATION_TITLE"
+msgstr "Change orientation"
+
+msgid "GEOM_CHANGE_ORIENTATION"
+msgstr "Objects to change orientation"
+
 msgid "GEOM_BY_PARAMETER"
 msgstr "By parameter"
 
@@ -1987,6 +1993,9 @@ msgstr "ProcessShape"
 
 msgid "SUPRESS_FACE_NEW_OBJ_NAME"
 msgstr "SupressFaces"
+
+msgid "CHANGE_ORIENTATION_NEW_OBJ_NAME"
+msgstr "Invert"
 
 msgid "NON_GEOM_OBJECTS_SELECTED"
 msgstr "There are objects selected which do not belong to %1 component."
@@ -2612,6 +2621,15 @@ msgstr "Check free faces"
 
 msgid "STB_CHECK_FREE_FACES"
 msgstr "Check free faces"
+
+msgid "TOP_CHANGE_ORIENTATION"
+msgstr "Change orientation"
+
+msgid "MEN_CHANGE_ORIENTATION"
+msgstr "Change orientation"
+
+msgid "STB_CHANGE_ORIENTATION"
+msgstr "Change orientation"
 
 msgid "MEN_MEASURES"
 msgstr "Measures"

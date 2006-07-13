@@ -503,6 +503,7 @@ void GeometryGUI::OnGUIEvent( int id )
            id == 608 ||   // MENU REPAIR - ADD POINT ON EDGE
            id == 609 ||   // MENU REPAIR - FREE BOUNDARIES
            id == 610 ||   // MENU REPAIR - FREE FACES
+           id == 611 ||   // MENU REPAIR - CHANGE ORIENTATION
 	   id == 602 ) {  // MENU REPAIR - GLUE FACES
 #ifndef WNT
 	library = getLibrary( "libRepairGUI.so" );
@@ -829,6 +830,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 608, "POINT_ON_EDGE" );
   createGeomAction( 609, "CHECK_FREE_BNDS" );
   createGeomAction( 610, "CHECK_FREE_FACES" );
+  createGeomAction( 611, "CHANGE_ORIENTATION" );
   
   createGeomAction( 708, "POINT_COORDS" );
   createGeomAction( 701, "BASIC_PROPS" );
@@ -971,6 +973,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 608, repairId, -1 );  
   createMenu( 609, repairId, -1 );  
   createMenu( 610, repairId, -1 );  
+  createMenu( 611, repairId, -1 );  
 
   int measurId = createMenu( tr( "MEN_MEASURES" ), -1, -1, 10 );
   createMenu( 708, measurId, -1 );  

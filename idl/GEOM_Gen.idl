@@ -1894,6 +1894,15 @@ module GEOM
     boolean GetFreeBoundary (in GEOM_Object theObject,
 			     out ListOfGO theClosedWires,
 			     out ListOfGO theOpenWires);
+
+    /*!
+     *  Change orientation of the given object.
+     *  \param theObject Shape to be processed.
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object ChangeOrientation (in GEOM_Object theObject);
+    GEOM_Object ChangeOrientationCopy (in GEOM_Object theObject);
+
   };
 
   /*!

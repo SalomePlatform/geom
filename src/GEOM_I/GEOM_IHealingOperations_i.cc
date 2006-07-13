@@ -454,3 +454,71 @@ CORBA::Boolean GEOM_IHealingOperations_i::GetFreeBoundary ( GEOM::GEOM_Object_pt
 
   return true;
 }
+
+
+//=============================================================================
+/*!
+ *  ChangeOrientation
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ChangeOrientation (GEOM::GEOM_Object_ptr theObject)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Check parameters
+  if ( CORBA::is_nil(theObject) )
+    return aGEOMObject._retn();
+
+  aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
+
+  // Get the object itself
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  // Perform
+//  Handle(GEOM_Object) aNewObject =
+    GetOperations()->ChangeOrientation( anObject );
+//  if (!GetOperations()->IsDone() || aNewObject.IsNull())
+//    return aGEOMObject._retn();
+
+  //return GetObject(aNewObject);
+  return aGEOMObject._retn();  
+}
+
+
+//=============================================================================
+/*!
+ *  ChangeOrientationCopy
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ChangeOrientationCopy (GEOM::GEOM_Object_ptr theObject)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Check parameters
+  if ( CORBA::is_nil(theObject) )
+    return aGEOMObject._retn();
+
+  // Get the object itself
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  // Perform
+  Handle(GEOM_Object) aNewObject =
+    GetOperations()->ChangeOrientationCopy( anObject );
+  if (!GetOperations()->IsDone() || aNewObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(aNewObject);
+}
+

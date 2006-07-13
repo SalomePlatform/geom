@@ -307,6 +307,10 @@ msgstr "pointonedge.png"
 msgid "ICON_DLG_SEWING"
 msgstr "sewing.png"
 
+#ChangeOrientationDlg
+msgid "ICON_DLG_CHANGE_ORIENTATION"
+msgstr "change_orientation.png"
+
 #PipeDlg
 msgid "ICON_DLG_PIPE"
 msgstr "pipe.png"
@@ -700,6 +704,9 @@ msgstr "free_bound.png"
 
 msgid "ICO_CHECK_FREE_FACES"
 msgstr "free_faces.png"
+
+msgid "ICO_CHANGE_ORIENTATION"
+msgstr "change_orientation.png"
 
 msgid "ICO_POINT_COORDS"
 msgstr "point_coord.png"

@@ -61,6 +61,9 @@ class GEOM_IHealingOperations_i :
 
    CORBA::Boolean GetFreeBoundary(GEOM::GEOM_Object_ptr theObject, GEOM::ListOfGO_out theClosedWires, GEOM::ListOfGO_out theOpenWires );
    
+   GEOM::GEOM_Object_ptr ChangeOrientation (GEOM::GEOM_Object_ptr theObject);
+   GEOM::GEOM_Object_ptr ChangeOrientationCopy (GEOM::GEOM_Object_ptr theObject);
+
    ::GEOMImpl_IHealingOperations* GetOperations() { return (::GEOMImpl_IHealingOperations*)GetImpl(); }
 
 private:

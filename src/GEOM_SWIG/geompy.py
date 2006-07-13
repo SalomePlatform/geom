@@ -1199,6 +1199,23 @@ def DivideEdge(theObject, theEdgeIndex, theValue, isByParameter):
       print "DivideEdge : ", HealOp.GetErrorCode()
     return anObj
 
+## Change orientation of the given object.
+#  @param theObject Shape to be processed.
+#  @update given shape
+def ChangeOrientation(theObject):
+    theObject = HealOp.ChangeOrientation(theObject)
+    if HealOp.IsDone() == 0:
+      print "ChangeOrientation : ", HealOp.GetErrorCode()
+
+## Change orientation of the given object.
+#  @param theObject Shape to be processed.
+#  @return New GEOM_Object, containing processed shape.
+def ChangeOrientationCopy(theObject):
+    anObj = HealOp.ChangeOrientation(theObject)
+    if HealOp.IsDone() == 0:
+      print "ChangeOrientation : ", HealOp.GetErrorCode()
+    return anObj
+
 ## Get a list of wires (wrapped in GEOM_Object-s),
 #  that constitute a free boundary of the given shape.
 #  @param theObject Shape to get free boundary of.

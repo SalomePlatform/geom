@@ -47,6 +47,7 @@ LIB_SRC = \
 	ShHealOper_ShapeProcess.cxx \
 	ShHealOper_SplitCurve2d.cxx \
 	ShHealOper_SplitCurve3d.cxx \
+	ShHealOper_ChangeOrientation.cxx \
 	ShHealOper_Tool.cxx \
 
 LIB_CLIENT_IDL = 
@@ -64,6 +65,7 @@ EXPORT_HEADERS = \
 	ShHealOper_SpiltCurve2d.hxx \
 	ShHealOper_SplitCurve2d.hxx \
 	ShHealOper_SplitCurve3d.hxx \
+	ShHealOper_ChangeOrientation.hxx \
 	ShHealOper_Tool.hxx
 
 # idl files
