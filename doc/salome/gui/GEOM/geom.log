@@ -125,6 +125,7 @@ boolean_operations.htm
 box.htm
 building_by_blocks.htm
 chamfer.htm
+change_orientation.htm
 changing_display_parameters.htm
 check_free_boundaries.htm
 check_free_faces.htm
@@ -267,6 +268,7 @@ image37.gif
 files\salome2_sp3_operationgui_functions_salome2_sp3_operationgui_functions_image87.gif
 files\salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image76.gif
 files\salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image31.gif
+image38.gif
 pics\multi_transformationsn1d.png
 pics\fillingsn.png
 pics\spheres.png
@@ -330,13 +332,14 @@ image29.gif
 image160.jpg
 files\salome2_sp3_transformationgui_functions_salome2_sp3_transformationgui_functions_image133.gif
 files\salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image34.gif
+pics\changeorientation.png
+pics\pipesn.png
+pics\pipe_wire_edgesn.png
 image2.gif
 pics\chamfer_faces.png
 pics\fillet_prism.png
 pics\rotationsn1.png
 pics\disp_mode1sn.png
-pics\pipesn.png
-pics\pipe_wire_edgesn.png
 pics\cones.png
 pics\planes1.png
 pics\lines.png
@@ -364,6 +367,7 @@ pics\ellipse.png
 pics\circle1.png
 image3.gif
 files\salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image56.gif
+pics\extrusion1.png
 image4.gif
 pics\isos_u12_v12sn.png
 pics\free_boudaries1.png
@@ -383,6 +387,7 @@ pics\circle2.png
 pics\point3.png
 image185.jpg
 files\salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image57.gif
+pics\extrusion2.png
 image5.gif
 pics\free_boudaries2.png
 pics\multi_rotation2d1.png
@@ -415,6 +420,7 @@ image61.gif
 image154.jpg
 image110.jpg
 files\salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image59.gif
+image40.gif
 pics\scale_transformsn2.png
 pics\translationsn1.png
 pics\facesn1.png
@@ -473,6 +479,7 @@ image113.jpg
 files\salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image101.gif
 files\salome2_sp3_booleangui_functions_salome2_sp3_booleangui_functions_image1.gif
 salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image14.gif
+image43.gif
 pics\image95.gif
 pics\mirror_planesn2.png
 pics\neo-scetcher2.png
@@ -499,7 +506,6 @@ pics\repair10.png
 pics\transformation2.png
 pics\mtransf1.png
 pics\editgroup.png
-pics\extrusion.png
 pics\box2.png
 image44.gif
 files\salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image103.gif
@@ -576,6 +582,7 @@ whgdata\whlstf10.htm
 whgdata\whlstf11.htm
 whgdata\whlstf12.htm
 whgdata\whlstf13.htm
+whgdata\whlstf14.htm
 whgdata\whlstg0.htm
 index.htm
 index_csh.htm

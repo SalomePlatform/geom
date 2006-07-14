@@ -27,7 +27,7 @@
       <item name="Extrusion" url="extrusion.htm" />
       <item name="Revolution" url="revolution.htm" />
       <item name="Filling" url="filling.htm" />
-      <item name="Pipe" url="pipe_creation.htm" />
+      <item name="Extrusion along a path" url="pipe_creation.htm" />
     </book>
     <item name="Working with groups" url="working_with_groups.htm" />
     <item name="Building by blocks" url="newentity_blocks.htm" />
@@ -90,10 +90,10 @@
       <item name="Add Point on Edge" url="add_point_on_edge.htm" />
       <item name="Check Free Boundaries" url="check_free_boundaries.htm" />
       <item name="Check Free Faces" url="check_free_faces.htm" />
+      <item name="Change Orientation" url="change_orientation.htm" />
     </book>
   </book>
   <item name="Using measurement tools" url="files/salome2_sp3_measuregui_functions.htm" />
-  <item name="Python interface geompy.py" url="geompy_doc/namespacegeompy.html" />
   <book name="TUI Scripts" >
     <item name="Viewing Geometrical Objects" url="changing_display_parameters.htm" />
     <book name="Creating Geometric Objects" >
