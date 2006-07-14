@@ -36,7 +36,7 @@ class GEOM_Swig
   GEOM_Swig();
   ~GEOM_Swig();
 
-  void createAndDisplayGO(const char* Entry);
+  void createAndDisplayGO(const char* Entry, bool isUpdated =true);
   void eraseGO(const char* Entry, bool allWindows);
   void createAndDisplayFitAllGO(const char* Entry);
   int  getIndexTopology(const char *SubEntry, const char *Entry);

@@ -110,14 +110,16 @@ GEOM_Swig::~GEOM_Swig()
   // MESSAGE("Destructeur");
 }
 
-void GEOM_Swig::createAndDisplayGO (const char* Entry)
+void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
 {
   class TEvent: public SALOME_Event
   {
     std::string myEntry;
+    bool        myUpdateViewer;
   public:
-    TEvent(const char* theEntry):
-      myEntry(theEntry)
+    TEvent(const char* theEntry, bool toUpdateViewer):
+      myEntry(theEntry),
+      myUpdateViewer(toUpdateViewer)
     {}
     virtual void Execute()
     {
@@ -178,7 +180,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
                                         "GEOM",
                                         const_cast<char*>( obj->GetID().c_str()));
 
-	  GEOM_Displayer(ActiveStudy).Display(anIO, true);
+	  GEOM_Displayer(ActiveStudy).Display(anIO, myUpdateViewer);
 	  /*if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
 	    SVTK_View* aView = aViewWindow->getView();
 	    int aMode = aView->GetDisplayMode();
@@ -216,7 +218,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
   };
 
   // MESSAGE("createAndDisplayGO");
-  ProcessVoidEvent(new TEvent (Entry));
+  ProcessVoidEvent(new TEvent (Entry, isUpdated));
 
   class TEventUpdateBrowser: public SALOME_Event
     {
@@ -233,7 +235,8 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
         }
     };
 
-  ProcessVoidEvent(new TEventUpdateBrowser ());
+  if (isUpdated)
+    ProcessVoidEvent(new TEventUpdateBrowser ());
 }
 
 void GEOM_Swig::createAndDisplayFitAllGO (const char* Entry)
