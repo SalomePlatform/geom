@@ -80,32 +80,52 @@ if (window.writeIntopicBar)
 
 <h3>Point Coordinates</h3>
 
+<p class="whs1">import math</p>
+
 <p class="whs1">import geompy</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># create a point</p>
+<p class="whs2"># create a point</p>
 
-<p class="whs1">point = geompy.MakeVertex(15, 
- 23, 80)</p>
+<p class="whs1">point = geompy.MakeVertex(15., 
+ 23., 80.)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># get the coordinates of the point and check its values</p>
+<p class="whs2"># get the coordinates 
+ of the point and check its values</p>
 
 <p class="whs1">coords = geompy.PointCoordinates(point)</p>
 
-<p class="whs1">if coords[0] != 15 
- or coords[1] != 23 or coords[2] != 80 :</p>
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># check the obtained 
+ coordinate values </p>
+
+<p class="whs1">tolerance = 1.e-07</p>
+
+<p class="whs1">def IsEqual(val1, 
+ val2): return (math.fabs(val1 - val2) &lt; tolerance)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">if IsEqual(coords[0], 
+ 15.) and IsEqual(coords[1], 23.) and IsEqual(coords[2], 80.):</p>
 
 <p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
- &quot;Coordinates of point must be (15, 23, 80), but returned (&quot;, 
- coords[0], &quot;, &quot;, coords[1], &quot;, &quot;, coords[2], &quot;)&quot;</p>
+ &quot;All values are OK.&quot;</p>
 
 <p class="whs1">else :</p>
 
-<p><span style="font-family: 'Lucida Console', monospace;">&nbsp;&nbsp;&nbsp;&nbsp;print 
- &quot;All values are OK.&quot;</span> </p>
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Coordinates of point must be (15, 23, 80), but returned (&quot;,</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ coords[0], &quot;, &quot;, coords[1], &quot;, &quot;, coords[2], &quot;)&quot;</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">&nbsp;&nbsp;&nbsp;&nbsp;pass</span> 
+ </p>
 
 <h3>Basic Properties</h3>
 

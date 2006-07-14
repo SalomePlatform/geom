@@ -491,88 +491,73 @@ if (window.writeIntopicBar)
 
 <h3><a name=bookmark4>Creation of a Compound</a></h3>
 
-<p class="whs1">import geompy</p>
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
 
 <p class="whs1">import salome</p>
+
+<p class="whs1">&nbsp;</p>
 
 <p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2">#create vertices</p>
+<p class="whs2"># create a vertex and 
+ a vector</p>
 
-<p class="whs1">p0 = geompy.MakeVertex( 
- 0., &nbsp;0., 
- &nbsp;0.)</p>
+<p class="whs1">p1 = geompy.MakeVertex( 
+ &nbsp;-30., &nbsp;-30., 
+ &nbsp;50.)</p>
 
-<p class="whs1">pz = geompy.MakeVertex( 
- 0., &nbsp;0., 
- 40.)</p>
+<p class="whs1">p2 = geompy.MakeVertex( 
+ &nbsp;-60., &nbsp;-60., 
+ &nbsp;30.)</p>
 
-<p class="whs1">&nbsp;</p>
-
-<p class="whs2"># create sketchers</p>
-
-<p class="whs1">sketcher = geompy.MakeSketcher(&quot;Sketcher:F 
- -50 -50:TT 100 -50:R 0:C 50 70:R 0:L 100:WW&quot;)</p>
+<p class="whs1">p3 = geompy.MakeVertex( 
+ &nbsp;-30., &nbsp;-30., 
+ &nbsp;10.)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create faces from two 
- wires</p>
+<p class="whs2"># create an arc from 
+ three points</p>
 
-<p class="whs1">face = geompy.MakeFace(sketcher,1)</p>
+<p class="whs1">arc = geompy.MakeArc(p1, 
+ p2, p3)</p>
 
-<p class="whs1">&nbsp;</p>
+<p class="whs1">ShapeListCompound 
+ = []</p>
 
-<p class="whs2"># create a prism</p>
+<p class="whs1">i = 0</p>
 
-<p class="whs1">prism = geompy.MakePrism(face, 
- p0, pz)</p>
+<p class="whs1">while i &lt;= 3 :</p>
 
-<p class="whs1">&nbsp;</p>
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;S 
+ = geompy.MakeTranslation(arc, i * 50., 0., 0.)</p>
 
-<p class="whs2"># explode the prism into 
- faces</p>
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;ShapeListCompound.append(S)</p>
 
-<p class="whs1">prism_faces = geompy.SubShapeAllSorted(prism, 
- geompy.ShapeType[&quot;FACE&quot;])</p>
-
-<p class="whs1">&nbsp;</p>
-
-<p class="whs2"># create a shell from 
- a set of faces</p>
-
-<p class="whs1">shell = geompy.MakeShell([prism_faces[0], 
- prism_faces[1],</p>
-
-<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prism_faces[3], 
- prism_faces[4],</p>
-
-<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prism_faces[5], 
- prism_faces[2]])</p>
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;i 
+ = i + 1</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># create a solid, bounded 
- by the given shells</p>
+<p class="whs2"># create a compund of 
+ the given shapes</p>
 
-<p class="whs1">solid = geompy.MakeSolid([shell])</p>
-
-<p class="whs1">&nbsp;</p>
-
-<p class="whs2"># add objects in the 
- study</p>
-
-<p class="whs1">id_solid = geompy.addToStudy(solid,&quot;Solid&quot;)</p>
+<p class="whs1">compound = geompy.MakeCompound(ShapeListCompound)</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs2"># display the solid</p>
+<p class="whs2"># add object in the study</p>
 
-<p class="whs1">gg.createAndDisplayGO(id_solid)</p>
+<p class="whs1">id_compound = geompy.addToStudy(compound,&quot;Compound&quot;)</p>
 
-<p class="whs1">gg.setDisplayMode(id_solid,1) 
+<p class="whs1">&nbsp;</p>
+
+<p class="whs2"># display the compound</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_compound) 
  </p>
 
 <script type="text/javascript" language="javascript1.2">

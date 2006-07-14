@@ -15,6 +15,7 @@ if (navigator.appName !="Netscape")
 <style type="text/css">
 <!--
 p.whs1 { font-family:'Lucida Console' , monospace; }
+p.whs2 { font-family:'Times New Roman' , serif; }
 -->
 </style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
@@ -347,7 +348,7 @@ if (window.writeIntopicBar)
 
 <p>&nbsp;</p>
 
-<p># create an object, symmetrical to the given one relatively the given 
+<p># create an object, symmetrical to another object through the given 
  plane</p>
 
 <p class="whs1">p1 = geompy.MakeVertex( 
@@ -367,7 +368,7 @@ if (window.writeIntopicBar)
 
 <p>&nbsp;</p>
 
-<p># create an object, symmetrical to the given one relatively the given 
+<p># create an object, symmetrical to another object through the given 
  axis</p>
 
 <p class="whs1">p4 = geompy.MakeVertex( 
@@ -384,7 +385,7 @@ if (window.writeIntopicBar)
 
 <p>&nbsp;</p>
 
-<p># create an object, symmetrical to the given one relatively the given 
+<p># create an object, symmetrical to another object through the given 
  point</p>
 
 <p class="whs1">mirror3 = geompy.MakeMirrorByPoint(box, 
@@ -450,18 +451,22 @@ if (window.writeIntopicBar)
 
 <p class="whs1">import salome</p>
 
+<p class="whs1">&nbsp;</p>
+
 <p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># create a box and a sphere</p>
+<p class="whs2"># create a box and a 
+ sphere</p>
 
 <p class="whs1">box = geompy.MakeBoxDXDYDZ(200, 
  200, 200)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># scale the given object by the factor</p>
+<p class="whs2"># scale the given object 
+ by the factor</p>
 
 <p class="whs1">p0 = geompy.MakeVertex(100, 
  100, 100)</p>
@@ -471,9 +476,10 @@ if (window.writeIntopicBar)
 <p class="whs1">scale = geompy.MakeScaleTransform(box, 
  p0, factor)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># add objects in the study</p>
+<p class="whs2"># add objects in the 
+ study</p>
 
 <p class="whs1">id_box = geompy.addToStudy(box, 
  &quot;Box&quot;)</p>
@@ -481,13 +487,15 @@ if (window.writeIntopicBar)
 <p class="whs1">id_scale = geompy.addToStudy(scale, 
  &quot;Scale&quot;)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># display the results</p>
+<p class="whs2"># display the results</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_box)</p>
 
 <p class="whs1">gg.setDisplayMode(id_box,1)</p>
+
+<p class="whs1">gg.setTransparency(id_box,0.5)</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_scale)</p>
 

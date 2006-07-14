@@ -15,6 +15,7 @@ if (navigator.appName !="Netscape")
 <style type="text/css">
 <!--
 p.whs1 { font-family:'Lucida Console' , monospace; }
+p.whs2 { font-family:'Times New Roman' , serif; }
 -->
 </style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
@@ -200,8 +201,6 @@ if (window.writeIntopicBar)
 <p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_qface3,1)</span> 
  </p>
 
-<p>&nbsp;</p>
-
 <h3>Hexagonal Solid</h3>
 
 <p class="whs1">import geompy</p>
@@ -210,120 +209,141 @@ if (window.writeIntopicBar)
 
 <p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># create vertices</p>
+<p class="whs2"># create vertices</p>
 
-<p class="whs1">p1 = geompy.MakeVertex( 
- &nbsp;0., &nbsp;&nbsp;0., 
+<p class="whs1">p0 &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;&nbsp;0., 
  &nbsp;&nbsp;0.)</p>
 
-<p class="whs1">p2 = geompy.MakeVertex(150., 
- &nbsp;30., &nbsp;&nbsp;0.)</p>
+<p class="whs1">p1 &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;&nbsp;0., 
+ &nbsp;40.)</p>
 
-<p class="whs1">p3 = geompy.MakeVertex( 
- &nbsp;0., 120., 
- &nbsp;50.)</p>
+<p class="whs1">p2 &nbsp;= 
+ geompy.MakeVertex( 70., -15., &nbsp;&nbsp;0.)</p>
 
-<p class="whs1">p4 = geompy.MakeVertex( 
- &nbsp;0., &nbsp;40., 
+<p class="whs1">p3 &nbsp;= 
+ geompy.MakeVertex( 70., -15., &nbsp;70.)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">p4 &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;70., &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p5 &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ &nbsp;70., &nbsp;40.)</p>
+
+<p class="whs1">p6 &nbsp;= 
+ geompy.MakeVertex( 70., &nbsp;70., 
+ &nbsp;&nbsp;0.)</p>
+
+<p class="whs1">p7 &nbsp;= 
+ geompy.MakeVertex( 70., &nbsp;70., 
  &nbsp;70.)</p>
 
-<p class="whs1">p5 = geompy.MakeVertex(100., 
- &nbsp;20., &nbsp;45.)</p>
+<p class="whs1">&nbsp;</p>
 
-<p class="whs1">p6 = geompy.MakeVertex( 
- &nbsp;0., 70., 
- &nbsp;40.)</p>
+<p class="whs1">p8 &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ -50., &nbsp;&nbsp;0.)</p>
 
-<p class="whs1">p7 = geompy.MakeVertex( 
- 70., 70., &nbsp;70.)</p>
-
-<p class="whs1">p8 = geompy.MakeVertex( 
- 70.,-15., &nbsp;70.)</p>
-
-<p class="whs1">p9 = geompy.MakeVertex( 
- &nbsp;0., &nbsp;0., 
- &nbsp;40.)</p>
+<p class="whs1">p9 &nbsp;= 
+ geompy.MakeVertex( &nbsp;0., 
+ -50., &nbsp;40.)</p>
 
 <p class="whs1">p10 = geompy.MakeVertex( 
- &nbsp;0., 70., 
- &nbsp;&nbsp;0.)</p>
+ 70., -35., &nbsp;&nbsp;0.)</p>
 
 <p class="whs1">p11 = geompy.MakeVertex( 
- 70., 70., &nbsp;&nbsp;0.)</p>
+ 70., -35., &nbsp;70.)</p>
 
-<p class="whs1">p12 = geompy.MakeVertex( 
- 70., -15., &nbsp;&nbsp;0.)</p>
+<p class="whs1">&nbsp;</p>
 
-<p class="whs1">p13 = geompy.MakeVertex( 
- &nbsp;0., &nbsp;0., 
- &nbsp;&nbsp;0.)</p>
+<p class="whs2"># create faces</p>
 
-<p>&nbsp;</p>
+<p class="whs1">qface1 = geompy.MakeQuad4Vertices(p0, 
+ p1, p2, p3)</p>
 
-<p># create faces</p>
+<p class="whs1">qface2 = geompy.MakeQuad4Vertices(p4, 
+ p5, p6, p7)</p>
 
-<p class="whs1">qface1 = geompy.MakeQuad4Vertices(p1, 
- p2, p3, p4)</p>
+<p class="whs1">qface3 = geompy.MakeQuad4Vertices(p0, 
+ p1, p4, p5)</p>
 
-<p class="whs1">qface2 = geompy.MakeQuad4Vertices(p1, 
- p2, p5, p4)</p>
+<p class="whs1">qface4 = geompy.MakeQuad4Vertices(p2, 
+ p3, p6, p7)</p>
 
-<p class="whs1">qface3 = geompy.MakeQuad4Vertices(p13, 
- p12, p11, p10)</p>
+<p class="whs1">qface5 = geompy.MakeQuad4Vertices(p0, 
+ p2, p4, p6)</p>
 
-<p class="whs1">qface4 = geompy.MakeQuad4Vertices(p9, 
- p8, p7, p6)</p>
+<p class="whs1">qface6 = geompy.MakeQuad4Vertices(p1, 
+ p3, p5, p7)</p>
 
-<p class="whs1">qface5 = geompy.MakeQuad4Vertices(p13, 
- p9, p6, p10)</p>
+<p class="whs1">&nbsp;</p>
 
-<p class="whs1">qface6 = geompy.MakeQuad4Vertices(p13, 
- p9, p8, p12)</p>
+<p class="whs1">qface7 = geompy.MakeQuad4Vertices(p8, 
+ p9, p10, p11)</p>
 
-<p class="whs1">qface7 = geompy.MakeQuad4Vertices(p12, 
- p8, p7, p11)</p>
+<p class="whs1">&nbsp;</p>
 
-<p class="whs1">qface8 = geompy.MakeQuad4Vertices(p11, 
- p7, p6, p10)</p>
-
-<p>&nbsp;</p>
-
-<p># create a hexahedral solid between two given faces</p>
+<p class="whs2"># create a hexahedral 
+ solid between two given faces</p>
 
 <p class="whs1">solid1 = geompy.MakeHexa2Faces(qface1, 
- qface2)</p>
+ qface7)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># create a hexahedral solids, bounded by six given faces</p>
+<p class="whs2"># create a hexahedral 
+ solid, bounded by six given faces</p>
 
-<p class="whs1">solid2 = geompy.MakeHexa(qface3, 
- qface4, qface5, qface6, qface7, qface8)</p>
+<p class="whs1">solid2 = geompy.MakeHexa(qface1, 
+ qface2, qface3, qface4, qface5, qface6)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># add objects in the study</p>
+<p class="whs2"># add objects in the 
+ study</p>
+
+<p class="whs1">geompy.addToStudy(qface1,&quot;qface1&quot;)</p>
+
+<p class="whs1">geompy.addToStudy(qface2,&quot;qface2&quot;)</p>
+
+<p class="whs1">geompy.addToStudy(qface3,&quot;qface3&quot;)</p>
+
+<p class="whs1">geompy.addToStudy(qface4,&quot;qface4&quot;)</p>
+
+<p class="whs1">geompy.addToStudy(qface5,&quot;qface5&quot;)</p>
+
+<p class="whs1">geompy.addToStudy(qface6,&quot;qface6&quot;)</p>
+
+<p class="whs1">geompy.addToStudy(qface7,&quot;qface7&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
 
 <p class="whs1">id_solid1 = geompy.addToStudy(solid1,&quot;Solid1&quot;)</p>
 
 <p class="whs1">id_solid2 = geompy.addToStudy(solid2,&quot;Solid2&quot;)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># display solids</p>
+<p class="whs2"># display solids</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_solid1)</p>
 
-<p class="whs1">gg.setDisplayMode(id_solid1,1)</p>
+<p class="whs1">gg.setDisplayMode(id_solid1, 
+ 1)</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_solid2)</p>
 
-<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_solid2,1)</span> 
- </p>
-
-<p>&nbsp;</p>
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_solid2, 
+ 1)</span> </p>
 
 <script type="text/javascript" language="javascript1.2">
 <!--

@@ -15,6 +15,7 @@ if (navigator.appName !="Netscape")
 <style type="text/css">
 <!--
 p.whs1 { font-family:'Lucida Console' , monospace; }
+p.whs2 { font-family:'Times New Roman' , serif; }
 -->
 </style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
@@ -79,15 +80,18 @@ if (window.writeIntopicBar)
 
 <h3><a name=bookmark4>Multi Transformation</a></h3>
 
-<p class="whs1">import geompy</p>
+<p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
+ geompy</span></p>
 
 <p class="whs1">import salome</p>
 
+<p class="whs1">&nbsp;</p>
+
 <p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># create vertices</p>
+<p class="whs2"># create vertices</p>
 
 <p class="whs1">p_25_25_50 = geompy.MakeVertex(25., 
  25., 50.)</p>
@@ -98,8 +102,12 @@ if (window.writeIntopicBar)
 <p class="whs1">p_25_50_25 = geompy.MakeVertex(25., 
  50., 25.)</p>
 
+<p class="whs1">&nbsp;</p>
+
 <p class="whs1">box = geompy.MakeBoxDXDYDZ(50, 
  50, 50)</p>
+
+<p class="whs1">&nbsp;</p>
 
 <p class="whs1">top_face = geompy.GetFaceNearPoint(box, 
  p_25_25_50)</p>
@@ -110,18 +118,21 @@ if (window.writeIntopicBar)
 <p class="whs1">xz_face = geompy.GetFaceNearPoint(box, 
  p_25_50_25)</p>
 
-<p class="whs1">top_face_ind = geompy.LocalOp.GetSubShapeIndex(box, 
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">top_face_ind = geompy.GetSubShapeID(box, 
  top_face)</p>
 
-<p class="whs1">yz_face_ind = geompy.LocalOp.GetSubShapeIndex(box, 
+<p class="whs1">yz_face_ind = geompy.GetSubShapeID(box, 
  yz_face)</p>
 
-<p class="whs1">xz_face_ind = geompy.LocalOp.GetSubShapeIndex(box, 
+<p class="whs1">xz_face_ind = geompy.GetSubShapeID(box, 
  xz_face)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># Multi-transformate block and glue the result</p>
+<p class="whs2"># Multi-transformate 
+ block and glue the result</p>
 
 <p class="whs1">box_tr1 = geompy.MakeMultiTransformation1D(box, 
  yz_face_ind, top_face_ind, 3)</p>
@@ -129,9 +140,10 @@ if (window.writeIntopicBar)
 <p class="whs1">box_tr2 = geompy.MakeMultiTransformation2D(box, 
  xz_face_ind, yz_face_ind, 3, top_face_ind, 0, 2)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># add objects in the study</p>
+<p class="whs2"># add objects in the 
+ study</p>
 
 <p class="whs1">id_box = geompy.addToStudy(box, 
  &quot;Box&quot;)</p>
@@ -142,9 +154,9 @@ if (window.writeIntopicBar)
 <p class="whs1">id_box_tr2 = geompy.addToStudy(box_tr2, 
  &quot;Multi-transformed Block 2D&quot;)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># display the results</p>
+<p class="whs2"># display the results</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_box)</p>
 
@@ -152,10 +164,10 @@ if (window.writeIntopicBar)
 
 <p class="whs1">gg.createAndDisplayGO(id_box_tr1)</p>
 
-<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_box_tr2)</span> 
+<p class="whs1">gg.createAndDisplayGO(id_box_tr2) 
  </p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
 <h3><a name=bookmark5>Explode on Blocks</a></h3>
 
@@ -163,11 +175,14 @@ if (window.writeIntopicBar)
 
 <p class="whs1">import salome</p>
 
+<p class="whs1">&nbsp;</p>
+
 <p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># create a box and a sphere</p>
+<p class="whs2"># create a box and a 
+ sphere</p>
 
 <p class="whs1">box = geompy.MakeBoxDXDYDZ(200, 
  200, 200)</p>
@@ -176,31 +191,38 @@ if (window.writeIntopicBar)
 
 <p class="whs1">&nbsp;</p>
 
-<p># make a compound</p>
+<p class="whs2"># make a compound</p>
 
 <p class="whs1">compound = geompy.MakeCompound([box, 
  sphere])</p>
 
-<p>&nbsp;</p>
+<p class="whs2">&nbsp;</p>
 
-<p># get all the blocks, contained in the given compound</p>
+<p class="whs2"># get all the blocks 
+ of the given compound, by criteria: min_nb_faces &lt;= nb. of faces &lt;= 
+ max_nb_faces</p>
+
+<p class="whs1">min_nb_faces = 6</p>
+
+<p class="whs1">max_nb_faces = 6</p>
 
 <p class="whs1">make_block_explode 
- = geompy.MakeBlockExplode(compound, 1, 1)</p>
+ = geompy.MakeBlockExplode(compound, min_nb_faces, max_nb_faces)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># add objects in the study</p>
+<p class="whs2"># add objects in the 
+ study</p>
 
 <p class="whs1">id_compound = geompy.addToStudy(compound, 
  &quot;Compound&quot;)</p>
 
 <p class="whs1">id_make_block_explode 
- = geompy.addToStudy(make_block_explode[0], &quot;MakeBlockExplode&quot;)</p>
+ = geompy.addToStudyInFather(compound, make_block_explode[0], &quot;MakeBlockExplode&quot;)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># display the results</p>
+<p class="whs2"># display the results</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_compound)</p>
 
@@ -217,41 +239,44 @@ if (window.writeIntopicBar)
 
 <p class="whs1">import salome</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># create a box and a sphere</p>
+<p class="whs2"># create a box</p>
 
 <p class="whs1">box = geompy.MakeBoxDXDYDZ(200, 
  200, 200)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># check and improve</p>
-
-<p class="whs1">check_box = geompy.CheckAndImprove(box)</p>
-
-<p>&nbsp;&nbsp;</p>
-
-<p># build all possible propagation groups</p>
+<p class="whs2"># build all possible 
+ propagation groups</p>
 
 <p class="whs1">listChains = geompy.Propagate(check_box)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
-<p># add objects in the study</p>
+<p class="whs2"># add objects in the 
+ study</p>
 
 <p class="whs1">geompy.addToStudy(check_box, 
  &quot;Box&quot;)</p>
 
+<p class="whs1">ii = 1</p>
+
 <p class="whs1">for chain in listChains:</p>
 
 <p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudyInFather(check_box, 
- chain, &quot;propagation chain&quot;)</p>
+ chain, &quot;propagation chain &quot; + `ii`)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;ii 
+ = ii + 1</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;pass</p>
+
+<p>&nbsp;</p>
 
 <p><span style="font-family: 'Lucida Console', monospace;">salome.sg.updateObjBrowser(1)</span> 
  </p>
-
-<p>&nbsp;</p>
 
 <script type="text/javascript" language="javascript1.2">
 <!--

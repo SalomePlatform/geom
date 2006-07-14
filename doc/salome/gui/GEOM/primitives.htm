@@ -143,50 +143,62 @@ if (window.writeIntopicBar)
 
 <p class="whs1">import salome</p>
 
+<p class="whs1">&nbsp;</p>
+
 <p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">&nbsp;</p>
 
 <p># create a vertex and a vector</p>
 
-<p class="whs1">p1 = geompy.MakeVertex(35, 
- 35, 0)</p>
+<p class="whs1">p1 = geompy.MakeVertex(25, 
+ 35, 45)</p>
 
-<p class="whs1">p2 = geompy.MakeVertex(35, 
- 35, 70)</p>
+<p class="whs1">p2 = geompy.MakeVertex(70, 
+ 70, 70)</p>
 
 <p class="whs1">v = geompy.MakeVector(p1, 
  p2)</p>
 
 <p>&nbsp;</p>
 
-<p># create cones</p>
+<p># create cylinders</p>
 
-<p class="whs1">cone1 = geompy.MakeCone(p1, 
- v, 17, 1, 20)</p>
+<p class="whs1">height = 40</p>
 
-<p class="whs1">cone2 = geompy.MakeConeR1R2H(30, 
- 10, 30)</p>
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">radius1 = 15</p>
+
+<p class="whs1">cylinder1 = geompy.MakeCylinder(p1, 
+ v, radius1, height)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">radius2 = 30</p>
+
+<p class="whs1">cylinder2 = geompy.MakeCylinderRH(radius2, 
+ height)</p>
 
 <p class="whs1">&nbsp;</p>
 
 <p># add objects in the study</p>
 
-<p class="whs1">id_cone1 = geompy.addToStudy(cone1,&quot;Cone1&quot;)</p>
+<p class="whs1">id_cylinder1 = geompy.addToStudy(cylinder1,&quot;Cylinder1&quot;)</p>
 
-<p class="whs1">id_cone2 = geompy.addToStudy(cone2,&quot;Cone2&quot;)</p>
+<p class="whs1">id_cylinder2 = geompy.addToStudy(cylinder2,&quot;Cylinder2&quot;)</p>
 
 <p>&nbsp;</p>
 
-<p># display cones</p>
+<p># display the cylinders</p>
 
-<p class="whs1">gg.createAndDisplayGO(id_cone1)</p>
+<p class="whs1">gg.createAndDisplayGO(id_cylinder1)</p>
 
-<p class="whs1">gg.setDisplayMode(id_cone1,1)</p>
+<p class="whs1">gg.setDisplayMode(id_cylinder1,1)</p>
 
-<p class="whs1">gg.createAndDisplayGO(id_cone2)</p>
+<p class="whs1">gg.createAndDisplayGO(id_cylinder2)</p>
 
-<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_cone2,1)</span> 
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_cylinder2,1)</span> 
  </p>
 
 <p>&nbsp;</p>
