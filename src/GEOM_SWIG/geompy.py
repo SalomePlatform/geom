@@ -1202,7 +1202,7 @@ def DivideEdge(theObject, theEdgeIndex, theValue, isByParameter):
 ## Change orientation of the given object.
 #  @param theObject Shape to be processed.
 #  @update given shape
-def ChangeOrientation(theObject):
+def ChangeOrientationShell(theObject):
     theObject = HealOp.ChangeOrientation(theObject)
     if HealOp.IsDone() == 0:
       print "ChangeOrientation : ", HealOp.GetErrorCode()
@@ -1210,7 +1210,7 @@ def ChangeOrientation(theObject):
 ## Change orientation of the given object.
 #  @param theObject Shape to be processed.
 #  @return New GEOM_Object, containing processed shape.
-def ChangeOrientationCopy(theObject):
+def ChangeOrientationShellCopy(theObject):
     anObj = HealOp.ChangeOrientation(theObject)
     if HealOp.IsDone() == 0:
       print "ChangeOrientation : ", HealOp.GetErrorCode()

@@ -819,7 +819,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.ChangeOrientation("
+  GEOM::TPythonDump(aFunction) << "geompy.ChangeOrientationShell("
                                << theObject << ")";
 
   SetErrorCode(OK);
@@ -874,7 +874,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.ChangeOrientationCopy("
+  GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.ChangeOrientationShellCopy("
                                << theObject << ")";
 
   SetErrorCode(OK);
