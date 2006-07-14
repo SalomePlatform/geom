@@ -920,7 +920,7 @@ def MakeCDG(aShape):
       print "GetCentreOfMass : ", MeasuOp.GetErrorCode()
     return anObj
 
-def CheckShape(aShape, theIsCheckGeom = 0):
+def CheckShape(theShape, theIsCheckGeom = 0):
     if theIsCheckGeom:
         (IsValid, Status) = MeasuOp.CheckShapeWithGeometry(theShape)
     else:
