@@ -927,7 +927,7 @@ msgstr "Tol. 2D :"
 
 #: GeometryGUI_FillingDlg.cxx:170
 msgid "GEOM_FILLING_COMPOUND"
-msgstr "Edge component"
+msgstr "Edges compound"
 
 #: GeometryGUI_FillingDlg.cxx:184
 msgid "GEOM_FILLING_TOL_3D"
