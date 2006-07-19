@@ -272,7 +272,10 @@ bool GEOM_Object::IsMainShape()
 Handle(GEOM_Function) GEOM_Object::AddFunction(const Standard_GUID& theGUID, int theFunctionType)
 {
   Standard_Integer nb = GetNbFunctions();
-  if(nb == 1 && theGUID == GetSubShapeID()) return NULL; //It's impossible to add a function to sub shape
+
+  //if(nb == 1 && theGUID == GetSubShapeID()) return NULL; //It's impossible to add a function to sub shape
+  // change by skl (+srn) for IPAL12999
+  if(nb == 1 && GetFunction(1)->GetDriverGUID() == GetSubShapeID()) return NULL; //It's impossible to add a function to sub shape
   nb++;
   TDF_Label aChild = FUNCTION_LABEL(nb);
 

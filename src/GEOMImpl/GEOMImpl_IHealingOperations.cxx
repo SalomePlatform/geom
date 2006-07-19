@@ -788,6 +788,11 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
   if (theObject.IsNull())
     return NULL;
 
+  if (!theObject->IsMainShape()) {
+    SetErrorCode("Sub shape cannot be transformed - need to create a copy");
+    return NULL;
+  }
+
   Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
   if (aLastFunction.IsNull()) 
     return NULL; //There is no function which creates an object to be processed
