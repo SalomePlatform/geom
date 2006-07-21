@@ -450,6 +450,17 @@ bool GEOMToolsGUI::Import()
 
   QString fileName = getFileName(app->desktop(), "", aMap,
                                  tr("GEOM_MEN_IMPORT"), true, fileType);
+
+  if (fileType.isEmpty() )
+    {
+      // Trying to detect file type
+      QFileInfo aFileInfo( fileName );
+      QString aPossibleType = (aFileInfo.extension(false)).upper() ;
+      
+      if ( (aMap.values()).contains(aPossibleType) )
+	fileType = aPossibleType;
+    }
+
   if (fileName.isEmpty() || fileType.isEmpty())
     return false;
 
