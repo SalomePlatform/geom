@@ -217,6 +217,8 @@ bool GroupGUI_GroupDlg::ClickOnApply()
       initName();
       myIdList->clear();
     }
+  else
+    activateSelection();
   return true;
 }
 
