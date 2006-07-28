@@ -39,6 +39,11 @@ class GEOM_IMeasureOperations_i :
 			    ::GEOMImpl_IMeasureOperations* theImpl);
   ~GEOM_IMeasureOperations_i();
 
+  void GetPosition (GEOM::GEOM_Object_ptr theShape,
+		    CORBA::Double& Ox, CORBA::Double& Oy, CORBA::Double& Oz,
+		    CORBA::Double& Zx, CORBA::Double& Zy, CORBA::Double& Zz,
+		    CORBA::Double& Xx, CORBA::Double& Xy, CORBA::Double& Xz);
+
   void GetBasicProperties (GEOM::GEOM_Object_ptr theShape,
 			   CORBA::Double& theLength,
 			   CORBA::Double& theSurfArea,

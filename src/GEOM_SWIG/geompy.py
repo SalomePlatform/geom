@@ -273,7 +273,7 @@ def MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize):
     return anObj
 
 ## Create a plane, similar to the existing one, but with another size of representing face.
-#  @param theFace Referenced plane.
+#  @param theFace Referenced plane or LCS(Marker).
 #  @param theTrimSize New half size of a side of quadrangle face, representing the plane.
 #  @return New GEOM_Object, containing the created plane.
 #
@@ -452,7 +452,7 @@ def MakeSketcher(theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0]):
 #  For format of the description string see the previous method.\n
 #  @param theCommand String, defining the sketcher in local
 #                    coordinates of the working plane.
-#  @param theWorkingPlane Planar Face of the working plane.
+#  @param theWorkingPlane Planar Face or LCS(Marker) of the working plane.
 #  @return New GEOM_Object, containing the created wire.
 def MakeSketcherOnPlane(theCommand, theWorkingPlane):
     anObj = CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
@@ -1468,8 +1468,16 @@ def MakeMirrorByPoint(theObject, thePoint):
       print "MirrorPointCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-## Modify the Location of the given object by LCS
-#  creating its copy before the setting
+## Modify the Location of the given object by LCS,
+#  creating its copy before the setting.
+#  @param theObject The object to be displaced.
+#  @param theStartLCS Coordinate system to perform displacement from it.
+#                     If \a theStartLCS is NULL, displacement
+#                     will be performed from global CS.
+#                     If \a theObject itself is used as \a theStartLCS,
+#                     its location will be changed to \a theEndLCS.
+#  @param theEndLCS Coordinate system to perform displacement to it.
+#  @return New GEOM_Object, containing the displaced shape.
 #
 #  Example: see GEOM_TestAll.py
 def MakePosition(theObject, theStartLCS, theEndLCS):
@@ -1812,6 +1820,25 @@ def CheckShape(theShape, theIsCheckGeom = 0):
       if IsValid == 0:
         print Status
     return IsValid
+
+## Get position (LCS) of theShape.
+#
+#  Origin of the LCS is situated at the shape's center of mass.
+#  Axes of the LCS are obtained from shape's location or,
+#  if the shape is a planar face, from position of its plane.
+#
+#  @param theShape Shape to calculate position of.
+#  @return [Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz].
+#          Ox,Oy,Oz: Coordinates of shape's LCS origin.
+#          Zx,Zy,Zz: Coordinates of shape's LCS normal(main) direction.
+#          Xx,Xy,Xz: Coordinates of shape's LCS X direction.
+#
+#  Example: see GEOM_TestMeasures.py
+def GetPosition(theShape):
+    aTuple = MeasuOp.GetPosition(theShape)
+    if MeasuOp.IsDone() == 0:
+      print "GetPosition : ", MeasuOp.GetErrorCode()
+    return aTuple
 
 # -----------------------------------------------------------------------------
 # Import/Export objects

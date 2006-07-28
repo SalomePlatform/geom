@@ -25,6 +25,9 @@
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
+#include <GEOMImpl_IMeasureOperations.hxx>
+
+// OCCT Includes
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_Plane.hxx>
@@ -100,13 +103,14 @@ Standard_Integer GEOMImpl_SketcherDriver::Execute(TFunction_Logbook& log) const
   {
     Handle(GEOM_Function) aRefFace = aCI.GetWorkingPlane();
     TopoDS_Shape aShape = aRefFace->GetValue();
-    if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_FACE )
-      return 0;
-    Handle(Geom_Surface) aGS = BRep_Tool::Surface( TopoDS::Face( aShape ));
-    if ( aGS.IsNull() || !aGS->IsKind( STANDARD_TYPE( Geom_Plane )))
-      return 0;
-    Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast( aGS );
-    aWPlane = aGPlane->Pln().Position();
+    //if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_FACE )
+    //  return 0;
+    //Handle(Geom_Surface) aGS = BRep_Tool::Surface( TopoDS::Face( aShape ));
+    //if ( aGS.IsNull() || !aGS->IsKind( STANDARD_TYPE( Geom_Plane )))
+    //  return 0;
+    //Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast( aGS );
+    //aWPlane = aGPlane->Pln().Position();
+    aWPlane = GEOMImpl_IMeasureOperations::GetPosition(aShape);
   }
   gp_Trsf aTrans;
   aTrans.SetTransformation(aWPlane);

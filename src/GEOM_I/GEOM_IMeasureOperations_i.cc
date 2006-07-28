@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -50,6 +50,36 @@ GEOM_IMeasureOperations_i::~GEOM_IMeasureOperations_i()
   MESSAGE("GEOM_IMeasureOperations_i::~GEOM_IMeasureOperations_i");
 }
 
+
+//=============================================================================
+/*!
+ *  GetPosition
+ */
+//=============================================================================
+void GEOM_IMeasureOperations_i::GetPosition
+                 (GEOM::GEOM_Object_ptr theShape,
+		  CORBA::Double& Ox, CORBA::Double& Oy, CORBA::Double& Oz,
+		  CORBA::Double& Zx, CORBA::Double& Zy, CORBA::Double& Zz,
+		  CORBA::Double& Xx, CORBA::Double& Xy, CORBA::Double& Xz)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Set default values: global CS
+  Ox = Oy = Oz = Zx = Zy = Xy = Xz = 0.;
+  Zz = Xx = 1.;
+
+  if (theShape == NULL) return;
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+
+  if (aShape.IsNull()) return;
+
+  // Get shape parameters
+  GetOperations()->GetPosition(aShape, Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz);
+}
 
 //=============================================================================
 /*!
@@ -201,7 +231,7 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShape (GEOM::GEOM_Object_ptr theS
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) 
+  if (theShape == NULL)
   {
     theDescription = CORBA::string_dup("null");
     return 0;
@@ -234,7 +264,7 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShapeWithGeometry (GEOM::GEOM_Obj
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) 
+  if (theShape == NULL)
   {
     theDescription = CORBA::string_dup("null");
     return 0;

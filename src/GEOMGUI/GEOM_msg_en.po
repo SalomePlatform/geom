@@ -651,6 +651,10 @@ msgstr "Face"
 msgid "GEOM_FACES"
 msgstr "Faces"
 
+#Face or LCS
+msgid "GEOM_FACE_OR_LCS"
+msgstr "Face or LCS"
+
 #Line
 msgid "GEOM_LINE"
 msgstr "Line"
@@ -1229,7 +1233,7 @@ msgstr "Working Plane Selection"
 
 #: GeometryGUI_WorkingPlaneDlg.cxx:107
 msgid "GEOM_WPLANE_FACE"
-msgstr "Plane Or Planar Face"
+msgstr "Plane Or Planar Face, Or LCS"
 
 #: GeometryGUI_WorkingPlaneDlg.cxx:107
 msgid "GEOM_WPLANE_VECTOR"

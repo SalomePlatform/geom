@@ -1,22 +1,22 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
@@ -33,6 +33,8 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TColStd_MapOfInteger.hxx>
+
 #include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
@@ -41,7 +43,7 @@ using namespace std;
 
 //=================================================================================
 // class    : BasicGUI_PlaneDlg()
-// purpose  : Constructs a BasicGUI_PlaneDlg which is a child of 'parent', with the 
+// purpose  : Constructs a BasicGUI_PlaneDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -89,20 +91,20 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   Group3Pnts->LineEdit3->setReadOnly( true );
 
   GroupFace = new DlgRef_1Sel1Spin(this, "GroupFace");
-  GroupFace->GroupBox1->setTitle(tr("GEOM_FACE"));
+  GroupFace->GroupBox1->setTitle(tr("GEOM_FACE_OR_LCS"));
   GroupFace->TextLabel1->setText(tr("GEOM_SELECTION"));
   GroupFace->TextLabel2->setText(tr("GEOM_PLANE_SIZE"));
   GroupFace->PushButton1->setPixmap(image3);
 
   GroupFace->LineEdit1->setReadOnly( true );
-    
+
   Layout1->addWidget(GroupPntDir, 2, 0);
   Layout1->addWidget(Group3Pnts, 2, 0);
   Layout1->addWidget(GroupFace, 2, 0);
   /***************************************************************/
 
   setHelpFileName("plane.htm");
-  
+
   Init();
 }
 
@@ -112,7 +114,7 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(GeometryGUI* theGeometryGUI, QWidget* paren
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 BasicGUI_PlaneDlg::~BasicGUI_PlaneDlg()
-{  
+{
 }
 
 
@@ -132,9 +134,9 @@ void BasicGUI_PlaneDlg::Init()
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   double aStep = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
-  
+
   double aTrimSize = 2000.0;
-  
+
   /* min, max, step and decimals for spin boxes */
   GroupPntDir->SpinBox_DX->RangeStepAndValidator( 0.001, COORD_MAX, aStep, 3 );
   GroupPntDir->SpinBox_DX->SetValue( aTrimSize );
@@ -196,7 +198,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked(int constructorId)
   switch ( constructorId )
   {
     case 0: /* plane from a point and a direction (vector, edge...) */
-      {	
+      {
 				Group3Pnts->hide();
 				GroupFace->hide();
 				resize(0, 0);
@@ -225,7 +227,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked(int constructorId)
 				/* for the first argument */
 				globalSelection( GEOM_POINT );
 				break;
-      } 
+      }
     case 2: /* plane from a planar face selection */
       {
 				GroupPntDir->hide();
@@ -237,13 +239,17 @@ void BasicGUI_PlaneDlg::ConstructorsClicked(int constructorId)
 				GroupFace->LineEdit1->setText(tr(""));
 
 				/* for the first argument */
-				globalSelection( GEOM_PLANE );
+				//globalSelection( GEOM_PLANE );
+                                TColStd_MapOfInteger aMap;
+                                aMap.Add( GEOM_PLANE );
+                                aMap.Add( GEOM_MARKER );
+                                globalSelection( aMap );
 				break;
       }
     }
 
   myEditCurrentArgument->setFocus();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
@@ -289,8 +295,8 @@ void BasicGUI_PlaneDlg::ClickOnCancel()
 void BasicGUI_PlaneDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
-  
-  if ( IObjectCount() != 1 )  
+
+  if ( IObjectCount() != 1 )
   {
     if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) myPoint  = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) myDir    = GEOM::GEOM_Object::_nil();
@@ -305,7 +311,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
-  {  
+  {
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) myPoint  = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) myDir    = aSelectedObject;
@@ -325,7 +331,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
 //=================================================================================
 void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();  
+  QPushButton* send = (QPushButton*)sender();
 
   if      ( send == GroupPntDir->PushButton1 ) myEditCurrentArgument = GroupPntDir->LineEdit1;
   else if ( send == GroupPntDir->PushButton2 ) myEditCurrentArgument = GroupPntDir->LineEdit2;
@@ -335,14 +341,19 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
   else if ( send == GroupFace->PushButton1 )   myEditCurrentArgument = GroupFace->LineEdit1;
 
   myEditCurrentArgument->setFocus();
-  
+
   if ( myEditCurrentArgument == GroupPntDir->LineEdit2 )
     globalSelection( GEOM_LINE );
-  else if ( myEditCurrentArgument == GroupFace->LineEdit1 )
-  	globalSelection( GEOM_PLANE );
+  else if ( myEditCurrentArgument == GroupFace->LineEdit1 ) {
+    //globalSelection( GEOM_PLANE );
+    TColStd_MapOfInteger aMap;
+    aMap.Add( GEOM_PLANE );
+    aMap.Add( GEOM_MARKER );
+    globalSelection( aMap );
+  }
   else
-  	globalSelection( GEOM_POINT );
-   
+    globalSelection( GEOM_POINT );
+
   SelectionIntoArgument();
 }
 
@@ -374,7 +385,7 @@ void BasicGUI_PlaneDlg::LineEditReturnPressed()
 void BasicGUI_PlaneDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   // myGeomGUI->SetState( 0 );

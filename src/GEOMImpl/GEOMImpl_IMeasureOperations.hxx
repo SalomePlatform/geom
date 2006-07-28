@@ -24,9 +24,11 @@
 #include "GEOM_IOperations.hxx"
 
 #include <BRepCheck_Analyzer.hxx>
+#include <TopoDS_Shape.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TCollection_AsciiString.hxx>
+#include <gp_Ax3.hxx>
 
 class GEOM_Engine;
 class Handle(GEOM_Object);
@@ -35,6 +37,11 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
  public:
   Standard_EXPORT GEOMImpl_IMeasureOperations(GEOM_Engine* theEngine, int theDocID);
   Standard_EXPORT ~GEOMImpl_IMeasureOperations();
+
+  Standard_EXPORT void GetPosition (Handle(GEOM_Object) theShape,
+                                    Standard_Real& Ox, Standard_Real& Oy, Standard_Real& Oz,
+                                    Standard_Real& Zx, Standard_Real& Zy, Standard_Real& Zz,
+                                    Standard_Real& Xx, Standard_Real& Xy, Standard_Real& Xz);
 
   Standard_EXPORT Handle(GEOM_Object) GetCentreOfMass (Handle(GEOM_Object) theShape);
 
@@ -72,6 +79,9 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
 
   Standard_EXPORT void PointCoordinates(Handle(GEOM_Object) theShape,
                                         Standard_Real& theX, Standard_Real& theY, Standard_Real& theZ );
+
+ public:
+  Standard_EXPORT static gp_Ax3 GetPosition (const TopoDS_Shape& theShape);
 
  private:
   void StructuralDump (const BRepCheck_Analyzer& theAna,

@@ -135,6 +135,8 @@
 
 #define POSITION_SHAPE      1
 #define POSITION_SHAPE_COPY 2
+#define POSITION_SHAPE_FROM_GLOBAL      3
+#define POSITION_SHAPE_FROM_GLOBAL_COPY 4
 
 #define TORUS_RR         1
 #define TORUS_PNT_VEC_RR 2

@@ -119,3 +119,13 @@ def TestMeasureOperations (geompy, math):
   #print " On Cube (", MinDist[4], ", ", MinDist[5], ", ", MinDist[6], ")"
 
   print "\nMinimal distance between Box and Cube = ", MinDist
+
+  ####### Position (LCS) #######
+
+  Pos = geompy.GetPosition(box)
+  print "\nPosition(LCS) of box 10x30x70:"
+  print "Origin: (", Pos[0], ", ", Pos[1], ", ", Pos[2], ")"
+  print "Z axis: (", Pos[3], ", ", Pos[4], ", ", Pos[5], ")"
+  print "X axis: (", Pos[6], ", ", Pos[7], ", ", Pos[8], ")"
+
+  pass

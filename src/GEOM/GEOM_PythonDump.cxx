@@ -104,9 +104,13 @@ namespace GEOM
 
   TPythonDump& TPythonDump::operator<< (const Handle(GEOM_Object)& theObject)
   {
-    TCollection_AsciiString anEntry;
-    TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-    myStream << anEntry.ToCString();
+    if (theObject.IsNull()) {
+      myStream << "None";
+    } else {
+      TCollection_AsciiString anEntry;
+      TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+      myStream << anEntry.ToCString();
+    }
     return *this;
   }
 

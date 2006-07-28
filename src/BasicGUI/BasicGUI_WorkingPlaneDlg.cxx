@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -34,23 +34,21 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <Geom_Surface.hxx>
-#include <Geom_Plane.hxx>
+// OCCT Includes
+#include <BRep_Tool.hxx>
 #include <TopoDS.hxx>
-#include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopExp.hxx>
-#include <BRep_Tool.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Dir.hxx>
-#include <gp_Pln.hxx>
-#include <V3d_View.hxx>
+#include <TColStd_MapOfInteger.hxx>
 
-#include "GEOMImpl_Types.hxx"
-
+// QT Includes
 #include <qcheckbox.h>
 #include <qlabel.h>
+
+#include "GEOMImpl_Types.hxx"
 
 using namespace std;
 
@@ -158,7 +156,7 @@ void BasicGUI_WorkingPlaneDlg::Init()
 
   connect(Group3->GroupBox1, SIGNAL(clicked(int)), this, SLOT(GroupClicked(int)));
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_WPLANE" ) );
@@ -171,14 +169,19 @@ void BasicGUI_WorkingPlaneDlg::Init()
 //=================================================================================
 void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
-  // myGeomGUI->SetState( 0 );
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+
+  disconnect(aSelMgr, 0, this, 0);
 
   switch (constructorId)
     {
     case 0:
       {
-        globalSelection( GEOM_PLANE );
+        //globalSelection( GEOM_PLANE );
+        TColStd_MapOfInteger aMap;
+        aMap.Add( GEOM_PLANE );
+        aMap.Add( GEOM_MARKER );
+        globalSelection( aMap );
 
         Group2->hide();
         Group3->hide();
@@ -189,8 +192,7 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
         Group1->LineEdit1->setText("");
         myFace = GEOM::GEOM_Object::_nil();
 
-        connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+        connect(aSelMgr, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
         break;
       }
     case 1:
@@ -208,8 +210,7 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
         myVectX = GEOM::GEOM_Object::_nil();
         myVectZ = GEOM::GEOM_Object::_nil();
 
-        connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+        connect(aSelMgr, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
         break;
       }
     case 2:
@@ -221,7 +222,7 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
 
         Group3->RadioButton1->setChecked(true);
         aOriginType = 1;
-              break;
+        break;
       }
     }
   displayPreview();
@@ -256,87 +257,98 @@ bool BasicGUI_WorkingPlaneDlg::ClickOnApply()
   myGeomGUI->application()->putInfo(tr(""));
   const int id = getConstructorId();
 
-  if (id == 0) {
-    if ( !CORBA::is_nil( myFace ) ) {
-      TopoDS_Face aPlaneShape;
-      if ( GEOMBase::GetShape( myFace, aPlaneShape, TopAbs_FACE ) ) {
-        Handle(Geom_Surface) aGS = BRep_Tool::Surface( TopoDS::Face( aPlaneShape ) );
-        if ( !aGS.IsNull() && aGS->IsKind( STANDARD_TYPE( Geom_Plane ) ) ) {
-          Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast( aGS );
-          gp_Pln aPln = aGPlane->Pln();
-
-          myWPlane = aPln.Position();
-          myGeomGUI->SetWorkingPlane(myWPlane);
-          myGeomGUI->ActiveWorkingPlane();
-          return true;
-        }
-      }
+  if (id == 0) { // by planar face selection
+    if (CORBA::is_nil(myFace)) {
+      showError( "Face has to be selected" );
+      return false;
     }
-  } else if (id == 1) {
+
+    // PAL12781: set center of WPL to face's center of mass
+    // like it is done for LCS creation
+    CORBA::Double Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz;
+    Ox = Oy = Oz = Zx = Zy = Xy = Xz = 0.;
+    Zz = Xx = 1.;
+
+    GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
+      myGeomGUI->GetGeomGen()->GetIMeasureOperations(getStudyId());
+    aMeasureOp->GetPosition(myFace, Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz);
+
+    if (aMeasureOp->IsDone()) {
+      gp_Pnt aPnt (Ox,Oy,Oz);
+      gp_Dir aDirN (Zx,Zy,Zz);
+      gp_Dir aDirX (Xx,Xy,Xz);
+      myWPlane = gp_Ax3(aPnt, aDirN, aDirX);
+    } else {
+      showError( "Wrong shape selected (has to be a planar face)" );
+      return false;
+    }
+
+  } else if (id == 1) { // by two vectors (Ox & Oz)
     if ( CORBA::is_nil( myVectX ) || CORBA::is_nil( myVectZ ) ) {
       showError( "Two vectors have to be selected" );
       return false;
     }
 
     TopoDS_Edge aVectX, aVectZ;
-    TopoDS_Vertex V1, V2;
+    TopoDS_Vertex VX1, VX2, VZ1, VZ2;
     gp_Vec aVX, aVZ;
-    if (GEOMBase::GetShape( myVectX, aVectX, TopAbs_EDGE ) &&
-        GEOMBase::GetShape( myVectZ, aVectZ, TopAbs_EDGE )) {
-      TopExp::Vertices(aVectZ, V1, V2, Standard_True);
-      if (!V1.IsNull() && !V2.IsNull())
-        aVZ = gp_Vec(BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
-      else {
-        showError( "Bad OZ vector" );
-        return false;
-      }
 
-      TopExp::Vertices(aVectX, V1, V2, Standard_True);
-      if (!V1.IsNull() && !V2.IsNull())
-        aVX = gp_Vec(BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
-      else {
-        showError( "Bad OX vector" );
-        return false;
-      }
-
-      gp_Dir aDirZ = gp_Dir(aVZ.X(), aVZ.Y(), aVZ.Z());
-      gp_Dir aDirX = gp_Dir(aVX.X(), aVX.Y(), aVX.Z());
-
-      if (aDirX.IsParallel(aDirZ, Precision::Confusion())) {
-        showError( "Parallel vectors selected" );
-        return false;
-      }
-
-      myWPlane = gp_Ax3(BRep_Tool::Pnt(V1), aDirZ, aDirX);
-
-      myGeomGUI->SetWorkingPlane(myWPlane);
-      myGeomGUI->ActiveWorkingPlane();
-      return true;
-    }
-  } else if (id == 2) {
-    gp_Pnt P1 = gp_Pnt(0., 0., 0.);
-    gp_Dir aDirZ, aDirX;
-
-    if (aOriginType == 1) {
-      aDirZ = gp_Dir(0., 0., 1.);
-      aDirX = gp_Dir(1., 0., 0.);
-    }
-    else if (aOriginType == 2) {
-      aDirZ = gp_Dir(1., 0., 0.);
-      aDirX = gp_Dir(0., 1., 0.);
-    }
-    else if (aOriginType == 0) {
-      aDirZ = gp_Dir(0., 1., 0.);
-      aDirX = gp_Dir(0., 0., 1.);
+    if (!GEOMBase::GetShape( myVectX, aVectX, TopAbs_EDGE ) ||
+        !GEOMBase::GetShape( myVectZ, aVectZ, TopAbs_EDGE )) {
+      showError( "Wrong shape selected (two vectors(edges) have to be selected)" );
+      return false;
     }
 
-    myWPlane = gp_Ax3(P1, aDirZ, aDirX);
+    TopExp::Vertices(aVectX, VX1, VX2, Standard_True);
+    TopExp::Vertices(aVectZ, VZ1, VZ2, Standard_True);
 
-    myGeomGUI->SetWorkingPlane(myWPlane);
-    myGeomGUI->ActiveWorkingPlane();
-    return true;
+    if (VX1.IsNull() || VX2.IsNull()) {
+      showError( "Bad OX vector" );
+      return false;
+    }
+    if (VZ1.IsNull() || VZ2.IsNull()) {
+      showError( "Bad OZ vector" );
+      return false;
+    }
+
+    aVX = gp_Vec(BRep_Tool::Pnt(VX1), BRep_Tool::Pnt(VX2));
+    aVZ = gp_Vec(BRep_Tool::Pnt(VZ1), BRep_Tool::Pnt(VZ2));
+
+    if (aVX.Magnitude() < Precision::Confusion()) {
+      showError( "Bad OX vector" );
+      return false;
+    }
+    if (aVZ.Magnitude() < Precision::Confusion()) {
+      showError( "Bad OZ vector" );
+      return false;
+    }
+
+    gp_Dir aDirX = gp_Dir(aVX.X(), aVX.Y(), aVX.Z());
+    gp_Dir aDirZ = gp_Dir(aVZ.X(), aVZ.Y(), aVZ.Z());
+
+    if (aDirX.IsParallel(aDirZ, Precision::Angular())) {
+      showError( "Parallel vectors selected" );
+      return false;
+    }
+
+    myWPlane = gp_Ax3(BRep_Tool::Pnt(VX1), aDirZ, aDirX);
+
+  } else if (id == 2) { // by selection from standard (OXY or OYZ, or OZX)
+    gp_Ax2 anAx2;
+
+    if      (aOriginType == 1) anAx2 = gp::XOY();
+    else if (aOriginType == 2) anAx2 = gp::YOZ();
+    else if (aOriginType == 0) anAx2 = gp::ZOX();
+
+    myWPlane = gp_Ax3(anAx2);
+
+  } else {
+    return false;
   }
-  return false;
+
+  myGeomGUI->SetWorkingPlane(myWPlane);
+  myGeomGUI->ActiveWorkingPlane();
+  return true;
 }
 
 //=================================================================================
@@ -425,7 +437,7 @@ void BasicGUI_WorkingPlaneDlg::LineEditReturnPressed()
 void BasicGUI_WorkingPlaneDlg::ActivateThisDialog( )
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   ConstructorsClicked( getConstructorId() );

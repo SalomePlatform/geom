@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -1019,27 +1019,28 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShape
 {
   SetErrorCode(KO);
 
-  if (theObject.IsNull() || theStartLCS.IsNull() || theEndLCS.IsNull()) return NULL;
+  if (theObject.IsNull() || theEndLCS.IsNull()) return NULL;
 
   Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be set in position
 
-  // Get last functions of the arguments
-  Handle(GEOM_Function) aStartLCS = theStartLCS->GetLastFunction();
-  Handle(GEOM_Function) aEndLCS = theEndLCS->GetLastFunction();
-
   //Add a Position function
+  Standard_Integer aType = POSITION_SHAPE;
+  if (theStartLCS.IsNull()) aType = POSITION_SHAPE_FROM_GLOBAL;
+
   Handle(GEOM_Function) aFunction =
-    theObject->AddFunction(GEOMImpl_PositionDriver::GetID(), POSITION_SHAPE);
+    theObject->AddFunction(GEOMImpl_PositionDriver::GetID(), aType);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_PositionDriver::GetID()) return NULL;
 
+  //Set operation arguments
   GEOMImpl_IPosition aTI (aFunction);
   aTI.SetShape(anOriginal);
-  aTI.SetStartLCS(aStartLCS);
-  aTI.SetEndLCS(aEndLCS);
+  aTI.SetEndLCS(theEndLCS->GetLastFunction());
+  if (!theStartLCS.IsNull())
+    aTI.SetStartLCS(theStartLCS->GetLastFunction());
 
   //Compute the Position
   try {
@@ -1072,7 +1073,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
 {
   SetErrorCode(KO);
 
-  if (theObject.IsNull() || theStartLCS.IsNull() || theEndLCS.IsNull()) return NULL;
+  if (theObject.IsNull() || theEndLCS.IsNull()) return NULL;
 
   Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be set in position
@@ -1081,8 +1082,11 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
   Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
 
   //Add a position function
+  Standard_Integer aType = POSITION_SHAPE_COPY;
+  if (theStartLCS.IsNull()) aType = POSITION_SHAPE_FROM_GLOBAL_COPY;
+
   Handle(GEOM_Function) aFunction =
-    aCopy->AddFunction(GEOMImpl_PositionDriver::GetID(), POSITION_SHAPE_COPY);
+    aCopy->AddFunction(GEOMImpl_PositionDriver::GetID(), aType);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
@@ -1090,8 +1094,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
 
   GEOMImpl_IPosition aTI (aFunction);
   aTI.SetShape(anOriginal);
-  aTI.SetStartLCS(theStartLCS->GetLastFunction());
   aTI.SetEndLCS(theEndLCS->GetLastFunction());
+  if (!theStartLCS.IsNull())
+    aTI.SetStartLCS(theStartLCS->GetLastFunction());
 
   //Compute the position
   try {

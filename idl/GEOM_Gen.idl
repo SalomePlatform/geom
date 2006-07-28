@@ -339,7 +339,7 @@ module GEOM
 
     /*!
      *  Create a plane, similar to the existing one, but with another size of representing face.
-     *  \param theFace Referenced plane.
+     *  \param theFace Referenced plane or LCS(Marker).
      *  \param theTrimSize New half size of a side of quadrangle face, representing the plane.
      *  \return New GEOM_Object, containing the created plane.
      */
@@ -616,15 +616,31 @@ module GEOM
 				in double theFactor);
 
     /*!
-     *  Modify the Location of the given object by LCS
+     *  Modify the Location of the given object by LCS.
+     *  \param theObject The object to be displaced.
+     *  \param theStartLCS Coordinate system to perform displacement from it.
+     *                     If \a theStartLCS is NULL, displacement
+     *                     will be performed from global CS.
+     *                     If \a theObject itself is used as \a theStartLCS,
+     *                     its location will be changed to \a theEndLCS.
+     *  \param theEndLCS Coordinate system to perform displacement to it.
+     *  \return theObject.
      */
     GEOM_Object PositionShape (in GEOM_Object theObject,
 			       in GEOM_Object theStartLCS,
 			       in GEOM_Object theEndLCS);
 
     /*!
-     *  Modify the Location of the given object by LCS
-     *  creating its copy before the setting
+     *  Modify the Location of the given object by LCS,
+     *  creating its copy before the setting.
+     *  \param theObject The object to be displaced.
+     *  \param theStartLCS Coordinate system to perform displacement from it.
+     *                     If \a theStartLCS is NULL, displacement
+     *                     will be performed from global CS.
+     *                     If \a theObject itself is used as \a theStartLCS,
+     *                     its location will be changed to \a theEndLCS.
+     *  \param theEndLCS Coordinate system to perform displacement to it.
+     *  \return New GEOM_Object, containing the displaced shape.
      */
     GEOM_Object PositionShapeCopy (in GEOM_Object theObject,
 				   in GEOM_Object theStartLCS,
@@ -1667,7 +1683,7 @@ module GEOM
      *  For format of the description string see the previous method.\n
      *  \param theCommand String, defining the sketcher in local
      *                    coordinates of the working plane.
-     *  \param theWorkingPlane Planar Face of the working plane.
+     *  \param theWorkingPlane Planar Face or LCS(Marker) of the working plane.
      *  \return New GEOM_Object, containing the created wire.
      */
     GEOM_Object MakeSketcherOnPlane (in string theCommand, in GEOM_Object theWorkingPlane);
@@ -1961,6 +1977,22 @@ module GEOM
    */
   interface GEOM_IMeasureOperations : GEOM_IOperations
   {
+    /*!
+     *  Get position (LCS) of theShape.
+     *  \param theShape Shape to calculate position of.
+     *  \param Ox,Oy,Oz Output. Coordinates of shape's location origin.
+     *                  Origin of the LCS is situated at the shape's center of mass.
+     *  \param Zx,Zy,Zz Output. Coordinates of shape's location normal(main) direction.
+     *  \param Xx,Xy,Xz Output. Coordinates of shape's location X direction.
+     *                  Axes of the LCS are obtained from shape's location or,
+     *                  if the shape is a planar face, from position of its plane.
+     *  \return Returns position of the shape through the last nine arguments.
+     */
+    void GetPosition (in GEOM_Object theShape,
+		      out double Ox, out double Oy, out double Oz,
+		      out double Zx, out double Zy, out double Zz,
+		      out double Xx, out double Xy, out double Xz);
+
     /*!
      *  Get summarized length of all wires,
      *  area of surface and volume of the given shape.

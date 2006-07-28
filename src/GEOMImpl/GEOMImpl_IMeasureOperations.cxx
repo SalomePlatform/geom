@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -32,6 +32,7 @@
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
+// OCCT Includes
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
 #include <TFunction_Logbook.hxx>
@@ -62,6 +63,10 @@
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
+#include <Geom_Surface.hxx>
+#include <Geom_Plane.hxx>
+#include <gp_Pln.hxx>
+
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -85,6 +90,102 @@ GEOMImpl_IMeasureOperations::~GEOMImpl_IMeasureOperations()
   MESSAGE("GEOMImpl_IMeasureOperations::~GEOMImpl_IMeasureOperations");
 }
 
+
+//=============================================================================
+/*! Get LCS, corresponding to the given shape.
+ *  Origin of the LCS is situated at the shape's center of mass.
+ *  Axes of the LCS are obtained from shape's location or,
+ *  if the shape is a planar face, from position of its plane.
+ */
+//=============================================================================
+gp_Ax3 GEOMImpl_IMeasureOperations::GetPosition (const TopoDS_Shape& theShape)
+{
+  gp_Ax3 aResult;
+
+  if (theShape.IsNull())
+    return aResult;
+
+  // Axes
+  aResult.Transform(theShape.Location().Transformation());
+  if (theShape.ShapeType() == TopAbs_FACE) {
+    Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(theShape));
+    if (!aGS.IsNull() && aGS->IsKind(STANDARD_TYPE(Geom_Plane))) {
+      Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast(aGS);
+      gp_Pln aPln = aGPlane->Pln();
+      aResult = aPln.Position();
+    }
+  }
+
+  // Origin
+  gp_Pnt aPnt;
+  if (theShape.ShapeType() == TopAbs_VERTEX) {
+    aPnt = BRep_Tool::Pnt(TopoDS::Vertex(theShape));
+  }
+  else {
+    GProp_GProps aSystem;
+    if (theShape.ShapeType() == TopAbs_EDGE || theShape.ShapeType() == TopAbs_WIRE)
+      BRepGProp::LinearProperties(theShape, aSystem);
+    else if (theShape.ShapeType() == TopAbs_FACE || theShape.ShapeType() == TopAbs_SHELL)
+      BRepGProp::SurfaceProperties(theShape, aSystem);
+    else
+      BRepGProp::VolumeProperties(theShape, aSystem);
+
+    aPnt = aSystem.CentreOfMass();
+  }
+
+  aResult.SetLocation(aPnt);
+
+  return aResult;
+}
+
+//=============================================================================
+/*!
+ *  GetPosition
+ */
+//=============================================================================
+void GEOMImpl_IMeasureOperations::GetPosition
+                   (Handle(GEOM_Object) theShape,
+                    Standard_Real& Ox, Standard_Real& Oy, Standard_Real& Oz,
+                    Standard_Real& Zx, Standard_Real& Zy, Standard_Real& Zz,
+                    Standard_Real& Xx, Standard_Real& Xy, Standard_Real& Xz)
+{
+  SetErrorCode(KO);
+
+  //Set default values: global CS
+  Ox = Oy = Oz = Zx = Zy = Xy = Xz = 0.;
+  Zz = Xx = 1.;
+
+  if (theShape.IsNull()) return;
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if (aShape.IsNull()) {
+    SetErrorCode("The Objects has NULL Shape");
+    return;
+  }
+
+  try {
+    gp_Ax3 anAx3 = GetPosition(aShape);
+
+    gp_Pnt anOri = anAx3.Location();
+    gp_Dir aDirZ = anAx3.Direction();
+    gp_Dir aDirX = anAx3.XDirection();
+
+    // Output values
+    anOri.Coord(Ox, Oy, Oz);
+    aDirZ.Coord(Zx, Zy, Zz);
+    aDirX.Coord(Xx, Xy, Xz);
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return;
+  }
+
+  SetErrorCode(OK);
+}
 
 //=============================================================================
 /*!

@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -63,7 +63,7 @@ GEOM_ITransformOperations_i::~GEOM_ITransformOperations_i()
 /*!
  *  TranslateTwoPoints
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPoints
                                              (GEOM::GEOM_Object_ptr theObject,
 					      GEOM::GEOM_Object_ptr thePoint1,
@@ -72,7 +72,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPoints
   //Set a not done flag
   GetOperations()->SetNotDone();
   GEOM::GEOM_Object_var aGEOMObject;
-  
+
   if (thePoint1 == NULL || thePoint2 == NULL || theObject == NULL) return aGEOMObject._retn();
 
   //check if the object is a subshape
@@ -108,7 +108,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPoints
 /*!
  *  TranslateTwoPointsCopy
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPointsCopy
                                              (GEOM::GEOM_Object_ptr theObject,
 					      GEOM::GEOM_Object_ptr thePoint1,
@@ -149,12 +149,12 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPointsCopy
 /*!
  *  TranslateDXDYDZ
  */
-//============================================================================= 
-GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZ (GEOM::GEOM_Object_ptr theObject, 
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZ (GEOM::GEOM_Object_ptr theObject,
 								    CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
 {
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
   GEOM::GEOM_Object_var aGEOMObject ;
 
   if (theObject == NULL) return aGEOMObject._retn();
@@ -183,7 +183,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZ (GEOM::GEOM_O
 /*!
  *  TranslateDXDYDZCopy
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZCopy
                                              (GEOM::GEOM_Object_ptr theObject, CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
 {
@@ -210,18 +210,18 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZCopy
   return GetObject(anObject);
 }
 
- 
+
 //=============================================================================
 /*!
  *  TranslateVector
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVector
                                             (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr theVector)
 {
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
   GEOM::GEOM_Object_var aGEOMObject;
 
   if (theObject == NULL || theVector == NULL) return aGEOMObject._retn();
@@ -243,18 +243,18 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVector
   Handle(GEOM_Object) aVector =
     GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), theVector->GetEntry());
   if (aVector.IsNull()) return aGEOMObject._retn();
-  
-  //Perform the translation
-  GetOperations()->TranslateVector(anObject, aVector);   
 
-  return aGEOMObject._retn();  
+  //Perform the translation
+  GetOperations()->TranslateVector(anObject, aVector);
+
+  return aGEOMObject._retn();
 }
- 
+
 //=============================================================================
 /*!
  *  TranslateVectorCopy
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorCopy
                                             (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr theVector)
@@ -262,7 +262,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorCopy
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   if (theObject == NULL || theVector == NULL) return aGEOMObject._retn();
 
@@ -275,13 +275,13 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorCopy
   Handle(GEOM_Object) aVector =
     GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), theVector->GetEntry());
   if (aVector.IsNull()) return aGEOMObject._retn();
-  
+
   //Perform the translation
-  Handle(GEOM_Object) anObject = GetOperations()->TranslateVectorCopy(aBasicObject, aVector);   
+  Handle(GEOM_Object) anObject = GetOperations()->TranslateVectorCopy(aBasicObject, aVector);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);  
+  return GetObject(anObject);
 }
 
 
@@ -289,13 +289,13 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorCopy
 /*!
  *  Rotate
  */
-//============================================================================= 	
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::Rotate (GEOM::GEOM_Object_ptr theObject,
 							   GEOM::GEOM_Object_ptr theAxis,
 							   CORBA::Double theAngle)
 {
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
   GEOM::GEOM_Object_var aGEOMObject;
 
   if (theObject == NULL || theAxis == NULL) return aGEOMObject._retn();
@@ -316,18 +316,18 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::Rotate (GEOM::GEOM_Object_ptr
   Handle(GEOM_Object) anAxis =
     GetOperations()->GetEngine()->GetObject(theAxis->GetStudyID(), theAxis->GetEntry());
   if (anAxis.IsNull()) return aGEOMObject._retn();
-  
-  //Perform the rotation
-  GetOperations()->Rotate(anObject, anAxis, theAngle);   
 
-  return aGEOMObject._retn();  
+  //Perform the rotation
+  GetOperations()->Rotate(anObject, anAxis, theAngle);
+
+  return aGEOMObject._retn();
 }
 
 //=============================================================================
 /*!
  *  RotateCopy
  */
-//============================================================================= 					   
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateCopy (GEOM::GEOM_Object_ptr theObject,
 							       GEOM::GEOM_Object_ptr theAxis,
 							       CORBA::Double theAngle)
@@ -335,7 +335,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateCopy (GEOM::GEOM_Object
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   if (theObject == NULL || theAxis == NULL) return aGEOMObject._retn();
 
@@ -348,13 +348,13 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateCopy (GEOM::GEOM_Object
   Handle(GEOM_Object) anAxis =
     GetOperations()->GetEngine()->GetObject(theAxis->GetStudyID(), theAxis->GetEntry());
   if (anAxis.IsNull()) return aGEOMObject._retn();
-  
+
   //Perform the rotation
-  Handle(GEOM_Object) anObject = GetOperations()->RotateCopy(aBasicObject, anAxis, theAngle);   
+  Handle(GEOM_Object) anObject = GetOperations()->RotateCopy(aBasicObject, anAxis, theAngle);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);  
+  return GetObject(anObject);
 }
 
 
@@ -362,7 +362,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateCopy (GEOM::GEOM_Object
 /*!
  *  MirrorPlane
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlane
                                             (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr thePlane)
@@ -370,7 +370,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlane
   GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   if (theObject == NULL || thePlane == NULL) return aGEOMObject._retn();
 
@@ -391,16 +391,16 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlane
   if (aPlane.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
-  GetOperations()->MirrorPlane(anObject, aPlane);   
+  GetOperations()->MirrorPlane(anObject, aPlane);
 
-  return aGEOMObject._retn();  
+  return aGEOMObject._retn();
 }
- 
+
 //=============================================================================
 /*!
  *  MirrorPlaneCopy
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlaneCopy
                                             (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr thePlane)
@@ -408,7 +408,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlaneCopy
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   if (theObject == NULL || thePlane == NULL) return aGEOMObject._retn();
 
@@ -421,20 +421,20 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlaneCopy
   Handle(GEOM_Object) aPlane =
     GetOperations()->GetEngine()->GetObject(thePlane->GetStudyID(), thePlane->GetEntry());
   if (aPlane.IsNull()) return aGEOMObject._retn();
-  
+
   //Perform the mirror
-  Handle(GEOM_Object) anObject = GetOperations()->MirrorPlaneCopy(aBasicObject, aPlane);   
+  Handle(GEOM_Object) anObject = GetOperations()->MirrorPlaneCopy(aBasicObject, aPlane);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);  
+  return GetObject(anObject);
 }
 
 //=============================================================================
 /*!
  *  MirrorAxis
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxis
                                             (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr theAxis)
@@ -442,7 +442,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxis
   GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   if (theObject == NULL || theAxis == NULL) return aGEOMObject._retn();
 
@@ -463,16 +463,16 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxis
   if (aAxis.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
-  GetOperations()->MirrorAxis(anObject, aAxis);   
+  GetOperations()->MirrorAxis(anObject, aAxis);
 
-  return aGEOMObject._retn();  
+  return aGEOMObject._retn();
 }
- 
+
 //=============================================================================
 /*!
  *  MirrorAxisCopy
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxisCopy
                                             (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr theAxis)
@@ -480,7 +480,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxisCopy
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   if (theObject == NULL || theAxis == NULL) return aGEOMObject._retn();
 
@@ -493,20 +493,20 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxisCopy
   Handle(GEOM_Object) aAxis =
     GetOperations()->GetEngine()->GetObject(theAxis->GetStudyID(), theAxis->GetEntry());
   if (aAxis.IsNull()) return aGEOMObject._retn();
-  
+
   //Perform the mirror
-  Handle(GEOM_Object) anObject = GetOperations()->MirrorAxisCopy(aBasicObject, aAxis);   
+  Handle(GEOM_Object) anObject = GetOperations()->MirrorAxisCopy(aBasicObject, aAxis);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);  
+  return GetObject(anObject);
 }
 
 //=============================================================================
 /*!
  *  MirrorPoint
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPoint
                                             (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr thePoint)
@@ -514,7 +514,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPoint
   GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   if (theObject == NULL || thePoint == NULL) return aGEOMObject._retn();
 
@@ -535,16 +535,16 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPoint
   if (aPoint.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
-  GetOperations()->MirrorPoint(anObject, aPoint);   
+  GetOperations()->MirrorPoint(anObject, aPoint);
 
-  return aGEOMObject._retn();  
+  return aGEOMObject._retn();
 }
- 
+
 //=============================================================================
 /*!
  *  MirrorPointCopy
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPointCopy
                                             (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr thePoint)
@@ -552,7 +552,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPointCopy
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   if (theObject == NULL || thePoint == NULL) return aGEOMObject._retn();
 
@@ -565,13 +565,13 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPointCopy
   Handle(GEOM_Object) aPoint =
     GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), thePoint->GetEntry());
   if (aPoint.IsNull()) return aGEOMObject._retn();
-  
+
   //Perform the mirror
-  Handle(GEOM_Object) anObject = GetOperations()->MirrorPointCopy(aBasicObject, aPoint);   
+  Handle(GEOM_Object) anObject = GetOperations()->MirrorPointCopy(aBasicObject, aPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);  
+  return GetObject(anObject);
 }
 
 
@@ -579,7 +579,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPointCopy
 /*!
  *  OffsetShape
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShape
                                              (GEOM::GEOM_Object_ptr theObject,
 					      CORBA::Double theOffset)
@@ -613,7 +613,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShape
 /*!
  *  OffsetShapeCopy
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShapeCopy
                                              (GEOM::GEOM_Object_ptr theObject,
 					      CORBA::Double theOffset)
@@ -643,7 +643,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShapeCopy
 /*!
  *  ScaleShape
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShape
                                              (GEOM::GEOM_Object_ptr theObject,
 					      GEOM::GEOM_Object_ptr thePoint,
@@ -682,7 +682,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShape
 /*!
  *  ScaleShapeCopy
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeCopy
                                              (GEOM::GEOM_Object_ptr theObject,
 					      GEOM::GEOM_Object_ptr thePoint,
@@ -718,7 +718,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeCopy
 /*!
  *  PositionShape
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShape
                                              (GEOM::GEOM_Object_ptr theObject,
 					      GEOM::GEOM_Object_ptr theStartLCS,
@@ -729,7 +729,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShape
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theObject == NULL || theStartLCS == NULL || theEndLCS == NULL)
+  if (theObject == NULL || theEndLCS == NULL)
     return aGEOMObject._retn();
 
   //check if the object is a subshape
@@ -743,10 +743,12 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShape
     GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
   if (anObject.IsNull()) return aGEOMObject._retn();
 
-  //Get the Start LCS
-  Handle(GEOM_Object) aStartLCS =
-    GetOperations()->GetEngine()->GetObject(theStartLCS->GetStudyID(), theStartLCS->GetEntry());
-  if (aStartLCS.IsNull()) return aGEOMObject._retn();
+  //Get the Start LCS (may be NULL for positioning from global LCS)
+  Handle(GEOM_Object) aStartLCS = NULL;
+  if (theStartLCS != NULL && !CORBA::is_nil(theStartLCS)) {
+    aStartLCS = GetOperations()->GetEngine()->GetObject(theStartLCS->GetStudyID(), theStartLCS->GetEntry());
+    if (aStartLCS.IsNull()) return aGEOMObject._retn();
+  }
 
   //Get the End LCS
   Handle(GEOM_Object) aEndLCS =
@@ -763,7 +765,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShape
 /*!
  *  PositionShapeCopy
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShapeCopy
                                              (GEOM::GEOM_Object_ptr theObject,
 					      GEOM::GEOM_Object_ptr theStartLCS,
@@ -774,7 +776,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShapeCopy
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theObject == NULL || theStartLCS == NULL || theEndLCS == NULL)
+  if (theObject == NULL || theEndLCS == NULL)
     return aGEOMObject._retn();
 
   //Get the basic object
@@ -782,10 +784,12 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShapeCopy
     GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
-  //Get the Start LCS
-  Handle(GEOM_Object) aStartLCS =
-    GetOperations()->GetEngine()->GetObject(theStartLCS->GetStudyID(), theStartLCS->GetEntry());
-  if (aStartLCS.IsNull()) return aGEOMObject._retn();
+  //Get the Start LCS (may be NULL for positioning from global LCS)
+  Handle(GEOM_Object) aStartLCS = NULL;
+  if (theStartLCS != NULL && !CORBA::is_nil(theStartLCS)) {
+    aStartLCS = GetOperations()->GetEngine()->GetObject(theStartLCS->GetStudyID(), theStartLCS->GetEntry());
+    if (aStartLCS.IsNull()) return aGEOMObject._retn();
+  }
 
   //Get the End LCS
   Handle(GEOM_Object) aEndLCS =
@@ -805,14 +809,14 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShapeCopy
 /*!
  *  MultiTranslate1D
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate1D
                            (GEOM::GEOM_Object_ptr theObject,
 			    GEOM::GEOM_Object_ptr theVector,
 			    CORBA::Double theStep, CORBA::Long theNbTimes)
 {
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -830,27 +834,27 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate1D
 
   //Perform the translation
   Handle(GEOM_Object) anObject =
-    GetOperations()->Translate1D(aBasicObject, aVector, theStep, theNbTimes);   
+    GetOperations()->Translate1D(aBasicObject, aVector, theStep, theNbTimes);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
-  return GetObject(anObject); 
+  return GetObject(anObject);
 }
 
 //=============================================================================
 /*!
  *  MultiTranslate2D
  */
-//============================================================================= 
-GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate2D (GEOM::GEOM_Object_ptr theObject, 
-								     GEOM::GEOM_Object_ptr theVector1, 
-								     CORBA::Double theStep1, 
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate2D (GEOM::GEOM_Object_ptr theObject,
+								     GEOM::GEOM_Object_ptr theVector1,
+								     CORBA::Double theStep1,
 								     CORBA::Long theNbTimes1,
-								     GEOM::GEOM_Object_ptr theVector2, 
-								     CORBA::Double theStep2, 
+								     GEOM::GEOM_Object_ptr theVector2,
+								     CORBA::Double theStep2,
 								     CORBA::Long theNbTimes2)
 {
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -873,23 +877,23 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate2D (GEOM::GEOM_
 
   //Perform the translation
   Handle(GEOM_Object) anObject = GetOperations()->Translate2D
-    (aBasicObject, aVector1, theStep1, theNbTimes1, aVector2, theStep2, theNbTimes2);   
+    (aBasicObject, aVector1, theStep1, theNbTimes1, aVector2, theStep2, theNbTimes2);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
-  return GetObject(anObject); 
+  return GetObject(anObject);
 }
 
 //=============================================================================
 /*!
  *  MultiRotate1D
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate1D (GEOM::GEOM_Object_ptr theObject,
 								  GEOM::GEOM_Object_ptr theVector,
 								  CORBA::Long theNbTimes)
 {
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -906,26 +910,26 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate1D (GEOM::GEOM_Obj
   if (aVector.IsNull()) return aGEOMObject._retn();
 
   //Perform the rotation
-  Handle(GEOM_Object) anObject = GetOperations()->Rotate1D(aBasicObject, aVector, theNbTimes);   
+  Handle(GEOM_Object) anObject = GetOperations()->Rotate1D(aBasicObject, aVector, theNbTimes);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
-  return GetObject(anObject);  
+  return GetObject(anObject);
 }
 
 //=============================================================================
 /*!
  *  MultiRotate2D
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate2D (GEOM::GEOM_Object_ptr theObject,
 								  GEOM::GEOM_Object_ptr theVector,
-								  CORBA::Double theAngle, 
-								  CORBA::Long theNbTimes1, 
-								  CORBA::Double theStep, 
+								  CORBA::Double theAngle,
+								  CORBA::Long theNbTimes1,
+								  CORBA::Double theStep,
 								  CORBA::Long theNbTimes2)
 {
   //Set a not done flag
-  GetOperations()->SetNotDone(); 
+  GetOperations()->SetNotDone();
 
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -943,8 +947,8 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate2D (GEOM::GEOM_Obj
 
   //Perform the rotation
   Handle(GEOM_Object) anObject = GetOperations()->Rotate2D
-    (aBasicObject, aVector, theAngle, theNbTimes1, theStep, theNbTimes2);   
+    (aBasicObject, aVector, theAngle, theNbTimes1, theStep, theNbTimes2);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
-  return GetObject(anObject);  
+  return GetObject(anObject);
 }
