@@ -42,9 +42,9 @@ class GEOM_Swig
   int  getIndexTopology(const char *SubEntry, const char *Entry);
   const char* getShapeTypeString(const char *Entry);
 
-  void setDisplayMode(const char* Entry, int mode);
-  void setColor(const char* Entry, int red, int green, int blue);
-  void setTransparency(const char* Entry, float transp);
+  void setDisplayMode(const char* Entry, int mode, bool isUpdated =true);
+  void setColor(const char* Entry, int red, int green, int blue, bool isUpdated =true);
+  void setTransparency(const char* Entry, float transp, bool isUpdated =true);
   void setDeflection(const char* Entry, float deflect);
   const char* getShapeTypeIcon(const char *Ior);
   

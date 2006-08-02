@@ -347,14 +347,15 @@ const char* GEOM_Swig::getShapeTypeIcon(const char* IOR)
   return "None";
 }
 
-void GEOM_Swig::setDisplayMode(const char* theEntry, int theMode)
+void GEOM_Swig::setDisplayMode(const char* theEntry, int theMode, bool isUpdated)
 {
   class TEvent: public SALOME_Event {
     std::string myEntry;
     int myMode;
+    bool myUpdateViewer;
   public:
-    TEvent(const char* theEntryArg, int theModeArg):
-      myEntry(theEntryArg), myMode(theModeArg)
+    TEvent(const char* theEntryArg, int theModeArg, bool theUpdated):
+      myEntry(theEntryArg), myMode(theModeArg), myUpdateViewer(theUpdated)
     {}
     virtual void Execute() {
       SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
@@ -366,29 +367,31 @@ void GEOM_Swig::setDisplayMode(const char* theEntry, int theMode)
       if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)) {
 	SVTK_View* aView = aViewWindow->getView();
 	aView->SetDisplayMode(anIO, myMode);
-	aView->Repaint();
+	if (myUpdateViewer)
+	  aView->Repaint();
       }
       else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
 	SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
 	if (soccViewer)
-	  soccViewer->switchRepresentation(anIO, myMode);
+	  soccViewer->switchRepresentation(anIO, myMode, myUpdateViewer);
       }
     }
   };
 
-  ProcessVoidEvent(new TEvent (theEntry, theMode));
+  ProcessVoidEvent(new TEvent (theEntry, theMode, isUpdated));
 }
 
-void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue)
+void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, bool isUpdated)
 {
   class TEvent: public SALOME_Event {
     std::string myEntry;
     int myRed;
     int myGreen;
     int myBlue;
+    bool myUpdateViewer;
   public:
-    TEvent(const char* theEntryArg, int theR, int theG, int theB):
-      myEntry(theEntryArg), myRed(theR), myGreen(theG), myBlue(theB)
+    TEvent(const char* theEntryArg, int theR, int theG, int theB, bool theUpdated):
+      myEntry(theEntryArg), myRed(theR), myGreen(theG), myBlue(theB), myUpdateViewer(theUpdated)
     {}
     virtual void Execute() {
       SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
@@ -401,7 +404,8 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue)
 	SVTK_View* aView = aViewWindow->getView();
         QColor aColor (myRed, myGreen, myBlue);
         aView->SetColor(anIO, aColor);
-	aView->Repaint();
+	if (myUpdateViewer)
+	  aView->Repaint();
       } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
 	Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
 	AIS_ListOfInteractive List;
@@ -417,24 +421,26 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue)
 	    if (ite.Value()->IsKind(STANDARD_TYPE(GEOM_AISShape)))
 	      Handle(GEOM_AISShape)::DownCast(ite.Value())->SetShadingColor(CSFColor);
 	    ite.Value()->Redisplay(Standard_True);
-	    occViewer->update();
+	    if (myUpdateViewer)
+	      occViewer->update();
 	    break;
 	  }
 	}
       }
     }
   };
-  ProcessVoidEvent(new TEvent(theEntry, red, green, blue));
+  ProcessVoidEvent(new TEvent(theEntry, red, green, blue, isUpdated));
 }
 
-void GEOM_Swig::setTransparency(const char* theEntry, float transp)
+void GEOM_Swig::setTransparency(const char* theEntry, float transp, bool isUpdated)
 {
   class TEvent: public SALOME_Event {
     std::string myEntry;
     float myParam;
+    bool myUpdateViewer;
   public:
-    TEvent(const char* theEntryArg, float theParam):
-      myEntry(theEntryArg), myParam(theParam)
+    TEvent(const char* theEntryArg, float theParam, bool theUpdated):
+      myEntry(theEntryArg), myParam(theParam), myUpdateViewer(theUpdated)
     {}
     virtual void Execute() {
       SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
@@ -446,16 +452,17 @@ void GEOM_Swig::setTransparency(const char* theEntry, float transp)
       if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)) {
 	SVTK_View* aView = aViewWindow->getView();
 	aView->SetTransparency(anIO, myParam);
-	aView->Repaint();
+	if (myUpdateViewer)
+	  aView->Repaint();
       } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
 	SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
 	if (soccViewer)
-	  soccViewer->setTransparency(anIO, myParam);
+	  soccViewer->setTransparency(anIO, myParam, myUpdateViewer);
       }
     }
   };
 
-  ProcessVoidEvent(new TEvent (theEntry, transp));
+  ProcessVoidEvent(new TEvent (theEntry, transp, isUpdated));
 }
 
 
