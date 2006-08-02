@@ -43,6 +43,7 @@
 
 #define COORD_MIN -1e+15
 #define COORD_MAX +1e+15
+#define MAX_NUMBER 100000
 
 //=================================================================================
 // class    : DlgRef_SpinBox

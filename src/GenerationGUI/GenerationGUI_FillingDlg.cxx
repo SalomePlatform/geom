@@ -124,10 +124,10 @@ void GenerationGUI_FillingDlg::Init()
   double SpecificStep1 = 1;
   double SpecificStep2 = 0.0001;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_1->RangeStepAndValidator(2.0, 999.999, SpecificStep1, 3);
+  GroupPoints->SpinBox_1->RangeStepAndValidator(2.0, MAX_NUMBER, SpecificStep1, 3);
   GroupPoints->SpinBox_2->RangeStepAndValidator(0.00001, 10000.0, SpecificStep2, 5);
-  GroupPoints->SpinBox_3->RangeStepAndValidator(1.0, 999.999, SpecificStep1, 3);
-  GroupPoints->SpinBox_4->RangeStepAndValidator(1.0, 999.999, SpecificStep1, 3);
+  GroupPoints->SpinBox_3->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep1, 3);
+  GroupPoints->SpinBox_4->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep1, 3);
   GroupPoints->SpinBox_5->RangeStepAndValidator(0.00001, 10000.0, SpecificStep2, 5);
 
   GroupPoints->SpinBox_1->SetValue(myMinDeg);

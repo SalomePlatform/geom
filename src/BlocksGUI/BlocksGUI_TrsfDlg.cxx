@@ -143,7 +143,8 @@ void BlocksGUI_TrsfDlg::Init()
   double SpecificStep = 1.0;
   QMap<int, DlgRef_SpinBox*>::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
-    anIter.data()->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
+    //anIter.data()->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
+    anIter.data()->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep, 3);
   }
 
   // signals and slots connections
