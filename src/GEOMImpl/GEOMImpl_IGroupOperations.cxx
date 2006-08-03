@@ -196,20 +196,18 @@ void GEOMImpl_IGroupOperations::RemoveObject (Handle(GEOM_Object) theGroup, int 
     else {
       aNewSeq = new TColStd_HArray1OfInteger(1, aLength-1);
       Standard_Boolean isFound = Standard_False;
-      for(Standard_Integer i = 1, k=1; i<=aLength; i++) {
-	if(i == aLength && !isFound) {
-	  SetErrorCode(NOT_EXISTS);
-	  return; 
-	}
-	if(aSeq->Value(i) == theSubShapeID) {
+      for (Standard_Integer i = 1, k = 1; i <= aLength; i++) {
+	if (aSeq->Value(i) == theSubShapeID) {
 	  isFound = Standard_True;
-	  continue;
-	}
-	aNewSeq->SetValue(k, aSeq->Value(i));
-	k++;
+	} else {
+          if (k < aLength) { // this check is to avoid sequence <aNewSeq> overflow
+            aNewSeq->SetValue(k, aSeq->Value(i));
+            k++;
+          }
+        }
       }
 
-      if(!isFound) {
+      if (!isFound) {
 	SetErrorCode(NOT_EXISTS);
 	return; 
       }
