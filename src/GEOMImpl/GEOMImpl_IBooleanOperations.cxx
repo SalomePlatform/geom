@@ -251,6 +251,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
     if (theMaterials.IsNull()) {
       Handle(TColStd_HArray1OfInteger) aMaterials =
         new TColStd_HArray1OfInteger (1, aShapesSeq->Length());
+      aMaterials->Init(0);
       aCI.SetMaterials(aMaterials);
     } else {
       aCI.SetMaterials(theMaterials);
