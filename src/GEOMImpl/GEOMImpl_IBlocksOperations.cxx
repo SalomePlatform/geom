@@ -934,12 +934,6 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByEdges
     SetErrorCode("Block or compound is null");
     return NULL;
   }
-  if (aBlockOrComp.ShapeType() != TopAbs_SOLID &&
-      aBlockOrComp.ShapeType() != TopAbs_COMPOUND &&
-      aBlockOrComp.ShapeType() != TopAbs_COMPSOLID) {
-    SetErrorCode("Shape is neither a block, nor a compound of blocks");
-    return NULL;
-  }
 
   TopoDS_Shape anArg1 = theEdge1->GetValue();
   TopoDS_Shape anArg2 = theEdge2->GetValue();
@@ -1125,12 +1119,6 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
   TopoDS_Shape aBlockOrComp = theShape->GetValue();
   if (aBlockOrComp.IsNull()) {
     SetErrorCode("Block or compound is null");
-    return NULL;
-  }
-  if (aBlockOrComp.ShapeType() != TopAbs_SOLID &&
-      aBlockOrComp.ShapeType() != TopAbs_COMPOUND &&
-      aBlockOrComp.ShapeType() != TopAbs_COMPSOLID) {
-    SetErrorCode("Shape is neither a block, nor a compound of blocks");
     return NULL;
   }
 
@@ -1320,12 +1308,6 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByNormale
   TopoDS_Shape aBlockOrComp = theShape->GetValue();
   if (aBlockOrComp.IsNull()) {
     SetErrorCode("Block or compound is null");
-    return NULL;
-  }
-  if (aBlockOrComp.ShapeType() != TopAbs_SOLID &&
-      aBlockOrComp.ShapeType() != TopAbs_COMPOUND &&
-      aBlockOrComp.ShapeType() != TopAbs_COMPSOLID) {
-    SetErrorCode("Shape is neither a block, nor a compound of blocks");
     return NULL;
   }
 
