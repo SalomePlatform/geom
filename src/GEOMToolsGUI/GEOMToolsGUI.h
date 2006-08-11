@@ -30,16 +30,23 @@
 #define GEOMTOOLSGUI_H
 
 #include "GEOMGUI.h"
+#include "GEOM_Displayer.h"
+
+#include <SALOME_Prs.h>
 
 #include <SALOMEDSClient.hxx>
 #include <SALOME_ListIO.hxx>
 
 #include <CORBA.h>
+
+#include <qptrlist.h>
+
 #if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
 #define GEOMTOOLSGUI_WNT_EXPORT __declspec( dllexport )
 #else
 #define GEOMTOOLSGUI_WNT_EXPORT
 #endif
+
 //=================================================================================
 // class    : GEOMToolsGUI
 // purpose  :
@@ -76,6 +83,12 @@ private:
   // if objects belong to different Components, a NULL string is returned.
   QString getParentComponent( _PTR( Study ), const SALOME_ListIO& );
   QString getParentComponent( _PTR(SObject) );
+
+  // Recursive deletion of object with children
+  void RemoveObjectWithChildren(_PTR(SObject) obj,
+				_PTR(Study) aStudy,
+				QPtrList<SALOME_View> views,
+				GEOM_Displayer* disp);
 };
 
 #endif

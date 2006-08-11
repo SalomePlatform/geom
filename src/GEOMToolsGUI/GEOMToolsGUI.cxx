@@ -227,7 +227,8 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 void GEOMToolsGUI::OnEditDelete()
 {
   SALOME_ListIO selected;
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( app ) {
     LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
     SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
@@ -300,42 +301,7 @@ void GEOMToolsGUI::OnEditDelete()
 	  if ( !strcmp( obj->GetIOR().c_str(), geomIOR ) )
 	    continue;
 
-	  // iterate through all children of obj, find IOR attributes on children
-	  // and remove shapes that correspond to these IORs
-	  for (_PTR(ChildIterator) it (aStudy->NewChildIterator(obj)); it->More(); it->Next()) {
-	    _PTR(SObject) child (it->Value());
-	    if (child->FindAttribute(anAttr, "AttributeIOR")) {
-	      _PTR(AttributeIOR) anIOR (anAttr);
-
-	      // Delete child( s ) shape in Client :
-	      const TCollection_AsciiString ASCior ((char*)anIOR->Value().c_str());
-	      getGeometryGUI()->GetShapeReader().RemoveShapeFromBuffer(ASCior);
-
-              CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(child);
-              GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow(corbaObj);
-              if (!CORBA::is_nil(geomObj)) {
-                for (view = views.first(); view; view = views.next()) {
-		  disp->Erase(geomObj, true, view);
-                }
-              }
-	    }
-	  } // for ( children of obj )
-
-	  // Erase main graphical object
-	  for ( view = views.first(); view; view = views.next() )
-	    disp->Erase( io, true, view );
-
-	  // Delete main shape in Client :
-	  if ( obj->FindAttribute( anAttr, "AttributeIOR" ) ) {
-	    _PTR(AttributeIOR) anIOR( anAttr );
-	    const TCollection_AsciiString ASCIor( (char*)anIOR->Value().c_str() );
-	    getGeometryGUI()->GetShapeReader().RemoveShapeFromBuffer( ASCIor );
-	  }
-
-          CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(obj);
-	  GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-	  if ( !CORBA::is_nil( geomObj ) )
-	    GeometryGUI::GetGeomGen()->RemoveObject( geomObj );
+          RemoveObjectWithChildren(obj, aStudy, views, disp);
 
 	  // Remove objects from Study
 	  aStudyBuilder->RemoveObject( obj );
@@ -456,7 +422,7 @@ bool GEOMToolsGUI::Import()
       // Trying to detect file type
       QFileInfo aFileInfo( fileName );
       QString aPossibleType = (aFileInfo.extension(false)).upper() ;
-      
+
       if ( (aMap.values()).contains(aPossibleType) )
 	fileType = aPossibleType;
     }
@@ -647,6 +613,45 @@ QString GEOMToolsGUI::getParentComponent( _PTR( SObject ) obj )
     }
   }
   return QString();
+}
+
+//=====================================================================================
+// function : RemoveObjectWithChildren
+// purpose  : to be used by OnEditDelete() method
+//=====================================================================================
+void GEOMToolsGUI::RemoveObjectWithChildren(_PTR(SObject) obj,
+                                            _PTR(Study) aStudy,
+                                            QPtrList<SALOME_View> views,
+                                            GEOM_Displayer* disp)
+{
+  // iterate through all children of obj
+  for (_PTR(ChildIterator) it (aStudy->NewChildIterator(obj)); it->More(); it->Next()) {
+    _PTR(SObject) child (it->Value());
+    RemoveObjectWithChildren(child, aStudy, views, disp);
+  }
+
+  // erase object and remove it from engine
+  _PTR(GenericAttribute) anAttr;
+  if (obj->FindAttribute(anAttr, "AttributeIOR")) {
+    _PTR(AttributeIOR) anIOR (anAttr);
+
+    // Delete shape in Client
+    const TCollection_AsciiString ASCIor ((char*)anIOR->Value().c_str());
+    getGeometryGUI()->GetShapeReader().RemoveShapeFromBuffer(ASCIor);
+
+    CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(obj);
+    GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+    if (!CORBA::is_nil(geomObj)) {
+      // Erase graphical object
+      SALOME_View* view = views.first();
+      for (; view; view = views.next()) {
+        disp->Erase(geomObj, true, view);
+      }
+
+      // Remove object from Engine
+      GeometryGUI::GetGeomGen()->RemoveObject( geomObj );
+    }
+  }
 }
 
 //=====================================================================================
