@@ -47,13 +47,7 @@
 
   PyAllowThreadsGuard guard;
 
-  try {
-    $action
-  }
-  catch(...) {
-    PyErr_SetString(PyExc_RuntimeError,"Unknown exception caught");
-    return NULL;
-  }
+  $action
 }
 
 class GEOM_Swig
