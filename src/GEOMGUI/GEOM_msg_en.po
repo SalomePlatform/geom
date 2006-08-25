@@ -2935,6 +2935,21 @@ msgstr "General"
 msgid "PREF_SHADING_COLOR"
 msgstr "Default shading color"
 
+msgid "PREF_WIREFRAME_COLOR"
+msgstr "Default wireframe color"
+
+msgid "PREF_FACE_COLOR"
+msgstr "Color of faces"
+
+msgid "PREF_EDGE_WIRE_COLOR"
+msgstr "Color of edges and wires"
+
+msgid "PREF_POINT_COLOR"
+msgstr "Color of points"
+
+msgid "PREF_ISOS_COLOR"
+msgstr "Color of isolines"
+
 msgid "PREF_STEP_VALUE"
 msgstr "Step value for spin boxes"
 

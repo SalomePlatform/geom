@@ -1647,18 +1647,31 @@ void GeometryGUI::createPreferences()
   int tabId = addPreference( tr( "PREF_TAB_SETTINGS" ) );
 
   int genGroup = addPreference( tr( "PREF_GROUP_GENERAL" ), tabId );
-  addPreference( tr( "PREF_SHADING_COLOR" ), genGroup,
-		 LightApp_Preferences::Color, "Geometry", "shading_color" );
-  int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
-			    LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
+  setPreferenceProperty( genGroup, "columns", 1 );
+
   int dispmode = addPreference( tr( "PREF_DISPLAY_MODE" ), genGroup,
 			    LightApp_Preferences::Selector, "Geometry", "display_mode" );
 
-  setPreferenceProperty( genGroup, "columns", 1 );
-
-  setPreferenceProperty( step, "min", 0.001 );
-  setPreferenceProperty( step, "max", 10000 );
-  setPreferenceProperty( step, "precision", 3 );
+  addPreference( tr( "PREF_SHADING_COLOR" ), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "shading_color" );
+  
+  addPreference( tr( "PREF_WIREFRAME_COLOR" ), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "wireframe_color" );
+  
+  addPreference( tr( "PREF_FACE_COLOR" ), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "face_color" );
+  
+  addPreference( tr( "PREF_EDGE_WIRE_COLOR"), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "edge_wire_color" );
+  
+  addPreference( tr( "PREF_POINT_COLOR"), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "point_color" );
+  
+  addPreference( tr( "PREF_ISOS_COLOR" ), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "isos_color" );
+  
+  int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
+			    LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
 
   // Set property for default display mode
   QStringList aModesList;
@@ -1671,6 +1684,12 @@ void GeometryGUI::createPreferences()
   
   setPreferenceProperty( dispmode, "strings", aModesList );
   setPreferenceProperty( dispmode, "indexes", anIndexesList );
+  
+  // Set property for step value for spinboxes
+  setPreferenceProperty( step, "min", 0.001 );
+  setPreferenceProperty( step, "max", 10000 );
+  setPreferenceProperty( step, "precision", 3 );
+  
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )

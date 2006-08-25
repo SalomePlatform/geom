@@ -69,6 +69,7 @@
 // OCCT Includes
 #include <AIS_Drawer.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
+#include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
 #include <StdSelect_TypeOfEdge.hxx>
@@ -530,6 +531,53 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             AISShape->Attributes()->SetPointAspect( anAspect );
           }
         }
+	else
+	  {
+	    SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+
+	    // Set color for iso lines
+	    QColor col = aResMgr->colorValue( "Geometry", "isos_color", QColor(int(0.5*255), int(0.5*255), int(0.5*255)) );
+	    Quantity_Color aColor = SalomeApp_Tools::color( col );
+
+	    Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
+            anAspect->SetColor( aColor );
+            AISShape->Attributes()->SetUIsoAspect( anAspect );
+
+	    anAspect = AISShape->Attributes()->VIsoAspect();
+            anAspect->SetColor( aColor );
+            AISShape->Attributes()->SetVIsoAspect( anAspect );
+	    
+	    if ( myShape.ShapeType() == TopAbs_FACE )
+	      {
+		col = aResMgr->colorValue( "Geometry", "face_color", QColor( 0, 255, 0 ) );
+		aColor = SalomeApp_Tools::color( col );
+
+		AISShape->SetColor( aColor );
+	      }
+	    else if ( myShape.ShapeType() == TopAbs_EDGE || myShape.ShapeType() == TopAbs_WIRE )
+	      {
+		col = aResMgr->colorValue( "Geometry", "edge_wire_color", QColor( 255, 0, 0 ) );
+		aColor = SalomeApp_Tools::color( col );
+		
+		AISShape->SetColor( aColor );
+	      }
+	    else if ( myShape.ShapeType() == TopAbs_VERTEX )
+	      {
+		col = aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) );
+		aColor = SalomeApp_Tools::color( col );
+		
+		Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
+		anAspect->SetColor( aColor );
+		AISShape->Attributes()->SetPointAspect( anAspect );
+	      }
+	    else
+	      {
+		col = aResMgr->colorValue( "Geometry", "wireframe_color", QColor( 255, 255, 0 ) );
+		aColor = SalomeApp_Tools::color( col );
+		
+		AISShape->SetColor( aColor );
+	      }
+	  }
 
         if ( HasWidth() )
           AISShape->SetWidth( GetWidth() );
