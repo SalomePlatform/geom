@@ -31,10 +31,16 @@ import GEOM
 
 g=None
 step = 0
-while step < 50 and g == None:
+sleeping_time = 0.01
+sleeping_time_max = 1.0
+while 1:
     g = lcc.FindOrLoadComponent("FactoryServer", "GEOM")
+    if g is not None: break
     step = step + 1
-    time.sleep(4)
+    if step > 100: break
+    time.sleep(sleeping_time)
+    sleeping_time = max(sleeping_time_max, 2*sleeping_time)
+    pass
 geom = g._narrow( GEOM.GEOM_Gen )
 
 myBuilder = None
