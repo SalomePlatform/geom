@@ -10,8 +10,13 @@
   </section>
   <section name="Geometry" >
     <!-- Other module preferences -->
-    <parameter name="SettingsGeomStep" value="10" />
-    <parameter name="display_mode"     value="0"  />
-    <parameter name="shading_color"    value="255, 255, 0" />
+    <parameter name="SettingsGeomStep"    value="10" />
+    <parameter name="display_mode"        value="0"  />
+    <parameter name="shading_color"       value="255, 255, 0" />
+    <parameter name="wireframe_color"     value="255, 255, 0" />
+    <parameter name="face_color"          value="0, 255, 0" />
+    <parameter name="edge_wire_color"     value="255, 0, 0" />
+    <parameter name="point_color"         value="255, 255, 0" />
+    <parameter name="isos_color"          value="127, 127, 127" />
   </section>
 </document>
