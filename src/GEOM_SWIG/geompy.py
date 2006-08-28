@@ -1211,7 +1211,7 @@ def ChangeOrientationShell(theObject):
 #  @param theObject Shape to be processed.
 #  @return New GEOM_Object, containing processed shape.
 def ChangeOrientationShellCopy(theObject):
-    anObj = HealOp.ChangeOrientation(theObject)
+    anObj = HealOp.ChangeOrientationCopy(theObject)
     if HealOp.IsDone() == 0:
       print "ChangeOrientation : ", HealOp.GetErrorCode()
     return anObj
