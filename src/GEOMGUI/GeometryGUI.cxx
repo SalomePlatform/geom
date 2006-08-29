@@ -1658,11 +1658,11 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_WIREFRAME_COLOR" ), genGroup,
 		 LightApp_Preferences::Color, "Geometry", "wireframe_color" );
   
-  addPreference( tr( "PREF_FACE_COLOR" ), genGroup,
-		 LightApp_Preferences::Color, "Geometry", "face_color" );
+  addPreference( tr( "PREF_FREE_BOUND_COLOR" ), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "free_bound_color" );
   
-  addPreference( tr( "PREF_EDGE_WIRE_COLOR"), genGroup,
-		 LightApp_Preferences::Color, "Geometry", "edge_wire_color" );
+  addPreference( tr( "PREF_LINE_COLOR"), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "line_color" );
   
   addPreference( tr( "PREF_POINT_COLOR"), genGroup,
 		 LightApp_Preferences::Color, "Geometry", "point_color" );

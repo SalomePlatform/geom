@@ -521,6 +521,19 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	AISShape->SetDisplayMode( myDisplayMode );
         AISShape->SetShadingColor( myShadingColor );
 
+	// Set color for iso lines
+	SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+	QColor col = aResMgr->colorValue( "Geometry", "isos_color", QColor(int(0.5*255), int(0.5*255), int(0.5*255)) );
+	Quantity_Color aColor = SalomeApp_Tools::color( col );
+	
+	Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
+	anAspect->SetColor( aColor );
+	AISShape->Attributes()->SetUIsoAspect( anAspect );
+	
+	anAspect = AISShape->Attributes()->VIsoAspect();
+	anAspect->SetColor( aColor );
+	AISShape->Attributes()->SetVIsoAspect( anAspect );
+	
         if ( HasColor() )
         {
 	  AISShape->SetColor( (Quantity_NameOfColor)GetColor() );
@@ -533,35 +546,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         }
 	else
 	  {
-	    SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-
-	    // Set color for iso lines
-	    QColor col = aResMgr->colorValue( "Geometry", "isos_color", QColor(int(0.5*255), int(0.5*255), int(0.5*255)) );
-	    Quantity_Color aColor = SalomeApp_Tools::color( col );
-
-	    Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
-            anAspect->SetColor( aColor );
-            AISShape->Attributes()->SetUIsoAspect( anAspect );
-
-	    anAspect = AISShape->Attributes()->VIsoAspect();
-            anAspect->SetColor( aColor );
-            AISShape->Attributes()->SetVIsoAspect( anAspect );
-	    
-	    if ( myShape.ShapeType() == TopAbs_FACE )
-	      {
-		col = aResMgr->colorValue( "Geometry", "face_color", QColor( 0, 255, 0 ) );
-		aColor = SalomeApp_Tools::color( col );
-
-		AISShape->SetColor( aColor );
-	      }
-	    else if ( myShape.ShapeType() == TopAbs_EDGE || myShape.ShapeType() == TopAbs_WIRE )
-	      {
-		col = aResMgr->colorValue( "Geometry", "edge_wire_color", QColor( 255, 0, 0 ) );
-		aColor = SalomeApp_Tools::color( col );
-		
-		AISShape->SetColor( aColor );
-	      }
-	    else if ( myShape.ShapeType() == TopAbs_VERTEX )
+	    if ( myShape.ShapeType() == TopAbs_VERTEX )
 	      {
 		col = aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) );
 		aColor = SalomeApp_Tools::color( col );
@@ -572,10 +557,34 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	      }
 	    else
 	      {
+		// Set line aspect
 		col = aResMgr->colorValue( "Geometry", "wireframe_color", QColor( 255, 255, 0 ) );
 		aColor = SalomeApp_Tools::color( col );
 		
-		AISShape->SetColor( aColor );
+		Handle(Prs3d_LineAspect) anAspect = AISShape->Attributes()->LineAspect();
+		anAspect->SetColor( aColor );
+		AISShape->Attributes()->SetLineAspect( anAspect );
+
+		// Set unfree boundaries aspect
+		anAspect = AISShape->Attributes()->UnFreeBoundaryAspect();
+		anAspect->SetColor( aColor );
+		AISShape->Attributes()->SetUnFreeBoundaryAspect( anAspect );
+
+		// Set free boundaries aspect
+		col = aResMgr->colorValue( "Geometry", "free_bound_color", QColor( 0, 255, 0 ) );
+		aColor = SalomeApp_Tools::color( col );
+		
+		anAspect = AISShape->Attributes()->FreeBoundaryAspect();
+		anAspect->SetColor( aColor );
+		AISShape->Attributes()->SetFreeBoundaryAspect( anAspect );
+		
+		// Set wire aspect
+		col = aResMgr->colorValue( "Geometry", "line_color", QColor( 255, 0, 0 ) );
+		aColor = SalomeApp_Tools::color( col );
+		
+		anAspect = AISShape->Attributes()->WireAspect();
+		anAspect->SetColor( aColor );
+		AISShape->Attributes()->SetWireAspect( anAspect );
 	      }
 	  }
 
