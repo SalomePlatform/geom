@@ -55,8 +55,8 @@ void ShHealOper_ChangeOrientation::Init(const TopoDS_Shape& theShape)
 
 Standard_Boolean ShHealOper_ChangeOrientation::Perform()
 {
+  BRep_Builder B;
   if (myInitShape.ShapeType() == TopAbs_SHELL) {
-    BRep_Builder B;
     myResultShape = myInitShape.EmptyCopied();
     TopoDS_Iterator itr(myInitShape);
     while (itr.More()) {
@@ -65,7 +65,13 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
     }
   }
   else if (myInitShape.ShapeType() == TopAbs_FACE) {
-    myResultShape = myInitShape.Reversed();
+    myResultShape = myInitShape.EmptyCopied();
+    TopoDS_Iterator itr(myInitShape);
+    while (itr.More()) {
+      B.Add(myResultShape,itr.Value());
+      itr.Next();
+    }
+    myResultShape.Reverse();
   }
   else if (myInitShape.ShapeType() == TopAbs_WIRE) {
     myResultShape = myInitShape.Reversed();
