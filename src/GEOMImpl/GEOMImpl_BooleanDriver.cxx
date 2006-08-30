@@ -175,21 +175,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
 
     // perform FUSE operation
     else if (aType == BOOLEAN_FUSE) {
-      // check shapes to provide special processing for compounds and compsolids
-      if (aShape1.ShapeType() == TopAbs_COMPOUND ||
-          aShape1.ShapeType() == TopAbs_COMPSOLID ||
-          aShape2.ShapeType() == TopAbs_COMPOUND ||
-          aShape2.ShapeType() == TopAbs_COMPSOLID) {
-        // at least one of arguments is complex
-        StdFail_NotDone::Raise("Fuse operation aborted: one of arguments is a complex shape");
-      } else {
-        // simple arguments
-        BRepAlgoAPI_Fuse BO (aShape1, aShape2);
-        if (!BO.IsDone()) {
-          StdFail_NotDone::Raise("Fuse operation can not be performed on the given shapes");
-        }
-        aShape = BO.Shape();
+      BRepAlgoAPI_Fuse BO (aShape1, aShape2);
+      if (!BO.IsDone()) {
+        StdFail_NotDone::Raise("Fuse operation can not be performed on the given shapes");
       }
+      aShape = BO.Shape();
     }
 
     // perform SECTION operation
