@@ -1060,7 +1060,7 @@ def SubShapeAllSortedIDs(aShape, aType):
     ListIDs = ShapesOp.SubShapeAllIDs(aShape,aType,1)
     if ShapesOp.IsDone() == 0:
       print "SubShapeAllSortedIDs : ", ShapesOp.GetErrorCode()
-    return ListObj
+    return ListIDs
 
 ## Obtain a compound of sub-shapes of <aShape>,
 #  selected by they indices in list of all sub-shapes of type <aType>.
