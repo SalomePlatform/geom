@@ -79,7 +79,9 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
     TopoDS_Shape aShape1 = aRefPnt1->GetValue();
     TopoDS_Shape aShape2 = aRefPnt2->GetValue();
     if (aShape1.ShapeType() != TopAbs_VERTEX ||
-        aShape2.ShapeType() != TopAbs_VERTEX) return 0;
+        aShape2.ShapeType() != TopAbs_VERTEX) {
+      Standard_ConstructionError::Raise("Wrong arguments: two points must be given");
+    }
     if (aShape1.IsSame(aShape2)) {
       Standard_ConstructionError::Raise("The end points must be different");
     }
@@ -95,8 +97,12 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) aRefDir = aPI.GetPoint2();
     TopoDS_Shape aShape1 = aRefPnt->GetValue();
     TopoDS_Shape aShape2 = aRefDir->GetValue();
-    if (aShape1.ShapeType() != TopAbs_VERTEX ||
-        aShape2.ShapeType() != TopAbs_EDGE) return 0;
+    if (aShape1.ShapeType() != TopAbs_VERTEX) {
+      Standard_ConstructionError::Raise("Wrong first argument: must be point");
+    }
+    if (aShape2.ShapeType() != TopAbs_EDGE) {
+      Standard_ConstructionError::Raise("Wrong second argument: must be vector");
+    }
     if (aShape1.IsSame(aShape2)) {
       Standard_ConstructionError::Raise("The end points must be different");
     }
