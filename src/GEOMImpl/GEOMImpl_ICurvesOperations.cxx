@@ -44,6 +44,7 @@
 
 #include <TDF_Tool.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -106,6 +107,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (list<Handle(GEOM_O
 
   //Compute the Polyline value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Polyline driver failed");
       return NULL;
@@ -170,6 +174,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleThreePnt (Handle(GEOM_
 
   //Compute the Circle value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Circle driver failed");
       return NULL;
@@ -225,6 +232,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 
   //Compute the Circle value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Circle driver failed");
       return NULL;
@@ -282,6 +292,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
 
   //Compute the Ellipse value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Ellipse driver failed");
       return NULL;
@@ -339,6 +352,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
 
   //Compute the Arc value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Arc driver failed");
       return NULL;
@@ -396,6 +412,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
 
   //Compute the Spline value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Spline driver failed");
       return NULL;
@@ -460,6 +479,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
 
   //Compute the Spline value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Spline driver failed");
       return NULL;
@@ -521,6 +543,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher
 
   //Compute the Sketcher value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sketcher driver failed");
       return NULL;
@@ -580,6 +605,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
 
   //Compute the Sketcher value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sketcher driver failed");
       return NULL;

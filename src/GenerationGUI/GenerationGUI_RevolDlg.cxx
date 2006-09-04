@@ -37,7 +37,6 @@
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepPrimAPI_MakeRevol.hxx>
 #include <TopExp_Explorer.hxx>
-#include <Standard_ErrorHandler.hxx>
 #include "GEOMImpl_Types.hxx"
 
 #include <qlabel.h>

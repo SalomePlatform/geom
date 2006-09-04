@@ -54,6 +54,7 @@
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_ExtendedString.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #define ARGUMENT_LABEL 1
@@ -165,7 +166,10 @@ TopoDS_Shape GEOM_Function::GetValue()
   if(anObject.IsNull()) return aShape;
   if(!anObject->IsMainShape()) {
     try {
-      GEOM_Solver aSolver(GEOM_Engine::GetEngine());
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+     OCC_CATCH_SIGNALS;
+#endif
+     GEOM_Solver aSolver(GEOM_Engine::GetEngine());
       if (!aSolver.ComputeFunction(this)) {
 	MESSAGE("GEOM_Object::GetValue Error : Can't build a sub shape");
 	return aShape;

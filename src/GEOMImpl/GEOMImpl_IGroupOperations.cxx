@@ -46,8 +46,6 @@
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 
-#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
-
 //=============================================================================
 /*!
  *   constructor:

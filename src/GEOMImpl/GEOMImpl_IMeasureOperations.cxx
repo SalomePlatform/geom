@@ -67,6 +67,7 @@
 #include <Geom_Plane.hxx>
 #include <gp_Pln.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -167,6 +168,10 @@ void GEOMImpl_IMeasureOperations::GetPosition
   }
 
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+
     gp_Ax3 anAx3 = GetPosition(aShape);
 
     gp_Pnt anOri = anAx3.Location();
@@ -219,6 +224,9 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetCentreOfMass
 
   //Compute the CentreOfMass value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Measure driver failed to compute centre of mass");
       return NULL;
@@ -263,6 +271,9 @@ void GEOMImpl_IMeasureOperations::GetBasicProperties (Handle(GEOM_Object) theSha
   //Compute the parameters
   GProp_GProps LProps, SProps;
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     BRepGProp::LinearProperties(aShape, LProps);
     theLength = LProps.Mass();
 
@@ -316,6 +327,9 @@ void GEOMImpl_IMeasureOperations::GetInertia
   GProp_GProps System;
 
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (aShape.ShapeType() == TopAbs_VERTEX ||
         aShape.ShapeType() == TopAbs_EDGE ||
         aShape.ShapeType() == TopAbs_WIRE) {
@@ -380,6 +394,9 @@ void GEOMImpl_IMeasureOperations::GetBoundingBox
   Bnd_Box B;
 
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     BRepBndLib::Add(aShape, B);
     B.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
   }
@@ -422,6 +439,9 @@ void GEOMImpl_IMeasureOperations::GetTolerance
   FaceMax = EdgeMax = VertMax = -RealLast();
 
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     for (TopExp_Explorer ExF (aShape, TopAbs_FACE); ExF.More(); ExF.Next()) {
       TopoDS_Face Face = TopoDS::Face(ExF.Current());
       T = BRep_Tool::Tolerance(Face);
@@ -481,6 +501,9 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)      theShape,
   //Compute the parameters
   bool isValid = false;
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     BRepCheck_Analyzer ana (aShape, theIsCheckGeom);
     if (ana.IsValid()) {
       theDump.Clear();
@@ -531,6 +554,9 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
   Astr = Astr + " Number of sub-shapes : \n";
 
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     int iType, nbTypes [TopAbs_SHAPE];
     for (iType = 0; iType < TopAbs_SHAPE; ++iType)
       nbTypes[iType] = 0;
@@ -601,6 +627,9 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
 
   //Compute the parameters
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     BRepExtrema_DistShapeShape dst (aShape1, aShape2);
     if (dst.IsDone()) {
       gp_Pnt PMin1, PMin2, P1, P2;
@@ -654,8 +683,10 @@ void GEOMImpl_IMeasureOperations::PointCoordinates( Handle(GEOM_Object) theShape
     return;
   }
 
-  try
-  {
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
     theX = aPnt.X();
     theY = aPnt.Y();

@@ -43,7 +43,6 @@
 #include <TopoDS_Iterator.hxx>
 #include <BRep_Tool.hxx>
 #include <Precision.hxx>
-#include <Standard_ErrorHandler.hxx>
 #include "GEOMImpl_Types.hxx"
 
 #include <qlabel.h>

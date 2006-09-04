@@ -47,6 +47,7 @@
 
 #include <GEOMImpl_Types.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -100,6 +101,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointXYZ
 
   //Compute the point value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Point driver failed");
       return NULL;
@@ -152,6 +156,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointWithReference
 
   //Compute the point value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Point driver failed");
       return NULL;
@@ -202,6 +209,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
 
   //Compute the point value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Point driver failed");
       return NULL;
@@ -252,6 +262,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentOnCurve
 
   //Compute the vector value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vector driver failed");
       return NULL;
@@ -300,6 +313,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeVectorDXDYDZ
 
   //Compute the Vector value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vector driver failed");
       return NULL;
@@ -352,6 +368,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeVectorTwoPnt
 
   //Compute the Vector value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vector driver failed");
       return NULL;
@@ -405,6 +424,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLine
 
   //Compute the Line value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Line driver failed");
       return NULL;
@@ -457,6 +479,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLineTwoPnt
 
   //Compute the Line value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Line driver failed");
       return NULL;
@@ -514,6 +539,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneThreePnt
 
   //Compute the Plane value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Plane driver failed");
       return NULL;
@@ -568,6 +596,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlanePntVec
 
   //Compute the Plane value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Plane driver failed");
       return NULL;
@@ -619,6 +650,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneFace
 
   //Compute the Plane value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Plane driver failed");
       return NULL;
@@ -670,6 +704,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarker
 
   //Compute the marker value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Marker driver failed");
       return NULL;
@@ -728,6 +765,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentPlaneOnFace(const Hand
 
   //Compute the Plane value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Plane driver failed");
       return NULL;
