@@ -59,6 +59,7 @@ class GEOM_Swig
   void createAndDisplayGO(const char* Entry, bool isUpdated =true);
   void eraseGO(const char* Entry, bool allWindows);
   void createAndDisplayFitAllGO(const char* Entry);
+  void UpdateViewer();
   int  getIndexTopology(const char *SubEntry, const char *Entry);
   const char* getShapeTypeString(const char *Entry);
 

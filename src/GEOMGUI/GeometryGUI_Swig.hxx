@@ -52,6 +52,7 @@ public:
   void createAndDisplayGO(const char* Entry, bool isUpdated = true);
   void eraseGO(const char* Entry, bool allWindows);
   void createAndDisplayFitAllGO(const char* Entry);
+  void UpdateViewer();
   void setDisplayMode(const char* Entry, int mode, bool isUpdated = true);
   void setColor(const char* Entry, int red, int green, int blue, bool isUpdated = true);
   void setTransparency(const char* Entry, float transp, bool isUpdated = true);

@@ -269,6 +269,25 @@ void GEOM_Swig::createAndDisplayFitAllGO (const char* Entry)
   ProcessVoidEvent(new TEventFitAll());
 }
 
+void GEOM_Swig::UpdateViewer()
+{
+  class TEventUpdateViewer: public SALOME_Event
+  {
+    public:
+      TEventUpdateViewer() {}
+      virtual void Execute() {
+	SUIT_Application* app = SUIT_Session::session()->activeApplication();
+	if (!app) return;
+	SalomeApp_Study* ActiveStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+	if (!ActiveStudy) return;
+	
+	GEOM_Displayer(ActiveStudy).UpdateViewer();
+      }
+  };
+  
+  ProcessVoidEvent(new TEventUpdateViewer());
+}
+
 int GEOM_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
 {
   GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();
