@@ -155,26 +155,32 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       }
       aShape = aFW->WireAPIMake();
     }
-
   }
   else if (aType == FACE_WIRE) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
-    if (aShapeBase.IsNull() || aShapeBase.ShapeType() != TopAbs_WIRE) {
-      Standard_NullObject::Raise
-        ("Shape for face construction is null or not a wire");
+    if (aShapeBase.IsNull()) Standard_NullObject::Raise("Argument Shape is null");
+    TopoDS_Wire W;
+    if (aShapeBase.ShapeType() == TopAbs_WIRE) {
+      W = TopoDS::Wire(aShapeBase);
     }
-    TopoDS_Wire W = TopoDS::Wire(aShapeBase);
-    //BRepBuilderAPI_MakeFace MF (W, aCI.GetIsPlanar());
-    //if (!MF.IsDone()) {
-    //  Standard_ConstructionError::Raise("Face construction failed");
-    //}
-    //aShape = MF.Shape();
+    else if (aShapeBase.ShapeType() == TopAbs_EDGE && aShapeBase.Closed()) {
+      BRepBuilderAPI_MakeWire MW;
+      MW.Add(TopoDS::Edge(aShapeBase));
+      if (!MW.IsDone()) {
+        Standard_ConstructionError::Raise("Wire construction failed");
+      }
+      //W = TopoDS::Wire(aShapeBase);
+      W = MW;
+    }
+    else {
+      Standard_NullObject::Raise
+        ("Shape for face construction is neither a wire nor a closed edge");
+    }
     GEOMImpl_Block6Explorer::MakeFace(W, aCI.GetIsPlanar(), aShape);
     if (aShape.IsNull()) {
       Standard_ConstructionError::Raise("Face construction failed");
     }
-
   }
   else if (aType == FACE_WIRES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
@@ -192,11 +198,6 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     TopoDS_Wire W = TopoDS::Wire(aWire);
 
     // basic face
-    //BRepBuilderAPI_MakeFace MF (W, aCI.GetIsPlanar());
-    //if (!MF.IsDone()) {
-    //  Standard_ConstructionError::Raise("Face construction failed");
-    //}
-    //TopoDS_Shape FFace = MF.Shape();
     TopoDS_Shape FFace;
     GEOMImpl_Block6Explorer::MakeFace(W, aCI.GetIsPlanar(), FFace);
     if (FFace.IsNull()) {

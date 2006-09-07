@@ -134,8 +134,20 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
         }
       }
 
-      if (isCompound)
-        aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion());
+      if (isCompound) {
+        TopTools_ListOfShape listShapeC;
+        AddSimpleShapes(C, listShapeC);
+        TopTools_ListIteratorOfListOfShape itSubC (listShapeC);
+        bool isOnlySolids = true;
+        for (; itSubC.More(); itSubC.Next()) {
+          TopoDS_Shape aValueC = itSubC.Value();
+          if (aValueC.ShapeType() != TopAbs_SOLID) isOnlySolids = false;
+        }
+        if (isOnlySolids)
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion());
+        else
+          aShape = C;
+      }
     }
 
     // perform CUT operation
@@ -169,8 +181,20 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
           aShape = aCut;
       }
 
-      if (isCompound)
-        aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion());
+      if (isCompound) {
+        TopTools_ListOfShape listShapeC;
+        AddSimpleShapes(C, listShapeC);
+        TopTools_ListIteratorOfListOfShape itSubC (listShapeC);
+        bool isOnlySolids = true;
+        for (; itSubC.More(); itSubC.Next()) {
+          TopoDS_Shape aValueC = itSubC.Value();
+          if (aValueC.ShapeType() != TopAbs_SOLID) isOnlySolids = false;
+        }
+        if (isOnlySolids)
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion());
+        else
+          aShape = C;
+      }
     }
 
     // perform FUSE operation
