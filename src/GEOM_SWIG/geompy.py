@@ -26,7 +26,10 @@
 #  Module : GEOM
 #  $Header$
 
+import salome
+salome.salome_init()
 from salome import *
+
 import GEOM
 
 """
