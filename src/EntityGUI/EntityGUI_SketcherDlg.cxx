@@ -1,30 +1,30 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : EntityGUI_SketcherDlg.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
+//  $Header$
 
 #include "EntityGUI_SketcherDlg.h"
 #include "Sketcher_Profile.hxx"
@@ -58,7 +58,7 @@ using namespace std;
 
 //=================================================================================
 // class    : EntityGUI_SketcherDlg()
-// purpose  : Constructs a EntityGUI_SketcherDlg which is a child of 'parent', with the 
+// purpose  : Constructs a EntityGUI_SketcherDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -80,7 +80,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
   buttonClose->setText(tr("GEOM_BUT_CLOSE_SKETCH"));
   buttonHelp->setText(tr("GEOM_BUT_HELP"));
 
-  GroupVal->close(TRUE);        
+  GroupVal->close(TRUE);
   GroupDest2->close(TRUE);
   GroupDest3->close(TRUE);
 
@@ -132,24 +132,42 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
   Group1Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
   Group1Spin->buttonUndo->setPixmap(image1);
   Group1Spin->buttonRedo->setPixmap(image2);
+  QWidget::setTabOrder(Group1Spin->SpinBox_DX , Group1Spin->buttonApply);
+  QWidget::setTabOrder(Group1Spin->buttonApply, Group1Spin->buttonUndo);
+  QWidget::setTabOrder(Group1Spin->buttonUndo , Group1Spin->buttonRedo);
 
   Group2Spin = new EntityGUI_2Spin(this, "Group2Spin");
   Group2Spin->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
   Group2Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
   Group2Spin->buttonUndo->setPixmap(image1);
   Group2Spin->buttonRedo->setPixmap(image2);
+  QWidget::setTabOrder(Group2Spin->SpinBox_DX , Group2Spin->SpinBox_DY);
+  QWidget::setTabOrder(Group2Spin->SpinBox_DY , Group2Spin->buttonApply);
+  QWidget::setTabOrder(Group2Spin->buttonApply, Group2Spin->buttonUndo);
+  QWidget::setTabOrder(Group2Spin->buttonUndo , Group2Spin->buttonRedo);
 
   Group3Spin = new EntityGUI_3Spin(this, "Group3Spin");
   Group3Spin->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
   Group3Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
   Group3Spin->buttonUndo->setPixmap(image1);
   Group3Spin->buttonRedo->setPixmap(image2);
+  QWidget::setTabOrder(Group3Spin->SpinBox_DX , Group3Spin->SpinBox_DY);
+  QWidget::setTabOrder(Group3Spin->SpinBox_DY , Group3Spin->SpinBox_DZ);
+  QWidget::setTabOrder(Group3Spin->SpinBox_DZ , Group3Spin->buttonApply);
+  QWidget::setTabOrder(Group3Spin->buttonApply, Group3Spin->buttonUndo);
+  QWidget::setTabOrder(Group3Spin->buttonUndo , Group3Spin->buttonRedo);
 
   Group4Spin = new EntityGUI_4Spin(this, "Group4Spin");
   Group4Spin->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
   Group4Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
   Group4Spin->buttonUndo->setPixmap(image1);
   Group4Spin->buttonRedo->setPixmap(image2);
+  QWidget::setTabOrder(Group4Spin->SpinBox_DX , Group4Spin->SpinBox_DY);
+  QWidget::setTabOrder(Group4Spin->SpinBox_DY , Group4Spin->SpinBox_DZ);
+  QWidget::setTabOrder(Group4Spin->SpinBox_DZ , Group4Spin->SpinBox_DS);
+  QWidget::setTabOrder(Group4Spin->SpinBox_DS , Group4Spin->buttonApply);
+  QWidget::setTabOrder(Group4Spin->buttonApply, Group4Spin->buttonUndo);
+  QWidget::setTabOrder(Group4Spin->buttonUndo , Group4Spin->buttonRedo);
 
   Layout5->addMultiCellWidget(GroupPt, 1, 1, 0, 1);
   Layout5->addWidget(GroupD1, 1, 0);
@@ -217,7 +235,19 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
 
   connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
   connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-  
+
+  // install event filter on spin-boxes to provide Apply action on Return pressed
+  Group1Spin->SpinBox_DX->installEventFilter(this);
+  Group2Spin->SpinBox_DX->installEventFilter(this);
+  Group2Spin->SpinBox_DY->installEventFilter(this);
+  Group3Spin->SpinBox_DX->installEventFilter(this);
+  Group3Spin->SpinBox_DY->installEventFilter(this);
+  Group3Spin->SpinBox_DZ->installEventFilter(this);
+  Group4Spin->SpinBox_DX->installEventFilter(this);
+  Group4Spin->SpinBox_DY->installEventFilter(this);
+  Group4Spin->SpinBox_DZ->installEventFilter(this);
+  Group4Spin->SpinBox_DS->installEventFilter(this);
+
   Init();
 }
 
@@ -228,7 +258,42 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
 //=================================================================================
 EntityGUI_SketcherDlg::~EntityGUI_SketcherDlg()
 {
-	myGeometryGUI->SetActiveDialogBox( 0 );
+  myGeometryGUI->SetActiveDialogBox( 0 );
+}
+
+
+//=================================================================================
+// function : eventFilter()
+// purpose  : event filter for spin-boxes to provide Apply action on Return pressed
+//=================================================================================
+bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
+{
+  if (event->type() == QEvent::KeyPress) {
+    QKeyEvent* ke = (QKeyEvent*)event;
+    if (ke->key() == Key_Return) {
+      if (object == Group1Spin->SpinBox_DX) {
+        Group1Spin->buttonApply->animateClick();
+        return true;
+      } else if (object == Group2Spin->SpinBox_DX ||
+                 object == Group2Spin->SpinBox_DY) {
+        Group2Spin->buttonApply->animateClick();
+        return true;
+      } else if (object == Group3Spin->SpinBox_DX ||
+                 object == Group3Spin->SpinBox_DY ||
+                 object == Group3Spin->SpinBox_DZ) {
+        Group3Spin->buttonApply->animateClick();
+        return true;
+      } else if (object == Group4Spin->SpinBox_DX ||
+                 object == Group4Spin->SpinBox_DY ||
+                 object == Group4Spin->SpinBox_DZ ||
+                 object == Group4Spin->SpinBox_DS) {
+        Group4Spin->buttonApply->animateClick();
+        return true;
+      }
+    }
+  }
+
+  return EntityGUI_Skeleton_QTD::eventFilter(object, event);
 }
 
 
@@ -289,7 +354,7 @@ void EntityGUI_SketcherDlg::Init()
 //=================================================================================
 void EntityGUI_SketcherDlg::InitClick()
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  disconnect(myGeometryGUI->getApp()->selectionMgr(), 0, this, 0);
 
   Group1Sel->hide();
   Group1Spin->hide();
@@ -359,13 +424,16 @@ void EntityGUI_SketcherDlg::PointClicked(int constructorId)
 {
   InitClick();
 
+  // Get setting of step value from file configuration
+  double step = SUIT_Session::session()->resourceMgr()->doubleValue("Geometry", "SettingsGeomStep", 100.0);
+
   if ( myConstructorId == 0 )
   {  // SEGMENT
     if ( constructorId == 1 )
     {  // XY
       mySketchType = PT_ABS;
-      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 100., 3);
-      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 100., 3);
+      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
       Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_X2"));
       Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_Y2"));
       myX = 0.0;
@@ -380,8 +448,8 @@ void EntityGUI_SketcherDlg::PointClicked(int constructorId)
     else if ( constructorId == 0 )
     {  // DXDY
       mySketchType = PT_RELATIVE;
-      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 100., 3);
-      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 100., 3);
+      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
       Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_DX2"));
       Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_DY2"));
       myDX = 0.0;
@@ -397,8 +465,8 @@ void EntityGUI_SketcherDlg::PointClicked(int constructorId)
     {  // Selection
       mySketchType = PT_SEL;
       myEditCurrentArgument = Group1Sel->LineEdit1;
-      connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	      SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+      connect(myGeometryGUI->getApp()->selectionMgr(),
+	      SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
       Group1Sel->show();
       Group1Sel->buttonApply->setFocus();
       SelectionIntoArgument();
@@ -428,6 +496,9 @@ void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
   InitClick();
   myAngle = 0.0;
 
+  // Get setting of step value from file configuration
+  double step = SUIT_Session::session()->resourceMgr()->doubleValue("Geometry", "SettingsGeomStep", 100.0);
+
   if ( myConstructorId == 0 )
   {  // SEGMENT
     myX = 0.0;
@@ -436,7 +507,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
     if ( myConstructorDirId == 2 )
     {  // Angle
       Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., 3);
-      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 100., 3);
+      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
       Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_ANGLE2"));
       Group2Spin->SpinBox_DX->SetValue(myAngle);
       Group2Spin->buttonApply->setFocus();
@@ -460,7 +531,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
 				Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_Y3"));
 				Group2Spin->SpinBox_DY->SetValue(myY);
       }
-    }                   
+    }
     else if ( myConstructorDirId == 0 )
     {  // Perpendicular
       Group1Spin->show();
@@ -513,7 +584,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
     {  // DXDY
       Group3Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, 3);
       Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, 3);
-      Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, 100., 3);
+      Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
       Group3Spin->TextLabel1->setText(tr("GEOM_SKETCHER_VX2"));
       Group3Spin->TextLabel2->setText(tr("GEOM_SKETCHER_VY2"));
       myDX = 0.0;
@@ -551,7 +622,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
       {  // Length
 				mySketchType = DIR_ANGLE_LENGTH;
 				Group3Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., 3);
-				Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 100., 3);
+				Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
 				Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., 3);
 				Group3Spin->TextLabel1->setText(tr("GEOM_SKETCHER_ANGLE2"));
 				Group3Spin->TextLabel2->setText(tr("GEOM_SKETCHER_RADIUS2"));
@@ -570,7 +641,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
       if ( constructorId == 2 )
       {  // Length
 				mySketchType = DIR_PER_LENGTH;
-				Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 100., 3);
+				Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
 				Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., 3);
 				Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_RADIUS2"));
 				Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_ANGLE2"));
@@ -587,7 +658,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
       if ( constructorId == 2 )
       {  // Length
 				mySketchType = DIR_TAN_LENGTH;
-				Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 100., 3);
+				Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
 				Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., 3);
 				Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_RADIUS2"));
 				Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_ANGLE2"));
@@ -651,7 +722,7 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
 			       tr( "GEOM_ERROR_STATUS" ), tr( "CANNOT_CLOSE" ), tr( "BUT_OK" ) );
       return;
     }
-    
+
     QString Command = myCommand.join( "" ) + GetNewCommand();
     Sketcher_Profile aProfile (Command.ascii());
 
@@ -660,11 +731,11 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
     TopoDS_Shape myShape;
     if ( aProfile.IsDone() )
       myShape = aProfile.GetShape();
-      
+
     if(myShape.ShapeType() != TopAbs_VERTEX)
       myCommand.append( ":WW" );
   }
-  else 
+  else
     myIsAllAdded = true;
 
   if( myCommand.size() > 2 )
@@ -680,7 +751,7 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
 //=================================================================================
 bool EntityGUI_SketcherDlg::ClickOnApply()
 {
-  ((QPushButton*)sender())->setFocus();
+  ((QPushButton*)sender())->setFocus(); // to update value of currently edited spin-box (PAL11948)
 
   myCommand.append( GetNewCommand() );
   mySketchState = NEXT_POINT;
@@ -695,6 +766,24 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
 
   GEOMBase_Helper::displayPreview();
 
+  // Set focus to SpinBox_DX
+  if (sender() == Group1Spin->buttonApply) {
+    (Group1Spin->SpinBox_DX)->setFocus();
+    (Group1Spin->SpinBox_DX)->selectAll();
+  }
+  else if (sender() == Group2Spin->buttonApply) {
+    (Group2Spin->SpinBox_DX)->setFocus();
+    (Group2Spin->SpinBox_DX)->selectAll();
+  }
+  else if (sender() == Group3Spin->buttonApply) {
+    (Group3Spin->SpinBox_DX)->setFocus();
+    (Group3Spin->SpinBox_DX)->selectAll();
+  }
+  else if (sender() == Group4Spin->buttonApply) {
+    (Group4Spin->SpinBox_DX)->setFocus();
+    (Group4Spin->SpinBox_DX)->selectAll();
+  }
+
   return true;
 }
 
@@ -705,7 +794,7 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
 void EntityGUI_SketcherDlg::ClickOnHelp()
 {
   LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
-  if (app) 
+  if (app)
     app->onHelpContextModule(myGeometryGUI ? app->moduleName(myGeometryGUI->moduleName()) : QString(""), myHelpFileName);
   else {
     SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
@@ -726,7 +815,7 @@ void EntityGUI_SketcherDlg::ClickOnUndo()
 
   if(myCommand.count() == 1) {
     mySketchState = FIRST_POINT;
-    
+
     RadioButton1->setChecked(true);
     TypeClicked(0);
 
@@ -872,7 +961,7 @@ void EntityGUI_SketcherDlg::DeactivateActiveDialog()
 
   setEnabled( false );
   globalSelection();
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  disconnect(myGeometryGUI->getApp()->selectionMgr(), 0, this, 0);
   myGeometryGUI->SetActiveDialogBox(0);
 }
 
@@ -887,8 +976,8 @@ void EntityGUI_SketcherDlg::ActivateThisDialog()
   setEnabled(true);
   myGeometryGUI->SetActiveDialogBox((QDialog*)this);
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect(myGeometryGUI->getApp()->selectionMgr(),
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   //myGeometryGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
@@ -918,7 +1007,7 @@ void EntityGUI_SketcherDlg::enterEvent(QEvent* e)
 void EntityGUI_SketcherDlg::closeEvent(QCloseEvent* e)
 {
   //myGeometryGUI->SetState( -1 );
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  disconnect(myGeometryGUI->getApp()->selectionMgr(), 0, this, 0);
   QDialog::closeEvent( e );
 }
 
@@ -1265,28 +1354,29 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
   }
 
   QString cmd;
-  if( ( mySketchState != FIRST_POINT && myLastX1 == myLastX2 && myLastY1 == myLastY2 ) || myIsAllAdded ) {
+  if( ( mySketchState != FIRST_POINT &&
+        myLastX1 == myLastX2 && myLastY1 == myLastY2 ) || myIsAllAdded ) {
     cmd = myCommand.join( "" );
 
     if ( Group1Sel->isVisible() ) {
       Group1Sel->buttonApply->setEnabled(false);
-      Group1Sel->buttonApply->setFocus();
+      //Group1Sel->buttonApply->setFocus();
     }
     if ( Group1Spin->isVisible() ) {
       Group1Spin->buttonApply->setEnabled(false);
-      Group1Spin->buttonApply->setFocus();
+      //Group1Spin->buttonApply->setFocus();
     }
     if ( Group2Spin->isVisible() ) {
       Group2Spin->buttonApply->setEnabled(false);
-      Group2Spin->buttonApply->setFocus();
+      //Group2Spin->buttonApply->setFocus();
     }
     if ( Group3Spin->isVisible() ) {
       Group3Spin->buttonApply->setEnabled(false);
-      Group3Spin->buttonApply->setFocus();
+      //Group3Spin->buttonApply->setFocus();
     }
     if ( Group4Spin->isVisible() ) {
       Group4Spin->buttonApply->setEnabled(false);
-      Group4Spin->buttonApply->setFocus();
+      //Group4Spin->buttonApply->setFocus();
     }
   }
   else {
@@ -1294,26 +1384,26 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 
     if ( Group1Sel->isVisible() ) {
       Group1Sel->buttonApply->setEnabled(true);
-      Group1Sel->buttonApply->setFocus();
+      //Group1Sel->buttonApply->setFocus();
     }
     if ( Group1Spin->isVisible() ) {
       Group1Spin->buttonApply->setEnabled(true);
-      Group1Spin->buttonApply->setFocus();
+      //Group1Spin->buttonApply->setFocus();
     }
     if ( Group2Spin->isVisible() ) {
       Group2Spin->buttonApply->setEnabled(true);
-      Group2Spin->buttonApply->setFocus();
+      //Group2Spin->buttonApply->setFocus();
     }
     if ( Group3Spin->isVisible() ) {
       Group3Spin->buttonApply->setEnabled(true);
-      Group3Spin->buttonApply->setFocus();
+      //Group3Spin->buttonApply->setFocus();
     }
     if ( Group4Spin->isVisible() ) {
       Group4Spin->buttonApply->setEnabled(true);
-      Group4Spin->buttonApply->setFocus();
+      //Group4Spin->buttonApply->setFocus();
     }
   }
-    
+
   gp_Ax3 myWPlane = myGeometryGUI->GetWorkingPlane();
   GEOM::ListOfDouble_var WPlane = new GEOM::ListOfDouble;
   WPlane->length(9);
@@ -1329,7 +1419,8 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
   WPlane[7] = myWPlane.XDirection().Y();
   WPlane[8] = myWPlane.XDirection().Z();
 
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSketcher( cmd.latin1(), WPlane );
+  GEOM::GEOM_Object_var anObj =
+    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSketcher( cmd.latin1(), WPlane );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
@@ -1441,7 +1532,3 @@ void  EntityGUI_SketcherDlg::keyPressEvent( QKeyEvent* e )
       ClickOnHelp();
     }
 }
-
-
-
-
