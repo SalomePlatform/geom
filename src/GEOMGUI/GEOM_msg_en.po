@@ -2958,3 +2958,7 @@ msgstr "Default display mode"
 
 msgid "PREF_TAB_SETTINGS"
 msgstr "Settings"
+
+msgid "ERROR_SHAPE_TYPE"
+msgstr "Object of incorrect type selected!\nPlease, select face, shell or solid and try again"
+
