@@ -439,7 +439,7 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, boo
 	    ite.Value()->SetColor(CSFColor);
 	    if (ite.Value()->IsKind(STANDARD_TYPE(GEOM_AISShape)))
 	      Handle(GEOM_AISShape)::DownCast(ite.Value())->SetShadingColor(CSFColor);
-	    ite.Value()->Redisplay(Standard_True);
+	    ic->Redisplay(ite.Value(), true, true);
 	    if (myUpdateViewer)
 	      occViewer->update();
 	    break;
