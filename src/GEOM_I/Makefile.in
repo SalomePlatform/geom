@@ -55,7 +55,7 @@ LIB_SRC = \
 	GEOM_DumpPython.cc
 
 # SALOME_Component.idl
-LIB_CLIENT_IDL = SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Component.idl SALOME_Exception.idl
+LIB_CLIENT_IDL = SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Component.idl SALOME_Exception.idl SALOME_GenericObj.idl
                  #SALOME_Exception.idl SALOME_GenericObj.idl
 
 LIB_SERVER_IDL = GEOM_Gen.idl
