@@ -97,6 +97,12 @@ class GEOM_IShapesOperations_i :
 				    GEOM::GEOM_Object_ptr theAx1,
 				    GEOM::shape_state     theState);
 
+  GEOM::ListOfGO* GetShapesOnPlaneWithLocation(GEOM::GEOM_Object_ptr theShape,
+					       CORBA::Long           theShapeType,
+					       GEOM::GEOM_Object_ptr theAx1,
+					       GEOM::GEOM_Object_ptr thePnt,
+					       GEOM::shape_state     theState);
+
   GEOM::ListOfGO* GetShapesOnCylinder (GEOM::GEOM_Object_ptr theShape,
 				       CORBA::Long           theShapeType,
 				       GEOM::GEOM_Object_ptr theAxis,
@@ -121,6 +127,12 @@ class GEOM_IShapesOperations_i :
 					 CORBA::Long           theShapeType,
 					 GEOM::GEOM_Object_ptr theAx1,
 					 GEOM::shape_state     theState);
+
+  GEOM::ListOfLong* GetShapesOnPlaneWithLocationIDs (GEOM::GEOM_Object_ptr theShape,
+						     CORBA::Long           theShapeType,
+						     GEOM::GEOM_Object_ptr theAx1,
+						     GEOM::GEOM_Object_ptr thePnt,
+						     GEOM::shape_state     theState);
 
   GEOM::ListOfLong* GetShapesOnCylinderIDs (GEOM::GEOM_Object_ptr theShape,
 					    CORBA::Long           theShapeType,

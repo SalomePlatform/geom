@@ -97,6 +97,13 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
                                                          const Handle(GEOM_Object)& theAx1,
                                                          const GEOMAlgo_State       theState);
 
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetShapesOnPlaneWithLocation (const Handle(GEOM_Object)& theShape,
+								     const Standard_Integer     theShapeType,
+								     const Handle(GEOM_Object)& theAx1,
+								     const Handle(GEOM_Object)& thePnt,
+								     const GEOMAlgo_State       theState);
+
+
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetShapesOnCylinder (const Handle(GEOM_Object)& theShape,
                                                             const Standard_Integer     theShapeType,
                                                             const Handle(GEOM_Object)& theAxis,
@@ -112,6 +119,12 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(TColStd_HSequenceOfInteger) GetShapesOnPlaneIDs (const Handle(GEOM_Object)& theShape,
                                                           const Standard_Integer     theShapeType,
                                                           const Handle(GEOM_Object)& theAx1,
+                                                          const GEOMAlgo_State       theState);
+
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger) GetShapesOnPlaneWithLocationIDs (const Handle(GEOM_Object)& theShape,
+						      const Standard_Integer     theShapeType,
+                                                          const Handle(GEOM_Object)& theAx1,
+							  const Handle(GEOM_Object)& thePnt,
                                                           const GEOMAlgo_State       theState);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfInteger) GetShapesOnCylinderIDs (const Handle(GEOM_Object)& theShape,

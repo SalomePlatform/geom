@@ -744,7 +744,7 @@ def MakeWire(theEdgesAndWires):
     return anObj
 
 ## Create a face on the given wire.
-#  @param theWire Wire to build the face on.
+#  @param theWire closed Wire or Edge to build the face on.
 #  @param isPlanarWanted If TRUE, only planar face will be built.
 #                        If impossible, NULL object will be returned.
 #  @return New GEOM_Object, containing the created face.
@@ -757,7 +757,7 @@ def MakeFace(theWire, isPlanarWanted):
     return anObj
 
 ## Create a face on the given wires set.
-#  @param theWires List of wires to build the face on.
+#  @param theWires List of closed wires or edges to build the face on.
 #  @param isPlanarWanted If TRUE, only planar face will be built.
 #                        If impossible, NULL object will be returned.
 #  @return New GEOM_Object, containing the created face.
@@ -898,6 +898,33 @@ def GetShapesOnPlaneIDs(theShape, theShapeType, theAx1, theState):
     aList = ShapesOp.GetShapesOnPlaneIDs(theShape, theShapeType, theAx1, theState)
     if ShapesOp.IsDone() == 0:
         print "GetShapesOnPlaneIDs : ", ShapesOp.GetErrorCode()
+    return aList
+
+## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+#  the specified plane by the certain way, defined through \a theState parameter.
+#  @param theShape Shape to find sub-shapes of.
+#  @param theShapeType Type of sub-shapes to be retrieved.
+#  @param theAx1 Vector (or line, or linear edge), specifying normal
+#                direction of the plane to find shapes on.
+#  @param thePnt Point specifying location of the plane to find shapes on.
+#  @param theState The state of the subshapes to find. It can be one of
+#   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
+#  @return List of all found sub-shapes.
+#
+#  Example: see GEOM_TestOthers.py
+def GetShapesOnPlaneWithLocation(theShape, theShapeType, theAx1, thePnt, theState):
+    aList = ShapesOp.GetShapesOnPlaneWithLocation(theShape, theShapeType, theAx1, thePnt, theState)
+    if ShapesOp.IsDone() == 0:
+      print "GetShapesOnPlaneWithLocation : ", ShapesOp.GetErrorCode()
+    return aList
+
+## Works like the above method, but returns list of sub-shapes indices
+#
+#  Example: see GEOM_TestOthers.py
+def GetShapesOnPlaneWithLocationIDs(theShape, theShapeType, theAx1, thePnt, theState):
+    aList = ShapesOp.GetShapesOnPlaneWithLocationIDs(theShape, theShapeType, theAx1, thePnt, theState)
+    if ShapesOp.IsDone() == 0:
+        print "GetShapesOnPlaneWithLocationIDs : ", ShapesOp.GetErrorCode()
     return aList
 
 ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively

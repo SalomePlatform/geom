@@ -303,6 +303,7 @@ def TestOtherOperations (geompy, math):
   v_n0p = geompy.MakeVectorDXDYDZ(-1,  0,  1)
   v_pp0 = geompy.MakeVectorDXDYDZ( 1,  1,  0)
   v_np0 = geompy.MakeVectorDXDYDZ(-1,  1,  0)
+  v_0n0 = geompy.MakeVectorDXDYDZ( 0, -1,  0)
 
   pln_0pp = geompy.MakePlane(p0, v_0pp, 300)
   pln_0np = geompy.MakePlane(p0, v_0np, 300)
@@ -418,6 +419,20 @@ def TestOtherOperations (geompy, math):
   geompy.UnionIDs(faces_above, faces_above_pln_ids)
   geompy.addToStudy(faces_above, "Group of faces above Plane (N = (0, 1, 1))")
 
+  # GetShapesOnPlaneWithLocation
+  Loc = geompy.MakeVertex(0, -50, 0)
+  edges_on_pln = geompy.GetShapesOnPlaneWithLocation(blocksComp, geompy.ShapeType["EDGE"],
+                                                     v_0n0, Loc, geompy.GEOM.ST_ON)
+  for edge_i in edges_on_pln:
+    geompy.addToStudy(edge_i, "Edge on Plane (N = (0, -1, 0) & Location = (0, -50, 0)")
+    
+  # GetShapesOnPlaneWithLocationIDs
+  edges_on_pln_ids = geompy.GetShapesOnPlaneWithLocationIDs(blocksComp, geompy.ShapeType["EDGE"],
+                                                            v_0n0, Loc, geompy.GEOM.ST_ON)
+  group_edges_on_pln = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
+  geompy.UnionIDs(group_edges_on_pln, edges_on_pln_ids)
+  geompy.addToStudy(group_edges_on_pln, "Group of edges on Plane (N = (0, -1, 0) & Location = (0, -50, 0))")
+  
   # GetShapesOnCylinder
   edges_out_cyl = geompy.GetShapesOnCylinder(blocksComp, geompy.ShapeType["EDGE"],
                                              vy, 55, geompy.GEOM.ST_OUT)

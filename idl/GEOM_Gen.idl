@@ -884,7 +884,7 @@ module GEOM
 
     /*!
      *  Create a face on the given wire.
-     *  \param theWire Wire to build the face on.
+     *  \param theWire closed Wire or Edge to build the face on.
      *  \param isPlanarWanted If TRUE, only planar face will be built.
      *                        If impossible, NULL object will be returned.
      *  \return New GEOM_Object, containing the created face.
@@ -893,7 +893,7 @@ module GEOM
 
     /*!
      *  Create a face on the given wires set.
-     *  \param theWires List of wires to build the face on.
+     *  \param theWires List of closed wires or edges to build the face on.
      *  \param isPlanarWanted If TRUE, only planar face will be built.
      *                        If impossible, NULL object will be returned.
      *  \return New GEOM_Object, containing the created face.
@@ -1053,6 +1053,24 @@ module GEOM
 			       in long        theShapeType,
 			       in GEOM_Object theAx1,
 			       in shape_state theState);
+    /*!
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified plane by the certain way, defined through \a theState parameter.
+     *  \param theShape Shape to find sub-shapes of.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param theAx1 Vector (or line, or linear edge), specifying normal
+     *                direction of the plane to find shapes on.
+     *  \param thePnt Point specifying location of the plane to find shapes on.
+     *  \param theState The state of the subshapes to find.
+     *  \return List of all found sub-shapes.
+     */
+    ListOfGO GetShapesOnPlaneWithLocation (in GEOM_Object theShape,
+					   in long        theShapeType,
+					   in GEOM_Object theAx1,
+					   in GEOM_Object thePnt,
+					   in shape_state theState);
+
+
 
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1121,6 +1139,23 @@ module GEOM
 				    in long        theShapeType,
 				    in GEOM_Object theAx1,
 				    in shape_state theState);
+				    
+    /*!
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified plane by the certain way, defined through \a theState parameter.
+     *  \param theShape Shape to find sub-shapes of.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param theAx1 Vector (or line, or linear edge), specifying normal
+     *                direction of the plane to find shapes on.
+     *  \param thePnt Point specifying location of the plane to find shapes on.     
+     *  \param theState The state of the subshapes to find.
+     *  \return List of IDs of all found sub-shapes.
+     */
+    ListOfLong GetShapesOnPlaneWithLocationIDs (in GEOM_Object theShape,
+						in long        theShapeType,
+						in GEOM_Object theAx1,
+						in GEOM_Object thePnt,
+						in shape_state theState);
 
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively

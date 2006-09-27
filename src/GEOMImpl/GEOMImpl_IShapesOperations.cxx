@@ -1419,6 +1419,80 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
 
 //=============================================================================
 /*!
+ *  GetShapesOnPlaneWithLocation
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlaneWithLocation
+                                        (const Handle(GEOM_Object)& theShape,
+                                         const Standard_Integer     theShapeType,
+                                         const Handle(GEOM_Object)& theAx1,
+					 const Handle(GEOM_Object)& thePnt,
+                                         const GEOMAlgo_State       theState)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull() || theAx1.IsNull() || thePnt.IsNull()) return NULL;
+
+  TopoDS_Shape aShape = theShape->GetValue();
+  TopoDS_Shape anAx1  = theAx1->GetValue();
+  TopoDS_Shape anPnt = thePnt->GetValue();
+
+  if (aShape.IsNull() || anAx1.IsNull() || anPnt.IsNull()) return NULL;
+
+  TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
+  if ( !checkTypeShapesOn( theShapeType ))
+    return NULL;
+
+  // Create plane
+  if ( anAx1.ShapeType() != TopAbs_EDGE || anPnt.ShapeType() != TopAbs_VERTEX ) return NULL;
+  TopoDS_Vertex V1, V2, V3;
+  TopoDS_Edge anEdge = TopoDS::Edge(anAx1);
+  TopExp::Vertices(anEdge, V1, V2, Standard_True);
+
+  if (V1.IsNull() || V2.IsNull()) {
+    SetErrorCode("Bad edge given for the plane normal vector");
+    return NULL;
+  }
+  V3 = TopoDS::Vertex(anPnt);
+
+  if(V3.IsNull()) {
+    SetErrorCode("Bad vertex given for the plane location");
+      return NULL;
+  }
+  gp_Pnt aLoc = BRep_Tool::Pnt(V3);
+  gp_Vec aVec(BRep_Tool::Pnt(V1),BRep_Tool::Pnt(V2));
+
+  if (aVec.Magnitude() < Precision::Confusion()) {
+     SetErrorCode("Vector with null magnitude given");
+    return NULL;
+  }
+  Handle(Geom_Surface) aPlane = new Geom_Plane(aLoc, aVec);
+
+  if ( aPlane.IsNull() )
+    return NULL;
+  
+  // Find objects
+  TCollection_AsciiString anAsciiList;
+  Handle(TColStd_HSequenceOfTransient) aSeq;
+  aSeq = getShapesOnSurface( aPlane, theShape, aShapeType, theState, anAsciiList );
+  if ( aSeq.IsNull() || aSeq->Length() == 0 )
+    return NULL;
+
+  // Make a Python command
+
+  Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast( aSeq->Value( 1 ));
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
+    << "] = geompy.GetShapesOnPlaneWithLocation(" << theShape << ", "
+    << aShapeType << ", " << theAx1 << ", "<< thePnt <<", " << theState << ")";
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+//=============================================================================
+/*!
  *  GetShapesOnCylinder
  */
 //=============================================================================
@@ -1560,6 +1634,73 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnPlaneI
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnPlane = geompy.GetShapesOnPlaneIDs"
     << "(" << theShape << "," << aShapeType << "," << theAx1 << "," << theState << ")";
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnPlaneWithLocationIDs
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnPlaneWithLocationIDs
+                                        (const Handle(GEOM_Object)& theShape,
+                                         const Standard_Integer     theShapeType,
+                                         const Handle(GEOM_Object)& theAx1,
+					 const Handle(GEOM_Object)& thePnt,
+                                         const GEOMAlgo_State       theState)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull() || theAx1.IsNull() || thePnt.IsNull()) return NULL;
+
+  TopoDS_Shape aShape = theShape->GetValue();
+  TopoDS_Shape anAx1  = theAx1->GetValue();
+  TopoDS_Shape anPnt  = thePnt->GetValue();
+
+  if (aShape.IsNull() || anAx1.IsNull() || anPnt.IsNull()) return NULL;
+
+  TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
+  if ( !checkTypeShapesOn( aShapeType ))
+    return NULL;
+
+  // Create plane
+  if (anAx1.ShapeType() != TopAbs_EDGE || anPnt.ShapeType() != TopAbs_VERTEX) return NULL;
+  TopoDS_Edge anEdge = TopoDS::Edge(anAx1);
+  TopoDS_Vertex V1, V2, V3;
+  TopExp::Vertices(anEdge, V1, V2, Standard_True);
+  if (V1.IsNull() || V2.IsNull()) {
+    SetErrorCode("Bad edge given for the plane normal vector");
+    return NULL;
+  }
+  V3 = TopoDS::Vertex(anPnt);
+  if(V3.IsNull()) {
+    SetErrorCode("Bad vertex given for the plane location");
+      return NULL;
+  }
+  gp_Pnt aLoc = BRep_Tool::Pnt(V3);
+  gp_Vec aVec(BRep_Tool::Pnt(V1),BRep_Tool::Pnt(V2));
+  if (aVec.Magnitude() < Precision::Confusion()) {
+    SetErrorCode("Vector with null magnitude given");
+    return NULL;
+  }
+  
+  Handle(Geom_Surface) aPlane = new Geom_Plane(aLoc, aVec);  
+  if ( aPlane.IsNull() )
+    return NULL;
+
+  // Find object IDs
+  Handle(TColStd_HSequenceOfInteger) aSeq;
+  aSeq = getShapesOnSurfaceIDs( aPlane, aShape, aShapeType, theState );
+
+  // The GetShapesOnPlaneIDs() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theAx1)->GetLastFunction();
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction, /*append=*/true)
+    << "listShapesOnPlane = geompy.GetShapesOnPlaneWithLocationIDs"
+    << "(" << theShape << ", " << aShapeType << ", " << theAx1 << ", "<< thePnt << ", "  << theState << ")";
 
   SetErrorCode(OK);
   return aSeq;
