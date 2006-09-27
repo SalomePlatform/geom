@@ -170,8 +170,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       if (!MW.IsDone()) {
         Standard_ConstructionError::Raise("Wire construction failed");
       }
-      //W = TopoDS::Wire(aShapeBase);
-      W = MW;
+          W = MW;
     }
     else {
       Standard_NullObject::Raise
@@ -189,17 +188,30 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       Standard_ConstructionError::Raise("No wires given");
     }
 
-    // first wire
+    // first wire or edge
     Handle(GEOM_Function) aRefWire = Handle(GEOM_Function)::DownCast(aShapes->Value(1));
     TopoDS_Shape aWire = aRefWire->GetValue();
-    if (aWire.IsNull() || aWire.ShapeType() != TopAbs_WIRE) {
-      Standard_NullObject::Raise("Shape for face construction is null or not a wire");
+    if (aWire.IsNull()) Standard_NullObject::Raise("Argument Shape is null");
+    TopoDS_Wire W1;
+    if(aWire.ShapeType() == TopAbs_WIRE) {
+      W1 = TopoDS::Wire(aWire);
     }
-    TopoDS_Wire W = TopoDS::Wire(aWire);
+    else if(aWire.ShapeType() == TopAbs_EDGE && aWire.Closed()) {
+      BRepBuilderAPI_MakeWire MW;
+      MW.Add(TopoDS::Edge(aWire));
+      if (!MW.IsDone()) {
+        Standard_ConstructionError::Raise("Wire construction failed");
+      }
+          W1 = MW;
+    }
+    else {
+      Standard_NullObject::Raise
+        ("Shape for face construction is neither a wire nor closed edge");
+    }
 
     // basic face
     TopoDS_Shape FFace;
-    GEOMImpl_Block6Explorer::MakeFace(W, aCI.GetIsPlanar(), FFace);
+    GEOMImpl_Block6Explorer::MakeFace(W1, aCI.GetIsPlanar(), FFace);
     if (FFace.IsNull()) {
       Standard_ConstructionError::Raise("Face construction failed");
     }
@@ -221,11 +233,24 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         Handle(GEOM_Function) aRefWire_i =
           Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
         TopoDS_Shape aWire_i = aRefWire_i->GetValue();
-        if (aWire_i.IsNull() || aWire_i.ShapeType() != TopAbs_WIRE) {
-          Standard_NullObject::Raise("Shape for face construction is null or not a wire");
-        }
-
-        FR.Add(TopoDS::Wire(aWire_i));
+        if (aWire_i.IsNull()) Standard_NullObject::Raise("Argument Shape is null");
+	TopoDS_Wire W_i;
+	if(aWire_i.ShapeType() == TopAbs_WIRE) {
+	  W_i = TopoDS::Wire(aWire_i);
+	}
+	else if(aWire_i.ShapeType() == TopAbs_EDGE && aWire_i.Closed()) {
+	  BRepBuilderAPI_MakeWire MW1;
+	  MW1.Add(TopoDS::Edge(aWire_i));
+	  if (!MW1.IsDone()) {
+	    Standard_ConstructionError::Raise("Wire construction failed");
+	  }
+          W_i = MW1;  
+	}
+	else {
+	  Standard_NullObject::Raise
+	    ("Shape for face construction is neither a wire nor closed edges");
+	}
+	FR.Add(W_i);
       }
 
       FR.Perform();
