@@ -68,18 +68,23 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr orb,
 
   _impl = new ::GEOMImpl_Gen;
 
-  //work around PAL12004, PAL12628
-  //OSD::SetSignal( true );
-  bool raiseFPE;
+  //PAL10867: disable signals catching with "noexcepthandler" option
+  char* envNoCatchSignals = getenv("NOT_INTERCEPT_SIGNALS");
+  if (!envNoCatchSignals || !atoi(envNoCatchSignals))
+  {
+    //work around PAL12004, PAL12628
+    //OSD::SetSignal( true );
+    bool raiseFPE;
 #ifdef _DEBUG_
-  raiseFPE = true;
-  char* envDisableFPE = getenv("DISABLE_FPE");
-  if (envDisableFPE && atoi(envDisableFPE))
-    raiseFPE = false;
+    raiseFPE = true;
+    char* envDisableFPE = getenv("DISABLE_FPE");
+    if (envDisableFPE && atoi(envDisableFPE))
+      raiseFPE = false;
 #else
-  raiseFPE = false;
+    raiseFPE = false;
 #endif
-  OSD::SetSignal( raiseFPE );
+    OSD::SetSignal( raiseFPE );
+  }
 }
 
 //============================================================================
@@ -462,6 +467,9 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(anObj->GetEntry(), anEntry);
   GEOM::GEOM_Object_var obj = GetObject(anObj->GetDocID(), anEntry.ToCString());
+
+  //Set the study entry of the published GEOM_Object
+  obj->SetStudyEntry(aNewSO->GetID());
 
   // Add IORAttribute to the Study and set IOR of the created GEOM_Object to it
   SALOMEDS::GenericAttribute_var anAttr = aStudyBuilder->FindOrCreateAttribute(aNewSO, "AttributeIOR");
