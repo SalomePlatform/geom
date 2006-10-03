@@ -137,14 +137,14 @@
   aNb=myDS->NumberOfShapesOfTheObject();
   //
   for (i=1; i<=aNb; i++) {
-    const TopoDS_Shape& aF=myDS->Shape(i);
+    const TopoDS_Shape aF=myDS->Shape(i);
     if (aF.ShapeType()==TopAbs_FACE) {
       TopExp::MapShapesAndAncestors (aF, TopAbs_EDGE, TopAbs_FACE, aMEF);
     }
   }
   //
   for (i=1; i<=aNb; i++) {
-    const TopoDS_Shape& aS=myDS->Shape(i);
+    const TopoDS_Shape aS=myDS->Shape(i);
     if (aS.ShapeType()==TopAbs_EDGE) {
       const TopoDS_Edge& aE=TopoDS::Edge(aS);
       
@@ -306,8 +306,8 @@
   // Clear aPaveSet, aSplitEdges
   aPaveSet.ChangeSet().Clear();
   //
-  const TopoDS_Edge& aDE=TopoDS::Edge(myDS->Shape(nED));
-  const TopoDS_Face& aDF=TopoDS::Face(myDS->Shape(nFD));
+  const TopoDS_Edge aDE=TopoDS::Edge(myDS->Shape(nED));
+  const TopoDS_Face aDF=TopoDS::Face(myDS->Shape(nFD));
   //
   // 2D Curve of degenerated edge on the face aDF
   Handle(Geom2d_Curve) aC2DDE=BRep_Tool::CurveOnSurface(aDE, aDF, aTD1, aTD2);
@@ -333,7 +333,7 @@
   for (; anIt.More(); anIt.Next()) {
     const BOPTools_PaveBlock& aPB=anIt.Value();
     nE=aPB.Edge();
-    const TopoDS_Edge& aE=TopoDS::Edge(myDS->Shape(nE));
+    const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));
     
     Handle(Geom2d_Curve) aC2D=BRep_Tool::CurveOnSurface(aE, aDF, aT1, aT2);
     //
@@ -427,8 +427,8 @@
   TopoDS_Edge aE, aESplit;
   TopoDS_Vertex aV1, aV2;
 
-  const TopoDS_Edge& aDE=TopoDS::Edge(myDS->Shape(nED));
-  const TopoDS_Face& aDF=TopoDS::Face(myDS->Shape(nFD));
+  const TopoDS_Edge aDE=TopoDS::Edge(myDS->Shape(nED));
+  const TopoDS_Face aDF=TopoDS::Face(myDS->Shape(nFD));
 
   BOPTools_ListIteratorOfListOfPaveBlock aPBIt(aSplitEdges);
 

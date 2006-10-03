@@ -78,8 +78,8 @@
       aWith=n2;
       SortTypes(aWhat, aWith);
       if (!bJustAddInterference) {
-	const TopoDS_Shape& aS1=myDS->GetShape(aWhat);
-	const TopoDS_Shape& aS2=myDS->GetShape(aWith);
+	const TopoDS_Shape aS1=myDS->GetShape(aWhat);
+	const TopoDS_Shape aS2=myDS->GetShape(aWith);
 	//
 	const TopoDS_Vertex& aV1=TopoDS::Vertex(aS1);
 	const TopoDS_Vertex& aV2=TopoDS::Vertex(aS2);
@@ -127,7 +127,7 @@
     aNbV=aChain.Extent();
     for (j=1; j<=aNbV; ++j) {
       aIdV=aChain(j);
-      const TopoDS_Shape& aV=myDS->Shape(aIdV);
+      const TopoDS_Shape aV=myDS->Shape(aIdV);
       if (!aM.Contains(aV)) {
 	aM.Add(aV);
 	aLV.Append(aV);

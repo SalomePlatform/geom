@@ -236,7 +236,7 @@
   for(i=1; i<=aNbF; ++i) {
     nF=aMF(i);
     iRankF=myDS->Rank(nF);
-    const TopoDS_Shape& aF=myDS->Shape(nF);
+    const TopoDS_Shape aF=myDS->Shape(nF);
     aExp.Init(aF, TopAbs_EDGE);
     for(; aExp.More();  aExp.Next()) {
       aE=TopoDS::Edge(aExp.Current());

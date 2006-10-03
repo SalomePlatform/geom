@@ -145,8 +145,8 @@ static
       continue;
     }
     //
-    const TopoDS_Edge& aE1=TopoDS::Edge(myDS->Shape(nE1));
-    const TopoDS_Edge& aE2=TopoDS::Edge(myDS->Shape(nE2));
+    const TopoDS_Edge aE1=TopoDS::Edge(myDS->Shape(nE1));
+    const TopoDS_Edge aE2=TopoDS::Edge(myDS->Shape(nE2));
     //
     if (BRep_Tool::Degenerated(aE1) || BRep_Tool::Degenerated(aE2)){
       continue;
@@ -468,7 +468,7 @@ static
     aNbEdges=aME.Extent();
     for (j=1; j<=aNbEdges; ++j) {
       nE=aME(j);
-      const TopoDS_Edge& aE=TopoDS::Edge(myDS->Shape(nE));
+      const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));
       //
       aFlag=myContext.ComputeVE (aNewVertex, aE, aT);
       //
@@ -775,10 +775,10 @@ static
   Standard_Real d1121, d1122, d1222, d1221, aTolSum, aCoeff=1.05;
   gp_Pnt aP11, aP12, aP21, aP22;
 
-  const TopoDS_Vertex& aV11=TopoDS::Vertex(myDS->Shape(aPB1.Pave1().Index()));
-  const TopoDS_Vertex& aV12=TopoDS::Vertex(myDS->Shape(aPB1.Pave2().Index()));
-  const TopoDS_Vertex& aV21=TopoDS::Vertex(myDS->Shape(aPB2.Pave1().Index()));
-  const TopoDS_Vertex& aV22=TopoDS::Vertex(myDS->Shape(aPB2.Pave2().Index()));
+  const TopoDS_Vertex aV11=TopoDS::Vertex(myDS->Shape(aPB1.Pave1().Index()));
+  const TopoDS_Vertex aV12=TopoDS::Vertex(myDS->Shape(aPB1.Pave2().Index()));
+  const TopoDS_Vertex aV21=TopoDS::Vertex(myDS->Shape(aPB2.Pave1().Index()));
+  const TopoDS_Vertex aV22=TopoDS::Vertex(myDS->Shape(aPB2.Pave2().Index()));
 
   aTolV11=BRep_Tool::Tolerance(aV11);
   aTolV12=BRep_Tool::Tolerance(aV12);

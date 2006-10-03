@@ -138,13 +138,13 @@ static
       continue;
     }
     // Edge
-    const TopoDS_Edge& aE=TopoDS::Edge(myDS->GetShape(nE));
+    const TopoDS_Edge aE=TopoDS::Edge(myDS->GetShape(nE));
     if (BRep_Tool::Degenerated(aE)){
       continue;
     }
     aTolE=BRep_Tool::Tolerance(aE);
     // Face
-    const TopoDS_Face& aF=TopoDS::Face(myDS->GetShape(nF));
+    const TopoDS_Face aF=TopoDS::Face(myDS->GetShape(nF));
     aTolF=BRep_Tool::Tolerance(aF);
     const Bnd_Box& aBBF=myDS->GetBoundingBox(nF); 
     //
@@ -492,7 +492,7 @@ static
     aNbEdges=aME.Extent();
     for (j=1; j<=aNbEdges; ++j) {
       nE=aME(j);
-      const TopoDS_Edge& aE=TopoDS::Edge(myDS->Shape(nE));
+      const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));
       //
       aFlag=myContext.ComputeVE (aNewVertex, aE, aT);
       //
@@ -575,7 +575,7 @@ static
   aNbV=aMVF.Extent();
   for (i=1; i<=aNbV; ++i) {
     nVF=aMVF(i);
-    const TopoDS_Vertex& aVF=TopoDS::Vertex(myDS->Shape(nVF));
+    const TopoDS_Vertex aVF=TopoDS::Vertex(myDS->Shape(nVF));
     iFlag=IntTools_Tools::ComputeVV(aNewVertex, aVF);
     if (!iFlag) {
       return nVF;

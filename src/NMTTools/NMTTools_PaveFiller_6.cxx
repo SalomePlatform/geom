@@ -165,8 +165,8 @@ static
       continue;
     }
     //
-    const TopoDS_Face& aF1=TopoDS::Face(myDS->Shape(nF1));
-    const TopoDS_Face& aF2=TopoDS::Face(myDS->Shape(nF2));
+    const TopoDS_Face aF1=TopoDS::Face(myDS->Shape(nF1));
+    const TopoDS_Face aF2=TopoDS::Face(myDS->Shape(nF2));
     //
     // FF
     bToApproxC3d     = mySectionAttribute.Approximation();
@@ -254,8 +254,8 @@ static
     // 
     // Faces
     aFFi.Indices(nF1, nF2);
-    const TopoDS_Face& aF1=TopoDS::Face(myDS->Shape(nF1));
-    const TopoDS_Face& aF2=TopoDS::Face(myDS->Shape(nF2));
+    const TopoDS_Face aF1=TopoDS::Face(myDS->Shape(nF1));
+    const TopoDS_Face aF2=TopoDS::Face(myDS->Shape(nF2));
     //
     BOPTools_ListOfPaveBlock aLPB, aLPBC;
     //
@@ -377,8 +377,8 @@ static
 	// Make Section Edge  
 	TopoDS_Edge aES;
 	//
-	const TopoDS_Vertex& aV1=TopoDS::Vertex(myDS->Shape(nV1));
-	const TopoDS_Vertex& aV2=TopoDS::Vertex(myDS->Shape(nV2));
+	const TopoDS_Vertex aV1=TopoDS::Vertex(myDS->Shape(nV1));
+	const TopoDS_Vertex aV2=TopoDS::Vertex(myDS->Shape(nV2));
 	//
 	BOPTools_Tools::MakeSectEdge (aIC, aV1, aT1, aV2, aT2, aES);
 	//
@@ -489,13 +489,13 @@ static
     for (j=1; j<=aNbSE; ++j) {
       const BOPTools_PaveBlock& aPBSE=aMEPB(j);
       nV1=aPBSE.Pave1().Index();
-      const TopoDS_Shape& aV1=myDS->Shape(nV1);
+      const TopoDS_Shape aV1=myDS->Shape(nV1);
       if (aV1.IsSame(aV)) {
 	aMNewOld.Add(i, nV1);
 	break;
       }
       nV2=aPBSE.Pave2().Index();
-      const TopoDS_Shape& aV2=myDS->Shape(nV2);
+      const TopoDS_Shape aV2=myDS->Shape(nV2);
       if (aV2.IsSame(aV)) {
 	aMNewOld.Add(i, nV2);
 	break;
@@ -546,9 +546,9 @@ static
       BooleanOperations_AncestorsSeqAndSuccessorsSeq anASSeq;
       //
       nV1=aPBSE.Pave1().Index();
-      const TopoDS_Shape& aV1=myDS->Shape(nV1);
+      const TopoDS_Shape aV1=myDS->Shape(nV1);
       nV2=aPBSE.Pave2().Index();
-      const TopoDS_Shape& aV2=myDS->Shape(nV2);
+      const TopoDS_Shape aV2=myDS->Shape(nV2);
       //
       anASSeq.SetNewSuccessor(nV1);
       anASSeq.SetNewOrientation(aV1.Orientation());
@@ -580,8 +580,8 @@ static
       BOPTools_PaveBlock aPB=aIt.Value();
       //
       ////modified by NIZNHY-PKV Thu Jan 26 10:16:36 2006f
-      const TopoDS_Face& aF1=TopoDS::Face(myDS->Shape(nF1));
-      const TopoDS_Face& aF2=TopoDS::Face(myDS->Shape(nF2));
+      const TopoDS_Face aF1=TopoDS::Face(myDS->Shape(nF1));
+      const TopoDS_Face aF2=TopoDS::Face(myDS->Shape(nF2));
       ////modified by NIZNHY-PKV Thu Jan 26 10:16:39 2006t
       //
       if (aCBAPI.IsCommonBlock(aPB)) {
@@ -617,13 +617,13 @@ static
       aT1=aPave1.Param();
       mV1=aPave1.Index();            // index in tDS
       nV1=aMNewOld.FindFromKey(mV1); // index in myDS
-      const TopoDS_Shape& aV1=myDS->Shape(nV1);
+      const TopoDS_Shape aV1=myDS->Shape(nV1);
       //
       const BOPTools_Pave& aPave2=aPB.Pave2();
       aT2=aPave2.Param();
       mV2=aPave2.Index();
       nV2=aMNewOld.FindFromKey(mV2);
-      const TopoDS_Shape& aV2=myDS->Shape(nV2);
+      const TopoDS_Shape aV2=myDS->Shape(nV2);
       //
       if (!aMNewOld.Contains(mE)) {
 	// add new SE to the myDS
@@ -684,8 +684,8 @@ static
     BOPTools_SSInterference& aFF=aFFs(i);
     aFF.Indices(nF1, nF2);
     //
-    const TopoDS_Face& aF1=TopoDS::Face(myDS->Shape(nF1));
-    const TopoDS_Face& aF2=TopoDS::Face(myDS->Shape(nF2));
+    const TopoDS_Face aF1=TopoDS::Face(myDS->Shape(nF1));
+    const TopoDS_Face aF2=TopoDS::Face(myDS->Shape(nF2));
     //
     aF1FWD=aF1;
     aF1FWD.Orientation(TopAbs_FORWARD);
@@ -699,7 +699,7 @@ static
     for (; anIt.More(); anIt.Next()) {
       const BOPTools_PaveBlock& aPB=anIt.Value();
       nE=aPB.Edge();
-      const TopoDS_Edge& aE=TopoDS::Edge(myDS->Shape(nE));
+      const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));
       
       BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aE, aF1FWD);
       BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aE, aF2FWD);
@@ -768,7 +768,7 @@ static
   //
   //Edge
   nE2=aPBR.Edge();
-  const TopoDS_Edge& aE2=TopoDS::Edge(myDS->GetShape(nE2));
+  const TopoDS_Edge aE2=TopoDS::Edge(myDS->GetShape(nE2));
   // VE
   iVM=myContext.ComputeVE(aVM, aE2, aTmp); 
   //
@@ -799,8 +799,8 @@ static
   aFFi.Indices(nF1, nF2);
   aTolR3D=aFFi.TolR3D();
   //
-  const TopoDS_Face& aF1=TopoDS::Face(myDS->GetShape(nF1));
-  const TopoDS_Face& aF2=TopoDS::Face(myDS->GetShape(nF2));
+  const TopoDS_Face aF1=TopoDS::Face(myDS->GetShape(nF1));
+  const TopoDS_Face aF2=TopoDS::Face(myDS->GetShape(nF2));
   //
   bVF=myContext.IsValidPointForFaces (aP1, aF1, aF2, aTolR3D);
   if (bVF) {
@@ -850,14 +850,13 @@ static
     TColStd_ListOfInteger& aTVs=aBC.TechnoVertices();
     aTVs.Append(nV);
   }
-  
   if (bFound1 && !bFound2) {
     nV=aPave1.Index();
     aPave.SetIndex(nV);
     aPave.SetParam(aT);
     aFFiPS.Append(aPave);
     //
-    const TopoDS_Vertex& aV=TopoDS::Vertex(myDS->Shape(nV));
+    const TopoDS_Vertex aV=TopoDS::Vertex(myDS->Shape(nV));
     BOPTools_Tools::UpdateVertex (aIC, aT, aV);
   }
   
@@ -867,7 +866,7 @@ static
     aPave.SetParam(aT);
     aCPS.Append(aPave);
     //
-    const TopoDS_Vertex& aV=TopoDS::Vertex(myDS->Shape(nV));
+    const TopoDS_Vertex aV=TopoDS::Vertex(myDS->Shape(nV));
     BOPTools_Tools::UpdateVertex (aIC, aT, aV);
   }
 }
@@ -888,7 +887,7 @@ static
   for (; anIt.More(); anIt.Next()) {
     const BOPTools_Pave& aPC=anIt.Value();
     nV=aPC.Index();
-    const TopoDS_Vertex& aV=TopoDS::Vertex(myDS->Shape(nV));
+    const TopoDS_Vertex aV=TopoDS::Vertex(myDS->Shape(nV));
     bIsVertex=IntTools_Tools::IsVertex (aP, aTolPV, aV);
     if (bIsVertex) {
       aPave=aPC;
@@ -974,7 +973,7 @@ static
     const BOPTools_Pave& aPave=anIt.Value();
     //
     nV=aPave.Index();
-    const TopoDS_Vertex& aV=TopoDS::Vertex(myDS->Shape(nV));
+    const TopoDS_Vertex aV=TopoDS::Vertex(myDS->Shape(nV));
     //
     Bnd_Box aBBV;
     BRepBndLib::Add(aV, aBBV);
