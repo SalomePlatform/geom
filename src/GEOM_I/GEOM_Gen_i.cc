@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -108,7 +108,7 @@ char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 {
   GEOM::GEOM_Object_var anObject = GEOM::GEOM_Object::_narrow(_orb->string_to_object(IORString));
   if (!CORBA::is_nil(anObject)) {
-    return strdup(anObject->GetEntry());
+    return CORBA::string_dup(anObject->GetEntry());
   }
   return 0;
 }
@@ -133,7 +133,7 @@ char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
   GEOM::GEOM_Object_var obj = GetObject(anObject->GetDocID(), anEntry.ToCString());
 
   CORBA::String_var aPersRefString = _orb->object_to_string(obj);
-  return strdup(aPersRefString);
+  return CORBA::string_dup(aPersRefString);
 }
 
 //============================================================================
@@ -187,8 +187,10 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   }
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeIOR");
   SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-  char *aGeomObjIOR = _orb->object_to_string(theObject);
-  anIOR->SetValue(strdup(aGeomObjIOR));
+  //char *aGeomObjIOR = _orb->object_to_string(theObject);
+   CORBA::String_var aGeomObjIOR = _orb->object_to_string(theObject);
+  //anIOR->SetValue(CORBA::string_dup(aGeomObjIOR));
+  anIOR->SetValue(aGeomObjIOR);
 
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributePixMap");
   SALOMEDS::AttributePixMap_var aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
@@ -243,7 +245,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     aShapeName = "Vertex_";
   }
   //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
-  //else aShapeName = TCollection_AsciiString(strdup(theName));
+  //else aShapeName = TCollection_AsciiString(CORBA::string_dup(theName));
 
   // asv : 11.11.04 Introducing a more sofisticated method of name creation, just as
   //       it is done in GUI in GEOMBase::GetDefaultName() - not just add a Tag() == number
@@ -261,7 +263,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     aShapeName = aNewShapeName;
   }
   else // MOST PROBABLY CALLED FROM GEOM GUI (ALREADY WITH VALID NAME)
-    aShapeName = TCollection_AsciiString(strdup(theName));
+    aShapeName = TCollection_AsciiString((char*)theName);
 
   //Set the study entry as a name of  the published GEOM_Object
   aShape->SetStudyEntry(aResultSO->GetID());
@@ -353,7 +355,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq.in(), true);
 
   SALOMEDS::Study_var Study = theComponent->GetStudy();
-  TCollection_AsciiString name( strdup(Study->Name()) );
+  TCollection_AsciiString name (Study->Name());
 
   return true;
 }
@@ -486,7 +488,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
 //============================================================================
 char* GEOM_Gen_i::ComponentDataType()
 {
-  return strdup("GEOM");
+  return CORBA::string_dup("GEOM");
 }
 
 //============================================================================
@@ -537,7 +539,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM:
 void GEOM_Gen_i::register_name(char * name)
 {
   GEOM::GEOM_Gen_ptr g = GEOM::GEOM_Gen::_narrow(_this());
-  name_service->Register(g, strdup(name));
+  name_service->Register(g, CORBA::string_dup(name));
 }
 
 //============================================================================
