@@ -288,6 +288,10 @@ void GEOMToolsGUI::OnEditDelete()
 	_PTR(GenericAttribute) anAttr;
 	GEOM_Displayer* disp = new GEOM_Displayer( appStudy );
 
+        _PTR(SComponent) aGeom ( aStudy->FindComponent("GEOM") );
+          if ( !aGeom )
+            return;	
+
 	// MAIN LOOP OF SELECTED OBJECTS
 	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
 
@@ -300,6 +304,29 @@ void GEOMToolsGUI::OnEditDelete()
 	  // disable removal of "Geometry" component object
 	  if ( !strcmp( obj->GetIOR().c_str(), geomIOR ) )
 	    continue;
+
+          //If the object has been used to create another one,then it can't be deleted 
+          _PTR(ChildIterator) it (aStudy->NewChildIterator(aGeom));
+          for ( it->InitEx( true ); it->More(); it->Next() ) {
+             _PTR(SObject) chobj (it->Value());
+             CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(chobj);
+             GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+             if( CORBA::is_nil(geomObj) ) 
+                continue;
+             GEOM::ListOfGO_var list = geomObj->GetDependency();
+             if( list->length() > 1 )
+               for(int i = 0; i < list->length(); i++ ){
+                 CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject(obj);
+                 GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
+	         if( list[i]->_is_equivalent( geomObj_rem ) ){
+                   SUIT_MessageBox::warn1 ( app->desktop(),
+					    QObject::tr("WRN_WARNING"),
+					    QObject::tr("DEP_OBJECT"),
+					    QObject::tr("BUT_OK") );
+		   return;
+		}
+              }
+	   }
 
           RemoveObjectWithChildren(obj, aStudy, views, disp);
 
