@@ -27,7 +27,7 @@
 
 ############# MakeSpanner #############
 
-def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None, hasGUI = 0):
+def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
 
   ### Variables ###
 
@@ -355,11 +355,10 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
     Block_new = geompy.MakeHexa2Faces(Face_g_1, Face_g_1_tr)
     id_block_new = geompy.addToStudy(Block_new, "Block New")
 
-  if isMeshTest == 1:
+  if isMeshTest == 1 and smesh is not None:
 
     print "##################### Build Mesh #####################"
 
-    import StdMeshers
 
     # ---- add a middle block of spanner handle in study
 
@@ -380,117 +379,68 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
     Id_Edge1 = geompy.addToStudyInFather(FaceTop, Edge1, "Edge 1")
     Id_Edge2 = geompy.addToStudyInFather(FaceTop, Edge2, "Edge 2")
 
-    # ---- launch SMESH
+    print "-------------------------- Algorithm and Hypothesis"
 
-    smeshgui = None
-    if hasGUI == 1:
-      smeshgui = salome.ImportComponentGUI("SMESH")
-      smeshgui.Init(salome.myStudyId)
+    print "---- Init a Mesh with the Spanner"
 
-    print "-------------------------- create Hypothesis"
+    mesh = smesh.Mesh(Spanner, "Meshed Spanner")
+
+    print "-------------------------- add hypothesis to Spanner"
 
     print "-------------------------- NumberOfSegments"
-
-    hypNbSeg3 = smesh.CreateHypothesis("NumberOfSegments", "libStdMeshersEngine.so")
-    hypNbSeg3.SetNumberOfSegments(3)
+    algoReg = mesh.Segment()
+    listHyp = algoReg.GetCompatibleHypothesis()
+    for hyp in listHyp:
+      print hyp
+    print algoReg.GetName()
+    print algoReg.GetId()
+    algoReg.SetName("Regular_1D")
+      
+      
+    hypNbSeg3 = algoReg.NumberOfSegments(3)
     print hypNbSeg3.GetName()
     print hypNbSeg3.GetId()
     print hypNbSeg3.GetNumberOfSegments()
-
-    if hasGUI == 1:
-      idseg = salome.ObjectToID(hypNbSeg3)
-      smeshgui.SetName(idseg, "NumberOfSegments_3");
-
-    print "-------------------------- LocalLength"
-
-    hypLen1 = smesh.CreateHypothesis("LocalLength", "libStdMeshersEngine.so")
-    hypLen1.SetLength(10)
-    print hypLen1.GetName()
-    print hypLen1.GetId()
-    print hypLen1.GetLength()
-
-    if hasGUI == 1:
-      idlength = salome.ObjectToID(hypLen1)
-      smeshgui.SetName(idlength, "Local_Length_10");
-
-    print "-------------------------- Propagation"
-
-    hypProp = smesh.CreateHypothesis("Propagation", "libStdMeshersEngine.so")
-    print hypProp.GetName()
-    print hypProp.GetId()
-
-    if hasGUI == 1:
-      idprop = salome.ObjectToID(hypProp)
-      smeshgui.SetName(idprop, "Propagation hypothesis");
-
-    #print "-------------------------- NumberOfSegments"
-    #
-    #hypNbSeg15 = smesh.CreateHypothesis("NumberOfSegments", "libStdMeshersEngine.so")
-    #hypNbSeg15.SetNumberOfSegments(15)
-    #print hypNbSeg15.GetName()
-    #print hypNbSeg15.GetId()
-    #print hypNbSeg15.GetNumberOfSegments()
-    #
-    #if hasGUI == 1:
-    #  idseg15 = salome.ObjectToID(hypNbSeg15)
-    #  smeshgui.SetName(idseg15, "NumberOfSegments_15");
-
-    print "-------------------------- Regular_1D"
-
-    algoReg = smesh.CreateHypothesis("Regular_1D", "libStdMeshersEngine.so")
-    listHyp = algoReg.GetCompatibleHypothesis()
-    for hyp in listHyp:
-        print hyp
-    print algoReg.GetName()
-    print algoReg.GetId()
-
-    if hasGUI == 1:
-      idreg = salome.ObjectToID(algoReg)
-      smeshgui.SetName(idreg, "Regular_1D");
+    smesh.SetName(hypNbSeg3, "NumberOfSegments_3")
 
     print "-------------------------- Quadrangle_2D"
 
-    algoQuad = smesh.CreateHypothesis("Quadrangle_2D", "libStdMeshersEngine.so")
+    algoQuad = mesh.Quadrangle()
     listHyp = algoQuad.GetCompatibleHypothesis()
     for hyp in listHyp:
         print hyp
     print algoQuad.GetName()
     print algoQuad.GetId()
-
-    if hasGUI == 1:
-      idquad = salome.ObjectToID(algoQuad)
-      smeshgui.SetName(idquad, "Quadrangle_2D");
-
-    print "---- Init a Mesh with the Spanner"
-
-    mesh = smesh.CreateMesh(Spanner)
-    if hasGUI == 1:
-      idmesh = salome.ObjectToID(mesh)
-      smeshgui.SetName(idmesh, "Meshed Spanner");
-
-    print "-------------------------- add hypothesis to Spanner"
-
-    mesh.AddHypothesis(Spanner, algoReg)
-    mesh.AddHypothesis(Spanner, hypNbSeg3)
-    mesh.AddHypothesis(Spanner, algoQuad)
+    algoQuad.SetName("Quadrangle_2D")
 
     print "-------------------------- add hypothesis to the Middle Block"
-
-    submesh_bl = mesh.GetSubMesh(BlockMh, "SubMesh Middle Block")
-    mesh.AddHypothesis(BlockMh, hypLen1)
+    
+    print "-------------------------- LocalLength"
+    algoRegMb = mesh.Segment(BlockMh)
+    hypLen1 = algoRegMb.LocalLength(10)
+    print hypLen1.GetName()
+    print hypLen1.GetId()
+    print hypLen1.GetLength()
+    smesh.SetName(hypLen1, "Local_Length_10")
 
     print "-------------------------- add hypothesis to the long edges of the Top Face of the Middle Block"
 
-    submesh_e1 = mesh.GetSubMesh(Edge1, "SubMesh Edge 1 of Top Face")
-    mesh.AddHypothesis(Edge1, hypProp)
-    #mesh.AddHypothesis(Edge1, hypNbSeg15)
-
-    submesh_e2 = mesh.GetSubMesh(Edge2, "SubMesh Edge 2 of Top Face")
-    mesh.AddHypothesis(Edge2, hypProp)
-    #mesh.AddHypothesis(Edge2, hypNbSeg15)
-
+    algoRegE1 = mesh.Segment(Edge1)
+    hypPropE1 = algoRegE1.Propagation()
+    print hypPropE1.GetName()
+    print hypPropE1.GetId()
+    smesh.SetName(hypPropE1, "Propagation hypothesis")
+    smesh.SetName(algoRegE1.GetSubMesh(), "SubMesh Edge 1 of Top Face")
+    
+    algoRegE2 = mesh.Segment(Edge2)
+    hypPropE2 = algoRegE2.Propagation()
+    print hypPropE2.GetName()
+    print hypPropE2.GetId()
+    smesh.SetName(hypPropE2, "Propagation hypothesis")
+    smesh.SetName(algoRegE2.GetSubMesh(), "SubMesh Edge 2 of Top Face")
+    
     print "-------------------------- compute the mesh"
-    smesh.Compute(mesh, Spanner)
+    mesh.Compute()
 
     print "Information about the Mesh:"
     print "Number of nodes       : ", mesh.NbNodes()
