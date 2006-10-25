@@ -66,6 +66,7 @@
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <AIS_Drawer.hxx>
+#include <BRepTools.hxx>
 
 // IDL Headers
 #include <SALOMEconfig.h>
@@ -613,13 +614,13 @@ void GEOM_Swig::setDeflection(const char* theEntry, float theDeflect)
 	  if ((!aObj.IsNull()) && aObj->hasEntry() && aObj->isSame(anIO)) {
 	    Handle(AIS_Shape) aShape = Handle(AIS_Shape)::DownCast(it.Value());
 	    if (!aShape.IsNull()) {
-	      Handle(AIS_Drawer) aDrawer = aShape->Attributes();
-	      if (aDrawer.IsNull())
-		aDrawer = new AIS_Drawer();
-	      aDrawer->SetDeviationCoefficient(myParam);
-	      aShape->SetAttributes(aDrawer);
-	      aContext->Redisplay(aShape, true, true);
-	      aContext->UpdateCurrentViewer();
+	      TopoDS_Shape aSh = aShape->Shape();
+	      if (!aSh.IsNull())
+		BRepTools::Clean(aSh);
+
+	      aShape->SetOwnDeviationCoefficient( myParam );
+	      aShape->SetOwnHLRDeviationAngle( 1.57 );
+	      aContext->Redisplay(aShape);
 	      return;
 	    }
 	  }
