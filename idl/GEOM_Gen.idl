@@ -471,6 +471,34 @@ module GEOM
 				  in long theNbTimes2);
 
     /*!
+     *  Rotate given object around vector perpendicular to plane containing three points.
+     *  \param theObject The object to be rotated.
+     *  \param theCentPoint central point - the axis is the vector perpendicular to the plane
+     *  containing the three points.
+     *  \param thePoint1 and thePoint2 - in a perpendicular plan of the axis.
+     *  \return theObject.
+     */
+    GEOM_Object RotateThreePoints (in GEOM_Object theObject,
+				   in GEOM_Object theCentPoint,
+				   in GEOM_Object thePoint1,
+				   in GEOM_Object thePoint2);
+
+
+    /*!
+     *  Rotate given object around vector perpendicular to plane containing three points.
+     *  Creating its copy before the rotatation.
+     *  \param theObject The object to be rotated.
+     *  \param theCentPoint central point - the axis is the vector perpendicular to the plane
+     *  containing the three points.
+     *  \param thePoint1 and thePoint2 - in a perpendicular plan of the axis.
+     *  \return New GEOM_Object, containing the rotated object.
+     */
+    GEOM_Object RotateThreePointsCopy (in GEOM_Object theObject,
+				       in GEOM_Object theCentPoint,
+				       in GEOM_Object thePoint1,
+				       in GEOM_Object thePoint2);
+
+    /*!
      *  Rotate the given object around the given axis on the given angle.
      *  \param theObject The object to be rotated.
      *  \param theAxis Rotation axis.
@@ -480,6 +508,7 @@ module GEOM
     GEOM_Object Rotate (in GEOM_Object theObject,
 			in GEOM_Object theAxis,
 			in double theAngle);
+
 
     /*!
      *  Rotate the given object around the given axis
@@ -492,6 +521,7 @@ module GEOM
     GEOM_Object RotateCopy (in GEOM_Object theObject,
 			    in GEOM_Object theAxis,
 			    in double theAngle);
+
 
     /*!
      *  Rotate the given object around the given axis a given number times.

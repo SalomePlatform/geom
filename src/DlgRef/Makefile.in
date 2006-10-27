@@ -65,6 +65,7 @@ LIB_SRC = 	DlgRef_Skeleton_QTD.cxx \
 		DlgRef_3Spin_QTD.cxx \
 		DlgRef_3Spin1Check_QTD.cxx \
 		DlgRef_3Sel3Spin1Check_QTD.cxx \
+		DlgRef_4Sel1Spin2Check_QTD.cxx \
 		DlgRef_SpinBox.cxx \
 		DlgRef_1Sel1Spin.cxx \
 		DlgRef_1Sel2Spin.cxx \
@@ -86,7 +87,8 @@ LIB_SRC = 	DlgRef_Skeleton_QTD.cxx \
 		DlgRef_3Spin1Check.cxx \
 		DlgRef_3Sel1Spin.cxx \
 		DlgRef_3Check_QTD.cxx \
-		DlgRef_6Sel_QTD.cxx
+		DlgRef_6Sel_QTD.cxx \
+		DlgRef_4Sel1Spin2Check.cxx 
 
 LIB_MOC = \
 		DlgRef_Skeleton_QTD.h \
@@ -117,6 +119,7 @@ LIB_MOC = \
 		DlgRef_3Spin_QTD.h \
 		DlgRef_3Spin1Check_QTD.h \
 		DlgRef_3Sel3Spin1Check_QTD.h \
+		DlgRef_4Sel1Spin2Check_QTD.h \
 		DlgRef_SpinBox.h \
 		DlgRef_1Sel1Spin.h \
 		DlgRef_1Sel2Spin.h \
@@ -139,7 +142,8 @@ LIB_MOC = \
 		DlgRef_3Sel1Spin.h \
 		DlgRef_1Sel_Ext.h \
 		DlgRef_3Check_QTD.h \
-		DlgRef_6Sel_QTD.h
+		DlgRef_6Sel_QTD.h \
+		DlgRef_4Sel1Spin2Check.h
 
 # header files 
 EXPORT_HEADERS= $(LIB_MOC)
