@@ -107,6 +107,17 @@ class GEOMImpl_ITransformOperations : public GEOM_IOperations {
 				Standard_Integer theNbTimes1,
 				double theStep, 
 				Standard_Integer theNbTimes2);
+
+  Standard_EXPORT Handle(GEOM_Object) RotateThreePoints (Handle(GEOM_Object) theObject,
+							 Handle(GEOM_Object) theCentPoint, 
+							 Handle(GEOM_Object) thePoint1,
+							 Handle(GEOM_Object) thePoint2);
+
+  Standard_EXPORT Handle(GEOM_Object) RotateThreePointsCopy (Handle(GEOM_Object) theObject, 
+							 Handle(GEOM_Object) theCentPoint, 
+							 Handle(GEOM_Object) thePoint1,
+							 Handle(GEOM_Object) thePoint2);
+
 };
 
 #endif

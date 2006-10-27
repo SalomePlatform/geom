@@ -124,6 +124,17 @@ class GEOM_ITransformOperations_i :
 					   GEOM::GEOM_Object_ptr theStartLCS,
 					   GEOM::GEOM_Object_ptr theEndLCS);
 
+  GEOM::GEOM_Object_ptr RotateThreePoints (GEOM::GEOM_Object_ptr theObject,
+					   GEOM::GEOM_Object_ptr theCentPoint,
+					   GEOM::GEOM_Object_ptr thePoint1,
+					   GEOM::GEOM_Object_ptr thePoint2);
+
+  GEOM::GEOM_Object_ptr RotateThreePointsCopy (GEOM::GEOM_Object_ptr theObject,
+					       GEOM::GEOM_Object_ptr theCentPoint,
+					       GEOM::GEOM_Object_ptr thePoint1,
+					       GEOM::GEOM_Object_ptr thePoint2);
+
+
   ::GEOMImpl_ITransformOperations* GetOperations() { return (::GEOMImpl_ITransformOperations*)GetImpl(); }
 };
 

@@ -307,6 +307,17 @@ public:
   GEOM::GEOM_Object_ptr RotateCopy (GEOM::GEOM_Object_ptr theObject,
 				    GEOM::GEOM_Object_ptr theAxis,
 				    CORBA::Double theAngle);
+
+  GEOM::GEOM_Object_ptr RotateThreePoints (GEOM::GEOM_Object_ptr theObject,
+					   GEOM::GEOM_Object_ptr theCentPoint,
+					   GEOM::GEOM_Object_ptr thePoint1,
+					   GEOM::GEOM_Object_ptr thePoint2);
+
+  GEOM::GEOM_Object_ptr RotateThreePointsCopy (GEOM::GEOM_Object_ptr theObject,
+					       GEOM::GEOM_Object_ptr theCentPoint,
+					       GEOM::GEOM_Object_ptr thePoint1,
+					       GEOM::GEOM_Object_ptr thePoint2);
+
   GEOM::GEOM_Object_ptr MultiRotate1D (GEOM::GEOM_Object_ptr theObject,
 				       GEOM::GEOM_Object_ptr theAxis,
 				       CORBA::Long theNbTimes);

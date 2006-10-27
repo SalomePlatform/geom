@@ -115,10 +115,12 @@
 #define TRANSLATE_XYZ             7
 #define TRANSLATE_XYZ_COPY        8
 
-#define ROTATE      1
-#define ROTATE_COPY 2
-#define ROTATE_1D   3
-#define ROTATE_2D   4
+#define ROTATE                    1
+#define ROTATE_COPY               2
+#define ROTATE_1D                 3
+#define ROTATE_2D                 4
+#define ROTATE_THREE_POINTS       5
+#define ROTATE_THREE_POINTS_COPY  6
 
 #define MIRROR_PLANE      1
 #define MIRROR_PLANE_COPY 2

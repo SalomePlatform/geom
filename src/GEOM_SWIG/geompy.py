@@ -1446,6 +1446,21 @@ def MakeRotation(theObject, theAxis, theAngle):
       print "RotateCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
+## Rotate given object around vector perpendicular to plane
+#  containing three points, creating its copy before the rotatation.
+#  @param theObject The object to be rotated.
+#  @param theCentPoint central point - the axis is the vector perpendicular to the plane
+#  containing the three points.
+#  @param thePoint1 and thePoint2 - in a perpendicular plan of the axis.
+#  @return New GEOM_Object, containing the rotated object.
+#
+#  Example: see GEOM_TestAll.py
+def MakeRotationThreePoints(theObject, theCentPoint, thePoint1, thePoint2):
+    anObj = TrsfOp.RotateThreePointsCopy(theObject, theCentPoint, thePoint1, thePoint2)
+    if TrsfOp.IsDone() == 0:
+      print "RotateThreePointsCopy : ", TrsfOp.GetErrorCode()
+    return anObj
+
 ## Scale the given object by the factor, creating its copy before the scaling.
 #  @param theObject The object to be scaled.
 #  @param thePoint Center point for scaling.

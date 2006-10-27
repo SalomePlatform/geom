@@ -156,15 +156,16 @@ def TestAll (geompy, math):
   Sewing     = geompy.MakeSewing([Face, S], precision)   #(List Of GEOM_Object_ptr, Double)->GEOM_Object_ptr
 
   #Transform objects
-  Translation = geompy.MakeTranslationTwoPoints(Box, px, pz)  #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  TranslVect  = geompy.MakeTranslationVector(Box, vxyz)       #(2 GEOM_Object_ptr)->GEOM_Object_ptr
-  Rotation    = geompy.MakeRotation(Box, vz, angle1)          #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  Scale       = geompy.MakeScaleTransform(Box, p0, factor)    #
-  Mirror      = geompy.MakeMirrorByPlane(Box, Plane)          #(2 GEOM_Object_ptr)->GEOM_Object_ptr
-  MirrorAxis  = geompy.MakeMirrorByAxis(Box, Line1)           #
-  MirrorPnt   = geompy.MakeMirrorByPoint(Box, p200)           #
-  Position    = geompy.MakePosition(Box, cs1, cs2)            #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  Offset      = geompy.MakeOffset(Box, 10.)                   #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  Translation = geompy.MakeTranslationTwoPoints(Box, px, pz)    #(3 GEOM_Object_ptr)->GEOM_Object_ptr
+  TranslVect  = geompy.MakeTranslationVector(Box, vxyz)         #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  Rotation    = geompy.MakeRotation(Box, vz, angle1)            #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  RotatPnt    = geompy.MakeRotationThreePoints(Box, px, py, pz) #(4 GEOM_Object_ptr)->GEOM_Object_ptr
+  Scale       = geompy.MakeScaleTransform(Box, p0, factor)      #
+  Mirror      = geompy.MakeMirrorByPlane(Box, Plane)            #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  MirrorAxis  = geompy.MakeMirrorByAxis(Box, Line1)             #
+  MirrorPnt   = geompy.MakeMirrorByPoint(Box, p200)             #
+  Position    = geompy.MakePosition(Box, cs1, cs2)              #(3 GEOM_Object_ptr)->GEOM_Object_ptr
+  Offset      = geompy.MakeOffset(Box, 10.)                     #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Orientation = geompy.ChangeOrientation(Box)
 
   #IDList for Fillet/Chamfer
@@ -292,6 +293,7 @@ def TestAll (geompy, math):
   id_Translation = geompy.addToStudy(Translation, "Translation")
   id_TranslVect  = geompy.addToStudy(TranslVect , "Translation along vector")
   id_Rotation    = geompy.addToStudy(Rotation,    "Rotation")
+  id_RotatPnt    = geompy.addToStudy(RotatPnt,    "Rotation by three points")
   id_Scale       = geompy.addToStudy(Scale,       "Scale")
   id_Mirror      = geompy.addToStudy(Mirror,      "Mirror by Plane")
   id_MirrorAxis  = geompy.addToStudy(MirrorAxis,  "Mirror by Axis")

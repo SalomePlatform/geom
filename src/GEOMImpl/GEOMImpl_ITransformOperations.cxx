@@ -1405,3 +1405,122 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object)
   SetErrorCode(OK);
   return aCopy;
 }
+
+//=============================================================================
+/*!
+ *  RotateThreePoints
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePoints (Handle(GEOM_Object) theObject,
+								      Handle(GEOM_Object) theCentPoint, 
+								      Handle(GEOM_Object) thePoint1,
+								      Handle(GEOM_Object) thePoint2)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull() || theCentPoint.IsNull() || thePoint1.IsNull() || thePoint2.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL;  //There is no function which creates an object to be rotated
+
+  // Get last functions of the arguments
+  Handle(GEOM_Function) aCPF = theCentPoint->GetLastFunction();
+  Handle(GEOM_Function) aP1F = thePoint1->GetLastFunction();
+  Handle(GEOM_Function) aP2F = thePoint2->GetLastFunction();
+
+
+  //Add a rotate function
+  aFunction = theObject->AddFunction(GEOMImpl_RotateDriver::GetID(), ROTATE_THREE_POINTS);
+
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_RotateDriver::GetID()) return NULL;
+
+  GEOMImpl_IRotate aRI(aFunction);
+  aRI.SetCentPoint(aCPF);
+  aRI.SetPoint1(aP1F);
+  aRI.SetPoint2(aP2F);
+  aRI.SetOriginal(aLastFunction);
+
+  //Compute the translation
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Rotate driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.RotateThreePoints(" << theObject
+			       << ", " << theCentPoint << ", "<<thePoint1 << ", " << thePoint2 << ")";
+
+  SetErrorCode(OK);
+  return theObject;
+}
+
+//=============================================================================
+/*!
+ *  RotateThreePointsCopy
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePointsCopy (Handle(GEOM_Object) theObject, 
+							 Handle(GEOM_Object) theCentPoint, 
+							 Handle(GEOM_Object) thePoint1,
+							 Handle(GEOM_Object) thePoint2)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull() || theCentPoint.IsNull() || thePoint1.IsNull() || thePoint2.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL;  //There is no function which creates an object to be rotated
+
+  //Add a new Copy object
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+
+  //Add a rotate function
+  aFunction = aCopy->AddFunction(GEOMImpl_RotateDriver::GetID(), ROTATE_THREE_POINTS_COPY);
+  if (aFunction.IsNull()) return NULL;
+
+    //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_RotateDriver::GetID()) return NULL;
+
+  GEOMImpl_IRotate aRI(aFunction);
+  aRI.SetCentPoint(theCentPoint->GetLastFunction());
+  aRI.SetPoint1(thePoint1->GetLastFunction());
+  aRI.SetPoint2(thePoint2->GetLastFunction());
+  aRI.SetOriginal(aLastFunction);
+
+  //Compute the translation
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Rotate driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeRotationThreePoints(" << theObject
+			       << ", " << theCentPoint << ", "<<thePoint1 << ", " << thePoint2 << ")";
+
+  SetErrorCode(OK);
+  return aCopy;
+}
+
