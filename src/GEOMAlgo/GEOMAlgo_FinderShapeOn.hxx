@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -60,6 +60,7 @@ class TopTools_DataMapOfShapeShape;
 #include <Standard_Macro.hxx>
 #endif
 
+
 class GEOMAlgo_FinderShapeOn  : public GEOMAlgo_ShapeAlgo {
 
 public:
@@ -78,16 +79,36 @@ public:
       }
  // Methods PUBLIC
  // 
+
+
 Standard_EXPORT GEOMAlgo_FinderShapeOn();
 Standard_EXPORT virtual ~GEOMAlgo_FinderShapeOn();
+
+
 Standard_EXPORT virtual  void Perform() ;
+
+
 Standard_EXPORT   void SetSurface(const Handle(Geom_Surface)& aS) ;
+
+
 Standard_EXPORT   void SetShapeType(const TopAbs_ShapeEnum aST) ;
+
+
 Standard_EXPORT   void SetState(const GEOMAlgo_State aSF) ;
+
+
 Standard_EXPORT  const Handle_Geom_Surface& Surface() const;
+
+
 Standard_EXPORT   TopAbs_ShapeEnum ShapeType() const;
+
+
 Standard_EXPORT   GEOMAlgo_State State() const;
+
+
 Standard_EXPORT  const TopTools_ListOfShape& Shapes() const;
+
+
 Standard_EXPORT static  void CopySource(const TopoDS_Shape& aS,TopTools_DataMapOfShapeShape& aImages,TopTools_DataMapOfShapeShape& aOriginals,TopoDS_Shape& aSC) ;
 
 
@@ -98,11 +119,23 @@ protected:
 
  // Methods PROTECTED
  // 
+
+
 Standard_EXPORT virtual  void CheckData() ;
+
+
 Standard_EXPORT   void MakeArgument1() ;
+
+
 Standard_EXPORT   void MakeArgument2() ;
+
+
 Standard_EXPORT   void Find() ;
+
+
 Standard_EXPORT   void Find(const TopoDS_Shape& aS) ;
+
+
 Standard_EXPORT   void FindVertices() ;
 
 

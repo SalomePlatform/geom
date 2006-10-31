@@ -27,7 +27,9 @@
 #include <GEOM_Object.hxx>
 #include <GEOM_Function.hxx>
 
-#include <NMTAlgo_Splitter1.hxx>
+//#include <NMTAlgo_Splitter1.hxx>
+#include <GEOMAlgo_Splitter.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 #include <TDataStd_IntegerArray.hxx>
 
@@ -81,7 +83,8 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   Standard_Integer aType = aFunction->GetType();
 
   TopoDS_Shape aShape;
-  NMTAlgo_Splitter1 PS;
+  //sklNMTAlgo_Splitter1 PS;
+  GEOMAlgo_Splitter PS;
 
   if (aType == PARTITION_PARTITION) {
     Handle(TColStd_HSequenceOfTransient) aShapes  = aCI.GetShapes();
@@ -89,7 +92,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
     Handle(TColStd_HSequenceOfTransient) aKeepIns = aCI.GetKeepIns();
     Handle(TColStd_HSequenceOfTransient) aRemIns  = aCI.GetRemoveIns();
     Handle(TColStd_HArray1OfInteger) aMaterials   = aCI.GetMaterials();
-    Standard_Boolean DoRemoveWebs = !aMaterials.IsNull();
+    //sklStandard_Boolean DoRemoveWebs = !aMaterials.IsNull();
 
     unsigned int ind, nbshapes = 0;
     nbshapes += aShapes->Length() + aTools->Length();
@@ -106,10 +109,10 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       }
       if (ShapesMap.Add(aShape_i)) {
         PS.AddShape(aShape_i);
-        if (DoRemoveWebs) {
-          if (aMaterials->Length() >= ind)
-            PS.SetMaterial(aShape_i, aMaterials->Value(ind));
-        }
+//skl        if (DoRemoveWebs) {
+//skl          if (aMaterials->Length() >= ind)
+//skl            PS.SetMaterial(aShape_i, aMaterials->Value(ind));
+//skl        }
       }
     }
 
@@ -120,8 +123,9 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       if (aShape_i.IsNull()) {
         Standard_NullObject::Raise("In Partition a tool shape is null");
       }
-      if (!ShapesMap.Contains(aShape_i) && ToolsMap.Add(aShape_i))
+      if (!ShapesMap.Contains(aShape_i) && ToolsMap.Add(aShape_i)) {
         PS.AddTool(aShape_i);
+      }
     }
 
     // add shapes that are in ListKeepInside, as object shapes;
@@ -146,10 +150,13 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
         PS.AddShape(aShape_i);
     }
 
-    PS.Compute();
-    PS.SetRemoveWebs(DoRemoveWebs);
-    PS.Build((TopAbs_ShapeEnum) aCI.GetLimit());
+    PS.SetLimit( (TopAbs_ShapeEnum)aCI.GetLimit() );
+    PS.Perform();
 
+    //sklPS.Compute();
+    //sklPS.SetRemoveWebs(!DoRemoveWebs);
+    //sklPS.Build((TopAbs_ShapeEnum) aCI.GetLimit());
+    /*skl
     // suppress result outside of shapes in KInsideMap
     for (ind = 1; ind <= aKeepIns->Length(); ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aKeepIns->Value(ind));
@@ -163,8 +170,9 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aShape_i = aRefShape->GetValue();
       PS.RemoveShapesInside(aShape_i);
     }
-
-  } else if (aType == PARTITION_HALF) {
+    */
+  }
+  else if (aType == PARTITION_HALF) {
     Handle(GEOM_Function) aRefShape = aCI.GetShape();
     Handle(GEOM_Function) aRefPlane = aCI.GetPlane();
     TopoDS_Shape aShapeArg = aRefShape->GetValue();
@@ -180,9 +188,10 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
     // add tool shapes that are in ListTools and not in ListShapes;
     PS.AddTool(aPlaneArg);
 
-    PS.Compute();
-    PS.SetRemoveWebs(Standard_False);
-    PS.Build(aShapeArg.ShapeType());
+    //sklPS.Compute();
+    PS.Perform();
+    //PS.SetRemoveWebs(Standard_False);
+    //PS.Build(aShapeArg.ShapeType());
 
   } else {
   }

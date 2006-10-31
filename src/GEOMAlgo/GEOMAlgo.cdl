@@ -1,28 +1,26 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-//
--- See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+-- Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+-- CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+-- 
+-- This library is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU Lesser General Public
+-- License as published by the Free Software Foundation; either 
+-- version 2.1 of the License.
+-- 
+-- This library is distributed in the hope that it will be useful 
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of 
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+-- Lesser General Public License for more details.
+--
+-- You should have received a copy of the GNU Lesser General Public  
+-- License along with this library; if not, write to the Free Software 
+-- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+--
+-- See http:--www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+--
 -- File:	GEOMAlgo.cdl
 -- Created:	Sat Dec 04 12:36:22 2004
 -- Author:	Peter KURNEV
 --		<peter@PREFEX>
----Copyright:	 Matra Datavision 2004
-
 
 package GEOMAlgo 
 
@@ -30,7 +28,8 @@ package GEOMAlgo
 
 uses  
     TCollection, 
-    TColStd, 
+    
+    TColgp, 
     Geom,     
     Bnd, 
     gp,	  
@@ -40,10 +39,18 @@ uses
     TopTools, 
     IntTools, 
     BOPTools, 
-    BOP     
-    
+    BOP, 
+    --||
+    TColStd, 
+    BOPTColStd,  
+    BRepAlgo, 
+    NMTDS, 
+    NMTTools 
+    --||     
+
 is   
-    --  enumerations 
+    --
+    -- enumerations 
     --
     enumeration State is 
     	ST_UNKNOWN, 
@@ -57,8 +64,8 @@ is
     -- 
     --  classes 
     -- 
-    deferred class Algo;
-    deferred class ShapeAlgo; 
+    deferred class Algo;  
+    deferred class ShapeAlgo;  
     -- 
     --  gluer    	     
     class Gluer; 
@@ -69,7 +76,6 @@ is
     class PassKeyShape;  
     class SurfaceTools; 
     class Tools;  
-    
     --	     
     --  finder on 
     deferred class ShapeSolid;
@@ -81,6 +87,45 @@ is
     -- 
     class FinderShapeOn1;
     class StateCollector;
+    --
+    -- Builder/Splitter 
+    deferred class BuilderShape; 
+     
+    class Builder; 
+    class Splitter; 
+    class Tools3D; 
+    class BuilderTools; 
+    class ShapeSet;  
+     
+    deferred class BuilderArea;
+    class BuilderFace; 
+    class BuilderSolid;  
+    
+    class WireSplitter; 
+    class WireEdgeSet; 
+    class WESCorrector; 
+    -- 
+    --  Pointers
+    --     
+    pointer PWireEdgeSet to WireEdgeSet from GEOMAlgo;  
+    --	   
+    -- 
+    --  Instantiations	
+    class DataMapOfShapeShapeSet instantiates 
+    	DataMap from TCollection(Shape from TopoDS, 
+	                         ShapeSet from GEOMAlgo, 
+	                         ShapeMapHasher from TopTools); 
+	 
+    class DataMapOfShapeReal instantiates 
+    	DataMap from TCollection(Shape from TopoDS, 
+	                         Real from Standard, 
+	                         ShapeMapHasher from TopTools);		 
+				  
+    
+    class DataMapOfRealListOfShape instantiates  
+    	DataMap from TCollection(Real from Standard, 
+    	    	    	    	 ListOfShape from TopTools,  
+	                         MapRealHasher from TColStd);	   
     --
     --  instantiations
     class IndexedDataMapOfPassKeyShapeListOfShape   
@@ -105,20 +150,13 @@ is
     	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
 	    		    		         	 State from TopAbs,  
 	    	    	    	    	    	    	 ShapeMapHasher from TopTools);
---
     class ListOfPnt  
     	instantiates List from TCollection  (Pnt from gp);
 
---    class IndexedDataMapOfPassKeyInteger   
---	instantiates IndexedDataMap from TCollection (PassKeyRoot from GEOMAlgo, 
---						      Integer from Standard, 
---                                                      PassKeyMapHasher from GEOMAlgo); 
-						       
+					       
 
     class DataMapOfPassKeyInteger   
 	instantiates DataMap from TCollection (PassKey from GEOMAlgo, 
 					       Integer from Standard, 
                                                PassKeyMapHasher from GEOMAlgo);
-
-
 end GEOMAlgo;

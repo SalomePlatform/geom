@@ -44,19 +44,42 @@ LIB_SRC = \
 	BlockFix_UnionEdges.cxx \
 	BlockFix_UnionFaces.cxx \
 	GEOMAlgo_Algo.cxx \
+	GEOMAlgo_Builder_0.cxx \
+	GEOMAlgo_Builder_1.cxx \
+	GEOMAlgo_Builder_2.cxx \
+	GEOMAlgo_Builder_3.cxx \
+	GEOMAlgo_Builder_4.cxx \
+	GEOMAlgo_BuilderArea.cxx \
+	GEOMAlgo_Builder.cxx \
+	GEOMAlgo_BuilderFace.cxx \
+	GEOMAlgo_BuilderShape.cxx \
+	GEOMAlgo_BuilderSolid.cxx \
+	GEOMAlgo_BuilderTools.cxx \
 	GEOMAlgo_CoupleOfShapes.cxx \
 	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger_0.cxx \
+	GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape_0.cxx \
+	GEOMAlgo_DataMapIteratorOfDataMapOfShapeReal_0.cxx \
+	GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet_0.cxx \
 	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_0.cxx \
+	GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape_0.cxx \
+	GEOMAlgo_DataMapNodeOfDataMapOfShapeReal_0.cxx \
+	GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet_0.cxx \
 	GEOMAlgo_DataMapOfPassKeyInteger_0.cxx \
+	GEOMAlgo_DataMapOfRealListOfShape_0.cxx \
+	GEOMAlgo_DataMapOfShapeReal_0.cxx \
+	GEOMAlgo_DataMapOfShapeShapeSet_0.cxx \
 	GEOMAlgo_FinderShapeOn1.cxx \
+	GEOMAlgo_FinderShapeOn.cxx \
 	GEOMAlgo_FinderShapeOnQuad.cxx \
 	GEOMAlgo_GlueAnalyser.cxx \
 	GEOMAlgo_Gluer.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape_0.cxx \
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape_0.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape_0.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox_0.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState_0.cxx \
 	GEOMAlgo_IndexedDataMapOfIntegerShape_0.cxx \
+	GEOMAlgo_IndexedDataMapOfPassKeyListOfShape_0.cxx \
 	GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape_0.cxx \
 	GEOMAlgo_IndexedDataMapOfShapeBox_0.cxx \
 	GEOMAlgo_IndexedDataMapOfShapeState_0.cxx \
@@ -70,9 +93,20 @@ LIB_SRC = \
 	GEOMAlgo_PassKeyMapHasher.cxx \
 	GEOMAlgo_PassKeyShape.cxx \
 	GEOMAlgo_ShapeAlgo.cxx \
+	GEOMAlgo_ShapeSet.cxx \
+	GEOMAlgo_ShapeSolid.cxx \
+	GEOMAlgo_ShellSolid.cxx \
+	GEOMAlgo_SolidSolid.cxx \
+	GEOMAlgo_Splitter.cxx \
 	GEOMAlgo_StateCollector.cxx \
 	GEOMAlgo_SurfaceTools.cxx \
-	GEOMAlgo_Tools.cxx
+	GEOMAlgo_Tools3D.cxx \
+	GEOMAlgo_Tools.cxx \
+	GEOMAlgo_VertexSolid.cxx \
+	GEOMAlgo_WESCorrector.cxx \
+	GEOMAlgo_WireEdgeSet.cxx \
+	GEOMAlgo_WireSolid.cxx \
+	GEOMAlgo_WireSplitter.cxx
 
 LIB_CLIENT_IDL = 
 LIB_SERVER_IDL = 
@@ -84,18 +118,77 @@ EXPORT_HEADERS = \
 	BlockFix_CheckTool.hxx \
 	Handle_BlockFix_BlockFixAPI.hxx \
 	GEOMAlgo_Algo.hxx \
+	GEOMAlgo_BuilderArea.hxx \
+	GEOMAlgo_BuilderFace.hxx \
+	GEOMAlgo_Builder.hxx \
+	GEOMAlgo_BuilderShape.hxx \
+	GEOMAlgo_BuilderSolid.hxx \
+	GEOMAlgo_BuilderTools.hxx \
 	GEOMAlgo_CoupleOfShapes.hxx \
+	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx \
+	GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape.hxx \
+	GEOMAlgo_DataMapIteratorOfDataMapOfShapeReal.hxx \
+	GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet.hxx \
+	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx \
+	GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape.hxx \
+	GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx \
+	GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx \
+	GEOMAlgo_DataMapOfPassKeyInteger.hxx \
+	GEOMAlgo_DataMapOfRealListOfShape.hxx \
+	GEOMAlgo_DataMapOfShapeReal.hxx \
+	GEOMAlgo_DataMapOfShapeShapeSet.hxx \
+	GEOMAlgo_FinderShapeOn1.hxx \
+	GEOMAlgo_FinderShapeOn.hxx \
+	GEOMAlgo_FinderShapeOnQuad.hxx \
 	GEOMAlgo_GlueAnalyser.hxx \
 	GEOMAlgo_Gluer.hxx \
-	GEOMAlgo_FinderShapeOn1.hxx \
-	GEOMAlgo_FinderShapeOnQuad.hxx \
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx \
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape.hxx \
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape.hxx \
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx \
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState.hxx \
+	GEOMAlgo_IndexedDataMapOfIntegerShape.hxx \
+	GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx \
+	GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx \
+	GEOMAlgo_IndexedDataMapOfShapeBox.hxx \
 	GEOMAlgo_IndexedDataMapOfShapeState.hxx \
 	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx \
+	GEOMAlgo_ListIteratorOfListOfPnt.hxx \
+	GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx \
+	GEOMAlgo_ListNodeOfListOfPnt.hxx \
 	GEOMAlgo_ListOfCoupleOfShapes.hxx \
+	GEOMAlgo_ListOfPnt.hxx \
+	GEOMAlgo_PassKey.hxx \
+	GEOMAlgo_PassKeyMapHasher.hxx \
+	GEOMAlgo_PassKeyShape.hxx \
+	GEOMAlgo_PWireEdgeSet.hxx \
 	GEOMAlgo_ShapeAlgo.hxx \
+	GEOMAlgo_ShapeSet.hxx \
+	GEOMAlgo_ShapeSolid.hxx \
+	GEOMAlgo_ShellSolid.hxx \
+	GEOMAlgo_SolidSolid.hxx \
+	GEOMAlgo_Splitter.hxx \
+	GEOMAlgo_StateCollector.hxx \
 	GEOMAlgo_State.hxx \
+	GEOMAlgo_SurfaceTools.hxx \
+	GEOMAlgo_Tools3D.hxx \
+	GEOMAlgo_Tools.hxx \
+	GEOMAlgo_VertexSolid.hxx \
+	GEOMAlgo_WESCorrector.hxx \
+	GEOMAlgo_WireEdgeSet.hxx \
+	GEOMAlgo_WireSolid.hxx \
+	GEOMAlgo_WireSplitter.hxx \
+	Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx \
+	Handle_GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape.hxx \
+	Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx \
+	Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx \
+	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx \
+	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape.hxx \
+	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape.hxx \
+	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx \
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState.hxx \
-	Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx
+	Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx \
+	Handle_GEOMAlgo_ListNodeOfListOfPnt.hxx
 
 # idl files
 EXPORT_IDLS=
