@@ -25,6 +25,7 @@
 
 #include <NMTTools_PaveFiller.ixx>
 
+#include <TColStd_MapOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 
@@ -42,6 +43,73 @@
 #include <NMTTools_CommonBlock.hxx>
 #include <NMTTools_CommonBlockAPI.hxx>
 
+
+// Modified  to add new method Thu Sep 14 14:35:18 2006 
+// Contribution of Samtech www.samcef.com BEGIN
+//=======================================================================
+// function:  SharedEdges
+// purpose:
+//=======================================================================
+  void NMTTools_PaveFiller::SharedEdges(const Standard_Integer nF1,
+					const Standard_Integer nF2,
+					TColStd_ListOfInteger& aLNE,
+					TopTools_ListOfShape& aLSE)
+{
+  Standard_Integer nE1, nE2;
+  TColStd_MapOfInteger aM1;
+  //
+  BooleanOperations_ShapesDataStructure *pDS=myDS;
+  BooleanOperations_OnceExplorer aExp(*pDS);
+  //
+  aExp.Init(nF1, TopAbs_EDGE);
+  for (; aExp.More(); aExp.Next()) {
+    nE1=aExp.Current();
+    aM1.Add(nE1);
+  }
+  
+  aExp.Init(nF2, TopAbs_EDGE);
+  for (; aExp.More(); aExp.Next()) {
+    nE2=aExp.Current();
+    if (aM1.Contains(nE2)) {
+      aLNE.Append(nE2);
+      const TopoDS_Shape& aE2=myDS->Shape(nE2);
+      aLSE.Append(aE2);
+    }
+  }
+}
+// Contribution of Samtech www.samcef.com END
+//
+//=======================================================================
+// function: RealPaveBlock
+// purpose:
+//=======================================================================
+  const BOPTools_PaveBlock& NMTTools_PaveFiller::RealPaveBlock(const BOPTools_PaveBlock& aPB,
+							       TColStd_ListOfInteger& aLB)
+{
+  Standard_Integer nE, nSpx;
+  BOPTools_ListIteratorOfListOfPaveBlock aItPBx;
+  //
+  aLB.Clear();
+  nE=aPB.OriginalEdge();
+  const NMTTools_ListOfCommonBlock& aLCBE=myCommonBlockPool(myDS->RefEdge(nE));
+  NMTTools_CommonBlockAPI aCBAPI(aLCBE);
+  if (aCBAPI.IsCommonBlock(aPB)) {
+    NMTTools_CommonBlock& aCB=aCBAPI.CommonBlock(aPB);
+    //
+    const BOPTools_ListOfPaveBlock& aLPBx=aCB.PaveBlocks();
+    aItPBx.Initialize(aLPBx);
+    for (; aItPBx.More(); aItPBx.Next()) {
+      const BOPTools_PaveBlock& aPBx=aItPBx.Value();
+      nSpx=aPBx.Edge();
+      aLB.Append(nSpx);
+    }
+    //
+    const BOPTools_PaveBlock& aPBx=aCB.PaveBlock1();
+    return aPBx;
+  }
+  return aPB;
+}
+//
 //=======================================================================
 // function: RealPaveBlock
 // purpose:

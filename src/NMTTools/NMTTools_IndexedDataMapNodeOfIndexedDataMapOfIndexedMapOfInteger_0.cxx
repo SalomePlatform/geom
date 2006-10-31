@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -32,7 +32,7 @@
 #ifndef _NMTTools_IndexedDataMapOfIndexedMapOfInteger_HeaderFile
 #include <NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx>
 #endif
-NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger::~NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger() {}
+//NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger::~NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger() {}
  
 
 
@@ -40,11 +40,8 @@ Standard_EXPORT Handle_Standard_Type& NMTTools_IndexedDataMapNodeOfIndexedDataMa
 {
 
     static Handle_Standard_Type aType1 = STANDARD_TYPE(TCollection_MapNode);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TCollection_MapNode);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
  
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
@@ -77,11 +74,11 @@ const Handle(Standard_Type)& NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexe
 { 
   return STANDARD_TYPE(NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger) ; 
 }
-Standard_Boolean NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger::IsKind(const Handle(Standard_Type)& AType) const 
-{ 
-  return (STANDARD_TYPE(NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger) == AType || TCollection_MapNode::IsKind(AType)); 
-}
-Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger::~Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger() {}
+//Standard_Boolean NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger::IsKind(const Handle(Standard_Type)& AType) const 
+//{ 
+//  return (STANDARD_TYPE(NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger) == AType || TCollection_MapNode::IsKind(AType)); 
+//}
+//Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger::~Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger() {}
 #define TheKey Standard_Integer
 #define TheKey_hxx <Standard_Integer.hxx>
 #define TheItem TColStd_IndexedMapOfInteger

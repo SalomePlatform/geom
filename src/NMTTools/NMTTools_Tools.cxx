@@ -67,6 +67,9 @@
 #include <BRepLib.hxx>
 #include <BOPTools_Tools3D.hxx>
 #include <TopExp_Explorer.hxx>
+//
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_MapIteratorOfMapOfShape.hxx>
 
 static 
   void ProcessBlock(const Standard_Integer iV,
@@ -373,21 +376,49 @@ void ProcessBlock(const Standard_Integer iV,
 						      IntTools_Context& aCtx)
 {
   Standard_Boolean bFlag;
-  Standard_Integer i, aNbE1, aNbE2;
-  
-  TopTools_IndexedMapOfShape aME1, aME2;
-  TopoDS_Edge aEF1, aEF2;
+  // Modified  Thu Sep 14 14:35:18 2006 
+  // Contribution of Samtech www.samcef.com BEGIN
+  Standard_Integer aNbE1, aNbE2;
+  Standard_Real aTolF1, aTolF2, aTol;
+  gp_Pnt2d aP2D;
+  gp_Pnt aP;
   TopoDS_Face aF1, aF2;
+  TopExp_Explorer aExp;
+  TopTools_MapOfShape aME1, aME2;
+  TopTools_MapIteratorOfMapOfShape aIt;
+  //
+  bFlag=Standard_False;
+  // Contribution of Samtech www.samcef.com END
   //
   aF1=aF1x;
   aF1.Orientation(TopAbs_FORWARD);
   aF2=aF2y;
   aF2.Orientation(TopAbs_FORWARD);
   //
-  TopExp::MapShapes(aF1, TopAbs_EDGE, aME1);
-  TopExp::MapShapes(aF2, TopAbs_EDGE, aME2);
+  // Modified  Thu Sep 14 14:35:18 2006 
+  // Contribution of Samtech www.samcef.com BEGIN
   //
-  bFlag=Standard_False;
+  // 1
+  aExp.Init(aF1, TopAbs_EDGE);
+  for (; aExp.More(); aExp.Next()) {
+    const TopoDS_Edge& aE=TopoDS::Edge(aExp.Current());
+    if (!BRep_Tool::Degenerated(aE)) {
+      aME1.Add(aE);
+    }
+  }
+  //
+  aExp.Init(aF2, TopAbs_EDGE);
+  for (; aExp.More(); aExp.Next()) {
+    const TopoDS_Edge& aE=TopoDS::Edge(aExp.Current());
+    if (!BRep_Tool::Degenerated(aE)) {
+      if (!aME1.Contains(aE)) {
+	return bFlag;
+      }
+      aME2.Add(aE);
+    }
+  }
+  //
+  // Contribution of Samtech www.samcef.com END
   //
   aNbE1=aME1.Extent();
   aNbE2=aME2.Extent();
@@ -400,72 +431,18 @@ void ProcessBlock(const Standard_Integer iV,
     return bFlag;
   }
   //
-  for (i=1; i<=aNbE1; ++i) {
-    const TopoDS_Edge& aE1=TopoDS::Edge(aME1(i));
-    if (BRep_Tool::Degenerated(aE1)) {
-      // not try to compare deg edges because it 
-      // can not have same TShape on different faces at all
-      continue; 
-    }
-    if (!aME2.Contains(aE1)) {
-      return bFlag;
-    }
-  }
-  //
-  Standard_Real aTolF1, aTolF2, aTol;
-  gp_Pnt2d aP2D;
-  gp_Pnt aP;
-  TopExp_Explorer anExp;
-  //
+  // 2
   aTolF1=BRep_Tool::Tolerance(aF1);
   aTolF2=BRep_Tool::Tolerance(aF2);
   aTol=aTolF1+aTolF2;
   //
-  anExp.Init(aF1, TopAbs_EDGE);
-  for (; anExp.More(); anExp.Next()) {
-    const TopoDS_Edge& aE1=TopoDS::Edge(anExp.Current());
-    if (!BRep_Tool::Degenerated(aE1)) {
-      BOPTools_Tools3D::PointNearEdge(aE1, aF1, aP2D, aP);
-      bFlag=aCtx.IsValidPointForFace(aP, aF2, aTol);
-      break;
-    }
+  aIt.Initialize(aME1);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Edge& aE=TopoDS::Edge(aIt.Key());
+    BOPTools_Tools3D::PointNearEdge(aE, aF1, aP2D, aP);
+    bFlag=aCtx.IsValidPointForFace(aP, aF2, aTol);
+    break;
   }
-  return bFlag;
-  /*
-  //
-  Standard_Real aU1, aU2, aV1, aV2;
-  Standard_Real dU, dV, aU, aV;
-  Standard_Integer aNbP=5, aNbP1, j;
-  gp_Pnt2d aP2D;
-  gp_Pnt aP;
-  //
-  aTolF1=BRep_Tool::Tolerance(aF1);
-  aTolF2=BRep_Tool::Tolerance(aF2);
-  aTol=aTolF1+aTolF2;
-  //
-  BRepTools::UVBounds(aF1, aU1, aU2, aV1, aV2);
-  Handle(Geom_Surface) aS1=BRep_Tool::Surface(aF1);
-  //
-  aNbP1=aNbP+1;
-  dU=(aU2-aU1)/aNbP1;
-  dV=(aV2-aV1)/aNbP1;
-  //
-  for (i=1; i<=aNbP; ++i) {
-    aU=aU1+i*dU;
-    for (j=1; j<=aNbP; ++j) {
-      aV=aV1+j*dV;
-      aP2D.SetCoord(aU, aV);
-      //
-      if(aCtx.IsPointInFace(aF1, aP2D)) {
-	aP=aS1->Value(aU, aV);
-	bFlag=aCtx.IsValidPointForFace(aP, aF2, aTol);
-	if (!bFlag) {
-	  return bFlag;
-	}
-      }
-    }
-  }
-  */
   //
   return bFlag;
 }

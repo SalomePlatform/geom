@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -45,6 +45,7 @@ class NMTTools_ListNodeOfListOfCommonBlock;
 #include <Standard_Macro.hxx>
 #endif
 
+
 class NMTTools_ListOfCommonBlock  {
 
 public:
@@ -63,34 +64,71 @@ public:
       }
  // Methods PUBLIC
  // 
+
+
 Standard_EXPORT NMTTools_ListOfCommonBlock();
+
+
 Standard_EXPORT   void Assign(const NMTTools_ListOfCommonBlock& Other) ;
   void operator=(const NMTTools_ListOfCommonBlock& Other) 
 {
   Assign(Other);
 }
 
+
+
 Standard_EXPORT   Standard_Integer Extent() const;
+
+
 Standard_EXPORT   void Clear() ;
 ~NMTTools_ListOfCommonBlock()
 {
   Clear();
 }
 
+
   Standard_Boolean IsEmpty() const;
+
+
 Standard_EXPORT   void Prepend(const NMTTools_CommonBlock& I) ;
+
+
 Standard_EXPORT   void Prepend(const NMTTools_CommonBlock& I,NMTTools_ListIteratorOfListOfCommonBlock& theIt) ;
+
+
 Standard_EXPORT   void Prepend(NMTTools_ListOfCommonBlock& Other) ;
+
+
 Standard_EXPORT   void Append(const NMTTools_CommonBlock& I) ;
+
+
 Standard_EXPORT   void Append(const NMTTools_CommonBlock& I,NMTTools_ListIteratorOfListOfCommonBlock& theIt) ;
+
+
 Standard_EXPORT   void Append(NMTTools_ListOfCommonBlock& Other) ;
+
+
 Standard_EXPORT   NMTTools_CommonBlock& First() const;
+
+
 Standard_EXPORT   NMTTools_CommonBlock& Last() const;
+
+
 Standard_EXPORT   void RemoveFirst() ;
+
+
 Standard_EXPORT   void Remove(NMTTools_ListIteratorOfListOfCommonBlock& It) ;
+
+
 Standard_EXPORT   void InsertBefore(const NMTTools_CommonBlock& I,NMTTools_ListIteratorOfListOfCommonBlock& It) ;
+
+
 Standard_EXPORT   void InsertBefore(NMTTools_ListOfCommonBlock& Other,NMTTools_ListIteratorOfListOfCommonBlock& It) ;
+
+
 Standard_EXPORT   void InsertAfter(const NMTTools_CommonBlock& I,NMTTools_ListIteratorOfListOfCommonBlock& It) ;
+
+
 Standard_EXPORT   void InsertAfter(NMTTools_ListOfCommonBlock& Other,NMTTools_ListIteratorOfListOfCommonBlock& It) ;
 
 
@@ -112,6 +150,8 @@ private:
 
  // Methods PRIVATE
  // 
+
+
 Standard_EXPORT NMTTools_ListOfCommonBlock(const NMTTools_ListOfCommonBlock& Other);
 
 

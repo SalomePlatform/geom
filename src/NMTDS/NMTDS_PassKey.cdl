@@ -1,0 +1,80 @@
+-- Copyright (C) 2006 SAMTECH 
+-- 
+-- This library is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU Lesser General Public
+-- License as published by the Free Software Foundation; either 
+-- version 2.1 of the License.
+-- 
+-- This library is distributed in the hope that it will be useful 
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of 
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+-- Lesser General Public License for more details.
+--
+-- You should have received a copy of the GNU Lesser General Public  
+-- License along with this library; if not, write to the Free Software 
+-- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+--
+-- See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+-- 
+-- File:	NMTDS_PassKey.cdl
+-- Created:	
+-- Author:	Peter KURNEV
+--		<pkv@irinox>
+
+class PassKey from NMTDS 
+
+	---Purpose: 
+
+uses
+    Shape from TopoDS, 
+    ListOfInteger from TColStd   
+  	 
+--raises
+
+is 
+    Create  
+    	returns PassKey from NMTDS; 
+     
+    Assign(me:out;  
+    	    Other : PassKey from NMTDS) 
+    	returns PassKey from NMTDS; 
+    ---C++: alias operator =
+    ---C++: return & 
+--    
+    SetIds(me:out; 
+    	    aI1 :Integer from Standard;    
+    	    aI2 :Integer from Standard);  
+	     
+    NbMax(me) 
+	returns Integer  from Standard; 
+	 
+    Clear(me:out); 
+     
+    Compute(me:out); 
+     
+    IsEqual(me; 
+    	    aOther:PassKey from NMTDS) 
+	returns Boolean from Standard;   		     
+
+    Key(me) 
+    	returns Address from Standard;  
+	 
+    HashCode(me; 
+	    Upper : Integer  from Standard)  
+    	returns Integer from Standard;   	 
+     
+ 
+    Ids(me; 
+    	    aI1 :out Integer from Standard;    
+    	    aI2 :out Integer from Standard);
+     
+    Dump(me); 
+
+fields 
+ 
+    myNbIds: Integer from Standard is protected;  
+    myNbMax: Integer from Standard is protected; 
+    mySum  : Integer from Standard is protected;   
+    myIds  : Integer from Standard [2] is protected; 
+
+end PassKey;

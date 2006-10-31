@@ -27,8 +27,8 @@
 #include <BOPTColStd_Failure.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTTools_DEProcessor.hxx>
-//QQ #include "utilities.h"
 
+//
 //=======================================================================
 // function: NMTTools_PaveFiller::NMTTools_PaveFiller
 // purpose: 
@@ -165,25 +165,36 @@
   void NMTTools_PaveFiller::Init()
 {
   myDSIt.SetDS(myDS);
+  // Modified Thu Sep 14 14:35:18 2006 
+  // Contribution of Samtech www.samcef.com BEGIN
+  myDSIt.Prepare();
+  // Contribution of Samtech www.samcef.com END 
 }
+
 //=======================================================================
 // function: Perform
 // purpose: 
 //=======================================================================
   void NMTTools_PaveFiller::Perform()
 {
+  myIsDone=Standard_False;
+  //
   try {
     // 0.
-    Init();//myDSIt.SetDS(myDS);
-    //
+    // Modified Thu Sep 14 14:35:18 2006 
+    // Contribution of Samtech www.samcef.com BEGIN
+    Init();
+    // Contribution of Samtech www.samcef.com END
     //1.VV
+    //
     PerformVV();
     PerformNewVertices();
     //
     // 2.VE
     myPavePool.Resize (myNbEdges);
-    PrepareEdges();
     
+    PrepareEdges();
+
     PerformVE();
     //
     // 3.VF
@@ -193,7 +204,7 @@
     myCommonBlockPool.Resize (myNbEdges);
     mySplitShapesPool.Resize (myNbEdges);
     myPavePoolNew    .Resize (myNbEdges);
-    
+
     PreparePaveBlocks(TopAbs_VERTEX, TopAbs_EDGE);
     PreparePaveBlocks(TopAbs_EDGE, TopAbs_EDGE);
     //
@@ -206,16 +217,22 @@
     //
     // 5.EF
     PreparePaveBlocks(TopAbs_EDGE, TopAbs_FACE);
+
     PerformEF();
+    //
     RefinePavePool();
     //
     myPavePoolNew.Destroy();
+    
     MakeSplitEdges();
+
     UpdateCommonBlocks();
     //
     // 6. FF
     PerformFF ();
+    //
     MakeBlocks();
+    //
     MakePCurves();
     //
     // 7.Postprocessing 
@@ -224,10 +241,13 @@
     NMTTools_DEProcessor aDEP(*this);
     aDEP.Do();
     //
-    myIsDone = Standard_True;
+    // Modified to treat Alone Vertices Thu Sep 14 14:35:18 2006 
+    // Contribution of Samtech www.samcef.com BEGIN
+    MakeAloneVertices();
+    // Contribution of Samtech www.samcef.com END
+    //
+    myIsDone=Standard_True;
   }
-  catch (BOPTColStd_Failure& /*x*/) {
-    //QQ MESSAGE(x.Message() << flush);
-    myIsDone = Standard_False;
+  catch (BOPTColStd_Failure& ) {
   }
 }

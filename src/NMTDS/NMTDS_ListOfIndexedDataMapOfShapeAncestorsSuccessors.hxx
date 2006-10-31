@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -45,6 +45,7 @@ class NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors;
 #include <Standard_Macro.hxx>
 #endif
 
+
 class NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors  {
 
 public:
@@ -63,34 +64,71 @@ public:
       }
  // Methods PUBLIC
  // 
+
+
 Standard_EXPORT NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors();
+
+
 Standard_EXPORT   void Assign(const NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors& Other) ;
   void operator=(const NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors& Other) 
 {
   Assign(Other);
 }
 
+
+
 Standard_EXPORT   Standard_Integer Extent() const;
+
+
 Standard_EXPORT   void Clear() ;
 ~NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors()
 {
   Clear();
 }
 
+
   Standard_Boolean IsEmpty() const;
+
+
 Standard_EXPORT   void Prepend(const BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& I) ;
+
+
 Standard_EXPORT   void Prepend(const BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& I,NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors& theIt) ;
+
+
 Standard_EXPORT   void Prepend(NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors& Other) ;
+
+
 Standard_EXPORT   void Append(const BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& I) ;
+
+
 Standard_EXPORT   void Append(const BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& I,NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors& theIt) ;
+
+
 Standard_EXPORT   void Append(NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors& Other) ;
+
+
 Standard_EXPORT   BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& First() const;
+
+
 Standard_EXPORT   BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& Last() const;
+
+
 Standard_EXPORT   void RemoveFirst() ;
+
+
 Standard_EXPORT   void Remove(NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors& It) ;
+
+
 Standard_EXPORT   void InsertBefore(const BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& I,NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors& It) ;
+
+
 Standard_EXPORT   void InsertBefore(NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors& Other,NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors& It) ;
+
+
 Standard_EXPORT   void InsertAfter(const BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& I,NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors& It) ;
+
+
 Standard_EXPORT   void InsertAfter(NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors& Other,NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors& It) ;
 
 
@@ -112,6 +150,8 @@ private:
 
  // Methods PRIVATE
  // 
+
+
 Standard_EXPORT NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors(const NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors& Other);
 
 

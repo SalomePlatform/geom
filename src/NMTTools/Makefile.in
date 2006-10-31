@@ -37,8 +37,8 @@ VPATH=.:@srcdir@
 # Libraries targets
 LIB = libNMTTools.la
 LIB_SRC = \
-	NMTTools_CommonBlock.cxx \
 	NMTTools_CommonBlockAPI.cxx \
+	NMTTools_CommonBlock.cxx \
 	NMTTools_CommonBlockPool_0.cxx \
 	NMTTools_CoupleOfShape.cxx \
 	NMTTools_DEProcessor.cxx \
@@ -56,7 +56,6 @@ LIB_SRC = \
 	NMTTools_ListNodeOfListOfCoupleOfShape_0.cxx \
 	NMTTools_ListOfCommonBlock_0.cxx \
 	NMTTools_ListOfCoupleOfShape_0.cxx \
-	NMTTools_PaveFiller.cxx \
 	NMTTools_PaveFiller_0.cxx \
 	NMTTools_PaveFiller_1.cxx \
 	NMTTools_PaveFiller_2.cxx \
@@ -67,27 +66,62 @@ LIB_SRC = \
 	NMTTools_PaveFiller_7.cxx \
 	NMTTools_PaveFiller_8.cxx \
 	NMTTools_PaveFiller_9.cxx \
+	NMTTools_PaveFiller.cxx \
 	NMTTools_PCurveMaker.cxx \
-	NMTTools_Tools.cxx
+	NMTTools_Tools.cxx \
+	NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock_0.cxx \
+	NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock_0.cxx \
+	NMTTools_DataMapOfIntegerListOfPaveBlock_0.cxx \
+	NMTTools_MapIteratorOfMapOfPaveBlock_0.cxx \
+	NMTTools_MapOfPaveBlock_0.cxx \
+	NMTTools_StdMapNodeOfMapOfPaveBlock_0.cxx
+
 
 LIB_CLIENT_IDL = 
 LIB_SERVER_IDL = 
 
 # header files 
 EXPORT_HEADERS = \
-	NMTTools_PDSFiller.hxx \
-	NMTTools_DSFiller.hxx \
-	NMTTools_PPaveFiller.hxx \
-	NMTTools_PaveFiller.hxx \
-	NMTTools_ListOfCoupleOfShape.hxx \
-	NMTTools_Tools.hxx \
-	NMTTools_CoupleOfShape.hxx \
-	NMTTools_ListIteratorOfListOfCoupleOfShape.hxx \
-	NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx \
-	NMTTools_IteratorOfCoupleOfShape.hxx \
-	NMTTools_CommonBlockPool.hxx \
+	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInteger.hxx \
+	Handle_NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx \
+	Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger.hxx \
+	Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape.hxx \
+	Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock.hxx \
+	Handle_NMTTools_ListNodeOfListOfCommonBlock.hxx \
 	Handle_NMTTools_ListNodeOfListOfCoupleOfShape.hxx \
-	Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape.hxx
+	NMTDS_Iterator.hxx \
+	NMTTools_CommonBlockAPI.hxx \
+	NMTTools_CommonBlock.hxx \
+	NMTTools_CommonBlockPool.hxx \
+	NMTTools_CoupleOfShape.hxx \
+	NMTTools_DEProcessor.hxx \
+	NMTTools_DSFiller.hxx \
+	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger.hxx \
+	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape.hxx \
+	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock.hxx \
+	NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx \
+	NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx \
+	NMTTools_IndexedDataMapOfShapePaveBlock.hxx \
+	NMTTools_IteratorOfCoupleOfShape.hxx \
+	NMTTools_ListIteratorOfListOfCommonBlock.hxx \
+	NMTTools_ListIteratorOfListOfCoupleOfShape.hxx \
+	NMTTools_ListNodeOfListOfCommonBlock.hxx \
+	NMTTools_ListNodeOfListOfCoupleOfShape.hxx \
+	NMTTools_ListOfCommonBlock.hxx \
+	NMTTools_ListOfCoupleOfShape.hxx \
+	NMTTools_PaveFiller.hxx \
+	NMTTools_PCurveMaker.hxx \
+	NMTTools_PDSFiller.hxx \
+	NMTTools_PPaveFiller.hxx \
+	NMTTools_Tools.hxx \
+	Handle_NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock.hxx \
+	Handle_NMTTools_StdMapNodeOfMapOfPaveBlock.hxx \
+	NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock.hxx \
+	NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock.hxx \
+	NMTTools_DataMapOfIntegerListOfPaveBlock.hxx \
+	NMTTools_MapIteratorOfMapOfPaveBlock.hxx \
+	NMTTools_MapOfPaveBlock.hxx \
+	NMTTools_StdMapNodeOfMapOfPaveBlock.hxx
 
 # idl files
 EXPORT_IDLS=

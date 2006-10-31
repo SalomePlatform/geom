@@ -1,27 +1,26 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_0.cxx
-// Created:	Mon Dec  8 11:45:51 2003
+// File:	NMTTools_PaveFiller_1.cxx
+// Created:	Mon Dec  8 11:47:55 2003
 // Author:	Peter KURNEV
 //		<pkv@irinox>
-
 
 #include <NMTTools_PaveFiller.ixx>
 
@@ -69,9 +68,12 @@
 {
   Standard_Integer aNbIIs;
   Standard_Real aCfPredict=.5;
-
-  const BOPTools_ListOfCoupleOfInteger& aLC=myDSIt.ListOfCouple();
-  aNbIIs=aLC.Extent();
+  // Modified  Thu Sep 14 14:35:18 2006 
+  // Contribution of Samtech www.samcef.com BEGIN
+  //const BOPTools_ListOfCoupleOfInteger& aLC=myDSIt.ListOfCouple();
+  //aNbIIs=aLC.Extent();
+  aNbIIs=myDSIt.ExpectedLength();
+  // Contribution of Samtech www.samcef.com END
   //
   if (aNbIIs==1) {
     return aNbIIs;

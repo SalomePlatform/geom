@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -34,7 +34,14 @@
 #include <BOPTools_CArray1OfVSInterference.hxx>
 
 #include <NMTDS_ShapesDataStructure.hxx>
+#include <TopExp_Explorer.hxx>
 
+// Modified  Thu Sep 14 14:35:18 2006 
+// Contribution of Samtech www.samcef.com BEGIN
+static
+  Standard_Boolean Contains(const TopoDS_Face& aF,
+			    const TopoDS_Vertex& aV);
+// Contribution of Samtech www.samcef.com END
 //=======================================================================
 // function: PerformVF
 // purpose: 
@@ -85,6 +92,13 @@
 	//
 	aF2=TopoDS::Face(myDS->Shape(aWith));
 	//
+	// Modified  Thu Sep 14 14:35:18 2006 
+	// Contribution of Samtech www.samcef.com BEGIN
+	if (Contains(aF2, aV1)) {
+	  continue;
+	}
+	// Contribution of Samtech www.samcef.com END
+	//
 	aFlag=myContext.ComputeVS (aV1, aF2, aU, aV);
 	//
 	if (!aFlag) {
@@ -105,3 +119,27 @@
   }
   myIsDone=Standard_True;
 }
+// Modified  Thu Sep 14 14:35:18 2006 
+// Contribution of Samtech www.samcef.com BEGIN
+//=======================================================================
+//function : Contains
+//purpose  : 
+//=======================================================================
+Standard_Boolean Contains(const TopoDS_Face& aF,
+			  const TopoDS_Vertex& aV)
+{
+  Standard_Boolean bRet;
+  TopExp_Explorer aExp;
+  //
+  bRet=Standard_False;
+  aExp.Init(aF, TopAbs_VERTEX);
+  for (; aExp.More(); aExp.Next()) {
+    const TopoDS_Shape& aVF=aExp.Current();
+    if (aVF.IsSame(aV)) {
+      bRet=!bRet;
+      break;
+    }
+  }
+  return bRet;
+}
+// Contribution of Samtech www.samcef.com END
