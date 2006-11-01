@@ -1347,13 +1347,22 @@ def MakeSection(s1, s2):
 ## Perform partition operation.
 #  @param ListShapes Shapes to be intersected.
 #  @param ListTools Shapes to intersect theShapes.
-#  @param ListKeepInside Shapes, outside which the results will be deleted.
+#  !!!NOTE: shapes from this lists (for each separately) can not have
+#           intersections with each other.
+#
+#  After implementation new version of PartitionAlgo (October 2006)
+#  other parameters are ignored by current functionality. They are kept
+#  in this function only for support old versions.
+#  Ignored parameters:
+#      @param ListKeepInside Shapes, outside which the results will be deleted.
 #         Each shape from theKeepInside must belong to theShapes also.
-#  @param ListRemoveInside Shapes, inside which the results will be deleted.
+#      @param ListRemoveInside Shapes, inside which the results will be deleted.
 #         Each shape from theRemoveInside must belong to theShapes also.
-#  @param Limit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
-#  @param RemoveWebs If TRUE, perform Glue 3D algorithm.
-#  @param ListMaterials Material indices for each shape. Make sence, only if theRemoveWebs is TRUE.
+#      @param Limit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
+#      @param RemoveWebs If TRUE, perform Glue 3D algorithm.
+#      @param ListMaterials Material indices for each shape. Make sence,
+#         only if theRemoveWebs is TRUE.
+#
 #  @return New GEOM_Object, containing the result shapes.
 #
 #  Example: see GEOM_TestAll.py
