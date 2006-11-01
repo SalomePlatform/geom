@@ -182,6 +182,8 @@ void TransformationGUI_RotationDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->TextLabel4->setText(tr("GEOM_POINT_I").arg("1"));
 	GroupPoints->TextLabel5->setText(tr("GEOM_POINT_I").arg("2"));
 	GroupPoints->LineEdit2->clear();
+	GroupPoints->LineEdit4->clear();
+	GroupPoints->LineEdit5->clear();
 	myCentPoint = myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
 	break;
       } 
@@ -212,7 +214,8 @@ bool TransformationGUI_RotationDlg::ClickOnApply()
   if ( !onAccept( GroupPoints->CheckButton1->isChecked()) )
     return false;
   
-  Init();
+  initName();
+  ConstructorsClicked( getConstructorId() );
   return true;
 }
 
