@@ -147,7 +147,8 @@ def TestOtherOperations (geompy, math):
   p100 = geompy.MakeVertex(100, 100, 100)
   p300 = geompy.MakeVertex(300, 300, 300)
   Box1 = geompy.MakeBoxTwoPnt(p100, p300)
-  Partition = geompy.Partition([Box], [Box1], [], [Box])
+  #Partition = geompy.Partition([Box], [Box1], [], [Box])
+  Partition = geompy.Partition([Box], [Box1])
   id_Partition = geompy.addToStudy(Partition, "Partition of Box by Box1")
 
   # MakeMultiRotation1D, MakeMultiRotation2D
@@ -312,10 +313,13 @@ def TestOtherOperations (geompy, math):
   pln_pp0 = geompy.MakePlane(p0, v_pp0, 300)
   pln_np0 = geompy.MakePlane(p0, v_np0, 300)
 
-  part_tool_1 = geompy.MakePartition([b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0],
-                                     [],
-                                     [],
-                                     [b0])
+  #part_tool_1 = geompy.MakePartition([b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0],
+  #                                   [],
+  #                                   [],
+  #                                   [b0])
+  part_tool_1 = geompy.MakePartition([b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0])
+
+  id_part_tool_1 = geompy.addToStudy(part_tool_1, "part_tool_1")
 
   pt_pnt_1  = geompy.MakeVertex( 55,   0,  55)
   pt_pnt_2  = geompy.MakeVertex(  0,  55,  55)
@@ -343,14 +347,44 @@ def TestOtherOperations (geompy, math):
   pt_face_11 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_11)
   pt_face_12 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_12)
 
-  pt_box = geompy.GetBlockNearPoint(part_tool_1, p0)
+  #pt_box = geompy.GetBlockNearPoint(part_tool_1, p0)
 
-  part_tool = geompy.MakeCompound([pt_face_1, pt_face_4, pt_face_7, pt_face_10,
-                                   pt_face_2, pt_face_5, pt_face_8, pt_face_11,
-                                   pt_face_3, pt_face_6, pt_face_9, pt_face_12, pt_box])
-  id_part_tool = geompy.addToStudy(part_tool, "part_tool")
+  #part_tool = geompy.MakeCompound([pt_face_1, pt_face_4, pt_face_7, pt_face_10,
+  #                                 pt_face_2, pt_face_5, pt_face_8, pt_face_11,
+  #                                 #pt_face_3, pt_face_6, pt_face_9, pt_face_12, pt_box])
+  #                                 pt_face_3, pt_face_6, pt_face_9, pt_face_12)
+  #id_part_tool = geompy.addToStudy(part_tool, "part_tool")
 
-  part = geompy.MakePartition([s0], [part_tool])
+  #part = geompy.MakePartition([s0], [part_tool])
+  #part = geompy.MakePartition([s0], [ pt_face_1, pt_face_4, pt_face_7, pt_face_10,
+  #                                    pt_face_2, pt_face_5, pt_face_8, pt_face_11,
+  #                                    pt_face_3, pt_face_6, pt_face_9, pt_face_12, b0] )
+
+  p1 = geompy.MakeVertex(50, 0, 0)
+  p2 = geompy.MakeVertex(-50, 0, 0)
+  p3 = geompy.MakeVertex(0, 50, 0)
+  p4 = geompy.MakeVertex(0, -50, 0)
+  p5 = geompy.MakeVertex(0, 0, 50)
+  p6 = geompy.MakeVertex(0, 0, -50)
+
+  vx = geompy.MakeVectorDXDYDZ( 1,  0,  0)
+  vy = geompy.MakeVectorDXDYDZ( 0,  1,  0)
+  vz = geompy.MakeVectorDXDYDZ( 0,  0,  1)
+
+  plnX1 = geompy.MakePlane(p1, vx, 300)
+  plnX2 = geompy.MakePlane(p2, vx, 300)
+  plnY1 = geompy.MakePlane(p3, vy, 300)
+  plnY2 = geompy.MakePlane(p4, vy, 300)
+  plnZ1 = geompy.MakePlane(p5, vz, 300)
+  plnZ2 = geompy.MakePlane(p6, vz, 300)
+
+  #part = geompy.MakePartition([s0], [plnX1,plnX2,plnY1,plnY2,plnZ1,plnZ2])
+  part = geompy.MakePartition([s0], [plnX1])
+  part = geompy.MakePartition([part], [plnX2])
+  part = geompy.MakePartition([part], [plnY1])
+  part = geompy.MakePartition([part], [plnY2])
+  part = geompy.MakePartition([part], [plnZ1])
+  part = geompy.MakePartition([part], [plnZ2])
   geompy.addToStudy(part, "part")
 
   # GetFreeFacesIDs
