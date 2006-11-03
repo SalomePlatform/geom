@@ -76,7 +76,10 @@ colis_cc_multi = geompy.MultiRotate1D(colis_cc, vecz, 4)
 
 # --
 
-alveole = geompy.MakePartition([colis_cc_multi, barier])
+Compound1 = geompy.MakeCompound([colis_cc_multi, barier])
+SubShape_theShape = geompy.SubShapeAll(Compound1,geompy.ShapeType["SOLID"])
+alveole = geompy.MakePartition(SubShape_theShape)
+#alveole = geompy.MakePartition([colis_cc_multi, barier])
 
 geompy.addToStudy(alveole, "alveole before explode")
 
