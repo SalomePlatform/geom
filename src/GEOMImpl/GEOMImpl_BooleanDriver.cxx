@@ -257,7 +257,13 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
         TopTools_ListIteratorOfListOfShape itSub2 (listShape2);
         for (; itSub2.More(); itSub2.Next()) {
           TopoDS_Shape aValue2 = itSub2.Value();
-          BRepAlgoAPI_Section BO (aValue1, aValue2);
+          BRepAlgoAPI_Section BO (aValue1, aValue2, Standard_False);
+          // Set approximation to have an attached 3D BSpline geometry to each edge,
+          // where analytic curve is not possible. Without this flag in some cases
+          // we obtain BSpline curve of degree 1 (C0), which is slowly
+          // processed by some algorithms (Partition for example).
+          BO.Approximation(Standard_True);
+          BO.Build();
           if (!BO.IsDone()) {
             StdFail_NotDone::Raise("Section operation can not be performed on the given shapes");
           }
