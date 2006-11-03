@@ -115,10 +115,14 @@ if (window.writeIntopicBar)
  </B></span>checkbox allows to keep the initial object, otherwise it will be 
  removed.</p>
 
-<p class="whs2">&nbsp;</p>
-
 <p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
  Result <span style="font-weight: normal;">will be any</span> </b>&nbsp;GEOM_Object.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">Firstly you can define an <span style="font-weight: bold;"><B>Object</B></span> &nbsp;to 
+ be rotated, an <span style="font-weight: bold;"><B>Axis</B></span> of rotation 
+ and an <span style="font-weight: bold;"><B>Angle</B></span> of rotation.</p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
  </i><span style="font-style: italic;"><I>geompy.MakeRotation(Shape, Axis, 
@@ -131,7 +135,26 @@ if (window.writeIntopicBar)
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs3"><img src="pics/transformation4.png" x-maintain-ratio="TRUE" width="312px" height="376px" border="0" class="img_whs4"></p>
+<p class="whs3"><img src="pics/transformation4.png" x-maintain-ratio="TRUE" width="400px" height="432px" border="0" class="img_whs4"></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">Secondly you can define an <span style="font-weight: bold;"><B>Object</B></span> 
+ and three points. Rotation axis will pass through the first point and will be orthogonal
+ to a plane, defined by the three points. Rotation angle in this case is an angle between
+ two vectors, directed from the first point to the second and to the third points correspondingly.</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeRotationThreePoints(Shape, CentralPoint, 
+ Point1, Point2)</I></span> </p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments:</b> 1 shape + 3 points.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3"><img src="pics/transformation4a.png" x-maintain-ratio="TRUE" width="400px" height="432px" border="0" class="img_whs4"></p>
 
 <p class="whs3">&nbsp;</p>
 

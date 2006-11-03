@@ -112,12 +112,12 @@ if (window.writeIntopicBar)
  ListOfTools, ListOfKeepInside, ListOfRemoveInside, Limit, RemoveWebs, 
  ListOfMaterials)</I></span>, where ListOfShapes is a list of shapes to be 
  intersected, ListOfTools is a list of shapes to intersect the shapes from 
- ListOfShapes, ListOfKeepInside is a list of shapes outside which the results 
- will be deleted, ListOfRemoveInside is a list of shapes inside which the 
- results will be deleted, Limit is a type of the result shapes, if RemoveWebs 
- is True the Glue 3D algorithm will be performed on the results, ListOfMaterials 
- is a list of materials indices for each shape, it makes sense only if 
- RemoveWebs is True.</p>
+ ListOfShapes. Shapes from these two lists (for each separately)
+ can not have intersections with each other.
+ After implementation of a new version of PartitionAlgo (October 2006)
+ other parameters are ignored by current functionality. They are kept
+ in this function only for support of old scripts.
+</p>
 
 <p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Arguments:</b> 
  </font></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Name + 2 shapes (the first shape 
@@ -125,11 +125,7 @@ if (window.writeIntopicBar)
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs6"><img src="pics/partition1.png" x-maintain-ratio="TRUE" width="312px" height="483px" border="0" class="img_whs7"></p>
-
-<p class="whs2">&nbsp;</p>
-
-<p class="whs6"><img src="pics/neo-materials.png" x-maintain-ratio="TRUE" width="448px" height="302px" border="0" class="img_whs8"></p>
+<p class="whs6"><img src="pics/partition1.png" x-maintain-ratio="TRUE" width="400px" height="350px" border="0" class="img_whs7"></p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -151,7 +147,7 @@ if (window.writeIntopicBar)
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs6"><img src="pics/partition2.png" x-maintain-ratio="TRUE" width="312px" height="483px" border="0" class="img_whs7"></p>
+<p class="whs6"><img src="pics/partition2.png" x-maintain-ratio="TRUE" width="400px" height="350px" border="0" class="img_whs7"></p>
 
 <p class="whs6">&nbsp;</p>
 
