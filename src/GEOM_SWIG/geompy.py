@@ -1347,8 +1347,9 @@ def MakeSection(s1, s2):
 ## Perform partition operation.
 #  @param ListShapes Shapes to be intersected.
 #  @param ListTools Shapes to intersect theShapes.
-#  !!!NOTE: shapes from this lists (for each separately) can not have
-#           intersections with each other.
+#  !!!NOTE: Each compound from ListShapes and ListTools will be exploded
+#           in order to avoid possible intersection between shapes from
+#           this compound.
 #
 #  After implementation new version of PartitionAlgo (October 2006)
 #  other parameters are ignored by current functionality. They are kept
@@ -1367,6 +1368,46 @@ def MakeSection(s1, s2):
 #
 #  Example: see GEOM_TestAll.py
 def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
+                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+
+    NewListShapes = []
+    nbs = len(ListShapes)
+    for i in range(0,nbs):
+      if ListShapes[i].GetShapeType()==ShapeType["COMPOUND"]:
+        # need to explode
+        shapes = SubShapeAll(ListShapes[i],ShapeType["SHAPE"])
+        nbss = len(shapes)
+        for j in range(0,nbss): NewListShapes.append(shapes[j])
+      else: NewListShapes.append(ListShapes[i])
+      
+    NewListTools = []
+    nbs = len(ListTools)
+    for i in range(0,nbs):
+      if ListTools[i].GetShapeType()==ShapeType["COMPOUND"]:
+        # need to explode
+        shapes = SubShapeAll(ListTools[i],ShapeType["SHAPE"])
+        nbss = len(shapes)
+        for j in range(0,nbss): NewListShapes.append(shapes[j])
+      else: NewListTools.append(ListTools[i])
+      
+    return MakePartitionNonSelfIntersedtedShape(NewListShapes, NewListTools,
+                                                ListKeepInside, ListRemoveInside,
+                                                Limit, RemoveWebs, ListMaterials)
+
+## Perform partition operation.
+#  This method may be useful if it is needed to make a partition for
+#  compound contains nonintersected shapes. Performance will be better
+#  since intersection between shapes from compound is not performed.
+#
+#  Description of all parameters as in previous method MakePartition()
+#
+#  !!!NOTE: Compounds from ListShapes can not have intersections with each
+#           other and compounds from ListTools can not have intersections
+#           with each other.
+#
+#  @return New GEOM_Object, containing the result shapes.
+#
+def MakePartitionNonSelfIntersedtedShape(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                   Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
     anObj = BoolOp.MakePartition(ListShapes, ListTools,
                                  ListKeepInside, ListRemoveInside,
