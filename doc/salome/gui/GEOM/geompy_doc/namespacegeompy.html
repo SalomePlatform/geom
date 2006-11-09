@@ -306,6 +306,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#56f48212a436f46c02722f627d27e7f2">MakePartition</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Perform partition operation.  <a href="#56f48212a436f46c02722f627d27e7f2"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#dcdde81ee91dd4fffbd61f027fce692b">MakePartitionNonSelfIntersectedShape</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Perform partition operation.  <a href="#dcdde81ee91dd4fffbd61f027fce692b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#f1fc43bc5612514bcc2f6d772c3d38db">Partition</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Shortcut to <a class="el" href="namespacegeompy.html#56f48212a436f46c02722f627d27e7f2">MakePartition()</a>.  <a href="#f1fc43bc5612514bcc2f6d772c3d38db"></a><br></td></tr>
@@ -5204,7 +5207,7 @@ Example: see GEOM_TestOthers.py     </td>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>ListShapes</em>&nbsp;</td><td>Shapes to be intersected. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>ListTools</em>&nbsp;</td><td>Shapes to intersect theShapes. !!!NOTE: shapes from this lists (for each separately) can not have intersections with each other.</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>ListTools</em>&nbsp;</td><td>Shapes to intersect theShapes. !!!NOTE: Each compound from ListShapes and ListTools will be exploded in order to avoid possible intersection between shapes from this compound.</td></tr>
   </table>
 </dl>
 After implementation new version of PartitionAlgo (October 2006) other parameters are ignored by current functionality. They are kept in this function only for support old versions. Ignored parameters: <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -5218,6 +5221,77 @@ After implementation new version of PartitionAlgo (October 2006) other parameter
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing the result shapes.</dd></dl>
 Example: see GEOM_TestAll.py     </td>
+  </tr>
+</table>
+<a class="anchor" name="dcdde81ee91dd4fffbd61f027fce692b"></a><!-- doxytag: member="geompy::MakePartitionNonSelfIntersectedShape" ref="dcdde81ee91dd4fffbd61f027fce692b" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::MakePartitionNonSelfIntersectedShape           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>ListShapes</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>ListTools</em> = <code>[]</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>ListKeepInside</em> = <code>[]</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>ListRemoveInside</em> = <code>[]</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>Limit</em> = <code><a class="el" href="namespacegeompy.html#269cf26d7d10b8f6b4a20789ed8233a0">ShapeType</a>[&quot;SHAPE&quot;]</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>RemoveWebs</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>ListMaterials</em> = <code>[]</code></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+This method may be useful if it is needed to make a partition for compound contains nonintersected shapes. Performance will be better since intersection between shapes from compound is not performed.<p>
+Description of all parameters as in previous method <a class="el" href="namespacegeompy.html#56f48212a436f46c02722f627d27e7f2">MakePartition()</a><p>
+!!!NOTE: Compounds from ListShapes can not have intersections with each other and compounds from ListTools can not have intersections with each other.<p>
+<dl compact><dt><b>Returns:</b></dt><dd>New <a class="el" href="classGEOM__Object.html">GEOM_Object</a>, containing the result shapes. </dd></dl>
+    </td>
   </tr>
 </table>
 <a class="anchor" name="f1fc43bc5612514bcc2f6d772c3d38db"></a><!-- doxytag: member="geompy::Partition" ref="f1fc43bc5612514bcc2f6d772c3d38db" args="" --><p>
