@@ -1390,7 +1390,7 @@ def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=
         for j in range(0,nbss): NewListShapes.append(shapes[j])
       else: NewListTools.append(ListTools[i])
       
-    return MakePartitionNonSelfIntersedtedShape(NewListShapes, NewListTools,
+    return MakePartitionNonSelfIntersectedShape(NewListShapes, NewListTools,
                                                 ListKeepInside, ListRemoveInside,
                                                 Limit, RemoveWebs, ListMaterials)
 
@@ -1407,7 +1407,7 @@ def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=
 #
 #  @return New GEOM_Object, containing the result shapes.
 #
-def MakePartitionNonSelfIntersedtedShape(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
+def MakePartitionNonSelfIntersectedShape(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                   Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
     anObj = BoolOp.MakePartition(ListShapes, ListTools,
                                  ListKeepInside, ListRemoveInside,
