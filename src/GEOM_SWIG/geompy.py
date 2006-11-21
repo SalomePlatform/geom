@@ -1344,6 +1344,21 @@ def MakeFuse(s1, s2):
 def MakeSection(s1, s2):
     return MakeBoolean(s1, s2, 4)
 
+## Perform explode of compound
+#  Auxilary method for MakePartition
+def ExplodeCompound(aComp):
+    ResListShapes = []
+    shapes = SubShapeAll(aComp,ShapeType["SHAPE"])
+    nbss = len(shapes)
+    for i in range(0,nbss):
+        if shapes[i].GetShapeType()==GEOM.COMPOUND:
+            ResListShapes.extend(ExplodeCompound(shapes[i]))
+        else:
+            ResListShapes.append(shapes[i])
+            pass
+        pass
+    return ResListShapes
+  
 ## Perform partition operation.
 #  @param ListShapes Shapes to be intersected.
 #  @param ListTools Shapes to intersect theShapes.
@@ -1373,22 +1388,20 @@ def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=
     NewListShapes = []
     nbs = len(ListShapes)
     for i in range(0,nbs):
-      if ListShapes[i].GetShapeType()==ShapeType["COMPOUND"]:
-        # need to explode
-        shapes = SubShapeAll(ListShapes[i],ShapeType["SHAPE"])
-        nbss = len(shapes)
-        for j in range(0,nbss): NewListShapes.append(shapes[j])
-      else: NewListShapes.append(ListShapes[i])
+        if ListShapes[i].GetShapeType()==GEOM.COMPOUND:
+            # need to explode
+            NewListShapes.extend(ExplodeCompound(ListShapes[i]))
+        else: NewListShapes.append(ListShapes[i])
+        pass
       
     NewListTools = []
     nbs = len(ListTools)
     for i in range(0,nbs):
-      if ListTools[i].GetShapeType()==ShapeType["COMPOUND"]:
-        # need to explode
-        shapes = SubShapeAll(ListTools[i],ShapeType["SHAPE"])
-        nbss = len(shapes)
-        for j in range(0,nbss): NewListShapes.append(shapes[j])
-      else: NewListTools.append(ListTools[i])
+        if ListTools[i].GetShapeType()==GEOM.COMPOUND:
+            # need to explode
+            NewListTools.extend(ExplodeCompound(ListTools[i]))
+        else: NewListTools.append(ListTools[i])
+        pass
       
     return MakePartitionNonSelfIntersectedShape(NewListShapes, NewListTools,
                                                 ListKeepInside, ListRemoveInside,
