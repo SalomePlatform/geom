@@ -54,12 +54,6 @@
 
 
 static
-  void Path(const TopoDS_Shape& aV1,
-	    const TopTools_IndexedDataMapOfShapeListOfShape& aMVE,
-	    TopTools_MapOfShape& aMVP,
-	    TopTools_MapOfShape& aMEP,
-	    TopTools_MapOfShape& aMEC);
-static
   void MakeWire(const TopTools_ListOfShape& aLE, 
 		TopoDS_Wire& newWire);
 
@@ -122,20 +116,21 @@ static
   void GEOMAlgo_WESCorrector::DoConnexityBlocks()
 {
   Standard_Boolean bRegular;
-  Standard_Integer i, aNbV;
+  Standard_Integer i, aNbV, j, aNbC, aNbVP, aNbVS;
   TopTools_ListIteratorOfListOfShape aIt;
   TopoDS_Iterator aItE;
   TopoDS_Shape aER;
-  TopTools_MapOfShape aMER, aMEP, aMEC, aMVP;
-  TopTools_MapIteratorOfMapOfShape aItM;
+  TopTools_IndexedMapOfShape aMER, aMEP, aMEC, aMVP;
+  TopTools_IndexedMapOfShape aMVS, aMVAdd;
   TopTools_IndexedDataMapOfShapeListOfShape aMVE;
   //
   // 1. aMVE;
-  const TopTools_ListOfShape& aLE=myWES->StartElements();
-  aIt.Initialize(aLE);
+  const TopTools_ListOfShape& aLSE=myWES->StartElements();
+  aIt.Initialize(aLSE);
   for (; aIt.More(); aIt.Next()) {
     const TopoDS_Shape& aE=aIt.Value();
-    if (aMEP.Add(aE)) {
+    if (!aMEP.Contains(aE)) {
+      aMEP.Add(aE);
       TopExp::MapShapesAndAncestors(aE, TopAbs_VERTEX, TopAbs_EDGE, aMVE);
     }
     else {
@@ -143,42 +138,74 @@ static
     }
   }
   //
-  aMEP.Clear();
-  //
   // 2. 
   aNbV=aMVE.Extent();
   for (i=1; i<=aNbV; ++i) {
     const TopoDS_Shape& aV=aMVE.FindKey(i);
-    if (aMVP.Contains(aV)) {
+    //
+    aNbVS=aMVS.Extent();
+    if (aNbVS==aNbV) {
+      break;
+    }
+    //
+    if (aMVS.Contains(aV)) {
       continue;
     }
+    aMVS.Add(aV);    // aMVS - globally processed vertices
+    //
+    //------------------------------------- goal: aMEC
+    aMEC.Clear();    // aMEC - edges of CB
+    aMVP.Clear();    // aMVP - vertices to process right now 
+    aMVAdd.Clear();  // aMVAdd vertices to process on next step of while(1)
+    //
     aMVP.Add(aV);
     //
-    const TopTools_ListOfShape& aLEi=aMVE(i);
-    aIt.Initialize(aLEi);
-    for (; aIt.More(); aIt.Next()) {
-      const TopoDS_Shape& aE=aIt.Value();
-      if (aMEP.Contains(aE)) {
-	continue;
+    while(1) {
+      aNbVP=aMVP.Extent();
+      for (j=1; j<=aNbVP; ++j) {
+	const TopoDS_Shape& aVP=aMVP(j);
+	const TopTools_ListOfShape& aLE=aMVE.FindFromKey(aVP);
+	aIt.Initialize(aLE);
+	for (; aIt.More(); aIt.Next()) {
+	  const TopoDS_Shape& aE=aIt.Value();
+	  if (aMEC.Contains(aE)) {
+	    continue;
+	  }
+	  aMEC.Add(aE);
+	  //
+	  aItE.Initialize(aE);
+	  for (; aItE.More(); aItE.Next()) {
+	    const TopoDS_Shape& aVE=aItE.Value();
+	    if (!aMVS.Contains(aVE)) {
+	      aMVS.Add(aVE);
+	      aMVAdd.Add(aVE);
+	    }
+	  }
+	}
+      }//for (j=1; j<=aNbVP; ++j) 
+      //
+      aNbVP=aMVAdd.Extent();
+      if (!aNbVP) {
+	break; // from while(1)
       }
       //
-      aMEP.Add(aE);
-      aMEC.Add(aE);
-      aItE.Initialize(aE);
-      for (; aItE.More(); aItE.Next()) {
-	const TopoDS_Shape& aVE=aItE.Value();
-	Path(aVE, aMVE, aMVP, aMEP, aMEC);
+      aMVP.Clear();
+      for (j=1; j<=aNbVP; ++j) {
+	const TopoDS_Shape& aVE=aMVAdd(j);
+	aMVP.Add(aVE);
       }
-    }//for (; aIt.More(); aIt.Next()) {
-    //
+      aMVAdd.Clear();
+    }// while(1) {
+    //-------------------------------------
     BOP_ConnexityBlock aCB;
     TopTools_ListOfShape aLEC;
     TopTools_IndexedDataMapOfShapeListOfShape aMVER;
     //
     bRegular=Standard_True;
-    aItM.Initialize(aMEC);
-    for (; aItM.More(); aItM.Next()) {
-      aER=aItM.Key();
+   
+    aNbC=aMEC.Extent();
+    for (j=1; j<=aNbC; ++j) {
+      aER=aMEC(j);
       //
       if (aMER.Contains(aER)) {
 	Standard_Boolean bClosed;
@@ -200,14 +227,14 @@ static
       if (bRegular) {
 	TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
       }
-    }
+    }//for (j=1; j<=aNbC; ++j) {
     //
     if (bRegular) {
-      Standard_Integer j, aNbVR, aNbER;
+      Standard_Integer k, aNbVR, aNbER;
       //
       aNbVR=aMVER.Extent();
-      for (j=1; j<=aNbVR; ++j) {
-	const TopTools_ListOfShape& aLER=aMVE(j);
+      for (k=1; k<=aNbVR; ++k) {
+	const TopTools_ListOfShape& aLER=aMVER(k);//?? it was aMVE(k)
 	aNbER=aLER.Extent();
 	if (aNbER==1) {
 	  const TopoDS_Edge& aEx=TopoDS::Edge(aER);
@@ -229,41 +256,7 @@ static
     aMEC.Clear();
   }//for (i=1; i<=aNbV; ++i) {
 }
-//=======================================================================
-// function: Path
-// purpose: 
-//=======================================================================
-void Path(const TopoDS_Shape& aV1,
-	  const TopTools_IndexedDataMapOfShapeListOfShape& aMVE,
-	  TopTools_MapOfShape& aMVP,
-	  TopTools_MapOfShape& aMEP,
-	  TopTools_MapOfShape& aMEC)
-{
-  TopoDS_Iterator aItE;
-  TopTools_ListIteratorOfListOfShape aIt;
-  //
-  if (aMVP.Contains(aV1)) {
-    return;
-  }
-  aMVP.Add(aV1);
-  //
-  const TopTools_ListOfShape& aLE=aMVE.FindFromKey(aV1);
-  aIt.Initialize(aLE);
-  for (; aIt.More(); aIt.Next()) {
-    const TopoDS_Shape& aE=aIt.Value();
-    if (aMEP.Contains(aE)) {
-      continue;
-    }
-    aMEP.Add(aE);
-    aMEC.Add(aE);
-    //
-    aItE.Initialize(aE);
-    for (; aItE.More(); aItE.Next()) {
-      const TopoDS_Shape& aVE=aItE.Value();
-      Path(aVE, aMVE, aMVP, aMEP, aMEC);
-    }
-  }
-}
+
 //=======================================================================
 // function: DoCorrections
 // purpose: 

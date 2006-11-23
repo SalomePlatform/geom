@@ -65,9 +65,6 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
-#include <TopTools_MapIteratorOfMapOfShape.hxx>
-#include <TopTools_DataMapOfShapeListOfShape.hxx>
-#include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 
 #include <BRepClass3d_SolidClassifier.hxx>
 
@@ -81,8 +78,13 @@
 #include <NMTTools_ListOfCoupleOfShape.hxx>
 #include <NMTTools_ListIteratorOfListOfCoupleOfShape.hxx>
 #include <NMTTools_CoupleOfShape.hxx>
-
+#include <TopTools_DataMapOfShapeListOfShape.hxx>
+#include <TopTools_DataMapOfShapeListOfShape.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_MapIteratorOfMapOfShape.hxx>
 //
+
 static
   Standard_Boolean FindFacePairs (const TopoDS_Edge& ,
 				  const TopTools_ListOfShape& ,
@@ -212,7 +214,7 @@ static
 						   const TopoDS_Face& theFace2)
 {
   Standard_Boolean bRet;
-  Standard_Real aT1, aT2, aT, aDt2D, aD1, aD2, aDt2Dx;
+  Standard_Real aT1, aT2, aT, aDt2D, aDt2Dx;//aD1, aD2,
   gp_Pnt aPx, aPF, aPF1, aPF2;
   gp_Pnt2d aP2D, aPF2D;
   gp_Dir aDNF1, aDNF2;
@@ -247,20 +249,64 @@ static
   // 3
   bRet=Standard_False;
   //
-  BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1);
-  gp_Pln aPlnF1(aPx, aDNF1);
+  //modified by NIZNHY-PKV Mon Nov 13 12:12:53 2006f
   //
-  aD1=BOPTools_Tools3D::SignDistance(aPF, aPlnF1);
-  if (aD1<=0.) {
-    BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2);
-    gp_Pln aPlnF2(aPx, aDNF2);
+  BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1);
+  BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2);
+  //
+  {
+    Standard_Real aA12, aA1x, aTwoPI;
     //
-    aD2=BOPTools_Tools3D::SignDistance(aPF, aPlnF2);
-    if (aD2<=0.) {
+    aTwoPI=2.*PI;
+    gp_Vec aVBF (aPx, aPF );
+    gp_Vec aVBF1(aPx, aPF1);
+    gp_Vec aVBF2(aPx, aPF2);
+    //
+    gp_Dir aDTF1;
+    gp_Dir aDBF (aVBF);
+    gp_Dir aDBF1(aVBF1);
+    gp_Dir aDBF2(aVBF2);
+    //
+    aDTF1=aDNF1^aDBF1;
+    //aA12=aDBF1.AngleWithRef(aDBF2, aDTF1);
+    aA12=AngleWithRef(aDBF1, aDBF2, aDTF1);
+    if (aA12<0.) {
+      aA12=aA12+aTwoPI;
+    }
+    //aA1x=aDBF1.AngleWithRef(aDBF , aDTF1);
+    aA1x=AngleWithRef(aDBF1, aDBF , aDTF1);
+    if (aA1x<0.) {
+      aA1x=aA1x+aTwoPI;
+    }
+    //
+    if (aA1x<aA12) {
       bRet=!bRet; //TopAbs_IN;
     }
   }
+  //
+  /*
+  {
+    Standard_Real aD1, aD2;
+    //
+    //BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1);
+    gp_Pln aPlnF1(aPx, aDNF1);
+    //
+    aD1=BOPTools_Tools3D::SignDistance(aPF, aPlnF1);
+    if (aD1<=0.) {
+      //BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2);
+      gp_Pln aPlnF2(aPx, aDNF2);
+      //
+      aD2=BOPTools_Tools3D::SignDistance(aPF, aPlnF2);
+      if (aD2<=0.) {
+	bRet=!bRet; //TopAbs_IN;
+      }
+    }
+  }
+  */
+  //modified by NIZNHY-PKV Mon Nov 13 12:12:55 2006t
+  //
   return bRet;
+  
 }
 //=======================================================================
 //function : GetFaceOff
@@ -1012,3 +1058,98 @@ Standard_Real AngleWithRef(const gp_Dir& theD1,
   }
   return aBeta;
 }
+//
+/*
+static
+  void Path(const TopoDS_Shape& ,
+	  const TopoDS_Shape& ,
+	  const TopTools_IndexedDataMapOfShapeListOfShape& ,
+	  const TopTools_IndexedMapOfShape& ,
+	  TopTools_IndexedMapOfShape& );
+
+//=======================================================================
+// function: MakeConnexityBlock.
+// purpose: 
+//=======================================================================
+  void GEOMAlgo_Tools3D::MakeConnexityBlock (const TopTools_ListOfShape& theLFIn,
+					    const TopTools_IndexedMapOfShape& theMEAvoid,
+					    TopTools_ListOfShape& theLCB)
+{
+  Standard_Integer  j, aNbF;
+  TopTools_IndexedDataMapOfShapeListOfShape aEFMap;
+  TopTools_IndexedMapOfShape aMFP, aCBMap;
+  TopTools_ListIteratorOfListOfShape aIt;
+  TopExp_Explorer aExp;
+  TopAbs_ShapeEnum aType;
+  //
+  aIt.Initialize(theLFIn);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aF=aIt.Value();      
+    aType=aF.ShapeType();
+    TopExp::MapShapesAndAncestors(aF, TopAbs_EDGE, TopAbs_FACE, aEFMap);
+  }
+  //
+  aCBMap.Clear();
+  const TopoDS_Shape& aF=theLFIn.First();
+  //
+  aCBMap.Add(aF);
+  //
+  aExp.Init(aF, TopAbs_EDGE);
+  for (; aExp.More(); aExp.Next()){
+    const TopoDS_Shape& aE=aExp.Current();
+    if (theMEAvoid.Contains(aE)){
+      continue;
+    }
+    //
+    const TopTools_ListOfShape& aLF=aEFMap.FindFromKey(aE);
+    aIt.Initialize(aLF);
+    for (; aIt.More(); aIt.Next()) {
+      const TopoDS_Shape& aF1=aIt.Value();
+      if (!aF1.IsSame(aF)) {
+	Path (aE, aF1, aEFMap, theMEAvoid,  aCBMap);
+      }
+    }
+  }
+  //
+  aNbF=aCBMap.Extent();
+  for (j=1; j<=aNbF; ++j) {
+    const TopoDS_Shape& aFx=aCBMap(j);
+    theLCB.Append(aFx);
+  }
+}
+//=======================================================================
+// function: Path
+// purpose: 
+//=======================================================================
+void Path(const TopoDS_Shape& theE1,
+	  const TopoDS_Shape& theF1,
+	  const TopTools_IndexedDataMapOfShapeListOfShape& theEFMap,
+	  const TopTools_IndexedMapOfShape& theMEAvoid,
+	  TopTools_IndexedMapOfShape& theCBMap)
+{
+  TopTools_ListIteratorOfListOfShape aIt;
+  TopExp_Explorer aExp;
+  //
+  if (theCBMap.Contains(theF1)){
+    return;
+  }
+  theCBMap.Add(theF1);
+  //
+  aExp.Init(theF1, TopAbs_EDGE);
+  for (; aExp.More(); aExp.Next()){
+    const TopoDS_Shape& aE=aExp.Current();
+    if (!aE.IsSame(theE1)){
+      if (theMEAvoid.Contains(aE)) {
+	continue;
+      }
+      //
+      const TopTools_ListOfShape& aLF=theEFMap.FindFromKey(aE);
+      aIt.Initialize(aLF);
+      for (; aIt.More(); aIt.Next()) {
+	const TopoDS_Shape& aF=aIt.Value();
+	  Path (aE, aF, theEFMap, theMEAvoid, theCBMap);
+      }
+    }
+  }
+}
+*/

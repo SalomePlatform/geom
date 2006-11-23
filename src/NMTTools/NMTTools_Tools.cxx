@@ -70,6 +70,7 @@
 //
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
+#include <TopoDS_Iterator.hxx>
 
 static 
   void ProcessBlock(const Standard_Integer iV,
@@ -82,6 +83,70 @@ static
 		    TopTools_IndexedMapOfShape& aProcessed,
 		    TopTools_IndexedMapOfShape& aChain);
 
+//modified by NIZNHY-PKV Thu Nov 16 10:46:53 2006f SKL/PartC5
+//=======================================================================
+// function: UpdateEdge
+// purpose: 
+//=======================================================================
+  void  NMTTools_Tools::UpdateEdge(const TopoDS_Edge& aE,
+				   const Standard_Real aTolR)
+{ 
+  Standard_Real aTolE, aTolES, aTolV;
+  TopoDS_Iterator aIt;
+  BRep_Builder aBB;
+  //
+  aTolE=BRep_Tool::Tolerance(aE);
+  aTolES=Max(aTolR, aTolE);
+  aBB.UpdateEdge(aE, aTolES);
+  //
+  aIt.Initialize(aE);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Vertex& aV=TopoDS::Vertex(aIt.Value());
+    aTolV=BRep_Tool::Tolerance(aV);
+    if (aTolV<aTolES) {
+       aBB.UpdateVertex(aV, aTolES);
+    }
+  }
+}
+//=======================================================================
+// function: MakePCurve
+// purpose: 
+//=======================================================================
+  void  NMTTools_Tools::MakePCurve(const TopoDS_Edge& aE,
+				    const TopoDS_Face& aF,
+				    const Handle(Geom2d_Curve)& aC2Dx1)
+				    
+{
+  Standard_Real aTolE, aT1, aT2, aOutFirst, aOutLast, aOutTol;
+  Handle(Geom2d_Curve) aC2D, aC2DA;
+  TopoDS_Face aFFWD;
+  BRep_Builder aBB;
+  //
+  aFFWD=aF;
+  aFFWD.Orientation(TopAbs_FORWARD);
+  //
+  aTolE=BRep_Tool::Tolerance(aE);
+  //
+  const Handle(Geom_Curve)& aC3DE=BRep_Tool::Curve(aE, aT1, aT2);
+  Handle(Geom_TrimmedCurve)aC3DETrim=new Geom_TrimmedCurve(aC3DE, aT1, aT2);
+  //
+  aC2D=aC2Dx1;
+  if (aC2D.IsNull()) { // ?
+    BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aE, aFFWD);
+    BOPTools_Tools2D::CurveOnSurface(aE, aFFWD, aC2D, aOutFirst, aOutLast, aOutTol, Standard_True);
+  }
+  //
+  if (aC3DE->IsPeriodic()) {
+    BOPTools_Tools2D::AdjustPCurveOnFace(aFFWD, aT1, aT2,  aC2D, aC2DA); 
+  }
+  else {
+    BOPTools_Tools2D::AdjustPCurveOnFace(aFFWD, aC3DETrim, aC2D, aC2DA); 
+  }
+  //
+  aBB.UpdateEdge(aE, aC2DA, aFFWD, aTolE);
+  BRepLib::SameParameter(aE);
+}
+/*
 //=======================================================================
 // function: MakePCurve
 // purpose: 
@@ -140,7 +205,8 @@ static
   aBB.UpdateEdge(aE, aC2DA, aFFWD, aTolFact);
   BRepLib::SameParameter(aE);
 }
-  
+*/
+//modified by NIZNHY-PKV Thu Nov 16 10:46:55 2006t 
 //=======================================================================
 // function: IsSplitInOnFace
 // purpose: 

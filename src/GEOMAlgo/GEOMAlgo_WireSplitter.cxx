@@ -117,11 +117,6 @@ static
 			    const GeomAdaptor_Surface& aGAS);	
 
 static
-  void UVTolerance2D (const TopoDS_Vertex& aV,
-		      const GeomAdaptor_Surface& aGAS,
-		      Standard_Real& aTolU,
-		      Standard_Real& aTolV);
-static
   Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& );
 //
 
@@ -456,7 +451,7 @@ static
   Standard_Integer i,j, aNb, aNbj;
   Standard_Real aTol, anAngleIn, anAngleOut, anAngle, aMinAngle;
   Standard_Real aTol2D, aTol2D2;
-  Standard_Real aTol2, aD2, aTolUVb, aTolVVb;  
+  Standard_Real aTol2, aD2;//, aTolUVb, aTolVVb;  
   Standard_Boolean anIsSameV2d, anIsSameV, anIsFound, anIsOut, anIsNotPassed;
   BOP_ListIteratorOfListOfEdgeInfo anIt;
   TopoDS_Vertex aVb;
@@ -494,9 +489,13 @@ static
   aTol=2.*Tolerance2D(aVb, aGAS);
   aTol2=aTol*aTol;
   //
+  //modified by NIZNHY-PKV Tue Nov 14 16:56:19 2006f
+  /*
   UVTolerance2D(aVb, aGAS, aTolUVb, aTolVVb);
   aTolUVb = 2.*aTolUVb;
   aTolVVb = 2.*aTolVVb;
+  */
+  //modified by NIZNHY-PKV Tue Nov 14 16:56:26 2006t
   //
   aNb=aLS.Length();
   if (aNb>0) {
@@ -511,7 +510,7 @@ static
       aBuf.Append(aEPrev);
 
       anIsSameV=aVPrev.IsSame(aVb);
-      anIsSameV2d = Standard_False;
+      anIsSameV2d=Standard_False;
 
       if (anIsSameV) {
 	anIsSameV2d = Standard_True;
@@ -519,6 +518,8 @@ static
 	aD2=aPaPrev.SquareDistance(aPb);
 	anIsSameV2d =aD2<aTol2;
 	//
+	//modified by NIZNHY-PKV Tue Nov 14 16:56:49 2006f
+	/*
 	if(anIsSameV2d) {
 	  Standard_Real udist, vdist;
 	  //
@@ -528,6 +529,8 @@ static
 	    anIsSameV2d=!anIsSameV2d;
 	  }
 	}
+	*/
+	//modified by NIZNHY-PKV Tue Nov 14 16:56:54 2006t
       }//if (anIsSameV) {
       //
       if (anIsSameV && anIsSameV2d) {
@@ -892,6 +895,15 @@ Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& aLEInfo)
   }
   return iCnt;
 }
+//modified by NIZNHY-PKV Tue Nov 14 16:55:31 2006f
+/*
+static
+  void UVTolerance2D (const TopoDS_Vertex& aV,
+		      const GeomAdaptor_Surface& aGAS,
+		      Standard_Real& aTolU,
+		      Standard_Real& aTolV);
+*/
+/*
 //=======================================================================
 //function : UVTolerance2D
 //purpose  : 
@@ -907,3 +919,5 @@ void UVTolerance2D (const TopoDS_Vertex& aV,
   aTolU=aGAS.UResolution(aTolV3D);
   aTolV=aGAS.VResolution(aTolV3D);
 }
+*/
+//modified by NIZNHY-PKV Tue Nov 14 16:55:39 2006

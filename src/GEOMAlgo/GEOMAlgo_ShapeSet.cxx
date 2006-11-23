@@ -52,21 +52,25 @@
 //=======================================================================
   void GEOMAlgo_ShapeSet::Add(const TopoDS_Shape& theShape)
 {
-  myMap.Add(theShape);
+  if (myMap.Add(theShape)) {
+    myList.Append(theShape);
+  }
 }
 //=======================================================================
 //function : Add
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_ShapeSet::Add(const TopoDS_Shape& theShape,
-			   const TopAbs_ShapeEnum theType)
+			      const TopAbs_ShapeEnum theType)
 {
   TopExp_Explorer aExp;
   //
   aExp.Init(theShape, theType);
   for (; aExp.More(); aExp.Next()) {
     const TopoDS_Shape& aS=aExp.Current();
-    myMap.Add(aS);
+    if (myMap.Add(aS)) {
+      myList.Append(aS);
+    }
   }
 }
 //=======================================================================
@@ -79,7 +83,10 @@
   //
   aIt.Initialize(theLS);
   for (; aIt.More(); aIt.Next()) {
-    myMap.Add(aIt.Value());
+    const TopoDS_Shape& aS=aIt.Value();
+    if (myMap.Add(aS)) {
+      myList.Append(aS);
+    }
   }
 }
 //=======================================================================
@@ -88,6 +95,7 @@
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_ShapeSet::GetSet()const
 {
+  /*
   TopTools_ListOfShape *pL;
   TopTools_MapIteratorOfMapOfOrientedShape aIt;
   //
@@ -97,6 +105,7 @@
   for (; aIt.More(); aIt.Next()) {
     pL->Append(aIt.Key());
   }
+  */
   return myList;
 }
 //=======================================================================
@@ -115,7 +124,7 @@
   for (; aIt.More(); aIt.Next()) {
     const TopoDS_Shape& aF=aIt.Value();
     aOr=aF.Orientation();
-    if (aOr==TopAbs_FORWARD||aOr==TopAbs_REVERSED) {
+    if (aOr==TopAbs_FORWARD || aOr==TopAbs_REVERSED) {
       bRet=myMap.Contains(aF);
       if (!bRet) {
 	break;
@@ -130,6 +139,7 @@
 //=======================================================================
   void GEOMAlgo_ShapeSet::Subtract(const GEOMAlgo_ShapeSet& theOther)
 {
+  /*
   TopTools_MapIteratorOfMapOfOrientedShape aIt;
   //
   aIt.Initialize(theOther.myMap);
@@ -137,4 +147,21 @@
     const TopoDS_Shape& aS=aIt.Key();
     myMap.Remove(aS);
   }
+  */
+  //
+  TopTools_ListIteratorOfListOfShape aIt;
+  TopTools_ListOfShape aLS;
+  //
+  myMap.Clear();
+  aIt.Initialize(myList);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aS=aIt.Value();
+    if (!theOther.myMap.Contains(aS)) {
+      if(myMap.Add(aS)){
+	aLS.Append(aS);
+      }
+    }
+  }
+  //
+  myList=aLS;
 }

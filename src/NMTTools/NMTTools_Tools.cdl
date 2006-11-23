@@ -80,12 +80,23 @@ is
     FindChains(myclass; 
     	    aM1: IndexedDataMapOfShapeIndexedMapOfShape from NMTTools;
 	    aM2:out  IndexedDataMapOfShapeIndexedMapOfShape from NMTTools);
-     
+  
+--modified by NIZNHY-PKV Thu Nov 16 10:58:08 2006f	    
+--    MakePCurve(myclass;  
+--    	    aE  :  Edge from TopoDS; 
+--    	    aF  :  Face from TopoDS;  
+--   	    aC2D:  Curve from Geom2d; 
+--    	    aTolR2D: Real from Standard);  
+	    
     MakePCurve(myclass;  
-    	    aE  :  Edge from TopoDS; 
-    	    aF  :  Face from TopoDS;  
-    	    aC2D:  Curve from Geom2d; 
-    	    aTolR2D: Real from Standard);    
+    	    aE   :  Edge from TopoDS; 
+    	    aF   :  Face from TopoDS;  
+    	    aC2D :  Curve from Geom2d); 
+	     
+    UpdateEdge(myclass;  
+    	    aE   :  Edge from TopoDS;   
+    	    aTol :  Real from Standard);	
+--modified by NIZNHY-PKV Thu Nov 16 10:58:14 2006t
 --fields
 
 end Tools;
