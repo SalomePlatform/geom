@@ -521,16 +521,20 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	AISShape->SetDisplayMode( myDisplayMode );
         AISShape->SetShadingColor( myShadingColor );
 
-	// Set color for iso lines
+	// Set color and number for iso lines
 	SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
 	QColor col = aResMgr->colorValue( "Geometry", "isos_color", QColor(int(0.5*255), int(0.5*255), int(0.5*255)) );
 	Quantity_Color aColor = SalomeApp_Tools::color( col );
-	
+	int anUIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_u", 1);
+	int aVIsoNumber  = aResMgr->integerValue("OCCViewer", "iso_number_v", 1);
+		
 	Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
+	anAspect->SetNumber( anUIsoNumber );
 	anAspect->SetColor( aColor );
 	AISShape->Attributes()->SetUIsoAspect( anAspect );
 	
 	anAspect = AISShape->Attributes()->VIsoAspect();
+	anAspect->SetNumber( aVIsoNumber );
 	anAspect->SetColor( aColor );
 	AISShape->Attributes()->SetVIsoAspect( anAspect );
 	
