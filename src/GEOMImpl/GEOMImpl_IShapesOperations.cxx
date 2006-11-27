@@ -2499,23 +2499,12 @@ static bool isSameFace(const TopoDS_Face& theFace1, const TopoDS_Face& theFace2)
     if(P.Z() > zmaxB2) zmaxB2 = P.Z();
   }
 
-  //cout << "Face1 = " << xminB1 << " " << yminB1 << " " << zminB1 << " " << xmaxB1 << " " <<  ymaxB1 << " " << zmaxB1 << endl;
-  //cout << "Face2 = " << xminB2 << " " << yminB2 << " " << zminB2 << " " << xmaxB2 << " " <<  ymaxB2 << " " << zmaxB2 << endl;
-
   //Compare the bounding boxes of both faces
   if(gp_Pnt(xminB1, yminB1, zminB1).Distance(gp_Pnt(xminB2, yminB2, zminB2)) > MAX_TOLERANCE)
     return false;
 
   if(gp_Pnt(xmaxB1, ymaxB1, zmaxB1).Distance(gp_Pnt(xmaxB2, ymaxB2, zmaxB2)) > MAX_TOLERANCE)
     return false;
-
-  /*
-  TopTools_ListIteratorOfListOfShape LSI2t(LS2);
-  for(; LSI2t.More(); LSI2t.Next()) { 
-    TopoDS_Shape aValue = LSI2t.Value();
-    cout << (int)((void*)(aValue.TShape()->This()))<< endl;
-  }
-  */
 
   //Check that each edge of the Face1 has a counterpart in the Face2
   TopTools_MapOfOrientedShape aMap;
@@ -2660,8 +2649,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSame(const Handle(GEOM_Object
       gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(aWhat));
       TopExp_Explorer E(aWhere, TopAbs_VERTEX);
       for(; E.More(); E.Next()) {
+        if(!aMap.Add(E.Current())) continue;
         gp_Pnt P2 = BRep_Tool::Pnt(TopoDS::Vertex(E.Current()));
-        if(P.Distance(P2) < MAX_TOLERANCE) {
+        if(P.Distance(P2) <= MAX_TOLERANCE) {
+          isFound = true;
           aSubShape = E.Current();
           break;
         }
