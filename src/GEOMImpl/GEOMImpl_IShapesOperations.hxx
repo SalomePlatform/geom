@@ -194,6 +194,15 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
 
   Standard_EXPORT static void SortShapes (TopTools_ListOfShape& SL);
 
+  /*!
+   * \brief Searches a shape equal to theWhat in the context of theWhere
+    * \param theShapeWhere - a context shap
+    * \param theShapeWhat - a sample shape 
+    * \retval Handle(GEOM_Object) - found shape
+   */
+  Standard_EXPORT Handle(GEOM_Object) GetSame(const Handle(GEOM_Object)& theShapeWhere, 
+					      const Handle(GEOM_Object)& theShapeWhat);
+
  private:
   Handle(GEOM_Object) MakeShape (list<Handle(GEOM_Object)>      theShapes,
                                  const Standard_Integer         theObjectType,
