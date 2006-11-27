@@ -1021,6 +1021,18 @@ def GetInPlace(theShapeWhere, theShapeWhat):
       print "GetInPlace : ", ShapesOp.GetErrorCode()
     return anObj
 
+## Get sub-shape of theShapeWhere, which is
+#  equal to \a theShapeWhat.
+#  @param theShapeWhere Shape to find sub-shape of.
+#  @param theShapeWhat Shape, specifying what to find.
+#  @return New GEOM_Object for found sub-shape.
+#
+def GetSame(theShapeWhere, theShapeWhat):
+    anObj = ShapesOp.GetSame(theShapeWhere, theShapeWhat)
+    if ShapesOp.IsDone() == 0:
+      print "GetSame : ", ShapesOp.GetErrorCode()
+    return anObj
+
 # -----------------------------------------------------------------------------
 # Access to sub-shapes by their unique IDs inside the main shape.
 # -----------------------------------------------------------------------------
