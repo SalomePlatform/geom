@@ -124,7 +124,7 @@ namespace GEOM
     TDF_Tool::TagList(theObj1->GetEntry(), aTags1);
     TDF_Tool::TagList(theObj2->GetEntry(), aTags2);
     TColStd_ListIteratorOfListOfInteger aListIter1(aTags1), aListIter2(aTags2);
-    for (; aListIter1.More(); aListIter1.Next()) {
+    for (; aListIter1.More(); aListIter1.Next(), aListIter2.Next()) {
       if (!aListIter2.More())
         return theObj1; // anObj1 is stored under anObj2
 
