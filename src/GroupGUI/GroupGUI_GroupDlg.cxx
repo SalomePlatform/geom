@@ -618,7 +618,10 @@ void GroupGUI_GroupDlg::updateState()
 	 else if (aGeomObj->GetType() == GEOM_GROUP)
 	   aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
 	 else
-	   break;
+	   {
+	     aMapIndex.Clear();
+	     break;
+	   }
 	 
 	 for (int i = 0; i < aSubObjects->length(); i++) 
 	   {
