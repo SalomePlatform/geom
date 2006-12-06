@@ -2268,6 +2268,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
         TColStd_ListOfInteger aModifiedList;
         isFound = GetInPlaceOfCompound(aWhereFunction, aWhat, aModifiedList);
         if (isFound) {
+          if (aModifiedList.Extent() < 1) {
+            SetErrorCode("Error: Empty modifications history for all sub-shapes of the sought shape.");
+            return NULL;
+          }
           aModifiedArray = new TColStd_HArray1OfInteger (1, aModifiedList.Extent());
           TColStd_ListIteratorOfListOfInteger anIterModif (aModifiedList);
           for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++) {
@@ -2284,6 +2288,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
 
   //Add a new object
   Handle(GEOM_Object) aResult = GetEngine()->AddSubShape(theShapeWhere, aModifiedArray);
+  if (aResult.IsNull()) {
+    SetErrorCode("Error in algorithm: result found, but cannot be returned.");
+    return NULL;
+  }
 
   if (aModifiedArray->Length() > 1) {
     //Set a GROUP type
