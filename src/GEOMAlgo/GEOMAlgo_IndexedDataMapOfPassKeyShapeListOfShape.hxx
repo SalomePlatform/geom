@@ -37,7 +37,7 @@ class Standard_OutOfRange;
 class Standard_NoSuchObject;
 class GEOMAlgo_PassKeyShape;
 class TopTools_ListOfShape;
-class GEOMAlgo_PassKeyMapHasher;
+class GEOMAlgo_PassKeyShapeMapHasher;
 class GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape;
 
 

@@ -17,31 +17,41 @@
 --
 -- See http:--www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 --
--- File:	GEOMAlgo_PassKeyMapHasher.cdl
--- Created:	
+-- File:	GEOMAlgo_Algo.cdl
+-- Created:	Sat Dec 04 12:37:56 2004
 -- Author:	Peter KURNEV
---		<pkv@irinox>
+--		<peter@PREFEX>
 
 
-class PassKeyMapHasher from GEOMAlgo 
-
+deferred  class HAlgo from GEOMAlgo 
+    inherits TShared from MMgt   
 	---Purpose: 
 
-uses 
-    PassKey from GEOMAlgo 
-
+--uses
 --raises
 
-is 
-    HashCode(myclass;  
-    	    aPKey : PassKey from GEOMAlgo;  
-    	    Upper : Integer from Standard)  
-    	returns Integer from Standard;
-	
-	
-    IsEqual(myclass;  
-    	    aPKey1 : PassKey from GEOMAlgo;  
-    	    aPKey2 : PassKey from GEOMAlgo)  
-    	returns Boolean from Standard;
+is
+    Initialize 
+    	returns mutable HAlgo from GEOMAlgo;  
+    ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_HAlgo();" 
 
-end PassKeyMapHasher;
+    Perform(me:mutable) 
+	is deferred;      
+
+    CheckData(me:mutable) 
+	is virtual;  
+    	
+    CheckResult(me:mutable) 
+	is virtual;
+     
+    ErrorStatus (me) 
+    	returns Integer from Standard; 
+  
+    WarningStatus (me) 
+    	returns Integer from Standard;
+ 
+fields
+    myErrorStatus   : Integer from Standard  is protected;	 
+    myWarningStatus : Integer from Standard  is protected;	 
+ 
+end HAlgo;

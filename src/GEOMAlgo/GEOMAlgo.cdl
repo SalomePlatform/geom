@@ -40,14 +40,13 @@ uses
     IntTools, 
     BOPTools, 
     BOP, 
-    --||
+    
     TColStd, 
     BOPTColStd,  
     BRepAlgo, 
     NMTDS, 
     NMTTools 
-    --||     
-
+    
 is   
     --
     -- enumerations 
@@ -60,10 +59,17 @@ is
 	ST_ONIN, 
 	ST_ONOUT, 
 	ST_INOUT    
-    end State;
+    end State; 
+    --
+    deferred class HAlgo;
+    deferred class Clsf;
+    class ClsfSurf; 
+    class ClsfBox; 
+    class FinderShapeOn2; 
+    class PassKeyShapeMapHasher; 
     -- 
     --  classes 
-    -- 
+    --  
     deferred class Algo;  
     deferred class ShapeAlgo;  
     -- 
@@ -74,6 +80,7 @@ is
     class PassKey;  
     class PassKeyMapHasher; 
     class PassKeyShape;  
+    
     class SurfaceTools; 
     class Tools;  
     --	     
@@ -86,7 +93,8 @@ is
     class FinderShapeOn; 
     -- 
     class FinderShapeOn1;
-    class StateCollector;
+    class StateCollector; 
+    
     --
     -- Builder/Splitter 
     deferred class BuilderShape; 
@@ -128,10 +136,7 @@ is
 	                         MapRealHasher from TColStd);	   
     --
     --  instantiations
-    class IndexedDataMapOfPassKeyShapeListOfShape   
-	instantiates IndexedDataMap from TCollection (PassKeyShape from GEOMAlgo, 
-						      ListOfShape from TopTools, 
-                                                      PassKeyMapHasher from GEOMAlgo); 
+    
      
     class IndexedDataMapOfShapeBox  
     	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
@@ -153,10 +158,14 @@ is
     class ListOfPnt  
     	instantiates List from TCollection  (Pnt from gp);
 
-					       
-
     class DataMapOfPassKeyInteger   
 	instantiates DataMap from TCollection (PassKey from GEOMAlgo, 
 					       Integer from Standard, 
-                                               PassKeyMapHasher from GEOMAlgo);
+                                               PassKeyMapHasher from GEOMAlgo); 
+     
+    class IndexedDataMapOfPassKeyShapeListOfShape   
+	instantiates IndexedDataMap from TCollection (PassKeyShape from GEOMAlgo, 
+						      ListOfShape from TopTools, 
+                                                      PassKeyShapeMapHasher from GEOMAlgo); 
+
 end GEOMAlgo;

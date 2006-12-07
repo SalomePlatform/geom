@@ -16,32 +16,55 @@
 -- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 --
 -- See http:--www.salome-platform.org/ or email : webmaster.salome@opencascade.com
---
--- File:	GEOMAlgo_PassKeyMapHasher.cdl
--- Created:	
+-- 
+-- File:	GEOMAlgo_ClsfSurf.cdl
+-- Created:	Wed Nov 22 10:19:29 2006
 -- Author:	Peter KURNEV
 --		<pkv@irinox>
 
 
-class PassKeyMapHasher from GEOMAlgo 
-
+class ClsfSurf from GEOMAlgo 
+    inherits Clsf from GEOMAlgo 
+     
 	---Purpose: 
 
-uses 
-    PassKey from GEOMAlgo 
-
+uses  
+    Curve   from Geom, 
+    Surface from Geom,
+    Surface from GeomAdaptor 
+    
 --raises
 
 is 
-    HashCode(myclass;  
-    	    aPKey : PassKey from GEOMAlgo;  
-    	    Upper : Integer from Standard)  
-    	returns Integer from Standard;
-	
-	
-    IsEqual(myclass;  
-    	    aPKey1 : PassKey from GEOMAlgo;  
-    	    aPKey2 : PassKey from GEOMAlgo)  
-    	returns Boolean from Standard;
+    Create 
+    	returns mutable ClsfSurf from GEOMAlgo; 
+    ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_ClsfSurf();"  
+      
+    SetSurface(me:mutable; 
+    	    aS:Surface from Geom);  
+	 
+    Surface(me) 
+    	returns Surface from Geom; 
+    ---C++: return const &     
+     
+    Perform(me:mutable) 
+	is redefined;      
 
-end PassKeyMapHasher;
+    CheckData(me:mutable) 
+	is redefined;  
+    	
+    CanBeON(me; 
+    	    aC:Curve from Geom) 
+	returns Boolean from Standard 
+    	is redefined; 
+
+    CanBeON(me; 
+    	    aST:Surface from Geom) 
+	returns Boolean from Standard 
+    	is redefined;   
+	 
+fields 
+    myS   : Surface from Geom is protected;   
+    myGAS : Surface from GeomAdaptor is protected; 
+    
+end ClsfSurf;

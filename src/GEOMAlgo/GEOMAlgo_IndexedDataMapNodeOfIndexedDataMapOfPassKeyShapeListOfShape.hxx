@@ -44,7 +44,7 @@
 #endif
 class GEOMAlgo_PassKeyShape;
 class TopTools_ListOfShape;
-class GEOMAlgo_PassKeyMapHasher;
+class GEOMAlgo_PassKeyShapeMapHasher;
 class GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape;
 
 
@@ -104,8 +104,8 @@ TCollection_MapNodePtr myNext2;
 #define TheKey_hxx <GEOMAlgo_PassKeyShape.hxx>
 #define TheItem TopTools_ListOfShape
 #define TheItem_hxx <TopTools_ListOfShape.hxx>
-#define Hasher GEOMAlgo_PassKeyMapHasher
-#define Hasher_hxx <GEOMAlgo_PassKeyMapHasher.hxx>
+#define Hasher GEOMAlgo_PassKeyShapeMapHasher
+#define Hasher_hxx <GEOMAlgo_PassKeyShapeMapHasher.hxx>
 #define TCollection_IndexedDataMapNode GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape
 #define TCollection_IndexedDataMapNode_hxx <GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape.hxx>
 #define Handle_TCollection_IndexedDataMapNode Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape

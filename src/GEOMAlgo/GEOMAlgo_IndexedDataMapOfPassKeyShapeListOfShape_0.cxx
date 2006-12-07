@@ -34,8 +34,8 @@
 #ifndef _TopTools_ListOfShape_HeaderFile
 #include <TopTools_ListOfShape.hxx>
 #endif
-#ifndef _GEOMAlgo_PassKeyMapHasher_HeaderFile
-#include <GEOMAlgo_PassKeyMapHasher.hxx>
+#ifndef _GEOMAlgo_PassKeyShapeMapHasher_HeaderFile
+#include <GEOMAlgo_PassKeyShapeMapHasher.hxx>
 #endif
 #ifndef _GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape_HeaderFile
 #include <GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape.hxx>
@@ -46,8 +46,8 @@
 #define TheKey_hxx <GEOMAlgo_PassKeyShape.hxx>
 #define TheItem TopTools_ListOfShape
 #define TheItem_hxx <TopTools_ListOfShape.hxx>
-#define Hasher GEOMAlgo_PassKeyMapHasher
-#define Hasher_hxx <GEOMAlgo_PassKeyMapHasher.hxx>
+#define Hasher GEOMAlgo_PassKeyShapeMapHasher
+#define Hasher_hxx <GEOMAlgo_PassKeyShapeMapHasher.hxx>
 #define TCollection_IndexedDataMapNode GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape
 #define TCollection_IndexedDataMapNode_hxx <GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape.hxx>
 #define Handle_TCollection_IndexedDataMapNode Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape

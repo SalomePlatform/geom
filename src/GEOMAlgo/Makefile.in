@@ -55,6 +55,9 @@ LIB_SRC = \
 	GEOMAlgo_BuilderShape.cxx \
 	GEOMAlgo_BuilderSolid.cxx \
 	GEOMAlgo_BuilderTools.cxx \
+	GEOMAlgo_ClsfBox.cxx \
+	GEOMAlgo_Clsf.cxx \
+	GEOMAlgo_ClsfSurf.cxx \
 	GEOMAlgo_CoupleOfShapes.cxx \
 	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger_0.cxx \
 	GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape_0.cxx \
@@ -69,10 +72,12 @@ LIB_SRC = \
 	GEOMAlgo_DataMapOfShapeReal_0.cxx \
 	GEOMAlgo_DataMapOfShapeShapeSet_0.cxx \
 	GEOMAlgo_FinderShapeOn1.cxx \
+	GEOMAlgo_FinderShapeOn2.cxx \
 	GEOMAlgo_FinderShapeOn.cxx \
 	GEOMAlgo_FinderShapeOnQuad.cxx \
 	GEOMAlgo_GlueAnalyser.cxx \
 	GEOMAlgo_Gluer.cxx \
+	GEOMAlgo_HAlgo.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape_0.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape_0.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape_0.cxx \
@@ -92,6 +97,7 @@ LIB_SRC = \
 	GEOMAlgo_PassKey.cxx \
 	GEOMAlgo_PassKeyMapHasher.cxx \
 	GEOMAlgo_PassKeyShape.cxx \
+	GEOMAlgo_PassKeyShapeMapHasher.cxx \
 	GEOMAlgo_ShapeAlgo.cxx \
 	GEOMAlgo_ShapeSet.cxx \
 	GEOMAlgo_ShapeSolid.cxx \
@@ -124,6 +130,9 @@ EXPORT_HEADERS = \
 	GEOMAlgo_BuilderShape.hxx \
 	GEOMAlgo_BuilderSolid.hxx \
 	GEOMAlgo_BuilderTools.hxx \
+	GEOMAlgo_ClsfBox.hxx \
+	GEOMAlgo_Clsf.hxx \
+	GEOMAlgo_ClsfSurf.hxx \
 	GEOMAlgo_CoupleOfShapes.hxx \
 	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx \
 	GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape.hxx \
@@ -138,10 +147,12 @@ EXPORT_HEADERS = \
 	GEOMAlgo_DataMapOfShapeReal.hxx \
 	GEOMAlgo_DataMapOfShapeShapeSet.hxx \
 	GEOMAlgo_FinderShapeOn1.hxx \
+	GEOMAlgo_FinderShapeOn2.hxx \
 	GEOMAlgo_FinderShapeOn.hxx \
 	GEOMAlgo_FinderShapeOnQuad.hxx \
 	GEOMAlgo_GlueAnalyser.hxx \
 	GEOMAlgo_Gluer.hxx \
+	GEOMAlgo_HAlgo.hxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape.hxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape.hxx \
@@ -161,6 +172,7 @@ EXPORT_HEADERS = \
 	GEOMAlgo_PassKey.hxx \
 	GEOMAlgo_PassKeyMapHasher.hxx \
 	GEOMAlgo_PassKeyShape.hxx \
+	GEOMAlgo_PassKeyShapeMapHasher.hxx \
 	GEOMAlgo_PWireEdgeSet.hxx \
 	GEOMAlgo_ShapeAlgo.hxx \
 	GEOMAlgo_ShapeSet.hxx \
@@ -178,10 +190,14 @@ EXPORT_HEADERS = \
 	GEOMAlgo_WireEdgeSet.hxx \
 	GEOMAlgo_WireSolid.hxx \
 	GEOMAlgo_WireSplitter.hxx \
+	Handle_GEOMAlgo_ClsfBox.hxx \
+	Handle_GEOMAlgo_Clsf.hxx \
+	Handle_GEOMAlgo_ClsfSurf.hxx \
 	Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx \
 	Handle_GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape.hxx \
 	Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx \
 	Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx \
+	Handle_GEOMAlgo_HAlgo.hxx \
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx \
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape.hxx \
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape.hxx \

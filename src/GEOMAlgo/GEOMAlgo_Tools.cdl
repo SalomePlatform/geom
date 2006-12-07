@@ -21,7 +21,6 @@
 -- Created:	Mon Dec  6 11:26:02 2004
 -- Author:	Peter KURNEV
 --		<pkv@irinox>
----Copyright:	 Matra Datavision 2004
 
 
 class Tools from GEOMAlgo 
@@ -38,7 +37,7 @@ uses
     ListOfShape from TopTools,  
     IndexedDataMapOfShapeListOfShape from TopTools,
     Context from IntTools, 
-    IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo 
+    IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo  --qft 
     
 --raises
 
@@ -48,7 +47,7 @@ is
 	returns Boolean from Standard;    
 
     RefineSDShapes(myclass; 
-    	    aMSD:out IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo; 
+    	    aMSD:out IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo; --qft
     	    aTol:Real from Standard; 
     	    aCtx:out Context from IntTools) 
     	returns Integer from Standard;

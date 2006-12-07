@@ -21,47 +21,75 @@
 -- Created:	
 -- Author:	Peter KURNEV
 --		<pkv@irinox>
----Copyright:	 
 
 
 class PassKeyShape from GEOMAlgo 
-    inherits PassKey from GEOMAlgo  
-    
+   
 	---Purpose: 
 
 uses
     Shape from TopoDS, 
-    ListOfShape from TopTools   
-  	 
+    ListOfShape from TopTools,   
+    IndexedMapOfShape from TopTools 
+     
 --raises
 
 is 
     Create  
     	returns PassKeyShape from GEOMAlgo; 
-      
-    SetIds(me:out; 
+     ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_PassKeyShape();" 
+     
+    Create(Other:PassKeyShape from GEOMAlgo) 
+    	returns PassKeyShape from GEOMAlgo;
+     
+    Assign(me:out;  
+    	    Other : PassKeyShape from GEOMAlgo) 
+    	returns PassKeyShape from GEOMAlgo; 
+    ---C++: alias operator =
+    ---C++: return &  
+     
+    SetShapes(me:out; 
     	    aS  :Shape from TopoDS); 
     	    
-    SetIds(me:out; 
+    SetShapes(me:out; 
     	    aS1  :Shape from TopoDS; 
     	    aS2  :Shape from TopoDS); 
      
-    SetIds(me:out; 
+    SetShapes(me:out; 
     	    aS1  :Shape from TopoDS; 
     	    aS2  :Shape from TopoDS; 
     	    aS3  :Shape from TopoDS); 
  
-    SetIds(me:out;  
+    SetShapes(me:out;  
     	    aS1  :Shape from TopoDS; 
     	    aS2  :Shape from TopoDS; 
     	    aS3  :Shape from TopoDS;
     	    aS4  :Shape from TopoDS);
  
-    SetIds(me:out;  
+    SetShapes(me:out;  
     	    aLS  :ListOfShape from TopTools); 
-	     
+	 
+    Clear(me:out); 
+     
 
+    NbIds(me) 
+	returns Integer  from Standard; 
+     
+    IsEqual(me; 
+    	    aOther:PassKeyShape from GEOMAlgo) 
+	returns Boolean from Standard;   		     
+	 
+    HashCode(me; 
+	    Upper : Integer  from Standard)  
+    	returns Integer from Standard;   	 
+     
+    Dump(me; 
+    	aHex:Integer from Standard=0);  
+	
 fields 
-    myUpper  : Integer from Standard is protected; 
+    myNbIds:Integer from Standard is protected;    
+    mySum  :Integer from Standard is protected;    
+    myUpper:Integer from Standard is protected;    
+    myMap  :IndexedMapOfShape from TopTools is protected;        
 
 end PassKeyShape;

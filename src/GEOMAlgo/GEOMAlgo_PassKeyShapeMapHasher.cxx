@@ -23,14 +23,14 @@
 //		<pkv@irinox>
 
 
-#include <GEOMAlgo_PassKeyMapHasher.ixx>
+#include <GEOMAlgo_PassKeyShapeMapHasher.ixx>
 
 //=======================================================================
 //function : HashCode
 //purpose  : 
 //=======================================================================
-  Standard_Integer GEOMAlgo_PassKeyMapHasher::HashCode(const GEOMAlgo_PassKey& aPK,
-						       const Standard_Integer Upper)
+  Standard_Integer GEOMAlgo_PassKeyShapeMapHasher::HashCode(const GEOMAlgo_PassKeyShape& aPK,
+							    const Standard_Integer Upper)
 {
   return aPK.HashCode(Upper);
 }
@@ -38,8 +38,8 @@
 //function :IsEqual
 //purpose  : 
 //=======================================================================
-  Standard_Boolean GEOMAlgo_PassKeyMapHasher::IsEqual(const GEOMAlgo_PassKey& aPK1,
-						      const GEOMAlgo_PassKey& aPK2)
+  Standard_Boolean GEOMAlgo_PassKeyShapeMapHasher::IsEqual(const GEOMAlgo_PassKeyShape& aPK1,
+							   const GEOMAlgo_PassKeyShape& aPK2)
 {
   return aPK1.IsEqual(aPK2);
 }

@@ -16,32 +16,55 @@
 -- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 --
 -- See http:--www.salome-platform.org/ or email : webmaster.salome@opencascade.com
---
--- File:	GEOMAlgo_PassKeyMapHasher.cdl
--- Created:	
+-- 
+-- File:	GEOMAlgo_ClsfBox.cdl
+-- Created:	Wed Nov 22 10:19:29 2006
 -- Author:	Peter KURNEV
 --		<pkv@irinox>
 
 
-class PassKeyMapHasher from GEOMAlgo 
-
+class ClsfBox from GEOMAlgo 
+    inherits Clsf from GEOMAlgo 
+     
 	---Purpose: 
 
 uses 
-    PassKey from GEOMAlgo 
+    Shape from TopoDS, 
+    Curve   from Geom, 
+    Surface from Geom,
+    Surface from GeomAdaptor
 
 --raises
 
 is 
-    HashCode(myclass;  
-    	    aPKey : PassKey from GEOMAlgo;  
-    	    Upper : Integer from Standard)  
-    	returns Integer from Standard;
-	
-	
-    IsEqual(myclass;  
-    	    aPKey1 : PassKey from GEOMAlgo;  
-    	    aPKey2 : PassKey from GEOMAlgo)  
-    	returns Boolean from Standard;
+    Create 
+    	returns mutable ClsfBox from GEOMAlgo; 
+    ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_ClsfBox();"  
+      
+    SetBox(me:mutable; 
+    	    aS:Shape from TopoDS);  
+	 
+    Box(me) 
+    	returns Shape from TopoDS; 
+    ---C++: return const &     
+     
+    Perform(me:mutable) 
+	is redefined;      
 
-end PassKeyMapHasher;
+    CheckData(me:mutable) 
+	is redefined;  
+    	 
+    CanBeON(me; 
+    	    aC:Curve from Geom) 
+	returns Boolean from Standard 
+    	is redefined;  
+     
+    CanBeON(me; 
+    	    aST:Surface from Geom) 
+	returns Boolean from Standard 
+    	is redefined;   
+    
+fields 
+    myBox : Shape from TopoDS is protected; 
+    myGAS : Surface from GeomAdaptor [6] is protected;
+end ClsfBox;

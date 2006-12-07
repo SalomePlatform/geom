@@ -23,25 +23,25 @@
 --		<pkv@irinox>
 
 
-class PassKeyMapHasher from GEOMAlgo 
+class PassKeyShapeMapHasher from GEOMAlgo 
 
 	---Purpose: 
 
 uses 
-    PassKey from GEOMAlgo 
+    PassKeyShape from GEOMAlgo 
 
 --raises
 
 is 
     HashCode(myclass;  
-    	    aPKey : PassKey from GEOMAlgo;  
+    	    aPKey : PassKeyShape from GEOMAlgo;  
     	    Upper : Integer from Standard)  
     	returns Integer from Standard;
 	
 	
     IsEqual(myclass;  
-    	    aPKey1 : PassKey from GEOMAlgo;  
-    	    aPKey2 : PassKey from GEOMAlgo)  
+    	    aPKey1 : PassKeyShape from GEOMAlgo;  
+    	    aPKey2 : PassKeyShape from GEOMAlgo)  
     	returns Boolean from Standard;
 
-end PassKeyMapHasher;
+end PassKeyShapeMapHasher;
