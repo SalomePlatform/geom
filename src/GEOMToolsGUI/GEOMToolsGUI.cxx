@@ -309,23 +309,12 @@ void GEOMToolsGUI::OnEditDelete()
           _PTR(ChildIterator) it (aStudy->NewChildIterator(aGeom));
           for ( it->InitEx( true ); it->More(); it->Next() ) {
              _PTR(SObject) chobj (it->Value());
-             CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(chobj);
-             GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-             if( CORBA::is_nil(geomObj) ) 
-                continue;
-             GEOM::ListOfGO_var list = geomObj->GetDependency();
-             if( list->length() > 1 )
-               for(int i = 0; i < list->length(); i++ ){
-                 CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject(obj);
-                 GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
-	         if( list[i]->_is_equivalent( geomObj_rem ) ){
-                   SUIT_MessageBox::warn1 ( app->desktop(),
-					    QObject::tr("WRN_WARNING"),
-					    QObject::tr("DEP_OBJECT"),
-					    QObject::tr("BUT_OK") );
-		   return;
-		}
-              }
+	     if(CheckSubObjectInUse(chobj, obj, aStudy)) return;
+	     //check subobjects
+	     for (_PTR(ChildIterator) it (aStudy->NewChildIterator(obj)); it->More(); it->Next()) {
+	       _PTR(SObject) child (it->Value());
+	       if(CheckSubObjectInUse( chobj, child, aStudy)) return;
+	     }
 	   }
 
           RemoveObjectWithChildren(obj, aStudy, views, disp);
@@ -679,6 +668,39 @@ void GEOMToolsGUI::RemoveObjectWithChildren(_PTR(SObject) obj,
       GeometryGUI::GetGeomGen()->RemoveObject( geomObj );
     }
   }
+}
+
+//=====================================================================================
+// function : CheckSubObjectInUse
+// purpose  : to be used by OnEditDelete() method
+//=====================================================================================
+bool GEOMToolsGUI::CheckSubObjectInUse(_PTR(SObject) checkobj,
+				       _PTR(SObject) remobj,
+                                       _PTR(Study) aStudy)
+{
+  CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(checkobj);
+  GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+  if( CORBA::is_nil(geomObj) ) 
+    return false;
+
+  GEOM::ListOfGO_var list = geomObj->GetDependency();
+  if( list->length() > 1 )
+    for(int i = 0; i < list->length(); i++ ){
+      CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject(remobj);
+      GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
+      if( list[i]->_is_equivalent( geomObj_rem ) ){
+	SalomeApp_Application* app =
+	  dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+
+	SUIT_MessageBox::warn1 ( app->desktop(),
+				 QObject::tr("WRN_WARNING"),
+				 QObject::tr("DEP_OBJECT"),
+				 QObject::tr("BUT_OK") );
+	return true;
+      }
+    }
+
+  return false;
 }
 
 //=====================================================================================

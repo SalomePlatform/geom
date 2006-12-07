@@ -89,6 +89,12 @@ private:
 				_PTR(Study) aStudy,
 				QPtrList<SALOME_View> views,
 				GEOM_Displayer* disp);
+
+  //checks if the object passed as the first argument depends on the second arguments
+  bool CheckSubObjectInUse(_PTR(SObject) checkobj,
+			   _PTR(SObject) remobj,
+			   _PTR(Study) aStudy);
+    
 };
 
 #endif
