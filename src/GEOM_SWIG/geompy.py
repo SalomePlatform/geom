@@ -1008,6 +1008,29 @@ def GetShapesOnQuadrangleIDs(theShape, theShapeType, theTopLeftPoint, theTopRigt
         print "GetShapesOnQuadrangleIDs : ", ShapesOp.GetErrorCode()
     return aList
 
+## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+#  the specified \a theBox by the certain way, defined through \a theState parameter.
+#  @param theBox Shape for relative comparing.
+#  @param theShape Shape to find sub-shapes of.
+#  @param theShapeType Type of sub-shapes to be retrieved.
+#  @param theState The state of the subshapes to find. It can be one of
+#   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
+#  @return List of all found sub-shapes.
+#
+def GetShapesOnBox(theBox, theShape, theShapeType, theState):
+    aList = ShapesOp.GetShapesOnBox(theBox, theShape, theShapeType, theState)
+    if ShapesOp.IsDone() == 0:
+      print "GetShapesOnBox : ", ShapesOp.GetErrorCode()
+    return aList
+
+## Works like the above method, but returns list of sub-shapes indices
+#
+def GetShapesOnBoxIDs(theBox, theShape, theShapeType, theState):
+    aList = ShapesOp.GetShapesOnBoxIDs(theBox, theShape, theShapeType, theState)
+    if ShapesOp.IsDone() == 0:
+        print "GetShapesOnBoxIDs : ", ShapesOp.GetErrorCode()
+    return aList
+
 ## Get sub-shape(s) of theShapeWhere, which are
 #  coincident with \a theShapeWhat or could be a part of it.
 #  @param theShapeWhere Shape to find sub-shapes of.

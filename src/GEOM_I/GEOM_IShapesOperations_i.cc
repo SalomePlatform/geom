@@ -1120,6 +1120,90 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnQuadrangleIDs
 
 //=============================================================================
 /*!
+ *  GetShapesOnBox
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnBox
+                                                (GEOM::GEOM_Object_ptr theBox,
+                                                 GEOM::GEOM_Object_ptr theShape,
+                                                 CORBA::Long           theShapeType,
+                                                 GEOM::shape_state     theState)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if ( theShape == NULL ||  theBox == NULL )
+    return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aBox = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theBox->GetEntry());
+
+  if (aShape.IsNull() || aBox.IsNull() )
+    return aSeq._retn();
+
+  //Get Shapes On Box
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->GetShapesOnBox
+    (aBox,aShape, theShapeType,ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnQuadrangleIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnBoxIDs
+                                                (GEOM::GEOM_Object_ptr theBox,
+						 GEOM::GEOM_Object_ptr theShape,
+                                                 CORBA::Long           theShapeType,
+                                                 GEOM::shape_state     theState)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if ( theShape == NULL ||  theBox == NULL )
+    return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aBox = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theBox->GetEntry());
+
+  if (aShape.IsNull() || aBox.IsNull() )
+    return aSeq._retn();
+
+  //Get Shapes On Box
+  Handle(TColStd_HSequenceOfInteger) aHSeq = GetOperations()->GetShapesOnBoxIDs
+    (aBox,aShape, theShapeType,ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
  *  GetInPlace
  */
 //=============================================================================

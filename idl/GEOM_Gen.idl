@@ -1241,6 +1241,32 @@ module GEOM
                                          in shape_state theState);
 
     /*!
+     * \brief Find subshapes complying with given status
+     * \param theBox - the box to check state of subshapes against
+     * \param theShape - the shape to explore
+     * \param theShapeType - type of subshape of theShape
+     * \param theState - required state
+     * \return List of IDs of all found sub-shapes.
+     */
+    ListOfLong GetShapesOnBoxIDs (in GEOM_Object theBox,
+				  in GEOM_Object theShape,
+				  in long        theShapeType,
+				  in shape_state theState);
+
+    /*!
+     * \brief Find subshapes complying with given status
+     * \param theBox - the box to check state of subshapes against
+     * \param theShape - the shape to explore
+     * \param theShapeType - type of subshape of theShape
+     * \param theState - required state
+     * \return List of all found sub-shapes.
+     */
+    ListOfGO GetShapesOnBox (in GEOM_Object theBox,
+			     in GEOM_Object theShape,
+			     in long        theShapeType,
+			     in shape_state theState);
+
+    /*!
      *  Get sub-shape(s) of theShapeWhere, which are
      *  coincident with \a theShapeWhat or could be a part of it.
      *  \param theShapeWhere Shape to find sub-shapes of.

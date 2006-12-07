@@ -154,6 +154,16 @@ class GEOM_IShapesOperations_i :
                                               GEOM::GEOM_Object_ptr theBottomRigthPoint,
                                               GEOM::shape_state     theState);
 
+  GEOM::ListOfGO* GetShapesOnBox (GEOM::GEOM_Object_ptr theBox,
+				  GEOM::GEOM_Object_ptr theShape,
+				  CORBA::Long           theShapeType,
+				  GEOM::shape_state     theState);
+
+  GEOM::ListOfLong* GetShapesOnBoxIDs (GEOM::GEOM_Object_ptr theBox,
+				       GEOM::GEOM_Object_ptr theShape,
+				       CORBA::Long           theShapeType,
+				       GEOM::shape_state     theState);
+
   GEOM::GEOM_Object_ptr GetInPlace (GEOM::GEOM_Object_ptr theShapeWhere,
 				    GEOM::GEOM_Object_ptr theShapeWhat);
 

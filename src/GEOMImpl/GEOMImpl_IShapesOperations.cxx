@@ -39,6 +39,9 @@
 
 #include "GEOMAlgo_FinderShapeOn1.hxx"
 #include "GEOMAlgo_FinderShapeOnQuad.hxx"
+#include "GEOMAlgo_FinderShapeOn2.hxx"
+#include "GEOMAlgo_ClsfBox.hxx"
+//#include "GEOMAlgo_ClsfSurf.hxx"
 
 #include "utilities.h"
 #include "OpUtil.hxx"
@@ -1220,6 +1223,169 @@ Handle(Geom_Surface) GEOMImpl_IShapesOperations::makeCylinder(const TopoDS_Shape
 
   gp_Ax3 anAx3 (aLoc, aVec);
   return new Geom_CylindricalSurface(anAx3, theRadius);
+}
+
+
+//=======================================================================
+//function : getShapesOnBoxIDs
+  /*!
+   * \brief Find IDs of subshapes complying with given status about surface
+    * \param theBox - the box to check state of subshapes against
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theState - required state
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+   */
+//=======================================================================
+
+Handle(TColStd_HSequenceOfInteger)
+  GEOMImpl_IShapesOperations::getShapesOnBoxIDs(const Handle(GEOM_Object)& theBox,
+						const Handle(GEOM_Object)& theShape,
+						const Standard_Integer theShapeType,
+						GEOMAlgo_State theState)
+{
+  Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
+
+  TopoDS_Shape aBox = theBox->GetValue();
+  TopoDS_Shape aShape = theShape->GetValue();
+
+  // Call algo
+  GEOMAlgo_FinderShapeOn2 aFinder;
+  Standard_Real aTol = 0.0001; // default value
+
+  Handle(GEOMAlgo_ClsfBox) aClsfBox = new GEOMAlgo_ClsfBox;
+  aClsfBox->SetBox(aBox);
+
+  aFinder.SetShape(aShape);
+  aFinder.SetTolerance(aTol);
+  aFinder.SetClsf(aClsfBox);
+  aFinder.SetShapeType( (TopAbs_ShapeEnum)theShapeType );
+  aFinder.SetState(theState);
+  aFinder.Perform();
+
+  // Interprete results
+  Standard_Integer iErr = aFinder.ErrorStatus();
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iErr) {
+    MESSAGE(" iErr : " << iErr);
+    TCollection_AsciiString aMsg (" iErr : ");
+    aMsg += TCollection_AsciiString(iErr);
+    SetErrorCode(aMsg);
+    return aSeqOfIDs;
+  }
+  Standard_Integer iWrn = aFinder.WarningStatus();
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iWrn) {
+    MESSAGE(" *** iWrn : " << iWrn);
+  }
+
+  const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
+
+  if (listSS.Extent() < 1) {
+    SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    return aSeqOfIDs;
+  }
+
+  // Fill sequence of object IDs
+  aSeqOfIDs = new TColStd_HSequenceOfInteger;
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+
+  TopTools_ListIteratorOfListOfShape itSub (listSS);
+  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+    int id = anIndices.FindIndex(itSub.Value());
+    aSeqOfIDs->Append(id);
+  }
+
+  return aSeqOfIDs;
+}
+
+
+//=======================================================================
+//function : GetShapesOnBoxIDs
+/*!
+   * \brief Find subshapes complying with given status about surface
+    * \param theBox - the box to check state of subshapes against
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theState - required state
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+ */
+//=======================================================================
+
+Handle(TColStd_HSequenceOfInteger)
+    GEOMImpl_IShapesOperations::GetShapesOnBoxIDs(const Handle(GEOM_Object)& theBox,
+						  const Handle(GEOM_Object)& theShape,
+						  const Standard_Integer theShapeType,
+						  GEOMAlgo_State theState)
+{
+  // Find subshapes ids
+  Handle(TColStd_HSequenceOfInteger) aSeqOfIDs =
+    getShapesOnBoxIDs (theBox, theShape, theShapeType, theState);
+  if ( aSeqOfIDs.IsNull()  || aSeqOfIDs->Length() == 0 )
+    return NULL;
+
+  // The GetShapesOnBox() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theBox)->GetLastFunction();
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction)
+    << "listShapesOnBoxIDs = geompy.GetShapesOnQuadrangleIDs("
+    << theBox << ", "
+    << theShape << ", "
+    << TopAbs_ShapeEnum(theShapeType) << ", "
+    << theState << ")";
+
+  SetErrorCode(OK);
+  return aSeqOfIDs;
+}
+
+//=======================================================================
+//function : GetShapesOnBox
+/*!
+   * \brief Find subshapes complying with given status about surface
+    * \param theBox - the box to check state of subshapes against
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theState - required state
+    * \retval Handle(TColStd_HSequenceOfTransient) - found subshapes
+ */
+//=======================================================================
+
+Handle(TColStd_HSequenceOfTransient)
+    GEOMImpl_IShapesOperations::GetShapesOnBox(const Handle(GEOM_Object)& theBox,
+					       const Handle(GEOM_Object)&  theShape,
+					       const Standard_Integer theShapeType,
+					       GEOMAlgo_State theState)
+{
+  // Find subshapes ids
+  Handle(TColStd_HSequenceOfInteger) aSeqOfIDs =
+    getShapesOnBoxIDs (theBox, theShape, theShapeType, theState);
+  if ( aSeqOfIDs.IsNull()  || aSeqOfIDs->Length() == 0 )
+    return NULL;
+
+  // Find objects by indices
+  TCollection_AsciiString anAsciiList;
+  Handle(TColStd_HSequenceOfTransient) aSeq;
+  aSeq = getObjectsShapesOn( theShape, aSeqOfIDs, anAsciiList );
+  if ( aSeq.IsNull() || aSeq->IsEmpty() )
+    return NULL;
+
+  // Make a Python command
+
+  Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast( aSeq->Value( 1 ));
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction)
+    << "[" << anAsciiList.ToCString() << "] = geompy.GetShapesOnBox("
+    << theBox << ", "
+    << theShape << ", "
+    << TopAbs_ShapeEnum(theShapeType) << ", "
+    << theState << ")";
+
+  SetErrorCode(OK);
+  return aSeq;
 }
 
 
