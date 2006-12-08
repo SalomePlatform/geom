@@ -430,10 +430,33 @@ static
   GEOMAlgo_DataMapOfShapeShapeSet aMSS;
   GEOMAlgo_ShapeSet aSSi;
   //
-  aSB.SetContext(aCtx);
+  //modified by NIZNHY-PKV Wed Dec  6 17:08:03 2006f
+  //
+  // 0. Find same domain solids for non-interferred solids
+  aNbS=aDS.NumberOfShapesOfTheObject();
+  for (i=1; i<=aNbS; ++i) {
+    const TopoDS_Shape& aS=aDS.Shape(i);
+    if (aS.ShapeType()!=TopAbs_SOLID) {
+      continue;
+    }
+    if (!aMFence.Add(aS)) {
+      continue;
+    }
+    if(myDraftSolids.Contains(aS)) {
+      continue;
+    }
+    //
+    aSSi.Clear();
+    aSSi.Add(aS, TopAbs_FACE);
+    //
+    aMSS.Bind(aS, aSSi);
+  } //for (i=1; i<=aNbS; ++i) 
+  //
+  //modified by NIZNHY-PKV Wed Dec  6 17:08:09 2006t
   //
   // 1. Build solids for interferred source solids
   //
+  aSB.SetContext(aCtx);
   aNbS=myDraftSolids.Extent();
   for (i=1; i<=aNbS; ++i) {
     const TopoDS_Shape& aS =myDraftSolids.FindKey(i);
@@ -525,6 +548,8 @@ static
       myImages.Bind(aS, aLSR);
     }
   } // for (i=1; i<=aNbS; ++i) {
+  //modified by NIZNHY-PKV Wed Dec  6 17:07:47 2006f
+  /*
   //
   // 2. Find same domain solids for non-interferred solids
   aNbS=aDS.NumberOfShapesOfTheObject();
@@ -553,6 +578,8 @@ static
       }
     }
   } //for (i=1; i<=aNbS; ++i) 
+  */
+  //modified by NIZNHY-PKV Wed Dec  6 17:07:55 2006t
 }
 //=======================================================================
 //function :FillInternalShapes 

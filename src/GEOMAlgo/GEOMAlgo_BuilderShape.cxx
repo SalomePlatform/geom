@@ -115,5 +115,17 @@
   myHasDeleted=Standard_False;
   myHasGenerated=Standard_False;
   myHasModified=Standard_False;
+  //modified by NIZNHY-PKV Thu Dec  7 11:14:15 2006
+  myImagesResult.Clear();
+  //modified by NIZNHY-PKV Thu Dec  7 11:14:17 2006t
 }
-
+//modified by NIZNHY-PKV Thu Dec  7 11:57:00 2006f
+//=======================================================================
+//function : ImagesResult
+//purpose  : 
+//=======================================================================
+  const TopTools_IndexedDataMapOfShapeListOfShape& GEOMAlgo_BuilderShape::ImagesResult()const
+{
+  return myImagesResult;
+}
+//modified by NIZNHY-PKV Thu Dec  7 11:57:04 2006t

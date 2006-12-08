@@ -39,7 +39,6 @@
 
 #include <GEOMAlgo_Tools3D.hxx>
 
-
 static
   void MapShapes(const TopoDS_Shape& aS,
 		 TopTools_MapOfShape& aM);
@@ -208,17 +207,9 @@ static
 //=======================================================================
   void GEOMAlgo_Builder::PrepareHistory()
 {
-  myHistShapes.Clear();
-  myMapShape.Clear();
-  myHasDeleted=Standard_False;
-  myHasGenerated=Standard_False;
-  myHasModified=Standard_False;
-  //
   if(myShape.IsNull()) {
     return;
   }
-  //
-  MapShapes(myShape, myMapShape);
   //
   Standard_Boolean bHasImage, bContainsSD;
   TopAbs_ShapeEnum aType;
@@ -226,17 +217,51 @@ static
   TopTools_ListIteratorOfListOfShape aIt;
   TopTools_MapIteratorOfMapOfShape aItM;
   //
+  // 1. Clearing 
+  GEOMAlgo_BuilderShape::PrepareHistory();
+  //
+  // 2. myMapShape - all shapes of result with theirs sub-shapes 
+  MapShapes(myShape, myMapShape);
+  //
+  // 3. MS - all argument shapes with theirs sub-shapes
   aIt.Initialize(myShapes);
   for (; aIt.More(); aIt.Next()) {
-    const TopoDS_Shape& aS=aIt.Value();
-    MapShapes(aS, aMS);
+    const TopoDS_Shape& aSx=aIt.Value();
+    MapShapes(aSx, aMS);
   }
   //
+  // 4. Treatment
   aItM.Initialize(aMS);
   for (; aItM.More(); aItM.Next()) {
     const TopoDS_Shape& aSx=aItM.Key();
     aType=aSx.ShapeType();
+    //modified by NIZNHY-PKV Thu Dec  7 11:34:05 2006f
     //
+    // 4.1 .myImagesResult
+    TopTools_ListOfShape aLSx;
+    //
+    bHasImage=myImages.HasImage(aSx);
+    if (!bHasImage) {
+      if (myMapShape.Contains(aSx)) {
+	aLSx.Append(aSx);
+	myImagesResult.Add(aSx, aLSx);
+      }
+    }
+    else {
+      const TopTools_ListOfShape& aLSp=myImages.Image(aSx);
+      aIt.Initialize(aLSp);
+      for (; aIt.More(); aIt.Next()) {
+	const TopoDS_Shape& aSp=aIt.Value();
+	if (myMapShape.Contains(aSp)) {
+	  aLSx.Append(aSp);
+	}
+      }
+      myImagesResult.Add(aSx, aLSx);
+    }
+    //
+    //modified by NIZNHY-PKV Thu Dec  7 11:34:10 2006t
+    //
+    // 4.2 As it was 
     if (!myHasDeleted) {
       myHasDeleted=IsDeleted(aSx);//xx
     }
@@ -244,7 +269,9 @@ static
     if (!myHasGenerated || !myHasModified) {
       if (aType==TopAbs_EDGE   || aType==TopAbs_FACE || 
 	  aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
-	bHasImage=myImages.HasImage(aSx);
+	//modified by NIZNHY-PKV Thu Dec  7 11:53:01 2006f
+	//bHasImage=myImages.HasImage(aSx);
+	//modified by NIZNHY-PKV Thu Dec  7 11:53:04 2006t
 	if (bHasImage) {
 	  const TopTools_ListOfShape& aLSp=myImages.Image(aSx);
 	  aIt.Initialize(aLSp);

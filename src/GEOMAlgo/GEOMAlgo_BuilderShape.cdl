@@ -31,7 +31,8 @@ deferred class BuilderShape from GEOMAlgo
 uses
     Shape from TopoDS, 
     ListOfShape from TopTools, 
-    MapOfShape  from TopTools 
+    MapOfShape  from TopTools, 
+    IndexedDataMapOfShapeListOfShape from TopTools 
     
 --raises
 
@@ -91,9 +92,13 @@ is
 
     PrepareHistory (me:out) 
     	---Purpose:  Prepare information for history support  
-    	is virtual protected;    
- 
-	     
+    	is virtual protected;     
+	
+--modified by NIZNHY-PKV Thu Dec  7 11:13:17 2006f 
+    ImagesResult(me) 
+	 returns IndexedDataMapOfShapeListOfShape from TopTools; 
+    ---C++: return const &  
+--modified by NIZNHY-PKV Thu Dec  7 11:13:20 2006t
 fields
     myShape      : Shape from TopoDS is protected; 
     -- 
@@ -102,6 +107,8 @@ fields
     myHasDeleted   : Boolean     from Standard is protected; 
     myHasGenerated : Boolean     from Standard is protected; 
     myHasModified  : Boolean     from Standard is protected; 
-     
+--modified by NIZNHY-PKV Thu Dec  7 11:13:10 2006f
+    myImagesResult : IndexedDataMapOfShapeListOfShape from TopTools is protected; 
+--modified by NIZNHY-PKV Thu Dec  7 11:13:13 2006t
 end BuilderShape; 
 
