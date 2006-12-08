@@ -209,6 +209,9 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   TopTools_IndexedMapOfShape aResIndices;
   TopExp::MapShapes(aShape, aResIndices);
 
+  // Map: source_shape/images of source_shape in Result
+  const TopTools_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
+
   // history for all argument shapes
   TDF_LabelSequence aLabelSeq;
   aFunction->GetDependency(aLabelSeq);
@@ -231,7 +234,9 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
 
     for (Standard_Integer ie = 1; ie <= nbArgumentEntities; ie++) {
       TopoDS_Shape anEntity = anArgumentIndices.FindKey(ie);
-      const TopTools_ListOfShape& aModified = PS.Modified(anEntity);
+      if (!aMR.Contains(anEntity)) continue;
+
+      const TopTools_ListOfShape& aModified = aMR.FindFromKey(anEntity);
       Standard_Integer nbModified = aModified.Extent();
 
       if (nbModified > 0) {
@@ -239,10 +244,11 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
         Handle(TDataStd_IntegerArray) anAttr =
           TDataStd_IntegerArray::Set(aWhatHistoryLabel, 1, nbModified);
 
+        int ih = 1;
         TopTools_ListIteratorOfListOfShape itM (aModified);
-        for (int im = 1; itM.More(); itM.Next(), ++im) {
+        for (; itM.More(); itM.Next(), ++ih) {
           int id = aResIndices.FindIndex(itM.Value());
-          anAttr->SetValue(im, id);
+          anAttr->SetValue(ih, id);
         }
       }
     }

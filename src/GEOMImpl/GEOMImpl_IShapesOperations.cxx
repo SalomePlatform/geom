@@ -608,12 +608,14 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
     anArray = new TColStd_HArray1OfInteger(1,1);
     anArray->SetValue(1, anIndices.FindIndex(aValue));
     anObj = GetEngine()->AddSubShape(theShape, anArray);
-    aSeq->Append(anObj);
+    if (!anObj.IsNull()) {
+      aSeq->Append(anObj);
 
-    // for python command
-    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    anAsciiList += anEntry;
-    anAsciiList += ",";
+      // for python command
+      TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+      anAsciiList += anEntry;
+      anAsciiList += ",";
+    }
   }
 
   //Make a Python command
