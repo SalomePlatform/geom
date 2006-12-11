@@ -1,22 +1,23 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IGroupOperations.hxx>
@@ -51,7 +52,7 @@
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_IGroupOperations::GEOMImpl_IGroupOperations (GEOM_Engine* theEngine, int theDocID) 
+GEOMImpl_IGroupOperations::GEOMImpl_IGroupOperations (GEOM_Engine* theEngine, int theDocID)
 : GEOM_IOperations(theEngine, theDocID)
 {
   MESSAGE("GEOMImpl_IGroupOperations::GEOMImpl_IGroupOperations");
@@ -81,7 +82,7 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::CreateGroup
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
   anArray->SetValue(1, -1);
 
-  //Add a new Fillet object
+  //Add a new Sub-shape object
   Handle(GEOM_Object) aGroup = GetEngine()->AddSubShape(theMainShape, anArray);
 
   //Set a GROUP type
@@ -119,9 +120,9 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
   // Check sub-shape index validity
   TDF_Label aLabel = aSSI.GetMainShape()->GetOwnerEntry();
   if (aLabel.IsRoot()) return;
-  Handle(GEOM_Object) anObj = GEOM_Object::GetObject(aLabel);
-  if (anObj.IsNull()) return;
-  TopoDS_Shape aMainShape = anObj->GetValue();
+  Handle(GEOM_Object) aMainObj = GEOM_Object::GetObject(aLabel);
+  if (aMainObj.IsNull()) return;
+  TopoDS_Shape aMainShape = aMainObj->GetValue();
   if (aMainShape.IsNull()) return;
 
   TopTools_IndexedMapOfShape aMapOfShapes;
@@ -152,6 +153,10 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
     aSSI.SetIndices(aNewSeq);
   }
 
+  // As we do not recompute here our group, lets mark it as Modified
+  Standard_Integer aTic = aMainObj->GetTic(); // tic of main shape
+  theGroup->SetTic(aTic - 1);
+
   //Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "geompy.AddObject(" << theGroup << ", " << theSubShapeID << ")";
@@ -176,50 +181,58 @@ void GEOMImpl_IGroupOperations::RemoveObject (Handle(GEOM_Object) theGroup, int 
   GEOM_ISubShape aSSI(aFunction);
   Handle(TColStd_HArray1OfInteger) aSeq = aSSI.GetIndices();
   if(aSeq.IsNull()) return;
+
   if(aSeq->Length() == 1 && aSeq->Value(1) == -1) {
     SetErrorCode(NOT_EXISTS);
     return;
   }
-  else {
-    Handle(TColStd_HArray1OfInteger) aNewSeq;
-    Standard_Integer aLength = aSeq->Length();
-    if(aLength == 1) {
-      if(aSeq->Value(1) != theSubShapeID) {
-	SetErrorCode(NOT_EXISTS);
-	return; 	
-      }
-      aNewSeq = new TColStd_HArray1OfInteger(1,1);
-      aNewSeq->SetValue(1, -1);
+
+  Handle(TColStd_HArray1OfInteger) aNewSeq;
+  Standard_Integer aLength = aSeq->Length();
+  if(aLength == 1) {
+    if(aSeq->Value(1) != theSubShapeID) {
+      SetErrorCode(NOT_EXISTS);
+      return;
     }
-    else {
-      aNewSeq = new TColStd_HArray1OfInteger(1, aLength-1);
-      Standard_Boolean isFound = Standard_False;
-      for (Standard_Integer i = 1, k = 1; i <= aLength; i++) {
-	if (aSeq->Value(i) == theSubShapeID) {
-	  isFound = Standard_True;
-	} else {
-          if (k < aLength) { // this check is to avoid sequence <aNewSeq> overflow
-            aNewSeq->SetValue(k, aSeq->Value(i));
-            k++;
-          }
+    aNewSeq = new TColStd_HArray1OfInteger(1,1);
+    aNewSeq->SetValue(1, -1);
+  }
+  else {
+    aNewSeq = new TColStd_HArray1OfInteger(1, aLength-1);
+    Standard_Boolean isFound = Standard_False;
+    for (Standard_Integer i = 1, k = 1; i <= aLength; i++) {
+      if (aSeq->Value(i) == theSubShapeID) {
+        isFound = Standard_True;
+      } else {
+        if (k < aLength) { // this check is to avoid sequence <aNewSeq> overflow
+          aNewSeq->SetValue(k, aSeq->Value(i));
+          k++;
         }
       }
-
-      if (!isFound) {
-	SetErrorCode(NOT_EXISTS);
-	return; 
-      }
     }
 
-    aSSI.SetIndices(aNewSeq);
+    if (!isFound) {
+      SetErrorCode(NOT_EXISTS);
+      return;
+    }
   }
 
-  //Make a Python command 
+  aSSI.SetIndices(aNewSeq);
+
+  // As we do not recompute here our group, lets mark it as Modified
+  TDF_Label aLabel = aSSI.GetMainShape()->GetOwnerEntry();
+  if (aLabel.IsRoot()) return;
+  Handle(GEOM_Object) aMainObj = GEOM_Object::GetObject(aLabel);
+  if (aMainObj.IsNull()) return;
+  Standard_Integer aTic = aMainObj->GetTic(); // tic of main shape
+  theGroup->SetTic(aTic - 1);
+
+  //Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
     << "geompy.RemoveObject(" << theGroup << ", " << theSubShapeID << ")";
 
   SetErrorCode(OK);
-  return; 
+  return;
 }
 
 //=============================================================================
@@ -346,6 +359,10 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
     }
 
     aSSI.SetIndices(aNewSeq);
+
+    // As we do not recompute here our group, lets mark it as Modified
+    Standard_Integer aTic = aMainObj->GetTic(); // tic of main shape
+    theGroup->SetTic(aTic - 1);
   }
 
   //Make a Python command
@@ -476,6 +493,10 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
     }
 
     aSSI.SetIndices(aNewSeq);
+
+    // As we do not recompute here our group, lets mark it as Modified
+    Standard_Integer aTic = aMainObj->GetTic(); // tic of main shape
+    theGroup->SetTic(aTic - 1);
   }
 
   //Make a Python command
@@ -566,6 +587,10 @@ void GEOMImpl_IGroupOperations::UnionIDs (Handle(GEOM_Object) theGroup,
     }
 
     aSSI.SetIndices(aNewSeq);
+
+    // As we do not recompute here our group, lets mark it as Modified
+    Standard_Integer aTic = aMainObj->GetTic(); // tic of main shape
+    theGroup->SetTic(aTic - 1);
   }
 
   //Make a Python command
@@ -651,6 +676,10 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
     }
 
     aSSI.SetIndices(aNewSeq);
+
+    // As we do not recompute here our group, lets mark it as Modified
+    Standard_Integer aTic = aMainObj->GetTic(); // tic of main shape
+    theGroup->SetTic(aTic - 1);
   }
 
   //Make a Python command
@@ -677,7 +706,7 @@ TopAbs_ShapeEnum GEOMImpl_IGroupOperations::GetType(Handle(GEOM_Object) theGroup
   if(!aFreeLabel.FindAttribute(TDataStd_Integer::GetID(), anAttrib)) return TopAbs_SHAPE;
 
   SetErrorCode(OK);
-  return (TopAbs_ShapeEnum) anAttrib->Get(); 
+  return (TopAbs_ShapeEnum) anAttrib->Get();
 }
 
 //=============================================================================
@@ -707,7 +736,7 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::GetMainShape (Handle(GEOM_Object)
     << aMainShape << " = geompy.GetMainShape(" << theGroup << ")";
 
   SetErrorCode(OK);
-  return aMainShape; 
+  return aMainShape;
 }
 
 //=============================================================================
