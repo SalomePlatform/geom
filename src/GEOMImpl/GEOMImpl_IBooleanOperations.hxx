@@ -23,8 +23,6 @@
 
 #include "GEOM_IOperations.hxx"
 
-//#include "TColStd_HSequenceOfTransient.hxx"
-
 #include "list"
 
 class GEOM_Engine;
@@ -37,19 +35,21 @@ class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
   Standard_EXPORT ~GEOMImpl_IBooleanOperations();
 
   Standard_EXPORT Handle(GEOM_Object) MakeBoolean (Handle(GEOM_Object) theShape1,
-                                   Handle(GEOM_Object) theShape2,
-                                   Standard_Integer    theOp);
+                                                   Handle(GEOM_Object) theShape2,
+                                                   Standard_Integer    theOp);
 
-  Standard_EXPORT Handle(GEOM_Object) MakePartition (const Handle(TColStd_HSequenceOfTransient)& theShapes, 
-                                     const Handle(TColStd_HSequenceOfTransient)& theTools,
-                                     const Handle(TColStd_HSequenceOfTransient)& theKeepInside,
-                                     const Handle(TColStd_HSequenceOfTransient)& theRemoveInside,
-                                     const Standard_Integer           theLimit,
-                                     const Standard_Boolean           theRemoveWebs,
-                                     const Handle(TColStd_HArray1OfInteger)& theMaterials);
+  Standard_EXPORT Handle(GEOM_Object) MakePartition
+                  (const Handle(TColStd_HSequenceOfTransient)& theShapes,
+                   const Handle(TColStd_HSequenceOfTransient)& theTools,
+                   const Handle(TColStd_HSequenceOfTransient)& theKeepInside,
+                   const Handle(TColStd_HSequenceOfTransient)& theRemoveInside,
+                   const Standard_Integer                      theLimit,
+                   const Standard_Boolean                      theRemoveWebs,
+                   const Handle(TColStd_HArray1OfInteger)&     theMaterials,
+                   const Standard_Boolean                      thePerformSelfIntersections);
 
   Standard_EXPORT Handle(GEOM_Object) MakeHalfPartition (Handle(GEOM_Object) theShape,
-                                         Handle(GEOM_Object) thePlane);
+                                                         Handle(GEOM_Object) thePlane);
 };
 
 #endif

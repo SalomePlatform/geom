@@ -1645,13 +1645,21 @@ module GEOM
      *  Perform partition operation.
      *  \param theShapes Shapes to be intersected.
      *  \param theTools Shapes to intersect theShapes.
+     *  \note  Each compound from ListShapes and ListTools will be exploded in order
+     *         to avoid possible intersection between shapes from this compound.
+     *  \param theLimit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
+     *
+     *  After implementation new version of PartitionAlgo (October 2006)
+     *  other parameters are ignored by current functionality. They are kept
+     *  in this function only for supporting old versions.
+     *  Ignored parameters:
      *  \param theKeepInside Shapes, outside which the results will be deleted.
      *         Each shape from theKeepInside must belong to theShapes also.
      *  \param theRemoveInside Shapes, inside which the results will be deleted.
      *         Each shape from theRemoveInside must belong to theShapes also.
-     *  \param theLimit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
      *  \param theRemoveWebs If TRUE, perform Glue 3D algorithm.
      *  \param theMaterials Material indices for each shape. Make sence, only if theRemoveWebs is TRUE.
+     *
      *  \return New GEOM_Object, containing the result shapes.
      */
     GEOM_Object MakePartition (in ListOfGO   theShapes,
@@ -1661,6 +1669,27 @@ module GEOM
 			       in short      theLimit,
 			       in boolean    theRemoveWebs,
 			       in ListOfLong theMaterials);
+
+    /*!
+     *  Perform partition operation.
+     *  This method may be usefull if it is needed to make a partition for
+     *  a compound containing nonintersected shapes. Performance will be better
+     *  since intersection between shapes from compound is not performed.
+     *
+     *  Description of all parameters as in previous method MakePartition()
+     *
+     *  \note Passed compounds (via ListShapes or via ListTools)
+     *        have to consist of nonintersecting shapes.
+     *
+     *  \return New GEOM_Object, containing the result shapes.
+     */
+    GEOM_Object MakePartitionNonSelfIntersectedShape (in ListOfGO   theShapes,
+						      in ListOfGO   theTools,
+						      in ListOfGO   theKeepInside,
+						      in ListOfGO   theRemoveInside,
+						      in short      theLimit,
+						      in boolean    theRemoveWebs,
+						      in ListOfLong theMaterials);
 
     /*!
      *  Perform partition of the Shape with the Plane

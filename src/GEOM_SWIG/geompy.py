@@ -1379,27 +1379,13 @@ def MakeFuse(s1, s2):
 def MakeSection(s1, s2):
     return MakeBoolean(s1, s2, 4)
 
-## Perform explode of compound
-#  Auxilary method for MakePartition
-def ExplodeCompound(aComp):
-    ResListShapes = []
-    shapes = SubShapeAll(aComp,ShapeType["SHAPE"])
-    nbss = len(shapes)
-    for i in range(0,nbss):
-        if shapes[i].GetShapeType()==GEOM.COMPOUND:
-            ResListShapes.extend(ExplodeCompound(shapes[i]))
-        else:
-            ResListShapes.append(shapes[i])
-            pass
-        pass
-    return ResListShapes
-  
 ## Perform partition operation.
 #  @param ListShapes Shapes to be intersected.
 #  @param ListTools Shapes to intersect theShapes.
 #  !!!NOTE: Each compound from ListShapes and ListTools will be exploded
 #           in order to avoid possible intersection between shapes from
 #           this compound.
+#  @param Limit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
 #
 #  After implementation new version of PartitionAlgo (October 2006)
 #  other parameters are ignored by current functionality. They are kept
@@ -1409,7 +1395,6 @@ def ExplodeCompound(aComp):
 #         Each shape from theKeepInside must belong to theShapes also.
 #      @param ListRemoveInside Shapes, inside which the results will be deleted.
 #         Each shape from theRemoveInside must belong to theShapes also.
-#      @param Limit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
 #      @param RemoveWebs If TRUE, perform Glue 3D algorithm.
 #      @param ListMaterials Material indices for each shape. Make sence,
 #         only if theRemoveWebs is TRUE.
@@ -1419,28 +1404,12 @@ def ExplodeCompound(aComp):
 #  Example: see GEOM_TestAll.py
 def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                   Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
-
-    NewListShapes = []
-    nbs = len(ListShapes)
-    for i in range(0,nbs):
-        if ListShapes[i].GetShapeType()==GEOM.COMPOUND:
-            # need to explode
-            NewListShapes.extend(ExplodeCompound(ListShapes[i]))
-        else: NewListShapes.append(ListShapes[i])
-        pass
-      
-    NewListTools = []
-    nbs = len(ListTools)
-    for i in range(0,nbs):
-        if ListTools[i].GetShapeType()==GEOM.COMPOUND:
-            # need to explode
-            NewListTools.extend(ExplodeCompound(ListTools[i]))
-        else: NewListTools.append(ListTools[i])
-        pass
-      
-    return MakePartitionNonSelfIntersectedShape(NewListShapes, NewListTools,
-                                                ListKeepInside, ListRemoveInside,
-                                                Limit, RemoveWebs, ListMaterials)
+    anObj = BoolOp.MakePartition(ListShapes, ListTools,
+                                 ListKeepInside, ListRemoveInside,
+                                 Limit, RemoveWebs, ListMaterials);
+    if BoolOp.IsDone() == 0:
+      print "MakePartition : ", BoolOp.GetErrorCode()
+    return anObj
 
 ## Perform partition operation.
 #  This method may be useful if it is needed to make a partition for
@@ -1449,19 +1418,18 @@ def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=
 #
 #  Description of all parameters as in previous method MakePartition()
 #
-#  !!!NOTE: Compounds from ListShapes can not have intersections with each
-#           other and compounds from ListTools can not have intersections
-#           with each other.
+#  !!!NOTE: Passed compounds (via ListShapes or via ListTools)
+#           have to consist of nonintersecting shapes.
 #
 #  @return New GEOM_Object, containing the result shapes.
 #
 def MakePartitionNonSelfIntersectedShape(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                   Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
-    anObj = BoolOp.MakePartition(ListShapes, ListTools,
-                                 ListKeepInside, ListRemoveInside,
-                                 Limit, RemoveWebs, ListMaterials);
+    anObj = BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
+                                                        ListKeepInside, ListRemoveInside,
+                                                        Limit, RemoveWebs, ListMaterials);
     if BoolOp.IsDone() == 0:
-      print "MakePartition : ", BoolOp.GetErrorCode()
+      print "MakePartitionNonSelfIntersectedShape : ", BoolOp.GetErrorCode()
     return anObj
 
 ## Shortcut to MakePartition()
