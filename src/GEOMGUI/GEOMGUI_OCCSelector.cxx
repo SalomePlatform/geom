@@ -126,6 +126,12 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
 	    }
 	}
     }
+  // add externally selected objects
+  SUIT_DataOwnerPtrList::const_iterator anExtIter;
+  for(anExtIter = mySelectedExternals.begin(); anExtIter != mySelectedExternals.end(); anExtIter++) {
+    aList.append(*anExtIter);
+  }
+  
 }
 
 //================================================================
@@ -245,6 +251,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 	if ( !anOwner->ComesFromDecomposition() && globalSelMap.contains( entryStr ) ) 
 	{
 	  ownersmap.Add( anOwner );
+	  globalSelMap[entryStr]++;
 	}
 	// LOCAL selection
 	else
@@ -289,4 +296,20 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
   }
 
   vw->update();
+  
+  // fill extra selected
+  mySelectedExternals.clear();
+  for ( SUIT_DataOwnerPtrList::const_iterator itr2 = aList.begin(); itr2 != aList.end(); ++itr2 ) {
+    const LightApp_DataSubOwner* subOwner = dynamic_cast<const LightApp_DataSubOwner*>( (*itr2).operator->() );
+    if ( !subOwner )
+    {
+      const LightApp_DataOwner* owner = dynamic_cast<const LightApp_DataOwner*>( (*itr2).operator->() );
+      if ( owner )
+      {
+	SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+	QString anEntry = appStudy->referencedToEntry( owner->entry() );
+	if (globalSelMap[anEntry] == 1) mySelectedExternals.append(*itr2);
+      }
+    }
+  }
 }
