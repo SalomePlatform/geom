@@ -46,7 +46,6 @@
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Tools.h>
 #include <SalomeApp_DataModel.h>
-#include <SalomeApp_Module.h>
 
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
@@ -758,7 +757,6 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
       }
       else {
 	const int nbObjs = objects.size();
-	bool withChildren = false;
         int aNumber = 1;
 	for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
 	  if ( publish ) {
@@ -779,14 +777,15 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 		aName = GEOMBase::GetDefaultName( getPrefix( *it ) );
 	    }
 	    addInStudy( *it, aName.latin1() );
-	    withChildren = false;
+            // updateView=false
 	    display( *it, false );
 	  }
-	  else { // asv : fix of PAL6454. If publish==false, then the original shape was modified, and need to be re-cached in GEOM_Client
-	         // before redisplay
+	  else {
+            // asv : fix of PAL6454. If publish==false, then the original shape
+            // was modified, and need to be re-cached in GEOM_Client before redisplay
 	    clearShapeBuffer( *it );
-	    withChildren = true;
-	    redisplay( *it, withChildren, false );
+            // withChildren=true, updateView=false
+	    redisplay( *it, true, false );
           }
 	}
 
@@ -905,22 +904,23 @@ QString GEOMBase_Helper::getPrefix( GEOM::GEOM_Object_ptr theObj ) const
   if ( !myPrefix.isEmpty() || theObj->_is_nil() )
     return myPrefix;
 
-  TopoDS_Shape aShape;
-  if ( !GEOMBase::GetShape( theObj, aShape ) )
-    return "";
-
-  long aType = aShape.ShapeType();
+  //TopoDS_Shape aShape;
+  //if ( !GEOMBase::GetShape( theObj, aShape ) )
+  //  return "";
+  //
+  //long aType = aShape.ShapeType();
+  GEOM::shape_type aType = theObj->GetShapeType();
 
   switch ( aType )
   {
-    case TopAbs_VERTEX   : return QObject::tr( "GEOM_VERTEX" );
-    case TopAbs_EDGE     : return QObject::tr( "GEOM_EDGE" );
-    case TopAbs_WIRE     : return QObject::tr( "GEOM_WIRE" );
-    case TopAbs_FACE     : return QObject::tr( "GEOM_FACE" );
-    case TopAbs_SHELL    : return QObject::tr( "GEOM_SHELL" );
-    case TopAbs_SOLID    : return QObject::tr( "GEOM_SOLID" );
-    case TopAbs_COMPSOLID: return QObject::tr( "GEOM_COMPOUNDSOLID" );
-    case TopAbs_COMPOUND : return QObject::tr( "GEOM_COMPOUND" );
+    case GEOM::VERTEX   : return QObject::tr( "GEOM_VERTEX" );
+    case GEOM::EDGE     : return QObject::tr( "GEOM_EDGE" );
+    case GEOM::WIRE     : return QObject::tr( "GEOM_WIRE" );
+    case GEOM::FACE     : return QObject::tr( "GEOM_FACE" );
+    case GEOM::SHELL    : return QObject::tr( "GEOM_SHELL" );
+    case GEOM::SOLID    : return QObject::tr( "GEOM_SOLID" );
+    case GEOM::COMPSOLID: return QObject::tr( "GEOM_COMPOUNDSOLID" );
+    case GEOM::COMPOUND : return QObject::tr( "GEOM_COMPOUND" );
     default : return "";
   }
 }
