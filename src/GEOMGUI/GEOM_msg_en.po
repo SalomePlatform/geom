@@ -2932,6 +2932,9 @@ msgstr "OCC Viewer 3d"
 msgid "PREF_GROUP_GENERAL"
 msgstr "General"
 
+msgid "PREF_GROUP_VERTEX"
+msgstr "Marker of Points"
+
 msgid "PREF_SHADING_COLOR"
 msgstr "Default shading color"
 
@@ -2958,6 +2961,39 @@ msgstr "Default display mode"
 
 msgid "PREF_TAB_SETTINGS"
 msgstr "Settings"
+
+msgid "PREF_TYPE_OF_MARKER"
+msgstr "Type"
+
+msgid "PREF_MARKER_SCALE"
+msgstr "Size"
+
+msgid "TOM_POINT"
+msgstr "."
+
+msgid "TOM_PLUS"
+msgstr "+"
+
+msgid "TOM_STAR"
+msgstr "*"
+
+msgid "TOM_O"
+msgstr "O"
+
+msgid "TOM_X"
+msgstr "X"
+
+msgid "TOM_O_POINT"
+msgstr ". in O"
+
+msgid "TOM_O_PLUS"
+msgstr "+ in O"
+
+msgid "TOM_O_STAR"
+msgstr "* in O"
+
+msgid "TOM_O_X"
+msgstr "X in O"
 
 msgid "ERROR_SHAPE_TYPE"
 msgstr "Object of incorrect type selected!\nPlease, select face, shell or solid and try again"

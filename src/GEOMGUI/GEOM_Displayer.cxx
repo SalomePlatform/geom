@@ -237,6 +237,13 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   myShadingColor = SalomeApp_Tools::color( col );
 
   myDisplayMode = resMgr->integerValue("Geometry", "display_mode", 0);
+  myTypeOfMarker = (Aspect_TypeOfMarker)resMgr->integerValue("Geometry", "type_of_marker", 0);
+  myScaleOfMarker = resMgr->doubleValue("Geometry", "marker_scale", 1.);
+  if(myScaleOfMarker < 1.)
+    myScaleOfMarker = 1.;
+  if(myScaleOfMarker > 8.)
+    myScaleOfMarker = 8.;
+
 
   myColor = -1;
   // This color is used for shape displaying. If it is equal -1 then
@@ -527,17 +534,17 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	Quantity_Color aColor = SalomeApp_Tools::color( col );
 	int anUIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_u", 1);
 	int aVIsoNumber  = aResMgr->integerValue("OCCViewer", "iso_number_v", 1);
-		
+
 	Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
 	anAspect->SetNumber( anUIsoNumber );
 	anAspect->SetColor( aColor );
 	AISShape->Attributes()->SetUIsoAspect( anAspect );
-	
+
 	anAspect = AISShape->Attributes()->VIsoAspect();
 	anAspect->SetNumber( aVIsoNumber );
 	anAspect->SetColor( aColor );
 	AISShape->Attributes()->SetVIsoAspect( anAspect );
-	
+
         if ( HasColor() )
         {
 	  AISShape->SetColor( (Quantity_NameOfColor)GetColor() );
@@ -545,6 +552,8 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           {
             Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
             anAspect->SetColor( (Quantity_NameOfColor)GetColor() );
+            anAspect->SetScale( myScaleOfMarker );
+            anAspect->SetTypeOfMarker( myTypeOfMarker );
             AISShape->Attributes()->SetPointAspect( anAspect );
           }
         }
@@ -554,17 +563,19 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	      {
 		col = aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) );
 		aColor = SalomeApp_Tools::color( col );
-		
+
 		Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
 		anAspect->SetColor( aColor );
-		AISShape->Attributes()->SetPointAspect( anAspect );
+                anAspect->SetScale( myScaleOfMarker );
+                anAspect->SetTypeOfMarker( myTypeOfMarker );
+                AISShape->Attributes()->SetPointAspect( anAspect );
 	      }
 	    else
 	      {
 		// Set line aspect
 		col = aResMgr->colorValue( "Geometry", "wireframe_color", QColor( 255, 255, 0 ) );
 		aColor = SalomeApp_Tools::color( col );
-		
+
 		Handle(Prs3d_LineAspect) anAspect = AISShape->Attributes()->LineAspect();
 		anAspect->SetColor( aColor );
 		AISShape->Attributes()->SetLineAspect( anAspect );
@@ -577,15 +588,15 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 		// Set free boundaries aspect
 		col = aResMgr->colorValue( "Geometry", "free_bound_color", QColor( 0, 255, 0 ) );
 		aColor = SalomeApp_Tools::color( col );
-		
+
 		anAspect = AISShape->Attributes()->FreeBoundaryAspect();
 		anAspect->SetColor( aColor );
 		AISShape->Attributes()->SetFreeBoundaryAspect( anAspect );
-		
+
 		// Set wire aspect
 		col = aResMgr->colorValue( "Geometry", "line_color", QColor( 255, 0, 0 ) );
 		aColor = SalomeApp_Tools::color( col );
-		
+
 		anAspect = AISShape->Attributes()->WireAspect();
 		anAspect->SetColor( aColor );
 		AISShape->Attributes()->SetWireAspect( anAspect );
