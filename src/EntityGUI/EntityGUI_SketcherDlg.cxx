@@ -64,12 +64,14 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
-                                             const char* name, bool modal, WFlags fl)
+                                             const char* name, bool modal, WFlags fl,
+					     const double lineWidth)
   :EntityGUI_Skeleton_QTD(parent, name, modal, WStyle_Customize |
                           WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose),
    myIsAllAdded( false ),
    GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
-   myGeometryGUI( GUI )
+   myGeometryGUI( GUI ),
+   myLineWidth( lineWidth )
 {
   myGeometryGUI->SetActiveDialogBox(this);
 
@@ -344,7 +346,7 @@ void EntityGUI_SketcherDlg::Init()
   resize( 0, 0 );
   TypeClicked(0);
 
-  GEOMBase_Helper::displayPreview();
+  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
 }
 
 
@@ -443,7 +445,7 @@ void EntityGUI_SketcherDlg::PointClicked(int constructorId)
       Group2Spin->show();
       Group2Spin->buttonApply->setFocus();
 
-      GEOMBase_Helper::displayPreview();
+      GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
     }
     else if ( constructorId == 0 )
     {  // DXDY
@@ -459,7 +461,7 @@ void EntityGUI_SketcherDlg::PointClicked(int constructorId)
       Group2Spin->show();
       Group2Spin->buttonApply->setFocus();
 
-      GEOMBase_Helper::displayPreview();
+      GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
     }
     else if ( constructorId == 2 )
     {  // Selection
@@ -693,7 +695,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
     }
   }
 
-  GEOMBase_Helper::displayPreview();
+  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
 }
 
 
@@ -764,7 +766,7 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
   setEnabledUndo(true);
   setEnabledRedo(false);
 
-  GEOMBase_Helper::displayPreview();
+  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
 
   // Set focus to SpinBox_DX
   if (sender() == Group1Spin->buttonApply) {
@@ -826,7 +828,7 @@ void EntityGUI_SketcherDlg::ClickOnUndo()
 
   setEnabledRedo(true);
 
-  GEOMBase_Helper::displayPreview();
+  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
 }
 
 //=================================================================================
@@ -847,7 +849,7 @@ void EntityGUI_SketcherDlg::ClickOnRedo()
   if(myUndoCommand.count() == 1)
     setEnabledRedo(false);
 
-  GEOMBase_Helper::displayPreview();
+  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
 }
 
 //=================================================================================
@@ -911,7 +913,7 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
     }
   }
 
-  GEOMBase_Helper::displayPreview();
+  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
 }
 
 
@@ -985,7 +987,7 @@ void EntityGUI_SketcherDlg::ActivateThisDialog()
   myEditCurrentArgument = Group1Sel->LineEdit1;
   myEditCurrentArgument->setFocus();
 
-  GEOMBase_Helper::displayPreview();
+  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
 }
 
 
@@ -1180,7 +1182,7 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox(double newValue)
     }
   }
 
-  GEOMBase_Helper::displayPreview();
+  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
 }
 
 
@@ -1443,7 +1445,7 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
   getDisplayer()->SetColor( Quantity_NOC_RED );
 
   // set width of displayed shape
-  getDisplayer()->SetWidth( lineWidth );
+  getDisplayer()->SetWidth( (lineWidth == -1)?myLineWidth:lineWidth );
 
   // Disable activation of selection
   getDisplayer()->SetToActivate( activate );
