@@ -217,6 +217,7 @@ image56.gif
 files\salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image73.gif
 files\salome2_sp3_booleangui_functions_salome2_sp3_booleangui_functions_image4.gif
 salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image17.gif
+pics\view_rotation_point.png
 pics\clipping.png
 pics\image98.gif
 pics\archimedesn1.png
@@ -317,7 +318,6 @@ pics\sectionsn.png
 pics\fusesn2.png
 pics\toruses.png
 pics\circles.png
-pics\neo-materials.png
 pics\neo-obj3.png
 pics\neo-localcs2.png
 pics\measures1.png
@@ -332,6 +332,7 @@ image29.gif
 image160.jpg
 files\salome2_sp3_transformationgui_functions_salome2_sp3_transformationgui_functions_image133.gif
 files\salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image34.gif
+pics\partition2.png
 pics\changeorientation.png
 pics\pipesn.png
 pics\pipe_wire_edgesn.png
@@ -347,7 +348,6 @@ pics\neo-obj4.png
 pics\neo-localcs3.png
 pics\repair4.png
 pics\bool2.png
-pics\partition2.png
 pics\block5.png
 pics\sphere2.png
 pics\point1.png
@@ -367,6 +367,7 @@ pics\ellipse.png
 pics\circle1.png
 image3.gif
 files\salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image56.gif
+pics\set_rotation_point_dialog1.png
 pics\extrusion1.png
 image4.gif
 pics\isos_u12_v12sn.png
@@ -387,6 +388,7 @@ pics\circle2.png
 pics\point3.png
 image185.jpg
 files\salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image57.gif
+pics\set_rotation_point_dialog2.png
 pics\extrusion2.png
 image5.gif
 pics\free_boudaries2.png
@@ -457,6 +459,7 @@ files\salome2_sp3_repairgui_functions_salome2_sp3_repairgui_functions_image122.g
 files\salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image100.gif
 files\salome2_sp3_primitivegui_functions_salome2_sp3_primitivegui_functions_image99.gif
 salome2_sp3_buildgui_functions_salome2_sp3_buildgui_functions_image13.gif
+pics\transformation4a.png
 pics\image100.gif
 pics\geomcreategroup.png
 pics\commonsn.png

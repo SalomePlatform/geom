@@ -44,7 +44,6 @@
   </book>
   <book name="Viewing geometrical objects" >
     <item name="Viewing Geometrical Objects" url="viewing_geometrical_objects.htm" />
-    <item name="OCC 3D Viewer" url="occ_viewer.htm" />
     <item name="Display Mode" url="wireframe_and_shading.htm" />
     <item name="Color" url="color.htm" />
     <item name="Transparency" url="transparency.htm" />
@@ -94,7 +93,7 @@
     </book>
   </book>
   <item name="Using measurement tools" url="files/salome2_sp3_measuregui_functions.htm" />
-  <item name="Python Interface geompy.py" url="geompy_doc/namespacegeompy.html" />
+ <item name="Python Interface geompy.py" url="geompy_doc/namespacegeompy.html" />
 
   <book name="TUI Scripts" >
     <item name="Viewing Geometrical Objects" url="changing_display_parameters.htm" />
