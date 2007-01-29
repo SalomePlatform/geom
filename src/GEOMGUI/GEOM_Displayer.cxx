@@ -237,12 +237,12 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   myShadingColor = SalomeApp_Tools::color( col );
 
   myDisplayMode = resMgr->integerValue("Geometry", "display_mode", 0);
-  myTypeOfMarker = (Aspect_TypeOfMarker)resMgr->integerValue("Geometry", "type_of_marker", 0);
+  myTypeOfMarker = (Aspect_TypeOfMarker)resMgr->integerValue("Geometry", "type_of_marker", Aspect_TOM_PLUS);
   myScaleOfMarker = resMgr->doubleValue("Geometry", "marker_scale", 1.);
-  if(myScaleOfMarker < 1.)
-    myScaleOfMarker = 1.;
-  if(myScaleOfMarker > 8.)
-    myScaleOfMarker = 8.;
+  if(myScaleOfMarker < 1.0)
+    myScaleOfMarker = 1.0;
+  if(myScaleOfMarker > 7.)
+    myScaleOfMarker = 7.;
 
 
   myColor = -1;

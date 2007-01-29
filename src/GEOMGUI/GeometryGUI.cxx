@@ -1680,7 +1680,7 @@ void GeometryGUI::createPreferences()
                                     LightApp_Preferences::Selector, "Geometry", "type_of_marker" );
 
   int markerScale = addPreference( tr( "PREF_MARKER_SCALE" ), VertexGroup,
-                                   LightApp_Preferences::IntSpin, "Geometry", "marker_scale" );
+                                   LightApp_Preferences::DblSpin, "Geometry", "marker_scale" );
 
   // Set property for default display mode
   QStringList aModesList;
@@ -1701,34 +1701,44 @@ void GeometryGUI::createPreferences()
 
   // Set property for type of vertex marker
   QStringList aTypeOfMarkerList;
-  aTypeOfMarkerList.append( tr("TOM_POINT") );
-  aTypeOfMarkerList.append( tr("TOM_PLUS") );
-  aTypeOfMarkerList.append( tr("TOM_STAR") );
-  aTypeOfMarkerList.append( tr("TOM_O") );
-  aTypeOfMarkerList.append( tr("TOM_X") );
-  aTypeOfMarkerList.append( tr("TOM_O_POINT") );
-  aTypeOfMarkerList.append( tr("TOM_O_PLUS") );
-  aTypeOfMarkerList.append( tr("TOM_O_STAR") );
-  aTypeOfMarkerList.append( tr("TOM_O_X") );
-
   QValueList<QVariant> anTypeOfMarkerIndexesList;
-  anTypeOfMarkerIndexesList.append(Aspect_TOM_POINT);
+
+  aTypeOfMarkerList.append( tr("TOM_PLUS") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_PLUS);
+
+  aTypeOfMarkerList.append( tr("TOM_POINT") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_POINT);
+
+  aTypeOfMarkerList.append( tr("TOM_STAR") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_STAR);
+
+  aTypeOfMarkerList.append( tr("TOM_O") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_O);
+
+  aTypeOfMarkerList.append( tr("TOM_X") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_X);
+
+  aTypeOfMarkerList.append( tr("TOM_O_POINT") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_O_POINT);
+
+  aTypeOfMarkerList.append( tr("TOM_O_PLUS") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_O_PLUS);
+
+  aTypeOfMarkerList.append( tr("TOM_O_STAR") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_O_STAR);
+
+  aTypeOfMarkerList.append( tr("TOM_O_X") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_O_X);
+
 
   setPreferenceProperty( typeOfMarker, "strings", aTypeOfMarkerList );
   setPreferenceProperty( typeOfMarker, "indexes", anTypeOfMarkerIndexesList );
 
   // Set property for Vertex Marker scale
-  setPreferenceProperty( markerScale, "min", 0.25 );
-  setPreferenceProperty( markerScale, "max", 10. );
-  setPreferenceProperty( markerScale, "precision", 1 );
+  setPreferenceProperty( markerScale, "min", 1. );
+  setPreferenceProperty( markerScale, "max", 7. );
+  setPreferenceProperty( markerScale, "precision", 0.01 );
+  setPreferenceProperty( markerScale, "step", 0.5 );
 
 }
 
