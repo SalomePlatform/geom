@@ -107,6 +107,8 @@
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <NMTTools_MapOfPaveBlock.hxx>
+//
+#include <IntTools_ShrunkRange.hxx>
 
 static 
   Standard_Boolean IsPairFound(const Standard_Integer nF1,
@@ -134,6 +136,12 @@ static
 		    const TopoDS_Face& aF2,
 		    TopTools_ListOfShape& aLS);
 // Contribution of Samtech www.samcef.com END
+
+//modified by NIZNHY-PKV Mon Dec  4 12:56:04 2006f
+static
+  Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE, 
+			       IntTools_Context& aCtx);
+//modified by NIZNHY-PKV Mon Dec  4 12:56:08 2006t
 
 //=======================================================================
 // function: PerformFF
@@ -272,6 +280,7 @@ static
   Standard_Boolean bIsExistingPaveBlock, bIsValidIn2D, bIsCoincided;
   // Contribution of Samtech www.samcef.com END
   //
+  Standard_Boolean bIsMicroEdge;
   Standard_Integer i, aNbFFs, nF1, nF2, aBid=0;
   Standard_Integer nV1, nV2, j, aNbCurves;
   Standard_Real aTolR3D, aTol2D, aT1, aT2, aTolPPC=Precision::PConfusion();
@@ -510,6 +519,16 @@ static
 	//
 	BOPTools_Tools::MakeSectEdge (aIC, aV1, aT1, aV2, aT2, aES);
 	//
+	//modified by NIZNHY-PKV Mon Dec  4 12:56:35 2006f use_01
+	//
+	NMTTools_Tools::UpdateEdge (aES, aTolR3D);
+	bIsMicroEdge=IsMicroEdge(aES, myContext);
+	if (bIsMicroEdge) {
+	  continue;
+	}
+	//
+	//modified by NIZNHY-PKV Mon Dec  4 12:56:38 2006t
+	//
 	//modified by NIZNHY-PKV Thu Nov 16 11:13:46 2006f SKL/PartC5
 	{
 	  Handle(Geom2d_Curve) aC2D1, aC2D2;
@@ -519,7 +538,7 @@ static
 	  //
 	  NMTTools_Tools::MakePCurve(aES, aF1, aC2D1);
 	  NMTTools_Tools::MakePCurve(aES, aF2, aC2D2);
-	  NMTTools_Tools::UpdateEdge (aES, aTolR3D);
+	  //NMTTools_Tools::UpdateEdge (aES, aTolR3D); // ft use_01
 	}
 	
 	//
@@ -1419,3 +1438,44 @@ void SharedEdges1(const TopoDS_Face& aF1,
 }
 //
 // Contribution of Samtech www.samcef.com END
+
+//modified by NIZNHY-PKV Mon Dec  4 12:30:38 2006f use_01
+//=======================================================================
+//function : IsMicroEdge
+//purpose  : 
+//=======================================================================
+Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE, 
+			     IntTools_Context& aCtx)
+{
+  Standard_Boolean bRet;
+  Standard_Integer iErr;
+  Standard_Real aT1, aT2, aTmp;
+  Handle(Geom_Curve) aC3D;
+  TopoDS_Vertex aV1, aV2;
+  IntTools_Range aR;
+  //
+  bRet=(BRep_Tool::Degenerated(aE) || 
+	!BRep_Tool::IsGeometric(aE));
+  if (bRet) {
+    return bRet;
+  }
+  //
+  aC3D=BRep_Tool::Curve(aE, aT1, aT2);
+  TopExp::Vertices(aE, aV1, aV2);
+  aT1=BRep_Tool::Parameter(aV1, aE); 
+  aT2=BRep_Tool::Parameter(aV2, aE);
+  if (aT2<aT1) {
+    aTmp=aT1;
+    aT1=aT2;
+    aT2=aTmp;
+  }
+  //
+  aR.SetFirst(aT1);
+  aR.SetLast(aT2);
+  IntTools_ShrunkRange aSR (aE, aV1, aV2, aR, aCtx);
+  iErr=aSR.ErrorStatus();
+  bRet=!aSR.IsDone();
+  //
+  return bRet;
+}
+//modified by NIZNHY-PKV Mon Dec  4 12:55:50 2006t
