@@ -147,7 +147,7 @@ module GEOM
     /*!
      *  Get the TopoDS_Shape, for colocated case only.
      */
-    long getShape();
+    long long getShape();
 
     /*!
      ######################################################################
