@@ -471,6 +471,34 @@ module GEOM
 				  in long theNbTimes2);
 
     /*!
+     *  Rotate given object around vector perpendicular to plane containing three points.
+     *  \param theObject The object to be rotated.
+     *  \param theCentPoint central point - the axis is the vector perpendicular to the plane
+     *  containing the three points.
+     *  \param thePoint1 and thePoint2 - in a perpendicular plan of the axis.
+     *  \return theObject.
+     */
+    GEOM_Object RotateThreePoints (in GEOM_Object theObject,
+				   in GEOM_Object theCentPoint,
+				   in GEOM_Object thePoint1,
+				   in GEOM_Object thePoint2);
+
+
+    /*!
+     *  Rotate given object around vector perpendicular to plane containing three points.
+     *  Creating its copy before the rotatation.
+     *  \param theObject The object to be rotated.
+     *  \param theCentPoint central point - the axis is the vector perpendicular to the plane
+     *  containing the three points.
+     *  \param thePoint1 and thePoint2 - in a perpendicular plan of the axis.
+     *  \return New GEOM_Object, containing the rotated object.
+     */
+    GEOM_Object RotateThreePointsCopy (in GEOM_Object theObject,
+				       in GEOM_Object theCentPoint,
+				       in GEOM_Object thePoint1,
+				       in GEOM_Object thePoint2);
+
+    /*!
      *  Rotate the given object around the given axis on the given angle.
      *  \param theObject The object to be rotated.
      *  \param theAxis Rotation axis.
@@ -480,6 +508,7 @@ module GEOM
     GEOM_Object Rotate (in GEOM_Object theObject,
 			in GEOM_Object theAxis,
 			in double theAngle);
+
 
     /*!
      *  Rotate the given object around the given axis
@@ -492,6 +521,7 @@ module GEOM
     GEOM_Object RotateCopy (in GEOM_Object theObject,
 			    in GEOM_Object theAxis,
 			    in double theAngle);
+
 
     /*!
      *  Rotate the given object around the given axis a given number times.
@@ -884,7 +914,7 @@ module GEOM
 
     /*!
      *  Create a face on the given wire.
-     *  \param theWire Wire to build the face on.
+     *  \param theWire closed Wire or Edge to build the face on.
      *  \param isPlanarWanted If TRUE, only planar face will be built.
      *                        If impossible, NULL object will be returned.
      *  \return New GEOM_Object, containing the created face.
@@ -893,7 +923,7 @@ module GEOM
 
     /*!
      *  Create a face on the given wires set.
-     *  \param theWires List of wires to build the face on.
+     *  \param theWires List of closed wires or edges to build the face on.
      *  \param isPlanarWanted If TRUE, only planar face will be built.
      *                        If impossible, NULL object will be returned.
      *  \return New GEOM_Object, containing the created face.
@@ -1053,6 +1083,24 @@ module GEOM
 			       in long        theShapeType,
 			       in GEOM_Object theAx1,
 			       in shape_state theState);
+    /*!
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified plane by the certain way, defined through \a theState parameter.
+     *  \param theShape Shape to find sub-shapes of.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param theAx1 Vector (or line, or linear edge), specifying normal
+     *                direction of the plane to find shapes on.
+     *  \param thePnt Point specifying location of the plane to find shapes on.
+     *  \param theState The state of the subshapes to find.
+     *  \return List of all found sub-shapes.
+     */
+    ListOfGO GetShapesOnPlaneWithLocation (in GEOM_Object theShape,
+					   in long        theShapeType,
+					   in GEOM_Object theAx1,
+					   in GEOM_Object thePnt,
+					   in shape_state theState);
+
+
 
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1121,6 +1169,23 @@ module GEOM
 				    in long        theShapeType,
 				    in GEOM_Object theAx1,
 				    in shape_state theState);
+				    
+    /*!
+     *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  the specified plane by the certain way, defined through \a theState parameter.
+     *  \param theShape Shape to find sub-shapes of.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param theAx1 Vector (or line, or linear edge), specifying normal
+     *                direction of the plane to find shapes on.
+     *  \param thePnt Point specifying location of the plane to find shapes on.     
+     *  \param theState The state of the subshapes to find.
+     *  \return List of IDs of all found sub-shapes.
+     */
+    ListOfLong GetShapesOnPlaneWithLocationIDs (in GEOM_Object theShape,
+						in long        theShapeType,
+						in GEOM_Object theAx1,
+						in GEOM_Object thePnt,
+						in shape_state theState);
 
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1176,6 +1241,32 @@ module GEOM
                                          in shape_state theState);
 
     /*!
+     * \brief Find subshapes complying with given status
+     * \param theBox - the box to check state of subshapes against
+     * \param theShape - the shape to explore
+     * \param theShapeType - type of subshape of theShape
+     * \param theState - required state
+     * \return List of IDs of all found sub-shapes.
+     */
+    ListOfLong GetShapesOnBoxIDs (in GEOM_Object theBox,
+				  in GEOM_Object theShape,
+				  in long        theShapeType,
+				  in shape_state theState);
+
+    /*!
+     * \brief Find subshapes complying with given status
+     * \param theBox - the box to check state of subshapes against
+     * \param theShape - the shape to explore
+     * \param theShapeType - type of subshape of theShape
+     * \param theState - required state
+     * \return List of all found sub-shapes.
+     */
+    ListOfGO GetShapesOnBox (in GEOM_Object theBox,
+			     in GEOM_Object theShape,
+			     in long        theShapeType,
+			     in shape_state theState);
+
+    /*!
      *  Get sub-shape(s) of theShapeWhere, which are
      *  coincident with \a theShapeWhat or could be a part of it.
      *  \param theShapeWhere Shape to find sub-shapes of.
@@ -1184,6 +1275,16 @@ module GEOM
      */
     GEOM_Object GetInPlace (in GEOM_Object theShapeWhere,
 			    in GEOM_Object theShapeWhat);
+
+    /*!
+     *  Get sub-shape of theShapeWhere, which are
+     *  coincident with \a theShapeWhat that can either SOLID, FACE, EDGE or VERTEX.
+     *  \param theShapeWhere Shape to find sub-shapes of.
+     *  \param theShapeWhat Shape, specifying what to find.
+     *  \return found sub-shape.
+     */
+    GEOM_Object GetSame (in GEOM_Object theShapeWhere,
+	       	         in GEOM_Object theShapeWhat);
   };
 
   /*!
@@ -1544,13 +1645,21 @@ module GEOM
      *  Perform partition operation.
      *  \param theShapes Shapes to be intersected.
      *  \param theTools Shapes to intersect theShapes.
+     *  \note  Each compound from ListShapes and ListTools will be exploded in order
+     *         to avoid possible intersection between shapes from this compound.
+     *  \param theLimit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
+     *
+     *  After implementation new version of PartitionAlgo (October 2006)
+     *  other parameters are ignored by current functionality. They are kept
+     *  in this function only for supporting old versions.
+     *  Ignored parameters:
      *  \param theKeepInside Shapes, outside which the results will be deleted.
      *         Each shape from theKeepInside must belong to theShapes also.
      *  \param theRemoveInside Shapes, inside which the results will be deleted.
      *         Each shape from theRemoveInside must belong to theShapes also.
-     *  \param theLimit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
      *  \param theRemoveWebs If TRUE, perform Glue 3D algorithm.
      *  \param theMaterials Material indices for each shape. Make sence, only if theRemoveWebs is TRUE.
+     *
      *  \return New GEOM_Object, containing the result shapes.
      */
     GEOM_Object MakePartition (in ListOfGO   theShapes,
@@ -1560,6 +1669,27 @@ module GEOM
 			       in short      theLimit,
 			       in boolean    theRemoveWebs,
 			       in ListOfLong theMaterials);
+
+    /*!
+     *  Perform partition operation.
+     *  This method may be usefull if it is needed to make a partition for
+     *  a compound containing nonintersected shapes. Performance will be better
+     *  since intersection between shapes from compound is not performed.
+     *
+     *  Description of all parameters as in previous method MakePartition()
+     *
+     *  \note Passed compounds (via ListShapes or via ListTools)
+     *        have to consist of nonintersecting shapes.
+     *
+     *  \return New GEOM_Object, containing the result shapes.
+     */
+    GEOM_Object MakePartitionNonSelfIntersectedShape (in ListOfGO   theShapes,
+						      in ListOfGO   theTools,
+						      in ListOfGO   theKeepInside,
+						      in ListOfGO   theRemoveInside,
+						      in short      theLimit,
+						      in boolean    theRemoveWebs,
+						      in ListOfLong theMaterials);
 
     /*!
      *  Perform partition of the Shape with the Plane

@@ -244,6 +244,14 @@ module GEOM
     GEOM_Object RotateCopy (in GEOM_Object theObject,
 			    in GEOM_Object theAxis,
 			    in double      theAngle) ;
+    GEOM_Object RotateThreePoints (in GEOM_Object theObject,
+				   in GEOM_Object theCentPoint,
+				   in GEOM_Object thePoint1,
+				   in GEOM_Object thePoint2);
+    GEOM_Object RotateThreePointsCopy (in GEOM_Object theObject,
+				       in GEOM_Object theCentPoint,
+				       in GEOM_Object thePoint1,
+				       in GEOM_Object thePoint2);
     GEOM_Object MultiRotate1D (in GEOM_Object theObject,
 			       in GEOM_Object theAxis,
 			       in long        theNbTimes) ;
