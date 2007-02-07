@@ -18,12 +18,11 @@ img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
 p.whs3 { font-size:12pt; font-weight:normal; }
 p.whs4 { font-weight:bold; font-size:14pt; }
-p.whs5 { font-size:12pt; font-weight:bold; }
-p.whs6 { font-size:12pt; margin-left:40px; }
-img_whs7 { border:none; width:312px; height:483px; float:none; border-style:none; }
-img_whs8 { border:none; width:448px; height:302px; float:none; border-style:none; }
-img_whs9 { border:none; float:none; width:297px; height:245px; border-style:none; }
-img_whs10 { border:none; float:none; width:273px; height:245px; border-style:none; }
+p.whs5 { font-size:12pt; margin-left:40px; }
+img_whs6 { border:none; width:400px; height:350px; float:none; border-style:none; }
+img_whs7 { border:none; width:400px; height:324px; float:none; border-style:none; }
+img_whs8 { border:none; float:none; width:297px; height:245px; border-style:none; }
+img_whs9 { border:none; float:none; width:273px; height:245px; border-style:none; }
 -->
 </style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
@@ -105,31 +104,32 @@ if (window.writeIntopicBar)
 <p class="whs4"><b><span style="font-weight: bold;"><B>Intersection 
  of two shapes.</B></span></b></p>
 
-<p class="whs5">&nbsp;</p>
+<p class="whs3">&nbsp;</p>
+
+<p class="whs3">As far as the intersection 
+ of two objects can produce any type of geometrical objects, <span style="font-weight: bold;"><B>Reconstruction 
+ Limit</B></span> box allows to choose the preferrable result, i.e. a solid, 
+ a shell, a list of faces, etc.</p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
  </i><span style="font-style: italic;"><I>geompy.MakePartition(ListOfShapes, 
  ListOfTools, ListOfKeepInside, ListOfRemoveInside, Limit, RemoveWebs, 
- ListOfMaterials)</I></span>, where ListOfShapes is a list of shapes to be 
- intersected, ListOfTools is a list of shapes to intersect the shapes from 
- ListOfShapes, ListOfKeepInside is a list of shapes outside which the results 
- will be deleted, ListOfRemoveInside is a list of shapes inside which the 
- results will be deleted, Limit is a type of the result shapes, if RemoveWebs 
- is True the Glue 3D algorithm will be performed on the results, ListOfMaterials 
- is a list of materials indices for each shape, it makes sense only if 
- RemoveWebs is True.</p>
+ ListOfMaterials)</I></span>, where <span style="font-style: italic;"><I>ListOfShapes</I></span> 
+ is a list of shapes to be intersected and &nbsp;<span 
+ style="font-style: italic;"><I>ListOfTools</I></span> 
+ is a list of shapes to intersect the shapes from ListOfShapes. </p>
 
-<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Arguments:</b> 
- </font></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Name + 2 shapes (the first shape 
- will be intersected by the second shape) + reconstruction limit.</font></span></p>
+<p class="whs2">Since the implementation of a new version of 
+ PartitionAlgo other parameters are ignored by the current functionality 
+ and remain there only to support the old scripts. &nbsp;</p>
 
-<p class="whs2">&nbsp;</p>
-
-<p class="whs6"><img src="pics/partition1.png" x-maintain-ratio="TRUE" width="312px" height="483px" border="0" class="img_whs7"></p>
+<p class="whs2"><b>Arguments:</b> Name + 2 lists of shapes 
+ (the shapes from the first list will be intersected with the shapes from 
+ the second list) + reconstruction limit.</p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs6"><img src="pics/neo-materials.png" x-maintain-ratio="TRUE" width="448px" height="302px" border="0" class="img_whs8"></p>
+<p class="whs5"><img src="pics/partition1.png" x-maintain-ratio="TRUE" width="400px" height="350px" border="0" class="img_whs6"></p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -151,19 +151,17 @@ if (window.writeIntopicBar)
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs6"><img src="pics/partition2.png" x-maintain-ratio="TRUE" width="312px" height="483px" border="0" class="img_whs7"></p>
+<p class="whs5"><img src="pics/partition2.png" x-maintain-ratio="TRUE" width="400px" height="324px" border="0" class="img_whs7"></p>
 
-<p class="whs6">&nbsp;</p>
-
-<p class="whs6">&nbsp;</p>
+<p class="whs5">&nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">Example:</b></p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs6"><img src="pics/partitionsn1.png" x-maintain-ratio="TRUE" width="297px" height="245px" border="0" class="img_whs9"> &nbsp;<img src="pics/partitionsn2.png" x-maintain-ratio="TRUE" width="273px" height="245px" border="0" class="img_whs10"></p>
+<p class="whs5"><img src="pics/partitionsn1.png" x-maintain-ratio="TRUE" width="297px" height="245px" border="0" class="img_whs8"> &nbsp;<img src="pics/partitionsn2.png" x-maintain-ratio="TRUE" width="273px" height="245px" border="0" class="img_whs9"></p>
 
-<p class="whs6">&nbsp;</p>
+<p class="whs5">&nbsp;</p>
 
 <p class="whs2">Our TUI Scripts provide you with useful examples 
  of the use of <a href="basic_operations.htm#bookmark">Basic Operations</a>. 

@@ -36,6 +36,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#792541ac8429b9ba33ed099d822f7020">MakeVertexOnCurve</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a point, corresponding to the given parameter on the given curve.  <a href="#792541ac8429b9ba33ed099d822f7020"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#0b1d6768182d2d8302c359f2ec853952">MakeTangentOnCurve</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a tangent, corresponding to the given parameter on the given curve.  <a href="#0b1d6768182d2d8302c359f2ec853952"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#e7edc072e7e7b74feee2983e40b3f727">MakeVectorDXDYDZ</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a vector with the given components.  <a href="#e7edc072e7e7b74feee2983e40b3f727"></a><br></td></tr>
@@ -138,6 +141,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#4c093c166272f508454e8eb03133e020">MakeRevolution</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a shape by revolution of the base shape around the axis on the given angle, i.e.  <a href="#4c093c166272f508454e8eb03133e020"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#45564231762e3f8b99b58cd149b48a62">MakeThruSections</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.  <a href="#45564231762e3f8b99b58cd149b48a62"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#c4d4d9f9b338502dadd6342d3adb941d">MakePipeWithDifferentSections</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a shape by extrusion of the profile shape along the path shape.  <a href="#c4d4d9f9b338502dadd6342d3adb941d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#328df6d3aa2acd5dd367fd1ff0f02b90">MakeEdge</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a linear edge with specified ends.  <a href="#328df6d3aa2acd5dd367fd1ff0f02b90"></a><br></td></tr>
@@ -186,6 +195,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#1ec8a4c4f37f881676de67fbb185a1a7">GetShapesOnPlaneIDs</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Works like the above method, but returns list of sub-shapes indices.  <a href="#1ec8a4c4f37f881676de67fbb185a1a7"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#43c25e4a08b30b59dcd18696effb3394">GetShapesOnPlaneWithLocation</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Find in <em>theShape</em> all sub-shapes of type <em>theShapeType</em>, situated relatively the specified plane by the certain way, defined through <em>theState</em> parameter.  <a href="#43c25e4a08b30b59dcd18696effb3394"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#7e017a6cd1e9103c7d6f4d3897e36ae5">GetShapesOnPlaneWithLocationIDs</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Works like the above method, but returns list of sub-shapes indices.  <a href="#7e017a6cd1e9103c7d6f4d3897e36ae5"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#e472f5764a1014dc9c60778cb02ce970">GetShapesOnCylinder</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Find in <em>theShape</em> all sub-shapes of type <em>theShapeType</em>, situated relatively the specified cylinder by the certain way, defined through <em>theState</em> parameter.  <a href="#e472f5764a1014dc9c60778cb02ce970"></a><br></td></tr>
@@ -204,9 +219,18 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#db16045827aa23070ef98eca038ecd2c">GetShapesOnQuadrangleIDs</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Works like the above method, but returns list of sub-shapes indices.  <a href="#db16045827aa23070ef98eca038ecd2c"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#94c97c957d04ebd433cb5b3d94e8c8ac">GetShapesOnBox</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Find in <em>theShape</em> all sub-shapes of type <em>theShapeType</em>, situated relatively the specified <em>theBox</em> by the certain way, defined through <em>theState</em> parameter.  <a href="#94c97c957d04ebd433cb5b3d94e8c8ac"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#c7b1da4e965bf551fc87b72ebd6afde7">GetShapesOnBoxIDs</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Works like the above method, but returns list of sub-shapes indices.  <a href="#c7b1da4e965bf551fc87b72ebd6afde7"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#2695635fc745e6aa6cda4545e2133c41">GetInPlace</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get sub-shape(s) of theShapeWhere, which are coincident with <em>theShapeWhat</em> or could be a part of it.  <a href="#2695635fc745e6aa6cda4545e2133c41"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#808c0723c1cc2c641a02aeaa0d0b45c6">GetSame</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get sub-shape of theShapeWhere, which is equal to <em>theShapeWhat</em>.  <a href="#808c0723c1cc2c641a02aeaa0d0b45c6"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#67706610dda0d5005ee1cdfe2e8362a2">GetSubShape</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Obtain a composite sub-shape of &lt;aShape&gt;, composed from sub-shapes of &lt;aShape&gt;, selected by their unique IDs inside &lt;aShape&gt;.  <a href="#67706610dda0d5005ee1cdfe2e8362a2"></a><br></td></tr>
@@ -255,6 +279,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#3d0753cc00225c3c2432f64d2439de2c">DivideEdge</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Addition of a point to a given edge object.  <a href="#3d0753cc00225c3c2432f64d2439de2c"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#9c5759e7397aafa57af929453a3db08e">ChangeOrientationShell</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Change orientation of the given object.  <a href="#9c5759e7397aafa57af929453a3db08e"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#e82647674a4c63cda4dc8527712818e2">ChangeOrientationShellCopy</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Change orientation of the given object.  <a href="#e82647674a4c63cda4dc8527712818e2"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#65e1cf2711f524b98cd4596e53dda798">GetFreeBoundary</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get a list of wires (wrapped in GEOM_Object-s), that constitute a free boundary of the given shape.  <a href="#65e1cf2711f524b98cd4596e53dda798"></a><br></td></tr>
@@ -285,6 +315,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#56f48212a436f46c02722f627d27e7f2">MakePartition</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Perform partition operation.  <a href="#56f48212a436f46c02722f627d27e7f2"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#85a4e715d0d0e4c8c9960372bfeb5327">MakePartitionNonSelfIntersectedShape</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Perform partition operation.  <a href="#85a4e715d0d0e4c8c9960372bfeb5327"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#f1fc43bc5612514bcc2f6d772c3d38db">Partition</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Shortcut to <a class="el" href="namespacegeompy.html#56f48212a436f46c02722f627d27e7f2">MakePartition()</a>.  <a href="#f1fc43bc5612514bcc2f6d772c3d38db"></a><br></td></tr>
@@ -303,6 +336,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#3363966f33171e6415e1a1b5d4a8e9fa">MakeRotation</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Rotate the given object around the given axis on the given angle, creating its copy before the rotatation.  <a href="#3363966f33171e6415e1a1b5d4a8e9fa"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#6bcb1680b597f1491d371fa2a9242342">MakeRotationThreePoints</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Rotate given object around vector perpendicular to plane containing three points, creating its copy before the rotatation.  <a href="#6bcb1680b597f1491d371fa2a9242342"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#7ad2fdeeef570ba29c86ba28d3da09f7">MakeScaleTransform</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Scale the given object by the factor, creating its copy before the scaling.  <a href="#7ad2fdeeef570ba29c86ba28d3da09f7"></a><br></td></tr>
@@ -317,7 +353,7 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create an object, symmetrical to the given one relatively the given point.  <a href="#56e053740bed5b65670cf9cc10df4d8d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#c100ca3b5ccdbd133df55b331cf33c42">MakePosition</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Modify the Location of the given object by LCS creating its copy before the setting.  <a href="#c100ca3b5ccdbd133df55b331cf33c42"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Modify the Location of the given object by LCS, creating its copy before the setting.  <a href="#c100ca3b5ccdbd133df55b331cf33c42"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#1c9ca22c504f4190f49f3e222fadeff0">MakeOffset</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create new object as offset of the given one.  <a href="#1c9ca22c504f4190f49f3e222fadeff0"></a><br></td></tr>
@@ -387,6 +423,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#35d111502e0280fee475e86270792565">CheckShape</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check a topology of the given shape.  <a href="#35d111502e0280fee475e86270792565"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#1f93405313fd378a4383ea9833dab3de">GetPosition</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get position (LCS) of theShape.  <a href="#1f93405313fd378a4383ea9833dab3de"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#a0571beb5ffbacb42ce92195309820d0">Import</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Import a shape from the BREP or IGES or STEP file (depends on given format) with given name.  <a href="#a0571beb5ffbacb42ce92195309820d0"></a><br></td></tr>
@@ -512,8 +551,10 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a main shape associated with the group.  <a href="#4c9609d803e34c25427e59e4ab2ddb42"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#c6b2d69f3d03206b73ce0c0bbfb56eae">GetEdgesByLength</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create group of edges of theShape, whose length is in range [min_length, max_length].  <a href="#c6b2d69f3d03206b73ce0c0bbfb56eae"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#ae1cbdb4fcaa8ac1a7c826580b99fc5f">SelectEdges</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create group of edges of selected shape, whose length is in range [min_length, max_length].  <a href="#ae1cbdb4fcaa8ac1a7c826580b99fc5f"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#9c05eb3e0ffbdd757e288d3204422dc5">addPath</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add Path to load python scripts from.  <a href="#9c05eb3e0ffbdd757e288d3204422dc5"></a><br></td></tr>
@@ -890,6 +931,50 @@ Example: see GEOM_TestAll.py     </td>
 Example: see GEOM_TestAll.py     </td>
   </tr>
 </table>
+<a class="anchor" name="0b1d6768182d2d8302c359f2ec853952"></a><!-- doxytag: member="geompy::MakeTangentOnCurve" ref="0b1d6768182d2d8302c359f2ec853952" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::MakeTangentOnCurve           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theRefCurve</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theParameter</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theRefCurve</em>&nbsp;</td><td>The referenced curve. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theParameter</em>&nbsp;</td><td>Value of parameter on the referenced curve. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing the created tangent. </dd></dl>
+    </td>
+  </tr>
+</table>
 <a class="anchor" name="e7edc072e7e7b74feee2983e40b3f727"></a><!-- doxytag: member="geompy::MakeVectorDXDYDZ" ref="e7edc072e7e7b74feee2983e40b3f727" args="" --><p>
 <table class="mdTable" cellpadding="2" cellspacing="0">
   <tr>
@@ -1218,7 +1303,7 @@ Example: see GEOM_TestAll.py     </td>
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>theFace</em>&nbsp;</td><td>Referenced plane. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theFace</em>&nbsp;</td><td>Referenced plane or LCS(Marker). </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>theTrimSize</em>&nbsp;</td><td>New half size of a side of quadrangle face, representing the plane. </td></tr>
   </table>
 </dl>
@@ -1776,7 +1861,7 @@ Example: see GEOM_TestAll.py     </td>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>theCommand</em>&nbsp;</td><td>String, defining the sketcher in local coordinates of the working plane. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>theWorkingPlane</em>&nbsp;</td><td>Planar Face of the working plane. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theWorkingPlane</em>&nbsp;</td><td>Planar Face or LCS(Marker) of the working plane. </td></tr>
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing the created wire. </dd></dl>
@@ -2602,6 +2687,129 @@ all the space, transfixed by the base shape during its rotation around the axis 
 Example: see GEOM_TestAll.py     </td>
   </tr>
 </table>
+<a class="anchor" name="45564231762e3f8b99b58cd149b48a62"></a><!-- doxytag: member="geompy::MakeThruSections" ref="45564231762e3f8b99b58cd149b48a62" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::MakeThruSections           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theSeqSections</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theModeSolid</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>thePreci</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theRuled</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theSeqSections</em>&nbsp;</td><td>- set of specified sections. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theModeSolid</em>&nbsp;</td><td>- mode defining building solid or shell </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>thePreci</em>&nbsp;</td><td>- precision 3D used for smoothing by default 1.e-6 </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theRuled</em>&nbsp;</td><td>- mode defining type of the result surfaces (ruled or smoothed). </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing the created shell or solid.</dd></dl>
+Example: see GEOM_TestAll.py     </td>
+  </tr>
+</table>
+<a class="anchor" name="c4d4d9f9b338502dadd6342d3adb941d"></a><!-- doxytag: member="geompy::MakePipeWithDifferentSections" ref="c4d4d9f9b338502dadd6342d3adb941d" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::MakePipeWithDifferentSections           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theSeqBases</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theLocations</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>thePath</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theWithContact</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theWithCorrection</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+The path shape can be a wire or an edge. the several profiles can be specified in the several locations of path. <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theSeqBases</em>&nbsp;</td><td>- list of Bases shape to be extruded. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theLocations</em>&nbsp;</td><td>- list of locations on the path corresponding specified list of the Bases shapes. Number of locations should be equal to number of bases or list of locations can be empty. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>thePath</em>&nbsp;</td><td>- Path shape to extrude the base shape along it. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theWithContact</em>&nbsp;</td><td>- the mode defining that the section is translated to be in contact with the spine. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>-</em>&nbsp;</td><td>WithCorrection - defining that the section is rotated to be orthogonal to the spine tangent in the correspondent point </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing the created pipe.</dd></dl>
+Example: see GEOM_TestAll.py     </td>
+  </tr>
+</table>
 <a class="anchor" name="328df6d3aa2acd5dd367fd1ff0f02b90"></a><!-- doxytag: member="geompy::MakeEdge" ref="328df6d3aa2acd5dd367fd1ff0f02b90" args="" --><p>
 <table class="mdTable" cellpadding="2" cellspacing="0">
   <tr>
@@ -2716,7 +2924,7 @@ Example: see GEOM_TestAll.py     </td>
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>theWire</em>&nbsp;</td><td>Wire to build the face on. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theWire</em>&nbsp;</td><td>closed Wire or Edge to build the face on. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>isPlanarWanted</em>&nbsp;</td><td>If TRUE, only planar face will be built. If impossible, NULL object will be returned. </td></tr>
   </table>
 </dl>
@@ -2760,7 +2968,7 @@ Example: see GEOM_TestAll.py     </td>
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>theWires</em>&nbsp;</td><td>List of wires to build the face on. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theWires</em>&nbsp;</td><td>List of closed wires or edges to build the face on. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>isPlanarWanted</em>&nbsp;</td><td>If TRUE, only planar face will be built. If impossible, NULL object will be returned. </td></tr>
   </table>
 </dl>
@@ -3229,6 +3437,126 @@ Example: see GEOM_TestOthers.py     </td>
 Example: see GEOM_TestOthers.py     </td>
   </tr>
 </table>
+<a class="anchor" name="43c25e4a08b30b59dcd18696effb3394"></a><!-- doxytag: member="geompy::GetShapesOnPlaneWithLocation" ref="43c25e4a08b30b59dcd18696effb3394" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::GetShapesOnPlaneWithLocation           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShape</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShapeType</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theAx1</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>thePnt</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theState</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theShape</em>&nbsp;</td><td>Shape to find sub-shapes of. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theShapeType</em>&nbsp;</td><td>Type of sub-shapes to be retrieved. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theAx1</em>&nbsp;</td><td>Vector (or line, or linear edge), specifying normal direction of the plane to find shapes on. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>thePnt</em>&nbsp;</td><td>Point specifying location of the plane to find shapes on. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theState</em>&nbsp;</td><td>The state of the subshapes to find. It can be one of ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>List of all found sub-shapes.</dd></dl>
+Example: see GEOM_TestOthers.py     </td>
+  </tr>
+</table>
+<a class="anchor" name="7e017a6cd1e9103c7d6f4d3897e36ae5"></a><!-- doxytag: member="geompy::GetShapesOnPlaneWithLocationIDs" ref="7e017a6cd1e9103c7d6f4d3897e36ae5" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::GetShapesOnPlaneWithLocationIDs           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShape</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShapeType</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theAx1</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>thePnt</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theState</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Example: see GEOM_TestOthers.py     </td>
+  </tr>
+</table>
 <a class="anchor" name="e472f5764a1014dc9c60778cb02ce970"></a><!-- doxytag: member="geompy::GetShapesOnCylinder" ref="e472f5764a1014dc9c60778cb02ce970" args="" --><p>
 <table class="mdTable" cellpadding="2" cellspacing="0">
   <tr>
@@ -3537,8 +3865,10 @@ Example: see GEOM_TestOthers.py     </td>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>theShape</em>&nbsp;</td><td>Shape to find sub-shapes of. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>theShapeType</em>&nbsp;</td><td>Type of sub-shapes to be retrieved. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>theCenter</em>&nbsp;</td><td>Point, specifying center of the sphere to find shapes on. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>theRadius</em>&nbsp;</td><td>Radius of the sphere to find shapes on. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theTopLeftPoint</em>&nbsp;</td><td>Point, specifying top left corner of a quadrangle </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theTopRigthPoint</em>&nbsp;</td><td>Point, specifying top right corner of a quadrangle </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theBottomLeftPoint</em>&nbsp;</td><td>Point, specifying bottom left corner of a quadrangle </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theBottomRigthPoint</em>&nbsp;</td><td>Point, specifying bottom right corner of a quadrangle </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>theState</em>&nbsp;</td><td>The state of the subshapes to find. It can be one of ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN. </td></tr>
   </table>
 </dl>
@@ -3613,6 +3943,113 @@ Example: see GEOM_TestOthers.py     </td>
 Example: see GEOM_TestOthers.py     </td>
   </tr>
 </table>
+<a class="anchor" name="94c97c957d04ebd433cb5b3d94e8c8ac"></a><!-- doxytag: member="geompy::GetShapesOnBox" ref="94c97c957d04ebd433cb5b3d94e8c8ac" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::GetShapesOnBox           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theBox</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShape</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShapeType</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theState</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theBox</em>&nbsp;</td><td>Shape for relative comparing. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theShape</em>&nbsp;</td><td>Shape to find sub-shapes of. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theShapeType</em>&nbsp;</td><td>Type of sub-shapes to be retrieved. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theState</em>&nbsp;</td><td>The state of the subshapes to find. It can be one of ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>List of all found sub-shapes. </dd></dl>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="c7b1da4e965bf551fc87b72ebd6afde7"></a><!-- doxytag: member="geompy::GetShapesOnBoxIDs" ref="c7b1da4e965bf551fc87b72ebd6afde7" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::GetShapesOnBoxIDs           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theBox</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShape</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShapeType</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theState</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+    </td>
+  </tr>
+</table>
 <a class="anchor" name="2695635fc745e6aa6cda4545e2133c41"></a><!-- doxytag: member="geompy::GetInPlace" ref="2695635fc745e6aa6cda4545e2133c41" args="" --><p>
 <table class="mdTable" cellpadding="2" cellspacing="0">
   <tr>
@@ -3655,6 +4092,50 @@ Example: see GEOM_TestOthers.py     </td>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>Group of all found sub-shapes or a single found sub-shape.</dd></dl>
 Example: see GEOM_TestOthers.py     </td>
+  </tr>
+</table>
+<a class="anchor" name="808c0723c1cc2c641a02aeaa0d0b45c6"></a><!-- doxytag: member="geompy::GetSame" ref="808c0723c1cc2c641a02aeaa0d0b45c6" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::GetSame           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShapeWhere</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShapeWhat</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theShapeWhere</em>&nbsp;</td><td>Shape to find sub-shape of. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theShapeWhat</em>&nbsp;</td><td>Shape, specifying what to find. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>New <a class="el" href="classGEOM__Object.html">GEOM_Object</a> for found sub-shape. </dd></dl>
+    </td>
   </tr>
 </table>
 <a class="anchor" name="67706610dda0d5005ee1cdfe2e8362a2"></a><!-- doxytag: member="geompy::GetSubShape" ref="67706610dda0d5005ee1cdfe2e8362a2" args="" --><p>
@@ -4375,6 +4856,73 @@ Example: see GEOM_TestHealing.py     </td>
 Example: see GEOM_TestHealing.py     </td>
   </tr>
 </table>
+<a class="anchor" name="9c5759e7397aafa57af929453a3db08e"></a><!-- doxytag: member="geompy::ChangeOrientationShell" ref="9c5759e7397aafa57af929453a3db08e" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::ChangeOrientationShell           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>theObject</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theObject</em>&nbsp;</td><td>Shape to be processed.  given shape </td></tr>
+  </table>
+</dl>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="e82647674a4c63cda4dc8527712818e2"></a><!-- doxytag: member="geompy::ChangeOrientationShellCopy" ref="e82647674a4c63cda4dc8527712818e2" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::ChangeOrientationShellCopy           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>theObject</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theObject</em>&nbsp;</td><td>Shape to be processed. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing processed shape. </dd></dl>
+    </td>
+  </tr>
+</table>
 <a class="anchor" name="65e1cf2711f524b98cd4596e53dda798"></a><!-- doxytag: member="geompy::GetFreeBoundary" ref="65e1cf2711f524b98cd4596e53dda798" args="" --><p>
 <table class="mdTable" cellpadding="2" cellspacing="0">
   <tr>
@@ -4819,16 +5367,91 @@ Example: see GEOM_TestOthers.py     </td>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>ListShapes</em>&nbsp;</td><td>Shapes to be intersected. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>ListTools</em>&nbsp;</td><td>Shapes to intersect theShapes. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>ListTools</em>&nbsp;</td><td>Shapes to intersect theShapes. !!!NOTE: Each compound from ListShapes and ListTools will be exploded in order to avoid possible intersection between shapes from this compound.</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>Limit</em>&nbsp;</td><td>Type of resulting shapes (corresponding to TopAbs_ShapeEnum). </td></tr>
+  </table>
+</dl>
+After implementation new version of PartitionAlgo (October 2006) other parameters are ignored by current functionality. They are kept in this function only for support old versions. Ignored parameters: <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>ListKeepInside</em>&nbsp;</td><td>Shapes, outside which the results will be deleted. Each shape from theKeepInside must belong to theShapes also. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>ListRemoveInside</em>&nbsp;</td><td>Shapes, inside which the results will be deleted. Each shape from theRemoveInside must belong to theShapes also. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>Limit</em>&nbsp;</td><td>Type of resulting shapes (corresponding to TopAbs_ShapeEnum). </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>RemoveWebs</em>&nbsp;</td><td>If TRUE, perform Glue 3D algorithm. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>ListMaterials</em>&nbsp;</td><td>Material indices for each shape. Make sence, only if theRemoveWebs is TRUE. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>ListMaterials</em>&nbsp;</td><td>Material indices for each shape. Make sence, only if theRemoveWebs is TRUE.</td></tr>
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing the result shapes.</dd></dl>
 Example: see GEOM_TestAll.py     </td>
+  </tr>
+</table>
+<a class="anchor" name="85a4e715d0d0e4c8c9960372bfeb5327"></a><!-- doxytag: member="geompy::MakePartitionNonSelfIntersectedShape" ref="85a4e715d0d0e4c8c9960372bfeb5327" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::MakePartitionNonSelfIntersectedShape           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>ListShapes</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>ListTools</em> = <code>[]</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>ListKeepInside</em> = <code>[]</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>ListRemoveInside</em> = <code>[]</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>Limit</em> = <code><a class="el" href="namespacegeompy.html#269cf26d7d10b8f6b4a20789ed8233a0">ShapeType</a>[&quot;SHAPE&quot;]</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>RemoveWebs</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>ListMaterials</em> = <code>[]</code></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+This method may be useful if it is needed to make a partition for compound contains nonintersected shapes. Performance will be better since intersection between shapes from compound is not performed.<p>
+Description of all parameters as in previous method <a class="el" href="namespacegeompy.html#56f48212a436f46c02722f627d27e7f2">MakePartition()</a><p>
+!!!NOTE: Passed compounds (via ListShapes or via ListTools) have to consist of nonintersecting shapes.<p>
+<dl compact><dt><b>Returns:</b></dt><dd>New <a class="el" href="classGEOM__Object.html">GEOM_Object</a>, containing the result shapes. </dd></dl>
+    </td>
   </tr>
 </table>
 <a class="anchor" name="f1fc43bc5612514bcc2f6d772c3d38db"></a><!-- doxytag: member="geompy::Partition" ref="f1fc43bc5612514bcc2f6d772c3d38db" args="" --><p>
@@ -5144,6 +5767,63 @@ Example: see GEOM_TestAll.py     </td>
 Example: see GEOM_TestAll.py     </td>
   </tr>
 </table>
+<a class="anchor" name="6bcb1680b597f1491d371fa2a9242342"></a><!-- doxytag: member="geompy::MakeRotationThreePoints" ref="6bcb1680b597f1491d371fa2a9242342" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::MakeRotationThreePoints           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theObject</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theCentPoint</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>thePoint1</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>thePoint2</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theObject</em>&nbsp;</td><td>The object to be rotated. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theCentPoint</em>&nbsp;</td><td>central point - the axis is the vector perpendicular to the plane containing the three points. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>thePoint1</em>&nbsp;</td><td>and thePoint2 - in a perpendicular plan of the axis. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing the rotated object.</dd></dl>
+Example: see GEOM_TestAll.py     </td>
+  </tr>
+</table>
 <a class="anchor" name="7ad2fdeeef570ba29c86ba28d3da09f7"></a><!-- doxytag: member="geompy::MakeScaleTransform" ref="7ad2fdeeef570ba29c86ba28d3da09f7" args="" --><p>
 <table class="mdTable" cellpadding="2" cellspacing="0">
   <tr>
@@ -5367,6 +6047,14 @@ Example: see GEOM_TestAll.py     </td>
     <td>
 
 <p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theObject</em>&nbsp;</td><td>The object to be displaced. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theStartLCS</em>&nbsp;</td><td>Coordinate system to perform displacement from it. If <em>theStartLCS</em> is NULL, displacement will be performed from global CS. If <em>theObject</em> itself is used as <em>theStartLCS</em>, its location will be changed to <em>theEndLCS</em>. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theEndLCS</em>&nbsp;</td><td>Coordinate system to perform displacement to it. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing the displaced shape.</dd></dl>
 Example: see GEOM_TestAll.py     </td>
   </tr>
 </table>
@@ -6459,9 +7147,18 @@ Example: see GEOM_TestMeasures.py     </td>
           <td class="md" nowrap valign="top">def geompy::CheckShape           </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">&nbsp;</td>
-          <td class="mdname1" valign="top" nowrap> <em>theShape</em>          </td>
-          <td class="md" valign="top">&nbsp;)&nbsp;</td>
-          <td class="md" nowrap></td>
+          <td class="mdname" nowrap> <em>theShape</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theIsCheckGeom</em> = <code>0</code></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
         </tr>
       </table>
     </td>
@@ -6478,9 +7175,45 @@ Example: see GEOM_TestMeasures.py     </td>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>theShape</em>&nbsp;</td><td>Shape to check validity of. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theIsCheckGeom</em>&nbsp;</td><td>If FALSE, only the shape's topology will be checked, if TRUE, the shape's geometry will be checked also. </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd>TRUE, if the shape "seems to be valid" from the topological point of view. If theShape is invalid, prints a description of problem.</dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>TRUE, if the shape "seems to be valid". If theShape is invalid, prints a description of problem.</dd></dl>
+Example: see GEOM_TestMeasures.py     </td>
+  </tr>
+</table>
+<a class="anchor" name="1f93405313fd378a4383ea9833dab3de"></a><!-- doxytag: member="geompy::GetPosition" ref="1f93405313fd378a4383ea9833dab3de" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy::GetPosition           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>theShape</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Origin of the LCS is situated at the shape's center of mass. Axes of the LCS are obtained from shape's location or, if the shape is a planar face, from position of its plane.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theShape</em>&nbsp;</td><td>Shape to calculate position of. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>[Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz]. Ox,Oy,Oz: Coordinates of shape's LCS origin. Zx,Zy,Zz: Coordinates of shape's LCS normal(main) direction. Xx,Xy,Xz: Coordinates of shape's LCS X direction.</dd></dl>
 Example: see GEOM_TestMeasures.py     </td>
   </tr>
 </table>
@@ -7498,7 +8231,7 @@ Example: see GEOM_Spanner.py </li></ul>
     <td>
 
 <p>
-Unite faces and edges, sharing one surface. <dl compact><dt><b>Parameters:</b></dt><dd>
+Unite faces and edges, sharing one surface. It means that this faces must have references to one C++ surface object (handle). <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>theShape</em>&nbsp;</td><td>The compound or single solid to remove irregular edges from. </td></tr>
   </table>

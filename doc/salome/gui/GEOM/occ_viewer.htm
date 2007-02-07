@@ -14,7 +14,7 @@ if (navigator.appName !="Netscape")
 </script>
 <style type="text/css">
 <!--
-img_whs1 { border:none; width:291px; height:29px; float:none; border-style:none; }
+img_whs1 { border:none; width:313px; height:26px; float:none; }
 ul.whs2 { list-style:disc; }
 img_whs3 { border:none; width:26px; height:25px; float:none; border-style:none; }
 img_whs4 { border:none; width:27px; height:25px; float:none; border-style:none; }
@@ -22,17 +22,32 @@ img_whs5 { border:none; width:24px; height:23px; float:none; border-style:none; 
 img_whs6 { border:none; width:24px; height:24px; float:none; border-style:none; }
 img_whs7 { border:none; width:25px; height:24px; float:none; border-style:none; }
 img_whs8 { border:none; width:23px; height:23px; float:none; border-style:none; }
-img_whs9 { border:none; width:26px; height:26px; float:none; border-style:none; }
-img_whs10 { border:none; width:78px; height:147px; float:none; border-style:none; }
-img_whs11 { border:none; height:26px; float:none; width:29px; border-style:none; }
-img_whs12 { border:none; width:26px; height:24px; float:none; border-style:none; }
-img_whs13 { border:none; width:28px; height:29px; float:none; border-style:none; }
-img_whs14 { border:none; width:29px; height:26px; float:none; border-style:none; }
-p.whs15 { margin-left:40px; }
-img_whs16 { border:none; width:395px; height:280px; float:none; border-style:none; }
-p.whs17 { margin-left:84px; }
+p.whs9 { margin-top:0pt; margin-bottom:0pt; }
+img_whs10 { border:none; border-style:none; width:20px; height:20px; float:none; }
+p.whs11 { margin-left:80px; }
+img_whs12 { border:none; border-style:none; width:410px; height:255px; float:none; }
+img_whs13 { border:none; width:26px; height:26px; float:none; border-style:none; }
+img_whs14 { border:none; width:78px; height:147px; float:none; border-style:none; }
+img_whs15 { border:none; height:26px; float:none; width:29px; border-style:none; }
+img_whs16 { border:none; width:26px; height:24px; float:none; border-style:none; }
+img_whs17 { border:none; width:28px; height:29px; float:none; border-style:none; }
+img_whs18 { border:none; width:29px; height:26px; float:none; border-style:none; }
+img_whs19 { border:none; width:395px; height:280px; float:none; border-style:none; }
+p.whs20 { margin-left:40px; }
+p.whs21 { margin-left:84px; }
 -->
-</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+</style><script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs9 {margin-top:1pt;margin-bottom:1pt; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
 function reDo() {
   if (innerWidth != origWidth || innerHeight != origHeight)
@@ -108,7 +123,7 @@ if (window.writeIntopicBar)
 
 <p>&nbsp;</p>
 
-<p><img src="pics/image95.gif" x-maintain-ratio="TRUE" width="291px" height="29px" border="0" class="img_whs1"></p>
+<p><img src="pics/image95.gif" x-maintain-ratio="TRUE" width="313px" height="26px" border="0" class="img_whs1"></p>
 
 <p>&nbsp;</p>
 
@@ -143,54 +158,91 @@ if (window.writeIntopicBar)
 	<li class=kadov-p><p><img src="pics/image100.gif" x-maintain-ratio="TRUE" width="24px" height="24px" border="0" class="img_whs6"> <span style="font-weight: bold;"><B>Global 
  panning</B></span> - represents all displayed objects in the visible area. 
  </p></li>
+</ul>
+
+<ul type="disc" class="whs2">
 	
-	<li class=kadov-p><p><img src="pics/image89.gif" x-maintain-ratio="TRUE" width="26px" height="26px" border="0" class="img_whs9"> <span style="font-weight: bold;"><B>Rotation</B></span> 
+	<li class=kadov-p><p class="whs9"><img src="pics/view_rotation_point.png" x-maintain-ratio="TRUE" width="20px" height="20px" border="0" class="img_whs10"> <span style="font-weight: bold;"><B>Change rotation point</B></span> 
+ - allows to to choose the point around which the rotation is performed</p></li>
+</ul>
+
+<p class="whs11"><img src="pics/set_rotation_point_dialog1.png" x-maintain-ratio="TRUE" width="410px" height="255px" border="0" class="img_whs12"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11">By default the rotation point is located 
+ in the Center of the bounding box of an object. </p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><img src="pics/set_rotation_point_dialog2.png" x-maintain-ratio="TRUE" width="410px" height="255px" border="0" class="img_whs12"></p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11">Unchecking <span style="font-weight: bold;"><B>Use 
+ Bounding Box Center</B></span> box allows you to define the coordinates of 
+ the rotation point manually. </p>
+
+<p class="whs11">&nbsp;</p>
+
+<p class="whs11"><span style="font-weight: bold;"><B>Set to Origin</B></span> 
+ button restores the default rotation point coordinates.</p>
+
+<p class="whs11"><span style="font-weight: bold;"><B>Select Point 
+ from View</B></span> button allows to select the rotation point in the 3D 
+ Viewer</p>
+
+<p>&nbsp;</p>
+
+<ul type="disc" class="whs2">
+	
+	<li class=kadov-p><p><img src="pics/image89.gif" x-maintain-ratio="TRUE" width="26px" height="26px" border="0" class="img_whs13"> <span style="font-weight: bold;"><B>Rotation</B></span> 
  - allows to rotate the selected object using the mouse. </p></li>
 	
-	<li class=kadov-p><p><img src="pics/image102.gif" x-maintain-ratio="TRUE" width="78px" height="147px" border="0" class="img_whs10"> These buttons orientate the scene 
+	<li class=kadov-p><p><img src="pics/image102.gif" x-maintain-ratio="TRUE" width="78px" height="147px" border="0" class="img_whs14"> These buttons orientate the scene 
  strictly about coordinate axes.</p></li>
 	
-	<li class=kadov-p><p><img src="pics/image91.gif" x-maintain-ratio="TRUE" height="26px" width="29px" border="0" class="img_whs11"> <span style="font-weight: bold;"><B>Reset</B></span> 
+	<li class=kadov-p><p><img src="pics/image91.gif" x-maintain-ratio="TRUE" height="26px" width="29px" border="0" class="img_whs15"> <span style="font-weight: bold;"><B>Reset</B></span> 
  - restores the default position (isometric) of objects in the scene.</p></li>
 	
-	<li class=kadov-p><p><img src="pics/image103.gif" x-maintain-ratio="TRUE" width="26px" height="24px" border="0" class="img_whs12"> <span style="font-weight: bold;"><B>Memorise 
+	<li class=kadov-p><p><img src="pics/image103.gif" x-maintain-ratio="TRUE" width="26px" height="24px" border="0" class="img_whs16"> <span style="font-weight: bold;"><B>Memorise 
  view</B></span> - saves the current position of objects in the scene</p></li>
 	
 	<li class=kadov-p><p><img src="pics/image105.gif" x-maintain-ratio="TRUE" width="26px" height="25px" border="0" class="img_whs3"> <span style="font-weight: bold;"><B>Restore 
  view - </B></span>restores the<span style="font-weight: bold;"> <B></B></span>saved 
  position of objects in the scene</p></li>
 	
-	<li class=kadov-p><p><img src="pics/image86.gif" x-maintain-ratio="TRUE" width="28px" height="29px" border="0" class="img_whs13"> <span style="font-weight: bold;"><B>Clone 
+	<li class=kadov-p><p><img src="pics/image86.gif" x-maintain-ratio="TRUE" width="28px" height="29px" border="0" class="img_whs17"> <span style="font-weight: bold;"><B>Clone 
  view</B></span> - opens a new duplicate scene.</p></li>
 	
-	<li class=kadov-p><p><img src="pics/image106.gif" x-maintain-ratio="TRUE" width="29px" height="26px" border="0" class="img_whs14"> <span style="font-weight: bold;"><B>Clipping 
+	<li class=kadov-p><p><img src="pics/image106.gif" x-maintain-ratio="TRUE" width="29px" height="26px" border="0" class="img_whs18"> <span style="font-weight: bold;"><B>Clipping 
  -</B></span> allows to create cross-section views (clipping planes) of geometrical 
  objects.</p></li>
 </ul>
 
 <p>&nbsp;</p>
 
-<p class="whs15"><img src="pics/clipping.png" x-maintain-ratio="TRUE" width="395px" height="280px" border="0" class="img_whs16"></p>
+<p class="whs11"><img src="pics/clipping.png" x-maintain-ratio="TRUE" width="395px" height="280px" border="0" class="img_whs19"></p>
 
-<p class="whs15">&nbsp;</p>
+<p class="whs20">&nbsp;</p>
 
 <ul type="disc" class="whs2">
 	
-	<li class=kadov-p><p class="whs15"><span style="font-weight: bold;"><B>Base 
+	<li class=kadov-p><p class="whs20"><span style="font-weight: bold;"><B>Base 
  point</B></span> - allows to define the coordinates of the base point for 
  the clipping plane. Click </p></li>
 	
-	<li class=kadov-p><p class="whs17"><span style="font-weight: bold;"><B>Reset</B></span> 
+	<li class=kadov-p><p class="whs21"><span style="font-weight: bold;"><B>Reset</B></span> 
  - returns the base point to coordinate origin. </p></li>
 	
-	<li class=kadov-p><p class="whs15"><span style="font-weight: bold;"><B>Direction</B></span> 
+	<li class=kadov-p><p class="whs20"><span style="font-weight: bold;"><B>Direction</B></span> 
  - allows to define the orientation of the clipping plane.</p></li>
 	
-	<li class=kadov-p><p class="whs17"><span style="font-weight: bold;"><B>Invert</B></span> 
+	<li class=kadov-p><p class="whs21"><span style="font-weight: bold;"><B>Invert</B></span> 
  - allows to select which part of the object will be removed and which 
  will remain after clipping. </p></li>
 	
-	<li class=kadov-p><p class="whs15"><span style="font-weight: bold;"><B>Preview</B></span> 
+	<li class=kadov-p><p class="whs20"><span style="font-weight: bold;"><B>Preview</B></span> 
  - allows to see the results of clipping in the viewer.</p></li>
 </ul>
 
