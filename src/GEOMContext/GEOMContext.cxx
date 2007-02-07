@@ -25,9 +25,10 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "GEOMContext.h"
 #include "QAD_Tools.h"
+
+using namespace std;
 
 /* The object itself created in the static method 'GetOrCreateGEOMBase()' */
 static GEOMContext* GeomGUI = 0;

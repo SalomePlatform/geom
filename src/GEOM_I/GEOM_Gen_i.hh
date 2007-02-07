@@ -20,6 +20,8 @@
 #ifndef __GEOM_GEN_I_H__
 #define __GEOM_GEN_I_H__
 
+#include "GEOM_GEOM_I.hxx"
+
 #include "GEOMImpl_Gen.hxx"
 
 // IDL headers
@@ -52,7 +54,7 @@
 //=====================================================================
 // GEOM_Gen_i : class definition
 //=====================================================================
-class GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual public Engines_Component_i
+class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual public Engines_Component_i
 {
  public:
 

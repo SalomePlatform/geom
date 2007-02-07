@@ -51,16 +51,29 @@ class TopoDS_Shape;
 #ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
 #endif
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define GEOMCLIENT_WNT_EXPORT __declspec( dllexport )
+
+#ifdef WNT
+ #if defined GEOMCLIENT_EXPORTS
+  #if defined WIN32
+   #define GEOMCLIENT_EXPORT __declspec( dllexport )
+  #else
+   #define GEOMCLIENT_EXPORT
+  #endif
+ #else
+  #if defined WIN32
+   #define GEOMCLIENT_EXPORT __declspec( dllimport )
+  #else
+   #define GEOMCLIENT_EXPORT
+  #endif
+ #endif
 #else
-#define GEOMCLIENT_WNT_EXPORT
+ #define GEOMCLIENT_EXPORT
 #endif
 
 //=====================================================================
 // GEOM_Client : class definition
 //=====================================================================
-class GEOMCLIENT_WNT_EXPORT GEOM_Client  {
+class GEOMCLIENT_EXPORT GEOM_Client  {
 
 public:
   

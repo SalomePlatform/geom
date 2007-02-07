@@ -30,11 +30,29 @@
 
 #include "GEOMGUI.h"
 
+#ifdef WNT
+ #if defined BOOLEANGUI_EXPORTS
+  #if defined WIN32
+   #define GEOM_BOOLEANGUI_EXPORT __declspec( dllexport )
+  #else
+   #define GEOM_BOOLEANGUI_EXPORT
+  #endif
+ #else
+  #if defined WIN32
+   #define GEOM_BOOLEANGUI_EXPORT __declspec( dllimport )
+  #else
+   #define GEOM_BOOLEANGUI_EXPORT
+  #endif
+ #endif
+#else
+ #define GEOM_BOOLEANGUI_EXPORT
+#endif
+
 //=================================================================================
 // class    : BooleanGUI
 // purpose  :
 //=================================================================================
-class BooleanGUI : public GEOMGUI
+class GEOM_BOOLEANGUI_EXPORT BooleanGUI : public GEOMGUI
 {
 public:
   enum BooleanOperation { COMMON = 1, CUT = 2, FUSE = 3, SECTION = 4 };

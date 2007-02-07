@@ -29,6 +29,8 @@
 #ifndef MEASUREGUI_SKELETON_H
 #define MEASUREGUI_SKELETON_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include "MeasureGUI_Skeleton_QTD.h"
 #include "GEOMBase_Helper.h"
 
@@ -38,8 +40,9 @@ class QLineEdit;
 class QPushButton;
 class GEOM_Displayer;
 
-class MeasureGUI_Skeleton : public MeasureGUI_Skeleton_QTD,
-                            public GEOMBase_Helper
+class GEOM_MEASUREGUI_EXPORT 
+    MeasureGUI_Skeleton : public MeasureGUI_Skeleton_QTD,
+                          public GEOMBase_Helper
 { 
     Q_OBJECT
 

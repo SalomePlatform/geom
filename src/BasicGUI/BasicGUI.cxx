@@ -207,9 +207,7 @@ gp_Pnt BasicGUI::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView)
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
-	__declspec( dllexport )
-#endif
+GEOM_BASICGUI_EXPORT
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return new BasicGUI( parent );

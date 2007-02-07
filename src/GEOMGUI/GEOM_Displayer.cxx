@@ -175,11 +175,11 @@ static string getEntry( GEOM::GEOM_Object_ptr object )
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
   if ( app )
   {
-    string IOR = app->orb()->object_to_string( object );
-    if ( IOR != "" )
+    CORBA::String_var IOR = app->orb()->object_to_string( object );
+    if ( strcmp(IOR.in(), "") != 0 )
     {
       SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
-      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
+      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( string(IOR) ) );
       if ( SO )
 	return SO->GetID();
     }
@@ -197,11 +197,11 @@ static string getName( GEOM::GEOM_Object_ptr object )
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
   if ( app )
   {
-    string IOR = app->orb()->object_to_string( object );
-    if ( IOR != "" )
+    CORBA::String_var IOR = app->orb()->object_to_string( object );
+    if ( strcmp(IOR.in(), "") != 0 )
     {
       SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
-      _PTR(SObject) aSObj ( study->studyDS()->FindObjectIOR( IOR ) );
+      _PTR(SObject) aSObj ( study->studyDS()->FindObjectIOR( string(IOR) ) );
 
       _PTR(GenericAttribute) anAttr;
 
@@ -521,16 +521,20 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	AISShape->SetDisplayMode( myDisplayMode );
         AISShape->SetShadingColor( myShadingColor );
 
-	// Set color for iso lines
+	// Set color and number for iso lines
 	SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
 	QColor col = aResMgr->colorValue( "Geometry", "isos_color", QColor(int(0.5*255), int(0.5*255), int(0.5*255)) );
 	Quantity_Color aColor = SalomeApp_Tools::color( col );
-	
+	int anUIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_u", 1);
+	int aVIsoNumber  = aResMgr->integerValue("OCCViewer", "iso_number_v", 1);
+		
 	Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
+	anAspect->SetNumber( anUIsoNumber );
 	anAspect->SetColor( aColor );
 	AISShape->Attributes()->SetUIsoAspect( anAspect );
 	
 	anAspect = AISShape->Attributes()->VIsoAspect();
+	anAspect->SetNumber( aVIsoNumber );
 	anAspect->SetColor( aColor );
 	AISShape->Attributes()->SetVIsoAspect( anAspect );
 	

@@ -28,6 +28,8 @@
 #ifndef DIALOGBOX_FILLING_H
 #define DIALOGBOX_FILLING_H
 
+#include "GenerationGUI.h"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel5Spin.h"
 
@@ -35,7 +37,7 @@
 // class    : GenerationGUI_FillingDlg
 // purpose  :
 //=================================================================================
-class GenerationGUI_FillingDlg : public GEOMBase_Skeleton
+class GENERATIONGUI_EXPORT GenerationGUI_FillingDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

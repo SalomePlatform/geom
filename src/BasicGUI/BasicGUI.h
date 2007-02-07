@@ -28,21 +28,17 @@
 #ifndef BASICGUI_H
 #define BASICGUI_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMGUI.h"
 #include "GEOMBase.h"
 #include <V3d_View.hxx>
-
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
 
 //=================================================================================
 // class    : BasicGUI
 // purpose  :
 //=================================================================================
-class BasicGUI : public GEOMGUI
+class GEOM_BASICGUI_EXPORT BasicGUI : public GEOMGUI
 {
 public:
   BasicGUI( GeometryGUI* parent );

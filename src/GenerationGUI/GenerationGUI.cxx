@@ -92,9 +92,7 @@ bool GenerationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
-	__declspec( dllexport )
-#endif
+GENERATIONGUI_EXPORT
   GEOMGUI* GetLibGUI(GeometryGUI* parent)
   {
     return new GenerationGUI(parent);

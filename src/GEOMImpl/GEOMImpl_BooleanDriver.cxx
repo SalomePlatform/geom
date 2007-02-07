@@ -127,8 +127,25 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
           if (!BO.IsDone()) {
             StdFail_NotDone::Raise("Common operation can not be performed on the given shapes");
           }
-          if (isCompound)
-            B.Add(C, BO.Shape());
+          if (isCompound) {
+            TopoDS_Shape aStepResult = BO.Shape();
+
+            // check result of this step: if it is a compound (boolean operations
+            // allways return a compound), we add all sub-shapes of it.
+            // This allows to avoid adding empty compounds,
+            // resulting from COMMON on two non-intersecting shapes.
+            if (aStepResult.ShapeType() == TopAbs_COMPOUND) {
+              TopoDS_Iterator aCompIter (aStepResult);
+              for (; aCompIter.More(); aCompIter.Next()) {
+                // add shape in a result
+                B.Add(C, aCompIter.Value());
+              }
+            }
+            else {
+              // add shape in a result
+              B.Add(C, aStepResult);
+            }
+          }
           else
             aShape = BO.Shape();
         }
@@ -175,8 +192,23 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
           }
           aCut = BO.Shape();
         }
-        if (isCompound)
-          B.Add(C, aCut);
+        if (isCompound) {
+          // check result of this step: if it is a compound (boolean operations
+          // allways return a compound), we add all sub-shapes of it.
+          // This allows to avoid adding empty compounds,
+          // resulting from CUT of parts
+          if (aCut.ShapeType() == TopAbs_COMPOUND) {
+            TopoDS_Iterator aCompIter (aCut);
+            for (; aCompIter.More(); aCompIter.Next()) {
+              // add shape in a result
+              B.Add(C, aCompIter.Value());
+            }
+          }
+          else {
+            // add shape in a result
+            B.Add(C, aCut);
+          }
+        }
         else
           aShape = aCut;
       }
@@ -225,12 +257,35 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
         TopTools_ListIteratorOfListOfShape itSub2 (listShape2);
         for (; itSub2.More(); itSub2.Next()) {
           TopoDS_Shape aValue2 = itSub2.Value();
-          BRepAlgoAPI_Section BO (aValue1, aValue2);
+          BRepAlgoAPI_Section BO (aValue1, aValue2, Standard_False);
+          // Set approximation to have an attached 3D BSpline geometry to each edge,
+          // where analytic curve is not possible. Without this flag in some cases
+          // we obtain BSpline curve of degree 1 (C0), which is slowly
+          // processed by some algorithms (Partition for example).
+          BO.Approximation(Standard_True);
+          BO.Build();
           if (!BO.IsDone()) {
             StdFail_NotDone::Raise("Section operation can not be performed on the given shapes");
           }
-          if (isCompound)
-            B.Add(C, BO.Shape());
+          if (isCompound) {
+            TopoDS_Shape aStepResult = BO.Shape();
+
+            // check result of this step: if it is a compound (boolean operations
+            // allways return a compound), we add all sub-shapes of it.
+            // This allows to avoid adding empty compounds,
+            // resulting from SECTION on two non-intersecting shapes.
+            if (aStepResult.ShapeType() == TopAbs_COMPOUND) {
+              TopoDS_Iterator aCompIter (aStepResult);
+              for (; aCompIter.More(); aCompIter.Next()) {
+                // add shape in a result
+                B.Add(C, aCompIter.Value());
+              }
+            }
+            else {
+              // add shape in a result
+              B.Add(C, aStepResult);
+            }
+          }
           else
             aShape = BO.Shape();
         }

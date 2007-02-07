@@ -29,6 +29,8 @@
 #ifndef GEOM_ACTOR_H
 #define GEOM_ACTOR_H
 
+#include "GEOM_OBJECT_defs.hxx"
+
 #include "SALOME_Actor.h"
 
 //OpenCASCADE
@@ -38,13 +40,7 @@
 class vtkCamera;
 class TopoDS_Shape;
 
-#ifdef WNT
-#include <SALOME_WNT.hxx>
-#else
-#define SALOME_WNT_EXPORT
-#endif
-
-class SALOME_WNT_EXPORT GEOM_Actor : public SALOME_Actor {
+class GEOM_OBJECT_EXPORT GEOM_Actor : public SALOME_Actor {
  public:
   vtkTypeMacro(GEOM_Actor,SALOME_Actor);
 

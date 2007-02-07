@@ -28,12 +28,27 @@
 #define ROTATE_STEP1      4
 #define ROTATE_NBITER1   5
 #define ROTATE_NBITER2   6
+#define ROTATE_CENTRAL_POINT    7  
+#define ROTATE_POINT1           8
+#define ROTATE_POINT2           9
 
 class GEOMImpl_IRotate
 {
  public:
   
   GEOMImpl_IRotate(Handle(GEOM_Function) theFunction): _func(theFunction) {}
+  
+  void SetCentPoint(Handle(GEOM_Function) theCentPoint) { _func->SetReference(ROTATE_CENTRAL_POINT, theCentPoint); }
+  
+  Handle(GEOM_Function) GetCentPoint() { return _func->GetReference(ROTATE_CENTRAL_POINT); }
+
+  void SetPoint1(Handle(GEOM_Function) thePoint1) { _func->SetReference(ROTATE_POINT1, thePoint1); }
+  
+  Handle(GEOM_Function) GetPoint1() { return _func->GetReference(ROTATE_POINT1); }
+  
+  void SetPoint2(Handle(GEOM_Function) thePoint2) { _func->SetReference(ROTATE_POINT2, thePoint2); }
+  
+  Handle(GEOM_Function) GetPoint2() { return _func->GetReference(ROTATE_POINT2); }
   
   void SetAngle(Standard_Real theAngle) { _func->SetReal(ROTATE_ANGLE, theAngle); }
   

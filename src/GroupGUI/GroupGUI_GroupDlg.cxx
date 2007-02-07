@@ -329,15 +329,36 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
       
       GEOM::ListOfGO anObjects;
       GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
+
       GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
-      for (int i = 0; i < anObjects.length(); i++) {
-        TopoDS_Shape aShape;
-        if ( GEOMBase::GetShape(anObjects[i], aShape, getShapeType()) ) {
-          CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, anObjects[i] );
-          if ( anIndex >= 0 )
-            aMapIndex.Add( anIndex );
-        }
-      }
+      GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+
+      for (int i = 0; i < anObjects.length(); i++) 
+	{
+	  GEOM::GEOM_Object_var aGeomObj = anObjects[i];
+	  GEOM::ListOfGO_var aSubObjects = new GEOM::ListOfGO();
+	  TopoDS_Shape aShape;
+	  if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) ) 
+	    {
+	      aSubObjects->length(1);
+	      aSubObjects[0] = aGeomObj;
+	    }
+	  else if (aGeomObj->GetType() == GEOM_GROUP)
+	    aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
+	  else
+	    continue;
+
+	  for (int i = 0; i < aSubObjects->length(); i++) 
+	    {
+	      TopoDS_Shape aShape;
+	      if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) ) 
+		{
+		  CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+		  if ( anIndex >= 0 )
+		    aMapIndex.Add( anIndex );
+		}
+	    }
+	}
       
       if ( !myMainObj->_is_nil() )
       	localSelection( myMainObj, getShapeType() );
@@ -432,15 +453,36 @@ void GroupGUI_GroupDlg::add()
   if ( !aMapIndex.Extent() ) {
     GEOM::ListOfGO anObjects;
     GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
+    
     GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
-    for (int i = 0; i < anObjects.length(); i++) {
-      TopoDS_Shape aShape;
-      if ( GEOMBase::GetShape(anObjects[i], aShape, getShapeType()) ) {
-        CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, anObjects[i] );
-        if ( anIndex >= 0 )
-          aMapIndex.Add( anIndex );
+    GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+    
+    for (int i = 0; i < anObjects.length(); i++) 
+      {
+	GEOM::GEOM_Object_var aGeomObj = anObjects[i];
+	GEOM::ListOfGO_var aSubObjects  = new GEOM::ListOfGO();
+	TopoDS_Shape aShape;
+	if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) ) 
+	  {
+	    aSubObjects->length(1);
+	    aSubObjects[0] = aGeomObj;
+	  }
+	else if (aGeomObj->GetType() == GEOM_GROUP)
+	  aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
+	else
+	  break;
+	
+	for (int i = 0; i < aSubObjects->length(); i++) 
+	  {
+	  TopoDS_Shape aShape;
+	  if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) ) 
+	    {
+	      CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+	      if ( anIndex >= 0 )
+		aMapIndex.Add( anIndex );
+	    }
+	}
       }
-    }
   }
 
   if ( aMapIndex.Extent() >= 1 ) {
@@ -555,29 +597,60 @@ void GroupGUI_GroupDlg::updateState()
 
   // try to find out and process the object browser selection
   if ( !aMapIndex.Extent() && !CORBA::is_nil( myMainObj ) ) {
-    isAdd = true;
     GEOM::ListOfGO anObjects;
     GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
+    
     GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
-    for (int i = 0; i < anObjects.length(); i++) {
-      TopoDS_Shape aShape;
-      if ( GEOMBase::GetShape(anObjects[i], aShape, getShapeType()) ) {
-        CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, anObjects[i] );
-        if ( anIndex >= 0 )
-          aMapIndex.Add( anIndex );
-        else
-          isAdd = false;
-      }
-      else
-        isAdd = false;
+    GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
 
-      if ( !isAdd ) {
-        aMapIndex.Clear();
-        break;
-      }
-    }
+     isAdd = true;
+     
+     for (int i = 0; i < anObjects.length(); i++) 
+       {
+	 GEOM::GEOM_Object_var aGeomObj = anObjects[i];
+	 GEOM::ListOfGO_var aSubObjects = new GEOM::ListOfGO();
+	 TopoDS_Shape aShape;
+	 if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) ) 
+	   {
+	     aSubObjects->length(1);
+	     aSubObjects[0] = aGeomObj;
+	   }
+	 else if (aGeomObj->GetType() == GEOM_GROUP)
+	   aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
+	 else
+	   {
+	     aMapIndex.Clear();
+	     break;
+	   }
+	 
+	 for (int i = 0; i < aSubObjects->length(); i++) 
+	   {
+	     TopoDS_Shape aShape;
+	     aSubObjects[i];
+	     if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) ) 
+	       {
+		 CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+		 if ( anIndex >= 0 )
+		   aMapIndex.Add( anIndex );
+		 else
+		   isAdd = false;
+	       }
+	     else
+	       isAdd = false;
+	     
+	     if ( !isAdd ) {
+	       aMapIndex.Clear();
+	       break;
+	     }
+	   }
+	 
+	 if ( !isAdd ) {
+	   aMapIndex.Clear();
+	   break;
+	 }
+       }
   }
-
+  
   isAdd = aMapIndex.Extent() > 0;
 
   myAddBtn->setEnabled( !myEditCurrentArgument && !CORBA::is_nil( myMainObj ) && isAdd );
@@ -608,8 +681,10 @@ void GroupGUI_GroupDlg::highlightSubShapes()
     return;
 
   Standard_Boolean isOk;
+  char* objIOR = GEOMBase::GetIORFromObject( myMainObj );
   Handle(GEOM_AISShape) aSh =
-    GEOMBase::ConvertIORinGEOMAISShape( GEOMBase::GetIORFromObject( myMainObj ), isOk, true );
+    GEOMBase::ConvertIORinGEOMAISShape( objIOR, isOk, true );
+  free( objIOR );
   if ( !isOk || aSh.IsNull() )
     return;
 
@@ -705,7 +780,9 @@ bool GroupGUI_GroupDlg::execute( ObjectList& objects )
 
   SalomeApp_Study* study = getStudy();
   if ( study ) {
-    string IOR = GEOMBase::GetIORFromObject( aGroup );
+    char* objIOR = GEOMBase::GetIORFromObject( aGroup );
+    string IOR( objIOR );
+    free( objIOR );
     if ( IOR != "" ) {
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
       if ( SO ) {
@@ -734,3 +811,4 @@ GEOM::GEOM_Object_ptr GroupGUI_GroupDlg::getFather( GEOM::GEOM_Object_ptr theObj
   }
   return aFatherObj._retn();
 }
+

@@ -297,15 +297,15 @@ void RepairGUI_GlueDlg::clearShapeBufferLocal( GEOM::GEOM_Object_ptr theObj )
   if ( CORBA::is_nil( theObj ) )
     return;
 
-  string IOR = myGeomGUI->getApp()->orb()->object_to_string( theObj );
-  TCollection_AsciiString asciiIOR( strdup( IOR.c_str() ) );
+  CORBA::String_var IOR = myGeomGUI->getApp()->orb()->object_to_string( theObj );
+  TCollection_AsciiString asciiIOR( (char *)( IOR.in() ) );
   myGeomGUI->GetShapeReader().RemoveShapeFromBuffer( asciiIOR );
 
   if ( !getStudy() || !( getStudy()->studyDS() ) )
     return;
 
   _PTR(Study) aStudy = getStudy()->studyDS();
-  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( IOR ) );
+  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( string( IOR.in() ) ) );
   if ( !aSObj )
     return;
 

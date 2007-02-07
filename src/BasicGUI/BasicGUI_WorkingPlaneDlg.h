@@ -28,22 +28,18 @@
 #ifndef DIALOGBOX_WORKINGPLANE_H
 #define DIALOGBOX_WORKINGPLANE_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_QTD.h"
 #include "DlgRef_2Sel_QTD.h"
 #include "DlgRef_3Check_QTD.h"
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
-
 //=================================================================================
 // class    : BasicGUI_WorkingPlaneDlg
 // purpose  :
 //=================================================================================
-class BASICGUI_WNT_EXPORT BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

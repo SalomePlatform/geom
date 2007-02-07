@@ -32,6 +32,8 @@
 #include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
 
+#include <NCollection_DataMap.hxx>
+
 #ifdef WNT
 #include <windows.h>
 #else
@@ -92,8 +94,8 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(TFunction_Logbook& log) const
   if (aFileName.IsEmpty() || aFormatName.IsEmpty() || aLibName.IsEmpty())
     return 0;
 
-  // load plugin library
-  LibHandle anImportLib = LoadLib( aLibName.ToCString() );
+  // load plugin library  
+  LibHandle anImportLib = LoadLib( aLibName.ToCString() ); //This is workaround of BUG OCC13051
   funcPoint fp = 0;
   if ( anImportLib )
     fp = (funcPoint)GetProc( anImportLib, "Import" );
@@ -105,8 +107,8 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(TFunction_Logbook& log) const
   TCollection_AsciiString anError;
   TopoDS_Shape aShape = fp( aFileName, aFormatName, anError );
 
-  // unload plugin library
-  UnLoadLib( anImportLib );
+  // unload plugin library  
+  //UnLoadLib( anImportLib ); //This is workaround of BUG OCC13051
 
   if ( aShape.IsNull() ) {
     StdFail_NotDone::Raise(anError.ToCString());

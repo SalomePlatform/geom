@@ -29,6 +29,8 @@
 #if !defined (__GEOM_DISPLAYER_H)
 #define __GEOM_DISPLAYER_H
 
+#include "GEOM_GEOMGUI.hxx"
+
 #include "SALOME_Prs.h"
 #include "SALOME_InteractiveObject.hxx"
 #include "SALOME_ListIO.hxx"
@@ -55,18 +57,7 @@ class SalomeApp_Application;
 class SUIT_SelectionFilter;
 //class SALOME_Selection;
 
-//#ifdef WNT
-//#include <SALOME_WNT.hxx>
-//#else
-//#define SALOME_WNT_EXPORT
-//#endif
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define GEOMGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define GEOMGUI_WNT_EXPORT
-#endif
-
-class GEOMGUI_WNT_EXPORT GEOM_Displayer : public LightApp_Displayer
+class GEOMGUI_EXPORT GEOM_Displayer : public LightApp_Displayer
 {
     
 public:

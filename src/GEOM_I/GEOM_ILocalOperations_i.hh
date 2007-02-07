@@ -21,6 +21,7 @@
 #ifndef _GEOM_ILocalOperations_i_HeaderFile
 #define _GEOM_ILocalOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_ILocalOperations.hxx"
 
-class GEOM_ILocalOperations_i : 
+class GEOM_I_EXPORT GEOM_ILocalOperations_i : 
     public virtual POA_GEOM::GEOM_ILocalOperations,
     public virtual GEOM_IOperations_i
 {

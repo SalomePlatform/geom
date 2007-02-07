@@ -28,20 +28,16 @@
 #ifndef DIALOGBOX_LINE_H
 #define DIALOGBOX_LINE_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel_QTD.h"
-
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
 
 //=================================================================================
 // class    : BasicGUI_LineDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_LineDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_LineDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

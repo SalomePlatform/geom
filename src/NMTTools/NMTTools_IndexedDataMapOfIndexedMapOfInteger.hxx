@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -47,6 +47,7 @@ class NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger;
 #include <Standard_Macro.hxx>
 #endif
 
+
 class NMTTools_IndexedDataMapOfIndexedMapOfInteger  : public TCollection_BasicMap {
 
 public:
@@ -65,30 +66,52 @@ public:
       }
  // Methods PUBLIC
  // 
+
+
 Standard_EXPORT NMTTools_IndexedDataMapOfIndexedMapOfInteger(const Standard_Integer NbBuckets = 1);
+
+
 Standard_EXPORT   NMTTools_IndexedDataMapOfIndexedMapOfInteger& Assign(const NMTTools_IndexedDataMapOfIndexedMapOfInteger& Other) ;
   NMTTools_IndexedDataMapOfIndexedMapOfInteger& operator =(const NMTTools_IndexedDataMapOfIndexedMapOfInteger& Other) 
 {
   return Assign(Other);
 }
 
+
+
 Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
+
+
 Standard_EXPORT   void Clear() ;
 ~NMTTools_IndexedDataMapOfIndexedMapOfInteger()
 {
   Clear();
 }
 
+
+
 Standard_EXPORT   Standard_Integer Add(const Standard_Integer& K,const TColStd_IndexedMapOfInteger& I) ;
+
+
 Standard_EXPORT   void Substitute(const Standard_Integer I,const Standard_Integer& K,const TColStd_IndexedMapOfInteger& T) ;
+
+
 Standard_EXPORT   void RemoveLast() ;
+
+
 Standard_EXPORT   Standard_Boolean Contains(const Standard_Integer& K) const;
+
+
 Standard_EXPORT  const Standard_Integer& FindKey(const Standard_Integer I) const;
+
+
 Standard_EXPORT  const TColStd_IndexedMapOfInteger& FindFromIndex(const Standard_Integer I) const;
  const TColStd_IndexedMapOfInteger& operator ()(const Standard_Integer I) const
 {
   return FindFromIndex(I);
 }
+
+
 
 Standard_EXPORT   TColStd_IndexedMapOfInteger& ChangeFromIndex(const Standard_Integer I) ;
   TColStd_IndexedMapOfInteger& operator ()(const Standard_Integer I) 
@@ -96,8 +119,14 @@ Standard_EXPORT   TColStd_IndexedMapOfInteger& ChangeFromIndex(const Standard_In
   return ChangeFromIndex(I);
 }
 
+
+
 Standard_EXPORT   Standard_Integer FindIndex(const Standard_Integer& K) const;
+
+
 Standard_EXPORT  const TColStd_IndexedMapOfInteger& FindFromKey(const Standard_Integer& K) const;
+
+
 Standard_EXPORT   TColStd_IndexedMapOfInteger& ChangeFromKey(const Standard_Integer& K) ;
 
 
@@ -118,6 +147,8 @@ private:
 
  // Methods PRIVATE
  // 
+
+
 Standard_EXPORT NMTTools_IndexedDataMapOfIndexedMapOfInteger(const NMTTools_IndexedDataMapOfIndexedMapOfInteger& Other);
 
 

@@ -452,7 +452,8 @@ bool BlocksGUI_ExplodeDlg::execute (ObjectList& objects)
     ObjectList toRemoveFromEnggine;
     ObjectList::iterator anIter;
     for (anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter) {
-      if (selected.contains(myGeomGUI->getApp()->orb()->object_to_string(*anIter)))
+      CORBA::String_var objStr = myGeomGUI->getApp()->orb()->object_to_string(*anIter);
+      if (selected.contains(QString(objStr.in())))
         objects.push_back(*anIter);
       else
         toRemoveFromEnggine.push_back(*anIter);

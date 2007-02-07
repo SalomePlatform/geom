@@ -29,6 +29,8 @@
 #ifndef DLGREF_SKELETON_QTD_H
 #define DLGREF_SKELETON_QTD_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include <qvariant.h>
 #include <qdialog.h>
 
@@ -43,7 +45,7 @@ class QRadioButton;
 class QLineEdit;
 class QLabel;
 
-class DlgRef_Skeleton_QTD : public QDialog
+class GEOM_DLGREF_EXPORT DlgRef_Skeleton_QTD : public QDialog
 {
     Q_OBJECT
 

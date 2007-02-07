@@ -21,6 +21,7 @@
 #ifndef _GEOM_ICurvesOperations_i_HeaderFile
 #define _GEOM_ICurvesOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_ICurvesOperations.hxx"
 
-class GEOM_ICurvesOperations_i : 
+class GEOM_I_EXPORT GEOM_ICurvesOperations_i : 
     public virtual POA_GEOM::GEOM_ICurvesOperations,
     public virtual GEOM_IOperations_i
 {

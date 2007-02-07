@@ -28,6 +28,8 @@
 #ifndef DIALOGBOX_PRISM_H
 #define DIALOGBOX_PRISM_H
 
+#include "GenerationGUI.h"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel1Spin2Check.h"
 #include "DlgRef_3Sel_QTD.h"
@@ -36,7 +38,7 @@
 // class    : GenerationGUI_PrismDlg
 // purpose  :
 //=================================================================================
-class GenerationGUI_PrismDlg : public GEOMBase_Skeleton
+class GENERATIONGUI_EXPORT GenerationGUI_PrismDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

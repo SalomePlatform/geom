@@ -29,21 +29,17 @@
 #ifndef DIALOGBOX_MAXTOLERANCE_H
 #define DIALOGBOX_MAXTOLERANCE_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include "MeasureGUI_Skeleton.h"
 
 class  MeasureGUI_1Sel6LineEdit_QTD;
-
-#if defined WNT && defined MEASUREGUI_EXPORTS
-#define MEASUREGUI_EXPORT __declspec( dllexport )
-#else
-#define MEASUREGUI_EXPORT
-#endif
 
 //=================================================================================
 // class    : DialogBox_PROPERTIES
 // purpose  :
 //=================================================================================
-class MEASUREGUI_EXPORT MeasureGUI_MaxToleranceDlg : public MeasureGUI_Skeleton
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_MaxToleranceDlg : public MeasureGUI_Skeleton
 { 
     Q_OBJECT
 

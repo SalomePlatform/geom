@@ -28,6 +28,8 @@
 #ifndef DIALOGBOX_Marker_H
 #define DIALOGBOX_Marker_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_QTD.h"
 #include "DlgRef_3Sel_QTD.h"
@@ -36,13 +38,7 @@
 
 class DlgRef_SpinBox;
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
-
-class BasicGUI_MarkerDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_MarkerDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 

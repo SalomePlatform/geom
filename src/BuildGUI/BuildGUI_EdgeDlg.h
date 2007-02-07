@@ -28,6 +28,8 @@
 #ifndef DIALOGBOX_EDGE_H
 #define DIALOGBOX_EDGE_H
 
+#include "GEOM_BuildGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel_QTD.h"
 
@@ -35,7 +37,7 @@
 // class    : BuildGUI_EdgeDlg
 // purpose  :
 //=================================================================================
-class BuildGUI_EdgeDlg : public GEOMBase_Skeleton
+class GEOM_BUILDGUI_EXPORT BuildGUI_EdgeDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

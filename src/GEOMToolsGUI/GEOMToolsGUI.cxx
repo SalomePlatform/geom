@@ -249,8 +249,8 @@ void GEOMToolsGUI::OnEditDelete()
 	// VSR 17/11/04: check if all objects selected belong to GEOM component --> start
 	// modifications of ASV 01.06.05
 	QString parentComp = getParentComponent( aStudy, selected );
-	const char* geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
-	QString geomComp = getParentComponent( aStudy->FindObjectIOR( geomIOR ) );
+  CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
+	QString geomComp = getParentComponent( aStudy->FindObjectIOR( geomIOR.in() ) );
 
 	if ( parentComp != geomComp )  {
 	  SUIT_MessageBox::warn1 ( app->desktop(),
@@ -288,6 +288,10 @@ void GEOMToolsGUI::OnEditDelete()
 	_PTR(GenericAttribute) anAttr;
 	GEOM_Displayer* disp = new GEOM_Displayer( appStudy );
 
+        _PTR(SComponent) aGeom ( aStudy->FindComponent("GEOM") );
+          if ( !aGeom )
+            return;	
+
 	// MAIN LOOP OF SELECTED OBJECTS
 	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
 
@@ -300,6 +304,18 @@ void GEOMToolsGUI::OnEditDelete()
 	  // disable removal of "Geometry" component object
 	  if ( !strcmp( obj->GetIOR().c_str(), geomIOR ) )
 	    continue;
+
+          //If the object has been used to create another one,then it can't be deleted 
+          _PTR(ChildIterator) it (aStudy->NewChildIterator(aGeom));
+          for ( it->InitEx( true ); it->More(); it->Next() ) {
+             _PTR(SObject) chobj (it->Value());
+	     if(CheckSubObjectInUse(chobj, obj, aStudy)) return;
+	     //check subobjects
+	     for (_PTR(ChildIterator) it (aStudy->NewChildIterator(obj)); it->More(); it->Next()) {
+	       _PTR(SObject) child (it->Value());
+	       if(CheckSubObjectInUse( chobj, child, aStudy)) return;
+	     }
+	   }
 
           RemoveObjectWithChildren(obj, aStudy, views, disp);
 
@@ -655,13 +671,44 @@ void GEOMToolsGUI::RemoveObjectWithChildren(_PTR(SObject) obj,
 }
 
 //=====================================================================================
+// function : CheckSubObjectInUse
+// purpose  : to be used by OnEditDelete() method
+//=====================================================================================
+bool GEOMToolsGUI::CheckSubObjectInUse(_PTR(SObject) checkobj,
+				       _PTR(SObject) remobj,
+                                       _PTR(Study) aStudy)
+{
+  CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(checkobj);
+  GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+  if( CORBA::is_nil(geomObj) ) 
+    return false;
+
+  GEOM::ListOfGO_var list = geomObj->GetDependency();
+  if( list->length() > 1 )
+    for(int i = 0; i < list->length(); i++ ){
+      CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject(remobj);
+      GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
+      if( list[i]->_is_equivalent( geomObj_rem ) ){
+	SalomeApp_Application* app =
+	  dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+
+	SUIT_MessageBox::warn1 ( app->desktop(),
+				 QObject::tr("WRN_WARNING"),
+				 QObject::tr("DEP_OBJECT"),
+				 QObject::tr("BUT_OK") );
+	return true;
+      }
+    }
+
+  return false;
+}
+
+//=====================================================================================
 // EXPORTED METHODS
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
-	__declspec( dllexport )
-#endif
+GEOMTOOLSGUI_EXPORT
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return new GEOMToolsGUI( parent );

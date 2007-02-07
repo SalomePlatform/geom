@@ -126,6 +126,12 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
 	    }
 	}
     }
+  // add externally selected objects
+  SUIT_DataOwnerPtrList::const_iterator anExtIter;
+  for(anExtIter = getSelectedExt().begin(); anExtIter != getSelectedExt().end(); anExtIter++) {
+    aList.append(*anExtIter);
+  }
+  
 }
 
 //================================================================
@@ -175,11 +181,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 
   Handle(AIS_InteractiveContext) ic = vw->getAISContext();
 
-#ifndef WNT
   NCollection_DataMap<TCollection_AsciiString, TColStd_IndexedMapOfInteger> indexesMap; // "entry - list_of_int" map for LOCAL selection
-#else
-  NCollection_DataMap<Standard_CString, TColStd_IndexedMapOfInteger> indexesMap; // "entry - list_of_int" map for LOCAL selection
-#endif
   QMap<QString,int> globalSelMap; // only Key=entry from this map is used.  value(int) is NOT used at all.
   SelectMgr_IndexedMapOfOwner ownersmap; // map of owners to be selected
   
@@ -245,6 +247,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 	if ( !anOwner->ComesFromDecomposition() && globalSelMap.contains( entryStr ) ) 
 	{
 	  ownersmap.Add( anOwner );
+	  globalSelMap[entryStr]++;
 	}
 	// LOCAL selection
 	else
@@ -289,4 +292,21 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
   }
 
   vw->update();
+  
+  // fill extra selected
+  clearSelExtOwners();
+  for ( SUIT_DataOwnerPtrList::const_iterator itr2 = aList.begin(); itr2 != aList.end(); ++itr2 ) {
+    const LightApp_DataSubOwner* subOwner = dynamic_cast<const LightApp_DataSubOwner*>( (*itr2).operator->() );
+    if ( !subOwner )
+    {
+      const LightApp_DataOwner* owner = dynamic_cast<const LightApp_DataOwner*>( (*itr2).operator->() );
+      if ( owner )
+      {
+	SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+	QString anEntry = appStudy->referencedToEntry( owner->entry() );
+	if (globalSelMap[anEntry] == 1) 
+	  appendSelExtOwner(*itr2);
+      }
+    }
+  }
 }

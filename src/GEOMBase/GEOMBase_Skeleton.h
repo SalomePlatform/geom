@@ -28,6 +28,8 @@
 #ifndef GEOMBASE_SKELETON_H
 #define GEOMBASE_SKELETON_H
 
+#include "GEOM_GEOMBase.hxx"
+
 #include "DlgRef_Skeleton_QTD.h"
 
 #include "GEOMBase.h"
@@ -41,18 +43,8 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
-//#if defined WNT
-//#include <SALOME_WNT.hxx>
-//#else
-//#define SALOME_WNT_EXPORT
-//#endif
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define GEOMBASE_WNT_EXPORT __declspec( dllexport )
-#else
-#define GEOMBASE_WNT_EXPORT
-#endif
 
-class GEOMBASE_WNT_EXPORT GEOMBase_Skeleton : public DlgRef_Skeleton_QTD, public GEOMBase_Helper
+class GEOMBASE_EXPORT GEOMBase_Skeleton : public DlgRef_Skeleton_QTD, public GEOMBase_Helper
 {
     Q_OBJECT
 

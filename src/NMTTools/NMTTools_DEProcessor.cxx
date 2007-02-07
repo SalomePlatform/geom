@@ -17,7 +17,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	BOPTools_DEProcessor.cxx
+// File:	NMTTools_DEProcessor.cxx
 // Created:	Wed Sep 12 12:10:52 2001
 // Author:	Peter KURNEV
 //		<pkv@irinox>
@@ -80,11 +80,15 @@
 
 #include <NMTDS_ShapesDataStructure.hxx>
 
-//#include <NMTTools_DSFiller.hxx>
 #include <NMTTools_PaveFiller.hxx>
 //
 #include <BOPTools_SequenceOfCurves.hxx>
 #include <BOPTools_Curve.hxx>
+//
+#include <Geom2d_TrimmedCurve.hxx>
+
+#include <ElCLib.hxx>
+#include <gp_Lin2d.hxx>
 
 
 
@@ -137,14 +141,14 @@
   aNb=myDS->NumberOfShapesOfTheObject();
   //
   for (i=1; i<=aNb; i++) {
-    const TopoDS_Shape& aF=myDS->Shape(i);
+    const TopoDS_Shape aF=myDS->Shape(i);//mpv
     if (aF.ShapeType()==TopAbs_FACE) {
       TopExp::MapShapesAndAncestors (aF, TopAbs_EDGE, TopAbs_FACE, aMEF);
     }
   }
   //
   for (i=1; i<=aNb; i++) {
-    const TopoDS_Shape& aS=myDS->Shape(i);
+    const TopoDS_Shape aS=myDS->Shape(i);//mpv
     if (aS.ShapeType()==TopAbs_EDGE) {
       const TopoDS_Edge& aE=TopoDS::Edge(aS);
       
@@ -306,11 +310,16 @@
   // Clear aPaveSet, aSplitEdges
   aPaveSet.ChangeSet().Clear();
   //
-  const TopoDS_Edge& aDE=TopoDS::Edge(myDS->Shape(nED));
-  const TopoDS_Face& aDF=TopoDS::Face(myDS->Shape(nFD));
+  const TopoDS_Edge aDE=TopoDS::Edge(myDS->Shape(nED));//mpv
+  const TopoDS_Face aDF=TopoDS::Face(myDS->Shape(nFD));//mpv
   //
   // 2D Curve of degenerated edge on the face aDF
-  Handle(Geom2d_Curve) aC2DDE=BRep_Tool::CurveOnSurface(aDE, aDF, aTD1, aTD2);
+  // Modified  Thu Sep 14 14:35:18 2006 
+  // Contribution of Samtech www.samcef.com BEGIN
+  //Handle(Geom2d_Curve) aC2DDE=BRep_Tool::CurveOnSurface(aDE, aDF, aTD1, aTD2);
+  Handle(Geom2d_Curve) aC2DDE1=BRep_Tool::CurveOnSurface(aDE, aDF, aTD1, aTD2);
+  Handle(Geom2d_TrimmedCurve)aC2DDE=new Geom2d_TrimmedCurve(aC2DDE1, aTD1, aTD2);
+  // Contribution of Samtech www.samcef.com END 
   //
   // Choose direction for Degenerated Edge
   gp_Pnt2d aP2d1, aP2d2;
@@ -333,7 +342,7 @@
   for (; anIt.More(); anIt.Next()) {
     const BOPTools_PaveBlock& aPB=anIt.Value();
     nE=aPB.Edge();
-    const TopoDS_Edge& aE=TopoDS::Edge(myDS->Shape(nE));
+    const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));//mpv
     
     Handle(Geom2d_Curve) aC2D=BRep_Tool::CurveOnSurface(aE, aDF, aT1, aT2);
     //
@@ -360,7 +369,17 @@
 	for (j=1; j<=aNbPoints; ++j) {
 	  gp_Pnt2d aP2D=aGInter.Point(j).Value();
 	  //
-	  aX=(bXDir) ? aP2D.X(): aP2D.Y();
+	  // Modified to obtain exact parameter Thu Sep 14 14:35:18 2006 
+	  // Contribution of Samtech www.samcef.com BEGIN
+	  Handle(Geom2d_Line) aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
+	  if (aCLDE.IsNull()) {
+	    continue;
+	  }
+	  gp_Lin2d aLDE=aCLDE->Lin2d();
+	  aX=ElCLib::Parameter(aLDE, aP2D);
+	  //
+	  //aX=(bXDir) ? aP2D.X(): aP2D.Y();
+	  // Contribution of Samtech www.samcef.com END 
 	  //
 	  if (fabs (aX-aTD1) < aDT || fabs (aX-aTD2) < aDT) {
 	    continue; 
@@ -427,8 +446,8 @@
   TopoDS_Edge aE, aESplit;
   TopoDS_Vertex aV1, aV2;
 
-  const TopoDS_Edge& aDE=TopoDS::Edge(myDS->Shape(nED));
-  const TopoDS_Face& aDF=TopoDS::Face(myDS->Shape(nFD));
+  const TopoDS_Edge aDE=TopoDS::Edge(myDS->Shape(nED));//mpv
+  const TopoDS_Face aDF=TopoDS::Face(myDS->Shape(nFD));//mpv
 
   BOPTools_ListIteratorOfListOfPaveBlock aPBIt(aSplitEdges);
 

@@ -270,7 +270,18 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_OffsetDlg::createOperation()
 //=================================================================================
 bool TransformationGUI_OffsetDlg::isValid( QString& msg )
 {
-  return !(myObjects.length() == 0);
+  //return !(myObjects.length() == 0);
+  if (myObjects.length() == 0) return false;
+
+  for (int i = 0; i < myObjects.length(); i++)
+  {
+    GEOM::shape_type aType = myObjects[i]->GetShapeType();
+    if( aType != GEOM::FACE && aType != GEOM::SHELL && aType != GEOM::SOLID ){
+       msg = tr("ERROR_SHAPE_TYPE");
+       return false;
+    }
+  }
+  return true;
 }
 
 
@@ -288,6 +299,7 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
   if (GroupPoints->CheckButton1->isChecked() || IsPreview())
     for (int i = 0; i < myObjects.length(); i++)
       {
+
 	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->OffsetShapeCopy( myObjects[i], GetOffset() );
 	if ( !anObj->_is_nil() )
 	  objects.push_back( anObj._retn() );

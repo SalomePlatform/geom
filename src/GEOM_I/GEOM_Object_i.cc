@@ -52,7 +52,6 @@ GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr
 			      Handle(GEOM_Object) theImpl)
 : SALOME::GenericObj_i( thePOA ), _engine(theEngine), _impl(theImpl)
 {
-  thePOA->activate_object(this);
 }
 
 //=============================================================================
@@ -75,7 +74,8 @@ char* GEOM_Object_i::GetEntry()
   const TDF_Label& aLabel = _impl->GetEntry();
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(aLabel, anEntry);
-  return CORBA::string_dup(anEntry.ToCString());
+  const char* anEntstr = anEntry.ToCString();
+  return CORBA::string_dup(anEntstr);
 }
 
 //=============================================================================
@@ -130,7 +130,8 @@ void GEOM_Object_i::SetName(const char* theName)
 char* GEOM_Object_i::GetName()
 {
   char* aName = _impl->GetName();
-  if(aName) return strdup(aName);
+  if (aName)
+    return aName; // this is already copy of pointer (see implementation of _impl)
   return strdup("");
 }
 

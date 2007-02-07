@@ -55,7 +55,7 @@ LIB_SRC = \
 	GEOM_DumpPython.cc
 
 # SALOME_Component.idl
-LIB_CLIENT_IDL = SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Component.idl SALOME_Exception.idl
+LIB_CLIENT_IDL = SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Component.idl SALOME_Exception.idl SALOME_GenericObj.idl
                  #SALOME_Exception.idl SALOME_GenericObj.idl
 
 LIB_SERVER_IDL = GEOM_Gen.idl
@@ -81,7 +81,8 @@ EXPORT_HEADERS = GEOM_Object_i.hh \
 	         GEOM_ITransformOperations_i.hh \
 		 GEOM_IMeasureOperations_i.hh \
 	         GEOM_IGroupOperations_i.hh \
-		 GEOM_Gen_i.hh
+		 GEOM_Gen_i.hh \
+		 GEOM_GEOM_I.hxx
 
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(BOOST_CPPFLAGS) $(KERNEL_CXXFLAGS)

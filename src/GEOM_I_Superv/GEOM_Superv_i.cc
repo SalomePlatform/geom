@@ -1278,6 +1278,37 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::RotateCopy (GEOM::GEOM_Object_ptr theObject
   endService( " GEOM_Superv_i::RotateCopy" );
   return anObj;
 }
+//=============================================================================
+//  RotateThreePoints:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::RotateThreePoints (GEOM::GEOM_Object_ptr theObject,
+							GEOM::GEOM_Object_ptr theCentPoint,
+							GEOM::GEOM_Object_ptr thePoint1,
+							GEOM::GEOM_Object_ptr thePoint2)
+{
+  beginService( " GEOM_Superv_i::RotateThreePoints" );
+  MESSAGE("GEOM_Superv_i::RotateThreePoints");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->RotateThreePoints(theObject, theCentPoint, thePoint1, thePoint2);
+  endService( " GEOM_Superv_i::RotateThreePoints" );
+  return anObj;
+}
+
+//=============================================================================
+//  RotateThreePointsCopy:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::RotateThreePointsCopy (GEOM::GEOM_Object_ptr theObject,
+							    GEOM::GEOM_Object_ptr theCentPoint,
+							    GEOM::GEOM_Object_ptr thePoint1,
+							    GEOM::GEOM_Object_ptr thePoint2)
+{
+  beginService( " GEOM_Superv_i::RotateThreePointsCopy" );
+  MESSAGE("GEOM_Superv_i::RotateThreePointsCopy");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->RotateThreePointsCopy(theObject, theCentPoint, thePoint1, thePoint2);
+  endService( " GEOM_Superv_i::RotateThreePointsCopy" );
+  return anObj;
+}
 
 //=============================================================================
 //  MultiRotate1D:

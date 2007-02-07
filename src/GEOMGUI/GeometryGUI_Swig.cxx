@@ -66,6 +66,7 @@
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <AIS_Drawer.hxx>
+#include <BRepTools.hxx>
 
 // IDL Headers
 #include <SALOMEconfig.h>
@@ -145,7 +146,8 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
       if (!father)
         return;
       if (!father->ComponentIOR(aFatherIOR)) {
-        aStudyBuilder->LoadWith(father, SalomeApp_Application::orb()->object_to_string(Geom));
+        CORBA::String_var objStr = SalomeApp_Application::orb()->object_to_string(Geom);
+        aStudyBuilder->LoadWith(father, objStr.in());
         father->ComponentIOR(aFatherIOR);
       }
 
@@ -439,7 +441,7 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, boo
 	    ite.Value()->SetColor(CSFColor);
 	    if (ite.Value()->IsKind(STANDARD_TYPE(GEOM_AISShape)))
 	      Handle(GEOM_AISShape)::DownCast(ite.Value())->SetShadingColor(CSFColor);
-	    ite.Value()->Redisplay(Standard_True);
+	    ic->Redisplay(ite.Value(), true, true);
 	    if (myUpdateViewer)
 	      occViewer->update();
 	    break;
@@ -613,13 +615,13 @@ void GEOM_Swig::setDeflection(const char* theEntry, float theDeflect)
 	  if ((!aObj.IsNull()) && aObj->hasEntry() && aObj->isSame(anIO)) {
 	    Handle(AIS_Shape) aShape = Handle(AIS_Shape)::DownCast(it.Value());
 	    if (!aShape.IsNull()) {
-	      Handle(AIS_Drawer) aDrawer = aShape->Attributes();
-	      if (aDrawer.IsNull())
-		aDrawer = new AIS_Drawer();
-	      aDrawer->SetDeviationCoefficient(myParam);
-	      aShape->SetAttributes(aDrawer);
-	      aContext->Redisplay(aShape, true, true);
-	      aContext->UpdateCurrentViewer();
+	      TopoDS_Shape aSh = aShape->Shape();
+	      if (!aSh.IsNull())
+		BRepTools::Clean(aSh);
+
+	      aShape->SetOwnDeviationCoefficient( myParam );
+	      aShape->SetOwnHLRDeviationAngle( 1.57 );
+	      aContext->Redisplay(aShape);
 	      return;
 	    }
 	  }

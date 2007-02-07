@@ -27,13 +27,15 @@
 #ifndef DIALOGBOX_QUAD_FACE_H
 #define DIALOGBOX_QUAD_FACE_H
 
+#include "GEOM_BlocksGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 
 //=================================================================================
 // class    : BlocksGUI_QuadFaceDlg
 // purpose  :
 //=================================================================================
-class BlocksGUI_QuadFaceDlg : public GEOMBase_Skeleton
+class GEOM_BLOCKSGUI_EXPORT BlocksGUI_QuadFaceDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 

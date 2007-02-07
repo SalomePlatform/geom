@@ -903,7 +903,7 @@ msgstr "Create A Face"
 
 #: GeometryGUI_FaceDlg.cxx:78
 msgid "GEOM_FACE_FFW"
-msgstr "Face from a wire"
+msgstr "Face from a closed wire and edge"
 
 #: GeometryGUI_FaceDlg.cxx:103
 msgid "GEOM_FACE_OPT"
@@ -2958,3 +2958,9 @@ msgstr "Default display mode"
 
 msgid "PREF_TAB_SETTINGS"
 msgstr "Settings"
+
+msgid "ERROR_SHAPE_TYPE"
+msgstr "Object of incorrect type selected!\nPlease, select face, shell or solid and try again"
+
+msgid "DEP_OBJECT"
+msgstr "Selected object has been used to create another one\n It can't be deleted "

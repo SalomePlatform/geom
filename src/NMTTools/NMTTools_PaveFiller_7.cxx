@@ -46,6 +46,40 @@
 #include <TopExp.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 
+//
+#include <IntTools_SequenceOfPntOn2Faces.hxx>
+#include <IntTools_PntOnFace.hxx>
+#include <IntTools_PntOn2Faces.hxx>
+#include <BOPTools_Tools.hxx>
+#include <TopTools_DataMapOfShapeListOfInteger.hxx>
+#include <TColStd_ListOfInteger.hxx>
+#include <TopoDS_Compound.hxx>
+#include <BRep_Builder.hxx>
+#include <BOPTools_CArray1OfVVInterference.hxx>
+#include <BOPTools_VVInterference.hxx>
+#include <TopTools_DataMapOfShapeShape.hxx>
+#include <TopTools_DataMapOfShapeListOfInteger.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfShapeListOfInteger.hxx>
+#include <TColStd_MapOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TopTools_DataMapOfIntegerShape.hxx>
+#include <Bnd_HArray1OfBox.hxx>
+#include <Bnd_BoundSortBox.hxx>
+#include <Bnd_Box.hxx>
+#include <BRepBndLib.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfIntegerShape.hxx>
+#include <TopTools_DataMapOfShapeInteger.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfShapeInteger.hxx>
+#include <TopTools_DataMapOfShapeInteger.hxx>
+#include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
+
+// Modified  Thu Sep 14 14:35:18 2006 
+// Contribution of Samtech www.samcef.com BEGIN
+static 
+  void FuseVertices(const TopoDS_Shape& aCompound,
+		    TopTools_DataMapOfShapeShape& aDMVV);
+// Contribution of Samtech www.samcef.com END
+
 //=======================================================================
 // function: MakeSplitEdges
 // purpose: 
@@ -236,7 +270,7 @@
   for(i=1; i<=aNbF; ++i) {
     nF=aMF(i);
     iRankF=myDS->Rank(nF);
-    const TopoDS_Shape& aF=myDS->Shape(nF);
+    const TopoDS_Shape aF=myDS->Shape(nF);//mpv
     aExp.Init(aF, TopAbs_EDGE);
     for(; aExp.More();  aExp.Next()) {
       aE=TopoDS::Edge(aExp.Current());
@@ -278,3 +312,253 @@
     }
   }
 } 
+// Modified 
+// to treat Alone Vertices between faces
+// Thu Sep 14 14:35:18 2006 
+// Contribution of Samtech www.samcef.com BEGIN
+//=======================================================================
+// function: MakeAloneVertices
+// purpose: 
+//=======================================================================
+  void NMTTools_PaveFiller::MakeAloneVertices()
+{
+  Standard_Integer i, aNbFFs, nF1, nF2, j, aNbPnts, nFx, aNbV;
+  Standard_Real aTolF1, aTolF2, aTolSum, aTolV;
+  TColStd_ListIteratorOfListOfInteger aIt;
+  TColStd_ListOfInteger aLI;
+  TopoDS_Vertex aV;
+  TopoDS_Compound aCompound;
+  BRep_Builder aBB;
+  TopTools_DataMapOfShapeListOfInteger aDMVFF, aDMVFF1;
+  TopTools_DataMapIteratorOfDataMapOfShapeListOfInteger aItDMVFF;
+  TopTools_DataMapOfShapeShape aDMVV;
+  TopTools_DataMapOfIntegerShape aDMIV;
+  TopTools_DataMapOfShapeInteger aDMVI;
+  TopTools_DataMapIteratorOfDataMapOfShapeInteger aItDMVI;
+  TopTools_DataMapIteratorOfDataMapOfIntegerShape aItDMIV;
+  //
+  aBB.MakeCompound(aCompound);
+  //
+  myAloneVertices.Clear();
+  //
+  BOPTools_CArray1OfSSInterference& aFFs=myIntrPool->SSInterferences();
+  //
+  // 1. Collect alone vertices from FFs
+  aNbV=0;
+  aNbFFs=aFFs.Extent();
+  for (i=1; i<=aNbFFs; ++i) {
+    BOPTools_SSInterference& aFFi=aFFs(i);
+    aFFi.Indices(nF1, nF2);
+    //
+    const TopoDS_Face aF1=TopoDS::Face(myDS->Shape(nF1));//mpv
+    const TopoDS_Face aF2=TopoDS::Face(myDS->Shape(nF2));//mpv
+    //
+    aTolF1=BRep_Tool::Tolerance(aF1);
+    aTolF2=BRep_Tool::Tolerance(aF2);
+    aTolSum=aTolF1+aTolF2;
+    //
+    aLI.Clear();
+    aLI.Append(nF1);
+    aLI.Append(nF2);
+    //
+    const IntTools_SequenceOfPntOn2Faces& aSeqAlonePnts=aFFi.AlonePnts();
+    aNbPnts=aSeqAlonePnts.Length();
+    for (j=1; j<=aNbPnts; ++j) {
+      const gp_Pnt& aP=aSeqAlonePnts(j).P1().Pnt();
+      BOPTools_Tools::MakeNewVertex(aP, aTolSum, aV);
+      aDMVFF.Bind(aV, aLI);
+      aBB.Add(aCompound, aV);
+      ++aNbV;
+    }
+  }
+  if (!aNbV) {
+    return;
+  }
+  //
+  // 2. Try to fuse alone vertices themselves;
+  FuseVertices(aCompound, aDMVV);
+  //
+  // if some are fused, replace them by new ones 
+  aItDMVFF.Initialize(aDMVFF);
+  for (;  aItDMVFF.More(); aItDMVFF.Next()) {
+    const TopoDS_Shape& aVx=aItDMVFF.Key();
+    const TColStd_ListOfInteger& aLIx=aItDMVFF.Value();
+    //
+    if (!aDMVV.IsBound(aVx)) {
+      aDMVFF1.Bind(aVx, aLIx);
+    }
+    else {
+      const TopoDS_Shape& aVy=aDMVV.Find(aVx);
+      
+      if (aDMVFF1.IsBound(aVy)) {
+	TColStd_ListOfInteger& aLIy=aDMVFF1.ChangeFind(aVy);
+	aIt.Initialize(aLIx);
+	for(; aIt.More(); aIt.Next()) {
+	  nFx=aIt.Value();
+	  aLIy.Append(nFx);
+	}
+      }
+      else { 
+	aDMVFF1.Bind(aVy, aLIx);
+      }
+    }
+  }
+  aDMVFF.Clear();
+  //
+  // refine lists of faces in aDMVFF1; 
+  aItDMVFF.Initialize(aDMVFF1);
+  for (;  aItDMVFF.More(); aItDMVFF.Next()) {
+    TColStd_MapOfInteger aMIy;
+    TColStd_ListOfInteger aLIy;
+    //
+    const TopoDS_Shape& aVx=aItDMVFF.Key();
+    TColStd_ListOfInteger& aLIx=aDMVFF1.ChangeFind(aVx);
+    aIt.Initialize(aLIx);
+    for(; aIt.More(); aIt.Next()) {
+      nFx=aIt.Value();
+      if (aMIy.Add(nFx)) {
+	aLIy.Append(nFx);
+      }
+    }
+    aLIx.Clear();
+    aLIx.Append(aLIy);
+  }
+  //==================================
+  //
+  // 3. Collect vertices from DS
+  Standard_Integer aNbS, nV, nVSD, aNbVDS, i1, i2, aNbVSD;
+  //
+  aNbS=myDS->NumberOfShapesOfTheObject();
+  // old shapes
+  for (i=1; i<=aNbS; ++i) {
+    const TopoDS_Shape& aS=myDS->Shape(i);
+    if (aS.ShapeType() != TopAbs_VERTEX){
+      continue;
+    }
+    //
+    nVSD=FindSDVertex(i); 
+    nV=(nVSD) ? nVSD : i;
+    const TopoDS_Shape& aVx=myDS->Shape(nV);
+    if (!aDMVI.IsBound(aVx)) {
+      aDMVI.Bind(aVx, nV);
+    }
+  }
+  // new shapes
+  i1=myDS->NumberOfSourceShapes()+1;
+  i2=myDS->NumberOfInsertedShapes();
+  for (i=i1; i<=i2; ++i) {
+    const TopoDS_Shape aS=myDS->Shape(i);//mpv
+    if (aS.ShapeType() != TopAbs_VERTEX){
+      continue;
+    }
+    if (!aDMVI.IsBound(aS)) {
+      aDMVI.Bind(aS, i);
+    }
+  }
+  // 
+  // 4. Initialize BoundSortBox on aDMVI
+  //
+  Handle(Bnd_HArray1OfBox) aHAB;
+  Bnd_BoundSortBox aBSB;
+  //
+  aNbVDS=aDMVI.Extent();
+  aHAB=new Bnd_HArray1OfBox(1, aNbVDS);
+  //
+  aItDMVI.Initialize(aDMVI);
+  for (i=1; aItDMVI.More(); aItDMVI.Next(), ++i) {
+    Bnd_Box aBox;
+    //
+    nV=aItDMVI.Value();
+    aV=TopoDS::Vertex(aItDMVI.Key());
+    aTolV=BRep_Tool::Tolerance(aV);
+    aBox.SetGap(aTolV);
+    BRepBndLib::Add(aV, aBox);
+    aHAB->SetValue(i, aBox);
+    //
+    aDMIV.Bind(i, aV);
+  }
+  aBSB.Initialize(aHAB);
+  //
+  // 5. Compare 
+  aItDMVFF.Initialize(aDMVFF1);
+  for (;  aItDMVFF.More(); aItDMVFF.Next()) {
+    Bnd_Box aBoxV;
+    //
+    const TColStd_ListOfInteger& aLIFF=aItDMVFF.Value();
+    aV=TopoDS::Vertex(aItDMVFF.Key());
+    //
+    aTolV=BRep_Tool::Tolerance(aV);
+    aBoxV.SetGap(aTolV);
+    BRepBndLib::Add(aV, aBoxV);
+    //
+    const TColStd_ListOfInteger& aLIVSD=aBSB.Compare(aBoxV);
+    aNbVSD=aLIVSD.Extent();
+    if (aNbVSD==0) {
+      // add new vertex in DS and update map myAloneVertices
+      BooleanOperations_AncestorsSeqAndSuccessorsSeq anASSeq;
+      //
+      myDS->InsertShapeAndAncestorsSuccessors(aV, anASSeq);
+      nV=myDS->NumberOfInsertedShapes();
+      //
+      aIt.Initialize(aLIFF);
+      for (; aIt.More(); aIt.Next()) {
+	nFx=aIt.Value();
+	if (myAloneVertices.Contains(nFx)) {
+	  TColStd_IndexedMapOfInteger& aMVx=myAloneVertices.ChangeFromKey(nFx);
+	  aMVx.Add(nV);
+	}
+	else {
+	  TColStd_IndexedMapOfInteger aMVx;
+	  aMVx.Add(nV);
+	  myAloneVertices.Add(nFx, aMVx);
+	}
+      }
+    }
+  }
+}
+//=======================================================================
+// function: AloneVertices
+// purpose: 
+//=======================================================================
+  const NMTTools_IndexedDataMapOfIndexedMapOfInteger& NMTTools_PaveFiller::AloneVertices()const
+{
+  return myAloneVertices;
+}
+//=======================================================================
+// function: FuseVertices
+// purpose: 
+//=======================================================================
+void FuseVertices(const TopoDS_Shape& aCompound,
+		  TopTools_DataMapOfShapeShape& aDMVV)
+{
+  Standard_Integer i, aNbVV, n1, n2, nX;
+  NMTDS_ShapesDataStructure tDS;
+  //
+  tDS.SetCompositeShape(aCompound);
+  tDS.Init();
+  //
+  BOPTools_InterferencePool tInterfPool(tDS);
+  NMTTools_PaveFiller tPaveFiller(tInterfPool);
+  //
+  tPaveFiller.Init();
+  //
+  tPaveFiller.PerformVV();
+  tPaveFiller.PerformNewVertices();
+  //
+  const BOPTools_CArray1OfVVInterference& aVVt=tInterfPool.VVInterfs();
+  //
+  aNbVV=aVVt.Extent();
+  for (i=1; i<=aNbVV; ++i) {
+    const BOPTools_VVInterference& aVV=aVVt(i);
+    aVV.Indices(n1, n2);
+    nX=aVV.NewShape();
+    if (nX) {
+      const TopoDS_Shape& aV1=tDS.Shape(n1);
+      const TopoDS_Shape& aV2=tDS.Shape(n2);
+      const TopoDS_Shape& aVx=tDS.Shape(nX);
+      aDMVV.Bind(aV1, aVx);
+      aDMVV.Bind(aV2, aVx);
+    }
+  }
+}
+// Contribution of Samtech www.samcef.com END

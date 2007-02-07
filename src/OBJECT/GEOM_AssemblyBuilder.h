@@ -26,6 +26,8 @@
 //  Module : GEOM
 //  $Header$
 
+#include "GEOM_OBJECT_defs.hxx"
+
 #include <vtkAssembly.h>
 #include <vtkPropAssembly.h>
 #include <vtkActorCollection.h>
@@ -34,13 +36,7 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 
-#ifdef WNT
-#include <SALOME_WNT.hxx>
-#else
-#define SALOME_WNT_EXPORT
-#endif
-
-class SALOME_WNT_EXPORT GEOM_AssemblyBuilder {
+class GEOM_OBJECT_EXPORT GEOM_AssemblyBuilder {
 
  private:
 

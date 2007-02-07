@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -96,7 +96,7 @@ bool GeometryGUI::InitGeomGen()
 
 //=======================================================================
 // function : ClientSObjectToObject
-// purpose  : 
+// purpose  :
 //=======================================================================
 CORBA::Object_var GeometryGUI::ClientSObjectToObject (_PTR(SObject) theSObject)
 {
@@ -116,7 +116,7 @@ CORBA::Object_var GeometryGUI::ClientSObjectToObject (_PTR(SObject) theSObject)
 
 //=======================================================================
 // function : ClientStudyToStudy
-// purpose  : 
+// purpose  :
 //=======================================================================
 SALOMEDS::Study_var GeometryGUI::ClientStudyToStudy (_PTR(Study) theStudy)
 {
@@ -171,12 +171,12 @@ GeometryGUI::GeometryGUI() :
   SalomeApp_Module( "GEOM" )
 {
   if ( CORBA::is_nil( myComponentGeom ) )
-  { 
+  {
     SALOME_LifeCycleCORBA* ls = new SALOME_LifeCycleCORBA( getApp()->namingService() );
     Engines::Component_var comp = ls->FindOrLoad_Component( "FactoryServer", "GEOM" );
     myComponentGeom  = GEOM::GEOM_Gen::_narrow( comp );
   }
-  
+
   myState           = -1;
   myActiveDialogBox = 0;
   myFatherior       = "";
@@ -350,7 +350,7 @@ void GeometryGUI::OnGUIEvent( int id )
   bool ViewVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
   // if current viewframe is not of OCC and not of VTK type - return immediately
   // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
-  bool NotViewerDependentCommand = ( id == 901 || id == 216 || id == 213 ); 
+  bool NotViewerDependentCommand = ( id == 901 || id == 216 || id == 213 );
   if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommand )
       return;
 
@@ -486,7 +486,7 @@ void GeometryGUI::OnGUIEvent( int id )
   else if( id == 503 ||   // MENU OPERATION - PARTITION
 	   id == 504 ||   // MENU OPERATION - ARCHIMEDE
 	   id == 505 ||   // MENU OPERATION - FILLET
-	   id == 506 ||   // MENU OPERATION - CHAMFER  
+	   id == 506 ||   // MENU OPERATION - CHAMFER
 	   id == 507 ) {  // MENU OPERATION - CLIPPING RANGE
 #ifndef WNT
 	library = getLibrary( "libOperationGUI.so" );
@@ -549,9 +549,9 @@ void GeometryGUI::OnGUIEvent( int id )
   }
 
   // call method of corresponding GUI library
-  if ( library ) 
+  if ( library )
     library->OnGUIEvent( id, desk );
-  else 
+  else
     SUIT_MessageBox::error1( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
 }
 
@@ -578,7 +578,7 @@ void GeometryGUI::OnKeyPress( SUIT_ViewWindow* win, QKeyEvent* pe )
 // purpose  : Manages mouse move events [static]
 //=================================================================================
 void GeometryGUI::OnMouseMove( SUIT_ViewWindow* win, QMouseEvent* pe )
-{  
+{
   GUIMap::Iterator it;
   bool bOk = true;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it ) {
@@ -637,7 +637,7 @@ bool GeometryGUI::SetSettings()
 {
   QMenuBar*     Mb = parent->getMainMenuBar();
   SUIT_Study*   ActiveStudy = application()->activeStudy();
-    
+
 // Wireframe or Shading
   int DisplayMode = 0;
   SUIT_ViewWindow* window = application()->desktop()->activeWindow();
@@ -671,16 +671,16 @@ bool GeometryGUI::SetSettings()
   //  if(!AddInStudy.isEmpty())
   //    Settings_AddInStudy = AddInStudy.toInt();
   //  else
-  
+
   Settings_AddInStudy = 1;
   Mb->setItemChecked(411, Settings_AddInStudy);
 
-  // step value 
+  // step value
   QString S = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
   if(S.isEmpty())
     QAD_CONFIG->addSetting("Geometry:SettingsGeomStep", "100");
 
-  // isos 
+  // isos
   int count = ActiveStudy->getStudyFramesCount();
   for(int i = 0; i < count; i++) {
     if(ActiveStudy->getStudyFrame(i)->getTypeView() == VIEW_OCC) {
@@ -704,22 +704,22 @@ bool GeometryGUI::SetSettings()
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
     bOk = bOk && it.data()->SetSettings( parent );
-    
-  // MZN: Enable/disable "Clipping range" menu item(from GEOM_CLIPPING variable)	
+
+  // MZN: Enable/disable "Clipping range" menu item(from GEOM_CLIPPING variable)
   if (getenv( "GEOM_CLIPPING" ) == NULL)
     {
       QMenuItem* mi = Mb->findItem(50);
       if (mi && mi->popup())
-      mi->popup()->removeItem(507);    	
-    } 
-    
+      mi->popup()->removeItem(507);
+    }
+
   return bOk;
 }
 */
 
 //=======================================================================
 // function : createGeomAction
-// purpose  : 
+// purpose  :
 //=======================================================================
 void GeometryGUI::createGeomAction( const int id, const QString& po_id, const QString& icon_id, const int key, const bool toggle  )
 {
@@ -727,7 +727,7 @@ void GeometryGUI::createGeomAction( const int id, const QString& po_id, const QS
   QWidget* parent = application()->desktop();
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QPixmap pix;
-  if ( icon_id.length() ) 
+  if ( icon_id.length() )
     pix = resMgr->loadPixmap( "GEOM", tr( icon_id ) );
   else
     pix = resMgr->loadPixmap( "GEOM", tr( QString( "ICO_" )+po_id ), false );
@@ -831,7 +831,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 609, "CHECK_FREE_BNDS" );
   createGeomAction( 610, "CHECK_FREE_FACES" );
   createGeomAction( 611, "CHANGE_ORIENTATION" );
-  
+
   createGeomAction( 708, "POINT_COORDS" );
   createGeomAction( 701, "BASIC_PROPS" );
   createGeomAction( 702, "MASS_CENTER" );
@@ -845,7 +845,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 7072, "CHECK_COMPOUND" );
 
   createGeomAction( 5103, "CHECK_GEOMETRY" );
-  
+
   createGeomAction( 412, "SHADING_COLOR" );
   createGeomAction( 413, "ISOS" );
   createGeomAction( 414, "STEP_VALUE" );
@@ -896,125 +896,125 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 4020, basicId, -1 );
 
   int primId = createMenu( tr( "MEN_PRIMITIVES" ), newEntId, -1 );
-  createMenu( 4021, primId, -1 );  
-  createMenu( 4022, primId, -1 );  
-  createMenu( 4023, primId, -1 );  
-  createMenu( 4024, primId, -1 );  
-  createMenu( 4025, primId, -1 );  
+  createMenu( 4021, primId, -1 );
+  createMenu( 4022, primId, -1 );
+  createMenu( 4023, primId, -1 );
+  createMenu( 4024, primId, -1 );
+  createMenu( 4025, primId, -1 );
 
   int genId = createMenu( tr( "MEN_GENERATION" ), newEntId, -1 );
-  createMenu( 4031, genId, -1 );  
-  createMenu( 4032, genId, -1 );  
-  createMenu( 4033, genId, -1 );  
-  createMenu( 4034, genId, -1 );  
+  createMenu( 4031, genId, -1 );
+  createMenu( 4032, genId, -1 );
+  createMenu( 4033, genId, -1 );
+  createMenu( 4034, genId, -1 );
   createMenu( separator(), newEntId, -1 );
 
   int groupId = createMenu( tr( "MEN_GROUP" ), newEntId, -1 );
-  createMenu( 800, groupId, -1 );  
-  createMenu( 801, groupId, -1 );  
+  createMenu( 800, groupId, -1 );
+  createMenu( 801, groupId, -1 );
   createMenu( separator(), newEntId, -1 );
 
   int blocksId = createMenu( tr( "MEN_BLOCKS" ), newEntId, -1 );
-  createMenu( 9997, blocksId, -1 );  
-  createMenu( 9999, blocksId, -1 );  
+  createMenu( 9997, blocksId, -1 );
+  createMenu( 9999, blocksId, -1 );
 
   createMenu( separator(), newEntId, -1 );
-  createMenu( 404, newEntId, -1 );  
+  createMenu( 404, newEntId, -1 );
   createMenu( separator(), newEntId, -1 );
-  createMenu( 407, newEntId, -1 );  
+  createMenu( 407, newEntId, -1 );
 
   int buildId = createMenu( tr( "MEN_BUILD" ), newEntId, -1 );
-  createMenu( 4081, buildId, -1 );  
-  createMenu( 4082, buildId, -1 );  
-  createMenu( 4083, buildId, -1 );  
-  createMenu( 4084, buildId, -1 );  
-  createMenu( 4085, buildId, -1 );  
-  createMenu( 4086, buildId, -1 );  
+  createMenu( 4081, buildId, -1 );
+  createMenu( 4082, buildId, -1 );
+  createMenu( 4083, buildId, -1 );
+  createMenu( 4084, buildId, -1 );
+  createMenu( 4085, buildId, -1 );
+  createMenu( 4086, buildId, -1 );
 
   int operId = createMenu( tr( "MEN_OPERATIONS" ), -1, -1, 10 );
 
   int boolId = createMenu( tr( "MEN_BOOLEAN" ), operId, -1 );
-  createMenu( 5011, boolId, -1 );  
-  createMenu( 5012, boolId, -1 );  
-  createMenu( 5013, boolId, -1 );  
-  createMenu( 5014, boolId, -1 );  
+  createMenu( 5011, boolId, -1 );
+  createMenu( 5012, boolId, -1 );
+  createMenu( 5013, boolId, -1 );
+  createMenu( 5014, boolId, -1 );
 
   int transId = createMenu( tr( "MEN_TRANSFORMATION" ), operId, -1 );
-  createMenu( 5021, transId, -1 );  
-  createMenu( 5022, transId, -1 );  
-  createMenu( 5023, transId, -1 );  
-  createMenu( 5024, transId, -1 );  
-  createMenu( 5025, transId, -1 );  
-  createMenu( 5026, transId, -1 );  
+  createMenu( 5021, transId, -1 );
+  createMenu( 5022, transId, -1 );
+  createMenu( 5023, transId, -1 );
+  createMenu( 5024, transId, -1 );
+  createMenu( 5025, transId, -1 );
+  createMenu( 5026, transId, -1 );
   createMenu( separator(), transId, -1 );
-  createMenu( 5027, transId, -1 );  
-  createMenu( 5028, transId, -1 );  
+  createMenu( 5027, transId, -1 );
+  createMenu( 5028, transId, -1 );
 
-  createMenu( 503, operId, -1 );  
-  createMenu( 504, operId, -1 );  
+  createMenu( 503, operId, -1 );
+  createMenu( 504, operId, -1 );
   createMenu( separator(), operId, -1 );
-  createMenu( 505, transId, -1 );  
-  createMenu( 506, transId, -1 );  
-  //createMenu( 507, transId, -1 );  
+  createMenu( 505, transId, -1 );
+  createMenu( 506, transId, -1 );
+  //createMenu( 507, transId, -1 );
 
   int blockId = createMenu( tr( "MEN_BLOCKS" ), operId, -1 );
-  createMenu( 9998, blockId, -1 );  
-  createMenu( 9995, blockId, -1 );  
-  createMenu( 99991, blockId, -1 );  
+  createMenu( 9998, blockId, -1 );
+  createMenu( 9995, blockId, -1 );
+  createMenu( 99991, blockId, -1 );
 
   int repairId = createMenu( tr( "MEN_REPAIR" ), -1, -1, 10 );
-  createMenu( 605, repairId, -1 );  
-  createMenu( 603, repairId, -1 );  
-  createMenu( 606, repairId, -1 );  
-  createMenu( 607, repairId, -1 );  
-  createMenu( 604, repairId, -1 );  
-  createMenu( 601, repairId, -1 );  
-  createMenu( 602, repairId, -1 );  
-  createMenu( 608, repairId, -1 );  
-  createMenu( 609, repairId, -1 );  
-  createMenu( 610, repairId, -1 );  
-  createMenu( 611, repairId, -1 );  
+  createMenu( 605, repairId, -1 );
+  createMenu( 603, repairId, -1 );
+  createMenu( 606, repairId, -1 );
+  createMenu( 607, repairId, -1 );
+  createMenu( 604, repairId, -1 );
+  createMenu( 601, repairId, -1 );
+  createMenu( 602, repairId, -1 );
+  createMenu( 608, repairId, -1 );
+  createMenu( 609, repairId, -1 );
+  createMenu( 610, repairId, -1 );
+  createMenu( 611, repairId, -1 );
 
   int measurId = createMenu( tr( "MEN_MEASURES" ), -1, -1, 10 );
-  createMenu( 708, measurId, -1 );  
-  createMenu( 701, measurId, -1 );  
+  createMenu( 708, measurId, -1 );
+  createMenu( 701, measurId, -1 );
   createMenu( separator(), measurId, -1 );
-  createMenu( 702, measurId, -1 );  
-  createMenu( 703, measurId, -1 );  
+  createMenu( 702, measurId, -1 );
+  createMenu( 703, measurId, -1 );
   createMenu( separator(), measurId, -1 );
 
   int dimId = createMenu( tr( "MEN_DIMENSIONS" ), measurId, -1 );
-  createMenu( 7041, dimId, -1 );  
+  createMenu( 7041, dimId, -1 );
   createMenu( 7042, dimId, -1 );
   createMenu( separator(), measurId, -1 );
-  
-  createMenu( 705, measurId, -1 );  
+
+  createMenu( 705, measurId, -1 );
   createMenu( separator(), measurId, -1 );
-  createMenu( 706, measurId, -1 );  
-  createMenu( 707, measurId, -1 );  
-  createMenu( 7072, measurId, -1 );  
+  createMenu( 706, measurId, -1 );
+  createMenu( 707, measurId, -1 );
+  createMenu( 7072, measurId, -1 );
 
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
   createMenu( separator(), toolsId, -1 );
-  createMenu( 5103, toolsId, -1 );  
-  
+  createMenu( 5103, toolsId, -1 );
+
   //int prefId = createMenu( tr( "MEN_PREFERENCES" ), -1, -1, 50 );
   //createMenu( separator(), prefId, -1 );
   //int geomId = createMenu( tr( "MEN_PREFERENCES_GEOM" ), prefId, -1 );
-  //createMenu( 412, geomId, -1 );  
-  //createMenu( 413, geomId, -1 );  
-  //createMenu( 414, geomId, -1 );  
+  //createMenu( 412, geomId, -1 );
+  //createMenu( 413, geomId, -1 );
+  //createMenu( 414, geomId, -1 );
   //createMenu( separator(), prefId, -1 );
 
   int viewId = createMenu( tr( "MEN_VIEW" ), -1, -1 );
   createMenu( separator(), viewId, -1 );
 
   int dispmodeId = createMenu( tr( "MEN_DISPLAY_MODE" ), viewId, -1 );
-  createMenu( 211, dispmodeId, -1 );  
-  
+  createMenu( 211, dispmodeId, -1 );
+
   createMenu( separator(), viewId, -1 );
-  createMenu( 212, viewId, -1 );  
-  createMenu( 214, viewId, -1 );  
+  createMenu( 212, viewId, -1 );
+  createMenu( 214, viewId, -1 );
   createMenu( separator(), viewId, -1 );
 
 /*
@@ -1022,8 +1022,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   because of these items are accessible through object browser and viewers
   we have removed they from main menu
 
-  createMenu( 216, viewId, -1 );  
-  createMenu( 213, viewId, -1 );  
+  createMenu( 216, viewId, -1 );
+  createMenu( 213, viewId, -1 );
   createMenu( 215, viewId, -1 );
 */
 
@@ -1042,33 +1042,33 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( 4020, basicTbId );
 
   int primTbId = createTool( tr( "TOOL_PRIMITIVES" ) );
-  createTool( 4021, primTbId );  
-  createTool( 4022, primTbId );  
-  createTool( 4023, primTbId );  
-  createTool( 4024, primTbId );  
-  createTool( 4025, primTbId );  
+  createTool( 4021, primTbId );
+  createTool( 4022, primTbId );
+  createTool( 4023, primTbId );
+  createTool( 4024, primTbId );
+  createTool( 4025, primTbId );
 
   int boolTbId = createTool( tr( "TOOL_BOOLEAN" ) );
-  createTool( 5011, boolTbId );  
-  createTool( 5012, boolTbId );  
-  createTool( 5013, boolTbId );  
-  createTool( 5014, boolTbId );  
+  createTool( 5011, boolTbId );
+  createTool( 5012, boolTbId );
+  createTool( 5013, boolTbId );
+  createTool( 5014, boolTbId );
 
   int genTbId = createTool( tr( "TOOL_GENERATION" ) );
-  createTool( 4031, genTbId );  
-  createTool( 4032, genTbId );  
-  createTool( 4033, genTbId );  
-  createTool( 4034, genTbId );  
+  createTool( 4031, genTbId );
+  createTool( 4032, genTbId );
+  createTool( 4033, genTbId );
+  createTool( 4034, genTbId );
 
   int transTbId = createTool( tr( "TOOL_TRANSFORMATION" ) );
-  createTool( 5021, transTbId );  
-  createTool( 5022, transTbId );  
-  createTool( 5023, transTbId );  
-  createTool( 5024, transTbId );  
-  createTool( 5025, transTbId );  
-  createTool( 5026, transTbId );  
+  createTool( 5021, transTbId );
+  createTool( 5022, transTbId );
+  createTool( 5023, transTbId );
+  createTool( 5024, transTbId );
+  createTool( 5025, transTbId );
+  createTool( 5026, transTbId );
   createTool( separator(), transTbId );
-  createTool( 5027, transTbId );  
+  createTool( 5027, transTbId );
   createTool( 5028, transTbId );
 
   // ---- create popup menus --------------------------
@@ -1185,14 +1185,14 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   setMenuShown( false );
   setToolShown( false );
 
-  disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ), 
+  disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
 	     this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
 
   EmitSignalCloseAllDialogs();
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
-    it.data()->deactivate();  
+    it.data()->deactivate();
 
   // Unset actions accelerator keys
   //action(111)->setAccel(QKeySequence()); // Import
@@ -1286,7 +1286,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
   if( nbSel == 0 ) {
     ////// NOTHING SELECTED
     popup->clear();
-  } 
+  }
   else if ( nbSel == 1 ) {
     ////// SINGLE OBJECT SELECTION
     if ( parentComponent != parent->getActiveComponent() )  {
@@ -1513,7 +1513,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 
 //=======================================================================
 // function : GeometryGUI::BuildPresentation()
-// purpose  : 
+// purpose  :
 //=======================================================================
 void GeometryGUI::BuildPresentation( const Handle(SALOME_InteractiveObject)& io, SUIT_ViewWindow* win )
 {
@@ -1531,7 +1531,7 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
 
   const bool ViewOCC = ( win->getViewManager()->getType() == OCCViewer_Viewer::Type() );
 //  const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
-  
+
   // disable non-OCC viewframe menu commands
 //  action( 404 )->setEnabled( ViewOCC ); // SKETCHER
   action( 603 )->setEnabled( ViewOCC ); // SuppressFace
@@ -1617,9 +1617,14 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
 
 QString GeometryGUI::engineIOR() const
 {
+  QString anIOR = QString::null;
   if ( !CORBA::is_nil( GetGeomGen() ) )
-    return QString( getApp()->orb()->object_to_string( GetGeomGen() ) );
-  return QString( "" );
+  {
+    CORBA::String_var objStr = getApp()->orb()->object_to_string( GetGeomGen() );
+    anIOR = QString( objStr.in() );
+//    free( objStr ); ASV : 26.07.06 : commented out because it raises exception and blocks application
+  }
+  return anIOR;
 }
 
 LightApp_Selection* GeometryGUI::createSelection() const
@@ -1654,22 +1659,22 @@ void GeometryGUI::createPreferences()
 
   addPreference( tr( "PREF_SHADING_COLOR" ), genGroup,
 		 LightApp_Preferences::Color, "Geometry", "shading_color" );
-  
+
   addPreference( tr( "PREF_WIREFRAME_COLOR" ), genGroup,
 		 LightApp_Preferences::Color, "Geometry", "wireframe_color" );
-  
+
   addPreference( tr( "PREF_FREE_BOUND_COLOR" ), genGroup,
 		 LightApp_Preferences::Color, "Geometry", "free_bound_color" );
-  
+
   addPreference( tr( "PREF_LINE_COLOR"), genGroup,
 		 LightApp_Preferences::Color, "Geometry", "line_color" );
-  
+
   addPreference( tr( "PREF_POINT_COLOR"), genGroup,
 		 LightApp_Preferences::Color, "Geometry", "point_color" );
-  
+
   addPreference( tr( "PREF_ISOS_COLOR" ), genGroup,
 		 LightApp_Preferences::Color, "Geometry", "isos_color" );
-  
+
   int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
 			    LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
 
@@ -1677,23 +1682,30 @@ void GeometryGUI::createPreferences()
   QStringList aModesList;
   aModesList.append( tr("MEN_WIREFRAME") );
   aModesList.append( tr("MEN_SHADING") );
-  
+
   QValueList<QVariant> anIndexesList;
   anIndexesList.append(0);
   anIndexesList.append(1);
-  
+
   setPreferenceProperty( dispmode, "strings", aModesList );
   setPreferenceProperty( dispmode, "indexes", anIndexesList );
-  
+
   // Set property for step value for spinboxes
   setPreferenceProperty( step, "min", 0.001 );
   setPreferenceProperty( step, "max", 10000 );
   setPreferenceProperty( step, "precision", 3 );
-  
+
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )
 {
+  if (section == "Geometry") {
+    SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
+    if (param == QString("SettingsGeomStep")) {
+      double spin_step = aResourceMgr->doubleValue(section, param, 100.);
+      EmitSignalDefaultStepValueChanged(spin_step);
+    }
+  }
 }
 
 LightApp_Displayer* GeometryGUI::displayer()

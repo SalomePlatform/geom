@@ -21,6 +21,7 @@
 #ifndef _GEOM_IOperations_i_HeaderFile
 #define _GEOM_IOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 #include "GEOM_Object_i.hh" 
 #include "GEOM_Object.hxx"
 
-class GEOM_IOperations_i : public virtual POA_GEOM::GEOM_IOperations, public virtual SALOME::GenericObj_i
+class GEOM_I_EXPORT GEOM_IOperations_i : public virtual POA_GEOM::GEOM_IOperations, public virtual SALOME::GenericObj_i
 {
  public:
   GEOM_IOperations_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, ::GEOM_IOperations* theImpl);

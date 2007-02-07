@@ -744,7 +744,7 @@ def MakeWire(theEdgesAndWires):
     return anObj
 
 ## Create a face on the given wire.
-#  @param theWire Wire to build the face on.
+#  @param theWire closed Wire or Edge to build the face on.
 #  @param isPlanarWanted If TRUE, only planar face will be built.
 #                        If impossible, NULL object will be returned.
 #  @return New GEOM_Object, containing the created face.
@@ -757,7 +757,7 @@ def MakeFace(theWire, isPlanarWanted):
     return anObj
 
 ## Create a face on the given wires set.
-#  @param theWires List of wires to build the face on.
+#  @param theWires List of closed wires or edges to build the face on.
 #  @param isPlanarWanted If TRUE, only planar face will be built.
 #                        If impossible, NULL object will be returned.
 #  @return New GEOM_Object, containing the created face.
@@ -901,6 +901,33 @@ def GetShapesOnPlaneIDs(theShape, theShapeType, theAx1, theState):
     return aList
 
 ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+#  the specified plane by the certain way, defined through \a theState parameter.
+#  @param theShape Shape to find sub-shapes of.
+#  @param theShapeType Type of sub-shapes to be retrieved.
+#  @param theAx1 Vector (or line, or linear edge), specifying normal
+#                direction of the plane to find shapes on.
+#  @param thePnt Point specifying location of the plane to find shapes on.
+#  @param theState The state of the subshapes to find. It can be one of
+#   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
+#  @return List of all found sub-shapes.
+#
+#  Example: see GEOM_TestOthers.py
+def GetShapesOnPlaneWithLocation(theShape, theShapeType, theAx1, thePnt, theState):
+    aList = ShapesOp.GetShapesOnPlaneWithLocation(theShape, theShapeType, theAx1, thePnt, theState)
+    if ShapesOp.IsDone() == 0:
+      print "GetShapesOnPlaneWithLocation : ", ShapesOp.GetErrorCode()
+    return aList
+
+## Works like the above method, but returns list of sub-shapes indices
+#
+#  Example: see GEOM_TestOthers.py
+def GetShapesOnPlaneWithLocationIDs(theShape, theShapeType, theAx1, thePnt, theState):
+    aList = ShapesOp.GetShapesOnPlaneWithLocationIDs(theShape, theShapeType, theAx1, thePnt, theState)
+    if ShapesOp.IsDone() == 0:
+        print "GetShapesOnPlaneWithLocationIDs : ", ShapesOp.GetErrorCode()
+    return aList
+
+## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
 #  the specified cylinder by the certain way, defined through \a theState parameter.
 #  @param theShape Shape to find sub-shapes of.
 #  @param theShapeType Type of sub-shapes to be retrieved.
@@ -981,6 +1008,29 @@ def GetShapesOnQuadrangleIDs(theShape, theShapeType, theTopLeftPoint, theTopRigt
         print "GetShapesOnQuadrangleIDs : ", ShapesOp.GetErrorCode()
     return aList
 
+## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+#  the specified \a theBox by the certain way, defined through \a theState parameter.
+#  @param theBox Shape for relative comparing.
+#  @param theShape Shape to find sub-shapes of.
+#  @param theShapeType Type of sub-shapes to be retrieved.
+#  @param theState The state of the subshapes to find. It can be one of
+#   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
+#  @return List of all found sub-shapes.
+#
+def GetShapesOnBox(theBox, theShape, theShapeType, theState):
+    aList = ShapesOp.GetShapesOnBox(theBox, theShape, theShapeType, theState)
+    if ShapesOp.IsDone() == 0:
+      print "GetShapesOnBox : ", ShapesOp.GetErrorCode()
+    return aList
+
+## Works like the above method, but returns list of sub-shapes indices
+#
+def GetShapesOnBoxIDs(theBox, theShape, theShapeType, theState):
+    aList = ShapesOp.GetShapesOnBoxIDs(theBox, theShape, theShapeType, theState)
+    if ShapesOp.IsDone() == 0:
+        print "GetShapesOnBoxIDs : ", ShapesOp.GetErrorCode()
+    return aList
+
 ## Get sub-shape(s) of theShapeWhere, which are
 #  coincident with \a theShapeWhat or could be a part of it.
 #  @param theShapeWhere Shape to find sub-shapes of.
@@ -992,6 +1042,18 @@ def GetInPlace(theShapeWhere, theShapeWhat):
     anObj = ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
     if ShapesOp.IsDone() == 0:
       print "GetInPlace : ", ShapesOp.GetErrorCode()
+    return anObj
+
+## Get sub-shape of theShapeWhere, which is
+#  equal to \a theShapeWhat.
+#  @param theShapeWhere Shape to find sub-shape of.
+#  @param theShapeWhat Shape, specifying what to find.
+#  @return New GEOM_Object for found sub-shape.
+#
+def GetSame(theShapeWhere, theShapeWhat):
+    anObj = ShapesOp.GetSame(theShapeWhere, theShapeWhat)
+    if ShapesOp.IsDone() == 0:
+      print "GetSame : ", ShapesOp.GetErrorCode()
     return anObj
 
 # -----------------------------------------------------------------------------
@@ -1320,13 +1382,23 @@ def MakeSection(s1, s2):
 ## Perform partition operation.
 #  @param ListShapes Shapes to be intersected.
 #  @param ListTools Shapes to intersect theShapes.
-#  @param ListKeepInside Shapes, outside which the results will be deleted.
-#         Each shape from theKeepInside must belong to theShapes also.
-#  @param ListRemoveInside Shapes, inside which the results will be deleted.
-#         Each shape from theRemoveInside must belong to theShapes also.
+#  !!!NOTE: Each compound from ListShapes and ListTools will be exploded
+#           in order to avoid possible intersection between shapes from
+#           this compound.
 #  @param Limit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
-#  @param RemoveWebs If TRUE, perform Glue 3D algorithm.
-#  @param ListMaterials Material indices for each shape. Make sence, only if theRemoveWebs is TRUE.
+#
+#  After implementation new version of PartitionAlgo (October 2006)
+#  other parameters are ignored by current functionality. They are kept
+#  in this function only for support old versions.
+#  Ignored parameters:
+#      @param ListKeepInside Shapes, outside which the results will be deleted.
+#         Each shape from theKeepInside must belong to theShapes also.
+#      @param ListRemoveInside Shapes, inside which the results will be deleted.
+#         Each shape from theRemoveInside must belong to theShapes also.
+#      @param RemoveWebs If TRUE, perform Glue 3D algorithm.
+#      @param ListMaterials Material indices for each shape. Make sence,
+#         only if theRemoveWebs is TRUE.
+#
 #  @return New GEOM_Object, containing the result shapes.
 #
 #  Example: see GEOM_TestAll.py
@@ -1337,6 +1409,27 @@ def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=
                                  Limit, RemoveWebs, ListMaterials);
     if BoolOp.IsDone() == 0:
       print "MakePartition : ", BoolOp.GetErrorCode()
+    return anObj
+
+## Perform partition operation.
+#  This method may be useful if it is needed to make a partition for
+#  compound contains nonintersected shapes. Performance will be better
+#  since intersection between shapes from compound is not performed.
+#
+#  Description of all parameters as in previous method MakePartition()
+#
+#  !!!NOTE: Passed compounds (via ListShapes or via ListTools)
+#           have to consist of nonintersecting shapes.
+#
+#  @return New GEOM_Object, containing the result shapes.
+#
+def MakePartitionNonSelfIntersectedShape(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
+                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+    anObj = BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
+                                                        ListKeepInside, ListRemoveInside,
+                                                        Limit, RemoveWebs, ListMaterials);
+    if BoolOp.IsDone() == 0:
+      print "MakePartitionNonSelfIntersectedShape : ", BoolOp.GetErrorCode()
     return anObj
 
 ## Shortcut to MakePartition()
@@ -1417,6 +1510,21 @@ def MakeRotation(theObject, theAxis, theAngle):
     anObj = TrsfOp.RotateCopy(theObject, theAxis, theAngle)
     if TrsfOp.IsDone() == 0:
       print "RotateCopy : ", TrsfOp.GetErrorCode()
+    return anObj
+
+## Rotate given object around vector perpendicular to plane
+#  containing three points, creating its copy before the rotatation.
+#  @param theObject The object to be rotated.
+#  @param theCentPoint central point - the axis is the vector perpendicular to the plane
+#  containing the three points.
+#  @param thePoint1 and thePoint2 - in a perpendicular plan of the axis.
+#  @return New GEOM_Object, containing the rotated object.
+#
+#  Example: see GEOM_TestAll.py
+def MakeRotationThreePoints(theObject, theCentPoint, thePoint1, thePoint2):
+    anObj = TrsfOp.RotateThreePointsCopy(theObject, theCentPoint, thePoint1, thePoint2)
+    if TrsfOp.IsDone() == 0:
+      print "RotateThreePointsCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
 ## Scale the given object by the factor, creating its copy before the scaling.

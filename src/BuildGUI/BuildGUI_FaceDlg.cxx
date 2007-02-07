@@ -28,6 +28,7 @@
 
 #include "BuildGUI_FaceDlg.h"
 #include "GEOMImpl_Types.hxx"
+#include "TColStd_MapOfInteger.hxx"
 
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
@@ -64,7 +65,7 @@ BuildGUI_FaceDlg::BuildGUI_FaceDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
 
   GroupWire = new DlgRef_1Sel1Check_QTD(this, "GroupWire");
   GroupWire->GroupBox1->setTitle(tr("GEOM_FACE_FFW"));
-  GroupWire->TextLabel1->setText(tr("GEOM_WIRES"));
+  GroupWire->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupWire->CheckButton1->setText(tr("GEOM_FACE_OPT"));
   GroupWire->PushButton1->setPixmap(image1);
 
@@ -100,7 +101,10 @@ void BuildGUI_FaceDlg::Init()
 
   GroupWire->CheckButton1->setChecked(TRUE);
 
-  globalSelection( GEOM_WIRE );
+  TColStd_MapOfInteger aMap;
+  aMap.Add( GEOM_EDGE );
+  aMap.Add( GEOM_WIRE );
+  globalSelection( aMap );
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -160,7 +164,7 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
   if (!myWires.length())
     return;
   if(aNbSel != 1)
-    aName = tr("%1_wires").arg(aNbSel);
+    aName = tr("%1_objects").arg(aNbSel);
   
   myEditCurrentArgument->setText( aName );
   
@@ -178,7 +182,11 @@ void BuildGUI_FaceDlg::SetEditCurrentArgument()
   if (send != GroupWire->PushButton1)
     return;
   
-  globalSelection( GEOM_WIRE );
+  TColStd_MapOfInteger aMap;
+  aMap.Add( GEOM_EDGE );
+  aMap.Add( GEOM_WIRE );
+  globalSelection( aMap );
+
   myEditCurrentArgument = GroupWire->LineEdit1;
 
   myEditCurrentArgument->setFocus();
@@ -195,7 +203,10 @@ void BuildGUI_FaceDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
-  globalSelection( GEOM_WIRE );
+  TColStd_MapOfInteger aMap;
+  aMap.Add( GEOM_EDGE );
+  aMap.Add( GEOM_WIRE );
+  globalSelection( aMap );
 }
 
 

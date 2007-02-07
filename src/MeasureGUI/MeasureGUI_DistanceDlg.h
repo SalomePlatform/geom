@@ -29,22 +29,18 @@
 #ifndef DIALOGBOX_DISTANCE_H
 #define DIALOGBOX_DISTANCE_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include "MeasureGUI_Skeleton.h"
 
 class MeasureGUI_2Sel1LineEdit_QTD;
 class gp_Pnt;
 
-#if defined WNT && defined MEASUREGUI_EXPORTS
-#define MEASUREGUI_EXPORT __declspec( dllexport )
-#else
-#define MEASUREGUI_EXPORT
-#endif
-
 //=================================================================================
 // class    : MeasureGUI_DistanceDlg
 // purpose  :
 //=================================================================================
-class MEASUREGUI_EXPORT MeasureGUI_DistanceDlg : public MeasureGUI_Skeleton
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_DistanceDlg : public MeasureGUI_Skeleton
 { 
     Q_OBJECT
 

@@ -28,6 +28,8 @@
 #ifndef GEOMBASE_H
 #define GEOMBASE_H
 
+#include "GEOM_GEOMBase.hxx"
+
 // SALOME Includes
 #include "GEOM_AISShape.hxx"
 
@@ -39,17 +41,6 @@
 
 // QT Includes
 #include <qstring.h>
-//#if defined WNT
-//#include <SALOME_WNT.hxx>
-//#else
-//#define SALOME_WNT_EXPORT
-//#endif
-
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define GEOMBASE_WNT_EXPORT __declspec( dllexport )
-#else
-#define GEOMBASE_WNT_EXPORT
-#endif
 
 class GEOM_Actor;
 class SALOME_ListIO;
@@ -61,7 +52,7 @@ class QWidget;
 // class    : GEOMBase
 // purpose  :
 //=================================================================================
-class GEOMBASE_WNT_EXPORT GEOMBase
+class GEOMBASE_EXPORT GEOMBase
 {
 public :
   /* Selection and objects management */

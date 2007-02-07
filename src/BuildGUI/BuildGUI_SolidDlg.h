@@ -28,6 +28,8 @@
 #ifndef DIALOGBOX_SOLID_H
 #define DIALOGBOX_SOLID_H
 
+#include "GEOM_BuildGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel1Check_QTD.h"
 
@@ -35,7 +37,7 @@
 // class    : BuildGUI_SolidDlg
 // purpose  :
 //=================================================================================
-class BuildGUI_SolidDlg : public GEOMBase_Skeleton
+class GEOM_BUILDGUI_EXPORT BuildGUI_SolidDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

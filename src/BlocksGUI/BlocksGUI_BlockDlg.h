@@ -27,6 +27,8 @@
 #ifndef DIALOGBOX_BLOCK_H
 #define DIALOGBOX_BLOCK_H
 
+#include "GEOM_BlocksGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel_QTD.h"
 #include "DlgRef_6Sel_QTD.h"
@@ -36,7 +38,7 @@
 // class    : BlocksGUI_BlockDlg
 // purpose  :
 //=================================================================================
-class BlocksGUI_BlockDlg : public GEOMBase_Skeleton
+class GEOM_BLOCKSGUI_EXPORT BlocksGUI_BlockDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 

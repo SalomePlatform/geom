@@ -22,7 +22,6 @@
 //  File   : Partition_Loop3d.cxx
 //  Module : GEOM
 
-using namespace std;
 #include "Partition_Loop3d.ixx"
 
 #include <TopExp_Explorer.hxx>
@@ -43,6 +42,8 @@ using namespace std;
 #include <gp_Vec2d.hxx>
 #include <gp_Dir2d.hxx>
 #include <Geom_Curve.hxx>
+
+using namespace std;
 
 //=======================================================================
 //function : Partition_Loop3d

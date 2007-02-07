@@ -27,6 +27,8 @@
 #ifndef _GEOM_AISShape_HeaderFile
 #define _GEOM_AISShape_HeaderFile
 
+#include "GEOM_OBJECT_defs.hxx"
+
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
 #endif
@@ -58,12 +60,7 @@ class Prs3d_Presentation;
 class SALOME_InteractiveObject;
 class TopoDS_Shape;
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define OBJECT_WNT_EXPORT __declspec( dllexport )
-#else
-#define OBJECT_WNT_EXPORT
-#endif
-class  OBJECT_WNT_EXPORT GEOM_AISShape : public SALOME_AISShape {
+class GEOM_OBJECT_EXPORT GEOM_AISShape : public SALOME_AISShape {
 
 public:
 

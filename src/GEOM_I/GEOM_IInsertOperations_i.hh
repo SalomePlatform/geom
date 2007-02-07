@@ -21,6 +21,7 @@
 #ifndef _GEOM_IInsertOperations_i_HeaderFile
 #define _GEOM_IInsertOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_IInsertOperations.hxx"
 
-class GEOM_IInsertOperations_i : 
+class GEOM_I_EXPORT GEOM_IInsertOperations_i : 
     public virtual POA_GEOM::GEOM_IInsertOperations,
     public virtual GEOM_IOperations_i
 {

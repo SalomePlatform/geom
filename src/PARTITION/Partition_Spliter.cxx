@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "Partition_Inter2d.hxx"
 #include "Partition_Inter3d.hxx"
 #include "Partition_Loop2d.hxx"
@@ -83,6 +82,8 @@ using namespace std;
 #ifdef PART_PERF
 # include <OSD_Chronometer.hxx>
 #endif
+
+using namespace std;
 
 //=======================================================================
 //function : isClosed

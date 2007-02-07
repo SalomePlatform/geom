@@ -28,6 +28,8 @@
 #ifndef MEASUREGUI_2SEL1LINEEDIT_QTD_H
 #define MEASUREGUI_2SEL1LINEEDIT_QTD_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include <qvariant.h>
 #include <qwidget.h>
 class QVBoxLayout; 
@@ -38,7 +40,7 @@ class QLabel;
 class QLineEdit;
 class QPushButton;
 
-class MeasureGUI_2Sel1LineEdit_QTD : public QWidget
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_2Sel1LineEdit_QTD : public QWidget
 { 
     Q_OBJECT
 

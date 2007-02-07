@@ -748,6 +748,12 @@ def MakeRotation(aShape,axis,angle):
       print "RotateCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
+def MakeRotationThreePoints(aShape, centpoint, point1, point2):
+    anObj = TrsfOp.RotateThreePointsCopy(aShape, centpoint, point1, point2)
+    if TrsfOp.IsDone() == 0:
+      print "RotateThreePointsCopy : ", TrsfOp.GetErrorCode()
+    return anObj
+
 def MakeScaleTransform(aShape,theCenterofScale,factor):
     anObj = TrsfOp.ScaleShapeCopy(aShape,theCenterofScale,factor)
     if TrsfOp.IsDone() == 0:

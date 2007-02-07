@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -39,18 +39,6 @@ Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(NMTTools_IndexedDataMapNodeO
 
 class Handle(NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape) : public Handle(TCollection_MapNode) {
   public:
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
     Handle(NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape)():Handle(TCollection_MapNode)() {} 
     Handle(NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape)(const Handle(NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape)& aHandle) : Handle(TCollection_MapNode)(aHandle) 
      {
@@ -72,17 +60,12 @@ class Handle(NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape
       return *this;
      }
 
-    NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape* operator->() 
+    NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape* operator->() const
      {
       return (NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape *)ControlAccess();
      }
 
-    NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape* operator->() const 
-     {
-      return (NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape *)ControlAccess();
-     }
-
-   Standard_EXPORT ~Handle(NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape)();
+//   Standard_EXPORT ~Handle(NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape)();
  
    Standard_EXPORT static const Handle(NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape) DownCast(const Handle(Standard_Transient)& AnObject);
 };

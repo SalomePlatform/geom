@@ -35,7 +35,8 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 @COMMENCE@
 
 # header files 
-EXPORT_HEADERS= BasicGUI_PointDlg.h
+EXPORT_HEADERS= BasicGUI_PointDlg.h \
+		GEOM_BasicGUI.hxx
 
 # Libraries targets
 LIB = libBasicGUI.la 
@@ -62,7 +63,8 @@ LIB_MOC = \
 		BasicGUI_PlaneDlg.h \
 		BasicGUI_WorkingPlaneDlg.h \
 		BasicGUI_CurveDlg.h \
-		BasicGUI_MarkerDlg.h
+		BasicGUI_MarkerDlg.h \
+		GEOM_BasicGUI.hxx
 
 LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Exception.idl SALOME_Component.idl
 

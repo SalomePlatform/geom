@@ -21,6 +21,8 @@
 #ifndef _GEOMImpl_GEN_HXX_
 #define _GEOMImpl_GEN_HXX_
 
+#include <GEOM_GEOMImpl.hxx>
+
 #include <map>
 
 #include "GEOMImpl_IBasicOperations.hxx"
@@ -37,13 +39,7 @@
 #include "GEOMImpl_IGroupOperations.hxx"
 #include "GEOM_Engine.hxx"
 
-#ifdef WNT
-#include <SALOME_WNT.hxx>
-#else
-#define SALOME_WNT_EXPORT 
-#endif
-
-class SALOME_WNT_EXPORT GEOMImpl_Gen : public GEOM_Engine
+class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
 {
  public:
   GEOMImpl_Gen();

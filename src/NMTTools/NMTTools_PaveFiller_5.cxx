@@ -78,6 +78,8 @@
 #include <NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx>
 #include <NMTTools_CommonBlockAPI.hxx>
 #include <NMTTools_ListOfCommonBlock.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopExp.hxx>
 
 static
   void VertexParameter(const IntTools_CommonPrt& aCPart,
@@ -86,7 +88,7 @@ static
   Standard_Boolean IsOnPave(const Standard_Real& aTR,
 			    const IntTools_Range& aCPRange,
 			    const Standard_Real& aTolerance);
-
+//
 //=======================================================================
 // function: PerformEF
 // purpose: 
@@ -102,7 +104,6 @@ static
   BooleanOperations_IndexedDataMapOfShapeInteger aMapVI;
   BOPTools_IDMapOfPaveBlockIMapOfInteger aMapCB;
   BOPTools_IMapOfPaveBlock aIMPBx;
-  
   //
   BOPTools_CArray1OfESInterference& aEFs=myIntrPool->ESInterferences();
   //
@@ -138,14 +139,32 @@ static
       continue;
     }
     // Edge
-    const TopoDS_Edge& aE=TopoDS::Edge(myDS->GetShape(nE));
+    const TopoDS_Edge aE=TopoDS::Edge(myDS->GetShape(nE));//mpv
     if (BRep_Tool::Degenerated(aE)){
       continue;
     }
-    aTolE=BRep_Tool::Tolerance(aE);
     // Face
-    const TopoDS_Face& aF=TopoDS::Face(myDS->GetShape(nF));
+    const TopoDS_Face aF=TopoDS::Face(myDS->GetShape(nF));//mpv
+    //
+    // Modified 
+    // to avoid intersection between face and edge from that face
+    // Thu Sep 14 14:35:18 2006 
+    // Contribution of Samtech www.samcef.com BEGIN
+    TopTools_IndexedMapOfShape aME;
+    //
+    TopExp::MapShapes(aF, TopAbs_EDGE, aME);
+    if (aME.Contains(aE)) {
+      continue;
+    }
+    // Contribution of Samtech www.samcef.com END
+    //
     aTolF=BRep_Tool::Tolerance(aF);
+    
+    // Modified  Thu Sep 14 14:35:18 2006 
+    // Contribution of Samtech www.samcef.com BEGIN
+    aTolE=BRep_Tool::Tolerance(aE);
+    // Contribution of Samtech www.samcef.com END
+    
     const Bnd_Box& aBBF=myDS->GetBoundingBox(nF); 
     //
     // Process each PaveBlock on edge nE
@@ -492,7 +511,7 @@ static
     aNbEdges=aME.Extent();
     for (j=1; j<=aNbEdges; ++j) {
       nE=aME(j);
-      const TopoDS_Edge& aE=TopoDS::Edge(myDS->Shape(nE));
+      const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));//mpv
       //
       aFlag=myContext.ComputeVE (aNewVertex, aE, aT);
       //
@@ -575,7 +594,7 @@ static
   aNbV=aMVF.Extent();
   for (i=1; i<=aNbV; ++i) {
     nVF=aMVF(i);
-    const TopoDS_Vertex& aVF=TopoDS::Vertex(myDS->Shape(nVF));
+    const TopoDS_Vertex aVF=TopoDS::Vertex(myDS->Shape(nVF));//mpv
     iFlag=IntTools_Tools::ComputeVV(aNewVertex, aVF);
     if (!iFlag) {
       return nVF;

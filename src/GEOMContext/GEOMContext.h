@@ -34,11 +34,29 @@
 #include <OSD_SharedLibrary.hxx>
 #include <qapplication.h>
 
+#ifdef WNT
+ #if defined GEOMCONTEXT_EXPORTS
+  #if defined WIN32
+   #define GEOM_CONTEXT_EXPORT __declspec( dllexport )
+  #else
+   #define GEOM_CONTEXT_EXPORT
+  #endif
+ #else
+  #if defined WIN32
+   #define GEOM_CONTEXT_EXPORT __declspec( dllimport )
+  #else
+   #define GEOM_CONTEXT_EXPORT
+  #endif
+ #endif
+#else
+ #define GEOM_CONTEXT_EXPORT
+#endif
+
 //=================================================================================
 // class    : GEOMContext
 // purpose  :
 //=================================================================================
-class GEOMContext : public QObject
+class GEOM_CONTEXT_EXPORT GEOMContext : public QObject
 {
   Q_OBJECT /* for QT compatibility */
 

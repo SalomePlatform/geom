@@ -21,6 +21,7 @@
 #ifndef _GEOM_IBlocksOperations_i_HeaderFile
 #define _GEOM_IBlocksOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_IBlocksOperations.hxx"
 
-class GEOM_IBlocksOperations_i :
+class GEOM_I_EXPORT GEOM_IBlocksOperations_i :
     public virtual POA_GEOM::GEOM_IBlocksOperations,
     public virtual GEOM_IOperations_i
 {

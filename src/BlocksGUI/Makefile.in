@@ -52,7 +52,8 @@ LIB_MOC = \
 	BlocksGUI_BlockDlg.h \
 	BlocksGUI_ExplodeDlg.h \
 	BlocksGUI_PropagateDlg.h \
-	BlocksGUI_TrsfDlg.h
+	BlocksGUI_TrsfDlg.h \
+	GEOM_BlocksGUI.hxx
 
 LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
 

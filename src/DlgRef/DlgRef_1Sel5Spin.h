@@ -29,16 +29,12 @@
 #ifndef DLGREF_1SEL5SPIN_H
 #define DLGREF_1SEL5SPIN_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include "DlgRef_1Sel5Spin_QTD.h"
 #include "DlgRef_SpinBox.h"
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define DLGREF_WNT_EXPORT __declspec( dllexport )
-#else
-#define DLGREF_WNT_EXPORT
-#endif
-
-class DLGREF_WNT_EXPORT DlgRef_1Sel5Spin : public DlgRef_1Sel5Spin_QTD
+class GEOM_DLGREF_EXPORT DlgRef_1Sel5Spin : public DlgRef_1Sel5Spin_QTD
 { 
     Q_OBJECT
 

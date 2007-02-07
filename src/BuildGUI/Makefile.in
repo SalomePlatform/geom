@@ -54,7 +54,8 @@ LIB_MOC = \
 		BuildGUI_FaceDlg.h \
 		BuildGUI_ShellDlg.h \
 		BuildGUI_SolidDlg.h \
-		BuildGUI_CompoundDlg.h
+		BuildGUI_CompoundDlg.h \
+		GEOM_BuildGUI.hxx
 
 LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
 

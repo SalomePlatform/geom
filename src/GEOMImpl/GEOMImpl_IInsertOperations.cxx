@@ -372,7 +372,12 @@ Standard_Boolean GEOMImpl_IInsertOperations::IsSupported
       aKey += ".";
       aKey += aMode;
       if (myResMgr->Find(aKey.ToCString())) {
-        TCollection_AsciiString aLibName (myResMgr->Value(aKey.ToCString()));
+        TCollection_AsciiString aLibName (myResMgr->Value(aKey.ToCString()));        
+#ifndef WNT
+        aLibName += ".so";     
+#else
+        aLibName += ".dll";
+#endif
         theLibName = new TCollection_HAsciiString (aLibName);
         return Standard_True;
       }

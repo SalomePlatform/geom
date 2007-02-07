@@ -109,7 +109,8 @@ EXPORT_HEADERS= GEOMImpl_Gen.hxx \
 	        GEOMImpl_IMeasureOperations.hxx \
 		GEOMImpl_IGroupOperations.hxx \
 		GEOMImpl_CopyDriver.hxx \
-		GEOMImpl_Types.hxx
+		GEOMImpl_Types.hxx \
+		GEOM_GEOMImpl.hxx
 
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(KERNEL_CXXFLAGS) $(BOOST_CPPFLAGS)

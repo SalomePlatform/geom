@@ -28,25 +28,19 @@
 #ifndef DIALOGBOX_CIRCLE_H
 #define DIALOGBOX_CIRCLE_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel1Spin.h"
 #include "DlgRef_3Sel_QTD.h"
 
 #include "BasicGUI.h"
 
-#include <gp_Dir.hxx>
-
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
-
 //=================================================================================
 // class    : BasicGUI_CircleDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_CircleDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_CircleDlg : public GEOMBase_Skeleton
 {
     Q_OBJECT
 

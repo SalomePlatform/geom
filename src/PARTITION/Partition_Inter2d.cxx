@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "Partition_Inter2d.ixx"
 
 #include "utilities.h"
@@ -57,6 +56,8 @@ static Standard_Boolean TestEdges = 0;
 static Standard_Integer NbF2d = 0;
 static Standard_Integer NbE2d = 0;
 #endif
+
+using namespace std;
 
 //=======================================================================
 //function : getOtherShape

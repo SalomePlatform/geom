@@ -21,6 +21,7 @@
 #ifndef _GEOM_I3DPrimOperations_i_HeaderFile
 #define _GEOM_I3DPrimOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_I3DPrimOperations.hxx"
 
-class GEOM_I3DPrimOperations_i :
+class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
     public virtual POA_GEOM::GEOM_I3DPrimOperations,
     public virtual GEOM_IOperations_i
 {

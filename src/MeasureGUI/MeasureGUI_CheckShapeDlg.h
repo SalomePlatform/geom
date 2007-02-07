@@ -28,16 +28,12 @@
 #ifndef DIALOGBOX_CHECKSHAPEDLG_H
 #define DIALOGBOX_CHECKSHAPEDLG_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include "MeasureGUI_Skeleton.h"
 #include "MeasureGUI_1Sel1TextView_QTD.h"
 
 class QCheckBox;
-
-#if defined WNT && defined MEASUREGUI_EXPORTS
-#define MEASUREGUI_EXPORT __declspec( dllexport )
-#else
-#define MEASUREGUI_EXPORT
-#endif
 
 //=================================================================================
 // class    : MeasureGUI_1Sel1TextView1Check_QTD
@@ -58,7 +54,7 @@ public:
 // class    : MeasureGUI_CheckShapeDlg
 // purpose  :
 //=================================================================================
-class MEASUREGUI_EXPORT MeasureGUI_CheckShapeDlg : public MeasureGUI_Skeleton
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_CheckShapeDlg : public MeasureGUI_Skeleton
 {
     Q_OBJECT
 

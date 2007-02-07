@@ -77,8 +77,8 @@
 
 #include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
 #include <GEOMAlgo_IndexedDataMapOfShapeBox.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
-#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx> //qft
+#include <GEOMAlgo_PassKeyShape.hxx>//qft
 #include <GEOMAlgo_Tools.hxx>
 //
 
@@ -424,8 +424,8 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
   TopoDS_Shape aNewShape;
   TopTools_IndexedMapOfShape aMF;
   TopTools_ListIteratorOfListOfShape aItS;
-  GEOMAlgo_PassKeyShape aPKF;
-  GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape aMPKLF;
+  GEOMAlgo_PassKeyShape aPKF;//qft
+  GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape aMPKLF;//qft
   //
   TopExp::MapShapes(myShape, aType, aMF);
   //
@@ -433,7 +433,7 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
   for (i=1; i<=aNbF; ++i) {
     const TopoDS_Shape& aS=aMF(i);
     // 
-    aPKF.Clear();
+    //aPKF.Clear();//qft
     if (aType==TopAbs_FACE) {
       const TopoDS_Face& aF=TopoDS::Face(aS);
       FacePassKey(aF, aPKF);
@@ -622,17 +622,21 @@ void GEOMAlgo_Gluer::InnerTolerance()
 void GEOMAlgo_Gluer::FacePassKey(const TopoDS_Face& aF, 
 				 GEOMAlgo_PassKeyShape& aPK)
 {
-  Standard_Integer i, aNbE, aNbMax;
+  Standard_Integer i, aNbE;//, aNbMax;//qft
   TopTools_ListOfShape aLE;
   TopTools_IndexedMapOfShape aME;
   //
   TopExp::MapShapes(aF, TopAbs_EDGE, aME);
   aNbE=aME.Extent();
+  //qf
+  /*
   aNbMax=aPK.NbMax();
   if (!aNbE || aNbE>aNbMax) {
-     myErrorStatus=101; // temprorary
-     return;
+    myErrorStatus=101; // temprorary
+    return;
   }
+  */
+  //qt
   //
   for (i=1; i<=aNbE; ++i) {
     const TopoDS_Shape& aE=aME(i);
@@ -643,7 +647,10 @@ void GEOMAlgo_Gluer::FacePassKey(const TopoDS_Face& aF,
     const TopoDS_Shape& aER=myOrigins.Find(aE);
     aLE.Append(aER);
   }
-  aPK.SetIds(aLE);
+  //qf
+  //aPK.SetIds(aLE);
+  aPK.SetShapes(aLE);
+  //qt
 }
 //=======================================================================
 //function : EdgePassKey
@@ -662,7 +669,10 @@ void GEOMAlgo_Gluer::EdgePassKey(const TopoDS_Edge& aE,
   }
   const TopoDS_Shape& aVR1=myOrigins.Find(aV1);
   const TopoDS_Shape& aVR2=myOrigins.Find(aV2);
-  aPK.SetIds(aVR1, aVR2);
+  //qf
+  //aPK.SetIds(aVR1, aVR2);
+  aPK.SetShapes(aVR1, aVR2);
+  //qt
 }
 //=======================================================================
 //function : MakeVertex

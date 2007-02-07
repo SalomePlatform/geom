@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -50,6 +50,7 @@ class GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState;
 #include <Standard_Macro.hxx>
 #endif
 
+
 class GEOMAlgo_IndexedDataMapOfShapeState  : public TCollection_BasicMap {
 
 public:
@@ -68,30 +69,52 @@ public:
       }
  // Methods PUBLIC
  // 
+
+
 Standard_EXPORT GEOMAlgo_IndexedDataMapOfShapeState(const Standard_Integer NbBuckets = 1);
+
+
 Standard_EXPORT   GEOMAlgo_IndexedDataMapOfShapeState& Assign(const GEOMAlgo_IndexedDataMapOfShapeState& Other) ;
   GEOMAlgo_IndexedDataMapOfShapeState& operator =(const GEOMAlgo_IndexedDataMapOfShapeState& Other) 
 {
   return Assign(Other);
 }
 
+
+
 Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
+
+
 Standard_EXPORT   void Clear() ;
 ~GEOMAlgo_IndexedDataMapOfShapeState()
 {
   Clear();
 }
 
+
+
 Standard_EXPORT   Standard_Integer Add(const TopoDS_Shape& K,const TopAbs_State& I) ;
+
+
 Standard_EXPORT   void Substitute(const Standard_Integer I,const TopoDS_Shape& K,const TopAbs_State& T) ;
+
+
 Standard_EXPORT   void RemoveLast() ;
+
+
 Standard_EXPORT   Standard_Boolean Contains(const TopoDS_Shape& K) const;
+
+
 Standard_EXPORT  const TopoDS_Shape& FindKey(const Standard_Integer I) const;
+
+
 Standard_EXPORT  const TopAbs_State& FindFromIndex(const Standard_Integer I) const;
  const TopAbs_State& operator ()(const Standard_Integer I) const
 {
   return FindFromIndex(I);
 }
+
+
 
 Standard_EXPORT   TopAbs_State& ChangeFromIndex(const Standard_Integer I) ;
   TopAbs_State& operator ()(const Standard_Integer I) 
@@ -99,8 +122,14 @@ Standard_EXPORT   TopAbs_State& ChangeFromIndex(const Standard_Integer I) ;
   return ChangeFromIndex(I);
 }
 
+
+
 Standard_EXPORT   Standard_Integer FindIndex(const TopoDS_Shape& K) const;
+
+
 Standard_EXPORT  const TopAbs_State& FindFromKey(const TopoDS_Shape& K) const;
+
+
 Standard_EXPORT   TopAbs_State& ChangeFromKey(const TopoDS_Shape& K) ;
 
 
@@ -121,6 +150,8 @@ private:
 
  // Methods PRIVATE
  // 
+
+
 Standard_EXPORT GEOMAlgo_IndexedDataMapOfShapeState(const GEOMAlgo_IndexedDataMapOfShapeState& Other);
 
 

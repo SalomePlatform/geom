@@ -29,6 +29,8 @@
 #ifndef ENTITYGUI_SKELETON_QTD_H
 #define ENTITYGUI_SKELETON_QTD_H
 
+#include "GEOM_EntityGUI.hxx"
+
 #include <qvariant.h>
 #include <qdialog.h>
 
@@ -41,7 +43,7 @@ class QButtonGroup;
 class QRadioButton;
 class QPushButton;
 
-class EntityGUI_Skeleton_QTD : public QDialog
+class GEOM_ENTITYGUI_EXPORT EntityGUI_Skeleton_QTD : public QDialog
 {
     Q_OBJECT
 

@@ -29,19 +29,12 @@
 #ifndef DLGREF_3SPIN_H
 #define DLGREF_3SPIN_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include "DlgRef_3Spin_QTD.h"
 #include "DlgRef_SpinBox.h"
-//#if defined WNT
-//#include <SALOME_WNT.hxx>
-//#else
-//#define SALOME_WNT_EXPORT
-//#endif
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define DLGREF_WNT_EXPORT __declspec( dllexport )
-#else
-#define DLGREF_WNT_EXPORT
-#endif
-class DLGREF_WNT_EXPORT DlgRef_3Spin : public DlgRef_3Spin_QTD
+
+class GEOM_DLGREF_EXPORT DlgRef_3Spin : public DlgRef_3Spin_QTD
 { 
     Q_OBJECT
 

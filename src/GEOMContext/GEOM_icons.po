@@ -257,6 +257,10 @@ msgstr "translation.png"
 msgid "ICON_DLG_ROTATION"
 msgstr "rotate.png"
 
+#RotationDlg
+msgid "ICON_DLG_ROTATION_THREE_POINTS"
+msgstr "rotatepnt.png"
+
 #ScaleDlg
 msgid "ICON_DLG_SCALE"
 msgstr "scale.png"

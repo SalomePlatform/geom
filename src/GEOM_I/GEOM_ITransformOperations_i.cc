@@ -952,3 +952,102 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate2D (GEOM::GEOM_Obj
 
   return GetObject(anObject);
 }
+
+//=============================================================================
+/*!
+ *  RotateThreePoints
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePoints
+                                             (GEOM::GEOM_Object_ptr theObject,
+					      GEOM::GEOM_Object_ptr theCentPoint,
+					      GEOM::GEOM_Object_ptr thePoint1,
+					      GEOM::GEOM_Object_ptr thePoint2)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  if (theCentPoint == NULL || thePoint1 == NULL || thePoint2 == NULL || theObject == NULL) return aGEOMObject._retn();
+
+  //check if the object is a subshape
+  if(!theObject->IsMainShape()) {
+    GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
+    return aGEOMObject._retn();
+  }
+
+  aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
+
+  //Get the object itself
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  if (anObject.IsNull()) return aGEOMObject._retn();
+
+  //Get the central point of rotation
+  Handle(GEOM_Object) aCentPoint =
+    GetOperations()->GetEngine()->GetObject(theCentPoint->GetStudyID(), theCentPoint->GetEntry());
+  if (aCentPoint.IsNull()) return aGEOMObject._retn();
+
+  //Get the first point
+  Handle(GEOM_Object) aPoint1 =
+    GetOperations()->GetEngine()->GetObject(thePoint1->GetStudyID(), thePoint1->GetEntry());
+  if (aPoint1.IsNull()) return aGEOMObject._retn();
+
+  //Get the second point
+  Handle(GEOM_Object) aPoint2 =
+    GetOperations()->GetEngine()->GetObject(thePoint2->GetStudyID(), thePoint2->GetEntry());
+  if (aPoint2.IsNull()) return aGEOMObject._retn();
+
+  //Perform the translation
+  GetOperations()->RotateThreePoints(anObject, aCentPoint, aPoint1, aPoint2);
+
+  return aGEOMObject._retn();
+}
+
+//=============================================================================
+/*!
+ *  RotateThreePointsCopy
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePointsCopy
+                                             (GEOM::GEOM_Object_ptr theObject,
+					      GEOM::GEOM_Object_ptr theCentPoint,
+					      GEOM::GEOM_Object_ptr thePoint1,
+					      GEOM::GEOM_Object_ptr thePoint2)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theCentPoint == NULL || thePoint1 == NULL || thePoint2 == NULL || theObject == NULL) return aGEOMObject._retn();
+
+  //Get the object itself
+  Handle(GEOM_Object) aBasicObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  if (aBasicObject.IsNull()) return aGEOMObject._retn();
+
+  //Get the central point of rotation
+  Handle(GEOM_Object) aCentPoint =
+    GetOperations()->GetEngine()->GetObject(theCentPoint->GetStudyID(), theCentPoint->GetEntry());
+  if (aCentPoint.IsNull()) return aGEOMObject._retn();
+
+  //Get the first point
+  Handle(GEOM_Object) aPoint1 =
+    GetOperations()->GetEngine()->GetObject(thePoint1->GetStudyID(), thePoint1->GetEntry());
+  if (aPoint1.IsNull()) return aGEOMObject._retn();
+
+  //Get the second point
+  Handle(GEOM_Object) aPoint2 =
+    GetOperations()->GetEngine()->GetObject(thePoint2->GetStudyID(), thePoint2->GetEntry());
+  if (aPoint2.IsNull()) return aGEOMObject._retn();
+
+  //Perform the rotation
+  Handle(GEOM_Object) anObject =
+    GetOperations()->RotateThreePointsCopy(aBasicObject, aCentPoint, aPoint1, aPoint2);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+

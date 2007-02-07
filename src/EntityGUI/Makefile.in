@@ -38,7 +38,7 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 LIB = libEntityGUI.la
 
 # header files 
-EXPORT_HEADERS= 
+EXPORT_HEADERS= GEOM_EntityGUI.hxx
 
 LIB_SRC = 	EntityGUI.cxx \
 		EntityGUI_Skeleton_QTD.cxx \

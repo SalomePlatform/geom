@@ -221,9 +221,7 @@ bool EntityGUI::SObjectExist(const _PTR(SObject)& theFatherObject, const char* I
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
-	__declspec( dllexport )
-#endif
+GEOM_ENTITYGUI_EXPORT
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return new EntityGUI( parent );

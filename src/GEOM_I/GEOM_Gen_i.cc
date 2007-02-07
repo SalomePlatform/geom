@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -68,18 +68,23 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr orb,
 
   _impl = new ::GEOMImpl_Gen;
 
-  //work around PAL12004, PAL12628
-  //OSD::SetSignal( true );
-  bool raiseFPE;
+  //PAL10867: disable signals catching with "noexcepthandler" option
+  char* envNoCatchSignals = getenv("NOT_INTERCEPT_SIGNALS");
+  if (!envNoCatchSignals || !atoi(envNoCatchSignals))
+  {
+    //work around PAL12004, PAL12628
+    //OSD::SetSignal( true );
+    bool raiseFPE;
 #ifdef _DEBUG_
-  raiseFPE = true;
-  char* envDisableFPE = getenv("DISABLE_FPE");
-  if (envDisableFPE && atoi(envDisableFPE))
-    raiseFPE = false;
+    raiseFPE = true;
+    char* envDisableFPE = getenv("DISABLE_FPE");
+    if (envDisableFPE && atoi(envDisableFPE))
+      raiseFPE = false;
 #else
-  raiseFPE = false;
+    raiseFPE = false;
 #endif
-  OSD::SetSignal( raiseFPE );
+    OSD::SetSignal( raiseFPE );
+  }
 }
 
 //============================================================================
@@ -103,7 +108,7 @@ char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 {
   GEOM::GEOM_Object_var anObject = GEOM::GEOM_Object::_narrow(_orb->string_to_object(IORString));
   if (!CORBA::is_nil(anObject)) {
-    return strdup(anObject->GetEntry());
+    return CORBA::string_dup(anObject->GetEntry());
   }
   return 0;
 }
@@ -128,7 +133,7 @@ char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
   GEOM::GEOM_Object_var obj = GetObject(anObject->GetDocID(), anEntry.ToCString());
 
   CORBA::String_var aPersRefString = _orb->object_to_string(obj);
-  return strdup(aPersRefString);
+  return CORBA::string_dup(aPersRefString);
 }
 
 //============================================================================
@@ -182,8 +187,10 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   }
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeIOR");
   SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-  char *aGeomObjIOR = _orb->object_to_string(theObject);
-  anIOR->SetValue(strdup(aGeomObjIOR));
+  //char *aGeomObjIOR = _orb->object_to_string(theObject);
+   CORBA::String_var aGeomObjIOR = _orb->object_to_string(theObject);
+  //anIOR->SetValue(CORBA::string_dup(aGeomObjIOR));
+  anIOR->SetValue(aGeomObjIOR);
 
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributePixMap");
   SALOMEDS::AttributePixMap_var aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
@@ -238,7 +245,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     aShapeName = "Vertex_";
   }
   //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
-  //else aShapeName = TCollection_AsciiString(strdup(theName));
+  //else aShapeName = TCollection_AsciiString(CORBA::string_dup(theName));
 
   // asv : 11.11.04 Introducing a more sofisticated method of name creation, just as
   //       it is done in GUI in GEOMBase::GetDefaultName() - not just add a Tag() == number
@@ -256,7 +263,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     aShapeName = aNewShapeName;
   }
   else // MOST PROBABLY CALLED FROM GEOM GUI (ALREADY WITH VALID NAME)
-    aShapeName = TCollection_AsciiString(strdup(theName));
+    aShapeName = TCollection_AsciiString((char*)theName);
 
   //Set the study entry as a name of  the published GEOM_Object
   aShape->SetStudyEntry(aResultSO->GetID());
@@ -348,7 +355,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq.in(), true);
 
   SALOMEDS::Study_var Study = theComponent->GetStudy();
-  TCollection_AsciiString name( strdup(Study->Name()) );
+  TCollection_AsciiString name (Study->Name());
 
   return true;
 }
@@ -463,10 +470,14 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   TDF_Tool::Entry(anObj->GetEntry(), anEntry);
   GEOM::GEOM_Object_var obj = GetObject(anObj->GetDocID(), anEntry.ToCString());
 
+  //Set the study entry of the published GEOM_Object
+  obj->SetStudyEntry(aNewSO->GetID());
+
   // Add IORAttribute to the Study and set IOR of the created GEOM_Object to it
   SALOMEDS::GenericAttribute_var anAttr = aStudyBuilder->FindOrCreateAttribute(aNewSO, "AttributeIOR");
   SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-  anIOR->SetValue(_orb->object_to_string(obj));
+  CORBA::String_var objStr = _orb->object_to_string(obj);
+  anIOR->SetValue(objStr.in());
 
   // Return the created in the Study SObject
   return aNewSO._retn();
@@ -478,7 +489,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
 //============================================================================
 char* GEOM_Gen_i::ComponentDataType()
 {
-  return strdup("GEOM");
+  return CORBA::string_dup("GEOM");
 }
 
 //============================================================================
@@ -491,11 +502,11 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM:
   if(theObject->_is_nil() || theStudy->_is_nil()) return aResultSO;
 
   SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
-  char* IOR;
+  CORBA::String_var IOR;
 
   if(!theFather->_is_nil()) {
     IOR = _orb->object_to_string(theFather);
-    SALOMEDS::SObject_var aFatherSO = theStudy->FindObjectIOR(IOR);
+    SALOMEDS::SObject_var aFatherSO = theStudy->FindObjectIOR(IOR.in());
     if(aFatherSO->_is_nil()) return aResultSO._retn();
     aResultSO = aStudyBuilder->NewObject(aFatherSO);
     //aStudyBuilder->Addreference(aResultSO, aResultSO);
@@ -513,7 +524,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM:
     GEOM::GEOM_Object_var anObject = aList[i];
     if(anObject->_is_nil()) continue;
     IOR = _orb->object_to_string(anObject);
-    SALOMEDS::SObject_var aSO =  theStudy->FindObjectIOR(IOR);
+    SALOMEDS::SObject_var aSO =  theStudy->FindObjectIOR(IOR.in());
     if(aSO->_is_nil()) continue;
     SALOMEDS::SObject_var aSubSO = aStudyBuilder->NewObject(aResultSO);
     aStudyBuilder->Addreference(aSubSO, aSO);
@@ -529,7 +540,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM:
 void GEOM_Gen_i::register_name(char * name)
 {
   GEOM::GEOM_Gen_ptr g = GEOM::GEOM_Gen::_narrow(_this());
-  name_service->Register(g, strdup(name));
+  name_service->Register(g, CORBA::string_dup(name));
 }
 
 //============================================================================
@@ -871,8 +882,9 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject (CORBA::Long theStudyID, const char*
   GEOM_Object_i* servant = new GEOM_Object_i (_poa, engine, handle_object);
 
   obj = servant->_this();
-  stringIOR = _orb->object_to_string(obj);
-  handle_object->SetIOR(stringIOR);
+  CORBA::String_var objStr = _orb->object_to_string(obj);
+  TCollection_AsciiString anAscii( (char *)objStr.in() );
+  handle_object->SetIOR( anAscii );
   return obj._retn();
 }
 
@@ -882,9 +894,7 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject (CORBA::Long theStudyID, const char*
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
-	__declspec( dllexport )
-#endif
+GEOM_I_EXPORT
   PortableServer::ObjectId * GEOMEngine_factory(CORBA::ORB_ptr orb,
 						PortableServer::POA_ptr poa,
 						PortableServer::ObjectId * contId,

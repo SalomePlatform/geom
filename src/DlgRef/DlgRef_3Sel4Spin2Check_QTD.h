@@ -28,6 +28,8 @@
 #ifndef DLGREF_3SEL4SPIN2CHECK_QTD_H
 #define DLGREF_3SEL4SPIN2CHECK_QTD_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include <qvariant.h>
 #include <qwidget.h>
 class QVBoxLayout; 
@@ -40,7 +42,7 @@ class QLineEdit;
 class QPushButton;
 class QSpinBox;
 
-class DlgRef_3Sel4Spin2Check_QTD : public QWidget
+class GEOM_DLGREF_EXPORT DlgRef_3Sel4Spin2Check_QTD : public QWidget
 { 
     Q_OBJECT
 

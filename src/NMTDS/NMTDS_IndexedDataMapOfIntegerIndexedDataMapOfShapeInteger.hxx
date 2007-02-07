@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -47,6 +47,7 @@ class NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInte
 #include <Standard_Macro.hxx>
 #endif
 
+
 class NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger  : public TCollection_BasicMap {
 
 public:
@@ -65,30 +66,52 @@ public:
       }
  // Methods PUBLIC
  // 
+
+
 Standard_EXPORT NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger(const Standard_Integer NbBuckets = 1);
+
+
 Standard_EXPORT   NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger& Assign(const NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger& Other) ;
   NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger& operator =(const NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger& Other) 
 {
   return Assign(Other);
 }
 
+
+
 Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
+
+
 Standard_EXPORT   void Clear() ;
 ~NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger()
 {
   Clear();
 }
 
+
+
 Standard_EXPORT   Standard_Integer Add(const Standard_Integer& K,const BooleanOperations_IndexedDataMapOfShapeInteger& I) ;
+
+
 Standard_EXPORT   void Substitute(const Standard_Integer I,const Standard_Integer& K,const BooleanOperations_IndexedDataMapOfShapeInteger& T) ;
+
+
 Standard_EXPORT   void RemoveLast() ;
+
+
 Standard_EXPORT   Standard_Boolean Contains(const Standard_Integer& K) const;
+
+
 Standard_EXPORT  const Standard_Integer& FindKey(const Standard_Integer I) const;
+
+
 Standard_EXPORT  const BooleanOperations_IndexedDataMapOfShapeInteger& FindFromIndex(const Standard_Integer I) const;
  const BooleanOperations_IndexedDataMapOfShapeInteger& operator ()(const Standard_Integer I) const
 {
   return FindFromIndex(I);
 }
+
+
 
 Standard_EXPORT   BooleanOperations_IndexedDataMapOfShapeInteger& ChangeFromIndex(const Standard_Integer I) ;
   BooleanOperations_IndexedDataMapOfShapeInteger& operator ()(const Standard_Integer I) 
@@ -96,8 +119,14 @@ Standard_EXPORT   BooleanOperations_IndexedDataMapOfShapeInteger& ChangeFromInde
   return ChangeFromIndex(I);
 }
 
+
+
 Standard_EXPORT   Standard_Integer FindIndex(const Standard_Integer& K) const;
+
+
 Standard_EXPORT  const BooleanOperations_IndexedDataMapOfShapeInteger& FindFromKey(const Standard_Integer& K) const;
+
+
 Standard_EXPORT   BooleanOperations_IndexedDataMapOfShapeInteger& ChangeFromKey(const Standard_Integer& K) ;
 
 
@@ -118,6 +147,8 @@ private:
 
  // Methods PRIVATE
  // 
+
+
 Standard_EXPORT NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger(const NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger& Other);
 
 

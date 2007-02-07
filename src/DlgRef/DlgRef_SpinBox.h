@@ -29,17 +29,9 @@
 #ifndef  GEOMSPINBOX_H
 #define  GEOMSPINBOX_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include "QtxDblSpinBox.h"
-//#if defined WNT
-//#include <SALOME_WNT.hxx>
-//#else
-//#define SALOME_WNT_EXPORT
-//#endif
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define DLGREF_WNT_EXPORT __declspec( dllexport )
-#else
-#define DLGREF_WNT_EXPORT
-#endif
 
 #define COORD_MIN -1e+15
 #define COORD_MAX +1e+15
@@ -49,7 +41,7 @@
 // class    : DlgRef_SpinBox
 // purpose  : Derivated from QSpinBox class and modified to accept floats
 //=================================================================================
-class DLGREF_WNT_EXPORT DlgRef_SpinBox : public QtxDblSpinBox
+class GEOM_DLGREF_EXPORT DlgRef_SpinBox : public QtxDblSpinBox
 {
   Q_OBJECT
 

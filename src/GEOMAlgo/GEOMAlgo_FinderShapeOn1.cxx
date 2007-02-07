@@ -67,12 +67,13 @@
 #include <BRepLib_MakeEdge.hxx>
 
 #include <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
-#include <GEOMAlgo_PassKey.hxx>
-#include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
-#include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
+
 #include <GEOMAlgo_SurfaceTools.hxx>
 #include <GEOMAlgo_StateCollector.hxx>
 
+#include <GEOMAlgo_PassKey.hxx>
+#include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
+#include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn1
@@ -529,8 +530,7 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
 {
   myErrorStatus=0;
   //
-  Standard_Integer j, j1, j2, k, n[4], aNbLinks, aNx, aNbMax, aNb;
-  Standard_Integer iCnt, *pIds;
+  Standard_Integer j, j1, j2, k, n[4], aNbLinks, aNx, aNb, iCnt;//, aNbMax, *pIds;
   TopLoc_Location aLoc;
   Handle(Poly_Triangulation) aTRF;
   TColStd_MapOfInteger aMBN;
@@ -578,12 +578,20 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
     iCnt=aIt.Value();
     if (iCnt==1) {
       const GEOMAlgo_PassKey& aPK=aIt.Key();
+      //qf
+      /*
       aNbMax=aPK.NbMax();
       pIds=(Standard_Integer*)aPK.Key();
       for (k=1; k<3; ++k) {
 	aNx=*(pIds+aNbMax-k);
 	aMBN.Add(aNx);
       }
+      */
+      aNx=(Standard_Integer)aPK.Id(1);
+      aMBN.Add(aNx);
+      aNx=(Standard_Integer)aPK.Id(2);
+      aMBN.Add(aNx);
+      //qt
     }
   }
   //
@@ -620,10 +628,17 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
 	  // take the first having occured inner link
 	  // and discretize it
 	  const GEOMAlgo_PassKey& aPK=aIt.Key();
+	  //qf
+	  /*
 	  aNbMax=aPK.NbMax();
 	  pIds=(Standard_Integer*)aPK.Key();
 	  aN1=*(pIds+aNbMax-1);
 	  aN2=*(pIds+aNbMax-2);
+	  */
+	  //
+	  aN1=(Standard_Integer)aPK.Id(1);
+	  aN2=(Standard_Integer)aPK.Id(2);
+	  //qt
 	  aP1=aNodes(aN1).Transformed(aTrsf);
 	  aP2=aNodes(aN2).Transformed(aTrsf);
 	  //

@@ -28,22 +28,18 @@
 #ifndef MEASUREGUI_POINTDLG_H
 #define MEASUREGUI_POINTDLG_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include "MeasureGUI_Skeleton.h"
 
 class QLineEdit;
-
-#if defined WNT && defined MEASUREGUI_EXPORTS
-#define MEASUREGUI_EXPORT __declspec( dllexport )
-#else
-#define MEASUREGUI_EXPORT
-#endif
 
 //=================================================================================
 // class    : MeasureGUI_PointDlg
 // purpose  : Dialog for displaying point coordinates
 //=================================================================================
 
-class MEASUREGUI_EXPORT MeasureGUI_PointDlg : public MeasureGUI_Skeleton
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_PointDlg : public MeasureGUI_Skeleton
 { 
   Q_OBJECT
 

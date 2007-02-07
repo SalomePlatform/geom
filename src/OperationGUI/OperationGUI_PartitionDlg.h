@@ -29,7 +29,7 @@
 #define DIALOGBOX_PARTITION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_4Sel1List1Check_QTD.h"
+#include "DlgRef_2Sel1List_QTD.h"
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg
@@ -60,7 +60,6 @@ protected:
 private:
     void Init();
     void enterEvent(QEvent* e);
-    bool toRemoveWebs() const;
     int GetLimit() const;
 
     GEOM::ListOfGO   myListShapes;
@@ -69,7 +68,7 @@ private:
     GEOM::ListOfGO   myListRemoveInside;
     GEOM::ListOfGO   myListKeepInside;
 
-    DlgRef_4Sel1List1Check_QTD* GroupPoints;
+    DlgRef_2Sel1List_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();
@@ -79,8 +78,6 @@ private slots:
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
     void ComboTextChanged();
-    void onRemoveWebs(bool);
-    void SetMaterials();
     void ConstructorsClicked(int constructorId);
 };
 

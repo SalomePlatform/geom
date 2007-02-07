@@ -215,7 +215,8 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
     SalomeApp_Study* aDoc = getStudy();
     if ( aDoc && aDoc->studyDS() ) {
       _PTR(Study) aStudy = aDoc->studyDS();
-      _PTR(SObject) aSObj (aStudy->FindObjectIOR(SalomeApp_Application::orb()->object_to_string(object)));
+      CORBA::String_var objStr = SalomeApp_Application::orb()->object_to_string(object);
+      _PTR(SObject) aSObj (aStudy->FindObjectIOR(string(objStr.in())));
       if ( aSObj  ) {
 	_PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
 	for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
@@ -302,7 +303,8 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
   getDisplayer()->SetToActivate( activate );
 
   // Make a reference to GEOM_Object
-  getDisplayer()->SetName( SalomeApp_Application::orb()->object_to_string( object ) );
+  CORBA::String_var objStr = SalomeApp_Application::orb()->object_to_string( object );
+  getDisplayer()->SetName( objStr.in() );
 
   // Build prs
   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( object );
@@ -571,11 +573,13 @@ char* GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
 {
   SalomeApp_Study* study = getStudy();
   if ( study )  {
-    string IOR = GEOMBase::GetIORFromObject( object);
+    char * objIOR = GEOMBase::GetIORFromObject( object );
+    string IOR( objIOR );
+    free( objIOR );
     if ( IOR != "" ) {
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
       if ( SO ) {
-	return TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
+	      return TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
       }
     }
   }
@@ -602,15 +606,15 @@ void GEOMBase_Helper::clearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
   if ( CORBA::is_nil( theObj ) )
     return;
 
-  string IOR = SalomeApp_Application::orb()->object_to_string( theObj );
-  TCollection_AsciiString asciiIOR( strdup( IOR.c_str() ) );
+  CORBA::String_var IOR = SalomeApp_Application::orb()->object_to_string( theObj );
+  TCollection_AsciiString asciiIOR( (char *)IOR.in() );
   GEOM_Client().RemoveShapeFromBuffer( asciiIOR );
 
   if ( !getStudy() || !getStudy()->studyDS() )
     return;
 
   _PTR(Study) aStudy = getStudy()->studyDS();
-  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( IOR ) );
+  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( string( IOR ) ) );
   if ( !aSObj )
     return;
 

@@ -1,23 +1,23 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -27,6 +27,8 @@
 
 #ifndef ENTITYGUI_SKETCHERDLG_H
 #define ENTITYGUI_SKETCHERDLG_H
+
+#include "GEOM_EntityGUI.hxx"
 
 #include "GEOMBase_Helper.h"
 
@@ -57,7 +59,7 @@
 // class    : EntityGUI_Dlg
 // purpose  :
 //=================================================================================
-class EntityGUI_SketcherDlg : public EntityGUI_Skeleton_QTD, public GEOMBase_Helper
+class GEOM_ENTITYGUI_EXPORT EntityGUI_SketcherDlg : public EntityGUI_Skeleton_QTD, public GEOMBase_Helper
 { 
     Q_OBJECT
 
@@ -66,6 +68,8 @@ public:
 			  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~EntityGUI_SketcherDlg();
 
+    bool eventFilter (QObject* object, QEvent* event);
+
 protected:
     // redefined from GEOMBase_Helper
     virtual GEOM::GEOM_IOperations_ptr createOperation();
@@ -73,7 +77,7 @@ protected:
     virtual bool execute( ObjectList& objects );
 
     void closeEvent( QCloseEvent* e );
-    void keyPressEvent( QKeyEvent* e );    
+    void keyPressEvent( QKeyEvent* e );
 
 private :
     void Init();

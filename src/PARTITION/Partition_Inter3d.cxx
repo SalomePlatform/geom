@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "Partition_Inter2d.hxx"
 #include "Partition_Inter3d.ixx"
 #include "utilities.h"
@@ -83,6 +82,8 @@ using namespace std;
 #include <TopOpeBRep_DSFiller.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeShape.hxx>
 #include <stdio.h>
+
+using namespace std;
 
 //=======================================================================
 //function : Partition_Inter3d

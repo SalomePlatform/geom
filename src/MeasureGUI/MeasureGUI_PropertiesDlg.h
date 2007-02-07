@@ -28,21 +28,17 @@
 #ifndef DIALOGBOX_PROPERTIES_H
 #define DIALOGBOX_PROPERTIES_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include "MeasureGUI_Skeleton.h"
 class MeasureGUI_1Sel3LineEdit_QTD;
-
-#if defined WNT && defined MEASUREGUI_EXPORTS
-#define MEASUREGUI_EXPORT __declspec( dllexport )
-#else
-#define MEASUREGUI_EXPORT
-#endif
 
 //=================================================================================
 // class    : MeasureGUI_PropertiesDlg
 // purpose  : Dialog for displaying length, area and volume
 //=================================================================================
 
-class MEASUREGUI_EXPORT MeasureGUI_PropertiesDlg : public MeasureGUI_Skeleton
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_PropertiesDlg : public MeasureGUI_Skeleton
 { 
     Q_OBJECT
 

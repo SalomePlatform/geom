@@ -29,25 +29,18 @@
 #ifndef DlgRef_3SEL_1SPIN_H
 #define DlgRef_3SEL_1SPIN_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include "DlgRef_3Sel_QTD.h"
 #include "DlgRef_SpinBox.h"
 #include <qlayout.h>
 #include <qlabel.h>
-//#if defined WNT
-//#include <SALOME_WNT.hxx>
-//#else
-//#define SALOME_WNT_EXPORT
-//#endif
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define DLGREF_WNT_EXPORT __declspec( dllexport )
-#else
-#define DLGREF_WNT_EXPORT
-#endif
+
 //=================================================================================
 // class    : DlgRef_3Sel1Spin
 // purpose  : extension of a DlgRef_3Sel_QTD class, 1 additional spin box is added
 //=================================================================================
-class DLGREF_WNT_EXPORT DlgRef_3Sel1Spin : public DlgRef_3Sel_QTD
+class GEOM_DLGREF_EXPORT DlgRef_3Sel1Spin : public DlgRef_3Sel_QTD
 {
   Q_OBJECT
 

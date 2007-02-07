@@ -38,7 +38,6 @@
 GEOM_IOperations_i::GEOM_IOperations_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, ::GEOM_IOperations* theImpl)
 :SALOME::GenericObj_i( thePOA ), _impl(theImpl), _engine(theEngine)
 {
-  thePOA->activate_object(this);
 }
 
 //=============================================================================

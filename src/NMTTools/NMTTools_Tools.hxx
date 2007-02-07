@@ -49,6 +49,7 @@ class Geom2d_Curve;
 #include <Standard_Macro.hxx>
 #endif
 
+
 class NMTTools_Tools  {
 
 public:
@@ -67,15 +68,36 @@ public:
       }
  // Methods PUBLIC
  // 
+
+
 Standard_EXPORT static  void MakeNewVertex(const TopTools_ListOfShape& aLV,TopoDS_Vertex& aNewVertex) ;
+
+
 Standard_EXPORT static  void FindChains(const BOPTools_CArray1OfVVInterference& aVVs,BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCX) ;
+
+
 Standard_EXPORT static  void FindChains(const BOPTools_CArray1OfSSInterference& aVVs,BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCX) ;
+
+
 Standard_EXPORT static  void FindChains(const BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCV,BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCX) ;
+
+
 Standard_EXPORT static  Standard_Boolean IsSplitInOnFace(const TopoDS_Edge& aE,const TopoDS_Face& aF,IntTools_Context& aCtx) ;
+
+
 Standard_EXPORT static  Standard_Boolean AreFacesSameDomain(const TopoDS_Face& aF1,const TopoDS_Face& aF2,IntTools_Context& aCtx) ;
+
+
 Standard_EXPORT static  void FindChains(const NMTTools_ListOfCoupleOfShape& aLCS,NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& aM) ;
+
+
 Standard_EXPORT static  void FindChains(const NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& aM1,NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& aM2) ;
-Standard_EXPORT static  void MakePCurve(const TopoDS_Edge& aE,const TopoDS_Face& aF,const Handle(Geom2d_Curve)& aC2D,const Standard_Real aTolR2D) ;
+
+
+Standard_EXPORT static  void MakePCurve(const TopoDS_Edge& aE,const TopoDS_Face& aF,const Handle(Geom2d_Curve)& aC2D) ;
+
+
+Standard_EXPORT static  void UpdateEdge(const TopoDS_Edge& aE,const Standard_Real aTol) ;
 
 
 

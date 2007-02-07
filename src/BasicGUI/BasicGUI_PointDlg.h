@@ -28,6 +28,8 @@
 #ifndef DIALOGBOX_POINT_H
 #define DIALOGBOX_POINT_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel1Spin.h"
 #include "DlgRef_3Spin.h"
@@ -36,16 +38,11 @@
 class QLineEdit;
 class QGroupBox;
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
 //=================================================================================
 // class    : BasicGUI_PointDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_PointDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_PointDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

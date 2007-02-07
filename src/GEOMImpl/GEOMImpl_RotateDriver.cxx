@@ -79,6 +79,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
 
   GEOMImpl_IRotate RI(aFunction);
   gp_Trsf aTrsf;
+  gp_Pnt aCP, aP1, aP2;
   Standard_Integer aType = aFunction->GetType();
   Handle(GEOM_Function) anOriginalFunction = RI.GetOriginal();
   if(anOriginalFunction.IsNull()) return 0;
@@ -99,6 +100,31 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     Standard_Real anAngle = RI.GetAngle();
     aTrsf.SetRotation(anAx1, anAngle);
     
+    BRepBuilderAPI_Transform aTransformation(anOriginal, aTrsf, Standard_False);
+    aShape = aTransformation.Shape();
+  }
+  else if(aType ==  ROTATE_THREE_POINTS || aType == ROTATE_THREE_POINTS_COPY) {
+    Handle(GEOM_Function) aCentPoint = RI.GetCentPoint();
+    Handle(GEOM_Function) aPoint1 = RI.GetPoint1();
+    Handle(GEOM_Function) aPoint2 = RI.GetPoint2();
+    if(aCentPoint.IsNull() || aPoint1.IsNull() || aPoint2.IsNull()) return 0;
+    TopoDS_Shape aCV = aCentPoint->GetValue();
+    TopoDS_Shape aV1 = aPoint1->GetValue();
+    TopoDS_Shape aV2 = aPoint2->GetValue();
+    if(aCV.IsNull() || aCV.ShapeType() != TopAbs_VERTEX) return 0;
+    if(aV1.IsNull() || aV1.ShapeType() != TopAbs_VERTEX) return 0;
+    if(aV2.IsNull() || aV2.ShapeType() != TopAbs_VERTEX) return 0;
+
+    aCP = BRep_Tool::Pnt(TopoDS::Vertex(aCV));
+    aP1 = BRep_Tool::Pnt(TopoDS::Vertex(aV1));
+    aP2 = BRep_Tool::Pnt(TopoDS::Vertex(aV2));
+
+    gp_Vec aVec1(aCP, aP1);
+    gp_Vec aVec2(aCP, aP2);
+    gp_Dir aDir(aVec1 ^ aVec2);
+    gp_Ax1 anAx1(aCP, aDir);
+    Standard_Real anAngle = aVec1.Angle(aVec2);
+    aTrsf.SetRotation(anAx1, anAngle);
     BRepBuilderAPI_Transform aTransformation(anOriginal, aTrsf, Standard_False);
     aShape = aTransformation.Shape();
   }

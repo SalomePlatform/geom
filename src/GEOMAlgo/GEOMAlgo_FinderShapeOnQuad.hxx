@@ -37,6 +37,7 @@ class GEOMAlgo_FinderShapeOnQuad: public GEOMAlgo_FinderShapeOn1
 {
 public:
 
+  Standard_EXPORT
   GEOMAlgo_FinderShapeOnQuad(const gp_Pnt & theTopLeftPoint,
                              const gp_Pnt & theTopRigthPoint,
                              const gp_Pnt & theBottomLeftPoint,

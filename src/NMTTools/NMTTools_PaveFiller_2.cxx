@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -36,6 +36,7 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <TopoDS_Iterator.hxx>
 
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
@@ -49,9 +50,17 @@
 
 #include <NMTDS_ShapesDataStructure.hxx>
 //
+// Modified  Thu Sep 14 14:35:18 2006 
+// Contribution of Samtech www.samcef.com BEGIN
 #include <BOPTools_IndexedMapOfCoupleOfInteger.hxx>
 #include <BOPTools_CoupleOfInteger.hxx>
+#include <BooleanOperations_OnceExplorer.hxx>
+//
 
+static
+  Standard_Boolean Contains(const TopoDS_Edge& aE,
+			    const TopoDS_Vertex& aV);
+// Contribution of Samtech www.samcef.com END
 //=======================================================================
 // function: PrepareEdges
 // purpose: 
@@ -140,7 +149,6 @@
 	}
 	// Edge
 	aE2=TopoDS::Edge(myDS->Shape(aWith));
-	//
 	if (BRep_Tool::Degenerated(aE2)){
 	  continue;
 	}
@@ -152,12 +160,35 @@
 	if (iSDV) {
 	  nV1=iSDV;
 	  aV1=TopoDS::Vertex(myDS->Shape(nV1));
+	  // Modified to find same domain vertex Thu Sep 14 14:35:18 2006 
+	  // Contribution of Samtech www.samcef.com BEGIN
+	  Standard_Integer nVE, iSDVE, iRet;
+	  //
+	  BooleanOperations_OnceExplorer aExp(*myDS);
+	  iRet=0;
+	  aExp.Init(aWith, TopAbs_VERTEX);
+	  for (; aExp.More(); aExp.Next()) {
+	    nVE=aExp.Current();
+	    iSDVE=FindSDVertex(nVE);
+	    if (iSDVE==iSDV) {
+	      iRet=1;
+	      break;
+	    }
+	  }
+	  if (iRet) {
+	    continue;
+	  }
+	}
+	else {
+	  if (Contains(aE2, aV1)) {
+	    continue;
+	  }
+	  // Contribution of Samtech www.samcef.com END
 	}
 	//
 	aFlag=myContext.ComputeVE (aV1, aE2, aT);
 	//
 	if (!aFlag) {
-	  //
 	  // Add Interference to the Pool
 	  BOPTools_VEInterference anInterf (aWhat, aWith, aT);
 	  anIndexIn=aVEs.Append(anInterf);
@@ -185,46 +216,27 @@
   }
   myIsDone=Standard_True;
 }
-
-/*
-// A
-//
-      //                                                   cto900/M2
-      // Some of Edges can be [Semi] Infinite.  Such  Edges have no 
-      // vertices on correspondant INF ends.   So we  must  provide 
-      // these vertices formally (to obtain  Shrunk  Ranges for e.g). 
-      // In reality this vertex(-es) does not belong to the INF Edge.
-      // It just has reference in the DS.
-      //                            PKV Tue Apr 23 10:21:45 2002                 
-      {
-	Standard_Real aT1, aT2, aTolE;
-	Standard_Boolean bInf1, bInf2;
-	gp_Pnt aPx;
-	TopoDS_Vertex aVx; 
-	BRep_Builder aBB;
-	BooleanOperations_AncestorsSeqAndSuccessorsSeq anASSeq; 
-	//
-	aTolE=BRep_Tool::Tolerance(aE);
-	Handle(Geom_Curve) aC3D=BRep_Tool::Curve (aE, aT1, aT2);
-	bInf1=Precision::IsNegativeInfinite(aT1);
-	bInf2=Precision::IsPositiveInfinite(aT2);
-
-	if (bInf1) {
-	  aC3D->D0(aT1, aPx);
-	  aBB.MakeVertex(aVx, aPx, aTolE);
-	  myDS->InsertShapeAndAncestorsSuccessors(aVx, anASSeq);
-	  nV=myDS->NumberOfInsertedShapes();
-	  BOPTools_Pave aPave(nV, aT1); 
-	  aPaveSet.Append (aPave);
-	}
-
-	if (bInf2) {
-	  aC3D->D0(aT2, aPx);
-	  aBB.MakeVertex(aVx, aPx, aTolE);
-	  myDS->InsertShapeAndAncestorsSuccessors(aVx, anASSeq);
-	  nV=myDS->NumberOfInsertedShapes();
-	  BOPTools_Pave aPave(nV, aT2);
-	  aPaveSet.Append (aPave); 
-	}
-      }
-*/
+// Modified  Thu Sep 14 14:35:18 2006 
+// Contribution of Samtech www.samcef.com BEGIN
+//=======================================================================
+//function : Contains
+//purpose  : 
+//=======================================================================
+Standard_Boolean Contains(const TopoDS_Edge& aE,
+			  const TopoDS_Vertex& aV)
+{
+  Standard_Boolean bRet;
+  TopoDS_Iterator aIt;
+  //
+  bRet=Standard_False;
+  aIt.Initialize(aE);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aVE=aIt.Value();
+    if (aVE.IsSame(aV)) {
+      bRet=!bRet;
+      break;
+    }
+  }
+  return bRet;
+}
+// Contribution of Samtech www.samcef.com END

@@ -30,6 +30,8 @@
 
 #include <Standard_ConstructionError.hxx>
 
+#include <NCollection_DataMap.hxx>
+
 #ifdef WNT
 #include <windows.h>
 #else
@@ -99,7 +101,7 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(TFunction_Logbook& log) const
     return 0;
 
   // load plugin library
-  LibHandle anExportLib = LoadLib( aLibName.ToCString() );
+  LibHandle anExportLib = LoadLib( aLibName.ToCString() ); //This is workaround of BUG OCC13051
   funcPoint fp = 0;
   if ( anExportLib )
     fp = (funcPoint)GetProc( anExportLib, "Export" );
@@ -111,7 +113,7 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(TFunction_Logbook& log) const
   int res = fp( aShape, aFileName, aFormatName );
 
   // unload plugin library
-  UnLoadLib( anExportLib );
+  //UnLoadLib( anExportLib );
   if ( res )
     log.SetTouched(Label()); 
 

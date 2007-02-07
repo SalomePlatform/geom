@@ -27,24 +27,18 @@
 #ifndef BASICGUI_ELLIPSE_H
 #define BASICGUI_ELLIPSE_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel2Spin.h"
 
 #include "BasicGUI.h"
 
-#include <gp_Dir.hxx>
-
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
-
 //=================================================================================
 // class    : BasicGUI_EllipseDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_EllipseDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_EllipseDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

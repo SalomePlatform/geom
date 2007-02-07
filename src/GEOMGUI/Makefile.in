@@ -47,7 +47,8 @@ EXPORT_HEADERS= GeometryGUI.h \
 	        GEOMGUI_OCCSelector.h \
 		GEOMGUI_Selection.h \
                 GeometryGUI_Swig.hxx \
-		GeometryGUI_Swig.i
+		GeometryGUI_Swig.i \
+		GEOM_GEOMGUI.hxx
 
 # Libraries targets 
 LIB = libGEOM.la

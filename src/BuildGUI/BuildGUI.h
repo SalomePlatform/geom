@@ -28,13 +28,15 @@
 #ifndef BUILDGUI_H
 #define BUILDGUI_H
 
+#include "GEOM_BuildGUI.hxx"
+
 #include "GEOMGUI.h"
 
 //=================================================================================
 // class    : BuildGUI
 // purpose  :
 //=================================================================================
-class BuildGUI : public GEOMGUI
+class GEOM_BUILDGUI_EXPORT BuildGUI : public GEOMGUI
 {
 public :
   BuildGUI( GeometryGUI* parent );
