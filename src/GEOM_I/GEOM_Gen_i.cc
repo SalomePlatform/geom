@@ -272,6 +272,9 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeName");
   SALOMEDS::AttributeName_var aNameAttrib = SALOMEDS::AttributeName::_narrow(anAttr);
   aNameAttrib->SetValue(aShapeName.ToCString());
+  
+  //Set a name of the GEOM object
+  aShape->SetName(theName);
 
   return aResultSO._retn();
 }

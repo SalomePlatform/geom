@@ -202,6 +202,10 @@ void GEOMToolsGUI::OnRename()
 	      if ( !newName.isEmpty() ) {
 		aName->SetValue( newName.latin1() ); // rename the SObject
 		IObject->setName( newName.latin1() );// rename the InteractiveObject
+		// Rename the corresponding GEOM_Object
+		GEOM::GEOM_Object_var anObj =  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
+		if (!CORBA::is_nil( anObj ))
+		  anObj->SetName( newName.latin1() );
 		(dynamic_cast<SalomeApp_Module*>(app->activeModule()))->updateObjBrowser( false );
 	      }
 	    } // if ( name attribute )

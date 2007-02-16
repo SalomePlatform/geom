@@ -459,7 +459,6 @@ bool GEOMToolsGUI::Import()
     anObj = aInsOp->Import(fileN, fileT);
 
     if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
-      anObj->SetName(GEOMBase::GetDefaultName(QObject::tr("GEOM_IMPORT")).latin1());
       QString aPublishObjName =
         GEOMBase::GetDefaultName(SUIT_Tools::file(fileName, /*withExten=*/true));
 
