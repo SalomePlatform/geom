@@ -78,7 +78,8 @@ class SALOME_WNT_EXPORT GEOM_AssemblyBuilder {
   static vtkActorCollection* BuildActors(const TopoDS_Shape& myShape,
 					 Standard_Real deflection,
 					 Standard_Integer amode,
-					 Standard_Boolean forced);
+					 Standard_Boolean forced,
+					 Standard_Boolean isVector = Standard_False);
 
 
   //------------------------------------------------------------------

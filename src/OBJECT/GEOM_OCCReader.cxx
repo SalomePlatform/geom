@@ -740,14 +740,19 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     edgeTransf = aEdgeLoc.Transformation();
   }
 
+  gp_Pnt aP1, aP2;
+
   Standard_Integer nbnodes;
   if (aEdgePoly.IsNull()) {
     nbnodes = P->NbNodes();
     const TColgp_Array1OfPnt& theNodesP = P->Nodes();
 
+    aP1 = theNodesP(1);
+    aP2 = theNodesP(nbnodes);
+
     float coord[3];
     int pts[2];
-  
+
     for(int j=1;j<nbnodes;j++) {
       gp_Pnt pt1 = theNodesP(j);
       gp_Pnt pt2 = theNodesP(j+1);
@@ -773,6 +778,9 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     nbnodes = aEdgePoly->NbNodes();
     const TColStd_Array1OfInteger& Nodesidx = aEdgePoly->Nodes();
     const TColgp_Array1OfPnt& theNodesPoly = T->Nodes();
+
+    aP1 = theNodesPoly(1);
+    aP2 = theNodesPoly(nbnodes);
 
     float coord[3];
     int pts[2];
@@ -801,6 +809,91 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
       // insert line (pt1,pt2)
       Cells->InsertNextCell(2,pts);
     }
+  }
+
+  // vector representation has an arrow on its end
+  if (myIsVector)
+  {
+    if (!isidtrsf) {
+      // apply edge transformation
+      aP1.Transform(edgeTransf);
+      aP2.Transform(edgeTransf);
+    }
+
+    // draw an arrow
+    gp_Vec aDirVec (aP1, aP2);
+    Standard_Real aDist = aDirVec.Magnitude();
+    if (aDist < gp::Resolution()) return;
+    gp_Dir aDirection (aDirVec);
+
+    Standard_Real anAngle = PI/180.*5.;
+    Standard_Real aLength = aDist/10.;
+
+    Standard_Real dx,dy,dz;
+    aDirection.Coord(dx,dy,dz);
+
+    // Pointe de la fleche
+    Standard_Real xo,yo,zo;
+    aP2.Coord(xo,yo,zo);
+
+    // Centre du cercle base de la fleche
+    gp_XYZ aPc = aP2.XYZ() - aDirection.XYZ() * aLength;
+
+    // Construction d'un repere i,j pour le cercle
+    gp_Dir aDirN;
+    if      (Abs(dx) <= Abs(dy) && Abs(dx) <= Abs(dz)) aDirN = gp::DX();
+    else if (Abs(dy) <= Abs(dz) && Abs(dy) <= Abs(dx)) aDirN = gp::DY();
+    else aDirN = gp::DZ();
+
+    gp_Dir aDirI = aDirection ^ aDirN;
+    gp_Dir aDirJ = aDirection ^ aDirI;
+
+    // Add points and segments, composing the arrow
+    Standard_Real cosinus, sinus, Tg = tan(anAngle);
+
+    float coord[3];
+    coord[0] = xo; coord[1] = yo; coord[2] = zo;
+
+    int ptLoc = Pts->InsertNextPoint(coord);
+    int ptFirst = 0;
+    int ptPrev = 0;
+    int ptCur = 0;
+
+    int pts[2];
+
+    int NbPoints = 15;
+    for (int i = 1; i <= NbPoints; i++, ptPrev = ptCur)
+    {
+      cosinus = cos(2. * PI / NbPoints * (i-1));   
+      sinus   = sin(2. * PI / NbPoints * (i-1));
+
+      gp_XYZ aP = aPc + (aDirI.XYZ() * cosinus + aDirJ.XYZ() * sinus) * aLength * Tg;
+      coord[0] = aP.X();
+      coord[1] = aP.Y();
+      coord[2] = aP.Z();
+
+      // insert pts
+      ptCur = Pts->InsertNextPoint(coord);
+      pts[0] = ptCur;
+
+      if (i == 1) {
+        ptFirst = ptCur;
+      }
+      else {
+        // insert line (ptCur,ptPrev)
+        pts[1] = ptPrev;
+        Cells->InsertNextCell(2,pts);
+      }
+
+      // insert line (ptCur,ptLoc)
+      pts[1] = ptLoc;
+      Cells->InsertNextCell(2,pts);
+    }
+
+    // insert line (ptCur,ptFirst)
+    pts[0] = ptCur;
+    pts[1] = ptFirst;
+    Cells->InsertNextCell(2,pts);
   }
 }
 
@@ -972,8 +1065,9 @@ void GEOM_OCCReader::setDisplayMode(int thenewmode) {
   amode = thenewmode;
 }
 
-void GEOM_OCCReader::setTopo(const TopoDS_Shape& aShape) {
+void GEOM_OCCReader::setTopo(const TopoDS_Shape& aShape, bool isVector) {
   myShape = aShape;
+  myIsVector = isVector;
 }
 
 void GEOM_OCCReader::setForceUpdate(Standard_Boolean bol) {

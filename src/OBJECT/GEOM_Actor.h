@@ -62,10 +62,13 @@ class SALOME_WNT_EXPORT GEOM_Actor : public SALOME_Actor {
   void ReleaseGraphicsResources(vtkWindow *);
 
   const TopoDS_Shape& getTopo();
-  void setInputShape(const TopoDS_Shape& ashape,double adef1,int imode);
+  void setInputShape(const TopoDS_Shape& ashape, double adef1,
+		     int imode, bool isVector = false);
 
   double getDeflection();
   void setDeflection(double adefl);
+
+  double isVector() { return myIsVector; }
 
   // SubShape
   void SubShapeOn();
@@ -114,6 +117,7 @@ class SALOME_WNT_EXPORT GEOM_Actor : public SALOME_Actor {
 
   TopoDS_Shape myShape;
   double deflection;
+  bool myIsVector;
 
   vtkMapper* ShadingMapper;
   vtkMapper* WireframeMapper;

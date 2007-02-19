@@ -36,6 +36,7 @@ EXPORT_HEADERS = GEOM_Actor.h \
 		 GEOM_AssemblyBuilder.h \
 		 GEOM_AISShape.hxx \
 		 Handle_GEOM_AISShape.hxx \
+		 GEOM_AISVector.hxx \
 		 GEOM_InteractiveObject.hxx \
 		 Handle_GEOM_InteractiveObject.hxx \
 		 GEOM_AISTrihedron.hxx \
@@ -48,6 +49,7 @@ LIB_SRC =	 GEOM_Actor.cxx \
 		 GEOM_OCCReader.cxx \
 	  	 GEOM_AssemblyBuilder.cxx \
 		 GEOM_AISShape.cxx \
+		 GEOM_AISVector.cxx \
 		 GEOM_InteractiveObject.cxx \
 		 GEOM_AISTrihedron.cxx \
 		 GEOM_VTKTrihedron.cxx
