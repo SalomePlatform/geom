@@ -181,6 +181,10 @@ msgstr "pointonedge.png"
 msgid "ICON_DLG_ARC"
 msgstr "arc.png"
 
+#ArcDlg
+msgid "ICON_DLG_ARC_CENTER"
+msgstr "arccenter.png"
+
 #ArchimedeDlg
 msgid "ICON_DLG_ARCHIMEDE"
 msgstr "archimede.png"
