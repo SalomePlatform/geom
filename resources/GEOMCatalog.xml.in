@@ -3857,6 +3857,42 @@
                         <DataStream-list></DataStream-list>
                     </component-service>
                     <component-service>
+                        <service-name>MakeArcCenter</service-name>
+                        <service-author>ngr</service-author>
+                        <service-version>3.2.6</service-version>
+                        <service-comment>unknown</service-comment>
+                        <service-by-default>0</service-by-default>
+                        <inParameter-list>
+                            <inParameter>
+                                <inParameter-name>theCenter</inParameter-name>
+                                <inParameter-type>GEOM_Object</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>thePnt1</inParameter-name>
+                                <inParameter-type>GEOM_Object</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>thePnt2</inParameter-name>
+                                <inParameter-type>GEOM_Object</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>theSense</inParameter-name>
+                                <inParameter-type>boolean</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                        </inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-name>return</outParameter-name>
+                                <outParameter-type>GEOM_Object</outParameter-type>
+                                <outParameter-comment>unknown</outParameter-comment>
+                            </outParameter>
+                        </outParameter-list>
+                        <DataStream-list></DataStream-list>
+                    </component-service>                    <component-service>
                         <service-name>MakePolyline</service-name>
                         <service-author>mkr</service-author>
                         <service-version>2.1.0</service-version>

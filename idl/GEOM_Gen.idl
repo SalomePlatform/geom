@@ -1751,6 +1751,20 @@ module GEOM
 			 in GEOM_Object thePnt3);
 
     /*!
+     *  Create an arc of circle of center C from one point to another
+     *  \param theCenter Center point of the arc.
+     *  \param thePnt1 Start point of the arc.
+     *  \param thePnt2 End point of the arc.
+     *  \param theSense Orientation of the arc
+     *  \return New GEOM_Object, containing the created arc.
+     */
+    GEOM_Object MakeArcCenter (in GEOM_Object theCenter,
+                               in GEOM_Object thePnt1,
+                               in GEOM_Object thePnt2,
+                               in boolean theSense);
+
+
+    /*!
      *  Create a polyline on the set of points.
      *  \param thePoints Sequence of points for the polyline.
      *  \return New GEOM_Object, containing the created polyline.
