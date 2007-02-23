@@ -30,6 +30,8 @@
 
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_3Sel_QTD.h"
+#include "DlgRef_3Sel1Check_QTD.h"
+
 #if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
 #define BASICGUI_WNT_EXPORT __declspec( dllexport )
 #else
@@ -59,10 +61,11 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
-
+    int myConstructorId;
     GEOM::GEOM_Object_var myPoint1, myPoint2, myPoint3;
 
     DlgRef_3Sel_QTD* Group3Pnts;
+    DlgRef_3Sel1Check_QTD* Group3Pnts2;
 
 private slots:
     void ClickOnOk();
@@ -71,11 +74,11 @@ private slots:
     
     void ActivateThisDialog();
     void DeactivateActiveDialog();
-    
+    void ConstructorsClicked( int );
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-
+    void ReverseSense(int);
 };
 
 #endif // DIALOGBOX_ARC_H

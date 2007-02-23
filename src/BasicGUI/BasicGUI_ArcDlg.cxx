@@ -59,14 +59,15 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
                       WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ARC")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ARC_CENTER")));
+  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_ARC_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_ARC"));
   RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
+  RadioButton2->setPixmap(image1);
   RadioButton3->close(TRUE);
 
   Group3Pnts = new DlgRef_3Sel_QTD(this, "Group3Pnts");
@@ -79,11 +80,29 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
   Group3Pnts->LineEdit2->setReadOnly( true );
   Group3Pnts->LineEdit3->setReadOnly( true );
 
-  Group3Pnts->PushButton1->setPixmap(image1);
-  Group3Pnts->PushButton2->setPixmap(image1);
-  Group3Pnts->PushButton3->setPixmap(image1);
+  Group3Pnts->PushButton1->setPixmap(image2);
+  Group3Pnts->PushButton2->setPixmap(image2);
+  Group3Pnts->PushButton3->setPixmap(image2);
+
+
+  Group3Pnts2 = new DlgRef_3Sel1Check_QTD(this, "Group3Pnts2");
+  Group3Pnts2->GroupBox1->setTitle(tr("GEOM_POINTS"));
+  Group3Pnts2->TextLabel1->setText(tr("GEOM_CENTER_POINT"));
+  Group3Pnts2->TextLabel2->setText(tr("GEOM_POINT_I").arg("Start"));
+  Group3Pnts2->TextLabel3->setText(tr("GEOM_POINT_I").arg("End"));
+
+  Group3Pnts2->LineEdit1->setReadOnly( true );
+  Group3Pnts2->LineEdit2->setReadOnly( true );
+  Group3Pnts2->LineEdit3->setReadOnly( true );
+
+  Group3Pnts2->PushButton1->setPixmap(image2);
+  Group3Pnts2->PushButton2->setPixmap(image2);
+  Group3Pnts2->PushButton3->setPixmap(image2);
+  
+  Group3Pnts2->radioButton4->setText(tr("GEOM_REVERSE"));
 
   Layout1->addWidget( Group3Pnts, 2, 0 );
+  Layout1->addWidget( Group3Pnts2, 2, 0 );
 
   setHelpFileName("arc.htm");
 
@@ -109,17 +128,21 @@ void BasicGUI_ArcDlg::Init()
   /* init variables */
   // myGeomGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
-
+  
+  myConstructorId = -1;
   myEditCurrentArgument = Group3Pnts->LineEdit1;
   myEditCurrentArgument->setFocus();
 
   myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
+  Group3Pnts2->radioButton4->setChecked(FALSE);
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
   connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
   connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
+ 
+  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
+ 
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
@@ -130,11 +153,24 @@ void BasicGUI_ArcDlg::Init()
   connect(Group3Pnts->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(Group3Pnts->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(Group3Pnts->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  
+  connect(Group3Pnts2->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3Pnts2->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3Pnts2->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+
+  connect(Group3Pnts2->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group3Pnts2->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group3Pnts2->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  
+  connect(Group3Pnts2->radioButton4, SIGNAL(stateChanged(int)), this, SLOT(ReverseSense(int)));
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr( "GEOM_ARC" ) );
+  initName( tr( "GEOM_ARC" )); 
+  
+
+  ConstructorsClicked( 0 );
 }
 
 
@@ -173,8 +209,13 @@ bool BasicGUI_ArcDlg::ClickOnApply()
   Group3Pnts->LineEdit1->setText( "" );
   Group3Pnts->LineEdit2->setText( "" );
   Group3Pnts->LineEdit3->setText( "" );
-  myEditCurrentArgument = Group3Pnts->LineEdit1;
+  Group3Pnts2->LineEdit1->setText( "" );
+  Group3Pnts2->LineEdit2->setText( "" );
+  Group3Pnts2->LineEdit3->setText( "" );
+  if (getConstructorId() == 0)  myEditCurrentArgument = Group3Pnts->LineEdit1;
+  if (getConstructorId() == 1)  myEditCurrentArgument = Group3Pnts2->LineEdit1;
 
+  ConstructorsClicked( getConstructorId() );
   return true;
 }
 
@@ -185,25 +226,55 @@ bool BasicGUI_ArcDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_ArcDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
-
-  if ( IObjectCount() != 1 )
-  {
-    if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = GEOM::GEOM_Object::_nil();
+  if ((getConstructorId() != 0) && (getConstructorId() != 1))
     return;
-  }
-
+  
+  myEditCurrentArgument->setText("");
+  if ( IObjectCount() != 1 ){
+    switch (getConstructorId())
+    {
+      case 0:
+      {  
+          if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
+          else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
+          else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = GEOM::GEOM_Object::_nil();
+          return;
+          break;
+      }
+      case 1:
+      {  
+        if      ( myEditCurrentArgument == Group3Pnts2->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
+        else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
+        else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 )   myPoint3 = GEOM::GEOM_Object::_nil();
+        return;
+        break;
+      }
+    }
+  }   
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {
-    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
-    if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = aSelectedObject;
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = aSelectedObject;
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = aSelectedObject;
+    switch (getConstructorId())
+    {
+      case 0:
+      {
+        myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+        if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = aSelectedObject;
+        else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = aSelectedObject;
+        else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = aSelectedObject;
+        break;
+      }
+      case 1:
+      {
+        myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+        if      ( myEditCurrentArgument == Group3Pnts2->LineEdit1 )   myPoint1 = aSelectedObject;
+        else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 )   myPoint2 = aSelectedObject;
+        else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 )   myPoint3 = aSelectedObject;
+        break;
+      }
+    }
   }
 
   displayPreview();
@@ -217,11 +288,23 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 void BasicGUI_ArcDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-
-  if      ( send == Group3Pnts->PushButton1 )   myEditCurrentArgument = Group3Pnts->LineEdit1;
-  else if ( send == Group3Pnts->PushButton2 )   myEditCurrentArgument = Group3Pnts->LineEdit2;
-  else if ( send == Group3Pnts->PushButton3 )   myEditCurrentArgument = Group3Pnts->LineEdit3;
-
+  switch (getConstructorId())
+  {
+    case 0:
+    {
+      if      ( send == Group3Pnts->PushButton1 )   myEditCurrentArgument = Group3Pnts->LineEdit1;
+      else if ( send == Group3Pnts->PushButton2 )   myEditCurrentArgument = Group3Pnts->LineEdit2;
+      else if ( send == Group3Pnts->PushButton3 )   myEditCurrentArgument = Group3Pnts->LineEdit3;
+      break;
+    }
+    case 1:
+    {
+      if      ( send == Group3Pnts2->PushButton1 )   myEditCurrentArgument = Group3Pnts2->LineEdit1;
+      else if ( send == Group3Pnts2->PushButton2 )   myEditCurrentArgument = Group3Pnts2->LineEdit2;
+      else if ( send == Group3Pnts2->PushButton3 )   myEditCurrentArgument = Group3Pnts2->LineEdit3;
+      break;
+    }
+  }
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
@@ -234,9 +317,8 @@ void BasicGUI_ArcDlg::SetEditCurrentArgument()
 void BasicGUI_ArcDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if ( send == Group3Pnts->LineEdit1 ||
-       send == Group3Pnts->LineEdit2 ||
-       send == Group3Pnts->LineEdit3 )
+  if ( send == Group3Pnts->LineEdit1 || send == Group3Pnts->LineEdit2 || send == Group3Pnts->LineEdit3 ||
+       send == Group3Pnts2->LineEdit1 || send == Group3Pnts2->LineEdit2 || send == Group3Pnts2->LineEdit3 )
   {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
@@ -264,6 +346,9 @@ void BasicGUI_ArcDlg::ActivateThisDialog()
   Group3Pnts->LineEdit2->setText( "" );
   Group3Pnts->LineEdit3->setText( "" );
   myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
+
+  ConstructorsClicked( getConstructorId() );
+  
 }
 
 //=================================================================================
@@ -320,11 +405,34 @@ bool BasicGUI_ArcDlg::isValid( QString& msg )
 //=================================================================================
 bool BasicGUI_ArcDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj =
-    GEOM::GEOM_ICurvesOperations::_narrow(getOperation())->MakeArc(myPoint1, myPoint2, myPoint3);
-  if ( !anObj->_is_nil() )
+  bool res = false;
+  GEOM::GEOM_Object_var anObj;
+
+  switch (getConstructorId())
+  {
+    case 0:
+      {
+        if ( !CORBA::is_nil(myPoint1) && !CORBA::is_nil(myPoint2) &&!CORBA::is_nil(myPoint3) ){
+          anObj = GEOM::GEOM_ICurvesOperations::_narrow(getOperation())->MakeArc(myPoint1, myPoint2, myPoint3);
+          res = true;
+        }
+        break;
+      }
+    case 1:
+    {
+        bool Sense;
+        (Group3Pnts2->radioButton4->isChecked()) ? Sense=true : Sense = false;
+        if ( !CORBA::is_nil(myPoint1) && !CORBA::is_nil(myPoint2) &&!CORBA::is_nil(myPoint3) ){
+          anObj = GEOM::GEOM_ICurvesOperations::_narrow(getOperation())->MakeArcCenter(myPoint1, myPoint2, myPoint3,Sense);
+          res = true;
+        }
+        break;
+    }
+  }
+  if ( !anObj->_is_nil() ){
     objects.push_back( anObj._retn() );
-  return true;
+  }
+  return res;
 }
 
 //=================================================================================
@@ -334,4 +442,46 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
 void BasicGUI_ArcDlg::closeEvent( QCloseEvent* e )
 {
   GEOMBase_Skeleton::closeEvent( e );
+}
+
+//=================================================================================
+// function : ConstructorsClicked()
+// purpose  : Radio button management
+//=================================================================================
+void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
+{
+
+  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+
+  switch (constructorId)
+  {
+    case 0:
+    {
+      Group3Pnts->show();
+      resize(0, 0);
+      Group3Pnts2->hide();
+
+     connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+      break;
+    }
+    case 1:
+    {
+      Group3Pnts->hide();
+      resize(0, 0);
+      Group3Pnts2->show();
+      connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+      break;
+    }
+  }
+  displayPreview();
+}
+
+//=================================================================================
+// function : ReverseSense()
+// purpose  : Orientation of the arc
+//=================================================================================
+void BasicGUI_ArcDlg::ReverseSense(int sense)
+{
+  displayPreview();
 }
