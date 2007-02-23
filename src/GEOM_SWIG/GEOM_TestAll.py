@@ -84,6 +84,7 @@ def TestAll (geompy, math):
   Plane1 = geompy.MakePlaneThreePnt(px, pz, p200, trimsize) #(4 Doubles)->GEOM_Object_ptr
 
   Arc      = geompy.MakeArc(py, pz, px)                   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
+  Arc2     = geompy.MakeArcCenter(py, pz, px,0)           #(3 GEOM_Object_ptr,Boolean)->GEOM_Object_ptr
   Circle   = geompy.MakeCircle(p0, vz, radius1)           #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Circle1  = geompy.MakeCircleThreePnt(p0, pxyz, px)      #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   Ellipse  = geompy.MakeEllipse(p0, vy, radius2, radius1) #(2 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr

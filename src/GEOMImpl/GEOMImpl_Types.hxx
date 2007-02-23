@@ -186,6 +186,7 @@
 #define ELLIPSE_PNT_VEC_RR 1
 
 #define CIRC_ARC_THREE_PNT 1
+#define CIRC_ARC_CENTER    2
 
 #define FILLET_SHAPE_ALL   1
 #define FILLET_SHAPE_EDGES 2

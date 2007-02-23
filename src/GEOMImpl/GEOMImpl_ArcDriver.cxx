@@ -35,12 +35,18 @@
 #include <TopExp.hxx>
 
 #include <GC_MakeArcOfCircle.hxx>
-
 #include <Standard_ConstructionError.hxx>
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
+#include <gce_MakeCirc.hxx>
+#include <gce_MakePln.hxx>
+#include <ElCLib.hxx>
+#include <Geom_Circle.hxx>
+#include <Geom_TrimmedCurve.hxx>
 
+
+#include "utilities.h"
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -73,8 +79,7 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
   Standard_Integer aType = aFunction->GetType();
 
   TopoDS_Shape aShape;
-
-  if (aType == CIRC_ARC_THREE_PNT) {
+  if ((aType == CIRC_ARC_THREE_PNT)||(aType == CIRC_ARC_CENTER)) {
     Handle(GEOM_Function) aRefPoint1 = aCI.GetPoint1();
     Handle(GEOM_Function) aRefPoint2 = aCI.GetPoint2();
     Handle(GEOM_Function) aRefPoint3 = aCI.GetPoint3();
@@ -93,8 +98,28 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
         Standard_ConstructionError::Raise("Arc creation aborted: coincident points given");
       if (gp_Vec(aP1, aP2).IsParallel(gp_Vec(aP1, aP3), Precision::Angular()))
         Standard_ConstructionError::Raise("Arc creation aborted: points lay on one line");
-      GC_MakeArcOfCircle arc (aP1, aP2, aP3);
-      aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
+      if (aType == CIRC_ARC_THREE_PNT){
+        GC_MakeArcOfCircle arc(aP1, aP2, aP3);
+        aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
+
+      }
+      if (aType == CIRC_ARC_CENTER){
+        Standard_Real Rad = aP1.Distance(aP2);
+        gce_MakeCirc MC(aP1,gce_MakePln(aP1, aP2, aP3).Value(),Rad);
+        Standard_Boolean sense = aCI.GetSense();
+        if (MC.IsDone()) {
+          const gp_Circ& Circ = MC.Value();
+          Standard_Real Alpha1 = ElCLib::Parameter(Circ,aP2);
+          Standard_Real Alpha2 = ElCLib::Parameter(Circ,aP3);
+          Handle(Geom_Circle) C = new Geom_Circle(Circ);
+          Handle(Geom_TrimmedCurve) TheArc;
+          if (!sense)
+            TheArc= new Geom_TrimmedCurve(C,Alpha1,Alpha2,false);
+          if (sense)
+            TheArc= new Geom_TrimmedCurve(C,Alpha2,Alpha1,false);
+          aShape = BRepBuilderAPI_MakeEdge(TheArc).Edge();
+        }
+      }
     }
   } else {
   }
@@ -104,7 +129,7 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label());
-  
+  MESSAGE("Out of building step ...");
   return 1;    
 }
 

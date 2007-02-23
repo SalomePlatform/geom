@@ -2135,6 +2135,22 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArc (GEOM::GEOM_Object_ptr thePnt1,
 }
 
 //=============================================================================
+//  MakeArcCenter:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArcCenter (GEOM::GEOM_Object_ptr theCenter,
+                                                    GEOM::GEOM_Object_ptr thePnt1,
+                                                    GEOM::GEOM_Object_ptr thePnt2,
+                                                    CORBA::Boolean theSense)
+{
+  beginService( " GEOM_Superv_i::MakeArcCenter" );
+  MESSAGE("GEOM_Superv_i::MakeArcCenter");
+  getCurvesOp();
+  GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeArcCenter(theCenter, thePnt1, thePnt2,theSense);
+  endService( " GEOM_Superv_i::MakeArcCenter" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakePolyline:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePolyline (GEOM::GEOM_List_ptr thePoints)

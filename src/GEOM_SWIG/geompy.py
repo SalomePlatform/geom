@@ -339,6 +339,19 @@ def MakeArc(thePnt1, thePnt2, thePnt3):
       print "MakeArc : ", CurvesOp.GetErrorCode()
     return anObj
 
+##  Create an arc of circle from a center and 2 points.
+#  @param thePnt1 Center of the arc
+#  @param thePnt2 Start point of the arc. (Gives also the radius of the arc)
+#  @param thePnt3 End point of the arc (Gives also a direction)
+#  @return New GEOM_Object, containing the created arc.
+#
+#  Example: see GEOM_TestAll.py
+def MakeArcCenter(thePnt1, thePnt2, thePnt3,theSense):
+    anObj = CurvesOp.MakeArcCenter(thePnt1, thePnt2, thePnt3,theSense)
+    if CurvesOp.IsDone() == 0:
+      print "MakeArcCenter : ", CurvesOp.GetErrorCode()
+    return anObj
+
 ## Create a circle with given center, normal vector and radius.
 #  @param thePnt Circle center.
 #  @param theVec Vector, normal to the plane of the circle.

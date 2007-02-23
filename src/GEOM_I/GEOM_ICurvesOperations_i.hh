@@ -54,7 +54,12 @@ class GEOM_ICurvesOperations_i :
   GEOM::GEOM_Object_ptr MakeArc (GEOM::GEOM_Object_ptr thePnt1,
 				 GEOM::GEOM_Object_ptr thePnt2,
 				 GEOM::GEOM_Object_ptr thePnt3);
-
+  
+  GEOM::GEOM_Object_ptr MakeArcCenter (GEOM::GEOM_Object_ptr thePnt1,
+                                       GEOM::GEOM_Object_ptr thePnt2,
+                                       GEOM::GEOM_Object_ptr thePnt3,
+                                       bool theSense);
+  
   GEOM::GEOM_Object_ptr MakePolyline (const GEOM::ListOfGO& thePoints);
 
   GEOM::GEOM_Object_ptr MakeSplineBezier (const GEOM::ListOfGO& thePoints);
