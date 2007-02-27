@@ -3000,3 +3000,54 @@ msgstr "Object of incorrect type selected!\nPlease, select face, shell or solid 
 
 msgid "DEP_OBJECT"
 msgstr "Selected object has been used to create another one\n It can't be deleted "
+
+msgid "MEN_SELECT_ONLY"
+msgstr "Select Only"
+
+msgid "STB_VERTEX_SEL_ONLY"
+msgstr "Select only a Points"
+
+msgid "STB_EDGE_SEL_ONLY"
+msgstr "Select only a Edges"
+
+msgid "STB_WIRE_SEL_ONLY"
+msgstr "Select only a Wires"
+
+msgid "STB_FACE_SEL_ONLY"
+msgstr "Select only a Faces"
+
+msgid "STB_SHELL_SEL_ONLY"
+msgstr "Select only a Shells"
+
+msgid "STB_SOLID_SEL_ONLY"
+msgstr "Select only a Solids"
+
+msgid "STB_COMPOUND_SEL_ONLY"
+msgstr "Select only a Compounds"
+
+msgid "STB_ALL_SEL_ONLY"
+msgstr "Select all Objects"
+
+msgid "MEN_VERTEX_SEL_ONLY"
+msgstr "Vertex"
+
+msgid "MEN_EDGE_SEL_ONLY"
+msgstr "Edge"
+
+msgid "MEN_WIRE_SEL_ONLY"
+msgstr "Wire"
+
+msgid "MEN_FACE_SEL_ONLY"
+msgstr "Face"
+
+msgid "MEN_SHELL_SEL_ONLY"
+msgstr "Shell"
+
+msgid "MEN_SOLID_SEL_ONLY"
+msgstr "Solid"
+
+msgid "MEN_COMPOUND_SEL_ONLY"
+msgstr "Compound"
+
+msgid "MEN_ALL_SEL_ONLY"
+msgstr "Select All"

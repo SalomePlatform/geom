@@ -58,6 +58,7 @@ public :
   ~GEOMToolsGUI();
 
   bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
+  virtual void deactivate();
 
 private:
   // Import and export topology methods
@@ -78,7 +79,8 @@ private:
   void OnTransparency();
   void OnNbIsos();
   void OnOpen();
-
+  void OnSelectOnly(int mode);
+  
   // returns name of Module (Component) of given objects (usually selected objects)
   // if objects belong to different Components, a NULL string is returned.
   QString getParentComponent( _PTR( Study ), const SALOME_ListIO& );

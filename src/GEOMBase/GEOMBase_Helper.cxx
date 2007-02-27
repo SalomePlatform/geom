@@ -105,9 +105,13 @@ GEOMBase_Helper::~GEOMBase_Helper()
     erasePreview();
   if ( hasCommand() )
     abortCommand();
-
-  globalSelection( GEOM_ALLOBJECTS, true );
-
+  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app) {
+    GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
+    if(aGeomGUI)
+      globalSelection(aGeomGUI->getLocalSelectionMode() , true );
+  }
+  
   if (myDisplayer)
     delete myDisplayer;
 }

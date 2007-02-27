@@ -766,3 +766,24 @@ msgstr "erase.png"
 
 msgid "ICO_POP_CREATE_GROUP"
 msgstr "group_new.png"
+
+msgid "ICO_VERTEX_SEL_ONLY"
+msgstr "point2.png"
+
+msgid "ICO_EDGE_SEL_ONLY"
+msgstr "build_edge.png"
+
+msgid "ICO_WIRE_SEL_ONLY"
+msgstr "build_wire.png"
+
+msgid "ICO_FACE_SEL_ONLY"
+msgstr "build_face.png"
+
+msgid "ICO_SHELL_SEL_ONLY"
+msgstr "build_shell.png"
+
+msgid "ICO_SOLID_SEL_ONLY"
+msgstr "build_solid.png"
+
+msgid "ICO_COMPOUND_SEL_ONLY"
+msgstr "build_compound.png"

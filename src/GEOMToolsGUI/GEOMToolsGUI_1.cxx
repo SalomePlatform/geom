@@ -437,3 +437,14 @@ void GEOMToolsGUI::OnOpen()
   }
 */
 }
+
+void GEOMToolsGUI::OnSelectOnly(int mode)
+{
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( app ) {
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+    GEOM_Displayer aDisp (appStudy);
+    aDisp.GlobalSelection(mode);
+    getGeometryGUI()->setLocalSelectionMode(mode);
+  }
+}

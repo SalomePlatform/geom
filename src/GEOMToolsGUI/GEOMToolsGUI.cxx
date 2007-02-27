@@ -46,6 +46,7 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <LightApp_SelectionMgr.h>
+#include <GEOMImpl_Types.hxx>
 
 #include <SALOME_ListIteratorOfListIO.hxx>
 #include <SALOME_Prs.h>
@@ -154,6 +155,46 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 	Export();
 	break;
       }
+    case 2171: // POPUP VIEWER - SELECT ONLY - VERTEX
+      {
+	OnSelectOnly( GEOM_POINT );
+	break;
+      }
+    case 2172: // POPUP VIEWER - SELECT ONLY - EDGE
+      {
+	OnSelectOnly( GEOM_EDGE );
+	break;
+      }
+    case 2173: // POPUP VIEWER - SELECT ONLY - WIRE
+      {
+	OnSelectOnly( GEOM_WIRE );
+	break;
+      }
+    case 2174: // POPUP VIEWER - SELECT ONLY - FACE
+      {
+	OnSelectOnly( GEOM_FACE );
+	break;
+      }
+    case 2175: // POPUP VIEWER - SELECT ONLY - SHELL
+      {
+	OnSelectOnly( GEOM_SHELL );
+	break;
+      }
+    case 2176: // POPUP VIEWER - SELECT ONLY - SOLID
+      {
+	OnSelectOnly( GEOM_SOLID );
+	break;
+      }
+    case 2177: // POPUP VIEWER - SELECT ONLY - COMPOUND
+      {
+	OnSelectOnly( GEOM_COMPOUND );
+	break;
+      }
+    case 2178: // POPUP VIEWER - SELECT ONLY - SELECT ALL
+      {
+	OnSelectOnly( GEOM_ALLOBJECTS );
+	break;
+      }    
     case 411: // SETTINGS - ADD IN STUDY
       {
 	// SAN -- TO BE REMOVED !!!
@@ -700,6 +741,21 @@ bool GEOMToolsGUI::CheckSubObjectInUse(_PTR(SObject) checkobj,
     }
 
   return false;
+}
+
+//=================================================================================
+// function : deactivate()
+// purpose  : Called when GEOM component is deactivated
+//=================================================================================
+void GEOMToolsGUI::deactivate()
+{
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( app ) {
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+    GEOM_Displayer aDisp (appStudy);
+    aDisp.GlobalSelection();
+    getGeometryGUI()->setLocalSelectionMode(GEOM_ALLOBJECTS);
+  }
 }
 
 //=====================================================================================

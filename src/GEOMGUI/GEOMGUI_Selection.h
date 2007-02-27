@@ -47,6 +47,7 @@ private:
   bool                  isVisible( const int ) const;
   QString               typeName( const int ) const;  
   QString               displayMode( const int ) const;
+  QString               selectionMode() const;
 
   bool                  isComponent( const int ) const;
   GEOM::GEOM_Object_ptr getObject( const int ) const;

@@ -23,6 +23,7 @@
 #include "GEOM_Displayer.h"
 
 #include <LightApp_DataOwner.h>
+#include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 
 #include <OCCViewer_ViewModel.h>
@@ -66,7 +67,9 @@ GEOMGUI_Selection::~GEOMGUI_Selection()
 QtxValue GEOMGUI_Selection::globalParam( const QString& p ) const
 {
   if ( p == "isOCC" ) return QtxValue( activeViewType() == OCCViewer_Viewer::Type() );
- 
+  if ( p == "selectionmode" ){ 
+    return QtxValue(selectionMode()); 
+  }
   return LightApp_Selection::globalParam( p );
 }
 
@@ -200,4 +203,25 @@ GEOM::GEOM_Object_ptr GEOMGUI_Selection::getObject( const int index ) const
     }
   }
   return GEOM::GEOM_Object::_nil();
+}
+
+QString GEOMGUI_Selection:: selectionMode() const
+{ 
+  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app) {
+    GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
+    if(aGeomGUI)
+      switch(aGeomGUI->getLocalSelectionMode())
+	{
+	case GEOM_POINT      : return "VERTEX";
+	case GEOM_EDGE       : return "EDGE";
+	case GEOM_WIRE       : return "WIRE";
+	case GEOM_FACE       : return "FACE";
+	case GEOM_SHELL      : return "SHELL";
+	case GEOM_SOLID      : return "SOLID";
+	case GEOM_COMPOUND   : return "COMPOUND";
+	case GEOM_ALLOBJECTS : return "ALL";
+	default: return "";
+	}
+  }
 }
