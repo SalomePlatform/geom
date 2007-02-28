@@ -46,6 +46,7 @@
 #include <Prs3d_ShadingAspect.hxx>
 #include <SelectBasics_SensitiveEntity.hxx>
 #include <SelectMgr_EntityOwner.hxx>
+#include <StdSelect_BRepOwner.hxx>
 #include <SelectMgr_IndexedMapOfOwner.hxx>
 #include <SelectMgr_Selection.hxx>
 #include <StdSelect_DisplayMode.hxx>
@@ -100,7 +101,7 @@ static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
   TopExp::MapShapes(aMainShape, aMapOfShapes);
 
   for  ( Standard_Integer i = 1, n = anAllMap.Extent(); i <= n; i++ ) {
-    Handle(SelectMgr_EntityOwner) anOwner = anAllMap( i );
+    Handle(StdSelect_BRepOwner) anOwner = Handle(StdSelect_BRepOwner)::DownCast(anAllMap( i ));
     if ( anOwner.IsNull() || !anOwner->HasShape() )
       continue;
 
