@@ -1263,6 +1263,10 @@ msgstr "OZX"
 msgid "GEOM_WPLANE_OXY"
 msgstr "OXY"
 
+#: GeometryGUI_WorkingPlaneDlg.cxx:107
+msgid "GEOM_REVERSE_PLANE"
+msgstr "Reverse the plane normal"
+
 #: GeometryGUI_multiTranslationDlg.cxx:107
 msgid "GEOM_MULTITRANSLATION_TITLE"
 msgstr "Multi-Translation"
