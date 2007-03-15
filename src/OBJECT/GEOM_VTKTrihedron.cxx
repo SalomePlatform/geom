@@ -55,10 +55,7 @@
 #include <vtkAppendPolyData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkTransform.h>
-
-#include "VTKViewer_VectorText.h"
-
-
+#include <vtkVectorText.h>
 
 /*
   Class       : GEOM_VTKTrihedron
