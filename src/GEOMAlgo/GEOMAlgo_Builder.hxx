@@ -137,6 +137,10 @@ protected:
  // Methods PROTECTED
  // 
 
+//!  Performs calculations using prepared DSFiller <br>
+//!           object theDSF <br>
+Standard_EXPORT   void PerformInternal(const NMTTools_DSFiller& theDSF) ;
+
 //!  Prepare information for history support <br>
 Standard_EXPORT virtual  void PrepareHistory() ;
 
@@ -220,6 +224,7 @@ TopTools_IndexedDataMapOfShapeListOfShape myInParts;
 BRepAlgo_Image mySplitFaces;
 TopTools_IndexedDataMapOfShapeShape mySameDomainShapes;
 TopTools_IndexedDataMapOfShapeShape myDraftSolids;
+Standard_Integer myEntryPoint;
 
 
 private: 

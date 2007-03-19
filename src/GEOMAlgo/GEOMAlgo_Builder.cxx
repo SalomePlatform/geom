@@ -52,6 +52,7 @@
 {
   myNbTypes=9;
   myDSFiller=NULL;
+  myEntryPoint=0; // Entry point through PerformWithFiller ()
 }
 //=======================================================================
 //function : ~
@@ -59,6 +60,12 @@
 //=======================================================================
   GEOMAlgo_Builder::~GEOMAlgo_Builder()
 {
+  if (myEntryPoint==1) {
+    if (myDSFiller) {
+      delete myDSFiller;
+      myDSFiller=NULL;
+    }
+  }
 }
 //=======================================================================
 //function : AddCompound
@@ -253,18 +260,33 @@
     aBB.Add(aCS, aS);
   }
   //
+  if (myDSFiller) {
+    delete myDSFiller;
+    myDSFiller=NULL;
+  }
   NMTTools_DSFiller* pDSF=new NMTTools_DSFiller;
   //
   pDSF->SetCompositeShape(aCS);
   pDSF->Perform();
   //
-  PerformWithFiller(*pDSF);
+  myEntryPoint=1;
+  PerformInternal(*pDSF);
 }
 //=======================================================================
 //function : PerformWithFiller
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_Builder::PerformWithFiller(const NMTTools_DSFiller& theDSF)
+{
+  myEntryPoint=0;
+  //
+  PerformInternal(theDSF);
+}
+//=======================================================================
+//function : PerformInternal
+//purpose  : 
+//=======================================================================
+  void GEOMAlgo_Builder::PerformInternal(const NMTTools_DSFiller& theDSF)
 {
   myErrorStatus=0;
   //
