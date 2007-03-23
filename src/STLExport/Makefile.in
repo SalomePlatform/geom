@@ -1,5 +1,4 @@
-#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+#  Copyright (C) 2003  CEA
 # 
 #  This library is free software; you can redistribute it and/or 
 #  modify it under the terms of the GNU Lesser General Public 
@@ -20,18 +19,27 @@
 #
 #
 #  File   : Makefile.in
-#  Author : Patrick GOLDBRONN (CEA)
+#  Author : Eugeny Nikolaev
 #  Module : GEOM
-#  $Header$
+#  $Header: 
 
 top_srcdir=@top_srcdir@
-top_builddir=..
+top_builddir=../..
 srcdir=@srcdir@
-VPATH=.:@srcdir@
-
+VPATH=.:@srcdir@:@top_srcdir@/idl
 
 @COMMENCE@
 
-SUBDIRS = OBJECT ARCHIMEDE NMTDS NMTTools NMTAlgo GEOMAlgo SKETCHER GEOM BREPExport BREPImport IGESExport IGESImport STEPExport STEPImport ShHealOper GEOMImpl GEOM_I GEOMClient DlgRef GEOMFiltersSelection GEOMGUI GEOMBase GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI RepairGUI MeasureGUI GroupGUI BlocksGUI GEOM_I_Superv GEOM_SWIG STLExport
+# Libraries targets
 
-@MODULE@
+LIB= libSTLExport.la
+
+LIB_SRC = STLExport.cxx
+
+# additionnal information to compil and link file
+CPPFLAGS+= $(OCC_INCLUDES) $(KERNEL_CXXFLAGS)
+CXXFLAGS+= $(OCC_CXXFLAGS) $(KERNEL_CXXFLAGS)
+
+LDFLAGS+= $(CAS_LDPATH) -lTKSTL $(KERNEL_LDFLAGS)
+
+@CONCLUDE@

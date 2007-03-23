@@ -260,13 +260,32 @@ Standard_Boolean GEOMImpl_IInsertOperations::ImportTranslators
 
   if (!InitResMgr()) return Standard_False;
 
-  // Read Import formats list
+  // Read Import formats list from install directory
   if (myResMgr->Find("Import")) {
     TCollection_AsciiString aFormats (myResMgr->Value("Import"));
     TCollection_AsciiString aToken = aFormats.Token("| \t", 1);
     int i = 1;
     for (; !aToken.IsEmpty(); aToken = aFormats.Token("| \t", ++i)) {
       theFormats->Append(aToken);
+    }
+  }
+
+  // Read Import formats from user directory
+  if (myResMgrUser->Find("Import")) {
+    TCollection_AsciiString aFormats (myResMgrUser->Value("Import"));
+    TCollection_AsciiString aToken = aFormats.Token("| \t", 1);
+    int i = 1;
+    for (; !aToken.IsEmpty(); aToken = aFormats.Token("| \t", ++i)) {
+      int aLenFormats = theFormats->Length();
+      bool isFound = false;
+      for(int aInd=1;aInd<=aLenFormats;aInd++){
+	if( theFormats->Value(aInd) == aToken){
+	  isFound = true;
+	  break;
+	}
+      }
+      if(!isFound)
+	theFormats->Append(aToken);
     }
   }
 
@@ -277,10 +296,14 @@ Standard_Boolean GEOMImpl_IInsertOperations::ImportTranslators
     aKey = theFormats->Value(j) + ".ImportPattern";
     if (myResMgr->Find(aKey.ToCString()))
       aPattern = myResMgr->Value(aKey.ToCString());
+    else if(myResMgrUser->Find(aKey.ToCString()))
+      aPattern = myResMgrUser->Value(aKey.ToCString());
     else {
       aKey = theFormats->Value(j) + ".Pattern";
       if (myResMgr->Find(aKey.ToCString()))
         aPattern = myResMgr->Value(aKey.ToCString());
+      else if(myResMgrUser->Find(aKey.ToCString()))
+	aPattern = myResMgrUser->Value(aKey.ToCString());
       else {
         aPattern = theFormats->Value(j);
         aPattern += " Files ( *.* )";
@@ -313,13 +336,32 @@ Standard_Boolean GEOMImpl_IInsertOperations::ExportTranslators
 
   if (!InitResMgr()) return Standard_False;
 
-  // Read Export formats list
+  // Read Export formats list from install directory
   if (myResMgr->Find("Export")) {
     TCollection_AsciiString aFormats (myResMgr->Value("Export"));
     TCollection_AsciiString aToken = aFormats.Token("| \t", 1);
     int i = 1;
     for (; !aToken.IsEmpty(); aToken = aFormats.Token("| \t", ++i)) {
       theFormats->Append(aToken);
+    }
+  }
+
+  // Read Export formats list from user directory
+  if (myResMgrUser->Find("Export")) {
+    TCollection_AsciiString aFormats (myResMgrUser->Value("Export"));
+    TCollection_AsciiString aToken = aFormats.Token("| \t", 1);
+    int i = 1;
+    for (; !aToken.IsEmpty(); aToken = aFormats.Token("| \t", ++i)) {
+      int aLenFormats = theFormats->Length();
+      bool isFound = false;
+      for(int aInd=1;aInd<=aLenFormats;aInd++){
+	if( theFormats->Value(aInd) == aToken){
+	  isFound = true;
+	  break;
+	}
+      }
+      if(!isFound)
+	theFormats->Append(aToken);
     }
   }
 
@@ -330,10 +372,14 @@ Standard_Boolean GEOMImpl_IInsertOperations::ExportTranslators
     aKey = theFormats->Value(j) + ".ExportPattern";
     if (myResMgr->Find(aKey.ToCString()))
       aPattern = myResMgr->Value(aKey.ToCString());
+    else if (myResMgrUser->Find(aKey.ToCString()))
+      aPattern = myResMgrUser->Value(aKey.ToCString());
     else {
       aKey = theFormats->Value(j) + ".Pattern";
       if (myResMgr->Find(aKey.ToCString()))
         aPattern = myResMgr->Value(aKey.ToCString());
+      else if (myResMgrUser->Find(aKey.ToCString()))
+	aPattern = myResMgrUser->Value(aKey.ToCString());
       else {
         aPattern = theFormats->Value(j);
         aPattern += " Files ( *.* )";
@@ -363,7 +409,8 @@ Standard_Boolean GEOMImpl_IInsertOperations::IsSupported
   if (isImport) aMode = "Import";
   else aMode = "Export";
 
-  // Read supported formats for the certain mode
+  
+  // Read supported formats for the certain mode from install directory
   if (myResMgr->Find(aMode.ToCString())) {
     TCollection_AsciiString aFormats (myResMgr->Value(aMode.ToCString()));
     if (aFormats.Search(theFormat) > -1) {
@@ -378,7 +425,23 @@ Standard_Boolean GEOMImpl_IInsertOperations::IsSupported
       }
     }
   }
-
+  
+  // Read supported formats for the certain mode from user directory
+  if (myResMgrUser->Find(aMode.ToCString())) {
+    TCollection_AsciiString aFormats (myResMgrUser->Value(aMode.ToCString()));
+    if (aFormats.Search(theFormat) > -1) {
+      // Read library name for the supported format
+      TCollection_AsciiString aKey (theFormat);
+      aKey += ".";
+      aKey += aMode;
+      if (myResMgrUser->Find(aKey.ToCString())) {
+        TCollection_AsciiString aLibName (myResMgrUser->Value(aKey.ToCString()));
+        theLibName = new TCollection_HAsciiString (aLibName);
+        return Standard_True;
+      }
+    }
+  }
+  
   return Standard_False;
 }
 
@@ -391,14 +454,24 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
 {
   if (myResMgr.IsNull()) {
     // Initialize the Resource Manager
-    TCollection_AsciiString aResDir (getenv("GEOM_ROOT_DIR"));
+    TCollection_AsciiString aResDir (getenv("GEOM_ROOT_DIR")),aNull;
 #ifdef WNT
     aResDir += "\\share\\salome\\resources\\geom";
 #else
     aResDir += "/share/salome/resources/geom";
 #endif
+    
+    myResMgr = new Resource_Manager ("ImportExport", aResDir, aNull, Standard_False);
+
+    if (!myResMgr->Find("Import") && !myResMgr->Find("Export")) {
+      // instead of complains in Resource_Manager
+      INFOS("No valid file \"ImportExport\" found in " << aResDir.ToCString());
+    }
+  }
+
+  if (myResMgrUser.IsNull()) {
     char * dir = getenv("GEOM_ENGINE_RESOURCES_DIR");
-    TCollection_AsciiString aUserResDir;
+    TCollection_AsciiString aUserResDir,aNull;
     if ( dir )
     {
       aUserResDir = dir;
@@ -412,14 +485,16 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
       aUserResDir += "/.salome/resources";
 #endif
     }
-    myResMgr = new Resource_Manager ("ImportExport", aResDir, aUserResDir, Standard_False);
 
-    if (!myResMgr->Find("Import") && !myResMgr->Find("Export")) {
+    myResMgrUser = new Resource_Manager ("ImportExport", aNull, aUserResDir, Standard_False);
+
+    if (!myResMgrUser->Find("Import") && !myResMgrUser->Find("Export")) {
       // instead of complains in Resource_Manager
-      INFOS("No valid file \"ImportExport\" found in " << aResDir.ToCString() <<
-            " and in " << aUserResDir.ToCString() );
+      INFOS("No valid file \"ImportExport\" found in " << aUserResDir.ToCString() );
     }
-  }
 
-  return ( myResMgr->Find("Import") || myResMgr->Find("Export") );
+  }  
+
+  return ( myResMgr->Find("Import") || myResMgr->Find("Export") ||
+	   myResMgrUser->Find("Import") || myResMgrUser->Find("Export"));
 }
