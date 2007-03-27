@@ -452,9 +452,14 @@ Standard_Boolean GEOMImpl_IInsertOperations::IsSupported
 //=============================================================================
 Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
 {
+  bool isResourceFound     = false;
+  bool isResourceFoundUser = false;
+  TCollection_AsciiString aUserResDir,aResDir;
+  
   if (myResMgr.IsNull()) {
     // Initialize the Resource Manager
-    TCollection_AsciiString aResDir (getenv("GEOM_ROOT_DIR")),aNull;
+    TCollection_AsciiString aNull;
+    aResDir = TCollection_AsciiString(getenv("GEOM_ROOT_DIR"));
 #ifdef WNT
     aResDir += "\\share\\salome\\resources\\geom";
 #else
@@ -463,15 +468,18 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
     
     myResMgr = new Resource_Manager ("ImportExport", aResDir, aNull, Standard_False);
 
+    isResourceFound = true;
     if (!myResMgr->Find("Import") && !myResMgr->Find("Export")) {
       // instead of complains in Resource_Manager
+      isResourceFound = false;
       INFOS("No valid file \"ImportExport\" found in " << aResDir.ToCString());
     }
-  }
+  } else
+    isResourceFound = true;
 
   if (myResMgrUser.IsNull()) {
     char * dir = getenv("GEOM_ENGINE_RESOURCES_DIR");
-    TCollection_AsciiString aUserResDir,aNull;
+    TCollection_AsciiString aNull;
     if ( dir )
     {
       aUserResDir = dir;
@@ -488,12 +496,20 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
 
     myResMgrUser = new Resource_Manager ("ImportExport", aNull, aUserResDir, Standard_False);
 
+    isResourceFoundUser = true;
+    
     if (!myResMgrUser->Find("Import") && !myResMgrUser->Find("Export")) {
       // instead of complains in Resource_Manager
-      INFOS("No valid file \"ImportExport\" found in " << aUserResDir.ToCString() );
+      isResourceFoundUser = false;
     }
-
-  }  
+      
+  } else
+    isResourceFoundUser = true;
+    
+  if(!isResourceFound && !isResourceFoundUser){
+    INFOS("No valid file \"ImportExport\" found in " << aResDir.ToCString());
+    INFOS("No valid file \"ImportExport\" found in " << aUserResDir.ToCString() );
+  }
 
   return ( myResMgr->Find("Import") || myResMgr->Find("Export") ||
 	   myResMgrUser->Find("Import") || myResMgrUser->Find("Export"));
