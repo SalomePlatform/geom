@@ -189,8 +189,9 @@
   void NMTTools_DEProcessor::DoPaves()
 {
 
-  Standard_Integer i, aNbE, nED, nVD, nFD=0;
+  Standard_Integer i, aNbE, nED, nVD, nFD, aNbLPB;
   //
+  nFD=0;
   aNbE=myDEMap.Extent();
   for (i=1; i<=aNbE; i++) {
     nED=myDEMap.FindKey(i);
@@ -202,9 +203,16 @@
     TColStd_ListIteratorOfListOfInteger anIt(nLF);
     for (; anIt.More(); anIt.Next()) {
       nFD=anIt.Value();
-      
+      //
       BOPTools_ListOfPaveBlock aLPB;
       FindPaveBlocks(nED, nVD, nFD, aLPB);
+      //modified by NIZNHY-PKV Fri Mar 23 10:35:27 2007f
+      //
+      aNbLPB=aLPB.Extent();
+      if (!aNbLPB) {
+	continue;
+      }
+      //modified by NIZNHY-PKV Fri Mar 23 10:35:33 2007t
       FillPaveSet (nED, nVD, nFD, aLPB);
     }
     // 

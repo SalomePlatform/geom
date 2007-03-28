@@ -137,11 +137,9 @@ static
 		    TopTools_ListOfShape& aLS);
 // Contribution of Samtech www.samcef.com END
 
-//modified by NIZNHY-PKV Mon Dec  4 12:56:04 2006f
 static
   Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE, 
 			       IntTools_Context& aCtx);
-//modified by NIZNHY-PKV Mon Dec  4 12:56:08 2006t
 
 //=======================================================================
 // function: PerformFF
@@ -519,7 +517,7 @@ static
 	//
 	BOPTools_Tools::MakeSectEdge (aIC, aV1, aT1, aV2, aT2, aES);
 	//
-	//modified by NIZNHY-PKV Mon Dec  4 12:56:35 2006f use_01
+	// use_01 f
 	//
 	NMTTools_Tools::UpdateEdge (aES, aTolR3D);
 	bIsMicroEdge=IsMicroEdge(aES, myContext);
@@ -527,9 +525,9 @@ static
 	  continue;
 	}
 	//
-	//modified by NIZNHY-PKV Mon Dec  4 12:56:38 2006t
+	//use_01 t
 	//
-	//modified by NIZNHY-PKV Thu Nov 16 11:13:46 2006f SKL/PartC5
+	// SKL/PartC5 f
 	{
 	  Handle(Geom2d_Curve) aC2D1, aC2D2;
 	  //
@@ -538,24 +536,8 @@ static
 	  //
 	  NMTTools_Tools::MakePCurve(aES, aF1, aC2D1);
 	  NMTTools_Tools::MakePCurve(aES, aF2, aC2D2);
-	  //NMTTools_Tools::UpdateEdge (aES, aTolR3D); // ft use_01
+	  //SKL/PartC5 t 
 	}
-	
-	//
-	/*
-	{
-	  Standard_Real aTolR2D;
-	  Handle(Geom2d_Curve) aC2D1, aC2D2;
-	  //
-	  aTolR2D=aFFi.TolR2D();
-	  aC2D1=aIC.FirstCurve2d();
-	  aC2D2=aIC.SecondCurve2d();
-	  //
-	  NMTTools_Tools::MakePCurve(aES, aF1, aC2D1, aTolR2D);
-	  NMTTools_Tools::MakePCurve(aES, aF2, aC2D2, aTolR2D);
-	}
-	*/
-	//modified by NIZNHY-PKV Thu Nov 16 11:17:34 2006t
 	//
 	aMEPB.Add(aES, aPBNew);
 	aMapEI.Add(aES, i);
@@ -761,13 +743,11 @@ static
 	aF2FWD=aF2;
 	aF2FWD.Orientation(TopAbs_FORWARD);
 	//
-	//modified by NIZNHY-PKV Thu Nov 16 12:49:13 2006f SKL/PartC5
-	//NMTTools_Tools::MakePCurve(aEx, aF1FWD, aC2D1, aTolEx);
-	//NMTTools_Tools::MakePCurve(aEx, aF2FWD, aC2D2, aTolEx);
+	// SKL/PartC5 f
 	NMTTools_Tools::MakePCurve(aEx, aF1FWD, aC2D1);
 	NMTTools_Tools::MakePCurve(aEx, aF2FWD, aC2D2);
 	NMTTools_Tools::UpdateEdge (aEx, aTolEx);
-	//modified by NIZNHY-PKV Thu Nov 16 12:49:24 2006t 
+	//SKL/PartC5 t
       } //if (aCBAPI.IsCommonBlock(aPB))
       //
       // new SE
@@ -835,8 +815,12 @@ static
   void NMTTools_PaveFiller::MakePCurves()
 {
   Standard_Integer i, aNb,  nF1, nF2, nE;
+  Standard_Integer aNbCB, aNbF, nSp, nF;
   TopoDS_Face aF1FWD, aF2FWD;
+  TColStd_ListIteratorOfListOfInteger aItF;
   BOPTools_ListIteratorOfListOfPaveBlock anIt;
+  NMTTools_ListIteratorOfListOfCommonBlock aItCB;
+  TopAbs_ShapeEnum aType;
   //
   BOPTools_CArray1OfSSInterference& aFFs=myIntrPool->SSInterferences();
   //
@@ -865,7 +849,60 @@ static
       BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aE, aF1FWD);
       BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aE, aF2FWD);
     }
-  } 
+  }
+  //
+  //modified by NIZNHY-PKV Fri Mar 23 10:35:02 2007f
+  // Check common blocks between edges and faces
+  // Build P-Curves if they were not built in previos block.
+  //
+  // The main case is :arguments for e.g aEdge, aFace -> no FFs, 
+  // but p-curves are needed.
+  //
+  aNb=myDS->NumberOfShapesOfTheObject();
+  for (i=1; i<=aNb; ++i) {
+    const TopoDS_Shape& aS=myDS->Shape(i);
+    aType=aS.ShapeType();
+    //
+    if (aType!=TopAbs_EDGE) {
+      continue;
+    }
+    const TopoDS_Edge& aE=TopoDS::Edge(aS);
+    //
+    if (BRep_Tool::Degenerated(aE)) {
+      continue;
+    }
+    //
+    const NMTTools_ListOfCommonBlock& aLCB=myCommonBlockPool(myDS->RefEdge(i));
+    aNbCB=aLCB.Extent();
+    if (!aNbCB) {
+      continue;
+    }
+    //
+    aItCB.Initialize(aLCB);
+    for (; aItCB.More(); aItCB.Next()) {
+      const NMTTools_CommonBlock& aCB=aItCB.Value();
+      const BOPTools_PaveBlock &aPB1=aCB.PaveBlock1();
+      //
+      const TColStd_ListOfInteger& aLF=aCB.Faces();
+      aNbF=aLF.Extent();
+      if (!aNbF) { 
+	continue;
+      }
+      //
+      nSp=aPB1.Edge();
+      const TopoDS_Edge aSp=TopoDS::Edge(myDS->Shape(nSp));//mpv
+      //
+      aItF.Initialize(aLF);
+      for (; aItF.More(); aItF.Next()) {
+	nF=aItF.Value();
+	aF1FWD=TopoDS::Face(myDS->Shape(nF));
+	aF1FWD.Orientation(TopAbs_FORWARD);
+	// 
+	BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aSp, aF1FWD);
+      } // for (; aItCB.More(); aItCB.Next()) {
+    }//if (aS.ShapeType()==TopAbs_EDGE) {
+  }    
+  //modified by NIZNHY-PKV Fri Mar 23 10:35:13 2007t
 }
 //=======================================================================
 // function: IsExistingPaveBlock
@@ -1362,11 +1399,11 @@ void SharedEdges1(const TopoDS_Face& aF1,
     // V22
     const BOPTools_Pave& aPave22=aPBR.Pave2();
     nV22=aPave22.Index();
-    //modified by NIZNHY-PKV Wed Nov 15 13:08:13 2006f
+    //
     if (nV11==nV21 || nV11==nV22 || nV12==nV21 || nV12==nV22) {
       continue;
     }
-    //modified by NIZNHY-PKV Wed Nov 15 13:08:15 2006t
+    //
     // E2
     nE2=aPBR.Edge();
     //
@@ -1439,7 +1476,7 @@ void SharedEdges1(const TopoDS_Face& aF1,
 //
 // Contribution of Samtech www.samcef.com END
 
-//modified by NIZNHY-PKV Mon Dec  4 12:30:38 2006f use_01
+// use_01 f
 //=======================================================================
 //function : IsMicroEdge
 //purpose  : 
@@ -1478,4 +1515,4 @@ Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE,
   //
   return bRet;
 }
-//modified by NIZNHY-PKV Mon Dec  4 12:55:50 2006t
+// use_01 t
