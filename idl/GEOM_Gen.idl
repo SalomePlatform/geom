@@ -2115,12 +2115,72 @@ module GEOM
   };
 
   /*!
+   *  GEOM_IKindOfShape: namespace for shape_kind enumeration.
+   */
+  interface GEOM_IKindOfShape
+  {
+    enum shape_kind {
+      NO_SHAPE,
+      // COMPOSITEs
+      COMPOUND,
+      COMPSOLID,
+      SHELL,
+      WIRE,
+      // SOLIDs
+      SPHERE,
+      CYLINDER,
+      BOX,
+      ROTATED_BOX,
+      TORUS,
+      CONE,
+      POLYHEDRON,
+      SOLID,
+      // FACEs
+      SPHERE2D,
+      CYLINDER2D,
+      TORUS2D,
+      CONE2D,
+      DISK,
+      ELLIPSE2D,
+      POLYGON,
+      PLANAR,
+      FACE,
+      // EDGEs
+      CIRCLE,
+      ARC,
+      ELLIPSE,
+      ARC_ELLIPSE,
+      LINE, // infinite segment
+      SEGMENT,
+      EDGE,
+      // VERTEX
+      VERTEX
+    };
+  };
+
+
+  /*!
    *  GEOM_IMeasureOperations: Interface for measurement (distance, whatis) and
    *  properties calculation (like Centre of Mass, Inertia, etc.).
    *
    */
   interface GEOM_IMeasureOperations : GEOM_IOperations
   {
+    /*!
+     *  Get kind of theShape.
+     *  \param theShape Shape to get a kind of.
+     *  \param theIntegers Output. Integer and enumerated shape's parameters
+     *                     (kind of surface, closed/unclosed, number of edges, etc.)
+     *  \param theDoubles  Output. Double shape's parameters (coordinates, dimensions, etc.)
+     *  \note  Concrete meaning of each value, returned via \a theIntegers
+     *         or \a theDoubles list depends on the kind of the shape.
+     *  \return Returns a kind of shape in terms of <VAR>GEOM_IKindOfShape.shape_kind</VAR> enumeration.
+     */
+    //short KindOfShape (in GEOM_Object   theShape,
+    GEOM_IKindOfShape::shape_kind KindOfShape (in  GEOM_Object  theShape,
+					       out ListOfLong   theIntegers,
+					       out ListOfDouble theDoubles);
+
     /*!
      *  Get position (LCS) of theShape.
      *  \param theShape Shape to calculate position of.

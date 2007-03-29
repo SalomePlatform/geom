@@ -28,6 +28,8 @@
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TCollection_AsciiString.hxx>
+#include <TColStd_HSequenceOfInteger.hxx>
+#include <TColStd_HSequenceOfReal.hxx>
 #include <gp_Ax3.hxx>
 
 class GEOM_Engine;
@@ -37,6 +39,48 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
  public:
   Standard_EXPORT GEOMImpl_IMeasureOperations(GEOM_Engine* theEngine, int theDocID);
   Standard_EXPORT ~GEOMImpl_IMeasureOperations();
+
+  enum ShapeKind {
+    SK_NO_SHAPE,
+    // COMPOSITEs
+    SK_COMPOUND,
+    SK_COMPSOLID,
+    SK_SHELL,
+    SK_WIRE,
+    // SOLIDs
+    SK_SPHERE,
+    SK_CYLINDER,
+    SK_BOX,
+    SK_ROTATED_BOX,
+    SK_TORUS,
+    SK_CONE,
+    SK_POLYHEDRON,
+    SK_SOLID,
+    // FACEs
+    SK_SPHERE2D,
+    SK_CYLINDER2D,
+    SK_TORUS2D,
+    SK_CONE2D,
+    SK_DISK,
+    SK_ELLIPSE2D,
+    SK_POLYGON,
+    SK_PLANAR,
+    SK_FACE,
+    // EDGEs
+    SK_CIRCLE,
+    SK_ARC,
+    SK_ELLIPSE,
+    SK_ARC_ELLIPSE,
+    SK_LINE, // infinite segment
+    SK_SEGMENT,
+    SK_EDGE,
+    // VERTEX
+    SK_VERTEX
+  };
+
+  Standard_EXPORT ShapeKind KindOfShape (Handle(GEOM_Object) theShape,
+                                         Handle(TColStd_HSequenceOfInteger)& theIntegers,
+                                         Handle(TColStd_HSequenceOfReal)&    theDoubles);
 
   Standard_EXPORT void GetPosition (Handle(GEOM_Object) theShape,
                                     Standard_Real& Ox, Standard_Real& Oy, Standard_Real& Oz,

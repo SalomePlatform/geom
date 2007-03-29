@@ -144,6 +144,12 @@ def addToStudyInFather(aFather, aShape, aName):
 ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
 
 # -----------------------------------------------------------------------------
+# enumeration shape_kind
+# -----------------------------------------------------------------------------
+
+kind = GEOM.GEOM_IKindOfShape
+
+# -----------------------------------------------------------------------------
 # Basic primitives
 # -----------------------------------------------------------------------------
 
@@ -1963,6 +1969,76 @@ def GetPosition(theShape):
     if MeasuOp.IsDone() == 0:
       print "GetPosition : ", MeasuOp.GetErrorCode()
     return aTuple
+
+## Get kind of theShape.
+#
+#  @param theShape Shape to get a kind of.
+#  @return Returns a kind of shape in terms of <VAR>GEOM_IKindOfShape.shape_kind</VAR> enumeration
+#          and a list of parameters, describing the shape.
+#  @note  Concrete meaning of each value, returned via \a theIntegers
+#         or \a theDoubles list depends on the kind of the shape.
+#         The full list of possible outputs is:
+#         Currently implemented cases are marked with '+' sign:
+#
+#  geompy.kind.COMPOUND     nb_solids nb_faces nb_edges nb_vertices
+#  geompy.kind.COMPSOLID    nb_solids nb_faces nb_edges nb_vertices
+#
+#  geompy.kind.SHELL        geompy.info.closed   nb_faces nb_edges nb_vertices
+#  geompy.kind.SHELL        geompy.info.unclosed nb_faces nb_edges nb_vertices
+#
+#  geompy.kind.WIRE         geompy.info.closed   nb_edges nb_vertices
+#  geompy.kind.WIRE         geompy.info.unclosed nb_edges nb_vertices
+#
+#  geompy.kind.SPHERE       xc yc zc  R
+#  geompy.kind.CYLINDER     xb yb zb  dx dy dz  R  H
+#  geompy.kind.BOX          xc yc zc  dx dy dz
+#  geompy.kind.ROTATED_BOX  xo yo zo  zx zy zz  xx xy xz  dx dy dz
+#  geompy.kind.TORUS        xc yc zc  dx dy dz  R_1 R_2
+#  geompy.kind.CONE         xb yb zb  dx dy dz  H  R_1  R_2
+#  geompy.kind.POLYHEDRON   nb_faces nb_edges nb_vertices
+#  geompy.kind.SOLID        nb_faces nb_edges nb_vertices
+#
+#  geompy.kind.SPHERE2D     xc yc zc  R
+#  + geompy.kind.CYLINDER2D   xb yb zb  dx dy dz  R  H
+#  geompy.kind.TORUS2D      xc yc zc  dx dy dz  R_1 R_2
+#  geompy.kind.CONE2D       xc yc zc  dx dy dz  R_1 R_2
+#  geompy.kind.DISK         xc yc zc  dx dy dz  R
+#  geompy.kind.ELLIPSE2D    xc yc zc  dx dy dz  R_1 R_2
+#  geompy.kind.POLYGON      xo yo zo  dx dy dz  nb_edges nb_vertices
+#  + geompy.kind.PLANAR       xo yo zo  dx dy dz  nb_edges nb_vertices
+#  + geompy.kind.FACE         nb_edges nb_vertices _surface_type_id_
+#
+#  geompy.kind.CIRCLE       xc yc zc  dx dy dz  R
+#  geompy.kind.ARC          xc yc zc  dx dy dz  R  x1 y1 z1  x2 y2 z2
+#  geompy.kind.ELLIPSE      xc yc zc  dx dy dz  R_1 R_2
+#  geompy.kind.ARC_ELLIPSE   xc yc zc  dx dy dz  R_1 R_2  x1 y1 z1  x2 y2 z2
+#  geompy.kind.LINE         x1 y1 z1  x2 y2 z2
+#  geompy.kind.SEGMENT      x1 y1 z1  x2 y2 z2
+#  geompy.kind.EDGE         nb_vertices _curve_
+#
+#  + geompy.kind.VERTEX       x y z
+#
+#  Example: see GEOM_TestMeasures.py
+def KindOfShape(theShape):
+    aRoughTuple = MeasuOp.KindOfShape(theShape)
+    if MeasuOp.IsDone() == 0:
+        print "KindOfShape : ", MeasuOp.GetErrorCode()
+        return []
+
+    aKind  = aRoughTuple[0]
+    anInts = aRoughTuple[1]
+    aDbls  = aRoughTuple[2]
+
+    # Now there is no exception from this rule:
+    aKindTuple = [aKind] + aDbls + anInts
+
+    # If they are we will regroup parameters for such kind of shape.
+    # For example:
+    #if aKind == kind.SOME_KIND:
+    #    #  SOME_KIND     int int double int double double
+    #    aKindTuple = [aKind, anInts[0], anInts[1], aDbls[0], anInts[2], aDbls[1], aDbls[2]]
+
+    return aKindTuple
 
 # -----------------------------------------------------------------------------
 # Import/Export objects

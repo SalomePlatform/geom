@@ -39,6 +39,10 @@ class GEOM_IMeasureOperations_i :
 			    ::GEOMImpl_IMeasureOperations* theImpl);
   ~GEOM_IMeasureOperations_i();
 
+  GEOM::GEOM_IKindOfShape::shape_kind KindOfShape (GEOM::GEOM_Object_ptr  theShape,
+						   GEOM::ListOfLong_out   theIntegers,
+						   GEOM::ListOfDouble_out theDoubles);
+
   void GetPosition (GEOM::GEOM_Object_ptr theShape,
 		    CORBA::Double& Ox, CORBA::Double& Oy, CORBA::Double& Oz,
 		    CORBA::Double& Zx, CORBA::Double& Zy, CORBA::Double& Zz,

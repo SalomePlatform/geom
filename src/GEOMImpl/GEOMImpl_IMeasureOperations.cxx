@@ -39,12 +39,14 @@
 #include <TDF_Tool.hxx>
 
 #include <BRep_Tool.hxx>
+#include <BRepAdaptor_Surface.hxx>
+#include <BRepBndLib.hxx>
 #include <BRepCheck.hxx>
 #include <BRepCheck_Result.hxx>
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
-#include <BRepGProp.hxx>
-#include <BRepBndLib.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepGProp.hxx>
+#include <BRepTools.hxx>
 
 #include <Bnd_Box.hxx>
 
@@ -63,8 +65,20 @@
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
+#include <GeomAbs_SurfaceType.hxx>
 #include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
+#include <Geom_SphericalSurface.hxx>
+#include <Geom_CylindricalSurface.hxx>
+#include <Geom_ToroidalSurface.hxx>
+#include <Geom_ConicalSurface.hxx>
+#include <Geom_SurfaceOfLinearExtrusion.hxx>
+#include <Geom_SurfaceOfRevolution.hxx>
+#include <Geom_BezierSurface.hxx>
+#include <Geom_BSplineSurface.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
+#include <Geom_OffsetSurface.hxx>
+
 #include <gp_Pln.hxx>
 
 #include <Standard_Failure.hxx>
@@ -91,6 +105,350 @@ GEOMImpl_IMeasureOperations::~GEOMImpl_IMeasureOperations()
   MESSAGE("GEOMImpl_IMeasureOperations::~GEOMImpl_IMeasureOperations");
 }
 
+//=============================================================================
+/*! Get kind and parameters of the given shape.
+ */
+//=============================================================================
+GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
+                             (Handle(GEOM_Object) theShape,
+                              Handle(TColStd_HSequenceOfInteger)& theIntegers,
+                              Handle(TColStd_HSequenceOfReal)&    theDoubles)
+{
+  SetErrorCode(KO);
+  ShapeKind aKind = SK_NO_SHAPE;
+
+  if (theIntegers.IsNull()) theIntegers = new TColStd_HSequenceOfInteger;
+  else                      theIntegers->Clear();
+
+  if (theDoubles.IsNull()) theDoubles = new TColStd_HSequenceOfReal;
+  else                     theDoubles->Clear();
+
+  if (theShape.IsNull())
+    return aKind;
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return aKind;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if (aShape.IsNull()) return aKind;
+
+  TopAbs_ShapeEnum aType = aShape.ShapeType();
+  switch (aType)
+  {
+    //??? geompy.kind.compound     nb_solids nb_faces nb_edges nb_vertices
+    //??? geompy.kind.compsolid    nb_solids nb_faces nb_edges nb_vertices
+    //? "nb_faces" - all faces or only 'standalone' faces?
+    case TopAbs_COMPOUND:
+      aKind = SK_COMPOUND;
+      //
+      break;
+    case TopAbs_COMPSOLID:
+      aKind = SK_COMPSOLID;
+      //
+      break;
+    case TopAbs_SHELL:
+      //geompy.kind.shell        geompy.info.closed   nb_faces nb_edges nb_vertices
+      //geompy.kind.shell        geompy.info.unclosed nb_faces nb_edges nb_vertices
+      aKind = SK_SHELL;
+      //
+      break;
+    case TopAbs_WIRE:
+      //geompy.kind.wire         geompy.info.closed   nb_edges nb_vertices
+      //geompy.kind.wire         geompy.info.unclosed nb_edges nb_vertices
+      aKind = SK_WIRE;
+      //
+      break;
+    case TopAbs_SOLID:
+      //geompy.kind.sphere       xc yc zc  R
+      //geompy.kind.cylinder     xb yb zb  dx dy dz  R  H
+      //geompy.kind.box          xc yc zc  dx dy dz
+      //geompy.kind.rotated_box  xo yo zo  zx zy zz  xx xy xz  dx dy dz
+      //geompy.kind.torus        xc yc zc  dx dy dz  R_1 R_2
+      //geompy.kind.cone         xb yb zb  dx dy dz  H  R_1  R_2
+      //geompy.kind.polyhedron   nb_faces nb_edges nb_vertices
+      //geompy.kind.solid        nb_faces nb_edges nb_vertices
+      aKind = SK_SOLID;
+      //if () {
+      //  aKind = SK_SPHERE;
+      //  aKind = SK_CYLINDER;
+      //  aKind = SK_BOX;
+      //  aKind = SK_ROTATED_BOX;
+      //  aKind = SK_TORUS;
+      //  aKind = SK_CONE;
+      //  aKind = SK_POLYHEDRON;
+      //}
+      break;
+    case TopAbs_FACE:
+      // geompy.kind.sphere2d     xc yc zc  R
+      // + geompy.kind.cylinder2d   xb yb zb  dx dy dz  R  H
+      // geompy.kind.torus2d      xc yc zc  dx dy dz  R_1 R_2
+      // geompy.kind.cone2d       xc yc zc  dx dy dz  R_1 R_2
+      // geompy.kind.disk         xc yc zc  dx dy dz  R
+      // geompy.kind.ellipse2d    xc yc zc  dx dy dz  R_1 R_2
+      // geompy.kind.polygon      xo yo zo  dx dy dz  nb_edges nb_vertices
+      // + geompy.kind.planar       xo yo zo  dx dy dz  nb_edges nb_vertices
+      // + geompy.kind.face         nb_edges nb_vertices _surface_type_id_
+      aKind = SK_FACE;
+      {
+        TopoDS_Face aF = TopoDS::Face(aShape);
+
+        int nbWires = 0, nbEdges = 0, nbVertices = 0;
+
+        TopTools_MapOfShape mapShape;
+        TopExp_Explorer expw (aF, TopAbs_WIRE);
+        for (; expw.More(); expw.Next()) {
+          if (mapShape.Add(expw.Current())) {
+            //listShape.Append(expw.Current());
+            nbWires++;
+          }
+        }
+
+        mapShape.Clear();
+        TopExp_Explorer expe (aF, TopAbs_EDGE);
+        for (; expe.More(); expe.Next()) {
+          if (mapShape.Add(expe.Current())) {
+            //listShape.Append(expe.Current());
+            nbEdges++;
+          }
+        }
+
+        mapShape.Clear();
+        TopExp_Explorer expf (aF, TopAbs_VERTEX);
+        for (; expf.More(); expf.Next()) {
+          if (mapShape.Add(expf.Current())) {
+            //listShape.Append(expf.Current());
+            nbVertices++;
+          }
+        }
+
+        // Geometry
+        Handle(Geom_Surface) aGS = BRep_Tool::Surface(aF);
+        if (!aGS.IsNull()) {
+          BRepAdaptor_Surface aBAS (aF);
+
+          if (aGS->IsKind(STANDARD_TYPE(Geom_Plane))) {
+            // planar
+            aKind = SK_PLANAR;
+
+            Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast(aGS);
+            gp_Pln aPln = aGPlane->Pln();
+            gp_Ax3 aPos = aPln.Position();
+            gp_Pnt anOri = aPos.Location();
+            gp_Dir aDirZ = aPos.Direction();
+            //gp_Dir aDirX = aPos.XDirection();
+
+            // xo yo zo
+            theDoubles->Append(anOri.X());
+            theDoubles->Append(anOri.Y());
+            theDoubles->Append(anOri.Z());
+
+            // dx dy dz
+            theDoubles->Append(aDirZ.X());
+            theDoubles->Append(aDirZ.Y());
+            theDoubles->Append(aDirZ.Z());
+
+            // nb_edges nb_vertices (for planar only)
+            theIntegers->Append(nbEdges);
+            theIntegers->Append(nbVertices);
+
+            //if () {
+            //  aKind = SK_DISK;
+            //  aKind = SK_ELLIPSE2D;
+            //  aKind = SK_POLYGON;
+            //}
+          }
+          else if (aGS->IsKind(STANDARD_TYPE(Geom_SphericalSurface))) {
+            //if (/*isSphere*/false) {
+            if (aBAS.IsUClosed() && aBAS.IsVClosed()) { // does not work
+              Handle(Geom_SphericalSurface) aGSph = Handle(Geom_SphericalSurface)::DownCast(aGS);
+
+              // parameters
+              gp_Pnt aLoc = aGSph->Location();
+              Standard_Real rr = aGSph->Radius();
+
+              // xc yc zc
+              theDoubles->Append(aLoc.X());
+              theDoubles->Append(aLoc.Y());
+              theDoubles->Append(aLoc.Z());
+
+              // R
+              theDoubles->Append(rr);
+
+              aKind = SK_SPHERE2D;
+            }
+            else {
+              // nb_edges nb_vertices (for spherical only)
+              theIntegers->Append(nbEdges);
+              theIntegers->Append(nbVertices);
+
+              theIntegers->Append((Standard_Integer)GeomAbs_Sphere);
+            }
+          }
+          else if (aGS->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))) {
+            // Pure cylinder or just a piece of cylindric surface
+            TopLoc_Location aL;
+            Handle(Geom_Surface) aGSLoc = BRep_Tool::Surface(aF, aL);
+
+            //aF.Orientation(TopAbs_FORWARD);
+            TopExp_Explorer ex (aF, TopAbs_EDGE);
+            Standard_Real uMin, uMax, vMin, vMax;
+            bool isCylinder = true;
+            for (; ex.More(); ex.Next()) {
+              // check all edges: pure cylinder has only one seam edge
+              //                  and two edges with const v parameter
+              TopoDS_Edge E = TopoDS::Edge(ex.Current());
+
+              if (BRep_Tool::IsClosed(E, aGSLoc, aL)) {
+                // seam edge
+                //TopoDS_Edge ERevr = E;
+                //ERevr.Reverse();
+                //Handle(Geom2d_Curve) pcRepl1 = BRep_Tool::CurveOnSurface(E    , aF, f,l);
+                //Handle(Geom2d_Curve) pcRepl2 = BRep_Tool::CurveOnSurface(ERevr, aF, f,l);
+              }
+              else {
+                BRepTools::UVBounds(aF, E, uMin, uMax, vMin, vMax);
+                if (Abs(vMin - vMax) > Precision::Confusion())
+                  // neither seam, nor v-constant
+                  isCylinder = false;
+              }
+            }
+
+            if (isCylinder) {
+              aKind = SK_CYLINDER2D;
+
+              Handle(Geom_CylindricalSurface) aGCyl = Handle(Geom_CylindricalSurface)::DownCast(aGS);
+
+              // parameters
+              gp_Pnt aLoc = aGCyl->Location();
+              gp_Ax1 anAx = aGCyl->Axis();
+              gp_Dir aDir = anAx.Direction();
+              Standard_Real rr = aGCyl->Radius();
+
+              // xb yb zb
+              theDoubles->Append(aLoc.X());
+              theDoubles->Append(aLoc.Y());
+              theDoubles->Append(aLoc.Z());
+
+              // dx dy dz
+              theDoubles->Append(aDir.X());
+              theDoubles->Append(aDir.Y());
+              theDoubles->Append(aDir.Z());
+
+              // R
+              theDoubles->Append(rr);
+
+              // H
+              Standard_Real hh = Abs(aBAS.FirstVParameter() - aBAS.LastVParameter());
+              theDoubles->Append(hh);
+            }
+            else {
+              // nb_edges nb_vertices (for cylinrical only)
+              theIntegers->Append(nbEdges);
+              theIntegers->Append(nbVertices);
+
+              theIntegers->Append((Standard_Integer)GeomAbs_Cylinder);
+            }
+          }
+          else if (aGS->IsKind(STANDARD_TYPE(Geom_ToroidalSurface))) {
+            //  aKind = SK_TORUS2D;
+            theIntegers->Append(nbEdges);
+            theIntegers->Append(nbVertices);
+
+            theIntegers->Append((Standard_Integer)GeomAbs_Torus);
+          }
+          else if (aGS->IsKind(STANDARD_TYPE(Geom_ConicalSurface))) {
+            //  aKind = SK_CONE2D;
+            theIntegers->Append(nbEdges);
+            theIntegers->Append(nbVertices);
+
+            theIntegers->Append((Standard_Integer)GeomAbs_Cone);
+          }
+          else if (aGS->IsKind(STANDARD_TYPE(Geom_SurfaceOfLinearExtrusion))) {
+            //
+            theIntegers->Append(nbEdges);
+            theIntegers->Append(nbVertices);
+
+            theIntegers->Append((Standard_Integer)GeomAbs_SurfaceOfExtrusion);
+          }
+          else if (aGS->IsKind(STANDARD_TYPE(Geom_SurfaceOfRevolution))) {
+            //
+            theIntegers->Append(nbEdges);
+            theIntegers->Append(nbVertices);
+
+            theIntegers->Append((Standard_Integer)GeomAbs_SurfaceOfRevolution);
+          }
+          else if (aGS->IsKind(STANDARD_TYPE(Geom_BezierSurface))) {
+            //
+            theIntegers->Append(nbEdges);
+            theIntegers->Append(nbVertices);
+
+            theIntegers->Append((Standard_Integer)GeomAbs_BezierSurface);
+          }
+          else if (aGS->IsKind(STANDARD_TYPE(Geom_BSplineSurface))) {
+            //
+            theIntegers->Append(nbEdges);
+            theIntegers->Append(nbVertices);
+
+            theIntegers->Append((Standard_Integer)GeomAbs_BSplineSurface);
+          }
+          else if (aGS->IsKind(STANDARD_TYPE(Geom_OffsetSurface))) {
+            //
+            theIntegers->Append(nbEdges);
+            theIntegers->Append(nbVertices);
+
+            theIntegers->Append((Standard_Integer)GeomAbs_OffsetSurface);
+          }
+          else if (aGS->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
+            //
+            theIntegers->Append(nbEdges);
+            theIntegers->Append(nbVertices);
+
+            theIntegers->Append((Standard_Integer)GeomAbs_OtherSurface);
+          }
+          else {
+            // ???
+            theIntegers->Append(nbEdges);
+            theIntegers->Append(nbVertices);
+
+            theIntegers->Append((Standard_Integer)GeomAbs_OtherSurface);
+          }
+        }
+      }
+      break;
+    case TopAbs_EDGE:
+      //geompy.kind.circle       xc yc zc  dx dy dz  R
+      //geompy.kind.arc          xc yc zc  dx dy dz  R  x1 y1 z1  x2 y2 z2
+      //geompy.kind.ellipse      xc yc zc  dx dy dz  R_1 R_2
+      //geompy.kind.arcEllipse   xc yc zc  dx dy dz  R_1 R_2  x1 y1 z1  x2 y2 z2
+      //geompy.kind.line         x1 y1 z1  x2 y2 z2
+      //geompy.kind.segment      x1 y1 z1  x2 y2 z2
+      //geompy.kind.edge         nb_vertices _curve_type_id_
+      aKind = SK_EDGE;
+      //if () {
+      //  aKind = SK_CIRCLE;
+      //  aKind = SK_ARC;
+      //  aKind = SK_ELLIPSE;
+      //  aKind = SK_ARC_ELLIPSE;
+      //  aKind = SK_LINE;
+      //  aKind = SK_SEGMENT;
+      //}
+      break;
+    case TopAbs_VERTEX:
+      //geompy.kind.VERTEX  x y z
+      aKind = SK_VERTEX;
+      {
+        TopoDS_Vertex aV = TopoDS::Vertex(aShape);
+        gp_Pnt aP = BRep_Tool::Pnt(aV);
+        theDoubles->Append(aP.X());
+        theDoubles->Append(aP.Y());
+        theDoubles->Append(aP.Z());
+      }
+      break;
+  }
+
+  SetErrorCode(OK);
+  return aKind;
+}
 
 //=============================================================================
 /*! Get LCS, corresponding to the given shape.

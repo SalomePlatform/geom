@@ -128,4 +128,22 @@ def TestMeasureOperations (geompy, math):
   print "Z axis: (", Pos[3], ", ", Pos[4], ", ", Pos[5], ")"
   print "X axis: (", Pos[6], ", ", Pos[7], ", ", Pos[8], ")"
 
+  ####### KindOfShape #######
+
+  Kind = geompy.KindOfShape(box)
+  print "\nKindOfShape(box 10x30x70):", Kind
+  #if Kind[0] != geompy.kind.BOX:
+  #  print "Error: returned type is", Kind[0], "while must be", geompy.kind.BOX
+
+  Kind = geompy.KindOfShape(p137)
+  print "\nKindOfShape(p137):", Kind
+  if Kind[0] != geompy.kind.VERTEX:
+    print "  Error: returned type is", Kind[0], "while must be", geompy.kind.VERTEX
+  else:
+    dx = math.fabs(Kind[1] - 10)
+    dy = math.fabs(Kind[2] - 30)
+    dz = math.fabs(Kind[3] - 70)
+    if (dx + dy + dz) > 1e-5:
+      print "  Error: coordinates are (", Kind[1], ",", Kind[2], ",", Kind[3], ") while must be (10, 20, 30)"
+
   pass
