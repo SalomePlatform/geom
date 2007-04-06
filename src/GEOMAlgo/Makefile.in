@@ -82,11 +82,13 @@ LIB_SRC = \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape_0.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape_0.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox_0.cxx \
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo_0.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState_0.cxx \
 	GEOMAlgo_IndexedDataMapOfIntegerShape_0.cxx \
 	GEOMAlgo_IndexedDataMapOfPassKeyListOfShape_0.cxx \
 	GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape_0.cxx \
 	GEOMAlgo_IndexedDataMapOfShapeBox_0.cxx \
+	GEOMAlgo_IndexedDataMapOfShapeShapeInfo_0.cxx \
 	GEOMAlgo_IndexedDataMapOfShapeState_0.cxx \
 	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes_0.cxx \
 	GEOMAlgo_ListIteratorOfListOfPnt_0.cxx \
@@ -99,6 +101,9 @@ LIB_SRC = \
 	GEOMAlgo_PassKeyShape.cxx \
 	GEOMAlgo_PassKeyShapeMapHasher.cxx \
 	GEOMAlgo_ShapeAlgo.cxx \
+	GEOMAlgo_ShapeInfo.cxx \
+	GEOMAlgo_ShapeInfoFiller.cxx \
+	GEOMAlgo_ShapeInfoFiller_1.cxx \
 	GEOMAlgo_ShapeSet.cxx \
 	GEOMAlgo_ShapeSolid.cxx \
 	GEOMAlgo_ShellSolid.cxx \
@@ -157,12 +162,18 @@ EXPORT_HEADERS = \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape.hxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape.hxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx \
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState.hxx \
 	GEOMAlgo_IndexedDataMapOfIntegerShape.hxx \
 	GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx \
 	GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx \
 	GEOMAlgo_IndexedDataMapOfShapeBox.hxx \
+	GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx \
 	GEOMAlgo_IndexedDataMapOfShapeState.hxx \
+	GEOMAlgo_KindOfBounds.hxx \
+	GEOMAlgo_KindOfClosed.hxx \
+	GEOMAlgo_KindOfName.hxx \
+	GEOMAlgo_KindOfShape.hxx \
 	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx \
 	GEOMAlgo_ListIteratorOfListOfPnt.hxx \
 	GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx \
@@ -175,6 +186,8 @@ EXPORT_HEADERS = \
 	GEOMAlgo_PassKeyShapeMapHasher.hxx \
 	GEOMAlgo_PWireEdgeSet.hxx \
 	GEOMAlgo_ShapeAlgo.hxx \
+	GEOMAlgo_ShapeInfo.hxx \
+	GEOMAlgo_ShapeInfoFiller.hxx \
 	GEOMAlgo_ShapeSet.hxx \
 	GEOMAlgo_ShapeSolid.hxx \
 	GEOMAlgo_ShellSolid.hxx \
@@ -202,6 +215,7 @@ EXPORT_HEADERS = \
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape.hxx \
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape.hxx \
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx \
+	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx \
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState.hxx \
 	Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx \
 	Handle_GEOMAlgo_ListNodeOfListOfPnt.hxx
