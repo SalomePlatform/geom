@@ -149,6 +149,11 @@ ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE"
 
 kind = GEOM.GEOM_IKindOfShape
 
+class info:
+    UNKNOWN  = 0
+    CLOSED   = 1
+    UNCLOSED = 2
+
 # -----------------------------------------------------------------------------
 # Basic primitives
 # -----------------------------------------------------------------------------
@@ -1978,45 +1983,45 @@ def GetPosition(theShape):
 #  @note  Concrete meaning of each value, returned via \a theIntegers
 #         or \a theDoubles list depends on the kind of the shape.
 #         The full list of possible outputs is:
-#         Currently implemented cases are marked with '+' sign:
 #
-#  geompy.kind.COMPOUND     nb_solids nb_faces nb_edges nb_vertices
-#  geompy.kind.COMPSOLID    nb_solids nb_faces nb_edges nb_vertices
+#  geompy.kind.COMPOUND              nb_solids  nb_faces  nb_edges  nb_vertices
+#  geompy.kind.COMPSOLID             nb_solids  nb_faces  nb_edges  nb_vertices
 #
-#  geompy.kind.SHELL        geompy.info.closed   nb_faces nb_edges nb_vertices
-#  geompy.kind.SHELL        geompy.info.unclosed nb_faces nb_edges nb_vertices
+#  geompy.kind.SHELL       geompy.info.CLOSED   nb_faces  nb_edges  nb_vertices
+#  geompy.kind.SHELL       geompy.info.UNCLOSED nb_faces  nb_edges  nb_vertices
 #
-#  geompy.kind.WIRE         geompy.info.closed   nb_edges nb_vertices
-#  geompy.kind.WIRE         geompy.info.unclosed nb_edges nb_vertices
+#  geompy.kind.WIRE        geompy.info.CLOSED             nb_edges  nb_vertices
+#  geompy.kind.WIRE        geompy.info.UNCLOSED           nb_edges  nb_vertices
 #
-#  geompy.kind.SPHERE       xc yc zc  R
-#  geompy.kind.CYLINDER     xb yb zb  dx dy dz  R  H
-#  geompy.kind.BOX          xc yc zc  dx dy dz
-#  geompy.kind.ROTATED_BOX  xo yo zo  zx zy zz  xx xy xz  dx dy dz
-#  geompy.kind.TORUS        xc yc zc  dx dy dz  R_1 R_2
-#  geompy.kind.CONE         xb yb zb  dx dy dz  H  R_1  R_2
-#  geompy.kind.POLYHEDRON   nb_faces nb_edges nb_vertices
-#  geompy.kind.SOLID        nb_faces nb_edges nb_vertices
+#  geompy.kind.SPHERE       xc yc zc            R
+#  geompy.kind.CYLINDER     xb yb zb  dx dy dz  R         H
+#  geompy.kind.BOX          xc yc zc                      ax ay az
+#  geompy.kind.ROTATED_BOX  xc yc zc  zx zy zz  xx xy xz  ax ay az
+#  geompy.kind.TORUS        xc yc zc  dx dy dz  R_1  R_2
+#  geompy.kind.CONE         xb yb zb  dx dy dz  R_1  R_2  H
+#  geompy.kind.POLYHEDRON                       nb_faces  nb_edges  nb_vertices
+#  geompy.kind.SOLID                            nb_faces  nb_edges  nb_vertices
 #
-#  geompy.kind.SPHERE2D     xc yc zc  R
-#  + geompy.kind.CYLINDER2D   xb yb zb  dx dy dz  R  H
-#  geompy.kind.TORUS2D      xc yc zc  dx dy dz  R_1 R_2
-#  geompy.kind.CONE2D       xc yc zc  dx dy dz  R_1 R_2
-#  geompy.kind.DISK         xc yc zc  dx dy dz  R
-#  geompy.kind.ELLIPSE2D    xc yc zc  dx dy dz  R_1 R_2
-#  geompy.kind.POLYGON      xo yo zo  dx dy dz  nb_edges nb_vertices
-#  + geompy.kind.PLANAR       xo yo zo  dx dy dz  nb_edges nb_vertices
-#  + geompy.kind.FACE         nb_edges nb_vertices _surface_type_id_
+#  geompy.kind.SPHERE2D     xc yc zc            R
+#  geompy.kind.CYLINDER2D   xb yb zb  dx dy dz  R         H
+#  geompy.kind.TORUS2D      xc yc zc  dx dy dz  R_1  R_2
+#  geompy.kind.CONE2D       xc yc zc  dx dy dz  R_1  R_2  H
+#  geompy.kind.DISK_CIRCLE  xc yc zc  dx dy dz  R
+#  geompy.kind.DISK_ELLIPSE xc yc zc  dx dy dz  R_1  R_2
+#  geompy.kind.POLYGON      xo yo zo  dx dy dz            nb_edges  nb_vertices
+#  geompy.kind.PLANE        xo yo zo  dx dy dz
+#  geompy.kind.PLANAR       xo yo zo  dx dy dz            nb_edges  nb_vertices
+#  geompy.kind.FACE                                       nb_edges  nb_vertices
 #
 #  geompy.kind.CIRCLE       xc yc zc  dx dy dz  R
-#  geompy.kind.ARC          xc yc zc  dx dy dz  R  x1 y1 z1  x2 y2 z2
-#  geompy.kind.ELLIPSE      xc yc zc  dx dy dz  R_1 R_2
-#  geompy.kind.ARC_ELLIPSE   xc yc zc  dx dy dz  R_1 R_2  x1 y1 z1  x2 y2 z2
-#  geompy.kind.LINE         x1 y1 z1  x2 y2 z2
+#  geompy.kind.ARC_CIRCLE   xc yc zc  dx dy dz  R         x1 y1 z1  x2 y2 z2
+#  geompy.kind.ELLIPSE      xc yc zc  dx dy dz  R_1  R_2
+#  geompy.kind.ARC_ELLIPSE  xc yc zc  dx dy dz  R_1  R_2  x1 y1 z1  x2 y2 z2
+#  geompy.kind.LINE         xo yo zo  dx dy dz
 #  geompy.kind.SEGMENT      x1 y1 z1  x2 y2 z2
-#  geompy.kind.EDGE         nb_vertices _curve_
+#  geompy.kind.EDGE                                                 nb_vertices
 #
-#  + geompy.kind.VERTEX       x y z
+#  geompy.kind.VERTEX       x  y  z
 #
 #  Example: see GEOM_TestMeasures.py
 def KindOfShape(theShape):

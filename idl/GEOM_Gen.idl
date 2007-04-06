@@ -2127,32 +2127,33 @@ module GEOM
       SHELL,
       WIRE,
       // SOLIDs
-      SPHERE,
-      CYLINDER,
-      BOX,
-      ROTATED_BOX,
-      TORUS,
-      CONE,
-      POLYHEDRON,
-      SOLID,
+      SPHERE,       // full sphere
+      CYLINDER,     // cylinder
+      BOX,          // box with faces, parallel to global coordinate planes
+      ROTATED_BOX,  // other box
+      TORUS,        // full torus
+      CONE,         // cone
+      POLYHEDRON,   // solid, bounded by polygons
+      SOLID,        // other solid
       // FACEs
-      SPHERE2D,
-      CYLINDER2D,
-      TORUS2D,
-      CONE2D,
-      DISK,
-      ELLIPSE2D,
-      POLYGON,
-      PLANAR,
-      FACE,
+      SPHERE2D,     // spherical face (closed)
+      CYLINDER2D,   // cylindrical face with defined height
+      TORUS2D,      // toroidal face (closed)
+      CONE2D,       // conical face with defined height
+      DISK_CIRCLE,  // planar, bounded by circle
+      DISK_ELLIPSE, // planar, bounded by ellipse
+      POLYGON,      // planar, bounded by segments
+      PLANE,        // infinite planar
+      PLANAR,       // other planar
+      FACE,         // other face
       // EDGEs
-      CIRCLE,
-      ARC,
-      ELLIPSE,
-      ARC_ELLIPSE,
-      LINE, // infinite segment
-      SEGMENT,
-      EDGE,
+      CIRCLE,       // full circle
+      ARC_CIRCLE,   // arc of circle
+      ELLIPSE,      // full ellipse
+      ARC_ELLIPSE,  // arc of ellipse
+      LINE,         // infinite segment
+      SEGMENT,      // segment
+      EDGE,         // other edge
       // VERTEX
       VERTEX
     };

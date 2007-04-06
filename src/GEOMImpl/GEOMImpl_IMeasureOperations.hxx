@@ -48,32 +48,33 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
     SK_SHELL,
     SK_WIRE,
     // SOLIDs
-    SK_SPHERE,
-    SK_CYLINDER,
-    SK_BOX,
-    SK_ROTATED_BOX,
-    SK_TORUS,
-    SK_CONE,
-    SK_POLYHEDRON,
-    SK_SOLID,
+    SK_SPHERE,       // full sphere
+    SK_CYLINDER,     // cylinder
+    SK_BOX,          // box with faces, parallel to global coordinate planes
+    SK_ROTATED_BOX,  // other box
+    SK_TORUS,        // full torus
+    SK_CONE,         // cone
+    SK_POLYHEDRON,   // solid, bounded by polygons
+    SK_SOLID,        // other solid
     // FACEs
-    SK_SPHERE2D,
-    SK_CYLINDER2D,
-    SK_TORUS2D,
-    SK_CONE2D,
-    SK_DISK,
-    SK_ELLIPSE2D,
-    SK_POLYGON,
-    SK_PLANAR,
-    SK_FACE,
+    SK_SPHERE2D,     // spherical face (closed)
+    SK_CYLINDER2D,   // cylindrical face with defined height
+    SK_TORUS2D,      // toroidal face (closed)
+    SK_CONE2D,       // conical face with defined height
+    SK_DISK_CIRCLE,  // planar, bounded by circle
+    SK_DISK_ELLIPSE, // planar, bounded by ellipse
+    SK_POLYGON,      // planar, bounded by segments
+    SK_PLANE,        // infinite planar
+    SK_PLANAR,       // other planar
+    SK_FACE,         // other face
     // EDGEs
-    SK_CIRCLE,
-    SK_ARC,
-    SK_ELLIPSE,
-    SK_ARC_ELLIPSE,
-    SK_LINE, // infinite segment
-    SK_SEGMENT,
-    SK_EDGE,
+    SK_CIRCLE,       // full circle
+    SK_ARC_CIRCLE,   // arc of circle
+    SK_ELLIPSE,      // full ellipse
+    SK_ARC_ELLIPSE,  // arc of ellipse
+    SK_LINE,         // infinite segment
+    SK_SEGMENT,      // segment
+    SK_EDGE,         // other edge
     // VERTEX
     SK_VERTEX
   };
