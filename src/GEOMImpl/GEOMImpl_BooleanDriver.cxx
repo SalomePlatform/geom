@@ -30,6 +30,7 @@
 #include <BRepAlgoAPI_Cut.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepAlgoAPI_Section.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
@@ -231,6 +232,54 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
 
     // perform FUSE operation
     else if (aType == BOOLEAN_FUSE) {
+      // Check arguments
+      TopTools_ListOfShape listShape1, listShape2;
+      AddSimpleShapes(aShape1, listShape1);
+      AddSimpleShapes(aShape2, listShape2);
+
+      if (listShape1.Extent() > 1) {
+        TopTools_ListIteratorOfListOfShape it1 (listShape1);
+        for (; it1.More(); it1.Next()) {
+          TopoDS_Shape aValue1 = it1.Value();
+          TopTools_ListIteratorOfListOfShape it2 (listShape1);
+          for (; it2.More(); it2.Next()) {
+            TopoDS_Shape aValue2 = it2.Value();
+            if (aValue2 != aValue1) {
+              BRepAlgoAPI_Section BO (aValue1, aValue2);
+              if (BO.IsDone()) {
+                TopoDS_Shape aSect = BO.Shape();
+                TopExp_Explorer anExp (aSect, TopAbs_VERTEX);
+                if (anExp.More()) {
+                  StdFail_NotDone::Raise("Bad first shape for Fuse: compound with intersecting sub-shapes");
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (listShape2.Extent() > 1) {
+        TopTools_ListIteratorOfListOfShape it1 (listShape2);
+        for (; it1.More(); it1.Next()) {
+          TopoDS_Shape aValue1 = it1.Value();
+          TopTools_ListIteratorOfListOfShape it2 (listShape2);
+          for (; it2.More(); it2.Next()) {
+            TopoDS_Shape aValue2 = it2.Value();
+            if (aValue2 != aValue1) {
+              BRepAlgoAPI_Section BO (aValue1, aValue2);
+              if (BO.IsDone()) {
+                TopoDS_Shape aSect = BO.Shape();
+                TopExp_Explorer anExp (aSect, TopAbs_VERTEX);
+                if (anExp.More()) {
+                  StdFail_NotDone::Raise("Bad second shape for Fuse: compound with intersecting sub-shapes");
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Perform
       BRepAlgoAPI_Fuse BO (aShape1, aShape2);
       if (!BO.IsDone()) {
         StdFail_NotDone::Raise("Fuse operation can not be performed on the given shapes");
