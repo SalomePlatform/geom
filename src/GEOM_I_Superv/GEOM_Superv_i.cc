@@ -978,11 +978,12 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeThruSections(const GEOM::ListOfGO& theS
 //=============================================================================
 //  MakePipe:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections(const GEOM::ListOfGO& theBases,
-						      const GEOM::ListOfGO& theLocations,
-						      GEOM::GEOM_Object_ptr thePath,
-						      CORBA::Boolean theWithContact,
-						      CORBA::Boolean theWithCorrections)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections
+                     (const GEOM::ListOfGO& theBases,
+		      const GEOM::ListOfGO& theLocations,
+		      GEOM::GEOM_Object_ptr thePath,
+		      CORBA::Boolean theWithContact,
+		      CORBA::Boolean theWithCorrections)
 {
   beginService( " GEOM_Superv_i::MakePipeWithDifferentSections" );
   MESSAGE("GEOM_Superv_i::MakePipeWithDifferentSections");
@@ -991,6 +992,31 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections(const GEOM::L
   endService( " GEOM_Superv_i::MakePipeWithDifferentSections" );
   return anObj;
 }
+
+
+//=============================================================================
+//  MakePipe:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithShellSections
+                   (const GEOM::ListOfGO& theBases,
+		    const GEOM::ListOfGO& theSubBases,
+		    const GEOM::ListOfGO& theLocations,
+		    GEOM::GEOM_Object_ptr thePath,
+		    CORBA::Boolean theWithContact,
+		    CORBA::Boolean theWithCorrections)
+{
+  beginService( " GEOM_Superv_i::MakePipeWithShellSections" );
+  MESSAGE("GEOM_Superv_i::MakePipeWithShellSections");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj =
+    my3DPrimOp->MakePipeWithShellSections(theBases, theSubBases,
+					  theLocations, thePath,
+					  theWithContact, theWithCorrections);
+  endService( " GEOM_Superv_i::MakePipeWithShellSections" );
+  return anObj;
+}
+
+
 //=============================================================================
 //  MakeFuse:
 //=============================================================================

@@ -740,6 +740,32 @@ def MakePipeWithDifferentSections(theSeqBases, theLocations,thePath,theWithConta
       print "MakePipeWithDifferentSections : ", PrimOp.GetErrorCode()
     return anObj
 
+## Create a shape by extrusion of the profile shape along
+#  the path shape. The path shape can be a shell or a face.
+#  the several profiles can be specified in the several locations of path.	
+#  @param theSeqBases - list of  Bases shape to be extruded.
+#  @param theSeqSubBases - list of corresponding subshapes of section shapes.
+#  @param theLocations - list of locations on the path corresponding
+#                        specified list of the Bases shapes. Number of locations
+#                        should be equal to number of bases or list of locations can be empty.
+#  @param thePath - Path shape to extrude the base shape along it.
+#  @param theWithContact - the mode defining that the section is translated to be in
+#                          contact with the spine.
+#  @param - WithCorrection - defining that the section is rotated to be
+#                            orthogonal to the spine tangent in the correspondent point
+#  @return New GEOM_Object, containing the created solids.
+#
+#  Example: see GEOM_TestAll.py
+def MakePipeWithShellSections(theSeqBases, theSeqSubBases,
+                              theLocations, thePath,
+                              theWithContact, theWithCorrection):
+    anObj = PrimOp.MakePipeWithShellSections(theSeqBases, theSeqSubBases,
+                                             theLocations, thePath,
+                                             theWithContact, theWithCorrection)
+    if PrimOp.IsDone() == 0:
+      print "MakePipeWithShellSections : ", PrimOp.GetErrorCode()
+    return anObj
+
 # -----------------------------------------------------------------------------
 # Create base shapes
 # -----------------------------------------------------------------------------

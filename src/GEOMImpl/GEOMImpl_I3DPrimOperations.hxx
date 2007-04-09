@@ -80,11 +80,20 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                                                        bool theRuled);
 
   Standard_EXPORT Handle(GEOM_Object) MakePipeWithDifferentSections(
-						  const Handle(TColStd_HSequenceOfTransient)& theBases,
-						  const Handle(TColStd_HSequenceOfTransient)& theLocations,
-						  const Handle(GEOM_Object)& thePath,
-						  bool theWithContact,
-                                                  bool theWithCorrections);
+		const Handle(TColStd_HSequenceOfTransient)& theBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations,
+		const Handle(GEOM_Object)& thePath,
+		bool theWithContact,
+		bool theWithCorrections);
+
+  Standard_EXPORT Handle(GEOM_Object) MakePipeWithShellSections(
+		const Handle(TColStd_HSequenceOfTransient)& theBases,
+	        const Handle(TColStd_HSequenceOfTransient)& theSubBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations,
+		const Handle(GEOM_Object)& thePath,
+		bool theWithContact,
+		bool theWithCorrections);
+
 };
 
 #endif

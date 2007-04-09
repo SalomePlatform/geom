@@ -177,6 +177,13 @@ module GEOM
 					       in boolean theWithContact ,
 					       in boolean theWithCorrection );
     
+    GEOM_Object MakePipeWithShellSections (in ListOfGO theSeqBases,
+					   in ListOfGO theSeqSubBases,
+					   in ListOfGO theLocations,
+					   in GEOM_Object thePath,
+					   in boolean theWithContact ,
+					   in boolean theWithCorrection );
+    
     //-----------------------------------------------------------//
     // BooleanOperations                                         //
     //-----------------------------------------------------------//

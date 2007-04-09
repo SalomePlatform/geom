@@ -237,6 +237,13 @@ public:
 						      CORBA::Boolean theWithContact,
 						      CORBA::Boolean theWithCorrections);
   
+  GEOM::GEOM_Object_ptr MakePipeWithShellSections(const GEOM::ListOfGO& theBases,
+						  const GEOM::ListOfGO& theSubBases,
+						  const GEOM::ListOfGO& theLocations,
+						  GEOM::GEOM_Object_ptr thePath,
+						  CORBA::Boolean theWithContact,
+						  CORBA::Boolean theWithCorrections);
+  
   //-----------------------------------------------------------//
   // BooleanOperations                                         //
   //-----------------------------------------------------------//

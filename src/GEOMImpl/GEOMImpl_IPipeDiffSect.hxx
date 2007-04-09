@@ -42,13 +42,15 @@ class GEOMImpl_IPipeDiffSect : public GEOMImpl_IPipe
   GEOMImpl_IPipeDiffSect(const Handle(GEOM_Function)& theFunction):GEOMImpl_IPipe(theFunction) {}
   
   void SetBases (const Handle(TColStd_HSequenceOfTransient)& theBases) 
-  { _func->SetReferenceList(PIPEDS_LIST_BASES,theBases); }
+  {
+    _func->SetReferenceList(PIPEDS_LIST_BASES,theBases);
+  }
 
   Handle(TColStd_HSequenceOfTransient) GetBases ()
   { 
     Handle(TColStd_HSequenceOfTransient) aBases = _func->GetReferenceList(PIPEDS_LIST_BASES);
     return aBases; 
-   }
+  }
 
   void SetLocations (const Handle(TColStd_HSequenceOfTransient)& theLocations) 
   { _func->SetReferenceList(PIPEDS_LIST_LOCATIONS,theLocations); }
