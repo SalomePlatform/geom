@@ -1075,7 +1075,13 @@ void GEOM_Displayer::AfterDisplay( SALOME_View*, const SALOME_OCCViewType& )
 //=================================================================
 void GEOM_Displayer::SetColor( const int color )
 {
-  myColor = color;
+  if ( color == -1 )
+    UnsetColor();
+  else
+  {
+    myColor = color;
+    myShadingColor = Quantity_Color( (Quantity_NameOfColor)color );
+  }
 }
 
 int GEOM_Displayer::GetColor() const
@@ -1091,6 +1097,10 @@ bool GEOM_Displayer::HasColor() const
 void GEOM_Displayer::UnsetColor()
 {
   myColor = -1;
+  
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  QColor col = resMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
+  myShadingColor = SalomeApp_Tools::color( col );
 }
 
 //=================================================================
@@ -1182,4 +1192,28 @@ void GEOM_Displayer::setShape( const TopoDS_Shape& theShape )
 bool GEOM_Displayer::canBeDisplayed( const QString& /*entry*/, const QString& viewer_type ) const
 {
   return viewer_type==SOCC_Viewer::Type() || viewer_type==SVTK_Viewer::Type();
+}
+
+int GEOM_Displayer::SetDisplayMode( const int theMode )
+{
+  int aPrevMode = myDisplayMode;
+  if ( theMode != -1 )
+    myDisplayMode = theMode;
+  else
+  {
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    myDisplayMode = resMgr->integerValue( "Geometry", "display_mode", 0 );
+  }
+  return aPrevMode;
+}
+
+int GEOM_Displayer::GetDisplayMode() const
+{
+  return myDisplayMode;
+}
+
+int GEOM_Displayer::UnsetDisplayMode()
+{
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  myDisplayMode = resMgr->integerValue( "Geometry", "display_mode", 0 );
 }

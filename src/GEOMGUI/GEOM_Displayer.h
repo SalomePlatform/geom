@@ -128,6 +128,11 @@ public:
   void          UnsetWidth();
   double        GetWidth  () const;
   bool          HasWidth  () const;
+  
+  /* Set display mode shape displaying. If it is equal -1 then display mode is used. */
+  int           SetDisplayMode( const int );
+  int           GetDisplayMode() const;
+  int           UnsetDisplayMode();
 
 
   /* Sets name - for temporary objects only */
