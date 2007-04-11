@@ -312,7 +312,12 @@ module GEOM
     GEOM_Object MakeSolidShells (in GEOM_List theShells) ;
     GEOM_Object MakeCompound (in GEOM_List theShapes) ;
     GEOM_Object MakeGlueFaces (in GEOM_Object theShape, 
-			       in double      theTolerance) ;
+			       in double theTolerance);
+    GEOM_List GetGlueFaces (in GEOM_Object theShape, 
+			    in double theTolerance);
+    GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape, 
+				     in double theTolerance,
+				     in ListOfGO theFaces);
     GEOM_List MakeExplode (in GEOM_Object theShape,
 			   in long        theShapeType,
 			   in boolean     isSorted) ;

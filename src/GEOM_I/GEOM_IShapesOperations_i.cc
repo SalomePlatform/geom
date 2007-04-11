@@ -354,6 +354,92 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
   return GetObject(anObject);
 }
 
+
+//=============================================================================
+/*!
+ *  GetGlueFaces
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueFaces
+                                           (GEOM::GEOM_Object_ptr theShape,
+					    const CORBA::Double   theTolerance)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape == NULL) return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->GetGlueFaces(aShape, theTolerance);
+
+  //if (!GetOperations()->IsDone() || aHSeq.IsNull())
+  // to allow warning
+  if(aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+
+//=============================================================================
+/*!
+ *  MakeGlueFacesByList
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
+                                           (GEOM::GEOM_Object_ptr theShape,
+					    const CORBA::Double   theTolerance,
+					    const GEOM::ListOfGO& theFaces)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  int ind, aLen;
+  list<Handle(GEOM_Object)> aFaces;
+  //Get the shapes
+  aLen = theFaces.length();
+  for (ind = 0; ind < aLen; ind++) {
+    if (theFaces[ind] == NULL) return aGEOMObject._retn();
+    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
+      (theFaces[ind]->GetStudyID(), theFaces[ind]->GetEntry());
+    if (aSh.IsNull()) return aGEOMObject._retn();
+    aFaces.push_back(aSh);
+  }
+
+  //Perform the gluing
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeGlueFacesByList(aShape, theTolerance, aFaces);
+  //if (!GetOperations()->IsDone() || anObject.IsNull())
+  // to allow warning
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+
 //=============================================================================
 /*!
  *  MakeExplode

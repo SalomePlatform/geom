@@ -43,6 +43,10 @@
 #include "GEOMAlgo_FinderShapeOn2.hxx"
 #include "GEOMAlgo_ClsfBox.hxx"
 //#include "GEOMAlgo_ClsfSurf.hxx"
+#include "GEOMAlgo_Gluer1.hxx"
+#include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
+#include "GEOMAlgo_CoupleOfShapes.hxx"
+#include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
 
 #include "utilities.h"
 #include "OpUtil.hxx"
@@ -547,6 +551,170 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
   if (!isWarning) SetErrorCode(OK);
   return aGlued;
 }
+
+//=============================================================================
+/*!
+ *  GetGlueFaces
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueFaces
+                                                (Handle(GEOM_Object) theShape,
+                                                 const Standard_Real theTolerance)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+  TopoDS_Shape aShape = theShape->GetValue();
+  if (aShape.IsNull()) return NULL;
+
+  Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+
+  Standard_Integer iErr;
+  TopoDS_Shape aS;
+  GEOMAlgo_Gluer1 aGluer;
+  GEOMAlgo_ListIteratorOfListOfCoupleOfShapes aItCS;
+  GEOMAlgo_CoupleOfShapes aCS;
+  GEOMAlgo_ListOfCoupleOfShapes aLCS;
+
+  //aGluer = new GEOMAlgo_Gluer1;
+  aGluer.SetShape(aShape);
+  aGluer.SetTolerance(theTolerance);
+  aGluer.Perform();
+  iErr = aGluer.ErrorStatus();
+  if (iErr) return NULL;
+
+  TopTools_ListOfShape listShape;
+  const GEOMAlgo_ListOfCoupleOfShapes& aLCSG = aGluer.GluedFaces();
+  // Access to faces
+  aItCS.Initialize(aLCSG);
+  for (; aItCS.More(); aItCS.Next()) {
+    const GEOMAlgo_CoupleOfShapes& aCSG = aItCS.Value();
+    listShape.Append(aCSG.Shape1());
+  }
+
+  TopTools_ListIteratorOfListOfShape itSub (listShape);
+  TCollection_AsciiString anAsciiList, anEntry;
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+  Handle(TColStd_HArray1OfInteger) anArray;
+  Handle(GEOM_Object) anObj;
+  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+    TopoDS_Shape aValue = itSub.Value();
+    anArray = new TColStd_HArray1OfInteger(1,1);
+    anArray->SetValue(1, anIndices.FindIndex(aValue));
+    anObj = GetEngine()->AddSubShape(theShape, anArray);
+    if (!anObj.IsNull()) {
+      aSeq->Append(anObj);
+
+      // for python command
+      TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+      anAsciiList += anEntry;
+      anAsciiList += ",";
+    }
+  }
+
+  //Make a Python command
+  if(anAsciiList.Length()>0)
+    anAsciiList.Trunc(anAsciiList.Length() - 1);
+  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  GEOM::TPythonDump pd (aFunction, /*append=*/true);
+  pd << "[" << anAsciiList.ToCString();
+  pd << "] = geompy.GetGlueFaces" << theShape << ", " << theTolerance << ")";
+
+  SetErrorCode(OK);
+
+  return aSeq;
+}
+
+
+//=============================================================================
+/*!
+ *  MakeGlueFacesByList
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
+                                                (Handle(GEOM_Object) theShape,
+                                                 const Standard_Real theTolerance,
+						 list<Handle(GEOM_Object)> theFaces)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+
+  //Add a new Glued object
+  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
+
+  //Add a new Glue function
+  Handle(GEOM_Function) aFunction;
+  aFunction = aGlued->AddFunction(GEOMImpl_GlueDriver::GetID(), GLUE_FACES_BY_LIST);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_GlueDriver::GetID()) return NULL;
+
+  GEOMImpl_IGlue aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetBase(aRefShape);
+  aCI.SetTolerance(theTolerance);
+  Handle(TColStd_HSequenceOfTransient) aFaces = new TColStd_HSequenceOfTransient;
+  list<Handle(GEOM_Object)>::iterator it = theFaces.begin();
+  for (; it != theFaces.end(); it++) {
+    Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
+    if (aRefSh.IsNull()) {
+      SetErrorCode("NULL argument shape for the shape construction");
+      return NULL;
+    }
+    aFaces->Append(aRefSh);
+  }
+  aCI.SetFaces(aFaces);
+
+  //Compute the sub-shape value
+  Standard_Boolean isWarning = Standard_False;
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed to glue faces");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    // to provide warning
+    if (!aFunction->GetValue().IsNull()) {
+      isWarning = Standard_True;
+    } else {
+      return NULL;
+    }
+  }
+
+  //Make a Python command
+  
+  GEOM::TPythonDump pd(aFunction);
+  pd << aGlued << " = geompy.MakeGlueFacesByList("
+     << theShape << ", " << theTolerance << ", [";
+  // Faces
+  it = theFaces.begin();
+  if (it != theFaces.end()) {
+    pd << (*it++);
+    while (it != theFaces.end()) {
+      pd << ", " << (*it++);
+    }
+  }
+  pd << "])";
+
+
+  // to provide warning
+  if (!isWarning) SetErrorCode(OK);
+  return aGlued;
+}
+
+
 
 //=============================================================================
 /*!

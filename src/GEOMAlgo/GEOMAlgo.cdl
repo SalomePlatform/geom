@@ -127,6 +127,7 @@ is
     -- 
     --  gluer    	     
     class Gluer; 
+    class Gluer1;  
     class GlueAnalyser; 
     class CoupleOfShapes; 
     class PassKey;  
@@ -146,7 +147,16 @@ is
     -- 
     class FinderShapeOn1;
     class StateCollector; 
-    
+    --  adds
+    deferred class HAlgo;
+    deferred class Clsf;
+    class ClsfSurf; 
+    class ClsfBox;  
+    --modified by NIZNHY-PKV Mon Jan 29 10:27:44 2007f
+    class ClsfSolid;  
+    --modified by NIZNHY-PKV Mon Jan 29 10:27:46 2007t
+    class FinderShapeOn2; 
+    class PassKeyShapeMapHasher;
     --
     -- Builder/Splitter 
     deferred class BuilderShape; 
@@ -224,4 +234,26 @@ is
     	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
 	    		    		         	 ShapeInfo from GEOMAlgo,
 	    		    		         	 ShapeMapHasher from TopTools);
+
+    class DataMapOfPassKeyShapeShape   
+	instantiates DataMap from TCollection (PassKeyShape from GEOMAlgo, 
+					       Shape from TopoDS, 
+     	    	    	    	    	       PassKeyShapeMapHasher from GEOMAlgo); 
+
+    class DataMapOfShapeShapeSet instantiates 
+    	DataMap from TCollection(Shape from TopoDS, 
+	                         ShapeSet from GEOMAlgo, 
+	                         ShapeMapHasher from TopTools); 
+	 
+    class DataMapOfShapeReal instantiates 
+    	DataMap from TCollection(Shape from TopoDS, 
+	                         Real from Standard, 
+	                         ShapeMapHasher from TopTools);		 
+				  
+    
+    class DataMapOfRealListOfShape instantiates  
+    	DataMap from TCollection(Real from Standard, 
+    	    	    	    	 ListOfShape from TopTools,  
+	                         MapRealHasher from TColStd);	   
+    
 end GEOMAlgo;

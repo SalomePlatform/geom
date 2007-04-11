@@ -990,6 +990,25 @@ module GEOM
     GEOM_Object MakeGlueFaces (in GEOM_Object theShape, in double theTolerance);
 
     /*!
+     *  Find coincident faces in theShape for possible gluing.
+     *  \param theShape Initial shape.
+     *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
+     *  \return ListOfGO
+     */
+    ListOfGO GetGlueFaces (in GEOM_Object theShape, in double theTolerance);
+
+    /*!
+     *  Replace coincident faces in theShape by one face
+     *  in compliance with given list of faces
+     *  \param theShape Initial shape.
+     *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
+     *  \param theFaces List of faces for gluing.
+     *  \return New GEOM_Object, containing a copy of theShape without some faces.
+     */
+    GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape, in double theTolerance,
+				     in ListOfGO theFaces);
+
+    /*!
      *  Explode a shape on subshapes of a given type.
      *  \param theShape Shape to be exploded.
      *  \param theShapeType Type of sub-shapes to be retrieved.

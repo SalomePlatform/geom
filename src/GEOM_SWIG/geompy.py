@@ -1387,6 +1387,38 @@ def MakeGlueFaces(theShape, theTolerance):
       print "MakeGlueFaces : ", ShapesOp.GetErrorCode()
     return anObj
 
+
+## Find coincident faces in theShape for possible gluing.
+#  @param theShape Initial shape.
+#  @param theTolerance Maximum distance between faces,
+#                      which can be considered as coincident.
+#  @return ListOfGO.
+#
+#  Example: see GEOM_Spanner.py
+def GetGlueFaces(theShape, theTolerance):
+    anObj = ShapesOp.GetGlueFaces(theShape, theTolerance)
+    if ShapesOp.IsDone() == 0:
+      print "GetGlueFaces : ", ShapesOp.GetErrorCode()
+    return anObj
+
+
+## Replace coincident faces in theShape by one face
+#  in compliance with given list of faces
+#  @param theShape Initial shape.
+#  @param theTolerance Maximum distance between faces,
+#                      which can be considered as coincident.
+#  @param theFaces List of faces for gluing.
+#  @return New GEOM_Object, containing a copy of theShape
+#          without some faces.
+#
+#  Example: see GEOM_Spanner.py
+def MakeGlueFacesByList(theShape, theTolerance, theFaces):
+    anObj = ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces)
+    if ShapesOp.IsDone() == 0:
+      print "MakeGlueFacesByList : ", ShapesOp.GetErrorCode()
+    return anObj
+
+
 # -----------------------------------------------------------------------------
 # Boolean (Common, Cut, Fuse, Section)
 # -----------------------------------------------------------------------------

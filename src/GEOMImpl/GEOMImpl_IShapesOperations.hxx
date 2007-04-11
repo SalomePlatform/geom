@@ -60,7 +60,14 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeCompound (list<Handle(GEOM_Object)> theShapes);
 
   Standard_EXPORT Handle(GEOM_Object) MakeGlueFaces (Handle(GEOM_Object) theShape,
-                                     const Standard_Real theTolerance);
+						     const Standard_Real theTolerance);
+
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueFaces (Handle(GEOM_Object) theShape,
+								     const Standard_Real theTolerance);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueFacesByList (Handle(GEOM_Object) theShape,
+							   const Standard_Real theTolerance,
+							   list<Handle(GEOM_Object)> theFaces);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakeExplode (Handle(GEOM_Object)    theShape,
                                                     const Standard_Integer theShapeType,
