@@ -44,6 +44,7 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <LightApp_SelectionMgr.h>
+#include <LightApp_DataOwner.h>
 #include <SalomeApp_Tools.h>
 #include <SalomeApp_DataModel.h>
 
@@ -247,7 +248,9 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 void GEOMBase_Helper::displayPreview( const bool   activate,
                                       const bool   update,
                                       const bool   toRemoveFromEngine,
-                                      const double lineWidth )
+                                      const double lineWidth, 
+                                      const int    displayMode, 
+                                      const int    color )
 {
   isPreview = true;
   QString msg;
@@ -269,7 +272,7 @@ void GEOMBase_Helper::displayPreview( const bool   activate,
     else {
       for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it )
       {
-        displayPreview( *it, true, activate, false, lineWidth );
+        displayPreview( *it, true, activate, false, lineWidth, displayMode, color );
         if ( toRemoveFromEngine )
           getGeomEngine()->RemoveObject( *it );
       }
@@ -293,13 +296,18 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
                                       const bool            append,
                                       const bool            activate,
                                       const bool            update,
-                                      const double          lineWidth )
+                                      const double          lineWidth, 
+                                      const int             displayMode, 
+                                      const int             color )
 {
   // Set color for preview shape
-  getDisplayer()->SetColor( Quantity_NOC_VIOLET );
+  getDisplayer()->SetColor( color == -1 ? Quantity_NOC_VIOLET : color );
 
   // set width of displayed shape
   getDisplayer()->SetWidth( lineWidth );
+  
+  // set display mode of displayed shape
+  int aPrevDispMode = getDisplayer()->SetDisplayMode( displayMode );
 
   // Disable activation of selection
   getDisplayer()->SetToActivate( activate );
@@ -316,6 +324,8 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
   displayPreview( aPrs, append, update );
 
   getDisplayer()->UnsetName();
+  getDisplayer()->UnsetColor();
+  getDisplayer()->SetDisplayMode( aPrevDispMode );
 
   // Enable activation of displayed objects
   getDisplayer()->SetToActivate( true );
@@ -985,3 +995,38 @@ SUIT_Desktop* GEOMBase_Helper::getDesktop() const
   return myDesktop;
 }
 
+//================================================================
+// Function : selectObjects
+// Purpose  : Selects list of objects 
+//================================================================
+bool GEOMBase_Helper::selectObjects( ObjectList& objects )
+{
+  SUIT_DataOwnerPtrList aList;
+  ObjectList::iterator anIter;
+  for ( anIter = objects.begin(); anIter != objects.end(); ++anIter )
+  {
+    string entry = getEntry( *anIter );
+    QString aEntry( entry.c_str() );
+    LightApp_DataOwner* anOwher = new LightApp_DataOwner( aEntry );
+    aList.append( anOwher );
+  }
+  
+  SUIT_Session* session = SUIT_Session::session();
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  if ( !app )
+    return false;
+
+  LightApp_SelectionMgr* aMgr = app->selectionMgr();
+  if ( !aMgr )
+    return false;
+  
+  aMgr->setSelected( aList, false );
+  
+  return true;
+}
+  
+
+  
+  
+  
+  

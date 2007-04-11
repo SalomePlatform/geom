@@ -83,7 +83,9 @@ protected:
   virtual void displayPreview ( const bool   activate = false, 
                                 const bool   update = true,
                                 const bool   toRemoveFromEngine = true,
-                                const double lineWidth = -1 );
+                                const double lineWidth = -1, 
+                                const int    displayMode = -1,
+                                const int    color  = -1 );
   // This is the easiest way to show preview. It is based on execute() method.
   // It removes temporary GEOM::GEOM_Objects automatically.
 
@@ -91,7 +93,9 @@ protected:
                                  const bool   append = false, 
                                  const bool   activate = false, 
                                  const bool   update = true,
-                                 const double lineWidth = -1 );
+                                 const double lineWidth = -1, 
+                                 const int    displayMode = -1,
+                                 const int    color  = -1 );
   void displayPreview  ( const SALOME_Prs* prs, 
 			 const bool append = false, 
 			 const bool = true );
@@ -151,6 +155,9 @@ protected:
   Handle(SALOME_InteractiveObject) lastIObject() ;
   // Function returns the last selected object in the list
   // of selected objects
+  
+  bool selectObjects( ObjectList& objects );
+  // Selects list of objects 
 
   ////////////////////////////////////////////////////////////////////////////
   // Virtual methods, to be redefined in dialog classes
