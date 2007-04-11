@@ -588,6 +588,11 @@ static
     else {
       aInfo.SetKindOfClosed(GEOMAlgo_KC_NOTCLOSED);
       aInfo.SetKindOfName(GEOMAlgo_KN_ARCCIRCLE);
+      //
+      gp_Vec aVecX(aP, aP1);
+      gp_Dir aDirX(aVecX); 
+      gp_Ax2 aAx2new(aP, aAx2.Direction(), aDirX);
+      aInfo.SetPosition(aAx2new);
     }
   }// else if (aCT==GeomAbs_Circle) {
   //
@@ -625,6 +630,11 @@ static
     else {
       aInfo.SetKindOfClosed(GEOMAlgo_KC_NOTCLOSED);
       aInfo.SetKindOfName(GEOMAlgo_KN_ARCELLIPSE);
+      //
+      gp_Vec aVecX(aP, aP1);
+      gp_Dir aDirX(aVecX); 
+      gp_Ax2 aAx2new(aP, aAx2.Direction(), aDirX);
+      aInfo.SetPosition(aAx2new);
     }
   }// else if (aCT==GeomAbs_Ellipse) {
   //

@@ -294,12 +294,16 @@
       aKN=GEOMAlgo_KN_DISKCIRCLE;
       aInfo.SetKindOfName(aKN);
       aInfo.SetRadius1(aInfoE.Radius1());
+      aInfo.SetLocation(aInfoE.Location());
+      aInfo.SetPosition(aInfoE.Position());
     }
     if (aKNE==GEOMAlgo_KN_ELLIPSE) {
       aKN=GEOMAlgo_KN_DISKELLIPSE;
       aInfo.SetKindOfName(aKN);
       aInfo.SetRadius1(aInfoE.Radius1());
       aInfo.SetRadius2(aInfoE.Radius2());
+      aInfo.SetLocation(aInfoE.Location());
+      aInfo.SetPosition(aInfoE.Position());
     }
   }
   //
@@ -319,8 +323,33 @@
     //
     if (aNbV==3 && aNbE==3) {
       aInfo.SetKindOfName(GEOMAlgo_KN_TRIANGLE);
+      //
+      aXYZc.SetCoord(0.,0.,0.);
+      TopExp::MapShapes(aF, TopAbs_VERTEX, aMV);
+      for (i=1; i<=aNbV; ++i) {
+	const TopoDS_Vertex& aV=TopoDS::Vertex(aMV(i));
+	aP=BRep_Tool::Pnt(aV);
+	const gp_XYZ& aXYZ=aP.XYZ();
+	aXYZc=aXYZc+aXYZ;
+	aPx[i-1]=aP;
+      }
+      aXYZc.Divide(3.);
+      //
+      aPc.SetXYZ(aXYZc);
+      gp_Vec aVX(aPc, aPx[0]);
+      aVX.Normalize();
+      aDX.SetXYZ(aVX.XYZ());
+      const gp_Dir& aDZ=aPln.Axis().Direction();
+      //
+      gp_Ax2 aAx2(aPc, aDZ, aDX);
+      gp_Ax3 aAx3(aAx2);
+      //
+      aInfo.SetLocation(aPc);
+      aInfo.SetPosition(aAx3);
+      //
       return;
     }
+    //
     if (!(aNbV==4 && aNbE==4)) {
       return;
     }
@@ -540,19 +569,40 @@
     aPC[1]=aPD;
     aR[1]=0.;
   }
-  gp_Vec aVz(aPC[0], aPC[1]);
-  gp_Vec aVx(aPC[0], aPX[0]);
-  gp_Dir aDz(aVz);
-  gp_Dir aDx(aVx);
-  gp_Ax2 aAx2(aPC[0], aDz, aDx);
-  gp_Ax3 aAx3(aAx2);
   //
   aHeight=aPC[0].Distance(aPC[1]);
   //
-  aInfo.SetLocation(aPC[0]);
+  Standard_Real aRmin, aRmax;
+  gp_Ax2 aAx2new;
+  //
+  if (aR[0]>aR[1]) {
+    aRmin=aR[1];
+    aRmax=aR[0];
+    aPc=aPC[0];
+    gp_Vec aVz(aPC[0], aPC[1]);
+    gp_Vec aVx(aPC[0], aPX[0]);
+    gp_Dir aDz(aVz);
+    gp_Dir aDx(aVx);
+    gp_Ax2 aAx2(aPc, aDz, aDx);
+    aAx2new=aAx2;
+  }
+  else {
+    aRmin=aR[0];
+    aRmax=aR[1];
+    aPc=aPC[1];
+    gp_Vec aVz(aPC[1], aPC[0]);
+    gp_Vec aVx(aPC[1], aPX[1]);
+    gp_Dir aDz(aVz);
+    gp_Dir aDx(aVx);
+    gp_Ax2 aAx2(aPc, aDz, aDx);
+    aAx2new=aAx2;
+  }
+  //
+  gp_Ax3 aAx3(aAx2new);
+  aInfo.SetLocation(aPc);
   aInfo.SetPosition(aAx3);
-  aInfo.SetRadius1(aR[0]);
-  aInfo.SetRadius2(aR[1]);
+  aInfo.SetRadius1(aRmax);
+  aInfo.SetRadius2(aRmin);
   aInfo.SetHeight(aHeight);
   //
   aInfo.SetKindOfName(GEOMAlgo_KN_CONE);
@@ -633,7 +683,11 @@
   }
   aHeight=aPC[0].Distance(aPC[1]);
   //
+  gp_Ax3 aAx3=aCyl.Position();
+  aAx3.SetLocation(aPc);
+  //
   aInfo.SetKindOfName(GEOMAlgo_KN_CYLINDER);
+  aInfo.SetPosition(aAx3);
   aInfo.SetLocation(aPc);
   aInfo.SetHeight(aHeight);
 }
