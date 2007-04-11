@@ -1,5 +1,5 @@
-Import: BREP|IGES|STEP
-Export: BREP|IGES|IGES_5_3|STEP|STL_Bin|STL_ASCII
+Import: BREP|IGES|STEP|ACIS
+Export: BREP|IGES|IGES_5_3|STEP|STL_Bin|STL_ASCII|ACIS
 
 BREP.Import: libBREPImport.so
 BREP.Export: libBREPExport.so
@@ -22,3 +22,7 @@ STL_Bin.Pattern: STL Binary Files ( *.stl )
 
 STL_ASCII.Export: libSTLExport.so
 STL_ASCII.Pattern: STL ASCII Files ( *.stl )
+
+ACIS.Import: libACISImport.so
+ACIS.Export: libACISExport.so
+ACIS.Pattern: ACIS Files ( *.sat )
