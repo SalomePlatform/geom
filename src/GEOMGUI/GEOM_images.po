@@ -524,6 +524,9 @@ msgstr "block_face_4e.png"
 msgid "ICON_DLG_GLUE_FACES"
 msgstr "glue.png"
 
+msgid "ICON_DLG_GLUE_FACES2"
+msgstr "glue2.png"
+
 msgid "ICON_DLG_FREE_FACES"
 msgstr "free_faces.png"
 
