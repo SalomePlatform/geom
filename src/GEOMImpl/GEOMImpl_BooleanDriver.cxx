@@ -237,20 +237,23 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
       AddSimpleShapes(aShape1, listShape1);
       AddSimpleShapes(aShape2, listShape2);
 
-      if (listShape1.Extent() > 1) {
+      Standard_Boolean isIntersect = Standard_False;
+
+      if (listShape1.Extent() > 1 && !isIntersect) {
+        // check intersections inside the first compound
         TopTools_ListIteratorOfListOfShape it1 (listShape1);
-        for (; it1.More(); it1.Next()) {
+        for (; it1.More() && !isIntersect; it1.Next()) {
           TopoDS_Shape aValue1 = it1.Value();
           TopTools_ListIteratorOfListOfShape it2 (listShape1);
-          for (; it2.More(); it2.Next()) {
+          for (; it2.More() && !isIntersect; it2.Next()) {
             TopoDS_Shape aValue2 = it2.Value();
             if (aValue2 != aValue1) {
               BRepAlgoAPI_Section BO (aValue1, aValue2);
               if (BO.IsDone()) {
                 TopoDS_Shape aSect = BO.Shape();
-                TopExp_Explorer anExp (aSect, TopAbs_VERTEX);
+                TopExp_Explorer anExp (aSect, TopAbs_EDGE);
                 if (anExp.More()) {
-                  StdFail_NotDone::Raise("Bad first shape for Fuse: compound with intersecting sub-shapes");
+                  isIntersect = Standard_True;
                 }
               }
             }
@@ -258,8 +261,32 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
         }
       }
 
-      if (listShape2.Extent() > 1) {
+      if (listShape2.Extent() > 1 && !isIntersect) {
+        // check intersections inside the second compound
         TopTools_ListIteratorOfListOfShape it1 (listShape2);
+        for (; it1.More() && !isIntersect; it1.Next()) {
+          TopoDS_Shape aValue1 = it1.Value();
+          TopTools_ListIteratorOfListOfShape it2 (listShape2);
+          for (; it2.More() && !isIntersect; it2.Next()) {
+            TopoDS_Shape aValue2 = it2.Value();
+            if (aValue2 != aValue1) {
+              BRepAlgoAPI_Section BO (aValue1, aValue2);
+              if (BO.IsDone()) {
+                TopoDS_Shape aSect = BO.Shape();
+                TopExp_Explorer anExp (aSect, TopAbs_EDGE);
+                if (anExp.More()) {
+                  isIntersect = Standard_True;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (isIntersect) {
+        // have intersections inside compounds
+        // check intersections between compounds
+        TopTools_ListIteratorOfListOfShape it1 (listShape1);
         for (; it1.More(); it1.Next()) {
           TopoDS_Shape aValue1 = it1.Value();
           TopTools_ListIteratorOfListOfShape it2 (listShape2);
@@ -269,9 +296,9 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
               BRepAlgoAPI_Section BO (aValue1, aValue2);
               if (BO.IsDone()) {
                 TopoDS_Shape aSect = BO.Shape();
-                TopExp_Explorer anExp (aSect, TopAbs_VERTEX);
+                TopExp_Explorer anExp (aSect, TopAbs_EDGE);
                 if (anExp.More()) {
-                  StdFail_NotDone::Raise("Bad second shape for Fuse: compound with intersecting sub-shapes");
+                  StdFail_NotDone::Raise("Bad argument for Fuse: compound with intersecting sub-shapes");
                 }
               }
             }
