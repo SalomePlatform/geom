@@ -1,0 +1,75 @@
+#  GEOM GEOMFiltersSelection : filter selector for the viewer
+#
+#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+# 
+#  This library is free software; you can redistribute it and/or 
+#  modify it under the terms of the GNU Lesser General Public 
+#  License as published by the Free Software Foundation; either 
+#  version 2.1 of the License. 
+# 
+#  This library is distributed in the hope that it will be useful, 
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+#  Lesser General Public License for more details. 
+# 
+#  You should have received a copy of the GNU Lesser General Public 
+#  License along with this library; if not, write to the Free Software 
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+# 
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#
+#
+#
+#  File   : Makefile.in
+#  Author : Patrick GOLDBRONN (CEA)
+#  Modified by : Alexander BORODIN (OCN) - autotools usage
+#  Module : GEOM
+#  $Header$
+
+include $(top_srcdir)/adm_local/unix/make_common_starter.am
+
+# Libraries targets
+lib_LTLIBRARIES = libGEOMFiltersSelection.la
+
+# header files
+salomeinclude_HEADERS = \
+	GEOM_SelectionFilter.h \
+	GEOM_EdgeFilter.h \
+	GEOM_FaceFilter.h \
+	GEOM_TypeFilter.h \
+	GEOM_PreviewFilter.h \
+	GEOM_LogicalFilter.h \
+	GEOM_OCCFilter.h
+
+# Sources
+dist_libGEOMFiltersSelection_la_SOURCES = \
+	GEOM_SelectionFilter.cxx \
+	GEOM_EdgeFilter.cxx \
+	GEOM_FaceFilter.cxx \
+	GEOM_TypeFilter.cxx \
+        GEOM_PreviewFilter.cxx \
+	GEOM_LogicalFilter.cxx \
+	GEOM_OCCFilter.cxx
+
+# LIB_CLIENT_IDL= GEOM_Gen.idl SALOMEDS.idl SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
+
+
+# additionnal information to compil and link file
+libGEOMFiltersSelection_la_CPPFLAGS = \
+	$(QT_INCLUDES) \
+	$(CAS_CPPFLAGS) \
+	$(BOOST_CPPFLAGS) \
+	$(GUI_CXXFLAGS) \
+	$(KERNEL_CXXFLAGS) \
+	$(CORBA_CXXFLAGS) \
+	$(CORBA_INCLUDES) \
+	-I$(srcdir)/../GEOMClient \
+	-I$(top_builddir)/idl \
+	-I$(top_builddir)/salome_adm/unix
+
+libGEOMFiltersSelection_la_LDFLAGS  = \
+	../../idl/libSalomeIDLGEOM.la \
+	../GEOMClient/libGEOMClient.la \
+	$(GUI_LDFLAGS) -lsuit -lSalomeApp -lSalomeSession \
+	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA -lSalomeContainer -lTOOLSDS

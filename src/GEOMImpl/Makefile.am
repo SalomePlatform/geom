@@ -1,0 +1,133 @@
+#  GEOM GEOM : implementaion of GEOM_Gen.idl
+#
+#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+# 
+#  This library is free software; you can redistribute it and/or 
+#  modify it under the terms of the GNU Lesser General Public 
+#  License as published by the Free Software Foundation; either 
+#  version 2.1 of the License. 
+# 
+#  This library is distributed in the hope that it will be useful, 
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+#  Lesser General Public License for more details. 
+# 
+#  You should have received a copy of the GNU Lesser General Public 
+#  License along with this library; if not, write to the Free Software 
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+# 
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
+#  File   : Makefile.in
+#  Author : Damien COQUERET (OCC)
+#  Modified by : Alexander BORODIN (OCN) - autotools usage
+#  Module : GEOM
+#  $Header: 
+
+include $(top_srcdir)/adm_local/unix/make_common_starter.am
+
+# Libraries targets
+
+lib_LTLIBRARIES = libGEOMimpl.la
+
+# header files 
+salomeinclude_HEADERS = \
+	GEOMImpl_Gen.hxx \
+	GEOMImpl_IBasicOperations.hxx \
+	GEOMImpl_ITransformOperations.hxx \
+        GEOMImpl_IHealingOperations.hxx \
+	GEOMImpl_I3DPrimOperations.hxx \
+	GEOMImpl_IShapesOperations.hxx \
+	GEOMImpl_IBlocksOperations.hxx \
+	GEOMImpl_IBooleanOperations.hxx \
+	GEOMImpl_ICurvesOperations.hxx \
+	GEOMImpl_ILocalOperations.hxx \
+        GEOMImpl_IInsertOperations.hxx \
+        GEOMImpl_IMeasureOperations.hxx \
+	GEOMImpl_IGroupOperations.hxx \
+	GEOMImpl_CopyDriver.hxx \
+	GEOMImpl_Types.hxx \
+	GEOM_GEOMImpl.hxx
+
+dist_libGEOMimpl_la_SOURCES = \
+	GEOMImpl_IBasicOperations.cxx \
+	GEOMImpl_ITransformOperations.cxx \
+        GEOMImpl_IHealingOperations.cxx \
+	GEOMImpl_I3DPrimOperations.cxx \
+	GEOMImpl_IShapesOperations.cxx \
+	GEOMImpl_IBlocksOperations.cxx \
+	GEOMImpl_IBooleanOperations.cxx \
+	GEOMImpl_ICurvesOperations.cxx \
+	GEOMImpl_ILocalOperations.cxx \
+	GEOMImpl_IInsertOperations.cxx \
+	GEOMImpl_IMeasureOperations.cxx \
+	GEOMImpl_IGroupOperations.cxx \
+	GEOMImpl_Gen.cxx \
+	GEOMImpl_PointDriver.cxx \
+	GEOMImpl_VectorDriver.cxx \
+	GEOMImpl_LineDriver.cxx \
+	GEOMImpl_PlaneDriver.cxx \
+	GEOMImpl_MarkerDriver.cxx \
+	GEOMImpl_TranslateDriver.cxx \
+	GEOMImpl_MirrorDriver.cxx \
+	GEOMImpl_OffsetDriver.cxx \
+	GEOMImpl_ScaleDriver.cxx \
+	GEOMImpl_PositionDriver.cxx \
+	GEOMImpl_BoxDriver.cxx \
+	GEOMImpl_ConeDriver.cxx \
+	GEOMImpl_CylinderDriver.cxx \
+	GEOMImpl_SphereDriver.cxx \
+	GEOMImpl_TorusDriver.cxx \
+	GEOMImpl_PrismDriver.cxx \
+	GEOMImpl_PipeDriver.cxx \
+	GEOMImpl_ThruSectionsDriver.cxx \
+	GEOMImpl_RevolutionDriver.cxx \
+	GEOMImpl_ShapeDriver.cxx \
+	GEOMImpl_BlockDriver.cxx \
+	GEOMImpl_Block6Explorer.cxx \
+	GEOMImpl_MeasureDriver.cxx \
+	GEOMImpl_PolylineDriver.cxx \
+	GEOMImpl_CircleDriver.cxx \
+	GEOMImpl_EllipseDriver.cxx \
+	GEOMImpl_ArcDriver.cxx \
+	GEOMImpl_SplineDriver.cxx \
+	GEOMImpl_SketcherDriver.cxx \
+	GEOMImpl_FilletDriver.cxx \
+	GEOMImpl_ChamferDriver.cxx \
+	GEOMImpl_BooleanDriver.cxx \
+	GEOMImpl_PartitionDriver.cxx \
+	GEOMImpl_CopyDriver.cxx \
+	GEOMImpl_ExportDriver.cxx \
+	GEOMImpl_ImportDriver.cxx \
+	GEOMImpl_RotateDriver.cxx \
+	GEOMImpl_ArchimedeDriver.cxx \
+	GEOMImpl_HealingDriver.cxx \
+	GEOMImpl_FillingDriver.cxx \
+	GEOMImpl_GlueDriver.cxx
+
+# additionnal information to compil and link file
+libGEOMimpl_la_CPPFLAGS = \
+	$(CAS_CPPFLAGS) \
+	$(KERNEL_CXXFLAGS) \
+	$(BOOST_CPPFLAGS) \
+	-I$(srcdir)/../ShHealOper \
+	-I$(srcdir)/../NMTAlgo \
+	-I$(srcdir)/../NMTTools \
+	-I$(srcdir)/../GEOM \
+	-I$(srcdir)/../GEOMAlgo \
+	-I$(srcdir)/../SKETCHER \
+	-I$(srcdir)/../ARCHIMEDE \
+	-I$(top_builddir)/salome_adm/unix
+
+libGEOMimpl_la_LDFLAGS  = \
+	../GEOM/libGEOMbasic.la \
+	../NMTAlgo/libNMTAlgo.la \
+	../GEOMAlgo/libGEOMAlgo.la \
+	../ShHealOper/libShHealOper.la \
+	../ARCHIMEDE/libGEOMArchimede.la \
+	../SKETCHER/libGEOMSketcher.la \
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace \
+	$(STDLIB) \
+	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset
+
