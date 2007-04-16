@@ -17,15 +17,32 @@ if (navigator.appName !="Netscape")
 img_whs1 { border:none; width:25px; height:24px; border-style:none; }
 p.whs2 { font-size:12pt; }
 p.whs3 { font-size:12pt; text-indent:-68px; margin-left:72px; font-weight:normal; }
-p.whs4 { font-size:12pt; text-indent:-68px; margin-left:72px; }
-p.whs5 { font-size:12pt; text-indent:-68px; margin-left:112px; }
-img_whs6 { border:none; width:312px; height:315px; float:none; border-style:none; }
-p.whs7 { font-size:12pt; margin-left:112px; text-indent:-112px; }
-p.whs8 { font-size:12pt; text-indent:-112px; margin-left:152px; }
-img_whs9 { border:none; float:none; width:292px; height:239px; border-style:none; }
-img_whs10 { border:none; float:none; width:275px; height:239px; border-style:none; }
-p.whs11 { font-size:12pt; text-indent:-40px; margin-left:80px; }
-p.whs12 { font-weight:bold; }
+p.whs4 { font-size:12pt; margin-left:72px; text-indent:-72px; }
+p.whs5 { font-size:12pt; text-indent:-68px; margin-left:72px; }
+p.whs6 { font-size:12pt; margin-left:0px; }
+p.whs7 { font-size:12pt; text-indent:-68px; margin-left:112px; }
+img_whs8 { border:none; width:400px; height:315px; float:none; }
+p.whs9 { font-size:12pt; margin-left:112px; text-indent:-112px; }
+p.whs10 { font-size:12pt; text-indent:-112px; margin-left:152px; }
+img_whs11 { border:none; width:400px; height:370px; float:none; }
+img_whs12 { border:none; width:543px; height:123px; float:none; }
+table.whs13 { x-cell-content-align:top; border-spacing:0; width:94.919%; }
+col.whs14 { width:32.79%; }
+col.whs15 { width:31.064%; }
+col.whs16 { width:32.727%; }
+tr.whs17 { height:21px; }
+td.whs18 { padding-right:10px; padding-left:10px; border-left-style:none; border-top-style:none; border-bottom-style:none; border-right-style:none; }
+p.whs19 { font-style:italic; }
+td.whs20 { padding-right:10px; padding-left:10px; border-top-style:none; border-bottom-style:none; border-right-style:none; }
+td.whs21 { padding-right:10px; padding-left:10px; border-top-style:none; border-right-style:none; border-bottom-style:none; }
+tr.whs22 { height:23px; }
+td.whs23 { padding-right:10px; padding-left:10px; border-left-style:none; border-right-style:none; border-bottom-style:none; }
+img_whs24 { border:none; float:none; border-style:none; width:319px; height:261px; }
+td.whs25 { padding-right:10px; padding-left:10px; border-right-style:none; border-bottom-style:none; }
+img_whs26 { border:none; float:none; border-style:none; width:301px; height:261px; }
+img_whs27 { border:none; width:301px; height:260px; float:none; }
+p.whs28 { font-size:12pt; text-indent:-40px; margin-left:80px; }
+p.whs29 { font-weight:bold; }
 -->
 </style><script type="text/javascript" language="JavaScript">
 <!--
@@ -35,9 +52,11 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
   strNSS += "p.whs3 {text-indent:1pt; }";
   strNSS += "p.whs4 {text-indent:1pt; }";
   strNSS += "p.whs5 {text-indent:1pt; }";
+  strNSS += "p.whs6 {margin-left:1pt; }";
   strNSS += "p.whs7 {text-indent:1pt; }";
-  strNSS += "p.whs8 {text-indent:1pt; }";
-  strNSS += "p.whs11 {text-indent:1pt; }";
+  strNSS += "p.whs9 {text-indent:1pt; }";
+  strNSS += "p.whs10 {text-indent:1pt; }";
+  strNSS += "p.whs28 {text-indent:1pt; }";
   strNSS +="</style>";
   document.write(strNSS);
 }
@@ -104,8 +123,10 @@ if (window.writeIntopicBar)
 </script>
 <h1><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><img src="image61.gif" width="25px" height="24px" border="0" class="img_whs1"> </font></span>Glue Faces</h1>
 
-<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: normal;">T</b>o 
- Glue Faces in the Main Menu select Repair - &gt; Glue Faces.</font></span></p>
+<p class="whs2"><b style="font-weight: normal;">T</b>o <span 
+ style="font-weight: bold;"><B>Glue Faces</B></span> in the Main Menu select <span 
+ style="font-weight: bold;"><B>Repair</B></span> - &gt; <span style="font-weight: bold;"><B>Glue 
+ Faces</B></span>.</p>
 
 <p class="whs3">&nbsp;</p>
 
@@ -113,7 +134,7 @@ if (window.writeIntopicBar)
  g</b>lues faces that are coincident with respect to the given tolerance 
  value.</p>
 
-<p class="whs4">&nbsp;</p>
+<p class="whs5">&nbsp;</p>
 
 <p class="whs2"><b><span style="font-weight: normal;">T</span></b><b><span 
  style="font-weight: normal;">he</span> Result <span style="font-weight: normal;">will 
@@ -121,34 +142,78 @@ if (window.writeIntopicBar)
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs4"><b>TUI Command : </b><span style="font-style: italic;"><I>geompy.MakeGlueFaces(theShape, 
- theTolerance)</I></span>, where theShape is a compound of shapes to be glued, 
- theTolerance is a maximum distance between two faces, which can be considered 
- as coincident.</p>
+<p class="whs6"><b>TUI Command : </b><span 
+ style="font-style: italic;"><I>geompy.MakeGlueFaces(theShape, theTolerance)</I></span>, 
+ where <span style="font-style: italic;"><I>theShape</I></span> is a compound 
+ of shapes to be glued, <span style="font-style: italic;"><I>theTolerance</I></span> 
+ is a maximum distance between two faces, which can be considered as coincident.</p>
 
 <p class="whs4"><b style="font-weight: bold;">Arguments: 
  <span style="font-weight: normal;">Name +</span> </b>1 <i><span style="font-style: normal;">Compound 
  + Tolerance value</span></i></p>
 
-<p class="whs4">&nbsp;</p>
+<p class="whs5">&nbsp;</p>
 
-<p class="whs4">&nbsp;</p>
+<p class="whs7"><img src="pics/glue1.png" x-maintain-ratio="TRUE" width="400px" height="315px" border="0" class="img_whs8"></p>
 
-<p class="whs5"><img src="pics/repair7.png" x-maintain-ratio="TRUE" width="312px" height="315px" border="0" class="img_whs6"></p>
+<p class="whs9">&nbsp;</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs9">It is also possible to manually select 
+ the faces that will be glued - select the shape, specify the tolerance 
+ and press <span style="font-weight: bold;"><B>Detect</B></span> button. </p>
 
-<p class="whs7"><b style="font-weight: bold;">Example:</b></p>
+<p class="whs9">&nbsp;</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs10"><img src="pics/glue2.png" x-maintain-ratio="TRUE" width="400px" height="370px" border="0" class="img_whs11"></p>
 
-<p class="whs8"><img src="pics/glue_faces1.png" x-maintain-ratio="TRUE" width="292px" height="239px" border="0" class="img_whs9"> &nbsp;&nbsp;<img src="pics/glue_faces2.png" x-maintain-ratio="TRUE" width="275px" height="239px" border="0" class="img_whs10"></p>
+<p class="whs9">&nbsp;</p>
 
-<p class="whs11">&nbsp;</p>
+<p class="whs9"><span style="font-weight: bold;"><B>Geometry</B></span> 
+ module detects the faces where gluing can be performed and displays a 
+ notification.</p>
 
-<p class="whs11">&nbsp;</p>
+<p class="whs9">&nbsp;</p>
 
-<p class="whs12"><span style="font-weight: normal;">Our</span> 
+<p class="whs10"><img src="pics/glue3.png" x-maintain-ratio="TRUE" width="543px" height="123px" border="0" class="img_whs12"></p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs9">The faces that can be glued are colored 
+ in red. &nbsp;It 
+ is possible to select the faces for gluing in the 3D viewer. The selected 
+ faces will be marked in white. </p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs9"><b style="font-weight: bold;">Example:</b></p>
+
+<table x-use-null-cells width="94.919%" cellspacing="0" class="whs13">
+<col class="whs14">
+<col class="whs15">
+<col class="whs16">
+
+<tr valign="top" class="whs17">
+<td width="32.79%" class="whs18">
+<p class="whs19">Object that needs gluing.</td>
+<td width="31.064%" class="whs20">
+<p class="whs19">Glued object.</td>
+<td width="32.727%" class="whs21">
+<p class="whs19">Manual selection of faces for gluing.</td></tr>
+
+<tr valign="top" class="whs22">
+<td width="32.79%" class="whs23">
+<p class="whs2"><img src="pics/glue_faces1.png" x-maintain-ratio="TRUE" width="319px" height="261px" border="0" class="img_whs24"></td>
+<td width="31.064%" class="whs25">
+<p class="whs2"><img src="pics/glue_faces2.png" x-maintain-ratio="TRUE" width="301px" height="261px" border="0" class="img_whs26"></td>
+<td width="32.727%" class="whs25">
+<p class="whs2"><img src="pics/glue_faces3.png" x-maintain-ratio="TRUE" width="301px" height="260px" border="0" class="img_whs27"></td></tr>
+</table>
+
+<p class="whs28">&nbsp;</p>
+
+<p class="whs28">&nbsp;</p>
+
+<p class="whs29"><span style="font-weight: normal;">Our</span> 
  TUI Scripts <span style="font-weight: normal;">provide you with useful 
  examples of the use of</span> <a href="repairing_operations.htm#bookmark6">Repairing 
  Operations</a>. </p>
