@@ -232,6 +232,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
 
     // perform FUSE operation
     else if (aType == BOOLEAN_FUSE) {
+      /* Fix for NPAL15379: refused
       // Check arguments
       TopTools_ListOfShape listShape1, listShape2;
       AddSimpleShapes(aShape1, listShape1);
@@ -305,6 +306,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
           }
         }
       }
+      */
 
       // Perform
       BRepAlgoAPI_Fuse BO (aShape1, aShape2);
