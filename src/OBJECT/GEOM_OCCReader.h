@@ -59,7 +59,7 @@ class GEOM_OBJECT_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
 
   const TopoDS_Shape& getTopo();
 
-  void setTopo(const TopoDS_Shape& ashape);
+  void setTopo(const TopoDS_Shape& ashape, bool isVector = false);
 
   int  getDisplayMode();
   void setDisplayMode(int);
@@ -133,6 +133,7 @@ class GEOM_OBJECT_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
   int			 amode;
   int                    nbisos;
   TopoDS_Shape           myShape;
+  bool                   myIsVector;
 
 };
 

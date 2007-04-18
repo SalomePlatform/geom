@@ -35,6 +35,7 @@
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <SelectMgr_Selection.hxx>
 #include <SelectBasics_SensitiveEntity.hxx>
+#include <StdSelect_BRepOwner.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <SelectMgr_IndexedMapOfOwner.hxx>
 #include <NCollection_DataMap.hxx>
@@ -76,7 +77,7 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
     {
       for ( ic->InitSelected(); ic->MoreSelected(); ic->NextSelected() )
 	{
-	  Handle(SelectMgr_EntityOwner) anOwner = ic->SelectedOwner();
+	  Handle(StdSelect_BRepOwner) anOwner = Handle(StdSelect_BRepOwner)::DownCast(ic->SelectedOwner());
 	  if ( anOwner.IsNull() )
 	    continue;
 	  
@@ -128,7 +129,7 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
     }
   // add externally selected objects
   SUIT_DataOwnerPtrList::const_iterator anExtIter;
-  for(anExtIter = getSelectedExt().begin(); anExtIter != getSelectedExt().end(); anExtIter++) {
+  for(anExtIter = mySelectedExternals.begin(); anExtIter != mySelectedExternals.end(); anExtIter++) {
     aList.append(*anExtIter);
   }
   
@@ -239,7 +240,9 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 
       for  ( int i = 1, n = owners.Extent(); i <= n; i++ ) 
       {
-	Handle(SelectMgr_EntityOwner) anOwner = owners( i );
+
+	Handle(StdSelect_BRepOwner) anOwner = Handle(StdSelect_BRepOwner)::DownCast(owners( i ));
+
 	if ( anOwner.IsNull() || !anOwner->HasShape() )
 	  continue;
 
@@ -294,7 +297,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
   vw->update();
   
   // fill extra selected
-  clearSelExtOwners();
+  mySelectedExternals.clear();
   for ( SUIT_DataOwnerPtrList::const_iterator itr2 = aList.begin(); itr2 != aList.end(); ++itr2 ) {
     const LightApp_DataSubOwner* subOwner = dynamic_cast<const LightApp_DataSubOwner*>( (*itr2).operator->() );
     if ( !subOwner )
@@ -304,8 +307,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       {
 	SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
 	QString anEntry = appStudy->referencedToEntry( owner->entry() );
-	if (globalSelMap[anEntry] == 1) 
-	  appendSelExtOwner(*itr2);
+	if (globalSelMap[anEntry] == 1) mySelectedExternals.append(*itr2);
       }
     }
   }

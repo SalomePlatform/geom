@@ -181,6 +181,10 @@ msgstr "pointonedge.png"
 msgid "ICON_DLG_ARC"
 msgstr "arc.png"
 
+#ArcDlg
+msgid "ICON_DLG_ARC_CENTER"
+msgstr "arccenter.png"
+
 #ArchimedeDlg
 msgid "ICON_DLG_ARCHIMEDE"
 msgstr "archimede.png"
@@ -520,6 +524,9 @@ msgstr "block_face_4e.png"
 msgid "ICON_DLG_GLUE_FACES"
 msgstr "glue.png"
 
+msgid "ICON_DLG_GLUE_FACES2"
+msgstr "glue2.png"
+
 msgid "ICON_DLG_FREE_FACES"
 msgstr "free_faces.png"
 
@@ -762,3 +769,24 @@ msgstr "erase.png"
 
 msgid "ICO_POP_CREATE_GROUP"
 msgstr "group_new.png"
+
+msgid "ICO_VERTEX_SEL_ONLY"
+msgstr "point2.png"
+
+msgid "ICO_EDGE_SEL_ONLY"
+msgstr "build_edge.png"
+
+msgid "ICO_WIRE_SEL_ONLY"
+msgstr "build_wire.png"
+
+msgid "ICO_FACE_SEL_ONLY"
+msgstr "build_face.png"
+
+msgid "ICO_SHELL_SEL_ONLY"
+msgstr "build_shell.png"
+
+msgid "ICO_SOLID_SEL_ONLY"
+msgstr "build_solid.png"
+
+msgid "ICO_COMPOUND_SEL_ONLY"
+msgstr "build_compound.png"

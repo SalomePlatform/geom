@@ -25,27 +25,11 @@
 
 #include <NMTTools_PaveFiller.ixx>
 //
-// Modified  Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
-#include <TColStd_ListOfInteger.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <BRepBndLib.hxx>
-#include <BOPTools_CArray1OfVSInterference.hxx>
-#include <BOPTools_VSInterference.hxx>
-// Contribution of Samtech www.samcef.com END
-
 #include <stdio.h>
 #include <Precision.hxx>
 
-#include <NCollection_UBTreeFiller.hxx>
-
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <TColStd_MapOfInteger.hxx>
-
-#include <gp_XYZ.hxx>
-#include <gp_Pnt.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
@@ -53,17 +37,11 @@
 #include <TopoDS_Compound.hxx>
 
 #include <TopTools_IndexedMapOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
-#include <TopTools_DataMapOfShapeListOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_DataMapOfShapeShape.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
 
 #include <Bnd_Box.hxx>
-#include <BRepBndLib.hxx>
 
 #include <IntTools_ShrunkRange.hxx>
 #include <IntTools_Range.hxx>
@@ -97,14 +75,45 @@
 #include <BooleanOperations_KindOfInterference.hxx>
 
 #include <NMTDS_ShapesDataStructure.hxx>
-#include <NMTDS_IndexedDataMapOfIntegerShape.hxx>
-#include <NMTDS_IndexedDataMapOfShapeBox.hxx>
-#include <NMTDS_BoxBndTree.hxx>
 
 #include <NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx>
 #include <NMTTools_ListOfCommonBlock.hxx>
 #include <NMTTools_CommonBlock.hxx>
 #include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
+
+// Modified  Thu Sep 14 14:35:18 2006 
+// Contribution of Samtech www.samcef.com BEGIN
+#include <TColStd_ListOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <BRepBndLib.hxx>
+#include <BOPTools_CArray1OfVSInterference.hxx>
+#include <BOPTools_VSInterference.hxx>
+// Contribution of Samtech www.samcef.com END
+//
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <Bnd_HArray1OfBox.hxx>
+#include <Bnd_BoundSortBox.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
+#include <TopTools_DataMapOfShapeListOfShape.hxx>
+#include <NMTDS_IndexedDataMapOfIntegerShape.hxx>
+#include <NMTDS_IndexedDataMapOfShapeBox.hxx>
+#include <Bnd_Box.hxx>
+#include <BRepBndLib.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_DataMapOfShapeShape.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <gp_XYZ.hxx>
+#include <gp_Pnt.hxx>
+#include <BRep_Builder.hxx>
+#include <BRep_Tool.hxx>
+#include <TColStd_MapOfInteger.hxx>
+//
+#include <NMTDS_BoxBndTree.hxx>
+#include <NCollection_UBTreeFiller.hxx>
+#include <TColStd_MapOfInteger.hxx>
+#include <TColStd_MapIteratorOfMapOfInteger.hxx>
 
 
 static
@@ -115,7 +124,6 @@ static
 static
   void MakeNewVertex(const TopTools_ListOfShape& aLV, 
 		     TopoDS_Vertex& aNewVertex);
-
 
 
 static 
@@ -137,6 +145,7 @@ static
 static
   void FindChains(const BOPTools_IDMapOfPaveBlockIMapOfPaveBlock& aMapCB,
 		  NMTTools_ListOfCommonBlock& aLCB);
+
 //=======================================================================
 // function: PerformEE
 // purpose: 
@@ -447,6 +456,9 @@ static
     }//for (; aIt.More(); aIt.Next()) {
   }// for (; aItIm.More(); aItIm.Next())
 }
+//
+// case: use_02
+// completely rewritten
 //=======================================================================
 //function : TreatNewVertices
 //purpose  : 
@@ -455,7 +467,7 @@ void TreatNewVertices(const BooleanOperations_IndexedDataMapOfShapeInteger& aMap
 		   TopTools_DataMapOfShapeListOfShape& myImages,
 		   TopTools_DataMapOfShapeShape& myOrigins)
 {
-  Standard_Integer j, i, aNbV, aIndex, aNbVSD;
+  Standard_Integer j, i, aNbV, aNbVSD;
   Standard_Real aTol;
   TColStd_ListIteratorOfListOfInteger aIt;
   TopoDS_Shape aSTmp, aVF;
@@ -467,11 +479,9 @@ void TreatNewVertices(const BooleanOperations_IndexedDataMapOfShapeInteger& aMap
   NMTDS_IndexedDataMapOfIntegerShape aMIS;
   NMTDS_IndexedDataMapOfShapeBox aMSB;
   //
-  //
   NMTDS_BoxBndTreeSelector aSelector;
   NMTDS_BoxBndTree aBBTree;
   NCollection_UBTreeFiller <Standard_Integer, Bnd_Box> aTreeFiller(aBBTree);
-  //
   //
   myImages.Clear();
   myOrigins.Clear();
@@ -498,6 +508,7 @@ void TreatNewVertices(const BooleanOperations_IndexedDataMapOfShapeInteger& aMap
   //
   aTreeFiller.Fill();
   //
+  // Chains
   for (i=1; i<=aNbV; ++i) {
     const TopoDS_Shape& aV=aMV(i);
     //
@@ -505,33 +516,84 @@ void TreatNewVertices(const BooleanOperations_IndexedDataMapOfShapeInteger& aMap
       continue;
     }
     //
-    const Bnd_Box& aBoxV=aMSB.FindFromKey(aV);
-    aSelector.Clear();
-    aSelector.SetBox(aBoxV);
-    //
-    aNbVSD=aBBTree.Select(aSelector);
-    if (!aNbVSD) {
-      continue;  // it must not be 
-    }
-    //
-    // Images
-    //
+    Standard_Integer aNbIP, aIP, aNbIP1, aIP1;
     TopTools_ListOfShape aLVSD;
+    TColStd_MapOfInteger aMIP, aMIP1, aMIPC;
+    TColStd_MapIteratorOfMapOfInteger aIt1;
     //
-    const TColStd_ListOfInteger& aLI=aSelector.Indices();
-    aIt.Initialize(aLI);
-    for (j=0; aIt.More(); aIt.Next(), ++j) {
-      aIndex=aIt.Value();
-      const TopoDS_Shape& aVx=aMIS.FindFromKey(aIndex);
-      if(!j) {
-	aVF=aVx;
+    aMIP.Add(i);
+    while(1) {
+      aNbIP=aMIP.Extent();
+      aIt1.Initialize(aMIP);
+      for(; aIt1.More(); aIt1.Next()) {
+	aIP=aIt1.Key();
+	if (aMIPC.Contains(aIP)) {
+	  continue;
+	}
+	//
+	const TopoDS_Shape& aVP=aMIS.FindFromKey(aIP);
+	const Bnd_Box& aBoxVP=aMSB.FindFromKey(aVP);
+	//
+	aSelector.Clear();
+	aSelector.SetBox(aBoxVP);
+	//
+	aNbVSD=aBBTree.Select(aSelector);
+	if (!aNbVSD) {
+	  continue;  // it must not be 
+	}
+	//
+	const TColStd_ListOfInteger& aLI=aSelector.Indices();
+	aIt.Initialize(aLI);
+	for (; aIt.More(); aIt.Next()) {
+	  aIP1=aIt.Value();
+	  if (aMIP.Contains(aIP1)) {
+	    continue;
+	  }
+	  aMIP1.Add(aIP1);
+	} //for (; aIt.More(); aIt.Next()) {
+      }//for(; aIt1.More(); aIt1.Next()) {
+      //
+      aNbIP1=aMIP1.Extent();
+      if (!aNbIP1) {
+	break; // from while(1)
       }
-      aLVSD.Append(aVx);
-      aMVProcessed.Add(aVx);
+      //
+      aIt1.Initialize(aMIP);
+      for(; aIt1.More(); aIt1.Next()) {
+	aIP=aIt1.Key();
+	aMIPC.Add(aIP);
+      }
+      //
+      aMIP.Clear();
+      aIt1.Initialize(aMIP1);
+      for(; aIt1.More(); aIt1.Next()) {
+	aIP=aIt1.Key();
+	aMIP.Add(aIP);
+      }
+      aMIP1.Clear();
+    }// while(1)
+    //...
+    aNbIP=aMIPC.Extent();
+    if (!aNbIP) {
+      //modified by NIZNHY-PKV Tue Jan  9 14:26:09 2007f
+      aMIPC.Add(i);
+      //continue;
+      //modified by NIZNHY-PKV Tue Jan  9 14:26:12 2007t
     }
     //
+    aIt1.Initialize(aMIPC);
+    for(j=0; aIt1.More(); aIt1.Next(), ++j) {
+      aIP=aIt1.Key();
+      const TopoDS_Shape& aVP=aMIS.FindFromKey(aIP);
+      if (!j) {
+	aVF=aVP;
+      }
+      aLVSD.Append(aVP);
+      aMVProcessed.Add(aVP);
+    }
     myImages.Bind(aVF, aLVSD);
-  }
+  }// for (i=1; i<=aNbV; ++i) {
+  //------------------------------
   //
   // Make new vertices
   aMV.Clear();
@@ -577,6 +639,7 @@ void TreatNewVertices(const BooleanOperations_IndexedDataMapOfShapeInteger& aMap
     }
   }
 }
+//
 //=======================================================================
 //function : MakeNewVertex
 //purpose  : 
@@ -1364,3 +1427,213 @@ void ProcessBlock(const BOPTools_PaveBlock& aPB,
   }
 } 
 // Contribution of Samtech www.samcef.com END
+/*
+//=======================================================================
+// function:EENewVertices
+// purpose: 
+//=======================================================================
+  void NMTTools_PaveFiller::EENewVertices (const BooleanOperations_IndexedDataMapOfShapeInteger& aMapVI) 
+{
+  Standard_Integer aNb, i, j, aNewShape, aNbEdges, aNbIEE, aNbVV, aNbSimple;
+  Standard_Integer aWhat, aWith, i1, i2, nE1, nE2, nE, nV, aFlag;
+  Standard_Real aT;
+  TopoDS_Compound aCompound;
+  BRep_Builder aBB;
+  NMTTools_IndexedDataMapOfIndexedMapOfInteger aMNVE, aMNVIEE;
+  BooleanOperations_AncestorsSeqAndSuccessorsSeq anASSeq;	
+  BOPTools_Pave aPave;
+  TopoDS_Vertex aNewVertex;
+  TopTools_IndexedMapOfShape aMNVComplex, aMNVSimple;
+  //
+  BOPTools_CArray1OfEEInterference& aEEs=myIntrPool->EEInterferences();
+  //
+  aNb=aMapVI.Extent();
+  //
+  if (!aNb) { // no new vertices, no new problems 
+    return;
+  }
+  //
+  // 0. 
+  if (aNb==1) {
+    aNewVertex=TopoDS::Vertex(aMapVI.FindKey(1));
+    EENewVertices(aNewVertex, aMapVI);
+    return;
+  }
+  //
+  // 1. Make compound from new vertices
+  aBB.MakeCompound(aCompound);
+  for (i=1; i<=aNb; ++i) {
+    const TopoDS_Shape& aV=aMapVI.FindKey(i);
+    aBB.Add(aCompound, aV);
+  }
+  //
+  // 2. VV intersection between these vertices 
+  //       using the auxiliary Filler
+  NMTDS_ShapesDataStructure tDS;
+  //
+  tDS.SetCompositeShape(aCompound);
+  tDS.Init();
+  //
+  BOPTools_InterferencePool tInterfPool(tDS);
+  NMTTools_PaveFiller tPaveFiller(tInterfPool);
+  //
+  tPaveFiller.Init();
+  //
+  tPaveFiller.PerformVV();
+  tPaveFiller.PerformNewVertices();
+  //
+  const BOPTools_CArray1OfVVInterference& aVVInterfs=tInterfPool.VVInterfs();
+  //
+  // 3. Separate Comlex and Simple new vertices
+  aNbVV=aVVInterfs.Extent();
+  for (i=1; i<=aNbVV; ++i) {
+    const BOPTools_VVInterference& aVV=aVVInterfs(i);
+    aVV.Indices(aWhat, aWith);
+    const TopoDS_Shape& aV1=tDS.Shape(aWhat);
+    const TopoDS_Shape& aV2=tDS.Shape(aWith);
+    aMNVComplex.Add(aV1);
+    aMNVComplex.Add(aV2);
+  }
+  //
+  for (i=1; i<=aNb; ++i) {
+    const TopoDS_Shape& aV=aMapVI.FindKey(i);
+    if (!aMNVComplex.Contains(aV)) {
+      aMNVSimple.Add(aV);
+    }
+  }
+  //
+  // 4. Treat Simple new Vertices
+  aNbSimple=aMNVSimple.Extent();
+  for (i=1; i<=aNbSimple; ++i) {
+    const TopoDS_Vertex& aV=TopoDS::Vertex(aMNVSimple(i));
+    EENewVertices(aV, aMapVI);
+  }
+  //
+  // 3. Fill Maps : NewVertex-edges (aMNVE) 
+  //                NewVertex-interferences (aMNVIEE)
+  for (i=1; i<=aNbVV; ++i) {
+    const BOPTools_VVInterference& aVV=aVVInterfs(i);
+    aNewShape=aVV.NewShape();
+    if (!aNewShape) {
+      continue;
+    }
+    //
+    if (!aMNVE.Contains(aNewShape)) {
+      TColStd_IndexedMapOfInteger aMx;
+      aMNVE.Add(aNewShape, aMx);
+    }
+    if (!aMNVIEE.Contains(aNewShape)) {
+      TColStd_IndexedMapOfInteger aMx;
+      aMNVIEE.Add(aNewShape, aMx);
+    }
+    //
+    TColStd_IndexedMapOfInteger& aME=aMNVE.ChangeFromKey(aNewShape);
+    TColStd_IndexedMapOfInteger& aMIEE=aMNVIEE.ChangeFromKey(aNewShape);
+    //
+    aVV.Indices(aWhat, aWith);
+    //aWhat
+    const TopoDS_Shape& aV1=tDS.Shape(aWhat);
+    i1=aMapVI.FindFromKey(aV1);
+    const BOPTools_EEInterference& aEE1=aEEs(i1);
+    aEE1.Indices(nE1, nE2);
+    aME.Add(nE1);
+    aME.Add(nE2);
+    aMIEE.Add(i1);
+    //aWith
+    const TopoDS_Shape& aV2=tDS.Shape(aWith);
+    i2=aMapVI.FindFromKey(aV2);
+    const BOPTools_EEInterference& aEE2=aEEs(i2);
+    aEE2.Indices(nE1, nE2);
+    aME.Add(nE1);
+    aME.Add(nE2);
+    aMIEE.Add(i2);
+    //
+    //printf(" VV: (%d, %d) -> %d\n", aWhat, aWith, aNewShape);
+  }
+  //
+  // 4. Process new vertices
+  aNb=aMNVE.Extent();
+  for (i=1; i<=aNb; ++i) { // xx
+    //
+    //  new Vertex
+    nV=aMNVE.FindKey(i);
+    aNewVertex=TopoDS::Vertex(tDS.Shape(nV));
+    //
+    // Insert New Vertex in DS;
+    myDS->InsertShapeAndAncestorsSuccessors(aNewVertex, anASSeq);
+    aNewShape=myDS->NumberOfInsertedShapes();
+    myDS->SetState (aNewShape, BooleanOperations_ON);
+    //
+    // Update index of NewShape in EE interferences
+    const TColStd_IndexedMapOfInteger& aMIEE=aMNVIEE.FindFromKey(nV);//(i);
+    aNbIEE=aMIEE.Extent();
+    for (j=1; j<=aNbIEE; ++j) {
+      i1=aMIEE(j);
+      BOPTools_EEInterference& aEE1=aEEs(i1);
+      aEE1.SetNewShape(aNewShape);
+    }
+    // 
+    // Update Paves on edges
+    const TColStd_IndexedMapOfInteger& aME=aMNVE(i);
+    aNbEdges=aME.Extent();
+    for (j=1; j<=aNbEdges; ++j) {
+      nE=aME(j);
+      const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));//mpv
+      //
+      aFlag=myContext.ComputeVE (aNewVertex, aE, aT);
+      //
+      if (!aFlag) {
+	aPave.SetInterference(-1);
+	aPave.SetType (BooleanOperations_EdgeEdge);
+	aPave.SetIndex(aNewShape);
+	aPave.SetParam(aT);
+	//
+	BOPTools_PaveSet& aPaveSet=myPavePoolNew(myDS->RefEdge(nE));
+	aPaveSet.Append(aPave);
+      }
+    }
+  }// for (i=1; i<=aNb; ++i) {// xx
+}
+//=======================================================================
+// function:EENewVertices
+// purpose: 
+//=======================================================================
+  void NMTTools_PaveFiller::EENewVertices (const TopoDS_Vertex& aNewVertex,
+					   const BooleanOperations_IndexedDataMapOfShapeInteger& aMapVI) 
+{
+  Standard_Integer  i, aNewShape, nE1, nE2;
+  Standard_Real  aT1, aT2;
+  BooleanOperations_AncestorsSeqAndSuccessorsSeq anASSeq;	
+  BOPTools_Pave aPave;
+  //
+  BOPTools_CArray1OfEEInterference& aEEs=myIntrPool->EEInterferences();
+  //
+  // one new vertex case is treated in usual way
+  //
+  // Insert New Vertex in DS;
+  myDS->InsertShapeAndAncestorsSuccessors(aNewVertex, anASSeq);
+  aNewShape=myDS->NumberOfInsertedShapes();
+  myDS->SetState (aNewShape, BooleanOperations_ON);
+  // Insert New Vertex in EE Interference
+  i=aMapVI.FindFromKey(aNewVertex);
+  BOPTools_EEInterference& aEEInterf= aEEs(i);
+  aEEInterf.SetNewShape(aNewShape);
+  // Extact interference info
+  aEEInterf.Indices(nE1, nE2);
+  const IntTools_CommonPrt& aCPart=aEEInterf.CommonPrt();
+  VertexParameters(aCPart, aT1, aT2);
+  //
+  // Add Paves to the myPavePoolNew
+  aPave.SetInterference(i);
+  aPave.SetType (BooleanOperations_EdgeEdge);
+  aPave.SetIndex(aNewShape);
+  // Pave for edge nE1
+  aPave.SetParam(aT1);
+  BOPTools_PaveSet& aPaveSet1=myPavePoolNew(myDS->RefEdge(nE1));
+  aPaveSet1.Append(aPave);
+  // Pave for edge nE2
+  aPave.SetParam(aT2);
+  BOPTools_PaveSet& aPaveSet2=myPavePoolNew(myDS->RefEdge(nE2));
+  aPaveSet2.Append(aPave);
+}
+*/

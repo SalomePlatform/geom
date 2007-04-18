@@ -36,15 +36,15 @@ salomeinclude_HEADERS = \
 	GEOMImpl_Gen.hxx \
 	GEOMImpl_IBasicOperations.hxx \
 	GEOMImpl_ITransformOperations.hxx \
-        GEOMImpl_IHealingOperations.hxx \
+	GEOMImpl_IHealingOperations.hxx \
 	GEOMImpl_I3DPrimOperations.hxx \
 	GEOMImpl_IShapesOperations.hxx \
 	GEOMImpl_IBlocksOperations.hxx \
 	GEOMImpl_IBooleanOperations.hxx \
 	GEOMImpl_ICurvesOperations.hxx \
 	GEOMImpl_ILocalOperations.hxx \
-        GEOMImpl_IInsertOperations.hxx \
-        GEOMImpl_IMeasureOperations.hxx \
+	GEOMImpl_IInsertOperations.hxx \
+	GEOMImpl_IMeasureOperations.hxx \
 	GEOMImpl_IGroupOperations.hxx \
 	GEOMImpl_CopyDriver.hxx \
 	GEOMImpl_Types.hxx \

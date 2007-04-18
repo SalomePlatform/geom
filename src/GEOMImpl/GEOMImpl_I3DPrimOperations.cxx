@@ -59,6 +59,7 @@
 #include <GEOMImpl_IFilling.hxx>
 #include <GEOMImpl_IThruSections.hxx>
 #include <GEOMImpl_IPipeDiffSect.hxx>
+#include <GEOMImpl_IPipeShellSect.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -1091,17 +1092,18 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
    
 }
 
+
 //=============================================================================
 /*!
  *  MakePipeWithDifferentSections
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
-					        const Handle(TColStd_HSequenceOfTransient)& theBases,
-					        const Handle(TColStd_HSequenceOfTransient)& theLocations,
-					        const Handle(GEOM_Object)& thePath,
-					        bool theWithContact,
-                                                bool theWithCorrections)
+	        const Handle(TColStd_HSequenceOfTransient)& theBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations,
+		const Handle(GEOM_Object)& thePath,
+		bool theWithContact,
+		bool theWithCorrections)
 {
   Handle(GEOM_Object) anObj;
   SetErrorCode(KO);
@@ -1232,3 +1234,165 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
   
    
 }
+
+
+//=============================================================================
+/*!
+ *  MakePipeWithShellSections
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
+	        const Handle(TColStd_HSequenceOfTransient)& theBases,
+	        const Handle(TColStd_HSequenceOfTransient)& theSubBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations,
+		const Handle(GEOM_Object)& thePath,
+		bool theWithContact,
+		bool theWithCorrections)
+{
+  Handle(GEOM_Object) anObj;
+  SetErrorCode(KO);
+  if(theBases.IsNull())
+    return anObj;
+
+  Standard_Integer nbBases = theBases->Length();
+  
+  if (!nbBases)
+    return anObj;
+  
+  Standard_Integer nbSubBases =  (theSubBases.IsNull() ? 0 :theSubBases->Length());
+
+  Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
+
+  //Add a new Pipe object
+  Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
+ 
+  //Add a new Pipe function
+
+  Handle(GEOM_Function) aFunction =
+    aPipeDS->AddFunction(GEOMImpl_PipeDriver::GetID(), PIPE_SHELL_SECTIONS);
+  if (aFunction.IsNull()) return anObj;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PipeDriver::GetID()) return anObj;
+
+  //GEOMImpl_IPipeDiffSect aCI (aFunction);
+  GEOMImpl_IPipeShellSect aCI (aFunction);
+
+  Handle(GEOM_Function) aRefPath = thePath->GetLastFunction();
+  if(aRefPath.IsNull())
+    return anObj;
+
+  Handle(TColStd_HSequenceOfTransient) aSeqBases = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aSeqSubBases = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aSeqLocs = new TColStd_HSequenceOfTransient;
+
+  Standard_Integer i =1;
+  for( ; i <= nbBases; i++) {
+
+    Handle(Standard_Transient) anItem = theBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    Handle(GEOM_Object) aBase = Handle(GEOM_Object)::DownCast(anItem);
+    if(aBase.IsNull())
+      continue;
+    Handle(GEOM_Function) aRefBase = aBase->GetLastFunction();
+    if(aRefBase.IsNull())
+      continue;
+
+    if( nbSubBases >= nbBases ) {
+      Handle(Standard_Transient) aSubItem = theSubBases->Value(i);
+      if(aSubItem.IsNull())
+	continue;
+      Handle(GEOM_Object) aSubBase = Handle(GEOM_Object)::DownCast(aSubItem);
+      if(aSubBase.IsNull())
+	continue;
+      Handle(GEOM_Function) aRefSubBase = aSubBase->GetLastFunction();
+      if(aRefSubBase.IsNull())
+	continue;
+      aSeqSubBases->Append(aRefSubBase);
+    }
+
+    if(nbLocs) {
+      Handle(Standard_Transient) anItemLoc = theLocations->Value(i);
+      if(anItemLoc.IsNull())
+	continue;
+      Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
+      if(aLoc.IsNull())
+	continue;
+      Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
+      if(aRefLoc.IsNull())
+	continue;
+      aSeqLocs->Append(aRefLoc);
+    }
+
+    aSeqBases->Append(aRefBase);
+  }
+
+  if(!aSeqBases->Length())
+    return anObj;
+
+  aCI.SetBases(aSeqBases);
+  aCI.SetSubBases(aSeqSubBases);
+  aCI.SetLocations(aSeqLocs);
+  aCI.SetPath(aRefPath);
+  aCI.SetWithContactMode(theWithContact);
+  aCI.SetWithCorrectionMode(theWithCorrections);
+  
+  //Compute the Pipe value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Pipe with shell sections driver failed");
+      return anObj;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return anObj;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pyDump(aFunction);
+  pyDump << aPipeDS << " = geompy.MakePipeWithShellSections([";
+
+  for(i =1 ; i <= nbBases; i++) {
+
+    Handle(Standard_Transient) anItem = theBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbBases)
+	pyDump<<", ";
+    }
+    
+  }
+  
+  pyDump<< "], [";
+   
+  for(i =1 ; i <= nbLocs; i++) {
+
+    Handle(Standard_Transient) anItem = theLocations->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbLocs)
+	pyDump<<", ";
+    }
+  }  
+
+  pyDump<< "], "<<thePath<<","<<theWithContact << "," << theWithCorrections<<")";
+
+  SetErrorCode(OK);
+  return aPipeDS;
+
+}
+

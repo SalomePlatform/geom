@@ -489,14 +489,6 @@ static
   aTol=2.*Tolerance2D(aVb, aGAS);
   aTol2=aTol*aTol;
   //
-  //modified by NIZNHY-PKV Tue Nov 14 16:56:19 2006f
-  /*
-  UVTolerance2D(aVb, aGAS, aTolUVb, aTolVVb);
-  aTolUVb = 2.*aTolUVb;
-  aTolVVb = 2.*aTolVVb;
-  */
-  //modified by NIZNHY-PKV Tue Nov 14 16:56:26 2006t
-  //
   aNb=aLS.Length();
   if (aNb>0) {
     //
@@ -517,20 +509,6 @@ static
 	//
 	aD2=aPaPrev.SquareDistance(aPb);
 	anIsSameV2d =aD2<aTol2;
-	//
-	//modified by NIZNHY-PKV Tue Nov 14 16:56:49 2006f
-	/*
-	if(anIsSameV2d) {
-	  Standard_Real udist, vdist;
-	  //
-	  udist=fabs(aPaPrev.X() - aPb.X());
-	  vdist=fabs(aPaPrev.Y() - aPb.Y());
-	  if((udist > aTolUVb) || (vdist > aTolVVb)) {
-	    anIsSameV2d=!anIsSameV2d;
-	  }
-	}
-	*/
-	//modified by NIZNHY-PKV Tue Nov 14 16:56:54 2006t
       }//if (anIsSameV) {
       //
       if (anIsSameV && anIsSameV2d) {
@@ -685,7 +663,10 @@ static
   aTol2D=(aVr>anUr) ? aVr : anUr;
   //
   if (aType==GeomAbs_BSplineSurface||
-      aType==GeomAbs_Sphere) {
+      aType==GeomAbs_Sphere||
+      //modified by NIZNHY-PKV Wed Nov 29 10:18:50 2006f
+      GeomAbs_SurfaceOfRevolution) {
+    //modified by NIZNHY-PKV Wed Nov 29 10:18:55 2006t
     if (aTol2D < aTolV3D) {
       aTol2D=aTolV3D;
     }
@@ -895,29 +876,3 @@ Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& aLEInfo)
   }
   return iCnt;
 }
-//modified by NIZNHY-PKV Tue Nov 14 16:55:31 2006f
-/*
-static
-  void UVTolerance2D (const TopoDS_Vertex& aV,
-		      const GeomAdaptor_Surface& aGAS,
-		      Standard_Real& aTolU,
-		      Standard_Real& aTolV);
-*/
-/*
-//=======================================================================
-//function : UVTolerance2D
-//purpose  : 
-//=======================================================================
-void UVTolerance2D (const TopoDS_Vertex& aV,
-		    const GeomAdaptor_Surface& aGAS,
-		    Standard_Real& aTolU,
-		    Standard_Real& aTolV)
-{
-  Standard_Real aTolV3D;
-  //
-  aTolV3D = BRep_Tool::Tolerance(aV);
-  aTolU=aGAS.UResolution(aTolV3D);
-  aTolV=aGAS.VResolution(aTolV3D);
-}
-*/
-//modified by NIZNHY-PKV Tue Nov 14 16:55:39 2006

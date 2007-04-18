@@ -147,7 +147,7 @@ module GEOM
     /*!
      *  Get the TopoDS_Shape, for colocated case only.
      */
-    long getShape();
+    long long getShape();
 
     /*!
      ######################################################################
@@ -888,6 +888,29 @@ module GEOM
 					       in boolean theWithContact ,
 					       in boolean theWithCorrection );
     
+    /*!
+     *  Create a shape by extrusion of the profile shape along
+     *  the path shape. The path shape can be a shell or a face.
+     *  the several profiles can be specified in the several locations of path.	
+     *  \param theSeqBases - list of  Bases shape to be extruded.
+     *  \param theSeqSubBases - list of corresponding subshapes of section shapes.
+     *  \param theLocations - list of locations on the path corresponding
+     *                        specified list of the Bases shapes. Number of locations
+     *                        should be equal to number of bases or list of locations can be empty.
+     *  \param thePath - Path shape to extrude the base shape along it.
+     *  \param theWithContact - the mode defining that the section is translated to be in
+     *                          contact with the spine.
+     *  \param - WithCorrection - defining that the section is rotated to be
+     *	                         orthogonal to the spine tangent in the correspondent point
+     *  \return New GEOM_Object, containing the created pipe.
+     */
+    GEOM_Object MakePipeWithShellSections (in ListOfGO theSeqBases,
+					   in ListOfGO theSeqSubBases,
+					   in ListOfGO theLocations,
+					   in GEOM_Object thePath,
+					   in boolean theWithContact ,
+					   in boolean theWithCorrection );
+    
   };
 
   /*!
@@ -965,6 +988,25 @@ module GEOM
      *  \return New GEOM_Object, containing a copy of theShape without coincident faces.
      */
     GEOM_Object MakeGlueFaces (in GEOM_Object theShape, in double theTolerance);
+
+    /*!
+     *  Find coincident faces in theShape for possible gluing.
+     *  \param theShape Initial shape.
+     *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
+     *  \return ListOfGO
+     */
+    ListOfGO GetGlueFaces (in GEOM_Object theShape, in double theTolerance);
+
+    /*!
+     *  Replace coincident faces in theShape by one face
+     *  in compliance with given list of faces
+     *  \param theShape Initial shape.
+     *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
+     *  \param theFaces List of faces for gluing.
+     *  \return New GEOM_Object, containing a copy of theShape without some faces.
+     */
+    GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape, in double theTolerance,
+				     in ListOfGO theFaces);
 
     /*!
      *  Explode a shape on subshapes of a given type.
@@ -1751,6 +1793,20 @@ module GEOM
 			 in GEOM_Object thePnt3);
 
     /*!
+     *  Create an arc of circle of center C from one point to another
+     *  \param theCenter Center point of the arc.
+     *  \param thePnt1 Start point of the arc.
+     *  \param thePnt2 End point of the arc.
+     *  \param theSense Orientation of the arc
+     *  \return New GEOM_Object, containing the created arc.
+     */
+    GEOM_Object MakeArcCenter (in GEOM_Object theCenter,
+                               in GEOM_Object thePnt1,
+                               in GEOM_Object thePnt2,
+                               in boolean theSense);
+
+
+    /*!
      *  Create a polyline on the set of points.
      *  \param thePoints Sequence of points for the polyline.
      *  \return New GEOM_Object, containing the created polyline.
@@ -2101,12 +2157,73 @@ module GEOM
   };
 
   /*!
+   *  GEOM_IKindOfShape: namespace for shape_kind enumeration.
+   */
+  interface GEOM_IKindOfShape
+  {
+    enum shape_kind {
+      NO_SHAPE,
+      // COMPOSITEs
+      COMPOUND,
+      COMPSOLID,
+      SHELL,
+      WIRE,
+      // SOLIDs
+      SPHERE,       // full sphere
+      CYLINDER,     // cylinder
+      BOX,          // box with faces, parallel to global coordinate planes
+      ROTATED_BOX,  // other box
+      TORUS,        // full torus
+      CONE,         // cone
+      POLYHEDRON,   // solid, bounded by polygons
+      SOLID,        // other solid
+      // FACEs
+      SPHERE2D,     // spherical face (closed)
+      CYLINDER2D,   // cylindrical face with defined height
+      TORUS2D,      // toroidal face (closed)
+      CONE2D,       // conical face with defined height
+      DISK_CIRCLE,  // planar, bounded by circle
+      DISK_ELLIPSE, // planar, bounded by ellipse
+      POLYGON,      // planar, bounded by segments
+      PLANE,        // infinite planar
+      PLANAR,       // other planar
+      FACE,         // other face
+      // EDGEs
+      CIRCLE,       // full circle
+      ARC_CIRCLE,   // arc of circle
+      ELLIPSE,      // full ellipse
+      ARC_ELLIPSE,  // arc of ellipse
+      LINE,         // infinite segment
+      SEGMENT,      // segment
+      EDGE,         // other edge
+      // VERTEX
+      VERTEX
+    };
+  };
+
+
+  /*!
    *  GEOM_IMeasureOperations: Interface for measurement (distance, whatis) and
    *  properties calculation (like Centre of Mass, Inertia, etc.).
    *
    */
   interface GEOM_IMeasureOperations : GEOM_IOperations
   {
+    /*!
+     *  Get kind of theShape.
+     *  \param theShape Shape to get a kind of.
+     *  \param theIntegers Output. Integer and enumerated shape's parameters
+     *                     (kind of surface, closed/unclosed, number of edges, etc.)
+     *  \param theDoubles  Output. Double shape's parameters (coordinates, dimensions, etc.)
+     *  \note  Concrete meaning of each value, returned via \a theIntegers
+     *         or \a theDoubles list depends on the kind of the shape.
+     *  \return Returns a kind of shape in terms of <VAR>GEOM_IKindOfShape.shape_kind</VAR> enumeration.
+     */
+    //short KindOfShape (in GEOM_Object   theShape,
+    GEOM_IKindOfShape::shape_kind KindOfShape (in  GEOM_Object  theShape,
+					       out ListOfLong   theIntegers,
+					       out ListOfDouble theDoubles);
+
     /*!
      *  Get position (LCS) of theShape.
      *  \param theShape Shape to calculate position of.

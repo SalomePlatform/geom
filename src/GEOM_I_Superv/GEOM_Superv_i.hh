@@ -237,6 +237,13 @@ public:
 						      CORBA::Boolean theWithContact,
 						      CORBA::Boolean theWithCorrections);
   
+  GEOM::GEOM_Object_ptr MakePipeWithShellSections(const GEOM::ListOfGO& theBases,
+						  const GEOM::ListOfGO& theSubBases,
+						  const GEOM::ListOfGO& theLocations,
+						  GEOM::GEOM_Object_ptr thePath,
+						  CORBA::Boolean theWithContact,
+						  CORBA::Boolean theWithCorrections);
+  
   //-----------------------------------------------------------//
   // BooleanOperations                                         //
   //-----------------------------------------------------------//
@@ -371,7 +378,12 @@ public:
   GEOM::GEOM_Object_ptr MakeSolidShells (GEOM::GEOM_List_ptr theShells);
   GEOM::GEOM_Object_ptr MakeCompound (GEOM::GEOM_List_ptr theShapes);
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-						CORBA::Double   theTolerance);
+				       CORBA::Double theTolerance);
+  GEOM::GEOM_List_ptr GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
+				    CORBA::Double theTolerance);
+  GEOM::GEOM_Object_ptr MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
+					     CORBA::Double theTolerance,
+					     const GEOM::ListOfGO& theFaces);
   GEOM::GEOM_List_ptr MakeExplode (GEOM::GEOM_Object_ptr theShape,
 				       CORBA::Long theShapeType,
 				       CORBA::Boolean isSorted);
@@ -468,6 +480,10 @@ public:
   GEOM::GEOM_Object_ptr MakeArc (GEOM::GEOM_Object_ptr thePnt1,
 				 GEOM::GEOM_Object_ptr thePnt2,
 				 GEOM::GEOM_Object_ptr thePnt3);
+  GEOM::GEOM_Object_ptr MakeArcCenter (GEOM::GEOM_Object_ptr theCenter,
+                                       GEOM::GEOM_Object_ptr thePnt1,
+                                       GEOM::GEOM_Object_ptr thePnt2,
+                                       CORBA::Boolean theSense);
   GEOM::GEOM_Object_ptr MakePolyline (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSplineBezier (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints);

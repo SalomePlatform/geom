@@ -978,11 +978,12 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeThruSections(const GEOM::ListOfGO& theS
 //=============================================================================
 //  MakePipe:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections(const GEOM::ListOfGO& theBases,
-						      const GEOM::ListOfGO& theLocations,
-						      GEOM::GEOM_Object_ptr thePath,
-						      CORBA::Boolean theWithContact,
-						      CORBA::Boolean theWithCorrections)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections
+                     (const GEOM::ListOfGO& theBases,
+		      const GEOM::ListOfGO& theLocations,
+		      GEOM::GEOM_Object_ptr thePath,
+		      CORBA::Boolean theWithContact,
+		      CORBA::Boolean theWithCorrections)
 {
   beginService( " GEOM_Superv_i::MakePipeWithDifferentSections" );
   MESSAGE("GEOM_Superv_i::MakePipeWithDifferentSections");
@@ -991,6 +992,31 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections(const GEOM::L
   endService( " GEOM_Superv_i::MakePipeWithDifferentSections" );
   return anObj;
 }
+
+
+//=============================================================================
+//  MakePipe:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithShellSections
+                   (const GEOM::ListOfGO& theBases,
+		    const GEOM::ListOfGO& theSubBases,
+		    const GEOM::ListOfGO& theLocations,
+		    GEOM::GEOM_Object_ptr thePath,
+		    CORBA::Boolean theWithContact,
+		    CORBA::Boolean theWithCorrections)
+{
+  beginService( " GEOM_Superv_i::MakePipeWithShellSections" );
+  MESSAGE("GEOM_Superv_i::MakePipeWithShellSections");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj =
+    my3DPrimOp->MakePipeWithShellSections(theBases, theSubBases,
+					  theLocations, thePath,
+					  theWithContact, theWithCorrections);
+  endService( " GEOM_Superv_i::MakePipeWithShellSections" );
+  return anObj;
+}
+
+
 //=============================================================================
 //  MakeFuse:
 //=============================================================================
@@ -1652,13 +1678,44 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (GEOM::GEOM_List_ptr theShapes
 //  MakeGlueFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-								CORBA::Double   theTolerance)
+						    CORBA::Double   theTolerance)
 {
   beginService( " GEOM_Superv_i::MakeGlueFaces" );
   MESSAGE("GEOM_Superv_i::MakeGlueFaces");
   getShapesOp();
   GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeGlueFaces(theShape, theTolerance);
   endService( " GEOM_Superv_i::MakeGlueFaces" );
+  return anObj;
+}
+
+//=============================================================================
+//  GetGlueFaces:
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
+						 CORBA::Double theTolerance)
+{
+  beginService( " GEOM_Superv_i::GetGlueFaces" );
+  MESSAGE("GEOM_Superv_i::GetGlueFaces");
+  getShapesOp();
+  GEOM::ListOfGO* aList = myShapesOp->GetGlueFaces(theShape, theTolerance);
+  GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aList));
+  MESSAGE(" List of "<<aListPtr->GetList().length()<<" element(s)");
+  endService( " GEOM_Superv_i::GetGlueFaces" );
+  return aListPtr->_this();
+}
+
+//=============================================================================
+//  MakeGlueFacesByList:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
+							  CORBA::Double theTolerance,
+							  const GEOM::ListOfGO& theFaces)
+{
+  beginService( " GEOM_Superv_i::MakeGlueFacesByList" );
+  MESSAGE("GEOM_Superv_i::MakeGlueFacesByList");
+  getShapesOp();
+  GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces);
+  endService( " GEOM_Superv_i::MakeGlueFacesByList" );
   return anObj;
 }
 
@@ -2131,6 +2188,22 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArc (GEOM::GEOM_Object_ptr thePnt1,
   getCurvesOp();
   GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeArc(thePnt1, thePnt2, thePnt3);
   endService( " GEOM_Superv_i::MakeArc" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeArcCenter:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArcCenter (GEOM::GEOM_Object_ptr theCenter,
+                                                    GEOM::GEOM_Object_ptr thePnt1,
+                                                    GEOM::GEOM_Object_ptr thePnt2,
+                                                    CORBA::Boolean theSense)
+{
+  beginService( " GEOM_Superv_i::MakeArcCenter" );
+  MESSAGE("GEOM_Superv_i::MakeArcCenter");
+  getCurvesOp();
+  GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeArcCenter(theCenter, thePnt1, thePnt2,theSense);
+  endService( " GEOM_Superv_i::MakeArcCenter" );
   return anObj;
 }
 

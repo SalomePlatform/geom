@@ -107,6 +107,8 @@
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <NMTTools_MapOfPaveBlock.hxx>
+//
+#include <IntTools_ShrunkRange.hxx>
 
 static 
   Standard_Boolean IsPairFound(const Standard_Integer nF1,
@@ -134,6 +136,10 @@ static
 		    const TopoDS_Face& aF2,
 		    TopTools_ListOfShape& aLS);
 // Contribution of Samtech www.samcef.com END
+
+static
+  Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE, 
+			       IntTools_Context& aCtx);
 
 //=======================================================================
 // function: PerformFF
@@ -272,6 +278,7 @@ static
   Standard_Boolean bIsExistingPaveBlock, bIsValidIn2D, bIsCoincided;
   // Contribution of Samtech www.samcef.com END
   //
+  Standard_Boolean bIsMicroEdge;
   Standard_Integer i, aNbFFs, nF1, nF2, aBid=0;
   Standard_Integer nV1, nV2, j, aNbCurves;
   Standard_Real aTolR3D, aTol2D, aT1, aT2, aTolPPC=Precision::PConfusion();
@@ -510,7 +517,17 @@ static
 	//
 	BOPTools_Tools::MakeSectEdge (aIC, aV1, aT1, aV2, aT2, aES);
 	//
-	//modified by NIZNHY-PKV Thu Nov 16 11:13:46 2006f SKL/PartC5
+	// use_01 f
+	//
+	NMTTools_Tools::UpdateEdge (aES, aTolR3D);
+	bIsMicroEdge=IsMicroEdge(aES, myContext);
+	if (bIsMicroEdge) {
+	  continue;
+	}
+	//
+	//use_01 t
+	//
+	// SKL/PartC5 f
 	{
 	  Handle(Geom2d_Curve) aC2D1, aC2D2;
 	  //
@@ -519,24 +536,8 @@ static
 	  //
 	  NMTTools_Tools::MakePCurve(aES, aF1, aC2D1);
 	  NMTTools_Tools::MakePCurve(aES, aF2, aC2D2);
-	  NMTTools_Tools::UpdateEdge (aES, aTolR3D);
+	  //SKL/PartC5 t 
 	}
-	
-	//
-	/*
-	{
-	  Standard_Real aTolR2D;
-	  Handle(Geom2d_Curve) aC2D1, aC2D2;
-	  //
-	  aTolR2D=aFFi.TolR2D();
-	  aC2D1=aIC.FirstCurve2d();
-	  aC2D2=aIC.SecondCurve2d();
-	  //
-	  NMTTools_Tools::MakePCurve(aES, aF1, aC2D1, aTolR2D);
-	  NMTTools_Tools::MakePCurve(aES, aF2, aC2D2, aTolR2D);
-	}
-	*/
-	//modified by NIZNHY-PKV Thu Nov 16 11:17:34 2006t
 	//
 	aMEPB.Add(aES, aPBNew);
 	aMapEI.Add(aES, i);
@@ -742,13 +743,11 @@ static
 	aF2FWD=aF2;
 	aF2FWD.Orientation(TopAbs_FORWARD);
 	//
-	//modified by NIZNHY-PKV Thu Nov 16 12:49:13 2006f SKL/PartC5
-	//NMTTools_Tools::MakePCurve(aEx, aF1FWD, aC2D1, aTolEx);
-	//NMTTools_Tools::MakePCurve(aEx, aF2FWD, aC2D2, aTolEx);
+	// SKL/PartC5 f
 	NMTTools_Tools::MakePCurve(aEx, aF1FWD, aC2D1);
 	NMTTools_Tools::MakePCurve(aEx, aF2FWD, aC2D2);
 	NMTTools_Tools::UpdateEdge (aEx, aTolEx);
-	//modified by NIZNHY-PKV Thu Nov 16 12:49:24 2006t 
+	//SKL/PartC5 t
       } //if (aCBAPI.IsCommonBlock(aPB))
       //
       // new SE
@@ -816,8 +815,12 @@ static
   void NMTTools_PaveFiller::MakePCurves()
 {
   Standard_Integer i, aNb,  nF1, nF2, nE;
+  Standard_Integer aNbCB, aNbF, nSp, nF;
   TopoDS_Face aF1FWD, aF2FWD;
+  TColStd_ListIteratorOfListOfInteger aItF;
   BOPTools_ListIteratorOfListOfPaveBlock anIt;
+  NMTTools_ListIteratorOfListOfCommonBlock aItCB;
+  TopAbs_ShapeEnum aType;
   //
   BOPTools_CArray1OfSSInterference& aFFs=myIntrPool->SSInterferences();
   //
@@ -846,7 +849,60 @@ static
       BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aE, aF1FWD);
       BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aE, aF2FWD);
     }
-  } 
+  }
+  //
+  //modified by NIZNHY-PKV Fri Mar 23 10:35:02 2007f
+  // Check common blocks between edges and faces
+  // Build P-Curves if they were not built in previos block.
+  //
+  // The main case is :arguments for e.g aEdge, aFace -> no FFs, 
+  // but p-curves are needed.
+  //
+  aNb=myDS->NumberOfShapesOfTheObject();
+  for (i=1; i<=aNb; ++i) {
+    const TopoDS_Shape& aS=myDS->Shape(i);
+    aType=aS.ShapeType();
+    //
+    if (aType!=TopAbs_EDGE) {
+      continue;
+    }
+    const TopoDS_Edge& aE=TopoDS::Edge(aS);
+    //
+    if (BRep_Tool::Degenerated(aE)) {
+      continue;
+    }
+    //
+    const NMTTools_ListOfCommonBlock& aLCB=myCommonBlockPool(myDS->RefEdge(i));
+    aNbCB=aLCB.Extent();
+    if (!aNbCB) {
+      continue;
+    }
+    //
+    aItCB.Initialize(aLCB);
+    for (; aItCB.More(); aItCB.Next()) {
+      const NMTTools_CommonBlock& aCB=aItCB.Value();
+      const BOPTools_PaveBlock &aPB1=aCB.PaveBlock1();
+      //
+      const TColStd_ListOfInteger& aLF=aCB.Faces();
+      aNbF=aLF.Extent();
+      if (!aNbF) { 
+	continue;
+      }
+      //
+      nSp=aPB1.Edge();
+      const TopoDS_Edge aSp=TopoDS::Edge(myDS->Shape(nSp));//mpv
+      //
+      aItF.Initialize(aLF);
+      for (; aItF.More(); aItF.Next()) {
+	nF=aItF.Value();
+	aF1FWD=TopoDS::Face(myDS->Shape(nF));
+	aF1FWD.Orientation(TopAbs_FORWARD);
+	// 
+	BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aSp, aF1FWD);
+      } // for (; aItCB.More(); aItCB.Next()) {
+    }//if (aS.ShapeType()==TopAbs_EDGE) {
+  }    
+  //modified by NIZNHY-PKV Fri Mar 23 10:35:13 2007t
 }
 //=======================================================================
 // function: IsExistingPaveBlock
@@ -1342,11 +1398,11 @@ void SharedEdges1(const TopoDS_Face& aF1,
     // V22
     const BOPTools_Pave& aPave22=aPBR.Pave2();
     nV22=aPave22.Index();
-    //modified by NIZNHY-PKV Wed Nov 15 13:08:13 2006f
+    //
     if (nV11==nV21 || nV11==nV22 || nV12==nV21 || nV12==nV22) {
       continue;
     }
-    //modified by NIZNHY-PKV Wed Nov 15 13:08:15 2006t
+    //
     // E2
     nE2=aPBR.Edge();
     //
@@ -1418,3 +1474,44 @@ void SharedEdges1(const TopoDS_Face& aF1,
 }
 //
 // Contribution of Samtech www.samcef.com END
+
+// use_01 f
+//=======================================================================
+//function : IsMicroEdge
+//purpose  : 
+//=======================================================================
+Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE, 
+			     IntTools_Context& aCtx)
+{
+  Standard_Boolean bRet;
+  Standard_Integer iErr;
+  Standard_Real aT1, aT2, aTmp;
+  Handle(Geom_Curve) aC3D;
+  TopoDS_Vertex aV1, aV2;
+  IntTools_Range aR;
+  //
+  bRet=(BRep_Tool::Degenerated(aE) || 
+	!BRep_Tool::IsGeometric(aE));
+  if (bRet) {
+    return bRet;
+  }
+  //
+  aC3D=BRep_Tool::Curve(aE, aT1, aT2);
+  TopExp::Vertices(aE, aV1, aV2);
+  aT1=BRep_Tool::Parameter(aV1, aE); 
+  aT2=BRep_Tool::Parameter(aV2, aE);
+  if (aT2<aT1) {
+    aTmp=aT1;
+    aT1=aT2;
+    aT2=aTmp;
+  }
+  //
+  aR.SetFirst(aT1);
+  aR.SetLast(aT2);
+  IntTools_ShrunkRange aSR (aE, aV1, aV2, aR, aCtx);
+  iErr=aSR.ErrorStatus();
+  bRet=!aSR.IsDone();
+  //
+  return bRet;
+}
+// use_01 t

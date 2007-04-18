@@ -546,7 +546,7 @@ bool EntityGUI_SubShapeDlg::isValid( QString& msg )
 bool EntityGUI_SubShapeDlg::execute( ObjectList& objects )
 {
   GEOM::ListOfGO_var aList = GEOM::GEOM_IShapesOperations::_narrow(
-    getOperation() )->MakeExplode( myObject, shapeType(), false );
+    getOperation() )->MakeExplode( myObject, shapeType(), true );
     
   if ( !aList->length() )
     return false;

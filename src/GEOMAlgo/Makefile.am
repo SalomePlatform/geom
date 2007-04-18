@@ -109,10 +109,16 @@ dist_libGEOMAlgo_la_SOURCES = \
 	GEOMAlgo_WESCorrector.cxx \
 	GEOMAlgo_WireEdgeSet.cxx \
 	GEOMAlgo_WireSolid.cxx \
-	GEOMAlgo_WireSplitter.cxx
-
-LIB_CLIENT_IDL = 
-LIB_SERVER_IDL = 
+	GEOMAlgo_WireSplitter.cxx \
+	GEOMAlgo_ClsfSolid.cxx \
+	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape_0.cxx \
+	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape_0.cxx \
+	GEOMAlgo_DataMapOfPassKeyShapeShape_0.cxx \
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo_0.cxx \
+	GEOMAlgo_ShapeInfoFiller_1.cxx \
+	GEOMAlgo_IndexedDataMapOfShapeShapeInfo_0.cxx \
+	GEOMAlgo_ShapeInfo.cxx \
+	GEOMAlgo_ShapeInfoFiller.cxx
 
 # header files
 salomeinclude_HEADERS = \
@@ -202,6 +208,31 @@ salomeinclude_HEADERS = \
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState.hxx \
 	Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx \
 	Handle_GEOMAlgo_ListNodeOfListOfPnt.hxx
+	GEOMAlgo_ClsfSolid.hxx \
+	GEOMAlgo_ClsfSolid.ixx \
+	GEOMAlgo_ClsfSolid.jxx \
+	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape.hxx \
+	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx \
+	GEOMAlgo_DataMapOfPassKeyShapeShape.hxx \
+	GEOMAlgo_Gluer1.cxx \
+	GEOMAlgo_Gluer1.hxx \
+	GEOMAlgo_Gluer1.ixx \
+	GEOMAlgo_Gluer1.jxx \
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx \
+	GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx \
+	GEOMAlgo_KindOfBounds.hxx \
+	GEOMAlgo_KindOfClosed.hxx \
+	GEOMAlgo_KindOfName.hxx \
+	GEOMAlgo_KindOfShape.hxx \
+	GEOMAlgo_ShapeInfo.hxx \
+	GEOMAlgo_ShapeInfo.ixx \
+	GEOMAlgo_ShapeInfo.jxx \
+	GEOMAlgo_ShapeInfoFiller.hxx \
+	GEOMAlgo_ShapeInfoFiller.ixx \
+	GEOMAlgo_ShapeInfoFiller.jxx \
+	Handle_GEOMAlgo_ClsfSolid.hxx \
+	Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx \
+	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx
 
 libGEOMAlgo_la_CPPFLAGS = \
 	$(CAS_CPPFLAGS) \

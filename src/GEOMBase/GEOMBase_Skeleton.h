@@ -79,7 +79,7 @@ protected:
     QString myHelpFileName;
 
 protected slots:
-    void ClickOnCancel();
+    virtual void ClickOnCancel();
     void LineEditReturnPressed();
     void DeactivateActiveDialog();
     void ActivateThisDialog();

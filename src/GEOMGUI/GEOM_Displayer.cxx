@@ -40,6 +40,7 @@
 #include "GEOM_Actor.h"
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_AISShape.hxx"
+#include "GEOM_AISVector.hxx"
 #include "GEOM_AISTrihedron.hxx"
 #include "GEOM_VTKTrihedron.hxx"
 
@@ -237,6 +238,13 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   myShadingColor = SalomeApp_Tools::color( col );
 
   myDisplayMode = resMgr->integerValue("Geometry", "display_mode", 0);
+  myTypeOfMarker = (Aspect_TypeOfMarker)resMgr->integerValue("Geometry", "type_of_marker", Aspect_TOM_PLUS);
+  myScaleOfMarker = resMgr->doubleValue("Geometry", "marker_scale", 1.);
+  if(myScaleOfMarker < 1.0)
+    myScaleOfMarker = 1.0;
+  if(myScaleOfMarker > 7.)
+    myScaleOfMarker = 7.;
+
 
   myColor = -1;
   // This color is used for shape displaying. If it is equal -1 then
@@ -513,7 +521,12 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
     {
       if ( !myShape.IsNull() )
       {
-        Handle(GEOM_AISShape) AISShape = new GEOM_AISShape( myShape, "" );
+        //Handle(GEOM_AISShape) AISShape = new GEOM_AISShape( myShape, "" );
+        Handle(GEOM_AISShape) AISShape;
+        if (myType == GEOM_VECTOR)
+          AISShape = new GEOM_AISVector (myShape, "");
+        else
+          AISShape = new GEOM_AISShape (myShape, "");
         // Temporary staff: vertex must be infinite for correct visualization
         AISShape->SetInfiniteState( myShape.Infinite() || myShape.ShapeType() == TopAbs_VERTEX );
 
@@ -523,21 +536,22 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 
 	// Set color and number for iso lines
 	SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-	QColor col = aResMgr->colorValue( "Geometry", "isos_color", QColor(int(0.5*255), int(0.5*255), int(0.5*255)) );
+	QColor col = aResMgr->colorValue( "Geometry", "isos_color",
+                                          QColor(int(0.5*255), int(0.5*255), int(0.5*255)) );
 	Quantity_Color aColor = SalomeApp_Tools::color( col );
 	int anUIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_u", 1);
 	int aVIsoNumber  = aResMgr->integerValue("OCCViewer", "iso_number_v", 1);
-		
+
 	Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
 	anAspect->SetNumber( anUIsoNumber );
 	anAspect->SetColor( aColor );
 	AISShape->Attributes()->SetUIsoAspect( anAspect );
-	
+
 	anAspect = AISShape->Attributes()->VIsoAspect();
 	anAspect->SetNumber( aVIsoNumber );
 	anAspect->SetColor( aColor );
 	AISShape->Attributes()->SetVIsoAspect( anAspect );
-	
+
         if ( HasColor() )
         {
 	  AISShape->SetColor( (Quantity_NameOfColor)GetColor() );
@@ -545,6 +559,8 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           {
             Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
             anAspect->SetColor( (Quantity_NameOfColor)GetColor() );
+            anAspect->SetScale( myScaleOfMarker );
+            anAspect->SetTypeOfMarker( myTypeOfMarker );
             AISShape->Attributes()->SetPointAspect( anAspect );
           }
         }
@@ -554,17 +570,19 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	      {
 		col = aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) );
 		aColor = SalomeApp_Tools::color( col );
-		
+
 		Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
 		anAspect->SetColor( aColor );
-		AISShape->Attributes()->SetPointAspect( anAspect );
+                anAspect->SetScale( myScaleOfMarker );
+                anAspect->SetTypeOfMarker( myTypeOfMarker );
+                AISShape->Attributes()->SetPointAspect( anAspect );
 	      }
 	    else
 	      {
 		// Set line aspect
 		col = aResMgr->colorValue( "Geometry", "wireframe_color", QColor( 255, 255, 0 ) );
 		aColor = SalomeApp_Tools::color( col );
-		
+
 		Handle(Prs3d_LineAspect) anAspect = AISShape->Attributes()->LineAspect();
 		anAspect->SetColor( aColor );
 		AISShape->Attributes()->SetLineAspect( anAspect );
@@ -577,15 +595,15 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 		// Set free boundaries aspect
 		col = aResMgr->colorValue( "Geometry", "free_bound_color", QColor( 0, 255, 0 ) );
 		aColor = SalomeApp_Tools::color( col );
-		
+
 		anAspect = AISShape->Attributes()->FreeBoundaryAspect();
 		anAspect->SetColor( aColor );
 		AISShape->Attributes()->SetFreeBoundaryAspect( anAspect );
-		
+
 		// Set wire aspect
 		col = aResMgr->colorValue( "Geometry", "line_color", QColor( 255, 0, 0 ) );
 		aColor = SalomeApp_Tools::color( col );
-		
+
 		anAspect = AISShape->Attributes()->WireAspect();
 		anAspect->SetColor( aColor );
 		AISShape->Attributes()->SetWireAspect( anAspect );
@@ -664,7 +682,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 
   vtkActorCollection* theActors = 0;
 
-  if ( myType == GEOM_MARKER && !myShape.IsNull() && myShape.ShapeType() == TopAbs_FACE )
+  if ( myType == GEOM_MARKER && myShape.ShapeType() == TopAbs_FACE )
   {
     myToActivate = false;
     GEOM_VTKTrihedron* aTrh = GEOM_VTKTrihedron::New();
@@ -692,7 +710,10 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
     theActors->AddItem( aTrh );
   }
   else
-    theActors = GEOM_AssemblyBuilder::BuildActors( myShape, 0, 0, Standard_True );
+  {
+    bool isVector = (myType == GEOM_VECTOR);
+    theActors = GEOM_AssemblyBuilder::BuildActors( myShape, 0, 0, Standard_True, isVector );
+  }
 
   theActors->InitTraversal();
 
@@ -1054,7 +1075,13 @@ void GEOM_Displayer::AfterDisplay( SALOME_View*, const SALOME_OCCViewType& )
 //=================================================================
 void GEOM_Displayer::SetColor( const int color )
 {
-  myColor = color;
+  if ( color == -1 )
+    UnsetColor();
+  else
+  {
+    myColor = color;
+    myShadingColor = Quantity_Color( (Quantity_NameOfColor)color );
+  }
 }
 
 int GEOM_Displayer::GetColor() const
@@ -1070,6 +1097,10 @@ bool GEOM_Displayer::HasColor() const
 void GEOM_Displayer::UnsetColor()
 {
   myColor = -1;
+  
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  QColor col = resMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
+  myShadingColor = SalomeApp_Tools::color( col );
 }
 
 //=================================================================
@@ -1161,4 +1192,28 @@ void GEOM_Displayer::setShape( const TopoDS_Shape& theShape )
 bool GEOM_Displayer::canBeDisplayed( const QString& /*entry*/, const QString& viewer_type ) const
 {
   return viewer_type==SOCC_Viewer::Type() || viewer_type==SVTK_Viewer::Type();
+}
+
+int GEOM_Displayer::SetDisplayMode( const int theMode )
+{
+  int aPrevMode = myDisplayMode;
+  if ( theMode != -1 )
+    myDisplayMode = theMode;
+  else
+  {
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    myDisplayMode = resMgr->integerValue( "Geometry", "display_mode", 0 );
+  }
+  return aPrevMode;
+}
+
+int GEOM_Displayer::GetDisplayMode() const
+{
+  return myDisplayMode;
+}
+
+int GEOM_Displayer::UnsetDisplayMode()
+{
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  myDisplayMode = resMgr->integerValue( "Geometry", "display_mode", 0 );
 }

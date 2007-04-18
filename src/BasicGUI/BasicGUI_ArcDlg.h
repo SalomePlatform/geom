@@ -32,6 +32,7 @@
 
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_3Sel_QTD.h"
+#include "DlgRef_3Sel1Check_QTD.h"
 
 //=================================================================================
 // class    : BasicGUI_ArcDlg
@@ -57,10 +58,11 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
-
+    int myConstructorId;
     GEOM::GEOM_Object_var myPoint1, myPoint2, myPoint3;
 
     DlgRef_3Sel_QTD* Group3Pnts;
+    DlgRef_3Sel1Check_QTD* Group3Pnts2;
 
 private slots:
     void ClickOnOk();
@@ -69,11 +71,11 @@ private slots:
     
     void ActivateThisDialog();
     void DeactivateActiveDialog();
-    
+    void ConstructorsClicked( int );
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-
+    void ReverseSense(int);
 };
 
 #endif // DIALOGBOX_ARC_H

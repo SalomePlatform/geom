@@ -51,6 +51,11 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeArc (Handle(GEOM_Object) thePnt1,
                                                Handle(GEOM_Object) thePnt2,
                                                Handle(GEOM_Object) thePnt3);
+ 
+  Standard_EXPORT Handle(GEOM_Object) MakeArcCenter (Handle(GEOM_Object) thePnt1,
+                                                     Handle(GEOM_Object) thePnt2,
+                                                     Handle(GEOM_Object) thePnt3,
+                                                     bool                theSense);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSplineBezier        (list<Handle(GEOM_Object)> thePoints);
   Standard_EXPORT Handle(GEOM_Object) MakeSplineInterpolation (list<Handle(GEOM_Object)> thePoints);

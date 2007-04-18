@@ -86,7 +86,8 @@ dist_libDlgRef_la_SOURCES = \
 	DlgRef_3Sel1Spin.cxx \
 	DlgRef_3Check_QTD.cxx \
 	DlgRef_6Sel_QTD.cxx \
-	DlgRef_4Sel1Spin2Check.cxx 
+	DlgRef_4Sel1Spin2Check.cxx \
+	DlgRef_3Sel1Check_QTD.cxx
 
 MOC_FILES = \
 	DlgRef_Skeleton_QTD_moc.cxx \
@@ -142,7 +143,8 @@ MOC_FILES = \
 	DlgRef_1Sel_Ext_moc.cxx \
 	DlgRef_3Check_QTD_moc.cxx \
 	DlgRef_6Sel_QTD_moc.cxx \
-	DlgRef_4Sel1Spin2Check_moc.cxx
+	DlgRef_4Sel1Spin2Check_moc.cxx \
+	DlgRef_3Sel1Check_QTD_moc.cxx
 
 # header files 
 salomeinclude_HEADERS = \
@@ -200,6 +202,7 @@ salomeinclude_HEADERS = \
 	DlgRef_3Check_QTD.h \
 	DlgRef_6Sel_QTD.h \
 	DlgRef_4Sel1Spin2Check.h \
+	DlgRef_3Sel1Check_QTD.h \
 	GEOM_DlgRef.hxx
 
 nodist_libDlgRef_la_SOURCES= \

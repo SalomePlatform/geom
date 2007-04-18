@@ -188,6 +188,8 @@ check_blocks_compound.png \
 free_faces.png \
 propagate.png \
 redo.png \
-undo.png
+undo.png \
+arccenter.png \
+glue2.png
 
 nodist_salomeres_DATA = GEOMCatalog.xml

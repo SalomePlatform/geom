@@ -106,6 +106,13 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 						      CORBA::Boolean theWithContact,
 						      CORBA::Boolean theWithCorrections);
 
+  GEOM::GEOM_Object_ptr MakePipeWithShellSections(const GEOM::ListOfGO& theBases,
+						  const GEOM::ListOfGO& theSubBases,
+						  const GEOM::ListOfGO& theLocations,
+						  GEOM::GEOM_Object_ptr thePath,
+						  CORBA::Boolean theWithContact,
+						  CORBA::Boolean theWithCorrections);
+
   ::GEOMImpl_I3DPrimOperations* GetOperations()
   { return (::GEOMImpl_I3DPrimOperations*)GetImpl(); }
 };

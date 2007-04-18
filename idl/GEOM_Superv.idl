@@ -177,6 +177,13 @@ module GEOM
 					       in boolean theWithContact ,
 					       in boolean theWithCorrection );
     
+    GEOM_Object MakePipeWithShellSections (in ListOfGO theSeqBases,
+					   in ListOfGO theSeqSubBases,
+					   in ListOfGO theLocations,
+					   in GEOM_Object thePath,
+					   in boolean theWithContact ,
+					   in boolean theWithCorrection );
+    
     //-----------------------------------------------------------//
     // BooleanOperations                                         //
     //-----------------------------------------------------------//
@@ -305,7 +312,12 @@ module GEOM
     GEOM_Object MakeSolidShells (in GEOM_List theShells) ;
     GEOM_Object MakeCompound (in GEOM_List theShapes) ;
     GEOM_Object MakeGlueFaces (in GEOM_Object theShape, 
-			       in double      theTolerance) ;
+			       in double theTolerance);
+    GEOM_List GetGlueFaces (in GEOM_Object theShape, 
+			    in double theTolerance);
+    GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape, 
+				     in double theTolerance,
+				     in ListOfGO theFaces);
     GEOM_List MakeExplode (in GEOM_Object theShape,
 			   in long        theShapeType,
 			   in boolean     isSorted) ;
@@ -403,6 +415,10 @@ module GEOM
     GEOM_Object MakeArc (in GEOM_Object thePnt1,
 			 in GEOM_Object thePnt2,
 			 in GEOM_Object thePnt3) ;
+    GEOM_Object MakeArcCenter (in GEOM_Object theCenter,
+                               in GEOM_Object thePnt1,
+                               in GEOM_Object thePnt2,
+                               in boolean theSense) ;
     GEOM_Object MakePolyline (in GEOM_List thePoints) ;
     GEOM_Object MakeSplineBezier (in GEOM_List thePoints) ;
     GEOM_Object MakeSplineInterpolation (in GEOM_List thePoints) ;

@@ -61,6 +61,55 @@ is
 	ST_INOUT    
     end State; 
     --
+    enumeration KindOfShape is 
+    	KS_UNKNOWN, 
+    	KS_SPHERE,
+    	KS_CYLINDER,
+    	KS_BOX,
+    	KS_TORUS,
+    	KS_CONE,
+    	KS_ELLIPSE,
+    	KS_PLANE,
+    	KS_CIRCLE, 
+    	KS_LINE, 
+    	KS_DEGENERATED 
+    end KindOfShape;   
+    --  
+    enumeration KindOfName is 
+    	KN_UNKNOWN, 
+    	KN_SPHERE,
+    	KN_CYLINDER,
+    	KN_TORUS,
+    	KN_CONE,
+    	KN_ELLIPSE, 
+    	KN_CIRCLE,
+    	KN_PLANE,
+    	KN_LINE, 
+    	KN_BOX, 
+	KN_SEGMENT, 
+	KN_ARCCIRCLE, 
+        KN_POLYGON, 
+	KN_POLYHEDRON,
+    	KN_DISKCIRCLE, 
+    	KN_DISKELLIPSE, 
+	KN_RECTANGLE, 
+	KN_TRIANGLE, 
+	KN_QUADRANGLE, 
+	KN_ARCELLIPSE       	 
+    end KindOfName;   
+    --
+    enumeration KindOfBounds is  
+    	KB_UNKNOWN, 
+	KB_TRIMMED, 
+    	KB_INFINITE
+    end KindOfBounds;  
+    --
+    enumeration KindOfClosed is  
+    	KC_UNKNOWN, 
+	KC_CLOSED, 
+    	KC_NOTCLOSED
+    end KindOfClosed;  
+    --
     deferred class HAlgo;
     deferred class Clsf;
     class ClsfSurf; 
@@ -73,8 +122,12 @@ is
     deferred class Algo;  
     deferred class ShapeAlgo;  
     -- 
+    class ShapeInfo;
+    class ShapeInfoFiller;
+    -- 
     --  gluer    	     
     class Gluer; 
+    class Gluer1;  
     class GlueAnalyser; 
     class CoupleOfShapes; 
     class PassKey;  
@@ -94,7 +147,16 @@ is
     -- 
     class FinderShapeOn1;
     class StateCollector; 
-    
+    --  adds
+    deferred class HAlgo;
+    deferred class Clsf;
+    class ClsfSurf; 
+    class ClsfBox;  
+    --modified by NIZNHY-PKV Mon Jan 29 10:27:44 2007f
+    class ClsfSolid;  
+    --modified by NIZNHY-PKV Mon Jan 29 10:27:46 2007t
+    class FinderShapeOn2; 
+    class PassKeyShapeMapHasher;
     --
     -- Builder/Splitter 
     deferred class BuilderShape; 
@@ -151,21 +213,47 @@ is
     	instantiates List from TCollection  (CoupleOfShapes from GEOMAlgo);
 
 
-    class IndexedDataMapOfShapeState  
+    class IndexedDataMapOfShapeState
     	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
 	    		    		         	 State from TopAbs,  
 	    	    	    	    	    	    	 ShapeMapHasher from TopTools);
-    class ListOfPnt  
+    class ListOfPnt
     	instantiates List from TCollection  (Pnt from gp);
 
-    class DataMapOfPassKeyInteger   
+    class DataMapOfPassKeyInteger
 	instantiates DataMap from TCollection (PassKey from GEOMAlgo, 
 					       Integer from Standard, 
                                                PassKeyMapHasher from GEOMAlgo); 
      
-    class IndexedDataMapOfPassKeyShapeListOfShape   
+    class IndexedDataMapOfPassKeyShapeListOfShape
 	instantiates IndexedDataMap from TCollection (PassKeyShape from GEOMAlgo, 
 						      ListOfShape from TopTools, 
                                                       PassKeyShapeMapHasher from GEOMAlgo); 
 
+    class IndexedDataMapOfShapeShapeInfo
+    	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
+	    		    		         	 ShapeInfo from GEOMAlgo,
+	    		    		         	 ShapeMapHasher from TopTools);
+
+    class DataMapOfPassKeyShapeShape   
+	instantiates DataMap from TCollection (PassKeyShape from GEOMAlgo, 
+					       Shape from TopoDS, 
+     	    	    	    	    	       PassKeyShapeMapHasher from GEOMAlgo); 
+
+    class DataMapOfShapeShapeSet instantiates 
+    	DataMap from TCollection(Shape from TopoDS, 
+	                         ShapeSet from GEOMAlgo, 
+	                         ShapeMapHasher from TopTools); 
+	 
+    class DataMapOfShapeReal instantiates 
+    	DataMap from TCollection(Shape from TopoDS, 
+	                         Real from Standard, 
+	                         ShapeMapHasher from TopTools);		 
+				  
+    
+    class DataMapOfRealListOfShape instantiates  
+    	DataMap from TCollection(Real from Standard, 
+    	    	    	    	 ListOfShape from TopTools,  
+	                         MapRealHasher from TColStd);	   
+    
 end GEOMAlgo;

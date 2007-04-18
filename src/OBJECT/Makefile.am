@@ -38,6 +38,7 @@ salomeinclude_HEADERS = \
 	Handle_GEOM_InteractiveObject.hxx \
 	GEOM_AISTrihedron.hxx \
 	GEOM_VTKTrihedron.hxx \
+	GEOM_AISVector.hxx \
 	GEOM_OBJECT_defs.hxx
 
 # Libraries targets
@@ -50,7 +51,8 @@ dist_libGEOMObject_la_SOURCES = \
 	GEOM_AISShape.cxx \
 	GEOM_InteractiveObject.cxx \
 	GEOM_AISTrihedron.cxx \
-	GEOM_VTKTrihedron.cxx
+	GEOM_VTKTrihedron.cxx \
+	GEOM_AISVector.cxx
 
 
 libGEOMObject_la_CPPFLAGS = \

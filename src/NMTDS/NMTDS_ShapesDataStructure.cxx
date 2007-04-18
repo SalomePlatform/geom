@@ -24,17 +24,19 @@
 
 
 #include <NMTDS_ShapesDataStructure.ixx>
+
+#include <TColStd_MapOfInteger.hxx>
+
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Shape.hxx>
-#include <BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors.hxx>
-#include <NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx>
-#include <NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx>
+
 #include <BooleanOperations_ShapeAndInterferences.hxx>
-#include <NMTDS_IndexRange.hxx>
-//
 #include <BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors.hxx>
 #include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
-#include <TColStd_MapOfInteger.hxx>
+
+#include <NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx>
+#include <NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx>
+#include <NMTDS_IndexRange.hxx>
 
 //===========================================================================
 //function : NMTDS_ShapesDataStructure::NMTDS_ShapesDataStructure
@@ -152,27 +154,29 @@
   NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors aLx;
   NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors aLit;
   TopoDS_Iterator anIt;
-  // Modified  Thu Sep 14 14:35:18 2006 
-  // Contribution of Samtech www.samcef.com BEGIN
   BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors aMSA;
-  // Contribution of Samtech www.samcef.com END
   //
   anIt.Initialize(myCompositeShape);
-  for (i=0; anIt.More(); anIt.Next(), ++i) {
-    // Modified  Thu Sep 14 14:35:18 2006 
-    // Contribution of Samtech www.samcef.com BEGIN
+  for (; anIt.More(); anIt.Next()) {
     const TopoDS_Shape& aSx=anIt.Value(); 
     BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors aMS;
-    FillMap(aSx, aMSA, aMS);
-    aLx.Append(aMS);
-    // Contribution of Samtech www.samcef.com END
+    //modified by NIZNHY-PKV Tue Feb 27 17:05:47 2007f
+    //FillMap(aSx, aMSA, aMS);
+    //aLx.Append(aMS);
+    //
+    if (!aMSA.Contains(aSx)) {
+      FillMap(aSx, aMSA, aMS);
+      aLx.Append(aMS);
+    }
+    //modified by NIZNHY-PKV Tue Feb 27 17:06:03 2007t
   }
-  // Modified  Thu Sep 14 14:35:18 2006 
-  // Contribution of Samtech www.samcef.com BEGIN
+  //
   aNbS=aMSA.Extent(); 
-  // Contribution of Samtech www.samcef.com END
   //
   // Fill myRanges
+  //modified by NIZNHY-PKV Tue Feb 27 17:10:07 2007f
+  i=aLx.Extent();
+  //modified by NIZNHY-PKV Tue Feb 27 17:10:10 2007t
   myRanges.Resize(i);
   aLit.Initialize(aLx);
   for (i=1; aLit.More(); aLit.Next(), ++i) {
@@ -210,8 +214,6 @@
   // Contribution of Samtech www.samcef.com BEGIN
   //
   // Fill the table
-  //modified by NIZNHY-PKV Tue May 16 11:47:28 2006f
-  
   //aShift=0;
   //for (i=0; i<2; ++i) {
   //  if (i) {
@@ -224,7 +226,7 @@
   //    InsertShapeAndAncestorsSuccessors(aSx, aASx, aShift);
   //  }
   //}
-  
+
   aShift=0;
   for (j=1; j<=aNbS; ++j) {
     const TopoDS_Shape& aSx=aMSA.FindKey(j);

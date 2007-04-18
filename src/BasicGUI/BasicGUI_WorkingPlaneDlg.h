@@ -35,6 +35,8 @@
 #include "DlgRef_2Sel_QTD.h"
 #include "DlgRef_3Check_QTD.h"
 
+class QCheckBox;
+
 //=================================================================================
 // class    : BasicGUI_WorkingPlaneDlg
 // purpose  :
@@ -53,6 +55,8 @@ private:
     void Init();
     void enterEvent(QEvent* e);
 
+    bool updateWPlane(const bool showPreview = true);
+
     GEOM::GEOM_Object_var myFace;
     GEOM::GEOM_Object_var myVectX;
     GEOM::GEOM_Object_var myVectZ;
@@ -62,6 +66,8 @@ private:
     DlgRef_1Sel_QTD* Group1;
     DlgRef_2Sel_QTD* Group2;
     DlgRef_3Check_QTD* Group3;
+
+    QCheckBox* myReverseCB;
 
     gp_Ax3 myWPlane;
 
@@ -75,6 +81,7 @@ private slots:
     void SetEditCurrentArgument();
     void SelectionIntoArgument();
     void LineEditReturnPressed();
+    void onReverse();
 
     void ActivateThisDialog();
     void DeactivateActiveDialog();

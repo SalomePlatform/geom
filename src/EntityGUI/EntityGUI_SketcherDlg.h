@@ -65,7 +65,8 @@ class GEOM_ENTITYGUI_EXPORT EntityGUI_SketcherDlg : public EntityGUI_Skeleton_QT
 
 public:
     EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent = 0,
-			  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			  const char* name = 0, bool modal = FALSE, WFlags fl = 0,
+			  const double lineWidth = 2.);
     ~EntityGUI_SketcherDlg();
 
     bool eventFilter (QObject* object, QEvent* event);
@@ -127,6 +128,7 @@ private :
 		     DIR_TAN_LENGTH, DIR_TAN_X, DIR_TAN_Y,
 		     DIR_DXDY_LENGTH, DIR_DXDY_X, DIR_DXDY_Y};
 
+  double myLineWidth;
   virtual void displayPreview  ( GEOM::GEOM_Object_ptr obj,
                                  const bool            append = false,
                                  const bool            activate = false,

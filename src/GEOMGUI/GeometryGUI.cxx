@@ -61,6 +61,7 @@
 
 #include <Prs3d_Drawer.hxx>
 #include <Prs3d_IsoAspect.hxx>
+#include <Aspect_TypeOfMarker.hxx>
 #include <OSD_SharedLibrary.hxx>
 
 #include <utilities.h>
@@ -189,6 +190,7 @@ GeometryGUI::GeometryGUI() :
   myVTKSelectors.setAutoDelete( true );
 
   myDisplayer = 0;
+  myLocalSelectionMode = GEOM_ALLOBJECTS;
 }
 
 //=======================================================================
@@ -368,6 +370,14 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 121  ||  // MENU FILE - EXPORT BREP
       id == 122  ||  // MENU FILE - EXPORT IGES
       id == 123  ||  // MENU FILE - EXPORT STEP
+      id == 2171 ||  // POPUP VIEWER - SELECT ONLY - VERTEX
+      id == 2172 ||  // POPUP VIEWER - SELECT ONLY - EDGE
+      id == 2173 ||  // POPUP VIEWER - SELECT ONLY - WIRE
+      id == 2174 ||  // POPUP VIEWER - SELECT ONLY - FACE
+      id == 2175 ||  // POPUP VIEWER - SELECT ONLY - SHELL
+      id == 2176 ||  // POPUP VIEWER - SELECT ONLY - SOLID
+      id == 2177 ||  // POPUP VIEWER - SELECT ONLY - COMPOUND
+      id == 2178 ||  // POPUP VIEWER - SELECT ONLY - SELECT ALL      
       id == 31   ||  // MENU EDIT - COPY
       id == 33   ||  // MENU EDIT - DELETE
       id == 411  ||  // MENU SETTINGS - ADD IN STUDY
@@ -854,6 +864,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 212, "DISPLAY_ALL" );
   createGeomAction( 214, "ERASE_ALL" );
   createGeomAction( 216, "DISPLAY" );
+  createGeomAction( 2171, "VERTEX_SEL_ONLY" ,"", 0, true );
+  createGeomAction( 2172, "EDGE_SEL_ONLY", "", 0, true );
+  createGeomAction( 2173, "WIRE_SEL_ONLY", "",  0, true );
+  createGeomAction( 2174, "FACE_SEL_ONLY", "", 0, true );
+  createGeomAction( 2175, "SHELL_SEL_ONLY", "",  0, true );
+  createGeomAction( 2176, "SOLID_SEL_ONLY", "", 0, true );
+  createGeomAction( 2177, "COMPOUND_SEL_ONLY", "",  0, true );
+  createGeomAction( 2178, "ALL_SEL_ONLY", "",  0, true );
   createGeomAction( 213, "DISPLAY_ONLY" );
   createGeomAction( 215, "ERASE" );
 
@@ -1115,6 +1133,35 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  214 ), -1, -1 ); // erase All
   mgr->setRule( action( 214 ), clientOCCorVTK, true );
 
+  QString selectOnly = "(client='OCCViewer' or client='VTKViewer') and (selcount=0)";
+  
+  int selectolnyId = mgr->insert( tr("MEN_SELECT_ONLY"), -1, -1);                //select only menu
+  mgr->insert( action(2171), selectolnyId, -1);                                  //Vertex
+  mgr->setRule(action(2171), selectOnly, true);
+  mgr->setRule(action(2171), selectOnly + " and selectionmode='VERTEX'", false);
+  mgr->insert( action(2172), selectolnyId, -1);                                  //Edge
+  mgr->setRule(action(2172), selectOnly, true);
+  mgr->setRule(action(2172), selectOnly + " and selectionmode='EDGE'", false);
+  mgr->insert( action(2173), selectolnyId, -1);                                  //Wire
+  mgr->setRule(action(2173), selectOnly, true);
+  mgr->setRule(action(2173), selectOnly + " and selectionmode='WIRE'", false);
+  mgr->insert( action(2174), selectolnyId, -1);                                  //Face
+  mgr->setRule(action(2174), selectOnly, true);
+  mgr->setRule(action(2174), selectOnly + " and selectionmode='FACE'", false);
+  mgr->insert( action(2175), selectolnyId, -1);                                  //Shell
+  mgr->setRule(action(2175), selectOnly, true);
+  mgr->setRule(action(2175), selectOnly + " and selectionmode='SHELL'", false);
+  mgr->insert( action(2176), selectolnyId, -1);                                  //Solid
+  mgr->setRule(action(2176), selectOnly, true);
+  mgr->setRule(action(2176), selectOnly + " and selectionmode='SOLID'", false);
+  mgr->insert( action(2177), selectolnyId, -1);                                  //Compound
+  mgr->setRule(action(2177), selectOnly, true);
+  mgr->setRule(action(2177), selectOnly + " and selectionmode='COMPOUND'", false);
+  mgr->insert( separator(), selectolnyId, -1);
+  mgr->insert( action(2178), selectolnyId, -1);                                  //Clear selection filter
+  mgr->setRule(action(2178), selectOnly, true);
+  mgr->setRule(action(2178), selectOnly + " and selectionmode='ALL'", false);
+  
   mgr->insert( action(  213 ), -1, -1 ); // display only
   mgr->setRule( action( 213 ), rule.arg( types ).arg( "true" ), true );
   mgr->insert( separator(), -1, -1 );
@@ -1678,6 +1725,14 @@ void GeometryGUI::createPreferences()
   int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
 			    LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
 
+  int VertexGroup = addPreference( tr( "PREF_GROUP_VERTEX" ), tabId );
+
+  int typeOfMarker = addPreference( tr( "PREF_TYPE_OF_MARKER" ), VertexGroup,
+                                    LightApp_Preferences::Selector, "Geometry", "type_of_marker" );
+
+  int markerScale = addPreference( tr( "PREF_MARKER_SCALE" ), VertexGroup,
+                                   LightApp_Preferences::DblSpin, "Geometry", "marker_scale" );
+
   // Set property for default display mode
   QStringList aModesList;
   aModesList.append( tr("MEN_WIREFRAME") );
@@ -1694,6 +1749,47 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( step, "min", 0.001 );
   setPreferenceProperty( step, "max", 10000 );
   setPreferenceProperty( step, "precision", 3 );
+
+  // Set property for type of vertex marker
+  QStringList aTypeOfMarkerList;
+  QValueList<QVariant> anTypeOfMarkerIndexesList;
+
+  aTypeOfMarkerList.append( tr("TOM_PLUS") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_PLUS);
+
+  aTypeOfMarkerList.append( tr("TOM_POINT") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_POINT);
+
+  aTypeOfMarkerList.append( tr("TOM_STAR") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_STAR);
+
+  aTypeOfMarkerList.append( tr("TOM_O") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_O);
+
+  aTypeOfMarkerList.append( tr("TOM_X") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_X);
+
+  aTypeOfMarkerList.append( tr("TOM_O_POINT") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_POINT);
+
+  aTypeOfMarkerList.append( tr("TOM_O_PLUS") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_PLUS);
+
+  aTypeOfMarkerList.append( tr("TOM_O_STAR") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_STAR);
+
+  aTypeOfMarkerList.append( tr("TOM_O_X") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_X);
+
+
+  setPreferenceProperty( typeOfMarker, "strings", aTypeOfMarkerList );
+  setPreferenceProperty( typeOfMarker, "indexes", anTypeOfMarkerIndexesList );
+
+  // Set property for Vertex Marker scale
+  setPreferenceProperty( markerScale, "min", 1. );
+  setPreferenceProperty( markerScale, "max", 7. );
+  setPreferenceProperty( markerScale, "precision", 0.01 );
+  setPreferenceProperty( markerScale, "step", 0.5 );
 
 }
 
@@ -1713,4 +1809,13 @@ LightApp_Displayer* GeometryGUI::displayer()
   if( !myDisplayer )
     myDisplayer = new GEOM_Displayer( dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) );
   return myDisplayer;
+}
+
+void GeometryGUI::setLocalSelectionMode(const int mode)
+{
+  myLocalSelectionMode = mode;
+}
+int GeometryGUI::getLocalSelectionMode() const
+{
+  return myLocalSelectionMode;
 }

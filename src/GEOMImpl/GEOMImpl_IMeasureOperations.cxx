@@ -25,10 +25,13 @@
 #include <GEOMImpl_MeasureDriver.hxx>
 #include <GEOMImpl_IMeasure.hxx>
 
+#include <GEOMAlgo_ShapeInfo.hxx>
+#include <GEOMAlgo_ShapeInfoFiller.hxx>
+
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
 
-#include "utilities.h"
+#include <utilities.h>
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
@@ -39,12 +42,14 @@
 #include <TDF_Tool.hxx>
 
 #include <BRep_Tool.hxx>
+#include <BRepAdaptor_Surface.hxx>
+#include <BRepBndLib.hxx>
 #include <BRepCheck.hxx>
 #include <BRepCheck_Result.hxx>
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
-#include <BRepGProp.hxx>
-#include <BRepBndLib.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepGProp.hxx>
+#include <BRepTools.hxx>
 
 #include <Bnd_Box.hxx>
 
@@ -63,8 +68,20 @@
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
+#include <GeomAbs_SurfaceType.hxx>
 #include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
+#include <Geom_SphericalSurface.hxx>
+#include <Geom_CylindricalSurface.hxx>
+#include <Geom_ToroidalSurface.hxx>
+#include <Geom_ConicalSurface.hxx>
+#include <Geom_SurfaceOfLinearExtrusion.hxx>
+#include <Geom_SurfaceOfRevolution.hxx>
+#include <Geom_BezierSurface.hxx>
+#include <Geom_BSplineSurface.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
+#include <Geom_OffsetSurface.hxx>
+
 #include <gp_Pln.hxx>
 
 #include <Standard_Failure.hxx>
@@ -91,6 +108,619 @@ GEOMImpl_IMeasureOperations::~GEOMImpl_IMeasureOperations()
   MESSAGE("GEOMImpl_IMeasureOperations::~GEOMImpl_IMeasureOperations");
 }
 
+//=============================================================================
+/*! Get kind and parameters of the given shape.
+ */
+//=============================================================================
+GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
+                             (Handle(GEOM_Object) theShape,
+                              Handle(TColStd_HSequenceOfInteger)& theIntegers,
+                              Handle(TColStd_HSequenceOfReal)&    theDoubles)
+{
+  SetErrorCode(KO);
+  ShapeKind aKind = SK_NO_SHAPE;
+
+  if (theIntegers.IsNull()) theIntegers = new TColStd_HSequenceOfInteger;
+  else                      theIntegers->Clear();
+
+  if (theDoubles.IsNull()) theDoubles = new TColStd_HSequenceOfReal;
+  else                     theDoubles->Clear();
+
+  if (theShape.IsNull())
+    return aKind;
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return aKind;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if (aShape.IsNull()) return aKind;
+
+  // Call algorithm
+  GEOMAlgo_ShapeInfoFiller aSF;
+  aSF.SetShape(aShape);
+  aSF.Perform();
+  Standard_Integer iErr = aSF.ErrorStatus();
+  if (iErr) {
+    SetErrorCode("Error in GEOMAlgo_ShapeInfoFiller");
+    return SK_NO_SHAPE;
+  }
+  const GEOMAlgo_ShapeInfo& anInfo = aSF.Info();
+
+  // Interprete results
+  TopAbs_ShapeEnum aType = anInfo.Type();
+  switch (aType)
+  {
+  case TopAbs_COMPOUND:
+  case TopAbs_COMPSOLID:
+    {
+      // (+) geompy.kind.COMPOUND     nb_solids nb_faces nb_edges nb_vertices
+      // (+) geompy.kind.COMPSOLID    nb_solids nb_faces nb_edges nb_vertices
+      // ??? "nb_faces" - all faces or only 'standalone' faces?
+      if (aType == TopAbs_COMPOUND)
+        aKind = SK_COMPOUND;
+      else
+        aKind = SK_COMPSOLID;
+
+      //theIntegers->Append(anInfo.NbSubShapes(TopAbs_COMPOUND));
+      //theIntegers->Append(anInfo.NbSubShapes(TopAbs_COMPSOLID));
+      theIntegers->Append(anInfo.NbSubShapes(TopAbs_SOLID));
+      theIntegers->Append(anInfo.NbSubShapes(TopAbs_FACE));
+      theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+      theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
+    }
+    break;
+
+  case TopAbs_SHELL:
+    {
+      // (+) geompy.kind.SHELL  geompy.info.closed   nb_faces nb_edges nb_vertices
+      // (+) geompy.kind.SHELL  geompy.info.unclosed nb_faces nb_edges nb_vertices
+      aKind = SK_SHELL;
+
+      theIntegers->Append((int)anInfo.KindOfClosed());
+
+      theIntegers->Append(anInfo.NbSubShapes(TopAbs_FACE));
+      theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+      theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
+    }
+    break;
+
+  case TopAbs_WIRE:
+    {
+      // (+) geompy.kind.WIRE  geompy.info.closed   nb_edges nb_vertices
+      // (+) geompy.kind.WIRE  geompy.info.unclosed nb_edges nb_vertices
+      aKind = SK_WIRE;
+
+      theIntegers->Append((int)anInfo.KindOfClosed());
+
+      theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+      theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
+    }
+    break;
+
+  case TopAbs_SOLID:
+    {
+      aKind = SK_SOLID;
+
+      GEOMAlgo_KindOfName aKN = anInfo.KindOfName();
+      switch (aKN)
+      {
+      case GEOMAlgo_KN_SPHERE:
+        // (+) geompy.kind.SPHERE  xc yc zc  R
+        {
+          aKind = SK_SPHERE;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+        }
+        break;
+      case GEOMAlgo_KN_CYLINDER:
+        // (+) geompy.kind.CYLINDER  xb yb zb  dx dy dz  R  H
+        {
+          aKind = SK_CYLINDER;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+          theDoubles->Append(anInfo.Height());
+        }
+        break;
+      case GEOMAlgo_KN_BOX:
+        // (+) geompy.kind.BOX  xc yc zc  ax ay az
+        {
+          aKind = SK_BOX;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          gp_Dir aX = anAx3.XDirection();
+
+          // ax ay az
+          if (aD.IsParallel(gp::DZ(), Precision::Angular()) &&
+              aX.IsParallel(gp::DX(), Precision::Angular())) {
+            theDoubles->Append(anInfo.Length()); // ax'
+            theDoubles->Append(anInfo.Width());  // ay'
+            theDoubles->Append(anInfo.Height()); // az'
+          }
+          else if (aD.IsParallel(gp::DZ(), Precision::Angular()) &&
+                   aX.IsParallel(gp::DY(), Precision::Angular())) {
+            theDoubles->Append(anInfo.Width());  // ay'
+            theDoubles->Append(anInfo.Length()); // ax'
+            theDoubles->Append(anInfo.Height()); // az'
+          }
+          else if (aD.IsParallel(gp::DX(), Precision::Angular()) &&
+                   aX.IsParallel(gp::DZ(), Precision::Angular())) {
+            theDoubles->Append(anInfo.Height()); // az'
+            theDoubles->Append(anInfo.Width());  // ay'
+            theDoubles->Append(anInfo.Length()); // ax'
+          }
+          else if (aD.IsParallel(gp::DX(), Precision::Angular()) &&
+                   aX.IsParallel(gp::DY(), Precision::Angular())) {
+            theDoubles->Append(anInfo.Height()); // az'
+            theDoubles->Append(anInfo.Length()); // ax'
+            theDoubles->Append(anInfo.Width());  // ay'
+          }
+          else if (aD.IsParallel(gp::DY(), Precision::Angular()) &&
+                   aX.IsParallel(gp::DZ(), Precision::Angular())) {
+            theDoubles->Append(anInfo.Width());  // ay'
+            theDoubles->Append(anInfo.Height()); // az'
+            theDoubles->Append(anInfo.Length()); // ax'
+          }
+          else if (aD.IsParallel(gp::DY(), Precision::Angular()) &&
+                   aX.IsParallel(gp::DX(), Precision::Angular())) {
+            theDoubles->Append(anInfo.Length()); // ax'
+            theDoubles->Append(anInfo.Height()); // az'
+            theDoubles->Append(anInfo.Width());  // ay'
+          }
+          else {
+            // (+) geompy.kind.ROTATED_BOX  xo yo zo  zx zy zz  xx xy xz  ax ay az
+            aKind = SK_ROTATED_BOX;
+
+            // Direction and XDirection
+            theDoubles->Append(aD.X());
+            theDoubles->Append(aD.Y());
+            theDoubles->Append(aD.Z());
+
+            theDoubles->Append(aX.X());
+            theDoubles->Append(aX.Y());
+            theDoubles->Append(aX.Z());
+
+            // ax ay az
+            theDoubles->Append(anInfo.Length());
+            theDoubles->Append(anInfo.Width());
+            theDoubles->Append(anInfo.Height());
+          }
+        }
+        break;
+      case GEOMAlgo_KN_TORUS:
+        // (+) geompy.kind.TORUS  xc yc zc  dx dy dz  R_1 R_2
+        {
+          aKind = SK_TORUS;
+
+          gp_Pnt aO = anInfo.Location();
+          theDoubles->Append(aO.X());
+          theDoubles->Append(aO.Y());
+          theDoubles->Append(aO.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+          theDoubles->Append(anInfo.Radius2());
+        }
+        break;
+      case GEOMAlgo_KN_CONE:
+        // (+) geompy.kind.CONE  xb yb zb  dx dy dz  R_1 R_2  H
+        {
+          aKind = SK_CONE;
+
+          gp_Pnt aO = anInfo.Location();
+          theDoubles->Append(aO.X());
+          theDoubles->Append(aO.Y());
+          theDoubles->Append(aO.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+          theDoubles->Append(anInfo.Radius2());
+          theDoubles->Append(anInfo.Height());
+        }
+        break;
+      case GEOMAlgo_KN_POLYHEDRON:
+        // (+) geompy.kind.POLYHEDRON  nb_faces nb_edges nb_vertices
+        {
+          aKind = SK_POLYHEDRON;
+
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_FACE));
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
+        }
+        break;
+      default:
+        // (+) geompy.kind.SOLID  nb_faces nb_edges nb_vertices
+        {
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_FACE));
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
+        }
+      }
+    }
+    break;
+
+  case TopAbs_FACE:
+    {
+      aKind = SK_FACE;
+
+      GEOMAlgo_KindOfName aKN = anInfo.KindOfName();
+      switch (aKN) {
+      case GEOMAlgo_KN_SPHERE:
+        // (+) geompy.kind.SPHERE2D  xc yc zc  R
+        {
+          aKind = SK_SPHERE2D;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+        }
+        break;
+      case GEOMAlgo_KN_CYLINDER:
+        // (+) geompy.kind.CYLINDER2D  xb yb zb  dx dy dz  R  H
+        {
+          aKind = SK_CYLINDER2D;
+
+          gp_Pnt aO = anInfo.Location();
+          theDoubles->Append(aO.X());
+          theDoubles->Append(aO.Y());
+          theDoubles->Append(aO.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+          theDoubles->Append(anInfo.Height());
+        }
+        break;
+      case GEOMAlgo_KN_TORUS:
+        // (+) geompy.kind.TORUS2D  xc yc zc  dx dy dz  R_1 R_2
+        {
+          aKind = SK_TORUS2D;
+
+          gp_Pnt aO = anInfo.Location();
+          theDoubles->Append(aO.X());
+          theDoubles->Append(aO.Y());
+          theDoubles->Append(aO.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+          theDoubles->Append(anInfo.Radius2());
+        }
+        break;
+      case GEOMAlgo_KN_CONE:
+        // (+) geompy.kind.CONE2D  xc yc zc  dx dy dz  R_1 R_2  H
+        {
+          aKind = SK_CONE2D;
+
+          gp_Pnt aO = anInfo.Location();
+          theDoubles->Append(aO.X());
+          theDoubles->Append(aO.Y());
+          theDoubles->Append(aO.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+          theDoubles->Append(anInfo.Radius2());
+          theDoubles->Append(anInfo.Height());
+        }
+        break;
+      case GEOMAlgo_KN_DISKCIRCLE:
+        // (+) geompy.kind.DISK_CIRCLE  xc yc zc  dx dy dz  R
+        {
+          aKind = SK_DISK_CIRCLE;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+        }
+        break;
+      case GEOMAlgo_KN_DISKELLIPSE:
+        // (+) geompy.kind.DISK_ELLIPSE  xc yc zc  dx dy dz  R_1 R_2
+        {
+          aKind = SK_DISK_ELLIPSE;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+          theDoubles->Append(anInfo.Radius2());
+        }
+        break;
+      case GEOMAlgo_KN_RECTANGLE:
+      case GEOMAlgo_KN_TRIANGLE:
+      case GEOMAlgo_KN_QUADRANGLE:
+      case GEOMAlgo_KN_POLYGON:
+        // (+) geompy.kind.POLYGON  xo yo zo  dx dy dz  nb_edges nb_vertices
+        {
+          aKind = SK_POLYGON;
+
+          gp_Pnt aO = anInfo.Location();
+          theDoubles->Append(aO.X());
+          theDoubles->Append(aO.Y());
+          theDoubles->Append(aO.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
+        }
+        break;
+      case GEOMAlgo_KN_PLANE: // infinite
+        // (+) geompy.kind.PLANE  xo yo zo  dx dy dz
+        {
+          aKind = SK_PLANE;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+        }
+        break;
+      default:
+        if (anInfo.KindOfShape() == GEOMAlgo_KS_PLANE) {
+          // (+) geompy.kind.PLANAR  xo yo zo  dx dy dz  nb_edges nb_vertices
+
+          aKind = SK_PLANAR;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
+        }
+        else {
+          // ??? geompy.kind.FACE  nb_edges nb_vertices _surface_type_id_
+          // (+) geompy.kind.FACE  nb_edges nb_vertices
+
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+          theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
+        }
+      }
+    }
+    break;
+
+  case TopAbs_EDGE:
+    {
+      aKind = SK_EDGE;
+
+      GEOMAlgo_KindOfName aKN = anInfo.KindOfName();
+      switch (aKN) {
+      case GEOMAlgo_KN_CIRCLE:
+        {
+          // (+) geompy.kind.CIRCLE  xc yc zc  dx dy dz  R
+          aKind = SK_CIRCLE;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+        }
+        break;
+      case GEOMAlgo_KN_ARCCIRCLE:
+        {
+          // (+) geompy.kind.ARC_CIRCLE  xc yc zc  dx dy dz  R  x1 y1 z1  x2 y2 z2
+          aKind = SK_ARC_CIRCLE;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+
+          gp_Pnt aP1 = anInfo.Pnt1();
+          theDoubles->Append(aP1.X());
+          theDoubles->Append(aP1.Y());
+          theDoubles->Append(aP1.Z());
+
+          gp_Pnt aP2 = anInfo.Pnt2();
+          theDoubles->Append(aP2.X());
+          theDoubles->Append(aP2.Y());
+          theDoubles->Append(aP2.Z());
+        }
+        break;
+      case GEOMAlgo_KN_ELLIPSE:
+        {
+          // (+) geompy.kind.ELLIPSE  xc yc zc  dx dy dz  R_1 R_2
+          aKind = SK_ELLIPSE;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+          theDoubles->Append(anInfo.Radius2());
+        }
+        break;
+      case GEOMAlgo_KN_ARCELLIPSE:
+        {
+          // (+) geompy.kind.ARC_ELLIPSE  xc yc zc  dx dy dz  R_1 R_2  x1 y1 z1  x2 y2 z2
+          aKind = SK_ARC_ELLIPSE;
+
+          gp_Pnt aC = anInfo.Location();
+          theDoubles->Append(aC.X());
+          theDoubles->Append(aC.Y());
+          theDoubles->Append(aC.Z());
+
+          gp_Ax3 anAx3 = anInfo.Position();
+          gp_Dir aD = anAx3.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+
+          theDoubles->Append(anInfo.Radius1());
+          theDoubles->Append(anInfo.Radius2());
+
+          gp_Pnt aP1 = anInfo.Pnt1();
+          theDoubles->Append(aP1.X());
+          theDoubles->Append(aP1.Y());
+          theDoubles->Append(aP1.Z());
+
+          gp_Pnt aP2 = anInfo.Pnt2();
+          theDoubles->Append(aP2.X());
+          theDoubles->Append(aP2.Y());
+          theDoubles->Append(aP2.Z());
+        }
+        break;
+      case GEOMAlgo_KN_LINE:
+        {
+          // ??? geompy.kind.LINE  x1 y1 z1  x2 y2 z2
+          // (+) geompy.kind.LINE  x1 y1 z1  dx dy dz
+          aKind = SK_LINE;
+
+          gp_Pnt aO = anInfo.Location();
+          theDoubles->Append(aO.X());
+          theDoubles->Append(aO.Y());
+          theDoubles->Append(aO.Z());
+
+          gp_Dir aD = anInfo.Direction();
+          theDoubles->Append(aD.X());
+          theDoubles->Append(aD.Y());
+          theDoubles->Append(aD.Z());
+        }
+        break;
+      case GEOMAlgo_KN_SEGMENT:
+        {
+          // (+) geompy.kind.SEGMENT  x1 y1 z1  x2 y2 z2
+          aKind = SK_SEGMENT;
+
+          gp_Pnt aP1 = anInfo.Pnt1();
+          theDoubles->Append(aP1.X());
+          theDoubles->Append(aP1.Y());
+          theDoubles->Append(aP1.Z());
+
+          gp_Pnt aP2 = anInfo.Pnt2();
+          theDoubles->Append(aP2.X());
+          theDoubles->Append(aP2.Y());
+          theDoubles->Append(aP2.Z());
+        }
+        break;
+      default:
+        // ??? geompy.kind.EDGE  nb_vertices _curve_type_id_
+        // (+) geompy.kind.EDGE  nb_vertices
+        theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
+      }
+    }
+    break;
+
+  case TopAbs_VERTEX:
+    {
+      // (+) geompy.kind.VERTEX  x y z
+      aKind = SK_VERTEX;
+
+      gp_Pnt aP = anInfo.Location();
+      theDoubles->Append(aP.X());
+      theDoubles->Append(aP.Y());
+      theDoubles->Append(aP.Z());
+    }
+    break;
+  }
+
+  SetErrorCode(OK);
+  return aKind;
+}
 
 //=============================================================================
 /*! Get LCS, corresponding to the given shape.

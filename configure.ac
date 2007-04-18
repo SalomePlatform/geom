@@ -350,7 +350,6 @@ echo
 
 AC_OUTPUT_COMMANDS([ \
   chmod +x ./bin/*; \
-  chmod +x ./bin/salome/*; \
 ])
 
 # This list is initiated using autoscan and must be updated manually

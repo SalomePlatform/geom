@@ -55,6 +55,8 @@
 #include <Handle_Prs3d_Presentation.hxx>
 #endif
 
+#include <TCollection_AsciiString.hxx>
+
 class PrsMgr_PresentationManager3d;
 class Prs3d_Presentation;
 class SALOME_InteractiveObject;
@@ -102,32 +104,14 @@ public:
  //
 	friend Handle_Standard_Type& GEOM_AISShape_Type_();
 	const Handle(Standard_Type)& DynamicType() const;
-	Standard_Boolean	      IsKind(const Handle(Standard_Type)&) const;
+	Standard_Boolean	     IsKind(const Handle(Standard_Type)&) const;
 
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+protected: 
+  Quantity_Color myShadingColor;
 
 private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-  Standard_CString myName;
-  Quantity_Color myShadingColor;
+  TCollection_AsciiString myName;
 };
-
-
-
 
 
 // other inline functions and methods (like "C++: function call" methods)

@@ -202,6 +202,10 @@ void GEOMToolsGUI::OnRename()
 	      if ( !newName.isEmpty() ) {
 		aName->SetValue( newName.latin1() ); // rename the SObject
 		IObject->setName( newName.latin1() );// rename the InteractiveObject
+		// Rename the corresponding GEOM_Object
+		GEOM::GEOM_Object_var anObj =  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
+		if (!CORBA::is_nil( anObj ))
+		  anObj->SetName( newName.latin1() );
 		(dynamic_cast<SalomeApp_Module*>(app->activeModule()))->updateObjBrowser( false );
 	      }
 	    } // if ( name attribute )
@@ -432,4 +436,15 @@ void GEOMToolsGUI::OnOpen()
     }
   }
 */
+}
+
+void GEOMToolsGUI::OnSelectOnly(int mode)
+{
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( app ) {
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+    GEOM_Displayer aDisp (appStudy);
+    aDisp.GlobalSelection(mode);
+    getGeometryGUI()->setLocalSelectionMode(mode);
+  }
 }

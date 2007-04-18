@@ -25,6 +25,7 @@
 #define ARC_ARG_PI  1
 #define ARC_ARG_PC  2
 #define ARC_ARG_PE  3
+#define ARC_ARG_SE  4
 
 class GEOMImpl_IArc
 {
@@ -35,11 +36,13 @@ class GEOMImpl_IArc
   void SetPoint1(Handle(GEOM_Function) theP) { _func->SetReference(ARC_ARG_PI, theP); }
   void SetPoint2(Handle(GEOM_Function) theP) { _func->SetReference(ARC_ARG_PC, theP); }
   void SetPoint3(Handle(GEOM_Function) theP) { _func->SetReference(ARC_ARG_PE, theP); }
+  void SetSense(bool theSense) { _func->SetInteger(ARC_ARG_SE, theSense); }
 
   Handle(GEOM_Function) GetPoint1() { return _func->GetReference(ARC_ARG_PI); }
   Handle(GEOM_Function) GetPoint2() { return _func->GetReference(ARC_ARG_PC); }
   Handle(GEOM_Function) GetPoint3() { return _func->GetReference(ARC_ARG_PE); }
-
+  bool GetSense() { return _func->GetInteger(ARC_ARG_SE); }
+  
  private:
 
   Handle(GEOM_Function) _func;

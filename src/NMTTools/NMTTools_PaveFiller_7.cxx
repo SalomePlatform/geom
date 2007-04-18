@@ -196,6 +196,36 @@ static
     aCBIt.Initialize(aLCB);
     for (; aCBIt.More(); aCBIt.Next()) {
       NMTTools_CommonBlock& aCB=aCBIt.Value();
+      //
+      //modified by NIZNHY-PKV Wed Nov  8 15:59:46 2006f
+      // Among all PBs of aCB the first PB will be one
+      // that have max tolerance value 
+      {
+	Standard_Real aTolEx, aTolExMax;
+	BOPTools_ListOfPaveBlock *pLPB, aLPBx;
+	//
+	aTolExMax=-1.;
+	pLPB=(BOPTools_ListOfPaveBlock *)&aCB.PaveBlocks();
+	aPBIt.Initialize(*pLPB);
+	for (; aPBIt.More(); aPBIt.Next()) {
+	  const BOPTools_PaveBlock& aPBx=aPBIt.Value();
+	  nEx=aPBx.OriginalEdge();
+	  const TopoDS_Edge& aEx=TopoDS::Edge(myDS->Shape(nEx));
+	  aTolEx=BRep_Tool::Tolerance(aEx);
+	  if (aTolEx>aTolExMax) {
+	    aTolExMax=aTolEx;
+	    aLPBx.Prepend(aPBx);
+	  }
+	  else{
+	    aLPBx.Append(aPBx);
+	  }
+	}
+	//
+	pLPB->Clear();
+	*pLPB=aLPBx;
+      }
+      //modified by NIZNHY-PKV Wed Nov  8 15:59:50 2006t
+      //
       BOPTools_PaveBlock& aPB=aCB.PaveBlock1(nE);
       nSp=SplitIndex(aPB);
       aPB.SetEdge(nSp);

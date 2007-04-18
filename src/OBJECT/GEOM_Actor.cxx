@@ -113,7 +113,7 @@ void GEOM_Actor::ShallowCopy(vtkProp *prop)
   GEOM_Actor *f = GEOM_Actor::SafeDownCast(prop);
   if ( f != NULL )
     {
-      this->setInputShape(f->getTopo(),f->getDeflection(),f->getDisplayMode());
+      this->setInputShape(f->getTopo(),f->getDeflection(),f->getDisplayMode(),f->isVector());
       this->setName( f->getName() );
       if ( f->hasIO() )
 	this->setIO( f->getIO() );
@@ -155,9 +155,12 @@ void GEOM_Actor::setDeflection(double adef) {
   deflection = adef;
 }
 
-void GEOM_Actor::setInputShape(const TopoDS_Shape& aShape,double adef,int imode) {
+void GEOM_Actor::setInputShape(const TopoDS_Shape& aShape, double adef,
+                               int imode, bool isVector)
+{
   myShape = aShape;
   deflection = adef;
+  myIsVector = isVector;
   setDisplayMode(imode);
 }
 
@@ -192,10 +195,10 @@ void GEOM_Actor::CreateMapper(int theMode) {
     this->SetPosition(aPnt.X(),aPnt.Y(),aPnt.Z());
   }
   GEOM_OCCReader* aread = GEOM_OCCReader::New();
-  aread->setTopo(myShape);
+  aread->setTopo(myShape, myIsVector);
   aread->setDisplayMode(theMode);
   aread->GetOutput()->ReleaseDataFlagOn(); 
-    
+
   vtkPolyDataMapper* aMapper = vtkPolyDataMapper::New();
   if (theMode == 0) { 
     aMapper->SetInput(aread->GetOutput());

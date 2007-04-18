@@ -144,6 +144,17 @@ def addToStudyInFather(aFather, aShape, aName):
 ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
 
 # -----------------------------------------------------------------------------
+# enumeration shape_kind
+# -----------------------------------------------------------------------------
+
+kind = GEOM.GEOM_IKindOfShape
+
+class info:
+    UNKNOWN  = 0
+    CLOSED   = 1
+    UNCLOSED = 2
+
+# -----------------------------------------------------------------------------
 # Basic primitives
 # -----------------------------------------------------------------------------
 
@@ -337,6 +348,19 @@ def MakeArc(thePnt1, thePnt2, thePnt3):
     anObj = CurvesOp.MakeArc(thePnt1, thePnt2, thePnt3)
     if CurvesOp.IsDone() == 0:
       print "MakeArc : ", CurvesOp.GetErrorCode()
+    return anObj
+
+##  Create an arc of circle from a center and 2 points.
+#  @param thePnt1 Center of the arc
+#  @param thePnt2 Start point of the arc. (Gives also the radius of the arc)
+#  @param thePnt3 End point of the arc (Gives also a direction)
+#  @return New GEOM_Object, containing the created arc.
+#
+#  Example: see GEOM_TestAll.py
+def MakeArcCenter(thePnt1, thePnt2, thePnt3,theSense):
+    anObj = CurvesOp.MakeArcCenter(thePnt1, thePnt2, thePnt3,theSense)
+    if CurvesOp.IsDone() == 0:
+      print "MakeArcCenter : ", CurvesOp.GetErrorCode()
     return anObj
 
 ## Create a circle with given center, normal vector and radius.
@@ -714,6 +738,32 @@ def MakePipeWithDifferentSections(theSeqBases, theLocations,thePath,theWithConta
     anObj = PrimOp.MakePipeWithDifferentSections(theSeqBases, theLocations,thePath,theWithContact,theWithCorrection)
     if PrimOp.IsDone() == 0:
       print "MakePipeWithDifferentSections : ", PrimOp.GetErrorCode()
+    return anObj
+
+## Create a shape by extrusion of the profile shape along
+#  the path shape. The path shape can be a shell or a face.
+#  the several profiles can be specified in the several locations of path.	
+#  @param theSeqBases - list of  Bases shape to be extruded.
+#  @param theSeqSubBases - list of corresponding subshapes of section shapes.
+#  @param theLocations - list of locations on the path corresponding
+#                        specified list of the Bases shapes. Number of locations
+#                        should be equal to number of bases or list of locations can be empty.
+#  @param thePath - Path shape to extrude the base shape along it.
+#  @param theWithContact - the mode defining that the section is translated to be in
+#                          contact with the spine.
+#  @param - WithCorrection - defining that the section is rotated to be
+#                            orthogonal to the spine tangent in the correspondent point
+#  @return New GEOM_Object, containing the created solids.
+#
+#  Example: see GEOM_TestAll.py
+def MakePipeWithShellSections(theSeqBases, theSeqSubBases,
+                              theLocations, thePath,
+                              theWithContact, theWithCorrection):
+    anObj = PrimOp.MakePipeWithShellSections(theSeqBases, theSeqSubBases,
+                                             theLocations, thePath,
+                                             theWithContact, theWithCorrection)
+    if PrimOp.IsDone() == 0:
+      print "MakePipeWithShellSections : ", PrimOp.GetErrorCode()
     return anObj
 
 # -----------------------------------------------------------------------------
@@ -1337,6 +1387,38 @@ def MakeGlueFaces(theShape, theTolerance):
       print "MakeGlueFaces : ", ShapesOp.GetErrorCode()
     return anObj
 
+
+## Find coincident faces in theShape for possible gluing.
+#  @param theShape Initial shape.
+#  @param theTolerance Maximum distance between faces,
+#                      which can be considered as coincident.
+#  @return ListOfGO.
+#
+#  Example: see GEOM_Spanner.py
+def GetGlueFaces(theShape, theTolerance):
+    anObj = ShapesOp.GetGlueFaces(theShape, theTolerance)
+    if ShapesOp.IsDone() == 0:
+      print "GetGlueFaces : ", ShapesOp.GetErrorCode()
+    return anObj
+
+
+## Replace coincident faces in theShape by one face
+#  in compliance with given list of faces
+#  @param theShape Initial shape.
+#  @param theTolerance Maximum distance between faces,
+#                      which can be considered as coincident.
+#  @param theFaces List of faces for gluing.
+#  @return New GEOM_Object, containing a copy of theShape
+#          without some faces.
+#
+#  Example: see GEOM_Spanner.py
+def MakeGlueFacesByList(theShape, theTolerance, theFaces):
+    anObj = ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces)
+    if ShapesOp.IsDone() == 0:
+      print "MakeGlueFacesByList : ", ShapesOp.GetErrorCode()
+    return anObj
+
+
 # -----------------------------------------------------------------------------
 # Boolean (Common, Cut, Fuse, Section)
 # -----------------------------------------------------------------------------
@@ -1950,6 +2032,76 @@ def GetPosition(theShape):
     if MeasuOp.IsDone() == 0:
       print "GetPosition : ", MeasuOp.GetErrorCode()
     return aTuple
+
+## Get kind of theShape.
+#
+#  @param theShape Shape to get a kind of.
+#  @return Returns a kind of shape in terms of <VAR>GEOM_IKindOfShape.shape_kind</VAR> enumeration
+#          and a list of parameters, describing the shape.
+#  @note  Concrete meaning of each value, returned via \a theIntegers
+#         or \a theDoubles list depends on the kind of the shape.
+#         The full list of possible outputs is:
+#
+#  geompy.kind.COMPOUND              nb_solids  nb_faces  nb_edges  nb_vertices
+#  geompy.kind.COMPSOLID             nb_solids  nb_faces  nb_edges  nb_vertices
+#
+#  geompy.kind.SHELL       geompy.info.CLOSED   nb_faces  nb_edges  nb_vertices
+#  geompy.kind.SHELL       geompy.info.UNCLOSED nb_faces  nb_edges  nb_vertices
+#
+#  geompy.kind.WIRE        geompy.info.CLOSED             nb_edges  nb_vertices
+#  geompy.kind.WIRE        geompy.info.UNCLOSED           nb_edges  nb_vertices
+#
+#  geompy.kind.SPHERE       xc yc zc            R
+#  geompy.kind.CYLINDER     xb yb zb  dx dy dz  R         H
+#  geompy.kind.BOX          xc yc zc                      ax ay az
+#  geompy.kind.ROTATED_BOX  xc yc zc  zx zy zz  xx xy xz  ax ay az
+#  geompy.kind.TORUS        xc yc zc  dx dy dz  R_1  R_2
+#  geompy.kind.CONE         xb yb zb  dx dy dz  R_1  R_2  H
+#  geompy.kind.POLYHEDRON                       nb_faces  nb_edges  nb_vertices
+#  geompy.kind.SOLID                            nb_faces  nb_edges  nb_vertices
+#
+#  geompy.kind.SPHERE2D     xc yc zc            R
+#  geompy.kind.CYLINDER2D   xb yb zb  dx dy dz  R         H
+#  geompy.kind.TORUS2D      xc yc zc  dx dy dz  R_1  R_2
+#  geompy.kind.CONE2D       xc yc zc  dx dy dz  R_1  R_2  H
+#  geompy.kind.DISK_CIRCLE  xc yc zc  dx dy dz  R
+#  geompy.kind.DISK_ELLIPSE xc yc zc  dx dy dz  R_1  R_2
+#  geompy.kind.POLYGON      xo yo zo  dx dy dz            nb_edges  nb_vertices
+#  geompy.kind.PLANE        xo yo zo  dx dy dz
+#  geompy.kind.PLANAR       xo yo zo  dx dy dz            nb_edges  nb_vertices
+#  geompy.kind.FACE                                       nb_edges  nb_vertices
+#
+#  geompy.kind.CIRCLE       xc yc zc  dx dy dz  R
+#  geompy.kind.ARC_CIRCLE   xc yc zc  dx dy dz  R         x1 y1 z1  x2 y2 z2
+#  geompy.kind.ELLIPSE      xc yc zc  dx dy dz  R_1  R_2
+#  geompy.kind.ARC_ELLIPSE  xc yc zc  dx dy dz  R_1  R_2  x1 y1 z1  x2 y2 z2
+#  geompy.kind.LINE         xo yo zo  dx dy dz
+#  geompy.kind.SEGMENT      x1 y1 z1  x2 y2 z2
+#  geompy.kind.EDGE                                                 nb_vertices
+#
+#  geompy.kind.VERTEX       x  y  z
+#
+#  Example: see GEOM_TestMeasures.py
+def KindOfShape(theShape):
+    aRoughTuple = MeasuOp.KindOfShape(theShape)
+    if MeasuOp.IsDone() == 0:
+        print "KindOfShape : ", MeasuOp.GetErrorCode()
+        return []
+
+    aKind  = aRoughTuple[0]
+    anInts = aRoughTuple[1]
+    aDbls  = aRoughTuple[2]
+
+    # Now there is no exception from this rule:
+    aKindTuple = [aKind] + aDbls + anInts
+
+    # If they are we will regroup parameters for such kind of shape.
+    # For example:
+    #if aKind == kind.SOME_KIND:
+    #    #  SOME_KIND     int int double int double double
+    #    aKindTuple = [aKind, anInts[0], anInts[1], aDbls[0], anInts[2], aDbls[1], aDbls[2]]
+
+    return aKindTuple
 
 # -----------------------------------------------------------------------------
 # Import/Export objects

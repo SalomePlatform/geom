@@ -102,6 +102,16 @@ BasicGUI_WorkingPlaneDlg::BasicGUI_WorkingPlaneDlg(GeometryGUI* theGeometryGUI, 
   Layout1->addWidget(Group2, 1, 0);
   Layout1->addWidget(Group3, 1, 0);
   /***************************************************************/
+  QGroupBox* aReverseGroupBox = new QGroupBox(this, "aReverseGroupBox");
+  aReverseGroupBox->setTitle(tr(""));
+  aReverseGroupBox->setColumnLayout(1, Qt::Horizontal);
+  aReverseGroupBox->setInsideMargin(10);
+  
+  myReverseCB = new QCheckBox(aReverseGroupBox, "myReverseCB");
+  myReverseCB->setText(tr("GEOM_REVERSE_PLANE"));
+    
+  Layout1->addWidget(aReverseGroupBox, 2, 0);
+  
 
   setHelpFileName("working_plane.htm");
 
@@ -155,6 +165,8 @@ void BasicGUI_WorkingPlaneDlg::Init()
   connect(Group2->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
   connect(Group3->GroupBox1, SIGNAL(clicked(int)), this, SLOT(GroupClicked(int)));
+
+  connect(myReverseCB, SIGNAL(clicked()), this, SLOT(onReverse()));
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
@@ -225,7 +237,8 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
         break;
       }
     }
-  displayPreview();
+  
+  updateWPlane();
 }
 
 //=================================================================================
@@ -235,6 +248,7 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
 void BasicGUI_WorkingPlaneDlg::GroupClicked(int groupId)
 {
   aOriginType = groupId;
+  updateWPlane();
 }
 
 //=================================================================================
@@ -255,99 +269,12 @@ bool BasicGUI_WorkingPlaneDlg::ClickOnApply()
 {
   buttonApply->setFocus();
   myGeomGUI->application()->putInfo(tr(""));
-  const int id = getConstructorId();
-
-  if (id == 0) { // by planar face selection
-    if (CORBA::is_nil(myFace)) {
-      showError( "Face has to be selected" );
-      return false;
-    }
-
-    // PAL12781: set center of WPL to face's center of mass
-    // like it is done for LCS creation
-    CORBA::Double Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz;
-    Ox = Oy = Oz = Zx = Zy = Xy = Xz = 0.;
-    Zz = Xx = 1.;
-
-    GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
-      myGeomGUI->GetGeomGen()->GetIMeasureOperations(getStudyId());
-    aMeasureOp->GetPosition(myFace, Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz);
-
-    if (aMeasureOp->IsDone()) {
-      gp_Pnt aPnt (Ox,Oy,Oz);
-      gp_Dir aDirN (Zx,Zy,Zz);
-      gp_Dir aDirX (Xx,Xy,Xz);
-      myWPlane = gp_Ax3(aPnt, aDirN, aDirX);
-    } else {
-      showError( "Wrong shape selected (has to be a planar face)" );
-      return false;
-    }
-
-  } else if (id == 1) { // by two vectors (Ox & Oz)
-    if ( CORBA::is_nil( myVectX ) || CORBA::is_nil( myVectZ ) ) {
-      showError( "Two vectors have to be selected" );
-      return false;
-    }
-
-    TopoDS_Edge aVectX, aVectZ;
-    TopoDS_Vertex VX1, VX2, VZ1, VZ2;
-    gp_Vec aVX, aVZ;
-
-    if (!GEOMBase::GetShape( myVectX, aVectX, TopAbs_EDGE ) ||
-        !GEOMBase::GetShape( myVectZ, aVectZ, TopAbs_EDGE )) {
-      showError( "Wrong shape selected (two vectors(edges) have to be selected)" );
-      return false;
-    }
-
-    TopExp::Vertices(aVectX, VX1, VX2, Standard_True);
-    TopExp::Vertices(aVectZ, VZ1, VZ2, Standard_True);
-
-    if (VX1.IsNull() || VX2.IsNull()) {
-      showError( "Bad OX vector" );
-      return false;
-    }
-    if (VZ1.IsNull() || VZ2.IsNull()) {
-      showError( "Bad OZ vector" );
-      return false;
-    }
-
-    aVX = gp_Vec(BRep_Tool::Pnt(VX1), BRep_Tool::Pnt(VX2));
-    aVZ = gp_Vec(BRep_Tool::Pnt(VZ1), BRep_Tool::Pnt(VZ2));
-
-    if (aVX.Magnitude() < Precision::Confusion()) {
-      showError( "Bad OX vector" );
-      return false;
-    }
-    if (aVZ.Magnitude() < Precision::Confusion()) {
-      showError( "Bad OZ vector" );
-      return false;
-    }
-
-    gp_Dir aDirX = gp_Dir(aVX.X(), aVX.Y(), aVX.Z());
-    gp_Dir aDirZ = gp_Dir(aVZ.X(), aVZ.Y(), aVZ.Z());
-
-    if (aDirX.IsParallel(aDirZ, Precision::Angular())) {
-      showError( "Parallel vectors selected" );
-      return false;
-    }
-
-    myWPlane = gp_Ax3(BRep_Tool::Pnt(VX1), aDirZ, aDirX);
-
-  } else if (id == 2) { // by selection from standard (OXY or OYZ, or OZX)
-    gp_Ax2 anAx2;
-
-    if      (aOriginType == 1) anAx2 = gp::XOY();
-    else if (aOriginType == 2) anAx2 = gp::YOZ();
-    else if (aOriginType == 0) anAx2 = gp::ZOX();
-
-    myWPlane = gp_Ax3(anAx2);
-
-  } else {
-    return false;
+ 
+  if (updateWPlane(false)){
+    myGeomGUI->SetWorkingPlane(myWPlane);
+    myGeomGUI->ActiveWorkingPlane();
   }
-
-  myGeomGUI->SetWorkingPlane(myWPlane);
-  myGeomGUI->ActiveWorkingPlane();
+  
   return true;
 }
 
@@ -387,6 +314,8 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
     myVectZ = aSelectedObject;
 
   myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  
+  updateWPlane();
 }
 
 
@@ -427,6 +356,16 @@ void BasicGUI_WorkingPlaneDlg::LineEditReturnPressed()
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
+}
+
+
+//=================================================================================
+// function : onReverse()
+// purpose  :
+//=================================================================================
+void BasicGUI_WorkingPlaneDlg::onReverse()
+{
+  updateWPlane();
 }
 
 
@@ -480,4 +419,131 @@ void BasicGUI_WorkingPlaneDlg::enterEvent(QEvent* e)
 void BasicGUI_WorkingPlaneDlg::closeEvent( QCloseEvent* e )
 {
   GEOMBase_Skeleton::closeEvent( e );
+}
+
+
+//=================================================================================
+// function : updateWPlane
+// purpose  :
+//=================================================================================
+bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
+{
+  erasePreview();
+  
+  const int id = getConstructorId();
+
+  if (id == 0) { // by planar face selection
+    if (CORBA::is_nil(myFace)) {
+      if(!showPreview)
+	showError( "Face has to be selected" );
+      return false;
+    }
+
+    // PAL12781: set center of WPL to face's center of mass
+    // like it is done for LCS creation
+    CORBA::Double Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz;
+    Ox = Oy = Oz = Zx = Zy = Xy = Xz = 0.;
+    Zz = Xx = 1.;
+
+    GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
+      myGeomGUI->GetGeomGen()->GetIMeasureOperations(getStudyId());
+    aMeasureOp->GetPosition(myFace, Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz);
+
+    if (aMeasureOp->IsDone()) {
+      gp_Pnt aPnt (Ox,Oy,Oz);
+      gp_Dir aDirN (Zx,Zy,Zz);
+      gp_Dir aDirX (Xx,Xy,Xz);
+      myWPlane = gp_Ax3(aPnt, aDirN, aDirX);
+    } else {
+      if(!showPreview)
+	showError( "Wrong shape selected (has to be a planar face)" );
+      return false;
+    }
+
+  } else if (id == 1) { // by two vectors (Ox & Oz)
+    if ( CORBA::is_nil( myVectX ) || CORBA::is_nil( myVectZ ) ) {
+      if(!showPreview)
+	showError( "Two vectors have to be selected" );
+      return false;
+    }
+
+    TopoDS_Edge aVectX, aVectZ;
+    TopoDS_Vertex VX1, VX2, VZ1, VZ2;
+    gp_Vec aVX, aVZ;
+
+    if (!GEOMBase::GetShape( myVectX, aVectX, TopAbs_EDGE ) ||
+        !GEOMBase::GetShape( myVectZ, aVectZ, TopAbs_EDGE )) {
+      if(!showPreview)
+	showError( "Wrong shape selected (two vectors(edges) have to be selected)" );
+      return false;
+    }
+
+    TopExp::Vertices(aVectX, VX1, VX2, Standard_True);
+    TopExp::Vertices(aVectZ, VZ1, VZ2, Standard_True);
+
+    if (VX1.IsNull() || VX2.IsNull()) {
+      if(!showPreview)
+	showError( "Bad OX vector" );
+      return false;
+    }
+    if (VZ1.IsNull() || VZ2.IsNull()) {
+      if(!showPreview)
+	showError( "Bad OZ vector" );
+      return false;
+    }
+
+    aVX = gp_Vec(BRep_Tool::Pnt(VX1), BRep_Tool::Pnt(VX2));
+    aVZ = gp_Vec(BRep_Tool::Pnt(VZ1), BRep_Tool::Pnt(VZ2));
+
+    if (aVX.Magnitude() < Precision::Confusion()) {
+      if(!showPreview)
+	showError( "Bad OX vector" );
+      return false;
+    }
+    if (aVZ.Magnitude() < Precision::Confusion()) {
+      if(!showPreview)
+	showError( "Bad OZ vector" );
+      return false;
+    }
+
+    gp_Dir aDirX = gp_Dir(aVX.X(), aVX.Y(), aVX.Z());
+    gp_Dir aDirZ = gp_Dir(aVZ.X(), aVZ.Y(), aVZ.Z());
+
+    if (aDirX.IsParallel(aDirZ, Precision::Angular())) {
+      if(!showPreview)
+	showError( "Parallel vectors selected" );
+      return false;
+    }
+
+    myWPlane = gp_Ax3(BRep_Tool::Pnt(VX1), aDirZ, aDirX);
+
+  } else if (id == 2) { // by selection from standard (OXY or OYZ, or OZX)
+    gp_Ax2 anAx2;
+
+    if      (aOriginType == 1) anAx2 = gp::XOY();
+    else if (aOriginType == 2) anAx2 = gp::YOZ();
+    else if (aOriginType == 0) anAx2 = gp::ZOX();
+
+    myWPlane = gp_Ax3(anAx2);
+
+  } else {
+    return false;
+  }
+  
+  if (myReverseCB->isChecked())
+    {
+      myWPlane.YReverse();
+      myWPlane.ZReverse();
+    }
+  
+  if (showPreview)
+    {
+      GEOM::GEOM_IBasicOperations_var aBasicOp = getGeomEngine()->GetIBasicOperations( getStudyId() );
+      GEOM::GEOM_Object_var anObj = aBasicOp->MakeMarker(  myWPlane.Location().X(), myWPlane.Location().Y(), myWPlane.Location().Z(),
+							   myWPlane.XDirection().X(), myWPlane.XDirection().Y(), myWPlane.XDirection().Z(),
+							   myWPlane.YDirection().X(), myWPlane.YDirection().Y(), myWPlane.YDirection().Z() );
+      displayPreview(anObj);
+    }
+
+  return true;
 }

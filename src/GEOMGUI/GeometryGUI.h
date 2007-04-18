@@ -120,7 +120,8 @@ public:
   virtual void                contextMenuPopup( const QString&, QPopupMenu*, QString& );
   virtual void                createPreferences();
   virtual void                preferencesChanged( const QString&, const QString& );
-
+  int                         getLocalSelectionMode() const;
+  void                        setLocalSelectionMode(const int mode);
 
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );
@@ -170,6 +171,7 @@ private:
   QPtrList<LightApp_VTKSelector> myVTKSelectors;
 
   LightApp_Displayer*         myDisplayer;
+  int                         myLocalSelectionMode; //Select Only
 
 friend class DisplayGUI;
 };

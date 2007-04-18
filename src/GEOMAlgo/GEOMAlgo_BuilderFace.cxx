@@ -578,7 +578,77 @@ void MakeInternalWires(const TopTools_MapOfShape& theME,
     theWires.Append(aW);
   }
 }
+//=======================================================================
+//function : IsInside
+//purpose  : 
+//=======================================================================
+Standard_Boolean IsInside(const TopoDS_Shape& theHole,
+			  const TopoDS_Shape& theF2,
+			  IntTools_PContext& theContext)
+{
+  Standard_Boolean bRet;
+  Standard_Real aT, aU, aV;
+  
+  TopAbs_State aState;
+  TopExp_Explorer aExp;
+  TopTools_IndexedMapOfShape aME2;
+  gp_Pnt2d aP2D;
+  //
+  bRet=Standard_False;
+  aState=TopAbs_UNKNOWN;
+  const TopoDS_Face& aF2=TopoDS::Face(theF2);
+  //
+  TopExp::MapShapes(aF2, TopAbs_EDGE, aME2);
+  //
+  aExp.Init(theHole, TopAbs_EDGE);
+  if (aExp.More()) {
+    const TopoDS_Edge& aE = TopoDS::Edge(aExp.Current());
+    if (aME2.Contains(aE)) {
+      return bRet;
+    }
+    //
+    aT=BOPTools_Tools2D::IntermediatePoint(aE);
+    BOPTools_Tools2D::PointOnSurface(aE, aF2, aT, aU, aV);
+    aP2D.SetCoord(aU, aV);
+    //
+    IntTools_FClass2d& aClsf=theContext->FClass2d(aF2);
+    aState=aClsf.Perform(aP2D);
+    bRet=(aState==TopAbs_IN);
+  }
+  //
+  return bRet;
+}
 
+//=======================================================================
+//function : IsGrowthWire
+//purpose  : 
+//=======================================================================
+Standard_Boolean IsGrowthWire(const TopoDS_Shape& theWire,
+			      const TopTools_IndexedMapOfShape& theMHE)
+{
+  Standard_Boolean bRet;
+  TopoDS_Iterator aIt;
+  // 
+  bRet=Standard_False;
+  if (theMHE.Extent()) {
+    aIt.Initialize(theWire);
+    for(; aIt.More(); aIt.Next()) {
+      const TopoDS_Shape& aE=aIt.Value();
+      if (theMHE.Contains(aE)) {
+	return !bRet;
+      }
+    }
+  }
+  return bRet;
+}
+
+//BRepTools::Write(aFF, "ff");
+//
+//  ErrorStatus :
+// 11 - Null Context
+// 12 - Null face generix
+
+/*
 //=======================================================================
 //function : IsInside
 //purpose  : 
@@ -606,71 +676,4 @@ Standard_Boolean IsInside(const TopoDS_Shape& theHole,
   }
   return (aState==TopAbs_IN);
 }
-//=======================================================================
-//function : IsGrowthWire
-//purpose  : 
-//=======================================================================
-Standard_Boolean IsGrowthWire(const TopoDS_Shape& theWire,
-			      const TopTools_IndexedMapOfShape& theMHE)
-{
-  Standard_Boolean bRet;
-  TopoDS_Iterator aIt;
-  // 
-  bRet=Standard_False;
-  if (theMHE.Extent()) {
-    aIt.Initialize(theWire);
-    for(; aIt.More(); aIt.Next()) {
-      const TopoDS_Shape& aE=aIt.Value();
-      if (theMHE.Contains(aE)) {
-	return !bRet;
-      }
-    }
-  }
-  return bRet;
-}
-//modified by NIZNHY-PKV Mon Sep 18 13:18:27 2006f
-/*
-static
-   Standard_Boolean IsHole(const TopoDS_Shape& ,
-			   const TopoDS_Face& , 
-			   IntTools_PContext& );
 */
-//modified by NIZNHY-PKV Mon Sep 18 13:18:34 2006t
-//modified by NIZNHY-PKV Mon Sep 18 13:18:13 2006f
-/*
-//=======================================================================
-//function : IsHole
-//purpose  : 
-//=======================================================================
-Standard_Boolean IsHole(const TopoDS_Shape& theS2,
-			const TopoDS_Face& theFace,
-			IntTools_PContext& theContext)
-{
-  Standard_Boolean bIsHole;
-  Standard_Real aTol;
-  Handle(Geom_Surface) aS;
-  TopLoc_Location aLoc;
-  TopoDS_Face aF;
-  BRep_Builder aBB;
-  //
-  aTol=BRep_Tool::Tolerance(theFace);
-  aS=BRep_Tool::Surface(theFace, aLoc);
-  aBB.MakeFace(aF, aS, aLoc, aTol);
-  aBB.Add (aF, theS2);
-  //
-  IntTools_FClass2d& aClsf=theContext->FClass2d(aF);
-  //
-  bIsHole=aClsf.IsHole();
-  //
-  return bIsHole;
-  //
-}
-*/
-//modified by NIZNHY-PKV Mon Sep 18 13:18:06 2006t
-
-//BRepTools::Write(aFF, "ff");
-//
-//  ErrorStatus :
-// 11 - Null Context
-// 12 - Null face generix
-

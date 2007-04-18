@@ -272,6 +272,9 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeName");
   SALOMEDS::AttributeName_var aNameAttrib = SALOMEDS::AttributeName::_narrow(anAttr);
   aNameAttrib->SetValue(aShapeName.ToCString());
+  
+  //Set a name of the GEOM object
+  aShape->SetName(theName);
 
   return aResultSO._retn();
 }
@@ -287,6 +290,17 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   SALOMEDS::TMPFile_var aStreamFile;
   // Get a temporary directory to store a file
   std::string aTmpDir = (isMultiFile)?theURL:SALOMEDS_Tool::GetTmpDir();
+
+  // OCCT BUG: cannot save a document (in current folder)
+  // if directory name is empty
+  if (aTmpDir.size() == 0) {
+#ifdef WNT
+    aTmpDir = ".\\";
+#else
+    aTmpDir = "./";
+#endif
+  }
+
   // Create a list to store names of created files
   SALOMEDS::ListOfFileNames_var aSeq = new SALOMEDS::ListOfFileNames;
   aSeq->length(1);
@@ -338,8 +352,20 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
 
   // Get a temporary directory for a file
   std::string aTmpDir = isMultiFile?theURL:SALOMEDS_Tool::GetTmpDir();
+
+  // OCCT BUG: cannot load a document (from current folder)
+  // if directory name is empty
+  if (aTmpDir.size() == 0) {
+#ifdef WNT
+    aTmpDir = ".\\";
+#else
+    aTmpDir = "./";
+#endif
+  }
+
   // Conver the byte stream theStream to a file and place it in tmp directory
-  SALOMEDS::ListOfFileNames_var aSeq = SALOMEDS_Tool::PutStreamToFiles(theStream, aTmpDir.c_str(), isMultiFile);
+  SALOMEDS::ListOfFileNames_var aSeq =
+    SALOMEDS_Tool::PutStreamToFiles(theStream, aTmpDir.c_str(), isMultiFile);
 
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt("");

@@ -70,6 +70,7 @@ libGEOMToolsGUI_la_CPPFLAGS = \
 	-I$(srcdir)/../GEOMBase \
 	-I$(srcdir)/../GEOMGUI \
 	-I$(srcdir)/../GEOMClient \
+	-I$(srcdir)/../GEOMImpl \
 	-I$(top_builddir)/idl \
 	-I$(top_builddir)/salome_adm/unix
 

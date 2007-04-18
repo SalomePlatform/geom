@@ -115,7 +115,7 @@ static
 //=======================================================================
   void GEOMAlgo_WESCorrector::DoConnexityBlocks()
 {
-  Standard_Boolean bRegular;
+  Standard_Boolean bRegular, bClosed;
   Standard_Integer i, aNbV, j, aNbC, aNbVP, aNbVS;
   TopTools_ListIteratorOfListOfShape aIt;
   TopoDS_Iterator aItE;
@@ -208,17 +208,17 @@ static
       aER=aMEC(j);
       //
       if (aMER.Contains(aER)) {
-	Standard_Boolean bClosed;
-	//
 	aER.Orientation(TopAbs_FORWARD);
 	aLEC.Append(aER);
 	aER.Orientation(TopAbs_REVERSED);
 	aLEC.Append(aER);
 	//
-	bClosed=BRep_Tool::IsClosed(TopoDS::Edge(aER), myWES->Face());
-	if (!bClosed) {
+	//modified by NIZNHY-PKV Tue Nov 28 12:02:29 2006f
+	//bClosed=BRep_Tool::IsClosed(TopoDS::Edge(aER), myWES->Face());
+	//if (!bClosed) {
 	  bRegular=Standard_False;
-	}
+	//}
+	//modified by NIZNHY-PKV Tue Nov 28 12:02:33 2006t
       }
       else {
 	aLEC.Append(aER);
@@ -234,11 +234,12 @@ static
       //
       aNbVR=aMVER.Extent();
       for (k=1; k<=aNbVR; ++k) {
-	const TopTools_ListOfShape& aLER=aMVER(k);//?? it was aMVE(k)
+	const TopTools_ListOfShape& aLER=aMVER(k);
 	aNbER=aLER.Extent();
 	if (aNbER==1) {
 	  const TopoDS_Edge& aEx=TopoDS::Edge(aER);
-	  if (!BRep_Tool::IsClosed(aEx, myWES->Face())) {
+	  bClosed=BRep_Tool::IsClosed(aEx, myWES->Face());
+	  if (!bClosed) {
 	    bRegular=!bRegular;
 	    break;
 	  }

@@ -185,21 +185,23 @@ void GEOM_AssemblyBuilder::MeshShape(const TopoDS_Shape myShape,
 
 
 vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShape,
-							  Standard_Real deflection,
-							  Standard_Integer mode,
-							  Standard_Boolean forced) {
-
+                                                      Standard_Real    deflection,
+                                                      Standard_Integer mode,
+                                                      Standard_Boolean forced,
+                                                      Standard_Boolean isVector)
+{
   vtkActorCollection* AISActors = vtkActorCollection::New();
 
   if(myShape.ShapeType() == TopAbs_COMPOUND) {
     TopoDS_Iterator anItr(myShape);
     for(; anItr.More(); anItr.Next()) {
-      vtkActorCollection* theActors = GEOM_AssemblyBuilder::BuildActors(anItr.Value(), deflection, mode, forced);
+      vtkActorCollection* theActors =
+        GEOM_AssemblyBuilder::BuildActors(anItr.Value(), deflection, mode, forced);
       theActors->InitTraversal();
       vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
       while(!(anActor==NULL)) {
-	AISActors->AddItem(anActor);
-	anActor = (vtkActor*)theActors->GetNextActor();
+        AISActors->AddItem(anActor);
+        anActor = (vtkActor*)theActors->GetNextActor();
       }
     }
   }
@@ -301,7 +303,7 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
     }
   } else if ( myShape.ShapeType() == TopAbs_EDGE ) { // EDGE Actor
     GEOM_Actor* EdgeActor = GEOM_Actor::New();
-    EdgeActor->setInputShape(myShape,deflection,mode);
+    EdgeActor->setInputShape(myShape,deflection,mode,isVector);
     EdgeActor->SetShadingProperty(EdgeIProp);
     EdgeActor->SetWireframeProperty(EdgeIProp);
     EdgeActor->SetPreviewProperty(EdgePVProp);

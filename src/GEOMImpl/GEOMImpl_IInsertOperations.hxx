@@ -60,6 +60,7 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
 
  private:
   Handle(Resource_Manager) myResMgr;
+  Handle(Resource_Manager) myResMgrUser;
 };
 
 #endif

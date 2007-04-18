@@ -22,8 +22,11 @@
 
 #include "GEOM_Function.hxx"
 
+#include <TColStd_HSequenceOfTransient.hxx>
+
 #define GLUE_ARG_BASE   1
 #define GLUE_ARG_TOLER  2
+#define GLUE_ARG_FACES  3
 
 class GEOMImpl_IGlue
 {
@@ -40,6 +43,12 @@ class GEOMImpl_IGlue
   { _func->SetReal(GLUE_ARG_TOLER, theTolerance); }
 
   Standard_Real GetTolerance() { return _func->GetReal(GLUE_ARG_TOLER); }
+
+  void SetFaces(const Handle(TColStd_HSequenceOfTransient)& theShapes)
+  { _func->SetReferenceList(GLUE_ARG_FACES, theShapes); }
+
+  Handle(TColStd_HSequenceOfTransient) GetFaces()
+  { return _func->GetReferenceList(GLUE_ARG_FACES); }
 
  private:
 

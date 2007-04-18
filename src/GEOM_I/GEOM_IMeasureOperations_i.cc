@@ -50,6 +50,52 @@ GEOM_IMeasureOperations_i::~GEOM_IMeasureOperations_i()
   MESSAGE("GEOM_IMeasureOperations_i::~GEOM_IMeasureOperations_i");
 }
 
+//=============================================================================
+/*!
+ *  KindOfShape
+ */
+//=============================================================================
+GEOM::GEOM_IKindOfShape::shape_kind GEOM_IMeasureOperations_i::KindOfShape
+                                   (GEOM::GEOM_Object_ptr  theShape,
+				    GEOM::ListOfLong_out   theIntegers,
+				    GEOM::ListOfDouble_out theDoubles)
+{
+  GEOMImpl_IMeasureOperations::ShapeKind aKind = GEOMImpl_IMeasureOperations::SK_NO_SHAPE;
+
+  // allocate the CORBA arrays
+  GEOM::ListOfLong_var anIntegersArray = new GEOM::ListOfLong();
+  GEOM::ListOfDouble_var aDoublesArray = new GEOM::ListOfDouble();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+
+  if (!aShape.IsNull()) {
+    Handle(TColStd_HSequenceOfInteger) anIntegers = new TColStd_HSequenceOfInteger;
+    Handle(TColStd_HSequenceOfReal)    aDoubles   = new TColStd_HSequenceOfReal;
+
+    // Detect kind of shape and parameters
+    aKind = GetOperations()->KindOfShape(aShape, anIntegers, aDoubles);
+
+    int nbInts = anIntegers->Length();
+    int nbDbls = aDoubles->Length();
+
+    anIntegersArray->length(nbInts);
+    aDoublesArray->length(nbDbls);
+
+    for (int ii = 0; ii < nbInts; ii++) {
+      anIntegersArray[ii] = anIntegers->Value(ii + 1);
+    }
+    for (int id = 0; id < nbDbls; id++) {
+      aDoublesArray[id] = aDoubles->Value(id + 1);
+    }
+  }
+
+  // initialize out-parameters with local arrays
+  theIntegers = anIntegersArray._retn();
+  theDoubles  = aDoublesArray._retn();
+  return (GEOM::GEOM_IKindOfShape::shape_kind)aKind;
+}
 
 //=============================================================================
 /*!

@@ -1,22 +1,22 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
 //  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
@@ -37,6 +37,7 @@
 #include <TopoDS_Shape.hxx>
 #include <Quantity_Color.hxx>
 #include <LightApp_Displayer.h>
+#include <Aspect_TypeOfMarker.hxx>
 
 #include <list>
 
@@ -59,7 +60,7 @@ class SUIT_SelectionFilter;
 
 class GEOMGUI_EXPORT GEOM_Displayer : public LightApp_Displayer
 {
-    
+
 public:
   /* Constructor */
   GEOM_Displayer( SalomeApp_Study* app );
@@ -75,9 +76,9 @@ public:
 
   // This overloaded Display() method can be useful for operations
   // not using dialog boxes.
-  void          Display   ( GEOM::GEOM_Object_ptr theObj, 
+  void          Display   ( GEOM::GEOM_Object_ptr theObj,
 			    const bool updateViewer = true );
-                         
+
   void          Redisplay ( const Handle(SALOME_InteractiveObject)& theIO,
                             const bool updateViewer = true );
 
@@ -88,17 +89,17 @@ public:
 
   void          Erase     ( GEOM::GEOM_Object_ptr theObj,
                             const bool forced = false,
-                            const bool updateViewer = true );                            
+                            const bool updateViewer = true );
 
   /* Display/Erase list of objects methods */
-  
+
   void          Display   ( const SALOME_ListIO& theIOList,
                             const bool updateViewer = true );
-                            
+
   void          Erase     ( const SALOME_ListIO& theIOList,
                             const bool forced = false,
                             const bool updateViewer = true );
-                            
+
   void          Redisplay ( const SALOME_ListIO& theIOList,
                             const bool updateViewer = true );
 
@@ -118,6 +119,11 @@ public:
   void          UnsetWidth();
   double        GetWidth  () const;
   bool          HasWidth  () const;
+  
+  /* Set display mode shape displaying. If it is equal -1 then display mode is used. */
+  int           SetDisplayMode( const int );
+  int           GetDisplayMode() const;
+  int           UnsetDisplayMode();
 
 
   /* Sets name - for temporary objects only */
@@ -146,20 +152,20 @@ protected:
   /* internal methods */
   /* Builds presentation accordint to the current viewer type */
   virtual SALOME_Prs* buildPresentation( const QString&, SALOME_View* = 0 );
-  
+
   /* Sets interactive object */
   void        setIO( const Handle(SALOME_InteractiveObject)& theIO );
-  
+
   /* Sets shape */
   void        setShape( const TopoDS_Shape& theShape );
-  
+
   /* Resets internal data */
   void        internalReset();
 
   void        clearTemporary( LightApp_SelectionMgr* theSelMgr );
 
   SUIT_SelectionFilter* getFilter( const int theMode );
-  
+
 protected:
   Handle(SALOME_InteractiveObject) myIO;
   TopoDS_Shape                     myShape;
@@ -173,6 +179,8 @@ protected:
   double                           myWidth;
   bool                             myToActivate;
   int                              myDisplayMode;
+  Aspect_TypeOfMarker              myTypeOfMarker;
+  double                           myScaleOfMarker;
 
 private:
   SalomeApp_Application* myApp;

@@ -99,6 +99,13 @@ is
     -- 
     --    protected methods  
     --  
+    -- 
+    PerformInternal(me:out; 
+    	theDSF: DSFiller from NMTTools) 
+    	---Purpose:  Performs calculations using prepared DSFiller 
+	--           object theDSF          	 
+    	is protected; 
+    --
     PrepareHistory (me:out) 
     	---Purpose:  Prepare information for history support  
     	is redefined protected;  
@@ -241,7 +248,7 @@ fields
     mySameDomainShapes: IndexedDataMapOfShapeShape from TopTools is protected;
     --  solids 
     myDraftSolids     : IndexedDataMapOfShapeShape from TopTools is protected; 
-    
+    myEntryPoint      : Integer from Standard is protected;    
     --     
 end Builder;
 
