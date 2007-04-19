@@ -43,6 +43,8 @@ dist_libGEOMClient_la_SOURCES = \
 
 # additionnal information to compil and link file
 libGEOMClient_la_CPPFLAGS = \
+	$(CORBA_CXXFLAGS) \
+        $(CORBA_INCLUDES) \
 	$(CAS_CPPFLAGS) \
 	$(KERNEL_CXXFLAGS) \
 	-I$(top_builddir)/idl \
