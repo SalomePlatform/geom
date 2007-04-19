@@ -32,7 +32,7 @@ DIST_SUBDIRS = idl adm_local resources src doc bin
 
 DISTCLEANFILES = a.out aclocal.m4 configure
 
-salomeinclude_DATA=SMESH_version.h
+salomeinclude_DATA=GEOM_version.h
 
 EXTRA_DIST+= \
 	build_configure \
