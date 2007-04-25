@@ -161,4 +161,4 @@ install-exec-hook:\
 	$(libdir)/_libGEOM_Swig.so
 
 $(libdir)/_libGEOM_Swig.so:
-	ln -sf $(libdir)/libGEOM_Swigcmodule.so $@
+	( cd $(libdir); ln -sf libGEOM_Swigcmodule.so _libGEOM_Swig.so; )
