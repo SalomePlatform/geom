@@ -423,6 +423,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
     Standard_ConstructionError::Raise
       ("First location shapes is not coincided with first vertex of aWirePath");
   }
+  VLocs.ChangeValue(1) = VF;
   edge = TopoDS::Edge(Edges.Last());
   tol = BRep_Tool::Tolerance(edge);
   TopoDS_Vertex VL = sae.LastVertex(edge);
@@ -432,6 +433,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
     Standard_ConstructionError::Raise
       ("Last location shapes is not coincided with last vertex of aWirePath");
   }
+  VLocs.ChangeValue(nbLocs) = VL;
   int jcurr = 2;
   TopTools_SequenceOfShape tmpEdges;
   for(i=1; i<=Edges.Length() && jcurr<nbLocs; i++) {
@@ -450,11 +452,12 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	B.Add(W,tmpEdges.Value(j));
       B.Add(W,E);
       Wires.Append(W);
+      VLocs.ChangeValue(jcurr) = V2;
       jcurr++;
       tmpEdges.Clear();
     }
     else {
-      // find distance between E and aLocs(icurr)
+      // find distance between E and aLocs(jcurr)
       double fp,lp;
       Handle(Geom_Curve) C = BRep_Tool::Curve(E,fp,lp);
       GeomAPI_ProjectPointOnCurve PPC (PLocs.Value(jcurr),C);
@@ -467,7 +470,9 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	Handle(Geom_TrimmedCurve) tc1 = new Geom_TrimmedCurve(C,fp,param);
 	Handle(Geom_TrimmedCurve) tc2 = new Geom_TrimmedCurve(C,param,lp);
 	TopoDS_Edge E1,E2;
-	if(PC1.Distance(P1)<tol) {
+	gp_Pnt Pfp;
+	C->D0(fp,Pfp);
+	if(Pfp.Distance(P1)<tol) {
 	  B.MakeEdge(E1,tc1,tol);
 	  B.Add(E1,V1);
 	  TopoDS_Shape tmpV = VLocs.Value(jcurr).Oriented(TopAbs_REVERSED);
@@ -980,7 +985,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
   {
     GEOMImpl_IPipeDiffSect* aCIDS = (GEOMImpl_IPipeDiffSect*)aCI;
     //GEOMImpl_IPipeDiffSect* aCIDS = static_cast<GEOMImpl_IPipeDiffSect*>(aCI);
-    BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
+    //BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
     Handle(TColStd_HSequenceOfTransient) aBasesObjs = aCIDS->GetBases ();
     Handle(TColStd_HSequenceOfTransient) aLocObjs = aCIDS->GetLocations ();
     Standard_Boolean aWithContact = (aCIDS->GetWithContactMode());
@@ -1069,6 +1074,116 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     }
     
     nbLocs = aSeqLocs.Length();
+
+    // skl 02.05.2007
+    if(nbLocs>0) {
+      // we have to check that each location shape is a vertex from
+      // path and update aSeqLocs if it is needed (and possible)
+      TColgp_SequenceOfPnt PLocs;
+      for(i=1; i<=nbLocs; i++) {
+	TopoDS_Vertex V = TopoDS::Vertex(aSeqLocs.Value(i));
+	PLocs.Append(BRep_Tool::Pnt(V));
+      }
+      TopTools_SequenceOfShape Edges;
+      TopExp_Explorer anExp;
+      for ( anExp.Init( aWirePath, TopAbs_EDGE ); anExp.More(); anExp.Next() ) {
+	Edges.Append(anExp.Current());
+      }
+      int nbEdges = Edges.Length();
+      ShapeAnalysis_Edge sae;
+      TopoDS_Edge edge = TopoDS::Edge(Edges.First());
+      double tol = BRep_Tool::Tolerance(edge);
+      TopoDS_Vertex VF = sae.FirstVertex(edge);
+      gp_Pnt PF = BRep_Tool::Pnt(VF);
+      //cout<<"PF("<<PF.X()<<","<<PF.Y()<<","<<PF.Z()<<")"<<endl;
+      if( PF.Distance(PLocs.First()) > tol ) {
+	if(aCI) delete aCI;
+	Standard_ConstructionError::Raise
+	  ("First location shapes is not coincided with first vertex of aWirePath");
+      }
+      aSeqLocs.ChangeValue(1) = VF;
+      edge = TopoDS::Edge(Edges.Last());
+      tol = BRep_Tool::Tolerance(edge);
+      TopoDS_Vertex VL = sae.LastVertex(edge);
+      gp_Pnt PL = BRep_Tool::Pnt(VL);
+      if( PL.Distance(PLocs.Last()) > tol ) {
+	if(aCI) delete aCI;
+	Standard_ConstructionError::Raise
+	  ("Last location shapes is not coincided with last vertex of aWirePath");
+      }
+      aSeqLocs.ChangeValue(nbLocs) = VL;
+      int jcurr = 2;
+      for(i=1; i<=Edges.Length() && jcurr<nbLocs; i++) {
+	TopoDS_Edge E = TopoDS::Edge(Edges.Value(i));
+	tol = BRep_Tool::Tolerance(edge);
+	TopoDS_Vertex V1 = sae.FirstVertex(E);
+	TopoDS_Vertex V2 = sae.LastVertex(E);
+	gp_Pnt P1 = BRep_Tool::Pnt(V1);
+	gp_Pnt P2 = BRep_Tool::Pnt(V2);
+	if( P2.Distance(PLocs.Value(jcurr)) < tol ) {
+	  aSeqLocs.ChangeValue(jcurr) = V2;
+	  jcurr++;
+	}
+	else {
+	  // find distance between E and aLocs(jcurr)
+	  double fp,lp;
+	  Handle(Geom_Curve) C = BRep_Tool::Curve(E,fp,lp);
+	  GeomAPI_ProjectPointOnCurve PPC (PLocs.Value(jcurr),C);
+	  if( PPC.NbPoints()>0 &&
+	      PLocs.Value(jcurr).Distance(PPC.Point(1)) < tol ) {
+	    double param = PPC.Parameter(1);
+	    gp_Pnt PC1;
+	    C->D0(param,PC1);
+	    // split current edge
+	    Handle(Geom_TrimmedCurve) tc1 = new Geom_TrimmedCurve(C,fp,param);
+	    Handle(Geom_TrimmedCurve) tc2 = new Geom_TrimmedCurve(C,param,lp);
+	    TopoDS_Edge E1,E2;
+	    BRep_Builder B;
+	    gp_Pnt Pfp;
+	    C->D0(fp,Pfp);
+	    if(Pfp.Distance(P1)<tol) {
+	      B.MakeEdge(E1,tc1,tol);
+	      B.Add(E1,V1);
+	      TopoDS_Shape tmpV = aSeqLocs.Value(jcurr).Oriented(TopAbs_REVERSED);
+	      B.Add(E1,TopoDS::Vertex(tmpV));
+	      B.MakeEdge(E2,tc2,tol);
+	      tmpV = aSeqLocs.Value(jcurr).Oriented(TopAbs_FORWARD);
+	      B.Add(E2,TopoDS::Vertex(tmpV));
+	      B.Add(E2,V2);
+	    }
+	    else {
+	      B.MakeEdge(E1,tc2,tol);
+	      TopoDS_Shape tmpV = aSeqLocs.Value(jcurr).Oriented(TopAbs_FORWARD);
+	      B.Add(E1,TopoDS::Vertex(tmpV));
+	      B.Add(E1,V1);
+	      E1.Reverse();
+	      B.MakeEdge(E2,tc1,tol);
+	      B.Add(E2,V2);
+	      tmpV = aSeqLocs.Value(jcurr).Oriented(TopAbs_REVERSED);
+	      B.Add(E2,TopoDS::Vertex(tmpV));
+	      E2.Reverse();
+	    }
+	    jcurr++;
+	    Edges.Remove(i);
+	    Edges.InsertAfter(i-1,E1);
+	    Edges.InsertAfter(i,E2);
+	  }
+	}
+      }
+      if(nbEdges<Edges.Length()) {
+	// one of edges was splitted => we have to update WirePath
+	BRep_Builder B;
+	TopoDS_Wire W;
+	B.MakeWire(W);
+	for(i=1; i<=Edges.Length(); i++) {
+	  B.Add(W,TopoDS::Edge(Edges.Value(i)));
+	}
+	aWirePath = W;
+      }
+    }
+
+    BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
+
     Standard_Integer nbShapes = aSeqBases.Length();
     Standard_Integer step = nbShapes/nbBases;
     
