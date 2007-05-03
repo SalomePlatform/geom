@@ -1214,6 +1214,8 @@ int GEOM_Displayer::GetDisplayMode() const
 
 int GEOM_Displayer::UnsetDisplayMode()
 {
+  int aPrevMode = myDisplayMode;
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   myDisplayMode = resMgr->integerValue( "Geometry", "display_mode", 0 );
+  return aPrevMode;
 }
