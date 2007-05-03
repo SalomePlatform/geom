@@ -10,6 +10,8 @@
 #ifndef DLGREF_3SEL1CHECK_QTD_H
 #define DLGREF_3SEL1CHECK_QTD_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include <qvariant.h>
 #include <qwidget.h>
 
@@ -23,7 +25,7 @@ class QLineEdit;
 class QLabel;
 class QRadioButton;
 
-class DlgRef_3Sel1Check_QTD : public QWidget
+class GEOM_DLGREF_EXPORT DlgRef_3Sel1Check_QTD : public QWidget
 {
     Q_OBJECT
 
