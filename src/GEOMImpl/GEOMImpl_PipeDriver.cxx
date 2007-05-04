@@ -438,7 +438,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
   TopTools_SequenceOfShape tmpEdges;
   for(i=1; i<=Edges.Length() && jcurr<nbLocs; i++) {
     TopoDS_Edge E = TopoDS::Edge(Edges.Value(i));
-    tol = BRep_Tool::Tolerance(edge);
+    tol = BRep_Tool::Tolerance(E);
     TopoDS_Vertex V1 = sae.FirstVertex(E);
     TopoDS_Vertex V2 = sae.LastVertex(E);
     gp_Pnt P1 = BRep_Tool::Pnt(V1);
@@ -509,7 +509,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	Edges.InsertAfter(i,E2);
       }
       else {
-	tmpEdges.Append(edge);
+	tmpEdges.Append(E);
       }
     }
   }
