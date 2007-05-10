@@ -25,4 +25,4 @@
 #  Module : GEOM
 #  $Header$
 
-SUBDIRS = OBJECT ARCHIMEDE NMTDS NMTTools NMTAlgo GEOMAlgo SKETCHER GEOM BREPExport BREPImport IGESExport IGESImport STEPExport STEPImport ShHealOper GEOMImpl GEOM_I GEOMClient DlgRef GEOMFiltersSelection GEOMGUI GEOMBase GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI RepairGUI MeasureGUI GroupGUI BlocksGUI GEOM_I_Superv GEOM_SWIG
+SUBDIRS = OBJECT ARCHIMEDE NMTDS NMTTools NMTAlgo GEOMAlgo SKETCHER GEOM BREPExport BREPImport IGESExport IGESImport STEPExport STEPImport STLExport ShHealOper GEOMImpl GEOM_I GEOMClient DlgRef GEOMFiltersSelection GEOMGUI GEOMBase GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI RepairGUI MeasureGUI GroupGUI BlocksGUI GEOM_I_Superv GEOM_SWIG

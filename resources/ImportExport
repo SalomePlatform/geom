@@ -17,12 +17,12 @@ STEP.Import: libSTEPImport
 STEP.Export: libSTEPExport
 STEP.Pattern: STEP Files ( *.step *.stp )
 
-STL_Bin.Export: libSTLExport.so
+STL_Bin.Export: libSTLExport
 STL_Bin.Pattern: STL Binary Files ( *.stl )
 
-STL_ASCII.Export: libSTLExport.so
+STL_ASCII.Export: libSTLExport
 STL_ASCII.Pattern: STL ASCII Files ( *.stl )
 
-ACIS.Import: libACISImport.so
-ACIS.Export: libACISExport.so
+ACIS.Import: libACISImport
+ACIS.Export: libACISExport
 ACIS.Pattern: ACIS Files ( *.sat )

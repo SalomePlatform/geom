@@ -407,6 +407,7 @@ AC_OUTPUT([ \
   ./src/SKETCHER/Makefile \
   ./src/STEPExport/Makefile \
   ./src/STEPImport/Makefile \
+  ./src/STLExport/Makefile \
   ./src/ShHealOper/Makefile \
   ./src/TransformationGUI/Makefile \
   ./resources/Makefile \
