@@ -317,9 +317,6 @@ static
   aF=TopoDS::Face(aS);
   //
   aNbWires=NbWires(aF);
-  if (aNbWires>1) {
-    return;
-  }
   //
   aSurf=BRep_Tool::Surface(aF);
   GeomAdaptor_Surface aGAS(aSurf);
@@ -341,6 +338,8 @@ static
     aInfo.SetKindOfClosed(GEOMAlgo_KC_NOTCLOSED);
     aInfo.SetLocation(aP0);
     aInfo.SetPosition(aAx3);
+    //
+    if (aNbWires>1) return;
     //
     //aSurf->Bounds(aUMin, aUMax, aVMin, aVMax);
     BRepTools::UVBounds(aF, aUMin, aUMax, aVMin, aVMax);
@@ -374,6 +373,8 @@ static
     aInfo.SetPosition(aAx3);
     aInfo.SetRadius1(aR1);
     //
+    if (aNbWires>1) return;
+    //
     aInfo.SetKindOfBounds(GEOMAlgo_KB_TRIMMED);
     aInfo.SetKindOfClosed(GEOMAlgo_KC_CLOSED);
     //
@@ -393,6 +394,8 @@ static
     aInfo.SetLocation(aP0);
     aInfo.SetPosition(aAx3);
     aInfo.SetRadius1(aR1);
+    //
+    if (aNbWires>1) return;
     //
     BRepTools::UVBounds(aF, aUMin, aUMax, aVMin, aVMax);
     bInfU1=Precision::IsNegativeInfinite(aUMin);
@@ -423,6 +426,8 @@ static
     aInfo.SetLocation(aP0);
     aInfo.SetPosition(aAx3);
     //aInfo.SetRadius1(aR1);
+    //
+    if (aNbWires>1) return;
     //
     BRepTools::UVBounds(aF, aUMin, aUMax, aVMin, aVMax);
     bInfU1=Precision::IsNegativeInfinite(aUMin);
@@ -456,8 +461,10 @@ static
     aInfo.SetRadius1(aR1);
     aInfo.SetRadius2(aR2);
     //
+    if (aNbWires>1) return;
+    //
     aInfo.SetKindOfBounds(GEOMAlgo_KB_TRIMMED);
-    
+    //
     FillDetails(aF, aTorus);
   }
 }
