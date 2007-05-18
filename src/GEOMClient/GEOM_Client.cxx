@@ -222,7 +222,7 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
   TopExp::MapShapes(aMainShape, anIndices);
 
   /* Case of only one subshape */
-  if (list->length() == 1) {
+  if (list->length() == 1 && list[0] > 0) {
     S = anIndices.FindKey(list[0]);
   }
   else {
