@@ -43,18 +43,11 @@ namespace GEOM
       TCollection_AsciiString aDescr;
       if ( myAppend )
         aDescr = myFunction->GetDescription() + "\n\t";
-      aDescr += (char *)myStream.str().c_str();
+      std::string aString = myStream.str();
+      aDescr += (char *)aString.c_str();
       myFunction->SetDescription( aDescr );
     }
   }
-
-//  TPythonDump::operator TCollection_AsciiString () const
-//  {
-//    if (myCounter == 1) {
-//      return TCollection_AsciiString ((char *)myStream.str().c_str());
-//    }
-//    return TCollection_AsciiString ();
-//  }
 
   TPythonDump& TPythonDump::operator<< (long int theArg)
   {
