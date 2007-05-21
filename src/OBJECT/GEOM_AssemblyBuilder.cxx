@@ -174,6 +174,7 @@ void GEOM_AssemblyBuilder::MeshShape(const TopoDS_Shape myShape,
       // Compute default deflection
       Bnd_Box B;
       BRepBndLib::Add(myShape, B);
+      if ( B.IsVoid() ) return; // NPAL15983 (Bug when displaying empty groups) 
       Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
       B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
       deflection = MAX3( aXmax-aXmin , aYmax-aYmin , aZmax-aZmin) * 0.001 *4;
