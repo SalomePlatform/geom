@@ -738,7 +738,18 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
       myCommand.append( ":WW" );
   }
   else
+  {
+    // PAL16008 (Sketcher Validation should be equal to Apply&Close)
+    if (Group1Spin->buttonApply->isEnabled() && Group1Spin->isVisible() ||
+        Group2Spin->buttonApply->isEnabled() && Group2Spin->isVisible() ||
+        Group3Spin->buttonApply->isEnabled() && Group3Spin->isVisible() ||
+        Group4Spin->buttonApply->isEnabled() && Group4Spin->isVisible() ||
+        Group1Sel ->buttonApply->isEnabled() && Group1Sel->isVisible() )
+    {
+      ClickOnApply();
+    }
     myIsAllAdded = true;
+  }
 
   if( myCommand.size() > 2 )
     if( !onAccept() )
@@ -753,7 +764,8 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
 //=================================================================================
 bool EntityGUI_SketcherDlg::ClickOnApply()
 {
-  ((QPushButton*)sender())->setFocus(); // to update value of currently edited spin-box (PAL11948)
+  if (sender() && sender()->inherits("QPushButton"))
+    ((QPushButton*)sender())->setFocus(); // to update value of currently edited spin-box (PAL11948)
 
   myCommand.append( GetNewCommand() );
   mySketchState = NEXT_POINT;
