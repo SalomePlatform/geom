@@ -82,6 +82,7 @@
 #include <gp_Pln.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_MapIteratorOfMapOfInteger.hxx>
+#include <TopoDS_Iterator.hxx>
 
 // VTK Includes
 #include <vtkActorCollection.h>
@@ -525,8 +526,11 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         Handle(GEOM_AISShape) AISShape;
         if (myType == GEOM_VECTOR)
           AISShape = new GEOM_AISVector (myShape, "");
-        else
+        else {
+          if (!TopoDS_Iterator(myShape).More())
+            return;// NPAL15983 (Bug when displaying empty groups)
           AISShape = new GEOM_AISShape (myShape, "");
+        }
         // Temporary staff: vertex must be infinite for correct visualization
         AISShape->SetInfiniteState( myShape.Infinite() || myShape.ShapeType() == TopAbs_VERTEX );
 
