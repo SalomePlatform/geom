@@ -253,7 +253,6 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
   Init();
 }
 
-
 //=================================================================================
 // function : ~EntityGUI_SketcherDlg()
 // purpose  : Destroys the object and frees any allocated resources
@@ -262,7 +261,6 @@ EntityGUI_SketcherDlg::~EntityGUI_SketcherDlg()
 {
   myGeometryGUI->SetActiveDialogBox( 0 );
 }
-
 
 //=================================================================================
 // function : eventFilter()
@@ -293,6 +291,16 @@ bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
         return true;
       }
     }
+  }
+
+  if (event->type() == QEvent::KeyRelease) {
+    // NPAL16010 (Sketcher Apply non available if only one line is modified)
+    // To have Apply active as soon as value text changed
+    QString s = ((QtxDblSpinBox*) object)->text();
+    bool ok;
+    double newVal = s.toDouble( &ok );
+    if ( ok )
+      ValueChangedInSpinBox( newVal );
   }
 
   return EntityGUI_Skeleton_QTD::eventFilter(object, event);
@@ -1090,6 +1098,68 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox(double newValue)
     vs = Group4Spin->SpinBox_DS->GetValue();
   }
   else if ( send == Group4Spin->SpinBox_DS)
+  {
+    vx = Group4Spin->SpinBox_DX->GetValue();
+    vy = Group4Spin->SpinBox_DY->GetValue();
+    vz = Group4Spin->SpinBox_DZ->GetValue();
+    vs = newValue;
+  }
+  // NPAL16010 (Sketcher Apply non available if only one line is modified)
+  // if ValueChangedInSpinBox() called from eventFilter()
+  else if ( Group1Spin->SpinBox_DX->hasFocus() )
+  {
+    vx = newValue;
+  }
+  else if ( Group2Spin->SpinBox_DX ->hasFocus() )
+  {
+    vx = newValue;
+    vy = Group2Spin->SpinBox_DY->GetValue();
+  }
+  else if ( Group2Spin->SpinBox_DY->hasFocus() )
+  {
+    vx = Group2Spin->SpinBox_DX->GetValue();
+    vy = newValue;
+  }
+  else if ( Group3Spin->SpinBox_DX->hasFocus() )
+  {
+    vx = newValue;
+    vy = Group3Spin->SpinBox_DY->GetValue();
+    vz = Group3Spin->SpinBox_DZ->GetValue();
+  }
+  else if ( Group3Spin->SpinBox_DY->hasFocus() )
+  {
+    vx = Group3Spin->SpinBox_DX->GetValue();
+    vy = newValue;
+    vz = Group3Spin->SpinBox_DZ->GetValue();
+  }
+  else if ( Group3Spin->SpinBox_DZ->hasFocus() )
+  {
+    vx = Group3Spin->SpinBox_DX->GetValue();
+    vy = Group3Spin->SpinBox_DY->GetValue();
+    vz = newValue;
+  }
+  else if ( Group4Spin->SpinBox_DX->hasFocus() )
+  {
+    vx = newValue;
+    vy = Group4Spin->SpinBox_DY->GetValue();
+    vz = Group4Spin->SpinBox_DZ->GetValue();
+    vs = Group4Spin->SpinBox_DS->GetValue();
+  }
+  else if ( Group4Spin->SpinBox_DY->hasFocus() )
+  {
+    vx = Group4Spin->SpinBox_DX->GetValue();
+    vy = newValue;
+    vz = Group4Spin->SpinBox_DZ->GetValue();
+    vs = Group4Spin->SpinBox_DS->GetValue();
+  }
+  else if ( Group4Spin->SpinBox_DZ->hasFocus() )
+  {
+    vx = Group4Spin->SpinBox_DX->GetValue();
+    vy = Group4Spin->SpinBox_DY->GetValue();
+    vz = newValue;
+    vs = Group4Spin->SpinBox_DS->GetValue();
+  }
+  else if ( Group4Spin->SpinBox_DS->hasFocus() )
   {
     vx = Group4Spin->SpinBox_DX->GetValue();
     vy = Group4Spin->SpinBox_DY->GetValue();
