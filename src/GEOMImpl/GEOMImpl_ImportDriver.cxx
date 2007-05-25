@@ -106,7 +106,9 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape aShape = fp( aFileName, aFormatName, anError );
 
   // unload plugin library
-  UnLoadLib( anImportLib );
+  // commented by enk:
+  // the bug was occured: using ACIS Import/Export plugin
+  //UnLoadLib( anImportLib );
 
   if ( aShape.IsNull() ) {
     StdFail_NotDone::Raise(anError.ToCString());

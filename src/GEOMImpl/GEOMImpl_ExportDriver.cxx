@@ -111,7 +111,10 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(TFunction_Logbook& log) const
   int res = fp( aShape, aFileName, aFormatName );
 
   // unload plugin library
-  UnLoadLib( anExportLib );
+  // commented by enk:
+  // the bug was occured: using ACIS Import/Export plugin
+  // UnLoadLib( anExportLib );
+  
   if ( res )
     log.SetTouched(Label()); 
 
