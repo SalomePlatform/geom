@@ -44,6 +44,10 @@
 
 #include <NMTTools_DSFiller.hxx>
 
+static 
+  void TreatCompound(const TopoDS_Shape& aC, 
+		     TopTools_ListOfShape& aLSX);
+
 //=======================================================================
 //function : 
 //purpose  : 
@@ -53,6 +57,7 @@
   GEOMAlgo_Builder()
 {
   myLimit=TopAbs_SHAPE;
+  myLimitMode=0;
 }
 //=======================================================================
 //function : ~
@@ -112,6 +117,22 @@
   return myLimit;
 }
 //=======================================================================
+//function : SetLimitMode
+//purpose  : 
+//=======================================================================
+  void GEOMAlgo_Splitter::SetLimitMode(const Standard_Integer aMode)
+{
+  myLimitMode=aMode;
+}
+//=======================================================================
+//function : LimitMode
+//purpose  : 
+//=======================================================================
+  Standard_Integer GEOMAlgo_Splitter::LimitMode()const
+{
+  return myLimitMode;
+}
+//=======================================================================
 //function : Clear
 //purpose  : 
 //=======================================================================
@@ -168,21 +189,131 @@
     Standard_Integer i, aNbS;
     BRep_Builder aBB;
     TopoDS_Compound aC;
-    TopTools_IndexedMapOfShape aM;
+    TopTools_IndexedMapOfShape aMx;
     //
     aBB.MakeCompound(aC);
     //
-    TopExp::MapShapes(myShape, myLimit, aM);
-    aNbS=aM.Extent();
+    TopExp::MapShapes(myShape, myLimit, aMx);
+    aNbS=aMx.Extent();
     for (i=1; i<=aNbS; ++i) {
-      const TopoDS_Shape& aS=aM(i);
+      const TopoDS_Shape& aS=aMx(i);
       aBB.Add(aC, aS);
     }
+    //modified by NIZNHY-PKV Thu Feb 15 17:09:32 2007f
+    if (myLimitMode) {
+      Standard_Integer iType, iLimit, iTypeX;
+      TopAbs_ShapeEnum aType, aTypeX;
+      TopTools_ListOfShape aLSP, aLSX;
+      TopTools_ListIteratorOfListOfShape aIt, aItX, aItIm;
+      TopTools_MapOfShape  aM;
+      //
+      iLimit=(Standard_Integer)myLimit; 
+      //
+      // 1. Collect the shapes to process aLSP
+      aIt.Initialize(myShapes);
+      for (; aIt.More(); aIt.Next()) {
+	const TopoDS_Shape& aS=aIt.Value();
+	if (myMapTools.Contains(aS)) {
+	  continue;
+	}
+	//
+	aType=aS.ShapeType();
+	iType=(Standard_Integer)aType;
+	//
+	if (iType>iLimit) {
+	  aLSP.Append(aS);
+	}
+	//
+	else if (aType==TopAbs_COMPOUND) {
+	  aLSX.Clear();
+	  //
+	  TreatCompound(aS, aLSX);
+	  //
+	  aItX.Initialize(aLSX);
+	  for (; aItX.More(); aItX.Next()) {
+	    const TopoDS_Shape& aSX=aItX.Value();
+	    aTypeX=aSX.ShapeType();
+	    iTypeX=(Standard_Integer)aTypeX;
+	    //
+	    if (iTypeX>iLimit) {
+	      aLSP.Append(aSX);
+	    }
+	  }
+	}
+      }// for (; aIt.More(); aIt.Next()) {
+      //
+      // 2. Add them to aC
+      aIt.Initialize(aLSP);
+      for (; aIt.More(); aIt.Next()) {
+	const TopoDS_Shape& aS=aIt.Value();
+	if (myImages.HasImage(aS)) {
+	  const TopTools_ListOfShape& aLSIm=myImages.Image(aS);
+	  aItIm.Initialize(aLSIm);
+	  for (; aItIm.More(); aItIm.Next()) {
+	    const TopoDS_Shape& aSIm=aItIm.Value();
+	    if (aM.Add(aSIm)) {
+	      aBB.Add(aC, aSIm);
+	    }
+	  }
+	}
+	else {
+	  if (aM.Add(aS)) {
+	    aBB.Add(aC, aS);
+	  }
+	}
+      }
+    }// if (myLimitMode) {
+    //modified by NIZNHY-PKV Thu Feb 15 17:09:34 2007t
     myShape=aC;
-  }
+  }//if (myLimit!=TopAbs_SHAPE) {
   //
   GEOMAlgo_Builder::PostTreat();
+}
+//=======================================================================
+//function : TreatCompound
+//purpose  : 
+//=======================================================================
+void TreatCompound(const TopoDS_Shape& aC1, 
+		   TopTools_ListOfShape& aLSX)
+{
+  Standard_Integer aNbC1;
+  TopAbs_ShapeEnum aType;
+  TopTools_ListOfShape aLC, aLC1;
+  TopTools_ListIteratorOfListOfShape aIt, aIt1;
+  TopoDS_Iterator aItC;
   //
+  aLC.Append (aC1);
+  while(1) {
+    aLC1.Clear();
+    aIt.Initialize(aLC);
+    for (; aIt.More(); aIt.Next()) {
+      const TopoDS_Shape& aC=aIt.Value(); //C is compound
+      //
+      aItC.Initialize(aC);
+      for (; aItC.More(); aItC.Next()) {
+	const TopoDS_Shape& aS=aItC.Value();
+	aType=aS.ShapeType();
+	if (aType==TopAbs_COMPOUND) {
+	  aLC1.Append(aS);
+	}
+	else {
+	  aLSX.Append(aS);
+	}
+      }
+    }
+    //
+    aNbC1=aLC1.Extent();
+    if (!aNbC1) {
+      break;
+    }
+    //
+    aLC.Clear();
+    aIt.Initialize(aLC1);
+    for (; aIt.More(); aIt.Next()) {
+      const TopoDS_Shape& aSC=aIt.Value();
+      aLC.Append(aSC);
+    }
+  }// while(1)
 }
 //
 // myErrorStatus

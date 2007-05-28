@@ -258,7 +258,8 @@ public:
 				       GEOM::GEOM_List_ptr   theRemoveInside,
 				       CORBA::Short      theLimit,
 				       CORBA::Boolean    theRemoveWebs,
-				       GEOM::GEOM_List_ptr theMaterials);
+				       GEOM::GEOM_List_ptr theMaterials,
+				       CORBA::Short theKeepNonlimitShapes);
   GEOM::GEOM_Object_ptr MakeHalfPartition (GEOM::GEOM_Object_ptr theShape,
 					   GEOM::GEOM_Object_ptr thePlane);
 

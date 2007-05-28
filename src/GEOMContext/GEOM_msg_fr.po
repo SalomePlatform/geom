@@ -1190,6 +1190,9 @@ msgstr "Ombré"
 msgid "GEOM_RECONSTRUCTION_LIMIT"
 msgstr "Limite de Reconstruction"
 
+msgid "GEOM_KEEP_NONLIMIT_SHAPES"
+msgstr "Keep nonlimit shapes"
+
 msgid "GEOM_SUPPRESS_RESULT"
 msgstr "Supprimer le Resultat"
 

@@ -1468,6 +1468,10 @@ def MakeSection(s1, s2):
 #           in order to avoid possible intersection between shapes from
 #           this compound.
 #  @param Limit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
+#  @param KeepNonlimitShapes: if this parameter == 0 - only shapes with
+#                             type <= Limit are kept in the result,
+#                             else - shapes with type > Limit are kept
+#                             also (if they exist)
 #
 #  After implementation new version of PartitionAlgo (October 2006)
 #  other parameters are ignored by current functionality. They are kept
@@ -1485,10 +1489,12 @@ def MakeSection(s1, s2):
 #
 #  Example: see GEOM_TestAll.py
 def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
+                  KeepNonlimitShapes=0):
     anObj = BoolOp.MakePartition(ListShapes, ListTools,
                                  ListKeepInside, ListRemoveInside,
-                                 Limit, RemoveWebs, ListMaterials);
+                                 Limit, RemoveWebs, ListMaterials,
+                                 KeepNonlimitShapes);
     if BoolOp.IsDone() == 0:
       print "MakePartition : ", BoolOp.GetErrorCode()
     return anObj
@@ -1505,11 +1511,14 @@ def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=
 #
 #  @return New GEOM_Object, containing the result shapes.
 #
-def MakePartitionNonSelfIntersectedShape(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+def MakePartitionNonSelfIntersectedShape(ListShapes, ListTools=[],
+                                         ListKeepInside=[], ListRemoveInside=[],
+                                         Limit=ShapeType["SHAPE"], RemoveWebs=0,
+                                         ListMaterials=[], KeepNonlimitShapes=0):
     anObj = BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
                                                         ListKeepInside, ListRemoveInside,
-                                                        Limit, RemoveWebs, ListMaterials);
+                                                        Limit, RemoveWebs, ListMaterials,
+                                                        KeepNonlimitShapes);
     if BoolOp.IsDone() == 0:
       print "MakePartitionNonSelfIntersectedShape : ", BoolOp.GetErrorCode()
     return anObj
@@ -1518,10 +1527,12 @@ def MakePartitionNonSelfIntersectedShape(ListShapes, ListTools=[], ListKeepInsid
 #
 #  Example: see GEOM_TestOthers.py
 def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-              Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+              Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
+              KeepNonlimitShapes=0):
     anObj = MakePartition(ListShapes, ListTools,
                           ListKeepInside, ListRemoveInside,
-                          Limit, RemoveWebs, ListMaterials);
+                          Limit, RemoveWebs, ListMaterials,
+                          KeepNonlimitShapes);
     return anObj
 
 ## Perform partition of the Shape with the Plane

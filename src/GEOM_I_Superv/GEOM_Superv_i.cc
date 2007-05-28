@@ -1040,7 +1040,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theSha
 						    GEOM::GEOM_List_ptr   theRemoveInside,
 						    CORBA::Short      theLimit,
 						    CORBA::Boolean    theRemoveWebs,
-						    GEOM::GEOM_List_ptr theMaterials)
+						    GEOM::GEOM_List_ptr theMaterials,
+						    CORBA::Short theKeepNonlimitShapes)
 {
   beginService( " GEOM_Superv_i::MakePartition" );
   MESSAGE("GEOM_Superv_i::MakePartition");
@@ -1056,9 +1057,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theSha
     dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theMaterials, myPOA).in());
   if (aListImplS && aListImplT && aListImplKI && aListImplRI && aListImplM) {
     getBoolOp();
-    GEOM::GEOM_Object_ptr anObj = myBoolOp->MakePartition(aListImplS->GetList(), aListImplT->GetList(), 
-							  aListImplKI->GetList(), aListImplRI->GetList(),
-							  theLimit, theRemoveWebs, aListImplM->GetList());
+    GEOM::GEOM_Object_ptr anObj =
+      myBoolOp->MakePartition(aListImplS->GetList(), aListImplT->GetList(), 
+			      aListImplKI->GetList(), aListImplRI->GetList(),
+			      theLimit, theRemoveWebs, aListImplM->GetList(),
+			      theKeepNonlimitShapes);
     endService( " GEOM_Superv_i::MakePartition" );
     return anObj;
   }

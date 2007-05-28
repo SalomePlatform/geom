@@ -198,7 +198,8 @@ module GEOM
 			       in GEOM_List   theRemoveInside,
 			       in short       theLimit,
 			       in boolean     theRemoveWebs,
-			       in GEOM_List   theMaterials) ;
+			       in GEOM_List   theMaterials,
+			       in short       theKeepNonlimitShapes);
     GEOM_Object MakeHalfPartition (in GEOM_Object theShape,
 				   in GEOM_Object thePlane) ;
 

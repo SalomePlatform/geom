@@ -1690,6 +1690,10 @@ module GEOM
      *  \note  Each compound from ListShapes and ListTools will be exploded in order
      *         to avoid possible intersection between shapes from this compound.
      *  \param theLimit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
+     #  \param KeepNonlimitShapes: if this parameter == 0 - only shapes with
+     #                             type <= Limit are kept in the result,
+     #                             else - shapes with type > Limit are kept
+     #                             also (if they exist)
      *
      *  After implementation new version of PartitionAlgo (October 2006)
      *  other parameters are ignored by current functionality. They are kept
@@ -1710,7 +1714,8 @@ module GEOM
 			       in ListOfGO   theRemoveInside,
 			       in short      theLimit,
 			       in boolean    theRemoveWebs,
-			       in ListOfLong theMaterials);
+			       in ListOfLong theMaterials,
+			       in short      theKeepNonlimitShapes);
 
     /*!
      *  Perform partition operation.
@@ -1731,7 +1736,8 @@ module GEOM
 						      in ListOfGO   theRemoveInside,
 						      in short      theLimit,
 						      in boolean    theRemoveWebs,
-						      in ListOfLong theMaterials);
+						      in ListOfLong theMaterials,
+						      in short      theKeepNonlimitShapes);
 
     /*!
      *  Perform partition of the Shape with the Plane

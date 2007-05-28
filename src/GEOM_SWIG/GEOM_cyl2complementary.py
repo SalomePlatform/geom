@@ -97,7 +97,7 @@ p_tools.append(geompy.MakePlane(geompy.MakeVertex(gx+g_rayonPetit, 0, 0), geompy
 
 addToStudy(t_boite, "t_boite")
 
-p_element = geompy.MakePartition([t_boite], p_tools, [], [], 4, 0, [])
+p_element = geompy.MakePartition([t_boite], p_tools, [], [], 4, 0, [], 0)
 
 # Compound
 # --------

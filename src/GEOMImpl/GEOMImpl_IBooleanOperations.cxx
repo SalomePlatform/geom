@@ -148,7 +148,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
                               const Standard_Integer                      theLimit,
                               const Standard_Boolean                      theRemoveWebs,
                               const Handle(TColStd_HArray1OfInteger)&     theMaterials,
-                              const Standard_Boolean                      thePerformSelfIntersections)
+			      const Standard_Integer theKeepNonlimitShapes,
+                              const Standard_Boolean thePerformSelfIntersections)
 {
   SetErrorCode(KO);
 
@@ -251,6 +252,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
 
   // Limit
   aCI.SetLimit(theLimit);
+  aCI.SetKeepNonlimitShapes(theKeepNonlimitShapes);
 
   // Materials
   if (theRemoveWebs) {
@@ -302,7 +304,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
       pd << ", " << theMaterials->Value(i);
     }
   }
-  pd << "])";
+  pd << "], " << theKeepNonlimitShapes <<")";
 
   SetErrorCode(OK);
   return aPartition;
