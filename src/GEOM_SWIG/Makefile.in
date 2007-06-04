@@ -36,12 +36,10 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 
 # Libraries targets
 
-LIB = libGEOM_Swigcmodule.la
+LIB =
 LIB_SRC =
 
-SWIG_DEF = libGEOM_Swig.i
 EXPORT_PYSCRIPTS = \
-	libGEOM_Swig.py \
 	geompy.py \
 	batchmode_geompy.py \
 	GEOM_Spanner.py \
@@ -74,18 +72,10 @@ EXPORT_PYSCRIPTS = \
 	PAL_MESH_033_geometry.py \
 	PAL_MESH_035_geometry.py
 
-LIB_CLIENT_IDL = SALOMEDS.idl \
-                 SALOMEDS_Attributes.idl \
-		 SALOME_Exception.idl \
-		 GEOM_Gen.idl \
-		 SALOME_Component.idl \
-		 SALOME_GenericObj.idl
-
 EXPORT_SHAREDPYSCRIPTS=\
 		 GEOM_shared_modules.py
 
-CPPFLAGS+=$(QT_INCLUDES) $(PYTHON_INCLUDES) $(OCC_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) -DHAVE_CONFIG_H
+CPPFLAGS+=$(QT_INCLUDES) $(PYTHON_INCLUDES) $(OCC_INCLUDES) $(OGL_INCLUDES) -DHAVE_CONFIG_H
 LIBS+= $(PYTHON_LIBS)
-LDFLAGS+= -lGEOM
 
 @CONCLUDE@
