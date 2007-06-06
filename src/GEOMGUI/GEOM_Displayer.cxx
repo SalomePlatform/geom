@@ -527,7 +527,8 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         if (myType == GEOM_VECTOR)
           AISShape = new GEOM_AISVector (myShape, "");
         else {
-          if (!TopoDS_Iterator(myShape).More())
+          if (myShape.ShapeType() != TopAbs_VERTEX && // fix pb with not displayed points
+              !TopoDS_Iterator(myShape).More())
             return;// NPAL15983 (Bug when displaying empty groups)
           AISShape = new GEOM_AISShape (myShape, "");
         }
@@ -1218,6 +1219,8 @@ int GEOM_Displayer::GetDisplayMode() const
 
 int GEOM_Displayer::UnsetDisplayMode()
 {
+  int aPrevMode = myDisplayMode;
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   myDisplayMode = resMgr->integerValue( "Geometry", "display_mode", 0 );
+  return aPrevMode;
 }
