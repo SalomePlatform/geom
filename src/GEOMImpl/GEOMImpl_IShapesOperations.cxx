@@ -1420,6 +1420,12 @@ Handle(TColStd_HSequenceOfInteger)
   TopoDS_Shape aBox = theBox->GetValue();
   TopoDS_Shape aShape = theShape->GetValue();
 
+  // Check presence of triangulation, build if need
+  if (!CheckTriangulation(aShape)) {
+    SetErrorCode("Cannot build triangulation on the shape");
+    return aSeqOfIDs;
+  }
+
   // Call algo
   GEOMAlgo_FinderShapeOn2 aFinder;
   Standard_Real aTol = 0.0001; // default value
