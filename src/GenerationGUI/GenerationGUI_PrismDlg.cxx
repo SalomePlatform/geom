@@ -33,13 +33,10 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <BRepPrimAPI_MakePrism.hxx>
-#include <BRepAdaptor_Curve.hxx>
-#include <gp_Lin.hxx>
-#include "GEOMImpl_Types.hxx"
-
 #include <qlabel.h>
 #include <qcheckbox.h>
+
+#include "GEOMImpl_Types.hxx"
 
 #include "utilities.h"
 
@@ -52,12 +49,13 @@
 //=================================================================================
 GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
                                                const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                      WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PRISM")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
-  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PRISM_2P")));
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+  QPixmap image0(aResMgr->loadPixmap("GEOM", tr("ICON_DLG_PRISM")));
+  QPixmap image1(aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image2(aResMgr->loadPixmap("GEOM", tr("ICON_DLG_PRISM_2P")));
 
   setCaption(tr("GEOM_EXTRUSION_TITLE"));
 
@@ -65,8 +63,9 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWid
   GroupConstructors->setTitle(tr("GEOM_EXTRUSION"));
   RadioButton1->setPixmap(image0);
   RadioButton2->setPixmap(image2);
-  //RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
+
+  RadioButton1->setChecked(true);
 
   GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
   GroupPoints->CheckButton1->hide();
@@ -95,7 +94,6 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWid
 
   setHelpFileName("extrusion.htm");
 
-  /* Initialisations */
   Init();
 }
 
@@ -106,7 +104,7 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWid
 //=================================================================================
 GenerationGUI_PrismDlg::~GenerationGUI_PrismDlg()
 {  
-  /* no need to delete child widgets, Qt does it all for us */
+  // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -125,7 +123,6 @@ void GenerationGUI_PrismDlg::Init()
   GroupPoints2->LineEdit2->setReadOnly( true );
   GroupPoints2->LineEdit3->setReadOnly( true );
 
-  //myOkBase = myOkVec = false;
   myOkBase = myOkVec = myOkPnt1 = myOkPnt2 = false;
   
   /* Get setting of step value from file configuration */
@@ -167,8 +164,6 @@ void GenerationGUI_PrismDlg::Init()
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName(tr("GEOM_EXTRUSION"));
-
-  globalSelection( GEOM_ALLSHAPES );
   ConstructorsClicked(0);
 }
 
@@ -179,8 +174,9 @@ void GenerationGUI_PrismDlg::Init()
 //=================================================================================
 void GenerationGUI_PrismDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
-  
+  erasePreview();
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+
   switch (constructorId)
     {
     case 0:
@@ -190,10 +186,6 @@ void GenerationGUI_PrismDlg::ConstructorsClicked(int constructorId)
 	GroupPoints2->hide();
 	resize(0, 0);
 	GroupPoints->show();
-	
-        //GroupPoints->LineEdit1->setFocus();
-        //myEditCurrentArgument = GroupPoints->LineEdit1;
-        //displayPreview();
 
 	myEditCurrentArgument = GroupPoints->LineEdit1;
 	GroupPoints->LineEdit1->setText("");
@@ -208,10 +200,12 @@ void GenerationGUI_PrismDlg::ConstructorsClicked(int constructorId)
       }
     case 1:
       {
-	GroupPoints->hide();
+        globalSelection( GEOM_ALLSHAPES );
+
+        GroupPoints->hide();
 	resize(0, 0);
 	GroupPoints2->show();
-	
+
 	myEditCurrentArgument = GroupPoints2->LineEdit1;
 	GroupPoints2->LineEdit1->setText("");
  	GroupPoints2->LineEdit2->setText("");
@@ -220,11 +214,14 @@ void GenerationGUI_PrismDlg::ConstructorsClicked(int constructorId)
         myOkBase = myOkVec = myOkPnt1 = myOkPnt2 = false;
 	GroupPoints->LineEdit1->setText("");
  	GroupPoints->LineEdit2->setText("");
-	
+
 	break;
       }
     }
-  displayPreview();
+
+  myEditCurrentArgument->setFocus();
+  connect(myGeomGUI->getApp()->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
 
@@ -262,8 +259,8 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
 
-  if ( getConstructorId()==0 ) {
-
+  if (getConstructorId() == 0)
+  {
     if (IObjectCount() != 1) {
       if (myEditCurrentArgument == GroupPoints->LineEdit1)
         myOkBase = false;
@@ -288,13 +285,12 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
       myVec = aSelectedObject;
       myOkVec = true;
     }
-    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
 
+    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
     displayPreview();
   }
-
-  else { // getConstructorId()==1 - extrusion using 2 points
-
+  else // getConstructorId()==1 - extrusion using 2 points
+  {
     if (IObjectCount() != 1) {
       if (myEditCurrentArgument == GroupPoints2->LineEdit1)
         myOkBase = false;
@@ -330,9 +326,27 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
       myOkPnt2 = true;
     }
 
-    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
-
+    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
     displayPreview();
+  }
+}
+
+
+//=================================================================================
+// function : LineEditReturnPressed()
+// purpose  :
+//=================================================================================
+void GenerationGUI_PrismDlg::LineEditReturnPressed()
+{
+  QLineEdit* send = (QLineEdit*)sender();
+  if (send == GroupPoints->LineEdit1 ||
+      send == GroupPoints->LineEdit2 ||
+      send == GroupPoints2->LineEdit1 ||
+      send == GroupPoints2->LineEdit2 ||
+      send == GroupPoints2->LineEdit3 )
+  {
+    myEditCurrentArgument = send;
+    GEOMBase_Skeleton::LineEditReturnPressed();
   }
 }
 
@@ -344,61 +358,35 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 void GenerationGUI_PrismDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  globalSelection( GEOM_ALLSHAPES );
 
-  if(send == GroupPoints->PushButton1) {
+  if (send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
+    globalSelection( GEOM_ALLSHAPES );
   }
-  else if(send == GroupPoints->PushButton2) {
+  else if (send == GroupPoints->PushButton2) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
     globalSelection( GEOM_LINE );
   }
-  else if(send == GroupPoints2->PushButton1) {
+  else if (send == GroupPoints2->PushButton1) {
     GroupPoints2->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints2->LineEdit1;
+    globalSelection( GEOM_ALLSHAPES );
   }
-  else if(send == GroupPoints2->PushButton2) {
+  else if (send == GroupPoints2->PushButton2) {
     GroupPoints2->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints2->LineEdit2;
     globalSelection( GEOM_POINT );
   }
-  else if(send == GroupPoints2->PushButton3) {
+  else if (send == GroupPoints2->PushButton3) {
     GroupPoints2->LineEdit3->setFocus();
     myEditCurrentArgument = GroupPoints2->LineEdit3;
     globalSelection( GEOM_POINT );
   }
+
+  myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
-}
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void GenerationGUI_PrismDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1 ||
-     send == GroupPoints->LineEdit2 ||
-     send == GroupPoints2->LineEdit1 ||
-     send == GroupPoints2->LineEdit2 ||
-     send == GroupPoints2->LineEdit3 )
-    {
-      myEditCurrentArgument = send;
-      GEOMBase_Skeleton::LineEditReturnPressed();
-    }
-}
-
-//=================================================================================
-// function : enterEvent()
-// purpose  : when mouse enter onto the QWidget
-//=================================================================================
-void GenerationGUI_PrismDlg::enterEvent(QEvent * e)
-{
-  if ( !GroupConstructors->isEnabled() )
-    ActivateThisDialog();
 }
 
 
@@ -409,13 +397,22 @@ void GenerationGUI_PrismDlg::enterEvent(QEvent * e)
 void GenerationGUI_PrismDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  globalSelection( GEOM_ALLSHAPES );
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  //GroupPoints->LineEdit1->setFocus();
-  //myEditCurrentArgument = GroupPoints->LineEdit1;
-  //displayPreview();
+
   ConstructorsClicked( getConstructorId() );
+}
+
+
+//=================================================================================
+// function : enterEvent()
+// purpose  : when mouse enter onto the QWidget
+//=================================================================================
+void GenerationGUI_PrismDlg::enterEvent(QEvent * e)
+{
+  if (!GroupConstructors->isEnabled())
+    ActivateThisDialog();
 }
 
 
@@ -466,13 +463,13 @@ bool GenerationGUI_PrismDlg::execute( ObjectList& objects )
 
   switch ( getConstructorId() ) 
   {
-  case 0 :
+  case 0:
     { 
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakePrismVecH(myBase, myVec, getHeight());
       break;
     }
-  case 1 :
+  case 1:
     {
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakePrismTwoPnt(myBase, myPoint1, myPoint2);
