@@ -42,7 +42,6 @@
 #include "GEOMAlgo_FinderShapeOnQuad.hxx"
 #include "GEOMAlgo_FinderShapeOn2.hxx"
 #include "GEOMAlgo_ClsfBox.hxx"
-//#include "GEOMAlgo_ClsfSurf.hxx"
 #include "GEOMAlgo_Gluer1.hxx"
 #include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
 #include "GEOMAlgo_CoupleOfShapes.hxx"
@@ -62,6 +61,7 @@
 #include <BRepExtrema_ExtCF.hxx>
 
 #include <BRep_Tool.hxx>
+#include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
 #include <BRepGProp.hxx>
 #include <BRepAdaptor_Curve.hxx>
@@ -78,6 +78,7 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopLoc_Location.hxx>
@@ -1587,8 +1588,10 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
 
   // Check presence of triangulation, build if need
-  if (!CheckTriangulation(theShape))
+  if (!CheckTriangulation(theShape)) {
+    SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
+  }
 
   // Call algo
   GEOMAlgo_FinderShapeOn1 aFinder;
@@ -2207,8 +2210,10 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
 
   // Check presence of triangulation, build if need
-  if (!CheckTriangulation(aShape))
+  if (!CheckTriangulation(aShape)) {
+    SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
+  }
 
   // Call algo
   gp_Pnt aPntTL = BRep_Tool::Pnt(TopoDS::Vertex(aTL));
@@ -2652,6 +2657,33 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
 }
 
 //=======================================================================
+//function : CompsolidToCompound
+//purpose  :
+//=======================================================================
+TopoDS_Shape GEOMImpl_IShapesOperations::CompsolidToCompound (const TopoDS_Shape& theCompsolid)
+{
+  if (theCompsolid.ShapeType() != TopAbs_COMPSOLID) {
+    return theCompsolid;
+  }
+
+  TopoDS_Compound aCompound;
+  BRep_Builder B;
+  B.MakeCompound(aCompound);
+
+  TopTools_MapOfShape mapShape;
+  TopoDS_Iterator It (theCompsolid, Standard_True, Standard_True);
+
+  for (; It.More(); It.Next()) {
+    TopoDS_Shape aShape_i = It.Value();
+    if (mapShape.Add(aShape_i)) {
+      B.Add(aCompound, aShape_i);
+    }
+  }
+
+  return aCompound;
+}
+
+//=======================================================================
 //function : CheckTriangulation
 //purpose  :
 //=======================================================================
@@ -2659,7 +2691,6 @@ bool GEOMImpl_IShapesOperations::CheckTriangulation (const TopoDS_Shape& aShape)
 {
   TopExp_Explorer exp (aShape, TopAbs_FACE);
   if (!exp.More()) {
-    SetErrorCode("Shape without faces given");
     return false;
   }
 

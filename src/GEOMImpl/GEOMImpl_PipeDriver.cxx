@@ -21,16 +21,28 @@
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_PipeDriver.hxx>
+
+#include <GEOMImpl_IShapesOperations.hxx>
+#include <GEOMImpl_IPipeDiffSect.hxx>
+#include <GEOMImpl_IPipeShellSect.hxx>
 #include <GEOMImpl_IPipe.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
+#include <ShapeAnalysis_FreeBounds.hxx>
+#include <ShapeAnalysis_Edge.hxx>
+
 #include <BRep_Tool.hxx>
+#include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
-#include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepOffsetAPI_MakePipeShell.hxx>
 
 #include <TopAbs.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopoDS_Edge.hxx>
@@ -38,32 +50,24 @@
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Shell.hxx>
 #include <TopoDS_Face.hxx>
-#include <BRepOffsetAPI_MakePipeShell.hxx>
-#include <TColStd_HSequenceOfTransient.hxx>
-#include <GEOMImpl_IPipeDiffSect.hxx>
-#include <GEOMImpl_IPipeShellSect.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopTools_SequenceOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
 
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+#include <Geom_TrimmedCurve.hxx>
+
+#include <TColgp_SequenceOfPnt.hxx>
+#include <TColStd_HSequenceOfTransient.hxx>
+
+#include <Precision.hxx>
 #include <Standard_NullObject.hxx>
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
-#include "utilities.h"
-#include <TopExp_Explorer.hxx>
-#include <TopTools_SequenceOfShape.hxx>
-#include <BRep_Builder.hxx>
-#include <TopoDS_Compound.hxx>
-#include <ShapeAnalysis_FreeBounds.hxx>
-#include <TColgp_SequenceOfPnt.hxx>
-#include <ShapeAnalysis_Edge.hxx>
-#include <TopTools_IndexedDataMapOfShapeShape.hxx>
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#include <TopExp.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <GeomAPI_ProjectPointOnCurve.hxx>
-#include <Precision.hxx>
-#include <Geom_TrimmedCurve.hxx>
-#include <BRepBuilderAPI_Sewing.hxx>
 
-//#include <BRepTools.hxx>
+#include "utilities.h"
 
 
 //=======================================================================
@@ -345,7 +349,6 @@ static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
     }
 
     FindNextPairOfFaces(F1other, aMapEdgeFaces1, aMapEdgeFaces2, FF, aCI);
-    
   }
 }
 
@@ -1250,7 +1253,8 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
   }
 
-  aFunction->SetValue(aShape);
+  TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
+  aFunction->SetValue(aRes);
 
   log.SetTouched(Label());
   if(aCI) delete aCI;

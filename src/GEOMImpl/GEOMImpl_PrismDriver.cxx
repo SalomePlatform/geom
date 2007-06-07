@@ -21,6 +21,8 @@
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_PrismDriver.hxx>
+
+#include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_IPrism.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
@@ -114,7 +116,8 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
 
   if (aShape.IsNull()) return 0;
 
-  aFunction->SetValue(aShape);
+  TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
+  aFunction->SetValue(aRes);
 
   log.SetTouched(Label()); 
 

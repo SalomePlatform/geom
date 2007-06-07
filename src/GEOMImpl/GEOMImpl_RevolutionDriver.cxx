@@ -21,6 +21,8 @@
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_RevolutionDriver.hxx>
+
+#include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_IRevolution.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
@@ -114,11 +116,13 @@ Standard_Integer GEOMImpl_RevolutionDriver::Execute(TFunction_Logbook& log) cons
   }
 
   if (aShape.IsNull()) return 0;
-  aFunction->SetValue(aShape);
 
-  log.SetTouched(Label()); 
+  TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
+  aFunction->SetValue(aRes);
 
-  return 1;    
+  log.SetTouched(Label());
+
+  return 1;
 }
 
 
