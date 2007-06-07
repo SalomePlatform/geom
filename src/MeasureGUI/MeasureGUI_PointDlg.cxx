@@ -29,7 +29,10 @@
 #include "MeasureGUI_PointDlg.h"
 #include "GEOMBase.h"
 
+#include "DlgRef_SpinBox.h"
+
 #include "utilities.h"
+
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
@@ -189,9 +192,9 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     {
       gp_Pnt aPnt = BRep_Tool::Pnt( aPoint );
       mySelEdit->setText( aName );
-      myX->setText( QString( "%1" ).arg( aPnt.X() ) );
-      myY->setText( QString( "%1" ).arg( aPnt.Y() ) );
-      myZ->setText( QString( "%1" ).arg( aPnt.Z() ) );
+      myX->setText(DlgRef_SpinBox::PrintDoubleValue(aPnt.X()));
+      myY->setText(DlgRef_SpinBox::PrintDoubleValue(aPnt.Y()));
+      myZ->setText(DlgRef_SpinBox::PrintDoubleValue(aPnt.Z()));
     }
   }
   catch( ... )
