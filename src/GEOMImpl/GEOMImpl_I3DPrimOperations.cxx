@@ -864,7 +864,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aRevolution << " = geompy.MakeRevolutionAxisAngle("
+  GEOM::TPythonDump(aFunction) << aRevolution << " = geompy.MakeRevolution("
     << theBase << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
 
   SetErrorCode(OK);
