@@ -20,7 +20,7 @@
 #include <GEOMAlgo_Builder.hxx>
 
 #include <NMTDS_ShapesDataStructure.hxx>
-#include <NMTTools_DSFiller.hxx>
+//#include <NMTTools_DSFiller.hxx>
 #include <NMTTools_PaveFiller.hxx>
 #include <IntTools_Context.hxx>
 #include <TopoDS_Shape.hxx>

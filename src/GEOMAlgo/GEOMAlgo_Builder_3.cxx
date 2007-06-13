@@ -56,7 +56,6 @@
 #include <IntTools_Context.hxx>
 
 #include <NMTDS_ShapesDataStructure.hxx>
-#include <NMTTools_DSFiller.hxx>
 #include <NMTTools_PaveFiller.hxx>
 
 #include <GEOMAlgo_Tools3D.hxx>
@@ -93,8 +92,8 @@ static
 {
   myErrorStatus=0;
   //
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS(); 
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
   Standard_Boolean bToReverse;
@@ -186,8 +185,8 @@ static
 {
   myErrorStatus=0;
   //
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS(); 
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
   Standard_Boolean bIsIN, bHasImage;
@@ -416,8 +415,8 @@ static
 {
   myErrorStatus=0;
   // 
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
   Standard_Integer i, aNbS, iErr;
@@ -589,8 +588,8 @@ static
 {
   myErrorStatus=0;
   //
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
   //Standard_Boolean bHasImage;

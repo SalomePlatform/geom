@@ -25,54 +25,61 @@
 
 #include <NMTTools_PaveFiller.ixx>
 
+#include <Bnd_HArray1OfBox.hxx>
+#include <Bnd_BoundSortBox.hxx>
+#include <Bnd_Box.hxx>
+#include <BRepBndLib.hxx>
+
+#include <TColStd_MapOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TopTools_DataMapOfShapeListOfInteger.hxx>
+#include <TColStd_ListOfInteger.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+
+#include <TopAbs_Orientation.hxx>
+
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Compound.hxx>
 
-#include <NMTDS_ShapesDataStructure.hxx>
-#include <TopAbs_Orientation.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfIntegerShape.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfShapeInteger.hxx>
+#include <TopTools_DataMapOfShapeInteger.hxx>
+#include <TopTools_DataMapOfShapeShape.hxx>
+#include <TopTools_DataMapOfShapeListOfInteger.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfShapeListOfInteger.hxx>
+#include <TopTools_DataMapOfIntegerShape.hxx>
+
+#include <BRep_Builder.hxx>
+#include <BRep_Tool.hxx>
+
+#include <TopExp_Explorer.hxx>
+#include <TopExp.hxx>
+//
+#include <IntTools_SequenceOfPntOn2Faces.hxx>
+#include <IntTools_PntOnFace.hxx>
+#include <IntTools_PntOn2Faces.hxx>
+
+#include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
+
+#include <BOPTools_SSInterference.hxx>
+#include <BOPTools_CArray1OfSSInterference.hxx>
+#include <BOPTools_CArray1OfVVInterference.hxx>
+#include <BOPTools_VVInterference.hxx>
+#include <BOPTools_Tools.hxx>
 #include <BOPTools_ListOfPaveBlock.hxx>
 #include <BOPTools_ListIteratorOfListOfPaveBlock.hxx>
 #include <BOPTools_PaveBlock.hxx>
 #include <BOPTools_Pave.hxx>
 #include <BOPTools_Tools.hxx>
-#include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
-#include <BRep_Tool.hxx>
+
+#include <NMTDS_Iterator.hxx>
+#include <NMTDS_ShapesDataStructure.hxx>
+#include <NMTDS_InterfPool.hxx>
+
 #include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
-#include <BOPTools_SSInterference.hxx>
-#include <BOPTools_CArray1OfSSInterference.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TopExp.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
-
-//
-#include <IntTools_SequenceOfPntOn2Faces.hxx>
-#include <IntTools_PntOnFace.hxx>
-#include <IntTools_PntOn2Faces.hxx>
-#include <BOPTools_Tools.hxx>
-#include <TopTools_DataMapOfShapeListOfInteger.hxx>
-#include <TColStd_ListOfInteger.hxx>
-#include <TopoDS_Compound.hxx>
-#include <BRep_Builder.hxx>
-#include <BOPTools_CArray1OfVVInterference.hxx>
-#include <BOPTools_VVInterference.hxx>
-#include <TopTools_DataMapOfShapeShape.hxx>
-#include <TopTools_DataMapOfShapeListOfInteger.hxx>
-#include <TopTools_DataMapIteratorOfDataMapOfShapeListOfInteger.hxx>
-#include <TColStd_MapOfInteger.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <TopTools_DataMapOfIntegerShape.hxx>
-#include <Bnd_HArray1OfBox.hxx>
-#include <Bnd_BoundSortBox.hxx>
-#include <Bnd_Box.hxx>
-#include <BRepBndLib.hxx>
-#include <TopTools_DataMapIteratorOfDataMapOfIntegerShape.hxx>
-#include <TopTools_DataMapOfShapeInteger.hxx>
-#include <TopTools_DataMapIteratorOfDataMapOfShapeInteger.hxx>
-#include <TopTools_DataMapOfShapeInteger.hxx>
-#include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
-
 // Modified  Thu Sep 14 14:35:18 2006 
 // Contribution of Samtech www.samcef.com BEGIN
 static 
@@ -286,7 +293,7 @@ static
   BOPTools_Pave aPave1, aPave2;
   BOPTools_PaveBlock aPB;
   //
-  BOPTools_CArray1OfSSInterference& aFFs=myIntrPool->SSInterferences();
+  BOPTools_CArray1OfSSInterference& aFFs=myIP->SSInterferences();
   //
   aNbFFs=aFFs.Extent();
   for (i=1; i<=aNbFFs; ++i) {
@@ -371,7 +378,7 @@ static
   //
   myAloneVertices.Clear();
   //
-  BOPTools_CArray1OfSSInterference& aFFs=myIntrPool->SSInterferences();
+  BOPTools_CArray1OfSSInterference& aFFs=myIP->SSInterferences();
   //
   // 1. Collect alone vertices from FFs
   aNbV=0;
@@ -545,6 +552,50 @@ static
       }
     }
   }
+  // qqf
+  {
+    Standard_Integer aNbF, aNbAV, nF, k;
+    NMTTools_IndexedDataMapOfIndexedMapOfInteger aMAVF;
+    //
+    aNbF=myAloneVertices.Extent();
+    if (aNbF<2) {
+      return;
+    }
+    //
+    // 1. fill map Alone Vertex/Face ->  aMAVF
+    for (i=1; i<=aNbF; ++i) {
+      nF=myAloneVertices.FindKey(i);
+      const TColStd_IndexedMapOfInteger& aMAV=myAloneVertices(i);
+      aNbAV=aMAV.Extent();
+      for(j=1; j<=aNbAV; ++j) {
+	nV=aMAV(j);
+	if (aMAVF.Contains(nV)) {
+	  TColStd_IndexedMapOfInteger& aMF=aMAVF.ChangeFromKey(nV);
+	  aMF.Add(nF);
+	}
+	else{
+	  TColStd_IndexedMapOfInteger aMF;
+	  aMF.Add(nF);
+	  aMAVF.Add(nV, aMF);
+	}
+      }
+    }
+    //
+    // 2 Obtain pairs of faces
+    aNbAV=aMAVF.Extent();
+    for (i=1; i<=aNbAV; ++i) {
+      const TColStd_IndexedMapOfInteger& aMF=aMAVF(i);
+      aNbF=aMF.Extent();
+      for(j=1; j<aNbF; ++j) {
+	nF1=aMF(j);
+	for(k=j+1; k<=aNbF; ++k) {
+	  nF2=aMF(k);
+	  myIP->Add(nF1, nF2, Standard_True, NMTDS_TI_FF);
+	}
+      }
+    }
+  }
+  // qqt
 }
 //=======================================================================
 // function: AloneVertices
@@ -558,24 +609,22 @@ static
 // function: FuseVertices
 // purpose: 
 //=======================================================================
-void FuseVertices(const TopoDS_Shape& aCompound,
-		  TopTools_DataMapOfShapeShape& aDMVV)
+  void NMTTools_PaveFiller::FuseVertices(const TopoDS_Shape& aCompound,
+					 TopTools_DataMapOfShapeShape& aDMVV)const
 {
   Standard_Integer i, aNbVV, n1, n2, nX;
-  NMTDS_ShapesDataStructure tDS;
+  NMTTools_PaveFiller tPF;
   //
-  tDS.SetCompositeShape(aCompound);
-  tDS.Init();
+  tPF.SetCompositeShape(aCompound);
   //
-  BOPTools_InterferencePool tInterfPool(tDS);
-  NMTTools_PaveFiller tPaveFiller(tInterfPool);
+  tPF.Init();
   //
-  tPaveFiller.Init();
+  tPF.PerformVV();
+  //tPF.PerformNewVertices(); //qq
   //
-  tPaveFiller.PerformVV();
-  tPaveFiller.PerformNewVertices();
-  //
-  const BOPTools_CArray1OfVVInterference& aVVt=tInterfPool.VVInterfs();
+  NMTDS_ShapesDataStructure& tDS=*(tPF.DS());
+  NMTDS_InterfPool& tInterfPool=*(tPF.IP()); 
+  BOPTools_CArray1OfVVInterference& aVVt=tInterfPool.VVInterferences();
   //
   aNbVV=aVVt.Extent();
   for (i=1; i<=aNbVV; ++i) {

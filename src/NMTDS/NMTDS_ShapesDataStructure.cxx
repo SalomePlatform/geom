@@ -24,19 +24,28 @@
 
 
 #include <NMTDS_ShapesDataStructure.ixx>
-
-#include <TColStd_MapOfInteger.hxx>
-
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Shape.hxx>
-
-#include <BooleanOperations_ShapeAndInterferences.hxx>
 #include <BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors.hxx>
-#include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
-
 #include <NMTDS_ListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx>
 #include <NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx>
+#include <BooleanOperations_ShapeAndInterferences.hxx>
 #include <NMTDS_IndexRange.hxx>
+//
+#include <BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors.hxx>
+#include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
+#include <TColStd_MapOfInteger.hxx>
+#include <NMTDS_Tools.hxx>
+
+
+static
+  void ComputeBoxExS(const Standard_Integer aIx,
+		     const NMTDS_ShapesDataStructure* pDS,
+		     Bnd_Box& aBoxEx);
+static
+  void GetAllSuccessorsS(const Standard_Integer nS,
+			 const NMTDS_ShapesDataStructure* myDS,
+			 TColStd_IndexedMapOfInteger& aMA);
 
 //===========================================================================
 //function : NMTDS_ShapesDataStructure::NMTDS_ShapesDataStructure
@@ -170,7 +179,6 @@
     }
     //modified by NIZNHY-PKV Tue Feb 27 17:06:03 2007t
   }
-  //
   aNbS=aMSA.Extent(); 
   //
   // Fill myRanges
@@ -214,6 +222,7 @@
   // Contribution of Samtech www.samcef.com BEGIN
   //
   // Fill the table
+    
   //aShift=0;
   //for (i=0; i<2; ++i) {
   //  if (i) {
@@ -226,7 +235,7 @@
   //    InsertShapeAndAncestorsSuccessors(aSx, aASx, aShift);
   //  }
   //}
-
+  
   aShift=0;
   for (j=1; j<=aNbS; ++j) {
     const TopoDS_Shape& aSx=aMSA.FindKey(j);
@@ -360,4 +369,73 @@
   }
   // Contribution of Samtech www.samcef.com END
   return aIndex;
+}
+
+//=======================================================================
+//function : ComputeBoxEx
+//purpose  : 
+//=======================================================================
+  void NMTDS_ShapesDataStructure::ComputeBoxEx (const Standard_Integer aIx,
+						Bnd_Box& aBoxEx)const
+{
+  ComputeBoxExS(aIx, this, aBoxEx);
+}
+//=======================================================================
+//function : GetAllSuccessors
+//purpose  : 
+//=======================================================================
+  void NMTDS_ShapesDataStructure::GetAllSuccessors(const Standard_Integer nS,
+						   TColStd_IndexedMapOfInteger& aMA)const
+{
+  GetAllSuccessorsS(nS, this, aMA);
+}
+//=======================================================================
+//function : GetAllSuccessorsS
+//purpose  : 
+//=======================================================================
+void GetAllSuccessorsS(const Standard_Integer nS,
+		       const NMTDS_ShapesDataStructure* myDS,
+		       TColStd_IndexedMapOfInteger& aMA)
+{
+  TopAbs_ShapeEnum aT;
+  Standard_Integer i, nSx, aNbSuccessors, *pSuccessors;
+  Standard_Address xSuccessors;
+  //
+  const TopoDS_Shape& aS=myDS->Shape(nS);
+  aT=aS.ShapeType();
+  if(NMTDS_Tools::HasBRep(aT)) {
+    aMA.Add(nS);
+    //
+    if (aT==TopAbs_VERTEX) {
+      return;
+    }
+  }
+  //
+  myDS->GetSuccessors(nS, xSuccessors, aNbSuccessors);
+  pSuccessors=(Standard_Integer*)xSuccessors;
+  for (i=0; i<aNbSuccessors; ++i) {
+    nSx=pSuccessors[i];
+    GetAllSuccessorsS(nSx, myDS, aMA);
+  }
+}
+//=======================================================================
+// function: ComputeBoxExS
+// purpose: 
+//=======================================================================
+  void ComputeBoxExS(const Standard_Integer aIx,
+		     const NMTDS_ShapesDataStructure* pDS,
+		     Bnd_Box& aBoxEx)
+{
+  Standard_Integer i, aNbS, iS;
+  //
+  const Bnd_Box& aBox=pDS->GetBoundingBox(aIx);
+  aBoxEx.Add(aBox);
+  //
+  aNbS=pDS->NumberOfSuccessors(aIx);
+  for (i=1; i<=aNbS; ++i) {
+    Bnd_Box aBoxS;
+    iS=pDS->GetSuccessor(aIx, i);
+    ComputeBoxExS(iS, pDS, aBoxS);
+    aBoxEx.Add(aBoxS);
+  }
 }

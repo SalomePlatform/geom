@@ -25,7 +25,7 @@
 #include <NMTDS_PassKeyBoolean.ixx>
 
 //=======================================================================
-//function : NMTDS_PassKeyBoolean
+//function : 
 //purpose  : 
 //=======================================================================
   NMTDS_PassKeyBoolean::NMTDS_PassKeyBoolean()
@@ -35,13 +35,20 @@
 {
 }
 //=======================================================================
-//function :Assign
+//function : ~
 //purpose  : 
 //=======================================================================
-  NMTDS_PassKeyBoolean& NMTDS_PassKeyBoolean::Assign(const NMTDS_PassKeyBoolean& anOther)
+  NMTDS_PassKeyBoolean::~NMTDS_PassKeyBoolean()
+{
+}
+//=======================================================================
+//function :operator =
+//purpose  : 
+//=======================================================================
+  NMTDS_PassKeyBoolean& NMTDS_PassKeyBoolean::operator =(const NMTDS_PassKeyBoolean& anOther)
 {
   myFlag=anOther.myFlag;
-  NMTDS_PassKey::Assign(anOther);
+  NMTDS_PassKey::operator =(anOther);
   return *this;
 }
 //=======================================================================

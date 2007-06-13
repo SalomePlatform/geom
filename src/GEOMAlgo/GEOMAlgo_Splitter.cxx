@@ -42,7 +42,6 @@
 
 #include <BOP_CorrectTolerances.hxx>
 
-#include <NMTTools_DSFiller.hxx>
 
 static 
   void TreatCompound(const TopoDS_Shape& aC, 
@@ -320,6 +319,6 @@ void TreatCompound(const TopoDS_Shape& aC1,
 // 
 // 0  - Ok
 // 1  - The object is just initialized
-// 2  - DSFiller is failed
+// 2  - PaveFiller is failed
 // 10 - No shapes to process
 // 30 - SolidBuilder failed

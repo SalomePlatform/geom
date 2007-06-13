@@ -34,7 +34,8 @@
 #include <GEOM_Function.hxx>
 
 #include <ShHealOper_Sewing.hxx>
-#include <NMTAlgo_Splitter1.hxx>
+//#include <NMTAlgo_Splitter1.hxx>
+#include <GEOMAlgo_Gluer.hxx>
 #include <BlockFix_BlockFixAPI.hxx>
 
 #include "utilities.h"
@@ -470,14 +471,21 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aCompound = anArgs(1);
 
       // Glue coincident faces and edges (with Partition algorithm).
-      NMTAlgo_Splitter1 PS;
-      PS.AddShape(aCompound);
-      PS.Compute();
-      PS.SetRemoveWebs(Standard_False);
-//      PS.Build(aCompound.ShapeType());
-      PS.Build(TopAbs_SOLID);
+      //NMTAlgo_Splitter1 PS;
+      //PS.AddShape(aCompound);
+      //PS.Compute();
+      //PS.SetRemoveWebs(Standard_False);
+      //      PS.Build(aCompound.ShapeType());
+      //PS.Build(TopAbs_SOLID);
+      //aShape = PS.Shape();
 
-      aShape = PS.Shape();
+      GEOMAlgo_Gluer aGluer;
+      aGluer.SetShape(aCompound);
+      aGluer.SetCheckGeometry(Standard_True);
+      aGluer.Perform();
+      aShape = aGluer.Result();
+
+
     } else {
     }
 

@@ -114,7 +114,7 @@ EXPORT_HEADERS= GEOMImpl_Gen.hxx \
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) $(KERNEL_CXXFLAGS) $(BOOST_CPPFLAGS)
 CXXFLAGS += $(OCC_CXXFLAGS) $(KERNEL_CXXFLAGS)
-LDFLAGS  += $(KERNEL_LDFLAGS) $(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset -lGEOMbasic -lNMTAlgo -lGEOMAlgo -lShHealOper
+LDFLAGS  += $(KERNEL_LDFLAGS) $(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset -lGEOMbasic -lGEOMAlgo -lShHealOper
 
 
 # additional file to be cleaned

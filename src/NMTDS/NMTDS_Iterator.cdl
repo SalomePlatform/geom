@@ -24,7 +24,7 @@
 
 
 class Iterator from NMTDS 
-
+     
 	---Purpose: 
 
 uses  
@@ -33,7 +33,9 @@ uses
     ShapesDataStructure  from NMTDS,
     PShapesDataStructure from NMTDS,
     ListOfPassKeyBoolean from NMTDS,
-    ListIteratorOfListOfPassKeyBoolean from NMTDS
+    ListIteratorOfListOfPassKeyBoolean from NMTDS,
+    PassKeyBoolean from NMTDS 
+    
 --raises
 
 is 
@@ -61,18 +63,28 @@ is
     	    	aIndex2:out Integer from Standard;
     	    	aWithSubShape: out Boolean from Standard); 
     	
-    Prepare(me:out); 
-     
+    Prepare(me:out) 
+    	is virtual; 
+      
+    Intersect(me:out) 
+    	is virtual protected; 
+	
     ExpectedLength(me) 
     	returns Integer from Standard;  
 	 
+    BlockLength(me) 
+    	returns Integer from Standard;  
+     
     SDVertices(me) 
     	returns DataMapOfIntegerListOfInteger from TColStd; 
-    ---C++:return const & 
-
+    ---C++:return const &  
+     
+    FillMVSD(myclass; 
+    	aMVSD1:DataMapOfIntegerListOfInteger from TColStd; 
+    	aMVSD2:out DataMapOfIntegerListOfInteger from TColStd); 
  
 fields
-    myPDS      :PShapesDataStructure from NMTDS     is protected; 
+    myDS       :PShapesDataStructure from NMTDS     is protected; 
     myLists    :ListOfPassKeyBoolean from NMTDS [6] is protected;  
     myIterator :ListIteratorOfListOfPassKeyBoolean from NMTDS is protected; 
     myEmptyList:ListOfPassKeyBoolean from NMTDS is protected; 

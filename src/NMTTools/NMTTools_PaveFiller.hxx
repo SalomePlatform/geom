@@ -20,9 +20,6 @@
 #ifndef _NMTTools_PaveFiller_HeaderFile
 #define _NMTTools_PaveFiller_HeaderFile
 
-#ifndef _BOPTools_PInterferencePool_HeaderFile
-#include <BOPTools_PInterferencePool.hxx>
-#endif
 #ifndef _NMTDS_PShapesDataStructure_HeaderFile
 #include <NMTDS_PShapesDataStructure.hxx>
 #endif
@@ -31,9 +28,6 @@
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
-#endif
-#ifndef _NMTDS_Iterator_HeaderFile
-#include <NMTDS_Iterator.hxx>
 #endif
 #ifndef _BOPTools_PavePool_HeaderFile
 #include <BOPTools_PavePool.hxx>
@@ -56,13 +50,22 @@
 #ifndef _TColStd_DataMapOfIntegerInteger_HeaderFile
 #include <TColStd_DataMapOfIntegerInteger.hxx>
 #endif
+#ifndef _NMTDS_PIterator_HeaderFile
+#include <NMTDS_PIterator.hxx>
+#endif
+#ifndef _TopoDS_Shape_HeaderFile
+#include <TopoDS_Shape.hxx>
+#endif
+#ifndef _NMTDS_PInterfPool_HeaderFile
+#include <NMTDS_PInterfPool.hxx>
+#endif
 #ifndef _TopAbs_ShapeEnum_HeaderFile
 #include <TopAbs_ShapeEnum.hxx>
 #endif
 #ifndef _Standard_Real_HeaderFile
 #include <Standard_Real.hxx>
 #endif
-class BOPTools_InterferencePool;
+class TopoDS_Shape;
 class BOPTools_Pave;
 class IntTools_ShrunkRange;
 class IntTools_Context;
@@ -86,6 +89,7 @@ class gp_Pnt;
 class NMTTools_IndexedDataMapOfIndexedMapOfInteger;
 class TopTools_ListOfShape;
 class TopoDS_Edge;
+class TopTools_DataMapOfShapeShape;
 
 
 #ifndef _Standard_HeaderFile
@@ -117,37 +121,28 @@ public:
 
 
 Standard_EXPORT NMTTools_PaveFiller();
+Standard_EXPORT virtual ~NMTTools_PaveFiller();
 
 
-Standard_EXPORT NMTTools_PaveFiller(const BOPTools_InterferencePool& aIP);
+Standard_EXPORT   void SetCompositeShape(const TopoDS_Shape& aS) ;
 
 
-Standard_EXPORT virtual  void Destroy() ;
-Standard_EXPORT virtual ~NMTTools_PaveFiller(){Destroy();}
+Standard_EXPORT  const TopoDS_Shape& CompositeShape() const;
 
 
-Standard_EXPORT   void SetInterferencePool(const BOPTools_InterferencePool& aIP) ;
+Standard_EXPORT   NMTDS_PShapesDataStructure DS() ;
 
 
-Standard_EXPORT   BOPTools_PInterferencePool InterfPool() ;
+Standard_EXPORT   NMTDS_PIterator DSIt() ;
 
 
-Standard_EXPORT   void Init() ;
+Standard_EXPORT   NMTDS_PInterfPool IP() ;
 
 
 Standard_EXPORT virtual  void Perform() ;
 
 
-Standard_EXPORT virtual  void PerformVV() ;
-
-
-Standard_EXPORT virtual  void PerformNewVertices() ;
-
-
 Standard_EXPORT   Standard_Boolean IsDone() const;
-
-
-Standard_EXPORT   NMTDS_PShapesDataStructure DS() ;
 
 
 Standard_EXPORT  const IntTools_Context& Context() const;
@@ -285,6 +280,9 @@ Standard_EXPORT   Standard_Integer CheckIntermediatePoint(const BOPTools_PaveBlo
 Standard_EXPORT   void SharedEdges(const Standard_Integer nF1,const Standard_Integer nF2,TColStd_ListOfInteger& aLNE,TopTools_ListOfShape& aLSE) ;
 
 
+Standard_EXPORT   void FuseVertices(const TopoDS_Shape& aC,TopTools_DataMapOfShapeShape& aDMVV) const;
+
+
 
 
 
@@ -292,6 +290,15 @@ protected:
 
  // Methods PROTECTED
  // 
+
+
+Standard_EXPORT virtual  void Init() ;
+
+
+Standard_EXPORT virtual  void Clear() ;
+
+
+Standard_EXPORT virtual  void PerformVV() ;
 
 
 Standard_EXPORT virtual  void PerformVE() ;
@@ -324,13 +331,7 @@ Standard_EXPORT virtual  void PreparePaveBlocks(const Standard_Integer anE) ;
 Standard_EXPORT virtual  void PrepareEdges() ;
 
 
-Standard_EXPORT   void SortTypes(Standard_Integer& anInd1,Standard_Integer& anInd2) const;
-
-
-Standard_EXPORT   Standard_Integer ExpectedPoolLength() const;
-
-
-Standard_EXPORT   Standard_Boolean IsSuccesstorsComputed(const Standard_Integer iF1,const Standard_Integer iF2) const;
+Standard_EXPORT   Standard_Boolean IsSuccessorsComputed(const Standard_Integer iF1,const Standard_Integer iF2) const;
 
 
 Standard_EXPORT   Standard_Boolean IsBlocksCoinside(const BOPTools_PaveBlock& aPB1,const BOPTools_PaveBlock& aPB2) const;
@@ -392,12 +393,10 @@ Standard_EXPORT   void MakeAloneVertices() ;
 
  // Fields PROTECTED
  //
-BOPTools_PInterferencePool myIntrPool;
 NMTDS_PShapesDataStructure myDS;
 Standard_Boolean myIsDone;
 Standard_Integer myNbSources;
 Standard_Integer myNbEdges;
-NMTDS_Iterator myDSIt;
 BOPTools_PavePool myPavePool;
 BOPTools_PavePool myPavePoolNew;
 NMTTools_CommonBlockPool myCommonBlockPool;
@@ -406,6 +405,9 @@ IntTools_Context myContext;
 BOPTools_SSIntersectionAttribute mySectionAttribute;
 NMTTools_IndexedDataMapOfIndexedMapOfInteger myAloneVertices;
 TColStd_DataMapOfIntegerInteger myVSD;
+NMTDS_PIterator myDSIt;
+TopoDS_Shape myCompositeShape;
+NMTDS_PInterfPool myIP;
 
 
 private: 

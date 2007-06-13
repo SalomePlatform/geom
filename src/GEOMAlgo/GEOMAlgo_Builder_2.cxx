@@ -54,7 +54,6 @@
 #include <BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger.hxx>
 #include <BOPTools_ListOfPaveBlock.hxx>
 #include <BOPTools_ListIteratorOfListOfPaveBlock.hxx>
-#include <BOPTools_InterferencePool.hxx>
 #include <BOPTools_CArray1OfSSInterference.hxx>
 #include <BOPTools_SSInterference.hxx>
 #include <BOPTools_SequenceOfCurves.hxx>
@@ -68,7 +67,6 @@
 #include <BOPTools_CArray1OfESInterference.hxx>
 
 #include <NMTDS_ShapesDataStructure.hxx>
-#include <NMTTools_DSFiller.hxx>
 #include <NMTTools_PaveFiller.hxx>
 #include <NMTTools_ListOfCoupleOfShape.hxx>
 #include <NMTTools_Tools.hxx>
@@ -83,6 +81,7 @@
 #include <GEOMAlgo_Tools3D.hxx>
 #include <GEOMAlgo_WireEdgeSet.hxx>
 #include <GEOMAlgo_BuilderFace.hxx>
+#include <NMTDS_InterfPool.hxx>
 
 static
   void UpdateCandidates(const Standard_Integer ,
@@ -109,9 +108,9 @@ static
 //=======================================================================
   void GEOMAlgo_Builder::FillIn2DParts()
 {
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
-  BOPTools_InterferencePool* pIP=(BOPTools_InterferencePool*)&myDSFiller->InterfPool();
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
+  NMTDS_InterfPool* pIP=pPF->IP();
   BOPTools_CArray1OfSSInterference& aFFs=pIP->SSInterferences();
   NMTTools_CommonBlockPool& aCBP=pPF->ChangeCommonBlockPool();
   //
@@ -193,9 +192,9 @@ static
 //=======================================================================
   void GEOMAlgo_Builder::BuildSplitFaces()
 {
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
-  BOPTools_InterferencePool* pIP=(BOPTools_InterferencePool*)&myDSFiller->InterfPool();
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
+  NMTDS_InterfPool* pIP=pPF->IP();
   BOPTools_CArray1OfSSInterference& aFFs=pIP->SSInterferences();
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
@@ -388,9 +387,9 @@ static
 //=======================================================================
   void GEOMAlgo_Builder::FillSameDomainFaces()
 {
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
-  BOPTools_InterferencePool* pIP=(BOPTools_InterferencePool*)&myDSFiller->InterfPool();
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
+  NMTDS_InterfPool* pIP=pPF->IP();
   BOPTools_CArray1OfSSInterference& aFFs=pIP->SSInterferences();
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
@@ -513,7 +512,7 @@ static
   TopTools_ListOfShape aLFx;
   TopTools_ListIteratorOfListOfShape aIt;
   //
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   //
   aNb=aDS.NumberOfShapesOfTheObject();
   for (i=1; i<=aNb; ++i) {
@@ -557,9 +556,9 @@ static
 //=======================================================================
   void GEOMAlgo_Builder::FillInternalVertices()
 {
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
-  BOPTools_InterferencePool* pIP=(BOPTools_InterferencePool*)&myDSFiller->InterfPool();
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
+  NMTDS_InterfPool* pIP=pPF->IP();
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
   BOPTools_CArray1OfSSInterference& aFFs=pIP->SSInterferences();

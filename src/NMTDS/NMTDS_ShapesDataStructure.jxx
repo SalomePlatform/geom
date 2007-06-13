@@ -26,6 +26,12 @@
 #ifndef _BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors_HeaderFile
 #include <BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors.hxx>
 #endif
+#ifndef _TColStd_IndexedMapOfInteger_HeaderFile
+#include <TColStd_IndexedMapOfInteger.hxx>
+#endif
+#ifndef _Bnd_Box_HeaderFile
+#include <Bnd_Box.hxx>
+#endif
 #ifndef _NMTDS_ShapesDataStructure_HeaderFile
 #include <NMTDS_ShapesDataStructure.hxx>
 #endif

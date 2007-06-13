@@ -95,13 +95,19 @@ Standard_EXPORT   void Next() ;
 Standard_EXPORT   void Current(Standard_Integer& aIndex1,Standard_Integer& aIndex2,Standard_Boolean& aWithSubShape) const;
 
 
-Standard_EXPORT   void Prepare() ;
+Standard_EXPORT virtual  void Prepare() ;
 
 
 Standard_EXPORT   Standard_Integer ExpectedLength() const;
 
 
+Standard_EXPORT   Standard_Integer BlockLength() const;
+
+
 Standard_EXPORT  const TColStd_DataMapOfIntegerListOfInteger& SDVertices() const;
+
+
+Standard_EXPORT static  void FillMVSD(const TColStd_DataMapOfIntegerListOfInteger& aMVSD1,TColStd_DataMapOfIntegerListOfInteger& aMVSD2) ;
 
 
 
@@ -113,9 +119,12 @@ protected:
  // 
 
 
+Standard_EXPORT virtual  void Intersect() ;
+
+
  // Fields PROTECTED
  //
-NMTDS_PShapesDataStructure myPDS;
+NMTDS_PShapesDataStructure myDS;
 NMTDS_ListOfPassKeyBoolean myLists[6];
 NMTDS_ListIteratorOfListOfPassKeyBoolean myIterator;
 NMTDS_ListOfPassKeyBoolean myEmptyList;
