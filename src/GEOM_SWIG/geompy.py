@@ -1084,7 +1084,8 @@ def GetShapesOnBoxIDs(theBox, theShape, theShapeType, theState):
 ## Get sub-shape(s) of theShapeWhere, which are
 #  coincident with \a theShapeWhat or could be a part of it.
 #  @param theShapeWhere Shape to find sub-shapes of.
-#  @param theShapeWhat Shape, specifying what to find.
+#  @param theShapeWhat Shape, specifying what to find (must be in the
+#                      building history of the ShapeWhere).
 #  @return Group of all found sub-shapes or a single found sub-shape.
 #
 #  Example: see GEOM_TestOthers.py
@@ -1097,7 +1098,8 @@ def GetInPlace(theShapeWhere, theShapeWhat):
 ## Get sub-shape of theShapeWhere, which is
 #  equal to \a theShapeWhat.
 #  @param theShapeWhere Shape to find sub-shape of.
-#  @param theShapeWhat Shape, specifying what to find.
+#  @param theShapeWhat Shape, specifying what to find
+#                      (must be usual shape).
 #  @return New GEOM_Object for found sub-shape.
 #
 def GetSame(theShapeWhere, theShapeWhat):
