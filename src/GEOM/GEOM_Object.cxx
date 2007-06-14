@@ -95,19 +95,31 @@ Handle(GEOM_Object) GEOM_Object::GetObject(TDF_Label& theLabel)
 Handle(GEOM_Object) GEOM_Object::GetReferencedObject(TDF_Label& theLabel)
 {
   Handle(TDF_Reference) aRef;
-  if (!theLabel.FindAttribute(TDF_Reference::GetID(), aRef)) return NULL;
+  if (!theLabel.FindAttribute(TDF_Reference::GetID(), aRef)) {
+    return NULL;
+  }
+  
+  if(aRef.IsNull() || aRef->Get().IsNull()) {
+    return NULL;
+  }
+
 
   // Get TreeNode of a referenced function
   Handle(TDataStd_TreeNode) aT, aFather;
-  if (!TDataStd_TreeNode::Find(aRef->Get(), aT)) return NULL;
+  if (!TDataStd_TreeNode::Find(aRef->Get(), aT)) {
+    return NULL;
+  }
+
 
   // Get TreeNode of Object of the referenced function
   aFather = aT->Father();
-  if (aFather.IsNull()) return NULL;
+  if (aFather.IsNull()) {
+    return NULL;
+  }
 
   // Get label of the referenced object
   TDF_Label aLabel = aFather->Label();
-
+  
 
   return GEOM_Object::GetObject(aLabel);
 }
@@ -392,8 +404,10 @@ Handle(TColStd_HSequenceOfTransient) GEOM_Object::GetAllDependency()
   Standard_Integer aLength = aSeq.Length();
   if(aLength > 0) {
     anArray = new TColStd_HSequenceOfTransient;
-    for(Standard_Integer j =1; j<=aLength; j++)
-      anArray->Append(GetReferencedObject(aSeq(j)));
+    for(Standard_Integer j =1; j<=aLength; j++) {
+      Handle(GEOM_Object) aRefObj = GetReferencedObject(aSeq(j));
+      if(!aRefObj.IsNull()) anArray->Append(aRefObj);
+    }
   }
 
   return anArray;
