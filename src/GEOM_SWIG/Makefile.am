@@ -123,6 +123,7 @@ CLEANFILES = \
 dist_salomescript_DATA= \
 	libGEOM_Swig.py \
 	geompy.py \
+	geompyDC.py \
 	batchmode_geompy.py \
 	GEOM_Spanner.py \
 	GEOM_blocks.py \
