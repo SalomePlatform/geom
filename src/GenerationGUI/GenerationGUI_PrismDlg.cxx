@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -42,7 +42,7 @@
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg()
-// purpose  : Constructs a GenerationGUI_PrismDlg which is a child of 'parent', with the 
+// purpose  : Constructs a GenerationGUI_PrismDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -103,7 +103,7 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWid
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 GenerationGUI_PrismDlg::~GenerationGUI_PrismDlg()
-{  
+{
   // no need to delete child widgets, Qt does it all for us
 }
 
@@ -123,14 +123,15 @@ void GenerationGUI_PrismDlg::Init()
   GroupPoints2->LineEdit2->setReadOnly( true );
   GroupPoints2->LineEdit3->setReadOnly( true );
 
+  myPoint1 = myPoint2 = myBase = myVec = GEOM::GEOM_Object::_nil();
   myOkBase = myOkVec = myOkPnt1 = myOkPnt2 = false;
-  
+
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
 
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
   GroupPoints->SpinBox_DX->SetValue(100.0);
 
   /* signals and slots connections */
@@ -146,9 +147,10 @@ void GenerationGUI_PrismDlg::Init()
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)),
+          GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
 
-  connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)),      this, SLOT(onReverse()));
+  connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)), this, SLOT(onReverse()));
 
 
   connect(GroupPoints2->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
@@ -160,8 +162,8 @@ void GenerationGUI_PrismDlg::Init()
   connect(GroupPoints2->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect(myGeomGUI->getApp()->selectionMgr(),
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName(tr("GEOM_EXTRUSION"));
   ConstructorsClicked(0);
@@ -178,50 +180,48 @@ void GenerationGUI_PrismDlg::ConstructorsClicked(int constructorId)
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
 
   switch (constructorId)
+  {
+  case 0:
     {
-    case 0:
-      {
-	globalSelection( GEOM_POINT );
+      globalSelection( GEOM_ALLSHAPES );
 
-	GroupPoints2->hide();
-	resize(0, 0);
-	GroupPoints->show();
+      GroupPoints2->hide();
+      resize(0, 0);
+      GroupPoints->show();
 
-	myEditCurrentArgument = GroupPoints->LineEdit1;
-	GroupPoints->LineEdit1->setText("");
- 	GroupPoints->LineEdit2->setText("");
-	GroupPoints2->LineEdit1->setText("");
- 	GroupPoints2->LineEdit2->setText("");
- 	GroupPoints2->LineEdit3->setText("");
-	myPoint1 = myPoint2 = myBase = myVec = GEOM::GEOM_Object::_nil();
-        myOkBase = myOkVec = myOkPnt1 = myOkPnt2 = false;
+      myEditCurrentArgument = GroupPoints->LineEdit1;
+      GroupPoints->LineEdit1->setText(GroupPoints2->LineEdit1->text()); // keep base
+      GroupPoints->LineEdit2->setText("");
+      myVec = GEOM::GEOM_Object::_nil();
+      myOkVec = false;
 
-	break;
-      }
-    case 1:
-      {
-        globalSelection( GEOM_ALLSHAPES );
-
-        GroupPoints->hide();
-	resize(0, 0);
-	GroupPoints2->show();
-
-	myEditCurrentArgument = GroupPoints2->LineEdit1;
-	GroupPoints2->LineEdit1->setText("");
- 	GroupPoints2->LineEdit2->setText("");
- 	GroupPoints2->LineEdit3->setText("");
-	myPoint1 = myPoint2 = myBase = myVec = GEOM::GEOM_Object::_nil();
-        myOkBase = myOkVec = myOkPnt1 = myOkPnt2 = false;
-	GroupPoints->LineEdit1->setText("");
- 	GroupPoints->LineEdit2->setText("");
-
-	break;
-      }
+      break;
     }
+  case 1:
+    {
+      globalSelection( GEOM_ALLSHAPES );
+
+      GroupPoints->hide();
+      resize(0, 0);
+      GroupPoints2->show();
+
+      myEditCurrentArgument = GroupPoints2->LineEdit1;
+      GroupPoints2->LineEdit1->setText(GroupPoints->LineEdit1->text()); // keep base
+      GroupPoints2->LineEdit2->setText("");
+      GroupPoints2->LineEdit3->setText("");
+      myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
+      myOkPnt1 = myOkPnt2 = false;
+
+      break;
+    }
+  }
 
   myEditCurrentArgument->setFocus();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+  if (!myOkBase)
+    SelectionIntoArgument();
 }
 
 
@@ -287,7 +287,6 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     }
 
     myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
-    displayPreview();
   }
   else // getConstructorId()==1 - extrusion using 2 points
   {
@@ -327,8 +326,9 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     }
 
     myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
-    displayPreview();
   }
+
+  displayPreview();
 }
 
 
@@ -398,7 +398,7 @@ void GenerationGUI_PrismDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   ConstructorsClicked( getConstructorId() );
@@ -450,7 +450,12 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_PrismDlg::createOperation()
 //=================================================================================
 bool GenerationGUI_PrismDlg::isValid( QString& )
 {
-  return myOkBase && ( myOkVec || (myOkPnt1 && myOkPnt2) );
+  if (getConstructorId() == 0)
+    // by vector and height
+    return (myOkBase && myOkVec);
+
+  // by two points
+  return (myOkBase && myOkPnt1 && myOkPnt2);
 }
 
 //=================================================================================
@@ -461,10 +466,10 @@ bool GenerationGUI_PrismDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj;
 
-  switch ( getConstructorId() ) 
+  switch ( getConstructorId() )
   {
   case 0:
-    { 
+    {
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakePrismVecH(myBase, myVec, getHeight());
       break;

@@ -138,11 +138,11 @@ void BasicGUI_PlaneDlg::Init()
   double aTrimSize = 2000.0;
 
   /* min, max, step and decimals for spin boxes */
-  GroupPntDir->SpinBox_DX->RangeStepAndValidator( 0.001, COORD_MAX, aStep, 3 );
+  GroupPntDir->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, aStep, DBL_DIGITS_DISPLAY);
   GroupPntDir->SpinBox_DX->SetValue( aTrimSize );
-  Group3Pnts->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, aStep, 3);
+  Group3Pnts->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, aStep, DBL_DIGITS_DISPLAY);
   Group3Pnts->SpinBox_DX->SetValue( aTrimSize );
-  GroupFace->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, aStep, 3);
+  GroupFace->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, aStep, DBL_DIGITS_DISPLAY);
   GroupFace->SpinBox_DX->SetValue( aTrimSize );
 
   /* signals and slots connections */

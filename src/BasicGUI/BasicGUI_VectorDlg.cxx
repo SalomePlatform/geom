@@ -118,9 +118,9 @@ void BasicGUI_VectorDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
  
   /* min, max, step and decimals for spin boxes */
-  GroupDimensions->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupDimensions->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupDimensions->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupDimensions->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
 
   double dx( 0. ), dy( 0. ), dz( 200. );
   GroupDimensions->SpinBox_DX->SetValue( dx );
