@@ -288,17 +288,63 @@ static
 		bIsOnPave2=IsOnPave(aT2, aR2, aTol);
 		//
 		if(bIsOnPave1 || bIsOnPave2) {
-		  //myIntrPool->AddInterference (aWhat, aWith, BooleanOperations_EdgeEdge, anIndexIn);
-		  continue;
+		   continue;
 		}
 		//
 		BOPTools_Tools::MakeNewVertex(aEWhat, aT1, aEWith, aT2, aNewVertex);
+		//
+		//modified by NIZNHY-PKV Mon Jun 19 11:40:09 2007f
+		{
+		  Standard_Integer nV11, nV12, nV21, nV22, nVS[2], k, j, iFound;
+		  Standard_Real aTolVx, aTolVnew, aD2, aDT2;
+		  TColStd_MapOfInteger aMV;
+		  gp_Pnt aPnew, aPx;
+		  //
+		  iFound=0;
+		  j=-1;
+		  nV11=aPB1.Pave1().Index();
+		  nV12=aPB1.Pave2().Index();
+		  nV21=aPB2.Pave1().Index();
+		  nV22=aPB2.Pave2().Index();
+		  aMV.Add(nV11);
+		  aMV.Add(nV12);
+		  //
+		  if (aMV.Contains(nV21)) {
+		    ++j;
+		    nVS[j]=nV21;
+		  }
+		  if (aMV.Contains(nV22)) {
+		    ++j;
+		    nVS[j]=nV22;
+		  }
+		  //
+		  aTolVnew=BRep_Tool::Tolerance(aNewVertex);
+		  aPnew=BRep_Tool::Pnt(aNewVertex);
+		  //
+		  for (k=0; k<=j; ++k) {
+		    const TopoDS_Vertex& aVx=TopoDS::Vertex(myDS->Shape(nVS[k]));
+		    aTolVx=BRep_Tool::Tolerance(aVx);
+		    aPx=BRep_Tool::Pnt(aVx);
+		    aD2=aPnew.SquareDistance(aPx);
+		    //
+		    aDT2=100.*(aTolVnew+aTolVx)*(aTolVnew+aTolVx);
+		    //
+		    if (aD2<aDT2) {
+		      iFound=1;
+		      break;
+		    }
+		  }
+		  //
+		  if (iFound) {
+		    continue;
+		  }
+		}
+		//modified by NIZNHY-PKV Mon Jun 19 11:40:16 2007t
 		//
 		// Add Interference to the Pool
 		BOPTools_EEInterference anInterf (aWhat, aWith, aCPart);
 		//
 		anIndexIn=aEEs.Append(anInterf);
-		//myIntrPool->AddInterference (aWhat, aWith, BooleanOperations_EdgeEdge, anIndexIn);
 		// qqf
 		{
 		  myIP->Add(aWhat, aWith, Standard_True, NMTDS_TI_EE);
