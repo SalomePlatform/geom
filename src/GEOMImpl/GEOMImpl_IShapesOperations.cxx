@@ -2689,15 +2689,32 @@ TopoDS_Shape GEOMImpl_IShapesOperations::CompsolidToCompound (const TopoDS_Shape
 //=======================================================================
 bool GEOMImpl_IShapesOperations::CheckTriangulation (const TopoDS_Shape& aShape)
 {
+  bool isTriangulation = true;
+
   TopExp_Explorer exp (aShape, TopAbs_FACE);
-  if (!exp.More()) {
-    return false;
+  if (exp.More())
+  {
+    TopLoc_Location aTopLoc;
+    Handle(Poly_Triangulation) aTRF;
+    aTRF = BRep_Tool::Triangulation(TopoDS::Face(exp.Current()), aTopLoc);
+    if (aTRF.IsNull()) {
+      isTriangulation = false;
+    }
+  }
+  else // no faces, try edges
+  {
+    TopExp_Explorer expe (aShape, TopAbs_EDGE);
+    if (!expe.More()) {
+      return false;
+    }
+    TopLoc_Location aLoc;
+    Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(TopoDS::Edge(expe.Current()), aLoc);
+    if (aPE.IsNull()) {
+      isTriangulation = false;
+    }
   }
 
-  TopLoc_Location aTopLoc;
-  Handle(Poly_Triangulation) aTRF;
-  aTRF = BRep_Tool::Triangulation(TopoDS::Face(exp.Current()), aTopLoc);
-  if (aTRF.IsNull()) {
+  if (!isTriangulation) {
     // calculate deflection
     Standard_Real aDeviationCoefficient = 0.001;
 

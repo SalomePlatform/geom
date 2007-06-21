@@ -41,6 +41,7 @@
 #include <Poly_Triangle.hxx>
 #include <Poly_PolygonOnTriangulation.hxx>
 #include <Poly_Triangulation.hxx>
+#include <Poly_Polygon3D.hxx>
 
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
@@ -688,19 +689,32 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
   aLP.Clear();
   BRep_Tool::PolygonOnTriangulation(aE, aPTE, aTRE, aLoc);
   if (aTRE.IsNull() || aPTE.IsNull()) {
-    myErrorStatus=20; // no triangulation found
-    return;  
+    Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(aE, aLoc);
+    if (aPE.IsNull()) {
+      myErrorStatus=20; // no triangulation found
+      return;
+    }
+    const gp_Trsf& aTrsf=aLoc.Transformation();
+    const TColgp_Array1OfPnt& aNodes=aPE->Nodes();
+    //
+    aNbNodes=aPE->NbNodes();
+    Standard_Integer low = aNodes.Lower(), up = aNodes.Upper();
+    for (j=low+1; j<up; ++j) {
+      aP=aNodes(j).Transformed(aTrsf);
+      aLP.Append(aP);
+    }
   }
-  //
-  const gp_Trsf& aTrsf=aLoc.Transformation();
-  const TColgp_Array1OfPnt& aNodes=aTRE->Nodes();
-  //
-  aNbNodes=aPTE->NbNodes();
-  const TColStd_Array1OfInteger& aInds=aPTE->Nodes();
-  for (j=2; j<aNbNodes; ++j) {
-    aIndex=aInds(j);
-    aP=aNodes(aIndex).Transformed(aTrsf);
-    aLP.Append(aP);
+  else {
+    const gp_Trsf& aTrsf=aLoc.Transformation();
+    const TColgp_Array1OfPnt& aNodes=aTRE->Nodes();
+    //
+    aNbNodes=aPTE->NbNodes();
+    const TColStd_Array1OfInteger& aInds=aPTE->Nodes();
+    for (j=2; j<aNbNodes; ++j) {
+      aIndex=aInds(j);
+      aP=aNodes(aIndex).Transformed(aTrsf);
+      aLP.Append(aP);
+    }
   }
   //
   aNb=aLP.Extent();
@@ -708,7 +722,6 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
     // try to fill it yourself
     InnerPoints(aE, myNbPntsMin, aLP);
     aNb=aLP.Extent();
-    
   }
 }
 //=======================================================================
