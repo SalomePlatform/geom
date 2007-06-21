@@ -36,6 +36,7 @@
 #include "SUIT_Session.h"
 #include "SUIT_MessageBox.h"
 
+#include <qlabel.h>
 #include <qpushbutton.h>
 
 using namespace std;
@@ -57,12 +58,14 @@ GEOMBase_Skeleton::GEOMBase_Skeleton(GeometryGUI* theGeometryGUI, QWidget* paren
   if (!name)
     setName("GEOMBase_Skeleton");
 
+  GroupBoxName->setTitle(tr("GEOM_RESULT_NAME_GRP"));
+  NameLabel->setText(tr("GEOM_RESULT_NAME_LBL"));
+
   buttonCancel->setText(tr("GEOM_BUT_CLOSE"));
   buttonOk->setText(tr("GEOM_BUT_OK"));
   buttonApply->setText(tr("GEOM_BUT_APPLY"));
   buttonHelp->setText(tr("GEOM_BUT_HELP"));
 
-  GroupMedium->close(TRUE);
   resize(0, 0);
 
   Init();

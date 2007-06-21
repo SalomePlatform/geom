@@ -82,10 +82,6 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
   buttonClose->setText(tr("GEOM_BUT_CLOSE_SKETCH"));
   buttonHelp->setText(tr("GEOM_BUT_HELP"));
 
-  GroupVal->close(TRUE);
-  GroupDest2->close(TRUE);
-  GroupDest3->close(TRUE);
-
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_UNDO")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_REDO")));

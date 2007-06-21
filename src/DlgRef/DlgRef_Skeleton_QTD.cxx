@@ -20,7 +20,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
 **
-** Created: Fri Mar 17 11:18:06 2006
+** Created: Tue Mar 13 14:40:34 2007
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -56,11 +56,6 @@ DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent, const char* name, boo
     DlgRef_Skeleton_QTDLayout = new QGridLayout( this, 1, 1, 11, 6, "DlgRef_Skeleton_QTDLayout"); 
 
     Layout1 = new QGridLayout( 0, 1, 1, 0, 6, "Layout1"); 
-
-    GroupMedium = new QGroupBox( this, "GroupMedium" );
-    GroupMedium->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, GroupMedium->sizePolicy().hasHeightForWidth() ) );
-
-    Layout1->addWidget( GroupMedium, 2, 0 );
 
     GroupButtons = new QGroupBox( this, "GroupButtons" );
     GroupButtons->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, GroupButtons->sizePolicy().hasHeightForWidth() ) );
@@ -155,19 +150,5 @@ DlgRef_Skeleton_QTD::~DlgRef_Skeleton_QTD()
  */
 void DlgRef_Skeleton_QTD::languageChange()
 {
-    setCaption( tr( "DlgRef_Skeleton_QTD" ) );
-    GroupMedium->setTitle( QString::null );
-    GroupButtons->setTitle( QString::null );
-    buttonOk->setText( tr( "&Ok" ) );
-    buttonApply->setText( tr( "&Apply" ) );
-    buttonCancel->setText( tr( "&Cancel" ) );
-    buttonHelp->setText( tr( "&Help" ) );
-    GroupConstructors->setTitle( QString::null );
-    RadioButton1->setText( QString::null );
-    RadioButton2->setText( QString::null );
-    RadioButton3->setText( QString::null );
-    RadioButton4->setText( QString::null );
-    GroupBoxName->setTitle( tr( "Result name" ) );
-    NameLabel->setText( tr( "Name" ) );
 }
 
