@@ -69,6 +69,8 @@
 
 #include "utilities.h"
 
+#include "BRepTools.hxx"
+
 
 //=======================================================================
 //function : GetID
@@ -584,6 +586,152 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
       CreateFewSolids = true;
     }
 
+    // check orientation of sections
+    bool NeedReverse = false;
+    {
+      // first section
+      anExp.Init( aShBase1, TopAbs_FACE );
+      TopoDS_Shape aFace = anExp.Current();
+      TColgp_SequenceOfPnt aPnts;
+      double xc=0, yc=0, zc=0;
+      for ( anExp.Init( aFace, TopAbs_VERTEX ); anExp.More(); anExp.Next() ) {
+	TopoDS_Vertex V = TopoDS::Vertex(anExp.Current());
+	aPnts.Append(BRep_Tool::Pnt(V));
+	xc += aPnts.Last().X();
+	yc += aPnts.Last().Y();
+	zc += aPnts.Last().Z();
+      }
+      gp_Pnt PC( xc/aPnts.Length(), yc/aPnts.Length(), zc/aPnts.Length() );
+      gp_Vec V1(PC,aPnts.Value(1));
+      gp_Vec V2(PC,aPnts.Value(2));
+      gp_Vec VN = V1.Crossed(V2);
+      for(int ip=2; ip<aPnts.Length(); ip++) {
+	V1 = gp_Vec(PC,aPnts.Value(ip));
+	V2 = gp_Vec(PC,aPnts.Value(ip+1));
+	VN.Add(V1.Crossed(V2));
+      }
+      gp_Vec PathNorm;
+      gp_Pnt PLoc = BRep_Tool::Pnt(TopoDS::Vertex(VLocs(i)));
+      TopExp_Explorer WE;
+      for ( WE.Init( WPath, TopAbs_EDGE ); WE.More(); WE.Next() ) {
+	TopoDS_Edge edge = TopoDS::Edge(WE.Current());
+	double tol = BRep_Tool::Tolerance(edge);
+	TopoDS_Vertex VF = sae.FirstVertex(edge);
+	gp_Pnt PF = BRep_Tool::Pnt(VF);
+	if( PF.Distance(PLoc) < tol ) {
+	  double fp,lp;
+	  Handle(Geom_Curve) C = BRep_Tool::Curve(edge,fp,lp);
+	  gp_Pnt P1,P2;
+	  C->D0(fp,P1);
+	  if( P1.Distance(PLoc) < tol ) {
+	    C->D0(fp+(lp-fp)/100,P2);
+	  }
+	  else {
+	    C->D0(lp,P1);
+	    C->D0(lp+(fp-lp)/100,P2);
+	  }
+	  PathNorm = gp_Vec(P1,P2);
+	  break;
+	}
+	else {
+	  TopoDS_Vertex VL = sae.LastVertex(edge);
+	  gp_Pnt PL = BRep_Tool::Pnt(VL);
+	  if( PL.Distance(PLoc) < tol ) {
+	    double fp,lp;
+	    Handle(Geom_Curve) C = BRep_Tool::Curve(edge,fp,lp);
+	    gp_Pnt P1,P2;
+	    C->D0(fp,P1);
+	    if( P1.Distance(PLoc) < tol ) {
+	      C->D0(fp+(lp-fp)/100,P2);
+	    }
+	    else {
+	      C->D0(lp,P1);
+	      C->D0(lp+(fp-lp)/100,P2);
+	    }
+	    PathNorm = gp_Vec(P2,P1);
+	    break;
+	  }
+	}
+      }
+      //cout<<"VN("<<VN.X()<<","<<VN.Y()<<","<<VN.Z()<<")"<<endl;
+      //cout<<"PathNorm("<<PathNorm.X()<<","<<PathNorm.Y()<<","<<PathNorm.Z()<<")"<<endl;
+      if(fabs(VN.Angle(PathNorm)>PI/2.)) {
+	NeedReverse = true;
+	aShBase1.Reverse();
+      }
+    }
+    {
+      // second section
+      anExp.Init( aShBase2, TopAbs_FACE );
+      TopoDS_Shape aFace = anExp.Current();
+      TColgp_SequenceOfPnt aPnts;
+      double xc=0, yc=0, zc=0;
+      for ( anExp.Init( aFace, TopAbs_VERTEX ); anExp.More(); anExp.Next() ) {
+	TopoDS_Vertex V = TopoDS::Vertex(anExp.Current());
+	aPnts.Append(BRep_Tool::Pnt(V));
+	xc += aPnts.Last().X();
+	yc += aPnts.Last().Y();
+	zc += aPnts.Last().Z();
+      }
+      gp_Pnt PC( xc/aPnts.Length(), yc/aPnts.Length(), zc/aPnts.Length() );
+      gp_Vec V1(PC,aPnts.Value(1));
+      gp_Vec V2(PC,aPnts.Value(2));
+      gp_Vec VN = V1.Crossed(V2);
+      for(int ip=2; ip<aPnts.Length(); ip++) {
+	V1 = gp_Vec(PC,aPnts.Value(ip));
+	V2 = gp_Vec(PC,aPnts.Value(ip+1));
+	VN.Add(V1.Crossed(V2));
+      }
+      gp_Vec PathNorm;
+      gp_Pnt PLoc = BRep_Tool::Pnt(TopoDS::Vertex(VLocs(i+1)));
+      TopExp_Explorer WE;
+      for ( WE.Init( WPath, TopAbs_EDGE ); WE.More(); WE.Next() ) {
+	TopoDS_Edge edge = TopoDS::Edge(WE.Current());
+	double tol = BRep_Tool::Tolerance(edge);
+	TopoDS_Vertex VF = sae.FirstVertex(edge);
+	gp_Pnt PF = BRep_Tool::Pnt(VF);
+	if( PF.Distance(PLoc) < tol ) {
+	  double fp,lp;
+	  Handle(Geom_Curve) C = BRep_Tool::Curve(edge,fp,lp);
+	  gp_Pnt P1,P2;
+	  C->D0(fp,P1);
+	  if( P1.Distance(PLoc) < tol ) {
+	    C->D0(fp+(lp-fp)/100,P2);
+	  }
+	  else {
+	    C->D0(lp,P1);
+	    C->D0(lp+(fp-lp)/100,P2);
+	  }
+	  PathNorm = gp_Vec(P2,P1);
+	  break;
+	}
+	else {
+	  TopoDS_Vertex VL = sae.LastVertex(edge);
+	  gp_Pnt PL = BRep_Tool::Pnt(VL);
+	  if( PL.Distance(PLoc) < tol ) {
+	    double fp,lp;
+	    Handle(Geom_Curve) C = BRep_Tool::Curve(edge,fp,lp);
+	    gp_Pnt P1,P2;
+	    C->D0(fp,P1);
+	    if( P1.Distance(PLoc) < tol ) {
+	      C->D0(fp+(lp-fp)/100,P2);
+	    }
+	    else {
+	      C->D0(lp,P1);
+	      C->D0(lp+(fp-lp)/100,P2);
+	    }
+	    PathNorm = gp_Vec(P2,P1);
+	    break;
+	  }
+	}
+      }
+      //cout<<"VN("<<VN.X()<<","<<VN.Y()<<","<<VN.Z()<<")"<<endl;
+      //cout<<"PathNorm("<<PathNorm.X()<<","<<PathNorm.Y()<<","<<PathNorm.Z()<<")"<<endl;
+      if(fabs(VN.Angle(PathNorm)>PI/2.))
+	aShBase2.Reverse();
+    }
+
+
     if(!CreateFewSolids) {
       // we can create only one solid
       TopoDS_Shape aWire1, aWire2;
@@ -656,6 +804,10 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	for ( anExp.Init( aShBase2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
 	  B.Add(aShell,anExp.Current());
 	}
+	if(NeedReverse) {
+	  cout<<"shell is reversed"<<endl;
+	  aShell.Reverse();
+	}
 	// make sewing for this shell
 	Handle(BRepBuilderAPI_Sewing) aSewing = new BRepBuilderAPI_Sewing;
 	aSewing->SetTolerance(Precision::Confusion());
@@ -687,10 +839,12 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
     else {
       // main block - creation few solids (for each pair of faces)
       TopTools_MapOfShape aFaces1,aFaces2;
-      for ( anExp.Init( aShBase1, TopAbs_FACE ); anExp.More(); anExp.Next() )
+      for ( anExp.Init( aShBase1, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
 	aFaces1.Add(anExp.Current());
-      for ( anExp.Init( aShBase2, TopAbs_FACE ); anExp.More(); anExp.Next() )
+      }
+      for ( anExp.Init( aShBase2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
 	aFaces2.Add(anExp.Current());
+      }
       // creating map of edge faces
       TopTools_IndexedDataMapOfShapeListOfShape aMapEdgeFaces1;
       TopExp::MapShapesAndAncestors(aShBase1, TopAbs_EDGE, TopAbs_FACE, aMapEdgeFaces1);
@@ -885,6 +1039,10 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	  }
 	  B.Add(aShell,F1);
 	  B.Add(aShell,F2);
+	  if(NeedReverse) {
+	    //cout<<"shell is reversed"<<endl;
+	    aShell.Reverse();
+	  }
 	  // make sewing for this shell
 	  Handle(BRepBuilderAPI_Sewing) aSewing = new BRepBuilderAPI_Sewing;
 	  aSewing->SetTolerance(Precision::Confusion());

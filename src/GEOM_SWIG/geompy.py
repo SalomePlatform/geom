@@ -747,7 +747,9 @@ def MakePipeWithDifferentSections(theSeqBases, theLocations,thePath,theWithConta
 #  @param theSeqSubBases - list of corresponding subshapes of section shapes.
 #  @param theLocations - list of locations on the path corresponding
 #                        specified list of the Bases shapes. Number of locations
-#                        should be equal to number of bases.
+#                        should be equal to number of bases. First and last
+#                        locations must be coincided with first and last vertexes
+#                        of path correspondingly.
 #  @param thePath - Path shape to extrude the base shape along it.
 #  @param theWithContact - the mode defining that the section is translated to be in
 #                          contact with the spine.
