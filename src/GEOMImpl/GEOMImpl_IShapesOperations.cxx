@@ -2827,12 +2827,40 @@ static bool isSameFace(const TopoDS_Face& theFace1, const TopoDS_Face& theFace2)
     if(P.Z() > zmaxB2) zmaxB2 = P.Z();
   }
 
+
   //Compare the bounding boxes of both faces
   if(gp_Pnt(xminB1, yminB1, zminB1).Distance(gp_Pnt(xminB2, yminB2, zminB2)) > MAX_TOLERANCE)
     return false;
 
   if(gp_Pnt(xmaxB1, ymaxB1, zmaxB1).Distance(gp_Pnt(xmaxB2, ymaxB2, zmaxB2)) > MAX_TOLERANCE)
     return false;
+
+  Handle(Geom_Surface) S1 = BRep_Tool::Surface(theFace1);
+  Handle(Geom_Surface) S2 = BRep_Tool::Surface(theFace2);
+
+  //Check if there a coincidence of two surfaces at least in two points
+  double U11, U12, V11, V12, U21, U22, V21, V22;
+  BRepTools::UVBounds(theFace1, U11, U12, V11, V12);
+  BRepTools::UVBounds(theFace2, U21, U22, V21, V22);
+
+  double rangeU = U12-U11;
+  double rangeV = V12-V11;
+  double U = U11 + rangeU/3.0;
+  double V = V11 + rangeV/3.0;
+  gp_Pnt P1 = S1->Value(U, V);
+  U = U11+rangeU*2.0/3.0;
+  V = V11+rangeV*2.0/3.0;
+  gp_Pnt P2 = S1->Value(U, V);
+  
+  if(!GeomLib_Tool::Parameters(S2, P1, MAX_TOLERANCE, U, V) || U < U21 || U > U22 || V < V21 || V > V22)
+    return false;
+  
+  if(P1.Distance(S2->Value(U,V)) > MAX_TOLERANCE) return false;
+  
+  if(!GeomLib_Tool::Parameters(S2, P2, MAX_TOLERANCE, U, V) || U < U21 || U > U22 || V < V21 || V > V22)
+    return false;
+  
+  if(P2.Distance(S2->Value(U, V)) > MAX_TOLERANCE) return false;
 
   //Check that each edge of the Face1 has a counterpart in the Face2
   TopTools_MapOfOrientedShape aMap;
@@ -2851,36 +2879,6 @@ static bool isSameFace(const TopoDS_Face& theFace1, const TopoDS_Face& theFace2)
       }
     }
     if(!isFound) return false;
-  }
-
-  Handle(Geom_Surface) S1 = BRep_Tool::Surface(theFace1);
-  Handle(Geom_Surface) S2 = BRep_Tool::Surface(theFace2);
-  if(S1->DynamicType() == S2->DynamicType()) {
-    return true;
-  }
-  else {   //Check if there a coincidence of two surfaces at least in two points
-    double U11, U12, V11, V12, U21, U22, V21, V22;
-    BRepTools::UVBounds(theFace1, U11, U12, V11, V12);
-    BRepTools::UVBounds(theFace2, U21, U22, V21, V22);
-
-    double rangeU = U12-U11;
-    double rangeV = V12-V11;
-    double U = U11 + rangeU/3.0;
-    double V = V11 + rangeV/3.0;
-    gp_Pnt P1 = S1->Value(U, V);
-    U = U11+rangeU*2.0/3.0;
-    V = V11+rangeV*2.0/3.0;
-    gp_Pnt P2 = S1->Value(U, V);
-
-    if(!GeomLib_Tool::Parameters(S2, P1, MAX_TOLERANCE, U, V) || U < U21 || U > U22 || V < V21 || V > V22)
-      return false;
-
-    if(P1.Distance(S2->Value(U,V)) > MAX_TOLERANCE) return false;
-
-    if(!GeomLib_Tool::Parameters(S2, P2, MAX_TOLERANCE, U, V) || U < U21 || U > U22 || V < V21 || V > V22)
-      return false;
-
-    if(P2.Distance(S2->Value(U, V)) > MAX_TOLERANCE) return false;
   }
 
   return true;
