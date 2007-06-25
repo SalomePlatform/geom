@@ -39,6 +39,8 @@
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
+#include <GProp_GProps.hxx>
+#include <BRepGProp.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -69,7 +71,7 @@
 
 #include "utilities.h"
 
-#include "BRepTools.hxx"
+//#include "BRepTools.hxx"
 
 
 //=======================================================================
@@ -586,6 +588,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
       CreateFewSolids = true;
     }
 
+    /*
     // check orientation of sections
     bool NeedReverse = false;
     {
@@ -653,9 +656,9 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	  }
 	}
       }
-      //cout<<"VN("<<VN.X()<<","<<VN.Y()<<","<<VN.Z()<<")"<<endl;
-      //cout<<"PathNorm("<<PathNorm.X()<<","<<PathNorm.Y()<<","<<PathNorm.Z()<<")"<<endl;
-      if(fabs(VN.Angle(PathNorm)>PI/2.)) {
+      cout<<"VN("<<VN.X()<<","<<VN.Y()<<","<<VN.Z()<<")"<<endl;
+      cout<<"PathNorm("<<PathNorm.X()<<","<<PathNorm.Y()<<","<<PathNorm.Z()<<")"<<endl;
+      if(fabs(VN.Angle(PathNorm))>PI/2.) {
 	NeedReverse = true;
 	aShBase1.Reverse();
       }
@@ -727,10 +730,10 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
       }
       //cout<<"VN("<<VN.X()<<","<<VN.Y()<<","<<VN.Z()<<")"<<endl;
       //cout<<"PathNorm("<<PathNorm.X()<<","<<PathNorm.Y()<<","<<PathNorm.Z()<<")"<<endl;
-      if(fabs(VN.Angle(PathNorm)>PI/2.))
+      if(fabs(VN.Angle(PathNorm))>PI/2.)
 	aShBase2.Reverse();
     }
-
+    */
 
     if(!CreateFewSolids) {
       // we can create only one solid
@@ -804,10 +807,6 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	for ( anExp.Init( aShBase2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
 	  B.Add(aShell,anExp.Current());
 	}
-	if(NeedReverse) {
-	  cout<<"shell is reversed"<<endl;
-	  aShell.Reverse();
-	}
 	// make sewing for this shell
 	Handle(BRepBuilderAPI_Sewing) aSewing = new BRepBuilderAPI_Sewing;
 	aSewing->SetTolerance(Precision::Confusion());
@@ -821,6 +820,11 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	const TopoDS_Shape aSewShape = aSewing->SewedShape();
 	if( aSewShape.ShapeType() == TopAbs_SHELL ) {
 	  aShell = TopoDS::Shell(aSewShape);
+	  GProp_GProps aSystem;
+	  BRepGProp::VolumeProperties(aShell, aSystem);
+	  if(aSystem.Mass()<0) {
+	    aShell.Reverse();
+	  }
 	  if(BRep_Tool::IsClosed(aShell)) {
 	    TopoDS_Solid aSolid;
 	    B.MakeSolid(aSolid);
@@ -1006,7 +1010,6 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 
 
       // make pipe for each pair of faces
-      //BRepTools::Write(WPath,"/dn02/users_Linux/skl/work/Bugs/14857/wpath.brep");
       for(j=1; j<=FF.Extent(); j++) {
 	TopoDS_Shape F1 = FF.FindKey(j);
 	if( F1.ShapeType() != TopAbs_FACE )
@@ -1031,18 +1034,12 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	  TopoDS_Shape aShape = aBuilder.Shape();
 	  TopoDS_Shell aShell;
 	  B.MakeShell(aShell);
-	  //int nbf=0;
 	  for ( anExp.Init( aShape, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
-	    //nbf++;
-	    //cout<<"nbf="<<nbf<<endl;
 	    B.Add(aShell,anExp.Current());
 	  }
+
 	  B.Add(aShell,F1);
 	  B.Add(aShell,F2);
-	  if(NeedReverse) {
-	    //cout<<"shell is reversed"<<endl;
-	    aShell.Reverse();
-	  }
 	  // make sewing for this shell
 	  Handle(BRepBuilderAPI_Sewing) aSewing = new BRepBuilderAPI_Sewing;
 	  aSewing->SetTolerance(Precision::Confusion());
@@ -1056,6 +1053,12 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	  const TopoDS_Shape aSewShape = aSewing->SewedShape();
 	  if( aSewShape.ShapeType() == TopAbs_SHELL ) {
 	    aShell = TopoDS::Shell(aSewShape);
+	    GProp_GProps aSystem;
+	    BRepGProp::VolumeProperties(aShell, aSystem);
+	    if(aSystem.Mass()<0) {
+	      //cout<<"aSewShape is reversed"<<endl;
+	      aShell.Reverse();
+	    }
 	    if(BRep_Tool::IsClosed(aShell)) {
 	      TopoDS_Solid aSolid;
 	      B.MakeSolid(aSolid);
@@ -1075,6 +1078,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
     }
   }
 
+  //BRepTools::Write(aComp,"/dn02/users_Linux/skl/work/Bugs/14857/comp.brep");
   return aComp;
 }
 
