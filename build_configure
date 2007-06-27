@@ -39,12 +39,12 @@ cd ${CONF_DIR}
 ABS_CONF_DIR=`pwd`
 
 mkdir -p salome_adm/unix/config_files
-cp -f ${KERNEL_ROOT_DIR}/salome_adm/unix/config_files/* salome_adm/unix/config_files
-cp -f ${KERNEL_ROOT_DIR}/salome_adm/unix/pythonbe.py salome_adm/unix
+#cp -f ${KERNEL_ROOT_DIR}/salome_adm/unix/config_files/* salome_adm/unix/config_files
+#cp -f ${KERNEL_ROOT_DIR}/salome_adm/unix/pythonbe.py salome_adm/unix
 
 cp -f ${KERNEL_ROOT_DIR}/salome_adm/unix/SALOMEconfig.h.in salome_adm/unix
 
-cp -f ${GUI_ROOT_DIR}/adm_local/unix/config_files/* salome_adm/unix/config_files
+#cp -f ${GUI_ROOT_DIR}/adm_local/unix/config_files/* salome_adm/unix/config_files
 
 # remove KERNEL deprecated configure files
 #for deprecated in ac_cc_warnings.m4 ac_cxx_partial_specialization.m4 \
@@ -64,7 +64,9 @@ cp -f ${GUI_ROOT_DIR}/adm_local/unix/config_files/* salome_adm/unix/config_files
 #   autom4te.cache (directory)
 echo "====================================================== aclocal"
 
-aclocal -I adm_local/unix/config_files -I salome_adm/unix/config_files  || exit 1
+aclocal -I adm_local/unix/config_files \
+        -I ${KERNEL_ROOT_DIR}/salome_adm/unix/config_files \
+	-I ${GUI_ROOT_DIR}/adm_local/unix/config_files || exit 1
 
 # ____________________________________________________________________
 # libtoolize creates some configuration files (ltmain.sh,
