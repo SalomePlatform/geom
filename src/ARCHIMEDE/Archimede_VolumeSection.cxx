@@ -26,8 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-#include <Standard_OStream.hxx>
-
 #include "Archimede_VolumeSection.hxx"
 #include "utilities.h"
 
@@ -41,14 +39,10 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
 #include <math_Matrix.hxx>
-#include <math.h>
-#include <GC_MakePlane.hxx>
-#include <stdlib.h>
 #include <gp_Trsf.hxx>
 #include <gp_Dir.hxx>
 #include <gp_Ax1.hxx>
 #include <gp_Pnt.hxx>
-#include <gp_Pln.hxx>
 
 #include <GeomAPI_ProjectPointOnSurf.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>

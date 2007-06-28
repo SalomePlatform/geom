@@ -33,7 +33,8 @@
 #include <gp_Dir.hxx>
 #include <TopoDS_Shape.hxx>
 #include <Geom_Plane.hxx>
-#include <Geom_RectangularTrimmedSurface.hxx>
+
+class Handle(Geom_RectangularTrimmedSurface);
 
 class VolumeSection{
 
