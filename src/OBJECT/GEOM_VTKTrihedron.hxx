@@ -35,7 +35,6 @@
 #include "SALOME_Actor.h"
 #include "VTKViewer_Trihedron.h"
 
-class vtkActorCollection;
 class vtkRenderer;
 class vtkPolyDataMapper;
 

@@ -38,7 +38,6 @@
 #include <TopoDS.hxx>
 
 class vtkCamera;
-class TopoDS_Shape;
 
 class GEOM_OBJECT_EXPORT GEOM_Actor : public SALOME_Actor {
  public:

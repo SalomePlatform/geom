@@ -44,8 +44,6 @@ class vtkCellArray;
 // OpenCASCADE
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
-#include <Poly_Polygon3D.hxx>
-#include <Poly_PolygonOnTriangulation.hxx>
 #include <GeomAbs_IsoType.hxx>
 #include <BRepAdaptor_Surface.hxx>
 

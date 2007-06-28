@@ -28,9 +28,9 @@
 
 #include "GEOM_OBJECT_defs.hxx"
 
-#include <vtkAssembly.h>
-#include <vtkPropAssembly.h>
-#include <vtkActorCollection.h>
+class vtkProperty;
+class vtkAssembly;
+class vtkActorCollection;
 
 // Open CASCADE Inlcudes
 #include <TopoDS.hxx>

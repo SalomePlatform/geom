@@ -34,15 +34,10 @@
 #include "GEOM_AISShape.ixx"
 #include "SALOME_InteractiveObject.hxx"
 
-#include "utilities.h"
-
 // Open CASCADE Includes
 #include <AIS_Drawer.hxx>
 #include <AIS_InteractiveContext.hxx>
 #include <Graphic3d_AspectFillArea3d.hxx>
-#include <Prs3d_Drawer.hxx>
-#include <Prs3d_IsoAspect.hxx>
-#include <Prs3d_LineAspect.hxx>
 #include <Prs3d_ShadingAspect.hxx>
 #include <SelectBasics_SensitiveEntity.hxx>
 #include <SelectMgr_EntityOwner.hxx>
@@ -51,7 +46,6 @@
 #include <SelectMgr_Selection.hxx>
 #include <StdSelect_DisplayMode.hxx>
 #include <StdPrs_WFShape.hxx>
-#include <StdPrs_ShadedShape.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>

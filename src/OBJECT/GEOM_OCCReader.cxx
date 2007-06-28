@@ -34,24 +34,14 @@
 
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkMergePoints.h>
-
-#include <vtkTransform.h>
-#include <vtkMatrix4x4.h>
 
 // OpenCASCADE Includes
-#include <BRepAdaptor_Surface.hxx>
 #include <TopExp_Explorer.hxx>
-#include <BRepMesh_IncrementalMesh.hxx>
 #include <Poly_Triangulation.hxx>
 #include <Poly_Polygon3D.hxx>
-#include <BRep_Tool.hxx>
+#include <Poly_PolygonOnTriangulation.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
-#include <TopoDS_Wire.hxx>
-#include <BRepBndLib.hxx>
-#include <TopoDS.hxx>
 #include <TopAbs.hxx>
 #include <Precision.hxx>
 #include <BRepTools.hxx>
@@ -63,12 +53,7 @@
 #include <Geom2d_Line.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
 #include <HatchGen_Domain.hxx>
-#include <GeomAbs_IsoType.hxx>
-#include <Precision.hxx>
 #include <TopAbs_ShapeEnum.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Edge.hxx>
 #include <gp_Dir2d.hxx>
 #include <gp_Pnt2d.hxx>
 #include <TColStd_Array1OfInteger.hxx>

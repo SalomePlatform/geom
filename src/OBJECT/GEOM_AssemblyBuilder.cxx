@@ -35,8 +35,11 @@
 #include "GEOM_Actor.h"
 
 #include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
 
 #include <vtkProperty.h>
+#include <vtkAssembly.h>
+#include <vtkActorCollection.h>
 
 // Open CASCADE Includes
 #include <TopExp_Explorer.hxx>
@@ -49,6 +52,9 @@
 #include <TopExp.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopoDS_Iterator.hxx>
+
+// Qt includes
+#include <QColor>
 
 #include "utilities.h"
 

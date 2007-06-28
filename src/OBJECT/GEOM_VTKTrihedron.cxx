@@ -27,30 +27,19 @@
 //  $Header:
 
 #include "GEOM_VTKTrihedron.hxx"
-#include "utilities.h"
-#include "GEOM_OCCReader.h"
 
 #include <Geom_Axis2Placement.hxx>
 #include <gp_Ax2.hxx>
 #include <gp_Ax3.hxx>
 #include <gp_Pnt.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepBuilderAPI_MakeEdge.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Compound.hxx>
 
-#include <vtkMath.h>
 #include <vtkMapper.h>
-#include <vtkDataSet.h>
 #include <vtkRenderer.h>
-#include <vtkFollower.h>
-#include <vtkRenderWindow.h>
 #include <vtkObjectFactory.h>
-#include <vtkPolyData.h>
 #include <vtkActor.h>
+#include <vtkActorCollection.h>
 #include <vtkProperty.h>
 #include <vtkLineSource.h>
-#include <vtkConeSource.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkAppendPolyData.h>
 #include <vtkMatrix4x4.h>

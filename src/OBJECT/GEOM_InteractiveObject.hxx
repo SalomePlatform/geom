@@ -46,8 +46,6 @@
 #ifndef _Handle_SALOME_InteractiveObject_HeaderFile
 #include "Handle_SALOME_InteractiveObject.hxx"
 #endif
-class SALOME_InteractiveObject;
-
 
 class GEOM_InteractiveObject : public SALOME_InteractiveObject {
 
