@@ -29,9 +29,6 @@
 
 #include <SUIT_Session.h>
 
-#include <SALOMEDSClient.hxx>
-
-
 //=======================================================================
 // function : GEOM_SelectionFilter
 // purpose  :
@@ -84,7 +81,7 @@ GEOM::GEOM_Object_ptr GEOM_SelectionFilter::getObject( const SUIT_DataOwner* sOw
     _PTR(Study) study = appStudy->studyDS();
     QString entry = owner->entry();
 
-    _PTR(SObject) aSO (study->FindObjectID(entry.latin1())), aRefSO;
+    _PTR(SObject) aSO (study->FindObjectID(entry.toStdString())), aRefSO;
     if( extractReference && aSO && aSO->ReferencedObject( aRefSO ) )
       aSO = aRefSO;
 
@@ -164,7 +161,7 @@ void GEOM_SelectionFilter::add( const int type )
 void GEOM_SelectionFilter::remove( const int type )
 {
   if ( contains( type ) )
-    myTypes.remove( type );
+    myTypes.removeAll( type );
 }
 
 //=======================================================================

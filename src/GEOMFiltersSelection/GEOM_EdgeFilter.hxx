@@ -31,7 +31,6 @@
 #include "Handle_GEOM_EdgeFilter.hxx"
 #endif
 
-#include "SALOME_InteractiveObject.hxx"
 #include "GEOM_ShapeTypeFilter.hxx"
 
 // IDL Headers

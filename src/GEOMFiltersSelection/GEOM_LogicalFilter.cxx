@@ -23,7 +23,7 @@
 // function : GEOM_LogicalFilter
 // purpose  : 
 //=======================================================================
-GEOM_LogicalFilter::GEOM_LogicalFilter( const QPtrList<SUIT_SelectionFilter>& lst, const int op )
+GEOM_LogicalFilter::GEOM_LogicalFilter( const QList<SUIT_SelectionFilter*>& lst, const int op )
 : SUIT_SelectionFilter()
 {
   setFilters( lst ); 
@@ -45,8 +45,12 @@ GEOM_LogicalFilter::~GEOM_LogicalFilter()
 bool GEOM_LogicalFilter::isOk( const SUIT_DataOwner* owner ) const
 {
   GEOM_LogicalFilter* non_const_this = (GEOM_LogicalFilter*)this;
-  for ( SUIT_SelectionFilter* filter = non_const_this->myFilters.first(); filter; filter = non_const_this->myFilters.next() )
+  QListIterator<SUIT_SelectionFilter*> it( non_const_this->myFilters );
+  while ( it.hasNext() )
   {
+    SUIT_SelectionFilter* filter = it.next();
+    if ( !filter ) continue;
+
     if ( myOperation == LO_OR && filter->isOk( owner ) )
       return true;
     if ( myOperation == LO_AND && !filter->isOk( owner ) )
@@ -62,7 +66,7 @@ bool GEOM_LogicalFilter::isOk( const SUIT_DataOwner* owner ) const
 // function : setFilters
 // purpose  : 
 //=======================================================================
-void GEOM_LogicalFilter::setFilters( const QPtrList<SUIT_SelectionFilter>& lst )
+void GEOM_LogicalFilter::setFilters( const QList<SUIT_SelectionFilter*>& lst )
 {
   myFilters = lst;
 }
@@ -80,7 +84,7 @@ void GEOM_LogicalFilter::setOperation( const int op )
 // function : getFilters
 // purpose  : 
 //=======================================================================
-QPtrList<SUIT_SelectionFilter> GEOM_LogicalFilter::getFilters() const 
+QList<SUIT_SelectionFilter*> GEOM_LogicalFilter::getFilters() const 
 {
   return myFilters;
 }

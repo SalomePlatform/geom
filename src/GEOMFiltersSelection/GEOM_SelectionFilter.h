@@ -24,7 +24,7 @@
 
 #include <TopoDS_Shape.hxx>
 
-#include <qvaluelist.h>
+#include <QList>
 
 // IDL Headers
 #include <SALOMEconfig.h>
@@ -52,7 +52,7 @@ protected:
   bool                  isShapeOk( const TopoDS_Shape& ) const;
 
 private:
-  QValueList<int>       myTypes;
+  QList<int>            myTypes;
   bool                  myAll;
 
 };
