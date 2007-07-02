@@ -32,20 +32,21 @@
 #include "GEOM_DlgRef.hxx"
 
 #include "DlgRef_3Sel_QTD.h"
-#include "DlgRef_SpinBox.h"
-#include <qlayout.h>
-#include <qlabel.h>
+
+class DlgRef_SpinBox;
+class QGridLayout;
+class QLabel;
 
 //=================================================================================
 // class    : DlgRef_3Sel1Spin
 // purpose  : extension of a DlgRef_3Sel_QTD class, 1 additional spin box is added
 //=================================================================================
-class GEOM_DLGREF_EXPORT DlgRef_3Sel1Spin : public DlgRef_3Sel_QTD
+class GEOM_DLGREF_EXPORT DlgRef_3Sel1Spin : public QWidget, public Ui::DlgRef_3Sel_QTD
 {
   Q_OBJECT
 
   public:
-    DlgRef_3Sel1Spin( QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
+    DlgRef_3Sel1Spin( QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = 0 );
     ~DlgRef_3Sel1Spin();
 
     QLabel* TextLabel4;

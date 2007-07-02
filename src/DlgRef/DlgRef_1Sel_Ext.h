@@ -34,16 +34,16 @@
 
 class QGridLayout;
 
-class GEOM_DLGREF_EXPORT DlgRef_1Sel_Ext : public DlgRef_1Sel_QTD
+class GEOM_DLGREF_EXPORT DlgRef_1Sel_Ext : public QWidget, public Ui::DlgRef_1Sel_QTD
 { 
     Q_OBJECT
 
 public:
-    DlgRef_1Sel_Ext( QWidget* parent = 0, const char* name = 0, WFlags fl = 0 )
-    	: DlgRef_1Sel_QTD( parent, name, fl ) {};
+    DlgRef_1Sel_Ext( QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = 0 )
+    	: QWidget( parent, fl ) { setupUi(this); setObjectName(name); };
     ~DlgRef_1Sel_Ext() {};
 
-    QGridLayout* getGroupBoxLayout() { return GroupBox1Layout; }
+    QGridLayout* getGroupBoxLayout() { return gridLayout1; }
 };
 
 #endif // DlgRef_1Sel_Ext_H

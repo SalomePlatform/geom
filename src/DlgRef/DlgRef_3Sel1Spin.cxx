@@ -28,26 +28,43 @@
 
 
 #include "DlgRef_3Sel1Spin.h"
+#include "DlgRef_SpinBox.h"
+
+#include <QGridLayout>
+#include <QLabel>
+
 
 //=================================================================================
 // class    : DlgRef_3Sel1Spin
 // purpose  : 
 //=================================================================================
-DlgRef_3Sel1Spin::DlgRef_3Sel1Spin( QWidget* parent, const char* name, WFlags fl )
-  :DlgRef_3Sel_QTD( parent, name, fl )
+DlgRef_3Sel1Spin::DlgRef_3Sel1Spin( QWidget* parent, const char* name, Qt::WindowFlags fl )
+  :QWidget( parent, fl )
 {
-  Layout2 = new QGridLayout( 0, 1, 1, 0, 6, "Layout2"); 
+  setupUi(this);
 
-  TextLabel4 = new QLabel( (QWidget*)GroupBox1, "TextLabel4" );
-  TextLabel4->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel3->sizePolicy().hasHeightForWidth() ) );
+  setObjectName(name);
+
+  Layout2 = new QGridLayout(0); 
+  Layout2->setMargin(0);
+  Layout2->setSpacing(6);
+  Layout2->setObjectName("Layout2");
+
+  TextLabel4 = new QLabel( (QWidget*)GroupBox1 );
+  TextLabel4->setObjectName( "TextLabel4" );
+  QSizePolicy sizePolicy(static_cast<QSizePolicy::Policy>(0), static_cast<QSizePolicy::Policy>(0));
+  sizePolicy.setHorizontalStretch(0);
+  sizePolicy.setVerticalStretch(0);
+  sizePolicy.setHeightForWidth(TextLabel3->sizePolicy().hasHeightForWidth());
+  TextLabel4->setSizePolicy( sizePolicy );
   Layout2->addWidget( TextLabel4, 0, 0 );
 
   SpinBox_DX = new DlgRef_SpinBox( (QWidget*)GroupBox1, "SpinBox_DX" );
   Layout2->addWidget( SpinBox_DX, 0, 1 );
 
-  Layout1->addMultiCellLayout( Layout2, 3, 3, 0, 2 );    
+  gridLayout2->addLayout( Layout2, 3, 0, 1, 3 );    
   QSpacerItem* spacer = new QSpacerItem( 0, 16, QSizePolicy::Minimum, QSizePolicy::Expanding );
-  Layout1->addItem( spacer, 4, 2 );
+  gridLayout2->addItem( spacer, 4, 2 );
 }
 
 DlgRef_3Sel1Spin::~DlgRef_3Sel1Spin()

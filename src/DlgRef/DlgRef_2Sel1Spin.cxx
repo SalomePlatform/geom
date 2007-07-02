@@ -27,22 +27,23 @@
 //  $Header: 
 
 #include "DlgRef_2Sel1Spin.h"
-
-#include <qlayout.h>
-#include <qspinbox.h>
-#include <qgroupbox.h>
-#include <qpushbutton.h>
+#include "DlgRef_SpinBox.h"
 
 /* 
  *  Constructs a DlgRef_2Sel1Spin which is a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f' 
  */
-DlgRef_2Sel1Spin::DlgRef_2Sel1Spin(QWidget* parent,  const char* name, WFlags fl)
-  :DlgRef_2Sel1Spin_QTD(parent, name, fl)
+DlgRef_2Sel1Spin::DlgRef_2Sel1Spin(QWidget* parent,  const char* name, Qt::WindowFlags fl)
+  :QWidget(parent, fl)
 {
-  SpinBox1->close(TRUE);
+  setupUi(this);
+
+  setObjectName(name);
+
+  SpinBox1->setAttribute( Qt::WA_DeleteOnClose );
+  SpinBox1->close();
   SpinBox_DX = new DlgRef_SpinBox(GroupBox1, "SpinBox_DX");
-  Layout2->addWidget(SpinBox_DX, 0, 1);
+  gridLayout3->addWidget(SpinBox_DX, 0, 1);
 
   // PAL 6532
   PushButton1->setAutoDefault( false );

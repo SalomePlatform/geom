@@ -27,21 +27,23 @@
 //  $Header: 
 
 #include "DlgRef_1Sel1Spin1Check.h"
-
-#include <qlayout.h>
-#include <qspinbox.h>
-#include <qgroupbox.h>
+#include "DlgRef_SpinBox.h"
 
 /* 
  *  Constructs a DlgRef_1Sel1Spin which is a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f' 
  */
-DlgRef_1Sel1Spin1Check::DlgRef_1Sel1Spin1Check(QWidget* parent, const char* name, WFlags fl)
-  :DlgRef_1Sel1Spin1Check_QTD(parent, name, fl)
+DlgRef_1Sel1Spin1Check::DlgRef_1Sel1Spin1Check(QWidget* parent, const char* name, Qt::WindowFlags fl)
+  :QWidget(parent, fl)
 {
-  SpinBox1->close(TRUE);
+  setupUi(this);
+
+  setObjectName(name);
+
+  SpinBox1->setAttribute( Qt::WA_DeleteOnClose );
+  SpinBox1->close();
   SpinBox_DX = new DlgRef_SpinBox(GroupBox1, "SpinBox_DX");
-  Layout2->addWidget(SpinBox_DX, 0, 1);
+  gridLayout3->addWidget(SpinBox_DX, 0, 1);
 }
 
 

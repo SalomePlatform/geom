@@ -1,76 +1,247 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-//
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-/****************************************************************************
-** Form interface generated from reading ui file 'DlgRef_1Sel4Spin_QTD.ui'
+/********************************************************************************
+** Form generated from reading ui file 'DlgRef_1Sel4Spin_QTD.ui'
 **
-** Created: mar sep 23 16:05:09 2003
-**      by:  The User Interface Compiler (uic)
+** Created: Fri Jun 29 12:39:04 2007
+**      by: Qt User Interface Compiler version 4.2.3
 **
-** WARNING! All changes made in this file will be lost!
-****************************************************************************/
+** WARNING! All changes made in this file will be lost when recompiling ui file!
+********************************************************************************/
+
 #ifndef DLGREF_1SEL4SPIN_QTD_H
 #define DLGREF_1SEL4SPIN_QTD_H
 
-#include "GEOM_DlgRef.hxx"
+#include <QtCore/QVariant>
+#include <QtGui/QAction>
+#include <QtGui/QApplication>
+#include <QtGui/QButtonGroup>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QPushButton>
+#include <QtGui/QSpacerItem>
+#include <QtGui/QSpinBox>
+#include <QtGui/QWidget>
+#include <Qt3Support/Q3MimeSourceFactory>
 
-#include <qvariant.h>
-#include <qwidget.h>
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QSpinBox;
-
-class GEOM_DLGREF_EXPORT DlgRef_1Sel4Spin_QTD : public QWidget
-{ 
-    Q_OBJECT
-
+class Ui_DlgRef_1Sel4Spin_QTD
+{
 public:
-    DlgRef_1Sel4Spin_QTD( QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
-    ~DlgRef_1Sel4Spin_QTD();
+    QGridLayout *gridLayout;
+    QGroupBox *GroupBox1;
+    QGridLayout *gridLayout1;
+    QGridLayout *gridLayout2;
+    QGridLayout *gridLayout3;
+    QLabel *TextLabel5;
+    QLabel *TextLabel3;
+    QLabel *TextLabel4;
+    QSpinBox *SpinBox3;
+    QSpinBox *SpinBox1;
+    QLabel *TextLabel2;
+    QSpinBox *SpinBox2;
+    QSpacerItem *spacerItem;
+    QGridLayout *gridLayout4;
+    QLabel *TextLabel6;
+    QSpinBox *SpinBox4;
+    QHBoxLayout *hboxLayout;
+    QLabel *TextLabel1;
+    QPushButton *PushButton1;
+    QLineEdit *LineEdit1;
 
-    QGroupBox* GroupBox1;
-    QLabel* TextLabel5;
-    QLabel* TextLabel3;
-    QLabel* TextLabel4;
-    QSpinBox* SpinBox3;
-    QSpinBox* SpinBox1;
-    QLabel* TextLabel2;
-    QSpinBox* SpinBox2;
-    QLabel* TextLabel6;
-    QSpinBox* SpinBox4;
-    QLabel* TextLabel1;
-    QPushButton* PushButton1;
-    QLineEdit* LineEdit1;
+    void setupUi(QWidget *DlgRef_1Sel4Spin_QTD)
+    {
+    DlgRef_1Sel4Spin_QTD->setObjectName(QString::fromUtf8("DlgRef_1Sel4Spin_QTD"));
+    gridLayout = new QGridLayout(DlgRef_1Sel4Spin_QTD);
+    gridLayout->setSpacing(6);
+    gridLayout->setMargin(0);
+    gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+    GroupBox1 = new QGroupBox(DlgRef_1Sel4Spin_QTD);
+    GroupBox1->setObjectName(QString::fromUtf8("GroupBox1"));
+    gridLayout1 = new QGridLayout(GroupBox1);
+    gridLayout1->setSpacing(6);
+    gridLayout1->setMargin(11);
+    gridLayout1->setObjectName(QString::fromUtf8("gridLayout1"));
+    gridLayout2 = new QGridLayout();
+    gridLayout2->setSpacing(6);
+    gridLayout2->setMargin(0);
+    gridLayout2->setObjectName(QString::fromUtf8("gridLayout2"));
+    gridLayout3 = new QGridLayout();
+    gridLayout3->setSpacing(6);
+    gridLayout3->setMargin(0);
+    gridLayout3->setObjectName(QString::fromUtf8("gridLayout3"));
+    TextLabel5 = new QLabel(GroupBox1);
+    TextLabel5->setObjectName(QString::fromUtf8("TextLabel5"));
+    QSizePolicy sizePolicy(static_cast<QSizePolicy::Policy>(0), static_cast<QSizePolicy::Policy>(0));
+    sizePolicy.setHorizontalStretch(0);
+    sizePolicy.setVerticalStretch(0);
+    sizePolicy.setHeightForWidth(TextLabel5->sizePolicy().hasHeightForWidth());
+    TextLabel5->setSizePolicy(sizePolicy);
+    TextLabel5->setWordWrap(false);
+
+    gridLayout3->addWidget(TextLabel5, 0, 5, 1, 1);
+
+    TextLabel3 = new QLabel(GroupBox1);
+    TextLabel3->setObjectName(QString::fromUtf8("TextLabel3"));
+    QSizePolicy sizePolicy1(static_cast<QSizePolicy::Policy>(0), static_cast<QSizePolicy::Policy>(0));
+    sizePolicy1.setHorizontalStretch(0);
+    sizePolicy1.setVerticalStretch(0);
+    sizePolicy1.setHeightForWidth(TextLabel3->sizePolicy().hasHeightForWidth());
+    TextLabel3->setSizePolicy(sizePolicy1);
+    TextLabel3->setWordWrap(false);
+
+    gridLayout3->addWidget(TextLabel3, 0, 1, 1, 1);
+
+    TextLabel4 = new QLabel(GroupBox1);
+    TextLabel4->setObjectName(QString::fromUtf8("TextLabel4"));
+    QSizePolicy sizePolicy2(static_cast<QSizePolicy::Policy>(0), static_cast<QSizePolicy::Policy>(0));
+    sizePolicy2.setHorizontalStretch(0);
+    sizePolicy2.setVerticalStretch(0);
+    sizePolicy2.setHeightForWidth(TextLabel4->sizePolicy().hasHeightForWidth());
+    TextLabel4->setSizePolicy(sizePolicy2);
+    TextLabel4->setWordWrap(false);
+
+    gridLayout3->addWidget(TextLabel4, 0, 3, 1, 1);
+
+    SpinBox3 = new QSpinBox(GroupBox1);
+    SpinBox3->setObjectName(QString::fromUtf8("SpinBox3"));
+    QSizePolicy sizePolicy3(static_cast<QSizePolicy::Policy>(7), static_cast<QSizePolicy::Policy>(0));
+    sizePolicy3.setHorizontalStretch(0);
+    sizePolicy3.setVerticalStretch(0);
+    sizePolicy3.setHeightForWidth(SpinBox3->sizePolicy().hasHeightForWidth());
+    SpinBox3->setSizePolicy(sizePolicy3);
+
+    gridLayout3->addWidget(SpinBox3, 0, 6, 1, 1);
+
+    SpinBox1 = new QSpinBox(GroupBox1);
+    SpinBox1->setObjectName(QString::fromUtf8("SpinBox1"));
+    QSizePolicy sizePolicy4(static_cast<QSizePolicy::Policy>(7), static_cast<QSizePolicy::Policy>(0));
+    sizePolicy4.setHorizontalStretch(0);
+    sizePolicy4.setVerticalStretch(0);
+    sizePolicy4.setHeightForWidth(SpinBox1->sizePolicy().hasHeightForWidth());
+    SpinBox1->setSizePolicy(sizePolicy4);
+
+    gridLayout3->addWidget(SpinBox1, 0, 2, 1, 1);
+
+    TextLabel2 = new QLabel(GroupBox1);
+    TextLabel2->setObjectName(QString::fromUtf8("TextLabel2"));
+    QSizePolicy sizePolicy5(static_cast<QSizePolicy::Policy>(0), static_cast<QSizePolicy::Policy>(0));
+    sizePolicy5.setHorizontalStretch(0);
+    sizePolicy5.setVerticalStretch(0);
+    sizePolicy5.setHeightForWidth(TextLabel2->sizePolicy().hasHeightForWidth());
+    TextLabel2->setSizePolicy(sizePolicy5);
+    TextLabel2->setWordWrap(false);
+
+    gridLayout3->addWidget(TextLabel2, 0, 0, 1, 1);
+
+    SpinBox2 = new QSpinBox(GroupBox1);
+    SpinBox2->setObjectName(QString::fromUtf8("SpinBox2"));
+    QSizePolicy sizePolicy6(static_cast<QSizePolicy::Policy>(7), static_cast<QSizePolicy::Policy>(0));
+    sizePolicy6.setHorizontalStretch(0);
+    sizePolicy6.setVerticalStretch(0);
+    sizePolicy6.setHeightForWidth(SpinBox2->sizePolicy().hasHeightForWidth());
+    SpinBox2->setSizePolicy(sizePolicy6);
+
+    gridLayout3->addWidget(SpinBox2, 0, 4, 1, 1);
 
 
-protected:
-    QGridLayout* DlgRef_1Sel4Spin_QTDLayout;
-    QGridLayout* GroupBox1Layout;
-    QGridLayout* Layout1;
-    QGridLayout* Layout3;
-    QGridLayout* Layout4;
-    QHBoxLayout* Layout2;
+    gridLayout2->addLayout(gridLayout3, 1, 0, 1, 1);
+
+    spacerItem = new QSpacerItem(0, 16, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+    gridLayout2->addItem(spacerItem, 3, 0, 1, 1);
+
+    gridLayout4 = new QGridLayout();
+    gridLayout4->setSpacing(6);
+    gridLayout4->setMargin(0);
+    gridLayout4->setObjectName(QString::fromUtf8("gridLayout4"));
+    TextLabel6 = new QLabel(GroupBox1);
+    TextLabel6->setObjectName(QString::fromUtf8("TextLabel6"));
+    QSizePolicy sizePolicy7(static_cast<QSizePolicy::Policy>(0), static_cast<QSizePolicy::Policy>(0));
+    sizePolicy7.setHorizontalStretch(0);
+    sizePolicy7.setVerticalStretch(0);
+    sizePolicy7.setHeightForWidth(TextLabel6->sizePolicy().hasHeightForWidth());
+    TextLabel6->setSizePolicy(sizePolicy7);
+    TextLabel6->setWordWrap(false);
+
+    gridLayout4->addWidget(TextLabel6, 0, 0, 1, 1);
+
+    SpinBox4 = new QSpinBox(GroupBox1);
+    SpinBox4->setObjectName(QString::fromUtf8("SpinBox4"));
+
+    gridLayout4->addWidget(SpinBox4, 0, 1, 1, 1);
+
+
+    gridLayout2->addLayout(gridLayout4, 2, 0, 1, 1);
+
+    hboxLayout = new QHBoxLayout();
+    hboxLayout->setSpacing(6);
+    hboxLayout->setMargin(0);
+    hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
+    TextLabel1 = new QLabel(GroupBox1);
+    TextLabel1->setObjectName(QString::fromUtf8("TextLabel1"));
+    QSizePolicy sizePolicy8(static_cast<QSizePolicy::Policy>(0), static_cast<QSizePolicy::Policy>(0));
+    sizePolicy8.setHorizontalStretch(0);
+    sizePolicy8.setVerticalStretch(0);
+    sizePolicy8.setHeightForWidth(TextLabel1->sizePolicy().hasHeightForWidth());
+    TextLabel1->setSizePolicy(sizePolicy8);
+    TextLabel1->setWordWrap(false);
+
+    hboxLayout->addWidget(TextLabel1);
+
+    PushButton1 = new QPushButton(GroupBox1);
+    PushButton1->setObjectName(QString::fromUtf8("PushButton1"));
+    QSizePolicy sizePolicy9(static_cast<QSizePolicy::Policy>(0), static_cast<QSizePolicy::Policy>(0));
+    sizePolicy9.setHorizontalStretch(0);
+    sizePolicy9.setVerticalStretch(0);
+    sizePolicy9.setHeightForWidth(PushButton1->sizePolicy().hasHeightForWidth());
+    PushButton1->setSizePolicy(sizePolicy9);
+
+    hboxLayout->addWidget(PushButton1);
+
+    LineEdit1 = new QLineEdit(GroupBox1);
+    LineEdit1->setObjectName(QString::fromUtf8("LineEdit1"));
+
+    hboxLayout->addWidget(LineEdit1);
+
+
+    gridLayout2->addLayout(hboxLayout, 0, 0, 1, 1);
+
+
+    gridLayout1->addLayout(gridLayout2, 0, 0, 1, 1);
+
+
+    gridLayout->addWidget(GroupBox1, 0, 0, 1, 1);
+
+
+    retranslateUi(DlgRef_1Sel4Spin_QTD);
+
+    QSize size(284, 119);
+    size = size.expandedTo(DlgRef_1Sel4Spin_QTD->minimumSizeHint());
+    DlgRef_1Sel4Spin_QTD->resize(size);
+
+
+    QMetaObject::connectSlotsByName(DlgRef_1Sel4Spin_QTD);
+    } // setupUi
+
+    void retranslateUi(QWidget *DlgRef_1Sel4Spin_QTD)
+    {
+    DlgRef_1Sel4Spin_QTD->setWindowTitle(QApplication::translate("DlgRef_1Sel4Spin_QTD", "DlgRef_1Sel4Spin_QTD", 0, QApplication::UnicodeUTF8));
+    GroupBox1->setTitle(QString());
+    TextLabel5->setText(QApplication::translate("DlgRef_1Sel4Spin_QTD", "TL5", 0, QApplication::UnicodeUTF8));
+    TextLabel3->setText(QApplication::translate("DlgRef_1Sel4Spin_QTD", "TL3", 0, QApplication::UnicodeUTF8));
+    TextLabel4->setText(QApplication::translate("DlgRef_1Sel4Spin_QTD", "TL4", 0, QApplication::UnicodeUTF8));
+    TextLabel2->setText(QApplication::translate("DlgRef_1Sel4Spin_QTD", "TL2", 0, QApplication::UnicodeUTF8));
+    TextLabel6->setText(QApplication::translate("DlgRef_1Sel4Spin_QTD", "TL6", 0, QApplication::UnicodeUTF8));
+    TextLabel1->setText(QApplication::translate("DlgRef_1Sel4Spin_QTD", "TL1", 0, QApplication::UnicodeUTF8));
+    PushButton1->setText(QString());
+    Q_UNUSED(DlgRef_1Sel4Spin_QTD);
+    } // retranslateUi
+
 };
+
+namespace Ui {
+    class DlgRef_1Sel4Spin_QTD: public Ui_DlgRef_1Sel4Spin_QTD {};
+} // namespace Ui
 
 #endif // DLGREF_1SEL4SPIN_QTD_H

@@ -31,7 +31,7 @@
 
 #include "GEOM_DlgRef.hxx"
 
-#include "QtxDblSpinBox.h"
+#include "QtxDoubleSpinBox.h"
 
 #define COORD_MIN -1e+15
 #define COORD_MAX +1e+15
@@ -41,7 +41,7 @@
 // class    : DlgRef_SpinBox
 // purpose  : Derivated from QSpinBox class and modified to accept floats
 //=================================================================================
-class GEOM_DLGREF_EXPORT DlgRef_SpinBox : public QtxDblSpinBox
+class GEOM_DLGREF_EXPORT DlgRef_SpinBox : public QtxDoubleSpinBox
 {
   Q_OBJECT
 

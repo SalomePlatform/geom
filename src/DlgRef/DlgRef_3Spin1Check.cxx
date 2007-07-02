@@ -27,30 +27,36 @@
 //  $Header: 
 
 #include "DlgRef_3Spin1Check.h"
-
-#include <qlayout.h>
-#include <qspinbox.h>
-#include <qgroupbox.h>
+#include "DlgRef_SpinBox.h"
 
 /* 
  *  Constructs a DlgRef_3Spin which is a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f' 
  */
-DlgRef_3Spin1Check::DlgRef_3Spin1Check(QWidget* parent,  const char* name, WFlags fl)
-  :DlgRef_3Spin1Check_QTD(parent, name, fl)
+DlgRef_3Spin1Check::DlgRef_3Spin1Check(QWidget* parent,  const char* name, Qt::WindowFlags fl)
+  :QWidget(parent, fl)
 {
-  SpinBox1->close(TRUE);
-  SpinBox2->close(TRUE);
-  SpinBox3->close(TRUE);
+  setupUi(this);
+
+  setObjectName(name);
+
+  SpinBox1->setAttribute( Qt::WA_DeleteOnClose );
+  SpinBox1->close();
+
+  SpinBox2->setAttribute( Qt::WA_DeleteOnClose );
+  SpinBox2->close();
+
+  SpinBox3->setAttribute( Qt::WA_DeleteOnClose );
+  SpinBox3->close();
 
   SpinBox_DX = new DlgRef_SpinBox(GroupBox1, "SpinBox_DX");
-  Layout1->addWidget(SpinBox_DX, 0, 1);
+  gridLayout2->addWidget(SpinBox_DX, 0, 1);
 
   SpinBox_DY = new DlgRef_SpinBox(GroupBox1, "SpinBox_DY");
-  Layout1->addWidget(SpinBox_DY, 1, 1);
+  gridLayout2->addWidget(SpinBox_DY, 1, 1);
 
   SpinBox_DZ = new DlgRef_SpinBox(GroupBox1, "SpinBox_DZ");
-  Layout1->addWidget(SpinBox_DZ, 2, 1);
+  gridLayout2->addWidget(SpinBox_DZ, 2, 1);
 }
 
 

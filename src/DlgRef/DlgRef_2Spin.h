@@ -29,17 +29,18 @@
 #ifndef DLGREF_2SPIN_H
 #define DLGREF_2SPIN_H
 
-#include "DlgRef_2Spin_QTD.h"
-#include "DlgRef_SpinBox.h"
-
 #include "GEOM_DlgRef.hxx"
 
-class GEOM_DLGREF_EXPORT DlgRef_2Spin : public DlgRef_2Spin_QTD
+#include "DlgRef_2Spin_QTD.h"
+
+class DlgRef_SpinBox;
+
+class GEOM_DLGREF_EXPORT DlgRef_2Spin : public QWidget, public Ui::DlgRef_2Spin_QTD
 { 
     Q_OBJECT
 
 public:
-    DlgRef_2Spin(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
+    DlgRef_2Spin(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = 0);
     ~DlgRef_2Spin();
 
     DlgRef_SpinBox* SpinBox_DX;

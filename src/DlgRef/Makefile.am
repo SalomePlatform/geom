@@ -34,36 +34,6 @@ lib_LTLIBRARIES = libDlgRef.la
 
 # Sources files
 dist_libDlgRef_la_SOURCES = \
-	DlgRef_Skeleton_QTD.cxx \
-	DlgRef_1Sel_QTD.cxx \
-	DlgRef_2Sel_QTD.cxx \
-	DlgRef_3Sel_QTD.cxx \
-	DlgRef_1Sel1Check_QTD.cxx \
-	DlgRef_1Sel3Check_QTD.cxx \
-	DlgRef_1Sel1Check1List_QTD.cxx \
-	DlgRef_1Sel1Spin_QTD.cxx \
-	DlgRef_1Sel2Spin_QTD.cxx \
-	DlgRef_1Sel3Spin_QTD.cxx \
-	DlgRef_1Sel4Spin_QTD.cxx \
-	DlgRef_1Sel5Spin_QTD.cxx \
-	DlgRef_2Sel1Spin_QTD.cxx \
-	DlgRef_2Sel2Spin_QTD.cxx \
-	DlgRef_2Sel3Spin_QTD.cxx \
-	DlgRef_1Sel1Spin1Check_QTD.cxx \
-	DlgRef_2Sel1Spin2Check_QTD.cxx \
-	DlgRef_2Sel2Spin1Check_QTD.cxx \
-	DlgRef_2Sel4Spin1Check_QTD.cxx \
-	DlgRef_3Sel4Spin2Check_QTD.cxx \
-	DlgRef_4Sel1List_QTD.cxx \
-	DlgRef_2Sel1List_QTD.cxx \
-	DlgRef_1List1Spin1Btn_QTD.cxx \
-	DlgRef_4Sel1List1Check_QTD.cxx \
-	DlgRef_1Spin_QTD.cxx \
-	DlgRef_2Spin_QTD.cxx \
-	DlgRef_3Spin_QTD.cxx \
-	DlgRef_3Spin1Check_QTD.cxx \
-	DlgRef_3Sel3Spin1Check_QTD.cxx \
-	DlgRef_4Sel1Spin2Check_QTD.cxx \
 	DlgRef_SpinBox.cxx \
 	DlgRef_1Sel1Spin.cxx \
 	DlgRef_1Sel2Spin.cxx \
@@ -84,42 +54,9 @@ dist_libDlgRef_la_SOURCES = \
 	DlgRef_3Spin.cxx \
 	DlgRef_3Spin1Check.cxx \
 	DlgRef_3Sel1Spin.cxx \
-	DlgRef_3Check_QTD.cxx \
-	DlgRef_6Sel_QTD.cxx \
-	DlgRef_4Sel1Spin2Check.cxx \
-	DlgRef_3Sel1Check_QTD.cxx
+	DlgRef_4Sel1Spin2Check.cxx
 
 MOC_FILES = \
-	DlgRef_Skeleton_QTD_moc.cxx \
-	DlgRef_1Sel_QTD_moc.cxx \
-	DlgRef_2Sel_QTD_moc.cxx \
-	DlgRef_3Sel_QTD_moc.cxx \
-	DlgRef_1Sel1Check_QTD_moc.cxx \
-	DlgRef_1Sel3Check_QTD_moc.cxx \
-	DlgRef_1Sel1Check1List_QTD_moc.cxx \
-	DlgRef_1Sel1Spin_QTD_moc.cxx \
-	DlgRef_1Sel2Spin_QTD_moc.cxx \
-	DlgRef_1Sel3Spin_QTD_moc.cxx \
-	DlgRef_1Sel4Spin_QTD_moc.cxx \
-	DlgRef_1Sel5Spin_QTD_moc.cxx \
-	DlgRef_2Sel1Spin_QTD_moc.cxx \
-	DlgRef_2Sel2Spin_QTD_moc.cxx \
-	DlgRef_2Sel3Spin_QTD_moc.cxx \
-	DlgRef_1Sel1Spin1Check_QTD_moc.cxx \
-	DlgRef_2Sel1Spin2Check_QTD_moc.cxx \
-	DlgRef_2Sel2Spin1Check_QTD_moc.cxx \
-	DlgRef_2Sel4Spin1Check_QTD_moc.cxx \
-	DlgRef_3Sel4Spin2Check_QTD_moc.cxx \
-	DlgRef_4Sel1List_QTD_moc.cxx \
-	DlgRef_2Sel1List_QTD_moc.cxx \
-	DlgRef_1List1Spin1Btn_QTD_moc.cxx \
-	DlgRef_4Sel1List1Check_QTD_moc.cxx \
-	DlgRef_1Spin_QTD_moc.cxx \
-	DlgRef_2Spin_QTD_moc.cxx \
-	DlgRef_3Spin_QTD_moc.cxx \
-	DlgRef_3Spin1Check_QTD_moc.cxx \
-	DlgRef_3Sel3Spin1Check_QTD_moc.cxx \
-	DlgRef_4Sel1Spin2Check_QTD_moc.cxx \
 	DlgRef_SpinBox_moc.cxx \
 	DlgRef_1Sel1Spin_moc.cxx \
 	DlgRef_1Sel2Spin_moc.cxx \
@@ -141,10 +78,7 @@ MOC_FILES = \
 	DlgRef_3Spin1Check_moc.cxx \
 	DlgRef_3Sel1Spin_moc.cxx \
 	DlgRef_1Sel_Ext_moc.cxx \
-	DlgRef_3Check_QTD_moc.cxx \
-	DlgRef_6Sel_QTD_moc.cxx \
-	DlgRef_4Sel1Spin2Check_moc.cxx \
-	DlgRef_3Sel1Check_QTD_moc.cxx
+	DlgRef_4Sel1Spin2Check_moc.cxx
 
 # header files 
 salomeinclude_HEADERS = \

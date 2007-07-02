@@ -32,14 +32,15 @@
 #include "GEOM_DlgRef.hxx"
 
 #include "DlgRef_3Spin_QTD.h"
-#include "DlgRef_SpinBox.h"
 
-class GEOM_DLGREF_EXPORT DlgRef_3Spin : public DlgRef_3Spin_QTD
+class DlgRef_SpinBox;
+
+class GEOM_DLGREF_EXPORT DlgRef_3Spin : public QWidget, public Ui::DlgRef_3Spin_QTD
 { 
     Q_OBJECT
 
 public:
-    DlgRef_3Spin( QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
+    DlgRef_3Spin( QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = 0 );
     ~DlgRef_3Spin();
 
     DlgRef_SpinBox* SpinBox_DX;

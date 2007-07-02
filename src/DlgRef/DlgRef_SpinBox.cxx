@@ -28,15 +28,14 @@
 
 #include "DlgRef_SpinBox.h"
 
-#include <qvalidator.h>
-
 //=================================================================================
 // class    : DlgRef_SpinBox()
 // purpose  : constructor of specific widget accepting floats in double precision.
 //=================================================================================
 DlgRef_SpinBox::DlgRef_SpinBox(QWidget* parent, const char* name)
-  : QtxDblSpinBox(parent, name)
+  : QtxDoubleSpinBox(parent)
 {
+  setObjectName( name );
 }
 
 
@@ -55,7 +54,7 @@ DlgRef_SpinBox::~DlgRef_SpinBox()
 //=================================================================================
 void DlgRef_SpinBox::SetStep(double newStep)
 {
-  setLineStep(newStep);
+  setSingleStep(newStep);
 }
 
 
@@ -96,9 +95,8 @@ QString DlgRef_SpinBox::GetString()
 void DlgRef_SpinBox::RangeStepAndValidator(double min, double max,double step,
 					   unsigned short decimals)
 {
-  setPrecision(-decimals); // PAL12789. Minus is for using 'g' double->string conversion specifier,
-  //                          see QtxDblSpinBox::mapValueToText( double v )
+  setDecimals(-decimals); // PAL12789. Minus is for using 'g' double->string conversion specifier,
+  //                          see QtxDoubleSpinBox::mapValueToText( double v )
   setRange(min, max);
-  setLineStep(step);
-  ((QDoubleValidator*)validator())->setRange(min, max, decimals);
+  setSingleStep(step);
 }

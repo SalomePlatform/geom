@@ -32,14 +32,15 @@
 #include "GEOM_DlgRef.hxx"
 
 #include "DlgRef_2Sel2Spin1Check_QTD.h"
-#include "DlgRef_SpinBox.h"
 
-class GEOM_DLGREF_EXPORT DlgRef_2Sel2Spin1Check : public DlgRef_2Sel2Spin1Check_QTD
+class DlgRef_SpinBox;
+
+class GEOM_DLGREF_EXPORT DlgRef_2Sel2Spin1Check : public QWidget, public Ui::DlgRef_2Sel2Spin1Check_QTD
 { 
     Q_OBJECT
 
 public:
-    DlgRef_2Sel2Spin1Check(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
+    DlgRef_2Sel2Spin1Check(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = 0);
     ~DlgRef_2Sel2Spin1Check();
 
     DlgRef_SpinBox* SpinBox_DX;
