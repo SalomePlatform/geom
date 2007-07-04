@@ -36,14 +36,16 @@
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
+class LightApp_SelectionMgr;
+
 class GEOMGUI_EXPORT GEOMGUI_Selection : public LightApp_Selection
 {
 public:
-  GEOMGUI_Selection();
+  GEOMGUI_Selection( const QString&, LightApp_SelectionMgr* );
   virtual ~GEOMGUI_Selection();
 
-  virtual QtxValue      param( const int, const QString& ) const;
-  virtual QtxValue      globalParam( const QString& ) const;
+  virtual QVariant      parameter( const int, const QString& ) const;
+  virtual QVariant      parameter( const QString& ) const;
 
 private:
   bool                  isVisible( const int ) const;

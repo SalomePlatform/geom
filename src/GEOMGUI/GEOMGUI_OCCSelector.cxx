@@ -23,8 +23,6 @@
 
 #include <OCCViewer_ViewModel.h>
 
-#include <SALOME_InteractiveObject.hxx>
-
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <SelectMgr_EntityOwner.hxx>
@@ -37,7 +35,6 @@
 #include <SelectBasics_SensitiveEntity.hxx>
 #include <StdSelect_BRepOwner.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
-#include <SelectMgr_IndexedMapOfOwner.hxx>
 #include <NCollection_DataMap.hxx>
 
 #include <SUIT_Session.h>
@@ -198,12 +195,12 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
     {
       QString entry = subOwner->entry();
 #ifndef WNT
-      if ( indexesMap.IsBound( TCollection_AsciiString((char*)entry.latin1())))
+      if ( indexesMap.IsBound( TCollection_AsciiString(entry.toLatin1().data())))
 #else
-	  if ( indexesMap.IsBound( (char*)entry.latin1()))
+	  if ( indexesMap.IsBound( (char*)entry.toLatin1()))
 #endif
       {
-	TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind((char*)entry.latin1());
+	TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entry.toLatin1().data());
 	subIndexes.Add( subOwner->index() );
 	//indexesMap.replace( entry, subIndexes );
       }
@@ -211,7 +208,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       {
 	TColStd_IndexedMapOfInteger subIndexes;
 	subIndexes.Add( subOwner->index() );
-	indexesMap.Bind((char*)entry.latin1(), subIndexes);
+	indexesMap.Bind(entry.toLatin1().data(), subIndexes);
       }
     } 
     else // the owner is NOT a sub owner, maybe it is a DataOwner == GLOBAL selection
@@ -257,12 +254,12 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 	{
 	  Handle(AIS_Shape) aisShape = Handle(AIS_Shape)::DownCast( io );
 
-	  if ( !aisShape.IsNull() && indexesMap.IsBound( (char*)entryStr.latin1() ) )
+	  if ( !aisShape.IsNull() && indexesMap.IsBound( entryStr.toLatin1().data() ) )
 	  {
 	    TopoDS_Shape shape = aisShape->Shape();
 	    TopTools_IndexedMapOfShape aMapOfShapes;
 	    TopExp::MapShapes( shape, aMapOfShapes );
-	    const TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind((char*)entryStr.latin1());
+	    const TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entryStr.toLatin1().data());
 
 	    const TopoDS_Shape& aSubShape = anOwner->Shape();
 	    int  aSubShapeId = aMapOfShapes.FindIndex( aSubShape );

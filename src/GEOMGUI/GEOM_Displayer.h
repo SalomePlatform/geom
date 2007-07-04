@@ -31,9 +31,15 @@
 
 #include "GEOM_GEOMGUI.hxx"
 
-#include "SALOME_Prs.h"
 #include "SALOME_InteractiveObject.hxx"
-#include "SALOME_ListIO.hxx"
+
+class SALOME_ListIO;
+class SALOME_View;
+class SALOME_Prs;
+class SALOME_OCCPrs;
+class SALOME_VTKPrs;
+class SALOME_OCCViewType;
+
 #include <TopoDS_Shape.hxx>
 #include <Quantity_Color.hxx>
 #include <LightApp_Displayer.h>

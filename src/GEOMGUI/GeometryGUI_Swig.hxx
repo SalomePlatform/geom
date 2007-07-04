@@ -37,8 +37,6 @@
 #include CORBA_SERVER_HEADER(SALOMEDS)
 #include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
-class GEOM_Client;
-
 class GEOMGUI_EXPORT GEOM_Swig
 {
 public:

@@ -22,19 +22,13 @@
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
 
-#include <LightApp_DataOwner.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 
-#include <OCCViewer_ViewModel.h>
-
+#include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
 #include <SUIT_ViewWindow.h>
 #include <SUIT_ViewManager.h>
-#include <SUIT_ViewModel.h>
-
-#include <SALOMEDSClient_SObject.hxx>
-#include <SALOMEDSClient_Study.hxx>
 
 #include <SALOME_Prs.h>
 #include <SALOME_InteractiveObject.hxx>
@@ -56,7 +50,8 @@
 // VTK Includes
 #include <vtkActorCollection.h>
 
-GEOMGUI_Selection::GEOMGUI_Selection()
+GEOMGUI_Selection::GEOMGUI_Selection( const QString& client, LightApp_SelectionMgr* mgr )
+  :LightApp_Selection( client, mgr )
 {
 }
 
@@ -64,26 +59,26 @@ GEOMGUI_Selection::~GEOMGUI_Selection()
 {
 }
 
-QtxValue GEOMGUI_Selection::globalParam( const QString& p ) const
+QVariant GEOMGUI_Selection::parameter( const QString& p ) const
 {
-  if ( p == "isOCC" ) return QtxValue( activeViewType() == OCCViewer_Viewer::Type() );
+  if ( p == "isOCC" ) return QVariant( activeViewType() == OCCViewer_Viewer::Type() );
   if ( p == "selectionmode" ){ 
-    return QtxValue(selectionMode()); 
+    return QVariant(selectionMode()); 
   }
-  return LightApp_Selection::globalParam( p );
+  return LightApp_Selection::parameter( p );
 }
 
-QtxValue GEOMGUI_Selection::param( const int ind, const QString& p ) const
+QVariant GEOMGUI_Selection::parameter( const int ind, const QString& p ) const
 {
-//  if      ( p == "isVisible"   )    return QtxValue( isVisible( ind ) );
+//  if      ( p == "isVisible"   )    return QVariant( isVisible( ind ) );
 // parameter isVisible is calculated in base SalomeApp_Selection
 //  else
   if( p == "type" )
-    return QtxValue( typeName( ind ) );
+    return QVariant( typeName( ind ) );
   else if ( p == "displaymode" )
-    return QtxValue( displayMode( ind ) );
+    return QVariant( displayMode( ind ) );
   else
-    return LightApp_Selection::param( ind, p );
+    return LightApp_Selection::parameter( ind, p );
 }
 
 QString GEOMGUI_Selection::typeName( const int index ) const
@@ -106,7 +101,7 @@ bool GEOMGUI_Selection::isVisible( const int index ) const
   GEOM::GEOM_Object_var obj = getObject( index );
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   if ( !CORBA::is_nil( obj ) && view ) {
-    Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).latin1(), "GEOM", "TEMP_IO" );
+    Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).toLatin1(), "GEOM", "TEMP_IO" );
     return view->isVisible( io );
   }
   return false;
@@ -117,7 +112,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   QString viewType = activeViewType();
   if ( view /*fix for 9320==>*/&& ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
-    SALOME_Prs* prs = view->CreatePrs( entry( index ) );
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toStdString().c_str() );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
 	SOCC_Prs* occPrs = (SOCC_Prs*) prs;
@@ -177,7 +172,7 @@ bool GEOMGUI_Selection::isComponent( const int index ) const
     QString anEntry = entry( index );
 
     if ( study && !anEntry.isNull() ) {
-      _PTR(SObject) aSO( study->FindObjectID( anEntry.latin1() ) );
+      _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
       if ( aSO && aSO->GetFatherComponent() )
 	return aSO->GetFatherComponent()->GetIOR() == aSO->GetIOR();
     }
@@ -195,7 +190,7 @@ GEOM::GEOM_Object_ptr GEOMGUI_Selection::getObject( const int index ) const
     QString anEntry = entry(index);
 
     if (study && !anEntry.isNull()) {
-      _PTR(SObject) aSO (study->FindObjectID(anEntry.latin1()));
+      _PTR(SObject) aSO (study->FindObjectID(anEntry.toStdString()));
       if (aSO) {
         CORBA::Object_var anObj = GeometryGUI::ClientSObjectToObject(aSO);
 	return GEOM::GEOM_Object::_narrow(anObj);
@@ -224,4 +219,5 @@ QString GEOMGUI_Selection:: selectionMode() const
 	default: return "";
 	}
   }
+  return "";
 }

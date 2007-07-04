@@ -27,16 +27,17 @@
 //  $Header$
 
 #include "GeometryGUI_Swig.hxx"
-#include "SALOMEGUI_Swig.hxx"
 
 #include "GeometryGUI.h"
 
+#include "SUIT_Desktop.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "SalomeApp_Study.h"
-#include "SalomeApp_ImportOperation.h"
+//#include "SalomeApp_ImportOperation.h"
 
-#include "OB_Browser.h"
+// temporary commented
+//#include "OB_Browser.h"
 
 #include "OCCViewer_ViewWindow.h"
 #include "OCCViewer_ViewManager.h"
@@ -50,15 +51,13 @@
 #include "GEOM_Actor.h"
 #include "GEOM_Client.hxx"
 #include "GEOM_AISShape.hxx"
-#include "GEOM_AssemblyBuilder.h"
+//#include "GEOM_AssemblyBuilder.h"
 #include "GEOM_InteractiveObject.hxx"
 #include "GEOM_Displayer.h"
 
 #include "SALOME_Event.hxx"
 
-#include "utilities.h"
-
-#include "SALOMEDSClient.hxx"
+//#include "utilities.h"
 
 // OCCT Includes
 #include <TopAbs.hxx>

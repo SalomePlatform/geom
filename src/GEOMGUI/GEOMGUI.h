@@ -31,7 +31,7 @@
 
 #include "GEOM_GEOMGUI.hxx"
 
-#include <qobject.h>
+#include <QObject>
 
 class SUIT_Desktop;
 class SUIT_ViewWindow;

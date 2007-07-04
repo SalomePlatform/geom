@@ -40,7 +40,7 @@
 #include "SALOMEDSClient.hxx"
 
 // QT Includes
-#include <qmap.h>
+#include <QMap>
 
 // OCCT Includes
 #include <gp_Ax3.hxx>
@@ -52,7 +52,7 @@
 typedef QMap<QString, GEOMGUI*> GUIMap;
 
 class QDialog;
-class QPopupMenu;
+class QMenu;
 class GEOMGUI_OCCSelector;
 class LightApp_VTKSelector;
 class LightApp_Selection;
@@ -106,7 +106,7 @@ public:
   virtual void                BuildPresentation( const Handle(SALOME_InteractiveObject)&, SUIT_ViewWindow* = 0 );
 
 //  virtual void                DefinePopup( QString & theContext, QString & theParent, QString & theObject);
-//  virtual bool                CustomPopup( QAD_Desktop* parent, QPopupMenu* popup, const QString& theContext,
+//  virtual bool                CustomPopup( QAD_Desktop* parent, QMenu* popup, const QString& theContext,
 //			                   const QString& theParent, const QString& theObject );
 
   // The Working Plane management
@@ -117,7 +117,7 @@ public:
   virtual void                windows( QMap<int, int>& ) const;
   virtual void                viewManagers( QStringList& ) const;
 
-  virtual void                contextMenuPopup( const QString&, QPopupMenu*, QString& );
+  virtual void                contextMenuPopup( const QString&, QMenu*, QString& );
   virtual void                createPreferences();
   virtual void                preferencesChanged( const QString&, const QString& );
   int                         getLocalSelectionMode() const;
@@ -144,7 +144,7 @@ signals :
   void                        SignalDefaultStepValueChanged( double newVal );
 
 protected:
-  virtual LightApp_Selection* createSelection() const;
+  virtual LightApp_Selection* createSelection( const QString&, LightApp_SelectionMgr* ) const;
 
 private:
   GEOMGUI*                    getLibrary( const QString& libraryName );
@@ -167,8 +167,8 @@ private:
   gp_Ax3                      myWorkingPlane;
   QMap<int,QString>           myRules;           // popup rules
 
-  QPtrList<GEOMGUI_OCCSelector>   myOCCSelectors;
-  QPtrList<LightApp_VTKSelector> myVTKSelectors;
+  QList<GEOMGUI_OCCSelector*>  myOCCSelectors;
+  QList<LightApp_VTKSelector*> myVTKSelectors;
 
   LightApp_Displayer*         myDisplayer;
   int                         myLocalSelectionMode; //Select Only

@@ -47,8 +47,8 @@
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewWindow.h>
 #include <SUIT_Session.h>
-#include <SUIT_Tools.h>
 #include <SUIT_ViewManager.h>
+#include <SUIT_ResourceMgr.h>
 
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>
@@ -57,6 +57,8 @@
 #include <SalomeApp_Tools.h>
 
 #include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
+#include <SALOME_Prs.h>
 
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
@@ -64,15 +66,11 @@
 #include <SVTK_Prs.h>
 #include <SVTK_ViewModel.h>
 
-#include <SALOMEDSClient.hxx>
-#include <SALOMEDSClient_SObject.hxx>
-
 // OCCT Includes
 #include <AIS_Drawer.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
-#include <Graphic3d_AspectMarker3d.hxx>
 #include <StdSelect_TypeOfEdge.hxx>
 #include <StdSelect_TypeOfFace.hxx>
 #include <TopoDS_Face.hxx>
@@ -86,9 +84,6 @@
 // VTK Includes
 #include <vtkActorCollection.h>
 #include <vtkProperty.h>
-
-// STL Includes
-#include <cstring>
 
 // CORBA Headers
 #include CORBA_CLIENT_HEADER(SALOMEDS_Attributes)
@@ -378,9 +373,10 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
   if ( app )
   {
     SUIT_Desktop* desk = app->desktop();
-    QPtrList<SUIT_ViewWindow> wnds = desk->windows();
+    QList<SUIT_ViewWindow*> wnds = desk->windows();
     SUIT_ViewWindow* wnd;
-    for ( wnd = wnds.first(); wnd; wnd = wnds.next() )
+    QListIterator<SUIT_ViewWindow*> it( wnds );
+    while ( it.hasNext() && (wnd = it.next()) )
     {
       SUIT_ViewManager* vman = wnd->getViewManager();
       if ( vman )
@@ -849,7 +845,7 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
     if ( prs )
     {
       Handle( SALOME_InteractiveObject ) theIO = new SALOME_InteractiveObject();
-      theIO->setEntry( entry.latin1() );
+      theIO->setEntry( entry.toLatin1() );
       if ( !theIO.IsNull() )
       {
 	// set interactive object
@@ -1002,7 +998,7 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
     {
       TColStd_MapOfInteger aTopAbsModes;
       TColStd_MapIteratorOfMapOfInteger anIter( theModes );
-      QPtrList<SUIT_SelectionFilter> aListOfFilters;
+      QList<SUIT_SelectionFilter*> aListOfFilters;
       for ( ; anIter.More(); anIter.Next() )
 	{
 	  SUIT_SelectionFilter* aFilter = getFilter( anIter.Key() );

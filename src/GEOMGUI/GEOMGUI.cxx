@@ -33,8 +33,6 @@
 
 #include "GeometryGUI.h"
 
-#include <qevent.h>
-
 //=================================================================================
 // class    : GEOMGUI::GEOMGUI
 // purpose  : Constructor

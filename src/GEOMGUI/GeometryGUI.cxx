@@ -31,10 +31,15 @@
 #include "GEOMGUI_Selection.h"
 #include "GEOM_Displayer.h"
 
+#include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
+
+#include <QtxActionMenuMgr.h>
+#include <QtxPopupMgr.h>
+#include <CAM_Module.h>
 
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewPort3d.h>
@@ -45,7 +50,6 @@
 #include <SVTK_RenderWindowInteractor.h>
 #include <SVTK_InteractorStyle.h>
 #include <SVTK_ViewModel.h>
-#include <SVTK_ViewManager.h>
 
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -56,8 +60,10 @@
 #include <SALOME_ListIO.hxx>
 
 // External includes
-#include <qfileinfo.h>
-#include <qpainter.h>
+#include <QAction>
+#include <QFileInfo>
+#include <QString>
+#include <QPainter>
 
 #include <Prs3d_Drawer.hxx>
 #include <Prs3d_IsoAspect.hxx>
@@ -69,6 +75,7 @@
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
 
+using namespace Qt;
 
 extern "C" {
   Standard_EXPORT CAM_Module* createModule() {
@@ -129,41 +136,6 @@ SALOMEDS::Study_var GeometryGUI::ClientStudyToStudy (_PTR(Study) theStudy)
   return aDSStudy._retn();
 }
 
-//=================================================================================
-// class   : CustomItem
-// purpose : Set Font to a text.
-//=================================================================================
-class CustomItem : public QCustomMenuItem
-{
-public:
-  CustomItem(const QString& s, const QFont& f) : myString(s), myFont(f) {}
-  ~CustomItem() {}
-
-  void paint(QPainter* p, const QColorGroup& cg, bool act, bool /*enabled*/, int x, int y, int w, int h)
-  {
-    p->save();
-    p->fillRect( x, y, w, h, act ? cg.highlight() : cg.mid() );
-    p->setPen( act ? cg.highlightedText() : cg.buttonText() );
-    p->setFont( myFont );
-    p->drawText( x, y, w, h, AlignHCenter | AlignVCenter | ShowPrefix | DontClip | SingleLine, myString );
-    p->restore();
-  }
-
-  QSize sizeHint()
-  {
-    return QFontMetrics( myFont ).size( AlignHCenter | AlignVCenter | ShowPrefix | DontClip | SingleLine, myString );
-  }
-
-  bool fullSpan() const
-  {
-    return true;
-  }
-
-private:
-  QString myString;
-  QFont   myFont;
-};
-
 //=======================================================================
 // function : GeometryGUI::GeometryGUI()
 // purpose  : Constructor
@@ -186,9 +158,6 @@ GeometryGUI::GeometryGUI() :
   gp_Dir direction = gp_Dir(0., 0., 1.);
   myWorkingPlane = gp_Ax3(origin, direction);
 
-  myOCCSelectors.setAutoDelete( true );
-  myVTKSelectors.setAutoDelete( true );
-
   myDisplayer = 0;
   myLocalSelectionMode = GEOM_ALLOBJECTS;
 }
@@ -199,6 +168,11 @@ GeometryGUI::GeometryGUI() :
 //=======================================================================
 GeometryGUI::~GeometryGUI()
 {
+  while (!myOCCSelectors.isEmpty())
+    delete myOCCSelectors.takeFirst();
+
+  while (!myVTKSelectors.isEmpty())
+    delete myVTKSelectors.takeFirst();
 }
 
 //=======================================================================
@@ -210,19 +184,21 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
 {
   if ( !myGUIMap.contains( libraryName ) ) {
     // try to load library if it is not loaded yet
-    QCString libs;
+    QString libs;
 #ifndef WNT
-    if( ( libs = getenv( "LD_LIBRARY_PATH" ) ) ) {
-	  QStringList dirList = QStringList::split( ":", libs, false ); // skip empty entries
+    libs = getenv( "LD_LIBRARY_PATH" );
+    if( !libs.isEmpty() ) {
+      QStringList dirList = libs.split( ":", QString::SkipEmptyParts ); // skip empty entries
 #else
-	if( ( libs = getenv( "PATH" ) ) ) {
-	  QStringList dirList = QStringList::split( ";", libs, false ); // skip empty entries
+    libs = getenv( "PATH" );
+    if( !libs.isEmpty() ) {
+      QStringList dirList = libs.split( ";", QString::SkipEmptyParts ); // skip empty entries
 #endif
       for( int i = dirList.count()-1; i >= 0; i-- ) {
 	QString dir = dirList[ i ];
 	QFileInfo fi( Qtx::addSlash( dirList[ i ] ) + libraryName );
 	if( fi.exists() ) {
-	  OSD_SharedLibrary aSharedLibrary( (char*)fi.fileName().latin1() );
+	  OSD_SharedLibrary aSharedLibrary( fi.fileName().toLatin1().data() );
 	  bool res = aSharedLibrary.DlOpen( OSD_RTLD_LAZY );
 	  if( !res ) {
 	    MESSAGE( "Can't open library : " << aSharedLibrary.DlError() );
@@ -358,7 +334,7 @@ void GeometryGUI::OnGUIEvent( int id )
 
   // fix for IPAL9103, point 2
   if ( CORBA::is_nil( GetGeomGen() ) ) {
-    SUIT_MessageBox::error1( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_GET_ENGINE" ), tr( "GEOM_BUT_OK" ) );
+    SUIT_MessageBox::critical( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_GET_ENGINE" ), tr( "GEOM_BUT_OK" ) );
     return;
   }
 
@@ -562,7 +538,7 @@ void GeometryGUI::OnGUIEvent( int id )
   if ( library )
     library->OnGUIEvent( id, desk );
   else
-    SUIT_MessageBox::error1( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
+    SUIT_MessageBox::critical( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
 }
 
 
@@ -577,7 +553,7 @@ void GeometryGUI::OnKeyPress( SUIT_ViewWindow* win, QKeyEvent* pe )
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it ) {
     SUIT_Application* anApp = application();
     if (!anApp) return;
-    bOk = bOk && it.data()->OnKeyPress( pe, anApp->desktop(), win );
+    bOk = bOk && it.value()->OnKeyPress( pe, anApp->desktop(), win );
   }
 //  return bOk;
 }
@@ -594,7 +570,7 @@ void GeometryGUI::OnMouseMove( SUIT_ViewWindow* win, QMouseEvent* pe )
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it ) {
     SUIT_Application* anApp = application();
     if (!anApp) return;
-    bOk = bOk && it.data()->OnMouseMove( pe, anApp->desktop(), win );
+    bOk = bOk && it.value()->OnMouseMove( pe, anApp->desktop(), win );
   }
 //  return bOk;
 }
@@ -613,7 +589,7 @@ void GeometryGUI::OnMousePress( SUIT_ViewWindow* win, QMouseEvent* pe )
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it ) {
     SUIT_Application* anApp = application();
     if (!anApp) return;
-    processed = processed || it.data()->OnMousePress( pe, anApp->desktop(), win );
+    processed = processed || it.value()->OnMousePress( pe, anApp->desktop(), win );
   }
 //  return processed;
 }
@@ -733,20 +709,20 @@ bool GeometryGUI::SetSettings()
 //=======================================================================
 void GeometryGUI::createGeomAction( const int id, const QString& po_id, const QString& icon_id, const int key, const bool toggle  )
 {
-  QIconSet icon;
+  QIcon icon;
   QWidget* parent = application()->desktop();
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QPixmap pix;
   if ( icon_id.length() )
-    pix = resMgr->loadPixmap( "GEOM", tr( icon_id ) );
+    pix = resMgr->loadPixmap( "GEOM", tr( icon_id.toStdString().c_str() ) );
   else
-    pix = resMgr->loadPixmap( "GEOM", tr( QString( "ICO_" )+po_id ), false );
+    pix = resMgr->loadPixmap( "GEOM", tr( (QString( "ICO_" )+po_id).toStdString().c_str() ), false );
   if ( !pix.isNull() )
-    icon = QIconSet( pix );
+    icon = QIcon( pix );
 
-  QString tooltip    = tr( QString( "TOP_" )+po_id ),
-          menu       = tr( QString( "MEN_" )+po_id ),
-          status_bar = tr( QString( "STB_" )+po_id );
+  QString tooltip    = tr( (QString( "TOP_" )+po_id).toStdString().c_str() ),
+          menu       = tr( (QString( "MEN_" )+po_id).toStdString().c_str() ),
+          status_bar = tr( (QString( "STB_" )+po_id).toStdString().c_str() );
 
   createAction( id, tooltip, icon, menu, status_bar, key, parent, toggle, this, SLOT( OnGUIEvent() )  );
 }
@@ -1096,26 +1072,26 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   QtxPopupMgr* mgr = popupMgr();
   mgr->insert( action(  901 ), -1, -1 );  // rename
-  mgr->setRule( action( 901 ), "$type in {'Shape' 'Group'} and selcount=1", true );
+  mgr->setRule( action( 901 ), QString("$type in {'Shape' 'Group'} and selcount=1"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  8001 ), -1, -1 ); // create group
-  mgr->setRule( action( 8001 ), "client='ObjectBrowser' and type='Shape' and selcount=1 and isOCC=true", true );
+  mgr->setRule( action( 8001 ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  801 ), -1, -1 );  // edit group
-  mgr->setRule( action( 801 ),  "client='ObjectBrowser' and type='Group' and selcount=1 and isOCC=true", true );
+  mgr->setRule( action( 801 ),  QString("client='ObjectBrowser' and type='Group' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  80311 ), dispmodeId, -1 ); // wireframe
-  mgr->setRule( action( 80311 ), clientOCCorVTK_AndSomeVisible, true );
-  mgr->setRule( action( 80311 ), clientOCCorVTK + " and displaymode='Wireframe'", false );
+  mgr->setRule( action( 80311 ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( 80311 ), clientOCCorVTK + " and displaymode='Wireframe'", QtxPopupMgr::ToggleRule );
   mgr->insert( action(  80312 ), dispmodeId, -1 ); // shading
-  mgr->setRule( action( 80312 ), clientOCCorVTK_AndSomeVisible, true );
-  mgr->setRule( action( 80312 ), clientOCCorVTK + " and displaymode='Shading'", false );
+  mgr->setRule( action( 80312 ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( 80312 ), clientOCCorVTK + " and displaymode='Shading'", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  8032 ), -1, -1 ); // color
-  mgr->setRule( action( 8032 ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", true );
+  mgr->setRule( action( 8032 ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  8033 ), -1, -1 ); // transparency
-  mgr->setRule( action( 8033 ), clientOCCorVTK_AndSomeVisible, true );
+  mgr->setRule( action( 8033 ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->insert( action(  8034 ), -1, -1 ); // isos
-  mgr->setRule( action( 8034 ), "client='OCCViewer' and selcount>0 and isVisible", true );
+  mgr->setRule( action( 8034 ), QString("client='OCCViewer' and selcount>0 and isVisible"), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
 
 
@@ -1125,45 +1101,45 @@ void GeometryGUI::initialize( CAM_Application* app )
           types = "'Shape' 'Group'";
 
   mgr->insert( action(  216 ), -1, -1 ); // display
-  mgr->setRule( action( 216 ), rule.arg( types ).arg( "not isVisible" ), true );
+  mgr->setRule( action( 216 ), rule.arg( types ).arg( "not isVisible" ), QtxPopupMgr::VisibleRule );
 
   mgr->insert( action(  215 ), -1, -1 ); // erase
-  mgr->setRule( action( 215 ), rule.arg( types ).arg( "isVisible" ), true );
+  mgr->setRule( action( 215 ), rule.arg( types ).arg( "isVisible" ), QtxPopupMgr::VisibleRule );
 
   mgr->insert( action(  214 ), -1, -1 ); // erase All
-  mgr->setRule( action( 214 ), clientOCCorVTK, true );
+  mgr->setRule( action( 214 ), clientOCCorVTK, QtxPopupMgr::VisibleRule );
 
   QString selectOnly = "(client='OCCViewer' or client='VTKViewer') and (selcount=0)";
   
   int selectolnyId = mgr->insert( tr("MEN_SELECT_ONLY"), -1, -1);                //select only menu
   mgr->insert( action(2171), selectolnyId, -1);                                  //Vertex
-  mgr->setRule(action(2171), selectOnly, true);
-  mgr->setRule(action(2171), selectOnly + " and selectionmode='VERTEX'", false);
+  mgr->setRule(action(2171), selectOnly, QtxPopupMgr::VisibleRule);
+  mgr->setRule(action(2171), selectOnly + " and selectionmode='VERTEX'", QtxPopupMgr::ToggleRule);
   mgr->insert( action(2172), selectolnyId, -1);                                  //Edge
-  mgr->setRule(action(2172), selectOnly, true);
-  mgr->setRule(action(2172), selectOnly + " and selectionmode='EDGE'", false);
+  mgr->setRule(action(2172), selectOnly, QtxPopupMgr::VisibleRule);
+  mgr->setRule(action(2172), selectOnly + " and selectionmode='EDGE'", QtxPopupMgr::ToggleRule);
   mgr->insert( action(2173), selectolnyId, -1);                                  //Wire
-  mgr->setRule(action(2173), selectOnly, true);
-  mgr->setRule(action(2173), selectOnly + " and selectionmode='WIRE'", false);
+  mgr->setRule(action(2173), selectOnly, QtxPopupMgr::VisibleRule);
+  mgr->setRule(action(2173), selectOnly + " and selectionmode='WIRE'", QtxPopupMgr::ToggleRule);
   mgr->insert( action(2174), selectolnyId, -1);                                  //Face
-  mgr->setRule(action(2174), selectOnly, true);
-  mgr->setRule(action(2174), selectOnly + " and selectionmode='FACE'", false);
+  mgr->setRule(action(2174), selectOnly, QtxPopupMgr::VisibleRule);
+  mgr->setRule(action(2174), selectOnly + " and selectionmode='FACE'", QtxPopupMgr::ToggleRule);
   mgr->insert( action(2175), selectolnyId, -1);                                  //Shell
-  mgr->setRule(action(2175), selectOnly, true);
-  mgr->setRule(action(2175), selectOnly + " and selectionmode='SHELL'", false);
+  mgr->setRule(action(2175), selectOnly, QtxPopupMgr::VisibleRule);
+  mgr->setRule(action(2175), selectOnly + " and selectionmode='SHELL'", QtxPopupMgr::ToggleRule);
   mgr->insert( action(2176), selectolnyId, -1);                                  //Solid
-  mgr->setRule(action(2176), selectOnly, true);
-  mgr->setRule(action(2176), selectOnly + " and selectionmode='SOLID'", false);
+  mgr->setRule(action(2176), selectOnly, QtxPopupMgr::VisibleRule);
+  mgr->setRule(action(2176), selectOnly + " and selectionmode='SOLID'", QtxPopupMgr::ToggleRule);
   mgr->insert( action(2177), selectolnyId, -1);                                  //Compound
-  mgr->setRule(action(2177), selectOnly, true);
-  mgr->setRule(action(2177), selectOnly + " and selectionmode='COMPOUND'", false);
+  mgr->setRule(action(2177), selectOnly, QtxPopupMgr::VisibleRule);
+  mgr->setRule(action(2177), selectOnly + " and selectionmode='COMPOUND'", QtxPopupMgr::ToggleRule);
   mgr->insert( separator(), selectolnyId, -1);
   mgr->insert( action(2178), selectolnyId, -1);                                  //Clear selection filter
-  mgr->setRule(action(2178), selectOnly, true);
-  mgr->setRule(action(2178), selectOnly + " and selectionmode='ALL'", false);
+  mgr->setRule(action(2178), selectOnly, QtxPopupMgr::VisibleRule);
+  mgr->setRule(action(2178), selectOnly + " and selectionmode='ALL'", QtxPopupMgr::ToggleRule);
   
   mgr->insert( action(  213 ), -1, -1 ); // display only
-  mgr->setRule( action( 213 ), rule.arg( types ).arg( "true" ), true );
+  mgr->setRule( action( 213 ), rule.arg( types ).arg( "true" ), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );
@@ -1197,27 +1173,35 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
-    it.data()->activate( application()->desktop() );
+    it.value()->activate( application()->desktop() );
 
   LightApp_SelectionMgr* sm = getApp()->selectionMgr();
   SUIT_ViewManager* vm;
   ViewManagerList OCCViewManagers, VTKViewManagers;
+
   application()->viewManagers( OCCViewer_Viewer::Type(), OCCViewManagers );
-  for ( vm = OCCViewManagers.first(); vm; vm = OCCViewManagers.next() )
+  QListIterator<SUIT_ViewManager*> itOCC( OCCViewManagers );
+  while ( itOCC.hasNext() && (vm = itOCC.next()) )
     myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
+
   application()->viewManagers( SVTK_Viewer::Type(), VTKViewManagers );
-  for ( vm = VTKViewManagers.first(); vm; vm = VTKViewManagers.next() )
+  QListIterator<SUIT_ViewManager*> itVTK( VTKViewManagers );
+  while ( itVTK.hasNext() && (vm = itVTK.next()) )
     myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
 
   // disable OCC selectors
   getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
-  for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
-    sr->setEnabled(true);
-
+  QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
+  while ( itOCCSel.hasNext() )
+    if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
+      sr->setEnabled(true);
+  
   // disable VTK selectors
   getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
-  for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
-    sr->setEnabled(true);
+  QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
+  while ( itVTKSel.hasNext() )
+    if ( LightApp_VTKSelector* sr = itVTKSel.next() )
+      sr->setEnabled(true);
 
   return true;
 }
@@ -1239,7 +1223,7 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
-    it.data()->deactivate();
+    it.value()->deactivate();
 
   // Unset actions accelerator keys
   //action(111)->setAccel(QKeySequence()); // Import
@@ -1255,308 +1239,6 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
 
   return SalomeApp_Module::deactivateModule( study );
 }
-
-//=================================================================================
-// function : GeometryGUI::DefinePopup()
-// purpose  : Called from desktop to define popup menu [static]
-//=================================================================================
-/*
-void GeometryGUI::DefinePopup(QString& theContext, QString& theParent, QString& theObject)
-{
-  QAD_Study* ActiveStudy = QAD_Application::getDesktop()->getActiveStudy();
-  SALOME_Selection* Sel  = SALOME_Selection::Selection(ActiveStudy->getSelection());
-
-  theObject  = "";
-  theContext = "";
-
-  if ( theParent == "Viewer" ) {
-    if ( Sel->IObjectCount() == 0 )
-      theContext = "NothingSelected";
-  }
-
-  if ( Sel->IObjectCount() == 1 ) {
-    Handle(SALOME_InteractiveObject) IO = Sel->firstIObject();
-    if( IO->hasEntry() ) {
-      SALOMEDS::SObject_var sobj = ActiveStudy->getStudyDocument()->FindObjectID( IO->getEntry() );
-      if ( !sobj->_is_nil() ) {
-	SALOMEDS::SComponent_var scomp = sobj->GetFatherComponent();
-	if ( !strcmp(scomp->GetID(), IO->getEntry() ) ) {
-	  // component is selected
-	  theObject = "Component";
-	}
-	else {
-	  GEOM::GEOM_Object_var aGObj = GEOM::GEOM_Object::_narrow( sobj->GetObject() );
-	  if ( !CORBA::is_nil( aGObj ) ) {
-	    switch( aGObj->GetType() ) {
-	    case GEOM_GROUP:
-	      theObject = "Group";
-	      break;
-	    default:
-	      theObject = "Shape";
-	      break;
-	    }
-	  }
-	}
-      }
-    }
-  }
-}
-
-//=================================================================================
-// function : GeometryGUI::CustomPopup()
-// purpose  : Called from desktop to create popup menu [static]
-//=================================================================================
-bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString& theContext,
-			      const QString& theParent, const QString& theObject)
-{
-  GeometryGUI* geomGUI = GetGeomGUI();
-
-  // Deactivate any non modal dialog box to get the neutral point
-  geomGUI->EmitSignalDeactivateDialog();
-  QAD_Study* anActiveStudy    = parent->getActiveStudy();
-  QAD_StudyFrame* aStudyFrame = anActiveStudy->getActiveStudyFrame();
-  QAD_ViewFrame* aViewFrame   = aStudyFrame->getRightFrame()->getViewFrame();
-  SALOME_Selection* Sel       = SALOME_Selection::Selection(anActiveStudy->getSelection());
-  QString parentComponent     = ((SALOMEGUI_Desktop*)parent)->getComponentFromSelection();
-  bool isOCCViewer            = aViewFrame->getTypeView() == VIEW_OCC;
-  bool isVTKViewer            = aViewFrame->getTypeView() == VIEW_VTK;
-  int aDisplayMode            = 0;
-  QString objectName;
-
-  if ( aViewFrame->getTypeView() == VIEW_OCC )
-    aDisplayMode = ((OCCViewer_ViewFrame*)aViewFrame)->getViewer()->getAISContext()->DisplayMode();
-  else if ( aViewFrame->getTypeView() == VIEW_VTK )
-    aDisplayMode = (dynamic_cast<SVTK_ViewFrame*>( aViewFrame )->getRWInteractor()->GetDisplayMode();
-
-  int nbSel = Sel->IObjectCount();
-
-  if( nbSel == 0 ) {
-    ////// NOTHING SELECTED
-    popup->clear();
-  }
-  else if ( nbSel == 1 ) {
-    ////// SINGLE OBJECT SELECTION
-    if ( parentComponent != parent->getActiveComponent() )  {
-      ////// selected object does not belong to GEOM module:
-      // remove all commands except Display/Erase...
-      while ( 1 ) {
-	int id = popup->idAt( 0 );
-	if ( id <= QAD_TopLabel_Popup_ID )
-	  popup->removeItemAt( 0 );
-	else
-	  break;
-      }
-    }
-    else {
-      ////// selected object belong to the GEOM module
-      // get interactive object
-      Handle(SALOME_InteractiveObject) IObject = Sel->firstIObject();
-      objectName = IObject->getName();
-      // if object has entry get SObject
-      SALOMEDS::SObject_var SO;
-      if ( IObject->hasEntry() )
-	SO = anActiveStudy->getStudyDocument()->FindObjectID( IObject->getEntry() );
-
-      if ( theObject == "Component" ) {
-	////// menu for component
-	if ( !isOCCViewer && !isVTKViewer ) {
-	  popup->removeItem( QAD_DisplayOnly_Popup_ID );
-	  popup->removeItem( QAD_Display_Popup_ID );
-	  popup->removeItem( QAD_Erase_Popup_ID );
-	}
-      }
-      else {
-	////// not component (should be shape)
-	if ( IObject->hasEntry() )  /////// VSR : TO BE REMOVED
-	  popup->removeItem( 804 ); // "Add in Study"
-
-	// Here could be analysis of the geom shape's type
-	// ... //
-
-	SALOMEDS::GenericAttribute_var aTmpAttr;
-	if( SO->_is_nil() || SO->GetFatherComponent()->FindAttribute( aTmpAttr, "AttributeIOR") )
-	  popup->removeItem( 9024 ); // "Open" /////// VSR : TO BE REMOVED
-
-	if ( !isOCCViewer && theParent == "ObjectBrowser" ) {
-	  if ( theObject == "Shape" )
-	    popup->removeItem( 800 ); // Create Group
-	  else if ( theObject == "Group" )
-	    popup->removeItem( 801 ); // Edit Group
-	}
-
-	if ( isOCCViewer || isVTKViewer ) {
-	  ////// current viewer is OCC or VTK
-	  SALOME_Prs* prs = aViewFrame->CreatePrs( IObject->getEntry() );
-	  if ( aViewFrame->isVisible( IObject ) ) {
-	    ////// object is already displayed in the viewer
-	    popup->removeItem( QAD_Display_Popup_ID );
-	    if ( isOCCViewer ) {
-	      ////// OCC viewer only
-	      OCCViewer_Prs* occPrs = dynamic_cast<OCCViewer_Prs*>( prs );
-	      if ( occPrs && !occPrs->IsNull() ) {
-		AIS_ListOfInteractive ioList;
-		occPrs->GetObjects( ioList );
-		QMenuItem* mi = popup->findItem( 803 );
-		if ( mi && mi->popup() ) {
-		  if ( ioList.First()->DisplayMode() == 0 )
-		    mi->popup()->setItemChecked( 80311, true ); // "Wireframe"
-		  else if ( ioList.First()->DisplayMode() == 1 )
-		    mi->popup()->setItemChecked( 80312, true ); // "Shading"
-		  else if ( ioList.First()->DisplayMode() < 0 )
-		    mi->popup()->setItemChecked( aDisplayMode == 0 ? 80311 : 80312 , true ); // "Wireframe" or "Shading"
-		}
-	      }
-	    }
-	    else {
-	      ////// VTK viewer only
-	      popup->removeItem( 8034 ); // "Isos"
-	      SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
-	      if ( vtkPrs && !vtkPrs->IsNull() ) {
-		vtkActorCollection* actorList = vtkPrs->GetObjects();
-		actorList->InitTraversal();
-		SALOME_Actor* ac = SALOME_Actor::SafeDownCast( actorList->GetNextActor() );
-		QMenuItem* mi = popup->findItem( 803 );
-		if ( ac && mi && mi->popup() ) {
-		  if ( ac->getDisplayMode() == 0 )
-		    mi->popup()->setItemChecked( 80311, true ); // "Wireframe"
-		  else if ( ac->getDisplayMode() == 1 )
-		    mi->popup()->setItemChecked( 80312, true ); // "Shading"
-		  else
-		    mi->popup()->setItemChecked( aDisplayMode == 0 ? 80311 : 80312 , true ); // "Wireframe" or "Shading"
-		}
-	      }
-	    }
-	  }
-	  else {
-	    ////// object is not yet displayed in the viewer
-	    popup->removeItem( 803 );  // "Display Mode"
-	    popup->removeItem( 8032 ); // "Color"
-	    popup->removeItem( 8033 ); // "Transparency"
-	    popup->removeItem( 8034 ); // "Isos"
-	    popup->removeItem( QAD_Erase_Popup_ID );
-	  }
-	  delete prs;
-	}
-	else {
-	  ////// other viewer type (neither OCC nor VTK)
-	  popup->removeItem( 803 );  // "Display Mode"
-	  popup->removeItem( 8032 ); // "Color"
-	  popup->removeItem( 8033 ); // "Transparency"
-	  popup->removeItem( 8034 ); // "Isos"
-	  popup->removeItem( QAD_Display_Popup_ID );
-	  popup->removeItem( QAD_DisplayOnly_Popup_ID );
-	  popup->removeItem( QAD_Erase_Popup_ID );
-	}
-      }
-    }
-  }
-  else {
-    ////// MULTIPLE SELECTION
-    if ( parentComponent != parent->getActiveComponent() )  {
-      ////// not GEOM module objects or objects belong to different modules
-      // remove all commands except Display/Erase...
-      while ( 1 ) {
-	int id = popup->idAt( 0 );
-	if ( id <= QAD_TopLabel_Popup_ID )
-	  popup->removeItemAt( 0 );
-	else
-	  break;
-      }
-      if ( parentComponent.isNull() )  {
-	////// objects belong to different modules
-	popup->removeItem(QAD_Display_Popup_ID);
-	popup->removeItem(QAD_DisplayOnly_Popup_ID);
-	popup->removeItem(QAD_Erase_Popup_ID);
-      }
-      else {
-	objectName = tr( "GEOM_MEN_POPUP_NAME" ).arg( nbSel );
-      }
-    }
-    else {
-      ////// all selected objects belong to GEOM module
-      popup->removeItem( 901 ); // "Rename"
-
-      SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-      bool isComponent  = false;
-      bool needOpen     = false;
-      bool needDisplay  = false;
-      bool needErase    = false;
-      int needToPublish = 0;
-
-      for( ;It.More();It.Next() ) {
-	Handle(SALOME_InteractiveObject) anIObject = It.Value();
-
-	if ( aViewFrame->isVisible( anIObject ) )
-	  needErase   = true;
-	else
-	  needDisplay = true;
-
-	if( anIObject->hasEntry() ) {
-	  needToPublish = -1; /////// VSR : TO BE REMOVED
-	  SALOMEDS::SObject_var obj = anActiveStudy->getStudyDocument()->FindObjectID( anIObject->getEntry() );
-	  SALOMEDS::GenericAttribute_var aTmpAttr;
-	  if ( !obj->_is_nil() && !obj->GetFatherComponent()->FindAttribute( aTmpAttr, "AttributeIOR" ) )
-	    needOpen = true;  /////// VSR : TO BE REMOVED
-	  if ( !obj->_is_nil() && QString( obj->GetID() ) == QString( obj->GetFatherComponent()->GetID() ) )
-	    isComponent = true;
-	}
-	else {
-	  if ( needToPublish != -1 ) needToPublish = 1;
-	}
-      }
-      if( needOpen || ( !isOCCViewer && !isVTKViewer ) ) {
-	////// Data is not loaded yet or current viewer is neither OCC nor VTK
-	popup->removeItem( 803 );  // "Display Mode"
-	popup->removeItem( 8032 ); // "Color"
-	popup->removeItem( 8033 ); // "Transparency"
-	popup->removeItem( 8034 ); // "Isos"
-	popup->removeItem( 804 );  // "Add in Study"
-	popup->removeItem( QAD_DisplayOnly_Popup_ID );
-	popup->removeItem( QAD_Display_Popup_ID );
-	popup->removeItem( QAD_Erase_Popup_ID );
-      }
-      else {
-	popup->removeItem( 9024 );   // "Open"
-	if ( needToPublish <= 0 )
-	  popup->removeItem( 804 );  // "Add in Study"
-
-	if( isComponent ) {
-	  popup->removeItem( 803 );  // "Display Mode"
-	  popup->removeItem( 8032 ); // "Color"
-	  popup->removeItem( 8033 ); // "Transparency"
-	  popup->removeItem( 8034 ); // "Isos"
-	  popup->removeItem( QAD_DisplayOnly_Popup_ID );
-	}
-
-	if ( !needDisplay )
-	  popup->removeItem( QAD_Display_Popup_ID );
-	if ( !needErase )
-	  popup->removeItem( QAD_Erase_Popup_ID );
-	if ( !isOCCViewer )
-	  popup->removeItem( 8034 ); // "Isos"
-      }
-    }
-  }
-
-  // check popup for unnecessary separators
-  QAD_Tools::checkPopup( popup );
-  // find popup menu's TopLabel item (with title)
-  int topItem = popup->indexOf( QAD_TopLabel_Popup_ID );
-  if ( topItem >= 0 ) {
-    // remove popup menu's title item
-    popup->removeItem( QAD_TopLabel_Popup_ID );
-    if ( theParent == "Viewer" && !objectName.isEmpty() && popup->count() > 0 ) {
-      // set bold font for popup menu's title
-      QFont f = popup->font(); f.setBold( TRUE );
-      popup->removeItem( QAD_TopLabel_Popup_ID );
-      popup->insertItem( new CustomItem( objectName, f ), QAD_TopLabel_Popup_ID, topItem );
-    }
-  }
-
-  return false;
-}
-
-*/
 
 //=======================================================================
 // function : GeometryGUI::BuildPresentation()
@@ -1597,8 +1279,8 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
 
 void GeometryGUI::windows( QMap<int, int>& mappa ) const
 {
-  mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::DockLeft );
-  mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::DockBottom );
+  mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
+  mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::BottomDockWidgetArea );
 }
 
 void GeometryGUI::viewManagers( QStringList& lst ) const
@@ -1624,8 +1306,10 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
 
     // disable OCC selectors
     getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
-    for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
-      sr->setEnabled(true);
+    QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
+    while ( itOCCSel.hasNext() )
+      if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
+	sr->setEnabled(true);
   }
   else if ( vm->getType() == SVTK_Viewer::Type() )
   {
@@ -1634,8 +1318,10 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
 
     // disable VTK selectors
     getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
-    for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
-      sr->setEnabled(true);
+    QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
+    while ( itVTKSel.hasNext() )
+      if ( LightApp_VTKSelector* sr = itVTKSel.next() )
+	sr->setEnabled(true);
   }
 }
 
@@ -1644,21 +1330,25 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
   SUIT_ViewModel* viewer = vm->getViewModel();
   if ( vm->getType() == OCCViewer_Viewer::Type() )
   {
-    for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
-      if ( sr->viewer() == viewer )
-      {
-	myOCCSelectors.remove( sr );
-	break;
-      }
+    QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
+    while ( itOCCSel.hasNext() )
+      if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
+	if ( sr->viewer() == viewer )
+	{
+	  delete myOCCSelectors.takeAt( myOCCSelectors.indexOf( sr ) );
+	  break;
+	}
   }
   if ( vm->getType() == SVTK_Viewer::Type() )
   {
-    for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
-      if ( sr->viewer() == viewer )
-      {
-	myVTKSelectors.remove( sr );
-	break;
-      }
+    QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
+    while ( itVTKSel.hasNext() )
+      if ( LightApp_VTKSelector* sr = itVTKSel.next() )
+	if ( sr->viewer() == viewer )
+	{
+	  delete myVTKSelectors.takeAt( myVTKSelectors.indexOf( sr ) );
+	  break;
+	}
   }
 }
 
@@ -1674,12 +1364,12 @@ QString GeometryGUI::engineIOR() const
   return anIOR;
 }
 
-LightApp_Selection* GeometryGUI::createSelection() const
+LightApp_Selection* GeometryGUI::createSelection( const QString& client, LightApp_SelectionMgr* mgr ) const
 {
-  return new GEOMGUI_Selection();
+  return new GEOMGUI_Selection( client, mgr );
 }
 
-void GeometryGUI::contextMenuPopup( const QString& client, QPopupMenu* menu, QString& title )
+void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString& title )
 {
   SalomeApp_Module::contextMenuPopup( client, menu, title );
   SALOME_ListIO lst;
@@ -1738,7 +1428,7 @@ void GeometryGUI::createPreferences()
   aModesList.append( tr("MEN_WIREFRAME") );
   aModesList.append( tr("MEN_SHADING") );
 
-  QValueList<QVariant> anIndexesList;
+  QList<QVariant> anIndexesList;
   anIndexesList.append(0);
   anIndexesList.append(1);
 
@@ -1752,7 +1442,7 @@ void GeometryGUI::createPreferences()
 
   // Set property for type of vertex marker
   QStringList aTypeOfMarkerList;
-  QValueList<QVariant> anTypeOfMarkerIndexesList;
+  QList<QVariant> anTypeOfMarkerIndexesList;
 
   aTypeOfMarkerList.append( tr("TOM_PLUS") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_PLUS);
