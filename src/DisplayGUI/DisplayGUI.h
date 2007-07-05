@@ -29,7 +29,6 @@
 #define DISPLAYGUI_H
 
 #include "GEOMGUI.h"
-#include "GEOMBase.h"
 
 #ifdef WNT
 # if defined DISPLAYGUI_EXPORTS

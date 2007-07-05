@@ -29,16 +29,16 @@
 #include "DisplayGUI.h"
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
+#include "GEOM_AISShape.hxx"
 
 #include <SUIT_Desktop.h>
-#include <SUIT_Session.h>
 #include <SUIT_ViewWindow.h>
 #include <SUIT_OverrideCursor.h>
 
 #include <OCCViewer_ViewManager.h>
 #include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
 
+#include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <SVTK_ViewWindow.h>
@@ -56,7 +56,7 @@
 
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 
-#include <qmenubar.h>
+#include <QAction>
 
 
 //=======================================================================
@@ -94,7 +94,7 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     {
       InvertDisplayMode();
       int newMode = GetDisplayMode();
-      getGeometryGUI()->action( 211 )->setMenuText
+      getGeometryGUI()->action( 211 )->setText
         ( newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
       getGeometryGUI()->menuMgr()->update();
       break;
