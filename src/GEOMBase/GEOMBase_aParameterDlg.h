@@ -31,10 +31,10 @@
 
 #include "GEOM_GEOMBase.hxx"
 
-#include <qdialog.h>
+#include <QDialog>
 
 class QPushButton;
-class QtxDblSpinBox;
+class QtxDoubleSpinBox;
 
 //=================================================================================
 // class    : GEOMBase_aParameterDlg
@@ -45,7 +45,7 @@ class GEOMBASE_EXPORT GEOMBase_aParameterDlg : public QDialog
     Q_OBJECT
 
 public:
-    GEOMBase_aParameterDlg(const char* aValue1 = "25", const char* aTitle1 = "Value :", QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0, const double bottom = -1E6, const double top = +1E6, const int decimals = 6);
+    GEOMBase_aParameterDlg(const char* aValue1 = "25", const char* aTitle1 = "Value :", QWidget* parent = 0, const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0, const double bottom = -1E6, const double top = +1E6, const int decimals = 6);
     ~GEOMBase_aParameterDlg();
 
     void setValue(double val);
@@ -54,7 +54,7 @@ public:
 private:
     QPushButton* myButtonOk;
     QPushButton* myButtonCancel;
-    QtxDblSpinBox* mySpinBox;
+    QtxDoubleSpinBox* mySpinBox;
 
 };
 

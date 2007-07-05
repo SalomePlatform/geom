@@ -32,10 +32,10 @@
 #include "GEOMBase.h"
 #include "GEOM_Operation.h"
 #include "GeometryGUI.h"
-#include "GEOM_Displayer.h"
-#include "GEOMImpl_Types.hxx"
 
+#include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
+#include <SUIT_ViewManager.h>
 #include <SUIT_ViewWindow.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_OverrideCursor.h>
@@ -46,20 +46,16 @@
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_DataOwner.h>
 #include <SalomeApp_Tools.h>
-#include <SalomeApp_DataModel.h>
+
+#include "SALOME_Prs.h"
 
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
-
-#include <OB_Browser.h>
 
 #include <TColStd_MapOfInteger.hxx>
 #include <TCollection_AsciiString.hxx>
 
 using namespace std;
-
-#include <SALOMEDSClient.hxx>
-
 
 //================================================================
 // Function : getActiveView
@@ -173,7 +169,7 @@ void GEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateView
   if ( !object->_is_nil() ) {
     string entry = getEntry( object );
     getDisplayer()->Erase( new SALOME_InteractiveObject(
-      entry.c_str(), "GEOM", strdup( GEOMBase::GetName( object ) ) ), true, updateView );
+      entry.c_str(), "GEOM", strdup( GEOMBase::GetName( object ).toStdString().c_str() ) ), true, updateView );
   }
 }
 
@@ -212,7 +208,7 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 
     string entry = getEntry( object );
     getDisplayer()->Redisplay(new SALOME_InteractiveObject
-                              (entry.c_str(), "GEOM", strdup(GEOMBase::GetName(object))), false);
+                              (entry.c_str(), "GEOM", strdup(GEOMBase::GetName(object).toStdString().c_str())), false);
   }
 
   if ( withChildren ) {
@@ -230,7 +226,7 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 	    if ( !aChild->_is_nil() ) {
 	      string entry = getEntry( aChild );
 	      getDisplayer()->Redisplay( new SALOME_InteractiveObject(
-                entry.c_str(), "GEOM", strdup( GEOMBase::GetName( aChild ) ) ), false );
+                entry.c_str(), "GEOM", strdup( GEOMBase::GetName( aChild ).toStdString().c_str() ) ), false );
 	    }
 	  }
 	}
@@ -452,7 +448,7 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
     string aEntry = getEntry( anObj );
     if ( aEntry != "" )
       aListOfIO.Append( new SALOME_InteractiveObject(
-        aEntry.c_str(), "GEOM", strdup( GEOMBase::GetName( anObj ) ) ) );
+        aEntry.c_str(), "GEOM", strdup( GEOMBase::GetName( anObj ).toStdString().c_str() ) ) );
   }
 
   getDisplayer()->LocalSelection( aListOfIO, theMode );
@@ -565,13 +561,14 @@ SalomeApp_Study* GEOMBase_Helper::getStudy() const
   if (!aDesktop)
     return 0;
 
-  QPtrList<SUIT_Application> anAppList = SUIT_Session::session()->applications();
+  QList<SUIT_Application*> anAppList = SUIT_Session::session()->applications();
 
   SUIT_Application* anApp = 0;
-  for ( QPtrListIterator<SUIT_Application> it( anAppList ); it.current() ; ++it )
+  QListIterator<SUIT_Application*> it( anAppList );
+  while ( it.hasNext() )
     {
-      anApp = it.current();
-      if ( anApp->desktop() == aDesktop )
+      anApp = it.next();
+      if ( anApp && anApp->desktop() == aDesktop )
 	break;
     }
 
@@ -722,10 +719,11 @@ GEOM::GEOM_IOperations_ptr GEOMBase_Helper::getOperation()
 bool GEOMBase_Helper::checkViewWindow()
 {
   if ( myViewWindow ){
-    QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
-    for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it )
+    QList<SUIT_ViewWindow*> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
+    QListIterator<SUIT_ViewWindow*> it( aViewWindowsList );
+    while ( it.hasNext() )
       {
-	if ( myViewWindow == it.current() )
+	if ( myViewWindow == it.next() )
 	  return true;
       }
   }
@@ -748,10 +746,10 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
   bool aLocked = (_PTR(AttributeStudyProperties) (aStudy->GetProperties()))->IsLocked();
   if ( aLocked ) {
     MESSAGE("GEOMBase_Helper::onAccept - ActiveStudy is locked");
-    SUIT_MessageBox::warn1 ( (QWidget*)SUIT_Session::session()->activeApplication()->desktop(),
-			   QObject::tr("WRN_WARNING"),
-			   QObject::tr("WRN_STUDY_LOCKED"),
-			   QObject::tr("BUT_OK") );
+    SUIT_MessageBox::warning ( (QWidget*)SUIT_Session::session()->activeApplication()->desktop(),
+			       QObject::tr("WRN_WARNING"),
+			       QObject::tr("WRN_STUDY_LOCKED"),
+			       QObject::tr("BUT_OK") );
     return false;
   }
 
@@ -794,7 +792,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 	      if ( aName.isEmpty() )
 		aName = GEOMBase::GetDefaultName( getPrefix( *it ) );
 	    }
-	    addInStudy( *it, aName.latin1() );
+	    addInStudy( *it, aName.toLatin1() );
             // updateView=false
 	    display( *it, false );
 	  }
@@ -841,10 +839,10 @@ void GEOMBase_Helper::showError()
   if ( msg.isEmpty() )
     msg = QObject::tr( "GEOM_PRP_ABORT" );
 
-  SUIT_MessageBox::error1( SUIT_Session::session()->activeApplication()->desktop(),
-			   QObject::tr( "GEOM_ERROR_STATUS" ),
-			   msg,
-			   QObject::tr( "BUT_OK" ) );
+  SUIT_MessageBox::critical( SUIT_Session::session()->activeApplication()->desktop(),
+			     QObject::tr( "GEOM_ERROR_STATUS" ),
+			     msg,
+			     QObject::tr( "BUT_OK" ) );
 }
 
 //================================================================
@@ -856,7 +854,7 @@ void GEOMBase_Helper::showError( const QString& msg )
   QString str( QObject::tr( "GEOM_INCORRECT_INPUT" ) );
   if ( !msg.isEmpty() )
     str += "\n" + msg;
-  SUIT_MessageBox::error1(SUIT_Session::session()->activeApplication()->desktop(), QObject::tr( "GEOM_ERROR" ), str, QObject::tr( "BUT_OK" ) );
+  SUIT_MessageBox::critical(SUIT_Session::session()->activeApplication()->desktop(), QObject::tr( "GEOM_ERROR" ), str, QObject::tr( "BUT_OK" ) );
 }
 
 //////////////////////////////////////////////////////////////////

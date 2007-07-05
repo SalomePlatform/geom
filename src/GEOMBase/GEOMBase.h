@@ -40,11 +40,10 @@
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
 // QT Includes
-#include <qstring.h>
+#include <QString>
 
 class GEOM_Actor;
 class SALOME_ListIO;
-class TColStd_MapOfInteger;
 
 class QWidget;
 

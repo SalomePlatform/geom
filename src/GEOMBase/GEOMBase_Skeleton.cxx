@@ -27,16 +27,19 @@
 //  $Header$
 
 #include "GEOMBase_Skeleton.h"
+#include "GEOMBase.h"
 
 #include "GeometryGUI.h"
 
 #include "SalomeApp_Application.h"
 #include "LightApp_Application.h"
 #include "LightApp_SelectionMgr.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SUIT_MessageBox.h"
 
-#include <qpushbutton.h>
+#include <QKeyEvent>
 
 using namespace std;
 
@@ -48,22 +51,42 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 GEOMBase_Skeleton::GEOMBase_Skeleton(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                     const char* name, bool modal, WFlags fl)
-  : DlgRef_Skeleton_QTD( parent, name, modal, WStyle_Customize | WStyle_NormalBorder
-                         | WStyle_Title | WStyle_SysMenu | WDestructiveClose ), 
-   GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
-   myGeomGUI( theGeometryGUI )
+                                     const char* name, bool modal, Qt::WindowFlags fl)
+  : QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint ), 
+    GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
+    myGeomGUI( theGeometryGUI ),
+    myRBGroup( 0 )
 {
+  setupUi(this);
+
   if (!name)
-    setName("GEOMBase_Skeleton");
+    setObjectName("GEOMBase_Skeleton");
+  else
+    setObjectName(name);
+
+  setModal( modal );
+  setAttribute( Qt::WA_DeleteOnClose );
 
   buttonCancel->setText(tr("GEOM_BUT_CLOSE"));
   buttonOk->setText(tr("GEOM_BUT_OK"));
   buttonApply->setText(tr("GEOM_BUT_APPLY"));
   buttonHelp->setText(tr("GEOM_BUT_HELP"));
 
-  GroupMedium->close(TRUE);
+  GroupMedium->setAttribute( Qt::WA_DeleteOnClose );
+  GroupMedium->close();
   resize(0, 0);
+
+  if ( GroupConstructors != NULL ) {
+    myRBGroup = new QButtonGroup(GroupConstructors);
+    QList<QObject*> aRadioButtons = GroupConstructors->children();
+    QListIterator<QObject*> it( aRadioButtons );
+    int anId = 0;
+    while ( it.hasNext() )
+      if ( QRadioButton* aRB = ::qobject_cast<QRadioButton*>( it.next() ) ) {
+	myRBGroup->addButton( aRB, anId );
+	anId++;
+      }
+  }
 
   Init();
 }
@@ -204,7 +227,7 @@ void GEOMBase_Skeleton::initName( const char* thePrefix )
 //=================================================================================
 const char* GEOMBase_Skeleton::getNewObjectName() const
 {
-  return ResultName->text();
+  return ResultName->text().toStdString().c_str();
 }
 
 //=================================================================================
@@ -213,8 +236,12 @@ const char* GEOMBase_Skeleton::getNewObjectName() const
 //=================================================================================
 int GEOMBase_Skeleton::getConstructorId() const
 {
-  if ( GroupConstructors != NULL && GroupConstructors->selected() != NULL )
+  /*if ( GroupConstructors != NULL && GroupConstructors->selected() != NULL )
     return GroupConstructors->id( GroupConstructors->selected() );
+    return -1;*/
+
+  if ( myRBGroup != NULL )
+    return myRBGroup->checkedId();
   return -1;
 }
 
@@ -234,10 +261,10 @@ void GEOMBase_Skeleton::ClickOnHelp()
 #else
 		platform = "application";
 #endif
-    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
-			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
-			   QObject::tr("BUT_OK"));
+    SUIT_MessageBox::warning(0, QObject::tr("WRN_WARNING"),
+			     QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+			     arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
+			     QObject::tr("BUT_OK"));
   }
 }
 //=================================================================================
@@ -260,7 +287,7 @@ void GEOMBase_Skeleton::keyPressEvent( QKeyEvent* e )
   if ( e->isAccepted() )
     return;
 
-  if ( e->key() == Key_F1 )
+  if ( e->key() == Qt::Key_F1 )
     {
       e->accept();
       ClickOnHelp();

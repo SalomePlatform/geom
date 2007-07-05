@@ -31,26 +31,17 @@
 #include "GEOM_GEOMBase.hxx"
 
 #include "DlgRef_Skeleton_QTD.h"
-
-#include "GEOMBase.h"
 #include "GEOMBase_Helper.h"
-#include "GeometryGUI.h"
 
-#include <qwidget.h>
-#include <qgroupbox.h>
-#include <qlineedit.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
+class GeometryGUI;
 
-class GEOMBASE_EXPORT GEOMBase_Skeleton : public DlgRef_Skeleton_QTD, public GEOMBase_Helper
+class GEOMBASE_EXPORT GEOMBase_Skeleton : public QDialog, public Ui::DlgRef_Skeleton_QTD, public GEOMBase_Helper
 {
     Q_OBJECT
 
 public:
     GEOMBase_Skeleton(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+		      const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~GEOMBase_Skeleton();
 
 private:
@@ -77,6 +68,8 @@ protected:
     QLineEdit* myEditCurrentArgument; //!< Current LineEdit
     GeometryGUI* myGeomGUI;           //!< reference GEOM GUI
     QString myHelpFileName;
+    
+    QButtonGroup* myRBGroup;
 
 protected slots:
     virtual void ClickOnCancel();

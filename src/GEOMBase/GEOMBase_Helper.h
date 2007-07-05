@@ -32,12 +32,11 @@
 #include "GEOM_GEOMBase.hxx"
 
 #include "GEOM_Displayer.h"
-#include "SALOME_Prs.h"
 #include "SALOME_ListIO.hxx"
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 
-#include <qstring.h>
+#include <QString>
 
 #include <list>
 
@@ -46,8 +45,8 @@ typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 class SalomeApp_Study;
 class SUIT_Desktop;
 class SUIT_ViewWindow;
+class SALOME_Prs;
 class GEOM_Operation;
-class TopoDS_Shape;
 class TColStd_MapOfInteger;
 
 //================================================================

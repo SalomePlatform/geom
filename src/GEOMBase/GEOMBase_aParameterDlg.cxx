@@ -27,16 +27,12 @@
 //  $Header$
 
 #include "GEOMBase_aParameterDlg.h"
-#include "QtxDblSpinBox.h"
+#include "QtxDoubleSpinBox.h"
 
-#include <stdio.h>
-
-#include <qgroupbox.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-#include <qvariant.h>
-#include <qvalidator.h>
+#include <QGroupBox>
+#include <QLabel>
+#include <QPushButton>
+#include <QGridLayout>
 
 #ifndef WNT
 using namespace std;
@@ -60,53 +56,56 @@ using namespace std;
 //  TRUE to construct a modal dialog.
 // 
 //====================================================================================== 
-GEOMBase_aParameterDlg::GEOMBase_aParameterDlg(const char *aValue1, const char *aTitle1, QWidget* parent, const char* name, bool modal, WFlags fl, const double bottom, const double top, const int decimals)
-  :QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+GEOMBase_aParameterDlg::GEOMBase_aParameterDlg(const char *aValue1, const char *aTitle1, QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl, const double bottom, const double top, const int decimals)
+  :QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint )
 {
   if(!name)
-    setName( "MyParameterDialog" );
+    setObjectName( "MyParameterDialog" );
+  else
+    setObjectName( name );
+
+  setModal( modal );
+
   resize(288, 81); 
-  setCaption(name); /* appears on the title bar */
+  setWindowTitle(name); /* appears on the title bar */
   setSizeGripEnabled(TRUE);
 
   QGridLayout* topLayout = new QGridLayout(this); 
   topLayout->setSpacing(6);
   topLayout->setMargin(11);
 
-  QGroupBox* mainGrp = new QGroupBox(this, "mainGrp");
-  mainGrp->setColumnLayout(0, Qt::Vertical);
-  mainGrp->layout()->setSpacing(0);
-  mainGrp->layout()->setMargin(0);
-  QGridLayout* mainGrpLayout = new QGridLayout(mainGrp->layout());
+  QGroupBox* mainGrp = new QGroupBox(this);
+  mainGrp->setObjectName("mainGrp");
+  QGridLayout* mainGrpLayout = new QGridLayout(mainGrp);
   mainGrpLayout->setAlignment(Qt::AlignTop);
-  mainGrpLayout ->setSpacing(6);
+  mainGrpLayout->setSpacing(6);
   mainGrpLayout->setMargin(11);
   topLayout->addWidget(mainGrp, 0, 0);
 
   /* aTitle1 : text prompt on left of edit line */
-  QLabel* TextLabel1 = new QLabel(mainGrp, "TextLabel1");
+  QLabel* TextLabel1 = new QLabel(mainGrp);
+  TextLabel1->setObjectName("TextLabel1");
   TextLabel1->setText(tr(aTitle1));  
   mainGrpLayout->addWidget(TextLabel1, 0, 0);
 
-  mySpinBox = new QtxDblSpinBox(mainGrp, "mySpinBox");
-  mySpinBox->setPrecision(12);
+  mySpinBox = new QtxDoubleSpinBox(mainGrp);
+  mySpinBox->setObjectName("mySpinBox");
+  mySpinBox->setDecimals(decimals);
   mySpinBox->setRange(bottom, top);
-  ((QDoubleValidator*)(mySpinBox->validator()))->setRange(bottom, top, decimals);
   mySpinBox->setValue(QString(aValue1).toDouble());
   mainGrpLayout->addWidget(mySpinBox, 0, 1);
   
-  QGroupBox* btnGrp = new QGroupBox(this, "btnGrp");
-  btnGrp->setColumnLayout(0, Qt::Vertical);
-  btnGrp->layout()->setSpacing(0);
-  btnGrp->layout()->setMargin(0);
-  QGridLayout* btnGrpLayout = new QGridLayout(btnGrp->layout());
+  QGroupBox* btnGrp = new QGroupBox(this);
+  btnGrp->setObjectName("btnGrp");
+  QGridLayout* btnGrpLayout = new QGridLayout(btnGrp);
   btnGrpLayout->setAlignment(Qt::AlignTop);
   btnGrpLayout->setSpacing(6);
   btnGrpLayout->setMargin(11);
   topLayout->addWidget(btnGrp, 1, 0);
 
   /* Ok button */
-  myButtonOk = new QPushButton(btnGrp, "buttonOk");
+  myButtonOk = new QPushButton(btnGrp);
+  myButtonOk->setObjectName("buttonOk");
   myButtonOk->setText(tr("GEOM_BUT_OK"));
   myButtonOk->setAutoDefault(TRUE);
   myButtonOk->setDefault(TRUE);
@@ -115,7 +114,8 @@ GEOMBase_aParameterDlg::GEOMBase_aParameterDlg(const char *aValue1, const char *
   btnGrpLayout->addItem(new QSpacerItem(5, 5, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 1);
 
   /* Cancel button */
-  myButtonCancel = new QPushButton(btnGrp, "buttonCancel");
+  myButtonCancel = new QPushButton(btnGrp);
+  myButtonCancel->setObjectName("buttonCancel");
   myButtonCancel->setText(tr("GEOM_BUT_CANCEL"));
   myButtonCancel->setAutoDefault(TRUE);
   btnGrpLayout->addWidget(myButtonCancel, 0, 2);
