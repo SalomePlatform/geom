@@ -37,10 +37,6 @@
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
 
-#include <QtxActionMenuMgr.h>
-#include <QtxPopupMgr.h>
-#include <CAM_Module.h>
-
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_ViewModel.h>
