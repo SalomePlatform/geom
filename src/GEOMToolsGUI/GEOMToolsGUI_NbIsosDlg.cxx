@@ -31,14 +31,16 @@
 #include "GeometryGUI.h"
 #include <LightApp_Application.h>
 #include <SUIT_MessageBox.h>
+#include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SUIT_Tools.h>
 
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qgroupbox.h>
-#include <qlayout.h>
-#include <qspinbox.h>
+#include <QLabel>
+#include <QPushButton>
+#include <QGroupBox>
+#include <QGridLayout>
+#include <QSpinBox>
+#include <QKeyEvent>
 //using namespace std;
 
 //=================================================================================
@@ -49,55 +51,59 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 GEOMToolsGUI_NbIsosDlg::GEOMToolsGUI_NbIsosDlg(QWidget* parent )
-  :QDialog( parent, "GEOMToolsGUI_NbIsosDlg", true, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+  :QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint )
 {
-  setCaption( tr( "GEOM_MEN_ISOS" ) );
+  setObjectName( "GEOMToolsGUI_NbIsosDlg" );
+  setModal( true );
+
+  setWindowTitle( tr( "GEOM_MEN_ISOS" ) );
   setSizeGripEnabled(TRUE);
   QGridLayout* MyDialogLayout = new QGridLayout(this); 
   MyDialogLayout->setSpacing(6);
   MyDialogLayout->setMargin(11);
   
   /***************************************************************/
-  QGroupBox* GroupC1 = new QGroupBox( this, "GroupC1" );
-  GroupC1->setColumnLayout(0, Qt::Vertical );
-  GroupC1->layout()->setSpacing( 0 );
-  GroupC1->layout()->setMargin( 0 );
-  QGridLayout* GroupC1Layout = new QGridLayout( GroupC1->layout() );
+  QGroupBox* GroupC1 = new QGroupBox( this );
+  GroupC1->setObjectName( "GroupC1" );
+  QGridLayout* GroupC1Layout = new QGridLayout( GroupC1 );
   GroupC1Layout->setAlignment( Qt::AlignTop );
   GroupC1Layout->setSpacing( 6 );
   GroupC1Layout->setMargin( 11 );
   
-  QLabel* TextLabel1 = new QLabel( GroupC1, "TextLabel1" );
+  QLabel* TextLabel1 = new QLabel( GroupC1 );
+  TextLabel1->setObjectName( "TextLabel1" );
   TextLabel1->setText( tr( "GEOM_MEN_ISOU") );
   GroupC1Layout->addWidget( TextLabel1, 0, 0 );
   
-  SpinBoxU = new QSpinBox( GroupC1, "SpinBoxU" );
+  SpinBoxU = new QSpinBox( GroupC1 );
+  SpinBoxU->setObjectName( "SpinBoxU" );
   SpinBoxU->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-  SpinBoxU->setMinValue( 0 );
+  SpinBoxU->setMinimum( 0 );
   SpinBoxU->setValue( 1 );
   GroupC1Layout->addWidget( SpinBoxU, 0, 1 );
 
-  QLabel* TextLabel2 = new QLabel( GroupC1, "TextLabel2" );
+  QLabel* TextLabel2 = new QLabel( GroupC1 );
+  TextLabel2->setObjectName( "TextLabel2" );
   TextLabel2->setText( tr( "GEOM_MEN_ISOV") ) ;
   GroupC1Layout->addWidget( TextLabel2, 0, 2 );
 
-  SpinBoxV = new QSpinBox( GroupC1, "SpinBoxV");
+  SpinBoxV = new QSpinBox( GroupC1 );
+  SpinBoxV->setObjectName( "SpinBoxV");
   SpinBoxV->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
   SpinBoxV->setValue( 1 );
-  SpinBoxV->setMinValue( 0 );
+  SpinBoxV->setMinimum( 0 );
   GroupC1Layout->addWidget( SpinBoxV, 0, 3 );
   
   /***************************************************************/
-  QGroupBox* GroupButtons = new QGroupBox( this, "GroupButtons" );
-  GroupButtons->setColumnLayout(0, Qt::Vertical );
-  GroupButtons->layout()->setSpacing( 0 );
-  GroupButtons->layout()->setMargin( 0 );
-  QGridLayout* GroupButtonsLayout = new QGridLayout( GroupButtons->layout() );
+  QGroupBox* GroupButtons = new QGroupBox( this );
+  GroupButtons->setObjectName( "GroupButtons" );
+  QGridLayout* GroupButtonsLayout = new QGridLayout( GroupButtons );
   GroupButtonsLayout->setAlignment( Qt::AlignTop );
   GroupButtonsLayout->setSpacing( 6 );
   GroupButtonsLayout->setMargin( 11 );
   
-  QPushButton* buttonOk = new QPushButton( GroupButtons, "buttonOk" );
+  QPushButton* buttonOk = new QPushButton( GroupButtons );
+  buttonOk->setObjectName( "buttonOk" );
   buttonOk->setText( tr( "GEOM_BUT_OK" ) ) ;
   buttonOk->setAutoDefault( TRUE );
   buttonOk->setDefault( TRUE );
@@ -105,12 +111,14 @@ GEOMToolsGUI_NbIsosDlg::GEOMToolsGUI_NbIsosDlg(QWidget* parent )
   
   GroupButtonsLayout->addItem( new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ), 0, 1 );
   
-  QPushButton* buttonCancel = new QPushButton( GroupButtons, "buttonCancel" );
+  QPushButton* buttonCancel = new QPushButton( GroupButtons );
+  buttonCancel->setObjectName( "buttonCancel" );
   buttonCancel->setText( tr( "GEOM_BUT_CANCEL" ) ) ;
   buttonCancel->setAutoDefault( TRUE );
   GroupButtonsLayout->addWidget( buttonCancel, 0, 1 );
 
-  QPushButton* buttonHelp = new QPushButton( GroupButtons, "buttonHelp" );
+  QPushButton* buttonHelp = new QPushButton( GroupButtons );
+  buttonHelp->setObjectName( "buttonHelp" );
   buttonHelp->setText( tr( "GEOM_BUT_HELP" ) ) ;
   buttonHelp->setAutoDefault( TRUE );
   GroupButtonsLayout->addWidget( buttonHelp, 0, 2 );
@@ -177,10 +185,10 @@ void GEOMToolsGUI_NbIsosDlg::ClickOnHelp()
 #else
 		platform = "application";
 #endif
-    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
-			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
-			   QObject::tr("BUT_OK"));
+    SUIT_MessageBox::warning(0, QObject::tr("WRN_WARNING"),
+			     QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+			     arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
+			     QObject::tr("BUT_OK"));
   }
 }
 
@@ -194,7 +202,7 @@ void GEOMToolsGUI_NbIsosDlg::keyPressEvent( QKeyEvent* e )
   if ( e->isAccepted() )
     return;
 
-  if ( e->key() == Key_F1 )
+  if ( e->key() == Qt::Key_F1 )
     {
       e->accept();
       ClickOnHelp();

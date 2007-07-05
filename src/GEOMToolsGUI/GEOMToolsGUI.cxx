@@ -29,33 +29,32 @@
 #include "GEOMToolsGUI.h"
 
 #include "GeometryGUI.h"
-#include "GEOM_Actor.h"
 #include "GEOMBase.h"
 #include "GEOM_Operation.h"
 #include "GEOM_Displayer.h"
 
 #include <SUIT_Session.h>
-#include <SUIT_Application.h>
+//#include <SUIT_Application.h>
 #include <SUIT_OverrideCursor.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_Tools.h>
 #include <SUIT_FileDlg.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewModel.h>
+#include <SUIT_ViewManager.h>
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <LightApp_SelectionMgr.h>
 #include <GEOMImpl_Types.hxx>
 
+#include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
 #include <SALOME_Prs.h>
 
-#include "utilities.h"
-
 // QT Includes
-#include <qapplication.h>
-#include <qmap.h>
+#include <QApplication>
+#include <QMap>
 
 // OCCT Includes
 #include <TCollection_AsciiString.hxx>
@@ -83,13 +82,13 @@ static QString getFileName( QWidget*           parent,
 
   SUIT_FileDlg* fd = new SUIT_FileDlg( parent, open, true, true );
   if ( !caption.isEmpty() )
-    fd->setCaption( caption );
+    fd->setWindowTitle( caption );
 
   if ( !initial.isEmpty() )
-    fd->setSelection( initial );
+    fd->selectFile( initial );
 
   if ( !lastUsedFilter.isEmpty() && filterMap.contains( lastUsedFilter ) )
-    fd->setSelectedFilter( lastUsedFilter );
+    fd->selectFilter( lastUsedFilter );
 
   fd->setFilters( filters );
 
@@ -280,10 +279,10 @@ void GEOMToolsGUI::OnEditDelete()
 
 	bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
 	if ( aLocked ) {
-	  SUIT_MessageBox::warn1 ( app->desktop(),
-				   QObject::tr("WRN_WARNING"),
-				   QObject::tr("WRN_STUDY_LOCKED"),
-				   QObject::tr("BUT_OK") );
+	  SUIT_MessageBox::warning ( app->desktop(),
+				     QObject::tr("WRN_WARNING"),
+				     QObject::tr("WRN_STUDY_LOCKED"),
+				     QObject::tr("BUT_OK") );
 	  return;
 	}
 
@@ -294,31 +293,32 @@ void GEOMToolsGUI::OnEditDelete()
 	QString geomComp = getParentComponent( aStudy->FindObjectIOR( geomIOR.in() ) );
 
 	if ( parentComp != geomComp )  {
-	  SUIT_MessageBox::warn1 ( app->desktop(),
-				  QObject::tr("ERR_ERROR"),
-				  QObject::tr("NON_GEOM_OBJECTS_SELECTED").arg( getGeometryGUI()->moduleName() ),
-				  QObject::tr("BUT_OK") );
+	  SUIT_MessageBox::warning ( app->desktop(),
+				     QObject::tr("ERR_ERROR"),
+				     QObject::tr("NON_GEOM_OBJECTS_SELECTED").arg( getGeometryGUI()->moduleName() ),
+				     QObject::tr("BUT_OK") );
 	  return;
 	}
 	// VSR 17/11/04: check if all objects selected belong to GEOM component <-- finish
 
-	if ( SUIT_MessageBox::warn2( app->desktop(),
-				     QObject::tr( "GEOM_WRN_WARNING" ),
-				     QObject::tr( "GEOM_REALLY_DELETE" ),
-				     QObject::tr( "GEOM_BUT_YES" ),
-				     QObject::tr( "GEOM_BUT_NO" ), 1, 0, 0 ) != 1 )
+	if ( SUIT_MessageBox::warning( app->desktop(),
+				       QObject::tr( "GEOM_WRN_WARNING" ),
+				       QObject::tr( "GEOM_REALLY_DELETE" ),
+				       QObject::tr( "GEOM_BUT_YES" ),
+				       QObject::tr( "GEOM_BUT_NO" ), 1 ) != 0 )
 	  return;
 
 	//	QAD_Operation* op = new SALOMEGUI_ImportOperation(.....);
 	//	op->start();
 
 	// prepare list of SALOME_Views
-	QPtrList<SALOME_View> views;
+	QList<SALOME_View*> views;
 	SALOME_View* view;
 	// fill the list
 	ViewManagerList vmans = app->viewManagers();
 	SUIT_ViewManager* vman;
-	for ( vman = vmans.first(); vman; vman = vmans.next() ) {
+	QListIterator<SUIT_ViewManager*> it( vmans );
+	while ( it.hasNext() && (vman = it.next()) ) {
 	  SUIT_ViewModel* vmod = vman->getViewModel();
 	  view = dynamic_cast<SALOME_View*> ( vmod ); // must work for OCC and VTK views
 	  if ( view )
@@ -439,19 +439,19 @@ bool GEOMToolsGUI::Import()
 
   bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
   if ( aLocked ) {
-    SUIT_MessageBox::warn1 ( app->desktop(),
-			    QObject::tr("WRN_WARNING"),
-			    QObject::tr("WRN_STUDY_LOCKED"),
-			    QObject::tr("BUT_OK") );
+    SUIT_MessageBox::warning ( app->desktop(),
+			       QObject::tr("WRN_WARNING"),
+			       QObject::tr("WRN_STUDY_LOCKED"),
+			       QObject::tr("BUT_OK") );
     return false;
   }
 
   GEOM::GEOM_Gen_var eng = GeometryGUI::GetGeomGen();
   if ( CORBA::is_nil( eng ) ) {
-    SUIT_MessageBox::error1( app->desktop(),
-			    QObject::tr("WRN_WARNING"),
-			    QObject::tr( "GEOM Engine is not started" ),
-			    QObject::tr("BUT_OK") );
+    SUIT_MessageBox::critical( app->desktop(),
+			       QObject::tr("WRN_WARNING"),
+			       QObject::tr( "GEOM Engine is not started" ),
+			       QObject::tr("BUT_OK") );
       return false;
     }
 
@@ -478,7 +478,7 @@ bool GEOMToolsGUI::Import()
     {
       // Trying to detect file type
       QFileInfo aFileInfo( fileName );
-      QString aPossibleType = (aFileInfo.extension(false)).upper() ;
+      QString aPossibleType = (aFileInfo.suffix()).toUpper() ;
 
       if ( (aMap.values()).contains(aPossibleType) )
 	fileType = aPossibleType;
@@ -495,8 +495,8 @@ bool GEOMToolsGUI::Import()
 
     anOp->start();
 
-    CORBA::String_var fileN = fileName.latin1();
-    CORBA::String_var fileT = fileType.latin1();
+    CORBA::String_var fileN = fileName.toLatin1().data();
+    CORBA::String_var fileT = fileType.toLatin1().data();
     anObj = aInsOp->Import(fileN, fileT);
 
     if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
@@ -507,7 +507,7 @@ bool GEOMToolsGUI::Import()
       GeometryGUI::GetGeomGen()->PublishInStudy(aDSStudy,
 						SALOMEDS::SObject::_nil(),
 						anObj,
-						aPublishObjName);
+						aPublishObjName.toStdString().c_str());
 
       GEOM_Displayer( stud ).Display( anObj.in() );
 
@@ -519,10 +519,10 @@ bool GEOMToolsGUI::Import()
     else {
       anOp->abort();
       wc.suspend();
-      SUIT_MessageBox::error1( app->desktop(),
-			      QObject::tr( "GEOM_ERROR" ),
-			      QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ),
-			      QObject::tr("BUT_OK") );
+      SUIT_MessageBox::critical( app->desktop(),
+				 QObject::tr( "GEOM_ERROR" ),
+				 QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ),
+				 QObject::tr("BUT_OK") );
     }
   }
   catch( const SALOME::SALOME_Exception& S_ex ) {
@@ -555,10 +555,10 @@ bool GEOMToolsGUI::Export()
 
   GEOM::GEOM_Gen_var eng = GeometryGUI::GetGeomGen();
   if ( CORBA::is_nil( eng ) ) {
-    SUIT_MessageBox::error1( app->desktop(),
-			     QObject::tr("WRN_WARNING"),
-			     QObject::tr( "GEOM Engine is not started" ),
-			     QObject::tr("BUT_OK") );
+    SUIT_MessageBox::critical( app->desktop(),
+			       QObject::tr("WRN_WARNING"),
+			       QObject::tr( "GEOM Engine is not started" ),
+			       QObject::tr("BUT_OK") );
     return false;
   }
 
@@ -607,7 +607,7 @@ bool GEOMToolsGUI::Export()
       anOp->start();
 
 
-      aInsOp->Export( anObj, file, fileType.latin1() );
+      aInsOp->Export( anObj, file.toStdString().c_str(), fileType.toLatin1().constData() );
 
       if ( aInsOp->IsDone() )
 	anOp->commit();
@@ -615,10 +615,10 @@ bool GEOMToolsGUI::Export()
 	{
 	  anOp->abort();
 	  wc.suspend();
-	  SUIT_MessageBox::error1( app->desktop(),
-				   QObject::tr( "GEOM_ERROR" ),
-				   QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ),
-				   QObject::tr("BUT_OK") );
+	  SUIT_MessageBox::critical( app->desktop(),
+				     QObject::tr( "GEOM_ERROR" ),
+				     QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ),
+				     QObject::tr("BUT_OK") );
 	  return false;
 	}
     }
@@ -677,7 +677,7 @@ QString GEOMToolsGUI::getParentComponent( _PTR( SObject ) obj )
 //=====================================================================================
 void GEOMToolsGUI::RemoveObjectWithChildren(_PTR(SObject) obj,
                                             _PTR(Study) aStudy,
-                                            QPtrList<SALOME_View> views,
+                                            QList<SALOME_View*> views,
                                             GEOM_Displayer* disp)
 {
   // iterate through all children of obj
@@ -699,11 +699,11 @@ void GEOMToolsGUI::RemoveObjectWithChildren(_PTR(SObject) obj,
     GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
     if (!CORBA::is_nil(geomObj)) {
       // Erase graphical object
-      SALOME_View* view = views.first();
-      for (; view; view = views.next()) {
-        disp->Erase(geomObj, true, view);
-      }
-
+      QListIterator<SALOME_View*> it( views );
+      while ( it.hasNext() )
+	if ( SALOME_View* view = it.next() )
+	  disp->Erase(geomObj, true, view);
+      
       // Remove object from Engine
       GeometryGUI::GetGeomGen()->RemoveObject( geomObj );
     }
@@ -732,10 +732,10 @@ bool GEOMToolsGUI::CheckSubObjectInUse(_PTR(SObject) checkobj,
 	SalomeApp_Application* app =
 	  dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
 
-	SUIT_MessageBox::warn1 ( app->desktop(),
-				 QObject::tr("WRN_WARNING"),
-				 QObject::tr("DEP_OBJECT"),
-				 QObject::tr("BUT_OK") );
+	SUIT_MessageBox::warning ( app->desktop(),
+				   QObject::tr("WRN_WARNING"),
+				   QObject::tr("DEP_OBJECT"),
+				   QObject::tr("BUT_OK") );
 	return true;
       }
     }

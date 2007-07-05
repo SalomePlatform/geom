@@ -26,15 +26,15 @@
 //  Module : GEOM
 //  $Header$
 
-#include <PythonConsole_PyConsole.h>
+#include <PyConsole_Console.h>
 
 #include "GEOMToolsGUI.h"
 
 #include "GeometryGUI.h"
+#include "GEOM_Displayer.h"
 #include "GEOMToolsGUI_TransparencyDlg.h"
 #include "GEOMToolsGUI_NbIsosDlg.h"        // Method ISOS adjustement
 
-#include "GEOM_Actor.h"
 #include "GEOMBase.h"
 
 #include "SALOME_ListIO.hxx"
@@ -45,10 +45,8 @@
 #include <SVTK_View.h>
 
 #include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
 
 #include <SUIT_ViewManager.h>
-#include <SUIT_Application.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
@@ -62,31 +60,16 @@
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_NameDlg.h>
 
-#include "SALOMEDSClient.hxx"
-
 #include "utilities.h"
 
 // OCCT Includes
 #include <AIS_Drawer.hxx>
-#include <AIS_ListOfInteractive.hxx>
-#include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
 
-// VTK Includes
-#include <vtkBMPReader.h>
-#include <vtkTexture.h>
-#include <vtkTextureMapToPlane.h>
-#include <vtkTransformTextureCoords.h>
-#include <vtkDataSetMapper.h>
-#include <vtkRenderer.h>
-
 // QT Includes
-#include <qfileinfo.h>
-#include <qcolordialog.h>
-#include <qspinbox.h>
-#include <qapplication.h>
+#include <QColorDialog>
 
 using namespace std;
 
@@ -157,7 +140,9 @@ void GEOMToolsGUI::OnSettingsStep()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100. );
 
   Standard_Boolean res = false;
-  double dd = GEOMBase::Parameter( res, QString("%1").arg(step), tr("GEOM_MEN_STEP_LABEL"), tr("GEOM_STEP_TITLE"), 0.001, 10000.0, 3);
+  double dd = GEOMBase::Parameter( res, QString("%1").arg(step).toStdString().c_str(), 
+				   tr("GEOM_MEN_STEP_LABEL").toStdString().c_str(), 
+				   tr("GEOM_STEP_TITLE").toStdString().c_str(), 0.001, 10000.0, 3);
   if(res) {
     resMgr->setValue( "Geometry", "SettingsGeomStep", dd );
 
@@ -182,10 +167,10 @@ void GEOMToolsGUI::OnRename()
 
 	bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
 	if ( aLocked ) {
-	  SUIT_MessageBox::warn1 ( app->desktop(),
-				   QObject::tr("WRN_WARNING"),
-				   QObject::tr("WRN_STUDY_LOCKED"),
-				   QObject::tr("BUT_OK") );
+	  SUIT_MessageBox::warning ( app->desktop(),
+				     QObject::tr("WRN_WARNING"),
+				     QObject::tr("WRN_STUDY_LOCKED"),
+				     QObject::tr("BUT_OK") );
 	  return;
 	}
 
@@ -200,12 +185,12 @@ void GEOMToolsGUI::OnRename()
 
 	      QString newName = LightApp_NameDlg::getName( app->desktop(), aName->Value().c_str() );
 	      if ( !newName.isEmpty() ) {
-		aName->SetValue( newName.latin1() ); // rename the SObject
-		IObject->setName( newName.latin1() );// rename the InteractiveObject
+		aName->SetValue( newName.toLatin1().constData() ); // rename the SObject
+		IObject->setName( newName.toLatin1() );// rename the InteractiveObject
 		// Rename the corresponding GEOM_Object
 		GEOM::GEOM_Object_var anObj =  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
 		if (!CORBA::is_nil( anObj ))
-		  anObj->SetName( newName.latin1() );
+		  anObj->SetName( newName.toLatin1() );
 		(dynamic_cast<SalomeApp_Module*>(app->activeModule()))->updateObjBrowser( false );
 	      }
 	    } // if ( name attribute )
@@ -221,7 +206,7 @@ void GEOMToolsGUI::OnRename()
 void GEOMToolsGUI::OnCheckGeometry()
 {
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  PythonConsole* pyConsole = app->pythonConsole();
+  PyConsole_Console* pyConsole = app->pythonConsole();
 
   if(pyConsole)
     pyConsole->exec("from GEOM_usinggeom import *");

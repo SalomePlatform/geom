@@ -31,7 +31,7 @@
 
 #include "GEOM_ToolsGUI.hxx"
 
-#include <qdialog.h>
+#include <QDialog>
 
 class QSpinBox;
 

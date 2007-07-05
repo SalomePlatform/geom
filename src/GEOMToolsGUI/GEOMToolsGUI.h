@@ -32,16 +32,14 @@
 #include "GEOM_ToolsGUI.hxx"
 
 #include "GEOMGUI.h"
-#include "GEOM_Displayer.h"
-
-#include <SALOME_Prs.h>
 
 #include <SALOMEDSClient.hxx>
-#include <SALOME_ListIO.hxx>
 
-#include <CORBA.h>
+class GEOM_Displayer;
+class SALOME_View;
+class SALOME_ListIO;
 
-#include <qptrlist.h>
+#include <QList>
 
 //=================================================================================
 // class    : GEOMToolsGUI
@@ -85,7 +83,7 @@ private:
   // Recursive deletion of object with children
   void RemoveObjectWithChildren(_PTR(SObject) obj,
 				_PTR(Study) aStudy,
-				QPtrList<SALOME_View> views,
+				QList<SALOME_View*> views,
 				GEOM_Displayer* disp);
 
   //checks if the object passed as the first argument depends on the second arguments

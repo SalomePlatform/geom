@@ -39,10 +39,8 @@
 #include <SVTK_View.h>
 
 #include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
 
 #include <SUIT_ViewManager.h>
-#include <SUIT_Application.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
@@ -53,16 +51,12 @@
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <qframe.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qslider.h>
-#include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qapplication.h>
-#include <qgroupbox.h>
+#include <QLabel>
+#include <QPushButton>
+#include <QSlider>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QKeyEvent>
 
 #include <AIS_InteractiveContext.hxx>
 using namespace std;
@@ -76,31 +70,34 @@ using namespace std;
 //
 //=================================================================================
 GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
-  :QDialog( parent, "GEOMBase_TransparencyDlg", true, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
+  :QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint )
 {
+  setObjectName( "GEOMBase_TransparencyDlg" );
+  setModal( true );
+  
   resize(152, 107); 
-  setCaption(tr("GEOM_TRANSPARENCY_TITLE"));
+  setWindowTitle(tr("GEOM_TRANSPARENCY_TITLE"));
   setSizeGripEnabled(TRUE);
   QGridLayout* lay = new QGridLayout(this); 
   lay->setSpacing(6);
   lay->setMargin(11);
-
+  
   /*************************************************************************/
-  QGroupBox* GroupButtons = new QGroupBox( this, "GroupButtons" );
-  GroupButtons->setColumnLayout(0, Qt::Vertical );
-  GroupButtons->layout()->setSpacing( 0 );
-  GroupButtons->layout()->setMargin( 0 );
-  QGridLayout* GroupButtonsLayout = new QGridLayout( GroupButtons->layout() );
+  QGroupBox* GroupButtons = new QGroupBox( this );
+  GroupButtons->setObjectName( "GroupButtons" );
+  QGridLayout* GroupButtonsLayout = new QGridLayout( GroupButtons );
   GroupButtonsLayout->setAlignment( Qt::AlignTop );
   GroupButtonsLayout->setSpacing( 6 );
   GroupButtonsLayout->setMargin( 11 );
   
-  QPushButton* buttonOk = new QPushButton( GroupButtons, "buttonOk" );
+  QPushButton* buttonOk = new QPushButton( GroupButtons );
+  buttonOk->setObjectName( "buttonOk" );
   buttonOk->setText( tr( "GEOM_BUT_OK" ) );
   buttonOk->setAutoDefault( TRUE );
   buttonOk->setDefault( TRUE );
-
-  QPushButton* buttonHelp = new QPushButton( GroupButtons, "buttonHelp" );
+  
+  QPushButton* buttonHelp = new QPushButton( GroupButtons );
+  buttonHelp->setObjectName( "buttonHelp" );
   buttonHelp->setText( tr( "GEOM_BUT_HELP" ) );
   buttonHelp->setAutoDefault( TRUE );
   buttonHelp->setDefault( TRUE );
@@ -108,32 +105,37 @@ GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
   GroupButtonsLayout->addWidget( buttonOk, 0, 0 );
   GroupButtonsLayout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 1 );
   GroupButtonsLayout->addWidget( buttonHelp, 0, 2 );
-
+  
   /*************************************************************************/
-  QGroupBox* GroupC1 = new QGroupBox( this, "GroupC1" );
-  GroupC1->setColumnLayout(0, Qt::Vertical );
-  GroupC1->layout()->setSpacing( 0 );
-  GroupC1->layout()->setMargin( 0 );
-  QGridLayout* GroupC1Layout = new QGridLayout( GroupC1->layout() );
+  QGroupBox* GroupC1 = new QGroupBox( this );
+  GroupC1->setObjectName( "GroupC1" );
+  QGridLayout* GroupC1Layout = new QGridLayout( GroupC1 );
   GroupC1Layout->setAlignment( Qt::AlignTop );
   GroupC1Layout->setSpacing( 6 );
   GroupC1Layout->setMargin( 11 );
   
-  QLabel* TextLabelOpaque = new QLabel( GroupC1, "TextLabelOpaque" );
+  QLabel* TextLabelOpaque = new QLabel( GroupC1 );
+  TextLabelOpaque->setObjectName( "TextLabelOpaque" );
   TextLabelOpaque->setText( tr( "GEOM_TRANSPARENCY_OPAQUE"  ) );
-  TextLabelOpaque->setAlignment( int( QLabel::AlignLeft ) );
+  TextLabelOpaque->setAlignment( Qt::AlignLeft );
   GroupC1Layout->addWidget( TextLabelOpaque, 0, 0 );
   GroupC1Layout->addItem( new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ), 0, 1 );
   
-  QLabel* TextLabelTransparent = new QLabel( GroupC1, "TextLabelTransparent" );
+  QLabel* TextLabelTransparent = new QLabel( GroupC1 );
+  TextLabelTransparent->setObjectName( "TextLabelTransparent" );
   TextLabelTransparent->setText( tr( "GEOM_TRANSPARENCY_TRANSPARENT"  ) );
-  TextLabelTransparent->setAlignment( int( QLabel::AlignRight ) );
+  TextLabelTransparent->setAlignment( Qt::AlignRight );
   GroupC1Layout->addWidget( TextLabelTransparent, 0, 2 );
   
-  mySlider = new QSlider( 0, 10, 1, 5, Horizontal, GroupC1, "mySlider" );
+  mySlider = new QSlider( Qt::Horizontal, GroupC1 );
+  mySlider->setObjectName( "mySlider" );
+  mySlider->setMinimum( 0 );
+  mySlider->setMaximum( 10 );
+  mySlider->setPageStep( 1 );
+  mySlider->setValue( 5 );
   mySlider->setMinimumSize( 300, 0 );
-  mySlider->setTickmarks( QSlider::Left );
-  GroupC1Layout->addMultiCellWidget( mySlider, 1, 1, 0, 2 );
+  mySlider->setTickPosition( QSlider::TicksLeft );
+  GroupC1Layout->addWidget( mySlider, 1, 0, 1, 3 );
   /*************************************************************************/
   
   lay->addWidget(GroupC1, 0,  0);
@@ -204,10 +206,10 @@ void GEOMToolsGUI_TransparencyDlg::ClickOnHelp()
 #else
 		platform = "application";
 #endif
-    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
-			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
-			   QObject::tr("BUT_OK"));
+    SUIT_MessageBox::warning(0, QObject::tr("WRN_WARNING"),
+			     QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+			     arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
+			     QObject::tr("BUT_OK"));
   }
 }
 
@@ -296,7 +298,7 @@ void GEOMToolsGUI_TransparencyDlg::keyPressEvent( QKeyEvent* e )
   if ( e->isAccepted() )
     return;
 
-  if ( e->key() == Key_F1 )
+  if ( e->key() == Qt::Key_F1 )
     {
       e->accept();
       ClickOnHelp();
