@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'DlgRef_3Check_QTD.ui'
 **
-** Created: Fri Jun 29 14:57:56 2007
+** Created: Fri Jul 6 10:09:03 2007
 **      by: Qt User Interface Compiler version 4.2.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -15,6 +15,7 @@
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
 #include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
 #include <QtGui/QRadioButton>
 #include <QtGui/QSpacerItem>
 #include <QtGui/QWidget>
@@ -24,7 +25,7 @@ class Ui_DlgRef_3Check_QTD
 {
 public:
     QGridLayout *gridLayout;
-    QButtonGroup *GroupBox1;
+    QGroupBox *GroupBox1;
     QGridLayout *gridLayout1;
     QGridLayout *gridLayout2;
     QRadioButton *RadioButton3;
@@ -39,7 +40,7 @@ public:
     gridLayout->setSpacing(6);
     gridLayout->setMargin(0);
     gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-    GroupBox1 = new QButtonGroup(DlgRef_3Check_QTD);
+    GroupBox1 = new QGroupBox(DlgRef_3Check_QTD);
     GroupBox1->setObjectName(QString::fromUtf8("GroupBox1"));
     gridLayout1 = new QGridLayout(GroupBox1);
     gridLayout1->setSpacing(6);
