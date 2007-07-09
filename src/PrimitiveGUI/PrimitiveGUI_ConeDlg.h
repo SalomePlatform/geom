@@ -29,8 +29,9 @@
 #define DIALOGBOX_CONE_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel3Spin.h"
-#include "DlgRef_3Spin.h"
+
+class DlgRef_2Sel3Spin;
+class DlgRef_3Spin;
 
 //=================================================================================
 // class    : PrimitiveGUI_ConeDlg
@@ -42,7 +43,7 @@ class PrimitiveGUI_ConeDlg : public GEOMBase_Skeleton
 
 public:
     PrimitiveGUI_ConeDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			 const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			 const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~PrimitiveGUI_ConeDlg();
 
 protected:

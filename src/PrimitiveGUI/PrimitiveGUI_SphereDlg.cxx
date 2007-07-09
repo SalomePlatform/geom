@@ -27,17 +27,19 @@
 //  $Header$
 
 #include "PrimitiveGUI_SphereDlg.h"
+#include "DlgRef_1Sel1Spin.h"
+#include "DlgRef_1Spin.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qlabel.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -49,34 +51,34 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                               const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                               const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SPHERE_P")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SPHERE_DXYZ")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_SPHERE_TITLE"));
+  setWindowTitle(tr("GEOM_SPHERE_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_SPHERE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image1);
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
   GroupPoints = new DlgRef_1Sel1Spin(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_SPHERE_CR"));
   GroupPoints->TextLabel1->setText(tr("GEOM_CENTER"));
   GroupPoints->TextLabel2->setText(tr("GEOM_RADIUS"));
-  GroupPoints->PushButton1->setPixmap(image2);
+  GroupPoints->PushButton1->setIcon(image2);
 
   GroupDimensions = new DlgRef_1Spin(this, "GroupDimensions");
   GroupDimensions->GroupBox1->setTitle(tr("GEOM_SPHERE_RO"));
   GroupDimensions->TextLabel1->setText(tr("GEOM_RADIUS"));
 
-  Layout1->addWidget(GroupPoints, 2, 0);
-  Layout1->addWidget(GroupDimensions, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
   setHelpFileName("sphere.htm");
@@ -134,7 +136,7 @@ void PrimitiveGUI_SphereDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName(tr("GEOM_SPHERE"));
+  initName(tr("GEOM_SPHERE").toStdString().c_str());
   ConstructorsClicked(0);
 }
 

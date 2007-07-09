@@ -29,8 +29,9 @@
 #define DIALOGBOX_SPHERE_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel1Spin.h"
-#include "DlgRef_1Spin.h"
+
+class DlgRef_1Sel1Spin;
+class DlgRef_1Spin;
 
 
 //=================================================================================
@@ -43,7 +44,7 @@ class PrimitiveGUI_SphereDlg : public GEOMBase_Skeleton
 
 public:
     PrimitiveGUI_SphereDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			   const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			   const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~PrimitiveGUI_SphereDlg();
 
 protected:

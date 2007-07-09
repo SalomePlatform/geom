@@ -27,17 +27,19 @@
 //  $Header$
 
 #include "PrimitiveGUI_ConeDlg.h"
+#include "DlgRef_2Sel3Spin.h"
+#include "DlgRef_3Spin.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qlabel.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -49,21 +51,21 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 PrimitiveGUI_ConeDlg::PrimitiveGUI_ConeDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                           const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                           const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CONE_PV")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CONE_DXYZ")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_CONE_TITLE"));
+  setWindowTitle(tr("GEOM_CONE_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_CONE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image1);
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
   GroupPoints = new DlgRef_2Sel3Spin(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
@@ -72,8 +74,8 @@ PrimitiveGUI_ConeDlg::PrimitiveGUI_ConeDlg(GeometryGUI* theGeometryGUI, QWidget*
   GroupPoints->TextLabel3->setText(tr("GEOM_RADIUS_I").arg("1"));
   GroupPoints->TextLabel4->setText(tr("GEOM_RADIUS_I").arg("2"));
   GroupPoints->TextLabel5->setText(tr("GEOM_HEIGHT"));
-  GroupPoints->PushButton1->setPixmap(image2);
-  GroupPoints->PushButton2->setPixmap(image2);
+  GroupPoints->PushButton1->setIcon(image2);
+  GroupPoints->PushButton2->setIcon(image2);
 
   GroupDimensions = new DlgRef_3Spin(this, "GroupDimensions");
   GroupDimensions->GroupBox1->setTitle(tr("GEOM_BOX_OBJ"));
@@ -81,8 +83,8 @@ PrimitiveGUI_ConeDlg::PrimitiveGUI_ConeDlg(GeometryGUI* theGeometryGUI, QWidget*
   GroupDimensions->TextLabel2->setText(tr("GEOM_RADIUS_I").arg("2"));
   GroupDimensions->TextLabel3->setText(tr("GEOM_HEIGHT"));
 
-  Layout1->addWidget(GroupPoints, 2, 0);
-  Layout1->addWidget(GroupDimensions, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
   setHelpFileName( "cone.htm" );
@@ -162,7 +164,7 @@ void PrimitiveGUI_ConeDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   
-  initName( tr( "GEOM_CONE" ) );
+  initName( tr( "GEOM_CONE" ).toStdString().c_str() );
   ConstructorsClicked(0);
 }
 

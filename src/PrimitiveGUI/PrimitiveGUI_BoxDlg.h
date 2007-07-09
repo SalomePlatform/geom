@@ -30,9 +30,10 @@
 
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel_QTD.h"
-#include "DlgRef_3Spin.h"
 
 using namespace std;
+
+class DlgRef_3Spin;
 
 //=================================================================================
 // class    : PrimitiveGUI_BoxDlg
@@ -44,7 +45,7 @@ class PrimitiveGUI_BoxDlg : public GEOMBase_Skeleton
     
 public:
     PrimitiveGUI_BoxDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~PrimitiveGUI_BoxDlg();
     
 protected:
@@ -61,7 +62,7 @@ private :
 
     GEOM::GEOM_Object_var myPoint1, myPoint2;   /* Points containing the vector */ 
     
-    DlgRef_2Sel_QTD* GroupPoints;
+    Ui::DlgRef_2Sel_QTD* GroupPoints;
     DlgRef_3Spin* GroupDimensions;
 
 private slots:

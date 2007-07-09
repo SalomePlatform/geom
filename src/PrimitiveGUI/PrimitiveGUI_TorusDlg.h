@@ -29,8 +29,9 @@
 #define DIALOGBOX_TORUS_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel2Spin.h"
-#include "DlgRef_2Spin.h"
+
+class DlgRef_2Sel2Spin;
+class DlgRef_2Spin;
 
 
 //=================================================================================
@@ -43,7 +44,7 @@ class PrimitiveGUI_TorusDlg : public GEOMBase_Skeleton
 
 public:
     PrimitiveGUI_TorusDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			  const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~PrimitiveGUI_TorusDlg();
 
 protected:
