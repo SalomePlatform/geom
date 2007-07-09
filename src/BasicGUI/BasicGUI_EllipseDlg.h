@@ -30,9 +30,8 @@
 #include "GEOM_BasicGUI.hxx"
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel2Spin.h"
 
-#include "BasicGUI.h"
+class DlgRef_2Sel2Spin;
 
 //=================================================================================
 // class    : BasicGUI_EllipseDlg
@@ -44,7 +43,7 @@ class GEOM_BASICGUI_EXPORT BasicGUI_EllipseDlg : public GEOMBase_Skeleton
 
 public:
     BasicGUI_EllipseDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~BasicGUI_EllipseDlg();
 
 protected:

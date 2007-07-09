@@ -28,21 +28,15 @@
 
 #include "BasicGUI_ArcDlg.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qlabel.h>
-
-#include <BRepBuilderAPI_MakeEdge.hxx>
-#include <GC_MakeArcOfCircle.hxx>
-#include <Geom_TrimmedCurve.hxx>
-#include <Precision.hxx>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -54,23 +48,27 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                 const char* name, bool modal, WFlags fl)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                      WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                 const char* name, bool modal, Qt::WindowFlags fl)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ARC")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ARC_CENTER")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_ARC_TITLE"));
+  setWindowTitle(tr("GEOM_ARC_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_ARC"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image1);
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
-  Group3Pnts = new DlgRef_3Sel_QTD(this, "Group3Pnts");
+  Group3Pnts = new Ui::DlgRef_3Sel_QTD();
+  QWidget* aGroup3PntsWidget = new QWidget(this);
+  Group3Pnts->setupUi(aGroup3PntsWidget);
+  aGroup3PntsWidget->setObjectName("Group3Pnts");
+
   Group3Pnts->GroupBox1->setTitle(tr("GEOM_POINTS"));
   Group3Pnts->TextLabel1->setText(tr("GEOM_POINT_I").arg("1"));
   Group3Pnts->TextLabel2->setText(tr("GEOM_POINT_I").arg("2"));
@@ -80,12 +78,16 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
   Group3Pnts->LineEdit2->setReadOnly( true );
   Group3Pnts->LineEdit3->setReadOnly( true );
 
-  Group3Pnts->PushButton1->setPixmap(image2);
-  Group3Pnts->PushButton2->setPixmap(image2);
-  Group3Pnts->PushButton3->setPixmap(image2);
+  Group3Pnts->PushButton1->setIcon(image2);
+  Group3Pnts->PushButton2->setIcon(image2);
+  Group3Pnts->PushButton3->setIcon(image2);
 
 
-  Group3Pnts2 = new DlgRef_3Sel1Check_QTD(this, "Group3Pnts2");
+  Group3Pnts2 = new Ui::DlgRef_3Sel1Check_QTD();
+  QWidget* aGroup3Pnts2Widget = new QWidget(this);
+  Group3Pnts2->setupUi(aGroup3Pnts2Widget);
+  aGroup3Pnts2Widget->setObjectName("Group3Pnts2");
+
   Group3Pnts2->GroupBox1->setTitle(tr("GEOM_POINTS"));
   Group3Pnts2->TextLabel1->setText(tr("GEOM_CENTER_POINT"));
   Group3Pnts2->TextLabel2->setText(tr("GEOM_POINT_I").arg("Start"));
@@ -95,14 +97,14 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
   Group3Pnts2->LineEdit2->setReadOnly( true );
   Group3Pnts2->LineEdit3->setReadOnly( true );
 
-  Group3Pnts2->PushButton1->setPixmap(image2);
-  Group3Pnts2->PushButton2->setPixmap(image2);
-  Group3Pnts2->PushButton3->setPixmap(image2);
+  Group3Pnts2->PushButton1->setIcon(image2);
+  Group3Pnts2->PushButton2->setIcon(image2);
+  Group3Pnts2->PushButton3->setIcon(image2);
   
   Group3Pnts2->radioButton4->setText(tr("GEOM_REVERSE"));
 
-  Layout1->addWidget( Group3Pnts, 2, 0 );
-  Layout1->addWidget( Group3Pnts2, 2, 0 );
+  gridLayout1->addWidget( aGroup3PntsWidget, 2, 0 );
+  gridLayout1->addWidget( aGroup3Pnts2Widget, 2, 0 );
 
   setHelpFileName("arc.htm");
 
@@ -167,7 +169,7 @@ void BasicGUI_ArcDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr( "GEOM_ARC" )); 
+  initName( tr( "GEOM_ARC" ).toStdString().c_str() ); 
   
 
   ConstructorsClicked( 0 );
@@ -457,18 +459,18 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
   {
     case 0:
     {
-      Group3Pnts->show();
+      ::qobject_cast<QWidget*>( Group3Pnts->gridLayout->parent() )->show();
       resize(0, 0);
-      Group3Pnts2->hide();
+      ::qobject_cast<QWidget*>( Group3Pnts2->gridLayout->parent() )->hide();
 
      connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
       break;
     }
     case 1:
     {
-      Group3Pnts->hide();
+      ::qobject_cast<QWidget*>( Group3Pnts->gridLayout->parent() )->hide();
       resize(0, 0);
-      Group3Pnts2->show();
+      ::qobject_cast<QWidget*>( Group3Pnts2->gridLayout->parent() )->show();
       connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
       break;

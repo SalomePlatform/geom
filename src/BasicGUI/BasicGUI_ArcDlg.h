@@ -44,7 +44,7 @@ class GEOM_BASICGUI_EXPORT BasicGUI_ArcDlg : public GEOMBase_Skeleton
 
 public:
     BasicGUI_ArcDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		     const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+		     const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0 );
     ~BasicGUI_ArcDlg();
 
 protected:
@@ -61,8 +61,8 @@ private :
     int myConstructorId;
     GEOM::GEOM_Object_var myPoint1, myPoint2, myPoint3;
 
-    DlgRef_3Sel_QTD* Group3Pnts;
-    DlgRef_3Sel1Check_QTD* Group3Pnts2;
+    Ui::DlgRef_3Sel_QTD*       Group3Pnts;
+    Ui::DlgRef_3Sel1Check_QTD* Group3Pnts2;
 
 private slots:
     void ClickOnOk();

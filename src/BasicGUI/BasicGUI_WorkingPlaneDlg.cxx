@@ -27,16 +27,16 @@
 
 #include "BasicGUI_WorkingPlaneDlg.h"
 
+#include "GeometryGUI.h"
 #include "GEOMBase.h"
 
-#include "SUIT_Desktop.h"
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
 // OCCT Includes
 #include <BRep_Tool.hxx>
-#include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopExp.hxx>
@@ -45,8 +45,7 @@
 #include <TColStd_MapOfInteger.hxx>
 
 // QT Includes
-#include <qcheckbox.h>
-#include <qlabel.h>
+#include <QCheckBox>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -60,57 +59,70 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_WorkingPlaneDlg::BasicGUI_WorkingPlaneDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                                   const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                                   const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_WPLANE_FACE")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_WPLANE_VECTOR")));
   QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_WPLANE_ORIGIN")));
 
-  setCaption(tr("GEOM_WPLANE_TITLE"));
+  setWindowTitle(tr("GEOM_WPLANE_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_WPLANE"));
-  RadioButton1->setPixmap(image1);
-  RadioButton2->setPixmap(image2);
-  RadioButton3->setPixmap(image3);
+  RadioButton1->setIcon(image1);
+  RadioButton2->setIcon(image2);
+  RadioButton3->setIcon(image3);
 
-  Group1 = new DlgRef_1Sel_QTD(this, "Group1");
+  Group1 = new Ui::DlgRef_1Sel_QTD();
+  QWidget* aGroup1Widget = new QWidget(this);
+  Group1->setupUi(aGroup1Widget);
+  aGroup1Widget->setObjectName("Group1");
+
   Group1->GroupBox1->setTitle(tr("GEOM_WPLANE_FACE"));
   Group1->TextLabel1->setText(tr("GEOM_SELECTION"));
-  Group1->PushButton1->setPixmap(image0);
+  Group1->PushButton1->setIcon(image0);
   Group1->LineEdit1->setReadOnly( true );
 
-  Group2 = new DlgRef_2Sel_QTD(this, "Group2");
+  Group2 = new Ui::DlgRef_2Sel_QTD();
+  QWidget* aGroup2Widget = new QWidget(this);
+  Group2->setupUi(aGroup2Widget);
+  aGroup2Widget->setObjectName("Group2");
+
   Group2->GroupBox1->setTitle(tr("GEOM_WPLANE_VECTOR"));
   Group2->TextLabel1->setText(tr("GEOM_WPLANE_VX"));
   Group2->TextLabel2->setText(tr("GEOM_WPLANE_VZ"));
-  Group2->PushButton1->setPixmap(image0);
-  Group2->PushButton2->setPixmap(image0);
+  Group2->PushButton1->setIcon(image0);
+  Group2->PushButton2->setIcon(image0);
   Group2->LineEdit1->setReadOnly( true );
   Group2->LineEdit2->setReadOnly( true );
 
-  Group3 = new DlgRef_3Check_QTD(this, "Group3");
+  Group3 = new Ui::DlgRef_3Check_QTD();
+  QWidget* aGroup3Widget = new QWidget(this);
+  Group3->setupUi(aGroup3Widget);
+  aGroup3Widget->setObjectName("Group3");
+
   Group3->GroupBox1->setTitle(tr("GEOM_WPLANE_ORIGIN"));
   Group3->RadioButton1->setText(tr("GEOM_WPLANE_OXY"));
   Group3->RadioButton2->setText(tr("GEOM_WPLANE_OYZ"));
   Group3->RadioButton3->setText(tr("GEOM_WPLANE_OZX"));
 
-  Layout1->addWidget(Group1, 1, 0);
-  Layout1->addWidget(Group2, 1, 0);
-  Layout1->addWidget(Group3, 1, 0);
+  gridLayout1->addWidget(aGroup1Widget, 1, 0);
+  gridLayout1->addWidget(aGroup2Widget, 1, 0);
+  gridLayout1->addWidget(aGroup3Widget, 1, 0);
   /***************************************************************/
-  QGroupBox* aReverseGroupBox = new QGroupBox(this, "aReverseGroupBox");
-  aReverseGroupBox->setTitle(tr(""));
-  aReverseGroupBox->setColumnLayout(1, Qt::Horizontal);
-  aReverseGroupBox->setInsideMargin(10);
-  
-  myReverseCB = new QCheckBox(aReverseGroupBox, "myReverseCB");
-  myReverseCB->setText(tr("GEOM_REVERSE_PLANE"));
+  QFrame* aReverseGroupBox = new QFrame(this);
+  aReverseGroupBox->setObjectName("aReverseGroupBox");
+  aReverseGroupBox->setContentsMargins(10, 10, 10, 10);
+  QHBoxLayout* aReverseGroupBoxLayout = new QHBoxLayout( aReverseGroupBox );
     
-  Layout1->addWidget(aReverseGroupBox, 2, 0);
+  myReverseCB = new QCheckBox(aReverseGroupBox);
+  myReverseCB->setObjectName("myReverseCB");
+  myReverseCB->setText(tr("GEOM_REVERSE_PLANE"));
+  aReverseGroupBoxLayout->addWidget(myReverseCB);
+    
+  gridLayout1->addWidget(aReverseGroupBox, 2, 0);
   
 
   setHelpFileName("working_plane.htm");
@@ -171,7 +183,7 @@ void BasicGUI_WorkingPlaneDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr( "GEOM_WPLANE" ) );
+  initName( tr( "GEOM_WPLANE" ).toStdString().c_str() );
   ConstructorsClicked(0);
 }
 
@@ -195,10 +207,10 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
         aMap.Add( GEOM_MARKER );
         globalSelection( aMap );
 
-        Group2->hide();
-        Group3->hide();
+        ::qobject_cast<QWidget*>( Group2->gridLayout->parent() )->hide();
+        ::qobject_cast<QWidget*>( Group3->gridLayout->parent() )->hide();
         resize(0, 0);
-        Group1->show();
+        ::qobject_cast<QWidget*>( Group1->gridLayout->parent() )->show();
 
         myEditCurrentArgument = Group1->LineEdit1;
         Group1->LineEdit1->setText("");
@@ -211,10 +223,10 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
       {
         globalSelection( GEOM_LINE );
 
-        Group1->hide();
-        Group3->hide();
+        ::qobject_cast<QWidget*>( Group1->gridLayout->parent() )->hide();
+        ::qobject_cast<QWidget*>( Group3->gridLayout->parent() )->hide();
         resize(0, 0);
-        Group2->show();
+        ::qobject_cast<QWidget*>( Group2->gridLayout->parent() )->show();
 
         myEditCurrentArgument = Group2->LineEdit1;
         Group2->LineEdit1->setText("");
@@ -227,10 +239,10 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
       }
     case 2:
       {
-        Group1->hide();
-        Group2->hide();
+        ::qobject_cast<QWidget*>( Group1->gridLayout->parent() )->hide();
+        ::qobject_cast<QWidget*>( Group2->gridLayout->parent() )->hide();
         resize(0, 0);
-        Group3->show();
+        ::qobject_cast<QWidget*>( Group3->gridLayout->parent() )->show();
 
         Group3->RadioButton1->setChecked(true);
         aOriginType = 1;

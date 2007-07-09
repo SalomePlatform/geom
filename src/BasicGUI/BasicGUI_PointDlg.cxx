@@ -28,19 +28,26 @@
 
 #include "BasicGUI_PointDlg.h"
 
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "DlgRef_SpinBox.h"
+#include "DlgRef_1Sel1Spin.h"
+#include "DlgRef_3Spin.h"
+#include "DlgRef_1Sel3Spin.h"
+
 #include "GEOMImpl_Types.hxx"
 
-#include <qlabel.h>
-
-#include "utilities.h"
+#include <QApplication>
+#include <QLabel>
 
 #include <gp_Pnt.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopoDS_Vertex.hxx>
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopoDS.hxx>
 #include <BRep_Tool.hxx>
@@ -48,7 +55,6 @@
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
-#include <qapplication.h>
 using namespace std;
 //=================================================================================
 // class    : BasicGUI_PointDlg()
@@ -58,7 +64,7 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                     const char* name, bool modal, WFlags fl)
+                                     const char* name, bool modal, Qt::WindowFlags fl)
   :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, fl )
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POINT")));
@@ -66,48 +72,56 @@ BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
   QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POINT_REF")));
 
-  setCaption(tr("GEOM_POINT_TITLE"));
+  setWindowTitle(tr("GEOM_POINT_TITLE"));
 
-  QGroupBox* aFrame = new QGroupBox( 1, Qt::Horizontal, this );
-  aFrame->setInsideMargin( 0 );
+  QFrame* aFrame = new QFrame( this );
+  aFrame->setContentsMargins( 0, 0, 0, 0 );
   aFrame->setFrameStyle( QFrame::NoFrame );
-
+  QHBoxLayout* aFrameLayout = new QHBoxLayout( aFrame );
+  
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_POINTS"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image3);
-  RadioButton3->setPixmap(image1);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image3);
+  RadioButton3->setIcon(image1);
 
   GroupXYZ = new DlgRef_3Spin( aFrame, "GroupXYZ" );
   GroupXYZ->GroupBox1->setTitle(tr("GEOM_COORDINATES"));
   GroupXYZ->TextLabel1->setText(tr("GEOM_X"));
   GroupXYZ->TextLabel2->setText(tr("GEOM_Y"));
   GroupXYZ->TextLabel3->setText(tr("GEOM_Z"));
+  aFrameLayout->addWidget(GroupXYZ);
 
   GroupOnCurve = new DlgRef_1Sel1Spin( aFrame, "GroupOnCurve" );
   GroupOnCurve->GroupBox1->setTitle(tr("GEOM_PARAM_POINT"));
   GroupOnCurve->TextLabel1->setText(tr("GEOM_EDGE"));
   GroupOnCurve->TextLabel2->setText(tr("GEOM_PARAMETER"));
-  GroupOnCurve->PushButton1->setPixmap(image2);
+  GroupOnCurve->PushButton1->setIcon(image2);
+  aFrameLayout->addWidget(GroupOnCurve);
 
   GroupRefPoint = new DlgRef_1Sel3Spin( aFrame, "GoupRefPoint" );
   GroupRefPoint->GroupBox1->setTitle(tr("GEOM_REF_POINT"));
   GroupRefPoint->TextLabel1->setText(tr("GEOM_POINT"));
-  GroupRefPoint->PushButton1->setPixmap(image2);
+  GroupRefPoint->PushButton1->setIcon(image2);
   GroupRefPoint->TextLabel2->setText(tr("GEOM_DX"));
   GroupRefPoint->TextLabel3->setText(tr("GEOM_DY"));
   GroupRefPoint->TextLabel4->setText(tr("GEOM_DZ"));
+  aFrameLayout->addWidget(GroupRefPoint);
 
-  Layout1->addWidget( aFrame, 2, 0 );
+  gridLayout1->addWidget( aFrame, 2, 0 );
   /***************************************************************/
 
-  myCoordGrp = new QGroupBox( 2, Qt::Horizontal, tr( "GEOM_COORDINATES" ), aFrame );
-  new QLabel( tr( "GEOM_X" ), myCoordGrp );
+  myCoordGrp = new QGroupBox( tr( "GEOM_COORDINATES" ), aFrame );
+  QGridLayout* myCoordGrpLayout = new QGridLayout( myCoordGrp );
+  myCoordGrpLayout->addWidget( new QLabel( tr( "GEOM_X" ), myCoordGrp ), 0, 0 );
   myX = new QLineEdit( myCoordGrp );
-  new QLabel( tr( "GEOM_Y" ), myCoordGrp );
+  myCoordGrpLayout->addWidget( myX, 0, 1 );
+  myCoordGrpLayout->addWidget( new QLabel( tr( "GEOM_Y" ), myCoordGrp ), 1, 0 );
   myY = new QLineEdit( myCoordGrp );
-  new QLabel( tr( "GEOM_Z" ), myCoordGrp );
+  myCoordGrpLayout->addWidget( myY, 1, 1 );
+  myCoordGrpLayout->addWidget( new QLabel( tr( "GEOM_Z" ), myCoordGrp ), 2, 0 );
   myZ = new QLineEdit( myCoordGrp );
+  myCoordGrpLayout->addWidget( myZ, 2, 1 );
 
   myX->setReadOnly( true );
   myY->setReadOnly( true );
@@ -118,7 +132,7 @@ BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   myZ->setEnabled( false );
 
   QPalette aPal = myX->palette();
-  aPal.setColor( QPalette::Disabled, QColorGroup::Text, QColor( 0, 0, 0 ) ) ;
+  aPal.setColor( QPalette::Disabled, QPalette::Text, QColor( 0, 0, 0 ) ) ;
   myX->setPalette( aPal );
   myY->setPalette( aPal );
   myZ->setPalette( aPal );
@@ -206,7 +220,7 @@ void BasicGUI_PointDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));  
   
-  initName( tr("GEOM_VERTEX") );
+  initName( tr("GEOM_VERTEX").toStdString().c_str() );
   
   ConstructorsClicked( 0 );
 }

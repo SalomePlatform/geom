@@ -36,9 +36,7 @@
 #include "OCCViewer_ViewModel.h"
 #include "OCCViewer_ViewManager.h"
 #include "OCCViewer_ViewPort3d.h"
-#include "utilities.h"
 
-#include <Precision.hxx>
 #include <BRep_Tool.hxx>
 #include <ProjLib.hxx>
 #include <ElSLib.hxx>
@@ -54,6 +52,8 @@
 #include "BasicGUI_PlaneDlg.h"        // Method PLANE
 #include "BasicGUI_WorkingPlaneDlg.h" // Method WORKING PLANE
 #include "BasicGUI_MarkerDlg.h"       // Method REPAIR
+
+#include <QMouseEvent>
 
 using namespace std;
 
@@ -137,9 +137,9 @@ bool BasicGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWin
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
 
   // Create Point dialog, OCC viewer 
-  if ( aDlg && aDlg->isA( "BasicGUI_PointDlg" ) &&
+  if ( aDlg && ( QString(aDlg->metaObject()->className()).compare("BasicGUI_PointDlg") == 0) &&
        theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
-       pe->state() != Qt::ControlButton )
+       pe->modifiers() != Qt::ControlModifier )
   {
     BasicGUI_PointDlg* aPntDlg = (BasicGUI_PointDlg*) aDlg;
     if ( aPntDlg->acceptMouseEvent() )
@@ -151,7 +151,7 @@ bool BasicGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWin
       gp_Pnt aPnt;    
 
       ic->InitSelected();
-      if ( pe->state() == Qt::ShiftButton )
+      if ( pe->modifiers() == Qt::ShiftModifier )
         ic->ShiftSelect();  // Append selection
       else
         ic->Select();       // New selection

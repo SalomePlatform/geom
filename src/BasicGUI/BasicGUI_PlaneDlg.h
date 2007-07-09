@@ -31,9 +31,10 @@
 #include "GEOM_BasicGUI.hxx"
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel1Spin.h"
-#include "DlgRef_2Sel1Spin.h"
-#include "DlgRef_3Sel1Spin.h"
+
+class DlgRef_1Sel1Spin;
+class DlgRef_2Sel1Spin;
+class DlgRef_3Sel1Spin;
 
 //=================================================================================
 // class    : BasicGUI_PlaneDlg
@@ -45,7 +46,7 @@ class GEOM_BASICGUI_EXPORT BasicGUI_PlaneDlg : public GEOMBase_Skeleton
 
 public:
     BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+		       const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~BasicGUI_PlaneDlg();
 
 protected:

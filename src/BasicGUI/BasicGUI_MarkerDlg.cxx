@@ -29,16 +29,17 @@
 #include "BasicGUI_MarkerDlg.h"
 #include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qlabel.h>
+#include <QLabel>
 
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 // OCCT Includes
 #include <BRep_Tool.hxx>
@@ -59,65 +60,95 @@
 //=================================================================================
 BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* theParent )
   : GEOMBase_Skeleton(theGeometryGUI, theParent, "BasicGUI_MarkerDlg", false,
-                      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                      Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap iconCS1   ( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_MARKER" ) ) );
   QPixmap iconCS2   ( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_MARKER2" ) ) );
   QPixmap iconCS3   ( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_MARKER3" ) ) );
   QPixmap iconSelect( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption( tr( "CAPTION" ) );
+  setWindowTitle( tr( "CAPTION" ) );
 
   GroupConstructors->setTitle( tr( "LOCALCS" ) );
-  RadioButton1->setPixmap( iconCS1 );
-  RadioButton2->setPixmap( iconCS2 );
-  RadioButton3->setPixmap( iconCS3 );
+  RadioButton1->setIcon( iconCS1 );
+  RadioButton2->setIcon( iconCS2 );
+  RadioButton3->setIcon( iconCS3 );
 
-  Group1 = new DlgRef_1Sel_QTD(this, "Group1");
+  Group1 = new Ui::DlgRef_1Sel_QTD();
+  QWidget* aGroup1Widget = new QWidget(this);
+  Group1->setupUi(aGroup1Widget);
+  aGroup1Widget->setObjectName("Group1");
+
   Group1->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   Group1->TextLabel1->setText(tr("GEOM_OBJECT"));
-  Group1->PushButton1->setPixmap(iconSelect);
+  Group1->PushButton1->setIcon(iconSelect);
 
-  Group2 = new DlgRef_3Sel_QTD(this, "Group2");
+  Group2 = new Ui::DlgRef_3Sel_QTD();
+  QWidget* aGroup2Widget = new QWidget(this);
+  Group2->setupUi(aGroup2Widget);
+  aGroup2Widget->setObjectName("Group2");
+
   Group2->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   Group2->TextLabel1->setText(tr("GEOM_POINT"));
   Group2->TextLabel2->setText(tr("XDIR"));
   Group2->TextLabel3->setText(tr("YDIR"));
-  Group2->PushButton1->setPixmap(iconSelect);
-  Group2->PushButton2->setPixmap(iconSelect);
-  Group2->PushButton3->setPixmap(iconSelect);
+  Group2->PushButton1->setIcon(iconSelect);
+  Group2->PushButton2->setIcon(iconSelect);
+  Group2->PushButton3->setIcon(iconSelect);
 
-  aMainGrp = new QGroupBox( 1, Qt::Horizontal, this );
+  aMainGrp = new QFrame( this );
   aMainGrp->setFrameStyle( QFrame::NoFrame );
-  aMainGrp->setInsideMargin( 0 );
+  aMainGrp->setContentsMargins( 0, 0, 0, 0 );
+  QHBoxLayout* aMainGrpLayout = new QHBoxLayout( aMainGrp );
+  
+  QGroupBox* anOriGrp = new QGroupBox( tr( "ORIGIN" ), aMainGrp );
+  QVBoxLayout* anOriGrpLayout = new QVBoxLayout( anOriGrp );
 
-  QGroupBox* anOriGrp = new QGroupBox( 1, Qt::Vertical, tr( "ORIGIN" ), aMainGrp );
-  new QLabel( tr( "GEOM_X" ), anOriGrp );
+  anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_X" ), anOriGrp ) );
   myData[ X ] = new DlgRef_SpinBox( anOriGrp );
-  new QLabel( tr( "GEOM_Y" ), anOriGrp );
+  anOriGrpLayout->addWidget( myData[ X ] );
+  anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_Y" ), anOriGrp ) );
   myData[ Y ] = new DlgRef_SpinBox( anOriGrp );
-  new QLabel( tr( "GEOM_Z" ), anOriGrp );
+  anOriGrpLayout->addWidget( myData[ Y ] );
+  anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_Z" ), anOriGrp ) );
   myData[ Z ] = new DlgRef_SpinBox( anOriGrp );
+  anOriGrpLayout->addWidget( myData[ Z ] );
 
-  QGroupBox* aXAxisGrp = new QGroupBox( 1, Qt::Vertical, tr( "XDIR" ), aMainGrp );
-  new QLabel( tr( "DX" ), aXAxisGrp );
+  aMainGrpLayout->addWidget( anOriGrp );
+
+  QGroupBox* aXAxisGrp = new QGroupBox( tr( "XDIR" ), aMainGrp );
+  QVBoxLayout* aXAxisGrpLayout = new QVBoxLayout( aXAxisGrp );
+
+  aXAxisGrpLayout->addWidget( new QLabel( tr( "DX" ), aXAxisGrp ) );
   myData[ DX1 ] = new DlgRef_SpinBox( aXAxisGrp );
-  new QLabel( tr( "DY" ), aXAxisGrp );
+  aXAxisGrpLayout->addWidget( myData[ DX1 ] );
+  aXAxisGrpLayout->addWidget( new QLabel( tr( "DY" ), aXAxisGrp ) );
   myData[ DY1 ] = new DlgRef_SpinBox( aXAxisGrp );
-  new QLabel( tr( "DZ" ), aXAxisGrp );
+  aXAxisGrpLayout->addWidget( myData[ DY1 ] );
+  aXAxisGrpLayout->addWidget( new QLabel( tr( "DZ" ), aXAxisGrp ) );
   myData[ DZ1 ] = new DlgRef_SpinBox( aXAxisGrp );
+  aXAxisGrpLayout->addWidget( myData[ DZ1 ] );
 
-  QGroupBox* anYAxisGrp = new QGroupBox( 1, Qt::Vertical, tr( "YDIR" ), aMainGrp );
-  new QLabel( tr( "DX" ), anYAxisGrp );
+  aMainGrpLayout->addWidget( aXAxisGrp );
+
+  QGroupBox* anYAxisGrp = new QGroupBox( tr( "YDIR" ), aMainGrp );
+  QVBoxLayout* anYAxisGrpLayout = new QVBoxLayout( anYAxisGrp );
+
+  anYAxisGrpLayout->addWidget( new QLabel( tr( "DX" ), anYAxisGrp ) );
   myData[ DX2 ] = new DlgRef_SpinBox( anYAxisGrp );
-  new QLabel( tr( "DY" ), anYAxisGrp );
+  anYAxisGrpLayout->addWidget( myData[ DX2 ] );
+  anYAxisGrpLayout->addWidget( new QLabel( tr( "DY" ), anYAxisGrp ) );
   myData[ DY2 ] = new DlgRef_SpinBox( anYAxisGrp );
-  new QLabel( tr( "DZ" ), anYAxisGrp );
+  anYAxisGrpLayout->addWidget( myData[ DY2 ] );
+  anYAxisGrpLayout->addWidget( new QLabel( tr( "DZ" ), anYAxisGrp ) );
   myData[ DZ2 ] = new DlgRef_SpinBox( anYAxisGrp );
+  anYAxisGrpLayout->addWidget( myData[ DZ2 ] );
 
-  Layout1->addWidget( aMainGrp, 2, 0 );
-  Layout1->addWidget( Group1, 2, 0 );
-  Layout1->addWidget( Group2, 2, 0 );
+  aMainGrpLayout->addWidget( anYAxisGrp );
+
+  gridLayout1->addWidget( aMainGrp, 2, 0 );
+  gridLayout1->addWidget( aGroup1Widget, 2, 0 );
+  gridLayout1->addWidget( aGroup2Widget, 2, 0 );
 
   setHelpFileName("local_coordinate_system.htm");
 
@@ -169,21 +200,21 @@ void BasicGUI_MarkerDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
 
-  initName( tr( "LCS_NAME" ) );
+  initName( tr( "LCS_NAME" ).toStdString().c_str() );
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
 
   for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter )
   {
-    anIter.data()->RangeStepAndValidator( COORD_MIN, COORD_MAX, step, 3 );
-    connect( anIter.data(), SIGNAL( valueChanged( double ) ),
+    anIter.value()->RangeStepAndValidator( COORD_MIN, COORD_MAX, step, 3 );
+    connect( anIter.value(), SIGNAL( valueChanged( double ) ),
              this, SLOT( onValueChanged( double ) ) );
   }
 
   myBlockPreview = true;
   for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter )
-    anIter.data()->SetValue( 0 );
+    anIter.value()->SetValue( 0 );
   myData[ DX1 ]->SetValue( 1 );
   myData[ DY2 ]->SetValue( 1 );
   myBlockPreview = false;
@@ -231,8 +262,8 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
     {
     case 0:
     {
-      Group1->hide();
-      Group2->hide();
+      ::qobject_cast<QWidget*>( Group1->gridLayout->parent() )->hide();
+      ::qobject_cast<QWidget*>( Group2->gridLayout->parent() )->hide();
       resize(0, 0);
       aMainGrp->show();
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
@@ -241,10 +272,10 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
     }
     case 1:
       {
-	Group2->hide();
+	::qobject_cast<QWidget*>( Group2->gridLayout->parent() )->hide();
 	aMainGrp->hide();
 	//PAL6669: resize(0, 0);
-	Group1->show();
+	::qobject_cast<QWidget*>( Group1->gridLayout->parent() )->show();
 
 	globalSelection( GEOM_ALLGEOM );
 	myEditCurrentArgument = Group1->LineEdit1;
@@ -254,9 +285,9 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
     case 2:
       {
 	aMainGrp->hide();
-	Group1->show();
+	::qobject_cast<QWidget*>( Group1->gridLayout->parent() )->show();
 	//PAL6669: resize(0, 0);
-	Group2->show();
+	::qobject_cast<QWidget*>( Group2->gridLayout->parent() )->show();
 
 	globalSelection( GEOM_POINT );
 	myEditCurrentArgument = Group2->LineEdit1;

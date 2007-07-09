@@ -31,12 +31,15 @@
 #include "GEOM_BasicGUI.hxx"
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel1Spin.h"
-#include "DlgRef_3Spin.h"
-#include "DlgRef_1Sel3Spin.h"
+
+class DlgRef_1Sel1Spin;
+class DlgRef_3Spin;
+class DlgRef_1Sel3Spin;
 
 class QLineEdit;
 class QGroupBox;
+
+class gp_Pnt;
 
 //=================================================================================
 // class    : BasicGUI_PointDlg
@@ -48,7 +51,7 @@ class GEOM_BASICGUI_EXPORT BasicGUI_PointDlg : public GEOMBase_Skeleton
 
 public:
     BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+		      const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
 
     ~BasicGUI_PointDlg();
 

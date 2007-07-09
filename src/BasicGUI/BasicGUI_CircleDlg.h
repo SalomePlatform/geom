@@ -31,10 +31,9 @@
 #include "GEOM_BasicGUI.hxx"
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1Spin.h"
 #include "DlgRef_3Sel_QTD.h"
 
-#include "BasicGUI.h"
+class DlgRef_2Sel1Spin;
 
 //=================================================================================
 // class    : BasicGUI_CircleDlg
@@ -46,7 +45,7 @@ class GEOM_BASICGUI_EXPORT BasicGUI_CircleDlg : public GEOMBase_Skeleton
 
 public:
     BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+		       const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~BasicGUI_CircleDlg();
 
 protected:
@@ -64,8 +63,8 @@ private:
 
     GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3;
 
-    DlgRef_2Sel1Spin* GroupPntVecR;
-    DlgRef_3Sel_QTD*  Group3Pnts;
+    DlgRef_2Sel1Spin*     GroupPntVecR;
+    Ui::DlgRef_3Sel_QTD*  Group3Pnts;
 
 private slots:
     void ClickOnOk();

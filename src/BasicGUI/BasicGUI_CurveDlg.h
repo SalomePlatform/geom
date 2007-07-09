@@ -32,8 +32,6 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_QTD.h"
 
-#include "BasicGUI.h"
-
 #include <list>
 
 //=================================================================================
@@ -46,7 +44,7 @@ class GEOM_BASICGUI_EXPORT BasicGUI_CurveDlg : public GEOMBase_Skeleton
 
 public:
     BasicGUI_CurveDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+		      const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~BasicGUI_CurveDlg();
 
 protected:
@@ -61,7 +59,7 @@ private :
     void Init();
     void enterEvent(QEvent* e);
 
-    DlgRef_1Sel_QTD* GroupPoints;
+    Ui::DlgRef_1Sel_QTD* GroupPoints;
     GEOM::ListOfGO_var myPoints;
     list<GEOM::GEOM_Object_var> myOrderedSel;//!< This list used for managing orderes selection
 

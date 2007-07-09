@@ -27,17 +27,18 @@
 //  $Header$
 
 #include "BasicGUI_CircleDlg.h"
+#include "DlgRef_2Sel1Spin.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qlabel.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 //=================================================================================
 // class    : BasicGUI_CircleDlg()
@@ -47,21 +48,21 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_CircleDlg::BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                       const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                       const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PV")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PNTS")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_CIRCLE_TITLE"));
+  setWindowTitle(tr("GEOM_CIRCLE_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_CIRCLE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image2);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image2);
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
   GroupPntVecR = new DlgRef_2Sel1Spin(this, "GroupPntVecR");
   GroupPntVecR->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
@@ -69,27 +70,31 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* par
   GroupPntVecR->TextLabel1->setText(tr("GEOM_CENTER_POINT"));
   GroupPntVecR->TextLabel2->setText(tr("GEOM_VECTOR"));
   GroupPntVecR->TextLabel3->setText(tr("GEOM_RADIUS"));
-  GroupPntVecR->PushButton1->setPixmap(image1);
-  GroupPntVecR->PushButton2->setPixmap(image1);
+  GroupPntVecR->PushButton1->setIcon(image1);
+  GroupPntVecR->PushButton2->setIcon(image1);
 
   GroupPntVecR->LineEdit1->setReadOnly( true );
   GroupPntVecR->LineEdit2->setReadOnly( true );
 
-  Group3Pnts = new DlgRef_3Sel_QTD(this, "Group3Pnts");
+  Group3Pnts = new Ui::DlgRef_3Sel_QTD();
+  QWidget* aGroup3PntsWidget = new QWidget(this);
+  Group3Pnts->setupUi(aGroup3PntsWidget);
+  aGroup3PntsWidget->setObjectName("Group3Pnts");
+
   Group3Pnts->GroupBox1->setTitle(tr("GEOM_3_POINTS"));
   Group3Pnts->TextLabel1->setText(tr("GEOM_POINT1"));
   Group3Pnts->TextLabel2->setText(tr("GEOM_POINT2"));
   Group3Pnts->TextLabel3->setText(tr("GEOM_POINT3"));
-  Group3Pnts->PushButton1->setPixmap(image1);
-  Group3Pnts->PushButton2->setPixmap(image1);
-  Group3Pnts->PushButton3->setPixmap(image1);
+  Group3Pnts->PushButton1->setIcon(image1);
+  Group3Pnts->PushButton2->setIcon(image1);
+  Group3Pnts->PushButton3->setIcon(image1);
 
   Group3Pnts->LineEdit1->setReadOnly( true );
   Group3Pnts->LineEdit2->setReadOnly( true );
   Group3Pnts->LineEdit3->setReadOnly( true );
 
-  Layout1->addWidget( GroupPntVecR, 2, 0 );
-  Layout1->addWidget( Group3Pnts, 2, 0 );
+  gridLayout1->addWidget( GroupPntVecR, 2, 0 );
+  gridLayout1->addWidget( aGroup3PntsWidget, 2, 0 );
   /***************************************************************/
 
   setHelpFileName("circle.htm");
@@ -152,9 +157,9 @@ void BasicGUI_CircleDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName( tr( "GEOM_CIRCLE" ) );
+  initName( tr( "GEOM_CIRCLE" ).toStdString().c_str() );
 
-  Group3Pnts->hide();
+  ::qobject_cast<QWidget*>( Group3Pnts->gridLayout->parent() )->hide();
   ConstructorsClicked( 0 );
 }
 
@@ -171,7 +176,7 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
   {
     case 0:
       {
-	Group3Pnts->hide();
+	::qobject_cast<QWidget*>( Group3Pnts->gridLayout->parent() )->hide();
 	resize(0, 0);
 	GroupPntVecR->show();
 	
@@ -184,7 +189,7 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
     {
       GroupPntVecR->hide();
       resize( 0, 0 );
-      Group3Pnts->show();
+      ::qobject_cast<QWidget*>( Group3Pnts->gridLayout->parent() )->show();
       
       myEditCurrentArgument = Group3Pnts->LineEdit1;
       Group3Pnts->LineEdit1->setText("");

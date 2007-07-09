@@ -34,7 +34,7 @@
 #include "DlgRef_1Sel_QTD.h"
 #include "DlgRef_3Sel_QTD.h"
 
-#include <qmap.h>
+#include <QMap>
 
 class DlgRef_SpinBox;
 
@@ -82,9 +82,9 @@ private:
   int                           myConstructorId;
   int                           myBlockPreview;
 
-  QGroupBox*                    aMainGrp;
-  DlgRef_1Sel_QTD*              Group1;
-  DlgRef_3Sel_QTD*              Group2;
+  QFrame*                       aMainGrp;
+  Ui::DlgRef_1Sel_QTD*          Group1;
+  Ui::DlgRef_3Sel_QTD*          Group2;
 
 };
 

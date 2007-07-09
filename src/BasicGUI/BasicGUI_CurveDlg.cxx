@@ -27,14 +27,13 @@
 
 #include "BasicGUI_CurveDlg.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
-
-#include <qlabel.h>
-
-#include "utilities.h"
 
 #include "SALOME_ListIteratorOfListIO.hxx"
 #include "SALOME_ListIO.hxx"
@@ -52,9 +51,8 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_CurveDlg::BasicGUI_CurveDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                     const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                     const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POLYLINE")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SPLINE")));
@@ -62,21 +60,25 @@ BasicGUI_CurveDlg::BasicGUI_CurveDlg(GeometryGUI* theGeometryGUI, QWidget* paren
 
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_CURVE_TITLE"));
+  setWindowTitle(tr("GEOM_CURVE_TITLE"));
 
   /***************************************************************/
-  RadioButton1->setPixmap( image0 );
-  RadioButton2->setPixmap( image3 );
-  RadioButton3->setPixmap( image2 );
+  RadioButton1->setIcon( image0 );
+  RadioButton2->setIcon( image3 );
+  RadioButton3->setIcon( image2 );
 
-  GroupPoints = new DlgRef_1Sel_QTD( this, "GroupPoints" );
+  GroupPoints = new Ui::DlgRef_1Sel_QTD();
+  QWidget* aGroupPointsWidget = new QWidget(this);
+  GroupPoints->setupUi(aGroupPointsWidget);
+  aGroupPointsWidget->setObjectName("GroupPoints");
+
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_NODES" ) );
   GroupPoints->TextLabel1->setText( tr("GEOM_POINTS") );
-  GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints->PushButton1->setIcon(image1);
 
   GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(aGroupPointsWidget, 2, 0);
   /***************************************************************/
 
   setHelpFileName("curve.htm");
@@ -123,7 +125,7 @@ void BasicGUI_CurveDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName( tr( "GEOM_CURVE" ) );
+  initName( tr( "GEOM_CURVE" ).toStdString().c_str() );
   ConstructorsClicked( 0 );
 }
 

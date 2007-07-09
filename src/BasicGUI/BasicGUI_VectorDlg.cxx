@@ -27,17 +27,18 @@
 //  $Header$
 
 #include "BasicGUI_VectorDlg.h"
+#include "DlgRef_3Spin1Check.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qlabel.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -49,27 +50,32 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_VectorDlg::BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                       const char* name, bool modal, WFlags fl)
+                                       const char* name, bool modal, Qt::WindowFlags fl)
   :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, fl)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_2P")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_DXYZ")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_VECTOR_TITLE"));
+  setWindowTitle(tr("GEOM_VECTOR_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_VECTOR"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image1);
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
-  GroupPoints = new DlgRef_2Sel_QTD(this, "GroupPoints");
+  GroupPoints = new Ui::DlgRef_2Sel_QTD();
+  QWidget* aGroupPointsWidget = new QWidget(this);
+  GroupPoints->setupUi(aGroupPointsWidget);
+  aGroupPointsWidget->setObjectName("GroupPoints");
+
   GroupPoints->GroupBox1->setTitle(tr("GEOM_POINTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_POINT_I").arg("1"));
   GroupPoints->TextLabel2->setText(tr("GEOM_POINT_I").arg("2"));
-  GroupPoints->PushButton1->setPixmap(image2);
-  GroupPoints->PushButton2->setPixmap(image2);
+  GroupPoints->PushButton1->setIcon(image2);
+  GroupPoints->PushButton2->setIcon(image2);
 
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
@@ -81,8 +87,8 @@ BasicGUI_VectorDlg::BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* par
   GroupDimensions->TextLabel3->setText(tr("GEOM_DZ"));
   GroupDimensions->CheckBox1->setText(tr("GEOM_REVERSE_VECTOR"));
 
-  Layout1->addWidget(GroupPoints, 2, 0);
-  Layout1->addWidget(GroupDimensions, 2, 0);
+  gridLayout1->addWidget(aGroupPointsWidget, 2, 0);
+  gridLayout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
   setHelpFileName("vector.htm");
@@ -157,7 +163,7 @@ void BasicGUI_VectorDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr("GEOM_VECTOR") );
+  initName( tr("GEOM_VECTOR").toStdString().c_str() );
 
   GroupDimensions->hide();
   ConstructorsClicked( 0 );
@@ -180,7 +186,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
       {
 	GroupDimensions->hide();
 	resize(0, 0);
-	GroupPoints->show();
+	::qobject_cast<QWidget*>( GroupPoints->gridLayout->parent() )->show();
 
 	myEditCurrentArgument = GroupPoints->LineEdit1;
 	GroupPoints->LineEdit1->setText("");
@@ -193,7 +199,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
       }
     case 1:
       {
-	GroupPoints->hide();
+	::qobject_cast<QWidget*>( GroupPoints->gridLayout->parent() )->hide();
 	resize( 0, 0 );
 	GroupDimensions->show();
 	

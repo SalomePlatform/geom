@@ -28,16 +28,15 @@
 
 #include "BasicGUI_LineDlg.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qlabel.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -49,32 +48,37 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_LineDlg::BasicGUI_LineDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                   const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                   const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_DLG_LINE_2P")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_LINE_TITLE"));
+  setWindowTitle(tr("GEOM_LINE_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_LINE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
-  GroupPoints = new DlgRef_2Sel_QTD(this, "GroupPoints");
+  GroupPoints = new Ui::DlgRef_2Sel_QTD();
+  QWidget* aGroupPointsWidget = new QWidget(this);
+  GroupPoints->setupUi(aGroupPointsWidget);
+  aGroupPointsWidget->setObjectName("GroupPoints");
+
   GroupPoints->GroupBox1->setTitle(tr("GEOM_POINTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_POINT_I").arg("1"));
   GroupPoints->TextLabel2->setText(tr("GEOM_POINT_I").arg("2"));
-  GroupPoints->PushButton1->setPixmap(image1);
-  GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->PushButton1->setIcon(image1);
+  GroupPoints->PushButton2->setIcon(image1);
 
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(aGroupPointsWidget, 2, 0);
   /***************************************************************/
 
   setHelpFileName("line.htm");
@@ -123,7 +127,7 @@ void BasicGUI_LineDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   
-  initName( tr("GEOM_LINE") );
+  initName( tr("GEOM_LINE").toStdString().c_str() );
 }
 
 

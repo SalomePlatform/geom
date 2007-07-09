@@ -26,17 +26,18 @@
 //  $Header$
 
 #include "BasicGUI_EllipseDlg.h"
+#include "DlgRef_2Sel2Spin.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qlabel.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -48,20 +49,21 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_EllipseDlg::BasicGUI_EllipseDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                         const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                         const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ELLIPSE_PV")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_ELLIPSE_TITLE"));
+  setWindowTitle(tr("GEOM_ELLIPSE_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_ELLIPSE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
   GroupPoints = new DlgRef_2Sel2Spin(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
@@ -69,13 +71,13 @@ BasicGUI_EllipseDlg::BasicGUI_EllipseDlg(GeometryGUI* theGeometryGUI, QWidget* p
   GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
   GroupPoints->TextLabel3->setText(tr("GEOM_RADIUS_MAJOR"));
   GroupPoints->TextLabel4->setText(tr("GEOM_RADIUS_MINOR"));
-  GroupPoints->PushButton1->setPixmap(image1);
-  GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->PushButton1->setIcon(image1);
+  GroupPoints->PushButton2->setIcon(image1);
 
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
   setHelpFileName("ellipse.htm");
@@ -142,7 +144,7 @@ void BasicGUI_EllipseDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName( tr( "GEOM_ELLIPSE" ) );
+  initName( tr( "GEOM_ELLIPSE" ).toStdString().c_str() );
 }
 
 

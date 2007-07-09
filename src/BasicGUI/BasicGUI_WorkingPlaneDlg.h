@@ -35,6 +35,8 @@
 #include "DlgRef_2Sel_QTD.h"
 #include "DlgRef_3Check_QTD.h"
 
+#include <gp_Ax3.hxx>
+
 class QCheckBox;
 
 //=================================================================================
@@ -47,7 +49,7 @@ class GEOM_BASICGUI_EXPORT BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
 
 public:
     BasicGUI_WorkingPlaneDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			      const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+			      const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0 );
     ~BasicGUI_WorkingPlaneDlg();
     virtual void closeEvent( QCloseEvent* e );
 
@@ -63,9 +65,9 @@ private:
 
     int aOriginType;
 
-    DlgRef_1Sel_QTD* Group1;
-    DlgRef_2Sel_QTD* Group2;
-    DlgRef_3Check_QTD* Group3;
+    Ui::DlgRef_1Sel_QTD* Group1;
+    Ui::DlgRef_2Sel_QTD* Group2;
+    Ui::DlgRef_3Check_QTD* Group3;
 
     QCheckBox* myReverseCB;
 

@@ -27,15 +27,20 @@
 //  $Header$
 
 #include "BasicGUI_PlaneDlg.h"
+#include "DlgRef_1Sel1Spin.h"
+#include "DlgRef_2Sel1Spin.h"
+#include "DlgRef_3Sel1Spin.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
 #include <TColStd_MapOfInteger.hxx>
-
-#include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -49,30 +54,29 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                     const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                     const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PLANE_PV")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PLANE_3PNTS")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PLANE_FACE")));
   QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_PLANE_TITLE"));
+  setWindowTitle(tr("GEOM_PLANE_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_PLANE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->setPixmap(image2);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image1);
+  RadioButton3->setIcon(image2);
 
   GroupPntDir = new DlgRef_2Sel1Spin(this, "GroupPointDirection");
   GroupPntDir->GroupBox1->setTitle(tr("GEOM_PLANE_PV"));
   GroupPntDir->TextLabel1->setText(tr("GEOM_POINT"));
   GroupPntDir->TextLabel2->setText(tr("GEOM_VECTOR"));
   GroupPntDir->TextLabel3->setText(tr("GEOM_PLANE_SIZE"));
-  GroupPntDir->PushButton1->setPixmap(image3);
-  GroupPntDir->PushButton2->setPixmap(image3);
+  GroupPntDir->PushButton1->setIcon(image3);
+  GroupPntDir->PushButton2->setIcon(image3);
   GroupPntDir->LineEdit1->setReadOnly( true );
   GroupPntDir->LineEdit2->setReadOnly( true );
 
@@ -82,9 +86,9 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   Group3Pnts->TextLabel2->setText(tr("GEOM_POINT2"));
   Group3Pnts->TextLabel3->setText(tr("GEOM_POINT3"));
   Group3Pnts->TextLabel4->setText(tr("GEOM_PLANE_SIZE"));
-  Group3Pnts->PushButton1->setPixmap(image3);
-  Group3Pnts->PushButton2->setPixmap(image3);
-  Group3Pnts->PushButton3->setPixmap(image3);
+  Group3Pnts->PushButton1->setIcon(image3);
+  Group3Pnts->PushButton2->setIcon(image3);
+  Group3Pnts->PushButton3->setIcon(image3);
 
   Group3Pnts->LineEdit1->setReadOnly( true );
   Group3Pnts->LineEdit2->setReadOnly( true );
@@ -94,13 +98,13 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   GroupFace->GroupBox1->setTitle(tr("GEOM_FACE_OR_LCS"));
   GroupFace->TextLabel1->setText(tr("GEOM_SELECTION"));
   GroupFace->TextLabel2->setText(tr("GEOM_PLANE_SIZE"));
-  GroupFace->PushButton1->setPixmap(image3);
+  GroupFace->PushButton1->setIcon(image3);
 
   GroupFace->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPntDir, 2, 0);
-  Layout1->addWidget(Group3Pnts, 2, 0);
-  Layout1->addWidget(GroupFace, 2, 0);
+  gridLayout1->addWidget(GroupPntDir, 2, 0);
+  gridLayout1->addWidget(Group3Pnts, 2, 0);
+  gridLayout1->addWidget(GroupFace, 2, 0);
   /***************************************************************/
 
   setHelpFileName("plane.htm");
@@ -178,7 +182,7 @@ void BasicGUI_PlaneDlg::Init()
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr( "GEOM_PLANE" ) );
+  initName( tr( "GEOM_PLANE" ).toStdString().c_str() );
 
   Group3Pnts->hide();
   GroupFace->hide();

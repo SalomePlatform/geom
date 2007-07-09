@@ -31,7 +31,6 @@
 #include "GEOM_BasicGUI.hxx"
 
 #include "GEOMGUI.h"
-#include "GEOMBase.h"
 #include <V3d_View.hxx>
 
 //=================================================================================
