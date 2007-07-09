@@ -31,9 +31,8 @@
 #include "GenerationGUI.h"
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1Spin2Check.h"
 
-#include <gp_Dir.hxx>
+class DlgRef_2Sel1Spin2Check;
 
 //=================================================================================
 // class    : GenerationGUI_RevolDlg
@@ -45,7 +44,7 @@ class GENERATIONGUI_EXPORT GenerationGUI_RevolDlg : public GEOMBase_Skeleton
 
 public:
     GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			   const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			   const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~GenerationGUI_RevolDlg();
 
 protected:

@@ -31,7 +31,8 @@
 #include "GenerationGUI.h"
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel5Spin.h"
+
+class DlgRef_1Sel5Spin;
 
 //=================================================================================
 // class    : GenerationGUI_FillingDlg
@@ -43,7 +44,7 @@ class GENERATIONGUI_EXPORT GenerationGUI_FillingDlg : public GEOMBase_Skeleton
 
 public:
     GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			     const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~GenerationGUI_FillingDlg();
 
 protected:

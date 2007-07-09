@@ -27,22 +27,19 @@
 //  $Header$
 
 #include "GenerationGUI_RevolDlg.h"
+#include "DlgRef_2Sel1Spin2Check.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <gp_Lin.hxx>
-#include <BRepAdaptor_Curve.hxx>
-#include <BRepPrimAPI_MakeRevol.hxx>
 #include <TopExp_Explorer.hxx>
 #include "GEOMImpl_Types.hxx"
-
-#include <qlabel.h>
-#include <qcheckbox.h>
-
-#include "utilities.h"
 
 //=================================================================================
 // class    : GenerationGUI_RevolDlg()
@@ -52,20 +49,21 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                               const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                               const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_REVOL")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_REVOLUTION_TITLE"));
+  setWindowTitle(tr("GEOM_REVOLUTION_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_REVOLUTION"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
   GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
   GroupPoints->CheckButton1->hide();
@@ -73,13 +71,13 @@ GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWid
   GroupPoints->TextLabel1->setText(tr("GEOM_OBJECT"));
   GroupPoints->TextLabel2->setText(tr("GEOM_AXIS"));
   GroupPoints->TextLabel3->setText(tr("GEOM_ANGLE"));
-  GroupPoints->PushButton1->setPixmap(image1);
-  GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->PushButton1->setIcon(image1);
+  GroupPoints->PushButton2->setIcon(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
   GroupPoints->CheckButton2->setText(tr("GEOM_REVERSE"));
 
-  Layout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
   setHelpFileName("revolution.htm");
@@ -135,7 +133,7 @@ void GenerationGUI_RevolDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName(tr("GEOM_REVOLUTION"));
+  initName(tr("GEOM_REVOLUTION").toStdString().c_str());
 
   globalSelection( GEOM_ALLSHAPES );
 }

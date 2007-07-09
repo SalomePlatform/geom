@@ -27,27 +27,19 @@
 //  $Header$
 
 #include "GenerationGUI_FillingDlg.h"
+#include "DlgRef_1Sel5Spin.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <GeomFill_SectionGenerator.hxx>
-#include <GeomFill_Line.hxx>
-#include <GeomFill_AppSurf.hxx>
-#include <Geom_BSplineSurface.hxx>
-#include <Geom_TrimmedCurve.hxx>
-#include <BRepBuilderAPI_MakeFace.hxx>
-#include <TopExp_Explorer.hxx>
 #include <TopoDS_Iterator.hxx>
-#include <BRep_Tool.hxx>
-#include <Precision.hxx>
 #include "GEOMImpl_Types.hxx"
-
-#include <qlabel.h>
-
-#include "utilities.h"
 
 //=================================================================================
 // class    : GenerationGUI_FillingDlg()
@@ -57,20 +49,21 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 GenerationGUI_FillingDlg::GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                                   const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal,
-                     WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                                   const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_FILLING")));
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_FILLING_TITLE"));
+  setWindowTitle(tr("GEOM_FILLING_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_FILLING"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
   GroupPoints = new DlgRef_1Sel5Spin(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
@@ -80,10 +73,10 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, 
   GroupPoints->TextLabel4->setText(tr("GEOM_FILLING_NB_ITER"));
   GroupPoints->TextLabel5->setText(tr("GEOM_FILLING_MAX_DEG"));
   GroupPoints->TextLabel6->setText(tr("GEOM_FILLING_TOL_3D"));
-  GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints->PushButton1->setIcon(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
   setHelpFileName("filling.htm");
@@ -157,7 +150,7 @@ void GenerationGUI_FillingDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName(tr("GEOM_FILLING"));
+  initName(tr("GEOM_FILLING").toStdString().c_str());
 }
 
 

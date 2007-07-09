@@ -31,8 +31,9 @@
 #include "GenerationGUI.h"
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1Spin2Check.h"
 #include "DlgRef_3Sel_QTD.h"
+
+class DlgRef_2Sel1Spin2Check;
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg
@@ -44,7 +45,7 @@ class GENERATIONGUI_EXPORT GenerationGUI_PrismDlg : public GEOMBase_Skeleton
 
 public:
     GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			   const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			   const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~GenerationGUI_PrismDlg();
 
 protected:
@@ -68,7 +69,7 @@ private :
     bool myOkPnt2;
 
     DlgRef_2Sel1Spin2Check* GroupPoints;
-    DlgRef_3Sel_QTD* GroupPoints2; // for second layout for extrusion using 2 points
+    Ui::DlgRef_3Sel_QTD* GroupPoints2; // for second layout for extrusion using 2 points
 
 private slots:
     void ClickOnOk();

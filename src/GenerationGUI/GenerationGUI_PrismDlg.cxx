@@ -27,21 +27,18 @@
 //  $Header$
 
 #include "GenerationGUI_PrismDlg.h"
+#include "DlgRef_2Sel1Spin2Check.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <BRepPrimAPI_MakePrism.hxx>
-#include <BRepAdaptor_Curve.hxx>
-#include <gp_Lin.hxx>
 #include "GEOMImpl_Types.hxx"
-
-#include <qlabel.h>
-#include <qcheckbox.h>
-
-#include "utilities.h"
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg()
@@ -51,22 +48,21 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                               const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                               const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PRISM")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PRISM_2P")));
 
-  setCaption(tr("GEOM_EXTRUSION_TITLE"));
+  setWindowTitle(tr("GEOM_EXTRUSION_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_EXTRUSION"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image2);
-  //RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image2);
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
   GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
   GroupPoints->CheckButton1->hide();
@@ -74,23 +70,27 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWid
   GroupPoints->TextLabel1->setText(tr("GEOM_BASE"));
   GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
   GroupPoints->TextLabel3->setText(tr("GEOM_HEIGHT"));
-  GroupPoints->PushButton1->setPixmap(image1);
-  GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->PushButton1->setIcon(image1);
+  GroupPoints->PushButton2->setIcon(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
   GroupPoints->CheckButton2->setText(tr("GEOM_REVERSE"));
 
-  GroupPoints2 = new DlgRef_3Sel_QTD(this, "GroupPoints2");
+  GroupPoints2 = new Ui::DlgRef_3Sel_QTD();
+  QWidget* aGroupPoints2Widget = new QWidget(this);
+  GroupPoints2->setupUi(aGroupPoints2Widget);
+  aGroupPoints2Widget->setObjectName("GroupPoints2");
+
   GroupPoints2->GroupBox1->setTitle(tr("GEOM_EXTRUSION_BSV_2P"));
   GroupPoints2->TextLabel1->setText(tr("GEOM_BASE"));
   GroupPoints2->TextLabel2->setText(tr("GEOM_POINT_I").arg("1"));
   GroupPoints2->TextLabel3->setText(tr("GEOM_POINT_I").arg("2"));
-  GroupPoints2->PushButton1->setPixmap(image1);
-  GroupPoints2->PushButton2->setPixmap(image1);
-  GroupPoints2->PushButton3->setPixmap(image1);
+  GroupPoints2->PushButton1->setIcon(image1);
+  GroupPoints2->PushButton2->setIcon(image1);
+  GroupPoints2->PushButton3->setIcon(image1);
 
-  Layout1->addWidget(GroupPoints, 2, 0);
-  Layout1->addWidget(GroupPoints2, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(aGroupPoints2Widget, 2, 0);
   /***************************************************************/
 
   setHelpFileName("extrusion.htm");
@@ -166,7 +166,7 @@ void GenerationGUI_PrismDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName(tr("GEOM_EXTRUSION"));
+  initName(tr("GEOM_EXTRUSION").toStdString().c_str());
 
   globalSelection( GEOM_ALLSHAPES );
   ConstructorsClicked(0);
@@ -187,7 +187,7 @@ void GenerationGUI_PrismDlg::ConstructorsClicked(int constructorId)
       {
 	globalSelection( GEOM_POINT );
 
-	GroupPoints2->hide();
+	::qobject_cast<QWidget*>( GroupPoints2->gridLayout->parent() )->hide();
 	resize(0, 0);
 	GroupPoints->show();
 	
@@ -210,7 +210,7 @@ void GenerationGUI_PrismDlg::ConstructorsClicked(int constructorId)
       {
 	GroupPoints->hide();
 	resize(0, 0);
-	GroupPoints2->show();
+	::qobject_cast<QWidget*>( GroupPoints2->gridLayout->parent() )->show();
 	
 	myEditCurrentArgument = GroupPoints2->LineEdit1;
 	GroupPoints2->LineEdit1->setText("");
