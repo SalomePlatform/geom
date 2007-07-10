@@ -27,23 +27,25 @@
 //  $Header$
 
 #include "EntityGUI_SubShapeDlg.h"
-#include "GEOM_Displayer.h"
+
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
 
 #include "SUIT_Desktop.h"
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
+#include "SUIT_ViewManager.h"
+#include "SUIT_ViewWindow.h"
 #include "OCCViewer_ViewModel.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
-#include "SALOME_ListIteratorOfListIO.hxx"
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
 
-#include <qmessagebox.h>
-#include <qlabel.h>
-#include <qcombobox.h>
+#include <QMessageBox>
 
 //=================================================================================
 // class    : EntityGUI_SubShapeDlg
@@ -53,29 +55,35 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                             const char* name, bool modal, WFlags fl)
+                                             const char* name, bool modal, Qt::WindowFlags fl)
   :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, fl)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUBSHAPE")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_SUBSHAPE_TITLE"));
+  setWindowTitle(tr("GEOM_SUBSHAPE_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_SUB_SHAPE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
-  GroupPoints = new DlgRef_1Sel1Check1List_QTD(this, "GroupPoints");
+  GroupPoints = new Ui::DlgRef_1Sel1Check1List_QTD();
+  QWidget* aGroupPointsWidget = new QWidget(this);
+  GroupPoints->setupUi(aGroupPointsWidget);
+  aGroupPointsWidget->setObjectName("GroupPoints");
+
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
   GroupPoints->TextLabel2->setText(tr("GEOM_SUBSHAPE_TYPE"));
   GroupPoints->CheckButton1->setText(tr("GEOM_SUBSHAPE_SELECT"));
-  GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints->PushButton1->setIcon(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  gridLayout1->addWidget(aGroupPointsWidget, 1, 0);
   /***************************************************************/
 
   setHelpFileName("explode.htm");
@@ -106,15 +114,15 @@ void EntityGUI_SubShapeDlg::Init()
   myWithShape = true;
 
   /* type for sub shape selection */
-  GroupPoints->ComboBox1->insertItem("Compound");
-  GroupPoints->ComboBox1->insertItem("Compsolid");
-  GroupPoints->ComboBox1->insertItem("Solid");
-  GroupPoints->ComboBox1->insertItem("Shell");
-  GroupPoints->ComboBox1->insertItem("Face");
-  GroupPoints->ComboBox1->insertItem("Wire");
-  GroupPoints->ComboBox1->insertItem("Edge");
-  GroupPoints->ComboBox1->insertItem("Vertex");
-  GroupPoints->ComboBox1->insertItem("Shape");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compound");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compsolid");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Solid");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shell");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Face");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Wire");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Edge");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Vertex");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shape");
 
   if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
       != OCCViewer_Viewer::Type())
@@ -227,7 +235,7 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
   GroupPoints->LineEdit1->setText( aString );
 
 
-  int SelectedShapeType = GroupPoints->ComboBox1->currentItem();
+  int SelectedShapeType = GroupPoints->ComboBox1->currentIndex();
   int count = GroupPoints->ComboBox1->count();
 
   if ( myWithShape )
@@ -250,7 +258,7 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
   {
     if ( myWithShape == false )
     {
-      GroupPoints->ComboBox1->insertItem( "Shape" );
+      GroupPoints->ComboBox1->insertItem( GroupPoints->ComboBox1->count(), "Shape" );
       myWithShape = true;
     }
   }
@@ -273,16 +281,16 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
     {
       if ( myShape.ShapeType() != TopAbs_COMPOUND )
       {
-        GroupPoints->ComboBox1->setCurrentItem( 0 );
+        GroupPoints->ComboBox1->setCurrentIndex( 0 );
         ComboTextChanged();
       }
     }
     else
-      GroupPoints->ComboBox1->setCurrentItem(count1 - count + SelectedShapeType);
+      GroupPoints->ComboBox1->setCurrentIndex(count1 - count + SelectedShapeType);
   }
   else
   {
-    GroupPoints->ComboBox1->setCurrentItem( 0 );
+    GroupPoints->ComboBox1->setCurrentIndex( 0 );
     ComboTextChanged();
   }
 
@@ -367,26 +375,26 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
   myShape.Nullify();
   myEditCurrentArgument->setText("");
 
-  int SelectedShapeType = GroupPoints->ComboBox1->currentItem();
+  int SelectedShapeType = GroupPoints->ComboBox1->currentIndex();
   int count = GroupPoints->ComboBox1->count();
   if ( myWithShape )
     count = count - 1;
 
   /* type for sub shape selection */
   GroupPoints->ComboBox1->clear();
-  GroupPoints->ComboBox1->insertItem("Compound");
-  GroupPoints->ComboBox1->insertItem("Compsolid");
-  GroupPoints->ComboBox1->insertItem("Solid");
-  GroupPoints->ComboBox1->insertItem("Shell");
-  GroupPoints->ComboBox1->insertItem("Face");
-  GroupPoints->ComboBox1->insertItem("Wire");
-  GroupPoints->ComboBox1->insertItem("Edge");
-  GroupPoints->ComboBox1->insertItem("Vertex");
-  GroupPoints->ComboBox1->insertItem("Shape");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compound");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compsolid");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Solid");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shell");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Face");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Wire");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Edge");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Vertex");
+  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shape");
   
   myWithShape = true;
   
-  GroupPoints->ComboBox1->setCurrentItem( 8 - count + SelectedShapeType );
+  GroupPoints->ComboBox1->setCurrentIndex( 8 - count + SelectedShapeType );
   ComboTextChanged();
 
   updateButtonState();
@@ -488,7 +496,7 @@ bool EntityGUI_SubShapeDlg::isAllSubShapes() const
 //=================================================================================
 int EntityGUI_SubShapeDlg::shapeType() const
 {
-  int type = GroupPoints->ComboBox1->currentItem();
+  int type = GroupPoints->ComboBox1->currentIndex();
 
   if (myObject->_is_nil())
     return type;

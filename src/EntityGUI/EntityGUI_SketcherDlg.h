@@ -36,36 +36,26 @@
 #include "EntityGUI_Point_QTD.h"
 #include "EntityGUI_Dir1_QTD.h"
 #include "EntityGUI_Dir2_QTD.h"
-
 #include "EntityGUI_1Sel_QTD.h"
-#include "EntityGUI_1Spin.h"
-#include "EntityGUI_2Spin.h"
-#include "EntityGUI_3Spin.h"
-#include "EntityGUI_4Spin.h"
 
-#include "EntityGUI.h"
-#include "GeometryGUI.h"
+class EntityGUI_1Spin;
+class EntityGUI_2Spin;
+class EntityGUI_3Spin;
+class EntityGUI_4Spin;
 
-#include <gp_Dir.hxx>
-
-#include <qwidget.h>
-#include <qgroupbox.h>
-#include <qlineedit.h>
-#include <qlayout.h>
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
+class GeometryGUI;
 
 //=================================================================================
 // class    : EntityGUI_Dlg
 // purpose  :
 //=================================================================================
-class GEOM_ENTITYGUI_EXPORT EntityGUI_SketcherDlg : public EntityGUI_Skeleton_QTD, public GEOMBase_Helper
+class GEOM_ENTITYGUI_EXPORT EntityGUI_SketcherDlg : public QDialog, public Ui::EntityGUI_Skeleton_QTD, public GEOMBase_Helper
 { 
     Q_OBJECT
 
 public:
     EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent = 0,
-			  const char* name = 0, bool modal = FALSE, WFlags fl = 0,
+			  const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0,
 			  const double lineWidth = 2.);
     ~EntityGUI_SketcherDlg();
 
@@ -106,11 +96,11 @@ private :
     Standard_Real myLastX1, myLastY1;
     Standard_Real myLastX2, myLastY2;
 
-    EntityGUI_Point_QTD* GroupPt;
-    EntityGUI_Dir1_QTD* GroupD1;
-    EntityGUI_Dir2_QTD* GroupD2;
+    Ui::EntityGUI_Point_QTD* GroupPt;
+    Ui::EntityGUI_Dir1_QTD* GroupD1;
+    Ui::EntityGUI_Dir2_QTD* GroupD2;
 
-    EntityGUI_1Sel_QTD* Group1Sel;
+    Ui::EntityGUI_1Sel_QTD* Group1Sel;
     EntityGUI_1Spin* Group1Spin;
     EntityGUI_2Spin* Group2Spin;
     EntityGUI_3Spin* Group3Spin;

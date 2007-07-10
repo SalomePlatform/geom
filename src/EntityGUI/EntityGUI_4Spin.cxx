@@ -28,33 +28,39 @@
 
 #include "EntityGUI_4Spin.h"
 
-#include <qlayout.h>
-#include <qspinbox.h>
-#include <qgroupbox.h>
+#include "DlgRef_SpinBox.h"
 
 /* 
  *  Constructs a EntityGUI_4Spin which is a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f' 
  */
-EntityGUI_4Spin::EntityGUI_4Spin(QWidget* parent,  const char* name, WFlags fl)
-  :EntityGUI_4Spin_QTD(parent, name, fl)
+EntityGUI_4Spin::EntityGUI_4Spin(QWidget* parent,  const char* name, Qt::WindowFlags fl)
+  :QWidget(parent, fl)
 {
-  SpinBox1->close(TRUE);
-  SpinBox2->close(TRUE);
-  SpinBox3->close(TRUE);
-  SpinBox4->close(TRUE);
+  setupUi(this);
+
+  setObjectName(name);
+
+  SpinBox1->setAttribute( Qt::WA_DeleteOnClose );
+  SpinBox1->close();
+  SpinBox2->setAttribute( Qt::WA_DeleteOnClose );
+  SpinBox2->close();
+  SpinBox3->setAttribute( Qt::WA_DeleteOnClose );
+  SpinBox3->close();
+  SpinBox4->setAttribute( Qt::WA_DeleteOnClose );
+  SpinBox4->close();
 
   SpinBox_DX = new DlgRef_SpinBox(GroupBox1, "SpinBox_DX");
-  Layout1->addWidget(SpinBox_DX, 0, 1);
+  gridLayout5->addWidget(SpinBox_DX, 0, 1);
 
   SpinBox_DY = new DlgRef_SpinBox(GroupBox1, "SpinBox_DY");
-  Layout1->addWidget(SpinBox_DY, 1, 1);
+  gridLayout5->addWidget(SpinBox_DY, 1, 1);
 
   SpinBox_DZ = new DlgRef_SpinBox(GroupBox1, "SpinBox_DZ");
-  Layout1->addWidget(SpinBox_DZ, 2, 1);
+  gridLayout5->addWidget(SpinBox_DZ, 2, 1);
 
   SpinBox_DS = new DlgRef_SpinBox(GroupBox1, "SpinBox_DS");
-  Layout1->addWidget(SpinBox_DS, 3, 1);
+  gridLayout5->addWidget(SpinBox_DS, 3, 1);
 }
 
 

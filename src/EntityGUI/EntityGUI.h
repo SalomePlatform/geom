@@ -34,8 +34,9 @@
 
 #include "SALOMEDSClient.hxx"
 
-#include <TopoDS_Shape.hxx>
 #include <AIS_Shape.hxx>
+
+class TopoDS_Shape;
 
 //=================================================================================
 // class    : EntityGUI

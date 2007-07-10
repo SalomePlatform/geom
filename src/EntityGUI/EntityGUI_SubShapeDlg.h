@@ -33,7 +33,6 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel1Check1List_QTD.h"
 
-
 //=================================================================================
 // class    : EntityGUI_SubShapeDlg
 // purpose  :
@@ -44,7 +43,7 @@ class GEOM_ENTITYGUI_EXPORT EntityGUI_SubShapeDlg : public GEOMBase_Skeleton
 
 public:
     EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			  const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~EntityGUI_SubShapeDlg();
 
 protected:
@@ -85,7 +84,7 @@ private:
 
     bool                                myWithShape;  
     
-    DlgRef_1Sel1Check1List_QTD*         GroupPoints;
+    Ui::DlgRef_1Sel1Check1List_QTD*     GroupPoints;
     ObjectList                          myResult;
 };
 

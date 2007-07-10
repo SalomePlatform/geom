@@ -28,20 +28,15 @@
 
 #include "EntityGUI.h"
 #include "GeometryGUI.h"
-#include "GEOM_AssemblyBuilder.h"
 
 #include "SUIT_Desktop.h"
-#include "SUIT_Session.h"
 #include "SUIT_ViewWindow.h"
 #include "OCCViewer_ViewModel.h"
 #include "OCCViewer_ViewManager.h"
 #include "SalomeApp_Study.h"
-#include "SalomeApp_Tools.h"
 #include "SalomeApp_Application.h"
 
-#include <TopoDS_Compound.hxx>
-#include <BRep_Builder.hxx>
-#include <TopExp_Explorer.hxx>
+#include <TopoDS_Shape.hxx>
 
 #include "EntityGUI_SketcherDlg.h" // Sketcher
 #include "EntityGUI_SubShapeDlg.h" // Method SUBSHAPE
@@ -161,15 +156,18 @@ void EntityGUI::EraseSimulationShape()
   if ( !app ) return;
 
   // get all view windows at the desktop
-  QPtrList<SUIT_ViewWindow> aWndLst = app->desktop()->windows();
+  QList<SUIT_ViewWindow*> aWndLst = app->desktop()->windows();
   //get all view windows, which belong to the active study
-  QPtrList<SUIT_ViewWindow> aWndLstAS;
+  QList<SUIT_ViewWindow*> aWndLstAS;
   SUIT_ViewWindow* vw;
-  for ( vw = aWndLst.first(); vw; vw = aWndLst.next() )
+
+  QListIterator<SUIT_ViewWindow*> itWL( aWndLst );
+  while ( itWL.hasNext() && (vw = itWL.next()) )
     if ( vw->getViewManager()->study() == app->activeStudy() )
       aWndLstAS.append( vw );
 
-  for ( vw = aWndLstAS.first(); vw; vw = aWndLstAS.next() ) {
+  QListIterator<SUIT_ViewWindow*> itWLAS( aWndLstAS );
+  while ( itWLAS.hasNext() && (vw = itWLAS.next()) ) {
     if ( vw->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
       OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(vw->getViewManager()))->getOCCViewer();
       Handle(AIS_InteractiveContext) ic = v3d->getAISContext();

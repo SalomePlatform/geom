@@ -28,25 +28,29 @@
 
 #include "EntityGUI_2Spin.h"
 
-#include <qlayout.h>
-#include <qspinbox.h>
-#include <qgroupbox.h>
+#include "DlgRef_SpinBox.h" 
 
 /* 
  *  Constructs a EntityGUI_2Spin which is a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f' 
  */
-EntityGUI_2Spin::EntityGUI_2Spin(QWidget* parent, const char* name, WFlags fl)
-  :EntityGUI_2Spin_QTD(parent, name, fl)
+EntityGUI_2Spin::EntityGUI_2Spin(QWidget* parent, const char* name, Qt::WindowFlags fl)
+  :QWidget(parent, fl)
 {
-  SpinBox1->close(TRUE);
-  SpinBox2->close(TRUE);
+  setupUi(this);
+
+  setObjectName(name);
+
+  SpinBox1->setAttribute( Qt::WA_DeleteOnClose );
+  SpinBox1->close();
+  SpinBox2->setAttribute( Qt::WA_DeleteOnClose );
+  SpinBox2->close();
 
   SpinBox_DX = new DlgRef_SpinBox(GroupBox1, "SpinBox_DX");
-  Layout1->addWidget(SpinBox_DX, 0, 1);
+  gridLayout3->addWidget(SpinBox_DX, 0, 1);
 
   SpinBox_DY = new DlgRef_SpinBox(GroupBox1, "SpinBox_DY");
-  Layout1->addWidget(SpinBox_DY, 1, 1);
+  gridLayout3->addWidget(SpinBox_DY, 1, 1);
 
 }
 

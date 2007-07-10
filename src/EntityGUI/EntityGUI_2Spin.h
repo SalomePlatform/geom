@@ -32,14 +32,15 @@
 #include "GEOM_EntityGUI.hxx"
 
 #include "EntityGUI_2Spin_QTD.h"
-#include "DlgRef_SpinBox.h"
 
-class GEOM_ENTITYGUI_EXPORT EntityGUI_2Spin : public EntityGUI_2Spin_QTD
+class DlgRef_SpinBox;
+
+class GEOM_ENTITYGUI_EXPORT EntityGUI_2Spin : public QWidget, public Ui::EntityGUI_2Spin_QTD
 { 
     Q_OBJECT
 
 public:
-    EntityGUI_2Spin(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
+    EntityGUI_2Spin(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = 0);
     ~EntityGUI_2Spin();
 
     DlgRef_SpinBox* SpinBox_DX;

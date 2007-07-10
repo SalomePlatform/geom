@@ -37,15 +37,6 @@ salomeinclude_HEADERS = \
 	GEOM_EntityGUI.hxx
 
 dist_libEntityGUI_la_SOURCES = EntityGUI.cxx \
-	EntityGUI_Skeleton_QTD.cxx \
-	EntityGUI_Point_QTD.cxx \
-	EntityGUI_Dir1_QTD.cxx \
-	EntityGUI_Dir2_QTD.cxx \
-	EntityGUI_1Sel_QTD.cxx \
-	EntityGUI_1Spin_QTD.cxx \
-	EntityGUI_2Spin_QTD.cxx \
-	EntityGUI_3Spin_QTD.cxx \
-	EntityGUI_4Spin_QTD.cxx \
 	EntityGUI_1Spin.cxx \
 	EntityGUI_2Spin.cxx \
 	EntityGUI_3Spin.cxx \
@@ -54,15 +45,6 @@ dist_libEntityGUI_la_SOURCES = EntityGUI.cxx \
 	EntityGUI_SubShapeDlg.cxx
 
 MOC_FILES = \
-	EntityGUI_Skeleton_QTD_moc.cxx \
-	EntityGUI_Point_QTD_moc.cxx \
-	EntityGUI_Dir1_QTD_moc.cxx \
-	EntityGUI_Dir2_QTD_moc.cxx \
-	EntityGUI_1Sel_QTD_moc.cxx \
-	EntityGUI_1Spin_QTD_moc.cxx \
-	EntityGUI_2Spin_QTD_moc.cxx \
-	EntityGUI_3Spin_QTD_moc.cxx \
-	EntityGUI_4Spin_QTD_moc.cxx \
 	EntityGUI_1Spin_moc.cxx \
 	EntityGUI_2Spin_moc.cxx \
 	EntityGUI_3Spin_moc.cxx \

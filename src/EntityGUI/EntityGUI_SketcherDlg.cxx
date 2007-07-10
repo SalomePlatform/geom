@@ -28,8 +28,16 @@
 
 #include "EntityGUI_SketcherDlg.h"
 #include "Sketcher_Profile.hxx"
-#include "GEOM_Displayer.h"
 #include "GEOMBase.h"
+
+#include "EntityGUI_1Spin.h"
+#include "EntityGUI_2Spin.h"
+#include "EntityGUI_3Spin.h"
+#include "EntityGUI_4Spin.h"
+
+#include "DlgRef_SpinBox.h"
+
+#include "GeometryGUI.h"
 
 #include "SUIT_Desktop.h"
 #include "SUIT_Session.h"
@@ -39,8 +47,7 @@
 #include "LightApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qpushbutton.h>
-#include <qlabel.h>
+#include <QKeyEvent>
 
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>
@@ -52,8 +59,6 @@
 
 #include "GEOMImpl_Types.hxx"
 
-#include "utilities.h"
-
 using namespace std;
 
 //=================================================================================
@@ -64,33 +69,43 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
-                                             const char* name, bool modal, WFlags fl,
+                                             const char* name, bool modal, Qt::WindowFlags fl,
 					     const double lineWidth)
-  :EntityGUI_Skeleton_QTD(parent, name, modal, WStyle_Customize |
-                          WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose),
+  :QDialog(parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint),
    myIsAllAdded( false ),
    GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
    myGeometryGUI( GUI ),
    myLineWidth( lineWidth )
 {
+  setupUi(this);
+
+  setModal( modal );
+  setAttribute( Qt::WA_DeleteOnClose );
+
   myGeometryGUI->SetActiveDialogBox(this);
 
-  if ( !name ) setName("EntityGUI_SketcherDlg");
+  if ( !name ) 
+    setObjectName("EntityGUI_SketcherDlg");
+  else
+    setObjectName(name);
 
   buttonCancel->setText(tr("GEOM_BUT_CANCEL"));
   buttonEnd->setText(tr("GEOM_BUT_END_SKETCH"));
   buttonClose->setText(tr("GEOM_BUT_CLOSE_SKETCH"));
   buttonHelp->setText(tr("GEOM_BUT_HELP"));
 
-  GroupVal->close(TRUE);
-  GroupDest2->close(TRUE);
-  GroupDest3->close(TRUE);
+  GroupVal->setAttribute( Qt::WA_DeleteOnClose );
+  GroupVal->close();
+  GroupDest2->setAttribute( Qt::WA_DeleteOnClose );
+  GroupDest2->close();
+  GroupDest3->setAttribute( Qt::WA_DeleteOnClose );
+  GroupDest3->close();
 
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_UNDO")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_REDO")));
 
-  setCaption(tr("GEOM_SKETCHER_TITLE"));
+  setWindowTitle(tr("GEOM_SKETCHER_TITLE"));
 
   GroupConstructors->setTitle(tr("GEOM_SKETCHER_EL"));
   RadioButton1->setText(tr("GEOM_SKETCHER_SEGMENT"));
@@ -101,39 +116,55 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
   RB_Dest2->setText(tr("GEOM_SKETCHER_DIR"));
 
   /***************************************************************/
-  GroupPt = new EntityGUI_Point_QTD(GroupDest, "GroupPt");
+  GroupPt = new Ui::EntityGUI_Point_QTD();
+  QWidget* aGroupPtWidget = new QWidget(GroupDest);
+  GroupPt->setupUi(aGroupPtWidget);
+  aGroupPtWidget->setObjectName("GroupPt");
+
   GroupPt->GroupPoint->setTitle(tr("GEOM_SKETCHER_POINT"));
   GroupPt->RB_Point1->setText(tr("GEOM_SKETCHER_ABS"));
   GroupPt->RB_Point2->setText(tr("GEOM_SKETCHER_REL"));
   GroupPt->RB_Point3->setText(tr("GEOM_SKETCHER_SEL"));
 
-  GroupD1 = new EntityGUI_Dir1_QTD(GroupDest, "GroupD1");
+  GroupD1 = new Ui::EntityGUI_Dir1_QTD();
+  QWidget* aGroupD1Widget = new QWidget(GroupDest);
+  GroupD1->setupUi(aGroupD1Widget);
+  aGroupD1Widget->setObjectName("GroupD1");
+
   GroupD1->GroupDir1->setTitle(tr("GEOM_SKETCHER_DIR"));
   GroupD1->RB_Dir11->setText(tr("GEOM_SKETCHER_ANGLE"));
   GroupD1->RB_Dir12->setText(tr("GEOM_SKETCHER_PER"));
   GroupD1->RB_Dir13->setText(tr("GEOM_SKETCHER_TAN"));
   GroupD1->RB_Dir14->setText(tr("GEOM_SKETCHER_VXVY"));
 
-  GroupD2 = new EntityGUI_Dir2_QTD(GroupDest, "GroupD2");
+  GroupD2 = new Ui::EntityGUI_Dir2_QTD();
+  QWidget* aGroupD2Widget = new QWidget(GroupDest);
+  GroupD2->setupUi(aGroupD2Widget);
+  aGroupD2Widget->setObjectName("GroupD2");
+
   GroupD2->GroupDir2->setTitle(tr("GEOM_SKETCHER_DIR"));
   GroupD2->RB_Dir21->setText(tr("GEOM_SKETCHER_LENGTH"));
   GroupD2->RB_Dir22->setText(tr("GEOM_SKETCHER_X"));
   GroupD2->RB_Dir23->setText(tr("GEOM_SKETCHER_Y"));
 
-  Group1Sel = new EntityGUI_1Sel_QTD(this, "Group1Sel");
+  Group1Sel = new Ui::EntityGUI_1Sel_QTD();
+  QWidget* aGroup1SelWidget = new QWidget(this);
+  Group1Sel->setupUi(aGroup1SelWidget);
+  aGroup1SelWidget->setObjectName("Group1Sel");
+
   Group1Sel->TextLabel1->setText(tr("GEOM_SKETCHER_POINT2"));
   Group1Sel->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
   Group1Sel->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
-  Group1Sel->PushButton1->setPixmap(image0);
-  Group1Sel->buttonUndo->setPixmap(image1);
-  Group1Sel->buttonRedo->setPixmap(image2);
+  Group1Sel->PushButton1->setIcon(image0);
+  Group1Sel->buttonUndo->setIcon(image1);
+  Group1Sel->buttonRedo->setIcon(image2);
   Group1Sel->LineEdit1->setReadOnly( true );
 
   Group1Spin = new EntityGUI_1Spin(this, "Group1Spin");
   Group1Spin->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
   Group1Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
-  Group1Spin->buttonUndo->setPixmap(image1);
-  Group1Spin->buttonRedo->setPixmap(image2);
+  Group1Spin->buttonUndo->setIcon(image1);
+  Group1Spin->buttonRedo->setIcon(image2);
   QWidget::setTabOrder(Group1Spin->SpinBox_DX , Group1Spin->buttonApply);
   QWidget::setTabOrder(Group1Spin->buttonApply, Group1Spin->buttonUndo);
   QWidget::setTabOrder(Group1Spin->buttonUndo , Group1Spin->buttonRedo);
@@ -141,8 +172,8 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
   Group2Spin = new EntityGUI_2Spin(this, "Group2Spin");
   Group2Spin->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
   Group2Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
-  Group2Spin->buttonUndo->setPixmap(image1);
-  Group2Spin->buttonRedo->setPixmap(image2);
+  Group2Spin->buttonUndo->setIcon(image1);
+  Group2Spin->buttonRedo->setIcon(image2);
   QWidget::setTabOrder(Group2Spin->SpinBox_DX , Group2Spin->SpinBox_DY);
   QWidget::setTabOrder(Group2Spin->SpinBox_DY , Group2Spin->buttonApply);
   QWidget::setTabOrder(Group2Spin->buttonApply, Group2Spin->buttonUndo);
@@ -151,8 +182,8 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
   Group3Spin = new EntityGUI_3Spin(this, "Group3Spin");
   Group3Spin->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
   Group3Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
-  Group3Spin->buttonUndo->setPixmap(image1);
-  Group3Spin->buttonRedo->setPixmap(image2);
+  Group3Spin->buttonUndo->setIcon(image1);
+  Group3Spin->buttonRedo->setIcon(image2);
   QWidget::setTabOrder(Group3Spin->SpinBox_DX , Group3Spin->SpinBox_DY);
   QWidget::setTabOrder(Group3Spin->SpinBox_DY , Group3Spin->SpinBox_DZ);
   QWidget::setTabOrder(Group3Spin->SpinBox_DZ , Group3Spin->buttonApply);
@@ -162,8 +193,8 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
   Group4Spin = new EntityGUI_4Spin(this, "Group4Spin");
   Group4Spin->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
   Group4Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
-  Group4Spin->buttonUndo->setPixmap(image1);
-  Group4Spin->buttonRedo->setPixmap(image2);
+  Group4Spin->buttonUndo->setIcon(image1);
+  Group4Spin->buttonRedo->setIcon(image2);
   QWidget::setTabOrder(Group4Spin->SpinBox_DX , Group4Spin->SpinBox_DY);
   QWidget::setTabOrder(Group4Spin->SpinBox_DY , Group4Spin->SpinBox_DZ);
   QWidget::setTabOrder(Group4Spin->SpinBox_DZ , Group4Spin->SpinBox_DS);
@@ -171,15 +202,15 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
   QWidget::setTabOrder(Group4Spin->buttonApply, Group4Spin->buttonUndo);
   QWidget::setTabOrder(Group4Spin->buttonUndo , Group4Spin->buttonRedo);
 
-  Layout5->addMultiCellWidget(GroupPt, 1, 1, 0, 1);
-  Layout5->addWidget(GroupD1, 1, 0);
-  Layout5->addWidget(GroupD2, 1, 1);
+  gridLayout4->addWidget(aGroupPtWidget, 1, 0, 1, 2);
+  gridLayout4->addWidget(aGroupD1Widget, 1, 0);
+  gridLayout4->addWidget(aGroupD2Widget, 1, 1);
 
-  Layout1->addWidget(Group1Sel, 2, 0);
-  Layout1->addWidget(Group1Spin, 2, 0);
-  Layout1->addWidget(Group2Spin, 2, 0);
-  Layout1->addWidget(Group3Spin, 2, 0);
-  Layout1->addWidget(Group4Spin, 2, 0);
+  gridLayout1->addWidget(aGroup1SelWidget, 2, 0);
+  gridLayout1->addWidget(Group1Spin, 2, 0);
+  gridLayout1->addWidget(Group2Spin, 2, 0);
+  gridLayout1->addWidget(Group3Spin, 2, 0);
+  gridLayout1->addWidget(Group4Spin, 2, 0);
   /***************************************************************/
 
   /* signals and slots connections */
@@ -272,7 +303,7 @@ bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
 {
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent* ke = (QKeyEvent*)event;
-    if (ke->key() == Key_Return) {
+    if (ke->key() == Qt::Key_Return) {
       if (object == Group1Spin->SpinBox_DX) {
         Group1Spin->buttonApply->animateClick();
         return true;
@@ -295,7 +326,7 @@ bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
     }
   }
 
-  return EntityGUI_Skeleton_QTD::eventFilter(object, event);
+  return QDialog::eventFilter(object, event);
 }
 
 
@@ -358,7 +389,7 @@ void EntityGUI_SketcherDlg::InitClick()
 {
   disconnect(myGeometryGUI->getApp()->selectionMgr(), 0, this, 0);
 
-  Group1Sel->hide();
+  ::qobject_cast<QWidget*>( Group1Sel->gridLayout->parent() )->hide();
   Group1Spin->hide();
   Group2Spin->hide();
   Group3Spin->hide();
@@ -377,14 +408,14 @@ void EntityGUI_SketcherDlg::TypeClicked(int constructorId)
   myConstructorId = constructorId;
   if ( myConstructorId == 0 )     // SEGMENT
   {
-    GroupD2->setEnabled(true);
+    ::qobject_cast<QWidget*>( GroupD2->gridLayout->parent() )->setEnabled(true);
     RB_Dest1->setEnabled(true);
     RB_Dest1->setChecked(true);
     DestClicked(1);
   }
   else if (  myConstructorId == 1 ) // ARC
   {
-    GroupD2->setEnabled(false);
+    ::qobject_cast<QWidget*>( GroupD2->gridLayout->parent() )->setEnabled(false);
     RB_Dest1->setEnabled(false);
     RB_Dest2->setChecked(true);
     DestClicked(0);
@@ -398,21 +429,21 @@ void EntityGUI_SketcherDlg::TypeClicked(int constructorId)
 //=================================================================================
 void EntityGUI_SketcherDlg::DestClicked( int constructorId )
 {
-  GroupPt->hide();
-  GroupD1->hide();
-  GroupD2->hide();
+  ::qobject_cast<QWidget*>( GroupPt->gridLayout->parent() )->hide();
+  ::qobject_cast<QWidget*>( GroupD1->gridLayout->parent() )->hide();
+  ::qobject_cast<QWidget*>( GroupD2->gridLayout->parent() )->hide();
 
   if ( constructorId == 1 )
   {  // Point
     GroupPt->RB_Point1->setChecked(true);
-    GroupPt->show();
+    ::qobject_cast<QWidget*>( GroupPt->gridLayout->parent() )->show();
     PointClicked(1);  // XY
   }
   else if (  constructorId == 0 )
   {  // Direction
     GroupD1->RB_Dir11->setChecked(true);
-    GroupD1->show();
-    GroupD2->show();
+    ::qobject_cast<QWidget*>( GroupD1->gridLayout->parent() )->show();
+    ::qobject_cast<QWidget*>( GroupD2->gridLayout->parent() )->show();
     Dir1Clicked(2);  // Angle
   }
 }
@@ -469,7 +500,7 @@ void EntityGUI_SketcherDlg::PointClicked(int constructorId)
       myEditCurrentArgument = Group1Sel->LineEdit1;
       connect(myGeometryGUI->getApp()->selectionMgr(),
 	      SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-      Group1Sel->show();
+      ::qobject_cast<QWidget*>( Group1Sel->gridLayout->parent() )->show();
       Group1Sel->buttonApply->setFocus();
       SelectionIntoArgument();
     }
@@ -720,16 +751,16 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
     // Verify validity of commands
     if ( myCommand.count() <= 2 )
     {
-      SUIT_MessageBox::error1( SUIT_Session::session()->activeApplication()->desktop(),
-			       tr( "GEOM_ERROR_STATUS" ), tr( "CANNOT_CLOSE" ), tr( "BUT_OK" ) );
+      SUIT_MessageBox::critical( SUIT_Session::session()->activeApplication()->desktop(),
+				 tr( "GEOM_ERROR_STATUS" ), tr( "CANNOT_CLOSE" ), tr( "BUT_OK" ) );
       return;
     }
 
     QString Command = myCommand.join( "" ) + GetNewCommand();
-    Sketcher_Profile aProfile (Command.ascii());
+    Sketcher_Profile aProfile (Command.toAscii());
 
     Command = myCommand.join( "" );
-    aProfile = Sketcher_Profile(Command.ascii());
+    aProfile = Sketcher_Profile(Command.toAscii());
     TopoDS_Shape myShape;
     if ( aProfile.IsDone() )
       myShape = aProfile.GetShape();
@@ -806,10 +837,10 @@ void EntityGUI_SketcherDlg::ClickOnHelp()
 		platform = "application";
 #endif
 
-    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
-			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
-			   QObject::tr("BUT_OK"));
+    SUIT_MessageBox::warning(0, QObject::tr("WRN_WARNING"),
+			     QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+			     arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
+			     QObject::tr("BUT_OK"));
   }
 }
 
@@ -1325,13 +1356,13 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 
     //Last Shape
     QString Command1 = myCommand.join( "" );
-    Sketcher_Profile aProfile1 (Command1.ascii());
+    Sketcher_Profile aProfile1 (Command1.toAscii());
     if(aProfile1.IsDone())
       myShape1 = aProfile1.GetShape();
 
     //Current Shape
     QString Command2 = Command1 + GetNewCommand();
-    Sketcher_Profile aProfile2 (Command2.ascii());
+    Sketcher_Profile aProfile2 (Command2.toAscii());
     if(aProfile2.IsDone())
       myShape2 = aProfile2.GetShape();
 
@@ -1367,7 +1398,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
         myLastX1 == myLastX2 && myLastY1 == myLastY2 ) || myIsAllAdded ) {
     cmd = myCommand.join( "" );
 
-    if ( Group1Sel->isVisible() ) {
+    if ( ::qobject_cast<QWidget*>( Group1Sel->gridLayout->parent() )->isVisible() ) {
       Group1Sel->buttonApply->setEnabled(false);
       //Group1Sel->buttonApply->setFocus();
     }
@@ -1391,7 +1422,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
   else {
     cmd = myCommand.join( "" ) + GetNewCommand();
 
-    if ( Group1Sel->isVisible() ) {
+    if ( ::qobject_cast<QWidget*>( Group1Sel->gridLayout->parent() )->isVisible() ) {
       Group1Sel->buttonApply->setEnabled(true);
       //Group1Sel->buttonApply->setFocus();
     }
@@ -1429,7 +1460,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
   WPlane[8] = myWPlane.XDirection().Z();
 
   GEOM::GEOM_Object_var anObj =
-    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSketcher( cmd.latin1(), WPlane );
+    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSketcher( cmd.toLatin1(), WPlane );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
@@ -1495,7 +1526,7 @@ bool EntityGUI_SketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
        aShape.ShapeType() != TopAbs_WIRE && aShape.ShapeType() != TopAbs_VERTEX )
     return false;
 
-  if ( Group1Sel->isVisible()  && !Group1Sel->buttonApply->isEnabled()  ||
+  if ( ::qobject_cast<QWidget*>( Group1Sel->gridLayout->parent() )->isVisible()  && !Group1Sel->buttonApply->isEnabled()  ||
        Group1Spin->isVisible() && !Group1Spin->buttonApply->isEnabled() ||
        Group2Spin->isVisible() && !Group2Spin->buttonApply->isEnabled() ||
        Group3Spin->isVisible() && !Group3Spin->buttonApply->isEnabled() ||
@@ -1536,7 +1567,7 @@ void  EntityGUI_SketcherDlg::keyPressEvent( QKeyEvent* e )
   if ( e->isAccepted() )
     return;
 
-  if ( e->key() == Key_F1 )
+  if ( e->key() == Qt::Key_F1 )
     {
       e->accept();
       ClickOnHelp();
