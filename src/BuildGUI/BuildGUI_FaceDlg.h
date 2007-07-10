@@ -43,7 +43,7 @@ class GEOM_BUILDGUI_EXPORT BuildGUI_FaceDlg : public GEOMBase_Skeleton
 
 public:
     BuildGUI_FaceDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+		     const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~BuildGUI_FaceDlg();
 
 protected:
@@ -58,7 +58,7 @@ private:
     
     GEOM::ListOfGO myWires;
     
-    DlgRef_1Sel1Check_QTD* GroupWire;
+    Ui::DlgRef_1Sel1Check_QTD* GroupWire;
 
 private slots:
     void ClickOnOk();

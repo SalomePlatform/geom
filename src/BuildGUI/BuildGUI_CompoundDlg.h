@@ -43,7 +43,7 @@ class GEOM_BUILDGUI_EXPORT BuildGUI_CompoundDlg : public GEOMBase_Skeleton
 
 public:
     BuildGUI_CompoundDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			 const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			 const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~BuildGUI_CompoundDlg();
 
 protected:
@@ -59,7 +59,7 @@ private:
     GEOM::ListOfGO myShapes;
     bool           myOkShapes;
 
-    DlgRef_1Sel_QTD* GroupShapes;
+    Ui::DlgRef_1Sel_QTD* GroupShapes;
     
 private slots:
     void ClickOnOk();

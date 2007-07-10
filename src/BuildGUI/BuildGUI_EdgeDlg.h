@@ -43,7 +43,7 @@ class GEOM_BUILDGUI_EXPORT BuildGUI_EdgeDlg : public GEOMBase_Skeleton
 
 public:
     BuildGUI_EdgeDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+		     const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~BuildGUI_EdgeDlg();
 
 protected:
@@ -60,7 +60,7 @@ private:
     bool myOkPoint1;   /* true when myPoint is defined */    
     bool myOkPoint2;
     
-    DlgRef_2Sel_QTD* GroupPoints;
+    Ui::DlgRef_2Sel_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();

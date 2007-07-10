@@ -29,13 +29,15 @@
 #include "BuildGUI_ShellDlg.h"
 #include "GEOMImpl_Types.hxx"
 
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
 #include "TColStd_MapOfInteger.hxx"
-
-#include <qlabel.h>
 
 //=================================================================================
 // class    : BuildGUI_ShellDlg()
@@ -45,28 +47,33 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BuildGUI_ShellDlg::BuildGUI_ShellDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                     const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                     const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SHELL")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_SHELL_TITLE"));
+  setWindowTitle(tr("GEOM_SHELL_TITLE"));
     
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_SHELL"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
-  GroupShell = new DlgRef_1Sel_QTD(this, "GroupShell");
+  GroupShell = new Ui::DlgRef_1Sel_QTD();
+  QWidget* aGroupShellWidget = new QWidget(this);
+  GroupShell->setupUi(aGroupShellWidget);
+  aGroupShellWidget->setObjectName("GroupShell");
+
   GroupShell->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupShell->TextLabel1->setText(tr("GEOM_OBJECTS"));
-  GroupShell->PushButton1->setPixmap(image1);
+  GroupShell->PushButton1->setIcon(image1);
   GroupShell->LineEdit1->setReadOnly( true );
   
-  Layout1->addWidget(GroupShell, 2, 0);
+  gridLayout1->addWidget(aGroupShellWidget, 2, 0);
   /***************************************************************/
 
   setHelpFileName("shell.htm");
@@ -112,7 +119,7 @@ void BuildGUI_ShellDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName(tr("GEOM_SHELL"));
+  initName(tr("GEOM_SHELL").toStdString().c_str());
 }
 
 

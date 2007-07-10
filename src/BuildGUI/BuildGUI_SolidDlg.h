@@ -43,7 +43,7 @@ class GEOM_BUILDGUI_EXPORT BuildGUI_SolidDlg : public GEOMBase_Skeleton
 
 public:
     BuildGUI_SolidDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+		      const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~BuildGUI_SolidDlg();
 
 protected:
@@ -60,7 +60,7 @@ private:
     bool myOkShells;          /* to check when arguments is defined and
                                  all shells are closed */
 
-    DlgRef_1Sel1Check_QTD* GroupSolid;
+    Ui::DlgRef_1Sel1Check_QTD* GroupSolid;
 
 private slots:
     void ClickOnOk();

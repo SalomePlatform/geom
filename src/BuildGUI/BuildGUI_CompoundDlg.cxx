@@ -29,11 +29,13 @@
 #include "BuildGUI_CompoundDlg.h"
 #include "GEOMImpl_Types.hxx"
 
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
-
-#include <qlabel.h>
 
 //=================================================================================
 // class    : BuildGUI_CompoundDlg()
@@ -43,28 +45,33 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BuildGUI_CompoundDlg::BuildGUI_CompoundDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                           const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                           const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_COMPOUND")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_COMPOUND_TITLE"));
+  setWindowTitle(tr("GEOM_COMPOUND_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_COMPOUND"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
-  GroupShapes = new DlgRef_1Sel_QTD(this, "GroupShapes");
+  GroupShapes = new Ui::DlgRef_1Sel_QTD();
+  QWidget* aGroupShapesWidget = new QWidget(this);
+  GroupShapes->setupUi(aGroupShapesWidget);
+  aGroupShapesWidget->setObjectName("GroupShapes");
+
   GroupShapes->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupShapes->TextLabel1->setText(tr("GEOM_OBJECTS"));
-  GroupShapes->PushButton1->setPixmap(image1);
+  GroupShapes->PushButton1->setIcon(image1);
   GroupShapes->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupShapes, 2, 0);
+  gridLayout1->addWidget(aGroupShapesWidget, 2, 0);
   /***************************************************************/
 
   setHelpFileName("compound.htm");
@@ -105,7 +112,7 @@ void BuildGUI_CompoundDlg::Init()
 
   globalSelection( GEOM_ALLSHAPES );
 
-  initName( tr( "GEOM_COMPOUND" ) );
+  initName( tr( "GEOM_COMPOUND" ).toStdString().c_str() );
 }
 
 

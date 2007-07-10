@@ -29,13 +29,13 @@
 #include "BuildGUI_SolidDlg.h"
 #include "GEOMImpl_Types.hxx"
 
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
-
-//Qt includes
-#include <qcheckbox.h>
-#include <qlabel.h>
 
 //=================================================================================
 // class    : BuildGUI_SolidDlg()
@@ -45,29 +45,34 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BuildGUI_SolidDlg::BuildGUI_SolidDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                     const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                     const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SOLID")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_SOLID_TITLE"));
+  setWindowTitle(tr("GEOM_SOLID_TITLE"));
     
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_SOLID"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
-  GroupSolid = new DlgRef_1Sel1Check_QTD(this, "GroupSolid");
+  GroupSolid = new Ui::DlgRef_1Sel1Check_QTD();
+  QWidget* aGroupSolidWidget = new QWidget(this);
+  GroupSolid->setupUi(aGroupSolidWidget);
+  aGroupSolidWidget->setObjectName("GroupSolid");
+
   GroupSolid->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupSolid->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupSolid->CheckButton1->setText(tr("GEOM_CREATE_SINGLE_SOLID"));
-  GroupSolid->PushButton1->setPixmap(image1);
+  GroupSolid->PushButton1->setIcon(image1);
   GroupSolid->LineEdit1->setReadOnly( true );
   
-  Layout1->addWidget(GroupSolid, 2, 0);
+  gridLayout1->addWidget(aGroupSolidWidget, 2, 0);
   /***************************************************************/
 
   setHelpFileName("solid.htm");
@@ -112,7 +117,7 @@ void BuildGUI_SolidDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName(tr("GEOM_SOLID"));
+  initName(tr("GEOM_SOLID").toStdString().c_str());
 }
 
 

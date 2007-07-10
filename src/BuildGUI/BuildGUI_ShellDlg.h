@@ -43,7 +43,7 @@ class GEOM_BUILDGUI_EXPORT BuildGUI_ShellDlg : public GEOMBase_Skeleton
 
 public:
     BuildGUI_ShellDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+		      const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~BuildGUI_ShellDlg();
 
 protected:
@@ -59,7 +59,7 @@ private:
     GEOM::ListOfGO myFacesAndShells;
     bool myOkFacesAndShells;          /* to check when arguments is defined */
 
-    DlgRef_1Sel_QTD* GroupShell;
+    Ui::DlgRef_1Sel_QTD* GroupShell;
 
 private slots:
     void ClickOnOk();

@@ -43,7 +43,7 @@ class GEOM_BUILDGUI_EXPORT BuildGUI_WireDlg : public GEOMBase_Skeleton
 
 public:
     BuildGUI_WireDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+		     const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~BuildGUI_WireDlg();
 
 protected:
@@ -59,7 +59,7 @@ private:
     GEOM::ListOfGO myEdgesAndWires;
     bool myOkEdgesAndWires;   /* to check when arguments is defined */
 
-    DlgRef_1Sel_QTD* GroupPoints;
+    Ui::DlgRef_1Sel_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();

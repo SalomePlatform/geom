@@ -30,13 +30,13 @@
 #include "GEOMImpl_Types.hxx"
 #include "TColStd_MapOfInteger.hxx"
 
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
-
-//Qt includes
-#include <qcheckbox.h>
-#include <qlabel.h>
 
 using namespace std;
 
@@ -48,28 +48,33 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BuildGUI_FaceDlg::BuildGUI_FaceDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                   const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                   const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_FACE")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_FACE_TITLE"));
+  setWindowTitle(tr("GEOM_FACE_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_FACE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
-  GroupWire = new DlgRef_1Sel1Check_QTD(this, "GroupWire");
+  GroupWire = new Ui::DlgRef_1Sel1Check_QTD();
+  QWidget* aGroupWireWidget = new QWidget(this);
+  GroupWire->setupUi(aGroupWireWidget);
+  aGroupWireWidget->setObjectName("GroupWire");
+
   GroupWire->GroupBox1->setTitle(tr("GEOM_FACE_FFW"));
   GroupWire->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupWire->CheckButton1->setText(tr("GEOM_FACE_OPT"));
-  GroupWire->PushButton1->setPixmap(image1);
+  GroupWire->PushButton1->setIcon(image1);
 
-  Layout1->addWidget(GroupWire, 2, 0);
+  gridLayout1->addWidget(aGroupWireWidget, 2, 0);
   /***************************************************************/
 
   setHelpFileName("face.htm");
@@ -114,7 +119,7 @@ void BuildGUI_FaceDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName(tr("GEOM_FACE"));
+  initName(tr("GEOM_FACE").toStdString().c_str());
 }
 
 
