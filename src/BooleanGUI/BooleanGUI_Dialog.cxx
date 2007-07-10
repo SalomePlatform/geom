@@ -27,14 +27,14 @@
 //  $Header$
 
 #include "BooleanGUI_Dialog.h"
-#include "BooleanGUI.h"
-#include "DlgRef_2Sel_QTD.h"
 
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
-
-#include <qlabel.h>
 
 using namespace std;
 
@@ -46,7 +46,7 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGeometryGUI,
-                                      QWidget* parent, const char* name, bool modal, WFlags fl)
+                                      QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, fl),
    myOperation( theOperation )
 {
@@ -60,36 +60,42 @@ BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGe
 			aCaption = tr("GEOM_COMMON_TITLE");
 			setHelpFileName("common.htm");
 			break;
-		case BooleanGUI::CUT:
+        case BooleanGUI::CUT:
    	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CUT")));
 			aTitle = tr("GEOM_CUT");
 			aCaption = tr("GEOM_CUT_TITLE");
 			setHelpFileName("cut.htm");
 			break;
-		case BooleanGUI::FUSE:
+	case BooleanGUI::FUSE:
    	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_FUSE")));
 			aTitle = tr("GEOM_FUSE");
 			aCaption = tr("GEOM_FUSE_TITLE");
 			setHelpFileName("fuse.htm");
 			break;
-		case BooleanGUI::SECTION:
+	case BooleanGUI::SECTION:
    	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SECTION")));
 			aTitle = tr("GEOM_SECTION");
 			aCaption = tr("GEOM_SECTION_TITLE");
 			setHelpFileName("section.htm");
 			break;
-	}
+  }
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption( aCaption );
+  setWindowTitle( aCaption );
 
   /***************************************************************/
   GroupConstructors->setTitle( aTitle );
-  RadioButton1->setPixmap( image0 );
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon( image0 );
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
-  myGroup = new DlgRef_2Sel_QTD(this, "GroupCommon");
+  myGroup = new Ui::DlgRef_2Sel_QTD();
+  QWidget* aMyGroupWidget = new QWidget(this);
+  myGroup->setupUi(aMyGroupWidget);
+  aMyGroupWidget->setObjectName("GroupCommon");
+
   myGroup->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   if ( myOperation != BooleanGUI::CUT )
   {
@@ -102,12 +108,12 @@ BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGe
   	myGroup->TextLabel2->setText(tr("GEOM_TOOL_OBJECT"));
   }
   
-  myGroup->PushButton1->setPixmap(image1);
-  myGroup->PushButton2->setPixmap(image1);
+  myGroup->PushButton1->setIcon(image1);
+  myGroup->PushButton2->setIcon(image1);
   myGroup->LineEdit1->setReadOnly( true );
   myGroup->LineEdit2->setReadOnly( true );
 
-  Layout1->addWidget(myGroup, 2, 0);
+  gridLayout1->addWidget(aMyGroupWidget, 2, 0);
   /***************************************************************/
 
   /* Initialisation */
@@ -146,7 +152,7 @@ void BooleanGUI_Dialog::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName( GroupConstructors->title() );
+  initName( GroupConstructors->title().toStdString().c_str() );
 
   globalSelection( GEOM_ALLSHAPES );
 }

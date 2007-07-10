@@ -31,8 +31,7 @@
 #include "BooleanGUI.h" //for wnt defines
 
 #include "GEOMBase_Skeleton.h"
-
-class DlgRef_2Sel_QTD;
+#include "DlgRef_2Sel_QTD.h"
 
 //=================================================================================
 // class    : BooleanGUI_Dialog
@@ -44,7 +43,7 @@ class GEOM_BOOLEANGUI_EXPORT BooleanGUI_Dialog : public GEOMBase_Skeleton
 
 public:
     BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+		       const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~BooleanGUI_Dialog();
 
 protected:
@@ -62,7 +61,7 @@ private:
     GEOM::GEOM_Object_var myObject1;
     GEOM::GEOM_Object_var myObject2;
 
-    DlgRef_2Sel_QTD* myGroup;
+    Ui::DlgRef_2Sel_QTD* myGroup;
 
 private slots:
     void ClickOnOk();
