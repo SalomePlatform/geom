@@ -1681,12 +1681,14 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (GEOM::GEOM_List_ptr theShapes
 //  MakeGlueFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-						    CORBA::Double   theTolerance)
+						    CORBA::Double   theTolerance,
+						    CORBA::Boolean doKeepNonSolids)
 {
   beginService( " GEOM_Superv_i::MakeGlueFaces" );
   MESSAGE("GEOM_Superv_i::MakeGlueFaces");
   getShapesOp();
-  GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeGlueFaces(theShape, theTolerance);
+  GEOM::GEOM_Object_ptr anObj =
+    myShapesOp->MakeGlueFaces(theShape, theTolerance, doKeepNonSolids);
   endService( " GEOM_Superv_i::MakeGlueFaces" );
   return anObj;
 }
@@ -1712,12 +1714,14 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
 							  CORBA::Double theTolerance,
-							  const GEOM::ListOfGO& theFaces)
+							  const GEOM::ListOfGO& theFaces,
+							  CORBA::Boolean doKeepNonSolids)
 {
   beginService( " GEOM_Superv_i::MakeGlueFacesByList" );
   MESSAGE("GEOM_Superv_i::MakeGlueFacesByList");
   getShapesOp();
-  GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces);
+  GEOM::GEOM_Object_ptr anObj =
+    myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids);
   endService( " GEOM_Superv_i::MakeGlueFacesByList" );
   return anObj;
 }

@@ -27,6 +27,7 @@
 #define GLUE_ARG_BASE   1
 #define GLUE_ARG_TOLER  2
 #define GLUE_ARG_FACES  3
+#define GLUE_ARG_KEEPALL 4
 
 class GEOMImpl_IGlue
 {
@@ -49,6 +50,9 @@ class GEOMImpl_IGlue
 
   Handle(TColStd_HSequenceOfTransient) GetFaces()
   { return _func->GetReferenceList(GLUE_ARG_FACES); }
+
+  void SetKeepNonSolids (Standard_Boolean theFlag) { _func->SetInteger(GLUE_ARG_KEEPALL, theFlag ? 1 : 0); }
+  Standard_Boolean GetKeepNonSolids() { return (_func->GetInteger(GLUE_ARG_KEEPALL) != 0); }
 
  private:
 

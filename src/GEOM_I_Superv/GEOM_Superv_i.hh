@@ -379,12 +379,14 @@ public:
   GEOM::GEOM_Object_ptr MakeSolidShells (GEOM::GEOM_List_ptr theShells);
   GEOM::GEOM_Object_ptr MakeCompound (GEOM::GEOM_List_ptr theShapes);
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-				       CORBA::Double theTolerance);
+				       CORBA::Double theTolerance,
+				       CORBA::Boolean doKeepNonSolids);
   GEOM::GEOM_List_ptr GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
 				    CORBA::Double theTolerance);
   GEOM::GEOM_Object_ptr MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
 					     CORBA::Double theTolerance,
-					     const GEOM::ListOfGO& theFaces);
+					     const GEOM::ListOfGO& theFaces,
+					     CORBA::Boolean doKeepNonSolids);
   GEOM::GEOM_List_ptr MakeExplode (GEOM::GEOM_Object_ptr theShape,
 				       CORBA::Long theShapeType,
 				       CORBA::Boolean isSorted);

@@ -497,7 +497,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
                                                 (Handle(GEOM_Object) theShape,
-                                                 const Standard_Real theTolerance)
+                                                 const Standard_Real theTolerance,
+                                                 const Standard_Boolean doKeepNonSolids)
 {
   SetErrorCode(KO);
 
@@ -521,6 +522,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
 
   aCI.SetBase(aRefShape);
   aCI.SetTolerance(theTolerance);
+  aCI.SetKeepNonSolids(doKeepNonSolids);
 
   //Compute the sub-shape value
   Standard_Boolean isWarning = Standard_False;
@@ -636,7 +638,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueFaces
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
                                                 (Handle(GEOM_Object) theShape,
                                                  const Standard_Real theTolerance,
-						 list<Handle(GEOM_Object)> theFaces)
+						 list<Handle(GEOM_Object)> theFaces,
+                                                 const Standard_Boolean doKeepNonSolids)
 {
   SetErrorCode(KO);
 
@@ -660,6 +663,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
 
   aCI.SetBase(aRefShape);
   aCI.SetTolerance(theTolerance);
+  aCI.SetKeepNonSolids(doKeepNonSolids);
+
   Handle(TColStd_HSequenceOfTransient) aFaces = new TColStd_HSequenceOfTransient;
   list<Handle(GEOM_Object)>::iterator it = theFaces.begin();
   for (; it != theFaces.end(); it++) {

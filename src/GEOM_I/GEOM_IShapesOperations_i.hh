@@ -60,14 +60,16 @@ class GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr MakeCompound (const GEOM::ListOfGO& theShapes);
 
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-				       CORBA::Double         theTolerance);
+				       CORBA::Double         theTolerance,
+				       const CORBA::Boolean  doKeepNonSolids);
 
   GEOM::ListOfGO* GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
 			        CORBA::Double         theTolerance);
 
   GEOM::GEOM_Object_ptr MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
 					     CORBA::Double         theTolerance,
-					     const GEOM::ListOfGO& theFaces);
+					     const GEOM::ListOfGO& theFaces,
+					     const CORBA::Boolean  doKeepNonSolids);
 
   GEOM::ListOfGO* MakeExplode (GEOM::GEOM_Object_ptr theShape,
 			       CORBA::Long           theShapeType,

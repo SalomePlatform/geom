@@ -73,6 +73,7 @@ const Standard_GUID& GEOMImpl_GlueDriver::GetID()
 //=======================================================================
 TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& theShape,
                                                          const Standard_Real theTolerance,
+                                                         const Standard_Boolean doKeepNonSolids,
                                                          TCollection_AsciiString& theWarning) const
 {
   Standard_Integer iErr, iWrn;
@@ -82,6 +83,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& the
   aGluer.SetShape(theShape);
   aGluer.SetTolerance(theTolerance);
   aGluer.SetCheckGeometry(Standard_True);
+  aGluer.SetKeepNonSolids(doKeepNonSolids);
 
   aGluer.Perform();
 
@@ -197,7 +199,8 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& the
 //purpose  :
 //=======================================================================
 TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
-                                             const Standard_Real theTolerance)
+                                             const Standard_Real theTolerance,
+                                             const Standard_Boolean doKeepNonSolids)
 {
   Standard_Integer iErr, iWrn;
   TopoDS_Shape aRes;
@@ -206,6 +209,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
   aGluer.SetShape(theShape);
   aGluer.SetTolerance(theTolerance);
   aGluer.SetCheckGeometry(Standard_True);
+  aGluer.SetKeepNonSolids(doKeepNonSolids);
 
   aGluer.Perform();
 
@@ -261,6 +265,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
 //=======================================================================
 TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesByList (const TopoDS_Shape& theShape,
 						   const Standard_Real theTolerance,
+                                                   const Standard_Boolean doKeepNonSolids,
 						   const TopTools_MapOfShape& aFaces)
 {
   TopoDS_Shape aRes;
@@ -272,6 +277,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesByList (const TopoDS_Shape& theShape,
 
   aGluer.SetShape(theShape);
   aGluer.SetTolerance(theTolerance);
+  aGluer.SetKeepNonSolids(doKeepNonSolids);
   aGluer.Perform();
   Standard_Integer iErr = aGluer.ErrorStatus();
   if (iErr) return aRes;
@@ -327,8 +333,10 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
 
   Standard_Real tol3d = aCI.GetTolerance();
 
+  Standard_Boolean aKeepNonSolids = aCI.GetKeepNonSolids();
+
   if (aType == GLUE_FACES) {
-    aShape = GlueFacesWithWarnings(aShapeBase, tol3d, aWrn);
+    aShape = GlueFacesWithWarnings(aShapeBase, tol3d, aKeepNonSolids, aWrn);
   }
   else { // aType == GLUE_FACES_BY_LIST
     Handle(TColStd_HSequenceOfTransient) SF = aCI.GetFaces();
@@ -347,7 +355,7 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
       if(!aFaces.Contains(aFace))
 	aFaces.Add(aFace);
     }
-    aShape = GlueFacesByList(aShapeBase, tol3d, aFaces);
+    aShape = GlueFacesByList(aShapeBase, tol3d, aKeepNonSolids, aFaces);
   }
 
   if (aShape.IsNull()) return 0;

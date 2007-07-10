@@ -1385,8 +1385,8 @@ def MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter):
 #  @return New GEOM_Object, containing a copy of theShape without coincident faces.
 #
 #  Example: see GEOM_Spanner.py
-def MakeGlueFaces(theShape, theTolerance):
-    anObj = ShapesOp.MakeGlueFaces(theShape, theTolerance)
+def MakeGlueFaces(theShape, theTolerance, doKeepNonSolids=True):
+    anObj = ShapesOp.MakeGlueFaces(theShape, theTolerance, doKeepNonSolids)
     if ShapesOp.IsDone() == 0:
       print "MakeGlueFaces : ", ShapesOp.GetErrorCode()
     return anObj
@@ -1416,8 +1416,8 @@ def GetGlueFaces(theShape, theTolerance):
 #          without some faces.
 #
 #  Example: see GEOM_Spanner.py
-def MakeGlueFacesByList(theShape, theTolerance, theFaces):
-    anObj = ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces)
+def MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids=True):
+    anObj = ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids)
     if ShapesOp.IsDone() == 0:
       print "MakeGlueFacesByList : ", ShapesOp.GetErrorCode()
     return anObj

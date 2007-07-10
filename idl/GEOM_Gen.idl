@@ -985,9 +985,10 @@ module GEOM
      *  Replace coincident faces in theShape by one face.
      *  \param theShape Initial shape.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
+     *  \param doKeepNonSolids If FALSE, only solids will present in the result, otherwise all initial shapes.
      *  \return New GEOM_Object, containing a copy of theShape without coincident faces.
      */
-    GEOM_Object MakeGlueFaces (in GEOM_Object theShape, in double theTolerance);
+    GEOM_Object MakeGlueFaces (in GEOM_Object theShape, in double theTolerance, in boolean doKeepNonSolids);
 
     /*!
      *  Find coincident faces in theShape for possible gluing.
@@ -1003,10 +1004,11 @@ module GEOM
      *  \param theShape Initial shape.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
      *  \param theFaces List of faces for gluing.
+     *  \param doKeepNonSolids If FALSE, only solids will present in the result, otherwise all initial shapes.
      *  \return New GEOM_Object, containing a copy of theShape without some faces.
      */
     GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape, in double theTolerance,
-				     in ListOfGO theFaces);
+				     in ListOfGO theFaces, in boolean doKeepNonSolids);
 
     /*!
      *  Explode a shape on subshapes of a given type.
