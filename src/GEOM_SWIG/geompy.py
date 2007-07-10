@@ -1382,6 +1382,7 @@ def MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter):
 ## Replace coincident faces in theShape by one face.
 #  @param theShape Initial shape.
 #  @param theTolerance Maximum distance between faces, which can be considered as coincident.
+#  @param doKeepNonSolids If FALSE, only solids will present in the result, otherwise all initial shapes.
 #  @return New GEOM_Object, containing a copy of theShape without coincident faces.
 #
 #  Example: see GEOM_Spanner.py
@@ -1412,6 +1413,7 @@ def GetGlueFaces(theShape, theTolerance):
 #  @param theTolerance Maximum distance between faces,
 #                      which can be considered as coincident.
 #  @param theFaces List of faces for gluing.
+#  @param doKeepNonSolids If FALSE, only solids will present in the result, otherwise all initial shapes.
 #  @return New GEOM_Object, containing a copy of theShape
 #          without some faces.
 #
