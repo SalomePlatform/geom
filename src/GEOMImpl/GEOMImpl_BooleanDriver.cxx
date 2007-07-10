@@ -153,6 +153,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
       }
 
       if (isCompound) {
+        /*
         TopTools_ListOfShape listShapeC;
         AddSimpleShapes(C, listShapeC);
         TopTools_ListIteratorOfListOfShape itSubC (listShapeC);
@@ -165,6 +166,10 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
           aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion());
         else
           aShape = C;
+        */
+
+        // As GlueFaces has been improved to keep all kind of shapes
+        aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
       }
     }
 
@@ -215,6 +220,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
       }
 
       if (isCompound) {
+        /*
         TopTools_ListOfShape listShapeC;
         AddSimpleShapes(C, listShapeC);
         TopTools_ListIteratorOfListOfShape itSubC (listShapeC);
@@ -227,6 +233,10 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
           aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion());
         else
           aShape = C;
+        */
+
+        // As GlueFaces has been improved to keep all kind of shapes
+        aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
       }
     }
 
@@ -369,8 +379,12 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
         }
       }
 
-      if (isCompound)
-        aShape = C;
+      if (isCompound) {
+        //aShape = C;
+
+        // As GlueFaces has been improved to keep all kind of shapes
+        aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+      }
     }
 
     // UNKNOWN operation
