@@ -417,6 +417,55 @@ void GEOMAlgo_Gluer::MakeSubShapes (const TopoDS_Shape&  theShape,
     //
     aBB.Add(theResult, aNewSolid);
   }
+  else if (theShape.ShapeType() == TopAbs_WIRE)
+  {
+    if (myKeepNonSolids)
+    {
+      // just add image
+      if (!myOrigins.IsBound(theShape))
+      {
+        // build wire
+        const TopoDS_Wire& aW=TopoDS::Wire(theShape);
+        //
+        TopoDS_Wire newWire;
+        aBB.MakeWire(newWire);
+        //
+        TopExp_Explorer aExpE (aW, TopAbs_EDGE);
+        for (; aExpE.More(); aExpE.Next()) {
+          const TopoDS_Edge& aE=TopoDS::Edge(aExpE.Current());
+          TopoDS_Edge aER=TopoDS::Edge(myOrigins.Find(aE));
+          //
+          aER.Orientation(TopAbs_FORWARD);
+          if (!BRep_Tool::Degenerated(aER)) {
+            // build p-curve
+            //if (bIsUPeriodic) {
+            //  GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(aER, aFFWD, aUMin, aUMax);
+            //}
+            //BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aER, aFFWD);
+            //
+            // orient image
+            Standard_Boolean bIsToReverse=BOPTools_Tools3D::IsSplitToReverse1(aER, aE, myContext);
+            if (bIsToReverse) {
+              aER.Reverse();
+            }
+          }
+          else {
+            aER.Orientation(aE.Orientation());
+          }
+          //
+          aBB.Add(newWire, aER);
+        }
+        // xf
+        TopTools_ListOfShape aLW;
+        //
+        aLW.Append(aW);
+        myImages.Bind(newWire, aLW);
+        myOrigins.Bind(aW, newWire);
+      }
+      const TopoDS_Shape& aShapeR = myOrigins.Find(theShape);
+      aBB.Add(theResult, aShapeR);
+    }
+  }
   else
   {
     if (myKeepNonSolids)
