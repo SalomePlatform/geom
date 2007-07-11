@@ -164,7 +164,7 @@ void PrimitiveGUI_ConeDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   
-  initName( tr( "GEOM_CONE" ).toStdString().c_str() );
+  initName( tr( "GEOM_CONE" ).toLatin1().constData() );
   ConstructorsClicked(0);
 }
 

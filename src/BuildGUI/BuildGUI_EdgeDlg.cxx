@@ -124,7 +124,7 @@ void BuildGUI_EdgeDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName( tr( "GEOM_EDGE").toStdString().c_str() );
+  initName( tr( "GEOM_EDGE").toLatin1().constData() );
 }
 
 

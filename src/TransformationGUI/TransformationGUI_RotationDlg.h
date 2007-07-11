@@ -29,7 +29,8 @@
 #define DIALOGBOX_ROTATION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_4Sel1Spin2Check.h"
+
+class DlgRef_4Sel1Spin2Check;
   
 //=================================================================================
 // class    : TransformationGUI_RotationDlg
@@ -41,7 +42,7 @@ class TransformationGUI_RotationDlg : public GEOMBase_Skeleton
 
 public:
     TransformationGUI_RotationDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-				  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+				  const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~TransformationGUI_RotationDlg();
 
 protected:

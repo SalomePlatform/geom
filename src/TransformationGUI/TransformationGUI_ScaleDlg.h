@@ -29,8 +29,8 @@
 #define DIALOGBOX_SCALE_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1Spin2Check.h"
-  
+
+class DlgRef_2Sel1Spin2Check;  
   
 //=================================================================================
 // class    : TransformationGUI_ScaleDlg
@@ -42,7 +42,7 @@ class TransformationGUI_ScaleDlg : public GEOMBase_Skeleton
 
 public:
     TransformationGUI_ScaleDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+			       const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~TransformationGUI_ScaleDlg();
 
 protected:

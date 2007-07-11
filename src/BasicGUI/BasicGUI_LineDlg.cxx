@@ -127,7 +127,7 @@ void BasicGUI_LineDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   
-  initName( tr("GEOM_LINE").toStdString().c_str() );
+  initName( tr("GEOM_LINE").toLatin1().constData() );
 }
 
 

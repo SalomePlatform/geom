@@ -117,7 +117,7 @@ void BuildGUI_WireDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   
-  initName(tr("GEOM_WIRE").toStdString().c_str());
+  initName(tr("GEOM_WIRE").toLatin1().constData());
 }
 
 

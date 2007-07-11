@@ -121,7 +121,7 @@ void GenerationGUI_PipeDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName(tr("GEOM_PIPE").toStdString().c_str());
+  initName(tr("GEOM_PIPE").toLatin1().constData());
 
   globalSelection( GEOM_ALLSHAPES );
 }

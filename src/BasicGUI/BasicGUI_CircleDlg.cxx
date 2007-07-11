@@ -157,7 +157,7 @@ void BasicGUI_CircleDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName( tr( "GEOM_CIRCLE" ).toStdString().c_str() );
+  initName( tr( "GEOM_CIRCLE" ).toLatin1().constData() );
 
   ::qobject_cast<QWidget*>( Group3Pnts->gridLayout->parent() )->hide();
   ConstructorsClicked( 0 );

@@ -27,18 +27,19 @@
 //  $Header$
 
 #include "TransformationGUI_MultiRotationDlg.h"
+#include "DlgRef_2Sel4Spin1Check.h"
+#include "DlgRef_2Sel1Spin.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qcheckbox.h>
-#include <qlabel.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -50,30 +51,30 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg
-  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
   QPixmap image0(aResMgr->loadPixmap("GEOM",tr("ICON_DLG_MULTIROTATION_SIMPLE")));
   QPixmap image1(aResMgr->loadPixmap("GEOM",tr("ICON_DLG_MULTIROTATION_DOUBLE")));
   QPixmap image2(aResMgr->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_MULTIROTATION_TITLE"));
+  setWindowTitle(tr("GEOM_MULTIROTATION_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_MULTIROTATION"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image1);
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
   GroupPoints = new DlgRef_2Sel1Spin(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_MULTIROTATION_SIMPLE"));
   GroupPoints->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
   GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
   GroupPoints->TextLabel3->setText(tr("GEOM_NB_TIMES"));
-  GroupPoints->PushButton1->setPixmap(image2);
-  GroupPoints->PushButton2->setPixmap(image2);
+  GroupPoints->PushButton1->setIcon(image2);
+  GroupPoints->PushButton2->setIcon(image2);
   GroupPoints->LineEdit1->setReadOnly(true);
   GroupPoints->LineEdit2->setReadOnly(true);
 
@@ -86,13 +87,13 @@ TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg
   GroupDimensions->TextLabel5->setText(tr("GEOM_STEP"));
   GroupDimensions->TextLabel6->setText(tr("GEOM_NB_TIMES"));
   GroupDimensions->CheckButton1->setText(tr("GEOM_REVERSE"));
-  GroupDimensions->PushButton1->setPixmap(image2);
-  GroupDimensions->PushButton2->setPixmap(image2);
+  GroupDimensions->PushButton1->setIcon(image2);
+  GroupDimensions->PushButton2->setIcon(image2);
   GroupDimensions->LineEdit1->setReadOnly(true);
   GroupDimensions->LineEdit2->setReadOnly(true);
 
-  Layout1->addWidget(GroupPoints, 2, 0);
-  Layout1->addWidget(GroupDimensions, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
   setHelpFileName("multi_rotation.htm");
@@ -168,7 +169,7 @@ void TransformationGUI_MultiRotationDlg::Init()
   connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr( "GEOM_MULTIROTATION" ) );
+  initName( tr( "GEOM_MULTIROTATION" ).toLatin1().constData() );
   ConstructorsClicked( 0 );
 }
 

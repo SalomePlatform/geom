@@ -29,9 +29,9 @@
 #define DIALOGBOX_MULTIROTATION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel4Spin1Check.h"
-#include "DlgRef_2Sel1Spin.h"
 
+class DlgRef_2Sel4Spin1Check;
+class DlgRef_2Sel1Spin;
 
 //=================================================================================
 // class    : TransformationGUI_MultiRotationDlg
@@ -43,7 +43,7 @@ class TransformationGUI_MultiRotationDlg : public GEOMBase_Skeleton
 
 public:
     TransformationGUI_MultiRotationDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-				       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+				       const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~TransformationGUI_MultiRotationDlg();
 
 protected:

@@ -183,7 +183,7 @@ void BasicGUI_WorkingPlaneDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr( "GEOM_WPLANE" ).toStdString().c_str() );
+  initName( tr( "GEOM_WPLANE" ).toLatin1().constData() );
   ConstructorsClicked(0);
 }
 

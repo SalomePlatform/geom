@@ -27,18 +27,18 @@
 //  $Header$
 
 #include "TransformationGUI_MirrorDlg.h"
+#include "DlgRef_2Sel1Spin2Check.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qcheckbox.h>
-#include <qlabel.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -50,22 +50,21 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                                         const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                                         const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_MIRROR_POINT")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_MIRROR_AXE")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_MIRROR_PLANE")));
   QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_MIRROR_TITLE"));
+  setWindowTitle(tr("GEOM_MIRROR_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_MIRROR"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->setPixmap(image2);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image1);
+  RadioButton3->setIcon(image2);
  
   GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
   GroupPoints->SpinBox_DX->hide();
@@ -75,10 +74,10 @@ TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(GeometryGUI* theGeometr
   GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupPoints->TextLabel2->setText(tr("GEOM_POINT_MIRROR"));
   GroupPoints->TextLabel2->setFixedWidth(74);
-  GroupPoints->PushButton1->setPixmap(image3);
-  GroupPoints->PushButton2->setPixmap(image3);
+  GroupPoints->PushButton1->setIcon(image3);
+  GroupPoints->PushButton2->setIcon(image3);
   GroupPoints->CheckButton1->setText(tr("GEOM_CREATE_COPY"));
-  Layout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
   setHelpFileName("mirror_image.htm");  
@@ -130,7 +129,7 @@ void TransformationGUI_MirrorDlg::Init()
   connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr( "GEOM_MIRROR" ) );
+  initName( tr( "GEOM_MIRROR" ).toLatin1().constData() );
   ConstructorsClicked( 0 );
 }
 

@@ -29,9 +29,9 @@
 #define DIALOGBOX_MULTITRANSLATION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel2Spin1Check.h"
-#include "DlgRef_3Sel4Spin2Check.h"
 
+class DlgRef_2Sel2Spin1Check;
+class DlgRef_3Sel4Spin2Check;
 
 //=================================================================================
 // class    : TransformationGUI_MultiTranslationDlg
@@ -43,7 +43,7 @@ class TransformationGUI_MultiTranslationDlg : public GEOMBase_Skeleton
 
 public:
     TransformationGUI_MultiTranslationDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-					  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+					  const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~TransformationGUI_MultiTranslationDlg();
 
 protected:

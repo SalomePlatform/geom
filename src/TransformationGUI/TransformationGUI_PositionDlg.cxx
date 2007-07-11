@@ -27,20 +27,20 @@
 //  $Header$
 
 #include "TransformationGUI_PositionDlg.h"
+#include "DlgRef_3Sel3Spin1Check.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qlabel.h>
-#include <qcheckbox.h>
-
 #include "TColStd_MapOfInteger.hxx"
 
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -52,22 +52,22 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
-  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                      WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, Qt::WindowFlags fl)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
   QPixmap image0(aResMgr->loadPixmap("GEOM",tr("ICON_DLG_POSITION")));
   QPixmap image1(aResMgr->loadPixmap("GEOM",tr("ICON_DLG_POSITION2")));
   QPixmap imageselect(aResMgr->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_POSITION_TITLE"));
+  setWindowTitle(tr("GEOM_POSITION_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_POSITION"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image1);
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
  
   Group1 = new DlgRef_3Sel3Spin1Check(this, "Group1");
   Group1->SpinBox1->hide();
@@ -80,12 +80,12 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
   Group1->TextLabel1->setText(tr("GEOM_OBJECTS"));
   Group1->TextLabel2->setText(tr("GEOM_START_LCS"));
   Group1->TextLabel3->setText(tr("GEOM_END_LCS"));
-  Group1->PushButton1->setPixmap(imageselect);
-  Group1->PushButton2->setPixmap(imageselect);
-  Group1->PushButton3->setPixmap(imageselect);
+  Group1->PushButton1->setIcon(imageselect);
+  Group1->PushButton2->setIcon(imageselect);
+  Group1->PushButton3->setIcon(imageselect);
   Group1->CheckBox1->setText(tr("GEOM_CREATE_COPY"));
 
-  Layout1->addWidget(Group1, 2, 0);
+  gridLayout1->addWidget(Group1, 2, 0);
   
   /***************************************************************/
 
@@ -141,7 +141,7 @@ void TransformationGUI_PositionDlg::Init()
   connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr( "GEOM_POSITION" ) );
+  initName( tr( "GEOM_POSITION" ).toLatin1().constData() );
   ConstructorsClicked( 0 );
 }
 

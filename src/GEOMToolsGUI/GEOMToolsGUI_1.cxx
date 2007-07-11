@@ -140,9 +140,9 @@ void GEOMToolsGUI::OnSettingsStep()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100. );
 
   Standard_Boolean res = false;
-  double dd = GEOMBase::Parameter( res, QString("%1").arg(step).toStdString().c_str(), 
-				   tr("GEOM_MEN_STEP_LABEL").toStdString().c_str(), 
-				   tr("GEOM_STEP_TITLE").toStdString().c_str(), 0.001, 10000.0, 3);
+  double dd = GEOMBase::Parameter( res, QString("%1").arg(step).toLatin1().constData(), 
+				   tr("GEOM_MEN_STEP_LABEL").toLatin1().constData(), 
+				   tr("GEOM_STEP_TITLE").toLatin1().constData(), 0.001, 10000.0, 3);
   if(res) {
     resMgr->setValue( "Geometry", "SettingsGeomStep", dd );
 

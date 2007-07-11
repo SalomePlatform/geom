@@ -29,10 +29,8 @@
 #define DIALOGBOX_MIRROR_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1Spin2Check.h"
 
-#include "TransformationGUI.h"
-  
+class DlgRef_2Sel1Spin2Check;  
 
 //=================================================================================
 // class    : TransformationGUI_MirrorDlg
@@ -44,7 +42,7 @@ class TransformationGUI_MirrorDlg : public GEOMBase_Skeleton
 
 public:
     TransformationGUI_MirrorDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-				const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+				const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~TransformationGUI_MirrorDlg();
 
 protected:

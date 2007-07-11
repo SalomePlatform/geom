@@ -169,7 +169,7 @@ void BasicGUI_ArcDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr( "GEOM_ARC" ).toStdString().c_str() ); 
+  initName( tr( "GEOM_ARC" ).toLatin1().constData() ); 
   
 
   ConstructorsClicked( 0 );

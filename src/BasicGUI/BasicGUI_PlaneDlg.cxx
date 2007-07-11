@@ -182,7 +182,7 @@ void BasicGUI_PlaneDlg::Init()
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr( "GEOM_PLANE" ).toStdString().c_str() );
+  initName( tr( "GEOM_PLANE" ).toLatin1().constData() );
 
   Group3Pnts->hide();
   GroupFace->hide();

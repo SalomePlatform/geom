@@ -153,7 +153,7 @@ void PrimitiveGUI_TorusDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   
-  initName( tr( "GEOM_TORUS" ).toStdString().c_str() );
+  initName( tr( "GEOM_TORUS" ).toLatin1().constData() );
   ConstructorsClicked(0);
 }
 

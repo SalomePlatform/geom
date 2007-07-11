@@ -119,7 +119,7 @@ void BuildGUI_ShellDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName(tr("GEOM_SHELL").toStdString().c_str());
+  initName(tr("GEOM_SHELL").toLatin1().constData());
 }
 
 

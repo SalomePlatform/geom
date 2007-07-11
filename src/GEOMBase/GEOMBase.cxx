@@ -209,55 +209,55 @@ bool GEOMBase::GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& 
     {
     case TopAbs_COMPOUND:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUND").toStdString().c_str());
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUND").toLatin1().constData());
 	return true;
       }
     case  TopAbs_COMPSOLID:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUNDSOLID").toStdString().c_str()) ;
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUNDSOLID").toLatin1().constData()) ;
 	return true ;
       }
     case TopAbs_SOLID:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SOLID").toStdString().c_str()) ;
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SOLID").toLatin1().constData()) ;
 	return true ;
       }
     case TopAbs_SHELL:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHELL").toStdString().c_str()) ;
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHELL").toLatin1().constData()) ;
 	return true ;
       }
     case TopAbs_FACE:
       {
 	BRepAdaptor_Surface surf(TopoDS::Face(aShape));
 	if(surf.GetType() == GeomAbs_Plane) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_PLANE").toStdString().c_str());
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_PLANE").toLatin1().constData());
 	  return true;
 	}
 	else if(surf.GetType() == GeomAbs_Cylinder) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCYLINDER").toStdString().c_str());
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCYLINDER").toLatin1().constData());
 	  return true;
 	}
 	else if(surf.GetType() == GeomAbs_Sphere) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFSPHERE").toStdString().c_str());
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFSPHERE").toLatin1().constData());
 	  return true ;
 	}
 	else if(surf.GetType() == GeomAbs_Torus) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFTORUS").toStdString().c_str());
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFTORUS").toLatin1().constData());
 	  return true ;
 	}
 	else if(surf.GetType() == GeomAbs_Cone) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCONE").toStdString().c_str());
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCONE").toLatin1().constData());
 	  return true ;
 	}
 	else {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_FACE").toStdString().c_str());
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_FACE").toLatin1().constData());
 	  return true;
 	}
       }
     case TopAbs_WIRE:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_WIRE").toStdString().c_str());
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_WIRE").toLatin1().constData());
 	return true;
       }
     case TopAbs_EDGE:
@@ -265,31 +265,31 @@ bool GEOMBase::GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& 
 	BRepAdaptor_Curve curv(TopoDS::Edge(aShape));
 	if(curv.GetType() == GeomAbs_Line) {
 	  if((Abs(curv.FirstParameter()) >= 1E6) || (Abs(curv.LastParameter()) >= 1E6))
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_LINE").toStdString().c_str());
+	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_LINE").toLatin1().constData());
 	  else
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE").toStdString().c_str());
+	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE").toLatin1().constData());
 	  return true;
 	}
 	else if(curv.GetType() == GeomAbs_Circle) {
 	  if(curv.IsClosed())
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_CIRCLE").toStdString().c_str());
+	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_CIRCLE").toLatin1().constData());
 	  else
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_ARC").toStdString().c_str());
+	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_ARC").toLatin1().constData());
 	return true;
       }
 	else {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE").toStdString().c_str());
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE").toLatin1().constData());
 	  return true;
 	}
       }
     case TopAbs_VERTEX:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_VERTEX").toStdString().c_str());
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_VERTEX").toLatin1().constData());
 	return true;
       }
     case TopAbs_SHAPE:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHAPE").toStdString().c_str());
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHAPE").toLatin1().constData());
 	return true;
       }
     }
@@ -806,7 +806,7 @@ bool GEOMBase::SelectionByNameInDialogs(QWidget* aWidget, const QString& objectU
 
   _PTR(SObject) theObj ( listSO[0] );
   /* Create a SALOME_InteractiveObject with a SALOME::SObject */
-  char* aCopyobjectUserName = CORBA::string_dup(objectUserName.toStdString().c_str());
+  char* aCopyobjectUserName = CORBA::string_dup(objectUserName.toLatin1().constData());
   Handle(SALOME_InteractiveObject) SI = new SALOME_InteractiveObject(theObj->GetID().c_str(), "GEOM", aCopyobjectUserName);
   delete(aCopyobjectUserName);
 
@@ -881,7 +881,7 @@ void GEOMBase::ShowErrorMessage(const char* theErrorCode, const char* theComment
 
   QString aText = "";
   if (!anErrorCode.isEmpty())
-    aText.append("\n" + QObject::tr(anErrorCode.toStdString().c_str()));
+    aText.append("\n" + QObject::tr(anErrorCode.toLatin1().constData()));
   if (!aComment.isEmpty())
     aText.append("\n" + QString(theComment));
 

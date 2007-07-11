@@ -710,15 +710,15 @@ void GeometryGUI::createGeomAction( const int id, const QString& po_id, const QS
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QPixmap pix;
   if ( icon_id.length() )
-    pix = resMgr->loadPixmap( "GEOM", tr( icon_id.toStdString().c_str() ) );
+    pix = resMgr->loadPixmap( "GEOM", tr( icon_id.toLatin1().constData() ) );
   else
-    pix = resMgr->loadPixmap( "GEOM", tr( (QString( "ICO_" )+po_id).toStdString().c_str() ), false );
+    pix = resMgr->loadPixmap( "GEOM", tr( (QString( "ICO_" )+po_id).toLatin1().constData() ), false );
   if ( !pix.isNull() )
     icon = QIcon( pix );
 
-  QString tooltip    = tr( (QString( "TOP_" )+po_id).toStdString().c_str() ),
-          menu       = tr( (QString( "MEN_" )+po_id).toStdString().c_str() ),
-          status_bar = tr( (QString( "STB_" )+po_id).toStdString().c_str() );
+  QString tooltip    = tr( (QString( "TOP_" )+po_id).toLatin1().constData() ),
+          menu       = tr( (QString( "MEN_" )+po_id).toLatin1().constData() ),
+          status_bar = tr( (QString( "STB_" )+po_id).toLatin1().constData() );
 
   createAction( id, tooltip, icon, menu, status_bar, key, parent, toggle, this, SLOT( OnGUIEvent() )  );
 }

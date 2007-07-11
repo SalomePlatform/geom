@@ -152,7 +152,7 @@ void BooleanGUI_Dialog::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName( GroupConstructors->title().toStdString().c_str() );
+  initName( GroupConstructors->title().toLatin1().constData() );
 
   globalSelection( GEOM_ALLSHAPES );
 }

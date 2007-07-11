@@ -136,7 +136,7 @@ void PrimitiveGUI_SphereDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName(tr("GEOM_SPHERE").toStdString().c_str());
+  initName(tr("GEOM_SPHERE").toLatin1().constData());
   ConstructorsClicked(0);
 }
 

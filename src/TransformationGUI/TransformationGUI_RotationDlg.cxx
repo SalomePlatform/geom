@@ -27,18 +27,18 @@
 //  $Header$
 
 #include "TransformationGUI_RotationDlg.h"
+#include "DlgRef_4Sel1Spin2Check.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qcheckbox.h>
-#include <qlabel.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -50,22 +50,22 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 TransformationGUI_RotationDlg::TransformationGUI_RotationDlg
-  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM",tr("ICON_DLG_ROTATION")));
   QPixmap image1 (aResMgr->loadPixmap("GEOM",tr("ICON_SELECT")));
   QPixmap image2 (aResMgr->loadPixmap("GEOM",tr("ICON_DLG_ROTATION_THREE_POINTS")));
 
-  setCaption(tr("GEOM_ROTATION_TITLE"));
+  setWindowTitle(tr("GEOM_ROTATION_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_ROTATION"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image2);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image2);
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
   GroupPoints = new DlgRef_4Sel1Spin2Check(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
@@ -79,14 +79,14 @@ TransformationGUI_RotationDlg::TransformationGUI_RotationDlg
   GroupPoints->LineEdit2->setReadOnly(true);
   GroupPoints->LineEdit4->setReadOnly(true);
   GroupPoints->LineEdit5->setReadOnly(true);
-  GroupPoints->PushButton1->setPixmap(image1);
-  GroupPoints->PushButton2->setPixmap(image1);
-  GroupPoints->PushButton4->setPixmap(image1);
-  GroupPoints->PushButton5->setPixmap(image1);
+  GroupPoints->PushButton1->setIcon(image1);
+  GroupPoints->PushButton2->setIcon(image1);
+  GroupPoints->PushButton4->setIcon(image1);
+  GroupPoints->PushButton5->setIcon(image1);
   GroupPoints->CheckButton1->setText(tr("GEOM_CREATE_COPY"));
   GroupPoints->CheckButton2->setText(tr("GEOM_REVERSE"));
 
-  Layout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
   double anAngle = 0;
   double SpecificStep = 5;
@@ -146,7 +146,7 @@ void TransformationGUI_RotationDlg::Init()
   
   myAxis = myCentPoint = myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
   
-  initName( tr( "GEOM_ROTATION" ) );
+  initName( tr( "GEOM_ROTATION" ).toLatin1().constData() );
   ConstructorsClicked( 0 );
 }
 

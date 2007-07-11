@@ -27,18 +27,18 @@
 //  $Header$
 
 #include "TransformationGUI_TranslationDlg.h"
+#include "DlgRef_3Sel3Spin1Check.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qcheckbox.h>
-#include <qlabel.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -50,9 +50,8 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg
-  (GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+  (GeometryGUI* theGeometryGUI, QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_TRANSLATION_DXYZ")));
@@ -60,13 +59,13 @@ TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg
   QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_TRANSLATION_VECTOR")));
   QPixmap image3 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_TRANSLATION_TITLE"));
+  setWindowTitle(tr("GEOM_TRANSLATION_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_TRANSLATION"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->setPixmap(image2);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image1);
+  RadioButton3->setIcon(image2);
 
   RadioButton1->setChecked(true);
 
@@ -77,12 +76,12 @@ TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg
   GroupPoints->TextLabel4->setText(tr("GEOM_DX"));
   GroupPoints->TextLabel5->setText(tr("GEOM_DY"));
   GroupPoints->TextLabel6->setText(tr("GEOM_DZ"));
-  GroupPoints->PushButton1->setPixmap(image3);
-  GroupPoints->PushButton2->setPixmap(image3);
-  GroupPoints->PushButton3->setPixmap(image3);
+  GroupPoints->PushButton1->setIcon(image3);
+  GroupPoints->PushButton2->setIcon(image3);
+  GroupPoints->PushButton3->setIcon(image3);
   GroupPoints->CheckBox1->setText(tr("GEOM_CREATE_COPY"));
 
-  Layout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
   
   setHelpFileName("translation.htm");
@@ -156,7 +155,7 @@ void TransformationGUI_TranslationDlg::Init()
   connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName( tr( "GEOM_TRANSLATION" ) );
+  initName( tr( "GEOM_TRANSLATION" ).toLatin1().constData() );
   ConstructorsClicked( 0 );
 }
 

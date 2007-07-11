@@ -29,7 +29,6 @@
 #include "TransformationGUI.h"
 #include "GeometryGUI.h"
 
-#include "SUIT_Session.h"
 #include "SUIT_Desktop.h"
 
 #include "SalomeApp_Application.h"

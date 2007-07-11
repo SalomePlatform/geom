@@ -227,7 +227,7 @@ void GEOMBase_Skeleton::initName( const char* thePrefix )
 //=================================================================================
 const char* GEOMBase_Skeleton::getNewObjectName() const
 {
-  return ResultName->text().toStdString().c_str();
+  return ResultName->text().toLatin1().constData();
 }
 
 //=================================================================================

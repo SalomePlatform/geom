@@ -27,16 +27,16 @@
 //  $Header$
 
 #include "TransformationGUI_OffsetDlg.h"
+#include "DlgRef_1Sel1Spin1Check.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
-
-#include <qlabel.h>
-#include <qcheckbox.h>
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -48,20 +48,21 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                                         const char* name, bool modal, WFlags fl)
-    :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                       WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                                         const char* name, bool modal, Qt::WindowFlags fl)
+    :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_OFFSET")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_OFFSET_TITLE"));
+  setWindowTitle(tr("GEOM_OFFSET_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_OFFSET"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
  
   GroupPoints = new DlgRef_1Sel1Spin1Check(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
@@ -72,9 +73,9 @@ TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg(GeometryGUI* theGeometr
   // san -- modification of an exisitng object by offset is not allowed
   GroupPoints->CheckButton1->hide();
 
-  GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints->PushButton1->setIcon(image1);
   
-  Layout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
   
   /***************************************************************/
 
@@ -109,7 +110,7 @@ void TransformationGUI_OffsetDlg::Init()
    
   /* min, max, step and decimals for spin boxes & initial values */
   GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupPoints->SpinBox_DX->setPrecision(5);
+  GroupPoints->SpinBox_DX->setDecimals(5);
   //@ GroupPoints->SpinBox_DX->setDblPrecision(1e-05);    
   GroupPoints->SpinBox_DX->SetValue(1e-05);
   
@@ -128,7 +129,7 @@ void TransformationGUI_OffsetDlg::Init()
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
   
-  initName( tr( "GEOM_OFFSET" ) );
+  initName( tr( "GEOM_OFFSET" ).toLatin1().constData() );
 
   globalSelection( GEOM_ALLSHAPES );
   

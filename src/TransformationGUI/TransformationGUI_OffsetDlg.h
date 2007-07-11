@@ -29,8 +29,8 @@
 #define DIALOGBOX_OFFSET_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel1Spin1Check.h"
-  
+
+class DlgRef_1Sel1Spin1Check;  
   
 //=================================================================================
 // class    : TransformationGUI_OffsetDlg
@@ -42,7 +42,7 @@ class TransformationGUI_OffsetDlg : public GEOMBase_Skeleton
 
 public:
     TransformationGUI_OffsetDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-				const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+				const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     ~TransformationGUI_OffsetDlg();
 
 protected:

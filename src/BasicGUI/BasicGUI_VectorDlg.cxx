@@ -163,7 +163,7 @@ void BasicGUI_VectorDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName( tr("GEOM_VECTOR").toStdString().c_str() );
+  initName( tr("GEOM_VECTOR").toLatin1().constData() );
 
   GroupDimensions->hide();
   ConstructorsClicked( 0 );

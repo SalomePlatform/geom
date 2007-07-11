@@ -27,19 +27,19 @@
 //  $Header$
 
 #include "TransformationGUI_MultiTranslationDlg.h"
+#include "DlgRef_2Sel2Spin1Check.h"
+#include "DlgRef_3Sel4Spin2Check.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qlabel.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include <qcheckbox.h>
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -51,22 +51,22 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg
-  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+  (GeometryGUI* theGeometryGUI, QWidget* parent,  const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_MULTITRANSLATION_SIMPLE")));
   QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_MULTITRANSLATION_DOUBLE")));
   QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_MULTITRANSLATION_TITLE"));
+  setWindowTitle(tr("GEOM_MULTITRANSLATION_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_MULTITRANSLATION"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->setPixmap(image1);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setIcon(image1);
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
   GroupPoints = new DlgRef_2Sel2Spin1Check(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_MULTITRANSLATION_SIMPLE"));
@@ -75,8 +75,8 @@ TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg
   GroupPoints->TextLabel3->setText(tr("GEOM_STEP_U"));
   GroupPoints->TextLabel4->setText(tr("GEOM_NB_TIMES_U"));
   GroupPoints->CheckButton1->setText(tr("GEOM_REVERSE_U"));
-  GroupPoints->PushButton1->setPixmap(image2);
-  GroupPoints->PushButton2->setPixmap(image2);
+  GroupPoints->PushButton1->setIcon(image2);
+  GroupPoints->PushButton2->setIcon(image2);
   GroupPoints->LineEdit1->setReadOnly(true);
   GroupPoints->LineEdit2->setReadOnly(true);
 
@@ -91,15 +91,15 @@ TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg
   GroupDimensions->TextLabel7->setText(tr("GEOM_NB_TIMES_V"));
   GroupDimensions->CheckButton1->setText(tr("GEOM_REVERSE_U"));
   GroupDimensions->CheckButton2->setText(tr("GEOM_REVERSE_V"));
-  GroupDimensions->PushButton1->setPixmap(image2);
-  GroupDimensions->PushButton2->setPixmap(image2);
-  GroupDimensions->PushButton3->setPixmap(image2);
+  GroupDimensions->PushButton1->setIcon(image2);
+  GroupDimensions->PushButton2->setIcon(image2);
+  GroupDimensions->PushButton3->setIcon(image2);
   GroupDimensions->LineEdit1->setReadOnly(true);
   GroupDimensions->LineEdit2->setReadOnly(true);
   GroupDimensions->LineEdit3->setReadOnly(true);
 
-  Layout1->addWidget(GroupPoints, 2, 0);
-  Layout1->addWidget(GroupDimensions, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
   setHelpFileName("multi_translation.htm");
@@ -183,7 +183,7 @@ void TransformationGUI_MultiTranslationDlg::Init()
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   
-  initName( tr( "GEOM_MULTITRANSLATION" ) );
+  initName( tr( "GEOM_MULTITRANSLATION" ).toLatin1().constData() );
   ConstructorsClicked( 0 );
 }
 

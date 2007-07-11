@@ -220,7 +220,7 @@ void BasicGUI_PointDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));  
   
-  initName( tr("GEOM_VERTEX").toStdString().c_str() );
+  initName( tr("GEOM_VERTEX").toLatin1().constData() );
   
   ConstructorsClicked( 0 );
 }

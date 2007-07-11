@@ -27,18 +27,18 @@
 //  $Header$
 
 #include "TransformationGUI_ScaleDlg.h"
+#include "DlgRef_2Sel1Spin2Check.h"
+#include "DlgRef_SpinBox.h"
 
-#include "SUIT_Desktop.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+
+#include "SUIT_ResourceMgr.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
-#include <qlabel.h>
-#include <qcheckbox.h>
-
 #include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
 
 using namespace std;
 
@@ -50,20 +50,21 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                                       const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+                                                       const char* name, bool modal, Qt::WindowFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SCALE")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_SCALE_TITLE"));
+  setWindowTitle(tr("GEOM_SCALE_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_SCALE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  RadioButton1->setIcon(image0);
+  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton2->close();
+  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  RadioButton3->close();
 
   GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
   GroupPoints->CheckButton2->hide();
@@ -73,14 +74,14 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryG
   GroupPoints->TextLabel3->setText(tr("GEOM_SCALE_FACTOR"));
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
-  GroupPoints->PushButton1->setPixmap(image1);
-  GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->PushButton1->setIcon(image1);
+  GroupPoints->PushButton2->setIcon(image1);
   GroupPoints->CheckButton1->setText(tr("GEOM_CREATE_COPY"));
 
   // san -- modification of an exisitng object by offset is not allowed
   GroupPoints->CheckButton1->hide();
 
-  Layout1->addWidget(GroupPoints, 2, 0);
+  gridLayout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
   double aFactor = 2.0;
   double SpecificStep = 0.5;
@@ -136,7 +137,7 @@ void TransformationGUI_ScaleDlg::Init()
   
   myPoint = GEOM::GEOM_Object::_nil();
   
-  initName( tr( "GEOM_SCALE" ) );
+  initName( tr( "GEOM_SCALE" ).toLatin1().constData() );
 }
 
 

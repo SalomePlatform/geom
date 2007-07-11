@@ -157,7 +157,7 @@ void PrimitiveGUI_CylinderDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   
-  initName( tr( "GEOM_CYLINDER" ).toStdString().c_str() );
+  initName( tr( "GEOM_CYLINDER" ).toLatin1().constData() );
   ConstructorsClicked(0);
 }
 

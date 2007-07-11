@@ -112,7 +112,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   QString viewType = activeViewType();
   if ( view /*fix for 9320==>*/&& ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
-    SALOME_Prs* prs = view->CreatePrs( entry( index ).toStdString().c_str() );
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
 	SOCC_Prs* occPrs = (SOCC_Prs*) prs;

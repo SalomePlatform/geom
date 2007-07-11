@@ -112,7 +112,7 @@ void BuildGUI_CompoundDlg::Init()
 
   globalSelection( GEOM_ALLSHAPES );
 
-  initName( tr( "GEOM_COMPOUND" ).toStdString().c_str() );
+  initName( tr( "GEOM_COMPOUND" ).toLatin1().constData() );
 }
 
 

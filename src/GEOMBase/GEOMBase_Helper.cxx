@@ -169,7 +169,7 @@ void GEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateView
   if ( !object->_is_nil() ) {
     string entry = getEntry( object );
     getDisplayer()->Erase( new SALOME_InteractiveObject(
-      entry.c_str(), "GEOM", strdup( GEOMBase::GetName( object ).toStdString().c_str() ) ), true, updateView );
+      entry.c_str(), "GEOM", strdup( GEOMBase::GetName( object ).toLatin1().constData() ) ), true, updateView );
   }
 }
 
@@ -208,7 +208,7 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 
     string entry = getEntry( object );
     getDisplayer()->Redisplay(new SALOME_InteractiveObject
-                              (entry.c_str(), "GEOM", strdup(GEOMBase::GetName(object).toStdString().c_str())), false);
+                              (entry.c_str(), "GEOM", strdup(GEOMBase::GetName(object).toLatin1().constData())), false);
   }
 
   if ( withChildren ) {
@@ -226,7 +226,7 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 	    if ( !aChild->_is_nil() ) {
 	      string entry = getEntry( aChild );
 	      getDisplayer()->Redisplay( new SALOME_InteractiveObject(
-                entry.c_str(), "GEOM", strdup( GEOMBase::GetName( aChild ).toStdString().c_str() ) ), false );
+                entry.c_str(), "GEOM", strdup( GEOMBase::GetName( aChild ).toLatin1().constData() ) ), false );
 	    }
 	  }
 	}
@@ -448,7 +448,7 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
     string aEntry = getEntry( anObj );
     if ( aEntry != "" )
       aListOfIO.Append( new SALOME_InteractiveObject(
-        aEntry.c_str(), "GEOM", strdup( GEOMBase::GetName( anObj ).toStdString().c_str() ) ) );
+        aEntry.c_str(), "GEOM", strdup( GEOMBase::GetName( anObj ).toLatin1().constData() ) ) );
   }
 
   getDisplayer()->LocalSelection( aListOfIO, theMode );

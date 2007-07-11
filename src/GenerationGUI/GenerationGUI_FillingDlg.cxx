@@ -150,7 +150,7 @@ void GenerationGUI_FillingDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName(tr("GEOM_FILLING").toStdString().c_str());
+  initName(tr("GEOM_FILLING").toLatin1().constData());
 }
 
 

@@ -200,7 +200,7 @@ void BasicGUI_MarkerDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
 
-  initName( tr( "LCS_NAME" ).toStdString().c_str() );
+  initName( tr( "LCS_NAME" ).toLatin1().constData() );
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);

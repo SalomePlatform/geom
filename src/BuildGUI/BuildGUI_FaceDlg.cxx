@@ -119,7 +119,7 @@ void BuildGUI_FaceDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName(tr("GEOM_FACE").toStdString().c_str());
+  initName(tr("GEOM_FACE").toLatin1().constData());
 }
 
 

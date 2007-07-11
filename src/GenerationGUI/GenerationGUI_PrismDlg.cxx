@@ -166,7 +166,7 @@ void GenerationGUI_PrismDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName(tr("GEOM_EXTRUSION").toStdString().c_str());
+  initName(tr("GEOM_EXTRUSION").toLatin1().constData());
 
   globalSelection( GEOM_ALLSHAPES );
   ConstructorsClicked(0);

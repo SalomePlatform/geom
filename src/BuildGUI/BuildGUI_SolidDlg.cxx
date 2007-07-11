@@ -117,7 +117,7 @@ void BuildGUI_SolidDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName(tr("GEOM_SOLID").toStdString().c_str());
+  initName(tr("GEOM_SOLID").toLatin1().constData());
 }
 
 

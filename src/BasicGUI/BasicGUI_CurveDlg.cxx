@@ -125,7 +125,7 @@ void BasicGUI_CurveDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  initName( tr( "GEOM_CURVE" ).toStdString().c_str() );
+  initName( tr( "GEOM_CURVE" ).toLatin1().constData() );
   ConstructorsClicked( 0 );
 }
 

@@ -133,7 +133,7 @@ void GenerationGUI_RevolDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName(tr("GEOM_REVOLUTION").toStdString().c_str());
+  initName(tr("GEOM_REVOLUTION").toLatin1().constData());
 
   globalSelection( GEOM_ALLSHAPES );
 }
