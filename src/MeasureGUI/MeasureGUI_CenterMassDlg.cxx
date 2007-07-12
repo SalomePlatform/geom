@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -28,6 +28,8 @@
 
 #include "MeasureGUI_CenterMassDlg.h"
 #include "MeasureGUI_1Sel3LineEdit_QTD.h"
+
+#include "DlgRef_SpinBox.h"
 
 #include "utilities.h"
 #include "SUIT_Session.h"
@@ -245,9 +247,9 @@ void MeasureGUI_CenterMassDlg::processObject()
     getParameters( x, y, z );
     
     myGrp->LineEdit1->setText( GEOMBase::GetName( myObj ) );
-    myGrp->LineEdit2->setText( QString( "%1" ).arg( x ) );
-    myGrp->LineEdit3->setText( QString( "%1" ).arg( y ) );
-    myGrp->LineEdit4->setText( QString( "%1" ).arg( z ) );
+    myGrp->LineEdit2->setText( DlgRef_SpinBox::PrintDoubleValue( x ) );
+    myGrp->LineEdit3->setText( DlgRef_SpinBox::PrintDoubleValue( y ) );
+    myGrp->LineEdit4->setText( DlgRef_SpinBox::PrintDoubleValue( z ) );
 
     displayPreview();
   }

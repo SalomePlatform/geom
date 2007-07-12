@@ -328,16 +328,16 @@ void EntityGUI_SketcherDlg::Init()
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
   /* min, max, step and decimals for spin boxes */
-  Group1Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  Group3Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  Group4Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, 3);
-  Group4Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, 3);
-  Group4Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  Group4Spin->SpinBox_DS->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., 3);
+  Group1Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  Group3Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  Group4Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, DBL_DIGITS_DISPLAY);
+  Group4Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, DBL_DIGITS_DISPLAY);
+  Group4Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  Group4Spin->SpinBox_DS->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
 
   /* displays Dialog */
   GroupConstructors->setEnabled(false);
@@ -438,8 +438,8 @@ void EntityGUI_SketcherDlg::PointClicked(int constructorId)
     if ( constructorId == 1 )
     {  // XY
       mySketchType = PT_ABS;
-      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
       Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_X2"));
       Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_Y2"));
       myX = 0.0;
@@ -454,8 +454,8 @@ void EntityGUI_SketcherDlg::PointClicked(int constructorId)
     else if ( constructorId == 0 )
     {  // DXDY
       mySketchType = PT_RELATIVE;
-      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
       Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_DX2"));
       Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_DY2"));
       myDX = 0.0;
@@ -512,8 +512,8 @@ void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
     myLength = 100.0;
     if ( myConstructorDirId == 2 )
     {  // Angle
-      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., 3);
-      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
+      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
       Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_ANGLE2"));
       Group2Spin->SpinBox_DX->SetValue(myAngle);
       Group2Spin->buttonApply->setFocus();
@@ -588,9 +588,9 @@ void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
     }
     else if ( myConstructorDirId == 3 )
     {  // DXDY
-      Group3Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, 3);
-      Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, 3);
-      Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+      Group3Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, DBL_DIGITS_DISPLAY);
+      Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, DBL_DIGITS_DISPLAY);
+      Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
       Group3Spin->TextLabel1->setText(tr("GEOM_SKETCHER_VX2"));
       Group3Spin->TextLabel2->setText(tr("GEOM_SKETCHER_VY2"));
       myDX = 0.0;
@@ -626,54 +626,54 @@ void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
     {  // Angle
       if ( constructorId == 2 )
       {  // Length
-				mySketchType = DIR_ANGLE_LENGTH;
-				Group3Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., 3);
-				Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-				Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., 3);
-				Group3Spin->TextLabel1->setText(tr("GEOM_SKETCHER_ANGLE2"));
-				Group3Spin->TextLabel2->setText(tr("GEOM_SKETCHER_RADIUS2"));
-				Group3Spin->TextLabel3->setText(tr("GEOM_SKETCHER_ANGLE2"));
-				Group3Spin->SpinBox_DX->SetValue(myAngle);
-				myRadius = 100.0;
-				Group3Spin->SpinBox_DY->SetValue(myRadius);
-				myLength = 30.0;
-				Group3Spin->SpinBox_DZ->SetValue(myLength);
-				Group3Spin->show();
-				Group3Spin->buttonApply->setFocus();
+        mySketchType = DIR_ANGLE_LENGTH;
+        Group3Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
+        Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+        Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
+        Group3Spin->TextLabel1->setText(tr("GEOM_SKETCHER_ANGLE2"));
+        Group3Spin->TextLabel2->setText(tr("GEOM_SKETCHER_RADIUS2"));
+        Group3Spin->TextLabel3->setText(tr("GEOM_SKETCHER_ANGLE2"));
+        Group3Spin->SpinBox_DX->SetValue(myAngle);
+        myRadius = 100.0;
+        Group3Spin->SpinBox_DY->SetValue(myRadius);
+        myLength = 30.0;
+        Group3Spin->SpinBox_DZ->SetValue(myLength);
+        Group3Spin->show();
+        Group3Spin->buttonApply->setFocus();
       }
     }
     else if ( myConstructorDirId == 0 )
     {  // Perpendicular
       if ( constructorId == 2 )
       {  // Length
-				mySketchType = DIR_PER_LENGTH;
-				Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-				Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., 3);
-				Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_RADIUS2"));
-				Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_ANGLE2"));
-				myRadius = 100.0;
-				Group2Spin->SpinBox_DX->SetValue(myRadius);
-				myLength = 30.0;
-				Group2Spin->SpinBox_DY->SetValue(myLength);
-				Group2Spin->show();
-				Group2Spin->buttonApply->setFocus();
+        mySketchType = DIR_PER_LENGTH;
+        Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+        Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
+        Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_RADIUS2"));
+        Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_ANGLE2"));
+        myRadius = 100.0;
+        Group2Spin->SpinBox_DX->SetValue(myRadius);
+        myLength = 30.0;
+        Group2Spin->SpinBox_DY->SetValue(myLength);
+        Group2Spin->show();
+        Group2Spin->buttonApply->setFocus();
       }
     }
     else if ( myConstructorDirId == 1 )
     {  // Tangent
       if ( constructorId == 2 )
       {  // Length
-				mySketchType = DIR_TAN_LENGTH;
-				Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-				Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., 3);
-				Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_RADIUS2"));
-				Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_ANGLE2"));
-				myRadius = 100.0;
-				Group2Spin->SpinBox_DX->SetValue(myRadius);
-				myLength = 30.0;
-				Group2Spin->SpinBox_DY->SetValue(myLength);
-				Group2Spin->show();
-				Group2Spin->buttonApply->setFocus();
+        mySketchType = DIR_TAN_LENGTH;
+        Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+        Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
+        Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_RADIUS2"));
+        Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_ANGLE2"));
+        myRadius = 100.0;
+        Group2Spin->SpinBox_DX->SetValue(myRadius);
+        myLength = 30.0;
+        Group2Spin->SpinBox_DY->SetValue(myLength);
+        Group2Spin->show();
+        Group2Spin->buttonApply->setFocus();
       }
     }
     else if ( myConstructorDirId == 3 )

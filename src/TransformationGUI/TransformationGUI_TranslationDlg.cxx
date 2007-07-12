@@ -44,7 +44,7 @@ using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_TranslationDlg()
-// purpose  : Constructs a TransformationGUI_TranslationDlg which is a child of 'parent', with the 
+// purpose  : Constructs a TransformationGUI_TranslationDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -84,9 +84,9 @@ TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
-  
+
   setHelpFileName("translation.htm");
-  
+
   Init();
 }
 
@@ -124,9 +124,9 @@ void TransformationGUI_TranslationDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
 
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox1->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupPoints->SpinBox2->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupPoints->SpinBox3->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupPoints->SpinBox1->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupPoints->SpinBox2->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupPoints->SpinBox3->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
 
   GroupPoints->SpinBox1->SetValue(0.0);
   GroupPoints->SpinBox2->SetValue(0.0);
@@ -153,8 +153,8 @@ void TransformationGUI_TranslationDlg::Init()
 
   connect(GroupPoints->CheckBox1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
 
-  connect(myGeomGUI->getApp()->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect(myGeomGUI->getApp()->selectionMgr(),
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_TRANSLATION" ) );
   ConstructorsClicked( 0 );
@@ -176,7 +176,7 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked(int constructorId)
   switch (constructorId)
     {
     case 0: /* translation an object by dx, dy, dz */
-      {	 
+      {
 	GroupPoints->ShowRows(1,2,false);
 	resize(0,0);
 	GroupPoints->ShowRows(3,5,true);
@@ -192,7 +192,7 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->LineEdit3->clear();
 	myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
 	break;
-      } 
+      }
     case 2: /* translation an object by vector */
       {
 	GroupPoints->ShowRows(2,5,false);
@@ -206,7 +206,7 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked(int constructorId)
     }
 
   myEditCurrentArgument->setFocus();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
@@ -269,7 +269,7 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
         myPoint2 = GEOM::GEOM_Object::_nil();
       return;
     }
-      
+
     Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult);
 
@@ -281,7 +281,7 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
     else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2)
       myVector = aSelectedObject;
     else if (myEditCurrentArgument == GroupPoints->LineEdit3)
-      myPoint2 = aSelectedObject; 
+      myPoint2 = aSelectedObject;
 
     aName = GEOMBase::GetName( aSelectedObject );
   }
@@ -311,7 +311,7 @@ void TransformationGUI_TranslationDlg::LineEditReturnPressed()
 // purpose  :
 //=================================================================================
 void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
-{    
+{
   QPushButton* send = (QPushButton*)sender();
 
   if (send == GroupPoints->PushButton1) {
@@ -341,7 +341,7 @@ void TransformationGUI_TranslationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   ConstructorsClicked( getConstructorId() );
@@ -419,7 +419,7 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
 
   GEOM::GEOM_Object_var anObj;
 
-  switch ( getConstructorId() ) 
+  switch ( getConstructorId() )
     {
     case 0:
       {
