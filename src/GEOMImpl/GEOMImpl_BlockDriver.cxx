@@ -545,7 +545,7 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
         }
 
         // 5. Glue Faces
-        aShape = GEOMImpl_GlueDriver::GlueFaces(aComp, Precision::Confusion());
+        aShape = GEOMImpl_GlueDriver::GlueFaces(aComp, Precision::Confusion(), Standard_False);
       }
 
     } else if (aType == BLOCK_MULTI_TRANSFORM_1D ||
@@ -651,7 +651,7 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       }
 
       // Glue faces of the multi-block
-      aShape = GEOMImpl_GlueDriver::GlueFaces(aMulti, aTol);
+      aShape = GEOMImpl_GlueDriver::GlueFaces(aMulti, aTol, Standard_False);
 
     } else { // unknown function type
       return 0;
