@@ -169,7 +169,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
         */
 
         // As GlueFaces has been improved to keep all kind of shapes
-        aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+        TopExp_Explorer anExp (C, TopAbs_VERTEX);
+        if (anExp.More())
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+        else
+          aShape = C;
       }
     }
 
@@ -236,7 +240,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
         */
 
         // As GlueFaces has been improved to keep all kind of shapes
-        aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+        TopExp_Explorer anExp (C, TopAbs_VERTEX);
+        if (anExp.More())
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+        else
+          aShape = C;
       }
     }
 
@@ -383,7 +391,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
         //aShape = C;
 
         // As GlueFaces has been improved to keep all kind of shapes
-        aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+        TopExp_Explorer anExp (C, TopAbs_VERTEX);
+        if (anExp.More())
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+        else
+          aShape = C;
       }
     }
 
