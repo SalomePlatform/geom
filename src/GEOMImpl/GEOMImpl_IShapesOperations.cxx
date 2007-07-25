@@ -17,6 +17,11 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File      : GEOMImpl_IShapesOperations.cxx
+// Created   : 
+// Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
+// Project   : SALOME
+// $Header$
 
 #include <Standard_Stream.hxx>
 
@@ -110,6 +115,16 @@
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+
+// Includes added for GetInPlace algorithm improvement
+
+#include <GEOMImpl_MeasureDriver.hxx>
+#include <GEOMImpl_IMeasure.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+
+#include <BRepClass_FaceClassifier.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
+#include <Precision.hxx>
 
 //=============================================================================
 /*!
@@ -2408,7 +2423,7 @@ Handle(TColStd_HSequenceOfInteger)
 
 //=============================================================================
 /*!
- *  GetInPlace
+ *  GetInPlaceOfShape
  */
 //=============================================================================
 static bool GetInPlaceOfShape (const Handle(GEOM_Function)& theWhereFunction,
@@ -2530,7 +2545,182 @@ static bool GetInPlaceOfShape (const Handle(GEOM_Function)& theWhereFunction,
   return isFound;
 }
 
-Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
+//=============================================================================
+/*!
+ *  GetShapeProperties
+ */
+//=============================================================================
+
+void GEOMImpl_IShapesOperations::GetShapeProperties( const TopoDS_Shape aShape, Standard_Real tab[],
+                                                     gp_Pnt & aVertex )
+{
+  GProp_GProps SProps, VProps;
+  gp_Pnt aCenterMass;
+  TopoDS_Shape aPntShape;
+  Standard_Real aShapeSize;
+
+  BRepGProp::VolumeProperties(aShape, VProps);
+  aCenterMass = VProps.CentreOfMass();
+  aShapeSize  = VProps.Mass();
+  if (aShape.ShapeType() == TopAbs_FACE) {
+    BRepGProp::SurfaceProperties(aShape, SProps);
+    aCenterMass = SProps.CentreOfMass();
+    aShapeSize  = SProps.Mass();
+  }
+
+  aPntShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
+  aVertex   = BRep_Tool::Pnt( TopoDS::Vertex( aPntShape ) );
+  tab[0] = aVertex.X();
+  tab[1] = aVertex.Y();
+  tab[2] = aVertex.Z();
+  tab[3] = aShapeSize;
+  return;
+}
+
+//=============================================================================
+/*!
+ *  GetInPlace
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) theShapeWhere,
+                                                            Handle(GEOM_Object) theShapeWhat)
+{
+  SetErrorCode(KO);
+
+  if (theShapeWhere.IsNull() || theShapeWhat.IsNull()) return NULL;
+
+  TopoDS_Shape aWhere = theShapeWhere->GetValue();
+  TopoDS_Shape aWhat  = theShapeWhat->GetValue();
+
+  if (aWhere.IsNull() || aWhat.IsNull()) {
+    SetErrorCode("Error: aWhere and aWhat TopoDS_Shape are Null.");
+    return NULL;
+  }
+
+  Handle(GEOM_Function) aWhereFunction = theShapeWhere->GetLastFunction();
+  if (aWhereFunction.IsNull()) {
+    SetErrorCode("Error: aWhereFunction is Null.");
+    return NULL;
+  }
+
+  TopTools_IndexedMapOfShape aWhereIndices;
+  TopExp::MapShapes(aWhere, aWhereIndices);
+
+  TColStd_ListOfInteger aModifiedList;
+  Standard_Integer aWhereIndex;
+  Handle(TColStd_HArray1OfInteger) aModifiedArray;
+  Handle(GEOM_Object) aResult;
+
+  bool isFound = false;
+  Standard_Integer iType = TopAbs_SOLID;
+  Standard_Real    aWhat_Mass = 0., aWhere_Mass = 0.;
+  Standard_Real    tab_aWhat[4],    tab_aWhere[4];
+  Standard_Real    dl_l = 1e-3;
+  Standard_Real    min_l, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
+  gp_Pnt           aPnt, aPnt_aWhat;
+  GProp_GProps     aProps;
+
+  // 2D or 3D shapes
+  if ( aWhat.ShapeType() == TopAbs_COMPOUND  ||
+       aWhat.ShapeType() == TopAbs_SHELL     ||
+       aWhat.ShapeType() == TopAbs_COMPSOLID ) {
+    TopExp_Explorer Exp( aWhat, TopAbs_ShapeEnum( iType ) );
+    if ( ! Exp.More() ) iType = TopAbs_FACE;
+  }
+  else if ( aWhat.ShapeType() == TopAbs_FACE )
+    iType = TopAbs_FACE;
+
+  TopExp_Explorer Exp_aWhat( aWhat,   TopAbs_ShapeEnum( iType ) );
+  TopExp_Explorer Exp_aWhere( aWhere, TopAbs_ShapeEnum( iType ) );
+  TopExp_Explorer Exp_Edge( aWhere,   TopAbs_EDGE );
+
+  // Find the shortest edge in theShapeWhere shape
+  for ( Standard_Integer nbEdge = 0; Exp_Edge.More(); Exp_Edge.Next(), nbEdge++ ) {
+    BRepGProp::LinearProperties(Exp_Edge.Current(), aProps);
+    if ( ! nbEdge ) min_l = aProps.Mass();
+    if ( aProps.Mass() < min_l ) min_l = aProps.Mass();
+  }
+
+  // Compute tolerances
+  Tol_1D = dl_l * min_l;
+  Tol_2D = dl_l * ( min_l * min_l) * ( 2. + dl_l);
+  Tol_3D = dl_l * ( min_l * min_l * min_l ) * ( 3. + (3 * dl_l) + (dl_l * dl_l) );
+
+  Tol_Mass = Tol_3D;
+  if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
+
+  // Compute the ShapeWhat Mass
+  for ( ; Exp_aWhat.More(); Exp_aWhat.Next() ) {
+    if      ( iType == TopAbs_SOLID ) BRepGProp::VolumeProperties(Exp_aWhat.Current(), aProps);
+    else if ( iType == TopAbs_FACE )  BRepGProp::SurfaceProperties(Exp_aWhat.Current(), aProps);
+    aWhat_Mass += aProps.Mass();
+  }
+
+  // Finding the Sub-ShapeWhere
+  for ( Exp_aWhere.ReInit(); Exp_aWhere.More(); Exp_aWhere.Next() ) {
+    GetShapeProperties( Exp_aWhere.Current(), tab_aWhere, aPnt );
+    for ( Exp_aWhat.ReInit(); Exp_aWhat.More(); Exp_aWhat.Next() ) {
+      GetShapeProperties( Exp_aWhat.Current(), tab_aWhat, aPnt_aWhat );
+      if ( fabs(tab_aWhat[3] - tab_aWhere[3]) <= Tol_Mass && aPnt_aWhat.Distance(aPnt) <= Tol_1D )
+        isFound = true;
+      else if ( tab_aWhat[3] - ( tab_aWhere[3] > Tol_Mass) ) {
+        BRepClass3d_SolidClassifier SC_aWhere (Exp_aWhere.Current(), aPnt, Precision::Confusion());
+        BRepClass3d_SolidClassifier SC_aWhat  (Exp_aWhat.Current(),  aPnt, Precision::Confusion());
+        // Block construction 3D
+        if      ( SC_aWhere.State() == TopAbs_IN && SC_aWhat.State() == TopAbs_IN ) isFound = true;
+        // Block construction 2D
+        else if ( SC_aWhere.State() == TopAbs_ON && SC_aWhat.State() == TopAbs_ON ) isFound = true;
+      }
+      if ( isFound ) {
+        aWhereIndex = aWhereIndices.FindIndex(Exp_aWhere.Current());
+        aModifiedList.Append(aWhereIndex);
+        aWhere_Mass += tab_aWhere[3];
+        isFound = false;
+        break;
+      }
+    }
+    if ( fabs( aWhat_Mass - aWhere_Mass ) <= Tol_Mass ) break;
+  }
+
+  aModifiedArray = new TColStd_HArray1OfInteger (1, aModifiedList.Extent());
+  TColStd_ListIteratorOfListOfInteger anIterModif (aModifiedList);
+  for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++)
+    aModifiedArray->SetValue(imod, anIterModif.Value());
+
+  //Add a new object
+  aResult = GetEngine()->AddSubShape(theShapeWhere, aModifiedArray);
+  if (aResult.IsNull()) {
+    SetErrorCode("Error in algorithm: result found, but cannot be returned.");
+    return NULL;
+  }
+
+  if (aModifiedArray->Length() > 1) {
+    //Set a GROUP type
+    aResult->SetType(GEOM_GROUP);
+
+    //Set a sub shape type
+    TopoDS_Shape aFirstFound = aWhereIndices.FindKey(aModifiedArray->Value(1));
+    TopAbs_ShapeEnum aShapeType = aFirstFound.ShapeType();
+
+    TDF_Label aFreeLabel = aResult->GetFreeLabel();
+    TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)aShapeType);
+  }
+
+  //Make a Python command
+  Handle(GEOM_Function) aFunction = aResult->GetFunction(1);
+
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetInPlace("
+    << theShapeWhere << ", " << theShapeWhat << ")";
+
+  SetErrorCode(OK);
+  return aResult;
+}
+
+//=======================================================================
+//function : GetInPlaceByHistory
+//purpose  :
+//=======================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
                                           (Handle(GEOM_Object) theShapeWhere,
                                            Handle(GEOM_Object) theShapeWhat)
 {

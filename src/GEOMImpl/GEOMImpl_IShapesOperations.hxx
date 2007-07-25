@@ -17,7 +17,14 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
+//=============================================================================
+// File      : GEOMImpl_IShapesOperations.hxx
+// Created   : 
+// Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
+// Project   : SALOME
+// Copyright : CEA 2003
+// $Header$
+//=============================================================================
 #ifndef _GEOMImpl_IShapesOperations_HXX_
 #define _GEOMImpl_IShapesOperations_HXX_
 
@@ -31,6 +38,8 @@
 
 #include <list>
 #include <Handle_Geom_Surface.hxx>
+
+#include <gp_Pnt.hxx>
 
 class GEOM_Engine;
 class Handle(GEOM_Object);
@@ -206,8 +215,13 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                             Handle(GEOM_Object)    theCenter,
                                             const Standard_Real    theRadius);
 
+  void GetShapeProperties(const TopoDS_Shape aShape, Standard_Real propertiesArray[], gp_Pnt & aPnt);
+
   Standard_EXPORT Handle(GEOM_Object) GetInPlace (Handle(GEOM_Object) theShapeWhere,
                                                   Handle(GEOM_Object) theShapeWhat);
+
+  Standard_EXPORT Handle(GEOM_Object) GetInPlaceByHistory (Handle(GEOM_Object) theShapeWhere,
+                                                           Handle(GEOM_Object) theShapeWhat);
 
   /*!
    * \brief Searches a shape equal to theWhat in the context of theWhere

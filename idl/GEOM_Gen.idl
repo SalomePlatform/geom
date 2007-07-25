@@ -1311,7 +1311,7 @@ module GEOM
 			     in shape_state theState);
 
     /*!
-     *  Get sub-shape(s) of theShapeWhere, which are
+     *  Get sub-shape(s) of \a theShapeWhere, which are
      *  coincident with \a theShapeWhat or could be a part of it.
      *  \param theShapeWhere Shape to find sub-shapes of.
      *  \param theShapeWhat Shape, specifying what to find.
@@ -1319,6 +1319,23 @@ module GEOM
      */
     GEOM_Object GetInPlace (in GEOM_Object theShapeWhere,
 			    in GEOM_Object theShapeWhat);
+
+    /*!
+     *  Get sub-shape(s) of \a theShapeWhere, which are
+     *  coincident with \a theShapeWhat or could be a part of it.
+     *
+     *  Implementation of this method is based on a saved history of an operation,
+     *  produced \a theShapeWhere. The \a theShapeWhat must be among this operation's
+     *  arguments (an argument shape or a sub-shape of an argument shape).
+     *  The operation could be the Partition or one of boolean operations,
+     *  performed on simple shapes (not on compounds).
+     *
+     *  \param theShapeWhere Shape to find sub-shapes of.
+     *  \param theShapeWhat Shape, specifying what to find.
+     *  \return Group of all found sub-shapes or a single found sub-shape.
+     */
+    GEOM_Object GetInPlaceByHistory (in GEOM_Object theShapeWhere,
+				     in GEOM_Object theShapeWhat);
 
     /*!
      *  Get sub-shape of theShapeWhere, which are

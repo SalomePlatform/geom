@@ -1097,6 +1097,27 @@ def GetInPlace(theShapeWhere, theShapeWhat):
       print "GetInPlace : ", ShapesOp.GetErrorCode()
     return anObj
 
+## Get sub-shape(s) of \a theShapeWhere, which are
+#  coincident with \a theShapeWhat or could be a part of it.
+#
+#  Implementation of this method is based on a saved history of an operation,
+#  produced \a theShapeWhere. The \a theShapeWhat must be among this operation's
+#  arguments (an argument shape or a sub-shape of an argument shape).
+#  The operation could be the Partition or one of boolean operations,
+#  performed on simple shapes (not on compounds).
+#
+#  @param theShapeWhere Shape to find sub-shapes of.
+#  @param theShapeWhat Shape, specifying what to find (must be in the
+#                      building history of the ShapeWhere).
+#  @return Group of all found sub-shapes or a single found sub-shape.
+#
+#  Example: see GEOM_TestOthers.py
+def GetInPlaceByHistory(theShapeWhere, theShapeWhat):
+    anObj = ShapesOp.GetInPlaceByHistory(theShapeWhere, theShapeWhat)
+    if ShapesOp.IsDone() == 0:
+      print "GetInPlace : ", ShapesOp.GetErrorCode()
+    return anObj
+
 ## Get sub-shape of theShapeWhere, which is
 #  equal to \a theShapeWhat.
 #  @param theShapeWhere Shape to find sub-shape of.

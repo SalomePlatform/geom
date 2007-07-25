@@ -176,6 +176,9 @@ class GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr GetInPlace (GEOM::GEOM_Object_ptr theShapeWhere,
 				    GEOM::GEOM_Object_ptr theShapeWhat);
 
+  GEOM::GEOM_Object_ptr GetInPlaceByHistory (GEOM::GEOM_Object_ptr theShapeWhere,
+					     GEOM::GEOM_Object_ptr theShapeWhat);
+
   GEOM::GEOM_Object_ptr GetSame (GEOM::GEOM_Object_ptr theShapeWhere,
 				 GEOM::GEOM_Object_ptr theShapeWhat);
 

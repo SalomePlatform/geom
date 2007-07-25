@@ -1327,6 +1327,41 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetInPlace
 
 //=============================================================================
 /*!
+ *  GetInPlaceByHistory
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetInPlaceByHistory
+                                          (GEOM::GEOM_Object_ptr theShapeWhere,
+					   GEOM::GEOM_Object_ptr theShapeWhat)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShapeWhere == NULL ||
+      theShapeWhat == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShapeWhere = GetOperations()->GetEngine()->GetObject
+    (theShapeWhere->GetStudyID(), theShapeWhere->GetEntry());
+  Handle(GEOM_Object) aShapeWhat = GetOperations()->GetEngine()->GetObject
+    (theShapeWhat->GetStudyID(), theShapeWhat->GetEntry());
+
+  if (aShapeWhere.IsNull() ||
+      aShapeWhat.IsNull()) return aGEOMObject._retn();
+
+  //Get Shapes in place of aShapeWhat
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetInPlaceByHistory(aShapeWhere, aShapeWhat);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  GetSame
  */
 //=============================================================================
