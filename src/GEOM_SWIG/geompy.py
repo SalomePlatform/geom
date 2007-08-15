@@ -38,4 +38,4 @@ for k in dir(geom):
   if k[0] == '_':continue
   globals()[k]=getattr(geom,k)
 del k
-from geompyDC import ShapeType,GEOM,kind
+from geompyDC import ShapeType,GEOM,kind, info
