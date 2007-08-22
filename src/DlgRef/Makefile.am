@@ -56,6 +56,7 @@ dist_libDlgRef_la_SOURCES = \
 	DlgRef_3Sel4Spin2Check_QTD.cxx \
 	DlgRef_4Sel1List_QTD.cxx \
 	DlgRef_2Sel1List_QTD.cxx \
+	DlgRef_2Sel1List1Check_QTD.cxx \
 	DlgRef_1List1Spin1Btn_QTD.cxx \
 	DlgRef_4Sel1List1Check_QTD.cxx \
 	DlgRef_1Spin_QTD.cxx \
@@ -112,6 +113,7 @@ MOC_FILES = \
 	DlgRef_3Sel4Spin2Check_QTD_moc.cxx \
 	DlgRef_4Sel1List_QTD_moc.cxx \
 	DlgRef_2Sel1List_QTD_moc.cxx \
+	DlgRef_2Sel1List1Check_QTD_moc.cxx \
 	DlgRef_1List1Spin1Btn_QTD_moc.cxx \
 	DlgRef_4Sel1List1Check_QTD_moc.cxx \
 	DlgRef_1Spin_QTD_moc.cxx \
@@ -170,6 +172,7 @@ salomeinclude_HEADERS = \
 	DlgRef_3Sel4Spin2Check_QTD.h \
 	DlgRef_4Sel1List_QTD.h \
 	DlgRef_2Sel1List_QTD.h \
+	DlgRef_2Sel1List1Check_QTD.h \
 	DlgRef_1List1Spin1Btn_QTD.h \
 	DlgRef_4Sel1List1Check_QTD.h \
 	DlgRef_1Spin_QTD.h \

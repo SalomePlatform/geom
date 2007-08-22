@@ -20,8 +20,8 @@
 #ifndef _GEOMAlgo_Builder_HeaderFile
 #define _GEOMAlgo_Builder_HeaderFile
 
-#ifndef _NMTTools_PDSFiller_HeaderFile
-#include <NMTTools_PDSFiller.hxx>
+#ifndef _NMTTools_PPaveFiller_HeaderFile
+#include <NMTTools_PPaveFiller.hxx>
 #endif
 #ifndef _TopTools_ListOfShape_HeaderFile
 #include <TopTools_ListOfShape.hxx>
@@ -50,7 +50,7 @@
 #ifndef _TopAbs_ShapeEnum_HeaderFile
 #include <TopAbs_ShapeEnum.hxx>
 #endif
-class NMTTools_DSFiller;
+class NMTTools_PaveFiller;
 class TopoDS_Shape;
 class TopTools_ListOfShape;
 class BRepAlgo_Image;
@@ -90,9 +90,9 @@ Standard_EXPORT virtual ~GEOMAlgo_Builder();
 //!  Performs calculations <br>
 Standard_EXPORT virtual  void Perform() ;
 
-//!  Performs calculations using prepared DSFiller <br>
+//!  Performs calculations using prepared PaveFiller <br>
 //!           object theDSF <br>
-Standard_EXPORT virtual  void PerformWithFiller(const NMTTools_DSFiller& theDSF) ;
+Standard_EXPORT virtual  void PerformWithFiller(const NMTTools_PaveFiller& theDSF) ;
 
 //!  Adds argument theShape of the operation <br>
 Standard_EXPORT virtual  void AddShape(const TopoDS_Shape& theShape) ;
@@ -139,7 +139,7 @@ protected:
 
 //!  Performs calculations using prepared DSFiller <br>
 //!           object theDSF <br>
-Standard_EXPORT   void PerformInternal(const NMTTools_DSFiller& theDSF) ;
+Standard_EXPORT virtual  void PerformInternal(const NMTTools_PaveFiller& theDSF) ;
 
 //!  Prepare information for history support <br>
 Standard_EXPORT virtual  void PrepareHistory() ;
@@ -214,7 +214,7 @@ Standard_EXPORT   void BuildDraftSolid(const TopoDS_Shape& theSolid,TopoDS_Shape
 
  // Fields PROTECTED
  //
-NMTTools_PDSFiller myDSFiller;
+NMTTools_PPaveFiller myPaveFiller;
 TopTools_ListOfShape myShapes;
 Standard_Integer myNbTypes;
 TopTools_MapOfShape myMapFence;

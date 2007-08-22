@@ -206,6 +206,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       }
     }
 
+    PS.SetLimitMode(aCI.GetKeepNonlimitShapes());
     PS.SetLimit( (TopAbs_ShapeEnum)aCI.GetLimit() );
     PS.Perform();
 

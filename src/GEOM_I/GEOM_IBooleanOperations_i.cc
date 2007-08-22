@@ -99,7 +99,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
 				       const GEOM::ListOfGO&   theRemoveIns,
 				       CORBA::Short            theLimit,
 				       CORBA::Boolean          theRemoveWebs,
-				       const GEOM::ListOfLong& theMaterials)
+				       const GEOM::ListOfLong& theMaterials,
+				       CORBA::Short theKeepNonlimitShapes)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -166,6 +167,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
   Handle(GEOM_Object) anObject =
     GetOperations()->MakePartition(aShapes, aTools, aKeepIns, aRemIns,
 				   theLimit, theRemoveWebs, aMaterials,
+				   theKeepNonlimitShapes,
 				   /*PerformSelfIntersections*/Standard_True);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -185,7 +187,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
 				       const GEOM::ListOfGO&   theRemoveIns,
 				       CORBA::Short            theLimit,
 				       CORBA::Boolean          theRemoveWebs,
-				       const GEOM::ListOfLong& theMaterials)
+				       const GEOM::ListOfLong& theMaterials,
+				       CORBA::Short theKeepNonlimitShapes)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -252,6 +255,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
   Handle(GEOM_Object) anObject =
     GetOperations()->MakePartition(aShapes, aTools, aKeepIns, aRemIns,
 				   theLimit, theRemoveWebs, aMaterials,
+				   theKeepNonlimitShapes,
 				   /*PerformSelfIntersections*/Standard_False);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();

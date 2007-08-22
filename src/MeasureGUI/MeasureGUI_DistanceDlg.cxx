@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -30,6 +30,7 @@
 #include "MeasureGUI_2Sel1LineEdit_QTD.h"
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
+#include "DlgRef_SpinBox.h"
 
 #include "SUIT_Session.h"
 #include "SUIT_ViewWindow.h"
@@ -118,14 +119,13 @@ void MeasureGUI_DistanceDlg::Init()
   mySelEdit  = myGrp->LineEdit1;
   mySelBtn2  = myGrp->PushButton2;
   mySelEdit2 = myGrp->LineEdit2;
-  
+
   myEditCurrentArgument = mySelEdit;
 
   connect( mySelEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( mySelBtn2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
   MeasureGUI_Skeleton::Init();
-
 }
 
 
@@ -163,7 +163,7 @@ void MeasureGUI_DistanceDlg::processObject()
   double aDist = 0.;
   if ( getParameters( aDist, aPnt1, aPnt2 ) )
   {
-    myGrp->LineEdit3->setText( QString( "%1" ).arg( aDist ) );
+    myGrp->LineEdit3->setText( DlgRef_SpinBox::PrintDoubleValue( aDist ) );
     redisplayPreview();
   }
   else
@@ -171,7 +171,6 @@ void MeasureGUI_DistanceDlg::processObject()
     myGrp->LineEdit3->setText( "" );
     erasePreview();
   }
-    
 }
 
 //=================================================================================
@@ -256,12 +255,14 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
 {
   double aDist = 0.;
   gp_Pnt aPnt1( 0, 0, 0 ), aPnt2( 0, 0, 0 );
-  
-  if ( myObj->_is_nil() || myObj2->_is_nil() || !getParameters( aDist, aPnt1, aPnt2 ) ||
-       SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
-       != OCCViewer_Viewer::Type() )
+
+  SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+
+  if ( myObj->_is_nil() || myObj2->_is_nil() ||
+       !getParameters( aDist, aPnt1, aPnt2 ) ||
+       vw->getViewManager()->getType() != OCCViewer_Viewer::Type() )
     return 0;
-  
+
   try
   {
     if( aDist <= 1.e-9 )
@@ -282,7 +283,6 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
                     ( aPnt1.Y() + aPnt2.Y() ) / 2,
                     ( aPnt1.Z() + aPnt2.Z() ) / 2 + 100 );
 
-
       gp_Vec va( aPnt3, aPnt1 );
       gp_Vec vb( aPnt3, aPnt2 );
 
@@ -291,18 +291,15 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
         aPnt3.SetY( ( aPnt1.Y() + aPnt2.Y() ) / 2 + 100 );
         aPnt3.SetZ( ( aPnt1.Z() + aPnt2.Z() ) / 2 );
       }
-      
+
       gce_MakePln gce_MP( aPnt1, aPnt2, aPnt3 );
       Handle( Geom_Plane ) P = new Geom_Plane( gce_MP.Value() );
 
-      Handle( AIS_LengthDimension ) anIO = new AIS_LengthDimension(
-        aVert1, aVert2, P, aDist, TCollection_ExtendedString( (Standard_CString)aLabel.latin1() ) );
+      Handle( AIS_LengthDimension ) anIO = new AIS_LengthDimension
+        (aVert1, aVert2, P, aDist, TCollection_ExtendedString((Standard_CString)aLabel.latin1()));
 
-      SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-      SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>( ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs( 0 ) );
-      
-      //QAD_ViewFrame* vf = GEOM_Displayer::GetActiveView();
-      //OCCViewer_Prs* aPrs = dynamic_cast<OCCViewer_Prs*>( vf->CreatePrs( 0 ) );
+      SOCC_Prs* aPrs =
+        dynamic_cast<SOCC_Prs*>( ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs( 0 ) );
 
       if ( aPrs )
         aPrs->AddObject( anIO );
@@ -324,17 +321,3 @@ bool MeasureGUI_DistanceDlg::isValid( QString& msg )
 {
   return MeasureGUI_Skeleton::isValid( msg ) && !myObj2->_is_nil();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

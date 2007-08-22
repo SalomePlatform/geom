@@ -29,7 +29,7 @@
 #define DIALOGBOX_PARTITION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1List_QTD.h"
+#include "DlgRef_2Sel1List1Check_QTD.h"
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg
@@ -68,7 +68,7 @@ private:
     GEOM::ListOfGO   myListRemoveInside;
     GEOM::ListOfGO   myListKeepInside;
 
-    DlgRef_2Sel1List_QTD* GroupPoints;
+    DlgRef_2Sel1List1Check_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();

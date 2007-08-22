@@ -732,7 +732,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theSeqSubBases - list of corresponding subshapes of section shapes.
         #  @param theLocations - list of locations on the path corresponding
         #                        specified list of the Bases shapes. Number of locations
-        #                        should be equal to number of bases or list of locations can be empty.
+        #                        should be equal to number of bases. First and last
+        #                        locations must be coincided with first and last vertexes
+        #                        of path correspondingly.
         #  @param thePath - Path shape to extrude the base shape along it.
         #  @param theWithContact - the mode defining that the section is translated to be in
         #                          contact with the spine.
@@ -1079,6 +1081,27 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 print "GetInPlace : ", self.ShapesOp.GetErrorCode()
             return anObj
         
+        ## Get sub-shape(s) of \a theShapeWhere, which are
+        #  coincident with \a theShapeWhat or could be a part of it.
+        #
+        #  Implementation of this method is based on a saved history of an operation,
+        #  produced \a theShapeWhere. The \a theShapeWhat must be among this operation's
+        #  arguments (an argument shape or a sub-shape of an argument shape).
+        #  The operation could be the Partition or one of boolean operations,
+        #  performed on simple shapes (not on compounds).
+        #
+        #  @param theShapeWhere Shape to find sub-shapes of.
+        #  @param theShapeWhat Shape, specifying what to find (must be in the
+        #                      building history of the ShapeWhere).
+        #  @return Group of all found sub-shapes or a single found sub-shape.
+        #
+        #  Example: see GEOM_TestOthers.py
+        def GetInPlaceByHistory(theShapeWhere, theShapeWhat):
+            anObj = ShapesOp.GetInPlaceByHistory(theShapeWhere, theShapeWhat)
+            if ShapesOp.IsDone() == 0:
+                print "GetInPlace : ", ShapesOp.GetErrorCode()
+            return anObj
+
         ## Get sub-shape of theShapeWhere, which is
         #  equal to \a theShapeWhat.
         #  @param theShapeWhere Shape to find sub-shape of.
@@ -1365,11 +1388,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Replace coincident faces in theShape by one face.
         #  @param theShape Initial shape.
         #  @param theTolerance Maximum distance between faces, which can be considered as coincident.
+        #  @param doKeepNonSolids If FALSE, only solids will present in the result,
+        #                         otherwise all initial shapes.
         #  @return New GEOM_Object, containing a copy of theShape without coincident faces.
         #
         #  Example: see GEOM_Spanner.py
-        def MakeGlueFaces(self,theShape, theTolerance):
-            anObj = self.ShapesOp.MakeGlueFaces(theShape, theTolerance)
+        def MakeGlueFaces(theShape, theTolerance, doKeepNonSolids=True):
+            anObj = ShapesOp.MakeGlueFaces(theShape, theTolerance, doKeepNonSolids)
             if self.ShapesOp.IsDone() == 0:
                 print "MakeGlueFaces : ", self.ShapesOp.GetErrorCode()
             return anObj
@@ -1382,7 +1407,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return ListOfGO.
         #
         #  Example: see GEOM_Spanner.py
-        def GetGlueFaces(self,theShape, theTolerance):
+        def GetGlueFaces(self, theShape, theTolerance):
             anObj = self.ShapesOp.GetGlueFaces(theShape, theTolerance)
             if self.ShapesOp.IsDone() == 0:
                 print "GetGlueFaces : ", self.ShapesOp.GetErrorCode()
@@ -1395,12 +1420,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theTolerance Maximum distance between faces,
         #                      which can be considered as coincident.
         #  @param theFaces List of faces for gluing.
+        #  @param doKeepNonSolids If FALSE, only solids will present in the result,
+        #                         otherwise all initial shapes.
         #  @return New GEOM_Object, containing a copy of theShape
         #          without some faces.
         #
         #  Example: see GEOM_Spanner.py
-        def MakeGlueFacesByList(self,theShape, theTolerance, theFaces):
-            anObj = self.ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces)
+        def MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids=True):
+            anObj = ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids)
             if self.ShapesOp.IsDone() == 0:
                 print "MakeGlueFacesByList : ", self.ShapesOp.GetErrorCode()
             return anObj
@@ -1455,6 +1482,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #           in order to avoid possible intersection between shapes from
         #           this compound.
         #  @param Limit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
+        #  @param KeepNonlimitShapes: if this parameter == 0 - only shapes with
+        #                             type <= Limit are kept in the result,
+        #                             else - shapes with type > Limit are kept
+        #                             also (if they exist)
         #
         #  After implementation new version of PartitionAlgo (October 2006)
         #  other parameters are ignored by current functionality. They are kept
@@ -1472,10 +1503,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  Example: see GEOM_TestAll.py
         def MakePartition(self,ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                          Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+                          Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
+                          KeepNonlimitShapes=0):
             anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
                                               ListKeepInside, ListRemoveInside,
-                                              Limit, RemoveWebs, ListMaterials);
+                                              Limit, RemoveWebs, ListMaterials,
+                                              KeepNonlimitShapes);
             if self.BoolOp.IsDone() == 0:
                 print "MakePartition : ", self.BoolOp.GetErrorCode()
             return anObj
@@ -1492,11 +1525,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM_Object, containing the result shapes.
         #
-        def MakePartitionNonSelfIntersectedShape(self,ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                                                 Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+        def MakePartitionNonSelfIntersectedShape(ListShapes, ListTools=[],
+                                                 ListKeepInside=[], ListRemoveInside=[],
+                                                 Limit=ShapeType["SHAPE"], RemoveWebs=0,
+                                                 ListMaterials=[], KeepNonlimitShapes=0):
             anObj = self.BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
                                                                      ListKeepInside, ListRemoveInside,
-                                                                     Limit, RemoveWebs, ListMaterials);
+                                                                     Limit, RemoveWebs, ListMaterials,
+                                                                     KeepNonlimitShapes);
             if self.BoolOp.IsDone() == 0:
                 print "MakePartitionNonSelfIntersectedShape : ", self.BoolOp.GetErrorCode()
             return anObj
@@ -1505,10 +1541,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  Example: see GEOM_TestOthers.py
         def Partition(self,ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                      Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+                      Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
+                      KeepNonlimitShapes=0):
             anObj = self.MakePartition(ListShapes, ListTools,
                                        ListKeepInside, ListRemoveInside,
-                                       Limit, RemoveWebs, ListMaterials);
+                                       Limit, RemoveWebs, ListMaterials,
+                                       KeepNonlimitShapes);
             return anObj
         
         ## Perform partition of the Shape with the Plane

@@ -29,6 +29,9 @@
 #ifndef _TopAbs_ShapeEnum_HeaderFile
 #include <TopAbs_ShapeEnum.hxx>
 #endif
+#ifndef _Standard_Integer_HeaderFile
+#include <Standard_Integer.hxx>
+#endif
 #ifndef _GEOMAlgo_Builder_HeaderFile
 #include <GEOMAlgo_Builder.hxx>
 #endif
@@ -82,6 +85,12 @@ Standard_EXPORT   void SetLimit(const TopAbs_ShapeEnum aLimit) ;
 
 Standard_EXPORT   TopAbs_ShapeEnum Limit() const;
 
+
+Standard_EXPORT   void SetLimitMode(const Standard_Integer aLimitMode) ;
+
+
+Standard_EXPORT   Standard_Integer LimitMode() const;
+
 //!  Adds Tool arguments of the operation as <br>
 //!           shapes of upper level of container shape theShape <br>
 //! ===================================================== <br>
@@ -108,6 +117,7 @@ Standard_EXPORT virtual  void PostTreat() ;
 TopTools_ListOfShape myTools;
 TopTools_MapOfShape myMapTools;
 TopAbs_ShapeEnum myLimit;
+Standard_Integer myLimitMode;
 
 
 private: 

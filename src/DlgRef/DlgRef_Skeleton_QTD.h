@@ -20,7 +20,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
 **
-** Created: Fri Mar 17 11:18:06 2006
+** Created: Tue Mar 13 14:40:29 2007
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -53,7 +53,6 @@ public:
     DlgRef_Skeleton_QTD( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~DlgRef_Skeleton_QTD();
 
-    QGroupBox* GroupMedium;
     QGroupBox* GroupButtons;
     QPushButton* buttonOk;
     QPushButton* buttonApply;

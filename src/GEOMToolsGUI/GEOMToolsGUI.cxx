@@ -78,8 +78,14 @@ static QString getFileName( QWidget*           parent,
 {
   static QString lastUsedFilter;
   QStringList filters;
-  for ( FilterMap::const_iterator it = filterMap.begin(); it != filterMap.end(); ++it )
+  QString aBrepFilter;
+  for ( FilterMap::const_iterator it = filterMap.begin(); it != filterMap.end(); ++it ) {
     filters.push_back( it.key() );
+
+    if (it.key().contains("BREP", false)) {
+      aBrepFilter = it.key();
+    }
+  }
 
   SUIT_FileDlg* fd = new SUIT_FileDlg( parent, open, true, true );
   if ( !caption.isEmpty() )
@@ -88,10 +94,15 @@ static QString getFileName( QWidget*           parent,
   if ( !initial.isEmpty() )
     fd->setSelection( initial );
 
+  fd->setFilters( filters );
+
   if ( !lastUsedFilter.isEmpty() && filterMap.contains( lastUsedFilter ) )
     fd->setSelectedFilter( lastUsedFilter );
-
-  fd->setFilters( filters );
+  else {
+    if (!aBrepFilter.isEmpty()) {
+      fd->setSelectedFilter(aBrepFilter);
+    }
+  }
 
   fd->exec();
   QString filename = fd->selectedFile();

@@ -61,12 +61,11 @@ MeasureGUI_Skeleton::MeasureGUI_Skeleton( GeometryGUI*      GUI,
   GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
   myGeomGUI( GUI )
 {
-
   mySelBtn = 0;
   mySelEdit = 0;
   myDisplayer = 0;
   myHelpFileName = "";
-  
+
   if ( !name )
     setName( "MeasureGUI_Skeleton" );
 
@@ -75,7 +74,6 @@ MeasureGUI_Skeleton::MeasureGUI_Skeleton( GeometryGUI*      GUI,
 
   buttonClose->setAutoDefault( false );
 
-  GroupMedium->close( TRUE );
   resize( 350, 0 );
 }
 

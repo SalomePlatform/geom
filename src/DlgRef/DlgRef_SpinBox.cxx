@@ -102,3 +102,28 @@ void DlgRef_SpinBox::RangeStepAndValidator(double min, double max,double step,
   setLineStep(step);
   ((QDoubleValidator*)validator())->setRange(min, max, decimals);
 }
+
+QString DlgRef_SpinBox::PrintDoubleValue (double theValue, int thePrecision)
+{
+  QString aRes;
+  aRes.setNum(theValue, 'g', thePrecision);
+
+  // remove trailing zeroes
+  QString delim( "." );
+
+  int idx = aRes.findRev( delim );
+  if ( idx == -1 )
+    return aRes;
+
+  QString iPart = aRes.left( idx );
+  QString fPart = aRes.mid( idx + 1 );
+
+  while ( !fPart.isEmpty() && fPart.at( fPart.length() - 1 ) == '0' )
+    fPart.remove( fPart.length() - 1, 1 );
+
+  aRes = iPart;
+  if ( !fPart.isEmpty() )
+    aRes += delim + fPart;
+
+  return aRes;
+}

@@ -1,4 +1,5 @@
--- Copyright (C) 2006 SAMTECH 
+-- Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+-- CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 -- 
 -- This library is free software; you can redistribute it and/or
 -- modify it under the terms of the GNU Lesser General Public
@@ -14,12 +15,13 @@
 -- License along with this library; if not, write to the Free Software 
 -- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 --
--- See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+-- See http:--www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 -- 
 -- File:	NMTDS_PassKey.cdl
--- Created:	
+-- Created:	Mon Nov 20 12:16:13 2006
 -- Author:	Peter KURNEV
 --		<pkv@irinox>
+
 
 class PassKey from NMTDS 
 
@@ -27,54 +29,69 @@ class PassKey from NMTDS
 
 uses
     Shape from TopoDS, 
-    ListOfInteger from TColStd   
-  	 
+    IndexedMapOfInteger from TColStd, 
+    ListOfInteger from TColStd
+
 --raises
 
 is 
     Create  
     	returns PassKey from NMTDS; 
-     
-    Assign(me:out;  
-    	    Other : PassKey from NMTDS) 
-    	returns PassKey from NMTDS; 
-    ---C++: alias operator =
-    ---C++: return & 
---    
+    ---C++: alias "Standard_EXPORT virtual ~NMTDS_PassKey();" 
+
+    Create(Other:PassKey from NMTDS) 
+    	returns PassKey from NMTDS;
+   ---C++: alias "Standard_EXPORT NMTDS_PassKey& operator =(const NMTDS_PassKey& Other);" 
+
+    Clear(me:out);
+    
     SetIds(me:out; 
-    	    aI1 :Integer from Standard;    
+    	    aI1  :Integer from Standard); 
+	     
+    SetIds(me:out; 
+    	    aI1 :Integer from Standard; 
     	    aI2 :Integer from Standard);  
 	     
-    NbMax(me) 
-	returns Integer  from Standard; 
-	 
-    Clear(me:out); 
+    SetIds(me:out; 
+    	    aI1 :Integer from Standard;    
+    	    aI2 :Integer from Standard;    
+    	    aI3 :Integer from Standard);  
+
+    SetIds(me:out; 
+    	    aI1 :Integer from Standard;    
+    	    aI2 :Integer from Standard;    
+    	    aI3 :Integer from Standard;    
+    	    aI4 :Integer from Standard); 
      
-    Compute(me:out); 
+    SetIds(me:out;  
+    	    aLS  :ListOfInteger from TColStd);   
+
+    NbIds(me) 
+	returns Integer  from Standard; 
      
     IsEqual(me; 
     	    aOther:PassKey from NMTDS) 
 	returns Boolean from Standard;   		     
-
-    Key(me) 
-    	returns Address from Standard;  
 	 
     HashCode(me; 
 	    Upper : Integer  from Standard)  
     	returns Integer from Standard;   	 
      
- 
+    Id(me; 
+    	    aIndex: Integer  from Standard)  
+    	returns  Integer from Standard;
+    	
     Ids(me; 
     	    aI1 :out Integer from Standard;    
     	    aI2 :out Integer from Standard);
-     
-    Dump(me); 
 
+    Dump(me; 
+    	aHex:Integer from Standard=0);  
+     
+	
 fields 
- 
     myNbIds: Integer from Standard is protected;  
-    myNbMax: Integer from Standard is protected; 
-    mySum  : Integer from Standard is protected;   
-    myIds  : Integer from Standard [2] is protected; 
+    mySum  : Integer from Standard is protected;  
+    myMap  : IndexedMapOfInteger from TColStd is protected; 
 
 end PassKey;

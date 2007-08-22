@@ -1,18 +1,17 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
+// Copyright (C) 2006 SAMTECH
+// 
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
+// License as published by the Free Software Foundation; either 
 // version 2.1 of the License.
-//
-// This library is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// 
+// This library is distributed in the hope that it will be useful 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
+// You should have received a copy of the GNU Lesser General Public  
+// License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -24,44 +23,35 @@
 
 
 #include <NMTDS_Iterator.ixx>
-#include <NMTDS_CArray1OfIndexRange.hxx>
-#include <NMTDS_IndexRange.hxx>
+//
 #include <Bnd_Box.hxx>
-#include <TopoDS_Shape.hxx>
+//
 #include <TColStd_ListOfInteger.hxx>
-#include <TColStd_Array1OfListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_MapIteratorOfMapOfInteger.hxx>
+#include <TColStd_DataMapOfIntegerInteger.hxx>
+#include <TColStd_DataMapOfIntegerListOfInteger.hxx>
+#include <TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger.hxx>
+#include <TColStd_MapOfInteger.hxx>
+//
+#include <TopoDS.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <TopoDS_Shape.hxx>
+//
+#include <TopTools_DataMapOfShapeInteger.hxx>
+//
+#include <NMTDS_BoxBndTree.hxx>
+#include <NCollection_UBTreeFiller.hxx>
+#include <NMTDS_CArray1OfIndexRange.hxx>
+#include <NMTDS_IndexRange.hxx>
 #include <NMTDS_PassKeyBoolean.hxx>
 #include <NMTDS_MapOfPassKeyBoolean.hxx>
 #include <NMTDS_IndexedDataMapOfShapeBox.hxx>
 #include <NMTDS_IndexedDataMapOfIntegerShape.hxx>
-#include <Bnd_HArray1OfBox.hxx>
-#include <Bnd_BoundSortBox.hxx>
-#include <TColStd_ListOfInteger.hxx>
-#include <TColStd_DataMapOfIntegerInteger.hxx>
-#include <TopTools_DataMapOfShapeInteger.hxx>
-#include <TColStd_DataMapOfIntegerListOfInteger.hxx>
-#include <TColStd_DataMapIteratorOfDataMapOfIntegerInteger.hxx>
-#include <TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger.hxx>
-#include <TColStd_MapOfInteger.hxx>
-
-#include <NMTDS_BoxBndTree.hxx>
-#include <NCollection_UBTreeFiller.hxx>
-
-static 
-  void ComputeBoxEx(const Standard_Integer aIx,
-		    NMTDS_ShapesDataStructure* pDS,
-		    Bnd_Box& aBoxEx);
-
-static inline
-  Standard_Boolean IsValidType(const TopAbs_ShapeEnum aT);
-
-static
-  Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType1,
-				 const TopAbs_ShapeEnum aType2);
-
+#include <NMTDS_Tools.hxx>
+#include <NMTDS_DataMapOfIntegerMapOfInteger.hxx>
+#include <NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger.hxx>
 
 //=======================================================================
 //function : NMTDS_Iterator
@@ -69,7 +59,7 @@ static
 //=======================================================================
   NMTDS_Iterator::NMTDS_Iterator()
 {
-  myPDS=NULL; 
+  myDS=NULL; 
   myLength=0;
 }
 //=======================================================================
@@ -85,7 +75,7 @@ static
 //=======================================================================
   void NMTDS_Iterator::SetDS(const NMTDS_PShapesDataStructure& aDS)
 {
-  myPDS=aDS;
+  myDS=aDS;
 }
 //=======================================================================
 // function: DS
@@ -93,7 +83,7 @@ static
 //=======================================================================
   const NMTDS_ShapesDataStructure&  NMTDS_Iterator::DS()const
 {
-  return *myPDS;
+  return *myDS;
 }
 //=======================================================================
 // function: ExpectedLength
@@ -104,6 +94,24 @@ static
   return myLength;
 }
 //=======================================================================
+// function: BlockLength
+// purpose: 
+//=======================================================================
+  Standard_Integer NMTDS_Iterator::BlockLength() const
+{
+  Standard_Integer aNbIIs;
+  Standard_Real aCfPredict=.5;
+  
+  aNbIIs=ExpectedLength();
+  
+  if (aNbIIs<=1) {
+    return 1;
+  }
+  //
+  aNbIIs=(Standard_Integer) (aCfPredict*(Standard_Real)aNbIIs);
+  return aNbIIs;
+}
+//=======================================================================
 // function: Initialize
 // purpose: 
 //=======================================================================
@@ -112,7 +120,7 @@ static
 {
   Standard_Integer iX;
   //
-  iX=TypeToInteger(aType1, aType2);
+  iX=NMTDS_Tools::TypeToInteger(aType1, aType2);
   if (iX>=0) {
     myIterator.Initialize(myLists[iX]);
     myLength=myLists[iX].Extent();
@@ -158,34 +166,13 @@ static
 {
   return myMVSD;
 }
-
 //=======================================================================
 // function: Prepare
 // purpose: 
 //=======================================================================
   void NMTDS_Iterator::Prepare()
 {
-  Standard_Boolean bFlag;
-  Standard_Integer aNb, i, aNbB, aNbR;
-  Standard_Integer i1, i2, aNbSD, iX, j, iDS, jB, iR, k, aNbLV;
-  TColStd_ListIteratorOfListOfInteger aIt;
-  TColStd_DataMapOfIntegerInteger aMII;
-  TColStd_MapOfInteger aMFence;
-  TopTools_DataMapOfShapeInteger aMSI;
-  TopAbs_ShapeEnum aTi, aTj;
-  NMTDS_PassKeyBoolean aPKXB; 
-  NMTDS_MapOfPassKeyBoolean aMPKXB;
-  NMTDS_IndexedDataMapOfShapeBox aMSB;
-  Handle(Bnd_HArray1OfBox) aHAB;
-  Bnd_BoundSortBox aBSB;
-  //
-  NMTDS_BoxBndTreeSelector aSelector;
-  NMTDS_BoxBndTree aBBTree;
-  NCollection_UBTreeFiller <Standard_Integer, Bnd_Box> aTreeFiller(aBBTree);
-  //
-  if (myPDS==NULL){
-    return;
-  }
+  Standard_Integer i;
   //
   myLength=0;
   for (i=0; i<6; ++i) {
@@ -193,17 +180,48 @@ static
   }
   myMVSD.Clear();
   //
-  const NMTDS_CArray1OfIndexRange& aRanges=myPDS->Ranges();
+  if (myDS==NULL){
+    return;
+  }
+  Intersect();
+}
+//=======================================================================
+// function: Intersect
+// purpose: 
+//=======================================================================
+  void NMTDS_Iterator::Intersect()
+{
+  Standard_Boolean bFlag;
+  Standard_Integer aNb, i, aNbB, aNbR, iFlag;
+  Standard_Integer i1, i2, aNbSD, iX, j, iDS, jB, iR, k, aNbLV;
+  TColStd_ListIteratorOfListOfInteger aIt;
+  TColStd_DataMapOfIntegerInteger aMII;
+  //modified by NIZNHY-PKV Mon Jan 22 15:08:00 2007f
+  //TColStd_MapOfInteger aMFence;
+  TColStd_DataMapOfIntegerListOfInteger aMVSD;
+  TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger aItVSD;
+  //modified by NIZNHY-PKV Mon Jan 22 10:21:50 2007t
+  TopTools_DataMapOfShapeInteger aMSI;
+  TopAbs_ShapeEnum aTi, aTj;
+  NMTDS_PassKeyBoolean aPKXB; 
+  NMTDS_MapOfPassKeyBoolean aMPKXB;
+  NMTDS_IndexedDataMapOfShapeBox aMSB;
+  //
+  NMTDS_BoxBndTreeSelector aSelector;
+  NMTDS_BoxBndTree aBBTree;
+  NCollection_UBTreeFiller <Standard_Integer, Bnd_Box> aTreeFiller(aBBTree);
+  //
+  const NMTDS_CArray1OfIndexRange& aRanges=myDS->Ranges();
   aNbR=aRanges.Extent();
   //
-  aNb=myPDS->NumberOfShapesOfTheObject();
+  aNb=myDS->NumberOfShapesOfTheObject();
   for (i=1; i<=aNb; ++i) {
-    const TopoDS_Shape& aS=myPDS->Shape(i);
+    const TopoDS_Shape& aS=myDS->Shape(i);
     aTi=aS.ShapeType();
-    if (IsValidType(aTi)) {
+    if (NMTDS_Tools::HasBRep(aTi)) {
       Bnd_Box aBoxEx;
       //
-      ComputeBoxEx(i, myPDS, aBoxEx);
+      myDS->ComputeBoxEx(i, aBoxEx);
       aMSI.Bind(aS, i);
       aMSB.Add(aS, aBoxEx);
     }
@@ -228,9 +246,9 @@ static
     i1=aR.First();
     i2=aR.Last();
     for (i=i1; i<=i2; ++i) {
-      const TopoDS_Shape& aSi=myPDS->Shape(i);
+      const TopoDS_Shape& aSi=myDS->Shape(i);
       aTi=aSi.ShapeType();
-      if (!IsValidType(aTi)){
+      if (!NMTDS_Tools::HasBRep(aTi)){
 	continue;
       }
       const Bnd_Box& aBoxEx=aMSB.FindFromKey(aSi);
@@ -257,25 +275,24 @@ static
 	}
 	//
 	aPKXB.SetIds(i, j);
+	//
 	if (aMPKXB.Add(aPKXB)) {
 	  bFlag=Standard_False;// Bounding boxes are intersected
-	  const Bnd_Box& aBoxi=myPDS->GetBoundingBox(i);
-	  const Bnd_Box& aBoxj=myPDS->GetBoundingBox(j);
+	  const Bnd_Box& aBoxi=myDS->GetBoundingBox(i);
+	  const Bnd_Box& aBoxj=myDS->GetBoundingBox(j);
 	  if (aBoxi.IsOut(aBoxj)) {
 	    bFlag=!bFlag; //Bounding boxes of Sub-shapes are intersected
 	  }
-	  const TopoDS_Shape& aSj=myPDS->Shape(j);
+	  const TopoDS_Shape& aSj=myDS->Shape(j);
 	  aTj=aSj.ShapeType();
-	  iX=TypeToInteger(aTi, aTj);
-	  
+	  iX=NMTDS_Tools::TypeToInteger(aTi, aTj);
+	  //bFlag=(iStatus==2);
 	  aPKXB.SetFlag(bFlag);
 	  myLists[iX].Append(aPKXB);
 	  //
 	  // VSD prepare
 	  if (iX==5) { //VV
-	    if (aMFence.Add(j)) {
-	      aLV.Append(j);
-	    }
+	    aLV.Append(j);
 	  }
 	}// if (aMPKXB.Add(aPKXB)) {
       }// for (; aIt.More(); aIt.Next()) {
@@ -283,112 +300,154 @@ static
       // VSD treatment
       aNbLV=aLV.Extent();
       if (aNbLV) {
-	myMVSD.Bind(i, aLV);
+	TColStd_ListOfInteger aLV1;
+	//
+	const TopoDS_Vertex& aVi=TopoDS::Vertex(aSi);
+	aIt.Initialize(aLV);
+	for (; aIt.More(); aIt.Next()) {
+	  j=aIt.Value();  
+	  const TopoDS_Shape&  aSj=myDS->Shape(j);
+	  const TopoDS_Vertex& aVj=TopoDS::Vertex(aSj);
+	  iFlag=NMTDS_Tools::ComputeVV(aVi, aVj);
+	  if (!iFlag) {
+	    aLV1.Append(j);
+	  }
+	  else {
+	    aPKXB.SetIds(i, j);
+	    aMPKXB.Remove(aPKXB);
+	  }
+	}
+	aMVSD.Bind(i, aLV1);
       }
     }//for (i=i1; i<=i2; ++i) {
   }//for (iR=1; iR<aNbR; ++iR) {
-}
-
-//=======================================================================
-// function: IsValidType
-// purpose: 
-//=======================================================================
-Standard_Boolean IsValidType(const TopAbs_ShapeEnum aTi)
-{
-  return (aTi==TopAbs_VERTEX || aTi==TopAbs_EDGE || aTi==TopAbs_FACE);
+  //
+  //
+  // Chains
+  //=================
+  myMVSD.Clear();
+  NMTDS_Iterator::FillMVSD(aMVSD, myMVSD);
 }
 //=======================================================================
-// function: ComputeBoxEx
-// purpose: 
+//function : FillMVSD
+//purpose  : 
 //=======================================================================
-  void ComputeBoxEx(const Standard_Integer aIx,
-		    NMTDS_ShapesDataStructure* pDS,
-		    Bnd_Box& aBoxEx)
+  void NMTDS_Iterator::FillMVSD(const TColStd_DataMapOfIntegerListOfInteger& aMVSD,
+				TColStd_DataMapOfIntegerListOfInteger& bMVSD)
 {
-  Standard_Integer i, aNbS, iS;
+  Standard_Boolean bFound;
+  Standard_Integer aNbVSD, iCnt, i, j, k;
+  TColStd_ListOfInteger aLV;
+  TColStd_ListIteratorOfListOfInteger aIt;
+  TColStd_MapOfInteger aMF;
+  TColStd_MapIteratorOfMapOfInteger aItMI;
+  TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger aItVSD;
+  NMTDS_DataMapOfIntegerMapOfInteger aDMIMI;
+  NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger aIti, aItj;
   //
-  const Bnd_Box& aBox=pDS->GetBoundingBox(aIx);
-  aBoxEx.Add(aBox);
-  //
-  aNbS=pDS->NumberOfSuccessors(aIx);
-  for (i=1; i<=aNbS; ++i) {
-    Bnd_Box aBoxS;
-    iS=pDS->GetSuccessor(aIx, i);
-    ComputeBoxEx(iS, pDS, aBoxS);
-    aBoxEx.Add(aBoxS);
+  aNbVSD=aMVSD.Extent();
+  if (!aNbVSD) {
+    return;
   }
-}
-
-//=======================================================================
-// function: TypeToInteger
-// purpose: 
-//=======================================================================
-Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType1,
-			       const TopAbs_ShapeEnum aType2)
-{
-  Standard_Integer iRet, iT1, iT2, iX;
   //
-  iRet=-1;
-  iT1=(Standard_Integer)aType1;
-  iT2=(Standard_Integer)aType2;
-  //
-  iX=iT2*10+iT1;
-  switch (iX) {
-    case 77:
-      iRet=5; // VV
-      break;
-    case 76:
-    case 67:
-      iRet=4; // VE
-      break;
-    case 74:
-    case 47:
-      iRet=2; // VF
-      break;
-    case 66:
-      iRet=3; // EE
-      break;
-    case 64:
-    case 46:
-      iRet=1; // EF
-      break;
-    case 44:
-      iRet=0; // FF
-      break;
-    default:
-      break;
-  }
-  return iRet; 
-}
-
-/*
-//
-  // check
-  TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger aIt1;
-  TColStd_DataMapIteratorOfDataMapOfIntegerInteger aIt2;
-  //
-  printf(" \n");
-  printf(" aMVLV.Extent()=%d\n", aMVLV.Extent());
-  aIt1.Initialize(aMVLV);
-  for (; aIt1.More(); aIt1.Next()) {
-    i=aIt1.Key();
-    printf(" i=%d (", i);
-    const TColStd_ListOfInteger& aLV=aIt1.Value();
-    aIt.Initialize(aLV);
+  aItVSD.Initialize(aMVSD);
+  for (; aItVSD.More(); aItVSD.Next()) {
+    TColStd_MapOfInteger aMI;
+    //
+    i=aItVSD.Key();
+    aMI.Add(i);
+    const TColStd_ListOfInteger& aLVSD=aItVSD.Value();
+    aIt.Initialize(aLVSD);
     for (; aIt.More(); aIt.Next()) {
       j=aIt.Value();
-      printf(" %d", j);
+      aMI.Add(j);
     }
-    printf(")\n");
+    aDMIMI.Bind(i, aMI);
   }
-  //
-  printf(" \n");
-  printf(" aMVV.Extent()=%d\n", aMVV.Extent());
-  aIt2.Initialize(aMVV);
-  for (; aIt2.More(); aIt2.Next()) {
-    i=aIt2.Key();
-    j=aIt2.Value();
-    printf(" (%d, %d)\n", i, j);
+  // i
+  aIti.Initialize(aDMIMI);
+  for (; aIti.More(); aIti.Next()) {
+    i=aIti.Key();
+    if (aMF.Contains(i)) {
+      continue;
+    }
+    aMF.Add(i);
+    //
+    //TColStd_MapOfInteger& aMIi=aDMIMI.ChangeFind(i);
+    TColStd_MapOfInteger *pMIi=(TColStd_MapOfInteger *)&aIti.Value();
+    TColStd_MapOfInteger& aMIi=*pMIi;
+    //  j
+    while (1) {
+      iCnt=0;
+      aItj.Initialize(aDMIMI);
+      for (; aItj.More(); aItj.Next()) {
+	j=aItj.Key();
+	if (aMF.Contains(j)) {
+	  continue;
+	}
+	//
+	//TColStd_MapOfInteger& aMIj=aDMIMI.ChangeFind(j);
+	TColStd_MapOfInteger *pMj=(TColStd_MapOfInteger *)&aItj.Value();
+	TColStd_MapOfInteger& aMIj=*pMj;
+	//
+	aItMI.Initialize(aMIj);
+	for (; aItMI.More(); aItMI.Next()) {
+	  k=aItMI.Key();
+	  bFound=aMIi.Contains(k);
+	  if (bFound) {
+	    break;
+	  }
+	}
+	if (!bFound) {
+	  continue;
+	}
+	//
+	aItMI.Initialize(aMIj);
+	for (; aItMI.More(); aItMI.Next()) {
+	  k=aItMI.Key();
+	  aMIi.Add(k);
+	}
+	//
+	if (aMF.Add(j)) {
+	  ++iCnt;
+	}
+      } //for (; aItj.More(); aItj.Next()) {
+      if (!iCnt) {
+	break;
+      }
+    } // while (1) {
+    //
+    aLV.Clear();
+    aItMI.Initialize(aMIi);
+    for (; aItMI.More(); aItMI.Next()) {
+      k=aItMI.Key();
+	if (k!=i) {
+	  aLV.Append(k);
+	}
+    }
+    bMVSD.Bind(i, aLV);
+  }// for (; aIti.More(); aIti.Next()) {
+}
+
+  /*  
+  {
+    // check
+    TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger aItX;
+    //
+    printf(" \n");
+    printf(" myMVSD.Extent()=%d\n", myMVSD.Extent());
+    aItX.Initialize(myMVSD);
+    for (; aItX.More(); aItX.Next()) {
+      i=aItX.Key();
+      printf(" i=%d (", i);
+      const TColStd_ListOfInteger& aLV=aItX.Value();
+      aIt.Initialize(aLV);
+      for (; aIt.More(); aIt.Next()) {
+	j=aIt.Value();
+	printf(" %d", j);
+      }
+      printf(")\n");
+    }
   }
-  printf("\n");
 */
+

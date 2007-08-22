@@ -20,9 +20,6 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <property name="caption">
-        <string>EntityGUI_Skeleton_QTD</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -47,22 +44,6 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QGroupBox" row="2" column="0">
-                    <property name="name">
-                        <cstring>GroupVal</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>7</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="title">
-                        <string></string>
-                    </property>
-                </widget>
                 <widget class="QButtonGroup" row="0" column="0">
                     <property name="name">
                         <cstring>GroupConstructors</cstring>
@@ -74,9 +55,6 @@
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
-                    </property>
-                    <property name="title">
-                        <string>Element Type</string>
                     </property>
                     <grid>
                         <property name="name">
@@ -106,16 +84,10 @@
                                     <property name="name">
                                         <cstring>RadioButton1</cstring>
                                     </property>
-                                    <property name="text">
-                                        <string>Segment</string>
-                                    </property>
                                 </widget>
                                 <widget class="QRadioButton">
                                     <property name="name">
                                         <cstring>RadioButton2</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>Arc</string>
                                     </property>
                                 </widget>
                             </hbox>
@@ -133,9 +105,6 @@
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
-                    </property>
-                    <property name="title">
-                        <string>Destination</string>
                     </property>
                     <grid>
                         <property name="name">
@@ -173,9 +142,6 @@
                                             <verstretch>0</verstretch>
                                         </sizepolicy>
                                     </property>
-                                    <property name="title">
-                                        <string>Type</string>
-                                    </property>
                                     <grid>
                                         <property name="name">
                                             <cstring>unnamed</cstring>
@@ -204,74 +170,14 @@
                                                     <property name="name">
                                                         <cstring>RB_Dest2</cstring>
                                                     </property>
-                                                    <property name="text">
-                                                        <string>Direction</string>
-                                                    </property>
                                                 </widget>
                                                 <widget class="QRadioButton" row="0" column="0">
                                                     <property name="name">
                                                         <cstring>RB_Dest1</cstring>
                                                     </property>
-                                                    <property name="text">
-                                                        <string>Point</string>
-                                                    </property>
                                                 </widget>
                                             </grid>
                                         </widget>
-                                    </grid>
-                                </widget>
-                                <widget class="QButtonGroup" row="1" column="0">
-                                    <property name="name">
-                                        <cstring>GroupDest2</cstring>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>7</hsizetype>
-                                            <vsizetype>7</vsizetype>
-                                            <horstretch>0</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                    <property name="title">
-                                        <string></string>
-                                    </property>
-                                    <grid>
-                                        <property name="name">
-                                            <cstring>unnamed</cstring>
-                                        </property>
-                                        <property name="margin">
-                                            <number>11</number>
-                                        </property>
-                                        <property name="spacing">
-                                            <number>6</number>
-                                        </property>
-                                    </grid>
-                                </widget>
-                                <widget class="QButtonGroup" row="1" column="1">
-                                    <property name="name">
-                                        <cstring>GroupDest3</cstring>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>7</hsizetype>
-                                            <vsizetype>7</vsizetype>
-                                            <horstretch>0</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                    <property name="title">
-                                        <string></string>
-                                    </property>
-                                    <grid>
-                                        <property name="name">
-                                            <cstring>unnamed</cstring>
-                                        </property>
-                                        <property name="margin">
-                                            <number>11</number>
-                                        </property>
-                                        <property name="spacing">
-                                            <number>6</number>
-                                        </property>
                                     </grid>
                                 </widget>
                             </grid>
@@ -289,9 +195,6 @@
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
-                    </property>
-                    <property name="title">
-                        <string></string>
                     </property>
                     <hbox>
                         <property name="name">
@@ -321,16 +224,10 @@
                                     <property name="name">
                                         <cstring>buttonEnd</cstring>
                                     </property>
-                                    <property name="text">
-                                        <string>End Sketch</string>
-                                    </property>
                                 </widget>
                                 <widget class="QPushButton">
                                     <property name="name">
                                         <cstring>buttonClose</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>Close Sketch</string>
                                     </property>
                                 </widget>
                                 <spacer>
@@ -354,16 +251,10 @@
                                     <property name="name">
                                         <cstring>buttonCancel</cstring>
                                     </property>
-                                    <property name="text">
-                                        <string>&amp;Cancel</string>
-                                    </property>
                                 </widget>
 				<widget class="QPushButton">
                                     <property name="name">
                                         <cstring>buttonHelp</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>&amp;Help</string>
                                     </property>
                                 </widget>
                             </hbox>

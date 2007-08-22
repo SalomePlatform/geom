@@ -67,7 +67,7 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg(GeometryGUI* theGeometryGUI
   RadioButton3->close(TRUE);
 
   // Full partition (contains half-space partition)
-  GroupPoints = new DlgRef_2Sel1List_QTD(this, "GroupPoints");
+  GroupPoints = new DlgRef_2Sel1List1Check_QTD(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_PARTITION"));
   GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupPoints->TextLabel2->setText(tr("GEOM_TOOL_OBJECT"));
@@ -76,6 +76,7 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg(GeometryGUI* theGeometryGUI
   GroupPoints->PushButton2->setPixmap(image2);
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->radioButton4->setText(tr("GEOM_KEEP_NONLIMIT_SHAPES"));
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
@@ -109,6 +110,7 @@ void OperationGUI_PartitionDlg::Init()
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_WIRE"));
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_EDGE"));
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_VERTEX"));
+  GroupPoints->radioButton4->setChecked(FALSE);
   
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -123,6 +125,8 @@ void OperationGUI_PartitionDlg::Init()
   
   connect(GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(ComboTextChanged()));
   
+  connect(GroupPoints->radioButton4, SIGNAL(stateChanged(int)), this, SLOT(ReverseSense(int)));
+
   connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   
@@ -145,7 +149,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
   myListKeepInside.length(0);
   myListRemoveInside.length(0);
   myListMaterials.length(0);
-  
+
   switch (constructorId)
     {
     case 0: /*Full partition */
@@ -155,8 +159,8 @@ void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
 	resize(0, 0);
 	GroupPoints->TextLabel3->show();
 	GroupPoints->ComboBox1->show();
-	
 	GroupPoints->ComboBox1->setCurrentItem(0);
+	GroupPoints->radioButton4->show();
 	break;
       }
     case 1: /*Half-space partition */
@@ -166,6 +170,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->TextLabel3->hide();
 	GroupPoints->ComboBox1->hide();
 	GroupPoints->TextLabel2->setText(tr("GEOM_PLANE"));
+	GroupPoints->radioButton4->hide();
 	resize(0, 0);
 	break;
       } 
@@ -357,15 +362,25 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
   int aLimit = GetLimit();
   int aConstructorId = getConstructorId();
 
-  if (aConstructorId == 1)
+  int aKeepNonlimitShapes = 0;
+  if (aConstructorId == 1) {
     aLimit = GEOM::SHAPE;
+  }
+  else {
+    if(GroupPoints->radioButton4->isChecked()) {
+      aKeepNonlimitShapes = 1;
+    }
+    else {
+      aKeepNonlimitShapes = 0;
+    }
+  }
 
   if (isValid( msg )) {
 
     anObj = GEOM::GEOM_IBooleanOperations::_narrow(getOperation())->
       MakePartition(myListShapes, myListTools,
                     myListKeepInside, myListRemoveInside,
-		    aLimit, false, myListMaterials);
+		    aLimit, false, myListMaterials, aKeepNonlimitShapes);
     res = true;
   }
 

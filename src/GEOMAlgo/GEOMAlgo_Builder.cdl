@@ -37,8 +37,8 @@ uses
     MapOfShape                       from TopTools,
     Image     from BRepAlgo, 
     
-    DSFiller  from NMTTools,
-    PDSFiller from NMTTools
+    PaveFiller from NMTTools, 
+    PPaveFiller from NMTTools 
     
 --raises
 
@@ -54,8 +54,8 @@ is
     	is redefined; 
 	 
     PerformWithFiller(me:out; 
-    	theDSF: DSFiller from NMTTools) 
-    	---Purpose:  Performs calculations using prepared DSFiller 
+    	theDSF: PaveFiller from NMTTools) 
+    	---Purpose:  Performs calculations using prepared PaveFiller 
 	--           object theDSF          	 
     	is virtual;
    
@@ -99,13 +99,12 @@ is
     -- 
     --    protected methods  
     --  
-    -- 
     PerformInternal(me:out; 
-    	theDSF: DSFiller from NMTTools) 
+    	theDSF: PaveFiller from NMTTools) 
     	---Purpose:  Performs calculations using prepared DSFiller 
 	--           object theDSF          	 
-    	is protected; 
-    --
+    	is virtual protected;  
+	 
     PrepareHistory (me:out) 
     	---Purpose:  Prepare information for history support  
     	is redefined protected;  
@@ -234,7 +233,7 @@ is
     -- =====================================================
  
 fields 
-    myDSFiller        : PDSFiller from NMTTools is protected;  
+    myPaveFiller      : PPaveFiller from NMTTools is protected;  
     myShapes          : ListOfShape from TopTools is protected; 
     -- Common usage 
     myNbTypes         : Integer from Standard is protected; 
@@ -248,7 +247,7 @@ fields
     mySameDomainShapes: IndexedDataMapOfShapeShape from TopTools is protected;
     --  solids 
     myDraftSolids     : IndexedDataMapOfShapeShape from TopTools is protected; 
-    myEntryPoint      : Integer from Standard is protected;    
+    myEntryPoint      : Integer from Standard is protected;
     --     
 end Builder;
 

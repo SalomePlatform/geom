@@ -36,6 +36,8 @@
 #define PART_ARG_SHAPE 7
 #define PART_ARG_PLANE 8
 
+#define PART_ARG_KEEP_NONLIMIT_SHAPES 9
+
 class GEOMImpl_IPartition
 {
  public:
@@ -43,6 +45,9 @@ class GEOMImpl_IPartition
   GEOMImpl_IPartition(Handle(GEOM_Function) theFunction): _func(theFunction) {}
 
   void SetLimit(int theLimit) { _func->SetInteger(PART_ARG_LIMIT, theLimit); }
+
+  void SetKeepNonlimitShapes(int theKeepNonlimitShapes)
+  { _func->SetInteger(PART_ARG_KEEP_NONLIMIT_SHAPES,theKeepNonlimitShapes ); }
 
   void SetShapes(const Handle(TColStd_HSequenceOfTransient)& theShapes)
   { _func->SetReferenceList(PART_ARG_SHAPES, theShapes); }
@@ -61,6 +66,8 @@ class GEOMImpl_IPartition
 
 
   int GetLimit() { return _func->GetInteger(PART_ARG_LIMIT); }
+
+  int GetKeepNonlimitShapes() { return _func->GetInteger(PART_ARG_KEEP_NONLIMIT_SHAPES); }
 
   Handle(TColStd_HSequenceOfTransient) GetShapes()    { return _func->GetReferenceList(PART_ARG_SHAPES); }
   Handle(TColStd_HSequenceOfTransient) GetTools()     { return _func->GetReferenceList(PART_ARG_TOOLS); }

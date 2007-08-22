@@ -699,19 +699,23 @@ def MakeSection(s1, s2):
     return MakeBoolean(s1, s2, 4)
 
 def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
+                  KeepNonlimitShapes=0):
     anObj = BoolOp.MakePartition(ListShapes, ListTools,
                                  ListKeepInside, ListRemoveInside,
-                                 Limit, RemoveWebs, ListMaterials);
+                                 Limit, RemoveWebs, ListMaterials,
+                                 KeepNonlimitShapes);
     if BoolOp.IsDone() == 0:
       print "MakePartition : ", BoolOp.GetErrorCode()
     return anObj
 
 def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-              Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+              Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
+              KeepNonlimitShapes=0):
     anObj = MakePartition(ListShapes, ListTools,
                           ListKeepInside, ListRemoveInside,
-                          Limit, RemoveWebs, ListMaterials);
+                          Limit, RemoveWebs, ListMaterials,
+                          KeepNonlimitShapes);
     return anObj
 
 def MakeHalfPartition(theShape, thePlane):

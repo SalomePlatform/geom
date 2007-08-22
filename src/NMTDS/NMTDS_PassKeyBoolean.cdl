@@ -36,21 +36,16 @@ uses
 is 
     Create  
     	returns PassKeyBoolean from NMTDS; 
-     
-    Assign(me:out;  
-    	    Other : PassKeyBoolean from NMTDS) 
-    	returns PassKeyBoolean from NMTDS; 
-    ---C++: alias operator =
-    ---C++: return & 
---     
+    ---C++: alias "Standard_EXPORT virtual ~NMTDS_PassKeyBoolean();" 
+    
     SetFlag(me:out; 
     	    aFlag: Boolean from Standard); 
-	 
+    ---C++: alias " Standard_EXPORT NMTDS_PassKeyBoolean& operator =(const NMTDS_PassKeyBoolean& Other);" 
+    
     Flag(me)  
     	returns Boolean from Standard;      
 
 fields 
- 
     myFlag: Boolean from Standard is protected;  
 
 end PassKeyBoolean;

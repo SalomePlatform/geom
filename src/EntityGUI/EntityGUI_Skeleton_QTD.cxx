@@ -20,7 +20,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'EntityGUI_Skeleton_QTD.ui'
 **
-** Created: Fri Mar 17 15:47:14 2006
+** Created: Tue Mar 13 14:04:48 2007
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -30,9 +30,9 @@
 
 #include <qvariant.h>
 #include <qpushbutton.h>
-#include <qgroupbox.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
+#include <qgroupbox.h>
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
@@ -53,11 +53,6 @@ EntityGUI_Skeleton_QTD::EntityGUI_Skeleton_QTD( QWidget* parent, const char* nam
     EntityGUI_Skeleton_QTDLayout = new QGridLayout( this, 1, 1, 11, 6, "EntityGUI_Skeleton_QTDLayout"); 
 
     Layout1 = new QGridLayout( 0, 1, 1, 0, 6, "Layout1"); 
-
-    GroupVal = new QGroupBox( this, "GroupVal" );
-    GroupVal->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, GroupVal->sizePolicy().hasHeightForWidth() ) );
-
-    Layout1->addWidget( GroupVal, 2, 0 );
 
     GroupConstructors = new QButtonGroup( this, "GroupConstructors" );
     GroupConstructors->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)0, 0, 0, GroupConstructors->sizePolicy().hasHeightForWidth() ) );
@@ -110,26 +105,6 @@ EntityGUI_Skeleton_QTD::EntityGUI_Skeleton_QTD( QWidget* parent, const char* nam
     GroupDest1Layout->addLayout( Layout4, 0, 0 );
 
     Layout5->addMultiCellWidget( GroupDest1, 0, 0, 0, 1 );
-
-    GroupDest2 = new QButtonGroup( GroupDest, "GroupDest2" );
-    GroupDest2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, GroupDest2->sizePolicy().hasHeightForWidth() ) );
-    GroupDest2->setColumnLayout(0, Qt::Vertical );
-    GroupDest2->layout()->setSpacing( 6 );
-    GroupDest2->layout()->setMargin( 11 );
-    GroupDest2Layout = new QGridLayout( GroupDest2->layout() );
-    GroupDest2Layout->setAlignment( Qt::AlignTop );
-
-    Layout5->addWidget( GroupDest2, 1, 0 );
-
-    GroupDest3 = new QButtonGroup( GroupDest, "GroupDest3" );
-    GroupDest3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, GroupDest3->sizePolicy().hasHeightForWidth() ) );
-    GroupDest3->setColumnLayout(0, Qt::Vertical );
-    GroupDest3->layout()->setSpacing( 6 );
-    GroupDest3->layout()->setMargin( 11 );
-    GroupDest3Layout = new QGridLayout( GroupDest3->layout() );
-    GroupDest3Layout->setAlignment( Qt::AlignTop );
-
-    Layout5->addWidget( GroupDest3, 1, 1 );
 
     GroupDestLayout->addLayout( Layout5, 0, 0 );
 
@@ -190,21 +165,5 @@ EntityGUI_Skeleton_QTD::~EntityGUI_Skeleton_QTD()
  */
 void EntityGUI_Skeleton_QTD::languageChange()
 {
-    setCaption( tr( "EntityGUI_Skeleton_QTD" ) );
-    GroupVal->setTitle( QString::null );
-    GroupConstructors->setTitle( tr( "Element Type" ) );
-    RadioButton1->setText( tr( "Segment" ) );
-    RadioButton2->setText( tr( "Arc" ) );
-    GroupDest->setTitle( tr( "Destination" ) );
-    GroupDest1->setTitle( tr( "Type" ) );
-    RB_Dest2->setText( tr( "Direction" ) );
-    RB_Dest1->setText( tr( "Point" ) );
-    GroupDest2->setTitle( QString::null );
-    GroupDest3->setTitle( QString::null );
-    GroupButtons->setTitle( QString::null );
-    buttonEnd->setText( tr( "End Sketch" ) );
-    buttonClose->setText( tr( "Close Sketch" ) );
-    buttonCancel->setText( tr( "&Cancel" ) );
-    buttonHelp->setText( tr( "&Help" ) );
 }
 

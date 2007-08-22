@@ -117,9 +117,9 @@ void PrimitiveGUI_BoxDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
   
   /* min, max, step and decimals for spin boxes */
-  GroupDimensions->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupDimensions->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  GroupDimensions->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupDimensions->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
 
   double initValue = 200.0;
   GroupDimensions->SpinBox_DX->SetValue(initValue);

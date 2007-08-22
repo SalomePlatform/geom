@@ -42,7 +42,7 @@ using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_OffsetDlg()
-// purpose  : Constructs a TransformationGUI_OffsetDlg which is a child of 'parent', with the 
+// purpose  : Constructs a TransformationGUI_OffsetDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -62,7 +62,7 @@ TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg(GeometryGUI* theGeometr
   RadioButton1->setPixmap(image0);
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
- 
+
   GroupPoints = new DlgRef_1Sel1Spin1Check(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
@@ -73,13 +73,13 @@ TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg(GeometryGUI* theGeometr
   GroupPoints->CheckButton1->hide();
 
   GroupPoints->PushButton1->setPixmap(image1);
-  
+
   Layout1->addWidget(GroupPoints, 2, 0);
-  
+
   /***************************************************************/
 
-  setHelpFileName("offset_surface.htm");  
-  
+  setHelpFileName("offset_surface.htm");
+
   Init();
 }
 
@@ -89,7 +89,7 @@ TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg(GeometryGUI* theGeometr
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 TransformationGUI_OffsetDlg::~TransformationGUI_OffsetDlg()
-{  
+{
   /* no need to delete child widgets, Qt does it all for us */
 }
 
@@ -99,20 +99,18 @@ TransformationGUI_OffsetDlg::~TransformationGUI_OffsetDlg()
 // purpose  :
 //=================================================================================
 void TransformationGUI_OffsetDlg::Init()
-{  
+{
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->setReadOnly( true );
-  
+
   /* Get setting of step value from file configuration */
   double step = 1;
-   
+
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupPoints->SpinBox_DX->setPrecision(5);
-  //@ GroupPoints->SpinBox_DX->setDblPrecision(1e-05);    
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
   GroupPoints->SpinBox_DX->SetValue(1e-05);
-  
+
   // Activate Create a Copy mode
   GroupPoints->CheckButton1->setChecked(true);
   CreateCopyModeChanged(true);
@@ -120,18 +118,17 @@ void TransformationGUI_OffsetDlg::Init()
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  
+
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
-  
+
   initName( tr( "GEOM_OFFSET" ) );
 
   globalSelection( GEOM_ALLSHAPES );
-  
 }
 
 
@@ -154,7 +151,7 @@ bool TransformationGUI_OffsetDlg::ClickOnApply()
 {
   if ( !onAccept( GroupPoints->CheckButton1->isChecked() ) )
     return false;
-  
+
   initName();
   return true;
 }
@@ -180,9 +177,9 @@ void TransformationGUI_OffsetDlg::SelectionIntoArgument()
   GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), myObjects);
   if (!myObjects.length())
     return;
-  
+
   myEditCurrentArgument->setText( aName );
-  
+
   displayPreview();
 }
 
@@ -209,7 +206,7 @@ void TransformationGUI_OffsetDlg::LineEditReturnPressed()
 void TransformationGUI_OffsetDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  
+
   if(send == GroupPoints->PushButton1)
     {
       myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -237,7 +234,7 @@ void TransformationGUI_OffsetDlg::enterEvent(QEvent * e)
 void TransformationGUI_OffsetDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   globalSelection( GEOM_ALLSHAPES );
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -292,28 +289,28 @@ bool TransformationGUI_OffsetDlg::isValid( QString& msg )
 bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
 {
   bool res = false;
-  
+
   GEOM::GEOM_Object_var anObj;
-  
-  
+
   if (GroupPoints->CheckButton1->isChecked() || IsPreview())
     for (int i = 0; i < myObjects.length(); i++)
-      {
-
-	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->OffsetShapeCopy( myObjects[i], GetOffset() );
-	if ( !anObj->_is_nil() )
-	  objects.push_back( anObj._retn() );
-      }
+    {
+      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+        OffsetShapeCopy( myObjects[i], GetOffset() );
+      if ( !anObj->_is_nil() )
+        objects.push_back( anObj._retn() );
+    }
   else
     for (int i = 0; i < myObjects.length(); i++)
-      {
-	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->OffsetShape( myObjects[i], GetOffset() );
-	if ( !anObj->_is_nil() )
-	  objects.push_back( anObj._retn() );
-      }
-     
+    {
+      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+        OffsetShape( myObjects[i], GetOffset() );
+      if ( !anObj->_is_nil() )
+        objects.push_back( anObj._retn() );
+    }
+
   res = true;
-    
+
   return res;
 }
 

@@ -1189,6 +1189,9 @@ msgstr "\nShading"
 msgid "GEOM_RECONSTRUCTION_LIMIT"
 msgstr "Reconstruction Limit"
 
+msgid "GEOM_KEEP_NONLIMIT_SHAPES"
+msgstr "Keep nonlimit shapes"
+
 msgid "GEOM_SUPPRESS_RESULT"
 msgstr "Suppress Result"
 

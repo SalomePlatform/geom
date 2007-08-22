@@ -47,7 +47,6 @@
 //
 #include <NMTDS_ShapesDataStructure.hxx>
 //
-#include <NMTTools_DSFiller.hxx>
 #include <NMTTools_PaveFiller.hxx>
 #include <NMTTools_CommonBlockPool.hxx>
 #include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
@@ -78,8 +77,8 @@ static
 {
   myErrorStatus=0;
   //
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   //
   Standard_Integer i, aNb, iV;
   //
@@ -94,7 +93,6 @@ static
 	  myImages.Bind(aV, aVSD);
 	  //
 	  mySameDomainShapes.Add(aV, aVSD);
-	  //
 	}
       }
     }
@@ -108,8 +106,8 @@ static
 {
   myErrorStatus=0;
   //
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   const BOPTools_SplitShapesPool& aSSP=pPF->SplitShapesPool();
   NMTTools_CommonBlockPool& aCBP=pPF->ChangeCommonBlockPool();
   IntTools_Context& aCtx=pPF->ChangeContext();
@@ -218,8 +216,8 @@ static
   TopTools_MapOfShape aMS;
   TopTools_MapIteratorOfMapOfShape aItS;
   //
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
   aNbS=aDS.NumberOfShapesOfTheObject();

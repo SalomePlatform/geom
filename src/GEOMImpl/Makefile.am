@@ -112,7 +112,6 @@ libGEOMimpl_la_CPPFLAGS = \
 	$(KERNEL_CXXFLAGS) \
 	$(BOOST_CPPFLAGS) \
 	-I$(srcdir)/../ShHealOper \
-	-I$(srcdir)/../NMTAlgo \
 	-I$(srcdir)/../NMTTools \
 	-I$(srcdir)/../GEOM \
 	-I$(srcdir)/../GEOMAlgo \
@@ -122,7 +121,6 @@ libGEOMimpl_la_CPPFLAGS = \
 
 libGEOMimpl_la_LDFLAGS  = \
 	../GEOM/libGEOMbasic.la \
-	../NMTAlgo/libNMTAlgo.la \
 	../GEOMAlgo/libGEOMAlgo.la \
 	../ShHealOper/libShHealOper.la \
 	../ARCHIMEDE/libGEOMArchimede.la \

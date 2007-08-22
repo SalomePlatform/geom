@@ -38,9 +38,8 @@
 
 #include <BOP_CorrectTolerances.hxx>
 
-#include <NMTTools_DSFiller.hxx>
-
 #include <BRepLib.hxx>
+#include <NMTTools_PaveFiller.hxx>
 
 //=======================================================================
 //function : 
@@ -51,7 +50,7 @@
   GEOMAlgo_BuilderShape()
 {
   myNbTypes=9;
-  myDSFiller=NULL;
+  myPaveFiller=NULL;
   myEntryPoint=0; // Entry point through PerformWithFiller ()
 }
 //=======================================================================
@@ -61,9 +60,9 @@
   GEOMAlgo_Builder::~GEOMAlgo_Builder()
 {
   if (myEntryPoint==1) {
-    if (myDSFiller) {
-      delete myDSFiller;
-      myDSFiller=NULL;
+    if (myPaveFiller) {
+      delete myPaveFiller;
+      myPaveFiller=NULL;
     }
   }
 }
@@ -260,23 +259,19 @@
     aBB.Add(aCS, aS);
   }
   //
-  if (myDSFiller) {
-    delete myDSFiller;
-    myDSFiller=NULL;
-  }
-  NMTTools_DSFiller* pDSF=new NMTTools_DSFiller;
+  NMTTools_PaveFiller* pPF=new NMTTools_PaveFiller;
   //
-  pDSF->SetCompositeShape(aCS);
-  pDSF->Perform();
+  pPF->SetCompositeShape(aCS);
+  pPF->Perform();
   //
   myEntryPoint=1;
-  PerformInternal(*pDSF);
+  PerformInternal(*pPF);
 }
 //=======================================================================
 //function : PerformWithFiller
 //purpose  : 
 //=======================================================================
-  void GEOMAlgo_Builder::PerformWithFiller(const NMTTools_DSFiller& theDSF)
+  void GEOMAlgo_Builder::PerformWithFiller(const NMTTools_PaveFiller& theDSF)
 {
   myEntryPoint=0;
   //
@@ -286,18 +281,18 @@
 //function : PerformInternal
 //purpose  : 
 //=======================================================================
-  void GEOMAlgo_Builder::PerformInternal(const NMTTools_DSFiller& theDSF)
+  void GEOMAlgo_Builder::PerformInternal(const NMTTools_PaveFiller& pPF)
 {
   myErrorStatus=0;
   //
   Standard_Boolean bIsDone;
   //
-  // 0. myDSFiller
-  myDSFiller=(NMTTools_DSFiller *)&theDSF;
+  // 0. myPaveFiller
+  myPaveFiller=(NMTTools_PaveFiller *)&pPF;
   //
-  bIsDone=myDSFiller->IsDone();
+  bIsDone=myPaveFiller->IsDone();
   if (!bIsDone) {
-    myErrorStatus=2; // DSFiller is failed
+    myErrorStatus=2; // PaveFiller is failed
     return;
   }
   //
@@ -406,6 +401,6 @@
 // 
 // 0  - Ok
 // 1  - The object is just initialized
-// 2  - DSFiller is failed
+// 2  - PaveFiller is failed
 // 10 - No shapes to process
 // 30 - SolidBuilder failed

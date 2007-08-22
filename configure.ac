@@ -213,21 +213,6 @@ corba=make_$ORB
 CORBA=adm_local/unix/$corba
 
 fi
-echo
-echo ---------------------------------------------
-echo testing openGL
-echo ---------------------------------------------
-echo
-
-CHECK_OPENGL
-
-echo
-echo ---------------------------------------------
-echo testing QT
-echo ---------------------------------------------
-echo
-
-CHECK_QT
 
 echo
 echo ---------------------------------------------
@@ -237,13 +222,56 @@ echo
 
 CHECK_MSG2QM
 
-echo
-echo ---------------------------------------------
-echo testing VTK
-echo ---------------------------------------------
-echo
 
-CHECK_VTK
+GEOM_WITH_GUI=yes
+
+AM_CONDITIONAL(GEOM_ENABLE_GUI, [test "${GEOM_WITH_GUI}" = "yes"])
+
+if test "${GEOM_WITH_GUI}" = "yes"; then
+    echo
+    echo ---------------------------------------------
+    echo testing openGL
+    echo ---------------------------------------------
+    echo
+
+    CHECK_OPENGL
+
+    echo
+    echo ---------------------------------------------
+    echo testing QT
+    echo ---------------------------------------------
+    echo
+
+    CHECK_QT
+
+    echo
+    echo ---------------------------------------------
+    echo testing VTK
+    echo ---------------------------------------------
+    echo
+
+    CHECK_VTK
+
+    echo
+    echo ---------------------------------------------
+    echo Testing GUI
+    echo ---------------------------------------------
+    echo
+
+    CHECK_SALOME_GUI
+
+    echo
+    echo ---------------------------------------------
+    echo Testing full GUI
+    echo ---------------------------------------------
+    echo
+
+    CHECK_CORBA_IN_GUI
+    if test "x${CORBA_IN_GUI}" != "xyes"; then
+      echo "failed : For configure GEOM module necessary full GUI !"
+      exit
+    fi
+fi
 
 echo
 echo ---------------------------------------------
@@ -276,26 +304,6 @@ echo ---------------------------------------------
 echo
 
 CHECK_HTML_GENERATORS
-
-echo
-echo ---------------------------------------------
-echo Testing GUI
-echo ---------------------------------------------
-echo
-
-CHECK_SALOME_GUI
-
-echo
-echo ---------------------------------------------
-echo Testing full GUI
-echo ---------------------------------------------
-echo
-
-CHECK_CORBA_IN_GUI
-if test "x${CORBA_IN_GUI}" != "xyes"; then
-  echo "failed : For configure GEOM module necessary full GUI !"
-  exit
-fi
 
 echo
 echo ---------------------------------------------
@@ -387,6 +395,7 @@ AC_OUTPUT([ \
   ./src/GEOM_I/Makefile \
   ./src/GEOM_I_Superv/Makefile \
   ./src/GEOM_SWIG/Makefile \
+  ./src/GEOM_SWIG_WITHIHM/Makefile \
   ./src/GenerationGUI/Makefile \
   ./src/GroupGUI/Makefile \
   ./src/IGESExport/Makefile \

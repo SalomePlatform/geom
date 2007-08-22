@@ -102,6 +102,7 @@ GEOMAlgo_Gluer::GEOMAlgo_Gluer()
   myTolerance=0.0001;
   myTol=myTolerance;
   myCheckGeometry=Standard_True;
+  myKeepNonSolids=Standard_False;
   myNbAlone=0;
 }
 //=======================================================================
@@ -126,6 +127,14 @@ void GEOMAlgo_Gluer::SetCheckGeometry(const Standard_Boolean aFlag)
 Standard_Boolean GEOMAlgo_Gluer::CheckGeometry() const
 {
   return myCheckGeometry;
+}
+//=======================================================================
+//function : SetKeepNonSolids
+//purpose  : 
+//=======================================================================
+void GEOMAlgo_Gluer::SetKeepNonSolids(const Standard_Boolean aFlag)
+{
+  myKeepNonSolids=aFlag;
 }
 //=======================================================================
 //function : AloneShapes
@@ -356,39 +365,45 @@ void GEOMAlgo_Gluer::MakeVertices()
   }
 }
 //=======================================================================
-//function : MakeSolids
+//function : MakeSubShapes
 //purpose  : 
 //=======================================================================
-void GEOMAlgo_Gluer::MakeSolids()
+void GEOMAlgo_Gluer::MakeSubShapes (const TopoDS_Shape&  theShape,
+                                    TopTools_MapOfShape& theMS,
+                                    TopoDS_Compound&     theResult)
 {
-  myErrorStatus=0;
+  if (theMS.Contains(theShape))
+    return;
   //
-  Standard_Integer aNbS;
-  TopAbs_Orientation anOr;
-  TopoDS_Compound aCmp;
-  TopoDS_Solid aNewSolid;
-  TopTools_IndexedMapOfShape aMS;
-  TopExp_Explorer aExpS, aExp;
   BRep_Builder aBB;
   //
-  aBB.MakeCompound(aCmp);
+  theMS.Add(theShape);
   //
-  aNbS=aMS.Extent();
-  aExpS.Init(myShape, TopAbs_SOLID);
-  for (; aExpS.More(); aExpS.Next()) {
-    const TopoDS_Solid& aSolid=TopoDS::Solid(aExpS.Current());
-    if (aMS.Contains(aSolid)) {
-      continue;
+  if (theShape.ShapeType() == TopAbs_COMPOUND ||
+      theShape.ShapeType() == TopAbs_COMPSOLID)
+  {
+    TopoDS_Iterator It (theShape, Standard_True, Standard_True);
+    for (; It.More(); It.Next())
+    {
+      MakeSubShapes(It.Value(), theMS, theResult);
     }
-    aMS.Add(aSolid);
+  }
+  else if (theShape.ShapeType() == TopAbs_SOLID)
+  {
+    // build a solid
+    TopoDS_Solid aNewSolid;
+    TopExp_Explorer aExpS, aExp;
     //
-    anOr=aSolid.Orientation();
+    const TopoDS_Solid& aSolid = TopoDS::Solid(theShape);
+    //
+    TopAbs_Orientation anOr = aSolid.Orientation();
     //
     aBB.MakeSolid(aNewSolid);
     aNewSolid.Orientation(anOr);
     //
     aExp.Init(aSolid, TopAbs_SHELL);
-    for (; aExp.More(); aExp.Next()) {
+    for (; aExp.More(); aExp.Next())
+    {
       const TopoDS_Shape& aShell=aExp.Current();
       const TopoDS_Shape& aShellR=myOrigins.Find(aShell);
       aBB.Add(aNewSolid, aShellR);
@@ -400,14 +415,88 @@ void GEOMAlgo_Gluer::MakeSolids()
     myImages.Bind(aNewSolid, aLS);
     myOrigins.Bind(aSolid, aNewSolid);
     //
-    aBB.Add(aCmp, aNewSolid);
+    aBB.Add(theResult, aNewSolid);
   }
+  else if (theShape.ShapeType() == TopAbs_WIRE)
+  {
+    if (myKeepNonSolids)
+    {
+      // just add image
+      if (!myOrigins.IsBound(theShape))
+      {
+        // build wire
+        const TopoDS_Wire& aW=TopoDS::Wire(theShape);
+        //
+        TopoDS_Wire newWire;
+        aBB.MakeWire(newWire);
+        //
+        TopExp_Explorer aExpE (aW, TopAbs_EDGE);
+        for (; aExpE.More(); aExpE.Next()) {
+          const TopoDS_Edge& aE=TopoDS::Edge(aExpE.Current());
+          TopoDS_Edge aER=TopoDS::Edge(myOrigins.Find(aE));
+          //
+          aER.Orientation(TopAbs_FORWARD);
+          if (!BRep_Tool::Degenerated(aER)) {
+            // build p-curve
+            //if (bIsUPeriodic) {
+            //  GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(aER, aFFWD, aUMin, aUMax);
+            //}
+            //BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aER, aFFWD);
+            //
+            // orient image
+            Standard_Boolean bIsToReverse=BOPTools_Tools3D::IsSplitToReverse1(aER, aE, myContext);
+            if (bIsToReverse) {
+              aER.Reverse();
+            }
+          }
+          else {
+            aER.Orientation(aE.Orientation());
+          }
+          //
+          aBB.Add(newWire, aER);
+        }
+        // xf
+        TopTools_ListOfShape aLW;
+        //
+        aLW.Append(aW);
+        myImages.Bind(newWire, aLW);
+        myOrigins.Bind(aW, newWire);
+      }
+      const TopoDS_Shape& aShapeR = myOrigins.Find(theShape);
+      aBB.Add(theResult, aShapeR);
+    }
+  }
+  else
+  {
+    if (myKeepNonSolids)
+    {
+      // just add image
+      const TopoDS_Shape& aShapeR = myOrigins.Find(theShape);
+      aBB.Add(theResult, aShapeR);
+    }
+  }
+}
+//=======================================================================
+//function : MakeSolids
+//purpose  : 
+//=======================================================================
+void GEOMAlgo_Gluer::MakeSolids()
+{
+  myErrorStatus=0;
+  //
+  BRep_Builder aBB;
+  TopoDS_Compound aCmp;
+  TopTools_MapOfShape aMS;
+  //
+  aBB.MakeCompound(aCmp);
+  //
+  // Add images of all initial sub-shapes in the result.
+  // If myKeepNonSolids==false, add only solids images.
+  MakeSubShapes(myShape, aMS, aCmp);
   //
   myResult=aCmp;
   //
-  aNbS=aMS.Extent();
-  if (aNbS) {
-    Standard_Real aTol=1.e-7;
+  if (aMS.Extent()) {
     BOP_CorrectTolerances::CorrectCurveOnSurface(myResult);
   }
 }

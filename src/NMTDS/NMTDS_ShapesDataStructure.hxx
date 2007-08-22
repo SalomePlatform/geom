@@ -38,6 +38,8 @@
 class TopoDS_Shape;
 class NMTDS_CArray1OfIndexRange;
 class BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors;
+class TColStd_IndexedMapOfInteger;
+class Bnd_Box;
 
 
 #ifndef _Standard_HeaderFile
@@ -96,6 +98,12 @@ Standard_EXPORT   void FillMap(const TopoDS_Shape& aS,BooleanOperations_IndexedD
 
 
 Standard_EXPORT   void FillSubshapes(const TopoDS_Shape& aS,BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMSA,BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMS) const;
+
+
+Standard_EXPORT   void GetAllSuccessors(const Standard_Integer anIndex,TColStd_IndexedMapOfInteger& aScrs) const;
+
+
+Standard_EXPORT   void ComputeBoxEx(const Standard_Integer anIndex,Bnd_Box& aBox) const;
 
 
 

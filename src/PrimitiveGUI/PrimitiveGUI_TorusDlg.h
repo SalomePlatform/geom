@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -52,11 +52,10 @@ protected:
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
 
-    virtual void closeEvent( QCloseEvent* e );
-
 private:
     void Init();
     void enterEvent(QEvent* e);
+
     double getRadius1() const;
     double getRadius2() const;
 
@@ -65,12 +64,11 @@ private:
     DlgRef_2Sel2Spin* GroupPoints;
     DlgRef_2Spin* GroupDimensions;
 
-    private slots:
+private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
+
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

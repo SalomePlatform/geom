@@ -40,6 +40,8 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Compound.hxx>
 
+#include <TopExp.hxx>
+
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <IntTools_ShrunkRange.hxx>
@@ -63,7 +65,7 @@
 #include <BOPTools_ListOfPaveBlock.hxx>
 #include <BOPTools_ListIteratorOfListOfPaveBlock.hxx>
 #include <BOPTools_ESInterference.hxx>
-#include <BOPTools_InterferencePool.hxx>
+
 #include <BOPTools_CArray1OfVVInterference.hxx>
 #include <BOPTools_CArray1OfESInterference.hxx>
 #include <BOPTools_VVInterference.hxx>
@@ -72,14 +74,15 @@
 #include <BOPTools_IMapOfPaveBlock.hxx>
 
 #include <NMTDS_ShapesDataStructure.hxx>
+#include <NMTDS_Iterator.hxx>
+#include <NMTDS_InterfPool.hxx>
 
 #include <NMTTools_ListOfCommonBlock.hxx>
 #include <NMTTools_CommonBlockAPI.hxx>
 #include <NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx>
 #include <NMTTools_CommonBlockAPI.hxx>
 #include <NMTTools_ListOfCommonBlock.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
-#include <TopExp.hxx>
+
 
 static
   void VertexParameter(const IntTools_CommonPrt& aCPart,
@@ -105,28 +108,32 @@ static
   BOPTools_IDMapOfPaveBlockIMapOfInteger aMapCB;
   BOPTools_IMapOfPaveBlock aIMPBx;
   //
-  BOPTools_CArray1OfESInterference& aEFs=myIntrPool->ESInterferences();
+  BOPTools_CArray1OfESInterference& aEFs=myIP->ESInterferences();
   //
-  myDSIt.Initialize(TopAbs_EDGE, TopAbs_FACE);
+  myDSIt->Initialize(TopAbs_EDGE, TopAbs_FACE);
   //
   // BlockLength correction
-  aNbEFs=ExpectedPoolLength();
+  aNbEFs=myDSIt->BlockLength();
   aBlockLength=aEFs.BlockLength();
   if (aNbEFs > aBlockLength) {
     aEFs.SetBlockLength(aNbEFs);
   }
   //
-  for (; myDSIt.More(); myDSIt.Next()) {
-    myDSIt.Current(n1, n2, bJustAdd);
+  for (; myDSIt->More(); myDSIt->Next()) {
+    myDSIt->Current(n1, n2, bJustAdd);
     anIndexIn = 0;
     //
-    if (myIntrPool->IsComputed(n1, n2)) {
-      continue;
-    }
+    //if (myIntrPool->IsComputed(n1, n2)) {
+    //  continue;
+    //}
     //
     nE=n1; 
-    nF=n2; 
-    SortTypes(nE, nF);
+    nF=n2;
+    if (myDS->GetShapeType(n2)==TopAbs_EDGE) {
+      nE=n2; 
+      nF=n1;
+    }
+    //SortTypes(nE, nF);
     //
     // all Common Blocks for face nF
     //XXX
@@ -135,7 +142,7 @@ static
     NMTTools_CommonBlockAPI aCBAPIF(aLCBF);
     //XXX
     if(bJustAdd) {
-      myIntrPool->AddInterference (nE, nF, BooleanOperations_EdgeSurface, anIndexIn);
+      //myIntrPool->AddInterference (nE, nF, BooleanOperations_EdgeSurface, anIndexIn);
       continue;
     }
     // Edge
@@ -246,10 +253,15 @@ static
 		  //
 		  aMapVI.Add(aNewVertex, anIndexIn);
 		  aIMPBx.Add(aPB);
+		  // qqf
+		  {
+		    myIP->Add(nE, nF, Standard_True, NMTDS_TI_EF);
+		  }
+		  // qqt
 		  //
 		}// if (!nVF)
 	      }// if (!bIsOnPave1 && !bIsOnPave2) 
-	      myIntrPool->AddInterference (nE, nF, BooleanOperations_EdgeSurface, anIndexIn);
+	      //myIntrPool->AddInterference (nE, nF, BooleanOperations_EdgeSurface, anIndexIn);
 	    }// case TopAbs_VERTEX:
 	      break;
 	    //
@@ -258,7 +270,7 @@ static
 	      //
 	      aCoinsideFlag=BOPTools_Tools::IsBlockInOnFace(aPB, aF, myContext);
 	      if (!aCoinsideFlag) {
-		myIntrPool->AddInterference (nE, nF, BooleanOperations_EdgeSurface, anIndexIn);
+		//myIntrPool->AddInterference (nE, nF, BooleanOperations_EdgeSurface, anIndexIn);
 		break;
 	      }
 	      //
@@ -272,9 +284,12 @@ static
 		aMapF.Add(nF);
 		aMapCB.Add(aPB, aMapF);
 	      }
-	      //modified by NIZNHY-PKV Fri Jan 23 14:13:08 2004 f
 	      aIMPBx.Add(aPB);
-	      //modified by NIZNHY-PKV Fri Jan 23 14:13:10 2004 t
+	      // qqf
+	      {
+		myIP->Add(nE, nF, Standard_True, NMTDS_TI_EF);
+	      }
+	      // qqt
 	    }// case TopAbs_EDGE:
 	      break;
 
@@ -370,7 +385,7 @@ static
   void NMTTools_PaveFiller::EFNewVertices (const BooleanOperations_IndexedDataMapOfShapeInteger& aMapVI) 
 {
   Standard_Integer i, j, aNb, aNewShape, aFlag, iX, aNbVV, aNbSimple;
-  Standard_Integer aWhat, aWith, nE, nF, nV, aNbIEF, aNbEdges;
+  Standard_Integer aWhat, aWith, nE, nF, nV, aNbIEF, aNbEdges, iTmp;
   Standard_Real aT;
   TopoDS_Compound aCompound;
   TopoDS_Vertex aNewVertex;
@@ -380,7 +395,7 @@ static
   BooleanOperations_AncestorsSeqAndSuccessorsSeq anASSeq;
   TopTools_IndexedMapOfShape aMNVComplex, aMNVSimple;
   //
-  BOPTools_CArray1OfESInterference& aEFs=myIntrPool->ESInterferences();
+  BOPTools_CArray1OfESInterference& aEFs=myIP->ESInterferences();
   //
   aNb=aMapVI.Extent();
   //
@@ -404,20 +419,19 @@ static
   //
   // 2. VV intersection between these vertices 
   //       using the auxiliary Filler
-  NMTDS_ShapesDataStructure tDS;
+  NMTTools_PaveFiller tPF;
   //
-  tDS.SetCompositeShape(aCompound);
-  tDS.Init();
+  tPF.SetCompositeShape(aCompound);
   //
-  BOPTools_InterferencePool tInterfPool(tDS);
-  NMTTools_PaveFiller tPaveFiller(tInterfPool);
+  tPF.Init();
+  tPF.PerformVV();
+  //tPF.PerformNewVertices(); qq
   //
-  tPaveFiller.Init();
-  //
-  tPaveFiller.PerformVV();
-  tPaveFiller.PerformNewVertices();
-  //
-  const BOPTools_CArray1OfVVInterference& aVVInterfs=tInterfPool.VVInterfs();
+  NMTDS_ShapesDataStructure& tDS=*(tPF.DS());
+  //const BOPTools_InterferencePool& tInterfPool=*(tPF.InterfPool());
+  NMTDS_InterfPool& tInterfPool=*(tPF.IP());
+  //const BOPTools_CArray1OfVVInterference& aVVInterfs=tInterfPool.VVInterfs();
+  BOPTools_CArray1OfVVInterference& aVVInterfs=tInterfPool.VVInterferences();
   //
   // 3. Separate Comlex and Simple new vertices
   aNbVV=aVVInterfs.Extent();
@@ -472,7 +486,12 @@ static
     iX=aMapVI.FindFromKey(aV1);
     const BOPTools_ESInterference& aEF1=aEFs(iX);
     aEF1.Indices(nE, nF);
-    SortTypes(nE, nF);
+    //SortTypes(nE, nF);
+    if (myDS->GetShapeType(nF)==TopAbs_EDGE) {
+      iTmp=nE;
+      nE=nF;
+      nF=iTmp;
+    }
     aME.Add(nE);
     aMIEF.Add(iX);
     //aWith
@@ -480,7 +499,12 @@ static
     iX=aMapVI.FindFromKey(aV2);
     const BOPTools_ESInterference& aEF2=aEFs(iX);
     aEF2.Indices(nE, nF);
-    SortTypes(nE, nF);
+    //SortTypes(nE, nF);
+    if (myDS->GetShapeType(nF)==TopAbs_EDGE) {
+      iTmp=nE;
+      nE=nF;
+      nF=iTmp;
+    }
     aME.Add(nE);
     aMIEF.Add(iX);
   }
@@ -539,7 +563,7 @@ static
   BOPTools_Pave aPave;
   BooleanOperations_AncestorsSeqAndSuccessorsSeq anASSeq;
   //
-  BOPTools_CArray1OfESInterference& aEFs=myIntrPool->ESInterferences();
+  BOPTools_CArray1OfESInterference& aEFs=myIP->ESInterferences();
   //
   // Insert New Vertex in DS;
   myDS->InsertShapeAndAncestorsSuccessors(aNewVertex, anASSeq);
@@ -551,7 +575,10 @@ static
   aEFInterf.SetNewShape(aNewShape);
   // Extract interference info
   aEFInterf.Indices(nE, nF);
-  SortTypes(nE, nF);
+  //SortTypes(nE, nF);
+  if (myDS->GetShapeType(nF)==TopAbs_EDGE) {
+    nE=nF;
+  }
   const IntTools_CommonPrt& aCPart=aEFInterf.CommonPrt();
   VertexParameter(aCPart, aT);
   //

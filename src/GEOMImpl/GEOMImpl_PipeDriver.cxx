@@ -21,16 +21,30 @@
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_PipeDriver.hxx>
+
+#include <GEOMImpl_IShapesOperations.hxx>
+#include <GEOMImpl_IPipeDiffSect.hxx>
+#include <GEOMImpl_IPipeShellSect.hxx>
 #include <GEOMImpl_IPipe.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
+#include <ShapeAnalysis_FreeBounds.hxx>
+#include <ShapeAnalysis_Edge.hxx>
+
 #include <BRep_Tool.hxx>
+#include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
-#include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepOffsetAPI_MakePipeShell.hxx>
+#include <GProp_GProps.hxx>
+#include <BRepGProp.hxx>
 
 #include <TopAbs.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopoDS_Edge.hxx>
@@ -38,32 +52,26 @@
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Shell.hxx>
 #include <TopoDS_Face.hxx>
-#include <BRepOffsetAPI_MakePipeShell.hxx>
-#include <TColStd_HSequenceOfTransient.hxx>
-#include <GEOMImpl_IPipeDiffSect.hxx>
-#include <GEOMImpl_IPipeShellSect.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopTools_SequenceOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
 
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+#include <Geom_TrimmedCurve.hxx>
+
+#include <TColgp_SequenceOfPnt.hxx>
+#include <TColStd_HSequenceOfTransient.hxx>
+
+#include <Precision.hxx>
 #include <Standard_NullObject.hxx>
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
-#include "utilities.h"
-#include <TopExp_Explorer.hxx>
-#include <TopTools_SequenceOfShape.hxx>
-#include <BRep_Builder.hxx>
-#include <TopoDS_Compound.hxx>
-#include <ShapeAnalysis_FreeBounds.hxx>
-#include <TColgp_SequenceOfPnt.hxx>
-#include <ShapeAnalysis_Edge.hxx>
-#include <TopTools_IndexedDataMapOfShapeShape.hxx>
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#include <TopExp.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <GeomAPI_ProjectPointOnCurve.hxx>
-#include <Precision.hxx>
-#include <Geom_TrimmedCurve.hxx>
-#include <BRepBuilderAPI_Sewing.hxx>
 
-//#include <BRepTools.hxx>
+#include "utilities.h"
+
+//#include "BRepTools.hxx"
 
 
 //=======================================================================
@@ -345,7 +353,6 @@ static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
     }
 
     FindNextPairOfFaces(F1other, aMapEdgeFaces1, aMapEdgeFaces2, FF, aCI);
-    
   }
 }
 
@@ -423,6 +430,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
     Standard_ConstructionError::Raise
       ("First location shapes is not coincided with first vertex of aWirePath");
   }
+  VLocs.ChangeValue(1) = VF;
   edge = TopoDS::Edge(Edges.Last());
   tol = BRep_Tool::Tolerance(edge);
   TopoDS_Vertex VL = sae.LastVertex(edge);
@@ -432,11 +440,12 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
     Standard_ConstructionError::Raise
       ("Last location shapes is not coincided with last vertex of aWirePath");
   }
+  VLocs.ChangeValue(nbLocs) = VL;
   int jcurr = 2;
   TopTools_SequenceOfShape tmpEdges;
   for(i=1; i<=Edges.Length() && jcurr<nbLocs; i++) {
     TopoDS_Edge E = TopoDS::Edge(Edges.Value(i));
-    tol = BRep_Tool::Tolerance(edge);
+    tol = BRep_Tool::Tolerance(E);
     TopoDS_Vertex V1 = sae.FirstVertex(E);
     TopoDS_Vertex V2 = sae.LastVertex(E);
     gp_Pnt P1 = BRep_Tool::Pnt(V1);
@@ -450,11 +459,12 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	B.Add(W,tmpEdges.Value(j));
       B.Add(W,E);
       Wires.Append(W);
+      VLocs.ChangeValue(jcurr) = V2;
       jcurr++;
       tmpEdges.Clear();
     }
     else {
-      // find distance between E and aLocs(icurr)
+      // find distance between E and aLocs(jcurr)
       double fp,lp;
       Handle(Geom_Curve) C = BRep_Tool::Curve(E,fp,lp);
       GeomAPI_ProjectPointOnCurve PPC (PLocs.Value(jcurr),C);
@@ -467,7 +477,9 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	Handle(Geom_TrimmedCurve) tc1 = new Geom_TrimmedCurve(C,fp,param);
 	Handle(Geom_TrimmedCurve) tc2 = new Geom_TrimmedCurve(C,param,lp);
 	TopoDS_Edge E1,E2;
-	if(PC1.Distance(P1)<tol) {
+	gp_Pnt Pfp;
+	C->D0(fp,Pfp);
+	if(Pfp.Distance(P1)<tol) {
 	  B.MakeEdge(E1,tc1,tol);
 	  B.Add(E1,V1);
 	  TopoDS_Shape tmpV = VLocs.Value(jcurr).Oriented(TopAbs_REVERSED);
@@ -504,7 +516,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	Edges.InsertAfter(i,E2);
       }
       else {
-	tmpEdges.Append(edge);
+	tmpEdges.Append(E);
       }
     }
   }
@@ -575,6 +587,153 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
     if(nbf1==nbf2) {
       CreateFewSolids = true;
     }
+
+    /*
+    // check orientation of sections
+    bool NeedReverse = false;
+    {
+      // first section
+      anExp.Init( aShBase1, TopAbs_FACE );
+      TopoDS_Shape aFace = anExp.Current();
+      TColgp_SequenceOfPnt aPnts;
+      double xc=0, yc=0, zc=0;
+      for ( anExp.Init( aFace, TopAbs_VERTEX ); anExp.More(); anExp.Next() ) {
+	TopoDS_Vertex V = TopoDS::Vertex(anExp.Current());
+	aPnts.Append(BRep_Tool::Pnt(V));
+	xc += aPnts.Last().X();
+	yc += aPnts.Last().Y();
+	zc += aPnts.Last().Z();
+      }
+      gp_Pnt PC( xc/aPnts.Length(), yc/aPnts.Length(), zc/aPnts.Length() );
+      gp_Vec V1(PC,aPnts.Value(1));
+      gp_Vec V2(PC,aPnts.Value(2));
+      gp_Vec VN = V1.Crossed(V2);
+      for(int ip=2; ip<aPnts.Length(); ip++) {
+	V1 = gp_Vec(PC,aPnts.Value(ip));
+	V2 = gp_Vec(PC,aPnts.Value(ip+1));
+	VN.Add(V1.Crossed(V2));
+      }
+      gp_Vec PathNorm;
+      gp_Pnt PLoc = BRep_Tool::Pnt(TopoDS::Vertex(VLocs(i)));
+      TopExp_Explorer WE;
+      for ( WE.Init( WPath, TopAbs_EDGE ); WE.More(); WE.Next() ) {
+	TopoDS_Edge edge = TopoDS::Edge(WE.Current());
+	double tol = BRep_Tool::Tolerance(edge);
+	TopoDS_Vertex VF = sae.FirstVertex(edge);
+	gp_Pnt PF = BRep_Tool::Pnt(VF);
+	if( PF.Distance(PLoc) < tol ) {
+	  double fp,lp;
+	  Handle(Geom_Curve) C = BRep_Tool::Curve(edge,fp,lp);
+	  gp_Pnt P1,P2;
+	  C->D0(fp,P1);
+	  if( P1.Distance(PLoc) < tol ) {
+	    C->D0(fp+(lp-fp)/100,P2);
+	  }
+	  else {
+	    C->D0(lp,P1);
+	    C->D0(lp+(fp-lp)/100,P2);
+	  }
+	  PathNorm = gp_Vec(P1,P2);
+	  break;
+	}
+	else {
+	  TopoDS_Vertex VL = sae.LastVertex(edge);
+	  gp_Pnt PL = BRep_Tool::Pnt(VL);
+	  if( PL.Distance(PLoc) < tol ) {
+	    double fp,lp;
+	    Handle(Geom_Curve) C = BRep_Tool::Curve(edge,fp,lp);
+	    gp_Pnt P1,P2;
+	    C->D0(fp,P1);
+	    if( P1.Distance(PLoc) < tol ) {
+	      C->D0(fp+(lp-fp)/100,P2);
+	    }
+	    else {
+	      C->D0(lp,P1);
+	      C->D0(lp+(fp-lp)/100,P2);
+	    }
+	    PathNorm = gp_Vec(P2,P1);
+	    break;
+	  }
+	}
+      }
+      cout<<"VN("<<VN.X()<<","<<VN.Y()<<","<<VN.Z()<<")"<<endl;
+      cout<<"PathNorm("<<PathNorm.X()<<","<<PathNorm.Y()<<","<<PathNorm.Z()<<")"<<endl;
+      if(fabs(VN.Angle(PathNorm))>PI/2.) {
+	NeedReverse = true;
+	aShBase1.Reverse();
+      }
+    }
+    {
+      // second section
+      anExp.Init( aShBase2, TopAbs_FACE );
+      TopoDS_Shape aFace = anExp.Current();
+      TColgp_SequenceOfPnt aPnts;
+      double xc=0, yc=0, zc=0;
+      for ( anExp.Init( aFace, TopAbs_VERTEX ); anExp.More(); anExp.Next() ) {
+	TopoDS_Vertex V = TopoDS::Vertex(anExp.Current());
+	aPnts.Append(BRep_Tool::Pnt(V));
+	xc += aPnts.Last().X();
+	yc += aPnts.Last().Y();
+	zc += aPnts.Last().Z();
+      }
+      gp_Pnt PC( xc/aPnts.Length(), yc/aPnts.Length(), zc/aPnts.Length() );
+      gp_Vec V1(PC,aPnts.Value(1));
+      gp_Vec V2(PC,aPnts.Value(2));
+      gp_Vec VN = V1.Crossed(V2);
+      for(int ip=2; ip<aPnts.Length(); ip++) {
+	V1 = gp_Vec(PC,aPnts.Value(ip));
+	V2 = gp_Vec(PC,aPnts.Value(ip+1));
+	VN.Add(V1.Crossed(V2));
+      }
+      gp_Vec PathNorm;
+      gp_Pnt PLoc = BRep_Tool::Pnt(TopoDS::Vertex(VLocs(i+1)));
+      TopExp_Explorer WE;
+      for ( WE.Init( WPath, TopAbs_EDGE ); WE.More(); WE.Next() ) {
+	TopoDS_Edge edge = TopoDS::Edge(WE.Current());
+	double tol = BRep_Tool::Tolerance(edge);
+	TopoDS_Vertex VF = sae.FirstVertex(edge);
+	gp_Pnt PF = BRep_Tool::Pnt(VF);
+	if( PF.Distance(PLoc) < tol ) {
+	  double fp,lp;
+	  Handle(Geom_Curve) C = BRep_Tool::Curve(edge,fp,lp);
+	  gp_Pnt P1,P2;
+	  C->D0(fp,P1);
+	  if( P1.Distance(PLoc) < tol ) {
+	    C->D0(fp+(lp-fp)/100,P2);
+	  }
+	  else {
+	    C->D0(lp,P1);
+	    C->D0(lp+(fp-lp)/100,P2);
+	  }
+	  PathNorm = gp_Vec(P2,P1);
+	  break;
+	}
+	else {
+	  TopoDS_Vertex VL = sae.LastVertex(edge);
+	  gp_Pnt PL = BRep_Tool::Pnt(VL);
+	  if( PL.Distance(PLoc) < tol ) {
+	    double fp,lp;
+	    Handle(Geom_Curve) C = BRep_Tool::Curve(edge,fp,lp);
+	    gp_Pnt P1,P2;
+	    C->D0(fp,P1);
+	    if( P1.Distance(PLoc) < tol ) {
+	      C->D0(fp+(lp-fp)/100,P2);
+	    }
+	    else {
+	      C->D0(lp,P1);
+	      C->D0(lp+(fp-lp)/100,P2);
+	    }
+	    PathNorm = gp_Vec(P2,P1);
+	    break;
+	  }
+	}
+      }
+      //cout<<"VN("<<VN.X()<<","<<VN.Y()<<","<<VN.Z()<<")"<<endl;
+      //cout<<"PathNorm("<<PathNorm.X()<<","<<PathNorm.Y()<<","<<PathNorm.Z()<<")"<<endl;
+      if(fabs(VN.Angle(PathNorm))>PI/2.)
+	aShBase2.Reverse();
+    }
+    */
 
     if(!CreateFewSolids) {
       // we can create only one solid
@@ -661,6 +820,11 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	const TopoDS_Shape aSewShape = aSewing->SewedShape();
 	if( aSewShape.ShapeType() == TopAbs_SHELL ) {
 	  aShell = TopoDS::Shell(aSewShape);
+	  GProp_GProps aSystem;
+	  BRepGProp::VolumeProperties(aShell, aSystem);
+	  if(aSystem.Mass()<0) {
+	    aShell.Reverse();
+	  }
 	  if(BRep_Tool::IsClosed(aShell)) {
 	    TopoDS_Solid aSolid;
 	    B.MakeSolid(aSolid);
@@ -679,10 +843,12 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
     else {
       // main block - creation few solids (for each pair of faces)
       TopTools_MapOfShape aFaces1,aFaces2;
-      for ( anExp.Init( aShBase1, TopAbs_FACE ); anExp.More(); anExp.Next() )
+      for ( anExp.Init( aShBase1, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
 	aFaces1.Add(anExp.Current());
-      for ( anExp.Init( aShBase2, TopAbs_FACE ); anExp.More(); anExp.Next() )
+      }
+      for ( anExp.Init( aShBase2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
 	aFaces2.Add(anExp.Current());
+      }
       // creating map of edge faces
       TopTools_IndexedDataMapOfShapeListOfShape aMapEdgeFaces1;
       TopExp::MapShapesAndAncestors(aShBase1, TopAbs_EDGE, TopAbs_FACE, aMapEdgeFaces1);
@@ -844,7 +1010,6 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 
 
       // make pipe for each pair of faces
-      //BRepTools::Write(WPath,"/dn02/users_Linux/skl/work/Bugs/14857/wpath.brep");
       for(j=1; j<=FF.Extent(); j++) {
 	TopoDS_Shape F1 = FF.FindKey(j);
 	if( F1.ShapeType() != TopAbs_FACE )
@@ -869,12 +1034,10 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	  TopoDS_Shape aShape = aBuilder.Shape();
 	  TopoDS_Shell aShell;
 	  B.MakeShell(aShell);
-	  //int nbf=0;
 	  for ( anExp.Init( aShape, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
-	    //nbf++;
-	    //cout<<"nbf="<<nbf<<endl;
 	    B.Add(aShell,anExp.Current());
 	  }
+
 	  B.Add(aShell,F1);
 	  B.Add(aShell,F2);
 	  // make sewing for this shell
@@ -890,6 +1053,12 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	  const TopoDS_Shape aSewShape = aSewing->SewedShape();
 	  if( aSewShape.ShapeType() == TopAbs_SHELL ) {
 	    aShell = TopoDS::Shell(aSewShape);
+	    GProp_GProps aSystem;
+	    BRepGProp::VolumeProperties(aShell, aSystem);
+	    if(aSystem.Mass()<0) {
+	      //cout<<"aSewShape is reversed"<<endl;
+	      aShell.Reverse();
+	    }
 	    if(BRep_Tool::IsClosed(aShell)) {
 	      TopoDS_Solid aSolid;
 	      B.MakeSolid(aSolid);
@@ -909,6 +1078,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
     }
   }
 
+  //BRepTools::Write(aComp,"/dn02/users_Linux/skl/work/Bugs/14857/comp.brep");
   return aComp;
 }
 
@@ -980,7 +1150,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
   {
     GEOMImpl_IPipeDiffSect* aCIDS = (GEOMImpl_IPipeDiffSect*)aCI;
     //GEOMImpl_IPipeDiffSect* aCIDS = static_cast<GEOMImpl_IPipeDiffSect*>(aCI);
-    BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
+    //BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
     Handle(TColStd_HSequenceOfTransient) aBasesObjs = aCIDS->GetBases ();
     Handle(TColStd_HSequenceOfTransient) aLocObjs = aCIDS->GetLocations ();
     Standard_Boolean aWithContact = (aCIDS->GetWithContactMode());
@@ -1069,6 +1239,116 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     }
     
     nbLocs = aSeqLocs.Length();
+
+    // skl 02.05.2007
+    if(nbLocs>0) {
+      // we have to check that each location shape is a vertex from
+      // path and update aSeqLocs if it is needed (and possible)
+      TColgp_SequenceOfPnt PLocs;
+      for(i=1; i<=nbLocs; i++) {
+	TopoDS_Vertex V = TopoDS::Vertex(aSeqLocs.Value(i));
+	PLocs.Append(BRep_Tool::Pnt(V));
+      }
+      TopTools_SequenceOfShape Edges;
+      TopExp_Explorer anExp;
+      for ( anExp.Init( aWirePath, TopAbs_EDGE ); anExp.More(); anExp.Next() ) {
+	Edges.Append(anExp.Current());
+      }
+      int nbEdges = Edges.Length();
+      ShapeAnalysis_Edge sae;
+      TopoDS_Edge edge = TopoDS::Edge(Edges.First());
+      double tol = BRep_Tool::Tolerance(edge);
+      TopoDS_Vertex VF = sae.FirstVertex(edge);
+      gp_Pnt PF = BRep_Tool::Pnt(VF);
+      //cout<<"PF("<<PF.X()<<","<<PF.Y()<<","<<PF.Z()<<")"<<endl;
+      if( PF.Distance(PLocs.First()) > tol ) {
+	if(aCI) delete aCI;
+	Standard_ConstructionError::Raise
+	  ("First location shapes is not coincided with first vertex of aWirePath");
+      }
+      aSeqLocs.ChangeValue(1) = VF;
+      edge = TopoDS::Edge(Edges.Last());
+      tol = BRep_Tool::Tolerance(edge);
+      TopoDS_Vertex VL = sae.LastVertex(edge);
+      gp_Pnt PL = BRep_Tool::Pnt(VL);
+      if( PL.Distance(PLocs.Last()) > tol ) {
+	if(aCI) delete aCI;
+	Standard_ConstructionError::Raise
+	  ("Last location shapes is not coincided with last vertex of aWirePath");
+      }
+      aSeqLocs.ChangeValue(nbLocs) = VL;
+      int jcurr = 2;
+      for(i=1; i<=Edges.Length() && jcurr<nbLocs; i++) {
+	TopoDS_Edge E = TopoDS::Edge(Edges.Value(i));
+	tol = BRep_Tool::Tolerance(edge);
+	TopoDS_Vertex V1 = sae.FirstVertex(E);
+	TopoDS_Vertex V2 = sae.LastVertex(E);
+	gp_Pnt P1 = BRep_Tool::Pnt(V1);
+	gp_Pnt P2 = BRep_Tool::Pnt(V2);
+	if( P2.Distance(PLocs.Value(jcurr)) < tol ) {
+	  aSeqLocs.ChangeValue(jcurr) = V2;
+	  jcurr++;
+	}
+	else {
+	  // find distance between E and aLocs(jcurr)
+	  double fp,lp;
+	  Handle(Geom_Curve) C = BRep_Tool::Curve(E,fp,lp);
+	  GeomAPI_ProjectPointOnCurve PPC (PLocs.Value(jcurr),C);
+	  if( PPC.NbPoints()>0 &&
+	      PLocs.Value(jcurr).Distance(PPC.Point(1)) < tol ) {
+	    double param = PPC.Parameter(1);
+	    gp_Pnt PC1;
+	    C->D0(param,PC1);
+	    // split current edge
+	    Handle(Geom_TrimmedCurve) tc1 = new Geom_TrimmedCurve(C,fp,param);
+	    Handle(Geom_TrimmedCurve) tc2 = new Geom_TrimmedCurve(C,param,lp);
+	    TopoDS_Edge E1,E2;
+	    BRep_Builder B;
+	    gp_Pnt Pfp;
+	    C->D0(fp,Pfp);
+	    if(Pfp.Distance(P1)<tol) {
+	      B.MakeEdge(E1,tc1,tol);
+	      B.Add(E1,V1);
+	      TopoDS_Shape tmpV = aSeqLocs.Value(jcurr).Oriented(TopAbs_REVERSED);
+	      B.Add(E1,TopoDS::Vertex(tmpV));
+	      B.MakeEdge(E2,tc2,tol);
+	      tmpV = aSeqLocs.Value(jcurr).Oriented(TopAbs_FORWARD);
+	      B.Add(E2,TopoDS::Vertex(tmpV));
+	      B.Add(E2,V2);
+	    }
+	    else {
+	      B.MakeEdge(E1,tc2,tol);
+	      TopoDS_Shape tmpV = aSeqLocs.Value(jcurr).Oriented(TopAbs_FORWARD);
+	      B.Add(E1,TopoDS::Vertex(tmpV));
+	      B.Add(E1,V1);
+	      E1.Reverse();
+	      B.MakeEdge(E2,tc1,tol);
+	      B.Add(E2,V2);
+	      tmpV = aSeqLocs.Value(jcurr).Oriented(TopAbs_REVERSED);
+	      B.Add(E2,TopoDS::Vertex(tmpV));
+	      E2.Reverse();
+	    }
+	    jcurr++;
+	    Edges.Remove(i);
+	    Edges.InsertAfter(i-1,E1);
+	    Edges.InsertAfter(i,E2);
+	  }
+	}
+      }
+      if(nbEdges<Edges.Length()) {
+	// one of edges was splitted => we have to update WirePath
+	BRep_Builder B;
+	TopoDS_Wire W;
+	B.MakeWire(W);
+	for(i=1; i<=Edges.Length(); i++) {
+	  B.Add(W,TopoDS::Edge(Edges.Value(i)));
+	}
+	aWirePath = W;
+      }
+    }
+
+    BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
+
     Standard_Integer nbShapes = aSeqBases.Length();
     Standard_Integer step = nbShapes/nbBases;
     
@@ -1135,7 +1415,8 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
   }
 
-  aFunction->SetValue(aShape);
+  TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
+  aFunction->SetValue(aRes);
 
   log.SetTouched(Label());
   if(aCI) delete aCI;

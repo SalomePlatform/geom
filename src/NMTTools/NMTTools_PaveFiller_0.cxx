@@ -1,65 +1,70 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
+// 
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
+// License as published by the Free Software Foundation; either 
 // version 2.1 of the License.
-//
-// This library is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// 
+// This library is distributed in the hope that it will be useful 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
+// You should have received a copy of the GNU Lesser General Public  
+// License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_1.cxx
-// Created:	Mon Dec  8 11:47:55 2003
+// File:	NMTTools_PaveFiller_0.cxx
+// Created:	Mon Dec  8 11:45:51 2003
 // Author:	Peter KURNEV
 //		<pkv@irinox>
 
+
 #include <NMTTools_PaveFiller.ixx>
 
+#include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopAbs_ShapeEnum.hxx>
-#include <BOPTools_ListOfCoupleOfInteger.hxx>
+
+#include <NMTDS_InterfPool.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
-#include <BooleanOperations_OnceExplorer.hxx>
+#include <NMTDS_Iterator.hxx>
 
 //=======================================================================
-//function : SortTypes
-//purpose  : 
+// function:IsSuccesstorsComputed
+// purpose: 
 //=======================================================================
-  void NMTTools_PaveFiller::SortTypes(Standard_Integer& theWhat,
-				      Standard_Integer& theWith)const 
-{ 
-  Standard_Boolean aReverseFlag=Standard_True;
-
-  TopAbs_ShapeEnum aType1= myDS->GetShapeType(theWhat),
-                   aType2= myDS->GetShapeType(theWith);
-  
-  if (aType1==aType2)
-    return;
-  
-  if (aType1==TopAbs_EDGE && aType2==TopAbs_FACE){
-    aReverseFlag=Standard_False;
+  Standard_Boolean NMTTools_PaveFiller::IsSuccessorsComputed(const Standard_Integer aN1,
+							     const Standard_Integer aN2)const
+{
+  Standard_Boolean bComputed;
+  Standard_Integer i, nSuc, n1, n2, ntmp, aNbS;
+  TopAbs_ShapeEnum aType;
+  TColStd_IndexedMapOfInteger aMSuc;
+  //
+  n1=aN1;
+  n2=aN2;
+  aType=myDS->GetShapeType(aN1);
+  if (aType!=TopAbs_VERTEX) {
+    ntmp=n1;
+    n1=n2;
+    n2=ntmp;
   }
-
-  if (aType1==TopAbs_VERTEX && 
-      (aType2==TopAbs_FACE || aType2==TopAbs_EDGE)) {
-    aReverseFlag=Standard_False;
+  //
+  myDS->GetAllSuccessors(n2, aMSuc);
+  aNbS=aMSuc.Extent();
+  for (i=1; i<=aNbS; ++i) {
+    nSuc=aMSuc(i);
+    bComputed=myIP->Contains(n1, nSuc); 
+    if (bComputed) {
+      break;
+    }
   }
-  
-  Standard_Integer aWhat, aWith;
-  aWhat=(aReverseFlag) ? theWith : theWhat;
-  aWith=(aReverseFlag) ? theWhat : theWith;
-  
-  theWhat=aWhat;
-  theWith=aWith;
+  return bComputed;
 }
+/*
 //=======================================================================
 // function:  ExpectedPoolLength
 // purpose: 
@@ -72,7 +77,7 @@
   // Contribution of Samtech www.samcef.com BEGIN
   //const BOPTools_ListOfCoupleOfInteger& aLC=myDSIt.ListOfCouple();
   //aNbIIs=aLC.Extent();
-  aNbIIs=myDSIt.ExpectedLength();
+  aNbIIs=myDSIt->ExpectedLength();
   // Contribution of Samtech www.samcef.com END
   //
   if (aNbIIs==1) {
@@ -83,57 +88,39 @@
   
   return aNbIIs;
 }
+*/
+/*
 //=======================================================================
-// function:IsSuccesstorsComputed
-// purpose: 
+//function : SortTypes
+//purpose  : 
 //=======================================================================
-  Standard_Boolean NMTTools_PaveFiller::IsSuccesstorsComputed(const Standard_Integer aN1,
-							      const Standard_Integer aN2)const
-{
-  Standard_Integer nSuc, n1, n2;
-
-  BooleanOperations_OnceExplorer aExp(*myDS);
-  TopAbs_ShapeEnum aType=myDS->GetShapeType(aN1);
-
-  n1=aN1;
-  n2=aN2;
-
-  if (aType!=TopAbs_VERTEX) {
-    Standard_Integer ntmp=n1;
-    n1=n2;
-    n2=ntmp;
+  void NMTTools_PaveFiller::SortTypes(Standard_Integer& theWhat,
+				      Standard_Integer& theWith)const 
+{ 
+  Standard_Integer aWhat, aWith;
+  Standard_Boolean aReverseFlag;
+  TopAbs_ShapeEnum aType1, aType2;
+  //
+  aType1= myDS->GetShapeType(theWhat),
+  aType2= myDS->GetShapeType(theWith);
+  //
+  if (aType1==aType2) {
+    return;
   }
-
-  aType=myDS->GetShapeType(n2);
-  if (aType==TopAbs_EDGE) {
-    aExp.Init(n2, TopAbs_VERTEX);
-    for (; aExp.More(); aExp.Next()) {
-      nSuc=aExp.Current();
-      if (myIntrPool->IsComputed(n1, nSuc)) {
-	return Standard_True;
-      }
-    }
-  return Standard_False;
+  //
+  aReverseFlag=Standard_True;
+  if (aType1==TopAbs_EDGE && aType2==TopAbs_FACE) {
+    aReverseFlag=Standard_False;
   }
-
-  else if (aType==TopAbs_FACE) {
-    aExp.Init(n2, TopAbs_VERTEX);
-    for (; aExp.More(); aExp.Next()) {
-      nSuc=aExp.Current();
-      if (myIntrPool->IsComputed(n1, nSuc)) {
-	return Standard_True;
-      }
-    }
-
-    aExp.Init(n2, TopAbs_EDGE);
-    for (; aExp.More(); aExp.Next()) {
-      nSuc=aExp.Current();
-      if (myIntrPool->IsComputed(n1, nSuc)) {
-	return Standard_True;
-      }
-    }
-    return Standard_False;
+  if (aType1==TopAbs_VERTEX && 
+      (aType2==TopAbs_FACE || aType2==TopAbs_EDGE)) {
+    aReverseFlag=Standard_False;
   }
-
-  return Standard_False;
+  //
+  aWhat=(aReverseFlag) ? theWith : theWhat;
+  aWith=(aReverseFlag) ? theWhat : theWith;
+  //
+  theWhat=aWhat;
+  theWith=aWith;
 }
+*/

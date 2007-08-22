@@ -1312,6 +1312,9 @@ msgstr "\nShading"
 msgid "GEOM_RECONSTRUCTION_LIMIT"
 msgstr "Reconstruction Limit"
 
+msgid "GEOM_KEEP_NONLIMIT_SHAPES"
+msgstr "Keep nonlimit shapes"
+
 msgid "GEOM_SUPPRESS_RESULT"
 msgstr "Suppress Result"
 
@@ -2938,6 +2941,12 @@ msgstr "Rename"
 
 msgid "NAME_LBL"
 msgstr "Name: "
+
+msgid "GEOM_RESULT_NAME_GRP"
+msgstr "Result name"
+
+msgid "GEOM_RESULT_NAME_LBL"
+msgstr "Name"
 
 msgid "GEOM_ERR_GET_ENGINE"
 msgstr "Failed to obtain GEOM Engine component.  Reload Geometry module and try again."

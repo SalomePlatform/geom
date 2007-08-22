@@ -528,24 +528,72 @@ def TestOtherOperations (geompy, math):
   geompy.UnionIDs(vertices_on_quad, vertices_on_quad_ids)
   geompy.addToStudy(vertices_on_quad, "Group of vertices on Quadrangle F12")
 
-  # GetInPlace(theShapeWhere, theShapeWhat)
+  # Prepare arguments for GetInPlace and GetInPlaceByHistory
   box5 = geompy.MakeBoxDXDYDZ(100, 100, 100)
   box6 = geompy.MakeTranslation(box5, 50, 50, 0)
+
+  geompy.addToStudy(box5, "Box 5")
+  geompy.addToStudy(box6, "Box 6")
 
   part = geompy.MakePartition([box5], [box6])
   geompy.addToStudy(part, "Partitioned")
 
+  box5_faces = geompy.SubShapeAll(box5, geompy.ShapeType["FACE"])
+  box6_faces = geompy.SubShapeAll(box6, geompy.ShapeType["FACE"])
+
+  ifa = 1
+  for aface in box5_faces:
+    geompy.addToStudyInFather(box5, aface, "Face" + `ifa`)
+    ifa = ifa + 1
+
+  ifa = 1
+  for aface in box6_faces:
+    geompy.addToStudyInFather(box6, aface, "Face" + `ifa`)
+    ifa = ifa + 1
+
+  # GetInPlace(theShapeWhere, theShapeWhat)
   ibb = 5
-  box_list = [box5, box6]
-  for abox in box_list:
-    geompy.addToStudy(abox, "Box " + `ibb`)
-    box_faces = geompy.SubShapeAll(abox, geompy.ShapeType["FACE"])
+  faces_list = [box5_faces, box6_faces]
+  for afaces in faces_list:
     ifa = 1
-    for aface in box_faces:
-      geompy.addToStudyInFather(abox, aface, "Face" + `ifa`)
-      refl_box_face = geompy.GetInPlace(part, aface)
-      if refl_box_face is not None:
+    for aface in afaces:
+      if ibb == 6 and (ifa == 2 or ifa == 4):
+        # use IDL interface directly to avoid error message appearence in Python console
+        refl_box_face = geompy.ShapesOp.GetInPlace(part, aface)
+        if refl_box_face is not None:
+          geompy.addToStudyInFather(part, refl_box_face,
+                                    "Reflection of face " + `ifa` + " of box " + `ibb`)
+          error = "Result of GetInPlace must be NULL for face " + `ifa` + " of box " + `ibb`
+          raise RuntimeError, error
+      else:
+        # use geompy interface
+        refl_box_face = geompy.GetInPlace(part, aface)
         geompy.addToStudyInFather(part, refl_box_face,
-                                  "Reflection of Face " + `ifa` + " of box " + `ibb`)
+                                  "Reflection of face " + `ifa` + " of box " + `ibb`)
+      ifa = ifa + 1
+    ibb = ibb + 1
+
+  # GetInPlaceByHistory(theShapeWhere, theShapeWhat)
+  part = geompy.MakePartition([box5], [box6])
+  geompy.addToStudy(part, "Partitioned")
+
+  ibb = 5
+  faces_list = [box5_faces, box6_faces]
+  for afaces in faces_list:
+    ifa = 1
+    for aface in afaces:
+      if ibb == 6 and (ifa == 2 or ifa == 4):
+        # use IDL interface directly to avoid error message appearence in Python console
+        refl_box_face = geompy.ShapesOp.GetInPlaceByHistory(part, aface)
+        if refl_box_face is not None:
+          geompy.addToStudyInFather(part, refl_box_face,
+                                    "Reflection of face " + `ifa` + " of box " + `ibb` + " (by history)")
+          error = "Result of GetInPlaceByHistory must be NULL for face " + `ifa` + " of box " + `ibb`
+          raise RuntimeError, error
+      else:
+        # use geompy interface
+        refl_box_face = geompy.GetInPlaceByHistory(part, aface)
+        geompy.addToStudyInFather(part, refl_box_face,
+                                  "Reflection of face " + `ifa` + " of box " + `ibb` + " (by history)")
       ifa = ifa + 1
     ibb = ibb + 1

@@ -44,7 +44,7 @@ using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_MultiRotationDlg()
-// purpose  : Constructs a TransformationGUI_MultiRotationDlg which is a child of 'parent', with the 
+// purpose  : Constructs a TransformationGUI_MultiRotationDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -124,13 +124,13 @@ void TransformationGUI_MultiRotationDlg::Init()
   double SpecificStep1 = 5;
   double SpecificStep2 = 1;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep2, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep2, 10);
   GroupPoints->SpinBox_DX->SetValue(myNbTimes1);
 
-  GroupDimensions->SpinBox_DX1->RangeStepAndValidator(COORD_MIN, COORD_MAX, SpecificStep1, 3);
-  GroupDimensions->SpinBox_DY1->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep2, 3);
-  GroupDimensions->SpinBox_DX2->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupDimensions->SpinBox_DY2->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep2, 3);
+  GroupDimensions->SpinBox_DX1->RangeStepAndValidator(COORD_MIN, COORD_MAX, SpecificStep1, DBL_DIGITS_DISPLAY);
+  GroupDimensions->SpinBox_DY1->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep2, 10);
+  GroupDimensions->SpinBox_DX2->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupDimensions->SpinBox_DY2->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep2, 10);
   GroupDimensions->SpinBox_DX1->SetValue(myAng);
   GroupDimensions->SpinBox_DY1->SetValue(myNbTimes1);
   GroupDimensions->SpinBox_DX2->SetValue(myStep);
@@ -164,8 +164,8 @@ void TransformationGUI_MultiRotationDlg::Init()
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY2, SLOT(SetStep(double)));
 
   connect(GroupDimensions->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(ReverseAngle()));
-  
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_MULTIROTATION" ) );
@@ -219,7 +219,7 @@ void TransformationGUI_MultiRotationDlg::ConstructorsClicked(int constructorId)
 	GroupDimensions->SpinBox_DY2->SetValue(myNbTimes2);
 
 	break;
-      }      
+      }
     }
 
   myEditCurrentArgument->setFocus();
@@ -248,7 +248,7 @@ bool TransformationGUI_MultiRotationDlg::ClickOnApply()
 {
   if ( !onAccept() )
     return false;
-  
+
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
@@ -301,7 +301,7 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
 void TransformationGUI_MultiRotationDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  
+
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
     globalSelection( GEOM_ALLSHAPES );
@@ -331,10 +331,10 @@ void TransformationGUI_MultiRotationDlg::SetEditCurrentArgument()
 void TransformationGUI_MultiRotationDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1 || send == GroupDimensions->LineEdit1 || 
+  if(send == GroupPoints->LineEdit1 || send == GroupDimensions->LineEdit1 ||
      send == GroupPoints->LineEdit2 || send == GroupDimensions->LineEdit2)
     {
-      myEditCurrentArgument = send; 
+      myEditCurrentArgument = send;
       GEOMBase_Skeleton::LineEditReturnPressed();
     }
 }
@@ -347,9 +347,9 @@ void TransformationGUI_MultiRotationDlg::LineEditReturnPressed()
 void TransformationGUI_MultiRotationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  
+
   ConstructorsClicked( getConstructorId() );
 }
 
@@ -381,7 +381,7 @@ void TransformationGUI_MultiRotationDlg::ValueChangedInSpinBox(double newValue)
     myStep = newValue;
   else if(send == GroupDimensions->SpinBox_DY2)
     myNbTimes2 = (int)newValue;
-  
+
   displayPreview();
 }
 
@@ -431,10 +431,10 @@ bool TransformationGUI_MultiRotationDlg::isValid( QString& msg )
 bool TransformationGUI_MultiRotationDlg::execute( ObjectList& objects )
 {
   bool res = false;
-  
+
   GEOM::GEOM_Object_var anObj;
 
-  switch ( getConstructorId() ) 
+  switch ( getConstructorId() )
     {
     case 0 :
       {
@@ -456,10 +456,10 @@ bool TransformationGUI_MultiRotationDlg::execute( ObjectList& objects )
 	break;
       }
     }
-  
+
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
-  
+
   return res;
 }
 

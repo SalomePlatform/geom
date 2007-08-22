@@ -896,7 +896,7 @@ module GEOM
      *  \param theSeqSubBases - list of corresponding subshapes of section shapes.
      *  \param theLocations - list of locations on the path corresponding
      *                        specified list of the Bases shapes. Number of locations
-     *                        should be equal to number of bases or list of locations can be empty.
+     *                        should be equal to number of bases.
      *  \param thePath - Path shape to extrude the base shape along it.
      *  \param theWithContact - the mode defining that the section is translated to be in
      *                          contact with the spine.
@@ -985,9 +985,10 @@ module GEOM
      *  Replace coincident faces in theShape by one face.
      *  \param theShape Initial shape.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
+     *  \param doKeepNonSolids If FALSE, only solids will present in the result, otherwise all initial shapes.
      *  \return New GEOM_Object, containing a copy of theShape without coincident faces.
      */
-    GEOM_Object MakeGlueFaces (in GEOM_Object theShape, in double theTolerance);
+    GEOM_Object MakeGlueFaces (in GEOM_Object theShape, in double theTolerance, in boolean doKeepNonSolids);
 
     /*!
      *  Find coincident faces in theShape for possible gluing.
@@ -1003,10 +1004,11 @@ module GEOM
      *  \param theShape Initial shape.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
      *  \param theFaces List of faces for gluing.
+     *  \param doKeepNonSolids If FALSE, only solids will present in the result, otherwise all initial shapes.
      *  \return New GEOM_Object, containing a copy of theShape without some faces.
      */
     GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape, in double theTolerance,
-				     in ListOfGO theFaces);
+				     in ListOfGO theFaces, in boolean doKeepNonSolids);
 
     /*!
      *  Explode a shape on subshapes of a given type.
@@ -1309,7 +1311,7 @@ module GEOM
 			     in shape_state theState);
 
     /*!
-     *  Get sub-shape(s) of theShapeWhere, which are
+     *  Get sub-shape(s) of \a theShapeWhere, which are
      *  coincident with \a theShapeWhat or could be a part of it.
      *  \param theShapeWhere Shape to find sub-shapes of.
      *  \param theShapeWhat Shape, specifying what to find.
@@ -1317,6 +1319,23 @@ module GEOM
      */
     GEOM_Object GetInPlace (in GEOM_Object theShapeWhere,
 			    in GEOM_Object theShapeWhat);
+
+    /*!
+     *  Get sub-shape(s) of \a theShapeWhere, which are
+     *  coincident with \a theShapeWhat or could be a part of it.
+     *
+     *  Implementation of this method is based on a saved history of an operation,
+     *  produced \a theShapeWhere. The \a theShapeWhat must be among this operation's
+     *  arguments (an argument shape or a sub-shape of an argument shape).
+     *  The operation could be the Partition or one of boolean operations,
+     *  performed on simple shapes (not on compounds).
+     *
+     *  \param theShapeWhere Shape to find sub-shapes of.
+     *  \param theShapeWhat Shape, specifying what to find.
+     *  \return Group of all found sub-shapes or a single found sub-shape.
+     */
+    GEOM_Object GetInPlaceByHistory (in GEOM_Object theShapeWhere,
+				     in GEOM_Object theShapeWhat);
 
     /*!
      *  Get sub-shape of theShapeWhere, which are
@@ -1690,6 +1709,10 @@ module GEOM
      *  \note  Each compound from ListShapes and ListTools will be exploded in order
      *         to avoid possible intersection between shapes from this compound.
      *  \param theLimit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
+     #  \param KeepNonlimitShapes: if this parameter == 0 - only shapes with
+     #                             type <= Limit are kept in the result,
+     #                             else - shapes with type > Limit are kept
+     #                             also (if they exist)
      *
      *  After implementation new version of PartitionAlgo (October 2006)
      *  other parameters are ignored by current functionality. They are kept
@@ -1710,7 +1733,8 @@ module GEOM
 			       in ListOfGO   theRemoveInside,
 			       in short      theLimit,
 			       in boolean    theRemoveWebs,
-			       in ListOfLong theMaterials);
+			       in ListOfLong theMaterials,
+			       in short      theKeepNonlimitShapes);
 
     /*!
      *  Perform partition operation.
@@ -1731,7 +1755,8 @@ module GEOM
 						      in ListOfGO   theRemoveInside,
 						      in short      theLimit,
 						      in boolean    theRemoveWebs,
-						      in ListOfLong theMaterials);
+						      in ListOfLong theMaterials,
+						      in short      theKeepNonlimitShapes);
 
     /*!
      *  Perform partition of the Shape with the Plane

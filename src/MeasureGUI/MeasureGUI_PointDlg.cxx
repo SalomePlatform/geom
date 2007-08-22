@@ -29,7 +29,10 @@
 #include "MeasureGUI_PointDlg.h"
 #include "GEOMBase.h"
 
+#include "DlgRef_SpinBox.h"
+
 #include "utilities.h"
+
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
@@ -58,14 +61,13 @@
 //=================================================================================
 // class    : MeasureGUI_PointDlg()
 // purpose  : Constructs a MeasureGUI_PointDlg which is a child of 'parent'
-//            
 //=================================================================================
 MeasureGUI_PointDlg::MeasureGUI_PointDlg( GeometryGUI* GUI, QWidget* parent )
 : MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_PointDlg" )
 {
   QPixmap iconPnt( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_DLG_POINT" ) ) );
-  
+
   QPixmap iconSelect( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_SELECT" ) ) );
 
@@ -75,7 +77,7 @@ MeasureGUI_PointDlg::MeasureGUI_PointDlg( GeometryGUI* GUI, QWidget* parent )
   RadioButton1->setPixmap( iconPnt );
 
   QGroupBox* aGrp = new QGroupBox( 2, Qt::Horizontal, tr( "COORDINATES" ), this );
-  
+
   new QLabel( tr( "POINT" ), aGrp );
   QFrame* aFrame = new QFrame( aGrp );
   mySelBtn = new QPushButton( aFrame );
@@ -108,7 +110,7 @@ MeasureGUI_PointDlg::MeasureGUI_PointDlg( GeometryGUI* GUI, QWidget* parent )
 //=================================================================================
 // function : ~MeasureGUI_PointDlg()
 // purpose  : Destroys the object and frees any allocated resources
-//======================myX->setReadOnly( true );===========================================================
+//=================================================================================
 MeasureGUI_PointDlg::~MeasureGUI_PointDlg()
 {
 }
@@ -178,7 +180,7 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
 
       TopTools_IndexedMapOfShape aShapes;
       TopExp::MapShapes( aShape, aShapes );
-      
+
       if ( aShape != aShapes( i ) )
         aName += QString( ":%1" ).arg( i );
 
@@ -189,9 +191,9 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     {
       gp_Pnt aPnt = BRep_Tool::Pnt( aPoint );
       mySelEdit->setText( aName );
-      myX->setText( QString( "%1" ).arg( aPnt.X() ) );
-      myY->setText( QString( "%1" ).arg( aPnt.Y() ) );
-      myZ->setText( QString( "%1" ).arg( aPnt.Z() ) );
+      myX->setText(DlgRef_SpinBox::PrintDoubleValue(aPnt.X()));
+      myY->setText(DlgRef_SpinBox::PrintDoubleValue(aPnt.Y()));
+      myZ->setText(DlgRef_SpinBox::PrintDoubleValue(aPnt.Z()));
     }
   }
   catch( ... )
@@ -203,23 +205,3 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     myZ->setText( "" );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

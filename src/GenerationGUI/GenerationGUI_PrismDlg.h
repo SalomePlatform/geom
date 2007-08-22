@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -53,15 +53,15 @@ protected:
     virtual bool isValid( QString& msg );
     virtual bool execute( ObjectList& objects );    
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     double getHeight() const;
-    
+
     GEOM::GEOM_Object_var myBase; /* Base shape */
     GEOM::GEOM_Object_var myVec;  /* Vector, defining the direction */
-    GEOM::GEOM_Object_var myPoint1, myPoint2;   /* Points for extrusion */ 
- 
+    GEOM::GEOM_Object_var myPoint1, myPoint2; /* Points for extrusion */ 
+
     bool myOkBase;
     bool myOkVec;
     bool myOkPnt1;
@@ -73,11 +73,12 @@ private :
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
+
     void ActivateThisDialog();
+    void ConstructorsClicked(int);
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ConstructorsClicked(int);
     void ValueChangedInSpinBox();
     void onReverse();
 };

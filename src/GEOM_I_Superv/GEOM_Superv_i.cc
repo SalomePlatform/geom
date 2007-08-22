@@ -1040,7 +1040,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theSha
 						    GEOM::GEOM_List_ptr   theRemoveInside,
 						    CORBA::Short      theLimit,
 						    CORBA::Boolean    theRemoveWebs,
-						    GEOM::GEOM_List_ptr theMaterials)
+						    GEOM::GEOM_List_ptr theMaterials,
+						    CORBA::Short theKeepNonlimitShapes)
 {
   beginService( " GEOM_Superv_i::MakePartition" );
   MESSAGE("GEOM_Superv_i::MakePartition");
@@ -1056,9 +1057,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theSha
     dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theMaterials, myPOA).in());
   if (aListImplS && aListImplT && aListImplKI && aListImplRI && aListImplM) {
     getBoolOp();
-    GEOM::GEOM_Object_ptr anObj = myBoolOp->MakePartition(aListImplS->GetList(), aListImplT->GetList(), 
-							  aListImplKI->GetList(), aListImplRI->GetList(),
-							  theLimit, theRemoveWebs, aListImplM->GetList());
+    GEOM::GEOM_Object_ptr anObj =
+      myBoolOp->MakePartition(aListImplS->GetList(), aListImplT->GetList(), 
+			      aListImplKI->GetList(), aListImplRI->GetList(),
+			      theLimit, theRemoveWebs, aListImplM->GetList(),
+			      theKeepNonlimitShapes);
     endService( " GEOM_Superv_i::MakePartition" );
     return anObj;
   }
@@ -1678,12 +1681,14 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (GEOM::GEOM_List_ptr theShapes
 //  MakeGlueFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-						    CORBA::Double   theTolerance)
+						    CORBA::Double   theTolerance,
+						    CORBA::Boolean doKeepNonSolids)
 {
   beginService( " GEOM_Superv_i::MakeGlueFaces" );
   MESSAGE("GEOM_Superv_i::MakeGlueFaces");
   getShapesOp();
-  GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeGlueFaces(theShape, theTolerance);
+  GEOM::GEOM_Object_ptr anObj =
+    myShapesOp->MakeGlueFaces(theShape, theTolerance, doKeepNonSolids);
   endService( " GEOM_Superv_i::MakeGlueFaces" );
   return anObj;
 }
@@ -1709,12 +1714,14 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
 							  CORBA::Double theTolerance,
-							  const GEOM::ListOfGO& theFaces)
+							  const GEOM::ListOfGO& theFaces,
+							  CORBA::Boolean doKeepNonSolids)
 {
   beginService( " GEOM_Superv_i::MakeGlueFacesByList" );
   MESSAGE("GEOM_Superv_i::MakeGlueFacesByList");
   getShapesOp();
-  GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces);
+  GEOM::GEOM_Object_ptr anObj =
+    myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids);
   endService( " GEOM_Superv_i::MakeGlueFacesByList" );
   return anObj;
 }

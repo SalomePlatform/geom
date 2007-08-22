@@ -1,4 +1,5 @@
-// Copyright (C) 2006 SAMTECH
+// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 // 
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -28,17 +29,17 @@
 //function : HashCode
 //purpose  : 
 //=======================================================================
-  Standard_Integer NMTDS_PassKeyMapHasher::HashCode(const NMTDS_PassKey& aPKey,
+  Standard_Integer NMTDS_PassKeyMapHasher::HashCode(const NMTDS_PassKey& aPK,
 						    const Standard_Integer Upper)
 {
-  return aPKey.HashCode(Upper);
+  return aPK.HashCode(Upper);
 }
 //=======================================================================
 //function :IsEqual
 //purpose  : 
 //=======================================================================
-  Standard_Boolean NMTDS_PassKeyMapHasher::IsEqual(const NMTDS_PassKey& aPKey1,
-						   const NMTDS_PassKey& aPKey2)
+  Standard_Boolean NMTDS_PassKeyMapHasher::IsEqual(const NMTDS_PassKey& aPK1,
+						   const NMTDS_PassKey& aPK2)
 {
-  return aPKey1.IsEqual(aPKey2);
+  return aPK1.IsEqual(aPK2);
 }

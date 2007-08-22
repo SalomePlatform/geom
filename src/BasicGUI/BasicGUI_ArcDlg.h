@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -28,7 +28,7 @@
 #ifndef DIALOGBOX_ARC_H
 #define DIALOGBOX_ARC_H
 
-#include  "GEOM_BasicGUI.hxx"
+#include "GEOM_BasicGUI.hxx"
 
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_3Sel_QTD.h"
@@ -53,12 +53,10 @@ protected:
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
 
-    virtual void closeEvent( QCloseEvent* e );    
-
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
-    int myConstructorId;
+
     GEOM::GEOM_Object_var myPoint1, myPoint2, myPoint3;
 
     DlgRef_3Sel_QTD* Group3Pnts;
@@ -66,12 +64,10 @@ private :
 
 private slots:
     void ClickOnOk();
-    void ClickOnCancel();
     bool ClickOnApply();
-    
+
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
-    void ConstructorsClicked( int );
+    void ConstructorsClicked(int);
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

@@ -36,6 +36,7 @@
 #define COORD_MIN -1e+15
 #define COORD_MAX +1e+15
 #define MAX_NUMBER 100000
+#define DBL_DIGITS_DISPLAY 16
 
 //=================================================================================
 // class    : DlgRef_SpinBox
@@ -54,10 +55,11 @@ public :
   void SetValue(double v);
   double GetValue();
   QString GetString();
+
+  static QString PrintDoubleValue (double theValue, int Precision = DBL_DIGITS_DISPLAY);
   
 public slots:
   void SetStep(double newStep);
-
 };
 
 #endif //  GEOMSPINBOX_H

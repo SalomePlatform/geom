@@ -44,7 +44,7 @@ using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_ScaleDlg()
-// purpose  : Constructs a TransformationGUI_ScaleDlg which is a child of 'parent', with the 
+// purpose  : Constructs a TransformationGUI_ScaleDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -85,9 +85,9 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryG
   double aFactor = 2.0;
   double SpecificStep = 0.5;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, SpecificStep, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY);
   GroupPoints->SpinBox_DX->SetValue(aFactor);
-  
+
   // Activate Create a Copy mode
   GroupPoints->CheckButton1->setChecked(true);
   CreateCopyModeChanged(true);
@@ -95,18 +95,18 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryG
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  
+
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  
+
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
-   
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   setHelpFileName("scale_transform.htm");
@@ -120,7 +120,7 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryG
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 TransformationGUI_ScaleDlg::~TransformationGUI_ScaleDlg()
-{  
+{
   /* no need to delete child widgets, Qt does it all for us */
 }
 
@@ -133,9 +133,9 @@ void TransformationGUI_ScaleDlg::Init()
 {
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit2->clear();
-  
+
   myPoint = GEOM::GEOM_Object::_nil();
-  
+
   initName( tr( "GEOM_SCALE" ) );
 }
 
@@ -200,7 +200,7 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
       aName = GEOMBase::GetName( myPoint );
     }
   myEditCurrentArgument->setText( aName );
-  
+
   displayPreview();
 }
 
@@ -228,7 +228,7 @@ void TransformationGUI_ScaleDlg::LineEditReturnPressed()
 void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  
+
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
     globalSelection();
@@ -237,7 +237,7 @@ void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit2;
     globalSelection( GEOM_POINT );
   }
-  
+
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
@@ -250,7 +250,7 @@ void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
 void TransformationGUI_ScaleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   globalSelection();
   GroupPoints->LineEdit1->setFocus();
@@ -305,25 +305,27 @@ bool TransformationGUI_ScaleDlg::isValid( QString& msg )
 bool TransformationGUI_ScaleDlg::execute( ObjectList& objects )
 {
   bool res = false;
-  
+
   GEOM::GEOM_Object_var anObj;
 
   if (GroupPoints->CheckButton1->isChecked() || IsPreview())
     for (int i = 0; i < myObjects.length(); i++)
       {
-	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->ScaleShapeCopy( myObjects[i], myPoint, GetFactor() );
+	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+          ScaleShapeCopy( myObjects[i], myPoint, GetFactor() );
 	if ( !anObj->_is_nil() )
 	  objects.push_back( anObj._retn() );
       }
   else
     for (int i = 0; i < myObjects.length(); i++)
       {
-	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->ScaleShape( myObjects[i], myPoint, GetFactor() );
+	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+          ScaleShape( myObjects[i], myPoint, GetFactor() );
 	if ( !anObj->_is_nil() )
 	  objects.push_back( anObj._retn() );
       }
   res = true;
-  
+
   return res;
 }
 
