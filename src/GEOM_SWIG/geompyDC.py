@@ -1096,10 +1096,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return Group of all found sub-shapes or a single found sub-shape.
         #
         #  Example: see GEOM_TestOthers.py
-        def GetInPlaceByHistory(theShapeWhere, theShapeWhat):
-            anObj = ShapesOp.GetInPlaceByHistory(theShapeWhere, theShapeWhat)
-            if ShapesOp.IsDone() == 0:
-                print "GetInPlace : ", ShapesOp.GetErrorCode()
+        def GetInPlaceByHistory(self, theShapeWhere, theShapeWhat):
+            anObj = self.ShapesOp.GetInPlaceByHistory(theShapeWhere, theShapeWhat)
+            if self.ShapesOp.IsDone() == 0:
+                print "GetInPlace : ", self.ShapesOp.GetErrorCode()
             return anObj
 
         ## Get sub-shape of theShapeWhere, which is
@@ -1393,8 +1393,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing a copy of theShape without coincident faces.
         #
         #  Example: see GEOM_Spanner.py
-        def MakeGlueFaces(theShape, theTolerance, doKeepNonSolids=True):
-            anObj = ShapesOp.MakeGlueFaces(theShape, theTolerance, doKeepNonSolids)
+        def MakeGlueFaces(self, theShape, theTolerance, doKeepNonSolids=True):
+            anObj = self.ShapesOp.MakeGlueFaces(theShape, theTolerance, doKeepNonSolids)
             if self.ShapesOp.IsDone() == 0:
                 print "MakeGlueFaces : ", self.ShapesOp.GetErrorCode()
             return anObj
@@ -1426,8 +1426,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #          without some faces.
         #
         #  Example: see GEOM_Spanner.py
-        def MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids=True):
-            anObj = ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids)
+        def MakeGlueFacesByList(self, theShape, theTolerance, theFaces, doKeepNonSolids=True):
+            anObj = self.ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids)
             if self.ShapesOp.IsDone() == 0:
                 print "MakeGlueFacesByList : ", self.ShapesOp.GetErrorCode()
             return anObj
@@ -1502,7 +1502,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the result shapes.
         #
         #  Example: see GEOM_TestAll.py
-        def MakePartition(self,ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
+        def MakePartition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                           Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
                           KeepNonlimitShapes=0):
             anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
@@ -1525,7 +1525,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM_Object, containing the result shapes.
         #
-        def MakePartitionNonSelfIntersectedShape(ListShapes, ListTools=[],
+        def MakePartitionNonSelfIntersectedShape(self, ListShapes, ListTools=[],
                                                  ListKeepInside=[], ListRemoveInside=[],
                                                  Limit=ShapeType["SHAPE"], RemoveWebs=0,
                                                  ListMaterials=[], KeepNonlimitShapes=0):
@@ -1540,7 +1540,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Shortcut to MakePartition()
         #
         #  Example: see GEOM_TestOthers.py
-        def Partition(self,ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
+        def Partition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                       Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
                       KeepNonlimitShapes=0):
             anObj = self.MakePartition(ListShapes, ListTools,
