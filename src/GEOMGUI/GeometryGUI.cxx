@@ -854,8 +854,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 707, "CHECK" );
   createGeomAction( 7072, "CHECK_COMPOUND" );
 
+#ifdef _DEBUG_ // PAL16821 
   createGeomAction( 5103, "CHECK_GEOMETRY" );
-
+#endif
   createGeomAction( 412, "SHADING_COLOR" );
   createGeomAction( 413, "ISOS" );
   createGeomAction( 414, "STEP_VALUE" );
@@ -1012,10 +1013,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 707, measurId, -1 );
   createMenu( 7072, measurId, -1 );
 
+#ifdef _DEBUG_ // PAL16821 
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
   createMenu( separator(), toolsId, -1 );
   createMenu( 5103, toolsId, -1 );
-
+#endif
   //int prefId = createMenu( tr( "MEN_PREFERENCES" ), -1, -1, 50 );
   //createMenu( separator(), prefId, -1 );
   //int geomId = createMenu( tr( "MEN_PREFERENCES_GEOM" ), prefId, -1 );
