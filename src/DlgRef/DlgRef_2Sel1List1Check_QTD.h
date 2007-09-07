@@ -28,6 +28,7 @@
 #ifndef DLGREF_2SEL1LIST_QTD_H
 #define DLGREF_2SEL1LIST_QTD_H
 
+#include "GEOM_DlgRef.hxx"
 #include <qvariant.h>
 #include <qwidget.h>
 class QVBoxLayout; 
@@ -40,7 +41,7 @@ class QLineEdit;
 class QPushButton;
 class QRadioButton;
 
-class DlgRef_2Sel1List1Check_QTD : public QWidget
+class GEOM_DLGREF_EXPORT DlgRef_2Sel1List1Check_QTD : public QWidget
 { 
     Q_OBJECT
 

@@ -62,7 +62,7 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
 				       CORBA::Double         theTolerance,
-				       const CORBA::Boolean  doKeepNonSolids);
+					   CORBA::Boolean  doKeepNonSolids);
 
   GEOM::ListOfGO* GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
 			        CORBA::Double         theTolerance);
@@ -70,7 +70,8 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
 					     CORBA::Double         theTolerance,
 					     const GEOM::ListOfGO& theFaces,
-					     const CORBA::Boolean  doKeepNonSolids);
+						 CORBA::Boolean  doKeepNonSolids);
+
 
   GEOM::ListOfGO* MakeExplode (GEOM::GEOM_Object_ptr theShape,
 			       CORBA::Long           theShapeType,

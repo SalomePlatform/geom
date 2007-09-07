@@ -328,8 +328,8 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeCompound
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
                                            (GEOM::GEOM_Object_ptr theShape,
-					    const CORBA::Double   theTolerance,
-					    const CORBA::Boolean  doKeepNonSolids)
+					    CORBA::Double   theTolerance,
+					    CORBA::Boolean  doKeepNonSolids)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -401,9 +401,9 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueFaces
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
                                            (GEOM::GEOM_Object_ptr theShape,
-					    const CORBA::Double   theTolerance,
+					    CORBA::Double   theTolerance,
 					    const GEOM::ListOfGO& theFaces,
-					    const CORBA::Boolean  doKeepNonSolids)
+					    CORBA::Boolean  doKeepNonSolids)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
