@@ -184,6 +184,9 @@ module GEOM
 					   in boolean theWithContact ,
 					   in boolean theWithCorrection );
     
+    GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
+					   in ListOfGO theLocations );
+
     //-----------------------------------------------------------//
     // BooleanOperations                                         //
     //-----------------------------------------------------------//

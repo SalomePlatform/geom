@@ -768,6 +768,51 @@ def MakePipeWithShellSections(theSeqBases, theSeqSubBases,
       print "MakePipeWithShellSections : ", PrimOp.GetErrorCode()
     return anObj
 
+def MakePipeWithShellSectionsBySteps(theSeqBases, theSeqSubBases,
+                                     theLocations, thePath,
+                                     theWithContact, theWithCorrection):
+    res = []
+    nbsect = len(theSeqBases)
+    nbsubsect = len(theSeqSubBases)
+    #print "nbsect = ",nbsect
+    for i in range(1,nbsect):
+        #print "  i = ",i
+        tmpSeqBases = [ theSeqBases[i-1], theSeqBases[i] ]
+        tmpLocations = [ theLocations[i-1], theLocations[i] ]
+        tmpSeqSubBases = []
+        if nbsubsect>0: tmpSeqSubBases = [ theSeqSubBases[i-1], theSeqSubBases[i] ]
+        anObj = PrimOp.MakePipeWithShellSections(tmpSeqBases, tmpSeqSubBases,
+                                                 tmpLocations, thePath,
+                                                 theWithContact, theWithCorrection)
+        if PrimOp.IsDone() == 0:
+            print "Problems with pipe creation between ",i," and ",i+1," sections"
+            print "MakePipeWithShellSections : ", PrimOp.GetErrorCode()
+            break
+        else:
+            print "Pipe between ",i," and ",i+1," sections is OK"
+            res.append(anObj)
+            pass
+        pass
+
+    resc = MakeCompound(res)
+    #resc = MakeSewing(res, 0.001)
+    #print "resc: ",resc
+    return resc
+
+
+## Create solids between given sections
+#  @param theSeqBases - list of sections (shell or face).
+#  @param theLocations - list of corresponding vertexes
+#  @return New GEOM_Object, containing the created solids.
+#
+#  Example: see GEOM_TestAll.py
+def MakePipeShellsWithoutPath(theSeqBases, theLocations):
+    anObj = PrimOp.MakePipeShellsWithoutPath(theSeqBases, theLocations)
+    if PrimOp.IsDone() == 0:
+      print "MakePipeShellsWithoutPath : ", PrimOp.GetErrorCode()
+    return anObj
+
+
 # -----------------------------------------------------------------------------
 # Create base shapes
 # -----------------------------------------------------------------------------

@@ -243,6 +243,9 @@ public:
 						  GEOM::GEOM_Object_ptr thePath,
 						  CORBA::Boolean theWithContact,
 						  CORBA::Boolean theWithCorrections);
+
+  GEOM::GEOM_Object_ptr MakePipeShellsWithoutPath(const GEOM::ListOfGO& theBases,
+						  const GEOM::ListOfGO& theLocations);
   
   //-----------------------------------------------------------//
   // BooleanOperations                                         //

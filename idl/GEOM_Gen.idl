@@ -910,7 +910,16 @@ module GEOM
 					   in GEOM_Object thePath,
 					   in boolean theWithContact ,
 					   in boolean theWithCorrection );
-    
+
+    /*!
+     * Create solids between given sections
+     *  \param theSeqBases - list of sections (shell or face).
+     *  \param theLocations - list of corresponding vertexes
+     *  \return New GEOM_Object, containing the created solids.
+     */
+    GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
+					   in ListOfGO theLocations );
+
   };
 
   /*!

@@ -112,6 +112,9 @@ class GEOM_I3DPrimOperations_i :
 						  CORBA::Boolean theWithContact,
 						  CORBA::Boolean theWithCorrections);
 
+  GEOM::GEOM_Object_ptr MakePipeShellsWithoutPath(const GEOM::ListOfGO& theBases,
+						  const GEOM::ListOfGO& theLocations);
+
   ::GEOMImpl_I3DPrimOperations* GetOperations()
   { return (::GEOMImpl_I3DPrimOperations*)GetImpl(); }
 };

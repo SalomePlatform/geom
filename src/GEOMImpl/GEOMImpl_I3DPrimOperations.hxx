@@ -94,6 +94,10 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
 		bool theWithContact,
 		bool theWithCorrections);
 
+  Standard_EXPORT Handle(GEOM_Object) MakePipeShellsWithoutPath(
+		const Handle(TColStd_HSequenceOfTransient)& theBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations);
+
 };
 
 #endif

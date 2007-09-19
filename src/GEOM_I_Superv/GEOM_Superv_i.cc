@@ -1018,6 +1018,23 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithShellSections
 
 
 //=============================================================================
+//  MakePipe:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeShellsWithoutPath
+                   (const GEOM::ListOfGO& theBases,
+		    const GEOM::ListOfGO& theLocations)
+{
+  beginService( " GEOM_Superv_i::MakePipeShellsWithoutPath" );
+  MESSAGE("GEOM_Superv_i::MakePipeShellsWithoutPath");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj =
+    my3DPrimOp->MakePipeShellsWithoutPath(theBases,theLocations);
+  endService( " GEOM_Superv_i::MakePipeShellsWithoutPath" );
+  return anObj;
+}
+
+
+//=============================================================================
 //  MakeFuse:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFuse (GEOM::GEOM_Object_ptr theShape1,
