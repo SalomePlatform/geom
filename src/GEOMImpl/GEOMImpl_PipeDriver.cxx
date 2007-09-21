@@ -89,6 +89,7 @@
 
 //#include "BRepTools.hxx"
 //#include "GeomTools.hxx"
+#include <GEOMAlgo_GlueAnalyser.hxx>
 
 
 //=======================================================================
@@ -1545,15 +1546,18 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 
       TopExp_Explorer anExpE(F1,TopAbs_EDGE);
       TopTools_SequenceOfShape aNewFs;
-      int nbee=0;
+      //int nbee=0;
       for(; anExpE.More(); anExpE.Next()) {
 	TopoDS_Edge E1 = TopoDS::Edge(anExpE.Current());
-	nbee++;
+	//nbee++;
 	if(!FF.Contains(E1))
 	  cout<<"map FF not contains key E1"<<endl;
 
 	if(VPE.Contains(E1)) {
 	  aNewFs.Append(VPE.FindFromKey(E1));
+#ifdef _DEBUG_
+	  cout<<"    using existed face"<<endl;
+#endif
 	  continue;
 	}
 
@@ -1768,6 +1772,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 	sff->FixOrientation();
 	TopoDS_Face FixedFace = sff->Face();
 	aNewFs.Append(FixedFace);
+	VPE.Add(E1,FixedFace);
 	//cout<<"      face for edge "<<nbee<<" is created"<<endl;
 	//BRepTools::Write(FixedFace,"/dn02/users_Linux/skl/work/Bugs/14857/f.brep");
       }
