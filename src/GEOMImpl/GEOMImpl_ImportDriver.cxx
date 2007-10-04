@@ -29,7 +29,7 @@
 
 #include <TopoDS_Shape.hxx>
 
-#include <Standard_ConstructionError.hxx>
+#include <Standard_Failure.hxx>
 #include <StdFail_NotDone.hxx>
 
 #ifdef WNT
@@ -98,8 +98,11 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(TFunction_Logbook& log) const
   if ( anImportLib )
     fp = (funcPoint)GetProc( anImportLib, "Import" );
 
-  if ( !fp )
-    return 0;
+  if ( !fp ) {
+    TCollection_AsciiString aMsg = aFormatName;
+    aMsg += " plugin was not installed";
+    Standard_Failure::Raise(aMsg.ToCString());
+  }
 
   // perform the import
   TCollection_AsciiString anError;
