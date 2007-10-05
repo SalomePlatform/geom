@@ -157,6 +157,11 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#320f85ef909f16642860bf684ce4f90f">MakePipeWithShellSections</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a shape by extrusion of the profile shape along the path shape.  <a href="#320f85ef909f16642860bf684ce4f90f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#16f8f730fbc9e5af795c61cec9f08b78">MakePipeWithShellSectionsBySteps</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#2665852706db8318424e0b6c2a9ce7c0">MakePipeShellsWithoutPath</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create solids between given sections.  <a href="#2665852706db8318424e0b6c2a9ce7c0"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#c7fb1ddea1874640e7f772457c41e016">MakeEdge</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a linear edge with specified ends.  <a href="#c7fb1ddea1874640e7f772457c41e016"></a><br></td></tr>
@@ -238,6 +243,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#f02daf2ed71e982c4251c962c5e4a88c">GetInPlace</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get sub-shape(s) of theShapeWhere, which are coincident with <em>theShapeWhat</em> or could be a part of it.  <a href="#f02daf2ed71e982c4251c962c5e4a88c"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#ea2ede82def9a1cebc0a14edb5f41db0">GetInPlaceByHistory</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get sub-shape(s) of <em>theShapeWhere</em>, which are coincident with <em>theShapeWhat</em> or could be a part of it.  <a href="#ea2ede82def9a1cebc0a14edb5f41db0"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">def&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegeompy.html#75362cb6a9831780938d6c0a44d57626">GetSame</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get sub-shape of theShapeWhere, which is equal to <em>theShapeWhat</em>.  <a href="#75362cb6a9831780938d6c0a44d57626"></a><br></td></tr>
@@ -2914,10 +2922,115 @@ The path shape can be a shell or a face. the several profiles can be specified i
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>theSeqBases</em>&nbsp;</td><td>- list of Bases shape to be extruded. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>theSeqSubBases</em>&nbsp;</td><td>- list of corresponding subshapes of section shapes. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>theLocations</em>&nbsp;</td><td>- list of locations on the path corresponding specified list of the Bases shapes. Number of locations should be equal to number of bases. First and last locations must be coincided with first and last vertexes of path correspondingly.</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theLocations</em>&nbsp;</td><td>- list of locations on the path corresponding specified list of the Bases shapes. Number of locations should be equal to number of bases. First and last locations must be coincided with first and last vertexes of path correspondingly. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>thePath</em>&nbsp;</td><td>- Path shape to extrude the base shape along it. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>theWithContact</em>&nbsp;</td><td>- the mode defining that the section is translated to be in contact with the spine. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>-</em>&nbsp;</td><td>WithCorrection - defining that the section is rotated to be orthogonal to the spine tangent in the correspondent point </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing the created solids.</dd></dl>
+Example: see GEOM_TestAll.py     </td>
+  </tr>
+</table>
+<a class="anchor" name="16f8f730fbc9e5af795c61cec9f08b78"></a><!-- doxytag: member="geompy::MakePipeWithShellSectionsBySteps" ref="16f8f730fbc9e5af795c61cec9f08b78" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy.MakePipeWithShellSectionsBySteps           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theSeqBases</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theSeqSubBases</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theLocations</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>thePath</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theWithContact</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theWithCorrection</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="2665852706db8318424e0b6c2a9ce7c0"></a><!-- doxytag: member="geompy::MakePipeShellsWithoutPath" ref="2665852706db8318424e0b6c2a9ce7c0" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy.MakePipeShellsWithoutPath           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theSeqBases</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theLocations</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theSeqBases</em>&nbsp;</td><td>- list of sections (shell or face). </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theLocations</em>&nbsp;</td><td>- list of corresponding vertexes </td></tr>
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing the created solids.</dd></dl>
@@ -4208,6 +4321,51 @@ Example: see GEOM_TestOthers.py     </td>
 Example: see GEOM_TestOthers.py     </td>
   </tr>
 </table>
+<a class="anchor" name="ea2ede82def9a1cebc0a14edb5f41db0"></a><!-- doxytag: member="geompy::GetInPlaceByHistory" ref="ea2ede82def9a1cebc0a14edb5f41db0" args="" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">def geompy.GetInPlaceByHistory           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShapeWhere</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>theShapeWhat</em></td>
+        </tr>
+        <tr>
+          <td class="md"></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Implementation of this method is based on a saved history of an operation, produced <em>theShapeWhere</em>. The <em>theShapeWhat</em> must be among this operation's arguments (an argument shape or a sub-shape of an argument shape). The operation could be the Partition or one of boolean operations, performed on simple shapes (not on compounds).<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>theShapeWhere</em>&nbsp;</td><td>Shape to find sub-shapes of. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>theShapeWhat</em>&nbsp;</td><td>Shape, specifying what to find (must be in the building history of the ShapeWhere). </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>Group of all found sub-shapes or a single found sub-shape.</dd></dl>
+Example: see GEOM_TestOthers.py     </td>
+  </tr>
+</table>
 <a class="anchor" name="75362cb6a9831780938d6c0a44d57626"></a><!-- doxytag: member="geompy::GetSame" ref="75362cb6a9831780938d6c0a44d57626" args="" --><p>
 <table class="mdTable" cellpadding="2" cellspacing="0">
   <tr>
@@ -5186,7 +5344,13 @@ Example: see GEOM_TestAll.py     </td>
           <td class="md" nowrap align="right"></td>
           <td class="md"></td>
           <td class="md" nowrap>&nbsp;</td>
-          <td class="mdname" nowrap> <em>theTolerance</em></td>
+          <td class="mdname" nowrap> <em>theTolerance</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>doKeepNonSolids</em> = <code>True</code></td>
         </tr>
         <tr>
           <td class="md"></td>
@@ -5209,6 +5373,7 @@ Example: see GEOM_TestAll.py     </td>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>theShape</em>&nbsp;</td><td>Initial shape. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>theTolerance</em>&nbsp;</td><td>Maximum distance between faces, which can be considered as coincident. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>doKeepNonSolids</em>&nbsp;</td><td>If FALSE, only solids will present in the result, otherwise all initial shapes. </td></tr>
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing a copy of theShape without coincident faces.</dd></dl>
@@ -5280,7 +5445,13 @@ Example: see GEOM_Spanner.py     </td>
           <td class="md" nowrap align="right"></td>
           <td class="md"></td>
           <td class="md" nowrap>&nbsp;</td>
-          <td class="mdname" nowrap> <em>theFaces</em></td>
+          <td class="mdname" nowrap> <em>theFaces</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td class="md"></td>
+          <td class="md" nowrap>&nbsp;</td>
+          <td class="mdname" nowrap> <em>doKeepNonSolids</em> = <code>True</code></td>
         </tr>
         <tr>
           <td class="md"></td>
@@ -5304,6 +5475,7 @@ Example: see GEOM_Spanner.py     </td>
     <tr><td valign="top"></td><td valign="top"><em>theShape</em>&nbsp;</td><td>Initial shape. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>theTolerance</em>&nbsp;</td><td>Maximum distance between faces, which can be considered as coincident. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>theFaces</em>&nbsp;</td><td>List of faces for gluing. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>doKeepNonSolids</em>&nbsp;</td><td>If FALSE, only solids will present in the result, otherwise all initial shapes. </td></tr>
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>New GEOM_Object, containing a copy of theShape without some faces.</dd></dl>
@@ -9862,6 +10034,6 @@ If include_min/max == 0, edges with length == min/max_length will not be include
 </table>
 </DIV>
 <DIV class="div-footer">
-Generated on Wed Jun 20 12:05:38 2007 for SALOME - GEOM - v.3.2.6 by&nbsp;<A href="http://www.doxygen.org/index.html"><img src="doxygen.png" alt="doxygen" align="middle" border="0"></A> 1.4.6</DIV>
+Generated on Fri Oct 5 10:42:14 2007 for SALOME - GEOM - v.3.2.8 by&nbsp;<A href="http://www.doxygen.org/index.html"><img src="doxygen.png" alt="doxygen" align="middle" border="0"></A> 1.4.6</DIV>
 </BODY>
 </HTML>
