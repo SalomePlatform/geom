@@ -17,7 +17,7 @@ if (navigator.appName !="Netscape")
 img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
 p.whs3 { font-size:12pt; margin-left:40px; }
-img_whs4 { border:none; width:400px; height:367px; border-style:none; float:none; }
+img_whs4 { border:none; width:400px; height:367px; float:none; border-style:none; }
 img_whs5 { border:none; float:none; width:260px; height:230px; border-style:none; }
 -->
 </style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
@@ -101,17 +101,30 @@ if (window.writeIntopicBar)
 
 <p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
  Result <span style="font-weight: normal;">of the operation will be a</span></b> 
- GEOM_Object (face).</p>
+ GEOM_Object 
+ (face).</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><span style="font-weight: bold;"><B>Note:</B></span> 
+ This algorithm fills space between edges in the order of numbering, connecting 
+ Edge_1 with 
+ Edge_2 and 
+ so forth. If, for some reason, the order of edges in the compound is not 
+ straightforward, the results might be somewhat unexpected.</p>
 
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
- </i><span style="font-style: italic;"><I>geompy.MakeFilling(Shape, MinDegree, 
- MaxDegree, Tol2D, Tol3D, NbIter)</I></span>,</p>
+ </i><span style="font-style: italic;"><I>geompy.MakeFilling(Edges, 
+ MinDegree, 
+ MaxDegree, 
+ Tol2D, Tol3D, 
+ NbIter)</I></span>,</p>
 
 <p class="whs2"><b style="font-weight: bold;">Arguments:</b> 
- Name + 1 List of edges + 5 Parameters (Min. degree, Max. degree, Number 
- of iterations, 2D tolerance, 3D tolerance).</p>
+ Name + 1 List of edges + 5 Parameters (Min. 
+ degree, Max. degree, 2D tolerance, 3D tolerance, Number of iterations).</p>
 
 <p class="whs2">&nbsp;</p>
 
