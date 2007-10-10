@@ -25,9 +25,14 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 EXTRA_DIST+=GEOM
 
+doxygen=@DOXYGEN@
+
 usr_docs:
-	cp -fr $(srcdir)/GEOM ./
-	-find $(PWD) -name CVS -prune -exec rm -rf {} \;
+	cd ./GEOM; \
+	echo "Processing geompyDC.py file: "; \
+	$(doxygen) ./doxyfile_py; \
+	echo "Running doxygen in directory: "`pwd`; \
+	$(doxygen) ./doxyfile;
 
 docs: usr_docs
 
@@ -42,3 +47,10 @@ install-data-local: usr_docs
 
 uninstall-local:
 	rm -rf $(docdir)/gui/GEOM
+
+docguidir=$(docdir)/gui/GEOM
+
+nodist_docgui_DATA= GEOM/doxyfile
+nodist_docgui_DATA+= GEOM/doxyfile_py
+EXTRA_DIST+= GEOM/doxyfile.in
+EXTRA_DIST+= GEOM/doxyfile_py.in
