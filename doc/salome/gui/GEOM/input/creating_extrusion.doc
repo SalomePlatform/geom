@@ -1,0 +1,42 @@
+/*!
+
+\page create_extrusion_page Extrusion
+
+\n To generate an \b Extrusion on an object in the <b>Main Menu</b>
+select <b>New Entity - > Generation  - > Extrusion</b>
+
+\n There are 2 algorithms for creation of an \b Extrusion (Prism).
+\n The \b Result of the operation will be a GEOM_Object (edge, face,
+solid or compsolid).
+
+\n Firstly, you can define the <b>Base Shape</b> (a basis of the
+extrusion), the \b Vector (a direction of the extrusion) and the \b
+Height of extrusion.
+\b <b>TUI Command:</b> <em>geompy.MakePrismVecH(Base, Vector, Height)</em>
+\n <b>Arguments:</b> Name + 1 shape (vertex, edge, wire, face or
+shell) serving as base object + 1 vector (for direction of the
+extrusion) + 1 value (dimension).
+
+\image html extrusion1.png
+
+\n Secondly, you can define the \b Extrusion by the <b>Base Shape</b>
+and the \b Start and <b>End Point</b> of the \b Vector (in this way
+you don't need to create it in advance).
+\n <b>TUI Command:</b> <em>geompy.MakePrism(Base, Point1, Point2)</em>
+\n <b>Arguments:</b> Name + 1 shape (vertex, edge, wire, face or
+shell) serving as base object + 2 vertices.
+
+\image html extrusion2.png
+
+<b>Examples:</b>
+
+\image html prisms_basessn.png
+<center>Base Shape</center>
+
+\image html prismssn.png
+<center>Prisms</center>
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_prism "Complex Geometric Objects".
+
+*/

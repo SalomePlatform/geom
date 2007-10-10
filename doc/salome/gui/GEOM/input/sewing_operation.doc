@@ -1,0 +1,33 @@
+/*!
+
+\page sewing_operation_page Sewing
+
+\n To produce a \b Sewing operation in the <b>Main Menu</b> select <b>Repair - > Sewing</b>.
+
+\n This operation allows to sew several shapes.
+
+\n The \b Result will be a \b GEOM_Object. 
+
+\n <b>TUI Command:</b> <em>geompy.MakeSewing(ListOfShape, Precision),</em>
+ where \em ListOfShape is list of shapes to be sewed, \em Precision is a
+precision for sewing.
+
+\image html repair6.png
+
+\n <b>Arguments:</b> Name + 1 or more shapes + 1 value (sew
+precision).
+\n \b Detect button allows to display the number of free boundaries in
+your shape:
+
+\image html neo-detect2.png
+
+\n <b>Example:</b>
+
+\image html image112.jpg
+
+\image html image113.jpg
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_sewing "Repairing Operations".
+
+*/

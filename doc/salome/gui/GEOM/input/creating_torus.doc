@@ -1,0 +1,32 @@
+/*!
+
+\page create_torus_page Torus
+
+To create a \b Torus in the <b>Main Menu</b> select <b>New Entity - > Primitives - > Torus</b>
+
+\n There are two algorithms for creation of a \b Torus.
+\n The \b Result of each operation will be a GEOM_Object (SOLID).
+
+\n Firstly, you can define a \b Torus by the given <b>Base Point</b>,
+the normal \b Vector and the Major and Minor \b Radiuses.
+\n <b>TUI Command:</b> <em>geompy.MakeTorus(Point, Vector, RadiusMajor, RadiusMinor)</em>
+\n <b>Arguments:</b> Name + 1 vertex + 1 vector (for direction) + 2
+values (1 & 2 Radius).
+
+\image html torus1.png
+
+\n Secondly, you can define a \b Torus with the center at the origin
+of coordinates by its Major and Minor \b Radiuses.
+\n <b>TUI Command:</b> <em>geompy.MakeTorusRR(RadiusMajor, RadiusMinor)</em>
+\n <b>Arguments:</b> Name + 2 values (1 & 2 Radius from the origin).
+
+\image html torus2.png
+
+<b>Example:</b>
+
+\image html toruses.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_torus "Primitives".
+
+*/

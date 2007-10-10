@@ -1,0 +1,13 @@
+/*!
+
+\page create_primitives_page Creating Primitives
+
+<ul>
+<li>\subpage create_box_page</li>
+<li>\subpage create_cylinder_page</li>
+<li>\subpage create_sphere_page</li>
+<li>\subpage create_torus_page</li>
+<li>\subpage create_cone_page</li>
+</ul>
+
+*/

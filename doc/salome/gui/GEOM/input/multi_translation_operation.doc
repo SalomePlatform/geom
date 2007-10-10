@@ -1,0 +1,51 @@
+/*!
+
+\page multi_translation_operation_page Multi Translation
+
+\n To produce a <b>Multi Translation</b> in the <b>Main Menu</b>
+select <b>Operations - > Transformation - > Multi Translation</b>
+
+\n This operation makes several translations of a shape in \b one or \b
+two directions.
+\n The \b Result will be one or several \b GEOM_Objects (compound).
+
+\n To produce a <b>Simple Multi Translation</b> (in one direction) you
+need to indicate a \b Shape to be translated, a \b Vector of
+translation, a \b Step of translation and a <b>Number of Times</b> the
+shape must be moved.
+\n <b>TUI Command:</b> <em>geompy.MakeMultiTranslation1D(Shape, Dir,
+Step, NbTimes)</em>
+\n <b>Arguments:</b> Name + 1 shape + 1 vector (for direction) + 1
+step value + 1 value (repetition).
+
+\image html mtrans1.png
+
+\image html multi_translation_initialsn.png
+
+\image html multi_translation1dsn.png
+
+\n To produce a <b>Double Multi Translation</b> (in two directions) you need to
+indicate a \b Shape to be translated and a \b Vector of translation, a
+\b Step of translation and a <b>Number of Times</b> the shape must be moved along
+each axis.
+
+\n <b>TUI Command:</b> <em>geompy.MakeMultiTranslation2D(Shape, Dir1,
+Step1, NbTimes1, Dir2, Step2, NbTimes2),</em> where \em Shape is a shape
+to be translated, \em Dir1 is the first direction of translation, \em Step1 of
+the first translation, \em NbTimes1 is a number of translations to be done
+along \em Dir1, \em Dir2 is the second direction of translation, \em Step2 of the
+second translation, \em NbTimes2 is a number of translations to be done
+along \em Dir2.
+\n <b>Arguments:</b> Name + 1 shape + 2 vectors defining the direction
++ 2 step values + 2 values (repetitions).
+
+\image html mtrans2.png
+
+\image html multi_translation_initialsn.png
+
+\image html multi_translation2dsn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_multi_translation "Transformation Operations".
+
+*/

@@ -1,0 +1,17 @@
+/*!
+
+\page isolines_page Isolines
+
+\n In this menu you can change the number of isolines displayed within
+a shape.
+\n <b>Arguments:</b>2 values (number of isolines).
+
+\image html neo-isos.png
+
+\n <b>Example:</b>
+
+\image html colorsn.png
+
+\image html isos_u12_v12sn.png
+
+*/

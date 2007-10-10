@@ -1,0 +1,35 @@
+/*!
+
+\page suppress_holes_operation_page Suppress Holes
+
+\n To <b>Suppress Holes</b> in the <b>Main Menu</b> select <b>Repair - > Suppress Holes</b>.
+
+\n This operation removes holes on a selected shape. This operation is
+available in <b>OCC Viewer</b> only.
+
+\n The \b Result will be a \b GEOM_Object.
+
+\n <b>TUI Command:</b> <em>geompy.SuppressHoles(Shape,
+ListOfWireID),</em> where \em Shape is a shape where holes must be
+removed, \em ListOfWireID is a list of wire sub shapes ID's. If it is
+empty, then all holes are removed.
+
+\image html repair5.png
+
+\n <b>Arguments:</b> Name + 1 shape + Wires which should be removed.
+\n <b>Remove all holes</b> checkbox allows to fill all holes of a definite shape.
+\n \b Detect button allows to display the number of free boundaries in
+your shape:
+
+\image html neo-detect2.png
+
+\n <b>Example:</b>
+
+\image html image109.jpg
+
+\image html image110.jpg
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_suppress_holes "Repairing Operations".
+
+*/

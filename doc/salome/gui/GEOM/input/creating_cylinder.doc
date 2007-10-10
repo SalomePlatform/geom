@@ -1,0 +1,36 @@
+/*!
+
+\page create_cylinder_page Cylinder
+
+\n To create a \b Cylinder in the <b>Main Menu</b> select <b>New
+Entity - > Primitives - > Cylinder</b>
+
+\n There are 2 algorithms for creation of a \b Cylinder.
+\n The \b Result of each operation will be a GEOM_Object (SOLID).
+
+\n Firstly, you can define a \b Cylinder by the <b>Base Point</b> (the central
+point of the cylinder base), the \b Vector (the axis of the cylinder),
+and its dimensions: the Radius and the Height.
+\n <b>TUI Command:</b> <em>geompy.MakeCylinder(Point, Axis, Radius, Height)</em>
+\n <b>Arguments:</b>  Name + 1 vertex + 1 vector + 2 values
+(Dimensions: radius and height).
+
+\image html cylinder1.png
+
+\n Secondly, you can define a \b Cylinder by the given radius and the
+height at  the origin of coordinate system. The axis of the cylinder
+will be collinear to the OZ axis of the coordinate system.
+\n <b>TUI Command:</b> <em>geompy.MakeCylinderRH(Radius, Height)</em>
+\n <b>Arguments:</b> Name + 2 values (Dimensions at origin: radius and
+height).
+
+\image html cylinder2.png
+
+<b>Example:</b>
+
+\image html cylinders.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_cylinder "Primitives".
+
+*/

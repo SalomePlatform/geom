@@ -1,0 +1,48 @@
+/*!
+
+\page mirror_operation_page Mirror Image
+
+\n To produce a <b>Mirror Image</b> in the <b>Main Menu</b> select 
+<b>Operations - > Transformation - > Mirror Image</b>
+
+\n This operation creates a symmetrical copy of an \b Object, which
+can be mirrored in three different ways.
+\n <b>Create a copy</b> checkbox allows to keep the initial object,
+otherwise it will be removed.
+\n The \b Result will be a \b GEOM_Object.
+
+\n Firstly an \b Object can be mirrored through a \b Point of symmetry
+\n <b>TUI Command:</b> <em>geompy.MakeMirrorByPoint(Object, Point)</em>
+\n <b>Arguments:</b> Name + 1 shape + 1 vertex.
+
+\image html transformation7.png
+
+\image html mirror_pointsn1.png
+
+\image html mirror_pointsn2.png
+
+\n Secondly an \b Object can be mirrored through an \b Axis of
+symmetry
+\n <b>TUI Command:</b> <em>geompy.MakeMirrorByAxis(Object, Axis)</em>
+\n <b>Arguments:</b> Name + 1 shape + 1 vector.
+
+\image html transformation8.png
+
+\image html mirror_axissn1.png
+
+\image html mirror_axissn2.png
+
+\n Finally an \b Object can be mirrored through a \b Plane of symmetry
+\n <b>TUI Command:</b> <em>geompy.MakeMirrorByPlane(Shape, Plane)</em>
+\n <b>Arguments:</b> Name + 1 shape + 1 plane
+
+\image html transformation9.png
+
+\image html mirror_planesn1.png
+
+\image html mirror_planesn2.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_mirror "Transformation Operations".
+
+*/

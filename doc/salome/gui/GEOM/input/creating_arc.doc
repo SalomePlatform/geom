@@ -1,0 +1,46 @@
+/*!
+
+\page create_arc_page Arc
+
+To create an \b Arc in the <b>Main Menu</b> select <b>New Entity - >
+Basic - > Arc</b>
+
+\n There are 2 algorithms to create an \b Arc in the 3D space.
+\n The \b Result of each operation will be a GEOM_Object (edge).
+
+\n Firstly, you can define an \b Arc by three \b Points that lie on it,
+where Point1 is the starting point, Point2 is a middle point of the
+arc and Point3 is the ending point of the arc.
+\n <b>TUI Command:</b> <em>geompy.MakeArc(Point1, Point2, Point3)</em>
+\n <b>Arguments:</b> Name + 3 vertices.
+
+\image html arc.png
+
+\n Secondly, you can define an \b Arc by \b Center, \b Start and \b End
+points. The arc is built from the \b Start point to the \b End point. The
+radius of the arc is defined by the distance between the \b Center point
+and the \b Start point. The \b End point defines the angle of the arc. If
+the distance between the \b Center point and the \b End point is not equal
+to the radius, the arc will be built anyway.
+\n \b Reverse radio button allows to change the direction of the arc.
+\n <b>TUI Command:</b> <em>geompy.MakeArcCenter(Center Point, Start
+Point, End Point, boolean Sense)</em>
+\n <b>Arguments:</b> Name + 3 vertices + Boolean.
+
+\image html arc2.png
+
+\n <b>Examples:</b>
+
+\image html arcsn.png
+<center>Arc by three points lying on it.</center>
+
+\image html arcsn1.png
+<center>Arc by Start, End and Center.</center>
+
+\image html arcsn2.png
+<center>Reversed arc.</center>
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_basic_geom_objs_page "Basic Geometric Objects".
+
+*/

@@ -1,0 +1,27 @@
+/*!
+
+\page create_wire_page Wire
+
+\n To create a \b Wire in the <b>Main Menu</b> select <b>New Entity - > Build - > Wire</b>
+
+\n You can create a \b Wire from several connected edges and wires by
+selecting them in the object browser or in the viewer holding Shift
+button.
+\n The \b Result  will be a \b GEOM_Object (WIRE).
+
+\n <b>TUI Command:</b> <em>geompy.MakeWire(ListOfShape)</em>
+
+<b>Arguments:</b> Name + List of connected wires or edges.
+
+\n <b>Dialog Box:</b>
+
+\image html neo-obj3.png
+
+\n <b>Example:</b>
+
+\image html wiresn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_wire "Advanced Geometric Objects".
+
+*/

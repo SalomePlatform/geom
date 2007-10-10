@@ -1,0 +1,272 @@
+/*!
+
+\page tui_basic_geom_objs_page Basic Geometrical Objects
+
+\anchor tui_creation_point
+<br><h2>Creation of a Point</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices
+p0 = geompy.MakeVertex(0., 0., 0.)
+p100 = geompy.MakeVertexWithRef(p0, 100., 100., 100.)
+px = geompy.MakeVertex(100., 0., 0.)
+py = geompy.MakeVertex(0., 100., 0.)
+pz = geompy.MakeVertex(0., 0., 100.)
+
+# create a curve and a vertex on it
+Arc = geompy.MakeArc(py, pz, px)
+p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25)
+
+# add objects in the study
+id_p0       = geompy.addToStudy(p0,   "Vertex 0")
+id_p100     = geompy.addToStudy(p100, "Vertex 100")
+id_px       = geompy.addToStudy(px,   "Vertex X")
+id_py       = geompy.addToStudy(py,   "Vertex Y")
+id_pz       = geompy.addToStudy(pz,   "Vertex Z")
+id_Arc      = geompy.addToStudy(Arc,  "Arc")
+id_p_on_arc = geompy.addToStudy(p_on_arc, "Vertex on Arc")
+
+# display vertices
+gg.createAndDisplayGO(id_p0)
+gg.createAndDisplayGO(id_p100)
+gg.createAndDisplayGO(id_Arc)
+gg.createAndDisplayGO(id_p_on_arc) 
+\endcode
+
+\anchor tui_creation_line
+<br><h2>Creation of a Line</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices
+p0 = geompy.MakeVertex(0., 0., 0.)
+p100 = geompy.MakeVertexWithRef(p0, 100., 100., 100.)
+px = geompy.MakeVertex(100., 0.  , 0.  )
+py = geompy.MakeVertex(0.  , 100., 0.  )
+pz = geompy.MakeVertex(0.  , 0.  , 100.)
+
+# create a vector from two points
+vxy  = geompy.MakeVector(px, py)
+
+# create a line from a point and a vector
+line1 = geompy.MakeLine(pz, vxy)
+
+#create a line from two points
+line2 = geompy.MakeLineTwoPnt(p0, p100)
+
+# add objects in the study
+id_vxy      = geompy.addToStudy(vxy,  "Vector")
+id_line1    = geompy.addToStudy(line1,"Line1")
+id_line2    = geompy.addToStudy(line2,"Line2")
+
+# display lines
+gg.createAndDisplayGO(id_vxy)
+gg.createAndDisplayGO(id_line1)
+gg.createAndDisplayGO(id_line2) 
+\endcode
+
+\anchor tui_creation_circle
+<br><h2>Creation of a Circle</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices
+p0 = geompy.MakeVertex(0., 0., 0.)
+px = geompy.MakeVertex(100., 0.  , 0.  )
+py = geompy.MakeVertex(0.  , 100., 0.  )
+pz = geompy.MakeVertex(0.  , 0.  , 100.)
+
+# create a vector on two points
+vxy  = geompy.MakeVector(px, py)
+
+# create a circle from a point, a vector and a radius
+circle1 = geompy.MakeCircle(pz, vxy, 30)
+
+#create a circle from three points
+circle2 = geompy.MakeCircleThreePnt(p0, px, py)
+
+# add objects in the study
+id_vxy      = geompy.addToStudy(vxy,    "Vector")
+id_circle1  = geompy.addToStudy(circle1,"Circle1")
+id_circle2  = geompy.addToStudy(circle2,"Circle2")
+
+# display circles
+gg.createAndDisplayGO(id_vxy)
+gg.createAndDisplayGO(id_circle1)
+gg.createAndDisplayGO(id_circle2)
+\endcode
+
+\anchor tui_creation_ellipse
+<br><h2>Creation of an Ellipse</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices
+p0 = geompy.MakeVertex(0., 0., 0.)
+p50 = geompy.MakeVertex(50., 50., 50.)
+
+# create a vector from two points
+vector  = geompy.MakeVector(p0, p50)
+
+# create an ellipse from a point, a vector and radiuses
+ellipse = geompy.MakeEllipse(p50, vector, 50, 25)
+
+# add objects in the study
+id_vector  = geompy.addToStudy(vector, "Vector")
+id_ellipse = geompy.addToStudy(ellipse,"Ellipse")
+
+# display the ellipse and its normal vector
+gg.createAndDisplayGO(id_vector)
+gg.createAndDisplayGO(id_ellipse)
+\endcode
+ 
+\anchor tui_creation_curve
+<br><h2>Creation of a Curve</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices
+p0 = geompy.MakeVertex(0.  , 0.  , 0.  )
+p1 = geompy.MakeVertex(50. , 100., 200.)
+p2 = geompy.MakeVertex(150.,  50., 100.)
+p3 = geompy.MakeVertex(100., 150., 170.)
+p4 = geompy.MakeVertex(200., 200., 150.)
+
+# create a polyline from a list of points
+polyline = geompy.MakePolyline([p0, p1, p2, p3, p4])
+
+# create a bezier curve from a list of points
+bezier = geompy.MakeBezier([p0, p1, p2, p3, p4])
+
+#create a b-spline curve from a list of points
+interpol = geompy.MakeInterpol([p0, p1, p2, p3, p4])
+
+# add objects in the study
+id_p0       = geompy.addToStudy(p0,       "Point1")
+id_p1       = geompy.addToStudy(p1,       "Point2")
+id_p2       = geompy.addToStudy(p2,       "Point3")
+id_p3       = geompy.addToStudy(p3,       "Point4")
+id_p4       = geompy.addToStudy(p4,       "Point5")
+id_polyline = geompy.addToStudy(polyline, "Polyline")
+id_bezier   = geompy.addToStudy(bezier,   "Bezier")
+id_interpol = geompy.addToStudy(interpol, "Interpol")
+
+# display the points and the curves
+gg.createAndDisplayGO(id_p0)
+gg.createAndDisplayGO(id_p1)
+gg.createAndDisplayGO(id_p2)
+gg.createAndDisplayGO(id_p3)
+gg.createAndDisplayGO(id_p4)
+gg.createAndDisplayGO(id_polyline)
+gg.createAndDisplayGO(id_bezier)
+gg.createAndDisplayGO(id_interpol) 
+\endcode
+
+\anchor tui_creation_vector
+<br><h2>Creation of a Vector</h2>
+
+\code
+mport geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices
+p1 = geompy.MakeVertex(10., 50., 20.)
+p2 = geompy.MakeVertex(70., 70., 70.)
+
+# create a vector from two points
+vector1 = geompy.MakeVector(p1, p2)
+
+# create a vector from the given components
+vector2 = geompy.MakeVectorDXDYDZ(30, 30, 100)
+
+# add objects in the study
+id_p1      = geompy.addToStudy(p1,     "Point1")
+id_p2      = geompy.addToStudy(p2,     "Point2")
+id_vector1 = geompy.addToStudy(vector1,"Vector1")
+id_vector2 = geompy.addToStudy(vector2,"Vector2")
+
+# display the points and the vectors
+gg.createAndDisplayGO(id_p1)
+gg.createAndDisplayGO(id_p2)
+gg.createAndDisplayGO(id_vector1)
+gg.createAndDisplayGO(id_vector2) 
+\endcode
+
+\anchor tui_creation_plane
+<br><h2>Creation of a Plane</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices
+p1 = geompy.MakeVertex(  0.,   0., 100.)
+p2 = geompy.MakeVertex(100.,   0.,   0.)
+p3 = geompy.MakeVertex(200., 200., 200.)
+p4 = geompy.MakeVertex(100., 100.,   0.)
+p5 = geompy.MakeVertex(0.  , 100.,   0.)
+
+# create a vector from the given components
+vector = geompy.MakeVectorDXDYDZ(100., 100., 100.)
+
+# create a vector from two points
+vector_arc = geompy.MakeVector(p2, p5)
+
+# create an arc from three points
+arc = geompy.MakeArc(p2, p4, p5)
+
+# create a wire
+wire = geompy.MakeWire([vector_arc, arc])
+
+# create a face
+isPlanarWanted = 1
+face = geompy.MakeFace(wire, isPlanarWanted)
+trimsize = 1000.
+
+# create a plane from a point, a vector and a trimsize
+plane1 = geompy.MakePlane(p1, vector, trimsize)
+
+# create a plane from three points and a trimsize
+plane2 = geompy.MakePlaneThreePnt(p1, p2, p3, trimsize)
+
+# create a plane from the given face
+plane3 = geompy.MakePlaneFace(face, trimsize)
+
+# add objects in the study
+id_face   = geompy.addToStudy(face,  "Face")
+id_plane1 = geompy.addToStudy(plane1,"Plane1")
+id_plane2 = geompy.addToStudy(plane2,"Plane2")
+id_plane3 = geompy.addToStudy(plane3,"Plane3")
+
+# display the points and the vectors
+gg.createAndDisplayGO(id_face)
+gg.createAndDisplayGO(id_plane1)
+gg.createAndDisplayGO(id_plane2)
+gg.createAndDisplayGO(id_plane3)
+gg.setDisplayMode(id_plane1,1)
+gg.setTransparency(id_plane1,0.5)
+gg.setDisplayMode(id_plane2,1)
+gg.setTransparency(id_plane2,0.5)
+gg.setDisplayMode(id_plane3,1)
+gg.setTransparency(id_plane3,0.5) 
+\endcode
+
+*/

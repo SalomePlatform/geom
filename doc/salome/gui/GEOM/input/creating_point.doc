@@ -1,0 +1,44 @@
+/*!
+
+\page create_point_page Point
+
+To create a \b Point in the <b>Main Menu</b> select <b>New Entity - >
+Basic - > Point</b>
+
+\n There are three algorithms to create a \b Point in the 3D space.
+\n Each time the \b Result of the operation will be a GEOM_Object
+(vertex).
+
+\n Firstly, we can define a point by setting its X, Y and Z \b Coordinates. 
+\n <b>TUI Command:</b> <em>geompy.MakeVertex(X, Y, Z)</em>
+\n \b Arguments: Name (Vertex_n by default) + X, Y and Z coordinates of
+the point.
+
+\image html point1.png
+
+\n Secondly,  we can define a point by a \b Reference to another point
+and the shift of the coordinates of the new point regarding the
+coordinates of the old one.
+\n <b>TUI Command:</b> <em>geompy.MakeVertexWithRef(Reference, X,Y,Z).</em>
+\n <b>Arguments:</b> Name + 1 reference point + 3 coordinates defining
+the position of this point regarding the reference one.
+
+\image html neo-point2.png
+
+\n Finally, we can define a point by an \b Edge and a \b Parameter
+indicating its position on the Edge. For example, 0.5 means that the
+point is located in the middle of the edge.
+\n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurve(Edge,Parameter).</em>
+\n <b>Arguments:</b> Name + 1 edge  + 1 Parameter defining the
+position of the point on the given edge.
+
+\image html point3.png
+
+<b>Example:</b>
+
+\image html points.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_point "Basic Geometric Objects".
+
+*/

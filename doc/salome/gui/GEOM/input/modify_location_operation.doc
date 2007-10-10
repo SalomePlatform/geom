@@ -1,0 +1,61 @@
+/*!
+
+\page modify_location_operation_page Modify the Location
+
+\n To <b>Modify the Location</b> in the <b>Main Menu</b> select 
+<b>Operations - > Transformation - > Modify the Location</b>.
+
+\n This operation modifies the \b Location of an \b Object.
+
+\n The first algorithm places the object so that its center coincides
+with the center of an End Local Coordinate System. 
+\n <b>Create a copy</b> checkbox allows to keep the initial object, otherwise it
+will be removed.
+\n <b>Arguments:</b> Name + 1 Object + End Coordinate System.
+
+\image html transformation5.png
+
+\n In the picture the initial cube with the global coordinate system
+is to the right and the modified cube with the Local Coordinate
+System in the center of it is to the left .
+
+\image html image30.gif
+
+\n The second algorithm  modifies the location of an object using Start
+and End LSC, although the final position of the object will not
+coincide with the center of  either of the two systems. In this method
+the object is shifted from its initial position by the value of the
+remainder after subtraction of the coordinates of the Start LSC from
+the coordinates of the End LSC.
+\n <b>Create a copy</b> checkbox allows to keep the initial object,
+otherwise it will be removed.
+\n <b>Arguments:</b> Name + 1 Object + Start Coordinate System + End
+Coordinate System.
+
+\image html transformation6.png
+
+In this picture we see the initial cube with the global coordinate
+system and two LCS: LocalCS1 (GCS+100 along x-axis) and LocalCS2
+(GCS+200 along x-axis)
+
+\image html image1.gif
+
+Selecting Start LCS = LCS1 and End LCS = LCS2, we obtain the
+translated cube at the position (100;0;0)
+
+\image html image2.gif
+
+Selecting Start LCS = LCS2 and End LCS = LCS1, we obtain the
+translated cube at the position (-100;0;0)
+
+\image html image4.gif
+
+\n <b>TUI Command:</b> <em>geompy.MakePosition(theObject, theStartLCS,
+theEndLCS),</em>  where \em theObject is a shape, location of which is
+modified, \em theStartLCS is a location to move the shape from, \em
+theEndLCS is a location to move the shape to.
+
+\n Our <b>TUI Scripts</b> provide you with useful examples of the use
+of \ref tui_modify_location "Transformation Operations".
+
+*/

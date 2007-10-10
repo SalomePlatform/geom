@@ -1,0 +1,40 @@
+/*!
+
+\page create_lcs_page Local Coordinate System
+
+To create a <b>Local Coordinate System</b> in the <b>Main Menu</b> select <b>New Entity - > Basic - > Local Coordinate System</b>
+\n There are three algorithms to choose from.
+
+\n Firstly, you can define the values of X, Y, and Z coordinates of origin and the directions of X and Y axes directly in the menu.
+\n <b>TUI command:</b> <em>geompy.MakeMarker(OX, OY, OZ, XDX, XDY, XDZ,
+YDX, YDY, YDZ)</em>, where OX, OY, OZ are coordinates of the origin of
+LCS, XDX, XDY, XDZ is a vector of OX  direction of the LCS and YDX,
+YDY, YDZ is a a vector of OY direction of the LCS.
+\n <b>Arguments:</b> Name + Coordinates of origin, X axis direction, Y axis direction.
+
+\image html neo-localcs1.png
+
+\n Secondly, you can simply select any object in the object browser or
+3D viewer, in this case the coordinates of origin and axes direction
+of the LCS are calculated automatically basing on the selected object.
+\n <b>Arguments:</b> Name + reference object.
+
+\image html neo-localcs2.png
+
+\n The last algorithm of LCS construction allows to define the
+coordinates of origin by a point and axes directions by a line or a
+vector.
+\n <b>Arguments:</b> Name + 1 point of origin + X axis direction, Y
+axis direction.
+
+\image html neo-localcs3.png
+
+Press «OK» or «Apply» button to create an LCS at the location with the
+specified coordinates. The new object is shown in the Object Browser
+and in 3D viewer.
+
+<b>Example:</b>
+
+\image html image145.jpg
+
+*/

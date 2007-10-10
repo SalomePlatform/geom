@@ -1,0 +1,26 @@
+/*!
+
+\page introduction_page Introduction to Geometry
+
+\b Geometry module of SALOME is destined for:
+<ul>
+<li>Import and export of geometrical models in IGES, BREP and STEP formats.</li>
+<li>Construction and optimization of geometrical models using a wide
+range of  CAD functions:</li>
+<ul>
+<li>Creation of basic geometrical objects</li>
+<li>Construction of primitives</li>
+<li>Building shapes</li>
+<li>Generation of complex shapes</li>
+<li>Working with groups</li>
+<li>Geometrical repairing of objects</li>
+<li>Geometrical boolean operations</li>
+<li>Geometrical transformations</li>
+<li>Building by blocks</li>
+</ul>
+</ul>
+
+\image html image3.jpg
+
+
+*/

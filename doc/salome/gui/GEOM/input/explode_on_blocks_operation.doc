@@ -1,0 +1,32 @@
+/*!
+
+\page explode_on_blocks_operation_page Explode on Blocks
+
+\n To produce an <b>Explode on Blocks</b> operation in the <b>Main
+Menu</b> select <b>Operations - > Blocks - > Explode on Blocks</b>.
+
+\n This operation returns blocks of the given compound. The user may
+define the type of blocks to be extracted by setting the minimum and
+maximum number of faces in the target block. By checking the
+corresponding box the user may also interactively choose the blocks
+from a compound.
+
+\n The \b Result will be a \b GEOM_Object.
+
+\n <b>TUI Command:</b> <em>geompy.MakeBlockExplode(Compound,
+MinNbFaces, MaxNbFaces),</em> where \em Compound is a compound to be
+exploded into the blocks, \em MinNbFaces, \em MaxNbFaces are correspondingly
+the minimal and  the maximal number of faces of the resulting blocks.
+\n <b>Arguments:</b> 1 compound + 2 integers (min. and max. number of
+faces in the block to be extracted).
+
+\image html mtransf3.png
+
+\n <b>Example:</b>
+
+\image html block_explodesn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_explode_on_blocks "Blocks Operations".
+
+*/

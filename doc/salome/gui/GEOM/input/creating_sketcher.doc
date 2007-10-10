@@ -1,0 +1,69 @@
+/*!
+
+\page create_sketcher_page Sketcher
+
+Sketcher allows to create curves of 2 types: line segment and arc.
+The curve is created from the current point (center of coordinates
+when the sketcher is started).  The end of the curve is defined by
+means of "destination", which can be a destination point (for segment
+only) or destination direction coupled with length of a segment or
+angle and radius of an arc.
+
+\n Sketcher is able to create planar curves only. Therefore, it is
+necessary to select a working plane before starting a sketch (by
+default, XOY plane is used). Sketcher creates curves lying in the
+current working plane (New Entity -> Basic -> Working Plane).
+
+\n This functionality is available from the main menu via <em>New
+Entity / Sketch</em>.
+
+\n The Result of the operation will be a \b GEOM_Object.
+
+\n <b>TUI Command:</b> <em>geompy.MakeSketcher(Command, WorkingPlane)</em>
+\n This algorithm creates a sketcher (wire or face), following the
+textual description, passed through the Command argument. The edges of
+the resulting wire or face will be arcs of circles and/or linear
+segments.
+\n \em Command is a string, defining the sketcher by the coordinates of
+points in the local working plane.
+\n <em>WorkingPlane</em> is a planar face of the working plane (a list of 9
+doubles which are coordinates of OZ and OX of the local working
+plane).
+
+\n <b>Arguments:</b>
+<ol>
+<li>Element type (segment or arc).</li>
+<li>Destination type (point or direction).</li>
+<li>Destination point by means of:</li>
+<ul>
+<li>absolute coordinates X,Y;</li>
+<li>relative coordinates DX, DY (with respect to the current point);</li>
+<li>selection of an existing point.</li>
+</ul>
+<li>Destination direction by means of:</li>
+<ul>
+<li>angle between the new segment and the previous one;</li>
+<li>perpendicular to the previous segment (same as previous, but angle
+is predefined and is equal to 90 degrees);</li>
+<li>tangent to the previous segment;</li>
+<li>vector components DX, DY.</li>
+</ul>
+<li>Parameters of an element (for segment : length or target X or Y coordinate value, for arc : radius and angle).</li>
+</ol>
+
+\n <b>Dialog Box:</b>
+
+\image html neo-scetcher1.png
+
+\image html neo-scetcher2.png
+
+\n <b>Example:</b>
+
+\image html image204.jpg
+
+\image html image206.jpg
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_sketcher_page "Sketcher".
+
+*/

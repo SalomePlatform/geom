@@ -1,0 +1,45 @@
+/*!
+
+\page fillet_operation_page Fillet
+
+\n To produce a \b Fillet in the <b>Main Menu</b> select 
+<b>Operations - > Transformation - > Fillet</b>
+
+\n This operation creates fillets on the edges of a shape.
+\n The \b Result will be a \b GEOM_Object.
+
+\n To create fillets on all edges of the given shape, you need to
+define the <b>Main Object</b> to create a fillet on and the \b Radius of the
+Fillet.
+\n <b>TUI Command:</b> <em>geompy.MakeFilletAll(Shape, R)</em>
+\n <b>Arguments:</b> Name + 1 shape + 1 value (fillet radius).
+
+\image html fillet1.png
+
+\n To create fillets on the specified edges or faces of the given
+shape, you need to define the <b>Main Object</b> to create a fillet
+on, select the necessary edges or faces in the OCC Viewer and define
+the \b Radius of the Fillet.
+\n <b>TUI Command:</b> <em>geompy.MakeFillet(Shape, R, ShapeType, ListShapes)</em>
+\n <b>Arguments:</b> Name + 1 shape + 1 Selection of edges (or faces)
++ 1 value (Fillet radius).
+
+\image html fillet2.png
+
+\image html fillet3.png
+
+\n <b>Examples:</b>
+
+\image html fillet_all.png
+<center><em>Fillet on all</em></center>
+
+\image html fillet_edge.png
+<center><em>Fillet on an edge</em></center>
+
+\image html fillet_prism.png
+<center><em>Fillet on a Face</em></center>
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_fillet "Transformation Operations".
+
+*/

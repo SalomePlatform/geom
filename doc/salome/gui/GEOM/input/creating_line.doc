@@ -1,0 +1,30 @@
+/*!
+
+\page create_line_page Line
+
+To create a \b Line in the <b>Main Menu</b> select <b>New Entity - >Basic - > Line</b>
+
+\n To create a \b Line you should define \b Point1 and \b Point2,
+which are the points through  which the \b Line passes.
+\n The \b Result of the operation will be a GEOM_Object (edge).
+
+\n <b>TUI Command:</b> <em>geompy.MakeLineTwoPnt(Point1, Point2)</em>
+\n <b>Arguments:</b> Name + 2 vertices.
+
+\image html line.png
+
+<b>Example:</b>
+
+\image html lines.png
+
+\b NB! There is another way to create a line, which is currently
+accessible only via \b TUI commands.
+
+You can define a line  passing through the given \b Point and parallel
+to the given \b Vector.
+\n <b>TUI Command:</b> <em>geompy.MakeLine(Point, Vector)</em>
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_line "Basic Geometric Objects".
+
+*/

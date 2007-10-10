@@ -1,0 +1,43 @@
+/*!
+
+\page create_explode_page Explode
+
+\n To \b Explode an object into subshapes, in the <b>Main Menu</b>
+select <b>New Entity > Explode</b>.
+
+\n To create a list of  subshapes (vertices, edges, wires etc.) of the
+given shape using the \b Explode operation, you need to define the <b>Main
+Object</b>, which will be exploded and the <b>Type of Subshapes</b> you wish to
+obtain from it.
+\n The \b Result of the operation will be a List of \b GEOM_Objects
+(edges, faces, solids or compsolids).
+
+\n Using <b>TUI Commands</b> you can perform this operation in a
+variety of ways:
+<ul>
+<li><em>geompy.SubShapeAll(Shape, Type)</em> explodes a Shape on
+subshapes of a given Type and returns a List of sub-shapes.</li>
+<li><em>geompy.SubShapeAllIDs(Shape, Type)</em> explodes a Shape on
+subshapes of a given Type and returns a List of IDs of
+sub-shapes.</li>
+<li><em>geompy.SubShapeAllSorted(Shape, Type)</em> xplodes a shape on
+subshapes of a given type and sorts them by coordinates of their
+gravity centers, returning      a list of sub-shapes.</li>
+<li><em>geompy.SubShapeAllSortedIDs(Shape, Type)</em> explodes a shape
+on subshapes of a given type and sorts them by coordinates of their
+gravity centers,  returning a List of IDs of sub-shapes.</li>
+<li><em>geompy.SubShape(Shape, Type, ListOfInd)</em> allows to obtain
+a compound of sub-shapes of  the Shape,  selected by they indices in a
+list of all sub-shapes of the given Type. Each index is in the range
+[1, Nb_Sub-Shapes_Of_Given_Type].</li>
+<li><em>geompy.SubShapeSorted(Shape, Type, ListOfInd)</em> allows to
+obtain a compound of sub-shapes of the Shape, selected by they indices
+in sorted list of all sub-shapes of the given Type. Each index is in
+the range [1, Nb_Sub-Shapes_Of_Given_Type]</li>
+</ul>
+
+\n <b>Arguments:</b>1 SHAPE + 1 type of SubShape.
+
+\image html neo-obj1.png
+
+*/

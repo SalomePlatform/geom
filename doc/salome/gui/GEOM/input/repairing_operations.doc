@@ -1,0 +1,19 @@
+/*!
+
+\page repairing_operations_page Repairing Operations
+
+<ul>
+<li>\subpage shape_processing_operation_page</li>
+<li>\subpage suppress_faces_operation_page</li>
+<li>\subpage close_contour_operation_page</li>
+<li>\subpage suppress_internal_wires_operation_page</li>
+<li>\subpage suppress_holes_operation_page</li>
+<li>\subpage sewing_operation_page</li>
+<li>\subpage glue_faces_operation_page</li>
+<li>\subpage add_point_on_edge_operation_page</li>
+<li>\subpage check_free_boundaries_operation_page</li>
+<li>\subpage check_free_faces_operation_page</li>
+<li>\subpage change_orientation_operation_page</li>
+</ul>
+
+*/

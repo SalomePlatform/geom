@@ -1,0 +1,46 @@
+/*!
+
+\page multi_transformation_operation_page Block Multi Transformation
+
+\n To produce a <b>Multi Transformation</b> operation in the <b>Main
+Menu</b> select <b>Operations - > Blocks - > Multi Transformation</b>
+
+\n This operation makes several translations of a block (solid) in one
+or two directions depending on the arguments specified by the user.
+\n The \b Result in both cases will be a \b GEOM_Object.
+
+<br><h2>Simple Multi Transformation (in one direction)</h2>
+
+\n <b>TUI Command:</b> <em> geompy. MakeMultiTransformation1D(Block,
+DirFaceID1, DirFaceID2, NbTimes),</em> where \em Block is a block to be
+transformed, \em DirFaceID1 is an ID of the face which defines the first
+direction of transformation, \em DirFaceID2 is an ID of the face which
+defines the second direction of transformation, \em NbTimes is a number of
+transformations.
+\n <b>Arguments:</b> Name + 1 hexahedral solid + 1 or 2 faces + 1
+integer (number of blocks).
+
+\image html mtransf1.png
+
+\image html multi_transformationsn1d.png
+
+<br><h2>Double Multi Transformation (in two directions)</h2>
+
+\n <b>TUI Command:</b> <em>geompy. MakeMultiTransformation2D(Block,
+DirFaceID1U, DirFaceID2U, NbTimesU, DirFaceID1V, DirFaceID2V,
+NbTimesV),</em> where \em Block is a block to be transformed, \em DirFaceID1U
+and \em DirFaceID2U are IDs of the faces, which define directions of the
+first transformation, \em DirFaceID1V and \em DirFaceID2V are ID's of the
+faces which define directions of the second transformation, \em NbTimesU
+and \em NbTimesV are numbers of transformations.
+\n <b>Arguments:</b> Name + 1 hexahedral solid + 2, 3 or 4 faces + 2
+integers (number of blocks).
+
+\image html mtransf2.png
+
+\image html multi_transformationsn2d.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_multi_transformation "Blocks Operations".
+
+*/

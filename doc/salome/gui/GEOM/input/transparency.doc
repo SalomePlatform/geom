@@ -1,0 +1,25 @@
+/*!
+
+\page transparency_page Transparency
+
+\n You can change the transparency of a shape in the range between 0
+(absolutely opaque) and 1 (absolutely transparent and thus invisible)
+in the following dialog box.
+
+\image html neo-transparency.png
+
+or using a <b>TUI Command:</b> <em>gg.setTransparency(ID, Double)</em>
+
+\n <b>Examples:</b>
+
+\image html colorsn.png
+<center><em>Opaque</em></center>
+
+\image html transparencysn.png
+<center><em>50% Transparent</em></center>
+
+Our <b>TUI Scripts</b> provide you with useful examples of 
+\ref tui_change_transparency "Changing Display Parameters".
+
+*/
+

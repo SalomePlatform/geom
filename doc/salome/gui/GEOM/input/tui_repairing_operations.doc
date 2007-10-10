@@ -1,0 +1,456 @@
+/*!
+
+\page tui_repairing_operations_page Repairing Operations
+
+\anchor tui_shape_processing
+<br><h2>Shape Processing</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices, an edge, an arc, a wire, a face and a prism
+p1 = geompy.MakeVertex(0,0,0)
+p2 = geompy.MakeVertex(200,0,0)
+p3 = geompy.MakeVertex(100,150,0)
+edge = geompy.MakeEdge(p1,p2)
+arc  = geompy.MakeArc(p1,p3,p2)
+wire = geompy.MakeWire([edge,arc])
+face = geompy.MakeFace(wire, 1)
+theShape = geompy.MakePrismVecH(face, edge, 130)
+
+# check the shape at the beginning
+print "Before ProcessShape:"
+isValid = geompy.CheckShape(theShape)
+if isValid == 0:
+    print "The shape is not valid"
+else:
+    print "The shape seems to be valid"
+
+# process the Shape
+Operators = ["FixShape"]
+Parameters = ["FixShape.Tolerance3d"]
+Values = ["1e-7"]
+PS = geompy.ProcessShape(theShape, Operators, Parameters, Values)
+
+# check the shape at the end
+print "After ProcessShape:"
+isValid = geompy.CheckShape(PS)
+if isValid == 0:
+    print "The shape is not valid"
+    raise RuntimeError, "It seems, that the ProcessShape() has failed"
+else:
+    print "The shape seems to be valid"
+
+# add in the study and display
+Id_Shape = geompy.addToStudy(theShape, "Invalid Shape")
+Id_PS    = geompy.addToStudy(PS, "Processed Shape")
+gg.createAndDisplayGO(Id_Shape)
+gg.setDisplayMode(Id_Shape,1)
+gg.createAndDisplayGO(Id_PS)
+gg.setDisplayMode(Id_PS,1) 
+\endcode
+
+\anchor tui_suppress_faces
+<br><h2>Suppress Faces</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create a box
+box = geompy.MakeBoxDXDYDZ(200, 200, 200)
+
+# The list of IDs (IDList) for suppress faces
+sup_faces = []
+sup_faces = geompy.SubShapeAllSorted(box, geompy.ShapeType["FACE"])
+
+# get indices of the sub-shape
+f1_id = geompy.GetSubShapeID(box, sup_faces[3])
+
+# remove faces from the given object (shape)
+result = geompy.SuppressFaces(box, [f1_id])
+
+# add objects in the study
+id_box = geompy.addToStudy(box, "Box")
+id_result = geompy.addToStudy(result, "Result")
+
+# display the results
+gg.createAndDisplayGO(id_box)
+gg.setDisplayMode(id_box,1)
+gg.createAndDisplayGO(id_result)
+gg.setDisplayMode(id_result,1)
+\endcode
+
+\anchor tui_close_contour
+<br><h2>Close Contour</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices and vectors
+p0  = geompy.MakeVertex(  0.,   0.,   0.)
+px  = geompy.MakeVertex(100.,   0.,   0.)
+py  = geompy.MakeVertex(  0., 100.,   0.)
+py1 = geompy.MakeVertex(  0., 140.,   0.)
+pz  = geompy.MakeVertex(  0.,   0., 100.)
+vxy = geompy.MakeVector(px, py)
+
+# create an arc
+arc = geompy.MakeArc(py1, pz, px)
+
+# create a wire
+wire = geompy.MakeWire([vxy, arc])
+
+# close an open wire by creation of an edge between ends
+wire_close = geompy.CloseContour(wire, [1], 0)
+
+# add objects in the study
+id_wire = geompy.addToStudy(wire, "Wire")
+id_wire_close = geompy.addToStudy(wire_close, "Wire close")
+
+# display the results
+gg.createAndDisplayGO(id_wire)
+gg.createAndDisplayGO(id_wire_close) 
+\endcode
+
+\anchor tui_suppress_internal_wires 
+<br><h2>Suppress Internal Wires</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create a vertex and a vector
+p1 = geompy.MakeVertex(55, 65, 50)
+p2 = geompy.MakeVertex(55,  0, 50)
+v = geompy.MakeVector(p1, p2)
+
+# create a cylinder
+height = 100
+radius1 = 40
+cylinder = geompy.MakeCylinder(p1, v, radius1, height)
+
+# create a box
+box = geompy.MakeBoxDXDYDZ(100, 100, 100)
+
+# make a cut
+cut = geompy.MakeCut(box, cylinder)
+
+# suppress all internal wires
+result = geompy.SuppressInternalWires(cut, [])
+
+# add objects in the study
+id_cut = geompy.addToStudy(cut, "Cut")
+id_result = geompy.addToStudy(result, "Result")
+
+# display the results
+gg.createAndDisplayGO(id_cut)
+gg.setDisplayMode(id_cut,1)
+gg.createAndDisplayGO(id_result)
+gg.setDisplayMode(id_result,1) 
+\endcode
+
+\anchor tui_suppress_holes
+<br><h2>Suppress Holes</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create a vertex and a vector
+p1 = geompy.MakeVertex(35, 35, 0)
+p2 = geompy.MakeVertex(35, 35, 50)
+v = geompy.MakeVector(p1, p2)
+
+# create a cylinder
+height = 20
+radius1 = 20
+cylinder = geompy.MakeCylinder(p1, v, radius1, height)
+
+# create a cone
+cone = geompy.MakeCone(p1, v, 70, 0, 80)
+
+# make a cut
+cut = geompy.MakeCut(cone, cylinder)
+
+# get faces as sub-shapes
+faces = []
+faces = geompy.SubShapeAllSorted(cut, geompy.ShapeType["FACE"])
+f_2 = geompy.GetSubShapeID(cut, faces[2])
+
+# remove one face from the shape
+cut_without_f_2 = geompy.SuppressFaces(cut, [f_2])
+
+# get wires as sub-shapes
+wires = []
+wires = geompy.SubShapeAllSorted(cut_without_f_2, geompy.ShapeType["WIRE"])
+w_0 = geompy.GetSubShapeID(cut_without_f_2, wires[0])
+
+# suppress the selected wire
+result = geompy.SuppressHoles(cut_without_f_2, [w_0])
+
+# add objects in the study
+id_cut = geompy.addToStudy(cut, "Cut")
+id_cut_without_f_2 = geompy.addToStudy(cut_without_f_2, "Cut without f_2")
+id_result = geompy.addToStudy(result, "Result")
+
+# display the results
+gg.createAndDisplayGO(id_cut)
+gg.setDisplayMode(id_cut,1)
+gg.createAndDisplayGO(id_cut_without_f_2)
+gg.setDisplayMode(id_cut_without_f_2,1)
+gg.createAndDisplayGO(id_result)
+gg.setDisplayMode(id_result,1) 
+\endcode
+
+\anchor tui_sewing
+<br><h2>Sewing</h2>
+
+\code
+import geompy
+import salome
+import math
+gg = salome.ImportComponentGUI("GEOM")
+
+# create base points
+px = geompy.MakeVertex(100., 0., 0.)
+py = geompy.MakeVertex(0., 100., 0.)
+pz = geompy.MakeVertex(0., 0., 100.)
+
+# create base geometry 2D & 3D
+vector = geompy.MakeVector(px, py)
+arc = geompy.MakeArc(py, pz, px)
+
+# create base objects
+angle = 45. * math.pi / 180
+WantPlanarFace = 1 #True
+wire = geompy.MakeWire([vector, arc])
+face = geompy.MakeFace(wire, WantPlanarFace)
+face_rot = geompy.MakeRotation(face, vector, angle)
+
+# make sewing
+precision = 0.00001
+sewing = geompy.MakeSewing([face, face_rot], precision)
+
+# add objects in the study
+id_face = geompy.addToStudy(face, "Face")
+id_face_rot = geompy.addToStudy(face_rot, "Face rotation")
+id_sewing = geompy.addToStudy(sewing, "Sewing")
+
+# display the results
+gg.createAndDisplayGO(id_face)
+gg.setDisplayMode(id_face,1)
+gg.createAndDisplayGO(id_face_rot)
+gg.setDisplayMode(id_face_rot,1)
+gg.createAndDisplayGO(id_sewing)
+gg.setDisplayMode(id_sewing,1) 
+\endcode
+
+\anchor tui_glue_faces
+<br><h2>Glue Faces</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create boxes
+box1 = geompy.MakeBox(0,0,0,100,50,100)
+box2 = geompy.MakeBox(100,0,0,250,50,100)
+
+# make compound
+compound = geompy.MakeCompound([box1, box2])
+
+# glue compound's faces
+tolerance = 1e-5
+glue = geompy.MakeGlueFaces(compound, tolerance)
+
+# add objects in study
+id_box1 = geompy.addToStudy(box1, "Box1")
+id_box2 = geompy.addToStudy(box2, "Box2")
+id_compound = geompy.addToStudy(compound, "Compound")
+id_glue = geompy.addToStudy(glue, "Glue faces")
+
+# display results
+gg.createAndDisplayGO(id_box1)
+gg.setDisplayMode(id_box1,1)
+gg.createAndDisplayGO(id_box2)
+gg.setDisplayMode(id_box2,1)
+gg.createAndDisplayGO(id_compound)
+gg.setDisplayMode(id_compound,1)
+gg.createAndDisplayGO(id_glue)
+gg.setDisplayMode(id_glue,1) 
+\endcode
+
+\anchor tui_add_point_on_edge
+<br><h2>Add Point on Edge</h2>
+
+\code
+import geompy
+import salome
+
+# create vertices
+p1 = geompy.MakeVertex(0,0,50)
+p2 = geompy.MakeVertex(60,0,50)
+
+# make an edge
+edge = geompy.MakeEdge(p1, p2) #geompy.GetSubShape(box, edge_ind)
+
+# divide an edge
+divide = geompy.DivideEdge(edge, -1, 0.5, 0)
+
+# add objects in the study
+id_edge = geompy.addToStudy(edge, "Edge")
+edge_points = geompy.SubShapeAllSorted(edge, geompy.ShapeType["VERTEX"])
+for point in edge_points:
+    geompy.addToStudyInFather(edge, point, "Edge's point")
+
+id_divide = geompy.addToStudy(divide, "Divided edge")
+edge_points = geompy.SubShapeAllSorted(divide, geompy.ShapeType["VERTEX"])
+for point in edge_points:
+    geompy.addToStudyInFather(divide, point, "Edge's point after divide")
+
+salome.sg.updateObjBrowser(1) 
+\endcode
+
+\anchor tui_check_free_boundaries
+<br><h2>Check Free Boundaries</h2>
+
+\code
+import os
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create boxes
+box1 = geompy.MakeBox(0,0,0,100,50,100)
+box2 = geompy.MakeBox(100,0,0,250,50,100)
+
+# make a compound
+compound = geompy.MakeCompound([box1, box2])
+
+# import from *.brep
+ImportFromBREP = geompy.ImportBREP(os.getenv("DATA_DIR")+"/Shapes/Brep/flight_solid.brep")
+
+# get a face
+faces = geompy.SubShapeAllSorted(ImportFromBREP, geompy.ShapeType["FACE"])
+
+# get the free boundary for face 32
+Res = geompy.GetFreeBoundary(faces[32])
+isSuccess   = Res[0]
+ClosedWires = Res[1]
+OpenWires   = Res[2]
+
+if isSuccess == 1 :
+    print "Checking free boudaries is OK."
+else :
+    print "Checking free boudaries is KO!"
+print "len(ClosedWires) = ", len(ClosedWires)
+
+i = 0
+for wire in ClosedWires :
+    wire_name = "Face 32 -> Close wires : WIRE %d"%(i+1)
+    geompy.addToStudy(ClosedWires[i], wire_name)
+    if i < len(ClosedWires) :
+        i = i+ 1
+
+print "len(OpenWires) = ", len(OpenWires)
+
+i = 0
+for wire in OpenWires :
+    wire_name = "Face 32 -> Open wires : WIRE %d"%(i+1)
+    geompy.addToStudy(OpenWires[i], wire_name)
+    if i < len(OpenWires) :
+        i = i+ 1
+
+# get the free boundary for face 41
+Res = geompy.GetFreeBoundary(faces[41])
+isSuccess   = Res[0]
+ClosedWires = Res[1]
+OpenWires   = Res[2]
+
+if isSuccess == 1 :
+    print "Checking free boudaries is OK."
+else :
+    print "Checking free boudaries is KO!"
+print "len(ClosedWires) = ", len(ClosedWires)
+
+i = 0
+for wire in ClosedWires :
+    wire_name = "Face 41 -> Close wires : WIRE %d"%(i+1)
+    geompy.addToStudy(ClosedWires[i], wire_name)
+    if i < len(ClosedWires) :
+        i = i+ 1
+
+print "len(OpenWires) = ", len(OpenWires)
+
+i = 0
+for wire in OpenWires :
+    wire_name = "Face 41 -> Open wires : WIRE %d"%(i+1)
+    geompy.addToStudy(OpenWires[i], wire_name)
+    if i < len(OpenWires) :
+        i = i+ 1
+
+# add the imported object to the study
+id_ImportFromBREP = geompy.addToStudy(ImportFromBREP, "ImportFromBREP")
+salome.sg.updateObjBrowser(1)
+\endcode
+
+\anchor tui_check_free_faces
+<br><h2>Check Free Faces</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create a vertex and a vector
+p1 = geompy.MakeVertex(35, 35, 0)
+p2 = geompy.MakeVertex(35, 35, 50)
+v = geompy.MakeVector(p1, p2)
+
+# create a cylinder
+cylinder = geompy.MakeCone(p1, v, 30, 20, 20)
+
+# create a cone
+cone = geompy.MakeCone(p1, v, 70, 40, 60)
+
+# make cut
+cut = geompy.MakeCut(cone, cylinder)
+
+# get faces as sub-shapes
+faces = []
+faces = geompy.SubShapeAllSorted(cut, geompy.ShapeType["FACE"])
+f_2 = geompy.GetSubShapeID(cut, faces[0])
+
+# remove one face from the shape
+cut_without_f_2 = geompy.SuppressFaces(cut, [f_2])
+
+# suppress the specified wire
+result = geompy.GetFreeFacesIDs(cut_without_f_2)
+print "A number of free faces is ", len(result)
+
+# add objects in the study
+all_faces = geompy.SubShapeAllSorted(cut_without_f_2, geompy.ShapeType["FACE"])
+for face in all_faces :
+    sub_shape_id = geompy.GetSubShapeID(cut_without_f_2, face)
+    if result.count(sub_shape_id) > 0 :
+        face_name = "Free face %d"%(sub_shape_id)
+        geompy.addToStudy(face, face_name)
+
+# in this example all faces from cut_without_f_2 are free
+id_cut_without_f_2 = geompy.addToStudy(cut_without_f_2, "Cut without f_2")
+
+# display the results
+gg.createAndDisplayGO(id_cut_without_f_2)
+gg.setDisplayMode(id_cut_without_f_2,1) 
+\endcode
+
+*/

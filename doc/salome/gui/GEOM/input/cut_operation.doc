@@ -1,0 +1,24 @@
+/*!
+
+\page cut_operation_page Cut
+
+\n To produce a \b Cut operation in the <b>Main Menu</b> select <b>Operations - > Boolean - > Cut</b>
+
+\n This operation cuts a shape with another one.
+\n The \b Result will be a \b GEOM_Object (COMPOUND).
+\n <b>Arguments:</b> Name + 2 shapes.
+
+\n <b>Dialog Box:</b>
+
+\image html bool3.png
+
+\n <b>Example:</b>
+
+\image html fusesn1.png
+
+\image html cutsn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of 
+\ref tui_cut "Boolean Operations".
+
+*/

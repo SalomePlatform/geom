@@ -1,0 +1,45 @@
+/*!
+
+\page translation_operation_page Translation
+
+\n To produce a \b Translation in the <b>Main Menu</b> select
+<b>Operations - > Transformation - > Translation</b>
+
+This Operation makes a translation of an \b Object. To translate a
+shape you need to define the base shape and the coordinates of the
+vector of translation. <b>Create a copy</b> checkbox allows to keep the
+initial object, otherwise it will be removed.
+\n The \b Result of all operations will be any \b GEOM_Object.
+
+\n Firstly you can define an \b Object and the vector coordinates along the
+axes.
+\n <b>TUI Command:</b> <em>geompy.MakeTranslation(Shape, DX, DY,
+DZ),</em> where Shape is a shape to be translated, DX, DY, DZ are
+components of translation vector.
+\n <b>Arguments:</b> Name + 1 shape + 3 values (coordinates).
+
+\image html transformation1.png
+
+\n Secondly you can define an \b Object and the start and the end points
+of the vector.
+\n <b>TUI Command:</b> <em>geompy.MakeTranslationTwoPoints(Object, Point1, Point2)</em>
+\n <b>Arguments:</b> Name + 1 shape + 2 vertices
+
+\image html transformation2.png
+
+\n Finally you can define an \b Object and the vector  
+\n <b>TUI Command:</b> <em>geompy.MakeTranslationVector(Object, Vector)</em>
+\n <b>Arguments:</b> Name + 1 shape + 1 vector.
+
+\image html transformation3.png
+
+\n <b>Example:</b>
+
+\image html translationsn1.png
+
+\image html translationsn2.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of 
+\ref tui_translation "Transformation Operations".
+
+*/
