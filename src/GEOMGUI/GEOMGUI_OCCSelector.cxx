@@ -17,6 +17,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : GEOMGUI_OCCSelector.cxx
+// Author : Alexander SOLOVYOV, Open CASCADE S.A.S. (alexander.solovyov@opencascade.com)
+//
+
 #include "GEOMGUI_OCCSelector.h"
 
 #include <LightApp_DataSubOwner.h>

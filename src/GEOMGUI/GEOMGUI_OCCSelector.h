@@ -1,3 +1,5 @@
+// GEOM GEOMGUI : GUI for Geometry component
+//
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 // 
@@ -17,6 +19,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : GEOMGUI_OCCSelector.h
+// Author : Alexander SOLOVYOV, Open CASCADE S.A.S. (alexander.solovyov@opencascade.com)
+//
+
 #ifndef GEOMGUI_OCCSELECTOR_H
 #define GEOMGUI_OCCSELECTOR_H
 
@@ -36,4 +42,4 @@ protected:
 
 };
 
-#endif
+#endif // GEOMGUI_OCCSELECTOR_H

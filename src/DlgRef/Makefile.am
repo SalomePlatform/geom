@@ -34,121 +34,168 @@ lib_LTLIBRARIES = libDlgRef.la
 
 # Sources files
 dist_libDlgRef_la_SOURCES = \
-	DlgRef_SpinBox.cxx \
-	DlgRef_1Sel1Spin.cxx \
-	DlgRef_1Sel2Spin.cxx \
-	DlgRef_1Sel3Spin.cxx \
-	DlgRef_1Sel4Spin.cxx \
-	DlgRef_1Sel5Spin.cxx \
-	DlgRef_2Sel1Spin.cxx \
-	DlgRef_2Sel2Spin.cxx \
-	DlgRef_2Sel3Spin.cxx \
-	DlgRef_1Sel1Spin1Check.cxx \
-	DlgRef_2Sel1Spin2Check.cxx \
-	DlgRef_2Sel2Spin1Check.cxx \
-	DlgRef_2Sel4Spin1Check.cxx \
-	DlgRef_3Sel4Spin2Check.cxx \
-	DlgRef_3Sel3Spin1Check.cxx \
-	DlgRef_1Spin.cxx \
-	DlgRef_2Spin.cxx \
-	DlgRef_3Spin.cxx \
-	DlgRef_3Spin1Check.cxx \
-	DlgRef_3Sel1Spin.cxx \
-	DlgRef_4Sel1Spin2Check.cxx
+	GEOM_DlgRef.cxx
+
+# 	DlgRef_SpinBox.cxx \
+# 	DlgRef_1Sel1Spin.cxx \
+# 	DlgRef_1Sel2Spin.cxx \
+# 	DlgRef_1Sel3Spin.cxx \
+# 	DlgRef_1Sel4Spin.cxx \
+# 	DlgRef_1Sel5Spin.cxx \
+# 	DlgRef_2Sel1Spin.cxx \
+# 	DlgRef_2Sel2Spin.cxx \
+# 	DlgRef_2Sel3Spin.cxx \
+# 	DlgRef_1Sel1Spin1Check.cxx \
+# 	DlgRef_2Sel1Spin2Check.cxx \
+# 	DlgRef_2Sel2Spin1Check.cxx \
+# 	DlgRef_2Sel4Spin1Check.cxx \
+# 	DlgRef_3Sel4Spin2Check.cxx \
+# 	DlgRef_3Sel3Spin1Check.cxx \
+# 	DlgRef_1Spin.cxx \
+# 	DlgRef_2Spin.cxx \
+# 	DlgRef_3Spin.cxx \
+# 	DlgRef_3Spin1Check.cxx \
+# 	DlgRef_3Sel1Spin.cxx \
+# 	DlgRef_4Sel1Spin2Check.cxx
 
 MOC_FILES = \
-	DlgRef_SpinBox_moc.cxx \
-	DlgRef_1Sel1Spin_moc.cxx \
-	DlgRef_1Sel2Spin_moc.cxx \
-	DlgRef_1Sel3Spin_moc.cxx \
-	DlgRef_1Sel4Spin_moc.cxx \
-	DlgRef_1Sel5Spin_moc.cxx \
-	DlgRef_2Sel1Spin_moc.cxx \
-	DlgRef_2Sel2Spin_moc.cxx \
-	DlgRef_2Sel3Spin_moc.cxx \
-	DlgRef_1Sel1Spin1Check_moc.cxx \
-	DlgRef_2Sel1Spin2Check_moc.cxx \
-	DlgRef_2Sel2Spin1Check_moc.cxx \
-	DlgRef_2Sel4Spin1Check_moc.cxx \
-	DlgRef_3Sel4Spin2Check_moc.cxx \
-	DlgRef_3Sel3Spin1Check_moc.cxx \
-	DlgRef_1Spin_moc.cxx \
-	DlgRef_2Spin_moc.cxx \
-	DlgRef_3Spin_moc.cxx \
-	DlgRef_3Spin1Check_moc.cxx \
-	DlgRef_3Sel1Spin_moc.cxx \
-	DlgRef_1Sel_Ext_moc.cxx \
-	DlgRef_4Sel1Spin2Check_moc.cxx
+	GEOM_DlgRef_moc.cxx
+
+# 	DlgRef_SpinBox_moc.cxx \
+# 	DlgRef_1Sel1Spin_moc.cxx \
+# 	DlgRef_1Sel2Spin_moc.cxx \
+# 	DlgRef_1Sel3Spin_moc.cxx \
+# 	DlgRef_1Sel4Spin_moc.cxx \
+# 	DlgRef_1Sel5Spin_moc.cxx \
+# 	DlgRef_2Sel1Spin_moc.cxx \
+# 	DlgRef_2Sel2Spin_moc.cxx \
+# 	DlgRef_2Sel3Spin_moc.cxx \
+# 	DlgRef_1Sel1Spin1Check_moc.cxx \
+# 	DlgRef_2Sel1Spin2Check_moc.cxx \
+# 	DlgRef_2Sel2Spin1Check_moc.cxx \
+# 	DlgRef_2Sel4Spin1Check_moc.cxx \
+# 	DlgRef_3Sel4Spin2Check_moc.cxx \
+# 	DlgRef_3Sel3Spin1Check_moc.cxx \
+# 	DlgRef_1Spin_moc.cxx \
+# 	DlgRef_2Spin_moc.cxx \
+# 	DlgRef_3Spin_moc.cxx \
+# 	DlgRef_3Spin1Check_moc.cxx \
+# 	DlgRef_3Sel1Spin_moc.cxx \
+# 	DlgRef_1Sel_Ext_moc.cxx \
+# 	DlgRef_4Sel1Spin2Check_moc.cxx
 
 # header files 
 salomeinclude_HEADERS = \
-	DlgRef_Skeleton_QTD.h \
-	DlgRef_1Sel_QTD.h \
-	DlgRef_2Sel_QTD.h \
-	DlgRef_3Sel_QTD.h \
-	DlgRef_1Sel1Check_QTD.h \
-	DlgRef_1Sel3Check_QTD.h \
-	DlgRef_1Sel1Check1List_QTD.h \
-	DlgRef_1Sel1Spin_QTD.h \
-	DlgRef_1Sel2Spin_QTD.h \
-	DlgRef_1Sel3Spin_QTD.h \
-	DlgRef_1Sel4Spin_QTD.h \
-	DlgRef_1Sel5Spin_QTD.h \
-	DlgRef_2Sel1Spin_QTD.h \
-	DlgRef_2Sel2Spin_QTD.h \
-	DlgRef_2Sel3Spin_QTD.h \
-	DlgRef_1Sel1Spin1Check_QTD.h \
-	DlgRef_2Sel1Spin2Check_QTD.h \
-	DlgRef_2Sel2Spin1Check_QTD.h \
-	DlgRef_2Sel4Spin1Check_QTD.h \
-	DlgRef_3Sel4Spin2Check_QTD.h \
-	DlgRef_4Sel1List_QTD.h \
-	DlgRef_2Sel1List_QTD.h \
-	DlgRef_1List1Spin1Btn_QTD.h \
-	DlgRef_4Sel1List1Check_QTD.h \
-	DlgRef_1Spin_QTD.h \
-	DlgRef_2Spin_QTD.h \
-	DlgRef_3Spin_QTD.h \
-	DlgRef_3Spin1Check_QTD.h \
-	DlgRef_3Sel3Spin1Check_QTD.h \
-	DlgRef_4Sel1Spin2Check_QTD.h \
-	DlgRef_SpinBox.h \
-	DlgRef_1Sel1Spin.h \
-	DlgRef_1Sel2Spin.h \
-	DlgRef_1Sel3Spin.h \
-	DlgRef_1Sel4Spin.h \
-	DlgRef_1Sel5Spin.h \
-	DlgRef_2Sel1Spin.h \
-	DlgRef_2Sel2Spin.h \
-	DlgRef_2Sel3Spin.h \
-	DlgRef_1Sel1Spin1Check.h \
-	DlgRef_2Sel1Spin2Check.h \
-	DlgRef_2Sel2Spin1Check.h \
-	DlgRef_2Sel4Spin1Check.h \
-	DlgRef_3Sel4Spin2Check.h \
-	DlgRef_3Sel3Spin1Check.h \
-	DlgRef_1Spin.h \
-	DlgRef_2Spin.h \
-	DlgRef_3Spin.h \
-	DlgRef_3Spin1Check.h \
-	DlgRef_3Sel1Spin.h \
-	DlgRef_1Sel_Ext.h \
-	DlgRef_3Check_QTD.h \
-	DlgRef_6Sel_QTD.h \
-	DlgRef_4Sel1Spin2Check.h \
-	DlgRef_3Sel1Check_QTD.h \
-	GEOM_DlgRef.hxx
+	GEOM_DlgRef.h
 
-nodist_libDlgRef_la_SOURCES= \
-	$(MOC_FILES)
+#	DlgRef_Skeleton_QTD.h \
+# 	DlgRef_1Sel_QTD.h \
+# 	DlgRef_2Sel_QTD.h \
+# 	DlgRef_3Sel_QTD.h \
+# 	DlgRef_1Sel1Check_QTD.h \
+# 	DlgRef_1Sel3Check_QTD.h \
+# 	DlgRef_1Sel1Check1List_QTD.h \
+# 	DlgRef_1Sel1Spin_QTD.h \
+# 	DlgRef_1Sel2Spin_QTD.h \
+# 	DlgRef_1Sel3Spin_QTD.h \
+# 	DlgRef_1Sel4Spin_QTD.h \
+# 	DlgRef_1Sel5Spin_QTD.h \
+# 	DlgRef_2Sel1Spin_QTD.h \
+# 	DlgRef_2Sel2Spin_QTD.h \
+# 	DlgRef_2Sel3Spin_QTD.h \
+# 	DlgRef_1Sel1Spin1Check_QTD.h \
+# 	DlgRef_2Sel1Spin2Check_QTD.h \
+# 	DlgRef_2Sel2Spin1Check_QTD.h \
+# 	DlgRef_2Sel4Spin1Check_QTD.h \
+# 	DlgRef_3Sel4Spin2Check_QTD.h \
+# 	DlgRef_4Sel1List_QTD.h \
+# 	DlgRef_2Sel1List_QTD.h \
+# 	DlgRef_1List1Spin1Btn_QTD.h \
+# 	DlgRef_4Sel1List1Check_QTD.h \
+# 	DlgRef_1Spin_QTD.h \
+# 	DlgRef_2Spin_QTD.h \
+# 	DlgRef_3Spin_QTD.h \
+# 	DlgRef_3Spin1Check_QTD.h \
+# 	DlgRef_3Sel3Spin1Check_QTD.h \
+# 	DlgRef_4Sel1Spin2Check_QTD.h \
+# 	DlgRef_SpinBox.h \
+# 	DlgRef_1Sel1Spin.h \
+# 	DlgRef_1Sel2Spin.h \
+# 	DlgRef_1Sel3Spin.h \
+# 	DlgRef_1Sel4Spin.h \
+# 	DlgRef_1Sel5Spin.h \
+# 	DlgRef_2Sel1Spin.h \
+# 	DlgRef_2Sel2Spin.h \
+# 	DlgRef_2Sel3Spin.h \
+# 	DlgRef_1Sel1Spin1Check.h \
+# 	DlgRef_2Sel1Spin2Check.h \
+# 	DlgRef_2Sel2Spin1Check.h \
+# 	DlgRef_2Sel4Spin1Check.h \
+# 	DlgRef_3Sel4Spin2Check.h \
+# 	DlgRef_3Sel3Spin1Check.h \
+# 	DlgRef_1Spin.h \
+# 	DlgRef_2Spin.h \
+# 	DlgRef_3Spin.h \
+# 	DlgRef_3Spin1Check.h \
+# 	DlgRef_3Sel1Spin.h \
+# 	DlgRef_1Sel_Ext.h \
+# 	DlgRef_3Check_QTD.h \
+# 	DlgRef_6Sel_QTD.h \
+# 	DlgRef_4Sel1Spin2Check.h \
+# 	DlgRef_3Sel1Check_QTD.h \
+# 	GEOM_DlgRef.hxx
 
-# additionnal information to compil and link file
+UIC_FILES = \
+	ui_DlgRef_1List1Spin1Btn_QTD.h	\
+	ui_DlgRef_1Sel1Check1List_QTD.h	\
+	ui_DlgRef_1Sel1Check_QTD.h	\
+	ui_DlgRef_1Sel1Spin1Check_QTD.h	\
+	ui_DlgRef_1Sel1Spin_QTD.h	\
+	ui_DlgRef_1Sel2Spin_QTD.h	\
+	ui_DlgRef_1Sel3Check_QTD.h	\
+	ui_DlgRef_1Sel3Spin_QTD.h	\
+	ui_DlgRef_1Sel4Spin_QTD.h	\
+	ui_DlgRef_1Sel5Spin_QTD.h	\
+	ui_DlgRef_1Sel_QTD.h		\
+	ui_DlgRef_1Spin_QTD.h		\
+	ui_DlgRef_2Sel1List_QTD.h	\
+	ui_DlgRef_2Sel1Spin2Check_QTD.h	\
+	ui_DlgRef_2Sel1Spin_QTD.h	\
+	ui_DlgRef_2Sel2Spin1Check_QTD.h	\
+	ui_DlgRef_2Sel2Spin_QTD.h	\
+	ui_DlgRef_2Sel3Spin_QTD.h	\
+	ui_DlgRef_2Sel4Spin1Check_QTD.h	\
+	ui_DlgRef_2Sel_QTD.h		\
+	ui_DlgRef_2Spin_QTD.h		\
+	ui_DlgRef_3Check_QTD.h		\
+	ui_DlgRef_3Sel1Check_QTD.h	\
+	ui_DlgRef_3Sel1Spin_QTD.h	\
+	ui_DlgRef_3Sel3Spin1Check_QTD.h	\
+	ui_DlgRef_3Sel4Spin2Check_QTD.h	\
+	ui_DlgRef_3Sel_QTD.h		\
+	ui_DlgRef_3Spin1Check_QTD.h	\
+	ui_DlgRef_3Spin_QTD.h		\
+	ui_DlgRef_4Sel1List1Check_QTD.h	\
+	ui_DlgRef_4Sel1List_QTD.h	\
+	ui_DlgRef_4Sel1Spin2Check_QTD.h	\
+	ui_DlgRef_6Sel_QTD.h		\
+	ui_DlgRef_Skeleton_QTD.h
+
+BUILT_SOURCES = $(UIC_FILES)
+
+nodist_libDlgRef_la_SOURCES = \
+	$(MOC_FILES) \
+	$(UIC_FILES)
+
+# additionnal information to compile and link file
 libDlgRef_la_CPPFLAGS = \
-	$(QT_INCLUDES) \
-	$(KERNEL_CXXFLAGS) \
-	$(GUI_CXXFLAGS)
+	$(QT_INCLUDES)
+
+#	$(KERNEL_CXXFLAGS) \
+#	$(GUI_CXXFLAGS)
 
 libDlgRef_la_LDFLAGS  = \
-	$(GUI_LDFLAGS) -lqtx \
 	$(STDLIB) \
 	$(QT_MT_LIBS) 
+
+#	$(GUI_LDFLAGS)

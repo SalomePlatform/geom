@@ -17,6 +17,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : GEOMGUI_Selection.cxx
+// Author : Alexander SOLOVYOV, Open CASCADE S.A.S. (alexander.solovyov@opencascade.com)
+//
+
 #include "GEOMGUI_Selection.h"
 
 #include "GeometryGUI.h"
@@ -40,7 +44,7 @@
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
 // OCCT Includes
 #include <AIS.hxx>
@@ -51,7 +55,7 @@
 #include <vtkActorCollection.h>
 
 GEOMGUI_Selection::GEOMGUI_Selection( const QString& client, LightApp_SelectionMgr* mgr )
-  :LightApp_Selection( client, mgr )
+: LightApp_Selection( client, mgr )
 {
 }
 
