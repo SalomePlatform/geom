@@ -2826,18 +2826,45 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
   // Sorting
   Standard_Integer aTemp;
   Standard_Boolean exchange, Sort = Standard_True;
+  Standard_Real    tol = Precision::Confusion();
   while (Sort)
   {
     Sort = Standard_False;
     for (Index=1; Index < MaxShapes; Index++)
     {
-      if (MidXYZ(OrderInd(Index)) > MidXYZ(OrderInd(Index+1)))
+      Standard_Real dMidXYZ = MidXYZ(OrderInd(Index)) - MidXYZ(OrderInd(Index+1));
+      Standard_Real dLength = Length(OrderInd(Index)) - Length(OrderInd(Index+1));
+      if ( dMidXYZ > 0 ) {
 	exchange = Standard_True;
-      else if (MidXYZ(OrderInd(Index)) == MidXYZ(OrderInd(Index+1)) &&
-	       Length(OrderInd(Index)) >  Length(OrderInd(Index+1)) )
+      }
+      else if ( Abs(dMidXYZ) < tol && dLength > 0 ) {
 	exchange = Standard_True;
-      else
+      }
+      else if ( Abs(dMidXYZ) < tol && Abs(dLength) < tol &&
+                aShapes(OrderInd(Index)).ShapeType() <= TopAbs_FACE) {
+        // PAL17233
+        // equal values possible on shapes such as two halves of a sphere and
+        // a membrane inside the sphere
+        Bnd_Box box1,box2;
+        BRepBndLib::Add( aShapes( OrderInd(Index) ), box1 );
+        if ( box1.IsVoid() ) continue;
+        BRepBndLib::Add( aShapes( OrderInd(Index+1) ), box2 );
+        Standard_Real dSquareExtent = box1.SquareExtent() - box2.SquareExtent();
+        if ( dSquareExtent > 0 ) {
+          exchange = Standard_True;
+        }
+        else if ( Abs(dSquareExtent) < tol ) {
+          Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax, val1, val2;
+          box1.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+          val1 = (aXmin+aXmax)*999 + (aYmin+aYmax)*99 + (aZmin+aZmax)*0.9;
+          box2.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+          val2 = (aXmin+aXmax)*999 + (aYmin+aYmax)*99 + (aZmin+aZmax)*0.9;
+          exchange = val1 > val2;
+        }
+      }
+      else {
 	exchange = Standard_False;
+      }
       if (exchange)
       {
         aTemp = OrderInd(Index);
@@ -2847,6 +2874,7 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
       }
     }
   }
+    
   for (Index=1; Index <= MaxShapes; Index++)
     SL.Append( aShapes( OrderInd(Index) ));
 }
