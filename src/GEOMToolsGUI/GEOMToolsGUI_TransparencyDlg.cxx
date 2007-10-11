@@ -1,38 +1,35 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : GEOMToolsGUI_TransparencyDlg.cxx
+// Author : Lucien PIGNOLONI
 //
-//
-//  File   : GEOMBase_TransparencyDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-
 
 #include "GEOMToolsGUI_TransparencyDlg.h"
-#include "GEOMBase.h"
-#include "GEOM_AISShape.hxx"
-#include "GeometryGUI.h"
+#include <GEOMBase.h>
+#include <GEOM_AISShape.hxx>
+#include <GeometryGUI.h>
 
-#include "SALOME_ListIO.hxx"
-#include "SALOME_ListIteratorOfListIO.hxx"
+#include <SALOME_ListIO.hxx>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>
@@ -51,7 +48,7 @@
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <QLabel>
+7#include <QLabel>
 #include <QPushButton>
 #include <QSlider>
 #include <QGridLayout>
@@ -59,6 +56,7 @@
 #include <QKeyEvent>
 
 #include <AIS_InteractiveContext.hxx>
+
 using namespace std;
 
 //=================================================================================
