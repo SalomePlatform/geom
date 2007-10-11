@@ -48,7 +48,7 @@
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-7#include <QLabel>
+#include <QLabel>
 #include <QPushButton>
 #include <QSlider>
 #include <QGridLayout>

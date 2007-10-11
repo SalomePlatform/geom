@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File   : GEOMToolsGUI_1.cxx
-// Author : Sergey ANIKIN, , Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
+// Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
 //
 
 #include <PyConsole_Console.h>

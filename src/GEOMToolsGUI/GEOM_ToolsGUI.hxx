@@ -25,7 +25,7 @@
 #define GEOM_TOOLSGUI_HXX
 
 #if defined WIN32
-#  if defined GEOMTOOLSGUI
+#  if defined GEOMTOOLSGUI_EXPORTS
 #    define GEOMTOOLSGUI_EXPORT __declspec( dllexport )
 #  else
 #    define GEOMTOOLSGUI_EXPORT __declspec( dllimport )

@@ -1,43 +1,41 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : DisplayGUI.h
+// Author : Damien COQUERET, Open CASCADE S.A.S.
 //
-//
-//  File   : DisplayGUI.h
-//  Author : Damien COQUERET
-//  Module : GEOM
 
 #ifndef DISPLAYGUI_H
 #define DISPLAYGUI_H
 
 #include "GEOMGUI.h"
 
-#ifdef WNT
-# if defined DISPLAYGUI_EXPORTS
-#  define GEOM_DISPLAYGUI_EXPORT __declspec( dllexport )
-# else
-#  define GEOM_DISPLAYGUI_EXPORT __declspec( dllimport )
-# endif
+#if defined WIN32
+#  if defined DISPLAYGUI_EXPORTS
+#    define DISPLAYGUI_EXPORT __declspec( dllexport )
+#  else
+#    define DISPLAYGUI_EXPORT __declspec( dllimport )
+#  endif
 #else
-# define GEOM_DISPLAYGUI_EXPORT
+#  define DISPLAYGUI_EXPORT
 #endif
 
 //=================================================================================
@@ -46,7 +44,7 @@
 //=================================================================================
 //class QAD_ViewFrame;
 class SUIT_ViewWindow;
-class GEOM_DISPLAYGUI_EXPORT DisplayGUI : public GEOMGUI
+class DISPLAYGUI_EXPORT DisplayGUI : public GEOMGUI
 {
 public:
   DisplayGUI( GeometryGUI* parent );
@@ -80,4 +78,4 @@ public:
   void ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindo = 0 );
 };
 
-#endif
+#endif // DISPLAYGUI_H
