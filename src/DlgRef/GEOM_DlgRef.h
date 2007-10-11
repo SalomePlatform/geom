@@ -581,6 +581,8 @@ public:
   DlgRef_Skeleton( QWidget* = 0, Qt::WindowFlags = 0 );
   DlgRef_Skeleton( QWidget* = 0, bool modal = false, Qt::WindowFlags = 0 );
   ~DlgRef_Skeleton();
+
+  void initSpinBox( QDoubleSpinBox*, double, double, double = 0.1, int = 3 );
 };
 
 #endif // GEOM_DLGREF_H

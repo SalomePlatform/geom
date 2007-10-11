@@ -537,3 +537,12 @@ DlgRef_Skeleton::DlgRef_Skeleton( QWidget* parent, bool modal, Qt::WindowFlags f
 DlgRef_Skeleton::~DlgRef_Skeleton()
 {
 }
+
+void DlgRef_Skeleton::initSpinBox( QDoubleSpinBox* spinBox, 
+				   double min,  double max, 
+				   double step, int decimals )
+{
+  spinBox->setRange( min, max );
+  spinBox->setSingleStep( step );
+  spinBox->setDecimals( decimals );
+}
