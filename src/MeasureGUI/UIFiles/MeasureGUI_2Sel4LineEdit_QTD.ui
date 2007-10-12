@@ -1,15 +1,15 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
-<class>MeasureGUI_2Sel1LineEdit_QTD</class>
+<class>MeasureGUI_2Sel4LineEdit_QTD</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>MeasureGUI_2Sel1LineEdit_QTD</cstring>
+        <cstring>MeasureGUI_2Sel4LineEdit_QTD</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
             <width>129</width>
-            <height>115</height>
+            <height>163</height>
         </rect>
     </property>
     <grid>
@@ -138,7 +138,61 @@
                                 <cstring>LineEdit3</cstring>
                             </property>
                         </widget>
-                        <spacer row="3" column="2">
+                        <widget class="QLabel" row="3" column="0">
+                            <property name="name">
+                                <cstring>TextLabel4</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>LineEdit4</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="4" column="0">
+                            <property name="name">
+                                <cstring>TextLabel5</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit" row="4" column="1" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>LineEdit5</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="5" column="0">
+                            <property name="name">
+                                <cstring>TextLabel6</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit" row="5" column="1" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>LineEdit6</cstring>
+                            </property>
+                        </widget>
+                        <spacer row="6" column="2">
                             <property name="name">
                                 <cstring>Spacer8</cstring>
                             </property>

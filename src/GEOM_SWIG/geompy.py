@@ -2040,6 +2040,29 @@ def MinDistance(theShape1, theShape2):
       print "MinDistance : ", MeasuOp.GetErrorCode()
     return aTuple[0]
 
+## Get minimal distance between the given shapes.
+#  @param theShape1,theShape2 Shapes to find minimal distance between.
+#  @return Value of the minimal distance between the given shapes.
+#
+#  Example: see GEOM_TestMeasures.py
+def MinDistanceComponents(theShape1, theShape2):
+    aTuple = MeasuOp.GetMinDistance(theShape1, theShape2)
+    if MeasuOp.IsDone() == 0:
+      print "MinDistanceComponents : ", MeasuOp.GetErrorCode()
+    aRes = [aTuple[0], aTuple[4] - aTuple[1], aTuple[5] - aTuple[2], aTuple[6] - aTuple[3]]
+    return aRes
+
+## Get angle between the given shapes.
+#  @param theShape1,theShape2 Lines or linear edges to find angle between.
+#  @return Value of the angle between the given shapes.
+#
+#  Example: see GEOM_TestMeasures.py
+def GetAngle(theShape1, theShape2):
+    anAngle = MeasuOp.GetAngle(theShape1, theShape2)
+    if MeasuOp.IsDone() == 0:
+      print "GetAngle : ", MeasuOp.GetErrorCode()
+    return anAngle
+
 ## Get min and max tolerances of sub-shapes of theShape
 #  @param theShape Shape, to get tolerances of.
 #  @return [FaceMin,FaceMax, EdgeMin,EdgeMax, VertMin,VertMax]

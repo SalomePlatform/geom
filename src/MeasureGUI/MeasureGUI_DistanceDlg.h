@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -31,7 +31,7 @@
 
 #include "MeasureGUI_Skeleton.h"
 
-class MeasureGUI_2Sel1LineEdit_QTD;
+class MeasureGUI_2Sel4LineEdit_QTD;
 class gp_Pnt;
 
 #if defined WNT && defined MEASUREGUI_EXPORTS
@@ -74,7 +74,7 @@ private:
     QLineEdit*                          mySelEdit2;
     QPushButton*                        mySelBtn2;
 
-    MeasureGUI_2Sel1LineEdit_QTD*       myGrp;
+    MeasureGUI_2Sel4LineEdit_QTD*       myGrp;
     GEOM::GEOM_Object_var               myObj2;
 
 };

@@ -120,6 +120,30 @@ def TestMeasureOperations (geompy, math):
 
   print "\nMinimal distance between Box and Cube = ", MinDist
 
+  MinDistComps = geompy.MinDistanceComponents(box, cube)
+  print "\nMinimal distance between Box and Cube = ", MinDistComps[0]
+  print "Its components are  (", MinDistComps[1], ", ", MinDistComps[2], ", ", MinDistComps[3], ")"
+
+  ####### Angle #######
+
+  OX  = geompy.MakeVectorDXDYDZ(10, 0,0)
+  OXY = geompy.MakeVectorDXDYDZ(10,10,0)
+
+  # in one plane
+  Angle = geompy.GetAngle(OX, OXY)
+
+  print "\nAngle between OX and OXY = ", Angle
+  if math.fabs(Angle - 45.0) > 1e-05:
+    print "  Error: returned angle is", Angle, "while must be 45.0"
+
+  # not in one plane
+  OXY_shift = geompy.MakeTranslation(OXY,10,-10,20)
+  Angle = geompy.GetAngle(OX, OXY_shift)
+
+  print "Angle between OX and OXY_shift = ", Angle
+  if math.fabs(Angle - 45.0) > 1e-05:
+    print "  Error: returned angle is", Angle, "while must be 45.0"
+
   ####### Position (LCS) #######
 
   Pos = geompy.GetPosition(box)

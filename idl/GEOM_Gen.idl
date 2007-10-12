@@ -2370,6 +2370,12 @@ module GEOM
 			   out double X1, out double Y1, out double Z1,
 			   out double X2, out double Y2, out double Z2);
 
+    /*!
+     *  Get angle between the given lines or linear edges.
+     *  \param theShape1,theShape2 Shapes to find angle between. Lines or linear edges.
+     *  \return Value of the angle between the given shapes.
+     */
+    double GetAngle (in GEOM_Object theShape1, in GEOM_Object theShape2);
 
     /*!
      *  Get point coordinates

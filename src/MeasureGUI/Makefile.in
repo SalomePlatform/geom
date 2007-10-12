@@ -47,12 +47,14 @@ LIB_SRC = 	MeasureGUI.cxx \
 		MeasureGUI_1Sel12LineEdit_QTD.cxx \
 		MeasureGUI_1Sel1TextView_QTD.cxx \
 		MeasureGUI_2Sel1LineEdit_QTD.cxx \
+		MeasureGUI_2Sel4LineEdit_QTD.cxx \
 		MeasureGUI_Skeleton.cxx \
 		MeasureGUI_PropertiesDlg.cxx \
 		MeasureGUI_CenterMassDlg.cxx \
 		MeasureGUI_InertiaDlg.cxx \
 		MeasureGUI_BndBoxDlg.cxx \
 		MeasureGUI_DistanceDlg.cxx \
+		MeasureGUI_AngleDlg.cxx \
 		MeasureGUI_MaxToleranceDlg.cxx \
 		MeasureGUI_WhatisDlg.cxx \
 		MeasureGUI_CheckShapeDlg.cxx \
@@ -66,12 +68,14 @@ LIB_MOC = \
 		MeasureGUI_1Sel12LineEdit_QTD.h \
 		MeasureGUI_1Sel1TextView_QTD.h \
 		MeasureGUI_2Sel1LineEdit_QTD.h \
+		MeasureGUI_2Sel4LineEdit_QTD.h \
 		MeasureGUI_Skeleton.h \
 		MeasureGUI_PropertiesDlg.h \
 		MeasureGUI_CenterMassDlg.h \
 		MeasureGUI_InertiaDlg.h \
 		MeasureGUI_BndBoxDlg.h \
 		MeasureGUI_DistanceDlg.h \
+		MeasureGUI_AngleDlg.h \
 		MeasureGUI_MaxToleranceDlg.h \
 		MeasureGUI_WhatisDlg.h \
 		MeasureGUI_CheckShapeDlg.h \
