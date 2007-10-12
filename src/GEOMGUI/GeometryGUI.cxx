@@ -511,8 +511,8 @@ void GeometryGUI::OnGUIEvent( int id )
            id == 606 ||   // MENU REPAIR - CLOSE CONTOUR
            id == 607 ||   // MENU REPAIR - REMOVE INTERNAL WIRES
            id == 608 ||   // MENU REPAIR - ADD POINT ON EDGE
-           id == 609 ||   // MENU REPAIR - FREE BOUNDARIES
-           id == 610 ||   // MENU REPAIR - FREE FACES
+           id == 609 ||   // MENU MEASURE - FREE BOUNDARIES
+           id == 610 ||   // MENU MEASURE - FREE FACES
            id == 611 ||   // MENU REPAIR - CHANGE ORIENTATION
 	   id == 602 ) {  // MENU REPAIR - GLUE FACES
 #ifndef WNT
@@ -526,6 +526,7 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 703   ||  // MENU MEASURE - INERTIA
 	   id == 7041  ||  // MENU MEASURE - BOUNDING BOX
 	   id == 7042  ||  // MENU MEASURE - MIN DISTANCE
+	   id == 7043  ||  // MENU MEASURE - ANGLE
 	   id == 705   ||  // MENU MEASURE - TOLERANCE
 	   id == 706   ||  // MENU MEASURE - WHATIS
 	   id == 707   ||  // MENU MEASURE - CHECK
@@ -848,6 +849,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 703, "INERTIA" );
   createGeomAction( 7041, "BND_BOX" );
   createGeomAction( 7042, "MIN_DIST" );
+  createGeomAction( 7043, "MEASURE_ANGLE" );
 
   createGeomAction( 705, "TOLERANCE" );
   createGeomAction( 706, "WHAT_IS" );
@@ -990,8 +992,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 601, repairId, -1 );
   createMenu( 602, repairId, -1 );
   createMenu( 608, repairId, -1 );
-  createMenu( 609, repairId, -1 );
-  createMenu( 610, repairId, -1 );
+  //createMenu( 609, repairId, -1 );
+  //createMenu( 610, repairId, -1 );
   createMenu( 611, repairId, -1 );
 
   int measurId = createMenu( tr( "MEN_MEASURES" ), -1, -1, 10 );
@@ -1000,11 +1002,17 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(), measurId, -1 );
   createMenu( 702, measurId, -1 );
   createMenu( 703, measurId, -1 );
+  // NPAL16572: move "Check free boundaries" and "Check free faces" from "Repair" to "Measure"
+  createMenu( separator(), measurId, -1 );
+  createMenu( 609, measurId, -1 );
+  createMenu( 610, measurId, -1 );
+  // NPAL16572 END
   createMenu( separator(), measurId, -1 );
 
   int dimId = createMenu( tr( "MEN_DIMENSIONS" ), measurId, -1 );
   createMenu( 7041, dimId, -1 );
   createMenu( 7042, dimId, -1 );
+  createMenu( 7043, dimId, -1 );
   createMenu( separator(), measurId, -1 );
 
   createMenu( 705, measurId, -1 );

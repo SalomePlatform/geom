@@ -877,6 +877,22 @@ msgstr "Minimun Distance Between Two Objects"
 msgid "GEOM_MINDIST_OBJ"
 msgstr "Objects And Results"
 
+#: GeometryGUI_AngleDlg.cxx:82
+msgid "GEOM_MEASURE_ANGLE_TITLE"
+msgstr "Angle Between Two Objects"
+
+#: GeometryGUI_AngleDlg.cxx:86
+msgid "GEOM_MEASURE_ANGLE_ANGLE"
+msgstr "Angle"
+
+#: GeometryGUI_AngleDlg.cxx:90
+msgid "GEOM_MEASURE_ANGLE_OBJ"
+msgstr "Objects And Results"
+
+#: GeometryGUI_AngleDlg.cxx:93
+msgid "GEOM_MEASURE_ANGLE_IS"
+msgstr "Angle is :"
+
 #: GeometryGUI_EdgeDlg.cxx:47
 msgid "GEOM_EDGE_TITLE"
 msgstr "Create An Edge"
@@ -2713,6 +2729,15 @@ msgstr "Min distance"
 
 msgid "STB_MIN_DIST"
 msgstr "Compute minimum distance"
+
+msgid "TOP_MEASURE_ANGLE"
+msgstr "Compute angle"
+
+msgid "MEN_MEASURE_ANGLE"
+msgstr "Angle"
+
+msgid "STB_MEASURE_ANGLE"
+msgstr "Compute angle between two lines or linear edges"
 
 msgid "TOP_TOLERANCE"
 msgstr "Compute tolerance"

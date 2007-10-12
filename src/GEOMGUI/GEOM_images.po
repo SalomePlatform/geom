@@ -269,6 +269,10 @@ msgstr "whatis.png"
 msgid "ICON_DLG_MINDIST"
 msgstr "mindist.png"
 
+#AngleDlg
+msgid "ICON_DLG_ANGLE"
+msgstr "angle.png"
+
 #MirrorDlg (MZN: add icons for point and axe)
 msgid "ICON_DLG_MIRROR_POINT"
 msgstr "mirrorPoint.png"
@@ -736,6 +740,9 @@ msgstr "bounding.png"
 
 msgid "ICO_MIN_DIST"
 msgstr "mindist.png"
+
+msgid "ICO_MEASURE_ANGLE"
+msgstr "angle.png"
 
 msgid "ICO_TOLERANCE"
 msgstr "tolerance.png"
