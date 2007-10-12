@@ -43,12 +43,14 @@ dist_libMeasureGUI_la_SOURCES = \
 	MeasureGUI_1Sel12LineEdit_QTD.cxx \
 	MeasureGUI_1Sel1TextView_QTD.cxx \
 	MeasureGUI_2Sel1LineEdit_QTD.cxx \
+	MeasureGUI_2Sel4LineEdit_QTD.cxx \
 	MeasureGUI_Skeleton.cxx \
 	MeasureGUI_PropertiesDlg.cxx \
 	MeasureGUI_CenterMassDlg.cxx \
 	MeasureGUI_InertiaDlg.cxx \
 	MeasureGUI_BndBoxDlg.cxx \
 	MeasureGUI_DistanceDlg.cxx \
+	MeasureGUI_AngleDlg.cxx \
 	MeasureGUI_MaxToleranceDlg.cxx \
 	MeasureGUI_WhatisDlg.cxx \
 	MeasureGUI_CheckShapeDlg.cxx \
@@ -62,12 +64,14 @@ MOC_FILES = \
 	MeasureGUI_1Sel12LineEdit_QTD_moc.cxx \
 	MeasureGUI_1Sel1TextView_QTD_moc.cxx \
 	MeasureGUI_2Sel1LineEdit_QTD_moc.cxx \
+	MeasureGUI_2Sel4LineEdit_QTD_moc.cxx \
 	MeasureGUI_Skeleton_moc.cxx \
 	MeasureGUI_PropertiesDlg_moc.cxx \
 	MeasureGUI_CenterMassDlg_moc.cxx \
 	MeasureGUI_InertiaDlg_moc.cxx \
 	MeasureGUI_BndBoxDlg_moc.cxx \
 	MeasureGUI_DistanceDlg_moc.cxx \
+	MeasureGUI_AngleDlg_moc.cxx \
 	MeasureGUI_MaxToleranceDlg_moc.cxx \
 	MeasureGUI_WhatisDlg_moc.cxx \
 	MeasureGUI_CheckShapeDlg_moc.cxx \

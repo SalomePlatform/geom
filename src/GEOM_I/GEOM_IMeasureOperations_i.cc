@@ -17,6 +17,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include "GEOM_IMeasureOperations_i.hh"
@@ -392,8 +393,8 @@ CORBA::Double GEOM_IMeasureOperations_i::GetMinDistance
  *  PointCoordinates
  */
 //=============================================================================
-void GEOM_IMeasureOperations_i::PointCoordinates(
-  GEOM::GEOM_Object_ptr theShape, CORBA::Double& X, CORBA::Double& Y, CORBA::Double& Z )
+void GEOM_IMeasureOperations_i::PointCoordinates (GEOM::GEOM_Object_ptr theShape,
+						  CORBA::Double& X, CORBA::Double& Y, CORBA::Double& Z)
 
 {
   //Set a not done flag
@@ -411,4 +412,29 @@ void GEOM_IMeasureOperations_i::PointCoordinates(
 
   // Get shape parameters
   GetOperations()->PointCoordinates( aShape, X, Y, Z );
+}
+
+//=============================================================================
+/*!
+ *  GetAngle
+ */
+//=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::GetAngle (GEOM::GEOM_Object_ptr theShape1,
+						   GEOM::GEOM_Object_ptr theShape2)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape1 == NULL || theShape2 == NULL) return -1.0;
+
+  //Get the reference shapes
+  Handle(GEOM_Object) aShape1 = GetOperations()->GetEngine()->GetObject
+    (theShape1->GetStudyID(), theShape1->GetEntry());
+  Handle(GEOM_Object) aShape2 = GetOperations()->GetEngine()->GetObject
+    (theShape2->GetStudyID(), theShape2->GetEntry());
+
+  if (aShape1.IsNull() || aShape2.IsNull()) return -1.0;
+
+  // Get the angle
+  return GetOperations()->GetAngle(aShape1, aShape2);
 }

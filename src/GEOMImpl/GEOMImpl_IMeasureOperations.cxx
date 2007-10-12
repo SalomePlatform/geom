@@ -17,6 +17,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IMeasureOperations.hxx>
@@ -81,15 +82,17 @@
 #include <Geom_BSplineSurface.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_OffsetSurface.hxx>
+#include <Geom_Line.hxx>
 
 #include <gp_Pln.hxx>
+#include <gp_Lin.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
 /*!
- *   constructor:
+ *  Constructor
  */
 //=============================================================================
 GEOMImpl_IMeasureOperations::GEOMImpl_IMeasureOperations (GEOM_Engine* theEngine, int theDocID)
@@ -100,7 +103,7 @@ GEOMImpl_IMeasureOperations::GEOMImpl_IMeasureOperations (GEOM_Engine* theEngine
 
 //=============================================================================
 /*!
- *  destructor
+ *  Destructor
  */
 //=============================================================================
 GEOMImpl_IMeasureOperations::~GEOMImpl_IMeasureOperations()
@@ -1291,23 +1294,24 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
 }
 
 //=======================================================================
-//function : PointCoordinates
-//purpose  : Get coordinates of point
+/*!
+ *  Get coordinates of point
+ */
 //=======================================================================
-void GEOMImpl_IMeasureOperations::PointCoordinates( Handle(GEOM_Object) theShape,
-                        Standard_Real& theX, Standard_Real& theY, Standard_Real& theZ )
+void GEOMImpl_IMeasureOperations::PointCoordinates (Handle(GEOM_Object) theShape,
+                        Standard_Real& theX, Standard_Real& theY, Standard_Real& theZ)
 {
-  SetErrorCode( KO );
+  SetErrorCode(KO);
 
-  if ( theShape.IsNull() )
+  if (theShape.IsNull())
     return;
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-  if ( aRefShape.IsNull() )
+  if (aRefShape.IsNull())
     return;
 
   TopoDS_Shape aShape = aRefShape->GetValue();
-  if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_VERTEX )
+  if (aShape.IsNull() || aShape.ShapeType() != TopAbs_VERTEX)
   {
     SetErrorCode( "Shape must be a vertex" );
     return;
@@ -1321,13 +1325,82 @@ void GEOMImpl_IMeasureOperations::PointCoordinates( Handle(GEOM_Object) theShape
     theX = aPnt.X();
     theY = aPnt.Y();
     theZ = aPnt.Z();
-    SetErrorCode( OK );
+
+    SetErrorCode(OK);
   }
-  catch ( Standard_Failure )
+  catch (Standard_Failure)
   {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode( aFail->GetMessageString() );
   }
+}
+
+//=======================================================================
+/*!
+ *  Compute angle (in degrees) between two lines
+ */
+//=======================================================================
+Standard_Real GEOMImpl_IMeasureOperations::GetAngle (Handle(GEOM_Object) theLine1,
+                                                     Handle(GEOM_Object) theLine2)
+{
+  SetErrorCode(KO);
+
+  Standard_Real anAngle = -1.0;
+
+  if (theLine1.IsNull() || theLine2.IsNull())
+    return anAngle;
+
+  Handle(GEOM_Function) aRefLine1 = theLine1->GetLastFunction();
+  Handle(GEOM_Function) aRefLine2 = theLine2->GetLastFunction();
+  if (aRefLine1.IsNull() || aRefLine2.IsNull())
+    return anAngle;
+
+  TopoDS_Shape aLine1 = aRefLine1->GetValue();
+  TopoDS_Shape aLine2 = aRefLine2->GetValue();
+  if (aLine1.IsNull() || aLine2.IsNull() ||
+      aLine1.ShapeType() != TopAbs_EDGE ||
+      aLine2.ShapeType() != TopAbs_EDGE)
+  {
+    SetErrorCode("Two edges must be given");
+    return anAngle;
+  }
+
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    TopoDS_Edge E1 = TopoDS::Edge(aLine1);
+    TopoDS_Edge E2 = TopoDS::Edge(aLine2);
+
+    double fp,lp;
+    Handle(Geom_Curve) C1 = BRep_Tool::Curve(E1,fp,lp);
+    Handle(Geom_Curve) C2 = BRep_Tool::Curve(E2,fp,lp);
+
+    if (!C1->IsKind(STANDARD_TYPE(Geom_Line)) ||
+        !C2->IsKind(STANDARD_TYPE(Geom_Line)))
+    {
+      SetErrorCode("The edges must be linear");
+      return anAngle;
+    }
+
+    Handle(Geom_Line) L1 = Handle(Geom_Line)::DownCast(C1);
+    Handle(Geom_Line) L2 = Handle(Geom_Line)::DownCast(C2);
+
+    gp_Lin aLin1 = L1->Lin();
+    gp_Lin aLin2 = L2->Lin();
+
+    anAngle = aLin1.Angle(aLin2);
+    anAngle /= PI180; // convert radians into degrees
+
+    SetErrorCode(OK);
+  }
+  catch (Standard_Failure)
+  {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+  }
+
+  return anAngle;
 }
 
 //=======================================================================

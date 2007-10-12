@@ -34,5 +34,8 @@ uic -o MeasureGUI_1Sel12LineEdit_QTD.cxx -impl MeasureGUI_1Sel12LineEdit_QTD.h M
 uic -o MeasureGUI_2Sel1LineEdit_QTD.h MeasureGUI_2Sel1LineEdit_QTD.ui
 uic -o MeasureGUI_2Sel1LineEdit_QTD.cxx -impl MeasureGUI_2Sel1LineEdit_QTD.h MeasureGUI_2Sel1LineEdit_QTD.ui
 
+uic -o MeasureGUI_2Sel4LineEdit_QTD.h MeasureGUI_2Sel4LineEdit_QTD.ui
+uic -o MeasureGUI_2Sel4LineEdit_QTD.cxx -impl MeasureGUI_2Sel4LineEdit_QTD.h MeasureGUI_2Sel4LineEdit_QTD.ui
+
 #uic -o MeasureGUI_1Sel1TextView_QTD.h MeasureGUI_1Sel1TextView_QTD.ui
 #uic -o MeasureGUI_1Sel1TextView_QTD.cxx -impl MeasureGUI_1Sel1TextView_QTD.h MeasureGUI_1Sel1TextView_QTD.ui

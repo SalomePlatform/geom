@@ -122,8 +122,10 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                                 Standard_Real& X1, Standard_Real& Y1, Standard_Real& Z1,
                                                 Standard_Real& X2, Standard_Real& Y2, Standard_Real& Z2);
 
-  Standard_EXPORT void PointCoordinates(Handle(GEOM_Object) theShape,
-                                        Standard_Real& theX, Standard_Real& theY, Standard_Real& theZ );
+  Standard_EXPORT void PointCoordinates (Handle(GEOM_Object) theShape,
+                                         Standard_Real& theX, Standard_Real& theY, Standard_Real& theZ);
+
+  Standard_EXPORT Standard_Real GetAngle (Handle(GEOM_Object) theLine1, Handle(GEOM_Object) theLine2);
 
  public:
   Standard_EXPORT static gp_Ax3 GetPosition (const TopoDS_Shape& theShape);

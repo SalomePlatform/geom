@@ -27,7 +27,7 @@
 //  $Header$
 
 #include "MeasureGUI_DistanceDlg.h"
-#include "MeasureGUI_2Sel1LineEdit_QTD.h"
+#include "MeasureGUI_2Sel4LineEdit_QTD.h"
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
 #include "DlgRef_SpinBox.h"
@@ -78,12 +78,18 @@ MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg( GeometryGUI* GUI, QWidget* paren
   GroupConstructors->setTitle( tr( "GEOM_DISTANCE" ) );
   RadioButton1->setPixmap( image0 );
 
-  myGrp = new MeasureGUI_2Sel1LineEdit_QTD( this, "myGrp" );
+  myGrp = new MeasureGUI_2Sel4LineEdit_QTD( this, "myGrp" );
   myGrp->GroupBox1->setTitle( tr( "GEOM_MINDIST_OBJ" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT_I" ).arg( "1" ) );
   myGrp->TextLabel2->setText( tr( "GEOM_OBJECT_I" ).arg( "2" ) );
   myGrp->TextLabel3->setText( tr( "GEOM_LENGTH" ) );
+  myGrp->TextLabel4->setText( tr( "GEOM_DX" ) );
+  myGrp->TextLabel5->setText( tr( "GEOM_DY" ) );
+  myGrp->TextLabel6->setText( tr( "GEOM_DZ" ) );
   myGrp->LineEdit3->setReadOnly( TRUE );
+  myGrp->LineEdit4->setReadOnly( TRUE );
+  myGrp->LineEdit5->setReadOnly( TRUE );
+  myGrp->LineEdit6->setReadOnly( TRUE );
   myGrp->PushButton1->setPixmap( image1 );
   myGrp->PushButton2->setPixmap( image1 );
   myGrp->LineEdit1->setReadOnly( true );
@@ -152,7 +158,7 @@ void MeasureGUI_DistanceDlg::SelectionIntoArgument()
 
 //=================================================================================
 // function : processObject()
-// purpose  : Fill dialogs fileds in accordance with myObj and myObj2
+// purpose  : Fill dialogs fields in accordance with myObj and myObj2
 //=================================================================================
 void MeasureGUI_DistanceDlg::processObject()
 {
@@ -161,14 +167,23 @@ void MeasureGUI_DistanceDlg::processObject()
 
   gp_Pnt aPnt1, aPnt2;
   double aDist = 0.;
-  if ( getParameters( aDist, aPnt1, aPnt2 ) )
+  if (getParameters(aDist, aPnt1, aPnt2))
   {
     myGrp->LineEdit3->setText( DlgRef_SpinBox::PrintDoubleValue( aDist ) );
+
+    gp_XYZ aVec = aPnt2.XYZ() - aPnt1.XYZ();
+    myGrp->LineEdit4->setText( DlgRef_SpinBox::PrintDoubleValue( aVec.X() ) );
+    myGrp->LineEdit5->setText( DlgRef_SpinBox::PrintDoubleValue( aVec.Y() ) );
+    myGrp->LineEdit6->setText( DlgRef_SpinBox::PrintDoubleValue( aVec.Z() ) );
+
     redisplayPreview();
   }
   else
   {
     myGrp->LineEdit3->setText( "" );
+    myGrp->LineEdit4->setText( "" );
+    myGrp->LineEdit5->setText( "" );
+    myGrp->LineEdit6->setText( "" );
     erasePreview();
   }
 }

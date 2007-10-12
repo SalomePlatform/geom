@@ -1,13 +1,13 @@
 /****************************************************************************
-** Form implementation generated from reading ui file 'MeasureGUI_2Sel1LineEdit_QTD.ui'
+** Form implementation generated from reading ui file 'MeasureGUI_2Sel4LineEdit_QTD.ui'
 **
-** Created: Tue Oct 9 14:45:59 2007
+** Created: Tue Oct 9 14:32:18 2007
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
 
-#include "MeasureGUI_2Sel1LineEdit_QTD.h"
+#include "MeasureGUI_2Sel4LineEdit_QTD.h"
 
 #include <qvariant.h>
 #include <qpushbutton.h>
@@ -19,15 +19,15 @@
 #include <qwhatsthis.h>
 
 /*
- *  Constructs a MeasureGUI_2Sel1LineEdit_QTD as a child of 'parent', with the
+ *  Constructs a MeasureGUI_2Sel4LineEdit_QTD as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
  */
-MeasureGUI_2Sel1LineEdit_QTD::MeasureGUI_2Sel1LineEdit_QTD( QWidget* parent, const char* name, WFlags fl )
+MeasureGUI_2Sel4LineEdit_QTD::MeasureGUI_2Sel4LineEdit_QTD( QWidget* parent, const char* name, WFlags fl )
     : QWidget( parent, name, fl )
 {
     if ( !name )
-	setName( "MeasureGUI_2Sel1LineEdit_QTD" );
-    MeasureGUI_2Sel1LineEdit_QTDLayout = new QGridLayout( this, 1, 1, 0, 6, "MeasureGUI_2Sel1LineEdit_QTDLayout"); 
+	setName( "MeasureGUI_2Sel4LineEdit_QTD" );
+    MeasureGUI_2Sel4LineEdit_QTDLayout = new QGridLayout( this, 1, 1, 0, 6, "MeasureGUI_2Sel4LineEdit_QTDLayout"); 
 
     GroupBox1 = new QGroupBox( this, "GroupBox1" );
     GroupBox1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, GroupBox1->sizePolicy().hasHeightForWidth() ) );
@@ -75,21 +75,48 @@ MeasureGUI_2Sel1LineEdit_QTD::MeasureGUI_2Sel1LineEdit_QTD( QWidget* parent, con
     LineEdit3 = new QLineEdit( GroupBox1, "LineEdit3" );
 
     Layout1->addMultiCellWidget( LineEdit3, 2, 2, 1, 2 );
+
+    TextLabel4 = new QLabel( GroupBox1, "TextLabel4" );
+    TextLabel4->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel4->sizePolicy().hasHeightForWidth() ) );
+
+    Layout1->addWidget( TextLabel4, 3, 0 );
+
+    LineEdit4 = new QLineEdit( GroupBox1, "LineEdit4" );
+
+    Layout1->addMultiCellWidget( LineEdit4, 3, 3, 1, 2 );
+
+    TextLabel5 = new QLabel( GroupBox1, "TextLabel5" );
+    TextLabel5->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel5->sizePolicy().hasHeightForWidth() ) );
+
+    Layout1->addWidget( TextLabel5, 4, 0 );
+
+    LineEdit5 = new QLineEdit( GroupBox1, "LineEdit5" );
+
+    Layout1->addMultiCellWidget( LineEdit5, 4, 4, 1, 2 );
+
+    TextLabel6 = new QLabel( GroupBox1, "TextLabel6" );
+    TextLabel6->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel6->sizePolicy().hasHeightForWidth() ) );
+
+    Layout1->addWidget( TextLabel6, 5, 0 );
+
+    LineEdit6 = new QLineEdit( GroupBox1, "LineEdit6" );
+
+    Layout1->addMultiCellWidget( LineEdit6, 5, 5, 1, 2 );
     Spacer8 = new QSpacerItem( 0, 60, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    Layout1->addItem( Spacer8, 3, 2 );
+    Layout1->addItem( Spacer8, 6, 2 );
 
     GroupBox1Layout->addLayout( Layout1, 0, 0 );
 
-    MeasureGUI_2Sel1LineEdit_QTDLayout->addWidget( GroupBox1, 0, 0 );
+    MeasureGUI_2Sel4LineEdit_QTDLayout->addWidget( GroupBox1, 0, 0 );
     languageChange();
-    resize( QSize(129, 115).expandedTo(minimumSizeHint()) );
+    resize( QSize(129, 163).expandedTo(minimumSizeHint()) );
     clearWState( WState_Polished );
 }
 
 /*
  *  Destroys the object and frees any allocated resources
  */
-MeasureGUI_2Sel1LineEdit_QTD::~MeasureGUI_2Sel1LineEdit_QTD()
+MeasureGUI_2Sel4LineEdit_QTD::~MeasureGUI_2Sel4LineEdit_QTD()
 {
     // no need to delete child widgets, Qt does it all for us
 }
@@ -98,7 +125,7 @@ MeasureGUI_2Sel1LineEdit_QTD::~MeasureGUI_2Sel1LineEdit_QTD()
  *  Sets the strings of the subwidgets using the current
  *  language.
  */
-void MeasureGUI_2Sel1LineEdit_QTD::languageChange()
+void MeasureGUI_2Sel4LineEdit_QTD::languageChange()
 {
 }
 

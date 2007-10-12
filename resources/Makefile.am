@@ -35,6 +35,7 @@ SalomeApp.xml \
 GEOMDS_Resources \
 ImportExport \
 ShHealing \
+angle.png \
 arc.png \
 archimede.png \
 axisinertia.png \
