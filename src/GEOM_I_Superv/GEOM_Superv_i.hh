@@ -480,6 +480,9 @@ public:
   GEOM::GEOM_Object_ptr MakeCircleThreePnt (GEOM::GEOM_Object_ptr thePnt1,
 					    GEOM::GEOM_Object_ptr thePnt2,
 					    GEOM::GEOM_Object_ptr thePnt3);
+  GEOM::GEOM_Object_ptr MakeCircleCenter2Pnt (GEOM::GEOM_Object_ptr thePnt1,
+					      GEOM::GEOM_Object_ptr thePnt2,
+					      GEOM::GEOM_Object_ptr thePnt3);
   GEOM::GEOM_Object_ptr MakeEllipse (GEOM::GEOM_Object_ptr theCenter,
 				     GEOM::GEOM_Object_ptr theVector,
 				     CORBA::Double theRMajor, CORBA::Double theRMinor);
@@ -503,15 +506,31 @@ public:
 				       CORBA::Double theR);
   GEOM::GEOM_Object_ptr MakeFilletEdges (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
 					 GEOM::GEOM_List_ptr theEdges);
+  GEOM::GEOM_Object_ptr MakeFilletEdgesR1R2 (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR1,
+					     CORBA::Double theR2, GEOM::GEOM_List_ptr theEdges);
   GEOM::GEOM_Object_ptr MakeFilletFaces (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
 					 GEOM::GEOM_List_ptr theFaces);
+  GEOM::GEOM_Object_ptr MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR1,
+					     CORBA::Double theR2, GEOM::GEOM_List_ptr theFaces);
   GEOM::GEOM_Object_ptr MakeChamferAll (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD);
   GEOM::GEOM_Object_ptr MakeChamferEdge (GEOM::GEOM_Object_ptr theShape,
 					 CORBA::Double theD1, CORBA::Double theD2,
 					 CORBA::Long theFace1, CORBA::Long theFace2);
+  GEOM::GEOM_Object_ptr MakeChamferEdgeAD (GEOM::GEOM_Object_ptr theShape,
+ 					   CORBA::Double theD, CORBA::Double theAngle,
+					   CORBA::Long theFace1, CORBA::Long theFace2);
   GEOM::GEOM_Object_ptr MakeChamferFaces (GEOM::GEOM_Object_ptr theShape,
 					  CORBA::Double theD1, CORBA::Double theD2,
 					  GEOM::GEOM_List_ptr theFaces);
+  GEOM::GEOM_Object_ptr MakeChamferFacesAD (GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Double theD, CORBA::Double theAngle,
+					    GEOM::GEOM_List_ptr theFaces);
+  GEOM::GEOM_Object_ptr MakeChamferEdges (GEOM::GEOM_Object_ptr theShape,
+					  CORBA::Double theD1, CORBA::Double theD2,
+					  GEOM::GEOM_List_ptr theEdges);
+  GEOM::GEOM_Object_ptr MakeChamferEdgesAD (GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Double theD, CORBA::Double theAngle,
+   					    GEOM::GEOM_List_ptr theEdges);
   GEOM::GEOM_Object_ptr MakeArchimede (GEOM::GEOM_Object_ptr theShape,
                                        CORBA::Double theWeight,
 				       CORBA::Double theWaterDensity,

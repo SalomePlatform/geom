@@ -200,6 +200,77 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
 
 //=============================================================================
 /*!
+ *  MakeFilletEdges R1 R2
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdgesR1R2
+       (Handle(GEOM_Object) theShape, double theR1, double theR2, list<int> theEdges)
+{
+  SetErrorCode(KO);
+
+  //Add a new Fillet object
+  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GetDocID(), GEOM_FILLET);
+
+  //Add a new Fillet function
+  Handle(GEOM_Function) aFunction =
+    aFillet->AddFunction(GEOMImpl_FilletDriver::GetID(), FILLET_SHAPE_EDGES_2R);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_FilletDriver::GetID()) return NULL;
+
+  GEOMImpl_IFillet aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetShape(aRefShape);
+  aCI.SetR1(theR1);
+  aCI.SetR2(theR2);
+  int aLen = theEdges.size();
+  aCI.SetLength(aLen);
+
+  int ind = 1;
+  list<int>::iterator it = theEdges.begin();
+  for (; it != theEdges.end(); it++, ind++) {
+    aCI.SetEdge(ind, (*it));
+  }
+
+  //Compute the Fillet value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Fillet driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aFillet << " = geompy.MakeFilletR1R2(" << theShape
+    << ", " << theR1 << ", " <<theR2 << ", geompy.ShapeType[\"EDGE\"], [";
+
+  it = theEdges.begin();
+  pd << (*it++);
+  while (it != theEdges.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return aFillet;
+}
+
+
+//=============================================================================
+/*!
  *  MakeFilletFaces
  */
 //=============================================================================
@@ -255,6 +326,76 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
   GEOM::TPythonDump pd (aFunction);
   pd << aFillet << " = geompy.MakeFillet(" << theShape
     << ", " << theR << ", geompy.ShapeType[\"FACE\"], [";
+
+  it = theFaces.begin();
+  pd << (*it++);
+  while (it != theFaces.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return aFillet;
+}
+
+//=============================================================================
+/*!
+ *  MakeFilletFaces R1 R2
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFacesR1R2
+       (Handle(GEOM_Object) theShape, double theR1, double theR2, list<int> theFaces)
+{
+  SetErrorCode(KO);
+
+  //Add a new Fillet object
+  Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GetDocID(), GEOM_FILLET);
+
+  //Add a new Fillet function
+  Handle(GEOM_Function) aFunction =
+    aFillet->AddFunction(GEOMImpl_FilletDriver::GetID(), FILLET_SHAPE_FACES_2R);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_FilletDriver::GetID()) return NULL;
+
+  GEOMImpl_IFillet aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetShape(aRefShape);
+  aCI.SetR1(theR1);
+  aCI.SetR2(theR2);
+  int aLen = theFaces.size();
+  aCI.SetLength(aLen);
+
+  int ind = 1;
+  list<int>::iterator it = theFaces.begin();
+  for (; it != theFaces.end(); it++, ind++) {
+    aCI.SetFace(ind, (*it));
+  }
+
+  //Compute the Fillet value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Fillet driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aFillet << " = geompy.MakeFilletR1R2(" << theShape
+    << ", " << theR1 << ", " << theR2 << ", geompy.ShapeType[\"FACE\"], [";
 
   it = theFaces.begin();
   pd << (*it++);
@@ -379,6 +520,64 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdge
 
 //=============================================================================
 /*!
+ *  MakeChamferEdgeAD
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgeAD
+                            (Handle(GEOM_Object) theShape, double theD, double theAngle,
+                             int theFace1, int theFace2)
+{
+  SetErrorCode(KO);
+
+  //Add a new Chamfer object
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
+
+  //Add a new Chamfer function
+  Handle(GEOM_Function) aFunction =
+    aChamfer->AddFunction(GEOMImpl_ChamferDriver::GetID(), CHAMFER_SHAPE_EDGE_AD);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID()) return NULL;
+
+  GEOMImpl_IChamfer aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetShape(aRefShape);
+  aCI.SetD(theD);
+  aCI.SetAngle(theAngle);
+  aCI.SetFace1(theFace1);
+  aCI.SetFace2(theFace2);
+
+  //Compute the Chamfer value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Chamfer driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aChamfer
+    << " = geompy.MakeChamferEdgeAD(" << theShape << ", " << theD
+      << ", " << theAngle << ", " << theFace1 << ", " << theFace2 << ")";
+  cout << "ANGLE = " << theAngle << endl;
+  SetErrorCode(OK);
+  return aChamfer;
+}
+
+//=============================================================================
+/*!
  *  MakeChamferFaces
  */
 //=============================================================================
@@ -440,6 +639,221 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
   it = theFaces.begin();
   pd << (*it++);
   while (it != theFaces.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return aChamfer;
+}
+
+//=============================================================================
+/*!
+ *  MakeChamferFacesAD
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFacesAD
+                            (Handle(GEOM_Object) theShape, double theD, double theAngle,
+                             list<int> theFaces)
+{
+  SetErrorCode(KO);
+
+  //Add a new Chamfer object
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
+
+  //Add a new Chamfer function
+  Handle(GEOM_Function) aFunction =
+    aChamfer->AddFunction(GEOMImpl_ChamferDriver::GetID(), CHAMFER_SHAPE_FACES_AD);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID()) return NULL;
+
+  GEOMImpl_IChamfer aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetShape(aRefShape);
+  aCI.SetD(theD);
+  aCI.SetAngle(theAngle);
+  int aLen = theFaces.size();
+  aCI.SetLength(aLen);
+
+  int ind = 1;
+  list<int>::iterator it = theFaces.begin();
+  for (; it != theFaces.end(); it++, ind++) {
+    aCI.SetFace(ind, (*it));
+  }
+
+  //Compute the Chamfer value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Chamfer driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aChamfer << " = geompy.MakeChamferFacesAD(" << theShape
+    << ", " << theD << ", " << theAngle << ", [";
+
+  it = theFaces.begin();
+  pd << (*it++);
+  while (it != theFaces.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return aChamfer;
+}
+
+//=============================================================================
+/*!
+ *  MakeChamferEdges
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
+                            (Handle(GEOM_Object) theShape, double theD1, double theD2,
+                             list<int> theEdges)
+{
+  SetErrorCode(KO);
+
+  //Add a new Chamfer object
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
+
+  //Add a new Chamfer function
+  Handle(GEOM_Function) aFunction =
+    aChamfer->AddFunction(GEOMImpl_ChamferDriver::GetID(), CHAMFER_SHAPE_EDGES);
+  if (aFunction.IsNull()) { return NULL; cout << "Edges Function is NULL!!!" << endl; }
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID())
+	{ return NULL; cout << "Chamfer Driver is NULL!!!" << endl; }
+
+  GEOMImpl_IChamfer aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) { return NULL; cout << "Shape is NULL!!!" << endl; }
+
+  aCI.SetShape(aRefShape);
+  aCI.SetD1(theD1);
+  aCI.SetD2(theD2);
+  int aLen = theEdges.size();
+  aCI.SetLength(aLen);
+
+  int ind = 1;
+  list<int>::iterator it = theEdges.begin();
+  for (; it != theEdges.end(); it++, ind++) {
+    aCI.SetEdge(ind, (*it));
+  }
+
+  //Compute the Chamfer value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Chamfer driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aChamfer << " = geompy.MakeChamferEdges(" << theShape
+    << ", " << theD1 << ", " << theD2 << ", [";
+
+  it = theEdges.begin();
+  pd << (*it++);
+  while (it != theEdges.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return aChamfer;
+}
+
+//=============================================================================
+/*!
+ *  MakeChamferEdgesAD
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
+                            (Handle(GEOM_Object) theShape, double theD, double theAngle,
+                             list<int> theEdges)
+{
+  SetErrorCode(KO);
+
+  //Add a new Chamfer object
+  Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
+
+  //Add a new Chamfer function
+  Handle(GEOM_Function) aFunction =
+    aChamfer->AddFunction(GEOMImpl_ChamferDriver::GetID(), CHAMFER_SHAPE_EDGES_AD);
+  if (aFunction.IsNull()) { return NULL; cout << "Edges Function is NULL!!!" << endl; }
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID())
+	{ return NULL; cout << "Chamfer Driver is NULL!!!" << endl; }
+
+  GEOMImpl_IChamfer aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) { return NULL; cout << "Shape is NULL!!!" << endl; }
+
+  aCI.SetShape(aRefShape);
+  aCI.SetD(theD);
+  aCI.SetAngle(theAngle);
+  int aLen = theEdges.size();
+  aCI.SetLength(aLen);
+
+  int ind = 1;
+  list<int>::iterator it = theEdges.begin();
+  for (; it != theEdges.end(); it++, ind++) {
+    aCI.SetEdge(ind, (*it));
+  }
+
+  //Compute the Chamfer value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Chamfer driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aChamfer << " = geompy.MakeChamferEdgesAD(" << theShape
+    << ", " << theD << ", " << theAngle << ", [";
+
+  it = theEdges.begin();
+  pd << (*it++);
+  while (it != theEdges.end()) {
     pd << ", " << (*it++);
   }
   pd << "])";

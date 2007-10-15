@@ -322,6 +322,18 @@ msgstr "Center"
 msgid "GEOM_RADIUS"
 msgstr "Radius :"
 
+#Radius
+msgid "GEOM_CONSTANT_RADIUS"
+msgstr "Radius :"
+
+#Radius
+msgid "GEOM_R1"
+msgstr "R1 :"
+
+#Radius
+msgid "GEOM_R2"
+msgstr "R2 :"
+
 #Radius i
 msgid "GEOM_RADIUS_I"
 msgstr "Radius %1 :"

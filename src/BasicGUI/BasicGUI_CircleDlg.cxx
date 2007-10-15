@@ -36,6 +36,8 @@
 #include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
+#include "GEOM_Object.hxx"
+#include "GEOM_Engine.hxx"
 
 #include "utilities.h"
 
@@ -53,6 +55,7 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* par
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PV")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PNTS")));
+  QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_C2P")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_CIRCLE_TITLE"));
@@ -61,7 +64,7 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* par
   GroupConstructors->setTitle(tr("GEOM_CIRCLE"));
   RadioButton1->setPixmap(image0);
   RadioButton2->setPixmap(image2);
-  RadioButton3->close(TRUE);
+  RadioButton3->setPixmap(image3);
 
   GroupPntVecR = new DlgRef_2Sel1Spin(this, "GroupPntVecR");
   GroupPntVecR->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
@@ -88,8 +91,22 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* par
   Group3Pnts->LineEdit2->setReadOnly( true );
   Group3Pnts->LineEdit3->setReadOnly( true );
 
+  GroupCenter2Pnts = new DlgRef_3Sel_QTD(this, "GroupCenter2Pnts");
+  GroupCenter2Pnts->GroupBox1->setTitle(tr("GEOM_CENTER_2POINTS"));
+  GroupCenter2Pnts->TextLabel1->setText(tr("GEOM_CENTER_POINT"));
+  GroupCenter2Pnts->TextLabel2->setText(tr("GEOM_POINT1"));
+  GroupCenter2Pnts->TextLabel3->setText(tr("GEOM_POINT2"));
+  GroupCenter2Pnts->PushButton1->setPixmap(image1);
+  GroupCenter2Pnts->PushButton2->setPixmap(image1);
+  GroupCenter2Pnts->PushButton3->setPixmap(image1);
+
+  GroupCenter2Pnts->LineEdit1->setReadOnly( true );
+  GroupCenter2Pnts->LineEdit2->setReadOnly( true );
+  GroupCenter2Pnts->LineEdit3->setReadOnly( true );
+
   Layout1->addWidget( GroupPntVecR, 2, 0 );
   Layout1->addWidget( Group3Pnts, 2, 0 );
+  Layout1->addWidget( GroupCenter2Pnts, 2, 0 );
   /***************************************************************/
 
   setHelpFileName("circle.htm");
@@ -143,6 +160,10 @@ void BasicGUI_CircleDlg::Init()
   connect(Group3Pnts->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(Group3Pnts->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
+  connect(GroupCenter2Pnts->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupCenter2Pnts->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupCenter2Pnts->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+
   connect(GroupPntVecR->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPntVecR->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
@@ -155,6 +176,7 @@ void BasicGUI_CircleDlg::Init()
   initName( tr( "GEOM_CIRCLE" ) );
 
   Group3Pnts->hide();
+  GroupCenter2Pnts->hide();
   ConstructorsClicked( 0 );
 }
 
@@ -172,6 +194,7 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
     case 0:
       {
 	Group3Pnts->hide();
+	GroupCenter2Pnts->hide();
 	resize(0, 0);
 	GroupPntVecR->show();
 	
@@ -183,6 +206,7 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
   case 1:
     {
       GroupPntVecR->hide();
+      GroupCenter2Pnts->hide();
       resize( 0, 0 );
       Group3Pnts->show();
       
@@ -191,6 +215,19 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
       Group3Pnts->LineEdit2->setText("");
       Group3Pnts->LineEdit3->setText("");
       break;
+      }
+   case 2:
+      {
+	GroupPntVecR->hide();
+        Group3Pnts->hide();		
+        resize( 0, 0 );
+        GroupCenter2Pnts->show();
+
+	myEditCurrentArgument = GroupCenter2Pnts->LineEdit1;
+	GroupCenter2Pnts->LineEdit1->setText("");
+        GroupCenter2Pnts->LineEdit2->setText("");
+        GroupCenter2Pnts->LineEdit3->setText("");
+        break;
       }
   }
   
@@ -248,6 +285,9 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit1 ) myPoint4  = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit2 ) myPoint5  = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit3 ) myPoint6  = GEOM::GEOM_Object::_nil();
     return;
   }
 
@@ -255,15 +295,18 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
-  {  
+  { 
+ 
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     if      ( myEditCurrentArgument == GroupPntVecR->LineEdit1 ) myPoint  = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) myDir    = aSelectedObject;
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = aSelectedObject;
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = aSelectedObject;
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit1 ) myPoint4 = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit2 ) myPoint5 = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit3 ) myPoint6 = aSelectedObject;
   }
-
   displayPreview();
 }
 
@@ -281,6 +324,9 @@ void BasicGUI_CircleDlg::SetEditCurrentArgument()
   else if ( send == Group3Pnts->PushButton1 )   myEditCurrentArgument = Group3Pnts->LineEdit1;
   else if ( send == Group3Pnts->PushButton2 )   myEditCurrentArgument = Group3Pnts->LineEdit2;
   else if ( send == Group3Pnts->PushButton3 )   myEditCurrentArgument = Group3Pnts->LineEdit3;
+  else if ( send == GroupCenter2Pnts->PushButton1 )   myEditCurrentArgument = GroupCenter2Pnts->LineEdit1;
+  else if ( send == GroupCenter2Pnts->PushButton2 )   myEditCurrentArgument = GroupCenter2Pnts->LineEdit2;
+  else if ( send == GroupCenter2Pnts->PushButton3 )   myEditCurrentArgument = GroupCenter2Pnts->LineEdit3;
   
   myEditCurrentArgument->setFocus();
   
@@ -302,7 +348,10 @@ void BasicGUI_CircleDlg::LineEditReturnPressed()
        send == GroupPntVecR->LineEdit2 ||
        send == Group3Pnts->LineEdit1 ||
        send == Group3Pnts->LineEdit2 ||
-       send == Group3Pnts->LineEdit3 )
+       send == Group3Pnts->LineEdit3 ||
+       send == GroupCenter2Pnts->LineEdit1 ||
+       send == GroupCenter2Pnts->LineEdit2 ||
+       send == GroupCenter2Pnts->LineEdit3 )
   {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
@@ -362,7 +411,11 @@ void BasicGUI_CircleDlg::ValueChangedInSpinBox()
 //=================================================================================
 double BasicGUI_CircleDlg::getRadius() const
 {
-  return GroupPntVecR->SpinBox_DX->GetValue();
+  switch ( getConstructorId() )
+    {
+    case 0 :
+      return GroupPntVecR->SpinBox_DX->GetValue();
+    }
 }
 
 //=================================================================================
@@ -395,6 +448,9 @@ bool BasicGUI_CircleDlg::isValid( QString& msg )
   else if ( id == 1 )
     return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
       !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
+  else if ( id == 2 )
+      return !myPoint4->_is_nil() && !myPoint5->_is_nil() && !myPoint6->_is_nil() &&
+      !isEqual( myPoint4, myPoint5 ) && !isEqual( myPoint5, myPoint6 ) && !isEqual( myPoint4, myPoint6 );
   return false;
 }
 
@@ -410,6 +466,7 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
   
   switch ( getConstructorId() )
   {
+    cout << "constructior ID = " << getConstructorId() << endl;
   case 0 :
     anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCirclePntVecR( myPoint, myDir, getRadius() );
     res = true;
@@ -418,10 +475,15 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
     anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCircleThreePnt( myPoint1, myPoint2, myPoint3 );
     res = true;
     break;
+  case 2 :
+    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCircleCenter2Pnt( myPoint4, myPoint5, myPoint6 );
+    res = true;
+    break;
   }
   
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
+  else cout << "Execute Object is NULL!" << endl;
   
   return res;
 }

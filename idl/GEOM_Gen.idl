@@ -1801,7 +1801,15 @@ module GEOM
     GEOM_Object MakeCircleThreePnt (in GEOM_Object thePnt1,
 				    in GEOM_Object thePnt2,
 				    in GEOM_Object thePnt3);
-
+    /*!
+     *  Create a circle with given center, with a radius equals the distance from center to Point1
+     *  and on a plane defined by all of three points.
+     *  \param thePnt1,thePnt2,thePnt3 Points, defining the circle.
+     *  \return New GEOM_Object, containing the created circle.
+     */
+    GEOM_Object MakeCircleCenter2Pnt (in GEOM_Object thePnt1,
+				      in GEOM_Object thePnt2,
+				      in GEOM_Object thePnt3);
     /*!
      *  Create an ellipse with given center, normal vector and radiuses.
      *  \param thePnt Ellipse center.
@@ -1935,6 +1943,10 @@ module GEOM
     GEOM_Object MakeFilletEdges (in GEOM_Object theShape,
 				 in double      theR,
 				 in ListOfLong  theEdges);
+    GEOM_Object MakeFilletEdgesR1R2 (in GEOM_Object theShape,
+				     in double      theR1,
+				     in double      theR2,
+				     in ListOfLong  theEdges);
 
     /*!
      *  Perform a fillet on all edges of the specified faces of the given shape.
@@ -1948,6 +1960,10 @@ module GEOM
     GEOM_Object MakeFilletFaces (in GEOM_Object theShape,
 				 in double      theR,
 				 in ListOfLong  theFaces);
+    GEOM_Object MakeFilletFacesR1R2 (in GEOM_Object theShape,
+				     in double      theR1,
+				     in double      theR2,
+				     in ListOfLong  theFaces);
 
     /*!
      *  Perform a symmetric chamfer on all edges of the given shape.
@@ -1972,6 +1988,13 @@ module GEOM
     GEOM_Object MakeChamferEdge (in GEOM_Object theShape,
 				 in double theD1, in double theD2,
 				 in long theFace1, in long theFace2);
+    /*! 
+     *  The Same but with params theD = Chamfer Lenght
+     *  and theAngle = Chamfer Angle (Angle in radians)
+     */
+    GEOM_Object MakeChamferEdgeAD (in GEOM_Object theShape,
+				   in double theD, in double theAngle,
+				   in long theFace1, in long theFace2);
 
     /*!
      *  Perform a chamfer on all edges of the specified faces.
@@ -1989,6 +2012,32 @@ module GEOM
     GEOM_Object MakeChamferFaces (in GEOM_Object theShape,
 				  in double theD1, in double theD2,
 				  in ListOfLong theFaces);
+    /*! 
+     *  The Same but with params theD = Chamfer Lenght
+     *  and theAngle = Chamfer Angle (Angle in radians)
+     */
+    GEOM_Object MakeChamferFacesAD (in GEOM_Object theShape,
+				    in double theD, in double theAngle,
+				    in ListOfLong theFaces);
+
+   /*!
+    *  Perform a chamfer on edges,
+    *  with distance D1 on the first specified face (if several for one edge)
+    *  \param theShape Shape, to perform chamfer on.
+    *  \param theD1 theD2 Chamfer size
+    *  \param theEdges Sequence of edges of \a theShape.
+    *  \return New GEOM_Object, containing the result shape.
+    */
+    GEOM_Object MakeChamferEdges (in GEOM_Object theShape,
+				  in double theD1, in double theD2,
+				  in ListOfLong theEdges);
+    /*! 
+     *  The Same but with params theD = Chamfer Lenght
+     *  and theAngle = Chamfer Angle (Angle in radians)
+     */
+    GEOM_Object MakeChamferEdgesAD (in GEOM_Object theShape,
+				    in double theD, in double theAngle,
+				    in ListOfLong theEdges);
 
     /*!
      *  Perform an Archimde operation on the given shape with given parameters.

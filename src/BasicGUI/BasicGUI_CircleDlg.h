@@ -68,10 +68,12 @@ private:
     void   enterEvent(QEvent* e);
     double getRadius() const;
 
-    GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3;
+    GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3, myPoint4, myPoint5, myPoint6;
+    CORBA::Double myRadius;
 
     DlgRef_2Sel1Spin* GroupPntVecR;
     DlgRef_3Sel_QTD*  Group3Pnts;
+    DlgRef_3Sel_QTD*  GroupCenter2Pnts;
 
 private slots:
     void ClickOnOk();

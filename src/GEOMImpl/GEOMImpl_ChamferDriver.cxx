@@ -132,37 +132,50 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
           M.FindFromIndex(i).Extent() == 2)
         fill.Add(aD, E, F);
     }
-  } else if (aType == CHAMFER_SHAPE_EDGE) {
+  }else if (aType == CHAMFER_SHAPE_EDGE || aType == CHAMFER_SHAPE_EDGE_AD) {
     // chamfer on edges, common to two faces, with D1 on the first face
-    double aD1 = aCI.GetD1();
-    double aD2 = aCI.GetD2();
+   
     TopoDS_Shape aFace1, aFace2;
     if (GEOMImpl_ILocalOperations::GetSubShape(aShapeBase, aCI.GetFace1(), aFace1) &&
-        GEOMImpl_ILocalOperations::GetSubShape(aShapeBase, aCI.GetFace2(), aFace2)) {
-      TopoDS_Face F = TopoDS::Face(aFace1);
+        GEOMImpl_ILocalOperations::GetSubShape(aShapeBase, aCI.GetFace2(), aFace2))
+      {
+	TopoDS_Face F = TopoDS::Face(aFace1);
 
-      // fill map of edges of the second face
-      TopTools_MapOfShape aMap;
-      TopExp_Explorer Exp2 (aFace2, TopAbs_EDGE);
-      for (; Exp2.More(); Exp2.Next()) {
-        aMap.Add(Exp2.Current());
+	// fill map of edges of the second face
+	TopTools_MapOfShape aMap;
+	TopExp_Explorer Exp2 (aFace2, TopAbs_EDGE);
+	for (; Exp2.More(); Exp2.Next()) {
+	  aMap.Add(Exp2.Current());
+	}
+	
+	// find edges of the first face, common with the second face
+	TopExp_Explorer Exp (aFace1, TopAbs_EDGE);
+	for (; Exp.More(); Exp.Next()) {
+	  if (aMap.Contains(Exp.Current())) {
+	    TopoDS_Edge E = TopoDS::Edge(Exp.Current());
+	    if (!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
+	      {
+		if ( aType == CHAMFER_SHAPE_EDGE )
+		  {
+		    double aD1 = aCI.GetD1();
+		    double aD2 = aCI.GetD2();
+		    fill.Add(aD1, aD2, E, F);
+		  }
+		else
+		  {
+		    double aD = aCI.GetD();
+		    double anAngle = aCI.GetAngle();
+		    fill.AddDA(aD, anAngle, E, F);
+		  }
+	      }
+	  }
+	}
       }
-
-      // find edges of the first face, common with the second face
-      TopExp_Explorer Exp (aFace1, TopAbs_EDGE);
-      for (; Exp.More(); Exp.Next()) {
-        if (aMap.Contains(Exp.Current())) {
-          TopoDS_Edge E = TopoDS::Edge(Exp.Current());
-          if (!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
-            fill.Add(aD1, aD2, E, F);
-        }
-      }
-    }
-  } else if (aType == CHAMFER_SHAPE_FACES) {
+  }
+  else if (aType == CHAMFER_SHAPE_FACES || aType == CHAMFER_SHAPE_FACES_AD) {
     // chamfer on all edges of the selected faces, with D1 on the selected face
     // (on first selected face, if the edge belongs to two selected faces)
-    double aD1 = aCI.GetD1();
-    double aD2 = aCI.GetD2();
+
     int aLen = aCI.GetLength();
     int ind = 1;
     TopTools_MapOfShape aMap;
@@ -171,22 +184,67 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
     for (; ind <= aLen; ind++)
     {
       TopoDS_Shape aShapeFace;
-      if (GEOMImpl_ILocalOperations::GetSubShape
-          (aShapeBase, aCI.GetFace(ind), aShapeFace)) {
-        TopoDS_Face F = TopoDS::Face(aShapeFace);
-        TopExp_Explorer Exp (F, TopAbs_EDGE);
-        for (; Exp.More(); Exp.Next()) {
-          if (!aMap.Contains(Exp.Current())) {
-            TopoDS_Edge E = TopoDS::Edge(Exp.Current());
-            if (!BRepTools::IsReallyClosed(E, F) &&
-                !BRep_Tool::Degenerated(E) &&
-                M.FindFromKey(E).Extent() == 2)
-              fill.Add(aD1, aD2, E, F);
-          }
-        }
-      }
+      if (GEOMImpl_ILocalOperations::GetSubShape(aShapeBase, aCI.GetFace(ind), aShapeFace))
+	{
+	  TopoDS_Face F = TopoDS::Face(aShapeFace);
+	  TopExp_Explorer Exp (F, TopAbs_EDGE);
+	  for (; Exp.More(); Exp.Next()) {
+	    if (!aMap.Contains(Exp.Current()))
+	      {
+		TopoDS_Edge E = TopoDS::Edge(Exp.Current());
+		if (!BRepTools::IsReallyClosed(E, F) &&
+		    !BRep_Tool::Degenerated(E) &&
+		    M.FindFromKey(E).Extent() == 2)
+		  if (aType == CHAMFER_SHAPE_FACES)
+		    {
+		      double aD1 = aCI.GetD1();
+		      double aD2 = aCI.GetD2();
+		      fill.Add(aD1, aD2, E, F);
+		    }
+		  else
+		    {
+		      double aD = aCI.GetD();
+		      double anAngle = aCI.GetAngle();
+		      fill.AddDA(aD, anAngle, E, F);
+		    }
+	      }
+	  }
+	}
     }
-  } else {
+  }  
+else if (aType == CHAMFER_SHAPE_EDGES || aType == CHAMFER_SHAPE_EDGES_AD)
+  {
+    // chamfer on selected edges with lenght param D1 & D2.
+
+    int aLen = aCI.GetLength();
+    int ind = 1;
+    TopTools_MapOfShape aMap;
+    TopTools_IndexedDataMapOfShapeListOfShape M;
+    GEOMImpl_Block6Explorer::MapShapesAndAncestors(aShapeBase, TopAbs_EDGE, TopAbs_FACE, M);
+    for (; ind <= aLen; ind++)
+    {
+      TopoDS_Shape aShapeEdge;
+      if (GEOMImpl_ILocalOperations::GetSubShape(aShapeBase, aCI.GetEdge(ind), aShapeEdge))
+	{
+  	  TopoDS_Edge E = TopoDS::Edge(aShapeEdge);
+	  const TopTools_ListOfShape& aFacesList = M.FindFromKey(E);
+	  TopoDS_Face F = TopoDS::Face( aFacesList.First() );
+	  if (aType == CHAMFER_SHAPE_EDGES)
+	    {
+	      double aD1 = aCI.GetD1();
+	      double aD2 = aCI.GetD2();
+	      fill.Add(aD1, aD2, E, F);
+	    }
+	  else
+	    {
+	      double aD = aCI.GetD();
+	      double anAngle = aCI.GetAngle();
+	      fill.AddDA(aD, anAngle, E, F);
+	    }
+	} 
+    } 
+  }
+  else {
   }
 
   fill.Build();

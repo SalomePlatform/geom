@@ -249,6 +249,12 @@ def MakeCircleThreePnt(p1,p2,p3):
       print "MakeCircleThreePnt : ", CurvesOp.GetErrorCode()
     return anObj
 
+def MakeCircleCenter2Pnt(p1,p2,p3):
+    anObj = CurvesOp.MakeCircleCenter2Pnt(p1,p2,p3)
+    if CurvesOp.IsDone() == 0:
+      print "MakeCircleCenter2Pnt : ", CurvesOp.GetErrorCode()
+    return anObj
+
 def MakeEllipse(p1,v1,radiusMaj,radiusMin):
     anObj = CurvesOp.MakeEllipse(p1,v1,radiusMaj, radiusMin)
     if CurvesOp.IsDone() == 0:
@@ -852,6 +858,16 @@ def MakeFillet(aShape,radius,aShapeType,ListShape):
       print "MakeFillet : ", LocalOp.GetErrorCode()
     return anObj
 
+def MakeFilletR1R2(aShape,radius1,radius2,aShapeType,ListShape):
+    anObj = None
+    if aShapeType == ShapeType["EDGE"]:
+        anObj = LocalOp.MakeFilletEdgesR1R2(aShape,radius1,radius2,ListShape)
+    else:
+        anObj = LocalOp.MakeFilletFacesR1R2(aShape,radius1,radius2,ListShape)
+    if LocalOp.IsDone() == 0:
+      print "MakeFilletR1R2 : ", LocalOp.GetErrorCode()
+    return anObj
+
 def MakeChamferAll(aShape,d):
     anObj = LocalOp.MakeChamferAll(aShape,d)
     if LocalOp.IsDone() == 0:
@@ -864,10 +880,34 @@ def MakeChamferEdge(aShape,d1,d2,face1,face2):
       print "MakeChamferEdge : ", LocalOp.GetErrorCode()
     return anObj
 
+def MakeChamferEdgeAD(aShape,d,angle,face1,face2):
+    anObj = LocalOp.MakeChamferEdgeAD(aShape,d,angle,face1,face2)
+    if LocalOp.IsDone() == 0:
+      print "MakeChamferEdgeAD : ", LocalOp.GetErrorCode()
+    return anObj
+
 def MakeChamferFaces(aShape,d1,d2,ListShape):
     anObj = LocalOp.MakeChamferFaces(aShape,d1,d2,ListShape)
     if LocalOp.IsDone() == 0:
       print "MakeChamferFaces : ", LocalOp.GetErrorCode()
+    return anObj
+
+def MakeChamferFacesAD(aShape,d,angle,ListShape):
+    anObj = LocalOp.MakeChamferFacesAD(aShape,d,angle,ListShape)
+    if LocalOp.IsDone() == 0:
+      print "MakeChamferFacesAD : ", LocalOp.GetErrorCode()
+    return anObj
+
+def MakeChamferEdges(aShape,d1,d2,ListShape):
+    anObj = LocalOp.MakeChamferEdges(aShape,d1,d2,ListShape)
+    if LocalOp.IsDone() == 0:
+      print "MakeChamferEdges : ", LocalOp.GetErrorCode()
+    return anObj
+
+def MakeChamferEdgesAD(aShape,d,angle,ListShape):
+    anObj = LocalOp.MakeChamferEdgesAD(aShape,d,angle,ListShape)
+    if LocalOp.IsDone() == 0:
+      print "MakeChamferEdgesAD : ", LocalOp.GetErrorCode()
     return anObj
 
 def MakeChamfer(aShape,d1,d2,aShapeType,ListShape):

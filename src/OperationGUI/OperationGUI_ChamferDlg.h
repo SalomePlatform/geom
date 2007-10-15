@@ -41,9 +41,14 @@ class OperationGUI_ChamferDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
-  enum { MainObj1, MainObj2, Face1, Face2, MainObj3, Faces };
-  enum { SpinBox1, SpinBox21, SpinBox22, SpinBox31, SpinBox32 };
-
+  enum { MainObj1, MainObj2, Face1, Face2, MainObj3, Faces, MainObj4, Edges};
+  enum { SpinBox1,
+	 SpinBox21, SpinBox22, SpinBox23, SpinBox24, 
+	 SpinBox31, SpinBox32, SpinBox33, SpinBox34,
+	 SpinBox41, SpinBox42, SpinBox43, SpinBox44  };
+  enum { RadioButton21, RadioButton22,
+         RadioButton31, RadioButton32,
+         RadioButton41, RadioButton42 };
 public:
   OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QWidget* parent);
   virtual ~OperationGUI_ChamferDlg();
@@ -59,6 +64,7 @@ private slots:
     bool                                ClickOnApply();
     void                                ActivateThisDialog();
     void                                LineEditReturnPressed();
+    void                                RadioButtonPressed();
     void                                SelectionIntoArgument();
     void                                SetEditCurrentArgument();
     void                                ValueChangedInSpinBox( double newValue );
@@ -79,14 +85,17 @@ private:
     GEOM::GEOM_Object_var               myShape; 
     QMap< int, int >                    myFace;  // indexes of faces from second tab ( Face1,2 )
     TColStd_IndexedMapOfInteger         myFaces; // indexes of faces from first tab ( Faces )
+    TColStd_IndexedMapOfInteger         myEdges; // indexes of edges from fourth tab (Edges)
     
     QFrame*                             myGrp1;
     QFrame*                             myGrp2;
     QFrame*                             myGrp3;
+    QFrame*                             myGrp4;
 
     QMap< int, QPushButton* >           mySelBtn;
     QMap< int, QLineEdit* >             mySelName;
     QMap< int, DlgRef_SpinBox* >        mySpinBox;
+    QMap< int, QRadioButton* >          myRadioButton;
 };
 
 #endif // DIALOGBOX_CHAMFER_H

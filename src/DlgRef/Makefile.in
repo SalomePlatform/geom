@@ -77,6 +77,8 @@ LIB_SRC = 	DlgRef_Skeleton_QTD.cxx \
 		DlgRef_2Sel1Spin.cxx \
 		DlgRef_2Sel2Spin.cxx \
 		DlgRef_2Sel3Spin.cxx \
+		DlgRef_2Sel3Spin2Rb_QTD.cxx \
+		DlgRef_2Sel3Spin2Rb.cxx \
 		DlgRef_1Sel1Spin1Check.cxx \
 		DlgRef_2Sel1Spin2Check.cxx \
 		DlgRef_2Sel2Spin1Check.cxx \
@@ -108,6 +110,8 @@ LIB_MOC = \
 		DlgRef_1Sel5Spin_QTD.h \
 		DlgRef_2Sel1Spin_QTD.h \
 		DlgRef_2Sel2Spin_QTD.h \
+		DlgRef_2Sel3Spin2Rb_QTD.h \
+		DlgRef_2Sel3Spin2Rb.h \
 		DlgRef_2Sel3Spin_QTD.h \
 		DlgRef_1Sel1Spin1Check_QTD.h \
 		DlgRef_2Sel1Spin2Check_QTD.h \
