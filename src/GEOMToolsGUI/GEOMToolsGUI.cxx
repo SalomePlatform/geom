@@ -759,7 +759,9 @@ void GEOMToolsGUI::deactivate()
 //=====================================================================================
 extern "C"
 {
-GEOMTOOLSGUI_EXPORT
+#ifdef WIN32
+  __declspec( dllexport )
+#endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return new GEOMToolsGUI( parent );

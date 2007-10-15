@@ -28,30 +28,21 @@
 
 #include "GEOMGUI.h"
 
-#if defined WIN32
-#  if defined DISPLAYGUI_EXPORTS
-#    define DISPLAYGUI_EXPORT __declspec( dllexport )
-#  else
-#    define DISPLAYGUI_EXPORT __declspec( dllimport )
-#  endif
-#else
-#  define DISPLAYGUI_EXPORT
-#endif
-
 //=================================================================================
-// class    : GEOMBase_Display
+// class    : DisplayGUI
 // purpose  :
 //=================================================================================
-//class QAD_ViewFrame;
+
 class SUIT_ViewWindow;
-class DISPLAYGUI_EXPORT DisplayGUI : public GEOMGUI
+
+class DisplayGUI : public GEOMGUI
 {
 public:
-  DisplayGUI( GeometryGUI* parent );
+  DisplayGUI( GeometryGUI* );
   ~DisplayGUI();
 
   // Dispatch menu command
-  bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
+  bool OnGUIEvent( int, SUIT_Desktop* );
 
   // Display all GEOM objects
   void DisplayAll();
@@ -66,16 +57,16 @@ public:
 
   // DISPLAY MODE methods : 0 - wireframe, 1 - shading
   // Set display mode for the viewer (current viewer if <viewWindow> - 0 )
-  void SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow = 0 );
+  void SetDisplayMode( const int, SUIT_ViewWindow* = 0 );
   // Get display mode of the viewer (current viewer if <viewWindow> - 0 )
-  int  GetDisplayMode( SUIT_ViewWindow* viewWindow = 0 );
+  int  GetDisplayMode( SUIT_ViewWindow* = 0 );
   // Invert display mode ( shadin <-> wireframe ) for the viewer 
   // (current viewer if <viewWindow> = 0 )
-  void InvertDisplayMode( SUIT_ViewWindow* viewWindow = 0 );
+  void InvertDisplayMode( SUIT_ViewWindow* = 0 );
 
   // Set display mode for selected objects in the viewer given
   // (current viewer if <viewWindow> = 0 )
-  void ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindo = 0 );
+  void ChangeDisplayMode( const int, SUIT_ViewWindow* = 0 );
 };
 
 #endif // DISPLAYGUI_H

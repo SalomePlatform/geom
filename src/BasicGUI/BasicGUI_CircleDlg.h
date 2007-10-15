@@ -26,8 +26,6 @@
 #ifndef BASICGUI_CIRCLEDLG_H
 #define BASICGUI_CIRCLEDLG_H
 
-#include "GEOM_BasicGUI.hxx"
-
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_3Sel;
@@ -37,7 +35,7 @@ class DlgRef_2Sel1Spin;
 // class    : BasicGUI_CircleDlg
 // purpose  :
 //=================================================================================
-class BASICGUI_EXPORT BasicGUI_CircleDlg : public GEOMBase_Skeleton
+class BasicGUI_CircleDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 

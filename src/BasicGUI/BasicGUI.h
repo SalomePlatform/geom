@@ -26,8 +26,6 @@
 #ifndef BASICGUI_H
 #define BASICGUI_H
 
-#include "GEOM_BasicGUI.hxx"
-
 #include <GEOMGUI.h>
 #include <V3d_View.hxx>
 
@@ -35,14 +33,14 @@
 // class    : BasicGUI
 // purpose  :
 //=================================================================================
-class BASICGUI_EXPORT BasicGUI : public GEOMGUI
+class BasicGUI : public GEOMGUI
 {
 public:
   BasicGUI( GeometryGUI* );
   ~BasicGUI();
 
-  bool OnGUIEvent( int, SUIT_Desktop* );
-  bool OnMousePress( QMouseEvent*, SUIT_Desktop*, SUIT_ViewWindow* );
+  bool   OnGUIEvent( int, SUIT_Desktop* );
+  bool   OnMousePress( QMouseEvent*, SUIT_Desktop*, SUIT_ViewWindow* );
 
   gp_Pnt ConvertClickToPoint( int, int, Handle(V3d_View) );
 };

@@ -26,8 +26,6 @@
 #ifndef BASICGUI_LINEDLG_H
 #define BASICGUI_LINEDLG_H
 
-#include "GEOM_BasicGUI.hxx"
-
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_2Sel;
@@ -36,7 +34,7 @@ class DlgRef_2Sel;
 // class    : BasicGUI_LineDlg
 // purpose  :
 //=================================================================================
-class BASICGUI_EXPORT BasicGUI_LineDlg : public GEOMBase_Skeleton
+class BasicGUI_LineDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
 

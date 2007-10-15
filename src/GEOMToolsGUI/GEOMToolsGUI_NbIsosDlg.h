@@ -26,8 +26,6 @@
 #ifndef GEOMTOOLSGUI_NBISOSDLG_H
 #define GEOMTOOLSGUI_NBISOSDLG_H
 
-#include "GEOM_ToolsGUI.hxx"
-
 #include <QDialog>
 
 class QSpinBox;
@@ -36,30 +34,30 @@ class QSpinBox;
 // class    : GEOMToolsGUI_NbIsosDlg
 // purpose  :
 //=================================================================================
-class GEOMTOOLSGUI_EXPORT GEOMToolsGUI_NbIsosDlg : public QDialog
+class GEOMToolsGUI_NbIsosDlg : public QDialog
 { 
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    GEOMToolsGUI_NbIsosDlg( QWidget* parent );
-    ~GEOMToolsGUI_NbIsosDlg();
+  GEOMToolsGUI_NbIsosDlg( QWidget* );
+  ~GEOMToolsGUI_NbIsosDlg();
     
-    int       getU() const;
-    int       getV() const;
-
-    void      setU( const int );
-    void      setV( const int );
-
+  int       getU() const;
+  int       getV() const;
+  
+  void      setU( const int );
+  void      setV( const int );
+  
 private slots:
-    void      ClickOnHelp();
+  void      ClickOnHelp();
 
 private:
-    void      keyPressEvent(QKeyEvent*);
+ void       keyPressEvent( QKeyEvent* );
 
 private:
-    QSpinBox* SpinBoxU;
-    QSpinBox* SpinBoxV;
-    QString   myHelpFileName;
+ QSpinBox*  SpinBoxU;
+ QSpinBox*  SpinBoxV;
+ QString    myHelpFileName;
 };
 
 #endif // GEOMTOOLSGUI_NBISOSDLG_H

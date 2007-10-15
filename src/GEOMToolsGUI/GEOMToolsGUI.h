@@ -26,8 +26,6 @@
 #ifndef GEOMTOOLSGUI_H
 #define GEOMTOOLSGUI_H
 
-#include "GEOM_ToolsGUI.hxx"
-
 #include <GEOMGUI.h>
 
 #include <SALOMEDSClient.hxx>
@@ -42,51 +40,51 @@ class SALOME_ListIO;
 // class    : GEOMToolsGUI
 // purpose  :
 //=================================================================================
-class GEOMTOOLSGUI_EXPORT GEOMToolsGUI : public GEOMGUI
+class GEOMToolsGUI : public GEOMGUI
 {
-public :
+public:
   GEOMToolsGUI( GeometryGUI* ); // hide constructor to avoid direct creation
   ~GEOMToolsGUI();
 
-  bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
+  bool         OnGUIEvent( int, SUIT_Desktop* );
   virtual void deactivate();
 
 private:
   // Import and export topology methods
-  bool Import();
-  bool Export();
+  bool         Import();
+  bool         Export();
 
-  void OnEditCopy();
-  void OnEditDelete();
+  void         OnEditCopy();
+  void         OnEditDelete();
 
-  void OnSettingsColor();
-  void OnSettingsIsos();
-  void OnSettingsStep();
-  void OnRename();
-  void OnCheckGeometry();
+  void         OnSettingsColor();
+  void         OnSettingsIsos();
+  void         OnSettingsStep();
+  void         OnRename();
+  void         OnCheckGeometry();
 
   // Popup commands
-  void OnColor();
-  void OnTransparency();
-  void OnNbIsos();
-  void OnOpen();
-  void OnSelectOnly(int mode);
+  void         OnColor();
+  void         OnTransparency();
+  void         OnNbIsos();
+  void         OnOpen();
+  void         OnSelectOnly( int );
   
   // returns name of Module (Component) of given objects (usually selected objects)
   // if objects belong to different Components, a NULL string is returned.
-  QString getParentComponent( _PTR( Study ), const SALOME_ListIO& );
-  QString getParentComponent( _PTR(SObject) );
+  QString      getParentComponent( _PTR(Study), const SALOME_ListIO& );
+  QString      getParentComponent( _PTR(SObject) );
 
   // Recursive deletion of object with children
-  void RemoveObjectWithChildren(_PTR(SObject) obj,
-				_PTR(Study) aStudy,
-				QList<SALOME_View*> views,
-				GEOM_Displayer* disp);
-
+  void         RemoveObjectWithChildren( _PTR(SObject),
+					 _PTR(Study),
+					 QList<SALOME_View*>,
+					 GEOM_Displayer* );
+  
   //checks if the object passed as the first argument depends on the second arguments
-  bool CheckSubObjectInUse(_PTR(SObject) checkobj,
-			   _PTR(SObject) remobj,
-			   _PTR(Study) aStudy);
+  bool         CheckSubObjectInUse( _PTR(SObject),
+				    _PTR(SObject),
+				    _PTR(Study) );
     
 };
 

@@ -26,8 +26,6 @@
 #ifndef BASICGUI_WORKINGPLANEDLG_H
 #define BASICGUI_WORKINGPLANEDLG_H
 
-#include "GEOM_BasicGUI.hxx"
-
 #include <GEOMBase_Skeleton.h>
 
 #include <gp_Ax3.hxx>
@@ -41,7 +39,7 @@ class QCheckBox;
 // class    : BasicGUI_WorkingPlaneDlg
 // purpose  :
 //=================================================================================
-class BASICGUI_EXPORT BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
+class BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
 

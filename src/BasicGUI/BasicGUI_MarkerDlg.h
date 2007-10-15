@@ -26,8 +26,6 @@
 #ifndef BASICGUI_MARKERDLG_H
 #define BASICGUI_MARKERDLG_H
 
-#include "GEOM_BasicGUI.hxx"
-
 #include <GEOMBase_Skeleton.h>
 
 #include <QMap>
@@ -37,7 +35,7 @@ class DlgRef_3Sel;
 class QDoubleSpinBox;
 class QFrame;
 
-class BASICGUI_EXPORT BasicGUI_MarkerDlg : public GEOMBase_Skeleton
+class BasicGUI_MarkerDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 

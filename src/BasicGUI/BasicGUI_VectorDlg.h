@@ -26,8 +26,6 @@
 #ifndef BASICGUI_VECTORDLG_H
 #define BASICGUI_VECTORDLG_H
 
-#include "GEOM_BasicGUI.hxx"
-
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_2Sel;
@@ -37,7 +35,7 @@ class DlgRef_3Spin1Check;
 // class    : BasicGUI_VectorDlg
 // purpose  :
 //=================================================================================
-class BASICGUI_EXPORT BasicGUI_VectorDlg : public GEOMBase_Skeleton
+class BasicGUI_VectorDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
 

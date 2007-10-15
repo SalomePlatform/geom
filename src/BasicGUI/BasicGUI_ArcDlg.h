@@ -26,8 +26,6 @@
 #ifndef BASICGUI_ARCDLG_H
 #define BASICGUI_ARCDLG_H
 
-#include "GEOM_BasicGUI.hxx"
-
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_3Sel;
@@ -37,7 +35,7 @@ class DlgRef_3Sel1Check;
 // class    : BasicGUI_ArcDlg
 // purpose  : 
 //=================================================================================
-class BASICGUI_EXPORT BasicGUI_ArcDlg : public GEOMBase_Skeleton
+class BasicGUI_ArcDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
 

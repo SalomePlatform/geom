@@ -25,8 +25,6 @@
 #ifndef BASICGUI_ELLIPSEDLG_H
 #define BASICGUI_ELLIPSEDLG_H
 
-#include "GEOM_BasicGUI.hxx"
-
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_2Sel2Spin;
@@ -35,7 +33,7 @@ class DlgRef_2Sel2Spin;
 // class    : BasicGUI_EllipseDlg
 // purpose  :
 //=================================================================================
-class BASICGUI_EXPORT BasicGUI_EllipseDlg : public GEOMBase_Skeleton
+class BasicGUI_EllipseDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
 

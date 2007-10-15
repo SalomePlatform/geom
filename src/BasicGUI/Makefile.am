@@ -1,5 +1,3 @@
-# GEOM BASICGUI : 
-#
 # Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 # CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 # 
@@ -19,48 +17,59 @@
 # 
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-# File   : Makefile.in
-# Author : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
+# File    : Makefile.am
+# Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
+# Package : BasicGUI
 #
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS = BasicGUI_PointDlg.h \
-			GEOM_BasicGUI.hxx
+salomeinclude_HEADERS = 
 
 # Libraries targets
 lib_LTLIBRARIES = libBasicGUI.la
 
 # Sources files
-dist_libBasicGUI_la_SOURCES = \
-	BasicGUI.cxx \
-	BasicGUI_PointDlg.cxx \
-	BasicGUI_LineDlg.cxx \
-	BasicGUI_CircleDlg.cxx \
-	BasicGUI_EllipseDlg.cxx \
-	BasicGUI_ArcDlg.cxx \
-	BasicGUI_VectorDlg.cxx \
-	BasicGUI_PlaneDlg.cxx \
-	BasicGUI_WorkingPlaneDlg.cxx \
-	BasicGUI_CurveDlg.cxx \
+dist_libBasicGUI_la_SOURCES =		\
+	BasicGUI.h			\
+	BasicGUI_ArcDlg.h		\
+	BasicGUI_CircleDlg.h		\
+	BasicGUI_CurveDlg.h		\
+	BasicGUI_EllipseDlg.h		\
+	BasicGUI_LineDlg.h		\
+	BasicGUI_MarkerDlg.h		\
+	BasicGUI_PlaneDlg.h		\
+	BasicGUI_PointDlg.h		\
+	BasicGUI_VectorDlg.h		\
+	BasicGUI_WorkingPlaneDlg.h	\
+					\
+	BasicGUI.cxx			\
+	BasicGUI_PointDlg.cxx		\
+	BasicGUI_LineDlg.cxx		\
+	BasicGUI_CircleDlg.cxx		\
+	BasicGUI_EllipseDlg.cxx		\
+	BasicGUI_ArcDlg.cxx		\
+	BasicGUI_VectorDlg.cxx		\
+	BasicGUI_PlaneDlg.cxx		\
+	BasicGUI_WorkingPlaneDlg.cxx	\
+	BasicGUI_CurveDlg.cxx		\
 	BasicGUI_MarkerDlg.cxx
 
-MOC_FILES = \
-	BasicGUI_PointDlg_moc.cxx \
-	BasicGUI_LineDlg_moc.cxx \
-	BasicGUI_CircleDlg_moc.cxx \
-	BasicGUI_EllipseDlg_moc.cxx \
-	BasicGUI_ArcDlg_moc.cxx \
-	BasicGUI_VectorDlg_moc.cxx \
-	BasicGUI_PlaneDlg_moc.cxx \
-	BasicGUI_WorkingPlaneDlg_moc.cxx \
-	BasicGUI_CurveDlg_moc.cxx \
+MOC_FILES =					\
+	BasicGUI_PointDlg_moc.cxx		\
+	BasicGUI_LineDlg_moc.cxx		\
+	BasicGUI_CircleDlg_moc.cxx		\
+	BasicGUI_EllipseDlg_moc.cxx		\
+	BasicGUI_ArcDlg_moc.cxx			\
+	BasicGUI_VectorDlg_moc.cxx		\
+	BasicGUI_PlaneDlg_moc.cxx		\
+	BasicGUI_WorkingPlaneDlg_moc.cxx	\
+	BasicGUI_CurveDlg_moc.cxx		\
 	BasicGUI_MarkerDlg_moc.cxx
 
-nodist_libBasicGUI_la_SOURCES= \
+nodist_libBasicGUI_la_SOURCES = \
 	$(MOC_FILES)
-
 
 # LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Exception.idl SALOME_Component.idl
 
@@ -68,30 +77,30 @@ nodist_libBasicGUI_la_SOURCES= \
 
 # additionnal information to compil and link file
 
-libBasicGUI_la_CPPFLAGS = \
-	$(QT_INCLUDES) \
-	$(VTK_INCLUDES) \
-	$(CAS_CPPFLAGS) \
-	$(PYTHON_INCLUDES) \
-	$(BOOST_CPPFLAGS) \
-	$(KERNEL_CXXFLAGS) \
-	$(GUI_CXXFLAGS) \
-	$(CORBA_CXXFLAGS) \
-	$(CORBA_INCLUDES) \
-	-I$(srcdir)/../OBJECT \
-	-I$(srcdir)/../DlgRef \
-	-I$(srcdir)/../GEOMGUI \
-	-I$(srcdir)/../GEOMFiltersSelection \
-	-I$(srcdir)/../GEOMBase \
-	-I$(srcdir)/../GEOMImpl \
-	-I$(srcdir)/../GEOMClient \
-	-I$(top_builddir)/src/DlgRef \
-	-I$(top_builddir)/idl \
+libBasicGUI_la_CPPFLAGS =			\
+	$(QT_INCLUDES)				\
+	$(VTK_INCLUDES)				\
+	$(CAS_CPPFLAGS)				\
+	$(PYTHON_INCLUDES)			\
+	$(BOOST_CPPFLAGS)			\
+	$(KERNEL_CXXFLAGS)			\
+	$(GUI_CXXFLAGS)				\
+	$(CORBA_CXXFLAGS)			\
+	$(CORBA_INCLUDES)			\
+	-I$(srcdir)/../OBJECT			\
+	-I$(srcdir)/../DlgRef			\
+	-I$(srcdir)/../GEOMGUI			\
+	-I$(srcdir)/../GEOMFiltersSelection	\
+	-I$(srcdir)/../GEOMBase			\
+	-I$(srcdir)/../GEOMImpl			\
+	-I$(srcdir)/../GEOMClient		\
+	-I$(top_builddir)/src/DlgRef		\
+	-I$(top_builddir)/idl			\
 	-I$(top_builddir)/salome_adm/unix
 
 
-libBasicGUI_la_LDFLAGS  = \
-	../GEOMFiltersSelection/libGEOMFiltersSelection.la \
-	../GEOMBase/libGEOMBase.la \
-	../GEOMGUI/libGEOM.la \
+libBasicGUI_la_LDFLAGS  =					\
+	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
+	../GEOMBase/libGEOMBase.la				\
+	../GEOMGUI/libGEOM.la					\
 	$(GUI_LDFLAGS) -lsuit

@@ -26,8 +26,6 @@
 #ifndef BASICGUI_POINTDLG_H
 #define BASICGUI_POINTDLG_H
 
-#include "GEOM_BasicGUI.hxx"
-
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_1Sel1Spin;
@@ -43,7 +41,7 @@ class gp_Pnt;
 // class    : BasicGUI_PointDlg
 // purpose  :
 //=================================================================================
-class BASICGUI_EXPORT BasicGUI_PointDlg : public GEOMBase_Skeleton
+class BasicGUI_PointDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
 

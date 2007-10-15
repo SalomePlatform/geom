@@ -26,8 +26,6 @@
 #ifndef GEOMTOOLSGUI_TRANSPARENCYDLG_H
 #define GEOMTOOLSGUI_TRANSPARENCYDLG_H
 
-#include "GEOM_ToolsGUI.hxx"
-
 #include <QDialog>
 
 class QSlider;
@@ -37,19 +35,19 @@ class QSlider;
 // purpose  :
 //          : WARNING : that is a MODAL dialog.
 //=================================================================================
-class GEOMTOOLSGUI_EXPORT GEOMToolsGUI_TransparencyDlg : public QDialog
+class GEOMToolsGUI_TransparencyDlg : public QDialog
 { 
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-  GEOMToolsGUI_TransparencyDlg( QWidget* parent );    
+  GEOMToolsGUI_TransparencyDlg( QWidget* );    
   ~GEOMToolsGUI_TransparencyDlg();
 
 private:
-  void      keyPressEvent(QKeyEvent*);
+  void      keyPressEvent( QKeyEvent* );
 
-private :
-  bool      myFirstInit ;   /* Inform for the first init  */
+private:
+  bool      myFirstInit;   /* Inform for the first init  */
   QSlider*  mySlider; 
   QString   myHelpFileName;
 
@@ -58,8 +56,6 @@ private slots:
   void      ClickOnClose();
   void      ClickOnHelp();
   void      ValueHasChanged( int ) ;
-    
 };
 
 #endif // GEOMTOOLSGUI_TRANSPARENCYDLG_H
-

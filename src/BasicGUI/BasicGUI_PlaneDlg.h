@@ -26,8 +26,6 @@
 #ifndef BASICGUI_PLANEDLG_H
 #define BASICGUI_PLANEDLG_H
 
-#include "GEOM_BasicGUI.hxx"
-
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_1Sel1Spin;
@@ -38,7 +36,7 @@ class DlgRef_3Sel1Spin;
 // class    : BasicGUI_PlaneDlg
 // purpose  :
 //=================================================================================
-class BASICGUI_EXPORT BasicGUI_PlaneDlg : public GEOMBase_Skeleton
+class BasicGUI_PlaneDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
 

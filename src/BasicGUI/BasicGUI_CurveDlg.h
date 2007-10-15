@@ -25,8 +25,6 @@
 #ifndef BASICGUI_CURVEDLG_H
 #define BASICGUI_CURVEDLG_H
 
-#include "GEOM_BasicGUI.hxx"
-
 #include <GEOMBase_Skeleton.h>
 
 #include <list>
@@ -37,7 +35,7 @@ class DlgRef_1Sel;
 // class    : BasicGUI_CurveDlg
 // purpose  :
 //=================================================================================
-class BASICGUI_EXPORT BasicGUI_CurveDlg : public GEOMBase_Skeleton
+class BasicGUI_CurveDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
 
