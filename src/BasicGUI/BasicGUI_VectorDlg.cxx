@@ -1,46 +1,40 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : BasicGUI_VectorDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : BasicGUI_VectorDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
 #include "BasicGUI_VectorDlg.h"
-#include "DlgRef_3Spin1Check.h"
-#include "DlgRef_SpinBox.h"
 
-#include "GeometryGUI.h"
-#include "GEOMBase.h"
+#include <GEOM_DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
-#include "GEOMImpl_Types.hxx"
-
-using namespace std;
+#include <GEOMImpl_Types.hxx>
 
 //=================================================================================
 // class    : BasicGUI_VectorDlg()
@@ -49,49 +43,48 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_VectorDlg::BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                       const char* name, bool modal, Qt::WindowFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, fl)
+BasicGUI_VectorDlg::BasicGUI_VectorDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
+					const char* name, bool modal, Qt::WindowFlags fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, name, modal, fl )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_2P")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_VECTOR_DXYZ")));
-  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_VECTOR_2P" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_VECTOR_DXYZ" ) ) );
+  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setWindowTitle(tr("GEOM_VECTOR_TITLE"));
+  setWindowTitle( tr( "GEOM_VECTOR_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_VECTOR"));
-  RadioButton1->setIcon(image0);
-  RadioButton2->setIcon(image1);
-  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton3->close();
+  mainFrame()->GroupConstructors->setTitle(tr("GEOM_VECTOR"));
+  mainFrame()->RadioButton1->setIcon(image0);
+  mainFrame()->RadioButton2->setIcon(image1);
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupPoints = new Ui::DlgRef_2Sel_QTD();
-  QWidget* aGroupPointsWidget = new QWidget(this);
-  GroupPoints->setupUi(aGroupPointsWidget);
-  aGroupPointsWidget->setObjectName("GroupPoints");
+  GroupPoints = new DlgRef_2Sel( centralWidget() );
 
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_POINTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_POINT_I").arg("1"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_POINT_I").arg("2"));
-  GroupPoints->PushButton1->setIcon(image2);
-  GroupPoints->PushButton2->setIcon(image2);
+  GroupPoints->GroupBox1->setTitle( tr( "GEOM_POINTS" ) );
+  GroupPoints->TextLabel1->setText( tr( "GEOM_POINT_I" ).arg( 1 ) );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_POINT_I" ).arg( 2 ) );
+  GroupPoints->PushButton1->setIcon( image2 );
+  GroupPoints->PushButton2->setIcon( image2 );
 
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
 
-  GroupDimensions = new DlgRef_3Spin1Check(this, "GroupDimensions");
-  GroupDimensions->GroupBox1->setTitle(tr("GEOM_COORDINATES"));
-  GroupDimensions->TextLabel1->setText(tr("GEOM_DX"));
-  GroupDimensions->TextLabel2->setText(tr("GEOM_DY"));
-  GroupDimensions->TextLabel3->setText(tr("GEOM_DZ"));
-  GroupDimensions->CheckBox1->setText(tr("GEOM_REVERSE_VECTOR"));
+  GroupDimensions = new DlgRef_3Spin1Check( centralWidget() );
+  GroupDimensions->GroupBox1->setTitle( tr( "GEOM_COORDINATES" ) );
+  GroupDimensions->TextLabel1->setText( tr( "GEOM_DX" ) );
+  GroupDimensions->TextLabel2->setText( tr( "GEOM_DY" ) );
+  GroupDimensions->TextLabel3->setText( tr( "GEOM_DZ" ) );
+  GroupDimensions->CheckButton1->setText( tr( "GEOM_REVERSE_VECTOR" ) );
 
-  gridLayout1->addWidget(aGroupPointsWidget, 2, 0);
-  gridLayout1->addWidget(GroupDimensions, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupPoints );
+  layout->addWidget( GroupDimensions );
   /***************************************************************/
 
-  setHelpFileName("vector.htm");
+  setHelpFileName( "vector.htm" );
   
   /* Initialisations */
   Init();
@@ -121,51 +114,53 @@ void BasicGUI_VectorDlg::Init()
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
+  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
  
   /* min, max, step and decimals for spin boxes */
-  GroupDimensions->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupDimensions->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  initSpinBox( GroupDimensions->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 );
+  initSpinBox( GroupDimensions->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
+  initSpinBox( GroupDimensions->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 );
 
   double dx( 0. ), dy( 0. ), dz( 200. );
-  GroupDimensions->SpinBox_DX->SetValue( dx );
-  GroupDimensions->SpinBox_DY->SetValue( dy );
-  GroupDimensions->SpinBox_DZ->SetValue( dz );
+  GroupDimensions->SpinBox_DX->setValue( dx );
+  GroupDimensions->SpinBox_DY->setValue( dy );
+  GroupDimensions->SpinBox_DZ->setValue( dz );
 
-  GroupDimensions->CheckBox1->setChecked(FALSE);
+  GroupDimensions->CheckButton1->setChecked( false );
 
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
+  connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
   
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
+  connect( buttonCancel(), SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) );
+  connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( this,           SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPoints->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect( GroupPoints->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( GroupPoints->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
+  connect( GroupDimensions->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupDimensions->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupDimensions->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-  connect(GroupDimensions->CheckBox1, SIGNAL(stateChanged(int)), this, SLOT(ReverseVector(int)));
+  // VSR: TODO ->>
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DX, SLOT( SetStep( double ) ) );
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DY, SLOT( SetStep( double ) ) );
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DZ, SLOT( SetStep( double ) ) );
+  // <<-
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( GroupDimensions->CheckButton1, SIGNAL( stateChanged( int ) ), this, SLOT( ReverseVector( int ) ) );
 
-  initName( tr("GEOM_VECTOR").toLatin1().constData() );
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT(SelectionIntoArgument() ) );
 
-  GroupDimensions->hide();
+  initName( tr("GEOM_VECTOR") );
+
   ConstructorsClicked( 0 );
 }
 
@@ -176,42 +171,43 @@ void BasicGUI_VectorDlg::Init()
 //=================================================================================
 void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
   myPoint1 = GEOM::GEOM_Object::_nil();
   myPoint2 = GEOM::GEOM_Object::_nil();
 
-  switch (constructorId)
+  switch ( constructorId ) {
+  case 0:
     {
-    case 0:
-      {
-	GroupDimensions->hide();
-	resize(0, 0);
-	::qobject_cast<QWidget*>( GroupPoints->gridLayout->parent() )->show();
-
-	myEditCurrentArgument = GroupPoints->LineEdit1;
-	GroupPoints->LineEdit1->setText("");
- 	GroupPoints->LineEdit2->setText("");
-
-	globalSelection( GEOM_POINT );
-	connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-	break;
-      }
-    case 1:
-      {
-	::qobject_cast<QWidget*>( GroupPoints->gridLayout->parent() )->hide();
-	resize( 0, 0 );
-	GroupDimensions->show();
-	
-	double dx( 0. ), dy( 0. ), dz( 0. ); 
-	GroupDimensions->SpinBox_DX->SetValue( dx );
-	GroupDimensions->SpinBox_DY->SetValue( dy );
-	GroupDimensions->SpinBox_DZ->SetValue( dz );
-
-	GroupDimensions->CheckBox1->setChecked( FALSE );
-	break;
-      }
+      GroupDimensions->hide();
+      GroupPoints->show();
+      
+      myEditCurrentArgument = GroupPoints->LineEdit1;
+      GroupPoints->LineEdit1->setText( "" );
+      GroupPoints->LineEdit2->setText( "" );
+      
+      globalSelection( GEOM_POINT );
+      connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	       SIGNAL( currentSelectionChanged() ), this, SLOT(SelectionIntoArgument() ) );
+      break;
     }
+  case 1:
+    {
+      GroupPoints->hide();
+      GroupDimensions->show();
+      
+      double dx( 0. ), dy( 0. ), dz( 0. ); 
+      GroupDimensions->SpinBox_DX->setValue( dx );
+      GroupDimensions->SpinBox_DY->setValue( dy );
+      GroupDimensions->SpinBox_DZ->setValue( dz );
+      
+      GroupDimensions->CheckButton1->setChecked( false );
+      break;
+    }
+  }
+
+  qApp->processEvents();
+  updateGeometry();
+  resize( minimumSize() );
 
   displayPreview();
 }
@@ -242,7 +238,7 @@ void BasicGUI_VectorDlg::ClickOnCancel()
 //=================================================================================
 bool BasicGUI_VectorDlg::ClickOnApply()
 {
-  buttonApply->setFocus();
+  buttonApply()->setFocus();
 
   if ( !onAccept() )
     return false;
@@ -260,10 +256,9 @@ bool BasicGUI_VectorDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_VectorDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
 
-  if ( IObjectCount() != 1 ) 
-  {
+  if ( IObjectCount() != 1 ) {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
       myPoint1 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
@@ -274,8 +269,7 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
   // nbSel == 1 
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
-  {
+  if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint1 = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = aSelectedObject;
@@ -320,8 +314,8 @@ void BasicGUI_VectorDlg::LineEditReturnPressed()
 void BasicGUI_VectorDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 	
   ConstructorsClicked( getConstructorId() );
 }
@@ -340,9 +334,9 @@ void BasicGUI_VectorDlg::DeactivateActiveDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BasicGUI_VectorDlg::enterEvent(QEvent* e)
+void BasicGUI_VectorDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 
@@ -359,15 +353,15 @@ void BasicGUI_VectorDlg::ValueChangedInSpinBox( double newValue )
 // function : ReverseVector()
 // purpose  : 'state' not used here
 //=================================================================================
-void BasicGUI_VectorDlg::ReverseVector(int state)
+void BasicGUI_VectorDlg::ReverseVector( int state )
 {
-  double dx = -GroupDimensions->SpinBox_DX->GetValue();
-  double dy = -GroupDimensions->SpinBox_DY->GetValue();
-  double dz = -GroupDimensions->SpinBox_DZ->GetValue();
+  double dx = -GroupDimensions->SpinBox_DX->value();
+  double dy = -GroupDimensions->SpinBox_DY->value();
+  double dz = -GroupDimensions->SpinBox_DZ->value();
 
-  GroupDimensions->SpinBox_DX->SetValue( dx );
-  GroupDimensions->SpinBox_DY->SetValue( dy );
-  GroupDimensions->SpinBox_DZ->SetValue( dz );
+  GroupDimensions->SpinBox_DX->setValue( dx );
+  GroupDimensions->SpinBox_DY->setValue( dy );
+  GroupDimensions->SpinBox_DZ->setValue( dz );
   
   displayPreview();
 }
@@ -387,7 +381,7 @@ GEOM::GEOM_IOperations_ptr BasicGUI_VectorDlg::createOperation()
 //=================================================================================
 bool BasicGUI_VectorDlg::isValid( QString& msg )
 {
-  return getConstructorId() == 0 ? !myPoint1->_is_nil() && !myPoint2->_is_nil(): true;
+  return getConstructorId() == 0 ? !myPoint1->_is_nil() && !myPoint2->_is_nil() : true;
 }
 
 //=================================================================================
@@ -402,16 +396,17 @@ bool BasicGUI_VectorDlg::execute( ObjectList& objects )
 
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeVectorTwoPnt( myPoint1, myPoint2 );
-    res = true;
-    break;
-
+    {
+      anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeVectorTwoPnt( myPoint1, myPoint2 );
+      res = true;
+      break;
+    }
   case 1 :
     {
-      double dx = GroupDimensions->SpinBox_DX->GetValue();
-      double dy = GroupDimensions->SpinBox_DY->GetValue();
-      double dz = GroupDimensions->SpinBox_DZ->GetValue();
-      anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeVectorDXDYDZ( dx,dy,dz );
+      double dx = GroupDimensions->SpinBox_DX->value();
+      double dy = GroupDimensions->SpinBox_DY->value();
+      double dz = GroupDimensions->SpinBox_DZ->value();
+      anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeVectorDXDYDZ( dx, dy, dz );
       res = true;
       break;
     }

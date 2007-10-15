@@ -572,17 +572,14 @@ public:
 
 #include "ui_DlgRef_Skeleton_QTD.h"
 
-class DLGREF_EXPORT DlgRef_Skeleton : public QDialog, 
+class DLGREF_EXPORT DlgRef_Skeleton : public QWidget, 
                                       public Ui::DlgRef_Skeleton_QTD
 {
   Q_OBJECT
 
 public:
   DlgRef_Skeleton( QWidget* = 0, Qt::WindowFlags = 0 );
-  DlgRef_Skeleton( QWidget* = 0, bool modal = false, Qt::WindowFlags = 0 );
   ~DlgRef_Skeleton();
-
-  void initSpinBox( QDoubleSpinBox*, double, double, double = 0.1, int = 3 );
 };
 
 #endif // GEOM_DLGREF_H

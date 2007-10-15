@@ -54,7 +54,9 @@ libGEOMClient_la_LDFLAGS  = \
 	../../idl/libSalomeIDLGEOM.la \
 	../GEOM/libGEOMbasic.la \
 	$(KERNEL_LDFLAGS) -lSalomeIDLKernel -lOpUtil \
-	$(CAS_TKTopAlgo) \
-	$(CORBA_LIBS) \
-	$(STDLIB)
+	$(CAS_TKTopAlgo)
+
+# \
+#	$(CORBA_LIBS) \
+#	#$(STDLIB)
 

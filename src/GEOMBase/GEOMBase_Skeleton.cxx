@@ -27,6 +27,7 @@
 #include "GEOMBase.h"
 
 #include <GeometryGUI.h>
+#include <GEOM_DlgRef.h>
 
 #include <SalomeApp_Application.h>
 #include <LightApp_Application.h>
@@ -37,6 +38,7 @@
 #include <SUIT_MessageBox.h>
 
 #include <QKeyEvent>
+#include <QDoubleSpinBox>
 
 using namespace std;
 
@@ -45,45 +47,41 @@ using namespace std;
 // purpose  : Constructs a GEOMBase_Skeleton which is a child of 'parent', with the 
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
-//            TRUE to construct a modal dialog.
+//            true to construct a modal dialog.
 //=================================================================================
-GEOMBase_Skeleton::GEOMBase_Skeleton(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                     const char* name, bool modal, Qt::WindowFlags fl)
+GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* parent,
+				      const char* name, bool modal, Qt::WindowFlags fl )
   : QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint ), 
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeomGUI( theGeometryGUI ),
     myRBGroup( 0 )
 {
-  setupUi(this);
-
-  if (!name)
-    setObjectName("GEOMBase_Skeleton");
+  if ( !name )
+    setObjectName( "GEOMBase_Skeleton" );
   else
-    setObjectName(name);
+    setObjectName( name );
 
-  setModal( modal );
   setAttribute( Qt::WA_DeleteOnClose );
 
-  buttonCancel->setText(tr("GEOM_BUT_CLOSE"));
-  buttonOk->setText(tr("GEOM_BUT_OK"));
-  buttonApply->setText(tr("GEOM_BUT_APPLY"));
-  buttonHelp->setText(tr("GEOM_BUT_HELP"));
+  setModal( modal );
 
-  GroupMedium->setAttribute( Qt::WA_DeleteOnClose );
-  GroupMedium->close();
-  resize(0, 0);
+  myMainFrame = new DlgRef_Skeleton( this );
+  QVBoxLayout* topLayout = new QVBoxLayout( this );
+  topLayout->setMargin( 0 ); topLayout->setSpacing( 0 );
+  topLayout->addWidget( myMainFrame );
 
-  if ( GroupConstructors != NULL ) {
-    myRBGroup = new QButtonGroup(GroupConstructors);
-    QList<QObject*> aRadioButtons = GroupConstructors->children();
-    QListIterator<QObject*> it( aRadioButtons );
-    int anId = 0;
-    while ( it.hasNext() )
-      if ( QRadioButton* aRB = ::qobject_cast<QRadioButton*>( it.next() ) ) {
-	myRBGroup->addButton( aRB, anId );
-	anId++;
-      }
-  }
+  buttonCancel()->setText( tr( "GEOM_BUT_CLOSE" ) );
+  buttonOk()->setText( tr( "GEOM_BUT_OK" )) ;
+  buttonApply()->setText( tr( "GEOM_BUT_APPLY" ) );
+  buttonHelp()->setText( tr( "GEOM_BUT_HELP" ) );
+
+  myRBGroup = new QButtonGroup( this );
+  myRBGroup->addButton( myMainFrame->RadioButton1, 0 );
+  myRBGroup->addButton( myMainFrame->RadioButton2, 1 );
+  myRBGroup->addButton( myMainFrame->RadioButton3, 2 );
+  myRBGroup->addButton( myMainFrame->RadioButton4, 4 );
+
+  connect( myRBGroup, SIGNAL( buttonClicked( int ) ), this, SIGNAL( constructorsClicked( int ) ) );
 
   Init();
 }
@@ -95,7 +93,7 @@ GEOMBase_Skeleton::GEOMBase_Skeleton(GeometryGUI* theGeometryGUI, QWidget* paren
 //=================================================================================
 GEOMBase_Skeleton::~GEOMBase_Skeleton()
 {
-  if (myGeomGUI)
+  if ( myGeomGUI )
     myGeomGUI->SetActiveDialogBox( 0 );
 }
 
@@ -106,31 +104,36 @@ GEOMBase_Skeleton::~GEOMBase_Skeleton()
 //=================================================================================
 void GEOMBase_Skeleton::Init()
 {
-  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
-  if (!myGeomGUI && app)
+  SalomeApp_Application* app = (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() );
+  if ( !myGeomGUI && app )
     myGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
 
   /* init variables */
-  myGeomGUI->SetActiveDialogBox(this);
+  myGeomGUI->SetActiveDialogBox( this );
 
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  if (myGeomGUI) 
-  {
-    connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-    connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect( buttonCancel(), SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) );
+  if ( myGeomGUI ) {
+    connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
+    connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
   }
 
   // connect help button on a private slot that displays help information
-  connect( buttonHelp, SIGNAL( clicked() ), this, SLOT( ClickOnHelp() ) );
+  connect( buttonHelp(), SIGNAL( clicked() ), this, SLOT( ClickOnHelp() ) );
 
   /* displays Dialog */
-  RadioButton1->setChecked(TRUE);
-  RadioButton4->hide();
-
-  return;
+  myMainFrame->RadioButton1->setChecked( true );
+  myMainFrame->RadioButton4->hide();
 }
 
+void GEOMBase_Skeleton::initSpinBox( QDoubleSpinBox* spinBox, 
+				     double min,  double max, 
+				     double step, int decimals )
+{
+  spinBox->setRange( min, max );
+  spinBox->setSingleStep( step );
+  spinBox->setDecimals( decimals );
+}
 
 //=================================================================================
 // function : ClickOnCancel()
@@ -157,10 +160,8 @@ void GEOMBase_Skeleton::LineEditReturnPressed()
   const QString objectUserName = myEditCurrentArgument->text();
   QWidget* thisWidget = (QWidget*)this;
   
-  if(GEOMBase::SelectionByNameInDialogs(thisWidget, objectUserName, selectedIO()))
-     myEditCurrentArgument->setText(objectUserName);
-
-  return;
+  if ( GEOMBase::SelectionByNameInDialogs( thisWidget, objectUserName, selectedIO() ) )
+     myEditCurrentArgument->setText( objectUserName );
 }
 
 
@@ -170,12 +171,10 @@ void GEOMBase_Skeleton::LineEditReturnPressed()
 //=================================================================================
 void GEOMBase_Skeleton::DeactivateActiveDialog()
 {
-  this->setEnabled(false);
+  this->setEnabled( false );
   globalSelection();
-  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
-  if (myGeomGUI) myGeomGUI->SetActiveDialogBox(0);
-    
-  return;
+  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
+  if ( myGeomGUI ) myGeomGUI->SetActiveDialogBox( 0 );
 }
 
 
@@ -186,9 +185,9 @@ void GEOMBase_Skeleton::DeactivateActiveDialog()
 void GEOMBase_Skeleton::ActivateThisDialog()
 {
   /* Emit a signal to deactivate the active dialog */
-  if (myGeomGUI) myGeomGUI->EmitSignalDeactivateDialog();
-  this->setEnabled(true);
-  if (myGeomGUI) myGeomGUI->SetActiveDialogBox((QDialog*)this);
+  if ( myGeomGUI ) myGeomGUI->EmitSignalDeactivateDialog();
+  this->setEnabled( true );
+  if ( myGeomGUI ) myGeomGUI->SetActiveDialogBox( (QDialog*)this );
   return;
 }
 
@@ -197,11 +196,11 @@ void GEOMBase_Skeleton::ActivateThisDialog()
 // function : closeEvent()
 // purpose  : same than click on cancel button
 //=================================================================================
-void GEOMBase_Skeleton::closeEvent(QCloseEvent* e)
+void GEOMBase_Skeleton::closeEvent( QCloseEvent* e )
 {
-  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
-  if(app) {
-    disconnect( app->selectionMgr(), 0, this, 0);
+  SalomeApp_Application* app = (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() );
+  if( app ) {
+    disconnect( app->selectionMgr(), 0, this, 0 );
     app->updateActions();
   }
   QDialog::closeEvent( e );
@@ -211,11 +210,11 @@ void GEOMBase_Skeleton::closeEvent(QCloseEvent* e)
 // function : initName()
 // purpose  : initialize the Name field with a string "thePrefix_X" (Vertex_3)
 //=================================================================================
-void GEOMBase_Skeleton::initName( const char* thePrefix )
+void GEOMBase_Skeleton::initName( const QString& thePrefix )
 {
-  if ( thePrefix )
+  if ( !thePrefix.isNull() )
     setPrefix( thePrefix );
-  ResultName->setText( GEOMBase::GetDefaultName( getPrefix() ) );
+  myMainFrame->ResultName->setText( GEOMBase::GetDefaultName( getPrefix() ) );
 }
 
 //=================================================================================
@@ -224,7 +223,7 @@ void GEOMBase_Skeleton::initName( const char* thePrefix )
 //=================================================================================
 const char* GEOMBase_Skeleton::getNewObjectName() const
 {
-  return ResultName->text().toLatin1().constData();
+  return myMainFrame->ResultName->text().toLatin1().constData();
 }
 
 //=================================================================================
@@ -248,20 +247,20 @@ int GEOMBase_Skeleton::getConstructorId() const
 //=================================================================================
 void GEOMBase_Skeleton::ClickOnHelp()
 {
-  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
-  if (app) 
-    app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
+  LightApp_Application* app = (LightApp_Application*)( SUIT_Session::session()->activeApplication() );
+  if ( app ) 
+    app->onHelpContextModule( myGeomGUI ? app->moduleName( myGeomGUI->moduleName() ) : QString(""), myHelpFileName );
   else {
-		QString platform;
+    QString platform;
 #ifdef WIN32
-		platform = "winapplication";
+    platform = "winapplication";
 #else
-		platform = "application";
+    platform = "application";
 #endif
-    SUIT_MessageBox::warning(0, QObject::tr("WRN_WARNING"),
-			     QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			     arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
-			     QObject::tr("BUT_OK"));
+    SUIT_MessageBox::warning( 0, QObject::tr( "WRN_WARNING" ),
+			      QObject::tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
+			      arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( myHelpFileName ),
+			      QObject::tr( "BUT_OK" ) );
   }
 }
 //=================================================================================
@@ -269,9 +268,39 @@ void GEOMBase_Skeleton::ClickOnHelp()
 //  purpose  : set name for help file html
 //=================================================================================
 
-void GEOMBase_Skeleton::setHelpFileName(const QString& theName)
+void GEOMBase_Skeleton::setHelpFileName( const QString& theName )
 {
-    myHelpFileName = theName;
+  myHelpFileName = theName;
+}
+
+DlgRef_Skeleton* GEOMBase_Skeleton::mainFrame()
+{
+  return myMainFrame;
+}
+
+QWidget* GEOMBase_Skeleton::centralWidget()
+{
+  return myMainFrame->GroupMedium;
+}
+
+QPushButton* GEOMBase_Skeleton::buttonCancel() const
+{
+  return myMainFrame->buttonCancel;
+}
+
+QPushButton* GEOMBase_Skeleton::buttonOk() const
+{
+  return myMainFrame->buttonOk;
+}
+
+QPushButton* GEOMBase_Skeleton::buttonApply() const
+{
+  return myMainFrame->buttonApply;
+}
+
+QPushButton* GEOMBase_Skeleton::buttonHelp() const
+{
+  return myMainFrame->buttonHelp;
 }
 
 //=================================================================================
@@ -284,9 +313,8 @@ void GEOMBase_Skeleton::keyPressEvent( QKeyEvent* e )
   if ( e->isAccepted() )
     return;
 
-  if ( e->key() == Qt::Key_F1 )
-    {
-      e->accept();
-      ClickOnHelp();
-    }
+  if ( e->key() == Qt::Key_F1 ) {
+    e->accept();
+    ClickOnHelp();
+  }
 }

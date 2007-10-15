@@ -1,44 +1,40 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : BasicGUI_LineDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : BasicGUI_LineDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
 #include "BasicGUI_LineDlg.h"
 
-#include "GeometryGUI.h"
-#include "GEOMBase.h"
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
+#include <GEOM_DlgRef.h>
 
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
-#include "GEOMImpl_Types.hxx"
-
-using namespace std;
+#include <GEOMImpl_Types.hxx>
 
 //=================================================================================
 // class    : BasicGUI_LineDlg()
@@ -47,41 +43,41 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_LineDlg::BasicGUI_LineDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                   const char* name, bool modal, Qt::WindowFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
+BasicGUI_LineDlg::BasicGUI_LineDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
+				    const char* name, bool modal, Qt::WindowFlags fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, name, modal, fl )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_DLG_LINE_2P")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM",tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_LINE_2P" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setWindowTitle(tr("GEOM_LINE_TITLE"));
-
+  setWindowTitle( tr( "GEOM_LINE_TITLE" ) );
+ 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_LINE"));
-  RadioButton1->setIcon(image0);
-  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton2->close();
-  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton3->close();
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_LINE" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupPoints = new Ui::DlgRef_2Sel_QTD();
-  QWidget* aGroupPointsWidget = new QWidget(this);
-  GroupPoints->setupUi(aGroupPointsWidget);
-  aGroupPointsWidget->setObjectName("GroupPoints");
+  GroupPoints = new DlgRef_2Sel( centralWidget() );
 
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_POINTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_POINT_I").arg("1"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_POINT_I").arg("2"));
-  GroupPoints->PushButton1->setIcon(image1);
-  GroupPoints->PushButton2->setIcon(image1);
+  GroupPoints->GroupBox1->setTitle( tr( "GEOM_POINTS" ) );
+  GroupPoints->TextLabel1->setText( tr( "GEOM_POINT_I" ).arg( 1 ) );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_POINT_I" ).arg( 2 ) );
+  GroupPoints->PushButton1->setIcon( image1 );
+  GroupPoints->PushButton2->setIcon( image1 );
 
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
 
-  gridLayout1->addWidget(aGroupPointsWidget, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupPoints );
+
   /***************************************************************/
 
-  setHelpFileName("line.htm");
+  setHelpFileName( "line.htm" );
 
   Init();
 }
@@ -111,23 +107,23 @@ void BasicGUI_LineDlg::Init()
   globalSelection( GEOM_POINT );
 	
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
+  connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
 
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonCancel(), SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) );
+  connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPoints->PushButton2, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( GroupPoints->LineEdit2,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
-  initName( tr("GEOM_LINE").toLatin1().constData() );
+  initName( tr( "GEOM_LINE" ) );
 }
 
 
@@ -170,10 +166,9 @@ bool BasicGUI_LineDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_LineDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
 
-  if ( IObjectCount() != 1 ) 
-  {
+  if ( IObjectCount() != 1 ) {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 )      myPoint1 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = GEOM::GEOM_Object::_nil();
     return;
@@ -182,8 +177,7 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
   // nbSel == 1 
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
-  {
+  if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint1 = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = aSelectedObject;
@@ -228,8 +222,8 @@ void BasicGUI_LineDlg::LineEditReturnPressed()
 void BasicGUI_LineDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   // myGeomGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
@@ -256,9 +250,9 @@ void BasicGUI_LineDlg::DeactivateActiveDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BasicGUI_LineDlg::enterEvent(QEvent* e)
+void BasicGUI_LineDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 

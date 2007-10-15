@@ -93,6 +93,8 @@ libGEOMEngine_la_LDFLAGS  = \
 	../GEOM/libGEOMbasic.la \
 	$(KERNEL_LDFLAGS) -lSalomeNS -lSalomeContainer -lSalomeGenericObj -lTOOLSDS \
 	$(CAS_DATAEXCHANGE) \
-	$(CAS_LDPATH) -lTKFillet -lTKOffset \
-	$(STDLIB) \
-	$(CORBA_LIBS)
+	$(CAS_LDPATH) -lTKFillet -lTKOffset
+
+# \
+#	$(STDLIB) \
+#	$(CORBA_LIBS)

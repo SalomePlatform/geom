@@ -522,27 +522,11 @@ DlgRef_6Sel::~DlgRef_6Sel()
 //////////////////////////////////////////
 
 DlgRef_Skeleton::DlgRef_Skeleton( QWidget* parent, Qt::WindowFlags f )
-: QDialog( parent, f )
+: QWidget( parent, f )
 {
   setupUi( this );
-}
-
-DlgRef_Skeleton::DlgRef_Skeleton( QWidget* parent, bool modal, Qt::WindowFlags f )
-: QDialog( parent, f )
-{
-  setupUi( this );
-  setModal( modal );
 }
 
 DlgRef_Skeleton::~DlgRef_Skeleton()
 {
-}
-
-void DlgRef_Skeleton::initSpinBox( QDoubleSpinBox* spinBox, 
-				   double min,  double max, 
-				   double step, int decimals )
-{
-  spinBox->setRange( min, max );
-  spinBox->setSingleStep( step );
-  spinBox->setDecimals( decimals );
 }

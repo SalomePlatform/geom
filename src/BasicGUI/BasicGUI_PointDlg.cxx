@@ -1,47 +1,41 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : BasicGUI_PointDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : BasicGUI_PointDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
 #include "BasicGUI_PointDlg.h"
 
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
-#include "GeometryGUI.h"
-#include "GEOMBase.h"
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "DlgRef_SpinBox.h"
-#include "DlgRef_1Sel1Spin.h"
-#include "DlgRef_3Spin.h"
-#include "DlgRef_1Sel3Spin.h"
+#include <GEOM_DlgRef.h>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
 #include <QApplication>
 #include <QLabel>
@@ -55,7 +49,6 @@
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
-using namespace std;
 //=================================================================================
 // class    : BasicGUI_PointDlg()
 // purpose  : Constructs a BasicGUI_PointDlg which is a child of 'parent', with the 
@@ -63,55 +56,44 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                     const char* name, bool modal, Qt::WindowFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, fl )
+BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
+				      const char* name, bool modal, Qt::WindowFlags fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, name, modal, fl )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POINT")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POINT_EDGE")));
-  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
-  QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POINT_REF")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POINT") ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POINT_EDGE" ) ) );
+  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image3( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POINT_REF" ) ) );
 
-  setWindowTitle(tr("GEOM_POINT_TITLE"));
+  setWindowTitle( tr( "GEOM_POINT_TITLE" ) );
 
-  QFrame* aFrame = new QFrame( this );
-  aFrame->setContentsMargins( 0, 0, 0, 0 );
-  aFrame->setFrameStyle( QFrame::NoFrame );
-  QHBoxLayout* aFrameLayout = new QHBoxLayout( aFrame );
-  
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_POINTS"));
-  RadioButton1->setIcon(image0);
-  RadioButton2->setIcon(image3);
-  RadioButton3->setIcon(image1);
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_POINTS" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setIcon( image3 );
+  mainFrame()->RadioButton3->setIcon( image1 );
 
-  GroupXYZ = new DlgRef_3Spin( aFrame, "GroupXYZ" );
-  GroupXYZ->GroupBox1->setTitle(tr("GEOM_COORDINATES"));
-  GroupXYZ->TextLabel1->setText(tr("GEOM_X"));
-  GroupXYZ->TextLabel2->setText(tr("GEOM_Y"));
-  GroupXYZ->TextLabel3->setText(tr("GEOM_Z"));
-  aFrameLayout->addWidget(GroupXYZ);
+  GroupXYZ = new DlgRef_3Spin( centralWidget() );
+  GroupXYZ->GroupBox1->setTitle( tr( "GEOM_COORDINATES" ) );
+  GroupXYZ->TextLabel1->setText( tr( "GEOM_X" ) );
+  GroupXYZ->TextLabel2->setText( tr( "GEOM_Y" ) );
+  GroupXYZ->TextLabel3->setText( tr( "GEOM_Z" ) );
 
-  GroupOnCurve = new DlgRef_1Sel1Spin( aFrame, "GroupOnCurve" );
-  GroupOnCurve->GroupBox1->setTitle(tr("GEOM_PARAM_POINT"));
-  GroupOnCurve->TextLabel1->setText(tr("GEOM_EDGE"));
-  GroupOnCurve->TextLabel2->setText(tr("GEOM_PARAMETER"));
-  GroupOnCurve->PushButton1->setIcon(image2);
-  aFrameLayout->addWidget(GroupOnCurve);
+  GroupOnCurve = new DlgRef_1Sel1Spin( centralWidget() );
+  GroupOnCurve->GroupBox1->setTitle( tr( "GEOM_PARAM_POINT" ) );
+  GroupOnCurve->TextLabel1->setText( tr( "GEOM_EDGE" ) );
+  GroupOnCurve->TextLabel2->setText( tr( "GEOM_PARAMETER" ) );
+  GroupOnCurve->PushButton1->setIcon( image2 );
 
-  GroupRefPoint = new DlgRef_1Sel3Spin( aFrame, "GoupRefPoint" );
-  GroupRefPoint->GroupBox1->setTitle(tr("GEOM_REF_POINT"));
-  GroupRefPoint->TextLabel1->setText(tr("GEOM_POINT"));
-  GroupRefPoint->PushButton1->setIcon(image2);
-  GroupRefPoint->TextLabel2->setText(tr("GEOM_DX"));
-  GroupRefPoint->TextLabel3->setText(tr("GEOM_DY"));
-  GroupRefPoint->TextLabel4->setText(tr("GEOM_DZ"));
-  aFrameLayout->addWidget(GroupRefPoint);
+  GroupRefPoint = new DlgRef_1Sel3Spin( centralWidget() );
+  GroupRefPoint->GroupBox1->setTitle( tr( "GEOM_REF_POINT" ) );
+  GroupRefPoint->TextLabel1->setText( tr( "GEOM_POINT" ) );
+  GroupRefPoint->PushButton1->setIcon( image2 );
+  GroupRefPoint->TextLabel2->setText( tr( "GEOM_DX" ) );
+  GroupRefPoint->TextLabel3->setText( tr( "GEOM_DY" ) );
+  GroupRefPoint->TextLabel4->setText( tr( "GEOM_DZ" ) );
 
-  gridLayout1->addWidget( aFrame, 2, 0 );
-  /***************************************************************/
-
-  myCoordGrp = new QGroupBox( tr( "GEOM_COORDINATES" ), aFrame );
+  myCoordGrp = new QGroupBox( tr( "GEOM_COORDINATES" ), centralWidget() );
   QGridLayout* myCoordGrpLayout = new QGridLayout( myCoordGrp );
   myCoordGrpLayout->addWidget( new QLabel( tr( "GEOM_X" ), myCoordGrp ), 0, 0 );
   myX = new QLineEdit( myCoordGrp );
@@ -122,6 +104,13 @@ BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   myCoordGrpLayout->addWidget( new QLabel( tr( "GEOM_Z" ), myCoordGrp ), 2, 0 );
   myZ = new QLineEdit( myCoordGrp );
   myCoordGrpLayout->addWidget( myZ, 2, 1 );
+
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupXYZ );
+  layout->addWidget( GroupOnCurve );
+  layout->addWidget( GroupRefPoint );
+  layout->addWidget( myCoordGrp );
 
   myX->setReadOnly( true );
   myY->setReadOnly( true );
@@ -137,7 +126,7 @@ BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   myY->setPalette( aPal );
   myZ->setPalette( aPal );
 
-  setHelpFileName("point.htm");
+  setHelpFileName( "point.htm" );
  
   Init();
 }
@@ -168,59 +157,63 @@ void BasicGUI_PointDlg::Init()
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
+  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
   
   /* min, max, step and decimals for spin boxes */
-  GroupXYZ->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupXYZ->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupXYZ->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupXYZ->SpinBox_DX->SetValue(0.0);
-  GroupXYZ->SpinBox_DY->SetValue(0.0);
-  GroupXYZ->SpinBox_DZ->SetValue(0.0);
+  initSpinBox( GroupXYZ->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 );
+  initSpinBox( GroupXYZ->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
+  initSpinBox( GroupXYZ->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 );
+  GroupXYZ->SpinBox_DX->setValue( 0.0 );
+  GroupXYZ->SpinBox_DY->setValue( 0.0 );
+  GroupXYZ->SpinBox_DZ->setValue( 0.0 );
 
-  GroupRefPoint->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupRefPoint->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupRefPoint->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupRefPoint->SpinBox_DX->SetValue(0.0);
-  GroupRefPoint->SpinBox_DY->SetValue(0.0);
-  GroupRefPoint->SpinBox_DZ->SetValue(0.0);
+  initSpinBox( GroupRefPoint->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 );
+  initSpinBox( GroupRefPoint->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
+  initSpinBox( GroupRefPoint->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 );
+  GroupRefPoint->SpinBox_DX->setValue( 0.0 );
+  GroupRefPoint->SpinBox_DY->setValue( 0.0 );
+  GroupRefPoint->SpinBox_DZ->setValue( 0.0 );
 
   step = 0.1;
-  GroupOnCurve->SpinBox_DX->RangeStepAndValidator(0., 1., step, 3);
-  GroupOnCurve->SpinBox_DX->SetValue( 0.5 );
+
+  initSpinBox( GroupOnCurve->SpinBox_DX, 0., 1., step, 3 );
+  GroupOnCurve->SpinBox_DX->setValue( 0.5 );
 
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect( myGeomGUI,      SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
+  connect( myGeomGUI,      SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
 
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
+  connect( buttonCancel(), SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) );
+  connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupOnCurve->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupOnCurve->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( this,           SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
-  connect(GroupOnCurve->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupXYZ->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupXYZ->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupXYZ->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupRefPoint->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupRefPoint->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupRefPoint->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect( GroupOnCurve->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupOnCurve->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupOnCurve->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupXYZ->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupXYZ->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupXYZ->SpinBox_DZ, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupRefPoint->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupRefPoint->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupRefPoint->SpinBox_DZ, SLOT(SetStep(double)));
+  connect( GroupOnCurve->SpinBox_DX,  SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupXYZ->SpinBox_DX,      SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupXYZ->SpinBox_DY,      SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupXYZ->SpinBox_DZ,      SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupRefPoint->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupRefPoint->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupRefPoint->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));  
+  // VSR: TODO ->>
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupOnCurve->SpinBox_DX,  SLOT( SetStep( double ) ) );
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupXYZ->SpinBox_DX,      SLOT( SetStep( double ) ) );
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupXYZ->SpinBox_DY,      SLOT( SetStep( double ) ) );
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupXYZ->SpinBox_DZ,      SLOT( SetStep( double ) ) );
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupRefPoint->SpinBox_DX, SLOT( SetStep( double ) ) );
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupRefPoint->SpinBox_DY, SLOT( SetStep( double ) ) );
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupRefPoint->SpinBox_DZ, SLOT( SetStep( double ) ) );
+  // <<-
+
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );  
   
-  initName( tr("GEOM_VERTEX").toLatin1().constData() );
+  initName( tr( "GEOM_VERTEX" ) );
   
   ConstructorsClicked( 0 );
 }
@@ -232,31 +225,30 @@ void BasicGUI_PointDlg::Init()
 //=================================================================================
 void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
 {  
-  switch ( constructorId )
-  {
+  switch ( constructorId ) {
   case 0:
     {
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-
+      
       GroupRefPoint->hide();
       GroupOnCurve->hide();
 
-      GroupXYZ->show();
-
       myCoordGrp->hide();
+
+      GroupXYZ->show();
       break;
     }
   case 1:
     {
       myEditCurrentArgument = GroupRefPoint->LineEdit1;
-      myEditCurrentArgument->setText("");
+      myEditCurrentArgument->setText( "" );
       myRefPoint = GEOM::GEOM_Object::_nil();
-
+      
       globalSelection( GEOM_POINT );
-
+      
       GroupXYZ->hide();
       GroupOnCurve->hide();
-
+      
       GroupRefPoint->show();
       
       myCoordGrp->show();
@@ -265,7 +257,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
   case 2:
     {
       myEditCurrentArgument = GroupOnCurve->LineEdit1;
-      myEditCurrentArgument->setText("");
+      myEditCurrentArgument->setText( "" );
       myEdge = GEOM::GEOM_Object::_nil();
 
       globalSelection( GEOM_EDGE );
@@ -336,44 +328,37 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
 {
   const int id = getConstructorId();
 
-  if ( ( id == 1 || id == 2 ) && myEditCurrentArgument != 0 )
-  {
-    myEditCurrentArgument->setText("");
+  if ( ( id == 1 || id == 2 ) && myEditCurrentArgument != 0 ) {
+    myEditCurrentArgument->setText( "" );
     myX->setText( "" );
     myY->setText( "" );
     myZ->setText( "" );
     myRefPoint = myEdge = GEOM::GEOM_Object::_nil();
   }
 
-  if ( IObjectCount() == 1 )
-  {
+  if ( IObjectCount() == 1 ) {
     Standard_Boolean aRes = Standard_False;
     Handle(SALOME_InteractiveObject) anIO = firstIObject();
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-    if ( !CORBA::is_nil( aSelectedObject ) && aRes )
-    {
-      if ( id == 0 )
-      {
+    if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
+      if ( id == 0 ) {
         // get CORBA reference to data object
-        TopoDS_Shape aShape = myGeomGUI->GetShapeReader().GetShape
-          ( myGeomGUI->GetGeomGen(), aSelectedObject );
+        TopoDS_Shape aShape = myGeomGUI->GetShapeReader().GetShape( myGeomGUI->GetGeomGen(), aSelectedObject );
         if ( aShape.IsNull() )
           return;
 
-        if ( aShape.ShapeType() != TopAbs_VERTEX )
-        {
+        if ( aShape.ShapeType() != TopAbs_VERTEX ) {
           TColStd_IndexedMapOfInteger aMap;
           LightApp_Application* anApp =
             (LightApp_Application*)(SUIT_Session::session()->activeApplication());
           anApp->selectionMgr()->GetIndexes( anIO, aMap );
-
-          if ( aMap.Extent() == 1 )
-          {
+	  
+          if ( aMap.Extent() == 1 ) {
             int anIndex = aMap( 1 );
             TopTools_IndexedMapOfShape aShapes;
             TopExp::MapShapes( aShape, aShapes );
             aShape = aShapes.FindKey( anIndex );
-
+	    
             if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_VERTEX )
               return;
           }
@@ -382,23 +367,21 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
         }
 
         gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
-        GroupXYZ->SpinBox_DX->SetValue( aPnt.X() );
-        GroupXYZ->SpinBox_DY->SetValue( aPnt.Y() );
-        GroupXYZ->SpinBox_DZ->SetValue( aPnt.Z() );
+        GroupXYZ->SpinBox_DX->setValue( aPnt.X() );
+        GroupXYZ->SpinBox_DY->setValue( aPnt.Y() );
+        GroupXYZ->SpinBox_DZ->setValue( aPnt.Z() );
       }
-      else if ( id == 1 )
-      {
+      else if ( id == 1 ) {
         myRefPoint = aSelectedObject;
         GroupRefPoint->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
       }
-      else if ( id == 2 )
-      {
+      else if ( id == 2 ) {
         myEdge = aSelectedObject;
         GroupOnCurve->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
       }
     }
   }
-
+  
   displayPreview();
 }
 
@@ -426,15 +409,13 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
-  if ( send == GroupRefPoint->PushButton1 )
-  {
+  if ( send == GroupRefPoint->PushButton1 ) {
     GroupRefPoint->LineEdit1->setFocus();
     myEditCurrentArgument = GroupRefPoint->LineEdit1;
     
     globalSelection( GEOM_POINT );
   }
-  else if ( send == GroupOnCurve->PushButton1 )
-  {
+  else if ( send == GroupOnCurve->PushButton1 ) {
     GroupOnCurve->LineEdit1->setFocus();
     myEditCurrentArgument = GroupOnCurve->LineEdit1;
     
@@ -447,9 +428,9 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
 // function : enterEvent()
 // purpose  : to reactivate this dialog box when mouse enter onto the window
 //=================================================================================
-void BasicGUI_PointDlg::enterEvent(QEvent* e)
+void BasicGUI_PointDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 
@@ -492,7 +473,7 @@ void BasicGUI_PointDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 double BasicGUI_PointDlg::getParameter() const
 {
-  return GroupOnCurve->SpinBox_DX->GetValue();
+  return GroupOnCurve->SpinBox_DX->value();
 }
 
 //=================================================================================
@@ -501,11 +482,10 @@ double BasicGUI_PointDlg::getParameter() const
 //=================================================================================
 void BasicGUI_PointDlg::OnPointSelected( const gp_Pnt& thePnt )
 {
-  if ( getConstructorId() == 0 )
-  {
-    GroupXYZ->SpinBox_DX->SetValue( thePnt.X() );
-    GroupXYZ->SpinBox_DY->SetValue( thePnt.Y() );
-    GroupXYZ->SpinBox_DZ->SetValue( thePnt.Z() );
+  if ( getConstructorId() == 0 ) {
+    GroupXYZ->SpinBox_DX->setValue( thePnt.X() );
+    GroupXYZ->SpinBox_DY->setValue( thePnt.Y() );
+    GroupXYZ->SpinBox_DZ->setValue( thePnt.Z() );
 
     displayPreview();
   }
@@ -546,60 +526,54 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
 
   GEOM::GEOM_Object_var anObj;
 
-  switch ( getConstructorId() )
-  {
+  switch ( getConstructorId() ) {
   case 0 :
-  {
-    double x = GroupXYZ->SpinBox_DX->GetValue();
-    double y = GroupXYZ->SpinBox_DY->GetValue();
-    double z = GroupXYZ->SpinBox_DZ->GetValue();
+    {
+      double x = GroupXYZ->SpinBox_DX->value();
+      double y = GroupXYZ->SpinBox_DY->value();
+      double z = GroupXYZ->SpinBox_DZ->value();
       
-    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePointXYZ( x,y,z );
-    res = true;
-    break;
-  }
+      anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePointXYZ( x, y, z );
+      res = true;
+      break;
+    }
   case 1 :
-  {
-    double dx = GroupRefPoint->SpinBox_DX->GetValue();
-    double dy = GroupRefPoint->SpinBox_DY->GetValue();
-    double dz = GroupRefPoint->SpinBox_DZ->GetValue();
-  
-    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->
-      MakePointWithReference( myRefPoint, dx, dy, dz );
-    res = true;
-    break;
-  }
+    {
+      double dx = GroupRefPoint->SpinBox_DX->value();
+      double dy = GroupRefPoint->SpinBox_DY->value();
+      double dz = GroupRefPoint->SpinBox_DZ->value();
+      
+      anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->
+	MakePointWithReference( myRefPoint, dx, dy, dz );
+      res = true;
+      break;
+    }
   case 2 :
     anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->
       MakePointOnCurve( myEdge, getParameter() );
     res = true;
     break;
   }
-
-  if ( getConstructorId() == 1 || getConstructorId() == 2 )
-  {
+  
+  if ( getConstructorId() == 1 || getConstructorId() == 2 ) {
     TopoDS_Shape aShape;
-    if ( GEOMBase::GetShape( anObj, aShape ) && !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
-    {
+    if ( GEOMBase::GetShape( anObj, aShape ) && !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX ) {
       gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
       myX->setText( QString( "%1" ).arg( aPnt.X() ) );
       myY->setText( QString( "%1" ).arg( aPnt.Y() ) );
       myZ->setText( QString( "%1" ).arg( aPnt.Z() ) );
     }
-    else
-    {
+    else {
       myX->setText( "" );
       myY->setText( "" );
       myZ->setText( "" );
     }
   }
   
-  if ( !anObj->_is_nil() )
-  {
-    //printf( "--> a valid point is created\n" );
+  if ( !anObj->_is_nil() ) {
     objects.push_back( anObj._retn() );
   }
-
+  
   return res;
 }
 

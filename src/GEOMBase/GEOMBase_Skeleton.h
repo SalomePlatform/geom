@@ -29,29 +29,35 @@
 #include "GEOM_GEOMBase.hxx"
 #include "GEOMBase_Helper.h"
 
-#include <GEOM_DlgRef.h>
+#include <QDialog>
 
 class GeometryGUI;
+class DlgRef_Skeleton;
+class QDoubleSpinBox;
+class QLineEdit;
+class QButtonGroup;
+class QPushButton;
 
-class GEOMBASE_EXPORT GEOMBase_Skeleton : public QDialog, public Ui::DlgRef_Skeleton_QTD, public GEOMBase_Helper
+class GEOMBASE_EXPORT GEOMBase_Skeleton : public QDialog, public GEOMBase_Helper
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    GEOMBase_Skeleton(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		      const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
+    GEOMBase_Skeleton( GeometryGUI*, QWidget* = 0, const char* = 0, bool = false, Qt::WindowFlags = 0 );
     ~GEOMBase_Skeleton();
 
 private:
     void Init();
 
 protected:
-    void closeEvent(QCloseEvent* e);
-    void keyPressEvent(QKeyEvent* e);
+    void                initSpinBox( QDoubleSpinBox*, double, double, double = 0.1, int = 3 );
+    
+    void                closeEvent( QCloseEvent* );
+    void                keyPressEvent( QKeyEvent* );
 
     /*! initialize "Name" field with a string "thePrefix_X" (Vertex_3)
      */
-    void initName( const char* thePrefix = 0 );
+    void                initName( const QString& = QString() );
 
     /*! returns contents of "Name" field
      */
@@ -59,22 +65,34 @@ protected:
 
     /*! returns id of a selected "constructor" radio button or '-1' in case of error
      */
-    int getConstructorId() const;
+    int                 getConstructorId() const;
 
-    void setHelpFileName( const QString& );
+    void                setHelpFileName( const QString& );
 
-    QLineEdit* myEditCurrentArgument; //!< Current LineEdit
-    GeometryGUI* myGeomGUI;           //!< reference GEOM GUI
-    QString myHelpFileName;
+    DlgRef_Skeleton*    mainFrame();
+    QWidget*            centralWidget();
+    QPushButton*        buttonCancel() const;
+    QPushButton*        buttonOk() const;
+    QPushButton*        buttonApply() const;
+    QPushButton*        buttonHelp() const;
+
+protected:
+    QLineEdit*          myEditCurrentArgument; //!< Current LineEdit
+    GeometryGUI*        myGeomGUI;             //!< reference GEOM GUI
+    QString             myHelpFileName;        //!< Associated HTML help file name
     
-    QButtonGroup* myRBGroup;
+    QButtonGroup*       myRBGroup;             //!< radio button group
+    DlgRef_Skeleton*    myMainFrame;           //!< dialog box's mainframe widgetx
 
 protected slots:
-    virtual void ClickOnCancel();
-    void LineEditReturnPressed();
-    void DeactivateActiveDialog();
-    void ActivateThisDialog();
-    void ClickOnHelp();
+    virtual void        ClickOnCancel();
+    void                LineEditReturnPressed();
+    void                DeactivateActiveDialog();
+    void                ActivateThisDialog();
+    void                ClickOnHelp();
+
+signals:
+    void                constructorsClicked( int );
 };
 
 #endif // GEOMBASE_SKELETON_H

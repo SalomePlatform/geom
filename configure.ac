@@ -74,7 +74,7 @@ dnl libtool macro check for CC, LD, NM, LN_S, RANLIB, STRIP + pour les librairie
 
 echo
 echo ---------------------------------------------
-echo Coniguring production
+echo Configuring production
 echo ---------------------------------------------
 echo
 AC_ENABLE_DEBUG(yes)
@@ -236,14 +236,6 @@ CHECK_QT
 
 echo
 echo ---------------------------------------------
-echo testing msg2qm
-echo ---------------------------------------------
-echo
-
-CHECK_MSG2QM
-
-echo
-echo ---------------------------------------------
 echo testing VTK
 echo ---------------------------------------------
 echo
@@ -304,11 +296,19 @@ fi
 
 echo
 echo ---------------------------------------------
-echo Testing Kernel
+echo Testing SALOME KERNEL module
 echo ---------------------------------------------
 echo
 
 CHECK_KERNEL
+
+echo
+echo ---------------------------------------------
+echo Testing SALOME GUI module
+echo ---------------------------------------------
+echo
+
+CHECK_SALOME_GUI
 
 echo
 echo ---------------------------------------------
@@ -317,7 +317,7 @@ echo ---------------------------------------------
 echo
 
 echo Configure
-variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
+variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok SalomeGUI_ok"
 
 for var in $variables
 do
@@ -330,7 +330,7 @@ echo "Default ORB   : $DEFAULT_ORB"
 echo
 
 dnl We don t need to say when we re entering directories if we re using
-dnl GNU make becuase make does it for us.
+dnl GNU make because make does it for us.
 if test "X$GMAKE" = "Xyes"; then
    AC_SUBST(SETX) SETX=":"
 else

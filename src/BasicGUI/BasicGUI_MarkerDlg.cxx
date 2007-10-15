@@ -1,45 +1,42 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : BasicGUI_MarkerDlg.cxx
+// Author : Sergey LITONIN, Open CASCADE S.A.S. (sergey.litonin@opencascade.com)
 //
-//
-//  File   : BasicGUI_MarkerDlg.cxx
-//  Author : Sergey LITONIN
-//  Module : GEOM
-//  $Header$
 
 #include "BasicGUI_MarkerDlg.h"
-#include "DlgRef_SpinBox.h"
 
-#include "GeometryGUI.h"
-#include "GEOMBase.h"
+#include <GEOM_DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
 #include <QLabel>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
 // OCCT Includes
 #include <BRep_Tool.hxx>
@@ -59,8 +56,8 @@
 // purpose  : Constructor
 //=================================================================================
 BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* theParent )
-  : GEOMBase_Skeleton(theGeometryGUI, theParent, "BasicGUI_MarkerDlg", false,
-                      Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
+  : GEOMBase_Skeleton( theGeometryGUI, theParent, "BasicGUI_MarkerDlg", false,
+		       Qt::WindowTitleHint | Qt::WindowSystemMenuHint )
 {
   QPixmap iconCS1   ( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_MARKER" ) ) );
   QPixmap iconCS2   ( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_MARKER2" ) ) );
@@ -69,49 +66,44 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
 
   setWindowTitle( tr( "CAPTION" ) );
 
-  GroupConstructors->setTitle( tr( "LOCALCS" ) );
-  RadioButton1->setIcon( iconCS1 );
-  RadioButton2->setIcon( iconCS2 );
-  RadioButton3->setIcon( iconCS3 );
+  mainFrame()->GroupConstructors->setTitle( tr( "LOCALCS" ) );
+  mainFrame()->RadioButton1->setIcon( iconCS1 );
+  mainFrame()->RadioButton2->setIcon( iconCS2 );
+  mainFrame()->RadioButton3->setIcon( iconCS3 );
 
-  Group1 = new Ui::DlgRef_1Sel_QTD();
-  QWidget* aGroup1Widget = new QWidget(this);
-  Group1->setupUi(aGroup1Widget);
-  aGroup1Widget->setObjectName("Group1");
+  Group1 = new DlgRef_1Sel( centralWidget() );
 
-  Group1->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  Group1->TextLabel1->setText(tr("GEOM_OBJECT"));
-  Group1->PushButton1->setIcon(iconSelect);
+  Group1->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
+  Group1->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
+  Group1->PushButton1->setIcon( iconSelect );
 
-  Group2 = new Ui::DlgRef_3Sel_QTD();
-  QWidget* aGroup2Widget = new QWidget(this);
-  Group2->setupUi(aGroup2Widget);
-  aGroup2Widget->setObjectName("Group2");
+  Group2 = new DlgRef_3Sel( centralWidget() );
 
-  Group2->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  Group2->TextLabel1->setText(tr("GEOM_POINT"));
-  Group2->TextLabel2->setText(tr("XDIR"));
-  Group2->TextLabel3->setText(tr("YDIR"));
-  Group2->PushButton1->setIcon(iconSelect);
-  Group2->PushButton2->setIcon(iconSelect);
-  Group2->PushButton3->setIcon(iconSelect);
+  Group2->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
+  Group2->TextLabel1->setText( tr( "GEOM_POINT" ) );
+  Group2->TextLabel2->setText( tr( "XDIR" ) );
+  Group2->TextLabel3->setText( tr( "YDIR" ) );
+  Group2->PushButton1->setIcon( iconSelect );
+  Group2->PushButton2->setIcon( iconSelect );
+  Group2->PushButton3->setIcon( iconSelect );
 
-  aMainGrp = new QFrame( this );
-  aMainGrp->setFrameStyle( QFrame::NoFrame );
+  aMainGrp = new QFrame( centralWidget() );
+  aMainGrp->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   aMainGrp->setContentsMargins( 0, 0, 0, 0 );
   QHBoxLayout* aMainGrpLayout = new QHBoxLayout( aMainGrp );
+  aMainGrpLayout->setMargin( 0 );
   
   QGroupBox* anOriGrp = new QGroupBox( tr( "ORIGIN" ), aMainGrp );
   QVBoxLayout* anOriGrpLayout = new QVBoxLayout( anOriGrp );
 
   anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_X" ), anOriGrp ) );
-  myData[ X ] = new DlgRef_SpinBox( anOriGrp );
+  myData[ X ] = new QDoubleSpinBox( anOriGrp );
   anOriGrpLayout->addWidget( myData[ X ] );
   anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_Y" ), anOriGrp ) );
-  myData[ Y ] = new DlgRef_SpinBox( anOriGrp );
+  myData[ Y ] = new QDoubleSpinBox( anOriGrp );
   anOriGrpLayout->addWidget( myData[ Y ] );
   anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_Z" ), anOriGrp ) );
-  myData[ Z ] = new DlgRef_SpinBox( anOriGrp );
+  myData[ Z ] = new QDoubleSpinBox( anOriGrp );
   anOriGrpLayout->addWidget( myData[ Z ] );
 
   aMainGrpLayout->addWidget( anOriGrp );
@@ -120,13 +112,13 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   QVBoxLayout* aXAxisGrpLayout = new QVBoxLayout( aXAxisGrp );
 
   aXAxisGrpLayout->addWidget( new QLabel( tr( "DX" ), aXAxisGrp ) );
-  myData[ DX1 ] = new DlgRef_SpinBox( aXAxisGrp );
+  myData[ DX1 ] = new QDoubleSpinBox( aXAxisGrp );
   aXAxisGrpLayout->addWidget( myData[ DX1 ] );
   aXAxisGrpLayout->addWidget( new QLabel( tr( "DY" ), aXAxisGrp ) );
-  myData[ DY1 ] = new DlgRef_SpinBox( aXAxisGrp );
+  myData[ DY1 ] = new QDoubleSpinBox( aXAxisGrp );
   aXAxisGrpLayout->addWidget( myData[ DY1 ] );
   aXAxisGrpLayout->addWidget( new QLabel( tr( "DZ" ), aXAxisGrp ) );
-  myData[ DZ1 ] = new DlgRef_SpinBox( aXAxisGrp );
+  myData[ DZ1 ] = new QDoubleSpinBox( aXAxisGrp );
   aXAxisGrpLayout->addWidget( myData[ DZ1 ] );
 
   aMainGrpLayout->addWidget( aXAxisGrp );
@@ -135,22 +127,24 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   QVBoxLayout* anYAxisGrpLayout = new QVBoxLayout( anYAxisGrp );
 
   anYAxisGrpLayout->addWidget( new QLabel( tr( "DX" ), anYAxisGrp ) );
-  myData[ DX2 ] = new DlgRef_SpinBox( anYAxisGrp );
+  myData[ DX2 ] = new QDoubleSpinBox( anYAxisGrp );
   anYAxisGrpLayout->addWidget( myData[ DX2 ] );
   anYAxisGrpLayout->addWidget( new QLabel( tr( "DY" ), anYAxisGrp ) );
-  myData[ DY2 ] = new DlgRef_SpinBox( anYAxisGrp );
+  myData[ DY2 ] = new QDoubleSpinBox( anYAxisGrp );
   anYAxisGrpLayout->addWidget( myData[ DY2 ] );
   anYAxisGrpLayout->addWidget( new QLabel( tr( "DZ" ), anYAxisGrp ) );
-  myData[ DZ2 ] = new DlgRef_SpinBox( anYAxisGrp );
+  myData[ DZ2 ] = new QDoubleSpinBox( anYAxisGrp );
   anYAxisGrpLayout->addWidget( myData[ DZ2 ] );
 
   aMainGrpLayout->addWidget( anYAxisGrp );
 
-  gridLayout1->addWidget( aMainGrp, 2, 0 );
-  gridLayout1->addWidget( aGroup1Widget, 2, 0 );
-  gridLayout1->addWidget( aGroup2Widget, 2, 0 );
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( aMainGrp );
+  layout->addWidget( Group1 );
+  layout->addWidget( Group2 );
 
-  setHelpFileName("local_coordinate_system.htm");
+  setHelpFileName( "local_coordinate_system.htm" );
 
   Init();
 }
@@ -179,44 +173,44 @@ void BasicGUI_MarkerDlg::Init()
   Group2->LineEdit2->setReadOnly( true );
   Group2->LineEdit3->setReadOnly( true );
 
-  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
-  connect(Group1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(Group2->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(Group2->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(Group2->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( this,                SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
-  connect(Group1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group2->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group2->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group2->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( Group1->PushButton1, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group2->PushButton1, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group2->PushButton2, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group2->PushButton3, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
 
-  connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( onClose() ) );
-  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( onDeactivate() ) );
-  connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ), this, SLOT( onClose() ) );
+  connect( Group1->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( Group2->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( Group2->LineEdit2,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( Group2->LineEdit3,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect( buttonOk, SIGNAL( clicked() ), this, SLOT( onOk() ) );
-  connect( buttonApply, SIGNAL( clicked() ), this, SLOT( onApply() ) );
+  connect( myGeomGUI,           SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( onDeactivate() ) );
+  connect( myGeomGUI,           SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( onClose() ) );
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+  connect( buttonCancel(),      SIGNAL( clicked() ), this, SLOT( onClose() ) );
+  connect( buttonOk(),          SIGNAL( clicked() ), this, SLOT( onOk() ) );
+  connect( buttonApply(),       SIGNAL( clicked() ), this, SLOT( onApply() ) );
+
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
 
-  initName( tr( "LCS_NAME" ).toLatin1().constData() );
+  initName( tr( "LCS_NAME" ) );
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
+  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
-  for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter )
-  {
-    anIter.value()->RangeStepAndValidator( COORD_MIN, COORD_MAX, step, 3 );
+  for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter ) {
+    initSpinBox( anIter.value(), COORD_MIN, COORD_MAX, step, 3 );
     connect( anIter.value(), SIGNAL( valueChanged( double ) ),
              this, SLOT( onValueChanged( double ) ) );
   }
-
+  
   myBlockPreview = true;
   for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter )
-    anIter.value()->SetValue( 0 );
-  myData[ DX1 ]->SetValue( 1 );
-  myData[ DY2 ]->SetValue( 1 );
+    anIter.value()->setValue( 0 );
+  myData[ DX1 ]->setValue( 1 );
+  myData[ DY2 ]->setValue( 1 );
   myBlockPreview = false;
 
   ConstructorsClicked( 0 );
@@ -246,8 +240,7 @@ void BasicGUI_MarkerDlg::Init()
 //=================================================================================
 void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
 {
-  if ( myConstructorId == constructorId && myConstructorId == 0 )
-  {
+  if ( myConstructorId == constructorId && myConstructorId == 0 ) {
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
     activate( GEOM_MARKER );
     displayPreview();
@@ -256,50 +249,50 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
 
   myConstructorId = constructorId;
 
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
 
-  switch (constructorId)
+  switch ( constructorId ) {
+  case 0:
     {
-    case 0:
-    {
-      ::qobject_cast<QWidget*>( Group1->gridLayout->parent() )->hide();
-      ::qobject_cast<QWidget*>( Group2->gridLayout->parent() )->hide();
-      resize(0, 0);
+      Group1->hide();
+      Group2->hide();
       aMainGrp->show();
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       activate( GEOM_MARKER );
       break;
     }
-    case 1:
-      {
-	::qobject_cast<QWidget*>( Group2->gridLayout->parent() )->hide();
-	aMainGrp->hide();
-	//PAL6669: resize(0, 0);
-	::qobject_cast<QWidget*>( Group1->gridLayout->parent() )->show();
-
-	globalSelection( GEOM_ALLGEOM );
-	myEditCurrentArgument = Group1->LineEdit1;
-	Group1->LineEdit1->setText("");
-	break;
-      }
-    case 2:
-      {
-	aMainGrp->hide();
-	::qobject_cast<QWidget*>( Group1->gridLayout->parent() )->show();
-	//PAL6669: resize(0, 0);
-	::qobject_cast<QWidget*>( Group2->gridLayout->parent() )->show();
-
-	globalSelection( GEOM_POINT );
-	myEditCurrentArgument = Group2->LineEdit1;
-	Group2->LineEdit1->setText("");
-	Group2->LineEdit2->setText("");
-	Group2->LineEdit3->setText("");
-	break;
-      }
+  case 1:
+    {
+      aMainGrp->hide();
+      Group2->hide();
+      Group1->show();
+      
+      globalSelection( GEOM_ALLGEOM );
+      myEditCurrentArgument = Group1->LineEdit1;
+      Group1->LineEdit1->setText( "" );
+      break;
     }
+  case 2:
+    {
+      aMainGrp->hide();
+      Group1->show();
+      Group2->show();
+      
+      globalSelection( GEOM_POINT );
+      myEditCurrentArgument = Group2->LineEdit1;
+      Group2->LineEdit1->setText( "" );
+      Group2->LineEdit2->setText( "" );
+      Group2->LineEdit3->setText( "" );
+      break;
+    }
+  }
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-	  SIGNAL(currentSelectionChanged()), this, SLOT(onSelectionDone()));
+  qApp->processEvents();
+  updateGeometry();
+  resize( minimumSize() );
+  
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
   onSelectionDone();
 }
 
@@ -343,52 +336,45 @@ bool BasicGUI_MarkerDlg::onApply()
 //=================================================================================
 void BasicGUI_MarkerDlg::onSelectionDone0()
 {
-  if ( IObjectCount() == 1 )
-  {
+  if ( IObjectCount() == 1 ) {
     Standard_Boolean aRes = Standard_False;
     Handle(SALOME_InteractiveObject) anIO = firstIObject();
     GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-
+    
     LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 
-    if ( aRes && !aSelectedObj->_is_nil() )
-    {
+    if ( aRes && !aSelectedObj->_is_nil() ) {
       TopoDS_Shape aShape;
-      if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
-      {
+      if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
         // Existing LCS selected
-        if ( aSelectedObj->GetType() == GEOM_MARKER && aShape.ShapeType() == TopAbs_FACE )
-        {
+        if ( aSelectedObj->GetType() == GEOM_MARKER && aShape.ShapeType() == TopAbs_FACE ) {
           TopoDS_Face aFace = TopoDS::Face( aShape );
           Handle(Geom_Plane) aPlane = Handle(Geom_Plane)::DownCast( BRep_Tool::Surface( aFace ) );
-
-          if ( !aPlane.IsNull() )
-          {
+	  
+          if ( !aPlane.IsNull() ) {
             gp_Ax3 anAx3 = aPlane->Pln().Position();
             gp_Pnt aLoc = anAx3.Location();
             gp_Dir aXDir = anAx3.XDirection();
             gp_Dir aYDir = anAx3.YDirection();
-
-            myData[ X ]->SetValue( aLoc.X() );
-            myData[ Y ]->SetValue( aLoc.Y() );
-            myData[ Z ]->SetValue( aLoc.Z() );
-
-            myData[ DX1 ]->SetValue( aXDir.X() );
-            myData[ DY1 ]->SetValue( aXDir.Y() );
-            myData[ DZ1 ]->SetValue( aXDir.Z() );
-
-            myData[ DX2 ]->SetValue( aYDir.X() );
-            myData[ DY2 ]->SetValue( aYDir.Y() );
-            myData[ DZ2 ]->SetValue( aYDir.Z() );
+	    
+            myData[ X ]->setValue( aLoc.X() );
+            myData[ Y ]->setValue( aLoc.Y() );
+            myData[ Z ]->setValue( aLoc.Z() );
+	    
+            myData[ DX1 ]->setValue( aXDir.X() );
+            myData[ DY1 ]->setValue( aXDir.Y() );
+            myData[ DZ1 ]->setValue( aXDir.Z() );
+	    
+            myData[ DX2 ]->setValue( aYDir.X() );
+            myData[ DY2 ]->setValue( aYDir.Y() );
+            myData[ DZ2 ]->setValue( aYDir.Z() );
 	    aSelMgr->clearSelected();
           }
         }
-        else
-        {
+        else {
 	  TColStd_IndexedMapOfInteger aMap;
 	  aSelMgr->GetIndexes( anIO, aMap );
-	  if ( aMap.Extent() == 1 )
-          {
+	  if ( aMap.Extent() == 1 ) {
 	    int anIndex = aMap( 1 );
 	    TopTools_IndexedMapOfShape aShapes;
 	    TopExp::MapShapes( aShape, aShapes );
@@ -396,18 +382,17 @@ void BasicGUI_MarkerDlg::onSelectionDone0()
 	    aSelMgr->clearSelected();
 	  }
 
-          if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
-          {
+          if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX ) {
             gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
-            myData[ X ]->SetValue( aPnt.X() );
-            myData[ Y ]->SetValue( aPnt.Y() );
-            myData[ Z ]->SetValue( aPnt.Z() );
+            myData[ X ]->setValue( aPnt.X() );
+            myData[ Y ]->setValue( aPnt.Y() );
+            myData[ Z ]->setValue( aPnt.Z() );
           }
         }
       }
     }
   }
-
+  
   displayPreview();
 }
 
@@ -423,7 +408,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
     return;
   }
 
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   QString aName;
 
   if ( IObjectCount() == 1 ) {
@@ -433,40 +418,40 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 
     if ( !CORBA::is_nil( aSelectedObj ) && aRes ) {
       aName = GEOMBase::GetName( aSelectedObj );
-
+      
       if ( getConstructorId() == 1 ) { // by shape position
         // Get shape's position
-        CORBA::Double Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz, Yx,Yy,Yz;
+        CORBA::Double Ox, Oy, Oz,   Zx, Zy, Zz,   Xx, Xy, Xz,   Yx, Yy, Yz;
         Ox = Oy = Oz = Zx = Zy = Xy = Xz = Yx = Yz = 0;
         Zz = Xx = Yy = 1.;
-
+	
         GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
-          myGeomGUI->GetGeomGen()->GetIMeasureOperations(getStudyId());
-        aMeasureOp->GetPosition(aSelectedObj, Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz);
-
+          myGeomGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() );
+        aMeasureOp->GetPosition( aSelectedObj, Ox, Oy, Oz, Zx, Zy, Zz, Xx, Xy, Xz );
+	
         // Calculate Y direction
-        if (aMeasureOp->IsDone()) {
-          gp_Pnt aPnt (Ox,Oy,Oz);
-          gp_Dir aDirN (Zx,Zy,Zz);
-          gp_Dir aDirX (Xx,Xy,Xz);
-          gp_Ax3 anAx3 (aPnt, aDirN, aDirX);
+        if ( aMeasureOp->IsDone() ) {
+          gp_Pnt aPnt  ( Ox, Oy, Oz );
+          gp_Dir aDirN ( Zx, Zy, Zz );
+          gp_Dir aDirX ( Xx, Xy, Xz );
+          gp_Ax3 anAx3 ( aPnt, aDirN, aDirX );
 
           gp_Dir aDirY = anAx3.YDirection();
           aDirY.Coord(Yx,Yy,Yz);
         }
 
         // Set values
-        myData[ X ]->SetValue( Ox );
-        myData[ Y ]->SetValue( Oy );
-        myData[ Z ]->SetValue( Oz );
+        myData[ X ]->setValue( Ox );
+        myData[ Y ]->setValue( Oy );
+        myData[ Z ]->setValue( Oz );
 
-        myData[ DX1 ]->SetValue( Xx );
-        myData[ DY1 ]->SetValue( Xy );
-        myData[ DZ1 ]->SetValue( Xz );
+        myData[ DX1 ]->setValue( Xx );
+        myData[ DY1 ]->setValue( Xy );
+        myData[ DZ1 ]->setValue( Xz );
 
-        myData[ DX2 ]->SetValue( Yx );
-        myData[ DY2 ]->SetValue( Yy );
-        myData[ DZ2 ]->SetValue( Yz );
+        myData[ DX2 ]->setValue( Yx );
+        myData[ DY2 ]->setValue( Yy );
+        myData[ DZ2 ]->setValue( Yz );
 
         myEditCurrentArgument->setText( aName );
       }
@@ -474,7 +459,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
         TopoDS_Shape aShape;
         if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) ) {
           GEOM::short_array anIndexes;
-
+	  
           TColStd_IndexedMapOfInteger aMap;
           LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
           aSelMgr->GetIndexes( anIO, aMap );
@@ -486,52 +471,52 @@ void BasicGUI_MarkerDlg::onSelectionDone()
             aShape = aShapes.FindKey( anIndex );
           }
 
-          if (myEditCurrentArgument == Group2->LineEdit1) {
+          if ( myEditCurrentArgument == Group2->LineEdit1 ) {
 	    if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX ) {
 	      gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
-	      myData[ X ]->SetValue( aPnt.X() );
-	      myData[ Y ]->SetValue( aPnt.Y() );
-	      myData[ Z ]->SetValue( aPnt.Z() );
+	      myData[ X ]->setValue( aPnt.X() );
+	      myData[ Y ]->setValue( aPnt.Y() );
+	      myData[ Z ]->setValue( aPnt.Z() );
 	      myEditCurrentArgument->setText( aName );
 	    }
 	    else {
-	      myData[ X ]->SetValue( 0 );
-	      myData[ Y ]->SetValue( 0 );
-	      myData[ Z ]->SetValue( 0 );
+	      myData[ X ]->setValue( 0 );
+	      myData[ Y ]->setValue( 0 );
+	      myData[ Z ]->setValue( 0 );
 	    }
 	  }
 	  else if (myEditCurrentArgument == Group2->LineEdit2) {
 	    if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_EDGE ) {
-	      gp_Pnt aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(TopoDS::Edge(aShape)));
-	      gp_Pnt aP2 = BRep_Tool::Pnt(TopExp::LastVertex(TopoDS::Edge(aShape)));
-	      gp_Dir aDir(gp_Vec(aP1, aP2));
+	      gp_Pnt aP1 = BRep_Tool::Pnt( TopExp::FirstVertex( TopoDS::Edge( aShape ) ) );
+	      gp_Pnt aP2 = BRep_Tool::Pnt( TopExp::LastVertex( TopoDS::Edge( aShape ) ) );
+	      gp_Dir aDir( gp_Vec( aP1, aP2 ) );
 
-	      myData[ DX1 ]->SetValue( aDir.X() );
-	      myData[ DY1 ]->SetValue( aDir.Y() );
-	      myData[ DZ1 ]->SetValue( aDir.Z() );
+	      myData[ DX1 ]->setValue( aDir.X() );
+	      myData[ DY1 ]->setValue( aDir.Y() );
+	      myData[ DZ1 ]->setValue( aDir.Z() );
 	      myEditCurrentArgument->setText( aName );
 	    }
 	    else {
-	      myData[ DX1 ]->SetValue( 0 );
-	      myData[ DY1 ]->SetValue( 0 );
-	      myData[ DZ1 ]->SetValue( 0 );
+	      myData[ DX1 ]->setValue( 0 );
+	      myData[ DY1 ]->setValue( 0 );
+	      myData[ DZ1 ]->setValue( 0 );
 	    }
 	  }
-	  else if (myEditCurrentArgument == Group2->LineEdit3) {
+	  else if ( myEditCurrentArgument == Group2->LineEdit3 ) {
 	    if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_EDGE ) {
-	      gp_Pnt aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(TopoDS::Edge(aShape)));
-	      gp_Pnt aP2 = BRep_Tool::Pnt(TopExp::LastVertex(TopoDS::Edge(aShape)));
-	      gp_Dir aDir(gp_Vec(aP1, aP2));
+	      gp_Pnt aP1 = BRep_Tool::Pnt( TopExp::FirstVertex( TopoDS::Edge( aShape ) ) );
+	      gp_Pnt aP2 = BRep_Tool::Pnt( TopExp::LastVertex( TopoDS::Edge( aShape ) ) );
+	      gp_Dir aDir(gp_Vec( aP1, aP2 ));
 
-	      myData[ DX2 ]->SetValue( aDir.X() );
-	      myData[ DY2 ]->SetValue( aDir.Y() );
-	      myData[ DZ2 ]->SetValue( aDir.Z() );
+	      myData[ DX2 ]->setValue( aDir.X() );
+	      myData[ DY2 ]->setValue( aDir.Y() );
+	      myData[ DZ2 ]->setValue( aDir.Z() );
 	      myEditCurrentArgument->setText( aName );
 	    }
 	    else {
-	      myData[ DX2 ]->SetValue( 0 );
-	      myData[ DY2 ]->SetValue( 0 );
-	      myData[ DZ2 ]->SetValue( 0 );
+	      myData[ DX2 ]->setValue( 0 );
+	      myData[ DY2 ]->setValue( 0 );
+	      myData[ DZ2 ]->setValue( 0 );
 	    }
 	  }
 	}
@@ -540,33 +525,33 @@ void BasicGUI_MarkerDlg::onSelectionDone()
   }
   else {
     if ( getConstructorId() == 1 ) {
-      myData[ X ]->SetValue( 0 );
-      myData[ Y ]->SetValue( 0 );
-      myData[ Z ]->SetValue( 0 );
+      myData[ X ]->setValue( 0 );
+      myData[ Y ]->setValue( 0 );
+      myData[ Z ]->setValue( 0 );
 
-      myData[ DX1 ]->SetValue( 0 );
-      myData[ DY1 ]->SetValue( 0 );
-      myData[ DZ1 ]->SetValue( 0 );
+      myData[ DX1 ]->setValue( 0 );
+      myData[ DY1 ]->setValue( 0 );
+      myData[ DZ1 ]->setValue( 0 );
 
-      myData[ DX2 ]->SetValue( 0 );
-      myData[ DY2 ]->SetValue( 0 );
-      myData[ DZ2 ]->SetValue( 0 );
+      myData[ DX2 ]->setValue( 0 );
+      myData[ DY2 ]->setValue( 0 );
+      myData[ DZ2 ]->setValue( 0 );
     }
     else if ( getConstructorId() == 2 ) {
-      if (myEditCurrentArgument == Group2->LineEdit1) {
-	myData[ X ]->SetValue( 0 );
-	myData[ Y ]->SetValue( 0 );
-	myData[ Z ]->SetValue( 0 );
+      if ( myEditCurrentArgument == Group2->LineEdit1 ) {
+	myData[ X ]->setValue( 0 );
+	myData[ Y ]->setValue( 0 );
+	myData[ Z ]->setValue( 0 );
       }
-      else if (myEditCurrentArgument == Group2->LineEdit2) {
-	myData[ DX1 ]->SetValue( 0 );
-	myData[ DY1 ]->SetValue( 0 );
-	myData[ DZ1 ]->SetValue( 0 );
+      else if ( myEditCurrentArgument == Group2->LineEdit2 ) {
+	myData[ DX1 ]->setValue( 0 );
+	myData[ DY1 ]->setValue( 0 );
+	myData[ DZ1 ]->setValue( 0 );
       }
-      else if (myEditCurrentArgument == Group2->LineEdit3) {
-	myData[ DX2 ]->SetValue( 0 );
-	myData[ DY2 ]->SetValue( 0 );
-	myData[ DZ2 ]->SetValue( 0 );
+      else if ( myEditCurrentArgument == Group2->LineEdit3 ) {
+	myData[ DX2 ]->setValue( 0 );
+	myData[ DY2 ]->setValue( 0 );
+	myData[ DZ2 ]->setValue( 0 );
       }
     }
   }
@@ -582,23 +567,23 @@ void BasicGUI_MarkerDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
-  if(send == Group1->PushButton1) {
+  if ( send == Group1->PushButton1 ) {
     myEditCurrentArgument = Group1->LineEdit1;
     globalSelection( GEOM_ALLGEOM );
   }
-  else if(send == Group2->PushButton1) {
+  else if ( send == Group2->PushButton1 ) {
     myEditCurrentArgument = Group2->LineEdit1;
     globalSelection( GEOM_POINT );
   }
-  else if(send == Group2->PushButton2) {
+  else if ( send == Group2->PushButton2 ) {
     myEditCurrentArgument = Group2->LineEdit2;
-      globalSelection( GEOM_LINE );
+    globalSelection( GEOM_LINE );
   }
-  else if(send == Group2->PushButton3) {
+  else if ( send == Group2->PushButton3 ) {
     myEditCurrentArgument = Group2->LineEdit3;
     globalSelection( GEOM_LINE );
   }
-
+  
   myEditCurrentArgument->setFocus();
   onSelectionDone();
 }
@@ -622,7 +607,7 @@ void BasicGUI_MarkerDlg::LineEditReturnPressed()
 void BasicGUI_MarkerDlg::onActivate()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
 
   ConstructorsClicked( getConstructorId() );
@@ -641,9 +626,9 @@ void BasicGUI_MarkerDlg::onDeactivate()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BasicGUI_MarkerDlg::enterEvent(QEvent* e)
+void BasicGUI_MarkerDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     onActivate();
 }
 
@@ -663,8 +648,8 @@ GEOM::GEOM_IOperations_ptr BasicGUI_MarkerDlg::createOperation()
 bool BasicGUI_MarkerDlg::isValid( QString& msg )
 {
   const int id = getConstructorId();
-  gp_Vec v1( myData[ DX1 ]->GetValue(), myData[ DY1 ]->GetValue(), myData[ DZ1 ]->GetValue() ),
-         v2( myData[ DX2 ]->GetValue(), myData[ DY2 ]->GetValue(), myData[ DZ2 ]->GetValue() );
+  gp_Vec v1( myData[ DX1 ]->value(), myData[ DY1 ]->value(), myData[ DZ1 ]->value() ),
+         v2( myData[ DX2 ]->value(), myData[ DY2 ]->value(), myData[ DZ2 ]->value() );
 
   bool isOk = false;
   // we will got exception if the magnitude of any of the 2 vectors <= gp::Resolution()
@@ -675,16 +660,15 @@ bool BasicGUI_MarkerDlg::isValid( QString& msg )
       msg += tr( "VEC_PARALLEL" );
   }
 
-  switch ( id )
-  {
-    case 0:
-      return isOk;
-    case 1:
-      return !Group1->LineEdit1->text().isEmpty() && isOk;
-    case 2:
-      return !Group2->LineEdit1->text().isEmpty() &&
-	     !Group2->LineEdit2->text().isEmpty() &&
-	     !Group2->LineEdit3->text().isEmpty() && isOk;
+  switch ( id ) {
+  case 0:
+    return isOk;
+  case 1:
+    return !Group1->LineEdit1->text().isEmpty() && isOk;
+  case 2:
+    return !Group2->LineEdit1->text().isEmpty() &&
+      !Group2->LineEdit2->text().isEmpty() &&
+      !Group2->LineEdit3->text().isEmpty() && isOk;
   }
   return false;
 }
@@ -696,9 +680,9 @@ bool BasicGUI_MarkerDlg::isValid( QString& msg )
 bool BasicGUI_MarkerDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj = GEOM::GEOM_IBasicOperations::_narrow(
-    getOperation() )->MakeMarker( myData[ X   ]->GetValue(), myData[ Y   ]->GetValue(), myData[ Z   ]->GetValue(),
-                                  myData[ DX1 ]->GetValue(), myData[ DY1 ]->GetValue(), myData[ DZ1 ]->GetValue(),
-                                  myData[ DX2 ]->GetValue(), myData[ DY2 ]->GetValue(), myData[ DZ2 ]->GetValue() );
+    getOperation() )->MakeMarker( myData[ X   ]->value(), myData[ Y   ]->value(), myData[ Z   ]->value(),
+                                  myData[ DX1 ]->value(), myData[ DY1 ]->value(), myData[ DZ1 ]->value(),
+                                  myData[ DX2 ]->value(), myData[ DY2 ]->value(), myData[ DZ2 ]->value() );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
@@ -733,12 +717,9 @@ void BasicGUI_MarkerDlg::displayPreview ( const bool   activate,
                                           const bool   toRemoveFromEngine,
                                           const double lineWidth )
 {
-  if ( !myBlockPreview )
-  {
+  if ( !myBlockPreview ) {
     GEOMBase_Skeleton::displayPreview( activate, update, toRemoveFromEngine, lineWidth );
     if ( myConstructorId == 0 )
-    {
       GEOMBase_Skeleton::activate( GEOM_MARKER );
-    }
   }
 }

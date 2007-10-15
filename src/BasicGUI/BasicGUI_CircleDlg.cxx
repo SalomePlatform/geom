@@ -1,44 +1,41 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : BasicGUI_CircleDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : BasicGUI_CircleDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
 #include "BasicGUI_CircleDlg.h"
-#include "DlgRef_2Sel1Spin.h"
-#include "DlgRef_SpinBox.h"
 
-#include "GeometryGUI.h"
-#include "GEOMBase.h"
+#include <GEOM_DlgRef.h>
 
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "GEOMImpl_Types.hxx"
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
+
+#include <GEOMImpl_Types.hxx>
 
 //=================================================================================
 // class    : BasicGUI_CircleDlg()
@@ -47,57 +44,56 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_CircleDlg::BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                       const char* name, bool modal, Qt::WindowFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
+BasicGUI_CircleDlg::BasicGUI_CircleDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
+					const char* name, bool modal, Qt::WindowFlags fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, name, modal, fl )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PV")));
-  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CIRCLE_PNTS")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_CIRCLE_PV" ) ) );
+  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_CIRCLE_PNTS" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setWindowTitle(tr("GEOM_CIRCLE_TITLE"));
+  setWindowTitle( tr( "GEOM_CIRCLE_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_CIRCLE"));
-  RadioButton1->setIcon(image0);
-  RadioButton2->setIcon(image2);
-  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton3->close();
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_CIRCLE" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setIcon( image2 );
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupPntVecR = new DlgRef_2Sel1Spin(this, "GroupPntVecR");
-  GroupPntVecR->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  GroupPntVecR = new DlgRef_2Sel1Spin( centralWidget() );
+  GroupPntVecR->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
   
-  GroupPntVecR->TextLabel1->setText(tr("GEOM_CENTER_POINT"));
-  GroupPntVecR->TextLabel2->setText(tr("GEOM_VECTOR"));
-  GroupPntVecR->TextLabel3->setText(tr("GEOM_RADIUS"));
-  GroupPntVecR->PushButton1->setIcon(image1);
-  GroupPntVecR->PushButton2->setIcon(image1);
+  GroupPntVecR->TextLabel1->setText( tr( "GEOM_CENTER_POINT" ) );
+  GroupPntVecR->TextLabel2->setText( tr( "GEOM_VECTOR" ) );
+  GroupPntVecR->TextLabel3->setText( tr( "GEOM_RADIUS" ) );
+  GroupPntVecR->PushButton1->setIcon( image1 );
+  GroupPntVecR->PushButton2->setIcon( image1 );
 
   GroupPntVecR->LineEdit1->setReadOnly( true );
   GroupPntVecR->LineEdit2->setReadOnly( true );
 
-  Group3Pnts = new Ui::DlgRef_3Sel_QTD();
-  QWidget* aGroup3PntsWidget = new QWidget(this);
-  Group3Pnts->setupUi(aGroup3PntsWidget);
-  aGroup3PntsWidget->setObjectName("Group3Pnts");
+  Group3Pnts = new DlgRef_3Sel( centralWidget() );
 
-  Group3Pnts->GroupBox1->setTitle(tr("GEOM_3_POINTS"));
-  Group3Pnts->TextLabel1->setText(tr("GEOM_POINT1"));
-  Group3Pnts->TextLabel2->setText(tr("GEOM_POINT2"));
-  Group3Pnts->TextLabel3->setText(tr("GEOM_POINT3"));
-  Group3Pnts->PushButton1->setIcon(image1);
-  Group3Pnts->PushButton2->setIcon(image1);
-  Group3Pnts->PushButton3->setIcon(image1);
+  Group3Pnts->GroupBox1->setTitle( tr( "GEOM_3_POINTS" ) );
+  Group3Pnts->TextLabel1->setText( tr( "GEOM_POINT1" ) );
+  Group3Pnts->TextLabel2->setText( tr( "GEOM_POINT2" ) );
+  Group3Pnts->TextLabel3->setText( tr( "GEOM_POINT3" ) );
+  Group3Pnts->PushButton1->setIcon( image1 );
+  Group3Pnts->PushButton2->setIcon( image1 );
+  Group3Pnts->PushButton3->setIcon( image1 );
 
   Group3Pnts->LineEdit1->setReadOnly( true );
   Group3Pnts->LineEdit2->setReadOnly( true );
   Group3Pnts->LineEdit3->setReadOnly( true );
 
-  gridLayout1->addWidget( GroupPntVecR, 2, 0 );
-  gridLayout1->addWidget( aGroup3PntsWidget, 2, 0 );
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupPntVecR );
+  layout->addWidget( Group3Pnts );
   /***************************************************************/
 
-  setHelpFileName("circle.htm");
+  setHelpFileName( "circle.htm" );
 
   Init();
 }
@@ -127,39 +123,41 @@ void BasicGUI_CircleDlg::Init()
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  double aStep = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
+  double aStep = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPntVecR->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, aStep, 3);
-  GroupPntVecR->SpinBox_DX->SetValue( 100 );
+  initSpinBox( GroupPntVecR->SpinBox_DX, 0.001, COORD_MAX, aStep, 3 );
+  GroupPntVecR->SpinBox_DX->setValue( 100 );
 
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
+  connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
   
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
+  connect( buttonCancel(), SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) );
+  connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupPntVecR->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPntVecR->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(Group3Pnts->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(Group3Pnts->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(Group3Pnts->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( this,           SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
-  connect(GroupPntVecR->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPntVecR->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( GroupPntVecR->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPntVecR->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group3Pnts->PushButton1,   SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group3Pnts->PushButton2,   SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group3Pnts->PushButton3,   SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(GroupPntVecR->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPntVecR->SpinBox_DX, SLOT(SetStep(double)));
-  
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( GroupPntVecR->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( GroupPntVecR->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  initName( tr( "GEOM_CIRCLE" ).toLatin1().constData() );
+  connect( GroupPntVecR->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT(ValueChangedInSpinBox() ) );
+  // VSR: TODO ->>
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPntVecR->SpinBox_DX, SLOT( SetStep( double ) ) );
+  // <<-
 
-  ::qobject_cast<QWidget*>( Group3Pnts->gridLayout->parent() )->hide();
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT(SelectionIntoArgument() ) ) ;
+
+  initName( tr( "GEOM_CIRCLE" ) );
+
   ConstructorsClicked( 0 );
 }
 
@@ -169,40 +167,41 @@ void BasicGUI_CircleDlg::Init()
 //=================================================================================
 void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
   myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 
-  switch ( constructorId )
-  {
-    case 0:
-      {
-	::qobject_cast<QWidget*>( Group3Pnts->gridLayout->parent() )->hide();
-	resize(0, 0);
-	GroupPntVecR->show();
-	
-	myEditCurrentArgument = GroupPntVecR->LineEdit1;
-	GroupPntVecR->LineEdit1->setText("");
-	GroupPntVecR->LineEdit2->setText("");
-	break;
-      }
+  switch ( constructorId ) {
+  case 0:
+    {
+      Group3Pnts->hide();
+      GroupPntVecR->show();
+      
+      myEditCurrentArgument = GroupPntVecR->LineEdit1;
+      GroupPntVecR->LineEdit1->setText( "" );
+      GroupPntVecR->LineEdit2->setText( "" );
+      break;
+    }
   case 1:
     {
       GroupPntVecR->hide();
-      resize( 0, 0 );
-      ::qobject_cast<QWidget*>( Group3Pnts->gridLayout->parent() )->show();
+      Group3Pnts->show();
       
       myEditCurrentArgument = Group3Pnts->LineEdit1;
-      Group3Pnts->LineEdit1->setText("");
-      Group3Pnts->LineEdit2->setText("");
-      Group3Pnts->LineEdit3->setText("");
+      Group3Pnts->LineEdit1->setText( "" );
+      Group3Pnts->LineEdit2->setText( "" );
+      Group3Pnts->LineEdit3->setText( "" );
       break;
-      }
+    }
   }
   
+  qApp->processEvents();
+  updateGeometry();
+  resize( minimumSize() );
+
   myEditCurrentArgument->setFocus();
   globalSelection( GEOM_POINT );
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT(SelectionIntoArgument() ) );
 }
 
 //=================================================================================
@@ -244,10 +243,9 @@ void BasicGUI_CircleDlg::ClickOnCancel()
 //=================================================================================
 void BasicGUI_CircleDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   
-  if ( IObjectCount() != 1 )  
-  {
+  if ( IObjectCount() != 1 ) {
     if      ( myEditCurrentArgument == GroupPntVecR->LineEdit1 ) myPoint  = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) myDir    = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
@@ -259,8 +257,7 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
-  {  
+  if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {  
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     if      ( myEditCurrentArgument == GroupPntVecR->LineEdit1 ) myPoint  = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) myDir    = aSelectedObject;
@@ -307,8 +304,7 @@ void BasicGUI_CircleDlg::LineEditReturnPressed()
        send == GroupPntVecR->LineEdit2 ||
        send == Group3Pnts->LineEdit1 ||
        send == Group3Pnts->LineEdit2 ||
-       send == Group3Pnts->LineEdit3 )
-  {
+       send == Group3Pnts->LineEdit3 ) {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
@@ -323,8 +319,8 @@ void BasicGUI_CircleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection( GEOM_POINT );
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   // myGeomGUI->SetState( 0 );
 
@@ -336,9 +332,9 @@ void BasicGUI_CircleDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BasicGUI_CircleDlg::enterEvent(QEvent* e)
+void BasicGUI_CircleDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 
@@ -367,7 +363,7 @@ void BasicGUI_CircleDlg::ValueChangedInSpinBox()
 //=================================================================================
 double BasicGUI_CircleDlg::getRadius() const
 {
-  return GroupPntVecR->SpinBox_DX->GetValue();
+  return GroupPntVecR->SpinBox_DX->value();
 }
 
 //=================================================================================
@@ -413,8 +409,7 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
   
   GEOM::GEOM_Object_var anObj;
   
-  switch ( getConstructorId() )
-  {
+  switch ( getConstructorId() ) {
   case 0 :
     anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCirclePntVecR( myPoint, myDir, getRadius() );
     res = true;
@@ -439,4 +434,3 @@ void BasicGUI_CircleDlg::closeEvent( QCloseEvent* e )
 {
   GEOMBase_Skeleton::closeEvent( e );
 }
-

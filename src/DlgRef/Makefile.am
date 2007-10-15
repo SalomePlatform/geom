@@ -85,9 +85,8 @@ MOC_FILES = \
 # 	DlgRef_4Sel1Spin2Check_moc.cxx
 
 # header files 
-salomeinclude_HEADERS = \
-	GEOM_DlgRef.h
-
+#salomeinclude_HEADERS = \
+#	GEOM_DlgRef.h
 #	DlgRef_Skeleton_QTD.h \
 # 	DlgRef_1Sel_QTD.h \
 # 	DlgRef_2Sel_QTD.h \
@@ -183,8 +182,9 @@ UIC_FILES = \
 
 BUILT_SOURCES = $(UIC_FILES)
 
-nodist_libDlgRef_la_SOURCES = \
-	$(MOC_FILES) \
+nodist_libDlgRef_la_SOURCES =	\
+	GEOM_DlgRef.h		\
+	$(MOC_FILES)		\
 	$(UIC_FILES)
 
 # additionnal information to compile and link file
