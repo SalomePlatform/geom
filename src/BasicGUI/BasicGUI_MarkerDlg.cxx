@@ -186,9 +186,8 @@ void BasicGUI_MarkerDlg::Init()
   connect( Group2->LineEdit3,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( myGeomGUI,           SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( onDeactivate() ) );
-  connect( myGeomGUI,           SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( onClose() ) );
+  connect( myGeomGUI,           SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
 
-  connect( buttonCancel(),      SIGNAL( clicked() ), this, SLOT( onClose() ) );
   connect( buttonOk(),          SIGNAL( clicked() ), this, SLOT( onOk() ) );
   connect( buttonApply(),       SIGNAL( clicked() ), this, SLOT( onApply() ) );
 
@@ -303,16 +302,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
 void BasicGUI_MarkerDlg::onOk()
 {
   if ( onApply() )
-    onClose();
-}
-
-//=======================================================================
-// function : onClose()
-// purpose  :
-//=======================================================================
-void BasicGUI_MarkerDlg::onClose()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
+    ClickOnCancel();
 }
 
 //=================================================================================

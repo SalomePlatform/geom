@@ -40,8 +40,7 @@ class BasicGUI_CircleDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BasicGUI_CircleDlg( GeometryGUI*, QWidget* = 0,
-		      const char* = 0, bool = false, Qt::WindowFlags = 0 );
+  BasicGUI_CircleDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
   ~BasicGUI_CircleDlg();
 
 protected:
@@ -65,7 +64,6 @@ private:
 
 private slots:
   void                               ClickOnOk();
-  void                               ClickOnCancel();
   bool                               ClickOnApply();
 
   void                               ActivateThisDialog();

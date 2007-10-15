@@ -44,8 +44,8 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_EllipseDlg::BasicGUI_EllipseDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-					  const char* name, bool modal, Qt::WindowFlags fl )
-  : GEOMBase_Skeleton( theGeometryGUI, parent, name, modal, fl )
+					  bool modal, Qt::WindowFlags fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, "BasicGUI_EllipseDlg", modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_ELLIPSE_PV" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
@@ -122,7 +122,6 @@ void BasicGUI_EllipseDlg::Init()
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
   connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
 
-  connect( buttonCancel(), SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) );
   connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
@@ -177,15 +176,6 @@ bool BasicGUI_EllipseDlg::ClickOnApply()
   globalSelection( GEOM_POINT );
   
   return true;
-}
-
-//=======================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=======================================================================
-void BasicGUI_EllipseDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 //=================================================================================

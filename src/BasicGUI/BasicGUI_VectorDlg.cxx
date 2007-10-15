@@ -44,8 +44,8 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_VectorDlg::BasicGUI_VectorDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-					const char* name, bool modal, Qt::WindowFlags fl )
-  : GEOMBase_Skeleton( theGeometryGUI, parent, name, modal, fl )
+					bool modal, Qt::WindowFlags fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, "BasicGUI_VectorDlg", modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_VECTOR_2P" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_VECTOR_DXYZ" ) ) );
@@ -132,7 +132,6 @@ void BasicGUI_VectorDlg::Init()
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
   connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
   
-  connect( buttonCancel(), SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) );
   connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
@@ -221,15 +220,6 @@ void BasicGUI_VectorDlg::ClickOnOk()
 {
   if ( ClickOnApply() )
     ClickOnCancel();
-}
-
-//=======================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=======================================================================
-void BasicGUI_VectorDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 //=================================================================================

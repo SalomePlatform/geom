@@ -40,8 +40,7 @@ class BasicGUI_CurveDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BasicGUI_CurveDlg( GeometryGUI*, QWidget* = 0,
-		     const char* = 0, bool = false, Qt::WindowFlags = 0 );
+  BasicGUI_CurveDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
   ~BasicGUI_CurveDlg();
   
 protected:
@@ -63,7 +62,6 @@ private:
 
 private slots:
   void                               ClickOnOk();
-  void                               ClickOnCancel();
   bool                               ClickOnApply();
   
   void                               ActivateThisDialog();

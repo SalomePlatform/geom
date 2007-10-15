@@ -44,8 +44,7 @@ class BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BasicGUI_WorkingPlaneDlg( GeometryGUI*, QWidget* = 0,
-			    const char* = 0, bool = false, Qt::WindowFlags = 0 );
+  BasicGUI_WorkingPlaneDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
   ~BasicGUI_WorkingPlaneDlg();
 
 protected:
@@ -73,7 +72,6 @@ private:
   
 private slots:
   void                  ClickOnOk();
-  void                  ClickOnCancel();
   bool                  ClickOnApply();
   
   void                  ConstructorsClicked( int );

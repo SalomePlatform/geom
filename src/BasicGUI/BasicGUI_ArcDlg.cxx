@@ -44,8 +44,8 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_ArcDlg::BasicGUI_ArcDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-				  const char* name, bool modal, Qt::WindowFlags fl )
-  : GEOMBase_Skeleton( theGeometryGUI, parent, name, modal, fl )
+				  bool modal, Qt::WindowFlags fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, "BasicGUI_ArcDlg", modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_ARC" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_ARC_CENTER" ) ) );
@@ -136,7 +136,6 @@ void BasicGUI_ArcDlg::Init()
  
   connect( this,           SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
  
-  connect( buttonCancel(), SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) );
   connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
@@ -176,15 +175,6 @@ void BasicGUI_ArcDlg::ClickOnOk()
 {
   if ( ClickOnApply() )
     ClickOnCancel();
-}
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void BasicGUI_ArcDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 //=================================================================================

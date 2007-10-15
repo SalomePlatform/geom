@@ -41,8 +41,7 @@ class BasicGUI_PlaneDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BasicGUI_PlaneDlg( GeometryGUI*, QWidget* = 0,
-		     const char* = 0, bool = false, Qt::WindowFlags = 0 );
+  BasicGUI_PlaneDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
   ~BasicGUI_PlaneDlg();
   
 protected:
@@ -67,7 +66,6 @@ private:
 
 private slots:
   void                               ClickOnOk();
-  void                               ClickOnCancel();
   bool                               ClickOnApply();
   
   void                               ActivateThisDialog();

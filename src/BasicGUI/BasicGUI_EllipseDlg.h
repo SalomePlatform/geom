@@ -38,8 +38,7 @@ class BasicGUI_EllipseDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BasicGUI_EllipseDlg( GeometryGUI*, QWidget* = 0,
-		      const char* = 0, bool = false, Qt::WindowFlags = 0 );
+  BasicGUI_EllipseDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
   ~BasicGUI_EllipseDlg();
 
 protected:
@@ -61,7 +60,6 @@ private:
   
 private slots:
   void                               ClickOnOk();
-  void                               ClickOnCancel();
   bool                               ClickOnApply();
   
   void                               ActivateThisDialog();

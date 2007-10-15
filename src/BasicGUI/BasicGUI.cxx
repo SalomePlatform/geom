@@ -82,31 +82,31 @@ bool BasicGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 
   switch ( theCommandID ) {
   case 4011: // POINT
-    aDlg = new BasicGUI_PointDlg( getGeometryGUI(), parent, "" ); 
+    aDlg = new BasicGUI_PointDlg( getGeometryGUI(), parent ); 
     break;
   case 4012:  // LINE
-    aDlg = new BasicGUI_LineDlg( getGeometryGUI(), parent, "" );
+    aDlg = new BasicGUI_LineDlg( getGeometryGUI(), parent );
     break;
   case 4013:  // CIRCLE
-    aDlg = new BasicGUI_CircleDlg( getGeometryGUI(), parent, "");
+    aDlg = new BasicGUI_CircleDlg( getGeometryGUI(), parent );
     break;
   case 4014:  // ELLIPSE
-    aDlg = new BasicGUI_EllipseDlg( getGeometryGUI(), parent, "" );
+    aDlg = new BasicGUI_EllipseDlg( getGeometryGUI(), parent );
     break;
   case 4015:  // ARC
-    aDlg = new BasicGUI_ArcDlg( getGeometryGUI(), parent, "" );
+    aDlg = new BasicGUI_ArcDlg( getGeometryGUI(), parent );
     break ;
   case 4016: // VECTOR
-    aDlg = new BasicGUI_VectorDlg( getGeometryGUI(), parent, "" );
+    aDlg = new BasicGUI_VectorDlg( getGeometryGUI(), parent );
     break;
   case 4017: // PLANE
-    aDlg = new BasicGUI_PlaneDlg( getGeometryGUI(), parent, "");
+    aDlg = new BasicGUI_PlaneDlg( getGeometryGUI(), parent );
     break;
   case 4018: // WORKING PLANE
-    aDlg = new BasicGUI_WorkingPlaneDlg( getGeometryGUI(), parent, "" );
+    aDlg = new BasicGUI_WorkingPlaneDlg( getGeometryGUI(), parent );
     break;
   case 4019: // CURVE
-    aDlg = new BasicGUI_CurveDlg( getGeometryGUI(), parent, "" );
+    aDlg = new BasicGUI_CurveDlg( getGeometryGUI(), parent );
     break;
   case 4020: // REPAIR
     aDlg = new BasicGUI_MarkerDlg( getGeometryGUI(), parent );

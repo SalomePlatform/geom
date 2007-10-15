@@ -64,7 +64,6 @@ private:
 
 private slots:
   void                          onOk();
-  void                          onClose();
   bool                          onApply();
   void                          onActivate();
   void                          onDeactivate();

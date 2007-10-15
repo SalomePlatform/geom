@@ -46,8 +46,7 @@ class BasicGUI_PointDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BasicGUI_PointDlg( GeometryGUI*, QWidget* = 0,
-		     const char* = 0, bool = false, Qt::WindowFlags = 0 );
+  BasicGUI_PointDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
 
   ~BasicGUI_PointDlg();
 
@@ -82,7 +81,6 @@ private:
   
 private slots:
   void                               ClickOnOk();
-  void                               ClickOnCancel();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
   void                               DeactivateActiveDialog();
