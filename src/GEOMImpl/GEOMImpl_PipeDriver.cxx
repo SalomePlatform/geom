@@ -1920,8 +1920,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
   }
 
   //building pipe with different sections
-  else if (aType == PIPE_DIFFERENT_SECTIONS) 
-  {
+  else if (aType == PIPE_DIFFERENT_SECTIONS) {
     GEOMImpl_IPipeDiffSect* aCIDS = (GEOMImpl_IPipeDiffSect*)aCI;
     //GEOMImpl_IPipeDiffSect* aCIDS = static_cast<GEOMImpl_IPipeDiffSect*>(aCI);
     //BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
@@ -1933,16 +1932,14 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     Standard_Integer i =1, nbBases = aBasesObjs->Length(), 
       nbLocs = (aLocObjs.IsNull() ? 0 :aLocObjs->Length());
     
-    if(nbLocs && nbLocs != nbBases)
-    {
+    if(nbLocs && nbLocs != nbBases) {
       if(aCI) delete aCI;
       Standard_ConstructionError::Raise("Number of sections is not equal to number of locations ");
     }
     TopTools_SequenceOfShape aSeqBases;
     TopTools_SequenceOfShape aSeqLocs;
     TopTools_SequenceOfShape aSeqFaces;
-    for( ; i <= nbBases; i++) 
-    {
+    for( ; i <= nbBases; i++) {
       Handle(Standard_Transient) anItem = aBasesObjs->Value(i);
       if(anItem.IsNull())
 	continue;
@@ -1978,8 +1975,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
         aSeqFaces.Append(aShapeBase);
 	aSeqBases.Append(aWire);
       }
-      else if(aTypeBase == TopAbs_FACE)
-      {
+      else if(aTypeBase == TopAbs_FACE) {
 	NeedCreateSolid = Standard_True;
 	//for case one path should be used other type function
         aSeqFaces.Append(aShapeBase);
@@ -1993,14 +1989,12 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
       else if(aTypeBase == TopAbs_WIRE || aTypeBase == TopAbs_VERTEX) {
         aSeqBases.Append(aShapeBase);
       }
-      else if(aTypeBase == TopAbs_EDGE)
-      {
+      else if(aTypeBase == TopAbs_EDGE) {
         TopoDS_Edge anEdge = TopoDS::Edge(aShapeBase);
 	TopoDS_Shape aWireProf = BRepBuilderAPI_MakeWire(anEdge);
 	aSeqBases.Append(aWireProf);
       }
-      if(nbLocs) 
-      {
+      if(nbLocs) {
         Handle(Standard_Transient) anItemLoc = aLocObjs->Value(i);
 	if(anItemLoc.IsNull())
 	  continue;
@@ -2015,6 +2009,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     nbLocs = aSeqLocs.Length();
 
     // skl 02.05.2007
+    TopTools_SequenceOfShape Edges;
     if(nbLocs>0) {
       // we have to check that each location shape is a vertex from
       // path and update aSeqLocs if it is needed (and possible)
@@ -2023,7 +2018,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
 	TopoDS_Vertex V = TopoDS::Vertex(aSeqLocs.Value(i));
 	PLocs.Append(BRep_Tool::Pnt(V));
       }
-      TopTools_SequenceOfShape Edges;
+      //TopTools_SequenceOfShape Edges;
       TopExp_Explorer anExp;
       for ( anExp.Init( aWirePath, TopAbs_EDGE ); anExp.More(); anExp.Next() ) {
 	Edges.Append(anExp.Current());
@@ -2121,39 +2116,153 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
       }
     }
 
-    BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
-
-    Standard_Integer nbShapes = aSeqBases.Length();
-    Standard_Integer step = nbShapes/nbBases;
-    
-    if(nbShapes < nbBases || fmod((double)nbShapes, (double)nbBases))
-    {
-      if(aCI) delete aCI;
-      Standard_ConstructionError::Raise("Invalid sections were specified for building pipe");
-    }
-     
-    Standard_Integer ind =0;	 
-    for( i=1; i  <= nbShapes && ind < nbShapes; i++) //i+nbBases <= nbShapes
-    {
-      TopTools_SequenceOfShape usedBases;
-      Standard_Integer j = 1;
-      for( ; j <= nbBases ; j++) 
-      {
-	ind = i + (j-1)*step;
-	
-	 TopoDS_Shape aWireProf = aSeqBases.Value(ind);
-	 usedBases.Append(aWireProf);
-	 if(nbLocs) 
-	 {
-	   TopoDS_Shape aShapeLoc = aSeqLocs.Value(j);
-           TopoDS_Vertex aVert = TopoDS::Vertex(aShapeLoc);
-           aBuilder.Add(aWireProf,aVert,aWithContact,aWithCorrect);
-	 }
-	 else
-           aBuilder.Add(aWireProf,aWithContact,aWithCorrect);
+    // check curvature of wire for condition that
+    // max summary angle between directions along
+    // wire path must be < 4*PI. If not - split wire
+    // and seguences of shapes, perform pipe for each
+    // and make sewing after that
+    double fp,lp;
+    Handle(Geom_Curve) C = BRep_Tool::Curve(TopoDS::Edge(Edges.Value(1)),fp,lp);
+    gp_Pnt P1,P2;
+    gp_Vec Vec1,Vec2;
+    C->D1(fp,P1,Vec1);
+    C->D1(lp,P2,Vec2);
+    double SumAng = fabs(Vec1.Angle(Vec2));
+    Vec1 = Vec2;
+    P1 = P2;
+    TColStd_SequenceOfInteger SplitEdgeNums,SplitLocNums;
+    int LastLoc = 1;
+    //cout<<"Edges.Length()="<<Edges.Length()<<endl;
+    for(i=2; i<=Edges.Length(); i++) {
+      TopoDS_Edge edge = TopoDS::Edge(Edges.Value(i));
+      double tol = BRep_Tool::Tolerance(edge);
+      Handle(Geom_Curve) C = BRep_Tool::Curve(edge,fp,lp);
+      C->D1(lp,P2,Vec2);
+      double ang = fabs(Vec1.Angle(Vec2));
+      SumAng += ang;
+      if(SumAng>4*PI) {
+	SumAng = ang;
+	SplitEdgeNums.Append(i-1);
+	int j;
+	for(j=LastLoc+1; j<=aSeqLocs.Length(); j++) {
+	  TopoDS_Vertex aVert = TopoDS::Vertex(aSeqLocs.Value(j));
+	  gp_Pnt P = BRep_Tool::Pnt(aVert);
+	  if( P1.Distance(P) < tol ) {
+	    SplitLocNums.Append(j);
+	    LastLoc = j;
+	    break;
+	  }
+	}
       }
-      if(!aBuilder.IsReady())
-      {
+      Vec1 = Vec2;
+      P1 = P2;
+    }
+
+    //cout<<"SplitEdgeNums.Length()="<<SplitEdgeNums.Length()<<endl;
+    //cout<<"SplitLocNums.Length()="<<SplitLocNums.Length()<<endl;
+    if( SplitLocNums.Length()==SplitEdgeNums.Length() && SplitEdgeNums.Length()>0 ) {
+      TopTools_SequenceOfShape aSeqRes;
+      int nn, num1 = 1, num2 = 1;
+      for(nn=1; nn<=SplitEdgeNums.Length(); nn++) {
+	// create wirepath and sequences of shapes
+	BRep_Builder B;
+	TopoDS_Wire tmpW;
+	B.MakeWire(tmpW);
+	for(i=num1; i<=SplitEdgeNums.Value(nn); i++) {
+	  B.Add(tmpW,TopoDS::Edge(Edges.Value(i)));
+	}
+	num1 = SplitEdgeNums.Value(nn) + 1;
+	TopTools_SequenceOfShape aTmpSeqBases;
+	TopTools_SequenceOfShape aTmpSeqLocs;
+	for(i=num2; i<=SplitLocNums.Value(nn); i++) {
+	  aTmpSeqBases.Append(aSeqBases.Value(i));
+	  aTmpSeqLocs.Append(aSeqLocs.Value(i));
+	}
+	num2 = SplitLocNums.Value(nn);
+	// make pipe
+	BRepOffsetAPI_MakePipeShell aBuilder(tmpW);
+	Standard_Integer nbShapes = aTmpSeqBases.Length();
+	for(i=1; i<=nbShapes; i++) {
+	  TopoDS_Shape aShapeLoc = aTmpSeqLocs.Value(i);
+	  TopoDS_Vertex aVert = TopoDS::Vertex(aShapeLoc);
+	  aBuilder.Add(aTmpSeqBases.Value(i), aVert, aWithContact, aWithCorrect);
+	}
+	if(!aBuilder.IsReady()) {
+	  if(aCI) delete aCI;
+	  Standard_ConstructionError::Raise("Invalid input data for building PIPE: bases are invalid");
+	}
+	aBuilder.Build();
+	TopoDS_Shape resShape = aBuilder.Shape();
+	aSeqRes.Append(resShape);	
+      }
+      // create wirepath and sequences of shapes for last part
+      BRep_Builder B;
+      TopoDS_Wire tmpW;
+      B.MakeWire(tmpW);
+      for(i=num1; i<=Edges.Length(); i++) {
+	B.Add(tmpW,TopoDS::Edge(Edges.Value(i)));
+      }
+      TopTools_SequenceOfShape aTmpSeqBases;
+      TopTools_SequenceOfShape aTmpSeqLocs;
+      for(i=num2; i<=aSeqLocs.Length(); i++) {
+	aTmpSeqBases.Append(aSeqBases.Value(i));
+	aTmpSeqLocs.Append(aSeqLocs.Value(i));
+      }
+      // make pipe for last part
+      BRepOffsetAPI_MakePipeShell aBuilder(tmpW);
+      Standard_Integer nbShapes = aTmpSeqBases.Length();
+      for(i=1; i<=nbShapes; i++) {
+	TopoDS_Shape aShapeLoc = aTmpSeqLocs.Value(i);
+	TopoDS_Vertex aVert = TopoDS::Vertex(aShapeLoc);
+	aBuilder.Add(aTmpSeqBases.Value(i), aVert, aWithContact, aWithCorrect);
+      }
+      if(!aBuilder.IsReady()) {
+	if(aCI) delete aCI;
+	Standard_ConstructionError::Raise("Invalid input data for building PIPE: bases are invalid");
+      }
+      aBuilder.Build();
+      TopoDS_Shape resShape = aBuilder.Shape();
+      aSeqRes.Append(resShape);
+      // make sewing for result
+      Handle(BRepBuilderAPI_Sewing) aSewing = new BRepBuilderAPI_Sewing;
+      aSewing->SetTolerance(Precision::Confusion());
+      aSewing->SetFaceMode(Standard_True);
+      aSewing->SetFloatingEdgesMode(Standard_False);
+      aSewing->SetNonManifoldMode(Standard_False);
+      for(i=1; i<=aSeqRes.Length(); i++) {
+	aSewing->Add(aSeqRes.Value(i));
+      }
+      aSewing->Perform();
+      aShape = aSewing->SewedShape();
+    }
+    else {
+      // old implementation without splitting
+      BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
+
+      Standard_Integer nbShapes = aSeqBases.Length();
+      Standard_Integer step = nbShapes/nbBases;
+    
+      if(nbShapes < nbBases || fmod((double)nbShapes, (double)nbBases)) {
+	if(aCI) delete aCI;
+	Standard_ConstructionError::Raise("Invalid sections were specified for building pipe");
+      }
+      Standard_Integer ind =0;	 
+      for( i=1; i  <= nbShapes && ind < nbShapes; i++) { //i+nbBases <= nbShapes
+	TopTools_SequenceOfShape usedBases;
+	Standard_Integer j = 1;
+	for( ; j <= nbBases ; j++) {
+	  ind = i + (j-1)*step;
+	  TopoDS_Shape aWireProf = aSeqBases.Value(ind);
+	  usedBases.Append(aWireProf);
+	  if(nbLocs) {
+	    TopoDS_Shape aShapeLoc = aSeqLocs.Value(j);
+	    TopoDS_Vertex aVert = TopoDS::Vertex(aShapeLoc);
+	    aBuilder.Add(aWireProf,aVert,aWithContact,aWithCorrect);
+	  }
+	  else
+	    aBuilder.Add(aWireProf,aWithContact,aWithCorrect);
+	}
+      if(!aBuilder.IsReady()) {
 	if(aCI) delete aCI;
         Standard_ConstructionError::Raise("Invalid input data for building PIPE: bases are invalid");
       }
@@ -2162,17 +2271,17 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
       aSeqFaces.Append(aShape);	
       for( j = 1; j <=usedBases.Length(); j++)
         aBuilder.Delete(usedBases.Value(j));
-    }
+      }
     	
-    //for case if section is face 
-    if(aSeqFaces.Length() >1)
-    {
-      BRep_Builder aB;
-      TopoDS_Compound aComp;
-      aB.MakeCompound(aComp);
-      for( i = 1; i <= aSeqFaces.Length(); i++)
-        aB.Add(aComp,aSeqFaces.Value(i));
-      aShape = aComp;
+      //for case if section is face 
+      if(aSeqFaces.Length() >1)	{
+	BRep_Builder aB;
+	TopoDS_Compound aComp;
+	aB.MakeCompound(aComp);
+	for( i = 1; i <= aSeqFaces.Length(); i++)
+	  aB.Add(aComp,aSeqFaces.Value(i));
+	aShape = aComp;
+      }
     }
   }
 
