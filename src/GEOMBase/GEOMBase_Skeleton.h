@@ -38,6 +38,11 @@ class QLineEdit;
 class QButtonGroup;
 class QPushButton;
 
+#ifndef COORD_MIN
+#  define COORD_MIN -1e+15
+#  define COORD_MAX +1e+15
+#endif // COORD_MIN
+
 class GEOMBASE_EXPORT GEOMBase_Skeleton : public QDialog, public GEOMBase_Helper
 {
   Q_OBJECT
