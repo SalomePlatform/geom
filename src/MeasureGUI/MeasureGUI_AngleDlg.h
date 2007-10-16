@@ -28,17 +28,21 @@
 #ifndef DIALOGBOX_ANGLE_H
 #define DIALOGBOX_ANGLE_H
 
-#include "GEOM_MeasureGUI.hxx"
-
 #include "MeasureGUI_Skeleton.h"
 
 class MeasureGUI_2Sel1LineEdit_QTD;
+
+#if defined WNT && defined MEASUREGUI_EXPORTS
+#define MEASUREGUI_EXPORT __declspec( dllexport )
+#else
+#define MEASUREGUI_EXPORT
+#endif
 
 //=================================================================================
 // class    : MeasureGUI_AngleDlg
 // purpose  :
 //=================================================================================
-class GEOM_MEASUREGUI_EXPORT MeasureGUI_AngleDlg : public MeasureGUI_Skeleton
+class MEASUREGUI_EXPORT MeasureGUI_AngleDlg : public MeasureGUI_Skeleton
 { 
   Q_OBJECT
 
