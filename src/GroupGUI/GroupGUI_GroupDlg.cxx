@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -326,42 +326,42 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     // try to find out and process the object browser selection
     if ( !aMapIndex.Extent() ) {
       globalSelection( GEOM_ALLSHAPES );
-      
+
       GEOM::ListOfGO anObjects;
       GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
 
       GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
       GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
 
-      for (int i = 0; i < anObjects.length(); i++) 
-	{
-	  GEOM::GEOM_Object_var aGeomObj = anObjects[i];
-	  GEOM::ListOfGO_var aSubObjects = new GEOM::ListOfGO();
-	  TopoDS_Shape aShape;
-	  if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) ) 
-	    {
-	      aSubObjects->length(1);
-	      aSubObjects[0] = aGeomObj;
-	    }
-	  else if (aGeomObj->GetType() == GEOM_GROUP)
-	    aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
-	  else
-	    continue;
+      for (int i = 0; i < anObjects.length(); i++)
+      {
+        GEOM::GEOM_Object_var aGeomObj = anObjects[i];
+        GEOM::ListOfGO_var aSubObjects = new GEOM::ListOfGO();
+        TopoDS_Shape aShape;
+        if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) )
+        {
+          aSubObjects->length(1);
+          aSubObjects[0] = aGeomObj;
+        }
+        else if (aGeomObj->GetType() == GEOM_GROUP)
+          aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
+        else
+          continue;
 
-	  for (int i = 0; i < aSubObjects->length(); i++) 
-	    {
-	      TopoDS_Shape aShape;
-	      if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) ) 
-		{
-		  CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
-		  if ( anIndex >= 0 )
-		    aMapIndex.Add( anIndex );
-		}
-	    }
-	}
-      
+        for (int i = 0; i < aSubObjects->length(); i++)
+        {
+          TopoDS_Shape aShape;
+          if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) )
+          {
+            CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+            if ( anIndex >= 0 )
+              aMapIndex.Add( anIndex );
+          }
+        }
+      }
+
       if ( !myMainObj->_is_nil() )
-      	localSelection( myMainObj, getShapeType() );
+        localSelection( myMainObj, getShapeType() );
     }
 
     if (aMapIndex.Extent() >= 1) {
@@ -401,9 +401,8 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
     return;
 
   GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-  GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
 
-  GEOM::ListOfGO_var aSubShapes = aShOp->MakeExplode( myMainObj, getShapeType(), false );
+  GEOM::ListOfLong_var aSubShapes = aShOp->SubShapeAllIDs(myMainObj, getShapeType(), false);
   if ( !aShOp->IsDone() )
     return;
 
@@ -413,7 +412,7 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
 
   QListBoxItem* anItem;
   for ( int i = 0, n = aSubShapes->length(); i < n; i++ ) {
-    CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubShapes[i] );
+    CORBA::Long anIndex = aSubShapes[i];
     if ( anIndex < 0 )
       continue;
 
@@ -424,7 +423,7 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
 
   myIdList->blockSignals( isBlocked );
   highlightSubShapes();
-  updateState();
+  //updateState(); // already done in highlightSubShapes()
 }
 
 //=================================================================================
@@ -453,36 +452,36 @@ void GroupGUI_GroupDlg::add()
   if ( !aMapIndex.Extent() ) {
     GEOM::ListOfGO anObjects;
     GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
-    
+
     GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
     GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-    
-    for (int i = 0; i < anObjects.length(); i++) 
+
+    for (int i = 0; i < anObjects.length(); i++)
+    {
+      GEOM::GEOM_Object_var aGeomObj = anObjects[i];
+      GEOM::ListOfGO_var aSubObjects  = new GEOM::ListOfGO();
+      TopoDS_Shape aShape;
+      if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) )
       {
-	GEOM::GEOM_Object_var aGeomObj = anObjects[i];
-	GEOM::ListOfGO_var aSubObjects  = new GEOM::ListOfGO();
-	TopoDS_Shape aShape;
-	if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) ) 
-	  {
-	    aSubObjects->length(1);
-	    aSubObjects[0] = aGeomObj;
-	  }
-	else if (aGeomObj->GetType() == GEOM_GROUP)
-	  aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
-	else
-	  break;
-	
-	for (int i = 0; i < aSubObjects->length(); i++) 
-	  {
-	  TopoDS_Shape aShape;
-	  if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) ) 
-	    {
-	      CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
-	      if ( anIndex >= 0 )
-		aMapIndex.Add( anIndex );
-	    }
-	}
+        aSubObjects->length(1);
+        aSubObjects[0] = aGeomObj;
       }
+      else if (aGeomObj->GetType() == GEOM_GROUP)
+        aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
+      else
+        break;
+
+      for (int i = 0; i < aSubObjects->length(); i++)
+      {
+        TopoDS_Shape aShape;
+        if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) )
+        {
+          CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+          if ( anIndex >= 0 )
+            aMapIndex.Add( anIndex );
+        }
+      }
+    }
   }
 
   if ( aMapIndex.Extent() >= 1 ) {
@@ -585,72 +584,80 @@ void GroupGUI_GroupDlg::updateState()
 
   TColStd_IndexedMapOfInteger aMapIndex;
 
-  if ( IObjectCount() == 1 ) {
-    Standard_Boolean aResult = Standard_False;
-    GEOM::GEOM_Object_var anObj =
-      GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+  SALOME_ListIO aSelIOs;
+  SalomeApp_Application* app = myGeomGUI->getApp();
+  if (app) {
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if (aSelMgr) {
+      aSelMgr->selectedObjects(aSelIOs);
 
-    if ( aResult && !anObj->_is_nil() )
-      ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->
-        selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
+      if ( aSelIOs.Extent() == 1 ) {
+        Standard_Boolean aResult = Standard_False;
+        GEOM::GEOM_Object_var anObj =
+          GEOMBase::ConvertIOinGEOMObject( aSelIOs.First(), aResult );
+
+        if ( aResult && !anObj->_is_nil() )
+          aSelMgr->GetIndexes( aSelIOs.First(), aMapIndex );
+      }
+    }
   }
 
   // try to find out and process the object browser selection
   if ( !aMapIndex.Extent() && !CORBA::is_nil( myMainObj ) ) {
     GEOM::ListOfGO anObjects;
-    GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
-    
+    //GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
+    GEOMBase::ConvertListOfIOInListOfGO(aSelIOs, anObjects);
+
     GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
     GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
 
-     isAdd = true;
-     
-     for (int i = 0; i < anObjects.length(); i++) 
-       {
-	 GEOM::GEOM_Object_var aGeomObj = anObjects[i];
-	 GEOM::ListOfGO_var aSubObjects = new GEOM::ListOfGO();
-	 TopoDS_Shape aShape;
-	 if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) ) 
-	   {
-	     aSubObjects->length(1);
-	     aSubObjects[0] = aGeomObj;
-	   }
-	 else if (aGeomObj->GetType() == GEOM_GROUP)
-	   aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
-	 else
-	   {
-	     aMapIndex.Clear();
-	     break;
-	   }
-	 
-	 for (int i = 0; i < aSubObjects->length(); i++) 
-	   {
-	     TopoDS_Shape aShape;
-	     aSubObjects[i];
-	     if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) ) 
-	       {
-		 CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
-		 if ( anIndex >= 0 )
-		   aMapIndex.Add( anIndex );
-		 else
-		   isAdd = false;
-	       }
-	     else
-	       isAdd = false;
-	     
-	     if ( !isAdd ) {
-	       aMapIndex.Clear();
-	       break;
-	     }
-	   }
-	 
-	 if ( !isAdd ) {
-	   aMapIndex.Clear();
-	   break;
-	 }
-       }
+    isAdd = true;
+
+    for (int i = 0; i < anObjects.length(); i++)
+    {
+      GEOM::GEOM_Object_var aGeomObj = anObjects[i];
+      GEOM::ListOfGO_var aSubObjects = new GEOM::ListOfGO();
+      TopoDS_Shape aShape;
+      if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) ) {
+        aSubObjects->length(1);
+        aSubObjects[0] = aGeomObj;
+      }
+      else if (aGeomObj->GetType() == GEOM_GROUP) {
+        aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
+      }
+      else {
+        aMapIndex.Clear();
+        break;
+      }
+
+      for (int i = 0; i < aSubObjects->length(); i++)
+      {
+        TopoDS_Shape aShape;
+        aSubObjects[i];
+        if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) )
+        {
+          CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+          if ( anIndex >= 0 )
+            aMapIndex.Add( anIndex );
+          else
+            isAdd = false;
+        }
+        else
+          isAdd = false;
+
+        if ( !isAdd ) {
+          aMapIndex.Clear();
+          break;
+        }
+      }
+
+      if ( !isAdd ) {
+        aMapIndex.Clear();
+        break;
+      }
+    }
   }
-  
+
   isAdd = aMapIndex.Extent() > 0;
 
   myAddBtn->setEnabled( !myEditCurrentArgument && !CORBA::is_nil( myMainObj ) && isAdd );
@@ -749,30 +756,38 @@ bool GroupGUI_GroupDlg::isValid( QString& theMessage )
 //=================================================================================
 bool GroupGUI_GroupDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_IGroupOperations_var anOp = GEOM::GEOM_IGroupOperations::_narrow( getOperation() );
+  GEOM::GEOM_IGroupOperations_var anOp = GEOM::GEOM_IGroupOperations::_narrow(getOperation());
 
   GEOM::GEOM_Object_var aGroup;
-  if ( myMode == CreateGroup )
-    aGroup = anOp->CreateGroup( myMainObj, getShapeType() );
-  else if ( myMode == EditGroup )
+  if (myMode == CreateGroup)
+    aGroup = anOp->CreateGroup(myMainObj, getShapeType());
+  else if (myMode == EditGroup)
     aGroup = myGroup;
 
-  if ( CORBA::is_nil( aGroup ) || ( myMode == CreateGroup && !anOp->IsDone() ) )
+  if (CORBA::is_nil(aGroup) || (myMode == CreateGroup && !anOp->IsDone()))
     return false;
 
-  GEOM::ListOfLong_var aCurrList = anOp->GetObjects( aGroup );
-  if ( !anOp->IsDone()  )
+  GEOM::ListOfLong_var aCurrList = anOp->GetObjects(aGroup);
+  if (!anOp->IsDone())
     return false;
 
-  for ( int i = 0, n = aCurrList->length(); i < n; i++ ) {
-    anOp->RemoveObject( aGroup, aCurrList[i] );
-    if ( !anOp->IsDone()  )
+  if (aCurrList->length() > 0)
+  {
+    anOp->DifferenceIDs(aGroup, aCurrList);
+    if (!anOp->IsDone())
       return false;
   }
 
-  for ( int ii = 0, nn = myIdList->count(); ii < nn; ii++ ) {
-    anOp->AddObject( aGroup, myIdList->item( ii )->text().toInt() );
-    if ( !anOp->IsDone()  )
+  int ii, nn = myIdList->count();
+  if (nn > 0)
+  {
+    GEOM::ListOfLong_var aNewList = new GEOM::ListOfLong;
+    aNewList->length(nn);
+    for (ii = 0; ii < nn; ii++) {
+      aNewList[ii] = myIdList->item(ii)->text().toInt();
+    }
+    anOp->UnionIDs(aGroup, aNewList);
+    if (!anOp->IsDone())
       return false;
   }
 
@@ -807,4 +822,3 @@ GEOM::GEOM_Object_ptr GroupGUI_GroupDlg::getFather( GEOM::GEOM_Object_ptr theObj
   }
   return aFatherObj._retn();
 }
-
