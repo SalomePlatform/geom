@@ -58,7 +58,7 @@
 //=================================================================================
 BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
 				      bool modal, Qt::WindowFlags fl )
-  : GEOMBase_Skeleton( theGeometryGUI, parent, "BasicGUI_PointDlg", modal, fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POINT") ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POINT_EDGE" ) ) );

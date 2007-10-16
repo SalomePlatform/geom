@@ -1,45 +1,41 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : GenerationGUI_RevolDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : GenerationGUI_RevolDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
 #include "GenerationGUI_RevolDlg.h"
-#include "DlgRef_2Sel1Spin2Check.h"
-#include "DlgRef_SpinBox.h"
 
-#include "GeometryGUI.h"
-#include "GEOMBase.h"
+#include <GEOM_DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
 #include <TopExp_Explorer.hxx>
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
 //=================================================================================
 // class    : GenerationGUI_RevolDlg()
@@ -48,39 +44,41 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                               const char* name, bool modal, Qt::WindowFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
+GenerationGUI_RevolDlg::GenerationGUI_RevolDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
+						bool modal, Qt::WindowFlags fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_REVOL")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_REVOL" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setWindowTitle(tr("GEOM_REVOLUTION_TITLE"));
+  setWindowTitle( tr( "GEOM_REVOLUTION_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_REVOLUTION"));
-  RadioButton1->setIcon(image0);
-  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton2->close();
-  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton3->close();
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_REVOLUTION" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
+  GroupPoints = new DlgRef_2Sel1Spin2Check( centralWidget() );
   GroupPoints->CheckButton1->hide();
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_OBJECT"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_AXIS"));
-  GroupPoints->TextLabel3->setText(tr("GEOM_ANGLE"));
-  GroupPoints->PushButton1->setIcon(image1);
-  GroupPoints->PushButton2->setIcon(image1);
+  GroupPoints->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
+  GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_AXIS" ) );
+  GroupPoints->TextLabel3->setText( tr( "GEOM_ANGLE" ) );
+  GroupPoints->PushButton1->setIcon( image1 );
+  GroupPoints->PushButton2->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
-  GroupPoints->CheckButton2->setText(tr("GEOM_REVERSE"));
+  GroupPoints->CheckButton2->setText( tr( "GEOM_REVERSE" ) );
 
-  gridLayout1->addWidget(GroupPoints, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupPoints );
   /***************************************************************/
 
-  setHelpFileName("revolution.htm");
+  setHelpFileName( "revolution.htm" );
 
   /* Initialisations */
   Init();
@@ -112,28 +110,30 @@ void GenerationGUI_RevolDlg::Init()
 
   double SpecificStep = 5;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, SpecificStep, 3);
-  GroupPoints->SpinBox_DX->SetValue(45.0);
+  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, SpecificStep, 3 );
+  GroupPoints->SpinBox_DX->setValue( 45.0 );
 
   /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( GroupPoints->PushButton1,  SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPoints->PushButton2,  SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( GroupPoints->LineEdit1,    SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( GroupPoints->LineEdit2,    SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect(GroupPoints->SpinBox_DX,   SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)),        this, SLOT(onReverse()));
+  connect( GroupPoints->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
+  connect( GroupPoints->CheckButton2, SIGNAL( toggled( bool ) ),        this, SLOT( onReverse() ) );
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  // VSR: TODO ->>
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox_DX, SLOT( SetStep( double ) ) );
+  // <<-
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  initName(tr("GEOM_REVOLUTION").toLatin1().constData());
+  initName( tr( "GEOM_REVOLUTION" ) );
 
   globalSelection( GEOM_ALLSHAPES );
 }
@@ -168,7 +168,7 @@ bool GenerationGUI_RevolDlg::ClickOnApply()
 //purpose  : return true if theBase can be used as algo argument
 //=======================================================================
 
-static bool isAcceptableBase(const TopoDS_Shape& theBase)
+static bool isAcceptableBase( const TopoDS_Shape& theBase )
 {
   switch ( theBase.ShapeType() ) {
   case TopAbs_VERTEX:
@@ -181,7 +181,7 @@ static bool isAcceptableBase(const TopoDS_Shape& theBase)
   case TopAbs_COMPSOLID:
     return false;
   case TopAbs_COMPOUND: {
-    TopExp_Explorer exp( theBase, TopAbs_SOLID);
+    TopExp_Explorer exp( theBase, TopAbs_SOLID );
     return !exp.More();
   }
   default:
@@ -197,12 +197,12 @@ static bool isAcceptableBase(const TopoDS_Shape& theBase)
 void GenerationGUI_RevolDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   
-  if(IObjectCount() != 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1)
+  if ( IObjectCount() != 1 ) {
+    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
       myOkBase = false;        
-    else if(myEditCurrentArgument == GroupPoints->LineEdit2)
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
       myOkAxis = false;
     return;
   }
@@ -211,10 +211,10 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
   
-  if (!testResult)
+  if ( !testResult )
     return;
 
-  if(myEditCurrentArgument == GroupPoints->LineEdit1) {
+  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
     TopoDS_Shape S;
     myOkBase = false;
     
@@ -224,7 +224,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
     myBase = aSelectedObject;
     myOkBase = true;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
+  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
     myAxis = aSelectedObject;
     myOkAxis = true;
   }
@@ -243,11 +243,11 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
   QPushButton* send = (QPushButton*)sender();
   globalSelection( GEOM_ALLSHAPES );
 
-  if(send == GroupPoints->PushButton1) {
+  if ( send == GroupPoints->PushButton1 ) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
   }
-  else if(send == GroupPoints->PushButton2) {
+  else if ( send == GroupPoints->PushButton2 ) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
     globalSelection( GEOM_LINE );
@@ -263,12 +263,11 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
 void GenerationGUI_RevolDlg::LineEditReturnPressed()
 {  
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1 ||
-     send == GroupPoints->LineEdit2)
-    {
-      myEditCurrentArgument = send;
-      GEOMBase_Skeleton::LineEditReturnPressed();
-    }
+  if ( send == GroupPoints->LineEdit1 ||
+       send == GroupPoints->LineEdit2 ) {
+    myEditCurrentArgument = send;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 
@@ -280,7 +279,7 @@ void GenerationGUI_RevolDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection( GEOM_ALLSHAPES );
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), SIGNAL(currentSelectionChanged()), this, SLOT( SelectionIntoArgument() ) );
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;
   displayPreview();
@@ -291,9 +290,9 @@ void GenerationGUI_RevolDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void GenerationGUI_RevolDlg::enterEvent(QEvent* e)
+void GenerationGUI_RevolDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 
@@ -314,7 +313,7 @@ void GenerationGUI_RevolDlg::ValueChangedInSpinBox()
 //=================================================================================
 double GenerationGUI_RevolDlg::getAngle() const
 {
-  return GroupPoints->SpinBox_DX->GetValue();
+  return GroupPoints->SpinBox_DX->value();
 }
 
 //=================================================================================
@@ -359,6 +358,6 @@ bool GenerationGUI_RevolDlg::execute( ObjectList& objects )
 //=================================================================================
 void GenerationGUI_RevolDlg::onReverse()
 {
-  double anOldValue = GroupPoints->SpinBox_DX->GetValue();
-  GroupPoints->SpinBox_DX->SetValue( -anOldValue );
+  double anOldValue = GroupPoints->SpinBox_DX->value();
+  GroupPoints->SpinBox_DX->setValue( -anOldValue );
 }

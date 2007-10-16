@@ -45,7 +45,7 @@
 //=================================================================================
 BasicGUI_LineDlg::BasicGUI_LineDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
 				    bool modal, Qt::WindowFlags fl )
-  : GEOMBase_Skeleton( theGeometryGUI, parent, "BasicGUI_LineDlg", modal, fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_LINE_2P" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );

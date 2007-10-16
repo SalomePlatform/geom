@@ -1,36 +1,32 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : GenerationGUI_FillingDlg.h
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : GenerationGUI_FillingDlg.h
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
 
-#ifndef DIALOGBOX_FILLING_H
-#define DIALOGBOX_FILLING_H
+#ifndef GENERATIONGUI_FILLINGDLG_H
+#define GENERATIONGUI_FILLINGDLG_H
 
-#include "GenerationGUI.h"
-
-#include "GEOMBase_Skeleton.h"
+#include <GEOMBase_Skeleton.h>
 
 class DlgRef_1Sel5Spin;
 
@@ -38,43 +34,43 @@ class DlgRef_1Sel5Spin;
 // class    : GenerationGUI_FillingDlg
 // purpose  :
 //=================================================================================
-class GENERATIONGUI_EXPORT GenerationGUI_FillingDlg : public GEOMBase_Skeleton
+class GenerationGUI_FillingDlg : public GEOMBase_Skeleton
 { 
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			     const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
-    ~GenerationGUI_FillingDlg();
+  GenerationGUI_FillingDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
+  ~GenerationGUI_FillingDlg();
 
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& msg );
-    virtual bool execute( ObjectList& objects );    
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );    
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
+  void                               Init();
+  void                               enterEvent( QEvent* );
 
-    GEOM::GEOM_Object_var myCompound; /* compound of curves */
-    Standard_Integer myMinDeg;
-    Standard_Integer myMaxDeg;
-    Standard_Real myTol3D;
-    Standard_Real myTol2D;
-    Standard_Integer myNbIter;
-    bool myOkCompound;         /* to check when curv. compound is defined */
+private:
+  GEOM::GEOM_Object_var              myCompound; /* compound of curves */
+  Standard_Integer                   myMinDeg;
+  Standard_Integer                   myMaxDeg;
+  Standard_Real                      myTol3D;
+  Standard_Real                      myTol2D;
+  Standard_Integer                   myNbIter;
+  bool                               myOkCompound; /* to check when curv. compound is defined */
 
-    DlgRef_1Sel5Spin* GroupPoints;
-
+  DlgRef_1Sel5Spin*                  GroupPoints;
+    
 private slots:
-    void ClickOnOk();
-    bool ClickOnApply();
-    void ActivateThisDialog();
-    void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
-    void ValueChangedInSpinBox(double newValue);
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  void                               ActivateThisDialog();
+  void                               LineEditReturnPressed();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
+  void                               ValueChangedInSpinBox( double );
 };
 
-#endif // DIALOGBOX_FILLING_H
+#endif // GENERATIONGUI_FILLINGDLG_H

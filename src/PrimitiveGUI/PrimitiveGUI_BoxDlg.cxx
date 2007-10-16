@@ -1,47 +1,40 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : PrimitiveGUI_BoxDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : PrimitiveGUI_BoxDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
 #include "PrimitiveGUI_BoxDlg.h"
-#include "DlgRef_3Spin.h"
-#include "DlgRef_SpinBox.h"
 
-#include "GeometryGUI.h"
-#include "GEOMBase.h"
+#include <GEOM_DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
-#include "GEOMImpl_Types.hxx"
-
-using namespace std;
-
+#include <GEOMImpl_Types.hxx>
 
 //=================================================================================
 // class    : PrimitiveGUI_BoxDlg()
@@ -50,45 +43,43 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-PrimitiveGUI_BoxDlg::PrimitiveGUI_BoxDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                         const char* name, bool modal, Qt::WindowFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
+PrimitiveGUI_BoxDlg::PrimitiveGUI_BoxDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
+					  bool modal, Qt::WindowFlags fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BOX_2P")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BOX_DXYZ")));
-  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BOX_2P" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BOX_DXYZ" ) ));
+  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setWindowTitle(tr("GEOM_BOX_TITLE"));
+  setWindowTitle( tr( "GEOM_BOX_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_BOX"));
-  RadioButton1->setIcon(image0);
-  RadioButton2->setIcon(image1);
-  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton3->close();
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_BOX" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setIcon( image1 );
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupPoints = new Ui::DlgRef_2Sel_QTD();
-  QWidget* aGroupPointsWidget = new QWidget(this);
-  GroupPoints->setupUi(aGroupPointsWidget);
-  aGroupPointsWidget->setObjectName("GroupPoints");
+  GroupPoints = new DlgRef_2Sel( centralWidget() );
+  GroupPoints->GroupBox1->setTitle( tr( "GEOM_DIAGONAL_POINTS" ) );
+  GroupPoints->TextLabel1->setText( tr( "GEOM_POINT_I" ).arg( 1 ) );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_POINT_I" ).arg( 2 ) );
+  GroupPoints->PushButton1->setIcon( image2 );
+  GroupPoints->PushButton2->setIcon( image2 );
 
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_DIAGONAL_POINTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_POINT_I").arg("1"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_POINT_I").arg("2"));
-  GroupPoints->PushButton1->setIcon(image2);
-  GroupPoints->PushButton2->setIcon(image2);
+  GroupDimensions = new DlgRef_3Spin( centralWidget() );
+  GroupDimensions->GroupBox1->setTitle( tr( "GEOM_BOX_OBJ" ) );
+  GroupDimensions->TextLabel1->setText( tr( "GEOM_DX" ) );
+  GroupDimensions->TextLabel2->setText( tr( "GEOM_DY" ) );
+  GroupDimensions->TextLabel3->setText( tr( "GEOM_DZ" ) );
 
-  GroupDimensions = new DlgRef_3Spin(this, "GroupDimensions");
-  GroupDimensions->GroupBox1->setTitle(tr("GEOM_BOX_OBJ"));
-  GroupDimensions->TextLabel1->setText(tr("GEOM_DX"));
-  GroupDimensions->TextLabel2->setText(tr("GEOM_DY"));
-  GroupDimensions->TextLabel3->setText(tr("GEOM_DZ"));
-
-  gridLayout1->addWidget(aGroupPointsWidget, 2, 0);
-  gridLayout1->addWidget(GroupDimensions, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupPoints );
+  layout->addWidget( GroupDimensions );
   /***************************************************************/
 
-  setHelpFileName("box.htm");
+  setHelpFileName( "box.htm" );
   
   Init();
 }
@@ -119,43 +110,46 @@ void PrimitiveGUI_BoxDlg::Init()
     
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
+  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
   
   /* min, max, step and decimals for spin boxes */
-  GroupDimensions->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupDimensions->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
-  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, 3);
+  initSpinBox( GroupDimensions->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 );
+  initSpinBox( GroupDimensions->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
+  initSpinBox( GroupDimensions->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 );
 
   double initValue = 200.0;
-  GroupDimensions->SpinBox_DX->SetValue(initValue);
-  GroupDimensions->SpinBox_DY->SetValue(initValue);
-  GroupDimensions->SpinBox_DZ->SetValue(initValue);
+  GroupDimensions->SpinBox_DX->setValue( initValue );
+  GroupDimensions->SpinBox_DY->setValue( initValue );
+  GroupDimensions->SpinBox_DZ->setValue( initValue );
 
   /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
+  connect( this,          SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPoints->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( GroupPoints->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( GroupPoints->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(GroupDimensions->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect( GroupDimensions->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
+  connect( GroupDimensions->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
+  connect( GroupDimensions->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
   
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
+  // VSR: TODO ->>
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DX, SLOT( SetStep( double ) ) );
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DY, SLOT( SetStep( double ) ) );
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DZ, SLOT( SetStep( double ) ) );
+  // <<-
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  initName( tr( "GEOM_BOX" ).toLatin1().constData() );
-  ConstructorsClicked(0);
+  initName( tr( "GEOM_BOX" ) );
+
+  ConstructorsClicked( 0 );
 }
 
 
@@ -163,38 +157,39 @@ void PrimitiveGUI_BoxDlg::Init()
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void PrimitiveGUI_BoxDlg::ConstructorsClicked(int constructorId)
+void PrimitiveGUI_BoxDlg::ConstructorsClicked( int constructorId )
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication( ) ) )->selectionMgr(), 0, this, 0 );
   
-  switch (constructorId)
+  switch (  constructorId ) {
+  case 0:
     {
-    case 0:
-      {
-	globalSelection( GEOM_POINT );
-
-	GroupDimensions->hide();
-	resize(0, 0);
-	::qobject_cast<QWidget*>( GroupPoints->gridLayout->parent() )->show();
-	
-	myEditCurrentArgument = GroupPoints->LineEdit1;
-	GroupPoints->LineEdit1->setText("");
- 	GroupPoints->LineEdit2->setText("");
-	myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
-	
-	connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-	break;
-      }
-    case 1:
-      {
-	::qobject_cast<QWidget*>( GroupPoints->gridLayout->parent() )->hide();
-	resize(0, 0);
-	GroupDimensions->show();
-	
-	break;
-      }
+      globalSelection( GEOM_POINT );
+      
+      GroupDimensions->hide();
+      GroupPoints->show();
+      
+      myEditCurrentArgument = GroupPoints->LineEdit1;
+      GroupPoints->LineEdit1->setText( "" );
+      GroupPoints->LineEdit2->setText( "" );
+      myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
+      
+      connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+      break;
     }
+  case 1:
+    {
+      GroupPoints->hide();
+      GroupDimensions->show();
+      break;
+    }
+  }
+ 
+  qApp->processEvents();
+  updateGeometry();
+  resize( minimumSize() );
+
   displayPreview();
 }
 
@@ -234,27 +229,26 @@ void PrimitiveGUI_BoxDlg::SelectionIntoArgument()
   if ( getConstructorId() != 0 )
     return;
   
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   
-  if (IObjectCount() != 1) 
-    {
-      if (myEditCurrentArgument == GroupPoints->LineEdit1)
-	myPoint1 = GEOM::GEOM_Object::_nil();
-      else if ( myEditCurrentArgument == GroupPoints->LineEdit2)
-	myPoint2 = GEOM::GEOM_Object::_nil();
-      return;
-    }
+  if ( IObjectCount() != 1 ) {
+    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
+      myPoint1 = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+      myPoint2 = GEOM::GEOM_Object::_nil();
+    return;
+  }
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
   
-  if(!testResult || CORBA::is_nil( aSelectedObject ))
+  if ( !testResult || CORBA::is_nil( aSelectedObject ) )
     return;
   
-  if(myEditCurrentArgument == GroupPoints->LineEdit1)
+  if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
     myPoint1 = aSelectedObject;
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2)
+  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
     myPoint2 = aSelectedObject;
   
   myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
@@ -271,9 +265,9 @@ void PrimitiveGUI_BoxDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
   
-  if(send == GroupPoints->PushButton1)
+  if ( send == GroupPoints->PushButton1 )
     myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if(send == GroupPoints->PushButton2)
+  else if ( send == GroupPoints->PushButton2 )
     myEditCurrentArgument = GroupPoints->LineEdit2;
   
   globalSelection( GEOM_POINT );
@@ -290,11 +284,10 @@ void PrimitiveGUI_BoxDlg::SetEditCurrentArgument()
 void PrimitiveGUI_BoxDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1 || send == GroupPoints->LineEdit2)
-    {
-      myEditCurrentArgument = send;
-      GEOMBase_Skeleton::LineEditReturnPressed();
-    }
+  if ( send == GroupPoints->LineEdit1 || send == GroupPoints->LineEdit2 ) {
+    myEditCurrentArgument = send;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 
@@ -305,8 +298,8 @@ void PrimitiveGUI_BoxDlg::LineEditReturnPressed()
 void PrimitiveGUI_BoxDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
   ConstructorsClicked( getConstructorId() );
 }
@@ -316,9 +309,9 @@ void PrimitiveGUI_BoxDlg::ActivateThisDialog()
 // function : enterEvent [REDEFINED]
 // purpose  :
 //=================================================================================
-void PrimitiveGUI_BoxDlg::enterEvent(QEvent* e)
+void PrimitiveGUI_BoxDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 
@@ -349,7 +342,7 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_BoxDlg::createOperation()
 //=================================================================================
 bool PrimitiveGUI_BoxDlg::isValid( QString& msg )
 {
-  return getConstructorId() == 0 ? !(myPoint1->_is_nil() || myPoint2->_is_nil()) : true;
+  return getConstructorId() == 0 ? !( myPoint1->_is_nil() || myPoint2->_is_nil() ) : true;
 }
 
 
@@ -363,8 +356,7 @@ bool PrimitiveGUI_BoxDlg::execute( ObjectList& objects )
   
   GEOM::GEOM_Object_var anObj;
   
-  switch ( getConstructorId() ) 
-  {
+  switch ( getConstructorId() ) {
   case 0 :
     { 
       if ( !CORBA::is_nil( myPoint1 ) &&  !CORBA::is_nil( myPoint2 ) ) {
@@ -376,9 +368,9 @@ bool PrimitiveGUI_BoxDlg::execute( ObjectList& objects )
     }
   case 1 :
     {
-      double x = GroupDimensions->SpinBox_DX->GetValue();
-      double y = GroupDimensions->SpinBox_DY->GetValue();
-      double z = GroupDimensions->SpinBox_DZ->GetValue();
+      double x = GroupDimensions->SpinBox_DX->value();
+      double y = GroupDimensions->SpinBox_DY->value();
+      double z = GroupDimensions->SpinBox_DZ->value();
       
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeBoxDXDYDZ( x, y, z );
       res = true;
@@ -396,7 +388,7 @@ bool PrimitiveGUI_BoxDlg::execute( ObjectList& objects )
 // function : closeEvent
 // purpose  :
 //=================================================================================
-void  PrimitiveGUI_BoxDlg::closeEvent( QCloseEvent* e )
+void PrimitiveGUI_BoxDlg::closeEvent( QCloseEvent* e )
 {
   GEOMBase_Skeleton::closeEvent( e );
 }

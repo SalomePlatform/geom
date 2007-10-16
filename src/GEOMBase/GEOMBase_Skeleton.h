@@ -41,6 +41,8 @@ class QPushButton;
 #ifndef COORD_MIN
 #  define COORD_MIN -1e+15
 #  define COORD_MAX +1e+15
+#  define MAX_NUMBER 100000
+#  define DBL_DIGITS_DISPLAY 16
 #endif // COORD_MIN
 
 class GEOMBASE_EXPORT GEOMBase_Skeleton : public QDialog, public GEOMBase_Helper
@@ -48,7 +50,7 @@ class GEOMBASE_EXPORT GEOMBase_Skeleton : public QDialog, public GEOMBase_Helper
   Q_OBJECT
 
 public:
-    GEOMBase_Skeleton( GeometryGUI*, QWidget* = 0, const char* = 0, bool = false, Qt::WindowFlags = 0 );
+    GEOMBase_Skeleton( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
     ~GEOMBase_Skeleton();
 
 private:

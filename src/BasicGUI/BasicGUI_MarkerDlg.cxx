@@ -56,7 +56,7 @@
 // purpose  : Constructor
 //=================================================================================
 BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* theParent )
-  : GEOMBase_Skeleton( theGeometryGUI, theParent, "BasicGUI_MarkerDlg", false,
+  : GEOMBase_Skeleton( theGeometryGUI, theParent, false,
 		       Qt::WindowTitleHint | Qt::WindowSystemMenuHint )
 {
   QPixmap iconCS1   ( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_MARKER" ) ) );

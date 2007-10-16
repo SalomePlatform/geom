@@ -50,17 +50,12 @@ using namespace std;
 //            true to construct a modal dialog.
 //=================================================================================
 GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* parent,
-				      const char* name, bool modal, Qt::WindowFlags fl )
-  : QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint ), 
+				      bool modal, Qt::WindowFlags fl )
+  : QDialog( parent, fl ), 
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeomGUI( theGeometryGUI ),
     myRBGroup( 0 )
 {
-  if ( !name )
-    setObjectName( "GEOMBase_Skeleton" );
-  else
-    setObjectName( name );
-
   setAttribute( Qt::WA_DeleteOnClose );
 
   setModal( modal );
