@@ -1,31 +1,28 @@
-#  GEOM DLGREF : 
+# GEOM DLGREF : 
 #
-#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+# Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+# CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 # 
-#  This library is free software; you can redistribute it and/or 
-#  modify it under the terms of the GNU Lesser General Public 
-#  License as published by the Free Software Foundation; either 
-#  version 2.1 of the License. 
+# This library is free software; you can redistribute it and/or 
+# modify it under the terms of the GNU Lesser General Public 
+# License as published by the Free Software Foundation; either 
+# version 2.1 of the License. 
 # 
-#  This library is distributed in the hope that it will be useful, 
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-#  Lesser General Public License for more details. 
+# This library is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+# Lesser General Public License for more details. 
 # 
-#  You should have received a copy of the GNU Lesser General Public 
-#  License along with this library; if not, write to the Free Software 
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+# You should have received a copy of the GNU Lesser General Public 
+# License along with this library; if not, write to the Free Software 
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 # 
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+# File    : Makefile.am
+# Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
+# Package : DlgRef
 #
-#
-#  File   : Makefile.in
-#  Author : Damien COQUERET (OCC)
-#  Modified by : Alexander BORODIN (OCN) - autotools usage
-#  Module : GEOM
-#  $Header: 
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
@@ -33,116 +30,12 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 lib_LTLIBRARIES = libDlgRef.la
 
 # Sources files
-dist_libDlgRef_la_SOURCES = \
+dist_libDlgRef_la_SOURCES = 	\
+	GEOM_DlgRef.h		\
 	GEOM_DlgRef.cxx
-
-# 	DlgRef_SpinBox.cxx \
-# 	DlgRef_1Sel1Spin.cxx \
-# 	DlgRef_1Sel2Spin.cxx \
-# 	DlgRef_1Sel3Spin.cxx \
-# 	DlgRef_1Sel4Spin.cxx \
-# 	DlgRef_1Sel5Spin.cxx \
-# 	DlgRef_2Sel1Spin.cxx \
-# 	DlgRef_2Sel2Spin.cxx \
-# 	DlgRef_2Sel3Spin.cxx \
-# 	DlgRef_1Sel1Spin1Check.cxx \
-# 	DlgRef_2Sel1Spin2Check.cxx \
-# 	DlgRef_2Sel2Spin1Check.cxx \
-# 	DlgRef_2Sel4Spin1Check.cxx \
-# 	DlgRef_3Sel4Spin2Check.cxx \
-# 	DlgRef_3Sel3Spin1Check.cxx \
-# 	DlgRef_1Spin.cxx \
-# 	DlgRef_2Spin.cxx \
-# 	DlgRef_3Spin.cxx \
-# 	DlgRef_3Spin1Check.cxx \
-# 	DlgRef_3Sel1Spin.cxx \
-# 	DlgRef_4Sel1Spin2Check.cxx
 
 MOC_FILES = \
 	GEOM_DlgRef_moc.cxx
-
-# 	DlgRef_SpinBox_moc.cxx \
-# 	DlgRef_1Sel1Spin_moc.cxx \
-# 	DlgRef_1Sel2Spin_moc.cxx \
-# 	DlgRef_1Sel3Spin_moc.cxx \
-# 	DlgRef_1Sel4Spin_moc.cxx \
-# 	DlgRef_1Sel5Spin_moc.cxx \
-# 	DlgRef_2Sel1Spin_moc.cxx \
-# 	DlgRef_2Sel2Spin_moc.cxx \
-# 	DlgRef_2Sel3Spin_moc.cxx \
-# 	DlgRef_1Sel1Spin1Check_moc.cxx \
-# 	DlgRef_2Sel1Spin2Check_moc.cxx \
-# 	DlgRef_2Sel2Spin1Check_moc.cxx \
-# 	DlgRef_2Sel4Spin1Check_moc.cxx \
-# 	DlgRef_3Sel4Spin2Check_moc.cxx \
-# 	DlgRef_3Sel3Spin1Check_moc.cxx \
-# 	DlgRef_1Spin_moc.cxx \
-# 	DlgRef_2Spin_moc.cxx \
-# 	DlgRef_3Spin_moc.cxx \
-# 	DlgRef_3Spin1Check_moc.cxx \
-# 	DlgRef_3Sel1Spin_moc.cxx \
-# 	DlgRef_1Sel_Ext_moc.cxx \
-# 	DlgRef_4Sel1Spin2Check_moc.cxx
-
-# header files 
-#salomeinclude_HEADERS = \
-#	GEOM_DlgRef.h
-#	DlgRef_Skeleton_QTD.h \
-# 	DlgRef_1Sel_QTD.h \
-# 	DlgRef_2Sel_QTD.h \
-# 	DlgRef_3Sel_QTD.h \
-# 	DlgRef_1Sel1Check_QTD.h \
-# 	DlgRef_1Sel3Check_QTD.h \
-# 	DlgRef_1Sel1Check1List_QTD.h \
-# 	DlgRef_1Sel1Spin_QTD.h \
-# 	DlgRef_1Sel2Spin_QTD.h \
-# 	DlgRef_1Sel3Spin_QTD.h \
-# 	DlgRef_1Sel4Spin_QTD.h \
-# 	DlgRef_1Sel5Spin_QTD.h \
-# 	DlgRef_2Sel1Spin_QTD.h \
-# 	DlgRef_2Sel2Spin_QTD.h \
-# 	DlgRef_2Sel3Spin_QTD.h \
-# 	DlgRef_1Sel1Spin1Check_QTD.h \
-# 	DlgRef_2Sel1Spin2Check_QTD.h \
-# 	DlgRef_2Sel2Spin1Check_QTD.h \
-# 	DlgRef_2Sel4Spin1Check_QTD.h \
-# 	DlgRef_3Sel4Spin2Check_QTD.h \
-# 	DlgRef_4Sel1List_QTD.h \
-# 	DlgRef_2Sel1List_QTD.h \
-# 	DlgRef_1List1Spin1Btn_QTD.h \
-# 	DlgRef_4Sel1List1Check_QTD.h \
-# 	DlgRef_1Spin_QTD.h \
-# 	DlgRef_2Spin_QTD.h \
-# 	DlgRef_3Spin_QTD.h \
-# 	DlgRef_3Spin1Check_QTD.h \
-# 	DlgRef_3Sel3Spin1Check_QTD.h \
-# 	DlgRef_4Sel1Spin2Check_QTD.h \
-# 	DlgRef_SpinBox.h \
-# 	DlgRef_1Sel1Spin.h \
-# 	DlgRef_1Sel2Spin.h \
-# 	DlgRef_1Sel3Spin.h \
-# 	DlgRef_1Sel4Spin.h \
-# 	DlgRef_1Sel5Spin.h \
-# 	DlgRef_2Sel1Spin.h \
-# 	DlgRef_2Sel2Spin.h \
-# 	DlgRef_2Sel3Spin.h \
-# 	DlgRef_1Sel1Spin1Check.h \
-# 	DlgRef_2Sel1Spin2Check.h \
-# 	DlgRef_2Sel2Spin1Check.h \
-# 	DlgRef_2Sel4Spin1Check.h \
-# 	DlgRef_3Sel4Spin2Check.h \
-# 	DlgRef_3Sel3Spin1Check.h \
-# 	DlgRef_1Spin.h \
-# 	DlgRef_2Spin.h \
-# 	DlgRef_3Spin.h \
-# 	DlgRef_3Spin1Check.h \
-# 	DlgRef_3Sel1Spin.h \
-# 	DlgRef_1Sel_Ext.h \
-# 	DlgRef_3Check_QTD.h \
-# 	DlgRef_6Sel_QTD.h \
-# 	DlgRef_4Sel1Spin2Check.h \
-# 	DlgRef_3Sel1Check_QTD.h \
-# 	GEOM_DlgRef.hxx
 
 UIC_FILES = \
 	ui_DlgRef_1List1Spin1Btn_QTD.h	\
@@ -183,11 +76,10 @@ UIC_FILES = \
 BUILT_SOURCES = $(UIC_FILES)
 
 nodist_libDlgRef_la_SOURCES =	\
-	GEOM_DlgRef.h		\
 	$(MOC_FILES)		\
 	$(UIC_FILES)
 
-# additionnal information to compile and link file
+# additional information to compile and link file
 libDlgRef_la_CPPFLAGS = \
 	$(QT_INCLUDES)
 

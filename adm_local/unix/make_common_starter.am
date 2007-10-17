@@ -43,7 +43,7 @@ docdir             = $(datadir)/doc/@PACKAGE@
 ui_%.h: %.ui
 	$(UIC) -o $@ $<
 
-EXTRA_DIST=$(MOC_FILES:%_moc.cxx=%.h) $(nodist_salomeres_DATA:%.qm=%.po)
+EXTRA_DIST=$(MOC_FILES:%_moc.cxx=%.h) $(UIC_FILES:ui_%.h=%.ui) $(nodist_salomeres_DATA:%.qm=%.po)
 
 mostlyclean-local:
 	rm -f @builddir@/*_moc.cxx

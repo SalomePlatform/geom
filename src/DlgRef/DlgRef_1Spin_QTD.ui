@@ -20,7 +20,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0" >
-    <widget class="QGroupBox" name="SpinBox_DX" >
+    <widget class="QGroupBox" name="GroupBox1" >
      <property name="title" >
       <string/>
      </property>
