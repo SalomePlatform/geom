@@ -20,7 +20,7 @@
     <number>6</number>
    </property>
    <item row="1" column="0" >
-    <widget class="QGroupBox" name="DlgRef_Skeleton_QTD" >
+    <widget class="QGroupBox" name="GroupBoxName" >
      <property name="sizePolicy" >
       <sizepolicy>
        <hsizetype>5</hsizetype>

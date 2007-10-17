@@ -199,7 +199,7 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
   QString aString = ""; /* name of selection */
 
   int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString, true );
-  if( nbSel != 1 )
+  if ( nbSel != 1 )
     return;
 
   TopoDS_Shape S;

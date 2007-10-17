@@ -1208,7 +1208,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     //Last Shape
     QString Command1 = myCommand.join( "" );
     Sketcher_Profile aProfile1( Command1.toAscii() );
-    if( aProfile1.IsDone() )
+    if ( aProfile1.IsDone() )
       myShape1 = aProfile1.GetShape();
 
     //Current Shape
@@ -1249,7 +1249,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 	 myLastX1 == myLastX2 && myLastY1 == myLastY2 ) || myIsAllAdded ) {
     cmd = myCommand.join( "" );
 
-    if ( ::qobject_cast<QWidget*>( Group1Sel->gridLayout->parent() )->isVisible() ) {
+    if ( Group1Sel->isVisible() ) {
       Group1Sel->buttonApply->setEnabled( false );
       //Group1Sel->buttonApply->setFocus();
     }
@@ -1273,7 +1273,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
   else {
     cmd = myCommand.join( "" ) + GetNewCommand();
 
-    if ( ::qobject_cast<QWidget*>( Group1Sel->gridLayout->parent() )->isVisible() ) {
+    if ( Group1Sel->isVisible() ) {
       Group1Sel->buttonApply->setEnabled( true );
       //Group1Sel->buttonApply->setFocus();
     }

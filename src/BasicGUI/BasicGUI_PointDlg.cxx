@@ -493,7 +493,7 @@ GEOM::GEOM_IOperations_ptr BasicGUI_PointDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BasicGUI_PointDlg::isValid( QString& msg )
+bool BasicGUI_PointDlg::isValid( QString& /*msg*/ )
 {
   const int id = getConstructorId();
   if ( id == 0 )
