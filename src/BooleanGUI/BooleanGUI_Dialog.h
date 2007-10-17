@@ -1,75 +1,73 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : BooleanGUI_Dialog.h
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : BooleanGUI_Dialog.h
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
 
-#ifndef BooleanGUI_Dialog_H
-#define BooleanGUI_Dialog_H
+#ifndef BOOLEANGUI_DIALOG_H
+#define BOOLEANGUI_DIALOG_H
 
-#include "BooleanGUI.h" //for wnt defines
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel_QTD.h"
+class DlgRef_2Sel;
 
 //=================================================================================
 // class    : BooleanGUI_Dialog
 // purpose  :
 //=================================================================================
-class GEOM_BOOLEANGUI_EXPORT BooleanGUI_Dialog : public GEOMBase_Skeleton
+class BooleanGUI_Dialog : public GEOMBase_Skeleton
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		       const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
-    ~BooleanGUI_Dialog();
-
+  BooleanGUI_Dialog( const int, GeometryGUI*, QWidget* = 0,
+		     bool = false, Qt::WindowFlags = 0 );
+  ~BooleanGUI_Dialog();
+  
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& );
-    virtual bool execute( ObjectList& objects );
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );
 
 private:
-    int myOperation;
-	  
-    void Init();
-    void enterEvent(QEvent * e);
-
-    GEOM::GEOM_Object_var myObject1;
-    GEOM::GEOM_Object_var myObject2;
-
-    Ui::DlgRef_2Sel_QTD* myGroup;
+  void                               Init();
+  void                               enterEvent( QEvent* );
+  
+private:
+  int                                myOperation;
+  
+  GEOM::GEOM_Object_var              myObject1;
+  GEOM::GEOM_Object_var              myObject2;
+  
+  DlgRef_2Sel*                       myGroup;
 
 private slots:
-    void ClickOnOk();
-    bool ClickOnApply();
-    void SetEditCurrentArgument();
-    void SelectionIntoArgument();
-    void LineEditReturnPressed();
-    void ActivateThisDialog();
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  void                               SetEditCurrentArgument();
+  void                               SelectionIntoArgument();
+  void                               LineEditReturnPressed();
+  void                               ActivateThisDialog();
 };
 
-#endif // BooleanGUI_Dialog_H
+#endif // BOOLEANGUI_DIALOG_H

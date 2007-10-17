@@ -1,42 +1,39 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : BooleanGUI_Dialog.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : BooleanGUI_Dialog.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
+#include "BooleanGUI.h"
 #include "BooleanGUI_Dialog.h"
 
-#include "GeometryGUI.h"
-#include "GEOMBase.h"
+#include <GEOM_DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
-
-using namespace std;
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
 //=================================================================================
 // class    : BooleanGUI_Dialog()
@@ -46,74 +43,70 @@ using namespace std;
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGeometryGUI,
-                                      QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, fl),
-   myOperation( theOperation )
+                                      QWidget* parent, bool modal, Qt::WindowFlags fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl ),
+    myOperation( theOperation )
 {
   QPixmap image0;
   QString aTitle, aCaption;
-  switch ( myOperation )
-  {
-  	case BooleanGUI::COMMON:
-   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_COMMON")));
-			aTitle = tr("GEOM_COMMON");
-			aCaption = tr("GEOM_COMMON_TITLE");
-			setHelpFileName("common.htm");
-			break;
-        case BooleanGUI::CUT:
-   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CUT")));
-			aTitle = tr("GEOM_CUT");
-			aCaption = tr("GEOM_CUT_TITLE");
-			setHelpFileName("cut.htm");
-			break;
-	case BooleanGUI::FUSE:
-   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_FUSE")));
-			aTitle = tr("GEOM_FUSE");
-			aCaption = tr("GEOM_FUSE_TITLE");
-			setHelpFileName("fuse.htm");
-			break;
-	case BooleanGUI::SECTION:
-   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SECTION")));
-			aTitle = tr("GEOM_SECTION");
-			aCaption = tr("GEOM_SECTION_TITLE");
-			setHelpFileName("section.htm");
-			break;
+  switch ( myOperation ) {
+  case BooleanGUI::COMMON:
+    image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_COMMON" ) ) );
+    aTitle = tr( "GEOM_COMMON" );
+    aCaption = tr( "GEOM_COMMON_TITLE" );
+    setHelpFileName( "common.htm" );
+    break;
+  case BooleanGUI::CUT:
+    image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_CUT" ) ) );
+    aTitle = tr( "GEOM_CUT" );
+    aCaption = tr( "GEOM_CUT_TITLE" );
+    setHelpFileName( "cut.htm" );
+    break;
+  case BooleanGUI::FUSE:
+    image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_FUSE" ) ) );
+    aTitle = tr( "GEOM_FUSE" );
+    aCaption = tr( "GEOM_FUSE_TITLE" );
+    setHelpFileName( "fuse.htm" );
+    break;
+  case BooleanGUI::SECTION:
+    image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_SECTION" ) ) );
+    aTitle = tr( "GEOM_SECTION" );
+    aCaption = tr( "GEOM_SECTION_TITLE" );
+    setHelpFileName( "section.htm" );
+    break;
   }
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
   setWindowTitle( aCaption );
 
   /***************************************************************/
-  GroupConstructors->setTitle( aTitle );
-  RadioButton1->setIcon( image0 );
-  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton2->close();
-  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton3->close();
+  mainFrame()->GroupConstructors->setTitle( aTitle );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  myGroup = new Ui::DlgRef_2Sel_QTD();
-  QWidget* aMyGroupWidget = new QWidget(this);
-  myGroup->setupUi(aMyGroupWidget);
-  aMyGroupWidget->setObjectName("GroupCommon");
+  myGroup = new DlgRef_2Sel( centralWidget() );
 
-  myGroup->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  if ( myOperation != BooleanGUI::CUT )
-  {
-  	myGroup->TextLabel1->setText(tr("GEOM_OBJECT_I").arg("1"));
-  	myGroup->TextLabel2->setText(tr("GEOM_OBJECT_I").arg("2"));
+  myGroup->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
+  if ( myOperation != BooleanGUI::CUT ) {
+    myGroup->TextLabel1->setText( tr( "GEOM_OBJECT_I" ).arg( 1 ) );
+    myGroup->TextLabel2->setText( tr( "GEOM_OBJECT_I" ).arg( 2 ) );
   }
-  else
-  {
-  	myGroup->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
-  	myGroup->TextLabel2->setText(tr("GEOM_TOOL_OBJECT"));
+  else {
+    myGroup->TextLabel1->setText( tr( "GEOM_MAIN_OBJECT" ) );
+    myGroup->TextLabel2->setText( tr( "GEOM_TOOL_OBJECT" ) );
   }
   
-  myGroup->PushButton1->setIcon(image1);
-  myGroup->PushButton2->setIcon(image1);
+  myGroup->PushButton1->setIcon( image1 );
+  myGroup->PushButton2->setIcon( image1 );
   myGroup->LineEdit1->setReadOnly( true );
   myGroup->LineEdit2->setReadOnly( true );
 
-  gridLayout1->addWidget(aMyGroupWidget, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( myGroup );
   /***************************************************************/
 
   /* Initialisation */
@@ -140,19 +133,19 @@ void BooleanGUI_Dialog::Init()
   myEditCurrentArgument = myGroup->LineEdit1;
 
    /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(myGroup->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(myGroup->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( myGroup->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( myGroup->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect(myGroup->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(myGroup->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( myGroup->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( myGroup->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  initName( GroupConstructors->title().toLatin1().constData() );
+  initName( mainFrame()->GroupConstructors->title() );
 
   globalSelection( GEOM_ALLSHAPES );
 }
@@ -191,8 +184,7 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
 
-  if ( IObjectCount() != 1 )
-  {
+  if ( IObjectCount() != 1 ) {
     if      ( myEditCurrentArgument == myGroup->LineEdit1 )   myObject1 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == myGroup->LineEdit2 )   myObject2 = GEOM::GEOM_Object::_nil();
     return;
@@ -201,8 +193,7 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes && GEOMBase::IsShape( aSelectedObject ) )
-  {
+  if ( !CORBA::is_nil( aSelectedObject ) && aRes && GEOMBase::IsShape( aSelectedObject ) ) {
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     if      ( myEditCurrentArgument == myGroup->LineEdit1 )   myObject1 = aSelectedObject;
     else if ( myEditCurrentArgument == myGroup->LineEdit2 )   myObject2 = aSelectedObject;
@@ -233,8 +224,7 @@ void BooleanGUI_Dialog::SetEditCurrentArgument()
 void BooleanGUI_Dialog::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if ( send == myGroup->LineEdit1 || send == myGroup->LineEdit2 )
-  {
+  if ( send == myGroup->LineEdit1 || send == myGroup->LineEdit2 ) {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
@@ -249,8 +239,8 @@ void BooleanGUI_Dialog::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection( GEOM_ALLSHAPES );
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 }
 
 
@@ -258,9 +248,9 @@ void BooleanGUI_Dialog::ActivateThisDialog()
 // function : enterEvent()
 // purpose  : when mouse enter onto the QWidget
 //=================================================================================
-void BooleanGUI_Dialog::enterEvent(QEvent * e)
+void BooleanGUI_Dialog::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 

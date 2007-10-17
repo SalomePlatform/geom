@@ -37,7 +37,7 @@ class BooleanGUI : public GEOMGUI
 public:
   enum BooleanOperation { COMMON = 1, CUT = 2, FUSE = 3, SECTION = 4 };
 
-  BooleanGUI( GeometryGUI* parent );
+  BooleanGUI( GeometryGUI* );
   ~BooleanGUI();
 
   bool OnGUIEvent( int, SUIT_Desktop* );
