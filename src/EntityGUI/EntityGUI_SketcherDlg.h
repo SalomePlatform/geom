@@ -1,152 +1,163 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : EntityGUI_SketcherDlg.h
+// Author : Damien COQUERET, Open CASCADE S.A.S.
 //
-//
-//  File   : EntityGUI_SketcherDlg.h
-//  Author : Damine COQUERET
-//  Module : GEOM
 
 #ifndef ENTITYGUI_SKETCHERDLG_H
 #define ENTITYGUI_SKETCHERDLG_H
 
-#include "GEOM_EntityGUI.hxx"
+#include <GEOMBase_Helper.h>
 
-#include "GEOMBase_Helper.h"
+#include <QDialog>
 
-#include "EntityGUI_Skeleton_QTD.h"
-#include "EntityGUI_Point_QTD.h"
-#include "EntityGUI_Dir1_QTD.h"
-#include "EntityGUI_Dir2_QTD.h"
-#include "EntityGUI_1Sel_QTD.h"
-
+class QLineEdit;
+class QDoubleSpinBox;
+class EntityGUI_1Sel;
 class EntityGUI_1Spin;
 class EntityGUI_2Spin;
 class EntityGUI_3Spin;
 class EntityGUI_4Spin;
-
+class EntityGUI_Point;
+class EntityGUI_Dir1;
+class EntityGUI_Dir2;
+class EntityGUI_Skeleton;
 class GeometryGUI;
+
+#ifndef COORD_MIN
+#  define COORD_MIN -1e+15
+#  define COORD_MAX +1e+15
+#  define MAX_NUMBER 100000
+#  define DBL_DIGITS_DISPLAY 16
+#endif // COORD_MIN
 
 //=================================================================================
 // class    : EntityGUI_Dlg
 // purpose  :
 //=================================================================================
-class GEOM_ENTITYGUI_EXPORT EntityGUI_SketcherDlg : public QDialog, public Ui::EntityGUI_Skeleton_QTD, public GEOMBase_Helper
+class EntityGUI_SketcherDlg : public QDialog, GEOMBase_Helper
 { 
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent = 0,
-			  const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0,
-			  const double lineWidth = 2.);
-    ~EntityGUI_SketcherDlg();
-
-    bool eventFilter (QObject* object, QEvent* event);
+  EntityGUI_SketcherDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0,
+			 const double = 2. );
+  ~EntityGUI_SketcherDlg();
 
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& );
-    virtual bool execute( ObjectList& objects );
+  void                               initSpinBox( QDoubleSpinBox*, 
+						  double, double, double = 0.1, 
+						  int = 3 );
 
-    void closeEvent( QCloseEvent* e );
-    void keyPressEvent( QKeyEvent* e );
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );
 
-private :
-    void Init();
-    void enterEvent(QEvent* e);
-    void InitClick();
-    void setEnabledUndo(bool value);
-    void setEnabledRedo(bool value);
+  void                               closeEvent( QCloseEvent* );
+  void                               keyPressEvent( QKeyEvent* );
 
-    QString GetNewCommand();
+private:
+  void                               Init();
+  void                               enterEvent( QEvent* );
+  void                               InitClick();
+  void                               setEnabledUndo( bool );
+  void                               setEnabledRedo( bool );
+    
+  QString                            GetNewCommand();
 
-    int myConstructorId;
-    int myConstructorDirId;
-    int mySketchType;
-    int mySketchState;
+  virtual void                       displayPreview( GEOM::GEOM_Object_ptr,
+						     const bool = false,
+						     const bool = false,
+						     const bool = true,
+						     const double  = -1 );
 
-    bool myIsAllAdded;
+  bool                               createShapes( GEOM::GEOM_Object_ptr,
+						   TopoDS_Shape&,
+						   TopoDS_Shape& );
 
-    QLineEdit* myEditCurrentArgument;   /* Current LineEdit */
+private:
+  int                                myConstructorId;
+  int                                myConstructorDirId;
+  int                                mySketchType;
+  int                                mySketchState;
 
-    QStringList myCommand;
-    QStringList myUndoCommand;
+  bool                               myIsAllAdded;
 
-    Standard_Real myX, myY, myDX, myDY;
-    Standard_Real myLength, myAngle, myRadius;
-    Standard_Real myLastX1, myLastY1;
-    Standard_Real myLastX2, myLastY2;
+  QLineEdit*                         myEditCurrentArgument;   /* Current LineEdit */
 
-    Ui::EntityGUI_Point_QTD* GroupPt;
-    Ui::EntityGUI_Dir1_QTD* GroupD1;
-    Ui::EntityGUI_Dir2_QTD* GroupD2;
+  QStringList                        myCommand;
+  QStringList                        myUndoCommand;
 
-    Ui::EntityGUI_1Sel_QTD* Group1Sel;
-    EntityGUI_1Spin* Group1Spin;
-    EntityGUI_2Spin* Group2Spin;
-    EntityGUI_3Spin* Group3Spin;
-    EntityGUI_4Spin* Group4Spin;
+  Standard_Real                      myX, myY, myDX, myDY;
+  Standard_Real                      myLength, myAngle, myRadius;
+  Standard_Real                      myLastX1, myLastY1;
+  Standard_Real                      myLastX2, myLastY2;
 
-    GeometryGUI*  myGeometryGUI;
+  EntityGUI_Skeleton*                MainWidget;
 
-    QString myHelpFileName;
+  EntityGUI_Point*                   GroupPt;
+  EntityGUI_Dir1*                    GroupD1;
+  EntityGUI_Dir2*                    GroupD2;
 
-    enum SketchState {FIRST_POINT, NEXT_POINT};
+  EntityGUI_1Sel*                    Group1Sel;
+  EntityGUI_1Spin*                   Group1Spin;
+  EntityGUI_2Spin*                   Group2Spin;
+  EntityGUI_3Spin*                   Group3Spin;
+  EntityGUI_4Spin*                   Group4Spin;
 
-    enum SketchType {PT_ABS, PT_RELATIVE, PT_SEL,
-		     DIR_ANGLE_LENGTH, DIR_ANGLE_X, DIR_ANGLE_Y,
-		     DIR_PER_LENGTH, DIR_PER_X, DIR_PER_Y,
-		     DIR_TAN_LENGTH, DIR_TAN_X, DIR_TAN_Y,
-		     DIR_DXDY_LENGTH, DIR_DXDY_X, DIR_DXDY_Y};
+  GeometryGUI*                       myGeometryGUI;
 
-  double myLineWidth;
-  virtual void displayPreview  ( GEOM::GEOM_Object_ptr obj,
-                                 const bool            append = false,
-                                 const bool            activate = false,
-                                 const bool            update = true,
-                                 const double          lineWidth = -1 );
+  QString                            myHelpFileName;
+  
+  double                             myLineWidth;
 
-  bool createShapes( GEOM::GEOM_Object_ptr theObject,
-                     TopoDS_Shape&         theApplyedWire,
-                     TopoDS_Shape&         theLastSegment );
-
+private:
+  enum SketchState { FIRST_POINT, NEXT_POINT };
+  
+  enum SketchType { PT_ABS, PT_RELATIVE, PT_SEL,
+		    DIR_ANGLE_LENGTH, DIR_ANGLE_X, DIR_ANGLE_Y,
+		    DIR_PER_LENGTH, DIR_PER_X, DIR_PER_Y,
+		    DIR_TAN_LENGTH, DIR_TAN_X, DIR_TAN_Y,
+		    DIR_DXDY_LENGTH, DIR_DXDY_X, DIR_DXDY_Y };
+  
 private slots:
-    void ClickOnEnd();
-    void ClickOnCancel();
-    bool ClickOnApply();
-    void ClickOnUndo();
-    void ClickOnRedo();
-    void ClickOnHelp();
-    void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
-    void DeactivateActiveDialog();
-    void ActivateThisDialog();
-    void TypeClicked(int constructorId);
-    void DestClicked(int constructorId);
-    void PointClicked(int constructorId);
-    void Dir1Clicked(int constructorId);
-    void Dir2Clicked(int constructorId);
-    void ValueChangedInSpinBox(double newValue);
+  void                               ClickOnEnd();
+  void                               ClickOnCancel();
+  bool                               ClickOnApply();
+  void                               ClickOnUndo();
+  void                               ClickOnRedo();
+  void                               ClickOnHelp();
+  void                               LineEditReturnPressed();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
+  void                               DeactivateActiveDialog();
+  void                               ActivateThisDialog();
+  void                               TypeClicked( int );
+  void                               DestClicked( int );
+  void                               PointClicked( int );
+  void                               Dir1Clicked( int );
+  void                               Dir2Clicked( int );
+  void                               ValueChangedInSpinBox( double );
 };
 
 #endif // ENTITYGUI_SKETCHERDLG_H

@@ -1,91 +1,86 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : EntityGUI_SubShapeDlg.h
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : EntityGUI_SubShapeDlg.h
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
 
-#ifndef DIALOGBOX_SUBSHAPE_H
-#define DIALOGBOX_SUBSHAPE_H
+#ifndef ENTITYGUI_SUBSHAPEDLG_H
+#define ENTITYGUI_SUBSHAPEDLG_H
 
-#include "GEOM_EntityGUI.hxx"
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel1Check1List_QTD.h"
+class DlgRef_1Sel1Check1List;
 
 //=================================================================================
 // class    : EntityGUI_SubShapeDlg
 // purpose  :
 //=================================================================================
-class GEOM_ENTITYGUI_EXPORT EntityGUI_SubShapeDlg : public GEOMBase_Skeleton
+class EntityGUI_SubShapeDlg : public GEOMBase_Skeleton
 { 
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			  const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
-    ~EntityGUI_SubShapeDlg();
+  EntityGUI_SubShapeDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
+  ~EntityGUI_SubShapeDlg();
 
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr  createOperation();
-    virtual bool                        isValid( QString& );
-    virtual bool                        execute( ObjectList& objects );
-    virtual GEOM::GEOM_Object_ptr       getFather( GEOM::GEOM_Object_ptr theObj );
-    virtual const char* getNewObjectName() const;
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr  createOperation();
+  virtual bool                        isValid( QString& );
+  virtual bool                        execute( ObjectList& );
+  virtual GEOM::GEOM_Object_ptr       getFather( GEOM::GEOM_Object_ptr );
+  virtual const char*                 getNewObjectName() const;
 
 private slots:
-    void                                ClickOnOk();
-    bool                                ClickOnApply();
-    void                                ActivateThisDialog();
-    void                                DeactivateActiveDialog();
-    void                                LineEditReturnPressed();
-    void                                SelectionIntoArgument();
-    void                                SetEditCurrentArgument();
-    void                                SubShapeToggled();
-    void                                ComboTextChanged();
+  void                                ClickOnOk();
+  bool                                ClickOnApply();
+  void                                ActivateThisDialog();
+  void                                DeactivateActiveDialog();
+  void                                LineEditReturnPressed();
+  void                                SelectionIntoArgument();
+  void                                SetEditCurrentArgument();
+  void                                SubShapeToggled();
+  void                                ComboTextChanged();
 
-private :
-    void                                Init();
-    void                                enterEvent( QEvent* e );
+private:
+  void                                Init();
+  void                                enterEvent( QEvent* );
 
-    void                                ResetStateOfDialog();
-    unsigned int                        NumberOfSubShapes (const TopoDS_Shape& S,
-							   const int shapeType) const;
+  void                                ResetStateOfDialog();
+  unsigned int                        NumberOfSubShapes( const TopoDS_Shape&,
+							 const int ) const;
 
-    void                                updateButtonState();
-    bool                                isAllSubShapes() const;
-    int                                 shapeType() const;
+  void                                updateButtonState();
+  bool                                isAllSubShapes() const;
+  int                                 shapeType() const;
 
 private:    
-
-    TopoDS_Shape                        myShape;
-    GEOM::GEOM_Object_var               myObject;
-
-    bool                                myWithShape;  
-    
-    Ui::DlgRef_1Sel1Check1List_QTD*     GroupPoints;
-    ObjectList                          myResult;
+  TopoDS_Shape                        myShape;
+  GEOM::GEOM_Object_var               myObject;
+  
+  bool                                myWithShape;  
+  
+  DlgRef_1Sel1Check1List*             GroupPoints;
+  ObjectList                          myResult;
 };
 
-#endif // DIALOGBOX_SUBSHAPE_H
+#endif // ENTITYGUI_SUBSHAPEDLG_H

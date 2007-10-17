@@ -1,0 +1,85 @@
+<ui version="4.0" >
+ <class>EntityGUI_Dir1_QTD</class>
+ <widget class="QWidget" name="EntityGUI_Dir1_QTD" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>120</width>
+    <height>124</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>EntityGUI_Dir1_QTD</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="GroupDir1" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>7</hsizetype>
+       <vsizetype>0</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title" >
+      <string>Direction</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="3" column="0" >
+       <widget class="QRadioButton" name="RB_Dir14" >
+        <property name="text" >
+         <string>VX-VY</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QRadioButton" name="RB_Dir13" >
+        <property name="text" >
+         <string>Tangent</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="RB_Dir11" >
+        <property name="text" >
+         <string>Angle</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QRadioButton" name="RB_Dir12" >
+        <property name="text" >
+         <string>Perpendicular</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <tabstops>
+  <tabstop>RB_Dir11</tabstop>
+  <tabstop>RB_Dir12</tabstop>
+  <tabstop>RB_Dir13</tabstop>
+  <tabstop>RB_Dir14</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
