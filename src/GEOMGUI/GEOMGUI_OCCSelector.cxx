@@ -318,7 +318,10 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
   vw->unHighlightAll( false );
 
   // DO the selection
-  for  ( int i = 1, n = ownersmap.Extent(); i <= n; i++ )
+  int i = 1, n = ownersmap.Extent();
+  bool isAutoHilight = ic->AutomaticHilight();
+  ic->SetAutomaticHilight(Standard_False); // for better performance
+  for  (; i <= n; i++)
   {
     Handle(SelectMgr_EntityOwner) owner = ownersmap( i );
     if ( owner->State() )
@@ -329,8 +332,10 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
     else
       ic->AddOrRemoveSelected( Handle(AIS_InteractiveObject)::DownCast(owner->Selectable()), false );
   }
+  ic->SetAutomaticHilight(isAutoHilight); // restore
 
-  vw->update();
+  ic->HilightSelected(/*updateviewer*/Standard_True);
+  //vw->update();
 
   // fill extra selected
   mySelectedExternals.clear();

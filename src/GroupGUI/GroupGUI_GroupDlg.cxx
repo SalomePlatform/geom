@@ -510,11 +510,17 @@ void GroupGUI_GroupDlg::add()
 //=================================================================================
 void GroupGUI_GroupDlg::remove()
 {
+  bool isBlocked = myIdList->signalsBlocked();
+  myIdList->blockSignals( true );
+
   for ( int i = myIdList->count() - 1; i >= 0; i-- ) {
     if ( myIdList->isSelected( i ) )
       myIdList->removeItem( i );
   }
-  updateState();
+
+  myIdList->blockSignals( isBlocked );
+
+  highlightSubShapes();
 }
 
 
@@ -694,6 +700,7 @@ void GroupGUI_GroupDlg::highlightSubShapes()
     return;
 
   TColStd_MapOfInteger anIds;
+  //TColStd_IndexedMapOfInteger anIds;
 
   myBusy = true;
 
@@ -701,10 +708,16 @@ void GroupGUI_GroupDlg::highlightSubShapes()
     if ( myIdList->isSelected( ii ) )
       anIds.Add( myIdList->item( ii )->text().toInt() );
 
-  LightApp_SelectionMgr* aSelMgr =
-    ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+  SalomeApp_Application* app = myGeomGUI->getApp();
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   aSelMgr->clearSelected();
-  aSelMgr->AddOrRemoveIndex( aSh->getIO(), anIds, false );
+  aSelMgr->AddOrRemoveIndex(aSh->getIO(), anIds, false);
+  //SUIT_DataOwnerPtrList aList;
+  //Handle(SALOME_InteractiveObject) IObject = aSh->getIO();
+  //for (int i = 1; i <= anIds.Extent(); i++)
+  //  aList.append(new LightApp_DataSubOwner(QString(IObject->getEntry()), anIds(i)));
+  //aSelMgr->setSelected(aList, /*append*/false);
+  ////aSelMgr->selectObjects(aSh->getIO(), anIds, /*append*/false);
 
   myBusy = false;
 
