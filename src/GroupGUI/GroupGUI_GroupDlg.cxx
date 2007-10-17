@@ -595,6 +595,7 @@ void GroupGUI_GroupDlg::updateState()
   if (app) {
     LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
     if (aSelMgr) {
+      /*
       aSelMgr->selectedObjects(aSelIOs);
 
       if ( aSelIOs.Extent() == 1 ) {
@@ -605,6 +606,12 @@ void GroupGUI_GroupDlg::updateState()
         if ( aResult && !anObj->_is_nil() )
           aSelMgr->GetIndexes( aSelIOs.First(), aMapIndex );
       }
+      */
+      QMap<QString, TColStd_IndexedMapOfInteger> aMap;
+      //MapEntryOfMapOfInteger& aMap;
+      aSelMgr->selectedSubOwners(aMap);
+      if (aMap.size() == 1)
+        aMapIndex = aMap.begin().data();
     }
   }
 
@@ -700,7 +707,6 @@ void GroupGUI_GroupDlg::highlightSubShapes()
     return;
 
   TColStd_MapOfInteger anIds;
-  //TColStd_IndexedMapOfInteger anIds;
 
   myBusy = true;
 
@@ -712,12 +718,6 @@ void GroupGUI_GroupDlg::highlightSubShapes()
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   aSelMgr->clearSelected();
   aSelMgr->AddOrRemoveIndex(aSh->getIO(), anIds, false);
-  //SUIT_DataOwnerPtrList aList;
-  //Handle(SALOME_InteractiveObject) IObject = aSh->getIO();
-  //for (int i = 1; i <= anIds.Extent(); i++)
-  //  aList.append(new LightApp_DataSubOwner(QString(IObject->getEntry()), anIds(i)));
-  //aSelMgr->setSelected(aList, /*append*/false);
-  ////aSelMgr->selectObjects(aSh->getIO(), anIds, /*append*/false);
 
   myBusy = false;
 

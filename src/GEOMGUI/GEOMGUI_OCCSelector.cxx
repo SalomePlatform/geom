@@ -320,7 +320,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
   // DO the selection
   int i = 1, n = ownersmap.Extent();
   bool isAutoHilight = ic->AutomaticHilight();
-  ic->SetAutomaticHilight(Standard_False); // for better performance
+  ic->SetAutomaticHilight(Standard_False); //Bug 17269: for better performance
   for  (; i <= n; i++)
   {
     Handle(SelectMgr_EntityOwner) owner = ownersmap( i );
@@ -332,8 +332,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
     else
       ic->AddOrRemoveSelected( Handle(AIS_InteractiveObject)::DownCast(owner->Selectable()), false );
   }
-  ic->SetAutomaticHilight(isAutoHilight); // restore
-
+  ic->SetAutomaticHilight(isAutoHilight); //Bug 17269: restore mode
   ic->HilightSelected(/*updateviewer*/Standard_True);
   //vw->update();
 
