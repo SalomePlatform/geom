@@ -48,9 +48,9 @@ class OperationGUI_ChamferDlg : public GEOMBase_Skeleton
 	 SpinBox41, SpinBox42, SpinBox43, SpinBox44  };
   enum { RadioButton21, RadioButton22,
          RadioButton31, RadioButton32,
-         RadioButton41, RadioButton42 };
-public:
-  OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QWidget* parent);
+         RadioButton41, RadioButton42 ;
+public
+  OpertionGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QWidget* parent);
   virtual ~OperationGUI_ChamferDlg();
 
 protected:

@@ -1951,7 +1951,7 @@ def MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2):
       print "MakeChamferEdge : ", LocalOp.GetErrorCode()
     return anObj
 ## The Same chamfer but with params theD is chamfer lenght and
-#  theAngle is Angle of chamfer
+#  theAngle is Angle of chamfer (angle in radians)
 def MakeChamferEdgeAD(theShape, theD, theAngle, theFace1, theFace2):
     anObj = LocalOp.MakeChamferEdgeAD(theShape, theD, theAngle, theFace1, theFace2)
     if LocalOp.IsDone() == 0:
@@ -1976,7 +1976,7 @@ def MakeChamferFaces(theShape, theD1, theD2, theFaces):
       print "MakeChamferFaces : ", LocalOp.GetErrorCode()
     return anObj
 ## The Same chamfer but with params theD is chamfer lenght and
-#  theAngle is Angle of chamfer
+#  theAngle is Angle of chamfer (angle in radians)
 def MakeChamferFacesAD(theShape, theD, theAngle, theFaces):
     anObj = LocalOp.MakeChamferFacesAD(theShape, theD, theAngle, theFaces)
     if LocalOp.IsDone() == 0:
@@ -1997,7 +1997,7 @@ def MakeChamferEdges(theShape, theD1, theD2, theEdges):
       print "MakeChamferEdges : ", LocalOp.GetErrorCode()
     return anObj
 ## The Same chamfer but with params theD is chamfer lenght and
-#  theAngle is Angle of chamfer
+#  theAngle is Angle of chamfer (angle in radians)
 def MakeChamferEdgesAD(theShape, theD, theAngle, theEdges):
     anObj = LocalOp.MakeChamferEdgesAD(theShape, theD, theAngle, theEdges)
     if LocalOp.IsDone() == 0:

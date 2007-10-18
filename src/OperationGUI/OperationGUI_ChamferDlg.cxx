@@ -1,22 +1,22 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
@@ -85,7 +85,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QW
   QGroupBox* aSpinGrp = new QGroupBox( 1, Qt::Vertical, myGrp1 );
   aSpinGrp->setFrameStyle( QFrame::NoFrame );
   aSpinGrp->setInsideMargin( 0 );
-
+  
   new QLabel( tr( "D" ), aSpinGrp );
   mySpinBox[ SpinBox1 ] = new DlgRef_SpinBox( aSpinGrp );
 
@@ -215,7 +215,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QW
   Layout1->addWidget( myGrp4, 2, 0 );
 
   // Set range of spinboxes
-
+  
   double SpecificStep = 10.0;
   QMap< int, DlgRef_SpinBox* >::iterator anIter;
   for ( anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter )
@@ -370,7 +370,7 @@ void OperationGUI_ChamferDlg::ConstructorsClicked( int constructorId )
         myGrp3->show();
 	myGrp4->hide();
         mySpinBox[ SpinBox31 ]->SetValue( D1 );
-        mySpinBox[ SpinBox32 ]->SetValue( D2 );        
+        mySpinBox[ SpinBox32 ]->SetValue( D2 );       
         mySpinBox[ SpinBox33 ]->SetValue( D );
         mySpinBox[ SpinBox34 ]->SetValue( Angle );
     break;
@@ -599,7 +599,7 @@ void OperationGUI_ChamferDlg::RadioButtonPressed()
 //=================================================================================
 void OperationGUI_ChamferDlg::SetEditCurrentArgument()
 {
-  QPushButton* aSender = ( QPushButton* )sender();
+ QPushButton* aSender = ( QPushButton* )sender();
 
   QMap< int, QPushButton* >::iterator anIter;
   for ( anIter = mySelBtn.begin(); anIter != mySelBtn.end(); ++anIter )
@@ -672,8 +672,8 @@ void OperationGUI_ChamferDlg::createSelWg( const QString& theLbl,
 //=================================================================================
 void OperationGUI_ChamferDlg::reset()
 {
-  // Set Initial values of spinboxes
-  QMap< int, DlgRef_SpinBox* >::iterator anIter;
+ // Set Initial values of spinboxes
+  QMap< int, DlgRef_SpinBox* >::itertor anIter;
   for ( anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter )
     anIter.data()->SetValue( 5 );
 
@@ -766,7 +766,6 @@ void OperationGUI_ChamferDlg::enableWidgets()
   else if ( anId == 2 )
   {
     mySelName[ Faces ]->setEnabled( toEnable );
-
     if ( !toEnable )
 	{
 	  mySelName[ Faces ]->setText( "" );
@@ -793,7 +792,6 @@ GEOM::GEOM_IOperations_ptr OperationGUI_ChamferDlg::createOperation()
 {
   return getGeomEngine()->GetILocalOperations( getStudyId() );
 }
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  : Verify validity of input data
@@ -841,15 +839,14 @@ bool OperationGUI_ChamferDlg::execute( ObjectList& objects )
 						       mySpinBox[ SpinBox23 ]->GetValue(),
 						       mySpinBox[ SpinBox24 ]->GetValue() * PI180,
 						       myFace[ Face1 ],
-						       myFace[ Face2 ] );
+						       myFace[ Face2 ]);
     }
   else if ( anId == 2 )
   {
     GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
     anArray->length( myFaces.Extent() );
-
     for ( int i = 1, n = myFaces.Extent(); i <= n; i++ )
-      anArray[ i - 1 ] = myFaces( i );             
+      anArray[ i - 1 ] = myFaces( i );            
     if ( flag )
     anObj = GEOM::GEOM_ILocalOperations::_narrow(
       getOperation() )->MakeChamferFaces( myShape,
@@ -864,9 +861,8 @@ bool OperationGUI_ChamferDlg::execute( ObjectList& objects )
                                             anArray );
   }
   else if ( anId == 3 )
-  {
-    GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
-    anArray->length( myEdges.Extent() );
+  {    GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
+    anArray->length( myEdges.Extent() )
     for ( int i = 1, n = myEdges.Extent(); i <= n; i++ )
       anArray[ i - 1 ] = myEdges( i );             
     if ( flag )
@@ -884,12 +880,5 @@ bool OperationGUI_ChamferDlg::execute( ObjectList& objects )
 
   return true;
 }
-
-
-
-
-
-
-
 
 
