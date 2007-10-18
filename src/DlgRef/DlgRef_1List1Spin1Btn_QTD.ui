@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>217</width>
-    <height>120</height>
+    <width>213</width>
+    <height>116</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -26,11 +26,14 @@
      </property>
      <layout class="QGridLayout" >
       <property name="margin" >
-       <number>11</number>
+       <number>9</number>
       </property>
       <property name="spacing" >
        <number>6</number>
       </property>
+      <item rowspan="4" row="0" column="0" >
+       <widget class="QTreeWidget" name="ListView1" />
+      </item>
       <item row="3" column="1" >
        <spacer>
         <property name="orientation" >
@@ -41,14 +44,21 @@
         </property>
         <property name="sizeHint" >
          <size>
-          <width>0</width>
-          <height>23</height>
+          <width>16</width>
+          <height>120</height>
          </size>
         </property>
        </spacer>
       </item>
-      <item rowspan="4" row="0" column="0" >
-       <widget class="QListView" name="ListView1" />
+      <item row="2" column="1" >
+       <widget class="QPushButton" name="PushButton1" >
+        <property name="text" >
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QSpinBox" name="SpinBox1" />
       </item>
       <item row="0" column="1" >
        <widget class="QLabel" name="TextLabel1" >
@@ -60,16 +70,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="QSpinBox" name="SpinBox1" />
-      </item>
-      <item row="2" column="1" >
-       <widget class="QPushButton" name="PushButton1" >
-        <property name="text" >
-         <string/>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
@@ -77,6 +77,11 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <tabstops>
+  <tabstop>ListView1</tabstop>
+  <tabstop>SpinBox1</tabstop>
+  <tabstop>PushButton1</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

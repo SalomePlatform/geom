@@ -360,7 +360,7 @@ void TransformationGUI_MultiRotationDlg::ActivateThisDialog()
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::enterEvent( QEvent* )
 {
-  if( !mainFrame()->GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 

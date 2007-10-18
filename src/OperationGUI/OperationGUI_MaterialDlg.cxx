@@ -1,44 +1,38 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  CEA
+// Copyright (C) 2003  CEA
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : OperationGUI_MaterialDlg.cxx
+// Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
 //
-//
-//  File   : OperationGUI_MaterialDlg.cxx
-//  Author : Julia DOROVSKIKH
-//  Module : GEOM
-//  $Header$
 
 #include "OperationGUI_MaterialDlg.h"
 #include "OperationGUI_PartitionDlg.h"
 
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <GEOM_DlgRef.h>
+#include <GEOMBase.h>
+#include <GeometryGUI.h>
 
-#include "utilities.h"
-
-#include <qlabel.h>
-#include <qlistview.h>
-#include <qspinbox.h>
-
-using namespace std;
+#include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
 //=================================================================================
 // class    : OperationGUI_MaterialDlg()
@@ -47,40 +41,42 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_MaterialDlg::OperationGUI_MaterialDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
-                                                    const char* name, GEOM::ListOfGO ListShapes,
-                                                    bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+OperationGUI_MaterialDlg::OperationGUI_MaterialDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
+                                                    GEOM::ListOfGO ListShapes, bool modal )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
   myListShapes = ListShapes;
-  myParentDlg = parent;
+  
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_PARTITION" ) ) );
 
-  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_PARTITION")));
-
-  setCaption(tr("GEOM_MATERIAL_TITLE"));
+  setWindowTitle( tr( "GEOM_MATERIAL_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_PARTITION"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_PARTITION" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_1List1Spin1Btn_QTD(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_PARTITION"));
+  GroupPoints = new DlgRef_1List1Spin1Btn( centralWidget() );
+  GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION" ) );
 
-  myShapeCol = GroupPoints->ListView1->addColumn(tr("GEOM_MATERIAL_SHAPE"));
-  myMaterCol = GroupPoints->ListView1->addColumn(tr("GEOM_MATERIAL_MATERIAL"));
-  GroupPoints->ListView1->setSelectionMode(QListView::Extended);
-  GroupPoints->ListView1->setSorting(-1);
+  QStringList columns;
+  columns << tr( "GEOM_MATERIAL_SHAPE" ) << tr( "GEOM_MATERIAL_MATERIAL" );
+  GroupPoints->ListView1->setHeaderLabels( columns );
+  GroupPoints->ListView1->setSelectionMode( QAbstractItemView::ExtendedSelection );
+  GroupPoints->ListView1->setSortingEnabled( false );
 
-  GroupPoints->TextLabel1->setText(tr("GEOM_MATERIAL_ID"));
-  GroupPoints->PushButton1->setText(tr("GEOM_MATERIAL_SET"));
+  GroupPoints->TextLabel1->setText( tr( "GEOM_MATERIAL_ID" ) );
+  GroupPoints->PushButton1->setText( tr( "GEOM_MATERIAL_SET" ) );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupPoints );
   /***************************************************************/
 
-  setHelpFileName("partition.htm"); 
+  setHelpFileName( "partition.htm" ); 
 
   Init();
 }
@@ -102,43 +98,32 @@ void OperationGUI_MaterialDlg::Init()
 {
   // get materials list from the parent dialog
   OperationGUI_PartitionDlg* aParentDlg =
-    dynamic_cast<OperationGUI_PartitionDlg*>(myParentDlg);
-  if (aParentDlg)
+    qobject_cast<OperationGUI_PartitionDlg*>( parentWidget() );
+  if ( aParentDlg )
     myListMaterials = aParentDlg->GetListMaterials();
 
   /* list filling */
-  MESSAGE("Filling list with " << myListShapes.length() << " objects");
-  QString aMaterialId;
-  QListViewItem *anItem = NULL;
-  for (int ind = 0; ind < myListShapes.length(); ind++) {
+  for ( int ind = 0; ind < myListShapes.length(); ind++ ) {
     GEOM::GEOM_Object_var anObject = myListShapes[ind];
-    if (!anObject->_is_nil()) {
-      MESSAGE("Insert " << GEOMBase::GetName( anObject ));
-      if (ind < myListMaterials.length())
-	aMaterialId = QString::number(myListMaterials[ind]);
-      else 
-	aMaterialId = "0";
-      if (anItem)
-        // insert after aPrevItem
-        anItem = new QListViewItem(GroupPoints->ListView1, anItem,
-                                   GEOMBase::GetName( anObject ), aMaterialId);
-      else
-        // the first item creation
-        anItem = new QListViewItem(GroupPoints->ListView1,
-                                   GEOMBase::GetName( anObject ), aMaterialId);
+    if ( !anObject->_is_nil() ) {
+      QStringList labels;
+      labels << GEOMBase::GetName( anObject );
+      labels << ( ind < myListMaterials.length() ? 
+		  QString::number( myListMaterials[ind] ) : QString( "0" ) );
+      GroupPoints->ListView1->addTopLevelItem( new QTreeWidgetItem( labels ) );
     }
   }
-  MESSAGE("Filled");
 
   /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  buttonApply->close(TRUE);
-  buttonCancel->setText(tr("GEOM_BUT_CANCEL"));
-
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetMaterial()));
-
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( buttonOk(), SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  buttonApply()->setAttribute( Qt::WA_DeleteOnClose );
+  buttonApply()->close();
+  buttonCancel()->setText( tr( "GEOM_BUT_CANCEL" ) );
+  
+  connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetMaterial() ) );
+  
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 }
 
 
@@ -148,28 +133,22 @@ void OperationGUI_MaterialDlg::Init()
 //=================================================================================
 void OperationGUI_MaterialDlg::ClickOnOk()
 {
-  SUIT_Session::session()->activeApplication()->putInfo(tr(""));
+  SUIT_Session::session()->activeApplication()->putInfo( "" );
 
   int nbSh = myListShapes.length();  
-  myListMaterials.length(nbSh);
+  myListMaterials.length( nbSh );
 
-  QListViewItemIterator it (GroupPoints->ListView1);
-  for (int i = 0; it.current() != 0; it++, i++) {
-    QString aMatIdStr = it.current()->text(myMaterCol);
-    myListMaterials[i] = aMatIdStr.toInt();
-    MESSAGE("For shape # " << i << " material ID = " << myListMaterials[i]);
-  }
+  QTreeWidgetItemIterator it( GroupPoints->ListView1 );
+  for ( int i = 0; *it; it++, i++ )
+    myListMaterials[i] = (*it)->text( 1 ).toInt();
 
   // set materials list to the parent dialog
   OperationGUI_PartitionDlg* aParentDlg =
-    dynamic_cast<OperationGUI_PartitionDlg*>(myParentDlg);
-  if (aParentDlg)
-  {
-    aParentDlg->SetListMaterials(myListMaterials);
-  }
+    qobject_cast<OperationGUI_PartitionDlg*>( parentWidget() );
+  if ( aParentDlg )
+    aParentDlg->SetListMaterials( myListMaterials );
 
   ClickOnCancel();
-  return;
 }
 
 
@@ -199,15 +178,13 @@ void OperationGUI_MaterialDlg::SelectionIntoArgument()
 //=================================================================================
 void OperationGUI_MaterialDlg::SetMaterial()
 {
-  int aMatId = GroupPoints->SpinBox1->value();
-  QString aMatIdStr;
-  aMatIdStr.setNum(aMatId);
-  QListViewItemIterator it (GroupPoints->ListView1);
-  for (; it.current() != 0; it++) {
-    if (it.current()->isSelected())
-      it.current()->setText(myMaterCol, aMatIdStr);
+  QString aMatIdStr = QString::number( GroupPoints->SpinBox1->value() );
+  QList<QTreeWidgetItem*> selectedItems = GroupPoints->ListView1->selectedItems();
+
+  QListIterator<QTreeWidgetItem*> it( selectedItems );
+  while ( it.hasNext() ) {
+    it.next()->setText( 1, aMatIdStr );
   }
-  return;
 }
 
 
@@ -218,8 +195,8 @@ void OperationGUI_MaterialDlg::SetMaterial()
 void OperationGUI_MaterialDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   return;
 }
 
@@ -228,8 +205,8 @@ void OperationGUI_MaterialDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void OperationGUI_MaterialDlg::enterEvent(QEvent* e)
+void OperationGUI_MaterialDlg::enterEvent( QEvent* )
 {
-  if (!GroupConstructors->isEnabled())
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     this->ActivateThisDialog();
 }

@@ -1,31 +1,28 @@
-#  GEOM OPERATIONGUI : 
+# GEOM OPERATIONGUI : 
 #
-#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+# Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+# CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 # 
-#  This library is free software; you can redistribute it and/or 
-#  modify it under the terms of the GNU Lesser General Public 
-#  License as published by the Free Software Foundation; either 
-#  version 2.1 of the License. 
+# This library is free software; you can redistribute it and/or 
+# modify it under the terms of the GNU Lesser General Public 
+# License as published by the Free Software Foundation; either 
+# version 2.1 of the License. 
 # 
-#  This library is distributed in the hope that it will be useful, 
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-#  Lesser General Public License for more details. 
+# This library is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+# Lesser General Public License for more details. 
 # 
-#  You should have received a copy of the GNU Lesser General Public 
-#  License along with this library; if not, write to the Free Software 
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+# You should have received a copy of the GNU Lesser General Public 
+# License along with this library; if not, write to the Free Software 
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 # 
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+# File    : Makefile.am
+# Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
+# Package : OperationGUI
 #
-#
-#  File   : Makefile.in
-#  Author : Damien COQUERET (OCC)
-#  Modified by : Alexander BORODIN (OCN) - autotools usage
-#  Module : GEOM
-#  $Header: 
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
@@ -35,24 +32,32 @@ salomeinclude_HEADERS =
 # Libraries targets
 lib_LTLIBRARIES = libOperationGUI.la
 
-dist_libOperationGUI_la_SOURCES = \
-	OperationGUI.cxx \
-	OperationGUI_ArchimedeDlg.cxx \
-	OperationGUI_PartitionDlg.cxx \
-	OperationGUI_MaterialDlg.cxx \
-	OperationGUI_FilletDlg.cxx \
-	OperationGUI_ChamferDlg.cxx \
+dist_libOperationGUI_la_SOURCES =	\
+	OperationGUI.h			\
+	OperationGUI_ArchimedeDlg.h	\
+	OperationGUI_PartitionDlg.h	\
+	OperationGUI_MaterialDlg.h	\
+	OperationGUI_FilletDlg.h	\
+	OperationGUI_ChamferDlg.h	\
+	OperationGUI_ClippingDlg.h	\
+					\
+	OperationGUI.cxx		\
+	OperationGUI_ArchimedeDlg.cxx	\
+	OperationGUI_PartitionDlg.cxx	\
+	OperationGUI_MaterialDlg.cxx	\
+	OperationGUI_FilletDlg.cxx	\
+	OperationGUI_ChamferDlg.cxx	\
 	OperationGUI_ClippingDlg.cxx
 
 MOC_FILES = \
-	OperationGUI_ArchimedeDlg_moc.cxx \
-	OperationGUI_PartitionDlg_moc.cxx \
-	OperationGUI_MaterialDlg_moc.cxx \
-	OperationGUI_FilletDlg_moc.cxx \
-	OperationGUI_ChamferDlg_moc.cxx \
+	OperationGUI_ArchimedeDlg_moc.cxx	\
+	OperationGUI_PartitionDlg_moc.cxx	\
+	OperationGUI_MaterialDlg_moc.cxx	\
+	OperationGUI_FilletDlg_moc.cxx		\
+	OperationGUI_ChamferDlg_moc.cxx		\
 	OperationGUI_ClippingDlg_moc.cxx
 
-nodist_libOperationGUI_la_SOURCES= \
+nodist_libOperationGUI_la_SOURCES = \
 	$(MOC_FILES)
 
 #LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl SALOME_Exception.idl
@@ -61,25 +66,26 @@ nodist_libOperationGUI_la_SOURCES= \
 
 # additionnal information to compil and link file
 
-libOperationGUI_la_CPPFLAGS = \
-	$(QT_INCLUDES) \
-	$(VTK_INCLUDES) \
-	$(CAS_CPPFLAGS) \
-	$(PYTHON_INCLUDES) \
-	$(BOOST_CPPFLAGS) \
-	$(KERNEL_CXXFLAGS) \
-	$(GUI_CXXFLAGS) \
-	$(CORBA_CXXFLAGS) \
-	$(CORBA_INCLUDES) \
-	-I$(srcdir)/../GEOMGUI \
-	-I$(srcdir)/../DlgRef \
-	-I$(srcdir)/../GEOMBase \
-	-I$(srcdir)/../OBJECT \
-	-I$(srcdir)/../GEOMClient \
-	-I$(srcdir)/../GEOMImpl \
-	-I$(top_builddir)/idl \
+libOperationGUI_la_CPPFLAGS =		\
+	$(QT_INCLUDES)			\
+	$(VTK_INCLUDES)			\
+	$(CAS_CPPFLAGS)			\
+	$(PYTHON_INCLUDES)		\
+	$(BOOST_CPPFLAGS)		\
+	$(KERNEL_CXXFLAGS)		\
+	$(GUI_CXXFLAGS)			\
+	$(CORBA_CXXFLAGS)		\
+	$(CORBA_INCLUDES)		\
+	-I$(srcdir)/../GEOMGUI		\
+	-I$(srcdir)/../DlgRef		\
+	-I$(srcdir)/../GEOMBase		\
+	-I$(srcdir)/../OBJECT		\
+	-I$(srcdir)/../GEOMClient	\
+	-I$(srcdir)/../GEOMImpl		\
+	-I$(top_builddir)/src/DlgRef	\
+	-I$(top_builddir)/idl		\
 	-I$(top_builddir)/salome_adm/unix
 
-libOperationGUI_la_LDFLAGS  = \
-	../GEOMBase/libGEOMBase.la \
+libOperationGUI_la_LDFLAGS =		\
+	../GEOMBase/libGEOMBase.la	\
 	$(CAS_LDPATH) -lTKFillet

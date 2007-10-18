@@ -74,7 +74,7 @@ GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* pare
   myRBGroup->addButton( myMainFrame->RadioButton1, 0 );
   myRBGroup->addButton( myMainFrame->RadioButton2, 1 );
   myRBGroup->addButton( myMainFrame->RadioButton3, 2 );
-  myRBGroup->addButton( myMainFrame->RadioButton4, 4 );
+  myRBGroup->addButton( myMainFrame->RadioButton4, 3 );
 
   connect( myRBGroup, SIGNAL( buttonClicked( int ) ), this, SIGNAL( constructorsClicked( int ) ) );
 

@@ -385,7 +385,7 @@ void TransformationGUI_MultiTranslationDlg::ActivateThisDialog()
 //=================================================================================
 void TransformationGUI_MultiTranslationDlg::enterEvent( QEvent* )
 {
-  if( !mainFrame()->GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 

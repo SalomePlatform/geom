@@ -21,7 +21,7 @@
 #
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
-# Package : BooleanGUI
+# Package : TransformationGUI
 #
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am

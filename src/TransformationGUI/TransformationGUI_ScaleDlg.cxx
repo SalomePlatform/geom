@@ -258,7 +258,7 @@ void TransformationGUI_ScaleDlg::ActivateThisDialog()
 //=================================================================================
 void TransformationGUI_ScaleDlg::enterEvent( QEvent* )
 {
-  if( !mainFrame()->GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 
