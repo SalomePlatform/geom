@@ -196,7 +196,7 @@ def TestAll (geompy, math):
   #Local operations
   Fillet   = geompy.MakeFillet (Prism, radius, ShapeTypeEdge,
                                 IDlist_e) #(GEOM_Object_ptr, Double, Short, ListOfLong)->GEOM_Object_ptr
-  Fillet2  = geompy.MakeFilletR1R2 (Prism, radius1, radius2, ShapeTypeEdge,
+  Fillet2  = geompy.MakeFilletR1R2 (Prism, 7., 13., ShapeTypeEdge,
                                     IDlist_e) #(GEOM_Object_ptr, Double, Double, Short, ListOfLong)->GEOM_Object_ptr
   Chamfer  = geompy.MakeChamferEdge(Prism, d1, d2,
                                     f_ind_1, f_ind_2) #(GEOM_Object_ptr, 2 Doubles, 2 Long)->GEOM_Object_ptr
@@ -204,7 +204,7 @@ def TestAll (geompy, math):
                                      IDlist_f) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
   Chamfer3 = geompy.MakeChamferEdges(Prism, d1, d2,
                                      IDlist_e) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
-  Chamfer4 = geompy.MakeChamferFacesAD(Prism, d, angle,
+  Chamfer4 = geompy.MakeChamferFacesAD(Prism, d1, 20. * math.pi / 180.,
                                        IDlist_f) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
 
   #Create Patterns
