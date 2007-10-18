@@ -55,11 +55,13 @@ chamfer.png \
 chamferall.png \
 chamferedge.png \
 chamferface.png \
+chamferedgefromface.png \
 change_orientation.png \
 check.png \
 circle.png \
 circlepointvector.png \
 circle3points.png \
+circlecenter2pnts.png \
 common.png \
 cone.png \
 conedxyz.png \

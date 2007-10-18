@@ -104,3 +104,4 @@
 
 uic -o DlgRef_4Sel1Spin2Check_QTD.h DlgRef_4Sel1Spin2Check_QTD.ui
 uic -o DlgRef_4Sel1Spin2Check_QTD.cxx -impl DlgRef_4Sel1Spin2Check_QTD.h DlgRef_4Sel1Spin2Check_QTD.ui
+

@@ -411,6 +411,9 @@ module GEOM
     GEOM_Object MakeCircleThreePnt (in GEOM_Object thePnt1,
 				    in GEOM_Object thePnt2,
 				    in GEOM_Object thePnt3) ;
+    GEOM_Object MakeCircleCenter2Pnt (in GEOM_Object thePnt1,
+   				      in GEOM_Object thePnt2,
+				      in GEOM_Object thePnt3) ;
     GEOM_Object MakeEllipse (in GEOM_Object thePnt,
 			     in GEOM_Object theVec,
 			     in double      theRMajor,
@@ -436,17 +439,37 @@ module GEOM
     GEOM_Object MakeFilletEdges (in GEOM_Object theShape,
 				 in double      theR,
 				 in GEOM_List   theEdges) ;
+    GEOM_Object MakeFilletEdgesR1R2 (in GEOM_Object theShape,
+				     in double      theR1,
+				     in double      theR2,
+				     in GEOM_List   theEdges) ;
     GEOM_Object MakeFilletFaces (in GEOM_Object theShape,
 				 in double      theR,
 				 in GEOM_List   theFaces) ;
+    GEOM_Object MakeFilletFacesR1R2 (in GEOM_Object theShape,
+				     in double      theR1,
+				     in double      theR2,
+				     in GEOM_List   theFaces) ;
     GEOM_Object MakeChamferAll (in GEOM_Object theShape,
 				in double      theD) ;
     GEOM_Object MakeChamferEdge (in GEOM_Object theShape,
 				 in double theD1, in double theD2,
 				 in long theFace1, in long theFace2) ;
+    GEOM_Object MakeChamferEdgeAD (in GEOM_Object theShape,
+				   in double theD, in double theAngle,
+				   in long theFace1, in long theFace2) ;
     GEOM_Object MakeChamferFaces (in GEOM_Object theShape,
 				  in double theD1, in double theD2,
 				  in GEOM_List theFaces) ;
+    GEOM_Object MakeChamferFacesAD (in GEOM_Object theShape,
+				    in double theD, in double theAngle,
+				    in GEOM_List theFaces) ;
+    GEOM_Object MakeChamferEdges (in GEOM_Object theShape,
+				  in double theD1, in double theD2,
+				  in GEOM_List theEdges) ;
+    GEOM_Object MakeChamferEdgesAD (in GEOM_Object theShape,
+				    in double theD, in double theAngle,
+				    in GEOM_List theEdges) ;
     GEOM_Object MakeArchimede (in GEOM_Object theShape,
 			       in double      theWeight,
 			       in double      theWaterDensity,

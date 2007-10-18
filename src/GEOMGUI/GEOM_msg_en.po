@@ -313,6 +313,18 @@ msgstr "Center"
 msgid "GEOM_RADIUS"
 msgstr "Radius :"
 
+#Radius
+msgid "GEOM_CONSTANT_RADIUS"
+msgstr "Radius :"
+
+#Radius
+msgid "GEOM_R1"
+msgstr "R1 :"
+
+#Radius
+msgid "GEOM_R2"
+msgstr "R2 :"
+
 #Radius i
 msgid "GEOM_RADIUS_I"
 msgstr "Radius %1 :"
@@ -782,6 +794,10 @@ msgstr "D1 :"
 msgid "GEOM_D2"
 msgstr "D2 :"
 
+#D
+msgid "GEOM_D"
+msgstr "D :"
+
 #
 #==============================================================================
 #
@@ -825,6 +841,14 @@ msgstr "Chamfer On Whole Shape"
 #: GeometryGUI_ChamferDlg.cxx:58
 msgid "GEOM_CHAMFER_EDGES"
 msgstr "Chamfer On Edges From Shape"
+
+#: GeometryGUI_ChamferDlg.cxx:58
+msgid "GEOM_CHAMFER_EDGE"
+msgstr "Chamfer On Selected Edges"
+
+#: GeometryGUI_ChamferDlg.cxx:58
+msgid "SELECTED_EDGE"
+msgstr "Selected Edges"
 
 #: GeometryGUI_ChamferDlg.cxx:58
 msgid "GEOM_CHAMFER_FACES"
@@ -1484,6 +1508,9 @@ msgstr "Chamfer can't be computed with %1 and %2"
 
 msgid "GEOM_3_POINTS"
 msgstr "3 points"
+
+msgid "GEOM_CENTER_2POINTS"
+msgstr "Center and two points"
 
 msgid "GEOM_POINT1"
 msgstr "Point 1"
@@ -2857,13 +2884,13 @@ msgid "STB_ERASE_ALL"
 msgstr "Erase all"
 
 msgid "TOP_DISPLAY"
-msgstr "Display"
+msgstr "Show"
 
 msgid "MEN_DISPLAY"
-msgstr "Display"
+msgstr "Show"
 
 msgid "STB_DISPLAY"
-msgstr "Display"
+msgstr "Show object(s)"
 
 msgid "TOP_DISPLAY_ONLY"
 msgstr "Display only"
@@ -2875,13 +2902,13 @@ msgid "STB_DISPLAY_ONLY"
 msgstr "Display only"
 
 msgid "TOP_ERASE"
-msgstr "Erase"
+msgstr "Hide"
 
 msgid "MEN_ERASE"
-msgstr "Erase"
+msgstr "Hide"
 
 msgid "STB_ERASE"
-msgstr "Erase"
+msgstr "Hide object(s)"
 
 msgid "TOP_POP_RENAME"
 msgstr "Rename"

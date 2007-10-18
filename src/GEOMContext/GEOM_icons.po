@@ -129,6 +129,11 @@ msgstr "linepointvector.png"
 msgid "ICON_DLG_CIRCLE_PV"
 msgstr "circlepointvector.png"
 
+#CircleDlg
+msgid "ICON_DLG_CIRCLE_C2P"
+msgstr "circlecenter2pnts.png"
+
+
 #VectorDlg
 msgid "ICON_DLG_VECTOR_2P"
 msgstr "vector2points.png"

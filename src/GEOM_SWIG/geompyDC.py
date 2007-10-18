@@ -371,6 +371,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if self.CurvesOp.IsDone() == 0:
                 print "MakeCircleThreePnt : ", self.CurvesOp.GetErrorCode()
             return anObj
+
+        ## Create a circle, with given point1 as center,
+        #  passing through the point2 as radius and laying in the plane,
+        #  defined by all three given points.
+        #  @param thePnt1,thePnt2,thePnt3 Points, defining the circle.
+        #  @return New GEOM_Object, containing the created circle.
+        #
+        #  Example: see GEOM_example6.py
+        def MakeCircleCenter2Pnt(self,thePnt1, thePnt2, thePnt3):
+            anObj = self.CurvesOp.MakeCircleCenter2Pnt(thePnt1, thePnt2, thePnt3)
+            if self.CurvesOp.IsDone() == 0:
+                print "MakeCircleCenter2Pnt : ", self.CurvesOp.GetErrorCode()
+            return anObj
         
         ## Create an ellipse with given center, normal vector and radiuses.
         #  @param thePnt Ellipse center.
@@ -1841,6 +1854,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if self.LocalOp.IsDone() == 0:
                 print "MakeFillet : ", self.LocalOp.GetErrorCode()
             return anObj
+        ## The same but with two Fillet Radius R1 and R2
+        def MakeFilletR1R2(self, theShape, theR1, theR2, theShapeType, theListShapes):
+            anObj = None
+            if theShapeType == ShapeType["EDGE"]:
+                anObj = self.LocalOp.MakeFilletEdgesR1R2(theShape, theR1, theR2, theListShapes)
+            else:
+                anObj = self.LocalOp.MakeFilletFacesR1R2(theShape, theR1, theR2, theListShapes)
+            if self.LocalOp.IsDone() == 0:
+                print "MakeFilletR1R2 : ", self.LocalOp.GetErrorCode()
+            return anObj
         
         ## Perform a symmetric chamfer on all edges of the given shape.
         #  @param theShape Shape, to perform chamfer on.
@@ -1869,6 +1892,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if self.LocalOp.IsDone() == 0:
                 print "MakeChamferEdge : ", self.LocalOp.GetErrorCode()
             return anObj
+        ## The Same chamfer but with params theD is chamfer lenght and
+        #  theAngle is Angle of chamfer (angle in radians)
+        def MakeChamferEdgeAD(self, theShape, theD, theAngle, theFace1, theFace2):
+            anObj = self.LocalOp.MakeChamferEdgeAD(theShape, theD, theAngle, theFace1, theFace2)
+            if self.LocalOp.IsDone() == 0:
+                print "MakeChamferEdgeAD : ", self.LocalOp.GetErrorCode()
+            return anObj
         
         ## Perform a chamfer on all edges of the specified faces,
         #  with distance D1 on the first specified face (if several for one edge)
@@ -1886,6 +1916,34 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferFaces(theShape, theD1, theD2, theFaces)
             if self.LocalOp.IsDone() == 0:
                 print "MakeChamferFaces : ", self.LocalOp.GetErrorCode()
+            return anObj
+        ## The Same chamfer but with params theD is chamfer lenght and
+        #  theAngle is Angle of chamfer (angle in radians)
+        def MakeChamferFacesAD(self, theShape, theD, theAngle, theFaces):
+            anObj = self.LocalOp.MakeChamferFacesAD(theShape, theD, theAngle, theFaces)
+            if self.LocalOp.IsDone() == 0:
+                print "MakeChamferFacesAD : ", self.LocalOp.GetErrorCode()
+            return anObj
+        
+        ## Perform a chamfer on edges,
+        #  with distance D1 on the first specified face (if several for one edge)
+        #  @param theShape Shape, to perform chamfer on.
+        #  @param theD1 and theD2 Chamfer size 
+        #  @param theEdges Sequence of edges of \a theShape.
+        #  @return New GEOM_Object, containing the result shape.
+        #
+        #  Example:
+        def MakeChamferEdges(self, theShape, theD1, theD2, theEdges):
+            anObj = self.LocalOp.MakeChamferEdges(theShape, theD1, theD2, theEdges)
+            if self.LocalOp.IsDone() == 0:
+                print "MakeChamferEdges : ", self.LocalOp.GetErrorCode()
+            return anObj
+        ## The Same chamfer but with params theD is chamfer lenght and
+        #  theAngle is Angle of chamfer (angle in radians)
+        def MakeChamferEdgesAD(self, theShape, theD, theAngle, theEdges):
+            anObj = self.LocalOp.MakeChamferEdgesAD(theShape, theD, theAngle, theEdges)
+            if self.LocalOp.IsDone() == 0:
+                print "MakeChamferEdgesAD : ", self.LocalOp.GetErrorCode()
             return anObj
         
         ## Shortcut to MakeChamferEdge() and MakeChamferFaces()

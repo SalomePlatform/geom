@@ -1,6 +1,7 @@
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #
 #  Copyright (C) 2003  CEA
+
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,7 @@
 #  Author : Damien COQUERET, Open CASCADE
 #  Module : GEOM
 #  $Header$
+
 
 def TestAll (geompy, math):
 
@@ -87,6 +89,7 @@ def TestAll (geompy, math):
   Arc2     = geompy.MakeArcCenter(py, pz, px,0)           #(3 GEOM_Object_ptr,Boolean)->GEOM_Object_ptr
   Circle   = geompy.MakeCircle(p0, vz, radius1)           #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Circle1  = geompy.MakeCircleThreePnt(p0, pxyz, px)      #(3 GEOM_Object_ptr)->GEOM_Object_ptr
+  Circle2  = geompy.MakeCircleCenter2Pnt(p0, pxyz, py)    #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   Ellipse  = geompy.MakeEllipse(p0, vy, radius2, radius1) #(2 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr
   Polyline = geompy.MakePolyline([p0, pz, py, p200])      #(List of GEOM_Object_ptr)->GEOM_Object_ptr
   Bezier   = geompy.MakeBezier([p0, pz, p200, px])        #(List of GEOM_Object_ptr)->GEOM_Object_ptr
@@ -191,14 +194,20 @@ def TestAll (geompy, math):
   f_ind_2 = geompy.GetSubShapeID(Prism, prism_faces[1])
 
   IDlist_f = [f_ind_1, f_ind_2]
-
+  
   #Local operations
   Fillet   = geompy.MakeFillet (Prism, radius, ShapeTypeEdge,
                                 IDlist_e) #(GEOM_Object_ptr, Double, Short, ListOfLong)->GEOM_Object_ptr
+  Fillet2  = geompy.MakeFilletR1R2 (Prism, 7., 13., ShapeTypeEdge,
+                                    IDlist_e) #(GEOM_Object_ptr, Double, Double, Short, ListOfLong)->GEOM_Object_ptr
   Chamfer  = geompy.MakeChamferEdge(Prism, d1, d2,
                                     f_ind_1, f_ind_2) #(GEOM_Object_ptr, 2 Doubles, 2 Long)->GEOM_Object_ptr
   Chamfer2 = geompy.MakeChamferFaces(Prism, d1, d2,
                                      IDlist_f) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
+  Chamfer3 = geompy.MakeChamferEdges(Prism, d1, d2,
+                                     IDlist_e) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
+  Chamfer4 = geompy.MakeChamferFacesAD(Prism, d1, 0.2,
+                                       IDlist_f) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
 
   #Create Patterns
   MultiTrans1D = geompy.MakeMultiTranslation1D(Fillet, vz, step1, nbtimes1)
@@ -244,6 +253,7 @@ def TestAll (geompy, math):
   id_Arc      = geompy.addToStudy(Arc,      "Arc")
   id_Circle   = geompy.addToStudy(Circle,   "Circle")
   id_Circle1  = geompy.addToStudy(Circle1,  "Circle by 3 points")
+  id_Circle2  = geompy.addToStudy(Circle2,  "Circle by center and 2 points")
   id_Ellipse  = geompy.addToStudy(Ellipse,  "Ellipse")
   id_Polyline = geompy.addToStudy(Polyline, "Polyline")
   id_Bezier   = geompy.addToStudy(Bezier,   "Bezier")
@@ -304,8 +314,11 @@ def TestAll (geompy, math):
   id_Orientation = geompy.addToStudy(Orientation, "Orientation")
 
   id_Fillet   = geompy.addToStudy(Fillet,   "Fillet")
+  id_Fillet2  = geompy.addToStudy(Fillet2,  "Fillet2")
   id_Chamfer  = geompy.addToStudy(Chamfer,  "Chamfer on Edge")
   id_Chamfer2 = geompy.addToStudy(Chamfer2, "Chamfer on Faces")
+  id_Chamfer3 = geompy.addToStudy(Chamfer3, "Chamfer on Edges")
+  id_Chamfer4 = geompy.addToStudy(Chamfer4, "Chamfer on Faces with params D Angle")
 
   id_MultiTrans1D = geompy.addToStudy(MultiTrans1D, "MultiTrans1D")
   id_MultiTrans2D = geompy.addToStudy(MultiTrans2D, "MultiTrans2D")

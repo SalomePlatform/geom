@@ -54,6 +54,7 @@ dist_salomescript_DATA= \
 	GEOM_example3.py \
 	GEOM_example4.py \
 	GEOM_example5.py \
+	GEOM_example6.py \
 	GEOM_moteur.py \
 	GEOM_TestAll.py  \
 	GEOM_TestOthers.py \
