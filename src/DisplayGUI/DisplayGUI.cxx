@@ -327,7 +327,13 @@ void DisplayGUI::Erase()
       listIO.Append( anIObject );
     }
   }
-  GEOM_Displayer(anActiveStudy).Erase( listIO, true );
+
+  SUIT_ViewWindow* viewWindow = app->desktop()->activeWindow();
+  bool aIsForced = true;
+  if(viewWindow->getViewManager()->getType() == SVTK_Viewer::Type())
+    aIsForced = false;
+
+  GEOM_Displayer(anActiveStudy).Erase( listIO, aIsForced);
   getGeometryGUI()->getApp()->selectionMgr()->clearSelected();
 }
 

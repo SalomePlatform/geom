@@ -39,7 +39,14 @@ salomeinclude_HEADERS = \
 	GEOM_AISTrihedron.hxx \
 	GEOM_VTKTrihedron.hxx \
 	GEOM_AISVector.hxx \
-	GEOM_OBJECT_defs.hxx
+	GEOM_OBJECT_defs.hxx \
+	GEOM_SmartPtr.h \
+	GEOM_DeviceActor.h \
+	GEOM_EdgeSource.h \
+	GEOM_FaceSource.h \
+	GEOM_ShadingFace.h \
+	GEOM_VertexSource.h \
+	GEOM_WireframeFace.h
 
 # Libraries targets
 lib_LTLIBRARIES = libGEOMObject.la
@@ -52,7 +59,13 @@ dist_libGEOMObject_la_SOURCES = \
 	GEOM_InteractiveObject.cxx \
 	GEOM_AISTrihedron.cxx \
 	GEOM_VTKTrihedron.cxx \
-	GEOM_AISVector.cxx
+	GEOM_AISVector.cxx \
+	GEOM_DeviceActor.cxx \
+	GEOM_EdgeSource.cxx \
+	GEOM_FaceSource.cxx \
+	GEOM_ShadingFace.cxx \
+	GEOM_VertexSource.cxx \
+	GEOM_WireframeFace.cxx
 
 
 libGEOMObject_la_CPPFLAGS = \

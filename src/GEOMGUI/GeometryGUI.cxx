@@ -1125,7 +1125,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  8033 ), -1, -1 ); // transparency
   mgr->setRule( action( 8033 ), clientOCCorVTK_AndSomeVisible, true );
   mgr->insert( action(  8034 ), -1, -1 ); // isos
-  mgr->setRule( action( 8034 ), "client='OCCViewer' and selcount>0 and isVisible", true );
+  mgr->setRule( action( 8034 ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible", true );
   mgr->insert( separator(), -1, -1 );     // -----------
 
 
@@ -1419,7 +1419,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 	    }
 	    else {
 	      ////// VTK viewer only
-	      popup->removeItem( 8034 ); // "Isos"
+	      //popup->removeItem( 8034 ); // "Isos"
 	      SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
 	      if ( vtkPrs && !vtkPrs->IsNull() ) {
 		vtkActorCollection* actorList = vtkPrs->GetObjects();
@@ -1542,7 +1542,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 	  popup->removeItem( QAD_Display_Popup_ID );
 	if ( !needErase )
 	  popup->removeItem( QAD_Erase_Popup_ID );
-	if ( !isOCCViewer )
+	if ( !isOCCViewer && !isVTKViewer)
 	  popup->removeItem( 8034 ); // "Isos"
       }
     }
@@ -1587,7 +1587,7 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
     return;
 
   const bool ViewOCC = ( win->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-//  const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
+  const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
 
   // disable non-OCC viewframe menu commands
 //  action( 404 )->setEnabled( ViewOCC ); // SKETCHER
@@ -1598,6 +1598,7 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
   action( 608 )->setEnabled( ViewOCC ); // AddPointOnEdge
 //  action( 609 )->setEnabled( ViewOCC ); // Free boundaries
   action( 413 )->setEnabled( ViewOCC ); // Isos Settings
+  action( 413 )->setEnabled( ViewVTK ); // Isos Settings
 
   action( 800 )->setEnabled( ViewOCC ); // Create Group
   action( 801 )->setEnabled( ViewOCC ); // Edit Group
@@ -1674,14 +1675,9 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
 
 QString GeometryGUI::engineIOR() const
 {
-  QString anIOR = QString::null;
   if ( !CORBA::is_nil( GetGeomGen() ) )
-  {
-    CORBA::String_var objStr = getApp()->orb()->object_to_string( GetGeomGen() );
-    anIOR = QString( objStr.in() );
-//    free( objStr ); ASV : 26.07.06 : commented out because it raises exception and blocks application
-  }
-  return anIOR;
+    return QString( getApp()->orb()->object_to_string( GetGeomGen() ) );
+  return QString( "" );
 }
 
 LightApp_Selection* GeometryGUI::createSelection() const

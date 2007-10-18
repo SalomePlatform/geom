@@ -245,7 +245,7 @@ void GEOMToolsGUI::OnColor()
 	    return;
 	  SVTK_View* aView = vtkVW->getView();
 	  QColor initcolor = aView->GetColor( selected.First()  );
-	  QColor c = QColorDialog::getColor( QColor(), app->desktop() );
+	  QColor c = QColorDialog::getColor( initcolor, app->desktop() );
 	  if ( c.isValid() ) {
 	    SUIT_OverrideCursor();
 	    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
@@ -304,45 +304,107 @@ void GEOMToolsGUI::OnTransparency()
 void GEOMToolsGUI::OnNbIsos()
 {
   SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  
   bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+  const bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
 
-  if ( !isOCC )
-    return;
+  // if is OCCViewer
+  if(isOCC){
 
-  OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
-  Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
+    Handle (AIS_InteractiveContext) ic = vm->getAISContext();
 
-  ic->InitCurrent();
-  if ( ic->MoreCurrent() ) {
-    Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
-    Handle(AIS_Drawer)    CurDrawer = CurObject->Attributes();
-
-    int UIso = CurDrawer->UIsoAspect()->Number();
-    int VIso = CurDrawer->VIsoAspect()->Number();
-
-    GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
-      new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
-
-    NbIsosDlg->setU( UIso );
-    NbIsosDlg->setV( VIso );
-
-    if ( NbIsosDlg->exec() ) {
-      SUIT_OverrideCursor();
-      for(; ic->MoreCurrent(); ic->NextCurrent()) {
-        CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
-	Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
-
-	int nbUIso = NbIsosDlg->getU();
-	int nbVIso = NbIsosDlg->getV();
-
-	CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbUIso) );
-	CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbVIso) );
-
-	ic->SetLocalAttributes(CurObject, CurDrawer);
-	ic->Redisplay(CurObject);
+    ic->InitCurrent();
+    if ( ic->MoreCurrent() ) {
+      Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+      Handle(AIS_Drawer)    CurDrawer = CurObject->Attributes();
+      
+      int UIso = CurDrawer->UIsoAspect()->Number();
+      int VIso = CurDrawer->VIsoAspect()->Number();
+      
+      GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
+	new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
+      
+      NbIsosDlg->setU( UIso );
+      NbIsosDlg->setV( VIso );
+      
+      if ( NbIsosDlg->exec() ) {
+	SUIT_OverrideCursor();
+	for(; ic->MoreCurrent(); ic->NextCurrent()) {
+	  CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+	  Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
+	  
+	  int nbUIso = NbIsosDlg->getU();
+	  int nbVIso = NbIsosDlg->getV();
+	  
+	  CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbUIso) );
+	  CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbVIso) );
+	  
+	  ic->SetLocalAttributes(CurObject, CurDrawer);
+	  ic->Redisplay(CurObject);
+	}
       }
     }
-  }
+  } else if(isVTK){ // if is VTKViewer
+
+    //
+    // Warning. It's works incorrect. must be recheked.
+    //
+    SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+    if ( !app )
+      return;
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if ( !aSelMgr )
+      return;
+    SALOME_ListIO selected;
+    aSelMgr->selectedObjects( selected );
+    if ( selected.IsEmpty() )
+      return;
+    
+    Handle(SALOME_InteractiveObject) FirstIOS =  selected.First();
+    if ( FirstIOS.IsNull() )
+      return;
+    
+    SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
+    if ( !vtkVW )
+      return;
+    
+    SVTK_View* aView = vtkVW->getView();
+    vtkActorCollection* aCollection = aView->getRenderer()->GetActors();
+    
+    int UIso = 0;
+    int VIso = 0;
+    if(aCollection){
+      aCollection->InitTraversal();
+    }
+    
+    vtkActor *anAct = aCollection->GetNextActor();
+    if(GEOM_Actor *anActor = dynamic_cast<GEOM_Actor*>(anAct)){
+      anActor->GetNbIsos(UIso,VIso);
+    }
+    
+    
+    GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
+      new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
+    
+    NbIsosDlg->setU( UIso );
+    NbIsosDlg->setV( VIso );
+    
+    if ( NbIsosDlg->exec() ) {
+      SUIT_OverrideCursor();
+      
+      while(anAct = aCollection->GetNextActor()) {
+	if(GEOM_Actor *anActor = dynamic_cast<GEOM_Actor*>(anAct)){
+	  // There are no casting to needed actor.
+	  UIso = NbIsosDlg->getU();
+	  VIso = NbIsosDlg->getV();
+	  int aIsos[2]={UIso,VIso};
+	  anActor->SetNbIsos(aIsos);
+	}
+      }
+    }
+  } // end vtkviewer
+
 }
 
 void GEOMToolsGUI::OnOpen()
