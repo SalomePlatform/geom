@@ -333,8 +333,10 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       ic->AddOrRemoveSelected( Handle(AIS_InteractiveObject)::DownCast(owner->Selectable()), false );
   }
   ic->SetAutomaticHilight(isAutoHilight); //Bug 17269: restore mode
-  ic->HilightSelected(/*updateviewer*/Standard_True);
-  //vw->update();
+  if (n < 3000)
+    ic->HilightSelected(/*updateviewer*/Standard_True);
+  else
+    vw->update();
 
   // fill extra selected
   mySelectedExternals.clear();

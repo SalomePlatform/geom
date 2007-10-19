@@ -313,14 +313,16 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 
     TColStd_IndexedMapOfInteger aMapIndex;
 
-    if ( IObjectCount() == 1 ) {
-      Standard_Boolean aResult = Standard_False;
-      GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
-
-      if ( aResult && !anObj->_is_nil() )
-        ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->
-          selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
+    SALOME_ListIO aSelIOs;
+    SalomeApp_Application* app = myGeomGUI->getApp();
+    if (app) {
+      LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+      if (aSelMgr) {
+        QMap<QString, TColStd_IndexedMapOfInteger> aMap;
+        aSelMgr->selectedSubOwners(aMap);
+        if (aMap.size() == 1)
+          aMapIndex = aMap.begin().data();
+      }
     }
 
     // try to find out and process the object browser selection
@@ -438,14 +440,16 @@ void GroupGUI_GroupDlg::add()
 
   TColStd_IndexedMapOfInteger aMapIndex;
 
-  if ( IObjectCount() == 1 ) {
-    Standard_Boolean aResult = Standard_False;
-    GEOM::GEOM_Object_var anObj =
-      GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
-
-    if ( aResult && !anObj->_is_nil() )
-      ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->
-        selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
+  SALOME_ListIO aSelIOs;
+  SalomeApp_Application* app = myGeomGUI->getApp();
+  if (app) {
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if (aSelMgr) {
+      QMap<QString, TColStd_IndexedMapOfInteger> aMap;
+      aSelMgr->selectedSubOwners(aMap);
+      if (aMap.size() == 1)
+        aMapIndex = aMap.begin().data();
+    }
   }
 
   // try to find out and process the object browser selection
@@ -595,20 +599,7 @@ void GroupGUI_GroupDlg::updateState()
   if (app) {
     LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
     if (aSelMgr) {
-      /*
-      aSelMgr->selectedObjects(aSelIOs);
-
-      if ( aSelIOs.Extent() == 1 ) {
-        Standard_Boolean aResult = Standard_False;
-        GEOM::GEOM_Object_var anObj =
-          GEOMBase::ConvertIOinGEOMObject( aSelIOs.First(), aResult );
-
-        if ( aResult && !anObj->_is_nil() )
-          aSelMgr->GetIndexes( aSelIOs.First(), aMapIndex );
-      }
-      */
       QMap<QString, TColStd_IndexedMapOfInteger> aMap;
-      //MapEntryOfMapOfInteger& aMap;
       aSelMgr->selectedSubOwners(aMap);
       if (aMap.size() == 1)
         aMapIndex = aMap.begin().data();
@@ -710,18 +701,27 @@ void GroupGUI_GroupDlg::highlightSubShapes()
 
   myBusy = true;
 
-  for ( int ii = 0, nn = myIdList->count(); ii < nn; ii++ )
+  int ii = 0, nn = myIdList->count();
+  for ( ; ii < nn; ii++ )
     if ( myIdList->isSelected( ii ) )
       anIds.Add( myIdList->item( ii )->text().toInt() );
 
   SalomeApp_Application* app = myGeomGUI->getApp();
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   aSelMgr->clearSelected();
+  //if (nn < 3000) aSelMgr->AddOrRemoveIndex(aSh->getIO(), anIds, false);
   aSelMgr->AddOrRemoveIndex(aSh->getIO(), anIds, false);
 
   myBusy = false;
 
-  updateState();
+  //updateState();
+  if (nn < 3000) {
+    updateState();
+  }
+  else {
+    myAddBtn->setEnabled( true );
+    myRemBtn->setEnabled( true );
+  }
 }
 
 //=================================================================================
