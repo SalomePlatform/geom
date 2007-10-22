@@ -1,45 +1,46 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : RepairGUI_SuppressFacesDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : RepairGUI_SuppressFacesDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
 #include "RepairGUI_SuppressFacesDlg.h"
 
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
-#include "SUIT_Session.h"
-#include "SALOME_ListIteratorOfListIO.hxx"
+#include <GEOM_DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "GEOMImpl_Types.hxx"
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SALOME_ListIteratorOfListIO.hxx>
+
+#include <GEOMImpl_Types.hxx>
 
 #include <TopAbs.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
 
-#include <qlabel.h>
-
-using namespace std;
+#include <utilities.h>
 
 //=================================================================================
 // class    : RepairGUI_SuppressFacesDlg()
@@ -48,32 +49,35 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                                       const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
+                                                        bool modal )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUPRESS_FACE")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_SUPRESS_FACE" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
     
-  setCaption(tr("GEOM_SUPRESSFACE_TITLE"));
+  setWindowTitle( tr("GEOM_SUPRESSFACE_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_SUPRESSFACE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  mainFrame()->GroupConstructors->setTitle(tr("GEOM_SUPRESSFACE"));
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_1Sel_QTD(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("Faces to remove"));
-  GroupPoints->TextLabel1->setText(tr("Faces"));
-  GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints = new DlgRef_1Sel( centralWidget() );
+  GroupPoints->GroupBox1->setTitle( tr( "Faces to remove" ) );
+  GroupPoints->TextLabel1->setText( tr( "Faces" ) );
+  GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupPoints );
   /***************************************************************/
   
-  setHelpFileName("suppress_faces.htm");
+  setHelpFileName( "suppress_faces.htm" );
 
   Init();
 }
@@ -104,14 +108,14 @@ void RepairGUI_SuppressFacesDlg::Init()
   initSelection();
 	  
   /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "SUPRESS_FACE_NEW_OBJ_NAME" ) );
 }
@@ -138,7 +142,7 @@ bool RepairGUI_SuppressFacesDlg::ClickOnApply()
 
   initName();
 
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   myObjects->length( 0 );
   myFaces.clear();
 
@@ -155,31 +159,26 @@ bool RepairGUI_SuppressFacesDlg::ClickOnApply()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
 
   Standard_Boolean aRes = Standard_False;
   int i = 0;
   int numFaces = 0;
   myObjects->length( IObjectCount() );
   myFaces.clear();
-  for ( SALOME_ListIteratorOfListIO anIt( selectedIO() ); anIt.More(); anIt.Next() )
-  {
+  for ( SALOME_ListIteratorOfListIO anIt( selectedIO() ); anIt.More(); anIt.Next() ) {
     Handle(SALOME_InteractiveObject) anIO = anIt.Value();
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-    if ( !CORBA::is_nil( aSelectedObject ) && aRes )
-    {
+    if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
       TopoDS_Shape aShape;
-      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) )
-      {
-	if ( aShape.ShapeType() <= TopAbs_FACE ) // FACE, SHELL, SOLID, COMPOUND
-	{
+      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) ) {
+	if ( aShape.ShapeType() <= TopAbs_FACE ) { // FACE, SHELL, SOLID, COMPOUND
 	  GEOM::short_array anIndexes;
 
 	  TColStd_IndexedMapOfInteger aMap;
 	  myGeomGUI->getApp()->selectionMgr()->GetIndexes( anIO, aMap );
 	  
-	  if ( !aMap.IsEmpty() )
-	  {
+	  if ( !aMap.IsEmpty() ) {
 	    Convert( aMap, anIndexes );
 	    myObjects[i++] = aSelectedObject; // append the object
 	    myFaces.append( anIndexes );   // append faces' indexes
@@ -212,8 +211,7 @@ void RepairGUI_SuppressFacesDlg::Convert( const TColStd_IndexedMapOfInteger& the
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::SetEditCurrentArgument()
 {
-  if( sender() == GroupPoints->PushButton1 )
-  {
+  if ( sender() == GroupPoints->PushButton1 ) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
   }
@@ -227,8 +225,7 @@ void RepairGUI_SuppressFacesDlg::SetEditCurrentArgument()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::LineEditReturnPressed()
 {
-  if( sender() == GroupPoints->LineEdit1 )
-  {
+  if ( sender() == GroupPoints->LineEdit1 ) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
@@ -242,8 +239,8 @@ void RepairGUI_SuppressFacesDlg::LineEditReturnPressed()
 void RepairGUI_SuppressFacesDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   //myGeomGUI->SetState( 0 );
   initSelection();
@@ -254,9 +251,9 @@ void RepairGUI_SuppressFacesDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  : Mouse enter onto the dialog to activate it
 //=================================================================================
-void RepairGUI_SuppressFacesDlg::enterEvent(QEvent* e)
+void RepairGUI_SuppressFacesDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 
@@ -265,7 +262,7 @@ void RepairGUI_SuppressFacesDlg::enterEvent(QEvent* e)
 // function : closeEvent()
 // purpose  :
 //=================================================================================
-void RepairGUI_SuppressFacesDlg::closeEvent(QCloseEvent* e)
+void RepairGUI_SuppressFacesDlg::closeEvent( QCloseEvent* e )
 {
   //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
@@ -284,7 +281,7 @@ GEOM::GEOM_IOperations_ptr RepairGUI_SuppressFacesDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_SuppressFacesDlg::isValid( QString& msg )
+bool RepairGUI_SuppressFacesDlg::isValid( QString& )
 {
   const int objL = myObjects->length(), facesL = myFaces.size();
   return ( objL && objL == facesL );
@@ -297,8 +294,7 @@ bool RepairGUI_SuppressFacesDlg::isValid( QString& msg )
 bool RepairGUI_SuppressFacesDlg::execute( ObjectList& objects )
 {
   QStringList anErrorObjNames;
-  for ( int i = 0; i < myObjects->length(); i++ )
-  {
+  for ( int i = 0; i < myObjects->length(); i++ ) {
     GEOM::GEOM_Object_var obj = myObjects[i];
     GEOM::short_array faces = myFaces[i];
     //MESSAGE(">>>> Dlg, passing faces.. len = " << faces.length());
@@ -310,7 +306,7 @@ bool RepairGUI_SuppressFacesDlg::execute( ObjectList& objects )
   }
 
   if ( !anErrorObjNames.empty() )
-    MESSAGE("ERRORS occured while processing the following objects: " << anErrorObjNames.join( " " ));
+    MESSAGE( "ERRORS occured while processing the following objects: " << anErrorObjNames.join( " " ).toLatin1().data() );
 
   return anErrorObjNames.size() < myObjects->length(); // true if at least one object was OK, false if ALL objects were nil after Healing.
 }

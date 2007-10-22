@@ -1,40 +1,35 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : RepairGUI_CloseContourDlg.h
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : RepairGUI_CloseContourDlg.h
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
 
-#ifndef DIALOGBOX_CloseContour_H
-#define DIALOGBOX_CloseContour_H
+#ifndef REPAIRGUI_CLOSECONTOURDLG_H
+#define REPAIRGUI_CLOSECONTOURDLG_H
 
-#include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel_Ext.h"
+#include <GEOMBase_Skeleton.h>
 
-#include <TColStd_IndexedMapOfInteger.hxx>
-
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
+class DlgRef_2SelExt;
+class QButtonGroup;
 
 //=================================================================================
 // class    : RepairGUI_CloseContourDlg
@@ -42,45 +37,42 @@
 //=================================================================================
 class RepairGUI_CloseContourDlg : public GEOMBase_Skeleton
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    RepairGUI_CloseContourDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
-    ~RepairGUI_CloseContourDlg();
-
+  RepairGUI_CloseContourDlg( GeometryGUI*, QWidget* = 0, bool = false );
+  ~RepairGUI_CloseContourDlg();
+  
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& );
-    virtual bool execute( ObjectList& objects );
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );
+  
+private:
+  void                               Init();
+  void                               enterEvent( QEvent* );
+  void                               closeEvent( QCloseEvent* );
+  void                               initSelection();
+  
+  bool                               getIsByVertex() const;
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
-    void closeEvent(QCloseEvent* e);
-    void initSelection();
-
-    bool getIsByVertex() const;
-
-    GEOM::GEOM_Object_var myObject;
-    GEOM::short_array_var myWiresInd;
-
-    DlgRef_1Sel_Ext* GroupPoints;
-    QButtonGroup*    myIsVertexGr;
-    QLabel*          mySelectWiresLbl;
-    QPushButton*     mySelectWiresBtn;
-    QLineEdit*       mySelectWiresEdt;
-
+  GEOM::GEOM_Object_var              myObject;
+  GEOM::short_array_var              myWiresInd;
+  
+  DlgRef_2SelExt*                    GroupPoints;
+  QButtonGroup*                      myIsVertexGr;
+  
 private slots:
-    void ClickOnOk();
-    bool ClickOnApply();
-
-    void ActivateThisDialog();
-
-    void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  
+  void                               ActivateThisDialog();
+  
+  void                               LineEditReturnPressed();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
 };
 
-#endif // DIALOGBOX_CloseContour_H
+#endif // REPAIRGUI_CLOSECONTOURDLG_H

@@ -1,44 +1,44 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : RepairGUI_RemoveIntWiresDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : RepairGUI_RemoveIntWiresDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
 #include "RepairGUI_RemoveIntWiresDlg.h"
 
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
-#include "SUIT_Session.h"
-#include "SALOME_ListIteratorOfListIO.hxx"
+#include <GEOM_DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "GEOMImpl_Types.hxx"
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
+#include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
+
+#include <GEOMImpl_Types.hxx>
 
 #include <TopAbs.hxx>
 #include <TColStd_MapOfInteger.hxx>
-
-using namespace std;
+#include <TColStd_IndexedMapOfInteger.hxx>
 
 //=================================================================================
 // class    : RepairGUI_RemoveIntWiresDlg()
@@ -47,56 +47,40 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_RemoveIntWiresDlg::RepairGUI_RemoveIntWiresDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                                         const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_RemoveIntWiresDlg::RepairGUI_RemoveIntWiresDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
+							  bool modal )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
-  QPixmap image0 (myGeomGUI->getApp()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUPPRESS_INT_WIRES")));
-  QPixmap image1 (myGeomGUI->getApp()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( myGeomGUI->getApp()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_SUPPRESS_INT_WIRES" ) ) );
+  QPixmap image1( myGeomGUI->getApp()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption(tr("GEOM_REMOVE_INTERNAL_WIRES_TITLE"));
+  setWindowTitle( tr( "GEOM_REMOVE_INTERNAL_WIRES_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_REMOVE_INTERNAL_WIRES_TITLE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_REMOVE_INTERNAL_WIRES_TITLE" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_1Sel_Ext(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_INTERNAL_WIRES"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_SELECTED_FACE"));
-  GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints = new DlgRef_1Sel1Check1Sel( centralWidget() );
+  GroupPoints->GroupBox1->setTitle( tr( "GEOM_INTERNAL_WIRES" ) );
+  GroupPoints->TextLabel1->setText( tr( "GEOM_SELECTED_FACE" ) );
+  GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->CheckButton1->setText( tr( "GEOM_REMOVE_ALL_INT_WIRES" ) );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_WIRES_TO_REMOVE" ) );
+  GroupPoints->PushButton2->setIcon( image1 );
+  GroupPoints->LineEdit2->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupPoints );
 
-  myAllChk = new QCheckBox( tr( "GEOM_REMOVE_ALL_INT_WIRES" ), GroupPoints->GroupBox1 );
-
-  QGridLayout* aSelectWiresLay = new QGridLayout( 0, 1, 1, 0, 6, "aSelectWiresLay");
-
-  mySelectWiresBtn = new QPushButton( GroupPoints->GroupBox1, "mySelectWiresBtn" );
-  mySelectWiresBtn->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, mySelectWiresBtn->sizePolicy().hasHeightForWidth() ) );
-  mySelectWiresBtn->setText( trUtf8( "" ) );
-  mySelectWiresBtn->setPixmap(image1);
-  
-  mySelectWiresEdt = new QLineEdit( GroupPoints->GroupBox1, "mySelectWiresEdt" );
-  mySelectWiresEdt->setReadOnly( true );
-
-  mySelectWiresLbl = new QLabel( tr( "GEOM_WIRES_TO_REMOVE" ), GroupPoints->GroupBox1, "TextLabel1" );
-  mySelectWiresLbl->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, mySelectWiresLbl->sizePolicy().hasHeightForWidth() ) );
-
-  aSelectWiresLay->addWidget( mySelectWiresLbl, 0, 0 );
-	aSelectWiresLay->addWidget( mySelectWiresBtn, 0, 1 );  
-  aSelectWiresLay->addWidget( mySelectWiresEdt, 0, 2 );
-  QSpacerItem* spacer = new QSpacerItem( 0, 16, QSizePolicy::Minimum, QSizePolicy::Expanding );
-  aSelectWiresLay->addItem( spacer, 1, 2 );
-
-  GroupPoints->getGroupBoxLayout()->addMultiCellWidget( myAllChk, 1, 1, 0, 2 );
-  GroupPoints->getGroupBoxLayout()->addLayout( aSelectWiresLay, 2, 0 );  
   /***************************************************************/
 
-  setHelpFileName("suppress_internal_wires.htm");
+  setHelpFileName( "suppress_internal_wires.htm" );
 
   Init();
 }
@@ -121,25 +105,25 @@ void RepairGUI_RemoveIntWiresDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
   myObject = GEOM::GEOM_Object::_nil();
-	myWiresInd = new GEOM::short_array();
-	myWiresInd->length( 0 );
+  myWiresInd = new GEOM::short_array();
+  myWiresInd->length( 0 );
 
   //myGeomGUI->SetState( 0 );
   initSelection(); 
 
   /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(mySelectWiresBtn, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(mySelectWiresEdt, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPoints->PushButton2, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( GroupPoints->LineEdit2,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  connect( myAllChk, SIGNAL( clicked() ), this, SLOT( onRemoveAllClicked() ) );
+  connect( GroupPoints->CheckButton1, SIGNAL( clicked() ), this, SLOT( onRemoveAllClicked() ) );
 
   initName( tr( "REMOVE_INT_WIRES_NEW_OBJ_NAME" ) );
 }
@@ -162,18 +146,18 @@ void RepairGUI_RemoveIntWiresDlg::ClickOnOk()
 bool RepairGUI_RemoveIntWiresDlg::ClickOnApply()
 {
   if ( !onAccept() )
-  	return false;
+    return false;
 
   initName();
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  myEditCurrentArgument->setText("");
-  mySelectWiresEdt->setText("");
+  myEditCurrentArgument->setText( "" );
+  GroupPoints->LineEdit2->setText( "" );
   myObject = GEOM::GEOM_Object::_nil();
-	myWiresInd->length( 0 );
-
-	initSelection();
-
+  myWiresInd->length( 0 );
+  
+  initSelection();
+  
   return true;
 }
 
@@ -184,35 +168,33 @@ bool RepairGUI_RemoveIntWiresDlg::ClickOnApply()
 //=================================================================================
 void RepairGUI_RemoveIntWiresDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myObject = GEOM::GEOM_Object::_nil();
-  else if ( myEditCurrentArgument == mySelectWiresEdt ) myWiresInd->length( 0 );
+  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myWiresInd->length( 0 );
 
-  if ( IObjectCount() == 1 )
-    {
-      Handle(SALOME_InteractiveObject) anIO = firstIObject();
-      
-      if ( myEditCurrentArgument == GroupPoints->LineEdit1 )	// face selection
-	{
-	  Standard_Boolean aRes;
-	  myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-	  if ( aRes && GEOMBase::IsShape( myObject ) )
-	    myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
-	  else
-	    myObject = GEOM::GEOM_Object::_nil();
-	}
-      else if ( myEditCurrentArgument == mySelectWiresEdt && !myAllChk->isChecked() )
-	{
-	  TColStd_IndexedMapOfInteger aMap;
-	  ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( anIO, aMap );
-	  const int n = aMap.Extent();
-	  myWiresInd->length( n );
-	  for ( int i = 1; i <= n; i++ )
-	    myWiresInd[i-1] = aMap( i );
-	  if ( n )
-	    myEditCurrentArgument->setText( QString::number( n ) + "_" + tr( "GEOM_WIRE" ) + tr( "_S_" ) );
-	}
+  if ( IObjectCount() == 1 ) {
+    Handle(SALOME_InteractiveObject) anIO = firstIObject();
+    
+    if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {	// face selection
+      Standard_Boolean aRes;
+      myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
+      if ( aRes && GEOMBase::IsShape( myObject ) )
+	myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+      else
+	myObject = GEOM::GEOM_Object::_nil();
     }
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 && 
+	      !GroupPoints->CheckButton1->isChecked() ) {
+      TColStd_IndexedMapOfInteger aMap;
+      ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr()->GetIndexes( anIO, aMap );
+      const int n = aMap.Extent();
+      myWiresInd->length( n );
+      for ( int i = 1; i <= n; i++ )
+	myWiresInd[i-1] = aMap( i );
+      if ( n )
+	myEditCurrentArgument->setText( QString::number( n ) + "_" + tr( "GEOM_WIRE" ) + tr( "_S_" ) );
+    }
+  }
 }
 
 //=================================================================================
@@ -221,17 +203,16 @@ void RepairGUI_RemoveIntWiresDlg::SelectionIntoArgument()
 //=================================================================================
 void RepairGUI_RemoveIntWiresDlg::SetEditCurrentArgument()
 {
-	const QObject* send = sender();
+  const QObject* send = sender();
   if ( send == GroupPoints->PushButton1 )
-  	myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if ( send == mySelectWiresBtn && !myObject->_is_nil() )
-  	myEditCurrentArgument = mySelectWiresEdt;
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+  else if ( send == GroupPoints->PushButton2 && !myObject->_is_nil() )
+    myEditCurrentArgument = GroupPoints->LineEdit2;
 
-  if ( myEditCurrentArgument )
-  {
-  	initSelection();
-  	myEditCurrentArgument->setFocus();
-  	SelectionIntoArgument();
+  if ( myEditCurrentArgument ) {
+    initSelection();
+    myEditCurrentArgument->setFocus();
+    SelectionIntoArgument();
   }
 }
 
@@ -242,12 +223,11 @@ void RepairGUI_RemoveIntWiresDlg::SetEditCurrentArgument()
 //=================================================================================
 void RepairGUI_RemoveIntWiresDlg::LineEditReturnPressed()
 {
-	const QObject* send = sender();
-  if( send == GroupPoints->LineEdit1 || send == mySelectWiresEdt )
-  {
+  const QObject* send = sender();
+  if ( send == GroupPoints->LineEdit1 || send == GroupPoints->LineEdit2 ) {
     myEditCurrentArgument = (QLineEdit*)send;
-	  GEOMBase_Skeleton::LineEditReturnPressed();
-	}
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 
@@ -258,12 +238,12 @@ void RepairGUI_RemoveIntWiresDlg::LineEditReturnPressed()
 void RepairGUI_RemoveIntWiresDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  myEditCurrentArgument->setText("");
-  mySelectWiresEdt->setText("");
+  myEditCurrentArgument->setText( "" );
+  GroupPoints->LineEdit2->setText( "" );
   myObject = GEOM::GEOM_Object::_nil();
   myWiresInd->length( 0 );
 
@@ -275,9 +255,9 @@ void RepairGUI_RemoveIntWiresDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  : Mouse enter onto the dialog to activate it
 //=================================================================================
-void RepairGUI_RemoveIntWiresDlg::enterEvent(QEvent* e)
+void RepairGUI_RemoveIntWiresDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 
@@ -285,7 +265,7 @@ void RepairGUI_RemoveIntWiresDlg::enterEvent(QEvent* e)
 // function : closeEvent()
 // purpose  :
 //=================================================================================
-void RepairGUI_RemoveIntWiresDlg::closeEvent(QCloseEvent* e)
+void RepairGUI_RemoveIntWiresDlg::closeEvent( QCloseEvent* e )
 {
   //myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
@@ -304,9 +284,9 @@ GEOM::GEOM_IOperations_ptr RepairGUI_RemoveIntWiresDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_RemoveIntWiresDlg::isValid( QString& msg )
+bool RepairGUI_RemoveIntWiresDlg::isValid( QString& )
 {
-	return !myObject->_is_nil() && ( myAllChk->isChecked() || myWiresInd->length() );
+  return !myObject->_is_nil() && ( GroupPoints->CheckButton1->isChecked() || myWiresInd->length() );
 }
 
 //=================================================================================
@@ -330,13 +310,12 @@ bool RepairGUI_RemoveIntWiresDlg::execute( ObjectList& objects )
 //=================================================================================
 void RepairGUI_RemoveIntWiresDlg::onRemoveAllClicked()
 {
-  bool b = myAllChk->isOn();
-  mySelectWiresLbl->setEnabled( !b );
-  mySelectWiresBtn->setEnabled( !b );
-  mySelectWiresEdt->setEnabled( !b );
-  if ( b )
-  {
-    mySelectWiresEdt->setText( "" );
+  bool b = GroupPoints->CheckButton1->isChecked();
+  GroupPoints->TextLabel2->setEnabled( !b );
+  GroupPoints->PushButton2->setEnabled( !b );
+  GroupPoints->LineEdit2->setEnabled( !b );
+  if ( b ) {
+    GroupPoints->LineEdit2->setText( "" );
     myWiresInd->length( 0 );
   }
 }
@@ -347,18 +326,16 @@ void RepairGUI_RemoveIntWiresDlg::onRemoveAllClicked()
 //=================================================================================
 void RepairGUI_RemoveIntWiresDlg::initSelection()
 {
-  if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
-  {
-  	TColStd_MapOfInteger aTypes;
-	aTypes.Add( GEOM_COMPOUND );
-	aTypes.Add( GEOM_SOLID );
-	aTypes.Add( GEOM_SHELL );
-	aTypes.Add( GEOM_FACE );
-  	
-	globalSelection( aTypes );
+  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+    TColStd_MapOfInteger aTypes;
+    aTypes.Add( GEOM_COMPOUND );
+    aTypes.Add( GEOM_SOLID );
+    aTypes.Add( GEOM_SHELL );
+    aTypes.Add( GEOM_FACE );
+    
+    globalSelection( aTypes );
   }
-  else if ( myEditCurrentArgument == mySelectWiresEdt )
-  {
+  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
     //localSelection( myObject, TopAbs_EDGE );
     localSelection( myObject, TopAbs_WIRE );
   }
