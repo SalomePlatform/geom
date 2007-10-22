@@ -40,6 +40,7 @@ MOC_FILES = \
 UIC_FILES = \
 	ui_DlgRef_1List1Spin1Btn_QTD.h	\
 	ui_DlgRef_1Sel1Check1List_QTD.h	\
+	ui_DlgRef_1Sel1Check1Sel_QTD.h	\
 	ui_DlgRef_1Sel1Check_QTD.h	\
 	ui_DlgRef_1Sel1Spin1Check_QTD.h	\
 	ui_DlgRef_1Sel1Spin_QTD.h	\
@@ -49,6 +50,7 @@ UIC_FILES = \
 	ui_DlgRef_1Sel4Spin_QTD.h	\
 	ui_DlgRef_1Sel5Spin_QTD.h	\
 	ui_DlgRef_1Sel_QTD.h		\
+	ui_DlgRef_1SelExt_QTD.h		\
 	ui_DlgRef_1Spin_QTD.h		\
 	ui_DlgRef_2Sel1List_QTD.h	\
 	ui_DlgRef_2Sel1Spin2Check_QTD.h	\
@@ -58,6 +60,7 @@ UIC_FILES = \
 	ui_DlgRef_2Sel3Spin_QTD.h	\
 	ui_DlgRef_2Sel4Spin1Check_QTD.h	\
 	ui_DlgRef_2Sel_QTD.h		\
+	ui_DlgRef_2SelExt_QTD.h		\
 	ui_DlgRef_2Spin_QTD.h		\
 	ui_DlgRef_3Check_QTD.h		\
 	ui_DlgRef_3Sel1Check_QTD.h	\

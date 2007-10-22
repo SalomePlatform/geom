@@ -1,12 +1,12 @@
 <ui version="4.0" >
- <class>DlgRef_1Sel_QTD</class>
- <widget class="QWidget" name="DlgRef_1Sel_QTD" >
+ <class>MeasureGUI_1Sel3LineEdit_QTD</class>
+ <widget class="QWidget" name="MeasureGUI_1Sel3LineEdit_QTD" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>155</width>
-    <height>45</height>
+    <width>156</width>
+    <height>123</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,18 +17,10 @@
     <number>0</number>
    </property>
    <property name="spacing" >
-    <number>0</number>
+    <number>6</number>
    </property>
    <item row="0" column="0" >
     <widget class="QGroupBox" name="GroupBox1" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>7</hsizetype>
-       <vsizetype>7</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
      <property name="title" >
       <string/>
      </property>
@@ -39,8 +31,35 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="0" column="2" >
-       <widget class="QLineEdit" name="LineEdit1" />
+      <item row="3" column="1" colspan="2" >
+       <widget class="QLineEdit" name="LineEdit4" />
+      </item>
+      <item row="2" column="1" colspan="2" >
+       <widget class="QLineEdit" name="LineEdit3" />
+      </item>
+      <item row="1" column="1" colspan="2" >
+       <widget class="QLineEdit" name="LineEdit2" />
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="TextLabel3" >
+        <property name="text" >
+         <string>TL3</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="TextLabel4" >
+        <property name="text" >
+         <string>TL4</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="TextLabel2" >
+        <property name="text" >
+         <string>TL2</string>
+        </property>
+       </widget>
       </item>
       <item row="0" column="1" >
        <widget class="QPushButton" name="PushButton1" >
@@ -59,32 +78,25 @@
       </item>
       <item row="0" column="0" >
        <widget class="QLabel" name="TextLabel1" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>0</hsizetype>
-          <vsizetype>0</vsizetype>
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
         <property name="text" >
          <string>TL1</string>
         </property>
-        <property name="wordWrap" >
-         <bool>false</bool>
-        </property>
        </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLineEdit" name="LineEdit1" />
       </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>PushButton1</tabstop>
   <tabstop>LineEdit1</tabstop>
+  <tabstop>LineEdit2</tabstop>
+  <tabstop>LineEdit3</tabstop>
+  <tabstop>LineEdit4</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -1,75 +1,70 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : MeasureGUI_CenterMassDlg.h
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : MeasureGUI_CenterMassDlg.h
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
 
-#ifndef DIALOGBOX_CMASS_H
-#define DIALOGBOX_CMASS_H
+#ifndef MEASUREGUI_CENTERMASSDLG_H
+#define MEASUREGUI_CENTERMASSDLG_H
 
-#include "GEOM_MeasureGUI.hxx"
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOMBase_Skeleton.h"
-
-class MeasureGUI_1Sel3LineEdit_QTD;
+class MeasureGUI_1Sel3LineEdit;
 
 //=================================================================================
 // class    : MeasureGUI_CenterMassDlg
 // purpose  :
 //=================================================================================
-class GEOM_MEASUREGUI_EXPORT MeasureGUI_CenterMassDlg : public GEOMBase_Skeleton
+class MeasureGUI_CenterMassDlg : public GEOMBase_Skeleton
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    MeasureGUI_CenterMassDlg( GeometryGUI* GUI,
-			      QWidget*     parent );
-    ~MeasureGUI_CenterMassDlg();
+  MeasureGUI_CenterMassDlg( GeometryGUI*, QWidget* );
+  ~MeasureGUI_CenterMassDlg();
 
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr  createOperation();
-    virtual bool                        isValid( QString& msg );
-    virtual bool                        execute( ObjectList& objects );
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr  createOperation();
+  virtual bool                        isValid( QString& );
+  virtual bool                        execute( ObjectList& );
 
 private slots:
-    void                                ClickOnOk();
-    bool                                ClickOnApply();
-    void                                ActivateThisDialog();
-    void                                LineEditReturnPressed();
-    void                                SelectionIntoArgument();
-    void                                SetEditCurrentArgument();
-
+  void                                ClickOnOk();
+  bool                                ClickOnApply();
+  void                                ActivateThisDialog();
+  void                                LineEditReturnPressed();
+  void                                SelectionIntoArgument();
+  void                                SetEditCurrentArgument();
+  
 private:
-    void                                Init( );
-    void                                enterEvent( QEvent* e );
-    void                                processObject();
-    bool                                getParameters( double&, double&, double& );
-
+  void                                Init();
+  void                                enterEvent( QEvent* );
+  void                                processObject();
+  bool                                getParameters( double&, double&, double& );
+  
 private:
-    GEOM::GEOM_Object_var               myObj;
-    MeasureGUI_1Sel3LineEdit_QTD*       myGrp;
+  GEOM::GEOM_Object_var               myObj;
+  MeasureGUI_1Sel3LineEdit*           myGrp;
 };
 
-#endif // DIALOGBOX_CMASS_H
+#endif // MEASUREGUI_CENTERMASSDLG_H

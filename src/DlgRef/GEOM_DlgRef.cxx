@@ -52,6 +52,20 @@ DlgRef_1Sel1Check1List::~DlgRef_1Sel1Check1List()
 }
 
 //////////////////////////////////////////
+// DlgRef_1Sel1Check1Sel
+//////////////////////////////////////////
+
+DlgRef_1Sel1Check1Sel::DlgRef_1Sel1Check1Sel( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_1Sel1Check1Sel::~DlgRef_1Sel1Check1Sel()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_1Sel1Check
 //////////////////////////////////////////
 
@@ -192,6 +206,20 @@ DlgRef_1Sel::~DlgRef_1Sel()
 }
 
 //////////////////////////////////////////
+// DlgRef_1SelExt
+//////////////////////////////////////////
+
+DlgRef_1SelExt::DlgRef_1SelExt( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_1SelExt::~DlgRef_1SelExt()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_2Sel1List
 //////////////////////////////////////////
 
@@ -300,6 +328,20 @@ DlgRef_2Sel::DlgRef_2Sel( QWidget* parent, Qt::WindowFlags f )
 }
 
 DlgRef_2Sel::~DlgRef_2Sel()
+{
+}
+
+//////////////////////////////////////////
+// DlgRef_2SelExt
+//////////////////////////////////////////
+
+DlgRef_2SelExt::DlgRef_2SelExt( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_2SelExt::~DlgRef_2SelExt()
 {
 }
 

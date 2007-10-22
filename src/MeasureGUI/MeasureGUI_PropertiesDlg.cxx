@@ -1,85 +1,77 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : MeasureGUI_PropertiesDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : MeasureGUI_PropertiesDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
 #include "MeasureGUI_PropertiesDlg.h"
-#include "MeasureGUI_1Sel3LineEdit_QTD.h"
-#include "GEOM_Displayer.h"
-#include "GEOMImpl_Types.hxx"
-#include "GEOMBase.h"
+#include "MeasureGUI_Widgets.h"
 
-#include "SalomeApp_Tools.h"
-#include "utilities.h"
-#include "SUIT_Session.h"
+#include <GEOMImpl_Types.hxx>
+#include <GEOMBase.h>
+
+#include <SalomeApp_Tools.h>
+#include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
 
 #include <TColStd_MapOfInteger.hxx>
-
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
 
 //=================================================================================
 // class    : MeasureGUI_PropertiesDlg()
 // purpose  : Constructs a MeasureGUI_PropertiesDlg which is a child of 'parent', with the 
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
-//            TRUE to construct a modal dialog.
+//            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg( GeometryGUI* GUI, QWidget* parent )
-: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_PropertiesDlg" )
+  : MeasureGUI_Skeleton( GUI, parent )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
-    "GEOM",tr( "ICON_DLG_BASICPROPERTIES" ) ) );
+    "GEOM", tr( "ICON_DLG_BASICPROPERTIES" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
-    "GEOM",tr( "ICON_SELECT" ) ) );
+    "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption( tr( "GEOM_PROPERTIES_TITLE" ) );
+  setWindowTitle( tr( "GEOM_PROPERTIES_TITLE" ) );
 
   /***************************************************************/
   
-  GroupConstructors->setTitle( tr( "GEOM_PROPERTIES" ) );
-  RadioButton1->setPixmap( image0 );
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_PROPERTIES" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
 
-  myGrp = new MeasureGUI_1Sel3LineEdit_QTD( this, "myGrp"  );
+  myGrp = new MeasureGUI_1Sel3LineEdit( centralWidget()  );
   myGrp->GroupBox1->setTitle( tr( "GEOM_PROPERTIES_CONSTR" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
   myGrp->TextLabel2->setText( tr( "GEOM_LENGTH" ) );
   myGrp->TextLabel3->setText( tr( "GEOM_PROPERTIES_SURFACE" ) );
   myGrp->TextLabel4->setText( tr( "GEOM_PROPERTIES_VOLUME" ) );
-  myGrp->LineEdit2->setReadOnly( TRUE );
-  myGrp->LineEdit3->setReadOnly( TRUE );
-  myGrp->LineEdit4->setReadOnly( TRUE );
-  myGrp->PushButton1->setPixmap( image1 );
   myGrp->LineEdit1->setReadOnly( true );
+  myGrp->PushButton1->setIcon( image1 );
+  myGrp->LineEdit2->setReadOnly( true );
+  myGrp->LineEdit3->setReadOnly( true );
+  myGrp->LineEdit4->setReadOnly( true );
 
-  Layout1->addWidget( myGrp, 1, 0 );
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( myGrp );
   
   /***************************************************************/
 
@@ -117,10 +109,9 @@ void MeasureGUI_PropertiesDlg::Init()
 void MeasureGUI_PropertiesDlg::activateSelection()
 {
   static TColStd_MapOfInteger aTypes;
-  if ( aTypes.IsEmpty() )
-  {
+  if ( aTypes.IsEmpty() ) {
     aTypes.Add( GEOM_COMPOUND );
-//    aTypes.Add( TopAbs_COMPSOLID );
+    //    aTypes.Add( TopAbs_COMPSOLID );
     aTypes.Add( GEOM_SOLID );
     aTypes.Add( GEOM_SHELL );
     aTypes.Add( GEOM_FACE );
@@ -139,15 +130,13 @@ void MeasureGUI_PropertiesDlg::processObject()
 {
   double aLength, anArea, aVolume;
   
-  if ( !getParameters( aLength, anArea, aVolume ) )
-  {
+  if ( !getParameters( aLength, anArea, aVolume ) ) {
     mySelEdit->setText( "" );
     myGrp->LineEdit2->setText( "" );
     myGrp->LineEdit3->setText( "" );
     myGrp->LineEdit4->setText( "" );
   }
-  else
-  {
+  else {
     myGrp->LineEdit2->setText( QString( "%1" ).arg( aLength ) );
     myGrp->LineEdit3->setText( QString( "%1" ).arg( anArea ) );
     myGrp->LineEdit4->setText( QString( "%1" ).arg( aVolume ) );
@@ -164,15 +153,12 @@ bool MeasureGUI_PropertiesDlg::getParameters( double& theLength,
 {
   if ( myObj->_is_nil() )
     return false;
-  else
-  {
-    try
-    {
+  else {
+    try {
       GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetBasicProperties(
         myObj, theLength, theArea, theVolume );
     }
-    catch( const SALOME::SALOME_Exception& e )
-    {
+    catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
@@ -190,7 +176,7 @@ SALOME_Prs* MeasureGUI_PropertiesDlg::buildPrs()
   TopoDS_Shape aShape, aResult;
   
   if ( myObj->_is_nil() ||
-       !GEOMBase::GetShape( myObj, aShape )||
+       !GEOMBase::GetShape( myObj, aShape ) ||
        aShape.IsNull() ||
        aShape.ShapeType() != TopAbs_EDGE ||
        !GEOMBase::CreateArrowForLinearEdge( aShape, aResult ) ||

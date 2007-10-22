@@ -1,94 +1,85 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : MeasureGUI_DistanceDlg.cxx
+// Author : Nicolas REJNERI, Open CASCADE S.A.S.
 //
-//
-//  File   : MeasureGUI_DistanceDlg.cxx
-//  Author : Nicolas REJNERI
-//  Module : GEOM
-//  $Header$
 
 #include "MeasureGUI_DistanceDlg.h"
-#include "MeasureGUI_2Sel1LineEdit_QTD.h"
-#include "GEOMBase.h"
-#include "GEOM_Displayer.h"
+#include "MeasureGUI_Widgets.h"
 
-#include "SUIT_Session.h"
-#include "SUIT_ViewWindow.h"
-#include "SOCC_Prs.h"
-#include "SOCC_ViewModel.h"
-#include "SalomeApp_Tools.h"
+#include <GEOMBase.h>
+
+#include <SUIT_Session.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_ViewWindow.h>
+#include <SUIT_ViewManager.h>
+#include <SOCC_Prs.h>
+#include <SOCC_ViewModel.h>
+#include <SalomeApp_Tools.h>
 
 #include <Geom_Plane.hxx>
-#include <TopoDS_Edge.hxx>
 #include <AIS_LengthDimension.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
-#include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <gce_MakePln.hxx>
 #include <Precision.hxx>
-
-#include "utilities.h"
-
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
 
 //=================================================================================
 // class    : MeasureGUI_DistanceDlg()
 // purpose  : Constructs a MeasureGUI_DistanceDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
-//            TRUE to construct a modal dialog.
+//            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg( GeometryGUI* GUI, QWidget* parent )
-: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_DistanceDlg" )
+  : MeasureGUI_Skeleton( GUI, parent )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
-    "GEOM",tr( "ICON_DLG_MINDIST" ) ) );
+    "GEOM", tr( "ICON_DLG_MINDIST" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
-  "GEOM",tr( "ICON_SELECT" ) ) );
+    "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption( tr( "GEOM_MINDIST_TITLE" ) );
+  setWindowTitle( tr( "GEOM_MINDIST_TITLE" ) );
 
   /***************************************************************/
   
-  GroupConstructors->setTitle( tr( "GEOM_DISTANCE" ) );
-  RadioButton1->setPixmap( image0 );
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_DISTANCE" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
 
-  myGrp = new MeasureGUI_2Sel1LineEdit_QTD( this, "myGrp" );
+  myGrp = new MeasureGUI_2Sel1LineEdit( centralWidget() );
   myGrp->GroupBox1->setTitle( tr( "GEOM_MINDIST_OBJ" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT_I" ).arg( "1" ) );
   myGrp->TextLabel2->setText( tr( "GEOM_OBJECT_I" ).arg( "2" ) );
   myGrp->TextLabel3->setText( tr( "GEOM_LENGTH" ) );
-  myGrp->LineEdit3->setReadOnly( TRUE );
-  myGrp->PushButton1->setPixmap( image1 );
-  myGrp->PushButton2->setPixmap( image1 );
+  myGrp->LineEdit3->setReadOnly( true );
+  myGrp->PushButton1->setIcon( image1 );
+  myGrp->PushButton2->setIcon( image1 );
   myGrp->LineEdit1->setReadOnly( true );
   myGrp->LineEdit2->setReadOnly( true );
 
-  Layout1->addWidget( myGrp, 1, 0 );
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( myGrp );
 
   /***************************************************************/
 
@@ -122,7 +113,7 @@ void MeasureGUI_DistanceDlg::Init()
   myEditCurrentArgument = mySelEdit;
 
   connect( mySelEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( mySelBtn2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( mySelBtn2,  SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
 
   MeasureGUI_Skeleton::Init();
 
@@ -143,9 +134,9 @@ void MeasureGUI_DistanceDlg::SelectionIntoArgument()
     aSelectedObject = GEOM::GEOM_Object::_nil();
 
   if ( myEditCurrentArgument == mySelEdit )
-      myObj = aSelectedObject;
-    else
-      myObj2 = aSelectedObject;
+    myObj = aSelectedObject;
+  else
+    myObj2 = aSelectedObject;
 
   processObject();
 }
@@ -161,13 +152,11 @@ void MeasureGUI_DistanceDlg::processObject()
 
   gp_Pnt aPnt1, aPnt2;
   double aDist = 0.;
-  if ( getParameters( aDist, aPnt1, aPnt2 ) )
-  {
+  if ( getParameters( aDist, aPnt1, aPnt2 ) ) {
     myGrp->LineEdit3->setText( QString( "%1" ).arg( aDist ) );
     redisplayPreview();
   }
-  else
-  {
+  else {
     myGrp->LineEdit3->setText( "" );
     erasePreview();
   }
@@ -185,10 +174,8 @@ bool MeasureGUI_DistanceDlg::getParameters( double& theDistance,
   QString msg;
   if ( !isValid( msg ) )
     return false;
-  else
-  {
-    try
-    {
+  else {
+    try {
       double x1, y1, z1, x2, y2, z2;
       theDistance = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetMinDistance(
         myObj, myObj2, x1, y1, z1, x2, y2, z2 );
@@ -196,8 +183,7 @@ bool MeasureGUI_DistanceDlg::getParameters( double& theDistance,
       thePnt1.SetCoord( x1, y1, z1 );
       thePnt2.SetCoord( x2, y2, z2 );
     }
-    catch( const SALOME::SALOME_Exception& e )
-    {
+    catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
@@ -215,13 +201,11 @@ void MeasureGUI_DistanceDlg::SetEditCurrentArgument()
 {
   QPushButton* send = ( QPushButton* )sender();
 
-  if( send == mySelBtn )
-  {
+  if ( send == mySelBtn ) {
     mySelEdit->setFocus();
     myEditCurrentArgument = mySelEdit;
   }
-  else
-  {
+  else {
     mySelEdit2->setFocus();
     myEditCurrentArgument = mySelEdit2;
   }
@@ -238,7 +222,7 @@ void MeasureGUI_DistanceDlg::LineEditReturnPressed()
 {
   QLineEdit* send = ( QLineEdit* )sender();
 
-  if( send == mySelEdit )
+  if ( send == mySelEdit )
     myEditCurrentArgument = mySelEdit;
   else
     myEditCurrentArgument = mySelEdit2;
@@ -264,13 +248,11 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
   
   try
   {
-    if( aDist <= 1.e-9 )
-    {
+    if( aDist <= 1.e-9 ) {
       BRepBuilderAPI_MakeVertex aMaker( aPnt1 );
       return getDisplayer()->BuildPrs( aMaker.Vertex() );
     }
-    else
-    {
+    else {
       BRepBuilderAPI_MakeEdge MakeEdge( aPnt1, aPnt2 );
       TopoDS_Vertex aVert1 = BRepBuilderAPI_MakeVertex( aPnt1 );
       TopoDS_Vertex aVert2 = BRepBuilderAPI_MakeVertex( aPnt2 );
@@ -286,8 +268,7 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
       gp_Vec va( aPnt3, aPnt1 );
       gp_Vec vb( aPnt3, aPnt2 );
 
-      if ( va.IsParallel( vb, Precision::Angular() ) )
-      {
+      if ( va.IsParallel( vb, Precision::Angular() ) ) {
         aPnt3.SetY( ( aPnt1.Y() + aPnt2.Y() ) / 2 + 100 );
         aPnt3.SetZ( ( aPnt1.Z() + aPnt2.Z() ) / 2 );
       }
@@ -296,7 +277,7 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
       Handle( Geom_Plane ) P = new Geom_Plane( gce_MP.Value() );
 
       Handle( AIS_LengthDimension ) anIO = new AIS_LengthDimension(
-        aVert1, aVert2, P, aDist, TCollection_ExtendedString( (Standard_CString)aLabel.latin1() ) );
+        aVert1, aVert2, P, aDist, TCollection_ExtendedString( (Standard_CString)aLabel.toLatin1().constData() ) );
 
       SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
       SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>( ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs( 0 ) );
@@ -310,8 +291,7 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
       return aPrs;
     }
   }
-  catch( Standard_Failure )
-  {
+  catch( Standard_Failure ) {
     return 0;
   }
 }

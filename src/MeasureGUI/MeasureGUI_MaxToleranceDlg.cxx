@@ -1,68 +1,58 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : MeasureGUI_MaxToleranceDlg.cxx
+// Author : Nicolas REJNERI, Open CASCADE S.A.S.
 //
-//
-//  File   : MeasureGUI_MaxToleranceDlg.cxx
-//  Author : Nicolas REJNERI
-//  Module : GEOM
-//  $Header$
 
 #include "MeasureGUI_MaxToleranceDlg.h"
-#include "MeasureGUI_1Sel6LineEdit_QTD.h"
+#include "MeasureGUI_Widgets.h"
 
-#include "utilities.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Tools.h"
-
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
+#include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
+#include <SalomeApp_Tools.h>
 
 //=================================================================================
 // class    : MeasureGUI_MaxToleranceDlg()
 // purpose  : Constructs a MeasureGUI_MaxToleranceDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
-//            TRUE to construct a modal dialog.
+//            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_MaxToleranceDlg::MeasureGUI_MaxToleranceDlg( GeometryGUI* GUI, QWidget* parent )
-: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_MaxToleranceDlg" )
+  : MeasureGUI_Skeleton( GUI, parent )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
-    "GEOM",tr( "ICON_DLG_TOLERANCE" ) ) );
+    "GEOM", tr( "ICON_DLG_TOLERANCE" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
-    "GEOM",tr( "ICON_SELECT" ) ) );
+    "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption( tr( "GEOM_TOLERANCE_TITLE" ) );
+  setWindowTitle( tr( "GEOM_TOLERANCE_TITLE" ) );
 
   /***************************************************************/
   
-  GroupConstructors->setTitle( tr( "GEOM_TOLERANCE" ) );
-  RadioButton1->setPixmap( image0 );
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_TOLERANCE" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
 
-  myGrp = new MeasureGUI_1Sel6LineEdit_QTD( this, "myGrp" );
+  myGrp = new MeasureGUI_1Sel6LineEdit( centralWidget() );
   myGrp->GroupBox1->setTitle( tr( "GEOM_TOLERANCE_CONSTR" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
   myGrp->TextLabel2->setText( tr( "GEOM_MIN" ) );
@@ -70,16 +60,18 @@ MeasureGUI_MaxToleranceDlg::MeasureGUI_MaxToleranceDlg( GeometryGUI* GUI, QWidge
   myGrp->TextLabel4->setText( tr( "GEOM_TOLERANCE_FACE" ) );
   myGrp->TextLabel5->setText( tr( "GEOM_TOLERANCE_EDGE" ) );
   myGrp->TextLabel6->setText( tr( "GEOM_TOLERANCE_VERTEX" ) );
-  myGrp->LineEdit11->setReadOnly( TRUE );
-  myGrp->LineEdit12->setReadOnly( TRUE );
-  myGrp->LineEdit21->setReadOnly( TRUE );
-  myGrp->LineEdit22->setReadOnly( TRUE );
-  myGrp->LineEdit31->setReadOnly( TRUE );
-  myGrp->LineEdit32->setReadOnly( TRUE );
-  myGrp->PushButton1->setPixmap( image1 );
+  myGrp->LineEdit11->setReadOnly( true );
+  myGrp->LineEdit12->setReadOnly( true );
+  myGrp->LineEdit21->setReadOnly( true );
+  myGrp->LineEdit22->setReadOnly( true );
+  myGrp->LineEdit31->setReadOnly( true );
+  myGrp->LineEdit32->setReadOnly( true );
+  myGrp->PushButton1->setIcon( image1 );
   myGrp->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget( myGrp, 1, 0 );
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( myGrp );
   
   /***************************************************************/
 
@@ -122,8 +114,7 @@ void MeasureGUI_MaxToleranceDlg::processObject()
   
   if ( !getParameters( aMinFaceToler, aMaxFaceToler,
                        aMinEdgeToler, aMaxEdgeToler,
-                       aMinVertexToler, aMaxVertexToler ) )
-  {
+                       aMinVertexToler, aMaxVertexToler ) ) {
     myGrp->LineEdit11->setText( "" );
     myGrp->LineEdit12->setText( "" );
 
@@ -164,16 +155,13 @@ bool MeasureGUI_MaxToleranceDlg::getParameters( double& theMinFaceToler,
 {
   if ( myObj->_is_nil() )
     return false;
-  else
-  {
-    try
-    {
+  else {
+    try {
       GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetTolerance( myObj,
-        theMinFaceToler, theMaxFaceToler, theMinEdgeToler,
-        theMaxEdgeToler, theMinVertexToler, theMaxVertexToler  );
+        theMinFaceToler, theMaxFaceToler,   theMinEdgeToler,
+        theMaxEdgeToler, theMinVertexToler, theMaxVertexToler );
     }
-    catch( const SALOME::SALOME_Exception& e )
-    {
+    catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }

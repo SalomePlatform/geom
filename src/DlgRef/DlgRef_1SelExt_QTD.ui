@@ -1,12 +1,12 @@
 <ui version="4.0" >
- <class>DlgRef_1Sel_QTD</class>
- <widget class="QWidget" name="DlgRef_1Sel_QTD" >
+ <class>DlgRef_1SelExt_QTD</class>
+ <widget class="QWidget" name="DlgRef_1SelExt_QTD" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
     <width>155</width>
-    <height>45</height>
+    <height>51</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -39,23 +39,8 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="0" column="2" >
-       <widget class="QLineEdit" name="LineEdit1" />
-      </item>
-      <item row="0" column="1" >
-       <widget class="QPushButton" name="PushButton1" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>0</hsizetype>
-          <vsizetype>0</vsizetype>
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-       </widget>
+      <item row="1" column="0" colspan="3" >
+       <widget class="QWidget" native="1" name="Box" />
       </item>
       <item row="0" column="0" >
        <widget class="QLabel" name="TextLabel1" >
@@ -74,6 +59,24 @@
          <bool>false</bool>
         </property>
        </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QPushButton" name="PushButton1" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>0</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLineEdit" name="LineEdit1" />
       </item>
      </layout>
     </widget>

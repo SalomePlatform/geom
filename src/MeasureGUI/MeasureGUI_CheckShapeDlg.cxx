@@ -1,99 +1,74 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : MeasureGUI_CheckShapeDlg.cxx
+// Author : Nicolas REJNERI, Open CASCADE S.A.S.
 //
-//
-//  File   : MeasureGUI_CheckShapeDlg.cxx
-//  Author : Nicolas REJNERI
-//  Module : GEOM
-//  $Header$
 
 #include "MeasureGUI_CheckShapeDlg.h"
+#include "MeasureGUI_Widgets.h"
 
-#include "utilities.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Tools.h"
-
-#include <qtextedit.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
-#include <qcheckbox.h>
+#include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
+#include <SalomeApp_Tools.h>
 
 #define TEXTEDIT_FONT_FAMILY "Courier"
 #define TEXTEDIT_FONT_SIZE 11
-
-MeasureGUI_1Sel1TextView1Check_QTD::MeasureGUI_1Sel1TextView1Check_QTD(QWidget* parent,
-                                                                       const char* name, WFlags fl)
-  : MeasureGUI_1Sel1TextView_QTD(parent, name, fl)
-{
-  CheckBoxGeom = new QCheckBox(GroupBox1, "CheckBoxGeom");
-  CheckBoxGeom->setText(tr("CHECK_SHAPE_GEOMETRY"));
-  Layout1->addMultiCellWidget(CheckBoxGeom, 2, 2, 0, 2);
-
-  CheckBoxGeom->setChecked(false);
-}
-
-MeasureGUI_1Sel1TextView1Check_QTD::~MeasureGUI_1Sel1TextView1Check_QTD()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
 
 //=================================================================================
 // class    : MeasureGUI_CheckShapeDlg()
 // purpose  : Constructs a MeasureGUI_CheckShapeDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
-//            TRUE to construct a modal dialog.
+//            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_CheckShapeDlg::MeasureGUI_CheckShapeDlg( GeometryGUI* GUI, QWidget* parent )
-: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_CheckShapeDlg" )
+  : MeasureGUI_Skeleton( GUI, parent )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
-    "GEOM",tr( "ICON_DLG_CHECKSHAPE" ) ) );
+    "GEOM", tr( "ICON_DLG_CHECKSHAPE" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
-    "GEOM",tr( "ICON_SELECT" ) ) );
+    "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption( tr( "GEOM_CHECK_TITLE" ) );
+  setWindowTitle( tr( "GEOM_CHECK_TITLE" ) );
 
   /***************************************************************/
 
-  GroupConstructors->setTitle( tr( "GEOM_CHECK_SHAPE" ) );
-  RadioButton1->setPixmap( image0 );
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_CHECK_SHAPE" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
 
-  myGrp = new MeasureGUI_1Sel1TextView1Check_QTD( this, "myGrp" );
+  myGrp = new MeasureGUI_1Sel1TextView1Check( centralWidget() );
   myGrp->GroupBox1->setTitle( tr( "GEOM_CHECK_INFOS" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
-  myGrp->TextEdit1->setReadOnly( TRUE );
+  myGrp->TextView1->setReadOnly( true );
 
   QFont aFont( TEXTEDIT_FONT_FAMILY, TEXTEDIT_FONT_SIZE );
   aFont.setStyleHint( QFont::TypeWriter, QFont::PreferAntialias );
-  myGrp->TextEdit1->setFont( aFont );
-  myGrp->PushButton1->setPixmap( image1 );
+  myGrp->TextView1->setFont( aFont );
+  myGrp->PushButton1->setIcon( image1 );
   myGrp->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget( myGrp, 1, 0 );
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( myGrp );
 
   /***************************************************************/
 
@@ -122,8 +97,8 @@ void MeasureGUI_CheckShapeDlg::Init()
   mySelEdit = myGrp->LineEdit1;
   MeasureGUI_Skeleton::Init();
 
-  connect(myGrp->CheckBoxGeom, SIGNAL(toggled(bool)), 
-          this, SLOT(SelectionIntoArgument()));
+  connect( myGrp->CheckBox1, SIGNAL( toggled( bool) ), 
+	   this, SLOT( SelectionIntoArgument() ) );
 }
 
 //=================================================================================
@@ -134,22 +109,19 @@ bool MeasureGUI_CheckShapeDlg::getParameters ( bool& theIsValid, QString& theMsg
 {
   if ( myObj->_is_nil() )
     return false;
-  else
-  {
-    try
-    {
+  else {
+    try {
       char* aMsg;
-      bool isCheckGeometry = myGrp->CheckBoxGeom->isChecked();
+      bool isCheckGeometry = myGrp->CheckBox1->isChecked();
       GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
         GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
-      if (isCheckGeometry)
-        theIsValid = aMeasureOp->CheckShapeWithGeometry(myObj, aMsg);
+      if ( isCheckGeometry )
+        theIsValid = aMeasureOp->CheckShapeWithGeometry( myObj, aMsg );
       else
-        theIsValid = aMeasureOp->CheckShape(myObj, aMsg);
+        theIsValid = aMeasureOp->CheckShape( myObj, aMsg );
       theMsg = aMsg;
     }
-    catch( const SALOME::SALOME_Exception& e )
-    {
+    catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
@@ -167,18 +139,18 @@ void MeasureGUI_CheckShapeDlg::processObject()
 {
   bool isShapeValid;
   QString aMsg;
-  if ( !getParameters( isShapeValid, aMsg ) )
-  {
-    myGrp->TextEdit1->setText( "" );
+  if ( !getParameters( isShapeValid, aMsg ) ) {
+    myGrp->TextView1->setText( "" );
     return;
   }
 
-  if (isShapeValid) {
-    myGrp->TextEdit1->setText("This Shape seems to be valid.");
-  } else {
-    QString aDescr ("This Shape is not valid.\n");
+  if ( isShapeValid ) {
+    myGrp->TextView1->setText( "This Shape seems to be valid." );
+  } 
+  else {
+    QString aDescr ( "This Shape is not valid.\n" );
     aDescr += aMsg;
-    myGrp->TextEdit1->setText(aDescr);
-//    myGrp->TextEdit1->setText("This Shape is not valid.");
+    myGrp->TextView1->setText( aDescr );
+//    myGrp->TextView1->setText("This Shape is not valid.");
   }
 }

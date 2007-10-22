@@ -1,82 +1,84 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : MeasureGUI_CenterMassDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : MeasureGUI_CenterMassDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
 #include "MeasureGUI_CenterMassDlg.h"
-#include "MeasureGUI_1Sel3LineEdit_QTD.h"
+#include "MeasureGUI_Widgets.h"
 
-#include "utilities.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
-#include "SalomeApp_Tools.h"
+#include <GEOM_DlgRef.h>
+#include <GEOMBase.h>
+
+#include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
+#include <SalomeApp_Tools.h>
 
 #include <BRep_Tool.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS.hxx>
 #include <gp_Pnt.hxx>
 
-#include <qlabel.h>
-
 //=================================================================================
 // class    : MeasureGUI_CenterMassDlg()
 // purpose  : Constructs a MeasureGUI_CenterMassDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
-//            TRUE to construct a modal dialog.
+//            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
-  : GEOMBase_Skeleton(theGeometryGUI, parent, "MeasureGUI_CenterMassDlg", false,
-                      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+  : GEOMBase_Skeleton( theGeometryGUI, parent, false )
 {
-  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_CENTERMASS")));
-  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_CENTERMASS" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption( tr( "GEOM_CMASS_TITLE" ) );
+  setWindowTitle( tr( "GEOM_CMASS_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle( tr( "GEOM_CMASS" ) );
-  RadioButton1->setPixmap( image0 );
-  RadioButton2->close( TRUE );
-  RadioButton3->close( TRUE );
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_CMASS" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  myGrp = new MeasureGUI_1Sel3LineEdit_QTD( this, "myGrp" );
+  myGrp = new MeasureGUI_1Sel3LineEdit( centralWidget() );
   myGrp->GroupBox1->setTitle( tr( "GEOM_CENTER" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
   myGrp->TextLabel2->setText( tr( "GEOM_X" ) );
   myGrp->TextLabel3->setText( tr( "GEOM_Y" ) );
   myGrp->TextLabel4->setText( tr( "GEOM_Z" ) );
-  myGrp->LineEdit2->setReadOnly( TRUE );
-  myGrp->LineEdit3->setReadOnly( TRUE );
-  myGrp->LineEdit4->setReadOnly( TRUE );
-  myGrp->PushButton1->setPixmap( image1 );
+  myGrp->LineEdit2->setReadOnly( true );
+  myGrp->LineEdit3->setReadOnly( true );
+  myGrp->LineEdit4->setReadOnly( true );
+  myGrp->PushButton1->setIcon( image1 );
   myGrp->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget( myGrp, 2, 0 );
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( myGrp );
+
   /***************************************************************/
 
   myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Center_gravity";
@@ -105,22 +107,18 @@ void MeasureGUI_CenterMassDlg::Init()
   myEditCurrentArgument = myGrp->LineEdit1;
 
    /* signals and slots connections */
-  connect( buttonOk, SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
-  connect( buttonApply, SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect( myGrp->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( myGrp->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( myGrp->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( myGrp->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_POINT") );
   globalSelection();
   SelectionIntoArgument();
-
-  /* displays Dialog */
-  myGrp->show();
-  this->show();
 }
 
 
@@ -160,8 +158,7 @@ void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
   erasePreview();
   myObj = GEOM::GEOM_Object::_nil();
 
-  if ( IObjectCount() != 1 )
-  {
+  if ( IObjectCount() != 1 ) {
     processObject();
     return;
   }
@@ -170,8 +167,7 @@ void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject =
     GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
 
-  if ( !testResult || aSelectedObject->_is_nil() )
-  {
+  if ( !testResult || aSelectedObject->_is_nil() ) {
     processObject();
     return;
   }
@@ -201,8 +197,7 @@ void MeasureGUI_CenterMassDlg::SetEditCurrentArgument()
 void MeasureGUI_CenterMassDlg::LineEditReturnPressed()
 {
   QLineEdit* send = ( QLineEdit* )sender();
-  if ( send == myGrp->LineEdit1 )
-  {
+  if ( send == myGrp->LineEdit1 ) {
     myEditCurrentArgument = myGrp->LineEdit1;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
@@ -217,8 +212,8 @@ void MeasureGUI_CenterMassDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL(currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   globalSelection();
   displayPreview();
@@ -230,16 +225,14 @@ void MeasureGUI_CenterMassDlg::ActivateThisDialog()
 //=================================================================================
 void MeasureGUI_CenterMassDlg::processObject()
 {
-  if ( myObj->_is_nil() )
-  {
+  if ( myObj->_is_nil() ) {
     myGrp->LineEdit1->setText( "" );
     myGrp->LineEdit2->setText( "" );
     myGrp->LineEdit3->setText( "" );
     myGrp->LineEdit4->setText( "" );
     erasePreview();
   }
-  else
-  {
+  else {
     double x = 0, y = 0, z = 0;
     
     getParameters( x, y, z );
@@ -258,9 +251,9 @@ void MeasureGUI_CenterMassDlg::processObject()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void MeasureGUI_CenterMassDlg::enterEvent( QEvent* e )
+void MeasureGUI_CenterMassDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 
@@ -290,10 +283,8 @@ bool MeasureGUI_CenterMassDlg::getParameters( double& theX, double& theY, double
 {
   if ( myObj->_is_nil() )
     return false;
-  else
-  {
-    try
-    {
+  else {
+    try {
       GEOM::GEOM_Object_var anObj;
       anObj = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetCentreOfMass( myObj );
       if ( !getOperation()->IsDone() )
@@ -315,8 +306,7 @@ bool MeasureGUI_CenterMassDlg::getParameters( double& theX, double& theY, double
 
       return true;
     }
-    catch( const SALOME::SALOME_Exception& e )
-    {
+    catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }

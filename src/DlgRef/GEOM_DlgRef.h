@@ -67,6 +67,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_1Sel1Check1Sel
+//////////////////////////////////////////
+
+#include "ui_DlgRef_1Sel1Check1Sel_QTD.h"
+
+class DLGREF_EXPORT DlgRef_1Sel1Check1Sel : public QWidget, 
+					    public Ui::DlgRef_1Sel1Check1Sel_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_1Sel1Check1Sel( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_1Sel1Check1Sel();
+};
+
+//////////////////////////////////////////
 // DlgRef_1Sel1Check
 //////////////////////////////////////////
 
@@ -227,6 +243,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_1SelExt
+//////////////////////////////////////////
+
+#include "ui_DlgRef_1SelExt_QTD.h"
+
+class DLGREF_EXPORT DlgRef_1SelExt : public QWidget, 
+                                     public Ui::DlgRef_1SelExt_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_1SelExt( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_1SelExt();
+};
+
+//////////////////////////////////////////
 // DlgRef_2Sel1List
 //////////////////////////////////////////
 
@@ -352,6 +384,22 @@ class DLGREF_EXPORT DlgRef_2Sel : public QWidget,
 public:
   DlgRef_2Sel( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_2Sel();
+};
+
+//////////////////////////////////////////
+// DlgRef_2SelExt
+//////////////////////////////////////////
+
+#include "ui_DlgRef_2SelExt_QTD.h"
+
+class DLGREF_EXPORT DlgRef_2SelExt : public QWidget, 
+                                     public Ui::DlgRef_2SelExt_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_2SelExt( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_2SelExt();
 };
 
 //////////////////////////////////////////
