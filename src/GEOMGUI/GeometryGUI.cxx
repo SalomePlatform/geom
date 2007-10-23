@@ -767,7 +767,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 111, "IMPORT", "", (CTRL + Key_I) );
   createGeomAction( 121, "EXPORT", "", (CTRL + Key_E) );
 
-  createGeomAction( 33, "DELETE" );
+  createGeomAction( 33, "DELETE", "", Key_Delete );
 
   createGeomAction( 4011, "POINT" );
   createGeomAction( 4012, "LINE" );
@@ -878,7 +878,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 213, "DISPLAY_ONLY" );
   createGeomAction( 215, "ERASE" );
 
-  createGeomAction( 901, "POP_RENAME" );
+  createGeomAction( 901, "POP_RENAME", "", Key_F2 );
   createGeomAction( 80311, "POP_WIREFRAME", "", 0, true );
   createGeomAction( 80312, "POP_SHADING", "", 0, true );
   createGeomAction( 8032, "POP_COLOR" );
@@ -1107,6 +1107,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   QtxPopupMgr* mgr = popupMgr();
   mgr->insert( action(  901 ), -1, -1 );  // rename
   mgr->setRule( action( 901 ), "$type in {'Shape' 'Group'} and selcount=1", true );
+  mgr->insert( action(   33 ), -1, -1 );  // delete
+  mgr->setRule( action(  33 ), "$type in {'Shape' 'Group'} and selcount>0", true );
   mgr->insert( action(  8001 ), -1, -1 ); // create group
   mgr->setRule( action( 8001 ), "client='ObjectBrowser' and type='Shape' and selcount=1 and isOCC=true", true );
   mgr->insert( action(  801 ), -1, -1 );  // edit group
