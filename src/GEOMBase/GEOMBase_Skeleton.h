@@ -33,6 +33,7 @@
 
 class GeometryGUI;
 class DlgRef_Skeleton;
+class QSpinBox;
 class QDoubleSpinBox;
 class QLineEdit;
 class QButtonGroup;
@@ -57,6 +58,7 @@ private:
     void Init();
 
 protected:
+    void                initSpinBox( QSpinBox*, int, int, int = 1 );
     void                initSpinBox( QDoubleSpinBox*, double, double, double = 0.1, int = 3 );
     
     void                closeEvent( QCloseEvent* );

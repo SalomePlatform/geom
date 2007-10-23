@@ -38,6 +38,7 @@
 #include <SUIT_MessageBox.h>
 
 #include <QKeyEvent>
+#include <QSpinBox>
 #include <QDoubleSpinBox>
 
 using namespace std;
@@ -119,6 +120,13 @@ void GEOMBase_Skeleton::Init()
   /* displays Dialog */
   myMainFrame->RadioButton1->setChecked( true );
   myMainFrame->RadioButton4->hide();
+}
+
+void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox, 
+				     int min,  int max, int step )
+{
+  spinBox->setRange( min, max );
+  spinBox->setSingleStep( step );
 }
 
 void GEOMBase_Skeleton::initSpinBox( QDoubleSpinBox* spinBox, 

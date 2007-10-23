@@ -122,6 +122,20 @@ DlgRef_1Sel1Spin::~DlgRef_1Sel1Spin()
 }
 
 //////////////////////////////////////////
+// DlgRef_1Sel2Spin1View1Check
+//////////////////////////////////////////
+
+DlgRef_1Sel2Spin1View1Check::DlgRef_1Sel2Spin1View1Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_1Sel2Spin1View1Check::~DlgRef_1Sel2Spin1View1Check()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_1Sel2Spin
 //////////////////////////////////////////
 
