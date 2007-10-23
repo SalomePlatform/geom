@@ -99,6 +99,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_1Sel1List4Btn
+//////////////////////////////////////////
+
+#include "ui_DlgRef_1Sel1List4Btn_QTD.h"
+
+class DLGREF_EXPORT DlgRef_1Sel1List4Btn : public QWidget, 
+					   public Ui::DlgRef_1Sel1List4Btn_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_1Sel1List4Btn( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_1Sel1List4Btn();
+};
+
+//////////////////////////////////////////
 // DlgRef_1Sel1Spin1Check
 //////////////////////////////////////////
 

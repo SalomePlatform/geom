@@ -227,13 +227,15 @@ const char* GEOMBase_Skeleton::getNewObjectName() const
 //=================================================================================
 int GEOMBase_Skeleton::getConstructorId() const
 {
-  /*if ( GroupConstructors != NULL && GroupConstructors->selected() != NULL )
-    return GroupConstructors->id( GroupConstructors->selected() );
-    return -1;*/
-
-  if ( myRBGroup != NULL )
+  if ( myRBGroup )
     return myRBGroup->checkedId();
   return -1;
+}
+
+void GEOMBase_Skeleton::setConstructorId( const int id )
+{
+  if ( myRBGroup && myRBGroup->button( id ) )
+    myRBGroup->button( id )->setChecked( true );
 }
 
 //=================================================================================

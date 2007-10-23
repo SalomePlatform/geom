@@ -1,117 +1,93 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2004  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2004  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : GroupGUI_GroupDlg.cxx
+// Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
 //
-//
-//  File   : GroupGUI_GroupDlg.cxx
-//  Author : Sergey ANIKIN
-//  Module : GEOM
-//  $Header$
 
 #include "GroupGUI_GroupDlg.h"
 
-#include "SUIT_Desktop.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "SalomeApp_Study.h"
-#include "LightApp_SelectionMgr.h"
+#include <SUIT_Desktop.h>
+#include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
+#include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
+#include <LightApp_SelectionMgr.h>
 
-#include "GEOMBase.h"
+#include <GEOM_DlgRef.h>
+#include <GEOMBase.h>
 
-#include "GEOMImpl_Types.hxx"
-
-#include <qlabel.h>
-#include <qlistbox.h>
-#include <qlineedit.h>
-#include <qmap.h>
+#include <GEOMImpl_Types.hxx>
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_MapOfInteger.hxx>
 
-
-GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWidget* parent)
-  :GEOMBase_Skeleton( theGeometryGUI, parent, "GroupGUI_GroupDlg", false,
-                      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu),
-   myMode( mode ),
-   myBusy( false )
+GroupGUI_GroupDlg::GroupGUI_GroupDlg( Mode mode, GeometryGUI* theGeometryGUI, QWidget* parent )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, false ),
+    myMode( mode ),
+    myBusy( false )
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
-  QPixmap image0     (resMgr->loadPixmap("GEOM", tr("ICON_OBJBROWSER_VERTEX")));
-  QPixmap image1     (resMgr->loadPixmap("GEOM", tr("ICON_OBJBROWSER_EDGE")));
-  QPixmap image2     (resMgr->loadPixmap("GEOM", tr("ICON_OBJBROWSER_FACE")));
-  QPixmap image3     (resMgr->loadPixmap("GEOM", tr("ICON_OBJBROWSER_SOLID")));
-  QPixmap iconSelect (resMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image0    ( resMgr->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_VERTEX" ) ) );
+  QPixmap image1    ( resMgr->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_EDGE" ) ) );
+  QPixmap image2    ( resMgr->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_FACE" ) ) );
+  QPixmap image3    ( resMgr->loadPixmap( "GEOM", tr( "ICON_OBJBROWSER_SOLID" ) ) );
+  QPixmap iconSelect( resMgr->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption( myMode == CreateGroup ? tr( "CREATE_GROUP_TITLE" ) : tr( "EDIT_GROUP_TITLE" ) );
+  setWindowTitle( myMode == CreateGroup ? tr( "CREATE_GROUP_TITLE" ) : tr( "EDIT_GROUP_TITLE" ) );
 
   // Shape type button group
-  GroupConstructors->setEnabled( myMode == CreateGroup );
-  GroupConstructors->setTitle( tr( "SHAPE_TYPE" ) );
-  RadioButton1->setPixmap( image0 );
-  RadioButton2->setPixmap( image1 );
-  RadioButton3->setPixmap( image2 );
-  RadioButton4->setPixmap( image3 );
-  RadioButton4->show();
+  mainFrame()->GroupConstructors->setEnabled( myMode == CreateGroup );
+  mainFrame()->GroupConstructors->setTitle( tr( "SHAPE_TYPE" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setIcon( image1 );
+  mainFrame()->RadioButton3->setIcon( image2 );
+  mainFrame()->RadioButton4->setIcon( image3 );
+  mainFrame()->RadioButton4->show();
 
   // Group name
-  GroupBoxName->setTitle( tr( "GROUP_NAME" ) );
+  mainFrame()->GroupBoxName->setTitle( tr( "GROUP_NAME" ) );
 
   // Main shape and sub-shapes
-  GroupMedium = new QGroupBox( 1, Qt::Vertical, tr( "MAIN_SUB_SHAPES" ), this );
-  GroupMedium->setInsideMargin( 10 );
-  Layout1->addWidget( GroupMedium, 2, 0 );
+  myGroupBox = new DlgRef_1Sel1List4Btn( centralWidget() );
+  myGroupBox->GroupBox1->setTitle( tr( "MAIN_SUB_SHAPES" ) );
+  myGroupBox->TextLabel1->setText( tr( "MAIN_SHAPE" ) );
+  myGroupBox->PushButton1->setIcon( iconSelect );
+  myGroupBox->PushButton1->setEnabled( myMode == CreateGroup );
+  myGroupBox->LineEdit1->setReadOnly( true );
+  myGroupBox->LineEdit1->setEnabled( myMode == CreateGroup );
+  myGroupBox->PushButton2->setText( tr( "SELECT_SUB_SHAPES" ) );
+  myGroupBox->PushButton3->setText( tr( "SELECT_ALL" ) );
+  myGroupBox->PushButton4->setText( tr( "ADD" ) );
+  myGroupBox->PushButton5->setText( tr( "REMOVE" ) );
+  myGroupBox->ListView1->setSelectionMode( QAbstractItemView::ExtendedSelection );
+  myGroupBox->ListView1->setFlow( QListView::TopToBottom );
+  myGroupBox->ListView1->setWrapping( true );
 
-  QWidget* aFrame = new QWidget( GroupMedium );
-  QGridLayout* aMedLayout = new QGridLayout( aFrame, 4, 4, 0, 6 );
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( myGroupBox );
 
-  QLabel* aMainLabel = new QLabel( tr( "MAIN_SHAPE" ), aFrame );
-
-  mySelBtn = new QPushButton( aFrame );
-  mySelBtn->setPixmap( iconSelect );
-  mySelBtn->setEnabled( myMode == CreateGroup );
-
-  myMainName = new QLineEdit( aFrame );
-  myMainName->setReadOnly( true );
-  myMainName->setEnabled( myMode == CreateGroup );
-
-  mySelSubBtn = new QPushButton( tr( "SELECT_SUB_SHAPES" ), aFrame );
-  mySelAllBtn = new QPushButton( tr( "SELECT_ALL" ), aFrame );
-  myAddBtn    = new QPushButton( tr( "ADD" ), aFrame );
-  myRemBtn    = new QPushButton( tr( "REMOVE" ), aFrame );
-  myIdList    = new QListBox( aFrame );
-
-  myIdList->setSelectionMode( QListBox::Extended );
-  myIdList->setRowMode( QListBox::FitToWidth );
-
-  aMedLayout->addWidget( aMainLabel, 0, 0 );
-  aMedLayout->addWidget( mySelBtn, 0, 1 );
-  aMedLayout->addMultiCellWidget( myMainName, 0, 0, 2, 3 );
-  aMedLayout->addMultiCellWidget( mySelSubBtn, 1, 1, 0, 2 );
-  aMedLayout->addWidget( mySelAllBtn, 1, 3 );
-  aMedLayout->addMultiCellWidget( myIdList, 2, 3, 0, 2 );
-  aMedLayout->addWidget( myAddBtn, 2, 3 );
-  aMedLayout->addWidget( myRemBtn, 3, 3 );
-
-  setHelpFileName("working_with_groups.htm");
+  setHelpFileName( "working_with_groups.htm" );
 
   Init();
 }
@@ -133,10 +109,10 @@ void GroupGUI_GroupDlg::Init()
     initName( tr( "GROUP_PREFIX" ) );
 
     // Get ready for main shape selection
-    myEditCurrentArgument = myMainName;
+    myEditCurrentArgument = myGroupBox->LineEdit1;
 
-    connect( GroupConstructors, SIGNAL( clicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
-    connect( mySelBtn,          SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
+    connect( this, SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
+    connect( myGroupBox->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   }
   else if ( myMode == EditGroup && IObjectCount() ) {
     Standard_Boolean aResult = Standard_False;
@@ -146,39 +122,36 @@ void GroupGUI_GroupDlg::Init()
     if ( aResult && !CORBA::is_nil( anObj ) && anObj->GetType() == GEOM_GROUP ) {
       myGroup = anObj;
 
-      ResultName->setText( GEOMBase::GetName( myGroup ) );
+      mainFrame()->ResultName->setText( GEOMBase::GetName( myGroup ) );
 
       GEOM::GEOM_IGroupOperations_var anOp = GEOM::GEOM_IGroupOperations::_narrow( getOperation() );
       myMainObj = anOp->GetMainShape( myGroup );
       if ( !CORBA::is_nil( myMainObj ) )
-        myMainName->setText( GEOMBase::GetName( myMainObj ) );
+        myGroupBox->LineEdit1->setText( GEOMBase::GetName( myMainObj ) );
 
       setShapeType( (TopAbs_ShapeEnum)anOp->GetType( myGroup ) );
 
       GEOM::ListOfLong_var aCurrList = anOp->GetObjects( myGroup );
-      QListBoxItem* anItem;
-      for ( int i = 0, n = aCurrList->length(); i < n; i++ ) {
-        anItem = new QListBoxText( QString( "%1" ).arg(aCurrList[i] ) );
-        myIdList->insertItem( anItem );
-      }
+      for ( int i = 0, n = aCurrList->length(); i < n; i++ )
+        myGroupBox->ListView1->addItem( new QListWidgetItem( QString( "%1" ).arg( aCurrList[i] ) ) );
 
       myEditCurrentArgument = 0;
     }
   }
 
   LightApp_SelectionMgr* aSelMgr =
-    ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+    ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr();
 
   connect( aSelMgr,     SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  connect( buttonOk   , SIGNAL( clicked() ), this, SLOT( ClickOnOk()    ) );
-  connect( buttonApply, SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk()    ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect( mySelSubBtn, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( mySelAllBtn, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( myAddBtn,    SIGNAL( clicked() ), this, SLOT( add() ) );
-  connect( myRemBtn,    SIGNAL( clicked() ), this, SLOT( remove() ) );
-  connect( myIdList,    SIGNAL( selectionChanged() ), this, SLOT( selectionChanged() ) );
+  connect( myGroupBox->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( myGroupBox->PushButton3, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( myGroupBox->PushButton4, SIGNAL( clicked() ), this, SLOT( add() ) );
+  connect( myGroupBox->PushButton5, SIGNAL( clicked() ), this, SLOT( remove() ) );
+  connect( myGroupBox->ListView1,   SIGNAL( itemSelectionChanged() ), this, SLOT( selectionChanged() ) );
 
   activateSelection();
 }
@@ -187,9 +160,9 @@ void GroupGUI_GroupDlg::Init()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void GroupGUI_GroupDlg::enterEvent( QEvent* e )
+void GroupGUI_GroupDlg::enterEvent( QEvent* )
 {
-  if ( !buttonCancel->isEnabled() )
+  if ( !buttonCancel()->isEnabled() )
     this->ActivateThisDialog();
 }
 
@@ -212,13 +185,13 @@ bool GroupGUI_GroupDlg::ClickOnApply()
   if ( !onAccept( myMode == CreateGroup, true ) )
     return false;
 
-  if ( myMode == CreateGroup )
-    {
-      initName();
-      myIdList->clear();
-    }
-  else
+  if ( myMode == CreateGroup ) {
+    initName();
+    myGroupBox->ListView1->clear();
+  }
+  else {
     activateSelection();
+  }
   return true;
 }
 
@@ -231,7 +204,7 @@ void GroupGUI_GroupDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
@@ -245,12 +218,13 @@ void GroupGUI_GroupDlg::LineEditReturnPressed()
 {
   QLineEdit* send = ( QLineEdit* )sender();
 
-  if ( send == myMainName && !myEditCurrentArgument ) {
-    myEditCurrentArgument = myMainName;
+  if ( send == myGroupBox->LineEdit1 && !myEditCurrentArgument ) {
+    myEditCurrentArgument = myGroupBox->LineEdit1;
     activateSelection();
   }
-  else
+  else {
     GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 
   updateState();
 }
@@ -264,14 +238,14 @@ void GroupGUI_GroupDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
-  if ( send == mySelBtn )
-    myEditCurrentArgument = myMainName;
-  else if ( send == mySelSubBtn || send == mySelAllBtn )
+  if ( send == myGroupBox->PushButton1 )
+    myEditCurrentArgument = myGroupBox->LineEdit1;
+  else if ( send == myGroupBox->PushButton2 || send == myGroupBox->PushButton3 )
     myEditCurrentArgument = 0;
 
   activateSelection();
 
-  if ( send == mySelAllBtn )
+  if ( send == myGroupBox->PushButton3 )
     selectAllSubShapes();
   else
     updateState();
@@ -286,7 +260,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 {
   if ( myEditCurrentArgument ) {  // Selection of a main shape is active
     myEditCurrentArgument->setText( "" );
-    myIdList->clear();
+    myGroupBox->ListView1->clear();
 
     if ( IObjectCount() == 1 ) {
       Standard_Boolean aResult = Standard_False;
@@ -307,9 +281,9 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     if ( myBusy )
       return;
 
-    bool isBlocked = myIdList->signalsBlocked();
-    myIdList->blockSignals( true );
-    myIdList->clearSelection();
+    bool isBlocked = myGroupBox->ListView1->signalsBlocked();
+    myGroupBox->ListView1->blockSignals( true );
+    myGroupBox->ListView1->clearSelection();
 
     TColStd_IndexedMapOfInteger aMapIndex;
 
@@ -319,7 +293,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
         GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
       if ( aResult && !anObj->_is_nil() )
-        ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->
+        ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->
           selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
     }
 
@@ -333,48 +307,44 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
       GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
       GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
 
-      for (int i = 0; i < anObjects.length(); i++) 
-	{
-	  GEOM::GEOM_Object_var aGeomObj = anObjects[i];
-	  GEOM::ListOfGO_var aSubObjects = new GEOM::ListOfGO();
-	  TopoDS_Shape aShape;
-	  if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) ) 
-	    {
-	      aSubObjects->length(1);
-	      aSubObjects[0] = aGeomObj;
-	    }
-	  else if (aGeomObj->GetType() == GEOM_GROUP)
-	    aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
-	  else
-	    continue;
-
-	  for (int i = 0; i < aSubObjects->length(); i++) 
-	    {
-	      TopoDS_Shape aShape;
-	      if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) ) 
-		{
-		  CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
-		  if ( anIndex >= 0 )
-		    aMapIndex.Add( anIndex );
-		}
-	    }
+      for (int i = 0; i < anObjects.length(); i++) {
+	GEOM::GEOM_Object_var aGeomObj = anObjects[i];
+	GEOM::ListOfGO_var aSubObjects = new GEOM::ListOfGO();
+	TopoDS_Shape aShape;
+	if ( GEOMBase::GetShape( aGeomObj, aShape, getShapeType() ) ) {
+	  aSubObjects->length(1);
+	  aSubObjects[0] = aGeomObj;
 	}
+	else if (aGeomObj->GetType() == GEOM_GROUP)
+	  aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
+	else
+	  continue;
+
+	for (int i = 0; i < aSubObjects->length(); i++) {
+	  TopoDS_Shape aShape;
+	  if ( GEOMBase::GetShape( aSubObjects[i], aShape, getShapeType() ) ) {
+	    CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+	    if ( anIndex >= 0 )
+	      aMapIndex.Add( anIndex );
+	  }
+	}
+      }
       
       if ( !myMainObj->_is_nil() )
       	localSelection( myMainObj, getShapeType() );
     }
 
-    if (aMapIndex.Extent() >= 1) {
+    if ( aMapIndex.Extent() >= 1 ) {
       QMap<int, int> aMap;
-      for ( int i = 0, n = myIdList->count(); i < n; i++ )
-        aMap.insert( myIdList->item( i )->text().toInt(), i );
+      for ( int i = 0, n = myGroupBox->ListView1->count(); i < n; i++ )
+        aMap.insert( myGroupBox->ListView1->item( i )->text().toInt(), i );
 
       for ( int ii = 1, nn = aMapIndex.Extent(); ii <= nn; ii++ ) {
         if ( aMap.contains( aMapIndex( ii ) ) )
-          myIdList->setSelected( aMap[aMapIndex( ii )], true );
+          myGroupBox->ListView1->item( aMap[aMapIndex( ii )])->setSelected( true );
       }
     }
-    myIdList->blockSignals( isBlocked );
+    myGroupBox->ListView1->blockSignals( isBlocked );
   }
 
   updateState();
@@ -384,9 +354,9 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void GroupGUI_GroupDlg::ConstructorsClicked( int constructorId )
+void GroupGUI_GroupDlg::ConstructorsClicked( int )
 {
-  myIdList->clear();
+  myGroupBox->ListView1->clear();
   activateSelection();
   updateState();
 }
@@ -407,22 +377,21 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
   if ( !aShOp->IsDone() )
     return;
 
-  bool isBlocked = myIdList->signalsBlocked();
-  myIdList->blockSignals( true );
-  myIdList->clear();
+  bool isBlocked = myGroupBox->ListView1->signalsBlocked();
+  myGroupBox->ListView1->blockSignals( true );
+  myGroupBox->ListView1->clear();
 
-  QListBoxItem* anItem;
   for ( int i = 0, n = aSubShapes->length(); i < n; i++ ) {
     CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubShapes[i] );
     if ( anIndex < 0 )
       continue;
 
-    anItem = new QListBoxText( QString( "%1" ).arg( anIndex ) );
-    myIdList->insertItem( anItem );
-    myIdList->setSelected( anItem, true );
+    QListWidgetItem* anItem = new QListWidgetItem( QString( "%1" ).arg( anIndex ) );
+    myGroupBox->ListView1->addItem( anItem );
+    anItem->setSelected( true );
   }
 
-  myIdList->blockSignals( isBlocked );
+  myGroupBox->ListView1->blockSignals( isBlocked );
   highlightSubShapes();
   updateState();
 }
@@ -434,8 +403,8 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
 void GroupGUI_GroupDlg::add()
 {
   TColStd_MapOfInteger aMap;
-  for ( int i = 0, n = myIdList->count(); i < n; i++ )
-    aMap.Add( myIdList->item( i )->text().toInt() );
+  for ( int i = 0, n = myGroupBox->ListView1->count(); i < n; i++ )
+    aMap.Add( myGroupBox->ListView1->item( i )->text().toInt() );
 
   TColStd_IndexedMapOfInteger aMapIndex;
 
@@ -445,7 +414,7 @@ void GroupGUI_GroupDlg::add()
       GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
     if ( aResult && !anObj->_is_nil() )
-      ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->
+      ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->
         selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
   }
 
@@ -457,49 +426,44 @@ void GroupGUI_GroupDlg::add()
     GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
     GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
     
-    for (int i = 0; i < anObjects.length(); i++) 
-      {
-	GEOM::GEOM_Object_var aGeomObj = anObjects[i];
-	GEOM::ListOfGO_var aSubObjects  = new GEOM::ListOfGO();
-	TopoDS_Shape aShape;
-	if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) ) 
-	  {
-	    aSubObjects->length(1);
-	    aSubObjects[0] = aGeomObj;
-	  }
-	else if (aGeomObj->GetType() == GEOM_GROUP)
-	  aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
-	else
-	  break;
+    for ( int i = 0; i < anObjects.length(); i++ ) {
+      GEOM::GEOM_Object_var aGeomObj = anObjects[i];
+      GEOM::ListOfGO_var aSubObjects  = new GEOM::ListOfGO();
+      TopoDS_Shape aShape;
+      if ( GEOMBase::GetShape( aGeomObj, aShape, getShapeType() ) ) {
+	aSubObjects->length( 1 );
+	aSubObjects[0] = aGeomObj;
+      }
+      else if ( aGeomObj->GetType() == GEOM_GROUP )
+	aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false );
+      else
+	break;
 	
-	for (int i = 0; i < aSubObjects->length(); i++) 
-	  {
-	  TopoDS_Shape aShape;
-	  if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) ) 
-	    {
-	      CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
-	      if ( anIndex >= 0 )
-		aMapIndex.Add( anIndex );
-	    }
+      for ( int i = 0; i < aSubObjects->length(); i++ ) {
+	TopoDS_Shape aShape;
+	if ( GEOMBase::GetShape( aSubObjects[i], aShape, getShapeType() ) ) {
+	  CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+	  if ( anIndex >= 0 )
+	    aMapIndex.Add( anIndex );
 	}
       }
+    }
   }
 
   if ( aMapIndex.Extent() >= 1 ) {
-    QListBoxItem* anItem;
-    bool isBlocked = myIdList->signalsBlocked();
-    myIdList->blockSignals( true );
+    bool isBlocked = myGroupBox->ListView1->signalsBlocked();
+    myGroupBox->ListView1->blockSignals( true );
 
     for ( int i = 1, n = aMapIndex.Extent(); i <= n; i++ ) {
       if ( aMap.Contains( aMapIndex( i ) ) )
         continue;
 
-      anItem = new QListBoxText( QString( "%1" ).arg( aMapIndex( i ) ) );
-      myIdList->insertItem( anItem );
-      myIdList->setSelected( anItem, true );
+      QListWidgetItem* anItem = new QListWidgetItem( QString( "%1" ).arg( aMapIndex( i ) ) );
+      myGroupBox->ListView1->addItem( anItem );
+      anItem->setSelected( true );
     }
 
-    myIdList->blockSignals( isBlocked );
+    myGroupBox->ListView1->blockSignals( isBlocked );
   }
 
   updateState();
@@ -511,22 +475,12 @@ void GroupGUI_GroupDlg::add()
 //=================================================================================
 void GroupGUI_GroupDlg::remove()
 {
-  for ( int i = myIdList->count() - 1; i >= 0; i-- ) {
-    if ( myIdList->isSelected( i ) )
-      myIdList->removeItem( i );
-  }
+  QListIterator<QListWidgetItem*> it( myGroupBox->ListView1->selectedItems() );
+  while ( it.hasNext() )
+    delete it.next();
   updateState();
 }
 
-
-//=================================================================================
-// function : getConstructorId()
-// purpose  :
-//=================================================================================
-int GroupGUI_GroupDlg::getConstructorId() const
-{
-  return GroupConstructors->id( GroupConstructors->selected() );
-}
 
 //=================================================================================
 // function : getShapeType()
@@ -556,7 +510,7 @@ void GroupGUI_GroupDlg::setShapeType( const TopAbs_ShapeEnum theType )
   case TopAbs_FACE:   anId = 2; break;
   case TopAbs_SOLID:  anId = 3; break;
   }
-  GroupConstructors->setButton( anId );
+  setConstructorId( anId );
 }
 
 
@@ -591,75 +545,68 @@ void GroupGUI_GroupDlg::updateState()
       GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
     if ( aResult && !anObj->_is_nil() )
-      ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->
+      ( (SalomeApp_Application*)(SUIT_Session::session()->activeApplication() ) )->
         selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
   }
 
   // try to find out and process the object browser selection
   if ( !aMapIndex.Extent() && !CORBA::is_nil( myMainObj ) ) {
     GEOM::ListOfGO anObjects;
-    GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
+    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), anObjects );
     
     GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
     GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
 
      isAdd = true;
      
-     for (int i = 0; i < anObjects.length(); i++) 
-       {
-	 GEOM::GEOM_Object_var aGeomObj = anObjects[i];
-	 GEOM::ListOfGO_var aSubObjects = new GEOM::ListOfGO();
+     for ( int i = 0; i < anObjects.length(); i++ ) {
+       GEOM::GEOM_Object_var aGeomObj = anObjects[i];
+       GEOM::ListOfGO_var aSubObjects = new GEOM::ListOfGO();
+       TopoDS_Shape aShape;
+       if ( GEOMBase::GetShape( aGeomObj, aShape, getShapeType() ) ) {
+	 aSubObjects->length( 1 );
+	 aSubObjects[0] = aGeomObj;
+       }
+       else if ( aGeomObj->GetType() == GEOM_GROUP )
+	 aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false );
+       else {
+	 aMapIndex.Clear();
+	 break;
+       }
+       
+       for ( int i = 0; i < aSubObjects->length(); i++ ) {
 	 TopoDS_Shape aShape;
-	 if ( GEOMBase::GetShape(aGeomObj, aShape, getShapeType()) ) 
-	   {
-	     aSubObjects->length(1);
-	     aSubObjects[0] = aGeomObj;
-	   }
-	 else if (aGeomObj->GetType() == GEOM_GROUP)
-	   aSubObjects = aShapesOp->MakeExplode( aGeomObj, getShapeType(), false);
+	 aSubObjects[i];
+	 if ( GEOMBase::GetShape( aSubObjects[i], aShape, getShapeType() ) ) {
+	   CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+	   if ( anIndex >= 0 )
+	     aMapIndex.Add( anIndex );
+	   else
+	     isAdd = false;
+	 }
 	 else
-	   {
-	     aMapIndex.Clear();
-	     break;
-	   }
-	 
-	 for (int i = 0; i < aSubObjects->length(); i++) 
-	   {
-	     TopoDS_Shape aShape;
-	     aSubObjects[i];
-	     if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) ) 
-	       {
-		 CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
-		 if ( anIndex >= 0 )
-		   aMapIndex.Add( anIndex );
-		 else
-		   isAdd = false;
-	       }
-	     else
-	       isAdd = false;
+	   isAdd = false;
 	     
-	     if ( !isAdd ) {
-	       aMapIndex.Clear();
-	       break;
-	     }
-	   }
-	 
 	 if ( !isAdd ) {
 	   aMapIndex.Clear();
 	   break;
 	 }
        }
+       
+       if ( !isAdd ) {
+	 aMapIndex.Clear();
+	 break;
+       }
+     }
   }
   
   isAdd = aMapIndex.Extent() > 0;
 
-  myAddBtn->setEnabled( !myEditCurrentArgument && !CORBA::is_nil( myMainObj ) && isAdd );
-  bool hasSel = false;
-  for ( int ii = 0, nn = myIdList->count(); !hasSel && ii < nn; ii++ )
-    hasSel =  myIdList->isSelected( ii );
-  myRemBtn->setEnabled( hasSel );
-  mySelSubBtn->setEnabled( !CORBA::is_nil( myMainObj ) );
-  mySelAllBtn->setEnabled( !CORBA::is_nil( myMainObj ) );
+  myGroupBox->PushButton4->setEnabled( !myEditCurrentArgument && !CORBA::is_nil( myMainObj ) && isAdd );
+  bool hasSel = myGroupBox->ListView1->selectedItems().count() > 0;
+  myGroupBox->PushButton5->setEnabled( hasSel );
+  myGroupBox->PushButton2->setEnabled( !CORBA::is_nil( myMainObj ) );
+  myGroupBox->PushButton3->setEnabled( !CORBA::is_nil( myMainObj ) );
 }
 
 //=================================================================================
@@ -692,12 +639,12 @@ void GroupGUI_GroupDlg::highlightSubShapes()
 
   myBusy = true;
 
-  for ( int ii = 0, nn = myIdList->count(); ii < nn; ii++ )
-    if ( myIdList->isSelected( ii ) )
-      anIds.Add( myIdList->item( ii )->text().toInt() );
+  for ( int ii = 0, nn = myGroupBox->ListView1->count(); ii < nn; ii++ )
+    if ( myGroupBox->ListView1->item( ii )->isSelected() )
+      anIds.Add( myGroupBox->ListView1->item( ii )->text().toInt() );
 
   LightApp_SelectionMgr* aSelMgr =
-    ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr();
+    ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr();
   aSelMgr->clearSelected();
   aSelMgr->AddOrRemoveIndex( aSh->getIO(), anIds, false );
 
@@ -738,10 +685,10 @@ bool GroupGUI_GroupDlg::isValid( QString& theMessage )
     RETURN_WITH_MSG( !CORBA::is_nil( myMainObj ), tr( "NO_GROUP" ) )
   }
 
-  QString aName (getNewObjectName());
-  RETURN_WITH_MSG  ( !aName.stripWhiteSpace().isEmpty(), tr( "EMPTY_NAME" ) )
+  QString aName( getNewObjectName() );
+  RETURN_WITH_MSG  ( !aName.trimmed().isEmpty(), tr( "EMPTY_NAME" ) )
 
-  RETURN_WITH_MSG  ( myIdList->count(), tr( "EMPTY_LIST" ) )
+  RETURN_WITH_MSG  ( myGroupBox->ListView1->count(), tr( "EMPTY_LIST" ) )
   return true;
 }
 
@@ -772,8 +719,8 @@ bool GroupGUI_GroupDlg::execute( ObjectList& objects )
       return false;
   }
 
-  for ( int ii = 0, nn = myIdList->count(); ii < nn; ii++ ) {
-    anOp->AddObject( aGroup, myIdList->item( ii )->text().toInt() );
+  for ( int ii = 0, nn = myGroupBox->ListView1->count(); ii < nn; ii++ ) {
+    anOp->AddObject( aGroup, myGroupBox->ListView1->item( ii )->text().toInt() );
     if ( !anOp->IsDone()  )
       return false;
   }

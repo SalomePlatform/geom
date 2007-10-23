@@ -248,7 +248,7 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
   
   try
   {
-    if( aDist <= 1.e-9 ) {
+    if ( aDist <= 1.e-9 ) {
       BRepBuilderAPI_MakeVertex aMaker( aPnt1 );
       return getDisplayer()->BuildPrs( aMaker.Vertex() );
     }

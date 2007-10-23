@@ -80,6 +80,20 @@ DlgRef_1Sel1Check::~DlgRef_1Sel1Check()
 }
 
 //////////////////////////////////////////
+// DlgRef_1Sel1List4Btn
+//////////////////////////////////////////
+
+DlgRef_1Sel1List4Btn::DlgRef_1Sel1List4Btn( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_1Sel1List4Btn::~DlgRef_1Sel1List4Btn()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_1Sel1Spin1Check
 //////////////////////////////////////////
 

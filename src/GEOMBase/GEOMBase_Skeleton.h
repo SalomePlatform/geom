@@ -73,6 +73,9 @@ protected:
     /*! returns id of a selected "constructor" radio button or '-1' in case of error
      */
     int                 getConstructorId() const;
+    /*! set selected "constructor" radio button id
+     */
+    void                setConstructorId( const int );
 
     void                setHelpFileName( const QString& );
 

@@ -27,7 +27,6 @@
 #include "MeasureGUI_Widgets.h"
 
 #include <GEOMBase.h>
-//#include <GEOM_Displayer.h>
 
 #include <BRepPrimAPI_MakeBox.hxx>
 

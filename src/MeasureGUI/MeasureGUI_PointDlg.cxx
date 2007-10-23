@@ -33,14 +33,11 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-//#include <TColStd_MapOfInteger.hxx>
-//#include <TopAbs_ShapeEnum.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>
-//#include <TopAbs_ShapeEnum.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <gp_Pnt.hxx>

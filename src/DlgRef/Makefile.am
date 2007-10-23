@@ -42,6 +42,7 @@ UIC_FILES = \
 	ui_DlgRef_1Sel1Check1List_QTD.h	\
 	ui_DlgRef_1Sel1Check1Sel_QTD.h	\
 	ui_DlgRef_1Sel1Check_QTD.h	\
+	ui_DlgRef_1Sel1List4Btn_QTD.h	\
 	ui_DlgRef_1Sel1Spin1Check_QTD.h	\
 	ui_DlgRef_1Sel1Spin_QTD.h	\
 	ui_DlgRef_1Sel2Spin_QTD.h	\
