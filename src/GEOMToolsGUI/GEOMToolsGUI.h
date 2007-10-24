@@ -58,8 +58,6 @@ private:
   void         OnEditDelete();
 
   void         OnSettingsColor();
-  void         OnSettingsIsos();
-  void         OnSettingsStep();
   void         OnRename();
   void         OnCheckGeometry();
 

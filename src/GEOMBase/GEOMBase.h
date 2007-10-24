@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File   : GEOMBase.h
-// Author : Damien COQUERET
+// Author : Damien COQUERET, Open CASCADE S.A.S.
 //
 
 #ifndef GEOMBASE_H
@@ -97,12 +97,6 @@ public :
   /* Used just by Plane and Prism */
   static bool LinearEdgeExtremities(const TopoDS_Shape& S, gp_Pnt& P1, gp_Pnt& P2);
   static void GetBipointDxDyDz(gp_Pnt P1, gp_Pnt P2, double& dx, double& dy, double& dz);
-
-  /* User dialog 1 parameter returned */
-  static double Parameter(Standard_Boolean& res,
-			  const char* aValue1 = 0, const char* aTitle1 = 0,
-			  const char* aTitle = 0, const double bottom = -1E6,
-			  const double top = +1E6, const int decimals = 6);
 
   /* Simulation management */
   static bool CreateArrowForLinearEdge(const TopoDS_Shape& tds, TopoDS_Shape& ArrowCone);

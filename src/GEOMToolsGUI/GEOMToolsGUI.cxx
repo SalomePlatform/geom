@@ -200,16 +200,6 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 	OnSettingsColor();
 	break;
       }
-    case 413: // SETTINGS - ISOS
-      {
-	OnSettingsIsos();
-	break;
-      }
-    case 414: // SETTINGS : STEP VALUE FOR SPIN BOXES
-      {
-	OnSettingsStep();
-	break;
-      }
     case 804: // ADD IN STUDY - POPUP VIEWER
       {
 	// SAN -- TO BE REMOVED !!!!

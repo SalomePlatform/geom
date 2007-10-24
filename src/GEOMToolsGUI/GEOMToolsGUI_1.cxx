@@ -90,66 +90,6 @@ void GEOMToolsGUI::OnSettingsColor()
   }
 }
 
-void GEOMToolsGUI::OnSettingsIsos()
-{
-/*
-  SUIT_Session* sess = SUIT_Session::session();
-  SUIT_ResourceMgr* resMgr = sess->resourceMgr();
-  SUIT_Desktop* desk = sess->activeApplication()->desktop();
-
-  SUIT_ViewManager* vman = desk->activeWindow()->getViewManager();
-  QString type = vman->getType();
-
-  if ( type != OCCViewer_Viewer::Type() )
-    return;
-
-  OCCViewer_Viewer* vm = (OCCViewer_Viewer*)vman->getViewModel();
-  Handle (AIS_InteractiveContext) ic = vm->getAISContext();
-
-  int IsoU = resMgr->integerValue( "Geometry:SettingsIsoU", 1 );
-  int IsoV = resMgr->integerValue( "Geometry:SettingsIsoV", 1 );
-
-  ic->DefaultDrawer()->UIsoAspect()->SetNumber( IsoU );
-  ic->DefaultDrawer()->VIsoAspect()->SetNumber( IsoV );
-
-  GEOMBase_NbIsosDlg* NbIsosDlg = new GEOMBase_NbIsosDlg(desk, tr("GEOM_MEN_ISOS"), TRUE);
-
-  NbIsosDlg->SpinBoxU->setValue(IsoU);
-  NbIsosDlg->SpinBoxV->setValue(IsoV);
-
-  if(NbIsosDlg->exec()) {
-    IsoU = NbIsosDlg->SpinBoxU->text().toInt();
-    IsoV = NbIsosDlg->SpinBoxV->text().toInt();
-
-    ic->DefaultDrawer()->UIsoAspect()->SetNumber(UIso);
-    ic->DefaultDrawer()->VIsoAspect()->SetNumber(VIso);
-    resMgr->setValue("Geometry:SettingsIsoU", isoU);
-    resMgr->setValue("Geometry:SettingsIsoV", isoV);
-  }
-*/
-}
-
-void GEOMToolsGUI::OnSettingsStep()
-{
-  SUIT_Session* sess = SUIT_Session::session();
-  SUIT_ResourceMgr* resMgr = sess->resourceMgr();
-
-  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100. );
-
-  Standard_Boolean res = false;
-  double dd = GEOMBase::Parameter( res, QString("%1").arg(step).toLatin1().constData(), 
-				   tr("GEOM_MEN_STEP_LABEL").toLatin1().constData(), 
-				   tr("GEOM_STEP_TITLE").toLatin1().constData(), 0.001, 10000.0, 3);
-  if(res) {
-    resMgr->setValue( "Geometry", "SettingsGeomStep", dd );
-
-    /* Emit signal to GeometryGUI_SpinBoxes */
-    getGeometryGUI()->EmitSignalDefaultStepValueChanged( dd );
-  }
-  else
-    sess->activeApplication()->putInfo(tr("GEOM_PRP_ABORT"));
-}
-
 void GEOMToolsGUI::OnRename()
 {
   SALOME_ListIO selected;

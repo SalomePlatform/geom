@@ -25,8 +25,6 @@
 
 #include "GEOMBase.h"
 
-#include "GEOMBase_aParameterDlg.h"
-
 #include <GeometryGUI.h>
 #include <GEOM_Client.hxx>
 
@@ -738,34 +736,6 @@ bool GEOMBase::LinearEdgeExtremities(const TopoDS_Shape& S,  gp_Pnt& P1, gp_Pnt&
     return false;
 
   return true;
-}
-
-
-//=======================================================================
-// function : Parameter()
-// purpose  : return a parameter (float) from a dialog box
-//
-//  avalue1    : is a float or integer used as a default value displayed
-//  aTitle1    : is the title for aValue1
-//  aTitle     : is the main title
-//  bottom     : maximum value to be entered
-//  top	       : minimum value to be entered
-//  decimals   : number of decimals
-//=======================================================================
-double GEOMBase::Parameter(Standard_Boolean& res, const char* aValue1, const char* aTitle1, const char* aTitle, const double bottom, const double top, const int decimals)
-{
-  GEOMBase_aParameterDlg * Dialog = new GEOMBase_aParameterDlg(aValue1, aTitle1, SUIT_Session::session()->activeApplication()->desktop(),
-							       aTitle, TRUE, 0, bottom, top, decimals);
-  int r = Dialog->exec();
-  float X = 0.0;
-  if(r == QDialog::Accepted) {
-    res = Standard_True;
-    X = Dialog->getValue();
-  }
-  else
-    res = Standard_False;
-  delete Dialog;
-  return X;
 }
 
 

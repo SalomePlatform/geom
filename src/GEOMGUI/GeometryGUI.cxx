@@ -351,8 +351,6 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 33   ||  // MENU EDIT - DELETE
       id == 411  ||  // MENU SETTINGS - ADD IN STUDY
       id == 412  ||  // MENU SETTINGS - SHADING COLOR
-      id == 413  ||  // MENU SETTINGS - ISOS
-      id == 414  ||  // MENU SETTINGS - STEP VALUE FOR SPIN BOXES
       id == 5103 ||  // MENU TOOLS - CHECK GEOMETRY
       id == 8032 ||  // POPUP VIEWER - COLOR
       id == 8033 ||  // POPUP VIEWER - TRANSPARENCY
@@ -826,8 +824,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 5103, "CHECK_GEOMETRY" );
 
   createGeomAction( 412, "SHADING_COLOR" );
-  createGeomAction( 413, "ISOS" );
-  createGeomAction( 414, "STEP_VALUE" );
 
   createGeomAction( 211, "SHADING" );
   createGeomAction( 212, "DISPLAY_ALL" );
@@ -989,8 +985,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   //createMenu( separator(), prefId, -1 );
   //int geomId = createMenu( tr( "MEN_PREFERENCES_GEOM" ), prefId, -1 );
   //createMenu( 412, geomId, -1 );
-  //createMenu( 413, geomId, -1 );
-  //createMenu( 414, geomId, -1 );
   //createMenu( separator(), prefId, -1 );
 
   int viewId = createMenu( tr( "MEN_VIEW" ), -1, -1 );
@@ -1262,7 +1256,6 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
   action( 607 )->setEnabled( ViewOCC ); // RemoveInternalWires
   action( 608 )->setEnabled( ViewOCC ); // AddPointOnEdge
 //  action( 609 )->setEnabled( ViewOCC ); // Free boundaries
-  action( 413 )->setEnabled( ViewOCC ); // Isos Settings
 
   action( 800 )->setEnabled( ViewOCC ); // Create Group
   action( 801 )->setEnabled( ViewOCC ); // Edit Group

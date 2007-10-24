@@ -32,7 +32,6 @@
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 
-
 class GEOMBASE_EXPORT GEOM_Operation : public SUIT_Operation
 {
 public:
@@ -41,11 +40,11 @@ public:
 
 protected:
   // Reimplemented from SUIT_Operation
-  virtual void    startOperation();        
-  virtual void    commitOperation();
-  virtual void    suspendOperation();
-  virtual void    resumeOperation();
-  virtual void    abortOperation();
+  virtual void               startOperation();        
+  virtual void               commitOperation();
+  virtual void               suspendOperation();
+  virtual void               resumeOperation();
+  virtual void               abortOperation();
 
 private:
   GEOM::GEOM_IOperations_var myIOperation;
