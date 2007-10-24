@@ -2821,6 +2821,7 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
     }
     MidXYZ.SetValue(Index,
 		    GPoint.X()*999 + GPoint.Y()*99 + GPoint.Z()*0.9);
+    //cout << Index << " L: " << Length(Index) << "CG: " << MidXYZ(Index) << endl;
   }
 
   // Sorting
@@ -2834,10 +2835,14 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
     {
       Standard_Real dMidXYZ = MidXYZ(OrderInd(Index)) - MidXYZ(OrderInd(Index+1));
       Standard_Real dLength = Length(OrderInd(Index)) - Length(OrderInd(Index+1));
-      if ( dMidXYZ > 0 ) {
+      if ( dMidXYZ >= tol ) {
+//         cout << "MidXYZ: " << MidXYZ(OrderInd(Index))<< " > " <<MidXYZ(OrderInd(Index+1))
+//              << " d: " << dMidXYZ << endl;
 	exchange = Standard_True;
       }
-      else if ( Abs(dMidXYZ) < tol && dLength > 0 ) {
+      else if ( Abs(dMidXYZ) < tol && dLength >= tol ) {
+//         cout << "Length: " << Length(OrderInd(Index))<< " > " <<Length(OrderInd(Index+1))
+//              << " d: " << dLength << endl;
 	exchange = Standard_True;
       }
       else if ( Abs(dMidXYZ) < tol && Abs(dLength) < tol &&
@@ -2850,7 +2855,8 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
         if ( box1.IsVoid() ) continue;
         BRepBndLib::Add( aShapes( OrderInd(Index+1) ), box2 );
         Standard_Real dSquareExtent = box1.SquareExtent() - box2.SquareExtent();
-        if ( dSquareExtent > 0 ) {
+        if ( dSquareExtent >= tol ) {
+//           cout << "SquareExtent: " << box1.SquareExtent()<<" > "<<box2.SquareExtent() << endl;
           exchange = Standard_True;
         }
         else if ( Abs(dSquareExtent) < tol ) {
@@ -2860,6 +2866,7 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
           box2.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
           val2 = (aXmin+aXmax)*999 + (aYmin+aYmax)*99 + (aZmin+aZmax)*0.9;
           exchange = val1 > val2;
+//           cout << "box: " << val1<<" > "<<val2 << endl;
         }
       }
       else {
@@ -2867,6 +2874,7 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
       }
       if (exchange)
       {
+//         cout << "exchange " << Index << " & " << Index+1 << endl;
         aTemp = OrderInd(Index);
         OrderInd(Index) = OrderInd(Index+1);
         OrderInd(Index+1) = aTemp;
