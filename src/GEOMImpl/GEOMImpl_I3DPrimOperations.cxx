@@ -1375,6 +1375,23 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
   
   pyDump<< "], [";
    
+  for(i =1 ; i <= nbSubBases; i++) {
+
+    Handle(Standard_Transient) anItem = theSubBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbBases)
+	pyDump<<", ";
+    }
+    
+  }
+  
+  pyDump<< "], [";
+   
   for(i =1 ; i <= nbLocs; i++) {
 
     Handle(Standard_Transient) anItem = theLocations->Value(i);
@@ -1390,6 +1407,138 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
   }  
 
   pyDump<< "], "<<thePath<<","<<theWithContact << "," << theWithCorrections<<")";
+
+  SetErrorCode(OK);
+  return aPipeDS;
+
+}
+
+
+//=============================================================================
+/*!
+ *  MakePipeShellsWithoutPath
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
+	        const Handle(TColStd_HSequenceOfTransient)& theBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations)
+{
+  Handle(GEOM_Object) anObj;
+  SetErrorCode(KO);
+  if(theBases.IsNull())
+    return anObj;
+
+  Standard_Integer nbBases = theBases->Length();
+  
+  if (!nbBases)
+    return anObj;
+  
+  Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
+
+  //Add a new Pipe object
+  Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
+ 
+  //Add a new Pipe function
+
+  Handle(GEOM_Function) aFunction =
+    aPipeDS->AddFunction(GEOMImpl_PipeDriver::GetID(), PIPE_SHELLS_WITHOUT_PATH);
+  if (aFunction.IsNull()) return anObj;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PipeDriver::GetID()) return anObj;
+
+  GEOMImpl_IPipeShellSect aCI (aFunction);
+
+  Handle(TColStd_HSequenceOfTransient) aSeqBases = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aSeqLocs = new TColStd_HSequenceOfTransient;
+
+  Standard_Integer i =1;
+  for( ; i <= nbBases; i++) {
+
+    Handle(Standard_Transient) anItem = theBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    Handle(GEOM_Object) aBase = Handle(GEOM_Object)::DownCast(anItem);
+    if(aBase.IsNull())
+      continue;
+    Handle(GEOM_Function) aRefBase = aBase->GetLastFunction();
+    if(aRefBase.IsNull())
+      continue;
+
+    if(nbLocs) {
+      Handle(Standard_Transient) anItemLoc = theLocations->Value(i);
+      if(anItemLoc.IsNull())
+	continue;
+      Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
+      if(aLoc.IsNull())
+	continue;
+      Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
+      if(aRefLoc.IsNull())
+	continue;
+      aSeqLocs->Append(aRefLoc);
+    }
+
+    aSeqBases->Append(aRefBase);
+  }
+
+  if(!aSeqBases->Length())
+    return anObj;
+
+  aCI.SetBases(aSeqBases);
+  aCI.SetLocations(aSeqLocs);
+  
+  //Compute the Pipe value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Pipe with shell sections without path driver failed");
+      return anObj;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return anObj;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pyDump(aFunction);
+  pyDump << aPipeDS << " = geompy.MakePipeShellsWithoutPath([";
+
+  for(i =1 ; i <= nbBases; i++) {
+
+    Handle(Standard_Transient) anItem = theBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbBases)
+	pyDump<<", ";
+    }
+    
+  }
+  
+  pyDump<< "], [";
+   
+  for(i =1 ; i <= nbLocs; i++) {
+
+    Handle(Standard_Transient) anItem = theLocations->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbLocs)
+	pyDump<<", ";
+    }
+  }  
+
+  pyDump<< "])";
 
   SetErrorCode(OK);
   return aPipeDS;

@@ -524,6 +524,7 @@ void GeometryGUI::OnGUIEvent( int id )
   else if( id == 701   ||  // MENU MEASURE - PROPERTIES
 	   id == 702   ||  // MENU MEASURE - CDG
 	   id == 703   ||  // MENU MEASURE - INERTIA
+	   id == 704   ||  // MENU MEASURE - NORMALE
 	   id == 7041  ||  // MENU MEASURE - BOUNDING BOX
 	   id == 7042  ||  // MENU MEASURE - MIN DISTANCE
 	   id == 7043  ||  // MENU MEASURE - ANGLE
@@ -847,6 +848,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 701, "BASIC_PROPS" );
   createGeomAction( 702, "MASS_CENTER" );
   createGeomAction( 703, "INERTIA" );
+  createGeomAction( 704, "NORMALE" );
   createGeomAction( 7041, "BND_BOX" );
   createGeomAction( 7042, "MIN_DIST" );
   createGeomAction( 7043, "MEASURE_ANGLE" );
@@ -1002,6 +1004,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(), measurId, -1 );
   createMenu( 702, measurId, -1 );
   createMenu( 703, measurId, -1 );
+  createMenu( 704, measurId, -1 );
   // NPAL16572: move "Check free boundaries" and "Check free faces" from "Repair" to "Measure"
   createMenu( separator(), measurId, -1 );
   createMenu( 609, measurId, -1 );

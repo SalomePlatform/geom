@@ -47,6 +47,7 @@ dist_libMeasureGUI_la_SOURCES = \
 	MeasureGUI_Skeleton.cxx \
 	MeasureGUI_PropertiesDlg.cxx \
 	MeasureGUI_CenterMassDlg.cxx \
+	MeasureGUI_NormaleDlg.cxx \
 	MeasureGUI_InertiaDlg.cxx \
 	MeasureGUI_BndBoxDlg.cxx \
 	MeasureGUI_DistanceDlg.cxx \
@@ -68,6 +69,7 @@ MOC_FILES = \
 	MeasureGUI_Skeleton_moc.cxx \
 	MeasureGUI_PropertiesDlg_moc.cxx \
 	MeasureGUI_CenterMassDlg_moc.cxx \
+	MeasureGUI_NormaleDlg_moc.cxx \
 	MeasureGUI_InertiaDlg_moc.cxx \
 	MeasureGUI_BndBoxDlg_moc.cxx \
 	MeasureGUI_DistanceDlg_moc.cxx \

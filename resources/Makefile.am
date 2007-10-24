@@ -98,6 +98,7 @@ multirotationsimple.png \
 multitranslation.png \
 multitranslationdouble.png \
 multitranslationsimple.png \
+normale.png \
 offset.png \
 orientation.png \
 partition.png \

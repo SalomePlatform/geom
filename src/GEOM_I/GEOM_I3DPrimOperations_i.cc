@@ -597,7 +597,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithShellSections
 		  CORBA::Boolean theWithContact,
 		  CORBA::Boolean theWithCorrections)
 {
-   GEOM::GEOM_Object_var aGEOMObject;
+  GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -654,6 +654,60 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithShellSections
     GetOperations()->MakePipeWithShellSections(aSeqBases, aSeqSubBases,
 					       aSeqLocations, aPath,
 					       theWithContact, theWithCorrections);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+
+//=============================================================================
+/*!
+ *  MakePipeShellsWithoutPath
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath
+                 (const GEOM::ListOfGO& theBases,
+		  const GEOM::ListOfGO& theLocations)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+  Handle(TColStd_HSequenceOfTransient) aSeqBases = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aSeqLocations = new TColStd_HSequenceOfTransient;
+  int ind=0, aNbBases=0, aNbLocs=0;
+  
+  //Get the shapes
+  aNbBases = theBases.length();
+  aNbLocs = theLocations.length();
+
+  if( aNbLocs &&  aNbBases != aNbLocs)
+    return aGEOMObject._retn();
+  
+  for (ind = 0; ind < aNbBases; ind++) {
+    if (theBases[ind] == NULL) continue;
+    Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->
+      GetObject(theBases[ind]->GetStudyID(), theBases[ind]->GetEntry());
+    if(aBase.IsNull())
+      continue;
+    if(aNbLocs) {
+      Handle(GEOM_Object) aLoc = GetOperations()->GetEngine()->GetObject
+	(theLocations[ind]->GetStudyID(), theLocations[ind]->GetEntry());
+      if(aLoc.IsNull())
+	continue;
+      aSeqLocations->Append(aLoc);
+    }
+    aSeqBases->Append(aBase);
+  }
+
+  if(!aSeqBases->Length())
+    return aGEOMObject._retn();
+
+  // Make pipe
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePipeShellsWithoutPath(aSeqBases,aSeqLocations);
+
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

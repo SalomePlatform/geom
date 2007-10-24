@@ -910,7 +910,15 @@ module GEOM
 					   in GEOM_Object thePath,
 					   in boolean theWithContact ,
 					   in boolean theWithCorrection );
-    
+
+    /*!
+     * Create solids between given sections
+     *  \param theSeqBases - list of sections (shell or face).
+     *  \param theLocations - list of corresponding vertexes
+     *  \return New GEOM_Object, containing the created solids.
+     */
+    GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
+					   in ListOfGO theLocations);
   };
 
   /*!
@@ -1792,7 +1800,7 @@ module GEOM
     GEOM_Object MakeCircleThreePnt (in GEOM_Object thePnt1,
 				    in GEOM_Object thePnt2,
 				    in GEOM_Object thePnt3);
-/*!
+    /*!
      *  Create a circle with given center, with a radius equals the distance from center to Point1
      *  and on a plane defined by all of three points.
      *  \param thePnt1,thePnt2,thePnt3 Points, defining the circle.
@@ -1938,6 +1946,7 @@ module GEOM
 				     in double      theR1,
 				     in double      theR2,
 				     in ListOfLong  theEdges);
+
     /*!
      *  Perform a fillet on all edges of the specified faces of the given shape.
      *  \param theShape Shape, to perform fillet on.
@@ -1954,6 +1963,7 @@ module GEOM
 				     in double      theR1,
 				     in double      theR2,
 				     in ListOfLong  theFaces);
+
     /*!
      *  Perform a symmetric chamfer on all edges of the given shape.
      *  \param theShape Shape, to perform chamfer on.
@@ -1984,6 +1994,7 @@ module GEOM
     GEOM_Object MakeChamferEdgeAD (in GEOM_Object theShape,
 				   in double theD, in double theAngle,
 				   in long theFace1, in long theFace2);
+
     /*!
      *  Perform a chamfer on all edges of the specified faces.
      *  with distance D1 on the first specified face (if several for one edge)
@@ -2026,6 +2037,7 @@ module GEOM
     GEOM_Object MakeChamferEdgesAD (in GEOM_Object theShape,
 				    in double theD, in double theAngle,
 				    in ListOfLong theEdges);
+
     /*!
      *  Perform an Archimde operation on the given shape with given parameters.
      *                    The object presenting the resulting face is returned
@@ -2330,6 +2342,17 @@ module GEOM
      *  \return New GEOM_Object, containing the created point.
      */
     GEOM_Object GetCentreOfMass (in GEOM_Object theShape);
+
+    /*!
+     *  Get a vector, representing the normal of theFace.
+     *  If the face is not planar, theOptionalPoint is obligatory.
+     *  \param theFace Shape (face) to define the normal of.
+     *  \param theOptionalPoint Shape (point) to define the normal at.
+     *                          Can be NULL in case of planar face.
+     *  \return New GEOM_Object, containing the created normal vector.
+     */
+    GEOM_Object GetNormal (in GEOM_Object theFace,
+			   in GEOM_Object theOptionalPoint);
 
     /*!
      *  Get inertia matrix and moments of inertia of theShape.

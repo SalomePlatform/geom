@@ -209,6 +209,10 @@ msgstr "partitionplane.png"
 msgid "ICON_DLG_CENTERMASS"
 msgstr "centergravity.png"
 
+#NormaleDlg
+msgid "ICON_DLG_NORMALE"
+msgstr "normale.png"
+
 #BoundingBoxDlg
 msgid "ICON_DLG_BOUNDING_BOX"
 msgstr "bounding.png"
@@ -738,8 +742,8 @@ msgstr "point_coord.png"
 msgid "ICO_BASIC_PROPS"
 msgstr "basicproperties.png"
 
-msgid "ICO_MASS_CENTER"
-msgstr "centergravity.png"
+msgid "ICO_NORMALE"
+msgstr "normale.png"
 
 msgid "ICO_INERTIA"
 msgstr "axisinertia.png"

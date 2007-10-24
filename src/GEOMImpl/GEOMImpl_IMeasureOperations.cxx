@@ -880,6 +880,70 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetCentreOfMass
 
 //=============================================================================
 /*!
+ *  GetNormal
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetNormal
+                                         (Handle(GEOM_Object) theFace,
+                                          Handle(GEOM_Object) theOptionalPoint)
+{
+  SetErrorCode(KO);
+
+  if (theFace.IsNull()) return NULL;
+
+  //Add a new Normale object
+  Handle(GEOM_Object) aNorm = GetEngine()->AddObject(GetDocID(), GEOM_VECTOR);
+
+  //Add a new Normale function
+  Handle(GEOM_Function) aFunction =
+    aNorm->AddFunction(GEOMImpl_MeasureDriver::GetID(), VECTOR_FACE_NORMALE);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_MeasureDriver::GetID()) return NULL;
+
+  GEOMImpl_IMeasure aCI (aFunction);
+
+  Handle(GEOM_Function) aFace = theFace->GetLastFunction();
+  if (aFace.IsNull()) return NULL;
+
+  aCI.SetBase(aFace);
+
+  if (!theOptionalPoint.IsNull()) {
+    Handle(GEOM_Function) anOptPnt = theOptionalPoint->GetLastFunction();
+    aCI.SetPoint(anOptPnt);
+  }
+
+  //Compute the Normale value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Measure driver failed to compute normake of face");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aNorm << " = geompy.GetNormal(" << theFace;
+  if (!theOptionalPoint.IsNull()) {
+    pd << ", " << theOptionalPoint;
+  }
+  pd << ")";
+
+  SetErrorCode(OK);
+  return aNorm;
+}
+
+//=============================================================================
+/*!
  *  GetBasicProperties
  */
 //=============================================================================

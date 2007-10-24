@@ -29,12 +29,20 @@
 #include <BRep_Tool.hxx>
 #include <BRepGProp.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 
 #include <GProp_GProps.hxx>
+#include <GeomLProp_SLProps.hxx>
+#include <Geom_Surface.hxx>
+
+#include <Bnd_Box.hxx>
+#include <BRepBndLib.hxx>
+#include <BRepAdaptor_Surface.hxx>
+#include <ShapeAnalysis_Surface.hxx>
 
 #include <gp_Pnt.hxx>
 #include <Precision.hxx>
@@ -73,7 +81,8 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
 
   TopoDS_Shape aShape;
 
-  if (aType == CDG_MEASURE) {
+  if (aType == CDG_MEASURE)
+  {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
     if (aShapeBase.IsNull()) {
@@ -97,8 +106,99 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
     }
 
     aShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
+  }
+  else if (aType == VECTOR_FACE_NORMALE)
+  {
+    // Face
+    Handle(GEOM_Function) aRefBase = aCI.GetBase();
+    TopoDS_Shape aShapeBase = aRefBase->GetValue();
+    if (aShapeBase.IsNull()) {
+      Standard_NullObject::Raise("Face for normale calculation is null");
+    }
+    if (aShapeBase.ShapeType() != TopAbs_FACE) {
+      Standard_NullObject::Raise("Shape for normale calculation is not a face");
+    }
+    TopoDS_Face aFace = TopoDS::Face(aShapeBase);
 
-  } else {
+    // Point
+    gp_Pnt p1 (0,0,0);
+
+    Handle(GEOM_Function) aPntFunc = aCI.GetPoint();
+    if (!aPntFunc.IsNull())
+    {
+      TopoDS_Shape anOptPnt = aPntFunc->GetValue();
+      if (anOptPnt.IsNull())
+        Standard_NullObject::Raise("Invalid shape given for point argument");
+      p1 = BRep_Tool::Pnt(TopoDS::Vertex(anOptPnt));
+    }
+    else
+    {
+      gp_Ax3 aPos = GEOMImpl_IMeasureOperations::GetPosition(aFace);
+      p1 = aPos.Location();
+    }
+
+    // Point parameters on surface
+    Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
+    Handle(ShapeAnalysis_Surface) aSurfAna = new ShapeAnalysis_Surface (aSurf);
+    gp_Pnt2d pUV = aSurfAna->ValueOfUV(p1, Precision::Confusion());
+
+    // Normal direction
+    gp_Vec Vec1,Vec2;
+    BRepAdaptor_Surface SF (aFace);
+    SF.D1(pUV.X(), pUV.Y(), p1, Vec1, Vec2);
+    gp_Vec V = Vec1.Crossed(Vec2);
+    Standard_Real mod = V.Magnitude();
+    if (mod < Precision::Confusion())
+      Standard_NullObject::Raise("Normal vector of a face has null magnitude");
+
+    // Set length of normal vector to average radius of curvature
+    Standard_Real radius = 0.0;
+    GeomLProp_SLProps aProperties (aSurf, pUV.X(), pUV.Y(), 2, Precision::Confusion());
+    if (aProperties.IsCurvatureDefined()) {
+      Standard_Real radius1 = Abs(aProperties.MinCurvature());
+      Standard_Real radius2 = Abs(aProperties.MaxCurvature());
+      if (Abs(radius1) > Precision::Confusion()) {
+	radius = 1.0 / radius1;
+        if (Abs(radius2) > Precision::Confusion()) {
+          radius = (radius + 1.0 / radius2) / 2.0;
+        }
+      }
+      else {
+        if (Abs(radius2) > Precision::Confusion()) {
+          radius = 1.0 / radius2;
+        }
+      }
+    }
+
+    // Set length of normal vector to average dimension of the face
+    // (only if average radius of curvature is not appropriate)
+    if (radius < Precision::Confusion()) {
+        Bnd_Box B;
+        Standard_Real Xmin, Xmax, Ymin, Ymax, Zmin, Zmax;
+        BRepBndLib::Add(aFace, B);
+        B.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
+        radius = ((Xmax - Xmin) + (Ymax - Ymin) + (Zmax - Zmin)) / 3.0;
+    }
+
+    if (radius < Precision::Confusion())
+      radius = 1.0;
+
+    V *= radius / mod;
+
+    // consider the face orientation
+    if (aFace.Orientation() == TopAbs_REVERSED ||
+        aFace.Orientation() == TopAbs_INTERNAL) {
+      V = - V;
+    }
+
+    // Edge
+    gp_Pnt p2 = p1.Translated(V);
+    BRepBuilderAPI_MakeEdge aBuilder (p1, p2);
+    if (!aBuilder.IsDone())
+      Standard_NullObject::Raise("Vector construction failed");
+    aShape = aBuilder.Shape();
+  }
+  else {
   }
 
   if (aShape.IsNull()) return 0;
@@ -107,7 +207,7 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
 
   log.SetTouched(Label()); 
 
-  return 1;    
+  return 1;
 }
 
 

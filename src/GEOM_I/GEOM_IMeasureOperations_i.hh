@@ -56,6 +56,9 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
 
   GEOM::GEOM_Object_ptr GetCentreOfMass (GEOM::GEOM_Object_ptr theShape);
 
+  GEOM::GEOM_Object_ptr GetNormal (GEOM::GEOM_Object_ptr theFace,
+				   GEOM::GEOM_Object_ptr theOptionalPoint);
+
   void GetInertia (GEOM::GEOM_Object_ptr theShape,
 		   CORBA::Double& I11, CORBA::Double& I12, CORBA::Double& I13,
 		   CORBA::Double& I21, CORBA::Double& I22, CORBA::Double& I23,
