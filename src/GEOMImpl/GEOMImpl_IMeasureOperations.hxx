@@ -90,6 +90,9 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) GetCentreOfMass (Handle(GEOM_Object) theShape);
 
+  Standard_EXPORT Handle(GEOM_Object) GetNormal (Handle(GEOM_Object) theFace,
+                                                 Handle(GEOM_Object) theOptionalPoint);
+
   Standard_EXPORT void GetBasicProperties (Handle(GEOM_Object) theShape,
                                            Standard_Real& theLength,
                                            Standard_Real& theSurfArea,

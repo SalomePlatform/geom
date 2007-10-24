@@ -746,7 +746,6 @@ def MakeThruSections(theSeqSections,theModeSolid,thePreci,theRuled):
 #                            orthogonal to the spine tangent in the correspondent point
 #  @return New GEOM_Object, containing the created pipe.
 #
-#  Example: see GEOM_TestAll.py
 def MakePipeWithDifferentSections(theSeqBases, theLocations,thePath,theWithContact,theWithCorrection):
     anObj = PrimOp.MakePipeWithDifferentSections(theSeqBases, theLocations,thePath,theWithContact,theWithCorrection)
     if PrimOp.IsDone() == 0:
@@ -770,7 +769,6 @@ def MakePipeWithDifferentSections(theSeqBases, theLocations,thePath,theWithConta
 #                            orthogonal to the spine tangent in the correspondent point
 #  @return New GEOM_Object, containing the created solids.
 #
-#  Example: see GEOM_TestAll.py
 def MakePipeWithShellSections(theSeqBases, theSeqSubBases,
                               theLocations, thePath,
                               theWithContact, theWithCorrection):
@@ -818,7 +816,6 @@ def MakePipeWithShellSectionsBySteps(theSeqBases, theSeqSubBases,
 #  @param theLocations - list of corresponding vertexes
 #  @return New GEOM_Object, containing the created solids.
 #
-#  Example: see GEOM_TestAll.py
 def MakePipeShellsWithoutPath(theSeqBases, theLocations):
     anObj = PrimOp.MakePipeShellsWithoutPath(theSeqBases, theLocations)
     if PrimOp.IsDone() == 0:
@@ -2155,6 +2152,19 @@ def MakeCDG(theShape):
     anObj = MeasuOp.GetCentreOfMass(theShape)
     if MeasuOp.IsDone() == 0:
       print "GetCentreOfMass : ", MeasuOp.GetErrorCode()
+    return anObj
+
+## Get a normale to the given face. If the point is not given,
+#  the normale is calculated at the center of mass.
+#  @param theFace Face to define normale of.
+#  @param theOptionalPoint Point to compute the normale at.
+#  @return New GEOM_Object, containing the created vector.
+#
+#  Example: see GEOM_TestMeasures.py
+def GetNormal(theFace, theOptionalPoint = None):
+    anObj = MeasuOp.GetNormal(theFace, theOptionalPoint)
+    if MeasuOp.IsDone() == 0:
+      print "GetNormal : ", MeasuOp.GetErrorCode()
     return anObj
 
 ## Check a topology of the given shape.

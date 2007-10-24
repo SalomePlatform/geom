@@ -663,7 +663,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithShellSections
 
 //=============================================================================
 /*!
- *  MakePipeWithShellSections
+ *  MakePipeShellsWithoutPath
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath

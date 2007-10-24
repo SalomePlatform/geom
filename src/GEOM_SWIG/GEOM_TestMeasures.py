@@ -109,6 +109,22 @@ def TestMeasureOperations (geompy, math):
     if Coords[0] != 5 or Coords[1] != 15 or Coords[2] != 35:
       print "But must be (5, 15, 35)"
 
+  ####### GetNormal #######
+
+  faces = geompy.SubShapeAllSorted(box, geompy.ShapeType["FACE"])
+  face0 = faces[0]
+  vnorm = geompy.GetNormal(face0)
+  if vnorm is None:
+    raise RuntimeError, "GetNormal(face0) failed"
+  else:
+    geompy.addToStudy(face0, "Face0")
+    geompy.addToStudy(vnorm, "Normale to Face0")
+    print "\nNormale of face has been successfully obtained:"
+    #Coords = geompy.PointCoordinates(pcdg)
+    #print "(", Coords[0], ", ", Coords[1], ", ", Coords[2], ")"
+    #if Coords[0] != 5 or Coords[1] != 15 or Coords[2] != 35:
+    #  print "But must be (5, 15, 35)"
+
   ####### MinDistance #######
 
   MinDist = geompy.MinDistance(box, cube)

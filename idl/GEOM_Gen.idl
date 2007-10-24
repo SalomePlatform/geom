@@ -918,8 +918,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created solids.
      */
     GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
-					   in ListOfGO theLocations );
-
+					   in ListOfGO theLocations);
   };
 
   /*!
@@ -2343,6 +2342,17 @@ module GEOM
      *  \return New GEOM_Object, containing the created point.
      */
     GEOM_Object GetCentreOfMass (in GEOM_Object theShape);
+
+    /*!
+     *  Get a vector, representing the normal of theFace.
+     *  If the face is not planar, theOptionalPoint is obligatory.
+     *  \param theFace Shape (face) to define the normal of.
+     *  \param theOptionalPoint Shape (point) to define the normal at.
+     *                          Can be NULL in case of planar face.
+     *  \return New GEOM_Object, containing the created normal vector.
+     */
+    GEOM_Object GetNormal (in GEOM_Object theFace,
+			   in GEOM_Object theOptionalPoint);
 
     /*!
      *  Get inertia matrix and moments of inertia of theShape.

@@ -141,7 +141,7 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetCentreOfMass
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) return aGEOMObject._retn();
+  if (CORBA::is_nil(theShape)) return aGEOMObject._retn();
 
   //Get the reference shape
   Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
@@ -151,6 +151,41 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetCentreOfMass
 
   // Make Point - centre of mass of theShape
   Handle(GEOM_Object) anObject = GetOperations()->GetCentreOfMass(aShape);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  GetNormal
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetNormal
+                                       (GEOM::GEOM_Object_ptr theFace,
+					GEOM::GEOM_Object_ptr theOptionalPoint)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (CORBA::is_nil(theFace)) return aGEOMObject._retn();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aFace = GetOperations()->GetEngine()->GetObject
+    (theFace->GetStudyID(), theFace->GetEntry());
+
+  if (aFace.IsNull()) return aGEOMObject._retn();
+
+  // Make Vector - normal to theFace (in point theOptionalPoint if the face is not planar)
+  Handle(GEOM_Object) anOptionalPoint;
+  if (!CORBA::is_nil(theOptionalPoint)) {
+    anOptionalPoint = GetOperations()->GetEngine()->GetObject
+      (theOptionalPoint->GetStudyID(), theOptionalPoint->GetEntry());
+  }
+  Handle(GEOM_Object) anObject = GetOperations()->GetNormal(aFace, anOptionalPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

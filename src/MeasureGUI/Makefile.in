@@ -51,6 +51,7 @@ LIB_SRC = 	MeasureGUI.cxx \
 		MeasureGUI_Skeleton.cxx \
 		MeasureGUI_PropertiesDlg.cxx \
 		MeasureGUI_CenterMassDlg.cxx \
+		MeasureGUI_NormaleDlg.cxx \
 		MeasureGUI_InertiaDlg.cxx \
 		MeasureGUI_BndBoxDlg.cxx \
 		MeasureGUI_DistanceDlg.cxx \
@@ -72,6 +73,7 @@ LIB_MOC = \
 		MeasureGUI_Skeleton.h \
 		MeasureGUI_PropertiesDlg.h \
 		MeasureGUI_CenterMassDlg.h \
+		MeasureGUI_NormaleDlg.h \
 		MeasureGUI_InertiaDlg.h \
 		MeasureGUI_BndBoxDlg.h \
 		MeasureGUI_DistanceDlg.h \
