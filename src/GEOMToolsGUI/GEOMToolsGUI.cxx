@@ -72,15 +72,16 @@ typedef QMap<QString, QString> FilterMap;
 static QString getFileName( QWidget*           parent,
 			    const QString&     initial,
 			    const FilterMap&   filterMap,
+                            const QStringList  filters,
 			    const QString&     caption,
 			    bool               open,
 			    QString&           format )
 {
   static QString lastUsedFilter;
-  QStringList filters;
+  //QStringList filters;
   QString aBrepFilter;
   for ( FilterMap::const_iterator it = filterMap.begin(); it != filterMap.end(); ++it ) {
-    filters.push_back( it.key() );
+    //filters.push_back( it.key() );
 
     if (it.key().contains("BREP", false)) {
       aBrepFilter = it.key();
@@ -301,7 +302,7 @@ void GEOMToolsGUI::OnEditDelete()
 	// VSR 17/11/04: check if all objects selected belong to GEOM component --> start
 	// modifications of ASV 01.06.05
 	QString parentComp = getParentComponent( aStudy, selected );
-  CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
+        CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
 	QString geomComp = getParentComponent( aStudy->FindObjectIOR( geomIOR.in() ) );
 
 	if ( parentComp != geomComp )  {
@@ -474,15 +475,18 @@ bool GEOMToolsGUI::Import()
 
   // Obtain a list of available import formats
   FilterMap aMap;
+  QStringList filters;
   GEOM::string_array_var aFormats, aPatterns;
   aInsOp->ImportTranslators( aFormats, aPatterns );
 
-  for ( int i = 0, n = aFormats->length(); i < n; i++ )
+  for ( int i = 0, n = aFormats->length(); i < n; i++ ) {
     aMap.insert( (char*)aPatterns[i], (char*)aFormats[i] );
+    filters.push_back( (char*)aPatterns[i] );
+  }
 
   QString fileType;
 
-  QString fileName = getFileName(app->desktop(), "", aMap,
+  QString fileName = getFileName(app->desktop(), "", aMap, filters,
                                  tr("GEOM_MEN_IMPORT"), true, fileType);
 
   if (fileType.isEmpty() )
@@ -579,10 +583,13 @@ bool GEOMToolsGUI::Export()
 
   // Obtain a list of available export formats
   FilterMap aMap;
+  QStringList filters;
   GEOM::string_array_var aFormats, aPatterns;
   aInsOp->ExportTranslators( aFormats, aPatterns );
-  for ( int i = 0, n = aFormats->length(); i < n; i++ )
+  for ( int i = 0, n = aFormats->length(); i < n; i++ ) {
     aMap.insert( (char*)aPatterns[i], (char*)aFormats[i] );
+    filters.push_back( (char*)aPatterns[i] );
+  }
 
   // Get selected objects
   LightApp_SelectionMgr* sm = app->selectionMgr();
@@ -602,7 +609,7 @@ bool GEOMToolsGUI::Export()
       continue;
 
     QString fileType;
-    QString file = getFileName(app->desktop(), QString( IObject->getName() ), aMap,
+    QString file = getFileName(app->desktop(), QString( IObject->getName() ), aMap, filters,
 			       tr("GEOM_MEN_EXPORT"), false, fileType);
 
     // User has pressed "Cancel" --> stop the operation
