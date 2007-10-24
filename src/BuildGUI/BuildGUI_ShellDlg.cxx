@@ -1,43 +1,42 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : BuildGUI_ShellDlg.cxx
+// Author : Damien COQUERET, Open CASCADE S.A.S.
 //
-//
-//  File   : BuildGUI_ShellDlg.cxx
-//  Author : Damien COQUERET
-//  Module : GEOM
-//  $Header$
 
 #include "BuildGUI_ShellDlg.h"
-#include "GEOMImpl_Types.hxx"
 
-#include "GeometryGUI.h"
-#include "GEOMBase.h"
+#include <DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <GEOMImpl_Types.hxx>
 
-#include "TColStd_MapOfInteger.hxx"
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
+
+#include <TColStd_MapOfInteger.hxx>
 
 //=================================================================================
 // class    : BuildGUI_ShellDlg()
@@ -46,34 +45,32 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_ShellDlg::BuildGUI_ShellDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                     const char* name, bool modal, Qt::WindowFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
+BuildGUI_ShellDlg::BuildGUI_ShellDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
+  : GEOMBase_Skeleton( theGeometryGUI, parent )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SHELL")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BUILD_SHELL" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setWindowTitle(tr("GEOM_SHELL_TITLE"));
+  setWindowTitle( tr( "GEOM_SHELL_TITLE" ) );
     
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_SHELL"));
-  RadioButton1->setIcon(image0);
-  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton2->close();
-  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton3->close();
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_SHELL" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupShell = new Ui::DlgRef_1Sel_QTD();
-  QWidget* aGroupShellWidget = new QWidget(this);
-  GroupShell->setupUi(aGroupShellWidget);
-  aGroupShellWidget->setObjectName("GroupShell");
+  GroupShell = new DlgRef_1Sel( centralWidget() );
 
-  GroupShell->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupShell->TextLabel1->setText(tr("GEOM_OBJECTS"));
-  GroupShell->PushButton1->setIcon(image1);
+  GroupShell->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
+  GroupShell->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
+  GroupShell->PushButton1->setIcon( image1 );
   GroupShell->LineEdit1->setReadOnly( true );
   
-  gridLayout1->addWidget(aGroupShellWidget, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupShell );
   /***************************************************************/
 
   setHelpFileName("shell.htm");
@@ -106,20 +103,20 @@ void BuildGUI_ShellDlg::Init()
   myOkFacesAndShells = false;
   
   TColStd_MapOfInteger aMap;
-  aMap.Add(GEOM_SHELL);
-  aMap.Add(GEOM_FACE);
+  aMap.Add( GEOM_SHELL );
+  aMap.Add( GEOM_FACE );
   globalSelection( aMap );
 
   /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupShell->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( GroupShell->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  initName(tr("GEOM_SHELL").toLatin1().constData());
+  initName( tr( "GEOM_SHELL" ) );
 }
 
 
@@ -180,12 +177,12 @@ void BuildGUI_ShellDlg::SelectionIntoArgument()
 void BuildGUI_ShellDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  if (send != GroupShell->PushButton1)
+  if ( send != GroupShell->PushButton1 )
     return;
 
   TColStd_MapOfInteger aMap;
-  aMap.Add(GEOM_SHELL);
-  aMap.Add(GEOM_FACE);
+  aMap.Add( GEOM_SHELL );
+  aMap.Add( GEOM_FACE );
   globalSelection( aMap );
   myEditCurrentArgument = GroupShell->LineEdit1;
 
@@ -201,11 +198,11 @@ void BuildGUI_ShellDlg::SetEditCurrentArgument()
 void BuildGUI_ShellDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   TColStd_MapOfInteger aMap;
-  aMap.Add(GEOM_SHELL);
-  aMap.Add(GEOM_FACE);
+  aMap.Add( GEOM_SHELL );
+  aMap.Add( GEOM_FACE );
   globalSelection( aMap );
 }
 
@@ -214,9 +211,9 @@ void BuildGUI_ShellDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BuildGUI_ShellDlg::enterEvent(QEvent* e)
+void BuildGUI_ShellDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 

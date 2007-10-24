@@ -17,11 +17,11 @@
 // 
 // See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
 //
-// File   : GEOM_DlgRef.cxx
+// File   : DlgRef.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
 
-#include "GEOM_DlgRef.h"
+#include "DlgRef.h"
 
 //////////////////////////////////////////
 // DlgRef_1List1Spin1Btn

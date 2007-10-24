@@ -26,7 +26,7 @@
 #include "OperationGUI_PartitionDlg.h"
 #include "OperationGUI_MaterialDlg.h"
 
-#include <GEOM_DlgRef.h>
+#include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 

@@ -1,72 +1,69 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : BuildGUI_CompoundDlg.h
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : GEOMBase_CompoundDlg.h
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
 
-#ifndef DIALOGBOX_COMPOUND_H
-#define DIALOGBOX_COMPOUND_H
+#ifndef BUILDGUI_COMPOUNDDLG_H
+#define BUILDGUI_COMPOUNDDLG_H
 
-#include "GEOM_BuildGUI.hxx"
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel_QTD.h"
+class DlgRef_1Sel;
 
 //=================================================================================
 // class    : BuildGUI_CompoundDlg
 // purpose  :
 //=================================================================================
-class GEOM_BUILDGUI_EXPORT BuildGUI_CompoundDlg : public GEOMBase_Skeleton
+class BuildGUI_CompoundDlg : public GEOMBase_Skeleton
 { 
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    BuildGUI_CompoundDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			 const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
-    ~BuildGUI_CompoundDlg();
+  BuildGUI_CompoundDlg( GeometryGUI*, QWidget* = 0 );
+  ~BuildGUI_CompoundDlg();
 
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& msg );
-    virtual bool execute( ObjectList& objects );
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
-
-    GEOM::ListOfGO myShapes;
-    bool           myOkShapes;
-
-    Ui::DlgRef_1Sel_QTD* GroupShapes;
+  void                               Init();
+  void                               enterEvent( QEvent* );
+  
+private:
+  GEOM::ListOfGO                     myShapes;
+  bool                               myOkShapes;
+  
+  DlgRef_1Sel*                       GroupShapes;
     
 private slots:
-    void ClickOnOk();
-    bool ClickOnApply();
-    void ActivateThisDialog();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  void                               ActivateThisDialog();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
 };
 
-#endif // DIALOGBOX_COMPOUND_H
+#endif // BUILDGUI_COMPOUNDDLG_H

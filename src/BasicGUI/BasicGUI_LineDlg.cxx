@@ -25,9 +25,9 @@
 
 #include "BasicGUI_LineDlg.h"
 
+#include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
-#include <GEOM_DlgRef.h>
 
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>

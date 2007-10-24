@@ -1,42 +1,40 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+// GEOM GEOMGUI : GUI for Geometry component
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or 
+// modify it under the terms of the GNU Lesser General Public 
+// License as published by the Free Software Foundation; either 
+// version 2.1 of the License. 
 // 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+// Lesser General Public License for more details. 
 // 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with this library; if not, write to the Free Software 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : BuildGUI_EdgeDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : BuildGUI_EdgeDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
 
 #include "BuildGUI_EdgeDlg.h"
 
-#include "GeometryGUI.h"
-#include "GEOMBase.h"
+#include <DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
 //=================================================================================
 // class    : BuildGUI_EdgeDlg()
@@ -45,41 +43,39 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_EdgeDlg::BuildGUI_EdgeDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                   const char* name, bool modal, Qt::WindowFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
+BuildGUI_EdgeDlg::BuildGUI_EdgeDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
+  : GEOMBase_Skeleton( theGeometryGUI, parent )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_EDGE")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BUILD_EDGE" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setWindowTitle(tr("GEOM_EDGE_TITLE"));
+  setWindowTitle( tr( "GEOM_EDGE_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_EDGE"));
-  RadioButton1->setIcon(image0);
-  RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton2->close();
-  RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  RadioButton3->close();
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_EDGE" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupPoints = new Ui::DlgRef_2Sel_QTD();
-  QWidget* aGroupPointsWidget = new QWidget(this);
-  GroupPoints->setupUi(aGroupPointsWidget);
-  aGroupPointsWidget->setObjectName("GroupPoints");
+  GroupPoints = new DlgRef_2Sel( centralWidget() );
 
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_POINTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_POINT_I").arg("1"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_POINT_I").arg("2"));
-  GroupPoints->PushButton1->setIcon(image1);
-  GroupPoints->PushButton2->setIcon(image1);
+  GroupPoints->GroupBox1->setTitle( tr( "GEOM_POINTS" ) );
+  GroupPoints->TextLabel1->setText( tr( "GEOM_POINT_I" ).arg( 1 ) );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_POINT_I" ).arg( 2 ) );
+  GroupPoints->PushButton1->setIcon( image1 );
+  GroupPoints->PushButton2->setIcon( image1 );
   
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
 
-  gridLayout1->addWidget(aGroupPointsWidget, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupPoints );
   /***************************************************************/
 
-  setHelpFileName("edge.htm");
+  setHelpFileName( "edge.htm" );
 
   /* Initialisations */
   Init();
@@ -92,7 +88,7 @@ BuildGUI_EdgeDlg::BuildGUI_EdgeDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
 //=================================================================================
 BuildGUI_EdgeDlg::~BuildGUI_EdgeDlg()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -112,19 +108,19 @@ void BuildGUI_EdgeDlg::Init()
   globalSelection( GEOM_POINT );
 
   /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPoints->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( GroupPoints->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( GroupPoints->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  initName( tr( "GEOM_EDGE").toLatin1().constData() );
+  initName( tr( "GEOM_EDGE" ) );
 }
 
 
@@ -160,28 +156,28 @@ bool BuildGUI_EdgeDlg::ClickOnApply()
 void BuildGUI_EdgeDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   
-  if(IObjectCount() != 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1)
+  if ( IObjectCount() != 1 ) {
+    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
       myOkPoint1 = false;
-    else if(myEditCurrentArgument == GroupPoints->LineEdit2)
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
       myOkPoint2 = false;
     return;
   }
   
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
   
-  if(!testResult)
+  if ( !testResult )
     return;
 
-  if(myEditCurrentArgument == GroupPoints->LineEdit1) {
+  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
     myPoint1 = aSelectedObject;
     myOkPoint1 = true;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
+  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
     myPoint2 = aSelectedObject;
     myOkPoint2 = true;
   }
@@ -199,11 +195,10 @@ void BuildGUI_EdgeDlg::SelectionIntoArgument()
 void BuildGUI_EdgeDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1 || send == GroupPoints->LineEdit2)
-    {
-      myEditCurrentArgument = send;
-      GEOMBase_Skeleton::LineEditReturnPressed();
-    }
+  if ( send == GroupPoints->LineEdit1 || send == GroupPoints->LineEdit2 ) {
+    myEditCurrentArgument = send;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 
@@ -217,11 +212,11 @@ void BuildGUI_EdgeDlg::SetEditCurrentArgument()
   QPushButton* send = (QPushButton*)sender();
   globalSelection();
 
-  if(send == GroupPoints->PushButton1) {
+  if ( send == GroupPoints->PushButton1 ) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
     globalSelection( GEOM_POINT );
   }
-  else if(send == GroupPoints->PushButton2) {
+  else if ( send == GroupPoints->PushButton2 ) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
     globalSelection( GEOM_POINT );
   }
@@ -238,8 +233,8 @@ void BuildGUI_EdgeDlg::SetEditCurrentArgument()
 void BuildGUI_EdgeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   globalSelection( GEOM_POINT );
   displayPreview();
 }
@@ -249,9 +244,9 @@ void BuildGUI_EdgeDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BuildGUI_EdgeDlg::enterEvent(QEvent* e)
+void BuildGUI_EdgeDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 

@@ -25,7 +25,7 @@
 
 #include "BlocksGUI_PropagateDlg.h"
 
-#include <GEOM_DlgRef.h>
+#include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>

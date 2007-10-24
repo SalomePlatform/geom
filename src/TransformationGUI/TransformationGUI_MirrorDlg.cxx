@@ -25,7 +25,7 @@
 
 #include "TransformationGUI_MirrorDlg.h"
 
-#include <GEOM_DlgRef.h>
+#include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 

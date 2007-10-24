@@ -25,7 +25,7 @@
 
 #include "GenerationGUI_PipeDlg.h"
 
-#include <GEOM_DlgRef.h>
+#include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 

@@ -33,7 +33,7 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
-#include <GEOM_DlgRef.h>
+#include <DlgRef.h>
 
 #include <GEOMImpl_Types.hxx>
 

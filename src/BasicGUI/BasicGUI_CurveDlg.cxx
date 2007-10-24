@@ -24,7 +24,7 @@
 
 #include "BasicGUI_CurveDlg.h"
 
-#include <GEOM_DlgRef.h>
+#include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 

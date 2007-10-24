@@ -26,8 +26,8 @@
 #include "GEOMBase_Skeleton.h"
 #include "GEOMBase.h"
 
+#include <DlgRef.h>
 #include <GeometryGUI.h>
-#include <GEOM_DlgRef.h>
 
 #include <SalomeApp_Application.h>
 #include <LightApp_Application.h>

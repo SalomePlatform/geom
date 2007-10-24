@@ -31,11 +31,11 @@ lib_LTLIBRARIES = libDlgRef.la
 
 # Sources files
 dist_libDlgRef_la_SOURCES = 	\
-	GEOM_DlgRef.h		\
-	GEOM_DlgRef.cxx
+	DlgRef.h		\
+	DlgRef.cxx
 
 MOC_FILES = \
-	GEOM_DlgRef_moc.cxx
+	DlgRef_moc.cxx
 
 UIC_FILES = \
 	ui_DlgRef_1List1Spin1Btn_QTD.h		\

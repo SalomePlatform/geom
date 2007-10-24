@@ -26,7 +26,7 @@
 #include "MeasureGUI_CenterMassDlg.h"
 #include "MeasureGUI_Widgets.h"
 
-#include <GEOM_DlgRef.h>
+#include <DlgRef.h>
 #include <GEOMBase.h>
 
 #include <SUIT_Session.h>

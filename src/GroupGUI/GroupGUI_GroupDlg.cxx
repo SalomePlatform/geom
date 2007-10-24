@@ -32,7 +32,7 @@
 #include <SalomeApp_Study.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <GEOM_DlgRef.h>
+#include <DlgRef.h>
 #include <GEOMBase.h>
 
 #include <GEOMImpl_Types.hxx>

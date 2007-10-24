@@ -17,7 +17,7 @@
 // 
 // See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
 //
-// File   : GEOM_DlgRef.h
+// File   : DlgRef.h
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
 
