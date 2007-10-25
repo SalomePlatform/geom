@@ -621,7 +621,7 @@ def MakeConeR1R2H(theR1, theR2, theH):
 #  Example: see GEOM_TestAll.py
 def MakeTorus(thePnt, theVec, theRMajor, theRMinor):
     anObj = PrimOp.MakeTorusPntVecRR(thePnt, theVec, theRMajor, theRMinor)
-    RaiseIfFailed("MakeTourusPntVecRR", PrimOp)
+    RaiseIfFailed("MakeTorusPntVecRR", PrimOp)
     return anObj
 
 ## Create a torus with given radiuses at the origin of coordinate system.
@@ -632,7 +632,7 @@ def MakeTorus(thePnt, theVec, theRMajor, theRMinor):
 #  Example: see GEOM_TestAll.py
 def MakeTorusRR(theRMajor, theRMinor):
     anObj = PrimOp.MakeTorusRR(theRMajor, theRMinor)
-    RaiseIfFailed("MakeTourusRR", PrimOp)
+    RaiseIfFailed("MakeTorusRR", PrimOp)
     return anObj
 
 ## Create a shape by extrusion of the base shape along a vector, defined by two points.
@@ -842,7 +842,6 @@ def MakeFaceWires(theWires, isPlanarWanted):
 #  Example: see GEOM_TestOthers.py
 def MakeFaces(theWires, isPlanarWanted):
     anObj = MakeFaceWires(theWires, isPlanarWanted)
-    RaiseIfFailed("MakeFaceWires", ShapesOp)
     return anObj
 
 ## Create a shell from the set of faces and shells.
@@ -1110,7 +1109,7 @@ def GetInPlace(theShapeWhere, theShapeWhat):
 #  Example: see GEOM_TestOthers.py
 def GetInPlaceByHistory(theShapeWhere, theShapeWhat):
     anObj = ShapesOp.GetInPlaceByHistory(theShapeWhere, theShapeWhat)
-    RaiseIfFailed("GetInPlace", ShapesOp)
+    RaiseIfFailed("GetInPlaceByHistory", ShapesOp)
     return anObj
 
 ## Get sub-shape of theShapeWhere, which is
@@ -1188,7 +1187,7 @@ def SubShapeAllSorted(aShape, aType):
 #  @return List of IDs of sub-shapes.
 def SubShapeAllSortedIDs(aShape, aType):
     ListIDs = ShapesOp.SubShapeAllIDs(aShape,aType,1)
-    RaiseIfFailed("SubShapeAllSortedIDs", ShapesOp)
+    RaiseIfFailed("SubShapeAllIDs", ShapesOp)
     return ListIDs
 
 ## Obtain a compound of sub-shapes of <aShape>,
@@ -1276,7 +1275,7 @@ def Sew(theObject, theTolerance):
 #  Example: see GEOM_TestHealing.py
 def SuppressInternalWires(theObject, theWires):
     anObj = HealOp.RemoveIntWires(theObject, theWires)
-    RaiseIfFailed("SuppressInternalWires", HealOp)
+    RaiseIfFailed("SuppressIntWires", HealOp)
     return anObj
 
 ## Remove internal closed contours (holes) from the given object.
@@ -1288,7 +1287,7 @@ def SuppressInternalWires(theObject, theWires):
 #  Example: see GEOM_TestHealing.py
 def SuppressHoles(theObject, theWires):
     anObj = HealOp.FillHoles(theObject, theWires)
-    RaiseIfFailed("SuppressHoles", HealOp)
+    RaiseIfFailed("FillHoles", HealOp)
     return anObj
 
 ## Close an open wire.
@@ -1333,7 +1332,7 @@ def ChangeOrientationShell(theObject):
 #  @return New GEOM_Object, containing processed shape.
 def ChangeOrientationShellCopy(theObject):
     anObj = HealOp.ChangeOrientationCopy(theObject)
-    RaiseIfFailed("ChangeOrientation", HealOp)
+    RaiseIfFailed("ChangeOrientationCopy", HealOp)
     return anObj
 
 ## Get a list of wires (wrapped in GEOM_Object-s),
@@ -1347,7 +1346,7 @@ def ChangeOrientationShellCopy(theObject):
 #  Example: see GEOM_TestHealing.py
 def GetFreeBoundary(theObject):
     anObj = HealOp.GetFreeBoundary(theObject)
-    RaiseIfFailed("GetFreeBoundaries", HealOp)
+    RaiseIfFailed("GetFreeBoundary", HealOp)
     return anObj
 
 # -----------------------------------------------------------------------------
@@ -1705,7 +1704,7 @@ def MakeOffset(theObject, theOffset):
 #  Example: see GEOM_TestAll.py
 def MakeMultiTranslation1D(theObject, theVector, theStep, theNbTimes):
     anObj = TrsfOp.MultiTranslate1D(theObject, theVector, theStep, theNbTimes)
-    RaiseIfFailed("Multitranslate1D", TrsfOp)
+    RaiseIfFailed("MultiTranslate1D", TrsfOp)
     return anObj
 
 ## Conseqently apply two specified translations to theObject specified number of times.
@@ -1724,7 +1723,7 @@ def MakeMultiTranslation2D(theObject, theVector1, theStep1, theNbTimes1,
 			              theVector2, theStep2, theNbTimes2):
     anObj = TrsfOp.MultiTranslate2D(theObject, theVector1, theStep1, theNbTimes1,
 			                       theVector2, theStep2, theNbTimes2)
-    RaiseIfFailed("Multitranslate2D", TrsfOp)
+    RaiseIfFailed("MultiTranslate2D", TrsfOp)
     return anObj
 
 ## Rotate the given object around the given axis a given number times.
@@ -1805,9 +1804,10 @@ def MakeFillet(theShape, theR, theShapeType, theListShapes):
     anObj = None
     if theShapeType == ShapeType["EDGE"]:
         anObj = LocalOp.MakeFilletEdges(theShape, theR, theListShapes)
+        RaiseIfFailed("MakeFilletEdges", LocalOp)
     else:
         anObj = LocalOp.MakeFilletFaces(theShape, theR, theListShapes)
-    RaiseIfFailed("MakeFillet", LocalOp)
+        RaiseIfFailed("MakeFilletFaces", LocalOp)
     return anObj
 
 ## The same but with two Fillet Radius R1 and R2
@@ -1815,9 +1815,10 @@ def MakeFilletR1R2(theShape, theR1, theR2, theShapeType, theListShapes):
     anObj = None
     if theShapeType == ShapeType["EDGE"]:
         anObj = LocalOp.MakeFilletEdgesR1R2(theShape, theR1, theR2, theListShapes)
+        RaiseIfFailed("MakeFilletEdgesR1R2", LocalOp)
     else:
         anObj = LocalOp.MakeFilletFacesR1R2(theShape, theR1, theR2, theListShapes)
-    RaiseIfFailed("MakeFilletR1R2", LocalOp)
+        RaiseIfFailed("MakeFilletFacesR1R2", LocalOp)
     return anObj
 
 ## Perform a symmetric chamfer on all edges of the given shape.
@@ -1947,7 +1948,7 @@ def PointCoordinates(Point):
 #  Example: see GEOM_TestMeasures.py
 def BasicProperties(theShape):
     aTuple = MeasuOp.GetBasicProperties(theShape)
-    RaiseIfFailed("BasicProperties", MeasuOp)
+    RaiseIfFailed("GetBasicProperties", MeasuOp)
     return aTuple
 
 ## Get parameters of bounding box of the given shape
@@ -1960,7 +1961,7 @@ def BasicProperties(theShape):
 #  Example: see GEOM_TestMeasures.py
 def BoundingBox(theShape):
     aTuple = MeasuOp.GetBoundingBox(theShape)
-    RaiseIfFailed("BoundingBox", MeasuOp)
+    RaiseIfFailed("GetBoundingBox", MeasuOp)
     return aTuple
 
 ## Get inertia matrix and moments of inertia of theShape.
@@ -1972,7 +1973,7 @@ def BoundingBox(theShape):
 #  Example: see GEOM_TestMeasures.py
 def Inertia(theShape):
     aTuple = MeasuOp.GetInertia(theShape)
-    RaiseIfFailed("Inertia", MeasuOp)
+    RaiseIfFailed("GetInertia", MeasuOp)
     return aTuple
 
 ## Get minimal distance between the given shapes.
@@ -1992,7 +1993,7 @@ def MinDistance(theShape1, theShape2):
 #  Example: see GEOM_TestMeasures.py
 def MinDistanceComponents(theShape1, theShape2):
     aTuple = MeasuOp.GetMinDistance(theShape1, theShape2)
-    RaiseIfFailed("MinDistanceComponents", MeasuOp)
+    RaiseIfFailed("GetMinDistance", MeasuOp)
     aRes = [aTuple[0], aTuple[4] - aTuple[1], aTuple[5] - aTuple[2], aTuple[6] - aTuple[3]]
     return aRes
 
@@ -2016,7 +2017,7 @@ def GetAngle(theShape1, theShape2):
 #  Example: see GEOM_TestMeasures.py
 def Tolerance(theShape):
     aTuple = MeasuOp.GetTolerance(theShape)
-    RaiseIfFailed("Tolerance", MeasuOp)
+    RaiseIfFailed("GetTolerance", MeasuOp)
     return aTuple
 
 ## Obtain description of the given shape (number of sub-shapes of each type)
@@ -2062,13 +2063,11 @@ def GetNormal(theFace, theOptionalPoint = None):
 def CheckShape(theShape, theIsCheckGeom = 0):
     if theIsCheckGeom:
         (IsValid, Status) = MeasuOp.CheckShapeWithGeometry(theShape)
+        RaiseIfFailed("CheckShapeWithGeometry", MeasuOp)
     else:
         (IsValid, Status) = MeasuOp.CheckShape(theShape)
-
-    if MeasuOp.IsDone() == 0:
-      raise RuntimeError, "CheckShape : " + MeasuOp.GetErrorCode()
-    else:
-      if IsValid == 0:
+        RaiseIfFailed("CheckShape", MeasuOp)
+    if IsValid == 0:
         print Status
     return IsValid
 
@@ -2204,7 +2203,7 @@ def ImportSTEP(theFileName):
 #  Example: see GEOM_TestOthers.py
 def Export(theObject, theFileName, theFormatName):
     InsertOp.Export(theObject, theFileName, theFormatName)
-    RaiseIfFailed("Export :", InsertOp)
+    RaiseIfFailed("Export", InsertOp)
 
 ## Shortcut to Export() for BREP format
 #
@@ -2429,7 +2428,7 @@ def CheckAndImprove(theShape):
 #  Example: see GEOM_TestOthers.py
 def MakeBlockExplode(theCompound, theMinNbFaces, theMaxNbFaces):
     aList = BlocksOp.ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces)
-    RaiseIfFailed("MakeBlockExplode", BlocksOp)
+    RaiseIfFailed("ExplodeCompoundOfBlocks", BlocksOp)
     return aList
 
 ## Find block, containing the given point inside its volume or on boundary.
@@ -2584,7 +2583,7 @@ def DifferenceIDs(theGroup, theSubShapes):
 #  Example: see GEOM_TestOthers.py
 def GetObjectIDs(theGroup):
     ListIDs = GroupOp.GetObjects(theGroup)
-    RaiseIfFailed("GetObjectIDs", GroupOp)
+    RaiseIfFailed("GetObject", GroupOp)
     return ListIDs
 
 ## Returns a type of sub objects stored in the group
