@@ -43,6 +43,13 @@ import GEOM
 ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
 
 # -----------------------------------------------------------------------------
+# Raise an Error Function if Operation is Failed
+# -----------------------------------------------------------------------------
+def RaiseIfFailed (Method_name, Operation):
+    if Operation.IsDone() == 0:
+        raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
+
+# -----------------------------------------------------------------------------
 # enumeration shape_kind
 # -----------------------------------------------------------------------------
 
@@ -137,8 +144,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 print "addToStudyInFather() failed"
                 return ""
             return aShape.GetStudyEntry()
-
-
+        
         # -----------------------------------------------------------------------------
         # Basic primitives
         # -----------------------------------------------------------------------------
@@ -152,8 +158,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeVertex(self,theX, theY, theZ):
             anObj = self.BasicOp.MakePointXYZ(theX, theY, theZ)
-            if self.BasicOp.IsDone() == 0:
-                print "MakePointXYZ : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakePointXYZ", self.BasicOp)
             return anObj
         
         ## Create a point, distant from the referenced point
@@ -167,8 +172,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeVertexWithRef(self,theReference, theX, theY, theZ):
             anObj = self.BasicOp.MakePointWithReference(theReference, theX, theY, theZ)
-            if self.BasicOp.IsDone() == 0:
-                print "MakePointWithReference : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakePointWithReference", self.BasicOp)
             return anObj
         
         ## Create a point, corresponding to the given parameter on the given curve.
@@ -179,8 +183,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeVertexOnCurve(self,theRefCurve, theParameter):
             anObj = self.BasicOp.MakePointOnCurve(theRefCurve, theParameter)
-            if self.BasicOp.IsDone() == 0:
-                print "MakePointOnCurve : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakePointOnCurve", self.BasicOp)
             return anObj
         
         ## Create a tangent, corresponding to the given parameter on the given curve.
@@ -189,8 +192,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the created tangent.
         def MakeTangentOnCurve(self,theRefCurve, theParameter):
             anObj = self.BasicOp.MakeTangentOnCurve(theRefCurve, theParameter)
-            if self.BasicOp.IsDone() == 0:
-                print "MakeTangentOnCurve : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakeTangentOnCurve", self.BasicOp)
             return anObj
         
         ## Create a vector with the given components.
@@ -202,8 +204,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeVectorDXDYDZ(self,theDX, theDY, theDZ):
             anObj = self.BasicOp.MakeVectorDXDYDZ(theDX, theDY, theDZ)
-            if self.BasicOp.IsDone() == 0:
-                print "MakeVectorDXDYDZ : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakeVectorDXDYDZ", self.BasicOp)
             return anObj
         
         ## Create a vector between two points.
@@ -214,8 +215,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeVector(self,thePnt1, thePnt2):
             anObj = self.BasicOp.MakeVectorTwoPnt(thePnt1, thePnt2)
-            if self.BasicOp.IsDone() == 0:
-                print "MakeVectorTwoPnt : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakeVectorTwoPnt", self.BasicOp)
             return anObj
         
         ## Create a line, passing through the given point
@@ -227,8 +227,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeLine(self,thePnt, theDir):
             anObj = self.BasicOp.MakeLine(thePnt, theDir)
-            if self.BasicOp.IsDone() == 0:
-                print "MakeLine : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakeLine", self.BasicOp)
             return anObj
         
         ## Create a line, passing through the given points
@@ -239,8 +238,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeLineTwoPnt(self,thePnt1, thePnt2):
             anObj = self.BasicOp.MakeLineTwoPnt(thePnt1, thePnt2)
-            if self.BasicOp.IsDone() == 0:
-                print "MakeLineTwoPnt : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakeLineTwoPnt", self.BasicOp)
             return anObj
         
         ## Create a plane, passing through the given point
@@ -253,8 +251,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakePlane(self,thePnt, theVec, theTrimSize):
             anObj = self.BasicOp.MakePlanePntVec(thePnt, theVec, theTrimSize)
-            if self.BasicOp.IsDone() == 0:
-                print "MakePlanePntVec : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakePlanePntVec", self.BasicOp)
             return anObj
         
         ## Create a plane, passing through the three given points
@@ -267,8 +264,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakePlaneThreePnt(self,thePnt1, thePnt2, thePnt3, theTrimSize):
             anObj = self.BasicOp.MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize)
-            if self.BasicOp.IsDone() == 0:
-                print "MakePlaneThreePnt : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakePlaneThreePnt", self.BasicOp)
             return anObj
         
         ## Create a plane, similar to the existing one, but with another size of representing face.
@@ -279,8 +275,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakePlaneFace(self,theFace, theTrimSize):
             anObj = self.BasicOp.MakePlaneFace(theFace, theTrimSize)
-            if self.BasicOp.IsDone() == 0:
-                print "MakePlaneFace : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakePlaneFace", self.BasicOp)
             return anObj
         
         ## Create a local coordinate system.
@@ -292,8 +287,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeMarker(self,OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
             anObj = self.BasicOp.MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ)
-            if self.BasicOp.IsDone() == 0:
-                print "MakeMarker : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakeMarker", self.BasicOp)
             return anObj
         
         ## Create a local coordinate system.
@@ -314,8 +308,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakeMarker( O[0], O[1], O[2],
                                              OXOY[0], OXOY[1], OXOY[2],
                                              OXOY[3], OXOY[4], OXOY[5], )
-            if self.BasicOp.IsDone() == 0:
-                print "MakeMarker : ", self.BasicOp.GetErrorCode()
+            RaiseIfFailed("MakeMarker", self.BasicOp)
             return anObj
         
         # -----------------------------------------------------------------------------
@@ -331,8 +324,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeArc(self,thePnt1, thePnt2, thePnt3):
             anObj = self.CurvesOp.MakeArc(thePnt1, thePnt2, thePnt3)
-            if self.CurvesOp.IsDone() == 0:
-                print "MakeArc : ", self.CurvesOp.GetErrorCode()
+            RaiseIfFailed("MakeArc", self.CurvesOp)
             return anObj
         
         ##  Create an arc of circle from a center and 2 points.
@@ -344,8 +336,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeArcCenter(self,thePnt1, thePnt2, thePnt3,theSense):
             anObj = self.CurvesOp.MakeArcCenter(thePnt1, thePnt2, thePnt3,theSense)
-            if self.CurvesOp.IsDone() == 0:
-                print "MakeArcCenter : ", self.CurvesOp.GetErrorCode()
+            RaiseIfFailed("MakeArcCenter", self.CurvesOp)
             return anObj
         
         ## Create a circle with given center, normal vector and radius.
@@ -357,8 +348,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeCircle(self,thePnt, theVec, theR):
             anObj = self.CurvesOp.MakeCirclePntVecR(thePnt, theVec, theR)
-            if self.CurvesOp.IsDone() == 0:
-                print "MakeCirclePntVecR : ", self.CurvesOp.GetErrorCode()
+            RaiseIfFailed("MakeCirclePntVecR", self.CurvesOp)
             return anObj
         
         ## Create a circle, passing through three given points
@@ -368,8 +358,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeCircleThreePnt(self,thePnt1, thePnt2, thePnt3):
             anObj = self.CurvesOp.MakeCircleThreePnt(thePnt1, thePnt2, thePnt3)
-            if self.CurvesOp.IsDone() == 0:
-                print "MakeCircleThreePnt : ", self.CurvesOp.GetErrorCode()
+            RaiseIfFailed("MakeCircleThreePnt", self.CurvesOp)
             return anObj
 
         ## Create a circle, with given point1 as center,
@@ -381,8 +370,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_example6.py
         def MakeCircleCenter2Pnt(self,thePnt1, thePnt2, thePnt3):
             anObj = self.CurvesOp.MakeCircleCenter2Pnt(thePnt1, thePnt2, thePnt3)
-            if self.CurvesOp.IsDone() == 0:
-                print "MakeCircleCenter2Pnt : ", self.CurvesOp.GetErrorCode()
+            RaiseIfFailed("MakeCircleCenter2Pnt", self.CurvesOp)
             return anObj
         
         ## Create an ellipse with given center, normal vector and radiuses.
@@ -395,8 +383,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeEllipse(self,thePnt, theVec, theRMajor, theRMinor):
             anObj = self.CurvesOp.MakeEllipse(thePnt, theVec, theRMajor, theRMinor)
-            if self.CurvesOp.IsDone() == 0:
-                print "MakeEllipse : ", self.CurvesOp.GetErrorCode()
+            RaiseIfFailed("MakeEllipse", self.CurvesOp)
             return anObj
         
         ## Create a polyline on the set of points.
@@ -406,8 +393,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakePolyline(self,thePoints):
             anObj = self.CurvesOp.MakePolyline(thePoints)
-            if self.CurvesOp.IsDone() == 0:
-                print "MakePolyline : ", self.CurvesOp.GetErrorCode()
+            RaiseIfFailed("MakePolyline", self.CurvesOp)
             return anObj
         
         ## Create bezier curve on the set of points.
@@ -417,8 +403,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeBezier(self,thePoints):
             anObj = self.CurvesOp.MakeSplineBezier(thePoints)
-            if self.CurvesOp.IsDone() == 0:
-                print "MakeSplineBezier : ", self.CurvesOp.GetErrorCode()
+            RaiseIfFailed("MakeSplineBezier", self.CurvesOp)
             return anObj
         
         ## Create B-Spline curve on the set of points.
@@ -428,8 +413,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeInterpol(self,thePoints):
             anObj = self.CurvesOp.MakeSplineInterpolation(thePoints)
-            if self.CurvesOp.IsDone() == 0:
-                print "MakeSplineInterpolation : ", self.CurvesOp.GetErrorCode()
+            RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
             return anObj
         
         ## Create a sketcher (wire or face), following the textual description,
@@ -468,8 +452,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeSketcher(self,theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0]):
             anObj = self.CurvesOp.MakeSketcher(theCommand, theWorkingPlane)
-            if self.CurvesOp.IsDone() == 0:
-                print "MakeSketcher : ", self.CurvesOp.GetErrorCode()
+            RaiseIfFailed("MakeSketcher", self.CurvesOp)
             return anObj
         
         ## Create a sketcher (wire or face), following the textual description,
@@ -481,8 +464,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the created wire.
         def MakeSketcherOnPlane(self,theCommand, theWorkingPlane):
             anObj = self.CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
-            if self.CurvesOp.IsDone() == 0:
-                print "MakeSketcher : ", self.CurvesOp.GetErrorCode()
+            RaiseIfFailed("MakeSketcherOnPlane", self.CurvesOp)
             return anObj
         
         # -----------------------------------------------------------------------------
@@ -508,8 +490,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeBoxDXDYDZ(self,theDX, theDY, theDZ):
             anObj = self.PrimOp.MakeBoxDXDYDZ(theDX, theDY, theDZ)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeBoxDXDYDZ : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeBoxDXDYDZ", self.PrimOp)
             return anObj
         
         ## Create a box with two specified opposite vertices,
@@ -521,8 +502,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeBoxTwoPnt(self,thePnt1, thePnt2):
             anObj = self.PrimOp.MakeBoxTwoPnt(thePnt1, thePnt2)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeBoxTwoPnt : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeBoxTwoPnt", self.PrimOp)
             return anObj
         
         ## Create a cylinder with given base point, axis, radius and height.
@@ -535,8 +515,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeCylinder(self,thePnt, theAxis, theR, theH):
             anObj = self.PrimOp.MakeCylinderPntVecRH(thePnt, theAxis, theR, theH)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeCylinderPntVecRH : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeCylinderPntVecRH", self.PrimOp)
             return anObj
         
         ## Create a cylinder with given radius and height at
@@ -549,8 +528,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeCylinderRH(self,theR, theH):
             anObj = self.PrimOp.MakeCylinderRH(theR, theH)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeCylinderRH : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeCylinderRH", self.PrimOp)
             return anObj
         
         ## Create a sphere with given center and radius.
@@ -561,8 +539,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeSpherePntR(self,thePnt, theR):
             anObj = self.PrimOp.MakeSpherePntR(thePnt, theR)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeSpherePntR : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeSpherePntR", self.PrimOp)
             return anObj
         
         ## Create a sphere with given center and radius.
@@ -583,8 +560,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeSphereR(self,theR):
             anObj = self.PrimOp.MakeSphereR(theR)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeSphereR : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeSphereR", self.PrimOp)
             return anObj
         
         ## Create a cone with given base point, axis, height and radiuses.
@@ -600,8 +576,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeCone(self,thePnt, theAxis, theR1, theR2, theH):
             anObj = self.PrimOp.MakeConePntVecR1R2H(thePnt, theAxis, theR1, theR2, theH)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeConePntVecR1R2H : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeConePntVecR1R2H", self.PrimOp)
             return anObj
         
         ## Create a cone with given height and radiuses at
@@ -617,8 +592,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeConeR1R2H(self,theR1, theR2, theH):
             anObj = self.PrimOp.MakeConeR1R2H(theR1, theR2, theH)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeConeR1R2H : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeConeR1R2H", self.PrimOp)
             return anObj
         
         ## Create a torus with given center, normal vector and radiuses.
@@ -631,8 +605,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeTorus(self,thePnt, theVec, theRMajor, theRMinor):
             anObj = self.PrimOp.MakeTorusPntVecRR(thePnt, theVec, theRMajor, theRMinor)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeTorusPntVecRR : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeTorusPntVecRR", self.PrimOp)
             return anObj
         
         ## Create a torus with given radiuses at the origin of coordinate system.
@@ -643,8 +616,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeTorusRR(self,theRMajor, theRMinor):
             anObj = self.PrimOp.MakeTorusRR(theRMajor, theRMinor)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeTorusRR : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeTorusRR", self.PrimOp)
             return anObj
         
         ## Create a shape by extrusion of the base shape along a vector, defined by two points.
@@ -656,8 +628,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakePrism(self,theBase, thePoint1, thePoint2):
             anObj = self.PrimOp.MakePrismTwoPnt(theBase, thePoint1, thePoint2)
-            if self.PrimOp.IsDone() == 0:
-                print "MakePrismTwoPnt : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakePrismTwoPnt", self.PrimOp)
             return anObj
         
         ## Create a shape by extrusion of the base shape along the vector,
@@ -671,8 +642,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakePrismVecH(self,theBase, theVec, theH):
             anObj = self.PrimOp.MakePrismVecH(theBase, theVec, theH)
-            if self.PrimOp.IsDone() == 0:
-                print "MakePrismVecH : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakePrismVecH", self.PrimOp)
             return anObj
         
         ## Create a shape by extrusion of the base shape along
@@ -684,8 +654,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakePipe(self,theBase, thePath):
             anObj = self.PrimOp.MakePipe(theBase, thePath)
-            if self.PrimOp.IsDone() == 0:
-                print "MakePipe : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakePipe", self.PrimOp)
             return anObj
         
         ## Create a shape by revolution of the base shape around the axis
@@ -699,8 +668,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeRevolution(self,theBase, theAxis, theAngle):
             anObj = self.PrimOp.MakeRevolutionAxisAngle(theBase, theAxis, theAngle)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeRevolutionAxisAngle : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeRevolutionAxisAngle", self.PrimOp)
             return anObj
         
         ## Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.
@@ -713,8 +681,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeThruSections(self,theSeqSections,theModeSolid,thePreci,theRuled):
             anObj = self.PrimOp.MakeThruSections(theSeqSections,theModeSolid,thePreci,theRuled)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeThruSections : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeThruSections", self.PrimOp)
             return anObj
         
         ## Create a shape by extrusion of the profile shape along
@@ -737,8 +704,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakePipeWithDifferentSections(theSeqBases,
                                                               theLocations, thePath,
                                                               theWithContact, theWithCorrection)
-            if self.PrimOp.IsDone() == 0:
-                print "MakePipeWithDifferentSections : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakePipeWithDifferentSections", self.PrimOp)
             return anObj
         
         ## Create a shape by extrusion of the profile shape along
@@ -764,8 +730,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakePipeWithShellSections(theSeqBases, theSeqSubBases,
                                                           theLocations, thePath,
                                                           theWithContact, theWithCorrection)
-            if self.PrimOp.IsDone() == 0:
-                print "MakePipeWithShellSections : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakePipeWithShellSections", self.PrimOp)
             return anObj
 
         def MakePipeWithShellSectionsBySteps(self, theSeqBases, theSeqSubBases,
@@ -786,7 +751,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                               theWithContact, theWithCorrection)
                 if self.PrimOp.IsDone() == 0:
                     print "Problems with pipe creation between ",i," and ",i+1," sections"
-                    print "MakePipeWithShellSections : ", self.PrimOp.GetErrorCode()
+                    RaiseIfFailed("MakePipeWithShellSections", self.PrimOp)
                     break
                 else:
                     print "Pipe between ",i," and ",i+1," sections is OK"
@@ -806,8 +771,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         def MakePipeShellsWithoutPath(self, theSeqBases, theLocations):
             anObj = self.PrimOp.MakePipeShellsWithoutPath(theSeqBases, theLocations)
-            if self.PrimOp.IsDone() == 0:
-                print "MakePipeShellsWithoutPath : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakePipeShellsWithoutPath", self.PrimOp)
             return anObj
         
         
@@ -823,8 +787,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeEdge(self,thePnt1, thePnt2):
             anObj = self.ShapesOp.MakeEdge(thePnt1, thePnt2)
-            if self.ShapesOp.IsDone() == 0:
-                print "MakeEdge : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("MakeEdge", self.ShapesOp)
             return anObj
         
         ## Create a wire from the set of edges and wires.
@@ -834,8 +797,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeWire(self,theEdgesAndWires):
             anObj = self.ShapesOp.MakeWire(theEdgesAndWires)
-            if self.ShapesOp.IsDone() == 0:
-                print "MakeWire : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("MakeWire", self.ShapesOp)
             return anObj
         
         ## Create a face on the given wire.
@@ -847,8 +809,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeFace(self,theWire, isPlanarWanted):
             anObj = self.ShapesOp.MakeFace(theWire, isPlanarWanted)
-            if self.ShapesOp.IsDone() == 0:
-                print "MakeFace : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("MakeFace", self.ShapesOp)
             return anObj
         
         ## Create a face on the given wires set.
@@ -860,8 +821,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeFaceWires(self,theWires, isPlanarWanted):
             anObj = self.ShapesOp.MakeFaceWires(theWires, isPlanarWanted)
-            if self.ShapesOp.IsDone() == 0:
-                print "MakeFaceWires : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("MakeFaceWires", self.ShapesOp)
             return anObj
         
         ## Shortcut to MakeFaceWires()
@@ -878,8 +838,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeShell(self,theFacesAndShells):
             anObj = self.ShapesOp.MakeShell(theFacesAndShells)
-            if self.ShapesOp.IsDone() == 0:
-                print "MakeShell : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("MakeShell", self.ShapesOp)
             return anObj
         
         ## Create a solid, bounded by the given shells.
@@ -889,8 +848,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeSolid(self,theShells):
             anObj = self.ShapesOp.MakeSolidShells(theShells)
-            if self.ShapesOp.IsDone() == 0:
-                print "MakeSolid : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("MakeSolidShells", self.ShapesOp)
             return anObj
         
         ## Create a compound of the given shapes.
@@ -900,8 +858,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeCompound(self,theShapes):
             anObj = self.ShapesOp.MakeCompound(theShapes)
-            if self.ShapesOp.IsDone() == 0:
-                print "MakeCompound : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("MakeCompound", self.ShapesOp)
             return anObj
         
         ## Gives quantity of faces in the given shape.
@@ -911,8 +868,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def NumberOfFaces(self,theShape):
             nb_faces = self.ShapesOp.NumberOfFaces(theShape)
-            if self.ShapesOp.IsDone() == 0:
-                print "NumberOfFaces : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("NumberOfFaces", self.ShapesOp)
             return nb_faces
 
         ## Gives quantity of edges in the given shape.
@@ -922,8 +878,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def NumberOfEdges(self,theShape):
             nb_edges = self.ShapesOp.NumberOfEdges(theShape)
-            if self.ShapesOp.IsDone() == 0:
-                print "NumberOfEdges : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("NumberOfEdges", self.ShapesOp)
             return nb_edges
         
         ## Reverses an orientation the given shape.
@@ -933,8 +888,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def ChangeOrientation(self,theShape):
             anObj = self.ShapesOp.ChangeOrientation(theShape)
-            if self.ShapesOp.IsDone() == 0:
-                print "ChangeOrientation : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("ChangeOrientation", self.ShapesOp)
             return anObj
         
         ## Shortcut to ChangeOrientation()
@@ -952,8 +906,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetFreeFacesIDs(self,theShape):
             anIDs = self.ShapesOp.GetFreeFacesIDs(theShape)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetFreeFacesIDs : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetFreeFacesIDs", self.ShapesOp)
             return anIDs
         
         ## Get all sub-shapes of theShape1 of the given type, shared with theShape2.
@@ -965,8 +918,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetSharedShapes(self,theShape1, theShape2, theShapeType):
             aList = self.ShapesOp.GetSharedShapes(theShape1, theShape2, theShapeType)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetSharedShapes : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetSharedShapes", self.ShapesOp)
             return aList
         
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -982,8 +934,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetShapesOnPlane(self,theShape, theShapeType, theAx1, theState):
             aList = self.ShapesOp.GetShapesOnPlane(theShape, theShapeType, theAx1, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnPlane : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnPlane", self.ShapesOp)
             return aList
         
         ## Works like the above method, but returns list of sub-shapes indices
@@ -991,8 +942,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetShapesOnPlaneIDs(self,theShape, theShapeType, theAx1, theState):
             aList = self.ShapesOp.GetShapesOnPlaneIDs(theShape, theShapeType, theAx1, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnPlaneIDs : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnPlaneIDs", self.ShapesOp)
             return aList
         
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1009,8 +959,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetShapesOnPlaneWithLocation(self,theShape, theShapeType, theAx1, thePnt, theState):
             aList = self.ShapesOp.GetShapesOnPlaneWithLocation(theShape, theShapeType, theAx1, thePnt, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnPlaneWithLocation : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnPlaneWithLocation", self.ShapesOp)
             return aList
         
         ## Works like the above method, but returns list of sub-shapes indices
@@ -1018,8 +967,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetShapesOnPlaneWithLocationIDs(self,theShape, theShapeType, theAx1, thePnt, theState):
             aList = self.ShapesOp.GetShapesOnPlaneWithLocationIDs(theShape, theShapeType, theAx1, thePnt, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnPlaneWithLocationIDs : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnPlaneWithLocationIDs", self.ShapesOp)
             return aList
         
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1036,8 +984,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetShapesOnCylinder(self,theShape, theShapeType, theAxis, theRadius, theState):
             aList = self.ShapesOp.GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnCylinder : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnCylinder", self.ShapesOp)
             return aList
         
         ## Works like the above method, but returns list of sub-shapes indices
@@ -1045,8 +992,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetShapesOnCylinderIDs(self,theShape, theShapeType, theAxis, theRadius, theState):
             aList = self.ShapesOp.GetShapesOnCylinderIDs(theShape, theShapeType, theAxis, theRadius, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnCylinderIDs : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnCylinderIDs", self.ShapesOp)
             return aList
         
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1062,8 +1008,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetShapesOnSphere(self,theShape, theShapeType, theCenter, theRadius, theState):
             aList = self.ShapesOp.GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnSphere : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnSphere", self.ShapesOp)
             return aList
         
         ## Works like the above method, but returns list of sub-shapes indices
@@ -1071,8 +1016,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetShapesOnSphereIDs(self,theShape, theShapeType, theCenter, theRadius, theState):
             aList = self.ShapesOp.GetShapesOnSphereIDs(theShape, theShapeType, theCenter, theRadius, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnSphereIDs : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnSphereIDs", self.ShapesOp)
             return aList
         
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1090,8 +1034,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetShapesOnQuadrangle(self,theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState):
             aList = self.ShapesOp.GetShapesOnQuadrangle(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnQuadrangle : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnQuadrangle", self.ShapesOp)
             return aList
         
         ## Works like the above method, but returns list of sub-shapes indices
@@ -1099,8 +1042,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetShapesOnQuadrangleIDs(self,theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState):
             aList = self.ShapesOp.GetShapesOnQuadrangleIDs(theShape, theShapeType, theTopLeftPoint, theTopRigthPoint, theBottomLeftPoint, theBottomRigthPoint, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnQuadrangleIDs : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnQuadrangleIDs", self.ShapesOp)
             return aList
         
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1114,16 +1056,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         def GetShapesOnBox(self,theBox, theShape, theShapeType, theState):
             aList = self.ShapesOp.GetShapesOnBox(theBox, theShape, theShapeType, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnBox : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnBox", self.ShapesOp)
             return aList
         
         ## Works like the above method, but returns list of sub-shapes indices
         #
         def GetShapesOnBoxIDs(self,theBox, theShape, theShapeType, theState):
             aList = self.ShapesOp.GetShapesOnBoxIDs(theBox, theShape, theShapeType, theState)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetShapesOnBoxIDs : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetShapesOnBoxIDs", self.ShapesOp)
             return aList
         
         ## Get sub-shape(s) of theShapeWhere, which are
@@ -1135,8 +1075,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetInPlace(self,theShapeWhere, theShapeWhat):
             anObj = self.ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetInPlace : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetInPlace", self.ShapesOp)
             return anObj
         
         ## Get sub-shape(s) of \a theShapeWhere, which are
@@ -1156,8 +1095,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetInPlaceByHistory(self, theShapeWhere, theShapeWhat):
             anObj = self.ShapesOp.GetInPlaceByHistory(theShapeWhere, theShapeWhat)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetInPlace : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetInPlaceByHistory", self.ShapesOp)
             return anObj
 
         ## Get sub-shape of theShapeWhere, which is
@@ -1168,8 +1106,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         def GetSame(self,theShapeWhere, theShapeWhat):
             anObj = self.ShapesOp.GetSame(theShapeWhere, theShapeWhat)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetSame : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetSame", self.ShapesOp)
             return anObj
         
         # -----------------------------------------------------------------------------
@@ -1189,8 +1126,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def GetSubShapeID(self,aShape, aSubShape):
             anID = self.LocalOp.GetSubShapeIndex(aShape, aSubShape)
-            if self.LocalOp.IsDone() == 0:
-                print "GetSubShapeIndex : ", self.LocalOp.GetErrorCode()
+            RaiseIfFailed("GetSubShapeIndex", self.LocalOp)
             return anID
         
         # -----------------------------------------------------------------------------
@@ -1205,8 +1141,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def SubShapeAll(self,aShape, aType):
             ListObj = self.ShapesOp.MakeExplode(aShape,aType,0)
-            if self.ShapesOp.IsDone() == 0:
-                print "MakeExplode : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("MakeExplode", self.ShapesOp)
             return ListObj
         
         ## Explode a shape on subshapes of a given type.
@@ -1215,8 +1150,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return List of IDs of sub-shapes.
         def SubShapeAllIDs(self,aShape, aType):
             ListObj = self.ShapesOp.SubShapeAllIDs(aShape,aType,0)
-            if self.ShapesOp.IsDone() == 0:
-                print "SubShapeAllIDs : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
             return ListObj
         
         ## Explode a shape on subshapes of a given type.
@@ -1228,8 +1162,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def SubShapeAllSorted(self,aShape, aType):
             ListObj = self.ShapesOp.MakeExplode(aShape,aType,1)
-            if self.ShapesOp.IsDone() == 0:
-                print "MakeExplode : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("MakeExplode", self.ShapesOp)
             return ListObj
         
         ## Explode a shape on subshapes of a given type.
@@ -1239,8 +1172,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return List of IDs of sub-shapes.
         def SubShapeAllSortedIDs(self,aShape, aType):
             ListIDs = self.ShapesOp.SubShapeAllIDs(aShape,aType,1)
-            if self.ShapesOp.IsDone() == 0:
-                print "SubShapeAllSortedIDs : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
             return ListIDs
         
         ## Obtain a compound of sub-shapes of <aShape>,
@@ -1285,8 +1217,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestHealing.py
         def ProcessShape(self,theShape, theOperators, theParameters, theValues):
             anObj = self.HealOp.ProcessShape(theShape, theOperators, theParameters, theValues)
-            if self.HealOp.IsDone() == 0:
-                print "ProcessShape : ", self.HealOp.GetErrorCode()
+            RaiseIfFailed("ProcessShape", self.HealOp)
             return anObj
         
         ## Remove faces from the given object (shape).
@@ -1298,8 +1229,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestHealing.py
         def SuppressFaces(self,theObject, theFaces):
             anObj = self.HealOp.SuppressFaces(theObject, theFaces)
-            if self.HealOp.IsDone() == 0:
-                print "SuppressFaces : ", self.HealOp.GetErrorCode()
+            RaiseIfFailed("SuppressFaces", self.HealOp)
             return anObj
 
         ## Sewing of some shapes into single shape.
@@ -1318,8 +1248,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see MakeSewing() above
         def Sew(self,theObject, theTolerance):
             anObj = self.HealOp.Sew(theObject, theTolerance)
-            if self.HealOp.IsDone() == 0:
-                print "Sew : ", self.HealOp.GetErrorCode()
+            RaiseIfFailed("Sew", self.HealOp)
             return anObj
         
         ## Remove internal wires and edges from the given object (face).
@@ -1331,8 +1260,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestHealing.py
         def SuppressInternalWires(self,theObject, theWires):
             anObj = self.HealOp.RemoveIntWires(theObject, theWires)
-            if self.HealOp.IsDone() == 0:
-                print "SuppressInternalWires : ", self.HealOp.GetErrorCode()
+            RaiseIfFailed("RemoveIntWires", self.HealOp)
             return anObj
         
         ## Remove internal closed contours (holes) from the given object.
@@ -1344,8 +1272,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestHealing.py
         def SuppressHoles(self,theObject, theWires):
             anObj = self.HealOp.FillHoles(theObject, theWires)
-            if self.HealOp.IsDone() == 0:
-                print "SuppressHoles : ", self.HealOp.GetErrorCode()
+            RaiseIfFailed("FillHoles", self.HealOp)
             return anObj
         
         ## Close an open wire.
@@ -1359,8 +1286,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestHealing.py
         def CloseContour(self,theObject, theWires, isCommonVertex):
             anObj = self.HealOp.CloseContour(theObject, theWires, isCommonVertex)
-            if self.HealOp.IsDone() == 0:
-                print "CloseContour : ", self.HealOp.GetErrorCode()
+            RaiseIfFailed("CloseContour", self.HealOp)
             return anObj
         
         ## Addition of a point to a given edge object.
@@ -1376,8 +1302,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestHealing.py
         def DivideEdge(self,theObject, theEdgeIndex, theValue, isByParameter):
             anObj = self.HealOp.DivideEdge(theObject, theEdgeIndex, theValue, isByParameter)
-            if self.HealOp.IsDone() == 0:
-                print "DivideEdge : ", self.HealOp.GetErrorCode()
+            RaiseIfFailed("DivideEdge", self.HealOp)
             return anObj
         
         ## Change orientation of the given object.
@@ -1385,9 +1310,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @update given shape
         def ChangeOrientationShell(self,theObject):
             theObject = self.HealOp.ChangeOrientation(theObject)
-            if self.HealOp.IsDone() == 0:
-                print "ChangeOrientation : ", self.HealOp.GetErrorCode()
-                pass
+            RaiseIfFailed("ChangeOrientation", self.HealOp)
             pass
         
         ## Change orientation of the given object.
@@ -1395,8 +1318,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing processed shape.
         def ChangeOrientationShellCopy(self,theObject):
             anObj = self.HealOp.ChangeOrientationCopy(theObject)
-            if self.HealOp.IsDone() == 0:
-                print "ChangeOrientation : ", self.HealOp.GetErrorCode()
+            RaiseIfFailed("ChangeOrientationCopy", self.HealOp)
             return anObj
         
         ## Get a list of wires (wrapped in GEOM_Object-s),
@@ -1410,8 +1332,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestHealing.py
         def GetFreeBoundary(self,theObject):
             anObj = self.HealOp.GetFreeBoundary(theObject)
-            if self.HealOp.IsDone() == 0:
-                print "GetFreeBoundaries : ", self.HealOp.GetErrorCode()
+            RaiseIfFailed("GetFreeBoundaries", self.HealOp)
             return anObj
         
         # -----------------------------------------------------------------------------
@@ -1423,8 +1344,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeCopy(self,theOriginal):
             anObj = self.InsertOp.MakeCopy(theOriginal)
-            if self.InsertOp.IsDone() == 0:
-                print "MakeCopy : ", self.InsertOp.GetErrorCode()
+            RaiseIfFailed("MakeCopy", self.InsertOp)
             return anObj
         
         ## Create a filling from the given compound of contours.
@@ -1439,8 +1359,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeFilling(self,theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter):
             anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter)
-            if self.PrimOp.IsDone() == 0:
-                print "MakeFilling : ", self.PrimOp.GetErrorCode()
+            RaiseIfFailed("MakeFilling", self.PrimOp)
             return anObj
         
         ## Replace coincident faces in theShape by one face.
@@ -1453,8 +1372,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def MakeGlueFaces(self, theShape, theTolerance, doKeepNonSolids=True):
             anObj = self.ShapesOp.MakeGlueFaces(theShape, theTolerance, doKeepNonSolids)
-            if self.ShapesOp.IsDone() == 0:
-                print "MakeGlueFaces : ", self.ShapesOp.GetErrorCode()
+            if anObj is None:
+                raise RuntimeError, "MakeGlueFaces : " + self.ShapesOp.GetErrorCode()
             return anObj
         
         
@@ -1467,8 +1386,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def GetGlueFaces(self, theShape, theTolerance):
             anObj = self.ShapesOp.GetGlueFaces(theShape, theTolerance)
-            if self.ShapesOp.IsDone() == 0:
-                print "GetGlueFaces : ", self.ShapesOp.GetErrorCode()
+            RaiseIfFailed("GetGlueFaces", self.ShapesOp)
             return anObj
         
         
@@ -1486,8 +1404,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def MakeGlueFacesByList(self, theShape, theTolerance, theFaces, doKeepNonSolids=True):
             anObj = self.ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids)
-            if self.ShapesOp.IsDone() == 0:
-                print "MakeGlueFacesByList : ", self.ShapesOp.GetErrorCode()
+            if anObj is None:
+                raise RuntimeError, "MakeGlueFacesByList : " + self.ShapesOp.GetErrorCode()
             return anObj
         
         
@@ -1505,8 +1423,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeBoolean(self,theShape1, theShape2, theOperation):
             anObj = self.BoolOp.MakeBoolean(theShape1, theShape2, theOperation)
-            if self.BoolOp.IsDone() == 0:
-                print "MakeBoolean : ", self.BoolOp.GetErrorCode()
+            RaiseIfFailed("MakeBoolean", self.BoolOp)
             return anObj
         
         ## Shortcut to MakeBoolean(s1, s2, 1)
@@ -1567,8 +1484,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                               ListKeepInside, ListRemoveInside,
                                               Limit, RemoveWebs, ListMaterials,
                                               KeepNonlimitShapes);
-            if self.BoolOp.IsDone() == 0:
-                print "MakePartition : ", self.BoolOp.GetErrorCode()
+            RaiseIfFailed("MakePartition", self.BoolOp)
             return anObj
         
         ## Perform partition operation.
@@ -1591,8 +1507,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                                      ListKeepInside, ListRemoveInside,
                                                                      Limit, RemoveWebs, ListMaterials,
                                                                      KeepNonlimitShapes);
-            if self.BoolOp.IsDone() == 0:
-                print "MakePartitionNonSelfIntersectedShape : ", self.BoolOp.GetErrorCode()
+            RaiseIfFailed("MakePartitionNonSelfIntersectedShape", self.BoolOp)
             return anObj
         
         ## Shortcut to MakePartition()
@@ -1615,8 +1530,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeHalfPartition(self,theShape, thePlane):
             anObj = self.BoolOp.MakeHalfPartition(theShape, thePlane)
-            if self.BoolOp.IsDone() == 0:
-                print "MakeHalfPartition : ", self.BoolOp.GetErrorCode()
+            RaiseIfFailed("MakeHalfPartition", self.BoolOp)
             return anObj
         
         # -----------------------------------------------------------------------------
@@ -1633,8 +1547,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeTranslationTwoPoints(self,theObject, thePoint1, thePoint2):
             anObj = self.TrsfOp.TranslateTwoPointsCopy(theObject, thePoint1, thePoint2)
-            if self.TrsfOp.IsDone() == 0:
-                print "TranslateTwoPointsCopy : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("TranslateTwoPointsCopy", self.TrsfOp)
             return anObj
         
         ## Translate the given object along the vector, specified
@@ -1646,8 +1559,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeTranslation(self,theObject, theDX, theDY, theDZ):
             anObj = self.TrsfOp.TranslateDXDYDZCopy(theObject, theDX, theDY, theDZ)
-            if self.TrsfOp.IsDone() == 0:
-                print "TranslateDXDYDZCopy : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("TranslateDXDYDZ", self.TrsfOp)
             return anObj
         
         ## Translate the given object along the given vector,
@@ -1659,8 +1571,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeTranslationVector(self,theObject, theVector):
             anObj = self.TrsfOp.TranslateVectorCopy(theObject, theVector)
-            if self.TrsfOp.IsDone() == 0:
-                print "TranslateVectorCopy : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("TranslateVectorCopy", self.TrsfOp)
             return anObj
         
         ## Rotate the given object around the given axis
@@ -1673,8 +1584,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeRotation(self,theObject, theAxis, theAngle):
             anObj = self.TrsfOp.RotateCopy(theObject, theAxis, theAngle)
-            if self.TrsfOp.IsDone() == 0:
-                print "RotateCopy : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("RotateCopy", self.TrsfOp)
             return anObj
         
         ## Rotate given object around vector perpendicular to plane
@@ -1688,8 +1598,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeRotationThreePoints(self,theObject, theCentPoint, thePoint1, thePoint2):
             anObj = self.TrsfOp.RotateThreePointsCopy(theObject, theCentPoint, thePoint1, thePoint2)
-            if self.TrsfOp.IsDone() == 0:
-                print "RotateThreePointsCopy : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("RotateThreePointsCopy", self.TrsfOp)
             return anObj
         
         ## Scale the given object by the factor, creating its copy before the scaling.
@@ -1701,8 +1610,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeScaleTransform(self,theObject, thePoint, theFactor):
             anObj = self.TrsfOp.ScaleShapeCopy(theObject, thePoint, theFactor)
-            if self.TrsfOp.IsDone() == 0:
-                print "ScaleShapeCopy : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("ScaleShapeCopy", self.TrsfOp)
             return anObj
         
         ## Create an object, symmetrical
@@ -1714,8 +1622,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeMirrorByPlane(self,theObject, thePlane):
             anObj = self.TrsfOp.MirrorPlaneCopy(theObject, thePlane)
-            if self.TrsfOp.IsDone() == 0:
-                print "MirrorPlaneCopy : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("MirrorPlaneCopy", self.TrsfOp)
             return anObj
         
         ## Create an object, symmetrical
@@ -1727,8 +1634,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeMirrorByAxis(self,theObject, theAxis):
             anObj = self.TrsfOp.MirrorAxisCopy(theObject, theAxis)
-            if self.TrsfOp.IsDone() == 0:
-                print "MirrorAxisCopy : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("MirrorAxisCopy", self.TrsfOp)
             return anObj
         
         ## Create an object, symmetrical
@@ -1740,8 +1646,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeMirrorByPoint(self,theObject, thePoint):
             anObj = self.TrsfOp.MirrorPointCopy(theObject, thePoint)
-            if self.TrsfOp.IsDone() == 0:
-                print "MirrorPointCopy : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("MirrorPointCopy", self.TrsfOp)
             return anObj
         
         ## Modify the Location of the given object by LCS,
@@ -1758,8 +1663,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakePosition(self,theObject, theStartLCS, theEndLCS):
             anObj = self.TrsfOp.PositionShapeCopy(theObject, theStartLCS, theEndLCS)
-            if self.TrsfOp.IsDone() == 0:
-                print "PositionShapeCopy : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("PositionShapeCopy", self.TrsfOp)
             return anObj
         
         ## Create new object as offset of the given one.
@@ -1770,8 +1674,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeOffset(self,theObject, theOffset):
             anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset)
-            if self.TrsfOp.IsDone() == 0:
-                print "OffsetShapeCopy : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("OffsetShapeCopy", self.TrsfOp)
             return anObj
         
         # -----------------------------------------------------------------------------
@@ -1789,8 +1692,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeMultiTranslation1D(self,theObject, theVector, theStep, theNbTimes):
             anObj = self.TrsfOp.MultiTranslate1D(theObject, theVector, theStep, theNbTimes)
-            if self.TrsfOp.IsDone() == 0:
-                print "MultiTranslate1D : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("MultiTranslate1D", self.TrsfOp)
             return anObj
         
         ## Conseqently apply two specified translations to theObject specified number of times.
@@ -1809,8 +1711,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                    theVector2, theStep2, theNbTimes2):
             anObj = self.TrsfOp.MultiTranslate2D(theObject, theVector1, theStep1, theNbTimes1,
                                                  theVector2, theStep2, theNbTimes2)
-            if self.TrsfOp.IsDone() == 0:
-                print "MultiTranslate2D : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("MultiTranslate2D", self.TrsfOp)
             return anObj
         
         ## Rotate the given object around the given axis a given number times.
@@ -1824,8 +1725,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MultiRotate1D(self,theObject, theAxis, theNbTimes):
             anObj = self.TrsfOp.MultiRotate1D(theObject, theAxis, theNbTimes)
-            if self.TrsfOp.IsDone() == 0:
-                print "MultiRotate1D : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("MultiRotate1D", self.TrsfOp)
             return anObj
         
         ## Rotate the given object around the
@@ -1845,8 +1745,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MultiRotate2D(self,theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2):
             anObj = self.TrsfOp.MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2)
-            if self.TrsfOp.IsDone() == 0:
-                print "MultiRotate2D : ", self.TrsfOp.GetErrorCode()
+            RaiseIfFailed("MultiRotate2D", self.TrsfOp)
             return anObj
         
         ## The same, as MultiRotate1D(), but axis is given by direction and point
@@ -1877,8 +1776,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def MakeFilletAll(self,theShape, theR):
             anObj = self.LocalOp.MakeFilletAll(theShape, theR)
-            if self.LocalOp.IsDone() == 0:
-                print "MakeFilletAll : ", self.LocalOp.GetErrorCode()
+            RaiseIfFailed("MakeFilletAll", self.LocalOp)
             return anObj
         
         ## Perform a fillet on the specified edges/faces of the given shape
@@ -1894,20 +1792,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = None
             if theShapeType == ShapeType["EDGE"]:
                 anObj = self.LocalOp.MakeFilletEdges(theShape, theR, theListShapes)
+                RaiseIfFailed("MakeFilletEdges", self.LocalOp)
             else:
                 anObj = self.LocalOp.MakeFilletFaces(theShape, theR, theListShapes)
-            if self.LocalOp.IsDone() == 0:
-                print "MakeFillet : ", self.LocalOp.GetErrorCode()
+                RaiseIfFailed("MakeFilletFaces", self.LocalOp)
             return anObj
-        ## The same but with two Fillet Radius R1 and R2
+        
+        ## The same that MakeFillet but with two Fillet Radius R1 and R2
         def MakeFilletR1R2(self, theShape, theR1, theR2, theShapeType, theListShapes):
             anObj = None
             if theShapeType == ShapeType["EDGE"]:
                 anObj = self.LocalOp.MakeFilletEdgesR1R2(theShape, theR1, theR2, theListShapes)
+                RaiseIfFailed("MakeFilletEdgesR1R2", self.LocalOp)
             else:
                 anObj = self.LocalOp.MakeFilletFacesR1R2(theShape, theR1, theR2, theListShapes)
-            if self.LocalOp.IsDone() == 0:
-                print "MakeFilletR1R2 : ", self.LocalOp.GetErrorCode()
+                RaiseIfFailed("MakeFilletFacesR1R2", self.LocalOp)
             return anObj
         
         ## Perform a symmetric chamfer on all edges of the given shape.
@@ -1918,8 +1817,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def MakeChamferAll(self,theShape, theD):
             anObj = self.LocalOp.MakeChamferAll(theShape, theD)
-            if self.LocalOp.IsDone() == 0:
-                print "MakeChamferAll : ", self.LocalOp.GetErrorCode()
+            RaiseIfFailed("MakeChamferAll", self.LocalOp)
             return anObj
         
         ## Perform a chamfer on edges, common to the specified faces,
@@ -1934,15 +1832,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeChamferEdge(self,theShape, theD1, theD2, theFace1, theFace2):
             anObj = self.LocalOp.MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2)
-            if self.LocalOp.IsDone() == 0:
-                print "MakeChamferEdge : ", self.LocalOp.GetErrorCode()
+            RaiseIfFailed("MakeChamferEdge", self.LocalOp)
             return anObj
-        ## The Same chamfer but with params theD is chamfer lenght and
+        
+        ## The Same that MakeChamferEdge but with params theD is chamfer lenght and
         #  theAngle is Angle of chamfer (angle in radians)
         def MakeChamferEdgeAD(self, theShape, theD, theAngle, theFace1, theFace2):
             anObj = self.LocalOp.MakeChamferEdgeAD(theShape, theD, theAngle, theFace1, theFace2)
-            if self.LocalOp.IsDone() == 0:
-                print "MakeChamferEdgeAD : ", self.LocalOp.GetErrorCode()
+            RaiseIfFailed("MakeChamferEdgeAD", self.LocalOp)
             return anObj
         
         ## Perform a chamfer on all edges of the specified faces,
@@ -1959,15 +1856,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def MakeChamferFaces(self,theShape, theD1, theD2, theFaces):
             anObj = self.LocalOp.MakeChamferFaces(theShape, theD1, theD2, theFaces)
-            if self.LocalOp.IsDone() == 0:
-                print "MakeChamferFaces : ", self.LocalOp.GetErrorCode()
+            RaiseIfFailed("MakeChamferFaces", self.LocalOp)
             return anObj
-        ## The Same chamfer but with params theD is chamfer lenght and
+        
+        ## The Same that MakeChamferFaces but with params theD is chamfer lenght and
         #  theAngle is Angle of chamfer (angle in radians)
         def MakeChamferFacesAD(self, theShape, theD, theAngle, theFaces):
             anObj = self.LocalOp.MakeChamferFacesAD(theShape, theD, theAngle, theFaces)
-            if self.LocalOp.IsDone() == 0:
-                print "MakeChamferFacesAD : ", self.LocalOp.GetErrorCode()
+            RaiseIfFailed("MakeChamferFacesAD", self.LocalOp)
             return anObj
         
         ## Perform a chamfer on edges,
@@ -1980,15 +1876,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example:
         def MakeChamferEdges(self, theShape, theD1, theD2, theEdges):
             anObj = self.LocalOp.MakeChamferEdges(theShape, theD1, theD2, theEdges)
-            if self.LocalOp.IsDone() == 0:
-                print "MakeChamferEdges : ", self.LocalOp.GetErrorCode()
+            RaiseIfFailed("MakeChamferEdges", self.LocalOp)
             return anObj
-        ## The Same chamfer but with params theD is chamfer lenght and
+        
+        ## The Same that MakeChamferEdges but with params theD is chamfer lenght and
         #  theAngle is Angle of chamfer (angle in radians)
         def MakeChamferEdgesAD(self, theShape, theD, theAngle, theEdges):
             anObj = self.LocalOp.MakeChamferEdgesAD(theShape, theD, theAngle, theEdges)
-            if self.LocalOp.IsDone() == 0:
-                print "MakeChamferEdgesAD : ", self.LocalOp.GetErrorCode()
+            RaiseIfFailed("MakeChamferEdgesAD", self.LocalOp)
             return anObj
         
         ## Shortcut to MakeChamferEdge() and MakeChamferFaces()
@@ -2014,8 +1909,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestAll.py
         def Archimede(self,theShape, theWeight, theWaterDensity, theMeshDeflection):
             anObj = self.LocalOp.MakeArchimede(theShape, theWeight, theWaterDensity, theMeshDeflection)
-            if self.LocalOp.IsDone() == 0:
-                print "MakeArchimede : ", self.LocalOp.GetErrorCode()
+            RaiseIfFailed("MakeArchimede", self.LocalOp)
             return anObj
         
         # -----------------------------------------------------------------------------
@@ -2028,8 +1922,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def PointCoordinates(self,Point):
             aTuple = self.MeasuOp.PointCoordinates(Point)
-            if self.MeasuOp.IsDone() == 0:
-                print "PointCoordinates : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("PointCoordinates", self.MeasuOp)
             return aTuple
         
         ## Get summarized length of all wires,
@@ -2043,8 +1936,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def BasicProperties(self,theShape):
             aTuple = self.MeasuOp.GetBasicProperties(theShape)
-            if self.MeasuOp.IsDone() == 0:
-                print "BasicProperties : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("GetBasicProperties", self.MeasuOp)
             return aTuple
         
         ## Get parameters of bounding box of the given shape
@@ -2057,8 +1949,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def BoundingBox(self,theShape):
             aTuple = self.MeasuOp.GetBoundingBox(theShape)
-            if self.MeasuOp.IsDone() == 0:
-                print "BoundingBox : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("GetBoundingBox", self.MeasuOp)
             return aTuple
         
         ## Get inertia matrix and moments of inertia of theShape.
@@ -2070,8 +1961,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def Inertia(self,theShape):
             aTuple = self.MeasuOp.GetInertia(theShape)
-            if self.MeasuOp.IsDone() == 0:
-                print "Inertia : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("GetInertia", self.MeasuOp)
             return aTuple
         
         ## Get minimal distance between the given shapes.
@@ -2081,8 +1971,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def MinDistance(self, theShape1, theShape2):
             aTuple = self.MeasuOp.GetMinDistance(theShape1, theShape2)
-            if self.MeasuOp.IsDone() == 0:
-                print "MinDistance : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("GetMinDistance", self.MeasuOp)
             return aTuple[0]
 
         ## Get minimal distance between the given shapes.
@@ -2092,8 +1981,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def MinDistanceComponents(self, theShape1, theShape2):
             aTuple = self.MeasuOp.GetMinDistance(theShape1, theShape2)
-            if self.MeasuOp.IsDone() == 0:
-                print "MinDistanceComponents : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("GetMinDistance", self.MeasuOp)
             aRes = [aTuple[0], aTuple[4] - aTuple[1], aTuple[5] - aTuple[2], aTuple[6] - aTuple[3]]
             return aRes
 
@@ -2104,8 +1992,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def GetAngle(self, theShape1, theShape2):
             anAngle = self.MeasuOp.GetAngle(theShape1, theShape2)
-            if self.MeasuOp.IsDone() == 0:
-                print "GetAngle : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("GetAngle", self.MeasuOp)
             return anAngle
 
         ## Get min and max tolerances of sub-shapes of theShape
@@ -2118,8 +2005,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def Tolerance(self,theShape):
             aTuple = self.MeasuOp.GetTolerance(theShape)
-            if self.MeasuOp.IsDone() == 0:
-                print "Tolerance : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("GetTolerance", self.MeasuOp)
             return aTuple
 
         ## Obtain description of the given shape (number of sub-shapes of each type)
@@ -2129,8 +2015,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def WhatIs(self,theShape):
             aDescr = self.MeasuOp.WhatIs(theShape)
-            if self.MeasuOp.IsDone() == 0:
-                print "WhatIs : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("WhatIs", self.MeasuOp)
             return aDescr
         
         ## Get a point, situated at the centre of mass of theShape.
@@ -2140,8 +2025,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def MakeCDG(self,theShape):
             anObj = self.MeasuOp.GetCentreOfMass(theShape)
-            if self.MeasuOp.IsDone() == 0:
-                print "GetCentreOfMass : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("GetCenterOfMass", self.MeasuOp)
             return anObj
         
         ## Get a normale to the given face. If the point is not given,
@@ -2153,8 +2037,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def GetNormal(self, theFace, theOptionalPoint = None):
             anObj = self.MeasuOp.GetNormal(theFace, theOptionalPoint)
-            if self.MeasuOp.IsDone() == 0:
-                print "GetNormal : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("GetNormal", self.MeasuOp)
             return anObj
         
         ## Check a topology of the given shape.
@@ -2168,14 +2051,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def CheckShape(self,theShape, theIsCheckGeom = 0):
             if theIsCheckGeom:
                 (IsValid, Status) = self.MeasuOp.CheckShapeWithGeometry(theShape)
+                RaiseIfFailed("CheckShapeWithGeometry", self.MeasuOp)
             else:
                 (IsValid, Status) = self.MeasuOp.CheckShape(theShape)
-                
-            if self.MeasuOp.IsDone() == 0:
-                print "CheckShape : ", self.MeasuOp.GetErrorCode()
-            else:
-                if IsValid == 0:
-                    print Status
+                RaiseIfFailed("CheckShape", self.MeasuOp)
+            if IsValid == 0:
+                print Status
             return IsValid
         
         ## Get position (LCS) of theShape.
@@ -2193,8 +2074,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def GetPosition(self,theShape):
             aTuple = self.MeasuOp.GetPosition(theShape)
-            if self.MeasuOp.IsDone() == 0:
-                print "GetPosition : ", self.MeasuOp.GetErrorCode()
+            RaiseIfFailed("GetPosition", self.MeasuOp)
             return aTuple
         
         ## Get kind of theShape.
@@ -2249,7 +2129,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def KindOfShape(self,theShape):
             aRoughTuple = self.MeasuOp.KindOfShape(theShape)
             if self.MeasuOp.IsDone() == 0:
-                print "KindOfShape : ", self.MeasuOp.GetErrorCode()
+                raise RuntimeError, "KindOfShape : " + self.MeasuOp.GetErrorCode()
                 return []
              
             aKind  = aRoughTuple[0]
@@ -2281,8 +2161,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def Import(self,theFileName, theFormatName):
             anObj = self.InsertOp.Import(theFileName, theFormatName)
-            if self.InsertOp.IsDone() == 0:
-                print "Import : ", self.InsertOp.GetErrorCode()
+            RaiseIfFailed("Import", self.InsertOp)
             return anObj
         
         ## Shortcut to Import() for BREP format
@@ -2313,7 +2192,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def Export(self,theObject, theFileName, theFormatName):
             self.InsertOp.Export(theObject, theFileName, theFormatName)
             if self.InsertOp.IsDone() == 0:
-                print "Export : ", self.InsertOp.GetErrorCode()
+                raise RuntimeError,  "Export : " + self.InsertOp.GetErrorCode()
                 pass
             pass
         
@@ -2347,8 +2226,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def MakeQuad(self,E1, E2, E3, E4):
             anObj = self.BlocksOp.MakeQuad(E1, E2, E3, E4)
-            if self.BlocksOp.IsDone() == 0:
-                print "MakeQuad : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("MakeQuad", self.BlocksOp)
             return anObj
         
         ## Create a quadrangle face on two edges.
@@ -2359,8 +2237,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def MakeQuad2Edges(self,E1, E2):
             anObj = self.BlocksOp.MakeQuad2Edges(E1, E2)
-            if self.BlocksOp.IsDone() == 0:
-                print "MakeQuad2Edges : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("MakeQuad2Edges", self.BlocksOp)
             return anObj
         
         ## Create a quadrangle face with specified corners.
@@ -2371,8 +2248,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def MakeQuad4Vertices(self,V1, V2, V3, V4):
             anObj = self.BlocksOp.MakeQuad4Vertices(V1, V2, V3, V4)
-            if self.BlocksOp.IsDone() == 0:
-                print "MakeQuad4Vertices : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("MakeQuad4Vertices", self.BlocksOp)
             return anObj
         
         ## Create a hexahedral solid, bounded by the six given faces. Order of
@@ -2383,8 +2259,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def MakeHexa(self,F1, F2, F3, F4, F5, F6):
             anObj = self.BlocksOp.MakeHexa(F1, F2, F3, F4, F5, F6)
-            if self.BlocksOp.IsDone() == 0:
-                print "MakeHexa : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("MakeHexa", self.BlocksOp)
             return anObj
         
         ## Create a hexahedral solid between two given faces.
@@ -2395,8 +2270,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def MakeHexa2Faces(self,F1, F2):
             anObj = self.BlocksOp.MakeHexa2Faces(F1, F2)
-            if self.BlocksOp.IsDone() == 0:
-                print "MakeHexa2Faces : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("MakeHexa2Faces", self.BlocksOp)
             return anObj
         
         ## Get a vertex, found in the given shape by its coordinates.
@@ -2409,8 +2283,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetPoint(self,theShape, theX, theY, theZ, theEpsilon):
             anObj = self.BlocksOp.GetPoint(theShape, theX, theY, theZ, theEpsilon)
-            if self.BlocksOp.IsDone() == 0:
-                print "GetPoint : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("GetPoint", self.BlocksOp)
             return anObj
         
         ## Get an edge, found in the given shape by two given vertices.
@@ -2421,8 +2294,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def GetEdge(self,theShape, thePoint1, thePoint2):
             anObj = self.BlocksOp.GetEdge(theShape, thePoint1, thePoint2)
-            if self.BlocksOp.IsDone() == 0:
-                print "GetEdge : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("GetEdge", self.BlocksOp)
             return anObj
         
         ## Find an edge of the given shape, which has minimal distance to the given point.
@@ -2433,8 +2305,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetEdgeNearPoint(self,theShape, thePoint):
             anObj = self.BlocksOp.GetEdgeNearPoint(theShape, thePoint)
-            if self.BlocksOp.IsDone() == 0:
-                print "GetEdgeNearPoint : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("GetEdgeNearPoint", self.BlocksOp)
             return anObj
         
         ## Returns a face, found in the given shape by four given corner vertices.
@@ -2445,8 +2316,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def GetFaceByPoints(self,theShape, thePoint1, thePoint2, thePoint3, thePoint4):
             anObj = self.BlocksOp.GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4)
-            if self.BlocksOp.IsDone() == 0:
-                print "GetFaceByPoints : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("GetFaceByPoints", self.BlocksOp)
             return anObj
         
         ## Get a face of block, found in the given shape by two given edges.
@@ -2457,8 +2327,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def GetFaceByEdges(self,theShape, theEdge1, theEdge2):
             anObj = self.BlocksOp.GetFaceByEdges(theShape, theEdge1, theEdge2)
-            if self.BlocksOp.IsDone() == 0:
-                print "GetFaceByEdges : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("GetFaceByEdges", self.BlocksOp)
             return anObj
         
         ## Find a face, opposite to the given one in the given block.
@@ -2469,8 +2338,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def GetOppositeFace(self,theBlock, theFace):
             anObj = self.BlocksOp.GetOppositeFace(theBlock, theFace)
-            if self.BlocksOp.IsDone() == 0:
-                print "GetOppositeFace : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("GetOppositeFace", self.BlocksOp)
             return anObj
         
         ## Find a face of the given shape, which has minimal distance to the given point.
@@ -2481,8 +2349,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def GetFaceNearPoint(self,theShape, thePoint):
             anObj = self.BlocksOp.GetFaceNearPoint(theShape, thePoint)
-            if self.BlocksOp.IsDone() == 0:
-                print "GetFaceNearPoint : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("GetFaceNearPoint", self.BlocksOp)
             return anObj
         
         ## Find a face of block, whose outside normale has minimal angle with the given vector.
@@ -2493,8 +2360,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def GetFaceByNormale(self,theBlock, theVector):
             anObj = self.BlocksOp.GetFaceByNormale(theBlock, theVector)
-            if self.BlocksOp.IsDone() == 0:
-                print "GetFaceByNormale : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("GetFaceByNormale", self.BlocksOp)
             return anObj
         
         ## Check, if the compound of blocks is given.
@@ -2512,7 +2378,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def CheckCompoundOfBlocks(self,theCompound):
             (IsValid, BCErrors) = self.BlocksOp.CheckCompoundOfBlocks(theCompound)
             if self.BlocksOp.IsDone() == 0:
-                print "CheckCompoundOfBlocks : ", self.BlocksOp.GetErrorCode()
+                raise RuntimeError,  "CheckCompoundOfBlocks : " + self.BlocksOp.GetErrorCode()
             else:
                 if IsValid == 0:
                     Descr = self.BlocksOp.PrintBCErrors(theCompound, BCErrors)
@@ -2528,8 +2394,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def RemoveExtraEdges(self,theShape):
             anObj = self.BlocksOp.RemoveExtraEdges(theShape)
-            if self.BlocksOp.IsDone() == 0:
-                print "RemoveExtraEdges : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("RemoveExtraEdges", self.BlocksOp)
             return anObj
         
         ## Check, if the given shape is a blocks compound.
@@ -2541,8 +2406,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def CheckAndImprove(self,theShape):
             anObj = self.BlocksOp.CheckAndImprove(theShape)
-            if self.BlocksOp.IsDone() == 0:
-                print "CheckAndImprove : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("CheckAndImprove", self.BlocksOp)
             return anObj
         
         ## Get all the blocks, contained in the given compound.
@@ -2555,8 +2419,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def MakeBlockExplode(self,theCompound, theMinNbFaces, theMaxNbFaces):
             aList = self.BlocksOp.ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces)
-            if self.BlocksOp.IsDone() == 0:
-                print "MakeBlockExplode : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("ExplodeCompoundOfBlocks", self.BlocksOp)
             return aList
         
         ## Find block, containing the given point inside its volume or on boundary.
@@ -2568,8 +2431,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def GetBlockNearPoint(self,theCompound, thePoint):
             anObj = self.BlocksOp.GetBlockNearPoint(theCompound, thePoint)
-            if self.BlocksOp.IsDone() == 0:
-                print "GetBlockNearPoint : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("GetBlockNearPoint", self.BlocksOp)
             return anObj
         
         ## Find block, containing all the elements, passed as the parts, or maximum quantity of them.
@@ -2580,8 +2442,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetBlockByParts(self,theCompound, theParts):
             anObj = self.BlocksOp.GetBlockByParts(theCompound, theParts)
-            if self.BlocksOp.IsDone() == 0:
-                print "GetBlockByParts : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("GetBlockByParts", self.BlocksOp)
             return anObj
         
         ## Return all blocks, containing all the elements, passed as the parts.
@@ -2592,8 +2453,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def GetBlocksByParts(self,theCompound, theParts):
             aList = self.BlocksOp.GetBlocksByParts(theCompound, theParts)
-            if self.BlocksOp.IsDone() == 0:
-                print "GetBlocksByParts : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("GetBlockByParts", self.BlocksOp)
             return aList
 
         ## Multi-transformate block and glue the result.
@@ -2608,8 +2468,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def MakeMultiTransformation1D(self,Block, DirFace1, DirFace2, NbTimes):
             anObj = self.BlocksOp.MakeMultiTransformation1D(Block, DirFace1, DirFace2, NbTimes)
-            if self.BlocksOp.IsDone() == 0:
-                print "MakeMultiTransformation1D : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("MakeMultiTransformation1D", self.BlocksOp)
             return anObj
         
         ## Multi-transformate block and glue the result.
@@ -2624,8 +2483,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                       DirFace1V, DirFace2V, NbTimesV):
             anObj = self.BlocksOp.MakeMultiTransformation2D(Block, DirFace1U, DirFace2U, NbTimesU,
                                                             DirFace1V, DirFace2V, NbTimesV)
-            if self.BlocksOp.IsDone() == 0:
-                print "MakeMultiTransformation2D : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("MakeMultiTransformation2D", self.BlocksOp)
             return anObj
         
         ## Build all possible propagation groups.
@@ -2638,8 +2496,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def Propagate(self,theShape):
             listChains = self.BlocksOp.Propagate(theShape)
-            if self.BlocksOp.IsDone() == 0:
-                print "Propagate : ", self.BlocksOp.GetErrorCode()
+            RaiseIfFailed("Propagate", self.BlocksOp)
             return listChains
         
         # -----------------------------------------------------------------------------
@@ -2654,8 +2511,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def CreateGroup(self,theMainShape, theShapeType):
             anObj = self.GroupOp.CreateGroup(theMainShape, theShapeType)
-            if self.GroupOp.IsDone() == 0:
-                print "CreateGroup : ", self.GroupOp.GetErrorCode()
+            RaiseIfFailed("CreateGroup", self.GroupOp)
             return anObj
         
         ## Adds a sub object with ID theSubShapeId to the group
@@ -2666,9 +2522,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def AddObject(self,theGroup, theSubShapeID):
             self.GroupOp.AddObject(theGroup, theSubShapeID)
-            if self.GroupOp.IsDone() == 0:
-                print "AddObject : ", self.GroupOp.GetErrorCode()
-                pass
+            RaiseIfFailed("AddObject", self.GroupOp)
             pass
         
         ## Removes a sub object with ID \a theSubShapeId from the group
@@ -2679,9 +2533,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def RemoveObject(self,theGroup, theSubShapeID):
             self.GroupOp.RemoveObject(theGroup, theSubShapeID)
-            if self.GroupOp.IsDone() == 0:
-                print "RemoveObject : ", self.GroupOp.GetErrorCode()
-                pass
+            RaiseIfFailed("RemoveObject", self.GroupOp)
             pass
         
         ## Adds to the group all the given shapes. No errors, if some shapes are alredy included.
@@ -2691,9 +2543,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def UnionList (self,theGroup, theSubShapes):
             self.GroupOp.UnionList(theGroup, theSubShapes)
-            if self.GroupOp.IsDone() == 0:
-                print "UnionList : ", self.GroupOp.GetErrorCode()
-                pass
+            RaiseIfFailed("UnionList", self.GroupOp)
             pass
         
         ## Works like the above method, but argument
@@ -2702,9 +2552,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def UnionIDs(self,theGroup, theSubShapes):
             self.GroupOp.UnionIDs(theGroup, theSubShapes)
-            if self.GroupOp.IsDone() == 0:
-                print "UnionIDs : ", self.GroupOp.GetErrorCode()
-                pass
+            RaiseIfFailed("UnionIDs", self.GroupOp)
             pass
         
         ## Removes from the group all the given shapes. No errors, if some shapes are not included.
@@ -2714,9 +2562,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def DifferenceList (self,theGroup, theSubShapes):
             self.GroupOp.DifferenceList(theGroup, theSubShapes)
-            if self.GroupOp.IsDone() == 0:
-                print "DifferenceList : ", self.GroupOp.GetErrorCode()
-                pass
+            RaiseIfFailed("DifferenceList", self.GroupOp)
             pass
 
         ## Works like the above method, but argument
@@ -2725,9 +2571,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def DifferenceIDs(self,theGroup, theSubShapes):
             self.GroupOp.DifferenceIDs(theGroup, theSubShapes)
-            if self.GroupOp.IsDone() == 0:
-                print "DifferenceIDs : ", self.GroupOp.GetErrorCode()
-                pass
+            RaiseIfFailed("DifferenceIDs", self.GroupOp)
             pass
         
         ## Returns a list of sub objects ID stored in the group
@@ -2736,8 +2580,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetObjectIDs(self,theGroup):
             ListIDs = self.GroupOp.GetObjects(theGroup)
-            if self.GroupOp.IsDone() == 0:
-                print "GetObjectIDs : ", self.GroupOp.GetErrorCode()
+            RaiseIfFailed("GetObjectIDs", self.GroupOp)
             return ListIDs
         
         ## Returns a type of sub objects stored in the group
@@ -2746,8 +2589,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetType(self,theGroup):
             aType = self.GroupOp.GetType(theGroup)
-            if self.GroupOp.IsDone() == 0:
-                print "GetType : ", self.GroupOp.GetErrorCode()
+            RaiseIfFailed("GetType", self.GroupOp)
             return aType
         
         ## Returns a main shape associated with the group
@@ -2757,8 +2599,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetMainShape(self,theGroup):
             anObj = self.GroupOp.GetMainShape(theGroup)
-            if self.GroupOp.IsDone() == 0:
-                print "GetMainShape : ", self.GroupOp.GetErrorCode()
+            RaiseIfFailed("GetMainShape", self.GroupOp)
             return anObj
         
         ## Create group of edges of theShape, whose length is in range [min_length, max_length].
