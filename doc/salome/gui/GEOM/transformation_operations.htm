@@ -183,56 +183,85 @@ if (window.writeIntopicBar)
 
 <p># create a vertex and a vector</p>
 
-<p class="whs1">p1 = geompy.MakeVertex(10, 40, &nbsp;0)</p>
-<p class="whs1">p2 = geompy.MakeVertex(&nbsp;0, &nbsp;0, 50)</p>
-<p class="whs1">p3 = geompy.MakeVertex(10, 50,-20)</p>
-<p class="whs1">p4 = geompy.MakeVertex(10, 50, 60)</p>
+<p class="whs1">p1 = geompy.MakeVertex(10, 
+ 40, 0)</p>
 
-<p class="whs1">v = geompy.MakeVector(p1, p2)</p>
-<p class="whs1">vr = geompy.MakeVector(p3, p4)</p>
+<p class="whs1">p2 = geompy.MakeVertex( 
+ 0, &nbsp;0, 50)</p>
+
+<p class="whs1">p3 = geompy.MakeVertex(10, 
+ 50,-20)</p>
+
+<p class="whs1">p4 = geompy.MakeVertex(10, 
+ 50, 60)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p class="whs1">vr = geompy.MakeVector(p3, 
+ p4)</p>
 
 <p>&nbsp;</p>
 
 <p># create a cylinder</p>
 
 <p class="whs1">height = 35</p>
+
 <p class="whs1">radius1 = 20</p>
 
-<p class="whs1">cylinder = geompy.MakeCylinder(p1, v, radius1, height)</p>
+<p class="whs1">cylinder = geompy.MakeCylinder(p1, 
+ v, radius1, height)</p>
 
 <p>&nbsp;</p>
 
 <p># rotate the given object around the given axis by the given angle</p>
 
-<p class="whs1">rotation1 = geompy.MakeRotation(cylinder, vr, math.pi)</p>
-<p class="whs1">rotation2 = geompy.MakeRotationThreePoints(cylinder, p4, p1, p2)</p>
+<p class="whs1">rotation1 = geompy.MakeRotation(cylinder, 
+ vr, math.pi)</p>
+
+<p class="whs1">rotation2 = geompy.MakeRotationThreePoints(cylinder, 
+ p4, p1, p2)</p>
 
 <p>&nbsp;</p>
 
 <p># add objects in the study</p>
 
-<p class="whs1">id_vr = geompy.addToStudy(vr, &quot;Rotation 1 axis&quot;)</p>
-<p class="whs1">id_p4 = geompy.addToStudy(p4, &quot;Rotation 2 center&quot;)</p>
-<p class="whs1">id_p1 = geompy.addToStudy(p1, &quot;Rotation 2 point 1&quot;)</p>
-<p class="whs1">id_p2 = geompy.addToStudy(p2, &quot;Rotation 2 point 2&quot;)</p>
-<p class="whs1">id_cylinder = geompy.addToStudy(cylinder, &quot;Cylinder&quot;)</p>
-<p class="whs1">id_rotation1 = geompy.addToStudy(rotation1, &quot;Rotation 1&quot;)</p>
-<p class="whs1">id_rotation2 = geompy.addToStudy(rotation2, &quot;Rotation 2&quot;)</p>
+<p class="whs1">id_vr = geompy.addToStudy(vr, 
+ &quot;Rotation axis&quot;)</p>
 
-<p>&nbsp;</p>
+<p class="whs1">id_p4 = geompy.addToStudy(p4, 
+ &quot;Rotation 2 center&quot;)</p>
+
+<p class="whs1">id_p1 = geompy.addToStudy(p1, 
+ &quot;Rotation 2 point 1&quot;) </p>
+
+<p class="whs1">id_p2 = geompy.addToStudy(p2, 
+ &quot;Rotation 2 point 2&quot;)id_cylinder = geompy.addToStudy(cylinder, 
+ &quot;Cylinder&quot;)</p>
+
+<p class="whs1">id_rotation1 = geompy.addToStudy(rotation, 
+ &quot;Rotation 1&quot;)</p>
+
+<p class="whs1">id_rotation2 = geompy.addToStudy(rotation, 
+ &quot;Rotation 2&quot;)</p>
+
+<p class="whs1">&nbsp;</p>
 
 <p># display the results</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_vr)</p>
-<p class="whs1">gg.createAndDisplayGO(id_p4)</p>
-<p class="whs1">gg.createAndDisplayGO(id_p1)</p>
-<p class="whs1">gg.createAndDisplayGO(id_p2)</p>
-<p class="whs1">gg.createAndDisplayGO(id_cylinder)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p4)gg.createAndDisplayGO(id_p1)gg.createAndDisplayGO(id_p2)gg.createAndDisplayGO(id_cylinder)</p>
+
 <p class="whs1">gg.setDisplayMode(id_cylinder,1)</p>
+
 <p class="whs1">gg.createAndDisplayGO(id_rotation1)</p>
-<p class="whs1">gg.createAndDisplayGO(id_rotation2)</p>
-<p class="whs1">gg.setDisplayMode(id_rotation1,1)</p>
-<p class="whs1">gg.setDisplayMode(id_rotation2,1)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_rotation2)gg.setDisplayMode(id_rotation1,1)</span> 
+ </p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_rotation2,1)</span> 
+ </p>
 
 <p>&nbsp;</p>
 

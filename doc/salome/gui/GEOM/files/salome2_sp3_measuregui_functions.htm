@@ -21,35 +21,46 @@ A:link { color:#0000ff; }
 <!--
 p.whs1 { font-size:12pt; }
 img_whs2 { border:none; float:none; width:30px; height:30px; border-style:none; }
-p.whs3 { margin-left:40px; }
-img_whs4 { border:none; width:21px; height:19px; border-style:none; }
-p.whs5 { font-size:12pt; margin-left:40px; font-weight:bold; }
-img_whs6 { border:none; width:272px; height:303px; float:none; border-style:none; }
-p.whs7 { font-family:'Times New Roman' , serif; font-size:14pt; }
-img_whs8 { width:20px; height:20px; border-style:none; }
-p.whs9 { font-family:'Times New Roman' , serif; font-size:12pt; }
-img_whs10 { border:none; width:360px; height:307px; float:none; border-style:none; }
-p.whs11 { font-size:12pt; margin-left:40px; }
-img_whs12 { border:none; width:312px; height:367px; float:none; border-style:none; }
-p.whs13 { font-size:12pt; margin-left:400px; }
-img_whs14 { border:none; width:360px; height:333px; float:none; border-style:none; }
-p.whs15 { font-size:12pt; font-weight:bold; }
-img_whs16 { border:none; width:360px; height:328px; float:none; border-style:none; }
-p.whs17 { font-size:12pt; font-weight:normal; }
-img_whs18 { border:none; width:360px; height:290px; float:none; border-style:none; }
-img_whs19 { border:none; width:360px; height:405px; float:none; border-style:none; }
-img_whs20 { border:none; width:360px; height:337px; float:none; border-style:none; }
-p.whs21 { font-size:12pt; margin-left:40px; text-indent:-40px; }
-img_whs22 { border:none; width:25px; height:23px; border-style:none; }
-ul.whs23 { list-style:disc; }
-img_whs24 { border:none; width:329px; height:436px; float:none; border-style:none; }
+p.whs3 { font-size:12pt; margin-left:48px; }
+p.whs4 { margin-left:40px; }
+img_whs5 { border:none; width:21px; height:19px; border-style:none; }
+p.whs6 { font-size:12pt; margin-left:40px; font-weight:bold; }
+img_whs7 { border:none; width:272px; height:303px; float:none; border-style:none; }
+p.whs8 { font-family:'Times New Roman' , serif; font-size:14pt; }
+img_whs9 { width:20px; height:20px; border-style:none; }
+p.whs10 { font-family:'Times New Roman' , serif; font-size:12pt; }
+img_whs11 { border:none; width:360px; height:307px; float:none; border-style:none; }
+p.whs12 { font-size:12pt; margin-left:40px; }
+img_whs13 { border:none; width:312px; height:367px; float:none; border-style:none; }
+p.whs14 { font-size:12pt; margin-left:400px; }
+img_whs15 { border:none; width:360px; height:333px; float:none; border-style:none; }
+p.whs16 { font-size:14pt; }
+img_whs17 { border:none; width:22px; height:22px; border-style:none; }
+img_whs18 { border:none; width:243px; height:203px; float:none; border-style:none; }
+p.whs19 { font-size:12pt; margin-left:0px; }
+h1.whs20 { font-size:14pt; }
+img_whs21 { border:none; width:23px; height:22px; border-style:none; }
+p.whs22 { font-size:12pt; font-weight:normal; }
+img_whs23 { border:none; width:322px; height:163px; float:none; border-style:none; }
+p.whs24 { font-size:12pt; font-weight:bold; }
+img_whs25 { border:none; width:360px; height:328px; float:none; border-style:none; }
+img_whs26 { border:none; width:360px; height:370px; float:none; }
+p.whs27 { font-size:12pt; margin-left:40px; text-indent:-40px; }
+img_whs28 { border:none; width:24px; height:22px; border-style:none; }
+img_whs29 { border:none; width:360px; height:292px; float:none; }
+img_whs30 { border:none; width:360px; height:405px; float:none; border-style:none; }
+img_whs31 { border:none; width:360px; height:337px; float:none; border-style:none; }
+img_whs32 { border:none; width:25px; height:23px; border-style:none; }
+ul.whs33 { list-style:disc; }
+img_whs34 { border:none; width:329px; height:436px; float:none; border-style:none; }
 -->
 </style><script type="text/javascript" language="JavaScript">
 <!--
 if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
 {
   var strNSS = "<style type='text/css'>";
-  strNSS += "p.whs21 {text-indent:1pt; }";
+  strNSS += "p.whs19 {margin-left:1pt; }";
+  strNSS += "p.whs27 {text-indent:1pt; }";
   strNSS +="</style>";
   document.write(strNSS);
 }
@@ -134,15 +145,28 @@ if (window.writeIntopicBar)
 	
 	<li class=kadov-p><p class="whs1"><a href="#Inertia_axis">Inertia</a></p></li>
 	
-	<li class=kadov-p><p class="whs1"><a href="#Bounding_box">Bounding 
- box</a></p></li>
+	<li class=kadov-p><p class="whs1"><a href="#free_boundaries">Check 
+ free boundaries</a></p></li>
 	
-	<li class=kadov-p><p class="whs1"><a href="#Min_distance">Min. 
- distance</a></p></li>
+	<li class=kadov-p><p class="whs1"><a href="#free_faces">Check 
+ free faces</a></p></li>
 	
-	<li class=kadov-p><p class="whs1"><a href="#Tolerance">Tolerance</a></p></li>
+	<li class=kadov-p><p class="whs1">Dimensions:</p></li>
 	
-	<li class=kadov-p><p class="whs1"><a href="#Whatis">WhatIs</a></p></li>
+	<li class=kadov-p><p class="whs3"><a 
+ href="#Bounding_box">Bounding box</a></p></li>
+	
+	<li class=kadov-p><p class="whs3"><a 
+ href="#Min_distance">Min. distance</a></p></li>
+	
+	<li class=kadov-p><p class="whs3"><a 
+ href="#Angle">Angle</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Tolerance">Compute 
+ Tolerance</a></p></li>
+	
+	<li class=kadov-p><p class="whs1"><a href="#Whatis">What 
+ is</a></p></li>
 	
 	<li class=kadov-p><p class="whs1"><a href="#check">Check</a></p></li>
 	
@@ -163,14 +187,14 @@ if (window.writeIntopicBar)
 
 <p class=TODO>&nbsp;</p>
 
-<p class="whs3">In the main menu select <span style="font-weight: bold;"><B>Measures 
+<p class="whs4">In the main menu select <span style="font-weight: bold;"><B>Measures 
  </B></span>submenu.</p>
 
-<p class="whs3">&nbsp;</p>
+<p class="whs4">&nbsp;</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs1"><a name=PointCoord>&nbsp;<img src="../image49.gif" width="21px" height="19px" border="0" class="img_whs4"> <span style="font-weight: bold; font-size: 14pt;"><font size=4 style="font-size:14pt;"><B>Point coordinates</B></font></span></a></p>
+<p class="whs1"><a name=PointCoord>&nbsp;<img src="../image49.gif" width="21px" height="19px" border="0" class="img_whs5"> <span style="font-weight: bold; font-size: 14pt;"><font size=4 style="font-size:14pt;"><B>Point coordinates</B></font></span></a></p>
 
 <p class="whs1">&nbsp;</p>
 
@@ -188,18 +212,18 @@ if (window.writeIntopicBar)
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs5"><img src="../pics/measures1.png" x-maintain-ratio="TRUE" width="272px" height="303px" border="0" class="img_whs6"></p>
+<p class="whs6"><img src="../pics/measures1.png" x-maintain-ratio="TRUE" width="272px" height="303px" border="0" class="img_whs7"></p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs7"><b style="font-weight: bold;"><a 
+<p class="whs8"><b style="font-weight: bold;"><a 
  NAME=Basic_properties
-	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image71.gif" width="20px" height="20px" border="0" class="img_whs8"> Basic properties</a></b> 
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image71.gif" width="20px" height="20px" border="0" class="img_whs9"> Basic properties</a></b> 
  </p>
 
-<p class="whs9">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
 <p class="whs1">Returns the properties (Length, Surface &amp; 
  Volume) for the selected geometrical object.</p>
@@ -215,17 +239,17 @@ if (window.writeIntopicBar)
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs3"><img src="../pics/neo-basicprop.png" x-maintain-ratio="TRUE" width="360px" height="307px" border="0" class="img_whs10"></p>
+<p class="whs4"><img src="../pics/neo-basicprop.png" x-maintain-ratio="TRUE" width="360px" height="307px" border="0" class="img_whs11"></p>
 
 <p>&nbsp;</p>
 
 <p>&nbsp;</p>
 
-<p class="whs7"><a name=Center_gravity
-	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image72.gif" width="20px" height="20px" border="0" class="img_whs8"><b style="font-size: 14pt;"> 
+<p class="whs8"><a name=Center_gravity
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image72.gif" width="20px" height="20px" border="0" class="img_whs9"><b style="font-size: 14pt;"> 
  Center of mass</b></a></p>
 
-<p class="whs9">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
 <p class="whs1">Calculates and returns the coordinates of the 
  gravity center for the selected geometrical object.</p>
@@ -241,18 +265,18 @@ if (window.writeIntopicBar)
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs11"><img src="../pics/measures3.png" x-maintain-ratio="TRUE" width="312px" height="367px" border="0" class="img_whs12"></p>
+<p class="whs12"><img src="../pics/measures3.png" x-maintain-ratio="TRUE" width="312px" height="367px" border="0" class="img_whs13"></p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs8">&nbsp;</p>
 
-<p class="whs7"><a NAME=Inertia_axis
-	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image73.gif" width="20px" height="20px" border="0" class="img_whs8"><b><font style="font-size: 14pt;"
+<p class="whs8"><a NAME=Inertia_axis
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image73.gif" width="20px" height="20px" border="0" class="img_whs9"><b><font style="font-size: 14pt;"
 														size=4> Inertia</font></b></a> 
  </p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs8">&nbsp;</p>
 
 <p class="whs1">Returns the axis of inertia for the selected 
  geometrical object.</p>
@@ -263,13 +287,13 @@ if (window.writeIntopicBar)
  the matrix and moments of inertia in the form of Python Tuple (I11, I12, 
  I13, </p>
 
-<p class="whs13">&nbsp;I21, 
+<p class="whs14">&nbsp;I21, 
  I22, I23, </p>
 
-<p class="whs13">&nbsp;I31, 
+<p class="whs14">&nbsp;I31, 
  I32, I33,</p>
 
-<p class="whs13"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">&nbsp;Ix, 
+<p class="whs14"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">&nbsp;Ix, 
  Iy, Iz)</font></span>.</p>
 
 <p class="whs1">&nbsp;</p>
@@ -279,20 +303,66 @@ if (window.writeIntopicBar)
  Shape is a shape for which a matrix of inertia and moment of inertia are 
  returned.</p>
 
-<p class="whs11">&nbsp;</p>
+<p class="whs12">&nbsp;</p>
 
-<p class="whs11"><img src="../pics/measures4.png" x-maintain-ratio="TRUE" width="360px" height="333px" border="0" class="img_whs14"></p>
-
-<p class="whs1">&nbsp;</p>
+<p class="whs12"><img src="../pics/measures4.png" x-maintain-ratio="TRUE" width="360px" height="333px" border="0" class="img_whs15"></p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs7"><a NAME=Bounding_box
-	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image74.gif" width="20px" height="20px" border="0" class="img_whs8"><b><font style="font-size: 14pt;"
+<p class="whs16"><b style="font-weight: normal;"><a name=free_boundaries
+	style="font-size: 14pt;"><img src="../image44.gif" width="22px" height="22px" border="0" class="img_whs17"><span style="font-weight: bold; font-size: 14pt;"><font size=4 style="font-size:14pt;"><B>Check 
+ Free Boundaries </B></font></span></a></b></p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">Detects and highlights wires and edges that 
+ correspond to the shape's boundary.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command :</b><i><span 
+ style="font-style: italic;"> <I></i>(NoError, ClosedWires, OpenWires) = geompy.GetFreeBoundary(Shape)</I></span>, 
+ where Shape is a shape to be checked, NoError is false if an error occurred 
+ while checking free boundaries, ClosedWires is a list of closed free boundary 
+ wires, OpenWires is a list of open free boundary wires.</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs6"><img src="../pics/repair9.png" x-maintain-ratio="TRUE" width="243px" height="203px" border="0" class="img_whs18"></p>
+
+<p class="whs19">&nbsp;</p>
+
+<h1 class="whs20"><a name=free_faces><img src="../image10.gif" width="23px" height="22px" border="0" class="img_whs21"> Check Free 
+ Faces</a></h1>
+
+<p class="whs1">Detects and highlights all free faces of a 
+ given shape. A free face is a face not shared between two shells of the 
+ shape. </p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1"><b style="font-weight: bold;">Result<span style="font-weight: normal;">: 
+ </span></b><b><span style="font-weight: normal;">a list of IDs of all 
+ free faces of the shape</span><span style="font-weight: bold;"><B>. </B></span></b></p>
+
+<p class="whs1"><b style="font-weight: bold;">TUI Command :</b><i><span 
+ style="font-style: italic;"> <I></i>GetFreeFacesIDs(Shape)</I></span>, where 
+ Shape is a shape to be checked.</p>
+
+<p class="whs22">&nbsp;</p>
+
+<p class="whs12"><img src="../pics/repair10.png" x-maintain-ratio="TRUE" width="322px" height="163px" border="0" class="img_whs23"></p>
+
+<p class="whs19">&nbsp;</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs8"><a NAME=Bounding_box
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image74.gif" width="20px" height="20px" border="0" class="img_whs9"><b><font style="font-size: 14pt;"
 														size=4> Bounding 
  box</font></b></a> </p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs8">&nbsp;</p>
 
 <p class="whs1">Returns the dimensions of the bounding box 
  for the selected geometrical object.</p>
@@ -303,46 +373,65 @@ if (window.writeIntopicBar)
  the dimensions of the bounding box of a geometrical object in the form 
  of Python Tuple (Xmin, Xmax, Ymin, Ymax, Zmin, Zmax).</p>
 
-<p class="whs15">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.BoundingBox(Shape)</I></span><span 
+<p class="whs24">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.BoundingBox(Shape)</I></span><span 
  style="font-weight: normal;">, where Shape is a shape for which a bounding 
  box is computed.</span></p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs11"><img src="../pics/measures5.png" x-maintain-ratio="TRUE" width="360px" height="328px" border="0" class="img_whs16"></p>
+<p class="whs12"><img src="../pics/measures5.png" x-maintain-ratio="TRUE" width="360px" height="328px" border="0" class="img_whs25"></p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs7"><a NAME=Min_distance
-	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image75.gif" width="20px" height="20px" border="0" class="img_whs8"><b><font style="font-size: 14pt;"
+<p class="whs8"><a NAME=Min_distance
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image75.gif" width="20px" height="20px" border="0" class="img_whs9"><b><font style="font-size: 14pt;"
 														size=4> Min. distance</font></b></a></p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs8">&nbsp;</p>
 
 <p class="whs1">Returns the minimum distance between two geometrical 
- objects.</p>
+ objects and the components of the vector of minimum distance.</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs15">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.MinDistance(Shape1, 
+<p class="whs24">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.MinDistance(Shape1, 
  Shape2)</I></span><span style="font-weight: normal;">, where Shape1 and Shape2 
- are shapes between which the minimal distance computed.</span></p>
+ are shapes between which the minimal distance is computed.</span></p>
 
-<p class="whs17">&nbsp;</p>
+<p class="whs22">&nbsp;</p>
 
-<p class="whs11"><img src="../pics/distance.png" x-maintain-ratio="TRUE" width="360px" height="290px" border="0" class="img_whs18"></p>
+<p class="whs12"><img src="../pics/distance.png" x-maintain-ratio="TRUE" width="360px" height="370px" border="0" class="img_whs26"></p>
+
+<p class="whs12">&nbsp;</p>
+
+<p class="whs12">&nbsp;</p>
+
+<p class="whs27"><a name=Angle><img src="../image39.gif" width="24px" height="22px" border="0" class="img_whs28"><span style="font-size: 14pt; font-weight: bold;"><font size=4 style="font-size:14pt;"><B>Angle</B></font></span></a></p>
 
 <p class="whs1">&nbsp;</p>
 
+<p class="whs1">Returns the angle between lines and linear 
+ edges.</p>
+
+<p class="whs24">&nbsp;</p>
+
+<p class="whs24">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.GetAngle(shape1, 
+ shape2)</I></span><span style="font-weight: normal;">, where Shape1 and Shape2 
+ are shapes between which the angle is computed.</span></p>
+
+<p class="whs24">&nbsp;</p>
+
+<p class="whs4"><img src="../pics/angle.png" x-maintain-ratio="TRUE" width="360px" height="292px" border="0" class="img_whs29">&nbsp; </p>
+
 <p class="whs1">&nbsp;</p>
 
-<p class="whs7"><a NAME=Tolerance
-	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image76.gif" width="20px" height="20px" border="0" class="img_whs8"><b style="font-size: 14pt;"> 
+<p class="whs8"><a NAME=Tolerance
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image76.gif" width="20px" height="20px" border="0" class="img_whs9"><b style="font-size: 14pt;"> 
  Tolerance</b></a> </p>
 
-<p class="whs9">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
 <p class="whs1">Returns the maximum and the minimum tolerance 
  for the selected geometrical object.</p>
@@ -353,23 +442,23 @@ if (window.writeIntopicBar)
  the tolerance values (FaceMinTol, FaceMaxTol, EgdeMinTol, EgdeMaxTol, 
  VertexMinTol, VertexMaxTol).</p>
 
-<p class="whs15">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.Tolerance(Shape)</I></span><span 
+<p class="whs24">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.Tolerance(Shape)</I></span><span 
  style="font-weight: normal;">, where Shape is a shape for which minimal 
  and maximal tolerances are returned.</span></p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs11"><img src="../pics/new-tolerance.png" x-maintain-ratio="TRUE" width="360px" height="328px" border="0" class="img_whs16"></p>
+<p class="whs12"><img src="../pics/new-tolerance.png" x-maintain-ratio="TRUE" width="360px" height="328px" border="0" class="img_whs25"></p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs7"><a NAME=Whatis><span 
- style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image77.gif" width="20px" height="20px" border="0" class="img_whs8"><b style="font-size: 14pt;"> WhatIs</b></a> 
+<p class="whs8"><a NAME=Whatis><span 
+ style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image77.gif" width="20px" height="20px" border="0" class="img_whs9"><b style="font-size: 14pt;"> WhatIs</b></a> 
  </font></span></p>
 
-<p class="whs9">&nbsp;</p>
+<p class="whs10">&nbsp;</p>
 
 <p class="whs1">Displays types and quantities of all elements 
  composing the selected geometrical object.</p>
@@ -382,18 +471,18 @@ if (window.writeIntopicBar)
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs11"><img src="../pics/measures8.png" x-maintain-ratio="TRUE" width="360px" height="405px" border="0" class="img_whs19"></p>
+<p class="whs12"><img src="../pics/measures8.png" x-maintain-ratio="TRUE" width="360px" height="405px" border="0" class="img_whs30"></p>
 
-<p class="whs11">&nbsp;</p>
+<p class="whs12">&nbsp;</p>
 
-<p class="whs11">&nbsp;</p>
+<p class="whs12">&nbsp;</p>
 
-<p class="whs7"><a NAME=check
-	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image78.gif" width="20px" height="20px" border="0" class="img_whs8"><b><font style="font-size: 14pt;"
+<p class="whs8"><a NAME=check
+	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image78.gif" width="20px" height="20px" border="0" class="img_whs9"><b><font style="font-size: 14pt;"
 														size=4> Check</font></b></a> 
  </p>
 
-<p class="whs7">&nbsp;</p>
+<p class="whs8">&nbsp;</p>
 
 <p class="whs1">Checks the topology of the selected geometrical 
  object and returns True if it is valid. <span style="font-weight: bold;"><B>Check 
@@ -404,27 +493,27 @@ if (window.writeIntopicBar)
 <p class="whs1"><b style="font-weight: bold;">Result:</b> Boolean.</p>
 
 <p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
- </i><span style="font-style: italic;"><I>geompy.(theShape, theIsCheckGeom 
+ </i><span style="font-style: italic;"><I>geompy.CheckShape(theShape, theIsCheckGeom 
  = 0)</I></span>, where is shape which is checked for validity.</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs11"><img src="../pics/measures9.png" x-maintain-ratio="TRUE" width="360px" height="337px" border="0" class="img_whs20"></p>
+<p class="whs12"><img src="../pics/measures9.png" x-maintain-ratio="TRUE" width="360px" height="337px" border="0" class="img_whs31"></p>
 
-<p class="whs21">&nbsp;</p>
+<p class="whs27">&nbsp;</p>
 
-<p class="whs21">&nbsp;</p>
+<p class="whs27">&nbsp;</p>
 
-<p class="whs21"><a name=Check_comp_blocks><img src="../image27.gif" width="25px" height="23px" border="0" class="img_whs22"> <span style="font-size: 14pt; font-weight: bold;"><font size=4 style="font-size:14pt;"><B>Check compound 
+<p class="whs27"><a name=Check_comp_blocks><img src="../image27.gif" width="25px" height="23px" border="0" class="img_whs32"> <span style="font-size: 14pt; font-weight: bold;"><font size=4 style="font-size:14pt;"><B>Check compound 
  of blocks</B></font></span></a></p>
 
-<p class="whs21">&nbsp;</p>
+<p class="whs27">&nbsp;</p>
 
 <p class="whs1">Checks whether a shape is a compound of glued 
  blocks. To be considered as a compound of blocks, the given shape must 
  satisfy the following conditions:</p>
 
-<ul type="disc" class="whs23">
+<ul type="disc" class="whs33">
 	
 	<li class=kadov-p><p class="whs1">&nbsp;Each 
  element of the compound should be a Block (6 faces and 12 edges);</p></li>
@@ -444,7 +533,7 @@ if (window.writeIntopicBar)
 
 <p class="whs1">Informs of the following possible errors:</p>
 
-<ul type="disc" class="whs23">
+<ul type="disc" class="whs33">
 	
 	<li class=kadov-p><p class="whs1">not a block,</p></li>
 	
@@ -467,11 +556,11 @@ if (window.writeIntopicBar)
  a valid compound of blocks. If it is true, then the validity flag is returned, 
  and encountered errors are printed in the python console.</p>
 
-<p class="whs11">&nbsp;</p>
+<p class="whs12">&nbsp;</p>
 
-<p class="whs11"><img src="../pics/measures10.png" x-maintain-ratio="TRUE" width="329px" height="436px" border="0" class="img_whs24"></p>
+<p class="whs12"><img src="../pics/measures10.png" x-maintain-ratio="TRUE" width="329px" height="436px" border="0" class="img_whs34"></p>
 
-<p class="whs11">&nbsp;</p>
+<p class="whs12">&nbsp;</p>
 
 <script type="text/javascript" language="javascript1.2">
 <!--

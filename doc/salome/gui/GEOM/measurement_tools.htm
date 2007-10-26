@@ -260,6 +260,301 @@ if (window.writeIntopicBar)
 
 <p class="whs1">&nbsp;</p>
 
+<h3>Check Free Boundaries</h3>
+
+<p class="whs1">import os</p>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># create boxes</p>
+
+<p class="whs1">box1 = geompy.MakeBox(0,0,0,100,50,100)</p>
+
+<p class="whs1">box2 = geompy.MakeBox(100,0,0,250,50,100)</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># make a compound</p>
+
+<p class="whs1">compound = geompy.MakeCompound([box1, 
+ box2])</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># import from *.brep</p>
+
+<p class="whs1">ImportBREP = geompy.ImportBREP(&quot;<span 
+ style="font-family: 'Lucida Console', monospace;">os.getenv(&quot;DATA_DIR&quot;)+&quot;/Shapes/Brep/flight_solid.brep&quot;)</span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># get a face</p>
+
+<p class="whs1">faces = geompy.SubShapeAllSorted(ImportBREP, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># get the free boundary 
+ for face 32</p>
+
+<p class="whs1">Res = geompy.GetFreeBoundary(faces[32])</p>
+
+<p class="whs1">isSuccess &nbsp;&nbsp;= 
+ Res[0]</p>
+
+<p class="whs1">ClosedWires = Res[1]</p>
+
+<p class="whs1">OpenWires &nbsp;&nbsp;= 
+ Res[2]</p>
+
+<p class="whs2">&nbsp;&nbsp;</p>
+
+<p class="whs2">i<span style="font-family: 'Lucida Console', monospace;">f 
+ isSuccess == 1 :</span></p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Checking free boudaries is OK.&quot;</p>
+
+<p class="whs1">else :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Checking free boudaries is KO!&quot;</p>
+
+<p class="whs1">print &quot;len(ClosedWires) 
+ = &quot;, len(ClosedWires)</p>
+
+<p class="whs1">i = 0</p>
+
+<p class="whs1">for wire in ClosedWires 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;wire_name 
+ = &quot;Face 32 -&gt; Close wires : WIRE %d&quot;%(i+1)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudy(ClosedWires[i], 
+ wire_name)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;if 
+ i &lt; len(ClosedWires) :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i 
+ = i+ 1</p>
+
+<p class="whs1">print &quot;len(OpenWires) 
+ = &quot;, len(OpenWires)</p>
+
+<p class="whs1">i = 0</p>
+
+<p class="whs1">for wire in OpenWires 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;wire_name 
+ = &quot;Face 32 -&gt; Open wires : WIRE %d&quot;%(i+1)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudy(OpenWires[i], 
+ wire_name)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;if 
+ i &lt; len(OpenWires) :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i 
+ = i+ 1</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"># get the free boundary 
+ for face 41</p>
+
+<p class="whs1">Res = geompy.GetFreeBoundary(faces[41])</p>
+
+<p class="whs1">isSuccess &nbsp;&nbsp;= 
+ Res[0]</p>
+
+<p class="whs1">ClosedWires = Res[1]</p>
+
+<p class="whs1">OpenWires &nbsp;&nbsp;= 
+ Res[2]</p>
+
+<p class="whs1">&nbsp;&nbsp;</p>
+
+<p class="whs1">if isSuccess == 1 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Checking free boudaries is OK.&quot;</p>
+
+<p class="whs1">else :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Checking free boudaries is KO!&quot;</p>
+
+<p class="whs1">print &quot;len(ClosedWires) 
+ = &quot;, len(ClosedWires)</p>
+
+<p class="whs1">i = 0</p>
+
+<p class="whs1">for wire in ClosedWires 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;wire_name 
+ = &quot;Face 41 -&gt; Close wires : WIRE %d&quot;%(i+1)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudy(ClosedWires[i], 
+ wire_name)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;if 
+ i &lt; len(ClosedWires) :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i 
+ = i+ 1</p>
+
+<p class="whs1">print &quot;len(OpenWires) 
+ = &quot;, len(OpenWires)</p>
+
+<p class="whs1">i = 0</p>
+
+<p class="whs1">for wire in OpenWires 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;wire_name 
+ = &quot;Face 41 -&gt; Open wires : WIRE %d&quot;%(i+1)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudy(OpenWires[i], 
+ wire_name)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;if 
+ i &lt; len(OpenWires) :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i 
+ = i+ 1</p>
+
+<p class="whs2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<p class="whs2"># add the imported object 
+ to the study</p>
+
+<p class="whs1">id_ImportBREP = geompy.addToStudy(ImportBREP, 
+ &quot;ImportBREP&quot;)</p>
+
+<p class="whs2"><span style="font-family: 'Lucida Console', monospace;">salome.sg.updateObjBrowser(1)</span> 
+ </p>
+
+<p class="whs2">&nbsp;</p>
+
+<h3>Check Free Faces</h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create a vertex and a vector</p>
+
+<p class="whs1">p1 = geompy.MakeVertex(35, 
+ 35, 0)</p>
+
+<p class="whs1">p2 = geompy.MakeVertex(35, 
+ 35, 50)</p>
+
+<p class="whs1">v = geompy.MakeVector(p1, 
+ p2)</p>
+
+<p>&nbsp;</p>
+
+<p># create a cylinder</p>
+
+<p class="whs1">cylinder = geompy.MakeCone(p1, 
+ v, 30, 20, 20)</p>
+
+<p>&nbsp;</p>
+
+<p># create a cone</p>
+
+<p class="whs1">cone = geompy.MakeCone(p1, 
+ v, 70, 40, 60)</p>
+
+<p>&nbsp;</p>
+
+<p># make cut</p>
+
+<p class="whs1">cut = geompy.MakeCut(cone, 
+ cylinder)</p>
+
+<p>&nbsp;</p>
+
+<p># get faces as sub-shapes</p>
+
+<p class="whs1">faces = []</p>
+
+<p class="whs1">faces = geompy.SubShapeAllSorted(cut, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs1">f_2 = geompy.GetSubShapeID(cut, 
+ faces[0])</p>
+
+<p>&nbsp;</p>
+
+<p># remove one face from the shape</p>
+
+<p class="whs1">cut_without_f_2 = 
+ geompy.SuppressFaces(cut, [f_2])</p>
+
+<p>&nbsp;</p>
+
+<p># suppress the specified wire</p>
+
+<p class="whs1">result = geompy.GetFreeFacesIDs(cut_without_f_2)</p>
+
+<p class="whs1">print &quot;A number 
+ of free faces is &quot;, len(result)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in the study</p>
+
+<p class="whs1">all_faces = geompy.SubShapeAllSorted(cut_without_f_2, 
+ geompy.ShapeType[&quot;FACE&quot;])</p>
+
+<p class="whs1">for face in all_faces 
+ :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;sub_shape_id 
+ = geompy.GetSubShapeID(cut_without_f_2, face)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;if 
+ result.count(sub_shape_id) &gt; 0 :</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;face_name 
+ = &quot;Free face %d&quot;%(sub_shape_id)</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;geompy.addToStudy(face, 
+ face_name)</p>
+
+<p>&nbsp;</p>
+
+<p># in this example all faces from cut_without_f_2 are free</p>
+
+<p class="whs1">id_cut_without_f_2 
+ = geompy.addToStudy(cut_without_f_2, &quot;Cut without f_2&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display the results</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_cut_without_f_2)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.setDisplayMode(id_cut_without_f_2,1)</span></p>
+
 <h3>Bounding Box</h3>
 
 <p class="whs1">import geompy</p>
@@ -286,8 +581,6 @@ if (window.writeIntopicBar)
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs1">&nbsp;</p>
-
 <h3>Minimal Distance </h3>
 
 <p class="whs1"><span style="font-family: 'Lucida Console', monospace;">import 
@@ -306,7 +599,100 @@ if (window.writeIntopicBar)
 <p class="whs1">print &quot;\nMinimal 
  distance between box1 and box2 = &quot;, min_dist </p>
 
+<h3>Angle</h3>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">salome.salome_init()</p>
+
 <p class="whs1">&nbsp;</p>
+
+<p class="whs1">import math</p>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">geompy.init_geom(salome.myStudy)</p>
+
+<p>&nbsp;</p>
+
+<p class="whs1">OX &nbsp;= 
+ geompy.MakeVectorDXDYDZ(10, 0,0)</p>
+
+<p class="whs1">OXY = geompy.MakeVectorDXDYDZ(10,10,0)</p>
+
+<p>&nbsp;</p>
+
+<p># in one plane</p>
+
+<p class="whs1">Angle = geompy.GetAngle(OX, 
+ OXY)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">print &quot;\nAngle 
+ between OX and OXY = &quot;, Angle</p>
+
+<p class="whs1">if math.fabs(Angle 
+ - 45.0) &gt; 1e-05:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot; &nbsp;Error: 
+ returned angle is&quot;, Angle, &quot;while must be 45.0&quot;</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;pass</p>
+
+<p>&nbsp;</p>
+
+<p># not in one plane</p>
+
+<p class="whs1">OXY_shift = geompy.MakeTranslation(OXY,10,-10,20)</p>
+
+<p class="whs1">Angle = geompy.GetAngle(OX, 
+ OXY_shift)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">print &quot;Angle 
+ between OX and OXY_shift = &quot;, Angle</p>
+
+<p class="whs1">if math.fabs(Angle 
+ - 45.0) &gt; 1e-05:</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot; &nbsp;Error: 
+ returned angle is&quot;, Angle, &quot;while must be 45.0&quot;</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;pass</p>
+
+<p>&nbsp;</p>
+
+<p># not linear</p>
+
+<p class="whs1">pnt1 = geompy.MakeVertex(0, 
+ 0, 0)</p>
+
+<p class="whs1">pnt2 = geompy.MakeVertex(10, 
+ 0, 0)</p>
+
+<p class="whs1">pnt3 = geompy.MakeVertex(20, 
+ 10, 0)</p>
+
+<p class="whs1">arc &nbsp;= 
+ geompy.MakeArc(pnt1, pnt2, pnt3)</p>
+
+<p class="whs1">Angle = geompy.GetAngle(OX, 
+ arc)</p>
+
+<p class="whs1">&nbsp;</p>
+
+<p class="whs1">if (math.fabs(Angle 
+ + 1.0) &gt; 1e-6 or geompy.MeasuOp.IsDone()):</p>
+
+<p class="whs1">&nbsp;&nbsp;&nbsp;&nbsp;print 
+ &quot;Error. Angle must not be computed on curvilinear edges&quot;</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">&nbsp;&nbsp;&nbsp;&nbsp;pass</span> 
+ </p>
 
 <h3>Tolerance</h3>
 

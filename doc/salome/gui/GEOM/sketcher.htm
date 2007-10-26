@@ -99,25 +99,27 @@ if (window.writeIntopicBar)
 </script>
 <h1>Sketcher</h1>
 
-<p><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;"><img src="i_blue.jpg" x-maintain-ratio="TRUE" x-save-file="TRUE" x-save-method="compute-relative" width="30px" height="30px" border="0" class="img_whs1"></b></font></span>Sketcher allows to create curves of 2 types: line 
- segment and arc. &nbsp;The 
- curve is created from the current point (center of coordinates when the 
- sketcher is started). &nbsp;The 
- end of the curve is defined by means of &quot;destination&quot;, which 
- can be a destination point (for segment only) or destination direction 
- coupled with length of a segment or angle and radius of an arc.</p>
+<p><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b><img src="i_blue.jpg" x-maintain-ratio="TRUE" x-save-file="TRUE" x-save-method="compute-relative" width="30px" height="30px" border="0" class="img_whs1"></b></font></span>Sketcher 
+ allows to create curves of 2 types: line segment and arc. By default, 
+ the start point of the curve is located at the point of origin of the 
+ reference coordinate system and the curve lies in the plane <span style="font-style: italic;"><I>XOY</I></span>. 
+ &nbsp;The end 
+ of the curve is defined by means of &quot;destination&quot;, which can 
+ be a destination point (for segment only) or destination direction coupled 
+ with length of a segment or angle and radius of an arc.</p>
 
 <p>&nbsp;</p>
 
 <p>Sketcher is able to create planar curves only. Therefore, it is necessary 
- to select a working plane before starting a sketch (by default, XOY plane 
- is used). Sketcher creates curves lying in the current working plane (New 
- Entity -&gt; Basic -&gt; Working Plane).</p>
+ to select a working plane before starting a sketch (by default, the plane 
+ <span style="font-style: italic;"><I>XOY</I></span> 
+ is used). Sketcher creates curves lying in the current working plane (<span 
+ style="font-style: italic;"><I>New Entity -&gt; Basic -&gt; Working Plane</I></span>).</p>
 
 <p>&nbsp;</p>
 
 <p>This functionality is available from the main menu via <span style="font-style: italic;"><I>New 
- Entity / Sketch.</I></span></p>
+ Entity -&gt; Sketch.</I></span></p>
 
 <p>&nbsp;</p>
 
@@ -128,7 +130,8 @@ if (window.writeIntopicBar)
 <p>&nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
- </i><span style="font-style: italic;"><I>geompy.MakeSketcher(Command, WorkingPlane)</I></span></p>
+ </i><span style="font-style: italic;"><I>geompy.MakeSketcher(Command, 
+ WorkingPlane)</I></span></p>
 
 <p class="whs3">This algorithm creates 
  a sketcher (wire or face), following the textual description, passed through 
@@ -140,8 +143,9 @@ if (window.writeIntopicBar)
  local working plane.</p>
 
 <p class="whs3"><span style="font-style: italic;"><I>WorkingPlane</I></span> 
- is a planar face of the working plane (a list of 9 doubles which are coordinates 
- of OZ and OX of the local working plane).</p>
+ can be a plane or a planar face. The plane is defined by the <span style="font-style: italic;"><I>xyz</I></span> 
+ coordinates of three non-coincident points. The planar face is an existing 
+ &nbsp;GEOM_Object.</p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -160,7 +164,8 @@ if (window.writeIntopicBar)
  X,Y;</p></li>
 	
 	<li class=kadov-p><p class="whs2">relative coordinates 
- DX, DY (with respect to the current point);</p></li>
+ DX, DY 
+ (with respect to the current point);</p></li>
 	
 	<li class=kadov-p><p class="whs2">selection of an existing 
  point.</p></li>

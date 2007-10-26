@@ -87,74 +87,24 @@ if (window.writeIntopicBar)
 
 <p>&nbsp;</p>
 
-<p># create vertices</p>
+<p># create vertex</p>
 
 <p class="whs1">p0 = geompy.MakeVertex(0., 
  0., 0.)</p>
 
-<p class="whs1">p100 = geompy.MakeVertexWithRef(p0, 
- 100., 100., 100.)</p>
-
-<p class="whs1">px = geompy.MakeVertex(100., 
- 0., 0.)</p>
-
-<p class="whs1">py = geompy.MakeVertex(0., 
- 100., 0.)</p>
-
-<p class="whs1">pz = geompy.MakeVertex(0., 
- 0., 100.)</p>
-
 <p>&nbsp;</p>
 
-<p># create a curve and a vertex on it</p>
-
-<p class="whs1">Arc = geompy.MakeArc(py, 
- pz, px)</p>
-
-<p class="whs1">p_on_arc = geompy.MakeVertexOnCurve(Arc, 
- 0.25)</p>
-
-<p>&nbsp;</p>
-
-<p># add objects in the study</p>
+<p># add object in the study</p>
 
 <p class="whs1">id_p0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
  geompy.addToStudy(p0, &nbsp;&nbsp;&quot;Vertex 
  0&quot;)</p>
 
-<p class="whs1">id_p100 &nbsp;&nbsp;&nbsp;&nbsp;= 
- geompy.addToStudy(p100, &quot;Vertex 100&quot;)</p>
-
-<p class="whs1">id_px &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
- geompy.addToStudy(px, &nbsp;&nbsp;&quot;Vertex 
- X&quot;)</p>
-
-<p class="whs1">id_py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
- geompy.addToStudy(py, &nbsp;&nbsp;&quot;Vertex 
- Y&quot;)</p>
-
-<p class="whs1">id_pz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
- geompy.addToStudy(pz, &nbsp;&nbsp;&quot;Vertex 
- Z&quot;)</p>
-
-<p class="whs1">id_Arc &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
- geompy.addToStudy(Arc, &nbsp;&quot;Arc&quot;)</p>
-
-<p class="whs1">id_p_on_arc = geompy.addToStudy(p_on_arc, 
- &quot;Vertex on Arc&quot;)</p>
-
 <p>&nbsp;</p>
 
-<p># display vertices</p>
+<p># display vertex</p>
 
 <p class="whs1">gg.createAndDisplayGO(id_p0)</p>
-
-<p class="whs1">gg.createAndDisplayGO(id_p100)</p>
-
-<p class="whs1">gg.createAndDisplayGO(id_Arc)</p>
-
-<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_p_on_arc)</span> 
- </p>
 
 <p>&nbsp;</p>
 
@@ -358,6 +308,87 @@ if (window.writeIntopicBar)
 <p class="whs1">gg.createAndDisplayGO(id_vector)</p>
 
 <p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_ellipse)</span> 
+ </p>
+
+<p>&nbsp;</p>
+
+<h3><a name=bookmark7>Creation of an Arc</a></h3>
+
+<p class="whs1">import geompy</p>
+
+<p class="whs1">import salome</p>
+
+<p class="whs1">gg = salome.ImportComponentGUI(&quot;GEOM&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># create vertices</p>
+
+<p class="whs1">p0 = geompy.MakeVertex(0., 
+ 0., 0.)</p>
+
+<p class="whs1">p100 = geompy.MakeVertexWithRef(p0, 
+ 100., 100., 100.)</p>
+
+<p class="whs1">px = geompy.MakeVertex(100., 
+ 0., 0.)</p>
+
+<p class="whs1">py = geompy.MakeVertex(0., 
+ 100., 0.)</p>
+
+<p class="whs1">pz = geompy.MakeVertex(0., 
+ 0., 100.)</p>
+
+<p>&nbsp;</p>
+
+<p># create a curve and a vertex on it</p>
+
+<p class="whs1">Arc = geompy.MakeArc(py, 
+ pz, px)</p>
+
+<p class="whs1">p_on_arc = geompy.MakeVertexOnCurve(Arc, 
+ 0.25)</p>
+
+<p>&nbsp;</p>
+
+<p># add objects in the study</p>
+
+<p class="whs1">id_p0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(p0, &nbsp;&nbsp;&quot;Vertex 
+ 0&quot;)</p>
+
+<p class="whs1">id_p100 &nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(p100, &quot;Vertex 100&quot;)</p>
+
+<p class="whs1">id_px &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(px, &nbsp;&nbsp;&quot;Vertex 
+ X&quot;)</p>
+
+<p class="whs1">id_py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(py, &nbsp;&nbsp;&quot;Vertex 
+ Y&quot;)</p>
+
+<p class="whs1">id_pz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(pz, &nbsp;&nbsp;&quot;Vertex 
+ Z&quot;)</p>
+
+<p class="whs1">id_Arc &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+ geompy.addToStudy(Arc, &nbsp;&quot;Arc&quot;)</p>
+
+<p class="whs1">id_p_on_arc = geompy.addToStudy(p_on_arc, 
+ &quot;Vertex on Arc&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p># display vertices</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p0)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_p100)</p>
+
+<p class="whs1">gg.createAndDisplayGO(id_Arc)</p>
+
+<p><span style="font-family: 'Lucida Console', monospace;">gg.createAndDisplayGO(id_p_on_arc)</span> 
  </p>
 
 <p>&nbsp;</p>

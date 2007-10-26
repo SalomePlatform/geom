@@ -18,9 +18,8 @@ img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
 p.whs3 { font-size:12pt; margin-left:40px; }
 img_whs4 { border:none; width:312px; height:315px; float:none; border-style:none; }
-p.whs5 { font-size:12pt; font-style:italic; }
-img_whs6 { border:none; width:180px; height:180px; float:none; border-style:none; }
-img_whs7 { border:none; float:none; width:180px; height:180px; border-style:none; }
+img_whs5 { border:none; width:180px; height:180px; float:none; border-style:none; }
+img_whs6 { border:none; float:none; width:180px; height:180px; border-style:none; }
 -->
 </style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
@@ -91,10 +90,24 @@ if (window.writeIntopicBar)
 
 <p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">To 
  create a </span><span style="font-weight: bold;"><B>Face</B></span><span style="font-weight: normal;"> 
- you need to select a wire, whose elements will be connected so that the 
- surface of the resulting object was minimal. Check </span><span style="font-weight: bold;"><B>Try 
- to create a planar face</B></span><span style="font-weight: normal;"> to create 
- a planar face or nothing if it is impossible.</span></b></p>
+ you need to select input shape(s). </span></b>The list of input shapes 
+ can include shapes of any type; if the shapes are not wires or edges, 
+ the algorithm extracts all edges from the input shapes and works on the 
+ obtained edges. </p>
+
+<p class="whs2">The edges and wires do not necessary have to 
+ be closed, the algorithm automatically builds a wire of maximum length 
+ from all given edges and wires. If it founds multiple closed wires, it 
+ can build a face with holes or some separate faces, depending on the placement 
+ of the wires. If some resulting wires remain open, they will be added 
+ in the resulting compound as is. </p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">Check 
+ </span><span style="font-weight: bold;"><B>Try to create a planar face</B></span><span 
+ style="font-weight: normal;"> to create a planar face or nothing if it 
+ is impossible.</span></b></p>
 
 <p class="whs2"><b style="font-weight: bold;"><span style="font-weight: normal;">The</span> 
  Result<span style="font-weight: normal;"> will be a</span></b> GEOM_Object 
@@ -103,7 +116,8 @@ if (window.writeIntopicBar)
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
- </i><span style="font-style: italic;"><I>geompy.MakeFace(Wire, isPlanarWanted</I></span>)</p>
+ </i><span style="font-style: italic;"><I>geompy.MakeFaceWires([list of shapes], 
+ isPlanarWanted</I></span>)</p>
 
 <p class="whs2"><b style="font-weight: bold;">Arguments:</b> 
  Name + 1 wire.</p>
@@ -114,28 +128,13 @@ if (window.writeIntopicBar)
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2">There are some advanced possibilities accessible 
- only via<span style="font-weight: bold;"><B> TUI commands</B></span>.</p>
-
-<p class="whs2">&nbsp;</p>
-
-<p class="whs2"><span style="font-style: italic;"><I>geompy.MakeFaceWires(Wires, 
- isPlanarWanted)</I></span> - Creates a face on the given wires set. The argument 
- is not a single wire, but a list of wires. </p>
-
-<p class="whs2"><span style="font-style: italic;"><I>geompy.MakeFaces(Wires, 
- isPlanarWanted)</I></span> is a shortcut to <span style="font-style: italic;"><I>MakeFaceWires(). 
- </I></span></p>
-
-<p class="whs5">&nbsp;</p>
-
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">Example:</b></p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs3"><img src="pics/facesn1.png" x-maintain-ratio="TRUE" width="180px" height="180px" border="0" class="img_whs6"> <img src="pics/facesn2.png" x-maintain-ratio="TRUE" width="180px" height="180px" border="0" class="img_whs6"> <img src="pics/facesn3.png" x-maintain-ratio="TRUE" width="180px" height="180px" border="0" class="img_whs7"></p>
+<p class="whs3"><img src="pics/facesn1.png" x-maintain-ratio="TRUE" width="180px" height="180px" border="0" class="img_whs5"> <img src="pics/facesn2.png" x-maintain-ratio="TRUE" width="180px" height="180px" border="0" class="img_whs5"> <img src="pics/facesn3.png" x-maintain-ratio="TRUE" width="180px" height="180px" border="0" class="img_whs6"></p>
 
 <p class="whs3">&nbsp;</p>
 
