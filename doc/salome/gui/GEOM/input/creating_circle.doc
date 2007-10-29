@@ -5,7 +5,7 @@
 To create a \b Circle in the <b>Main Menu</b> select <b>New Entity - >
 Basic - > Circle</b>
 
-\n There are 2 algorithms to create a \b Circle in the 3D space. 
+\n There are 3 algorithms to create a \b Circle in the 3D space. 
 \n The \b Result of each operation will be a GEOM_Object (edge).
 
 \n Firstly, you can define a \b Circle by a <b>Center Point</b>, a \b
@@ -25,6 +25,16 @@ the direction) + Radius.
 
 <b>Example:</b>
 \image html circles.png
+
+\n Finally, you can define a circle by a <b>Center Point</b> and two
+\b Points.  
+\n <b>TUI Command:</b> <em>geompy.MakeCircleCenter2Pnt(Point1, Point2,
+Point3)</em>, where Point1 is the center of the circle, the distance
+between point1 and Point2 is the radius of the circle and Point3 helps
+to define the plane where the circle lies.
+\n <b>Arguments:</b> Name + 3 points.
+
+\image html circle3.png
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_circle "Basic Geometric Objects".

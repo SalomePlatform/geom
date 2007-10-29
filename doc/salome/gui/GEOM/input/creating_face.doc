@@ -5,22 +5,24 @@
 To create a \b Face in the <b>Main Menu</b> select <b>New Entity - >
 Build - > Face</b>
 
-\n To create a \b Face you need to select a wire, whose elements will
-be connected so that the surface of the resulting object was
-minimal. Check <b>Try to create a planar face</b> to create a planar
+\n To create a \b Face you need to select input shape(s). The list of
+input shapes can include shapes of any type; if the shapes are nor
+wires or edges, the algorithm extracts all edges from
+the input shapes and works on the obtaineed edges.
+\n The edges and wires do not necessarily have to be closed, the
+algorithm automatically builds a wire of maximum length from all
+given edges and wires. If it founds multiple closed wires, it can
+build a face with holes or some separate faces, depending on the
+placement of the wires. If some resulting wires remain open, they will
+be added in the resulting compound "as is".
+\n Check <b>Try to create a planar face</b> to create a planar
 face or nothing if it is impossible.
 \n The \b Result will be a \b GEOM_Object (FACE).
 
-\n <b>TUI Command:</b> <em>geompy.MakeFace(Wire, isPlanarWanted)</em>
+\n <b>TUI Command:</b> <em>geompy.MakeFaceWires([list of Shapes], isPlanarWanted)</em>
 \n <b>Arguments:</b> Name + 1 wire.
 
 \image html neo-obj4.png
-
-There are some advanced possibilities accessible only via <b>TUI
-commands</b>:
-
-<em>geompy.MakeFaceWires(Wires, isPlanarWanted)</em> - Creates a face on the given wires set. The argument is not a single wire, but a list of wires.
-<em>geompy.MakeFaces(Wires, isPlanarWanted)</em> is a shortcut to MakeFaceWires(). 
 
 \n <b>Example:</b>
 

@@ -12,7 +12,7 @@ Definition of a <b>Working Plane</b> is necessary for work with
 Camera Position.
 
 \n Firstly, you can select a \b Plane, a <b>Planar Face</b> or a <b>Local Coordinate System</b> to be your <b>Working Plane</b>.
-\n <b>Arguments:</b> Name + 1 selection (face or planar face).
+\n <b>Arguments:</b> Name + 1 selection (plane or planar face).
 
 \image html workplane4.png
 

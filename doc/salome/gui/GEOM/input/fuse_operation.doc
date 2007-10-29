@@ -7,7 +7,7 @@
 
 \n This operation creates a shape from two shapes.
 
-\n The \b Result will be a \b GEOM_Object (COMPOUND).
+\n The \b Result will be any \b GEOM_Object.
 \n <b>Arguments:</b> Name + 2 shapes.
 \n <b>TUI Command:</b> <em>geompy.MakeFuse(s1, s2)</em>
 

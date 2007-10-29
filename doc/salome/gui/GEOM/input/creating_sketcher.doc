@@ -3,8 +3,9 @@
 \page create_sketcher_page Sketcher
 
 Sketcher allows to create curves of 2 types: line segment and arc.
-The curve is created from the current point (center of coordinates
-when the sketcher is started).  The end of the curve is defined by
+By default the start point of the curve is located at the point of
+origin of the reference coordinate system and the curve lies in the
+plane XOY.  The end of the curve is defined by
 means of "destination", which can be a destination point (for segment
 only) or destination direction coupled with length of a segment or
 angle and radius of an arc.
@@ -26,9 +27,9 @@ the resulting wire or face will be arcs of circles and/or linear
 segments.
 \n \em Command is a string, defining the sketcher by the coordinates of
 points in the local working plane.
-\n <em>WorkingPlane</em> is a planar face of the working plane (a list of 9
-doubles which are coordinates of OZ and OX of the local working
-plane).
+\n <em>WorkingPlane</em> can be a plane or a planar face. The plane is
+defined by the XYZ coordinates of three non-coincident points. The
+planar face is an existing GEOM_Object.
 
 \n <b>Arguments:</b>
 <ol>

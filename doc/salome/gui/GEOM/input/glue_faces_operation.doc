@@ -10,10 +10,10 @@ given tolerance value.
 \n The \b Result will be a \b GEOM_Object.
 
 \n <b>TUI Command:</b> <em>geompy.MakeGlueFaces(theShape,
-theTolerance),</em> where \em theShape is a compound of shapes to be
+theTolerance),</em> where \em theShape is a compound of solids to be
 glued, \em theTolerance is a maximum distance between two faces, which can
 be considered as coincident.
-\n <b>Arguments:</b> Name + 1 Compound + Tolerance value.
+\n <b>Arguments:</b> Name + Compound of solids + Tolerance value.
 
 \image html glue1.png
 

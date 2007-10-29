@@ -125,9 +125,9 @@ type to Bezier curves and surfaces.</li>
 <li><b>Surface Mode</b> (ToBezier.SurfaceMode) - if checked in, allows
 conversion of surfaces.</li>
 <li><b>3D Curve Mode</b> (ToBezier.Curve3dMode) - if checked in,
-allows conversion of 2D curves.</li>
-<li><b>2D Curve Mode</b> (ToBezier.Curve2dMode) - if checked in,
 allows conversion of 3D curves.</li>
+<li><b>2D Curve Mode</b> (ToBezier.Curve2dMode) - if checked in,
+allows conversion of 2D curves.</li>
 <li><b>Max Tolerance</b> (ToBezier.MaxTolerance) - defines tolerance
 for detection and correction of problems.</li>
 </ul>

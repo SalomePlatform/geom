@@ -40,7 +40,4 @@ Point, End Point, boolean Sense)</em>
 \image html arcsn2.png
 <center>Reversed arc.</center>
 
-Our <b>TUI Scripts</b> provide you with useful examples of creation of 
-\ref tui_basic_geom_objs_page "Basic Geometric Objects".
-
 */

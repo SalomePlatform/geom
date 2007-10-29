@@ -16,20 +16,20 @@ axes.
 \n <b>TUI Command:</b> <em>geompy.MakeTranslation(Shape, DX, DY,
 DZ),</em> where Shape is a shape to be translated, DX, DY, DZ are
 components of translation vector.
-\n <b>Arguments:</b> Name + 1 shape + 3 values (coordinates).
+\n <b>Arguments:</b> Name + one or several objects + 3 values (coordinates).
 
 \image html transformation1.png
 
 \n Secondly you can define an \b Object and the start and the end points
 of the vector.
 \n <b>TUI Command:</b> <em>geompy.MakeTranslationTwoPoints(Object, Point1, Point2)</em>
-\n <b>Arguments:</b> Name + 1 shape + 2 vertices
+\n <b>Arguments:</b> Name + one or several objects + 2 vertices
 
 \image html transformation2.png
 
 \n Finally you can define an \b Object and the vector  
 \n <b>TUI Command:</b> <em>geompy.MakeTranslationVector(Object, Vector)</em>
-\n <b>Arguments:</b> Name + 1 shape + 1 vector.
+\n <b>Arguments:</b> Name + one or several objects + 1 vector.
 
 \image html transformation3.png
 

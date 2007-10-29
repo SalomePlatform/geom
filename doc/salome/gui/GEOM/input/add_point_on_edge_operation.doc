@@ -17,8 +17,8 @@ IsByParameter), </em> where \em Shape is a shape which contains an edge to
 be divided, \em EdgeID is the ID of the edge to be divided, if it = -1,
 then Shape is an edge, \em Value is a paramter on the edge or a
 length. \em IsByParameter if it is True then Value is the edge parameter
-in the range [0:1] otherwise it is a length of the edge in the range
-[0:1]
+in the range [0:1] otherwise it is a part of the length of the edge in the range
+[0: full length of the edge]
 \n <b>Arguments:</b> Name + 1 Edge + 1 value setting the position of
 the point according to one of the selected modes.
 

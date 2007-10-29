@@ -9,7 +9,7 @@
 \n The \b Result will be a \b GEOM_Object.
 
 \n To create fillets on all edges of the given shape, you need to
-define the <b>Main Object</b> to create a fillet on and the \b Radius of the
+select the <b>Main Object</b> to create a fillet on and to define the \b Radius of the
 Fillet.
 \n <b>TUI Command:</b> <em>geompy.MakeFilletAll(Shape, R)</em>
 \n <b>Arguments:</b> Name + 1 shape + 1 value (fillet radius).
@@ -21,7 +21,7 @@ shape, you need to define the <b>Main Object</b> to create a fillet
 on, select the necessary edges or faces in the OCC Viewer and define
 the \b Radius of the Fillet.
 \n <b>TUI Command:</b> <em>geompy.MakeFillet(Shape, R, ShapeType, ListShapes)</em>
-\n <b>Arguments:</b> Name + 1 shape + 1 Selection of edges (or faces)
+\n <b>Arguments:</b> Name + 1 shape + one or several edges (or faces)
 + 1 value (Fillet radius).
 
 \image html fillet2.png

@@ -11,8 +11,6 @@
 <li>\subpage sewing_operation_page</li>
 <li>\subpage glue_faces_operation_page</li>
 <li>\subpage add_point_on_edge_operation_page</li>
-<li>\subpage check_free_boundaries_operation_page</li>
-<li>\subpage check_free_faces_operation_page</li>
 <li>\subpage change_orientation_operation_page</li>
 </ul>
 

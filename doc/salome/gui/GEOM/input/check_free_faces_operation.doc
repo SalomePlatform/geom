@@ -3,8 +3,10 @@
 \page check_free_faces_operation_page Check Free Faces
 
 \n To <b>Check Free Faces</b> in the <b>Main Menu</b> select <b>Repair - > Check Free Faces</b>.
-\n This operation retrieves all free faces from a given shape. A free
-face is a face not shared between two shells of the shape.
+\n This operation highlights all free faces from a given shape. A free
+face is a face which is not shared between two objects of the shape.
+
+\n \b NOTE: This functionality works only in VTK viewer.
 
 \n The \b Result will be a \b GEOM_Object (a list of IDs of all free
 faces, containing in the shape).

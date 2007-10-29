@@ -13,7 +13,7 @@ otherwise it will be removed.
 
 \n Firstly an \b Object can be mirrored through a \b Point of symmetry
 \n <b>TUI Command:</b> <em>geompy.MakeMirrorByPoint(Object, Point)</em>
-\n <b>Arguments:</b> Name + 1 shape + 1 vertex.
+\n <b>Arguments:</b> Name + one or several objects + 1 vertex.
 
 \image html transformation7.png
 
@@ -24,7 +24,7 @@ otherwise it will be removed.
 \n Secondly an \b Object can be mirrored through an \b Axis of
 symmetry
 \n <b>TUI Command:</b> <em>geompy.MakeMirrorByAxis(Object, Axis)</em>
-\n <b>Arguments:</b> Name + 1 shape + 1 vector.
+\n <b>Arguments:</b> Name + one or several objects + 1 vector.
 
 \image html transformation8.png
 
@@ -34,7 +34,7 @@ symmetry
 
 \n Finally an \b Object can be mirrored through a \b Plane of symmetry
 \n <b>TUI Command:</b> <em>geompy.MakeMirrorByPlane(Shape, Plane)</em>
-\n <b>Arguments:</b> Name + 1 shape + 1 plane
+\n <b>Arguments:</b> Name + one or several objects + 1 plane
 
 \image html transformation9.png
 

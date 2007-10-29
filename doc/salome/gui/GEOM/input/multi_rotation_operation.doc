@@ -17,7 +17,8 @@ be 2*PI/NbTimes
 \n <b>Arguments:</b> Name + 1 shape + 1 vector for direction + 1 value
 (repetition).
 
-\b There is a <b>TUI</b>-only command
+\b <b>NB!</b> There is another way to execute a Multi-rotation
+operation, which is currently accessible only via TUI commands:
 <em>geompy.MakeMultiRotation1D(Shape, Dir, Point, NbTimes)</em> which works in
 the same way, but the Axis is defined  by direction and point.
 
@@ -37,7 +38,8 @@ the rotated shape and its projection on the rotation axis.
 \n <b>Arguments:</b> Name + 1 shape + 1 vector for direction + 1 angle
 + 1 value (repetition) + 1 step value + 1 value (repetition).
 
-There is a <b>TUI</b>-only command 
+<b>NB!</b> There is another way to execute a Double Multi-rotation
+operation, which is currently accessible only via TUI commands: 
 <em>geompy.MakeMultiRotation2D(Shape, Dir, Point, Angle, nbtimes1, Step,nbtimes2)</em>
 which works in the same way,
 but the Axis is defined  by direction and point.

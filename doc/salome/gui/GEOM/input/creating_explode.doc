@@ -10,7 +10,7 @@ given shape using the \b Explode operation, you need to define the <b>Main
 Object</b>, which will be exploded and the <b>Type of Subshapes</b> you wish to
 obtain from it.
 \n The \b Result of the operation will be a List of \b GEOM_Objects
-(edges, faces, solids or compsolids).
+(vertexes, edges, wires, faces, shells or solids).
 
 \n Using <b>TUI Commands</b> you can perform this operation in a
 variety of ways:

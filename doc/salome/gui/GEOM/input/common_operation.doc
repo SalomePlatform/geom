@@ -6,7 +6,7 @@
 
 \n This operation cuts the common part of two shapes and transforms it into an independent geometrical object.
 
-\n The \b Result will be a \b GEOM_Object (COMPOUND).
+\n The \b Result will be any \b GEOM_Object.
 \n <b>TUI Command:</b> <em>geompy.MakeCommon(s1, s2)</em>
 \n <b>Arguments:</b> Name + 2 shapes.
 

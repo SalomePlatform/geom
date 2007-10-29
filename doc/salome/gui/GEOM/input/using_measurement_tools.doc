@@ -10,8 +10,11 @@ concerning created or imported geometrical objects. They are:
 <li>\ref basic_prop_anchor "Basic properties"</li>
 <li>\ref center_mass_anchor "Center of mass"</li>
 <li>\ref inertia_anchor "Inertia"</li>
+<li>\ref boundaries_anchor "Check Free Boundaries"</li>
+<li>\ref faces_anchor "Check Faces"</li>
 <li>\ref bounding_box_anchor "Bounding box"</li>
 <li>\ref min_distance_anchor "Min. distance"</li>
+<li>\ref angle_anchor "Angle"</li>
 <li>\ref tolerance_anchor "Tolerance"</li>
 <li>\ref whatis_anchor "WhatIs"</li>
 <li>\ref check_anchor "Check"</li>
@@ -65,18 +68,47 @@ the shape for which a center of gravity is computed.
 \anchor inertia_anchor
 <br><h2>Inertia</h2>
 
-Returns the axis of inertia for the selected geometrical object.
+Returns the axial moments of inertia for the selected geometrical object.
 
-\n <b>Result:</b> Displays the matrix and moments of inertia in the
-form of Python Tuple <center>(I11, I12, I13,</center>
+\n <b>Result:</b> Displays the matrix of the own moments of inertia and
+the relative moments of inertia in the form of Python Tuple
+ <center>(I11, I12, I13,</center>
                      <center>I21, I22, I23,</center>
                      <center>I31, I32, I33,</center>
                      <center>Ix, Iy, Iz).</center>
 \n <b>TUI Command:</b> <em>geompy.Inertia(Shape),</em> where \em Shape is
-a shape for which a matrix of inertia and moment of inertia are
+a shape for which the own matrix of inertia and the relative moments of inertia are
 returned.
 
 \image html measures4.png
+
+\anchor boundaries_anchor
+<br><h2>Check Free Boundaries</h2>
+
+\n Detects and highlights  wires and edges that are not shared between
+two faces and are considered a shape's boundary.
+
+\n <b>TUI Command:</b> <em>(NoError, ClosedWires, OpenWires) =
+geompy.GetFreeBoundary(Shape),</em> where \em Shape is a shape to be
+checked, \em NoError is false if an error occurred while checking free
+boundaries, \em ClosedWires is a list of closed free boundary wires,
+\em OpenWires is a list of open free boundary wires.
+
+\image html repair9.png
+
+\anchor faces_anchor
+<br><h2>Check Free Faces</h2>
+
+\n Highlights all free faces of a given shape. A free
+face is a face which is not shared between two objects of the shape.
+
+\n \b NOTE: This functionality works only in VTK viewer.
+
+\n \b Result: a list of IDs of all free faces, containing in the shape.
+\n <b>TUI Command:</b> <em>GetFreeFacesIDs(Shape),</em> where \em Shape is
+a shape to be checked.
+
+\image html repair10.png
 
 \anchor bounding_box_anchor
 <br><h2>Bounding box</h2>
@@ -95,14 +127,24 @@ is a shape for which a bounding box is computed.
 \anchor min_distance_anchor
 <br><h2>Min. distance</h2>
 
-\n Returns the minimum distance between two geometrical objects.
+\n Returns the minimum distance between two geometrical objects and
+the coordinates of the vector of distance and shows the vector in the viewer.  
 
 \n <b>TUI Command:</b> <em>geompy.MinDistance(Shape1, Shape2),</em>
-where \em Shape1 and \em Shape2 are shapes between which the minimal distance
-computed.
+where \em Shape1 and \em Shape2 are shapes between which the minimal
+distance is computed.
 
 \image html distance.png
 
+\anchor angle_anchor
+<br><h2>Angle</h2>
+
+\n Returns the angle between two lines or linear edges
+\n <b>TUI Command:</b> <em>geompy.GetAngle(shape1, shape2), where
+Shape1 and Shape2 are shapes between which the angle is computed. 
+
+\image html angle.png
+ 
 \anchor tolerance_anchor
 <br><h2>Tolerance</h2>
 
@@ -136,7 +178,7 @@ geometry as well.
 
 \n <b>Result:</b> Boolean.
 \n <b>TUI Command:</b> <em>geompy.(theShape, theIsCheckGeom = 0),</em>
-where is shape which is checked for validity.
+where is theShape is the shape checked for validity.
 
 \image html measures9.png
 

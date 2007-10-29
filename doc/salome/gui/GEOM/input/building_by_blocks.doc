@@ -98,13 +98,17 @@ automatically.</li>
 
 \image html block4.png
 
+
+
 \image html block5.png
 
 \n <b>Example:</b>
 
 \image html image180.jpg
+<center>Hexahedral Solid built on the base of six Faces</center>
 
 \image html image181.jpg
+<center>Hexahedral Solid built on the base of two Faces</center>
 
 Our <b>TUI Scripts</b> provide you with useful examples of
 \ref tui_building_by_blocks_page "Building by Blocks".

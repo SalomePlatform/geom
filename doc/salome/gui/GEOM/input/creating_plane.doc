@@ -37,10 +37,10 @@ the plane).
 <b>Examples:</b>
 
 \image html planes1.png
-<center>Planes</center>
+<center>Planes created on the basis of the Global Coordinate System</center>
 
 \image html plane_on_face.png
-<center>A Plane created on a Plane of another size</center>
+<center>A Plane created on a Face of another Shape</center>
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_plane "Basic Geometric Objects".

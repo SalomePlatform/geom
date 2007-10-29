@@ -10,9 +10,9 @@ two directions.
 \n The \b Result will be one or several \b GEOM_Objects (compound).
 
 \n To produce a <b>Simple Multi Translation</b> (in one direction) you
-need to indicate a \b Shape to be translated, a \b Vector of
+need to indicate an \b Object to be translated, a \b Vector of
 translation, a \b Step of translation and a <b>Number of Times</b> the
-shape must be moved.
+Object should be duplicated.
 \n <b>TUI Command:</b> <em>geompy.MakeMultiTranslation1D(Shape, Dir,
 Step, NbTimes)</em>
 \n <b>Arguments:</b> Name + 1 shape + 1 vector (for direction) + 1
@@ -25,9 +25,8 @@ step value + 1 value (repetition).
 \image html multi_translation1dsn.png
 
 \n To produce a <b>Double Multi Translation</b> (in two directions) you need to
-indicate a \b Shape to be translated and a \b Vector of translation, a
-\b Step of translation and a <b>Number of Times</b> the shape must be moved along
-each axis.
+indicate an \b Object to be translated, and, for both axes, a \b
+Vector of translation, a \b Step of translation and a <b>Number of Times</b> the shape must be duplicated.
 
 \n <b>TUI Command:</b> <em>geompy.MakeMultiTranslation2D(Shape, Dir1,
 Step1, NbTimes1, Dir2, Step2, NbTimes2),</em> where \em Shape is a shape

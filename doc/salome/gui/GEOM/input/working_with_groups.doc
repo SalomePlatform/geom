@@ -20,7 +20,7 @@ In this Menu:
 
 <ul>
 <li><b>Shape Type</b> radio button define the type of elements for the
-group (points, lines, planes or shapes).</li>
+group (points, wires, faces, shells or solids).</li>
 <li><b>Group Name</b> - here you can enter the name of the group, by
 default, it is Group_n.</li>
 <li>Then, using the "Select" button, select the <b>Main Shape</b> (a

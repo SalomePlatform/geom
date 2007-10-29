@@ -4,14 +4,14 @@
 
 \n To <b>Suppress Holes</b> in the <b>Main Menu</b> select <b>Repair - > Suppress Holes</b>.
 
-\n This operation removes holes on a selected shape. This operation is
-available in <b>OCC Viewer</b> only.
+\n This operation removes holes with free boundaries on a selected
+shell or face. This operation is available in <b>OCC Viewer</b> only.
 
 \n The \b Result will be a \b GEOM_Object.
 
 \n <b>TUI Command:</b> <em>geompy.SuppressHoles(Shape,
-ListOfWireID),</em> where \em Shape is a shape where holes must be
-removed, \em ListOfWireID is a list of wire sub shapes ID's. If it is
+ListOfWireID),</em> where \em Shape is a shell or face, where holes
+with free boundaries must be removed, \em ListOfWireID is a list of wire sub shapes ID's. If it is
 empty, then all holes are removed.
 
 \image html repair5.png

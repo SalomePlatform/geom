@@ -6,7 +6,7 @@
 <b>Repair - > Suppress Internal Wires</b>.
 
 \n This operation removes all internal wires or specified internal
-wires from user specified faces. This operation is available in <b>OCC
+wires from user specified shapes. This operation is available in <b>OCC
 Viewer</b> only.
 
 \n The \b Result will be a \b GEOM_Object. 
@@ -19,10 +19,10 @@ internal wires are removed.
 <b>Arguments:</b>
 <ul>
 <li>Name of the resulting object</li>
-<li>User specified face</li>
-<li>User specified internal wires (lying on this face except for its
-boundary), or, in case the <b>Remove all internal wires</b> box is
-checked, all internal wires</li>
+<li>User specified shape</li>
+<li>User specified internal wires (lying on this shape except for its
+boundary), or all internal wires if <b>Remove all internal wires</b> box is
+checked </li>
 </ul>
 
 \image html repair4.png

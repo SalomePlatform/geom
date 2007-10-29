@@ -5,13 +5,13 @@
 \n To <b>Modify the Location</b> in the <b>Main Menu</b> select 
 <b>Operations - > Transformation - > Modify the Location</b>.
 
-\n This operation modifies the \b Location of an \b Object.
+\n This operation modifies the \b Location of \b Objects.
 
-\n The first algorithm places the object so that its center coincides
-with the center of an End Local Coordinate System. 
-\n <b>Create a copy</b> checkbox allows to keep the initial object, otherwise it
+\n The first algorithm places the object(s) so that its center coincides
+with the origin of the Local Coordinate System. 
+\n <b>Create a copy</b> checkbox allows to keep the initial objects, otherwise they
 will be removed.
-\n <b>Arguments:</b> Name + 1 Object + End Coordinate System.
+\n <b>Arguments:</b> Name + one or several objects + End Coordinate System.
 
 \image html transformation5.png
 
@@ -29,7 +29,7 @@ remainder after subtraction of the coordinates of the Start LSC from
 the coordinates of the End LSC.
 \n <b>Create a copy</b> checkbox allows to keep the initial object,
 otherwise it will be removed.
-\n <b>Arguments:</b> Name + 1 Object + Start Coordinate System + End
+\n <b>Arguments:</b> Name + one or several objects + Start Coordinate System + End
 Coordinate System.
 
 \image html transformation6.png
@@ -56,6 +56,6 @@ modified, \em theStartLCS is a location to move the shape from, \em
 theEndLCS is a location to move the shape to.
 
 \n Our <b>TUI Scripts</b> provide you with useful examples of the use
-of \ref tui_modify_location "Transformation Operations".
+of \ref tui_translation "Transformation Operations".
 
 */

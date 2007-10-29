@@ -88,6 +88,140 @@ print "Main moments of inertia of box 100x30x100:"
 print " Ix = ", In[9], ", Iy = ", In[10], ", Iz = ", In[11] 
 \endcode
 
+<br><h2>Check Free Boundaries</h2>
+
+\code
+import os
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create boxes
+box1 = geompy.MakeBox(0,0,0,100,50,100)
+box2 = geompy.MakeBox(100,0,0,250,50,100)
+
+# make a compound
+compound = geompy.MakeCompound([box1, box2])
+
+# import from *.brep
+ImportFromBREP = geompy.ImportBREP(os.getenv("DATA_DIR")+"/Shapes/Brep/flight_solid.brep")
+
+# get a face
+faces = geompy.SubShapeAllSorted(ImportFromBREP, geompy.ShapeType["FACE"])
+
+# get the free boundary for face 32
+Res = geompy.GetFreeBoundary(faces[32])
+isSuccess   = Res[0]
+ClosedWires = Res[1]
+OpenWires   = Res[2]
+
+if isSuccess == 1 :
+    print "Checking free boudaries is OK."
+else :
+    print "Checking free boudaries is KO!"
+print "len(ClosedWires) = ", len(ClosedWires)
+
+i = 0
+for wire in ClosedWires :
+    wire_name = "Face 32 -> Close wires : WIRE %d"%(i+1)
+    geompy.addToStudy(ClosedWires[i], wire_name)
+    if i < len(ClosedWires) :
+        i = i+ 1
+
+print "len(OpenWires) = ", len(OpenWires)
+
+i = 0
+for wire in OpenWires :
+    wire_name = "Face 32 -> Open wires : WIRE %d"%(i+1)
+    geompy.addToStudy(OpenWires[i], wire_name)
+    if i < len(OpenWires) :
+        i = i+ 1
+
+# get the free boundary for face 41
+Res = geompy.GetFreeBoundary(faces[41])
+isSuccess   = Res[0]
+ClosedWires = Res[1]
+OpenWires   = Res[2]
+
+if isSuccess == 1 :
+    print "Checking free boudaries is OK."
+else :
+    print "Checking free boudaries is KO!"
+print "len(ClosedWires) = ", len(ClosedWires)
+
+i = 0
+for wire in ClosedWires :
+    wire_name = "Face 41 -> Close wires : WIRE %d"%(i+1)
+    geompy.addToStudy(ClosedWires[i], wire_name)
+    if i < len(ClosedWires) :
+        i = i+ 1
+
+print "len(OpenWires) = ", len(OpenWires)
+
+i = 0
+for wire in OpenWires :
+    wire_name = "Face 41 -> Open wires : WIRE %d"%(i+1)
+    geompy.addToStudy(OpenWires[i], wire_name)
+    if i < len(OpenWires) :
+        i = i+ 1
+
+# add the imported object to the study
+id_ImportFromBREP = geompy.addToStudy(ImportFromBREP, "ImportFromBREP")
+salome.sg.updateObjBrowser(1)
+\endcode
+
+
+<br><h2>Check Free Faces</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create a vertex and a vector
+p1 = geompy.MakeVertex(35, 35, 0)
+p2 = geompy.MakeVertex(35, 35, 50)
+v = geompy.MakeVector(p1, p2)
+
+# create a cylinder
+cylinder = geompy.MakeCone(p1, v, 30, 20, 20)
+
+# create a cone
+cone = geompy.MakeCone(p1, v, 70, 40, 60)
+
+# make cut
+cut = geompy.MakeCut(cone, cylinder)
+
+# get faces as sub-shapes
+faces = []
+faces = geompy.SubShapeAllSorted(cut, geompy.ShapeType["FACE"])
+f_2 = geompy.GetSubShapeID(cut, faces[0])
+
+# remove one face from the shape
+cut_without_f_2 = geompy.SuppressFaces(cut, [f_2])
+
+# suppress the specified wire
+result = geompy.GetFreeFacesIDs(cut_without_f_2)
+print "A number of free faces is ", len(result)
+
+# add objects in the study
+all_faces = geompy.SubShapeAllSorted(cut_without_f_2, geompy.ShapeType["FACE"])
+for face in all_faces :
+    sub_shape_id = geompy.GetSubShapeID(cut_without_f_2, face)
+    if result.count(sub_shape_id) > 0 :
+        face_name = "Free face %d"%(sub_shape_id)
+        geompy.addToStudy(face, face_name)
+
+# in this example all faces from cut_without_f_2 are free
+id_cut_without_f_2 = geompy.addToStudy(cut_without_f_2, "Cut without f_2")
+
+# display the results
+gg.createAndDisplayGO(id_cut_without_f_2)
+gg.setDisplayMode(id_cut_without_f_2,1) 
+\endcode
+
+
+
 <br><h2>Bounding Box</h2>
 
 \code
@@ -130,6 +264,51 @@ print " Edge max. tolerance: ", Toler[3]
 print " Vertex min. tolerance: ", Toler[4]
 print " Vertex max. tolerance: ", Toler[5] 
 \endcode
+
+<br><h2>Angle</h2>
+
+\code
+import salome
+salome.salome_init()
+
+import math
+import geompy
+geompy.init_geom(salome.myStudy)
+
+OX  = geompy.MakeVectorDXDYDZ(10, 0,0)
+OXY = geompy.MakeVectorDXDYDZ(10,10,0)
+
+# in one plane
+Angle = geompy.GetAngle(OX, OXY)
+
+print "\nAngle between OX and OXY = ", Angle
+if math.fabs(Angle - 45.0) > 1e-05:
+    print "  Error: returned angle is", Angle, "while must be 45.0"
+    pass
+
+# not in one plane
+OXY_shift = geompy.MakeTranslation(OXY,10,-10,20)
+Angle = geompy.GetAngle(OX, OXY_shift)
+
+print "Angle between OX and OXY_shift = ", Angle
+if math.fabs(Angle - 45.0) > 1e-05:
+    print "  Error: returned angle is", Angle, "while must be 45.0"
+    pass
+
+# not linear
+pnt1 = geompy.MakeVertex(0, 0, 0)
+pnt2 = geompy.MakeVertex(10, 0, 0)
+pnt3 = geompy.MakeVertex(20, 10, 0)
+arc  = geompy.MakeArc(pnt1, pnt2, pnt3)
+Angle = geompy.GetAngle(OX, arc)
+
+if (math.fabs(Angle + 1.0) > 1e-6 or geompy.MeasuOp.IsDone()):
+    print "Error. Angle must not be computed on curvilinear edges"
+    pass
+
+\endcode
+
+
  
 <br><h2>What Is</h2>
 

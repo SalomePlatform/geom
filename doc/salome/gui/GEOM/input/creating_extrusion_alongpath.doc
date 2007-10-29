@@ -5,15 +5,15 @@
 To generate a \b Pipe in the <b>Main Menu</b> select <b>New Entity - > Generation  - > Extrusion along a path</b>
 
 \n To create an extruded \b Pipe shape, you need to define the <b>Base
-Object</b> (vertex, edge, wire, face or shell), which will be extruded
-and the <b>Path Object</b> (edge, face or shell) along which the <b>Base 
+Object</b> (vertex, edge, planar wire, face or shell), which will be extruded
+and the <b>Path Object</b> (edge or wire) along which the <b>Base 
 Object</b> will be extruded.
-\n The \b Result of the operation will be a GEOM_Object (edge, face,
+\n The \b Result of the operation will be a GEOM_Object (edge, face, shell,
 solid or compsolid).
 
 \n <b>TUI Command:</b> <em>geompy.MakePipe(baseShape, pathShape)</em>
-\n <b>Arguments:</b> Name + 1 shape (vertex, edge, wire, face or
-shell) serving as base object + 1 shape (edge, face or shell) for
+\n <b>Arguments:</b> Name + 1 shape (vertex, edge, planar wire, face or
+shell) serving as base object + 1 shape (edge or wire) for
 definition of the path.
 
 \image html pipe.png

@@ -20,6 +20,22 @@ Shape1 is the first argument and \em Shape2 is the second argument of
 Boolean operation, \em Operation is a type of the Boolean operation (1
 &mdash; Common, 2 &mdash; Cut, 3 &mdash; Fuse, 4 &mdash; Section).
 
+
+Besides, you can use advanced TUI commands performing these operations
+independently from each other:
+\par
+<em>geompy.MakeFuse(Shape1, Shape2)</em>, where \em Shape1 and \em
+Shape2 is the second argument of Fuse operation; 
+\par
+<em>geompy.MakeCommon(Shape1, Shape2)</em>, where \em Shape1 and \em
+Shape2 is the second argument of Common operation;
+\par
+<em>geompy.MakeCut(Shape1, Shape2)</em>, where \em Shape1 and \em
+Shape2 is the second argument of Cut operation;
+\par
+<em>geompy.MakeSection(Shape1, Shape2)</em>, where \em Shape1 and \em
+Shape2 is the second argument of Section operation;
+
 \n Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_boolean_operations_page "Boolean Operations".
 

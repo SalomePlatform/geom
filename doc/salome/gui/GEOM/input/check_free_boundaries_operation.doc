@@ -4,8 +4,8 @@
 
 \n To <b>Check Free Boundaries</b> in the <b>Main Menu</b> select <b>Repair - > Check Free Boundaries</b>.
 
-\n This operation detects wires and edges that correspond to the
-shape's boundary, and highlights it.
+\n This operation detects wires and edges that are not shared between
+two faces and are considered a shape's boundary. This control highlights them.
 
 \n The \b Result will be a \b GEOM_Object. 
 

@@ -21,10 +21,10 @@ Wireframe and Shading presentation.</li>
 <li>\ref color_page "Color" - allows to change the filling color in
 the standard <b>Select Color</b> menu.</li>
 <li>\ref transparency_page "Transparency" - allows to change the
-transparency of mesh elements.</li>
+transparency of geometrical objects.</li>
 <li>\ref isolines_page "Isos" - allows to change the number of
 isolines displayed within a shape.</li>
-<li><b>Erase</b> - allows to hide the selected mesh from the
+<li><b>Erase</b> - allows to hide the selected geometrical object from the
 viewer. TUI Command : <em>sg.EraseOnly(ID)</em>
 \n \image html image18.gif
 </li>
@@ -32,11 +32,11 @@ viewer. TUI Command : <em>sg.EraseOnly(ID)</em>
 Command: <em>sg.EraseAll()</em>
 \n \image html image26.gif
 </li>
-<li><b>Display Only</b> - allows to display only the selected mesh,
-hiding all other from the viewer. TUI Command: <em>sg.DisplayOnly(ID)</em>
+<li><b>Display Only</b> - allows to display only the selected
+geometrical object. TUI Command: <em>sg.DisplayOnly(ID)</em>
 \n \image html image33.gif
 </li>
-<li><b>Update</b> - refreshes the presentation of your mesh in the
+<li><b>Update</b> - refreshes the presentation of your geometrical object in the
 Object Browser, applying all recent changes.</li>
 <li><b>Dump view</b> - exports an object from the viewer in bmp, png,
 jpg or jpeg image format.</li>

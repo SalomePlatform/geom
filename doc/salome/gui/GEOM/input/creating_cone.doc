@@ -12,7 +12,8 @@
 \n Firstly, you can define a \b Cone by the <b>Base Point</b> (the
 central point of the cone base), the \b Axis, the \b Height and the
 first and the second \b Radiuses.
-\n <b>TUI Command:</b> <em>geompy.MakeCone(Point, Axis, Radius1, Radius2)</em>
+\n <b>TUI Command:</b> <em>geompy.MakeCone(Point, Axis, Radius1,
+Radius2, height)</em>
 \n <b>Arguments:</b> Name + 1 vertex + 1 vector (for direction) + 3
 values (Radius of the base part, radius of the upper part, height).
 

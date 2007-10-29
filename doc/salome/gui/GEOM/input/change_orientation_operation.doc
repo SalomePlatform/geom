@@ -3,11 +3,11 @@
 \page change_orientation_operation_page Change Orientation
 
 \n To <b>Change Orientation</b> in the <b>Main Menu</b> select <b>Repair - > Change Orientation</b>.
-\n This operation reverses the normals of faces composing the selected
-shell.
+\n This operation reverses the normals of selected faces or the normal
+of faces composing composing the selected opened shell.
 
 \n <b>TUI Command:</b> <em>geompy.ChangeOrientation(shape)</em>
-\n <b>Arguments:</b> Name + 1 shape (shell)
+\n <b>Arguments:</b> Name + one or several objects (face(s)), opened shell(s).
 \n Uncheck <b>Create a copy</b> checkbox if you don't wish to leave
 the initial object in the project (<b>Result name</b> field will be
 locked).

@@ -11,7 +11,7 @@ The \b Result will be a  \b GEOM_Object (SOLID).
 
 \n <b>TUI Command:</b> <em>geompy.MakeSolid(ListOfShape),</em> where
 ListOfShape is a list of shells from which the solid is constructed.
-\n <b>Arguments:</b> Name + A closed shell or a list of shells.
+\n <b>Arguments:</b> Name + A closed shell or a list of closed shells.
 
 \image html neo-obj6.png
 
