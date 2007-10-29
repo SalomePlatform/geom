@@ -87,8 +87,6 @@
       <item name="Sewing" url="sewing.htm" />
       <item name="Glue Faces" url="glue_faces.htm" />
       <item name="Add Point on Edge" url="add_point_on_edge.htm" />
-      <item name="Check Free Boundaries" url="check_free_boundaries.htm" />
-      <item name="Check Free Faces" url="check_free_faces.htm" />
       <item name="Change Orientation" url="change_orientation.htm" />
     </book>
   </book>
