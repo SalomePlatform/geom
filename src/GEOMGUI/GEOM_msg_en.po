@@ -954,7 +954,7 @@ msgstr "Create A Face"
 
 #: GeometryGUI_FaceDlg.cxx:78
 msgid "GEOM_FACE_FFW"
-msgstr "Face from a closed wire and edge"
+msgstr "Face creation from wires and/or edges"
 
 #: GeometryGUI_FaceDlg.cxx:103
 msgid "GEOM_FACE_OPT"
@@ -2388,7 +2388,7 @@ msgid "MEN_FACE"
 msgstr "Face"
 
 msgid "STB_FACE"
-msgstr "Build a face"
+msgstr "Build a face from wires and/or edges"
 
 msgid "TOP_SHELL"
 msgstr "Build a shell"
