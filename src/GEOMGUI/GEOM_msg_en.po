@@ -335,7 +335,7 @@ msgstr "Height :"
 
 #Length
 msgid "GEOM_LENGTH"
-msgstr "Length is :"
+msgstr "Length :"
 
 #Weight
 msgid "GEOM_WEIGHT"
@@ -914,7 +914,7 @@ msgstr "Objects And Results"
 
 #: GeometryGUI_AngleDlg.cxx:82
 msgid "GEOM_MEASURE_ANGLE_TITLE"
-msgstr "Angle Between Two Objects"
+msgstr "Angle Between Two Straight Edges/Lines/Vectors"
 
 #: GeometryGUI_AngleDlg.cxx:86
 msgid "GEOM_MEASURE_ANGLE_ANGLE"
@@ -926,7 +926,7 @@ msgstr "Objects And Results"
 
 #: GeometryGUI_AngleDlg.cxx:93
 msgid "GEOM_MEASURE_ANGLE_IS"
-msgstr "Angle is :"
+msgstr "Angle in degrees :"
 
 #: GeometryGUI_EdgeDlg.cxx:47
 msgid "GEOM_EDGE_TITLE"
