@@ -112,8 +112,8 @@ RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent
   aLay->addWidget( aMainGrp );
   aLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
   aLay->addWidget( aFrame );
-  
-  myHelpFileName = "check_free_faces.htm";
+
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#free_faces";
 
   connect( aCloseBtn, SIGNAL( clicked() ), SLOT( onClose() ) );
   connect( aHelpBtn, SIGNAL( clicked() ), SLOT( onHelp() ) );
