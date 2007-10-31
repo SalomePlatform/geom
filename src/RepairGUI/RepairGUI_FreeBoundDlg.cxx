@@ -96,8 +96,8 @@ RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg(GeometryGUI* theGUI, QWidget* the
   aLay->setMargin( MARGIN );
   aLay->addWidget( aMainGrp );
   aLay->addWidget( aFrame );
-  
-  myHelpFileName = "check_free_boundaries.htm";
+
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#free_boundaries";
 
   connect( aCloseBtn, SIGNAL( clicked() ), SLOT( onClose() ) );
   connect( aHelpBtn, SIGNAL( clicked() ), SLOT( onHelp() ) );
