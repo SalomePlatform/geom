@@ -33,12 +33,15 @@
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
 #include "DlgRef_SpinBox.h"
+#include "GeometryGUI.h"
 
 #include "SUIT_Session.h"
 #include "SUIT_ViewWindow.h"
+#include "SUIT_MessageBox.h"
 #include "SOCC_Prs.h"
 #include "SOCC_ViewModel.h"
 #include "SalomeApp_Tools.h"
+#include "SalomeApp_Application.h"
 
 // OCCT Includes
 #include <AIS_AngleDimension.hxx>
@@ -196,7 +199,15 @@ bool MeasureGUI_AngleDlg::getParameters (double& theAngle)
       return false;
     }
 
-    return getOperation()->IsDone();
+    bool isDone = getOperation()->IsDone();
+    if (!isDone) {
+      CORBA::String_var aMsg = getOperation()->GetErrorCode();
+      SUIT_MessageBox::warn1((QWidget*)myGeomGUI->getApp()->desktop(),
+                             QObject::tr("WRN_WARNING"),
+                             QObject::tr(aMsg.in()),
+                             QObject::tr("BUT_OK"));
+    }
+    return isDone;
   }
 
   return false;
