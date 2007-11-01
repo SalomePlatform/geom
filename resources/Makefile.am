@@ -32,6 +32,7 @@ GEOM_en.xml \
 GEOM_fr.xml \
 GEOM.config \
 SalomeApp.xml \
+Plugin \
 GEOMDS_Resources \
 ImportExport \
 ShHealing \
