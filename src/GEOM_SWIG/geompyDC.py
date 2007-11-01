@@ -1332,7 +1332,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestHealing.py
         def GetFreeBoundary(self,theObject):
             anObj = self.HealOp.GetFreeBoundary(theObject)
-            RaiseIfFailed("GetFreeBoundaries", self.HealOp)
+            RaiseIfFailed("GetFreeBoundary", self.HealOp)
             return anObj
         
         # -----------------------------------------------------------------------------
@@ -2025,7 +2025,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def MakeCDG(self,theShape):
             anObj = self.MeasuOp.GetCentreOfMass(theShape)
-            RaiseIfFailed("GetCenterOfMass", self.MeasuOp)
+            RaiseIfFailed("GetCentreOfMass", self.MeasuOp)
             return anObj
         
         ## Get a normale to the given face. If the point is not given,
@@ -2128,9 +2128,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestMeasures.py
         def KindOfShape(self,theShape):
             aRoughTuple = self.MeasuOp.KindOfShape(theShape)
-            if self.MeasuOp.IsDone() == 0:
-                raise RuntimeError, "KindOfShape : " + self.MeasuOp.GetErrorCode()
-                return []
+            RaiseIfFailed("KindOfShape", self.MeasuOp)
              
             aKind  = aRoughTuple[0]
             anInts = aRoughTuple[1]
@@ -2377,12 +2375,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def CheckCompoundOfBlocks(self,theCompound):
             (IsValid, BCErrors) = self.BlocksOp.CheckCompoundOfBlocks(theCompound)
-            if self.BlocksOp.IsDone() == 0:
-                raise RuntimeError,  "CheckCompoundOfBlocks : " + self.BlocksOp.GetErrorCode()
-            else:
-                if IsValid == 0:
-                    Descr = self.BlocksOp.PrintBCErrors(theCompound, BCErrors)
-                    print Descr
+            RaiseIfFailed("CheckCompoundOfBlocks", self.MeasuOp)
+            if IsValid == 0:
+                Descr = self.BlocksOp.PrintBCErrors(theCompound, BCErrors)
+                print Descr
             return IsValid
         
         ## Remove all seam and degenerated edges from \a theShape.
@@ -2453,7 +2449,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def GetBlocksByParts(self,theCompound, theParts):
             aList = self.BlocksOp.GetBlocksByParts(theCompound, theParts)
-            RaiseIfFailed("GetBlockByParts", self.BlocksOp)
+            RaiseIfFailed("GetBlocksByParts", self.BlocksOp)
             return aList
 
         ## Multi-transformate block and glue the result.
@@ -2580,7 +2576,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_TestOthers.py
         def GetObjectIDs(self,theGroup):
             ListIDs = self.GroupOp.GetObjects(theGroup)
-            RaiseIfFailed("GetObjectIDs", self.GroupOp)
+            RaiseIfFailed("GetObjects", self.GroupOp)
             return ListIDs
         
         ## Returns a type of sub objects stored in the group
