@@ -202,6 +202,16 @@ def MakeVertexOnCurve(theRefCurve, theParameter):
     RaiseIfFailed("MakePointOnCurve", BasicOp)
     return anObj
 
+## Create a point on intersection of two lines.
+#  @param theRefLine1, theRefLine2 The referenced lines.
+#  @return New GEOM_Object, containing the created point.
+#
+#  Example: see GEOM_TestAll.py
+def MakeVertexOnLinesIntersection(theRefLine1, theRefLine2):
+    anObj = BasicOp.MakePointOnCurve(theRefLine1, theRefLine2)
+    RaiseIfFailed("MakePointOnLinesIntersection", BasicOp)
+    return anObj
+
 ## Create a tangent, corresponding to the given parameter on the given curve.
 #  @param theRefCurve The referenced curve.
 #  @param theParameter Value of parameter on the referenced curve.
@@ -255,6 +265,17 @@ def MakeLine(thePnt, theDir):
 def MakeLineTwoPnt(thePnt1, thePnt2):
     anObj = BasicOp.MakeLineTwoPnt(thePnt1, thePnt2)
     RaiseIfFailed("MakeLineTwoPnt", BasicOp)
+    return anObj
+
+## Create a line on two faces intersection. 
+#  @param theFace1 First of two faces, defining the line.
+#  @param theFace2 Second of two faces, defining the line.
+#  @return New GEOM_Object, containing the created line.
+#
+#  Example: see GEOM_TestAll.py
+def MakeLineTwoFaces(theFace1, theFace2):
+    anObj = BasicOp.MakeLineTwoFaces(theFace1, theFace2)
+    RaiseIfFailed("MakeLineTwoFaces", BasicOp)
     return anObj
 
 ## Create a plane, passing through the given point
@@ -480,7 +501,7 @@ def MakeSketcher(theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0]):
 #  @return New GEOM_Object, containing the created wire.
 def MakeSketcherOnPlane(theCommand, theWorkingPlane):
     anObj = CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
-    RaiseIfFailed("MakeSketcher", CurvesOp)
+    RaiseIfFailed("MakeSketcherOnPlane", CurvesOp)
     return anObj
 
 # -----------------------------------------------------------------------------
@@ -576,7 +597,7 @@ def MakeSphere(x, y, z, theR):
 #  Example: see GEOM_TestAll.py
 def MakeSphereR(theR):
     anObj = PrimOp.MakeSphereR(theR)
-    RaiseIfFailed("MakeSphreR", PrimOp)
+    RaiseIfFailed("MakeSphereR", PrimOp)
     return anObj
 
 ## Create a cone with given base point, axis, height and radiuses.
@@ -861,7 +882,7 @@ def MakeShell(theFacesAndShells):
 #  Example: see GEOM_TestAll.py
 def MakeSolid(theShells):
     anObj = ShapesOp.MakeSolidShells(theShells)
-    RaiseIfFailed("MakeSolid", ShapesOp)
+    RaiseIfFailed("MakeSolidShells", ShapesOp)
     return anObj
 
 ## Create a compound of the given shapes.
@@ -881,7 +902,7 @@ def MakeCompound(theShapes):
 #  Example: see GEOM_TestOthers.py
 def NumberOfFaces(theShape):
     nb_faces = ShapesOp.NumberOfFaces(theShape)
-    RaiseIfFailed("NumberOfFace", ShapesOp)
+    RaiseIfFailed("NumberOfFaces", ShapesOp)
     return nb_faces
 
 ## Gives quantity of edges in the given shape.
@@ -947,7 +968,7 @@ def GetSharedShapes(theShape1, theShape2, theShapeType):
 #  Example: see GEOM_TestOthers.py
 def GetShapesOnPlane(theShape, theShapeType, theAx1, theState):
     aList = ShapesOp.GetShapesOnPlane(theShape, theShapeType, theAx1, theState)
-    RaiseIfFailed("GetShaepsOnPlane", ShapesOp)
+    RaiseIfFailed("GetShapesOnPlane", ShapesOp)
     return aList
 
 ## Works like the above method, but returns list of sub-shapes indices
@@ -1275,7 +1296,7 @@ def Sew(theObject, theTolerance):
 #  Example: see GEOM_TestHealing.py
 def SuppressInternalWires(theObject, theWires):
     anObj = HealOp.RemoveIntWires(theObject, theWires)
-    RaiseIfFailed("SuppressIntWires", HealOp)
+    RaiseIfFailed("RemoveIntWires", HealOp)
     return anObj
 
 ## Remove internal closed contours (holes) from the given object.
@@ -2140,9 +2161,7 @@ def GetPosition(theShape):
 #  Example: see GEOM_TestMeasures.py
 def KindOfShape(theShape):
     aRoughTuple = MeasuOp.KindOfShape(theShape)
-    if MeasuOp.IsDone() == 0:
-        raise RuntimerError, "KindOfShape : " + MeasuOp.GetErrorCode()
-        return []
+    RaiseIfFailed("KindOfShape", MeasuOp)
 
     aKind  = aRoughTuple[0]
     anInts = aRoughTuple[1]
@@ -2386,10 +2405,8 @@ def GetFaceByNormale(theBlock, theVector):
 #  Example: see GEOM_Spanner.py
 def CheckCompoundOfBlocks(theCompound):
     (IsValid, BCErrors) = BlocksOp.CheckCompoundOfBlocks(theCompound)
-    if BlocksOp.IsDone() == 0:
-      raise RuntimeError, "CheckCompoundOfBlocks : " + BlocksOp.GetErrorCode()
-    else:
-      if IsValid == 0:
+    RaiseIfFailed("CheckCompoundOfBlocks", BlocksOp)
+    if IsValid == 0:
         Descr = BlocksOp.PrintBCErrors(theCompound, BCErrors)
         print Descr
     return IsValid
@@ -2583,7 +2600,7 @@ def DifferenceIDs(theGroup, theSubShapes):
 #  Example: see GEOM_TestOthers.py
 def GetObjectIDs(theGroup):
     ListIDs = GroupOp.GetObjects(theGroup)
-    RaiseIfFailed("GetObject", GroupOp)
+    RaiseIfFailed("GetObjects", GroupOp)
     return ListIDs
 
 ## Returns a type of sub objects stored in the group

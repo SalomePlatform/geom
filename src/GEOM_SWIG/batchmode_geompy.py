@@ -155,6 +155,12 @@ def MakeVertexOnCurve(curve,par):
       print "MakePointOnCurve : ", BasicOp.GetErrorCode()
     return anObj
 
+def MakeVertexOnLinesIntersection(line1,line2):
+    anObj = BasicOp.MakePointOnLinesIntersection(line1,line2)
+    if BasicOp.IsDone() == 0:
+      print "MakePointOnLinesIntersection : ", BasicOp.GetErrorCode()
+    return anObj
+
 def MakeVectorDXDYDZ(dx,dy,dz):
     anObj = BasicOp.MakeVectorDXDYDZ(dx,dy,dz)
     if BasicOp.IsDone() == 0:
@@ -177,6 +183,12 @@ def MakeLineTwoPnt(p1, p2):
     anObj = BasicOp.MakeLineTwoPnt(p1,p2)
     if BasicOp.IsDone() == 0:
       print "MakeLineTwoPnt : ", BasicOp.GetErrorCode()
+    return anObj
+
+def MakeLineTwoFaces(f1, f2):
+    anObj = BasicOp.MakeLineTwoFaces(f1,f2)
+    if BasicOp.IsDone() == 0:
+      print "MakeLineTwoFaces : ", BasicOp.GetErrorCode()
     return anObj
 
 def MakePlane(p1,v1,trimsize):
