@@ -24,6 +24,11 @@ the \b Radius of the Fillet.
 \n <b>Arguments:</b> Name + 1 shape + one or several edges (or faces)
 + 1 value (Fillet radius).
 
+\n Alternatively, there is a possibility to create a fillet with a
+variable radius.  For this, toggle the lower radio button and define
+\b R1 (the radius at the start of the selected edge(s)) and \b R2 
+(the radius at the end of the selected edge(s))
+
 \image html fillet2.png
 
 \image html fillet3.png

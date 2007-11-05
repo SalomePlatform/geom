@@ -11,11 +11,13 @@ module</b>.
 left mouse click to change its presentation parameters and access to
 other useful options by right-clicking on the selected object.
 
-\image html image1.jpg
+\image html dialog.png
 
 <ul>
 <li><b>Rename</b> - allows to change the name of the geometric
 object.</li>
+<li><b>Delete</b> - irreversibly deletes the selected object from the
+viewer and from the Object Browser.</li> 
 <li>\ref display_mode_page "Display Mode" - allows to select between
 Wireframe and Shading presentation.</li>
 <li>\ref color_page "Color" - allows to change the filling color in
@@ -24,11 +26,11 @@ the standard <b>Select Color</b> menu.</li>
 transparency of geometrical objects.</li>
 <li>\ref isolines_page "Isos" - allows to change the number of
 isolines displayed within a shape.</li>
-<li><b>Erase</b> - allows to hide the selected geometrical object from the
+<li><b>Hide</b> - allows to hide the selected geometrical object from the
 viewer. TUI Command : <em>sg.EraseOnly(ID)</em>
 \n \image html image18.gif
 </li>
-<li><b>Erase all</b> - allows to hide all objects from the viewer. TUI
+<li><b>Hide all</b> - allows to hide all objects from the viewer. TUI
 Command: <em>sg.EraseAll()</em>
 \n \image html image26.gif
 </li>
