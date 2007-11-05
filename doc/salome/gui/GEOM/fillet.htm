@@ -18,7 +18,7 @@ img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
 p.whs3 { font-size:12pt; margin-left:40px; }
 img_whs4 { border:none; width:312px; height:315px; float:none; border-style:none; }
-img_whs5 { border:none; width:312px; height:346px; float:none; border-style:none; }
+img_whs5 { border:none; width:400px; height:376px; float:none; }
 p.whs6 { font-size:12pt; font-style:italic; margin-left:40px; }
 img_whs7 { border:none; width:226px; height:250px; float:none; border-style:none; }
 img_whs8 { border:none; float:none; width:208px; height:250px; border-style:none; }
@@ -118,7 +118,8 @@ if (window.writeIntopicBar)
  of the Fillet. &nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
- </i>geompy.MakeFilletAll(Shape, R) </p>
+ </i>geompy.MakeFilletAll(Shape, 
+ R) </p>
 
 <p class="whs2"><span style="font-style: italic;"><I><b style="font-weight: bold;">A</I></span><span 
  style="font-weight: bold;"><B>rguments: </B></span></b>Name + 1 shape + 1 value 
@@ -138,7 +139,9 @@ if (window.writeIntopicBar)
  of the Fillet. </p>
 
 <p class="whs2"><span style="font-style: italic;"><I><b style="font-weight: bold; font-style: normal;">TUI 
- Command:</b><i> </i>geompy.MakeFillet(Shape, R, ShapeType, ListShapes) 
+ Command:</b><i> </i>geompy.MakeFillet(Shape, 
+ R, ShapeType, 
+ ListShapes) 
  </I></span></p>
 
 <p class="whs2"><span style="font-style: italic;"><I><b style="font-weight: bold;">A</I></span><span 
@@ -147,7 +150,16 @@ if (window.writeIntopicBar)
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs3"><img src="pics/fillet2.png" x-maintain-ratio="TRUE" width="312px" height="346px" border="0" class="img_whs5"> &nbsp;<img src="pics/fillet3.png" x-maintain-ratio="TRUE" width="312px" height="346px" border="0" class="img_whs5"></p>
+<p class="whs2">Alternatively, there is a possibility to create 
+ a fillet with a variable radius. For this, toggle the lower radio button 
+ and define <span style="font-weight: bold;"><B>R1</B></span> 
+ (the radius at the start of the selected edge(s)) 
+ and <span style="font-weight: bold;"><B>R2</B></span> 
+ (the radius at the end of the selected edge(s))</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs3"><img src="pics/fillet2.png" x-maintain-ratio="TRUE" width="400px" height="376px" border="0" class="img_whs5"> &nbsp;<img src="pics/fillet3.png" x-maintain-ratio="TRUE" width="400px" height="376px" border="0" class="img_whs5"></p>
 
 <p class="whs2">&nbsp; </p>
 

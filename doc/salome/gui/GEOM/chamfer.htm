@@ -17,12 +17,15 @@ if (navigator.appName !="Netscape")
 img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
 p.whs3 { font-size:12pt; margin-left:40px; }
-img_whs4 { border:none; width:312px; height:319px; float:none; border-style:none; }
+img_whs4 { border:none; width:400px; height:319px; float:none; border-style:none; }
 img_whs5 { border:none; width:225px; height:239px; float:none; border-style:none; }
-img_whs6 { border:none; width:312px; height:381px; float:none; border-style:none; }
+img_whs6 { border:none; width:400px; height:426px; float:none; border-style:none; }
 img_whs7 { border:none; width:230px; height:245px; float:none; border-style:none; }
 img_whs8 { border:none; width:221px; height:238px; float:none; border-style:none; }
 p.whs9 { list-style:disc; margin-left:0in; margin-right:0in; margin-top:0px; margin-bottom:0px; }
+p.whs10 { list-style:disc; margin-left:0in; margin-right:0in; margin-top:0px; margin-bottom:0px; font-size:12pt; }
+p.whs11 { list-style:disc; margin-right:0in; margin-top:0px; margin-bottom:0px; font-size:12pt; margin-left:40px; }
+img_whs12 { border:none; width:400px; height:426px; float:none; }
 -->
 </style><script type="text/javascript" language="JavaScript">
 <!--
@@ -30,6 +33,8 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
 {
   var strNSS = "<style type='text/css'>";
   strNSS += "p.whs9 {margin-left:1pt;margin-right:1pt;margin-top:1pt;margin-bottom:1pt; }";
+  strNSS += "p.whs10 {margin-left:1pt;margin-right:1pt;margin-top:1pt;margin-bottom:1pt; }";
+  strNSS += "p.whs11 {margin-right:1pt;margin-top:1pt;margin-bottom:1pt; }";
   strNSS +="</style>";
   document.write(strNSS);
 }
@@ -119,35 +124,67 @@ if (window.writeIntopicBar)
  chamfer. &nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
- </i><span style="font-style: italic;"><I>geompy.MakeChamferAll(Shape, D)</I></span> 
- </p>
+ </i><span style="font-style: italic;"><I>geompy.MakeChamferAll(Shape, 
+ D)</I></span> </p>
 
 <p class="whs2"><b style="font-weight: bold;">Arguments: </b>Name 
  + 1 SHAPE + 1 value (Chamfer dimension).</p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs3"><img src="pics/chamfer1.png" x-maintain-ratio="TRUE" width="312px" height="319px" border="0" class="img_whs4"> &nbsp;<img src="pics/chamfer_all.png" x-maintain-ratio="TRUE" width="225px" height="239px" border="0" class="img_whs5"></p>
+<p class="whs3"><img src="pics/chamfer1.png" x-maintain-ratio="TRUE" width="400px" height="319px" border="0" class="img_whs4"> &nbsp;<img src="pics/chamfer_all.png" x-maintain-ratio="TRUE" width="225px" height="239px" border="0" class="img_whs5"></p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs2">To create chamfer on the specified edges of 
- the given shape, &nbsp;you 
+<p class="whs2">In the algorithms below there exist two ways 
+ to define the <span style="font-weight: bold;"><B>Dimension</B></span> of the 
+ Chamfer.</p>
+
+<p class="whs2">Firstly the <span style="font-weight: bold;"><B>Dimension</B></span> 
+ can be defined via <span style="font-weight: bold;"><B>D1</B></span> 
+ and <span style="font-weight: bold;"><B>D2</B></span>, 
+ which represent the offset on the first and the second face forming the 
+ edge. </p>
+
+<p class="whs2">Secondly the <span style="font-weight: bold;"><B>Dimension</B></span> 
+ can be defined via <span style="font-weight: bold;"><B>D,</B></span> which represents 
+ the offset on the first face, and the <span style="font-weight: bold;"><B>Angle,</B></span> 
+ which is the angle between the first face and the chamfer plane. </p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2">To create chamfer on the edges lying between 
+ the specified faces of the given shape, &nbsp;you 
  need to define the <span style="font-weight: bold;"><B>Main Object</B></span> 
- to create a fillet on, select the two faces to which belongs the <span 
- style="font-size: 12pt;"><font size=3 style="font-size:12pt;">necessary common edge in the viewer and define 
- the </font></span><span style="font-size: 12pt; font-weight: bold;"><font size=3 style="font-size:12pt;"><B>Dimension</B></font></span><span 
- style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> of the Chamfer.</font></span></p>
+ to create a fillet on, select the two (or more) faces to which belongs 
+ the necessary common edge(s) 
+ in the viewer and define the <span style="font-weight: bold;"><B>Dimension</B></span> 
+ of the Chamfer.</p>
 
-<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
- </i><span style="font-style: italic;"><I>geompy.MakeChamferEdge(Shape, D1, 
- D2, Face1, Face2)</I></span>, where Shape is a shape to create a chamfer on, 
- D1 is a chamfer size along Face1, D2 is a chamfer size along Face2, Face1 
- and Face2 are indices of faces in Shape.</p>
+<p class="whs2"><b>TUI Command:</b><i> </i><span style="font-style: italic;"><I>geompy.MakeChamferEdge(Shape, 
+ D1, D2, 
+ Face1, Face2)</I></span>, 
+ where Shape is a shape to create a chamfer on, D1 
+ is a chamfer size along Face1, 
+ D2 is a chamfer 
+ size along Face2 
+ and Face1 and 
+ Face2 are indices 
+ of faces in Shape.</p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs3"><img src="pics/chamfer2.png" x-maintain-ratio="TRUE" width="312px" height="381px" border="0" class="img_whs6"> &nbsp;<img src="pics/chamfer_edge.png" x-maintain-ratio="TRUE" width="230px" height="245px" border="0" class="img_whs7"></p>
+<p class="whs2"><b>Alternative TUI Command:</b><i> </i><span 
+ style="font-style: italic;"><I>geompy.MakeChamferEdge(Shape, 
+ D, Angle, Face1, 
+ Face2), where 
+ </I></span>D is a chamfer size along Face1 
+ and Angle is the angle between Face1 
+ and the chamfer plane.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs3"><img src="pics/chamfer2.png" x-maintain-ratio="TRUE" width="400px" height="426px" border="0" class="img_whs6"> &nbsp;<img src="pics/chamfer_edge.png" x-maintain-ratio="TRUE" width="230px" height="245px" border="0" class="img_whs7"></p>
 
 <p class="whs2">&nbsp;</p>
 
@@ -157,22 +194,67 @@ if (window.writeIntopicBar)
  to create a fillet on, select the necessary faces the OCC Viewer and define 
  the <span style="font-weight: bold;"><B>Dimension</B></span> of the Chamfer.</p>
 
-<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
- </i><span style="font-style: italic;"><I>geompy.MakeChamferFaces(Shape, D1, 
- D2, ListOfFaceID)</I></span>, where Shape is a shape to create chamfer on, 
- D1 is a chamfer size along a face from &nbsp;ListOfFaceID, 
- &nbsp;D2 is a 
- chamfer size along two faces connected to the edge to which the chamfer 
- is applied, ListOfFaceID is a list of indices of faces in Shape.</p>
+<p class="whs2"><b>TUI Command:</b><i> </i><span style="font-style: italic;"><I>geompy.MakeChamferFaces(Shape, 
+ D1, D2, 
+ ListOfFaceID)</I></span>, 
+ where Shape is a shape to create chamfer on, D1 
+ and D2 &nbsp;are 
+ chamfer sizes along faces from &nbsp;ListOfFaceID. 
+ For each Edge Face1 
+ and Face2 are 
+ defined basing on their indices. </p>
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs3"><img src="pics/chamfer3.png" x-maintain-ratio="TRUE" width="312px" height="381px" border="0" class="img_whs6"> &nbsp;<img src="pics/chamfer_faces.png" x-maintain-ratio="TRUE" width="221px" height="238px" border="0" class="img_whs8"></p>
+<p class="whs2"><b>Alternative TUI Command:</b><i> </i><span 
+ style="font-style: italic;"><I>geompy.MakeChamferFaces(Shape, 
+ D, Angle, ListOfFaceID), 
+ where </I></span>D is a chamfer size along Face1 
+ and Angle is the angle between Face1 
+ and the chamfer plane.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs3"><img src="pics/chamfer3.png" x-maintain-ratio="TRUE" width="400px" height="426px" border="0" class="img_whs6"> &nbsp;<img src="pics/chamfer_faces.png" x-maintain-ratio="TRUE" width="221px" height="238px" border="0" class="img_whs8"></p>
 
 <p class="whs3">&nbsp;</p>
 
-<p class="whs9">&nbsp;&nbsp;<span 
- style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Our </font></span><span 
+<p class="whs9">To create chamfer on an arbitrary set 
+ of edges of the given shape <span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">you need to 
+ define the </font></span><span style="font-weight: bold;"><B>Main Object</B></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> to create a fillet on, select the necessary 
+ edges in the OCC Viewer and define the </font></span><span style="font-weight: bold;"><B>Dimension</B></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> of the Chamfer.</font></span> &nbsp;&nbsp;</p>
+
+<p class="whs9"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b>TUI 
+ Command:</b><i> </i></font></span><span style="font-style: italic;"><I>geompy.MakeChamferEdges(Shape, 
+ D1, D2, 
+ ListOfEdgeID)</I></span><span 
+ style="font-size: 12pt;"><font size=3 style="font-size:12pt;">, where Shape is a shape to create a chamfer 
+ on, D1 and 
+ D2 are chamfer 
+ sizes faces defined by the algorithm basing on ListOfEdgeID, 
+ which is a list of &nbsp;indices 
+ of edges in Shape. For each Edge the algorithm selects Face1 
+ and Face2 basing 
+ on their indices. </font></span></p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs10"><b>Alternative TUI Command:</b><i> </i><span 
+ style="font-style: italic;"><I>geompy.MakeChamferEdges(Shape, 
+ D, Angle, ListOfEdgeID), 
+ where </I></span>D is a chamfer size along Face1 
+ and Angle is the angle between Face1 
+ and the chamfer plane.</p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs11"><img src="pics/chamfer4.png" x-maintain-ratio="TRUE" width="400px" height="426px" border="0" class="img_whs12"></p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs9"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Our </font></span><span 
  style="font-weight: bold;"><B>TUI Scripts</B></span><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"> 
  provide you with useful examples of the use of <a href="transformation_operations.htm#bookmark4">Transformation 
  Operations</a>. </font></span></p>
