@@ -388,6 +388,8 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 8032 ||  // POPUP VIEWER - COLOR
       id == 8033 ||  // POPUP VIEWER - TRANSPARENCY
       id == 8034 ||  // POPUP VIEWER - ISOS
+      id == 8035 ||  // POPUP VIEWER - AUTO COLOR
+      id == 8036 ||  // POPUP VIEWER - DISABLE AUTO COLOR
       id == 804  ||  // POPUP VIEWER - ADD IN STUDY
       id == 901  ||  // OBJECT BROWSER - RENAME
       id == 9024 ) { // OBJECT BROWSER - OPEN
@@ -886,6 +888,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 8032, "POP_COLOR" );
   createGeomAction( 8033, "POP_TRANSPARENCY" );
   createGeomAction( 8034, "POP_ISOS" );
+  createGeomAction( 8035, "POP_AUTO_COLOR" );
+  createGeomAction( 8036, "POP_DISABLE_AUTO_COLOR" );
   createGeomAction( 8001, "POP_CREATE_GROUP" );
 
   // make wireframe-shading items to be exclusive (only one at a time is selected)
@@ -1107,6 +1111,12 @@ void GeometryGUI::initialize( CAM_Application* app )
   QString clientOCCorVTK = "(client='OCCViewer' or client='VTKViewer')";
   QString clientOCCorVTK_AndSomeVisible = clientOCCorVTK + " and selcount>0 and isVisible";
 
+  QString clientOCCorVTKorOB = "(client='ObjectBrowser' or client='OCCViewer' or client='VTKViewer')";
+  QString clientOCCorVTKorOB_AndSomeVisible = clientOCCorVTKorOB + " and selcount>0 and isVisible";
+
+  QString autoColorPrefix =
+    "(client='ObjectBrowser' or client='OCCViewer') and type='Shape' and selcount=1 and isOCC=true";
+
   QtxPopupMgr* mgr = popupMgr();
   mgr->insert( action(  901 ), -1, -1 );  // rename
   mgr->setRule( action( 901 ), "$type in {'Shape' 'Group'} and selcount=1", true );
@@ -1126,11 +1136,16 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( 80312 ), clientOCCorVTK + " and displaymode='Shading'", false );
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  8032 ), -1, -1 ); // color
-  mgr->setRule( action( 8032 ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", true );
+  mgr->setRule( action( 8032 ), clientOCCorVTKorOB_AndSomeVisible + " and ($component={'GEOM'})", true );
   mgr->insert( action(  8033 ), -1, -1 ); // transparency
   mgr->setRule( action( 8033 ), clientOCCorVTK_AndSomeVisible, true );
   mgr->insert( action(  8034 ), -1, -1 ); // isos
   mgr->setRule( action( 8034 ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible", true );
+  mgr->insert( separator(), -1, -1 );     // -----------
+  mgr->insert( action(  8035 ), -1, -1 ); // auto color
+  mgr->setRule( action( 8035 ), autoColorPrefix + " and isAutoColor=false", true );
+  mgr->insert( action(  8036 ), -1, -1 ); // disable auto color
+  mgr->setRule( action( 8036 ), autoColorPrefix + " and isAutoColor=true", true );
   mgr->insert( separator(), -1, -1 );     // -----------
 
 

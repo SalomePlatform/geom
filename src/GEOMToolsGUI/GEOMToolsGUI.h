@@ -71,6 +71,8 @@ private:
   void OnCheckGeometry();
 
   // Popup commands
+  void OnAutoColor();
+  void OnDisableAutoColor();
   void OnColor();
   void OnTransparency();
   void OnNbIsos();
@@ -92,7 +94,6 @@ private:
   bool CheckSubObjectInUse(_PTR(SObject) checkobj,
 			   _PTR(SObject) remobj,
 			   _PTR(Study) aStudy);
-    
 };
 
 #endif

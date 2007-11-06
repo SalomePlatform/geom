@@ -39,6 +39,8 @@
 #include <LightApp_Displayer.h>
 #include <Aspect_TypeOfMarker.hxx>
 
+#include <qvaluelist.h>
+
 #include <list>
 
 #include <SALOMEconfig.h>
@@ -147,6 +149,8 @@ public:
   void         GlobalSelection( const TColStd_MapOfInteger&, const bool = false );
 
   SalomeApp_Study* getStudy() const;
+
+  static SALOMEDS::Color getUniqueColor( const QValueList<SALOMEDS::Color>& );
 
 protected:
   /* internal methods */

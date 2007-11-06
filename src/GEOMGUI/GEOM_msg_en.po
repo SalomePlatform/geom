@@ -2957,6 +2957,24 @@ msgstr "Shading"
 msgid "STB_POP_SHADING"
 msgstr "Shading"
 
+msgid "TOP_POP_AUTO_COLOR"
+msgstr "Auto color"
+
+msgid "MEN_POP_AUTO_COLOR"
+msgstr "Auto color"
+
+msgid "STB_POP_AUTO_COLOR"
+msgstr "Auto color"
+
+msgid "TOP_POP_DISABLE_AUTO_COLOR"
+msgstr "Disable auto color"
+
+msgid "MEN_POP_DISABLE_AUTO_COLOR"
+msgstr "Disable auto color"
+
+msgid "STB_POP_DISABLE_AUTO_COLOR"
+msgstr "Disable auto color"
+
 msgid "TOP_POP_COLOR"
 msgstr "Color"
 

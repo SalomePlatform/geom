@@ -257,6 +257,16 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 	OnNbIsos();
 	break;
       }
+    case 8035: // AUTO COLOR - POPUP VIEWER
+      {
+	OnAutoColor();
+	break;
+      }
+    case 8036: // DISABLE AUTO COLOR - POPUP VIEWER
+      {
+	OnDisableAutoColor();
+	break;
+      }
     case 9024 : // OPEN - OBJBROSER POPUP
       {
 	OnOpen();

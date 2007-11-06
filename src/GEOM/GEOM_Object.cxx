@@ -33,6 +33,8 @@
 #include <TDataStd_UAttribute.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDataStd_Comment.hxx>
+#include <TDataStd_RealArray.hxx>
+#include <TColStd_HArray1OfReal.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_ExtendedString.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -42,6 +44,8 @@
 #define TYPE_LABEL 2
 #define FREE_LABEL 3
 #define TIC_LABEL  4
+#define COLOR_LABEL      5
+#define AUTO_COLOR_LABEL 6
 
 //=======================================================================
 //function : GetObjectID
@@ -287,6 +291,65 @@ char* GEOM_Object::GetName()
   // return aName.ToCString();
   // the following code could lead to memory leak, so take care about recieved pointer
   return strdup(aName.ToCString());
+}
+
+//=============================================================================
+/*!
+ *  SetColor
+ */
+//=============================================================================
+void GEOM_Object::SetColor(const SALOMEDS::Color& theColor)
+{
+  Handle(TDataStd_RealArray) anArray = new TDataStd_RealArray();
+  anArray->Init( 1, 3 );
+  anArray->SetValue( 1, theColor.R );
+  anArray->SetValue( 2, theColor.G );
+  anArray->SetValue( 3, theColor.B );
+
+  Handle(TDataStd_RealArray) anAttr =
+    TDataStd_RealArray::Set(_label.FindChild(COLOR_LABEL), anArray->Lower(), anArray->Upper());
+  anAttr->ChangeArray(anArray->Array());
+}
+
+//=============================================================================
+/*!
+ *  GetColor
+ */
+//=============================================================================
+SALOMEDS::Color GEOM_Object::GetColor()
+{
+  Handle(TDataStd_RealArray) anArray;
+  bool isFound = _label.FindChild(COLOR_LABEL).FindAttribute(TDataStd_RealArray::GetID(), anArray);
+
+  SALOMEDS::Color aColor;
+  aColor.R = isFound ? anArray->Value( 1 ) : 0.f;
+  aColor.G = isFound ? anArray->Value( 2 ) : 0.f;
+  aColor.B = isFound ? anArray->Value( 3 ) : 0.f;
+
+  return aColor;
+}
+
+//=============================================================================
+/*!
+ *  SetAutoColor
+ */
+//=============================================================================
+void GEOM_Object::SetAutoColor(CORBA::Boolean theAutoColor)
+{
+  TDataStd_Integer::Set(_label.FindChild(AUTO_COLOR_LABEL), (int)theAutoColor);
+}
+
+//=============================================================================
+/*!
+ *  GetAutoColor
+ */
+//=============================================================================
+CORBA::Boolean GEOM_Object::GetAutoColor()
+{
+  Handle(TDataStd_Integer) anAutoColor;
+  if(!_label.FindChild(AUTO_COLOR_LABEL).FindAttribute(TDataStd_Integer::GetID(), anAutoColor)) return false;
+
+  return anAutoColor->Get();
 }
 
 //=============================================================================

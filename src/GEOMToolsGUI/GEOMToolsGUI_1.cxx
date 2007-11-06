@@ -40,6 +40,9 @@
 #include "SALOME_ListIO.hxx"
 #include "SALOME_ListIteratorOfListIO.hxx"
 
+#include <SOCC_Prs.h>
+
+#include <SVTK_Prs.h>
 #include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>
 #include <SVTK_View.h>
@@ -61,6 +64,8 @@
 
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_NameDlg.h>
+
+#include <GEOMImpl_Types.hxx>
 
 #include "SALOMEDSClient.hxx"
 
@@ -87,6 +92,7 @@
 #include <qcolordialog.h>
 #include <qspinbox.h>
 #include <qapplication.h>
+#include <qptrlist.h>
 
 using namespace std;
 
@@ -227,11 +233,151 @@ void GEOMToolsGUI::OnCheckGeometry()
     pyConsole->exec("from GEOM_usinggeom import *");
 }
 
+void GEOMToolsGUI::OnAutoColor()
+{
+  QPtrList<SALOME_Prs> aListOfGroups;
+
+  SALOME_ListIO selected;
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if( !app )
+    return;
+
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if( !aSelMgr || !appStudy )
+    return;
+
+  aSelMgr->selectedObjects( selected );
+  if( selected.IsEmpty() )
+    return;
+
+  Handle(SALOME_InteractiveObject) anIObject = selected.First();
+
+  _PTR(Study) aStudy = appStudy->studyDS();
+  _PTR(SObject) aMainSObject( aStudy->FindObjectID( anIObject->getEntry() ) );
+  GEOM::GEOM_Object_var aMainObject = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aMainSObject));
+  if( CORBA::is_nil( aMainObject ) )
+    return;
+
+  aMainObject->SetAutoColor( true );
+
+  QValueList<SALOMEDS::Color> aReservedColors;
+
+  GEOM_Displayer aDisp (appStudy);
+
+  SALOME_View* vf = aDisp.GetActiveView();
+
+  SUIT_ViewWindow* window = app->desktop()->activeWindow();
+  bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+  bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+
+  for( _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) ); it->More(); it->Next() )
+  {
+    _PTR(SObject) aChildSObject( it->Value() );
+    GEOM::GEOM_Object_var aChildObject = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
+    if( CORBA::is_nil( aChildObject ) )
+      continue;
+
+    if( aChildObject->GetType() != GEOM_GROUP )
+      continue;
+
+    cout << "Group : " << aChildObject->GetName() << endl;
+
+    SALOMEDS::Color aColor = GEOM_Displayer::getUniqueColor( aReservedColors );
+    cout << "Color : " << aColor.R << " " << aColor.G << " " << aColor.B << endl;
+
+    aChildObject->SetColor( aColor );
+    aReservedColors.append( aColor );
+
+    QColor c( (int)( aColor.R * 255.0 ), (int)( aColor.G * 255.0 ), (int)( aColor.B * 255.0 ) );
+
+    SALOME_Prs* aPrs = vf->CreatePrs( aChildSObject->GetID().c_str() );
+
+    if ( isVTK )
+    {
+      SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
+      if ( !vtkVW )
+	return;
+      SVTK_View* aView = vtkVW->getView();
+      SUIT_OverrideCursor();
+      for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
+	aView->SetColor( It.Value(), c );
+    }
+    else if ( isOCC )
+    {
+      OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
+      Handle(AIS_InteractiveContext) ic = vm->getAISContext();
+
+      SOCC_Prs* anOCCPrs = dynamic_cast<SOCC_Prs*>( aPrs );
+      if( !anOCCPrs )
+	continue;
+
+      AIS_ListOfInteractive aList;
+      anOCCPrs->GetObjects( aList );
+      if( !aList.Extent() )
+	continue;
+
+      Handle(AIS_InteractiveObject) io = aList.First();
+      if( io.IsNull() )
+	continue;
+
+      Quantity_Color aQuanColor( c.red() / 255., c.green() / 255., c.blue() / 255., Quantity_TOC_RGB );
+
+      // Set color for a point
+      Handle(AIS_Drawer) aCurDrawer = io->Attributes();
+      Handle(Prs3d_PointAspect) aCurPointAspect = aCurDrawer->PointAspect();
+      Quantity_Color aCurColor;
+      Standard_Real aCurScale;
+      Aspect_TypeOfMarker aCurTypeOfMarker;
+      aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
+      aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aQuanColor, aCurScale) );
+      ic->SetLocalAttributes( io, aCurDrawer );
+
+      io->SetColor( aQuanColor );
+      if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
+	Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aQuanColor );
+
+      io->Redisplay( Standard_True );
+    }
+  }
+
+  app->updateActions(); //SRN: To update a Save button in the toolbar
+}
+
+void GEOMToolsGUI::OnDisableAutoColor()
+{
+  SALOME_ListIO selected;
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if( !app )
+    return;
+
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if( !aSelMgr || !appStudy )
+    return;
+
+  aSelMgr->selectedObjects( selected );
+  if( selected.IsEmpty() )
+    return;
+
+  Handle(SALOME_InteractiveObject) anIObject = selected.First();
+
+  _PTR(Study) aStudy = appStudy->studyDS();
+  _PTR(SObject) aMainSObject( aStudy->FindObjectID( anIObject->getEntry() ) );
+  GEOM::GEOM_Object_var aMainObject =  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aMainSObject));
+  if( CORBA::is_nil( aMainObject ) )
+    return;
+
+  aMainObject->SetAutoColor( false );
+
+}
+
 void GEOMToolsGUI::OnColor()
 {
   SALOME_ListIO selected;
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( app ) {
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( app && appStudy ) {
     LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
     if ( aSelMgr ) {
       aSelMgr->selectedObjects( selected );
@@ -283,6 +429,19 @@ void GEOMToolsGUI::OnColor()
 		    Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aColor );
 
 		  io->Redisplay( Standard_True );
+
+		  // store color to GEOM_Object
+		  _PTR(Study) aStudy = appStudy->studyDS();
+		  _PTR(SObject) aSObject( aStudy->FindObjectID( It.Value()->getEntry() ) );
+		  GEOM::GEOM_Object_var anObject =
+		    GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
+
+		  SALOMEDS::Color aSColor;
+		  aSColor.R = (double)c.red() / 255.0;
+		  aSColor.G = (double)c.green() / 255.0;
+		  aSColor.B = (double)c.blue() / 255.0;
+		  anObject->SetColor( aSColor );
+		  anObject->SetAutoColor( false );
 		}
 	      }
 	    } // if c.isValid()

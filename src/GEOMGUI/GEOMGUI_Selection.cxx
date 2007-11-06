@@ -82,6 +82,8 @@ QtxValue GEOMGUI_Selection::param( const int ind, const QString& p ) const
     return QtxValue( typeName( ind ) );
   else if ( p == "displaymode" )
     return QtxValue( displayMode( ind ) );
+  else if ( p == "isAutoColor" )
+    return QtxValue( isAutoColor( ind ) );
   else
     return LightApp_Selection::param( ind, p );
 }
@@ -109,6 +111,14 @@ bool GEOMGUI_Selection::isVisible( const int index ) const
     Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).latin1(), "GEOM", "TEMP_IO" );
     return view->isVisible( io );
   }
+  return false;
+}
+
+bool GEOMGUI_Selection::isAutoColor( const int index ) const
+{
+  GEOM::GEOM_Object_var obj = getObject( index );
+  if ( !CORBA::is_nil( obj ) )
+    return obj->GetAutoColor();
   return false;
 }
 

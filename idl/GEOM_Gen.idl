@@ -26,6 +26,7 @@
 #include "SALOME_Exception.idl"
 #include "SALOME_Component.idl"
 #include "SALOMEDS.idl"
+#include "SALOMEDS_Attributes.idl"
 
 #include "SALOME_GenericObj.idl"
 
@@ -120,6 +121,28 @@ module GEOM
      *  Get name of the object associated with this object.
      */
     string GetName();
+
+    /*!
+     *  Set color of the object.
+     *  \param theColor is a color of the object.
+     */
+    void SetColor(in SALOMEDS::Color theColor);
+
+    /*!
+     *  Get color of the object.
+     */
+    SALOMEDS::Color GetColor();
+
+    /*!
+     *  Toggle auto color mode on the object.
+     *  \param theAtoColor is a flag which toggles auto color mode.
+     */
+    void SetAutoColor(in boolean theAutoColor);
+
+    /*!
+     *  Get flag of object's auto color mode.
+     */
+    boolean GetAutoColor();
 
     /*!
      *  Set a Study entry where this object was published.
