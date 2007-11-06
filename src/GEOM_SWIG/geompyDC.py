@@ -2375,7 +2375,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Example: see GEOM_Spanner.py
         def CheckCompoundOfBlocks(self,theCompound):
             (IsValid, BCErrors) = self.BlocksOp.CheckCompoundOfBlocks(theCompound)
-            RaiseIfFailed("CheckCompoundOfBlocks", self.MeasuOp)
+            RaiseIfFailed("CheckCompoundOfBlocks", self.BlocksOp)
             if IsValid == 0:
                 Descr = self.BlocksOp.PrintBCErrors(theCompound, BCErrors)
                 print Descr
