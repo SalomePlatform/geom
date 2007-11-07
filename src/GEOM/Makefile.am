@@ -68,9 +68,12 @@ salomeinclude_HEADERS = \
 
 # additionnal information to compil and link file
 libGEOMbasic_la_CPPFLAGS = \
+	$(CORBA_CXXFLAGS) \
+        $(CORBA_INCLUDES) \
 	$(CAS_CPPFLAGS) \
 	$(KERNEL_CXXFLAGS) \
 	$(BOOST_CPPFLAGS) \
+	-I$(top_builddir)/idl \
 	-I$(top_builddir)/salome_adm/unix
 
 libGEOMbasic_la_LDFLAGS  = \
