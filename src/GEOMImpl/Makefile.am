@@ -108,6 +108,8 @@ dist_libGEOMimpl_la_SOURCES = \
 
 # additionnal information to compil and link file
 libGEOMimpl_la_CPPFLAGS = \
+	$(CORBA_CXXFLAGS) \
+        $(CORBA_INCLUDES) \
 	$(CAS_CPPFLAGS) \
 	$(KERNEL_CXXFLAGS) \
 	$(BOOST_CPPFLAGS) \
@@ -117,6 +119,7 @@ libGEOMimpl_la_CPPFLAGS = \
 	-I$(srcdir)/../GEOMAlgo \
 	-I$(srcdir)/../SKETCHER \
 	-I$(srcdir)/../ARCHIMEDE \
+	-I$(top_builddir)/idl \
 	-I$(top_builddir)/salome_adm/unix
 
 libGEOMimpl_la_LDFLAGS  = \
