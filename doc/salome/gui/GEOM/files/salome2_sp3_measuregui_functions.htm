@@ -133,45 +133,21 @@ if (window.writeIntopicBar)
 <p class="whs1">&nbsp;</p>
 
 <ul>
-	
-	<li class=kadov-p><p class="whs1"><a href="#PointCoord">Point 
- coordinates</a></p></li>
-	
-	<li class=kadov-p><p class="whs1"><a href="#Basic_properties">Basic 
- properties</a></p></li>
-	
-	<li class=kadov-p><p class="whs1"><a href="#Center_gravity">Center 
- of mass</a></p></li>
-	
+	<li class=kadov-p><p class="whs1"><a href="#PointCoord">Point coordinates</a></p></li>
+	<li class=kadov-p><p class="whs1"><a href="#Basic_properties">Basic properties</a></p></li>
+	<li class=kadov-p><p class="whs1"><a href="#Center_gravity">Center of mass</a></p></li>
 	<li class=kadov-p><p class="whs1"><a href="#Inertia_axis">Inertia</a></p></li>
-	
-	<li class=kadov-p><p class="whs1"><a href="#free_boundaries">Check 
- free boundaries</a></p></li>
-	
-	<li class=kadov-p><p class="whs1"><a href="#free_faces">Check 
- free faces</a></p></li>
-	
+	<li class=kadov-p><p class="whs1"><a href="#normale_anchor">Normale to a Face</a></p></li>
+	<li class=kadov-p><p class="whs1"><a href="#free_boundaries">Check free boundaries</a></p></li>
+	<li class=kadov-p><p class="whs1"><a href="#free_faces">Check free faces</a></p></li>
 	<li class=kadov-p><p class="whs1">Dimensions:</p></li>
-	
-	<li class=kadov-p><p class="whs3"><a 
- href="#Bounding_box">Bounding box</a></p></li>
-	
-	<li class=kadov-p><p class="whs3"><a 
- href="#Min_distance">Min. distance</a></p></li>
-	
-	<li class=kadov-p><p class="whs3"><a 
- href="#Angle">Angle</a></p></li>
-	
-	<li class=kadov-p><p class="whs1"><a href="#Tolerance">Compute 
- Tolerance</a></p></li>
-	
-	<li class=kadov-p><p class="whs1"><a href="#Whatis">What 
- is</a></p></li>
-	
+	<li class=kadov-p><p class="whs3"><a href="#Bounding_box">Bounding box</a></p></li>
+	<li class=kadov-p><p class="whs3"><a href="#Min_distance">Min. distance</a></p></li>
+	<li class=kadov-p><p class="whs3"><a href="#Angle">Angle</a></p></li>
+	<li class=kadov-p><p class="whs1"><a href="#Tolerance">Compute Tolerance</a></p></li>
+	<li class=kadov-p><p class="whs1"><a href="#Whatis">What is</a></p></li>
 	<li class=kadov-p><p class="whs1"><a href="#check">Check</a></p></li>
-	
-	<li class=kadov-p><p class="whs1"><a href="#Check_comp_blocks">Check 
- compound of blocks</a></p></li>
+	<li class=kadov-p><p class="whs1"><a href="#Check_comp_blocks">Check compound of blocks</a></p></li>
 </ul>
 
 <p class="whs1">&nbsp;</p>
@@ -266,58 +242,49 @@ if (window.writeIntopicBar)
 <p class="whs1">&nbsp;</p>
 
 <p class="whs12"><img src="../pics/measures3.png" x-maintain-ratio="TRUE" width="312px" height="367px" border="0" class="img_whs13"></p>
-
 <p class="whs1">&nbsp;</p>
 
 <p class="whs8">&nbsp;</p>
 
-<p class="whs8"><a NAME=Inertia_axis
-	style="font-size: 14pt;"><img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image73.gif" width="20px" height="20px" border="0" class="img_whs9"><b><font style="font-size: 14pt;"
-														size=4> Inertia</font></b></a> 
- </p>
-
+<p class="whs8"><a NAME=Inertia_axis style="font-size: 14pt;">
+  <img src="salome2_sp3_measuregui_functions_salome2_sp3_measuregui_functions_image73.gif" width="20px" height="20px" border="0" class="img_whs9">
+  <b><font style="font-size: 14pt;" size=4>Inertia</font></b></a></p>
 <p class="whs8">&nbsp;</p>
-
-<p class="whs1">Returns the axis of inertia for the selected 
- geometrical object.</p>
-
+<p class="whs1">Returns the axis of inertia for the selected geometrical object.</p>
 <p class="whs1">&nbsp;</p>
-
 <p class="whs1"><b style="font-weight: bold;">Result:</b> Displays 
- the matrix and moments of inertia in the form of Python Tuple (I11, I12, 
- I13, </p>
-
-<p class="whs14">&nbsp;I21, 
- I22, I23, </p>
-
-<p class="whs14">&nbsp;I31, 
- I32, I33,</p>
-
-<p class="whs14"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">&nbsp;Ix, 
- Iy, Iz)</font></span>.</p>
-
+ the matrix and moments of inertia in the form of Python Tuple (I11, I12, I13, </p>
+<p class="whs14">&nbsp;I21, I22, I23, </p>
+<p class="whs14">&nbsp;I31, I32, I33,</p>
+<p class="whs14"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">&nbsp;Ix, Iy, Iz)</font></span>.</p>
 <p class="whs1">&nbsp;</p>
-
 <p class="whs1"><span style="font-weight: bold;"><B>TUI command:</B></span> 
  <span style="font-style: italic;"><I>geompy.Inertia(Shape)</I></span>, where 
- Shape is a shape for which a matrix of inertia and moment of inertia are 
- returned.</p>
-
+ Shape is a shape for which a matrix of inertia and moment of inertia are returned.</p>
 <p class="whs12">&nbsp;</p>
-
 <p class="whs12"><img src="../pics/measures4.png" x-maintain-ratio="TRUE" width="360px" height="333px" border="0" class="img_whs15"></p>
-
 <p class="whs1">&nbsp;</p>
 
-<p class="whs16"><b style="font-weight: normal;"><a name=free_boundaries
-	style="font-size: 14pt;"><img src="../image44.gif" width="22px" height="22px" border="0" class="img_whs17"><span style="font-weight: bold; font-size: 14pt;"><font size=4 style="font-size:14pt;"><B>Check 
- Free Boundaries </B></font></span></a></b></p>
-
+<p class="whs16"><b style="font-weight: normal;"><a name=normale_anchor	style="font-size: 14pt;">
+  <img src="salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image33.gif" width="22px" height="22px" border="0" class="img_whs17">
+  <span style="font-weight: bold; font-size: 14pt;">
+  <font size=4 style="font-size:14pt;"><B>Normale to a Face</B></font></span></a>
+</b></p>
+<p class="whs1">&nbsp;</p>
+<p class="whs1">Calculates the normal vector to the selected Face. The Point
+is a point of the Face, where the Normal should be calculated.</p>
+<p class="whs1">&nbsp;</p>
+<p class="whs6"><img src="../pics/normaletoface.png" x-maintain-ratio="TRUE" width="243px" height="203px" border="0" class="img_whs18"></p>
 <p class="whs1">&nbsp;</p>
 
-<p class="whs1">Detects and highlights wires and edges that 
- correspond to the shape's boundary.</p>
+<p class="whs16"><b style="font-weight: normal;"><a name=free_boundaries style="font-size: 14pt;">
+  <img src="../image44.gif" width="22px" height="22px" border="0" class="img_whs17">
+  <span style="font-weight: bold; font-size: 14pt;">
+  <font size=4 style="font-size:14pt;"><B>Check Free Boundaries </B></font></span></a>
+</b></p>
 
+<p class="whs1">&nbsp;</p>
+<p class="whs1">Detects and highlights wires and edges that correspond to the shape's boundary.</p>
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">TUI Command :</b><i><span 
