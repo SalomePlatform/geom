@@ -74,7 +74,7 @@ MeasureGUI_NormaleDlg::MeasureGUI_NormaleDlg (GeometryGUI* theGeometryGUI, QWidg
   Layout1->addWidget(GroupArgs, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("normale.htm");
+  setHelpFileName("using_measurement_tools_page.html#normale_anchor");
 
   Init();
 }
