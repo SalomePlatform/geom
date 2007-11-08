@@ -74,7 +74,7 @@ MeasureGUI_NormaleDlg::MeasureGUI_NormaleDlg (GeometryGUI* theGeometryGUI, QWidg
   Layout1->addWidget(GroupArgs, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("normale.htm");
+  setHelpFileName("files/salome2_sp3_measuregui_functions.htm#normale_anchor");
 
   Init();
 }
