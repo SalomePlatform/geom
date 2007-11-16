@@ -181,6 +181,12 @@ void GroupGUI_GroupDlg::Init()
   connect( myIdList,    SIGNAL( selectionChanged() ), this, SLOT( selectionChanged() ) );
 
   activateSelection();
+  // activate subshapes selection if Main Shape is Selected
+  if ( !CORBA::is_nil( myMainObj ) ) {
+    myEditCurrentArgument = 0;
+    activateSelection();
+    updateState();
+  }
 }
 
 //=================================================================================
@@ -296,7 +302,10 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
       if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
         myMainObj = anObj;
         myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
-        updateState();
+	// activate subshapes selection by default
+	myEditCurrentArgument = 0;
+	activateSelection();
+	updateState();
         return;
       }
     }
@@ -654,7 +663,6 @@ void GroupGUI_GroupDlg::updateState()
           break;
         }
       }
-
       if ( !isAdd ) {
         aMapIndex.Clear();
         break;

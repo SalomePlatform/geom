@@ -65,6 +65,7 @@ BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POINT_EDGE")));
   QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
   QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POINT_REF")));
+  QPixmap image4(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_POINT_LINES")));
 
   setCaption(tr("GEOM_POINT_TITLE"));
 
@@ -77,6 +78,8 @@ BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   RadioButton1->setPixmap(image0);
   RadioButton2->setPixmap(image3);
   RadioButton3->setPixmap(image1);
+  RadioButton4->show();
+  RadioButton4->setPixmap(image4);
 
   GroupXYZ = new DlgRef_3Spin( aFrame, "GroupXYZ" );
   GroupXYZ->GroupBox1->setTitle(tr("GEOM_COORDINATES"));
@@ -98,6 +101,13 @@ BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   GroupRefPoint->TextLabel3->setText(tr("GEOM_DY"));
   GroupRefPoint->TextLabel4->setText(tr("GEOM_DZ"));
 
+  GroupLineIntersection = new DlgRef_2Sel_QTD (aFrame, "GroupLineIntersection");
+  GroupLineIntersection->GroupBox1->setTitle(tr("GEOM_LINE_INTERSECTION"));
+  GroupLineIntersection->TextLabel1->setText(tr("GEOM_LINE1"));
+  GroupLineIntersection->PushButton1->setPixmap(image2);
+  GroupLineIntersection->TextLabel2->setText(tr("GEOM_LINE2"));
+  GroupLineIntersection->PushButton2->setPixmap(image2);
+  
   Layout1->addWidget( aFrame, 2, 0 );
   /***************************************************************/
 
@@ -146,6 +156,8 @@ void BasicGUI_PointDlg::Init()
 {
   GroupOnCurve->LineEdit1->setReadOnly( true );
   GroupRefPoint->LineEdit1->setReadOnly( true );
+  GroupLineIntersection->LineEdit1->setReadOnly( true );
+  GroupLineIntersection->LineEdit2->setReadOnly( true );
 
   myEdge = GEOM::GEOM_Object::_nil();
   myRefPoint = GEOM::GEOM_Object::_nil();
@@ -186,6 +198,10 @@ void BasicGUI_PointDlg::Init()
 
   connect(GroupOnCurve->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupOnCurve->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupLineIntersection->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupLineIntersection->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupLineIntersection->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupLineIntersection->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupOnCurve->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupXYZ->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
@@ -226,9 +242,8 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
 
       GroupRefPoint->hide();
       GroupOnCurve->hide();
-
+      GroupLineIntersection->hide();
       GroupXYZ->show();
-
       myCoordGrp->hide();
       break;
     }
@@ -242,9 +257,8 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
 
       GroupXYZ->hide();
       GroupOnCurve->hide();
-
       GroupRefPoint->show();
-      
+      GroupLineIntersection->hide();      
       myCoordGrp->show();
       break;
     }
@@ -258,10 +272,26 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
 
       GroupXYZ->hide();
       GroupRefPoint->hide();
-
       GroupOnCurve->show();
-      
+      GroupLineIntersection->hide();      
       myCoordGrp->show();
+      break;
+    }
+  case 3:
+    { 
+      myEditCurrentArgument = GroupLineIntersection->LineEdit1;
+      GroupLineIntersection->LineEdit1->setText("");
+      GroupLineIntersection->LineEdit2->setText("");
+      myLine1 = GEOM::GEOM_Object::_nil();
+      myLine2 = GEOM::GEOM_Object::_nil();
+
+      globalSelection( GEOM_EDGE );
+
+      GroupXYZ->hide();
+      GroupRefPoint->hide();
+      GroupOnCurve->hide();
+      GroupLineIntersection->show();      
+      myCoordGrp->hide();
       break;
     }
   }
@@ -382,6 +412,17 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
         myEdge = aSelectedObject;
         GroupOnCurve->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
       }
+      else if ( id == 3 )
+      {
+	if (myEditCurrentArgument == GroupLineIntersection->LineEdit1) {
+        myLine1 = aSelectedObject;
+        GroupLineIntersection->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
+	}
+	else if (myEditCurrentArgument == GroupLineIntersection->LineEdit2) {
+        myLine2 = aSelectedObject;
+        GroupLineIntersection->LineEdit2->setText( GEOMBase::GetName( aSelectedObject ) );
+	}
+      }
     }
   }
 
@@ -396,7 +437,8 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
 void BasicGUI_PointDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupRefPoint->LineEdit1 || send == GroupOnCurve->LineEdit1 )
+  if ( send == GroupRefPoint->LineEdit1 || send == GroupOnCurve->LineEdit1 ||
+       send == GroupLineIntersection->LineEdit1 || send == GroupLineIntersection->LineEdit2  )
     {
       myEditCurrentArgument = send;
       GEOMBase_Skeleton::LineEditReturnPressed();
@@ -426,8 +468,21 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
     
     globalSelection( GEOM_EDGE );
   }
+  else if ( send == GroupLineIntersection->PushButton1 )
+  {
+    GroupLineIntersection->LineEdit1->setFocus();
+    myEditCurrentArgument = GroupLineIntersection->LineEdit1;
+    
+    globalSelection( GEOM_EDGE );
+  }
+  else if ( send == GroupLineIntersection->PushButton2 )
+  {
+    GroupLineIntersection->LineEdit2->setFocus();
+    myEditCurrentArgument = GroupLineIntersection->LineEdit2;
+    
+    globalSelection( GEOM_EDGE );
+  }
 }
-
 
 //=================================================================================
 // function : enterEvent()
@@ -519,6 +574,8 @@ bool BasicGUI_PointDlg::isValid( QString& msg )
     return !myRefPoint->_is_nil();
   else if ( id == 2 )
     return !myEdge->_is_nil();
+  else if ( id == 3)
+    return ( !myLine1->_is_nil() && !myLine2->_is_nil() );
   return false;
 }
 
@@ -560,6 +617,11 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
       MakePointOnCurve( myEdge, getParameter() );
     res = true;
     break;
+  case 3 :
+    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->
+      MakePointOnLinesIntersection( myLine1, myLine2 );
+      res = true;
+      break;
   }
 
   if ( getConstructorId() == 1 || getConstructorId() == 2 )

@@ -27,13 +27,15 @@
 
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
-
+#include <BRepAlgoAPI_Section.hxx>
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_MapOfShape.hxx>
 
 #include <gp_Pnt.hxx>
 #include <Precision.hxx>
@@ -91,6 +93,40 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
       Standard_ConstructionError::Raise("The end points are too close");
     }
     aShape = BRepBuilderAPI_MakeEdge(P1, P2).Shape();
+
+  } else if (aType == LINE_TWO_FACES) {
+    Handle(GEOM_Function) aRefFace1 = aPI.GetFace1();
+    Handle(GEOM_Function) aRefFace2 = aPI.GetFace2();
+    TopoDS_Shape aShape1 = aRefFace1->GetValue();
+    TopoDS_Shape aShape2 = aRefFace2->GetValue();
+    if (aShape1.ShapeType() != TopAbs_FACE ||
+        aShape2.ShapeType() != TopAbs_FACE) {
+      Standard_ConstructionError::Raise("Wrong arguments: two faces must be given");
+    }
+    if (aShape1.IsSame(aShape2)) {
+      Standard_ConstructionError::Raise("The end faces must be different");
+    }
+    BRepAlgoAPI_Section E (aShape1, aShape2, Standard_False);
+    E.Approximation(Standard_True);
+    E.Build();
+    if (!E.IsDone()) {
+      Standard_ConstructionError::Raise("Line can not be performed on the given faces");
+    }
+    else
+    {
+	TopExp_Explorer Exp (E, TopAbs_EDGE);
+	if ( Exp.More() ){
+	    aShape = Exp.Current();
+	    Exp.Next();
+	}
+	else
+	  {
+	    Standard_ConstructionError::Raise("Faces not have intersection line");
+	    aShape = E.Shape();
+	  }
+	if ( Exp.More() )
+	  aShape = E.Shape();
+    }
 
   } else if (aType == LINE_PNT_DIR) {
     Handle(GEOM_Function) aRefPnt = aPI.GetPoint1();

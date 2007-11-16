@@ -31,6 +31,7 @@
 #include "GeometryGUI.h"
 #include "GEOM_Actor.h"
 #include "GEOMBase.h"
+
 #include "GEOM_Operation.h"
 #include "GEOM_Displayer.h"
 
@@ -313,10 +314,18 @@ void GEOMToolsGUI::OnEditDelete()
 	  return;
 	}
 	// VSR 17/11/04: check if all objects selected belong to GEOM component <-- finish
-
+	QString aNameList;
+	int nbSel = selected.Extent();
+	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
+	  {
+	  Handle(SALOME_InteractiveObject) io = It.Value();
+	  aNameList.append("\n    - ");
+	  aNameList.append(io->getName());
+	  }
+	
 	if ( SUIT_MessageBox::warn2( app->desktop(),
 				     QObject::tr( "GEOM_WRN_WARNING" ),
-				     QObject::tr( "GEOM_REALLY_DELETE" ),
+				     QObject::tr( "GEOM_REALLY_DELETE" ).arg( nbSel ).arg( aNameList ),
 				     QObject::tr( "GEOM_BUT_YES" ),
 				     QObject::tr( "GEOM_BUT_NO" ), 1, 0, 0 ) != 1 )
 	  return;

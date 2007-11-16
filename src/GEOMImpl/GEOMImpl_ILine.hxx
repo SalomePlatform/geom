@@ -22,8 +22,10 @@
 
 #include "GEOM_Function.hxx"
 
-#define LINE_ARG_PNT1 1
-#define LINE_ARG_PNT2 2
+#define LINE_ARG_PNT1  1
+#define LINE_ARG_PNT2  2
+#define LINE_ARG_FACE1 3
+#define LINE_ARG_FACE2 4
 
 class GEOMImpl_ILine
 {
@@ -33,9 +35,13 @@ class GEOMImpl_ILine
 
   void SetPoint1(Handle(GEOM_Function) theRef) { _func->SetReference(LINE_ARG_PNT1, theRef); }
   void SetPoint2(Handle(GEOM_Function) theRef) { _func->SetReference(LINE_ARG_PNT2, theRef); }
+  void SetFace1(Handle(GEOM_Function) theRef) { _func->SetReference(LINE_ARG_FACE1, theRef); }
+  void SetFace2(Handle(GEOM_Function) theRef) { _func->SetReference(LINE_ARG_FACE2, theRef); }
 
   Handle(GEOM_Function) GetPoint1() { return _func->GetReference(LINE_ARG_PNT1); }
   Handle(GEOM_Function) GetPoint2() { return _func->GetReference(LINE_ARG_PNT2); }
+  Handle(GEOM_Function) GetFace1() { return _func->GetReference(LINE_ARG_FACE1); }
+  Handle(GEOM_Function) GetFace2() { return _func->GetReference(LINE_ARG_FACE2); }
 
  private:
 

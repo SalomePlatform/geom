@@ -89,10 +89,11 @@
 #define EXPORT_SHAPE 1
 #define IMPORT_SHAPE 1
 
-#define POINT_XYZ       1
-#define POINT_XYZ_REF   2
-#define POINT_CURVE_PAR 3
-//#define POINT_FACE_PAR 4
+#define POINT_XYZ                1
+#define POINT_XYZ_REF            2
+#define POINT_CURVE_PAR          3
+#define POINT_LINES_INTERSECTION 4
+//#define POINT_FACE_PAR 5
 
 #define VECTOR_TWO_PNT  1
 #define VECTOR_DX_DY_DZ 2
@@ -104,8 +105,9 @@
 #define PLANE_THREE_PNT 3
 #define PLANE_TANGENT_FACE 4
 
-#define LINE_TWO_PNT 1
-#define LINE_PNT_DIR 2
+#define LINE_TWO_PNT   1
+#define LINE_PNT_DIR   2
+#define LINE_TWO_FACES 3
 
 #define TRANSLATE_TWO_POINTS      1
 #define TRANSLATE_VECTOR          2
@@ -156,10 +158,13 @@
 #define SPHERE_R     1
 #define SPHERE_PNT_R 2
 
-#define PRISM_BASE_VEC_H   1
-#define PRISM_BASE_TWO_PNT 2
+#define PRISM_BASE_VEC_H         1
+#define PRISM_BASE_TWO_PNT       2
+#define PRISM_BASE_VEC_H_2WAYS   3
+#define PRISM_BASE_TWO_PNT_2WAYS 4
 
-#define REVOLUTION_BASE_AXIS_ANGLE 1
+#define REVOLUTION_BASE_AXIS_ANGLE       1
+#define REVOLUTION_BASE_AXIS_ANGLE_2WAYS 2
 
 #define PIPE_BASE_PATH 1
 #define PIPE_DIFFERENT_SECTIONS 2

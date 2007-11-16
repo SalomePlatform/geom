@@ -28,6 +28,7 @@
 #include <GEOM_Function.hxx>
 
 #include <BRepPrimAPI_MakeRevol.hxx>
+#include <BRepBuilderAPI_Transform.hxx>
 #include <BRep_Tool.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -35,7 +36,7 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
-
+#include <gp_Trsf.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Lin.hxx>
 #include <gp_Dir.hxx>
@@ -77,7 +78,7 @@ Standard_Integer GEOMImpl_RevolutionDriver::Execute(TFunction_Logbook& log) cons
 
   TopoDS_Shape aShape;
 
-  if (aType == REVOLUTION_BASE_AXIS_ANGLE) {
+  if (aType == REVOLUTION_BASE_AXIS_ANGLE || aType == REVOLUTION_BASE_AXIS_ANGLE_2WAYS) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     Handle(GEOM_Function) aRefAxis = aCI.GetAxis();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
@@ -106,9 +107,17 @@ Standard_Integer GEOMImpl_RevolutionDriver::Execute(TFunction_Logbook& log) cons
 	Standard_ConstructionError::Raise("Vertex to be rotated is too close to Revolution Axis");
       }
     }
-
+    double anAngle = aCI.GetAngle();
     gp_Ax1 anAxis (BRep_Tool::Pnt(V1), aV);
-    BRepPrimAPI_MakeRevol MR (aShapeBase, anAxis, aCI.GetAngle(), Standard_False);
+    if (aType == REVOLUTION_BASE_AXIS_ANGLE_2WAYS)
+      {
+	gp_Trsf aTrsf;
+	aTrsf.SetRotation(anAxis, ( -anAngle ));
+	BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+	aShapeBase = aTransformation.Shape();
+	anAngle = anAngle * 2;
+      }
+    BRepPrimAPI_MakeRevol MR (aShapeBase, anAxis, anAngle, Standard_False);
     if (!MR.IsDone()) MR.Build();
     if (!MR.IsDone()) StdFail_NotDone::Raise("Revolution algorithm has failed");
     aShape = MR.Shape();

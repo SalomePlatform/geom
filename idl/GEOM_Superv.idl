@@ -83,6 +83,8 @@ module GEOM
 				  in GEOM_Object thePnt2) ;
     GEOM_Object MakeLineTwoPnt (in GEOM_Object thePnt1,
 				in GEOM_Object thePnt2) ;
+    GEOM_Object MakeLineTwoFaces (in GEOM_Object theFace1,
+				  in GEOM_Object theFace2) ;
     GEOM_Object MakePlaneThreePnt (in GEOM_Object thePnt1,
 				   in GEOM_Object thePnt2,
 				   in GEOM_Object thePnt3,
@@ -154,14 +156,23 @@ module GEOM
     GEOM_Object MakePrismVecH (in GEOM_Object theBase,
 			       in GEOM_Object theVec,
 			       in double      theH) ;
+    GEOM_Object MakePrismVecH2Ways (in GEOM_Object theBase,
+				    in GEOM_Object theVec,
+				    in double      theH) ;
     GEOM_Object MakePrismTwoPnt (in GEOM_Object theBase,
 				 in GEOM_Object thePoint1,
 				 in GEOM_Object thePoint2) ;
+    GEOM_Object MakePrismTwoPnt2Ways (in GEOM_Object theBase,
+				      in GEOM_Object thePoint1,
+				      in GEOM_Object thePoint2) ;
     GEOM_Object MakePipe (in GEOM_Object theBase, 
 			  in GEOM_Object thePath) ;
     GEOM_Object MakeRevolutionAxisAngle (in GEOM_Object theBase,
 					 in GEOM_Object theAxis,
 					 in double      theAngle) ;
+    GEOM_Object MakeRevolutionAxisAngle2Ways (in GEOM_Object theBase,
+					      in GEOM_Object theAxis,
+					      in double      theAngle) ;
     GEOM_Object MakeFilling (in GEOM_Object theShape,
 			     in long theMinDeg, in long theMaxDeg,
 			     in double theTol2D, in double theTol3D,

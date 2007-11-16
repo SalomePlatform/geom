@@ -34,6 +34,7 @@
 #include "LightApp_SelectionMgr.h"
 
 #include <qlabel.h>
+#include <qcheckbox.h>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -93,7 +94,7 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
   Group3Pnts2->PushButton2->setPixmap(image2);
   Group3Pnts2->PushButton3->setPixmap(image2);
 
-  Group3Pnts2->radioButton4->setText(tr("GEOM_REVERSE"));
+  Group3Pnts2->CheckButton1->setText(tr("GEOM_REVERSE"));
 
   Layout1->addWidget( Group3Pnts, 2, 0 );
   Layout1->addWidget( Group3Pnts2, 2, 0 );
@@ -123,7 +124,7 @@ void BasicGUI_ArcDlg::Init()
   /* init variables */
   myEditCurrentArgument = Group3Pnts->LineEdit1;
   myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
-  Group3Pnts2->radioButton4->setChecked(FALSE);
+  Group3Pnts2->CheckButton1->setChecked(FALSE);
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
@@ -151,7 +152,7 @@ void BasicGUI_ArcDlg::Init()
   connect(Group3Pnts2->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(Group3Pnts2->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(Group3Pnts2->radioButton4, SIGNAL(stateChanged(int)), this, SLOT(ReverseSense(int)));
+  connect(Group3Pnts2->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ReverseSense(int)));
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
@@ -427,7 +428,7 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
   case 1:
     {
       bool Sense;
-      (Group3Pnts2->radioButton4->isChecked()) ? Sense = true : Sense = false;
+      (Group3Pnts2->CheckButton1->isChecked()) ? Sense = true : Sense = false;
       if ( !CORBA::is_nil(myPoint1) && !CORBA::is_nil(myPoint2) &&!CORBA::is_nil(myPoint3) )
       {
         anObj = GEOM::GEOM_ICurvesOperations::_narrow(getOperation())->

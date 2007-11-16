@@ -310,6 +310,10 @@ msgstr "Points"
 msgid "GEOM_POINT_I"
 msgstr "Point %1"
 
+#Face i
+msgid "GEOM_FACE_I"
+msgstr "Face %1"
+
 #Arguments
 msgid "GEOM_ARGUMENTS"
 msgstr "Arguments"
@@ -361,6 +365,10 @@ msgstr "Coord. :"
 #Reverse
 msgid "GEOM_REVERSE"
 msgstr "Reverse"
+
+#Bothway
+msgid "GEOM_BOTHWAY"
+msgstr "Bothway"
 
 #Reverse U
 msgid "GEOM_REVERSE_U"
@@ -632,6 +640,14 @@ msgstr "Faces"
 #Line
 msgid "GEOM_LINE"
 msgstr "Line"
+
+#Line 1
+msgid "GEOM_LINE1"
+msgstr "Line 1"
+
+#Line 2
+msgid "GEOM_LINE2"
+msgstr "Line 2"
 
 #Plane
 msgid "GEOM_PLANE"

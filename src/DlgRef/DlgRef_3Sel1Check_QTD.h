@@ -1,7 +1,7 @@
 /****************************************************************************
-** Form interface generated from reading ui file 'UIFiles/DlgRef_3Sel1Check_QTD.ui'
+** Form interface generated from reading ui file 'DlgRef_3Sel1Check_QTD.ui'
 **
-** Created: Wed Feb 21 10:48:39 2007
+** Created: Mon Oct 29 18:14:59 2007
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -21,7 +21,7 @@ class QGroupBox;
 class QPushButton;
 class QLineEdit;
 class QLabel;
-class QRadioButton;
+class QCheckBox;
 
 class DlgRef_3Sel1Check_QTD : public QWidget
 {
@@ -41,7 +41,7 @@ public:
     QPushButton* PushButton3;
     QLineEdit* LineEdit3;
     QLabel* TextLabel3;
-    QRadioButton* radioButton4;
+    QCheckBox* CheckButton1;
 
 protected:
     QGridLayout* DlgRef_3Sel1Check_QTDLayout;

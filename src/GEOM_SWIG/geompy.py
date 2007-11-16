@@ -667,6 +667,11 @@ def MakePrism(theBase, thePoint1, thePoint2):
     anObj = PrimOp.MakePrismTwoPnt(theBase, thePoint1, thePoint2)
     RaiseIfFailed("MakePrismTwoPnt", PrimOp)
     return anObj
+## The same prism but in two directions forward&backward.
+def MakePrism2Ways(theBase, thePoint1, thePoint2):
+    anObj = PrimOp.MakePrismTwoPnt2Ways(theBase, thePoint1, thePoint2)
+    RaiseIfFailed("MakePrismTwoPnt2Ways", PrimOp)
+    return anObj
 
 ## Create a shape by extrusion of the base shape along the vector,
 #  i.e. all the space, transfixed by the base shape during its translation
@@ -680,6 +685,20 @@ def MakePrism(theBase, thePoint1, thePoint2):
 def MakePrismVecH(theBase, theVec, theH):
     anObj = PrimOp.MakePrismVecH(theBase, theVec, theH)
     RaiseIfFailed("MakePrismVecH", PrimOp)
+    return anObj
+
+## Create a shape by extrusion of the base shape along the vector,
+#  i.e. all the space, transfixed by the base shape during its translation
+#  along the vector on the given distance in 2 Ways (forward/backward) .
+#  @param theBase Base shape to be extruded.
+#  @param theVec Direction of extrusion.
+#  @param theH Prism dimension along theVec in forward direction.
+#  @return New GEOM_Object, containing the created prism.
+#
+#  Example: see GEOM_TestAll.py
+def MakePrismVecH2Ways(theBase, theVec, theH):
+    anObj = PrimOp.MakePrismVecH2Ways(theBase, theVec, theH)
+    RaiseIfFailed("MakePrismVecH2Ways", PrimOp)
     return anObj
 
 ## Create a shape by extrusion of the base shape along
@@ -706,6 +725,11 @@ def MakePipe(theBase, thePath):
 def MakeRevolution(theBase, theAxis, theAngle):
     anObj = PrimOp.MakeRevolutionAxisAngle(theBase, theAxis, theAngle)
     RaiseIfFailed("MakeRevolutionAxisAngle", PrimOp)
+    return anObj
+## The Same Revolution but in both ways forward&backward.
+def MakeRevolution2Ways(theBase, theAxis, theAngle):
+    anObj = PrimOp.MakeRevolutionAxisAngle2Ways(theBase, theAxis, theAngle)
+    RaiseIfFailed("MakeRevolutionAxisAngle2Ways", PrimOp)
     return anObj
 
 ## Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.

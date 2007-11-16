@@ -61,6 +61,7 @@ private :
     GEOM::GEOM_Object_var myAxis; /* Axis of the revolution */
     bool myOkBase; 
     bool myOkAxis;
+    bool myBothway;
 
     DlgRef_2Sel1Spin2Check* GroupPoints;
 
@@ -73,6 +74,7 @@ private slots:
     void SetEditCurrentArgument();
     void ValueChangedInSpinBox();
     void onReverse();
+    void onBothway();
 };
 
 #endif // DIALOGBOX_REVOLUTION_H

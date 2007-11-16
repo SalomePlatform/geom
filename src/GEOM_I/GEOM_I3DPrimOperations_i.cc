@@ -351,6 +351,39 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismVecH
 
 //=============================================================================
 /*!
+ *  MakePrismVecH2Ways
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismVecH2Ways
+                      (GEOM::GEOM_Object_ptr theBase, GEOM::GEOM_Object_ptr theVec,
+		       CORBA::Double theH)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theBase == NULL || theVec == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject
+    (theBase->GetStudyID(), theBase->GetEntry());
+  Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
+    (theVec->GetStudyID(), theVec->GetEntry());
+
+  if (aBase.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
+
+  //Create the Prism
+  Handle(GEOM_Object) anObject =
+      GetOperations()->MakePrismVecH2Ways(aBase, aVec, theH);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakePrismTwoPnt
  */
 //=============================================================================
@@ -381,6 +414,44 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismTwoPnt
   //Create the Prism
   Handle(GEOM_Object) anObject =
     GetOperations()->MakePrismTwoPnt(aBase, aPoint1, aPoint2);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakePrismTwoPnt2Ways
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismTwoPnt2Ways
+                                             (GEOM::GEOM_Object_ptr theBase,
+					      GEOM::GEOM_Object_ptr thePoint1,
+					      GEOM::GEOM_Object_ptr thePoint2)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theBase == NULL || thePoint1 == NULL || thePoint2 == NULL)
+    return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject
+    (theBase->GetStudyID(), theBase->GetEntry());
+  Handle(GEOM_Object) aPoint1 = GetOperations()->GetEngine()->GetObject
+    (thePoint1->GetStudyID(), thePoint1->GetEntry());
+  Handle(GEOM_Object) aPoint2 = GetOperations()->GetEngine()->GetObject
+    (thePoint2->GetStudyID(), thePoint2->GetEntry());
+
+  if (aBase.IsNull() || aPoint1.IsNull() || aPoint2.IsNull())
+    return aGEOMObject._retn();
+
+  //Create the Prism
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePrismTwoPnt2Ways(aBase, aPoint1, aPoint2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -446,6 +517,39 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeRevolutionAxisAngle
   //Create the Revolution
   Handle(GEOM_Object) anObject =
       GetOperations()->MakeRevolutionAxisAngle(aBase, anAxis, theAngle);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeRevolutionAxisAngle2Ways
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeRevolutionAxisAngle2Ways
+                      (GEOM::GEOM_Object_ptr theBase, GEOM::GEOM_Object_ptr theAxis,
+		       CORBA::Double theAngle)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theBase == NULL || theAxis == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject
+    (theBase->GetStudyID(), theBase->GetEntry());
+  Handle(GEOM_Object) anAxis = GetOperations()->GetEngine()->GetObject
+    (theAxis->GetStudyID(), theAxis->GetEntry());
+
+  if (aBase.IsNull() || anAxis.IsNull()) return aGEOMObject._retn();
+
+  //Create the Revolution
+  Handle(GEOM_Object) anObject =
+      GetOperations()->MakeRevolutionAxisAngle2Ways(aBase, anAxis, theAngle);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

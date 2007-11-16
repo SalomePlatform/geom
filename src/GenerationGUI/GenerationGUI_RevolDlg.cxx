@@ -66,9 +66,9 @@ GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWid
   RadioButton1->setPixmap(image0);
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
+  myBothway = false;
 
   GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
-  GroupPoints->CheckButton1->hide();
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_OBJECT"));
   GroupPoints->TextLabel2->setText(tr("GEOM_AXIS"));
@@ -77,6 +77,7 @@ GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWid
   GroupPoints->PushButton2->setPixmap(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->CheckButton1->setText(tr("GEOM_BOTHWAY"));
   GroupPoints->CheckButton2->setText(tr("GEOM_REVERSE"));
 
   Layout1->addWidget(GroupPoints, 2, 0);
@@ -128,6 +129,7 @@ void GenerationGUI_RevolDlg::Init()
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX,   SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)),        this, SLOT(onBothway()));
   connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)),        this, SLOT(onReverse()));
 
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
@@ -345,8 +347,12 @@ bool GenerationGUI_RevolDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj;
 
-  anObj = GEOM::GEOM_I3DPrimOperations::_narrow(
-    getOperation() )->MakeRevolutionAxisAngle( myBase, myAxis, getAngle() * PI180 );
+  if (!myBothway)
+    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(
+      getOperation() )->MakeRevolutionAxisAngle( myBase, myAxis, getAngle() * PI180 );
+  else
+    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(
+      getOperation() )->MakeRevolutionAxisAngle2Ways( myBase, myAxis, getAngle() * PI180 );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
@@ -363,4 +369,16 @@ void GenerationGUI_RevolDlg::onReverse()
 {
   double anOldValue = GroupPoints->SpinBox_DX->GetValue();
   GroupPoints->SpinBox_DX->SetValue( -anOldValue );
+}
+
+//=================================================================================
+// function :  onBothway()
+// purpose  :
+//=================================================================================
+void GenerationGUI_RevolDlg::onBothway()
+{
+  bool anOldValue = myBothway;
+  myBothway = !anOldValue;
+  GroupPoints->CheckButton2->setEnabled(!myBothway);  
+  displayPreview();
 }

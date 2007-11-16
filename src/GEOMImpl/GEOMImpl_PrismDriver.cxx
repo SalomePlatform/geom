@@ -28,6 +28,7 @@
 #include <GEOM_Function.hxx>
 
 #include <BRepPrimAPI_MakePrism.hxx>
+#include <BRepBuilderAPI_Transform.hxx>
 #include <BRep_Tool.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -38,6 +39,8 @@
 
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
+#include <gp_Trsf.hxx>
+#include <gp_Vec.hxx>
 #include <Standard_ConstructionError.hxx>
 
 //=======================================================================
@@ -93,7 +96,35 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
         }
       }
     }
-  } else if (aType == PRISM_BASE_TWO_PNT) {
+  } else if (aType == PRISM_BASE_VEC_H_2WAYS) {
+    Handle(GEOM_Function) aRefBase = aCI.GetBase();
+    Handle(GEOM_Function) aRefVector = aCI.GetVector();
+    TopoDS_Shape aShapeBase = aRefBase->GetValue();
+    TopoDS_Shape aShapeVec = aRefVector->GetValue();
+    if (aShapeVec.ShapeType() == TopAbs_EDGE) {
+      TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
+      TopoDS_Vertex V1, V2;
+      gp_Trsf aTrsf;
+      gp_Pnt aP1, aP2;
+      TopExp::Vertices(anE, V1, V2, Standard_True);
+      if (!V1.IsNull() && !V2.IsNull()) {
+        gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+        if (Abs(aCI.GetH()) < Precision::Confusion()) {
+          Standard_ConstructionError::Raise("Absolute value of prism height is too small");
+        }
+        if (aV.Magnitude() > Precision::Confusion()) {
+	  gp_Vec aVec;
+          aV.Normalize();
+	  aVec.Normalize();
+	  aVec  = aV * (-aCI.GetH());
+          aTrsf.SetTranslation(aVec);
+	  BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+	  aShapeBase = aTransformation.Shape();
+          aShape = BRepPrimAPI_MakePrism(aShapeBase, (aV * aCI.GetH() * 2), Standard_False).Shape();
+        }
+      }
+    }
+  } else if (aType == PRISM_BASE_TWO_PNT || aType == PRISM_BASE_TWO_PNT_2WAYS) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     Handle(GEOM_Function) aRefPnt1 = aCI.GetFirstPoint();
     Handle(GEOM_Function) aRefPnt2 = aCI.GetLastPoint();
@@ -107,6 +138,14 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
       if (!V1.IsNull() && !V2.IsNull()) {
         gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
         if (aV.Magnitude() > gp::Resolution()) {
+	  if (aType == PRISM_BASE_TWO_PNT_2WAYS)
+	    {
+	      gp_Trsf aTrsf;
+	      aTrsf.SetTranslation(-aV);
+	      BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+	      aShapeBase = aTransformation.Shape();
+	      aV = aV * 2;
+	    }
           aShape = BRepPrimAPI_MakePrism(aShapeBase, aV, Standard_False).Shape();
         }
       }

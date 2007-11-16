@@ -31,6 +31,7 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel1Spin.h"
 #include "DlgRef_3Spin.h"
+#include "DlgRef_2Sel_QTD.h"
 #include "DlgRef_1Sel3Spin.h"
 
 class QLineEdit;
@@ -73,10 +74,13 @@ private :
 
     GEOM::GEOM_Object_var myEdge;
     GEOM::GEOM_Object_var myRefPoint; 
+    GEOM::GEOM_Object_var myLine1; 
+    GEOM::GEOM_Object_var myLine2;
 
     DlgRef_3Spin*     GroupXYZ;
     DlgRef_1Sel3Spin* GroupRefPoint;
     DlgRef_1Sel1Spin* GroupOnCurve;
+    DlgRef_2Sel_QTD*  GroupLineIntersection;
 
     QGroupBox*        myCoordGrp;
     QLineEdit*        myX;
