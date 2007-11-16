@@ -74,6 +74,7 @@ dist_libGEOMAlgo_la_SOURCES = \
 	GEOMAlgo_FinderShapeOnQuad.cxx \
 	GEOMAlgo_GlueAnalyser.cxx \
 	GEOMAlgo_Gluer.cxx \
+	GEOMAlgo_Gluer1.cxx \
 	GEOMAlgo_HAlgo.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape_0.cxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape_0.cxx \
@@ -155,6 +156,11 @@ salomeinclude_HEADERS = \
 	GEOMAlgo_FinderShapeOnQuad.hxx \
 	GEOMAlgo_GlueAnalyser.hxx \
 	GEOMAlgo_Gluer.hxx \
+	GEOMAlgo_Gluer.ixx \
+	GEOMAlgo_Gluer.jxx \
+	GEOMAlgo_Gluer1.hxx \
+	GEOMAlgo_Gluer1.ixx \
+	GEOMAlgo_Gluer1.jxx \
 	GEOMAlgo_HAlgo.hxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape.hxx \
@@ -214,10 +220,6 @@ salomeinclude_HEADERS = \
 	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape.hxx \
 	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx \
 	GEOMAlgo_DataMapOfPassKeyShapeShape.hxx \
-	GEOMAlgo_Gluer1.cxx \
-	GEOMAlgo_Gluer1.hxx \
-	GEOMAlgo_Gluer1.ixx \
-	GEOMAlgo_Gluer1.jxx \
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx \
 	GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx \
 	GEOMAlgo_KindOfBounds.hxx \
@@ -244,6 +246,3 @@ libGEOMAlgo_la_LDFLAGS  = \
 	../NMTTools/libNMTTools.la \
 	$(STDLIB) \
 	$(CAS_LDPATH) -lTKBO -lTKShHealing -lTKBool -lTKMesh
-
-
-
