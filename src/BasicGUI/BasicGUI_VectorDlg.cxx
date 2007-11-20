@@ -85,7 +85,7 @@ BasicGUI_VectorDlg::BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* par
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("vector.htm");
+  setHelpFileName("create_vector_page.html");
   
   /* Initialisations */
   Init();

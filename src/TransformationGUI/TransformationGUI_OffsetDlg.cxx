@@ -78,7 +78,7 @@ TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg(GeometryGUI* theGeometr
 
   /***************************************************************/
 
-  setHelpFileName("offset_surface.htm");
+  setHelpFileName("offset_operation_page.html");
 
   Init();
 }

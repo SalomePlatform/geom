@@ -87,7 +87,7 @@ BlocksGUI_BlockDlg::BlocksGUI_BlockDlg (GeometryGUI* theGeometryGUI, QWidget* pa
   Layout1->addWidget(Group6F, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("newentity_blocks.htm#HexahedralSolid");
+  setHelpFileName("build_by_blocks_page.html#hexa_solid_anchor");
 
   Init();
 }

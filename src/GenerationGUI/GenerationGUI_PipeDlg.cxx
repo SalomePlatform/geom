@@ -83,7 +83,7 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg(GeometryGUI* theGeometryGUI, QWidge
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("pipe_creation.htm");
+  setHelpFileName("create_extrusion_alongpath_page.html");
 
   /* Initialisations */
   Init();

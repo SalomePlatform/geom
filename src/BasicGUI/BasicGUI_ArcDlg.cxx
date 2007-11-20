@@ -99,7 +99,7 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
   Layout1->addWidget( Group3Pnts2, 2, 0 );
   /***************************************************************/
 
-  setHelpFileName("arc.htm");
+  setHelpFileName("create_arc_page.html");
 
   Init();
 }

@@ -117,7 +117,7 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg(GeometryGUI* theGeometryGUI, QWid
   Group3->SpinBox_DY->RangeStepAndValidator(0.001, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY);
   Group3->SpinBox_DZ->RangeStepAndValidator(0.001, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY);
 
-  setHelpFileName("fillet.htm");
+  setHelpFileName("fillet_operation_page.html");
 
   /* Initialisations */
   Init();

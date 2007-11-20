@@ -77,7 +77,7 @@ BasicGUI_LineDlg::BasicGUI_LineDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("line.htm");
+  setHelpFileName("create_line_page.html");
 
   Init();
 }

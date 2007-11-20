@@ -83,7 +83,7 @@ PrimitiveGUI_CylinderDlg::PrimitiveGUI_CylinderDlg(GeometryGUI* theGeometryGUI, 
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("cylinder.htm");
+  setHelpFileName("create_cylinder_page.html");
 
   Init();
 }

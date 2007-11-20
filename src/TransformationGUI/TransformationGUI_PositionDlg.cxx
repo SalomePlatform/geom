@@ -89,7 +89,7 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
   
   /***************************************************************/
 
-  setHelpFileName("modify_the_location.htm");  
+  setHelpFileName("modify_location_operation_page.html");  
   
   Init();
 }

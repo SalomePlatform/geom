@@ -105,7 +105,7 @@ MeasureGUI_AngleDlg::MeasureGUI_AngleDlg (GeometryGUI* GUI, QWidget* parent)
   Layout1->addWidget(myGrp, 1, 0);
 
   // Help page reference
-  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Angle";
+  myHelpFileName = "using_measurement_tools_page.html#angle_anchor";
 
   // Initialisation
   Init();

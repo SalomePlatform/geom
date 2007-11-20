@@ -89,7 +89,7 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg(GeometryGUI* theGeometryGUI, QWidget* p
   GroupPoints->getGroupBoxLayout()->addLayout( aLay, 3, 0 );
   /***************************************************************/
 
-  setHelpFileName("sewing.htm");
+  setHelpFileName("sewing_operation_page.html");
 
   Init();
 }

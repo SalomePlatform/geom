@@ -83,7 +83,7 @@ PrimitiveGUI_BoxDlg::PrimitiveGUI_BoxDlg(GeometryGUI* theGeometryGUI, QWidget* p
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("box.htm");
+  setHelpFileName("create_box_page.html");
   
   Init();
 }

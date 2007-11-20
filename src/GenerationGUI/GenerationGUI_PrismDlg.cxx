@@ -92,7 +92,7 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg(GeometryGUI* theGeometryGUI, QWid
   Layout1->addWidget(GroupPoints2, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("extrusion.htm");
+  setHelpFileName("create_extrusion_page.html");
 
   Init();
 }

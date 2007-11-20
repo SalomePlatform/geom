@@ -102,7 +102,7 @@ TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("multi_translation.htm");
+  setHelpFileName("multi_translation_operation_page.html");
 
   Init();
 }

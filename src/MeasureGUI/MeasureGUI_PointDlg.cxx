@@ -101,7 +101,7 @@ MeasureGUI_PointDlg::MeasureGUI_PointDlg( GeometryGUI* GUI, QWidget* parent )
 
   Layout1->addWidget( aGrp, 1, 0 );
 
-  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#PointCoord";
+  myHelpFileName = "using_measurement_tools_page.html#point_coord_anchor";
 
   Init();
 }

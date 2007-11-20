@@ -82,7 +82,7 @@ GenerationGUI_RevolDlg::GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWid
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("revolution.htm");
+  setHelpFileName("create_revolution_page.html");
 
   /* Initialisations */
   Init();

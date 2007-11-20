@@ -72,7 +72,7 @@ BuildGUI_FaceDlg::BuildGUI_FaceDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
   Layout1->addWidget(GroupWire, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("face.htm");
+  setHelpFileName("create_face_page.html");
 
   /* Initialisations */
   Init();

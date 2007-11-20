@@ -54,31 +54,31 @@ BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGe
   QString aTitle, aCaption;
   switch ( myOperation )
   {
-  	case BooleanGUI::COMMON:
-   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_COMMON")));
-			aTitle = tr("GEOM_COMMON");
-			aCaption = tr("GEOM_COMMON_TITLE");
-			setHelpFileName("common.htm");
-			break;
-		case BooleanGUI::CUT:
-   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CUT")));
-			aTitle = tr("GEOM_CUT");
-			aCaption = tr("GEOM_CUT_TITLE");
-			setHelpFileName("cut.htm");
-			break;
-		case BooleanGUI::FUSE:
-   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_FUSE")));
-			aTitle = tr("GEOM_FUSE");
-			aCaption = tr("GEOM_FUSE_TITLE");
-			setHelpFileName("fuse.htm");
-			break;
-		case BooleanGUI::SECTION:
-   	  image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SECTION")));
-			aTitle = tr("GEOM_SECTION");
-			aCaption = tr("GEOM_SECTION_TITLE");
-			setHelpFileName("section.htm");
-			break;
-	}
+    case BooleanGUI::COMMON:
+      image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_COMMON")));
+      aTitle = tr("GEOM_COMMON");
+      aCaption = tr("GEOM_COMMON_TITLE");
+      setHelpFileName("common_operation_page.html");
+      break;
+    case BooleanGUI::CUT:
+      image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CUT")));
+      aTitle = tr("GEOM_CUT");
+      aCaption = tr("GEOM_CUT_TITLE");
+      setHelpFileName("cut_operation_page.html");
+      break;
+    case BooleanGUI::FUSE:
+      image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_FUSE")));
+      aTitle = tr("GEOM_FUSE");
+      aCaption = tr("GEOM_FUSE_TITLE");
+      setHelpFileName("fuse_operation_page.html");
+      break;
+    case BooleanGUI::SECTION:
+      image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SECTION")));
+      aTitle = tr("GEOM_SECTION");
+      aCaption = tr("GEOM_SECTION_TITLE");
+      setHelpFileName("section_operation_page.html");
+      break;
+  }
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption( aCaption );

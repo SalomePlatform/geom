@@ -126,7 +126,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   GroupPoints2->getGroupBoxLayout()->addWidget( aGrid, 3, 0 );
   /***************************************************************/
 
-  setHelpFileName("glue_faces.htm");
+  setHelpFileName("glue_faces_operation_page.html");
   
   // Disable second way of gluing if OCC viewer is not active one
   if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 

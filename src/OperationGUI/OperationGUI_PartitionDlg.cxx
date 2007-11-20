@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -27,7 +27,6 @@
 //  $Header$
 
 #include "OperationGUI_PartitionDlg.h"
-#include "OperationGUI_MaterialDlg.h"
 
 #include "GEOMImpl_Types.hxx"
 
@@ -81,8 +80,8 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg(GeometryGUI* theGeometryGUI
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("partition.htm"); 
- 
+  setHelpFileName("partition_page.html");
+
   Init();
 }
 
@@ -111,7 +110,7 @@ void OperationGUI_PartitionDlg::Init()
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_EDGE"));
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_VERTEX"));
   GroupPoints->radioButton4->setChecked(FALSE);
-  
+
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -127,7 +126,7 @@ void OperationGUI_PartitionDlg::Init()
   
   connect(GroupPoints->radioButton4, SIGNAL(stateChanged(int)), this, SLOT(ReverseSense(int)));
 
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   
   initName( tr( "GEOM_PARTITION" ) );
@@ -145,7 +144,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
   globalSelection();
   
   myListShapes.length(0);
-  myListTools.length(0);  
+  myListTools.length(0);
   myListKeepInside.length(0);
   myListRemoveInside.length(0);
   myListMaterials.length(0);
@@ -173,7 +172,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->radioButton4->hide();
 	resize(0, 0);
 	break;
-      } 
+      }
     }
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -181,7 +180,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
   GroupPoints->LineEdit2->clear();
 
   myEditCurrentArgument->setFocus();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   MESSAGE(width()<<" "<<height());
 }
@@ -223,7 +222,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
   QString aString = "";
   
   int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString, true );
-    
+
   if ( nbSel < 1 )
   {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
@@ -269,7 +268,7 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
   
-  if(send == GroupPoints->PushButton1) 
+  if(send == GroupPoints->PushButton1)
     myEditCurrentArgument = GroupPoints->LineEdit1;
   else if(send == GroupPoints->PushButton2)
   {
@@ -279,7 +278,7 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
   }
  
   globalSelection( GEOM_ALLSHAPES );
-      
+
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
@@ -293,7 +292,7 @@ void OperationGUI_PartitionDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
 
-  if(send == GroupPoints->LineEdit1 || 
+  if(send == GroupPoints->LineEdit1 ||
      send == GroupPoints->LineEdit2 )
     {
       myEditCurrentArgument = send;
@@ -309,10 +308,10 @@ void OperationGUI_PartitionDlg::LineEditReturnPressed()
 void OperationGUI_PartitionDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  ConstructorsClicked( getConstructorId() ); 
+  ConstructorsClicked( getConstructorId() );
 }
 
 
@@ -425,7 +424,7 @@ int OperationGUI_PartitionDlg::GetLimit() const
 {
   int aLimit = GroupPoints->ComboBox1->currentItem();
 
-  switch(aLimit)
+  switch (aLimit)
   {
   case 0:  aLimit = GEOM::SOLID ; break;
   case 1:  aLimit = GEOM::SHELL ; break;

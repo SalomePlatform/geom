@@ -113,7 +113,7 @@ BasicGUI_WorkingPlaneDlg::BasicGUI_WorkingPlaneDlg(GeometryGUI* theGeometryGUI, 
   Layout1->addWidget(aReverseGroupBox, 2, 0);
   
 
-  setHelpFileName("working_plane.htm");
+  setHelpFileName("create_wplane_page.html");
 
   Init();
 }

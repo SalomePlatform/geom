@@ -103,7 +103,7 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   Layout1->addWidget(GroupFace, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("plane.htm");
+  setHelpFileName("create_plane_page.html");
 
   Init();
 }

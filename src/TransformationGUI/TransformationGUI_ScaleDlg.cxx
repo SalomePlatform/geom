@@ -109,7 +109,7 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryG
   connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  setHelpFileName("scale_transform.htm");
+  setHelpFileName("scale_operation_page.html");
 
   Init();
 }

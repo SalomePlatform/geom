@@ -82,7 +82,7 @@ PrimitiveGUI_TorusDlg::PrimitiveGUI_TorusDlg(GeometryGUI* theGeometryGUI, QWidge
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("turus.htm");
+  setHelpFileName("create_torus_page.html");
 
   Init();
 }

@@ -70,7 +70,7 @@ OperationGUI_ArchimedeDlg::OperationGUI_ArchimedeDlg( GeometryGUI* theGeometryGU
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("archimede.htm");
+  setHelpFileName("archimede_page.html");
 
   /* Initialisations */
   Init();

@@ -95,7 +95,7 @@ TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("multi_rotation.htm");
+  setHelpFileName("multi_rotation_operation_page.html");
 
   Init();
 }

@@ -78,7 +78,7 @@ BasicGUI_EllipseDlg::BasicGUI_EllipseDlg(GeometryGUI* theGeometryGUI, QWidget* p
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("ellipse.htm");
+  setHelpFileName("create_ellipse_page.html");
 
   Init();
 }

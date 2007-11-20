@@ -100,7 +100,7 @@ BlocksGUI_QuadFaceDlg::BlocksGUI_QuadFaceDlg (GeometryGUI* theGeometryGUI, QWidg
   Layout1->addWidget(myGrp3, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("newentity_blocks.htm#QuadrangleFace");
+  setHelpFileName("build_by_blocks_page.html#quad_face_anchor");
 
   Init();
 }

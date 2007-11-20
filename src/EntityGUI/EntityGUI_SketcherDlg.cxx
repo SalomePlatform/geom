@@ -322,7 +322,7 @@ void EntityGUI_SketcherDlg::Init()
   myLastX2 = 0.0;
   myLastY2 = 0.0;
 
-  myHelpFileName = "sketcher.htm";
+  myHelpFileName = "create_sketcher_page.html";
 
   /* Get setting of step value from file configuration */
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );

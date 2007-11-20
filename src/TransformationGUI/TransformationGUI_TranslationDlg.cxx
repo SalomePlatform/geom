@@ -85,7 +85,7 @@ TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("translation.htm");
+  setHelpFileName("translation_operation_page.html");
 
   Init();
 }

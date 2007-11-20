@@ -73,7 +73,7 @@ RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(GeometryGUI* theGeometryG
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
   
-  setHelpFileName("suppress_faces.htm");
+  setHelpFileName("suppress_faces_operation_page.html");
 
   Init();
 }

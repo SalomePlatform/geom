@@ -85,7 +85,7 @@ PrimitiveGUI_ConeDlg::PrimitiveGUI_ConeDlg(GeometryGUI* theGeometryGUI, QWidget*
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
-  setHelpFileName( "cone.htm" );
+  setHelpFileName( "create_cone_page.html" );
   
   Init();
 }

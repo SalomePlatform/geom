@@ -96,7 +96,7 @@ RepairGUI_RemoveIntWiresDlg::RepairGUI_RemoveIntWiresDlg(GeometryGUI* theGeometr
   GroupPoints->getGroupBoxLayout()->addLayout( aSelectWiresLay, 2, 0 );  
   /***************************************************************/
 
-  setHelpFileName("suppress_internal_wires.htm");
+  setHelpFileName("suppress_internal_wires_operation_page.html");
 
   Init();
 }

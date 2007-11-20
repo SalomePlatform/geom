@@ -81,7 +81,7 @@ TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(GeometryGUI* theGeometr
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("mirror_image.htm");  
+  setHelpFileName("mirror_operation_page.html");  
   
   Init();
 }

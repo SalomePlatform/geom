@@ -69,7 +69,7 @@ BuildGUI_WireDlg::BuildGUI_WireDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("wire.htm");
+  setHelpFileName("create_wire_page.html");
 
   /* Initialisations */
   Init();

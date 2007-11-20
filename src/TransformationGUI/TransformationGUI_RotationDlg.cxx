@@ -119,7 +119,7 @@ TransformationGUI_RotationDlg::TransformationGUI_RotationDlg
   connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  setHelpFileName("rotation.htm");
+  setHelpFileName("rotation_operation_page.html");
 
   Init();
 }

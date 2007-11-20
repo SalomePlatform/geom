@@ -225,7 +225,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QW
            anIter.data()->RangeStepAndValidator( 0, 90, 5, 0 );
     }
 
-  setHelpFileName("chamfer.htm");
+  setHelpFileName("chamfer_operation_page.html");
 
   /* Initialisations */
   RadioButtonPressed();

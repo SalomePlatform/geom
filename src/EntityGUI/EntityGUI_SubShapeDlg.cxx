@@ -78,7 +78,7 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidge
   Layout1->addWidget(GroupPoints, 1, 0);
   /***************************************************************/
 
-  setHelpFileName("explode.htm");
+  setHelpFileName("create_explode_page.html");
 
   Init();
 }

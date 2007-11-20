@@ -111,7 +111,7 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWi
   aMedLayout->addWidget( myAddBtn, 2, 3 );
   aMedLayout->addWidget( myRemBtn, 3, 3 );
 
-  setHelpFileName("working_with_groups.htm");
+  setHelpFileName("work_with_groups_page.html");
 
   Init();
 }
