@@ -588,12 +588,12 @@ msgstr "Bounding Box"
 msgid "GEOM_CMASS"
 msgstr "Center Of Mass"
 
-#Normale
+#Normal
 msgid "GEOM_NORMALE"
-msgstr "Normale To A Face"
+msgstr "Normal To A Face"
 
 msgid "GEOM_VECTOR_NORMALE"
-msgstr "Vector_Normale"
+msgstr "Vector_Normal"
 
 #Basic Properties
 msgid "GEOM_PROPERTIES"
@@ -871,7 +871,7 @@ msgstr "Center Of Mass Construction"
 
 #: GeometryGUI_NormaleDlg.cxx:57
 msgid "GEOM_NORMALE_TITLE"
-msgstr "Create Normale To A Face"
+msgstr "Create Normal To A Face"
 
 msgid "GEOM_PLANE_SIZE"
 msgstr "Size of plane :"
@@ -2739,13 +2739,13 @@ msgid "STB_MASS_CENTER"
 msgstr "Compute center of mass"
 
 msgid "TOP_NORMALE"
-msgstr "Compute normale to a face"
+msgstr "Compute normal to a face"
 
 msgid "MEN_NORMALE"
-msgstr "Normale to a face"
+msgstr "Normal to a face"
 
 msgid "STB_NORMALE"
-msgstr "Compute normale to a face in a point (optional)"
+msgstr "Compute normal to a face in a point (optional)"
 
 msgid "TOP_INERTIA"
 msgstr "Compute intertia"
