@@ -368,7 +368,7 @@ msgstr "Reverse"
 
 #Bothway
 msgid "GEOM_BOTHWAY"
-msgstr "Bothway"
+msgstr "Both Directions"
 
 #Reverse U
 msgid "GEOM_REVERSE_U"

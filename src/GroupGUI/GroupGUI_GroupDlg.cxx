@@ -331,6 +331,15 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
         aSelMgr->selectedSubOwners(aMap);
         if (aMap.size() == 1)
           aMapIndex = aMap.begin().data();
+	if (aMap.size() == 0) {
+	  Standard_Boolean aResult = Standard_False;
+	  GEOM::GEOM_Object_var anObj =
+	    GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+	  if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
+	    localSelection( anObj, getShapeType() );
+	  }
+	 
+	}
       }
     }
 

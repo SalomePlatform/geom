@@ -359,7 +359,7 @@ msgstr "Reverse"
 
 #Bothway
 msgid "GEOM_BOTHWAY"
-msgstr "Bothway"
+msgstr "Both Directions"
 
 #Reverse U
 msgid "GEOM_REVERSE_U"
@@ -2905,22 +2905,22 @@ msgid "STB_SHADING"
 msgstr "Shading"
 
 msgid "TOP_DISPLAY_ALL"
-msgstr "Display all"
+msgstr "Show all"
 
 msgid "MEN_DISPLAY_ALL"
-msgstr "Display all"
+msgstr "Show all"
 
 msgid "STB_DISPLAY_ALL"
-msgstr "Display all"
+msgstr "Show all"
 
 msgid "TOP_ERASE_ALL"
-msgstr "Erase all"
+msgstr "Hide all"
 
 msgid "MEN_ERASE_ALL"
-msgstr "Erase all"
+msgstr "Hide all"
 
 msgid "STB_ERASE_ALL"
-msgstr "Erase all"
+msgstr "Hide all"
 
 msgid "TOP_DISPLAY"
 msgstr "Show"
@@ -2932,13 +2932,13 @@ msgid "STB_DISPLAY"
 msgstr "Show object(s)"
 
 msgid "TOP_DISPLAY_ONLY"
-msgstr "Display only"
+msgstr "Show only"
 
 msgid "MEN_DISPLAY_ONLY"
-msgstr "Display only"
+msgstr "Show only"
 
 msgid "STB_DISPLAY_ONLY"
-msgstr "Display only"
+msgstr "Show only"
 
 msgid "TOP_ERASE"
 msgstr "Hide"
