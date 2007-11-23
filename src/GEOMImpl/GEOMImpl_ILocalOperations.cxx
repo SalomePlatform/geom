@@ -571,7 +571,6 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgeAD
   GEOM::TPythonDump(aFunction) << aChamfer
     << " = geompy.MakeChamferEdgeAD(" << theShape << ", " << theD
       << ", " << theAngle << ", " << theFace1 << ", " << theFace2 << ")";
-  cout << "ANGLE = " << theAngle << endl;
   SetErrorCode(OK);
   return aChamfer;
 }
