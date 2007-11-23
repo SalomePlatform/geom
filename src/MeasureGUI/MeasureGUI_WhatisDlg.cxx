@@ -58,8 +58,8 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( GeometryGUI* GUI, QWidget* parent )
-: MeasureGUI_Skeleton( GUI, parent, "MeasureGUI_WhatisDlg" )
+MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg (GeometryGUI* GUI, QWidget* parent)
+  : MeasureGUI_Skeleton(GUI, parent, "MeasureGUI_WhatisDlg")
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
     "GEOM",tr( "ICON_DLG_WHATIS" ) ) );
@@ -69,19 +69,27 @@ MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( GeometryGUI* GUI, QWidget* parent )
   setCaption( tr( "GEOM_WHATIS_TITLE" ) );
 
   /***************************************************************/
-  
+
   GroupConstructors->setTitle( tr( "GEOM_WHATIS" ) );
   RadioButton1->setPixmap( image0 );
 
   myGrp = new MeasureGUI_1Sel1TextView_QTD( this, "myGrp" );
   myGrp->GroupBox1->setTitle( tr( "GEOM_WHATIS_OBJECT" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
+
   myGrp->TextEdit1->setReadOnly( TRUE );
+  // fix height to fit all text
+  myGrp->TextEdit1->setWordWrap(QTextEdit::NoWrap);
+  myGrp->TextEdit1->setTextFormat(Qt::PlainText);
+  QString allLines ("\n\n\n\n\n\n\n\n\n"); // 10 lines
+  myGrp->TextEdit1->setText(allLines);
+  int sbHeight = myGrp->TextEdit1->horizontalScrollBar()->height();
+  myGrp->TextEdit1->setFixedHeight(myGrp->TextEdit1->contentsHeight() + sbHeight);
+
   myGrp->PushButton1->setPixmap( image1 );
   myGrp->LineEdit1->setReadOnly( true );
 
   Layout1->addWidget( myGrp, 1, 0 );
-  resize( 350, 370 );
 
   /***************************************************************/
 
@@ -111,6 +119,7 @@ void MeasureGUI_WhatisDlg::Init()
   mySelEdit = myGrp->LineEdit1;
   MeasureGUI_Skeleton::Init();
 }
+
 
 //=================================================================================
 // function : processObject
@@ -146,6 +155,3 @@ bool MeasureGUI_WhatisDlg::getParameters( QString& theText )
     return getOperation()->IsDone();
   }
 }
-
-
-
