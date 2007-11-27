@@ -165,7 +165,7 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
 		  {
 		    double aD = aCI.GetD();
 		    double anAngle = aCI.GetAngle();
-		    if (anAngle>0)
+		    if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
 		      fill.AddDA(aD, anAngle, E, F);
 		  }
 	      }
@@ -206,7 +206,7 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
 		    {
 		      double aD = aCI.GetD();
 		      double anAngle = aCI.GetAngle();
-		      if (anAngle>0)
+		      if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
 			fill.AddDA(aD, anAngle, E, F);
 		    }
 	      }
@@ -241,7 +241,7 @@ else if (aType == CHAMFER_SHAPE_EDGES || aType == CHAMFER_SHAPE_EDGES_AD)
 	    {
 	      double aD = aCI.GetD();
 	      double anAngle = aCI.GetAngle();
-	      if (anAngle>0)
+	      if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
 		fill.AddDA(aD, anAngle, E, F);
 	    }
 	} 

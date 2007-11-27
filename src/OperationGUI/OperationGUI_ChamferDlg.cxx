@@ -222,7 +222,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QW
     {
       anIter.data()->RangeStepAndValidator( 0.001, COORD_MAX, SpecificStep, 3 );
       if ( anIter.key() == SpinBox44 || anIter.key() == SpinBox34 || anIter.key() == SpinBox24 )
-           anIter.data()->RangeStepAndValidator( 0, 90, 5, 0 );
+           anIter.data()->RangeStepAndValidator( 0.001, 89.999, 5, 0 );
     }
 
   setHelpFileName("chamfer_operation_page.html");
