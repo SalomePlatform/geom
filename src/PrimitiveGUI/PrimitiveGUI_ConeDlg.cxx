@@ -33,6 +33,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
@@ -269,10 +276,32 @@ void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
 
   if (myEditCurrentArgument == GroupPoints->LineEdit1)
     myPoint = aSelectedObject;
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2)
-    myDir = aSelectedObject;
-  
-  
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2)  {
+    if ( testResult && !aSelectedObject->_is_nil() )
+      {
+	TopoDS_Shape aShape;
+	
+	if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	  {
+	    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	    TColStd_IndexedMapOfInteger aMap;
+	      aSelMgr->GetIndexes( firstIObject(), aMap );
+	      if ( aMap.Extent() == 1 )
+		{
+		  GEOM::GEOM_IShapesOperations_var aShapesOp =
+		    getGeomEngine()->GetIShapesOperations( getStudyId() );
+		  int anIndex = aMap( 1 );
+		  TopTools_IndexedMapOfShape aShapes;
+		  TopExp::MapShapes( aShape, aShapes );
+		  aShape = aShapes.FindKey( anIndex );
+		  myDir = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		  aSelMgr->clearSelected();
+		}
+	      else
+		myDir = aSelectedObject;
+	  }
+      }
+  }
   myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
   displayPreview();
 }
@@ -292,7 +321,9 @@ void PrimitiveGUI_ConeDlg::SetEditCurrentArgument()
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    globalSelection( GEOM_LINE );
+    //    globalSelection( GEOM_LINE );
+        GEOM::GEOM_Object_var anObj;
+    localSelection( anObj, TopAbs_EDGE );
   }
   
   myEditCurrentArgument->setFocus();

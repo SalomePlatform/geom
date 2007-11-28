@@ -43,6 +43,9 @@
 #include <gp_Pnt.hxx>
 #include <gp_Dir.hxx>
 #include <TColStd_MapOfInteger.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 // QT Includes
 #include <qcheckbox.h>
@@ -209,7 +212,9 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
       }
     case 1:
       {
-        globalSelection( GEOM_LINE );
+	//globalSelection( GEOM_LINE );
+	GEOM::GEOM_Object_var anObj;
+	localSelection( anObj, TopAbs_EDGE );
 
         Group1->hide();
         Group3->hide();
@@ -285,6 +290,7 @@ bool BasicGUI_WorkingPlaneDlg::ClickOnApply()
 void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
+  QString aName;
 
   const int id = getConstructorId();
   if ( IObjectCount() != 1 ) {
@@ -306,14 +312,45 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
   if(!aRes || CORBA::is_nil( aSelectedObject ))
     return;
 
+  aName = GEOMBase::GetName( aSelectedObject );
+
   if(myEditCurrentArgument == Group1->LineEdit1)
     myFace = aSelectedObject;
-  else if(myEditCurrentArgument == Group2->LineEdit1)
-    myVectX = aSelectedObject;
-  else if(myEditCurrentArgument == Group2->LineEdit2)
-    myVectZ = aSelectedObject;
+  else if(myEditCurrentArgument == Group2->LineEdit1 || myEditCurrentArgument == Group2->LineEdit2)  {
+      if ( aRes && !aSelectedObject->_is_nil() )
+	{
+	  TopoDS_Shape aShape;
+	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	    {
+	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	      TColStd_IndexedMapOfInteger aMap;
+	      aSelMgr->GetIndexes( firstIObject(), aMap );
+		if ( aMap.Extent() == 1 )
+		  {
+		    GEOM::GEOM_IShapesOperations_var aShapesOp =
+		      getGeomEngine()->GetIShapesOperations( getStudyId() );
+		    int anIndex = aMap( 1 );
+		    TopTools_IndexedMapOfShape aShapes;
+		    TopExp::MapShapes( aShape, aShapes );
+		    aShape = aShapes.FindKey( anIndex );
+		    aName = aName + " Edge_" + QString::number( anIndex );
+		    if(myEditCurrentArgument == Group2->LineEdit1)
+		      myVectX = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		    else
+		      myVectZ = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		  }
+		else {
+		  if(myEditCurrentArgument == Group2->LineEdit1)
+		    myVectX = aSelectedObject;
+		  else
+		    myVectZ = aSelectedObject;
+		}
+		aSelMgr->clearSelected();
+	    }
+	}
+    }
 
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  myEditCurrentArgument->setText( aName );
   
   updateWPlane();
 }
@@ -333,11 +370,15 @@ void BasicGUI_WorkingPlaneDlg::SetEditCurrentArgument()
   }
   else if(send == Group2->PushButton1) {
     myEditCurrentArgument = Group2->LineEdit1;
-    globalSelection( GEOM_LINE );
+    GEOM::GEOM_Object_var anObj;
+    localSelection( anObj, TopAbs_EDGE );
+    //globalSelection( GEOM_LINE );
   }
   else if(send == Group2->PushButton2) {
     myEditCurrentArgument = Group2->LineEdit2;
-    globalSelection( GEOM_LINE );
+    GEOM::GEOM_Object_var anObj;
+    localSelection( anObj, TopAbs_EDGE );
+    //globalSelection( GEOM_LINE );
   }
 
   myEditCurrentArgument->setFocus();

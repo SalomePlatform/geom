@@ -36,6 +36,11 @@
 #include <qlabel.h>
 
 #include <TopoDS_Edge.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
 #if OCC_VERSION_MAJOR >= 5
@@ -128,7 +133,7 @@ void GenerationGUI_PipeDlg::Init()
 
   initName(tr("GEOM_PIPE"));
 
-  globalSelection( GEOM_ALLSHAPES );
+  //  globalSelection( GEOM_ALLSHAPES );
 }
 
 
@@ -199,12 +204,33 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
   else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
     myOkPath = false;
     
-    if(!GEOMBase::GetShape(aSelectedObject, S) ||
-       !(S.ShapeType() == TopAbs_WIRE || S.ShapeType() == TopAbs_EDGE) ) 
+    if( !GEOMBase::GetShape(aSelectedObject, S) ) 
       return;
     
-    myPath = aSelectedObject;
-    myOkPath = true;
+    if ( testResult && !aSelectedObject->_is_nil() && aSelectedObject != myBase)
+      {
+	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	TColStd_IndexedMapOfInteger aMap;
+	aSelMgr->GetIndexes( firstIObject(), aMap );
+	if ( aMap.Extent() == 1 )
+	  {
+	    GEOM::GEOM_IShapesOperations_var aShapesOp =
+	      getGeomEngine()->GetIShapesOperations( getStudyId() );
+	    int anIndex = aMap( 1 );
+	    TopTools_IndexedMapOfShape aShapes;
+	    TopExp::MapShapes( S, aShapes );
+	    S = aShapes.FindKey( anIndex );
+	    if ( S.ShapeType() == TopAbs_WIRE || S.ShapeType() == TopAbs_EDGE ) {
+	      myPath = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	      myOkPath = true;
+	      aSelMgr->clearSelected();
+	    }
+	  }
+	else if ( S.ShapeType() == TopAbs_WIRE || S.ShapeType() == TopAbs_EDGE ) {
+	    myPath = aSelectedObject;
+	    myOkPath = true;
+	  }
+      }
   }
   myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
   
@@ -223,10 +249,13 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
+    globalSelection( GEOM_ALLSHAPES );
   }
   else if(send == GroupPoints->PushButton2) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
+    GEOM::GEOM_Object_var anObj;
+    localSelection( anObj, TopAbs_EDGE );
   }
   SelectionIntoArgument();
 }

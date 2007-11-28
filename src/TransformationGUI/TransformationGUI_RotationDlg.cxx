@@ -33,6 +33,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qcheckbox.h>
 #include <qlabel.h>
 
@@ -262,8 +269,31 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
       if(!testResult || CORBA::is_nil( aSelectedObject ))
 	return;
 
-      if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0)
-	myAxis = aSelectedObject;
+      if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0) {
+	if ( testResult && !aSelectedObject->_is_nil() )
+	{
+	  TopoDS_Shape aShape;
+	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	    {
+	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	      TColStd_IndexedMapOfInteger aMap;
+	      aSelMgr->GetIndexes( firstIObject(), aMap );
+		if ( aMap.Extent() == 1 )
+		  {
+		    GEOM::GEOM_IShapesOperations_var aShapesOp =
+		      getGeomEngine()->GetIShapesOperations( getStudyId() );
+		    int anIndex = aMap( 1 );
+		    TopTools_IndexedMapOfShape aShapes;
+		    TopExp::MapShapes( aShape, aShapes );
+		    aShape = aShapes.FindKey( anIndex );
+		    myAxis = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		    aSelMgr->clearSelected();
+		  }
+		else
+		  myAxis = aSelectedObject;
+	    }
+	}
+      }
       else if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1)
 	myCentPoint = aSelectedObject;
       else if(myEditCurrentArgument == GroupPoints->LineEdit4)
@@ -293,8 +323,13 @@ void TransformationGUI_RotationDlg::SetEditCurrentArgument()
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    getConstructorId() == 0 ? globalSelection( GEOM_LINE ) :
-                              globalSelection( GEOM_POINT  );
+    if (getConstructorId() == 0) {
+      //globalSelection( GEOM_LINE );
+      GEOM::GEOM_Object_var anObj;
+      localSelection( anObj, TopAbs_EDGE );
+    }
+    else
+      globalSelection( GEOM_POINT  );
   }
   else if (send == GroupPoints->PushButton4)
     {

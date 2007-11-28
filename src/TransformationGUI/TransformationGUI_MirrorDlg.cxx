@@ -33,6 +33,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qcheckbox.h>
 #include <qlabel.h>
 
@@ -229,10 +236,33 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
 	  return;
 	}
       Standard_Boolean testResult = Standard_False;
-      myArgument = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
+      GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
+      myArgument = aSelectedObject;
       if(!testResult || CORBA::is_nil( myArgument ))
 	return;
-      aName = GEOMBase::GetName( myArgument );
+
+      if ( testResult && !aSelectedObject->_is_nil() )
+	{
+	  TopoDS_Shape aShape;
+	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	    {
+	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	      TColStd_IndexedMapOfInteger aMap;
+	      aSelMgr->GetIndexes( firstIObject(), aMap );
+	      if ( aMap.Extent() == 1 )
+		{
+		    GEOM::GEOM_IShapesOperations_var aShapesOp =
+		      getGeomEngine()->GetIShapesOperations( getStudyId() );
+		    int anIndex = aMap( 1 );
+		    TopTools_IndexedMapOfShape aShapes;
+		    TopExp::MapShapes( aShape, aShapes );
+		    aShape = aShapes.FindKey( anIndex );
+		    myArgument = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		    aSelMgr->clearSelected();
+		  }
+	    }
+	}
+      aName = GEOMBase::GetName( aSelectedObject );
     }
   myEditCurrentArgument->setText( aName );
    
@@ -279,7 +309,9 @@ void TransformationGUI_MirrorDlg::SetEditCurrentArgument()
 	}
       case 1:
 	{
-	  globalSelection( GEOM_LINE );
+	  //globalSelection( GEOM_LINE );
+	  GEOM::GEOM_Object_var anObj;
+	  localSelection( anObj, TopAbs_EDGE );
 	  break;
 	}
       case 2:

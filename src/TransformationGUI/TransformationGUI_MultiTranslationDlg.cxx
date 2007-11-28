@@ -33,6 +33,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
@@ -302,10 +309,39 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
       myEditCurrentArgument == GroupDimensions->LineEdit1)
     myBase = aSelectedObject;
   else if (myEditCurrentArgument == GroupPoints->LineEdit2 ||
-           myEditCurrentArgument == GroupDimensions->LineEdit2)
-    myVectorU = aSelectedObject;
-  else if (myEditCurrentArgument == GroupDimensions->LineEdit3)
-    myVectorV = aSelectedObject;
+           myEditCurrentArgument == GroupDimensions->LineEdit2 ||
+	   myEditCurrentArgument == GroupDimensions->LineEdit3 ) {
+    if ( testResult && !aSelectedObject->_is_nil() )
+	{
+	  TopoDS_Shape aShape;
+	  
+	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	    {
+	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	      TColStd_IndexedMapOfInteger aMap;
+	      aSelMgr->GetIndexes( firstIObject(), aMap );
+		if ( aMap.Extent() == 1 )
+		  {
+		    GEOM::GEOM_IShapesOperations_var aShapesOp =
+		      getGeomEngine()->GetIShapesOperations( getStudyId() );
+		    int anIndex = aMap( 1 );
+		    TopTools_IndexedMapOfShape aShapes;
+		    TopExp::MapShapes( aShape, aShapes );
+		    aShape = aShapes.FindKey( anIndex );
+		    aSelMgr->clearSelected();
+		    if ( myEditCurrentArgument == GroupDimensions->LineEdit3 )
+		      myVectorV = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		    else
+		      myVectorU = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		  }
+		else
+		  if ( myEditCurrentArgument == GroupDimensions->LineEdit3 )
+		    myVectorV = aSelectedObject;
+		  else
+		    myVectorU = aSelectedObject;
+	    }
+	}
+    }
 
   myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
 
@@ -327,7 +363,9 @@ void TransformationGUI_MultiTranslationDlg::SetEditCurrentArgument()
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    globalSelection( GEOM_LINE  );
+    //    globalSelection( GEOM_LINE  );
+    GEOM::GEOM_Object_var anObj;
+    localSelection( anObj, TopAbs_EDGE );
   }
   else if(send == GroupDimensions->PushButton1) {
     myEditCurrentArgument = GroupDimensions->LineEdit1;
@@ -335,11 +373,15 @@ void TransformationGUI_MultiTranslationDlg::SetEditCurrentArgument()
   }
   else if(send == GroupDimensions->PushButton2) {
     myEditCurrentArgument = GroupDimensions->LineEdit2;
-    globalSelection( GEOM_LINE  );
+    //    globalSelection( GEOM_LINE  );
+    GEOM::GEOM_Object_var anObj;
+    localSelection( anObj, TopAbs_EDGE );
   }
   else if(send == GroupDimensions->PushButton3) {
     myEditCurrentArgument = GroupDimensions->LineEdit3;
-    globalSelection( GEOM_LINE  );
+    //    globalSelection( GEOM_LINE  );
+    GEOM::GEOM_Object_var anObj;
+    localSelection( anObj, TopAbs_EDGE );
   }
 
   myEditCurrentArgument->setFocus();

@@ -33,7 +33,16 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #include <qlabel.h>
+
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+
+#include <GEOMImpl_ILocalOperations.hxx>
 
 #include "GEOMImpl_Types.hxx"
 #include "GEOM_Object.hxx"
@@ -293,13 +302,39 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
 
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
+  Handle(SALOME_InteractiveObject) anIO = firstIObject();
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   { 
- 
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     if      ( myEditCurrentArgument == GroupPntVecR->LineEdit1 ) myPoint  = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) myDir    = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 )
+      {
+	if ( aRes && !aSelectedObject->_is_nil() )
+	  {
+	    TopoDS_Shape aShape;
+
+	    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	      {
+		LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+		TColStd_IndexedMapOfInteger aMap;
+		aSelMgr->GetIndexes( anIO, aMap );
+		if ( aMap.Extent() == 1 )
+		  {
+		    GEOM::GEOM_IShapesOperations_var aShapesOp =
+		      getGeomEngine()->GetIShapesOperations( getStudyId() );
+		    int anIndex = aMap( 1 );
+		    TopTools_IndexedMapOfShape aShapes;
+		    TopExp::MapShapes( aShape, aShapes );
+		    aShape = aShapes.FindKey( anIndex );
+		    myDir = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		    aSelMgr->clearSelected();
+		  }
+		else
+		  myDir = aSelectedObject;
+	      }
+	  }
+      }
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = aSelectedObject;
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = aSelectedObject;
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = aSelectedObject;
@@ -330,8 +365,12 @@ void BasicGUI_CircleDlg::SetEditCurrentArgument()
   
   myEditCurrentArgument->setFocus();
   
-  if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) 
-    globalSelection( GEOM_LINE );
+  if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 )
+    {
+      //globalSelection( GEOM_LINE );
+      GEOM::GEOM_Object_var anObj;
+      localSelection( anObj, TopAbs_EDGE );
+    }
   else
     globalSelection( GEOM_POINT );
   SelectionIntoArgument();

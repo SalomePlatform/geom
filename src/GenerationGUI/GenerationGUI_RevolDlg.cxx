@@ -33,6 +33,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <gp_Lin.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepPrimAPI_MakeRevol.hxx>
@@ -229,8 +236,32 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
     myOkBase = true;
   }
   else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
-    myAxis = aSelectedObject;
-    myOkAxis = true;
+    if ( testResult && !aSelectedObject->_is_nil() )
+      {
+	TopoDS_Shape aShape;
+	
+	if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	  {
+	    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	      TColStd_IndexedMapOfInteger aMap;
+	      aSelMgr->GetIndexes( firstIObject(), aMap );
+	      if ( aMap.Extent() == 1 )
+		{
+		  GEOM::GEOM_IShapesOperations_var aShapesOp =
+		    getGeomEngine()->GetIShapesOperations( getStudyId() );
+		  int anIndex = aMap( 1 );
+		  TopTools_IndexedMapOfShape aShapes;
+		  TopExp::MapShapes( aShape, aShapes );
+		  aShape = aShapes.FindKey( anIndex );
+		  myAxis = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		  aSelMgr->clearSelected();
+		}
+	      else
+		myAxis = aSelectedObject;
+
+	      myOkAxis = true;
+	  }
+      }
   }
   myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
 
@@ -254,7 +285,9 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
   else if(send == GroupPoints->PushButton2) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    globalSelection( GEOM_LINE );
+    //globalSelection( GEOM_LINE );
+    GEOM::GEOM_Object_var anObj;
+    localSelection( anObj, TopAbs_EDGE );
   }
   SelectionIntoArgument();
 }

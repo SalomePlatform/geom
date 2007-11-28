@@ -35,6 +35,13 @@
 
 #include <TColStd_MapOfInteger.hxx>
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
@@ -314,7 +321,32 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
   {
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) myPoint  = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) myDir    = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) {
+      if ( aRes && !aSelectedObject->_is_nil() )
+	{
+	  TopoDS_Shape aShape;
+	  
+	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	    {
+	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	      TColStd_IndexedMapOfInteger aMap;
+	      aSelMgr->GetIndexes( firstIObject(), aMap );
+		if ( aMap.Extent() == 1 )
+		  {
+		    GEOM::GEOM_IShapesOperations_var aShapesOp =
+		      getGeomEngine()->GetIShapesOperations( getStudyId() );
+		    int anIndex = aMap( 1 );
+		    TopTools_IndexedMapOfShape aShapes;
+		    TopExp::MapShapes( aShape, aShapes );
+		    aShape = aShapes.FindKey( anIndex );
+		    myDir = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		    aSelMgr->clearSelected();
+		  }
+		else
+		  myDir = aSelectedObject;
+	    }
+	}
+    }
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )  myPoint1 = aSelectedObject;
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )  myPoint2 = aSelectedObject;
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )  myPoint3 = aSelectedObject;
@@ -342,8 +374,11 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 
   myEditCurrentArgument->setFocus();
 
-  if ( myEditCurrentArgument == GroupPntDir->LineEdit2 )
-    globalSelection( GEOM_LINE );
+  if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) {
+    //globalSelection( GEOM_LINE );
+    GEOM::GEOM_Object_var anObj;
+    localSelection( anObj, TopAbs_EDGE );
+  }
   else if ( myEditCurrentArgument == GroupFace->LineEdit1 ) {
     //globalSelection( GEOM_PLANE );
     TColStd_MapOfInteger aMap;
