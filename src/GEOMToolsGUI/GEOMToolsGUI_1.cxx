@@ -281,11 +281,7 @@ void GEOMToolsGUI::OnAutoColor()
     if( aChildObject->GetType() != GEOM_GROUP )
       continue;
 
-    cout << "Group : " << aChildObject->GetName() << endl;
-
     SALOMEDS::Color aColor = GEOM_Displayer::getUniqueColor( aReservedColors );
-    cout << "Color : " << aColor.R << " " << aColor.G << " " << aColor.B << endl;
-
     aChildObject->SetColor( aColor );
     aReservedColors.append( aColor );
 
