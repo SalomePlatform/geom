@@ -780,7 +780,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   }
 
   if (listShape.IsEmpty()) {
-    SetErrorCode("The given shape has no sub-shapes of the requested type");
+    //SetErrorCode("The given shape has no sub-shapes of the requested type");
+    SetErrorCode(NOT_FOUND_ANY); // NPAL18017
     return aSeq;
   }
 
@@ -825,7 +826,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
 
 //=============================================================================
 /*!
- *  GetSubShapeAllIDs
+ *  SubShapeAllIDs
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
@@ -864,7 +865,8 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
   }
 
   if (listShape.IsEmpty()) {
-    SetErrorCode("The given shape has no sub-shapes of the requested type");
+    //SetErrorCode("The given shape has no sub-shapes of the requested type");
+    SetErrorCode(NOT_FOUND_ANY); // NPAL18017
     return aSeq;
   }
 
@@ -1480,7 +1482,8 @@ Handle(TColStd_HSequenceOfInteger)
   const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
 
   if (listSS.Extent() < 1) {
-    SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    //SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    SetErrorCode(NOT_FOUND_ANY); // NPAL18017
     return aSeqOfIDs;
   }
 
@@ -1654,7 +1657,8 @@ Handle(TColStd_HSequenceOfInteger)
   const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
 
   if (listSS.Extent() < 1) {
-    SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    //SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    SetErrorCode(NOT_FOUND_ANY); // NPAL18017
     return aSeqOfIDs;
   }
 
@@ -2281,7 +2285,8 @@ Handle(TColStd_HSequenceOfInteger)
   const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
 
   if (listSS.Extent() < 1) {
-    SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    //SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    SetErrorCode(NOT_FOUND_ANY); // NPAL18017
     return aSeqOfIDs;
   }
 
