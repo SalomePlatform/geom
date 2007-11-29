@@ -65,6 +65,10 @@ msgstr "&Help"
 msgid "GEOM_BUT_EXPLODE"
 msgstr "&Explode"
 
+#NOT_FOUND_ANY error from some operations
+msgid "NOT_FOUND_ANY"
+msgstr "Not a single entity has been found"
+
 #
 #==============================================================================
 #
