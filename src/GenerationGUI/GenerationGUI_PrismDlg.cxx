@@ -510,7 +510,7 @@ bool GenerationGUI_PrismDlg::execute( ObjectList& objects )
 	  MakePrismVecH(myBase, myVec, getHeight());
       else
       	anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-	MakePrismVecH2Ways(myBase, myVec, ( fabs(getHeight()) ) );
+	MakePrismVecH2Ways(myBase, myVec, getHeight() );
       break;
     }
   case 1:
