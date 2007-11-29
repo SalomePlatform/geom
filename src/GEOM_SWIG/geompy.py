@@ -141,7 +141,8 @@ def addToStudyInFather(aFather, aShape, aName):
 # Raise an Error if Operation is Failed
 # -----------------------------------------------------------------------------
 def RaiseIfFailed (method_name, operation):
-    if operation.IsDone() == 0:
+    #NPAL18017#if operation.IsDone() == 0:
+    if operation.IsDone() == 0 and operation.GetErrorCode() != "NOT_FOUND_ANY":
       raise RuntimeError, method_name + " : " + operation.GetErrorCode()
 
 # -----------------------------------------------------------------------------
