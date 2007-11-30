@@ -209,7 +209,7 @@ def MakeVertexOnCurve(theRefCurve, theParameter):
 #
 #  Example: see GEOM_TestAll.py
 def MakeVertexOnLinesIntersection(theRefLine1, theRefLine2):
-    anObj = BasicOp.MakePointOnCurve(theRefLine1, theRefLine2)
+    anObj = BasicOp.MakePointOnLinesIntersection(theRefLine1, theRefLine2)
     RaiseIfFailed("MakePointOnLinesIntersection", BasicOp)
     return anObj
 
