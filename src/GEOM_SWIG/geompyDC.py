@@ -47,7 +47,7 @@ ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE"
 # -----------------------------------------------------------------------------
 def RaiseIfFailed (Method_name, Operation):
     #NPAL18017#if Operation.IsDone() == 0:
-    if operation.IsDone() == 0 and operation.GetErrorCode() != "NOT_FOUND_ANY":
+    if Operation.IsDone() == 0 and Operation.GetErrorCode() != "NOT_FOUND_ANY":
         raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
 
 # -----------------------------------------------------------------------------
