@@ -80,6 +80,7 @@ def TestAll (geompy, math):
   #Create base geometry 2D
   Line   = geompy.MakeLineTwoPnt(p0, pxyz)                  #(2 GEOM_Object_ptr)->GEOM_Object_ptr
   Line1  = geompy.MakeLine(pz, vxy)                         #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  Line2  = geompy.MakeLineTwoPnt(pxyz, pz)                   #(2 GEOM_Object_ptr)->GEOM_Object_ptr
   Plane  = geompy.MakePlane(pz, vxyz, trimsize)             #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Plane1 = geompy.MakePlaneThreePnt(px, pz, p200, trimsize) #(4 Doubles)->GEOM_Object_ptr
 
@@ -97,6 +98,9 @@ def TestAll (geompy, math):
 
   #Test point on curve creation
   p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+
+  #Test point on lines intersection
+  pLine   = geompy.MakeVertexOnLinesIntersection( Line1, Line2 )
 
   #Create base geometry 3D
   Box      = geompy.MakeBoxTwoPnt(p0, p200)                   #(2 GEOM_Object_ptr)->GEOM_Object_ptr
@@ -147,6 +151,9 @@ def TestAll (geompy, math):
 
   #ShapeList for Sewing
   S = geompy.MakeRotation(Face, vxy, angle1)
+	
+  #Test Line on Faces Intersection
+  Line3  = geompy.MakeLineTwoFaces( prism1_faces[0], prism1_faces[1]) #(2 GEOM_Object_ptr)->GEOM_Object_ptr
 
   #Create advanced objects
   Copy       = geompy.MakeCopy(Box)                      #(GEOM_Object_ptr)->GEOM_Object_ptr
@@ -233,6 +240,7 @@ def TestAll (geompy, math):
   id_pz   = geompy.addToStudy(pz,   "Vertex Z")
   id_pxyz = geompy.addToStudy(pxyz, "Vertex XYZ")
   id_p200 = geompy.addToStudy(p200, "Vertex 200")
+  id_pLine = geompy.addToStudy(pLine, "Vertex on Lines Intersection")	
 
   id_vx   = geompy.addToStudy(vx,   "Vector X")
   id_vy   = geompy.addToStudy(vy,   "Vector Y")
@@ -245,6 +253,7 @@ def TestAll (geompy, math):
 
   id_Line   = geompy.addToStudy(Line,   "Line")
   id_Line1  = geompy.addToStudy(Line1,  "Line by point and vector")
+  id_Line3  = geompy.addToStudy(Line3,  "Line on Two Faces Intersection")
   id_Plane  = geompy.addToStudy(Plane,  "Plane")
   id_Plane1 = geompy.addToStudy(Plane1,  "Plane by 3 points")
 
