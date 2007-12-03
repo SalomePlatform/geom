@@ -10,7 +10,7 @@ concerning created or imported geometrical objects. They are:
 <li>\ref basic_prop_anchor "Basic properties"</li>
 <li>\ref center_mass_anchor "Center of mass"</li>
 <li>\ref inertia_anchor "Inertia"</li>
-<li>\ref normale_anchor "Normale to a Face"</li>
+<li>\ref normale_anchor "Normal to a Face"</li>
 <li>\ref boundaries_anchor "Check Free Boundaries"</li>
 <li>\ref faces_anchor "Check Faces"</li>
 <li>\ref bounding_box_anchor "Bounding box"</li>
@@ -84,7 +84,7 @@ returned.
 \image html measures4.png
 
 \anchor normale_anchor
-<br><h2>Normale to a Face</h2>
+<br><h2>Normal to a Face</h2>
 
 \n Calculates the normal vector to the selected \b Face. The \b Point
 is a point of the \Face, where the Normal should be calculated.
