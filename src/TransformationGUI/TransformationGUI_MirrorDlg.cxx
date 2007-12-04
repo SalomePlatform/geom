@@ -304,7 +304,8 @@ void TransformationGUI_MirrorDlg::SetEditCurrentArgument()
       {
       case 0:
 	{
-	  globalSelection( GEOM_POINT );
+	  //	  globalSelection( GEOM_POINT );
+	  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 	  break;
 	}
       case 1:

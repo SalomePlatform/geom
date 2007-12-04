@@ -32,6 +32,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+
 #include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
@@ -101,7 +108,8 @@ void BasicGUI_EllipseDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  globalSelection( GEOM_POINT );
+  //  globalSelection( GEOM_POINT );
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX); //Select Vertex on All Shapes
 
   myPoint = myDir = GEOM::GEOM_Object::_nil();
 
@@ -207,6 +215,25 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {  
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+    // Get Selected object if selected subshape
+    TopoDS_Shape aShape;
+    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+      {
+	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	TColStd_IndexedMapOfInteger aMap;
+	aSelMgr->GetIndexes( firstIObject(), aMap );
+	if ( aMap.Extent() == 1 )
+	  {
+	    GEOM::GEOM_IShapesOperations_var aShapesOp =
+	      getGeomEngine()->GetIShapesOperations( getStudyId() );
+	    int anIndex = aMap( 1 );
+	    TopTools_IndexedMapOfShape aShapes;
+	    TopExp::MapShapes( aShape, aShapes );
+	    aShape = aShapes.FindKey( anIndex );
+	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    aSelMgr->clearSelected();
+	  }
+      }
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myDir   = aSelectedObject;
   }
@@ -228,9 +255,9 @@ void BasicGUI_EllipseDlg::SetEditCurrentArgument()
   
   myEditCurrentArgument->setFocus();
   if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
-    globalSelection( GEOM_LINE );
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
   else
-    globalSelection( GEOM_POINT );
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
   SelectionIntoArgument();
 }
 

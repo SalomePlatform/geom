@@ -39,6 +39,12 @@
 #include "SALOME_ListIteratorOfListIO.hxx"
 #include "SALOME_ListIO.hxx"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include "GEOMImpl_Types.hxx"
 
 using namespace std;
@@ -106,7 +112,8 @@ void BasicGUI_CurveDlg::Init()
   myPoints = new GEOM::ListOfGO();
   myPoints->length( 0 );
 
-  globalSelection( GEOM_POINT );
+  //  globalSelection( GEOM_POINT );
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
@@ -275,9 +282,30 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
 	{
 	  //TopoDS_Shape aPointShape;
 	  //if ( myGeomBase->GetShape( aSelectedObject, aPointShape, TopAbs_VERTEX ) )
+
+	  TopoDS_Shape aShape;
+	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	    {
+	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	      TColStd_IndexedMapOfInteger aMap;
+	      aSelMgr->GetIndexes( anIt.Value(), aMap );
+	      if ( aMap.Extent() == 1 )
+		{
+		  GEOM::GEOM_IShapesOperations_var aShapesOp =
+		    getGeomEngine()->GetIShapesOperations( getStudyId() );
+		  int anIndex = aMap( 1 );
+		  TopTools_IndexedMapOfShape aShapes;
+		  TopExp::MapShapes( aShape, aShapes );
+		  aShape = aShapes.FindKey( anIndex );
+		  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		  aSelMgr->clearSelected();
+		}
+	  }
+
 	  int pos = isPointInList(myOrderedSel,aSelectedObject);
 	  if(is_append && pos==-1)
-	    myOrderedSel.push_back(aSelectedObject);
+	  myOrderedSel.push_back(aSelectedObject);
+
 	  myPoints[i++] = aSelectedObject;
 	}
     }
@@ -314,7 +342,8 @@ void BasicGUI_CurveDlg::ActivateThisDialog()
 
   // myGeomGUI->SetState( 0 );
 
-  globalSelection( GEOM_POINT );
+  //  globalSelection( GEOM_POINT );
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   ConstructorsClicked( getConstructorId() );
 }
 

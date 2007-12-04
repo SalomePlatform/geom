@@ -179,7 +179,8 @@ void PrimitiveGUI_CylinderDlg::ConstructorsClicked(int constructorId)
     { 
     case 0 :
       {
-	globalSelection( GEOM_POINT );
+	//	globalSelection( GEOM_POINT );
+	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
 	GroupDimensions->hide();
 	resize(0, 0);
@@ -269,35 +270,30 @@ void PrimitiveGUI_CylinderDlg::SelectionIntoArgument()
     
   if(!testResult || CORBA::is_nil( aSelectedObject ))
     return;
-  
+
+  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  TopoDS_Shape aShape;
+  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+    {
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes( firstIObject(), aMap );
+      if ( aMap.Extent() == 1 )
+	{
+	  GEOM::GEOM_IShapesOperations_var aShapesOp =
+	    getGeomEngine()->GetIShapesOperations( getStudyId() );
+	  int anIndex = aMap( 1 );
+	  TopTools_IndexedMapOfShape aShapes;
+	  TopExp::MapShapes( aShape, aShapes );
+	  aShape = aShapes.FindKey( anIndex );
+	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	  aSelMgr->clearSelected();
+	}
+    }
   if (myEditCurrentArgument == GroupPoints->LineEdit1)
     myPoint = aSelectedObject;
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2)  {
-    if ( testResult && !aSelectedObject->_is_nil() )
-      {
-	TopoDS_Shape aShape;
-	if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
-	  {
-	    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-	    TColStd_IndexedMapOfInteger aMap;
-	    aSelMgr->GetIndexes( firstIObject(), aMap );
-	    if ( aMap.Extent() == 1 )
-	      {
-		    GEOM::GEOM_IShapesOperations_var aShapesOp =
-		      getGeomEngine()->GetIShapesOperations( getStudyId() );
-		    int anIndex = aMap( 1 );
-		    TopTools_IndexedMapOfShape aShapes;
-		    TopExp::MapShapes( aShape, aShapes );
-		    aShape = aShapes.FindKey( anIndex );
-		    myDir = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-		    aSelMgr->clearSelected();
-	      }
-	    else
-	      myDir = aSelectedObject;
-	  }
-      }
-  }
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2)
+    myDir = aSelectedObject;
   displayPreview();
 }
 
@@ -312,7 +308,8 @@ void PrimitiveGUI_CylinderDlg::SetEditCurrentArgument()
   
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection( GEOM_POINT );
+    //    globalSelection( GEOM_POINT );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;

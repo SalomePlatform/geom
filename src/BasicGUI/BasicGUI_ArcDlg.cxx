@@ -33,6 +33,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+
 #include <qlabel.h>
 #include <qcheckbox.h>
 
@@ -174,7 +181,7 @@ void BasicGUI_ArcDlg::ConstructorsClicked (int constructorId)
   {
   case 0:
     {
-      globalSelection( GEOM_POINT );
+      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX); //Select Vertex on All Shapes
 
       Group3Pnts->show();
       resize(0, 0);
@@ -190,7 +197,7 @@ void BasicGUI_ArcDlg::ConstructorsClicked (int constructorId)
     }
   case 1:
     {
-      globalSelection( GEOM_POINT );
+      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX); //Select Vertex on All Shapes
 
       Group3Pnts->hide();
       resize(0, 0);
@@ -280,11 +287,30 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {
+    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+    // Get Selected object if selected subshape
+    TopoDS_Shape aShape;
+    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+      {
+	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	TColStd_IndexedMapOfInteger aMap;
+	aSelMgr->GetIndexes( firstIObject(), aMap );
+	if ( aMap.Extent() == 1 )
+	  {
+	    GEOM::GEOM_IShapesOperations_var aShapesOp =
+	      getGeomEngine()->GetIShapesOperations( getStudyId() );
+	    int anIndex = aMap( 1 );
+	    TopTools_IndexedMapOfShape aShapes;
+	    TopExp::MapShapes( aShape, aShapes );
+	    aShape = aShapes.FindKey( anIndex );
+	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    aSelMgr->clearSelected();
+	  }
+      }
     switch (getConstructorId())
     {
       case 0:
       {
-        myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
         if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = aSelectedObject;
         else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = aSelectedObject;
         else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = aSelectedObject;
@@ -292,7 +318,6 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
       }
       case 1:
       {
-        myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
         if      ( myEditCurrentArgument == Group3Pnts2->LineEdit1 )   myPoint1 = aSelectedObject;
         else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 )   myPoint2 = aSelectedObject;
         else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 )   myPoint3 = aSelectedObject;

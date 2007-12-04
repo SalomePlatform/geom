@@ -258,7 +258,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
 	//PAL6669: resize(0, 0);
 	Group2->show();
 
-	globalSelection( GEOM_POINT );
+	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 	myEditCurrentArgument = Group2->LineEdit1;
 	Group2->LineEdit1->setText("");
 	Group2->LineEdit2->setText("");
@@ -558,14 +558,16 @@ void BasicGUI_MarkerDlg::SetEditCurrentArgument()
   else if(send == Group2->PushButton1) {
     myEditCurrentArgument = Group2->LineEdit1;
     globalSelection( GEOM_POINT );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
   else if(send == Group2->PushButton2) {
     myEditCurrentArgument = Group2->LineEdit2;
       globalSelection( GEOM_LINE );
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if(send == Group2->PushButton3) {
     myEditCurrentArgument = Group2->LineEdit3;
-    globalSelection( GEOM_LINE );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
 
   myEditCurrentArgument->setFocus();

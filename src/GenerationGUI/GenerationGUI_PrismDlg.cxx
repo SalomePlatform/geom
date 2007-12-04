@@ -284,42 +284,38 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     // nbSel == 1
     Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_ptr aSelectedObject =
-      GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
 
     if (!testResult)
       return;
+
+    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+    TopoDS_Shape aShape;
+    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+      {
+	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	TColStd_IndexedMapOfInteger aMap;
+	aSelMgr->GetIndexes( firstIObject(), aMap );
+	if ( aMap.Extent() == 1 )
+	  {
+	    GEOM::GEOM_IShapesOperations_var aShapesOp =
+	      getGeomEngine()->GetIShapesOperations( getStudyId() );
+	    int anIndex = aMap( 1 );
+	    TopTools_IndexedMapOfShape aShapes;
+	    TopExp::MapShapes( aShape, aShapes );
+	    aShape = aShapes.FindKey( anIndex );
+	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    aSelMgr->clearSelected();
+	  }
+      }
 
     if (myEditCurrentArgument == GroupPoints->LineEdit1) {
       myBase = aSelectedObject;
       myOkBase = true;
     }
     else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
-      if ( testResult && !aSelectedObject->_is_nil() )
-	{
-	  TopoDS_Shape aShape;
-	  
-	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
-	    {
-	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-	      TColStd_IndexedMapOfInteger aMap;
-	      aSelMgr->GetIndexes( firstIObject(), aMap );
-	      if ( aMap.Extent() == 1 )
-		{
-		  GEOM::GEOM_IShapesOperations_var aShapesOp =
-		    getGeomEngine()->GetIShapesOperations( getStudyId() );
-		  int anIndex = aMap( 1 );
-		  TopTools_IndexedMapOfShape aShapes;
-		  TopExp::MapShapes( aShape, aShapes );
-		  aShape = aShapes.FindKey( anIndex );
-		  myVec = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-		  aSelMgr->clearSelected();
-		}
-	      else
-		myVec = aSelectedObject;
-
-	      myOkVec = true;
-	    }
-	}
+      myVec = aSelectedObject;
+      myOkVec = true;
     }
     myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
   }
@@ -347,6 +343,26 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     if (!testResult || CORBA::is_nil( aSelectedObject ))
       return;
 
+    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+    TopoDS_Shape aShape;
+    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+      {
+	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	TColStd_IndexedMapOfInteger aMap;
+	aSelMgr->GetIndexes( firstIObject(), aMap );
+	if ( aMap.Extent() == 1 )
+	  {
+	    GEOM::GEOM_IShapesOperations_var aShapesOp =
+	      getGeomEngine()->GetIShapesOperations( getStudyId() );
+	    int anIndex = aMap( 1 );
+	    TopTools_IndexedMapOfShape aShapes;
+	    TopExp::MapShapes( aShape, aShapes );
+	    aShape = aShapes.FindKey( anIndex );
+	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    aSelMgr->clearSelected();
+	  }
+      }
+
     if (myEditCurrentArgument == GroupPoints2->LineEdit1) {
       myBase = aSelectedObject;
       myOkBase = true;
@@ -360,7 +376,6 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
       myOkPnt2 = true;
     }
 
-    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
   }
 
   displayPreview();
@@ -414,12 +429,12 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
   else if (send == GroupPoints2->PushButton2) {
     GroupPoints2->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints2->LineEdit2;
-    globalSelection( GEOM_POINT );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
   else if (send == GroupPoints2->PushButton3) {
     GroupPoints2->LineEdit3->setFocus();
     myEditCurrentArgument = GroupPoints2->LineEdit3;
-    globalSelection( GEOM_POINT );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
 
   myEditCurrentArgument->setFocus();

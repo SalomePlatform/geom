@@ -372,13 +372,11 @@ void BasicGUI_WorkingPlaneDlg::SetEditCurrentArgument()
     myEditCurrentArgument = Group2->LineEdit1;
     GEOM::GEOM_Object_var anObj;
     localSelection( anObj, TopAbs_EDGE );
-    //globalSelection( GEOM_LINE );
   }
   else if(send == Group2->PushButton2) {
     myEditCurrentArgument = Group2->LineEdit2;
     GEOM::GEOM_Object_var anObj;
     localSelection( anObj, TopAbs_EDGE );
-    //globalSelection( GEOM_LINE );
   }
 
   myEditCurrentArgument->setFocus();

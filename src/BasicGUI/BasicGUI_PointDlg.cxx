@@ -253,7 +253,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myEditCurrentArgument->setText("");
       myRefPoint = GEOM::GEOM_Object::_nil();
 
-      globalSelection( GEOM_POINT );
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
       GroupXYZ->hide();
       GroupOnCurve->hide();
@@ -268,7 +268,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myEditCurrentArgument->setText("");
       myEdge = GEOM::GEOM_Object::_nil();
 
-      globalSelection( GEOM_EDGE );
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
 
       GroupXYZ->hide();
       GroupRefPoint->hide();
@@ -285,7 +285,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myLine1 = GEOM::GEOM_Object::_nil();
       myLine2 = GEOM::GEOM_Object::_nil();
 
-      globalSelection( GEOM_EDGE );
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
 
       GroupXYZ->hide();
       GroupRefPoint->hide();
@@ -366,36 +366,32 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
     Standard_Boolean aRes = Standard_False;
     Handle(SALOME_InteractiveObject) anIO = firstIObject();
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
+    QString aName = GEOMBase::GetName( aSelectedObject );
     if ( !CORBA::is_nil( aSelectedObject ) && aRes )
     {
+      myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+      TopoDS_Shape aShape;
+      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	{
+	  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	  TColStd_IndexedMapOfInteger aMap;
+	  aSelMgr->GetIndexes( firstIObject(), aMap );
+	  if ( aMap.Extent() == 1 )
+	    {
+	      GEOM::GEOM_IShapesOperations_var aShapesOp =
+		getGeomEngine()->GetIShapesOperations( getStudyId() );
+	      int anIndex = aMap( 1 );
+	      TopTools_IndexedMapOfShape aShapes;
+	      TopExp::MapShapes( aShape, aShapes );
+	      aShape = aShapes.FindKey( anIndex );
+	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	      aSelMgr->clearSelected();
+	    }
+	}
       if ( id == 0 )
       {
-        // get CORBA reference to data object
-        TopoDS_Shape aShape = myGeomGUI->GetShapeReader().GetShape
-          ( myGeomGUI->GetGeomGen(), aSelectedObject );
-        if ( aShape.IsNull() )
-          return;
-
-        if ( aShape.ShapeType() != TopAbs_VERTEX )
-        {
-          TColStd_IndexedMapOfInteger aMap;
-          LightApp_Application* anApp =
-            (LightApp_Application*)(SUIT_Session::session()->activeApplication());
-          anApp->selectionMgr()->GetIndexes( anIO, aMap );
-
-          if ( aMap.Extent() == 1 )
-          {
-            int anIndex = aMap( 1 );
-            TopTools_IndexedMapOfShape aShapes;
-            TopExp::MapShapes( aShape, aShapes );
-            aShape = aShapes.FindKey( anIndex );
-
-            if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_VERTEX )
-              return;
-          }
-          else
-            return;
-        }
+	if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_VERTEX )
+	  return;
 
         gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
         GroupXYZ->SpinBox_DX->SetValue( aPnt.X() );
@@ -405,22 +401,22 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
       else if ( id == 1 )
       {
         myRefPoint = aSelectedObject;
-        GroupRefPoint->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
+        GroupRefPoint->LineEdit1->setText( aName );
       }
       else if ( id == 2 )
       {
         myEdge = aSelectedObject;
-        GroupOnCurve->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
+        GroupOnCurve->LineEdit1->setText( aName );
       }
       else if ( id == 3 )
       {
 	if (myEditCurrentArgument == GroupLineIntersection->LineEdit1) {
         myLine1 = aSelectedObject;
-        GroupLineIntersection->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
+        GroupLineIntersection->LineEdit1->setText( aName );
 	}
 	else if (myEditCurrentArgument == GroupLineIntersection->LineEdit2) {
         myLine2 = aSelectedObject;
-        GroupLineIntersection->LineEdit2->setText( GEOMBase::GetName( aSelectedObject ) );
+        GroupLineIntersection->LineEdit2->setText( aName );
 	}
       }
     }
@@ -459,28 +455,28 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
     GroupRefPoint->LineEdit1->setFocus();
     myEditCurrentArgument = GroupRefPoint->LineEdit1;
     
-    globalSelection( GEOM_POINT );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
   else if ( send == GroupOnCurve->PushButton1 )
   {
     GroupOnCurve->LineEdit1->setFocus();
     myEditCurrentArgument = GroupOnCurve->LineEdit1;
     
-    globalSelection( GEOM_EDGE );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if ( send == GroupLineIntersection->PushButton1 )
   {
     GroupLineIntersection->LineEdit1->setFocus();
     myEditCurrentArgument = GroupLineIntersection->LineEdit1;
     
-    globalSelection( GEOM_EDGE );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if ( send == GroupLineIntersection->PushButton2 )
   {
     GroupLineIntersection->LineEdit2->setFocus();
     myEditCurrentArgument = GroupLineIntersection->LineEdit2;
     
-    globalSelection( GEOM_EDGE );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
 }
 

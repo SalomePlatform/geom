@@ -33,6 +33,12 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
@@ -186,7 +192,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
 	GroupPoints->LineEdit1->setText("");
  	GroupPoints->LineEdit2->setText("");
 
-	globalSelection( GEOM_POINT );
+	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 	connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
@@ -271,6 +277,24 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+    TopoDS_Shape aShape;
+    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+      {
+	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	TColStd_IndexedMapOfInteger aMap;
+	aSelMgr->GetIndexes( firstIObject(), aMap );
+	if ( aMap.Extent() == 1 )
+	  {
+	    GEOM::GEOM_IShapesOperations_var aShapesOp =
+	      getGeomEngine()->GetIShapesOperations( getStudyId() );
+	    int anIndex = aMap( 1 );
+	    TopTools_IndexedMapOfShape aShapes;
+	    TopExp::MapShapes( aShape, aShapes );
+	    aShape = aShapes.FindKey( anIndex );
+	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    aSelMgr->clearSelected();
+	  }
+      }
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint1 = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = aSelectedObject;
   }

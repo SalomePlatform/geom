@@ -33,6 +33,12 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
@@ -117,7 +123,7 @@ void BasicGUI_LineDlg::Init()
   myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
 
   // myGeomGUI->SetState( 0 );
-  globalSelection( GEOM_POINT );
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 	
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
@@ -173,7 +179,13 @@ bool BasicGUI_LineDlg::ClickOnApply()
 {
   if ( !onAccept() )
     return false;
-  
+  GroupPoints->LineEdit1->setText( "" );
+  GroupPoints->LineEdit2->setText( "" );
+  GroupFaces->LineEdit1->setText( "" );
+  GroupFaces->LineEdit2->setText( "" );
+  myPoint1 = myPoint2 = myFace1 = myFace2 = GEOM::GEOM_Object::_nil();
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX ); //Select vertex on all shapes
   initName();
   return true;
 }
@@ -193,7 +205,6 @@ void BasicGUI_LineDlg::ConstructorsClicked(int constructorId)
       myEditCurrentArgument->setText("");
       myPoint1 = GEOM::GEOM_Object::_nil();
       myPoint2 = GEOM::GEOM_Object::_nil();
-      globalSelection( GEOM_POINT );
       GroupPoints->show();
       GroupFaces->hide();
       break;
@@ -205,7 +216,6 @@ void BasicGUI_LineDlg::ConstructorsClicked(int constructorId)
       myEditCurrentArgument->setText("");
       myFace1 = GEOM::GEOM_Object::_nil();
       myFace2 = GEOM::GEOM_Object::_nil();
-      globalSelection( GEOM_FACE );
       GroupPoints->hide();
       GroupFaces->show();
       break;
@@ -240,6 +250,24 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+    TopoDS_Shape aShape;
+    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+      {
+	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	TColStd_IndexedMapOfInteger aMap;
+	aSelMgr->GetIndexes( firstIObject(), aMap );
+	if ( aMap.Extent() == 1 )
+	  {
+	    GEOM::GEOM_IShapesOperations_var aShapesOp =
+		      getGeomEngine()->GetIShapesOperations( getStudyId() );
+	    int anIndex = aMap( 1 );
+	    TopTools_IndexedMapOfShape aShapes;
+	    TopExp::MapShapes( aShape, aShapes );
+	    aShape = aShapes.FindKey( anIndex );
+	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    aSelMgr->clearSelected();
+	  }
+      }
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint1 = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = aSelectedObject;
     else if ( myEditCurrentArgument == GroupFaces->LineEdit1 )  myFace1 = aSelectedObject;
@@ -293,7 +321,8 @@ void BasicGUI_LineDlg::ActivateThisDialog()
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   // myGeomGUI->SetState( 0 );
-  globalSelection( GEOM_POINT );
+  //  globalSelection( GEOM_POINT );
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setFocus();

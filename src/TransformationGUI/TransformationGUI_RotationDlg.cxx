@@ -269,31 +269,28 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
       if(!testResult || CORBA::is_nil( aSelectedObject ))
 	return;
 
-      if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0) {
-	if ( testResult && !aSelectedObject->_is_nil() )
+      aName = GEOMBase::GetName( aSelectedObject );
+      TopoDS_Shape aShape;
+      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
 	{
-	  TopoDS_Shape aShape;
-	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	  TColStd_IndexedMapOfInteger aMap;
+	  aSelMgr->GetIndexes( firstIObject(), aMap );
+	  if ( aMap.Extent() == 1 )
 	    {
-	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-	      TColStd_IndexedMapOfInteger aMap;
-	      aSelMgr->GetIndexes( firstIObject(), aMap );
-		if ( aMap.Extent() == 1 )
-		  {
-		    GEOM::GEOM_IShapesOperations_var aShapesOp =
-		      getGeomEngine()->GetIShapesOperations( getStudyId() );
-		    int anIndex = aMap( 1 );
-		    TopTools_IndexedMapOfShape aShapes;
-		    TopExp::MapShapes( aShape, aShapes );
-		    aShape = aShapes.FindKey( anIndex );
-		    myAxis = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-		    aSelMgr->clearSelected();
-		  }
-		else
-		  myAxis = aSelectedObject;
+	      GEOM::GEOM_IShapesOperations_var aShapesOp =
+		getGeomEngine()->GetIShapesOperations( getStudyId() );
+	      int anIndex = aMap( 1 );
+	      TopTools_IndexedMapOfShape aShapes;
+	      TopExp::MapShapes( aShape, aShapes );
+	      aShape = aShapes.FindKey( anIndex );
+	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	      aSelMgr->clearSelected();
 	    }
 	}
-      }
+     
+      if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0)
+	myAxis = aSelectedObject;
       else if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1)
 	myCentPoint = aSelectedObject;
       else if(myEditCurrentArgument == GroupPoints->LineEdit4)
@@ -301,7 +298,6 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
       else if(myEditCurrentArgument == GroupPoints->LineEdit5)
 	myPoint2 = aSelectedObject;
 
-      aName = GEOMBase::GetName( aSelectedObject );
     }
   myEditCurrentArgument->setText( aName );
 
@@ -329,17 +325,17 @@ void TransformationGUI_RotationDlg::SetEditCurrentArgument()
       localSelection( anObj, TopAbs_EDGE );
     }
     else
-      globalSelection( GEOM_POINT  );
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
   else if (send == GroupPoints->PushButton4)
     {
       myEditCurrentArgument = GroupPoints->LineEdit4;
-      globalSelection( GEOM_POINT );
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
     }
   else if (send == GroupPoints->PushButton5)
     {
       myEditCurrentArgument = GroupPoints->LineEdit5;
-      globalSelection( GEOM_POINT );
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
     }
 
   myEditCurrentArgument->setFocus();

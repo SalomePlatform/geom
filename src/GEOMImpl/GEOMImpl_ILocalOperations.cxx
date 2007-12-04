@@ -768,8 +768,8 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
     }
   }
   catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
 
