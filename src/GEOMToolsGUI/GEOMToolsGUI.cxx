@@ -31,6 +31,7 @@
 #include "GeometryGUI.h"
 #include "GEOM_Actor.h"
 #include "GEOMBase.h"
+#include "GEOMBase_aWarningDlg.h"
 
 #include "GEOM_Operation.h"
 #include "GEOM_Displayer.h"
@@ -315,20 +316,22 @@ void GEOMToolsGUI::OnEditDelete()
 	}
 	// VSR 17/11/04: check if all objects selected belong to GEOM component <-- finish
 	QString aNameList;
-	int nbSel = selected.Extent();
+	int nbSel = 0;
 	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
 	  {
 	  Handle(SALOME_InteractiveObject) io = It.Value();
-	  aNameList.append("\n    - ");
-	  aNameList.append(io->getName());
+	  QString aName = io->getName();
+	    if ( aName != "" && aName.ref(0) != '*') {
+	      aNameList.append("\n    - " + aName);
+	      nbSel++;
+	    }
 	  }
-	
-	if ( SUIT_MessageBox::warn2( app->desktop(),
-				     QObject::tr( "GEOM_WRN_WARNING" ),
-				     QObject::tr( "GEOM_REALLY_DELETE" ).arg( nbSel ).arg( aNameList ),
-				     QObject::tr( "GEOM_BUT_YES" ),
-				     QObject::tr( "GEOM_BUT_NO" ), 1, 0, 0 ) != 1 )
-	  return;
+
+       GEOMBase_aWarningDlg* Dialog = new GEOMBase_aWarningDlg( app->desktop(),  QObject::tr( "GEOM_WRN_WARNING" ), aNameList, nbSel);
+       int r = Dialog->exec();
+
+       if (!r)
+	 return;
 
 	//	QAD_Operation* op = new SALOMEGUI_ImportOperation(.....);
 	//	op->start();

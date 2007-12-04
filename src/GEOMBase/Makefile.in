@@ -41,17 +41,19 @@ LIB = libGEOMBase.la
 EXPORT_HEADERS= GEOMBase.h \
 		GEOMBase_Skeleton.h \
 		GEOMBase_Helper.h \
+		GEOMBase_aWarningDlg.h \
 		GEOM_Operation.h
 
 LIB_SRC = 	GEOMBase.cxx \
 		GEOMBase_Skeleton.cxx \
 		GEOMBase_aParameterDlg.cxx \
+		GEOMBase_aWarningDlg.cxx \
 		GEOMBase_Helper.cxx \
 		GEOM_Operation.cxx
 
-LIB_MOC = \
-		GEOMBase_Skeleton.h \
-		GEOMBase_aParameterDlg.h
+LIB_MOC = 	GEOMBase_Skeleton.h \
+		GEOMBase_aParameterDlg.h \
+		GEOMBase_aWarningDlg.h
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 SALOMEDS.idl \
