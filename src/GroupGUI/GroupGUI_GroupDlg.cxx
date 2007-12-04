@@ -93,7 +93,7 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWi
   myMainName->setReadOnly( true );
   myMainName->setEnabled( myMode == CreateGroup );
 
-  mySelSubBtn = new QPushButton( tr( "SELECT_SUB_SHAPES" ), aFrame );
+  mySelSubBtn = new QRadioButton (tr( "SELECT_SUB_SHAPES" ), aFrame  );
   mySelAllBtn = new QPushButton( tr( "SELECT_ALL" ), aFrame );
   myAddBtn    = new QPushButton( tr( "ADD" ), aFrame );
   myRemBtn    = new QPushButton( tr( "REMOVE" ), aFrame );
@@ -128,7 +128,7 @@ GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
 void GroupGUI_GroupDlg::Init()
 {
   // san -- TODO: clear selected sub-shapes...
-
+  mySelSubBtn->setChecked( true );
   if ( myMode == CreateGroup ) {
     initName( tr( "GROUP_PREFIX" ) );
 
@@ -272,7 +272,7 @@ void GroupGUI_GroupDlg::SetEditCurrentArgument()
 
   if ( send == mySelBtn )
     myEditCurrentArgument = myMainName;
-  else if ( send == mySelSubBtn || send == mySelAllBtn )
+  else if ( (QRadioButton*)sender() == mySelSubBtn || send == mySelAllBtn )
     myEditCurrentArgument = 0;
 
   activateSelection();

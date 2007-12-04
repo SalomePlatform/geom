@@ -35,6 +35,7 @@
 class QGroupBox;
 class QLineEdit;
 class QListBox;
+class QRadioButton;
 
 //=================================================================================
 // class    : GroupGUI_GroupDlg
@@ -93,7 +94,7 @@ private:
     QGroupBox*            GroupMedium;
     QPushButton*          mySelBtn;
     QLineEdit*            myMainName;
-    QPushButton*          mySelSubBtn;
+    QRadioButton*         mySelSubBtn;
     QPushButton*          mySelAllBtn;
     QPushButton*          myAddBtn;
     QPushButton*          myRemBtn;
