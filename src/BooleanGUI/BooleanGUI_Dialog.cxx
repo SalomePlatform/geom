@@ -76,7 +76,7 @@ BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGe
       image0 = QPixmap( SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SECTION")));
       aTitle = tr("GEOM_SECTION");
       aCaption = tr("GEOM_SECTION_TITLE");
-      setHelpFileName("section_operation_page.html");
+      setHelpFileName("section_opeartion_page.html");
       break;
   }
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
