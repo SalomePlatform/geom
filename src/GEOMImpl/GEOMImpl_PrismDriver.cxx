@@ -76,7 +76,7 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
 
   TopoDS_Shape aShape;
 
-  if (aType == PRISM_BASE_VEC_H) {
+  if (aType == PRISM_BASE_VEC_H || aType == PRISM_BASE_VEC_H_2WAYS) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     Handle(GEOM_Function) aRefVector = aCI.GetVector();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
@@ -92,35 +92,14 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
         }
         if (aV.Magnitude() > Precision::Confusion()) {
           aV.Normalize();
+	  if (aType == PRISM_BASE_VEC_H_2WAYS) {
+	    gp_Trsf aTrsf;
+	    aTrsf.SetTranslation( -aV * aCI.GetH() );
+	    BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+	    aShapeBase = aTransformation.Shape();
+	    aCI.SetH( aCI.GetH()*2 );
+	  }
           aShape = BRepPrimAPI_MakePrism(aShapeBase, aV * aCI.GetH(), Standard_False).Shape();
-        }
-      }
-    }
-  } else if (aType == PRISM_BASE_VEC_H_2WAYS) {
-    Handle(GEOM_Function) aRefBase = aCI.GetBase();
-    Handle(GEOM_Function) aRefVector = aCI.GetVector();
-    TopoDS_Shape aShapeBase = aRefBase->GetValue();
-    TopoDS_Shape aShapeVec = aRefVector->GetValue();
-    if (aShapeVec.ShapeType() == TopAbs_EDGE) {
-      TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
-      TopoDS_Vertex V1, V2;
-      gp_Trsf aTrsf;
-      gp_Pnt aP1, aP2;
-      TopExp::Vertices(anE, V1, V2, Standard_True);
-      if (!V1.IsNull() && !V2.IsNull()) {
-        gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
-        if (Abs(aCI.GetH()) < Precision::Confusion()) {
-          Standard_ConstructionError::Raise("Absolute value of prism height is too small");
-        }
-        if (aV.Magnitude() > Precision::Confusion()) {
-	  gp_Vec aVec;
-          aV.Normalize();
-	  aVec.Normalize();
-	  aVec  = aV * (-aCI.GetH());
-          aTrsf.SetTranslation(aVec);
-	  BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
-	  aShapeBase = aTransformation.Shape();
-          aShape = BRepPrimAPI_MakePrism(aShapeBase, (aV * aCI.GetH() * 2), Standard_False).Shape();
         }
       }
     }
