@@ -379,94 +379,93 @@ SetDeflection(float theDeflection, bool theIsRelative)
   SetModified(); 
 } 
 
-void  
-GEOM_Actor:: 
-SetShape(const TopoDS_Shape& theShape, 
-         float theDeflection, 
-         bool theIsRelative) 
-{ 
-  myShape = theShape; 
- 
-  myVertexSource->Clear(); 
-  myIsolatedEdgeSource->Clear(); 
-  myOneFaceEdgeSource->Clear(); 
-  mySharedEdgeSource->Clear(); 
-  myWireframeFaceSource->Clear(); 
-  myShadingFaceSource->Clear(); 
- 
-  TopExp_Explorer aVertexExp(theShape,TopAbs_VERTEX);
-  for(; aVertexExp.More(); aVertexExp.Next()){
+void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
+                           float theDeflection,
+                           bool theIsRelative,
+                           bool theIsVector)
+{
+  myShape = theShape;
+
+  myVertexSource->Clear();
+  myIsolatedEdgeSource->Clear();
+  myOneFaceEdgeSource->Clear();
+  mySharedEdgeSource->Clear();
+  myWireframeFaceSource->Clear();
+  myShadingFaceSource->Clear();
+
+  TopExp_Explorer aVertexExp (theShape,TopAbs_VERTEX);
+  for (; aVertexExp.More(); aVertexExp.Next())
+  {
      const TopoDS_Vertex& aVertex = TopoDS::Vertex(aVertexExp.Current());
      myVertexSource->AddVertex(aVertex);
-  } 
-  SetDeflection(theDeflection,theIsRelative); 
- 
-  // look if edges are free or shared 
+  }
+  SetDeflection(theDeflection, theIsRelative);
+
+  // look if edges are free or shared
   TopTools_IndexedDataMapOfShapeListOfShape anEdgeMap;
   TopExp::MapShapesAndAncestors(theShape,TopAbs_EDGE,TopAbs_FACE,anEdgeMap);
 
-  SetShape(theShape,anEdgeMap); 
+  SetShape(theShape,anEdgeMap,theIsVector);
 }
 
-void  
-GEOM_Actor:: 
-SetShape(const TopoDS_Shape& theShape, 
-         const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap) 
-{ 
-  if(theShape.ShapeType() == TopAbs_COMPOUND) {
+void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
+                           const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
+                           bool theIsVector)
+{
+  if (theShape.ShapeType() == TopAbs_COMPOUND) {
     TopoDS_Iterator anItr(theShape);
-    for(; anItr.More(); anItr.Next()) {
-      SetShape(anItr.Value(),theEdgeMap);
+    for (; anItr.More(); anItr.Next()) {
+      SetShape(anItr.Value(),theEdgeMap,theIsVector);
     }
   }
 
-  switch(theShape.ShapeType()){
+  switch (theShape.ShapeType()) {
     case TopAbs_WIRE: {
       TopExp_Explorer anEdgeExp(theShape,TopAbs_EDGE);
-      for(; anEdgeExp.More(); anEdgeExp.Next()){
+      for (; anEdgeExp.More(); anEdgeExp.Next()){
         const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());
-        if(!BRep_Tool::Degenerated(anEdge))    
-          myIsolatedEdgeSource->AddEdge(anEdge);
+        if (!BRep_Tool::Degenerated(anEdge))
+          myIsolatedEdgeSource->AddEdge(anEdge,theIsVector);
       }
       break;
     }
     case TopAbs_EDGE: {
       const TopoDS_Edge& anEdge = TopoDS::Edge(theShape);
-      if(!BRep_Tool::Degenerated(anEdge))    
-        myIsolatedEdgeSource->AddEdge(anEdge);
+      if (!BRep_Tool::Degenerated(anEdge))
+        myIsolatedEdgeSource->AddEdge(anEdge,theIsVector);
       break;
     }
     case TopAbs_VERTEX: {
       break;
     }
     default: {
-      TopExp_Explorer aFaceExp(theShape,TopAbs_FACE);
-      for(; aFaceExp.More(); aFaceExp.Next()) { 
+      TopExp_Explorer aFaceExp (theShape,TopAbs_FACE);
+      for(; aFaceExp.More(); aFaceExp.Next()) {
         const TopoDS_Face& aFace = TopoDS::Face(aFaceExp.Current());
         myWireframeFaceSource->AddFace(aFace);
         myShadingFaceSource->AddFace(aFace);
         TopExp_Explorer anEdgeExp(aFaceExp.Current(), TopAbs_EDGE);
 	for(; anEdgeExp.More(); anEdgeExp.Next()) {
-	  const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current()); 
+	  const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());
           if(!BRep_Tool::Degenerated(anEdge)){
 	    // compute the number of faces
 	    int aNbOfFaces = theEdgeMap.FindFromKey(anEdge).Extent();
-	    switch(aNbOfFaces){	  
+	    switch(aNbOfFaces){
 	    case 0:  // isolated edge
-	      myIsolatedEdgeSource->AddEdge(anEdge);
+	      myIsolatedEdgeSource->AddEdge(anEdge,theIsVector);
 	      break;
 	    case 1:  // edge in only one face
-	      myOneFaceEdgeSource->AddEdge(anEdge);
+	      myOneFaceEdgeSource->AddEdge(anEdge,theIsVector);
 	      break;
 	    default: // edge shared by at least two faces
-	      mySharedEdgeSource->AddEdge(anEdge);
+	      mySharedEdgeSource->AddEdge(anEdge,theIsVector);
 	    }
           }
-        } 
+        }
       }
     }
-  } 
-} 
+  }
+}
 
 // OLD METHODS
 void GEOM_Actor::setDeflection(double adef) {

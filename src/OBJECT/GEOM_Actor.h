@@ -32,54 +32,55 @@
 #include "GEOM_OBJECT_defs.hxx"
 
 #include "SALOME_Actor.h"
- 
+
 #include <TopoDS_Shape.hxx>
- 
+
 #include "GEOM_SmartPtr.h"
 #include <vtkSmartPointer.h>
- 
-class GEOM_VertexSource; 
-typedef GEOM_SmartPtr<GEOM_VertexSource> PVertexSource; 
- 
-class GEOM_EdgeSource; 
-typedef GEOM_SmartPtr<GEOM_EdgeSource> PEdgeSource; 
- 
-class GEOM_WireframeFace; 
-typedef GEOM_SmartPtr<GEOM_WireframeFace> PWFaceSource; 
- 
-class GEOM_ShadingFace; 
-typedef GEOM_SmartPtr<GEOM_ShadingFace> PSFaceSource; 
- 
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx> 
-class vtkRenderer; 
- 
-class vtkAppendPolyData; 
-typedef GEOM_SmartPtr<vtkAppendPolyData> PAppendFilter; 
+
+class GEOM_VertexSource;
+typedef GEOM_SmartPtr<GEOM_VertexSource> PVertexSource;
+
+class GEOM_EdgeSource;
+typedef GEOM_SmartPtr<GEOM_EdgeSource> PEdgeSource;
+
+class GEOM_WireframeFace;
+typedef GEOM_SmartPtr<GEOM_WireframeFace> PWFaceSource;
+
+class GEOM_ShadingFace;
+typedef GEOM_SmartPtr<GEOM_ShadingFace> PSFaceSource;
+
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+class vtkRenderer;
+
+class vtkAppendPolyData;
+typedef GEOM_SmartPtr<vtkAppendPolyData> PAppendFilter;
 
 class GEOM_OBJECT_EXPORT GEOM_Actor: public SALOME_Actor
-{  
-public: 
-  vtkTypeMacro(GEOM_Actor,SALOME_Actor); 
-  static GEOM_Actor* New(); 
- 
-  void SetShape(const TopoDS_Shape& theShape, 
-                float theDeflection, 
-                bool theIsRelative); 
- 
-  void SetDeflection(float theDeflection, bool theIsRelative); 
-  float GetDeflection() const{ return myDeflection;} 
-  bool GetIsRelative() const{ return myIsRelative;} 
- 
-  void AddToRender(vtkRenderer* theRenderer); 
+{
+public:
+  vtkTypeMacro(GEOM_Actor,SALOME_Actor);
+  static GEOM_Actor* New();
+
+  void SetShape(const TopoDS_Shape& theShape,
+                float theDeflection,
+                bool theIsRelative,
+                bool theIsVector = false);
+
+  void SetDeflection(float theDeflection, bool theIsRelative);
+  float GetDeflection() const{ return myDeflection;}
+  bool GetIsRelative() const{ return myIsRelative;}
+
+  void AddToRender(vtkRenderer* theRenderer);
   void RemoveFromRender(vtkRenderer* theRenderer);
 
   enum EDisplayMode{ eWireframe, eShading};
-  
+
 /*   void SetDisplayMode(EDisplayMode theMode);  */
 /*   EDisplayMode GetDisplayMode() const { return myDisplayMode;}  */
- 
-  void SetSelected(bool theIsSelected); 
-  bool IsSelected() const { return myIsSelected;} 
+
+  void SetSelected(bool theIsSelected);
+  bool IsSelected() const { return myIsSelected;}
 
   // OLD METHODS
   // Properties
@@ -108,7 +109,7 @@ public:
   // SubShape
   void SubShapeOn();
   void SubShapeOff();
-  
+
   // Highlight
   virtual void highlight(bool theHighlight);
   virtual bool hasHighlight() { return true; }
@@ -130,19 +131,19 @@ public:
   virtual
   void
   Highlight(bool theHighlight);
-  
+
   //----------------------------------------------------------------------------
   //! To process prehighlight (called from #SVTK_InteractorStyle)
   virtual
   bool
-  PreHighlight(vtkInteractorStyle* theInteractorStyle, 
+  PreHighlight(vtkInteractorStyle* theInteractorStyle,
 	       SVTK_SelectionEvent* theSelectionEvent,
 	       bool theIsHighlight);
 
   //! To process highlight (called from #SVTK_InteractorStyle)
-  virtual 
+  virtual
   bool
-  Highlight(vtkInteractorStyle* theInteractorStyle, 
+  Highlight(vtkInteractorStyle* theInteractorStyle,
 	    SVTK_SelectionEvent* theSelectionEvent,
 	    bool theIsHighlight);
 
@@ -157,63 +158,64 @@ public:
   virtual
   void
   SetNbIsos(const int theNb[2]);
-  
+
   virtual
   void
   GetNbIsos(int &theNbU,int &theNbV);
-  
-protected: 
-  void SetShape(const TopoDS_Shape& theShape, 
-                const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap); 
- 
-  void SetModified(); 
+
+protected:
+  void SetShape(const TopoDS_Shape& theShape,
+                const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
+                bool theIsVector = false);
+
+  void SetModified();
 
   void GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result);
- 
-  GEOM_Actor(); 
-  ~GEOM_Actor(); 
- 
-private: 
+
+  GEOM_Actor();
+  ~GEOM_Actor();
+
+private:
   TopoDS_Shape myShape;
   int myNbIsos[2];
-  
-  float myDeflection; 
-  bool myIsRelative; 
-  bool myIsForced; 
- 
-  //  EDisplayMode myDisplayMode; 
-  bool myIsSelected; 
- 
-  PDeviceActor myVertexActor; 
-  PVertexSource myVertexSource; 
- 
-  PDeviceActor myIsolatedEdgeActor; 
-  PEdgeSource myIsolatedEdgeSource; 
- 
-  PDeviceActor myOneFaceEdgeActor; 
-  PEdgeSource myOneFaceEdgeSource; 
- 
-  PDeviceActor mySharedEdgeActor; 
-  PEdgeSource mySharedEdgeSource; 
- 
-  PDeviceActor myWireframeFaceActor; 
-  PWFaceSource myWireframeFaceSource; 
- 
-  PDeviceActor myShadingFaceActor; 
-  PSFaceSource myShadingFaceSource; 
- 
+
+  float myDeflection;
+  bool myIsRelative;
+  bool myIsForced;
+
+  //  EDisplayMode myDisplayMode;
+  bool myIsSelected;
+
+  PDeviceActor myVertexActor;
+  PVertexSource myVertexSource;
+
+  PDeviceActor myIsolatedEdgeActor;
+  PEdgeSource myIsolatedEdgeSource;
+
+  PDeviceActor myOneFaceEdgeActor;
+  PEdgeSource myOneFaceEdgeSource;
+
+  PDeviceActor mySharedEdgeActor;
+  PEdgeSource mySharedEdgeSource;
+
+  PDeviceActor myWireframeFaceActor;
+  PWFaceSource myWireframeFaceSource;
+
+  PDeviceActor myShadingFaceActor;
+  PSFaceSource myShadingFaceSource;
+
   PDeviceActor myHighlightActor;
   vtkSmartPointer<vtkProperty>  myHighlightProp;
   vtkSmartPointer<vtkProperty>  myPreHighlightProp;
   vtkSmartPointer<vtkProperty>  myShadingFaceProp;
- 
-  PAppendFilter myAppendFilter; 
-  PPolyDataMapper myPolyDataMapper; 
- 
-  virtual void SetMapper(vtkMapper*); 
- 
-  GEOM_Actor(const GEOM_Actor&); 
-  void operator=(const GEOM_Actor&); 
-}; 
- 
-#endif //GEOM_ACTOR_H 
+
+  PAppendFilter myAppendFilter;
+  PPolyDataMapper myPolyDataMapper;
+
+  virtual void SetMapper(vtkMapper*);
+
+  GEOM_Actor(const GEOM_Actor&);
+  void operator=(const GEOM_Actor&);
+};
+
+#endif //GEOM_ACTOR_H

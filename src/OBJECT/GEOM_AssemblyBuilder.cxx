@@ -207,7 +207,7 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
   vtkActorCollection* AISActors = vtkActorCollection::New();
   MeshShape(myShape,deflection,forced);
   GEOM_Actor* aGeomActor = GEOM_Actor::New();
-  aGeomActor->SetShape(myShape,(float)deflection,false);
+  aGeomActor->SetShape(myShape,(float)deflection,false,isVector);
   AISActors->AddItem(aGeomActor);
 
   aGeomActor->Delete();

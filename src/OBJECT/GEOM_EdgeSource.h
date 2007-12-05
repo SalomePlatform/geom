@@ -17,16 +17,21 @@ public:
   vtkTypeMacro(GEOM_EdgeSource,vtkPolyDataSource); 
   static GEOM_EdgeSource* New(); 
  
-  void AddEdge(const TopoDS_Edge& theEdge); 
+  void AddEdge (const TopoDS_Edge& theEdge,
+                bool theIsVector = false);
   void Clear(){ myEdgeSet.Clear();} 
  
   static  
   void OCC2VTK(const TopoDS_Edge& theEdge,  
                vtkPolyData* thePolyData, 
-               vtkPoints* thePts); 
+               vtkPoints* thePts,
+               bool theIsVector = false); 
  
 protected: 
-  TEdgeSet myEdgeSet; 
+  TEdgeSet myEdgeSet;
+  // The <myIsVector> flag is common for all edges, because the shape,
+  // representing a vector, can have only one edge.
+  bool myIsVector;
  
   void Execute(); 
  
