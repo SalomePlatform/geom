@@ -46,7 +46,10 @@ GEOMBase_aWarningDlg::GEOMBase_aWarningDlg( QWidget* parent, const char* name, c
 {
   if(!name)
     setName( "Warning" );
-  resize(296, 150); 
+  if ( theNum < 15 )
+    resize(296, (120 + (14*theNum)) ); 
+  else
+    resize(296, 300);
   setCaption(name); /* appears on the title bar */
   setSizeGripEnabled(TRUE);
 
@@ -65,13 +68,17 @@ GEOMBase_aWarningDlg::GEOMBase_aWarningDlg( QWidget* parent, const char* name, c
   mainGrpLayout->setMargin(11);
   topLayout->addWidget(mainGrp, 0, 0);
   
+  QLabel* TextLabel = new QLabel(mainGrp, "TextLabel");
+  TextLabel->setText( QObject::tr( "GEOM_REALLY_DELETE" ).arg( theNum ) );  
+  mainGrpLayout->addWidget(TextLabel, 0, 0);
  
   QScrollView* viewer = new QScrollView (mainGrp, "viewer");
   viewer->setResizePolicy( QScrollView::AutoOneFit );
   QLabel* TextLabel1 = new QLabel(viewer, "TextLabel1");
-  TextLabel1->setText( QObject::tr( "GEOM_REALLY_DELETE" ).arg( theNum ).arg( theText ) );  
+  TextLabel1->setText( theText );
+  TextLabel1->setAlignment(Qt::AlignTop);
   viewer->addChild(TextLabel1);
-  mainGrpLayout->addWidget(viewer, 0, 0);
+  mainGrpLayout->addWidget(viewer, 1, 0);
 
   //Create Buttons
 
