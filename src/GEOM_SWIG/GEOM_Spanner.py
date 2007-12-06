@@ -324,8 +324,13 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
       Face_5_horiz = geompy.GetFaceByNormale(aBlock, vz)
       f_5_horiz_ind = geompy.LocalOp.GetSubShapeIndex(aBlock, Face_5_horiz)
 
-      MRot = geompy.MakeMultiTransformation2D(aBlock, f42_sp_ind, 0, 3, f_5_horiz_ind, 0, 5)
-      if MRot is not None:
+      MRot = None
+      is2Dok = True
+      try:
+        MRot = geompy.MakeMultiTransformation2D(aBlock, f42_sp_ind, 0, 3, f_5_horiz_ind, 0, 5)
+      except:
+        is2Dok = False
+      if is2Dok and MRot is not None:
         isMRot2D = 1
         p_z100 = geompy.MakeVertex(0., 0., 100.)
         MRot_tr = geompy.MakeTranslationTwoPoints(MRot, p0, p_z100)
