@@ -94,7 +94,7 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
           aV.Normalize();
 	  if (aType == PRISM_BASE_VEC_H_2WAYS) {
 	    gp_Trsf aTrsf;
-	    aTrsf.SetTranslation( -aV * aCI.GetH() );
+	    aTrsf.SetTranslation( (-aV) * aCI.GetH() );
 	    BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
 	    aShapeBase = aTransformation.Shape();
 	    aCI.SetH( aCI.GetH()*2 );
