@@ -29,10 +29,14 @@
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
+#include <GEOMAlgo_GlueAnalyser.hxx>
+
 #include <ShapeAnalysis_FreeBounds.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeFix_Face.hxx>
 #include <ShapeFix_Shell.hxx>
+#include <ShapeFix_Shape.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
@@ -86,10 +90,6 @@
 #include <Standard_ConstructionError.hxx>
 
 #include "utilities.h"
-
-//#include "BRepTools.hxx"
-//#include "GeomTools.hxx"
-#include <GEOMAlgo_GlueAnalyser.hxx>
 
 
 //=======================================================================
@@ -2295,19 +2295,28 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     aShape = CreatePipeShellsWithoutPath(aCI);
   }
 
+  if (aCI) delete aCI;
+
   if (aShape.IsNull()) return 0;
 
   BRepCheck_Analyzer ana (aShape, Standard_False);
   if (!ana.IsValid()) {
-    if(aCI) delete aCI;
-    Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+    ShapeFix_ShapeTolerance aSFT;
+    aSFT.LimitTolerance(aShape,Precision::Confusion(),Precision::Confusion());
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+    aSfs->SetPrecision(Precision::Confusion());
+    aSfs->Perform();
+    aShape = aSfs->Shape();
+
+    ana.Init(aShape, Standard_False);
+    if (!ana.IsValid()) 
+      Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
   }
 
   TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
   aFunction->SetValue(aRes);
 
   log.SetTouched(Label());
-  if(aCI) delete aCI;
   return 1;
 }
 
