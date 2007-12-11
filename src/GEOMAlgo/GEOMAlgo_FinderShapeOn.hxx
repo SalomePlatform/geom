@@ -111,9 +111,7 @@ Standard_EXPORT  const TopTools_ListOfShape& Shapes() const;
 
 Standard_EXPORT static  void CopySource(const TopoDS_Shape& aS,TopTools_DataMapOfShapeShape& aImages,TopTools_DataMapOfShapeShape& aOriginals,TopoDS_Shape& aSC) ;
 
-
-
-
+Standard_EXPORT static  bool BuildTriangulation (const TopoDS_Shape& theShape);
 
 protected:
 
