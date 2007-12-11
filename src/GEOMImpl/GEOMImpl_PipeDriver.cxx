@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -29,10 +29,14 @@
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
+#include <GEOMAlgo_GlueAnalyser.hxx>
+
 #include <ShapeAnalysis_FreeBounds.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeFix_Face.hxx>
 #include <ShapeFix_Shell.hxx>
+#include <ShapeFix_Shape.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
@@ -87,10 +91,6 @@
 
 #include "utilities.h"
 
-//#include "BRepTools.hxx"
-//#include "GeomTools.hxx"
-#include <GEOMAlgo_GlueAnalyser.hxx>
-
 
 //=======================================================================
 //function : GetID
@@ -126,12 +126,12 @@ static bool FillForOtherEdges(const TopoDS_Shape& F1,
   // creating map of vertex edges for both faces
   TopTools_IndexedDataMapOfShapeListOfShape aMapVertEdge1;
   TopExp::MapShapesAndAncestors(F1, TopAbs_VERTEX, TopAbs_EDGE, aMapVertEdge1);
-  if(!FF.Contains(F1))
-    cout<<"    FillForOtherEdges: map FF not contains key F1"<<endl;
-  if(!FF.Contains(E1))
-    cout<<"    FillForOtherEdges: map FF not contains key E1"<<endl;
-  if(!FF.Contains(V1))
-    cout<<"    FillForOtherEdges: map FF not contains key V1"<<endl;
+  if (!FF.Contains(F1))
+    MESSAGE("    FillForOtherEdges: map FF not contains key F1");
+  if (!FF.Contains(E1))
+    MESSAGE("    FillForOtherEdges: map FF not contains key E1");
+  if (!FF.Contains(V1))
+    MESSAGE("    FillForOtherEdges: map FF not contains key V1");
   const TopoDS_Shape& F2 = FF.FindFromKey(F1);
   const TopoDS_Shape& E2 = FF.FindFromKey(E1);
   const TopoDS_Shape& V2 = FF.FindFromKey(V1);
@@ -636,10 +636,10 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
   Standard_Boolean aWithContact = (aCIDS->GetWithContactMode());
   Standard_Boolean aWithCorrect = (aCIDS->GetWithCorrectionMode());
 
-  Standard_Integer nbBases = aBasesObjs->Length(), 
+  Standard_Integer nbBases = aBasesObjs->Length(),
     nbSubBases = (aSubBasesObjs.IsNull() ? 0 :aSubBasesObjs->Length()),
     nbLocs = (aLocObjs.IsNull() ? 0 :aLocObjs->Length());
-    
+
   if( nbLocs != nbBases) {
     if(aCI) delete aCI;
     Standard_ConstructionError::Raise("Number of sections is not equal to number of locations ");
@@ -860,7 +860,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
     if(aShBase2.IsNull())
       continue;
     TopAbs_ShapeEnum aType2 = aShBase2.ShapeType();
-    
+
     //BRepTools::Write(aShBase1,"/dn02/users_Linux/skl/work/Bugs/14857/base1.brep");
 
     bool OkSec = ( aType1==TopAbs_SHELL || aType1==TopAbs_FACE ) &&
@@ -1151,7 +1151,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
       TopExp::MapShapesAndAncestors(aShBase1, TopAbs_EDGE, TopAbs_FACE, aMapEdgeFaces1);
       TopTools_IndexedDataMapOfShapeListOfShape aMapEdgeFaces2;
       TopExp::MapShapesAndAncestors(aShBase2, TopAbs_EDGE, TopAbs_FACE, aMapEdgeFaces2);
-  
+
       // constuct map face->face
       TopTools_IndexedDataMapOfShapeShape FF;
       TopoDS_Shape FS1,FS2;
@@ -1263,7 +1263,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	    Standard_ConstructionError::Raise("Invalid subbase shape");
 	  }
 	  FS1 = aSh;
-	}	
+	}
 	{ // 2 section
 	  Handle(Standard_Transient) anItem = aSubBasesObjs->Value(i+1);
 	  if(anItem.IsNull()) {
@@ -1291,7 +1291,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
 	  if(aCI) delete aCI;
 	  Standard_ConstructionError::Raise("Invalid subbase shape");
 	}
-      
+
 	FF.Add(FS1,FS2);
 
 	// add pairs of edges to FF
@@ -1396,9 +1396,9 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
   // vertex for recognition
   Handle(TColStd_HSequenceOfTransient) VObjs = aCIDS->GetLocations();
 
-  Standard_Integer nbBases = aBasesObjs->Length(), 
+  Standard_Integer nbBases = aBasesObjs->Length(),
     nbv = (VObjs.IsNull() ? 0 :VObjs->Length());
-    
+
   if( nbv != nbBases ) {
     if(aCI) delete aCI;
     Standard_ConstructionError::Raise("Number of shapes for recognition is invalid");
@@ -1510,12 +1510,11 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 
       Handle(Geom_Surface) S1 = BRep_Tool::Surface(TopoDS::Face(F1));
       if(S1->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
-	Handle(Geom_RectangularTrimmedSurface) RTS = 
+	Handle(Geom_RectangularTrimmedSurface) RTS =
 	  Handle(Geom_RectangularTrimmedSurface)::DownCast(S1);
 	S1 = RTS->BasisSurface();
       }
-      Handle(Geom_Plane) Pln1 = 
-	  Handle(Geom_Plane)::DownCast(S1);
+      Handle(Geom_Plane) Pln1 = Handle(Geom_Plane)::DownCast(S1);
       if( Pln1.IsNull() ) {
 	if(aCI) delete aCI;
 	Standard_ConstructionError::Raise("Surface from face is not plane");
@@ -1524,11 +1523,11 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 
       Handle(Geom_Surface) S2 = BRep_Tool::Surface(TopoDS::Face(F2));
       if(S2->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
-	Handle(Geom_RectangularTrimmedSurface) RTS = 
+	Handle(Geom_RectangularTrimmedSurface) RTS =
 	  Handle(Geom_RectangularTrimmedSurface)::DownCast(S2);
 	S2 = RTS->BasisSurface();
       }
-      Handle(Geom_Plane) Pln2 = 
+      Handle(Geom_Plane) Pln2 =
 	  Handle(Geom_Plane)::DownCast(S2);
       if( Pln2.IsNull() ) {
 	if(aCI) delete aCI;
@@ -1628,9 +1627,9 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 	B.Add(W,E4.Reversed());
 	//cout<<"      wire for edge "<<nbee<<" is created"<<endl;
 	//BRepTools::Write(W,"/dn02/users_Linux/skl/work/Bugs/14857/w.brep");
-	
+
 	// make surface
-	
+
 	double fp,lp;
 	Handle(Geom_Curve) C1 = BRep_Tool::Curve(E1,fp,lp);
 	//bool IsConicC1 = false;
@@ -1784,7 +1783,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
       }
       B.Add(aShell,F1);
       B.Add(aShell,F2);
-      
+
       // make sewing for this shell
       Handle(BRepBuilderAPI_Sewing) aSewing = new BRepBuilderAPI_Sewing;
       aSewing->SetTolerance(Precision::Confusion());
@@ -1823,7 +1822,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 	cout<<"    solid for face "<<nbff<<" is not created"<<endl;
       }
       //cout<<"    solid for face "<<nbff<<" is created"<<endl;
-      
+
       //Handle(ShapeFix_Shell) sfs = new ShapeFix_Shell(aShell);
       //sfs->Perform();
       //TopoDS_Shell FixedShell = sfs->Shell();
@@ -1885,31 +1884,30 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
       if(aCI) delete aCI;
       Standard_NullObject::Raise("MakePipe aborted : null path argument");
     }
-  
+
     // Get path contour
     if (aShapePath.ShapeType() == TopAbs_WIRE) {
       aWirePath = TopoDS::Wire(aShapePath);
-    } 
+    }
     else {
       if (aShapePath.ShapeType() == TopAbs_EDGE) {
 	TopoDS_Edge anEdge = TopoDS::Edge(aShapePath);
 	aWirePath = BRepBuilderAPI_MakeWire(anEdge);
-      } 
+      }
       else {
 	if(aCI) delete aCI;
 	Standard_TypeMismatch::Raise("MakePipe aborted : path shape is neither a wire nor an edge");
-      } 
+      }
     }
   }
 
   TopoDS_Shape aShape;
 
-  if (aType == PIPE_BASE_PATH) {
-     
+  if (aType == PIPE_BASE_PATH)
+  {
     Handle(GEOM_Function) aRefBase = aCI->GetBase();
-   
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
-    
+
     if (aShapeBase.IsNull()) {
       if(aCI) delete aCI;
       Standard_NullObject::Raise("MakePipe aborted : null base argument");
@@ -1929,9 +1927,9 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     Standard_Boolean aWithContact = (aCIDS->GetWithContactMode());
     Standard_Boolean aWithCorrect = (aCIDS->GetWithCorrectionMode());
 
-    Standard_Integer i =1, nbBases = aBasesObjs->Length(), 
+    Standard_Integer i =1, nbBases = aBasesObjs->Length(),
       nbLocs = (aLocObjs.IsNull() ? 0 :aLocObjs->Length());
-    
+
     if(nbLocs && nbLocs != nbBases) {
       if(aCI) delete aCI;
       Standard_ConstructionError::Raise("Number of sections is not equal to number of locations ");
@@ -1952,7 +1950,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
       TopAbs_ShapeEnum aTypeBase = aShapeBase.ShapeType();
 
       //if for section was specified face with a few wires then a few
-      //    pipes were build and make solid 
+      //    pipes were build and make solid
       Standard_Boolean NeedCreateSolid = Standard_False;
       if(aTypeBase == TopAbs_SHELL) {
 	// create wire as boundary contour if shell is no closed
@@ -2005,7 +2003,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
 	aSeqLocs.Append(aShapeLoc);
       }
     }
-    
+
     nbLocs = aSeqLocs.Length();
 
     // skl 02.05.2007
@@ -2193,7 +2191,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
 	}
 	aBuilder.Build();
 	TopoDS_Shape resShape = aBuilder.Shape();
-	aSeqRes.Append(resShape);	
+	aSeqRes.Append(resShape);
       }
       // create wirepath and sequences of shapes for last part
       BRep_Builder B;
@@ -2241,12 +2239,12 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
 
       Standard_Integer nbShapes = aSeqBases.Length();
       Standard_Integer step = nbShapes/nbBases;
-    
+
       if(nbShapes < nbBases || fmod((double)nbShapes, (double)nbBases)) {
 	if(aCI) delete aCI;
 	Standard_ConstructionError::Raise("Invalid sections were specified for building pipe");
       }
-      Standard_Integer ind =0;	 
+      Standard_Integer ind =0;
       for( i=1; i  <= nbShapes && ind < nbShapes; i++) { //i+nbBases <= nbShapes
 	TopTools_SequenceOfShape usedBases;
 	Standard_Integer j = 1;
@@ -2268,12 +2266,12 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
       }
       aBuilder.Build();
       aShape = aBuilder.Shape();
-      aSeqFaces.Append(aShape);	
+      aSeqFaces.Append(aShape);
       for( j = 1; j <=usedBases.Length(); j++)
         aBuilder.Delete(usedBases.Value(j));
       }
-    	
-      //for case if section is face 
+
+      //for case if section is face
       if(aSeqFaces.Length() >1)	{
 	BRep_Builder aB;
 	TopoDS_Compound aComp;
@@ -2295,19 +2293,31 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     aShape = CreatePipeShellsWithoutPath(aCI);
   }
 
+  if (aCI) {
+    delete aCI;
+    aCI = 0;
+  }
+
   if (aShape.IsNull()) return 0;
 
   BRepCheck_Analyzer ana (aShape, Standard_False);
   if (!ana.IsValid()) {
-    if(aCI) delete aCI;
-    Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+    ShapeFix_ShapeTolerance aSFT;
+    aSFT.LimitTolerance(aShape,Precision::Confusion(),Precision::Confusion());
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+    aSfs->SetPrecision(Precision::Confusion());
+    aSfs->Perform();
+    aShape = aSfs->Shape();
+
+    ana.Init(aShape, Standard_False);
+    if (!ana.IsValid())
+      Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
   }
 
   TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
   aFunction->SetValue(aRes);
 
   log.SetTouched(Label());
-  if(aCI) delete aCI;
   return 1;
 }
 
