@@ -71,6 +71,7 @@
 
 #include <GEOMAlgo_SurfaceTools.hxx>
 #include <GEOMAlgo_StateCollector.hxx>
+#include <GEOMAlgo_FinderShapeOn.hxx>
 
 #include <GEOMAlgo_PassKey.hxx>
 #include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
@@ -603,8 +604,11 @@
   //
   aTRF=BRep_Tool::Triangulation(aF, aLoc);
   if (aTRF.IsNull()) {
-    myErrorStatus=20; // no triangulation found
-    return;  
+    if (!GEOMAlgo_FinderShapeOn::BuildTriangulation(aF)) {
+      myErrorStatus=20; // no triangulation found
+      return;
+    }
+    aTRF=BRep_Tool::Triangulation(aF, aLoc);
   }
   //
   const gp_Trsf& aTrsf=aLoc.Transformation();
@@ -751,8 +755,11 @@
   if (aTRE.IsNull() || aPTE.IsNull()) {
     Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(aE, aLoc);
     if (aPE.IsNull()) {
-      myErrorStatus=20; // no triangulation found
-      return;
+      if (!GEOMAlgo_FinderShapeOn::BuildTriangulation(aE)) {
+        myErrorStatus=20; // no triangulation found
+        return;
+      }
+      aPE = BRep_Tool::Polygon3D(aE, aLoc);
     }
     const gp_Trsf& aTrsf=aLoc.Transformation();
     const TColgp_Array1OfPnt& aNodes=aPE->Nodes();
