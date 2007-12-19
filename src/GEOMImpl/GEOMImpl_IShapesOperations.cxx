@@ -41,6 +41,7 @@
 #include "GEOMImpl_Block6Explorer.hxx"
 
 #include "GEOM_Function.hxx"
+#include "GEOM_ISubShape.hxx"
 #include "GEOM_PythonDump.hxx"
 
 #include "GEOMAlgo_FinderShapeOn1.hxx"
@@ -753,9 +754,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   TopoDS_Shape aShape = theShape->GetValue();
   if (aShape.IsNull()) return NULL;
 
+  Handle(GEOM_Function) aMainShape = theShape->GetLastFunction();
+
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   Handle(GEOM_Object) anObj;
-  Handle(GEOM_Function) aFunction;
   TopTools_MapOfShape mapShape;
   TopTools_ListOfShape listShape;
 
@@ -792,13 +794,33 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   TopExp::MapShapes(aShape, anIndices);
   Handle(TColStd_HArray1OfInteger) anArray;
 
+  Standard_Integer nbAllSubShape = anIndices.Extent();
+
   TopTools_ListIteratorOfListOfShape itSub (listShape);
   TCollection_AsciiString anAsciiList, anEntry;
-  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+  for (int index = 1; itSub.More(); itSub.Next(), ++index)
+  {
     TopoDS_Shape aValue = itSub.Value();
     anArray = new TColStd_HArray1OfInteger(1,1);
     anArray->SetValue(1, anIndices.FindIndex(aValue));
-    anObj = GetEngine()->AddSubShape(theShape, anArray);
+
+    //anObj = GetEngine()->AddSubShape(theShape, anArray);
+    {
+      anObj = GetEngine()->AddObject(GetDocID(), GEOM_SUBSHAPE);
+      Handle(GEOM_Function) aFunction = anObj->AddFunction(GEOM_Object::GetSubShapeID(), 1);
+      if (aFunction.IsNull()) return aSeq;
+
+      GEOM_ISubShape aSSI (aFunction);
+      aSSI.SetMainShape(aMainShape);
+      aSSI.SetIndices(anArray);
+
+      // Set function value directly, as we know it.
+      // Usage of Solver here would lead to significant loss of time,
+      // because GEOM_SubShapeDriver will build TopTools_IndexedMapOfShape
+      // on the main shape for each being calculated sub-shape separately.
+      aFunction->SetValue(aValue);
+    }
+
     if (!anObj.IsNull()) {
       aSeq->Append(anObj);
 
@@ -812,9 +834,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   //Make a Python command
   anAsciiList.Trunc(anAsciiList.Length() - 1);
 
-  aFunction = theShape->GetLastFunction();
-
-  GEOM::TPythonDump pd (aFunction, /*append=*/true);
+  GEOM::TPythonDump pd (aMainShape, /*append=*/true);
   pd << "[" << anAsciiList.ToCString();
   pd << "] = geompy.SubShapeAll" << (isSorted ? "Sorted(" : "(");
   pd << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";

@@ -212,8 +212,8 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
     // try to load library if it is not loaded yet
     QCString libs;
 #ifndef WNT
-    if( ( libs = getenv( "LD_LIBRARY_PATH" ) ) ) {
-	  QStringList dirList = QStringList::split( ":", libs, false ); // skip empty entries
+    if ( (libs = getenv( "LD_LIBRARY_PATH" )) ) {
+      QStringList dirList = QStringList::split( ":", libs, false ); // skip empty entries
 #else
 	if( ( libs = getenv( "PATH" ) ) ) {
 	  QStringList dirList = QStringList::split( ";", libs, false ); // skip empty entries
@@ -377,7 +377,7 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 2175 ||  // POPUP VIEWER - SELECT ONLY - SHELL
       id == 2176 ||  // POPUP VIEWER - SELECT ONLY - SOLID
       id == 2177 ||  // POPUP VIEWER - SELECT ONLY - COMPOUND
-      id == 2178 ||  // POPUP VIEWER - SELECT ONLY - SELECT ALL      
+      id == 2178 ||  // POPUP VIEWER - SELECT ONLY - SELECT ALL
       id == 31   ||  // MENU EDIT - COPY
       id == 33   ||  // MENU EDIT - DELETE
       id == 411  ||  // MENU SETTINGS - ADD IN STUDY
@@ -860,7 +860,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 707, "CHECK" );
   createGeomAction( 7072, "CHECK_COMPOUND" );
 
-#ifdef _DEBUG_ // PAL16821 
+#ifdef _DEBUG_ // PAL16821
   createGeomAction( 5103, "CHECK_GEOMETRY" );
 #endif
   createGeomAction( 412, "SHADING_COLOR" );
@@ -1028,7 +1028,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 707, measurId, -1 );
   createMenu( 7072, measurId, -1 );
 
-#ifdef _DEBUG_ // PAL16821 
+#ifdef _DEBUG_ // PAL16821
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
   createMenu( separator(), toolsId, -1 );
   createMenu( 5103, toolsId, -1 );
@@ -1164,7 +1164,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( 214 ), clientOCCorVTK, true );
 
   QString selectOnly = "(client='OCCViewer' or client='VTKViewer') and (selcount=0)";
-  
+
   int selectolnyId = mgr->insert( tr("MEN_SELECT_ONLY"), -1, -1);                //select only menu
   mgr->insert( action(2171), selectolnyId, -1);                                  //Vertex
   mgr->setRule(action(2171), selectOnly, true);
@@ -1191,7 +1191,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(2178), selectolnyId, -1);                                  //Clear selection filter
   mgr->setRule(action(2178), selectOnly, true);
   mgr->setRule(action(2178), selectOnly + " and selectionmode='ALL'", false);
-  
+
   mgr->insert( action(  213 ), -1, -1 ); // display only
   mgr->setRule( action( 213 ), rule.arg( types ).arg( "true" ), true );
   mgr->insert( separator(), -1, -1 );
@@ -1240,12 +1240,12 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
 
   // disable OCC selectors
-  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+  //getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
   for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
     sr->setEnabled(true);
 
   // disable VTK selectors
-  getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
+  //getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
   for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
     sr->setEnabled(true);
 
