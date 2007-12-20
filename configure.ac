@@ -214,20 +214,19 @@ CORBA=adm_local/unix/$corba
 
 fi
 
-echo
-echo ---------------------------------------------
-echo testing msg2qm
-echo ---------------------------------------------
-echo
-
-CHECK_MSG2QM
-
-
 GEOM_WITH_GUI=yes
 
 AM_CONDITIONAL(GEOM_ENABLE_GUI, [test "${GEOM_WITH_GUI}" = "yes"])
 
 if test "${GEOM_WITH_GUI}" = "yes"; then
+    echo
+    echo ---------------------------------------------
+    echo testing msg2qm
+    echo ---------------------------------------------
+    echo
+
+    CHECK_MSG2QM
+
     echo
     echo ---------------------------------------------
     echo testing openGL
@@ -320,7 +319,13 @@ echo ---------------------------------------------
 echo
 
 echo Configure
+
+if test "${GEOM_WITH_GUI}" = "yes"; then
 variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
+fi
+if test "${GEOM_WITH_GUI}" = "no"; then
+variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
+fi
 
 for var in $variables
 do
