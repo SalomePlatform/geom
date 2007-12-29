@@ -195,6 +195,7 @@ propagate.png \
 redo.png \
 undo.png \
 arccenter.png \
-glue2.png
+glue2.png \
+remove_extra_edges.png
 
 nodist_salomeres_DATA = GEOMCatalog.xml

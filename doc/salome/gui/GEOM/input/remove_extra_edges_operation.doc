@@ -1,0 +1,24 @@
+/*!
+
+\page remove_extra_edges_operation_page Remove Extra Edges
+
+\n To <b>Remove extra edges</b> in the <b>Main Menu</b> select
+<b>Repair - > Remove extra edges</b>.
+\n This operation removes all seam and degenerated edges from a given
+shape and unites faces and edges, sharing one surface.
+
+\n <b>TUI Command:</b> <em>geompy.RemoveExtraEdges(theShape)</em>,
+there <em>theShape</em> is a compound or a single solid to remove irregular edges from.
+\n <b>Arguments:</b> Name + one shape.
+
+\image html remove_extra_edges.png
+
+\n <b>Example:</b>
+
+\image html remove_extra_edges1.png
+<center><em>Shape with extra edges</em></center>
+
+\image html remove_extra_edges2.png
+<center><em>Improved shape</em></center>
+
+*/

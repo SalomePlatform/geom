@@ -1717,6 +1717,12 @@ msgstr "Change orientation"
 msgid "GEOM_CHANGE_ORIENTATION"
 msgstr "Objects to change orientation"
 
+msgid "GEOM_REMOVE_EXTRA_EDGES_TITLE"
+msgstr "Remove extra edges"
+
+msgid "GEOM_REMOVE_EXTRA_EDGES"
+msgstr "Object to remove extra edges"
+
 msgid "GEOM_BY_PARAMETER"
 msgstr "By parameter"
 
@@ -2077,6 +2083,9 @@ msgstr "SupressFaces"
 
 msgid "CHANGE_ORIENTATION_NEW_OBJ_NAME"
 msgstr "Invert"
+
+msgid "REMOVE_EXTRA_EDGES_NEW_OBJ_NAME"
+msgstr "NoExtraEdges"
 
 msgid "NON_GEOM_OBJECTS_SELECTED"
 msgstr "There are objects selected which do not belong to %1 component."
@@ -2711,6 +2720,15 @@ msgstr "Change orientation"
 
 msgid "STB_CHANGE_ORIENTATION"
 msgstr "Change orientation"
+
+msgid "TOP_REMOVE_EXTRA_EDGES"
+msgstr "Remove extra edges"
+
+msgid "MEN_REMOVE_EXTRA_EDGES"
+msgstr "Remove extra edges"
+
+msgid "STB_REMOVE_EXTRA_EDGES"
+msgstr "Remove extra edges"
 
 msgid "MEN_MEASURES"
 msgstr "Measures"

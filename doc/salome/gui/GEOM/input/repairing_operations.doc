@@ -12,6 +12,7 @@
 <li>\subpage glue_faces_operation_page</li>
 <li>\subpage add_point_on_edge_operation_page</li>
 <li>\subpage change_orientation_operation_page</li>
+<li>\subpage remove_extra_edges_operation_page</li>
 </ul>
 
 */
