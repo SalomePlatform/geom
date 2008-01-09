@@ -86,6 +86,7 @@ fuse.png \
 geometry.png \
 line.png \
 line2points.png \
+line2faces.png \
 lineedge.png \
 linepointvector.png \
 mindist.png \
@@ -117,6 +118,7 @@ planeworkingvector.png \
 planeworkingorigin.png \
 point2.png \
 pointonedge.png \
+point_line_intersection.png \
 polyline.png \
 prism.png \
 prism2.png \
