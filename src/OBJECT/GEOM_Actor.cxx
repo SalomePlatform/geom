@@ -306,11 +306,6 @@ SetVisibility(int theVisibility)
 
   this->myHighlightActor->SetVisibility(theVisibility && (myIsSelected || myIsPreselected));
   
-//   if(myDisplayMode == (int)eShading)
-//     this->myHighlightActor->SetInput(myShadingFaceSource->GetOutput(),false);
-//   else
-//     this->myHighlightActor->SetInput(myAppendFilter->GetOutput(),false);
-  
   myShadingFaceActor->SetVisibility(theVisibility && (myDisplayMode == (int)eShading) && (!myIsSelected || !myIsPreselected)); 
   myWireframeFaceActor->SetVisibility(theVisibility && (myDisplayMode ==(int)eWireframe) && !myIsSelected);
 
@@ -508,7 +503,7 @@ void GEOM_Actor::SetShadingProperty(vtkProperty* Prop)
 }
 
 
-void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
+void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
 {
 #ifdef MYDEBUG
   cout << "GEOM_Actor::Render"<<endl;
@@ -516,8 +511,8 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
 
   if(!GetVisibility())
     return;
-  
-/* render the property */
+
+  /* render the property */
   if (!this->Property) {
     // force creation of a property
     this->GetProperty();
@@ -574,10 +569,11 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
     vtkMatrix4x4 *aMatrix = vtkMatrix4x4::New();
     this->GetMatrix(ren->GetActiveCamera(), aMatrix);
     this->Device->SetUserMatrix(aMatrix);
-    this->Device->Render(ren,this->Mapper);
+    this->Device->Render(ren,theMapper);
     aMatrix->Delete();    
   } else
-    this->Device->Render(ren, this->Mapper);
+    this->Device->Render(ren, theMapper);
+
 }
 
 void GEOM_Actor::ReleaseGraphicsResources(vtkWindow *)
@@ -653,7 +649,7 @@ void GEOM_Actor::SubShapeOff()
 void GEOM_Actor::highlight(bool highlight)
 {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::highlight highlight="<<highlight<<endl;
+  cout << this << " GEOM_Actor::highlight highlight="<<highlight<<endl;
 #endif
   SALOME_Actor::highlight(highlight);
 }
@@ -702,12 +698,11 @@ GEOM_Actor
 {
   myIsSelected = theIsHighlight;
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::Highlight myIsSelected="<<myIsSelected<<endl;
+  cout << this << " GEOM_Actor::Highlight myIsSelected="<<myIsSelected<<endl;
 #endif
   
   SALOME_Actor::Highlight(theIsHighlight); // this method call ::highlight(theIsHighlight) in the end
   SetVisibility(GetVisibility());
-  
 }
 
 /*!
@@ -720,8 +715,9 @@ GEOM_Actor
 	       bool theIsHighlight)
 {
 #ifdef MYDEBUG
-  cout << "this="<<this<<"  GEOM_Actor::PreHighlight (3) theIsHighlight="<<theIsHighlight<<endl;
+  cout << this<<" GEOM_Actor::PreHighlight (3) theIsHighlight="<<theIsHighlight<<endl;
 #endif
+
   if ( !GetPickable() )
     return false;  
 
@@ -764,10 +760,13 @@ GEOM_Actor
 {
   // define the selection of object
 #ifdef MYDEBUG
-  cout << endl << "GEOM_Actor::Highlight (3) myIsSelected="<<myIsSelected<<endl;
+  cout << endl << this << " GEOM_Actor::Highlight (3) myIsSelected="<<myIsSelected<<endl;
 #endif
   bool aRet = SALOME_Actor::Highlight(theInteractorStyle,theSelectionEvent,theIsHighlight);
   SetSelected(theIsHighlight);
+  if(theIsHighlight)
+    SetPreSelected(false);
+  
  
   return aRet;
 }
