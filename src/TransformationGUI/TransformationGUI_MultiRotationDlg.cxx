@@ -33,6 +33,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qcheckbox.h>
 #include <qlabel.h>
 
@@ -281,14 +288,51 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
   if (!testResult || CORBA::is_nil(aSelectedObject) || !GEOMBase::IsShape(aSelectedObject))
     return;
 
+  QString aName = GEOMBase::GetName( aSelectedObject );
+
   if (myEditCurrentArgument == GroupPoints->LineEdit1 ||
       myEditCurrentArgument == GroupDimensions->LineEdit1)
     myBase = aSelectedObject;
   else if (myEditCurrentArgument == GroupPoints->LineEdit2 ||
-           myEditCurrentArgument == GroupDimensions->LineEdit2)
-    myVector = aSelectedObject;
-
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+           myEditCurrentArgument == GroupDimensions->LineEdit2) {
+    if ( testResult && !aSelectedObject->_is_nil() )
+	{
+	  TopoDS_Shape aShape;
+	  
+	  
+	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	    {
+	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	      TColStd_IndexedMapOfInteger aMap;
+	      aSelMgr->GetIndexes( firstIObject(), aMap );
+	      if ( aMap.Extent() == 1 )
+		{
+		  int anIndex = aMap( 1 );
+		  aName += QString(":edge_%1").arg(anIndex);
+		  
+		  //Find SubShape Object in Father
+		  GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
+		  
+		  if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+		    GEOM::GEOM_IShapesOperations_var aShapesOp =
+		      getGeomEngine()->GetIShapesOperations( getStudyId() );
+		    myVector = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		  }
+		  else
+		    myVector = aFindedObject; // get existing object
+		}
+	      else {
+		if (aShape.ShapeType() != TopAbs_EDGE) {
+		  aSelectedObject = GEOM::GEOM_Object::_nil();
+		  aName = "";
+		}
+		myVector = aSelectedObject;
+	      }
+	      
+	    }
+	}
+  }
+  myEditCurrentArgument->setText( aName );
 
   displayPreview();
 }
@@ -301,22 +345,21 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
 void TransformationGUI_MultiRotationDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection( GEOM_ALLSHAPES );
 
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection( GEOM_ALLSHAPES );
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    globalSelection( GEOM_LINE  );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if(send == GroupDimensions->PushButton1) {
     myEditCurrentArgument = GroupDimensions->LineEdit1;
-    globalSelection( GEOM_ALLSHAPES );
   }
   else if(send == GroupDimensions->PushButton2) {
     myEditCurrentArgument = GroupDimensions->LineEdit2;
-    globalSelection( GEOM_LINE  );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
 
   myEditCurrentArgument->setFocus();
@@ -472,4 +515,24 @@ void  TransformationGUI_MultiRotationDlg::closeEvent( QCloseEvent* e )
 {
   // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void TransformationGUI_MultiRotationDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+  
+  switch (getConstructorId())
+    {
+    case 0:
+      objMap[GroupPoints->LineEdit2->text()] = myVector;
+      break;
+    case 1:
+      objMap[GroupDimensions->LineEdit2->text()] = myVector;
+      break;
+    }
+  addSubshapesToFather( objMap );
 }

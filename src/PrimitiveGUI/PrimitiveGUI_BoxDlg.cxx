@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -32,6 +32,12 @@
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
+
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 #include <qlabel.h>
 
@@ -146,13 +152,12 @@ void PrimitiveGUI_BoxDlg::Init()
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_BOX" ) );
   ConstructorsClicked(0);
 }
-
 
 //=================================================================================
 // function : ConstructorsClicked()
@@ -160,24 +165,26 @@ void PrimitiveGUI_BoxDlg::Init()
 //=================================================================================
 void PrimitiveGUI_BoxDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
-  
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+
   switch (constructorId)
     {
     case 0:
       {
-	globalSelection( GEOM_POINT );
+	//	globalSelection( GEOM_POINT );
+        globalSelection(); // close local contexts, if any
+	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
 	GroupDimensions->hide();
 	resize(0, 0);
 	GroupPoints->show();
-	
+
 	myEditCurrentArgument = GroupPoints->LineEdit1;
 	GroupPoints->LineEdit1->setText("");
  	GroupPoints->LineEdit2->setText("");
 	myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
 	
-	connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	connect(myGeomGUI->getApp()->selectionMgr(), 
 		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
@@ -193,7 +200,6 @@ void PrimitiveGUI_BoxDlg::ConstructorsClicked(int constructorId)
   displayPreview();
 }
 
-
 //=================================================================================
 // function : ClickOnOk()
 // purpose  :
@@ -203,7 +209,6 @@ void PrimitiveGUI_BoxDlg::ClickOnOk()
   if ( ClickOnApply() )
     ClickOnCancel();
 }
-
 
 //=================================================================================
 // function : ClickOnApply()
@@ -219,44 +224,74 @@ bool PrimitiveGUI_BoxDlg::ClickOnApply()
   return true;
 }
 
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed
 //=================================================================================
 void PrimitiveGUI_BoxDlg::SelectionIntoArgument()
 {
-  if ( getConstructorId() != 0 )
+  if (getConstructorId() != 0)
     return;
-  
+
   myEditCurrentArgument->setText("");
-  
+
   if (IObjectCount() != 1) 
-    {
-      if (myEditCurrentArgument == GroupPoints->LineEdit1)
-	myPoint1 = GEOM::GEOM_Object::_nil();
-      else if ( myEditCurrentArgument == GroupPoints->LineEdit2)
-	myPoint2 = GEOM::GEOM_Object::_nil();
-      return;
-    }
+  {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1)
+      myPoint1 = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
+      myPoint2 = GEOM::GEOM_Object::_nil();
+    return;
+  }
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
-  
-  if(!testResult || CORBA::is_nil( aSelectedObject ))
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult);
+
+  if (!testResult || CORBA::is_nil(aSelectedObject))
     return;
-  
-  if(myEditCurrentArgument == GroupPoints->LineEdit1)
+
+  TopoDS_Shape aShape;
+  QString aName = GEOMBase::GetName(aSelectedObject);
+  if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+  {
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    TColStd_IndexedMapOfInteger aMap;
+    aSelMgr->GetIndexes(firstIObject(), aMap);
+    if (aMap.Extent() == 1) // Local Selection
+    {
+      int anIndex = aMap( 1 );
+      aName.append( ":vertex_" + QString::number( anIndex ) );	  
+
+      //Find SubShape Object in Father
+      GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+      
+      if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	GEOM::GEOM_IShapesOperations_var aShapesOp =
+	  getGeomEngine()->GetIShapesOperations( getStudyId() );
+	aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+      }
+      else
+	aSelectedObject = aFindedObject; // get Object from study	
+    }
+    else // Global Selection
+    {
+      if (aShape.ShapeType() != TopAbs_VERTEX) {
+        aSelectedObject = GEOM::GEOM_Object::_nil();
+        aName = "";
+      }
+    }
+  }
+
+  myEditCurrentArgument->setText(aName);
+
+  if (myEditCurrentArgument == GroupPoints->LineEdit1)
     myPoint1 = aSelectedObject;
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2)
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2)
     myPoint2 = aSelectedObject;
-  
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
-  
+
   displayPreview();
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -265,18 +300,19 @@ void PrimitiveGUI_BoxDlg::SelectionIntoArgument()
 void PrimitiveGUI_BoxDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  
+
   if(send == GroupPoints->PushButton1)
     myEditCurrentArgument = GroupPoints->LineEdit1;
   else if(send == GroupPoints->PushButton2)
     myEditCurrentArgument = GroupPoints->LineEdit2;
-  
-  globalSelection( GEOM_POINT );
-  
+
+  //  globalSelection( GEOM_POINT );
+  globalSelection(); // close local contexts, if any
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()
@@ -300,9 +336,9 @@ void PrimitiveGUI_BoxDlg::LineEditReturnPressed()
 void PrimitiveGUI_BoxDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
+
   ConstructorsClicked( getConstructorId() );
 }
 
@@ -394,4 +430,19 @@ bool PrimitiveGUI_BoxDlg::execute( ObjectList& objects )
 void  PrimitiveGUI_BoxDlg::closeEvent( QCloseEvent* e )
 {
   GEOMBase_Skeleton::closeEvent( e );
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void PrimitiveGUI_BoxDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+  if ( getConstructorId() == 0 ) 
+  {
+    objMap[GroupPoints->LineEdit1->text()] = myPoint1;
+    objMap[GroupPoints->LineEdit2->text()] = myPoint2;
+    addSubshapesToFather( objMap );
+  }
 }

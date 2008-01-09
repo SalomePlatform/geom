@@ -41,6 +41,9 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakePointOnCurve (Handle(GEOM_Object) theCurve,
                                         double theParameter);
 
+  Standard_EXPORT Handle(GEOM_Object) MakePointOnLinesIntersection
+                                      (Handle(GEOM_Object) theLine1, Handle(GEOM_Object) theLine2);
+
   // Vector
   Standard_EXPORT Handle(GEOM_Object) MakeVectorDXDYDZ (double theDX, double theDY, double theDZ);
 
@@ -53,6 +56,9 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
   // Line
   Standard_EXPORT Handle(GEOM_Object) MakeLineTwoPnt (Handle(GEOM_Object) thePnt1,
                                       Handle(GEOM_Object) thePnt2);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeLineTwoFaces (Handle(GEOM_Object) theFace1,
+                                      Handle(GEOM_Object) theFace2);
 
   Standard_EXPORT Handle(GEOM_Object) MakeLine (Handle(GEOM_Object) thePnt,
                                 Handle(GEOM_Object) theDir);

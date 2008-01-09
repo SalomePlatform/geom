@@ -21,60 +21,36 @@
 //
 //
 //
-//  File   : PrimitiveGUI_TorusDlg.h
-//  Author : Lucien PIGNOLONI
+//  File   : GEOMBase_aWarningDlg.h
+//  Author : Dmitry Matveitchev
 //  Module : GEOM
+//  $Header: /home/server/cvs/GEOM/GEOM_SRC/src/GEOMBase/GEOMBase_aWarningDlg.h
 
-#ifndef DIALOGBOX_TORUS_H
-#define DIALOGBOX_TORUS_H
+#ifndef GEOMBase_aWarningDLG_H
+#define GEOMBase_aWarningDLG_H
 
-#include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel2Spin.h"
-#include "DlgRef_2Spin.h"
+#include <qdialog.h>
+#include <qwidget.h>
 
+class QString;
+class QPushButton;
 
 //=================================================================================
-// class    : PrimitiveGUI_TorusDlg
+// class    : GEOMBase_aWarningDlg
 // purpose  :
 //=================================================================================
-class PrimitiveGUI_TorusDlg : public GEOMBase_Skeleton
+class GEOMBase_aWarningDlg : public QDialog
 { 
     Q_OBJECT
 
 public:
-    PrimitiveGUI_TorusDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
-    ~PrimitiveGUI_TorusDlg();
-
-protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& );
-    virtual bool execute( ObjectList& objects );
-    virtual void addSubshapesToStudy();
+    GEOMBase_aWarningDlg( QWidget* parent, const char* name, QString theText, int nb );
+    ~GEOMBase_aWarningDlg();
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
+    QPushButton* myButtonOk;
+    QPushButton* myButtonCancel;
 
-    double getRadius1() const;
-    double getRadius2() const;
-
-    GEOM::GEOM_Object_var myPoint, myDir;
-
-    DlgRef_2Sel2Spin* GroupPoints;
-    DlgRef_2Spin* GroupDimensions;
-
-private slots:
-    void ClickOnOk();
-    bool ClickOnApply();
-
-    void ActivateThisDialog();
-    void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
-    void ConstructorsClicked(int);
-    void ValueChangedInSpinBox();
 };
 
-#endif // DIALOGBOX_TORUS_H
+#endif

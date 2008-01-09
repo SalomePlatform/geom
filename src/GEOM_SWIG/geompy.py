@@ -39,3 +39,4 @@ for k in dir(geom):
   globals()[k]=getattr(geom,k)
 del k
 from geompyDC import ShapeType,GEOM,kind, info
+

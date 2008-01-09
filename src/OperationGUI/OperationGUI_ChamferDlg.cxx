@@ -370,7 +370,7 @@ void OperationGUI_ChamferDlg::ConstructorsClicked( int constructorId )
         myGrp3->show();
 	myGrp4->hide();
         mySpinBox[ SpinBox31 ]->SetValue( D1 );
-        mySpinBox[ SpinBox32 ]->SetValue( D2 );       
+        mySpinBox[ SpinBox32 ]->SetValue( D2 );
         mySpinBox[ SpinBox33 ]->SetValue( D );
         mySpinBox[ SpinBox34 ]->SetValue( Angle );
     break;
@@ -378,7 +378,7 @@ void OperationGUI_ChamferDlg::ConstructorsClicked( int constructorId )
         myGrp1->hide();
         myGrp2->hide();
         myGrp3->hide();
-		myGrp4->show();
+	myGrp4->show();
         mySpinBox[ SpinBox41 ]->SetValue( D1 );
         mySpinBox[ SpinBox42 ]->SetValue( D2 );        
         mySpinBox[ SpinBox43 ]->SetValue( D );
@@ -725,7 +725,7 @@ void OperationGUI_ChamferDlg::activateSelection()
 		 myEditCurrentArgument == mySelName[ Faces ] ) )
     localSelection( myShape, TopAbs_FACE );
   else if (!myShape->_is_nil() && myEditCurrentArgument == mySelName[ Edges ] )
-	localSelection( myShape, TopAbs_EDGE );
+    localSelection( myShape, TopAbs_EDGE );
   else
   {
     TColStd_MapOfInteger aMap;
@@ -846,7 +846,7 @@ bool OperationGUI_ChamferDlg::execute( ObjectList& objects )
     GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
     anArray->length( myFaces.Extent() );
     for ( int i = 1, n = myFaces.Extent(); i <= n; i++ )
-      anArray[ i - 1 ] = myFaces( i );            
+      anArray[ i - 1 ] = myFaces( i );
     if ( flag )
     anObj = GEOM::GEOM_ILocalOperations::_narrow(
       getOperation() )->MakeChamferFaces( myShape,
@@ -861,7 +861,8 @@ bool OperationGUI_ChamferDlg::execute( ObjectList& objects )
                                             anArray );
   }
   else if ( anId == 3 )
-  { GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
+  {
+    GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
     anArray->length( myEdges.Extent() );
     for ( int i = 1, n = myEdges.Extent(); i <= n; i++ )
       anArray[ i - 1 ] = myEdges( i );             
@@ -880,5 +881,3 @@ bool OperationGUI_ChamferDlg::execute( ObjectList& objects )
 
   return true;
 }
-
-

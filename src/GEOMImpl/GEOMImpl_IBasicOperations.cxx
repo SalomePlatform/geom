@@ -233,6 +233,60 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
 
 //=============================================================================
 /*!
+ *  MakePointOnLinesIntersection
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnLinesIntersection
+                            (Handle(GEOM_Object) theLine1, Handle(GEOM_Object) theLine2)
+{
+  SetErrorCode(KO);
+
+  if (theLine1.IsNull() || theLine2.IsNull()) return NULL;
+
+  //Add a new Point object
+  Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GetDocID(), GEOM_POINT);
+
+  //Add a new Point function for creation a point relativley another point
+  Handle(GEOM_Function) aFunction = aPoint->AddFunction(GEOMImpl_PointDriver::GetID(), POINT_LINES_INTERSECTION);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PointDriver::GetID()) return NULL;
+
+  GEOMImpl_IPoint aPI (aFunction);
+
+  Handle(GEOM_Function) aRef1 = theLine1->GetLastFunction();
+  Handle(GEOM_Function) aRef2 = theLine2->GetLastFunction();
+  if (aRef1.IsNull() || aRef2.IsNull()) return NULL;
+
+  aPI.SetLine1(aRef1);
+  aPI.SetLine2(aRef2);
+
+  //Compute the point value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Point driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnLinesIntersection("
+                               << theLine1 << ", " << theLine2 << ")";
+
+  SetErrorCode(OK);
+  return aPoint;
+}
+
+//=============================================================================
+/*!
  *  MakeTangentOnCurve
  */
 //=============================================================================
@@ -501,6 +555,60 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLineTwoPnt
   return aLine;
 }
 
+//=============================================================================
+/*!
+ *  MakeLineTwoFaces
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLineTwoFaces
+                     (Handle(GEOM_Object) theFace1, Handle(GEOM_Object) theFace2)
+{
+  SetErrorCode(KO);
+
+  if (theFace1.IsNull() || theFace2.IsNull()) return NULL;
+
+  //Add a new Line object
+  Handle(GEOM_Object) aLine = GetEngine()->AddObject(GetDocID(), GEOM_LINE);
+
+  //Add a new Line function
+  Handle(GEOM_Function) aFunction =
+    aLine->AddFunction(GEOMImpl_LineDriver::GetID(), LINE_TWO_FACES);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_LineDriver::GetID()) return NULL;
+
+  GEOMImpl_ILine aPI (aFunction);
+
+  Handle(GEOM_Function) aRef1 = theFace1->GetLastFunction();
+  Handle(GEOM_Function) aRef2 = theFace2->GetLastFunction();
+  if (aRef1.IsNull() || aRef2.IsNull()) return NULL;
+
+  aPI.SetFace1(aRef1);
+  aPI.SetFace2(aRef2);
+
+  //Compute the Line value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Line driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aLine << " = geompy.MakeLineTwoFaces("
+                               << theFace1 << ", " << theFace2 << ")";
+
+  SetErrorCode(OK);
+  return aLine;
+}
 
 //=============================================================================
 /*!

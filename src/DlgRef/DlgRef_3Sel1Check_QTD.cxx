@@ -1,7 +1,7 @@
 /****************************************************************************
-** Form implementation generated from reading ui file 'UIFiles/DlgRef_3Sel1Check_QTD.ui'
+** Form implementation generated from reading ui file 'DlgRef_3Sel1Check_QTD.ui'
 **
-** Created: Wed Feb 21 10:49:18 2007
+** Created: Mon Oct 29 18:14:59 2007
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -14,7 +14,7 @@
 #include <qgroupbox.h>
 #include <qlineedit.h>
 #include <qlabel.h>
-#include <qradiobutton.h>
+#include <qcheckbox.h>
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
@@ -46,7 +46,7 @@ DlgRef_3Sel1Check_QTD::DlgRef_3Sel1Check_QTD( QWidget* parent, const char* name,
 
     LineEdit1 = new QLineEdit( GroupBox1, "LineEdit1" );
 
-    GroupBox1Layout->addWidget( LineEdit1, 0, 2 );
+    GroupBox1Layout->addMultiCellWidget( LineEdit1, 0, 0, 2, 3 );
 
     TextLabel1 = new QLabel( GroupBox1, "TextLabel1" );
     TextLabel1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel1->sizePolicy().hasHeightForWidth() ) );
@@ -60,7 +60,7 @@ DlgRef_3Sel1Check_QTD::DlgRef_3Sel1Check_QTD( QWidget* parent, const char* name,
 
     LineEdit2 = new QLineEdit( GroupBox1, "LineEdit2" );
 
-    GroupBox1Layout->addWidget( LineEdit2, 1, 2 );
+    GroupBox1Layout->addMultiCellWidget( LineEdit2, 1, 1, 2, 3 );
 
     TextLabel2 = new QLabel( GroupBox1, "TextLabel2" );
     TextLabel2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel2->sizePolicy().hasHeightForWidth() ) );
@@ -74,22 +74,22 @@ DlgRef_3Sel1Check_QTD::DlgRef_3Sel1Check_QTD( QWidget* parent, const char* name,
 
     LineEdit3 = new QLineEdit( GroupBox1, "LineEdit3" );
 
-    GroupBox1Layout->addWidget( LineEdit3, 2, 2 );
+    GroupBox1Layout->addMultiCellWidget( LineEdit3, 2, 2, 2, 3 );
 
     TextLabel3 = new QLabel( GroupBox1, "TextLabel3" );
     TextLabel3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel3->sizePolicy().hasHeightForWidth() ) );
 
     GroupBox1Layout->addWidget( TextLabel3, 2, 0 );
-
-    radioButton4 = new QRadioButton( GroupBox1, "radioButton4" );
-
-    GroupBox1Layout->addMultiCellWidget( radioButton4, 3, 3, 0, 1 );
     Spacer3 = new QSpacerItem( 16, 721, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    GroupBox1Layout->addItem( Spacer3, 4, 2 );
+    GroupBox1Layout->addItem( Spacer3, 4, 3 );
+
+    CheckButton1 = new QCheckBox( GroupBox1, "CheckButton1" );
+
+    GroupBox1Layout->addMultiCellWidget( CheckButton1, 3, 3, 0, 2 );
 
     DlgRef_3Sel1Check_QTDLayout->addWidget( GroupBox1, 0, 0 );
     languageChange();
-    resize( QSize(490, 878).expandedTo(minimumSizeHint()) );
+    resize( QSize(403, 441).expandedTo(minimumSizeHint()) );
     clearWState( WState_Polished );
 
     // tab order
@@ -122,6 +122,6 @@ void DlgRef_3Sel1Check_QTD::languageChange()
     TextLabel2->setText( tr( "TL2" ) );
     PushButton3->setText( QString::null );
     TextLabel3->setText( tr( "TL3" ) );
-    radioButton4->setText( tr( "radioButton4" ) );
+    CheckButton1->setText( tr( "CheckButton1" ) );
 }
 

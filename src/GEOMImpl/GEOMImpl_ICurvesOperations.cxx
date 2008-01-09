@@ -256,7 +256,6 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleCenter2Pnt (Handle(GEO
   return aCircle;
 }
 
- 
 //=============================================================================
 /*!
  *  MakeCirclePntVecR

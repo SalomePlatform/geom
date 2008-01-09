@@ -82,9 +82,17 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 				       GEOM::GEOM_Object_ptr theVec,
 				       CORBA::Double theH);
 
+  GEOM::GEOM_Object_ptr MakePrismVecH2Ways (GEOM::GEOM_Object_ptr theBase,
+					    GEOM::GEOM_Object_ptr theVec,
+					    CORBA::Double theH);
+
   GEOM::GEOM_Object_ptr MakePrismTwoPnt (GEOM::GEOM_Object_ptr theBase,
 					 GEOM::GEOM_Object_ptr thePoint1,
 					 GEOM::GEOM_Object_ptr thePoint2);
+
+  GEOM::GEOM_Object_ptr MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr theBase,
+					      GEOM::GEOM_Object_ptr thePoint1,
+					      GEOM::GEOM_Object_ptr thePoint2);
 
   GEOM::GEOM_Object_ptr MakePipe (GEOM::GEOM_Object_ptr theBase,
 				  GEOM::GEOM_Object_ptr thePath);
@@ -92,6 +100,10 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
   GEOM::GEOM_Object_ptr MakeRevolutionAxisAngle (GEOM::GEOM_Object_ptr theBase,
 						 GEOM::GEOM_Object_ptr theAxis,
 						 CORBA::Double theAngle);
+
+  GEOM::GEOM_Object_ptr MakeRevolutionAxisAngle2Ways (GEOM::GEOM_Object_ptr theBase,
+						      GEOM::GEOM_Object_ptr theAxis,
+						      CORBA::Double theAngle);
 
   GEOM::GEOM_Object_ptr MakeFilling(GEOM::GEOM_Object_ptr theShape, CORBA::Long theMinDeg, CORBA::Long theMaxDeg, CORBA::Double theTol2D, CORBA::Double theTol3D, CORBA::Long theNbIter);
 

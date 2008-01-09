@@ -102,6 +102,14 @@
 #uic -o DlgRef_3Check_QTD.h DlgRef_3Check_QTD.ui
 #uic -o DlgRef_3Check_QTD.cxx -impl DlgRef_3Check_QTD.h DlgRef_3Check_QTD.ui
 
-uic -o DlgRef_4Sel1Spin2Check_QTD.h DlgRef_4Sel1Spin2Check_QTD.ui
-uic -o DlgRef_4Sel1Spin2Check_QTD.cxx -impl DlgRef_4Sel1Spin2Check_QTD.h DlgRef_4Sel1Spin2Check_QTD.ui
+#uic -o DlgRef_4Sel1Spin2Check_QTD.h DlgRef_4Sel1Spin2Check_QTD.ui
+#uic -o DlgRef_4Sel1Spin2Check_QTD.cxx -impl DlgRef_4Sel1Spin2Check_QTD.h DlgRef_4Sel1Spin2Check_QTD.ui
 
+#uic -o DlgRef_4Sel1Spin2Check_QTD.h DlgRef_4Sel1Spin2Check_QTD.ui
+#uic -o DlgRef_4Sel1Spin2Check_QTD.cxx -impl DlgRef_4Sel1Spin2Check_QTD.h DlgRef_4Sel1Spin2Check_QTD.ui
+
+#uic -o DlgRef_2Sel3Spin2Rb_QTD.h DlgRef_2Sel3Spin2Rb_QTD.ui
+#uic -o DlgRef_2Sel3Spin2Rb_QTD.cxx -impl DlgRef_2Sel3Spin2Rb_QTD.h DlgRef_2Sel3Spin2Rb_QTD.ui
+
+uic -o DlgRef_3Sel1Check_QTD.h DlgRef_3Sel1Check_QTD.ui
+uic -o DlgRef_3Sel1Check_QTD.cxx -impl DlgRef_3Sel1Check_QTD.h DlgRef_3Sel1Check_QTD.ui>>>>>>> 1.6.2.3

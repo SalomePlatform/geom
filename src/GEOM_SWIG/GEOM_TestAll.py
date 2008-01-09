@@ -82,6 +82,7 @@ def TestAll (geompy, math):
   #Create base geometry 2D
   Line   = geompy.MakeLineTwoPnt(p0, pxyz)                  #(2 GEOM_Object_ptr)->GEOM_Object_ptr
   Line1  = geompy.MakeLine(pz, vxy)                         #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  Line2  = geompy.MakeLineTwoPnt(pxyz, pz)                   #(2 GEOM_Object_ptr)->GEOM_Object_ptr
   Plane  = geompy.MakePlane(pz, vxyz, trimsize)             #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Plane1 = geompy.MakePlaneThreePnt(px, pz, p200, trimsize) #(4 Doubles)->GEOM_Object_ptr
 
@@ -99,6 +100,9 @@ def TestAll (geompy, math):
 
   #Test point on curve creation
   p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+
+  #Test point on lines intersection
+  pLine   = geompy.MakeVertexOnLinesIntersection( Line1, Line2 )
 
   #Create base geometry 3D
   Box      = geompy.MakeBoxTwoPnt(p0, p200)                   #(2 GEOM_Object_ptr)->GEOM_Object_ptr
@@ -149,6 +153,9 @@ def TestAll (geompy, math):
 
   #ShapeList for Sewing
   S = geompy.MakeRotation(Face, vxy, angle1)
+	
+  #Test Line on Faces Intersection
+  Line3  = geompy.MakeLineTwoFaces( prism1_faces[0], prism1_faces[1]) #(2 GEOM_Object_ptr)->GEOM_Object_ptr
 
   #Create advanced objects
   Copy       = geompy.MakeCopy(Box)                      #(GEOM_Object_ptr)->GEOM_Object_ptr
@@ -206,9 +213,8 @@ def TestAll (geompy, math):
                                      IDlist_f) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
   Chamfer3 = geompy.MakeChamferEdges(Prism, d1, d2,
                                      IDlist_e) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
-  Chamfer4 = geompy.MakeChamferFacesAD(Prism, d1, 0.2,
+  Chamfer4 = geompy.MakeChamferFacesAD(Prism, d1, 20. * math.pi / 180.,
                                        IDlist_f) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
-
   #Create Patterns
   MultiTrans1D = geompy.MakeMultiTranslation1D(Fillet, vz, step1, nbtimes1)
   MultiTrans2D = geompy.MakeMultiTranslation2D(Fillet, vz, step1, nbtimes1, vy, step2, nbtimes2)
@@ -235,6 +241,7 @@ def TestAll (geompy, math):
   id_pz   = geompy.addToStudy(pz,   "Vertex Z")
   id_pxyz = geompy.addToStudy(pxyz, "Vertex XYZ")
   id_p200 = geompy.addToStudy(p200, "Vertex 200")
+  id_pLine = geompy.addToStudy(pLine, "Vertex on Lines Intersection")	
 
   id_vx   = geompy.addToStudy(vx,   "Vector X")
   id_vy   = geompy.addToStudy(vy,   "Vector Y")
@@ -247,6 +254,7 @@ def TestAll (geompy, math):
 
   id_Line   = geompy.addToStudy(Line,   "Line")
   id_Line1  = geompy.addToStudy(Line1,  "Line by point and vector")
+  id_Line3  = geompy.addToStudy(Line3,  "Line on Two Faces Intersection")
   id_Plane  = geompy.addToStudy(Plane,  "Plane")
   id_Plane1 = geompy.addToStudy(Plane1,  "Plane by 3 points")
 
@@ -315,6 +323,7 @@ def TestAll (geompy, math):
 
   id_Fillet   = geompy.addToStudy(Fillet,   "Fillet")
   id_Fillet2  = geompy.addToStudy(Fillet2,  "Fillet2")
+
   id_Chamfer  = geompy.addToStudy(Chamfer,  "Chamfer on Edge")
   id_Chamfer2 = geompy.addToStudy(Chamfer2, "Chamfer on Faces")
   id_Chamfer3 = geompy.addToStudy(Chamfer3, "Chamfer on Edges")

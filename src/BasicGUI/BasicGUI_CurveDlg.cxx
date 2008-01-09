@@ -16,7 +16,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -30,6 +30,7 @@
 #include "SUIT_Desktop.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
+#include "SalomeApp_Study.h"
 #include "LightApp_SelectionMgr.h"
 
 #include <qlabel.h>
@@ -38,6 +39,12 @@
 
 #include "SALOME_ListIteratorOfListIO.hxx"
 #include "SALOME_ListIO.hxx"
+
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -106,7 +113,8 @@ void BasicGUI_CurveDlg::Init()
   myPoints = new GEOM::ListOfGO();
   myPoints->length( 0 );
 
-  globalSelection( GEOM_POINT );
+  globalSelection(); // close local contexts, if any
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
@@ -120,7 +128,7 @@ void BasicGUI_CurveDlg::Init()
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName( tr( "GEOM_CURVE" ) );
@@ -225,6 +233,7 @@ static int isPointInList(list<GEOM::GEOM_Object_var>& thePoints,
 
   return -1;
 }
+
 //=================================================================================
 /*! function : removeUnnecessaryPnt()
  *  purpose  : Remove unnecessary points from list \a theOldPoints
@@ -263,40 +272,97 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText("");
 
   Standard_Boolean aRes = Standard_False;
-  int i = 0;
   int IOC = IObjectCount();
-  bool is_append = myPoints->length() < IOC; // if true - add point, else remove
-  myPoints->length( IOC ); // this length may be greater than number of objects,
+  //  bool is_append = myPoints->length() < IOC; // if true - add point, else remove
+  //  myPoints->length( IOC ); // this length may be greater than number of objects,
                            // that will actually be put into myPoints
-  for ( SALOME_ListIteratorOfListIO anIt( selectedIO() ); anIt.More(); anIt.Next() )
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  _PTR(Study) aDStudy = appStudy->studyDS();
+  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+
+  int anIndex;
+  TopoDS_Shape aShape;
+  TColStd_IndexedMapOfInteger aMapIndexes;
+  GEOM::GEOM_Object_var anObject;
+  std::list<GEOM::GEOM_Object_var> aList;
+  SALOME_ListIO selected;
+  aSelMgr->selectedObjects( selected, QString::null, false );
+
+  for ( SALOME_ListIteratorOfListIO anIt( selected ); anIt.More(); anIt.Next() )
     {
       GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
+
       if ( !CORBA::is_nil( aSelectedObject ) && aRes )
 	{
-	  //TopoDS_Shape aPointShape;
-	  //if ( myGeomBase->GetShape( aSelectedObject, aPointShape, TopAbs_VERTEX ) )
-	  int pos = isPointInList(myOrderedSel,aSelectedObject);
-	  if(is_append && pos==-1)
-	    myOrderedSel.push_back(aSelectedObject);
-	  myPoints[i++] = aSelectedObject;
+	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	    {
+	      aSelMgr->GetIndexes( anIt.Value(), aMapIndexes );
+
+	      if ( aMapIndexes.Extent() > 0 )
+		{
+		  for (int ii=1; ii <= aMapIndexes.Extent(); ii++) {
+		    anIndex = aMapIndexes(ii);
+		    QString aName = GEOMBase::GetName( aSelectedObject );
+		    aName = aName + ":vertex_" + QString::number( anIndex );
+		    anObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		    //Find Object in study
+		    _PTR(SObject) obj ( aDStudy->FindObjectID( anIt.Value()->getEntry() ) );
+		    bool inStudy = false;
+		    for (_PTR(ChildIterator) iit (aDStudy->NewChildIterator(obj)); iit->More(); iit->Next()) {
+		      _PTR(SObject) child (iit->Value());
+		      QString aChildName = child->GetName();
+		      if (aChildName == aName) {
+			inStudy = true;
+			CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(iit->Value());
+			anObject = GEOM::GEOM_Object::_narrow( corbaObj );
+		      }
+		    }
+
+		    if (!inStudy)
+		      GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
+							    anObject, aName, aSelectedObject);
+		    
+		    int pos = isPointInList(myOrderedSel, anObject);
+		    if (pos==-1) {
+		      myOrderedSel.push_back(anObject);
+		    }
+		    //		    if (!inStudy)
+		    aList.push_back(anObject);
+		  }
+		} else { // aMap.Extent() == 0
+		  int pos = isPointInList(myOrderedSel,aSelectedObject);
+		  if(pos==-1)
+		    myOrderedSel.push_back(aSelectedObject);
+		  aList.push_back(aSelectedObject);
+		} 
+	    }
 	}
     }
 
-  myPoints->length( i ); // this is the right length, smaller of equal to the previously set
+  myPoints->length( aList.size()  );  
+
+  int k=0;
+  for (list<GEOM::GEOM_Object_var>::iterator j=aList.begin();j!=aList.end();j++)
+    myPoints[k++] = *j;
+
   if(IOC == 0)
     myOrderedSel.clear();
   else
-    removeUnnecessaryPnt(myOrderedSel,myPoints);
+    removeUnnecessaryPnt(myOrderedSel, myPoints);
 
-  if(myOrderedSel.size() == myPoints->length()){
-    int k=0;
-    for (list<GEOM::GEOM_Object_var>::iterator j=myOrderedSel.begin();j!=myOrderedSel.end();j++)
-      myPoints[k++] = *j;
-  } else {
-    //cout << "ERROR: Ordered sequence size != selection sequence size! ("<<myOrderedSel.size()<<"!="<<myPoints->length()<<")"<<endl;
-  }
-  if ( i )
-    GroupPoints->LineEdit1->setText( QString::number( i ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
+  // if ( myOrderedSel.size() == myPoints->length() ) {
+  myPoints->length( myOrderedSel.size()  );  
+  k=0;
+  for (list<GEOM::GEOM_Object_var>::iterator j=myOrderedSel.begin();j!=myOrderedSel.end();j++)
+    myPoints[k++] = *j;
+  //  }
+
+  if ( myPoints->length() > 0  )
+    GroupPoints->LineEdit1->setText( QString::number( myPoints->length() ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
   
   displayPreview(); 
 }
@@ -309,12 +375,11 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
 void BasicGUI_CurveDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
-  // myGeomGUI->SetState( 0 );
-
-  globalSelection( GEOM_POINT );
+  globalSelection(); // close local contexts, if any
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   ConstructorsClicked( getConstructorId() );
 }
 

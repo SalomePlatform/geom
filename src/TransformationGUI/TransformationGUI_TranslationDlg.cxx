@@ -33,6 +33,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qlabel.h>
 #include <qcheckbox.h>
 
@@ -276,14 +283,50 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
     if (!testResult || CORBA::is_nil( aSelectedObject ))
       return;
 
+    TopoDS_Shape aShape;
+    aName = GEOMBase::GetName( aSelectedObject );
+    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+      {
+	TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+	if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2)
+	  aNeedType = TopAbs_EDGE;
+
+	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	TColStd_IndexedMapOfInteger aMap;
+	aSelMgr->GetIndexes( firstIObject(), aMap );
+	if ( aMap.Extent() == 1 )
+	  {
+	    int anIndex = aMap( 1 );
+	    if (aNeedType == TopAbs_EDGE)
+	      aName += QString(":edge_%1").arg(anIndex);
+	    else
+	      aName += QString(":vertex_%1").arg(anIndex);
+
+	    //Find SubShape Object in Father
+	    GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
+	    
+	    if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	      GEOM::GEOM_IShapesOperations_var aShapesOp =
+		getGeomEngine()->GetIShapesOperations( getStudyId() );
+	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    }
+	    else
+	      aSelectedObject = aFindedObject;
+	  } else // Global Selection
+	    {
+	      if (aShape.ShapeType() != aNeedType) {
+		aSelectedObject = GEOM::GEOM_Object::_nil();
+		aName = "";
+	      }
+	    }
+      }
+    
     if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1)
       myPoint1 = aSelectedObject;
     else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2)
       myVector = aSelectedObject;
     else if (myEditCurrentArgument == GroupPoints->LineEdit3)
       myPoint2 = aSelectedObject;
-
-    aName = GEOMBase::GetName( aSelectedObject );
   }
 
   myEditCurrentArgument->setText( aName );
@@ -313,19 +356,21 @@ void TransformationGUI_TranslationDlg::LineEditReturnPressed()
 void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection();
 
   if (send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection();
   }
   else if (send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    getConstructorId() == 1 ? globalSelection( GEOM_POINT ) :
-                              globalSelection( GEOM_LINE  );
+    if (getConstructorId() == 1)
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    else 
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if (send == GroupPoints->PushButton3) {
     myEditCurrentArgument = GroupPoints->LineEdit3;
-    globalSelection( GEOM_POINT );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
 
   myEditCurrentArgument->setFocus();
@@ -501,4 +546,30 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
 void TransformationGUI_TranslationDlg::CreateCopyModeChanged(bool isCreateCopy)
 {
   GroupBoxName->setEnabled(isCreateCopy);
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void TransformationGUI_TranslationDlg::addSubshapesToStudy()
+{
+  bool toCreateCopy = IsPreview() || GroupPoints->CheckBox1->isChecked();
+  if (toCreateCopy) {
+    QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+    switch (getConstructorId())
+      {
+      case 0:
+	return;
+      case 1:
+	objMap[GroupPoints->LineEdit2->text()] = myPoint1;
+	objMap[GroupPoints->LineEdit3->text()] = myPoint2;
+	break;
+      case 2:
+	objMap[GroupPoints->LineEdit2->text()] = myVector;
+	break;
+      }
+    addSubshapesToFather( objMap );
+  }
 }

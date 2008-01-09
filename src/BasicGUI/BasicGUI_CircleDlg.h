@@ -54,8 +54,8 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
-
     virtual void closeEvent( QCloseEvent* e );    
+    virtual void addSubshapesToStudy();
 
 private:
     void   Init();
@@ -68,6 +68,7 @@ private:
     DlgRef_2Sel1Spin* GroupPntVecR;
     DlgRef_3Sel_QTD*  Group3Pnts;
     DlgRef_3Sel_QTD*  GroupCenter2Pnts;
+
 private slots:
     void ClickOnOk();
     void ClickOnCancel();

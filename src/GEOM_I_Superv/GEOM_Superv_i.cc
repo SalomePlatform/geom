@@ -546,6 +546,20 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurve (GEOM::GEOM_Object_ptr the
 }
 
 //=============================================================================
+//  MakePointOnLinesIntersection:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theRefLine1,
+								   GEOM::GEOM_Object_ptr theRefLine2)
+{
+  beginService( " GEOM_Superv_i::MakePointOnLinesIntersection" );
+  MESSAGE("GEOM_Superv_i::MakePointOnLinesIntersection");
+  getBasicOp();
+  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakePointOnLinesIntersection(theRefLine1, theRefLine2);
+  endService( " GEOM_Superv_i::MakePointOnLinesIntersection" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakeTangentOnCurve:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
@@ -599,6 +613,20 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeLineTwoPnt (GEOM::GEOM_Object_ptr thePn
   getBasicOp();
   GEOM::GEOM_Object_ptr anObj = myBasicOp->MakeLineTwoPnt(thePnt1, thePnt2);
   endService( " GEOM_Superv_i::MakeLineTwoPnt");
+  return anObj;
+}
+
+//=============================================================================
+//  MakeLineTwoFaces:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeLineTwoFaces (GEOM::GEOM_Object_ptr theFace1,
+						       GEOM::GEOM_Object_ptr theFace2)
+{
+  beginService( " GEOM_Superv_i::MakeLineTwoFaces");
+  MESSAGE("GEOM_Superv_i::MakeLineTwoFaces");
+  getBasicOp();
+  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakeLineTwoFaces(theFace1, theFace2);
+  endService( " GEOM_Superv_i::MakeLineTwoFaces");
   return anObj;
 }
 
@@ -880,6 +908,20 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismVecH (GEOM::GEOM_Object_ptr theBas
   return anObj;
 }
 
+//=============================================================================
+//  MakePrismVecH2Ways:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismVecH2Ways (GEOM::GEOM_Object_ptr theBase,
+							 GEOM::GEOM_Object_ptr theVec,
+							 CORBA::Double         theH)
+{
+  beginService( " GEOM_Superv_i::MakePrismVecH2Ways" );
+  MESSAGE("GEOM_Superv_i::MakePrismVecH2Ways");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePrismVecH2Ways(theBase, theVec, theH);
+  endService( " GEOM_Superv_i::MakePrismVecH2Ways" );
+  return anObj;
+}
 
 //=============================================================================
 //  MakePrismTwoPnt:
@@ -893,6 +935,21 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismTwoPnt (GEOM::GEOM_Object_ptr theB
   get3DPrimOp();
   GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePrismTwoPnt(theBase, thePoint1, thePoint2);
   endService( " GEOM_Superv_i::MakePrismTwoPnt" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakePrismTwoPnt2Ways:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr theBase,
+							   GEOM::GEOM_Object_ptr thePoint1,
+							   GEOM::GEOM_Object_ptr thePoint2)
+{
+  beginService( " GEOM_Superv_i::MakePrismTwoPnt2Ways" );
+  MESSAGE("GEOM_Superv_i::MakePrismTwoPnt2Ways");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePrismTwoPnt2Ways(theBase, thePoint1, thePoint2);
+  endService( " GEOM_Superv_i::MakePrismTwoPnt2Ways" );
   return anObj;
 }
 
@@ -922,6 +979,21 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeRevolutionAxisAngle (GEOM::GEOM_Object_
   get3DPrimOp();
   GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeRevolutionAxisAngle(theBase, theAxis, theAngle);
   endService( " GEOM_Superv_i::MakeRevolutionAxisAngle" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeRevolutionAxisAngle:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeRevolutionAxisAngle2Ways (GEOM::GEOM_Object_ptr theBase,
+								   GEOM::GEOM_Object_ptr theAxis,
+								   CORBA::Double theAngle)
+{
+  beginService( " GEOM_Superv_i::MakeRevolutionAxisAngle2Ways" );
+  MESSAGE("GEOM_Superv_i::MakeRevolutionAxisAngle2Ways");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeRevolutionAxisAngle2Ways(theBase, theAxis, theAngle);
+  endService( " GEOM_Superv_i::MakeRevolutionAxisAngle2Ways" );
   return anObj;
 }
 

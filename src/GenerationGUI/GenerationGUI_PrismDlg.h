@@ -32,7 +32,7 @@
 
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel1Spin2Check.h"
-#include "DlgRef_3Sel_QTD.h"
+#include "DlgRef_3Sel1Check_QTD.h"
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg
@@ -52,6 +52,7 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& msg );
     virtual bool execute( ObjectList& objects );    
+    virtual void addSubshapesToStudy();
 
 private:
     void Init();
@@ -66,9 +67,11 @@ private:
     bool myOkVec;
     bool myOkPnt1;
     bool myOkPnt2;
+    bool myBothway;
+    bool myBothway2;
 
     DlgRef_2Sel1Spin2Check* GroupPoints;
-    DlgRef_3Sel_QTD* GroupPoints2; // for second layout for extrusion using 2 points
+    DlgRef_3Sel1Check_QTD* GroupPoints2; // for second layout for extrusion using 2 points
 
 private slots:
     void ClickOnOk();
@@ -81,6 +84,8 @@ private slots:
     void SetEditCurrentArgument();
     void ValueChangedInSpinBox();
     void onReverse();
+    void onBothway();
+    void onBothway2();
 };
 
 #endif // DIALOGBOX_PRISM_H

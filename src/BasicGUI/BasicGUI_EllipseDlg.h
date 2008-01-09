@@ -52,8 +52,8 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
-
     virtual void closeEvent( QCloseEvent* e );
+    virtual void addSubshapesToStudy();
 
 private :
     void Init();

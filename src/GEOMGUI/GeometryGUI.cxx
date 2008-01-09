@@ -215,8 +215,8 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
     if ( (libs = getenv( "LD_LIBRARY_PATH" )) ) {
       QStringList dirList = QStringList::split( ":", libs, false ); // skip empty entries
 #else
-	if( ( libs = getenv( "PATH" ) ) ) {
-	  QStringList dirList = QStringList::split( ";", libs, false ); // skip empty entries
+      if ( (libs = getenv( "PATH" )) ) {
+        QStringList dirList = QStringList::split( ";", libs, false ); // skip empty entries
 #endif
       for( int i = dirList.count()-1; i >= 0; i-- ) {
 	QString dir = dirList[ i ];

@@ -53,6 +53,9 @@ class GEOM_I_EXPORT GEOM_IBasicOperations_i :
    GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theCurve,
 					   CORBA::Double theParameter);
 
+   GEOM::GEOM_Object_ptr MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theLine1,
+						       GEOM::GEOM_Object_ptr theLine2);
+
    GEOM::GEOM_Object_ptr MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
 					     CORBA::Double theParameter);
 
@@ -68,6 +71,9 @@ class GEOM_I_EXPORT GEOM_IBasicOperations_i :
 
    GEOM::GEOM_Object_ptr MakeLineTwoPnt (GEOM::GEOM_Object_ptr thePnt1,
 					 GEOM::GEOM_Object_ptr thePnt2);
+
+   GEOM::GEOM_Object_ptr MakeLineTwoFaces (GEOM::GEOM_Object_ptr theFace1,
+					   GEOM::GEOM_Object_ptr theFace2);
 
    GEOM::GEOM_Object_ptr MakePlaneThreePnt (GEOM::GEOM_Object_ptr thePnt1,
 					    GEOM::GEOM_Object_ptr thePnt2,

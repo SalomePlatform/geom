@@ -122,6 +122,10 @@ msgid "ICON_DLG_LINE_2P"
 msgstr "line2points.png"
 
 #LineDlg
+msgid "ICON_DLG_LINE_2F"
+msgstr "line2faces.png"
+
+#LineDlg
 msgid "ICON_DLG_LINE_EDGE"
 msgstr "lineedge.png"
 
@@ -180,6 +184,10 @@ msgstr "point3.png"
 #PoinDlg
 msgid "ICON_DLG_POINT_EDGE"
 msgstr "pointonedge.png"
+
+#PoinDlg
+msgid "ICON_DLG_POINT_LINES"
+msgstr "point_line_intersection.png"
 
 #ArcDlg
 msgid "ICON_DLG_ARC"

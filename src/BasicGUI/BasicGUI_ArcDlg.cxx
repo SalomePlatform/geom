@@ -33,7 +33,15 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+
 #include <qlabel.h>
+#include <qcheckbox.h>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -93,7 +101,7 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
   Group3Pnts2->PushButton2->setPixmap(image2);
   Group3Pnts2->PushButton3->setPixmap(image2);
 
-  Group3Pnts2->radioButton4->setText(tr("GEOM_REVERSE"));
+  Group3Pnts2->CheckButton1->setText(tr("GEOM_REVERSE"));
 
   Layout1->addWidget( Group3Pnts, 2, 0 );
   Layout1->addWidget( Group3Pnts2, 2, 0 );
@@ -123,7 +131,7 @@ void BasicGUI_ArcDlg::Init()
   /* init variables */
   myEditCurrentArgument = Group3Pnts->LineEdit1;
   myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
-  Group3Pnts2->radioButton4->setChecked(FALSE);
+  Group3Pnts2->CheckButton1->setChecked(FALSE);
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
@@ -151,10 +159,10 @@ void BasicGUI_ArcDlg::Init()
   connect(Group3Pnts2->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(Group3Pnts2->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(Group3Pnts2->radioButton4, SIGNAL(stateChanged(int)), this, SLOT(ReverseSense(int)));
+  connect(Group3Pnts2->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ReverseSense(int)));
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-          SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_ARC" ));
   ConstructorsClicked( 0 );
@@ -173,7 +181,8 @@ void BasicGUI_ArcDlg::ConstructorsClicked (int constructorId)
   {
   case 0:
     {
-      globalSelection( GEOM_POINT );
+      globalSelection(); // close local contexts, if any
+      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX); //Select Vertex on All Shapes
 
       Group3Pnts->show();
       resize(0, 0);
@@ -189,7 +198,8 @@ void BasicGUI_ArcDlg::ConstructorsClicked (int constructorId)
     }
   case 1:
     {
-      globalSelection( GEOM_POINT );
+      globalSelection(); // close local contexts, if any
+      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX); //Select Vertex on All Shapes
 
       Group3Pnts->hide();
       resize(0, 0);
@@ -239,7 +249,6 @@ bool BasicGUI_ArcDlg::ClickOnApply()
   return true;
 }
 
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
@@ -251,7 +260,7 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 
   myEditCurrentArgument->setText("");
 
-  if ( IObjectCount() != 1 )
+  if (IObjectCount() != 1)
   {
     switch (getConstructorId())
     {
@@ -276,14 +285,48 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), aRes);
+  if (!CORBA::is_nil(aSelectedObject) && aRes)
   {
+    QString aName = GEOMBase::GetName(aSelectedObject);
+
+    // Get Selected object if selected subshape
+    TopoDS_Shape aShape;
+    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+    {
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes(firstIObject(), aMap);
+      if (aMap.Extent() == 1) // Local Selection
+      {
+        int anIndex = aMap(1);
+        aName += QString(":vertex_%1").arg(anIndex);
+
+	//Find SubShape Object in Father
+	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+
+	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	}
+	else
+	  aSelectedObject = aFindedObject; // get Object from study
+      }
+      else // Global Selection
+      {
+        if (aShape.ShapeType() != TopAbs_VERTEX) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+        }
+      }
+    }
+
+    myEditCurrentArgument->setText(aName);
+
     switch (getConstructorId())
     {
       case 0:
       {
-        myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
         if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = aSelectedObject;
         else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = aSelectedObject;
         else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = aSelectedObject;
@@ -291,7 +334,6 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
       }
       case 1:
       {
-        myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
         if      ( myEditCurrentArgument == Group3Pnts2->LineEdit1 )   myPoint1 = aSelectedObject;
         else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 )   myPoint2 = aSelectedObject;
         else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 )   myPoint3 = aSelectedObject;
@@ -302,7 +344,6 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 
   displayPreview();
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()
@@ -427,7 +468,7 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
   case 1:
     {
       bool Sense;
-      (Group3Pnts2->radioButton4->isChecked()) ? Sense = true : Sense = false;
+      (Group3Pnts2->CheckButton1->isChecked()) ? Sense = true : Sense = false;
       if ( !CORBA::is_nil(myPoint1) && !CORBA::is_nil(myPoint2) &&!CORBA::is_nil(myPoint3) )
       {
         anObj = GEOM::GEOM_ICurvesOperations::_narrow(getOperation())->
@@ -450,4 +491,28 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
 void BasicGUI_ArcDlg::ReverseSense(int sense)
 {
   displayPreview();
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BasicGUI_ArcDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+switch (getConstructorId())
+  {
+  case 0:
+    objMap[Group3Pnts->LineEdit1->text()] = myPoint1;
+    objMap[Group3Pnts->LineEdit2->text()] = myPoint2;
+    objMap[Group3Pnts->LineEdit3->text()] = myPoint3;
+    break;
+  case 1:
+    objMap[Group3Pnts2->LineEdit1->text()] = myPoint1;
+    objMap[Group3Pnts2->LineEdit2->text()] = myPoint2;
+    objMap[Group3Pnts2->LineEdit3->text()] = myPoint3;
+    break;
+  }
+ addSubshapesToFather( objMap );
 }

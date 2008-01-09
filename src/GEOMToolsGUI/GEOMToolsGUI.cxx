@@ -31,6 +31,8 @@
 #include "GeometryGUI.h"
 #include "GEOM_Actor.h"
 #include "GEOMBase.h"
+#include "GEOMBase_aWarningDlg.h"
+
 #include "GEOM_Operation.h"
 #include "GEOM_Displayer.h"
 
@@ -323,13 +325,53 @@ void GEOMToolsGUI::OnEditDelete()
 	  return;
 	}
 	// VSR 17/11/04: check if all objects selected belong to GEOM component <-- finish
+	QString aNameList;
+	int nbSel = 0;
+	//Get Main Objects Names
+	Handle(SALOME_InteractiveObject) anIObject;
+	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
+	  {
+	    QString aName = It.Value()->getName();
+	    if ( aName != "" && aName.ref(0) != '*') {
+	      aNameList.append("    - " + aName + "\n");
+	      nbSel++;
+	    }
+	    anIObject = It.Value();
+	  }
+	// Append Child Names of Last Selected Object
+	_PTR(SObject) obj ( aStudy->FindObjectID( anIObject->getEntry() ) );
+	for (_PTR(ChildIterator) iit (aStudy->NewChildIterator(obj)); iit->More(); iit->Next()) {
+	  _PTR(SObject) child (iit->Value());
+	  QString aName = child->GetName();
+	  if (aName != "" && aName.ref(0) != '*') {
+	    aNameList.append("    - " +  aName + "\n");
+	    nbSel++;
+	    //append childs child
+	    for (_PTR(ChildIterator) iitt(aStudy->NewChildIterator(child)); iitt->More(); iitt->Next()) {
+	      _PTR(SObject) childchild(iitt->Value());
+	      QString aName = childchild->GetName();
+	      if (aName != "" && aName.ref(0) != '*') {
+	       aNameList.append("    - " +  aName + "\n");
+	       nbSel++;
+	       for (_PTR(ChildIterator) itt(aStudy->NewChildIterator(childchild)); itt->More(); itt->Next())
+		 {
+		   _PTR(SObject) childs(itt->Value());
+		   QString aName = childs->GetName();
+		   if (aName != "" && aName.ref(0) != '*') {
+		     aNameList.append("    - " +  aName + "\n");
+		     nbSel++;
+		   }
+		 }
+	      }
+	    }
+	  }
+	} //end of child append
 
-	if ( SUIT_MessageBox::warn2( app->desktop(),
-				     QObject::tr( "GEOM_WRN_WARNING" ),
-				     QObject::tr( "GEOM_REALLY_DELETE" ),
-				     QObject::tr( "GEOM_BUT_YES" ),
-				     QObject::tr( "GEOM_BUT_NO" ), 1, 0, 0 ) != 1 )
-	  return;
+       GEOMBase_aWarningDlg* Dialog = new GEOMBase_aWarningDlg( app->desktop(),  QObject::tr( "GEOM_WRN_WARNING" ), aNameList, nbSel);
+       int r = Dialog->exec();
+
+       if (!r)
+	 return;
 
 	//	QAD_Operation* op = new SALOMEGUI_ImportOperation(.....);
 	//	op->start();

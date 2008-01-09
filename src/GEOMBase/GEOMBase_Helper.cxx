@@ -774,6 +774,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 	showError();
       }
       else {
+	addSubshapesToStudy(); // add Subshapes if local selection
 	const int nbObjs = objects.size();
         int aNumber = 1;
 	for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
@@ -1029,8 +1030,75 @@ bool GEOMBase_Helper::selectObjects( ObjectList& objects )
   return true;
 }
   
+//================================================================
+// Function : findObjectInFather
+// Purpose  : It should return an object if its founded in study or
+//            return Null object if the object is not founded
+//================================================================
+GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr theFather, const char* theName)
+{
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  _PTR(Study) aDStudy = appStudy->studyDS();
+  string IOR = GEOMBase::GetIORFromObject( theFather );
+  _PTR(SObject) SObj ( aDStudy->FindObjectIOR( IOR ) );
 
+  bool inStudy = false;
+  GEOM::GEOM_Object_var aReturnObject;
+  for (_PTR(ChildIterator) iit (aDStudy->NewChildIterator( SObj )); iit->More() && !inStudy; iit->Next()) {
+    _PTR(SObject) child (iit->Value());
+    QString aChildName = child->GetName();
+    if (aChildName == theName) {
+      inStudy = true;
+      CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(iit->Value());
+      aReturnObject = GEOM::GEOM_Object::_narrow( corbaObj );
+    }
+  }
+  if (inStudy)
+    return aReturnObject._retn();
+
+  return GEOM::GEOM_Object::_nil();
+}
   
-  
-  
+//================================================================
+// Function : addSubshapesToStudy
+// Purpose  : Virtual method to add subshapes if needs
+//================================================================  
+void GEOMBase_Helper::addSubshapesToStudy()
+{
+  //Impemented in Dialogs, called from Accept method
+}
+
+//================================================================
+// Function : addSubshapesToFather
+// Purpose  : Method to add Father Subshapes to Study if it`s not exist
+//================================================================  
+void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>& theMap )
+{
+  //GetStudyDS
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  _PTR(Study) aDStudy = appStudy->studyDS();
+
+  GEOM::GEOM_IGroupOperations_var anOp = getGeomEngine()->GetIGroupOperations( getStudyId() );
+ 
+  for( QMap<QString, GEOM::GEOM_Object_var>::Iterator it = theMap.begin(); it != theMap.end(); it++ )
+    {
+      if ( !anOp->_is_nil() ) {
+	GEOM::GEOM_Object_var aFatherObj = anOp->GetMainShape( it.data() );
+	GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key() );
+      
+	//Add Object to study if its not exist
+	if ( aFindedObject == GEOM::GEOM_Object::_nil() )
+	  GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
+					      it.data(), it.key(), aFatherObj );
+      }
+      else {
+	//cout << " anOperations is NULL! " << endl;
+      }
+    }
+}  
+
   

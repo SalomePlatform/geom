@@ -694,6 +694,66 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
 
 //=============================================================================
 /*!
+ *  MakePrismVecH2Ways
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH2Ways (Handle(GEOM_Object) theBase,
+								    Handle(GEOM_Object) theVec,
+								    double theH)
+{
+  SetErrorCode(KO);
+
+  if (theBase.IsNull() || theVec.IsNull()) return NULL;
+
+  //Add a new Prism object
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+
+  //Add a new Prism function for creation a Prism relatively to vector
+  Handle(GEOM_Function) aFunction =
+    aPrism->AddFunction(GEOMImpl_PrismDriver::GetID(), PRISM_BASE_VEC_H_2WAYS);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PrismDriver::GetID()) return NULL;
+
+  GEOMImpl_IPrism aCI (aFunction);
+
+  Handle(GEOM_Function) aRefBase = theBase->GetLastFunction();
+  Handle(GEOM_Function) aRefVec  = theVec->GetLastFunction();
+
+  if (aRefBase.IsNull() || aRefVec.IsNull()) return NULL;
+
+  aCI.SetBase(aRefBase);
+  aCI.SetVector(aRefVec);
+  aCI.SetH(theH);
+
+  //Compute the Prism value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      //SetErrorCode("Prism driver failed");
+      SetErrorCode("Extrusion can not be created, check input data");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrismVecH2Ways("
+    << theBase << ", " << theVec << ", " << theH << ")";
+
+  SetErrorCode(OK);
+  return aPrism;
+}
+
+//=============================================================================
+/*!
  *  MakePrismTwoPnt
  */
 //=============================================================================
@@ -747,6 +807,67 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrism("
+    << theBase << ", " << thePoint1 << ", " << thePoint2 << ")";
+
+  SetErrorCode(OK);
+  return aPrism;
+}
+
+//=============================================================================
+/*!
+ *  MakePrismTwoPnt2Ways
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt2Ways
+       (Handle(GEOM_Object) theBase,
+        Handle(GEOM_Object) thePoint1, Handle(GEOM_Object) thePoint2)
+{
+  SetErrorCode(KO);
+
+  if (theBase.IsNull() || thePoint1.IsNull() || thePoint2.IsNull()) return NULL;
+
+  //Add a new Prism object
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+
+  //Add a new Prism function for creation a Prism relatively to two points
+  Handle(GEOM_Function) aFunction =
+    aPrism->AddFunction(GEOMImpl_PrismDriver::GetID(), PRISM_BASE_TWO_PNT_2WAYS);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PrismDriver::GetID()) return NULL;
+
+  GEOMImpl_IPrism aCI (aFunction);
+
+  Handle(GEOM_Function) aRefBase = theBase->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt1 = thePoint1->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt2 = thePoint2->GetLastFunction();
+
+  if (aRefBase.IsNull() || aRefPnt1.IsNull() || aRefPnt2.IsNull()) return NULL;
+
+  aCI.SetBase(aRefBase);
+  aCI.SetFirstPoint(aRefPnt1);
+  aCI.SetLastPoint(aRefPnt2);
+
+  //Compute the Prism value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      //SetErrorCode("Prism driver failed");
+      SetErrorCode("Extrusion can not be created, check input data");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrism2Ways("
     << theBase << ", " << thePoint1 << ", " << thePoint2 << ")";
 
   SetErrorCode(OK);
@@ -871,6 +992,63 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
   return aRevolution;
 }
 
+//=============================================================================
+/*!
+ *  MakeRevolutionAxisAngle2Ways
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle2Ways
+                   (Handle(GEOM_Object) theBase, Handle(GEOM_Object) theAxis, double theAngle)
+{
+  SetErrorCode(KO);
+
+  if (theBase.IsNull() || theAxis.IsNull()) return NULL;
+
+  //Add a new Revolution object
+  Handle(GEOM_Object) aRevolution = GetEngine()->AddObject(GetDocID(), GEOM_REVOLUTION);
+
+  //Add a new Revolution function for creation a revolution relatively to axis
+  Handle(GEOM_Function) aFunction =
+    aRevolution->AddFunction(GEOMImpl_RevolutionDriver::GetID(), REVOLUTION_BASE_AXIS_ANGLE_2WAYS);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_RevolutionDriver::GetID()) return NULL;
+
+  GEOMImpl_IRevolution aCI (aFunction);
+
+  Handle(GEOM_Function) aRefBase = theBase->GetLastFunction();
+  Handle(GEOM_Function) aRefAxis = theAxis->GetLastFunction();
+
+  if (aRefBase.IsNull() || aRefAxis.IsNull()) return NULL;
+
+  aCI.SetBase(aRefBase);
+  aCI.SetAxis(aRefAxis);
+  aCI.SetAngle(theAngle);
+
+  //Compute the Revolution value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Revolution driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aRevolution << " = geompy.MakeRevolution2Ways("
+    << theBase << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
+
+  SetErrorCode(OK);
+  return aRevolution;
+}
 
 //=============================================================================
 /*!
