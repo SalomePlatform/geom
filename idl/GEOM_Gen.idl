@@ -287,6 +287,13 @@ module GEOM
     GEOM_Object MakePointOnCurve (in GEOM_Object theRefCurve,
 				  in double theParameter);
 
+    /*!
+     *  Create a point, on two lines intersection.
+     *  \param theRefLine1, theRefLine2 The referenced lines.
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object MakePointOnLinesIntersection (in GEOM_Object theRefLine1,
+					      in GEOM_Object theRefLine2);
     
      /*!
      *  Create a vector, corresponding to tangent to the given parameter on the given curve.
@@ -334,6 +341,14 @@ module GEOM
      *  \return New GEOM_Object, containing the created line.
      */
     GEOM_Object MakeLineTwoPnt (in GEOM_Object thePnt1, in GEOM_Object thePnt2);
+
+    /*!
+     *  Create a line, given by two faces intersection.
+     *  \param theFace1 First of two faces, defining the line.
+     *  \param theFace2 Second of two faces, defining the line.
+     *  \return New GEOM_Object, containing the created line.
+     */
+    GEOM_Object MakeLineTwoFaces (in GEOM_Object theFace1, in GEOM_Object theFace2);
 
     /*!
      *  Create a plane, passing through the three given points
@@ -829,6 +844,10 @@ module GEOM
     GEOM_Object MakePrismVecH (in GEOM_Object theBase,
 			       in GEOM_Object theVec,
 			       in double      theH);
+    /*  The Same Prism but in 2 directions (forward&backward) */
+    GEOM_Object MakePrismVecH2Ways (in GEOM_Object theBase,
+				    in GEOM_Object theVec,
+				    in double      theH);
 
     /*!
      *  Create a shape by extrusion of the base shape along a vector, defined by two points.
@@ -840,6 +859,10 @@ module GEOM
     GEOM_Object MakePrismTwoPnt (in GEOM_Object theBase,
 				 in GEOM_Object thePoint1,
 				 in GEOM_Object thePoint2);
+    /*  The same prism but in two directions forward&backward */
+    GEOM_Object MakePrismTwoPnt2Ways (in GEOM_Object theBase,
+				      in GEOM_Object thePoint1,
+				      in GEOM_Object thePoint2);
 
     /*!
      *  Create a shape by extrusion of the base shape along
@@ -862,6 +885,10 @@ module GEOM
     GEOM_Object MakeRevolutionAxisAngle (in GEOM_Object theBase,
 					 in GEOM_Object theAxis,
 					 in double theAngle);
+    /*  The Same Revolution but in both ways forward&backward */
+    GEOM_Object MakeRevolutionAxisAngle2Ways (in GEOM_Object theBase,
+					      in GEOM_Object theAxis,
+					      in double theAngle);
 
     /*!
      *  Create a filling from the given compound of contours.
