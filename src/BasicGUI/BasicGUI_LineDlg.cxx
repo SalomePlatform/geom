@@ -177,6 +177,7 @@ bool BasicGUI_LineDlg::ClickOnApply()
     return false;
 
   initName();
+  myEditCurrentArgument->setText("");
   ConstructorsClicked(getConstructorId());
   return true;
 }
