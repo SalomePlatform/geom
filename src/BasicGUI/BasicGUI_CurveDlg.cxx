@@ -198,6 +198,8 @@ bool BasicGUI_CurveDlg::ClickOnApply()
 
   initName();
   ConstructorsClicked( getConstructorId() );
+  globalSelection(); // close local contexts, if any
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
   return true;
 }
 

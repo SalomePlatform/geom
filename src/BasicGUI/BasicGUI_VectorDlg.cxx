@@ -203,6 +203,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
       GroupPoints->hide();
       resize( 0, 0 );
       GroupDimensions->show();
+      globalSelection(); // close local contexts, if any
 
       double dx( 0. ), dy( 0. ), dz( 0. ); 
       GroupDimensions->SpinBox_DX->SetValue( dx );
