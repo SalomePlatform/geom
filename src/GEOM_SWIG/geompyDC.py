@@ -186,6 +186,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakePointOnCurve", self.BasicOp)
             return anObj
+
+        ## Create a point on intersection of two lines.
+        #  @param theRefLine1, theRefLine2 The referenced lines.
+        #  @return New GEOM_Object, containing the created point.
+        #
+        #  Example: see GEOM_TestAll.py
+        def MakeVertexOnLinesIntersection(self, theRefLine1, theRefLine2):
+            anObj = self.BasicOp.MakePointOnLinesIntersection(theRefLine1, theRefLine2)
+            RaiseIfFailed("MakePointOnLinesIntersection", self.BasicOp)
+            return anObj
         
         ## Create a tangent, corresponding to the given parameter on the given curve.
         #  @param theRefCurve The referenced curve.
@@ -240,6 +250,17 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeLineTwoPnt(self,thePnt1, thePnt2):
             anObj = self.BasicOp.MakeLineTwoPnt(thePnt1, thePnt2)
             RaiseIfFailed("MakeLineTwoPnt", self.BasicOp)
+            return anObj
+
+        ## Create a line on two faces intersection. 
+        #  @param theFace1 First of two faces, defining the line.
+        #  @param theFace2 Second of two faces, defining the line.
+        #  @return New GEOM_Object, containing the created line.
+        #
+        #  Example: see GEOM_TestAll.py
+        def MakeLineTwoFaces(self, theFace1, theFace2):
+            anObj = self.BasicOp.MakeLineTwoFaces(theFace1, theFace2)
+            RaiseIfFailed("MakeLineTwoFaces", self.BasicOp)
             return anObj
         
         ## Create a plane, passing through the given point

@@ -198,6 +198,7 @@ void PrimitiveGUI_CylinderDlg::ConstructorsClicked(int constructorId)
     case 1 :
       { 
 	GroupPoints->hide();
+        globalSelection(); // close local contexts, if any
 	resize( 0, 0 );
 	GroupDimensions->show();
 	
