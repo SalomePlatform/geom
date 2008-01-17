@@ -46,9 +46,7 @@ uses
     ShrunkRange from IntTools,
     
     IndexedDataMapOfShapeInteger from BooleanOperations, 
-    
-    --InterferencePool  from BOPTools,
-    --PInterferencePool from BOPTools, 
+
     PavePool          from BOPTools, 
     PaveBlock         from BOPTools,
     ListOfPaveBlock   from BOPTools,
@@ -85,16 +83,7 @@ is
     	returns PaveFiller from NMTTools;  
     ---C++: alias "Standard_EXPORT virtual ~NMTTools_PaveFiller();"
       
-   -- Create(aIP:InterferencePool from BOPTools)
-    --	returns PaveFiller from NMTTools; 
-     
-   -- Destroy (me: in out) 
-	--is  virtual;    
-    --  -C++: alias "Standard_EXPORT virtual ~NMTTools_PaveFiller(){Destroy();}"
-    -- 
-    --  Selectors/Modifiers
-    --SetInterferencePool(me:out; 
-    --	    aIP:PInterferencePool from BOPTools);
+  
      
     SetCompositeShape (me:out;  
     	    aS:  Shape from TopoDS);  
@@ -103,18 +92,10 @@ is
     	returns  Shape from TopoDS; 
     	---C++:  return  const&  
 	
-    --InterfPool(me:out) 
-    	--returns PInterferencePool from BOPTools; 
-
-    --SetDS(me:out; 
-    	--    aDS:PShapesDataStructure from NMTDS);  
 	     
     DS(me:out) 
       	returns PShapesDataStructure from NMTDS;  
-     
-    --SetDSIt(me:out; 
-    	--    	aIt:PIterator from NMTDS); 
-	 
+ 
     DSIt(me:out) 
     	returns PIterator from NMTDS; 
      
@@ -169,21 +150,11 @@ is
     PreparePaveBlocks (me:out;   
     	    anE:Integer from Standard) 
     	is virtual protected;  		  
-		       
-    --PerformNewVertices  (me:out) 
-    	--is virtual;  
+	
      
     PrepareEdges  (me:out) 
     	is virtual protected;  
      
-    --SortTypes      (me;   
-    --	    anInd1:in out Integer from Standard; 
-    --        anInd2:in out Integer from Standard) 
-    --	is protected; 
-     
-    --ExpectedPoolLength(me) 
-    --	returns  Integer from Standard 
-	--is protected;  
     --
     -- Query section 
     IsDone(me) 
@@ -394,16 +365,16 @@ is
     RealPaveBlock(me:out;   
     	    aPB:PaveBlock from BOPTools) 
 	returns PaveBlock from BOPTools; 
-    ---C++: return const & 	  
+    ---C++: return const & 	   
     
-    -- Modified to add new method Thu Sep 14 14:35:18 2006 
-    -- Contribution of Samtech www.samcef.com BEGIN  
+    --modified by NIZNHY-PKV Fri Nov 30 10:30:54 2007  f
     RealPaveBlock(me:out;   
     	    aPB:PaveBlock from BOPTools; 
-    	    aLB:out ListOfInteger from TColStd) 
+    	    aLB:out ListOfInteger from TColStd; 
+    	    aIsCommonBlock:out  Integer from Standard) 
 	returns PaveBlock from BOPTools; 
     ---C++: return const & 	 
-    -- Contribution of Samtech www.samcef.com END 
+    --modified by NIZNHY-PKV Fri Nov 30 10:30:58 2007  t 
      
     RealSplitsFace  (me:out;  
     	         nF2 :Integer from Standard;  
@@ -530,7 +501,6 @@ is
 	aDMVV:  out  DataMapOfShapeShape from TopTools);  
      
 fields 
-    --myIntrPool         :  PInterferencePool from BOPTools    	is protected; 
     myDS               :  PShapesDataStructure from NMTDS   	is protected;   
     myIsDone           :  Boolean from Standard                 is protected; 
     myNbSources        :  Integer from Standard                 is protected;  
@@ -544,10 +514,10 @@ fields
     myContext          :  Context from IntTools                 is protected; 
     mySectionAttribute :  SSIntersectionAttribute from BOPTools is protected; 
     myAloneVertices    :  IndexedDataMapOfIndexedMapOfInteger from NMTTools is protected;   
-    --modified by NIZNHY-PKV Wed Oct 11 11:06:50 2006f
+    --
     myVSD              :  DataMapOfIntegerInteger from TColStd is protected; 
     myDSIt             :  PIterator from NMTDS is protected;  
     myCompositeShape   :  Shape from TopoDS is protected;
     myIP               :  PInterfPool from NMTDS is protected;     
-    --modified by NIZNHY-PKV Wed Oct 11 11:06:55 2006t 
+
 end PaveFiller;

@@ -83,18 +83,23 @@
 // function: RealPaveBlock
 // purpose:
 //=======================================================================
-  const BOPTools_PaveBlock& NMTTools_PaveFiller::RealPaveBlock(const BOPTools_PaveBlock& aPB,
-							       TColStd_ListOfInteger& aLB)
+  const BOPTools_PaveBlock& NMTTools_PaveFiller::RealPaveBlock
+     (const BOPTools_PaveBlock& aPB,
+      TColStd_ListOfInteger& aLB,
+      Standard_Integer& aIsCommonBlock)
 {
   Standard_Integer nE, nSpx;
   BOPTools_ListIteratorOfListOfPaveBlock aItPBx;
   //
+  aIsCommonBlock=0;
   aLB.Clear();
   nE=aPB.OriginalEdge();
   const NMTTools_ListOfCommonBlock& aLCBE=myCommonBlockPool(myDS->RefEdge(nE));
   NMTTools_CommonBlockAPI aCBAPI(aLCBE);
   if (aCBAPI.IsCommonBlock(aPB)) {
     NMTTools_CommonBlock& aCB=aCBAPI.CommonBlock(aPB);
+    //
+    aIsCommonBlock=1;   
     //
     const BOPTools_ListOfPaveBlock& aLPBx=aCB.PaveBlocks();
     aItPBx.Initialize(aLPBx);
