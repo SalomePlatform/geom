@@ -405,9 +405,9 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
 //=================================================================================
 void EntityGUI_SubShapeDlg::SubShapeToggled()
 {
-  if ( isAllSubShapes() )
-    globalSelection( GEOM_ALLSHAPES );
-  else
+  globalSelection( GEOM_ALLSHAPES );
+
+  if ( !isAllSubShapes() )
     localSelection( myObject, shapeType() );
 }
 
