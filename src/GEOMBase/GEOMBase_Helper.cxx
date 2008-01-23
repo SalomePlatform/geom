@@ -789,7 +789,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 	      if ( aName.isEmpty() )
 		aName = GEOMBase::GetDefaultName( getPrefix( *it ) );
 	    }
-	    addInStudy( *it, aName.toLatin1() );
+	    addInStudy( *it, aName.toLatin1().constData() );
             // updateView=false
 	    display( *it, false );
 	  }
