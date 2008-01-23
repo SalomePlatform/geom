@@ -105,7 +105,7 @@ bool GEOMGUI_Selection::isVisible( const int index ) const
   GEOM::GEOM_Object_var obj = getObject( index );
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   if ( !CORBA::is_nil( obj ) && view ) {
-    Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).toLatin1(), "GEOM", "TEMP_IO" );
+    Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).toLatin1().constData(), "GEOM", "TEMP_IO" );
     return view->isVisible( io );
   }
   return false;

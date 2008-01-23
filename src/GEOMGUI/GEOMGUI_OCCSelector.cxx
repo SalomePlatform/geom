@@ -201,7 +201,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 #ifndef WNT
       if ( indexesMap.IsBound( TCollection_AsciiString(entry.toLatin1().data())))
 #else
-	  if ( indexesMap.IsBound( (char*)entry.toLatin1()))
+	  if ( indexesMap.IsBound( entry.toLatin1().data() ) )
 #endif
       {
 	TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entry.toLatin1().data());

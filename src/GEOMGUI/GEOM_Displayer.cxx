@@ -842,7 +842,7 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
     if ( prs )
     {
       Handle( SALOME_InteractiveObject ) theIO = new SALOME_InteractiveObject();
-      theIO->setEntry( entry.toLatin1() );
+      theIO->setEntry( entry.toLatin1().constData() );
       if ( !theIO.IsNull() )
       {
 	// set interactive object
