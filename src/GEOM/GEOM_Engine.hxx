@@ -101,6 +101,8 @@ class GEOM_Engine
   GEOM_DataMapOfAsciiStringTransient _objects;
 
   Resource_DataMapOfAsciiStringAsciiString _studyEntry2NameMap;
+
+  int _lastObjectTag;
 };
 
 #endif

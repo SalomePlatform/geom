@@ -114,6 +114,7 @@ GEOM_Engine::GEOM_Engine()
 
   _OCAFApp = new GEOM_Application();
   _UndoLimit = 10;
+  _lastObjectTag = 0;
 }
 
 //=============================================================================
@@ -176,18 +177,34 @@ Handle(GEOM_Object) GEOM_Engine::GetObject(int theDocID, char* theEntry)
 //=============================================================================
 Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
 {
-    Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
-    Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
+  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
+  Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
 
-    TDF_Label aChild = TDF_TagSource::NewChild(aDoc->Main());
-    Handle(GEOM_Object) anObject = new GEOM_Object(aChild, theType);
+  //TDF_Label aChild = TDF_TagSource::NewChild(aDoc->Main());
+  // NPAL18604: use existing label to decrease memory usage,
+  //            if this label has been freed (object deleted)
+  bool useExisting = false;
+  TDF_Label aChild;
+  if (_lastObjectTag > 0) {
+    aChild = aDoc->Main().FindChild(_lastObjectTag, Standard_False);
+    if (!aChild.IsAttribute(TDataStd_TreeNode::GetDefaultTreeID())) {
+      useExisting = true;
+    }
+  }
+  if (!useExisting) {
+    // create new label
+    aChild = TDF_TagSource::NewChild(aDoc->Main());
+    _lastObjectTag = aChild.Tag();
+  }
 
-    //Put an object in the map of created objects
-    TCollection_AsciiString anID = BuildIDFromObject(anObject);
-    if(_objects.IsBound(anID)) _objects.UnBind(anID);
-    _objects.Bind(anID, anObject);
+  Handle(GEOM_Object) anObject = new GEOM_Object(aChild, theType);
 
-    return anObject;
+  //Put an object in the map of created objects
+  TCollection_AsciiString anID = BuildIDFromObject(anObject);
+  if(_objects.IsBound(anID)) _objects.UnBind(anID);
+  _objects.Bind(anID, anObject);
+
+  return anObject;
 }
 
 //=============================================================================
@@ -204,7 +221,22 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   Handle(TDocStd_Document) aDoc = GetDocument(theMainShape->GetDocID());
   Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
 
-  TDF_Label aChild = TDF_TagSource::NewChild(aDoc->Main());
+  //TDF_Label aChild = TDF_TagSource::NewChild(aDoc->Main());
+  // NPAL18604: use existing label to decrease memory usage,
+  //            if this label has been freed (object deleted)
+  bool useExisting = false;
+  TDF_Label aChild;
+  if (_lastObjectTag > 0) {
+    aChild = aDoc->Main().FindChild(_lastObjectTag, Standard_False);
+    if (!aChild.IsAttribute(TDataStd_TreeNode::GetDefaultTreeID())) {
+      useExisting = true;
+    }
+  }
+  if (!useExisting) {
+    // create new label
+    aChild = TDF_TagSource::NewChild(aDoc->Main());
+    _lastObjectTag = aChild.Tag();
+  }
 
   Handle(GEOM_Function) aMainShape = theMainShape->GetLastFunction();
   Handle(GEOM_Object) anObject = new GEOM_Object(aChild, 28); //28 is SUBSHAPE type

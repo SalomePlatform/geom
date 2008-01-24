@@ -114,7 +114,7 @@ void GEOM_IOperations_i::FinishOperation()
 
 //=============================================================================
 /*!
- *  AboutOperation
+ *  AbortOperation
  */
 //=============================================================================
 void GEOM_IOperations_i::AbortOperation()
@@ -132,6 +132,6 @@ GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObjec
   if(theObject.IsNull()) return NULL;
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  GEOM::GEOM_Object_var GO = GEOM::GEOM_Object::_duplicate(_engine->GetObject(theObject->GetDocID(), anEntry.ToCString()));
+  GEOM::GEOM_Object_var GO = _engine->GetObject(theObject->GetDocID(), anEntry.ToCString());
   return GO._retn();
 }
