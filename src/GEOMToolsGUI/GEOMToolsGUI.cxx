@@ -425,7 +425,7 @@ void GEOMToolsGUI::OnEditDelete()
           RemoveObjectWithChildren(obj, aStudy, views, disp);
 
 	  // Remove objects from Study
-	  aStudyBuilder->RemoveObject( obj );
+	  aStudyBuilder->RemoveObjectWithChildren( obj );
 
 	  //deleted = true;
 	} // MAIN LOOP of selected
