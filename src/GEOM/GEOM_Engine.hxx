@@ -30,6 +30,7 @@
 #include <TDocStd_Document.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfAsciiString.hxx>
+#include <TDF_Label.hxx>
 
 class GEOM_Engine
 {
@@ -102,7 +103,7 @@ class GEOM_Engine
 
   Resource_DataMapOfAsciiStringAsciiString _studyEntry2NameMap;
 
-  int _lastObjectTag;
+  TDF_Label _lastCleared;
 };
 
 #endif
