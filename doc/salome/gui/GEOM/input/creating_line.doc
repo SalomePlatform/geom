@@ -4,14 +4,24 @@
 
 To create a \b Line in the <b>Main Menu</b> select <b>New Entity - >Basic - > Line</b>
 
-\n To create a \b Line you should define \b Point1 and \b Point2,
-which are the points through  which the \b Line passes.
-\n The \b Result of the operation will be a GEOM_Object (edge).
 
+There are 2 algorithms to create a \b Line in the 3D space.
+The Result of each operation will be a GEOM_Object (edge).
+
+\n Firstly you can define a \b Line through \b Point1 and \b Point2,
+which are the points through  which the \b Line passes.
 \n <b>TUI Command:</b> <em>geompy.MakeLineTwoPnt(Point1, Point2)</em>
 \n <b>Arguments:</b> Name + 2 vertices.
 
-\image html line.png
+\image html line1.png
+
+\n Secondly you can define a \b Line as intersection of  \b Plane1 and
+\b Plane2.
+\n <b>TUI Command:</b> <em>geompy.MakeLineTwoFaces(myFace1, myFace2)</em>
+\n <b>Arguments:</b> Name + 2 faces.
+
+\image html line2.png
+
 
 <b>Example:</b>
 

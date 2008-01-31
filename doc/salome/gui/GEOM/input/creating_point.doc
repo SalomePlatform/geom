@@ -5,7 +5,7 @@
 To create a \b Point in the <b>Main Menu</b> select <b>New Entity - >
 Basic - > Point</b>
 
-\n There are three algorithms to create a \b Point in the 3D space.
+\n There are four algorithms to create a \b Point in the 3D space.
 \n Each time the \b Result of the operation will be a GEOM_Object
 (vertex).
 
@@ -23,9 +23,9 @@ coordinates of the old one.
 \n <b>Arguments:</b> Name + 1 reference point + 3 coordinates defining
 the position of this point regarding the reference one.
 
-\image html neo-point2.png
+\image html point2.png
 
-\n Finally, we can define a point by an \b Edge and a \b Parameter
+\n Thirdly, we can define a point by an \b Edge and a \b Parameter
 indicating its position on the Edge, ranging from 0.0 to 1.0. For example, 0.5 means that the
 point is located in the middle of the edge.
 \n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurve(Edge,Parameter).</em>
@@ -34,6 +34,11 @@ position of the point on the given edge.
 
 \image html point3.png
 
+\n Finally, we can define a point by intersection of two \b  Lines.
+\n <b>TUI Command:</b> <em>geompy.MakePointOnLinesIntersection(myLine1,myLine2).</em>
+\n <b>Arguments:</b> Name + 2 lines
+
+\image html point4.png
 <b>Example:</b>
 
 \image html points.png
