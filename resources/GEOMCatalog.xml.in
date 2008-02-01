@@ -8,6 +8,35 @@
 <path-prefix-list>
 </path-prefix-list>
 
+<!-- Geom data types  -->
+<type-list>
+  <type name="BCErrorType" kind="int"/>
+  <objref name="GEOM_Object" id="IDL:GEOM/GEOM_Object:1.0" />
+  <objref name="GEOM_List"  id="IDL:GEOM/GEOM_List:1.0" />
+  <objref name="GEOM_Gen"  id="IDL:GEOM/GEOM_Gen:1.0" />
+  <objref name="GEOM_Shape"  id="IDL:GEOM/GEOM_Object:1.0" />
+  <objref name="GEOM_Superv"  id="IDL:GEOM/GEOM_Superv:1.0" />
+  <objref name="GEOM_IBasicOperations"  id="IDL:GEOM/GEOM_IBasicOperations:1.0" />
+  <objref name="GEOM_ITransformOperations"  id="IDL:GEOM/GEOM_ITransformOperations:1.0" />
+  <objref name="GEOM_I3DPrimOperations"  id="IDL:GEOM/GEOM_I3DPrimOperations:1.0" />
+  <objref name="GEOM_IShapesOperations"  id="IDL:GEOM/GEOM_IShapesOperations:1.0" />
+  <objref name="GEOM_IBooleanOperations"  id="IDL:GEOM/GEOM_IBooleanOperations:1.0" />
+  <objref name="GEOM_ICurvesOperations"  id="IDL:GEOM/GEOM_ICurvesOperations:1.0" />
+  <objref name="GEOM_ILocalOperations"  id="IDL:GEOM/GEOM_ILocalOperations:1.0" />
+  <objref name="GEOM_IHealingOperations"  id="IDL:GEOM/GEOM_IHealingOperations:1.0" />
+  <objref name="GEOM_IInsertOperations"  id="IDL:GEOM/GEOM_IInsertOperations:1.0" />
+  <objref name="GEOM_IMeasureOperations"  id="IDL:GEOM/GEOM_IMeasureOperations:1.0" />
+  <objref name="GEOM_IBlocksOperations"  id="IDL:GEOM/GEOM_IBlocksOperations:1.0" />
+  <objref name="GEOM_IGroupOperations"  id="IDL:GEOM/GEOM_IGroupOperations:1.0" />
+  <sequence name="ListOfLong" content="int"  />
+  <sequence name="ListOfGO" content="GEOM_Object"  />
+  <sequence name="string_array" content="string"  />
+  <struct name="BCError" >
+    <member name="incriminated" type="ListOfLong"/>
+  </struct>
+  <sequence name="BCErrors" content="BCError"  />
+</type-list>
+
 <!-- Component list -->
 <component-list>
     <component>
