@@ -117,6 +117,25 @@ GEOM_Engine::GEOM_Engine()
   //_lastObjectTag = 0;
 }
 
+/*!
+ *  Destructor
+ */
+GEOM_Engine::~GEOM_Engine()
+{ 
+  GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It(_objects);
+  for(; It.More(); It.Next()) 
+    {
+      RemoveObject(Handle(GEOM_Object)::DownCast(It.Value()));
+    }
+
+  //Close all documents not closed
+  for(Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr(_mapIDDocument); anItr.More(); anItr.Next())
+    Close(anItr.Key());
+
+  _mapIDDocument.Clear();
+  _objects.Clear();
+}
+
 //=============================================================================
 /*!
  *  GetDocument

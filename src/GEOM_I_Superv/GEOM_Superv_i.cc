@@ -70,6 +70,12 @@ GEOM_Superv_i::GEOM_Superv_i(CORBA::ORB_ptr orb,
 GEOM_Superv_i::~GEOM_Superv_i()
 {
   MESSAGE("GEOM_Superv_i::~GEOM_Superv_i");
+  if (!CORBA::is_nil(myBasicOp))
+    myBasicOp->Destroy();
+  if (!CORBA::is_nil(myBoolOp))
+    myBoolOp->Destroy();
+  if (!CORBA::is_nil(my3DPrimOp))
+    my3DPrimOp->Destroy();
   delete name_service;
 }
 
@@ -79,8 +85,8 @@ GEOM_Superv_i::~GEOM_Superv_i()
 //============================================================================
 void GEOM_Superv_i::register_name(char * name)
 {
-  GEOM::GEOM_Superv_ptr g = GEOM::GEOM_Superv::_narrow(POA_GEOM::GEOM_Superv::_this());
-  name_service->Register(g, strdup(name)); 
+  GEOM::GEOM_Superv_var g = _this();
+  name_service->Register(g, name); 
 }
 
 //=============================================================================
@@ -88,9 +94,17 @@ void GEOM_Superv_i::register_name(char * name)
 //=============================================================================
 void GEOM_Superv_i::setGeomEngine()
 {
+  if ( !CORBA::is_nil(myGeomEngine) ) 
+    return;
   // get GEOM_Gen engine
+  /*
   SALOME_LifeCycleCORBA* lcc = new SALOME_LifeCycleCORBA( name_service );
   Engines::Component_var comp = lcc->FindOrLoad_Component( "FactoryServer", "GEOM" );
+  */
+
+  Engines::Container_var cont=GetContainerRef();
+  cont->load_component_Library("GEOM");
+  Engines::Component_var comp=cont->create_component_instance("GEOM",0);
 
   myGeomEngine = GEOM::GEOM_Gen::_narrow(comp);
 }
@@ -799,7 +813,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSphere  (CORBA::Double theX,
   MESSAGE("GEOM_Superv_i::MakeSphepe");
   getBasicOp();
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeSpherePntR(myBasicOp->MakePointXYZ(theX, theY, theZ), theRadius);
+  GEOM::GEOM_Object_var o = myBasicOp->MakePointXYZ(theX, theY, theZ);
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeSpherePntR(o, theRadius);
+  o->Destroy();
   endService( " GEOM_Superv_i::MakeSphepe" );
   return anObj;
 }
@@ -2737,7 +2753,8 @@ extern "C"
 						      const char * interfaceName)
   {
     GEOM_Superv_i * myGEOM_Superv_i = new GEOM_Superv_i(orb, poa, contId, instanceName, interfaceName);
-    myGEOM_Superv_i->register_name("/myGEOM_Superv");
+    //Don't understand the reason why this component is registered ???
+//    myGEOM_Superv_i->register_name("/myGEOM_Superv");
     return myGEOM_Superv_i->getId() ;
   }
 }

@@ -36,7 +36,7 @@ class GEOM_Engine
 {
  public:
   Standard_EXPORT GEOM_Engine();
-  Standard_EXPORT ~GEOM_Engine() { _mapIDDocument.Clear(); _objects.Clear(); }
+  Standard_EXPORT virtual ~GEOM_Engine();
 
   //Retuns the engine    
   Standard_EXPORT static GEOM_Engine* GetEngine();   

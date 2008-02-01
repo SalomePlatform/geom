@@ -85,7 +85,7 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
  private:
 
-  GEOM::GEOM_Gen_ptr _engine;
+  GEOM::GEOM_Gen_var _engine;
   Handle(GEOM_Object) _impl;
   TopoDS_Shape _geom;
 };

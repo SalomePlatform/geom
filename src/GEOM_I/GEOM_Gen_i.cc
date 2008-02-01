@@ -565,8 +565,8 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM:
 //============================================================================
 void GEOM_Gen_i::register_name(char * name)
 {
-  GEOM::GEOM_Gen_ptr g = GEOM::GEOM_Gen::_narrow(_this());
-  name_service->Register(g, CORBA::string_dup(name));
+  GEOM::GEOM_Gen_var g = _this();
+  name_service->Register(g, name);
 }
 
 //============================================================================
@@ -599,6 +599,7 @@ GEOM::GEOM_IBasicOperations_ptr GEOM_Gen_i::GetIBasicOperations(CORBA::Long theS
 
   GEOM::GEOM_Gen_ptr engine = _this();
 
+  //transfer reference on engine
   GEOM_IBasicOperations_i* aServant =
     new GEOM_IBasicOperations_i(_poa, engine, _impl->GetIBasicOperations(theStudyID));
 
@@ -928,7 +929,8 @@ GEOM_I_EXPORT
 						const char * interfaceName)
   {
    GEOM_Gen_i * myGEOM_Gen_i = new GEOM_Gen_i(orb, poa, contId, instanceName, interfaceName);
-   myGEOM_Gen_i->register_name("/myGEOM_Gen"); // NRI : 11/07/2002 : Add for Supervision example
+   // Don't understand the reason of this register ????
+//   myGEOM_Gen_i->register_name("/myGEOM_Gen"); // NRI : 11/07/2002 : Add for Supervision example
    return myGEOM_Gen_i->getId();
   }
 }

@@ -247,8 +247,9 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeSpherePntR
   if (thePnt == NULL) return aGEOMObject._retn();
 
   //Get the reference point
+  CORBA::String_var entry=thePnt->GetEntry();
   Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
-    (thePnt->GetStudyID(), thePnt->GetEntry());
+    (thePnt->GetStudyID(), entry);
 
   if (aPnt.IsNull()) return aGEOMObject._retn();
 
