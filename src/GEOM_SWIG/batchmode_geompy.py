@@ -700,8 +700,8 @@ def MakeCopy(aShape):
       print "MakeCopy : ", InsertOp.GetErrorCode()
     return anObj
 
-def MakeFilling(aShape,mindeg,maxdeg,tol2d,tol3d,nbiter):
-    anObj = PrimOp.MakeFilling(aShape,mindeg,maxdeg,tol2d,tol3d,nbiter)
+def MakeFilling(aShape,mindeg,maxdeg,tol2d,tol3d,nbiter,isApprox=0):
+    anObj = PrimOp.MakeFilling(aShape,mindeg,maxdeg,tol2d,tol3d,nbiter,isApprox)
     if PrimOp.IsDone() == 0:
       print "MakeFilling : ", PrimOp.GetErrorCode()
     return anObj

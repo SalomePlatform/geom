@@ -31,7 +31,7 @@
 #include "GenerationGUI.h"
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel5Spin.h"
+#include "DlgRef_1Sel5Spin1Check.h"
 
 //=================================================================================
 // class    : GenerationGUI_FillingDlg
@@ -62,9 +62,10 @@ private:
     Standard_Real myTol3D;
     Standard_Real myTol2D;
     Standard_Integer myNbIter;
+    bool myIsApprox;
     bool myOkCompound;         /* to check when curv. compound is defined */
 
-    DlgRef_1Sel5Spin* GroupPoints;
+    DlgRef_1Sel5Spin1Check* GroupPoints;
 
 private slots:
     void ClickOnOk();
@@ -74,6 +75,7 @@ private slots:
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
     void ValueChangedInSpinBox(double newValue);
+    void ApproxChanged();
 };
 
 #endif // DIALOGBOX_FILLING_H

@@ -1012,6 +1012,10 @@ msgstr "Tol. 3D :"
 msgid "GEOM_FILLING_NB_ITER"
 msgstr "Nb. Iter :"
 
+#: GeometryGUI_FillingDlg.cxx:84
+msgid "GEOM_FILLING_APPROX"
+msgstr "Approximation"
+
 #: GeometryGUI_FuseDlg.cxx:48
 msgid "GEOM_FUSE_TITLE"
 msgstr "BOOLEAN : Fuse Two Objects"

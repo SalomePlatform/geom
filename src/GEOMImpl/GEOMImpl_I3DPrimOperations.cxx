@@ -1110,7 +1110,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSolidShell (Handle(GEOM_Obje
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
        (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg,
-        double theTol2D, double theTol3D, int theNbIter)
+        double theTol2D, double theTol3D, int theNbIter, bool isApprox)
 {
   SetErrorCode(KO);
 
@@ -1138,6 +1138,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
   aFI.SetTol2D(theTol2D);
   aFI.SetTol3D(theTol3D);
   aFI.SetNbIter(theNbIter);
+  aFI.SetApprox(isApprox);
 
   //Compute the Solid value
   try {
@@ -1159,9 +1160,13 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aFilling << " = geompy.MakeFilling("
+  GEOM::TPythonDump pd (aFunction);
+  pd << aFilling << " = geompy.MakeFilling("
     << theShape << ", " << theMinDeg << ", " << theMaxDeg << ", "
-      << theTol2D << ", " << theTol3D << ", " << theNbIter << ")";
+      << theTol2D << ", " << theTol3D << ", " << theNbIter;
+  if(isApprox)
+    pd << ", " << isApprox;
+  pd << ")";
 
   SetErrorCode(OK);
   return aFilling;

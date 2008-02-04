@@ -567,7 +567,8 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_pt
 							    CORBA::Long theMaxDeg,
 							    CORBA::Double theTol2D,
 							    CORBA::Double theTol3D,
-							    CORBA::Long theNbIter)
+							    CORBA::Long theNbIter,
+							    CORBA::Boolean theApprox)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -583,7 +584,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_pt
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   //Create the Solid
-  Handle(GEOM_Object) anObject = GetOperations()->MakeFilling(aShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeFilling(aShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter, theApprox);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

@@ -1,18 +1,20 @@
 /*!
 
-\page creaet_filling_page Filling Surface with Edges
+\page create_filling_page Filling Surface with Edges
 
 To generate a \b Filling in the <b>Main Menu</b> select <b>New Entity - > Generation  - > Filling</b>
 
 \n To create a curving face using several edges you need to define the
 <b>Edges Compound</b>, \b Minimum and <b>Maximum Degree</b>, \b
-Tolerance for \b 2D and for \b 3D  and the <b>Number of Iterations</b>.
+Tolerance for \b 2D and for \b 3D , the <b>Number of Iterations</b>
+and <b>Approximation</b>.
 \n The \b Result of the operation will be a GEOM_Object (face).
 
-\n <b>TUI Command:</b> <em>geompy.MakeFilling(Edges, MinDegree, MaxDegree, Tol2D, Tol3D, NbIter)</em>
-\n <b>Arguments:</b> Name + 1 List of edges + 5 Parameters
+\n <b>TUI Command:</b> <em>geompy.MakeFilling(Edges, MinDegree,
+MaxDegree, Tol2D, Tol3D, NbIter, isApprox)</em>
+\n <b>Arguments:</b> Name + 1 List of edges + 6 Parameters
 (Min. degree, Max. degree, Number of iterations, 2D tolerance, 3D
-tolerance, Number of iterations).
+tolerance, Number of iterations, Approximation).
 
 \image html filling.png
 
