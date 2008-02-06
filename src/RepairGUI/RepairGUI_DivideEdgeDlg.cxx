@@ -95,7 +95,7 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg( GeometryGUI* theGeometryGUI, Q
 
   /***************************************************************/
 
-  setHelpFileName( "add_point_on_edge.htm" );
+  setHelpFileName( "add_point_on_edge_operation_page.html" );
 
   Init();
 }
@@ -273,16 +273,6 @@ void RepairGUI_DivideEdgeDlg::enterEvent( QEvent* )
 {
   if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
-}
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void RepairGUI_DivideEdgeDlg::closeEvent( QCloseEvent* e )
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
 }
 
 

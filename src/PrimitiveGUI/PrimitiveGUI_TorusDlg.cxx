@@ -34,6 +34,13 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <GEOMImpl_Types.hxx>
 
 //=================================================================================
@@ -47,9 +54,10 @@ PrimitiveGUI_TorusDlg::PrimitiveGUI_TorusDlg( GeometryGUI* theGeometryGUI, QWidg
 					      bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_TORUS_PV" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_TORUS_DXYZ" ) ) );
-  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+  QPixmap image0( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_TORUS_PV" ) ) );
+  QPixmap image1( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_TORUS_DXYZ" ) ) );
+  QPixmap image2( aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
   setWindowTitle( tr( "GEOM_TORUS_TITLE" ) );
 
@@ -80,7 +88,7 @@ PrimitiveGUI_TorusDlg::PrimitiveGUI_TorusDlg( GeometryGUI* theGeometryGUI, QWidg
   layout->addWidget( GroupDimensions );
   /***************************************************************/
 
-  setHelpFileName( "turus.htm" );
+  setHelpFileName( "create_torus_page.html" );
   
   Init();
 }
@@ -114,10 +122,10 @@ void PrimitiveGUI_TorusDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, step, 3 );
-  initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, step, 3 );
-  initSpinBox( GroupDimensions->SpinBox_DX, 0.001, COORD_MAX, step, 3 );
-  initSpinBox( GroupDimensions->SpinBox_DY, 0.001, COORD_MAX, step, 3 );
+  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DX, 0.001, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DY, 0.001, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
 
   GroupPoints->SpinBox_DX->setValue( 300.0 );
   GroupPoints->SpinBox_DY->setValue( 100.0 );
@@ -147,8 +155,8 @@ void PrimitiveGUI_TorusDlg::Init()
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DX, SLOT( SetStep( double ) ) );
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DY, SLOT( SetStep( double ) ) );
   
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
   
   initName( tr( "GEOM_TORUS" ) );
 
@@ -162,12 +170,13 @@ void PrimitiveGUI_TorusDlg::Init()
 //=================================================================================
 void PrimitiveGUI_TorusDlg::ConstructorsClicked( int constructorId )
 {
-  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
+  disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
   
   switch( constructorId ) {
   case 0 :
     {
-      globalSelection( GEOM_LINE );
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       
       GroupDimensions->hide();
       GroupPoints->show();
@@ -177,14 +186,16 @@ void PrimitiveGUI_TorusDlg::ConstructorsClicked( int constructorId )
       GroupPoints->LineEdit2->setText( "" );
       myPoint = myDir = GEOM::GEOM_Object::_nil();
       
-      connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+      connect( myGeomGUI->getApp()->selectionMgr(),
 	       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+      SelectionIntoArgument();
       break;
     }
   case 1:
     {
       GroupPoints->hide();
       GroupDimensions->show();
+      globalSelection(); // close local contexts, if any
       
       break ;
     }
@@ -219,7 +230,7 @@ bool PrimitiveGUI_TorusDlg::ClickOnApply()
     return false;
 
   initName();
-  ConstructorsClicked( getConstructorId() );
+
   return true;
 }
 
@@ -250,12 +261,50 @@ void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
   if ( !testResult || CORBA::is_nil( aSelectedObject ) )
     return;
   
+
+  QString aName = GEOMBase::GetName(aSelectedObject);
+  TopoDS_Shape aShape;
+  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
+    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+    if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+      aNeedType = TopAbs_EDGE;
+
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    TColStd_IndexedMapOfInteger aMap;
+    aSelMgr->GetIndexes( firstIObject(), aMap );
+    if ( aMap.Extent() == 1 ) { // Local Selection
+      int anIndex = aMap( 1 );
+      if ( aNeedType == TopAbs_EDGE )
+        aName.append( ":edge_" + QString::number( anIndex ) );
+      else
+        aName.append( ":vertex_" + QString::number( anIndex ) );
+
+      //Find SubShape Object in Father
+      GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+
+      if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	GEOM::GEOM_IShapesOperations_var aShapesOp =
+	  getGeomEngine()->GetIShapesOperations( getStudyId() );
+	aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+      }
+      else
+	aSelectedObject = aFindedObject; // get Object from study
+    }
+    else { // Global Selection
+      if ( aShape.ShapeType() != aNeedType ) {
+        aSelectedObject = GEOM::GEOM_Object::_nil();
+        aName = "";
+      }
+    }
+  }
+
+  myEditCurrentArgument->setText(aName);
+
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
     myPoint = aSelectedObject;
   else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
     myDir = aSelectedObject;
     
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
   displayPreview();
 }
 
@@ -267,14 +316,16 @@ void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
 void PrimitiveGUI_TorusDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection( GEOM_POINT ); // to break previous local selection
   
   if ( send == GroupPoints->PushButton1 ) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection( GEOM_POINT );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
   else if ( send == GroupPoints->PushButton2 ) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    globalSelection( GEOM_LINE );
+    GEOM::GEOM_Object_var anObj;
+    localSelection( anObj, TopAbs_EDGE );
   }
   
   myEditCurrentArgument->setFocus();
@@ -304,7 +355,7 @@ void PrimitiveGUI_TorusDlg::LineEditReturnPressed()
 void PrimitiveGUI_TorusDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+  connect( myGeomGUI->getApp()->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
  
   ConstructorsClicked( getConstructorId() );
@@ -319,16 +370,6 @@ void PrimitiveGUI_TorusDlg::enterEvent( QEvent* )
 {
   if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-void PrimitiveGUI_TorusDlg::DeactivateActiveDialog()
-{
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 
@@ -393,16 +434,6 @@ bool PrimitiveGUI_TorusDlg::execute( ObjectList& objects )
 
 
 //=================================================================================
-// function : closeEvent
-// purpose  :
-//=================================================================================
-void PrimitiveGUI_TorusDlg::closeEvent( QCloseEvent* e )
-{
-  GEOMBase_Skeleton::closeEvent( e );
-}
-
-
-//=================================================================================
 // function : getRadius1()
 // purpose  :
 //=================================================================================
@@ -429,4 +460,23 @@ double PrimitiveGUI_TorusDlg::getRadius2() const
   else if ( aConstructorId == 1 )
     return GroupDimensions->SpinBox_DY->value();
   return 0;
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void PrimitiveGUI_TorusDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+  switch ( getConstructorId() ) {
+  case 0:
+    objMap[GroupPoints->LineEdit1->text()] = myPoint;
+    objMap[GroupPoints->LineEdit2->text()] = myDir;
+    break;
+  case 1:
+    return;
+  }
+  addSubshapesToFather( objMap );
 }

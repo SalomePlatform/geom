@@ -76,7 +76,7 @@ void GEOM_AssemblyBuilder::InitProperties(vtkProperty* IsoProp,
 					  vtkProperty* VertexProp,
 					  vtkProperty* IsoPVProp,
 					  vtkProperty* EdgePVProp,
-					  vtkProperty* VertexPVProp)
+			   		  vtkProperty* VertexPVProp)
 {
   // Shading like default OCC material
   FaceProp->SetRepresentationToSurface();
@@ -180,6 +180,7 @@ void GEOM_AssemblyBuilder::MeshShape(const TopoDS_Shape myShape,
       // Compute default deflection
       Bnd_Box B;
       BRepBndLib::Add(myShape, B);
+      if ( B.IsVoid() ) return; // NPAL15983 (Bug when displaying empty groups) 
       Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
       B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
       deflection = MAX3( aXmax-aXmin , aYmax-aYmin , aZmax-aZmin) * 0.001 *4;
@@ -196,8 +197,28 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
                                                       Standard_Boolean forced,
                                                       Standard_Boolean isVector)
 {
-  vtkActorCollection* AISActors = vtkActorCollection::New();
+  /*
+  vtkProperty* IsoProp = vtkProperty::New();
+  vtkProperty* FaceProp = vtkProperty::New();
+  vtkProperty* EdgeFProp = vtkProperty::New();
+  vtkProperty* EdgeSProp = vtkProperty::New();
+  vtkProperty* EdgeIProp = vtkProperty::New();
+  vtkProperty* VertexProp = vtkProperty::New();
+  vtkProperty* IsoPVProp = vtkProperty::New();
+  vtkProperty* EdgePVProp = vtkProperty::New();
+  vtkProperty* VertexPVProp = vtkProperty::New();
+  InitProperties(IsoProp,FaceProp,EdgeFProp,EdgeSProp,EdgeIProp,VertexProp,IsoPVProp,EdgePVProp,VertexPVProp);
+  */
 
+  vtkActorCollection* AISActors = vtkActorCollection::New();
+  MeshShape(myShape,deflection,forced);
+  GEOM_Actor* aGeomActor = GEOM_Actor::New();
+  aGeomActor->SetShape(myShape,(float)deflection,false,isVector);
+  AISActors->AddItem(aGeomActor);
+
+  aGeomActor->Delete();
+  
+  /*
   if(myShape.ShapeType() == TopAbs_COMPOUND) {
     TopoDS_Iterator anItr(myShape);
     for(; anItr.More(); anItr.Next()) {
@@ -325,6 +346,8 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
     AISActors->AddItem(VertexActor);
   
   } 
+  */
+  
   
   return AISActors;
 
@@ -343,8 +366,7 @@ vtkAssembly*  GEOM_AssemblyBuilder::BuildAssembly(const TopoDS_Shape& myShape,
   // Create a new vtkAssembly
 
   vtkAssembly* myVTKShape = vtkAssembly::New();
-
-
+  /*
   // Create graphics properties
 
   vtkProperty* IsoProp = vtkProperty::New();
@@ -423,6 +445,8 @@ vtkAssembly*  GEOM_AssemblyBuilder::BuildAssembly(const TopoDS_Shape& myShape,
     }
     myVTKShape->AddPart(myFaceAssembly);
   }
+
+  */
   
   return myVTKShape;
  

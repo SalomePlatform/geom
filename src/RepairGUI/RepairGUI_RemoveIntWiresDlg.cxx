@@ -80,7 +80,7 @@ RepairGUI_RemoveIntWiresDlg::RepairGUI_RemoveIntWiresDlg( GeometryGUI* theGeomet
 
   /***************************************************************/
 
-  setHelpFileName( "suppress_internal_wires.htm" );
+  setHelpFileName( "suppress_internal_wires_operation_page.html" );
 
   Init();
 }
@@ -259,16 +259,6 @@ void RepairGUI_RemoveIntWiresDlg::enterEvent( QEvent* )
 {
   if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
-}
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void RepairGUI_RemoveIntWiresDlg::closeEvent( QCloseEvent* e )
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
 }
 
 //=================================================================================

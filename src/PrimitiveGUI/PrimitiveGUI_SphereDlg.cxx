@@ -34,6 +34,12 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <GEOMImpl_Types.hxx>
 
 //=================================================================================
@@ -76,7 +82,7 @@ PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg( GeometryGUI* theGeometryGUI, QWi
   layout->addWidget( GroupDimensions );
   /***************************************************************/
 
-  setHelpFileName( "sphere.htm" );
+  setHelpFileName( "create_sphere_page.html" );
 
   Init();
 }
@@ -109,8 +115,8 @@ void PrimitiveGUI_SphereDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, step, 3 );
-  initSpinBox( GroupDimensions->SpinBox_DX, 0.001, COORD_MAX, step, 3 );
+  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DX, 0.001, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
   GroupPoints->SpinBox_DX->setValue( 100.0 );
   GroupDimensions->SpinBox_DX->setValue( 100.0 );
   
@@ -131,8 +137,8 @@ void PrimitiveGUI_SphereDlg::Init()
   connect(myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DX, SLOT( SetStep( double ) ) );
   // <<-
 
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_SPHERE" ) );
 
@@ -146,12 +152,14 @@ void PrimitiveGUI_SphereDlg::Init()
 //=================================================================================
 void PrimitiveGUI_SphereDlg::ConstructorsClicked( int constructorId )
 {
-  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
+  disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
   
   switch ( constructorId ) {
   case 0:
     {
-      globalSelection( GEOM_POINT );
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+
       GroupDimensions->hide();
       GroupPoints->show();
       
@@ -159,12 +167,14 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked( int constructorId )
       GroupPoints->LineEdit1->setText( "" );
       myPoint = GEOM::GEOM_Object::_nil();
       
-      connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+      connect( myGeomGUI->getApp()->selectionMgr(), 
 	       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       break;
     }
   case 1:
     {
+      globalSelection(); // close local contexts, if any
+      
       GroupPoints->hide();
       GroupDimensions->show();
       
@@ -229,8 +239,38 @@ void PrimitiveGUI_SphereDlg::SelectionIntoArgument()
   if ( !testResult || CORBA::is_nil( aSelectedObject ) )
     return;
     
+  QString aName = GEOMBase::GetName( aSelectedObject );
+  TopoDS_Shape aShape;
+  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull() ) {
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    TColStd_IndexedMapOfInteger aMap;
+    aSelMgr->GetIndexes( firstIObject(), aMap );
+    if ( aMap.Extent() == 1 ) { // Local Selection
+      int anIndex = aMap( 1 );
+      aName.append( ":vertex_" + QString::number( anIndex ) );
+
+      //Find SubShape Object in Father
+      GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName );
+
+      if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	GEOM::GEOM_IShapesOperations_var aShapesOp =
+	  getGeomEngine()->GetIShapesOperations( getStudyId() );
+	aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+      }
+      else {
+	aSelectedObject = aFindedObject; // get Object from study
+      }
+    }
+    else { // Global Selection
+      if (aShape.ShapeType() != TopAbs_VERTEX) {
+        aSelectedObject = GEOM::GEOM_Object::_nil();
+        aName = "";
+      }
+    }
+  }
+
+  myEditCurrentArgument->setText( aName );
   myPoint = aSelectedObject;
-  myEditCurrentArgument->setText( GEOMBase::GetName( myPoint ) );
   
   displayPreview();
 }
@@ -261,7 +301,8 @@ void PrimitiveGUI_SphereDlg::SetEditCurrentArgument()
   if ( send == GroupPoints->PushButton1 ) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection( GEOM_POINT );
+    globalSelection(); // close local contexts, if any
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
     SelectionIntoArgument();
   }
 }
@@ -274,8 +315,8 @@ void PrimitiveGUI_SphereDlg::SetEditCurrentArgument()
 void PrimitiveGUI_SphereDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
   
   ConstructorsClicked( getConstructorId() );
 }
@@ -364,17 +405,6 @@ bool PrimitiveGUI_SphereDlg::execute( ObjectList& objects )
   return res;
 }
 
-//=================================================================================
-// function : closeEvent
-// purpose  :
-//=================================================================================
-void PrimitiveGUI_SphereDlg::closeEvent( QCloseEvent* e )
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
-}
-
-
 
 //=================================================================================
 // function : getRadius()
@@ -388,4 +418,22 @@ double PrimitiveGUI_SphereDlg::getRadius() const
   else if ( aConstructorId == 1 )
     return GroupDimensions->SpinBox_DX->value();
   return 0;
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void PrimitiveGUI_SphereDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+  switch ( getConstructorId() ) {
+  case 0:
+    objMap[GroupPoints->LineEdit1->text()] = myPoint;
+    break;
+  case 1:
+    return;
+  }
+  addSubshapesToFather( objMap );
 }

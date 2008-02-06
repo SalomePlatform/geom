@@ -34,6 +34,12 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <GEOMImpl_Types.hxx>
 
 //=================================================================================
@@ -84,7 +90,7 @@ BasicGUI_VectorDlg::BasicGUI_VectorDlg( GeometryGUI* theGeometryGUI, QWidget* pa
   layout->addWidget( GroupDimensions );
   /***************************************************************/
 
-  setHelpFileName( "vector.htm" );
+  setHelpFileName( "create_vector_page.html" );
   
   /* Initialisations */
   Init();
@@ -117,9 +123,9 @@ void BasicGUI_VectorDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
  
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( GroupDimensions->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 );
-  initSpinBox( GroupDimensions->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
-  initSpinBox( GroupDimensions->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 );
+  initSpinBox( GroupDimensions->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
 
   double dx( 0. ), dy( 0. ), dz( 200. );
   GroupDimensions->SpinBox_DX->setValue( dx );
@@ -155,8 +161,8 @@ void BasicGUI_VectorDlg::Init()
 
   connect( GroupDimensions->CheckButton1, SIGNAL( stateChanged( int ) ), this, SLOT( ReverseVector( int ) ) );
 
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT(SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr("GEOM_VECTOR") );
 
@@ -170,7 +176,7 @@ void BasicGUI_VectorDlg::Init()
 //=================================================================================
 void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
 {
-  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
+  disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
   myPoint1 = GEOM::GEOM_Object::_nil();
   myPoint2 = GEOM::GEOM_Object::_nil();
 
@@ -184,15 +190,17 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
       GroupPoints->LineEdit1->setText( "" );
       GroupPoints->LineEdit2->setText( "" );
       
-      globalSelection( GEOM_POINT );
-      connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	       SIGNAL( currentSelectionChanged() ), this, SLOT(SelectionIntoArgument() ) );
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+      connect( myGeomGUI->getApp()->selectionMgr(), 
+	       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       break;
     }
   case 1:
     {
       GroupPoints->hide();
       GroupDimensions->show();
+      globalSelection(); // close local contexts, if any
       
       double dx( 0. ), dy( 0. ), dz( 0. ); 
       GroupDimensions->SpinBox_DX->setValue( dx );
@@ -260,7 +268,38 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
-    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+    QString aName = GEOMBase::GetName(aSelectedObject);
+
+    TopoDS_Shape aShape;
+    if ( GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes( firstIObject(), aMap );
+      if ( aMap.Extent() == 1 ) { // Local Selection
+        int anIndex = aMap( 1 );
+        aName += QString( ":vertex_%1" ).arg( anIndex );
+
+	//Find SubShape Object in Father
+	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+	
+	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+	  aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+	}
+	else {
+	  aSelectedObject = aFindedObject; // get Object from study
+	}
+      }
+      else { // Global Selection
+        if ( aShape.ShapeType() != TopAbs_VERTEX ) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+        }
+      }
+    }
+
+    myEditCurrentArgument->setText(aName);
+
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint1 = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = aSelectedObject;
   }
@@ -304,8 +343,8 @@ void BasicGUI_VectorDlg::LineEditReturnPressed()
 void BasicGUI_VectorDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+           this, SLOT( SelectionIntoArgument() ) );
 	
   ConstructorsClicked( getConstructorId() );
 }
@@ -316,7 +355,6 @@ void BasicGUI_VectorDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_VectorDlg::DeactivateActiveDialog()
 {
-  // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -408,3 +446,21 @@ bool BasicGUI_VectorDlg::execute( ObjectList& objects )
   return res;
 }
 
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BasicGUI_VectorDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+  switch ( getConstructorId() ) {
+  case 0:
+    objMap[GroupPoints->LineEdit1->text()] = myPoint1;
+    objMap[GroupPoints->LineEdit2->text()] = myPoint2;
+    break;
+  case 1:
+    return;
+  }
+  addSubshapesToFather( objMap );
+}

@@ -1,0 +1,30 @@
+/*!
+
+\page suppress_faces_operation_page Suppress Faces
+
+\n To produce a <b>Suppress Faces</b> operation in the <b>Main
+Menu</b> select <b>Repair - > Suppress Faces</b>.
+
+\n This operation suppresses a face of a shape. This operation is
+available in <b>OCC Viewer</b> only.
+
+\n The \b Result will be a \b GEOM_Object (ListOfGeomShapes).
+
+\n <b>TUI Command:</b> <em>geompy.SuppressFaces(Shape, ListOfID),</em>
+where \em Shape is a shape to be processed, \em ListOfID is a list of faces
+ID's to be removed.
+\n <b>Arguments:</b> Name + Faces which should be removed (you can
+select them in the 3D viewer).
+
+\image html repair2.png
+
+\n <b>Example:</b>
+
+\image html suppress_faces1.png
+
+\image html suppress_faces2.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_suppress_faces "Repairing Operations".
+
+*/

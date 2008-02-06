@@ -33,6 +33,8 @@
 #include <TDataStd_UAttribute.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDataStd_Comment.hxx>
+#include <TDataStd_RealArray.hxx>
+#include <TColStd_HArray1OfReal.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_ExtendedString.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -42,6 +44,8 @@
 #define TYPE_LABEL 2
 #define FREE_LABEL 3
 #define TIC_LABEL  4
+#define COLOR_LABEL      5
+#define AUTO_COLOR_LABEL 6
 
 //=======================================================================
 //function : GetObjectID
@@ -95,19 +99,31 @@ Handle(GEOM_Object) GEOM_Object::GetObject(TDF_Label& theLabel)
 Handle(GEOM_Object) GEOM_Object::GetReferencedObject(TDF_Label& theLabel)
 {
   Handle(TDF_Reference) aRef;
-  if (!theLabel.FindAttribute(TDF_Reference::GetID(), aRef)) return NULL;
+  if (!theLabel.FindAttribute(TDF_Reference::GetID(), aRef)) {
+    return NULL;
+  }
+  
+  if(aRef.IsNull() || aRef->Get().IsNull()) {
+    return NULL;
+  }
+
 
   // Get TreeNode of a referenced function
   Handle(TDataStd_TreeNode) aT, aFather;
-  if (!TDataStd_TreeNode::Find(aRef->Get(), aT)) return NULL;
+  if (!TDataStd_TreeNode::Find(aRef->Get(), aT)) {
+    return NULL;
+  }
+
 
   // Get TreeNode of Object of the referenced function
   aFather = aT->Father();
-  if (aFather.IsNull()) return NULL;
+  if (aFather.IsNull()) {
+    return NULL;
+  }
 
   // Get label of the referenced object
   TDF_Label aLabel = aFather->Label();
-
+  
 
   return GEOM_Object::GetObject(aLabel);
 }
@@ -279,6 +295,65 @@ char* GEOM_Object::GetName()
 
 //=============================================================================
 /*!
+ *  SetColor
+ */
+//=============================================================================
+void GEOM_Object::SetColor(const SALOMEDS::Color& theColor)
+{
+  Handle(TDataStd_RealArray) anArray = new TDataStd_RealArray();
+  anArray->Init( 1, 3 );
+  anArray->SetValue( 1, theColor.R );
+  anArray->SetValue( 2, theColor.G );
+  anArray->SetValue( 3, theColor.B );
+
+  Handle(TDataStd_RealArray) anAttr =
+    TDataStd_RealArray::Set(_label.FindChild(COLOR_LABEL), anArray->Lower(), anArray->Upper());
+  anAttr->ChangeArray(anArray->Array());
+}
+
+//=============================================================================
+/*!
+ *  GetColor
+ */
+//=============================================================================
+SALOMEDS::Color GEOM_Object::GetColor()
+{
+  Handle(TDataStd_RealArray) anArray;
+  bool isFound = _label.FindChild(COLOR_LABEL).FindAttribute(TDataStd_RealArray::GetID(), anArray);
+
+  SALOMEDS::Color aColor;
+  aColor.R = isFound ? anArray->Value( 1 ) : 0.f;
+  aColor.G = isFound ? anArray->Value( 2 ) : 0.f;
+  aColor.B = isFound ? anArray->Value( 3 ) : 0.f;
+
+  return aColor;
+}
+
+//=============================================================================
+/*!
+ *  SetAutoColor
+ */
+//=============================================================================
+void GEOM_Object::SetAutoColor(CORBA::Boolean theAutoColor)
+{
+  TDataStd_Integer::Set(_label.FindChild(AUTO_COLOR_LABEL), (int)theAutoColor);
+}
+
+//=============================================================================
+/*!
+ *  GetAutoColor
+ */
+//=============================================================================
+CORBA::Boolean GEOM_Object::GetAutoColor()
+{
+  Handle(TDataStd_Integer) anAutoColor;
+  if(!_label.FindChild(AUTO_COLOR_LABEL).FindAttribute(TDataStd_Integer::GetID(), anAutoColor)) return false;
+
+  return anAutoColor->Get();
+}
+
+//=============================================================================
+/*!
  *  SetAuxData
  */
 //=============================================================================
@@ -395,8 +470,10 @@ Handle(TColStd_HSequenceOfTransient) GEOM_Object::GetAllDependency()
   Standard_Integer aLength = aSeq.Length();
   if(aLength > 0) {
     anArray = new TColStd_HSequenceOfTransient;
-    for(Standard_Integer j =1; j<=aLength; j++)
-      anArray->Append(GetReferencedObject(aSeq(j)));
+    for(Standard_Integer j =1; j<=aLength; j++) {
+      Handle(GEOM_Object) aRefObj = GetReferencedObject(aSeq(j));
+      if(!aRefObj.IsNull()) anArray->Append(aRefObj);
+    }
   }
 
   return anArray;

@@ -72,7 +72,7 @@ MeasureGUI_CheckShapeDlg::MeasureGUI_CheckShapeDlg( GeometryGUI* GUI, QWidget* p
 
   /***************************************************************/
 
-  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#check";
+  myHelpFileName = "using_measurement_tools_page.html#check_anchor";
 
   /* Initialisation */
   Init();

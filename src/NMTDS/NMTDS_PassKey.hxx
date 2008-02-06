@@ -23,12 +23,13 @@
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
 #endif
+#ifndef _TColStd_IndexedMapOfInteger_HeaderFile
+#include <TColStd_IndexedMapOfInteger.hxx>
+#endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
-#ifndef _Standard_Address_HeaderFile
-#include <Standard_Address.hxx>
-#endif
+class TColStd_ListOfInteger;
 
 
 #ifndef _Standard_HeaderFile
@@ -60,41 +61,47 @@ public:
 
 
 Standard_EXPORT NMTDS_PassKey();
+Standard_EXPORT virtual ~NMTDS_PassKey();
 
 
-Standard_EXPORT   NMTDS_PassKey& Assign(const NMTDS_PassKey& Other) ;
-  NMTDS_PassKey& operator =(const NMTDS_PassKey& Other) 
-{
-  return Assign(Other);
-}
-
-
-
-Standard_EXPORT   void SetIds(const Standard_Integer aI1,const Standard_Integer aI2) ;
-
-
-Standard_EXPORT   Standard_Integer NbMax() const;
+Standard_EXPORT NMTDS_PassKey(const NMTDS_PassKey& Other);
+Standard_EXPORT NMTDS_PassKey& operator =(const NMTDS_PassKey& Other);
 
 
 Standard_EXPORT   void Clear() ;
 
 
-Standard_EXPORT   void Compute() ;
+Standard_EXPORT   void SetIds(const Standard_Integer aI1) ;
+
+
+Standard_EXPORT   void SetIds(const Standard_Integer aI1,const Standard_Integer aI2) ;
+
+
+Standard_EXPORT   void SetIds(const Standard_Integer aI1,const Standard_Integer aI2,const Standard_Integer aI3) ;
+
+
+Standard_EXPORT   void SetIds(const Standard_Integer aI1,const Standard_Integer aI2,const Standard_Integer aI3,const Standard_Integer aI4) ;
+
+
+Standard_EXPORT   void SetIds(const TColStd_ListOfInteger& aLS) ;
+
+
+Standard_EXPORT   Standard_Integer NbIds() const;
 
 
 Standard_EXPORT   Standard_Boolean IsEqual(const NMTDS_PassKey& aOther) const;
 
 
-Standard_EXPORT   Standard_Address Key() const;
-
-
 Standard_EXPORT   Standard_Integer HashCode(const Standard_Integer Upper) const;
+
+
+Standard_EXPORT   Standard_Integer Id(const Standard_Integer aIndex) const;
 
 
 Standard_EXPORT   void Ids(Standard_Integer& aI1,Standard_Integer& aI2) const;
 
 
-Standard_EXPORT   void Dump() const;
+Standard_EXPORT   void Dump(const Standard_Integer aHex = 0) const;
 
 
 
@@ -109,9 +116,8 @@ protected:
  // Fields PROTECTED
  //
 Standard_Integer myNbIds;
-Standard_Integer myNbMax;
 Standard_Integer mySum;
-Standard_Integer myIds[2];
+TColStd_IndexedMapOfInteger myMap;
 
 
 private: 

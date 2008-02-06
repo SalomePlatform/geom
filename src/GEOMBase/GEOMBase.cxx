@@ -59,15 +59,13 @@
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TopoDS.hxx>
 
 #include <Precision.hxx>
 
 #include <vtkRenderer.h>
 
 #include <set>
-
-using namespace std;
-
 
 //=====================================================================================
 // function : GetShapeFromIOR()

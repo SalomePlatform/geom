@@ -71,7 +71,7 @@ BuildGUI_CompoundDlg::BuildGUI_CompoundDlg( GeometryGUI* theGeometryGUI, QWidget
   layout->addWidget( GroupShapes );
   /***************************************************************/
 
-  setHelpFileName( "compound.htm" );
+  setHelpFileName("create_compound_page.html");
 
   /* Initialisations */
   Init();

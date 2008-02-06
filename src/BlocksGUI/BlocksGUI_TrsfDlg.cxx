@@ -87,7 +87,7 @@ BlocksGUI_TrsfDlg::BlocksGUI_TrsfDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   layout->addWidget( myGrp2 );
   /***************************************************************/
 
-  setHelpFileName( "multi_transformation.htm" );
+  setHelpFileName( "multi_transformation_operation_page.html" );
 
   Init();
 }

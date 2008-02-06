@@ -80,16 +80,16 @@ DlgRef_1Sel1Check::~DlgRef_1Sel1Check()
 }
 
 //////////////////////////////////////////
-// DlgRef_1Sel1List4Btn
+// DlgRef_1Sel1List1Check3Btn
 //////////////////////////////////////////
 
-DlgRef_1Sel1List4Btn::DlgRef_1Sel1List4Btn( QWidget* parent, Qt::WindowFlags f )
+DlgRef_1Sel1List1Check3Btn::DlgRef_1Sel1List1Check3Btn( QWidget* parent, Qt::WindowFlags f )
 : QWidget( parent, f )
 {
   setupUi( this );
 }
 
-DlgRef_1Sel1List4Btn::~DlgRef_1Sel1List4Btn()
+DlgRef_1Sel1List1Check3Btn::~DlgRef_1Sel1List1Check3Btn()
 {
 }
 
@@ -248,6 +248,20 @@ DlgRef_1SelExt::~DlgRef_1SelExt()
 }
 
 //////////////////////////////////////////
+// DlgRef_2Sel1List1Check
+//////////////////////////////////////////
+
+DlgRef_2Sel1List1Check::DlgRef_2Sel1List1Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_2Sel1List1Check::~DlgRef_2Sel1List1Check()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_2Sel1List
 //////////////////////////////////////////
 
@@ -314,6 +328,20 @@ DlgRef_2Sel2Spin::DlgRef_2Sel2Spin( QWidget* parent, Qt::WindowFlags f )
 }
 
 DlgRef_2Sel2Spin::~DlgRef_2Sel2Spin()
+{
+}
+
+//////////////////////////////////////////
+// DlgRef_2Sel3Spin2Rb
+//////////////////////////////////////////
+
+DlgRef_2Sel3Spin2Rb::DlgRef_2Sel3Spin2Rb( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_2Sel3Spin2Rb::~DlgRef_2Sel3Spin2Rb()
 {
 }
 
@@ -599,4 +627,33 @@ DlgRef_Skeleton::DlgRef_Skeleton( QWidget* parent, Qt::WindowFlags f )
 
 DlgRef_Skeleton::~DlgRef_Skeleton()
 {
+}
+
+//////////////////////////////////////////
+// Utility functions
+//////////////////////////////////////////
+
+QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
+{
+  QString aRes;
+  aRes.setNum( theValue, 'g', thePrecision );
+
+  // remove trailing zeroes
+  QString delim( "." );
+
+  int idx = aRes.lastIndexOf( delim );
+  if ( idx == -1 )
+    return aRes;
+
+  QString iPart = aRes.left( idx );
+  QString fPart = aRes.mid( idx + 1 );
+
+  while ( !fPart.isEmpty() && fPart.at( fPart.length() - 1 ) == '0' )
+    fPart.remove( fPart.length() - 1, 1 );
+
+  aRes = iPart;
+  if ( !fPart.isEmpty() )
+    aRes += delim + fPart;
+
+  return aRes;
 }

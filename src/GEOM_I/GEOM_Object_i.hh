@@ -53,6 +53,14 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual char* GetName();
 
+  virtual void SetColor(const SALOMEDS::Color& theColor);
+
+  virtual SALOMEDS::Color GetColor();
+
+  virtual void SetAutoColor(CORBA::Boolean theAutoColor);
+
+  virtual CORBA::Boolean GetAutoColor();
+
   virtual void SetStudyEntry(const char* theEntry);
 
   virtual char* GetStudyEntry();

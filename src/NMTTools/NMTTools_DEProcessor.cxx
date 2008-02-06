@@ -74,7 +74,7 @@
 #include <BOPTools_PavePool.hxx>
 #include <BOPTools_PaveSet.hxx>
 #include <BOPTools_Tools3D.hxx>
-#include <BOPTools_InterferencePool.hxx>
+
 #include <BOPTools_CArray1OfSSInterference.hxx>
 #include <BOPTools_SplitShapesPool.hxx>
 
@@ -90,7 +90,7 @@
 #include <ElCLib.hxx>
 #include <gp_Lin2d.hxx>
 
-
+#include <NMTDS_InterfPool.hxx>
 
 //=======================================================================
 // function: NMTTools_DEProcessor::NMTTools_DEProcessor
@@ -189,7 +189,7 @@
   void NMTTools_DEProcessor::DoPaves()
 {
 
-  Standard_Integer i, aNbE, nED, nVD, nFD, aNbLPB;
+  Standard_Integer i, aNbE, nED, nVD, aNbLPB, nFD;
   //
   nFD=0;
   aNbE=myDEMap.Extent();
@@ -203,16 +203,15 @@
     TColStd_ListIteratorOfListOfInteger anIt(nLF);
     for (; anIt.More(); anIt.Next()) {
       nFD=anIt.Value();
-      //
+      
       BOPTools_ListOfPaveBlock aLPB;
       FindPaveBlocks(nED, nVD, nFD, aLPB);
-      //modified by NIZNHY-PKV Fri Mar 23 10:35:27 2007f
-      //
+      // xxf
       aNbLPB=aLPB.Extent();
       if (!aNbLPB) {
 	continue;
       }
-      //modified by NIZNHY-PKV Fri Mar 23 10:35:33 2007t
+      //xxt
       FillPaveSet (nED, nVD, nFD, aLPB);
     }
     // 
@@ -236,7 +235,8 @@
   BOPTools_ListIteratorOfListOfPaveBlock anIt;
   Standard_Integer i, aNb, nF2, nV;
   //
-  BOPTools_CArray1OfSSInterference& aFFs=(myFiller->InterfPool())->SSInterferences();
+  //BOPTools_CArray1OfSSInterference& aFFs=(myFiller->InterfPool())->SSInterferences();
+  BOPTools_CArray1OfSSInterference& aFFs=(myFiller->IP())->SSInterferences();
   //
   aNb=aFFs.Extent();
   for (i=1; i<=aNb; ++i) {

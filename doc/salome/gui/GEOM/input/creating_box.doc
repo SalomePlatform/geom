@@ -1,0 +1,41 @@
+/*!
+
+\page create_box_page Box
+
+To create a \b Box in the <b>Main Menu</b> select <b>New Entity - >
+Primitives - > Box</b>
+
+\n There are 2 algorithms for creation of a \b Box.
+\n The \b Result of each operation will be a GEOM_Object (SOLID).
+
+\n Firstly, you can define a \b Box by two specified \b Vertices (its
+opposite corners). The edges of the box will be parallel to the
+coordinate axes.
+\n <b>TUI Command:</b> <em>geompy.MakeBoxTwoPnt(Point1, Point2)</em>
+\n <b>Arguments:</b> Name + 2 vertices (opposite corners of the box).
+
+\image html box1.png
+
+\n Secondly, you can define a \b Box by specified dimensions along the
+coordinate axes and with edges, parallel to them.  The center of the
+box will be at point (DX/2, DY/2, DZ/2).
+\n <b>TUI Command:</b> <em>geompy.MakeBoxDXDYDZ(DX, DY, DZ)</em>
+\n <b>Arguments:</b> Name + 3 values (dimensions at origin).
+
+\image html box2.png
+
+\b NB! There is a third way to create a \b Box, which is currently
+accessible only via \b TUI commands.
+\n You can define a \b Box by the coordinates of two \b Vertices (in
+this way you don't need to create them in advance).
+\n <b>TUI Command:</b> <em>geompy.MakeBox(x1,y1,z1,x2,y2,z2)</em>
+\n <b>Arguments:</b> Name + X, Y and Z coordinates of both points.
+
+<b>Example:</b>
+
+\image html boxes.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_box "Primitives".
+
+*/

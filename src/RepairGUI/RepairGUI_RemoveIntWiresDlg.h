@@ -51,7 +51,6 @@ protected:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
-  void                               closeEvent( QCloseEvent* );
   void                               initSelection();
   
 private:

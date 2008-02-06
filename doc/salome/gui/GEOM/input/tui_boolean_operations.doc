@@ -1,0 +1,139 @@
+/*!
+
+\page tui_boolean_operations_page Boolean Operations
+
+\anchor tui_fuse
+<br><h2>Fuse</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create a vertex and a vector
+p1 = geompy.MakeVertex(25, 55, 0)
+p2 = geompy.MakeVertex( 0,  0, 0)
+v = geompy.MakeVector(p1, p2)
+
+# create a cylinder
+height = 35
+radius1 = 20
+cylinder = geompy.MakeCylinder(p1, v, radius1, height)
+
+# create a sphere
+sphere = geompy.MakeSphereR(40)
+
+# fuse
+fuse = geompy.MakeFuse(cylinder, sphere)
+
+# add objects in the study
+id_cylinder = geompy.addToStudy(cylinder, "Cylinder")
+id_sphere = geompy.addToStudy(sphere, "Sphere")
+id_fuse = geompy.addToStudy(fuse, "Fuse")
+
+# display results
+gg.createAndDisplayGO(id_cylinder)
+gg.setDisplayMode(id_cylinder,1)
+gg.createAndDisplayGO(id_sphere)
+gg.setDisplayMode(id_sphere,1)
+gg.createAndDisplayGO(id_fuse)
+gg.setDisplayMode(id_fuse,1)
+\endcode
+
+\anchor tui_common
+<br><h2>Common</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create a vertex and a vector
+p1 = geompy.MakeVertex(25, 55, 0)
+p2 = geompy.MakeVertex( 0,  0, 0)
+v = geompy.MakeVector(p1, p2)
+
+# create a cylinder
+height = 35
+radius1 = 20
+cylinder = geompy.MakeCylinder(p1, v, radius1, height)
+
+# create a sphere
+sphere = geompy.MakeSphereR(40)
+
+# make common
+common = geompy.MakeCommon(cylinder, sphere)
+
+# add objects in the study
+id_common = geompy.addToStudy(common, "Common")
+
+# display the results
+gg.createAndDisplayGO(id_common)
+gg.setDisplayMode(id_common,1)
+\endcode
+
+\anchor tui_cut
+<br><h2>Cut</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create a vertex and a vector
+p1 = geompy.MakeVertex(25, 55, 0)
+p2 = geompy.MakeVertex( 0,  0, 0)
+v = geompy.MakeVector(p1, p2)
+
+# create a cylinder
+height = 35
+radius1 = 20
+cylinder = geompy.MakeCylinder(p1, v, radius1, height)
+
+# create a sphere
+sphere = geompy.MakeSphereR(40)
+
+#cut
+cut = geompy.MakeCut(cylinder, sphere)
+
+# add objects in the study
+id_cut = geompy.addToStudy(cut, "Cut")
+
+# display the results
+gg.createAndDisplayGO(id_cut)
+gg.setDisplayMode(id_cut,1) 
+\endcode
+
+\anchor tui_section 
+<br><h2>Section</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create a vertex and a vector
+p1 = geompy.MakeVertex(25, 55, 0)
+p2 = geompy.MakeVertex( 0,  0, 0)
+v = geompy.MakeVector(p1, p2)
+
+# create a cylinder
+height = 35
+radius1 = 20
+cylinder = geompy.MakeCylinder(p1, v, radius1, height)
+
+# create a sphere
+sphere = geompy.MakeSphereR(40)
+
+# make a section
+section = geompy.MakeSection(cylinder, sphere)
+
+# add objects in the study
+id_section = geompy.addToStudy(section, "Section")
+
+# display the results
+gg.createAndDisplayGO(id_section)
+gg.setDisplayMode(id_section,1) 
+\endcode
+
+*/

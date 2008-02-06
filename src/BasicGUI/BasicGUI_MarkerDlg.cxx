@@ -144,7 +144,7 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   layout->addWidget( Group1 );
   layout->addWidget( Group2 );
 
-  setHelpFileName( "local_coordinate_system.htm" );
+  setHelpFileName( "create_lcs_page.html" );
 
   Init();
 }
@@ -191,7 +191,7 @@ void BasicGUI_MarkerDlg::Init()
   connect( buttonOk(),          SIGNAL( clicked() ), this, SLOT( onOk() ) );
   connect( buttonApply(),       SIGNAL( clicked() ), this, SLOT( onApply() ) );
 
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+  connect( myGeomGUI->getApp()->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
 
   initName( tr( "LCS_NAME" ) );
@@ -200,7 +200,7 @@ void BasicGUI_MarkerDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
   for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter ) {
-    initSpinBox( anIter.value(), COORD_MIN, COORD_MAX, step, 3 );
+    initSpinBox( anIter.value(), COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
     connect( anIter.value(), SIGNAL( valueChanged( double ) ),
              this, SLOT( onValueChanged( double ) ) );
   }
@@ -240,6 +240,7 @@ void BasicGUI_MarkerDlg::Init()
 void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
 {
   if ( myConstructorId == constructorId && myConstructorId == 0 ) {
+    globalSelection(); // close local contexts, if any
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
     activate( GEOM_MARKER );
     displayPreview();
@@ -248,7 +249,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
 
   myConstructorId = constructorId;
 
-  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
+  disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
 
   switch ( constructorId ) {
   case 0:
@@ -256,6 +257,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       Group1->hide();
       Group2->hide();
       aMainGrp->show();
+      globalSelection(); // close local contexts, if any
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       activate( GEOM_MARKER );
       break;
@@ -277,7 +279,8 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       Group1->show();
       Group2->show();
       
-      globalSelection( GEOM_POINT );
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       myEditCurrentArgument = Group2->LineEdit1;
       Group2->LineEdit1->setText( "" );
       Group2->LineEdit2->setText( "" );
@@ -290,8 +293,8 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
   updateGeometry();
   resize( minimumSize() );
   
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( onSelectionDone() ) );
   onSelectionDone();
 }
 
@@ -364,12 +367,12 @@ void BasicGUI_MarkerDlg::onSelectionDone0()
         else {
 	  TColStd_IndexedMapOfInteger aMap;
 	  aSelMgr->GetIndexes( anIO, aMap );
-	  if ( aMap.Extent() == 1 ) {
+	  if ( aMap.Extent() == 1 ) { // Local Selection
 	    int anIndex = aMap( 1 );
 	    TopTools_IndexedMapOfShape aShapes;
 	    TopExp::MapShapes( aShape, aShapes );
 	    aShape = aShapes.FindKey( anIndex );
-	    aSelMgr->clearSelected();
+	    aSelMgr->clearSelected(); // ???
 	  }
 
           if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX ) {
@@ -399,7 +402,6 @@ void BasicGUI_MarkerDlg::onSelectionDone()
   }
 
   myEditCurrentArgument->setText( "" );
-  QString aName;
 
   if ( IObjectCount() == 1 ) {
     Standard_Boolean aRes = Standard_False;
@@ -407,7 +409,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
     GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
 
     if ( !CORBA::is_nil( aSelectedObj ) && aRes ) {
-      aName = GEOMBase::GetName( aSelectedObj );
+      QString aName = GEOMBase::GetName( aSelectedObj );
       
       if ( getConstructorId() == 1 ) { // by shape position
         // Get shape's position
@@ -448,7 +450,9 @@ void BasicGUI_MarkerDlg::onSelectionDone()
       else if ( getConstructorId() == 2 ) { // by point and two vectors
         TopoDS_Shape aShape;
         if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) ) {
-          GEOM::short_array anIndexes;
+          TopAbs_ShapeEnum aNeedType = TopAbs_EDGE;
+          if ( myEditCurrentArgument == Group2->LineEdit1 )
+            aNeedType = TopAbs_VERTEX;
 	  
           TColStd_IndexedMapOfInteger aMap;
           LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -456,6 +460,11 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 
           if ( !aMap.IsEmpty() ) {
             int anIndex = aMap( 1 );
+            if ( aNeedType == TopAbs_EDGE )
+              aName += QString( "_edge_%1" ).arg( anIndex );
+            else
+              aName += QString( "_vertex_%1" ).arg( anIndex );
+
             TopTools_IndexedMapOfShape aShapes;
             TopExp::MapShapes( aShape, aShapes );
             aShape = aShapes.FindKey( anIndex );
@@ -563,15 +572,20 @@ void BasicGUI_MarkerDlg::SetEditCurrentArgument()
   }
   else if ( send == Group2->PushButton1 ) {
     myEditCurrentArgument = Group2->LineEdit1;
-    globalSelection( GEOM_POINT );
+    //globalSelection( GEOM_POINT );
+    globalSelection(); // close local contexts, if any
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
   else if ( send == Group2->PushButton2 ) {
     myEditCurrentArgument = Group2->LineEdit2;
-    globalSelection( GEOM_LINE );
+    //globalSelection( GEOM_LINE );
+    globalSelection(); // close local contexts, if any
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if ( send == Group2->PushButton3 ) {
     myEditCurrentArgument = Group2->LineEdit3;
-    globalSelection( GEOM_LINE );
+    globalSelection(); // close local contexts, if any
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   
   myEditCurrentArgument->setFocus();
@@ -597,8 +611,8 @@ void BasicGUI_MarkerDlg::LineEditReturnPressed()
 void BasicGUI_MarkerDlg::onActivate()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( onSelectionDone() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( onSelectionDone() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -678,15 +692,6 @@ bool BasicGUI_MarkerDlg::execute( ObjectList& objects )
     objects.push_back( anObj._retn() );
 
   return true;
-}
-
-//=================================================================================
-// function : closeEvent
-// purpose  :
-//=================================================================================
-void BasicGUI_MarkerDlg::closeEvent( QCloseEvent* e )
-{
-  GEOMBase_Skeleton::closeEvent( e );
 }
 
 //=================================================================================

@@ -83,6 +83,8 @@ module GEOM
 				  in GEOM_Object thePnt2) ;
     GEOM_Object MakeLineTwoPnt (in GEOM_Object thePnt1,
 				in GEOM_Object thePnt2) ;
+    GEOM_Object MakeLineTwoFaces (in GEOM_Object theFace1,
+				  in GEOM_Object theFace2) ;
     GEOM_Object MakePlaneThreePnt (in GEOM_Object thePnt1,
 				   in GEOM_Object thePnt2,
 				   in GEOM_Object thePnt3,
@@ -154,14 +156,23 @@ module GEOM
     GEOM_Object MakePrismVecH (in GEOM_Object theBase,
 			       in GEOM_Object theVec,
 			       in double      theH) ;
+    GEOM_Object MakePrismVecH2Ways (in GEOM_Object theBase,
+				    in GEOM_Object theVec,
+				    in double      theH) ;
     GEOM_Object MakePrismTwoPnt (in GEOM_Object theBase,
 				 in GEOM_Object thePoint1,
 				 in GEOM_Object thePoint2) ;
+    GEOM_Object MakePrismTwoPnt2Ways (in GEOM_Object theBase,
+				      in GEOM_Object thePoint1,
+				      in GEOM_Object thePoint2) ;
     GEOM_Object MakePipe (in GEOM_Object theBase, 
 			  in GEOM_Object thePath) ;
     GEOM_Object MakeRevolutionAxisAngle (in GEOM_Object theBase,
 					 in GEOM_Object theAxis,
 					 in double      theAngle) ;
+    GEOM_Object MakeRevolutionAxisAngle2Ways (in GEOM_Object theBase,
+					      in GEOM_Object theAxis,
+					      in double      theAngle) ;
     GEOM_Object MakeFilling (in GEOM_Object theShape,
 			     in long theMinDeg, in long theMaxDeg,
 			     in double theTol2D, in double theTol3D,
@@ -184,6 +195,9 @@ module GEOM
 					   in boolean theWithContact ,
 					   in boolean theWithCorrection );
     
+    GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
+					   in ListOfGO theLocations );
+
     //-----------------------------------------------------------//
     // BooleanOperations                                         //
     //-----------------------------------------------------------//
@@ -198,7 +212,8 @@ module GEOM
 			       in GEOM_List   theRemoveInside,
 			       in short       theLimit,
 			       in boolean     theRemoveWebs,
-			       in GEOM_List   theMaterials) ;
+			       in GEOM_List   theMaterials,
+			       in short       theKeepNonlimitShapes);
     GEOM_Object MakeHalfPartition (in GEOM_Object theShape,
 				   in GEOM_Object thePlane) ;
 
@@ -312,12 +327,14 @@ module GEOM
     GEOM_Object MakeSolidShells (in GEOM_List theShells) ;
     GEOM_Object MakeCompound (in GEOM_List theShapes) ;
     GEOM_Object MakeGlueFaces (in GEOM_Object theShape, 
-			       in double theTolerance);
+			       in double theTolerance,
+			       in boolean doKeepNonSolids);
     GEOM_List GetGlueFaces (in GEOM_Object theShape, 
 			    in double theTolerance);
     GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape, 
 				     in double theTolerance,
-				     in ListOfGO theFaces);
+				     in ListOfGO theFaces,
+				     in boolean doKeepNonSolids);
     GEOM_List MakeExplode (in GEOM_Object theShape,
 			   in long        theShapeType,
 			   in boolean     isSorted) ;
@@ -408,6 +425,9 @@ module GEOM
     GEOM_Object MakeCircleThreePnt (in GEOM_Object thePnt1,
 				    in GEOM_Object thePnt2,
 				    in GEOM_Object thePnt3) ;
+    GEOM_Object MakeCircleCenter2Pnt (in GEOM_Object thePnt1,
+   				      in GEOM_Object thePnt2,
+				      in GEOM_Object thePnt3) ;
     GEOM_Object MakeEllipse (in GEOM_Object thePnt,
 			     in GEOM_Object theVec,
 			     in double      theRMajor,
@@ -433,17 +453,37 @@ module GEOM
     GEOM_Object MakeFilletEdges (in GEOM_Object theShape,
 				 in double      theR,
 				 in GEOM_List   theEdges) ;
+    GEOM_Object MakeFilletEdgesR1R2 (in GEOM_Object theShape,
+				     in double      theR1,
+				     in double      theR2,
+				     in GEOM_List   theEdges) ;
     GEOM_Object MakeFilletFaces (in GEOM_Object theShape,
 				 in double      theR,
 				 in GEOM_List   theFaces) ;
+    GEOM_Object MakeFilletFacesR1R2 (in GEOM_Object theShape,
+				     in double      theR1,
+				     in double      theR2,
+				     in GEOM_List   theFaces) ;
     GEOM_Object MakeChamferAll (in GEOM_Object theShape,
 				in double      theD) ;
     GEOM_Object MakeChamferEdge (in GEOM_Object theShape,
 				 in double theD1, in double theD2,
 				 in long theFace1, in long theFace2) ;
+    GEOM_Object MakeChamferEdgeAD (in GEOM_Object theShape,
+				   in double theD, in double theAngle,
+				   in long theFace1, in long theFace2) ;
     GEOM_Object MakeChamferFaces (in GEOM_Object theShape,
 				  in double theD1, in double theD2,
 				  in GEOM_List theFaces) ;
+    GEOM_Object MakeChamferFacesAD (in GEOM_Object theShape,
+				    in double theD, in double theAngle,
+				    in GEOM_List theFaces) ;
+    GEOM_Object MakeChamferEdges (in GEOM_Object theShape,
+				  in double theD1, in double theD2,
+				  in GEOM_List theEdges) ;
+    GEOM_Object MakeChamferEdgesAD (in GEOM_Object theShape,
+				    in double theD, in double theAngle,
+				    in GEOM_List theEdges) ;
     GEOM_Object MakeArchimede (in GEOM_Object theShape,
 			       in double      theWeight,
 			       in double      theWaterDensity,

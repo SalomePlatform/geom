@@ -73,7 +73,7 @@ OperationGUI_ArchimedeDlg::OperationGUI_ArchimedeDlg( GeometryGUI* theGeometryGU
 
   /***************************************************************/
 
-  setHelpFileName( "archimede.htm" );
+  setHelpFileName( "archimede_page.html" );
 
   /* Initialisations */
   Init();
@@ -106,9 +106,9 @@ void OperationGUI_ArchimedeDlg::Init()
   double SpecificStep1 = 0.1;
   double SpecificStep2 = 0.01;
   /* min, max, myStep and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, myStep, 3 );
-  initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, SpecificStep1, 3 );
-  initSpinBox( GroupPoints->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep2, 3 );
+  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, myStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, SpecificStep1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPoints->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep2, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
 
   GroupPoints->SpinBox_DX->setValue( 100.0 );
   GroupPoints->SpinBox_DY->setValue( 1.0 );

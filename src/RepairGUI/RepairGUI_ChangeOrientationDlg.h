@@ -51,7 +51,6 @@ protected:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
-  void                               closeEvent( QCloseEvent* );
   
 private:
   GEOM::GEOM_Object_var              myObject;

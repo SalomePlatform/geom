@@ -38,12 +38,12 @@ salomeinclude_HEADERS = \
 	Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock.hxx \
 	Handle_NMTTools_ListNodeOfListOfCommonBlock.hxx \
 	Handle_NMTTools_ListNodeOfListOfCoupleOfShape.hxx \
+	NMTTools_CheckerSI.hxx \
 	NMTTools_CommonBlockAPI.hxx \
 	NMTTools_CommonBlock.hxx \
 	NMTTools_CommonBlockPool.hxx \
 	NMTTools_CoupleOfShape.hxx \
 	NMTTools_DEProcessor.hxx \
-	NMTTools_DSFiller.hxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger.hxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape.hxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock.hxx \
@@ -58,8 +58,6 @@ salomeinclude_HEADERS = \
 	NMTTools_ListOfCommonBlock.hxx \
 	NMTTools_ListOfCoupleOfShape.hxx \
 	NMTTools_PaveFiller.hxx \
-	NMTTools_PCurveMaker.hxx \
-	NMTTools_PDSFiller.hxx \
 	NMTTools_PPaveFiller.hxx \
 	NMTTools_Tools.hxx \
 	Handle_NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock.hxx \
@@ -75,12 +73,13 @@ salomeinclude_HEADERS = \
 lib_LTLIBRARIES = libNMTTools.la
 
 dist_libNMTTools_la_SOURCES = \
+	NMTTools_CheckerSI.cxx \
+	NMTTools_CheckerSI_1.cxx \
 	NMTTools_CommonBlockAPI.cxx \
 	NMTTools_CommonBlock.cxx \
 	NMTTools_CommonBlockPool_0.cxx \
 	NMTTools_CoupleOfShape.cxx \
 	NMTTools_DEProcessor.cxx \
-	NMTTools_DSFiller.cxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger_0.cxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape_0.cxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock_0.cxx \
@@ -105,7 +104,6 @@ dist_libNMTTools_la_SOURCES = \
 	NMTTools_PaveFiller_8.cxx \
 	NMTTools_PaveFiller_9.cxx \
 	NMTTools_PaveFiller.cxx \
-	NMTTools_PCurveMaker.cxx \
 	NMTTools_Tools.cxx \
 	NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock_0.cxx \
 	NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock_0.cxx \

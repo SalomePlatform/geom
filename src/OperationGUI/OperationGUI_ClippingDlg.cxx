@@ -94,8 +94,8 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( GeometryGUI* theGeometryGUI,
   layout->addWidget( GroupArguments );
 
   /* Initialisations */
-  initSpinBox( SpinBox_Near, COORD_MIN, COORD_MAX, 10.0, 3 );
-  initSpinBox( SpinBox_Far, COORD_MIN, COORD_MAX, 10.0, 3 );
+  initSpinBox( SpinBox_Near, COORD_MIN, COORD_MAX, 10.0, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( SpinBox_Far, COORD_MIN, COORD_MAX, 10.0, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
@@ -266,15 +266,6 @@ void OperationGUI_ClippingDlg::onActivate()
 void OperationGUI_ClippingDlg::enterEvent( QEvent* )
 {
   this->setEnabled( true );
-}
-
-//=================================================================================
-// function : closeEvent
-// purpose  :
-//=================================================================================
-void OperationGUI_ClippingDlg::closeEvent( QCloseEvent* e )
-{
-  QDialog::closeEvent( e );
 }
 
 //=================================================================================

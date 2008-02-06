@@ -1,0 +1,116 @@
+/*!
+
+\page build_by_blocks_page Building by blocks
+
+<h2>Introduction</h2>
+
+Below are some general notions about blocks:
+
+A block is a an elementary geometric solid that has specific
+geometric constraints oriented for meshing. In the hexahedral case,
+blocks have 6 faces and each face has 4 edges.
+
+Tetrahedral Block - is a block with constraints for tetrahedral
+meshing.
+
+Hexahedral Block - is a block with constraints for hexahedral meshing.
+
+Block Compound - is a compound composed of blocks only.
+
+These functionalities are available from the main menu via <em>New
+Entity / Blocks</em>.
+
+<ul>
+<li>\ref quad_face_anchor "Quadrangle face"</li>
+<li>\ref hexa_solid_anchor "Hexahedral solid"</li>
+</ul>
+
+<br>
+\anchor quad_face_anchor
+<h2>Quadrangle face</h2>
+
+\n <b>Description:</b> Builds a face using the below mentioned
+arguments. This operation allows to build a face bypassing the
+intermediate stage of building edges and wires (in the case of
+building by 4 points) or wires (in the case of building by 4 or 2
+edges).
+
+\n The \b Result of the operation will be a \b GEOM_Object (face).
+
+\n <b>TUI Command:</b>
+<ul>
+<li><em>geompy.MakeQuad4Vertices(V1, V2, V3, V4),</em> where V1, V2,
+V3, V4 are four vertices from which a face is constructed. Edges are
+created automatically.</li>
+<li><em>geompy.MakeQuad2Edges(E1, E2),</em> where E1, E2 are edges from
+which the face is constructed, two other edges are created
+automatically.</li>
+<li><em>geompy.MakeQuad(E1, E2, E3, E4),</em> where E1, E2, E3, E4 are
+four edges from which the face is constructed.</li>
+</ul>
+
+<b>Arguments:</b>
+<ul>
+<li>Name + 4 Points, or</li>
+<li>Name + 2 Edges, or</li>
+<li>Name + 4 Edges.</li>
+</ul>
+
+\n <b>Dialog Box:</b>
+
+\image html block1.png
+
+\image html block2.png
+
+\image html block3.png
+
+\n <b>Example:</b>
+\image html image185.jpg
+
+
+<br><br>
+\anchor hexa_solid_anchor
+<h2>Hexahedral solid</h2>
+
+\n <b>Description:</b> Builds a hexahedral solid. either of the below
+mentioned arguments. This operation allows to build a solid bypassing
+the intermediate stage of building a shell and 4 faces (in the case of
+building by 2 faces) or just a shell (in the case of building by 6
+faces).
+
+\n The \b Result of the operation will be a \b GEOM_Object (solid).
+
+\n <b>TUI Command:</b>
+<ul>
+<li><em>geompy.MakeHexa2Faces(F1, F2),</em> where F1 and F2 are faces
+from which the hexahedron is constructed, other four faces are created
+automatically.</li>
+<li><em>geompy.MakeHexa(F1, F2, F3, F4, F5, F6),</em> where F1 &mdash; F6 are six faces from which the hexahedron is constructed.</li>
+</ul>
+
+\n <b>Arguments:</b>
+<ul>
+<li>Name + 2 Faces, or</li>
+<li>Name + 6 Faces.</li>
+</ul>
+
+\n <b>Dialog Box:</b>
+
+\image html block4.png
+
+
+
+\image html block5.png
+
+\n <b>Example:</b>
+
+\image html image180.jpg
+<center>Hexahedral Solid built on the base of six Faces</center>
+
+\image html image181.jpg
+<center>Hexahedral Solid built on the base of two Faces</center>
+
+Our <b>TUI Scripts</b> provide you with useful examples of
+\ref tui_building_by_blocks_page "Building by Blocks".
+
+*/

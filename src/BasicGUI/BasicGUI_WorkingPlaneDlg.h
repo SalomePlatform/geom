@@ -47,9 +47,6 @@ public:
   BasicGUI_WorkingPlaneDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
   ~BasicGUI_WorkingPlaneDlg();
 
-protected:
-  virtual void          closeEvent( QCloseEvent* );
-
 private:
   void                  Init();
   void                  enterEvent( QEvent* );

@@ -75,21 +75,25 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg( GeometryGUI* theGeometryGUI, QWi
   Group1->PushButton1->setIcon( iconSelect );
   Group1->LineEdit1->setReadOnly( true );
 
-  Group2 = new DlgRef_2Sel1Spin( centralWidget() );
+  Group2 = new DlgRef_2Sel3Spin2Rb( centralWidget() );
   Group2->GroupBox1->setTitle( tr( "GEOM_FILLET_EDGES" ) );
   Group2->TextLabel1->setText( tr( "GEOM_MAIN_OBJECT" ) );
   Group2->TextLabel2->setText( tr( "SELECTED_EDGES" ) );
   Group2->TextLabel3->setText( tr( "GEOM_RADIUS" ) );
+  Group2->TextLabel4->setText( tr( "GEOM_R1" ) );
+  Group2->TextLabel5->setText( tr( "GEOM_R2" ) );
   Group2->PushButton1->setIcon( iconSelect );
   Group2->PushButton2->setIcon( iconSelect );
   Group2->LineEdit1->setReadOnly( true );
   Group2->LineEdit2->setReadOnly( true );
 
-  Group3 = new DlgRef_2Sel1Spin( centralWidget() );
+  Group3 = new DlgRef_2Sel3Spin2Rb( centralWidget() );
   Group3->GroupBox1->setTitle( tr( "GEOM_FILLET_FACES" ) );
   Group3->TextLabel1->setText( tr( "GEOM_MAIN_OBJECT" ) );
   Group3->TextLabel2->setText( tr( "SELECTED_FACES" ) );
   Group3->TextLabel3->setText( tr( "GEOM_RADIUS" ) );
+  Group3->TextLabel4->setText( tr( "GEOM_R1" ) );
+  Group3->TextLabel5->setText( tr( "GEOM_R2" ) );
   Group3->PushButton1->setIcon( iconSelect );
   Group3->PushButton2->setIcon( iconSelect );
   Group3->LineEdit1->setReadOnly( true );
@@ -103,11 +107,15 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg( GeometryGUI* theGeometryGUI, QWi
   /***************************************************************/
 
   double SpecificStep = 10.0;
-  initSpinBox( Group1->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3 );
-  initSpinBox( Group2->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3 );
-  initSpinBox( Group3->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3 );
-
-  setHelpFileName( "fillet.htm" );
+  initSpinBox( Group1->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group2->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group2->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group2->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  
+  setHelpFileName( "fillet_operation_page.html" );
 
   /* Initialisations */
   Init();
@@ -154,9 +162,19 @@ void OperationGUI_FilletDlg::Init()
   // spin boxes  
   connect( Group1->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group2->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group2->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group2->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group3->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group3->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group3->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-    // selection
+  // radio buttons
+  connect( Group2->RadioButton1, SIGNAL( clicked() ), this, SLOT( RadioButtonClicked() ) );
+  connect( Group2->RadioButton2, SIGNAL( clicked() ), this, SLOT( RadioButtonClicked() ) );
+  connect( Group3->RadioButton1, SIGNAL( clicked() ), this, SLOT( RadioButtonClicked() ) );
+  connect( Group3->RadioButton2, SIGNAL( clicked() ), this, SLOT( RadioButtonClicked() ) );
+
+  // selection
   connect( myGeomGUI->getApp()->selectionMgr(), 
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
@@ -182,10 +200,20 @@ void OperationGUI_FilletDlg::ConstructorsClicked( int constructorId )
     return;
 
   // Get radius from previous widget
-  double R = 5;
-  if      ( myConstructorId == 0 ) R = Group1->SpinBox_DX->value();
-  else if ( myConstructorId == 1 ) R = Group2->SpinBox_DX->value();
-  else                             R = Group3->SpinBox_DX->value();
+  double R = 5, R1 = 5, R2 = 5;
+  if      ( myConstructorId == 0 ) { 
+    R = Group1->SpinBox_DX->value();
+  }
+  else if ( myConstructorId == 1 ) {
+    R = Group2->SpinBox_DX->value();
+    R1 = Group2->SpinBox_DY->value();
+    R2 = Group2->SpinBox_DZ->value();
+  }
+  else {
+    R = Group3->SpinBox_DX->value();
+    R1 = Group3->SpinBox_DY->value();
+    R2 = Group3->SpinBox_DZ->value();
+  }
 
   myConstructorId = constructorId;
 
@@ -201,12 +229,16 @@ void OperationGUI_FilletDlg::ConstructorsClicked( int constructorId )
     Group3->hide();
     Group2->show();
     Group2->SpinBox_DX->setValue( R );
+    Group2->SpinBox_DY->setValue( R1 );
+    Group2->SpinBox_DZ->setValue( R2 );
     break;
   case 2:
     Group1->hide();
     Group2->hide();
     Group3->show();
     Group3->SpinBox_DX->setValue( R );
+    Group3->SpinBox_DY->setValue( R1 );
+    Group3->SpinBox_DZ->setValue( R2 );
     break;
   default:
     break;
@@ -425,7 +457,11 @@ void OperationGUI_FilletDlg::reset()
   // Set Initial values of spinboxes
   Group1->SpinBox_DX->setValue( 5 );
   Group2->SpinBox_DX->setValue( 5 );
+  Group2->SpinBox_DY->setValue( 5 );
+  Group2->SpinBox_DZ->setValue( 5 );
   Group3->SpinBox_DX->setValue( 5 );
+  Group3->SpinBox_DY->setValue( 5 );
+  Group3->SpinBox_DZ->setValue( 5 );
 
   Group1->LineEdit1->setText( "" );
   Group2->LineEdit1->setText( "" );
@@ -539,8 +575,7 @@ bool OperationGUI_FilletDlg::execute( ObjectList& objects )
   int anId = getConstructorId();
   if ( anId == 0 )
     anObj = GEOM::GEOM_ILocalOperations::_narrow(
-      getOperation() )->MakeFilletAll( myShape,
-                                       getRadius() );
+      getOperation() )->MakeFilletAll( myShape, getRadius() );
   else if ( anId == 1 ) {
     GEOM::ListOfLong_var aList = new GEOM::ListOfLong;
     aList->length( myEdges.Extent() );
@@ -548,8 +583,15 @@ bool OperationGUI_FilletDlg::execute( ObjectList& objects )
     for ( int i = 1, n = myEdges.Extent(); i <= n; i++ )
       aList[ i - 1 ] = myEdges( i );
 
-    anObj = GEOM::GEOM_ILocalOperations::_narrow(
-      getOperation() )->MakeFilletEdges( myShape, getRadius(), aList );
+    if ( Group2->RadioButton1->isChecked() )
+      anObj = GEOM::GEOM_ILocalOperations::_narrow( getOperation() )->
+	MakeFilletEdges( myShape, getRadius(), aList );
+    else
+      anObj = GEOM::GEOM_ILocalOperations::_narrow( getOperation() )->
+	MakeFilletEdgesR1R2( myShape,
+			     Group2->SpinBox_DY->value(),
+			     Group2->SpinBox_DZ->value(),
+			     aList );
   }
   else if ( anId == 2 ) {
     GEOM::ListOfLong_var aList = new GEOM::ListOfLong;
@@ -558,8 +600,16 @@ bool OperationGUI_FilletDlg::execute( ObjectList& objects )
     for ( int i = 1, n = myFaces.Extent(); i <= n; i++ )
       aList[ i - 1 ] = myFaces( i );
 
-    anObj = GEOM::GEOM_ILocalOperations::_narrow(
-      getOperation() )->MakeFilletFaces( myShape, getRadius(), aList );
+    if ( Group3->RadioButton1->isChecked() ) {
+      anObj = GEOM::GEOM_ILocalOperations::_narrow( getOperation() )->
+	MakeFilletFaces( myShape, getRadius(), aList );
+    }
+    else {
+      anObj = GEOM::GEOM_ILocalOperations::_narrow( getOperation() )->
+	MakeFilletFacesR1R2( myShape, 
+			     Group3->SpinBox_DY->value(),
+			     Group3->SpinBox_DZ->value(), aList );
+    }
   }
 
   if ( !anObj->_is_nil() )
@@ -578,4 +628,39 @@ double OperationGUI_FilletDlg::getRadius() const
   if      ( anId == 0 ) return Group1->SpinBox_DX->value();
   else if ( anId == 1 ) return Group2->SpinBox_DX->value();
   else                  return Group3->SpinBox_DX->value();
+}
+
+//=================================================================================
+// function : RadiobuttonClicked
+// purpose  :
+//=================================================================================
+
+void OperationGUI_FilletDlg::RadioButtonClicked()
+{
+  const QObject* s = sender();
+
+  bool flag = s == Group2->RadioButton1 || s == Group3->RadioButton1;
+    
+  Group2->RadioButton1->blockSignals( true );
+  Group2->RadioButton2->blockSignals( true );
+  Group3->RadioButton1->blockSignals( true );
+  Group3->RadioButton2->blockSignals( true );
+  
+  Group2->SpinBox_DX->setEnabled( flag );
+  Group2->SpinBox_DY->setEnabled( !flag );
+  Group2->SpinBox_DZ->setEnabled( !flag );
+  Group2->RadioButton1->setChecked( flag );
+  Group2->RadioButton2->setChecked( !flag );
+  Group3->SpinBox_DX->setEnabled( flag );
+  Group3->SpinBox_DY->setEnabled( !flag );
+  Group3->SpinBox_DZ->setEnabled( !flag );
+  Group3->RadioButton1->setChecked( flag );
+  Group3->RadioButton2->setChecked( !flag );
+
+  Group2->RadioButton1->blockSignals( false );
+  Group2->RadioButton2->blockSignals( false );
+  Group3->RadioButton1->blockSignals( false );
+  Group3->RadioButton2->blockSignals( false );
+
+  displayPreview();  
 }

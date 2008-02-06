@@ -48,15 +48,13 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
+  virtual void                       addSubshapesToStudy();
   
-  virtual void                       closeEvent( QCloseEvent* );    
-
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
 
 private:
-  int                                myConstructorId;
   GEOM::GEOM_Object_var              myPoint1, myPoint2, myPoint3;
 
   DlgRef_3Sel*                       Group3Pnts;
@@ -67,7 +65,6 @@ private slots:
   bool                               ClickOnApply();
   
   void                               ActivateThisDialog();
-  void                               DeactivateActiveDialog();
   void                               ConstructorsClicked( int );
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();

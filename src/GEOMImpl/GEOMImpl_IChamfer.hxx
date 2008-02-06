@@ -22,11 +22,12 @@
 
 #include "GEOM_Function.hxx"
 
-#define CHAM_ARG_SH   1
-#define CHAM_ARG_D1   2
-#define CHAM_ARG_D2   3
-#define CHAM_ARG_LENG 4
-#define CHAM_ARG_LAST 4
+#define CHAM_ARG_SH    1
+#define CHAM_ARG_D1    2
+#define CHAM_ARG_D2    3
+#define CHAM_ARG_ANGLE 3
+#define CHAM_ARG_LENG  4
+#define CHAM_ARG_LAST  4
 
 class GEOMImpl_IChamfer
 {
@@ -41,10 +42,12 @@ class GEOMImpl_IChamfer
   void SetD (double theD) { _func->SetReal(CHAM_ARG_D1, theD); }
   void SetD1(double theD) { _func->SetReal(CHAM_ARG_D1, theD); }
   void SetD2(double theD) { _func->SetReal(CHAM_ARG_D2, theD); }
+  void SetAngle(double theAngle) { _func->SetReal(CHAM_ARG_ANGLE, theAngle); }
 
   double GetD () { return _func->GetReal(CHAM_ARG_D1); }
   double GetD1() { return _func->GetReal(CHAM_ARG_D1); }
   double GetD2() { return _func->GetReal(CHAM_ARG_D2); }
+  double GetAngle() { return _func->GetReal(CHAM_ARG_ANGLE); }
 
   void SetLength(int theLen) { _func->SetInteger(CHAM_ARG_LENG, theLen); }
 
@@ -56,10 +59,13 @@ class GEOMImpl_IChamfer
               { _func->SetInteger(CHAM_ARG_LAST + 1, theFace); }
   void SetFace2(int theFace)
               { _func->SetInteger(CHAM_ARG_LAST + 2, theFace); }
+  void SetEdge(int theInd, int theEdge)
+              { _func->SetInteger(CHAM_ARG_LAST + theInd, theEdge); }
 
   int GetFace(int theInd) { return _func->GetInteger(CHAM_ARG_LAST + theInd); }
   int GetFace1() { return _func->GetInteger(CHAM_ARG_LAST + 1); }
   int GetFace2() { return _func->GetInteger(CHAM_ARG_LAST + 2); }
+  int GetEdge(int theInd) { return _func->GetInteger(CHAM_ARG_LAST + theInd); }
 
  private:
 

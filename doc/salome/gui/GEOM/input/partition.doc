@@ -1,0 +1,52 @@
+/*!
+
+\page partition_page Partition
+
+\n To produce a \b Partition in the <b>Main Menu</b> select <b>Operations - > Partition</b>
+
+\n This operation builds a compound by intersection of several shapes with a tool object or a plane.
+\n The \b Result will be any \b GEOM_Object.
+
+<br><h2>Intersection of two shapes.</h2>
+
+\n As far as the intersection of two objects can produce any type of
+geometrical objects, <b>Reconstruction Limit</b> box allows choosing the
+preferrable result, i.e. a solid, a shell, a list of faces, etc.
+\n <b>TUI Command:</b> <em>geompy.MakePartition(ListOfShapes,
+ListOfTools, ListOfKeepInside, ListOfRemoveInside, Limit, RemoveWebs,
+ListOfMaterials),</em> where where \em ListOfShapes is a list of shapes to
+be intersected and \em ListOfTools is a list of shapes to intersect the
+shapes from ListOfShapes.
+\n Since the implementation of a new version of PartitionAlgo other
+parameters are ignored by the current functionality and remain there
+only to support the old scripts.
+\n <b>Arguments:</b> Name + 2 lists of shapes (the shapes from the
+first list will be intersected with the shapes from the second list) +
+reconstruction limit.
+
+\image html partition1.png
+
+<b>Keep nonlimit shapes</b> checkbox allows building geometrical objects of
+all types at the same time i.e. no reconstruction limit is applied.
+
+
+<br><h2>Intersection of a Shape and a Plane.</h2>
+
+\n <b>TUI Command:</b> <em> geompy.MakeHalfPartition(Shapes,
+Plane),</em> where \em Shapes are a list of Shapes to be intersected
+and \em Plane is a Tool shape, to intersect the \em Shapes.
+\n <b>Arguments:</b> Name + a list of shapes which will be intersected
++ 1 cutting plane.
+
+\image html partition2.png
+
+\n <b>Example:</b>
+
+\image html partitionsn1.png
+
+\image html partitionsn2.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_partition "Basic Operations".
+
+*/

@@ -62,11 +62,13 @@ private:
   void         OnCheckGeometry();
 
   // Popup commands
+  void         OnAutoColor();
+  void         OnDisableAutoColor();
   void         OnColor();
   void         OnTransparency();
   void         OnNbIsos();
   void         OnOpen();
-  void         OnSelectOnly( int );
+  void         OnSelectOnly(int mode);
   
   // returns name of Module (Component) of given objects (usually selected objects)
   // if objects belong to different Components, a NULL string is returned.
@@ -83,7 +85,6 @@ private:
   bool         CheckSubObjectInUse( _PTR(SObject),
 				    _PTR(SObject),
 				    _PTR(Study) );
-    
 };
 
 #endif // GEOMTOOLSGUI_H

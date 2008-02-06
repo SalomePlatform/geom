@@ -24,7 +24,6 @@
 //
 
 #include "OperationGUI_PartitionDlg.h"
-#include "OperationGUI_MaterialDlg.h"
 
 #include <DlgRef.h>
 #include <GeometryGUI.h>
@@ -63,7 +62,7 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   mainFrame()->RadioButton3->close();
 
   // Full partition (contains half-space partition)
-  GroupPoints = new DlgRef_2Sel1List( centralWidget() );
+  GroupPoints = new DlgRef_2Sel1List1Check( centralWidget() );
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
   GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECT" ) );
@@ -72,6 +71,7 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   GroupPoints->PushButton2->setIcon( image2 );
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->CheckButton1->setText( tr( "GEOM_KEEP_NONLIMIT_SHAPES" ) );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -79,7 +79,7 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
 
   /***************************************************************/
 
-  setHelpFileName( "partition.htm" ); 
+  setHelpFileName( "partition_page.html" );
  
   Init();
 }
@@ -117,6 +117,7 @@ void OperationGUI_PartitionDlg::Init()
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_WIRE" ) );
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_EDGE" ) );
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_VERTEX" ) );
+  GroupPoints->CheckButton1->setChecked( false );
   
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
@@ -132,7 +133,9 @@ void OperationGUI_PartitionDlg::Init()
   
   connect( GroupPoints->ComboBox1, SIGNAL( activated( int ) ), this, SLOT( ComboTextChanged() ) );
   
-  connect( myGeomGUI->getApp()->selectionMgr(), 
+  connect( GroupPoints->CheckButton1, SIGNAL( stateChanged( int ) ), this, SLOT( ReverseSense( int ) ) );
+
+  connect( myGeomGUI->getApp()->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
   initName( tr( "GEOM_PARTITION" ) );
@@ -162,14 +165,15 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
     GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECT" ) );
     GroupPoints->TextLabel3->show();
     GroupPoints->ComboBox1->show();
-    
     GroupPoints->ComboBox1->setCurrentIndex( 0 );
+    GroupPoints->CheckButton1->show();
     break;
   case 1: /*Half-space partition */
     GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION_HALFSPACE" ) );
     GroupPoints->TextLabel3->hide();
     GroupPoints->ComboBox1->hide();
     GroupPoints->TextLabel2->setText( tr( "GEOM_PLANE" ) );
+    GroupPoints->CheckButton1->hide();
     break;
   } 
 
@@ -356,15 +360,25 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
 
   int aLimit = GetLimit();
   int aConstructorId = getConstructorId();
+  int aKeepNonlimitShapes = 0;
 
-  if ( aConstructorId == 1 )
+  if ( aConstructorId == 1 ) {
     aLimit = GEOM::SHAPE;
+  }
+  else {
+    if ( GroupPoints->CheckButton1->isChecked() ) {
+      aKeepNonlimitShapes = 1;
+    }
+    else {
+      aKeepNonlimitShapes = 0;
+    }
+  }
 
   if ( isValid( msg ) ) {
-    anObj = GEOM::GEOM_IBooleanOperations::_narrow(getOperation())->
-      MakePartition(myListShapes, myListTools,
-                    myListKeepInside, myListRemoveInside,
-		    aLimit, false, myListMaterials);
+    anObj = GEOM::GEOM_IBooleanOperations::_narrow( getOperation() )->
+      MakePartition( myListShapes, myListTools,
+		     myListKeepInside, myListRemoveInside,
+		     aLimit, false, myListMaterials, aKeepNonlimitShapes );
     res = true;
   }
 
@@ -372,16 +386,6 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
     objects.push_back( anObj._retn() );
 
   return res;
-}
-
-
-//=================================================================================
-// function : closeEvent
-// purpose  :
-//=================================================================================
-void OperationGUI_PartitionDlg::closeEvent( QCloseEvent* e )
-{
-  GEOMBase_Skeleton::closeEvent( e );
 }
 
 

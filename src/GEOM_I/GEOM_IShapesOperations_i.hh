@@ -61,14 +61,17 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr MakeCompound (const GEOM::ListOfGO& theShapes);
 
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-				       CORBA::Double         theTolerance);
+				       CORBA::Double         theTolerance,
+					   CORBA::Boolean  doKeepNonSolids);
 
   GEOM::ListOfGO* GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
 			        CORBA::Double         theTolerance);
 
   GEOM::GEOM_Object_ptr MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
 					     CORBA::Double         theTolerance,
-					     const GEOM::ListOfGO& theFaces);
+					     const GEOM::ListOfGO& theFaces,
+						 CORBA::Boolean  doKeepNonSolids);
+
 
   GEOM::ListOfGO* MakeExplode (GEOM::GEOM_Object_ptr theShape,
 			       CORBA::Long           theShapeType,
@@ -174,6 +177,9 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   GEOM::GEOM_Object_ptr GetInPlace (GEOM::GEOM_Object_ptr theShapeWhere,
 				    GEOM::GEOM_Object_ptr theShapeWhat);
+
+  GEOM::GEOM_Object_ptr GetInPlaceByHistory (GEOM::GEOM_Object_ptr theShapeWhere,
+					     GEOM::GEOM_Object_ptr theShapeWhat);
 
   GEOM::GEOM_Object_ptr GetSame (GEOM::GEOM_Object_ptr theShapeWhere,
 				 GEOM::GEOM_Object_ptr theShapeWhat);

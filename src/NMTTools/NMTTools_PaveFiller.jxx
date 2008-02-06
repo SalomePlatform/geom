@@ -17,8 +17,8 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
-#ifndef _BOPTools_InterferencePool_HeaderFile
-#include <BOPTools_InterferencePool.hxx>
+#ifndef _TopoDS_Shape_HeaderFile
+#include <TopoDS_Shape.hxx>
 #endif
 #ifndef _BOPTools_Pave_HeaderFile
 #include <BOPTools_Pave.hxx>
@@ -88,6 +88,9 @@
 #endif
 #ifndef _TopoDS_Edge_HeaderFile
 #include <TopoDS_Edge.hxx>
+#endif
+#ifndef _TopTools_DataMapOfShapeShape_HeaderFile
+#include <TopTools_DataMapOfShapeShape.hxx>
 #endif
 #ifndef _NMTTools_PaveFiller_HeaderFile
 #include <NMTTools_PaveFiller.hxx>

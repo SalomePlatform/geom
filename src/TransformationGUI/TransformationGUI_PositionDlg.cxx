@@ -85,7 +85,7 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
   
   /***************************************************************/
 
-  setHelpFileName( "modify_the_location.htm" );
+  setHelpFileName( "modify_location_operation_page.html" );
   
   Init();
 }
@@ -405,15 +405,6 @@ bool TransformationGUI_PositionDlg::execute( ObjectList& objects )
   }
   
   return res;
-}
-
-//=================================================================================
-// function : closeEvent
-// purpose  :
-//=================================================================================
-void  TransformationGUI_PositionDlg::closeEvent( QCloseEvent* e )
-{
-  GEOMBase_Skeleton::closeEvent( e );
 }
 
 

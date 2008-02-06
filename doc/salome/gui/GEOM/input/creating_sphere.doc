@@ -1,0 +1,36 @@
+/*!
+
+\page create_sphere_page Sphere
+
+\n To create a \b Sphere in the <b>Main Menu</b> select <b>New Entity - > Primitives - > Sphere</b>
+
+\n There are two algorithms for creation of a \b Sphere.
+\n The \b Result of each operation will be a GEOM_Object (SOLID).
+
+\n Firstly, you can define a \b Sphere by the <b>Center Point</b> and the \b Radius.
+\n <b>TUI Command:</b> <em>geompy.MakeSphere(Point, Radius)</em>
+\n <b>Arguments:</b> Name + 1 vertex + 1 value (Radius).
+
+\image html sphere1.png
+
+\n Secondly, you can define a \b Sphere with the center at the origin of
+coordinate system by the \b Radius.
+\n <b>TUI Command:</b> <em>geompy. MakeSphereR(Radius)</em>
+\n <b>Arguments:</b> Name + 1  value (Radius from the origin).
+
+\image html sphere2.png
+
+\n <b>NB!</b> The is another way to create a\b  Sphere, which is
+currently accessible only via \b TUI commands.
+\n You can define the \b Sphere by the coordinates of the <b>Center
+Point</b> and its \b Radius (in this way you don't need to create it in advance).
+\n <b>TUI Command:</b> <em>geompy.MakeSphere(X, Y, Z, Radius)</em>
+
+<b>Example:</b>
+
+\image html spheres.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_sphere "Primitives".
+
+*/

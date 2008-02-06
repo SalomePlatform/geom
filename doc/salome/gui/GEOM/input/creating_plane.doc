@@ -1,0 +1,48 @@
+/*!
+
+\page create_plane_page Plane
+
+To create a \b Plane in the <b>Main Menu</b> select <b>New Entity - >
+Basic - > Plane</b>
+
+\n There are three algorithms to create a plane in the 3D space.
+\n The \b Result of each operation will be a GEOM_Object (face).
+
+\n Firstly, you can define a \b Plane by a \b Point through which  the
+plane passes, a \b Vector giving a normal of the plane and a <b>Size
+of the Plane</b> (size of a side of quadrangle face, representing the
+plane).
+\n <b>TUI Command:</b> <em>geompy.MakePlane(Point, Vector, TrimSize)</em>
+\n <b>Arguments:</b> Name + 1 vertex + 1 vector  + 1 value (to define
+the size of the plane).
+
+\image html plane1.png
+
+\n Secondly, you can define a \b Plane by three \b Points through
+which  the plane passes and a <b>Size of the Plane</b>.
+\n <b>TUI Command:</b> <em>geompy.MakePlaneThreePnt(Point1, Point2, Point3, TrimSize)</em>
+\n <b>Arguments:</b> Name + 3 vertices + 1 value (to define the size
+of the plane).
+
+\image html plane2.png
+
+\n Finally, you can define a \b Plane by another \b Plane or <b>Local
+Coordinate System</b> and a <b>Size of the Plane</b>.
+\n <b>TUI Command:</b> <em>geompy.MakePlaneFace(Face, TrimSize)</em>
+\n <b>Arguments:</b> Name + 1 face + 1 value (to define the size of
+the plane).
+
+\image html plane3.png
+
+<b>Examples:</b>
+
+\image html planes1.png
+<center>Planes created on the basis of the Global Coordinate System</center>
+
+\image html plane_on_face.png
+<center>A Plane created on a Face of another Shape</center>
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_plane "Basic Geometric Objects".
+
+*/

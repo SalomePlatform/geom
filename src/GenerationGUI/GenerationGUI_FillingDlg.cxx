@@ -77,7 +77,7 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg( GeometryGUI* theGeometryGUI,
   layout->addWidget( GroupPoints  );
   /***************************************************************/
 
-  setHelpFileName( "filling.htm" );
+  setHelpFileName( "creaet_filling_page.html" );
 
   /* Initialisations */
   Init();

@@ -27,22 +27,24 @@
 
 #include <OCCViewer_ViewModel.h>
 
-#include <AIS_ListOfInteractive.hxx>
-#include <AIS_ListIteratorOfListOfInteractive.hxx>
-#include <SelectMgr_EntityOwner.hxx>
-#include <AIS_Shape.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
-#include <TopExp.hxx>
-#include <SelectMgr_IndexedMapOfOwner.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <SelectMgr_Selection.hxx>
-#include <SelectBasics_SensitiveEntity.hxx>
-#include <StdSelect_BRepOwner.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
-#include <NCollection_DataMap.hxx>
-
 #include <SUIT_Session.h>
 #include <SalomeApp_Study.h>
+#include <SALOME_InteractiveObject.hxx>
+
+#include <StdSelect_BRepOwner.hxx>
+#include <SelectMgr_Selection.hxx>
+#include <SelectMgr_EntityOwner.hxx>
+#include <SelectMgr_IndexedMapOfOwner.hxx>
+#include <SelectBasics_SensitiveEntity.hxx>
+
+#include <AIS_Shape.hxx>
+#include <AIS_ListOfInteractive.hxx>
+#include <AIS_ListIteratorOfListOfInteractive.hxx>
+#include <TopExp.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_DataMap.hxx>
 
 
 //================================================================
@@ -69,71 +71,78 @@ GEOMGUI_OCCSelector::~GEOMGUI_OCCSelector()
 void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
 {
   OCCViewer_Viewer* vw = viewer();
-  if ( !vw )
+  if (!vw)
     return;
 
   Handle(AIS_InteractiveContext) ic = vw->getAISContext();
-  
-  if ( ic->HasOpenedContext() )
-    {
-      for ( ic->InitSelected(); ic->MoreSelected(); ic->NextSelected() )
-	{
-	  Handle(StdSelect_BRepOwner) anOwner = Handle(StdSelect_BRepOwner)::DownCast(ic->SelectedOwner());
-	  if ( anOwner.IsNull() )
-	    continue;
-	  
-	  Handle(AIS_InteractiveObject) io = Handle(AIS_InteractiveObject)::DownCast( anOwner->Selectable() );
-	  
-	  QString entryStr = entry( io );
-	  int index = -1; 
-	  
-	  if ( anOwner->ComesFromDecomposition() ) // == Local Selection
-	    {
-	      TopoDS_Shape subShape = anOwner->Shape();
-	      Handle(AIS_Shape) aisShape = Handle(AIS_Shape)::DownCast( io );
-	      if ( !aisShape.IsNull() )
-		{
-		  TopoDS_Shape bigShape = aisShape->Shape();
-		  
-		  TopTools_IndexedMapOfShape subShapes;
-		  TopExp::MapShapes( bigShape, subShapes );
-		  index = subShapes.FindIndex( subShape );
-		}
-	    }
-	  
-	  if ( !entryStr.isEmpty() )
-	    {
-	      LightApp_DataOwner* owner;
-	      if ( index > -1 ) // Local Selection
-		owner = new LightApp_DataSubOwner( entryStr, index );
-	      else // Global Selection
-		owner = new LightApp_DataOwner( entryStr );
 
-	      aList.append( SUIT_DataOwnerPtr( owner ) );
-	    }
-	}
-    }
-  else
+  if (ic->HasOpenedContext())
+  {
+    TopoDS_Shape curBigShape;
+    TopTools_IndexedMapOfShape subShapes;
+
+    for (ic->InitSelected(); ic->MoreSelected(); ic->NextSelected())
     {
-      for ( ic->InitCurrent(); ic->MoreCurrent(); ic->NextCurrent() )
-	{
-	  Handle(AIS_InteractiveObject) io = ic->Current();
-	  
-	  QString entryStr = entry( io );
-	  
-	  if ( !entryStr.isEmpty() )
-	    {
-	      LightApp_DataOwner* owner = new LightApp_DataOwner( entryStr );
-	      aList.append( SUIT_DataOwnerPtr( owner ) );
-	    }
-	}
+      Handle(StdSelect_BRepOwner) anOwner = Handle(StdSelect_BRepOwner)::DownCast(ic->SelectedOwner());
+      if (anOwner.IsNull())
+        continue;
+
+      Handle(AIS_InteractiveObject) io = Handle(AIS_InteractiveObject)::DownCast(anOwner->Selectable());
+
+      QString entryStr = entry(io);
+      int index = -1;
+
+      if (anOwner->ComesFromDecomposition()) // == Local Selection
+      {
+        TopoDS_Shape subShape = anOwner->Shape();
+        Handle(AIS_Shape) aisShape = Handle(AIS_Shape)::DownCast(io);
+        if (!aisShape.IsNull())
+        {
+          TopoDS_Shape bigShape = aisShape->Shape();
+
+          if (!bigShape.IsEqual(curBigShape))
+          {
+            curBigShape = bigShape;
+            TopExp::MapShapes(bigShape, subShapes);
+          }
+          index = subShapes.FindIndex(subShape);
+        }
+      }
+
+      if (!entryStr.isEmpty())
+      {
+        LightApp_DataOwner* owner;
+        if (index > -1) // Local Selection
+          owner = new LightApp_DataSubOwner (entryStr, index);
+        else // Global Selection
+          owner = new LightApp_DataOwner (entryStr);
+
+        aList.append(SUIT_DataOwnerPtr(owner));
+      }
     }
+  }
+  else
+  {
+    for (ic->InitCurrent(); ic->MoreCurrent(); ic->NextCurrent())
+    {
+      Handle(AIS_InteractiveObject) io = ic->Current();
+
+      QString entryStr = entry( io );
+
+      if ( !entryStr.isEmpty() )
+      {
+        LightApp_DataOwner* owner = new LightApp_DataOwner( entryStr );
+        aList.append( SUIT_DataOwnerPtr( owner ) );
+      }
+    }
+  }
+
   // add externally selected objects
   SUIT_DataOwnerPtrList::const_iterator anExtIter;
-  for(anExtIter = mySelectedExternals.begin(); anExtIter != mySelectedExternals.end(); anExtIter++) {
+  for (anExtIter = mySelectedExternals.begin(); anExtIter != mySelectedExternals.end(); anExtIter++)
+  {
     aList.append(*anExtIter);
   }
-  
 }
 
 //================================================================
@@ -183,10 +192,16 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 
   Handle(AIS_InteractiveContext) ic = vw->getAISContext();
 
-  NCollection_DataMap<TCollection_AsciiString, TColStd_IndexedMapOfInteger> indexesMap; // "entry - list_of_int" map for LOCAL selection
+  // "entry - list_of_int" map for LOCAL selection
+#ifndef WNT
+  NCollection_DataMap<TCollection_AsciiString, TColStd_IndexedMapOfInteger> indexesMap;
+#else
+  NCollection_DataMap<Standard_CString, TColStd_IndexedMapOfInteger> indexesMap;
+#endif
+
   QMap<QString,int> globalSelMap; // only Key=entry from this map is used.  value(int) is NOT used at all.
   SelectMgr_IndexedMapOfOwner ownersmap; // map of owners to be selected
-  
+
   AIS_ListOfInteractive aDispList;
   ic->DisplayedObjects( aDispList );
 
@@ -214,15 +229,16 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 	subIndexes.Add( subOwner->index() );
 	indexesMap.Bind(entry.toLatin1().data(), subIndexes);
       }
-    } 
+    }
     else // the owner is NOT a sub owner, maybe it is a DataOwner == GLOBAL selection
     {
       const LightApp_DataOwner* owner = dynamic_cast<const LightApp_DataOwner*>( (*itr).operator->() );
       if ( owner )
       {
-	SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+	SalomeApp_Study* appStudy =
+          dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
 	QString anEntry = appStudy->referencedToEntry( owner->entry() );
-	
+
 	globalSelMap[anEntry] = 1;
       }
     }
@@ -239,51 +255,76 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       SelectMgr_IndexedMapOfOwner owners;
       getEntityOwners( io, ic, owners ); // get all owners
 
-      for  ( int i = 1, n = owners.Extent(); i <= n; i++ ) 
+      int i, n = owners.Extent();
+
+      // 1. Prepare map of shapes for local selection
+      TopTools_IndexedMapOfShape aMapOfShapes;
+      bool isLocal = false;
+
+      Handle(StdSelect_BRepOwner) anOwner;
+      for (i = 1; i <= n && !isLocal; i++)
       {
+        anOwner = Handle(StdSelect_BRepOwner)::DownCast(owners( i ));
+        if (!anOwner.IsNull() && anOwner->HasShape())
+        {
+          if (anOwner->ComesFromDecomposition() || !globalSelMap.contains(entryStr))
+          {
+            // has a local selection
+            Handle(AIS_Shape) aisShape = Handle(AIS_Shape)::DownCast( io );
+            if (!aisShape.IsNull() && indexesMap.IsBound(entryStr.toLatin1().data()))
+            {
+              isLocal = true;
+              TopoDS_Shape shape = aisShape->Shape();
+              TopExp::MapShapes(shape, aMapOfShapes);
+            }
+          }
+        }
+      }
 
-	Handle(StdSelect_BRepOwner) anOwner = Handle(StdSelect_BRepOwner)::DownCast(owners( i ));
+      // 2. Process all owners
+      for (i = 1; i <= n; i++)
+      {
+        anOwner = Handle(StdSelect_BRepOwner)::DownCast(owners( i ));
 
-	if ( anOwner.IsNull() || !anOwner->HasShape() )
-	  continue;
+        if ( anOwner.IsNull() || !anOwner->HasShape() )
+          continue;
 
-	// GLOBAL selection
-	if ( !anOwner->ComesFromDecomposition() && globalSelMap.contains( entryStr ) ) 
-	{
-	  ownersmap.Add( anOwner );
-	  globalSelMap[entryStr]++;
-	}
-	// LOCAL selection
-	else
-	{
-	  Handle(AIS_Shape) aisShape = Handle(AIS_Shape)::DownCast( io );
+        // GLOBAL selection
+        if ( !anOwner->ComesFromDecomposition() && globalSelMap.contains( entryStr ) )
+        {
+          ownersmap.Add( anOwner );
+          globalSelMap[entryStr]++;
+        }
+        // LOCAL selection
+        else
+        {
+          if (isLocal)
+          {
+            const TColStd_IndexedMapOfInteger& subIndexes =
+              indexesMap.ChangeFind(entryStr.toLatin1().data());
 
-	  if ( !aisShape.IsNull() && indexesMap.IsBound( entryStr.toLatin1().data() ) )
-	  {
-	    TopoDS_Shape shape = aisShape->Shape();
-	    TopTools_IndexedMapOfShape aMapOfShapes;
-	    TopExp::MapShapes( shape, aMapOfShapes );
-	    const TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entryStr.toLatin1().data());
+            const TopoDS_Shape& aSubShape = anOwner->Shape();
+            int aSubShapeId = aMapOfShapes.FindIndex( aSubShape );
 
-	    const TopoDS_Shape& aSubShape = anOwner->Shape();
-	    int  aSubShapeId = aMapOfShapes.FindIndex( aSubShape );
-
-	    // check if the "sub_shape_index" is found in the "map of indexes for this entry",
-	    // which was passes in the parameter
-	    if ( subIndexes.Contains( aSubShapeId ) )
-	    {
-	      ownersmap.Add( anOwner );
-	    }
-	  }
-        } // end of local selection
+            // check if the "sub_shape_index" is found in the "map of indexes for this entry",
+            // which was passes in the parameter
+            if ( subIndexes.Contains( aSubShapeId ) )
+            {
+              ownersmap.Add( anOwner );
+            }
+          }
+        } // end of LOCAL selection
       } // end of for(owners)
-    }// end of if(entry)
-  }// end of for(AIS_all_ios)
+    } // end of if(entry)
+  } // end of for(AIS_all_ios)
 
   vw->unHighlightAll( false );
 
   // DO the selection
-  for  ( int i = 1, n = ownersmap.Extent(); i <= n; i++ ) 
+  int i = 1, n = ownersmap.Extent();
+  bool isAutoHilight = ic->AutomaticHilight();
+  ic->SetAutomaticHilight(Standard_False); //Bug 17269: for better performance
+  for  (; i <= n; i++)
   {
     Handle(SelectMgr_EntityOwner) owner = ownersmap( i );
     if ( owner->State() )
@@ -294,19 +335,25 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
     else
       ic->AddOrRemoveSelected( Handle(AIS_InteractiveObject)::DownCast(owner->Selectable()), false );
   }
+  ic->SetAutomaticHilight(isAutoHilight); //Bug 17269: restore mode
+  if (n < 3000)
+    ic->HilightSelected(/*updateviewer*/Standard_True);
+  else
+    vw->update();
 
-  vw->update();
-  
   // fill extra selected
   mySelectedExternals.clear();
-  for ( SUIT_DataOwnerPtrList::const_iterator itr2 = aList.begin(); itr2 != aList.end(); ++itr2 ) {
-    const LightApp_DataSubOwner* subOwner = dynamic_cast<const LightApp_DataSubOwner*>( (*itr2).operator->() );
+  for ( SUIT_DataOwnerPtrList::const_iterator itr2 = aList.begin(); itr2 != aList.end(); ++itr2 )
+  {
+    const LightApp_DataSubOwner* subOwner =
+      dynamic_cast<const LightApp_DataSubOwner*>( (*itr2).operator->() );
     if ( !subOwner )
     {
       const LightApp_DataOwner* owner = dynamic_cast<const LightApp_DataOwner*>( (*itr2).operator->() );
       if ( owner )
       {
-	SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+	SalomeApp_Study* appStudy =
+          dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
 	QString anEntry = appStudy->referencedToEntry( owner->entry() );
 	if (globalSelMap[anEntry] == 1) mySelectedExternals.append(*itr2);
       }

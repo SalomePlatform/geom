@@ -72,7 +72,7 @@ BlocksGUI_PropagateDlg::BlocksGUI_PropagateDlg( GeometryGUI* theGeometryGUI, QWi
 
   /***************************************************************/
 
-  setHelpFileName( "propagate.htm" );
+  setHelpFileName( "propagate_operation_page.html" );
 
   Init();
 }
@@ -208,17 +208,6 @@ void BlocksGUI_PropagateDlg::enterEvent( QEvent* )
 {
   if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
-}
-
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void BlocksGUI_PropagateDlg::closeEvent( QCloseEvent* e )
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
 }
 
 //=================================================================================

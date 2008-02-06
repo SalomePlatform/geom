@@ -45,6 +45,7 @@ dist_libRepairGUI_la_SOURCES =			\
 	RepairGUI_FreeFacesDlg.h		\
 	RepairGUI_ChangeOrientationDlg.h	\
 	RepairGUI_GlueDlg.h			\
+	RepairGUI_RemoveExtraEdgesDlg.h		\
 						\
 	RepairGUI.cxx				\
 	RepairGUI_SewingDlg.cxx			\
@@ -57,7 +58,8 @@ dist_libRepairGUI_la_SOURCES =			\
 	RepairGUI_FreeBoundDlg.cxx		\
 	RepairGUI_FreeFacesDlg.cxx		\
 	RepairGUI_ChangeOrientationDlg.cxx	\
-	RepairGUI_GlueDlg.cxx
+	RepairGUI_GlueDlg.cxx			\
+	RepairGUI_RemoveExtraEdgesDlg.cxx
 
 MOC_FILES = \
 	RepairGUI_SewingDlg_moc.cxx		\
@@ -70,7 +72,8 @@ MOC_FILES = \
 	RepairGUI_FreeBoundDlg_moc.cxx		\
 	RepairGUI_FreeFacesDlg_moc.cxx		\
 	RepairGUI_ChangeOrientationDlg_moc.cxx	\
-	RepairGUI_GlueDlg_moc.cxx     
+	RepairGUI_GlueDlg_moc.cxx     		\
+	RepairGUI_RemoveExtraEdgesDlg_moc.cxx
 
 nodist_libRepairGUI_la_SOURCES = \
 	$(MOC_FILES)

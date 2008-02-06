@@ -41,8 +41,6 @@
 #include <QSpinBox>
 #include <QDoubleSpinBox>
 
-using namespace std;
-
 //=================================================================================
 // class    : GEOMBase_Skeleton()
 // purpose  : Constructs a GEOMBase_Skeleton which is a child of 'parent', with the 
@@ -66,6 +64,8 @@ GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* pare
   topLayout->setMargin( 0 ); topLayout->setSpacing( 0 );
   topLayout->addWidget( myMainFrame );
 
+  myMainFrame->GroupBoxName->setTitle( tr( "GEOM_RESULT_NAME_GRP" ) );
+  myMainFrame->NameLabel->setText( tr( "GEOM_RESULT_NAME_LBL" ) );
   buttonCancel()->setText( tr( "GEOM_BUT_CLOSE" ) );
   buttonOk()->setText( tr( "GEOM_BUT_OK" )) ;
   buttonApply()->setText( tr( "GEOM_BUT_APPLY" ) );

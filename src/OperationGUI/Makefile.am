@@ -36,7 +36,6 @@ dist_libOperationGUI_la_SOURCES =	\
 	OperationGUI.h			\
 	OperationGUI_ArchimedeDlg.h	\
 	OperationGUI_PartitionDlg.h	\
-	OperationGUI_MaterialDlg.h	\
 	OperationGUI_FilletDlg.h	\
 	OperationGUI_ChamferDlg.h	\
 	OperationGUI_ClippingDlg.h	\
@@ -44,7 +43,6 @@ dist_libOperationGUI_la_SOURCES =	\
 	OperationGUI.cxx		\
 	OperationGUI_ArchimedeDlg.cxx	\
 	OperationGUI_PartitionDlg.cxx	\
-	OperationGUI_MaterialDlg.cxx	\
 	OperationGUI_FilletDlg.cxx	\
 	OperationGUI_ChamferDlg.cxx	\
 	OperationGUI_ClippingDlg.cxx
@@ -52,7 +50,6 @@ dist_libOperationGUI_la_SOURCES =	\
 MOC_FILES = \
 	OperationGUI_ArchimedeDlg_moc.cxx	\
 	OperationGUI_PartitionDlg_moc.cxx	\
-	OperationGUI_MaterialDlg_moc.cxx	\
 	OperationGUI_FilletDlg_moc.cxx		\
 	OperationGUI_ChamferDlg_moc.cxx		\
 	OperationGUI_ClippingDlg_moc.cxx

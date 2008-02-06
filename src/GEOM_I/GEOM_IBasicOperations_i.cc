@@ -107,6 +107,39 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointWithReference
 
 //=============================================================================
 /*!
+ *  MakePointOnLinesIntersection
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnLinesIntersection
+                  (GEOM::GEOM_Object_ptr theLine1,  GEOM::GEOM_Object_ptr theLine2)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theLine1 == NULL || theLine2 == NULL) return aGEOMObject._retn();
+
+  //Get the reference Lines
+
+  Handle(GEOM_Object) aRef1 = GetOperations()->GetEngine()->GetObject
+    (theLine1->GetStudyID(), theLine1->GetEntry());
+  Handle(GEOM_Object) aRef2 = GetOperations()->GetEngine()->GetObject
+    (theLine2->GetStudyID(), theLine2->GetEntry());
+  if (aRef1.IsNull() || aRef2.IsNull()) return aGEOMObject._retn();
+
+  //Create the point
+
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePointOnLinesIntersection(aRef1, aRef2);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakePointOnCurve
  */
 //=============================================================================
@@ -290,6 +323,38 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeLineTwoPnt
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  MakeLineTwoFaces
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeLineTwoFaces
+                 (GEOM::GEOM_Object_ptr theFace1, GEOM::GEOM_Object_ptr theFace2)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theFace1 == NULL || theFace2 == NULL) return aGEOMObject._retn();
+
+  //Get the reference points
+
+  Handle(GEOM_Object) aRef1 = GetOperations()->GetEngine()->GetObject
+    (theFace1->GetStudyID(), theFace1->GetEntry());
+  Handle(GEOM_Object) aRef2 = GetOperations()->GetEngine()->GetObject
+    (theFace2->GetStudyID(), theFace2->GetEntry());
+  if (aRef1.IsNull() || aRef2.IsNull()) return aGEOMObject._retn();
+
+  //Create the Line
+
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeLineTwoFaces(aRef1, aRef2);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
 
 //=============================================================================
 /*!

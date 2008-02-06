@@ -27,8 +27,10 @@ class ShapesDataStructure from NMTDS
 
 	---Purpose: 
 
-uses
-    Shape from TopoDS,  
+uses  
+    Box from Bnd,
+    IndexedMapOfInteger from TColStd,
+    Shape from TopoDS, 
     IndexedDataMapOfShapeAncestorsSuccessors from BooleanOperations,
     CArray1OfIndexRange from NMTDS, 
     IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger from NMTDS
@@ -78,6 +80,14 @@ is
     	    aMSA:out IndexedDataMapOfShapeAncestorsSuccessors from BooleanOperations;  
     	    aMS :out IndexedDataMapOfShapeAncestorsSuccessors from BooleanOperations); 
 -- Contribution of Samtech www.samcef.com END 
+
+    GetAllSuccessors(me; 
+    	anIndex:Integer from Standard; 
+	aScrs  :out IndexedMapOfInteger from TColStd);   
+
+    ComputeBoxEx(me; 
+    	anIndex:Integer from Standard; 
+	aBox:out Box from Bnd);   
 
 fields
     myCompositeShape:  Shape from TopoDS is protected; 

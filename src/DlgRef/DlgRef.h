@@ -99,19 +99,19 @@ public:
 };
 
 //////////////////////////////////////////
-// DlgRef_1Sel1List4Btn
+// DlgRef_1Sel1List1Check3Btn
 //////////////////////////////////////////
 
-#include "ui_DlgRef_1Sel1List4Btn_QTD.h"
+#include "ui_DlgRef_1Sel1List1Check3Btn_QTD.h"
 
-class DLGREF_EXPORT DlgRef_1Sel1List4Btn : public QWidget, 
-					   public Ui::DlgRef_1Sel1List4Btn_QTD
+class DLGREF_EXPORT DlgRef_1Sel1List1Check3Btn : public QWidget, 
+					         public Ui::DlgRef_1Sel1List1Check3Btn_QTD
 {
   Q_OBJECT
 
 public:
-  DlgRef_1Sel1List4Btn( QWidget* = 0, Qt::WindowFlags = 0 );
-  ~DlgRef_1Sel1List4Btn();
+  DlgRef_1Sel1List1Check3Btn( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_1Sel1List1Check3Btn();
 };
 
 //////////////////////////////////////////
@@ -291,6 +291,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_2Sel1List1Check
+//////////////////////////////////////////
+
+#include "ui_DlgRef_2Sel1List1Check_QTD.h"
+
+class DLGREF_EXPORT DlgRef_2Sel1List1Check : public QWidget, 
+                                             public Ui::DlgRef_2Sel1List1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_2Sel1List1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_2Sel1List1Check();
+};
+
+//////////////////////////////////////////
 // DlgRef_2Sel1List
 //////////////////////////////////////////
 
@@ -368,6 +384,22 @@ class DLGREF_EXPORT DlgRef_2Sel2Spin : public QWidget,
 public:
   DlgRef_2Sel2Spin( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_2Sel2Spin();
+};
+
+//////////////////////////////////////////
+// DlgRef_2Sel3Spin2Rb
+//////////////////////////////////////////
+
+#include "ui_DlgRef_2Sel3Spin2Rb_QTD.h"
+
+class DLGREF_EXPORT DlgRef_2Sel3Spin2Rb : public QWidget, 
+                                          public Ui::DlgRef_2Sel3Spin2Rb_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_2Sel3Spin2Rb( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_2Sel3Spin2Rb();
 };
 
 //////////////////////////////////////////
@@ -660,6 +692,15 @@ class DLGREF_EXPORT DlgRef_Skeleton : public QWidget,
 public:
   DlgRef_Skeleton( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_Skeleton();
+};
+
+//////////////////////////////////////////
+// Utility functions
+//////////////////////////////////////////
+
+namespace DlgRef
+{
+  QString PrintDoubleValue( double, int = 16 );
 };
 
 #endif // GEOM_DLGREF_H

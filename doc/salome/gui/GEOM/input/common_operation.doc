@@ -1,0 +1,24 @@
+/*!
+
+\page common_operation_page Common
+
+\n To produce a \b Common operation in the <b>Main Menu</b> select <b>Operations - > Boolean - > Common</b>
+
+\n This operation cuts the common part of two shapes and transforms it into an independent geometrical object.
+
+\n The \b Result will be any \b GEOM_Object.
+\n <b>TUI Command:</b> <em>geompy.MakeCommon(s1, s2)</em>
+\n <b>Arguments:</b> Name + 2 shapes.
+
+\image html bool2.png
+
+\n <b>Example:</b>
+
+\image html fusesn1.png
+
+\image html commonsn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_common "Boolean Operations".
+
+*/

@@ -27,6 +27,7 @@
 #include "MeasureGUI_Widgets.h"
 
 #include <GEOMBase.h>
+#include <DlgRef.h>
 
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
@@ -66,16 +67,22 @@ MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg( GeometryGUI* GUI, QWidget* paren
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_DISTANCE" ) );
   mainFrame()->RadioButton1->setIcon( image0 );
 
-  myGrp = new MeasureGUI_2Sel1LineEdit( centralWidget() );
+  myGrp = new MeasureGUI_2Sel4LineEdit( centralWidget() );
   myGrp->GroupBox1->setTitle( tr( "GEOM_MINDIST_OBJ" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT_I" ).arg( "1" ) );
   myGrp->TextLabel2->setText( tr( "GEOM_OBJECT_I" ).arg( "2" ) );
   myGrp->TextLabel3->setText( tr( "GEOM_LENGTH" ) );
+  myGrp->TextLabel4->setText( tr( "GEOM_DX" ) );
+  myGrp->TextLabel5->setText( tr( "GEOM_DY" ) );
+  myGrp->TextLabel6->setText( tr( "GEOM_DZ" ) );
   myGrp->LineEdit3->setReadOnly( true );
   myGrp->PushButton1->setIcon( image1 );
   myGrp->PushButton2->setIcon( image1 );
   myGrp->LineEdit1->setReadOnly( true );
   myGrp->LineEdit2->setReadOnly( true );
+  myGrp->LineEdit4->setReadOnly( true );
+  myGrp->LineEdit5->setReadOnly( true );
+  myGrp->LineEdit6->setReadOnly( true );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -83,7 +90,7 @@ MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg( GeometryGUI* GUI, QWidget* paren
 
   /***************************************************************/
 
-  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Min_distance";
+  myHelpFileName = "using_measurement_tools_page.html#min_distance_anchor";
 
   /* Initialisation */
   Init();
@@ -116,7 +123,6 @@ void MeasureGUI_DistanceDlg::Init()
   connect( mySelBtn2,  SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
 
   MeasureGUI_Skeleton::Init();
-
 }
 
 
@@ -143,7 +149,7 @@ void MeasureGUI_DistanceDlg::SelectionIntoArgument()
 
 //=================================================================================
 // function : processObject()
-// purpose  : Fill dialogs fileds in accordance with myObj and myObj2
+// purpose  : Fill dialogs fields in accordance with myObj and myObj2
 //=================================================================================
 void MeasureGUI_DistanceDlg::processObject()
 {
@@ -153,14 +159,22 @@ void MeasureGUI_DistanceDlg::processObject()
   gp_Pnt aPnt1, aPnt2;
   double aDist = 0.;
   if ( getParameters( aDist, aPnt1, aPnt2 ) ) {
-    myGrp->LineEdit3->setText( QString( "%1" ).arg( aDist ) );
+    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( aDist ) );
+
+    gp_XYZ aVec = aPnt2.XYZ() - aPnt1.XYZ();
+    myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( aVec.X() ) );
+    myGrp->LineEdit5->setText( DlgRef::PrintDoubleValue( aVec.Y() ) );
+    myGrp->LineEdit6->setText( DlgRef::PrintDoubleValue( aVec.Z() ) );
+
     redisplayPreview();
   }
   else {
     myGrp->LineEdit3->setText( "" );
+    myGrp->LineEdit4->setText( "" );
+    myGrp->LineEdit5->setText( "" );
+    myGrp->LineEdit6->setText( "" );
     erasePreview();
   }
-    
 }
 
 //=================================================================================
@@ -241,9 +255,12 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
   double aDist = 0.;
   gp_Pnt aPnt1( 0, 0, 0 ), aPnt2( 0, 0, 0 );
   
-  if ( myObj->_is_nil() || myObj2->_is_nil() || !getParameters( aDist, aPnt1, aPnt2 ) ||
-       SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
-       != OCCViewer_Viewer::Type() )
+
+  SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+
+  if ( myObj->_is_nil() || myObj2->_is_nil() ||
+       !getParameters( aDist, aPnt1, aPnt2 ) ||
+       vw->getViewManager()->getType() != OCCViewer_Viewer::Type() )
     return 0;
   
   try
@@ -264,7 +281,6 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
                     ( aPnt1.Y() + aPnt2.Y() ) / 2,
                     ( aPnt1.Z() + aPnt2.Z() ) / 2 + 100 );
 
-
       gp_Vec va( aPnt3, aPnt1 );
       gp_Vec vb( aPnt3, aPnt2 );
 
@@ -279,11 +295,7 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
       Handle( AIS_LengthDimension ) anIO = new AIS_LengthDimension(
         aVert1, aVert2, P, aDist, TCollection_ExtendedString( (Standard_CString)aLabel.toLatin1().constData() ) );
 
-      SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
       SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>( ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs( 0 ) );
-      
-      //QAD_ViewFrame* vf = GEOM_Displayer::GetActiveView();
-      //OCCViewer_Prs* aPrs = dynamic_cast<OCCViewer_Prs*>( vf->CreatePrs( 0 ) );
 
       if ( aPrs )
         aPrs->AddObject( anIO );
@@ -304,17 +316,3 @@ bool MeasureGUI_DistanceDlg::isValid( QString& msg )
 {
   return MeasureGUI_Skeleton::isValid( msg ) && !myObj2->_is_nil();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

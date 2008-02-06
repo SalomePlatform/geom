@@ -77,7 +77,7 @@ RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg( GeometryGUI* theGeometry
   layout->addWidget( GroupPoints );
   /***************************************************************/
   
-  setHelpFileName( "suppress_faces.htm" );
+  setHelpFileName( "suppress_faces_operation_page.html" );
 
   Init();
 }
@@ -257,16 +257,6 @@ void RepairGUI_SuppressFacesDlg::enterEvent( QEvent* )
     ActivateThisDialog();
 }
 
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void RepairGUI_SuppressFacesDlg::closeEvent( QCloseEvent* e )
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
-}
 
 //=================================================================================
 // function : createOperation

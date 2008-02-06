@@ -75,7 +75,7 @@ TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg( GeometryGUI* theGeomet
   
   /***************************************************************/
 
-  setHelpFileName( "offset_surface.htm" );  
+  setHelpFileName( "offset_operation_page.html" );
   
   Init();
 }
@@ -105,9 +105,7 @@ void TransformationGUI_OffsetDlg::Init()
   double step = 1;
    
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 );
-  GroupPoints->SpinBox_DX->setDecimals( 5 );
-  //@ GroupPoints->SpinBox_DX->setDblPrecision(1e-05);    
+  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
   GroupPoints->SpinBox_DX->setValue( 1e-05 );
   
   // Activate Create a Copy mode
@@ -128,7 +126,6 @@ void TransformationGUI_OffsetDlg::Init()
   initName( tr( "GEOM_OFFSET" ) );
 
   globalSelection( GEOM_ALLSHAPES );
-  
 }
 
 
@@ -306,16 +303,6 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
   res = true;
     
   return res;
-}
-
-//=================================================================================
-// function : closeEvent
-// purpose  :
-//=================================================================================
-void TransformationGUI_OffsetDlg::closeEvent( QCloseEvent* e )
-{
-  // myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
 }
 
 

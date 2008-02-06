@@ -47,7 +47,6 @@
 //
 #include <NMTDS_ShapesDataStructure.hxx>
 //
-#include <NMTTools_DSFiller.hxx>
 #include <NMTTools_PaveFiller.hxx>
 #include <NMTTools_CommonBlockPool.hxx>
 #include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
@@ -78,8 +77,8 @@ static
 {
   myErrorStatus=0;
   //
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   //
   Standard_Integer i, aNb, iV;
   //
@@ -94,7 +93,6 @@ static
 	  myImages.Bind(aV, aVSD);
 	  //
 	  mySameDomainShapes.Add(aV, aVSD);
-	  //
 	}
       }
     }
@@ -108,14 +106,14 @@ static
 {
   myErrorStatus=0;
   //
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   const BOPTools_SplitShapesPool& aSSP=pPF->SplitShapesPool();
   NMTTools_CommonBlockPool& aCBP=pPF->ChangeCommonBlockPool();
   IntTools_Context& aCtx=pPF->ChangeContext();
   //
   Standard_Boolean bToReverse;
-  Standard_Integer i, aNb, aNbSp, nSp, nSpR, nSpx;
+  Standard_Integer i, aNb, aNbSp, nSp, nSpR, nSpx, aIsCB;
   TColStd_ListIteratorOfListOfInteger aItLB;
   TColStd_ListOfInteger aLB;
   TopoDS_Edge aEE, aESpR;
@@ -149,10 +147,16 @@ static
       nSp=aPB.Edge();
       const TopoDS_Shape& aSp=aDS.Shape(nSp);
       //
-      const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB);
+      //modified by NIZNHY-PKV Fri Nov 30 10:40:36 2007 f
+      //const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB);
+      const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB, aIsCB);
+      //modified by NIZNHY-PKV Fri Nov 30 10:40:48 2007t
       nSpR=aPBR.Edge();
       const TopoDS_Shape& aSpR=aDS.Shape(nSpR);
-      if (aSpR.IsSame(aSp) && aSpR.IsSame(aE)) {
+      //modified by NIZNHY-PKV Fri Nov 30 10:41:39 2007f
+      //if (aSpR.IsSame(aSp) && aSpR.IsSame(aE)) {
+      if (aSpR.IsSame(aSp) && aSpR.IsSame(aE) && !aIsCB) {
+	//modified by NIZNHY-PKV Fri Nov 30 10:41:46 2007t
 	continue;
       }
       //
@@ -176,7 +180,10 @@ static
       aIt.Initialize(aLPB);
       for (; aIt.More(); aIt.Next()) {
 	const BOPTools_PaveBlock& aPB=aIt.Value();
-	const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB);
+	//modified by NIZNHY-PKV Fri Nov 30 10:42:15 2007f
+	//const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB);
+	const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB, aIsCB);
+	//modified by NIZNHY-PKV Fri Nov 30 10:42:20 2007t
 	nSpR=aPBR.Edge();
 	const TopoDS_Shape& aSpR=aDS.Shape(nSpR);
 	//
@@ -218,8 +225,8 @@ static
   TopTools_MapOfShape aMS;
   TopTools_MapIteratorOfMapOfShape aItS;
   //
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
   aNbS=aDS.NumberOfShapesOfTheObject();

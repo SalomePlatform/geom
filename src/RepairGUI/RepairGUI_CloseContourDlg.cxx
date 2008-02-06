@@ -93,7 +93,7 @@ RepairGUI_CloseContourDlg::RepairGUI_CloseContourDlg( GeometryGUI* theGeometryGU
 
   /***************************************************************/
 
-  setHelpFileName( "close_contour.htm" );
+  setHelpFileName( "close_contour_operation_page.html" );
 
   Init();
 }
@@ -281,16 +281,6 @@ void RepairGUI_CloseContourDlg::enterEvent( QEvent* )
     ActivateThisDialog();
 }
 
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void RepairGUI_CloseContourDlg::closeEvent( QCloseEvent* e )
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
-}
 
 //=================================================================================
 // function : createOperation

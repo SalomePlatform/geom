@@ -83,7 +83,7 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg( GeometryGUI* theGeometryGUI, QWidg
   layout->addWidget( GroupPoints );
   /***************************************************************/
 
-  setHelpFileName( "explode.htm" );
+  setHelpFileName( "create_explode_page.html" );
 
   Init();
 }
@@ -137,7 +137,7 @@ void EntityGUI_SubShapeDlg::Init()
   connect( GroupPoints->ComboBox1,    SIGNAL( activated( int ) ),    this, SLOT( ComboTextChanged() ) );
   connect( GroupPoints->CheckButton1, SIGNAL( stateChanged( int ) ), this, SLOT( SubShapeToggled() ) );
 
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+  connect( myGeomGUI->getApp()->selectionMgr(),
 	   SIGNAL( currentSelectionChanged( )), this, SLOT( SelectionIntoArgument() ) );
 
   updateButtonState();
@@ -180,7 +180,12 @@ bool EntityGUI_SubShapeDlg::ClickOnApply()
     }
   }
 
-  return onAccept();
+  bool isOk = onAccept();
+
+  // restore selection, corresponding to current selection mode
+  SubShapeToggled();
+
+  return isOk;
 }
 
 
@@ -333,8 +338,8 @@ void EntityGUI_SubShapeDlg::DeactivateActiveDialog()
 void EntityGUI_SubShapeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication( ) ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) ) ;
+  connect( myGeomGUI->getApp()->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   SubShapeToggled();
   updateButtonState();
 }
@@ -393,9 +398,9 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
 //=================================================================================
 void EntityGUI_SubShapeDlg::SubShapeToggled()
 {
-  if ( isAllSubShapes() )
-    globalSelection( GEOM_ALLSHAPES );
-  else
+  globalSelection( GEOM_ALLSHAPES );
+
+  if ( !isAllSubShapes() )
     localSelection( myObject, shapeType() );
 }
 
@@ -523,7 +528,7 @@ bool EntityGUI_SubShapeDlg::isValid( QString& msg )
       
       if ( aResult && !anObj->_is_nil() ) {
 	TColStd_IndexedMapOfInteger aMapIndex;
-	( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
+	myGeomGUI->getApp()->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
 	isOk = aMapIndex.Extent() > 0;
 	if ( !isOk )
 	  msg += tr( "NO_SUBSHAPES_SELECTED" );
@@ -555,7 +560,7 @@ bool EntityGUI_SubShapeDlg::execute( ObjectList& objects )
 
       if ( aResult && !anObj->_is_nil() ) {
 	TColStd_IndexedMapOfInteger aMapIndex;
-	( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
+	myGeomGUI->getApp()->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
 
 	GEOM::GEOM_ILocalOperations_var aLocOp = 
 	  getGeomEngine()->GetILocalOperations( getStudyId() );

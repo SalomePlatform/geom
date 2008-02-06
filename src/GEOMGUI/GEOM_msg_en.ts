@@ -504,7 +504,7 @@
         </message>
         <message>
             <source>GEOM_FACE_FFW</source>
-            <translation>Face from a closed wire and edge</translation>
+            <translation>Face creation from wires and/or edges</translation>
         </message>
         <message>
             <source>GEOM_FACE_OPT</source>
@@ -684,7 +684,7 @@
         </message>
         <message>
             <source>GEOM_LENGTH</source>
-            <translation>Length is :</translation>
+            <translation>Length :</translation>
         </message>
         <message>
             <source>GEOM_LINE</source>
@@ -1168,7 +1168,7 @@
         </message>
         <message>
             <source>GEOM_REALLY_DELETE</source>
-            <translation>Do you really want to delete object(s) ?</translation>
+            <translation>Do you really want to delete this %1 object(s):</translation>
         </message>
         <message>
             <source>GEOM_RECONSTRUCTION_LIMIT</source>
@@ -1960,11 +1960,11 @@
         </message>
         <message>
             <source>MEN_DISPLAY</source>
-            <translation>Display</translation>
+            <translation>Show</translation>
         </message>
         <message>
             <source>MEN_DISPLAY_ALL</source>
-            <translation>Display all</translation>
+            <translation>Show all</translation>
         </message>
         <message>
             <source>MEN_DISPLAY_MODE</source>
@@ -1972,7 +1972,7 @@
         </message>
         <message>
             <source>MEN_DISPLAY_ONLY</source>
-            <translation>Display only</translation>
+            <translation>Show only</translation>
         </message>
         <message>
             <source>MEN_EDGE</source>
@@ -1992,11 +1992,11 @@
         </message>
         <message>
             <source>MEN_ERASE</source>
-            <translation>Erase</translation>
+            <translation>Hide</translation>
         </message>
         <message>
             <source>MEN_ERASE_ALL</source>
-            <translation>Erase all</translation>
+            <translation>Hide all</translation>
         </message>
         <message>
             <source>MEN_EXPLODE</source>
@@ -2508,15 +2508,15 @@
         </message>
         <message>
             <source>STB_DISPLAY</source>
-            <translation>Display</translation>
+            <translation>Show object(s)</translation>
         </message>
         <message>
             <source>STB_DISPLAY_ALL</source>
-            <translation>Display all</translation>
+            <translation>Show all</translation>
         </message>
         <message>
             <source>STB_DISPLAY_ONLY</source>
-            <translation>Display only</translation>
+            <translation>Show only</translation>
         </message>
         <message>
             <source>STB_EDGE</source>
@@ -2532,11 +2532,11 @@
         </message>
         <message>
             <source>STB_ERASE</source>
-            <translation>Erase</translation>
+            <translation>Hide object(s)</translation>
         </message>
         <message>
             <source>STB_ERASE_ALL</source>
-            <translation>Erase all</translation>
+            <translation>Hide all</translation>
         </message>
         <message>
             <source>STB_EXPLODE</source>
@@ -2556,7 +2556,7 @@
         </message>
         <message>
             <source>STB_FACE</source>
-            <translation>Build a face</translation>
+            <translation>Build a face from wires and/or edges</translation>
         </message>
         <message>
             <source>STB_FACE_SEL_ONLY</source>
@@ -2980,15 +2980,15 @@
         </message>
         <message>
             <source>TOP_DISPLAY</source>
-            <translation>Display</translation>
+            <translation>Show</translation>
         </message>
         <message>
             <source>TOP_DISPLAY_ALL</source>
-            <translation>Display all</translation>
+            <translation>Show all</translation>
         </message>
         <message>
             <source>TOP_DISPLAY_ONLY</source>
-            <translation>Display only</translation>
+            <translation>Show only</translation>
         </message>
         <message>
             <source>TOP_EDGE</source>
@@ -3000,11 +3000,11 @@
         </message>
         <message>
             <source>TOP_ERASE</source>
-            <translation>Erase</translation>
+            <translation>Hide</translation>
         </message>
         <message>
             <source>TOP_ERASE_ALL</source>
-            <translation>Erase all</translation>
+            <translation>Hide all</translation>
         </message>
         <message>
             <source>TOP_EXPLODE</source>
@@ -3265,6 +3265,170 @@
         <message>
             <source>_S_</source>
             <translation>(s)</translation>
+        </message>
+        <message>
+            <source>NOT_FOUND_ANY</source>
+            <translation>Not a single entity has been found</translation>
+        </message>
+        <message>
+            <source>GEOM_FACE_I</source>
+            <translation>Face %1</translation>
+        </message>
+        <message>
+            <source>GEOM_CONSTANT_RADIUS</source>
+            <translation>Radius :</translation>
+        </message>
+        <message>
+            <source>GEOM_R1</source>
+            <translation>R1 :</translation>
+        </message>
+        <message>
+            <source>GEOM_R2</source>
+            <translation>R2 :</translation>
+        </message>
+        <message>
+            <source>GEOM_BOTHWAY</source>
+            <translation>Both Directions</translation>
+        </message>
+        <message>
+            <source>GEOM_NORMALE</source>
+            <translation>Normal To A Face</translation>
+        </message>
+        <message>
+            <source>GEOM_VECTOR_NORMALE</source>
+            <translation>Vector_Normal</translation>
+        </message>
+        <message>
+            <source>GEOM_LINE1</source>
+            <translation>Line 1</translation>
+        </message>
+        <message>
+            <source>GEOM_LINE2</source>
+            <translation>Line 2</translation>
+        </message>
+        <message>
+            <source>GEOM_D</source>
+            <translation>D :</translation>
+        </message>
+        <message>
+            <source>GEOM_CHAMFER_EDGE</source>
+            <translation>Chamfer On Selected Edges</translation>
+        </message>
+        <message>
+            <source>SELECTED_EDGE</source>
+            <translation>Selected Edges</translation>
+        </message>
+        <message>
+            <source>GEOM_NORMALE_TITLE</source>
+            <translation>Create Normal To A Face</translation>
+        </message>
+        <message>
+            <source>GEOM_MEASURE_ANGLE_TITLE</source>
+            <translation>Angle Between Two Straight Edges/Lines/Vectors</translation>
+        </message>
+        <message>
+            <source>GEOM_MEASURE_ANGLE_ANGLE</source>
+            <translation>Angle</translation>
+        </message>
+        <message>
+            <source>GEOM_MEASURE_ANGLE_OBJ</source>
+            <translation>Objects And Results</translation>
+        </message>
+        <message>
+            <source>GEOM_MEASURE_ANGLE_IS</source>
+            <translation>Angle in degrees :</translation>
+        </message>
+        <message>
+            <source>GEOM_LINE_INTERSECTION</source>
+            <translation>Point On Lines Intersection</translation>
+        </message>
+        <message>
+            <source>GEOM_KEEP_NONLIMIT_SHAPES</source>
+            <translation>Keep nonlimit shapes</translation>
+        </message>
+        <message>
+            <source>GEOM_CENTER_2POINTS</source>
+            <translation>Center and two points</translation>
+        </message>
+        <message>
+            <source>GEOM_REMOVE_EXTRA_EDGES_TITLE</source>
+            <translation>Remove extra edges</translation>
+        </message>
+        <message>
+            <source>GEOM_REMOVE_EXTRA_EDGES</source>
+            <translation>Object to remove extra edges</translation>
+        </message>
+        <message>
+            <source>REMOVE_EXTRA_EDGES_NEW_OBJ_NAME</source>
+            <translation>NoExtraEdges</translation>
+        </message>
+        <message>
+            <source>TOP_REMOVE_EXTRA_EDGES</source>
+            <translation>Remove extra edges</translation>
+        </message>
+        <message>
+            <source>MEN_REMOVE_EXTRA_EDGES</source>
+            <translation>Remove extra edges</translation>
+        </message>
+        <message>
+            <source>STB_REMOVE_EXTRA_EDGES</source>
+            <translation>Remove extra edges</translation>
+        </message>
+        <message>
+            <source>TOP_NORMALE</source>
+            <translation>Compute normal to a face</translation>
+        </message>
+        <message>
+            <source>MEN_NORMALE</source>
+            <translation>Normal to a face</translation>
+        </message>
+        <message>
+            <source>STB_NORMALE</source>
+            <translation>Compute normal to a face in a point (optional)</translation>
+        </message>
+        <message>
+            <source>TOP_MEASURE_ANGLE</source>
+            <translation>Compute angle</translation>
+        </message>
+        <message>
+            <source>MEN_MEASURE_ANGLE</source>
+            <translation>Angle</translation>
+        </message>
+        <message>
+            <source>STB_MEASURE_ANGLE</source>
+            <translation>Compute angle between two lines or linear edges</translation>
+        </message>
+        <message>
+            <source>TOP_POP_AUTO_COLOR</source>
+            <translation>Auto color</translation>
+        </message>
+        <message>
+            <source>MEN_POP_AUTO_COLOR</source>
+            <translation>Auto color</translation>
+        </message>
+        <message>
+            <source>STB_POP_AUTO_COLOR</source>
+            <translation>Auto color</translation>
+        </message>
+        <message>
+            <source>TOP_POP_DISABLE_AUTO_COLOR</source>
+            <translation>Disable auto color</translation>
+        </message>
+        <message>
+            <source>MEN_POP_DISABLE_AUTO_COLOR</source>
+            <translation>Disable auto color</translation>
+        </message>
+        <message>
+            <source>STB_POP_DISABLE_AUTO_COLOR</source>
+            <translation>Disable auto color</translation>
+        </message>
+        <message>
+            <source>GEOM_RESULT_NAME_GRP</source>
+            <translation>Result name</translation>
+        </message>
+        <message>
+            <source>GEOM_RESULT_NAME_LBL</source>
+            <translation>Name</translation>
         </message>
     </context>
     <context>

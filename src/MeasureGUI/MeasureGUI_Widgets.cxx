@@ -123,6 +123,20 @@ MeasureGUI_2Sel1LineEdit::~MeasureGUI_2Sel1LineEdit()
 }
 
 //////////////////////////////////////////
+// MeasureGUI_2Sel4LineEdit
+//////////////////////////////////////////
+
+MeasureGUI_2Sel4LineEdit::MeasureGUI_2Sel4LineEdit( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+MeasureGUI_2Sel4LineEdit::~MeasureGUI_2Sel4LineEdit()
+{
+}
+
+//////////////////////////////////////////
 // MeasureGUI_SkeletonBox
 //////////////////////////////////////////
 

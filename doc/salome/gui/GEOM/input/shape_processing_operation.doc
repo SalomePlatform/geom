@@ -1,0 +1,158 @@
+/*!
+
+\page shape_processing_operation_page Shape Processing
+
+\n To produce a <b>Shape Processing</b> operation in the <b>Main Menu</b> 
+select <b>Repair - > Shape Processing</b>.
+\n This operation processes one or more shapes using various operators.
+
+\n The \b Result will be a \b GEOM_Object.
+
+\n <b>TUI Command:</b> <em>geompy.ProcessShape(Shape, Operators,
+Parameters, Values),</em> where \em Shape is a processed shape, \em Operators
+is a list of operators ("FixShape", "SplitClosedFaces", etc.),
+\em Parameters is a list of parameters ("FixShape.Tolerance3d",
+etc), \em Values is a list of values of parameters placed in the same
+order as in the list of Parameters.
+
+\n In this dialog box you can select the object that you need to
+process, define its name and operators applied to it during
+processing.
+
+\image html repair1.png
+
+<b>Operators and Parameters</b> (TUI names are given in brackets):
+
+<ul>
+<li><b>Fix Shape</b> (FixShape) - corrects invalid shapes.</li>
+<ul>
+<li><b>3D Tolerance</b> (FixShape.Tolerance3d) - work tolerance for
+detection of the problems and correction of them.</li>
+<li><b>Max 3D Tolerance</b> (FixShape.MaxTolerance3d)  - maximal
+possible tolerance of the shape after correction.</li>
+</ul>
+<li><b>Fix Face Size</b> (FixFaceSize) - removes small faces, such as
+spots and strips.</li>
+<ul>
+<li><b>Tolerance</b> (FixFaceSize.Tolerance) - defines minimum
+possible face size.</li>
+</ul>
+<li><b>Drop Small Edges</b> (DropSmallEdges) - removes edges, which
+merge with neighbouring edges.</li>
+<ul>
+<li><b>3D Tolerance</b> (DropSmallEdges.Tolerance3d) - defines minimum
+possible distance between two parallel edges.</li>
+</ul>
+<li><b>Split Angle</b> (SplitAngle) - splits faces based on conical
+surfaces, surfaces of revolution and cylindrical surfaces in segments
+using a certain angle.</li>
+<ul>
+<li><b>Angle</b> (SplitAngle.Angle) - the central angle of the
+resulting segments (i.e. we obtain two segments if Angle=180, four if
+Angle=90, etc).</li>
+<li><b>Max. Tolerance</b> (SplitAngle.MaxTolerance) - maximum possible
+tolerance among the resulting segments.</li>
+</ul>
+<li><b>Split Closed Faces</b> (SplitClosedFaces) - splits closed faces
+in segments. The number of segments depends on the number of splitting
+points.</li>
+<ul>
+<li><b>Number of splitting points</b> (SplitClosedFaces.NbSplitPoints) - the number of splitting points.</li>
+</ul>
+<li><b>Split Continuity</b> (SplitContinuity) - splits shapes to
+reduce continuities of curves and surfaces.</li>
+<ul>
+<li><b>3D Tolerance</b> (SplitContinuity.Tolerance3d) - 3D tolerance for correction of geometry.</li>
+<li><b>Surface Continuity</b> (SplitContinuity.SurfaceContinuity) - required continuity for surfaces.</li>
+<li><b>Curve Continuity</b> (SplitContinuity.CurveContinuity) - required continuity for curves.</li>
+</ul>
+\n This and the previous parameters can take the following values:
+\par
+<b>Parametric Continuity</b>
+\n \b C0 (Positional Continuity): curves are joined (the end positions
+of curves or surfaces are coincidental. The curves or surfaces may
+still meet at an angle, giving rise to a sharp corner or edge).
+\n \b C1 (Tangential Continuity): first derivatives are equal (the end
+vectors of curves or surfaces are parallel, ruling out sharp edges).
+\n \b C2 (Curvature Continuity): first and second derivatives are
+equal (the end vectors of curves or surfaces are of the same
+magnitude).
+\n \b CN N-th derivatives are equal (both the direction and the
+magnitude of the Nth derivatives of curves or surfaces (d/du C(u)) are
+the same at junction.
+\par
+<b>Geometric Continuity</b>
+\n \b G1: first derivatives are proportional at junction.
+\n The curve tangents thus have the same direction, but not necessarily
+the same magnitude. i.e., C1'(1) = (a,b,c) and C2'(0) = (k*a, k*b,
+k*c).
+\n \b G2: first and second derivatives are proportional at junction.
+\n As the names imply, geometric continuity requires the geometry to
+be continuous, while parametric continuity requires that the
+underlying parameterization was continuous as well.
+\n Parametric continuity of order n implies geometric continuity of
+order n, but not vice-versa. 
+
+<li><b>Bspline Restriction</b> (BsplineRestriction) - converts curves
+and surfaces to Bsplines and processes them with the following
+parameters:</li>
+<ul>
+<li><b>Surface Mode</b> (BSplineRestriction.SurfaceMode) -
+approximation of surfaces if restriction is necessary.</li>
+<li><b>3D Curve Mode</b> (BSplineRestriction.Curve3dMode) - conversion
+of any 3D curve to BSpline and approximation.</li>
+<li><b>2D Curve Mode</b> (BSplineRestriction.Curve2dMode) - conversion
+of any 2D curve to BSpline and approximation.</li>
+<li><b>3D Tolerance</b> (BSplineRestriction.Tolerance3d) - defines the
+possibility of surfaces and 3D curves approximation with the specified
+parameters.</li>
+<li><b>2D Tolerance</b> (BSplineRestriction.Tolerance2d) - defines the
+possibility of surfaces and 2D curves approximation with the specified
+parameters.</li>
+<li><b>Required Degree</b> (BSplineRestriction.RequiredDegree) -
+required degree of the resulting BSplines.</li>
+<li><b>Required number of segments</b>
+(BSplineRestriction.RequiredNbSegments) - required maximum number of
+segments of resultant BSplines.</li>
+<li><b>3D Continuity</b> (BSplineRestriction.Continuity3d) -
+continuity of the resulting surfaces and 3D curves.</li>
+<li><b>2D Continuity</b> (BSplineRestriction.Continuity2d) -
+continuity of the resulting 2D curves.</li>
+</ul>
+<li><b>To Bezier</b> (ToBezier) - converts curves and surfaces of any
+type to Bezier curves and surfaces.</li>
+<ul>
+<li><b>Surface Mode</b> (ToBezier.SurfaceMode) - if checked in, allows
+conversion of surfaces.</li>
+<li><b>3D Curve Mode</b> (ToBezier.Curve3dMode) - if checked in,
+allows conversion of 3D curves.</li>
+<li><b>2D Curve Mode</b> (ToBezier.Curve2dMode) - if checked in,
+allows conversion of 2D curves.</li>
+<li><b>Max Tolerance</b> (ToBezier.MaxTolerance) - defines tolerance
+for detection and correction of problems.</li>
+</ul>
+<li><b>Same Parameter</b> (SameParameter) - fixes edges of 2D and 3D
+curves not having the same parameter.</li>
+<ul>
+<li><b>3D Tolerance</b> (SameParameter.Tolerance3d) - defines tolerance for fixing of edges.</li>
+</ul>
+</ul>
+
+\n <b>Example:</b>
+
+\image html image154.jpg
+<center><em>Shape before applying Shape Processing (FixShape
+operator). View # 1.</em></center>
+
+\image html image156.jpg
+<center><em>Shape before applying Shape Processing (FixShape
+operator). View # 2.</em></center>
+
+\image html image160.jpg
+<center><em>The same shape after applying Shape
+Processing.</em></center>
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_shape_processing "Repairing Operations".
+
+*/

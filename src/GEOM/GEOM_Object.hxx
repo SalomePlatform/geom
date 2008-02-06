@@ -54,6 +54,10 @@
 #include <TCollection_AsciiString.hxx>
 #endif
 
+#include "SALOMEconfig.h"
+#include CORBA_SERVER_HEADER(SALOMEDS)
+#include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
+
 class Handle_TColStd_HSequenceOfTransient;
 class Standard_Transient;
 class Handle_Standard_Type;
@@ -196,6 +200,18 @@ class GEOM_Object : public MMgt_TShared
 
   //Returns a name of this GEOM_Object
   Standard_EXPORT char* GetName();
+
+  //Sets a color of this GEOM_Object
+  Standard_EXPORT void SetColor(const SALOMEDS::Color& theColor);
+
+  //Returns a color of this GEOM_Object
+  Standard_EXPORT SALOMEDS::Color GetColor();
+
+  //Toggles an auto color mode on this GEOM_Object
+  Standard_EXPORT void SetAutoColor(CORBA::Boolean theAutoColor);
+
+  //Returns a flag of auto color mode of this GEOM_Object
+  Standard_EXPORT CORBA::Boolean GetAutoColor();
 
   //Sets an auxiliary data
   Standard_EXPORT void SetAuxData(const char* theData);

@@ -28,28 +28,25 @@ class PaveFiller from NMTTools
 	---Purpose: 
 
 uses   
-    -- Modified to add new definitions Thu Sep 14 14:35:18 2006 
-    -- Contribution of Samtech www.samcef.com BEGIN   
-    ListOfInteger from TColStd, 
-    -- Contribution of Samtech www.samcef.com END 
     DataMapOfIntegerInteger from TColStd,
     Pnt from gp,
     ShapeEnum  from  TopAbs, 
     Vertex     from  TopoDS, 
     Face       from  TopoDS,  
+    Shape      from TopoDS, 
     -- Modified to add new definitions Thu Sep 14 14:35:18 2006 
     -- Contribution of Samtech www.samcef.com BEGIN 
     Edge       from  TopoDS, 
-    ListOfShape from TopTools, 
+    ListOfShape from TopTools,  
+    DataMapOfShapeShape from TopTools,
+    ListOfInteger from TColStd,  
     -- Contribution of Samtech www.samcef.com END 
     
     Context     from IntTools, 
     ShrunkRange from IntTools,
     
     IndexedDataMapOfShapeInteger from BooleanOperations, 
-    
-    InterferencePool  from BOPTools,
-    PInterferencePool from BOPTools, 
+
     PavePool          from BOPTools, 
     PaveBlock         from BOPTools,
     ListOfPaveBlock   from BOPTools,
@@ -66,48 +63,60 @@ uses
     CommonBlockPool         from NMTTools, 
     CommonBlock             from NMTTools, 
     ListOfCommonBlock       from NMTTools, 
-    -- Modified to add new definitions Thu Sep 14 14:35:18 2006 
-    -- Contribution of Samtech www.samcef.com BEGIN
-    IndexedDataMapOfIndexedMapOfInteger from NMTTools,  
-    -- Contribution of Samtech www.samcef.com END
+   
     ShapesDataStructure  from NMTDS,  
+
     -- Modified to add new definitions Thu Sep 14 14:35:18 2006 
     -- Contribution of Samtech www.samcef.com BEGIN
     PShapesDataStructure from NMTDS, 
-    Iterator             from NMTDS 
+    Iterator             from NMTDS, 
+    IndexedDataMapOfIndexedMapOfInteger from NMTTools,  
     -- Contribution of Samtech www.samcef.com END
+     
+    PIterator from NMTDS, 
+    PInterfPool from NMTDS
 
 --raises
 
 is 
     Create 
-    	returns PaveFiller from NMTTools; 
+    	returns PaveFiller from NMTTools;  
+    ---C++: alias "Standard_EXPORT virtual ~NMTTools_PaveFiller();"
       
-    Create(aIP:InterferencePool from BOPTools)
-    	returns PaveFiller from NMTTools; 
+  
      
-    Destroy (me: in out) 
-	is  virtual;    
-    ---C++: alias "Standard_EXPORT virtual ~NMTTools_PaveFiller(){Destroy();}"
-    -- 
-    --  Selectors/Modifiers
-    SetInterferencePool(me:out; 
-    	    aIP:InterferencePool from BOPTools);
-    
-    InterfPool(me:out) 
-    	returns PInterferencePool from BOPTools; 
+    SetCompositeShape (me:out;  
+    	    aS:  Shape from TopoDS);  
+     
+    CompositeShape(me) 
+    	returns  Shape from TopoDS; 
+    	---C++:  return  const&  
+	
+	     
+    DS(me:out) 
+      	returns PShapesDataStructure from NMTDS;  
+ 
+    DSIt(me:out) 
+    	returns PIterator from NMTDS; 
+     
+    IP(me:out)  
+    	returns PInterfPool from NMTDS; 
     --	 
     --  Perform the algo  
     -- Modified to add new method Thu Sep 14 14:35:18 2006 
     -- Contribution of Samtech www.samcef.com BEGIN      
-    Init       (me:out); 
+    Init       (me:out) 
+    	is virtual  protected; 
     -- Contribution of Samtech www.samcef.com END
 	 
+    Clear   (me:out) 
+    	is virtual  protected;
+
     Perform    (me:out) 
 	is virtual;   
 	 
     PerformVV  (me:out) 
-    	is virtual ;  
+    	is virtual protected;  
      
     PerformVE  (me:out) 
     	is virtual protected; 
@@ -141,29 +150,16 @@ is
     PreparePaveBlocks (me:out;   
     	    anE:Integer from Standard) 
     	is virtual protected;  		  
-		       
-    PerformNewVertices  (me:out) 
-    	is virtual ;  
+	
      
     PrepareEdges  (me:out) 
     	is virtual protected;  
      
-    SortTypes      (me;   
-    	    anInd1:in out Integer from Standard; 
-            anInd2:in out Integer from Standard) 
-    	is protected; 
-     
-    ExpectedPoolLength(me) 
-    	returns  Integer from Standard 
-	is protected;  
     --
     -- Query section 
     IsDone(me) 
     	returns  Boolean from Standard; 
 
-    DS(me:out) 
-    	returns PShapesDataStructure from NMTDS;  
-	 
     Context(me) 
     	 returns Context from IntTools; 
     	---C++:return const &	
@@ -200,7 +196,7 @@ is
     	    	    nV:  Integer  from  Standard) 
     	returns Integer from Standard; 
 
-    IsSuccesstorsComputed (me;  
+    IsSuccessorsComputed (me;  
     	    iF1:Integer from  Standard; 
     	    iF2:Integer from  Standard) 
     	returns  Boolean from Standard 
@@ -369,16 +365,16 @@ is
     RealPaveBlock(me:out;   
     	    aPB:PaveBlock from BOPTools) 
 	returns PaveBlock from BOPTools; 
-    ---C++: return const & 	  
+    ---C++: return const & 	   
     
-    -- Modified to add new method Thu Sep 14 14:35:18 2006 
-    -- Contribution of Samtech www.samcef.com BEGIN  
+    --modified by NIZNHY-PKV Fri Nov 30 10:30:54 2007  f
     RealPaveBlock(me:out;   
     	    aPB:PaveBlock from BOPTools; 
-    	    aLB:out ListOfInteger from TColStd) 
+    	    aLB:out ListOfInteger from TColStd; 
+    	    aIsCommonBlock:out  Integer from Standard) 
 	returns PaveBlock from BOPTools; 
     ---C++: return const & 	 
-    -- Contribution of Samtech www.samcef.com END 
+    --modified by NIZNHY-PKV Fri Nov 30 10:30:58 2007  t 
      
     RealSplitsFace  (me:out;  
     	         nF2 :Integer from Standard;  
@@ -500,18 +496,16 @@ is
     	         aLSE :out ListOfShape   from TopTools); 
     -- Contribution of Samtech www.samcef.com END 
 
+    FuseVertices(me; 
+    	aC:Shape from TopoDS; 
+	aDMVV:  out  DataMapOfShapeShape from TopTools);  
+     
 fields 
-    myIntrPool         :  PInterferencePool from BOPTools    	is protected; 
     myDS               :  PShapesDataStructure from NMTDS   	is protected;   
     myIsDone           :  Boolean from Standard                 is protected; 
     myNbSources        :  Integer from Standard                 is protected;  
     myNbEdges          :  Integer from Standard           	is protected;  
 
-    -- Modified to add new field Thu Sep 14 14:35:18 2006 
-    -- Contribution of Samtech www.samcef.com BEGIN     
-    myDSIt             :  Iterator from NMTDS is protected; 
-    -- Contribution of Samtech www.samcef.com END 
-     
     myPavePool         :  PavePool from BOPTools                is protected;     
     myPavePoolNew      :  PavePool from BOPTools                is protected;  
     myCommonBlockPool  :  CommonBlockPool from NMTTools         is protected;  
@@ -521,6 +515,9 @@ fields
     mySectionAttribute :  SSIntersectionAttribute from BOPTools is protected; 
     myAloneVertices    :  IndexedDataMapOfIndexedMapOfInteger from NMTTools is protected;   
     --
-    myVSD              :  DataMapOfIntegerInteger from TColStd is protected;
-    --
+    myVSD              :  DataMapOfIntegerInteger from TColStd is protected; 
+    myDSIt             :  PIterator from NMTDS is protected;  
+    myCompositeShape   :  Shape from TopoDS is protected;
+    myIP               :  PInterfPool from NMTDS is protected;     
+
 end PaveFiller;

@@ -346,7 +346,7 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 2175 ||  // POPUP VIEWER - SELECT ONLY - SHELL
       id == 2176 ||  // POPUP VIEWER - SELECT ONLY - SOLID
       id == 2177 ||  // POPUP VIEWER - SELECT ONLY - COMPOUND
-      id == 2178 ||  // POPUP VIEWER - SELECT ONLY - SELECT ALL      
+      id == 2178 ||  // POPUP VIEWER - SELECT ONLY - SELECT ALL
       id == 31   ||  // MENU EDIT - COPY
       id == 33   ||  // MENU EDIT - DELETE
       id == 411  ||  // MENU SETTINGS - ADD IN STUDY
@@ -355,6 +355,8 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 8032 ||  // POPUP VIEWER - COLOR
       id == 8033 ||  // POPUP VIEWER - TRANSPARENCY
       id == 8034 ||  // POPUP VIEWER - ISOS
+      id == 8035 ||  // POPUP VIEWER - AUTO COLOR
+      id == 8036 ||  // POPUP VIEWER - DISABLE AUTO COLOR
       id == 804  ||  // POPUP VIEWER - ADD IN STUDY
       id == 901  ||  // OBJECT BROWSER - RENAME
       id == 9024 ) { // OBJECT BROWSER - OPEN
@@ -478,10 +480,11 @@ void GeometryGUI::OnGUIEvent( int id )
            id == 606 ||   // MENU REPAIR - CLOSE CONTOUR
            id == 607 ||   // MENU REPAIR - REMOVE INTERNAL WIRES
            id == 608 ||   // MENU REPAIR - ADD POINT ON EDGE
-           id == 609 ||   // MENU REPAIR - FREE BOUNDARIES
-           id == 610 ||   // MENU REPAIR - FREE FACES
+           id == 609 ||   // MENU MEASURE - FREE BOUNDARIES
+           id == 610 ||   // MENU MEASURE - FREE FACES
            id == 611 ||   // MENU REPAIR - CHANGE ORIENTATION
-	   id == 602 ) {  // MENU REPAIR - GLUE FACES
+	   id == 602 ||   // MENU REPAIR - GLUE FACES
+	   id == 612 ) {  // MENU REPAIR - REMOVE EXTRA EDGES
 #ifndef WNT
 	library = getLibrary( "libRepairGUI.so" );
 #else
@@ -491,8 +494,10 @@ void GeometryGUI::OnGUIEvent( int id )
   else if( id == 701   ||  // MENU MEASURE - PROPERTIES
 	   id == 702   ||  // MENU MEASURE - CDG
 	   id == 703   ||  // MENU MEASURE - INERTIA
+	   id == 704   ||  // MENU MEASURE - NORMALE
 	   id == 7041  ||  // MENU MEASURE - BOUNDING BOX
 	   id == 7042  ||  // MENU MEASURE - MIN DISTANCE
+	   id == 7043  ||  // MENU MEASURE - ANGLE
 	   id == 705   ||  // MENU MEASURE - TOLERANCE
 	   id == 706   ||  // MENU MEASURE - WHATIS
 	   id == 707   ||  // MENU MEASURE - CHECK
@@ -733,7 +738,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 111, "IMPORT", "", (CTRL + Key_I) );
   createGeomAction( 121, "EXPORT", "", (CTRL + Key_E) );
 
-  createGeomAction( 33, "DELETE" );
+  createGeomAction( 33, "DELETE", "", Qt::Key_Delete );
 
   createGeomAction( 4011, "POINT" );
   createGeomAction( 4012, "LINE" );
@@ -808,21 +813,25 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 609, "CHECK_FREE_BNDS" );
   createGeomAction( 610, "CHECK_FREE_FACES" );
   createGeomAction( 611, "CHANGE_ORIENTATION" );
+  createGeomAction( 612, "REMOVE_EXTRA_EDGES" );
 
   createGeomAction( 708, "POINT_COORDS" );
   createGeomAction( 701, "BASIC_PROPS" );
   createGeomAction( 702, "MASS_CENTER" );
   createGeomAction( 703, "INERTIA" );
+  createGeomAction( 704, "NORMALE" );
   createGeomAction( 7041, "BND_BOX" );
   createGeomAction( 7042, "MIN_DIST" );
+  createGeomAction( 7043, "MEASURE_ANGLE" );
 
   createGeomAction( 705, "TOLERANCE" );
   createGeomAction( 706, "WHAT_IS" );
   createGeomAction( 707, "CHECK" );
   createGeomAction( 7072, "CHECK_COMPOUND" );
 
+#ifdef _DEBUG_ // PAL16821
   createGeomAction( 5103, "CHECK_GEOMETRY" );
-
+#endif
   createGeomAction( 412, "SHADING_COLOR" );
 
   createGeomAction( 211, "SHADING" );
@@ -840,12 +849,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 213, "DISPLAY_ONLY" );
   createGeomAction( 215, "ERASE" );
 
-  createGeomAction( 901, "POP_RENAME" );
+  createGeomAction( 901, "POP_RENAME", "", Qt::Key_F2 );
   createGeomAction( 80311, "POP_WIREFRAME", "", 0, true );
   createGeomAction( 80312, "POP_SHADING", "", 0, true );
   createGeomAction( 8032, "POP_COLOR" );
   createGeomAction( 8033, "POP_TRANSPARENCY" );
   createGeomAction( 8034, "POP_ISOS" );
+  createGeomAction( 8035, "POP_AUTO_COLOR" );
+  createGeomAction( 8036, "POP_DISABLE_AUTO_COLOR" );
   createGeomAction( 8001, "POP_CREATE_GROUP" );
 
   // make wireframe-shading items to be exclusive (only one at a time is selected)
@@ -954,9 +965,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 601, repairId, -1 );
   createMenu( 602, repairId, -1 );
   createMenu( 608, repairId, -1 );
-  createMenu( 609, repairId, -1 );
-  createMenu( 610, repairId, -1 );
+  //createMenu( 609, repairId, -1 );
+  //createMenu( 610, repairId, -1 );
   createMenu( 611, repairId, -1 );
+  createMenu( 612, repairId, -1 );
 
   int measurId = createMenu( tr( "MEN_MEASURES" ), -1, -1, 10 );
   createMenu( 708, measurId, -1 );
@@ -964,11 +976,18 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(), measurId, -1 );
   createMenu( 702, measurId, -1 );
   createMenu( 703, measurId, -1 );
+  createMenu( 704, measurId, -1 );
+  // NPAL16572: move "Check free boundaries" and "Check free faces" from "Repair" to "Measure"
+  createMenu( separator(), measurId, -1 );
+  createMenu( 609, measurId, -1 );
+  createMenu( 610, measurId, -1 );
+  // NPAL16572 END
   createMenu( separator(), measurId, -1 );
 
   int dimId = createMenu( tr( "MEN_DIMENSIONS" ), measurId, -1 );
   createMenu( 7041, dimId, -1 );
   createMenu( 7042, dimId, -1 );
+  createMenu( 7043, dimId, -1 );
   createMenu( separator(), measurId, -1 );
 
   createMenu( 705, measurId, -1 );
@@ -977,10 +996,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 707, measurId, -1 );
   createMenu( 7072, measurId, -1 );
 
+#ifdef _DEBUG_ // PAL16821
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
   createMenu( separator(), toolsId, -1 );
   createMenu( 5103, toolsId, -1 );
-
+#endif
   //int prefId = createMenu( tr( "MEN_PREFERENCES" ), -1, -1, 50 );
   //createMenu( separator(), prefId, -1 );
   //int geomId = createMenu( tr( "MEN_PREFERENCES_GEOM" ), prefId, -1 );
@@ -1057,9 +1077,17 @@ void GeometryGUI::initialize( CAM_Application* app )
   QString clientOCCorVTK = "(client='OCCViewer' or client='VTKViewer')";
   QString clientOCCorVTK_AndSomeVisible = clientOCCorVTK + " and selcount>0 and isVisible";
 
+  QString clientOCCorVTKorOB = "(client='ObjectBrowser' or client='OCCViewer' or client='VTKViewer')";
+  QString clientOCCorVTKorOB_AndSomeVisible = clientOCCorVTKorOB + " and selcount>0 and isVisible";
+
+  QString autoColorPrefix =
+    "(client='ObjectBrowser' or client='OCCViewer') and type='Shape' and selcount=1 and isOCC=true";
+
   QtxPopupMgr* mgr = popupMgr();
   mgr->insert( action(  901 ), -1, -1 );  // rename
   mgr->setRule( action( 901 ), QString("$type in {'Shape' 'Group'} and selcount=1"), QtxPopupMgr::VisibleRule );
+  mgr->insert( action(   33 ), -1, -1 );  // delete
+  mgr->setRule( action(  33 ), QString("$type in {'Shape' 'Group'} and selcount>0"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  8001 ), -1, -1 ); // create group
   mgr->setRule( action( 8001 ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  801 ), -1, -1 );  // edit group
@@ -1074,11 +1102,16 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( 80312 ), clientOCCorVTK + " and displaymode='Shading'", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  8032 ), -1, -1 ); // color
-  mgr->setRule( action( 8032 ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( 8032 ), clientOCCorVTKorOB_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  8033 ), -1, -1 ); // transparency
   mgr->setRule( action( 8033 ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->insert( action(  8034 ), -1, -1 ); // isos
-  mgr->setRule( action( 8034 ), QString("client='OCCViewer' and selcount>0 and isVisible"), QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( 8034 ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
+  mgr->insert( separator(), -1, -1 );     // -----------
+  mgr->insert( action(  8035 ), -1, -1 ); // auto color
+  mgr->setRule( action( 8035 ), autoColorPrefix + " and isAutoColor=false", QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  8036 ), -1, -1 ); // disable auto color
+  mgr->setRule( action( 8036 ), autoColorPrefix + " and isAutoColor=true", QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
 
 
@@ -1097,7 +1130,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( 214 ), clientOCCorVTK, QtxPopupMgr::VisibleRule );
 
   QString selectOnly = "(client='OCCViewer' or client='VTKViewer') and (selcount=0)";
-  
+
   int selectolnyId = mgr->insert( tr("MEN_SELECT_ONLY"), -1, -1);                //select only menu
   mgr->insert( action(2171), selectolnyId, -1);                                  //Vertex
   mgr->setRule(action(2171), selectOnly, QtxPopupMgr::VisibleRule);
@@ -1124,7 +1157,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(2178), selectolnyId, -1);                                  //Clear selection filter
   mgr->setRule(action(2178), selectOnly, QtxPopupMgr::VisibleRule);
   mgr->setRule(action(2178), selectOnly + " and selectionmode='ALL'", QtxPopupMgr::ToggleRule);
-  
   mgr->insert( action(  213 ), -1, -1 ); // display only
   mgr->setRule( action( 213 ), rule.arg( types ).arg( "true" ), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );
@@ -1177,14 +1209,14 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
 
   // disable OCC selectors
-  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+  //getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
   QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
   while ( itOCCSel.hasNext() )
     if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
       sr->setEnabled(true);
-  
+
   // disable VTK selectors
-  getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
+  //getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
   QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
   while ( itVTKSel.hasNext() )
     if ( LightApp_VTKSelector* sr = itVTKSel.next() )
@@ -1246,7 +1278,7 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
     return;
 
   const bool ViewOCC = ( win->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-//  const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
+  const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
 
   // disable non-OCC viewframe menu commands
 //  action( 404 )->setEnabled( ViewOCC ); // SKETCHER
@@ -1256,6 +1288,7 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
   action( 607 )->setEnabled( ViewOCC ); // RemoveInternalWires
   action( 608 )->setEnabled( ViewOCC ); // AddPointOnEdge
 //  action( 609 )->setEnabled( ViewOCC ); // Free boundaries
+//  action( 413 )->setEnabled( ViewOCC || ViewVTK ); // Isos Settings
 
   action( 800 )->setEnabled( ViewOCC ); // Create Group
   action( 801 )->setEnabled( ViewOCC ); // Edit Group
@@ -1340,14 +1373,9 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
 
 QString GeometryGUI::engineIOR() const
 {
-  QString anIOR = QString::null;
   if ( !CORBA::is_nil( GetGeomGen() ) )
-  {
-    CORBA::String_var objStr = getApp()->orb()->object_to_string( GetGeomGen() );
-    anIOR = QString( objStr.in() );
-//    free( objStr ); ASV : 26.07.06 : commented out because it raises exception and blocks application
-  }
-  return anIOR;
+    return QString( getApp()->orb()->object_to_string( GetGeomGen() ) );
+  return "";
 }
 
 LightApp_Selection* GeometryGUI::createSelection( const QString& client, LightApp_SelectionMgr* mgr ) const

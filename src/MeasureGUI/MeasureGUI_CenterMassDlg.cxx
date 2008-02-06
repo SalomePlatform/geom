@@ -81,7 +81,7 @@ MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg( GeometryGUI* theGeometryGUI,
 
   /***************************************************************/
 
-  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Center_gravity";
+  myHelpFileName = "using_measurement_tools_page.html#center_mass_anchor";
 
   /* Initialisation */
   Init();
@@ -238,9 +238,9 @@ void MeasureGUI_CenterMassDlg::processObject()
     getParameters( x, y, z );
     
     myGrp->LineEdit1->setText( GEOMBase::GetName( myObj ) );
-    myGrp->LineEdit2->setText( QString( "%1" ).arg( x ) );
-    myGrp->LineEdit3->setText( QString( "%1" ).arg( y ) );
-    myGrp->LineEdit4->setText( QString( "%1" ).arg( z ) );
+    myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( x ) );
+    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( y ) );
+    myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( z ) );
 
     displayPreview();
   }

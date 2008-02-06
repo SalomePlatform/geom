@@ -1,0 +1,34 @@
+/*!
+
+\page archimede_page Archimede
+
+\n To produce an \b Archimede operation in the <b>Main Menu</b> select
+<b>Operations - > Archimede</b>
+
+\n This operation creates a plane corresponding to the modeled
+water-line of the object plunged into the water (in Z direction).
+
+\n The \b Result will be any \b GEOM_Object.
+
+\n <b>TUI Command:</b>
+<em>geompy.Archimede(Shape,Weight,WaterDensity,MeshingDeflection),</em>
+ where \em Shape is a shape to put into the water, \em Weight is a weight of
+the shape, \em WaterDensity  is density of water, \em MeshingDeflection is a
+deflection of the mesh, using to compute the section.
+\n <b>Arguments:</b> Name + 1 shape  + 3 values (Weight, Water Density
+& Meshing Deflection).
+
+\image html archimede.png
+
+\n <b>Example:</b>
+
+\image html archimedesn1.png
+
+\image html archimedesn2.png
+
+\image html archimedesn3.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of 
+\ref tui_archimede "Basic Operations".
+
+*/

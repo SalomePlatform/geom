@@ -63,6 +63,13 @@ is
 	 
     Limit(me)  
     	returns ShapeEnum from TopAbs;   
+
+    SetLimitMode(me:out; 
+    	    aLimitMode:Integer from Standard); 
+	     
+    LimitMode(me) 
+    	returns Integer from Standard;    
+
     -- 
     --    Protected methods  
     --  
@@ -89,5 +96,7 @@ fields
     myTools           : ListOfShape from TopTools is protected; 
     myMapTools        : MapOfShape  from TopTools is protected;        
     myLimit           : ShapeEnum   from TopAbs   is protected;   
+    myLimitMode       : Integer from Standard     is protected;  
+
 end Splitter;
 

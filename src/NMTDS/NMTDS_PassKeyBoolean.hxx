@@ -57,17 +57,11 @@ public:
 
 
 Standard_EXPORT NMTDS_PassKeyBoolean();
-
-
-Standard_EXPORT   NMTDS_PassKeyBoolean& Assign(const NMTDS_PassKeyBoolean& Other) ;
-  NMTDS_PassKeyBoolean& operator =(const NMTDS_PassKeyBoolean& Other) 
-{
-  return Assign(Other);
-}
-
+Standard_EXPORT virtual ~NMTDS_PassKeyBoolean();
 
 
 Standard_EXPORT   void SetFlag(const Standard_Boolean aFlag) ;
+ Standard_EXPORT NMTDS_PassKeyBoolean& operator =(const NMTDS_PassKeyBoolean& Other);
 
 
 Standard_EXPORT   Standard_Boolean Flag() const;

@@ -77,6 +77,7 @@
 #include <gp_Pln.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_MapIteratorOfMapOfInteger.hxx>
+#include <TopoDS_Iterator.hxx>
 
 // VTK Includes
 #include <vtkActorCollection.h>
@@ -518,8 +519,12 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         Handle(GEOM_AISShape) AISShape;
         if (myType == GEOM_VECTOR)
           AISShape = new GEOM_AISVector (myShape, "");
-        else
+        else {
+          if (myShape.ShapeType() != TopAbs_VERTEX && // fix pb with not displayed points
+              !TopoDS_Iterator(myShape).More())
+            return;// NPAL15983 (Bug when displaying empty groups)
           AISShape = new GEOM_AISShape (myShape, "");
+        }
         // Temporary staff: vertex must be infinite for correct visualization
         AISShape->SetInfiniteState( myShape.Infinite() || myShape.ShapeType() == TopAbs_VERTEX );
 
@@ -622,6 +627,81 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           AISShape->setIO( anObj );
           AISShape->SetOwner( anObj );
         }
+
+	// Get color from GEOM_Object
+	SUIT_Session* session = SUIT_Session::session();
+	SUIT_Application* app = session->activeApplication();
+	if ( app )
+	{
+	  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+	  if ( study )
+	  {
+	    Handle( SALOME_InteractiveObject ) anIO = AISShape->getIO();
+	    if ( !anIO.IsNull() )
+	    {
+	      _PTR(SObject) SO ( study->studyDS()->FindObjectID( anIO->getEntry() ) );
+	      if ( SO )
+	      {
+		// get CORBA reference to data object
+		CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
+		if ( !CORBA::is_nil( object ) )
+		{
+		  // downcast to GEOM object
+		  GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( object );
+		  if ( !aGeomObject->_is_nil() )
+		  {
+		    SALOMEDS::Color aSColor = aGeomObject->GetColor();
+		    bool hasColor = aSColor.R > 0 || aSColor.G > 0 || aSColor.B > 0;
+		    if( !hasColor && aGeomObject->GetType() == GEOM_GROUP ) // auto color for group
+		    {
+		      GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();
+		      GEOM::GEOM_IGroupOperations_var anOperations = aGeomGen->GetIGroupOperations( study->id() );
+		      GEOM::GEOM_Object_var aMainObject = anOperations->GetMainShape( aGeomObject );
+		      if ( !aMainObject->_is_nil() && aMainObject->GetAutoColor() )
+		      {
+			QList<SALOMEDS::Color> aReservedColors;
+
+			SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( app );
+			CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
+			if ( strcmp(IOR.in(), "") != 0 )
+			{
+			  _PTR(Study) aStudy = study->studyDS();
+			  _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( string(IOR) ) );
+			  _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
+			  for( ; it->More(); it->Next() )
+			  {
+			    _PTR(SObject) aChildSObject( it->Value() );
+			    GEOM::GEOM_Object_var aChildObject =
+			      GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
+			    if( CORBA::is_nil( aChildObject ) )
+			      continue;
+
+			    if( aChildObject->GetType() != GEOM_GROUP )
+			      continue;
+
+			    SALOMEDS::Color aReservedColor = aChildObject->GetColor();
+			    aReservedColors.append( aReservedColor );
+			  }
+			}
+
+			aSColor = getUniqueColor( aReservedColors );
+			hasColor = true;
+		      }
+		    }
+
+		    if( hasColor )
+		    {
+		      Quantity_Color aQuanColor( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
+		      AISShape->SetColor( aQuanColor );
+		      AISShape->SetShadingColor( aQuanColor );
+		    }
+		  }
+		}
+	      }
+	    }
+	  }
+	}
+
         // AISShape->SetName(???); ??? necessary to set name ???
         occPrs->AddObject( AISShape );
 
@@ -1211,4 +1291,62 @@ int GEOM_Displayer::UnsetDisplayMode()
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   myDisplayMode = resMgr->integerValue( "Geometry", "display_mode", 0 );
   return aPrevMode;
+}
+
+SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& theReservedColors )
+{
+  int aHue = -1;
+  int aTolerance = 64;
+  int anIterations = 0;
+  int aPeriod = 5;
+
+  while( 1 )
+  {
+    anIterations++;
+    if( anIterations % aPeriod == 0 )
+    {
+      aTolerance /= 2;
+      if( aTolerance < 1 )
+	break;
+    }
+    //cout << "Iteration N" << anIterations << " (tolerance=" << aTolerance << ")"<< endl;
+
+    aHue = (int)( 360.0 * rand() / RAND_MAX );
+    //cout << "Hue = " << aHue << endl;
+
+    //cout << "Auto colors : ";
+    bool ok = true;
+    QList<SALOMEDS::Color>::const_iterator it = theReservedColors.constBegin();
+    QList<SALOMEDS::Color>::const_iterator itEnd = theReservedColors.constEnd();
+    for( ; it != itEnd; ++it )
+    {
+      SALOMEDS::Color anAutoColor = *it;
+      QColor aQColor( (int)( anAutoColor.R * 255.0 ), (int)( anAutoColor.G * 255.0 ), (int)( anAutoColor.B * 255.0 ) );
+
+      int h, s, v;
+      aQColor.getHsv( &h, &s, &v );
+      //cout << h << " ";
+      if( abs( h - aHue ) < aTolerance )
+      {
+	ok = false;
+	//cout << "break (diff = " << abs( h - aHue ) << ")";
+	break;
+      }
+    }
+    //cout << endl;
+
+    if( ok )
+      break;
+  }
+
+  //cout << "Hue of the returned color = " << aHue << endl;
+  QColor aColor;
+  aColor.setHsv( aHue, 255, 255 );
+
+  SALOMEDS::Color aSColor;
+  aSColor.R = (double)aColor.red() / 255.0;
+  aSColor.G = (double)aColor.green() / 255.0;
+  aSColor.B = (double)aColor.blue() / 255.0;
+
+  return aSColor;
 }

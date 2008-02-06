@@ -89,22 +89,25 @@
 #define EXPORT_SHAPE 1
 #define IMPORT_SHAPE 1
 
-#define POINT_XYZ       1
-#define POINT_XYZ_REF   2
-#define POINT_CURVE_PAR 3
-//#define POINT_FACE_PAR 4
+#define POINT_XYZ                1
+#define POINT_XYZ_REF            2
+#define POINT_CURVE_PAR          3
+#define POINT_LINES_INTERSECTION 4
+//#define POINT_FACE_PAR 5
 
 #define VECTOR_TWO_PNT  1
 #define VECTOR_DX_DY_DZ 2
 #define VECTOR_TANGENT_CURVE_PAR 3
+#define VECTOR_FACE_NORMALE 4
 
 #define PLANE_PNT_VEC   1
 #define PLANE_FACE      2
 #define PLANE_THREE_PNT 3
 #define PLANE_TANGENT_FACE 4
 
-#define LINE_TWO_PNT 1
-#define LINE_PNT_DIR 2
+#define LINE_TWO_PNT   1
+#define LINE_PNT_DIR   2
+#define LINE_TWO_FACES 3
 
 #define TRANSLATE_TWO_POINTS      1
 #define TRANSLATE_VECTOR          2
@@ -155,14 +158,18 @@
 #define SPHERE_R     1
 #define SPHERE_PNT_R 2
 
-#define PRISM_BASE_VEC_H   1
-#define PRISM_BASE_TWO_PNT 2
+#define PRISM_BASE_VEC_H         1
+#define PRISM_BASE_TWO_PNT       2
+#define PRISM_BASE_VEC_H_2WAYS   3
+#define PRISM_BASE_TWO_PNT_2WAYS 4
 
-#define REVOLUTION_BASE_AXIS_ANGLE 1
+#define REVOLUTION_BASE_AXIS_ANGLE       1
+#define REVOLUTION_BASE_AXIS_ANGLE_2WAYS 2
 
 #define PIPE_BASE_PATH 1
 #define PIPE_DIFFERENT_SECTIONS 2
 #define PIPE_SHELL_SECTIONS 3
+#define PIPE_SHELLS_WITHOUT_PATH 4
 
 #define THRUSECTIONS_RULED 1
 #define THRUSECTIONS_SMOOTHED 2
@@ -180,6 +187,7 @@
 
 #define CIRCLE_THREE_PNT 1
 #define CIRCLE_PNT_VEC_R 2
+#define CIRCLE_CENTER_TWO_PNT 3
 
 #define SPLINE_BEZIER        1
 #define SPLINE_INTERPOLATION 2
@@ -189,13 +197,19 @@
 #define CIRC_ARC_THREE_PNT 1
 #define CIRC_ARC_CENTER    2
 
-#define FILLET_SHAPE_ALL   1
-#define FILLET_SHAPE_EDGES 2
-#define FILLET_SHAPE_FACES 3
+#define FILLET_SHAPE_ALL      1
+#define FILLET_SHAPE_EDGES    2
+#define FILLET_SHAPE_FACES    3
+#define FILLET_SHAPE_EDGES_2R 4
+#define FILLET_SHAPE_FACES_2R 5
 
-#define CHAMFER_SHAPE_ALL   1
-#define CHAMFER_SHAPE_EDGE  2
-#define CHAMFER_SHAPE_FACES 3
+#define CHAMFER_SHAPE_ALL      1
+#define CHAMFER_SHAPE_EDGE     2
+#define CHAMFER_SHAPE_FACES    3
+#define CHAMFER_SHAPE_EDGES    4
+#define CHAMFER_SHAPE_EDGE_AD  5
+#define CHAMFER_SHAPE_FACES_AD 6
+#define CHAMFER_SHAPE_EDGES_AD 7
 
 #define WIRE_EDGES          1
 #define FACE_WIRE           2

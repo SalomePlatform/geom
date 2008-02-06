@@ -34,6 +34,12 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <GEOMImpl_Types.hxx>
 
 //=================================================================================
@@ -75,7 +81,7 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg( GeometryGUI* theGeometryGUI, QWidg
   layout->addWidget( GroupPoints );
   /***************************************************************/
 
-  setHelpFileName( "pipe_creation.htm" );
+  setHelpFileName( "create_extrusion_alongpath_page.html" );
 
   /* Initialisations */
   Init();
@@ -120,7 +126,7 @@ void GenerationGUI_PipeDlg::Init()
 
   initName( tr( "GEOM_PIPE" ) );
 
-  globalSelection( GEOM_ALLSHAPES );
+  //globalSelection( GEOM_ALLSHAPES );
 }
 
 
@@ -186,19 +192,52 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       return;
     
     myBase = aSelectedObject;
+    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     myOkBase = true;
   }
   else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
     myOkPath = false;
     
-    if ( !GEOMBase::GetShape( aSelectedObject, S ) ||
-	 !( S.ShapeType() == TopAbs_WIRE || S.ShapeType() == TopAbs_EDGE ) )
+    if ( !GEOMBase::GetShape( aSelectedObject, S ) ) 
       return;
+
+    QString aName = GEOMBase::GetName( aSelectedObject );
     
-    myPath = aSelectedObject;
-    myOkPath = true;
+    if ( testResult && !aSelectedObject->_is_nil() && aSelectedObject != myBase ) {
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      TColStd_IndexedMapOfInteger aMap;
+      
+      aSelMgr->GetIndexes( firstIObject(), aMap );
+      if ( aMap.Extent() == 1 ) {
+	int anIndex = aMap( 1 );
+	aName.append( ":edge_" + QString::number( anIndex ) );
+	
+	//Find SubShape Object in Father
+	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+	
+	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	  GEOM::GEOM_IShapesOperations_var aShapesOp =
+	    getGeomEngine()->GetIShapesOperations( getStudyId() );
+	  myPath = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+	  myOkPath = true;
+	}
+	else {  // get Object from study
+	  myPath = aFindedObject;
+	  myOkPath = true;
+	}
+      }
+      else {
+	myOkPath = true;
+	if ( S.ShapeType() != TopAbs_EDGE ) {
+	  aSelectedObject = GEOM::GEOM_Object::_nil();
+	  aName = "";
+	  myOkPath = false;
+	}
+	myPath = aSelectedObject;
+      }
+    }
+    myEditCurrentArgument->setText( aName );
   }
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
   
   displayPreview();
 }
@@ -211,14 +250,18 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
 void GenerationGUI_PipeDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection();
 
   if ( send == GroupPoints->PushButton1 ) {
     GroupPoints->LineEdit1->setFocus();
+    globalSelection( GEOM_ALLSHAPES );
     myEditCurrentArgument = GroupPoints->LineEdit1;
   }
   else if ( send == GroupPoints->PushButton2 ) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
+    globalSelection();
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   SelectionIntoArgument();
 }
@@ -300,4 +343,16 @@ bool GenerationGUI_PipeDlg::execute( ObjectList& objects )
 }
 
 
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void GenerationGUI_PipeDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+  objMap[GroupPoints->LineEdit2->text()] = myPath;
+
+  addSubshapesToFather( objMap );
+}
 

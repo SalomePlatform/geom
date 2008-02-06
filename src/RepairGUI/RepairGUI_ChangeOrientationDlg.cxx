@@ -75,7 +75,7 @@ RepairGUI_ChangeOrientationDlg::RepairGUI_ChangeOrientationDlg( GeometryGUI* the
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupPoints );
 
-  setHelpFileName( "change_orientation.htm" );
+  setHelpFileName( "change_orientation_operation_page.html" );
 
   Init();
 }
@@ -232,17 +232,6 @@ void RepairGUI_ChangeOrientationDlg::enterEvent( QEvent* )
 {
   if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
-}
-
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void RepairGUI_ChangeOrientationDlg::closeEvent( QCloseEvent* e )
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
 }
 
 

@@ -89,7 +89,7 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg( GeometryGUI* theGeometryGUI, QWidget* 
   layout->addWidget( GroupPoints );
   /***************************************************************/
 
-  setHelpFileName( "sewing.htm" );
+  setHelpFileName( "sewing_operation_page.html" );
 
   Init();
 }
@@ -245,16 +245,6 @@ void RepairGUI_SewingDlg::enterEvent( QEvent* )
     ActivateThisDialog();
 }
 
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void RepairGUI_SewingDlg::closeEvent( QCloseEvent* e )
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
-}
 
 //=================================================================================
 // function : createOperation

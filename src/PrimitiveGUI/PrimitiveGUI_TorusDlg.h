@@ -48,8 +48,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-  
-  virtual void                       closeEvent( QCloseEvent* );
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
@@ -66,7 +65,6 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               DeactivateActiveDialog();
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();

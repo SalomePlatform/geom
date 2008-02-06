@@ -116,6 +116,41 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdges
 
 //=============================================================================
 /*!
+ *  MakeFilletEdges R1 R2
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdgesR1R2
+                     (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR1,
+                      CORBA::Double theR2, const GEOM::ListOfLong& theEdges)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  if (theShape == NULL) return aGEOMObject._retn();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShapeRef = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  if (aShapeRef.IsNull()) return aGEOMObject._retn();
+
+  //Get the reference edges
+  int ind = 0;
+  int aLen = theEdges.length();
+  list<int> anEdges;
+  for (; ind < aLen; ind++) {
+    anEdges.push_back(theEdges[ind]);
+  }
+
+  //Create the Fillet
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeFilletEdgesR1R2(aShapeRef, theR1, theR2, anEdges);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeFilletFaces
  */
 //=============================================================================
@@ -143,6 +178,41 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFaces
   //Create the Fillet
   Handle(GEOM_Object) anObject =
     GetOperations()->MakeFilletFaces(aShapeRef, theR, aFaces);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeFilletFaces R1 R2
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFacesR1R2
+                      (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR1,
+                       CORBA::Double theR2, const GEOM::ListOfLong& theFaces)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  if (theShape == NULL) return aGEOMObject._retn();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShapeRef = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  if (aShapeRef.IsNull()) return aGEOMObject._retn();
+
+  //Get the reference faces
+  int ind = 0;
+  int aLen = theFaces.length();
+  list<int> aFaces;
+  for (; ind < aLen; ind++) {
+    aFaces.push_back(theFaces[ind]);
+  }
+
+  //Create the Fillet
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeFilletFacesR1R2(aShapeRef, theR1, theR2, aFaces);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -203,6 +273,33 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdge
 
   return GetObject(anObject);
 }
+//=============================================================================
+/*!
+ *  MakeChamferEdgeAD
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdgeAD
+                      (GEOM::GEOM_Object_ptr theShape,
+		       CORBA::Double theD, CORBA::Double theAngle,
+		       CORBA::Long theFace1, CORBA::Long theFace2)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  if (theShape == NULL) return aGEOMObject._retn();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShapeRef = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  if (aShapeRef.IsNull()) return aGEOMObject._retn();
+
+  //Create the Chamfer
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeChamferEdgeAD(aShapeRef, theD, theAngle, theFace1, theFace2);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
 
 //=============================================================================
 /*!
@@ -234,6 +331,113 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFaces
   //Create the Chamfer
   Handle(GEOM_Object) anObject =
     GetOperations()->MakeChamferFaces(aShapeRef, theD1, theD2, aFaces);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+//=============================================================================
+/*!
+ *  MakeChamferFacesAD
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFacesAD
+                      (GEOM::GEOM_Object_ptr theShape,
+		       CORBA::Double theD, CORBA::Double theAngle,
+		       const GEOM::ListOfLong& theFaces)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  if (theShape == NULL) return aGEOMObject._retn();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShapeRef = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  if (aShapeRef.IsNull()) return aGEOMObject._retn();
+
+  //Get the reference faces
+  int ind = 0;
+  int aLen = theFaces.length();
+  list<int> aFaces;
+  for (; ind < aLen; ind++) {
+    aFaces.push_back(theFaces[ind]);
+  }
+
+  //Create the Chamfer
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeChamferFacesAD(aShapeRef, theD, theAngle, aFaces);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeChamferEdges
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdges
+                      (GEOM::GEOM_Object_ptr theShape,
+		       CORBA::Double theD1, CORBA::Double theD2,
+		       const GEOM::ListOfLong& theEdges)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  if (theShape == NULL) return aGEOMObject._retn();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShapeRef = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  if (aShapeRef.IsNull()) return aGEOMObject._retn();
+
+  //Get the reference edges
+  int ind = 0;
+  int aLen = theEdges.length();
+  list<int> aEdges;
+  for (; ind < aLen; ind++) {
+    aEdges.push_back(theEdges[ind]);
+  }
+
+  //Create the Chamfer
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeChamferEdges(aShapeRef, theD1, theD2, aEdges);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeChamferEdgesAD
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdgesAD
+                      (GEOM::GEOM_Object_ptr theShape,
+		       CORBA::Double theD, CORBA::Double theAngle,
+		       const GEOM::ListOfLong& theEdges)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  if (theShape == NULL) return aGEOMObject._retn();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShapeRef = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  if (aShapeRef.IsNull()) return aGEOMObject._retn();
+
+  //Get the reference edges
+  int ind = 0;
+  int aLen = theEdges.length();
+  list<int> aEdges;
+  for (; ind < aLen; ind++) {
+    aEdges.push_back(theEdges[ind]);
+  }
+
+  //Create the Chamfer
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeChamferEdgesAD(aShapeRef, theD, theAngle, aEdges);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

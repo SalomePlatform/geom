@@ -1,0 +1,39 @@
+/*!
+
+\page import_export_geom_obj_page Importing/exporting geometrical objects
+
+In Geometry module you can import and export geometrical objects
+from/into BREP, IGES, STEP files. The mechanisms of import and export
+are implemented via plug-ins, which gives you the opportunity to
+expand the range of available formats by adding more plug-ins (for
+example, CATIA 5).
+
+<em>To import geometrical objects from a BREP, IGES, STEP file:</em>
+
+\par
+From the \b File menu choose \b Import. In the opening dialog box \b Import
+select the required format of the file for importation and search for
+a *.brep, *.iges or *.step  file.
+
+\image html geomimport.png
+
+\par 
+Select the required file and click \b Open. Your file will be imported in
+the module and its contents (geometrical object) will be displayed in
+the <b>Object Browser</b>.
+
+\n <em>To export geometrical objects into a BREP, IGES, STEP
+file:</em>
+
+\par
+Select the object you wish to export, then from the \b File menu choose
+\b Export. In the opening dialog box \b Export define the required format,
+the name and the location of the file for exportation.
+
+\image html geomexport.png
+
+\par
+Click \b Save to confirm your exportation.
+
+*/
+

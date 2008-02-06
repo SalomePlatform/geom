@@ -56,7 +56,7 @@ MeasureGUI_Skeleton::MeasureGUI_Skeleton( GeometryGUI* GUI, QWidget* parent,
 {
   myMainFrame = new MeasureGUI_SkeletonBox( this );
   QVBoxLayout* topLayout = new QVBoxLayout( this );
-  topLayout->setMargin( 0 ); topLayout->setSpacing( 0 );
+  topLayout->setMargin( 9 ); topLayout->setSpacing( 0 );
   topLayout->addWidget( myMainFrame );
 
   setAttribute( Qt::WA_DeleteOnClose );

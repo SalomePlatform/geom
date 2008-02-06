@@ -87,7 +87,7 @@ RepairGUI_RemoveHolesDlg::RepairGUI_RemoveHolesDlg( GeometryGUI* theGeometryGUI,
 
   /***************************************************************/
 
-  setHelpFileName( "suppress_holes.htm" );
+  setHelpFileName( "suppress_holes_operation_page.html" );
 
   Init();
 }
@@ -276,16 +276,6 @@ void RepairGUI_RemoveHolesDlg::enterEvent( QEvent* )
     ActivateThisDialog();
 }
 
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void RepairGUI_RemoveHolesDlg::closeEvent( QCloseEvent* e )
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
-}
 
 //=================================================================================
 // function : createOperation

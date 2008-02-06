@@ -328,7 +328,8 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeCompound
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
                                            (GEOM::GEOM_Object_ptr theShape,
-					    const CORBA::Double   theTolerance)
+					    CORBA::Double   theTolerance,
+					    CORBA::Boolean  doKeepNonSolids)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -345,7 +346,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
 
   //Perform the gluing
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeGlueFaces(aShape, theTolerance);
+    GetOperations()->MakeGlueFaces(aShape, theTolerance, doKeepNonSolids);
   //if (!GetOperations()->IsDone() || anObject.IsNull())
   // to allow warning
   if (anObject.IsNull())
@@ -400,8 +401,9 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueFaces
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
                                            (GEOM::GEOM_Object_ptr theShape,
-					    const CORBA::Double   theTolerance,
-					    const GEOM::ListOfGO& theFaces)
+					    CORBA::Double   theTolerance,
+					    const GEOM::ListOfGO& theFaces,
+					    CORBA::Boolean  doKeepNonSolids)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -430,7 +432,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
 
   //Perform the gluing
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeGlueFacesByList(aShape, theTolerance, aFaces);
+    GetOperations()->MakeGlueFacesByList(aShape, theTolerance, aFaces, doKeepNonSolids);
   //if (!GetOperations()->IsDone() || anObject.IsNull())
   // to allow warning
   if (anObject.IsNull())
@@ -1317,6 +1319,41 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetInPlace
   //Get Shapes in place of aShapeWhat
   Handle(GEOM_Object) anObject =
     GetOperations()->GetInPlace(aShapeWhere, aShapeWhat);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  GetInPlaceByHistory
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetInPlaceByHistory
+                                          (GEOM::GEOM_Object_ptr theShapeWhere,
+					   GEOM::GEOM_Object_ptr theShapeWhat)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShapeWhere == NULL ||
+      theShapeWhat == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShapeWhere = GetOperations()->GetEngine()->GetObject
+    (theShapeWhere->GetStudyID(), theShapeWhere->GetEntry());
+  Handle(GEOM_Object) aShapeWhat = GetOperations()->GetEngine()->GetObject
+    (theShapeWhat->GetStudyID(), theShapeWhat->GetEntry());
+
+  if (aShapeWhere.IsNull() ||
+      aShapeWhat.IsNull()) return aGEOMObject._retn();
+
+  //Get Shapes in place of aShapeWhat
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetInPlaceByHistory(aShapeWhere, aShapeWhat);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

@@ -55,7 +55,7 @@ RepairGUI_ShapeProcessDlg::RepairGUI_ShapeProcessDlg( GeometryGUI* theGeometryGU
 						      bool modal )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
-  setHelpFileName( "shape_processing.htm" );
+  setHelpFileName( "shape_processing_operation_page.html" );
   init();
 }
 
@@ -420,17 +420,6 @@ void RepairGUI_ShapeProcessDlg::enterEvent( QEvent* )
 {
   if ( !mainFrame()->GroupBoxName->isEnabled() )
     activate();
-}
-
-
-//=================================================================================
-// function : closeEvent()
-// purpose  : same than click on cancel button
-//=================================================================================
-void RepairGUI_ShapeProcessDlg::closeEvent( QCloseEvent* e )
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
 }
 
 

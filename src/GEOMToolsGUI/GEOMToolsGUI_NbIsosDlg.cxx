@@ -122,7 +122,7 @@ GEOMToolsGUI_NbIsosDlg::GEOMToolsGUI_NbIsosDlg(QWidget* parent )
   MyDialogLayout->addWidget(GroupC1, 0, 0);
   MyDialogLayout->addWidget(GroupButtons, 1, 0);
 
-  myHelpFileName = "isos.htm";
+  myHelpFileName = "isolines_page.html";
   
   // signals and slots connections
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(accept()));

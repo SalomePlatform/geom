@@ -38,11 +38,17 @@
 #ifndef _TopTools_ListOfShape_HeaderFile
 #include <TopTools_ListOfShape.hxx>
 #endif
+#ifndef _TopTools_MapOfShape_HeaderFile
+#include <TopTools_MapOfShape.hxx>
+#endif
 #ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
 #include <GEOMAlgo_ShapeAlgo.hxx>
 #endif
 #ifndef _TopAbs_ShapeEnum_HeaderFile
 #include <TopAbs_ShapeEnum.hxx>
+#endif
+#ifndef _TopoDS_Compound_HeaderFile
+#include <TopoDS_Compound.hxx>
 #endif
 class TopTools_ListOfShape;
 class TopoDS_Shape;
@@ -90,6 +96,9 @@ Standard_EXPORT   void SetCheckGeometry(const Standard_Boolean aFlag) ;
 
 
 Standard_EXPORT   Standard_Boolean CheckGeometry() const;
+
+
+Standard_EXPORT   void SetKeepNonSolids(const Standard_Boolean aFlag) ;
 
 
 Standard_EXPORT virtual  void Perform() ;
@@ -143,6 +152,11 @@ Standard_EXPORT   void MakeShapes(const TopAbs_ShapeEnum aType) ;
 Standard_EXPORT   void MakeShells() ;
 
 
+Standard_EXPORT   void MakeSubShapes(const TopoDS_Shape& theShape,
+                                     TopTools_MapOfShape& theMS,
+                                     TopoDS_Compound& theResult);
+
+
 Standard_EXPORT   void MakeSolids() ;
 
 
@@ -173,6 +187,7 @@ Standard_EXPORT   Standard_Boolean HasNewSubShape(const TopoDS_Shape& aS) const;
  // Fields PROTECTED
  //
 Standard_Boolean myCheckGeometry;
+Standard_Boolean myKeepNonSolids;
 Standard_Real myTol;
 TopTools_DataMapOfShapeListOfShape myImages;
 TopTools_DataMapOfShapeShape myOrigins;

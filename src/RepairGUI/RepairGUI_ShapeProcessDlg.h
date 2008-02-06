@@ -55,8 +55,6 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList&  );
   
-  virtual void                       closeEvent( QCloseEvent* );        
-
 private:
   void                               init();
   void                               reset();

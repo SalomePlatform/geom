@@ -36,6 +36,12 @@
 #include <LightApp_SelectionMgr.h>
 
 #include <TColStd_MapOfInteger.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 #include <GEOMImpl_Types.hxx>
 
@@ -102,7 +108,7 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   layout->addWidget( GroupFace );
   /***************************************************************/
 
-  setHelpFileName( "plane.htm" );
+  setHelpFileName( "create_plane_page.html" );
 
   Init();
 }
@@ -137,11 +143,11 @@ void BasicGUI_PlaneDlg::Init()
   double aTrimSize = 2000.0;
 
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( GroupPntDir->SpinBox_DX, 0.001, COORD_MAX, aStep, 3 );
+  initSpinBox( GroupPntDir->SpinBox_DX, 0.001, COORD_MAX, aStep, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
   GroupPntDir->SpinBox_DX->setValue( aTrimSize );
-  initSpinBox( Group3Pnts->SpinBox_DX, 0.001, COORD_MAX, aStep, 3 );
+  initSpinBox( Group3Pnts->SpinBox_DX, 0.001, COORD_MAX, aStep, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
   Group3Pnts->SpinBox_DX->setValue( aTrimSize );
-  initSpinBox( GroupFace->SpinBox_DX, 0.001, COORD_MAX, aStep, 3 );
+  initSpinBox( GroupFace->SpinBox_DX, 0.001, COORD_MAX, aStep, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
   GroupFace->SpinBox_DX->setValue( aTrimSize );
 
   /* signals and slots connections */
@@ -177,7 +183,7 @@ void BasicGUI_PlaneDlg::Init()
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupFace->SpinBox_DX,   SLOT( SetStep( double ) ) );
   // <<-
 
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_PLANE" ) );
 
@@ -191,7 +197,7 @@ void BasicGUI_PlaneDlg::Init()
 //=================================================================================
 void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
 {
-  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
+  disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
   myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = myFace = GEOM::GEOM_Object::_nil();
 
   switch ( constructorId ) {
@@ -206,7 +212,8 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       GroupPntDir->LineEdit2->setText( "" );
       
       /* for the first argument */
-      globalSelection( GEOM_POINT );
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       break;
     }
   case 1: /* plane from 3 points */
@@ -221,7 +228,8 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       Group3Pnts->LineEdit3->setText( "" );
       
       /* for the first argument */
-      globalSelection( GEOM_POINT );
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       break;
     }
   case 2: /* plane from a planar face selection */
@@ -248,8 +256,8 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
   resize( minimumSize() );
 
   myEditCurrentArgument->setFocus();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 }
 
 
@@ -300,7 +308,49 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
-    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+    QString aName = GEOMBase::GetName( aSelectedObject );
+
+    TopoDS_Shape aShape;
+    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
+      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+      if ( myEditCurrentArgument == GroupPntDir->LineEdit2 )
+        aNeedType = TopAbs_EDGE;
+      else if ( myEditCurrentArgument == GroupFace->LineEdit1 )
+        aNeedType = TopAbs_FACE;
+
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes( firstIObject(), aMap );
+      if ( aMap.Extent() == 1 ) { // Local Selection
+        int anIndex = aMap( 1 );
+        if ( aNeedType == TopAbs_EDGE )
+          aName += QString( ":edge_%1" ).arg( anIndex );
+        else if (aNeedType == TopAbs_FACE)
+          aName += QString( ":face_%1" ).arg( anIndex );
+        else
+          aName += QString( ":vertex_%1" ).arg( anIndex );
+
+	//Find SubShape Object in Father
+	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+
+	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+	  aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+	} 
+	else {
+	  aSelectedObject = aFindedObject; // get Object from study
+	}
+      }
+      else { // Global Selection
+        if ( aShape.ShapeType() != aNeedType ) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+        }
+      }
+    }
+
+    myEditCurrentArgument->setText( aName );
+
     if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) myPoint  = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) myDir    = aSelectedObject;
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )  myPoint1 = aSelectedObject;
@@ -320,6 +370,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
 void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection( GEOM_POINT );
 
   if      ( send == GroupPntDir->PushButton1 ) myEditCurrentArgument = GroupPntDir->LineEdit1;
   else if ( send == GroupPntDir->PushButton2 ) myEditCurrentArgument = GroupPntDir->LineEdit2;
@@ -330,17 +381,20 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 
   myEditCurrentArgument->setFocus();
 
-  if ( myEditCurrentArgument == GroupPntDir->LineEdit2 )
-    globalSelection( GEOM_LINE );
+  if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) {
+    globalSelection(); // close local contexts, if any
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+  }
   else if ( myEditCurrentArgument == GroupFace->LineEdit1 ) {
-    //globalSelection( GEOM_PLANE );
     TColStd_MapOfInteger aMap;
     aMap.Add( GEOM_PLANE );
     aMap.Add( GEOM_MARKER );
     globalSelection( aMap );
   }
-  else
-    globalSelection( GEOM_POINT );
+  else { // 3 Pnts
+    globalSelection(); // close local contexts, if any
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  }
 
   SelectionIntoArgument();
 }
@@ -372,10 +426,8 @@ void BasicGUI_PlaneDlg::LineEditReturnPressed()
 void BasicGUI_PlaneDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-
-  // myGeomGUI->SetState( 0 );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -386,7 +438,6 @@ void BasicGUI_PlaneDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_PlaneDlg::DeactivateActiveDialog()
 {
-  // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -493,13 +544,27 @@ bool BasicGUI_PlaneDlg::execute( ObjectList& objects )
   
   return res;
 }
-
 //=================================================================================
-// function : closeEvent
-// purpose  :
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
 //=================================================================================
-void BasicGUI_PlaneDlg::closeEvent( QCloseEvent* e )
+void BasicGUI_PlaneDlg::addSubshapesToStudy()
 {
-  GEOMBase_Skeleton::closeEvent( e );
-}
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
 
+  switch ( getConstructorId() ) {
+  case 0:
+    objMap[GroupPntDir->LineEdit1->text()] = myPoint;
+    objMap[GroupPntDir->LineEdit2->text()] = myDir;
+    break;
+  case 1:
+    objMap[Group3Pnts->LineEdit1->text()] = myPoint1;
+    objMap[Group3Pnts->LineEdit2->text()] = myPoint2;
+    objMap[Group3Pnts->LineEdit3->text()] = myPoint3;
+    break;
+  case 2:
+    objMap[GroupFace->LineEdit1->text()] = myFace;
+    break;
+  }
+  addSubshapesToFather( objMap );
+}

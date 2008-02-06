@@ -1,0 +1,89 @@
+/*!
+
+\page work_with_groups_page Working with groups
+
+Creation and editing groups of subshapes of a geometrical object makes
+handling subshapes much easier. This functionality is available in OCC
+viewer only.
+
+<br><h2>Create a group</h2>
+
+\image html image56.gif
+
+To create a group of subshapes of a geometrical object in the main
+menu select <b>New entity > Group > Create</b>
+\n The following menu will appear:
+
+\image html geomcreategroup.png
+
+In this Menu:
+
+<ul>
+<li><b>Shape Type</b> radio button define the type of elements for the
+group (points, wires, faces, shells or solids).</li>
+<li><b>Group Name</b> - here you can enter the name of the group, by
+default, it is Group_n.</li>
+<li>Then, using the "Select" button, select the <b>Main Shape</b> (a
+geometrical object on which the group will be created). You can select
+the elements of your group in two ways: </li>
+<ul>
+<li>Clicking <b>Select Sub-Shapes</b> button you can select them
+manually in the 3D Viewer, and add to the group by clicking the \b Add
+button (keep down the Shift button on the keyboard to select several
+elements and add all them together). The indexes of the selected
+elements will be displayed in the list. To delete elements from the
+list, select them and click \b Remove button.</li>
+<li>Clicking <b>Select All</b> button you can add all object's
+elements of a certain type in the list of the elements of the
+group. To delete elements from the list, select them and click \b
+Remove button.</li>
+</ul>
+<li>Finally, confirm your selection by clicking \b OK (also closes the
+Menu) or \b Apply (leaves the Menu open for creation of other groups),
+or skip it by clicking \b Close button.</li>
+</ul>
+
+\n The Result of the operation will be a \b GEOM_Object.
+
+\n <b>TUI Command:</b> <em>geompy.CreateGroup(MainShape,
+ShapeType),</em> where MainShape is a shape for which the group is
+created, ShapeType is a type of shapes in the created group.
+\n <b>Arguments:</b> 1 Shape + Type of subshape.
+
+<b>Example:</b>
+
+\image html image193.jpg
+
+
+<br><h2>Edit a group</h2>
+
+\image html image57.gif
+
+To \b Edit an existing group in the main menu select <b>New entity >
+Group > Edit</b>. This menu is designed in the same way as the
+<b>Create a group</b> menu.
+
+\n The \b Result of the operation will be a \b GEOM_Object.
+
+\n <b>TUI Command:</b>
+<ul>
+<li><em>geompy.AddObject(Group, SubShapeID),</em> where Group is a
+group to which a sub shape has to be added, SubShapeID is an ID of the
+sub shape to be added to the group.</li>
+<li><em>geompy.RemoveObject(Group, SubShapeID),</em> where Group is a
+group from which a sub shape has to be removed, SubShapeID is an ID of
+the sub shape to be removed from the group.</li>
+<li><em>geompy.GetObjectIDs(Group),</em> where Group is a group for which its object's are returned.
+\n Returns: List of IDs.</li>
+</ul>
+
+\n <b>Arguments:</b> 1 Shape + its subshapes.
+
+\n <b>Dialog Box:</b> 
+
+\image html editgroup.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of 
+\ref tui_working_with_groups_page "Working with Groups".
+
+*/

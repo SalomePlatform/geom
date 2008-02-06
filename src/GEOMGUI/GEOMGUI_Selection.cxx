@@ -81,6 +81,8 @@ QVariant GEOMGUI_Selection::parameter( const int ind, const QString& p ) const
     return QVariant( typeName( ind ) );
   else if ( p == "displaymode" )
     return QVariant( displayMode( ind ) );
+  else if ( p == "isAutoColor" )
+    return QVariant( isAutoColor( ind ) );
   else
     return LightApp_Selection::parameter( ind, p );
 }
@@ -108,6 +110,14 @@ bool GEOMGUI_Selection::isVisible( const int index ) const
     Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).toLatin1().constData(), "GEOM", "TEMP_IO" );
     return view->isVisible( io );
   }
+  return false;
+}
+
+bool GEOMGUI_Selection::isAutoColor( const int index ) const
+{
+  GEOM::GEOM_Object_var obj = getObject( index );
+  if ( !CORBA::is_nil( obj ) )
+    return obj->GetAutoColor();
   return false;
 }
 
@@ -204,14 +214,14 @@ GEOM::GEOM_Object_ptr GEOMGUI_Selection::getObject( const int index ) const
   return GEOM::GEOM_Object::_nil();
 }
 
-QString GEOMGUI_Selection:: selectionMode() const
-{ 
+QString GEOMGUI_Selection::selectionMode() const
+{
   SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
   if (app) {
     GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
-    if(aGeomGUI)
-      switch(aGeomGUI->getLocalSelectionMode())
-	{
+    if (aGeomGUI) {
+      switch (aGeomGUI->getLocalSelectionMode())
+      {
 	case GEOM_POINT      : return "VERTEX";
 	case GEOM_EDGE       : return "EDGE";
 	case GEOM_WIRE       : return "WIRE";
@@ -221,7 +231,8 @@ QString GEOMGUI_Selection:: selectionMode() const
 	case GEOM_COMPOUND   : return "COMPOUND";
 	case GEOM_ALLOBJECTS : return "ALL";
 	default: return "";
-	}
+      }
+    }
   }
   return "";
 }

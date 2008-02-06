@@ -59,7 +59,14 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakePrismVecH (Handle(GEOM_Object) theBase,
                                      Handle(GEOM_Object) theVec, double theH);
 
+  Standard_EXPORT Handle(GEOM_Object) MakePrismVecH2Ways (Handle(GEOM_Object) theBase,
+                                              Handle(GEOM_Object) theVec, double theH);
+
   Standard_EXPORT Handle(GEOM_Object) MakePrismTwoPnt (Handle(GEOM_Object) theBase,
+                                       Handle(GEOM_Object) thePoint1,
+                                       Handle(GEOM_Object) thePoint2);
+
+  Standard_EXPORT Handle(GEOM_Object) MakePrismTwoPnt2Ways (Handle(GEOM_Object) theBase,
                                        Handle(GEOM_Object) thePoint1,
                                        Handle(GEOM_Object) thePoint2);
 
@@ -69,6 +76,10 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeRevolutionAxisAngle (Handle(GEOM_Object) theBase,
                                                Handle(GEOM_Object) theAxis,
                                                double theAngle);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeRevolutionAxisAngle2Ways (Handle(GEOM_Object) theBase,
+								    Handle(GEOM_Object) theAxis,
+								    double theAngle);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSolidShell (Handle(GEOM_Object) theShell);
 
@@ -93,6 +104,10 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
 		const Handle(GEOM_Object)& thePath,
 		bool theWithContact,
 		bool theWithCorrections);
+
+  Standard_EXPORT Handle(GEOM_Object) MakePipeShellsWithoutPath(
+		const Handle(TColStd_HSequenceOfTransient)& theBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations);
 
 };
 

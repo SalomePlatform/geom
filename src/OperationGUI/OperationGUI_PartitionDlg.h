@@ -28,7 +28,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_2Sel1List;
+class DlgRef_2Sel1List1Check;
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg
@@ -50,8 +50,6 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-  
-  virtual void                       closeEvent( QCloseEvent* );
 
 private:
   void                               Init();
@@ -65,7 +63,7 @@ private:
   GEOM::ListOfGO                     myListRemoveInside;
   GEOM::ListOfGO                     myListKeepInside;
 
-  DlgRef_2Sel1List*                  GroupPoints;
+  DlgRef_2Sel1List1Check*            GroupPoints;
 
 private slots:
   void                               ClickOnOk();

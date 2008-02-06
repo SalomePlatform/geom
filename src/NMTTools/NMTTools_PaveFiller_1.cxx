@@ -21,13 +21,14 @@
 // Created:	Mon Dec  8 11:47:55 2003
 // Author:	Peter KURNEV
 //		<pkv@irinox>
+
 #include <NMTTools_PaveFiller.ixx>
 
 #include <TColStd_DataMapOfIntegerListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger.hxx>
-  
+
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
@@ -35,12 +36,14 @@
 #include <TopTools_ListOfShape.hxx>
 
 #include <IntTools_Tools.hxx>
+#include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
 #include <BOPTools_VVInterference.hxx>
 #include <BOPTools_CArray1OfVVInterference.hxx>
-#include <BOPTools_VVInterference.hxx>
-#include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
 
+#include <NMTDS_Iterator.hxx>
+#include <NMTDS_InterfPool.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
+
 #include <NMTTools_Tools.hxx>
 
 //=======================================================================
@@ -51,47 +54,47 @@
 {
   myIsDone=Standard_False;
   //
-  Standard_Integer anIndexIn, aWhat, aWith, aNbVVs, aBlockLength, aNbVSD; 
-  Standard_Integer nVnew;
+  Standard_Integer aNbVVs, aBL, aNbVSD, nVnew, i, j, n1, n2;
   TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger aIt1;
-  TColStd_ListIteratorOfListOfInteger aIt;
+  TColStd_ListIteratorOfListOfInteger aItX, aItY;
+  TColStd_ListOfInteger aLIX;
   TopTools_ListOfShape aLV;
   TopoDS_Vertex aVnew;
-  TopoDS_Shape aS;
   //
   myVSD.Clear();
   //
-  BOPTools_CArray1OfVVInterference& aVVs=myIntrPool->VVInterferences();
-  //
-  // BlockLength correction
-  aNbVVs=ExpectedPoolLength();
-  aBlockLength=aVVs.BlockLength();
-  if (aNbVVs > aBlockLength) {
-    aVVs.SetBlockLength(aNbVVs);
-  }
-  //
-  const TColStd_DataMapOfIntegerListOfInteger& aMVSD=myDSIt.SDVertices();
+  const TColStd_DataMapOfIntegerListOfInteger& aMVSD=myDSIt->SDVertices();
   aNbVSD=aMVSD.Extent();
   if (!aNbVSD) {
     return;
+  }
+  //
+  BOPTools_CArray1OfVVInterference& aVVs=myIP->VVInterferences();
+  //
+  // BlockLength correction
+  myDSIt->Initialize(TopAbs_VERTEX, TopAbs_VERTEX);
+  aNbVVs=myDSIt->BlockLength();
+  aBL=aVVs.BlockLength();
+  if (aNbVVs > aBL) {
+    aVVs.SetBlockLength(aNbVVs);
   }
   //
   aIt1.Initialize(aMVSD);
   for (; aIt1.More(); aIt1.Next()) {
     aLV.Clear();
     //
-    aWhat=aIt1.Key();
+    n1=aIt1.Key();
     const TColStd_ListOfInteger& aLIV=aIt1.Value();
     //
     // new vertex
-    aIt.Initialize(aLIV);
-    for (; aIt.More(); aIt.Next()) {
-      aWith=aIt.Value();
-      aS=myDS->Shape(aWith);
-      aLV.Append(aS);
+    const TopoDS_Shape& aS1=myDS->Shape(n1);
+    aLV.Append(aS1);
+    aItX.Initialize(aLIV);
+    for (; aItX.More(); aItX.Next()) {
+      n2=aItX.Value();
+      const TopoDS_Shape& aS2=myDS->Shape(n2);
+      aLV.Append(aS2);
     }
-    aS=myDS->Shape(aWhat);
-    aLV.Append(aS);
     //
     NMTTools_Tools::MakeNewVertex(aLV, aVnew);
     //
@@ -101,28 +104,36 @@
     nVnew=myDS->NumberOfInsertedShapes();
     myDS->SetState (nVnew, BooleanOperations_ON);
     //
-    // interferences
-    aIt.Initialize(aLIV);
-    for (; aIt.More(); aIt.Next()) {
-      aWith=aIt.Value();
-      BOPTools_VVInterference aVV(aWhat, aWith);
-      aVV.SetNewShape(nVnew);
-      anIndexIn=aVVs.Append(aVV);
-      myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexVertex, anIndexIn);
-      //
-      // to find SD-Vertices
-      myVSD.Bind(aWith, nVnew);
+    // myVSD, aLIX
+    aLIX.Clear();
+    aLIX.Append(n1);
+    myVSD.Bind(n1, nVnew);
+    //
+    aItX.Initialize(aLIV);
+    for (; aItX.More(); aItX.Next()) {
+      n2=aItX.Value();
+      aLIX.Append(n2);
+      myVSD.Bind(n2, nVnew);
     }
-     myVSD.Bind(aWhat, nVnew);
+    //
+    // interferences
+    aItX.Initialize(aLIX);
+    for (i=0; aItX.More(); aItX.Next(), ++i) {
+      aItY.Initialize(aLIX);
+      for (j=0; aItY.More(); aItY.Next(), ++j) {
+	if (j>i) {
+	  n1=aItX.Value();
+	  n2=aItY.Value();
+	  myIP->Add(n1, n2, Standard_True, NMTDS_TI_VV);
+	  //
+	  BOPTools_VVInterference aVV(n1, n2);
+	  aVV.SetNewShape(nVnew);
+	  aVVs.Append(aVV);    
+	}
+      }
+    }
   }//for (; aIt1.More(); aIt1.Next()) {
   myIsDone=Standard_True;
-}
-//=======================================================================
-// function: PerformNewVertices
-// purpose: 
-//=======================================================================
-  void NMTTools_PaveFiller::PerformNewVertices() 
-{
 }
 //=======================================================================
 // function: FindSDVertex
@@ -138,3 +149,12 @@
   }
   return nVSD;
 }
+/*
+//=======================================================================
+// function: PerformNewVertices
+// purpose: 
+//=======================================================================
+  void NMTTools_PaveFiller::PerformNewVertices() 
+{
+}
+*/

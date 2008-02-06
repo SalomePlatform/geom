@@ -27,6 +27,7 @@
 #include "MeasureGUI_Widgets.h"
 
 #include <GEOMBase.h>
+#include <DlgRef.h>
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -76,7 +77,7 @@ MeasureGUI_PointDlg::MeasureGUI_PointDlg( GeometryGUI* GUI, QWidget* parent )
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( myGrp );
 
-  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#PointCoord";
+  myHelpFileName = "using_measurement_tools_page.html#point_coord_anchor";
 
   Init();
 }
@@ -162,9 +163,9 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     if ( !aPoint.IsNull() ) {
       gp_Pnt aPnt = BRep_Tool::Pnt( aPoint );
       myGrp->LineEdit1->setText( aName );
-      myGrp->LineEdit2->setText( QString( "%1" ).arg( aPnt.X() ) );
-      myGrp->LineEdit3->setText( QString( "%1" ).arg( aPnt.Y() ) );
-      myGrp->LineEdit4->setText( QString( "%1" ).arg( aPnt.Z() ) );
+      myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( aPnt.X() ) );
+      myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( aPnt.Y() ) );
+      myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( aPnt.Z() ) );
     }
   }
   catch( ... )

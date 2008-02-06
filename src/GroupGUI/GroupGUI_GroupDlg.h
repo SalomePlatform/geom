@@ -30,7 +30,7 @@
 
 #include <TopAbs_ShapeEnum.hxx>
 
-class DlgRef_1Sel1List4Btn;
+class DlgRef_1Sel1List1Check3Btn;
 
 //=================================================================================
 // class    : GroupGUI_GroupDlg
@@ -85,7 +85,7 @@ private:
   GEOM::GEOM_Object_var               myMainObj;
   GEOM::GEOM_Object_var               myGroup;
   
-  DlgRef_1Sel1List4Btn*               myGroupBox;
+  DlgRef_1Sel1List1Check3Btn*         myGroupBox;
 };
 
 #endif // GROUPGUI_GROUPDLG_H

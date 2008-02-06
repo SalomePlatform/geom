@@ -47,6 +47,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );    
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
@@ -58,6 +59,7 @@ private:
   GEOM::GEOM_Object_var              myAxis; /* Axis of the revolution */
   bool                               myOkBase; 
   bool                               myOkAxis;
+  bool                               myBothway;
   
   DlgRef_2Sel1Spin2Check*            GroupPoints;
     
@@ -70,6 +72,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox();
   void                               onReverse();
+  void                               onBothway();
 };
 
 #endif // GENERATIONGUI_REVOLUTIONDLG_H

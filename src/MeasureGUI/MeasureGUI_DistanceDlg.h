@@ -28,7 +28,7 @@
 
 #include "MeasureGUI_Skeleton.h"
 
-class MeasureGUI_2Sel1LineEdit;
+class MeasureGUI_2Sel4LineEdit;
 class gp_Pnt;
 
 //=================================================================================
@@ -63,7 +63,7 @@ private:
   QLineEdit*                          mySelEdit2;
   QPushButton*                        mySelBtn2;
   
-  MeasureGUI_2Sel1LineEdit*           myGrp;
+  MeasureGUI_2Sel4LineEdit*           myGrp;
   GEOM::GEOM_Object_var               myObj2;
 };
 

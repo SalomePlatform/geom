@@ -94,7 +94,7 @@ MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( Geomet
 
   /***************************************************************/
 
-  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Check_comp_blocks";
+  myHelpFileName = "using_measurement_tools_page.html#check_compound_anchor";
 
   /* Initialisation */
   Init();

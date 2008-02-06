@@ -17,6 +17,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include "GEOM_IMeasureOperations_i.hh"
@@ -140,7 +141,7 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetCentreOfMass
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) return aGEOMObject._retn();
+  if (CORBA::is_nil(theShape)) return aGEOMObject._retn();
 
   //Get the reference shape
   Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
@@ -150,6 +151,41 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetCentreOfMass
 
   // Make Point - centre of mass of theShape
   Handle(GEOM_Object) anObject = GetOperations()->GetCentreOfMass(aShape);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  GetNormal
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetNormal
+                                       (GEOM::GEOM_Object_ptr theFace,
+					GEOM::GEOM_Object_ptr theOptionalPoint)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (CORBA::is_nil(theFace)) return aGEOMObject._retn();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aFace = GetOperations()->GetEngine()->GetObject
+    (theFace->GetStudyID(), theFace->GetEntry());
+
+  if (aFace.IsNull()) return aGEOMObject._retn();
+
+  // Make Vector - normal to theFace (in point theOptionalPoint if the face is not planar)
+  Handle(GEOM_Object) anOptionalPoint;
+  if (!CORBA::is_nil(theOptionalPoint)) {
+    anOptionalPoint = GetOperations()->GetEngine()->GetObject
+      (theOptionalPoint->GetStudyID(), theOptionalPoint->GetEntry());
+  }
+  Handle(GEOM_Object) anObject = GetOperations()->GetNormal(aFace, anOptionalPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -392,8 +428,8 @@ CORBA::Double GEOM_IMeasureOperations_i::GetMinDistance
  *  PointCoordinates
  */
 //=============================================================================
-void GEOM_IMeasureOperations_i::PointCoordinates(
-  GEOM::GEOM_Object_ptr theShape, CORBA::Double& X, CORBA::Double& Y, CORBA::Double& Z )
+void GEOM_IMeasureOperations_i::PointCoordinates (GEOM::GEOM_Object_ptr theShape,
+						  CORBA::Double& X, CORBA::Double& Y, CORBA::Double& Z)
 
 {
   //Set a not done flag
@@ -411,4 +447,29 @@ void GEOM_IMeasureOperations_i::PointCoordinates(
 
   // Get shape parameters
   GetOperations()->PointCoordinates( aShape, X, Y, Z );
+}
+
+//=============================================================================
+/*!
+ *  GetAngle
+ */
+//=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::GetAngle (GEOM::GEOM_Object_ptr theShape1,
+						   GEOM::GEOM_Object_ptr theShape2)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape1 == NULL || theShape2 == NULL) return -1.0;
+
+  //Get the reference shapes
+  Handle(GEOM_Object) aShape1 = GetOperations()->GetEngine()->GetObject
+    (theShape1->GetStudyID(), theShape1->GetEntry());
+  Handle(GEOM_Object) aShape2 = GetOperations()->GetEngine()->GetObject
+    (theShape2->GetStudyID(), theShape2->GetEntry());
+
+  if (aShape1.IsNull() || aShape2.IsNull()) return -1.0;
+
+  // Get the angle
+  return GetOperations()->GetAngle(aShape1, aShape2);
 }

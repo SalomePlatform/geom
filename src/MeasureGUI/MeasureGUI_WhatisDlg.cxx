@@ -32,6 +32,8 @@
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Tools.h>
 
+#include <QScrollBar>
+
 //=================================================================================
 // class    : MeasureGUI_WhatisDlg( )
 // purpose  : Constructs a MeasureGUI_WhatisDlg which is a child of 'parent', with the
@@ -58,6 +60,15 @@ MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( GeometryGUI* GUI, QWidget* parent )
   myGrp->GroupBox1->setTitle( tr( "GEOM_WHATIS_OBJECT" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
   myGrp->TextView1->setReadOnly( true );
+
+  // fix height to fit all text
+  myGrp->TextView1->setLineWrapMode( QTextEdit::NoWrap );
+  // myGrp->TextView1->setTextFormat( Qt::PlainText ); // VSR : TODO
+  QString allLines ("\n\n\n\n\n\n\n\n\n"); // 10 lines
+  myGrp->TextView1->setText( allLines );
+  int sbHeight = myGrp->TextView1->horizontalScrollBar()->height();
+  myGrp->TextView1->setFixedHeight( myGrp->TextView1->document()->size().height() + sbHeight );
+
   myGrp->PushButton1->setIcon( image1 );
   myGrp->LineEdit1->setReadOnly( true );
 
@@ -67,7 +78,7 @@ MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( GeometryGUI* GUI, QWidget* parent )
 
   /***************************************************************/
 
-  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Whatis";
+  myHelpFileName = "using_measurement_tools_page.html#whatis_anchor";
 
   /* Initialisation */
   Init();
@@ -125,6 +136,3 @@ bool MeasureGUI_WhatisDlg::getParameters( QString& theText )
     return getOperation()->IsDone();
   }
 }
-
-
-

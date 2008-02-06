@@ -62,7 +62,6 @@ private slots:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
-  void                               closeEvent( QCloseEvent* );
   void                               activateSelection();
 
 private:

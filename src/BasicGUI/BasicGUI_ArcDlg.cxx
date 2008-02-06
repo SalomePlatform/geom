@@ -34,6 +34,13 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+
 #include <GEOMImpl_Types.hxx>
 
 //=================================================================================
@@ -47,9 +54,10 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
 				  bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_ARC" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_ARC_CENTER" ) ) );
-  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+  QPixmap image0( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_ARC" ) ) );
+  QPixmap image1( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_ARC_CENTER" ) ) );
+  QPixmap image2( aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
   setWindowTitle( tr( "GEOM_ARC_TITLE" ) );
 
@@ -98,7 +106,7 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
   layout->addWidget( Group3Pnts );
   layout->addWidget( Group3Pnts2 );
 
-  setHelpFileName( "arc.htm" );
+  setHelpFileName( "create_arc_page.html" );
 
   Init();
 }
@@ -120,12 +128,7 @@ BasicGUI_ArcDlg::~BasicGUI_ArcDlg()
 void BasicGUI_ArcDlg::Init()
 {
   /* init variables */
-  // myGeomGUI->SetState( 0 );
-  globalSelection( GEOM_POINT );
-  
-  myConstructorId = -1;
   myEditCurrentArgument = Group3Pnts->LineEdit1;
-  myEditCurrentArgument->setFocus();
 
   myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
   Group3Pnts2->CheckButton1->setChecked( false );
@@ -157,8 +160,8 @@ void BasicGUI_ArcDlg::Init()
   
   connect( Group3Pnts2->CheckButton1, SIGNAL( toggled( bool ) ), this, SLOT( ReverseSense() ) );
 
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_ARC" ) ); 
   
@@ -188,18 +191,6 @@ bool BasicGUI_ArcDlg::ClickOnApply()
 
   initName();
 
-  // reset
-  myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
-  Group3Pnts->LineEdit1->setText( "" );
-  Group3Pnts->LineEdit2->setText( "" );
-  Group3Pnts->LineEdit3->setText( "" );
-  Group3Pnts2->LineEdit1->setText( "" );
-  Group3Pnts2->LineEdit2->setText( "" );
-  Group3Pnts2->LineEdit3->setText( "" );
-  if ( getConstructorId() == 0 )  myEditCurrentArgument = Group3Pnts->LineEdit1;
-  if ( getConstructorId() == 1 )  myEditCurrentArgument = Group3Pnts2->LineEdit1;
-
-  ConstructorsClicked( getConstructorId() );
   return true;
 }
 
@@ -234,15 +225,48 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
+    QString aName = GEOMBase::GetName(aSelectedObject);
+
+    // Get Selected object if selected subshape
+    TopoDS_Shape aShape;
+    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+    {
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes(firstIObject(), aMap);
+      if (aMap.Extent() == 1) // Local Selection
+      {
+        int anIndex = aMap(1);
+        aName += QString(":vertex_%1").arg(anIndex);
+
+	//Find SubShape Object in Father
+	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+
+	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	}
+	else
+	  aSelectedObject = aFindedObject; // get Object from study
+      }
+      else // Global Selection
+      {
+        if (aShape.ShapeType() != TopAbs_VERTEX) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+        }
+      }
+    }
+
+    myEditCurrentArgument->setText(aName);
+
     switch ( getConstructorId() ) {
     case 0:
-      myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
       if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = aSelectedObject;
       else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = aSelectedObject;
       else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = aSelectedObject;
       break;
     case 1:
-      myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
       if      ( myEditCurrentArgument == Group3Pnts2->LineEdit1 )   myPoint1 = aSelectedObject;
       else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 )   myPoint2 = aSelectedObject;
       else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 )   myPoint3 = aSelectedObject;
@@ -300,32 +324,13 @@ void BasicGUI_ArcDlg::LineEditReturnPressed()
 void BasicGUI_ArcDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  // myGeomGUI->SetState( 0 );
-  globalSelection( GEOM_POINT );
-
-  myEditCurrentArgument = Group3Pnts->LineEdit1;
-  myEditCurrentArgument->setFocus();
-
-  Group3Pnts->LineEdit1->setText( "" );
-  Group3Pnts->LineEdit2->setText( "" );
-  Group3Pnts->LineEdit3->setText( "" );
-  myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
+  connect( myGeomGUI->getApp()->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ),
+	   this,
+	   SLOT(SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
-  
-}
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  : public slot to deactivate if active
-//=================================================================================
-void BasicGUI_ArcDlg::DeactivateActiveDialog()
-{
-  // myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 //=================================================================================
@@ -401,39 +406,42 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
 }
 
 //=================================================================================
-// function : closeEvent
-// purpose  :
-//=================================================================================
-void BasicGUI_ArcDlg::closeEvent( QCloseEvent* e )
-{
-  GEOMBase_Skeleton::closeEvent( e );
-}
-
-//=================================================================================
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
 void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
 {
-  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
+  disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
 
   switch ( constructorId ) {
   case 0:
     {
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX ); //Select Vertex on All Shapes
+
       Group3Pnts2->hide();
       Group3Pnts->show();
 
-      connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	       SIGNAL(currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+      Group3Pnts->LineEdit1->setText( Group3Pnts2->LineEdit1->text() );
+      Group3Pnts->LineEdit2->setText( Group3Pnts2->LineEdit2->text() );
+      Group3Pnts->LineEdit3->setText( Group3Pnts2->LineEdit3->text() );
+
+      myEditCurrentArgument = Group3Pnts->LineEdit1;
       break;
     }
   case 1:
     {
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX ); //Select Vertex on All Shapes
+
       Group3Pnts->hide();
       Group3Pnts2->show();
-      connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),          
-	       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+
+      Group3Pnts2->LineEdit1->setText( Group3Pnts->LineEdit1->text() );
+      Group3Pnts2->LineEdit2->setText( Group3Pnts->LineEdit2->text() );
+      Group3Pnts2->LineEdit3->setText( Group3Pnts->LineEdit3->text() );
       
+      myEditCurrentArgument = Group3Pnts2->LineEdit1;
       break;
     }
   }
@@ -441,6 +449,13 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
   qApp->processEvents();
   updateGeometry();
   resize( minimumSize() );
+
+  myEditCurrentArgument->setFocus();
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
+
+  if ( CORBA::is_nil( myPoint1 ) )
+    SelectionIntoArgument();
 
   displayPreview();
 }
@@ -452,4 +467,27 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
 void BasicGUI_ArcDlg::ReverseSense()
 {
   displayPreview();
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BasicGUI_ArcDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+  switch ( getConstructorId() ) {
+  case 0:
+    objMap[Group3Pnts->LineEdit1->text()] = myPoint1;
+    objMap[Group3Pnts->LineEdit2->text()] = myPoint2;
+    objMap[Group3Pnts->LineEdit3->text()] = myPoint3;
+    break;
+  case 1:
+    objMap[Group3Pnts2->LineEdit1->text()] = myPoint1;
+    objMap[Group3Pnts2->LineEdit2->text()] = myPoint2;
+    objMap[Group3Pnts2->LineEdit3->text()] = myPoint3;
+    break;
+  }
+  addSubshapesToFather( objMap );
 }

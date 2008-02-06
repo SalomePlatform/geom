@@ -282,22 +282,22 @@ void EntityGUI_SketcherDlg::Init()
   myLastX2 = 0.0;
   myLastY2 = 0.0;
 
-  myHelpFileName = "sketcher.htm";
+  myHelpFileName = "create_sketcher_page.html";
 
   /* Get setting of step value from file configuration */
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( Group1Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 );
-  initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 );
-  initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
-  initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 );
-  initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
-  initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 );
-  initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, 3 );
-  initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, 3 );
-  initSpinBox( Group4Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 );
-  initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, 5., 3 );
+  initSpinBox( Group1Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group4Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
 
   /* displays Dialog */
   MainWidget->GroupConstructors->setEnabled( false );
@@ -394,8 +394,8 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
   if ( myConstructorId == 0 ) {  // SEGMENT
     if ( constructorId == 1 ) {  // XY
       mySketchType = PT_ABS;
-      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 );
-      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
+      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
       Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X2" ) );
       Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y2" ) );
       myX = 0.0;
@@ -409,8 +409,8 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
     }
     else if ( constructorId == 0 ) {  // DXDY
       mySketchType = PT_RELATIVE;
-      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 );
-      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
+      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
       Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_DX2" ) );
       Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_DY2" ) );
       myDX = 0.0;
@@ -464,8 +464,8 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
     myY = 0.0;
     myLength = 100.0;
     if ( myConstructorDirId == 2 ) {  // Angle
-      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 5., 3 );
-      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
+      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
       Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
       Group2Spin->SpinBox_DX->setValue( myAngle );
       Group2Spin->buttonApply->setFocus();
@@ -528,9 +528,9 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
       }
     }
     else if ( myConstructorDirId == 3 ) {  // DXDY
-      initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, 3 );
-      initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, 3 );
-      initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 );
+      initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
       Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_VX2" ) );
       Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_VY2" ) );
       myDX = 0.0;
@@ -561,9 +561,9 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
     if ( myConstructorDirId == 2 ) {  // Angle
       if ( constructorId == 2 ) {  // Length
 	mySketchType = DIR_ANGLE_LENGTH;
-	initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 5., 3 );
-	initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
-	initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, 5., 3 );
+	initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+	initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+	initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
 	Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
 	Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
 	Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_ANGLE2" ));
@@ -579,8 +579,8 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
     else if ( myConstructorDirId == 0 ) {  // Perpendicular
       if ( constructorId == 2 ) {  // Length
 	mySketchType = DIR_PER_LENGTH;
-	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
-	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., 3 );
+	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
 	Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
 	Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
 	myRadius = 100.0;
@@ -594,8 +594,8 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
     else if ( myConstructorDirId == 1 ) {  // Tangent
       if ( constructorId == 2 ) {  // Length
 	mySketchType = DIR_TAN_LENGTH;
-	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 );
-	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., 3 );
+	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
 	Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
 	Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
 	myRadius = 100.0;
@@ -667,8 +667,17 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
     if ( myShape.ShapeType() != TopAbs_VERTEX )
       myCommand.append( ":WW" );
   }
-  else
+  else {
+    // PAL16008 (Sketcher Validation should be equal to Apply&Close)
+    if ( Group1Spin->buttonApply->isEnabled() && Group1Spin->isVisible() ||
+	 Group2Spin->buttonApply->isEnabled() && Group2Spin->isVisible() ||
+	 Group3Spin->buttonApply->isEnabled() && Group3Spin->isVisible() ||
+	 Group4Spin->buttonApply->isEnabled() && Group4Spin->isVisible() ||
+	 Group1Sel ->buttonApply->isEnabled() && Group1Sel->isVisible() ) {
+      ClickOnApply();
+    }
     myIsAllAdded = true;
+  }
 
   if ( myCommand.size() > 2 )
     if ( !onAccept() )
@@ -683,7 +692,8 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
 //=================================================================================
 bool EntityGUI_SketcherDlg::ClickOnApply()
 {
-  ((QPushButton*)sender())->setFocus(); // to update value of currently edited spin-box (PAL11948)
+  if ( sender() && sender()->inherits( "QPushButton" ) )
+    ( (QPushButton*)sender() )->setFocus(); // to update value of currently edited spin-box (PAL11948)
 
   myCommand.append( GetNewCommand() );
   mySketchState = NEXT_POINT;
@@ -1003,6 +1013,58 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     vs = Group4Spin->SpinBox_DS->value();
   }
   else if ( send == Group4Spin->SpinBox_DS ) {
+    vx = Group4Spin->SpinBox_DX->value();
+    vy = Group4Spin->SpinBox_DY->value();
+    vz = Group4Spin->SpinBox_DZ->value();
+    vs = newValue;
+  }
+  // NPAL16010 (Sketcher Apply non available if only one line is modified)
+  // if ValueChangedInSpinBox() called from eventFilter()
+  else if ( Group1Spin->SpinBox_DX->hasFocus() ) {
+    vx = newValue;
+  }
+  else if ( Group2Spin->SpinBox_DX ->hasFocus() ) {
+    vx = newValue;
+    vy = Group2Spin->SpinBox_DY->value();
+  }
+  else if ( Group2Spin->SpinBox_DY->hasFocus() ) {
+    vx = Group2Spin->SpinBox_DX->value();
+    vy = newValue;
+  }
+  else if ( Group3Spin->SpinBox_DX->hasFocus() ) {
+    vx = newValue;
+    vy = Group3Spin->SpinBox_DY->value();
+    vz = Group3Spin->SpinBox_DZ->value();
+  }
+  else if ( Group3Spin->SpinBox_DY->hasFocus() ) {
+    vx = Group3Spin->SpinBox_DX->value();
+    vy = newValue;
+    vz = Group3Spin->SpinBox_DZ->value();
+  }
+  else if ( Group3Spin->SpinBox_DZ->hasFocus() ) {
+    vx = Group3Spin->SpinBox_DX->value();
+    vy = Group3Spin->SpinBox_DY->value();
+    vz = newValue;
+  }
+  else if ( Group4Spin->SpinBox_DX->hasFocus() ) {
+    vx = newValue;
+    vy = Group4Spin->SpinBox_DY->value();
+    vz = Group4Spin->SpinBox_DZ->value();
+    vs = Group4Spin->SpinBox_DS->value();
+  }
+  else if ( Group4Spin->SpinBox_DY->hasFocus() ) {
+    vx = Group4Spin->SpinBox_DX->value();
+    vy = newValue;
+    vz = Group4Spin->SpinBox_DZ->value();
+    vs = Group4Spin->SpinBox_DS->value();
+  }
+  else if ( Group4Spin->SpinBox_DZ->hasFocus() ) {
+    vx = Group4Spin->SpinBox_DX->value();
+    vy = Group4Spin->SpinBox_DY->value();
+    vz = newValue;
+    vs = Group4Spin->SpinBox_DS->value();
+  }
+  else if ( Group4Spin->SpinBox_DS->hasFocus() ) {
     vx = Group4Spin->SpinBox_DX->value();
     vy = Group4Spin->SpinBox_DY->value();
     vz = Group4Spin->SpinBox_DZ->value();

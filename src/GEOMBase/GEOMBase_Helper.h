@@ -34,6 +34,7 @@
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 
 #include <QString>
+#include <QMap>
 
 #include <list>
 
@@ -171,6 +172,12 @@ protected:
   // as a top-level object.
 
   virtual const char* getNewObjectName() const; 
+  virtual void addSubshapesToStudy();
+
+  GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, const QString& theName );
+  //This Metod to find SubObject in theFather Object by Name (theName)
+
+  void addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>& theMap );
 
   void SetIsPreview(const bool thePreview) {isPreview = thePreview;}
   bool IsPreview() {return isPreview;}

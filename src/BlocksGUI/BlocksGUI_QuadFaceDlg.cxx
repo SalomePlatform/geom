@@ -89,7 +89,7 @@ BlocksGUI_QuadFaceDlg::BlocksGUI_QuadFaceDlg( GeometryGUI* theGeometryGUI, QWidg
 
   /***************************************************************/
 
-  setHelpFileName( "newentity_blocks.htm#QuadrangleFace" );
+  setHelpFileName( "build_by_blocks_page.html#quad_face_anchor" );
 
   Init();
 }

@@ -41,6 +41,7 @@
 #include <Poly_Triangle.hxx>
 #include <Poly_PolygonOnTriangulation.hxx>
 #include <Poly_Triangulation.hxx>
+#include <Poly_Polygon3D.hxx>
 
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
@@ -70,6 +71,7 @@
 
 #include <GEOMAlgo_SurfaceTools.hxx>
 #include <GEOMAlgo_StateCollector.hxx>
+#include <GEOMAlgo_FinderShapeOn.hxx>
 
 #include <GEOMAlgo_PassKey.hxx>
 #include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
@@ -602,8 +604,11 @@
   //
   aTRF=BRep_Tool::Triangulation(aF, aLoc);
   if (aTRF.IsNull()) {
-    myErrorStatus=20; // no triangulation found
-    return;  
+    if (!GEOMAlgo_FinderShapeOn::BuildTriangulation(aF)) {
+      myErrorStatus=20; // no triangulation found
+      return;
+    }
+    aTRF=BRep_Tool::Triangulation(aF, aLoc);
   }
   //
   const gp_Trsf& aTrsf=aLoc.Transformation();
@@ -748,19 +753,35 @@
   aLP.Clear();
   BRep_Tool::PolygonOnTriangulation(aE, aPTE, aTRE, aLoc);
   if (aTRE.IsNull() || aPTE.IsNull()) {
-    myErrorStatus=20; // no triangulation found
-    return;  
+    Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(aE, aLoc);
+    if (aPE.IsNull()) {
+      if (!GEOMAlgo_FinderShapeOn::BuildTriangulation(aE)) {
+        myErrorStatus=20; // no triangulation found
+        return;
+      }
+      aPE = BRep_Tool::Polygon3D(aE, aLoc);
+    }
+    const gp_Trsf& aTrsf=aLoc.Transformation();
+    const TColgp_Array1OfPnt& aNodes=aPE->Nodes();
+    //
+    aNbNodes=aPE->NbNodes();
+    Standard_Integer low = aNodes.Lower(), up = aNodes.Upper();
+    for (j=low+1; j<up; ++j) {
+      aP=aNodes(j).Transformed(aTrsf);
+      aLP.Append(aP);
+    }
   }
-  //
-  const gp_Trsf& aTrsf=aLoc.Transformation();
-  const TColgp_Array1OfPnt& aNodes=aTRE->Nodes();
-  //
-  aNbNodes=aPTE->NbNodes();
-  const TColStd_Array1OfInteger& aInds=aPTE->Nodes();
-  for (j=2; j<aNbNodes; ++j) {
-    aIndex=aInds(j);
-    aP=aNodes(aIndex).Transformed(aTrsf);
-    aLP.Append(aP);
+  else {
+    const gp_Trsf& aTrsf=aLoc.Transformation();
+    const TColgp_Array1OfPnt& aNodes=aTRE->Nodes();
+    //
+    aNbNodes=aPTE->NbNodes();
+    const TColStd_Array1OfInteger& aInds=aPTE->Nodes();
+    for (j=2; j<aNbNodes; ++j) {
+      aIndex=aInds(j);
+      aP=aNodes(aIndex).Transformed(aTrsf);
+      aLP.Append(aP);
+    }
   }
   //
   aNb=aLP.Extent();
@@ -768,7 +789,6 @@
     // try to fill it yourself
     InnerPoints(aE, myNbPntsMin, aLP);
     aNb=aLP.Extent();
-    
   }
 }
 //=======================================================================
@@ -818,4 +838,3 @@
 // 30- can not obtain the line from the link
 // 40- point can not be classified
 // 41- invalid data for classifier
-

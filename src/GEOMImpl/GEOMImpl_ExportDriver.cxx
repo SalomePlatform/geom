@@ -28,9 +28,7 @@
 #include <TopoDS_Shape.hxx>
 #include <TCollection_AsciiString.hxx>
 
-#include <Standard_ConstructionError.hxx>
-
-#include <NCollection_DataMap.hxx>
+#include <Standard_Failure.hxx>
 
 #ifdef WNT
 #include <windows.h>
@@ -106,14 +104,20 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(TFunction_Logbook& log) const
   if ( anExportLib )
     fp = (funcPoint)GetProc( anExportLib, "Export" );
 
-  if ( !fp )
-    return 0;
+  if ( !fp ) {
+    TCollection_AsciiString aMsg = aFormatName;
+    aMsg += " plugin was not installed";
+    Standard_Failure::Raise(aMsg.ToCString());
+  }
 
   // perform the export
   int res = fp( aShape, aFileName, aFormatName );
 
   // unload plugin library
-  //UnLoadLib( anExportLib );
+  // commented by enk:
+  // the bug was occured: using ACIS Import/Export plugin
+  // UnLoadLib( anExportLib );
+
   if ( res )
     log.SetTouched(Label()); 
 

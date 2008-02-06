@@ -32,9 +32,11 @@ GEOM_en.xml \
 GEOM_fr.xml \
 GEOM.config \
 SalomeApp.xml \
+Plugin \
 GEOMDS_Resources \
 ImportExport \
 ShHealing \
+angle.png \
 arc.png \
 archimede.png \
 axisinertia.png \
@@ -54,11 +56,13 @@ chamfer.png \
 chamferall.png \
 chamferedge.png \
 chamferface.png \
+chamferedgefromface.png \
 change_orientation.png \
 check.png \
 circle.png \
 circlepointvector.png \
 circle3points.png \
+circlecenter2pnts.png \
 common.png \
 cone.png \
 conedxyz.png \
@@ -82,6 +86,7 @@ fuse.png \
 geometry.png \
 line.png \
 line2points.png \
+line2faces.png \
 lineedge.png \
 linepointvector.png \
 mindist.png \
@@ -95,6 +100,7 @@ multirotationsimple.png \
 multitranslation.png \
 multitranslationdouble.png \
 multitranslationsimple.png \
+normale.png \
 offset.png \
 orientation.png \
 partition.png \
@@ -112,6 +118,7 @@ planeworkingvector.png \
 planeworkingorigin.png \
 point2.png \
 pointonedge.png \
+point_line_intersection.png \
 polyline.png \
 prism.png \
 prism2.png \
@@ -190,6 +197,7 @@ propagate.png \
 redo.png \
 undo.png \
 arccenter.png \
-glue2.png
+glue2.png \
+remove_extra_edges.png
 
 nodist_salomeres_DATA = GEOMCatalog.xml

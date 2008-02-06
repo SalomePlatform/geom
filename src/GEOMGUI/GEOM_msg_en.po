@@ -65,6 +65,10 @@ msgstr "&Help"
 msgid "GEOM_BUT_EXPLODE"
 msgstr "&Explode"
 
+#NOT_FOUND_ANY error from some operations
+msgid "NOT_FOUND_ANY"
+msgstr "Not a single entity has been found"
+
 #
 #==============================================================================
 #
@@ -235,7 +239,7 @@ msgstr "Warning"
 
 #: GeometryGUI.cxx:3854
 msgid "GEOM_REALLY_DELETE"
-msgstr "Do you really want to delete object(s) ?"
+msgstr "Do you really want to delete this %1 object(s):"
 
 #
 #==============================================================================
@@ -301,6 +305,10 @@ msgstr "Points"
 msgid "GEOM_POINT_I"
 msgstr "Point %1"
 
+#Face i
+msgid "GEOM_FACE_I"
+msgstr "Face %1"
+
 #Arguments
 msgid "GEOM_ARGUMENTS"
 msgstr "Arguments"
@@ -313,6 +321,18 @@ msgstr "Center"
 msgid "GEOM_RADIUS"
 msgstr "Radius :"
 
+#Radius
+msgid "GEOM_CONSTANT_RADIUS"
+msgstr "Radius :"
+
+#Radius
+msgid "GEOM_R1"
+msgstr "R1 :"
+
+#Radius
+msgid "GEOM_R2"
+msgstr "R2 :"
+
 #Radius i
 msgid "GEOM_RADIUS_I"
 msgstr "Radius %1 :"
@@ -323,7 +343,7 @@ msgstr "Height :"
 
 #Length
 msgid "GEOM_LENGTH"
-msgstr "Length is :"
+msgstr "Length :"
 
 #Weight
 msgid "GEOM_WEIGHT"
@@ -340,6 +360,10 @@ msgstr "Coord. :"
 #Reverse
 msgid "GEOM_REVERSE"
 msgstr "Reverse"
+
+#Bothway
+msgid "GEOM_BOTHWAY"
+msgstr "Both Directions"
 
 #Reverse U
 msgid "GEOM_REVERSE_U"
@@ -576,6 +600,13 @@ msgstr "Bounding Box"
 msgid "GEOM_CMASS"
 msgstr "Center Of Mass"
 
+#Normal
+msgid "GEOM_NORMALE"
+msgstr "Normal To A Face"
+
+msgid "GEOM_VECTOR_NORMALE"
+msgstr "Vector_Normal"
+
 #Basic Properties
 msgid "GEOM_PROPERTIES"
 msgstr "Basic Properties"
@@ -658,6 +689,14 @@ msgstr "Face or LCS"
 #Line
 msgid "GEOM_LINE"
 msgstr "Line"
+
+#Line 1
+msgid "GEOM_LINE1"
+msgstr "Line 1"
+
+#Line 2
+msgid "GEOM_LINE2"
+msgstr "Line 2"
 
 #Plane
 msgid "GEOM_PLANE"
@@ -782,6 +821,10 @@ msgstr "D1 :"
 msgid "GEOM_D2"
 msgstr "D2 :"
 
+#D
+msgid "GEOM_D"
+msgstr "D :"
+
 #
 #==============================================================================
 #
@@ -827,6 +870,14 @@ msgid "GEOM_CHAMFER_EDGES"
 msgstr "Chamfer On Edges From Shape"
 
 #: GeometryGUI_ChamferDlg.cxx:58
+msgid "GEOM_CHAMFER_EDGE"
+msgstr "Chamfer On Selected Edges"
+
+#: GeometryGUI_ChamferDlg.cxx:58
+msgid "SELECTED_EDGE"
+msgstr "Selected Edges"
+
+#: GeometryGUI_ChamferDlg.cxx:58
 msgid "GEOM_CHAMFER_FACES"
 msgstr "Chamfer On Faces From Shape"
 
@@ -837,6 +888,10 @@ msgstr "Circle Construction"
 #: GeometryGUI_CenterMassDlg.cxx:77
 msgid "GEOM_CMASS_TITLE"
 msgstr "Center Of Mass Construction"
+
+#: GeometryGUI_NormaleDlg.cxx:57
+msgid "GEOM_NORMALE_TITLE"
+msgstr "Create Normal To A Face"
 
 msgid "GEOM_PLANE_SIZE"
 msgstr "Size of plane :"
@@ -877,6 +932,22 @@ msgstr "Minimun Distance Between Two Objects"
 msgid "GEOM_MINDIST_OBJ"
 msgstr "Objects And Results"
 
+#: GeometryGUI_AngleDlg.cxx:82
+msgid "GEOM_MEASURE_ANGLE_TITLE"
+msgstr "Angle Between Two Straight Edges/Lines/Vectors"
+
+#: GeometryGUI_AngleDlg.cxx:86
+msgid "GEOM_MEASURE_ANGLE_ANGLE"
+msgstr "Angle"
+
+#: GeometryGUI_AngleDlg.cxx:90
+msgid "GEOM_MEASURE_ANGLE_OBJ"
+msgstr "Objects And Results"
+
+#: GeometryGUI_AngleDlg.cxx:93
+msgid "GEOM_MEASURE_ANGLE_IS"
+msgstr "Angle in degrees :"
+
 #: GeometryGUI_EdgeDlg.cxx:47
 msgid "GEOM_EDGE_TITLE"
 msgstr "Create An Edge"
@@ -903,7 +974,7 @@ msgstr "Create A Face"
 
 #: GeometryGUI_FaceDlg.cxx:78
 msgid "GEOM_FACE_FFW"
-msgstr "Face from a closed wire and edge"
+msgstr "Face creation from wires and/or edges"
 
 #: GeometryGUI_FaceDlg.cxx:103
 msgid "GEOM_FACE_OPT"
@@ -1297,6 +1368,9 @@ msgstr "Parametric point"
 msgid "GEOM_REF_POINT"
 msgstr "Point with reference"
 
+msgid "GEOM_LINE_INTERSECTION"
+msgstr "Point On Lines Intersection"
+
 #
 #==============================================================================
 #
@@ -1311,6 +1385,9 @@ msgstr "\nShading"
 
 msgid "GEOM_RECONSTRUCTION_LIMIT"
 msgstr "Reconstruction Limit"
+
+msgid "GEOM_KEEP_NONLIMIT_SHAPES"
+msgstr "Keep nonlimit shapes"
 
 msgid "GEOM_SUPPRESS_RESULT"
 msgstr "Suppress Result"
@@ -1465,6 +1542,9 @@ msgstr "Chamfer can't be computed with %1 and %2"
 
 msgid "GEOM_3_POINTS"
 msgstr "3 points"
+
+msgid "GEOM_CENTER_2POINTS"
+msgstr "Center and two points"
 
 msgid "GEOM_POINT1"
 msgstr "Point 1"
@@ -1655,6 +1735,12 @@ msgstr "Change orientation"
 
 msgid "GEOM_CHANGE_ORIENTATION"
 msgstr "Objects to change orientation"
+
+msgid "GEOM_REMOVE_EXTRA_EDGES_TITLE"
+msgstr "Remove extra edges"
+
+msgid "GEOM_REMOVE_EXTRA_EDGES"
+msgstr "Object to remove extra edges"
 
 msgid "GEOM_BY_PARAMETER"
 msgstr "By parameter"
@@ -2017,6 +2103,9 @@ msgstr "SupressFaces"
 msgid "CHANGE_ORIENTATION_NEW_OBJ_NAME"
 msgstr "Invert"
 
+msgid "REMOVE_EXTRA_EDGES_NEW_OBJ_NAME"
+msgstr "NoExtraEdges"
+
 msgid "NON_GEOM_OBJECTS_SELECTED"
 msgstr "There are objects selected which do not belong to %1 component."
 
@@ -2331,7 +2420,7 @@ msgid "MEN_FACE"
 msgstr "Face"
 
 msgid "STB_FACE"
-msgstr "Build a face"
+msgstr "Build a face from wires and/or edges"
 
 msgid "TOP_SHELL"
 msgstr "Build a shell"
@@ -2651,6 +2740,15 @@ msgstr "Change orientation"
 msgid "STB_CHANGE_ORIENTATION"
 msgstr "Change orientation"
 
+msgid "TOP_REMOVE_EXTRA_EDGES"
+msgstr "Remove extra edges"
+
+msgid "MEN_REMOVE_EXTRA_EDGES"
+msgstr "Remove extra edges"
+
+msgid "STB_REMOVE_EXTRA_EDGES"
+msgstr "Remove extra edges"
+
 msgid "MEN_MEASURES"
 msgstr "Measures"
 
@@ -2681,6 +2779,15 @@ msgstr "Center of mass"
 msgid "STB_MASS_CENTER"
 msgstr "Compute center of mass"
 
+msgid "TOP_NORMALE"
+msgstr "Compute normal to a face"
+
+msgid "MEN_NORMALE"
+msgstr "Normal to a face"
+
+msgid "STB_NORMALE"
+msgstr "Compute normal to a face in a point (optional)"
+
 msgid "TOP_INERTIA"
 msgstr "Compute intertia"
 
@@ -2710,6 +2817,15 @@ msgstr "Min distance"
 
 msgid "STB_MIN_DIST"
 msgstr "Compute minimum distance"
+
+msgid "TOP_MEASURE_ANGLE"
+msgstr "Compute angle"
+
+msgid "MEN_MEASURE_ANGLE"
+msgstr "Angle"
+
+msgid "STB_MEASURE_ANGLE"
+msgstr "Compute angle between two lines or linear edges"
 
 msgid "TOP_TOLERANCE"
 msgstr "Compute tolerance"
@@ -2811,49 +2927,49 @@ msgid "STB_SHADING"
 msgstr "Shading"
 
 msgid "TOP_DISPLAY_ALL"
-msgstr "Display all"
+msgstr "Show all"
 
 msgid "MEN_DISPLAY_ALL"
-msgstr "Display all"
+msgstr "Show all"
 
 msgid "STB_DISPLAY_ALL"
-msgstr "Display all"
+msgstr "Show all"
 
 msgid "TOP_ERASE_ALL"
-msgstr "Erase all"
+msgstr "Hide all"
 
 msgid "MEN_ERASE_ALL"
-msgstr "Erase all"
+msgstr "Hide all"
 
 msgid "STB_ERASE_ALL"
-msgstr "Erase all"
+msgstr "Hide all"
 
 msgid "TOP_DISPLAY"
-msgstr "Display"
+msgstr "Show"
 
 msgid "MEN_DISPLAY"
-msgstr "Display"
+msgstr "Show"
 
 msgid "STB_DISPLAY"
-msgstr "Display"
+msgstr "Show object(s)"
 
 msgid "TOP_DISPLAY_ONLY"
-msgstr "Display only"
+msgstr "Show only"
 
 msgid "MEN_DISPLAY_ONLY"
-msgstr "Display only"
+msgstr "Show only"
 
 msgid "STB_DISPLAY_ONLY"
-msgstr "Display only"
+msgstr "Show only"
 
 msgid "TOP_ERASE"
-msgstr "Erase"
+msgstr "Hide"
 
 msgid "MEN_ERASE"
-msgstr "Erase"
+msgstr "Hide"
 
 msgid "STB_ERASE"
-msgstr "Erase"
+msgstr "Hide object(s)"
 
 msgid "TOP_POP_RENAME"
 msgstr "Rename"
@@ -2881,6 +2997,24 @@ msgstr "Shading"
 
 msgid "STB_POP_SHADING"
 msgstr "Shading"
+
+msgid "TOP_POP_AUTO_COLOR"
+msgstr "Auto color"
+
+msgid "MEN_POP_AUTO_COLOR"
+msgstr "Auto color"
+
+msgid "STB_POP_AUTO_COLOR"
+msgstr "Auto color"
+
+msgid "TOP_POP_DISABLE_AUTO_COLOR"
+msgstr "Disable auto color"
+
+msgid "MEN_POP_DISABLE_AUTO_COLOR"
+msgstr "Disable auto color"
+
+msgid "STB_POP_DISABLE_AUTO_COLOR"
+msgstr "Disable auto color"
 
 msgid "TOP_POP_COLOR"
 msgstr "Color"
@@ -2938,6 +3072,12 @@ msgstr "Rename"
 
 msgid "NAME_LBL"
 msgstr "Name: "
+
+msgid "GEOM_RESULT_NAME_GRP"
+msgstr "Result name"
+
+msgid "GEOM_RESULT_NAME_LBL"
+msgstr "Name"
 
 msgid "GEOM_ERR_GET_ENGINE"
 msgstr "Failed to obtain GEOM Engine component.  Reload Geometry module and try again."

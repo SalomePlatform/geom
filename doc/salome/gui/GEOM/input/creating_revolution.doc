@@ -1,0 +1,26 @@
+/*!
+
+\page create_revolution_page Revolution
+
+To create an extruded shape by \b Revolution in the <b>Main Menu</b>
+select <b>New Entity - > Generation  - > Revolution</b>
+
+\n To create an extruded shape by \b Revolution you need to define the
+source \b Object to rotate, the \b Axis of revolution and the \b Angle by which
+the \b Shape has to be rotated around the \b Axis (in degrees).
+\n The \b Result of the operation will be a GEOM_Object (edge, face, shell,
+solid or compsolid).
+
+\n <b>TUI Command:</b> <em>geompy.MakeRevolution(Shape, Axis, Angle).</em>
+\n <b>Arguments:</b> Name + 1 shape (vertex, edge, planar wire, face or shell) serving as base object + 1 vector (for direction) + 1 value (angle).
+
+\image html revolution.png
+
+<b>Example:</b>
+
+\image html revolutionsn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_revolution "Complex Geometric Objects".
+
+*/

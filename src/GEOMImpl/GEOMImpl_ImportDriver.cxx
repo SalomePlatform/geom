@@ -29,10 +29,8 @@
 
 #include <TopoDS_Shape.hxx>
 
-#include <Standard_ConstructionError.hxx>
+#include <Standard_Failure.hxx>
 #include <StdFail_NotDone.hxx>
-
-#include <NCollection_DataMap.hxx>
 
 #ifdef WNT
 #include <windows.h>
@@ -94,20 +92,25 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(TFunction_Logbook& log) const
   if (aFileName.IsEmpty() || aFormatName.IsEmpty() || aLibName.IsEmpty())
     return 0;
 
-  // load plugin library  
+  // load plugin library
   LibHandle anImportLib = LoadLib( aLibName.ToCString() ); //This is workaround of BUG OCC13051
   funcPoint fp = 0;
   if ( anImportLib )
     fp = (funcPoint)GetProc( anImportLib, "Import" );
 
-  if ( !fp )
-    return 0;
+  if ( !fp ) {
+    TCollection_AsciiString aMsg = aFormatName;
+    aMsg += " plugin was not installed";
+    Standard_Failure::Raise(aMsg.ToCString());
+  }
 
   // perform the import
   TCollection_AsciiString anError;
   TopoDS_Shape aShape = fp( aFileName, aFormatName, anError );
 
-  // unload plugin library  
+  // unload plugin library
+  // commented by enk:
+  // the bug was occured: using ACIS Import/Export plugin
   //UnLoadLib( anImportLib ); //This is workaround of BUG OCC13051
 
   if ( aShape.IsNull() ) {

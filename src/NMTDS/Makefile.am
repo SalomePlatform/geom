@@ -31,6 +31,7 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
 salomeinclude_HEADERS = \
+	Handle_NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger.hxx \
 	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInteger.hxx \
 	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx \
 	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx \
@@ -40,6 +41,9 @@ salomeinclude_HEADERS = \
 	Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean.hxx \
 	Handle_NMTDS_StdMapNodeOfMapOfPassKey.hxx \
 	NMTDS_CArray1OfIndexRange.hxx \
+	NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger.hxx \
+	NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger.hxx \
+	NMTDS_DataMapOfIntegerMapOfInteger.hxx \
 	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInteger.hxx \
 	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx \
 	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx \
@@ -47,7 +51,10 @@ salomeinclude_HEADERS = \
 	NMTDS_IndexedDataMapOfIntegerShape.hxx \
 	NMTDS_IndexedDataMapOfShapeBox.hxx \
 	NMTDS_IndexRange.hxx \
+	NMTDS_InterfPool.hxx \
+	NMTDS_InterfType.hxx \
 	NMTDS_Iterator.hxx \
+	NMTDS_IteratorCheckerSI.hxx \
 	NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx \
 	NMTDS_ListIteratorOfListOfPassKeyBoolean.hxx \
 	NMTDS_ListIteratorOfListOfPassKey.hxx \
@@ -62,12 +69,17 @@ salomeinclude_HEADERS = \
 	NMTDS_MapOfPassKeyBoolean.hxx  \
 	NMTDS_MapOfPassKey.hxx \
 	NMTDS_PassKeyBoolean.hxx \
+	NMTDS_PInterfPool.hxx \
+	NMTDS_PIterator.hxx \
 	NMTDS_PassKey.hxx \
 	NMTDS_PassKeyMapHasher.hxx \
+	NMTDS_PassKeyShape.hxx \
+	NMTDS_PassKeyShapeMapHasher.hxx \
 	NMTDS_PShapesDataStructure.hxx \
 	NMTDS_ShapesDataStructure.hxx \
 	NMTDS_StdMapNodeOfMapOfPassKeyBoolean.hxx \
 	NMTDS_StdMapNodeOfMapOfPassKey.hxx \
+	NMTDS_Tools.hxx \
 	NMTDS_BoxBndTree.hxx
 
 # Libraries targets
@@ -75,6 +87,9 @@ lib_LTLIBRARIES = libNMTDS.la
 
 dist_libNMTDS_la_SOURCES = \
 	NMTDS_CArray1OfIndexRange_0.cxx \
+	NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger_0.cxx \
+	NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger_0.cxx \
+	NMTDS_DataMapOfIntegerMapOfInteger_0.cxx \
 	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInteger_0.cxx \
 	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape_0.cxx \
 	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox_0.cxx \
@@ -82,7 +97,9 @@ dist_libNMTDS_la_SOURCES = \
 	NMTDS_IndexedDataMapOfIntegerShape_0.cxx  \
 	NMTDS_IndexedDataMapOfShapeBox_0.cxx \
 	NMTDS_IndexRange.cxx \
+	NMTDS_InterfPool.cxx \
 	NMTDS_Iterator.cxx \
+	NMTDS_IteratorCheckerSI.cxx \
 	NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors_0.cxx  \
 	NMTDS_ListIteratorOfListOfPassKey_0.cxx  \
 	NMTDS_ListIteratorOfListOfPassKeyBoolean_0.cxx \
@@ -99,9 +116,12 @@ dist_libNMTDS_la_SOURCES = \
 	NMTDS_PassKeyBoolean.cxx \
 	NMTDS_PassKey.cxx \
 	NMTDS_PassKeyMapHasher.cxx \
+	NMTDS_PassKeyShape.cxx \
+	NMTDS_PassKeyShapeMapHasher.cxx \
 	NMTDS_ShapesDataStructure.cxx \
 	NMTDS_StdMapNodeOfMapOfPassKey_0.cxx \
 	NMTDS_StdMapNodeOfMapOfPassKeyBoolean_0.cxx \
+	NMTDS_Tools.cxx \
 	NMTDS_BoxBndTree.cxx
 
 # additionnal information to compil and link file

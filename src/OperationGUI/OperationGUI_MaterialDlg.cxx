@@ -76,7 +76,7 @@ OperationGUI_MaterialDlg::OperationGUI_MaterialDlg( GeometryGUI* theGeometryGUI,
   layout->addWidget( GroupPoints );
   /***************************************************************/
 
-  setHelpFileName( "partition.htm" ); 
+  setHelpFileName("partition_page.html"); 
 
   Init();
 }

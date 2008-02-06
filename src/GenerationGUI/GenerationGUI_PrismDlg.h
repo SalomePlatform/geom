@@ -28,8 +28,8 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_3Sel;
 class DlgRef_2Sel1Spin2Check;
+class DlgRef_3Sel1Check;
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg
@@ -48,6 +48,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );    
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
@@ -63,9 +64,11 @@ private:
   bool                               myOkVec;
   bool                               myOkPnt1;
   bool                               myOkPnt2;
+  bool                               myBothway;
+  bool                               myBothway2;
   
   DlgRef_2Sel1Spin2Check*            GroupPoints;
-  DlgRef_3Sel*                       GroupPoints2; // for second layout for extrusion using 2 points
+  DlgRef_3Sel1Check*                 GroupPoints2; // for second layout for extrusion using 2 points
   
 private slots:
   void                               ClickOnOk();
@@ -77,6 +80,8 @@ private slots:
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox();
   void                               onReverse();
+  void                               onBothway();
+  void                               onBothway2();
 };
 
 #endif // GENERATIONGUI_PRISMDLG_H

@@ -120,7 +120,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* pare
 
   /***************************************************************/
 
-  setHelpFileName( "glue_faces.htm" );
+  setHelpFileName( "glue_faces_operation_page.html" );
   
   // Disable second way of gluing if OCC viewer is not active one
   if ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
@@ -358,16 +358,6 @@ void RepairGUI_GlueDlg::enterEvent( QEvent* )
     ActivateThisDialog();
 }
 
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void RepairGUI_GlueDlg::closeEvent( QCloseEvent* e )
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
-}
-
 
 //=================================================================================
 // function : createOperation
@@ -397,63 +387,65 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
   objects.clear();
 
   switch ( getConstructorId() ) {
-  case 0 :
+  case 0:
     {
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow
-        ( getOperation() )->MakeGlueFaces( myObject, myTolEdt2->value() );
+        ( getOperation() )->MakeGlueFaces( myObject, myTolEdt2->value(), true );
       aResult = !anObj->_is_nil();
       if ( aResult )
-	objects.push_back( anObj._retn() );
+        objects.push_back( anObj._retn() );
       break;
     }
-  case 1 :
-    if ( IsPreview() ) {
-      // if this method is used for displaying preview then we must detect glue faces only
+  case 1:
+    {
+      if ( IsPreview() ) {
+        // if this method is used for displaying preview then we must detect glue faces only
+        ObjectList::iterator anIter;
+        for ( anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter )
+          objects.push_back( GEOM::GEOM_Object::_duplicate( *anIter ) );
+        return myTmpObjs.size() ? true : false;
+      } // IsPreview
+
+      // Make glue face by list.
+      // Iterate through myTmpObjs and verifies where each object is currently selected or not.
+      QMap<QString, char> selected;
+
+      // Get names of selected objects
+      SALOME_ListIteratorOfListIO it ( selectedIO() );
+      for ( ; it.More(); it.Next() ) 
+        selected.insert( it.Value()->getName(), 0 );
+
+      // Iterate through result and select objects with names from selection
+      // ObjectList toRemoveFromEnggine;
+      ObjectList toGlue;
       ObjectList::iterator anIter;
-      for (anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter)
-	objects.push_back( GEOM::GEOM_Object::_duplicate( *anIter ) );
-      return myTmpObjs.size() ? true : false;
-    } // IsPreview
-    
-    // Make glue face by list.
-    // Iterate through myTmpObjs and verifies where each object is currently selected or not.
-    QMap<QString, char> selected;
-    
-    // Get names of selected objects
-    SALOME_ListIteratorOfListIO it ( selectedIO() );
-    for ( ; it.More(); it.Next() ) 
-      selected.insert( it.Value()->getName(), 0 );
-    
-    // Iterate through result and select objects with names from selection
-    // ObjectList toRemoveFromEnggine;
-    ObjectList toGlue;
-    ObjectList::iterator anIter;
-    for ( anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter ) {
-      if ( selected.contains( myGeomGUI->getApp()->orb()->object_to_string(*anIter) ) )
-	toGlue.push_back(*anIter);
-    }
-          
-    // make glue faces
-    GEOM::ListOfGO_var aListForGlue = new GEOM::ListOfGO();
-    aListForGlue->length( toGlue.size() );
-    ObjectList::iterator anIter3 = toGlue.begin();
-    for ( int i = 0; anIter3 != toGlue.end(); ++anIter3, ++i )
-      aListForGlue[ i ] = *anIter3;
-    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow
-      ( getOperation() )->MakeGlueFacesByList( myObject, myTolEdt2->value(), aListForGlue );
-        
-    aResult = !anObj->_is_nil();
-    
-    if ( aResult )
-      objects.push_back( anObj._retn() );
-    
-    // Remove from engine useless objects        
-    clearTemporary();
-    
-    updateButtonState();
-    
-    break;
-  } // case
+      for ( anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter ) {
+        if ( selected.contains( myGeomGUI->getApp()->orb()->object_to_string(*anIter) ) )
+          toGlue.push_back( *anIter );
+      }
+      
+      // make glue faces
+      GEOM::ListOfGO_var aListForGlue = new GEOM::ListOfGO();
+      aListForGlue->length( toGlue.size() );
+      ObjectList::iterator anIter3 = toGlue.begin();
+      for ( int i = 0; anIter3 != toGlue.end(); ++anIter3, ++i )
+        aListForGlue[ i ] = *anIter3;
+      GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow
+        ( getOperation() )->MakeGlueFacesByList( myObject, myTolEdt2->value(), aListForGlue, true );
+
+      aResult = !anObj->_is_nil();
+
+      if ( aResult )
+        objects.push_back( anObj._retn() );
+
+      // Remove from engine useless objects
+      clearTemporary();
+
+      updateButtonState();
+
+      break;
+    } // case 1
+  } // switch
 
   return aResult;
 }

@@ -1,0 +1,38 @@
+/*!
+
+\page create_face_page Face
+
+To create a \b Face in the <b>Main Menu</b> select <b>New Entity - >
+Build - > Face</b>
+
+\n To create a \b Face you need to select input shape(s). The list of
+input shapes can include shapes of any type; if the shapes are nor
+wires or edges, the algorithm extracts all edges from
+the input shapes and works on the obtaineed edges.
+\n The edges and wires do not necessarily have to be closed, the
+algorithm automatically builds a wire of maximum length from all
+given edges and wires. If it founds multiple closed wires, it can
+build a face with holes or some separate faces, depending on the
+placement of the wires. If some resulting wires remain open, they will
+be added in the resulting compound "as is".
+\n Check <b>Try to create a planar face</b> to create a planar
+face or nothing if it is impossible.
+\n The \b Result will be a \b GEOM_Object (FACE).
+
+\n <b>TUI Command:</b> <em>geompy.MakeFaceWires([list of Shapes], isPlanarWanted)</em>
+\n <b>Arguments:</b> Name + 1 wire.
+
+\image html neo-obj4.png
+
+\n <b>Example:</b>
+
+\image html facesn1.png
+
+\image html facesn2.png
+
+\image html facesn3.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_face "Advanced Geometric Objects".
+
+*/

@@ -1,0 +1,36 @@
+/*!
+
+\page add_point_on_edge_operation_page Add Point on Edge
+
+\n To <b>Add Point on Edge</b> in the <b>Main Menu</b> select
+<b>Repair - > Add Point on Edge</b>.
+
+\n This operation splits an edge in two in accordance with the
+specified mode (by length or by parameter) and a value specifying the
+position of the point on edge (for example val =0.5; mode =
+Length). This operation is available in <b>OCC Viewer</b> only.
+
+\n The \b Result will be a \b GEOM_Object.
+
+\n <b>TUI Command:</b> <em>geompy.DivideEdge(Shape, EdgeID, Value,
+IsByParameter), </em> where \em Shape is a shape which contains an edge to
+be divided, \em EdgeID is the ID of the edge to be divided, if it = -1,
+then Shape is an edge, \em Value is a paramter on the edge or a
+length. \em IsByParameter if it is True then Value is the edge parameter
+in the range [0:1] otherwise it is a part of the length of the edge in the range
+[0: full length of the edge]
+\n <b>Arguments:</b> Name + 1 Edge + 1 value setting the position of
+the point according to one of the selected modes.
+
+\image html repair8.png
+
+\n <b>Example:</b>
+
+\image html image167.jpg
+
+\image html image168.jpg
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of 
+\ref tui_add_point_on_edge "Repairing Operations".
+
+*/

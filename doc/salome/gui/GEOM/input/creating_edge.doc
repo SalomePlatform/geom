@@ -1,0 +1,26 @@
+/*!
+
+\page create_edge_page Edge
+
+\n To create an \b Edge in the <b>Main Menu</b> select <b>New Entity- > Build - > Edge</b> 
+
+\n You can create an \b Edge from two points (\b Point1 and \b Point2), being the first and the last vertices of the edge.
+
+The \b Result  will be a \b GEOM_Object (EDGE).
+
+<b>TUI Command:</b> <em>geompy.MakeEdge(Vertex1, Vertex2),</em> where
+Vertex1 and Vertex2 are correspondingly the first and the last vertex
+of the edge.
+
+<b>Arguments:</b> Name + 2 vertices.
+
+\image html neo-obj2.png
+
+\n <b>Example:</b>
+
+\image html edgesn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_edge "Advanced Geometric Objects".
+
+*/

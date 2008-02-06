@@ -49,7 +49,7 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
   
-  virtual void                       closeEvent( QCloseEvent* );    
+  virtual void                       addSubshapesToStudy();
   
 private:
   void                               Init();
@@ -57,10 +57,11 @@ private:
   double                             getRadius() const;
 
 private:
-  GEOM::GEOM_Object_var              myPoint, myDir, myPoint1, myPoint2, myPoint3;
+  GEOM::GEOM_Object_var              myPoint, myDir, myPoint1, myPoint2, myPoint3, myPoint4, myPoint5, myPoint6;
 
   DlgRef_2Sel1Spin*                  GroupPntVecR;
   DlgRef_3Sel*                       Group3Pnts;
+  DlgRef_3Sel*                       GroupCenter2Pnts;
 
 private slots:
   void                               ClickOnOk();

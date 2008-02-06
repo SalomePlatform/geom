@@ -31,9 +31,11 @@
 
 #include "MeasureGUI_PropertiesDlg.h"    // Method PROPERTIES
 #include "MeasureGUI_CenterMassDlg.h"    // Method CENTER MASS
+#include "MeasureGUI_NormaleDlg.h"       // Method NORMALE
 #include "MeasureGUI_InertiaDlg.h"       // Method INERTIA
 #include "MeasureGUI_BndBoxDlg.h"        // Method BNDBOX
 #include "MeasureGUI_DistanceDlg.h"      // Method DISTANCE
+#include "MeasureGUI_AngleDlg.h"         // Method ANGLE
 #include "MeasureGUI_MaxToleranceDlg.h"  // Method MAXTOLERANCE
 #include "MeasureGUI_WhatisDlg.h"        // Method WHATIS
 #include "MeasureGUI_CheckShapeDlg.h"    // Method CHECKSHAPE
@@ -81,12 +83,18 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case 703:
     dlg = new MeasureGUI_InertiaDlg( getGeometryGUI(), parent );
     break; // INERTIA
+  case 704 : 
+    dlg = new MeasureGUI_NormaleDlg( getGeometryGUI(), parent );
+    break; // NORMALE
   case 7041:
     dlg = new MeasureGUI_BndBoxDlg( getGeometryGUI(), parent );
     break; // BOUNDING BOX
   case 7042:
     dlg = new MeasureGUI_DistanceDlg( getGeometryGUI(), parent );
     break; // MIN DISTANCE
+  case 7043: 
+    dlg = new MeasureGUI_AngleDlg( getGeometryGUI(), parent );
+    break; // ANGLE
   case 705: 
     dlg = new MeasureGUI_MaxToleranceDlg( getGeometryGUI(), parent );
     break; // MAXTOLERANCE

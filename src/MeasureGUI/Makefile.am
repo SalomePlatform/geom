@@ -38,9 +38,11 @@ dist_libMeasureGUI_la_SOURCES =			\
 	MeasureGUI_Skeleton.h			\
 	MeasureGUI_PropertiesDlg.h		\
 	MeasureGUI_CenterMassDlg.h		\
+	MeasureGUI_NormaleDlg.h			\
 	MeasureGUI_InertiaDlg.h			\
 	MeasureGUI_BndBoxDlg.h			\
 	MeasureGUI_DistanceDlg.h		\
+	MeasureGUI_AngleDlg.h			\
 	MeasureGUI_MaxToleranceDlg.h		\
 	MeasureGUI_WhatisDlg.h			\
 	MeasureGUI_CheckShapeDlg.h		\
@@ -52,9 +54,11 @@ dist_libMeasureGUI_la_SOURCES =			\
 	MeasureGUI_Skeleton.cxx			\
 	MeasureGUI_PropertiesDlg.cxx		\
 	MeasureGUI_CenterMassDlg.cxx		\
+	MeasureGUI_NormaleDlg.cxx		\
 	MeasureGUI_InertiaDlg.cxx		\
 	MeasureGUI_BndBoxDlg.cxx		\
 	MeasureGUI_DistanceDlg.cxx		\
+	MeasureGUI_AngleDlg.cxx			\
 	MeasureGUI_MaxToleranceDlg.cxx		\
 	MeasureGUI_WhatisDlg.cxx		\
 	MeasureGUI_CheckShapeDlg.cxx		\
@@ -66,9 +70,11 @@ MOC_FILES = 						\
 	MeasureGUI_Skeleton_moc.cxx			\
 	MeasureGUI_PropertiesDlg_moc.cxx		\
 	MeasureGUI_CenterMassDlg_moc.cxx		\
+	MeasureGUI_NormaleDlg_moc.cxx			\
 	MeasureGUI_InertiaDlg_moc.cxx			\
 	MeasureGUI_BndBoxDlg_moc.cxx			\
 	MeasureGUI_DistanceDlg_moc.cxx			\
+	MeasureGUI_AngleDlg_moc.cxx			\
 	MeasureGUI_MaxToleranceDlg_moc.cxx		\
 	MeasureGUI_WhatisDlg_moc.cxx			\
 	MeasureGUI_CheckShapeDlg_moc.cxx		\
@@ -86,6 +92,7 @@ UIC_FILES =						\
 	ui_MeasureGUI_1Sel3LineEdit_QTD.h		\
 	ui_MeasureGUI_1Sel6LineEdit_QTD.h		\
 	ui_MeasureGUI_2Sel1LineEdit_QTD.h		\
+	ui_MeasureGUI_2Sel4LineEdit_QTD.h		\
 	ui_MeasureGUI_SkeletonBox_QTD.h
 
 BUILT_SOURCES = $(UIC_FILES)

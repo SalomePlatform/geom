@@ -99,12 +99,20 @@
             <translation>chamferedge.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_CHAMFER_EDGE_FROM_FACE</source>
+            <translation>chamferedgefromface.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_CHAMFER_FACE</source>
             <translation>chamferface.png</translation>
         </message>
         <message>
             <source>ICON_DLG_CHANGE_ORIENTATION</source>
             <translation>change_orientation.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_REMOVE_EXTRA_EDGES</source>
+            <translation>remove_extra_edges.png</translation>
         </message>
         <message>
             <source>ICON_DLG_CHECKSHAPE</source>
@@ -121,6 +129,10 @@
         <message>
             <source>ICON_DLG_CIRCLE_PV</source>
             <translation>circlepointvector.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_CIRCLE_C2P</source>
+            <translation>circlecenter2pnts.png</translation>
         </message>
         <message>
             <source>ICON_DLG_CLOSECONTOUR</source>
@@ -205,6 +217,10 @@
         <message>
             <source>ICON_DLG_LINE_2P</source>
             <translation>line2points.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_LINE_2F</source>
+            <translation>line2faces.png</translation>
         </message>
         <message>
             <source>ICON_DLG_LINE_EDGE</source>
@@ -303,12 +319,24 @@
             <translation>point3.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_POINT_LINES</source>
+            <translation>point_line_intersection.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_POLYLINE</source>
             <translation>polyline.png</translation>
         </message>
         <message>
             <source>ICON_DLG_POSITION</source>
             <translation>position.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_NORMALE</source>
+            <translation>normale.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_ANGLE</source>
+            <translation>angle.png</translation>
         </message>
         <message>
             <source>ICON_DLG_POSITION2</source>
@@ -757,6 +785,18 @@
         <message>
             <source>ICO_PLANE</source>
             <translation>plane.png</translation>
+        </message>
+        <message>
+            <source>ICO_REMOVE_EXTRA_EDGES</source>
+            <translation>remove_extra_edges.png</translation>
+        </message>
+        <message>
+            <source>ICO_NORMALE</source>
+            <translation>normale.png</translation>
+        </message>
+        <message>
+            <source>ICO_MEASURE_ANGLE</source>
+            <translation>angle.png</translation>
         </message>
         <message>
             <source>ICO_POINT</source>

@@ -72,7 +72,7 @@ BuildGUI_SolidDlg::BuildGUI_SolidDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   layout->addWidget( GroupSolid );
   /***************************************************************/
 
-  setHelpFileName( "solid.htm" );
+  setHelpFileName("create_solid_page.html");
 
   /* Initialisations */
   Init();

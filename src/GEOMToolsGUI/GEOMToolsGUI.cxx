@@ -24,6 +24,7 @@
 //
 
 #include "GEOMToolsGUI.h"
+#include "GEOMToolsGUI_DeleteDlg.h"
 
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
@@ -67,14 +68,19 @@ typedef QMap<QString, QString> FilterMap;
 static QString getFileName( QWidget*           parent,
 			    const QString&     initial,
 			    const FilterMap&   filterMap,
+                            const QStringList& filters,
 			    const QString&     caption,
 			    bool               open,
 			    QString&           format )
 {
   static QString lastUsedFilter;
-  QStringList filters;
-  for ( FilterMap::const_iterator it = filterMap.begin(); it != filterMap.end(); ++it )
-    filters.push_back( it.key() );
+  //QStringList filters;
+  QString aBrepFilter;
+  for ( FilterMap::const_iterator it = filterMap.begin(); it != filterMap.end(); ++it ) {
+    //filters.push_back( it.key() );
+    if ( it.key().contains( "BREP", Qt::CaseInsensitive ) )
+      aBrepFilter = it.key();
+  }
 
   SUIT_FileDlg* fd = new SUIT_FileDlg( parent, open, true, true );
   if ( !caption.isEmpty() )
@@ -83,8 +89,14 @@ static QString getFileName( QWidget*           parent,
   if ( !initial.isEmpty() )
     fd->selectFile( initial );
 
-  if ( !lastUsedFilter.isEmpty() && filterMap.contains( lastUsedFilter ) )
+  fd->setFilters( filters );
+  
+  if ( !lastUsedFilter.isEmpty() && filterMap.contains( lastUsedFilter ) ) {
     fd->selectFilter( lastUsedFilter );
+  }
+  else if ( !aBrepFilter.isEmpty() ) {
+    fd->selectFilter( aBrepFilter );
+  }
 
   fd->setFilters( filters );
 
@@ -230,6 +242,16 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 	OnNbIsos();
 	break;
       }
+    case 8035: // AUTO COLOR - POPUP VIEWER
+      {
+	OnAutoColor();
+	break;
+      }
+    case 8036: // DISABLE AUTO COLOR - POPUP VIEWER
+      {
+	OnDisableAutoColor();
+	break;
+      }
     case 9024 : // OPEN - OBJBROSER POPUP
       {
 	OnOpen();
@@ -275,7 +297,7 @@ void GEOMToolsGUI::OnEditDelete()
 	// VSR 17/11/04: check if all objects selected belong to GEOM component --> start
 	// modifications of ASV 01.06.05
 	QString parentComp = getParentComponent( aStudy, selected );
-  CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
+	CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
 	QString geomComp = getParentComponent( aStudy->FindObjectIOR( geomIOR.in() ) );
 
 	if ( parentComp != geomComp )  {
@@ -287,11 +309,27 @@ void GEOMToolsGUI::OnEditDelete()
 	}
 	// VSR 17/11/04: check if all objects selected belong to GEOM component <-- finish
 
-	if ( SUIT_MessageBox::warning( app->desktop(),
-				       QObject::tr( "GEOM_WRN_WARNING" ),
-				       QObject::tr( "GEOM_REALLY_DELETE" ),
-				       QObject::tr( "GEOM_BUT_YES" ),
-				       QObject::tr( "GEOM_BUT_NO" ), 1 ) != 0 )
+	QStringList aNameList;
+	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+	  Handle(SALOME_InteractiveObject) anIObject = It.Value();
+	  QString aName = anIObject->getName();
+	  if ( aName != "" && aName[ 0 ] != '*' ) {
+	    aNameList.append( aName );
+	  
+	    _PTR(SObject) obj ( aStudy->FindObjectID( anIObject->getEntry() ) );
+	    _PTR(ChildIterator) it ( aStudy->NewChildIterator( obj ) );
+	    for ( it->InitEx( true ); it->More(); it->Next() ) {
+	      _PTR(SObject) child( it->Value() );
+	      QString aName = child->GetName().c_str();
+	      if ( aName != "" && aName[ 0 ] != '*' ) {
+		aNameList.append( aName );
+	      }
+	    }
+	  }
+	}
+
+	GEOMToolsGUI_DeleteDlg dlg( app->desktop(), aNameList );
+	if ( !dlg.exec() )
 	  return;
 
 	//	QAD_Operation* op = new SALOMEGUI_ImportOperation(.....);
@@ -347,7 +385,7 @@ void GEOMToolsGUI::OnEditDelete()
           RemoveObjectWithChildren(obj, aStudy, views, disp);
 
 	  // Remove objects from Study
-	  aStudyBuilder->RemoveObject( obj );
+	  aStudyBuilder->RemoveObjectWithChildren( obj );
 
 	  //deleted = true;
 	} // MAIN LOOP of selected
@@ -449,15 +487,18 @@ bool GEOMToolsGUI::Import()
 
   // Obtain a list of available import formats
   FilterMap aMap;
+  QStringList filters;
   GEOM::string_array_var aFormats, aPatterns;
   aInsOp->ImportTranslators( aFormats, aPatterns );
 
-  for ( int i = 0, n = aFormats->length(); i < n; i++ )
+  for ( int i = 0, n = aFormats->length(); i < n; i++ ) {
     aMap.insert( (char*)aPatterns[i], (char*)aFormats[i] );
+    filters.push_back( (char*)aPatterns[i] );
+  }
 
   QString fileType;
 
-  QString fileName = getFileName(app->desktop(), "", aMap,
+  QString fileName = getFileName(app->desktop(), "", aMap, filters,
                                  tr("GEOM_MEN_IMPORT"), true, fileType);
 
   if (fileType.isEmpty() )
@@ -554,10 +595,13 @@ bool GEOMToolsGUI::Export()
 
   // Obtain a list of available export formats
   FilterMap aMap;
+  QStringList filters;
   GEOM::string_array_var aFormats, aPatterns;
   aInsOp->ExportTranslators( aFormats, aPatterns );
-  for ( int i = 0, n = aFormats->length(); i < n; i++ )
+  for ( int i = 0, n = aFormats->length(); i < n; i++ ) {
     aMap.insert( (char*)aPatterns[i], (char*)aFormats[i] );
+    filters.push_back( (char*)aPatterns[i] );
+  }
 
   // Get selected objects
   LightApp_SelectionMgr* sm = app->selectionMgr();
@@ -577,7 +621,7 @@ bool GEOMToolsGUI::Export()
       continue;
 
     QString fileType;
-    QString file = getFileName(app->desktop(), QString( IObject->getName() ), aMap,
+    QString file = getFileName(app->desktop(), QString( IObject->getName() ), aMap, filters,
 			       tr("GEOM_MEN_EXPORT"), false, fileType);
 
     // User has pressed "Cancel" --> stop the operation

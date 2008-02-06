@@ -76,7 +76,7 @@ BlocksGUI_ExplodeDlg::BlocksGUI_ExplodeDlg( GeometryGUI* theGeometryGUI, QWidget
   layout->addWidget( myGrp1 );
   /***************************************************************/
 
-  setHelpFileName( "explode_on_blocks.htm" );
+  setHelpFileName( "explode_on_blocks_operation_page.html" );
 
   Init();
 }

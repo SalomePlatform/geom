@@ -1,0 +1,41 @@
+/*!
+
+\page create_cone_page Cone
+
+\n To create a \b Cone in the <b>Main Menu</b> select <b>New Entity - > Primitives - > Cone</b>
+
+\n There are two algorithms for creation of a \b Cone.
+\n The \b Result of each operation will be a GEOM_Object (SOLID).
+
+ 
+
+\n Firstly, you can define a \b Cone by the <b>Base Point</b> (the
+central point of the cone base), the \b Axis, the \b Height and the
+first and the second \b Radiuses.
+\n <b>TUI Command:</b> <em>geompy.MakeCone(Point, Axis, Radius1,
+Radius2, height)</em>
+\n <b>Arguments:</b> Name + 1 vertex + 1 vector (for direction) + 3
+values (Radius of the base part, radius of the upper part, height).
+
+\image html cone1.png
+
+\n Secondly, you can define a \b Cone with the center at the origin of
+coordinates by its \b Height and \b Radiuses. The \b Axis of the \b
+Cone will be collinear to the OZ axis of the coordinate system.
+\n <b>TUI Command:</b> <em>geompy.MakeConeR1R2H(Radius1, Radius2, Height)</em>
+\n <b>Arguments:</b> Name + 3 values (Radius of the base part, radius
+of the upper part, height).
+
+\image html cone2.png
+
+\note If both radiuses are non-zero, the \b Cone will be truncated. If
+the radiuses are equal, a \b Cylinder will be created instead.
+
+<b>Example:</b>
+
+\image html cones.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_cone "Primitives".
+
+*/

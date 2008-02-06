@@ -1,0 +1,41 @@
+/*!
+
+\page create_curve_page Curve
+
+To create a \b Curve in the <b>Main Menu</b> select <b>New Entity - >
+Basic - > Curve</b>
+
+\n There are three algorithms to create a \b Curve in the 3D space. Each
+time you define it by a list of \b Points through which the curve
+passes. The three <b>Curve Construction</b> menu choices correspond to three
+possible types of curves: Polyline, Besier or B-spline (Interpolated).
+\n The \b Result of each operation will be a GEOM_Object (edge).
+
+\n <b>TUI Commands:</b>
+<ul>
+<li><em>geompy.MakePolyline(ListOfShapes)</em></li>
+<li><em>geompy.MakeBezier(ListOfShapes)</em></li>
+<li><em>geompy.MakeInterpol(ListOfShapes)</em></li>
+</ul>
+ListOfShape is a list of points through which the curve passes.
+
+<b>Arguments:</b> Name + at least 2 points which will serve as nodes
+on the curve.
+
+\image html curve.png
+
+<b>Examples:</b>
+
+\image html polyline.png
+<center>Polyline</center>
+
+\image html bezier.png
+<center>Bezier</center>
+
+\image html interpol.png
+<center>B-Spline</center>
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_curve "Basic Geometric Objects".
+
+*/

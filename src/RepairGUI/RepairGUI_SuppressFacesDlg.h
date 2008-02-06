@@ -54,7 +54,6 @@ protected:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
-  void                               closeEvent( QCloseEvent* );
 
   void                               Convert( const TColStd_IndexedMapOfInteger&, 
 					      GEOM::short_array& );

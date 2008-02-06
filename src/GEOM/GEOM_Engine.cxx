@@ -379,7 +379,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   if(aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
  
   aScript = "import geompy\n";
-  aScript += "import math\n\n";
+  aScript += "import math\n";
+  aScript += "import SALOMEDS\n\n";
   aScript += "def RebuildData(theStudy):";
   aScript += "\n\tgeompy.init_geom(theStudy)";
   
@@ -480,6 +481,40 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   //Add final part of the script
   if(aLen && aSeq->Value(aLen) < aScriptLength)  anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength); // mkr : IPAL11865
  
+  // ouv : NPAL12872
+  for (anEntryToNameIt.Initialize( theObjectNames );
+       anEntryToNameIt.More();
+       anEntryToNameIt.Next())
+  {
+    const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
+    const TCollection_AsciiString& aName = anEntryToNameIt.Value();
+
+    TDF_Label L;
+    TDF_Tool::Label( aDoc->GetData(), aEntry, L );
+    if ( L.IsNull() )
+      continue;
+
+    Handle(GEOM_Object) obj = GEOM_Object::GetObject( L );
+    if ( obj.IsNull() )
+      continue;
+
+    bool anAutoColor = obj->GetAutoColor();
+    if ( anAutoColor )
+    {
+      TCollection_AsciiString aCommand( "\n\t" );
+      aCommand += aName + ".SetAutoColor(1)";
+      anUpdatedScript += aCommand.ToCString();
+    }
+
+    SALOMEDS::Color aColor = obj->GetColor();
+    if ( aColor.R > 0 || aColor.G > 0 || aColor.B > 0 )
+    {
+      TCollection_AsciiString aCommand( "\n\t" );
+      aCommand += aName + ".SetColor(SALOMEDS.Color(" + aColor.R + "," + aColor.G + "," + aColor.B + "))";
+      anUpdatedScript += aCommand.ToCString();
+    }
+  }
+
   // Make script to publish in study
   if ( isPublished )
   {

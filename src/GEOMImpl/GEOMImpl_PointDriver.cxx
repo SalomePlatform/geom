@@ -27,7 +27,8 @@
 
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
-
+#include <BRepExtrema_DistShapeShape.hxx>
+#include <Precision.hxx>
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
@@ -97,7 +98,34 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     aP = aFP + (aLP - aFP) * aPI.GetParameter();
     aPnt = aCurve->Value(aP);
 
-  } else {
+  } else if (aType == POINT_LINES_INTERSECTION) {
+    Handle(GEOM_Function) aRef1 = aPI.GetLine1();
+    Handle(GEOM_Function) aRef2 = aPI.GetLine2();
+
+    TopoDS_Shape aRefShape1 = aRef1->GetValue();
+    TopoDS_Shape aRefShape2 = aRef2->GetValue();
+
+    if (aRefShape1.ShapeType() != TopAbs_EDGE || aRefShape2.ShapeType() != TopAbs_EDGE ) {
+      Standard_TypeMismatch::Raise
+        ("Creation Point On Lines Intersection Aborted : Line shape is not an edge");
+    }
+    //Calculate Lines Intersection Point
+    BRepExtrema_DistShapeShape dst (aRefShape1, aRefShape2);
+    if (dst.IsDone())
+      {
+	gp_Pnt P1, P2;
+	for (int i = 1; i <= dst.NbSolution(); i++) {
+	  P1 = dst.PointOnShape1(i);
+	  P2 = dst.PointOnShape2(i);
+	  Standard_Real Dist = P1.Distance(P2);
+	  if ( Dist <= Precision::Confusion() )
+	    aPnt = P1;
+	  else 
+	    Standard_TypeMismatch::Raise ("Lines not have an Intersection Point");
+	}
+      }
+  }
+  else {
     return 0;
   }
 

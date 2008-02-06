@@ -1,0 +1,39 @@
+/*!
+
+\page suppress_internal_wires_operation_page Suppress Internal Wires
+
+\n To <b>Suppress Internal Wires</b> in the <b>Main Menu</b> select
+<b>Repair - > Suppress Internal Wires</b>.
+
+\n This operation removes all internal wires or specified internal
+wires from user specified shapes. This operation is available in <b>OCC
+Viewer</b> only.
+
+\n The \b Result will be a \b GEOM_Object. 
+
+\n <b>TUI Command:</b> <em>geompy.SuppressInternalWires(Shape, Wires),
+</em> where \em Shape is a shape where wires are to be removed, \em Wires is a
+list of wires ID's to be removed; if the list is empty then all
+internal wires are removed.
+
+<b>Arguments:</b>
+<ul>
+<li>Name of the resulting object</li>
+<li>User specified shape</li>
+<li>User specified internal wires (lying on this shape except for its
+boundary), or all internal wires if <b>Remove all internal wires</b> box is
+checked </li>
+</ul>
+
+\image html repair4.png
+
+\n <b>Example:</b>
+
+\image html supp_int_wires1.png
+
+\image html supp_int_wires2.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_suppress_internal_wires "Repairing Operations".
+
+*/

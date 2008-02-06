@@ -35,7 +35,6 @@
 #include <NMTDS_ShapesDataStructure.hxx>
 
 #include <NMTTools_PaveFiller.hxx>
-#include <NMTTools_DSFiller.hxx>
 
 #include <GEOMAlgo_Tools3D.hxx>
 
@@ -49,8 +48,8 @@ static
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_Builder::Generated(const TopoDS_Shape& theS)
 {
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   IntTools_Context& aCtx=pPF->ChangeContext();
   //
   Standard_Boolean bHasImage, bToReverse;
@@ -104,8 +103,8 @@ static
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_Builder::Modified(const TopoDS_Shape& theS)
 {
-  const NMTDS_ShapesDataStructure& aDS=myDSFiller->DS();
-  NMTTools_PaveFiller* pPF=(NMTTools_PaveFiller*)&(myDSFiller->PaveFiller());
+  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  NMTTools_PaveFiller* pPF=myPaveFiller;
   IntTools_Context& aCtx=pPF->ChangeContext();
   //
   Standard_Boolean bHasImage, bToReverse;

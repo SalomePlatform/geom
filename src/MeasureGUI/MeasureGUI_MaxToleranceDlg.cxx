@@ -75,7 +75,7 @@ MeasureGUI_MaxToleranceDlg::MeasureGUI_MaxToleranceDlg( GeometryGUI* GUI, QWidge
   
   /***************************************************************/
 
-  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Tolerance";
+  myHelpFileName = "using_measurement_tools_page.html#tolerance_anchor";
   
   /* Initialisation */
   Init();
@@ -169,24 +169,3 @@ bool MeasureGUI_MaxToleranceDlg::getParameters( double& theMinFaceToler,
     return getOperation()->IsDone();
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

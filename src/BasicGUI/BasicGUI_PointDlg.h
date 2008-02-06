@@ -30,6 +30,7 @@
 
 class DlgRef_1Sel1Spin;
 class DlgRef_3Spin;
+class DlgRef_2Sel;
 class DlgRef_1Sel3Spin;
 
 class QLineEdit;
@@ -58,8 +59,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-  
-  virtual void                       closeEvent( QCloseEvent* );
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
@@ -69,10 +69,13 @@ private:
 private:
   GEOM::GEOM_Object_var              myEdge;
   GEOM::GEOM_Object_var              myRefPoint; 
+  GEOM::GEOM_Object_var              myLine1; 
+  GEOM::GEOM_Object_var              myLine2;
   
   DlgRef_3Spin*                      GroupXYZ;
   DlgRef_1Sel3Spin*                  GroupRefPoint;
   DlgRef_1Sel1Spin*                  GroupOnCurve;
+  DlgRef_2Sel*                       GroupLineIntersection;
   
   QGroupBox*                         myCoordGrp;
   QLineEdit*                         myX;

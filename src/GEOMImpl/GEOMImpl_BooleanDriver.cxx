@@ -153,6 +153,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
       }
 
       if (isCompound) {
+        /*
         TopTools_ListOfShape listShapeC;
         AddSimpleShapes(C, listShapeC);
         TopTools_ListIteratorOfListOfShape itSubC (listShapeC);
@@ -163,6 +164,14 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
         }
         if (isOnlySolids)
           aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion());
+        else
+          aShape = C;
+        */
+
+        // As GlueFaces has been improved to keep all kind of shapes
+        TopExp_Explorer anExp (C, TopAbs_VERTEX);
+        if (anExp.More())
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
         else
           aShape = C;
       }
@@ -215,6 +224,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
       }
 
       if (isCompound) {
+        /*
         TopTools_ListOfShape listShapeC;
         AddSimpleShapes(C, listShapeC);
         TopTools_ListIteratorOfListOfShape itSubC (listShapeC);
@@ -227,11 +237,20 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
           aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion());
         else
           aShape = C;
+        */
+
+        // As GlueFaces has been improved to keep all kind of shapes
+        TopExp_Explorer anExp (C, TopAbs_VERTEX);
+        if (anExp.More())
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+        else
+          aShape = C;
       }
     }
 
     // perform FUSE operation
     else if (aType == BOOLEAN_FUSE) {
+      /* Fix for NPAL15379: refused
       // Check arguments
       TopTools_ListOfShape listShape1, listShape2;
       AddSimpleShapes(aShape1, listShape1);
@@ -305,6 +324,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
           }
         }
       }
+      */
 
       // Perform
       BRepAlgoAPI_Fuse BO (aShape1, aShape2);
@@ -367,8 +387,16 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
         }
       }
 
-      if (isCompound)
-        aShape = C;
+      if (isCompound) {
+        //aShape = C;
+
+        // As GlueFaces has been improved to keep all kind of shapes
+        TopExp_Explorer anExp (C, TopAbs_VERTEX);
+        if (anExp.More())
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+        else
+          aShape = C;
+      }
     }
 
     // UNKNOWN operation

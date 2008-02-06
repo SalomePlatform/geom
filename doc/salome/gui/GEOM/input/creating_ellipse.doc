@@ -1,0 +1,24 @@
+/*!
+
+\page create_ellipse_page Ellipse
+
+To create an \b Ellipse in the <b>Main Menu</b> select <b>New Entity - > Basic - > Ellipse</b>
+
+\n You can define an \b Ellipse by its <b>Center Point</b>, a \b
+Vector giving its normal, and its <b>Major & Minor Radiuses</b>.
+\n The \b Result of the operation will be a GEOM_Object (edge).
+
+\n <b>TUI Command:</b> <em>geompy.MakeEllipse(Point, Vector, RadiusMajor, RadiusMinor)</em>
+\n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
+the direction) + 1 X Radius + 1 Y Radius.
+
+\image html ellipse.png
+
+<b>Example:</b>
+
+\image html ellipsesn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_ellipse "Basic Geometric Objects".
+
+*/

@@ -1,0 +1,25 @@
+/*!
+
+\page section_opeartion_page Section
+
+\n To produce a \b Section operation in the <b>Main Menu</b> select
+<b>Operations - > Boolean - > Section</b>
+
+\n This operation creates the section between 2 shapes.
+
+\n The \b Result will be any \b GEOM_Object (EDGE or WIRE).
+\n <b>TUI Command:</b> <em>geompy.MakeSection(s1, s2)</em>
+\n <b>Arguments:</b> Name + 2 shapes.
+
+\image html neo-section.png
+
+\n <b>Example:</b>
+
+\image html fusesn1.png
+
+\image html sectionsn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of 
+\ref tui_section "Boolean Operations".
+
+*/

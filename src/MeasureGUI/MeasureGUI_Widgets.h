@@ -137,6 +137,22 @@ public:
 };
 
 //////////////////////////////////////////
+// MeasureGUI_2Sel4LineEdit
+//////////////////////////////////////////
+
+#include "ui_MeasureGUI_2Sel4LineEdit_QTD.h"
+
+class MeasureGUI_2Sel4LineEdit : public QWidget, 
+                                 public Ui::MeasureGUI_2Sel4LineEdit_QTD
+{
+  Q_OBJECT
+
+public:
+  MeasureGUI_2Sel4LineEdit( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~MeasureGUI_2Sel4LineEdit();
+};
+
+//////////////////////////////////////////
 // MeasureGUI_SkeletonBox
 //////////////////////////////////////////
 

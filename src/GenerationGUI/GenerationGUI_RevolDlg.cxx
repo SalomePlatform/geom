@@ -34,7 +34,14 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #include <TopExp_Explorer.hxx>
+
 #include <GEOMImpl_Types.hxx>
 
 //=================================================================================
@@ -60,9 +67,9 @@ GenerationGUI_RevolDlg::GenerationGUI_RevolDlg( GeometryGUI* theGeometryGUI, QWi
   mainFrame()->RadioButton2->close();
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
+  myBothway = false;
 
   GroupPoints = new DlgRef_2Sel1Spin2Check( centralWidget() );
-  GroupPoints->CheckButton1->hide();
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
   GroupPoints->TextLabel2->setText( tr( "GEOM_AXIS" ) );
@@ -71,6 +78,7 @@ GenerationGUI_RevolDlg::GenerationGUI_RevolDlg( GeometryGUI* theGeometryGUI, QWi
   GroupPoints->PushButton2->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->CheckButton1->setText( tr( "GEOM_BOTHWAY" ) );
   GroupPoints->CheckButton2->setText( tr( "GEOM_REVERSE" ) );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
@@ -78,7 +86,7 @@ GenerationGUI_RevolDlg::GenerationGUI_RevolDlg( GeometryGUI* theGeometryGUI, QWi
   layout->addWidget( GroupPoints );
   /***************************************************************/
 
-  setHelpFileName( "revolution.htm" );
+  setHelpFileName( "create_revolution_page.html" );
 
   /* Initialisations */
   Init();
@@ -110,7 +118,7 @@ void GenerationGUI_RevolDlg::Init()
 
   double SpecificStep = 5;
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, SpecificStep, 3 );
+  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
   GroupPoints->SpinBox_DX->setValue( 45.0 );
 
   /* signals and slots connections */
@@ -124,6 +132,7 @@ void GenerationGUI_RevolDlg::Init()
   connect( GroupPoints->LineEdit2,    SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( GroupPoints->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
+  connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ),        this, SLOT( onBothway() ) );
   connect( GroupPoints->CheckButton2, SIGNAL( toggled( bool ) ),        this, SLOT( onReverse() ) );
 
   // VSR: TODO ->>
@@ -210,6 +219,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+  QString aName = GEOMBase::GetName( aSelectedObject );
   
   if ( !testResult )
     return;
@@ -225,10 +235,46 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
     myOkBase = true;
   }
   else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
-    myAxis = aSelectedObject;
-    myOkAxis = true;
+    if ( testResult && !aSelectedObject->_is_nil() ) {
+      TopoDS_Shape aShape;
+      
+      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
+	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	TColStd_IndexedMapOfInteger aMap;
+	aSelMgr->GetIndexes( firstIObject(), aMap );
+	if ( aMap.Extent() == 1 ) {
+	  
+	  int anIndex = aMap( 1 );
+	  aName.append( ":edge_" + QString::number( anIndex ) );
+	  
+	  //Find SubShape Object in Father
+	  GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+	  
+	  if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	    GEOM::GEOM_IShapesOperations_var aShapesOp =
+	      getGeomEngine()->GetIShapesOperations( getStudyId() );
+	    myAxis = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+	    myOkAxis = true;
+	  }
+	  else {
+	    myAxis = aFindedObject;
+	    myOkAxis = true;
+	  }
+	}
+	else {
+	  myOkAxis = true;
+	  if ( aShape.ShapeType() != TopAbs_EDGE ) {
+	    aSelectedObject = GEOM::GEOM_Object::_nil();
+	    aName = "";
+	    myOkAxis = false;
+	  }
+	  myAxis = aSelectedObject;
+	}
+      }
+    }
   }
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+
+  myEditCurrentArgument->setText( aName );
 
   displayPreview();
 }
@@ -250,7 +296,7 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
   else if ( send == GroupPoints->PushButton2 ) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    globalSelection( GEOM_LINE );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   SelectionIntoArgument();
 }
@@ -342,8 +388,14 @@ bool GenerationGUI_RevolDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj;
 
-  anObj = GEOM::GEOM_I3DPrimOperations::_narrow(
-    getOperation() )->MakeRevolutionAxisAngle( myBase, myAxis, getAngle() * PI180 );
+  if ( !myBothway ) {
+    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(
+      getOperation() )->MakeRevolutionAxisAngle( myBase, myAxis, getAngle() * PI180 );
+  }
+  else {
+    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(
+      getOperation() )->MakeRevolutionAxisAngle2Ways( myBase, myAxis, getAngle() * PI180 );
+  }
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
@@ -360,4 +412,30 @@ void GenerationGUI_RevolDlg::onReverse()
 {
   double anOldValue = GroupPoints->SpinBox_DX->value();
   GroupPoints->SpinBox_DX->setValue( -anOldValue );
+}
+
+
+//=================================================================================
+// function :  onBothway()
+// purpose  :
+//=================================================================================
+void GenerationGUI_RevolDlg::onBothway()
+{
+  bool anOldValue = myBothway;
+  myBothway = !anOldValue;
+  GroupPoints->CheckButton2->setEnabled( !myBothway );  
+  displayPreview();
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void GenerationGUI_RevolDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+  objMap[GroupPoints->LineEdit2->text()] = myAxis;
+
+  addSubshapesToFather( objMap );
 }

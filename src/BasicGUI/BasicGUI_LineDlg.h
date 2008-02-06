@@ -47,8 +47,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-  
-  virtual void                       closeEvent( QCloseEvent* );
+  virtual void                       addSubshapesToStudy();
     
 private:
   void                               Init();
@@ -57,8 +56,11 @@ private:
 private:
   GEOM::GEOM_Object_var              myPoint1;   
   GEOM::GEOM_Object_var              myPoint2;
+  GEOM::GEOM_Object_var              myFace1;
+  GEOM::GEOM_Object_var              myFace2;
   
   DlgRef_2Sel*                       GroupPoints;
+  DlgRef_2Sel*                       GroupFaces;
     
 private slots:
   void                               ClickOnOk();
@@ -66,6 +68,7 @@ private slots:
 
   void                               ActivateThisDialog();
   void                               DeactivateActiveDialog();
+  void                               ConstructorsClicked( int );    
     
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();

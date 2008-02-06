@@ -42,6 +42,8 @@ class SALOME_OCCViewType;
 #include <LightApp_Displayer.h>
 #include <Aspect_TypeOfMarker.hxx>
 
+#include <QList>
+
 #include <list>
 
 #include <SALOMEconfig.h>
@@ -150,6 +152,8 @@ public:
   void         GlobalSelection( const TColStd_MapOfInteger&, const bool = false );
 
   SalomeApp_Study* getStudy() const;
+
+  static SALOMEDS::Color getUniqueColor( const QList<SALOMEDS::Color>& );
 
 protected:
   /* internal methods */

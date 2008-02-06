@@ -146,7 +146,7 @@ GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
   //  mySlider->setValue( 5 ) ;
   ValueHasChanged(mySlider->value());
   
-  myHelpFileName = "transparency.htm";
+  myHelpFileName = "transparency_page.html";
 
   // signals and slots connections : after ValueHasChanged()
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));

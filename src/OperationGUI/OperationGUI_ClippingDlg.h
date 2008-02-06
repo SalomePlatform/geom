@@ -51,7 +51,6 @@ public:
 private:
   void              Init();
   
-  virtual void      closeEvent( QCloseEvent* );
   void              enterEvent( QEvent* );
   
 private:

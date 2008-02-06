@@ -75,7 +75,7 @@ BuildGUI_EdgeDlg::BuildGUI_EdgeDlg( GeometryGUI* theGeometryGUI, QWidget* parent
   layout->addWidget( GroupPoints );
   /***************************************************************/
 
-  setHelpFileName( "edge.htm" );
+  setHelpFileName("create_edge_page.html");
 
   /* Initialisations */
   Init();

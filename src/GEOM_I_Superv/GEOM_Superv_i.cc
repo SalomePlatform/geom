@@ -546,6 +546,20 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurve (GEOM::GEOM_Object_ptr the
 }
 
 //=============================================================================
+//  MakePointOnLinesIntersection:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theRefLine1,
+								   GEOM::GEOM_Object_ptr theRefLine2)
+{
+  beginService( " GEOM_Superv_i::MakePointOnLinesIntersection" );
+  MESSAGE("GEOM_Superv_i::MakePointOnLinesIntersection");
+  getBasicOp();
+  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakePointOnLinesIntersection(theRefLine1, theRefLine2);
+  endService( " GEOM_Superv_i::MakePointOnLinesIntersection" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakeTangentOnCurve:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
@@ -599,6 +613,20 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeLineTwoPnt (GEOM::GEOM_Object_ptr thePn
   getBasicOp();
   GEOM::GEOM_Object_ptr anObj = myBasicOp->MakeLineTwoPnt(thePnt1, thePnt2);
   endService( " GEOM_Superv_i::MakeLineTwoPnt");
+  return anObj;
+}
+
+//=============================================================================
+//  MakeLineTwoFaces:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeLineTwoFaces (GEOM::GEOM_Object_ptr theFace1,
+						       GEOM::GEOM_Object_ptr theFace2)
+{
+  beginService( " GEOM_Superv_i::MakeLineTwoFaces");
+  MESSAGE("GEOM_Superv_i::MakeLineTwoFaces");
+  getBasicOp();
+  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakeLineTwoFaces(theFace1, theFace2);
+  endService( " GEOM_Superv_i::MakeLineTwoFaces");
   return anObj;
 }
 
@@ -880,6 +908,20 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismVecH (GEOM::GEOM_Object_ptr theBas
   return anObj;
 }
 
+//=============================================================================
+//  MakePrismVecH2Ways:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismVecH2Ways (GEOM::GEOM_Object_ptr theBase,
+							 GEOM::GEOM_Object_ptr theVec,
+							 CORBA::Double         theH)
+{
+  beginService( " GEOM_Superv_i::MakePrismVecH2Ways" );
+  MESSAGE("GEOM_Superv_i::MakePrismVecH2Ways");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePrismVecH2Ways(theBase, theVec, theH);
+  endService( " GEOM_Superv_i::MakePrismVecH2Ways" );
+  return anObj;
+}
 
 //=============================================================================
 //  MakePrismTwoPnt:
@@ -893,6 +935,21 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismTwoPnt (GEOM::GEOM_Object_ptr theB
   get3DPrimOp();
   GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePrismTwoPnt(theBase, thePoint1, thePoint2);
   endService( " GEOM_Superv_i::MakePrismTwoPnt" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakePrismTwoPnt2Ways:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr theBase,
+							   GEOM::GEOM_Object_ptr thePoint1,
+							   GEOM::GEOM_Object_ptr thePoint2)
+{
+  beginService( " GEOM_Superv_i::MakePrismTwoPnt2Ways" );
+  MESSAGE("GEOM_Superv_i::MakePrismTwoPnt2Ways");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePrismTwoPnt2Ways(theBase, thePoint1, thePoint2);
+  endService( " GEOM_Superv_i::MakePrismTwoPnt2Ways" );
   return anObj;
 }
 
@@ -922,6 +979,21 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeRevolutionAxisAngle (GEOM::GEOM_Object_
   get3DPrimOp();
   GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeRevolutionAxisAngle(theBase, theAxis, theAngle);
   endService( " GEOM_Superv_i::MakeRevolutionAxisAngle" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeRevolutionAxisAngle:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeRevolutionAxisAngle2Ways (GEOM::GEOM_Object_ptr theBase,
+								   GEOM::GEOM_Object_ptr theAxis,
+								   CORBA::Double theAngle)
+{
+  beginService( " GEOM_Superv_i::MakeRevolutionAxisAngle2Ways" );
+  MESSAGE("GEOM_Superv_i::MakeRevolutionAxisAngle2Ways");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeRevolutionAxisAngle2Ways(theBase, theAxis, theAngle);
+  endService( " GEOM_Superv_i::MakeRevolutionAxisAngle2Ways" );
   return anObj;
 }
 
@@ -1018,6 +1090,23 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithShellSections
 
 
 //=============================================================================
+//  MakePipe:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeShellsWithoutPath
+                   (const GEOM::ListOfGO& theBases,
+		    const GEOM::ListOfGO& theLocations)
+{
+  beginService( " GEOM_Superv_i::MakePipeShellsWithoutPath" );
+  MESSAGE("GEOM_Superv_i::MakePipeShellsWithoutPath");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj =
+    my3DPrimOp->MakePipeShellsWithoutPath(theBases,theLocations);
+  endService( " GEOM_Superv_i::MakePipeShellsWithoutPath" );
+  return anObj;
+}
+
+
+//=============================================================================
 //  MakeFuse:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFuse (GEOM::GEOM_Object_ptr theShape1,
@@ -1040,7 +1129,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theSha
 						    GEOM::GEOM_List_ptr   theRemoveInside,
 						    CORBA::Short      theLimit,
 						    CORBA::Boolean    theRemoveWebs,
-						    GEOM::GEOM_List_ptr theMaterials)
+						    GEOM::GEOM_List_ptr theMaterials,
+						    CORBA::Short theKeepNonlimitShapes)
 {
   beginService( " GEOM_Superv_i::MakePartition" );
   MESSAGE("GEOM_Superv_i::MakePartition");
@@ -1056,9 +1146,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theSha
     dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theMaterials, myPOA).in());
   if (aListImplS && aListImplT && aListImplKI && aListImplRI && aListImplM) {
     getBoolOp();
-    GEOM::GEOM_Object_ptr anObj = myBoolOp->MakePartition(aListImplS->GetList(), aListImplT->GetList(), 
-							  aListImplKI->GetList(), aListImplRI->GetList(),
-							  theLimit, theRemoveWebs, aListImplM->GetList());
+    GEOM::GEOM_Object_ptr anObj =
+      myBoolOp->MakePartition(aListImplS->GetList(), aListImplT->GetList(), 
+			      aListImplKI->GetList(), aListImplRI->GetList(),
+			      theLimit, theRemoveWebs, aListImplM->GetList(),
+			      theKeepNonlimitShapes);
     endService( " GEOM_Superv_i::MakePartition" );
     return anObj;
   }
@@ -1678,12 +1770,14 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (GEOM::GEOM_List_ptr theShapes
 //  MakeGlueFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-						    CORBA::Double   theTolerance)
+						    CORBA::Double   theTolerance,
+						    CORBA::Boolean doKeepNonSolids)
 {
   beginService( " GEOM_Superv_i::MakeGlueFaces" );
   MESSAGE("GEOM_Superv_i::MakeGlueFaces");
   getShapesOp();
-  GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeGlueFaces(theShape, theTolerance);
+  GEOM::GEOM_Object_ptr anObj =
+    myShapesOp->MakeGlueFaces(theShape, theTolerance, doKeepNonSolids);
   endService( " GEOM_Superv_i::MakeGlueFaces" );
   return anObj;
 }
@@ -1709,12 +1803,14 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
 							  CORBA::Double theTolerance,
-							  const GEOM::ListOfGO& theFaces)
+							  const GEOM::ListOfGO& theFaces,
+							  CORBA::Boolean doKeepNonSolids)
 {
   beginService( " GEOM_Superv_i::MakeGlueFacesByList" );
   MESSAGE("GEOM_Superv_i::MakeGlueFacesByList");
   getShapesOp();
-  GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces);
+  GEOM::GEOM_Object_ptr anObj =
+    myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids);
   endService( " GEOM_Superv_i::MakeGlueFacesByList" );
   return anObj;
 }
@@ -2159,6 +2255,20 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCircleThreePnt (GEOM::GEOM_Object_ptr t
   endService( " GEOM_Superv_i::MakeCircleThreePnt" );
   return anObj;
 }
+//=============================================================================
+//  MakeCircleCenter2Pnt:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCircleCenter2Pnt (GEOM::GEOM_Object_ptr thePnt1,
+						  	   GEOM::GEOM_Object_ptr thePnt2,
+							   GEOM::GEOM_Object_ptr thePnt3)
+{
+  beginService( " GEOM_Superv_i::MakeCircleCenter2Pnt" );
+  MESSAGE("GEOM_Superv_i::MakeCircleCenter2Pnt");
+  getCurvesOp();
+  GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeCircleCenter2Pnt(thePnt1, thePnt2, thePnt3);
+  endService( " GEOM_Superv_i::MakeCircleCenter2Pnt" );
+  return anObj;
+}
 
 //=============================================================================
 //  MakeEllipse:
@@ -2316,6 +2426,28 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletEdges (GEOM::GEOM_Object_ptr theS
 }
 
 //=============================================================================
+//  MakeFilletEdges R1 R2:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletEdgesR1R2 (GEOM::GEOM_Object_ptr theShape, 
+						          CORBA::Double theR1,
+						          CORBA::Double theR2,
+						          GEOM::GEOM_List_ptr theEdges)
+{
+  beginService( " GEOM_Superv_i::MakeFilletEdgesR1R2" );
+  MESSAGE("GEOM_Superv_i::MakeFilletEdgesR1R2");
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplE = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theEdges, myPOA).in())) {
+    getLocalOp();
+    GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFilletEdgesR1R2(theShape, theR1,
+                                                                 theR2, aListImplE->GetList());
+    endService( " GEOM_Superv_i::MakeFilletEdgesR1R2" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeFilletEdgesR1R2" );
+  return NULL;
+}
+
+//=============================================================================
 //  MakeFilletFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFaces (GEOM::GEOM_Object_ptr theShape, 
@@ -2332,6 +2464,28 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFaces (GEOM::GEOM_Object_ptr theS
     return anObj;
   }
   endService( " GEOM_Superv_i::MakeFilletFaces" );
+  return NULL;
+}
+
+//=============================================================================
+//  MakeFilletFaces R1 R2:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr theShape, 
+						          CORBA::Double theR1,
+						          CORBA::Double theR2,
+						          GEOM::GEOM_List_ptr theFaces)
+{
+  beginService( " GEOM_Superv_i::MakeFilletFacesR1R2" );
+  MESSAGE("GEOM_Superv_i::MakeFilletFacesR1R2");
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theFaces, myPOA).in())) {
+    getLocalOp();
+    GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFilletFacesR1R2(theShape, theR1, theR2,
+                                                                 aListImplF->GetList());
+    endService( " GEOM_Superv_i::MakeFilletFacesR1R2" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeFilletFacesR1R2" );
   return NULL;
 }
 
@@ -2364,6 +2518,21 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdge (GEOM::GEOM_Object_ptr theS
 }
 
 //=============================================================================
+//  MakeChamferEdgeAD:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdgeAD (GEOM::GEOM_Object_ptr theShape,
+						        CORBA::Double theD, CORBA::Double theAngle,
+						        CORBA::Long theFace1, CORBA::Long theFace2)
+{
+  beginService( " GEOM_Superv_i::MakeChamferEdgeAD" );
+  MESSAGE("GEOM_Superv_i::MakeChamferEdgeAD");
+  getLocalOp();
+  GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeChamferEdgeAD(theShape, theD, theAngle, theFace1, theFace2);
+  endService( " GEOM_Superv_i::MakeChamferEdgeAD" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakeChamferFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferFaces (GEOM::GEOM_Object_ptr theShape,
@@ -2380,6 +2549,66 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferFaces (GEOM::GEOM_Object_ptr the
     return anObj;
   }
   endService( " GEOM_Superv_i::MakeChamferFaces" );
+  return NULL;
+}
+
+//=============================================================================
+//  MakeChamferFacesAD:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferFacesAD (GEOM::GEOM_Object_ptr theShape,
+						         CORBA::Double theD, CORBA::Double theAngle,
+						         GEOM::GEOM_List_ptr theFaces)
+{
+  beginService( " GEOM_Superv_i::MakeChamferFacesAD" );
+  MESSAGE("GEOM_Superv_i::MakeChamferFacesAD");
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theFaces, myPOA).in())) {
+    getLocalOp();
+    GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeChamferFacesAD(theShape, theD, theAngle, aListImplF->GetList());
+    endService( " GEOM_Superv_i::MakeChamferFacesAD" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeChamferFacesAD" );
+  return NULL;
+}
+
+//=============================================================================
+//  MakeChamferEdges:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdges (GEOM::GEOM_Object_ptr theShape,
+						       CORBA::Double theD1, CORBA::Double theD2,
+						       GEOM::GEOM_List_ptr theEdges)
+{
+  beginService( " GEOM_Superv_i::MakeChamferEdges" );
+  MESSAGE("GEOM_Superv_i::MakeChamferEdges");
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theEdges, myPOA).in())) {
+    getLocalOp();
+    GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeChamferEdges(theShape, theD1, theD2, aListImplF->GetList());
+    endService( " GEOM_Superv_i::MakeChamferEdges" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeChamferEdges" );
+  return NULL;
+}
+
+//=============================================================================
+//  MakeChamferEdgesAD:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdgesAD (GEOM::GEOM_Object_ptr theShape,
+						         CORBA::Double theD, CORBA::Double theAngle,
+						         GEOM::GEOM_List_ptr theEdges)
+{
+  beginService( " GEOM_Superv_i::MakeChamferEdgesAD" );
+  MESSAGE("GEOM_Superv_i::MakeChamferEdgesAD");
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theEdges, myPOA).in())) {
+    getLocalOp();
+    GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeChamferEdgesAD(theShape, theD, theAngle, aListImplF->GetList());
+    endService( " GEOM_Superv_i::MakeChamferEdgesAD" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeChamferEdgesAD" );
   return NULL;
 }
 
