@@ -148,6 +148,16 @@ void BooleanGUI_Dialog::Init()
 
   initName( GroupConstructors->title() );
 
+  setTabOrder (RadioButton1, ResultName );
+  setTabOrder (ResultName, myGroup->PushButton1);
+  setTabOrder (myGroup->PushButton1, myGroup->PushButton2);
+  setTabOrder (myGroup->PushButton2, buttonOk);
+  setTabOrder (buttonOk, buttonApply);
+  setTabOrder (buttonApply, buttonCancel);
+  setTabOrder (buttonCancel, buttonHelp);
+
+  RadioButton1->setFocus();
+
   globalSelection( GEOM_ALLSHAPES );
 }
 
