@@ -147,7 +147,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       aFW->Load(aWire);
       aFW->FixReorder();
 
-      if (aFW->StatusReorder(ShapeExtend_FAIL1)) {
+      if        (aFW->StatusReorder(ShapeExtend_FAIL1)) {
         Standard_ConstructionError::Raise("Wire construction failed: several loops detected");
       } else if (aFW->StatusReorder(ShapeExtend_FAIL)) {
         Standard_ConstructionError::Raise("Wire construction failed");
@@ -155,6 +155,13 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         Standard_ConstructionError::Raise("Wire construction failed: some gaps detected");
       } else {
       }
+
+      aFW->ClosedWireMode() = Standard_False;
+      aFW->FixConnected();
+      if (aFW->StatusConnected(ShapeExtend_FAIL)) {
+        Standard_ConstructionError::Raise("Wire construction failed: cannot build connected wire");
+      }
+
       aShape = aFW->WireAPIMake();
     }
   }
