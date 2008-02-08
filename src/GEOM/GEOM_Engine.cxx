@@ -114,7 +114,6 @@ GEOM_Engine::GEOM_Engine()
 
   _OCAFApp = new GEOM_Application();
   _UndoLimit = 10;
-  //_lastObjectTag = 0;
 }
 
 /*!
@@ -394,20 +393,22 @@ bool GEOM_Engine::Load(int theDocID, char* theFileName)
 //=============================================================================
 void GEOM_Engine::Close(int theDocID)
 {
-  if(_mapIDDocument.IsBound(theDocID)) {
+  if (_mapIDDocument.IsBound(theDocID)) {
     Handle(TDocStd_Document) aDoc = Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
 
     //Remove all GEOM Objects associated to the given document
     TColStd_SequenceOfAsciiString aSeq;
-    GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It(_objects);
-    for(; It.More(); It.Next()) {
-      TCollection_AsciiString anObjID(It.Key());
+    GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It (_objects);
+    for (; It.More(); It.Next()) {
+      TCollection_AsciiString anObjID (It.Key());
       Standard_Integer anID = ExtractDocID(anObjID);
-      if(theDocID == anID) aSeq.Append(It.Key());
+      if (theDocID == anID) aSeq.Append(It.Key());
     }
-    for(Standard_Integer i=1; i<=aSeq.Length(); i++) _objects.UnBind(aSeq.Value(i));
+    for (Standard_Integer i=1; i<=aSeq.Length(); i++) _objects.UnBind(aSeq.Value(i));
 
-   _mapIDDocument.UnBind(theDocID);
+    _lastCleared.Nullify();
+
+    _mapIDDocument.UnBind(theDocID);
     _OCAFApp->Close(aDoc);
     aDoc.Nullify();
   }
