@@ -61,7 +61,7 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg( GeometryGUI* theGeometryGUI,
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_1Sel5Spin( centralWidget() );
+  GroupPoints = new DlgRef_1Sel5Spin1Check( centralWidget() );
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_FILLING_COMPOUND" ) );
   GroupPoints->TextLabel2->setText( tr( "GEOM_FILLING_MIN_DEG" ) );
@@ -69,6 +69,7 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg( GeometryGUI* theGeometryGUI,
   GroupPoints->TextLabel4->setText( tr( "GEOM_FILLING_NB_ITER" ) );
   GroupPoints->TextLabel5->setText( tr( "GEOM_FILLING_MAX_DEG" ) );
   GroupPoints->TextLabel6->setText( tr( "GEOM_FILLING_TOL_3D" ) );
+  GroupPoints->CheckBox1->setText( tr( "GEOM_FILLING_APPROX" ) );
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
 
@@ -77,7 +78,7 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg( GeometryGUI* theGeometryGUI,
   layout->addWidget( GroupPoints  );
   /***************************************************************/
 
-  setHelpFileName( "creaet_filling_page.html" );
+  setHelpFileName( "create_filling_page.html" );
 
   /* Initialisations */
   Init();
@@ -107,6 +108,7 @@ void GenerationGUI_FillingDlg::Init()
   myTol3D = 0.0001;
   myTol2D = 0.0001;
   myNbIter = 5;
+  myIsApprox = false;
   myOkCompound = false;
 
   globalSelection( GEOM_COMPOUND );
@@ -138,6 +140,8 @@ void GenerationGUI_FillingDlg::Init()
   connect( GroupPoints->SpinBox3, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupPoints->SpinBox4, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupPoints->SpinBox5, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+
+  connect( GroupPoints->CheckBox1, SIGNAL( stateChanged( int ) ), this, SLOT( ApproxChanged() ) );
 
   // VSR: TODO ->>
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox1, SLOT( SetStep( double ) ) );
@@ -301,6 +305,16 @@ void GenerationGUI_FillingDlg::ValueChangedInSpinBox( double newValue )
 }
 
 //=================================================================================
+// function : ApproxChanged()
+// purpose  :
+//=================================================================================
+void GenerationGUI_FillingDlg::ApproxChanged()
+{
+  myIsApprox = GroupPoints->CheckBox1->isChecked();
+  displayPreview();
+}
+
+//=================================================================================
 // function : createOperation
 // purpose  :
 //=================================================================================
@@ -327,7 +341,7 @@ bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
   GEOM::GEOM_Object_var anObj;
 
   anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation() )->MakeFilling(
-    myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D, myNbIter );
+    myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D, myNbIter, myIsApprox );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

@@ -147,6 +147,12 @@ void BooleanGUI_Dialog::Init()
 
   initName( mainFrame()->GroupConstructors->title() );
 
+  setTabOrder( mainFrame()->GroupConstructors, mainFrame()->GroupBoxName );
+  setTabOrder( mainFrame()->GroupBoxName, mainFrame()->GroupMedium );
+  setTabOrder( mainFrame()->GroupMedium, mainFrame()->GroupButtons );
+
+  mainFrame()->RadioButton1->setFocus();
+
   globalSelection( GEOM_ALLSHAPES );
 }
 

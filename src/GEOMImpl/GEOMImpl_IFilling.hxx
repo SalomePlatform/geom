@@ -28,6 +28,7 @@
 #define FILL_ARG_TOL3D    4
 #define FILL_ARG_SHAPE    5
 #define FILL_ARG_NBITER   6
+#define FILL_ARG_APPROX   7
 
 class GEOMImpl_IFilling
 {
@@ -46,6 +47,9 @@ class GEOMImpl_IFilling
   int GetMaxDeg() { return _func->GetInteger(FILL_ARG_MAXDEG); }
   void SetNbIter(int theNbIter) { _func->SetInteger(FILL_ARG_NBITER, theNbIter); }
   int GetNbIter() { return _func->GetInteger(FILL_ARG_NBITER); } 
+
+  void SetApprox(bool theApprox) { _func->SetInteger(FILL_ARG_APPROX, theApprox); }
+  bool GetApprox() { return _func->GetInteger(FILL_ARG_APPROX); } 
 
   void SetShape(Handle(GEOM_Function) theShape) { _func->SetReference(FILL_ARG_SHAPE, theShape); }
   Handle(GEOM_Function) GetShape() { return _func->GetReference(FILL_ARG_SHAPE); }

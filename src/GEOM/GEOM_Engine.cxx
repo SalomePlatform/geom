@@ -116,6 +116,25 @@ GEOM_Engine::GEOM_Engine()
   _UndoLimit = 10;
 }
 
+/*!
+ *  Destructor
+ */
+GEOM_Engine::~GEOM_Engine()
+{ 
+  GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It(_objects);
+  for(; It.More(); It.Next()) 
+    {
+      RemoveObject(Handle(GEOM_Object)::DownCast(It.Value()));
+    }
+
+  //Close all documents not closed
+  for(Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr(_mapIDDocument); anItr.More(); anItr.Next())
+    Close(anItr.Key());
+
+  _mapIDDocument.Clear();
+  _objects.Clear();
+}
+
 //=============================================================================
 /*!
  *  GetDocument
@@ -176,18 +195,33 @@ Handle(GEOM_Object) GEOM_Engine::GetObject(int theDocID, char* theEntry)
 //=============================================================================
 Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
 {
-    Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
-    Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
+  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
+  Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
 
-    TDF_Label aChild = TDF_TagSource::NewChild(aDoc->Main());
-    Handle(GEOM_Object) anObject = new GEOM_Object(aChild, theType);
+  // NPAL18604: use existing label to decrease memory usage,
+  //            if this label has been freed (object deleted)
+  bool useExisting = false;
+  TDF_Label aChild;
+  if (!_lastCleared.IsNull()) {
+    if (_lastCleared.Root() == aDoc->Main().Root()) {
+      useExisting = true;
+      aChild = _lastCleared;
+      _lastCleared.Nullify();
+    }
+  }
+  if (!useExisting) {
+    // create new label
+    aChild = TDF_TagSource::NewChild(aDoc->Main());
+  }
 
-    //Put an object in the map of created objects
-    TCollection_AsciiString anID = BuildIDFromObject(anObject);
-    if(_objects.IsBound(anID)) _objects.UnBind(anID);
-    _objects.Bind(anID, anObject);
+  Handle(GEOM_Object) anObject = new GEOM_Object(aChild, theType);
 
-    return anObject;
+  //Put an object in the map of created objects
+  TCollection_AsciiString anID = BuildIDFromObject(anObject);
+  if(_objects.IsBound(anID)) _objects.UnBind(anID);
+  _objects.Bind(anID, anObject);
+
+  return anObject;
 }
 
 //=============================================================================
@@ -204,7 +238,21 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   Handle(TDocStd_Document) aDoc = GetDocument(theMainShape->GetDocID());
   Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
 
-  TDF_Label aChild = TDF_TagSource::NewChild(aDoc->Main());
+  // NPAL18604: use existing label to decrease memory usage,
+  //            if this label has been freed (object deleted)
+  bool useExisting = false;
+  TDF_Label aChild;
+  if (!_lastCleared.IsNull()) {
+    if (_lastCleared.Root() == aDoc->Main().Root()) {
+      useExisting = true;
+      aChild = _lastCleared;
+      _lastCleared.Nullify();
+    }
+  }
+  if (!useExisting) {
+    // create new label
+    aChild = TDF_TagSource::NewChild(aDoc->Main());
+  }
 
   Handle(GEOM_Function) aMainShape = theMainShape->GetLastFunction();
   Handle(GEOM_Object) anObject = new GEOM_Object(aChild, 28); //28 is SUBSHAPE type
@@ -258,22 +306,23 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
 //=============================================================================
 bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
 {
-  if(!theObject) return false;
+  if (!theObject) return false;
 
   //Remove an object from the map of available objects
   TCollection_AsciiString anID = BuildIDFromObject(theObject);
-  if(_objects.IsBound(anID)) _objects.UnBind(anID);
+  if (_objects.IsBound(anID)) _objects.UnBind(anID);
 
   int nb = theObject->GetNbFunctions();
   Handle(TDataStd_TreeNode) aNode;
-  for(int i = 1; i<=nb; i++) {
+  for (int i = 1; i<=nb; i++) {
     Handle(GEOM_Function) aFunction = theObject->GetFunction(i);
-    if(aFunction->GetEntry().FindAttribute(GEOM_Function::GetFunctionTreeID(), aNode)) 
+    if (aFunction->GetEntry().FindAttribute(GEOM_Function::GetFunctionTreeID(), aNode)) 
       aNode->Remove();
   }
 
   TDF_Label aLabel = theObject->GetEntry();
   aLabel.ForgetAllAttributes(Standard_True);
+  _lastCleared = aLabel;
 
   theObject.Nullify();
 
@@ -344,20 +393,22 @@ bool GEOM_Engine::Load(int theDocID, char* theFileName)
 //=============================================================================
 void GEOM_Engine::Close(int theDocID)
 {
-  if(_mapIDDocument.IsBound(theDocID)) {
+  if (_mapIDDocument.IsBound(theDocID)) {
     Handle(TDocStd_Document) aDoc = Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
 
     //Remove all GEOM Objects associated to the given document
     TColStd_SequenceOfAsciiString aSeq;
-    GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It(_objects);
-    for(; It.More(); It.Next()) {
-      TCollection_AsciiString anObjID(It.Key());
+    GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It (_objects);
+    for (; It.More(); It.Next()) {
+      TCollection_AsciiString anObjID (It.Key());
       Standard_Integer anID = ExtractDocID(anObjID);
-      if(theDocID == anID) aSeq.Append(It.Key());
+      if (theDocID == anID) aSeq.Append(It.Key());
     }
-    for(Standard_Integer i=1; i<=aSeq.Length(); i++) _objects.UnBind(aSeq.Value(i));
+    for (Standard_Integer i=1; i<=aSeq.Length(); i++) _objects.UnBind(aSeq.Value(i));
 
-   _mapIDDocument.UnBind(theDocID);
+    _lastCleared.Nullify();
+
+    _mapIDDocument.UnBind(theDocID);
     _OCAFApp->Close(aDoc);
     aDoc.Nullify();
   }

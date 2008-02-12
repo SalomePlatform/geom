@@ -279,8 +279,10 @@ bool RepairGUI_GlueDlg::ClickOnApply()
 //=================================================================================
 void RepairGUI_GlueDlg::SelectionIntoArgument()
 {
-  if ( mySubShapesChk->isChecked() &&  getConstructorId() == 1 )
+  if ( mySubShapesChk->isChecked() &&  getConstructorId() == 1 ) {
+    updateButtonState();
     return;
+  }
   
   erasePreview();
   myEditCurrentArgument->setText( "" );
@@ -603,6 +605,8 @@ void RepairGUI_GlueDlg::onDetect()
     msg = tr( "THERE_ARE_NO_FACES_FOR_GLUING" );
   }
   
+  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+	   SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()) ) ;
   SUIT_MessageBox::information( this, tr( "GEOM_FREE_BOUNDS_TLT" ), msg, tr( "Close" ) );
   updateButtonState();
   activateSelection();
@@ -635,10 +639,13 @@ void RepairGUI_GlueDlg::activateSelection()
       globalSelection( GEOM_ALLSHAPES );
     else {
       displayPreview( true, false, false, 2/*line width*/, 1/*display mode*/, Quantity_NOC_RED );
+      disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+		  SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) ) ;
       globalSelection( GEOM_PREVIEW );
-    }
+      connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) ) ;
+    } 
   }
-  
   updateViewer();
 }
 
@@ -656,9 +663,13 @@ void RepairGUI_GlueDlg::updateButtonState()
   }
   else
   {
+    bool wasSelected = false;
+    SALOME_ListIteratorOfListIO it ( selectedIO() );
+    if (it.More() > 0)
+      wasSelected = true;
     bool wasDetected = myTmpObjs.size() ? true : false;
-    buttonOk()->setEnabled( hasMainObj && wasDetected );
-    buttonApply()->setEnabled( hasMainObj && wasDetected );
+    buttonOk()->setEnabled( hasMainObj && wasDetected && wasSelected );
+    buttonApply()->setEnabled( hasMainObj && wasDetected && wasSelected );
     mySubShapesChk->setEnabled( hasMainObj && wasDetected );
     myDetectBtn->setEnabled( hasMainObj );
     if ( !hasMainObj || !wasDetected )

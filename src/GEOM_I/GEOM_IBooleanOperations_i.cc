@@ -72,10 +72,12 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
   if (theShape1 == NULL || theShape2 == NULL) return aGEOMObject._retn();
 
   //Get the reference shapes
+  CORBA::String_var entry=theShape1->GetEntry();
   Handle(GEOM_Object) aSh1 = GetOperations()->GetEngine()->GetObject
-    (theShape1->GetStudyID(), theShape1->GetEntry());
+    (theShape1->GetStudyID(), entry);
+  entry=theShape2->GetEntry();
   Handle(GEOM_Object) aSh2 = GetOperations()->GetEngine()->GetObject
-    (theShape2->GetStudyID(), theShape2->GetEntry());
+    (theShape2->GetStudyID(), entry);
 
   if (aSh1.IsNull() || aSh2.IsNull()) return aGEOMObject._retn();
 

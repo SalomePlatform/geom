@@ -3014,7 +3014,8 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFilling(GEOM::GEOM_Shape_ptr myShape,
 				       CORBA::Short maxdeg,
 				       CORBA::Double tol3d,
 				       CORBA::Double tol2d,
-				       CORBA::Short nbiter)
+				       CORBA::Short nbiter,
+				       CORBA::Boolean theApprox)
   throw (SALOME::SALOME_Exception)
 {
   Unexpect aCatch(SALOME_SalomeException);
@@ -3053,7 +3054,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFilling(GEOM::GEOM_Shape_ptr myShape,
     Handle(GeomFill_Line) Line = new GeomFill_Line(i) ;
     
     GeomFill_AppSurf App(mindeg, maxdeg, tol3d, tol2d, nbiter) ; /* user parameters */
-    App.Perform(Line, Section) ;
+    App.Perform(Line, Section, theApprox) ;
     
     if (!App.IsDone()) {
       THROW_SALOME_CORBA_EXCEPTION("Filling aborted : non valid shape result", SALOME::BAD_PARAM);

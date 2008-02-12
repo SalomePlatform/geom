@@ -237,7 +237,7 @@ public:
   GEOM::GEOM_Object_ptr MakeFilling (GEOM::GEOM_Object_ptr theShape,
 				     CORBA::Long theMinDeg, CORBA::Long theMaxDeg,
 				     CORBA::Double theTol2D, CORBA::Double theTol3D,
-				     CORBA::Long theNbIter);
+				     CORBA::Long theNbIter, CORBA::Boolean theApprox);
 
   GEOM::GEOM_Object_ptr MakeThruSections(const GEOM::ListOfGO& theSeqSections,
 					 CORBA::Boolean theModeSolid,
@@ -566,21 +566,21 @@ public:
   
 private:
   SALOME_NamingService *  name_service; 
-  GEOM::GEOM_Gen_ptr      myGeomEngine;
+  GEOM::GEOM_Gen_var      myGeomEngine;
   CORBA::Long             myStudyID;
   CORBA::Long             myLastStudyID; // mkr : PAL10770
   PortableServer::POA_var myPOA;
   
-  GEOM::GEOM_IBasicOperations_ptr     myBasicOp;
-  GEOM::GEOM_I3DPrimOperations_ptr    my3DPrimOp;
-  GEOM::GEOM_IBooleanOperations_ptr   myBoolOp;
-  GEOM::GEOM_IInsertOperations_ptr    myInsOp;
-  GEOM::GEOM_ITransformOperations_ptr myTransfOp;
-  GEOM::GEOM_IShapesOperations_ptr    myShapesOp;
-  GEOM::GEOM_IBlocksOperations_ptr    myBlocksOp;
-  GEOM::GEOM_ICurvesOperations_ptr    myCurvesOp;
-  GEOM::GEOM_ILocalOperations_ptr     myLocalOp;
-  GEOM::GEOM_IGroupOperations_ptr     myGroupOp;
+  GEOM::GEOM_IBasicOperations_var     myBasicOp;
+  GEOM::GEOM_I3DPrimOperations_var    my3DPrimOp;
+  GEOM::GEOM_IBooleanOperations_var   myBoolOp;
+  GEOM::GEOM_IInsertOperations_var    myInsOp;
+  GEOM::GEOM_ITransformOperations_var myTransfOp;
+  GEOM::GEOM_IShapesOperations_var    myShapesOp;
+  GEOM::GEOM_IBlocksOperations_var    myBlocksOp;
+  GEOM::GEOM_ICurvesOperations_var    myCurvesOp;
+  GEOM::GEOM_ILocalOperations_var     myLocalOp;
+  GEOM::GEOM_IGroupOperations_var     myGroupOp;
 
 };
 

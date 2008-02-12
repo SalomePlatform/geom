@@ -59,7 +59,7 @@ class GEOM_I_EXPORT GEOM_IOperations_i : public virtual POA_GEOM::GEOM_IOperatio
  private:
  
   ::GEOM_IOperations* _impl;
-  GEOM::GEOM_Gen_ptr _engine;     
+  GEOM::GEOM_Gen_var _engine;     
 };
 
 #endif

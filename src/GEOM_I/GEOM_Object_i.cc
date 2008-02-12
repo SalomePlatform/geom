@@ -61,7 +61,9 @@ GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr
 //=============================================================================
 
 GEOM_Object_i::~GEOM_Object_i()
-{}
+{
+  GEOM_Engine::GetEngine()->RemoveObject(_impl);
+}
 
 
 //=============================================================================

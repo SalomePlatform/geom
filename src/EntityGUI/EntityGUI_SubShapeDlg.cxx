@@ -518,6 +518,13 @@ GEOM::GEOM_IOperations_ptr EntityGUI_SubShapeDlg::createOperation()
 bool EntityGUI_SubShapeDlg::isValid( QString& msg )
 {
   bool isOk = false;
+  Handle(SALOME_InteractiveObject) IO = firstIObject();
+  Standard_Boolean testResult;
+  myObject = GEOMBase::ConvertIOinGEOMObject( IO, testResult );
+  if ( !testResult || myObject->_is_nil() )  {
+    updateButtonState();
+    return isOk;
+  }
   if ( !myObject->_is_nil() ) {
     if ( isAllSubShapes() )
       isOk = true;

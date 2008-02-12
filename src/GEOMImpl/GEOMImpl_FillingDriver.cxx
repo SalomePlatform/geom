@@ -88,6 +88,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   Standard_Real tol3d = IF.GetTol2D();
   Standard_Real tol2d = IF.GetTol3D();
   Standard_Integer nbiter = IF.GetNbIter();
+  Standard_Boolean isApprox = IF.GetApprox();
 
   if (mindeg > maxdeg) {
     Standard_RangeError::Raise("Minimal degree can not be more than maximal degree");
@@ -115,7 +116,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   Handle(GeomFill_Line) Line = new GeomFill_Line(i);
 
   GeomFill_AppSurf App (mindeg, maxdeg, tol3d, tol2d, nbiter); /* user parameters */
-  App.Perform(Line, Section);
+  App.Perform(Line, Section, isApprox);
 
   if (!App.IsDone()) return 0;
   Standard_Integer UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots;

@@ -83,7 +83,7 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakeSolidShell (Handle(GEOM_Object) theShell);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeFilling (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg, double theTol2D, double theTol3D, int theNbIter);
+  Standard_EXPORT Handle(GEOM_Object) MakeFilling (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg, double theTol2D, double theTol3D, int theNbIter, bool isApprox);
 
   Standard_EXPORT Handle(GEOM_Object) MakeThruSections(const Handle(TColStd_HSequenceOfTransient)& theSeqSections,
 						       bool theModeSolid,

@@ -3430,6 +3430,10 @@
             <source>GEOM_RESULT_NAME_LBL</source>
             <translation>Name</translation>
         </message>
+        <message>
+            <source>GEOM_FILLING_APPROX</source>
+            <translation>Approximation</translation>
+        </message>
     </context>
     <context>
         <name>BasicGUI_MarkerDlg</name>

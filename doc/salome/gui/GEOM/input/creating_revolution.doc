@@ -8,6 +8,8 @@ select <b>New Entity - > Generation  - > Revolution</b>
 \n To create an extruded shape by \b Revolution you need to define the
 source \b Object to rotate, the \b Axis of revolution and the \b Angle by which
 the \b Shape has to be rotated around the \b Axis (in degrees).
+\n <b> Both Directions </b> checkbox allows extruding the source
+object both forward and backward.
 \n The \b Result of the operation will be a GEOM_Object (edge, face, shell,
 solid or compsolid).
 

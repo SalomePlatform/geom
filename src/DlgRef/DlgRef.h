@@ -227,6 +227,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_1Sel5Spin1Check
+//////////////////////////////////////////
+
+#include "ui_DlgRef_1Sel5Spin1Check_QTD.h"
+
+class DLGREF_EXPORT DlgRef_1Sel5Spin1Check : public QWidget, 
+                                             public Ui::DlgRef_1Sel5Spin1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_1Sel5Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_1Sel5Spin1Check();
+};
+
+//////////////////////////////////////////
 // DlgRef_1Sel5Spin
 //////////////////////////////////////////
 

@@ -1379,8 +1379,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the created filling surface.
         #
         #  Example: see GEOM_TestAll.py
-        def MakeFilling(self,theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter):
-            anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter)
+        def MakeFilling(self,theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter, isApprox=0):
+            anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter, isApprox)
             RaiseIfFailed("MakeFilling", self.PrimOp)
             return anObj
         
