@@ -17,9 +17,14 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
+
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
+
+using namespace std;
 
 #include <Standard_Stream.hxx>
 

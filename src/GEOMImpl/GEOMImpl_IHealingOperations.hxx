@@ -18,6 +18,8 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+using namespace std;
+
 #ifndef _GEOMImpl_IHealingOperations_HXX_
 #define _GEOMImpl_IHealingOperations_HXX_
 

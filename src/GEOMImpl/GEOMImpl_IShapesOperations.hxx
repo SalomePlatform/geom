@@ -28,6 +28,8 @@
 #ifndef _GEOMImpl_IShapesOperations_HXX_
 #define _GEOMImpl_IShapesOperations_HXX_
 
+using namespace std;
+
 #include "GEOM_IOperations.hxx"
 
 #include "GEOMAlgo_State.hxx"

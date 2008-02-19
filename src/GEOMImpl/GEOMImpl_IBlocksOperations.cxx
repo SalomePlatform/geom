@@ -21,6 +21,8 @@
 #pragma warning( disable:4786 )
 #endif
 
+using namespace std;
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IBlocksOperations.hxx>

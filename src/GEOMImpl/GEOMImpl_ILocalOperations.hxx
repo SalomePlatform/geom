@@ -21,6 +21,8 @@
 #ifndef _GEOMImpl_ILocalOperations_HXX_
 #define _GEOMImpl_ILocalOperations_HXX_
 
+using namespace std;
+
 #include "Utils_SALOME_Exception.hxx"
 #include "GEOM_IOperations.hxx"
 #include "GEOM_Engine.hxx"
