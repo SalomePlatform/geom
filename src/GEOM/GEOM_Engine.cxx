@@ -569,7 +569,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   // Make script to publish in study
   if ( isPublished )
   {
-    map< int, string > anEntryToCommandMap; // sort publishing commands by object entry
+    std::map< int, std::string > anEntryToCommandMap; // sort publishing commands by object entry
     for (anEntryToNameIt.Initialize( theObjectNames );
          anEntryToNameIt.More();
          anEntryToNameIt.Next())
@@ -602,11 +602,11 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       // bind a command to the last digit of the entry
       int tag =
         aEntry.SubString( aEntry.SearchFromEnd(":")+1, aEntry.Length() ).IntegerValue();
-      anEntryToCommandMap.insert( make_pair( tag, aCommand.ToCString() ));
+      anEntryToCommandMap.insert( std::make_pair( tag, aCommand.ToCString() ));
     }
 
     // add publishing commands to the script
-    map< int, string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
+    std::map< int, std::string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
     for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand ) {
       anUpdatedScript += (char*)anEntryToCommand->second.c_str();
     }
