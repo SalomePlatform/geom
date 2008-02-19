@@ -29,6 +29,8 @@
 #if !defined (__GEOM_DISPLAYER_H)
 #define __GEOM_DISPLAYER_H
 
+using namespace std;
+
 #include "GEOM_GEOMGUI.hxx"
 
 #include "SALOME_Prs.h"
