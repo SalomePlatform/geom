@@ -97,14 +97,16 @@ void GEOM_Superv_i::setGeomEngine()
   if ( !CORBA::is_nil(myGeomEngine) ) 
     return;
   // get GEOM_Gen engine
-  /*
+  ///*
   SALOME_LifeCycleCORBA* lcc = new SALOME_LifeCycleCORBA( name_service );
   Engines::Component_var comp = lcc->FindOrLoad_Component( "FactoryServer", "GEOM" );
-  */
+  //*/
 
+  /*
   Engines::Container_var cont=GetContainerRef();
   cont->load_component_Library("GEOM");
   Engines::Component_var comp=cont->create_component_instance("GEOM",0);
+  */
 
   myGeomEngine = GEOM::GEOM_Gen::_narrow(comp);
 }
