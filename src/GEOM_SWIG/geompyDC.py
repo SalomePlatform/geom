@@ -1390,11 +1390,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         
         ## Create a filling from the given compound of contours.
         #  @param theShape the compound of contours
-        #  @param theMinDeg a minimal degree
-        #  @param theMaxDeg a maximal degree
-        #  @param theTol2D a 2d tolerance
-        #  @param theTol3D a 3d tolerance
-        #  @param theNbIter a number of iteration
+        #  @param theMinDeg a minimal degree of BSpline surface to create
+        #  @param theMaxDeg a maximal degree of BSpline surface to create
+        #  @param theTol2D a 2d tolerance to be reached
+        #  @param theTol3D a 3d tolerance to be reached
+        #  @param theNbIter a number of iteration of approximation algorithm
         #  @return New GEOM_Object, containing the created filling surface.
         #
         #  Example: see GEOM_TestAll.py
