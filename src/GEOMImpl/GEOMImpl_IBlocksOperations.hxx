@@ -112,17 +112,17 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
 
   struct BCError {
     BCErrorType error;
-    list<int>   incriminated;
+    std::list<int>   incriminated;
   };
 
   Standard_EXPORT Standard_Boolean CheckCompoundOfBlocksOld (Handle(GEOM_Object) theCompound,
-                                             list<BCError>&      theErrors);
+                                             std::list<BCError>&      theErrors);
 
   Standard_EXPORT Standard_Boolean CheckCompoundOfBlocks (Handle(GEOM_Object) theCompound,
-                                          list<BCError>&      theErrors);
+                                          std::list<BCError>&      theErrors);
 
   Standard_EXPORT TCollection_AsciiString PrintBCErrors (Handle(GEOM_Object)  theCompound,
-                                         const list<BCError>& theErrors);
+                                         const std::list<BCError>& theErrors);
 
   Standard_EXPORT Handle(GEOM_Object) RemoveExtraEdges (Handle(GEOM_Object) theShape);
 

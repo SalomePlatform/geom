@@ -36,15 +36,15 @@ class GEOMImpl_ILocalOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakeFilletAll   (Handle(GEOM_Object) theShape, double theR);
   Standard_EXPORT Handle(GEOM_Object) MakeFilletEdges (Handle(GEOM_Object) theShape, double theR,
-                                       list<int> theEdges);
+                                                       std::list<int> theEdges);
   Standard_EXPORT Handle(GEOM_Object) MakeFilletEdgesR1R2 (Handle(GEOM_Object) theShape,
                                                            double theR1, double theR2,
-                                                           list<int> theEdges);
+                                                           std::list<int> theEdges);
   Standard_EXPORT Handle(GEOM_Object) MakeFilletFaces (Handle(GEOM_Object) theShape, double theR,
-                                       list<int> theFaces);
+                                                       std::list<int> theFaces);
   Standard_EXPORT Handle(GEOM_Object) MakeFilletFacesR1R2 (Handle(GEOM_Object) theShape,
                                                            double theR1, double theR2,
-                                                           list<int> theFaces);
+                                                           std::list<int> theFaces);
 
   Standard_EXPORT Handle(GEOM_Object) MakeChamferAll   (Handle(GEOM_Object) theShape, double theD);
   Standard_EXPORT Handle(GEOM_Object) MakeChamferEdge  (Handle(GEOM_Object) theShape,
@@ -54,27 +54,27 @@ class GEOMImpl_ILocalOperations : public GEOM_IOperations {
                                         double theD, double theAngle,
                                         int theFace1, int theFace2);
   Standard_EXPORT Handle(GEOM_Object) MakeChamferFaces (Handle(GEOM_Object) theShape,
-                                        double theD1, double theD2,
-                                        list<int> theFaces);
+                                                        double theD1, double theD2,
+                                                        std::list<int> theFaces);
   Standard_EXPORT Handle(GEOM_Object) MakeChamferFacesAD (Handle(GEOM_Object) theShape,
-                                        double theD, double theAngle,
-                                        list<int> theFaces);
+                                                          double theD, double theAngle,
+                                                          std::list<int> theFaces);
   Standard_EXPORT Handle(GEOM_Object) MakeChamferEdges (Handle(GEOM_Object) theShape,
-                                        double theD1, double theD2,
-                                        list<int> theEdges);
+                                                        double theD1, double theD2,
+                                                        std::list<int> theEdges);
   Standard_EXPORT Handle(GEOM_Object) MakeChamferEdgesAD (Handle(GEOM_Object) theShape,
-                                        double theD, double theAngle,
-                                        list<int> theEdges);
+                                                          double theD, double theAngle,
+                                                          std::list<int> theEdges);
   Standard_EXPORT Handle(GEOM_Object) MakeArchimede (Handle(GEOM_Object) theShape,
-                                     double theWeight, double theWaterDensity,
-                                     double theMeshingDeflection);
-
+                                                     double theWeight, double theWaterDensity,
+                                                     double theMeshingDeflection);
+  
   Standard_EXPORT Standard_Integer GetSubShapeIndex (Handle(GEOM_Object) theShape,
-                                     Handle(GEOM_Object) theSubShape);
-
+                                                     Handle(GEOM_Object) theSubShape);
+  
   Standard_EXPORT static bool GetSubShape (const TopoDS_Shape& theShape,
-                           const int theIndex,
-                           TopoDS_Shape& theSubShape);
+                                           const int theIndex,
+                                           TopoDS_Shape& theSubShape);
 };
 
 #endif

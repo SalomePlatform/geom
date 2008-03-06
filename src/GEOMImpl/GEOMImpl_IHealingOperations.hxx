@@ -42,17 +42,17 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
                                     const Handle(TColStd_HArray1OfExtendedString)& theValues );
 
   // Retrieve default Shape Process parameters (from resource file)
-  Standard_EXPORT void GetShapeProcessParameters( list<string>& theOperations,
-                                  list<string>& theParams,
-                                  list<string>& theValues );
+  Standard_EXPORT void GetShapeProcessParameters( std::list<std::string>& theOperations,
+                                                  std::list<std::string>& theParams,
+                                                  std::list<std::string>& theValues );
 
   // Retrieve default Shape Process parameters for given operator
-  Standard_EXPORT bool GetOperatorParameters( const string theOperation, 
-                              list<string>& theParams,
-                              list<string>& theValues );
+  Standard_EXPORT bool GetOperatorParameters( const std::string theOperation, 
+                                              std::list<std::string>& theParams,
+                                              std::list<std::string>& theValues );
 
   // returns all parameters that are valid for the given operation (Shape Process operator)
-  Standard_EXPORT static bool GetParameters( const string theOperation, list<string>& theParams );                                      
+  Standard_EXPORT static bool GetParameters( const std::string theOperation, std::list<std::string>& theParams );
 
   Standard_EXPORT Handle(GEOM_Object) SuppressFaces( Handle(GEOM_Object) theObject,
                                      const Handle(TColStd_HArray1OfInteger)& theFaces);

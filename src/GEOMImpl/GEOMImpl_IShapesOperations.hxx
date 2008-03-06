@@ -54,20 +54,20 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) MakeEdge (Handle(GEOM_Object) thePoint1,
                                 Handle(GEOM_Object) thePoint2);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeWire (list<Handle(GEOM_Object)> theEdgesAndWires);
+  Standard_EXPORT Handle(GEOM_Object) MakeWire (std::list<Handle(GEOM_Object)> theEdgesAndWires);
 
   Standard_EXPORT Handle(GEOM_Object) MakeFace (Handle(GEOM_Object) theWire, const bool isPlanarWanted);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeFaceWires (list<Handle(GEOM_Object)> theWires,
+  Standard_EXPORT Handle(GEOM_Object) MakeFaceWires (std::list<Handle(GEOM_Object)> theWires,
                                      const bool isPlanarWanted);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeShell (list<Handle(GEOM_Object)> theShapes);
+  Standard_EXPORT Handle(GEOM_Object) MakeShell (std::list<Handle(GEOM_Object)> theShapes);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSolidShell (Handle(GEOM_Object) theShell);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeSolidShells (list<Handle(GEOM_Object)> theShells);
+  Standard_EXPORT Handle(GEOM_Object) MakeSolidShells (std::list<Handle(GEOM_Object)> theShells);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeCompound (list<Handle(GEOM_Object)> theShapes);
+  Standard_EXPORT Handle(GEOM_Object) MakeCompound (std::list<Handle(GEOM_Object)> theShapes);
 
   Standard_EXPORT Handle(GEOM_Object) MakeGlueFaces (Handle(GEOM_Object) theShape,
 						     const Standard_Real theTolerance,
@@ -78,7 +78,7 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT Handle(GEOM_Object) MakeGlueFacesByList (Handle(GEOM_Object) theShape,
 							   const Standard_Real theTolerance,
-							   list<Handle(GEOM_Object)> theFaces,
+							   std::list<Handle(GEOM_Object)> theFaces,
                                                            const Standard_Boolean doKeepNonSolids);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakeExplode (Handle(GEOM_Object)    theShape,
@@ -285,7 +285,7 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT static bool CheckTriangulation (const TopoDS_Shape& theShape);
 
  private:
-  Handle(GEOM_Object) MakeShape (list<Handle(GEOM_Object)>      theShapes,
+  Handle(GEOM_Object) MakeShape (std::list<Handle(GEOM_Object)>      theShapes,
                                  const Standard_Integer         theObjectType,
                                  const Standard_Integer         theFunctionType,
                                  const TCollection_AsciiString& theMethodName);

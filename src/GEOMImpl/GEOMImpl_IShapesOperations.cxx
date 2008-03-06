@@ -210,7 +210,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
-                             (list<Handle(GEOM_Object)> theShapes)
+                             (std::list<Handle(GEOM_Object)> theShapes)
 {
   return MakeShape(theShapes, GEOM_WIRE, WIRE_EDGES, "MakeWire");
 }
@@ -277,7 +277,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
-                             (list<Handle(GEOM_Object)> theShapes,
+                             (std::list<Handle(GEOM_Object)> theShapes,
                               const bool isPlanarWanted)
 {
   SetErrorCode(KO);
@@ -298,7 +298,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
   Handle(TColStd_HSequenceOfTransient) aShapesSeq = new TColStd_HSequenceOfTransient;
 
   // Shapes
-  list<Handle(GEOM_Object)>::iterator it = theShapes.begin();
+  std::list<Handle(GEOM_Object)>::iterator it = theShapes.begin();
   for (; it != theShapes.end(); it++) {
     Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
     if (aRefSh.IsNull()) {
@@ -351,7 +351,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShell
-                             (list<Handle(GEOM_Object)> theShapes)
+                             (std::list<Handle(GEOM_Object)> theShapes)
 {
   return MakeShape(theShapes, GEOM_SHELL, SHELL_FACES, "MakeShell");
 }
@@ -362,7 +362,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShell
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidShells
-                             (list<Handle(GEOM_Object)> theShapes)
+                             (std::list<Handle(GEOM_Object)> theShapes)
 {
   return MakeShape(theShapes, GEOM_SOLID, SOLID_SHELLS, "MakeSolid");
 }
@@ -427,7 +427,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidShell (Handle(GEOM_Obje
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeCompound
-                             (list<Handle(GEOM_Object)> theShapes)
+                             (std::list<Handle(GEOM_Object)> theShapes)
 {
   return MakeShape(theShapes, GEOM_COMPOUND, COMPOUND_SHAPES, "MakeCompound");
 }
@@ -438,7 +438,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeCompound
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
-                             (list<Handle(GEOM_Object)>      theShapes,
+                             (std::list<Handle(GEOM_Object)>      theShapes,
                               const Standard_Integer         theObjectType,
                               const Standard_Integer         theFunctionType,
                               const TCollection_AsciiString& theMethodName)
@@ -461,7 +461,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
   Handle(TColStd_HSequenceOfTransient) aShapesSeq = new TColStd_HSequenceOfTransient;
 
   // Shapes
-  list<Handle(GEOM_Object)>::iterator it = theShapes.begin();
+  std::list<Handle(GEOM_Object)>::iterator it = theShapes.begin();
   for (; it != theShapes.end(); it++) {
     Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
     if (aRefSh.IsNull()) {
@@ -654,7 +654,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueFaces
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
                                                 (Handle(GEOM_Object) theShape,
                                                  const Standard_Real theTolerance,
-						 list<Handle(GEOM_Object)> theFaces,
+						 std::list<Handle(GEOM_Object)> theFaces,
                                                  const Standard_Boolean doKeepNonSolids)
 {
   SetErrorCode(KO);
@@ -682,7 +682,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
   aCI.SetKeepNonSolids(doKeepNonSolids);
 
   Handle(TColStd_HSequenceOfTransient) aFaces = new TColStd_HSequenceOfTransient;
-  list<Handle(GEOM_Object)>::iterator it = theFaces.begin();
+  std::list<Handle(GEOM_Object)>::iterator it = theFaces.begin();
   for (; it != theFaces.end(); it++) {
     Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
     if (aRefSh.IsNull()) {

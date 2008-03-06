@@ -1923,7 +1923,7 @@ Standard_Boolean HasAnyConnection (const Standard_Integer         theBlockIndex,
 //=============================================================================
 Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocksOld
                                                 (Handle(GEOM_Object) theCompound,
-                                                 list<BCError>&      theErrors)
+                                                 std::list<BCError>&      theErrors)
 {
   SetErrorCode(KO);
 
@@ -2075,11 +2075,11 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocksOld
 //=============================================================================
 TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
                                                 (Handle(GEOM_Object)  theCompound,
-                                                 const list<BCError>& theErrors)
+                                                 const std::list<BCError>& theErrors)
 {
   TCollection_AsciiString aDescr;
 
-  list<BCError>::const_iterator errIt = theErrors.begin();
+  std::list<BCError>::const_iterator errIt = theErrors.begin();
   int i = 0;
   for (; errIt != theErrors.end(); i++, errIt++) {
     BCError errStruct = *errIt;
@@ -2104,8 +2104,8 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
       break;
     }
 
-    list<int> sshList = errStruct.incriminated;
-    list<int>::iterator sshIt = sshList.begin();
+    std::list<int> sshList = errStruct.incriminated;
+    std::list<int>::iterator sshIt = sshList.begin();
     int jj = 0;
     for (; sshIt != sshList.end(); jj++, sshIt++) {
       if (jj > 0)
@@ -2124,7 +2124,7 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
 //=============================================================================
 Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
                                               (Handle(GEOM_Object) theCompound,
-                                               list<BCError>&      theErrors)
+                                               std::list<BCError>&      theErrors)
 {
   SetErrorCode(KO);
 

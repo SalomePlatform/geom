@@ -187,9 +187,9 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ShapeProcess (Handle(GEOM_Objec
  *  ShapeProcess
  */
 //=============================================================================
-void GEOMImpl_IHealingOperations::GetShapeProcessParameters (list<string>& theOperations,
-                                                             list<string>& theParams,
-                                                             list<string>& theValues)
+void GEOMImpl_IHealingOperations::GetShapeProcessParameters (std::list<std::string>& theOperations,
+                                                             std::list<std::string>& theParams,
+                                                             std::list<std::string>& theValues)
 {
   ShHealOper_ShapeProcess aHealer;
   TColStd_SequenceOfAsciiString anOperators;
@@ -198,7 +198,7 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (list<string>& theOp
   {
     for ( Standard_Integer i = 1; i <= anOperators.Length(); i++ )
     {
-      string anOperation = anOperators.Value( i ).ToCString();
+      std::string anOperation = anOperators.Value( i ).ToCString();
       if ( GetOperatorParameters( anOperation, theParams, theValues ) )
 	theOperations.push_back( anOperation );
       else
@@ -222,15 +222,15 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (list<string>& theOp
  *  GetOperatorParameters
  */
 //=============================================================================
-bool GEOMImpl_IHealingOperations::GetOperatorParameters( const string theOperation, 
-							 list<string>& theParams,
-							 list<string>& theValues )
+bool GEOMImpl_IHealingOperations::GetOperatorParameters( const std::string theOperation, 
+							 std::list<std::string>& theParams,
+							 std::list<std::string>& theValues )
 {
   ShHealOper_ShapeProcess aHealer;
   int nbParamValueErrors( 0 );
-  list<string> aParams;
+  std::list<std::string> aParams;
   if ( GetParameters( theOperation, aParams ) ) {
-    for ( list<string>::iterator it = aParams.begin(); it != aParams.end(); ++it ) {
+    for ( std::list<std::string>::iterator it = aParams.begin(); it != aParams.end(); ++it ) {
       TCollection_AsciiString aParam( (Standard_CString)(*it).c_str() );
       TCollection_AsciiString aValue;
       if ( aHealer.GetParameter( aParam, aValue ) ) {
@@ -258,8 +258,8 @@ bool GEOMImpl_IHealingOperations::GetOperatorParameters( const string theOperati
  *  GetParameters
  */
 //=============================================================================
-bool GEOMImpl_IHealingOperations::GetParameters (const string theOperation,
-                                                 list<string>& theParams)
+bool GEOMImpl_IHealingOperations::GetParameters (const std::string theOperation,
+                                                 std::list<std::string>& theParams)
 {
   if ( theOperation == "SplitAngle" ) {
     theParams.push_back( "SplitAngle.Angle" );
