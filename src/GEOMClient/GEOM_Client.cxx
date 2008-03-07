@@ -66,7 +66,7 @@
 //=======================================================================
 TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape )
 {
-    string hst_client = GetHostname();
+    std::string hst_client = GetHostname();
 
     Engines::Container_var ctn_server = geom->GetContainerRef();
     long                   pid_server = ctn_server->getPID();
@@ -81,7 +81,7 @@ TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr a
         int sizebuf = SeqFile->length();
         char* buf;
         buf = (char*) &SeqFile[0];
-        istrstream streamBrep(buf,sizebuf);
+        std::istrstream streamBrep(buf,sizebuf);
         BRep_Builder aBuilder;
         BRepTools::Read(S, streamBrep, aBuilder);
         return(S);
