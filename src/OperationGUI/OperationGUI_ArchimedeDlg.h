@@ -63,6 +63,7 @@ private slots:
   void                                ActivateThisDialog();
   void                                LineEditReturnPressed();
   void                                SelectionIntoArgument();
+  void                                SetDoubleSpinBoxStep( double );
 };
 
 #endif // OPERATIONGUI_ARCHIMEDEDLG_H

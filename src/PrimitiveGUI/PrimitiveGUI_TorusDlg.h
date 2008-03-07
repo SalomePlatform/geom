@@ -70,6 +70,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox();
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // PRIMITIVEGUI_TORUSDLG_H

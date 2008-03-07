@@ -79,6 +79,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox();
+  void                               SetDoubleSpinBoxStep( double );
   void                               onReverse();
   void                               onBothway();
   void                               onBothway2();

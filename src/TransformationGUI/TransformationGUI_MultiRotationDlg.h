@@ -75,6 +75,7 @@ private slots:
   void                               ReverseAngle();
   void                               ValueChangedInSpinBox( double );
   void                               ConstructorsClicked( int );
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // TRANSFORMATIONGUI_MULTIROTATIONDLG_H

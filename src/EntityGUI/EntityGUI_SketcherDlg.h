@@ -158,6 +158,7 @@ private slots:
   void                               Dir1Clicked( int );
   void                               Dir2Clicked( int );
   void                               ValueChangedInSpinBox( double );
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // ENTITYGUI_SKETCHERDLG_H

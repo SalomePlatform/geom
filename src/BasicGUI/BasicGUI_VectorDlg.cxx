@@ -153,11 +153,7 @@ void BasicGUI_VectorDlg::Init()
   connect( GroupDimensions->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupDimensions->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-  // VSR: TODO ->>
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DX, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DY, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DZ, SLOT( SetStep( double ) ) );
-  // <<-
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( GroupDimensions->CheckButton1, SIGNAL( stateChanged( int ) ), this, SLOT( ReverseVector( int ) ) );
 
@@ -167,6 +163,17 @@ void BasicGUI_VectorDlg::Init()
   initName( tr("GEOM_VECTOR") );
 
   ConstructorsClicked( 0 );
+}
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void BasicGUI_VectorDlg::SetDoubleSpinBoxStep( double step )
+{
+  GroupDimensions->SpinBox_DX->setSingleStep(step);
+  GroupDimensions->SpinBox_DY->setSingleStep(step);
+  GroupDimensions->SpinBox_DZ->setSingleStep(step);
 }
 
 

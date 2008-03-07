@@ -149,11 +149,7 @@ void PrimitiveGUI_TorusDlg::Init()
   connect( GroupDimensions->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
   connect( GroupDimensions->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
 
-  // VSR: TODO ->>
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox_DX,     SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox_DY,     SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DX, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DY, SLOT( SetStep( double ) ) );
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
   
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
 	   this, SLOT( SelectionIntoArgument() ) );
@@ -161,6 +157,18 @@ void PrimitiveGUI_TorusDlg::Init()
   initName( tr( "GEOM_TORUS" ) );
 
   ConstructorsClicked( 0 );
+}
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void PrimitiveGUI_TorusDlg::SetDoubleSpinBoxStep( double step )
+{
+  GroupPoints->SpinBox_DX->setSingleStep(step);
+  GroupPoints->SpinBox_DY->setSingleStep(step);
+  GroupDimensions->SpinBox_DX->setSingleStep(step);
+  GroupDimensions->SpinBox_DY->setSingleStep(step);
 }
 
 

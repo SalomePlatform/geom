@@ -71,6 +71,7 @@ private slots:
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox();
+  void                               SetDoubleSpinBoxStep( double );
   void                               onReverse();
   void                               onBothway();
 };

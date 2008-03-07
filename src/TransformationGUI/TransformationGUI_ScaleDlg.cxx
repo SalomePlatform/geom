@@ -106,9 +106,7 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg( GeometryGUI* theGeometry
   connect( GroupPoints->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( GroupPoints->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
-  // VSR: TODO ->>
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox_DX, SLOT( SetStep( double ) ) );
-  // <<-
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
   connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ), this, SLOT( CreateCopyModeChanged( bool ) ) );
    
   connect( myGeomGUI->getApp()->selectionMgr(), 
@@ -309,6 +307,15 @@ void TransformationGUI_ScaleDlg::enterEvent( QEvent* )
 void TransformationGUI_ScaleDlg::ValueChangedInSpinBox()
 {
   displayPreview();
+}
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void TransformationGUI_ScaleDlg::SetDoubleSpinBoxStep( double step )
+{
+  GroupPoints->SpinBox_DX->setSingleStep(step);
 }
 
 

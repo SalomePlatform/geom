@@ -70,6 +70,7 @@ private slots:
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox();
   void                               CreateCopyModeChanged( bool );
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // TRANSFORMATIONGUI_TRANSLATIONDLG_H

@@ -120,11 +120,7 @@ void OperationGUI_ArchimedeDlg::Init()
 
   connect( GroupPoints->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  // VSR: TODO ->>
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox_DX, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox_DY, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox_DZ, SLOT( SetStep( double ) ) );
-  // <<-
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
   
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
 	   this, SLOT( SelectionIntoArgument() ) );
@@ -136,6 +132,17 @@ void OperationGUI_ArchimedeDlg::Init()
   SelectionIntoArgument();
 }
 
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void OperationGUI_ArchimedeDlg::SetDoubleSpinBoxStep( double step )
+{
+  GroupPoints->SpinBox_DX->setSingleStep(step);
+  GroupPoints->SpinBox_DY->setSingleStep(step);
+  GroupPoints->SpinBox_DZ->setSingleStep(step);
+}
 
 //=================================================================================
 // function : ClickOnOk()

@@ -72,6 +72,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox();
   void                               CreateCopyModeChanged( bool );
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // TRANSFORMATIONGUI_SCALEDLG_H

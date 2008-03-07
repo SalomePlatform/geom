@@ -76,6 +76,7 @@ private slots:
   void                               ReverseStepV();
   void                               ValueChangedInSpinBox( double );
   void                               ConstructorsClicked( int );
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // TRANSFORMATIONGUI_MULTITRANSLATIONDLG_H

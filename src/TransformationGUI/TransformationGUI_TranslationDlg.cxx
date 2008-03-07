@@ -149,11 +149,7 @@ void TransformationGUI_TranslationDlg::Init()
   connect( GroupPoints->SpinBox2, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
   connect( GroupPoints->SpinBox3, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
   
-  // VSR: TODO ->>
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox1, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox2, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox3, SLOT( SetStep( double ) ) );
-  // <<-
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
   
   connect( GroupPoints->CheckBox1, SIGNAL( toggled( bool ) ), this, SLOT( CreateCopyModeChanged( bool ) ) );
   
@@ -165,6 +161,17 @@ void TransformationGUI_TranslationDlg::Init()
   ConstructorsClicked( 0 );
 }
 
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void TransformationGUI_TranslationDlg::SetDoubleSpinBoxStep( double step )
+{
+  GroupPoints->SpinBox1->setSingleStep(step);
+  GroupPoints->SpinBox2->setSingleStep(step);
+  GroupPoints->SpinBox3->setSingleStep(step);
+}
 
 //=================================================================================
 // function : ConstructorsClicked()

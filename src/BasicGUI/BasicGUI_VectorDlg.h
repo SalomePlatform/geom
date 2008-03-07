@@ -73,6 +73,7 @@ private slots:
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox( double );
   void                               ReverseVector( int );
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // BASICGUI_VECTORDLG_H

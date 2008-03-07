@@ -135,9 +135,7 @@ void GenerationGUI_RevolDlg::Init()
   connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ),        this, SLOT( onBothway() ) );
   connect( GroupPoints->CheckButton2, SIGNAL( toggled( bool ) ),        this, SLOT( onReverse() ) );
 
-  // VSR: TODO ->>
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox_DX, SLOT( SetStep( double ) ) );
-  // <<-
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
@@ -146,6 +144,16 @@ void GenerationGUI_RevolDlg::Init()
 
   globalSelection( GEOM_ALLSHAPES );
 }
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void GenerationGUI_RevolDlg::SetDoubleSpinBoxStep( double step )
+{
+  GroupPoints->SpinBox_DX->setSingleStep(step);
+}
+
 
 
 //=================================================================================

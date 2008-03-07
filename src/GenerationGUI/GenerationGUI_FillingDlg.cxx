@@ -143,18 +143,25 @@ void GenerationGUI_FillingDlg::Init()
 
   connect( GroupPoints->CheckBox1, SIGNAL( stateChanged( int ) ), this, SLOT( ApproxChanged() ) );
 
-  // VSR: TODO ->>
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox1, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox2, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox3, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox4, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox5, SLOT( SetStep( double ) ) );
-  // <<-
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_FILLING" ) );
+}
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void GenerationGUI_FillingDlg::SetDoubleSpinBoxStep( double step )
+{
+  GroupPoints->SpinBox1->setSingleStep(step);
+  GroupPoints->SpinBox2->setSingleStep(step);
+  GroupPoints->SpinBox3->setSingleStep(step);
+  GroupPoints->SpinBox4->setSingleStep(step);
+  GroupPoints->SpinBox5->setSingleStep(step);
 }
 
 

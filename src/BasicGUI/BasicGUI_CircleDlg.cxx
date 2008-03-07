@@ -171,9 +171,7 @@ void BasicGUI_CircleDlg::Init()
   connect( GroupPntVecR->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( GroupPntVecR->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT(ValueChangedInSpinBox() ) );
-  // VSR: TODO ->>
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPntVecR->SpinBox_DX, SLOT( SetStep( double ) ) );
-  // <<-
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
@@ -181,6 +179,15 @@ void BasicGUI_CircleDlg::Init()
   initName( tr( "GEOM_CIRCLE" ) );
 
   ConstructorsClicked( 0 );
+}
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void BasicGUI_CircleDlg::SetDoubleSpinBoxStep( double step )
+{
+  GroupPntVecR->SpinBox_DX->setSingleStep(step);
 }
 
 //=================================================================================

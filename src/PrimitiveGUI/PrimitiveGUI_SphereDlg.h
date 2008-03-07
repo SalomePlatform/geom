@@ -71,6 +71,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox();
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // DIALOGBOX_SPHERE_H

@@ -212,18 +212,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   connect( Group4Spin->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group4Spin->SpinBox_DS, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-  // VSR: TODO ->>
-  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), Group1Spin->SpinBox_DX, SLOT( SetStep( double ) ) );
-  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), Group2Spin->SpinBox_DX, SLOT( SetStep( double ) ) );
-  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), Group2Spin->SpinBox_DY, SLOT( SetStep( double ) ) );
-  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), Group3Spin->SpinBox_DX, SLOT( SetStep( double ) ) );
-  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), Group3Spin->SpinBox_DY, SLOT( SetStep( double ) ) );
-  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), Group3Spin->SpinBox_DZ, SLOT( SetStep( double ) ) );
-  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), Group4Spin->SpinBox_DX, SLOT( SetStep( double ) ) );
-  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), Group4Spin->SpinBox_DY, SLOT( SetStep( double ) ) );
-  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), Group4Spin->SpinBox_DZ, SLOT( SetStep( double ) ) );
-  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), Group4Spin->SpinBox_DS, SLOT( SetStep( double ) ) );
-  // <<-
+  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( myGeometryGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
   connect( myGeometryGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
@@ -1491,3 +1480,22 @@ void EntityGUI_SketcherDlg::initSpinBox( QDoubleSpinBox* spinBox,
   spinBox->setSingleStep( step );
   spinBox->setDecimals( decimals );
 }
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void EntityGUI_SketcherDlg::SetDoubleSpinBoxStep( double step )
+{
+  Group1Spin->SpinBox_DX->setSingleStep(step);
+  Group2Spin->SpinBox_DX->setSingleStep(step);
+  Group2Spin->SpinBox_DY->setSingleStep(step);
+  Group3Spin->SpinBox_DX->setSingleStep(step);
+  Group3Spin->SpinBox_DY->setSingleStep(step);
+  Group3Spin->SpinBox_DZ->setSingleStep(step);
+  Group4Spin->SpinBox_DX->setSingleStep(step);
+  Group4Spin->SpinBox_DY->setSingleStep(step);
+  Group4Spin->SpinBox_DZ->setSingleStep(step);
+  Group4Spin->SpinBox_DS->setSingleStep(step);
+}
+

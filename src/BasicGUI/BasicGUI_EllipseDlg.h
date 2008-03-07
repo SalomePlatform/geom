@@ -68,6 +68,7 @@ private slots:
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox( double );
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // BASICGUI_ELLIPSEDLG_H

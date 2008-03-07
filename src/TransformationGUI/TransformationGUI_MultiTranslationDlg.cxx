@@ -171,14 +171,7 @@ void TransformationGUI_MultiTranslationDlg::Init()
   connect( GroupDimensions->SpinBox_DX2, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupDimensions->SpinBox_DY2, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-  // VSR: TODO ->>
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox_DX,      SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupPoints->SpinBox_DY,      SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DX1, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DY1, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DX2, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupDimensions->SpinBox_DY2, SLOT( SetStep( double ) ) );
-  // <<-
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( GroupPoints->CheckButton1,     SIGNAL( toggled( bool ) ), this, SLOT( ReverseStepU() ) );
   connect( GroupDimensions->CheckButton1, SIGNAL( toggled( bool ) ), this, SLOT( ReverseStepU() ) );
@@ -192,6 +185,20 @@ void TransformationGUI_MultiTranslationDlg::Init()
   ConstructorsClicked( 0 );
 }
 
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void TransformationGUI_MultiTranslationDlg::SetDoubleSpinBoxStep( double step )
+{
+  GroupPoints->SpinBox_DX->setSingleStep(step);
+  GroupPoints->SpinBox_DY->setSingleStep(step);
+  GroupDimensions->SpinBox_DX1->setSingleStep(step);
+  GroupDimensions->SpinBox_DY1->setSingleStep(step);
+  GroupDimensions->SpinBox_DX2->setSingleStep(step);
+  GroupDimensions->SpinBox_DY2->setSingleStep(step);
+}
 
 //=================================================================================
 // function : ConstructorsClicked()

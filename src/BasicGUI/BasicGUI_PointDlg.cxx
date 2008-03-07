@@ -218,15 +218,7 @@ void BasicGUI_PointDlg::Init()
   connect( GroupRefPoint->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupRefPoint->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-  // VSR: TODO ->>
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupOnCurve->SpinBox_DX,  SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupXYZ->SpinBox_DX,      SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupXYZ->SpinBox_DY,      SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupXYZ->SpinBox_DZ,      SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupRefPoint->SpinBox_DX, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupRefPoint->SpinBox_DY, SLOT( SetStep( double ) ) );
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), GroupRefPoint->SpinBox_DZ, SLOT( SetStep( double ) ) );
-  // <<-
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this,  SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged() ),
 	   this,  SLOT(SelectionIntoArgument() ) );
@@ -235,6 +227,21 @@ void BasicGUI_PointDlg::Init()
   initName( tr( "GEOM_VERTEX" ) );
   
   ConstructorsClicked( 0 );
+}
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void BasicGUI_PointDlg::SetDoubleSpinBoxStep( double step )
+{
+  GroupOnCurve->SpinBox_DX->setSingleStep(step);
+  GroupXYZ->SpinBox_DX->setSingleStep(step);
+  GroupXYZ->SpinBox_DY->setSingleStep(step);
+  GroupXYZ->SpinBox_DZ->setSingleStep(step);
+  GroupRefPoint->SpinBox_DX->setSingleStep(step);
+  GroupRefPoint->SpinBox_DY->setSingleStep(step);
+  GroupRefPoint->SpinBox_DZ->setSingleStep(step);
 }
 
 

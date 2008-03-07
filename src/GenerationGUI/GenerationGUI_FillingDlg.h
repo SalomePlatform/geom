@@ -73,6 +73,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox( double );
   void                               ApproxChanged();
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // GENERATIONGUI_FILLINGDLG_H

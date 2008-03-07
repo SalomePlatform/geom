@@ -76,6 +76,7 @@ private slots:
   void                               LineEditReturnPressed();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox();
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // BASICGUI_CIRCLEDLG_H

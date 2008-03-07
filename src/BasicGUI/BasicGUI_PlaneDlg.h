@@ -75,6 +75,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox( double );
+  void                               SetDoubleSpinBoxStep( double );
 };
 
 #endif // BASICGUI_PLANEDLG_H
