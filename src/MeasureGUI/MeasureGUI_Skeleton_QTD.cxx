@@ -20,7 +20,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'MeasureGUI_Skeleton_QTD.ui'
 **
-** Created: Tue Mar 21 10:10:08 2006
+** Created: Tue Mar 13 14:20:24 2007
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -96,11 +96,6 @@ MeasureGUI_Skeleton_QTD::MeasureGUI_Skeleton_QTD( QWidget* parent, const char* n
 
     Layout1->addWidget( GroupConstructors, 0, 0 );
 
-    GroupMedium = new QGroupBox( this, "GroupMedium" );
-    GroupMedium->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, GroupMedium->sizePolicy().hasHeightForWidth() ) );
-
-    Layout1->addWidget( GroupMedium, 1, 0 );
-
     MeasureGUI_Skeleton_QTDLayout->addLayout( Layout1, 0, 0 );
     languageChange();
     resize( QSize(228, 266).expandedTo(minimumSizeHint()) );
@@ -121,12 +116,5 @@ MeasureGUI_Skeleton_QTD::~MeasureGUI_Skeleton_QTD()
  */
 void MeasureGUI_Skeleton_QTD::languageChange()
 {
-    setCaption( tr( "MeasureGUI_Skeleton_QTD" ) );
-    GroupButtons->setTitle( QString::null );
-    buttonClose->setText( tr( "&Close" ) );
-    buttonHelp->setText( tr( "&Help" ) );
-    GroupConstructors->setTitle( QString::null );
-    RadioButton1->setText( QString::null );
-    GroupMedium->setTitle( QString::null );
 }
 

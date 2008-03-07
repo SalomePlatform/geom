@@ -33,6 +33,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
@@ -45,7 +52,7 @@ using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_MultiTranslationDlg()
-// purpose  : Constructs a TransformationGUI_MultiTranslationDlg which is a child of 'parent', with the 
+// purpose  : Constructs a TransformationGUI_MultiTranslationDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -102,7 +109,7 @@ TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("multi_translation.htm");
+  setHelpFileName("multi_translation_operation_page.html");
 
   Init();
 }
@@ -127,18 +134,18 @@ void TransformationGUI_MultiTranslationDlg::Init()
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
-  
+
   double SpecificStep = 1;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupPoints->SpinBox_DY->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep, 10);
   GroupPoints->SpinBox_DX->SetValue(myStepU);
   GroupPoints->SpinBox_DY->SetValue(myNbTimesU);
 
-  GroupDimensions->SpinBox_DX1->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupDimensions->SpinBox_DY1->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
-  GroupDimensions->SpinBox_DX2->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupDimensions->SpinBox_DY2->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
+  GroupDimensions->SpinBox_DX1->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupDimensions->SpinBox_DY1->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep, 10);
+  GroupDimensions->SpinBox_DX2->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupDimensions->SpinBox_DY2->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep, 10);
   GroupDimensions->SpinBox_DX1->SetValue(myStepU);
   GroupDimensions->SpinBox_DY1->SetValue(myNbTimesU);
   GroupDimensions->SpinBox_DX2->SetValue(myStepV);
@@ -178,11 +185,10 @@ void TransformationGUI_MultiTranslationDlg::Init()
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(ReverseStepU()));
   connect(GroupDimensions->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(ReverseStepU()));
   connect(GroupDimensions->CheckButton2, SIGNAL(toggled(bool)), this, SLOT(ReverseStepV()));
-  
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  
   initName( tr( "GEOM_MULTITRANSLATION" ) );
   ConstructorsClicked( 0 );
 }
@@ -195,7 +201,7 @@ void TransformationGUI_MultiTranslationDlg::Init()
 void TransformationGUI_MultiTranslationDlg::ConstructorsClicked(int constructorId)
 {
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  
+
   myStepU = myStepV = 50.0;
   myNbTimesU = myNbTimesV = 2;
 
@@ -238,10 +244,10 @@ void TransformationGUI_MultiTranslationDlg::ConstructorsClicked(int constructorI
 	break;
       }
     }
-  
+
   myEditCurrentArgument->setFocus();
   myBase = myVectorU = GEOM::GEOM_Object::_nil();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
@@ -265,7 +271,7 @@ bool TransformationGUI_MultiTranslationDlg::ClickOnApply()
 {
   if ( !onAccept() )
     return false;
-  
+
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
@@ -279,13 +285,15 @@ bool TransformationGUI_MultiTranslationDlg::ClickOnApply()
 void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
-  
-  if(IObjectCount() != 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1 || myEditCurrentArgument == GroupDimensions->LineEdit1)
+
+  if (IObjectCount() != 1) {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1 ||
+        myEditCurrentArgument == GroupDimensions->LineEdit1)
       myBase = GEOM::GEOM_Object::_nil();
-    else if(myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupDimensions->LineEdit2)
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2 ||
+             myEditCurrentArgument == GroupDimensions->LineEdit2)
       myVectorU = GEOM::GEOM_Object::_nil();
-    else if(myEditCurrentArgument == GroupDimensions->LineEdit3)
+    else if (myEditCurrentArgument == GroupDimensions->LineEdit3)
       myVectorV = GEOM::GEOM_Object::_nil();
     return;
   }
@@ -297,15 +305,62 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
   if ( !testResult || CORBA::is_nil( aSelectedObject ) || !GEOMBase::IsShape( aSelectedObject ) )
     return;
 
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 || myEditCurrentArgument == GroupDimensions->LineEdit1)
-    myBase = aSelectedObject;	      
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupDimensions->LineEdit2)
-    myVectorU = aSelectedObject;
-  else if(myEditCurrentArgument == GroupDimensions->LineEdit3) 
-    myVectorV = aSelectedObject;
+  QString aName = GEOMBase::GetName( aSelectedObject );
 
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
-  
+  if (myEditCurrentArgument == GroupPoints->LineEdit1 ||
+      myEditCurrentArgument == GroupDimensions->LineEdit1)
+    myBase = aSelectedObject;
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2 ||
+           myEditCurrentArgument == GroupDimensions->LineEdit2 ||
+	   myEditCurrentArgument == GroupDimensions->LineEdit3 ) {
+    if ( testResult && !aSelectedObject->_is_nil() )
+	{
+	  TopoDS_Shape aShape;
+	  
+	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	    {
+	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	      TColStd_IndexedMapOfInteger aMap;
+	      aSelMgr->GetIndexes( firstIObject(), aMap );
+		if ( aMap.Extent() == 1 )
+		  {
+		    int anIndex = aMap( 1 );
+		    aName += QString(":edge_%1").arg(anIndex);
+
+		    //Find SubShape Object in Father
+		    GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
+		    
+		    if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+		      GEOM::GEOM_IShapesOperations_var aShapesOp =
+			getGeomEngine()->GetIShapesOperations( getStudyId() );
+		      if ( myEditCurrentArgument == GroupDimensions->LineEdit3 )
+			myVectorV = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		      else
+			myVectorU = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		    }
+		    else {
+		      if ( myEditCurrentArgument == GroupDimensions->LineEdit3 )
+			myVectorV = aFindedObject;
+		      else
+			myVectorU = aFindedObject;
+		    }
+		  }
+		else {
+		  if (aShape.ShapeType() != TopAbs_EDGE) {
+		    aSelectedObject = GEOM::GEOM_Object::_nil();
+		    aName = "";
+		  }
+		  if ( myEditCurrentArgument == GroupDimensions->LineEdit3 )
+		    myVectorV = aSelectedObject;
+		  else
+		    myVectorU = aSelectedObject;
+		}
+	    }
+	}
+    }
+
+  myEditCurrentArgument->setText( aName );
+
   displayPreview();	
 }
 
@@ -317,29 +372,27 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 void TransformationGUI_MultiTranslationDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
- 
+  globalSelection( GEOM_ALLSHAPES );
 
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection( GEOM_ALLSHAPES );
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    globalSelection( GEOM_LINE  );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if(send == GroupDimensions->PushButton1) {
     myEditCurrentArgument = GroupDimensions->LineEdit1;
-    globalSelection( GEOM_ALLSHAPES );
   }
   else if(send == GroupDimensions->PushButton2) {
     myEditCurrentArgument = GroupDimensions->LineEdit2;
-    globalSelection( GEOM_LINE  );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if(send == GroupDimensions->PushButton3) {
     myEditCurrentArgument = GroupDimensions->LineEdit3;
-    globalSelection( GEOM_LINE  );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
-  
+
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
@@ -356,7 +409,7 @@ void TransformationGUI_MultiTranslationDlg::LineEditReturnPressed()
      send == GroupPoints->LineEdit2 || send == GroupDimensions->LineEdit2 ||
                                        send == GroupDimensions->LineEdit3)
     {
-      myEditCurrentArgument = send; 
+      myEditCurrentArgument = send;
       GEOMBase_Skeleton::LineEditReturnPressed();
     }
 }
@@ -369,7 +422,7 @@ void TransformationGUI_MultiTranslationDlg::LineEditReturnPressed()
 void TransformationGUI_MultiTranslationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   ConstructorsClicked( getConstructorId() );
@@ -418,7 +471,7 @@ void TransformationGUI_MultiTranslationDlg::ValueChangedInSpinBox(double newValu
 	break;
       }
     }
-  
+
   displayPreview();
 }
 
@@ -430,14 +483,14 @@ void TransformationGUI_MultiTranslationDlg::ValueChangedInSpinBox(double newValu
 void TransformationGUI_MultiTranslationDlg::ReverseStepU()
 {
   myStepU = -myStepU;
-  
+
   int aConstructorId = getConstructorId();
 
   if(aConstructorId == 0)
     GroupPoints->SpinBox_DX->SetValue(myStepU);
   else if(aConstructorId == 1)
     GroupDimensions->SpinBox_DX1->SetValue(myStepU);
-  
+
   displayPreview();
 }
 
@@ -449,9 +502,9 @@ void TransformationGUI_MultiTranslationDlg::ReverseStepU()
 void TransformationGUI_MultiTranslationDlg::ReverseStepV()
 {
   myStepV = -myStepV;
-  
+
   GroupDimensions->SpinBox_DX2->SetValue(myStepV);
- 
+
   displayPreview();
 }
 
@@ -473,12 +526,12 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_MultiTranslationDlg::createOperatio
 bool TransformationGUI_MultiTranslationDlg::isValid( QString& msg )
 {
   int aConstructorId = getConstructorId();
-  
+
   if(aConstructorId == 0)
     return !(myBase->_is_nil() || myVectorU->_is_nil());
   else if(aConstructorId == 1)
     return !(myBase->_is_nil() || myVectorU->_is_nil() || myVectorV->_is_nil());
-  return 0;	    
+  return 0;
 }
 
 //=================================================================================
@@ -488,10 +541,10 @@ bool TransformationGUI_MultiTranslationDlg::isValid( QString& msg )
 bool TransformationGUI_MultiTranslationDlg::execute( ObjectList& objects )
 {
   bool res = false;
-  
+
   GEOM::GEOM_Object_var anObj;
 
-  switch ( getConstructorId() ) 
+  switch ( getConstructorId() )
     {
     case 0 :
       {
@@ -512,10 +565,10 @@ bool TransformationGUI_MultiTranslationDlg::execute( ObjectList& objects )
 	break;
       }
     }
-  
+
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
-  
+
   return res;
 }
 
@@ -528,4 +581,25 @@ void  TransformationGUI_MultiTranslationDlg::closeEvent( QCloseEvent* e )
 {
   // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void TransformationGUI_MultiTranslationDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+  
+  switch (getConstructorId())
+    {
+    case 0:
+      objMap[GroupPoints->LineEdit2->text()] = myVectorU;
+      break;
+    case 1:
+      objMap[GroupDimensions->LineEdit2->text()] = myVectorU;
+      objMap[GroupDimensions->LineEdit3->text()] = myVectorV;
+      break;
+    }
+  addSubshapesToFather( objMap );
 }

@@ -82,6 +82,8 @@
 #include <qvaluelist.h>
 #include <qstringlist.h>
 
+#include <set>
+
 #include "GEOMImpl_Types.hxx"
 
 using namespace std;
@@ -849,18 +851,30 @@ QString GEOMBase::GetDefaultName(const QString& theOperation)
 {
   QString aName = "";
 
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  // collect all object names of GEOM component
+  SalomeApp_Study* appStudy =
+    dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
   if ( !appStudy ) return aName;
   _PTR(Study) aStudy = appStudy->studyDS();
 
-  int aNumber = 0;
-  _PTR(SObject) obj;
-  do
-    {
-      aName = theOperation+"_"+QString::number(++aNumber);
-      obj = aStudy->FindObject(aName.latin1());
+  std::set<std::string> aSet;
+  _PTR(SComponent) aGeomCompo (aStudy->FindComponent("GEOM"));
+  if (aGeomCompo) {
+    _PTR(ChildIterator) it (aStudy->NewChildIterator(aGeomCompo));
+    _PTR(SObject) obj;
+    for (it->InitEx(true); it->More(); it->Next()) {
+      obj = it->Value();
+      aSet.insert(obj->GetName());
     }
-  while (obj);
+  }
+
+  // build a unique name
+  int aNumber = 0;
+  bool isUnique = false;
+  while (!isUnique) {
+    aName = theOperation + "_" + QString::number(++aNumber);
+    isUnique = (aSet.count(aName.latin1()) == 0);
+  }
 
   return aName;
 }
@@ -940,10 +954,10 @@ QString GEOMBase::GetName( GEOM::GEOM_Object_ptr theObj )
 
   if ( appStudy )
   {
-    string anIOR = SalomeApp_Application::orb()->object_to_string( theObj );
-    if ( anIOR != "" )
+    CORBA::String_var anIOR = SalomeApp_Application::orb()->object_to_string( theObj );
+    if ( strcmp(anIOR.in(), "") != 0 )
     {
-      _PTR(SObject) aSObj ( appStudy->studyDS()->FindObjectIOR( anIOR ) );
+      _PTR(SObject) aSObj ( appStudy->studyDS()->FindObjectIOR( string( anIOR ) ) );
 
       _PTR(GenericAttribute) anAttr;
 

@@ -29,28 +29,32 @@
 #ifndef GEOMTOOLSGUI_H
 #define GEOMTOOLSGUI_H
 
+#include "GEOM_ToolsGUI.hxx"
+
 #include "GEOMGUI.h"
+#include "GEOM_Displayer.h"
+
+#include <SALOME_Prs.h>
 
 #include <SALOMEDSClient.hxx>
 #include <SALOME_ListIO.hxx>
 
 #include <CORBA.h>
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define GEOMTOOLSGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define GEOMTOOLSGUI_WNT_EXPORT
-#endif
+
+#include <qptrlist.h>
+
 //=================================================================================
 // class    : GEOMToolsGUI
 // purpose  :
 //=================================================================================
-class GEOMTOOLSGUI_WNT_EXPORT GEOMToolsGUI : public GEOMGUI
+class GEOMTOOLSGUI_EXPORT GEOMToolsGUI : public GEOMGUI
 {
 public :
   GEOMToolsGUI( GeometryGUI* ); // hide constructor to avoid direct creation
   ~GEOMToolsGUI();
 
   bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
+  virtual void deactivate();
 
 private:
   // Import and export topology methods
@@ -67,15 +71,29 @@ private:
   void OnCheckGeometry();
 
   // Popup commands
+  void OnAutoColor();
+  void OnDisableAutoColor();
   void OnColor();
   void OnTransparency();
   void OnNbIsos();
   void OnOpen();
-
+  void OnSelectOnly(int mode);
+  
   // returns name of Module (Component) of given objects (usually selected objects)
   // if objects belong to different Components, a NULL string is returned.
   QString getParentComponent( _PTR( Study ), const SALOME_ListIO& );
   QString getParentComponent( _PTR(SObject) );
+
+  // Recursive deletion of object with children
+  void RemoveObjectWithChildren(_PTR(SObject) obj,
+				_PTR(Study) aStudy,
+				QPtrList<SALOME_View> views,
+				GEOM_Displayer* disp);
+
+  //checks if the object passed as the first argument depends on the second arguments
+  bool CheckSubObjectInUse(_PTR(SObject) checkobj,
+			   _PTR(SObject) remobj,
+			   _PTR(Study) aStudy);
 };
 
 #endif

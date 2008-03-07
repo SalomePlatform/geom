@@ -59,7 +59,14 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakePrismVecH (Handle(GEOM_Object) theBase,
                                      Handle(GEOM_Object) theVec, double theH);
 
+  Standard_EXPORT Handle(GEOM_Object) MakePrismVecH2Ways (Handle(GEOM_Object) theBase,
+                                              Handle(GEOM_Object) theVec, double theH);
+
   Standard_EXPORT Handle(GEOM_Object) MakePrismTwoPnt (Handle(GEOM_Object) theBase,
+                                       Handle(GEOM_Object) thePoint1,
+                                       Handle(GEOM_Object) thePoint2);
+
+  Standard_EXPORT Handle(GEOM_Object) MakePrismTwoPnt2Ways (Handle(GEOM_Object) theBase,
                                        Handle(GEOM_Object) thePoint1,
                                        Handle(GEOM_Object) thePoint2);
 
@@ -70,9 +77,13 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                                                Handle(GEOM_Object) theAxis,
                                                double theAngle);
 
+  Standard_EXPORT Handle(GEOM_Object) MakeRevolutionAxisAngle2Ways (Handle(GEOM_Object) theBase,
+								    Handle(GEOM_Object) theAxis,
+								    double theAngle);
+
   Standard_EXPORT Handle(GEOM_Object) MakeSolidShell (Handle(GEOM_Object) theShell);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeFilling (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg, double theTol2D, double theTol3D, int theNbIter);
+  Standard_EXPORT Handle(GEOM_Object) MakeFilling (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg, double theTol2D, double theTol3D, int theNbIter, bool isApprox);
 
   Standard_EXPORT Handle(GEOM_Object) MakeThruSections(const Handle(TColStd_HSequenceOfTransient)& theSeqSections,
 						       bool theModeSolid,
@@ -80,11 +91,24 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                                                        bool theRuled);
 
   Standard_EXPORT Handle(GEOM_Object) MakePipeWithDifferentSections(
-						  const Handle(TColStd_HSequenceOfTransient)& theBases,
-						  const Handle(TColStd_HSequenceOfTransient)& theLocations,
-						  const Handle(GEOM_Object)& thePath,
-						  bool theWithContact,
-                                                  bool theWithCorrections);
+		const Handle(TColStd_HSequenceOfTransient)& theBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations,
+		const Handle(GEOM_Object)& thePath,
+		bool theWithContact,
+		bool theWithCorrections);
+
+  Standard_EXPORT Handle(GEOM_Object) MakePipeWithShellSections(
+		const Handle(TColStd_HSequenceOfTransient)& theBases,
+	        const Handle(TColStd_HSequenceOfTransient)& theSubBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations,
+		const Handle(GEOM_Object)& thePath,
+		bool theWithContact,
+		bool theWithCorrections);
+
+  Standard_EXPORT Handle(GEOM_Object) MakePipeShellsWithoutPath(
+		const Handle(TColStd_HSequenceOfTransient)& theBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations);
+
 };
 
 #endif

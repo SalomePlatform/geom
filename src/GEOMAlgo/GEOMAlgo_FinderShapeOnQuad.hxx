@@ -37,6 +37,7 @@ class GEOMAlgo_FinderShapeOnQuad: public GEOMAlgo_FinderShapeOn1
 {
 public:
 
+  Standard_EXPORT
   GEOMAlgo_FinderShapeOnQuad(const gp_Pnt & theTopLeftPoint,
                              const gp_Pnt & theTopRigthPoint,
                              const gp_Pnt & theBottomLeftPoint,
@@ -51,9 +52,9 @@ protected:
 private:
 
   bool                         myConcaveQuad;
-  vector<bool>                 myConcaveSide;
-  vector<gp_Pnt>               myPoints;
-  vector<GeomAdaptor_Surface>  myPlanes;
+  std::vector<bool>                 myConcaveSide;
+  std::vector<gp_Pnt>               myPoints;
+  std::vector<GeomAdaptor_Surface>  myPlanes;
   gp_Vec                       myQuadNormal;
 };
 #endif

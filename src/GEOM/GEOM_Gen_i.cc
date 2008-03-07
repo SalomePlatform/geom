@@ -3014,7 +3014,8 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFilling(GEOM::GEOM_Shape_ptr myShape,
 				       CORBA::Short maxdeg,
 				       CORBA::Double tol3d,
 				       CORBA::Double tol2d,
-				       CORBA::Short nbiter)
+				       CORBA::Short nbiter,
+				       CORBA::Boolean theApprox)
   throw (SALOME::SALOME_Exception)
 {
   Unexpect aCatch(SALOME_SalomeException);
@@ -3053,7 +3054,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFilling(GEOM::GEOM_Shape_ptr myShape,
     Handle(GeomFill_Line) Line = new GeomFill_Line(i) ;
     
     GeomFill_AppSurf App(mindeg, maxdeg, tol3d, tol2d, nbiter) ; /* user parameters */
-    App.Perform(Line, Section) ;
+    App.Perform(Line, Section, theApprox) ;
     
     if (!App.IsDone()) {
       THROW_SALOME_CORBA_EXCEPTION("Filling aborted : non valid shape result", SALOME::BAD_PARAM);
@@ -5016,6 +5017,77 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeFillet( GEOM::GEOM_Shape_ptr shape,
   return result ;  
 }
 
+//================================================================================
+// function : MakeFilletR1R2()
+// purpose  : Create a cylinder topology
+//================================================================================
+GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeFilletR1R2( GEOM::GEOM_Shape_ptr shape,
+				                  CORBA::Double radius1,
+				                  CORBA::Double radius2,
+				                  CORBA::Short ShapeType,
+					          const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID ) 
+  throw (SALOME::SALOME_Exception)
+{
+  Unexpect aCatch(SALOME_SalomeException);
+  GEOM::GEOM_Shape_var result;
+  TopoDS_Shape tds ;
+
+  const TopoDS_Shape aShape = GetTopoShape(shape) ;
+  if( aShape.IsNull() ) {
+    THROW_SALOME_CORBA_EXCEPTION("Shape is null", SALOME::BAD_PARAM);
+  }
+
+  BRepFilletAPI_MakeFillet fill(aShape);
+
+  try {
+    /* case all */
+    if(ListOfID.length() == 0) {
+      TopExp_Explorer Exp ( aShape, TopAbs_EDGE );
+      for (Exp; Exp.More(); Exp.Next()) {
+	TopoDS_Edge E =TopoDS::Edge(Exp.Current());
+	fill.Add(E);
+      }
+      for (int i = 1;i<=fill.NbContours();i++) {
+#if OCC_VERSION_MAJOR >= 5
+	fill.SetRadius(radius1,radius2,i,i);
+#else
+	fill.SetRadius(radius1,radius2,i);
+#endif
+      }
+      tds = fill.Shape();
+      
+    } else {
+
+      /* case selection */               
+      for ( unsigned int ind = 0; ind < ListOfID.length(); ind++ ) {
+	TopoDS_Shape ss ;
+	if( GetShapeFromIndex( aShape, (TopAbs_ShapeEnum)ShapeType, ListOfID[ind], ss ) ) {
+	  TopoDS_Edge E = TopoDS::Edge(ss) ;
+	  fill.Add( E );
+	}
+      }
+      for (int i = 1;i<=fill.NbContours();i++) {
+#if OCC_VERSION_MAJOR >= 5
+	fill.SetRadius(radius1,radius2,i,i);
+#else
+	fill.SetRadius(radius1,radius2,i);
+#endif
+      }
+      tds = fill.Shape();
+    }
+  }
+  catch(Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeFilletR1R2", SALOME::BAD_PARAM);
+  }
+  
+  if (tds.IsNull()) {
+    THROW_SALOME_CORBA_EXCEPTION("Make Fillet aborted", SALOME::BAD_PARAM);
+  } 
+  result = CreateObject(tds);
+  InsertInLabelOneArgument(aShape, shape, tds, result, myCurrentOCAFDoc) ;
+
+  return result ;  
+}
 
 //================================================================================
 // function : MakeChamfer
@@ -5077,6 +5149,68 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeChamfer( GEOM::GEOM_Shape_ptr shape,
   result = CreateObject(tds);
   InsertInLabelOneArgument(aShape, shape, tds, result, myCurrentOCAFDoc) ;
 
+  return result ;
+}
+
+//================================================================================
+// function : MakeChamferAD
+// purpose  : Create a Chamfer topology by Lenght & Angle
+//================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeChamferAD( GEOM::GEOM_Shape_ptr shape,
+					        CORBA::Double d,
+					        CORBA::Double angle,
+					        CORBA::Short ShapeType,
+					        const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID ) 
+  throw (SALOME::SALOME_Exception)
+{
+  Unexpect aCatch(SALOME_SalomeException);
+  GEOM::GEOM_Shape_var result;
+  TopoDS_Shape tds ;
+
+  const TopoDS_Shape aShape = GetTopoShape(shape) ;
+  if( aShape.IsNull() ) {
+    THROW_SALOME_CORBA_EXCEPTION("Shape is null", SALOME::BAD_PARAM);
+  }
+  
+  BRepFilletAPI_MakeChamfer MC(aShape);
+
+  try {
+    /* case all */
+    TopTools_IndexedDataMapOfShapeListOfShape M;
+    TopExp::MapShapesAndAncestors(aShape,TopAbs_EDGE,TopAbs_FACE,M);
+    if(ListOfID.length() == 0) {
+      for (int i = 1;i<=M.Extent();i++) {
+	TopoDS_Edge E = TopoDS::Edge(M.FindKey(i));
+	TopoDS_Face F = TopoDS::Face(M.FindFromIndex(i).First());
+	if (!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
+	  MC.AddDA(d,angle,E,F);
+      }
+      tds = MC.Shape();
+
+    } else {
+
+      /* case selection */  
+      for ( unsigned int ind = 0; ind < ListOfID.length(); ind++ ) {
+	TopoDS_Shape ss ;
+	if( GetShapeFromIndex( aShape, (TopAbs_ShapeEnum)ShapeType, ListOfID[ind], ss ) ) {
+	  TopoDS_Edge E = TopoDS::Edge( ss ) ;
+	  TopoDS_Face F = TopoDS::Face(M.FindFromKey(E).First());
+	  if (!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
+	    MC.AddDA(d,angle,E,F);
+	}
+      }
+      tds = MC.Shape();
+    }
+  }
+  catch(Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeChamferAD", SALOME::BAD_PARAM);
+  }
+  
+  if (tds.IsNull()) {
+    THROW_SALOME_CORBA_EXCEPTION("Make ChamferAD aborted", SALOME::BAD_PARAM);
+  } 
+  result = CreateObject(tds);
+  InsertInLabelOneArgument(aShape, shape, tds, result, myCurrentOCAFDoc) ;
   return result ;
 }
 

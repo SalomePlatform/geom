@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -47,6 +47,7 @@ class GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger;
 #include <Standard_Macro.hxx>
 #endif
 
+
 class GEOMAlgo_DataMapOfPassKeyInteger  : public TCollection_BasicMap {
 
 public:
@@ -65,28 +66,46 @@ public:
       }
  // Methods PUBLIC
  // 
+
+
 Standard_EXPORT GEOMAlgo_DataMapOfPassKeyInteger(const Standard_Integer NbBuckets = 1);
+
+
 Standard_EXPORT   GEOMAlgo_DataMapOfPassKeyInteger& Assign(const GEOMAlgo_DataMapOfPassKeyInteger& Other) ;
   GEOMAlgo_DataMapOfPassKeyInteger& operator =(const GEOMAlgo_DataMapOfPassKeyInteger& Other) 
 {
   return Assign(Other);
 }
 
+
+
 Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
+
+
 Standard_EXPORT   void Clear() ;
 ~GEOMAlgo_DataMapOfPassKeyInteger()
 {
   Clear();
 }
 
+
+
 Standard_EXPORT   Standard_Boolean Bind(const GEOMAlgo_PassKey& K,const Standard_Integer& I) ;
+
+
 Standard_EXPORT   Standard_Boolean IsBound(const GEOMAlgo_PassKey& K) const;
+
+
 Standard_EXPORT   Standard_Boolean UnBind(const GEOMAlgo_PassKey& K) ;
+
+
 Standard_EXPORT  const Standard_Integer& Find(const GEOMAlgo_PassKey& K) const;
  const Standard_Integer& operator()(const GEOMAlgo_PassKey& K) const
 {
   return Find(K);
 }
+
+
 
 Standard_EXPORT   Standard_Integer& ChangeFind(const GEOMAlgo_PassKey& K) ;
   Standard_Integer& operator()(const GEOMAlgo_PassKey& K) 
@@ -113,6 +132,8 @@ private:
 
  // Methods PRIVATE
  // 
+
+
 Standard_EXPORT GEOMAlgo_DataMapOfPassKeyInteger(const GEOMAlgo_DataMapOfPassKeyInteger& Other);
 
 

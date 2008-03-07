@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -48,6 +48,7 @@ class NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape;
 #include <Standard_Macro.hxx>
 #endif
 
+
 class NMTTools_IndexedDataMapOfShapeIndexedMapOfShape  : public TCollection_BasicMap {
 
 public:
@@ -66,30 +67,52 @@ public:
       }
  // Methods PUBLIC
  // 
+
+
 Standard_EXPORT NMTTools_IndexedDataMapOfShapeIndexedMapOfShape(const Standard_Integer NbBuckets = 1);
+
+
 Standard_EXPORT   NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& Assign(const NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& Other) ;
   NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& operator =(const NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& Other) 
 {
   return Assign(Other);
 }
 
+
+
 Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
+
+
 Standard_EXPORT   void Clear() ;
 ~NMTTools_IndexedDataMapOfShapeIndexedMapOfShape()
 {
   Clear();
 }
 
+
+
 Standard_EXPORT   Standard_Integer Add(const TopoDS_Shape& K,const TopTools_IndexedMapOfShape& I) ;
+
+
 Standard_EXPORT   void Substitute(const Standard_Integer I,const TopoDS_Shape& K,const TopTools_IndexedMapOfShape& T) ;
+
+
 Standard_EXPORT   void RemoveLast() ;
+
+
 Standard_EXPORT   Standard_Boolean Contains(const TopoDS_Shape& K) const;
+
+
 Standard_EXPORT  const TopoDS_Shape& FindKey(const Standard_Integer I) const;
+
+
 Standard_EXPORT  const TopTools_IndexedMapOfShape& FindFromIndex(const Standard_Integer I) const;
  const TopTools_IndexedMapOfShape& operator ()(const Standard_Integer I) const
 {
   return FindFromIndex(I);
 }
+
+
 
 Standard_EXPORT   TopTools_IndexedMapOfShape& ChangeFromIndex(const Standard_Integer I) ;
   TopTools_IndexedMapOfShape& operator ()(const Standard_Integer I) 
@@ -97,8 +120,14 @@ Standard_EXPORT   TopTools_IndexedMapOfShape& ChangeFromIndex(const Standard_Int
   return ChangeFromIndex(I);
 }
 
+
+
 Standard_EXPORT   Standard_Integer FindIndex(const TopoDS_Shape& K) const;
+
+
 Standard_EXPORT  const TopTools_IndexedMapOfShape& FindFromKey(const TopoDS_Shape& K) const;
+
+
 Standard_EXPORT   TopTools_IndexedMapOfShape& ChangeFromKey(const TopoDS_Shape& K) ;
 
 
@@ -119,6 +148,8 @@ private:
 
  // Methods PRIVATE
  // 
+
+
 Standard_EXPORT NMTTools_IndexedDataMapOfShapeIndexedMapOfShape(const NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& Other);
 
 

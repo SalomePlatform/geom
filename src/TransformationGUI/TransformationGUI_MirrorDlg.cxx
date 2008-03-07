@@ -33,6 +33,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qcheckbox.h>
 #include <qlabel.h>
 
@@ -81,7 +88,7 @@ TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(GeometryGUI* theGeometr
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("mirror_image.htm");  
+  setHelpFileName("mirror_operation_page.html");  
   
   Init();
 }
@@ -229,10 +236,54 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
 	  return;
 	}
       Standard_Boolean testResult = Standard_False;
-      myArgument = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
+      GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
+      myArgument = aSelectedObject;
       if(!testResult || CORBA::is_nil( myArgument ))
 	return;
-      aName = GEOMBase::GetName( myArgument );
+
+      aName = GEOMBase::GetName( aSelectedObject );
+
+      if ( testResult && !aSelectedObject->_is_nil() )
+	{
+	  TopoDS_Shape aShape;
+	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	    {
+	      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+	      if (getConstructorId() == 1)
+		aNeedType = TopAbs_EDGE;
+	      else if (getConstructorId() == 2)
+		aNeedType = TopAbs_FACE;
+	      
+	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	      TColStd_IndexedMapOfInteger aMap;
+	      aSelMgr->GetIndexes( firstIObject(), aMap );
+	      if ( aMap.Extent() == 1 )
+		{
+		    int anIndex = aMap( 1 );
+		    if (aNeedType == TopAbs_VERTEX)
+		      aName += QString(":vertex_%1").arg(anIndex);
+		    else
+		      aName += QString(":edge_%1").arg(anIndex);
+		    
+		    //Find SubShape Object in Father
+		    GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
+		    
+		    if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+		      GEOM::GEOM_IShapesOperations_var aShapesOp =
+			getGeomEngine()->GetIShapesOperations( getStudyId() );
+		      myArgument = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		    }
+		    else
+		      myArgument = aFindedObject; // get Object from study
+		}
+	      else {
+		if (aShape.ShapeType() != aNeedType) {
+		  myArgument = GEOM::GEOM_Object::_nil();
+		  aName = "";
+		}
+	      }
+	    }
+	}
     }
   myEditCurrentArgument->setText( aName );
    
@@ -263,10 +314,10 @@ void TransformationGUI_MirrorDlg::LineEditReturnPressed()
 void TransformationGUI_MirrorDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection();
   
   if(send == GroupPoints->PushButton1){
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection();
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
@@ -274,12 +325,12 @@ void TransformationGUI_MirrorDlg::SetEditCurrentArgument()
       {
       case 0:
 	{
-	  globalSelection( GEOM_POINT );
+	  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 	  break;
 	}
       case 1:
 	{
-	  globalSelection( GEOM_LINE );
+	  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
 	  break;
 	}
       case 2:
@@ -431,4 +482,29 @@ void  TransformationGUI_MirrorDlg::closeEvent( QCloseEvent* e )
 void TransformationGUI_MirrorDlg::CreateCopyModeChanged(bool isCreateCopy)
 {
   this->GroupBoxName->setEnabled(isCreateCopy);
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void TransformationGUI_MirrorDlg::addSubshapesToStudy()
+{
+  bool toCreateCopy = IsPreview() || GroupPoints->CheckButton1->isChecked();
+  if (toCreateCopy) {
+    QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+    switch (getConstructorId())
+      {
+      case 0:
+	objMap[GroupPoints->LineEdit2->text()] = myArgument;
+	break;
+      case 1:
+	objMap[GroupPoints->LineEdit2->text()] = myArgument;
+	break;
+      case 2:
+	return;
+      }
+    addSubshapesToFather( objMap );
+  }
 }

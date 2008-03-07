@@ -1,0 +1,30 @@
+/*!
+
+\page create_extrusion_alongpath_page Pipe Construction
+
+To generate a \b Pipe in the <b>Main Menu</b> select <b>New Entity - > Generation  - > Extrusion along a path</b>
+
+\n To create an extruded \b Pipe shape, you need to define the <b>Base
+Object</b> (vertex, edge, planar wire, face or shell), which will be extruded
+and the <b>Path Object</b> (edge or wire) along which the <b>Base 
+Object</b> will be extruded.
+\n The \b Result of the operation will be a GEOM_Object (edge, face, shell,
+solid or compsolid).
+
+\n <b>TUI Command:</b> <em>geompy.MakePipe(baseShape, pathShape)</em>
+\n <b>Arguments:</b> Name + 1 shape (vertex, edge, planar wire, face or
+shell) serving as base object + 1 shape (edge or wire) for
+definition of the path.
+
+\image html pipe.png
+
+<b>Example:</b>
+
+\image html pipe_wire_edgesn.png
+
+\image html pipesn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_pipe "Complex Geometric Objects".
+
+*/

@@ -27,6 +27,8 @@
 #ifndef _GEOM_AISShape_HeaderFile
 #define _GEOM_AISShape_HeaderFile
 
+#include "GEOM_OBJECT_defs.hxx"
+
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
 #endif
@@ -53,17 +55,14 @@
 #include <Handle_Prs3d_Presentation.hxx>
 #endif
 
+#include <TCollection_AsciiString.hxx>
+
 class PrsMgr_PresentationManager3d;
 class Prs3d_Presentation;
 class SALOME_InteractiveObject;
 class TopoDS_Shape;
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define OBJECT_WNT_EXPORT __declspec( dllexport )
-#else
-#define OBJECT_WNT_EXPORT
-#endif
-class  OBJECT_WNT_EXPORT GEOM_AISShape : public SALOME_AISShape {
+class GEOM_OBJECT_EXPORT GEOM_AISShape : public SALOME_AISShape {
 
 public:
 
@@ -105,32 +104,14 @@ public:
  //
 	friend Handle_Standard_Type& GEOM_AISShape_Type_();
 	const Handle(Standard_Type)& DynamicType() const;
-	Standard_Boolean	      IsKind(const Handle(Standard_Type)&) const;
+	Standard_Boolean	     IsKind(const Handle(Standard_Type)&) const;
 
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+protected: 
+  Quantity_Color myShadingColor;
 
 private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-  Standard_CString myName;
-  Quantity_Color myShadingColor;
+  TCollection_AsciiString myName;
 };
-
-
-
 
 
 // other inline functions and methods (like "C++: function call" methods)

@@ -30,12 +30,13 @@
 #include <TDocStd_Document.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfAsciiString.hxx>
+#include <TDF_Label.hxx>
 
 class GEOM_Engine
 {
  public:
   Standard_EXPORT GEOM_Engine();
-  Standard_EXPORT ~GEOM_Engine() { _mapIDDocument.Clear(); _objects.Clear(); }
+  Standard_EXPORT virtual ~GEOM_Engine();
 
   //Retuns the engine    
   Standard_EXPORT static GEOM_Engine* GetEngine();   
@@ -101,6 +102,8 @@ class GEOM_Engine
   GEOM_DataMapOfAsciiStringTransient _objects;
 
   Resource_DataMapOfAsciiStringAsciiString _studyEntry2NameMap;
+
+  TDF_Label _lastCleared;
 };
 
 #endif

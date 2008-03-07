@@ -33,7 +33,7 @@
 #include <TColStd_IndexedMapOfInteger.hxx>
 
 class DlgRef_1Sel1Spin;
-class DlgRef_2Sel1Spin;
+class DlgRef_2Sel3Spin2Rb;
 
 //=================================================================================
 // class    : OperationGUI_FilletDlg
@@ -62,6 +62,7 @@ private slots:
     void                                SetEditCurrentArgument();
     void                                ValueChangedInSpinBox( double newValue );
     void                                ConstructorsClicked( int constructorId );
+    void                                RadioButton_Clicked();
 
 private:
     void                                Init();
@@ -80,8 +81,8 @@ private:
     TColStd_IndexedMapOfInteger         myFaces;
 
     DlgRef_1Sel1Spin*                   Group1;
-    DlgRef_2Sel1Spin*                   Group2;
-    DlgRef_2Sel1Spin*                   Group3;
+    DlgRef_2Sel3Spin2Rb*                Group2;
+    DlgRef_2Sel3Spin2Rb*                Group3;
 };
 
 #endif // DIALOGBOX_FILLET_H

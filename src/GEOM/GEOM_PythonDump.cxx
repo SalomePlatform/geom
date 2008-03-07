@@ -43,18 +43,11 @@ namespace GEOM
       TCollection_AsciiString aDescr;
       if ( myAppend )
         aDescr = myFunction->GetDescription() + "\n\t";
-      aDescr += (char *)myStream.str().c_str();
+      std::string aString = myStream.str();
+      aDescr += (char *)aString.c_str();
       myFunction->SetDescription( aDescr );
     }
   }
-
-//  TPythonDump::operator TCollection_AsciiString () const
-//  {
-//    if (myCounter == 1) {
-//      return TCollection_AsciiString ((char *)myStream.str().c_str());
-//    }
-//    return TCollection_AsciiString ();
-//  }
 
   TPythonDump& TPythonDump::operator<< (long int theArg)
   {
@@ -104,9 +97,13 @@ namespace GEOM
 
   TPythonDump& TPythonDump::operator<< (const Handle(GEOM_Object)& theObject)
   {
-    TCollection_AsciiString anEntry;
-    TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-    myStream << anEntry.ToCString();
+    if (theObject.IsNull()) {
+      myStream << "None";
+    } else {
+      TCollection_AsciiString anEntry;
+      TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+      myStream << anEntry.ToCString();
+    }
     return *this;
   }
 

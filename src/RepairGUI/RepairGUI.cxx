@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -31,6 +31,8 @@
 #include "SUIT_Desktop.h"
 #include "SUIT_Session.h"
 
+#include "SalomeApp_Application.h"
+
 #include "RepairGUI_SewingDlg.h"        // Method SEWING
 #include "RepairGUI_SuppressFacesDlg.h" // Method SUPPRESS FACES
 #include "RepairGUI_RemoveHolesDlg.h"   // Method SUPPRESS HOLE
@@ -41,25 +43,12 @@
 #include "RepairGUI_FreeBoundDlg.h"     // Method FREE BOUNDARIES
 #include "RepairGUI_FreeFacesDlg.h"     // Method FREE FACES
 #include "RepairGUI_GlueDlg.h"          // Method GLUE FACES
+#include "RepairGUI_ChangeOrientationDlg.h" // Method CHANGE ORIENTATION
+#include "RepairGUI_RemoveExtraEdgesDlg.h" // Method REMOVE EXTRA EDGES
 
 #include "utilities.h"
 
 using namespace std;
-
-RepairGUI* RepairGUI::myGUIObject = 0;
-
-//=======================================================================
-// function : GetRepairGUI()
-// purpose  : Get the only RepairGUI object [ static ]
-//=======================================================================
-RepairGUI* RepairGUI::GetRepairGUI( GeometryGUI* parent )
-{
-  if ( myGUIObject == 0 ) {
-    // init RepairGUI only once
-    myGUIObject = new RepairGUI( parent );
-  }
-  return myGUIObject;
-}
 
 //=======================================================================
 // function : RepairGUI()
@@ -68,7 +57,6 @@ RepairGUI* RepairGUI::GetRepairGUI( GeometryGUI* parent )
 RepairGUI::RepairGUI( GeometryGUI* parent ) : GEOMGUI( parent )
 {
 }
-
 
 //=======================================================================
 // function : ~RepairGUI()
@@ -85,6 +73,9 @@ RepairGUI::~RepairGUI()
 //=======================================================================
 bool RepairGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if (!app) return false;
+
   getGeometryGUI()->EmitSignalDeactivateDialog();
 
   QDialog* aDlg = NULL;
@@ -97,10 +88,12 @@ bool RepairGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     case 606: aDlg = new RepairGUI_CloseContourDlg  (getGeometryGUI(), parent, ""); break;
     case 607: aDlg = new RepairGUI_RemoveIntWiresDlg(getGeometryGUI(), parent, ""); break;
     case 608: aDlg = new RepairGUI_DivideEdgeDlg    (getGeometryGUI(), parent, ""); break;
-    case 609: aDlg = new RepairGUI_FreeBoundDlg     (getGeometryGUI(), parent, ""); break;    
-    case 610: aDlg = new RepairGUI_FreeFacesDlg     (getGeometryGUI(), parent, ""); break;    
+    case 609: aDlg = new RepairGUI_FreeBoundDlg     (getGeometryGUI(), parent, ""); break;
+    case 610: aDlg = new RepairGUI_FreeFacesDlg     (getGeometryGUI(), parent, ""); break;
+    case 611: aDlg = new RepairGUI_ChangeOrientationDlg (getGeometryGUI(), parent, ""); break;
+    case 612: aDlg = new RepairGUI_RemoveExtraEdgesDlg (getGeometryGUI(), parent, ""); break;  
     default:
-      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;
   }
 
@@ -121,6 +114,6 @@ extern "C"
 #endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return RepairGUI::GetRepairGUI( parent );
+    return new RepairGUI( parent );
   }
 }

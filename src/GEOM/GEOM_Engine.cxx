@@ -55,6 +55,7 @@
 #include <map>
 #include <string>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 static GEOM_Engine* TheEngine = NULL;
@@ -113,6 +114,25 @@ GEOM_Engine::GEOM_Engine()
 
   _OCAFApp = new GEOM_Application();
   _UndoLimit = 10;
+}
+
+/*!
+ *  Destructor
+ */
+GEOM_Engine::~GEOM_Engine()
+{ 
+  GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It(_objects);
+  for(; It.More(); It.Next()) 
+    {
+      RemoveObject(Handle(GEOM_Object)::DownCast(It.Value()));
+    }
+
+  //Close all documents not closed
+  for(Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr(_mapIDDocument); anItr.More(); anItr.Next())
+    Close(anItr.Key());
+
+  _mapIDDocument.Clear();
+  _objects.Clear();
 }
 
 //=============================================================================
@@ -175,18 +195,33 @@ Handle(GEOM_Object) GEOM_Engine::GetObject(int theDocID, char* theEntry)
 //=============================================================================
 Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
 {
-    Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
-    Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
+  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
+  Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
 
-    TDF_Label aChild = TDF_TagSource::NewChild(aDoc->Main());
-    Handle(GEOM_Object) anObject = new GEOM_Object(aChild, theType);
+  // NPAL18604: use existing label to decrease memory usage,
+  //            if this label has been freed (object deleted)
+  bool useExisting = false;
+  TDF_Label aChild;
+  if (!_lastCleared.IsNull()) {
+    if (_lastCleared.Root() == aDoc->Main().Root()) {
+      useExisting = true;
+      aChild = _lastCleared;
+      _lastCleared.Nullify();
+    }
+  }
+  if (!useExisting) {
+    // create new label
+    aChild = TDF_TagSource::NewChild(aDoc->Main());
+  }
 
-    //Put an object in the map of created objects
-    TCollection_AsciiString anID = BuildIDFromObject(anObject);
-    if(_objects.IsBound(anID)) _objects.UnBind(anID);
-    _objects.Bind(anID, anObject);
+  Handle(GEOM_Object) anObject = new GEOM_Object(aChild, theType);
 
-    return anObject;
+  //Put an object in the map of created objects
+  TCollection_AsciiString anID = BuildIDFromObject(anObject);
+  if(_objects.IsBound(anID)) _objects.UnBind(anID);
+  _objects.Bind(anID, anObject);
+
+  return anObject;
 }
 
 //=============================================================================
@@ -203,7 +238,21 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   Handle(TDocStd_Document) aDoc = GetDocument(theMainShape->GetDocID());
   Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
 
-  TDF_Label aChild = TDF_TagSource::NewChild(aDoc->Main());
+  // NPAL18604: use existing label to decrease memory usage,
+  //            if this label has been freed (object deleted)
+  bool useExisting = false;
+  TDF_Label aChild;
+  if (!_lastCleared.IsNull()) {
+    if (_lastCleared.Root() == aDoc->Main().Root()) {
+      useExisting = true;
+      aChild = _lastCleared;
+      _lastCleared.Nullify();
+    }
+  }
+  if (!useExisting) {
+    // create new label
+    aChild = TDF_TagSource::NewChild(aDoc->Main());
+  }
 
   Handle(GEOM_Function) aMainShape = theMainShape->GetLastFunction();
   Handle(GEOM_Object) anObject = new GEOM_Object(aChild, 28); //28 is SUBSHAPE type
@@ -214,6 +263,9 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   aSSI.SetIndices(theIndices);
 
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     GEOM_Solver aSolver (GEOM_Engine::GetEngine());
     if (!aSolver.ComputeFunction(aFunction)) {
       MESSAGE("GEOM_Engine::AddSubShape Error: Can't build a sub shape");
@@ -254,22 +306,23 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
 //=============================================================================
 bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
 {
-  if(!theObject) return false;
+  if (!theObject) return false;
 
   //Remove an object from the map of available objects
   TCollection_AsciiString anID = BuildIDFromObject(theObject);
-  if(_objects.IsBound(anID)) _objects.UnBind(anID);
+  if (_objects.IsBound(anID)) _objects.UnBind(anID);
 
   int nb = theObject->GetNbFunctions();
   Handle(TDataStd_TreeNode) aNode;
-  for(int i = 1; i<=nb; i++) {
+  for (int i = 1; i<=nb; i++) {
     Handle(GEOM_Function) aFunction = theObject->GetFunction(i);
-    if(aFunction->GetEntry().FindAttribute(GEOM_Function::GetFunctionTreeID(), aNode)) 
+    if (aFunction->GetEntry().FindAttribute(GEOM_Function::GetFunctionTreeID(), aNode)) 
       aNode->Remove();
   }
 
   TDF_Label aLabel = theObject->GetEntry();
   aLabel.ForgetAllAttributes(Standard_True);
+  _lastCleared = aLabel;
 
   theObject.Nullify();
 
@@ -340,20 +393,22 @@ bool GEOM_Engine::Load(int theDocID, char* theFileName)
 //=============================================================================
 void GEOM_Engine::Close(int theDocID)
 {
-  if(_mapIDDocument.IsBound(theDocID)) {
+  if (_mapIDDocument.IsBound(theDocID)) {
     Handle(TDocStd_Document) aDoc = Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
 
     //Remove all GEOM Objects associated to the given document
     TColStd_SequenceOfAsciiString aSeq;
-    GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It(_objects);
-    for(; It.More(); It.Next()) {
-      TCollection_AsciiString anObjID(It.Key());
+    GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It (_objects);
+    for (; It.More(); It.Next()) {
+      TCollection_AsciiString anObjID (It.Key());
       Standard_Integer anID = ExtractDocID(anObjID);
-      if(theDocID == anID) aSeq.Append(It.Key());
+      if (theDocID == anID) aSeq.Append(It.Key());
     }
-    for(Standard_Integer i=1; i<=aSeq.Length(); i++) _objects.UnBind(aSeq.Value(i));
+    for (Standard_Integer i=1; i<=aSeq.Length(); i++) _objects.UnBind(aSeq.Value(i));
 
-   _mapIDDocument.UnBind(theDocID);
+    _lastCleared.Nullify();
+
+    _mapIDDocument.UnBind(theDocID);
     _OCAFApp->Close(aDoc);
     aDoc.Nullify();
   }
@@ -375,7 +430,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   if(aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
  
   aScript = "import geompy\n";
-  aScript += "import math\n\n";
+  aScript += "import math\n";
+  aScript += "import SALOMEDS\n\n";
   aScript += "def RebuildData(theStudy):";
   aScript += "\n\tgeompy.init_geom(theStudy)";
   
@@ -476,10 +532,44 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   //Add final part of the script
   if(aLen && aSeq->Value(aLen) < aScriptLength)  anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength); // mkr : IPAL11865
  
+  // ouv : NPAL12872
+  for (anEntryToNameIt.Initialize( theObjectNames );
+       anEntryToNameIt.More();
+       anEntryToNameIt.Next())
+  {
+    const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
+    const TCollection_AsciiString& aName = anEntryToNameIt.Value();
+
+    TDF_Label L;
+    TDF_Tool::Label( aDoc->GetData(), aEntry, L );
+    if ( L.IsNull() )
+      continue;
+
+    Handle(GEOM_Object) obj = GEOM_Object::GetObject( L );
+    if ( obj.IsNull() )
+      continue;
+
+    bool anAutoColor = obj->GetAutoColor();
+    if ( anAutoColor )
+    {
+      TCollection_AsciiString aCommand( "\n\t" );
+      aCommand += aName + ".SetAutoColor(1)";
+      anUpdatedScript += aCommand.ToCString();
+    }
+
+    SALOMEDS::Color aColor = obj->GetColor();
+    if ( aColor.R > 0 || aColor.G > 0 || aColor.B > 0 )
+    {
+      TCollection_AsciiString aCommand( "\n\t" );
+      aCommand += aName + ".SetColor(SALOMEDS.Color(" + aColor.R + "," + aColor.G + "," + aColor.B + "))";
+      anUpdatedScript += aCommand.ToCString();
+    }
+  }
+
   // Make script to publish in study
   if ( isPublished )
   {
-    map< int, string > anEntryToCommandMap; // sort publishing commands by object entry
+    std::map< int, std::string > anEntryToCommandMap; // sort publishing commands by object entry
     for (anEntryToNameIt.Initialize( theObjectNames );
          anEntryToNameIt.More();
          anEntryToNameIt.Next())
@@ -512,11 +602,11 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       // bind a command to the last digit of the entry
       int tag =
         aEntry.SubString( aEntry.SearchFromEnd(":")+1, aEntry.Length() ).IntegerValue();
-      anEntryToCommandMap.insert( make_pair( tag, aCommand.ToCString() ));
+      anEntryToCommandMap.insert( std::make_pair( tag, aCommand.ToCString() ));
     }
 
     // add publishing commands to the script
-    map< int, string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
+    std::map< int, std::string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
     for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand ) {
       anUpdatedScript += (char*)anEntryToCommand->second.c_str();
     }

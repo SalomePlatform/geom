@@ -30,199 +30,488 @@
   \class GEOM_Actor GEOM_Actor.h
   \brief This class allows to display an OpenCASCADE CAD model in a VTK viewer.
 */
+#include "GEOM_Actor.h" 
+ 
+#include "GEOM_DeviceActor.h" 
+#include "GEOM_VertexSource.h" 
+#include "GEOM_EdgeSource.h" 
+#include "GEOM_WireframeFace.h" 
+#include "GEOM_ShadingFace.h"
+#include "SVTK_Actor.h"
 
-#include "GEOM_Actor.h"
-
-#include <vtkObjectFactory.h>
-#include <vtkPolyData.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkPolyDataNormals.h>
-
+#include <vtkObjectFactory.h> 
+#include <vtkRenderer.h> 
+#include <vtkProperty.h> 
+#include <vtkPointPicker.h>
+#include <vtkCellPicker.h>
+ 
+#include <TopAbs_ShapeEnum.hxx>
+#include <TopExp_Explorer.hxx>
+#include <Poly_Triangulation.hxx>
+#include <BRepMesh_IncrementalMesh.hxx>
+#include <Bnd_Box.hxx>
+#include <TopoDS.hxx>
+#include <BRep_Tool.hxx>
+#include <BRepBndLib.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <TopExp.hxx>
+ 
+#include <vtkPolyDataWriter.h> 
+ 
+#include <vtkAppendPolyData.h>  
+#include <vtkPolyDataMapper.h>  
+#include <vtkPolyData.h>  
 #include <vtkTransform.h>
 #include <vtkMatrix4x4.h>
 #include <vtkMath.h>
-
-#include <vtkProperty.h>
-#include <vtkRenderer.h>
 #include <vtkCamera.h>
 
-// OpenCASCADE Includes
-#include "GEOM_OCCReader.h"
-#include <BRep_Tool.hxx>
+//vtkStandardNewMacro(GEOM_Actor);
 
-using namespace std;
+#ifndef MYDEBUG
+//#define MYDEBUG
+#endif
 
-//-------------------------------------------------------------
-// Main methods
-//-------------------------------------------------------------
+GEOM_Actor::GEOM_Actor(): 
+  //  myDisplayMode(eWireframe), 
+  myIsSelected(false), 
+ 
+  myVertexActor(GEOM_DeviceActor::New(),true), 
+  myVertexSource(GEOM_VertexSource::New(),true), 
+ 
+  myIsolatedEdgeActor(GEOM_DeviceActor::New(),true), 
+  myIsolatedEdgeSource(GEOM_EdgeSource::New(),true), 
+ 
+  myOneFaceEdgeActor(GEOM_DeviceActor::New(),true), 
+  myOneFaceEdgeSource(GEOM_EdgeSource::New(),true), 
+ 
+  mySharedEdgeActor(GEOM_DeviceActor::New(),true), 
+  mySharedEdgeSource(GEOM_EdgeSource::New(),true), 
+ 
+  myWireframeFaceActor(GEOM_DeviceActor::New(),true), 
+  myWireframeFaceSource(GEOM_WireframeFace::New(),true), 
+ 
+  myShadingFaceActor(GEOM_DeviceActor::New(),true), 
+  myShadingFaceSource(GEOM_ShadingFace::New(),true), 
+ 
+  myHighlightActor(GEOM_DeviceActor::New(),true), 
+  myAppendFilter(vtkAppendPolyData::New(),true), 
+  myPolyDataMapper(vtkPolyDataMapper::New(),true),
 
+  myHighlightProp(vtkProperty::New()),
+  myPreHighlightProp(vtkProperty::New()),
+  myShadingFaceProp(vtkProperty::New())
+  
+{ 
+#ifdef MYDEBUG
+  cout <<this<< " GEOM_Actor::GEOM_Actor"<<endl;
+#endif
 
-GEOM_Actor* GEOM_Actor::New()
+  myPolyDataMapper->SetInput(myAppendFilter->GetOutput()); 
+  vtkProperty* aProperty; 
+
+  myHighlightProp->SetAmbient(0.5);
+  myHighlightProp->SetDiffuse(0.3);
+  myHighlightProp->SetSpecular(0.2);
+  myHighlightProp->SetRepresentationToSurface();
+  myHighlightProp->SetAmbientColor(1, 1, 1);
+  myHighlightProp->SetDiffuseColor(1, 1, 1);
+  myHighlightProp->SetSpecularColor(0.5, 0.5, 0.5);
+  myHighlightActor->SetProperty(myHighlightProp.GetPointer());
+
+  this->myHighlightActor->SetInput(myAppendFilter->GetOutput(),false);
+
+  myPreHighlightProp->SetColor(0,1,1);
+  myPreHighlightProp->SetPointSize(SALOME_POINT_SIZE+2);
+  myPreHighlightProp->SetLineWidth(SALOME_LINE_WIDTH+1);
+  myPreHighlightProp->SetRepresentationToWireframe();
+
+  myAppendFilter->AddInput(myVertexSource->GetOutput()); 
+  myVertexActor->SetInput(myVertexSource->GetOutput(),false); 
+  aProperty = myVertexActor->GetProperty(); 
+  aProperty->SetRepresentation(VTK_POINTS); 
+  aProperty->SetPointSize(3); 
+  aProperty->SetColor(1, 1, 0);
+ 
+  myAppendFilter->AddInput(myIsolatedEdgeSource->GetOutput()); 
+  myIsolatedEdgeActor->SetInput(myIsolatedEdgeSource->GetOutput(),false); 
+  aProperty = myIsolatedEdgeActor->GetProperty(); 
+  aProperty->SetRepresentation(VTK_WIREFRAME); 
+  aProperty->SetColor(1, 0, 0);
+ 
+  myAppendFilter->AddInput(myOneFaceEdgeSource->GetOutput()); 
+  myOneFaceEdgeActor->SetInput(myOneFaceEdgeSource->GetOutput(),false); 
+  aProperty = myOneFaceEdgeActor->GetProperty(); 
+  aProperty->SetRepresentation(VTK_WIREFRAME); 
+  aProperty->SetColor(0, 1, 0);
+ 
+  myAppendFilter->AddInput(mySharedEdgeSource->GetOutput()); 
+  mySharedEdgeActor->SetInput(mySharedEdgeSource->GetOutput(),false); 
+  aProperty = mySharedEdgeActor->GetProperty(); 
+  aProperty->SetRepresentation(VTK_WIREFRAME); 
+  aProperty->SetColor(1, 1, 0);
+ 
+  myAppendFilter->AddInput(myWireframeFaceSource->GetOutput()); 
+  myWireframeFaceActor->SetInput(myWireframeFaceSource->GetOutput(),false); 
+  aProperty = myWireframeFaceActor->GetProperty(); 
+  aProperty->SetRepresentation(VTK_WIREFRAME); 
+  aProperty->SetColor(0.5, 0.5, 0.5);
+
+  myShadingFaceActor->SetInput(myShadingFaceSource->GetOutput(),true); 
+
+  myShadingFaceProp->SetRepresentation(VTK_SURFACE); 
+  myShadingFaceProp->SetInterpolationToGouraud(); 
+  myShadingFaceProp->SetAmbient(1.0);
+  myShadingFaceProp->SetDiffuse(1.0);
+  myShadingFaceProp->SetSpecular(0.4);
+  myShadingFaceProp->SetAmbientColor(0.329412, 0.223529, 0.027451);
+  myShadingFaceProp->SetDiffuseColor(0.780392, 0.568627, 0.113725);
+  myShadingFaceProp->SetSpecularColor(0.992157, 0.941176, 0.807843);
+
+  myShadingFaceActor->SetProperty(myShadingFaceProp.GetPointer());
+
+  // Toggle display mode 
+  setDisplayMode(0); // WIRE FRAME
+
+} 
+ 
+ 
+GEOM_Actor::~GEOM_Actor() 
+{ 
+#ifdef MYDEBUG
+  cout <<this<< " ~GEOM_Actor::GEOM_Actor"<<endl;
+#endif
+  myHighlightProp->Delete();
+  myPreHighlightProp->Delete();
+  myShadingFaceProp->Delete();
+} 
+ 
+GEOM_Actor*  
+GEOM_Actor:: 
+New() 
+{ 
+  GEOM_Actor* anObject = new GEOM_Actor(); 
+  anObject->SetMapper(anObject->myPolyDataMapper.Get()); 
+  return anObject; 
+} 
+ 
+ 
+void Write(vtkPolyData* theDataSet, const char* theFileName){ 
+  vtkPolyDataWriter* aWriter = vtkPolyDataWriter::New(); 
+  cout<<"Write - "<<theFileName<<"' : "<<theDataSet->GetNumberOfPoints()<<"; "<<theDataSet->GetNumberOfCells()<<endl; 
+  aWriter->SetInput(theDataSet); 
+  aWriter->SetFileName(theFileName); 
+  //aWriter->Write(); 
+  aWriter->Delete(); 
+} 
+ 
+void 
+GEOM_Actor:: 
+SetModified() 
+{ 
+  this->myVertexSource->Modified(); 
+  this->myIsolatedEdgeSource->Modified(); 
+  this->myOneFaceEdgeSource->Modified(); 
+  this->mySharedEdgeSource->Modified(); 
+  this->myWireframeFaceSource->Modified(); 
+  this->myShadingFaceSource->Modified(); 
+} 
+
+void  
+GEOM_Actor:: 
+SetMapper(vtkMapper* theMapper) 
+{ 
+  SALOME_Actor::SetMapper(theMapper); 
+} 
+
+void 
+GEOM_Actor:: 
+AddToRender(vtkRenderer* theRenderer)
 {
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("GEOM_Actor");
-  if(ret)
-    {
-      return (GEOM_Actor*)ret;
+  //SALOME_Actor::AddToRender(theRenderer);
+  
+  theRenderer->AddActor(this); 
+ 
+  this->myHighlightActor->AddToRender(theRenderer); 
+  
+
+  myShadingFaceActor->AddToRender(theRenderer); 
+  myWireframeFaceActor->AddToRender(theRenderer); 
+ 
+  mySharedEdgeActor->AddToRender(theRenderer); 
+  myOneFaceEdgeActor->AddToRender(theRenderer); 
+  myIsolatedEdgeActor->AddToRender(theRenderer); 
+ 
+  myVertexActor->AddToRender(theRenderer); 
+}
+ 
+void 
+GEOM_Actor:: 
+RemoveFromRender(vtkRenderer* theRenderer)
+{
+  //SALOME_Actor::RemoveFromRender(theRenderer);
+
+  
+  theRenderer->RemoveActor(this);
+
+  myHighlightActor->RemoveFromRender(theRenderer); 
+  myShadingFaceActor->RemoveFromRender(theRenderer); 
+  myWireframeFaceActor->RemoveFromRender(theRenderer); 
+ 
+  mySharedEdgeActor->RemoveFromRender(theRenderer); 
+  myOneFaceEdgeActor->RemoveFromRender(theRenderer); 
+  myIsolatedEdgeActor->RemoveFromRender(theRenderer); 
+ 
+  myVertexActor->RemoveFromRender(theRenderer);
+
+  
+  SetSelected(false);
+  SetVisibility(false);
+}
+
+void  
+GEOM_Actor:: 
+setDisplayMode(int theMode) 
+{ 
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::SetDisplayMode = "<<theMode  <<endl;
+#endif
+  VTKViewer_Actor::setDisplayMode(theMode);
+  SetVisibility(GetVisibility()); 
+} 
+
+void  
+GEOM_Actor:: 
+SetSelected(bool theIsSelected) 
+{ 
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::SetSelected = "<<theIsSelected  <<endl;
+#endif
+
+  myIsSelected = theIsSelected; 
+  SetVisibility(GetVisibility()); 
+} 
+
+void  
+GEOM_Actor:: 
+SetVisibility(int theVisibility) 
+{ 
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::SetVisibility = "<<theVisibility <<"  myIsSelected="<< myIsSelected
+       << " theVisibility="<<theVisibility<<" myIsPreselected="<<myIsPreselected<<endl;
+#endif
+
+  SALOME_Actor::SetVisibility(theVisibility);
+
+  this->myHighlightActor->SetVisibility(theVisibility && (myIsSelected || myIsPreselected));
+  
+  myShadingFaceActor->SetVisibility(theVisibility && (myDisplayMode == (int)eShading) && (!myIsSelected || !myIsPreselected)); 
+  myWireframeFaceActor->SetVisibility(theVisibility && (myDisplayMode ==(int)eWireframe) && !myIsSelected);
+
+  mySharedEdgeActor->SetVisibility(theVisibility && myDisplayMode == (int)eWireframe && !myIsSelected);
+  myOneFaceEdgeActor->SetVisibility(theVisibility && myDisplayMode == (int)eWireframe && !myIsSelected);
+  myIsolatedEdgeActor->SetVisibility(theVisibility && !myIsSelected);
+
+  myVertexActor->SetVisibility(false);// must be added new mode points 
+}
+ 
+
+void
+GEOM_Actor
+::SetNbIsos(const int theNb[2])
+{
+  myNbIsos[0] = theNb[0];
+  myNbIsos[1] = theNb[1];
+}
+
+void
+GEOM_Actor
+::GetNbIsos(int &theNbU,int &theNbV)
+{
+  theNbU = myNbIsos[0];
+  theNbV = myNbIsos[1];
+}
+
+static 
+void 
+MeshShape(const TopoDS_Shape& theShape,
+          float& theDeflection, 
+          bool theIsRelative)
+{ 
+  static Standard_Real RELATIVE_DEFLECTION = 0.0001; 
+  Standard_Real aDeflection = theDeflection; 
+
+  if(theDeflection <= 0) { // Compute default theDeflection
+    Bnd_Box B;
+    BRepBndLib::Add(theShape, B);
+    Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+    B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+    Standard_Real aDiagonal = (aXmax-aXmin)*(aXmax-aXmin) +
+                              (aYmax-aYmin)*(aYmax-aYmin) +
+                              (aZmax-aZmin)*(aZmax-aZmin);
+    aDiagonal = sqrt(aDiagonal); 
+    aDeflection = aDiagonal*RELATIVE_DEFLECTION; 
+ 
+    if(theIsRelative) 
+      theDeflection = RELATIVE_DEFLECTION; 
+    else 
+      theDeflection = aDeflection; 
+  }
+  
+  BRepMesh_IncrementalMesh aMesh(theShape,aDeflection);
+}
+
+void  
+GEOM_Actor:: 
+SetDeflection(float theDeflection, bool theIsRelative) 
+{ 
+  myDeflection = theDeflection; 
+  myIsRelative = theIsRelative; 
+ 
+  MeshShape(myShape,myDeflection,myIsRelative); 
+ 
+  SetModified(); 
+} 
+
+void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
+                           float theDeflection,
+                           bool theIsRelative,
+                           bool theIsVector)
+{
+  myShape = theShape;
+
+  myVertexSource->Clear();
+  myIsolatedEdgeSource->Clear();
+  myOneFaceEdgeSource->Clear();
+  mySharedEdgeSource->Clear();
+  myWireframeFaceSource->Clear();
+  myShadingFaceSource->Clear();
+
+  TopExp_Explorer aVertexExp (theShape,TopAbs_VERTEX);
+  for (; aVertexExp.More(); aVertexExp.Next())
+  {
+     const TopoDS_Vertex& aVertex = TopoDS::Vertex(aVertexExp.Current());
+     myVertexSource->AddVertex(aVertex);
+  }
+  SetDeflection(theDeflection, theIsRelative);
+
+  // look if edges are free or shared
+  TopTools_IndexedDataMapOfShapeListOfShape anEdgeMap;
+  TopExp::MapShapesAndAncestors(theShape,TopAbs_EDGE,TopAbs_FACE,anEdgeMap);
+
+  SetShape(theShape,anEdgeMap,theIsVector);
+}
+
+void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
+                           const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
+                           bool theIsVector)
+{
+  if (theShape.ShapeType() == TopAbs_COMPOUND) {
+    TopoDS_Iterator anItr(theShape);
+    for (; anItr.More(); anItr.Next()) {
+      SetShape(anItr.Value(),theEdgeMap,theIsVector);
     }
-  // If the factory was unable to create the object, then create it here.
-  return new GEOM_Actor;
-}
+  }
 
-
-GEOM_Actor::GEOM_Actor()
-{
-  this->Device = vtkActor::New();
-
-  this->WireframeMapper = NULL;
-  this->ShadingMapper = NULL;
-
-  this->ShadingProperty = NULL;
-  this->WireframeProperty = NULL;
-
-  this->deflection = 0;
-  myDisplayMode = 0; 
-
-  this->myIO = NULL;
-  this->myName = "";
-
-  this->HighlightProperty = NULL;
-  this->myIsHighlighted = false;
-
-  this->subshape = false;
-  this->myIsInfinite = false;
-}
-
-GEOM_Actor::~GEOM_Actor()
-{
-  if (WireframeMapper != NULL)
-    WireframeMapper->Delete();
-  if (ShadingMapper != NULL)
-    ShadingMapper->Delete();
-  if (ShadingProperty != NULL)
-    ShadingProperty->Delete();
-  if (WireframeProperty != NULL)
-    WireframeProperty->Delete();
-  if (HighlightProperty != NULL)
-    HighlightProperty->Delete();
-}
-
-
-void GEOM_Actor::ShallowCopy(vtkProp *prop)
-{
-  GEOM_Actor *f = GEOM_Actor::SafeDownCast(prop);
-  if ( f != NULL )
-    {
-      this->setInputShape(f->getTopo(),f->getDeflection(),f->getDisplayMode());
-      this->setName( f->getName() );
-      if ( f->hasIO() )
-	this->setIO( f->getIO() );
-      this->ShadingMapper = NULL;
-      this->WireframeMapper = NULL;
-    } else {
-      this->myIO = NULL;
-      this->myName = "";
-      this->ShadingMapper = NULL;
-      this->WireframeMapper = NULL;
+  switch (theShape.ShapeType()) {
+    case TopAbs_WIRE: {
+      TopExp_Explorer anEdgeExp(theShape,TopAbs_EDGE);
+      for (; anEdgeExp.More(); anEdgeExp.Next()){
+        const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());
+        if (!BRep_Tool::Degenerated(anEdge))
+          myIsolatedEdgeSource->AddEdge(anEdge,theIsVector);
+      }
+      break;
     }
-
-  // Now do superclass
-  this->SALOME_Actor::ShallowCopy(prop);
+    case TopAbs_EDGE: {
+      const TopoDS_Edge& anEdge = TopoDS::Edge(theShape);
+      if (!BRep_Tool::Degenerated(anEdge))
+        myIsolatedEdgeSource->AddEdge(anEdge,theIsVector);
+      break;
+    }
+    case TopAbs_VERTEX: {
+      break;
+    }
+    default: {
+      TopExp_Explorer aFaceExp (theShape,TopAbs_FACE);
+      for(; aFaceExp.More(); aFaceExp.Next()) {
+        const TopoDS_Face& aFace = TopoDS::Face(aFaceExp.Current());
+        myWireframeFaceSource->AddFace(aFace);
+        myShadingFaceSource->AddFace(aFace);
+        TopExp_Explorer anEdgeExp(aFaceExp.Current(), TopAbs_EDGE);
+	for(; anEdgeExp.More(); anEdgeExp.Next()) {
+	  const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());
+          if(!BRep_Tool::Degenerated(anEdge)){
+	    // compute the number of faces
+	    int aNbOfFaces = theEdgeMap.FindFromKey(anEdge).Extent();
+	    switch(aNbOfFaces){
+	    case 0:  // isolated edge
+	      myIsolatedEdgeSource->AddEdge(anEdge,theIsVector);
+	      break;
+	    case 1:  // edge in only one face
+	      myOneFaceEdgeSource->AddEdge(anEdge,theIsVector);
+	      break;
+	    default: // edge shared by at least two faces
+	      mySharedEdgeSource->AddEdge(anEdge,theIsVector);
+	    }
+          }
+        }
+      }
+    }
+  }
 }
 
-//-------------------------------------------------------------
-// Set parameters
-//-------------------------------------------------------------
-
-
-void GEOM_Actor::setDisplayMode(int thenewmode) {
-  myDisplayMode = thenewmode;
-  if ( thenewmode >=1 ) {
-    if ((myShape.ShapeType() == TopAbs_WIRE) || 
-	(myShape.ShapeType() == TopAbs_EDGE) || 
-	(myShape.ShapeType() == TopAbs_VERTEX)) {
-      if ( !subshape )
-	CreateWireframeMapper();
-      else
-	return;
-    } else
-      CreateShadingMapper();
-  } else
-    CreateWireframeMapper();
-}
-
+// OLD METHODS
 void GEOM_Actor::setDeflection(double adef) {
-  deflection = adef;
-}
-
-void GEOM_Actor::setInputShape(const TopoDS_Shape& aShape,double adef,int imode) {
-  myShape = aShape;
-  deflection = adef;
-  setDisplayMode(imode);
-}
-
-//-------------------------------------------------------------
-// Get parameters
-//-------------------------------------------------------------
-
-const TopoDS_Shape& GEOM_Actor::getTopo() {
-  return myShape;
-}
-
-double GEOM_Actor::getDeflection() {
-  return deflection;
-}
-
-void GEOM_Actor::SetWireframeProperty(vtkProperty* Prop) {
-  this->WireframeProperty = Prop;
-}
-
-void GEOM_Actor::SetShadingProperty(vtkProperty* Prop) {
-  this->ShadingProperty = Prop;
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::setDeflection"<<endl;
+#endif
+  SetDeflection((float)adef,GetIsRelative());
 }
 
 
-//-------------------------------------------------------------
-// Mapper creating function
-//-------------------------------------------------------------
-void GEOM_Actor::CreateMapper(int theMode) {
-  this->myIsInfinite = (bool)myShape.Infinite();  
-  if(myShape.ShapeType() == TopAbs_VERTEX) {
-    gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(myShape));
-    this->SetPosition(aPnt.X(),aPnt.Y(),aPnt.Z());
-  }
-  GEOM_OCCReader* aread = GEOM_OCCReader::New();
-  aread->setTopo(myShape);
-  aread->setDisplayMode(theMode);
-  aread->GetOutput()->ReleaseDataFlagOn(); 
-    
-  vtkPolyDataMapper* aMapper = vtkPolyDataMapper::New();
-  if (theMode == 0) { 
-    aMapper->SetInput(aread->GetOutput());
-  } else {
-    vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
-    normals->SetInput(aread->GetOutput());
-    aMapper->SetInput(normals->GetOutput());
-  }
-  aread->Delete();
-  this->SetMapper(theMode == 0? WireframeMapper = aMapper : ShadingMapper = aMapper);
-}
+// warning! must be checked!
+// SetHighlightProperty
+// SetWireframeProperty
+// SetShadingProperty
 
-void GEOM_Actor::CreateShadingMapper() {
-  CreateMapper(1);
-}
-
-
-void GEOM_Actor::CreateWireframeMapper() {
-  CreateMapper(0);
-}
-
-//-------------------------------------------------------------
-// Render function
-//-------------------------------------------------------------
-
-void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
+void GEOM_Actor::SetHighlightProperty(vtkProperty* Prop)
 {
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::SetHighlightProperty"<<endl;
+#endif
+  this->myHighlightActor->GetProperty()->DeepCopy(Prop);
+  
+}
+
+void GEOM_Actor::SetWireframeProperty(vtkProperty* Prop)
+{
+#ifdef MYDEBUG
+  cout << this << " GEOM_Actor::SetWireframeProperty"<<endl;
+#endif
+  // must be filled
+  myWireframeFaceActor->SetProperty(Prop);
+}
+
+void GEOM_Actor::SetShadingProperty(vtkProperty* Prop)
+{
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::SetShadingProperty"<<endl;
+#endif
+  myShadingFaceProp->DeepCopy(Prop);
+}
+
+
+void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
+{
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::Render"<<endl;
+#endif
+
+  if(!GetVisibility())
+    return;
+
   /* render the property */
   if (!this->Property) {
     // force creation of a property
@@ -235,17 +524,29 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
     this->Property->SetSpecularColor(0.99,0.98,0.83);
   }
 
-  if(!myIsHighlighted) {
-    if ( myIsPreselected ) 
-      this->Property = PreviewProperty;
-    else if(myDisplayMode >= 1) {
-      // SHADING
-      this->Property = ShadingProperty;
-    }
-    else {
-      this->Property = WireframeProperty;     
-    }
+  switch(myDisplayMode){
+  case 0://wireframe
+    myPreHighlightProp->SetRepresentationToWireframe();
+    myHighlightProp->SetRepresentationToWireframe();
+    break;
+  case 1://shading
+    myPreHighlightProp->SetRepresentationToSurface();
+    myHighlightProp->SetRepresentationToSurface();
+    break;
+  }
 
+  if(!myIsSelected){
+    if(myIsPreselected){
+      this->myHighlightActor->SetProperty(myPreHighlightProp.GetPointer());
+      myShadingFaceActor->SetProperty(myPreHighlightProp.GetPointer());
+    } else {
+      this->myHighlightActor->SetProperty(myShadingFaceProp.GetPointer());
+      myShadingFaceActor->SetProperty(myShadingFaceProp.GetPointer());
+    }
+  }
+  else{
+    this->myHighlightActor->SetProperty(myHighlightProp.GetPointer());
+    myShadingFaceActor->SetProperty(myHighlightProp.GetPointer());
   }
 
   this->Property->Render(this, ren);
@@ -254,24 +555,6 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
     this->Device->SetBackfaceProperty(this->BackfaceProperty);
   }
   this->Device->SetProperty(this->Property);
-  // Store information on time it takes to render.
-  // We might want to estimate time from the number of polygons in mapper.
-  if(myDisplayMode >= 1) {
-    if((myShape.ShapeType() == TopAbs_WIRE) || 
-       (myShape.ShapeType() == TopAbs_EDGE) || 
-       (myShape.ShapeType() == TopAbs_VERTEX)) {
-      if ( !subshape ) {
-	if(WireframeMapper==NULL) CreateWireframeMapper();
-      } else
-	return;
-    }
-    else {
-      if(ShadingMapper==NULL) CreateShadingMapper();
-    }
-  }
-  else {
-    if(WireframeMapper==NULL) CreateWireframeMapper();
-  }
   if(myShape.ShapeType() == TopAbs_VERTEX) {
     if(ren){
       //The parameter determine size of vertex actor relate to diagonal of RendererWindow
@@ -286,107 +569,207 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
     vtkMatrix4x4 *aMatrix = vtkMatrix4x4::New();
     this->GetMatrix(ren->GetActiveCamera(), aMatrix);
     this->Device->SetUserMatrix(aMatrix);
-    this->Device->Render(ren,this->Mapper);
+    this->Device->Render(ren,theMapper);
     aMatrix->Delete();    
   } else
-    this->Device->Render(ren, this->Mapper);
- if(WireframeMapper!=NULL) this->EstimatedRenderTime = WireframeMapper->GetTimeToDraw(); 
- else if(ShadingMapper!=NULL) this->EstimatedRenderTime = ShadingMapper->GetTimeToDraw();
+    this->Device->Render(ren, theMapper);
+
 }
 
-// SubShape
+void GEOM_Actor::ReleaseGraphicsResources(vtkWindow *)
+{
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::ReleaseGraphicsResources"<<endl;
+#endif  
+}
+
+
+
+void GEOM_Actor::ShallowCopy(vtkProp *prop)
+{
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::ShallowCopy"<<endl;
+#endif
+  GEOM_Actor *f = GEOM_Actor::SafeDownCast(prop);
+  if ( f != NULL )
+    {
+      this->SetShape(f->getTopo(),f->GetDeflection(),f->GetIsRelative());
+    }
+
+  // Now do superclass
+  this->SALOME_Actor::ShallowCopy(prop);
+}
+
+const TopoDS_Shape& GEOM_Actor::getTopo() {
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::getTopo"<<endl;
+#endif
+  return myShape;
+}
+
+void GEOM_Actor::setInputShape(const TopoDS_Shape& ashape, double adef1,
+                               int imode, bool isVector)
+{
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::setInputShape"<<endl;
+#endif
+}
+
+double GEOM_Actor::getDeflection()
+{
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::getDeflection"<<endl;
+#endif
+  return (double) GetDeflection();
+}
+
+
+double GEOM_Actor::isVector()
+{
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::isVector"<<endl;
+#endif  
+  return 0;
+}
+
 void GEOM_Actor::SubShapeOn()
 {
-  subshape = true;
-}
-void GEOM_Actor::SubShapeOff()
-{
-  subshape = false;
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::SubShapeOn"<<endl;
+#endif  
 }
 
-//-------------------------------------------------------------
-// Opacity methods
-//-------------------------------------------------------------
+void GEOM_Actor::SubShapeOff()
+{
+#ifdef MYDEBUG
+  cout << "GEOM_Actor::SubShapeOff"<<endl;
+#endif
+}
+
+void GEOM_Actor::highlight(bool highlight)
+{
+#ifdef MYDEBUG
+  cout << this << " GEOM_Actor::highlight highlight="<<highlight<<endl;
+#endif
+  SALOME_Actor::highlight(highlight);
+}
 
 void GEOM_Actor::SetOpacity(vtkFloatingPointType opa)
 {
-  //HighlightProperty->SetOpacity(opa);
-  SALOME_Actor::SetOpacity(opa);
-  ShadingProperty->SetOpacity(opa);
+  // enk:tested OK
+  myShadingFaceProp->SetOpacity(opa);
+  myHighlightProp->SetOpacity(opa);
+  myPreHighlightProp->SetOpacity(opa);
 }
 
-vtkFloatingPointType GEOM_Actor::GetOpacity() {
-  return ShadingProperty->GetOpacity();
-}
-
-//-------------------------------------------------------------
-// Color methods
-//-------------------------------------------------------------
-void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b) {
-  ShadingProperty->SetColor(r,g,b);  
-}
-
-void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b) {
-  vtkFloatingPointType color[3];
-  ShadingProperty->GetColor(color);
-  r = color[0];
-  g = color[1];
-  b = color[2];
-}
-
-//-------------------------------------------------------------
-// Highlight methods
-//-------------------------------------------------------------
-
-void GEOM_Actor::highlight(bool highlight) {
-
-  if(highlight && !myIsHighlighted) {
-    myIsHighlighted=true;
-    // build highlight property is necessary
-    if(HighlightProperty==NULL) {
-      HighlightProperty = vtkProperty::New();
-      HighlightProperty->SetAmbient(0.5);
-      HighlightProperty->SetDiffuse(0.3);
-      HighlightProperty->SetSpecular(0.2);
-      HighlightProperty->SetRepresentationToSurface();
-      HighlightProperty->SetAmbientColor(1, 1, 1);
-      HighlightProperty->SetDiffuseColor(1, 1, 1);
-      HighlightProperty->SetSpecularColor(0.5, 0.5, 0.5); 
-    }
-      
-    this->Property = HighlightProperty;
- 
-  }
-  else if (!highlight) {
-    if(myIsHighlighted) {
-      myIsHighlighted=false;
-      if(myDisplayMode==1) {
-	//unhilight in shading
-	this->Property = ShadingProperty;
-      }
-      else {
-	//unhilight in wireframe
-	this->Property = WireframeProperty;
-      }
-    }
-  }
-}
-
-void GEOM_Actor::SetHighlightProperty(vtkProperty* Prop) {
-  this->HighlightProperty = Prop;
-}
-
-
-void GEOM_Actor::ReleaseGraphicsResources(vtkWindow *renWin) 
+vtkFloatingPointType GEOM_Actor::GetOpacity()
 {
-  vtkActor::ReleaseGraphicsResources(renWin);
-  
-  // broadcast the message down to the individual LOD mappers
-
-  if(WireframeMapper) this->WireframeMapper->ReleaseGraphicsResources(renWin);
-  if(ShadingMapper) this->ShadingMapper->ReleaseGraphicsResources(renWin);
+  // enk:tested OK
+  return myShadingFaceProp->GetOpacity(); 
 }
 
+void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b)
+{
+  // enk:tested OK
+  myShadingFaceProp->SetColor(r,g,b);
+}
+
+void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b)
+{
+  // enk:tested OK
+  vtkFloatingPointType aRGB[3];
+  myShadingFaceProp->GetColor(aRGB);
+  r = aRGB[0];
+  g = aRGB[1];
+  b = aRGB[2];
+}
+
+bool GEOM_Actor::IsInfinite()
+{
+  return (bool)(myShape.Infinite());
+}
+
+/*!
+  To map current selection to VTK representation
+*/
+void
+GEOM_Actor
+::Highlight(bool theIsHighlight)
+{
+  myIsSelected = theIsHighlight;
+#ifdef MYDEBUG
+  cout << this << " GEOM_Actor::Highlight myIsSelected="<<myIsSelected<<endl;
+#endif
+  
+  SALOME_Actor::Highlight(theIsHighlight); // this method call ::highlight(theIsHighlight) in the end
+  SetVisibility(GetVisibility());
+}
+
+/*!
+  To process prehighlight (called from SVTK_InteractorStyle)
+*/
+bool
+GEOM_Actor
+::PreHighlight(vtkInteractorStyle *theInteractorStyle, 
+	       SVTK_SelectionEvent* theSelectionEvent,
+	       bool theIsHighlight)
+{
+#ifdef MYDEBUG
+  cout << this<<" GEOM_Actor::PreHighlight (3) theIsHighlight="<<theIsHighlight<<endl;
+#endif
+
+  if ( !GetPickable() )
+    return false;  
+
+  myPreHighlightActor->SetVisibility( false );
+  bool anIsPreselected = myIsPreselected;
+  
+  Selection_Mode aSelectionMode = theSelectionEvent->mySelectionMode;
+  bool anIsChanged = (mySelectionMode != aSelectionMode);
+
+  if( !theIsHighlight ) {
+    SetPreSelected( false );
+  }else{
+    switch(aSelectionMode){
+    case ActorSelection : 
+    {
+      if( !mySelector->IsSelected( myIO ) ) {
+	SetPreSelected( true );
+      }
+    }
+    default:
+      break;
+    }
+  }
+
+  mySelectionMode = aSelectionMode;
+  anIsChanged |= (anIsPreselected != myIsPreselected);
+
+  SetVisibility(GetVisibility());
+  return anIsChanged;
+}
+
+/*!
+  To process highlight (called from SVTK_InteractorStyle)
+*/
+bool
+GEOM_Actor
+::Highlight(vtkInteractorStyle *theInteractorStyle, 
+	    SVTK_SelectionEvent* theSelectionEvent,
+	    bool theIsHighlight)
+{
+  // define the selection of object
+#ifdef MYDEBUG
+  cout << endl << this << " GEOM_Actor::Highlight (3) myIsSelected="<<myIsSelected<<endl;
+#endif
+  bool aRet = SALOME_Actor::Highlight(theInteractorStyle,theSelectionEvent,theIsHighlight);
+  SetSelected(theIsHighlight);
+  if(theIsHighlight)
+    SetPreSelected(false);
+  
+ 
+  return aRet;
+}
 
 // Copy the follower's composite 4x4 matrix into the matrix provided.
 void GEOM_Actor::GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result)

@@ -65,6 +65,10 @@ msgstr "&Help"
 msgid "GEOM_BUT_EXPLODE"
 msgstr "&Explode"
 
+#NOT_FOUND_ANY error from some operations
+msgid "NOT_FOUND_ANY"
+msgstr "Not a single entity has been found"
+
 #
 #==============================================================================
 #
@@ -235,7 +239,7 @@ msgstr "Warning"
 
 #: GeometryGUI.cxx:3854
 msgid "GEOM_REALLY_DELETE"
-msgstr "Do you really want to delete object(s) ?"
+msgstr "Do you really want to delete this %1 object(s):"
 
 #
 #==============================================================================
@@ -301,6 +305,10 @@ msgstr "Points"
 msgid "GEOM_POINT_I"
 msgstr "Point %1"
 
+#Face i
+msgid "GEOM_FACE_I"
+msgstr "Face %1"
+
 #Arguments
 msgid "GEOM_ARGUMENTS"
 msgstr "Arguments"
@@ -313,6 +321,18 @@ msgstr "Center"
 msgid "GEOM_RADIUS"
 msgstr "Radius :"
 
+#Radius
+msgid "GEOM_CONSTANT_RADIUS"
+msgstr "Radius :"
+
+#Radius
+msgid "GEOM_R1"
+msgstr "R1 :"
+
+#Radius
+msgid "GEOM_R2"
+msgstr "R2 :"
+
 #Radius i
 msgid "GEOM_RADIUS_I"
 msgstr "Radius %1 :"
@@ -323,7 +343,7 @@ msgstr "Height :"
 
 #Length
 msgid "GEOM_LENGTH"
-msgstr "Length is :"
+msgstr "Length :"
 
 #Weight
 msgid "GEOM_WEIGHT"
@@ -340,6 +360,10 @@ msgstr "Coord. :"
 #Reverse
 msgid "GEOM_REVERSE"
 msgstr "Reverse"
+
+#Bothway
+msgid "GEOM_BOTHWAY"
+msgstr "Both Directions"
 
 #Reverse U
 msgid "GEOM_REVERSE_U"
@@ -522,8 +546,8 @@ msgid "GEOM_MIRROR"
 msgstr "Mirror"
 
 #Prism
-msgid "GEOM_PRISM"
-msgstr "Prism"
+msgid "GEOM_EXTRUSION"
+msgstr "Extrusion"
 
 #Sub Shapes
 msgid "GEOM_SUB_SHAPE"
@@ -575,6 +599,13 @@ msgstr "Bounding Box"
 #Center Of Mass
 msgid "GEOM_CMASS"
 msgstr "Center Of Mass"
+
+#Normal
+msgid "GEOM_NORMALE"
+msgstr "Normal To A Face"
+
+msgid "GEOM_VECTOR_NORMALE"
+msgstr "Vector_Normal"
 
 #Basic Properties
 msgid "GEOM_PROPERTIES"
@@ -651,9 +682,21 @@ msgstr "Face"
 msgid "GEOM_FACES"
 msgstr "Faces"
 
+#Face or LCS
+msgid "GEOM_FACE_OR_LCS"
+msgstr "Face or LCS"
+
 #Line
 msgid "GEOM_LINE"
 msgstr "Line"
+
+#Line 1
+msgid "GEOM_LINE1"
+msgstr "Line 1"
+
+#Line 2
+msgid "GEOM_LINE2"
+msgstr "Line 2"
 
 #Plane
 msgid "GEOM_PLANE"
@@ -778,6 +821,10 @@ msgstr "D1 :"
 msgid "GEOM_D2"
 msgstr "D2 :"
 
+#D
+msgid "GEOM_D"
+msgstr "D :"
+
 #
 #==============================================================================
 #
@@ -823,6 +870,14 @@ msgid "GEOM_CHAMFER_EDGES"
 msgstr "Chamfer On Edges From Shape"
 
 #: GeometryGUI_ChamferDlg.cxx:58
+msgid "GEOM_CHAMFER_EDGE"
+msgstr "Chamfer On Selected Edges"
+
+#: GeometryGUI_ChamferDlg.cxx:58
+msgid "SELECTED_EDGE"
+msgstr "Selected Edges"
+
+#: GeometryGUI_ChamferDlg.cxx:58
 msgid "GEOM_CHAMFER_FACES"
 msgstr "Chamfer On Faces From Shape"
 
@@ -833,6 +888,10 @@ msgstr "Circle Construction"
 #: GeometryGUI_CenterMassDlg.cxx:77
 msgid "GEOM_CMASS_TITLE"
 msgstr "Center Of Mass Construction"
+
+#: GeometryGUI_NormaleDlg.cxx:57
+msgid "GEOM_NORMALE_TITLE"
+msgstr "Create Normal To A Face"
 
 msgid "GEOM_PLANE_SIZE"
 msgstr "Size of plane :"
@@ -873,6 +932,22 @@ msgstr "Minimun Distance Between Two Objects"
 msgid "GEOM_MINDIST_OBJ"
 msgstr "Objects And Results"
 
+#: GeometryGUI_AngleDlg.cxx:82
+msgid "GEOM_MEASURE_ANGLE_TITLE"
+msgstr "Angle Between Two Straight Edges/Lines/Vectors"
+
+#: GeometryGUI_AngleDlg.cxx:86
+msgid "GEOM_MEASURE_ANGLE_ANGLE"
+msgstr "Angle"
+
+#: GeometryGUI_AngleDlg.cxx:90
+msgid "GEOM_MEASURE_ANGLE_OBJ"
+msgstr "Objects And Results"
+
+#: GeometryGUI_AngleDlg.cxx:93
+msgid "GEOM_MEASURE_ANGLE_IS"
+msgstr "Angle in degrees :"
+
 #: GeometryGUI_EdgeDlg.cxx:47
 msgid "GEOM_EDGE_TITLE"
 msgstr "Create An Edge"
@@ -899,7 +974,7 @@ msgstr "Create A Face"
 
 #: GeometryGUI_FaceDlg.cxx:78
 msgid "GEOM_FACE_FFW"
-msgstr "Face from a wire"
+msgstr "Face creation from wires and/or edges"
 
 #: GeometryGUI_FaceDlg.cxx:103
 msgid "GEOM_FACE_OPT"
@@ -907,7 +982,7 @@ msgstr "Try to create a planar face"
 
 #: GeometryGUI_FillingDlg.cxx:53
 msgid "GEOM_FILLING_TITLE"
-msgstr "Filling Surface With Curves"
+msgstr "Filling Surface With Edges"
 
 #: GeometryGUI_FillingDlg.cxx:112
 msgid "GEOM_FILLING_ARG"
@@ -927,7 +1002,7 @@ msgstr "Tol. 2D :"
 
 #: GeometryGUI_FillingDlg.cxx:170
 msgid "GEOM_FILLING_COMPOUND"
-msgstr "Curves Comp."
+msgstr "Edges compound"
 
 #: GeometryGUI_FillingDlg.cxx:184
 msgid "GEOM_FILLING_TOL_3D"
@@ -936,6 +1011,10 @@ msgstr "Tol. 3D :"
 #: GeometryGUI_FillingDlg.cxx:192
 msgid "GEOM_FILLING_NB_ITER"
 msgstr "Nb. Iter :"
+
+#: GeometryGUI_FillingDlg.cxx:84
+msgid "GEOM_FILLING_APPROX"
+msgstr "Approximation"
 
 #: GeometryGUI_FuseDlg.cxx:48
 msgid "GEOM_FUSE_TITLE"
@@ -1052,12 +1131,15 @@ msgid "GEOM_PLANE_PV"
 msgstr "Point + Vector"
 
 #: GeometryGUI_PrismDlg.cxx:54
-msgid "GEOM_PRISM_TITLE"
-msgstr "Prism Construction"
+msgid "GEOM_EXTRUSION_TITLE"
+msgstr "Construction by Extrusion"
 
 #: GeometryGUI_PrismDlg.cxx:83
-msgid "GEOM_PRISM_BSV"
+msgid "GEOM_EXTRUSION_BSV"
 msgstr "Base Shape + Vector"
+
+msgid "GEOM_EXTRUSION_BSV_2P"
+msgstr "Base Shape + 2 Points"
 
 #: GeometryGUI_PropertiesDlg.cxx:56
 msgid "GEOM_PROPERTIES_TITLE"
@@ -1226,7 +1308,7 @@ msgstr "Working Plane Selection"
 
 #: GeometryGUI_WorkingPlaneDlg.cxx:107
 msgid "GEOM_WPLANE_FACE"
-msgstr "Plane Or Planar Face"
+msgstr "Plane, Planar Face or LCS"
 
 #: GeometryGUI_WorkingPlaneDlg.cxx:107
 msgid "GEOM_WPLANE_VECTOR"
@@ -1255,6 +1337,10 @@ msgstr "OZX"
 #: GeometryGUI_WorkingPlaneDlg.cxx:107
 msgid "GEOM_WPLANE_OXY"
 msgstr "OXY"
+
+#: GeometryGUI_WorkingPlaneDlg.cxx:107
+msgid "GEOM_REVERSE_PLANE"
+msgstr "Reverse the plane normal"
 
 #: GeometryGUI_multiTranslationDlg.cxx:107
 msgid "GEOM_MULTITRANSLATION_TITLE"
@@ -1286,6 +1372,9 @@ msgstr "Parametric point"
 msgid "GEOM_REF_POINT"
 msgstr "Point with reference"
 
+msgid "GEOM_LINE_INTERSECTION"
+msgstr "Point On Lines Intersection"
+
 #
 #==============================================================================
 #
@@ -1300,6 +1389,9 @@ msgstr "\nShading"
 
 msgid "GEOM_RECONSTRUCTION_LIMIT"
 msgstr "Reconstruction Limit"
+
+msgid "GEOM_KEEP_NONLIMIT_SHAPES"
+msgstr "Keep nonlimit shapes"
 
 msgid "GEOM_SUPPRESS_RESULT"
 msgstr "Suppress Result"
@@ -1454,6 +1546,9 @@ msgstr "Chamfer can't be computed with %1 and %2"
 
 msgid "GEOM_3_POINTS"
 msgstr "3 points"
+
+msgid "GEOM_CENTER_2POINTS"
+msgstr "Center and two points"
 
 msgid "GEOM_POINT1"
 msgstr "Point 1"
@@ -1639,6 +1734,18 @@ msgstr "Free boundaries"
 msgid "GEOM_FREE_FACES"
 msgstr "Free faces"
 
+msgid "GEOM_CHANGE_ORIENTATION_TITLE"
+msgstr "Change orientation"
+
+msgid "GEOM_CHANGE_ORIENTATION"
+msgstr "Objects to change orientation"
+
+msgid "GEOM_REMOVE_EXTRA_EDGES_TITLE"
+msgstr "Remove extra edges"
+
+msgid "GEOM_REMOVE_EXTRA_EDGES"
+msgstr "Object to remove extra edges"
+
 msgid "GEOM_BY_PARAMETER"
 msgstr "By parameter"
 
@@ -1710,6 +1817,9 @@ msgstr "Point Coordinates"
 
 msgid "MeasureGUI_PointDlg::COORDINATES"
 msgstr "Point and its coordinates"
+
+msgid "MeasureGUI_1Sel1TextView1Check_QTD::CHECK_SHAPE_GEOMETRY"
+msgstr "Check also geometry"
 
 msgid "GroupGUI_GroupDlg::CREATE_GROUP_TITLE"
 msgstr "Create Group"
@@ -1954,6 +2064,18 @@ msgstr "Glue faces"
 msgid "GEOM_GLUE"
 msgstr "Glue"
 
+msgid "RepairGUI_GlueDlg::SELECT_FACES"
+msgstr "Select Faces"
+
+msgid "RepairGUI_GlueDlg::FACES_FOR_GLUING_ARE_DETECTED"
+msgstr "There are %1 face(s) that can be glued. They are coloured on the screen with red colour\nPlease close this message box and select faces for glueing"
+
+msgid "RepairGUI_GlueDlg::GLUE_FACES"
+msgstr "Glue faces"
+
+msgid "RepairGUI_GlueDlg::THERE_ARE_NO_FACES_FOR_GLUING"
+msgstr "There are no faces for gluing"
+
 msgid "GEOM_FREE_FACES_TITLE"
 msgstr "Free faces"
 
@@ -1981,6 +2103,12 @@ msgstr "ProcessShape"
 
 msgid "SUPRESS_FACE_NEW_OBJ_NAME"
 msgstr "SupressFaces"
+
+msgid "CHANGE_ORIENTATION_NEW_OBJ_NAME"
+msgstr "Invert"
+
+msgid "REMOVE_EXTRA_EDGES_NEW_OBJ_NAME"
+msgstr "NoExtraEdges"
 
 msgid "NON_GEOM_OBJECTS_SELECTED"
 msgstr "There are objects selected which do not belong to %1 component."
@@ -2200,13 +2328,13 @@ msgid "STB_FILLING"
 msgstr "Create a filling"
 
 msgid "TOP_PIPE"
-msgstr "Create a pipe"
+msgstr "Extrusion along a path"
 
 msgid "MEN_PIPE"
-msgstr "Pipe"
+msgstr "Extrusion along a path"
 
 msgid "STB_PIPE"
-msgstr "Create a pipe"
+msgstr "Create a shape by Extrusion along a path"
 
 msgid "MEN_GROUP"
 msgstr "Group"
@@ -2296,7 +2424,7 @@ msgid "MEN_FACE"
 msgstr "Face"
 
 msgid "STB_FACE"
-msgstr "Build a face"
+msgstr "Build a face from wires and/or edges"
 
 msgid "TOP_SHELL"
 msgstr "Build a shell"
@@ -2607,6 +2735,24 @@ msgstr "Check free faces"
 msgid "STB_CHECK_FREE_FACES"
 msgstr "Check free faces"
 
+msgid "TOP_CHANGE_ORIENTATION"
+msgstr "Change orientation"
+
+msgid "MEN_CHANGE_ORIENTATION"
+msgstr "Change orientation"
+
+msgid "STB_CHANGE_ORIENTATION"
+msgstr "Change orientation"
+
+msgid "TOP_REMOVE_EXTRA_EDGES"
+msgstr "Remove extra edges"
+
+msgid "MEN_REMOVE_EXTRA_EDGES"
+msgstr "Remove extra edges"
+
+msgid "STB_REMOVE_EXTRA_EDGES"
+msgstr "Remove extra edges"
+
 msgid "MEN_MEASURES"
 msgstr "Measures"
 
@@ -2637,6 +2783,15 @@ msgstr "Center of mass"
 msgid "STB_MASS_CENTER"
 msgstr "Compute center of mass"
 
+msgid "TOP_NORMALE"
+msgstr "Compute normal to a face"
+
+msgid "MEN_NORMALE"
+msgstr "Normal to a face"
+
+msgid "STB_NORMALE"
+msgstr "Compute normal to a face in a point (optional)"
+
 msgid "TOP_INERTIA"
 msgstr "Compute intertia"
 
@@ -2666,6 +2821,15 @@ msgstr "Min distance"
 
 msgid "STB_MIN_DIST"
 msgstr "Compute minimum distance"
+
+msgid "TOP_MEASURE_ANGLE"
+msgstr "Compute angle"
+
+msgid "MEN_MEASURE_ANGLE"
+msgstr "Angle"
+
+msgid "STB_MEASURE_ANGLE"
+msgstr "Compute angle between two lines or linear edges"
 
 msgid "TOP_TOLERANCE"
 msgstr "Compute tolerance"
@@ -2767,49 +2931,49 @@ msgid "STB_SHADING"
 msgstr "Shading"
 
 msgid "TOP_DISPLAY_ALL"
-msgstr "Display all"
+msgstr "Show all"
 
 msgid "MEN_DISPLAY_ALL"
-msgstr "Display all"
+msgstr "Show all"
 
 msgid "STB_DISPLAY_ALL"
-msgstr "Display all"
+msgstr "Show all"
 
 msgid "TOP_ERASE_ALL"
-msgstr "Erase all"
+msgstr "Hide all"
 
 msgid "MEN_ERASE_ALL"
-msgstr "Erase all"
+msgstr "Hide all"
 
 msgid "STB_ERASE_ALL"
-msgstr "Erase all"
+msgstr "Hide all"
 
 msgid "TOP_DISPLAY"
-msgstr "Display"
+msgstr "Show"
 
 msgid "MEN_DISPLAY"
-msgstr "Display"
+msgstr "Show"
 
 msgid "STB_DISPLAY"
-msgstr "Display"
+msgstr "Show object(s)"
 
 msgid "TOP_DISPLAY_ONLY"
-msgstr "Display only"
+msgstr "Show only"
 
 msgid "MEN_DISPLAY_ONLY"
-msgstr "Display only"
+msgstr "Show only"
 
 msgid "STB_DISPLAY_ONLY"
-msgstr "Display only"
+msgstr "Show only"
 
 msgid "TOP_ERASE"
-msgstr "Erase"
+msgstr "Hide"
 
 msgid "MEN_ERASE"
-msgstr "Erase"
+msgstr "Hide"
 
 msgid "STB_ERASE"
-msgstr "Erase"
+msgstr "Hide object(s)"
 
 msgid "TOP_POP_RENAME"
 msgstr "Rename"
@@ -2837,6 +3001,24 @@ msgstr "Shading"
 
 msgid "STB_POP_SHADING"
 msgstr "Shading"
+
+msgid "TOP_POP_AUTO_COLOR"
+msgstr "Auto color"
+
+msgid "MEN_POP_AUTO_COLOR"
+msgstr "Auto color"
+
+msgid "STB_POP_AUTO_COLOR"
+msgstr "Auto color"
+
+msgid "TOP_POP_DISABLE_AUTO_COLOR"
+msgstr "Disable auto color"
+
+msgid "MEN_POP_DISABLE_AUTO_COLOR"
+msgstr "Disable auto color"
+
+msgid "STB_POP_DISABLE_AUTO_COLOR"
+msgstr "Disable auto color"
 
 msgid "TOP_POP_COLOR"
 msgstr "Color"
@@ -2895,6 +3077,12 @@ msgstr "Rename"
 msgid "NAME_LBL"
 msgstr "Name: "
 
+msgid "GEOM_RESULT_NAME_GRP"
+msgstr "Result name"
+
+msgid "GEOM_RESULT_NAME_LBL"
+msgstr "Name"
+
 msgid "GEOM_ERR_GET_ENGINE"
 msgstr "Failed to obtain GEOM Engine component.  Reload Geometry module and try again."
 
@@ -2904,8 +3092,26 @@ msgstr "OCC Viewer 3d"
 msgid "PREF_GROUP_GENERAL"
 msgstr "General"
 
+msgid "PREF_GROUP_VERTEX"
+msgstr "Marker of Points"
+
 msgid "PREF_SHADING_COLOR"
 msgstr "Default shading color"
+
+msgid "PREF_WIREFRAME_COLOR"
+msgstr "Default wireframe color"
+
+msgid "PREF_FREE_BOUND_COLOR"
+msgstr "Color of free boundaries"
+
+msgid "PREF_LINE_COLOR"
+msgstr "Color of edges, vectors, wires"
+
+msgid "PREF_POINT_COLOR"
+msgstr "Color of points"
+
+msgid "PREF_ISOS_COLOR"
+msgstr "Color of isolines"
 
 msgid "PREF_STEP_VALUE"
 msgstr "Step value for spin boxes"
@@ -2915,3 +3121,100 @@ msgstr "Default display mode"
 
 msgid "PREF_TAB_SETTINGS"
 msgstr "Settings"
+
+msgid "PREF_TYPE_OF_MARKER"
+msgstr "Type"
+
+msgid "PREF_MARKER_SCALE"
+msgstr "Size"
+
+msgid "TOM_POINT"
+msgstr "."
+
+msgid "TOM_PLUS"
+msgstr "+"
+
+msgid "TOM_STAR"
+msgstr "*"
+
+msgid "TOM_O"
+msgstr "O"
+
+msgid "TOM_X"
+msgstr "X"
+
+msgid "TOM_O_POINT"
+msgstr ". in O"
+
+msgid "TOM_O_PLUS"
+msgstr "+ in O"
+
+msgid "TOM_O_STAR"
+msgstr "* in O"
+
+msgid "TOM_O_X"
+msgstr "X in O"
+
+msgid "ERROR_SHAPE_TYPE"
+msgstr "Object of incorrect type selected!\nPlease, select face, shell or solid and try again"
+
+msgid "DEP_OBJECT"
+msgstr "Selected object has been used to create another one\n It can't be deleted "
+
+msgid "MEN_SELECT_ONLY"
+msgstr "Select Only"
+
+msgid "STB_VERTEX_SEL_ONLY"
+msgstr "Select only a Points"
+
+msgid "STB_EDGE_SEL_ONLY"
+msgstr "Select only a Edges"
+
+msgid "STB_WIRE_SEL_ONLY"
+msgstr "Select only a Wires"
+
+msgid "STB_FACE_SEL_ONLY"
+msgstr "Select only a Faces"
+
+msgid "STB_SHELL_SEL_ONLY"
+msgstr "Select only a Shells"
+
+msgid "STB_SOLID_SEL_ONLY"
+msgstr "Select only a Solids"
+
+msgid "STB_COMPOUND_SEL_ONLY"
+msgstr "Select only a Compounds"
+
+msgid "STB_ALL_SEL_ONLY"
+msgstr "Select all Objects"
+
+msgid "MEN_VERTEX_SEL_ONLY"
+msgstr "Vertex"
+
+msgid "MEN_EDGE_SEL_ONLY"
+msgstr "Edge"
+
+msgid "MEN_WIRE_SEL_ONLY"
+msgstr "Wire"
+
+msgid "MEN_FACE_SEL_ONLY"
+msgstr "Face"
+
+msgid "MEN_SHELL_SEL_ONLY"
+msgstr "Shell"
+
+msgid "MEN_SOLID_SEL_ONLY"
+msgstr "Solid"
+
+msgid "MEN_COMPOUND_SEL_ONLY"
+msgstr "Compound"
+
+msgid "MEN_ALL_SEL_ONLY"
+msgstr "Select All"
+
+
+
+
+
+
+

@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include <stdio.h>
 
 #include "Partition_Loop.ixx"
@@ -62,6 +61,8 @@ using namespace std;
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
+
+using namespace std;
 
 static char* name = new char[100];
 static int nbe = 0;

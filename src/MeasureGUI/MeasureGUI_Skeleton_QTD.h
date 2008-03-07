@@ -20,7 +20,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'MeasureGUI_Skeleton_QTD.ui'
 **
-** Created: Tue Mar 21 10:10:08 2006
+** Created: Tue Mar 13 14:20:20 2007
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -28,6 +28,8 @@
 
 #ifndef MEASUREGUI_SKELETON_QTD_H
 #define MEASUREGUI_SKELETON_QTD_H
+
+#include "GEOM_MeasureGUI.hxx"
 
 #include <qvariant.h>
 #include <qdialog.h>
@@ -41,7 +43,7 @@ class QPushButton;
 class QButtonGroup;
 class QRadioButton;
 
-class MeasureGUI_Skeleton_QTD : public QDialog
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_Skeleton_QTD : public QDialog
 {
     Q_OBJECT
 
@@ -54,7 +56,6 @@ public:
     QPushButton* buttonHelp;
     QButtonGroup* GroupConstructors;
     QRadioButton* RadioButton1;
-    QGroupBox* GroupMedium;
 
 protected:
     QGridLayout* MeasureGUI_Skeleton_QTDLayout;

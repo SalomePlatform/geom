@@ -59,7 +59,9 @@
 #include <GEOMImpl_IFilling.hxx>
 #include <GEOMImpl_IThruSections.hxx>
 #include <GEOMImpl_IPipeDiffSect.hxx>
+#include <GEOMImpl_IPipeShellSect.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -111,6 +113,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxDXDYDZ (double theDX, dou
 
   //Compute the box value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Box driver failed");
       return NULL;
@@ -165,6 +170,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxTwoPnt (Handle(GEOM_Objec
 
   //Compute the Box value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Box driver failed");
       return NULL;
@@ -211,6 +219,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
 
   //Compute the Cylinder value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Cylinder driver failed");
       return NULL;
@@ -269,6 +280,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
 
   //Compute the Cylinder value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Cylinder driver failed");
       return NULL;
@@ -318,6 +332,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConeR1R2H (double theR1, dou
 
   //Compute the Cone value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Cone driver failed");
       return NULL;
@@ -378,6 +395,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConePntVecR1R2H (Handle(GEOM
 
   //Compute the Cone value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Cone driver failed");
       return NULL;
@@ -423,6 +443,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSphereR (double theR)
 
   //Compute the Sphere value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sphere driver failed");
       return NULL;
@@ -475,6 +498,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSpherePntR (Handle(GEOM_Obje
 
   //Compute the Sphere value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sphere driver failed");
       return NULL;
@@ -523,6 +549,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusRR
 
   //Compute the Torus value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Torus driver failed");
       return NULL;
@@ -580,6 +609,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusPntVecRR
 
   //Compute the Torus value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Torus driver failed");
       return NULL;
@@ -637,8 +669,12 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
 
   //Compute the Prism value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Prism driver failed");
+      //SetErrorCode("Prism driver failed");
+      SetErrorCode("Extrusion can not be created, check input data");
       return NULL;
     }
   }
@@ -650,6 +686,66 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrismVecH("
+    << theBase << ", " << theVec << ", " << theH << ")";
+
+  SetErrorCode(OK);
+  return aPrism;
+}
+
+//=============================================================================
+/*!
+ *  MakePrismVecH2Ways
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH2Ways (Handle(GEOM_Object) theBase,
+								    Handle(GEOM_Object) theVec,
+								    double theH)
+{
+  SetErrorCode(KO);
+
+  if (theBase.IsNull() || theVec.IsNull()) return NULL;
+
+  //Add a new Prism object
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+
+  //Add a new Prism function for creation a Prism relatively to vector
+  Handle(GEOM_Function) aFunction =
+    aPrism->AddFunction(GEOMImpl_PrismDriver::GetID(), PRISM_BASE_VEC_H_2WAYS);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PrismDriver::GetID()) return NULL;
+
+  GEOMImpl_IPrism aCI (aFunction);
+
+  Handle(GEOM_Function) aRefBase = theBase->GetLastFunction();
+  Handle(GEOM_Function) aRefVec  = theVec->GetLastFunction();
+
+  if (aRefBase.IsNull() || aRefVec.IsNull()) return NULL;
+
+  aCI.SetBase(aRefBase);
+  aCI.SetVector(aRefVec);
+  aCI.SetH(theH);
+
+  //Compute the Prism value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      //SetErrorCode("Prism driver failed");
+      SetErrorCode("Extrusion can not be created, check input data");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrismVecH2Ways("
     << theBase << ", " << theVec << ", " << theH << ")";
 
   SetErrorCode(OK);
@@ -694,8 +790,12 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt
 
   //Compute the Prism value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Prism driver failed");
+      //SetErrorCode("Prism driver failed");
+      SetErrorCode("Extrusion can not be created, check input data");
       return NULL;
     }
   }
@@ -707,6 +807,67 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrism("
+    << theBase << ", " << thePoint1 << ", " << thePoint2 << ")";
+
+  SetErrorCode(OK);
+  return aPrism;
+}
+
+//=============================================================================
+/*!
+ *  MakePrismTwoPnt2Ways
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt2Ways
+       (Handle(GEOM_Object) theBase,
+        Handle(GEOM_Object) thePoint1, Handle(GEOM_Object) thePoint2)
+{
+  SetErrorCode(KO);
+
+  if (theBase.IsNull() || thePoint1.IsNull() || thePoint2.IsNull()) return NULL;
+
+  //Add a new Prism object
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+
+  //Add a new Prism function for creation a Prism relatively to two points
+  Handle(GEOM_Function) aFunction =
+    aPrism->AddFunction(GEOMImpl_PrismDriver::GetID(), PRISM_BASE_TWO_PNT_2WAYS);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PrismDriver::GetID()) return NULL;
+
+  GEOMImpl_IPrism aCI (aFunction);
+
+  Handle(GEOM_Function) aRefBase = theBase->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt1 = thePoint1->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt2 = thePoint2->GetLastFunction();
+
+  if (aRefBase.IsNull() || aRefPnt1.IsNull() || aRefPnt2.IsNull()) return NULL;
+
+  aCI.SetBase(aRefBase);
+  aCI.SetFirstPoint(aRefPnt1);
+  aCI.SetLastPoint(aRefPnt2);
+
+  //Compute the Prism value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      //SetErrorCode("Prism driver failed");
+      SetErrorCode("Extrusion can not be created, check input data");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrism2Ways("
     << theBase << ", " << thePoint1 << ", " << thePoint2 << ")";
 
   SetErrorCode(OK);
@@ -749,6 +910,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipe (Handle(GEOM_Object) th
 
   //Compute the Pipe value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Pipe driver failed");
       return NULL;
@@ -806,6 +970,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
 
   //Compute the Revolution value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Revolution driver failed");
       return NULL;
@@ -825,6 +992,63 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
   return aRevolution;
 }
 
+//=============================================================================
+/*!
+ *  MakeRevolutionAxisAngle2Ways
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle2Ways
+                   (Handle(GEOM_Object) theBase, Handle(GEOM_Object) theAxis, double theAngle)
+{
+  SetErrorCode(KO);
+
+  if (theBase.IsNull() || theAxis.IsNull()) return NULL;
+
+  //Add a new Revolution object
+  Handle(GEOM_Object) aRevolution = GetEngine()->AddObject(GetDocID(), GEOM_REVOLUTION);
+
+  //Add a new Revolution function for creation a revolution relatively to axis
+  Handle(GEOM_Function) aFunction =
+    aRevolution->AddFunction(GEOMImpl_RevolutionDriver::GetID(), REVOLUTION_BASE_AXIS_ANGLE_2WAYS);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_RevolutionDriver::GetID()) return NULL;
+
+  GEOMImpl_IRevolution aCI (aFunction);
+
+  Handle(GEOM_Function) aRefBase = theBase->GetLastFunction();
+  Handle(GEOM_Function) aRefAxis = theAxis->GetLastFunction();
+
+  if (aRefBase.IsNull() || aRefAxis.IsNull()) return NULL;
+
+  aCI.SetBase(aRefBase);
+  aCI.SetAxis(aRefAxis);
+  aCI.SetAngle(theAngle);
+
+  //Compute the Revolution value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Revolution driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aRevolution << " = geompy.MakeRevolution2Ways("
+    << theBase << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
+
+  SetErrorCode(OK);
+  return aRevolution;
+}
 
 //=============================================================================
 /*!
@@ -858,6 +1082,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSolidShell (Handle(GEOM_Obje
 
   //Compute the Solid value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Solid driver failed");
       return NULL;
@@ -883,7 +1110,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSolidShell (Handle(GEOM_Obje
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
        (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg,
-        double theTol2D, double theTol3D, int theNbIter)
+        double theTol2D, double theTol3D, int theNbIter, bool isApprox)
 {
   SetErrorCode(KO);
 
@@ -911,9 +1138,13 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
   aFI.SetTol2D(theTol2D);
   aFI.SetTol3D(theTol3D);
   aFI.SetNbIter(theNbIter);
+  aFI.SetApprox(isApprox);
 
   //Compute the Solid value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Filling driver failed");
       return NULL;
@@ -929,9 +1160,13 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aFilling << " = geompy.MakeFilling("
+  GEOM::TPythonDump pd (aFunction);
+  pd << aFilling << " = geompy.MakeFilling("
     << theShape << ", " << theMinDeg << ", " << theMaxDeg << ", "
-      << theTol2D << ", " << theTol3D << ", " << theNbIter << ")";
+      << theTol2D << ", " << theTol3D << ", " << theNbIter;
+  if(isApprox)
+    pd << ", " << isApprox;
+  pd << ")";
 
   SetErrorCode(OK);
   return aFilling;
@@ -1000,6 +1235,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
 
   //Compute the ThruSections value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("ThruSections driver failed");
       return anObj;
@@ -1037,17 +1275,18 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
    
 }
 
+
 //=============================================================================
 /*!
  *  MakePipeWithDifferentSections
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
-					        const Handle(TColStd_HSequenceOfTransient)& theBases,
-					        const Handle(TColStd_HSequenceOfTransient)& theLocations,
-					        const Handle(GEOM_Object)& thePath,
-					        bool theWithContact,
-                                                bool theWithCorrections)
+	        const Handle(TColStd_HSequenceOfTransient)& theBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations,
+		const Handle(GEOM_Object)& thePath,
+		bool theWithContact,
+		bool theWithCorrections)
 {
   Handle(GEOM_Object) anObj;
   SetErrorCode(KO);
@@ -1122,6 +1361,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
   
   //Compute the Pipe value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Pipe with defferent section driver failed");
       return anObj;
@@ -1175,3 +1417,314 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
   
    
 }
+
+
+//=============================================================================
+/*!
+ *  MakePipeWithShellSections
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
+	        const Handle(TColStd_HSequenceOfTransient)& theBases,
+	        const Handle(TColStd_HSequenceOfTransient)& theSubBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations,
+		const Handle(GEOM_Object)& thePath,
+		bool theWithContact,
+		bool theWithCorrections)
+{
+  Handle(GEOM_Object) anObj;
+  SetErrorCode(KO);
+  if(theBases.IsNull())
+    return anObj;
+
+  Standard_Integer nbBases = theBases->Length();
+  
+  if (!nbBases)
+    return anObj;
+  
+  Standard_Integer nbSubBases =  (theSubBases.IsNull() ? 0 :theSubBases->Length());
+
+  Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
+
+  //Add a new Pipe object
+  Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
+ 
+  //Add a new Pipe function
+
+  Handle(GEOM_Function) aFunction =
+    aPipeDS->AddFunction(GEOMImpl_PipeDriver::GetID(), PIPE_SHELL_SECTIONS);
+  if (aFunction.IsNull()) return anObj;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PipeDriver::GetID()) return anObj;
+
+  //GEOMImpl_IPipeDiffSect aCI (aFunction);
+  GEOMImpl_IPipeShellSect aCI (aFunction);
+
+  Handle(GEOM_Function) aRefPath = thePath->GetLastFunction();
+  if(aRefPath.IsNull())
+    return anObj;
+
+  Handle(TColStd_HSequenceOfTransient) aSeqBases = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aSeqSubBases = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aSeqLocs = new TColStd_HSequenceOfTransient;
+
+  Standard_Integer i =1;
+  for( ; i <= nbBases; i++) {
+
+    Handle(Standard_Transient) anItem = theBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    Handle(GEOM_Object) aBase = Handle(GEOM_Object)::DownCast(anItem);
+    if(aBase.IsNull())
+      continue;
+    Handle(GEOM_Function) aRefBase = aBase->GetLastFunction();
+    if(aRefBase.IsNull())
+      continue;
+
+    if( nbSubBases >= nbBases ) {
+      Handle(Standard_Transient) aSubItem = theSubBases->Value(i);
+      if(aSubItem.IsNull())
+	continue;
+      Handle(GEOM_Object) aSubBase = Handle(GEOM_Object)::DownCast(aSubItem);
+      if(aSubBase.IsNull())
+	continue;
+      Handle(GEOM_Function) aRefSubBase = aSubBase->GetLastFunction();
+      if(aRefSubBase.IsNull())
+	continue;
+      aSeqSubBases->Append(aRefSubBase);
+    }
+
+    if(nbLocs) {
+      Handle(Standard_Transient) anItemLoc = theLocations->Value(i);
+      if(anItemLoc.IsNull())
+	continue;
+      Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
+      if(aLoc.IsNull())
+	continue;
+      Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
+      if(aRefLoc.IsNull())
+	continue;
+      aSeqLocs->Append(aRefLoc);
+    }
+
+    aSeqBases->Append(aRefBase);
+  }
+
+  if(!aSeqBases->Length())
+    return anObj;
+
+  aCI.SetBases(aSeqBases);
+  aCI.SetSubBases(aSeqSubBases);
+  aCI.SetLocations(aSeqLocs);
+  aCI.SetPath(aRefPath);
+  aCI.SetWithContactMode(theWithContact);
+  aCI.SetWithCorrectionMode(theWithCorrections);
+  
+  //Compute the Pipe value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Pipe with shell sections driver failed");
+      return anObj;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return anObj;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pyDump(aFunction);
+  pyDump << aPipeDS << " = geompy.MakePipeWithShellSections([";
+
+  for(i =1 ; i <= nbBases; i++) {
+
+    Handle(Standard_Transient) anItem = theBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbBases)
+	pyDump<<", ";
+    }
+    
+  }
+  
+  pyDump<< "], [";
+   
+  for(i =1 ; i <= nbSubBases; i++) {
+
+    Handle(Standard_Transient) anItem = theSubBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbBases)
+	pyDump<<", ";
+    }
+    
+  }
+  
+  pyDump<< "], [";
+   
+  for(i =1 ; i <= nbLocs; i++) {
+
+    Handle(Standard_Transient) anItem = theLocations->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbLocs)
+	pyDump<<", ";
+    }
+  }  
+
+  pyDump<< "], "<<thePath<<","<<theWithContact << "," << theWithCorrections<<")";
+
+  SetErrorCode(OK);
+  return aPipeDS;
+
+}
+
+
+//=============================================================================
+/*!
+ *  MakePipeShellsWithoutPath
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
+	        const Handle(TColStd_HSequenceOfTransient)& theBases,
+		const Handle(TColStd_HSequenceOfTransient)& theLocations)
+{
+  Handle(GEOM_Object) anObj;
+  SetErrorCode(KO);
+  if(theBases.IsNull())
+    return anObj;
+
+  Standard_Integer nbBases = theBases->Length();
+  
+  if (!nbBases)
+    return anObj;
+  
+  Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
+
+  //Add a new Pipe object
+  Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
+ 
+  //Add a new Pipe function
+
+  Handle(GEOM_Function) aFunction =
+    aPipeDS->AddFunction(GEOMImpl_PipeDriver::GetID(), PIPE_SHELLS_WITHOUT_PATH);
+  if (aFunction.IsNull()) return anObj;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PipeDriver::GetID()) return anObj;
+
+  GEOMImpl_IPipeShellSect aCI (aFunction);
+
+  Handle(TColStd_HSequenceOfTransient) aSeqBases = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aSeqLocs = new TColStd_HSequenceOfTransient;
+
+  Standard_Integer i =1;
+  for( ; i <= nbBases; i++) {
+
+    Handle(Standard_Transient) anItem = theBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    Handle(GEOM_Object) aBase = Handle(GEOM_Object)::DownCast(anItem);
+    if(aBase.IsNull())
+      continue;
+    Handle(GEOM_Function) aRefBase = aBase->GetLastFunction();
+    if(aRefBase.IsNull())
+      continue;
+
+    if(nbLocs) {
+      Handle(Standard_Transient) anItemLoc = theLocations->Value(i);
+      if(anItemLoc.IsNull())
+	continue;
+      Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
+      if(aLoc.IsNull())
+	continue;
+      Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
+      if(aRefLoc.IsNull())
+	continue;
+      aSeqLocs->Append(aRefLoc);
+    }
+
+    aSeqBases->Append(aRefBase);
+  }
+
+  if(!aSeqBases->Length())
+    return anObj;
+
+  aCI.SetBases(aSeqBases);
+  aCI.SetLocations(aSeqLocs);
+  
+  //Compute the Pipe value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Pipe with shell sections without path driver failed");
+      return anObj;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return anObj;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pyDump(aFunction);
+  pyDump << aPipeDS << " = geompy.MakePipeShellsWithoutPath([";
+
+  for(i =1 ; i <= nbBases; i++) {
+
+    Handle(Standard_Transient) anItem = theBases->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbBases)
+	pyDump<<", ";
+    }
+    
+  }
+  
+  pyDump<< "], [";
+   
+  for(i =1 ; i <= nbLocs; i++) {
+
+    Handle(Standard_Transient) anItem = theLocations->Value(i);
+    if(anItem.IsNull())
+      continue;
+    
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
+    if(!anObj.IsNull()) {
+      pyDump<< anObj;
+      if(i < nbLocs)
+	pyDump<<", ";
+    }
+  }  
+
+  pyDump<< "])";
+
+  SetErrorCode(OK);
+  return aPipeDS;
+
+}
+

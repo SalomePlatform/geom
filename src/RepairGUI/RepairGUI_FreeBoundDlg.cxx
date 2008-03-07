@@ -96,8 +96,9 @@ RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg(GeometryGUI* theGUI, QWidget* the
   aLay->setMargin( MARGIN );
   aLay->addWidget( aMainGrp );
   aLay->addWidget( aFrame );
-  
-  myHelpFileName = "check_free_boundaries.htm";
+
+  //myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#free_boundaries";
+  myHelpFileName = "using_measurement_tools_page.html#boundaries_anchor";
 
   connect( aCloseBtn, SIGNAL( clicked() ), SLOT( onClose() ) );
   connect( aHelpBtn, SIGNAL( clicked() ), SLOT( onHelp() ) );
@@ -136,9 +137,15 @@ void RepairGUI_FreeBoundDlg::onHelp()
   if (app)
     app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
   else {
+		QString platform;
+#ifdef WIN32
+		platform = "winapplication";
+#else
+		platform = "application";
+#endif
     SUIT_MessageBox::warn1
       (0, tr("WRN_WARNING"), tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-       arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
+       arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
        tr("BUT_OK"));
   }
 }
@@ -297,4 +304,21 @@ bool RepairGUI_FreeBoundDlg::execute( ObjectList& objects )
   }
 
   return result;
+}
+
+//=================================================================================
+// function : keyPressEvent()
+// purpose  :
+//=================================================================================
+void RepairGUI_FreeBoundDlg::keyPressEvent( QKeyEvent* e )
+{
+  QDialog::keyPressEvent( e );
+  if ( e->isAccepted() )
+    return;
+
+  if ( e->key() == Key_F1 )
+    {
+      e->accept();
+      onHelp();
+    }
 }

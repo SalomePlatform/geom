@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -48,6 +48,7 @@ class NMTTools_PaveFiller;
 #include <Standard_Macro.hxx>
 #endif
 
+
 class NMTTools_DSFiller  {
 
 public:
@@ -66,22 +67,48 @@ public:
       }
  // Methods PUBLIC
  // 
+
+
 Standard_EXPORT NMTTools_DSFiller();
+
+//! Destructor <br>
+//! <br>
+//!  Selectors/Modifiers <br>
 Standard_EXPORT   void Destroy() ;
 ~NMTTools_DSFiller()
 {
   Destroy();
 }
 
+
+
 Standard_EXPORT   void SetCompositeShape(const TopoDS_Shape& aS) ;
+
+
 Standard_EXPORT  const TopoDS_Shape& CompositeShape() const;
+
+
 Standard_EXPORT   void SetNewFiller(const Standard_Boolean aFlag) const;
+
+
 Standard_EXPORT   Standard_Boolean IsNewFiller() const;
+
+
 Standard_EXPORT   void Perform() ;
+
+
 Standard_EXPORT  const NMTDS_ShapesDataStructure& DS() const;
+
+
 Standard_EXPORT  const BOPTools_InterferencePool& InterfPool() const;
+
+
 Standard_EXPORT   Standard_Boolean IsDone() const;
+
+
 Standard_EXPORT  const NMTTools_PaveFiller& PaveFiller() const;
+
+
 Standard_EXPORT   NMTTools_PaveFiller& ChangePaveFiller() ;
 
 
@@ -92,6 +119,8 @@ protected:
 
  // Methods PROTECTED
  // 
+
+
 Standard_EXPORT   void Clear() ;
 
 

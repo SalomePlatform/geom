@@ -18,11 +18,9 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_ShapeDriver.hxx>
+
 #include <GEOMImpl_IShapes.hxx>
-#include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
 
@@ -36,25 +34,30 @@
 #include <BRepAlgo_FaceRestrictor.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
-#include <BRepTools_Quilt.hxx>
 #include <BRepCheck.hxx>
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepCheck_Shell.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
+
+#include <ShapeAnalysis_FreeBounds.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Wire.hxx>
+#include <TopoDS_Shell.hxx>
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopExp_Explorer.hxx>
+
 #include <TopTools_MapOfShape.hxx>
-#include <TopTools_SequenceOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_HSequenceOfShape.hxx>
+
+#include <TColStd_HSequenceOfTransient.hxx>
 
 #include <Precision.hxx>
 #include <Standard_NullObject.hxx>
@@ -114,17 +117,25 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       if (aShape_i.ShapeType() == TopAbs_EDGE) {
         B.Add(aWire, TopoDS::Edge(aShape_i));
         MW.Add(TopoDS::Edge(aShape_i));
+        if (!MW.IsDone()) {
+          // check status after each edge/wire addition, because the final status
+          // can be OK even in case, when some edges/wires was not accepted.
+          isMWDone = false;
+        }
       } else if (aShape_i.ShapeType() == TopAbs_WIRE) {
-        B.Add(aWire, TopoDS::Wire(aShape_i));
-        MW.Add(TopoDS::Wire(aShape_i));
+        TopExp_Explorer exp (aShape_i, TopAbs_EDGE);
+        for (; exp.More(); exp.Next()) {
+          B.Add(aWire, TopoDS::Edge(exp.Current()));
+          MW.Add(TopoDS::Edge(exp.Current()));
+          if (!MW.IsDone()) {
+            // check status after each edge/wire addition, because the final status
+            // can be OK even in case, when some edges/wires was not accepted.
+            isMWDone = false;
+          }
+        }
       } else {
         Standard_TypeMismatch::Raise
           ("Shape for wire construction is neither an edge nor a wire");
-      }
-      if (!MW.IsDone()) {
-        // check status after each edge/wire addition, because the final status
-        // can be OK even in case, when some edges/wires was not accepted.
-        isMWDone = false;
       }
     }
 
@@ -136,7 +147,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       aFW->Load(aWire);
       aFW->FixReorder();
 
-      if (aFW->StatusReorder(ShapeExtend_FAIL1)) {
+      if        (aFW->StatusReorder(ShapeExtend_FAIL1)) {
         Standard_ConstructionError::Raise("Wire construction failed: several loops detected");
       } else if (aFW->StatusReorder(ShapeExtend_FAIL)) {
         Standard_ConstructionError::Raise("Wire construction failed");
@@ -144,76 +155,115 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         Standard_ConstructionError::Raise("Wire construction failed: some gaps detected");
       } else {
       }
+
+      aFW->ClosedWireMode() = Standard_False;
+      aFW->FixConnected();
+      if (aFW->StatusConnected(ShapeExtend_FAIL)) {
+        Standard_ConstructionError::Raise("Wire construction failed: cannot build connected wire");
+      }
+
       aShape = aFW->WireAPIMake();
     }
-
-  } else if (aType == FACE_WIRE) {
+  }
+  else if (aType == FACE_WIRE) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
-    if (aShapeBase.IsNull() || aShapeBase.ShapeType() != TopAbs_WIRE) {
-      Standard_NullObject::Raise
-        ("Shape for face construction is null or not a wire");
+    if (aShapeBase.IsNull()) Standard_NullObject::Raise("Argument Shape is null");
+    TopoDS_Wire W;
+    if (aShapeBase.ShapeType() == TopAbs_WIRE) {
+      W = TopoDS::Wire(aShapeBase);
     }
-    TopoDS_Wire W = TopoDS::Wire(aShapeBase);
-    //BRepBuilderAPI_MakeFace MF (W, aCI.GetIsPlanar());
-    //if (!MF.IsDone()) {
-    //  Standard_ConstructionError::Raise("Face construction failed");
-    //}
-    //aShape = MF.Shape();
+    else if (aShapeBase.ShapeType() == TopAbs_EDGE && aShapeBase.Closed()) {
+      BRepBuilderAPI_MakeWire MW;
+      MW.Add(TopoDS::Edge(aShapeBase));
+      if (!MW.IsDone()) {
+        Standard_ConstructionError::Raise("Wire construction failed");
+      }
+          W = MW;
+    }
+    else {
+      Standard_NullObject::Raise
+        ("Shape for face construction is neither a wire nor a closed edge");
+    }
     GEOMImpl_Block6Explorer::MakeFace(W, aCI.GetIsPlanar(), aShape);
     if (aShape.IsNull()) {
       Standard_ConstructionError::Raise("Face construction failed");
     }
+  }
+  else if (aType == FACE_WIRES) {
+    // Try to build a face from a set of wires and edges
+    int ind;
 
-  } else if (aType == FACE_WIRES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     int nbshapes = aShapes->Length();
     if (nbshapes < 1) {
-      Standard_ConstructionError::Raise("No wires given");
+      Standard_ConstructionError::Raise("No wires or edges given");
     }
 
-    // first wire
-    Handle(GEOM_Function) aRefWire = Handle(GEOM_Function)::DownCast(aShapes->Value(1));
-    TopoDS_Shape aWire = aRefWire->GetValue();
-    if (aWire.IsNull() || aWire.ShapeType() != TopAbs_WIRE) {
-      Standard_NullObject::Raise("Shape for face construction is null or not a wire");
-    }
-    TopoDS_Wire W = TopoDS::Wire(aWire);
+    // 1. Extract all edges from the given arguments
+    TopTools_MapOfShape aMapEdges;
+    Handle(TopTools_HSequenceOfShape) aSeqEdgesIn = new TopTools_HSequenceOfShape;
 
-    // basic face
-    //BRepBuilderAPI_MakeFace MF (W, aCI.GetIsPlanar());
-    //if (!MF.IsDone()) {
-    //  Standard_ConstructionError::Raise("Face construction failed");
-    //}
-    //TopoDS_Shape FFace = MF.Shape();
-    TopoDS_Shape FFace;
-    GEOMImpl_Block6Explorer::MakeFace(W, aCI.GetIsPlanar(), FFace);
-    if (FFace.IsNull()) {
+    BRep_Builder B;
+    for (ind = 1; ind <= nbshapes; ind++) {
+      Handle(GEOM_Function) aRefSh_i = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
+      TopoDS_Shape aSh_i = aRefSh_i->GetValue();
+
+      TopExp_Explorer anExpE_i (aSh_i, TopAbs_EDGE);
+      for (; anExpE_i.More(); anExpE_i.Next()) {
+        if (aMapEdges.Add(anExpE_i.Current())) {
+          aSeqEdgesIn->Append(anExpE_i.Current());
+        }
+      }
+    }
+
+    // 2. Connect edges to wires of maximum length
+    Handle(TopTools_HSequenceOfShape) aSeqWiresOut;
+    ShapeAnalysis_FreeBounds::ConnectEdgesToWires(aSeqEdgesIn, Precision::Confusion(),
+                                                  /*shared*/Standard_False, aSeqWiresOut);
+
+    // 3. Separate closed wires
+    Handle(TopTools_HSequenceOfShape) aSeqClosedWires = new TopTools_HSequenceOfShape;
+    Handle(TopTools_HSequenceOfShape) aSeqOpenWires = new TopTools_HSequenceOfShape;
+    for (ind = 1; ind <= aSeqWiresOut->Length(); ind++) {
+      if (aSeqWiresOut->Value(ind).Closed())
+        aSeqClosedWires->Append(aSeqWiresOut->Value(ind));
+      else
+        aSeqOpenWires->Append(aSeqWiresOut->Value(ind));
+    }
+
+    if (aSeqClosedWires->Length() < 1) {
+      Standard_ConstructionError::Raise
+        ("There is no closed contour can be built from the given arguments");
+    }
+
+    // 4. Build a face / list of faces from all the obtained closed wires
+
+    // 4.a. Basic face
+    TopoDS_Shape aFFace;
+    TopoDS_Wire aW1 = TopoDS::Wire(aSeqClosedWires->Value(1));
+    GEOMImpl_Block6Explorer::MakeFace(aW1, aCI.GetIsPlanar(), aFFace);
+    if (aFFace.IsNull()) {
       Standard_ConstructionError::Raise("Face construction failed");
     }
 
-    if (nbshapes == 1) {
-      aShape = FFace;
-
-    } else {
+    // 4.b. Add other wires
+    if (aSeqClosedWires->Length() == 1) {
+      aShape = aFFace;
+    }
+    else {
       TopoDS_Compound C;
       BRep_Builder aBuilder;
       aBuilder.MakeCompound(C);
       BRepAlgo_FaceRestrictor FR;
 
-      TopAbs_Orientation OriF = FFace.Orientation();
-      TopoDS_Shape aLocalS = FFace.Oriented(TopAbs_FORWARD);
+      TopAbs_Orientation OriF = aFFace.Orientation();
+      TopoDS_Shape aLocalS = aFFace.Oriented(TopAbs_FORWARD);
       FR.Init(TopoDS::Face(aLocalS), Standard_False, Standard_True);
 
-      for (int ind = 1; ind <= nbshapes; ind++) {
-        Handle(GEOM_Function) aRefWire_i =
-          Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
-        TopoDS_Shape aWire_i = aRefWire_i->GetValue();
-        if (aWire_i.IsNull() || aWire_i.ShapeType() != TopAbs_WIRE) {
-          Standard_NullObject::Raise("Shape for face construction is null or not a wire");
-        }
-
-        FR.Add(TopoDS::Wire(aWire_i));
+      for (ind = 1; ind <= aSeqClosedWires->Length(); ind++) {
+        TopoDS_Wire aW = TopoDS::Wire(aSeqClosedWires->Value(ind));
+        FR.Add(aW);
       }
 
       FR.Perform();
@@ -233,7 +283,28 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         }
       }
     }
-  } else if (aType == SHELL_FACES) {
+
+    // 5. Add all open wires to the result
+    if (aSeqOpenWires->Length() > 0) {
+      //Standard_ConstructionError::Raise("There are some open wires");
+      TopoDS_Compound C;
+      BRep_Builder aBuilder;
+      if (aSeqClosedWires->Length() == 1) {
+        aBuilder.MakeCompound(C);
+        aBuilder.Add(C, aShape);
+      }
+      else {
+        C = TopoDS::Compound(aShape);
+      }
+
+      for (ind = 1; ind <= aSeqOpenWires->Length(); ind++) {
+        aBuilder.Add(C, aSeqOpenWires->Value(ind));
+      }
+
+      aShape = C;
+    }
+  }
+  else if (aType == SHELL_FACES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
 
@@ -250,17 +321,29 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     aSewing.Perform();
 
-    TopExp_Explorer exp (aSewing.SewedShape(), TopAbs_SHELL);
-    Standard_Integer ish = 0;
-    for (; exp.More(); exp.Next()) {
-      aShape = exp.Current();
-      ish++;
+    TopoDS_Shape sh = aSewing.SewedShape();
+    if( sh.ShapeType()==TopAbs_FACE && nbshapes==1 ) {
+      // case for creation of shell from one face - PAL12722 (skl 26.06.2006)
+      TopoDS_Shell ss;
+      B.MakeShell(ss);
+      B.Add(ss,sh);
+      aShape = ss;
+    }
+    else {
+      //TopExp_Explorer exp (aSewing.SewedShape(), TopAbs_SHELL);
+      TopExp_Explorer exp (sh, TopAbs_SHELL);
+      Standard_Integer ish = 0;
+      for (; exp.More(); exp.Next()) {
+        aShape = exp.Current();
+        ish++;
+      }
+
+      if (ish != 1)
+        aShape = aSewing.SewedShape();
     }
 
-    if (ish != 1)
-      aShape = aSewing.SewedShape();
-
-  } else if (aType == SOLID_SHELL) {
+  }
+  else if (aType == SOLID_SHELL) {
     Handle(GEOM_Function) aRefShell = aCI.GetBase();
     TopoDS_Shape aShapeShell = aRefShell->GetValue();
     if (aShapeShell.IsNull() || aShapeShell.ShapeType() != TopAbs_SHELL) {
@@ -282,7 +365,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     aShape = Sol;
 
-  } else if (aType == SOLID_SHELLS) {
+  }
+  else if (aType == SOLID_SHELLS) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
     Standard_Integer ish = 0;
@@ -313,7 +397,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       return 0;
     }
 
-  } else if (aType == COMPOUND_SHAPES) {
+  }
+  else if (aType == COMPOUND_SHAPES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
 
@@ -331,7 +416,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     aShape = C;
 
-  } else if (aType == REVERSE_ORIENTATION) {
+  }
+  else if (aType == REVERSE_ORIENTATION) {
     Handle(GEOM_Function) aRefShape = aCI.GetBase();
     TopoDS_Shape aShape_i = aRefShape->GetValue();
     if (aShape_i.IsNull()) {
@@ -342,13 +428,13 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     if( Copy.IsDone() ) {
       TopoDS_Shape tds = Copy.Shape();
       if( tds.IsNull() ) {
-	Standard_ConstructionError::Raise("Orientation aborted : Can not reverse the shape");
+        Standard_ConstructionError::Raise("Orientation aborted : Can not reverse the shape");
       }
 
       if( tds.Orientation() == TopAbs_FORWARD)
-	tds.Orientation(TopAbs_REVERSED) ;
+        tds.Orientation(TopAbs_REVERSED);
       else
-	tds.Orientation(TopAbs_FORWARD) ;
+        tds.Orientation(TopAbs_FORWARD);
 
       aShape = tds;
     }
@@ -409,5 +495,5 @@ const Handle(GEOMImpl_ShapeDriver) Handle(GEOMImpl_ShapeDriver)::DownCast(const 
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }

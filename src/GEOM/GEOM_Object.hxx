@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -34,10 +34,10 @@
 #endif
 #ifndef _Handle_MMgt_TShared_HeaderFile
 #include <Handle_MMgt_TShared.hxx>
-#endif  
+#endif
 #ifndef _MMgt_TShared_HeaderFile
 #include <MMgt_TShared.hxx>
-#endif  
+#endif
 #ifndef _Standard_GUID_HeaderFile
 #include <Standard_GUID.hxx>
 #endif
@@ -54,6 +54,10 @@
 #include <TCollection_AsciiString.hxx>
 #endif
 
+#include "SALOMEconfig.h"
+#include CORBA_SERVER_HEADER(SALOMEDS)
+#include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
+
 class Handle_TColStd_HSequenceOfTransient;
 class Standard_Transient;
 class Handle_Standard_Type;
@@ -65,25 +69,25 @@ Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOM_Object);
 
 class Handle(GEOM_Object) : public Handle(MMgt_TShared) {
   public:
-    inline void* operator new(size_t,void* anAddress) 
+    inline void* operator new(size_t,void* anAddress)
       {
         return anAddress;
       }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
+    inline void* operator new(size_t size)
+      {
+        return Standard::Allocate(size);
       }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+    inline void  operator delete(void *anAddress)
+      {
+        if (anAddress) Standard::Free((Standard_Address&)anAddress);
       }
 
-    Handle(GEOM_Object)():Handle(MMgt_TShared)() {} 
-    Handle(GEOM_Object)(const Handle(GEOM_Object)& aHandle) : Handle(MMgt_TShared)(aHandle) 
+    Handle(GEOM_Object)():Handle(MMgt_TShared)() {}
+    Handle(GEOM_Object)(const Handle(GEOM_Object)& aHandle) : Handle(MMgt_TShared)(aHandle)
      {
      }
 
-    Handle(GEOM_Object)(const GEOM_Object* anItem) : Handle(MMgt_TShared)((MMgt_TShared *)anItem) 
+    Handle(GEOM_Object)(const GEOM_Object* anItem) : Handle(MMgt_TShared)((MMgt_TShared *)anItem)
      {
      }
 
@@ -99,21 +103,20 @@ class Handle(GEOM_Object) : public Handle(MMgt_TShared) {
       return *this;
      }
 
-    GEOM_Object* operator->() 
+    GEOM_Object* operator->()
      {
       return (GEOM_Object *)ControlAccess();
      }
 
-    GEOM_Object* operator->() const 
+    GEOM_Object* operator->() const
      {
       return (GEOM_Object *)ControlAccess();
      }
 
    Standard_EXPORT ~Handle(GEOM_Object)() {};
- 
+
    Standard_EXPORT static const Handle(GEOM_Object) DownCast(const Handle(Standard_Transient)& AnObject);
 };
-
 
 
 #include <Standard_GUID.hxx>
@@ -121,33 +124,33 @@ class Handle(GEOM_Object) : public Handle(MMgt_TShared) {
 #include "GEOM_Function.hxx"
 #include "GEOM_Engine.hxx"
 
-
 class GEOM_Object : public MMgt_TShared
 {
- friend class GEOM_Engine;     
+ friend class GEOM_Engine;
 
  public:
-  inline void* operator new(size_t,void* anAddress) 
+  inline void* operator new(size_t,void* anAddress)
     {
       return anAddress;
     }
-  inline void* operator new(size_t size) 
-    { 
-      return Standard::Allocate(size); 
+  inline void* operator new(size_t size)
+    {
+      return Standard::Allocate(size);
     }
-  inline void  operator delete(void *anAddress) 
-    { 
-      if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  inline void  operator delete(void *anAddress)
+    {
+      if (anAddress) Standard::Free((Standard_Address&)anAddress);
     }
-  
+
   // Type management
   //
   Standard_EXPORT friend Handle_Standard_Type& GEOM_Object_Type_();
   Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOM_Object) ; }
-  Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOM_Object) == AType || MMgt_TShared::IsKind(AType)); } 
+  Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const
+           { return (STANDARD_TYPE(GEOM_Object) == AType || MMgt_TShared::IsKind(AType)); }
 
  private:
-   GEOM_Object(TDF_Label& theLabel);  
+  GEOM_Object(TDF_Label& theLabel);
 
  public:
   Standard_EXPORT GEOM_Object(TDF_Label& theEntry, int theType);
@@ -166,25 +169,30 @@ class GEOM_Object : public MMgt_TShared
   Standard_EXPORT static const Standard_GUID& GetSubShapeID();
 
   //###########################################################
-  //Access to properties 
+  //Access to properties
   //###########################################################
 
   //Returns a TreeNode that presents a root of a function tree for this GEOM_Object
-  Standard_EXPORT Handle(TDataStd_TreeNode) GetRootNode() { return _root; } 
-  
+  Standard_EXPORT Handle(TDataStd_TreeNode) GetRootNode() { return _root; }
+
   //Returns a label of this GEOM_Object
   Standard_EXPORT TDF_Label GetEntry() { return _label; }
-  
+
   //Returns a type of this GEOM_Object (GEOM_POINT, GEOM_VECTOR...)
-  Standard_EXPORT int GetType();      
+  Standard_EXPORT int GetType();
 
   //Sets the type of this GEOM_Object
   Standard_EXPORT void SetType(int theType);
-  
-  //Returns an ID of the OCAF document where this GEOM_Object is stored
-  Standard_EXPORT int GetDocID(); 
 
-  //Returns a value (as TopoDS_Shape) of this GEOM_Object 
+  //Modifications counter management
+  Standard_EXPORT int  GetTic();
+  Standard_EXPORT void SetTic(int theTic);
+  Standard_EXPORT void IncrementTic();
+
+  //Returns an ID of the OCAF document where this GEOM_Object is stored
+  Standard_EXPORT int GetDocID();
+
+  //Returns a value (as TopoDS_Shape) of this GEOM_Object
   Standard_EXPORT TopoDS_Shape GetValue();
 
   //Sets a name of this GEOM_Object
@@ -193,42 +201,55 @@ class GEOM_Object : public MMgt_TShared
   //Returns a name of this GEOM_Object
   Standard_EXPORT char* GetName();
 
+  //Sets a color of this GEOM_Object
+  Standard_EXPORT void SetColor(const SALOMEDS::Color& theColor);
+
+  //Returns a color of this GEOM_Object
+  Standard_EXPORT SALOMEDS::Color GetColor();
+
+  //Toggles an auto color mode on this GEOM_Object
+  Standard_EXPORT void SetAutoColor(CORBA::Boolean theAutoColor);
+
+  //Returns a flag of auto color mode of this GEOM_Object
+  Standard_EXPORT CORBA::Boolean GetAutoColor();
+
   //Sets an auxiliary data
   Standard_EXPORT void SetAuxData(const char* theData);
 
   //Returns an auxiliary data
   Standard_EXPORT TCollection_AsciiString GetAuxData();
 
-  //###########################################################  
+  //###########################################################
   // Sub shape methods
   //###########################################################
-  
+
   //Returns false if the object is a sub shape of another object
   Standard_EXPORT bool IsMainShape();
 
- //###########################################################  
- // CORBA related methods
- //###########################################################
- 
- //Sets an IOR of CORBA GEOM_Object_i which refers to this object
- Standard_EXPORT void SetIOR(TCollection_AsciiString& theIOR) { _ior = theIOR; }
+  //###########################################################
+  // CORBA related methods
+  //###########################################################
 
- //Returns an IOR of CORBA GEOM_Object_i which refers to this object
- Standard_EXPORT TCollection_AsciiString GetIOR() { return _ior; }
+  //Sets an IOR of CORBA GEOM_Object_i which refers to this object
+  Standard_EXPORT void SetIOR(TCollection_AsciiString& theIOR) { _ior = theIOR; }
+
+  //Returns an IOR of CORBA GEOM_Object_i which refers to this object
+  Standard_EXPORT TCollection_AsciiString GetIOR() { return _ior; }
 
   //###########################################################
   //Functions methods
   //###########################################################
 
-  //Adds a function with a driver GUID = theGUID and a type theFunctionType to the function tree of this GEOM_Object
+  //Adds a function with a driver GUID = theGUID and a type theFunctionType
+  //to the function tree of this GEOM_Object
   Standard_EXPORT Handle(GEOM_Function) AddFunction(const Standard_GUID& theGUID, int theFunctionType);
-  
+
   //Returns a number of functions of this GEOM_Object
-  Standard_EXPORT int GetNbFunctions(); 
-  
+  Standard_EXPORT int GetNbFunctions();
+
   //Returns a function with given number theFunctionNumber
   Standard_EXPORT Handle(GEOM_Function) GetFunction(int theFunctionNumber);
-  
+
   //Return the last function of this GEOM_Object
   Standard_EXPORT Handle(GEOM_Function) GetLastFunction();
 
@@ -238,19 +259,17 @@ class GEOM_Object : public MMgt_TShared
   //Returns the dependencies of the last function
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetLastDependency();
 
- //###########################################################  
- // Internal methods
- //###########################################################
+  //###########################################################
+  // Internal methods
+  //###########################################################
 
- //Returns a label which could be used to store some additional data
- Standard_EXPORT TDF_Label GetFreeLabel();
- 
+  //Returns a label which could be used to store some additional data
+  Standard_EXPORT TDF_Label GetFreeLabel();
 
  private:
-
   Handle(TDataStd_TreeNode) _root;
-  TDF_Label    _label;
-  TCollection_AsciiString _ior;
+  TDF_Label                 _label;
+  TCollection_AsciiString   _ior;
 };
 
 #endif

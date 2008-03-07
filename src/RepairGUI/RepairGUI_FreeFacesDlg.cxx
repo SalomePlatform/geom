@@ -112,8 +112,9 @@ RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent
   aLay->addWidget( aMainGrp );
   aLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
   aLay->addWidget( aFrame );
-  
-  myHelpFileName = "check_free_faces.htm";
+
+  //myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#free_faces";
+  myHelpFileName = "using_measurement_tools_page.html#faces_anchor";
 
   connect( aCloseBtn, SIGNAL( clicked() ), SLOT( onClose() ) );
   connect( aHelpBtn, SIGNAL( clicked() ), SLOT( onHelp() ) );
@@ -157,9 +158,15 @@ void RepairGUI_FreeFacesDlg::onHelp()
   if (app)
     app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
   else {
+		QString platform;
+#ifdef WIN32
+		platform = "winapplication";
+#else
+		platform = "application";
+#endif
     SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
 			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
+			   arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
 			   QObject::tr("BUT_OK"));
   }
 }
@@ -352,3 +359,19 @@ void RepairGUI_FreeFacesDlg::onSetEditCurrentArgument()
   onSelectionDone();
 }
 
+//=================================================================================
+// function : keyPressEvent()
+// purpose  :
+//=================================================================================
+void RepairGUI_FreeFacesDlg::keyPressEvent( QKeyEvent* e )
+{
+  QDialog::keyPressEvent( e );
+  if ( e->isAccepted() )
+    return;
+
+  if ( e->key() == Key_F1 )
+    {
+      e->accept();
+      onHelp();
+    }
+}

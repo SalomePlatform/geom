@@ -1,0 +1,137 @@
+/*!
+
+\mainpage Geometry Module Reference Documentation
+
+<ul>
+<li>\subpage introduction_page</li>
+<li>\subpage import_export_geom_obj_page</li>
+<li>\subpage create_geom_obj_page</li>
+<ul>
+<li>\ref create_basic_geom_obj_page</li>
+<ul>
+<li>\ref create_point_page</li>
+<li>\ref create_line_page</li>
+<li>\ref create_circle_page</li>
+<li>\ref create_ellipse_page</li>
+<li>\ref create_arc_page</li>
+<li>\ref create_curve_page</li>
+<li>\ref create_vector_page</li>
+<li>\ref create_plane_page</li>
+<li>\ref create_wplane_page</li>
+<li>\ref create_lcs_page</li>
+</ul>
+<li>\ref create_primitives_page</li>
+<ul>
+<li>\ref create_box_page</li>
+<li>\ref create_cylinder_page</li>
+<li>\ref create_sphere_page</li>
+<li>\ref create_torus_page </li>
+<li>\ref create_cone_page </li>
+</ul>
+<li>\ref create_complex_obj_page</li>
+<ul>
+<li>\ref create_extrusion_page</li>
+<li>\ref create_revolution_page</li>
+<li>\ref create_filling_page</li>
+<li>\ref create_extrusion_alongpath_page</li>
+</ul>
+<li>\ref work_with_groups_page</li>
+<li>\ref build_by_blocks_page</li>
+<li>\ref create_sketcher_page</li>
+<li>\ref create_adv_obj_page</li>
+<ul>
+<li>\ref create_explode_page</li>
+<li>\ref create_edge_page</li>
+<li>\ref create_wire_page</li>
+<li>\ref create_face_page</li>
+<li>\ref create_shell_page</li>
+<li>\ref create_solid_page</li>
+<li>\ref create_compound_page</li>
+</ul>
+</ul>
+<li>\subpage view_geom_obj_chapter_page</li>
+<ul>
+<li>\ref view_geom_obj_page</li>
+<li>\ref display_mode_page</li>
+<li>\ref color_page</li>
+<li>\ref transparency_page</li>
+<li>\ref isolines_page</li>
+</ul>
+<li>\subpage transform_geom_obj_page</li>
+<ul>
+<li>\ref basic_operations_page</li>
+<ul>
+<li>\ref partition_page</li>
+<li>\ref archimede_page</li>
+</ul>
+<li>\ref boolean_operations_page</li>
+<ul>
+<li>\ref using_boolean_operations_page</li>
+<li>\ref fuse_operation_page</li>
+<li>\ref common_operation_page</li>
+<li>\ref cut_operation_page</li>
+<li>\ref section_opeartion_page</li>
+</ul>
+<li>\ref transformation_operations_page</li>
+<ul>
+<li>\ref translation_operation_page</li>
+<li>\ref rotation_operation_page</li>
+<li>\ref modify_location_operation_page</li>
+<li>\ref mirror_operation_page</li>
+<li>\ref scale_operation_page</li>
+<li>\ref offset_operation_page</li>
+<li>\ref multi_translation_operation_page</li>
+<li>\ref multi_rotation_operation_page</li>
+<li>\ref fillet_operation_page</li>
+<li>\ref chamfer_operation_page</li>
+</ul>
+<li>\ref blocks_operations_page</li>
+<ul>
+<li>\ref multi_transformation_operation_page</li>
+<li>\ref explode_on_blocks_operation_page</li>
+<li>\ref propagate_operation_page</li>
+</ul>
+<li>\ref repairing_operations_page</li>
+<ul>
+<li>\ref shape_processing_operation_page</li>
+<li>\ref suppress_faces_operation_page</li>
+<li>\ref close_contour_operation_page</li>
+<li>\ref suppress_internal_wires_operation_page</li>
+<li>\ref suppress_holes_operation_page</li>
+<li>\ref sewing_operation_page</li>
+<li>\ref glue_faces_operation_page</li>
+<li>\ref add_point_on_edge_operation_page</li>
+<li>\ref check_free_boundaries_operation_page</li>
+<li>\ref check_free_faces_operation_page</li>
+<li>\ref change_orientation_operation_page</li>
+<li>\ref remove_extra_edges_operation_page</li>
+</ul>
+</ul>
+<li>\subpage using_measurement_tools_page</li>
+<li>\subpage geompy_page</li>
+<li>\subpage tui_scripts_page</li>
+<ul>
+<li>\ref tui_viewing_geom_objs_page</li>
+<li>\ref tui_creating_geom_objs_page</li>
+<ul>
+<li>\ref tui_basic_geom_objs_page</li>
+<li>\ref tui_primitives_page</li>
+<li>\ref tui_complex_objs_page</li>
+<li>\ref tui_working_with_groups_page</li>
+<li>\ref tui_building_by_blocks_page</li>
+<li>\ref tui_sketcher_page</li>
+<li>\ref tui_advanced_geom_objs_page</li>
+</ul>
+<li>\ref tui_transformation_page</li>
+<ul>
+<li>\ref tui_basic_operations_page</li>
+<li>\ref tui_boolean_operations_page</li>
+<li>\ref tui_transformation_operations_page</li>
+<li>\ref tui_blocks_operations_page</li>
+<li>\ref tui_repairing_operations_page</li>
+</ul>
+<li>\ref tui_measurement_tools_page</li>
+</ul>
+</ul>
+
+*/

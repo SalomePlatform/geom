@@ -48,6 +48,7 @@
 #include <Handle_TFunction_Driver.hxx>
 #endif
 
+
 class Standard_Transient;
 class Handle_Standard_Type;
 class Handle(TFunction_Driver);
@@ -136,22 +137,25 @@ public:
         if (anAddress) Standard::Free((Standard_Address&)anAddress); 
       }
 
- // Methods PUBLIC
- // 
-Standard_EXPORT GEOMImpl_PipeDriver();
-Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
-Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
-Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
-Standard_EXPORT static const Standard_GUID& GetID();
-Standard_EXPORT ~GEOMImpl_PipeDriver() {};
+  // Methods PUBLIC
+  // 
+  Standard_EXPORT GEOMImpl_PipeDriver();
+  Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
+  Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const
+  { return Standard_True; }
+  Standard_EXPORT static const Standard_GUID& GetID();
+  Standard_EXPORT ~GEOMImpl_PipeDriver() {};
 
 
- // Type management
- //
-Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_PipeDriver_Type_();
-Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_PipeDriver) ; }
-Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_PipeDriver) == AType || TFunction_Driver::IsKind(AType)); } 
-
+  // Type management
+  //
+  Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_PipeDriver_Type_();
+  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const
+  { return STANDARD_TYPE(GEOMImpl_PipeDriver) ; }
+  Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const
+  { return (STANDARD_TYPE(GEOMImpl_PipeDriver) == AType ||
+	    TFunction_Driver::IsKind(AType)); } 
 
 };
 

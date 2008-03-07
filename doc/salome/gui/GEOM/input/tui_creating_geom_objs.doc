@@ -1,0 +1,15 @@
+/*!
+
+\page tui_creating_geom_objs_page Creating Geometric Objects
+
+<ul>
+<li>\subpage tui_basic_geom_objs_page</li>
+<li>\subpage tui_primitives_page</li>
+<li>\subpage tui_complex_objs_page</li>
+<li>\subpage tui_working_with_groups_page</li>
+<li>\subpage tui_building_by_blocks_page</li>
+<li>\subpage tui_sketcher_page</li>
+<li>\subpage tui_advanced_geom_objs_page</li>
+</ul>
+
+*/

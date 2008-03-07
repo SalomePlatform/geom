@@ -1,0 +1,48 @@
+/*!
+
+\page glue_faces_operation_page Glue Faces
+
+\n To <b>Glue Faces</b> in the <b>Main Menu</b> select <b>Repair - > Glue Faces</b>.
+
+\n This operation glues faces that are coincident with respect to the
+given tolerance value.
+
+\n The \b Result will be a \b GEOM_Object.
+
+\n <b>TUI Command:</b> <em>geompy.MakeGlueFaces(theShape,
+theTolerance),</em> where \em theShape is a compound of solids to be
+glued, \em theTolerance is a maximum distance between two faces, which can
+be considered as coincident.
+\n <b>Arguments:</b> Name + Compound of solids + Tolerance value.
+
+\image html glue1.png
+
+\n It is also possible to manually select the faces that will be 
+glued - select the shape, specify the tolerance and press \b Detect button.
+
+\image html glue2.png
+
+\n \b Geometry module detects the faces where gluing can be performed and
+displays a notification.
+
+\image html glue3.png
+
+\n The faces that can be glued are colored in red.  It is possible to
+select the faces for gluing in the 3D viewer. The selected faces will
+be marked in white.
+
+\n <b>Example:</b>
+
+\image html glue_faces1.png
+<center><em>Object that needs gluing</em></center>
+
+\image html glue_faces2.png
+<center><em>Glued object</em></center>
+
+\image html glue_faces3.png
+<center><em>Manual selection of faces for gluing</em></center>
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_glue_faces "Repairing Operations".
+
+*/

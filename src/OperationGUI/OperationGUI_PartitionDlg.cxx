@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -27,7 +27,6 @@
 //  $Header$
 
 #include "OperationGUI_PartitionDlg.h"
-#include "OperationGUI_MaterialDlg.h"
 
 #include "GEOMImpl_Types.hxx"
 
@@ -67,30 +66,22 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg(GeometryGUI* theGeometryGUI
   RadioButton3->close(TRUE);
 
   // Full partition (contains half-space partition)
-  GroupPoints = new DlgRef_4Sel1List1Check_QTD(this, "GroupPoints");
+  GroupPoints = new DlgRef_2Sel1List1Check_QTD(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_PARTITION"));
-  GroupPoints->GroupBox2->setTitle(tr("SUPPRESS_RESULT"));
   GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupPoints->TextLabel2->setText(tr("GEOM_TOOL_OBJECT"));
   GroupPoints->TextLabel3->setText(tr("GEOM_RECONSTRUCTION_LIMIT"));
-  GroupPoints->TextLabel4->setText(tr("GEOM_SUPPRESS_RESULT_INSIDE"));
-  GroupPoints->TextLabel5->setText(tr("GEOM_SUPPRESS_RESULT_OUTSIDE"));
-  GroupPoints->CheckBox1->setText(tr("GEOM_REMOVE_WEBS"));
   GroupPoints->PushButton1->setPixmap(image2);
   GroupPoints->PushButton2->setPixmap(image2);
-  GroupPoints->PushButton3->setPixmap(image2);
-  GroupPoints->PushButton4->setPixmap(image2);
-  GroupPoints->PushButton5->setText(tr("GEOM_SET_MATERIALS"));
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
-  GroupPoints->LineEdit3->setReadOnly( true );
-  GroupPoints->LineEdit4->setReadOnly( true );
+  GroupPoints->radioButton4->setText(tr("GEOM_KEEP_NONLIMIT_SHAPES"));
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("partition.htm"); 
- 
+  setHelpFileName("partition_page.html");
+
   Init();
 }
 
@@ -118,7 +109,8 @@ void OperationGUI_PartitionDlg::Init()
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_WIRE"));
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_EDGE"));
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_VERTEX"));
-  
+  GroupPoints->radioButton4->setChecked(FALSE);
+
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -126,20 +118,15 @@ void OperationGUI_PartitionDlg::Init()
   
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton4, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton5, SIGNAL(clicked()), this, SLOT(SetMaterials()));
   
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit4, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  
-  connect(GroupPoints->CheckBox1, SIGNAL(toggled(bool)), this, SLOT(onRemoveWebs(bool)));
   
   connect(GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(ComboTextChanged()));
   
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(GroupPoints->radioButton4, SIGNAL(stateChanged(int)), this, SLOT(ReverseSense(int)));
+
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   
   initName( tr( "GEOM_PARTITION" ) );
@@ -157,11 +144,11 @@ void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
   globalSelection();
   
   myListShapes.length(0);
-  myListTools.length(0);  
+  myListTools.length(0);
   myListKeepInside.length(0);
   myListRemoveInside.length(0);
   myListMaterials.length(0);
-  
+
   switch (constructorId)
     {
     case 0: /*Full partition */
@@ -171,33 +158,29 @@ void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
 	resize(0, 0);
 	GroupPoints->TextLabel3->show();
 	GroupPoints->ComboBox1->show();
-	GroupPoints->GroupBox2->show();
-	
 	GroupPoints->ComboBox1->setCurrentItem(0);
-	GroupPoints->LineEdit3->clear();
-	GroupPoints->LineEdit4->clear();
+	GroupPoints->radioButton4->show();
 	break;
       }
     case 1: /*Half-space partition */
       {
 
 	GroupPoints->GroupBox1->setTitle(tr("GEOM_PARTITION_HALFSPACE"));
-	GroupPoints->GroupBox2->hide();
 	GroupPoints->TextLabel3->hide();
 	GroupPoints->ComboBox1->hide();
 	GroupPoints->TextLabel2->setText(tr("GEOM_PLANE"));
+	GroupPoints->radioButton4->hide();
 	resize(0, 0);
 	break;
-      } 
+      }
     }
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->clear();
   GroupPoints->LineEdit2->clear();
-  onRemoveWebs(false);
 
   myEditCurrentArgument->setFocus();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   MESSAGE(width()<<" "<<height());
 }
@@ -239,7 +222,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
   QString aString = "";
   
   int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString, true );
-    
+
   if ( nbSel < 1 )
   {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
@@ -249,10 +232,6 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
       myListTools.length( 0 );
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit3 )
-      myListRemoveInside.length( 0 );
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit4 )
-      myListKeepInside.length( 0 );
   }
   
   // One and only one plane can be selected
@@ -276,18 +255,6 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
     if ( !myListTools.length() )
       return;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit3)
-  {
-    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myListRemoveInside, true );
-    if (!myListRemoveInside.length())
-      return;
-  }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit4)
-  {
-    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(),  myListKeepInside, true );
-    if ( !myListKeepInside.length() )
-      return;
-  }
   
   myEditCurrentArgument->setText( aString );
 }
@@ -301,7 +268,7 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
   
-  if(send == GroupPoints->PushButton1) 
+  if(send == GroupPoints->PushButton1)
     myEditCurrentArgument = GroupPoints->LineEdit1;
   else if(send == GroupPoints->PushButton2)
   {
@@ -309,13 +276,9 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
     if( getConstructorId()==1 )
       globalSelection( GEOM_PLANE  );
   }
-  else if(send == GroupPoints->PushButton3)
-    myEditCurrentArgument = GroupPoints->LineEdit3;
-  else if(send == GroupPoints->PushButton4)
-    myEditCurrentArgument = GroupPoints->LineEdit4;
  
   globalSelection( GEOM_ALLSHAPES );
-      
+
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
@@ -329,10 +292,8 @@ void OperationGUI_PartitionDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
 
-  if(send == GroupPoints->LineEdit1 || 
-     send == GroupPoints->LineEdit2 ||
-     send == GroupPoints->LineEdit3 ||
-     send == GroupPoints->LineEdit4 )
+  if(send == GroupPoints->LineEdit1 ||
+     send == GroupPoints->LineEdit2 )
     {
       myEditCurrentArgument = send;
       GEOMBase_Skeleton::LineEditReturnPressed();
@@ -347,10 +308,10 @@ void OperationGUI_PartitionDlg::LineEditReturnPressed()
 void OperationGUI_PartitionDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  ConstructorsClicked( getConstructorId() ); 
+  ConstructorsClicked( getConstructorId() );
 }
 
 
@@ -400,17 +361,25 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
   int aLimit = GetLimit();
   int aConstructorId = getConstructorId();
 
-  if (aConstructorId == 1)
+  int aKeepNonlimitShapes = 0;
+  if (aConstructorId == 1) {
     aLimit = GEOM::SHAPE;
+  }
+  else {
+    if(GroupPoints->radioButton4->isChecked()) {
+      aKeepNonlimitShapes = 1;
+    }
+    else {
+      aKeepNonlimitShapes = 0;
+    }
+  }
 
   if (isValid( msg )) {
-    if (aConstructorId == 0 && !toRemoveWebs())
-      myListMaterials.length(0);
 
     anObj = GEOM::GEOM_IBooleanOperations::_narrow(getOperation())->
       MakePartition(myListShapes, myListTools,
                     myListKeepInside, myListRemoveInside,
-                    aLimit, toRemoveWebs(), myListMaterials);
+		    aLimit, false, myListMaterials, aKeepNonlimitShapes);
     res = true;
   }
 
@@ -438,47 +407,12 @@ void OperationGUI_PartitionDlg::closeEvent( QCloseEvent* e )
 void OperationGUI_PartitionDlg::ComboTextChanged()
 {
   bool IsEnabled = GroupPoints->ComboBox1->currentItem() < 3;
-  GroupPoints->LineEdit3->setEnabled(IsEnabled);
-  GroupPoints->LineEdit4->setEnabled(IsEnabled);
-  GroupPoints->TextLabel4->setEnabled(IsEnabled);
-  GroupPoints->TextLabel5->setEnabled(IsEnabled);
-  GroupPoints->PushButton3->setEnabled(IsEnabled);
-  GroupPoints->PushButton4->setEnabled(IsEnabled);
-}
-
-
-//=================================================================================
-// function : SetMaterials()
-// purpose  : 
-//=================================================================================
-void OperationGUI_PartitionDlg::SetMaterials()
-{
-  OperationGUI_MaterialDlg* aDlg =
-    new OperationGUI_MaterialDlg(myGeomGUI, this, "", myListShapes, true);
-  aDlg->show();
-}
-
-
-//=================================================================================
-// function : onRemoveWebs()
-// purpose  : 
-//=================================================================================
-void OperationGUI_PartitionDlg::onRemoveWebs(bool isChecked)
-{
-  if (GroupPoints->CheckBox1->isChecked() != isChecked)
-    GroupPoints->CheckBox1->setChecked(isChecked);
-  
-  GroupPoints->PushButton5->setEnabled(isChecked);
-}
-
-
-//=================================================================================
-// function : toRemoveWebs()
-// purpose  : 
-//=================================================================================
-bool OperationGUI_PartitionDlg::toRemoveWebs() const
-{
-  return GroupPoints->CheckBox1->isChecked();
+  //GroupPoints->LineEdit3->setEnabled(IsEnabled);
+  //GroupPoints->LineEdit4->setEnabled(IsEnabled);
+  //GroupPoints->TextLabel4->setEnabled(IsEnabled);
+  //GroupPoints->TextLabel5->setEnabled(IsEnabled);
+  //GroupPoints->PushButton3->setEnabled(IsEnabled);
+  //GroupPoints->PushButton4->setEnabled(IsEnabled);
 }
 
 
@@ -490,7 +424,7 @@ int OperationGUI_PartitionDlg::GetLimit() const
 {
   int aLimit = GroupPoints->ComboBox1->currentItem();
 
-  switch(aLimit)
+  switch (aLimit)
   {
   case 0:  aLimit = GEOM::SOLID ; break;
   case 1:  aLimit = GEOM::SHELL ; break;

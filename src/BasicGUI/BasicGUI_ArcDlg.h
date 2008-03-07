@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -28,18 +28,17 @@
 #ifndef DIALOGBOX_ARC_H
 #define DIALOGBOX_ARC_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_3Sel_QTD.h"
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
+#include "DlgRef_3Sel1Check_QTD.h"
+
 //=================================================================================
 // class    : BasicGUI_ArcDlg
 // purpose  : 
 //=================================================================================
-class BasicGUI_ArcDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_ArcDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
@@ -53,29 +52,27 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
+    virtual void addSubshapesToStudy();
 
-    virtual void closeEvent( QCloseEvent* e );    
-
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
 
     GEOM::GEOM_Object_var myPoint1, myPoint2, myPoint3;
 
     DlgRef_3Sel_QTD* Group3Pnts;
+    DlgRef_3Sel1Check_QTD* Group3Pnts2;
 
 private slots:
     void ClickOnOk();
-    void ClickOnCancel();
     bool ClickOnApply();
-    
+
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
-    
+    void ConstructorsClicked(int);
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-
+    void ReverseSense(int);
 };
 
 #endif // DIALOGBOX_ARC_H

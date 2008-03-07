@@ -28,6 +28,8 @@
 #ifndef DLGREF_1SEL1CHECK1LIST_QTD_H
 #define DLGREF_1SEL1CHECK1LIST_QTD_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include <qvariant.h>
 #include <qwidget.h>
 class QVBoxLayout; 
@@ -40,13 +42,7 @@ class QLineEdit;
 class QPushButton;
 class QRadioButton;
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define DLGREF_WNT_EXPORT __declspec( dllexport )
-#else
-#define DLGREF_WNT_EXPORT
-#endif
-
-class DLGREF_WNT_EXPORT DlgRef_1Sel1Check1List_QTD : public QWidget
+class GEOM_DLGREF_EXPORT DlgRef_1Sel1Check1List_QTD : public QWidget
 { 
     Q_OBJECT
 

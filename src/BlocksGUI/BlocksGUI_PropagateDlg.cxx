@@ -77,7 +77,7 @@ BlocksGUI_PropagateDlg::BlocksGUI_PropagateDlg(GeometryGUI* theGeometryGUI, QWid
 
   /***************************************************************/
 
-  setHelpFileName("propagate.htm");
+  setHelpFileName("propagate_operation_page.html");
 
   Init();
 }

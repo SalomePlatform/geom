@@ -28,6 +28,10 @@
 #include <GEOM_Function.hxx>
 
 #include <GEOMAlgo_Gluer.hxx>
+#include "GEOMAlgo_Gluer1.hxx"
+#include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
+#include "GEOMAlgo_CoupleOfShapes.hxx"
+#include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
 
 #include "utilities.h"
 
@@ -69,6 +73,7 @@ const Standard_GUID& GEOMImpl_GlueDriver::GetID()
 //=======================================================================
 TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& theShape,
                                                          const Standard_Real theTolerance,
+                                                         const Standard_Boolean doKeepNonSolids,
                                                          TCollection_AsciiString& theWarning) const
 {
   Standard_Integer iErr, iWrn;
@@ -78,6 +83,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& the
   aGluer.SetShape(theShape);
   aGluer.SetTolerance(theTolerance);
   aGluer.SetCheckGeometry(Standard_True);
+  aGluer.SetKeepNonSolids(doKeepNonSolids);
 
   aGluer.Perform();
 
@@ -187,12 +193,14 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& the
   return aRes;
 }
 
+
 //=======================================================================
 //function : GlueFaces
 //purpose  :
 //=======================================================================
 TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
-                                             const Standard_Real theTolerance)
+                                             const Standard_Real theTolerance,
+                                             const Standard_Boolean doKeepNonSolids)
 {
   Standard_Integer iErr, iWrn;
   TopoDS_Shape aRes;
@@ -201,6 +209,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
   aGluer.SetShape(theShape);
   aGluer.SetTolerance(theTolerance);
   aGluer.SetCheckGeometry(Standard_True);
+  aGluer.SetKeepNonSolids(doKeepNonSolids);
 
   aGluer.Perform();
 
@@ -249,6 +258,58 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
   return aRes;
 }
 
+
+//=======================================================================
+//function : GlueFacesByList
+//purpose  :
+//=======================================================================
+TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesByList (const TopoDS_Shape& theShape,
+						   const Standard_Real theTolerance,
+                                                   const Standard_Boolean doKeepNonSolids,
+						   const TopTools_MapOfShape& aFaces)
+{
+  TopoDS_Shape aRes;
+
+  GEOMAlgo_Gluer1 aGluer;
+  GEOMAlgo_ListIteratorOfListOfCoupleOfShapes aItCS;
+  GEOMAlgo_CoupleOfShapes aCS;
+  GEOMAlgo_ListOfCoupleOfShapes aLCS;
+
+  aGluer.SetShape(theShape);
+  aGluer.SetTolerance(theTolerance);
+  aGluer.SetKeepNonSolids(doKeepNonSolids);
+  aGluer.Perform();
+  Standard_Integer iErr = aGluer.ErrorStatus();
+  if (iErr) return aRes;
+
+  TopTools_ListOfShape listShape;
+  const GEOMAlgo_ListOfCoupleOfShapes& aLCSG = aGluer.GluedFaces();
+  // Access to faces
+  aItCS.Initialize(aLCSG);
+  for (; aItCS.More(); aItCS.Next()) {
+    const GEOMAlgo_CoupleOfShapes& aCSG = aItCS.Value();
+    const TopoDS_Shape& aF1 = aCSG.Shape1();
+    const TopoDS_Shape& aF2 = aCSG.Shape2();
+    if( aFaces.Contains(aF1) || aFaces.Contains(aF2) )
+      continue;
+    aCS.SetShapes(aF1,aF2);
+    aLCS.Append(aCS);
+  }
+
+  //cout<<"aLCS.Extent() = "<<aLCS.Extent()<<endl;
+  if(aLCS.Extent()>0) {
+    aGluer.SetFacesToUnglue(aLCS);
+    aGluer.UnglueFaces();
+    iErr = aGluer.ErrorStatus();
+    if (iErr) return aRes;
+  }
+
+  aRes = aGluer.Result();
+
+  return aRes;
+}
+
+
 //=======================================================================
 //function : Execute
 //purpose  :
@@ -264,16 +325,37 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape aShape;
   TCollection_AsciiString aWrn;
 
-  if (aType == GLUE_FACES) {
-    Handle(GEOM_Function) aRefBase = aCI.GetBase();
-    TopoDS_Shape aShapeBase = aRefBase->GetValue();
-    if (aShapeBase.IsNull()) {
-      Standard_NullObject::Raise("Shape for gluing is null");
-    }
+  Handle(GEOM_Function) aRefBase = aCI.GetBase();
+  TopoDS_Shape aShapeBase = aRefBase->GetValue();
+  if (aShapeBase.IsNull()) {
+    Standard_NullObject::Raise("Shape for gluing is null");
+  }
 
-    Standard_Real tol3d = aCI.GetTolerance();
-    aShape = GlueFacesWithWarnings(aShapeBase, tol3d, aWrn);
-  } else {
+  Standard_Real tol3d = aCI.GetTolerance();
+
+  Standard_Boolean aKeepNonSolids = aCI.GetKeepNonSolids();
+
+  if (aType == GLUE_FACES) {
+    aShape = GlueFacesWithWarnings(aShapeBase, tol3d, aKeepNonSolids, aWrn);
+  }
+  else { // aType == GLUE_FACES_BY_LIST
+    Handle(TColStd_HSequenceOfTransient) SF = aCI.GetFaces();
+    TopTools_MapOfShape aFaces;
+    int i=1;
+    for( ; i <= SF->Length(); i++) {
+      Handle(Standard_Transient) anItem = SF->Value(i);
+      if(anItem.IsNull())
+	continue;
+      Handle(GEOM_Function) aRefSh = Handle(GEOM_Function)::DownCast(anItem);
+      if(aRefSh.IsNull())
+	continue;
+      TopoDS_Shape aFace = aRefSh->GetValue();
+      if(aFace.IsNull())
+	continue;
+      if(!aFaces.Contains(aFace))
+	aFaces.Add(aFace);
+    }
+    aShape = GlueFacesByList(aShapeBase, tol3d, aKeepNonSolids, aFaces);
   }
 
   if (aShape.IsNull()) return 0;

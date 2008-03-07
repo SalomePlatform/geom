@@ -29,10 +29,12 @@
 #ifndef DLGREF_1SEL4SPIN_H
 #define DLGREF_1SEL4SPIN_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include "DlgRef_1Sel4Spin_QTD.h"
 #include "DlgRef_SpinBox.h"
 
-class DlgRef_1Sel4Spin : public DlgRef_1Sel4Spin_QTD
+class GEOM_DLGREF_EXPORT DlgRef_1Sel4Spin : public DlgRef_1Sel4Spin_QTD
 { 
     Q_OBJECT
 

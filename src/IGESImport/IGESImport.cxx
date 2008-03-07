@@ -31,9 +31,21 @@
 #include <TopoDS_Shape.hxx>
 
 #ifdef WNT
-#include <SALOME_WNT.hxx>
+ #if defined IGESIMPORT_EXPORTS
+  #if defined WIN32
+   #define IGESIMPORT_EXPORT __declspec( dllexport )
+  #else
+   #define IGESIMPORT_EXPORT
+  #endif
+ #else
+  #if defined WIN32
+   #define IGESIMPORT_EXPORT __declspec( dllimport )
+  #else
+   #define IGESIMPORT_EXPORT
+  #endif
+ #endif
 #else
-#define SALOME_WNT_EXPORT
+ #define IGESIMPORT_EXPORT
 #endif
 
 //=============================================================================
@@ -44,7 +56,7 @@
 
 extern "C"
 {
-SALOME_WNT_EXPORT
+IGESIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        const TCollection_AsciiString& /*theFormatName*/,
                        TCollection_AsciiString&       theError)

@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -25,6 +25,9 @@
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
+#include <GEOMImpl_IMeasureOperations.hxx>
+
+// OCCT Includes
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTopAdaptor_FClass2d.hxx>
@@ -53,29 +56,29 @@
 //=======================================================================
 //function : GetID
 //purpose  :
-//======================================================================= 
+//=======================================================================
 const Standard_GUID& GEOMImpl_PlaneDriver::GetID()
 {
   static Standard_GUID aPlaneDriver("FF1BBB05-5D14-4df2-980B-3A668264EA16");
-  return aPlaneDriver; 
+  return aPlaneDriver;
 }
 
 
 //=======================================================================
 //function : GEOMImpl_PlaneDriver
-//purpose  : 
+//purpose  :
 //=======================================================================
-GEOMImpl_PlaneDriver::GEOMImpl_PlaneDriver() 
+GEOMImpl_PlaneDriver::GEOMImpl_PlaneDriver()
 {
 }
 
 //=======================================================================
 //function : Execute
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
 {
-  if (Label().IsNull())  return 0;    
+  if (Label().IsNull())  return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
 
   GEOMImpl_IPlane aPI (aFunction);
@@ -124,13 +127,16 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
   } else if (aType == PLANE_FACE) {
     Handle(GEOM_Function) aRef = aPI.GetFace();
     TopoDS_Shape aRefShape = aRef->GetValue();
-    if (aRefShape.ShapeType() != TopAbs_FACE) return 0;
-    Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(aRefShape));
-    if (!aGS->IsKind(STANDARD_TYPE(Geom_Plane))) {
-      Standard_TypeMismatch::Raise("Plane creation aborted: non-planar face given as argument");
-    }
-    aShape = BRepBuilderAPI_MakeFace(aGS, -aSize, +aSize, -aSize, +aSize).Shape();
-  } 
+    //if (aRefShape.ShapeType() != TopAbs_FACE) return 0;
+    //Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(aRefShape));
+    //if (!aGS->IsKind(STANDARD_TYPE(Geom_Plane))) {
+    //  Standard_TypeMismatch::Raise("Plane creation aborted: non-planar face given as argument");
+    //}
+    //aShape = BRepBuilderAPI_MakeFace(aGS, -aSize, +aSize, -aSize, +aSize).Shape();
+    gp_Ax3 anAx3 = GEOMImpl_IMeasureOperations::GetPosition(aRefShape);
+    gp_Pln aPln (anAx3);
+    aShape = BRepBuilderAPI_MakeFace(aPln, -aSize, +aSize, -aSize, +aSize).Shape();
+  }
   else if (aType == PLANE_TANGENT_FACE)
   {
     Handle(GEOM_Function) aRefFace = aPI.GetFace();
@@ -138,7 +144,7 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
     if(aShape1.IsNull())
       Standard_TypeMismatch::Raise("Plane was not created.Basis face was not specified");
     TopoDS_Face aFace = TopoDS::Face(aShape1);
-    
+
     Standard_Real aKoefU = aPI.GetParameterU();
     Standard_Real aKoefV = aPI.GetParameterV();
     Standard_Real aUmin,aUmax,aVmin,aVmax;
@@ -154,7 +160,7 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
     gp_Pnt aPLoc;
     aSurf->D1(aParamU,aParamV,aPLoc,aVecU,aVecV);
     BRepTopAdaptor_FClass2d clas(aFace,Precision::PConfusion());
-    
+
     TopAbs_State stOut= clas.PerformInfinitePoint();
     gp_Pnt2d aP2d(aParamU,aParamV);
     TopAbs_State st= clas.Perform(aP2d);
@@ -167,7 +173,6 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
     if(aTool.IsDone())
       aShape = aTool.Shape();
   }
-
   else {
   }
 
@@ -175,7 +180,7 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
 
   aFunction->SetValue(aShape);
 
-  log.SetTouched(Label()); 
+  log.SetTouched(Label());
 
   return 1;
 }
@@ -184,17 +189,17 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
 //=======================================================================
 //function :  GEOMImpl_PlaneDriver_Type_
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOMImpl_PlaneDriver_Type_()
 {
 
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
   if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared); 
+  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
- 
+
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PlaneDriver",
@@ -209,7 +214,7 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_PlaneDriver_Type_()
 //=======================================================================
 //function : DownCast
 //purpose  :
-//======================================================================= 
+//=======================================================================
 const Handle(GEOMImpl_PlaneDriver) Handle(GEOMImpl_PlaneDriver)::DownCast
        (const Handle(Standard_Transient)& AnObject)
 {

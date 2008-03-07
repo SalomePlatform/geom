@@ -28,6 +28,8 @@
 #ifndef DIALOGBOX_REVOLUTION_H
 #define DIALOGBOX_REVOLUTION_H
 
+#include "GenerationGUI.h"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel1Spin2Check.h"
 
@@ -37,7 +39,7 @@
 // class    : GenerationGUI_RevolDlg
 // purpose  :
 //=================================================================================
-class GenerationGUI_RevolDlg : public GEOMBase_Skeleton
+class GENERATIONGUI_EXPORT GenerationGUI_RevolDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
@@ -51,6 +53,7 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& msg );
     virtual bool execute( ObjectList& objects );    
+    virtual void addSubshapesToStudy();
 
 private :
     void Init();
@@ -61,6 +64,7 @@ private :
     GEOM::GEOM_Object_var myAxis; /* Axis of the revolution */
     bool myOkBase; 
     bool myOkAxis;
+    bool myBothway;
 
     DlgRef_2Sel1Spin2Check* GroupPoints;
 
@@ -73,6 +77,7 @@ private slots:
     void SetEditCurrentArgument();
     void ValueChangedInSpinBox();
     void onReverse();
+    void onBothway();
 };
 
 #endif // DIALOGBOX_REVOLUTION_H

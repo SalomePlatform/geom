@@ -46,6 +46,7 @@
 #include <Prs3d_ShadingAspect.hxx>
 #include <SelectBasics_SensitiveEntity.hxx>
 #include <SelectMgr_EntityOwner.hxx>
+#include <StdSelect_BRepOwner.hxx>
 #include <SelectMgr_IndexedMapOfOwner.hxx>
 #include <SelectMgr_Selection.hxx>
 #include <StdSelect_DisplayMode.hxx>
@@ -100,7 +101,7 @@ static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
   TopExp::MapShapes(aMainShape, aMapOfShapes);
 
   for  ( Standard_Integer i = 1, n = anAllMap.Extent(); i <= n; i++ ) {
-    Handle(SelectMgr_EntityOwner) anOwner = anAllMap( i );
+    Handle(StdSelect_BRepOwner) anOwner = Handle(StdSelect_BRepOwner)::DownCast(anAllMap( i ));
     if ( anOwner.IsNull() || !anOwner->HasShape() )
       continue;
 
@@ -115,11 +116,9 @@ static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
 }
 
 GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
-			     const Standard_CString aName): SALOME_AISShape(shape)
+			     const Standard_CString aName)
+  : SALOME_AISShape(shape), myName(aName)
 {
-  myName = new char [strlen(aName)+1];
-  strcpy( myName, aName);
-
   myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
 }
 
@@ -140,8 +139,7 @@ Standard_Boolean GEOM_AISShape::hasIO(){
 
 void GEOM_AISShape::setName(const Standard_CString aName)
 {
-  myName = new char [strlen(aName)+1];
-  strcpy( myName, aName);
+  myName = aName;
 
   Handle(SALOME_InteractiveObject) IO = getIO();
   if ( !IO.IsNull() )
@@ -149,7 +147,7 @@ void GEOM_AISShape::setName(const Standard_CString aName)
 }
 
 Standard_CString GEOM_AISShape::getName(){
-  return myName;
+  return myName.ToCString();
 }
 
 void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,

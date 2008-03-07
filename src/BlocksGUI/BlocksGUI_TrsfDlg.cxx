@@ -119,7 +119,7 @@ BlocksGUI_TrsfDlg::BlocksGUI_TrsfDlg (GeometryGUI* theGeometryGUI, QWidget* pare
   Layout1->addWidget( myGrp2, 2, 0 );
   /***************************************************************/
 
-  setHelpFileName("multi_transformation.htm");
+  setHelpFileName("multi_transformation_operation_page.html");
 
   Init();
 }
@@ -143,7 +143,8 @@ void BlocksGUI_TrsfDlg::Init()
   double SpecificStep = 1.0;
   QMap<int, DlgRef_SpinBox*>::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
-    anIter.data()->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
+    //anIter.data()->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
+    anIter.data()->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep, 3);
   }
 
   // signals and slots connections

@@ -1,22 +1,22 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 // 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
@@ -57,8 +57,9 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QW
   myConstructorId = -1;
 
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_ALL")));
-  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_EDGE")));
+  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_EDGE_FROM_FACE")));
   QPixmap image3(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_FACE")));
+  QPixmap image4(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_EDGE")));
   QPixmap iconSelect(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption( tr( "GEOM_CHAMFER_TITLE" ) );
@@ -68,6 +69,8 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QW
   RadioButton1->setPixmap( image1 );
   RadioButton2->setPixmap( image2 );
   RadioButton3->setPixmap( image3 );
+  RadioButton4->show();
+  RadioButton4->setPixmap( image4 );
 
   // Create first group
 
@@ -82,7 +85,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QW
   QGroupBox* aSpinGrp = new QGroupBox( 1, Qt::Vertical, myGrp1 );
   aSpinGrp->setFrameStyle( QFrame::NoFrame );
   aSpinGrp->setInsideMargin( 0 );
-
+  
   new QLabel( tr( "D" ), aSpinGrp );
   mySpinBox[ SpinBox1 ] = new DlgRef_SpinBox( aSpinGrp );
 
@@ -101,15 +104,32 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QW
   createSelWg( tr( "FACE_1" ), iconSelect, aSelGrp2, Face1 );
   createSelWg( tr( "FACE_2" ), iconSelect, aSelGrp2, Face2 );
 
-  aSpinGrp = new QGroupBox( 1, Qt::Vertical, myGrp2 );
-  aSpinGrp->setFrameStyle( QFrame::NoFrame );
-  aSpinGrp->setInsideMargin( 0 );
+  QGroupBox* aSpinGrp1 = new QGroupBox( 1, Qt::Vertical, myGrp2 );
+  aSpinGrp1->setFrameStyle( QFrame::NoFrame );
+  aSpinGrp1->setInsideMargin( 0 );
+  
+  myRadioButton[ RadioButton21] = new QRadioButton( aSpinGrp1 );
 
-  new QLabel( tr( "GEOM_D1" ), aSpinGrp );
-  mySpinBox[ SpinBox21 ] = new DlgRef_SpinBox( aSpinGrp );
+  new QLabel( tr( "GEOM_D1" ), aSpinGrp1 );
+  mySpinBox[ SpinBox21 ] = new DlgRef_SpinBox( aSpinGrp1 );
 
-  new QLabel( tr( "GEOM_D2" ), aSpinGrp );
-  mySpinBox[ SpinBox22 ] = new DlgRef_SpinBox( aSpinGrp );
+  new QLabel( tr( "GEOM_D2" ), aSpinGrp1 );
+  mySpinBox[ SpinBox22 ] = new DlgRef_SpinBox( aSpinGrp1 );
+
+  QGroupBox* aSpinGrp2 = new QGroupBox( 1, Qt::Vertical, myGrp2 );
+  aSpinGrp2->setFrameStyle( QFrame::NoFrame );
+  aSpinGrp2->setInsideMargin( 0 );
+
+  myRadioButton[ RadioButton22] = new QRadioButton( aSpinGrp2 );
+
+  new QLabel( tr( "GEOM_D" ), aSpinGrp2 );
+  mySpinBox[ SpinBox23 ] = new DlgRef_SpinBox( aSpinGrp2 );
+
+  new QLabel( tr( "GEOM_ANGLE" ), aSpinGrp2 );
+  mySpinBox[ SpinBox24 ] = new DlgRef_SpinBox( aSpinGrp2 );
+
+ ( new QLabel( myGrp2 ) )->setSizePolicy(
+	QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 
   // Create third group
 
@@ -122,17 +142,69 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QW
   createSelWg( tr( "GEOM_MAIN_OBJECT" ), iconSelect, aSelGrp3, MainObj3 );
   createSelWg( tr( "SELECTED_FACES" ), iconSelect, aSelGrp3, Faces );
 
-  aSpinGrp = new QGroupBox( 1, Qt::Vertical, myGrp3 );
-  aSpinGrp->setFrameStyle( QFrame::NoFrame );
-  aSpinGrp->setInsideMargin( 0 );
+  aSpinGrp1 = new QGroupBox( 1, Qt::Vertical, myGrp3 );
+  aSpinGrp1->setFrameStyle( QFrame::NoFrame );
+  aSpinGrp1->setInsideMargin( 0 );
 
-  new QLabel( tr( "GEOM_D1" ), aSpinGrp );
-  mySpinBox[ SpinBox31 ] = new DlgRef_SpinBox( aSpinGrp );
+  myRadioButton[ RadioButton31] = new QRadioButton( aSpinGrp1 );
 
-  new QLabel( tr( "GEOM_D2" ), aSpinGrp );
-  mySpinBox[ SpinBox32 ] = new DlgRef_SpinBox( aSpinGrp );
+  new QLabel( tr( "GEOM_D1" ), aSpinGrp1 );
+  mySpinBox[ SpinBox31 ] = new DlgRef_SpinBox( aSpinGrp1 );
+
+  new QLabel( tr( "GEOM_D2" ), aSpinGrp1 );
+  mySpinBox[ SpinBox32 ] = new DlgRef_SpinBox( aSpinGrp1 );
+
+  aSpinGrp2 = new QGroupBox( 1, Qt::Vertical, myGrp3 );
+  aSpinGrp2->setFrameStyle( QFrame::NoFrame );
+  aSpinGrp2->setInsideMargin( 0 );
+
+  myRadioButton[ RadioButton32] = new QRadioButton( aSpinGrp2 );
+
+  new QLabel( tr( "GEOM_D" ), aSpinGrp2 );
+  mySpinBox[ SpinBox33 ] = new DlgRef_SpinBox( aSpinGrp2 );
+
+  new QLabel( tr( "GEOM_ANGLE" ), aSpinGrp2 );
+  mySpinBox[ SpinBox34 ] = new DlgRef_SpinBox( aSpinGrp2 );
 
   ( new QLabel( myGrp3 ) )->setSizePolicy(
+	QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+
+  // Create fourth group
+
+  myGrp4 = new QGroupBox( 1, Qt::Horizontal, tr( "GEOM_CHAMFER_EDGE" ), this );
+
+  QGroupBox* aSelGrp4 = new QGroupBox( 3, Qt::Horizontal, myGrp4 );
+  aSelGrp4->setFrameStyle( QFrame::NoFrame );
+  aSelGrp4->setInsideMargin( 0 );
+
+  createSelWg( tr( "GEOM_MAIN_OBJECT" ), iconSelect, aSelGrp4, MainObj4 );
+  createSelWg( tr( "SELECTED_EDGE" ), iconSelect, aSelGrp4, Edges );
+
+  aSpinGrp1 = new QGroupBox( 1, Qt::Vertical, myGrp4 );
+  aSpinGrp1->setFrameStyle( QFrame::NoFrame );
+  aSpinGrp1->setInsideMargin( 0 );
+
+  myRadioButton[ RadioButton41] = new QRadioButton( aSpinGrp1 );
+
+  new QLabel( tr( "GEOM_D1" ), aSpinGrp1 );
+  mySpinBox[ SpinBox41 ] = new DlgRef_SpinBox( aSpinGrp1 );
+
+  new QLabel( tr( "GEOM_D2" ), aSpinGrp1 );
+  mySpinBox[ SpinBox42 ] = new DlgRef_SpinBox( aSpinGrp1 );
+
+  aSpinGrp2 = new QGroupBox( 1, Qt::Vertical, myGrp4 );
+  aSpinGrp2->setFrameStyle( QFrame::NoFrame );
+  aSpinGrp2->setInsideMargin( 0 );
+
+  myRadioButton[ RadioButton42] = new QRadioButton( aSpinGrp2 );
+
+  new QLabel( tr( "GEOM_D" ), aSpinGrp2 );
+  mySpinBox[ SpinBox43 ] = new DlgRef_SpinBox( aSpinGrp2 );
+
+  new QLabel( tr( "GEOM_ANGLE" ), aSpinGrp2 );
+  mySpinBox[ SpinBox44 ] = new DlgRef_SpinBox( aSpinGrp2 );
+
+  ( new QLabel( myGrp4 ) )->setSizePolicy(
     QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 
   // Add groups to layout
@@ -140,17 +212,23 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QW
   Layout1->addWidget( myGrp1, 2, 0 );
   Layout1->addWidget( myGrp2, 2, 0 );
   Layout1->addWidget( myGrp3, 2, 0 );
+  Layout1->addWidget( myGrp4, 2, 0 );
 
   // Set range of spinboxes
-
+  
   double SpecificStep = 10.0;
   QMap< int, DlgRef_SpinBox* >::iterator anIter;
   for ( anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter )
-    anIter.data()->RangeStepAndValidator( 0.001, 999.999, SpecificStep, 3 );
+    {
+      anIter.data()->RangeStepAndValidator( 0.001, COORD_MAX, SpecificStep, 3 );
+      if ( anIter.key() == SpinBox44 || anIter.key() == SpinBox34 || anIter.key() == SpinBox24 )
+           anIter.data()->RangeStepAndValidator( 0.001, 89.999, 5, 0 );
+    }
 
-  setHelpFileName("chamfer.htm");
+  setHelpFileName("chamfer_operation_page.html");
 
   /* Initialisations */
+  RadioButtonPressed();
   Init();
 }
 
@@ -203,14 +281,21 @@ void OperationGUI_ChamferDlg::Init()
     connect( anIterSpin.data(), SIGNAL( valueChanged( double ) ),
              this, SLOT( ValueChangedInSpinBox( double ) ) );
 
+  // radio buttons
+  QMap< int, QRadioButton* >::iterator anIterRadio;
+  for ( anIterRadio = myRadioButton.begin(); anIterRadio != myRadioButton.end(); ++anIterRadio )
+    connect( anIterRadio.data(), SIGNAL( clicked() ),
+	     this, SLOT( RadioButtonPressed() ) );
+
   // selection
   connect(myGeomGUI->getApp()->selectionMgr(), 
           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_CHAMFER" ) );
 
-  myGrp2->hide();
+  myGrp4->hide();
   myGrp3->hide();
+  myGrp2->hide();
   myGrp1->show();
 }
 
@@ -233,18 +318,29 @@ void OperationGUI_ChamferDlg::ConstructorsClicked( int constructorId )
     return;
 
   // Get values from previous widget
-  double D1 = 5, D2 = 5;
+  double D1 = 5, D2 = 5, D = 5, Angle = 5;
   if ( myConstructorId == 0 )
     D1 = D2 = mySpinBox[ SpinBox1 ]->GetValue();
   else if ( myConstructorId == 1 )
   {
     D1 = mySpinBox[ SpinBox21 ]->GetValue();
     D2 = mySpinBox[ SpinBox22 ]->GetValue();
+    D =  mySpinBox[ SpinBox23 ]->GetValue();
+    Angle = mySpinBox[ SpinBox24 ]->GetValue();
   }
   else if ( myConstructorId == 2 )
   {
     D1 = mySpinBox[ SpinBox31 ]->GetValue();
     D2 = mySpinBox[ SpinBox32 ]->GetValue();
+    D =  mySpinBox[ SpinBox33 ]->GetValue();
+    Angle = mySpinBox[ SpinBox34 ]->GetValue();
+  }
+  else if ( myConstructorId == 3 )
+  {
+    D1 = mySpinBox[ SpinBox41 ]->GetValue();
+    D2 = mySpinBox[ SpinBox42 ]->GetValue();
+    D =  mySpinBox[ SpinBox43 ]->GetValue();
+    Angle = mySpinBox[ SpinBox44 ]->GetValue();
   }
 
   myConstructorId = constructorId;
@@ -255,21 +351,38 @@ void OperationGUI_ChamferDlg::ConstructorsClicked( int constructorId )
         myGrp1->show();
         myGrp2->hide();
         myGrp3->hide();
+	myGrp4->hide();
         mySpinBox[ SpinBox1 ]->SetValue( D1 );
     break;
     case 1:
         myGrp1->hide();
         myGrp2->show();
         myGrp3->hide();
+	myGrp4->hide();
         mySpinBox[ SpinBox21 ]->SetValue( D1 );
         mySpinBox[ SpinBox22 ]->SetValue( D2 );
+        mySpinBox[ SpinBox23 ]->SetValue( D );
+        mySpinBox[ SpinBox24 ]->SetValue( Angle );
     break;
     case 2:
         myGrp1->hide();
         myGrp2->hide();
         myGrp3->show();
+	myGrp4->hide();
         mySpinBox[ SpinBox31 ]->SetValue( D1 );
-        mySpinBox[ SpinBox32 ]->SetValue( D2 );        
+        mySpinBox[ SpinBox32 ]->SetValue( D2 );
+        mySpinBox[ SpinBox33 ]->SetValue( D );
+        mySpinBox[ SpinBox34 ]->SetValue( Angle );
+    break;
+	case 3:
+        myGrp1->hide();
+        myGrp2->hide();
+        myGrp3->hide();
+	myGrp4->show();
+        mySpinBox[ SpinBox41 ]->SetValue( D1 );
+        mySpinBox[ SpinBox42 ]->SetValue( D2 );        
+        mySpinBox[ SpinBox43 ]->SetValue( D );
+        mySpinBox[ SpinBox44 ]->SetValue( Angle );
     break;
     default:
     break;
@@ -277,7 +390,8 @@ void OperationGUI_ChamferDlg::ConstructorsClicked( int constructorId )
 
   if      ( constructorId == 0 ) myEditCurrentArgument = mySelName[ MainObj1 ];
   else if ( constructorId == 1 ) myEditCurrentArgument = mySelName[ MainObj2 ];
-  else                           myEditCurrentArgument = mySelName[ MainObj3 ];
+  else if ( constructorId == 2 ) myEditCurrentArgument = mySelName[ MainObj3 ];
+  else                           myEditCurrentArgument = mySelName[ MainObj4 ];
 
   activateSelection(); 
   enableWidgets();
@@ -317,7 +431,6 @@ bool OperationGUI_ChamferDlg::ClickOnApply()
   return true;
 }
 
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection has changed
@@ -338,7 +451,7 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
     }
 
   // If selection of main object is activated
-  if ( aCurrFocus == MainObj1 || aCurrFocus == MainObj2 || aCurrFocus == MainObj3 )
+  if ( aCurrFocus == MainObj1 || aCurrFocus == MainObj2 || aCurrFocus == MainObj3 || aCurrFocus == MainObj4)
   {
     if ( IObjectCount() == 1 )
     {
@@ -379,7 +492,7 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
             QString aFaceName = QString( GEOMBase::GetName( anObj ) ) + ":%1";
             myEditCurrentArgument->setText( aFaceName.arg( anIndex ) );
             myFace[ aCurrFocus ] = anIndex;
-            displayPreview();
+	    displayPreview();
             return;
          }
       }
@@ -387,8 +500,8 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
 
     myFace[ aCurrFocus ] = -1;
   }
-  // If face selection of third tab is activated
-  else if ( aCurrFocus == Faces )
+  // If face selection of third or fourth tab is activated
+  else if ( aCurrFocus == Faces  || aCurrFocus == Edges )
   {
     if ( IObjectCount() == 1 )
     {
@@ -403,24 +516,30 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
 
          if ( anIndexes.Extent() > 0 )
          {
-           QString aFaceName;
+           QString aName;
            if ( anIndexes.Extent() == 1 )
            {
              int anIndex = anIndexes( 1 );
 
-             aFaceName = QString( GEOMBase::GetName( anObj ) ) + QString( ":%1" ).arg( anIndex );
+             aName = QString( GEOMBase::GetName( anObj ) ) + QString( ":%1" ).arg( anIndex );
            }
            else
-             aFaceName = tr( "GEOM_MEN_POPUP_NAME" ).arg( anIndexes.Extent() );
+             aName = tr( "GEOM_MEN_POPUP_NAME" ).arg( anIndexes.Extent() );
 
-           myEditCurrentArgument->setText( aFaceName );
-           myFaces = anIndexes;
+           myEditCurrentArgument->setText( aName );
+	   int aConstructorId = getConstructorId();
+	   if ( aConstructorId == 2)
+	     myFaces = anIndexes;
+	   else if (aConstructorId == 3)
+	     myEdges = anIndexes;
+	     
            displayPreview();
            return;
          }
       }
     }
     myFaces.Clear();
+    myEdges.Clear();
   }
 }
 
@@ -441,6 +560,38 @@ void OperationGUI_ChamferDlg::LineEditReturnPressed()
   GEOMBase_Skeleton::LineEditReturnPressed();
 }
 
+//=================================================================================
+// function : RadioButtonPressed()
+// purpose  :
+//=================================================================================
+void OperationGUI_ChamferDlg::RadioButtonPressed()
+{
+  bool flag;
+  flag = ( myRadioButton[ RadioButton21 ]->isChecked() &&
+	   myRadioButton[ RadioButton31 ]->isChecked() &&
+	   myRadioButton[ RadioButton41 ]->isChecked() );
+    
+  myRadioButton[ RadioButton21 ]->setChecked(!flag);
+  myRadioButton[ RadioButton31 ]->setChecked(!flag);
+  myRadioButton[ RadioButton41 ]->setChecked(!flag);
+  myRadioButton[ RadioButton22 ]->setChecked(flag);
+  myRadioButton[ RadioButton32 ]->setChecked(flag);
+  myRadioButton[ RadioButton42 ]->setChecked(flag);
+  mySpinBox[ SpinBox21 ]->setDisabled(flag);
+  mySpinBox[ SpinBox22 ]->setDisabled(flag); 
+  mySpinBox[ SpinBox31 ]->setDisabled(flag); 
+  mySpinBox[ SpinBox32 ]->setDisabled(flag); 
+  mySpinBox[ SpinBox41 ]->setDisabled(flag); 
+  mySpinBox[ SpinBox42 ]->setDisabled(flag);
+  mySpinBox[ SpinBox23 ]->setDisabled(!flag);
+  mySpinBox[ SpinBox24 ]->setDisabled(!flag); 
+  mySpinBox[ SpinBox33 ]->setDisabled(!flag); 
+  mySpinBox[ SpinBox34 ]->setDisabled(!flag); 
+  mySpinBox[ SpinBox43 ]->setDisabled(!flag); 
+  mySpinBox[ SpinBox44 ]->setDisabled(!flag);
+  displayPreview();
+}
+
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -448,7 +599,7 @@ void OperationGUI_ChamferDlg::LineEditReturnPressed()
 //=================================================================================
 void OperationGUI_ChamferDlg::SetEditCurrentArgument()
 {
-  QPushButton* aSender = ( QPushButton* )sender();
+ QPushButton* aSender = ( QPushButton* )sender();
 
   QMap< int, QPushButton* >::iterator anIter;
   for ( anIter = mySelBtn.begin(); anIter != mySelBtn.end(); ++anIter )
@@ -521,7 +672,7 @@ void OperationGUI_ChamferDlg::createSelWg( const QString& theLbl,
 //=================================================================================
 void OperationGUI_ChamferDlg::reset()
 {
-  // Set Initial values of spinboxes
+ // Set Initial values of spinboxes
   QMap< int, DlgRef_SpinBox* >::iterator anIter;
   for ( anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter )
     anIter.data()->SetValue( 5 );
@@ -536,11 +687,13 @@ void OperationGUI_ChamferDlg::reset()
 
   if      ( aConstructorId == 0 ) myEditCurrentArgument = mySelName[ MainObj1 ];
   else if ( aConstructorId == 1 ) myEditCurrentArgument = mySelName[ MainObj2 ];
-  else                            myEditCurrentArgument = mySelName[ MainObj3 ];
+  else if ( aConstructorId == 2 ) myEditCurrentArgument = mySelName[ MainObj3 ];
+  else                            myEditCurrentArgument = mySelName[ MainObj4 ];
 
   myShape = GEOM::GEOM_Object::_nil();
 
   myFaces.Clear();
+  myEdges.Clear();
   myFace[ Face1 ] = -1;
   myFace[ Face2 ] = -1;
 
@@ -569,8 +722,10 @@ void OperationGUI_ChamferDlg::activateSelection()
   if (  !myShape->_is_nil() &&
        ( myEditCurrentArgument == mySelName[ Face1 ] ||
          myEditCurrentArgument == mySelName[ Face2 ] ||
-         myEditCurrentArgument == mySelName[ Faces ] ) )
+		 myEditCurrentArgument == mySelName[ Faces ] ) )
     localSelection( myShape, TopAbs_FACE );
+  else if (!myShape->_is_nil() && myEditCurrentArgument == mySelName[ Edges ] )
+    localSelection( myShape, TopAbs_EDGE );
   else
   {
     TColStd_MapOfInteger aMap;
@@ -611,9 +766,21 @@ void OperationGUI_ChamferDlg::enableWidgets()
   else if ( anId == 2 )
   {
     mySelName[ Faces ]->setEnabled( toEnable );
+    if ( !toEnable )
+	{
+	  mySelName[ Faces ]->setText( "" );
+	  myFaces = -1;
+	}
+  }
+  else if ( anId == 3 )
+  {
+    mySelName[ Edges ]->setEnabled( toEnable );
 
     if ( !toEnable )
-      myFaces.Clear();
+	{
+	  mySelName[ Edges ]->setText( "" );
+	  myEdges = -1;
+	}
   }
 }
 
@@ -625,7 +792,6 @@ GEOM::GEOM_IOperations_ptr OperationGUI_ChamferDlg::createOperation()
 {
   return getGeomEngine()->GetILocalOperations( getStudyId() );
 }
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  : Verify validity of input data
@@ -637,6 +803,7 @@ bool OperationGUI_ChamferDlg::isValid( QString& )
     case 0: return !myShape->_is_nil();
     case 1: return !myShape->_is_nil() && myFace[ Face1 ] > 0 && myFace[ Face2 ] > 0;
     case 2: return !myShape->_is_nil() && myFaces.Extent() > 0;
+    case 3: return !myShape->_is_nil() && myEdges.Extent() > 0;
     default: return false;
   }
 }
@@ -648,6 +815,9 @@ bool OperationGUI_ChamferDlg::isValid( QString& )
 bool OperationGUI_ChamferDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj;
+  bool flag = ( myRadioButton[ RadioButton21 ]->isChecked() &&
+                myRadioButton[ RadioButton31 ]->isChecked() &&
+                myRadioButton[ RadioButton41 ]->isChecked() );
 
   int anId = getConstructorId();
   if ( anId == 0 )
@@ -655,42 +825,59 @@ bool OperationGUI_ChamferDlg::execute( ObjectList& objects )
       getOperation() )->MakeChamferAll( myShape,
                                         mySpinBox[ SpinBox1 ]->GetValue() );
   else if ( anId == 1 )
-    anObj = GEOM::GEOM_ILocalOperations::_narrow(
-      getOperation() )->MakeChamferEdge( myShape,
-                                         mySpinBox[ SpinBox21 ]->GetValue(),
-                                         mySpinBox[ SpinBox22 ]->GetValue(),
-                                         myFace[ Face1 ],
-                                         myFace[ Face2 ] );
+    {
+      if ( flag )
+	  anObj = GEOM::GEOM_ILocalOperations::_narrow(
+		  getOperation() )->MakeChamferEdge( myShape,
+						     mySpinBox[ SpinBox21 ]->GetValue(),
+						     mySpinBox[ SpinBox22 ]->GetValue(),
+						     myFace[ Face1 ],
+						     myFace[ Face2 ] );
+      else
+	  anObj = GEOM::GEOM_ILocalOperations::_narrow(
+		  getOperation() )->MakeChamferEdgeAD( myShape,
+						       mySpinBox[ SpinBox23 ]->GetValue(),
+						       mySpinBox[ SpinBox24 ]->GetValue() * PI180,
+						       myFace[ Face1 ],
+						       myFace[ Face2 ]);
+    }
   else if ( anId == 2 )
   {
-
-    int i = 0;
     GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
     anArray->length( myFaces.Extent() );
-
-
     for ( int i = 1, n = myFaces.Extent(); i <= n; i++ )
-      anArray[ i - 1 ] = myFaces( i );             
-    
+      anArray[ i - 1 ] = myFaces( i );
+    if ( flag )
     anObj = GEOM::GEOM_ILocalOperations::_narrow(
       getOperation() )->MakeChamferFaces( myShape,
                                           mySpinBox[ SpinBox31 ]->GetValue(),
                                           mySpinBox[ SpinBox32 ]->GetValue(),
                                           anArray );
+    else
+    anObj = GEOM::GEOM_ILocalOperations::_narrow(
+      getOperation() )->MakeChamferFacesAD( myShape,
+                                            mySpinBox[ SpinBox33 ]->GetValue(),
+                                            mySpinBox[ SpinBox34 ]->GetValue() * PI180,
+                                            anArray );
   }
-
+  else if ( anId == 3 )
+  {
+    GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
+    anArray->length( myEdges.Extent() );
+    for ( int i = 1, n = myEdges.Extent(); i <= n; i++ )
+      anArray[ i - 1 ] = myEdges( i );             
+    if ( flag )
+      anObj = GEOM::GEOM_ILocalOperations::_narrow(
+      getOperation() )->MakeChamferEdges( myShape, mySpinBox[ SpinBox41 ]->GetValue(),
+                                          mySpinBox[ SpinBox42 ]->GetValue(), anArray );
+    else
+      anObj = GEOM::GEOM_ILocalOperations::_narrow(
+      getOperation() )->MakeChamferEdgesAD( myShape, mySpinBox[ SpinBox43 ]->GetValue(),
+                                            mySpinBox[ SpinBox44 ]->GetValue() * PI180, anArray );
+  }
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
 
   return true;
 }
-
-
-
-
-
-
-
-
-

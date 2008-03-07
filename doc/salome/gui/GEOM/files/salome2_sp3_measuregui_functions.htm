@@ -3,7 +3,7 @@
 <html>
 
 <head>
-<title>Titre</title>
+<title>Using Measurement Tools</title>
 <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
 <meta name="generator" content="RoboHelp by eHelp Corporation www.ehelp.com">
 <link rel="stylesheet" href="../default_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
@@ -38,7 +38,7 @@ img_whs16 { border:none; width:360px; height:328px; float:none; border-style:non
 p.whs17 { font-size:12pt; font-weight:normal; }
 img_whs18 { border:none; width:360px; height:290px; float:none; border-style:none; }
 img_whs19 { border:none; width:360px; height:405px; float:none; border-style:none; }
-img_whs20 { border:none; width:360px; height:309px; float:none; border-style:none; }
+img_whs20 { border:none; width:360px; height:337px; float:none; border-style:none; }
 p.whs21 { font-size:12pt; margin-left:40px; text-indent:-40px; }
 img_whs22 { border:none; width:25px; height:23px; border-style:none; }
 ul.whs23 { list-style:disc; }
@@ -174,15 +174,13 @@ if (window.writeIntopicBar)
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs1"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Description:</b> 
- Returns the coordinates of a point.</font></span></p>
+<p class="whs1"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Returns the 
+ coordinates of a point.</font></span></p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">Result:</b> Point 
  coordinates (X, Y, Z) in 3D space in the form of Python Tuple.</p>
-
-<p class="whs1">&nbsp;</p>
 
 <p class="whs1"><span style="font-weight: bold;"><B>TUI command:</B></span> 
  <span style="font-style: italic;"><I>geompy.PointCoordinates(Point)</I></span>, 
@@ -203,16 +201,13 @@ if (window.writeIntopicBar)
 
 <p class="whs9">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Description:</b> 
- Return the properties (Length, Surface &amp; Volume) of a definite geometrical 
- object.</p>
+<p class="whs1">Returns the properties (Length, Surface &amp; 
+ Volume) for the selected geometrical object.</p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">Result:</b> Display 
  Length, Surface &amp; Volume in the form of Python Tuple.</p>
-
-<p class="whs1">&nbsp;</p>
 
 <p class="whs1"><span style="font-weight: bold;"><B>TUI command:</B></span> 
  <span style="font-style: italic;"><I>geompy.BasicProperties(Shape)</I></span>, 
@@ -232,15 +227,13 @@ if (window.writeIntopicBar)
 
 <p class="whs9">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Description:</b> 
- Creates a gravity center of a shape and returns its coordinates.</p>
+<p class="whs1">Calculates and returns the coordinates of the 
+ gravity center for the selected geometrical object.</p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (vertex).</p>
-
-<p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
  </i><span style="font-style: italic;"><I>geompy.MakeCDG(Shape)</I></span>, where 
@@ -261,12 +254,12 @@ if (window.writeIntopicBar)
 
 <p class="whs7">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Description:</b> 
- Returns the inertia axis of a geometrical object.</p>
+<p class="whs1">Returns the axis of inertia for the selected 
+ geometrical object.</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Result:</b> Display 
+<p class="whs1"><b style="font-weight: bold;">Result:</b> Displays 
  the matrix and moments of inertia in the form of Python Tuple (I11, I12, 
  I13, </p>
 
@@ -301,16 +294,14 @@ if (window.writeIntopicBar)
 
 <p class="whs7">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Description:</b> 
- Returns the dimensions of the bounding box of a geometrical object.</p>
+<p class="whs1">Returns the dimensions of the bounding box 
+ for the selected geometrical object.</p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">Result:</b> Displays 
  the dimensions of the bounding box of a geometrical object in the form 
  of Python Tuple (Xmin, Xmax, Ymin, Ymax, Zmin, Zmax).</p>
-
-<p class="whs1">&nbsp;</p>
 
 <p class="whs15">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.BoundingBox(Shape)</I></span><span 
  style="font-weight: normal;">, where Shape is a shape for which a bounding 
@@ -330,13 +321,8 @@ if (window.writeIntopicBar)
 
 <p class="whs7">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Description:</b> 
- Returns the min. distance between 2 geometrical objects.</p>
-
-<p class="whs1">&nbsp;</p>
-
-<p class="whs1"><b style="font-weight: bold;">Result:</b> Displays 
- the min. distance.</p>
+<p class="whs1">Returns the minimum distance between two geometrical 
+ objects.</p>
 
 <p class="whs1">&nbsp;</p>
 
@@ -358,16 +344,14 @@ if (window.writeIntopicBar)
 
 <p class="whs9">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Description:</b> 
- Returns the tolerance of a geometrical object.</p>
+<p class="whs1">Returns the maximum and the minimum tolerance 
+ for the selected geometrical object.</p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">Result:</b> Displays 
  the tolerance values (FaceMinTol, FaceMaxTol, EgdeMinTol, EgdeMaxTol, 
  VertexMinTol, VertexMaxTol).</p>
-
-<p class="whs1">&nbsp;</p>
 
 <p class="whs15">TUI command: <span style="font-weight: normal; font-style: italic;"><I>geompy.Tolerance(Shape)</I></span><span 
  style="font-weight: normal;">, where Shape is a shape for which minimal 
@@ -387,13 +371,8 @@ if (window.writeIntopicBar)
 
 <p class="whs9">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Description:</b> 
- Returns the type of a geometrical object.</p>
-
-<p class="whs1">&nbsp;</p>
-
-<p class="whs1"><b style="font-weight: bold;">Result:</b> Displays 
- all elements composing your geometrical object.</p>
+<p class="whs1">Displays types and quantities of all elements 
+ composing the selected geometrical object.</p>
 
 <p class="whs1">&nbsp;</p>
 
@@ -416,24 +395,21 @@ if (window.writeIntopicBar)
 
 <p class="whs7">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Description:</b> 
- Returns True if this geometrical object is valid.</p>
+<p class="whs1">Checks the topology of the selected geometrical 
+ object and returns True if it is valid. <span style="font-weight: bold;"><B>Check 
+ also geometry</B></span> checkbox allows to test the geometry as well. </p>
 
 <p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">Result:</b> Boolean.</p>
 
-<p class="whs1">&nbsp;</p>
-
 <p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
- </i><span style="font-style: italic;"><I>geompy.CheckShape(Shape)</I></span>, 
- where is shape which is checked for validity.</p>
+ </i><span style="font-style: italic;"><I>geompy.(theShape, theIsCheckGeom 
+ = 0)</I></span>, where is shape which is checked for validity.</p>
 
 <p class="whs1">&nbsp;</p>
 
-<p class="whs11"><img src="../pics/measures9.png" x-maintain-ratio="TRUE" width="360px" height="309px" border="0" class="img_whs20"></p>
-
-<p class="whs11">&nbsp;</p>
+<p class="whs11"><img src="../pics/measures9.png" x-maintain-ratio="TRUE" width="360px" height="337px" border="0" class="img_whs20"></p>
 
 <p class="whs21">&nbsp;</p>
 
@@ -444,9 +420,9 @@ if (window.writeIntopicBar)
 
 <p class="whs21">&nbsp;</p>
 
-<p class="whs1"><b style="font-weight: bold;">Description:</b> 
- Checks whether a shape is a compound of glued blocks. To be considered 
- as a compound of blocks, the given shape must satisfy the following conditions:</p>
+<p class="whs1">Checks whether a shape is a compound of glued 
+ blocks. To be considered as a compound of blocks, the given shape must 
+ satisfy the following conditions:</p>
 
 <ul type="disc" class="whs23">
 	
@@ -484,8 +460,6 @@ if (window.writeIntopicBar)
 
 <p class="whs1"><b style="font-weight: bold;">Result:</b> Boolean; 
  highlight in the viewer.</p>
-
-<p class="whs1">&nbsp;</p>
 
 <p class="whs1"><b style="font-weight: bold;">TUI Command:</b><i> 
  </i><span style="font-style: italic;"><I>geompy.CheckCompoundOfBlocks(Compound). 

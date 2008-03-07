@@ -1,0 +1,87 @@
+/*!
+
+\page chamfer_operation_page Chamfer
+
+\n To produce a \b Chamfer in the <b>Main Menu</b> select 
+<b>Operations - > Transformation - > Chamfer</b>
+
+\n This operation allows you to make chamfer of the edges of a Shape.
+\n The \b Result will be a \b GEOM_Object.
+
+\n To create chamfer on all edges of the given shape, you need to
+define the <b>Main Object</b> to create a chamfer on and the \b
+Dimension (radius) of the chamfer.
+\n <b>TUI Command:</b> <em>geompy.MakeChamferAll(Shape, D)</em>
+\n <b>Arguments:</b> Name + 1 SHAPE + 1 value (Chamfer dimension).
+
+\image html chamfer1.png
+
+\image html chamfer_all.png
+
+\n In the algorithms below there exist two ways to define the \b
+Dimension of the Chamfer
+\n Firstly the \b Dimension can be defined via \b D1 and \D2, which
+represent the offset on the first and the second face forming the
+edge. 
+\n Secondly the \b Dimension can be defined via \b D, which represents
+the offset on the first face, and the \b Angle, which is the angle
+between the first face and the chamfer plane.   
+
+
+\n To create chamfer on the specified edges of the given shape,  you
+need to define the <b>Main Object</b> to create a fillet on, select
+the two faces to which belongs the necessary common edge in the viewer
+and define the \b Dimension of the Chamfer.
+\n <b>TUI Command:</b> <em>geompy.MakeChamferEdge(Shape, D1, D2,
+Face1, Face2),</em> where \em Shape is a shape to create a chamfer on,
+\em D1 is a chamfer size along \em Face1, \em D2 is a chamfer size
+along \em Face2, \em Face1 and \em Face2 are indices of faces in
+Shape.
+
+\n <b>Alternative TUI Command:</b> <em>geompy.MakeChamferEdge(Shape, D, Angle,
+Face1, Face2),</em> where \em D1 is a chamfer size along \em Face1 and
+\em Angle is the angle between Face1 and the chamfer plane.
+
+\image html chamfer2.png
+
+\image html chamfer_edge.png
+
+\n To create chamfer on the specified faces of the given shape,  you need
+to define the <b>Main Object</b> to create a fillet on, select the
+necessary faces the OCC Viewer and define the \b Dimension of the
+Chamfer.
+\n <b>TUI Command:</b> <em>geompy.MakeChamferFaces(Shape, D1, D2,
+ListOfFaceID),</em> where \em Shape is a shape to create chamfer on,
+\em D1 and D2 are chamfer sizes along faces from  \em
+ListOfFaceID. For each Edge Face1 and Face2 are defined basing
+on their indices.
+
+\n <b>Alternative TUI Command:</b> <em>geompy.MakeChamferFaces(Shape, D, Angle,
+ListOfFaceID),</em> where \em D1 is a chamfer size along \em Face1 and
+\em Angle is the angle between Face1 and the chamfer plane.
+
+\image html chamfer3.png
+
+\image html chamfer_faces.png
+
+\n To create chamfer on an arbitrary set of edges of the given shape
+to define the <b>Main Object</b> to create a fillet on, select the
+necessary edges the OCC Viewer and define the \b Dimension of the
+Chamfer.
+\n <b>TUI Command:</b> <em>geompy.MakeChamferEdges(Shape, D1, D2,
+ListOfEdgeID),</em> where \em Shape is a shape to create chamfer on,
+\em D1 and D2 are chamfer sizes along faces defined by the algorithm
+basing on \em ListOfEdgeID, which is a list of indices of edges in
+\em Shape. For each Edge the algorithm selects Face1 and Face2 basing
+on their indices.
+
+\n <b>Alternative TUI Command:</b> <em>geompy.MakeChamferEdges(Shape, D, Angle,
+ListOfEdgeID),</em> where \em D1 is a chamfer size along \em Face1 and
+\em Angle is the angle between Face1 and the chamfer plane. 
+
+\image html chamfer4.png 
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_chamfer "Transformation Operations".
+
+*/

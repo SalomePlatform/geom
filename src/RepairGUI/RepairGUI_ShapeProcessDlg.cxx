@@ -57,7 +57,7 @@ RepairGUI_ShapeProcessDlg::RepairGUI_ShapeProcessDlg(GeometryGUI* theGeometryGUI
   :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
                      WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  setHelpFileName("shape_processing.htm");
+  setHelpFileName("shape_processing_operation_page.html");
   init();
 }
 

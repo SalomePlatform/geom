@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -61,6 +61,7 @@
 
 #include <Prs3d_Drawer.hxx>
 #include <Prs3d_IsoAspect.hxx>
+#include <Aspect_TypeOfMarker.hxx>
 #include <OSD_SharedLibrary.hxx>
 
 #include <utilities.h>
@@ -96,7 +97,7 @@ bool GeometryGUI::InitGeomGen()
 
 //=======================================================================
 // function : ClientSObjectToObject
-// purpose  : 
+// purpose  :
 //=======================================================================
 CORBA::Object_var GeometryGUI::ClientSObjectToObject (_PTR(SObject) theSObject)
 {
@@ -116,7 +117,7 @@ CORBA::Object_var GeometryGUI::ClientSObjectToObject (_PTR(SObject) theSObject)
 
 //=======================================================================
 // function : ClientStudyToStudy
-// purpose  : 
+// purpose  :
 //=======================================================================
 SALOMEDS::Study_var GeometryGUI::ClientStudyToStudy (_PTR(Study) theStudy)
 {
@@ -171,12 +172,12 @@ GeometryGUI::GeometryGUI() :
   SalomeApp_Module( "GEOM" )
 {
   if ( CORBA::is_nil( myComponentGeom ) )
-  { 
+  {
     SALOME_LifeCycleCORBA* ls = new SALOME_LifeCycleCORBA( getApp()->namingService() );
     Engines::Component_var comp = ls->FindOrLoad_Component( "FactoryServer", "GEOM" );
     myComponentGeom  = GEOM::GEOM_Gen::_narrow( comp );
   }
-  
+
   myState           = -1;
   myActiveDialogBox = 0;
   myFatherior       = "";
@@ -189,6 +190,7 @@ GeometryGUI::GeometryGUI() :
   myVTKSelectors.setAutoDelete( true );
 
   myDisplayer = 0;
+  myLocalSelectionMode = GEOM_ALLOBJECTS;
 }
 
 //=======================================================================
@@ -210,11 +212,11 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
     // try to load library if it is not loaded yet
     QCString libs;
 #ifndef WNT
-    if( ( libs = getenv( "LD_LIBRARY_PATH" ) ) ) {
-	  QStringList dirList = QStringList::split( ":", libs, false ); // skip empty entries
+    if ( (libs = getenv( "LD_LIBRARY_PATH" )) ) {
+      QStringList dirList = QStringList::split( ":", libs, false ); // skip empty entries
 #else
-	if( ( libs = getenv( "PATH" ) ) ) {
-	  QStringList dirList = QStringList::split( ";", libs, false ); // skip empty entries
+      if ( (libs = getenv( "PATH" )) ) {
+        QStringList dirList = QStringList::split( ";", libs, false ); // skip empty entries
 #endif
       for( int i = dirList.count()-1; i >= 0; i-- ) {
 	QString dir = dirList[ i ];
@@ -350,7 +352,7 @@ void GeometryGUI::OnGUIEvent( int id )
   bool ViewVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
   // if current viewframe is not of OCC and not of VTK type - return immediately
   // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
-  bool NotViewerDependentCommand = ( id == 901 || id == 216 || id == 213 ); 
+  bool NotViewerDependentCommand = ( id == 901 || id == 216 || id == 213 );
   if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommand )
       return;
 
@@ -368,6 +370,14 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 121  ||  // MENU FILE - EXPORT BREP
       id == 122  ||  // MENU FILE - EXPORT IGES
       id == 123  ||  // MENU FILE - EXPORT STEP
+      id == 2171 ||  // POPUP VIEWER - SELECT ONLY - VERTEX
+      id == 2172 ||  // POPUP VIEWER - SELECT ONLY - EDGE
+      id == 2173 ||  // POPUP VIEWER - SELECT ONLY - WIRE
+      id == 2174 ||  // POPUP VIEWER - SELECT ONLY - FACE
+      id == 2175 ||  // POPUP VIEWER - SELECT ONLY - SHELL
+      id == 2176 ||  // POPUP VIEWER - SELECT ONLY - SOLID
+      id == 2177 ||  // POPUP VIEWER - SELECT ONLY - COMPOUND
+      id == 2178 ||  // POPUP VIEWER - SELECT ONLY - SELECT ALL
       id == 31   ||  // MENU EDIT - COPY
       id == 33   ||  // MENU EDIT - DELETE
       id == 411  ||  // MENU SETTINGS - ADD IN STUDY
@@ -378,6 +388,8 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 8032 ||  // POPUP VIEWER - COLOR
       id == 8033 ||  // POPUP VIEWER - TRANSPARENCY
       id == 8034 ||  // POPUP VIEWER - ISOS
+      id == 8035 ||  // POPUP VIEWER - AUTO COLOR
+      id == 8036 ||  // POPUP VIEWER - DISABLE AUTO COLOR
       id == 804  ||  // POPUP VIEWER - ADD IN STUDY
       id == 901  ||  // OBJECT BROWSER - RENAME
       id == 9024 ) { // OBJECT BROWSER - OPEN
@@ -486,7 +498,7 @@ void GeometryGUI::OnGUIEvent( int id )
   else if( id == 503 ||   // MENU OPERATION - PARTITION
 	   id == 504 ||   // MENU OPERATION - ARCHIMEDE
 	   id == 505 ||   // MENU OPERATION - FILLET
-	   id == 506 ||   // MENU OPERATION - CHAMFER  
+	   id == 506 ||   // MENU OPERATION - CHAMFER
 	   id == 507 ) {  // MENU OPERATION - CLIPPING RANGE
 #ifndef WNT
 	library = getLibrary( "libOperationGUI.so" );
@@ -501,9 +513,11 @@ void GeometryGUI::OnGUIEvent( int id )
            id == 606 ||   // MENU REPAIR - CLOSE CONTOUR
            id == 607 ||   // MENU REPAIR - REMOVE INTERNAL WIRES
            id == 608 ||   // MENU REPAIR - ADD POINT ON EDGE
-           id == 609 ||   // MENU REPAIR - FREE BOUNDARIES
-           id == 610 ||   // MENU REPAIR - FREE FACES
-	   id == 602 ) {  // MENU REPAIR - GLUE FACES
+           id == 609 ||   // MENU MEASURE - FREE BOUNDARIES
+           id == 610 ||   // MENU MEASURE - FREE FACES
+           id == 611 ||   // MENU REPAIR - CHANGE ORIENTATION
+	   id == 602 ||   // MENU REPAIR - GLUE FACES
+	   id == 612 ) {  // MENU REPAIR - REMOVE EXTRA EDGES
 #ifndef WNT
 	library = getLibrary( "libRepairGUI.so" );
 #else
@@ -513,8 +527,10 @@ void GeometryGUI::OnGUIEvent( int id )
   else if( id == 701   ||  // MENU MEASURE - PROPERTIES
 	   id == 702   ||  // MENU MEASURE - CDG
 	   id == 703   ||  // MENU MEASURE - INERTIA
+	   id == 704   ||  // MENU MEASURE - NORMALE
 	   id == 7041  ||  // MENU MEASURE - BOUNDING BOX
 	   id == 7042  ||  // MENU MEASURE - MIN DISTANCE
+	   id == 7043  ||  // MENU MEASURE - ANGLE
 	   id == 705   ||  // MENU MEASURE - TOLERANCE
 	   id == 706   ||  // MENU MEASURE - WHATIS
 	   id == 707   ||  // MENU MEASURE - CHECK
@@ -548,9 +564,9 @@ void GeometryGUI::OnGUIEvent( int id )
   }
 
   // call method of corresponding GUI library
-  if ( library ) 
+  if ( library )
     library->OnGUIEvent( id, desk );
-  else 
+  else
     SUIT_MessageBox::error1( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
 }
 
@@ -577,7 +593,7 @@ void GeometryGUI::OnKeyPress( SUIT_ViewWindow* win, QKeyEvent* pe )
 // purpose  : Manages mouse move events [static]
 //=================================================================================
 void GeometryGUI::OnMouseMove( SUIT_ViewWindow* win, QMouseEvent* pe )
-{  
+{
   GUIMap::Iterator it;
   bool bOk = true;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it ) {
@@ -636,7 +652,7 @@ bool GeometryGUI::SetSettings()
 {
   QMenuBar*     Mb = parent->getMainMenuBar();
   SUIT_Study*   ActiveStudy = application()->activeStudy();
-    
+
 // Wireframe or Shading
   int DisplayMode = 0;
   SUIT_ViewWindow* window = application()->desktop()->activeWindow();
@@ -670,16 +686,16 @@ bool GeometryGUI::SetSettings()
   //  if(!AddInStudy.isEmpty())
   //    Settings_AddInStudy = AddInStudy.toInt();
   //  else
-  
+
   Settings_AddInStudy = 1;
   Mb->setItemChecked(411, Settings_AddInStudy);
 
-  // step value 
+  // step value
   QString S = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
   if(S.isEmpty())
     QAD_CONFIG->addSetting("Geometry:SettingsGeomStep", "100");
 
-  // isos 
+  // isos
   int count = ActiveStudy->getStudyFramesCount();
   for(int i = 0; i < count; i++) {
     if(ActiveStudy->getStudyFrame(i)->getTypeView() == VIEW_OCC) {
@@ -703,22 +719,22 @@ bool GeometryGUI::SetSettings()
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
     bOk = bOk && it.data()->SetSettings( parent );
-    
-  // MZN: Enable/disable "Clipping range" menu item(from GEOM_CLIPPING variable)	
+
+  // MZN: Enable/disable "Clipping range" menu item(from GEOM_CLIPPING variable)
   if (getenv( "GEOM_CLIPPING" ) == NULL)
     {
       QMenuItem* mi = Mb->findItem(50);
       if (mi && mi->popup())
-      mi->popup()->removeItem(507);    	
-    } 
-    
+      mi->popup()->removeItem(507);
+    }
+
   return bOk;
 }
 */
 
 //=======================================================================
 // function : createGeomAction
-// purpose  : 
+// purpose  :
 //=======================================================================
 void GeometryGUI::createGeomAction( const int id, const QString& po_id, const QString& icon_id, const int key, const bool toggle  )
 {
@@ -726,7 +742,7 @@ void GeometryGUI::createGeomAction( const int id, const QString& po_id, const QS
   QWidget* parent = application()->desktop();
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QPixmap pix;
-  if ( icon_id.length() ) 
+  if ( icon_id.length() )
     pix = resMgr->loadPixmap( "GEOM", tr( icon_id ) );
   else
     pix = resMgr->loadPixmap( "GEOM", tr( QString( "ICO_" )+po_id ), false );
@@ -755,7 +771,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 111, "IMPORT", "", (CTRL + Key_I) );
   createGeomAction( 121, "EXPORT", "", (CTRL + Key_E) );
 
-  createGeomAction( 33, "DELETE" );
+  createGeomAction( 33, "DELETE", "", Key_Delete );
 
   createGeomAction( 4011, "POINT" );
   createGeomAction( 4012, "LINE" );
@@ -829,21 +845,26 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 608, "POINT_ON_EDGE" );
   createGeomAction( 609, "CHECK_FREE_BNDS" );
   createGeomAction( 610, "CHECK_FREE_FACES" );
-  
+  createGeomAction( 611, "CHANGE_ORIENTATION" );
+  createGeomAction( 612, "REMOVE_EXTRA_EDGES" );
+
   createGeomAction( 708, "POINT_COORDS" );
   createGeomAction( 701, "BASIC_PROPS" );
   createGeomAction( 702, "MASS_CENTER" );
   createGeomAction( 703, "INERTIA" );
+  createGeomAction( 704, "NORMALE" );
   createGeomAction( 7041, "BND_BOX" );
   createGeomAction( 7042, "MIN_DIST" );
+  createGeomAction( 7043, "MEASURE_ANGLE" );
 
   createGeomAction( 705, "TOLERANCE" );
   createGeomAction( 706, "WHAT_IS" );
   createGeomAction( 707, "CHECK" );
   createGeomAction( 7072, "CHECK_COMPOUND" );
 
+#ifdef _DEBUG_ // PAL16821
   createGeomAction( 5103, "CHECK_GEOMETRY" );
-  
+#endif
   createGeomAction( 412, "SHADING_COLOR" );
   createGeomAction( 413, "ISOS" );
   createGeomAction( 414, "STEP_VALUE" );
@@ -852,15 +873,25 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 212, "DISPLAY_ALL" );
   createGeomAction( 214, "ERASE_ALL" );
   createGeomAction( 216, "DISPLAY" );
+  createGeomAction( 2171, "VERTEX_SEL_ONLY" ,"", 0, true );
+  createGeomAction( 2172, "EDGE_SEL_ONLY", "", 0, true );
+  createGeomAction( 2173, "WIRE_SEL_ONLY", "",  0, true );
+  createGeomAction( 2174, "FACE_SEL_ONLY", "", 0, true );
+  createGeomAction( 2175, "SHELL_SEL_ONLY", "",  0, true );
+  createGeomAction( 2176, "SOLID_SEL_ONLY", "", 0, true );
+  createGeomAction( 2177, "COMPOUND_SEL_ONLY", "",  0, true );
+  createGeomAction( 2178, "ALL_SEL_ONLY", "",  0, true );
   createGeomAction( 213, "DISPLAY_ONLY" );
   createGeomAction( 215, "ERASE" );
 
-  createGeomAction( 901, "POP_RENAME" );
+  createGeomAction( 901, "POP_RENAME", "", Key_F2 );
   createGeomAction( 80311, "POP_WIREFRAME", "", 0, true );
   createGeomAction( 80312, "POP_SHADING", "", 0, true );
   createGeomAction( 8032, "POP_COLOR" );
   createGeomAction( 8033, "POP_TRANSPARENCY" );
   createGeomAction( 8034, "POP_ISOS" );
+  createGeomAction( 8035, "POP_AUTO_COLOR" );
+  createGeomAction( 8036, "POP_DISABLE_AUTO_COLOR" );
   createGeomAction( 8001, "POP_CREATE_GROUP" );
 
   // make wireframe-shading items to be exclusive (only one at a time is selected)
@@ -894,124 +925,134 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 4020, basicId, -1 );
 
   int primId = createMenu( tr( "MEN_PRIMITIVES" ), newEntId, -1 );
-  createMenu( 4021, primId, -1 );  
-  createMenu( 4022, primId, -1 );  
-  createMenu( 4023, primId, -1 );  
-  createMenu( 4024, primId, -1 );  
-  createMenu( 4025, primId, -1 );  
+  createMenu( 4021, primId, -1 );
+  createMenu( 4022, primId, -1 );
+  createMenu( 4023, primId, -1 );
+  createMenu( 4024, primId, -1 );
+  createMenu( 4025, primId, -1 );
 
   int genId = createMenu( tr( "MEN_GENERATION" ), newEntId, -1 );
-  createMenu( 4031, genId, -1 );  
-  createMenu( 4032, genId, -1 );  
-  createMenu( 4033, genId, -1 );  
-  createMenu( 4034, genId, -1 );  
+  createMenu( 4031, genId, -1 );
+  createMenu( 4032, genId, -1 );
+  createMenu( 4033, genId, -1 );
+  createMenu( 4034, genId, -1 );
   createMenu( separator(), newEntId, -1 );
 
   int groupId = createMenu( tr( "MEN_GROUP" ), newEntId, -1 );
-  createMenu( 800, groupId, -1 );  
-  createMenu( 801, groupId, -1 );  
+  createMenu( 800, groupId, -1 );
+  createMenu( 801, groupId, -1 );
   createMenu( separator(), newEntId, -1 );
 
   int blocksId = createMenu( tr( "MEN_BLOCKS" ), newEntId, -1 );
-  createMenu( 9997, blocksId, -1 );  
-  createMenu( 9999, blocksId, -1 );  
+  createMenu( 9997, blocksId, -1 );
+  createMenu( 9999, blocksId, -1 );
 
   createMenu( separator(), newEntId, -1 );
-  createMenu( 404, newEntId, -1 );  
+  createMenu( 404, newEntId, -1 );
   createMenu( separator(), newEntId, -1 );
-  createMenu( 407, newEntId, -1 );  
+  createMenu( 407, newEntId, -1 );
 
   int buildId = createMenu( tr( "MEN_BUILD" ), newEntId, -1 );
-  createMenu( 4081, buildId, -1 );  
-  createMenu( 4082, buildId, -1 );  
-  createMenu( 4083, buildId, -1 );  
-  createMenu( 4084, buildId, -1 );  
-  createMenu( 4085, buildId, -1 );  
-  createMenu( 4086, buildId, -1 );  
+  createMenu( 4081, buildId, -1 );
+  createMenu( 4082, buildId, -1 );
+  createMenu( 4083, buildId, -1 );
+  createMenu( 4084, buildId, -1 );
+  createMenu( 4085, buildId, -1 );
+  createMenu( 4086, buildId, -1 );
 
   int operId = createMenu( tr( "MEN_OPERATIONS" ), -1, -1, 10 );
 
   int boolId = createMenu( tr( "MEN_BOOLEAN" ), operId, -1 );
-  createMenu( 5011, boolId, -1 );  
-  createMenu( 5012, boolId, -1 );  
-  createMenu( 5013, boolId, -1 );  
-  createMenu( 5014, boolId, -1 );  
+  createMenu( 5011, boolId, -1 );
+  createMenu( 5012, boolId, -1 );
+  createMenu( 5013, boolId, -1 );
+  createMenu( 5014, boolId, -1 );
 
   int transId = createMenu( tr( "MEN_TRANSFORMATION" ), operId, -1 );
-  createMenu( 5021, transId, -1 );  
-  createMenu( 5022, transId, -1 );  
-  createMenu( 5023, transId, -1 );  
-  createMenu( 5024, transId, -1 );  
-  createMenu( 5025, transId, -1 );  
-  createMenu( 5026, transId, -1 );  
+  createMenu( 5021, transId, -1 );
+  createMenu( 5022, transId, -1 );
+  createMenu( 5023, transId, -1 );
+  createMenu( 5024, transId, -1 );
+  createMenu( 5025, transId, -1 );
+  createMenu( 5026, transId, -1 );
   createMenu( separator(), transId, -1 );
-  createMenu( 5027, transId, -1 );  
-  createMenu( 5028, transId, -1 );  
+  createMenu( 5027, transId, -1 );
+  createMenu( 5028, transId, -1 );
 
-  createMenu( 503, operId, -1 );  
-  createMenu( 504, operId, -1 );  
+  createMenu( 503, operId, -1 );
+  createMenu( 504, operId, -1 );
   createMenu( separator(), operId, -1 );
-  createMenu( 505, transId, -1 );  
-  createMenu( 506, transId, -1 );  
-  //createMenu( 507, transId, -1 );  
+  createMenu( 505, transId, -1 );
+  createMenu( 506, transId, -1 );
+  //createMenu( 507, transId, -1 );
 
   int blockId = createMenu( tr( "MEN_BLOCKS" ), operId, -1 );
-  createMenu( 9998, blockId, -1 );  
-  createMenu( 9995, blockId, -1 );  
-  createMenu( 99991, blockId, -1 );  
+  createMenu( 9998, blockId, -1 );
+  createMenu( 9995, blockId, -1 );
+  createMenu( 99991, blockId, -1 );
 
   int repairId = createMenu( tr( "MEN_REPAIR" ), -1, -1, 10 );
-  createMenu( 605, repairId, -1 );  
-  createMenu( 603, repairId, -1 );  
-  createMenu( 606, repairId, -1 );  
-  createMenu( 607, repairId, -1 );  
-  createMenu( 604, repairId, -1 );  
-  createMenu( 601, repairId, -1 );  
-  createMenu( 602, repairId, -1 );  
-  createMenu( 608, repairId, -1 );  
-  createMenu( 609, repairId, -1 );  
-  createMenu( 610, repairId, -1 );  
+  createMenu( 605, repairId, -1 );
+  createMenu( 603, repairId, -1 );
+  createMenu( 606, repairId, -1 );
+  createMenu( 607, repairId, -1 );
+  createMenu( 604, repairId, -1 );
+  createMenu( 601, repairId, -1 );
+  createMenu( 602, repairId, -1 );
+  createMenu( 608, repairId, -1 );
+  //createMenu( 609, repairId, -1 );
+  //createMenu( 610, repairId, -1 );
+  createMenu( 611, repairId, -1 );
+  createMenu( 612, repairId, -1 );
 
   int measurId = createMenu( tr( "MEN_MEASURES" ), -1, -1, 10 );
-  createMenu( 708, measurId, -1 );  
-  createMenu( 701, measurId, -1 );  
+  createMenu( 708, measurId, -1 );
+  createMenu( 701, measurId, -1 );
   createMenu( separator(), measurId, -1 );
-  createMenu( 702, measurId, -1 );  
-  createMenu( 703, measurId, -1 );  
+  createMenu( 702, measurId, -1 );
+  createMenu( 703, measurId, -1 );
+  createMenu( 704, measurId, -1 );
+  // NPAL16572: move "Check free boundaries" and "Check free faces" from "Repair" to "Measure"
+  createMenu( separator(), measurId, -1 );
+  createMenu( 609, measurId, -1 );
+  createMenu( 610, measurId, -1 );
+  // NPAL16572 END
   createMenu( separator(), measurId, -1 );
 
   int dimId = createMenu( tr( "MEN_DIMENSIONS" ), measurId, -1 );
-  createMenu( 7041, dimId, -1 );  
+  createMenu( 7041, dimId, -1 );
   createMenu( 7042, dimId, -1 );
+  createMenu( 7043, dimId, -1 );
   createMenu( separator(), measurId, -1 );
-  
-  createMenu( 705, measurId, -1 );  
-  createMenu( separator(), measurId, -1 );
-  createMenu( 706, measurId, -1 );  
-  createMenu( 707, measurId, -1 );  
-  createMenu( 7072, measurId, -1 );  
 
+  createMenu( 705, measurId, -1 );
+  createMenu( separator(), measurId, -1 );
+  createMenu( 706, measurId, -1 );
+  createMenu( 707, measurId, -1 );
+  createMenu( 7072, measurId, -1 );
+
+#ifdef _DEBUG_ // PAL16821
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
   createMenu( separator(), toolsId, -1 );
-  createMenu( 5103, toolsId, -1 );  
-  
+  createMenu( 5103, toolsId, -1 );
+#endif
   //int prefId = createMenu( tr( "MEN_PREFERENCES" ), -1, -1, 50 );
   //createMenu( separator(), prefId, -1 );
   //int geomId = createMenu( tr( "MEN_PREFERENCES_GEOM" ), prefId, -1 );
-  //createMenu( 412, geomId, -1 );  
-  //createMenu( 413, geomId, -1 );  
-  //createMenu( 414, geomId, -1 );  
+  //createMenu( 412, geomId, -1 );
+  //createMenu( 413, geomId, -1 );
+  //createMenu( 414, geomId, -1 );
   //createMenu( separator(), prefId, -1 );
 
   int viewId = createMenu( tr( "MEN_VIEW" ), -1, -1 );
   createMenu( separator(), viewId, -1 );
 
   int dispmodeId = createMenu( tr( "MEN_DISPLAY_MODE" ), viewId, -1 );
-  createMenu( 211, dispmodeId, -1 );  
-  
+  createMenu( 211, dispmodeId, -1 );
+
   createMenu( separator(), viewId, -1 );
-  createMenu( 212, viewId, -1 );  
-  createMenu( 214, viewId, -1 );  
+  createMenu( 212, viewId, -1 );
+  createMenu( 214, viewId, -1 );
   createMenu( separator(), viewId, -1 );
 
 /*
@@ -1019,8 +1060,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   because of these items are accessible through object browser and viewers
   we have removed they from main menu
 
-  createMenu( 216, viewId, -1 );  
-  createMenu( 213, viewId, -1 );  
+  createMenu( 216, viewId, -1 );
+  createMenu( 213, viewId, -1 );
   createMenu( 215, viewId, -1 );
 */
 
@@ -1039,59 +1080,76 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( 4020, basicTbId );
 
   int primTbId = createTool( tr( "TOOL_PRIMITIVES" ) );
-  createTool( 4021, primTbId );  
-  createTool( 4022, primTbId );  
-  createTool( 4023, primTbId );  
-  createTool( 4024, primTbId );  
-  createTool( 4025, primTbId );  
+  createTool( 4021, primTbId );
+  createTool( 4022, primTbId );
+  createTool( 4023, primTbId );
+  createTool( 4024, primTbId );
+  createTool( 4025, primTbId );
 
   int boolTbId = createTool( tr( "TOOL_BOOLEAN" ) );
-  createTool( 5011, boolTbId );  
-  createTool( 5012, boolTbId );  
-  createTool( 5013, boolTbId );  
-  createTool( 5014, boolTbId );  
+  createTool( 5011, boolTbId );
+  createTool( 5012, boolTbId );
+  createTool( 5013, boolTbId );
+  createTool( 5014, boolTbId );
 
   int genTbId = createTool( tr( "TOOL_GENERATION" ) );
-  createTool( 4031, genTbId );  
-  createTool( 4032, genTbId );  
-  createTool( 4033, genTbId );  
-  createTool( 4034, genTbId );  
+  createTool( 4031, genTbId );
+  createTool( 4032, genTbId );
+  createTool( 4033, genTbId );
+  createTool( 4034, genTbId );
 
   int transTbId = createTool( tr( "TOOL_TRANSFORMATION" ) );
-  createTool( 5021, transTbId );  
-  createTool( 5022, transTbId );  
-  createTool( 5023, transTbId );  
-  createTool( 5024, transTbId );  
-  createTool( 5025, transTbId );  
-  createTool( 5026, transTbId );  
+  createTool( 5021, transTbId );
+  createTool( 5022, transTbId );
+  createTool( 5023, transTbId );
+  createTool( 5024, transTbId );
+  createTool( 5025, transTbId );
+  createTool( 5026, transTbId );
   createTool( separator(), transTbId );
-  createTool( 5027, transTbId );  
+  createTool( 5027, transTbId );
   createTool( 5028, transTbId );
 
+  // ---- create popup menus --------------------------
+
+  QString clientOCCorVTK = "(client='OCCViewer' or client='VTKViewer')";
+  QString clientOCCorVTK_AndSomeVisible = clientOCCorVTK + " and selcount>0 and isVisible";
+
+  QString clientOCCorVTKorOB = "(client='ObjectBrowser' or client='OCCViewer' or client='VTKViewer')";
+  QString clientOCCorVTKorOB_AndSomeVisible = clientOCCorVTKorOB + " and selcount>0 and isVisible";
+
+  QString autoColorPrefix =
+    "(client='ObjectBrowser' or client='OCCViewer') and type='Shape' and selcount=1 and isOCC=true";
+
   QtxPopupMgr* mgr = popupMgr();
-  mgr->insert( action(  901 ), -1, -1 ); // rename
+  mgr->insert( action(  901 ), -1, -1 );  // rename
   mgr->setRule( action( 901 ), "$type in {'Shape' 'Group'} and selcount=1", true );
+  mgr->insert( action(   33 ), -1, -1 );  // delete
+  mgr->setRule( action(  33 ), "$type in {'Shape' 'Group'} and selcount>0", true );
   mgr->insert( action(  8001 ), -1, -1 ); // create group
   mgr->setRule( action( 8001 ), "client='ObjectBrowser' and type='Shape' and selcount=1 and isOCC=true", true );
-  mgr->insert( action(  801 ), -1, -1 ); // edit group
+  mgr->insert( action(  801 ), -1, -1 );  // edit group
   mgr->setRule( action( 801 ),  "client='ObjectBrowser' and type='Group' and selcount=1 and isOCC=true", true );
-  mgr->insert( separator(), -1, -1 );        // -----------
+  mgr->insert( separator(), -1, -1 );     // -----------
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  80311 ), dispmodeId, -1 ); // wireframe
-  mgr->setRule( action( 80311 ), "(client='OCCViewer' or client='VTKViewer') and selcount>0 and isVisible", true );
-  mgr->setRule( action( 80311 ), "(client='OCCViewer' or client='VTKViewer') and displaymode='Wireframe'", false );
+  mgr->setRule( action( 80311 ), clientOCCorVTK_AndSomeVisible, true );
+  mgr->setRule( action( 80311 ), clientOCCorVTK + " and displaymode='Wireframe'", false );
   mgr->insert( action(  80312 ), dispmodeId, -1 ); // shading
-  mgr->setRule( action( 80312 ), "(client='OCCViewer' or client='VTKViewer') and selcount>0 and isVisible", true );
-  mgr->setRule( action( 80312 ), "(client='OCCViewer' or client='VTKViewer') and displaymode='Shading'", false );
-  mgr->insert( separator(), -1, -1 );        // -----------
+  mgr->setRule( action( 80312 ), clientOCCorVTK_AndSomeVisible, true );
+  mgr->setRule( action( 80312 ), clientOCCorVTK + " and displaymode='Shading'", false );
+  mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  8032 ), -1, -1 ); // color
-  mgr->setRule( action( 8032 ), "(client='OCCViewer' or client='VTKViewer') and selcount>0 and isVisible", true );
+  mgr->setRule( action( 8032 ), clientOCCorVTKorOB_AndSomeVisible + " and ($component={'GEOM'})", true );
   mgr->insert( action(  8033 ), -1, -1 ); // transparency
-  mgr->setRule( action( 8033 ), "(client='OCCViewer' or client='VTKViewer') and selcount>0 and isVisible", true );
+  mgr->setRule( action( 8033 ), clientOCCorVTK_AndSomeVisible, true );
   mgr->insert( action(  8034 ), -1, -1 ); // isos
-  mgr->setRule( action( 8034 ), "client='OCCViewer' and selcount>0 and isVisible", true );
-  mgr->insert( separator(), -1, -1 );        // -----------
-  
+  mgr->setRule( action( 8034 ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible", true );
+  mgr->insert( separator(), -1, -1 );     // -----------
+  mgr->insert( action(  8035 ), -1, -1 ); // auto color
+  mgr->setRule( action( 8035 ), autoColorPrefix + " and isAutoColor=false", true );
+  mgr->insert( action(  8036 ), -1, -1 ); // disable auto color
+  mgr->setRule( action( 8036 ), autoColorPrefix + " and isAutoColor=true", true );
+  mgr->insert( separator(), -1, -1 );     // -----------
 
 
   QString canDisplay = "($component={'GEOM'}) and (selcount>0) and ({true} in $canBeDisplayed) ",
@@ -1106,7 +1164,36 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( 215 ), rule.arg( types ).arg( "isVisible" ), true );
 
   mgr->insert( action(  214 ), -1, -1 ); // erase All
-  mgr->setRule( action( 214 ), "client='OCCViewer' or client='VTKViewer'", true );
+  mgr->setRule( action( 214 ), clientOCCorVTK, true );
+
+  QString selectOnly = "(client='OCCViewer' or client='VTKViewer') and (selcount=0)";
+
+  int selectolnyId = mgr->insert( tr("MEN_SELECT_ONLY"), -1, -1);                //select only menu
+  mgr->insert( action(2171), selectolnyId, -1);                                  //Vertex
+  mgr->setRule(action(2171), selectOnly, true);
+  mgr->setRule(action(2171), selectOnly + " and selectionmode='VERTEX'", false);
+  mgr->insert( action(2172), selectolnyId, -1);                                  //Edge
+  mgr->setRule(action(2172), selectOnly, true);
+  mgr->setRule(action(2172), selectOnly + " and selectionmode='EDGE'", false);
+  mgr->insert( action(2173), selectolnyId, -1);                                  //Wire
+  mgr->setRule(action(2173), selectOnly, true);
+  mgr->setRule(action(2173), selectOnly + " and selectionmode='WIRE'", false);
+  mgr->insert( action(2174), selectolnyId, -1);                                  //Face
+  mgr->setRule(action(2174), selectOnly, true);
+  mgr->setRule(action(2174), selectOnly + " and selectionmode='FACE'", false);
+  mgr->insert( action(2175), selectolnyId, -1);                                  //Shell
+  mgr->setRule(action(2175), selectOnly, true);
+  mgr->setRule(action(2175), selectOnly + " and selectionmode='SHELL'", false);
+  mgr->insert( action(2176), selectolnyId, -1);                                  //Solid
+  mgr->setRule(action(2176), selectOnly, true);
+  mgr->setRule(action(2176), selectOnly + " and selectionmode='SOLID'", false);
+  mgr->insert( action(2177), selectolnyId, -1);                                  //Compound
+  mgr->setRule(action(2177), selectOnly, true);
+  mgr->setRule(action(2177), selectOnly + " and selectionmode='COMPOUND'", false);
+  mgr->insert( separator(), selectolnyId, -1);
+  mgr->insert( action(2178), selectolnyId, -1);                                  //Clear selection filter
+  mgr->setRule(action(2178), selectOnly, true);
+  mgr->setRule(action(2178), selectOnly + " and selectionmode='ALL'", false);
 
   mgr->insert( action(  213 ), -1, -1 ); // display only
   mgr->setRule( action( 213 ), rule.arg( types ).arg( "true" ), true );
@@ -1156,12 +1243,12 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
 
   // disable OCC selectors
-  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+  //getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
   for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
     sr->setEnabled(true);
 
   // disable VTK selectors
-  getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
+  //getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
   for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
     sr->setEnabled(true);
 
@@ -1178,14 +1265,14 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   setMenuShown( false );
   setToolShown( false );
 
-  disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ), 
+  disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
 	     this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
 
   EmitSignalCloseAllDialogs();
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
-    it.data()->deactivate();  
+    it.data()->deactivate();
 
   // Unset actions accelerator keys
   //action(111)->setAccel(QKeySequence()); // Import
@@ -1279,7 +1366,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
   if( nbSel == 0 ) {
     ////// NOTHING SELECTED
     popup->clear();
-  } 
+  }
   else if ( nbSel == 1 ) {
     ////// SINGLE OBJECT SELECTION
     if ( parentComponent != parent->getActiveComponent() )  {
@@ -1355,7 +1442,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 	    }
 	    else {
 	      ////// VTK viewer only
-	      popup->removeItem( 8034 ); // "Isos"
+	      //popup->removeItem( 8034 ); // "Isos"
 	      SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
 	      if ( vtkPrs && !vtkPrs->IsNull() ) {
 		vtkActorCollection* actorList = vtkPrs->GetObjects();
@@ -1478,7 +1565,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 	  popup->removeItem( QAD_Display_Popup_ID );
 	if ( !needErase )
 	  popup->removeItem( QAD_Erase_Popup_ID );
-	if ( !isOCCViewer )
+	if ( !isOCCViewer && !isVTKViewer)
 	  popup->removeItem( 8034 ); // "Isos"
       }
     }
@@ -1506,7 +1593,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 
 //=======================================================================
 // function : GeometryGUI::BuildPresentation()
-// purpose  : 
+// purpose  :
 //=======================================================================
 void GeometryGUI::BuildPresentation( const Handle(SALOME_InteractiveObject)& io, SUIT_ViewWindow* win )
 {
@@ -1523,8 +1610,8 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
     return;
 
   const bool ViewOCC = ( win->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-//  const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
-  
+  const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
+
   // disable non-OCC viewframe menu commands
 //  action( 404 )->setEnabled( ViewOCC ); // SKETCHER
   action( 603 )->setEnabled( ViewOCC ); // SuppressFace
@@ -1534,6 +1621,7 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
   action( 608 )->setEnabled( ViewOCC ); // AddPointOnEdge
 //  action( 609 )->setEnabled( ViewOCC ); // Free boundaries
   action( 413 )->setEnabled( ViewOCC ); // Isos Settings
+  action( 413 )->setEnabled( ViewVTK ); // Isos Settings
 
   action( 800 )->setEnabled( ViewOCC ); // Create Group
   action( 801 )->setEnabled( ViewOCC ); // Edit Group
@@ -1640,34 +1728,109 @@ void GeometryGUI::createPreferences()
   int tabId = addPreference( tr( "PREF_TAB_SETTINGS" ) );
 
   int genGroup = addPreference( tr( "PREF_GROUP_GENERAL" ), tabId );
-  addPreference( tr( "PREF_SHADING_COLOR" ), genGroup,
-		 LightApp_Preferences::Color, "Geometry", "shading_color" );
-  int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
-			    LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
+  setPreferenceProperty( genGroup, "columns", 1 );
+
   int dispmode = addPreference( tr( "PREF_DISPLAY_MODE" ), genGroup,
 			    LightApp_Preferences::Selector, "Geometry", "display_mode" );
 
-  setPreferenceProperty( genGroup, "columns", 1 );
+  addPreference( tr( "PREF_SHADING_COLOR" ), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "shading_color" );
 
-  setPreferenceProperty( step, "min", 0.001 );
-  setPreferenceProperty( step, "max", 10000 );
-  setPreferenceProperty( step, "precision", 3 );
+  addPreference( tr( "PREF_WIREFRAME_COLOR" ), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "wireframe_color" );
+
+  addPreference( tr( "PREF_FREE_BOUND_COLOR" ), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "free_bound_color" );
+
+  addPreference( tr( "PREF_LINE_COLOR"), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "line_color" );
+
+  addPreference( tr( "PREF_POINT_COLOR"), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "point_color" );
+
+  addPreference( tr( "PREF_ISOS_COLOR" ), genGroup,
+		 LightApp_Preferences::Color, "Geometry", "isos_color" );
+
+  int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
+			    LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
+
+  int VertexGroup = addPreference( tr( "PREF_GROUP_VERTEX" ), tabId );
+
+  int typeOfMarker = addPreference( tr( "PREF_TYPE_OF_MARKER" ), VertexGroup,
+                                    LightApp_Preferences::Selector, "Geometry", "type_of_marker" );
+
+  int markerScale = addPreference( tr( "PREF_MARKER_SCALE" ), VertexGroup,
+                                   LightApp_Preferences::DblSpin, "Geometry", "marker_scale" );
 
   // Set property for default display mode
   QStringList aModesList;
   aModesList.append( tr("MEN_WIREFRAME") );
   aModesList.append( tr("MEN_SHADING") );
-  
+
   QValueList<QVariant> anIndexesList;
   anIndexesList.append(0);
   anIndexesList.append(1);
-  
+
   setPreferenceProperty( dispmode, "strings", aModesList );
   setPreferenceProperty( dispmode, "indexes", anIndexesList );
+
+  // Set property for step value for spinboxes
+  setPreferenceProperty( step, "min", 0.001 );
+  setPreferenceProperty( step, "max", 10000 );
+  setPreferenceProperty( step, "precision", 3 );
+
+  // Set property for type of vertex marker
+  QStringList aTypeOfMarkerList;
+  QValueList<QVariant> anTypeOfMarkerIndexesList;
+
+  aTypeOfMarkerList.append( tr("TOM_PLUS") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_PLUS);
+
+  aTypeOfMarkerList.append( tr("TOM_POINT") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_POINT);
+
+  aTypeOfMarkerList.append( tr("TOM_STAR") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_STAR);
+
+  aTypeOfMarkerList.append( tr("TOM_O") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_O);
+
+  aTypeOfMarkerList.append( tr("TOM_X") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_X);
+
+  aTypeOfMarkerList.append( tr("TOM_O_POINT") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_POINT);
+
+  aTypeOfMarkerList.append( tr("TOM_O_PLUS") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_PLUS);
+
+  aTypeOfMarkerList.append( tr("TOM_O_STAR") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_STAR);
+
+  aTypeOfMarkerList.append( tr("TOM_O_X") );
+  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_X);
+
+
+  setPreferenceProperty( typeOfMarker, "strings", aTypeOfMarkerList );
+  setPreferenceProperty( typeOfMarker, "indexes", anTypeOfMarkerIndexesList );
+
+  // Set property for Vertex Marker scale
+  setPreferenceProperty( markerScale, "min", 1. );
+  setPreferenceProperty( markerScale, "max", 7. );
+  setPreferenceProperty( markerScale, "precision", 0.01 );
+  setPreferenceProperty( markerScale, "step", 0.5 );
+
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )
 {
+  if (section == "Geometry") {
+    SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
+    if (param == QString("SettingsGeomStep")) {
+      double spin_step = aResourceMgr->doubleValue(section, param, 100.);
+      EmitSignalDefaultStepValueChanged(spin_step);
+    }
+  }
 }
 
 LightApp_Displayer* GeometryGUI::displayer()
@@ -1675,4 +1838,13 @@ LightApp_Displayer* GeometryGUI::displayer()
   if( !myDisplayer )
     myDisplayer = new GEOM_Displayer( dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) );
   return myDisplayer;
+}
+
+void GeometryGUI::setLocalSelectionMode(const int mode)
+{
+  myLocalSelectionMode = mode;
+}
+int GeometryGUI::getLocalSelectionMode() const
+{
+  return myLocalSelectionMode;
 }

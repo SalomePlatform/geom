@@ -17,10 +17,11 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_PassKey.cxx
-// Created:	
+//
+// File:	GEOMAlgo_Algo.cxx
+// Created:	Sat Dec 04 12:39:47 2004
 // Author:	Peter KURNEV
-//		<pkv@irinox>
+//		<peter@PREFEX>
 
 
 #include <GEOMAlgo_PassKey.ixx>
@@ -28,13 +29,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TColStd_ListOfInteger.hxx>
 
 #ifdef WNT
 #pragma warning( disable : 4101) 
 #endif
 
-static 
-  void SortShell(const int n, int* a); 
 static
   Standard_Integer NormalizedId(const Standard_Integer aId,
 				const Standard_Integer aDiv);
@@ -45,19 +45,35 @@ static
 //=======================================================================
   GEOMAlgo_PassKey::GEOMAlgo_PassKey()
 {
-  Clear();
+ Clear(); 
+}
+//=======================================================================
+//function :
+//purpose  : 
+//=======================================================================
+  GEOMAlgo_PassKey::GEOMAlgo_PassKey(const GEOMAlgo_PassKey& aOther)
+{
+  myNbIds=aOther.myNbIds;
+  mySum=aOther.mySum;
+  myMap=aOther.myMap;
 }
 //=======================================================================
 //function :Assign
 //purpose  : 
 //=======================================================================
-  GEOMAlgo_PassKey& GEOMAlgo_PassKey::Assign(const GEOMAlgo_PassKey& anOther)
+  GEOMAlgo_PassKey& GEOMAlgo_PassKey::Assign(const GEOMAlgo_PassKey& aOther)
 {
-  myNbIds=anOther.myNbIds;
-  myNbMax=anOther.myNbMax;
-  mySum=anOther.mySum;
-  memcpy(myIds, anOther.myIds, sizeof(myIds));
+  myNbIds=aOther.myNbIds;
+  mySum=aOther.mySum;
+  myMap=aOther.myMap;
   return *this;
+}
+//=======================================================================
+//function :~
+//purpose  : 
+//=======================================================================
+  GEOMAlgo_PassKey::~GEOMAlgo_PassKey()
+{
 }
 //=======================================================================
 //function :Clear
@@ -65,95 +81,66 @@ static
 //=======================================================================
   void GEOMAlgo_PassKey::Clear()
 {
-  Standard_Integer i;
-  //
   myNbIds=0;
-  myNbMax=8;
   mySum=0;
-  for (i=0; i<myNbMax; ++i) {
-    myIds[i]=0;
-  }
+  myMap.Clear();
 }
 //=======================================================================
 //function :SetIds
 //purpose  : 
 //=======================================================================
-  void GEOMAlgo_PassKey::SetIds(const Standard_Integer anId1)
+  void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1)
 			       
 {
+  Clear();
   myNbIds=1;
-  myIds[myNbMax-1]=anId1;
-  mySum=anId1;
+  myMap.Add(aId1);
+  mySum=NormalizedId(aId1, myNbIds);
 }
 //=======================================================================
 //function :SetIds
 //purpose  : 
 //=======================================================================
-  void GEOMAlgo_PassKey::SetIds(const Standard_Integer anId1,
-				const Standard_Integer anId2)
+  void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
+				const Standard_Integer aId2)
 {
-  Standard_Integer aIdN1, aIdN2;
+  TColStd_ListOfInteger aLI;
   //
-  myNbIds=2;
-  aIdN1=NormalizedId(anId1, myNbIds);
-  aIdN2=NormalizedId(anId2, myNbIds);
-  mySum=aIdN1+aIdN2;
-  //
-  if (anId1<anId2) {
-    myIds[myNbMax-2]=anId1;
-    myIds[myNbMax-1]=anId2;
-    return;
-  }
-  myIds[myNbMax-2]=anId2;
-  myIds[myNbMax-1]=anId1;
-}
-
-//=======================================================================
-//function :SetIds
-//purpose  : 
-//=======================================================================
-  void GEOMAlgo_PassKey::SetIds(const Standard_Integer anId1,
-				const Standard_Integer anId2,
-				const Standard_Integer anId3)
-{
-  Standard_Integer aIdN1, aIdN2, aIdN3;
-  //
-  myNbIds=3;
-  aIdN1=NormalizedId(anId1, myNbIds);
-  aIdN2=NormalizedId(anId2, myNbIds);
-  aIdN3=NormalizedId(anId3, myNbIds);
-  mySum=aIdN1+aIdN2+aIdN3;
-  //
-  myIds[myNbMax-3]=anId1;
-  myIds[myNbMax-2]=anId2;
-  myIds[myNbMax-1]=anId3;
-  //
-  Compute();
+  aLI.Append(aId1);
+  aLI.Append(aId2);
+  SetIds(aLI);
 }
 //=======================================================================
 //function :SetIds
 //purpose  : 
 //=======================================================================
-  void GEOMAlgo_PassKey::SetIds(const Standard_Integer anId1,
-				const Standard_Integer anId2,
-				const Standard_Integer anId3,
-				const Standard_Integer anId4)
+  void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
+				const Standard_Integer aId2,
+				const Standard_Integer aId3)
 {
-  Standard_Integer aIdN1, aIdN2, aIdN3, aIdN4;
+  TColStd_ListOfInteger aLI;
   //
-  myNbIds=4;
-  aIdN1=NormalizedId(anId1, myNbIds);
-  aIdN2=NormalizedId(anId2, myNbIds);
-  aIdN3=NormalizedId(anId3, myNbIds);
-  aIdN4=NormalizedId(anId4, myNbIds);
-  mySum=aIdN1+aIdN2+aIdN3+aIdN4;
+  aLI.Append(aId1);
+  aLI.Append(aId2);
+  aLI.Append(aId3);
+  SetIds(aLI);
+}
+//=======================================================================
+//function :SetIds
+//purpose  : 
+//=======================================================================
+  void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
+				const Standard_Integer aId2,
+				const Standard_Integer aId3,
+				const Standard_Integer aId4)
+{ 
+  TColStd_ListOfInteger aLI;
   //
-  myIds[myNbMax-4]=anId1;
-  myIds[myNbMax-3]=anId2;
-  myIds[myNbMax-2]=anId3;
-  myIds[myNbMax-1]=anId4;
-  //
-  Compute();
+  aLI.Append(aId1);
+  aLI.Append(aId2);
+  aLI.Append(aId3);
+  aLI.Append(aId4);
+  SetIds(aLI);
 }
 //=======================================================================
 //function :SetIds
@@ -161,100 +148,77 @@ static
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const TColStd_ListOfInteger& aLI)
 {
-  Standard_Integer aNb, i, anId, aIdN;
+  Standard_Integer i, aId, aIdN;
   TColStd_ListIteratorOfListOfInteger aIt;
   //
-  aNb=aLI.Extent();
-  if (!aNb || aNb > myNbMax) {
-    return;
-  }
-  //
-  myNbIds=aNb;
-  mySum=0;
-  i=myNbMax-myNbIds;
+  Clear();
   aIt.Initialize(aLI);
-  for (; aIt.More(); aIt.Next(), ++i) {
-    anId=aIt.Value();
-    myIds[i]=anId;
-    aIdN=NormalizedId(anId, myNbIds);
+  for (; aIt.More(); aIt.Next()) {
+    aId=aIt.Value();
+    myMap.Add(aId);
+  }
+  myNbIds=myMap.Extent();
+  for(i=1; i<=myNbIds; ++i) {
+    aId=myMap(i);
+    aIdN=NormalizedId(aId, myNbIds);
     mySum+=aIdN;
   }
-  //
-  Compute();
+}
+//=======================================================================
+//function :NbIds
+//purpose  : 
+//=======================================================================
+  Standard_Integer GEOMAlgo_PassKey::NbIds()const
+{
+  return myNbIds;
 }
 //=======================================================================
 //function :Id
 //purpose  : 
 //=======================================================================
-  Standard_Integer GEOMAlgo_PassKey::Id(const Standard_Integer aIndex)const
+  Standard_Integer GEOMAlgo_PassKey::Id(const Standard_Integer aIndex) const
 {
-  if (aIndex < 0 || aIndex >= myNbMax) {
-    return 0;
+  if (aIndex<1 || aIndex>myNbIds) {
+    return -1;
   }
-  return myIds[aIndex];
-}
-//=======================================================================
-//function :NbMax
-//purpose  : 
-//=======================================================================
-  Standard_Integer GEOMAlgo_PassKey::NbMax()const
-{
-  return myNbMax;
-}
-//=======================================================================
-//function :Compute
-//purpose  : 
-//=======================================================================
-  void GEOMAlgo_PassKey::Compute()
-{
-  SortShell(myNbIds, myIds+myNbMax-myNbIds);
+  return myMap(aIndex);
 }
 //=======================================================================
 //function :IsEqual
 //purpose  : 
 //=======================================================================
-  Standard_Boolean GEOMAlgo_PassKey::IsEqual(const GEOMAlgo_PassKey& anOther) const
+  Standard_Boolean GEOMAlgo_PassKey::IsEqual(const GEOMAlgo_PassKey& aOther) const
 {
-  Standard_Integer iIsEqual;
-  Standard_Boolean bIsEqual;
+  Standard_Boolean bRet;
+  Standard_Integer i, aId;
   //
-  iIsEqual=memcmp(myIds, anOther.myIds, sizeof(myIds));
-  bIsEqual=Standard_False;
-  if (!iIsEqual) {
-    bIsEqual=!bIsEqual;
+  bRet=Standard_False;
+  //
+  if (myNbIds!=aOther.myNbIds) {
+    return bRet;
   }
-  return bIsEqual;
-}
-//=======================================================================
-//function :Key
-//purpose  : 
-//=======================================================================
-  Standard_Address GEOMAlgo_PassKey::Key()const
-{
-  return (Standard_Address)myIds;
+  for (i=1; i<=myNbIds; ++i) {
+    aId=myMap(i);
+    if (!aOther.myMap.Contains(aId)) {
+      return bRet;
+    }
+  }
+  return !bRet;
 }
 //=======================================================================
 //function : HashCode
 //purpose  : 
 //=======================================================================
-  Standard_Integer GEOMAlgo_PassKey::HashCode(const Standard_Integer Upper) const
+  Standard_Integer GEOMAlgo_PassKey::HashCode(const Standard_Integer aUpper) const
 {
-  //return (mySum % Upper);
-  return ::HashCode(mySum, Upper);
+  return ::HashCode(mySum, aUpper);
 }
 //=======================================================================
 //function : Dump
 //purpose  : 
 //=======================================================================
-  void GEOMAlgo_PassKey::Dump()const
+  void GEOMAlgo_PassKey::Dump(const Standard_Integer )const
 {
-  Standard_Integer i;
-  //
-  printf(" PassKey: {");
-  for (i=0; i<myNbMax; ++i) {
-    printf(" %d", myIds[i]);
-  }
-  printf(" }");
 }
 //=======================================================================
 // function: NormalizedId
@@ -272,34 +236,4 @@ Standard_Integer NormalizedId(const Standard_Integer aId,
     aIdRet=aId%aTresh;
   }
   return aIdRet;
-}
-//=======================================================================
-// function: SortShell
-// purpose : 
-//=======================================================================
-void SortShell(const int n, int* a) 
-{
-  int  x, nd, i, j, l, d=1;
-  //
-  while(d<=n) {
-    d*=2;
-  }
-  //
-  while (d) {
-    d=(d-1)/2;
-    //
-    nd=n-d;
-    for (i=0; i<nd; ++i) {
-      j=i;
-    m30:;
-      l=j+d;
-      if (a[l] < a[j]){
-	x=a[j];
-	a[j]=a[l];
-	a[l]=x;
-	j-=d;
-	if (j > -1) goto m30;
-      }//if (a[l] < a[j]){
-    }//for (i=0; i<nd; ++i) 
-  }//while (1)
 }

@@ -21,6 +21,7 @@
 #ifndef _GEOM_IBooleanOperations_i_HeaderFile
 #define _GEOM_IBooleanOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_IBooleanOperations.hxx"
 
-class GEOM_IBooleanOperations_i : 
+class GEOM_I_EXPORT GEOM_IBooleanOperations_i : 
     public virtual POA_GEOM::GEOM_IBooleanOperations,
     public virtual GEOM_IOperations_i
 {
@@ -47,9 +48,19 @@ class GEOM_IBooleanOperations_i :
 				       const GEOM::ListOfGO&   theTools,
 				       const GEOM::ListOfGO&   theKeepInside,
 				       const GEOM::ListOfGO&   theRemoveInside,
-				       CORBA::Short      theLimit,
-				       CORBA::Boolean    theRemoveWebs,
-				       const GEOM::ListOfLong& theMaterials);
+				       CORBA::Short            theLimit,
+				       CORBA::Boolean          theRemoveWebs,
+				       const GEOM::ListOfLong& theMaterials,
+				       CORBA::Short theKeepNonlimitShapes);
+
+  GEOM::GEOM_Object_ptr MakePartitionNonSelfIntersectedShape (const GEOM::ListOfGO&   theShapes,
+							      const GEOM::ListOfGO&   theTools,
+							      const GEOM::ListOfGO&   theKeepInside,
+							      const GEOM::ListOfGO&   theRemoveInside,
+							      CORBA::Short            theLimit,
+							      CORBA::Boolean          theRemoveWebs,
+							      const GEOM::ListOfLong& theMaterials,
+							      CORBA::Short theKeepNonlimitShapes);
 
 
   GEOM::GEOM_Object_ptr MakeHalfPartition (GEOM::GEOM_Object_ptr theShape,

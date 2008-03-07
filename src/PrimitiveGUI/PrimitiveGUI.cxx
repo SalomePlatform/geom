@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -33,26 +33,15 @@
 #include "SUIT_Session.h"
 #include "SUIT_Desktop.h"
 
+#include "SalomeApp_Application.h"
+
 #include "PrimitiveGUI_BoxDlg.h"      // Method BOX
 #include "PrimitiveGUI_CylinderDlg.h" // Method CYLINDER
 #include "PrimitiveGUI_SphereDlg.h"   // Method SPHERE
 #include "PrimitiveGUI_TorusDlg.h"    // Method TORUS
 #include "PrimitiveGUI_ConeDlg.h"     // Method CONE
-using namespace std;
-PrimitiveGUI* PrimitiveGUI::myGUIObject = 0;
 
-//=======================================================================
-// function : GetPrimitiveGUI()
-// purpose  : Get the only PrimitiveGUI object [ static ]
-//=======================================================================
-PrimitiveGUI* PrimitiveGUI::GetPrimitiveGUI( GeometryGUI* parent )
-{
-  if ( myGUIObject == 0 ) {
-    // init PrimitiveGUI only once
-    myGUIObject = new PrimitiveGUI( parent );
-  }
-  return myGUIObject;
-}
+using namespace std;
 
 //=======================================================================
 // function : PrimitiveGUI()
@@ -61,7 +50,6 @@ PrimitiveGUI* PrimitiveGUI::GetPrimitiveGUI( GeometryGUI* parent )
 PrimitiveGUI::PrimitiveGUI(GeometryGUI* parent) : GEOMGUI(parent)
 {
 }
-
 
 //=======================================================================
 // function : ~PrimitiveGUI
@@ -78,47 +66,38 @@ PrimitiveGUI::~PrimitiveGUI()
 //=======================================================================
 bool PrimitiveGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if (!app) return false;
+
   getGeometryGUI()->EmitSignalDeactivateDialog();
-  
+
   QDialog* aDlg = NULL;
 
   switch (theCommandID)
-    {
+  {
     case 4021: // BOX
-      {
 	aDlg = new PrimitiveGUI_BoxDlg(getGeometryGUI(), parent, "");
 	break;
-      }
     case 4022: // CYLINDER
-      {
 	aDlg = new PrimitiveGUI_CylinderDlg(getGeometryGUI(), parent, "");
 	break;
-      }
     case 4023: // SPHERE
-      {
 	aDlg = new PrimitiveGUI_SphereDlg(getGeometryGUI(), parent, "");
 	break;
-      }
     case 4024: // TORUS
-      {
 	aDlg = new PrimitiveGUI_TorusDlg(getGeometryGUI(), parent, "");
 	break;
-      }
     case 4025: // CONE
-      {
 	aDlg = new PrimitiveGUI_ConeDlg(getGeometryGUI(), parent, "");
 	break;
-      }
     default:
-      {
-	SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+	app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
 	break;
-      }
     }
 
-  if ( aDlg != NULL )
+  if (aDlg != NULL)
     aDlg->show();
-  
+
   return true;
 }
 
@@ -133,6 +112,6 @@ extern "C"
 #endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return PrimitiveGUI::GetPrimitiveGUI( parent );
+    return new PrimitiveGUI( parent );
   }
 }

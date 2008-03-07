@@ -105,7 +105,7 @@ RepairGUI_RemoveHolesDlg::RepairGUI_RemoveHolesDlg(GeometryGUI* theGeometryGUI, 
   GroupPoints->getGroupBoxLayout()->addLayout( aDetectLay, 3, 0 );
   /***************************************************************/
 
-  setHelpFileName("suppress_holes.htm");
+  setHelpFileName("suppress_holes_operation_page.html");
 
   Init();
 }

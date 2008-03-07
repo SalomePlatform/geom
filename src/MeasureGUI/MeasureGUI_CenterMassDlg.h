@@ -28,21 +28,17 @@
 #ifndef DIALOGBOX_CMASS_H
 #define DIALOGBOX_CMASS_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 
 class MeasureGUI_1Sel3LineEdit_QTD;
-
-#if defined WNT && defined MEASUREGUI_EXPORTS
-#define MEASUREGUI_EXPORT __declspec( dllexport )
-#else
-#define MEASUREGUI_EXPORT
-#endif
 
 //=================================================================================
 // class    : MeasureGUI_CenterMassDlg
 // purpose  :
 //=================================================================================
-class MEASUREGUI_EXPORT MeasureGUI_CenterMassDlg : public GEOMBase_Skeleton
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_CenterMassDlg : public GEOMBase_Skeleton
 {
     Q_OBJECT
 

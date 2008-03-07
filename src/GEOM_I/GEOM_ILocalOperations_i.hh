@@ -21,6 +21,7 @@
 #ifndef _GEOM_ILocalOperations_i_HeaderFile
 #define _GEOM_ILocalOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_ILocalOperations.hxx"
 
-class GEOM_ILocalOperations_i : 
+class GEOM_I_EXPORT GEOM_ILocalOperations_i : 
     public virtual POA_GEOM::GEOM_ILocalOperations,
     public virtual GEOM_IOperations_i
 {
@@ -41,18 +42,48 @@ class GEOM_ILocalOperations_i :
 
   GEOM::GEOM_Object_ptr MakeFilletAll   (GEOM::GEOM_Object_ptr theShape,
 					 CORBA::Double theR);
+
   GEOM::GEOM_Object_ptr MakeFilletEdges (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
 					 const GEOM::ListOfLong& theEdges);
+
+  GEOM::GEOM_Object_ptr MakeFilletEdgesR1R2 (GEOM::GEOM_Object_ptr theShape,
+                                             CORBA::Double theR1,
+                                             CORBA::Double theR2,
+					     const GEOM::ListOfLong& theEdges);
+
   GEOM::GEOM_Object_ptr MakeFilletFaces (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
 					 const GEOM::ListOfLong& theFaces);
 
+  GEOM::GEOM_Object_ptr MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr theShape,
+                                             CORBA::Double theR1,
+                                             CORBA::Double theR2,
+				      	     const GEOM::ListOfLong& theFaces);
+
   GEOM::GEOM_Object_ptr MakeChamferAll   (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD);
+
   GEOM::GEOM_Object_ptr MakeChamferEdge  (GEOM::GEOM_Object_ptr theShape,
 					  CORBA::Double theD1, CORBA::Double theD2,
 					  CORBA::Long theFace1, CORBA::Long theFace2);
+
+  GEOM::GEOM_Object_ptr MakeChamferEdgeAD  (GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Double theD, CORBA::Double theAngle,
+					    CORBA::Long theFace1, CORBA::Long theFace2);
+
   GEOM::GEOM_Object_ptr MakeChamferFaces (GEOM::GEOM_Object_ptr theShape,
 					  CORBA::Double theD1, CORBA::Double theD2,
 					  const GEOM::ListOfLong& theFaces);
+
+  GEOM::GEOM_Object_ptr MakeChamferFacesAD (GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Double theD, CORBA::Double theAngle,
+					    const GEOM::ListOfLong& theFaces);
+
+  GEOM::GEOM_Object_ptr MakeChamferEdges (GEOM::GEOM_Object_ptr theShape,
+					  CORBA::Double theD1, CORBA::Double theD2,
+					  const GEOM::ListOfLong& theEdges);
+
+  GEOM::GEOM_Object_ptr MakeChamferEdgesAD (GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Double theD, CORBA::Double theAngle,
+					    const GEOM::ListOfLong& theEdges);
 
   GEOM::GEOM_Object_ptr MakeArchimede (GEOM::GEOM_Object_ptr theShape,
                                        CORBA::Double theWeight,

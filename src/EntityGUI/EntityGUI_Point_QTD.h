@@ -28,6 +28,8 @@
 #ifndef ENTITYGUI_POINT_QTD_H
 #define ENTITYGUI_POINT_QTD_H
 
+#include "GEOM_EntityGUI.hxx"
+
 #include <qvariant.h>
 #include <qwidget.h>
 class QVBoxLayout; 
@@ -36,7 +38,7 @@ class QGridLayout;
 class QButtonGroup;
 class QRadioButton;
 
-class EntityGUI_Point_QTD : public QWidget
+class GEOM_ENTITYGUI_EXPORT EntityGUI_Point_QTD : public QWidget
 { 
     Q_OBJECT
 

@@ -38,7 +38,7 @@ if test "x$GEOM_DIR" == "x" ; then
 # 
 fi
 
-if test -f ${GEOM_DIR}/bin/salome/libGEOM_Swig.py ; then
+if test -f ${GEOM_DIR}/bin/salome/geompy.py ; then
    Geom_ok=yes
    AC_MSG_RESULT(Using Geom module distribution in ${GEOM_DIR})
 

@@ -17,9 +17,14 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
+
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
+
+using namespace std;
 
 #include <Standard_Stream.hxx>
 
@@ -49,6 +54,7 @@
 
 #include <TDF_Tool.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 
@@ -134,8 +140,10 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ShapeProcess (Handle(GEOM_Objec
   }
 
   //Compute the translation
-  try
-  {
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Shape Healing algorithm failed");
@@ -341,8 +349,10 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -410,8 +420,10 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -477,8 +489,10 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveIntWires
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -543,8 +557,10 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -609,8 +625,10 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -670,8 +688,10 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -773,3 +793,122 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject
   SetErrorCode(OK);
   return true;
 }
+
+
+//=============================================================================
+/*!
+ *  ChangeOrientation
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_Object) theObject)
+{
+  // set error code, check parameters
+  SetErrorCode(KO);
+
+  if (theObject.IsNull())
+    return NULL;
+
+  if (!theObject->IsMainShape()) {
+    SetErrorCode("Sub shape cannot be transformed - need to create a copy");
+    return NULL;
+  }
+
+  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) 
+    return NULL; //There is no function which creates an object to be processed
+
+  //Add the function
+  aFunction = theObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CHANGE_ORIENTATION);
+
+  if (aFunction.IsNull())
+    return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+
+  // prepare "data container" class IHealing
+  GEOMImpl_IHealing HI(aFunction);
+  HI.SetOriginal( aLastFunction );
+
+  //Compute the translation
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Healing driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << "geompy.ChangeOrientationShell("
+                               << theObject << ")";
+
+  SetErrorCode(OK);
+  return theObject;
+}
+
+
+//=============================================================================
+/*!
+ *  ChangeOrientationCopy
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(GEOM_Object) theObject)
+{
+  // set error code, check parameters
+  SetErrorCode(KO);
+
+  if (theObject.IsNull())
+    return NULL;
+
+  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull())
+    return NULL; //There is no function which creates an object to be processed
+
+  // Add a new object
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+
+  //Add the function
+  aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CHANGE_ORIENTATION);
+
+  if (aFunction.IsNull())
+    return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+
+  // prepare "data container" class IHealing
+  GEOMImpl_IHealing HI(aFunction);
+  HI.SetOriginal( aLastFunction );
+
+  //Compute the translation
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Healing driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.ChangeOrientationShellCopy("
+                               << theObject << ")";
+
+  SetErrorCode(OK);
+  return aNewObject;
+}
+

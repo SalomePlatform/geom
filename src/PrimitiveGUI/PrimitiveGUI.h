@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : PrimitiveGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef PRIMITIVEGUI_H
 #define PRIMITIVEGUI_H
@@ -38,19 +37,11 @@
 //=================================================================================
 class PrimitiveGUI : public GEOMGUI
 {
-protected:
-  PrimitiveGUI(GeometryGUI* parent); // hide constructor to avoid direct creation
-
-public :
+public:
+  PrimitiveGUI(GeometryGUI* parent);
   ~PrimitiveGUI();
 
-  // Get the only PrimitiveGUI object
-  static PrimitiveGUI* GetPrimitiveGUI(GeometryGUI* parent);
-
   bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
-
-private:
-  static PrimitiveGUI* myGUIObject;    // the only PrimitiveGUI object
 };
 
 #endif

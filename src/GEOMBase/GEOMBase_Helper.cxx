@@ -44,9 +44,9 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <LightApp_SelectionMgr.h>
+#include <LightApp_DataOwner.h>
 #include <SalomeApp_Tools.h>
 #include <SalomeApp_DataModel.h>
-#include <SalomeApp_Module.h>
 
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
@@ -106,9 +106,13 @@ GEOMBase_Helper::~GEOMBase_Helper()
     erasePreview();
   if ( hasCommand() )
     abortCommand();
-
-  globalSelection( GEOM_ALLOBJECTS, true );
-
+  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app) {
+    GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
+    if(aGeomGUI)
+      globalSelection(aGeomGUI->getLocalSelectionMode() , true );
+  }
+  
   if (myDisplayer)
     delete myDisplayer;
 }
@@ -215,7 +219,8 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
     SalomeApp_Study* aDoc = getStudy();
     if ( aDoc && aDoc->studyDS() ) {
       _PTR(Study) aStudy = aDoc->studyDS();
-      _PTR(SObject) aSObj (aStudy->FindObjectIOR(SalomeApp_Application::orb()->object_to_string(object)));
+      CORBA::String_var objStr = SalomeApp_Application::orb()->object_to_string(object);
+      _PTR(SObject) aSObj (aStudy->FindObjectIOR(string(objStr.in())));
       if ( aSObj  ) {
 	_PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
 	for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
@@ -244,7 +249,9 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 void GEOMBase_Helper::displayPreview( const bool   activate,
                                       const bool   update,
                                       const bool   toRemoveFromEngine,
-                                      const double lineWidth )
+                                      const double lineWidth, 
+                                      const int    displayMode, 
+                                      const int    color )
 {
   isPreview = true;
   QString msg;
@@ -266,7 +273,7 @@ void GEOMBase_Helper::displayPreview( const bool   activate,
     else {
       for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it )
       {
-        displayPreview( *it, true, activate, false, lineWidth );
+        displayPreview( *it, true, activate, false, lineWidth, displayMode, color );
         if ( toRemoveFromEngine )
           getGeomEngine()->RemoveObject( *it );
       }
@@ -290,19 +297,25 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
                                       const bool            append,
                                       const bool            activate,
                                       const bool            update,
-                                      const double          lineWidth )
+                                      const double          lineWidth, 
+                                      const int             displayMode, 
+                                      const int             color )
 {
   // Set color for preview shape
-  getDisplayer()->SetColor( Quantity_NOC_VIOLET );
+  getDisplayer()->SetColor( color == -1 ? Quantity_NOC_VIOLET : color );
 
   // set width of displayed shape
   getDisplayer()->SetWidth( lineWidth );
+  
+  // set display mode of displayed shape
+  int aPrevDispMode = getDisplayer()->SetDisplayMode( displayMode );
 
   // Disable activation of selection
   getDisplayer()->SetToActivate( activate );
 
   // Make a reference to GEOM_Object
-  getDisplayer()->SetName( SalomeApp_Application::orb()->object_to_string( object ) );
+  CORBA::String_var objStr = SalomeApp_Application::orb()->object_to_string( object );
+  getDisplayer()->SetName( objStr.in() );
 
   // Build prs
   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( object );
@@ -313,6 +326,8 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
   displayPreview( aPrs, append, update );
 
   getDisplayer()->UnsetName();
+  getDisplayer()->UnsetColor();
+  getDisplayer()->SetDisplayMode( aPrevDispMode );
 
   // Enable activation of displayed objects
   getDisplayer()->SetToActivate( true );
@@ -571,11 +586,13 @@ char* GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
 {
   SalomeApp_Study* study = getStudy();
   if ( study )  {
-    string IOR = GEOMBase::GetIORFromObject( object);
+    char * objIOR = GEOMBase::GetIORFromObject( object );
+    string IOR( objIOR );
+    free( objIOR );
     if ( IOR != "" ) {
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
       if ( SO ) {
-	return TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
+	      return TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
       }
     }
   }
@@ -602,15 +619,15 @@ void GEOMBase_Helper::clearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
   if ( CORBA::is_nil( theObj ) )
     return;
 
-  string IOR = SalomeApp_Application::orb()->object_to_string( theObj );
-  TCollection_AsciiString asciiIOR( strdup( IOR.c_str() ) );
+  CORBA::String_var IOR = SalomeApp_Application::orb()->object_to_string( theObj );
+  TCollection_AsciiString asciiIOR( (char *)IOR.in() );
   GEOM_Client().RemoveShapeFromBuffer( asciiIOR );
 
   if ( !getStudy() || !getStudy()->studyDS() )
     return;
 
   _PTR(Study) aStudy = getStudy()->studyDS();
-  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( IOR ) );
+  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( string( IOR ) ) );
   if ( !aSObj )
     return;
 
@@ -757,8 +774,8 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 	showError();
       }
       else {
+	addSubshapesToStudy(); // add Subshapes if local selection
 	const int nbObjs = objects.size();
-	bool withChildren = false;
         int aNumber = 1;
 	for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
 	  if ( publish ) {
@@ -779,14 +796,15 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 		aName = GEOMBase::GetDefaultName( getPrefix( *it ) );
 	    }
 	    addInStudy( *it, aName.latin1() );
-	    withChildren = false;
+            // updateView=false
 	    display( *it, false );
 	  }
-	  else { // asv : fix of PAL6454. If publish==false, then the original shape was modified, and need to be re-cached in GEOM_Client
-	         // before redisplay
+	  else {
+            // asv : fix of PAL6454. If publish==false, then the original shape
+            // was modified, and need to be re-cached in GEOM_Client before redisplay
 	    clearShapeBuffer( *it );
-	    withChildren = true;
-	    redisplay( *it, withChildren, false );
+            // withChildren=true, updateView=false
+	    redisplay( *it, true, false );
           }
 	}
 
@@ -905,22 +923,23 @@ QString GEOMBase_Helper::getPrefix( GEOM::GEOM_Object_ptr theObj ) const
   if ( !myPrefix.isEmpty() || theObj->_is_nil() )
     return myPrefix;
 
-  TopoDS_Shape aShape;
-  if ( !GEOMBase::GetShape( theObj, aShape ) )
-    return "";
-
-  long aType = aShape.ShapeType();
+  //TopoDS_Shape aShape;
+  //if ( !GEOMBase::GetShape( theObj, aShape ) )
+  //  return "";
+  //
+  //long aType = aShape.ShapeType();
+  GEOM::shape_type aType = theObj->GetShapeType();
 
   switch ( aType )
   {
-    case TopAbs_VERTEX   : return QObject::tr( "GEOM_VERTEX" );
-    case TopAbs_EDGE     : return QObject::tr( "GEOM_EDGE" );
-    case TopAbs_WIRE     : return QObject::tr( "GEOM_WIRE" );
-    case TopAbs_FACE     : return QObject::tr( "GEOM_FACE" );
-    case TopAbs_SHELL    : return QObject::tr( "GEOM_SHELL" );
-    case TopAbs_SOLID    : return QObject::tr( "GEOM_SOLID" );
-    case TopAbs_COMPSOLID: return QObject::tr( "GEOM_COMPOUNDSOLID" );
-    case TopAbs_COMPOUND : return QObject::tr( "GEOM_COMPOUND" );
+    case GEOM::VERTEX   : return QObject::tr( "GEOM_VERTEX" );
+    case GEOM::EDGE     : return QObject::tr( "GEOM_EDGE" );
+    case GEOM::WIRE     : return QObject::tr( "GEOM_WIRE" );
+    case GEOM::FACE     : return QObject::tr( "GEOM_FACE" );
+    case GEOM::SHELL    : return QObject::tr( "GEOM_SHELL" );
+    case GEOM::SOLID    : return QObject::tr( "GEOM_SOLID" );
+    case GEOM::COMPSOLID: return QObject::tr( "GEOM_COMPOUNDSOLID" );
+    case GEOM::COMPOUND : return QObject::tr( "GEOM_COMPOUND" );
     default : return "";
   }
 }
@@ -981,3 +1000,107 @@ SUIT_Desktop* GEOMBase_Helper::getDesktop() const
   return myDesktop;
 }
 
+//================================================================
+// Function : selectObjects
+// Purpose  : Selects list of objects 
+//================================================================
+bool GEOMBase_Helper::selectObjects( ObjectList& objects )
+{
+  SUIT_DataOwnerPtrList aList;
+  ObjectList::iterator anIter;
+  for ( anIter = objects.begin(); anIter != objects.end(); ++anIter )
+  {
+    string entry = getEntry( *anIter );
+    QString aEntry( entry.c_str() );
+    LightApp_DataOwner* anOwher = new LightApp_DataOwner( aEntry );
+    aList.append( anOwher );
+  }
+  
+  SUIT_Session* session = SUIT_Session::session();
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  if ( !app )
+    return false;
+
+  LightApp_SelectionMgr* aMgr = app->selectionMgr();
+  if ( !aMgr )
+    return false;
+  
+  aMgr->setSelected( aList, false );
+  
+  return true;
+}
+  
+//================================================================
+// Function : findObjectInFather
+// Purpose  : It should return an object if its founded in study or
+//            return Null object if the object is not founded
+//================================================================
+GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr theFather, const char* theName)
+{
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  _PTR(Study) aDStudy = appStudy->studyDS();
+  string IOR = GEOMBase::GetIORFromObject( theFather );
+  _PTR(SObject) SObj ( aDStudy->FindObjectIOR( IOR ) );
+
+  bool inStudy = false;
+  GEOM::GEOM_Object_var aReturnObject;
+  for (_PTR(ChildIterator) iit (aDStudy->NewChildIterator( SObj )); iit->More() && !inStudy; iit->Next()) {
+    _PTR(SObject) child (iit->Value());
+    QString aChildName = child->GetName();
+    if (aChildName == theName) {
+      inStudy = true;
+      CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(iit->Value());
+      aReturnObject = GEOM::GEOM_Object::_narrow( corbaObj );
+    }
+  }
+  if (inStudy)
+    return aReturnObject._retn();
+
+  return GEOM::GEOM_Object::_nil();
+}
+  
+//================================================================
+// Function : addSubshapesToStudy
+// Purpose  : Virtual method to add subshapes if needs
+//================================================================  
+void GEOMBase_Helper::addSubshapesToStudy()
+{
+  //Impemented in Dialogs, called from Accept method
+}
+
+//================================================================
+// Function : addSubshapesToFather
+// Purpose  : Method to add Father Subshapes to Study if it`s not exist
+//================================================================  
+void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>& theMap )
+{
+  //GetStudyDS
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  _PTR(Study) aDStudy = appStudy->studyDS();
+
+  GEOM::GEOM_IGroupOperations_var anOp = getGeomEngine()->GetIGroupOperations( getStudyId() );
+ 
+  for( QMap<QString, GEOM::GEOM_Object_var>::Iterator it = theMap.begin(); it != theMap.end(); it++ )
+    {
+      if ( !anOp->_is_nil() ) {
+	GEOM::GEOM_Object_var aFatherObj = anOp->GetMainShape( it.data() );
+	if ( !aFatherObj->_is_nil() ) {	
+	GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key() );
+      
+	//Add Object to study if its not exist
+	if ( aFindedObject == GEOM::GEOM_Object::_nil() )
+	  GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
+					      it.data(), it.key(), aFatherObj );
+	}
+      }
+      else {
+	//cout << " anOperations is NULL! " << endl;
+      }
+    }
+}  
+
+  

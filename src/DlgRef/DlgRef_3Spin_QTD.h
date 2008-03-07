@@ -28,6 +28,8 @@
 #ifndef DLGREF_3SPIN_QTD_H
 #define DLGREF_3SPIN_QTD_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include <qvariant.h>
 #include <qwidget.h>
 class QVBoxLayout; 
@@ -37,12 +39,7 @@ class QGroupBox;
 class QLabel;
 class QSpinBox;
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define DLGREF_WNT_EXPORT __declspec( dllexport )
-#else
-#define DLGREF_WNT_EXPORT
-#endif
-class DLGREF_WNT_EXPORT DlgRef_3Spin_QTD : public QWidget
+class GEOM_DLGREF_EXPORT DlgRef_3Spin_QTD : public QWidget
 { 
     Q_OBJECT
 

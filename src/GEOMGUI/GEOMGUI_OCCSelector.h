@@ -20,9 +20,11 @@
 #ifndef GEOMGUI_OCCSELECTOR_H
 #define GEOMGUI_OCCSELECTOR_H
 
+#include "GEOM_GEOMGUI.hxx"
+
 #include <LightApp_OCCSelector.h>
 
-class GEOMGUI_OCCSelector : public LightApp_OCCSelector
+class GEOMGUI_EXPORT GEOMGUI_OCCSelector : public LightApp_OCCSelector
 {
 public:
   GEOMGUI_OCCSelector( OCCViewer_Viewer*, SUIT_SelectionMgr* );

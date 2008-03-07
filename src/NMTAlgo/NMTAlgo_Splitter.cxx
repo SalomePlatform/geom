@@ -309,9 +309,15 @@ static
     return;
   }
   //
-  if (!mySourceShapes.Extent()){
+  if (!mySourceShapes.Extent()) {
     // No source shapes to treat
     myErrorStatus=103; 
+    return;
+  }
+  //
+  if (!aDSF.IsDone()) {
+    // NMTTools_DSFiller failed
+    myErrorStatus=104; 
     return;
   }
   //
@@ -622,3 +628,4 @@ static
 // 101 - Null shape is not allowed here
 // 102 - DS is not computed
 // 103 - No source shapes to treat
+// 104 - NMTTools_DSFiller failed

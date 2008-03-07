@@ -29,32 +29,29 @@
 #ifndef _GeometryGUI_SWIG_HXX_
 #define _GeometryGUI_SWIG_HXX_
 
+#include "GEOM_GEOMGUI.hxx"
+
 // IDL Headers
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 #include CORBA_SERVER_HEADER(SALOMEDS)
 #include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define GEOMGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define GEOMGUI_WNT_EXPORT
-#endif
-
 class GEOM_Client;
 
-class GEOMGUI_WNT_EXPORT GEOM_Swig
+class GEOMGUI_EXPORT GEOM_Swig
 {
 public:
   GEOM_Swig();
   ~GEOM_Swig();
 
-  void createAndDisplayGO(const char* Entry);
+  void createAndDisplayGO(const char* Entry, bool isUpdated = true);
   void eraseGO(const char* Entry, bool allWindows);
   void createAndDisplayFitAllGO(const char* Entry);
-  void setDisplayMode(const char* Entry, int mode);
-  void setColor(const char* Entry, int red, int green, int blue);
-  void setTransparency(const char* Entry, float transp);
+  void UpdateViewer();
+  void setDisplayMode(const char* Entry, int mode, bool isUpdated = true);
+  void setColor(const char* Entry, int red, int green, int blue, bool isUpdated = true);
+  void setTransparency(const char* Entry, float transp, bool isUpdated = true);
   void setDeflection(const char* Entry, float deflect);
 
   int  getIndexTopology(const char *SubEntry, const char *Entry);

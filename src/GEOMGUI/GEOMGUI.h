@@ -29,6 +29,8 @@
 #if !defined( __GEOMGUI_H )
 #define __GEOMGUI_H
 
+#include "GEOM_GEOMGUI.hxx"
+
 #include <qobject.h>
 
 class SUIT_Desktop;
@@ -37,21 +39,11 @@ class QMouseEvent;
 class QKeyEvent;
 class GeometryGUI;
 
-//#ifdef WNT
-//#include <SALOME_WNT.hxx>
-//#else
-//#define SALOME_WNT_EXPORT
-//#endif
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define GEOMGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define GEOMGUI_WNT_EXPORT
-#endif
 //=================================================================================
 // class    : GEOMGUI
 // purpose  : Base class for all geometry GUI subclasses
 //=================================================================================
-class GEOMGUI_WNT_EXPORT GEOMGUI : public QObject
+class GEOMGUI_EXPORT GEOMGUI : public QObject
 {
 public :
   // Constructor

@@ -29,6 +29,8 @@
 #ifndef GEOMETRYGUI_H
 #define GEOMETRYGUI_H
 
+#include "GEOM_GEOMGUI.hxx"
+
 #include "SalomeApp_Module.h"
 
 #include "GEOMGUI.h"
@@ -47,24 +49,6 @@
 #include "SALOMEconfig.h"
 #include CORBA_CLIENT_HEADER(SALOMEDS)
 
-#ifdef WNT
-#include <SALOME_WNT.hxx>
-#else
-#define SALOME_WNT_EXPORT
-#endif
-
-//#if defined WNT 
-//#include <SALOME_WNT.hxx>
-//#else
-//#define SALOME_WNT_EXPORT
-//#endif
-
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define GEOMGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define GEOMGUI_WNT_EXPORT
-#endif
-
 typedef QMap<QString, GEOMGUI*> GUIMap;
 
 class QDialog;
@@ -78,7 +62,7 @@ class SUIT_ViewManager;
 // class    : GeometryGUI
 // purpose  :
 //=================================================================================
-class  GEOMGUI_WNT_EXPORT GeometryGUI : public SalomeApp_Module
+class  GEOMGUI_EXPORT GeometryGUI : public SalomeApp_Module
 {
   Q_OBJECT;
 
@@ -136,7 +120,8 @@ public:
   virtual void                contextMenuPopup( const QString&, QPopupMenu*, QString& );
   virtual void                createPreferences();
   virtual void                preferencesChanged( const QString&, const QString& );
-
+  int                         getLocalSelectionMode() const;
+  void                        setLocalSelectionMode(const int mode);
 
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );
@@ -186,6 +171,7 @@ private:
   QPtrList<LightApp_VTKSelector> myVTKSelectors;
 
   LightApp_Displayer*         myDisplayer;
+  int                         myLocalSelectionMode; //Select Only
 
 friend class DisplayGUI;
 };

@@ -1,22 +1,23 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include "GEOM_IMeasureOperations_i.hh"
@@ -50,6 +51,82 @@ GEOM_IMeasureOperations_i::~GEOM_IMeasureOperations_i()
   MESSAGE("GEOM_IMeasureOperations_i::~GEOM_IMeasureOperations_i");
 }
 
+//=============================================================================
+/*!
+ *  KindOfShape
+ */
+//=============================================================================
+GEOM::GEOM_IKindOfShape::shape_kind GEOM_IMeasureOperations_i::KindOfShape
+                                   (GEOM::GEOM_Object_ptr  theShape,
+				    GEOM::ListOfLong_out   theIntegers,
+				    GEOM::ListOfDouble_out theDoubles)
+{
+  GEOMImpl_IMeasureOperations::ShapeKind aKind = GEOMImpl_IMeasureOperations::SK_NO_SHAPE;
+
+  // allocate the CORBA arrays
+  GEOM::ListOfLong_var anIntegersArray = new GEOM::ListOfLong();
+  GEOM::ListOfDouble_var aDoublesArray = new GEOM::ListOfDouble();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+
+  if (!aShape.IsNull()) {
+    Handle(TColStd_HSequenceOfInteger) anIntegers = new TColStd_HSequenceOfInteger;
+    Handle(TColStd_HSequenceOfReal)    aDoubles   = new TColStd_HSequenceOfReal;
+
+    // Detect kind of shape and parameters
+    aKind = GetOperations()->KindOfShape(aShape, anIntegers, aDoubles);
+
+    int nbInts = anIntegers->Length();
+    int nbDbls = aDoubles->Length();
+
+    anIntegersArray->length(nbInts);
+    aDoublesArray->length(nbDbls);
+
+    for (int ii = 0; ii < nbInts; ii++) {
+      anIntegersArray[ii] = anIntegers->Value(ii + 1);
+    }
+    for (int id = 0; id < nbDbls; id++) {
+      aDoublesArray[id] = aDoubles->Value(id + 1);
+    }
+  }
+
+  // initialize out-parameters with local arrays
+  theIntegers = anIntegersArray._retn();
+  theDoubles  = aDoublesArray._retn();
+  return (GEOM::GEOM_IKindOfShape::shape_kind)aKind;
+}
+
+//=============================================================================
+/*!
+ *  GetPosition
+ */
+//=============================================================================
+void GEOM_IMeasureOperations_i::GetPosition
+                 (GEOM::GEOM_Object_ptr theShape,
+		  CORBA::Double& Ox, CORBA::Double& Oy, CORBA::Double& Oz,
+		  CORBA::Double& Zx, CORBA::Double& Zy, CORBA::Double& Zz,
+		  CORBA::Double& Xx, CORBA::Double& Xy, CORBA::Double& Xz)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Set default values: global CS
+  Ox = Oy = Oz = Zx = Zy = Xy = Xz = 0.;
+  Zz = Xx = 1.;
+
+  if (theShape == NULL) return;
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+
+  if (aShape.IsNull()) return;
+
+  // Get shape parameters
+  GetOperations()->GetPosition(aShape, Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz);
+}
 
 //=============================================================================
 /*!
@@ -64,7 +141,7 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetCentreOfMass
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) return aGEOMObject._retn();
+  if (CORBA::is_nil(theShape)) return aGEOMObject._retn();
 
   //Get the reference shape
   Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
@@ -74,6 +151,41 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetCentreOfMass
 
   // Make Point - centre of mass of theShape
   Handle(GEOM_Object) anObject = GetOperations()->GetCentreOfMass(aShape);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  GetNormal
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetNormal
+                                       (GEOM::GEOM_Object_ptr theFace,
+					GEOM::GEOM_Object_ptr theOptionalPoint)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (CORBA::is_nil(theFace)) return aGEOMObject._retn();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aFace = GetOperations()->GetEngine()->GetObject
+    (theFace->GetStudyID(), theFace->GetEntry());
+
+  if (aFace.IsNull()) return aGEOMObject._retn();
+
+  // Make Vector - normal to theFace (in point theOptionalPoint if the face is not planar)
+  Handle(GEOM_Object) anOptionalPoint;
+  if (!CORBA::is_nil(theOptionalPoint)) {
+    anOptionalPoint = GetOperations()->GetEngine()->GetObject
+      (theOptionalPoint->GetStudyID(), theOptionalPoint->GetEntry());
+  }
+  Handle(GEOM_Object) anObject = GetOperations()->GetNormal(aFace, anOptionalPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -201,7 +313,7 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShape (GEOM::GEOM_Object_ptr theS
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) 
+  if (theShape == NULL)
   {
     theDescription = CORBA::string_dup("null");
     return 0;
@@ -219,7 +331,40 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShape (GEOM::GEOM_Object_ptr theS
 
   // Get shape parameters
   TCollection_AsciiString aDump;
-  if (GetOperations()->CheckShape(aShape, aDump))
+  if (GetOperations()->CheckShape(aShape, /*check_geom = */false, aDump))
+  {
+    theDescription = CORBA::string_dup("OK");
+    return 1;
+  }
+  theDescription = CORBA::string_dup(aDump.ToCString());
+  return 0;
+}
+
+CORBA::Boolean GEOM_IMeasureOperations_i::CheckShapeWithGeometry (GEOM::GEOM_Object_ptr theShape,
+								  CORBA::String_out     theDescription)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape == NULL)
+  {
+    theDescription = CORBA::string_dup("null");
+    return 0;
+  }
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+
+  if (aShape.IsNull())
+  {
+    theDescription = CORBA::string_dup("null2");
+    return 0;
+  }
+
+  // Get shape parameters
+  TCollection_AsciiString aDump;
+  if (GetOperations()->CheckShape(aShape, /*check_geom = */true, aDump))
   {
     theDescription = CORBA::string_dup("OK");
     return 1;
@@ -283,8 +428,8 @@ CORBA::Double GEOM_IMeasureOperations_i::GetMinDistance
  *  PointCoordinates
  */
 //=============================================================================
-void GEOM_IMeasureOperations_i::PointCoordinates(
-  GEOM::GEOM_Object_ptr theShape, CORBA::Double& X, CORBA::Double& Y, CORBA::Double& Z )
+void GEOM_IMeasureOperations_i::PointCoordinates (GEOM::GEOM_Object_ptr theShape,
+						  CORBA::Double& X, CORBA::Double& Y, CORBA::Double& Z)
 
 {
   //Set a not done flag
@@ -302,4 +447,29 @@ void GEOM_IMeasureOperations_i::PointCoordinates(
 
   // Get shape parameters
   GetOperations()->PointCoordinates( aShape, X, Y, Z );
+}
+
+//=============================================================================
+/*!
+ *  GetAngle
+ */
+//=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::GetAngle (GEOM::GEOM_Object_ptr theShape1,
+						   GEOM::GEOM_Object_ptr theShape2)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape1 == NULL || theShape2 == NULL) return -1.0;
+
+  //Get the reference shapes
+  Handle(GEOM_Object) aShape1 = GetOperations()->GetEngine()->GetObject
+    (theShape1->GetStudyID(), theShape1->GetEntry());
+  Handle(GEOM_Object) aShape2 = GetOperations()->GetEngine()->GetObject
+    (theShape2->GetStudyID(), theShape2->GetEntry());
+
+  if (aShape1.IsNull() || aShape2.IsNull()) return -1.0;
+
+  // Get the angle
+  return GetOperations()->GetAngle(aShape1, aShape2);
 }

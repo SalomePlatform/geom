@@ -1,36 +1,43 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_BooleanDriver.hxx>
 #include <GEOMImpl_IBoolean.hxx>
 #include <GEOMImpl_Types.hxx>
+#include <GEOMImpl_GlueDriver.hxx>
 #include <GEOM_Function.hxx>
 
+#include <BRep_Builder.hxx>
 #include <BRepAlgo.hxx>
 #include <BRepAlgoAPI_Common.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepAlgoAPI_Section.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <Precision.hxx>
 
 #include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
@@ -54,6 +61,30 @@ GEOMImpl_BooleanDriver::GEOMImpl_BooleanDriver()
 {
 }
 
+void AddSimpleShapes(TopoDS_Shape theShape, TopTools_ListOfShape& theList)
+{
+  if (theShape.ShapeType() != TopAbs_COMPOUND &&
+      theShape.ShapeType() != TopAbs_COMPSOLID) {
+    theList.Append(theShape);
+    return;
+  }
+
+  TopTools_MapOfShape mapShape;
+  TopoDS_Iterator It (theShape, Standard_True, Standard_True);
+
+  for (; It.More(); It.Next()) {
+    TopoDS_Shape aShape_i = It.Value();
+    if (mapShape.Add(aShape_i)) {
+      if (aShape_i.ShapeType() == TopAbs_COMPOUND ||
+          aShape_i.ShapeType() == TopAbs_COMPSOLID) {
+        AddSimpleShapes(aShape_i, theList);
+      } else {
+        theList.Append(aShape_i);
+      }
+    }
+  }
+}
+
 //=======================================================================
 //function : Execute
 //purpose  :
@@ -73,38 +104,309 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape aShape1 = aRefShape1->GetValue();
   TopoDS_Shape aShape2 = aRefShape2->GetValue();
   if (!aShape1.IsNull() && !aShape2.IsNull()) {
+
+    // perform COMMON operation
     if (aType == BOOLEAN_COMMON) {
-      BRepAlgoAPI_Common BO (aShape1, aShape2);
-//      BO.Build();
-      if (!BO.IsDone()) {
-        StdFail_NotDone::Raise("Requested boolean operation can not be performed on the given shapes");
+      BRep_Builder B;
+      TopoDS_Compound C;
+      B.MakeCompound(C);
+
+      TopTools_ListOfShape listShape1, listShape2;
+      AddSimpleShapes(aShape1, listShape1);
+      AddSimpleShapes(aShape2, listShape2);
+
+      Standard_Boolean isCompound =
+        (listShape1.Extent() > 1 || listShape2.Extent() > 1);
+
+      TopTools_ListIteratorOfListOfShape itSub1 (listShape1);
+      for (; itSub1.More(); itSub1.Next()) {
+        TopoDS_Shape aValue1 = itSub1.Value();
+        TopTools_ListIteratorOfListOfShape itSub2 (listShape2);
+        for (; itSub2.More(); itSub2.Next()) {
+          TopoDS_Shape aValue2 = itSub2.Value();
+          BRepAlgoAPI_Common BO (aValue1, aValue2);
+          if (!BO.IsDone()) {
+            StdFail_NotDone::Raise("Common operation can not be performed on the given shapes");
+          }
+          if (isCompound) {
+            TopoDS_Shape aStepResult = BO.Shape();
+
+            // check result of this step: if it is a compound (boolean operations
+            // allways return a compound), we add all sub-shapes of it.
+            // This allows to avoid adding empty compounds,
+            // resulting from COMMON on two non-intersecting shapes.
+            if (aStepResult.ShapeType() == TopAbs_COMPOUND) {
+              TopoDS_Iterator aCompIter (aStepResult);
+              for (; aCompIter.More(); aCompIter.Next()) {
+                // add shape in a result
+                B.Add(C, aCompIter.Value());
+              }
+            }
+            else {
+              // add shape in a result
+              B.Add(C, aStepResult);
+            }
+          }
+          else
+            aShape = BO.Shape();
+        }
       }
-      aShape = BO.Shape();
-    } else if (aType == BOOLEAN_CUT) {
-      BRepAlgoAPI_Cut BO (aShape1, aShape2);
-      if (!BO.IsDone()) {
-        StdFail_NotDone::Raise("Requested boolean operation can not be performed on the given shapes");
+
+      if (isCompound) {
+        /*
+        TopTools_ListOfShape listShapeC;
+        AddSimpleShapes(C, listShapeC);
+        TopTools_ListIteratorOfListOfShape itSubC (listShapeC);
+        bool isOnlySolids = true;
+        for (; itSubC.More(); itSubC.Next()) {
+          TopoDS_Shape aValueC = itSubC.Value();
+          if (aValueC.ShapeType() != TopAbs_SOLID) isOnlySolids = false;
+        }
+        if (isOnlySolids)
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion());
+        else
+          aShape = C;
+        */
+
+        // As GlueFaces has been improved to keep all kind of shapes
+        TopExp_Explorer anExp (C, TopAbs_VERTEX);
+        if (anExp.More())
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+        else
+          aShape = C;
       }
-      aShape = BO.Shape();
-    } else if (aType == BOOLEAN_FUSE) {
+    }
+
+    // perform CUT operation
+    else if (aType == BOOLEAN_CUT) {
+      BRep_Builder B;
+      TopoDS_Compound C;
+      B.MakeCompound(C);
+
+      TopTools_ListOfShape listShapes, listTools;
+      AddSimpleShapes(aShape1, listShapes);
+      AddSimpleShapes(aShape2, listTools);
+
+      Standard_Boolean isCompound = (listShapes.Extent() > 1);
+
+      TopTools_ListIteratorOfListOfShape itSub1 (listShapes);
+      for (; itSub1.More(); itSub1.Next()) {
+        TopoDS_Shape aCut = itSub1.Value();
+        // tools
+        TopTools_ListIteratorOfListOfShape itSub2 (listTools);
+        for (; itSub2.More(); itSub2.Next()) {
+          TopoDS_Shape aTool = itSub2.Value();
+          BRepAlgoAPI_Cut BO (aCut, aTool);
+          if (!BO.IsDone()) {
+            StdFail_NotDone::Raise("Cut operation can not be performed on the given shapes");
+          }
+          aCut = BO.Shape();
+        }
+        if (isCompound) {
+          // check result of this step: if it is a compound (boolean operations
+          // allways return a compound), we add all sub-shapes of it.
+          // This allows to avoid adding empty compounds,
+          // resulting from CUT of parts
+          if (aCut.ShapeType() == TopAbs_COMPOUND) {
+            TopoDS_Iterator aCompIter (aCut);
+            for (; aCompIter.More(); aCompIter.Next()) {
+              // add shape in a result
+              B.Add(C, aCompIter.Value());
+            }
+          }
+          else {
+            // add shape in a result
+            B.Add(C, aCut);
+          }
+        }
+        else
+          aShape = aCut;
+      }
+
+      if (isCompound) {
+        /*
+        TopTools_ListOfShape listShapeC;
+        AddSimpleShapes(C, listShapeC);
+        TopTools_ListIteratorOfListOfShape itSubC (listShapeC);
+        bool isOnlySolids = true;
+        for (; itSubC.More(); itSubC.Next()) {
+          TopoDS_Shape aValueC = itSubC.Value();
+          if (aValueC.ShapeType() != TopAbs_SOLID) isOnlySolids = false;
+        }
+        if (isOnlySolids)
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion());
+        else
+          aShape = C;
+        */
+
+        // As GlueFaces has been improved to keep all kind of shapes
+        TopExp_Explorer anExp (C, TopAbs_VERTEX);
+        if (anExp.More())
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+        else
+          aShape = C;
+      }
+    }
+
+    // perform FUSE operation
+    else if (aType == BOOLEAN_FUSE) {
+      /* Fix for NPAL15379: refused
+      // Check arguments
+      TopTools_ListOfShape listShape1, listShape2;
+      AddSimpleShapes(aShape1, listShape1);
+      AddSimpleShapes(aShape2, listShape2);
+
+      Standard_Boolean isIntersect = Standard_False;
+
+      if (listShape1.Extent() > 1 && !isIntersect) {
+        // check intersections inside the first compound
+        TopTools_ListIteratorOfListOfShape it1 (listShape1);
+        for (; it1.More() && !isIntersect; it1.Next()) {
+          TopoDS_Shape aValue1 = it1.Value();
+          TopTools_ListIteratorOfListOfShape it2 (listShape1);
+          for (; it2.More() && !isIntersect; it2.Next()) {
+            TopoDS_Shape aValue2 = it2.Value();
+            if (aValue2 != aValue1) {
+              BRepAlgoAPI_Section BO (aValue1, aValue2);
+              if (BO.IsDone()) {
+                TopoDS_Shape aSect = BO.Shape();
+                TopExp_Explorer anExp (aSect, TopAbs_EDGE);
+                if (anExp.More()) {
+                  isIntersect = Standard_True;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (listShape2.Extent() > 1 && !isIntersect) {
+        // check intersections inside the second compound
+        TopTools_ListIteratorOfListOfShape it1 (listShape2);
+        for (; it1.More() && !isIntersect; it1.Next()) {
+          TopoDS_Shape aValue1 = it1.Value();
+          TopTools_ListIteratorOfListOfShape it2 (listShape2);
+          for (; it2.More() && !isIntersect; it2.Next()) {
+            TopoDS_Shape aValue2 = it2.Value();
+            if (aValue2 != aValue1) {
+              BRepAlgoAPI_Section BO (aValue1, aValue2);
+              if (BO.IsDone()) {
+                TopoDS_Shape aSect = BO.Shape();
+                TopExp_Explorer anExp (aSect, TopAbs_EDGE);
+                if (anExp.More()) {
+                  isIntersect = Standard_True;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (isIntersect) {
+        // have intersections inside compounds
+        // check intersections between compounds
+        TopTools_ListIteratorOfListOfShape it1 (listShape1);
+        for (; it1.More(); it1.Next()) {
+          TopoDS_Shape aValue1 = it1.Value();
+          TopTools_ListIteratorOfListOfShape it2 (listShape2);
+          for (; it2.More(); it2.Next()) {
+            TopoDS_Shape aValue2 = it2.Value();
+            if (aValue2 != aValue1) {
+              BRepAlgoAPI_Section BO (aValue1, aValue2);
+              if (BO.IsDone()) {
+                TopoDS_Shape aSect = BO.Shape();
+                TopExp_Explorer anExp (aSect, TopAbs_EDGE);
+                if (anExp.More()) {
+                  StdFail_NotDone::Raise("Bad argument for Fuse: compound with intersecting sub-shapes");
+                }
+              }
+            }
+          }
+        }
+      }
+      */
+
+      // Perform
       BRepAlgoAPI_Fuse BO (aShape1, aShape2);
       if (!BO.IsDone()) {
-        StdFail_NotDone::Raise("Requested boolean operation can not be performed on the given shapes");
+        StdFail_NotDone::Raise("Fuse operation can not be performed on the given shapes");
       }
       aShape = BO.Shape();
-    } else if (aType == BOOLEAN_SECTION) {
-      BRepAlgoAPI_Section BO (aShape1, aShape2);
-      if (!BO.IsDone()) {
-        StdFail_NotDone::Raise("Requested boolean operation can not be performed on the given shapes");
+    }
+
+    // perform SECTION operation
+    else if (aType == BOOLEAN_SECTION) {
+      BRep_Builder B;
+      TopoDS_Compound C;
+      B.MakeCompound(C);
+
+      TopTools_ListOfShape listShape1, listShape2;
+      AddSimpleShapes(aShape1, listShape1);
+      AddSimpleShapes(aShape2, listShape2);
+
+      Standard_Boolean isCompound =
+        (listShape1.Extent() > 1 || listShape2.Extent() > 1);
+
+      TopTools_ListIteratorOfListOfShape itSub1 (listShape1);
+      for (; itSub1.More(); itSub1.Next()) {
+        TopoDS_Shape aValue1 = itSub1.Value();
+        TopTools_ListIteratorOfListOfShape itSub2 (listShape2);
+        for (; itSub2.More(); itSub2.Next()) {
+          TopoDS_Shape aValue2 = itSub2.Value();
+          BRepAlgoAPI_Section BO (aValue1, aValue2, Standard_False);
+          // Set approximation to have an attached 3D BSpline geometry to each edge,
+          // where analytic curve is not possible. Without this flag in some cases
+          // we obtain BSpline curve of degree 1 (C0), which is slowly
+          // processed by some algorithms (Partition for example).
+          BO.Approximation(Standard_True);
+          BO.Build();
+          if (!BO.IsDone()) {
+            StdFail_NotDone::Raise("Section operation can not be performed on the given shapes");
+          }
+          if (isCompound) {
+            TopoDS_Shape aStepResult = BO.Shape();
+
+            // check result of this step: if it is a compound (boolean operations
+            // allways return a compound), we add all sub-shapes of it.
+            // This allows to avoid adding empty compounds,
+            // resulting from SECTION on two non-intersecting shapes.
+            if (aStepResult.ShapeType() == TopAbs_COMPOUND) {
+              TopoDS_Iterator aCompIter (aStepResult);
+              for (; aCompIter.More(); aCompIter.Next()) {
+                // add shape in a result
+                B.Add(C, aCompIter.Value());
+              }
+            }
+            else {
+              // add shape in a result
+              B.Add(C, aStepResult);
+            }
+          }
+          else
+            aShape = BO.Shape();
+        }
       }
-      aShape = BO.Shape();
-    } else {
+
+      if (isCompound) {
+        //aShape = C;
+
+        // As GlueFaces has been improved to keep all kind of shapes
+        TopExp_Explorer anExp (C, TopAbs_VERTEX);
+        if (anExp.More())
+          aShape = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+        else
+          aShape = C;
+      }
+    }
+
+    // UNKNOWN operation
+    else {
     }
   }
 
   if (aShape.IsNull()) return 0;
   if (!BRepAlgo::IsValid(aShape)) {
-    Standard_ConstructionError::Raise("Boolean aborted : non valid shape result");
+    Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
   }
 
   aFunction->SetValue(aShape);

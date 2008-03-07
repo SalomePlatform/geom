@@ -1,0 +1,15 @@
+/*!
+
+\page create_adv_obj_page Creating Advanced Geometrical Objects
+
+<ul>
+<li>\subpage create_explode_page</li>
+<li>\subpage create_edge_page</li>
+<li>\subpage create_wire_page</li>
+<li>\subpage create_face_page</li>
+<li>\subpage create_shell_page</li>
+<li>\subpage create_solid_page</li>
+<li>\subpage create_compound_page</li>
+</ul>
+
+*/

@@ -34,6 +34,8 @@
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_Actor.h"
 
+#include <SUIT_Session.h>
+
 #include <vtkProperty.h>
 
 // Open CASCADE Includes
@@ -68,7 +70,7 @@ void GEOM_AssemblyBuilder::InitProperties(vtkProperty* IsoProp,
 					  vtkProperty* VertexProp,
 					  vtkProperty* IsoPVProp,
 					  vtkProperty* EdgePVProp,
-					  vtkProperty* VertexPVProp)
+			   		  vtkProperty* VertexPVProp)
 {
   // Shading like default OCC material
   FaceProp->SetRepresentationToSurface();
@@ -80,12 +82,19 @@ void GEOM_AssemblyBuilder::InitProperties(vtkProperty* IsoProp,
   FaceProp->SetDiffuseColor(0.780392, 0.568627, 0.113725);
   FaceProp->SetSpecularColor(0.992157, 0.941176, 0.807843);
 
-  // Wireframe for iso
-  IsoProp->SetRepresentationToWireframe();
-  IsoProp->SetAmbientColor(0.5, 0.5, 0.5);
-  IsoProp->SetDiffuseColor(0.5, 0.5, 0.5);
-  IsoProp->SetSpecularColor(0.5, 0.5, 0.5);
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+  QColor aColor;
 
+  // Wireframe for iso
+  aColor = aResMgr->colorValue( "Geometry", "isos_color", QColor( int(0.5*255), int(0.5*255), int(0.5*255) ) );
+  float red = aColor.red()/255.0;
+  float green = aColor.green()/255.0;
+  float blue = aColor.blue()/255.0;
+  IsoProp->SetRepresentationToWireframe();
+  IsoProp->SetAmbientColor(red, green, blue);
+  IsoProp->SetDiffuseColor(red, green, blue);
+  IsoProp->SetSpecularColor(red, green, blue);
+  
   // Wireframe for iso
   IsoPVProp->SetRepresentationToWireframe();
   IsoPVProp->SetAmbientColor(0, 1, 1);
@@ -93,23 +102,34 @@ void GEOM_AssemblyBuilder::InitProperties(vtkProperty* IsoProp,
   IsoPVProp->SetSpecularColor(0, 1, 1);
 
   // Wireframe for shared edge 
+  aColor = aResMgr->colorValue( "Geometry", "wireframe_color", QColor( 255, 255, 0 ) );
+  red = aColor.red()/255.0;
+  green = aColor.green()/255.0;
+  blue = aColor.blue()/255.0;
   EdgeSProp->SetRepresentationToWireframe();
-  EdgeSProp->SetAmbientColor(1, 1, 0);
-  EdgeSProp->SetDiffuseColor(1, 1, 0);
-  EdgeSProp->SetSpecularColor(1, 1, 0);
-
+  EdgeSProp->SetAmbientColor(red, green, blue);
+  EdgeSProp->SetDiffuseColor(red, green, blue);
+  EdgeSProp->SetSpecularColor(red, green, blue);
+  
   // Wireframe for free edge 
+  aColor = aResMgr->colorValue( "Geometry", "free_bound_color", QColor( 0, 255, 0 ) );
+  red = aColor.red()/255.0;
+  green = aColor.green()/255.0;
+  blue = aColor.blue()/255.0;
   EdgeFProp->SetRepresentationToWireframe();
-  EdgeFProp->SetAmbientColor(0, 1, 0);
-  EdgeFProp->SetDiffuseColor(0, 1, 0);
-  EdgeFProp->SetSpecularColor(0, 1, 0);
+  EdgeFProp->SetAmbientColor(red, green, blue);
+  EdgeFProp->SetDiffuseColor(red, green, blue);
+  EdgeFProp->SetSpecularColor(red, green, blue);
 
   // Wireframe for isolated edge 
+  aColor = aResMgr->colorValue( "Geometry", "line_color", QColor( 255, 0, 0 ) );
+  red = aColor.red()/255.0;
+  green = aColor.green()/255.0;
+  blue = aColor.blue()/255.0;
   EdgeIProp->SetRepresentationToWireframe();
-  EdgeIProp->SetAmbientColor(1, 0, 0);
-  EdgeIProp->SetDiffuseColor(1, 0, 0);
-  EdgeIProp->SetSpecularColor(1, 0, 0);
-
+  EdgeIProp->SetAmbientColor(red, green, blue);
+  EdgeIProp->SetDiffuseColor(red, green, blue);
+  
   // Wireframe for Preview edge 
   EdgePVProp->SetRepresentationToWireframe();
   EdgePVProp->SetAmbientColor(1, 1, 0);
@@ -117,11 +137,15 @@ void GEOM_AssemblyBuilder::InitProperties(vtkProperty* IsoProp,
   EdgePVProp->SetSpecularColor(1, 1, 0);
 
   // Wireframe for vertex 
+  aColor = aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) );
+  red = aColor.red()/255.0;
+  green = aColor.green()/255.0;
+  blue = aColor.blue()/255.0;
   VertexProp->SetRepresentationToWireframe();
-  VertexProp->SetAmbientColor(1, 1, 0);
-  VertexProp->SetDiffuseColor(1, 1, 0);
-  VertexProp->SetSpecularColor(1, 1, 0);
-
+  VertexProp->SetAmbientColor(red, green, blue);
+  VertexProp->SetDiffuseColor(red, green, blue);
+  VertexProp->SetSpecularColor(red, green, blue);
+  
   // Wireframe for vertex 
   VertexPVProp->SetRepresentationToWireframe();
   VertexPVProp->SetAmbientColor(0, 1, 1);
@@ -150,6 +174,7 @@ void GEOM_AssemblyBuilder::MeshShape(const TopoDS_Shape myShape,
       // Compute default deflection
       Bnd_Box B;
       BRepBndLib::Add(myShape, B);
+      if ( B.IsVoid() ) return; // NPAL15983 (Bug when displaying empty groups) 
       Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
       B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
       deflection = MAX3( aXmax-aXmin , aYmax-aYmin , aZmax-aZmin) * 0.001 *4;
@@ -161,21 +186,43 @@ void GEOM_AssemblyBuilder::MeshShape(const TopoDS_Shape myShape,
 
 
 vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShape,
-							  Standard_Real deflection,
-							  Standard_Integer mode,
-							  Standard_Boolean forced) {
+                                                      Standard_Real    deflection,
+                                                      Standard_Integer mode,
+                                                      Standard_Boolean forced,
+                                                      Standard_Boolean isVector)
+{
+  /*
+  vtkProperty* IsoProp = vtkProperty::New();
+  vtkProperty* FaceProp = vtkProperty::New();
+  vtkProperty* EdgeFProp = vtkProperty::New();
+  vtkProperty* EdgeSProp = vtkProperty::New();
+  vtkProperty* EdgeIProp = vtkProperty::New();
+  vtkProperty* VertexProp = vtkProperty::New();
+  vtkProperty* IsoPVProp = vtkProperty::New();
+  vtkProperty* EdgePVProp = vtkProperty::New();
+  vtkProperty* VertexPVProp = vtkProperty::New();
+  InitProperties(IsoProp,FaceProp,EdgeFProp,EdgeSProp,EdgeIProp,VertexProp,IsoPVProp,EdgePVProp,VertexPVProp);
+  */
 
   vtkActorCollection* AISActors = vtkActorCollection::New();
+  MeshShape(myShape,deflection,forced);
+  GEOM_Actor* aGeomActor = GEOM_Actor::New();
+  aGeomActor->SetShape(myShape,(float)deflection,false,isVector);
+  AISActors->AddItem(aGeomActor);
 
+  aGeomActor->Delete();
+  
+  /*
   if(myShape.ShapeType() == TopAbs_COMPOUND) {
     TopoDS_Iterator anItr(myShape);
     for(; anItr.More(); anItr.Next()) {
-      vtkActorCollection* theActors = GEOM_AssemblyBuilder::BuildActors(anItr.Value(), deflection, mode, forced);
+      vtkActorCollection* theActors =
+        GEOM_AssemblyBuilder::BuildActors(anItr.Value(), deflection, mode, forced);
       theActors->InitTraversal();
       vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
       while(!(anActor==NULL)) {
-	AISActors->AddItem(anActor);
-	anActor = (vtkActor*)theActors->GetNextActor();
+        AISActors->AddItem(anActor);
+        anActor = (vtkActor*)theActors->GetNextActor();
       }
     }
   }
@@ -230,6 +277,7 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
 	GEOM_Actor* EdgeActor = GEOM_Actor::New();
 	EdgeActor->SubShapeOn();
 	EdgeActor->setInputShape(ex2.Current(),deflection,mode);
+	
 	switch (nbf) {
 	  
 	case 0 : // isolated edge
@@ -252,6 +300,7 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
 	    EdgeActor->SetWireframeProperty(EdgeSProp);
 	  }
 	}
+	
 	EdgeActor->SetPreviewProperty(EdgePVProp);
 	AISActors->AddItem(EdgeActor);
       }
@@ -275,7 +324,7 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
     }
   } else if ( myShape.ShapeType() == TopAbs_EDGE ) { // EDGE Actor
     GEOM_Actor* EdgeActor = GEOM_Actor::New();
-    EdgeActor->setInputShape(myShape,deflection,mode);
+    EdgeActor->setInputShape(myShape,deflection,mode,isVector);
     EdgeActor->SetShadingProperty(EdgeIProp);
     EdgeActor->SetWireframeProperty(EdgeIProp);
     EdgeActor->SetPreviewProperty(EdgePVProp);
@@ -291,6 +340,8 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
     AISActors->AddItem(VertexActor);
   
   } 
+  */
+  
   
   return AISActors;
 
@@ -309,8 +360,7 @@ vtkAssembly*  GEOM_AssemblyBuilder::BuildAssembly(const TopoDS_Shape& myShape,
   // Create a new vtkAssembly
 
   vtkAssembly* myVTKShape = vtkAssembly::New();
-
-
+  /*
   // Create graphics properties
 
   vtkProperty* IsoProp = vtkProperty::New();
@@ -389,6 +439,8 @@ vtkAssembly*  GEOM_AssemblyBuilder::BuildAssembly(const TopoDS_Shape& myShape,
     }
     myVTKShape->AddPart(myFaceAssembly);
   }
+
+  */
   
   return myVTKShape;
  

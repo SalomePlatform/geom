@@ -17,17 +17,18 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : MeasureGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef MEASUREGUI_H
 #define MEASUREGUI_H
+
+#include "GEOM_MeasureGUI.hxx"
 
 #include "GEOMGUI.h"
 
@@ -35,18 +36,13 @@
 // class    : MeasureGUI
 // purpose  :
 //=================================================================================
-class MeasureGUI : public GEOMGUI
+class GEOM_MEASUREGUI_EXPORT MeasureGUI : public GEOMGUI
 {
-protected:
-                              MeasureGUI( GeometryGUI* parent ); 
+public:
+  MeasureGUI( GeometryGUI* parent ); 
+  ~MeasureGUI();
 
-public :
-                              ~MeasureGUI();
-  static MeasureGUI*          GetMeasureGUI( GeometryGUI* parent );
-  bool                        OnGUIEvent( int , SUIT_Desktop* );
-
-private:
-  static MeasureGUI*          myGUIObject;
+  bool OnGUIEvent( int , SUIT_Desktop* );
 };
 
 #endif

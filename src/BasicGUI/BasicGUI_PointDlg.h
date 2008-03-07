@@ -28,24 +28,22 @@
 #ifndef DIALOGBOX_POINT_H
 #define DIALOGBOX_POINT_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel1Spin.h"
 #include "DlgRef_3Spin.h"
+#include "DlgRef_2Sel_QTD.h"
 #include "DlgRef_1Sel3Spin.h"
 
 class QLineEdit;
 class QGroupBox;
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
 //=================================================================================
 // class    : BasicGUI_PointDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_PointDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_PointDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
@@ -63,7 +61,7 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
-
+    virtual void addSubshapesToStudy();
     virtual void closeEvent( QCloseEvent* e );
 
 private :
@@ -73,10 +71,13 @@ private :
 
     GEOM::GEOM_Object_var myEdge;
     GEOM::GEOM_Object_var myRefPoint; 
+    GEOM::GEOM_Object_var myLine1; 
+    GEOM::GEOM_Object_var myLine2;
 
     DlgRef_3Spin*     GroupXYZ;
     DlgRef_1Sel3Spin* GroupRefPoint;
     DlgRef_1Sel1Spin* GroupOnCurve;
+    DlgRef_2Sel_QTD*  GroupLineIntersection;
 
     QGroupBox*        myCoordGrp;
     QLineEdit*        myX;

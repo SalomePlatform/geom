@@ -28,21 +28,17 @@
 #ifndef DIALOGBOX_BNDBOX_H
 #define DIALOGBOX_BNDBOX_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include "MeasureGUI_Skeleton.h"
 
 class MeasureGUI_1Sel6LineEdit_QTD;
-
-#if defined WNT && defined MEASUREGUI_EXPORTS
-#define MEASUREGUI_EXPORT __declspec( dllexport )
-#else
-#define MEASUREGUI_EXPORT
-#endif
 
 //=================================================================================
 // class    : DialogBox_PROPERTIES
 // purpose  :
 //=================================================================================
-class MEASUREGUI_EXPORT MeasureGUI_BndBoxDlg : public MeasureGUI_Skeleton
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_BndBoxDlg : public MeasureGUI_Skeleton
 { 
     Q_OBJECT
 

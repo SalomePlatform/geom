@@ -28,6 +28,8 @@
 #ifndef DLGREF_1SEL5SPIN_QTD_H
 #define DLGREF_1SEL5SPIN_QTD_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include <qvariant.h>
 #include <qwidget.h>
 class QVBoxLayout; 
@@ -39,7 +41,7 @@ class QLineEdit;
 class QPushButton;
 class QSpinBox;
 
-class DlgRef_1Sel5Spin_QTD : public QWidget
+class GEOM_DLGREF_EXPORT DlgRef_1Sel5Spin_QTD : public QWidget
 { 
     Q_OBJECT
 

@@ -1,22 +1,30 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File      : GEOMImpl_IShapesOperations.cxx
+// Created   : 
+// Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
+// Project   : SALOME
+// $Header$
+
+using namespace std;
+
 #include <Standard_Stream.hxx>
 
 #include "GEOMImpl_IShapesOperations.hxx"
@@ -35,10 +43,17 @@
 #include "GEOMImpl_Block6Explorer.hxx"
 
 #include "GEOM_Function.hxx"
+#include "GEOM_ISubShape.hxx"
 #include "GEOM_PythonDump.hxx"
 
 #include "GEOMAlgo_FinderShapeOn1.hxx"
 #include "GEOMAlgo_FinderShapeOnQuad.hxx"
+#include "GEOMAlgo_FinderShapeOn2.hxx"
+#include "GEOMAlgo_ClsfBox.hxx"
+#include "GEOMAlgo_Gluer1.hxx"
+#include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
+#include "GEOMAlgo_CoupleOfShapes.hxx"
+#include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
 
 #include "utilities.h"
 #include "OpUtil.hxx"
@@ -54,6 +69,8 @@
 #include <BRepExtrema_ExtCF.hxx>
 
 #include <BRep_Tool.hxx>
+#include <BRep_Builder.hxx>
+#include <BRepTools.hxx>
 #include <BRepGProp.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAdaptor_Surface.hxx>
@@ -65,13 +82,16 @@
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopoDS_Solid.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopLoc_Location.hxx>
 #include <TopTools_MapOfShape.hxx>
+#include <TopTools_MapOfOrientedShape.hxx>
 #include <TopTools_Array1OfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -82,6 +102,7 @@
 #include <Geom_CylindricalSurface.hxx>
 #include <GeomAdaptor_Surface.hxx>
 
+#include <GeomLib_Tool.hxx>
 #include <Geom2d_Curve.hxx>
 
 #include <Bnd_Box.hxx>
@@ -95,7 +116,18 @@
 
 #include <vector>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+
+// Includes added for GetInPlace algorithm improvement
+
+#include <GEOMImpl_MeasureDriver.hxx>
+#include <GEOMImpl_IMeasure.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+
+#include <BRepClass_FaceClassifier.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
+#include <Precision.hxx>
 
 //=============================================================================
 /*!
@@ -152,6 +184,9 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
 
   //Compute the Edge value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vector driver failed");
       return NULL;
@@ -216,6 +251,9 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
 
   //Compute the Face value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to compute a face");
       return NULL;
@@ -277,6 +315,9 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
 
   //Compute the shape
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;
@@ -360,6 +401,9 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidShell (Handle(GEOM_Obje
 
   //Compute the Solid value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Solid driver failed");
       return NULL;
@@ -432,6 +476,9 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
 
   //Compute the shape
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;
@@ -468,7 +515,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
                                                 (Handle(GEOM_Object) theShape,
-                                                 const Standard_Real theTolerance)
+                                                 const Standard_Real theTolerance,
+                                                 const Standard_Boolean doKeepNonSolids)
 {
   SetErrorCode(KO);
 
@@ -492,10 +540,14 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
 
   aCI.SetBase(aRefShape);
   aCI.SetTolerance(theTolerance);
+  aCI.SetKeepNonSolids(doKeepNonSolids);
 
   //Compute the sub-shape value
   Standard_Boolean isWarning = Standard_False;
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to glue faces");
       return NULL;
@@ -523,6 +575,173 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
 
 //=============================================================================
 /*!
+ *  GetGlueFaces
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueFaces
+                                                (Handle(GEOM_Object) theShape,
+                                                 const Standard_Real theTolerance)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+  TopoDS_Shape aShape = theShape->GetValue();
+  if (aShape.IsNull()) return NULL;
+
+  Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+
+  Standard_Integer iErr;
+  TopoDS_Shape aS;
+  GEOMAlgo_Gluer1 aGluer;
+  GEOMAlgo_ListIteratorOfListOfCoupleOfShapes aItCS;
+  GEOMAlgo_CoupleOfShapes aCS;
+  GEOMAlgo_ListOfCoupleOfShapes aLCS;
+
+  //aGluer = new GEOMAlgo_Gluer1;
+  aGluer.SetShape(aShape);
+  aGluer.SetTolerance(theTolerance);
+  aGluer.Perform();
+  iErr = aGluer.ErrorStatus();
+  if (iErr) return NULL;
+
+  TopTools_ListOfShape listShape;
+  const GEOMAlgo_ListOfCoupleOfShapes& aLCSG = aGluer.GluedFaces();
+  // Access to faces
+  aItCS.Initialize(aLCSG);
+  for (; aItCS.More(); aItCS.Next()) {
+    const GEOMAlgo_CoupleOfShapes& aCSG = aItCS.Value();
+    listShape.Append(aCSG.Shape1());
+  }
+
+  TopTools_ListIteratorOfListOfShape itSub (listShape);
+  TCollection_AsciiString anAsciiList, anEntry;
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+  Handle(TColStd_HArray1OfInteger) anArray;
+  Handle(GEOM_Object) anObj;
+  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+    TopoDS_Shape aValue = itSub.Value();
+    anArray = new TColStd_HArray1OfInteger(1,1);
+    anArray->SetValue(1, anIndices.FindIndex(aValue));
+    anObj = GetEngine()->AddSubShape(theShape, anArray);
+    if (!anObj.IsNull()) {
+      aSeq->Append(anObj);
+
+      // for python command
+      TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+      anAsciiList += anEntry;
+      anAsciiList += ",";
+    }
+  }
+
+  //Make a Python command
+  if(anAsciiList.Length()>0)
+    anAsciiList.Trunc(anAsciiList.Length() - 1);
+  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  GEOM::TPythonDump pd (aFunction, /*append=*/true);
+  pd << "[" << anAsciiList.ToCString();
+  pd << "] = geompy.GetGlueFaces(" << theShape << ", " << theTolerance << ")";
+
+  SetErrorCode(OK);
+
+  return aSeq;
+}
+
+
+//=============================================================================
+/*!
+ *  MakeGlueFacesByList
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
+                                                (Handle(GEOM_Object) theShape,
+                                                 const Standard_Real theTolerance,
+						 list<Handle(GEOM_Object)> theFaces,
+                                                 const Standard_Boolean doKeepNonSolids)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+
+  //Add a new Glued object
+  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
+
+  //Add a new Glue function
+  Handle(GEOM_Function) aFunction;
+  aFunction = aGlued->AddFunction(GEOMImpl_GlueDriver::GetID(), GLUE_FACES_BY_LIST);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_GlueDriver::GetID()) return NULL;
+
+  GEOMImpl_IGlue aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetBase(aRefShape);
+  aCI.SetTolerance(theTolerance);
+  aCI.SetKeepNonSolids(doKeepNonSolids);
+
+  Handle(TColStd_HSequenceOfTransient) aFaces = new TColStd_HSequenceOfTransient;
+  list<Handle(GEOM_Object)>::iterator it = theFaces.begin();
+  for (; it != theFaces.end(); it++) {
+    Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
+    if (aRefSh.IsNull()) {
+      SetErrorCode("NULL argument shape for the shape construction");
+      return NULL;
+    }
+    aFaces->Append(aRefSh);
+  }
+  aCI.SetFaces(aFaces);
+
+  //Compute the sub-shape value
+  Standard_Boolean isWarning = Standard_False;
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed to glue faces");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    // to provide warning
+    if (!aFunction->GetValue().IsNull()) {
+      isWarning = Standard_True;
+    } else {
+      return NULL;
+    }
+  }
+
+  //Make a Python command
+  
+  GEOM::TPythonDump pd(aFunction);
+  pd << aGlued << " = geompy.MakeGlueFacesByList("
+     << theShape << ", " << theTolerance << ", [";
+  // Faces
+  it = theFaces.begin();
+  if (it != theFaces.end()) {
+    pd << (*it++);
+    while (it != theFaces.end()) {
+      pd << ", " << (*it++);
+    }
+  }
+  pd << "])";
+
+
+  // to provide warning
+  if (!isWarning) SetErrorCode(OK);
+  return aGlued;
+}
+
+
+
+//=============================================================================
+/*!
  *  MakeExplode
  */
 //=============================================================================
@@ -537,9 +756,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   TopoDS_Shape aShape = theShape->GetValue();
   if (aShape.IsNull()) return NULL;
 
+  Handle(GEOM_Function) aMainShape = theShape->GetLastFunction();
+
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   Handle(GEOM_Object) anObj;
-  Handle(GEOM_Function) aFunction;
   TopTools_MapOfShape mapShape;
   TopTools_ListOfShape listShape;
 
@@ -564,7 +784,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   }
 
   if (listShape.IsEmpty()) {
-    SetErrorCode("The given shape has no sub-shapes of the requested type");
+    //SetErrorCode("The given shape has no sub-shapes of the requested type");
+    SetErrorCode(NOT_FOUND_ANY); // NPAL18017
     return aSeq;
   }
 
@@ -575,27 +796,47 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   TopExp::MapShapes(aShape, anIndices);
   Handle(TColStd_HArray1OfInteger) anArray;
 
+  Standard_Integer nbAllSubShape = anIndices.Extent();
+
   TopTools_ListIteratorOfListOfShape itSub (listShape);
   TCollection_AsciiString anAsciiList, anEntry;
-  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+  for (int index = 1; itSub.More(); itSub.Next(), ++index)
+  {
     TopoDS_Shape aValue = itSub.Value();
     anArray = new TColStd_HArray1OfInteger(1,1);
     anArray->SetValue(1, anIndices.FindIndex(aValue));
-    anObj = GetEngine()->AddSubShape(theShape, anArray);
-    aSeq->Append(anObj);
 
-    // for python command
-    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    anAsciiList += anEntry;
-    anAsciiList += ",";
+    //anObj = GetEngine()->AddSubShape(theShape, anArray);
+    {
+      anObj = GetEngine()->AddObject(GetDocID(), GEOM_SUBSHAPE);
+      Handle(GEOM_Function) aFunction = anObj->AddFunction(GEOM_Object::GetSubShapeID(), 1);
+      if (aFunction.IsNull()) return aSeq;
+
+      GEOM_ISubShape aSSI (aFunction);
+      aSSI.SetMainShape(aMainShape);
+      aSSI.SetIndices(anArray);
+
+      // Set function value directly, as we know it.
+      // Usage of Solver here would lead to significant loss of time,
+      // because GEOM_SubShapeDriver will build TopTools_IndexedMapOfShape
+      // on the main shape for each being calculated sub-shape separately.
+      aFunction->SetValue(aValue);
+    }
+
+    if (!anObj.IsNull()) {
+      aSeq->Append(anObj);
+
+      // for python command
+      TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+      anAsciiList += anEntry;
+      anAsciiList += ",";
+    }
   }
 
   //Make a Python command
   anAsciiList.Trunc(anAsciiList.Length() - 1);
 
-  aFunction = theShape->GetLastFunction();
-
-  GEOM::TPythonDump pd (aFunction, /*append=*/true);
+  GEOM::TPythonDump pd (aMainShape, /*append=*/true);
   pd << "[" << anAsciiList.ToCString();
   pd << "] = geompy.SubShapeAll" << (isSorted ? "Sorted(" : "(");
   pd << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
@@ -607,7 +848,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
 
 //=============================================================================
 /*!
- *  GetSubShapeAllIDs
+ *  SubShapeAllIDs
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
@@ -646,7 +887,8 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
   }
 
   if (listShape.IsEmpty()) {
-    SetErrorCode("The given shape has no sub-shapes of the requested type");
+    //SetErrorCode("The given shape has no sub-shapes of the requested type");
+    SetErrorCode(NOT_FOUND_ANY); // NPAL18017
     return aSeq;
   }
 
@@ -947,6 +1189,9 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
 
   //Compute the sub-shape value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to reverse shape");
       return NULL;
@@ -1017,7 +1262,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetFreeFacesIDs
 
 //=======================================================================
 //function : GetSharedShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
@@ -1082,7 +1327,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
 
 //=============================================================================
 /*!
- *  
+ *
  */
 //=============================================================================
 static GEOM::TPythonDump& operator<< (GEOM::TPythonDump&   theDump,
@@ -1198,6 +1443,176 @@ Handle(Geom_Surface) GEOMImpl_IShapesOperations::makeCylinder(const TopoDS_Shape
 
 
 //=======================================================================
+//function : getShapesOnBoxIDs
+  /*!
+   * \brief Find IDs of subshapes complying with given status about surface
+    * \param theBox - the box to check state of subshapes against
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theState - required state
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+   */
+//=======================================================================
+
+Handle(TColStd_HSequenceOfInteger)
+  GEOMImpl_IShapesOperations::getShapesOnBoxIDs(const Handle(GEOM_Object)& theBox,
+						const Handle(GEOM_Object)& theShape,
+						const Standard_Integer theShapeType,
+						GEOMAlgo_State theState)
+{
+  Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
+
+  TopoDS_Shape aBox = theBox->GetValue();
+  TopoDS_Shape aShape = theShape->GetValue();
+
+  // Check presence of triangulation, build if need
+  if (!CheckTriangulation(aShape)) {
+    SetErrorCode("Cannot build triangulation on the shape");
+    return aSeqOfIDs;
+  }
+
+  // Call algo
+  GEOMAlgo_FinderShapeOn2 aFinder;
+  Standard_Real aTol = 0.0001; // default value
+
+  Handle(GEOMAlgo_ClsfBox) aClsfBox = new GEOMAlgo_ClsfBox;
+  aClsfBox->SetBox(aBox);
+
+  aFinder.SetShape(aShape);
+  aFinder.SetTolerance(aTol);
+  aFinder.SetClsf(aClsfBox);
+  aFinder.SetShapeType( (TopAbs_ShapeEnum)theShapeType );
+  aFinder.SetState(theState);
+  aFinder.Perform();
+
+  // Interprete results
+  Standard_Integer iErr = aFinder.ErrorStatus();
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iErr) {
+    MESSAGE(" iErr : " << iErr);
+    TCollection_AsciiString aMsg (" iErr : ");
+    aMsg += TCollection_AsciiString(iErr);
+    SetErrorCode(aMsg);
+    return aSeqOfIDs;
+  }
+  Standard_Integer iWrn = aFinder.WarningStatus();
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iWrn) {
+    MESSAGE(" *** iWrn : " << iWrn);
+  }
+
+  const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
+
+  if (listSS.Extent() < 1) {
+    //SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    SetErrorCode(NOT_FOUND_ANY); // NPAL18017
+    return aSeqOfIDs;
+  }
+
+  // Fill sequence of object IDs
+  aSeqOfIDs = new TColStd_HSequenceOfInteger;
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+
+  TopTools_ListIteratorOfListOfShape itSub (listSS);
+  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+    int id = anIndices.FindIndex(itSub.Value());
+    aSeqOfIDs->Append(id);
+  }
+
+  return aSeqOfIDs;
+}
+
+
+//=======================================================================
+//function : GetShapesOnBoxIDs
+/*!
+   * \brief Find subshapes complying with given status about surface
+    * \param theBox - the box to check state of subshapes against
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theState - required state
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+ */
+//=======================================================================
+
+Handle(TColStd_HSequenceOfInteger)
+    GEOMImpl_IShapesOperations::GetShapesOnBoxIDs(const Handle(GEOM_Object)& theBox,
+						  const Handle(GEOM_Object)& theShape,
+						  const Standard_Integer theShapeType,
+						  GEOMAlgo_State theState)
+{
+  // Find subshapes ids
+  Handle(TColStd_HSequenceOfInteger) aSeqOfIDs =
+    getShapesOnBoxIDs (theBox, theShape, theShapeType, theState);
+  if ( aSeqOfIDs.IsNull()  || aSeqOfIDs->Length() == 0 )
+    return NULL;
+
+  // The GetShapesOnBox() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theBox)->GetLastFunction();
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction)
+    << "listShapesOnBoxIDs = geompy.GetShapesOnQuadrangleIDs("
+    << theBox << ", "
+    << theShape << ", "
+    << TopAbs_ShapeEnum(theShapeType) << ", "
+    << theState << ")";
+
+  SetErrorCode(OK);
+  return aSeqOfIDs;
+}
+
+//=======================================================================
+//function : GetShapesOnBox
+/*!
+   * \brief Find subshapes complying with given status about surface
+    * \param theBox - the box to check state of subshapes against
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theState - required state
+    * \retval Handle(TColStd_HSequenceOfTransient) - found subshapes
+ */
+//=======================================================================
+
+Handle(TColStd_HSequenceOfTransient)
+    GEOMImpl_IShapesOperations::GetShapesOnBox(const Handle(GEOM_Object)& theBox,
+					       const Handle(GEOM_Object)&  theShape,
+					       const Standard_Integer theShapeType,
+					       GEOMAlgo_State theState)
+{
+  // Find subshapes ids
+  Handle(TColStd_HSequenceOfInteger) aSeqOfIDs =
+    getShapesOnBoxIDs (theBox, theShape, theShapeType, theState);
+  if ( aSeqOfIDs.IsNull()  || aSeqOfIDs->Length() == 0 )
+    return NULL;
+
+  // Find objects by indices
+  TCollection_AsciiString anAsciiList;
+  Handle(TColStd_HSequenceOfTransient) aSeq;
+  aSeq = getObjectsShapesOn( theShape, aSeqOfIDs, anAsciiList );
+  if ( aSeq.IsNull() || aSeq->IsEmpty() )
+    return NULL;
+
+  // Make a Python command
+
+  Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast( aSeq->Value( 1 ));
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction)
+    << "[" << anAsciiList.ToCString() << "] = geompy.GetShapesOnBox("
+    << theBox << ", "
+    << theShape << ", "
+    << TopAbs_ShapeEnum(theShapeType) << ", "
+    << theState << ")";
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+
+//=======================================================================
 //function : getShapesOnSurfaceIDs
   /*!
    * \brief Find IDs of subshapes complying with given status about surface
@@ -1218,8 +1633,10 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
 
   // Check presence of triangulation, build if need
-  if (!CheckTriangulation(theShape))
+  if (!CheckTriangulation(theShape)) {
+    SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
+  }
 
   // Call algo
   GEOMAlgo_FinderShapeOn1 aFinder;
@@ -1262,7 +1679,8 @@ Handle(TColStd_HSequenceOfInteger)
   const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
 
   if (listSS.Extent() < 1) {
-    SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    //SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    SetErrorCode(NOT_FOUND_ANY); // NPAL18017
     return aSeqOfIDs;
   }
 
@@ -1397,6 +1815,80 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
 
 //=============================================================================
 /*!
+ *  GetShapesOnPlaneWithLocation
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlaneWithLocation
+                                        (const Handle(GEOM_Object)& theShape,
+                                         const Standard_Integer     theShapeType,
+                                         const Handle(GEOM_Object)& theAx1,
+					 const Handle(GEOM_Object)& thePnt,
+                                         const GEOMAlgo_State       theState)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull() || theAx1.IsNull() || thePnt.IsNull()) return NULL;
+
+  TopoDS_Shape aShape = theShape->GetValue();
+  TopoDS_Shape anAx1  = theAx1->GetValue();
+  TopoDS_Shape anPnt = thePnt->GetValue();
+
+  if (aShape.IsNull() || anAx1.IsNull() || anPnt.IsNull()) return NULL;
+
+  TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
+  if ( !checkTypeShapesOn( theShapeType ))
+    return NULL;
+
+  // Create plane
+  if ( anAx1.ShapeType() != TopAbs_EDGE || anPnt.ShapeType() != TopAbs_VERTEX ) return NULL;
+  TopoDS_Vertex V1, V2, V3;
+  TopoDS_Edge anEdge = TopoDS::Edge(anAx1);
+  TopExp::Vertices(anEdge, V1, V2, Standard_True);
+
+  if (V1.IsNull() || V2.IsNull()) {
+    SetErrorCode("Bad edge given for the plane normal vector");
+    return NULL;
+  }
+  V3 = TopoDS::Vertex(anPnt);
+
+  if(V3.IsNull()) {
+    SetErrorCode("Bad vertex given for the plane location");
+      return NULL;
+  }
+  gp_Pnt aLoc = BRep_Tool::Pnt(V3);
+  gp_Vec aVec(BRep_Tool::Pnt(V1),BRep_Tool::Pnt(V2));
+
+  if (aVec.Magnitude() < Precision::Confusion()) {
+     SetErrorCode("Vector with null magnitude given");
+    return NULL;
+  }
+  Handle(Geom_Surface) aPlane = new Geom_Plane(aLoc, aVec);
+
+  if ( aPlane.IsNull() )
+    return NULL;
+
+  // Find objects
+  TCollection_AsciiString anAsciiList;
+  Handle(TColStd_HSequenceOfTransient) aSeq;
+  aSeq = getShapesOnSurface( aPlane, theShape, aShapeType, theState, anAsciiList );
+  if ( aSeq.IsNull() || aSeq->Length() == 0 )
+    return NULL;
+
+  // Make a Python command
+
+  Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast( aSeq->Value( 1 ));
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
+    << "] = geompy.GetShapesOnPlaneWithLocation(" << theShape << ", "
+    << aShapeType << ", " << theAx1 << ", "<< thePnt <<", " << theState << ")";
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+//=============================================================================
+/*!
  *  GetShapesOnCylinder
  */
 //=============================================================================
@@ -1431,7 +1923,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnCyli
   aSeq = getShapesOnSurface( aCylinder, theShape, aShapeType, theState, anAsciiList );
   if ( aSeq.IsNull() || aSeq->Length() == 0 )
     return NULL;
-  
+
   // Make a Python command
 
   Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast( aSeq->Value( 1 ));
@@ -1484,7 +1976,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnSphe
   aSeq = getShapesOnSurface( aSphere, theShape, aShapeType, theState, anAsciiList );
   if ( aSeq.IsNull() || aSeq->Length() == 0 )
     return NULL;
-    
+
   // Make a Python command
 
   Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast( aSeq->Value( 1 ));
@@ -1545,6 +2037,73 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnPlaneI
 
 //=============================================================================
 /*!
+ *  GetShapesOnPlaneWithLocationIDs
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnPlaneWithLocationIDs
+                                        (const Handle(GEOM_Object)& theShape,
+                                         const Standard_Integer     theShapeType,
+                                         const Handle(GEOM_Object)& theAx1,
+					 const Handle(GEOM_Object)& thePnt,
+                                         const GEOMAlgo_State       theState)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull() || theAx1.IsNull() || thePnt.IsNull()) return NULL;
+
+  TopoDS_Shape aShape = theShape->GetValue();
+  TopoDS_Shape anAx1  = theAx1->GetValue();
+  TopoDS_Shape anPnt  = thePnt->GetValue();
+
+  if (aShape.IsNull() || anAx1.IsNull() || anPnt.IsNull()) return NULL;
+
+  TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
+  if ( !checkTypeShapesOn( aShapeType ))
+    return NULL;
+
+  // Create plane
+  if (anAx1.ShapeType() != TopAbs_EDGE || anPnt.ShapeType() != TopAbs_VERTEX) return NULL;
+  TopoDS_Edge anEdge = TopoDS::Edge(anAx1);
+  TopoDS_Vertex V1, V2, V3;
+  TopExp::Vertices(anEdge, V1, V2, Standard_True);
+  if (V1.IsNull() || V2.IsNull()) {
+    SetErrorCode("Bad edge given for the plane normal vector");
+    return NULL;
+  }
+  V3 = TopoDS::Vertex(anPnt);
+  if(V3.IsNull()) {
+    SetErrorCode("Bad vertex given for the plane location");
+      return NULL;
+  }
+  gp_Pnt aLoc = BRep_Tool::Pnt(V3);
+  gp_Vec aVec(BRep_Tool::Pnt(V1),BRep_Tool::Pnt(V2));
+  if (aVec.Magnitude() < Precision::Confusion()) {
+    SetErrorCode("Vector with null magnitude given");
+    return NULL;
+  }
+
+  Handle(Geom_Surface) aPlane = new Geom_Plane(aLoc, aVec);
+  if ( aPlane.IsNull() )
+    return NULL;
+
+  // Find object IDs
+  Handle(TColStd_HSequenceOfInteger) aSeq;
+  aSeq = getShapesOnSurfaceIDs( aPlane, aShape, aShapeType, theState );
+
+  // The GetShapesOnPlaneIDs() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theAx1)->GetLastFunction();
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction, /*append=*/true)
+    << "listShapesOnPlane = geompy.GetShapesOnPlaneWithLocationIDs"
+    << "(" << theShape << ", " << aShapeType << ", " << theAx1 << ", "<< thePnt << ", "  << theState << ")";
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+//=============================================================================
+/*!
  *  GetShapesOnCylinderIDs
  */
 //=============================================================================
@@ -1572,7 +2131,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylind
   Handle(Geom_Surface) aCylinder = makeCylinder( anAxis, theRadius );
   if ( aCylinder.IsNull() )
     return NULL;
-  
+
   // Find object IDs
   Handle(TColStd_HSequenceOfInteger) aSeq;
   aSeq = getShapesOnSurfaceIDs( aCylinder, aShape, aShapeType, theState );
@@ -1626,7 +2185,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnSphere
   // Find object IDs
   Handle(TColStd_HSequenceOfInteger) aSeq;
   aSeq = getShapesOnSurfaceIDs( aSphere, aShape, aShapeType, theState );
-  
+
   // The GetShapesOnSphere() doesn't change object so no new function is required.
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theCenter)->GetLastFunction();
 
@@ -1680,13 +2239,13 @@ Handle(TColStd_HSequenceOfInteger)
   TopoDS_Shape aBR = theBottomRigthPoint->GetValue();
 
   if (aShape.IsNull() ||
-      aTL.IsNull() || 
-      aTR.IsNull() || 
-      aBL.IsNull() || 
+      aTL.IsNull() ||
+      aTR.IsNull() ||
+      aBL.IsNull() ||
       aBR.IsNull() ||
-      aTL.ShapeType() != TopAbs_VERTEX || 
-      aTR.ShapeType() != TopAbs_VERTEX || 
-      aBL.ShapeType() != TopAbs_VERTEX || 
+      aTL.ShapeType() != TopAbs_VERTEX ||
+      aTR.ShapeType() != TopAbs_VERTEX ||
+      aBL.ShapeType() != TopAbs_VERTEX ||
       aBR.ShapeType() != TopAbs_VERTEX )
     return NULL;
 
@@ -1697,8 +2256,10 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
 
   // Check presence of triangulation, build if need
-  if (!CheckTriangulation(aShape))
+  if (!CheckTriangulation(aShape)) {
+    SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
+  }
 
   // Call algo
   gp_Pnt aPntTL = BRep_Tool::Pnt(TopoDS::Vertex(aTL));
@@ -1746,7 +2307,8 @@ Handle(TColStd_HSequenceOfInteger)
   const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
 
   if (listSS.Extent() < 1) {
-    SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    //SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    SetErrorCode(NOT_FOUND_ANY); // NPAL18017
     return aSeqOfIDs;
   }
 
@@ -1888,91 +2450,304 @@ Handle(TColStd_HSequenceOfInteger)
 
 //=============================================================================
 /*!
- *  GetInPlace
+ *  GetInPlaceOfShape
  */
 //=============================================================================
-static void SimplifyWhat (TopoDS_Shape& theWhat,
-                          TopTools_IndexedMapOfShape& theArgumentIndices,
-                          TColStd_ListOfInteger& theSimpleSubWhat)
+static bool GetInPlaceOfShape (const Handle(GEOM_Function)& theWhereFunction,
+                               const TopTools_IndexedMapOfShape& theWhereIndices,
+                               const TopoDS_Shape& theWhat,
+                               TColStd_ListOfInteger& theModifiedList)
 {
-  TopTools_MapOfShape mapShape;
-  TopoDS_Iterator It (theWhat, Standard_True, Standard_True);
-  for (; It.More(); It.Next()) {
-    if (mapShape.Add(It.Value())) {
-      TopoDS_Shape curSh = It.Value();
-      if (curSh.ShapeType() == TopAbs_COMPOUND ||
-          curSh.ShapeType() == TopAbs_COMPSOLID) {
-        SimplifyWhat(curSh, theArgumentIndices, theSimpleSubWhat);
-      } else {
-        theSimpleSubWhat.Append(theArgumentIndices.FindIndex(curSh));
-      }
-    }
+  if (theWhereFunction.IsNull() || theWhat.IsNull()) return false;
+
+  if (theWhereIndices.Contains(theWhat)) {
+    // entity was not changed by the operation
+    Standard_Integer aWhatIndex = theWhereIndices.FindIndex(theWhat);
+    theModifiedList.Append(aWhatIndex);
+    return true;
   }
-}
 
-static bool GetInPlaceOfCompound (Handle(GEOM_Function)& theWhereFunction,
-                                  TopoDS_Shape& theWhat,
-                                  TColStd_ListOfInteger& theModifiedArray)
-{
-  bool isFoundAny = false;
-  TopTools_MapOfShape mapShape;
-  TopoDS_Iterator It (theWhat, Standard_True, Standard_True);
-  for (; It.More(); It.Next()) {
-    if (mapShape.Add(It.Value())) {
-      TopoDS_Shape curWhat = It.Value();
-      if (curWhat.ShapeType() == TopAbs_COMPOUND ||
-          curWhat.ShapeType() == TopAbs_COMPSOLID) {
-        // Recursive call for compound or compsolid
-        if (GetInPlaceOfCompound(theWhereFunction, curWhat, theModifiedArray))
-          isFoundAny = true;
-      } else {
-        // Try to find for "simple" shape
-        bool isFound = false;
+  // try to find in history
+  TDF_Label aHistoryLabel = theWhereFunction->GetHistoryEntry(Standard_False);
 
-        TDF_LabelSequence aLabelSeq;
-        theWhereFunction->GetDependency(aLabelSeq);
-        Standard_Integer nbArg = aLabelSeq.Length();
+  // search in history for all argument shapes
+  Standard_Boolean isFound = Standard_False;
+  Standard_Boolean isGood = Standard_False;
 
-        for (Standard_Integer iarg = 1; iarg <= nbArg && !isFound; iarg++) {
+  TDF_LabelSequence aLabelSeq;
+  theWhereFunction->GetDependency(aLabelSeq);
+  Standard_Integer nbArg = aLabelSeq.Length();
 
-          TDF_Label anArgumentRefLabel = aLabelSeq.Value(iarg);
+  for (Standard_Integer iarg = 1; iarg <= nbArg && !isFound; iarg++) {
 
-          Handle(GEOM_Object) anArgumentObject = GEOM_Object::GetReferencedObject(anArgumentRefLabel);
-          TopoDS_Shape anArgumentShape = anArgumentObject->GetValue();
+    TDF_Label anArgumentRefLabel = aLabelSeq.Value(iarg);
 
-          TopTools_IndexedMapOfShape anArgumentIndices;
-          TopExp::MapShapes(anArgumentShape, anArgumentIndices);
+    Handle(GEOM_Object) anArgumentObject = GEOM_Object::GetReferencedObject(anArgumentRefLabel);
+    TopoDS_Shape anArgumentShape = anArgumentObject->GetValue();
 
-          if (anArgumentIndices.Contains(curWhat)) {
-            isFound = Standard_True;
-            Standard_Integer aWhatIndex = anArgumentIndices.FindIndex(curWhat);
+    TopTools_IndexedMapOfShape anArgumentIndices;
+    TopExp::MapShapes(anArgumentShape, anArgumentIndices);
 
-            // Find corresponding label in history
-            TDF_Label anArgumentHistoryLabel =
-              theWhereFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_False);
-            if (!anArgumentHistoryLabel.IsNull()) {
-              TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(aWhatIndex, Standard_False);
-              if (!aWhatHistoryLabel.IsNull()) {
-                Handle(TDataStd_IntegerArray) anIntegerArray;
-                if (aWhatHistoryLabel.FindAttribute(TDataStd_IntegerArray::GetID(), anIntegerArray)) {
-                  Standard_Integer imod, aModifLen = anIntegerArray->Array()->Length();
-                  for (imod = 1; imod <= aModifLen; imod++) {
-                    theModifiedArray.Append(anIntegerArray->Array()->Value(imod));
-                  }
-                }
-              }
+    if (anArgumentIndices.Contains(theWhat)) {
+      isFound = Standard_True;
+      Standard_Integer aWhatIndex = anArgumentIndices.FindIndex(theWhat);
+
+      // Find corresponding label in history
+      TDF_Label anArgumentHistoryLabel =
+        theWhereFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_False);
+      if (anArgumentHistoryLabel.IsNull()) {
+        // Lost History of operation argument. Possibly, all its entities was removed.
+        isGood = Standard_True;
+      }
+      else {
+        TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(aWhatIndex, Standard_False);
+
+        if (aWhatHistoryLabel.IsNull()) {
+          // Removed entity ? Compound ? Compsolid ? Shell ? Wire
+          isGood = Standard_False;
+        } else {
+          Handle(TDataStd_IntegerArray) anIntegerArray;
+          if (!aWhatHistoryLabel.FindAttribute(TDataStd_IntegerArray::GetID(), anIntegerArray)) {
+            //Error: Empty modifications history for the sought shape.
+            isGood = Standard_False;
+          }
+          else {
+            isGood = Standard_True;
+            Standard_Integer imod, aModifLen = anIntegerArray->Array()->Length();
+            for (imod = 1; imod <= aModifLen; imod++) {
+              theModifiedList.Append(anIntegerArray->Array()->Value(imod));
             }
           }
         }
-        if (isFound)
-          isFoundAny = true;
       }
     }
   }
-  return isFoundAny;
+
+  isFound = isGood;
+
+  if (!isFound) {
+    // try compound/compsolid/shell/wire element by element
+    bool isFoundAny = false;
+    TopTools_MapOfShape mapShape;
+
+    if (theWhat.ShapeType() == TopAbs_COMPOUND ||
+        theWhat.ShapeType() == TopAbs_COMPSOLID) {
+      // recursive processing of compound/compsolid
+      TopoDS_Iterator anIt (theWhat, Standard_True, Standard_True);
+      for (; anIt.More(); anIt.Next()) {
+        if (mapShape.Add(anIt.Value())) {
+          TopoDS_Shape curWhat = anIt.Value();
+          isFoundAny = GetInPlaceOfShape(theWhereFunction, theWhereIndices, curWhat, theModifiedList);
+          if (isFoundAny) isFound = Standard_True;
+        }
+      }
+    }
+    else if (theWhat.ShapeType() == TopAbs_SHELL) {
+      // try to replace a shell by its faces images
+      TopExp_Explorer anExp (theWhat, TopAbs_FACE);
+      for (; anExp.More(); anExp.Next()) {
+        if (mapShape.Add(anExp.Current())) {
+          TopoDS_Shape curWhat = anExp.Current();
+          isFoundAny = GetInPlaceOfShape(theWhereFunction, theWhereIndices, curWhat, theModifiedList);
+          if (isFoundAny) isFound = Standard_True;
+        }
+      }
+    }
+    else if (theWhat.ShapeType() == TopAbs_WIRE) {
+      // try to replace a wire by its edges images
+      TopExp_Explorer anExp (theWhat, TopAbs_EDGE);
+      for (; anExp.More(); anExp.Next()) {
+        if (mapShape.Add(anExp.Current())) {
+          TopoDS_Shape curWhat = anExp.Current();
+          isFoundAny = GetInPlaceOfShape(theWhereFunction, theWhereIndices, curWhat, theModifiedList);
+          if (isFoundAny) isFound = Standard_True;
+        }
+      }
+    }
+    else {
+      // Removed entity
+    }
+  }
+
+  return isFound;
 }
 
-Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
+//=============================================================================
+/*!
+ *  GetShapeProperties
+ */
+//=============================================================================
+
+void GEOMImpl_IShapesOperations::GetShapeProperties( const TopoDS_Shape aShape, Standard_Real tab[],
+                                                     gp_Pnt & aVertex )
+{
+  GProp_GProps SProps, VProps;
+  gp_Pnt aCenterMass;
+  TopoDS_Shape aPntShape;
+  Standard_Real aShapeSize;
+
+  BRepGProp::VolumeProperties(aShape, VProps);
+  aCenterMass = VProps.CentreOfMass();
+  aShapeSize  = VProps.Mass();
+  if (aShape.ShapeType() == TopAbs_FACE) {
+    BRepGProp::SurfaceProperties(aShape, SProps);
+    aCenterMass = SProps.CentreOfMass();
+    aShapeSize  = SProps.Mass();
+  }
+
+  aPntShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
+  aVertex   = BRep_Tool::Pnt( TopoDS::Vertex( aPntShape ) );
+  tab[0] = aVertex.X();
+  tab[1] = aVertex.Y();
+  tab[2] = aVertex.Z();
+  tab[3] = aShapeSize;
+  return;
+}
+
+//=============================================================================
+/*!
+ *  GetInPlace
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) theShapeWhere,
+                                                            Handle(GEOM_Object) theShapeWhat)
+{
+  SetErrorCode(KO);
+
+  if (theShapeWhere.IsNull() || theShapeWhat.IsNull()) return NULL;
+
+  TopoDS_Shape aWhere = theShapeWhere->GetValue();
+  TopoDS_Shape aWhat  = theShapeWhat->GetValue();
+
+  if (aWhere.IsNull() || aWhat.IsNull()) {
+    SetErrorCode("Error: aWhere and aWhat TopoDS_Shape are Null.");
+    return NULL;
+  }
+
+  Handle(GEOM_Function) aWhereFunction = theShapeWhere->GetLastFunction();
+  if (aWhereFunction.IsNull()) {
+    SetErrorCode("Error: aWhereFunction is Null.");
+    return NULL;
+  }
+
+  TopTools_IndexedMapOfShape aWhereIndices;
+  TopExp::MapShapes(aWhere, aWhereIndices);
+
+  TColStd_ListOfInteger aModifiedList;
+  Standard_Integer aWhereIndex;
+  Handle(TColStd_HArray1OfInteger) aModifiedArray;
+  Handle(GEOM_Object) aResult;
+
+  bool isFound = false;
+  Standard_Integer iType = TopAbs_SOLID;
+  Standard_Real    aWhat_Mass = 0., aWhere_Mass = 0.;
+  Standard_Real    tab_aWhat[4],    tab_aWhere[4];
+  Standard_Real    dl_l = 1e-3;
+  Standard_Real    min_l, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
+  gp_Pnt           aPnt, aPnt_aWhat;
+  GProp_GProps     aProps;
+
+  // 2D or 3D shapes
+  if ( aWhat.ShapeType() == TopAbs_COMPOUND  ||
+       aWhat.ShapeType() == TopAbs_SHELL     ||
+       aWhat.ShapeType() == TopAbs_COMPSOLID ) {
+    TopExp_Explorer Exp( aWhat, TopAbs_ShapeEnum( iType ) );
+    if ( ! Exp.More() ) iType = TopAbs_FACE;
+  }
+  else if ( aWhat.ShapeType() == TopAbs_FACE )
+    iType = TopAbs_FACE;
+
+  TopExp_Explorer Exp_aWhat( aWhat,   TopAbs_ShapeEnum( iType ) );
+  TopExp_Explorer Exp_aWhere( aWhere, TopAbs_ShapeEnum( iType ) );
+  TopExp_Explorer Exp_Edge( aWhere,   TopAbs_EDGE );
+
+  // Find the shortest edge in theShapeWhere shape
+  for ( Standard_Integer nbEdge = 0; Exp_Edge.More(); Exp_Edge.Next(), nbEdge++ ) {
+    BRepGProp::LinearProperties(Exp_Edge.Current(), aProps);
+    if ( ! nbEdge ) min_l = aProps.Mass();
+    if ( aProps.Mass() < min_l ) min_l = aProps.Mass();
+  }
+
+  // Compute tolerances
+  Tol_1D = dl_l * min_l;
+  Tol_2D = dl_l * ( min_l * min_l) * ( 2. + dl_l);
+  Tol_3D = dl_l * ( min_l * min_l * min_l ) * ( 3. + (3 * dl_l) + (dl_l * dl_l) );
+
+  Tol_Mass = Tol_3D;
+  if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
+
+  // Compute the ShapeWhat Mass
+  for ( ; Exp_aWhat.More(); Exp_aWhat.Next() ) {
+    if      ( iType == TopAbs_SOLID ) BRepGProp::VolumeProperties(Exp_aWhat.Current(), aProps);
+    else if ( iType == TopAbs_FACE )  BRepGProp::SurfaceProperties(Exp_aWhat.Current(), aProps);
+    aWhat_Mass += aProps.Mass();
+  }
+
+  // Finding the Sub-ShapeWhere
+  for ( Exp_aWhere.ReInit(); Exp_aWhere.More(); Exp_aWhere.Next() ) {
+    GetShapeProperties( Exp_aWhere.Current(), tab_aWhere, aPnt );
+    for ( Exp_aWhat.ReInit(); Exp_aWhat.More(); Exp_aWhat.Next() ) {
+      GetShapeProperties( Exp_aWhat.Current(), tab_aWhat, aPnt_aWhat );
+      if ( fabs(tab_aWhat[3] - tab_aWhere[3]) <= Tol_Mass && aPnt_aWhat.Distance(aPnt) <= Tol_1D )
+        isFound = true;
+      else if ( tab_aWhat[3] - ( tab_aWhere[3] > Tol_Mass) ) {
+        BRepClass3d_SolidClassifier SC_aWhere (Exp_aWhere.Current(), aPnt, Precision::Confusion());
+        BRepClass3d_SolidClassifier SC_aWhat  (Exp_aWhat.Current(),  aPnt, Precision::Confusion());
+        // Block construction 3D
+        if      ( SC_aWhere.State() == TopAbs_IN && SC_aWhat.State() == TopAbs_IN ) isFound = true;
+        // Block construction 2D
+        else if ( SC_aWhere.State() == TopAbs_ON && SC_aWhat.State() == TopAbs_ON ) isFound = true;
+      }
+      if ( isFound ) {
+        aWhereIndex = aWhereIndices.FindIndex(Exp_aWhere.Current());
+        aModifiedList.Append(aWhereIndex);
+        aWhere_Mass += tab_aWhere[3];
+        isFound = false;
+        break;
+      }
+    }
+    if ( fabs( aWhat_Mass - aWhere_Mass ) <= Tol_Mass ) break;
+  }
+
+  aModifiedArray = new TColStd_HArray1OfInteger (1, aModifiedList.Extent());
+  TColStd_ListIteratorOfListOfInteger anIterModif (aModifiedList);
+  for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++)
+    aModifiedArray->SetValue(imod, anIterModif.Value());
+
+  //Add a new object
+  aResult = GetEngine()->AddSubShape(theShapeWhere, aModifiedArray);
+  if (aResult.IsNull()) {
+    SetErrorCode("Error in algorithm: result found, but cannot be returned.");
+    return NULL;
+  }
+
+  if (aModifiedArray->Length() > 1) {
+    //Set a GROUP type
+    aResult->SetType(GEOM_GROUP);
+
+    //Set a sub shape type
+    TopoDS_Shape aFirstFound = aWhereIndices.FindKey(aModifiedArray->Value(1));
+    TopAbs_ShapeEnum aShapeType = aFirstFound.ShapeType();
+
+    TDF_Label aFreeLabel = aResult->GetFreeLabel();
+    TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)aShapeType);
+  }
+
+  //Make a Python command
+  Handle(GEOM_Function) aFunction = aResult->GetFunction(1);
+
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetInPlace("
+    << theShapeWhere << ", " << theShapeWhat << ")";
+
+  SetErrorCode(OK);
+  return aResult;
+}
+
+//=======================================================================
+//function : GetInPlaceByHistory
+//purpose  :
+//=======================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
                                           (Handle(GEOM_Object) theShapeWhere,
                                            Handle(GEOM_Object) theShapeWhat)
 {
@@ -1985,146 +2760,45 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
 
   if (aWhere.IsNull() || aWhat.IsNull()) return NULL;
 
-  //Fill array of indices
-  Handle(TColStd_HArray1OfInteger) aModifiedArray;
-
   Handle(GEOM_Function) aWhereFunction = theShapeWhere->GetLastFunction();
+  if (aWhereFunction.IsNull()) return NULL;
 
+  //Fill array of indices
   TopTools_IndexedMapOfShape aWhereIndices;
   TopExp::MapShapes(aWhere, aWhereIndices);
 
-  if (aWhereIndices.Contains(aWhat)) {
+  // process shape
+  TColStd_ListOfInteger aModifiedList;
+  bool isFound = GetInPlaceOfShape(aWhereFunction, aWhereIndices, aWhat, aModifiedList);
 
-    // entity was not changed by the operation
-    Standard_Integer aWhatIndex = aWhereIndices.FindIndex(aWhat);
-    aModifiedArray = new TColStd_HArray1OfInteger(1,1);
-    aModifiedArray->SetValue(1, aWhatIndex);
+  if (!isFound || aModifiedList.Extent() < 1) {
+    SetErrorCode("Error: No history found for the sought shape or its sub-shapes.");
+    return NULL;
+  }
 
-  } else {
-
-    TDF_Label aHistoryLabel = aWhereFunction->GetHistoryEntry(Standard_False);
-    if (aHistoryLabel.IsNull()) {
-      SetErrorCode("Modifications history does not exist for the shape under consideration.");
-      return NULL;
-    }
-
-    // search in history for all argument shapes
-    Standard_Boolean isFound = Standard_False;
-
-    TDF_LabelSequence aLabelSeq;
-    aWhereFunction->GetDependency(aLabelSeq);
-    Standard_Integer nbArg = aLabelSeq.Length();
-
-    for (Standard_Integer iarg = 1; iarg <= nbArg && !isFound; iarg++) {
-
-      TDF_Label anArgumentRefLabel = aLabelSeq.Value(iarg);
-
-      Handle(GEOM_Object) anArgumentObject = GEOM_Object::GetReferencedObject(anArgumentRefLabel);
-      TopoDS_Shape anArgumentShape = anArgumentObject->GetValue();
-
-      TopTools_IndexedMapOfShape anArgumentIndices;
-      TopExp::MapShapes(anArgumentShape, anArgumentIndices);
-
-      if (anArgumentIndices.Contains(aWhat)) {
-        isFound = Standard_True;
-        Standard_Integer aWhatIndex = anArgumentIndices.FindIndex(aWhat);
-
-        // Find corresponding label in history
-        TDF_Label anArgumentHistoryLabel =
-          aWhereFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_False);
-        if (anArgumentHistoryLabel.IsNull()) {
-          // Lost History of operation argument. Possibly, all its entities was removed.
-          SetErrorCode(OK);
-          return NULL;
-        }
-
-        TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(aWhatIndex, Standard_False);
-        if (aWhatHistoryLabel.IsNull()) {
-          // Check, if the sought shape is Compound or Compsolid.
-          // In that case we will try to find history for its sub-shapes
-          if (aWhat.ShapeType() == TopAbs_COMPOUND ||
-              aWhat.ShapeType() == TopAbs_COMPSOLID) {
-            TColStd_ListOfInteger aSimpleSubWhat, aModifiedList;
-            SimplifyWhat(aWhat, anArgumentIndices, aSimpleSubWhat);
-            TColStd_ListIteratorOfListOfInteger anIterSub (aSimpleSubWhat);
-            for (; anIterSub.More(); anIterSub.Next()) {
-              Standard_Integer aSubWhatIndex = anIterSub.Value();
-              TDF_Label aSubWhatHistoryLabel =
-                anArgumentHistoryLabel.FindChild(aSubWhatIndex, Standard_False);
-              if (!aSubWhatHistoryLabel.IsNull()) {
-                Handle(TDataStd_IntegerArray) anIntegerArray;
-                if (aSubWhatHistoryLabel.FindAttribute(TDataStd_IntegerArray::GetID(), anIntegerArray)) {
-                  for (Standard_Integer isub = 1; isub <= anIntegerArray->Length(); isub++) {
-                    aModifiedList.Append(anIntegerArray->Value(isub));
-                  }
-                }
-              }
-            }
-            if (aModifiedList.Extent() > 0) {
-              Handle(TColStd_HArray1OfInteger) aModifiedArraySub =
-                new TColStd_HArray1OfInteger (1, aModifiedList.Extent());
-              TColStd_ListIteratorOfListOfInteger anIterModif (aModifiedList);
-              for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++) {
-                aModifiedArraySub->SetValue(imod, anIterModif.Value());
-              }
-              aModifiedArray = aModifiedArraySub;
-            } else {
-              // Removed entity
-              SetErrorCode(OK);
-              return NULL;
-            }
-          } else {
-            // Removed entity
-            SetErrorCode(OK);
-            return NULL;
-          }
-        } else {
-          Handle(TDataStd_IntegerArray) anIntegerArray;
-          if (!aWhatHistoryLabel.FindAttribute(TDataStd_IntegerArray::GetID(), anIntegerArray)) {
-            SetErrorCode("Error: Empty modifications history for the sought shape.");
-            return NULL;
-          }
-
-          aModifiedArray = anIntegerArray->Array();
-          if (aModifiedArray->Length() == 0) {
-            SetErrorCode("Error: Empty modifications history for the sought shape.");
-            return NULL;
-          }
-        }
-      }
-    }
-
-    if (!isFound) {
-      // try compound element by element
-      if (aWhat.ShapeType() == TopAbs_COMPOUND ||
-          aWhat.ShapeType() == TopAbs_COMPSOLID) {
-        TColStd_ListOfInteger aModifiedList;
-        isFound = GetInPlaceOfCompound(aWhereFunction, aWhat, aModifiedList);
-        if (isFound) {
-          aModifiedArray = new TColStd_HArray1OfInteger (1, aModifiedList.Extent());
-          TColStd_ListIteratorOfListOfInteger anIterModif (aModifiedList);
-          for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++) {
-            aModifiedArray->SetValue(imod, anIterModif.Value());
-          }
-        }
-      }
-      if (!isFound) {
-        SetErrorCode("The sought shape does not belong to any operation argument.");
-        return NULL;
-      }
-    }
+  Handle(TColStd_HArray1OfInteger) aModifiedArray =
+    new TColStd_HArray1OfInteger (1, aModifiedList.Extent());
+  TColStd_ListIteratorOfListOfInteger anIterModif (aModifiedList);
+  for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++) {
+    aModifiedArray->SetValue(imod, anIterModif.Value());
   }
 
   //Add a new object
   Handle(GEOM_Object) aResult = GetEngine()->AddSubShape(theShapeWhere, aModifiedArray);
+  if (aResult.IsNull()) {
+    SetErrorCode("Error in algorithm: result found, but cannot be returned.");
+    return NULL;
+  }
 
   if (aModifiedArray->Length() > 1) {
     //Set a GROUP type
     aResult->SetType(GEOM_GROUP);
 
     //Set a sub shape type
+    TopoDS_Shape aFirstFound = aWhereIndices.FindKey(aModifiedArray->Value(1));
+    TopAbs_ShapeEnum aShapeType = aFirstFound.ShapeType();
+
     TDF_Label aFreeLabel = aResult->GetFreeLabel();
-    TopAbs_ShapeEnum aShapeType = aWhat.ShapeType();
     TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)aShapeType);
   }
 
@@ -2174,25 +2848,60 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
     }
     MidXYZ.SetValue(Index,
 		    GPoint.X()*999 + GPoint.Y()*99 + GPoint.Z()*0.9);
+    //cout << Index << " L: " << Length(Index) << "CG: " << MidXYZ(Index) << endl;
   }
 
   // Sorting
   Standard_Integer aTemp;
   Standard_Boolean exchange, Sort = Standard_True;
+  Standard_Real    tol = Precision::Confusion();
   while (Sort)
   {
     Sort = Standard_False;
     for (Index=1; Index < MaxShapes; Index++)
     {
-      if (MidXYZ(OrderInd(Index)) > MidXYZ(OrderInd(Index+1)))
+      Standard_Real dMidXYZ = MidXYZ(OrderInd(Index)) - MidXYZ(OrderInd(Index+1));
+      Standard_Real dLength = Length(OrderInd(Index)) - Length(OrderInd(Index+1));
+      if ( dMidXYZ >= tol ) {
+//         cout << "MidXYZ: " << MidXYZ(OrderInd(Index))<< " > " <<MidXYZ(OrderInd(Index+1))
+//              << " d: " << dMidXYZ << endl;
 	exchange = Standard_True;
-      else if (MidXYZ(OrderInd(Index)) == MidXYZ(OrderInd(Index+1)) &&
-	       Length(OrderInd(Index)) >  Length(OrderInd(Index+1)) )
+      }
+      else if ( Abs(dMidXYZ) < tol && dLength >= tol ) {
+//         cout << "Length: " << Length(OrderInd(Index))<< " > " <<Length(OrderInd(Index+1))
+//              << " d: " << dLength << endl;
 	exchange = Standard_True;
-      else
+      }
+      else if ( Abs(dMidXYZ) < tol && Abs(dLength) < tol &&
+                aShapes(OrderInd(Index)).ShapeType() <= TopAbs_FACE) {
+        // PAL17233
+        // equal values possible on shapes such as two halves of a sphere and
+        // a membrane inside the sphere
+        Bnd_Box box1,box2;
+        BRepBndLib::Add( aShapes( OrderInd(Index) ), box1 );
+        if ( box1.IsVoid() ) continue;
+        BRepBndLib::Add( aShapes( OrderInd(Index+1) ), box2 );
+        Standard_Real dSquareExtent = box1.SquareExtent() - box2.SquareExtent();
+        if ( dSquareExtent >= tol ) {
+//           cout << "SquareExtent: " << box1.SquareExtent()<<" > "<<box2.SquareExtent() << endl;
+          exchange = Standard_True;
+        }
+        else if ( Abs(dSquareExtent) < tol ) {
+          Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax, val1, val2;
+          box1.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+          val1 = (aXmin+aXmax)*999 + (aYmin+aYmax)*99 + (aZmin+aZmax)*0.9;
+          box2.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+          val2 = (aXmin+aXmax)*999 + (aYmin+aYmax)*99 + (aZmin+aZmax)*0.9;
+          exchange = val1 > val2;
+//           cout << "box: " << val1<<" > "<<val2 << endl;
+        }
+      }
+      else {
 	exchange = Standard_False;
+      }
       if (exchange)
       {
+//         cout << "exchange " << Index << " & " << Index+1 << endl;
         aTemp = OrderInd(Index);
         OrderInd(Index) = OrderInd(Index+1);
         OrderInd(Index+1) = aTemp;
@@ -2200,8 +2909,36 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
       }
     }
   }
+    
   for (Index=1; Index <= MaxShapes; Index++)
     SL.Append( aShapes( OrderInd(Index) ));
+}
+
+//=======================================================================
+//function : CompsolidToCompound
+//purpose  :
+//=======================================================================
+TopoDS_Shape GEOMImpl_IShapesOperations::CompsolidToCompound (const TopoDS_Shape& theCompsolid)
+{
+  if (theCompsolid.ShapeType() != TopAbs_COMPSOLID) {
+    return theCompsolid;
+  }
+
+  TopoDS_Compound aCompound;
+  BRep_Builder B;
+  B.MakeCompound(aCompound);
+
+  TopTools_MapOfShape mapShape;
+  TopoDS_Iterator It (theCompsolid, Standard_True, Standard_True);
+
+  for (; It.More(); It.Next()) {
+    TopoDS_Shape aShape_i = It.Value();
+    if (mapShape.Add(aShape_i)) {
+      B.Add(aCompound, aShape_i);
+    }
+  }
+
+  return aCompound;
 }
 
 //=======================================================================
@@ -2210,16 +2947,32 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
 //=======================================================================
 bool GEOMImpl_IShapesOperations::CheckTriangulation (const TopoDS_Shape& aShape)
 {
+  bool isTriangulation = true;
+
   TopExp_Explorer exp (aShape, TopAbs_FACE);
-  if (!exp.More()) {
-    SetErrorCode("Shape without faces given");
-    return false;
+  if (exp.More())
+  {
+    TopLoc_Location aTopLoc;
+    Handle(Poly_Triangulation) aTRF;
+    aTRF = BRep_Tool::Triangulation(TopoDS::Face(exp.Current()), aTopLoc);
+    if (aTRF.IsNull()) {
+      isTriangulation = false;
+    }
+  }
+  else // no faces, try edges
+  {
+    TopExp_Explorer expe (aShape, TopAbs_EDGE);
+    if (!expe.More()) {
+      return false;
+    }
+    TopLoc_Location aLoc;
+    Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(TopoDS::Edge(expe.Current()), aLoc);
+    if (aPE.IsNull()) {
+      isTriangulation = false;
+    }
   }
 
-  TopLoc_Location aTopLoc;
-  Handle(Poly_Triangulation) aTRF;
-  aTRF = BRep_Tool::Triangulation(TopoDS::Face(exp.Current()), aTopLoc);
-  if (aTRF.IsNull()) {
+  if (!isTriangulation) {
     // calculate deflection
     Standard_Real aDeviationCoefficient = 0.001;
 
@@ -2236,4 +2989,323 @@ bool GEOMImpl_IShapesOperations::CheckTriangulation (const TopoDS_Shape& aShape)
   }
 
   return true;
+}
+
+#define MAX_TOLERANCE 1.e-7
+
+
+//=======================================================================
+//function : isSameEdge
+//purpose  : Returns True if two edges coincide
+//=======================================================================
+static bool isSameEdge(const TopoDS_Edge& theEdge1, const TopoDS_Edge& theEdge2)
+{
+  TopoDS_Vertex V11, V12, V21, V22;
+  TopExp::Vertices(theEdge1, V11, V12);
+  TopExp::Vertices(theEdge2, V21, V22);
+  gp_Pnt P11 = BRep_Tool::Pnt(V11);
+  gp_Pnt P12 = BRep_Tool::Pnt(V12);
+  gp_Pnt P21 = BRep_Tool::Pnt(V21);
+  gp_Pnt P22 = BRep_Tool::Pnt(V22);
+  bool coincide = false;
+
+  //Check that ends of edges coincide
+  if(P11.Distance(P21) <= MAX_TOLERANCE) {
+    if(P12.Distance(P22) <= MAX_TOLERANCE) coincide =  true;
+  }
+  else if(P11.Distance(P22) <= MAX_TOLERANCE) {
+    if(P12.Distance(P21) <= MAX_TOLERANCE) coincide = true;
+  }
+
+  if(!coincide) return false;
+
+  double U11, U12, U21, U22;
+  Handle(Geom_Curve) C1 = BRep_Tool::Curve(theEdge1, U11, U12);
+  Handle(Geom_Curve) C2 = BRep_Tool::Curve(theEdge2, U21, U22);
+  if(C1->DynamicType() == C2->DynamicType()) return true;
+
+  //Check that both edges has the same geometry
+  double range = U12-U11;
+  double U = U11+ range/3.0;
+  gp_Pnt P1 = C1->Value(U);     //Compute a point on one third of the edge's length
+  U = U11+range*2.0/3.0;
+  gp_Pnt P2 = C1->Value(U);     //Compute a point on two thirds of the edge's length
+
+  if(!GeomLib_Tool::Parameter(C2, P1, MAX_TOLERANCE, U) ||  U < U21 || U > U22)
+    return false;
+
+  if(P1.Distance(C2->Value(U)) > MAX_TOLERANCE) return false;
+
+  if(!GeomLib_Tool::Parameter(C2, P2, MAX_TOLERANCE, U) || U < U21 || U > U22)
+    return false;
+
+  if(P2.Distance(C2->Value(U)) > MAX_TOLERANCE) return false;
+
+  return true;
+}
+
+#include <TopoDS_TShape.hxx>
+//=======================================================================
+//function : isSameFace
+//purpose  : Returns True if two faces coincide
+//=======================================================================
+static bool isSameFace(const TopoDS_Face& theFace1, const TopoDS_Face& theFace2)
+{
+  TopExp_Explorer E(theFace1, TopAbs_EDGE);
+  TopTools_ListOfShape LS1, LS2;
+  for(; E.More(); E.Next()) LS1.Append(E.Current());
+
+  E.Init(theFace2, TopAbs_EDGE);
+  for(; E.More(); E.Next()) LS2.Append(E.Current());
+
+  //Compare the number of edges in the faces
+  if(LS1.Extent() != LS2.Extent()) return false;
+
+  double aMin = RealFirst(), aMax = RealLast();
+  double xminB1=aMax, yminB1=aMax, zminB1=aMax, xminB2=aMax, yminB2=aMax, zminB2=aMax;
+  double xmaxB1=aMin, ymaxB1=aMin, zmaxB1=aMin, xmaxB2=aMin, ymaxB2=aMin, zmaxB2=aMin;
+
+  for(E.Init(theFace1, TopAbs_VERTEX); E.More(); E.Next()) {
+    gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(E.Current()));
+    if(P.X() < xminB1) xminB1 = P.X();
+    if(P.Y() < yminB1) yminB1 = P.Y();
+    if(P.Z() < zminB1) zminB1 = P.Z();
+    if(P.X() > xmaxB1) xmaxB1 = P.X();
+    if(P.Y() > ymaxB1) ymaxB1 = P.Y();
+    if(P.Z() > zmaxB1) zmaxB1 = P.Z();
+  }
+
+  for(E.Init(theFace2, TopAbs_VERTEX); E.More(); E.Next()) {
+    gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(E.Current()));
+    if(P.X() < xminB2) xminB2 = P.X();
+    if(P.Y() < yminB2) yminB2 = P.Y();
+    if(P.Z() < zminB2) zminB2 = P.Z();
+    if(P.X() > xmaxB2) xmaxB2 = P.X();
+    if(P.Y() > ymaxB2) ymaxB2 = P.Y();
+    if(P.Z() > zmaxB2) zmaxB2 = P.Z();
+  }
+
+
+  //Compare the bounding boxes of both faces
+  if(gp_Pnt(xminB1, yminB1, zminB1).Distance(gp_Pnt(xminB2, yminB2, zminB2)) > MAX_TOLERANCE)
+    return false;
+
+  if(gp_Pnt(xmaxB1, ymaxB1, zmaxB1).Distance(gp_Pnt(xmaxB2, ymaxB2, zmaxB2)) > MAX_TOLERANCE)
+    return false;
+
+  Handle(Geom_Surface) S1 = BRep_Tool::Surface(theFace1);
+  Handle(Geom_Surface) S2 = BRep_Tool::Surface(theFace2);
+
+  //Check if there a coincidence of two surfaces at least in two points
+  double U11, U12, V11, V12, U21, U22, V21, V22;
+  BRepTools::UVBounds(theFace1, U11, U12, V11, V12);
+  BRepTools::UVBounds(theFace2, U21, U22, V21, V22);
+
+  double rangeU = U12-U11;
+  double rangeV = V12-V11;
+  double U = U11 + rangeU/3.0;
+  double V = V11 + rangeV/3.0;
+  gp_Pnt P1 = S1->Value(U, V);
+  U = U11+rangeU*2.0/3.0;
+  V = V11+rangeV*2.0/3.0;
+  gp_Pnt P2 = S1->Value(U, V);
+  
+  if(!GeomLib_Tool::Parameters(S2, P1, MAX_TOLERANCE, U, V) || U < U21 || U > U22 || V < V21 || V > V22)
+    return false;
+  
+  if(P1.Distance(S2->Value(U,V)) > MAX_TOLERANCE) return false;
+  
+  if(!GeomLib_Tool::Parameters(S2, P2, MAX_TOLERANCE, U, V) || U < U21 || U > U22 || V < V21 || V > V22)
+    return false;
+  
+  if(P2.Distance(S2->Value(U, V)) > MAX_TOLERANCE) return false;
+
+  //Check that each edge of the Face1 has a counterpart in the Face2
+  TopTools_MapOfOrientedShape aMap;
+  TopTools_ListIteratorOfListOfShape LSI1(LS1);
+  for(; LSI1.More(); LSI1.Next()) {
+    TopoDS_Edge E = TopoDS::Edge(LSI1.Value());
+    bool isFound = false;
+    TopTools_ListIteratorOfListOfShape LSI2(LS2);
+    for(; LSI2.More(); LSI2.Next()) {
+      TopoDS_Shape aValue = LSI2.Value();
+      if(aMap.Contains(aValue)) continue; //To avoid checking already found edge several times
+      if(isSameEdge(E, TopoDS::Edge(aValue))) {
+        aMap.Add(aValue);
+        isFound = true;
+        break;
+      }
+    }
+    if(!isFound) return false;
+  }
+
+  return true;
+}
+
+//=======================================================================
+//function : isSameSolid
+//purpose  : Returns True if two solids coincide
+//=======================================================================
+bool isSameSolid(const TopoDS_Solid& theSolid1, const TopoDS_Solid& theSolid2)
+{
+  TopExp_Explorer E(theSolid1, TopAbs_FACE);
+  TopTools_ListOfShape LS1, LS2;
+  for(; E.More(); E.Next()) LS1.Append(E.Current());
+  E.Init(theSolid2, TopAbs_FACE);
+  for(; E.More(); E.Next()) LS2.Append(E.Current());
+
+  if(LS1.Extent() != LS2.Extent()) return false;
+
+  double aMin = RealFirst(), aMax = RealLast();
+  double xminB1=aMax, yminB1=aMax, zminB1=aMax, xminB2=aMax, yminB2=aMax, zminB2=aMax;
+  double xmaxB1=aMin, ymaxB1=aMin, zmaxB1=aMin, xmaxB2=aMin, ymaxB2=aMin, zmaxB2=aMin;
+
+  for(E.Init(theSolid1, TopAbs_VERTEX); E.More(); E.Next()) {
+    gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(E.Current()));
+    if(P.X() < xminB1) xminB1 = P.X();
+    if(P.Y() < yminB1) yminB1 = P.Y();
+    if(P.Z() < zminB1) zminB1 = P.Z();
+    if(P.X() > xmaxB1) xmaxB1 = P.X();
+    if(P.Y() > ymaxB1) ymaxB1 = P.Y();
+    if(P.Z() > zmaxB1) zmaxB1 = P.Z();
+  }
+
+  for(E.Init(theSolid2, TopAbs_VERTEX); E.More(); E.Next()) {
+    gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(E.Current()));
+    if(P.X() < xminB2) xminB2 = P.X();
+    if(P.Y() < yminB2) yminB2 = P.Y();
+    if(P.Z() < zminB2) zminB2 = P.Z();
+    if(P.X() > xmaxB2) xmaxB2 = P.X();
+    if(P.Y() > ymaxB2) ymaxB2 = P.Y();
+    if(P.Z() > zmaxB2) zmaxB2 = P.Z();
+  }
+
+  //Compare the bounding boxes of both solids
+  if(gp_Pnt(xminB1, yminB1, zminB1).Distance(gp_Pnt(xminB2, yminB2, zminB2)) > MAX_TOLERANCE)
+    return false;
+
+  if(gp_Pnt(xmaxB1, ymaxB1, zmaxB1).Distance(gp_Pnt(xmaxB2, ymaxB2, zmaxB2)) > MAX_TOLERANCE)
+    return false;
+
+  //Check that each face of the Solid1 has a counterpart in the Solid2
+  TopTools_MapOfOrientedShape aMap;
+  TopTools_ListIteratorOfListOfShape LSI1(LS1);
+  for(; LSI1.More(); LSI1.Next()) {
+    TopoDS_Face F = TopoDS::Face(LSI1.Value());
+    bool isFound = false;
+    TopTools_ListIteratorOfListOfShape LSI2(LS2);
+    for(; LSI2.More(); LSI2.Next()) {
+      if(aMap.Contains(LSI2.Value())) continue; //To avoid checking already found faces several times
+      if(isSameFace(F, TopoDS::Face(LSI2.Value()))) {
+        aMap.Add(LSI2.Value());
+        isFound = true;
+        break;
+      }
+    }
+    if(!isFound) return false;
+  }
+
+  return true;
+}
+
+//=======================================================================
+//function : GetSame
+//purpose  :
+//=======================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSame(const Handle(GEOM_Object)& theShapeWhere,
+							const Handle(GEOM_Object)& theShapeWhat)
+{
+  SetErrorCode(KO);
+  if (theShapeWhere.IsNull() || theShapeWhat.IsNull()) return NULL;
+
+  TopoDS_Shape aWhere = theShapeWhere->GetValue();
+  TopoDS_Shape aWhat  = theShapeWhat->GetValue();
+
+  if (aWhere.IsNull() || aWhat.IsNull()) return NULL;
+
+  int anIndex = -1;
+  bool isFound = false;
+  TopoDS_Shape aSubShape;
+  TopTools_MapOfShape aMap;
+
+  switch(aWhat.ShapeType()) {
+    case TopAbs_VERTEX: {
+      gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(aWhat));
+      TopExp_Explorer E(aWhere, TopAbs_VERTEX);
+      for(; E.More(); E.Next()) {
+        if(!aMap.Add(E.Current())) continue;
+        gp_Pnt P2 = BRep_Tool::Pnt(TopoDS::Vertex(E.Current()));
+        if(P.Distance(P2) <= MAX_TOLERANCE) {
+          isFound = true;
+          aSubShape = E.Current();
+          break;
+        }
+      }
+      break;
+                        }
+    case TopAbs_FACE: {
+      TopoDS_Face aFace = TopoDS::Face(aWhat);
+      TopExp_Explorer E(aWhere, TopAbs_FACE);
+      for(; E.More(); E.Next()) {
+        if(!aMap.Add(E.Current())) continue;
+        if(isSameFace(aFace, TopoDS::Face(E.Current()))) {
+          aSubShape = E.Current();
+          isFound = true;
+          break;
+        }
+      }
+      break;
+                      }
+    case TopAbs_EDGE: {
+      TopoDS_Edge anEdge = TopoDS::Edge(aWhat);
+      TopExp_Explorer E(aWhere, TopAbs_EDGE);
+      for(; E.More(); E.Next()) {
+        if(!aMap.Add(E.Current())) continue;
+        if(isSameEdge(anEdge, TopoDS::Edge(E.Current()))) {
+          aSubShape = E.Current();
+          isFound = true;
+          break;
+        }
+      }
+      break;
+                      }
+    case TopAbs_SOLID: {
+      TopoDS_Solid aSolid = TopoDS::Solid(aWhat);
+      TopExp_Explorer E(aWhere, TopAbs_SOLID);
+      for(; E.More(); E.Next()) {
+        if(!aMap.Add(E.Current())) continue;
+        if(isSameSolid(aSolid, TopoDS::Solid(E.Current()))) {
+          aSubShape = E.Current();
+          isFound = true;
+          break;
+        }
+      }
+      break;
+                       }
+    default:
+      return NULL;
+  }
+
+  if(isFound) {
+    TopTools_IndexedMapOfShape anIndices;
+    TopExp::MapShapes(aWhere, anIndices);
+    if (anIndices.Contains(aSubShape))
+      anIndex = anIndices.FindIndex(aSubShape);
+  }
+
+  if(anIndex < 0) return NULL;
+
+  Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
+
+  anArray->SetValue(1, anIndex);
+
+  Handle(GEOM_Object) aResult = GetEngine()->AddSubShape(theShapeWhere, anArray);
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetSame("
+    << theShapeWhere << ", " << theShapeWhat << ")";
+
+  SetErrorCode(OK);
+
+  return aResult;
 }

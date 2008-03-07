@@ -24,6 +24,8 @@
 
 #define FILLET_ARG_SH   1
 #define FILLET_ARG_R    2
+#define FILLET_ARG_R1   4
+#define FILLET_ARG_R2   5
 #define FILLET_ARG_LENG 3
 #define FILLET_ARG_LAST 3
 
@@ -38,8 +40,12 @@ class GEOMImpl_IFillet
   Handle(GEOM_Function) GetShape() { return _func->GetReference(FILLET_ARG_SH); }
 
   void SetR(double theR) { _func->SetReal(FILLET_ARG_R, theR); }
+  void SetR1(double theR1) { _func->SetReal(FILLET_ARG_R1, theR1); }
+  void SetR2(double theR2) { _func->SetReal(FILLET_ARG_R2, theR2); }
 
   double GetR() { return _func->GetReal(FILLET_ARG_R); }
+  double GetR1() { return _func->GetReal(FILLET_ARG_R1); }
+  double GetR2() { return _func->GetReal(FILLET_ARG_R2); }
 
   void SetLength(int theLen) { _func->SetInteger(FILLET_ARG_LENG, theLen); }
 

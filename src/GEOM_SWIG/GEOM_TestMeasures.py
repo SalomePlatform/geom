@@ -109,6 +109,22 @@ def TestMeasureOperations (geompy, math):
     if Coords[0] != 5 or Coords[1] != 15 or Coords[2] != 35:
       print "But must be (5, 15, 35)"
 
+  ####### GetNormal #######
+
+  faces = geompy.SubShapeAllSorted(box, geompy.ShapeType["FACE"])
+  face0 = faces[0]
+  vnorm = geompy.GetNormal(face0)
+  if vnorm is None:
+    raise RuntimeError, "GetNormal(face0) failed"
+  else:
+    geompy.addToStudy(face0, "Face0")
+    geompy.addToStudy(vnorm, "Normale to Face0")
+    print "\nNormale of face has been successfully obtained:"
+    #Coords = geompy.PointCoordinates(pcdg)
+    #print "(", Coords[0], ", ", Coords[1], ", ", Coords[2], ")"
+    #if Coords[0] != 5 or Coords[1] != 15 or Coords[2] != 35:
+    #  print "But must be (5, 15, 35)"
+
   ####### MinDistance #######
 
   MinDist = geompy.MinDistance(box, cube)
@@ -119,3 +135,55 @@ def TestMeasureOperations (geompy, math):
   #print " On Cube (", MinDist[4], ", ", MinDist[5], ", ", MinDist[6], ")"
 
   print "\nMinimal distance between Box and Cube = ", MinDist
+
+  MinDistComps = geompy.MinDistanceComponents(box, cube)
+  print "\nMinimal distance between Box and Cube = ", MinDistComps[0]
+  print "Its components are  (", MinDistComps[1], ", ", MinDistComps[2], ", ", MinDistComps[3], ")"
+
+  ####### Angle #######
+
+  OX  = geompy.MakeVectorDXDYDZ(10, 0,0)
+  OXY = geompy.MakeVectorDXDYDZ(10,10,0)
+
+  # in one plane
+  Angle = geompy.GetAngle(OX, OXY)
+
+  print "\nAngle between OX and OXY = ", Angle
+  if math.fabs(Angle - 45.0) > 1e-05:
+    print "  Error: returned angle is", Angle, "while must be 45.0"
+
+  # not in one plane
+  OXY_shift = geompy.MakeTranslation(OXY,10,-10,20)
+  Angle = geompy.GetAngle(OX, OXY_shift)
+
+  print "Angle between OX and OXY_shift = ", Angle
+  if math.fabs(Angle - 45.0) > 1e-05:
+    print "  Error: returned angle is", Angle, "while must be 45.0"
+
+  ####### Position (LCS) #######
+
+  Pos = geompy.GetPosition(box)
+  print "\nPosition(LCS) of box 10x30x70:"
+  print "Origin: (", Pos[0], ", ", Pos[1], ", ", Pos[2], ")"
+  print "Z axis: (", Pos[3], ", ", Pos[4], ", ", Pos[5], ")"
+  print "X axis: (", Pos[6], ", ", Pos[7], ", ", Pos[8], ")"
+
+  ####### KindOfShape #######
+
+  Kind = geompy.KindOfShape(box)
+  print "\nKindOfShape(box 10x30x70):", Kind
+  #if Kind[0] != geompy.kind.BOX:
+  #  print "Error: returned type is", Kind[0], "while must be", geompy.kind.BOX
+
+  Kind = geompy.KindOfShape(p137)
+  print "\nKindOfShape(p137):", Kind
+  if Kind[0] != geompy.kind.VERTEX:
+    print "  Error: returned type is", Kind[0], "while must be", geompy.kind.VERTEX
+  else:
+    dx = math.fabs(Kind[1] - 10)
+    dy = math.fabs(Kind[2] - 30)
+    dz = math.fabs(Kind[3] - 70)
+    if (dx + dy + dz) > 1e-5:
+      print "  Error: coordinates are (", Kind[1], ",", Kind[2], ",", Kind[3], ") while must be (10, 20, 30)"
+
+  pass

@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -37,20 +37,6 @@
 #include "SalomeApp_Application.h"
 #include "SalomeApp_Study.h"
 #include "LightApp_SelectionMgr.h"
-
-GroupGUI* GroupGUI::myGUIObject = 0;
-
-//=======================================================================
-// function : GetGroupGUI()
-// purpose  : Get the only GroupGUI object [ static ]
-//=======================================================================
-GroupGUI* GroupGUI::GetGroupGUI(GeometryGUI* parent)
-{
-  if ( myGUIObject == 0 ) 
-    myGUIObject = new GroupGUI(parent);
-
-  return myGUIObject;
-}
 
 //=======================================================================
 // function : GroupGUI()
@@ -76,12 +62,14 @@ GroupGUI::~GroupGUI()
 //=======================================================================
 bool GroupGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return false;
+
   getGeometryGUI()->EmitSignalDeactivateDialog();
 
   QDialog* aDlg = NULL;
 
-  SUIT_Application* suitApp = SUIT_Session::session()->activeApplication();
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(suitApp->activeStudy());
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
   if ( !appStudy ) return false;
   _PTR(Study) aStudy = appStudy->studyDS();
 
@@ -103,12 +91,9 @@ bool GroupGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
       SALOME_ListIO aList;
       aList.Clear();
 
-      SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>(suitApp);
-      if (app) {
-	LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-	if (aSelMgr)
-	  aSelMgr->selectedObjects(aList);
-      }
+      LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+      if (aSelMgr)
+        aSelMgr->selectedObjects(aList);
 
       if (aList.Extent() == 1) {
 	Standard_Boolean aResult = Standard_False;
@@ -124,7 +109,7 @@ bool GroupGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
       break;
     }
   default: 
-    suitApp->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID)); 
+    app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID)); 
     break;
   }
 
@@ -144,6 +129,6 @@ extern "C"
 #endif
   GEOMGUI* GetLibGUI(GeometryGUI* p)
   {
-    return GroupGUI::GetGroupGUI(p);
+    return new GroupGUI(p);
   }
 }

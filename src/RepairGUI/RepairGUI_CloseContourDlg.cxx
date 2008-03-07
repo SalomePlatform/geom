@@ -103,7 +103,7 @@ RepairGUI_CloseContourDlg::RepairGUI_CloseContourDlg(GeometryGUI* theGeometryGUI
   GroupPoints->getGroupBoxLayout()->addMultiCellWidget(myIsVertexGr, 2, 2, 0, 2);
   /***************************************************************/
 
-  setHelpFileName("close_contour.htm");
+  setHelpFileName("close_contour_operation_page.html");
 
   Init();
 }

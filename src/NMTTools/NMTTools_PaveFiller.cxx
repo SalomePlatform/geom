@@ -27,7 +27,8 @@
 #include <BOPTColStd_Failure.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTTools_DEProcessor.hxx>
-//QQ #include "utilities.h"
+#include <NMTDS_Iterator.hxx>
+#include <NMTDS_InterfPool.hxx>
 
 //=======================================================================
 // function: NMTTools_PaveFiller::NMTTools_PaveFiller
@@ -35,55 +36,56 @@
 //=======================================================================
   NMTTools_PaveFiller::NMTTools_PaveFiller()
 {
-  myIntrPool=NULL;
   myDS=NULL;
+  myDSIt=NULL;
   myIsDone=Standard_False;
   myNbSources=0;
   myNbEdges=0;
+  myIP=NULL;
 }
 //=======================================================================
-// function:NMTTools_PaveFiller::NMTTools_PaveFiller
+// function: ~
 // purpose: 
 //=======================================================================
-  NMTTools_PaveFiller::NMTTools_PaveFiller(const BOPTools_InterferencePool& aIP)
+  NMTTools_PaveFiller::~NMTTools_PaveFiller()
 {
-  SetInterferencePool(aIP);
+  Clear();
 }
 //=======================================================================
-// function: Destroy
+// function: Clear
 // purpose: 
 //=======================================================================
-  void NMTTools_PaveFiller::Destroy()
+  void NMTTools_PaveFiller::Clear()
 {
+  if (myDSIt) {
+    delete myDSIt;
+  } 
+  if (myDS) {
+    delete myDS;
+  }
+  myDSIt=NULL;
+  myDS=NULL;
+  
+  if (myIP) {
+    delete myIP;
+  }
+  myIP=NULL;
 }
 //=======================================================================
-// function: SetInterferencePool
+// function: SetCompositeShape
 // purpose: 
 //=======================================================================
-  void NMTTools_PaveFiller::SetInterferencePool(const BOPTools_InterferencePool& aIP)
+  void NMTTools_PaveFiller::SetCompositeShape(const TopoDS_Shape& aS)
 {
-  myIsDone=Standard_False;
-  //
-  myIntrPool=(BOPTools_InterferencePool*)&aIP;
-  myDS=(NMTDS_ShapesDataStructure*)myIntrPool->DS();
-  myNbSources=myDS->NumberOfShapesOfTheObject()+myDS->NumberOfShapesOfTheTool();
-  myNbEdges=myDS->NbEdges();
+  myCompositeShape=aS;
 }
 //=======================================================================
-// function:  InterfPool
+// function: CompositeShape
 // purpose: 
 //=======================================================================
-  BOPTools_PInterferencePool NMTTools_PaveFiller::InterfPool()
+  const TopoDS_Shape& NMTTools_PaveFiller::CompositeShape()const
 {
-  return myIntrPool;
-}
-//=======================================================================
-// function:IsDone
-// purpose: 
-//=======================================================================
-  Standard_Boolean NMTTools_PaveFiller::IsDone() const
-{
-  return myIsDone;
+  return myCompositeShape;
 }
 //=======================================================================
 // function:  DS
@@ -92,6 +94,30 @@
   NMTDS_PShapesDataStructure NMTTools_PaveFiller::DS()
 {
   return myDS;
+}
+//=======================================================================
+// function: DSIt
+// purpose: 
+//=======================================================================
+  NMTDS_PIterator NMTTools_PaveFiller::DSIt()
+{
+  return myDSIt;
+}
+//=======================================================================
+// function:  IP
+// purpose: 
+//=======================================================================
+  NMTDS_PInterfPool NMTTools_PaveFiller::IP()
+{
+  return myIP;
+}
+//=======================================================================
+// function:IsDone
+// purpose: 
+//=======================================================================
+  Standard_Boolean NMTTools_PaveFiller::IsDone() const
+{
+  return myIsDone;
 }
 //=======================================================================
 // function: Context
@@ -149,7 +175,6 @@
 {
   return mySplitShapesPool;
 }
-
 //=======================================================================
 // function:  ChangeSplitShapesPool
 // purpose: 
@@ -164,26 +189,55 @@
 //=======================================================================
   void NMTTools_PaveFiller::Init()
 {
-  myDSIt.SetDS(myDS);
+  myIsDone=Standard_False;
+  if (myCompositeShape.IsNull()) {
+    return;
+  }
+  //
+  Clear();
+  // 1.
+  myDS=new NMTDS_ShapesDataStructure;
+  myDS->SetCompositeShape(myCompositeShape);
+  myDS->Init();
+  //
+  // 2.
+  myDSIt=new NMTDS_Iterator;
+  myDSIt->SetDS(myDS);
+  myDSIt->Prepare();
+  //
+  // 3.
+  myNbSources=myDS->NumberOfShapesOfTheObject()+
+              myDS->NumberOfShapesOfTheTool();
+  myNbEdges=myDS->NbEdges();
+  //
+  // 4
+  myIP=new NMTDS_InterfPool;
 }
+
 //=======================================================================
 // function: Perform
 // purpose: 
 //=======================================================================
   void NMTTools_PaveFiller::Perform()
 {
+  myIsDone=Standard_False;
+  //
+  //----------------
   try {
     // 0.
-    Init();//myDSIt.SetDS(myDS);
-    //
+    // Modified Thu Sep 14 14:35:18 2006 
+    // Contribution of Samtech www.samcef.com BEGIN
+    Init();
+    // Contribution of Samtech www.samcef.com END
     //1.VV
+    //
     PerformVV();
-    PerformNewVertices();
     //
     // 2.VE
     myPavePool.Resize (myNbEdges);
-    PrepareEdges();
     
+    PrepareEdges();
+
     PerformVE();
     //
     // 3.VF
@@ -193,7 +247,7 @@
     myCommonBlockPool.Resize (myNbEdges);
     mySplitShapesPool.Resize (myNbEdges);
     myPavePoolNew    .Resize (myNbEdges);
-    
+
     PreparePaveBlocks(TopAbs_VERTEX, TopAbs_EDGE);
     PreparePaveBlocks(TopAbs_EDGE, TopAbs_EDGE);
     //
@@ -207,15 +261,20 @@
     // 5.EF
     PreparePaveBlocks(TopAbs_EDGE, TopAbs_FACE);
     PerformEF();
+    //
     RefinePavePool();
     //
     myPavePoolNew.Destroy();
+    
     MakeSplitEdges();
+
     UpdateCommonBlocks();
     //
     // 6. FF
     PerformFF ();
+    //
     MakeBlocks();
+    //
     MakePCurves();
     //
     // 7.Postprocessing 
@@ -224,8 +283,13 @@
     NMTTools_DEProcessor aDEP(*this);
     aDEP.Do();
     //
+    // Modified to treat Alone Vertices Thu Sep 14 14:35:18 2006 
+    // Contribution of Samtech www.samcef.com BEGIN
+    MakeAloneVertices();
+    // Contribution of Samtech www.samcef.com END
+    //
+    myIsDone=Standard_True;
   }
-  catch (BOPTColStd_Failure& /*x*/) {
-    //QQ MESSAGE(x.Message() << flush);
+  catch (BOPTColStd_Failure& ) {
   }
 }

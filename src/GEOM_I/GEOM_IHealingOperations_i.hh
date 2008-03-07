@@ -21,6 +21,7 @@
 #ifndef _GEOM_IHealingOperations_i_HeaderFile
 #define _GEOM_IHealingOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -33,7 +34,7 @@
 #include <TColStd_HArray1OfExtendedString.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 
-class GEOM_IHealingOperations_i : 
+class GEOM_I_EXPORT GEOM_IHealingOperations_i : 
     public virtual POA_GEOM::GEOM_IHealingOperations,
     public virtual GEOM_IOperations_i
 {
@@ -61,6 +62,9 @@ class GEOM_IHealingOperations_i :
 
    CORBA::Boolean GetFreeBoundary(GEOM::GEOM_Object_ptr theObject, GEOM::ListOfGO_out theClosedWires, GEOM::ListOfGO_out theOpenWires );
    
+   GEOM::GEOM_Object_ptr ChangeOrientation (GEOM::GEOM_Object_ptr theObject);
+   GEOM::GEOM_Object_ptr ChangeOrientationCopy (GEOM::GEOM_Object_ptr theObject);
+
    ::GEOMImpl_IHealingOperations* GetOperations() { return (::GEOMImpl_IHealingOperations*)GetImpl(); }
 
 private:

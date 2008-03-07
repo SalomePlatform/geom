@@ -122,6 +122,10 @@ msgid "ICON_DLG_LINE_2P"
 msgstr "line2points.png"
 
 #LineDlg
+msgid "ICON_DLG_LINE_2F"
+msgstr "line2faces.png"
+
+#LineDlg
 msgid "ICON_DLG_LINE_EDGE"
 msgstr "lineedge.png"
 
@@ -132,6 +136,10 @@ msgstr "linepointvector.png"
 #CircleDlg
 msgid "ICON_DLG_CIRCLE_PV"
 msgstr "circlepointvector.png"
+
+#CircleDlg
+msgid "ICON_DLG_CIRCLE_C2P"
+msgstr "circlecenter2pnts.png"
 
 #VectorDlg
 msgid "ICON_DLG_VECTOR_2P"
@@ -177,9 +185,17 @@ msgstr "point3.png"
 msgid "ICON_DLG_POINT_EDGE"
 msgstr "pointonedge.png"
 
+#PoinDlg
+msgid "ICON_DLG_POINT_LINES"
+msgstr "point_line_intersection.png"
+
 #ArcDlg
 msgid "ICON_DLG_ARC"
 msgstr "arc.png"
+
+#ArcDlg
+msgid "ICON_DLG_ARC_CENTER"
+msgstr "arccenter.png"
 
 #ArchimedeDlg
 msgid "ICON_DLG_ARCHIMEDE"
@@ -200,6 +216,10 @@ msgstr "partitionplane.png"
 #CenterMassDlg
 msgid "ICON_DLG_CENTERMASS"
 msgstr "centergravity.png"
+
+#NormaleDlg
+msgid "ICON_DLG_NORMALE"
+msgstr "normale.png"
 
 #BoundingBoxDlg
 msgid "ICON_DLG_BOUNDING_BOX"
@@ -265,6 +285,10 @@ msgstr "whatis.png"
 msgid "ICON_DLG_MINDIST"
 msgstr "mindist.png"
 
+#AngleDlg
+msgid "ICON_DLG_ANGLE"
+msgstr "angle.png"
+
 #MirrorDlg (MZN: add icons for point and axe)
 msgid "ICON_DLG_MIRROR_POINT"
 msgstr "mirrorPoint.png"
@@ -291,6 +315,10 @@ msgstr "translationVector.png"
 msgid "ICON_DLG_ROTATION"
 msgstr "rotate.png"
 
+#RotationDlg
+msgid "ICON_DLG_ROTATION_THREE_POINTS"
+msgstr "rotatepnt.png"
+
 #ScaleDlg
 msgid "ICON_DLG_SCALE"
 msgstr "scale.png"
@@ -307,6 +335,14 @@ msgstr "pointonedge.png"
 msgid "ICON_DLG_SEWING"
 msgstr "sewing.png"
 
+#ChangeOrientationDlg
+msgid "ICON_DLG_CHANGE_ORIENTATION"
+msgstr "change_orientation.png"
+
+#ChangeOrientationDlg
+msgid "ICON_DLG_REMOVE_EXTRA_EDGES"
+msgstr "remove_extra_edges.png"
+
 #PipeDlg
 msgid "ICON_DLG_PIPE"
 msgstr "pipe.png"
@@ -314,6 +350,9 @@ msgstr "pipe.png"
 #PrismDlg
 msgid "ICON_DLG_PRISM"
 msgstr "prism.png"
+
+msgid "ICON_DLG_PRISM_2P"
+msgstr "prism2.png"
 
 #RevolutionDlg
 msgid "ICON_DLG_REVOL"
@@ -350,6 +389,11 @@ msgstr "filletedge.png"
 #ChamferDlg
 msgid "ICON_DLG_CHAMFER_EDGE"
 msgstr "chamferedge.png"
+
+#ChamferDlg
+msgid "ICON_DLG_CHAMFER_EDGE_FROM_FACE"
+msgstr "chamferedgefromface.png"
+
 
 #FilletDlg
 msgid "ICON_DLG_FILLET_FACE"
@@ -508,6 +552,9 @@ msgstr "block_face_4e.png"
 
 msgid "ICON_DLG_GLUE_FACES"
 msgstr "glue.png"
+
+msgid "ICON_DLG_GLUE_FACES2"
+msgstr "glue2.png"
 
 msgid "ICON_DLG_FREE_FACES"
 msgstr "free_faces.png"
@@ -698,14 +745,20 @@ msgstr "free_bound.png"
 msgid "ICO_CHECK_FREE_FACES"
 msgstr "free_faces.png"
 
+msgid "ICO_CHANGE_ORIENTATION"
+msgstr "change_orientation.png"
+
+msgid "ICO_REMOVE_EXTRA_EDGES"
+msgstr "remove_extra_edges.png"
+
 msgid "ICO_POINT_COORDS"
 msgstr "point_coord.png"
 
 msgid "ICO_BASIC_PROPS"
 msgstr "basicproperties.png"
 
-msgid "ICO_MASS_CENTER"
-msgstr "centergravity.png"
+msgid "ICO_NORMALE"
+msgstr "normale.png"
 
 msgid "ICO_INERTIA"
 msgstr "axisinertia.png"
@@ -715,6 +768,9 @@ msgstr "bounding.png"
 
 msgid "ICO_MIN_DIST"
 msgstr "mindist.png"
+
+msgid "ICO_MEASURE_ANGLE"
+msgstr "angle.png"
 
 msgid "ICO_TOLERANCE"
 msgstr "tolerance.png"
@@ -748,3 +804,24 @@ msgstr "erase.png"
 
 msgid "ICO_POP_CREATE_GROUP"
 msgstr "group_new.png"
+
+msgid "ICO_VERTEX_SEL_ONLY"
+msgstr "point2.png"
+
+msgid "ICO_EDGE_SEL_ONLY"
+msgstr "build_edge.png"
+
+msgid "ICO_WIRE_SEL_ONLY"
+msgstr "build_wire.png"
+
+msgid "ICO_FACE_SEL_ONLY"
+msgstr "build_face.png"
+
+msgid "ICO_SHELL_SEL_ONLY"
+msgstr "build_shell.png"
+
+msgid "ICO_SOLID_SEL_ONLY"
+msgstr "build_solid.png"
+
+msgid "ICO_COMPOUND_SEL_ONLY"
+msgstr "build_compound.png"

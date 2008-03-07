@@ -29,13 +29,14 @@
 #ifndef GEOM_OPERATION_H
 #define GEOM_OPERATION_H
 
+#include "GEOM_GEOMBase.hxx"
+
 #include "SUIT_Operation.h"
 #include <SALOMEconfig.h>
-#include <Standard_Macro.hxx>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 
 
-class Standard_EXPORT GEOM_Operation : public SUIT_Operation
+class GEOMBASE_EXPORT GEOM_Operation : public SUIT_Operation
 {
 public:
   GEOM_Operation( SUIT_Application*, GEOM::GEOM_IOperations_ptr );

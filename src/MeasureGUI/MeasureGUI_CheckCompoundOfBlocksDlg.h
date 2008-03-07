@@ -28,23 +28,19 @@
 #ifndef DIALOGBOX_CHECKCOMPOUNDOFBLOCKSDLG_H
 #define DIALOGBOX_CHECKCOMPOUNDOFBLOCKSDLG_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 
 class MeasureGUI_1Sel1TextView_QTD;
 class QListBox;
 class QLabel;
 
-#if defined WNT && defined MEASUREGUI_EXPORTS
-#define MEASUREGUI_EXPORT __declspec( dllexport )
-#else
-#define MEASUREGUI_EXPORT
-#endif
-
 //=================================================================================
 // class    : MeasureGUI_CheckCompoundOfBlocksDlg
 // purpose  :
 //=================================================================================
-class MEASUREGUI_EXPORT MeasureGUI_CheckCompoundOfBlocksDlg : public GEOMBase_Skeleton
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_CheckCompoundOfBlocksDlg : public GEOMBase_Skeleton
 {
     Q_OBJECT
 

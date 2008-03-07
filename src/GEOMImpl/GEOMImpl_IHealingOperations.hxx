@@ -18,6 +18,8 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+using namespace std;
+
 #ifndef _GEOMImpl_IHealingOperations_HXX_
 #define _GEOMImpl_IHealingOperations_HXX_
 
@@ -81,6 +83,10 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
   Standard_EXPORT bool GetFreeBoundary ( Handle(GEOM_Object) theObject, 
                          Handle(TColStd_HSequenceOfTransient)& theOutClosedWires, 
                          Handle(TColStd_HSequenceOfTransient)& theOutOpenWires );
+
+  Standard_EXPORT Handle(GEOM_Object) ChangeOrientation( Handle(GEOM_Object) theObject);
+  Standard_EXPORT Handle(GEOM_Object) ChangeOrientationCopy( Handle(GEOM_Object) theObject);
+
 };
 
 #endif

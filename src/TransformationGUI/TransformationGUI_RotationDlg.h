@@ -29,7 +29,7 @@
 #define DIALOGBOX_ROTATION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1Spin2Check.h"
+#include "DlgRef_4Sel1Spin2Check.h"
   
 //=================================================================================
 // class    : TransformationGUI_RotationDlg
@@ -49,7 +49,7 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
-
+    virtual void addSubshapesToStudy();
     virtual void closeEvent( QCloseEvent* e );
 
 private:
@@ -58,9 +58,9 @@ private:
     double GetAngle() const;
     
     GEOM::ListOfGO myObjects;
-    GEOM::GEOM_Object_var myAxis;
+    GEOM::GEOM_Object_var myAxis, myCentPoint, myPoint1, myPoint2;
     
-    DlgRef_2Sel1Spin2Check* GroupPoints;
+    DlgRef_4Sel1Spin2Check* GroupPoints;
 
 private slots:
     void ClickOnOk();
@@ -71,6 +71,7 @@ private slots:
     void SetEditCurrentArgument();
     void ValueChangedInSpinBox();
     void CreateCopyModeChanged(bool isCreateCopy);
+    void ConstructorsClicked(int constructorId);
     void onReverse();
 };
 

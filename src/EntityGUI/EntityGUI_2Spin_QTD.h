@@ -28,6 +28,8 @@
 #ifndef ENTITYGUI_2SPIN_QTD_H
 #define ENTITYGUI_2SPIN_QTD_H
 
+#include "GEOM_EntityGUI.hxx"
+
 #include <qvariant.h>
 #include <qwidget.h>
 class QVBoxLayout; 
@@ -38,7 +40,7 @@ class QLabel;
 class QPushButton;
 class QSpinBox;
 
-class EntityGUI_2Spin_QTD : public QWidget
+class GEOM_ENTITYGUI_EXPORT EntityGUI_2Spin_QTD : public QWidget
 { 
     Q_OBJECT
 

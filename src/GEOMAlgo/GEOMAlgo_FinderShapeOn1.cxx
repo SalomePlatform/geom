@@ -41,6 +41,7 @@
 #include <Poly_Triangle.hxx>
 #include <Poly_PolygonOnTriangulation.hxx>
 #include <Poly_Triangulation.hxx>
+#include <Poly_Polygon3D.hxx>
 
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
@@ -67,12 +68,14 @@
 #include <BRepLib_MakeEdge.hxx>
 
 #include <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
+
+#include <GEOMAlgo_SurfaceTools.hxx>
+#include <GEOMAlgo_StateCollector.hxx>
+#include <GEOMAlgo_FinderShapeOn.hxx>
+
 #include <GEOMAlgo_PassKey.hxx>
 #include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
 #include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
-#include <GEOMAlgo_SurfaceTools.hxx>
-#include <GEOMAlgo_StateCollector.hxx>
-
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn1
@@ -529,8 +532,7 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
 {
   myErrorStatus=0;
   //
-  Standard_Integer j, j1, j2, k, n[4], aNbLinks, aNx, aNbMax, aNb;
-  Standard_Integer iCnt, *pIds;
+  Standard_Integer j, j1, j2, k, n[4], aNbLinks, aNx, aNb, iCnt;//, aNbMax, *pIds;
   TopLoc_Location aLoc;
   Handle(Poly_Triangulation) aTRF;
   TColStd_MapOfInteger aMBN;
@@ -542,8 +544,11 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
   //
   aTRF=BRep_Tool::Triangulation(aF, aLoc);
   if (aTRF.IsNull()) {
-    myErrorStatus=20; // no triangulation found
-    return;  
+    if (!GEOMAlgo_FinderShapeOn::BuildTriangulation(aF)) {
+      myErrorStatus=20; // no triangulation found
+      return;
+    }
+    aTRF=BRep_Tool::Triangulation(aF, aLoc);
   }
   //
   const gp_Trsf& aTrsf=aLoc.Transformation();
@@ -578,12 +583,20 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
     iCnt=aIt.Value();
     if (iCnt==1) {
       const GEOMAlgo_PassKey& aPK=aIt.Key();
+      //qf
+      /*
       aNbMax=aPK.NbMax();
       pIds=(Standard_Integer*)aPK.Key();
       for (k=1; k<3; ++k) {
 	aNx=*(pIds+aNbMax-k);
 	aMBN.Add(aNx);
       }
+      */
+      aNx=(Standard_Integer)aPK.Id(1);
+      aMBN.Add(aNx);
+      aNx=(Standard_Integer)aPK.Id(2);
+      aMBN.Add(aNx);
+      //qt
     }
   }
   //
@@ -620,10 +633,17 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
 	  // take the first having occured inner link
 	  // and discretize it
 	  const GEOMAlgo_PassKey& aPK=aIt.Key();
+	  //qf
+	  /*
 	  aNbMax=aPK.NbMax();
 	  pIds=(Standard_Integer*)aPK.Key();
 	  aN1=*(pIds+aNbMax-1);
 	  aN2=*(pIds+aNbMax-2);
+	  */
+	  //
+	  aN1=(Standard_Integer)aPK.Id(1);
+	  aN2=(Standard_Integer)aPK.Id(2);
+	  //qt
 	  aP1=aNodes(aN1).Transformed(aTrsf);
 	  aP2=aNodes(aN2).Transformed(aTrsf);
 	  //
@@ -673,19 +693,35 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
   aLP.Clear();
   BRep_Tool::PolygonOnTriangulation(aE, aPTE, aTRE, aLoc);
   if (aTRE.IsNull() || aPTE.IsNull()) {
-    myErrorStatus=20; // no triangulation found
-    return;  
+    Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(aE, aLoc);
+    if (aPE.IsNull()) {
+      if (!GEOMAlgo_FinderShapeOn::BuildTriangulation(aE)) {
+        myErrorStatus=20; // no triangulation found
+        return;
+      }
+      aPE = BRep_Tool::Polygon3D(aE, aLoc);
+    }
+    const gp_Trsf& aTrsf=aLoc.Transformation();
+    const TColgp_Array1OfPnt& aNodes=aPE->Nodes();
+    //
+    aNbNodes=aPE->NbNodes();
+    Standard_Integer low = aNodes.Lower(), up = aNodes.Upper();
+    for (j=low+1; j<up; ++j) {
+      aP=aNodes(j).Transformed(aTrsf);
+      aLP.Append(aP);
+    }
   }
-  //
-  const gp_Trsf& aTrsf=aLoc.Transformation();
-  const TColgp_Array1OfPnt& aNodes=aTRE->Nodes();
-  //
-  aNbNodes=aPTE->NbNodes();
-  const TColStd_Array1OfInteger& aInds=aPTE->Nodes();
-  for (j=2; j<aNbNodes; ++j) {
-    aIndex=aInds(j);
-    aP=aNodes(aIndex).Transformed(aTrsf);
-    aLP.Append(aP);
+  else {
+    const gp_Trsf& aTrsf=aLoc.Transformation();
+    const TColgp_Array1OfPnt& aNodes=aTRE->Nodes();
+    //
+    aNbNodes=aPTE->NbNodes();
+    const TColStd_Array1OfInteger& aInds=aPTE->Nodes();
+    for (j=2; j<aNbNodes; ++j) {
+      aIndex=aInds(j);
+      aP=aNodes(aIndex).Transformed(aTrsf);
+      aLP.Append(aP);
+    }
   }
   //
   aNb=aLP.Extent();
@@ -693,7 +729,6 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
     // try to fill it yourself
     InnerPoints(aE, myNbPntsMin, aLP);
     aNb=aLP.Extent();
-    
   }
 }
 //=======================================================================

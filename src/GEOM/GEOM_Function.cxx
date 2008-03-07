@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -23,6 +23,7 @@
 #include <GEOM_Function.hxx>
 #include <GEOM_Object.hxx>
 #include <GEOM_Solver.hxx>
+#include <GEOM_ISubShape.hxx>
 
 #include "utilities.h"
 
@@ -54,6 +55,7 @@
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_ExtendedString.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #define ARGUMENT_LABEL 1
@@ -160,27 +162,58 @@ TopoDS_Shape GEOM_Function::GetValue()
 
   TopoDS_Shape aShape;
   TDF_Label aLabel = GetOwnerEntry();
-  if(aLabel.IsRoot()) return aShape;
+  if (aLabel.IsRoot()) return aShape;
   Handle(GEOM_Object) anObject = GEOM_Object::GetObject(aLabel);
-  if(anObject.IsNull()) return aShape;
-  if(!anObject->IsMainShape()) {
-    try {
-      GEOM_Solver aSolver(GEOM_Engine::GetEngine());
-      if (!aSolver.ComputeFunction(this)) {
-	MESSAGE("GEOM_Object::GetValue Error : Can't build a sub shape");
-	return aShape;
-      }
+  if (anObject.IsNull()) return aShape;
+
+  if (!anObject->IsMainShape()) {
+    bool isResult = false;
+    TDF_Label aResultLabel = _label.FindChild(RESULT_LABEL);
+    if (!aResultLabel.IsNull()) {
+      Handle(TNaming_NamedShape) aNS;
+      if (aResultLabel.FindAttribute(TNaming_NamedShape::GetID(), aNS))
+        isResult = true;
     }
-    catch (Standard_Failure) {
-      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-      MESSAGE("GEOM_Function::GetValue Error: " << aFail->GetMessageString());
-      return aShape;
+
+    // compare tics
+    if (isResult) {
+      // tic of this
+      Standard_Integer aTic = anObject->GetTic();
+
+      // tic of main shape
+      GEOM_ISubShape aCI (this);
+      TDF_Label aLabelObjMainSh = aCI.GetMainShape()->GetOwnerEntry();
+      if (aLabelObjMainSh.IsRoot()) return aShape;
+      Handle(GEOM_Object) anObjMainSh = GEOM_Object::GetObject(aLabelObjMainSh);
+      if (anObjMainSh.IsNull()) return aShape;
+      Standard_Integer aTicMainSh = anObjMainSh->GetTic();
+
+      // compare
+      isResult = ((aTic == aTicMainSh) ? true : false);
+    }
+
+    if (!isResult) {
+      try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+        OCC_CATCH_SIGNALS;
+#endif
+        GEOM_Solver aSolver(GEOM_Engine::GetEngine());
+        if (!aSolver.ComputeFunction(this)) {
+          MESSAGE("GEOM_Object::GetValue Error : Can't build a sub shape");
+          return aShape;
+        }
+      }
+      catch (Standard_Failure) {
+        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+        MESSAGE("GEOM_Function::GetValue Error: " << aFail->GetMessageString());
+        return aShape;
+      }
     }
   }
 
   TDF_Label aResultLabel = _label.FindChild(RESULT_LABEL);
   Handle(TNaming_NamedShape) aNS;
-  if(!aResultLabel.FindAttribute(TNaming_NamedShape::GetID(), aNS)) return aShape;
+  if (!aResultLabel.FindAttribute(TNaming_NamedShape::GetID(), aNS)) return aShape;
 
   aShape = aNS->Get();
 
@@ -190,7 +223,7 @@ TopoDS_Shape GEOM_Function::GetValue()
 
 //=============================================================================
 /*!
- *  GetValue
+ *  SetValue
  */
 //=============================================================================
 void GEOM_Function::SetValue(TopoDS_Shape& theShape)
@@ -200,6 +233,26 @@ void GEOM_Function::SetValue(TopoDS_Shape& theShape)
   TNaming_Builder aBuilder(aResultLabel);
 
   aBuilder.Generated(theShape);
+
+  // synchronisation between main shape and its sub-shapes
+  TDF_Label aLabel = GetOwnerEntry();
+  if (aLabel.IsRoot()) return;
+  Handle(GEOM_Object) anObject = GEOM_Object::GetObject(aLabel);
+  if (anObject.IsNull()) return;
+  if (anObject->IsMainShape()) {
+    // increase modifications counter of this (main) shape
+    anObject->IncrementTic();
+  }
+  else {
+    // update modifications counter of this (sub-) shape to be the same as on main shape
+    GEOM_ISubShape aCI (this);
+    TDF_Label aLabelObjMainSh = aCI.GetMainShape()->GetOwnerEntry();
+    if (aLabelObjMainSh.IsRoot()) return;
+    Handle(GEOM_Object) anObjMainSh = GEOM_Object::GetObject(aLabelObjMainSh);
+    if (anObjMainSh.IsNull()) return;
+
+    anObject->SetTic(anObjMainSh->GetTic());
+  }
 
   _isDone = true;
 }

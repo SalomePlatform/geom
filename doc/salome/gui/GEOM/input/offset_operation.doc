@@ -1,0 +1,28 @@
+/*!
+
+\page offset_operation_page Offset Surface
+
+\n To produce an <b>Offset Surface</b> in the <b>Main Menu</b> select
+<b>Operations - > Transformation - > Offset Surface</b>
+
+\n This operation translates each point of an \b Object (a set of
+Objects) along a local normal by a given \b Offset distance (signed
+number, negative value meaning inner offset).
+\n \b Offset operation is applicable to faces, shells and solids.
+\n The \b Result will be a \b GEOM_Object 
+\n <b>TUI Command:</b> <em>geompy.MakeOffset(Shape, Offset),</em>
+where Shape is a shape(s) which has to be an offset, Offset is a value of
+the offset.
+\n <b>Arguments:</b> Name + Object (face(s), shell(s), solid(s)) +
+Offset value
+
+\image html transformation11.png
+
+\n <b>Example:</b>
+
+\image html offsetsn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_offset "Transformation Operations".
+
+*/

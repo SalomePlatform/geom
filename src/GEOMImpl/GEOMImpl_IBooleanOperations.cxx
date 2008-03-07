@@ -1,22 +1,23 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IBooleanOperations.hxx>
@@ -36,6 +37,7 @@
 
 #include "utilities.h"
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -43,7 +45,7 @@
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_IBooleanOperations::GEOMImpl_IBooleanOperations (GEOM_Engine* theEngine, int theDocID) 
+GEOMImpl_IBooleanOperations::GEOMImpl_IBooleanOperations (GEOM_Engine* theEngine, int theDocID)
 : GEOM_IOperations(theEngine, theDocID)
 {
   MESSAGE("GEOMImpl_IBooleanOperations::GEOMImpl_IBooleanOperations");
@@ -72,10 +74,10 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
   SetErrorCode(KO);
 
   if (theShape1.IsNull() || theShape2.IsNull()) return NULL;
- 
-  //Add a new Boolean object  
+
+  //Add a new Boolean object
   Handle(GEOM_Object) aBool = GetEngine()->AddObject(GetDocID(), GEOM_BOOLEAN);
- 
+
   //Add a new Boolean function
   Handle(GEOM_Function) aFunction;
   if (theOp == 1) {
@@ -91,10 +93,10 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_BooleanDriver::GetID()) return NULL; 
+  if (aFunction->GetDriverGUID() != GEOMImpl_BooleanDriver::GetID()) return NULL;
 
   GEOMImpl_IBoolean aCI (aFunction);
-  
+
   Handle(GEOM_Function) aRef1 = theShape1->GetLastFunction();
   Handle(GEOM_Function) aRef2 = theShape2->GetLastFunction();
 
@@ -105,6 +107,9 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
 
   //Compute the Boolean value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Boolean driver failed");
       return NULL;
@@ -127,7 +132,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
   pd << theShape1 << ", " << theShape2 << ")";
 
   SetErrorCode(OK);
-  return aBool; 
+  return aBool;
 }
 
 //=============================================================================
@@ -136,31 +141,33 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
-                             (const Handle(TColStd_HSequenceOfTransient)& theShapes, 
+                             (const Handle(TColStd_HSequenceOfTransient)& theShapes,
                               const Handle(TColStd_HSequenceOfTransient)& theTools,
                               const Handle(TColStd_HSequenceOfTransient)& theKeepIns,
                               const Handle(TColStd_HSequenceOfTransient)& theRemoveIns,
-                              const Standard_Integer           theLimit,
-                              const Standard_Boolean           theRemoveWebs,
-                              const Handle(TColStd_HArray1OfInteger)& theMaterials)
+                              const Standard_Integer                      theLimit,
+                              const Standard_Boolean                      theRemoveWebs,
+                              const Handle(TColStd_HArray1OfInteger)&     theMaterials,
+			      const Standard_Integer theKeepNonlimitShapes,
+                              const Standard_Boolean thePerformSelfIntersections)
 {
   SetErrorCode(KO);
 
-  //Add a new Partition object  
+  //Add a new Partition object
   Handle(GEOM_Object) aPartition = GetEngine()->AddObject(GetDocID(), GEOM_PARTITION);
- 
+
   //Add a new Partition function
-  Handle(GEOM_Function) aFunction =
-    aPartition->AddFunction(GEOMImpl_PartitionDriver::GetID(), PARTITION_PARTITION);
+  Handle(GEOM_Function) aFunction;
+  if (thePerformSelfIntersections)
+    aFunction = aPartition->AddFunction(GEOMImpl_PartitionDriver::GetID(), PARTITION_PARTITION);
+  else
+    aFunction = aPartition->AddFunction(GEOMImpl_PartitionDriver::GetID(), PARTITION_NO_SELF_INTERSECTIONS);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_PartitionDriver::GetID()) return NULL; 
+  if (aFunction->GetDriverGUID() != GEOMImpl_PartitionDriver::GetID()) return NULL;
 
   GEOMImpl_IPartition aCI (aFunction);
-  
-//  int aLen = theShapes.size();
-//  aCI.SetLength(aLen);
 
   Handle(TColStd_HSequenceOfTransient) aShapesSeq  = new TColStd_HSequenceOfTransient;
   Handle(TColStd_HSequenceOfTransient) aToolsSeq   = new TColStd_HSequenceOfTransient;
@@ -245,12 +252,14 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
 
   // Limit
   aCI.SetLimit(theLimit);
+  aCI.SetKeepNonlimitShapes(theKeepNonlimitShapes);
 
   // Materials
   if (theRemoveWebs) {
     if (theMaterials.IsNull()) {
       Handle(TColStd_HArray1OfInteger) aMaterials =
         new TColStd_HArray1OfInteger (1, aShapesSeq->Length());
+      aMaterials->Init(0);
       aCI.SetMaterials(aMaterials);
     } else {
       aCI.SetMaterials(theMaterials);
@@ -259,6 +268,9 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
 
   //Compute the Partition
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Partition driver failed");
       return NULL;
@@ -270,17 +282,21 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
     return NULL;
   }
 
-  //Make a Python command 
+  //Make a Python command
   GEOM::TPythonDump pd (aFunction);
-  pd << aPartition << " = geompy.MakePartition([";
+  if (thePerformSelfIntersections)
+    pd << aPartition << " = geompy.MakePartition([";
+  else
+    pd << aPartition << " = geompy.MakePartitionNonSelfIntersectedShape([";
+
   // Shapes, Tools
   pd << aShapesDescr.ToCString() << "], [" << aToolsDescr.ToCString() << "], [";
   // Keep Ins, Remove Ins
   pd << aKeepInsDescr.ToCString() << "], [" << aRemoveInsDescr.ToCString() << "], ";
   // Limit, Remove Webs
-  pd << theLimit << ", " << (int)theRemoveWebs << ", [";
+  pd << TopAbs_ShapeEnum(theLimit) << ", " << (int)theRemoveWebs << ", [";
   // Materials
-  if (theMaterials->Length() > 0) {
+  if (!theMaterials.IsNull() && theMaterials->Length() > 0) {
     int i = theMaterials->Lower();
     pd << theMaterials->Value(i);
     i++;
@@ -288,10 +304,10 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
       pd << ", " << theMaterials->Value(i);
     }
   }
-  pd << "])";
+  pd << "], " << theKeepNonlimitShapes <<")";
 
   SetErrorCode(OK);
-  return aPartition; 
+  return aPartition;
 }
 
 //=============================================================================
@@ -305,20 +321,20 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
   SetErrorCode(KO);
 
   if (theShape.IsNull() || thePlane.IsNull()) return NULL;
- 
-  //Add a new Boolean object  
-  Handle(GEOM_Object) aPart = GetEngine()->AddObject(GetDocID(), GEOM_BOOLEAN);
- 
+
+  //Add a new Boolean object
+  Handle(GEOM_Object) aPart = GetEngine()->AddObject(GetDocID(), GEOM_PARTITION);
+
   //Add a new Partition function
   Handle(GEOM_Function) aFunction =
     aPart->AddFunction(GEOMImpl_PartitionDriver::GetID(), PARTITION_HALF);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_PartitionDriver::GetID()) return NULL; 
+  if (aFunction->GetDriverGUID() != GEOMImpl_PartitionDriver::GetID()) return NULL;
 
   GEOMImpl_IPartition aCI (aFunction);
-  
+
   Handle(GEOM_Function) aRef1 = theShape->GetLastFunction();
   Handle(GEOM_Function) aRef2 = thePlane->GetLastFunction();
 
@@ -329,6 +345,9 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
 
   //Compute the Partition value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Partition driver failed");
       return NULL;
@@ -340,10 +359,10 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
     return NULL;
   }
 
-  //Make a Python command 
+  //Make a Python command
   GEOM::TPythonDump(aFunction) << aPart << " = geompy.MakeHalfPartition("
                                << theShape << ", " << thePlane << ")";
 
   SetErrorCode(OK);
-  return aPart; 
+  return aPart;
 }

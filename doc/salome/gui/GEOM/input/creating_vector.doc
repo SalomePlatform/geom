@@ -1,0 +1,31 @@
+/*!
+
+\page create_vector_page Vector
+
+To create a \b Vector in the <b>Main Menu</b> select <b>New Entity - >
+Basic - > Vector</b>
+
+\n There are 2 algorithms to create a \b Vector in the 3D space.
+\n The \b Result of each operation will be a GEOM_Object (edge).
+
+\n Firstly, you can define a Vector by its \b Start and <b>End Points</b>.
+\n <b>TUI Command:</b> <em>geompy.MakeVector(Point1, Point2)</em>
+\n <b>Arguments:</b> Name + 2 vertices.
+
+\image html vector1.png
+
+\n Secondly, you can define a \b Vector starting in the <b>Origin of
+coordinates</b> by its <b>End Point</b>.
+\n <b>TUI Command:</b> <em>geompy.MakeVectorDXDYDZ(DX, DY, DZ)</em>
+\n <b>Arguments:</b> Name + 3 values
+
+\image html vector2.png
+
+<b>Example:</b>
+
+\image html image34.gif
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_vector "Basic Geometric Objects".
+
+*/

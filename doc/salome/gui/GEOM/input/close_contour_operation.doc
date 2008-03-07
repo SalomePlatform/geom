@@ -1,0 +1,35 @@
+/*!
+
+\page close_contour_operation_page Close Contour
+
+\n To produce a <b>Close Contour</b> operation in the <b>Main Menu</b>
+select <b>Repair - > Close Contour</b>.
+
+\n This operation closes an open contour and modifies the underlying
+face (if needed) in accordance with user specified mode:
+<ul>
+<li>By common vertex &ndash; a vertex is created between the end points
+of the contour and its tolerance is increased to a value of the gap
+between the ends of the contour;</li>
+<li>By new edge &ndash; a new edge is inserted between the end points of the contour.</li>
+</ul>
+This operation is available in <b>OCC Viewer</b> only.
+
+\n The \b Result will be a \b GEOM_Object.
+
+\n <b>TUI Command:</b> <em>geompy.CloseContour(Shape, Wires,
+IsCommonVertex),</em> where \em Shape is a shape to be processed, \em Wires is
+a list of edges or wires ID's which has to be closed within the
+shape (if the list contains only one element = -1, the shape itself is
+considered as a wire), \em IsCommonVertex if this parameter is True a
+closure has to be done by creation of a common vertex, otherwise an
+edge is added between the end vertices.
+\n <b>Arguments:</b> Name + 1 shape + contour (Wire, or a set of
+Edges) + mode of closure (by vertex or by edge)
+
+\image html repair3.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_close_contour "Repairing Operations".
+
+*/

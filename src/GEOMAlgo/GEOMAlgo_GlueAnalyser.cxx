@@ -270,7 +270,7 @@
   for (i=1; i<=aNbF; ++i) {
     const TopoDS_Shape& aS=aMF(i);
     // 
-    aPKF.Clear();
+    //aPKF.Clear();//qft
     if (aType==TopAbs_FACE) {
       const TopoDS_Face& aF=TopoDS::Face(aS);
       FacePassKey(aF, aPKF);
@@ -341,9 +341,10 @@
   TopTools_IndexedDataMapOfShapeListOfShape aMFS;
   TopTools_IndexedMapOfShape aMx, aMS;
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItIm;
+  GEOMAlgo_CoupleOfShapes aCS;
+  //
   GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape aMPKLS;
   GEOMAlgo_PassKeyShape aPKSx;
-  GEOMAlgo_CoupleOfShapes aCS;
   //
   aBB.MakeCompound(aCmp);
   //
@@ -383,8 +384,11 @@
       continue;
     }
     //
-    aPKSx.Clear();
-    aPKSx.SetIds(aSx[0], aSx[1]);
+    //aPKSx.Clear();//qft
+    //qf
+    //aPKSx.SetIds(aSx[0], aSx[1]);
+    aPKSx.SetShapes(aSx[0], aSx[1]);
+    //qt
     //
     if (!aMPKLS.Contains(aPKSx)) {
       TopTools_ListOfShape aLSx;

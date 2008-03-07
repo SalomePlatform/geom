@@ -21,6 +21,7 @@
 #ifndef _GEOM_IBasicOperations_i_HeaderFile
 #define _GEOM_IBasicOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_IBasicOperations.hxx"
 
-class GEOM_IBasicOperations_i :
+class GEOM_I_EXPORT GEOM_IBasicOperations_i :
     public virtual POA_GEOM::GEOM_IBasicOperations,
     public virtual GEOM_IOperations_i
 {
@@ -52,6 +53,9 @@ class GEOM_IBasicOperations_i :
    GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theCurve,
 					   CORBA::Double theParameter);
 
+   GEOM::GEOM_Object_ptr MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theLine1,
+						       GEOM::GEOM_Object_ptr theLine2);
+
    GEOM::GEOM_Object_ptr MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
 					     CORBA::Double theParameter);
 
@@ -67,6 +71,9 @@ class GEOM_IBasicOperations_i :
 
    GEOM::GEOM_Object_ptr MakeLineTwoPnt (GEOM::GEOM_Object_ptr thePnt1,
 					 GEOM::GEOM_Object_ptr thePnt2);
+
+   GEOM::GEOM_Object_ptr MakeLineTwoFaces (GEOM::GEOM_Object_ptr theFace1,
+					   GEOM::GEOM_Object_ptr theFace2);
 
    GEOM::GEOM_Object_ptr MakePlaneThreePnt (GEOM::GEOM_Object_ptr thePnt1,
 					    GEOM::GEOM_Object_ptr thePnt2,

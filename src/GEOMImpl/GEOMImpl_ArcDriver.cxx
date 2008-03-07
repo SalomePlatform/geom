@@ -35,11 +35,15 @@
 #include <TopExp.hxx>
 
 #include <GC_MakeArcOfCircle.hxx>
-
+#include <GC_MakeCircle.hxx>
 #include <Standard_ConstructionError.hxx>
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
+#include <gp_Circ.hxx>
+#include <Geom_Circle.hxx>
+
+#include "utilities.h"
 
 //=======================================================================
 //function : GetID
@@ -73,28 +77,55 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
   Standard_Integer aType = aFunction->GetType();
 
   TopoDS_Shape aShape;
-
-  if (aType == CIRC_ARC_THREE_PNT) {
+  if ((aType == CIRC_ARC_THREE_PNT) || (aType == CIRC_ARC_CENTER))
+  {
     Handle(GEOM_Function) aRefPoint1 = aCI.GetPoint1();
     Handle(GEOM_Function) aRefPoint2 = aCI.GetPoint2();
     Handle(GEOM_Function) aRefPoint3 = aCI.GetPoint3();
+
     TopoDS_Shape aShapePnt1 = aRefPoint1->GetValue();
     TopoDS_Shape aShapePnt2 = aRefPoint2->GetValue();
     TopoDS_Shape aShapePnt3 = aRefPoint3->GetValue();
+
     if (aShapePnt1.ShapeType() == TopAbs_VERTEX &&
         aShapePnt2.ShapeType() == TopAbs_VERTEX &&
-        aShapePnt3.ShapeType() == TopAbs_VERTEX) {
+        aShapePnt3.ShapeType() == TopAbs_VERTEX)
+    {
       gp_Pnt aP1 = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt1));
       gp_Pnt aP2 = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt2));
       gp_Pnt aP3 = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt3));
+
       if (aP1.Distance(aP2) < gp::Resolution() ||
           aP1.Distance(aP3) < gp::Resolution() ||
           aP2.Distance(aP3) < gp::Resolution())
         Standard_ConstructionError::Raise("Arc creation aborted: coincident points given");
+
       if (gp_Vec(aP1, aP2).IsParallel(gp_Vec(aP1, aP3), Precision::Angular()))
         Standard_ConstructionError::Raise("Arc creation aborted: points lay on one line");
-      GC_MakeArcOfCircle arc (aP1, aP2, aP3);
-      aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
+
+      if (aType == CIRC_ARC_THREE_PNT)
+      {
+        GC_MakeArcOfCircle arc (aP1, aP2, aP3);
+        aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
+      }
+      else // CIRC_ARC_CENTER
+      {
+        Standard_Boolean sense = aCI.GetSense();
+
+        Standard_Real aRad = aP1.Distance(aP2);
+        gp_Vec aV1 (aP1, aP2);
+        gp_Vec aV2 (aP1, aP3);
+        gp_Vec aN = aV1 ^ aV2;
+
+        if (sense)
+          aN = -aN;
+
+        GC_MakeCircle circ (aP1, aN, aRad);
+        Handle(Geom_Circle) aGeomCirc = circ.Value();
+
+        GC_MakeArcOfCircle arc (aGeomCirc->Circ(), aP2, aP3, Standard_True);
+        aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
+      }
     }
   } else {
   }
@@ -104,8 +135,7 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label());
-  
-  return 1;    
+  return 1;
 }
 
 

@@ -34,12 +34,25 @@
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Shape.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #ifdef WNT
-#include <SALOME_WNT.hxx>
+ #if defined STEPIMPORT_EXPORTS
+  #if defined WIN32
+   #define STEPIMPORT_EXPORT __declspec( dllexport )
+  #else
+   #define STEPIMPORT_EXPORT
+  #endif
+ #else
+  #if defined WIN32
+   #define STEPIMPORT_EXPORT __declspec( dllimport )
+  #else
+   #define STEPIMPORT_EXPORT
+  #endif
+ #endif
 #else
-#define SALOME_WNT_EXPORT
+ #define STEPIMPORT_EXPORT
 #endif
 
 //=============================================================================
@@ -50,7 +63,7 @@
 
 extern "C"
 {
-SALOME_WNT_EXPORT
+STEPIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        const TCollection_AsciiString& /*theFormatName*/,
                        TCollection_AsciiString&       theError)
@@ -64,6 +77,9 @@ SALOME_WNT_EXPORT
     BRep_Builder B;
     B.MakeCompound( compound );
     try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+      OCC_CATCH_SIGNALS;
+#endif
       IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());
 
       if (status == IFSelect_RetDone) {

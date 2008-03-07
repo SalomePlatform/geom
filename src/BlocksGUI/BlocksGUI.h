@@ -23,10 +23,11 @@
 //  File   : BuildGUI.h
 //  Author : Julia DOROVSKIKH
 //  Module : GEOM
-//  $Header$
 
 #ifndef BLOCKSGUI_H
 #define BLOCKSGUI_H
+
+#include "GEOM_BlocksGUI.hxx"
 
 #include "GEOMGUI.h"
 
@@ -34,21 +35,13 @@
 // class    : BlocksGUI
 // purpose  :
 //=================================================================================
-class BlocksGUI : public GEOMGUI
+class GEOM_BLOCKSGUI_EXPORT BlocksGUI : public GEOMGUI
 {
- protected:
-  BlocksGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
-
  public:
+  BlocksGUI( GeometryGUI* parent );
   ~BlocksGUI();
 
-  // Get the only BuildGUI object
-  static BlocksGUI* GetBlocksGUI( GeometryGUI* parent );
-
   bool OnGUIEvent (int theCommandID, SUIT_Desktop* parent);
-
-private:
-  static BlocksGUI* myGUIObject;        // the only BlocksGUI object
 };
 
 #endif

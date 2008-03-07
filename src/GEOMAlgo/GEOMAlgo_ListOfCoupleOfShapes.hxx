@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -45,6 +45,7 @@ class GEOMAlgo_ListNodeOfListOfCoupleOfShapes;
 #include <Standard_Macro.hxx>
 #endif
 
+
 class GEOMAlgo_ListOfCoupleOfShapes  {
 
 public:
@@ -63,34 +64,71 @@ public:
       }
  // Methods PUBLIC
  // 
+
+
 Standard_EXPORT GEOMAlgo_ListOfCoupleOfShapes();
+
+
 Standard_EXPORT   void Assign(const GEOMAlgo_ListOfCoupleOfShapes& Other) ;
   void operator=(const GEOMAlgo_ListOfCoupleOfShapes& Other) 
 {
   Assign(Other);
 }
 
+
+
 Standard_EXPORT   Standard_Integer Extent() const;
+
+
 Standard_EXPORT   void Clear() ;
 ~GEOMAlgo_ListOfCoupleOfShapes()
 {
   Clear();
 }
 
+
   Standard_Boolean IsEmpty() const;
+
+
 Standard_EXPORT   void Prepend(const GEOMAlgo_CoupleOfShapes& I) ;
+
+
 Standard_EXPORT   void Prepend(const GEOMAlgo_CoupleOfShapes& I,GEOMAlgo_ListIteratorOfListOfCoupleOfShapes& theIt) ;
+
+
 Standard_EXPORT   void Prepend(GEOMAlgo_ListOfCoupleOfShapes& Other) ;
+
+
 Standard_EXPORT   void Append(const GEOMAlgo_CoupleOfShapes& I) ;
+
+
 Standard_EXPORT   void Append(const GEOMAlgo_CoupleOfShapes& I,GEOMAlgo_ListIteratorOfListOfCoupleOfShapes& theIt) ;
+
+
 Standard_EXPORT   void Append(GEOMAlgo_ListOfCoupleOfShapes& Other) ;
+
+
 Standard_EXPORT   GEOMAlgo_CoupleOfShapes& First() const;
+
+
 Standard_EXPORT   GEOMAlgo_CoupleOfShapes& Last() const;
+
+
 Standard_EXPORT   void RemoveFirst() ;
+
+
 Standard_EXPORT   void Remove(GEOMAlgo_ListIteratorOfListOfCoupleOfShapes& It) ;
+
+
 Standard_EXPORT   void InsertBefore(const GEOMAlgo_CoupleOfShapes& I,GEOMAlgo_ListIteratorOfListOfCoupleOfShapes& It) ;
+
+
 Standard_EXPORT   void InsertBefore(GEOMAlgo_ListOfCoupleOfShapes& Other,GEOMAlgo_ListIteratorOfListOfCoupleOfShapes& It) ;
+
+
 Standard_EXPORT   void InsertAfter(const GEOMAlgo_CoupleOfShapes& I,GEOMAlgo_ListIteratorOfListOfCoupleOfShapes& It) ;
+
+
 Standard_EXPORT   void InsertAfter(GEOMAlgo_ListOfCoupleOfShapes& Other,GEOMAlgo_ListIteratorOfListOfCoupleOfShapes& It) ;
 
 
@@ -112,6 +150,8 @@ private:
 
  // Methods PRIVATE
  // 
+
+
 Standard_EXPORT GEOMAlgo_ListOfCoupleOfShapes(const GEOMAlgo_ListOfCoupleOfShapes& Other);
 
 

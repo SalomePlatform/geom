@@ -1,0 +1,11 @@
+/*!
+
+\page blocks_operations_page Blocks Operations
+
+<ul>
+<li>\subpage multi_transformation_operation_page</li>
+<li>\subpage explode_on_blocks_operation_page</li> 
+<li>\subpage propagate_operation_page</li>
+</ul>
+
+*/

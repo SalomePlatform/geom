@@ -31,6 +31,7 @@
 #include "GEOM_Displayer.h"
 #include "GEOMImpl_Types.hxx"
 #include "GEOMBase.h"
+#include "DlgRef_SpinBox.h"
 
 #include "SalomeApp_Tools.h"
 #include "utilities.h"
@@ -83,7 +84,7 @@ MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg( GeometryGUI* GUI, QWidget* p
   
   /***************************************************************/
 
-  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Basic_properties";
+  myHelpFileName = "using_measurement_tools_page.html#basic_prop_anchor";
 
   /* Initialisation */
   Init();
@@ -148,9 +149,9 @@ void MeasureGUI_PropertiesDlg::processObject()
   }
   else
   {
-    myGrp->LineEdit2->setText( QString( "%1" ).arg( aLength ) );
-    myGrp->LineEdit3->setText( QString( "%1" ).arg( anArea ) );
-    myGrp->LineEdit4->setText( QString( "%1" ).arg( aVolume ) );
+    myGrp->LineEdit2->setText( DlgRef_SpinBox::PrintDoubleValue( aLength ) );
+    myGrp->LineEdit3->setText( DlgRef_SpinBox::PrintDoubleValue( anArea ) );
+    myGrp->LineEdit4->setText( DlgRef_SpinBox::PrintDoubleValue( aVolume ) );
   }
 }
 
@@ -200,24 +201,3 @@ SALOME_Prs* MeasureGUI_PropertiesDlg::buildPrs()
   return getDisplayer()->BuildPrs( aResult );
   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

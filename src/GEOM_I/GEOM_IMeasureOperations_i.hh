@@ -21,6 +21,7 @@
 #ifndef _GEOM_IMeasureOperations_i_HeaderFile
 #define _GEOM_IMeasureOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_IMeasureOperations.hxx"
 
-class GEOM_IMeasureOperations_i :
+class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
     public virtual POA_GEOM::GEOM_IMeasureOperations,
     public virtual GEOM_IOperations_i
 {
@@ -39,12 +40,24 @@ class GEOM_IMeasureOperations_i :
 			    ::GEOMImpl_IMeasureOperations* theImpl);
   ~GEOM_IMeasureOperations_i();
 
+  GEOM::GEOM_IKindOfShape::shape_kind KindOfShape (GEOM::GEOM_Object_ptr  theShape,
+						   GEOM::ListOfLong_out   theIntegers,
+						   GEOM::ListOfDouble_out theDoubles);
+
+  void GetPosition (GEOM::GEOM_Object_ptr theShape,
+		    CORBA::Double& Ox, CORBA::Double& Oy, CORBA::Double& Oz,
+		    CORBA::Double& Zx, CORBA::Double& Zy, CORBA::Double& Zz,
+		    CORBA::Double& Xx, CORBA::Double& Xy, CORBA::Double& Xz);
+
   void GetBasicProperties (GEOM::GEOM_Object_ptr theShape,
 			   CORBA::Double& theLength,
 			   CORBA::Double& theSurfArea,
 			   CORBA::Double& theVolume);
 
   GEOM::GEOM_Object_ptr GetCentreOfMass (GEOM::GEOM_Object_ptr theShape);
+
+  GEOM::GEOM_Object_ptr GetNormal (GEOM::GEOM_Object_ptr theFace,
+				   GEOM::GEOM_Object_ptr theOptionalPoint);
 
   void GetInertia (GEOM::GEOM_Object_ptr theShape,
 		   CORBA::Double& I11, CORBA::Double& I12, CORBA::Double& I13,
@@ -65,6 +78,9 @@ class GEOM_IMeasureOperations_i :
   CORBA::Boolean CheckShape (GEOM::GEOM_Object_ptr theShape,
 			     CORBA::String_out     theDescription);
 
+  CORBA::Boolean CheckShapeWithGeometry (GEOM::GEOM_Object_ptr theShape,
+					 CORBA::String_out     theDescription);
+
   char* WhatIs (GEOM::GEOM_Object_ptr theShape);
 
   CORBA::Double GetMinDistance (GEOM::GEOM_Object_ptr theShape1,
@@ -72,9 +88,11 @@ class GEOM_IMeasureOperations_i :
                                 CORBA::Double& X1, CORBA::Double& Y1, CORBA::Double& Z1,
                                 CORBA::Double& X2, CORBA::Double& Y2, CORBA::Double& Z2);
 
+  void PointCoordinates (GEOM::GEOM_Object_ptr theShape,
+			 CORBA::Double& X, CORBA::Double& Y, CORBA::Double& Z);
 
-  void PointCoordinates( GEOM::GEOM_Object_ptr theShape,
-    CORBA::Double& X, CORBA::Double& Y, CORBA::Double& Z );
+  CORBA::Double GetAngle (GEOM::GEOM_Object_ptr theShape1,
+			  GEOM::GEOM_Object_ptr theShape2);
 
   ::GEOMImpl_IMeasureOperations* GetOperations()
   { return (::GEOMImpl_IMeasureOperations*)GetImpl(); }

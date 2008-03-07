@@ -66,6 +66,7 @@
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <AIS_Drawer.hxx>
+#include <BRepTools.hxx>
 
 // IDL Headers
 #include <SALOMEconfig.h>
@@ -110,14 +111,16 @@ GEOM_Swig::~GEOM_Swig()
   // MESSAGE("Destructeur");
 }
 
-void GEOM_Swig::createAndDisplayGO (const char* Entry)
+void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
 {
   class TEvent: public SALOME_Event
   {
     std::string myEntry;
+    bool        myUpdateViewer;
   public:
-    TEvent(const char* theEntry):
-      myEntry(theEntry)
+    TEvent(const char* theEntry, bool toUpdateViewer):
+      myEntry(theEntry),
+      myUpdateViewer(toUpdateViewer)
     {}
     virtual void Execute()
     {
@@ -143,7 +146,8 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
       if (!father)
         return;
       if (!father->ComponentIOR(aFatherIOR)) {
-        aStudyBuilder->LoadWith(father, SalomeApp_Application::orb()->object_to_string(Geom));
+        CORBA::String_var objStr = SalomeApp_Application::orb()->object_to_string(Geom);
+        aStudyBuilder->LoadWith(father, objStr.in());
         father->ComponentIOR(aFatherIOR);
       }
 
@@ -178,7 +182,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
                                         "GEOM",
                                         const_cast<char*>( obj->GetID().c_str()));
 
-	  GEOM_Displayer(ActiveStudy).Display(anIO, true);
+	  GEOM_Displayer(ActiveStudy).Display(anIO, myUpdateViewer);
 	  /*if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
 	    SVTK_View* aView = aViewWindow->getView();
 	    int aMode = aView->GetDisplayMode();
@@ -216,7 +220,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
   };
 
   // MESSAGE("createAndDisplayGO");
-  ProcessVoidEvent(new TEvent (Entry));
+  ProcessVoidEvent(new TEvent (Entry, isUpdated));
 
   class TEventUpdateBrowser: public SALOME_Event
     {
@@ -233,7 +237,8 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
         }
     };
 
-  ProcessVoidEvent(new TEventUpdateBrowser ());
+  if (isUpdated)
+    ProcessVoidEvent(new TEventUpdateBrowser ());
 }
 
 void GEOM_Swig::createAndDisplayFitAllGO (const char* Entry)
@@ -264,6 +269,25 @@ void GEOM_Swig::createAndDisplayFitAllGO (const char* Entry)
 
   createAndDisplayGO(Entry);
   ProcessVoidEvent(new TEventFitAll());
+}
+
+void GEOM_Swig::UpdateViewer()
+{
+  class TEventUpdateViewer: public SALOME_Event
+  {
+    public:
+      TEventUpdateViewer() {}
+      virtual void Execute() {
+	SUIT_Application* app = SUIT_Session::session()->activeApplication();
+	if (!app) return;
+	SalomeApp_Study* ActiveStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+	if (!ActiveStudy) return;
+	
+	GEOM_Displayer(ActiveStudy).UpdateViewer();
+      }
+  };
+  
+  ProcessVoidEvent(new TEventUpdateViewer());
 }
 
 int GEOM_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
@@ -344,14 +368,15 @@ const char* GEOM_Swig::getShapeTypeIcon(const char* IOR)
   return "None";
 }
 
-void GEOM_Swig::setDisplayMode(const char* theEntry, int theMode)
+void GEOM_Swig::setDisplayMode(const char* theEntry, int theMode, bool isUpdated)
 {
   class TEvent: public SALOME_Event {
     std::string myEntry;
     int myMode;
+    bool myUpdateViewer;
   public:
-    TEvent(const char* theEntryArg, int theModeArg):
-      myEntry(theEntryArg), myMode(theModeArg)
+    TEvent(const char* theEntryArg, int theModeArg, bool theUpdated):
+      myEntry(theEntryArg), myMode(theModeArg), myUpdateViewer(theUpdated)
     {}
     virtual void Execute() {
       SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
@@ -363,29 +388,31 @@ void GEOM_Swig::setDisplayMode(const char* theEntry, int theMode)
       if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)) {
 	SVTK_View* aView = aViewWindow->getView();
 	aView->SetDisplayMode(anIO, myMode);
-	aView->Repaint();
+	if (myUpdateViewer)
+	  aView->Repaint();
       }
       else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
 	SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
 	if (soccViewer)
-	  soccViewer->switchRepresentation(anIO, myMode);
+	  soccViewer->switchRepresentation(anIO, myMode, myUpdateViewer);
       }
     }
   };
 
-  ProcessVoidEvent(new TEvent (theEntry, theMode));
+  ProcessVoidEvent(new TEvent (theEntry, theMode, isUpdated));
 }
 
-void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue)
+void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, bool isUpdated)
 {
   class TEvent: public SALOME_Event {
     std::string myEntry;
     int myRed;
     int myGreen;
     int myBlue;
+    bool myUpdateViewer;
   public:
-    TEvent(const char* theEntryArg, int theR, int theG, int theB):
-      myEntry(theEntryArg), myRed(theR), myGreen(theG), myBlue(theB)
+    TEvent(const char* theEntryArg, int theR, int theG, int theB, bool theUpdated):
+      myEntry(theEntryArg), myRed(theR), myGreen(theG), myBlue(theB), myUpdateViewer(theUpdated)
     {}
     virtual void Execute() {
       SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
@@ -398,7 +425,8 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue)
 	SVTK_View* aView = aViewWindow->getView();
         QColor aColor (myRed, myGreen, myBlue);
         aView->SetColor(anIO, aColor);
-	aView->Repaint();
+	if (myUpdateViewer)
+	  aView->Repaint();
       } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
 	Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
 	AIS_ListOfInteractive List;
@@ -413,25 +441,27 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue)
 	    ite.Value()->SetColor(CSFColor);
 	    if (ite.Value()->IsKind(STANDARD_TYPE(GEOM_AISShape)))
 	      Handle(GEOM_AISShape)::DownCast(ite.Value())->SetShadingColor(CSFColor);
-	    ite.Value()->Redisplay(Standard_True);
-	    occViewer->update();
+	    ic->Redisplay(ite.Value(), true, true);
+	    if (myUpdateViewer)
+	      occViewer->update();
 	    break;
 	  }
 	}
       }
     }
   };
-  ProcessVoidEvent(new TEvent(theEntry, red, green, blue));
+  ProcessVoidEvent(new TEvent(theEntry, red, green, blue, isUpdated));
 }
 
-void GEOM_Swig::setTransparency(const char* theEntry, float transp)
+void GEOM_Swig::setTransparency(const char* theEntry, float transp, bool isUpdated)
 {
   class TEvent: public SALOME_Event {
     std::string myEntry;
     float myParam;
+    bool myUpdateViewer;
   public:
-    TEvent(const char* theEntryArg, float theParam):
-      myEntry(theEntryArg), myParam(theParam)
+    TEvent(const char* theEntryArg, float theParam, bool theUpdated):
+      myEntry(theEntryArg), myParam(theParam), myUpdateViewer(theUpdated)
     {}
     virtual void Execute() {
       SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
@@ -443,16 +473,17 @@ void GEOM_Swig::setTransparency(const char* theEntry, float transp)
       if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)) {
 	SVTK_View* aView = aViewWindow->getView();
 	aView->SetTransparency(anIO, myParam);
-	aView->Repaint();
+	if (myUpdateViewer)
+	  aView->Repaint();
       } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
 	SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
 	if (soccViewer)
-	  soccViewer->setTransparency(anIO, myParam);
+	  soccViewer->setTransparency(anIO, myParam, myUpdateViewer);
       }
     }
   };
 
-  ProcessVoidEvent(new TEvent (theEntry, transp));
+  ProcessVoidEvent(new TEvent (theEntry, transp, isUpdated));
 }
 
 
@@ -584,13 +615,13 @@ void GEOM_Swig::setDeflection(const char* theEntry, float theDeflect)
 	  if ((!aObj.IsNull()) && aObj->hasEntry() && aObj->isSame(anIO)) {
 	    Handle(AIS_Shape) aShape = Handle(AIS_Shape)::DownCast(it.Value());
 	    if (!aShape.IsNull()) {
-	      Handle(AIS_Drawer) aDrawer = aShape->Attributes();
-	      if (aDrawer.IsNull())
-		aDrawer = new AIS_Drawer();
-	      aDrawer->SetDeviationCoefficient(myParam);
-	      aShape->SetAttributes(aDrawer);
-	      aContext->Redisplay(aShape, true, true);
-	      aContext->UpdateCurrentViewer();
+	      TopoDS_Shape aSh = aShape->Shape();
+	      if (!aSh.IsNull())
+		BRepTools::Clean(aSh);
+
+	      aShape->SetOwnDeviationCoefficient( myParam );
+	      aShape->SetOwnHLRDeviationAngle( 1.57 );
+	      aContext->Redisplay(aShape);
 	      return;
 	    }
 	  }

@@ -21,6 +21,9 @@
 #ifndef _GEOM_Object_i_HeaderFile
 #define _GEOM_Object_i_HeaderFile
 
+#include "GEOM_GEOM_I.hxx"
+
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(SALOMEDS)
@@ -32,7 +35,7 @@
 
 #include <TopoDS_Shape.hxx>
 
-class GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual SALOME::GenericObj_i
+class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual SALOME::GenericObj_i
 {
  public:
    GEOM_Object_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_Object) theImpl);
@@ -50,6 +53,14 @@ class GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual SALOM
 
   virtual char* GetName();
 
+  virtual void SetColor(const SALOMEDS::Color& theColor);
+
+  virtual SALOMEDS::Color GetColor();
+
+  virtual void SetAutoColor(CORBA::Boolean theAutoColor);
+
+  virtual CORBA::Boolean GetAutoColor();
+
   virtual void SetStudyEntry(const char* theEntry);
 
   virtual char* GetStudyEntry();
@@ -60,7 +71,7 @@ class GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual SALOM
 
   virtual SALOMEDS::TMPFile* GetShapeStream();
 
-  virtual CORBA::Long getShape();
+  virtual CORBA::LongLong getShape();
 
   virtual bool IsMainShape() { return _impl->IsMainShape(); }
 
@@ -74,7 +85,7 @@ class GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual SALOM
 
  private:
 
-  GEOM::GEOM_Gen_ptr _engine;
+  GEOM::GEOM_Gen_var _engine;
   Handle(GEOM_Object) _impl;
   TopoDS_Shape _geom;
 };

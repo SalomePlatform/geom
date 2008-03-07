@@ -29,6 +29,8 @@
 #ifndef GEOMBase_aParameterDLG_H
 #define GEOMBase_aParameterDLG_H
 
+#include "GEOM_GEOMBase.hxx"
+
 #include <qdialog.h>
 
 class QPushButton;
@@ -38,7 +40,7 @@ class QtxDblSpinBox;
 // class    : GEOMBase_aParameterDlg
 // purpose  :
 //=================================================================================
-class GEOMBase_aParameterDlg : public QDialog
+class GEOMBASE_EXPORT GEOMBase_aParameterDlg : public QDialog
 { 
     Q_OBJECT
 

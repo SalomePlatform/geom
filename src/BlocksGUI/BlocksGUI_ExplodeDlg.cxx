@@ -107,7 +107,7 @@ BlocksGUI_ExplodeDlg::BlocksGUI_ExplodeDlg (GeometryGUI* theGeometryGUI, QWidget
   Layout1->addWidget(myGrp1, 1, 0);
   /***************************************************************/
 
-  setHelpFileName("explode_on_blocks.htm");
+  setHelpFileName("explode_on_blocks_operation_page.html");
 
   Init();
 }
@@ -452,7 +452,8 @@ bool BlocksGUI_ExplodeDlg::execute (ObjectList& objects)
     ObjectList toRemoveFromEnggine;
     ObjectList::iterator anIter;
     for (anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter) {
-      if (selected.contains(myGeomGUI->getApp()->orb()->object_to_string(*anIter)))
+      CORBA::String_var objStr = myGeomGUI->getApp()->orb()->object_to_string(*anIter);
+      if (selected.contains(QString(objStr.in())))
         objects.push_back(*anIter);
       else
         toRemoveFromEnggine.push_back(*anIter);

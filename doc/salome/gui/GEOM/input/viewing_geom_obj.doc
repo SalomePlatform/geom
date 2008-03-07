@@ -1,0 +1,55 @@
+/*!
+
+\page view_geom_obj_page Overview
+
+\n Newly created geometrical objects are automatically displayed in
+the <b>OCC 3D Viewer</b>.
+
+\n <b>OCC 3D Viewer</b> is described in the documentation on <b>GUI
+module</b>.
+\n After the object has appeared in the Viewer, you can select it with
+left mouse click to change its presentation parameters and access to
+other useful options by right-clicking on the selected object.
+
+\image html dialog.png
+
+<ul>
+<li><b>Rename</b> - allows to change the name of the geometric
+object.</li>
+<li><b>Delete</b> - irreversibly deletes the selected object from the
+viewer and from the Object Browser.</li> 
+<li>\ref display_mode_page "Display Mode" - allows to select between
+Wireframe and Shading presentation.</li>
+<li>\ref color_page "Color" - allows to change the filling color in
+the standard <b>Select Color</b> menu.</li>
+<li>\ref transparency_page "Transparency" - allows to change the
+transparency of geometrical objects.</li>
+<li>\ref isolines_page "Isos" - allows to change the number of
+isolines displayed within a shape.</li>
+<li><b>Hide</b> - allows to hide the selected geometrical object from the
+viewer. TUI Command : <em>sg.EraseOnly(ID)</em>
+\n \image html image18.gif
+</li>
+<li><b>Hide all</b> - allows to hide all objects from the viewer. TUI
+Command: <em>sg.EraseAll()</em>
+\n \image html image26.gif
+</li>
+<li><b>Display Only</b> - allows to display only the selected
+geometrical object. TUI Command: <em>sg.DisplayOnly(ID)</em>
+\n \image html image33.gif
+</li>
+<li><b>Update</b> - refreshes the presentation of your geometrical object in the
+Object Browser, applying all recent changes.</li>
+<li><b>Dump view</b> - exports an object from the viewer in bmp, png,
+jpg or jpeg image format.</li>
+<li><b>Change background</b> - allows to redefine the background
+color. By default it is black.
+\n\n Some of these functionalities are available through right-clicking
+on the viewer background:
+
+\image html image2.jpg <br></li>
+
+<li><b>Select Only</b> provides a filter for exclusive selection of objects of a certain type.</li>
+</ul>
+
+*/

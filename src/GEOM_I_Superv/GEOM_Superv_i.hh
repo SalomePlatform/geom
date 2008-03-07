@@ -142,6 +142,8 @@ public:
 						CORBA::Double theZ);
   GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
 					  CORBA::Double theParameter);
+  GEOM::GEOM_Object_ptr MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theRefLine1,
+						      GEOM::GEOM_Object_ptr theRefLine2);
   GEOM::GEOM_Object_ptr MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
 					     CORBA::Double theParameter);
   GEOM::GEOM_Object_ptr MakeVectorDXDYDZ (CORBA::Double theDX,
@@ -151,6 +153,8 @@ public:
 					  GEOM::GEOM_Object_ptr thePnt2);
   GEOM::GEOM_Object_ptr MakeLineTwoPnt (GEOM::GEOM_Object_ptr thePnt1,
 					GEOM::GEOM_Object_ptr thePnt2);
+  GEOM::GEOM_Object_ptr MakeLineTwoFaces (GEOM::GEOM_Object_ptr theFace1,
+					  GEOM::GEOM_Object_ptr theFace2);
   GEOM::GEOM_Object_ptr MakePlaneThreePnt (GEOM::GEOM_Object_ptr thePnt1,
 					   GEOM::GEOM_Object_ptr thePnt2,
 					   GEOM::GEOM_Object_ptr thePnt3,
@@ -213,18 +217,27 @@ public:
   GEOM::GEOM_Object_ptr MakePrismVecH (GEOM::GEOM_Object_ptr theBase,
 				       GEOM::GEOM_Object_ptr theVec,
 				       CORBA::Double         theH);
+  GEOM::GEOM_Object_ptr MakePrismVecH2Ways (GEOM::GEOM_Object_ptr theBase,
+					    GEOM::GEOM_Object_ptr theVec,
+					    CORBA::Double         theH);
   GEOM::GEOM_Object_ptr MakePrismTwoPnt (GEOM::GEOM_Object_ptr theBase,
 					 GEOM::GEOM_Object_ptr thePoint1,
 					 GEOM::GEOM_Object_ptr thePoint2);
+  GEOM::GEOM_Object_ptr MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr theBase,
+					      GEOM::GEOM_Object_ptr thePoint1,
+					      GEOM::GEOM_Object_ptr thePoint2);
   GEOM::GEOM_Object_ptr MakePipe (GEOM::GEOM_Object_ptr theBase, 
 				  GEOM::GEOM_Object_ptr thePath);
   GEOM::GEOM_Object_ptr MakeRevolutionAxisAngle (GEOM::GEOM_Object_ptr theBase,
 						 GEOM::GEOM_Object_ptr theAxis,
 						 CORBA::Double theAngle);
+  GEOM::GEOM_Object_ptr MakeRevolutionAxisAngle2Ways (GEOM::GEOM_Object_ptr theBase,
+						      GEOM::GEOM_Object_ptr theAxis,
+						      CORBA::Double theAngle);
   GEOM::GEOM_Object_ptr MakeFilling (GEOM::GEOM_Object_ptr theShape,
 				     CORBA::Long theMinDeg, CORBA::Long theMaxDeg,
 				     CORBA::Double theTol2D, CORBA::Double theTol3D,
-				     CORBA::Long theNbIter);
+				     CORBA::Long theNbIter, CORBA::Boolean theApprox);
 
   GEOM::GEOM_Object_ptr MakeThruSections(const GEOM::ListOfGO& theSeqSections,
 					 CORBA::Boolean theModeSolid,
@@ -236,6 +249,16 @@ public:
 						      GEOM::GEOM_Object_ptr thePath,
 						      CORBA::Boolean theWithContact,
 						      CORBA::Boolean theWithCorrections);
+  
+  GEOM::GEOM_Object_ptr MakePipeWithShellSections(const GEOM::ListOfGO& theBases,
+						  const GEOM::ListOfGO& theSubBases,
+						  const GEOM::ListOfGO& theLocations,
+						  GEOM::GEOM_Object_ptr thePath,
+						  CORBA::Boolean theWithContact,
+						  CORBA::Boolean theWithCorrections);
+
+  GEOM::GEOM_Object_ptr MakePipeShellsWithoutPath(const GEOM::ListOfGO& theBases,
+						  const GEOM::ListOfGO& theLocations);
   
   //-----------------------------------------------------------//
   // BooleanOperations                                         //
@@ -251,7 +274,8 @@ public:
 				       GEOM::GEOM_List_ptr   theRemoveInside,
 				       CORBA::Short      theLimit,
 				       CORBA::Boolean    theRemoveWebs,
-				       GEOM::GEOM_List_ptr theMaterials);
+				       GEOM::GEOM_List_ptr theMaterials,
+				       CORBA::Short theKeepNonlimitShapes);
   GEOM::GEOM_Object_ptr MakeHalfPartition (GEOM::GEOM_Object_ptr theShape,
 					   GEOM::GEOM_Object_ptr thePlane);
 
@@ -307,6 +331,17 @@ public:
   GEOM::GEOM_Object_ptr RotateCopy (GEOM::GEOM_Object_ptr theObject,
 				    GEOM::GEOM_Object_ptr theAxis,
 				    CORBA::Double theAngle);
+
+  GEOM::GEOM_Object_ptr RotateThreePoints (GEOM::GEOM_Object_ptr theObject,
+					   GEOM::GEOM_Object_ptr theCentPoint,
+					   GEOM::GEOM_Object_ptr thePoint1,
+					   GEOM::GEOM_Object_ptr thePoint2);
+
+  GEOM::GEOM_Object_ptr RotateThreePointsCopy (GEOM::GEOM_Object_ptr theObject,
+					       GEOM::GEOM_Object_ptr theCentPoint,
+					       GEOM::GEOM_Object_ptr thePoint1,
+					       GEOM::GEOM_Object_ptr thePoint2);
+
   GEOM::GEOM_Object_ptr MultiRotate1D (GEOM::GEOM_Object_ptr theObject,
 				       GEOM::GEOM_Object_ptr theAxis,
 				       CORBA::Long theNbTimes);
@@ -360,7 +395,14 @@ public:
   GEOM::GEOM_Object_ptr MakeSolidShells (GEOM::GEOM_List_ptr theShells);
   GEOM::GEOM_Object_ptr MakeCompound (GEOM::GEOM_List_ptr theShapes);
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-						CORBA::Double   theTolerance);
+				       CORBA::Double theTolerance,
+				       CORBA::Boolean doKeepNonSolids);
+  GEOM::GEOM_List_ptr GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
+				    CORBA::Double theTolerance);
+  GEOM::GEOM_Object_ptr MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
+					     CORBA::Double theTolerance,
+					     const GEOM::ListOfGO& theFaces,
+					     CORBA::Boolean doKeepNonSolids);
   GEOM::GEOM_List_ptr MakeExplode (GEOM::GEOM_Object_ptr theShape,
 				       CORBA::Long theShapeType,
 				       CORBA::Boolean isSorted);
@@ -451,12 +493,19 @@ public:
   GEOM::GEOM_Object_ptr MakeCircleThreePnt (GEOM::GEOM_Object_ptr thePnt1,
 					    GEOM::GEOM_Object_ptr thePnt2,
 					    GEOM::GEOM_Object_ptr thePnt3);
+  GEOM::GEOM_Object_ptr MakeCircleCenter2Pnt (GEOM::GEOM_Object_ptr thePnt1,
+					      GEOM::GEOM_Object_ptr thePnt2,
+					      GEOM::GEOM_Object_ptr thePnt3);
   GEOM::GEOM_Object_ptr MakeEllipse (GEOM::GEOM_Object_ptr theCenter,
 				     GEOM::GEOM_Object_ptr theVector,
 				     CORBA::Double theRMajor, CORBA::Double theRMinor);
   GEOM::GEOM_Object_ptr MakeArc (GEOM::GEOM_Object_ptr thePnt1,
 				 GEOM::GEOM_Object_ptr thePnt2,
 				 GEOM::GEOM_Object_ptr thePnt3);
+  GEOM::GEOM_Object_ptr MakeArcCenter (GEOM::GEOM_Object_ptr theCenter,
+                                       GEOM::GEOM_Object_ptr thePnt1,
+                                       GEOM::GEOM_Object_ptr thePnt2,
+                                       CORBA::Boolean theSense);
   GEOM::GEOM_Object_ptr MakePolyline (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSplineBezier (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints);
@@ -470,15 +519,31 @@ public:
 				       CORBA::Double theR);
   GEOM::GEOM_Object_ptr MakeFilletEdges (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
 					 GEOM::GEOM_List_ptr theEdges);
+  GEOM::GEOM_Object_ptr MakeFilletEdgesR1R2 (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR1,
+					     CORBA::Double theR2, GEOM::GEOM_List_ptr theEdges);
   GEOM::GEOM_Object_ptr MakeFilletFaces (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
 					 GEOM::GEOM_List_ptr theFaces);
+  GEOM::GEOM_Object_ptr MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR1,
+					     CORBA::Double theR2, GEOM::GEOM_List_ptr theFaces);
   GEOM::GEOM_Object_ptr MakeChamferAll (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD);
   GEOM::GEOM_Object_ptr MakeChamferEdge (GEOM::GEOM_Object_ptr theShape,
 					 CORBA::Double theD1, CORBA::Double theD2,
 					 CORBA::Long theFace1, CORBA::Long theFace2);
+  GEOM::GEOM_Object_ptr MakeChamferEdgeAD (GEOM::GEOM_Object_ptr theShape,
+ 					   CORBA::Double theD, CORBA::Double theAngle,
+					   CORBA::Long theFace1, CORBA::Long theFace2);
   GEOM::GEOM_Object_ptr MakeChamferFaces (GEOM::GEOM_Object_ptr theShape,
 					  CORBA::Double theD1, CORBA::Double theD2,
 					  GEOM::GEOM_List_ptr theFaces);
+  GEOM::GEOM_Object_ptr MakeChamferFacesAD (GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Double theD, CORBA::Double theAngle,
+					    GEOM::GEOM_List_ptr theFaces);
+  GEOM::GEOM_Object_ptr MakeChamferEdges (GEOM::GEOM_Object_ptr theShape,
+					  CORBA::Double theD1, CORBA::Double theD2,
+					  GEOM::GEOM_List_ptr theEdges);
+  GEOM::GEOM_Object_ptr MakeChamferEdgesAD (GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Double theD, CORBA::Double theAngle,
+   					    GEOM::GEOM_List_ptr theEdges);
   GEOM::GEOM_Object_ptr MakeArchimede (GEOM::GEOM_Object_ptr theShape,
                                        CORBA::Double theWeight,
 				       CORBA::Double theWaterDensity,
@@ -501,21 +566,21 @@ public:
   
 private:
   SALOME_NamingService *  name_service; 
-  GEOM::GEOM_Gen_ptr      myGeomEngine;
+  GEOM::GEOM_Gen_var      myGeomEngine;
   CORBA::Long             myStudyID;
   CORBA::Long             myLastStudyID; // mkr : PAL10770
   PortableServer::POA_var myPOA;
   
-  GEOM::GEOM_IBasicOperations_ptr     myBasicOp;
-  GEOM::GEOM_I3DPrimOperations_ptr    my3DPrimOp;
-  GEOM::GEOM_IBooleanOperations_ptr   myBoolOp;
-  GEOM::GEOM_IInsertOperations_ptr    myInsOp;
-  GEOM::GEOM_ITransformOperations_ptr myTransfOp;
-  GEOM::GEOM_IShapesOperations_ptr    myShapesOp;
-  GEOM::GEOM_IBlocksOperations_ptr    myBlocksOp;
-  GEOM::GEOM_ICurvesOperations_ptr    myCurvesOp;
-  GEOM::GEOM_ILocalOperations_ptr     myLocalOp;
-  GEOM::GEOM_IGroupOperations_ptr     myGroupOp;
+  GEOM::GEOM_IBasicOperations_var     myBasicOp;
+  GEOM::GEOM_I3DPrimOperations_var    my3DPrimOp;
+  GEOM::GEOM_IBooleanOperations_var   myBoolOp;
+  GEOM::GEOM_IInsertOperations_var    myInsOp;
+  GEOM::GEOM_ITransformOperations_var myTransfOp;
+  GEOM::GEOM_IShapesOperations_var    myShapesOp;
+  GEOM::GEOM_IBlocksOperations_var    myBlocksOp;
+  GEOM::GEOM_ICurvesOperations_var    myCurvesOp;
+  GEOM::GEOM_ILocalOperations_var     myLocalOp;
+  GEOM::GEOM_IGroupOperations_var     myGroupOp;
 
 };
 

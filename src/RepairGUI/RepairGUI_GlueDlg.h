@@ -32,6 +32,7 @@
 
 class QtxDblSpinBox;
 class DlgRef_1Sel_Ext;
+class QCheckBox;
 
 //=================================================================================
 // class    : RepairGUI_GlueDlg
@@ -42,8 +43,8 @@ class RepairGUI_GlueDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    RepairGUI_GlueDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+                       const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~RepairGUI_GlueDlg();
 
 protected:
@@ -57,16 +58,34 @@ private:
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
     void initSelection();
+    
+    void clearTemporary();
 
-    bool onAcceptLocal( const bool publish = true, const bool useTransaction = true );
+    bool onAcceptLocal();
     void clearShapeBufferLocal( GEOM::GEOM_Object_ptr );
     // Reimplementation of onAccept for local case of this class.
-
+    
+    void activateSelection();
+    void updateButtonState();
+    void selectTmpInViewer();
+    
+private:    
+  
     GEOM::GEOM_Object_var myObject;
-
+    ObjectList            myTmpObjs;
+    
     DlgRef_1Sel_Ext* GroupPoints;
+    DlgRef_1Sel_Ext* GroupPoints2;
     QtxDblSpinBox*   myTolEdt;
+    QtxDblSpinBox*   myTolEdt2;
+    QPushButton*     myDetectBtn;
+    QCheckBox*       mySubShapesChk;
 
+    int myCurrConstrId;
+    
+protected slots:
+    virtual void ClickOnCancel();
+    
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
@@ -76,6 +95,13 @@ private slots:
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
+
+    void ConstructorsClicked(int);
+    //void ValueChangedInSpinBox();
+
+    void onDetect();
+    void onTolerChanged( double );
+    void onSubShapesChk();
 };
 
 #endif // DIALOGBOX_Glue_H

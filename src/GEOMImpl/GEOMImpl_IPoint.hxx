@@ -30,6 +30,8 @@
 
 #define ARG_PARAM 5
 #define ARG_CURVE 6
+#define ARG_LINE1 7
+#define ARG_LINE2 8 
 
 class GEOMImpl_IPoint
 {
@@ -50,8 +52,12 @@ class GEOMImpl_IPoint
   Handle(GEOM_Function) GetRef() { return _func->GetReference(ARG_REF); }
 
   void SetCurve(Handle(GEOM_Function) theRef) { _func->SetReference(ARG_CURVE, theRef); }
+  void SetLine1(Handle(GEOM_Function) theRef) { _func->SetReference(ARG_LINE1, theRef); }
+  void SetLine2(Handle(GEOM_Function) theRef) { _func->SetReference(ARG_LINE2, theRef); }
 
   Handle(GEOM_Function) GetCurve() { return _func->GetReference(ARG_CURVE); }
+  Handle(GEOM_Function) GetLine1() { return _func->GetReference(ARG_LINE1); }
+  Handle(GEOM_Function) GetLine2() { return _func->GetReference(ARG_LINE2); }
 
   void SetParameter(double theParam) { _func->SetReal(ARG_PARAM, theParam); }
 

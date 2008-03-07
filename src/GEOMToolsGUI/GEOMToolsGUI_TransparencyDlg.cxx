@@ -146,7 +146,7 @@ GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
   //  mySlider->setValue( 5 ) ;
   ValueHasChanged(mySlider->value());
   
-  myHelpFileName = "transparency.htm";
+  myHelpFileName = "transparency_page.html";
 
   // signals and slots connections : after ValueHasChanged()
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -198,9 +198,15 @@ void GEOMToolsGUI_TransparencyDlg::ClickOnHelp()
     app->onHelpContextModule(aGeomGUI ? app->moduleName(aGeomGUI->moduleName()) : QString(""), myHelpFileName);
   }
   else {
+		QString platform;
+#ifdef WIN32
+		platform = "winapplication";
+#else
+		platform = "application";
+#endif
     SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
 			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
+			   arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
 			   QObject::tr("BUT_OK"));
   }
 }
@@ -278,4 +284,21 @@ void GEOMToolsGUI_TransparencyDlg::ValueHasChanged( int newValue )
     } // for...
     ic->UpdateCurrentViewer();
   } // if ( isOCC )
+}
+
+//=================================================================================
+// function : keyPressEvent()
+// purpose  :
+//=================================================================================
+void GEOMToolsGUI_TransparencyDlg::keyPressEvent( QKeyEvent* e )
+{
+  QDialog::keyPressEvent( e );
+  if ( e->isAccepted() )
+    return;
+
+  if ( e->key() == Key_F1 )
+    {
+      e->accept();
+      ClickOnHelp();
+    }
 }

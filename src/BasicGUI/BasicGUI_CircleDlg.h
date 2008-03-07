@@ -28,25 +28,19 @@
 #ifndef DIALOGBOX_CIRCLE_H
 #define DIALOGBOX_CIRCLE_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel1Spin.h"
 #include "DlgRef_3Sel_QTD.h"
 
 #include "BasicGUI.h"
 
-#include <gp_Dir.hxx>
-
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
-
 //=================================================================================
 // class    : BasicGUI_CircleDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_CircleDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_CircleDlg : public GEOMBase_Skeleton
 {
     Q_OBJECT
 
@@ -60,18 +54,20 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
-
     virtual void closeEvent( QCloseEvent* e );    
+    virtual void addSubshapesToStudy();
 
 private:
     void   Init();
     void   enterEvent(QEvent* e);
     double getRadius() const;
 
-    GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3;
+    GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3, myPoint4, myPoint5, myPoint6;
+    CORBA::Double myRadius;
 
     DlgRef_2Sel1Spin* GroupPntVecR;
     DlgRef_3Sel_QTD*  Group3Pnts;
+    DlgRef_3Sel_QTD*  GroupCenter2Pnts;
 
 private slots:
     void ClickOnOk();

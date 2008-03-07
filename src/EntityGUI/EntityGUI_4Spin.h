@@ -29,10 +29,12 @@
 #ifndef ENTITYGUI_4SPIN_H
 #define ENTITYGUI_4SPIN_H
 
+#include "GEOM_EntityGUI.hxx"
+
 #include "EntityGUI_4Spin_QTD.h"
 #include "DlgRef_SpinBox.h"
 
-class EntityGUI_4Spin : public EntityGUI_4Spin_QTD
+class GEOM_ENTITYGUI_EXPORT EntityGUI_4Spin : public EntityGUI_4Spin_QTD
 { 
     Q_OBJECT
 

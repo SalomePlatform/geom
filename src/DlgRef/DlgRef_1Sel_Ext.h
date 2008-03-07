@@ -28,17 +28,13 @@
 #ifndef DlgRef_1Sel_Ext_H
 #define DlgRef_1Sel_Ext_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include "DlgRef_1Sel_QTD.h"
 
 class QGridLayout;
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define DLGREF_WNT_EXPORT __declspec( dllexport )
-#else
-#define DLGREF_WNT_EXPORT
-#endif
-
-class DLGREF_WNT_EXPORT DlgRef_1Sel_Ext : public DlgRef_1Sel_QTD
+class GEOM_DLGREF_EXPORT DlgRef_1Sel_Ext : public DlgRef_1Sel_QTD
 { 
     Q_OBJECT
 

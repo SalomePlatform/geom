@@ -36,6 +36,7 @@
 #include "SUIT_Session.h"
 #include "SUIT_MessageBox.h"
 
+#include <qlabel.h>
 #include <qpushbutton.h>
 
 using namespace std;
@@ -57,12 +58,14 @@ GEOMBase_Skeleton::GEOMBase_Skeleton(GeometryGUI* theGeometryGUI, QWidget* paren
   if (!name)
     setName("GEOMBase_Skeleton");
 
+  GroupBoxName->setTitle(tr("GEOM_RESULT_NAME_GRP"));
+  NameLabel->setText(tr("GEOM_RESULT_NAME_LBL"));
+
   buttonCancel->setText(tr("GEOM_BUT_CLOSE"));
   buttonOk->setText(tr("GEOM_BUT_OK"));
   buttonApply->setText(tr("GEOM_BUT_APPLY"));
   buttonHelp->setText(tr("GEOM_BUT_HELP"));
 
-  GroupMedium->close(TRUE);
   resize(0, 0);
 
   Init();
@@ -228,9 +231,15 @@ void GEOMBase_Skeleton::ClickOnHelp()
   if (app) 
     app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
   else {
+		QString platform;
+#ifdef WIN32
+		platform = "winapplication";
+#else
+		platform = "application";
+#endif
     SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
 			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
+			   arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
 			   QObject::tr("BUT_OK"));
   }
 }
@@ -242,4 +251,21 @@ void GEOMBase_Skeleton::ClickOnHelp()
 void GEOMBase_Skeleton::setHelpFileName(const QString& theName)
 {
     myHelpFileName = theName;
+}
+
+//=================================================================================
+// function : keyPressEvent()
+// purpose  :
+//=================================================================================
+void GEOMBase_Skeleton::keyPressEvent( QKeyEvent* e )
+{
+  QDialog::keyPressEvent( e );
+  if ( e->isAccepted() )
+    return;
+
+  if ( e->key() == Key_F1 )
+    {
+      e->accept();
+      ClickOnHelp();
+    }
 }

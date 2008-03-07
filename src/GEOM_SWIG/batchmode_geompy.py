@@ -31,10 +31,16 @@ import GEOM
 
 g=None
 step = 0
-while step < 50 and g == None:
+sleeping_time = 0.01
+sleeping_time_max = 1.0
+while 1:
     g = lcc.FindOrLoadComponent("FactoryServer", "GEOM")
+    if g is not None: break
     step = step + 1
-    time.sleep(4)
+    if step > 100: break
+    time.sleep(sleeping_time)
+    sleeping_time = max(sleeping_time_max, 2*sleeping_time)
+    pass
 geom = g._narrow( GEOM.GEOM_Gen )
 
 myBuilder = None
@@ -149,6 +155,12 @@ def MakeVertexOnCurve(curve,par):
       print "MakePointOnCurve : ", BasicOp.GetErrorCode()
     return anObj
 
+def MakeVertexOnLinesIntersection(line1,line2):
+    anObj = BasicOp.MakePointOnLinesIntersection(line1,line2)
+    if BasicOp.IsDone() == 0:
+      print "MakePointOnLinesIntersection : ", BasicOp.GetErrorCode()
+    return anObj
+
 def MakeVectorDXDYDZ(dx,dy,dz):
     anObj = BasicOp.MakeVectorDXDYDZ(dx,dy,dz)
     if BasicOp.IsDone() == 0:
@@ -171,6 +183,12 @@ def MakeLineTwoPnt(p1, p2):
     anObj = BasicOp.MakeLineTwoPnt(p1,p2)
     if BasicOp.IsDone() == 0:
       print "MakeLineTwoPnt : ", BasicOp.GetErrorCode()
+    return anObj
+
+def MakeLineTwoFaces(f1, f2):
+    anObj = BasicOp.MakeLineTwoFaces(f1,f2)
+    if BasicOp.IsDone() == 0:
+      print "MakeLineTwoFaces : ", BasicOp.GetErrorCode()
     return anObj
 
 def MakePlane(p1,v1,trimsize):
@@ -241,6 +259,12 @@ def MakeCircleThreePnt(p1,p2,p3):
     anObj = CurvesOp.MakeCircleThreePnt(p1,p2,p3)
     if CurvesOp.IsDone() == 0:
       print "MakeCircleThreePnt : ", CurvesOp.GetErrorCode()
+    return anObj
+
+def MakeCircleCenter2Pnt(p1,p2,p3):
+    anObj = CurvesOp.MakeCircleCenter2Pnt(p1,p2,p3)
+    if CurvesOp.IsDone() == 0:
+      print "MakeCircleCenter2Pnt : ", CurvesOp.GetErrorCode()
     return anObj
 
 def MakeEllipse(p1,v1,radiusMaj,radiusMin):
@@ -370,10 +394,22 @@ def MakePrism(baseShape,point1,point2):
       print "MakePrismTwoPnt : ", PrimOp.GetErrorCode()
     return anObj
 
+def MakePrism2Ways(baseShape,point1,point2):
+    anObj = PrimOp.MakePrismTwoPnt2Ways(baseShape,point1,point2)
+    if PrimOp.IsDone() == 0:
+      print "MakePrismTwoPnt2Ways : ", PrimOp.GetErrorCode()
+    return anObj
+
 def MakePrismVecH(baseShape,vector,height):
     anObj = PrimOp.MakePrismVecH(baseShape,vector,height)
     if PrimOp.IsDone() == 0:
       print "MakePrismVecH : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakePrismVecH2Ways(baseShape,vector,height):
+    anObj = PrimOp.MakePrismVecH2Ways(baseShape,vector,height)
+    if PrimOp.IsDone() == 0:
+      print "MakePrismVecH2Ways : ", PrimOp.GetErrorCode()
     return anObj
 
 def MakePipe(baseShape,pathShape):
@@ -386,6 +422,12 @@ def MakeRevolution(aShape,axis,angle):
     anObj = PrimOp.MakeRevolutionAxisAngle(aShape,axis,angle)
     if PrimOp.IsDone() == 0:
       print "MakeRevolutionAxisAngle : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakeRevolution2Ways(aShape,axis,angle):
+    anObj = PrimOp.MakeRevolutionAxisAngle2Ways(aShape,axis,angle)
+    if PrimOp.IsDone() == 0:
+      print "MakeRevolutionAxisAngle2Ways : ", PrimOp.GetErrorCode()
     return anObj
 
 # -----------------------------------------------------------------------------
@@ -658,8 +700,8 @@ def MakeCopy(aShape):
       print "MakeCopy : ", InsertOp.GetErrorCode()
     return anObj
 
-def MakeFilling(aShape,mindeg,maxdeg,tol2d,tol3d,nbiter):
-    anObj = PrimOp.MakeFilling(aShape,mindeg,maxdeg,tol2d,tol3d,nbiter)
+def MakeFilling(aShape,mindeg,maxdeg,tol2d,tol3d,nbiter,isApprox=0):
+    anObj = PrimOp.MakeFilling(aShape,mindeg,maxdeg,tol2d,tol3d,nbiter,isApprox)
     if PrimOp.IsDone() == 0:
       print "MakeFilling : ", PrimOp.GetErrorCode()
     return anObj
@@ -693,19 +735,23 @@ def MakeSection(s1, s2):
     return MakeBoolean(s1, s2, 4)
 
 def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+                  Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
+                  KeepNonlimitShapes=0):
     anObj = BoolOp.MakePartition(ListShapes, ListTools,
                                  ListKeepInside, ListRemoveInside,
-                                 Limit, RemoveWebs, ListMaterials);
+                                 Limit, RemoveWebs, ListMaterials,
+                                 KeepNonlimitShapes);
     if BoolOp.IsDone() == 0:
       print "MakePartition : ", BoolOp.GetErrorCode()
     return anObj
 
 def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-              Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+              Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
+              KeepNonlimitShapes=0):
     anObj = MakePartition(ListShapes, ListTools,
                           ListKeepInside, ListRemoveInside,
-                          Limit, RemoveWebs, ListMaterials);
+                          Limit, RemoveWebs, ListMaterials,
+                          KeepNonlimitShapes);
     return anObj
 
 def MakeHalfPartition(theShape, thePlane):
@@ -740,6 +786,12 @@ def MakeRotation(aShape,axis,angle):
     anObj = TrsfOp.RotateCopy(aShape,axis,angle)
     if TrsfOp.IsDone() == 0:
       print "RotateCopy : ", TrsfOp.GetErrorCode()
+    return anObj
+
+def MakeRotationThreePoints(aShape, centpoint, point1, point2):
+    anObj = TrsfOp.RotateThreePointsCopy(aShape, centpoint, point1, point2)
+    if TrsfOp.IsDone() == 0:
+      print "RotateThreePointsCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
 def MakeScaleTransform(aShape,theCenterofScale,factor):
@@ -836,6 +888,16 @@ def MakeFillet(aShape,radius,aShapeType,ListShape):
       print "MakeFillet : ", LocalOp.GetErrorCode()
     return anObj
 
+def MakeFilletR1R2(aShape,radius1,radius2,aShapeType,ListShape):
+    anObj = None
+    if aShapeType == ShapeType["EDGE"]:
+        anObj = LocalOp.MakeFilletEdgesR1R2(aShape,radius1,radius2,ListShape)
+    else:
+        anObj = LocalOp.MakeFilletFacesR1R2(aShape,radius1,radius2,ListShape)
+    if LocalOp.IsDone() == 0:
+      print "MakeFilletR1R2 : ", LocalOp.GetErrorCode()
+    return anObj
+
 def MakeChamferAll(aShape,d):
     anObj = LocalOp.MakeChamferAll(aShape,d)
     if LocalOp.IsDone() == 0:
@@ -848,10 +910,34 @@ def MakeChamferEdge(aShape,d1,d2,face1,face2):
       print "MakeChamferEdge : ", LocalOp.GetErrorCode()
     return anObj
 
+def MakeChamferEdgeAD(aShape,d,angle,face1,face2):
+    anObj = LocalOp.MakeChamferEdgeAD(aShape,d,angle,face1,face2)
+    if LocalOp.IsDone() == 0:
+      print "MakeChamferEdgeAD : ", LocalOp.GetErrorCode()
+    return anObj
+
 def MakeChamferFaces(aShape,d1,d2,ListShape):
     anObj = LocalOp.MakeChamferFaces(aShape,d1,d2,ListShape)
     if LocalOp.IsDone() == 0:
       print "MakeChamferFaces : ", LocalOp.GetErrorCode()
+    return anObj
+
+def MakeChamferFacesAD(aShape,d,angle,ListShape):
+    anObj = LocalOp.MakeChamferFacesAD(aShape,d,angle,ListShape)
+    if LocalOp.IsDone() == 0:
+      print "MakeChamferFacesAD : ", LocalOp.GetErrorCode()
+    return anObj
+
+def MakeChamferEdges(aShape,d1,d2,ListShape):
+    anObj = LocalOp.MakeChamferEdges(aShape,d1,d2,ListShape)
+    if LocalOp.IsDone() == 0:
+      print "MakeChamferEdges : ", LocalOp.GetErrorCode()
+    return anObj
+
+def MakeChamferEdgesAD(aShape,d,angle,ListShape):
+    anObj = LocalOp.MakeChamferEdgesAD(aShape,d,angle,ListShape)
+    if LocalOp.IsDone() == 0:
+      print "MakeChamferEdgesAD : ", LocalOp.GetErrorCode()
     return anObj
 
 def MakeChamfer(aShape,d1,d2,aShapeType,ListShape):
@@ -920,8 +1006,12 @@ def MakeCDG(aShape):
       print "GetCentreOfMass : ", MeasuOp.GetErrorCode()
     return anObj
 
-def CheckShape(aShape):
-    (IsValid, Status) = MeasuOp.CheckShape(aShape)
+def CheckShape(theShape, theIsCheckGeom = 0):
+    if theIsCheckGeom:
+        (IsValid, Status) = MeasuOp.CheckShapeWithGeometry(theShape)
+    else:
+        (IsValid, Status) = MeasuOp.CheckShape(theShape)
+
     if MeasuOp.IsDone() == 0:
       print "CheckShape : ", MeasuOp.GetErrorCode()
     else:

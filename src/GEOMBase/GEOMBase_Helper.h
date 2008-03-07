@@ -29,6 +29,8 @@
 #ifndef GEOMBASE_HELPER_H
 #define GEOMBASE_HELPER_H
 
+#include "GEOM_GEOMBase.hxx"
+
 #include "GEOM_Displayer.h"
 #include "SALOME_Prs.h"
 #include "SALOME_ListIO.hxx"
@@ -36,18 +38,10 @@
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 
 #include <qstring.h>
+#include <qmap.h>
 
 #include <list>
-//#if defined WNT 
-//#include <SALOME_WNT.hxx>
-//#else
-//#define SALOME_WNT_EXPORT
-//#endif
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define GEOMBASE_WNT_EXPORT __declspec( dllexport )
-#else
-#define GEOMBASE_WNT_EXPORT
-#endif
+
 typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 
 class SalomeApp_Study;
@@ -64,7 +58,7 @@ class TColStd_MapOfInteger;
 //               performing common operations (display/erase, selection activation,
 //               publication in a study, transaction management)
 //================================================================
-class GEOMBASE_WNT_EXPORT GEOMBase_Helper
+class GEOMBASE_EXPORT GEOMBase_Helper
 {
 public:
   GEOMBase_Helper( SUIT_Desktop* );
@@ -83,7 +77,9 @@ protected:
   virtual void displayPreview ( const bool   activate = false, 
                                 const bool   update = true,
                                 const bool   toRemoveFromEngine = true,
-                                const double lineWidth = -1 );
+                                const double lineWidth = -1, 
+                                const int    displayMode = -1,
+                                const int    color  = -1 );
   // This is the easiest way to show preview. It is based on execute() method.
   // It removes temporary GEOM::GEOM_Objects automatically.
 
@@ -91,7 +87,9 @@ protected:
                                  const bool   append = false, 
                                  const bool   activate = false, 
                                  const bool   update = true,
-                                 const double lineWidth = -1 );
+                                 const double lineWidth = -1, 
+                                 const int    displayMode = -1,
+                                 const int    color  = -1 );
   void displayPreview  ( const SALOME_Prs* prs, 
 			 const bool append = false, 
 			 const bool = true );
@@ -151,6 +149,9 @@ protected:
   Handle(SALOME_InteractiveObject) lastIObject() ;
   // Function returns the last selected object in the list
   // of selected objects
+  
+  bool selectObjects( ObjectList& objects );
+  // Selects list of objects 
 
   ////////////////////////////////////////////////////////////////////////////
   // Virtual methods, to be redefined in dialog classes
@@ -175,6 +176,12 @@ protected:
   // as a top-level object.
 
   virtual const char* getNewObjectName() const; 
+  virtual void addSubshapesToStudy();
+
+  GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, const char* theName );
+  //This Metod to find SubObject in theFather Object by Name (theName)
+
+  void addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>& theMap );
 
   void SetIsPreview(const bool thePreview) {isPreview = thePreview;}
   bool IsPreview() {return isPreview;}

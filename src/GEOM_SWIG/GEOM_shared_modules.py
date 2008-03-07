@@ -25,7 +25,9 @@
 # see salome_shared_modules.py
 # (avoids incomplete import at run time)
 
-print "============== import GEOM ======================="
+from launchConfigureParser import verbose
+
+if verbose(): print "============== import GEOM ======================="
 
 import GEOM
 

@@ -28,22 +28,18 @@
 #ifndef DIALOGBOX_PLANE_H
 #define DIALOGBOX_PLANE_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel1Spin.h"
 #include "DlgRef_2Sel1Spin.h"
 #include "DlgRef_3Sel1Spin.h"
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
-
 //=================================================================================
 // class    : BasicGUI_PlaneDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_PlaneDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_PlaneDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
@@ -57,7 +53,7 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
-
+    virtual void addSubshapesToStudy();
     virtual void closeEvent( QCloseEvent* e );
 
 private :

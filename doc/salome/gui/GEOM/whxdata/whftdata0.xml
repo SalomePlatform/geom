@@ -10,6 +10,7 @@
 <topic name="Box" url="box.htm" />
 <topic name="Building by Blocks" url="building_by_blocks.htm" />
 <topic name="Chamfer" url="chamfer.htm" />
+<topic name="Change Orientation" url="change_orientation.htm" />
 <topic name="Changing Display Parameters" url="changing_display_parameters.htm" />
 <topic name="Check Free Boundaries" url="check_free_boundaries.htm" />
 <topic name="Check Free Faces" url="check_free_faces.htm" />
@@ -30,9 +31,9 @@
 <topic name="Extrusion" url="extrusion.htm" />
 <topic name="Face" url="face.htm" />
 <topic name="Introduction to GEOM" url="files/introduction_to_geom.htm" />
-<topic name="Titre" url="files/salome2_sp3_booleangui_functions.htm" />
-<topic name="Titre" url="files/salome2_sp3_geomtoolsgui_functions.htm" />
-<topic name="Titre" url="files/salome2_sp3_measuregui_functions.htm" />
+<topic name="Using Boolean Operations" url="files/salome2_sp3_booleangui_functions.htm" />
+<topic name="Importing and exporting geometrical objects" url="files/salome2_sp3_geomtoolsgui_functions.htm" />
+<topic name="Using Measurement Tools" url="files/salome2_sp3_measuregui_functions.htm" />
 <topic name="Fillet" url="fillet.htm" />
 <topic name="Filling" url="filling.htm" />
 <topic name="Fuse" url="fuse.htm" />

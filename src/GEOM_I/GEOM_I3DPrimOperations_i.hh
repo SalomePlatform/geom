@@ -21,6 +21,7 @@
 #ifndef _GEOM_I3DPrimOperations_i_HeaderFile
 #define _GEOM_I3DPrimOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_I3DPrimOperations.hxx"
 
-class GEOM_I3DPrimOperations_i :
+class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
     public virtual POA_GEOM::GEOM_I3DPrimOperations,
     public virtual GEOM_IOperations_i
 {
@@ -81,9 +82,17 @@ class GEOM_I3DPrimOperations_i :
 				       GEOM::GEOM_Object_ptr theVec,
 				       CORBA::Double theH);
 
+  GEOM::GEOM_Object_ptr MakePrismVecH2Ways (GEOM::GEOM_Object_ptr theBase,
+					    GEOM::GEOM_Object_ptr theVec,
+					    CORBA::Double theH);
+
   GEOM::GEOM_Object_ptr MakePrismTwoPnt (GEOM::GEOM_Object_ptr theBase,
 					 GEOM::GEOM_Object_ptr thePoint1,
 					 GEOM::GEOM_Object_ptr thePoint2);
+
+  GEOM::GEOM_Object_ptr MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr theBase,
+					      GEOM::GEOM_Object_ptr thePoint1,
+					      GEOM::GEOM_Object_ptr thePoint2);
 
   GEOM::GEOM_Object_ptr MakePipe (GEOM::GEOM_Object_ptr theBase,
 				  GEOM::GEOM_Object_ptr thePath);
@@ -92,7 +101,11 @@ class GEOM_I3DPrimOperations_i :
 						 GEOM::GEOM_Object_ptr theAxis,
 						 CORBA::Double theAngle);
 
-  GEOM::GEOM_Object_ptr MakeFilling(GEOM::GEOM_Object_ptr theShape, CORBA::Long theMinDeg, CORBA::Long theMaxDeg, CORBA::Double theTol2D, CORBA::Double theTol3D, CORBA::Long theNbIter);
+  GEOM::GEOM_Object_ptr MakeRevolutionAxisAngle2Ways (GEOM::GEOM_Object_ptr theBase,
+						      GEOM::GEOM_Object_ptr theAxis,
+						      CORBA::Double theAngle);
+
+  GEOM::GEOM_Object_ptr MakeFilling(GEOM::GEOM_Object_ptr theShape, CORBA::Long theMinDeg, CORBA::Long theMaxDeg, CORBA::Double theTol2D, CORBA::Double theTol3D, CORBA::Long theNbIter, CORBA::Boolean theApprox);
 
   GEOM::GEOM_Object_ptr MakeThruSections(const GEOM::ListOfGO& theSeqSections,
 					 CORBA::Boolean theModeSolid,
@@ -104,6 +117,16 @@ class GEOM_I3DPrimOperations_i :
 						      GEOM::GEOM_Object_ptr thePath,
 						      CORBA::Boolean theWithContact,
 						      CORBA::Boolean theWithCorrections);
+
+  GEOM::GEOM_Object_ptr MakePipeWithShellSections(const GEOM::ListOfGO& theBases,
+						  const GEOM::ListOfGO& theSubBases,
+						  const GEOM::ListOfGO& theLocations,
+						  GEOM::GEOM_Object_ptr thePath,
+						  CORBA::Boolean theWithContact,
+						  CORBA::Boolean theWithCorrections);
+
+  GEOM::GEOM_Object_ptr MakePipeShellsWithoutPath(const GEOM::ListOfGO& theBases,
+						  const GEOM::ListOfGO& theLocations);
 
   ::GEOMImpl_I3DPrimOperations* GetOperations()
   { return (::GEOMImpl_I3DPrimOperations*)GetImpl(); }

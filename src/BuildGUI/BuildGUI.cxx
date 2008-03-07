@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -31,6 +31,8 @@
 #include "SUIT_Desktop.h"
 #include "SUIT_Session.h"
 
+#include "SalomeApp_Application.h"
+
 #include "BuildGUI_EdgeDlg.h"       // Method EDGE
 #include "BuildGUI_WireDlg.h"       // Method WIRE
 #include "BuildGUI_FaceDlg.h"       // Method FACE
@@ -40,20 +42,6 @@
 
 #include "GeometryGUI.h"
 
-BuildGUI* BuildGUI::myGUIObject = 0;
-
-//=======================================================================
-// function : GetBuildGUI()
-// purpose  : Get the only BuildGUI object [ static ]
-//=======================================================================
-BuildGUI* BuildGUI::GetBuildGUI( GeometryGUI* parent )
-{
-  if ( myGUIObject == 0 ) 
-    myGUIObject = new BuildGUI( parent );
-
-  return myGUIObject;
-}
-
 //=======================================================================
 // function : BuildGUI()
 // purpose  : Constructor
@@ -62,7 +50,6 @@ BuildGUI::BuildGUI( GeometryGUI* parent )
 : GEOMGUI( parent )
 {
 }
-
 
 //=======================================================================
 // function : ~BuildGUI()
@@ -80,7 +67,7 @@ BuildGUI::~BuildGUI()
 bool BuildGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
   getGeometryGUI()->EmitSignalDeactivateDialog();
-  
+
   QDialog* aDlg = NULL;
 
   switch ( theCommandID )
@@ -91,15 +78,15 @@ bool BuildGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     case 4084: aDlg = new BuildGUI_ShellDlg   ( getGeometryGUI(), parent, "" ); break;
     case 4085: aDlg = new BuildGUI_SolidDlg   ( getGeometryGUI(), parent, "" ); break;
     case 4086: aDlg = new BuildGUI_CompoundDlg( getGeometryGUI(), parent, "" ); break;
-    
+
     default: 
-      SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
+      getGeometryGUI()->getApp()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
       break;
   }
-  
+
   if ( aDlg != NULL )
     aDlg->show();
-  
+
   return true;
 }
 
@@ -108,11 +95,9 @@ bool BuildGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
-	__declspec( dllexport )
-#endif
+ GEOM_BUILDGUI_EXPORT
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return BuildGUI::GetBuildGUI( parent );
+    return new BuildGUI( parent );
   }
 }

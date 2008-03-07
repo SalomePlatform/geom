@@ -30,9 +30,21 @@
 #include <TopoDS_Shape.hxx>
 
 #ifdef WNT
-#include <SALOME_WNT.hxx>
+ #if defined BREPEXPORT_EXPORTS
+  #if defined WIN32
+   #define BREPEXPORT_EXPORT __declspec( dllexport )
+  #else
+   #define BREPEXPORT_EXPORT
+  #endif
+ #else
+  #if defined WIN32
+   #define BREPEXPORT_EXPORT __declspec( dllimport )
+  #else
+   #define BREPEXPORT_EXPORT
+  #endif
+ #endif
 #else
-#define SALOME_WNT_EXPORT
+ #define BREPEXPORT_EXPORT
 #endif
 
 //=============================================================================
@@ -43,10 +55,8 @@
 
 extern "C"
 {
-SALOME_WNT_EXPORT
-  int Export(const TopoDS_Shape& theShape,
-             const TCollection_AsciiString& theFileName,
-             const TCollection_AsciiString& /*theFormatName*/)
+BREPEXPORT_EXPORT
+  int Export(const TopoDS_Shape& theShape, const TCollection_AsciiString& theFileName)
   {
     MESSAGE("Export BREP into file " << theFileName.ToCString());
 

@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -28,14 +28,17 @@
 #ifndef DIALOGBOX_PRISM_H
 #define DIALOGBOX_PRISM_H
 
+#include "GenerationGUI.h"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel1Spin2Check.h"
+#include "DlgRef_3Sel1Check_QTD.h"
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg
 // purpose  :
 //=================================================================================
-class GenerationGUI_PrismDlg : public GEOMBase_Skeleton
+class GENERATIONGUI_EXPORT GenerationGUI_PrismDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
@@ -49,29 +52,40 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& msg );
     virtual bool execute( ObjectList& objects );    
+    virtual void addSubshapesToStudy();
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     double getHeight() const;
-    
+
     GEOM::GEOM_Object_var myBase; /* Base shape */
     GEOM::GEOM_Object_var myVec;  /* Vector, defining the direction */
+    GEOM::GEOM_Object_var myPoint1, myPoint2; /* Points for extrusion */ 
 
     bool myOkBase;
     bool myOkVec;
+    bool myOkPnt1;
+    bool myOkPnt2;
+    bool myBothway;
+    bool myBothway2;
 
     DlgRef_2Sel1Spin2Check* GroupPoints;
+    DlgRef_3Sel1Check_QTD* GroupPoints2; // for second layout for extrusion using 2 points
 
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
+
     void ActivateThisDialog();
+    void ConstructorsClicked(int);
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
     void ValueChangedInSpinBox();
     void onReverse();
+    void onBothway();
+    void onBothway2();
 };
 
 #endif // DIALOGBOX_PRISM_H

@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -96,7 +96,7 @@ MeasureGUI_InertiaDlg::MeasureGUI_InertiaDlg( GeometryGUI* GUI, QWidget* parent 
   
   /***************************************************************/
 
-  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Inertia_axis";
+  myHelpFileName = "using_measurement_tools_page.html#inertia_anchor";
 
   /* Initialisation */
   Init();
@@ -203,4 +203,3 @@ bool MeasureGUI_InertiaDlg::getParameters( gp_Mat& I,
     return getOperation()->IsDone();
   }
 }
-

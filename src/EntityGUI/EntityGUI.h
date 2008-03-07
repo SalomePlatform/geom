@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -27,6 +27,8 @@
 
 #ifndef ENTITYGUI_H
 #define ENTITYGUI_H
+
+#include "GEOM_EntityGUI.hxx"
 
 #include "GEOMGUI.h"
 
@@ -39,16 +41,11 @@
 // class    : EntityGUI
 // purpose  :
 //=================================================================================
-class EntityGUI : public GEOMGUI
+class GEOM_ENTITYGUI_EXPORT EntityGUI : public GEOMGUI
 {
-protected:
-  EntityGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
-
 public :
+  EntityGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
   ~EntityGUI();
-
-  // Get the only EntityGUI object
-  static EntityGUI* GetEntityGUI( GeometryGUI* parent );
 
   bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
 

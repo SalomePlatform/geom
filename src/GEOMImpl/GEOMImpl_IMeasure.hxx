@@ -22,10 +22,15 @@
 
 #include "GEOM_Function.hxx"
 
-#define MEASURE_ARG_BASE 1
+//#define MEASURE_ARG_BASE  1
+//#define MEASURE_ARG_POINT 2
 
 class GEOMImpl_IMeasure
 {
+  enum {
+    MEASURE_ARG_BASE  = 1,
+    MEASURE_ARG_POINT = 2
+  };
  public:
 
   GEOMImpl_IMeasure(Handle(GEOM_Function) theFunction): _func(theFunction) {}
@@ -34,6 +39,11 @@ class GEOMImpl_IMeasure
   { _func->SetReference(MEASURE_ARG_BASE, theRefBase); }
 
   Handle(GEOM_Function) GetBase() { return _func->GetReference(MEASURE_ARG_BASE); }
+
+  void SetPoint(Handle(GEOM_Function) thePnt)
+  { _func->SetReference(MEASURE_ARG_POINT, thePnt); }
+
+  Handle(GEOM_Function) GetPoint() { return _func->GetReference(MEASURE_ARG_POINT); }
 
  private:
 

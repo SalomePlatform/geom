@@ -31,9 +31,21 @@
 #include <TopoDS_Shape.hxx>
 
 #ifdef WNT
-#include <SALOME_WNT.hxx>
+ #if defined BREPIMPORT_EXPORTS
+  #if defined WIN32
+   #define BREPIMPORT_EXPORT __declspec( dllexport )
+  #else
+   #define BREPIMPORT_EXPORT
+  #endif
+ #else
+  #if defined WIN32
+   #define BREPIMPORT_EXPORT __declspec( dllimport )
+  #else
+   #define BREPIMPORT_EXPORT
+  #endif
+ #endif
 #else
-#define SALOME_WNT_EXPORT
+ #define BREPIMPORT_EXPORT
 #endif
 
 //=============================================================================
@@ -44,7 +56,7 @@
 
 extern "C"
 {
-SALOME_WNT_EXPORT
+BREPIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        const TCollection_AsciiString& /*theFormatName*/,
                        TCollection_AsciiString&       theError)

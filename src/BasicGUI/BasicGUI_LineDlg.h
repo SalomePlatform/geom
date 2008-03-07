@@ -28,20 +28,16 @@
 #ifndef DIALOGBOX_LINE_H
 #define DIALOGBOX_LINE_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel_QTD.h"
-
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
 
 //=================================================================================
 // class    : BasicGUI_LineDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_LineDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_LineDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
@@ -57,6 +53,7 @@ protected:
     virtual bool execute( ObjectList& objects );
 
     virtual void closeEvent( QCloseEvent* e );
+    virtual void addSubshapesToStudy();
     
 private :
     void Init();
@@ -64,8 +61,11 @@ private :
 
     GEOM::GEOM_Object_var myPoint1;   
     GEOM::GEOM_Object_var myPoint2;
+    GEOM::GEOM_Object_var myFace1;   
+    GEOM::GEOM_Object_var myFace2;
 
     DlgRef_2Sel_QTD* GroupPoints;
+    DlgRef_2Sel_QTD* GroupFaces;
     
 private slots:
     void ClickOnOk();
@@ -74,7 +74,7 @@ private slots:
 
     void ActivateThisDialog();
     void DeactivateActiveDialog();
-    
+    void ConstructorsClicked(int constructorId);    
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

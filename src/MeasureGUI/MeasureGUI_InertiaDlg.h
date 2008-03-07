@@ -29,24 +29,20 @@
 #ifndef DIALOGBOX_INERTIA_H
 #define DIALOGBOX_INERTIA_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include "MeasureGUI_Skeleton.h"
 
 class MeasureGUI_1Sel12LineEdit_QTD;
 class gp_XYZ;
 class gp_Mat;
 
-#if defined WNT && defined MEASUREGUI_EXPORTS
-#define MEASUREGUI_EXPORT __declspec( dllexport )
-#else
-#define MEASUREGUI_EXPORT
-#endif
-
 //=================================================================================
 // class    : MeasureGUI_InertiaDlg
 // purpose  : Dialog for displaying moment of inertia
 //=================================================================================
 
-class MEASUREGUI_EXPORT MeasureGUI_InertiaDlg : public MeasureGUI_Skeleton
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_InertiaDlg : public MeasureGUI_Skeleton
 { 
     Q_OBJECT
 

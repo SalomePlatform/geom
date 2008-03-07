@@ -1,0 +1,28 @@
+/*!
+
+\page propagate_operation_page Propagate
+
+\n To produce a \b Propagate operation in the <b>Main Menu</b> select
+<b>Operations - > Blocks - > Propagate</b>
+
+\n This operation breaks a multitude of edges of a shape into groups
+(builds all possible propagation groups).
+\n The \b Result will be a <b>List of GEOM_Objects</b>. Each Geom
+Object will contain a group of edges.
+
+\n <b>TUI Command:</b> <em>geompy.Propagate(Shape),</em> where \em Shape
+is a shape to build propagation groups on.
+\n <b>Arguments:</b> 1 Shape.
+
+\image html mtransf4.png
+
+\n <b>Example:</b>
+
+\image html image15.jpg
+
+\image html image16.jpg
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_propagate "Blocks Operations".
+
+*/

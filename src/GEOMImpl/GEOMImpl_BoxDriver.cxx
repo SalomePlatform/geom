@@ -86,6 +86,12 @@ Standard_Integer GEOMImpl_BoxDriver::Execute(TFunction_Logbook& log) const
         aShape2.ShapeType() == TopAbs_VERTEX) {
       gp_Pnt P1 = BRep_Tool::Pnt(TopoDS::Vertex(aShape1));
       gp_Pnt P2 = BRep_Tool::Pnt(TopoDS::Vertex(aShape2));
+
+      if (P1.X() == P2.X() || P1.Y() == P2.Y() || P1.Z() == P2.Z()) {
+	StdFail_NotDone::Raise("Box can not be created, the points belong to the same plane");
+	return 0;
+      }
+
       BRepPrimAPI_MakeBox MB (P1,P2);
       MB.Build();
 

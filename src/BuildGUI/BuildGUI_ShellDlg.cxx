@@ -69,7 +69,7 @@ BuildGUI_ShellDlg::BuildGUI_ShellDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   Layout1->addWidget(GroupShell, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("shell.htm");
+  setHelpFileName("create_shell_page.html");
 
   /* Initialisations */
   Init();

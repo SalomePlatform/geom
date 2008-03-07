@@ -34,6 +34,8 @@
 #ifndef GEOM_OCCREADER_H
 #define GEOM_OCCREADER_H
 
+#include "GEOM_OBJECT_defs.hxx"
+
 #include <vtkPolyDataSource.h>
 
 class vtkPoints;
@@ -47,13 +49,7 @@ class vtkCellArray;
 #include <GeomAbs_IsoType.hxx>
 #include <BRepAdaptor_Surface.hxx>
 
-#ifdef _WIN_32
-#define VTKOCC_EXPORT __declspec (dllexport)
-#else
-#define VTKOCC_EXPORT
-#endif
-
-class VTKOCC_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
+class GEOM_OBJECT_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
 
   // methods	
 
@@ -63,7 +59,7 @@ class VTKOCC_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
 
   const TopoDS_Shape& getTopo();
 
-  void setTopo(const TopoDS_Shape& ashape);
+  void setTopo(const TopoDS_Shape& ashape, bool isVector = false);
 
   int  getDisplayMode();
   void setDisplayMode(int);
@@ -137,6 +133,7 @@ class VTKOCC_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
   int			 amode;
   int                    nbisos;
   TopoDS_Shape           myShape;
+  bool                   myIsVector;
 
 };
 

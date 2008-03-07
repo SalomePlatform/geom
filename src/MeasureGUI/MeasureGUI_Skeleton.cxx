@@ -61,12 +61,11 @@ MeasureGUI_Skeleton::MeasureGUI_Skeleton( GeometryGUI*      GUI,
   GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
   myGeomGUI( GUI )
 {
-
   mySelBtn = 0;
   mySelEdit = 0;
   myDisplayer = 0;
   myHelpFileName = "";
-  
+
   if ( !name )
     setName( "MeasureGUI_Skeleton" );
 
@@ -75,7 +74,6 @@ MeasureGUI_Skeleton::MeasureGUI_Skeleton( GeometryGUI*      GUI,
 
   buttonClose->setAutoDefault( false );
 
-  GroupMedium->close( TRUE );
   resize( 350, 0 );
 }
 
@@ -153,9 +151,15 @@ void MeasureGUI_Skeleton::ClickOnHelp()
   if (app) 
     app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
   else {
+		QString platform;
+#ifdef WIN32
+		platform = "winapplication";
+#else
+		platform = "application";
+#endif
     SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
 			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
+			   arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
 			   QObject::tr("BUT_OK"));
   }
 }
@@ -365,3 +369,19 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_Skeleton::createOperation()
   return getGeomEngine()->GetIMeasureOperations( getStudyId() );
 }
 
+//=================================================================================
+// function : keyPressEvent()
+// purpose  :
+//=================================================================================
+void MeasureGUI_Skeleton::keyPressEvent( QKeyEvent* e )
+{
+  QDialog::keyPressEvent( e );
+  if ( e->isAccepted() )
+    return;
+
+  if ( e->key() == Key_F1 )
+    {
+      e->accept();
+      ClickOnHelp();
+    }
+}

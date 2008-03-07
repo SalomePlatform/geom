@@ -1,22 +1,23 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include "GEOM_IBooleanOperations_i.hh"
@@ -57,7 +58,7 @@ GEOM_IBooleanOperations_i::~GEOM_IBooleanOperations_i()
 /*!
  *  MakeBoolean
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
                                                  (GEOM::GEOM_Object_ptr theShape1,
 						  GEOM::GEOM_Object_ptr theShape2,
@@ -71,10 +72,12 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
   if (theShape1 == NULL || theShape2 == NULL) return aGEOMObject._retn();
 
   //Get the reference shapes
+  CORBA::String_var entry=theShape1->GetEntry();
   Handle(GEOM_Object) aSh1 = GetOperations()->GetEngine()->GetObject
-    (theShape1->GetStudyID(), theShape1->GetEntry());
+    (theShape1->GetStudyID(), entry);
+  entry=theShape2->GetEntry();
   Handle(GEOM_Object) aSh2 = GetOperations()->GetEngine()->GetObject
-    (theShape2->GetStudyID(), theShape2->GetEntry());
+    (theShape2->GetStudyID(), entry);
 
   if (aSh1.IsNull() || aSh2.IsNull()) return aGEOMObject._retn();
 
@@ -90,15 +93,16 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
 /*!
  *  MakePartition
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
                                       (const GEOM::ListOfGO&   theShapes,
 				       const GEOM::ListOfGO&   theTools,
 				       const GEOM::ListOfGO&   theKeepIns,
 				       const GEOM::ListOfGO&   theRemoveIns,
-				       const CORBA::Short      theLimit,
-				       const CORBA::Boolean    theRemoveWebs,
-				       const GEOM::ListOfLong& theMaterials)
+				       CORBA::Short            theLimit,
+				       CORBA::Boolean          theRemoveWebs,
+				       const GEOM::ListOfLong& theMaterials,
+				       CORBA::Short theKeepNonlimitShapes)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -154,15 +158,107 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
 
   //Get the materials
   aLen = theMaterials.length();
-  aMaterials = new TColStd_HArray1OfInteger (1, aLen);
-  for (ind = 0; ind < aLen; ind++) {
-    aMaterials->SetValue(ind+1, theMaterials[ind]);
+  if ( aLen ) {
+    aMaterials = new TColStd_HArray1OfInteger (1, aLen);
+    for (ind = 0; ind < aLen; ind++) {
+      aMaterials->SetValue(ind+1, theMaterials[ind]);
+    }
   }
 
   // Make Partition
   Handle(GEOM_Object) anObject =
     GetOperations()->MakePartition(aShapes, aTools, aKeepIns, aRemIns,
-				   theLimit, theRemoveWebs, aMaterials);
+				   theLimit, theRemoveWebs, aMaterials,
+				   theKeepNonlimitShapes,
+				   /*PerformSelfIntersections*/Standard_True);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakePartitionNonSelfIntersectedShape
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersectedShape
+                                      (const GEOM::ListOfGO&   theShapes,
+				       const GEOM::ListOfGO&   theTools,
+				       const GEOM::ListOfGO&   theKeepIns,
+				       const GEOM::ListOfGO&   theRemoveIns,
+				       CORBA::Short            theLimit,
+				       CORBA::Boolean          theRemoveWebs,
+				       const GEOM::ListOfLong& theMaterials,
+				       CORBA::Short theKeepNonlimitShapes)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  int ind, aLen;
+  Handle(TColStd_HSequenceOfTransient) aShapes  = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aTools   = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aKeepIns = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aRemIns  = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HArray1OfInteger) aMaterials;
+
+  //Get the shapes
+  aLen = theShapes.length();
+  for (ind = 0; ind < aLen; ind++) {
+    if (theShapes[ind] == NULL) return aGEOMObject._retn();
+    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
+      (theShapes[ind]->GetStudyID(), theShapes[ind]->GetEntry());
+    if (aSh.IsNull()) return aGEOMObject._retn();
+    aShapes->Append(aSh);
+  }
+
+  //Get the tools
+  aLen = theTools.length();
+  for (ind = 0; ind < aLen; ind++) {
+    if (theTools[ind] == NULL) return aGEOMObject._retn();
+    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
+      (theTools[ind]->GetStudyID(), theTools[ind]->GetEntry());
+    if (aSh.IsNull()) return aGEOMObject._retn();
+    aTools->Append(aSh);
+  }
+
+  //Get the keep inside shapes
+  aLen = theKeepIns.length();
+  for (ind = 0; ind < aLen; ind++) {
+    if (theKeepIns[ind] == NULL) return aGEOMObject._retn();
+    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
+      (theKeepIns[ind]->GetStudyID(), theKeepIns[ind]->GetEntry());
+    if (aSh.IsNull()) return aGEOMObject._retn();
+    aKeepIns->Append(aSh);
+  }
+
+  //Get the remove inside shapes
+  aLen = theRemoveIns.length();
+  for (ind = 0; ind < aLen; ind++) {
+    if (theRemoveIns[ind] == NULL) return aGEOMObject._retn();
+    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
+      (theRemoveIns[ind]->GetStudyID(), theRemoveIns[ind]->GetEntry());
+    if (aSh.IsNull()) return aGEOMObject._retn();
+    aRemIns->Append(aSh);
+  }
+
+  //Get the materials
+  aLen = theMaterials.length();
+  if ( aLen ) {
+    aMaterials = new TColStd_HArray1OfInteger (1, aLen);
+    for (ind = 0; ind < aLen; ind++) {
+      aMaterials->SetValue(ind+1, theMaterials[ind]);
+    }
+  }
+
+  // Make Partition
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePartition(aShapes, aTools, aKeepIns, aRemIns,
+				   theLimit, theRemoveWebs, aMaterials,
+				   theKeepNonlimitShapes,
+				   /*PerformSelfIntersections*/Standard_False);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -173,7 +269,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
 /*!
  *  MakeHalfPartition
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeHalfPartition
                                                  (GEOM::GEOM_Object_ptr theShape,
 						  GEOM::GEOM_Object_ptr thePlane)

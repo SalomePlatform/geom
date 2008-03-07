@@ -6,12 +6,17 @@
   </section>
   <section name="resources">
     <!-- Module resources -->
-    <parameter name="GEOM" value="${GEOM_ROOT_DIR}/share/salome/resources"/>
+    <parameter name="GEOM" value="${GEOM_ROOT_DIR}/share/salome/resources/geom"/>
   </section>
   <section name="Geometry" >
     <!-- Other module preferences -->
-    <parameter name="SettingsGeomStep" value="10" />
-    <parameter name="display_mode"     value="0"  />
-    <parameter name="shading_color"    value="255, 255, 0" />
+    <parameter name="SettingsGeomStep"    value="10" />
+    <parameter name="display_mode"        value="0"  />
+    <parameter name="shading_color"       value="255, 255, 0" />
+    <parameter name="wireframe_color"     value="255, 255, 0" />
+    <parameter name="free_bound_color"    value="0, 255, 0" />
+    <parameter name="line_color"          value="255, 0, 0" />
+    <parameter name="point_color"         value="255, 255, 0" />
+    <parameter name="isos_color"          value="200, 200, 200" />
   </section>
 </document>

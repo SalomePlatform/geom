@@ -53,6 +53,8 @@ class Handle_Standard_Type;
 class Handle(TFunction_Driver);
 class GEOMImpl_GlueDriver;
 
+#include <TopTools_MapOfShape.hxx>
+
 Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_GlueDriver);
 
 class Handle(GEOMImpl_GlueDriver) : public Handle(TFunction_Driver) {
@@ -148,11 +150,19 @@ Standard_EXPORT static const Standard_GUID& GetID();
 Standard_EXPORT ~GEOMImpl_GlueDriver() {};
 
 Standard_EXPORT static TopoDS_Shape GlueFaces (const TopoDS_Shape& theShape,
-                                               const Standard_Real theTolerance);
+                                               const Standard_Real theTolerance,
+                                               const Standard_Boolean doKeepNonSolids = Standard_True);
 
 Standard_EXPORT TopoDS_Shape GlueFacesWithWarnings (const TopoDS_Shape& theShape,
                                                     const Standard_Real theTolerance,
+                                                    const Standard_Boolean doKeepNonSolids,
                                                     TCollection_AsciiString& theWarning) const;
+
+Standard_EXPORT static TopoDS_Shape GlueFacesByList (const TopoDS_Shape& theShape,
+						     const Standard_Real theTolerance,
+                                                     const Standard_Boolean doKeepNonSolids,
+						     const TopTools_MapOfShape& aFaces);
+
 
  // Type management
  //

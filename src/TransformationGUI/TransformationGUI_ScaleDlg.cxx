@@ -33,6 +33,12 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qlabel.h>
 #include <qcheckbox.h>
 
@@ -44,7 +50,7 @@ using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_ScaleDlg()
-// purpose  : Constructs a TransformationGUI_ScaleDlg which is a child of 'parent', with the 
+// purpose  : Constructs a TransformationGUI_ScaleDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -85,9 +91,9 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryG
   double aFactor = 2.0;
   double SpecificStep = 0.5;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY);
   GroupPoints->SpinBox_DX->SetValue(aFactor);
-  
+
   // Activate Create a Copy mode
   GroupPoints->CheckButton1->setChecked(true);
   CreateCopyModeChanged(true);
@@ -95,21 +101,21 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryG
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  
+
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  
+
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
-   
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  setHelpFileName("scale_transform.htm");
+  setHelpFileName("scale_operation_page.html");
 
   Init();
 }
@@ -120,7 +126,7 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryG
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 TransformationGUI_ScaleDlg::~TransformationGUI_ScaleDlg()
-{  
+{
   /* no need to delete child widgets, Qt does it all for us */
 }
 
@@ -133,9 +139,9 @@ void TransformationGUI_ScaleDlg::Init()
 {
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit2->clear();
-  
+
   myPoint = GEOM::GEOM_Object::_nil();
-  
+
   initName( tr( "GEOM_SCALE" ) );
 }
 
@@ -194,13 +200,48 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
 	  return;
 	}
       Standard_Boolean testResult = Standard_False;
-      myPoint = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
+      GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
+      aName = GEOMBase::GetName( aSelectedObject );
+      
+      TopoDS_Shape aShape;
+      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	{
+	  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	  TColStd_IndexedMapOfInteger aMap;
+	  aSelMgr->GetIndexes( firstIObject(), aMap );
+	  if ( aMap.Extent() == 1 )
+	    {
+	      int anIndex = aMap( 1 );
+	      aName += QString(":vertex_%1").arg(anIndex);
+
+	      //Find SubShape Object in Father
+	      GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
+	      
+	      if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+		GEOM::GEOM_IShapesOperations_var aShapesOp =
+		  getGeomEngine()->GetIShapesOperations( getStudyId() );
+		aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		aSelMgr->clearSelected();
+	      }
+	      else
+		aSelectedObject = aFindedObject; // get Object from study
+	    }
+	  else {
+	    if (aShape.ShapeType() != TopAbs_VERTEX) {
+	      aSelectedObject = GEOM::GEOM_Object::_nil();
+	      aName = "";
+	    }
+	  }
+	}
+
+      myPoint = aSelectedObject;
+
       if(!testResult || CORBA::is_nil( myPoint ))
 	return;
-      aName = GEOMBase::GetName( myPoint );
+
     }
   myEditCurrentArgument->setText( aName );
-  
+
   displayPreview();
 }
 
@@ -228,16 +269,16 @@ void TransformationGUI_ScaleDlg::LineEditReturnPressed()
 void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  
+  globalSelection();
+
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection();
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    globalSelection( GEOM_POINT );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
-  
+
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
@@ -250,7 +291,7 @@ void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
 void TransformationGUI_ScaleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   globalSelection();
   GroupPoints->LineEdit1->setFocus();
@@ -305,25 +346,27 @@ bool TransformationGUI_ScaleDlg::isValid( QString& msg )
 bool TransformationGUI_ScaleDlg::execute( ObjectList& objects )
 {
   bool res = false;
-  
+
   GEOM::GEOM_Object_var anObj;
 
   if (GroupPoints->CheckButton1->isChecked() || IsPreview())
     for (int i = 0; i < myObjects.length(); i++)
       {
-	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->ScaleShapeCopy( myObjects[i], myPoint, GetFactor() );
+	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+          ScaleShapeCopy( myObjects[i], myPoint, GetFactor() );
 	if ( !anObj->_is_nil() )
 	  objects.push_back( anObj._retn() );
       }
   else
     for (int i = 0; i < myObjects.length(); i++)
       {
-	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->ScaleShape( myObjects[i], myPoint, GetFactor() );
+	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+          ScaleShape( myObjects[i], myPoint, GetFactor() );
 	if ( !anObj->_is_nil() )
 	  objects.push_back( anObj._retn() );
       }
   res = true;
-  
+
   return res;
 }
 
@@ -355,4 +398,20 @@ double TransformationGUI_ScaleDlg::GetFactor() const
 void TransformationGUI_ScaleDlg::CreateCopyModeChanged(bool isCreateCopy)
 {
   this->GroupBoxName->setEnabled(isCreateCopy);
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void TransformationGUI_ScaleDlg::addSubshapesToStudy()
+{
+  bool toCreateCopy = IsPreview() || GroupPoints->CheckButton1->isChecked();
+  if (toCreateCopy) {
+    QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+    objMap[GroupPoints->LineEdit2->text()] = myPoint;
+
+    addSubshapesToFather( objMap );
+  }
 }

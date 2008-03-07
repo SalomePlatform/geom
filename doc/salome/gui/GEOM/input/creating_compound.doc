@@ -1,0 +1,23 @@
+/*!
+
+\page create_compound_page Compound
+
+\n To create a \b Compound in the <b>Main Menu</b> select <b>New
+Entity - > Build - > Compound</b>.
+
+\n You can create a compound from a list of shells.
+\n The \b Result will be a \b GEOM_Object (COMPOUND).
+
+\n <b>TUI Command:</b> <em>geompy.MakeCompound(ListOfShape)</em>
+\n <b>Arguments:</b> Name + List of shapes.
+
+\image html neo-obj7.png
+
+\n <b>Example:</b>
+
+\image html compoundsn.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_compound "Advanced Geometric Objects".
+
+*/

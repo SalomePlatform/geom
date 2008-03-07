@@ -50,10 +50,9 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
+    virtual void addSubshapesToStudy();
 
-    virtual void closeEvent( QCloseEvent* e );
-
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
 
@@ -69,8 +68,8 @@ private slots :
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void ValueChangedInSpinBox();
     void ConstructorsClicked(int constructorId);
+    void ValueChangedInSpinBox();
     void CreateCopyModeChanged(bool isCreateCopy);
 };
 

@@ -43,10 +43,10 @@
 #include <TopoDS_Iterator.hxx>
 #include <BRep_Tool.hxx>
 #include <Precision.hxx>
-#include <Standard_ErrorHandler.hxx>
 #include "GEOMImpl_Types.hxx"
 
 #include <qlabel.h>
+#include <qcheckbox.h>
 
 #include "utilities.h"
 
@@ -73,7 +73,7 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, 
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_1Sel5Spin(this, "GroupPoints");
+  GroupPoints = new DlgRef_1Sel5Spin1Check(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_FILLING_COMPOUND"));
   GroupPoints->TextLabel2->setText(tr("GEOM_FILLING_MIN_DEG"));
@@ -81,13 +81,14 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg(GeometryGUI* theGeometryGUI, 
   GroupPoints->TextLabel4->setText(tr("GEOM_FILLING_NB_ITER"));
   GroupPoints->TextLabel5->setText(tr("GEOM_FILLING_MAX_DEG"));
   GroupPoints->TextLabel6->setText(tr("GEOM_FILLING_TOL_3D"));
+  GroupPoints->CheckBox1->setText(tr("GEOM_FILLING_APPROX"));
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("filling.htm");
+  setHelpFileName("create_filling_page.html");
 
   /* Initialisations */
   Init();
@@ -117,6 +118,7 @@ void GenerationGUI_FillingDlg::Init()
   myTol3D = 0.0001;
   myTol2D = 0.0001;
   myNbIter = 5;
+  myIsApprox = false;
   myOkCompound = false;
 
   globalSelection( GEOM_COMPOUND );
@@ -124,10 +126,10 @@ void GenerationGUI_FillingDlg::Init()
   double SpecificStep1 = 1;
   double SpecificStep2 = 0.0001;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_1->RangeStepAndValidator(2.0, 999.999, SpecificStep1, 3);
+  GroupPoints->SpinBox_1->RangeStepAndValidator(2.0, MAX_NUMBER, SpecificStep1, 3);
   GroupPoints->SpinBox_2->RangeStepAndValidator(0.00001, 10000.0, SpecificStep2, 5);
-  GroupPoints->SpinBox_3->RangeStepAndValidator(1.0, 999.999, SpecificStep1, 3);
-  GroupPoints->SpinBox_4->RangeStepAndValidator(1.0, 999.999, SpecificStep1, 3);
+  GroupPoints->SpinBox_3->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep1, 3);
+  GroupPoints->SpinBox_4->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep1, 3);
   GroupPoints->SpinBox_5->RangeStepAndValidator(0.00001, 10000.0, SpecificStep2, 5);
 
   GroupPoints->SpinBox_1->SetValue(myMinDeg);
@@ -148,6 +150,7 @@ void GenerationGUI_FillingDlg::Init()
   connect(GroupPoints->SpinBox_3, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupPoints->SpinBox_4, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupPoints->SpinBox_5, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->CheckBox1, SIGNAL(stateChanged(int)), this, SLOT(ApproxChanged()));
 
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_1, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_2, SLOT(SetStep(double)));
@@ -311,6 +314,16 @@ void GenerationGUI_FillingDlg::ValueChangedInSpinBox(double newValue)
 }
 
 //=================================================================================
+// function : ApproxChanged()
+// purpose  :
+//=================================================================================
+void GenerationGUI_FillingDlg::ApproxChanged()
+{
+  myIsApprox = GroupPoints->CheckBox1->isChecked();
+  displayPreview();
+}
+
+//=================================================================================
 // function : createOperation
 // purpose  :
 //=================================================================================
@@ -337,7 +350,7 @@ bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
   GEOM::GEOM_Object_var anObj;
 
   anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation() )->MakeFilling(
-    myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D, myNbIter );
+	  myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D, myNbIter, myIsApprox );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

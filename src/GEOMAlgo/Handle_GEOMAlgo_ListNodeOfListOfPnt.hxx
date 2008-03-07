@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -39,18 +39,6 @@ Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMAlgo_ListNodeOfListOfPnt
 
 class Handle(GEOMAlgo_ListNodeOfListOfPnt) : public Handle(TCollection_MapNode) {
   public:
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
     Handle(GEOMAlgo_ListNodeOfListOfPnt)():Handle(TCollection_MapNode)() {} 
     Handle(GEOMAlgo_ListNodeOfListOfPnt)(const Handle(GEOMAlgo_ListNodeOfListOfPnt)& aHandle) : Handle(TCollection_MapNode)(aHandle) 
      {
@@ -72,17 +60,12 @@ class Handle(GEOMAlgo_ListNodeOfListOfPnt) : public Handle(TCollection_MapNode) 
       return *this;
      }
 
-    GEOMAlgo_ListNodeOfListOfPnt* operator->() 
+    GEOMAlgo_ListNodeOfListOfPnt* operator->() const
      {
       return (GEOMAlgo_ListNodeOfListOfPnt *)ControlAccess();
      }
 
-    GEOMAlgo_ListNodeOfListOfPnt* operator->() const 
-     {
-      return (GEOMAlgo_ListNodeOfListOfPnt *)ControlAccess();
-     }
-
-   Standard_EXPORT ~Handle(GEOMAlgo_ListNodeOfListOfPnt)();
+//   Standard_EXPORT ~Handle(GEOMAlgo_ListNodeOfListOfPnt)();
  
    Standard_EXPORT static const Handle(GEOMAlgo_ListNodeOfListOfPnt) DownCast(const Handle(Standard_Transient)& AnObject);
 };

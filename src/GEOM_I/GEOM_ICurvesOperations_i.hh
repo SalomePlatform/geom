@@ -21,6 +21,7 @@
 #ifndef _GEOM_ICurvesOperations_i_HeaderFile
 #define _GEOM_ICurvesOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_ICurvesOperations.hxx"
 
-class GEOM_ICurvesOperations_i : 
+class GEOM_I_EXPORT GEOM_ICurvesOperations_i : 
     public virtual POA_GEOM::GEOM_ICurvesOperations,
     public virtual GEOM_IOperations_i
 {
@@ -47,6 +48,10 @@ class GEOM_ICurvesOperations_i :
 					    GEOM::GEOM_Object_ptr thePnt2,
 					    GEOM::GEOM_Object_ptr thePnt3);
 
+  GEOM::GEOM_Object_ptr MakeCircleCenter2Pnt (GEOM::GEOM_Object_ptr thePnt1,
+					      GEOM::GEOM_Object_ptr thePnt2,
+					      GEOM::GEOM_Object_ptr thePnt3);
+
   GEOM::GEOM_Object_ptr MakeEllipse (GEOM::GEOM_Object_ptr theCenter,
 				     GEOM::GEOM_Object_ptr theVector,
 				     double theRMajor, double theRMinor);
@@ -54,7 +59,12 @@ class GEOM_ICurvesOperations_i :
   GEOM::GEOM_Object_ptr MakeArc (GEOM::GEOM_Object_ptr thePnt1,
 				 GEOM::GEOM_Object_ptr thePnt2,
 				 GEOM::GEOM_Object_ptr thePnt3);
-
+  
+  GEOM::GEOM_Object_ptr MakeArcCenter (GEOM::GEOM_Object_ptr thePnt1,
+                                       GEOM::GEOM_Object_ptr thePnt2,
+                                       GEOM::GEOM_Object_ptr thePnt3,
+                                       bool theSense);
+  
   GEOM::GEOM_Object_ptr MakePolyline (const GEOM::ListOfGO& thePoints);
 
   GEOM::GEOM_Object_ptr MakeSplineBezier (const GEOM::ListOfGO& thePoints);

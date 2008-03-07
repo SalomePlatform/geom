@@ -44,6 +44,7 @@
 
 #include <TDF_Tool.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -106,6 +107,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (list<Handle(GEOM_O
 
   //Compute the Polyline value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Polyline driver failed");
       return NULL;
@@ -170,6 +174,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleThreePnt (Handle(GEOM_
 
   //Compute the Circle value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Circle driver failed");
       return NULL;
@@ -183,6 +190,66 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleThreePnt (Handle(GEOM_
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aCircle << " = geompy.MakeCircleThreePnt("
+    << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << ")";
+
+  SetErrorCode(OK);
+  return aCircle;
+}
+
+//=============================================================================
+/*!
+ *  MakeCircleCenter2Pnt
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleCenter2Pnt (Handle(GEOM_Object) thePnt1,
+                                                                      Handle(GEOM_Object) thePnt2,
+                                                                      Handle(GEOM_Object) thePnt3)
+{
+  SetErrorCode(KO);
+
+  if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
+
+  //Add a new Circle object
+  Handle(GEOM_Object) aCircle = GetEngine()->AddObject(GetDocID(), GEOM_CIRCLE);
+
+  //Add a new Circle function for creation a circle relatively to center and 2 points
+  Handle(GEOM_Function) aFunction =
+    aCircle->AddFunction(GEOMImpl_CircleDriver::GetID(), CIRCLE_CENTER_TWO_PNT);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_CircleDriver::GetID()) return NULL;
+
+  GEOMImpl_ICircle aCI (aFunction);
+
+  Handle(GEOM_Function) aRefPnt1 = thePnt1->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt2 = thePnt2->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt3 = thePnt3->GetLastFunction();
+
+  if (aRefPnt1.IsNull() || aRefPnt2.IsNull() || aRefPnt3.IsNull()) return NULL;
+
+  aCI.SetPoint1(aRefPnt1);
+  aCI.SetPoint2(aRefPnt2);
+  aCI.SetPoint3(aRefPnt3);
+
+  //Compute the Circle value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Circle driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aCircle << " = geompy.MakeCircleCenter2Pnt("
     << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << ")";
 
   SetErrorCode(OK);
@@ -225,6 +292,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 
   //Compute the Circle value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Circle driver failed");
       return NULL;
@@ -282,6 +352,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
 
   //Compute the Ellipse value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Ellipse driver failed");
       return NULL;
@@ -319,7 +392,68 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
 
   //Add a new Circle Arc function
   Handle(GEOM_Function) aFunction =
-    anArc->AddFunction(GEOMImpl_ArcDriver::GetID(), CIRC_ARC_THREE_PNT);
+      anArc->AddFunction(GEOMImpl_ArcDriver::GetID(), CIRC_ARC_THREE_PNT);  
+
+  if (aFunction.IsNull()) return NULL;
+  
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ArcDriver::GetID()) return NULL;
+  GEOMImpl_IArc aCI (aFunction);
+
+  Handle(GEOM_Function) aRefPnt1 = thePnt1->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt2 = thePnt2->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt3 = thePnt3->GetLastFunction();
+  
+
+  if (aRefPnt1.IsNull() || aRefPnt2.IsNull() || aRefPnt3.IsNull()) return NULL;
+
+  aCI.SetPoint1(aRefPnt1);
+  aCI.SetPoint2(aRefPnt2);
+  aCI.SetPoint3(aRefPnt3);
+  
+  //Compute the Arc value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Arc driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << anArc << " = geompy.MakeArc("
+    << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << ")";
+
+  SetErrorCode(OK);
+  return anArc;
+}
+
+//=============================================================================
+/*!
+ *  MakeArcCenter
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcCenter (Handle(GEOM_Object) thePnt1,
+                                                               Handle(GEOM_Object) thePnt2,
+                                                               Handle(GEOM_Object) thePnt3,
+                                                               bool                theSense)
+{
+  SetErrorCode(KO);
+  if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
+
+  //Add a new Circle Arc object
+  Handle(GEOM_Object) anArc = GetEngine()->AddObject(GetDocID(), GEOM_CIRC_ARC);
+
+  //Add a new Circle Arc function
+  Handle(GEOM_Function) aFunction =
+      anArc->AddFunction(GEOMImpl_ArcDriver::GetID(), CIRC_ARC_CENTER);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
@@ -336,12 +470,16 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
   aCI.SetPoint1(aRefPnt1);
   aCI.SetPoint2(aRefPnt2);
   aCI.SetPoint3(aRefPnt3);
+  aCI.SetSense(theSense);
 
   //Compute the Arc value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Arc driver failed");
-      return NULL;
+  SetErrorCode("Arc driver failed");
+  return NULL;
     }
   }
   catch (Standard_Failure) {
@@ -349,10 +487,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
-
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << anArc << " = geompy.MakeArc("
-    << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << ")";
+  GEOM::TPythonDump(aFunction) << anArc << " = geompy.MakeArcCenter("
+      << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << "," << theSense << ")";
 
   SetErrorCode(OK);
   return anArc;
@@ -396,6 +533,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
 
   //Compute the Spline value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Spline driver failed");
       return NULL;
@@ -460,6 +600,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
 
   //Compute the Spline value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Spline driver failed");
       return NULL;
@@ -521,6 +664,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher
 
   //Compute the Sketcher value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sketcher driver failed");
       return NULL;
@@ -580,6 +726,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
 
   //Compute the Sketcher value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sketcher driver failed");
       return NULL;

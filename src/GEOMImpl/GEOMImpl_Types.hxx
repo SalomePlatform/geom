@@ -89,22 +89,25 @@
 #define EXPORT_SHAPE 1
 #define IMPORT_SHAPE 1
 
-#define POINT_XYZ       1
-#define POINT_XYZ_REF   2
-#define POINT_CURVE_PAR 3
-//#define POINT_FACE_PAR 4
+#define POINT_XYZ                1
+#define POINT_XYZ_REF            2
+#define POINT_CURVE_PAR          3
+#define POINT_LINES_INTERSECTION 4
+//#define POINT_FACE_PAR 5
 
 #define VECTOR_TWO_PNT  1
 #define VECTOR_DX_DY_DZ 2
 #define VECTOR_TANGENT_CURVE_PAR 3
+#define VECTOR_FACE_NORMALE 4
 
 #define PLANE_PNT_VEC   1
 #define PLANE_FACE      2
 #define PLANE_THREE_PNT 3
 #define PLANE_TANGENT_FACE 4
 
-#define LINE_TWO_PNT 1
-#define LINE_PNT_DIR 2
+#define LINE_TWO_PNT   1
+#define LINE_PNT_DIR   2
+#define LINE_TWO_FACES 3
 
 #define TRANSLATE_TWO_POINTS      1
 #define TRANSLATE_VECTOR          2
@@ -115,10 +118,12 @@
 #define TRANSLATE_XYZ             7
 #define TRANSLATE_XYZ_COPY        8
 
-#define ROTATE      1
-#define ROTATE_COPY 2
-#define ROTATE_1D   3
-#define ROTATE_2D   4
+#define ROTATE                    1
+#define ROTATE_COPY               2
+#define ROTATE_1D                 3
+#define ROTATE_2D                 4
+#define ROTATE_THREE_POINTS       5
+#define ROTATE_THREE_POINTS_COPY  6
 
 #define MIRROR_PLANE      1
 #define MIRROR_PLANE_COPY 2
@@ -135,6 +140,8 @@
 
 #define POSITION_SHAPE      1
 #define POSITION_SHAPE_COPY 2
+#define POSITION_SHAPE_FROM_GLOBAL      3
+#define POSITION_SHAPE_FROM_GLOBAL_COPY 4
 
 #define TORUS_RR         1
 #define TORUS_PNT_VEC_RR 2
@@ -151,13 +158,18 @@
 #define SPHERE_R     1
 #define SPHERE_PNT_R 2
 
-#define PRISM_BASE_VEC_H   1
-#define PRISM_BASE_TWO_PNT 2
+#define PRISM_BASE_VEC_H         1
+#define PRISM_BASE_TWO_PNT       2
+#define PRISM_BASE_VEC_H_2WAYS   3
+#define PRISM_BASE_TWO_PNT_2WAYS 4
 
-#define REVOLUTION_BASE_AXIS_ANGLE 1
+#define REVOLUTION_BASE_AXIS_ANGLE       1
+#define REVOLUTION_BASE_AXIS_ANGLE_2WAYS 2
 
 #define PIPE_BASE_PATH 1
 #define PIPE_DIFFERENT_SECTIONS 2
+#define PIPE_SHELL_SECTIONS 3
+#define PIPE_SHELLS_WITHOUT_PATH 4
 
 #define THRUSECTIONS_RULED 1
 #define THRUSECTIONS_SMOOTHED 2
@@ -169,11 +181,13 @@
 
 #define PARTITION_PARTITION 1
 #define PARTITION_HALF      2
+#define PARTITION_NO_SELF_INTERSECTIONS 3
 
 #define POLYLINE_POINTS 1
 
 #define CIRCLE_THREE_PNT 1
 #define CIRCLE_PNT_VEC_R 2
+#define CIRCLE_CENTER_TWO_PNT 3
 
 #define SPLINE_BEZIER        1
 #define SPLINE_INTERPOLATION 2
@@ -181,14 +195,21 @@
 #define ELLIPSE_PNT_VEC_RR 1
 
 #define CIRC_ARC_THREE_PNT 1
+#define CIRC_ARC_CENTER    2
 
-#define FILLET_SHAPE_ALL   1
-#define FILLET_SHAPE_EDGES 2
-#define FILLET_SHAPE_FACES 3
+#define FILLET_SHAPE_ALL      1
+#define FILLET_SHAPE_EDGES    2
+#define FILLET_SHAPE_FACES    3
+#define FILLET_SHAPE_EDGES_2R 4
+#define FILLET_SHAPE_FACES_2R 5
 
-#define CHAMFER_SHAPE_ALL   1
-#define CHAMFER_SHAPE_EDGE  2
-#define CHAMFER_SHAPE_FACES 3
+#define CHAMFER_SHAPE_ALL      1
+#define CHAMFER_SHAPE_EDGE     2
+#define CHAMFER_SHAPE_FACES    3
+#define CHAMFER_SHAPE_EDGES    4
+#define CHAMFER_SHAPE_EDGE_AD  5
+#define CHAMFER_SHAPE_FACES_AD 6
+#define CHAMFER_SHAPE_EDGES_AD 7
 
 #define WIRE_EDGES          1
 #define FACE_WIRE           2
@@ -204,17 +225,19 @@
 #define ARCHIMEDE_TYPE 1
 
 // Shape Healing operators
-#define SHAPE_PROCESS     1
-#define SUPPRESS_FACES    2
-#define CLOSE_CONTOUR     3
-#define REMOVE_INT_WIRES  4
-#define FILL_HOLES        5
-#define SEWING            6
-#define DIVIDE_EDGE       7
+#define SHAPE_PROCESS      1
+#define SUPPRESS_FACES     2
+#define CLOSE_CONTOUR      3
+#define REMOVE_INT_WIRES   4
+#define FILL_HOLES         5
+#define SEWING             6
+#define DIVIDE_EDGE        7
+#define CHANGE_ORIENTATION 8
 
 #define BASIC_FILLING 1
 
 #define GLUE_FACES 1
+#define GLUE_FACES_BY_LIST 2
 
 #define SKETCHER_NINE_DOUBLS 1
 #define SKETCHER_PLANE 2

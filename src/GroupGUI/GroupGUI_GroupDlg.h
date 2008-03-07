@@ -32,8 +32,10 @@
 
 #include <TopAbs_ShapeEnum.hxx>
 
+class QGroupBox;
 class QLineEdit;
 class QListBox;
+class QRadioButton;
 
 //=================================================================================
 // class    : GroupGUI_GroupDlg
@@ -89,9 +91,10 @@ private:
     GEOM::GEOM_Object_var myMainObj;
     GEOM::GEOM_Object_var myGroup;
 
+    QGroupBox*            GroupMedium;
     QPushButton*          mySelBtn;
     QLineEdit*            myMainName;
-    QPushButton*          mySelSubBtn;
+    QRadioButton*         mySelSubBtn;
     QPushButton*          mySelAllBtn;
     QPushButton*          myAddBtn;
     QPushButton*          myRemBtn;

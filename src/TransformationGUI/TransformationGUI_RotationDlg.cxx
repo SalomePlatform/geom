@@ -33,6 +33,13 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #include <qcheckbox.h>
 #include <qlabel.h>
 
@@ -44,7 +51,7 @@ using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_RotationDlg()
-// purpose  : Constructs a TransformationGUI_RotationDlg which is a child of 'parent', with the 
+// purpose  : Constructs a TransformationGUI_RotationDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -54,59 +61,72 @@ TransformationGUI_RotationDlg::TransformationGUI_RotationDlg
   :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
                      WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ROTATION")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
+  QPixmap image0 (aResMgr->loadPixmap("GEOM",tr("ICON_DLG_ROTATION")));
+  QPixmap image1 (aResMgr->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM",tr("ICON_DLG_ROTATION_THREE_POINTS")));
 
   setCaption(tr("GEOM_ROTATION_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_ROTATION"));
   RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
+  RadioButton2->setPixmap(image2);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
+  GroupPoints = new DlgRef_4Sel1Spin2Check(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupPoints->TextLabel2->setText(tr("GEOM_AXIS"));
   GroupPoints->TextLabel3->setText(tr("GEOM_ANGLE"));
+  GroupPoints->TextLabel4->setText(tr("GEOM_POINT_I").arg("1"));
+  GroupPoints->TextLabel5->setText(tr("GEOM_POINT_I").arg("2"));
+
   GroupPoints->LineEdit1->setReadOnly(true);
   GroupPoints->LineEdit2->setReadOnly(true);
+  GroupPoints->LineEdit4->setReadOnly(true);
+  GroupPoints->LineEdit5->setReadOnly(true);
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->PushButton4->setPixmap(image1);
+  GroupPoints->PushButton5->setPixmap(image1);
   GroupPoints->CheckButton1->setText(tr("GEOM_CREATE_COPY"));
   GroupPoints->CheckButton2->setText(tr("GEOM_REVERSE"));
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
+
   double anAngle = 0;
   double SpecificStep = 5;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY);
   GroupPoints->SpinBox_DX->SetValue(anAngle);
 
   // Activate Create a Copy mode
   GroupPoints->CheckButton1->setChecked(true);
   CreateCopyModeChanged(true);
-  
+
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  
+  connect(GroupConstructors, SIGNAL(clicked(int)), SLOT(ConstructorsClicked(int)));
+
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  
+  connect(GroupPoints->PushButton4, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->PushButton5, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
   connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)), this, SLOT(onReverse()));
-  
+
   connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  setHelpFileName("rotation.htm");
+  setHelpFileName("rotation_operation_page.html");
 
   Init();
 }
@@ -131,12 +151,56 @@ void TransformationGUI_RotationDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit2->clear();
-  
-  myAxis = GEOM::GEOM_Object::_nil();
-  
+
+  myAxis = myCentPoint = myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
+
   initName( tr( "GEOM_ROTATION" ) );
+  ConstructorsClicked( 0 );
 }
 
+//=================================================================================
+// function : ConstructorsClicked()
+// purpose  : Radio button management
+//=================================================================================
+void TransformationGUI_RotationDlg::ConstructorsClicked(int constructorId)
+{
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+  globalSelection();
+
+  switch (constructorId)
+    {
+    case 0: /* rotation an object angle and axis */
+      {
+	GroupPoints->ShowRows(2,3,false);
+	resize(0,0);
+	GroupPoints->TextLabel2->setText(tr("GEOM_AXIS"));
+	GroupPoints->LineEdit2->clear();
+	GroupPoints->ShowRows(4,4,true);
+	myAxis = GEOM::GEOM_Object::_nil();
+	break;
+      }
+    case 1: /* rotation an object by 3 points */
+      {
+	GroupPoints->ShowRows(4,4,false);
+	resize(0,0);
+	GroupPoints->ShowRows(2,3,true);
+	GroupPoints->TextLabel2->setText(tr("GEOM_CENTRAL_POINT"));
+	GroupPoints->TextLabel4->setText(tr("GEOM_POINT_I").arg("1"));
+	GroupPoints->TextLabel5->setText(tr("GEOM_POINT_I").arg("2"));
+	GroupPoints->LineEdit2->clear();
+	GroupPoints->LineEdit4->clear();
+	GroupPoints->LineEdit5->clear();
+	myCentPoint = myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
+	break;
+      }
+    }
+
+  myEditCurrentArgument->setFocus();
+  connect(myGeomGUI->getApp()->selectionMgr(),
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+}
 
 //=================================================================================
 // function : ClickOnOk()
@@ -157,8 +221,9 @@ bool TransformationGUI_RotationDlg::ClickOnApply()
 {
   if ( !onAccept( GroupPoints->CheckButton1->isChecked()) )
     return false;
-  
-  Init();
+
+  initName();
+  ConstructorsClicked( getConstructorId() );
   return true;
 }
 
@@ -171,7 +236,7 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
   QString aName;
-  
+
   if(myEditCurrentArgument == GroupPoints->LineEdit1)
     {
       int aNbSel = GEOMBase::GetNameOfSelectedIObjects(selectedIO(), aName);
@@ -184,21 +249,76 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
       if (!myObjects.length())
 	return;
     }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2)
+  else
     {
       if(IObjectCount() != 1)
 	{
-	  myAxis = GEOM::GEOM_Object::_nil();
+	  if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0)
+	    myAxis = GEOM::GEOM_Object::_nil();
+	  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1)
+	    myCentPoint  = GEOM::GEOM_Object::_nil();
+          else if(myEditCurrentArgument == GroupPoints->LineEdit4)
+	    myPoint1 = GEOM::GEOM_Object::_nil();
+	  else if(myEditCurrentArgument == GroupPoints->LineEdit5)
+	    myPoint2 = GEOM::GEOM_Object::_nil();
 	  return;
 	}
+
       Standard_Boolean testResult = Standard_False;
-      myAxis = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
-      if(!testResult || CORBA::is_nil( myAxis ))
+      GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
+      if(!testResult || CORBA::is_nil( aSelectedObject ))
 	return;
-      aName = GEOMBase::GetName( myAxis );
+
+      aName = GEOMBase::GetName( aSelectedObject );
+      TopoDS_Shape aShape;
+      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+	{
+	  TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+	  if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0)
+	    aNeedType = TopAbs_EDGE;
+
+	  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	  TColStd_IndexedMapOfInteger aMap;
+	  aSelMgr->GetIndexes( firstIObject(), aMap );
+	  if ( aMap.Extent() == 1 )
+	    {
+	      int anIndex = aMap( 1 );
+	      if (aNeedType == TopAbs_EDGE)
+		aName += QString(":edge_%1").arg(anIndex);
+	      else
+		aName += QString(":vertex_%1").arg(anIndex);
+
+	      //Find SubShape Object in Father
+	      GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
+
+	      if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+		GEOM::GEOM_IShapesOperations_var aShapesOp =
+		  getGeomEngine()->GetIShapesOperations( getStudyId() );
+		aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	      }
+	      else
+		aSelectedObject = aFindedObject; // get Object from study
+	    }
+	  else {
+	    if (aShape.ShapeType() != aNeedType) {
+	      aSelectedObject = GEOM::GEOM_Object::_nil();
+	      aName = "";
+	    }
+	  }
+	}
+     
+      if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0)
+	myAxis = aSelectedObject;
+      else if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1)
+	myCentPoint = aSelectedObject;
+      else if(myEditCurrentArgument == GroupPoints->LineEdit4)
+	myPoint1 = aSelectedObject;
+      else if(myEditCurrentArgument == GroupPoints->LineEdit5)
+	myPoint2 = aSelectedObject;
+
     }
   myEditCurrentArgument->setText( aName );
-  
+
   displayPreview();
 }
 
@@ -210,16 +330,29 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
 void TransformationGUI_RotationDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  
+  globalSelection();
+
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection();
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    globalSelection( GEOM_LINE );
+    if (getConstructorId() == 0)
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    else
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
-  
+  else if (send == GroupPoints->PushButton4)
+    {
+      myEditCurrentArgument = GroupPoints->LineEdit4;
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    }
+  else if (send == GroupPoints->PushButton5)
+    {
+      myEditCurrentArgument = GroupPoints->LineEdit5;
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    }
+
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
@@ -230,7 +363,7 @@ void TransformationGUI_RotationDlg::SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
 void TransformationGUI_RotationDlg::LineEditReturnPressed()
-{  
+{
   QLineEdit* send = (QLineEdit*)sender();
   if(send == GroupPoints->LineEdit1 ||
      send == GroupPoints->LineEdit2)
@@ -248,13 +381,10 @@ void TransformationGUI_RotationDlg::LineEditReturnPressed()
 void TransformationGUI_RotationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  globalSelection();
-  GroupPoints->LineEdit1->setFocus();
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  GroupPoints->LineEdit2->clear();
-  myAxis = GEOM::GEOM_Object::_nil();
+
+  ConstructorsClicked( getConstructorId() );
 }
 
 
@@ -295,7 +425,20 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_RotationDlg::createOperation()
 //=================================================================================
 bool TransformationGUI_RotationDlg::isValid( QString& msg )
 {
-  return !(myObjects.length() == 0 || myAxis->_is_nil());
+  switch (getConstructorId())
+    {
+    case 0:
+      {
+	return !(myObjects.length() == 0 || myAxis->_is_nil());
+	break;
+      }
+    case 1:
+      {
+	return !(myObjects.length() == 0 || myCentPoint->_is_nil() || myPoint1->_is_nil() || myPoint2->_is_nil() );
+	break;
+      }
+    default: return false;
+    }
 }
 
 
@@ -306,25 +449,56 @@ bool TransformationGUI_RotationDlg::isValid( QString& msg )
 bool TransformationGUI_RotationDlg::execute( ObjectList& objects )
 {
   bool res = false;
-  
+  bool toCreateCopy = IsPreview() || GroupPoints->CheckButton1->isChecked();
+
   GEOM::GEOM_Object_var anObj;
-  
-  if (GroupPoints->CheckButton1->isChecked() || IsPreview())
-    for (int i = 0; i < myObjects.length(); i++)
+
+  switch ( getConstructorId() )
+    {
+    case 0 :
       {
-	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->RotateCopy( myObjects[i], myAxis, GetAngle() * PI180 );
-	if ( !anObj->_is_nil() )
-	  objects.push_back( anObj._retn() );
+	if (toCreateCopy)
+	  for (int i = 0; i < myObjects.length(); i++)
+	    {
+	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+                RotateCopy( myObjects[i], myAxis, GetAngle() * PI180 );
+	      if ( !anObj->_is_nil() )
+		objects.push_back( anObj._retn() );
+	    }
+	else
+	  for (int i = 0; i < myObjects.length(); i++)
+	    {
+	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+                Rotate( myObjects[i], myAxis, GetAngle() * PI180 );
+	      if ( !anObj->_is_nil() )
+		objects.push_back( anObj._retn() );
+	    }
+	res = true;
+	break;
       }
-  else
-    for (int i = 0; i < myObjects.length(); i++)
+    case 1 :
       {
-	anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->Rotate( myObjects[i], myAxis, GetAngle() * PI180 );
-	if ( !anObj->_is_nil() )
-	  objects.push_back( anObj._retn() );
+	if (toCreateCopy)
+	  for (int i = 0; i < myObjects.length(); i++)
+	    {
+	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+                RotateThreePointsCopy( myObjects[i], myCentPoint, myPoint1, myPoint2 );
+	      if ( !anObj->_is_nil() )
+		objects.push_back( anObj._retn() );
+	    }
+	else
+	  for (int i = 0; i < myObjects.length(); i++)
+	    {
+	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+                RotateThreePoints( myObjects[i], myCentPoint, myPoint1, myPoint2 );	
+	      if ( !anObj->_is_nil() )
+		objects.push_back( anObj._retn() );
+	    }
+	res = true;
+	break;
       }
-  res = true;
-  
+    }
+
   return res;
 }
 
@@ -367,4 +541,28 @@ void TransformationGUI_RotationDlg::onReverse()
 {
   double anOldValue = GroupPoints->SpinBox_DX->GetValue();
   GroupPoints->SpinBox_DX->SetValue( -anOldValue );
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void TransformationGUI_RotationDlg::addSubshapesToStudy()
+{
+  bool toCreateCopy = IsPreview() || GroupPoints->CheckButton1->isChecked();
+  if (toCreateCopy) {
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+  switch (getConstructorId())
+    {
+    case 0:
+      objMap[GroupPoints->LineEdit2->text()] = myAxis;
+      break;
+    case 1:
+      objMap[GroupPoints->LineEdit2->text()] = myCentPoint;
+      objMap[GroupPoints->LineEdit4->text()] = myPoint1;
+      objMap[GroupPoints->LineEdit5->text()] = myPoint2;
+      break;
+    }
+  addSubshapesToFather( objMap );
+  }
 }
