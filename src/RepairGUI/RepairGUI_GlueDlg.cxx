@@ -470,7 +470,7 @@ void RepairGUI_GlueDlg::clearShapeBufferLocal( GEOM::GEOM_Object_ptr theObj )
     return;
 
   _PTR(Study) aStudy = getStudy()->studyDS();
-  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( string( IOR.in() ) ) );
+  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( std::string( IOR.in() ) ) );
   if ( !aSObj )
     return;
 
@@ -727,12 +727,12 @@ void RepairGUI_GlueDlg::ClickOnCancel()
 // Function : getEntry
 // Purpose  :
 //================================================================
-static string getEntry( GEOM::GEOM_Object_ptr object )
+static std::string getEntry( GEOM::GEOM_Object_ptr object )
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
   if ( app ) {
-    string IOR = app->orb()->object_to_string( object );
+    std::string IOR = app->orb()->object_to_string( object );
     if ( IOR != "" ) {
       SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );

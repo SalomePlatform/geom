@@ -768,7 +768,7 @@ bool GroupGUI_GroupDlg::execute( ObjectList& objects )
   SalomeApp_Study* study = getStudy();
   if ( study ) {
     char* objIOR = GEOMBase::GetIORFromObject( aGroup );
-    string IOR( objIOR );
+    std::string IOR( objIOR );
     free( objIOR );
     if ( IOR != "" ) {
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
