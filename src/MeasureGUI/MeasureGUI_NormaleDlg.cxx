@@ -32,6 +32,11 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #include <qlabel.h>
 
 #include "GEOMImpl_Types.hxx"
@@ -177,14 +182,37 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
   if (!testResult)
     return;
 
+  QString aName = GEOMBase::GetName(aSelectedObject);
+
   if (myEditCurrentArgument == GroupArgs->LineEdit1) {
     myFace = aSelectedObject;
   }
   else if (myEditCurrentArgument == GroupArgs->LineEdit2) {
+    TopoDS_Shape aShape;
+    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+    {
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes(firstIObject(), aMap);
+      if (aMap.Extent() == 1) // Local Selection
+      {
+        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+        int anIndex = aMap( 1 );
+        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        aName += QString(":vertex_%1").arg(anIndex);
+      }
+      else // Global Selection
+      {
+	if (aShape.ShapeType() != TopAbs_VERTEX) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+	}
+      }
+    }
     myPoint = aSelectedObject;
   }
 
-  myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+  myEditCurrentArgument->setText( aName );
 
   displayPreview();
 }
@@ -211,14 +239,14 @@ void MeasureGUI_NormaleDlg::LineEditReturnPressed()
 void MeasureGUI_NormaleDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection(GEOM_FACE);
 
   if (send == GroupArgs->PushButton1) {
     myEditCurrentArgument = GroupArgs->LineEdit1;
-    globalSelection(GEOM_FACE);
   }
   else if (send == GroupArgs->PushButton2) {
     myEditCurrentArgument = GroupArgs->LineEdit2;
-    globalSelection(GEOM_POINT);
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
 
   myEditCurrentArgument->setFocus();
