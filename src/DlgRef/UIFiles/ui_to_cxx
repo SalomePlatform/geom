@@ -18,8 +18,8 @@
 #
 #!/bin/sh
 
-#uic -o DlgRef_Skeleton_QTD.h DlgRef_Skeleton_QTD.ui
-#uic -o DlgRef_Skeleton_QTD.cxx -impl DlgRef_Skeleton_QTD.h DlgRef_Skeleton_QTD.ui
+uic -o DlgRef_Skeleton_QTD.h DlgRef_Skeleton_QTD.ui
+uic -o DlgRef_Skeleton_QTD.cxx -impl DlgRef_Skeleton_QTD.h DlgRef_Skeleton_QTD.ui
 
 #uic -o DlgRef_1Sel_QTD.h DlgRef_1Sel_QTD.ui
 #uic -o DlgRef_1Sel_QTD.cxx -impl DlgRef_1Sel_QTD.h DlgRef_1Sel_QTD.ui
@@ -114,5 +114,8 @@
 #uic -o DlgRef_2Sel3Spin2Rb_QTD.h DlgRef_2Sel3Spin2Rb_QTD.ui
 #uic -o DlgRef_2Sel3Spin2Rb_QTD.cxx -impl DlgRef_2Sel3Spin2Rb_QTD.h DlgRef_2Sel3Spin2Rb_QTD.ui
 
-uic -o DlgRef_3Sel1Check_QTD.h DlgRef_3Sel1Check_QTD.ui
-uic -o DlgRef_3Sel1Check_QTD.cxx -impl DlgRef_3Sel1Check_QTD.h DlgRef_3Sel1Check_QTD.ui>>>>>>> 1.6.2.3
+#uic -o DlgRef_3Sel1Check_QTD.h DlgRef_3Sel3Spin2Check_QTD.ui
+#uic -o DlgRef_3Sel1Check_QTD.cxx -impl DlgRef_3Sel1Check_QTD.h DlgRef_3Sel1Check_QTD.ui>>>>>>> 1.6.2.3
+
+#uic -o DlgRef_3Sel3Spin2Check_QTD.h DlgRef_3Sel3Spin2Check_QTD.ui
+#uic -o DlgRef_3Sel3Spin2Check_QTD.cxx -impl DlgRef_3Sel3Spin2Check_QTD.h DlgRef_3Sel3Spin2Check_QTD.ui

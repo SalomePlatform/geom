@@ -284,6 +284,53 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorCopy
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  TranslateVectorDistance
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorDistance
+                                            (GEOM::GEOM_Object_ptr theObject,
+					     GEOM::GEOM_Object_ptr theVector,
+					     CORBA::Double theDistance,
+					     CORBA::Boolean theCopy)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+  GetOperations()->SetNotDone(); //Set a not done flag
+  
+  if (theObject == NULL || theVector == NULL || theDistance == 0) return aGEOMObject._retn();
+  
+  //check if the object is a subshape
+  if(!theObject->IsMainShape()) {
+    GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
+    return aGEOMObject._retn();
+  }
+  
+  if (!theCopy)
+    aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
+  
+  //Get the object itself
+  Handle(GEOM_Object) aBasicObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  if (aBasicObject.IsNull()) return aGEOMObject._retn();
+  
+  //Get the vector of translation
+  Handle(GEOM_Object) aVector =
+    GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), theVector->GetEntry());
+  if (aVector.IsNull()) return aGEOMObject._retn();
+  
+  //Perform the translation
+  if (theCopy) {
+    Handle(GEOM_Object) anObject = GetOperations()->TranslateVectorDistance(aBasicObject, aVector, theDistance, theCopy);
+    if (!GetOperations()->IsDone() || anObject.IsNull())
+      return aGEOMObject._retn();
+
+    return GetObject(anObject);
+  }
+
+  GetOperations()->TranslateVectorDistance(aBasicObject, aVector, theDistance, theCopy);
+  return aGEOMObject._retn();
+}
 
 //=============================================================================
 /*!

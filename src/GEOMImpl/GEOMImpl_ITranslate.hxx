@@ -33,7 +33,8 @@
 #define TRANSLATE_ARG_VECTOR2  11
 #define TRANSLATE_ARG_DX  12
 #define TRANSLATE_ARG_DY  13  
-#define TRANSLATE_ARG_DZ  14  
+#define TRANSLATE_ARG_DZ  14
+#define TRANSLATE_ARG_DISTANCE 15    
 
 class GEOMImpl_ITranslate
 {
@@ -80,6 +81,10 @@ class GEOMImpl_ITranslate
   void SetDX(double theDX) { return _func->SetReal(TRANSLATE_ARG_DX, theDX); }
 
   double GetDX() { return _func->GetReal(TRANSLATE_ARG_DX); }
+
+  void SetDistance(double theDistance) { return _func->SetReal(TRANSLATE_ARG_DISTANCE, theDistance); }
+
+  double GetDistance() { return _func->GetReal(TRANSLATE_ARG_DISTANCE); }
 
   void SetDY(double theDY) { return _func->SetReal(TRANSLATE_ARG_DY, theDY); }
 

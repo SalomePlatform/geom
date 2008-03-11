@@ -29,7 +29,7 @@
 #define DIALOGBOX_TRANSLATION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_3Sel3Spin1Check.h"
+#include "DlgRef_3Sel3Spin2Check.h"
 
 
 //=================================================================================
@@ -58,8 +58,9 @@ private:
 
     GEOM::GEOM_Object_var myVector, myPoint1, myPoint2;
     GEOM::ListOfGO        myObjects;
+    double                myTranslateDistance;
 
-    DlgRef_3Sel3Spin1Check* GroupPoints;
+    DlgRef_3Sel3Spin2Check* GroupPoints;
 
 private slots :
     void ClickOnOk();
@@ -71,6 +72,7 @@ private slots :
     void ConstructorsClicked(int constructorId);
     void ValueChangedInSpinBox();
     void CreateCopyModeChanged(bool isCreateCopy);
+    void ActivateDistanceChanged(bool isEnable);
 };
 
 #endif // DIALOGBOX_TRANSLATION_H

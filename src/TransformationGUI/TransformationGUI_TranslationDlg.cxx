@@ -42,6 +42,7 @@
 
 #include <qlabel.h>
 #include <qcheckbox.h>
+#include <qapplication.h>
 
 #include "GEOMImpl_Types.hxx"
 
@@ -77,7 +78,7 @@ TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg
 
   RadioButton1->setChecked(true);
 
-  GroupPoints = new DlgRef_3Sel3Spin1Check(this, "GroupPoints");
+  GroupPoints = new DlgRef_3Sel3Spin2Check(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupPoints->TextLabel3->setText(tr("GEOM_POINT_I").arg("2"));
@@ -87,7 +88,8 @@ TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg
   GroupPoints->PushButton1->setPixmap(image3);
   GroupPoints->PushButton2->setPixmap(image3);
   GroupPoints->PushButton3->setPixmap(image3);
-  GroupPoints->CheckBox1->setText(tr("GEOM_CREATE_COPY"));
+  GroupPoints->CheckBox1->setText(tr("Activate Distance"));
+  GroupPoints->CheckBox2->setText(tr("GEOM_CREATE_COPY"));
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
@@ -123,7 +125,7 @@ void TransformationGUI_TranslationDlg::Init()
   myVector = myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
 
   // Activate Create a Copy mode
-  GroupPoints->CheckBox1->setChecked(true);
+  GroupPoints->CheckBox2->setChecked(true);
   CreateCopyModeChanged(true);
 
   /* Get setting of step value from file configuration */
@@ -158,13 +160,16 @@ void TransformationGUI_TranslationDlg::Init()
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox2, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox3, SLOT(SetStep(double)));
 
-  connect(GroupPoints->CheckBox1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
+  connect(GroupPoints->CheckBox1, SIGNAL(toggled(bool)), this, SLOT(ActivateDistanceChanged(bool)));
+  connect(GroupPoints->CheckBox2, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
 
   connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_TRANSLATION" ) );
+
   ConstructorsClicked( 0 );
+
 }
 
 
@@ -185,29 +190,41 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked(int constructorId)
     case 0: /* translation an object by dx, dy, dz */
       {
 	GroupPoints->ShowRows(1,2,false);
+	GroupPoints->TextLabel6->setText(tr("GEOM_DZ"));
+	GroupPoints->CheckBox1->hide();
 	resize(0,0);
 	GroupPoints->ShowRows(3,5,true);
+	GroupPoints->SpinBox3->setEnabled(true);
 	break;
       }
     case 1: /* translation an object by 2 points */
       {
 	GroupPoints->ShowRows(3,5,false);
+	GroupPoints->CheckBox1->hide();
+	GroupPoints->TextLabel6->setText(tr("GEOM_DZ"));
 	resize(0,0);
 	GroupPoints->ShowRows(0,2,true);
 	GroupPoints->TextLabel2->setText(tr("GEOM_POINT_I").arg("1"));
 	GroupPoints->LineEdit2->clear();
 	GroupPoints->LineEdit3->clear();
+	GroupPoints->SpinBox3->setEnabled(true);
 	myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
 	break;
       }
     case 2: /* translation an object by vector */
       {
-	GroupPoints->ShowRows(2,5,false);
+	GroupPoints->CheckBox1->show();
+	GroupPoints->TextLabel6->setText(tr("GEOM_DISTANCE"));
+	GroupPoints->ShowRows(2,4,false);
+	GroupPoints->SpinBox3->SetValue(0.0);
+	GroupPoints->SpinBox3->setEnabled(false);
 	resize(0,0);
 	GroupPoints->ShowRows(0,1,true);
+	GroupPoints->ShowRows(5,5,true);
 	GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
 	GroupPoints->LineEdit2->clear();
 	myVector = GEOM::GEOM_Object::_nil();
+	ActivateDistanceChanged(GroupPoints->CheckBox1->isChecked());
 	break;
       }
     }
@@ -215,6 +232,10 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked(int constructorId)
   myEditCurrentArgument->setFocus();
   connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+  qApp->processEvents();
+  updateGeometry();
+  resize(minimumSize());
 }
 
 
@@ -235,7 +256,7 @@ void TransformationGUI_TranslationDlg::ClickOnOk()
 //=================================================================================
 bool TransformationGUI_TranslationDlg::ClickOnApply()
 {
-  if ( !onAccept(GroupPoints->CheckBox1->isChecked()) )
+  if ( !onAccept(GroupPoints->CheckBox2->isChecked()) )
     return false;
 
   initName();
@@ -436,6 +457,12 @@ bool  TransformationGUI_TranslationDlg::isValid( QString& msg )
     {
     case 0:
       {
+	Handle(SALOME_InteractiveObject) IO = firstIObject();
+	Standard_Boolean testResult;
+	GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject( IO, testResult );
+	if ( !testResult || anObject->_is_nil() )
+	  return false;
+
 	return !(myObjects.length() == 0 );
 	break;
       }
@@ -460,7 +487,7 @@ bool  TransformationGUI_TranslationDlg::isValid( QString& msg )
 bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
 {
   bool res = false;
-  bool toCreateCopy = IsPreview() || GroupPoints->CheckBox1->isChecked();
+  bool toCreateCopy = IsPreview() || GroupPoints->CheckBox2->isChecked();
 
   GEOM::GEOM_Object_var anObj;
 
@@ -514,27 +541,40 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
       }
     case 2:
       {
-	if (toCreateCopy)
-	  for (int i = 0; i < myObjects.length(); i++)
-	    {
-	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
-                TranslateVectorCopy( myObjects[i], myVector );
-	      if ( !anObj->_is_nil() )
-		objects.push_back( anObj._retn() );
-	    }
-	else
-	  for (int i = 0; i < myObjects.length(); i++)
-	    {
-	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
-                TranslateVector( myObjects[i], myVector );
-	      if ( !anObj->_is_nil() )
-		objects.push_back( anObj._retn() );
-	    }
+	bool byDistance = GroupPoints->CheckBox1->isChecked();
+	if (byDistance) {
+	  bool withCopy = GroupPoints->CheckBox2->isChecked();
+	  double aDistance = GroupPoints->SpinBox3->GetValue();
+	  for (int i = 0; i < myObjects.length(); i++) {
+	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+	      TranslateVectorDistance( myObjects[i], myVector, aDistance, toCreateCopy );
+	    if ( !anObj->_is_nil() )
+	      objects.push_back( anObj._retn() );
+	  }
+	}
+	else {
+	  if (toCreateCopy)
+	    for (int i = 0; i < myObjects.length(); i++)
+	      {
+		anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+		  TranslateVectorCopy( myObjects[i], myVector );
+		if ( !anObj->_is_nil() )
+		  objects.push_back( anObj._retn() );
+		
+	      }
+	  else
+	    for (int i = 0; i < myObjects.length(); i++)
+	      {
+		anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+		  TranslateVector( myObjects[i], myVector );
+		if ( !anObj->_is_nil() )
+		  objects.push_back( anObj._retn() );
+	      }
+	}
 	res = true;
 	break;
       }
     }
-
   return res;
 }
 
@@ -549,12 +589,22 @@ void TransformationGUI_TranslationDlg::CreateCopyModeChanged(bool isCreateCopy)
 }
 
 //=================================================================================
+// function :  ActivateDistanceChanged()
+// purpose  :
+//=================================================================================
+void TransformationGUI_TranslationDlg::ActivateDistanceChanged(bool theEnable)
+{
+  GroupPoints->SpinBox3->setEnabled(theEnable);
+  displayPreview();
+}
+
+//=================================================================================
 // function : addSubshapeToStudy
 // purpose  : virtual method to add new SubObjects if local selection
 //=================================================================================
 void TransformationGUI_TranslationDlg::addSubshapesToStudy()
 {
-  bool toCreateCopy = IsPreview() || GroupPoints->CheckBox1->isChecked();
+  bool toCreateCopy = IsPreview() || GroupPoints->CheckBox2->isChecked();
   if (toCreateCopy) {
     QMap<QString, GEOM::GEOM_Object_var> objMap;
 

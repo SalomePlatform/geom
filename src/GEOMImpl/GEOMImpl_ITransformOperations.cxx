@@ -350,7 +350,6 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVector
   SetErrorCode(OK);
   return theObject;
 }
-
 //=============================================================================
 /*!
  *  TranslateVectorCopy
@@ -403,6 +402,73 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorCopy
 
   SetErrorCode(OK);
   return aCopy;
+}
+
+//=============================================================================
+/*!
+ *  TranslateVectorDistance
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorDistance
+       (Handle(GEOM_Object) theObject, Handle(GEOM_Object) theVector, double theDistance, bool theCopy)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull() || theVector.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
+
+  Handle(GEOM_Object) aCopy;   //Add a new Copy object
+  Handle(GEOM_Function) aFunction;
+
+  //Add a translate function
+  if (theCopy) {
+    aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+    aFunction = aCopy->AddFunction(GEOMImpl_TranslateDriver::GetID(), TRANSLATE_VECTOR_DISTANCE);
+  }
+  else {
+    aFunction = theObject->AddFunction(GEOMImpl_TranslateDriver::GetID(), TRANSLATE_VECTOR_DISTANCE);
+  }
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_TranslateDriver::GetID()) return NULL;
+
+  GEOMImpl_ITranslate aTI(aFunction);
+  aTI.SetVector(theVector->GetLastFunction());
+  aTI.SetDistance(theDistance);
+//  aTI.SetShape(theObject->GetValue());
+  aTI.SetOriginal(aLastFunction);
+
+  //Compute the translation
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Translation driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  if (theCopy) {
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeTranslationVectorDistance("
+				 << theObject << ", " << theVector << ", " << theDistance << ")";
+    SetErrorCode(OK);
+    return aCopy;
+  }
+
+  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.TranslateVectorDistance("
+			       << theObject << ", " << theVector << ", " << theDistance << ", " << theCopy << ")";
+  SetErrorCode(OK);
+  return theObject;
 }
 
 //=============================================================================

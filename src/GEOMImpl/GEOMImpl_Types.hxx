@@ -111,6 +111,7 @@
 
 #define TRANSLATE_TWO_POINTS      1
 #define TRANSLATE_VECTOR          2
+#define TRANSLATE_VECTOR_DISTANCE 9
 #define TRANSLATE_TWO_POINTS_COPY 3
 #define TRANSLATE_VECTOR_COPY     4
 #define TRANSLATE_1D              5

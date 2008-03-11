@@ -60,6 +60,11 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
   GEOM::GEOM_Object_ptr TranslateVectorCopy (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr theVector);
 
+  GEOM::GEOM_Object_ptr TranslateVectorDistance (GEOM::GEOM_Object_ptr theObject,
+						 GEOM::GEOM_Object_ptr theVector,
+						 CORBA::Double theDistance,
+						 CORBA::Boolean theCopy);
+
   GEOM::GEOM_Object_ptr MultiTranslate1D (GEOM::GEOM_Object_ptr theObject, GEOM::GEOM_Object_ptr theVector, CORBA::Double theStep, CORBA::Long theNbTimes);
 
   GEOM::GEOM_Object_ptr MultiTranslate2D (GEOM::GEOM_Object_ptr theObject, GEOM::GEOM_Object_ptr theVector1, CORBA::Double theStep1, CORBA::Long theNbTimes1,
@@ -72,7 +77,6 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
   GEOM::GEOM_Object_ptr MultiRotate1D (GEOM::GEOM_Object_ptr theObject,
 				       GEOM::GEOM_Object_ptr theVector,
 				       CORBA::Long theNbTimes);
-
  
   GEOM::GEOM_Object_ptr MultiRotate2D (GEOM::GEOM_Object_ptr theObject,
 				       GEOM::GEOM_Object_ptr theVector, 

@@ -50,6 +50,9 @@ class GEOMImpl_ITransformOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) TranslateVectorCopy (Handle(GEOM_Object) theObject,
                                            Handle(GEOM_Object) theVector);
 
+  Standard_EXPORT Handle(GEOM_Object) TranslateVectorDistance (Handle(GEOM_Object) theObject,
+                                      Handle(GEOM_Object) theVector, double theDistance, bool theCopy);
+
   Standard_EXPORT Handle(GEOM_Object) Translate1D (Handle(GEOM_Object) theObject, Handle(GEOM_Object) theVector, double theStep, Standard_Integer theNbTimes);
 
   Standard_EXPORT Handle(GEOM_Object) Translate2D (Handle(GEOM_Object) theObject, Handle(GEOM_Object) theVector, double theStep1, Standard_Integer theNbTimes1,
