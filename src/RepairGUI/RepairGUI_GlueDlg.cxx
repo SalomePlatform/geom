@@ -637,6 +637,10 @@ void RepairGUI_GlueDlg::onDetect()
     return;
   }
 
+  buttonOk->setEnabled( false );
+  buttonApply->setEnabled( false );
+  globalSelection( GEOM_ALLSHAPES );
+
   GEOM::ListOfGO_var aList = GEOM::GEOM_IShapesOperations::_narrow
     ( getOperation() )->GetGlueFaces( myObject, myTolEdt2->value() );
   
