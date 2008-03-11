@@ -171,6 +171,7 @@ def TestAll (geompy, math):
   #Transform objects
   Translation = geompy.MakeTranslationTwoPoints(Box, px, pz)    #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   TranslVect  = geompy.MakeTranslationVector(Box, vxyz)         #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  TranslVectD = geompy.MakeTranslationVectorDistance(Box, vxyz, 50.0)   #(2 GEOM_Object_ptr)->GEOM_Object_ptr  
   Rotation    = geompy.MakeRotation(Box, vz, angle1)            #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   RotatPnt    = geompy.MakeRotationThreePoints(Box, px, py, pz) #(4 GEOM_Object_ptr)->GEOM_Object_ptr
   Scale       = geompy.MakeScaleTransform(Box, p0, factor)      #
@@ -315,6 +316,7 @@ def TestAll (geompy, math):
 
   id_Translation = geompy.addToStudy(Translation, "Translation")
   id_TranslVect  = geompy.addToStudy(TranslVect , "Translation along vector")
+  id_TranslVectD = geompy.addToStudy(TranslVectD, "Translation along vector with defined distance")
   id_Rotation    = geompy.addToStudy(Rotation,    "Rotation")
   id_RotatPnt    = geompy.addToStudy(RotatPnt,    "Rotation by three points")
   id_Scale       = geompy.addToStudy(Scale,       "Scale")

@@ -1615,6 +1615,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("TranslateVectorCopy", self.TrsfOp)
             return anObj
 
+        ## Translate the given object along the given vector on given distance,
+        #  creating its copy before the translation.
+        #  @param theObject The object to be translated.
+        #  @param theVector The translation vector.
+        #  @param theDistance The translation distance.
+        #  @return New GEOM_Object, containing the translated object.
+        #
+        #  Example: see GEOM_TestAll.py
+        def MakeTranslationVectorDistance(self,theObject, theVector, theDistance):
+            anObj = self.TrsfOp.TranslateVectorDistance(theObject, theVector, theDistance, 1)
+            RaiseIfFailed("TranslateVectorDistance", self.TrsfOp)
+            return anObj
+        
         ## Rotate the given object around the given axis
         #  on the given angle, creating its copy before the rotatation.
         #  @param theObject The object to be rotated.
