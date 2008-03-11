@@ -29,12 +29,13 @@
 #define GROUPGUI_GROUPDLG_H
 
 #include "GEOMBase_Skeleton.h"
-
+#include <qcheckbox.h>
 #include <TopAbs_ShapeEnum.hxx>
 
 class QGroupBox;
 class QLineEdit;
 class QListBox;
+
 class QRadioButton;
 
 //=================================================================================
@@ -84,6 +85,7 @@ private:
     void                                activateSelection();
     void                                updateState();
     void                                highlightSubShapes();
+    void                                onGetInPlace();
 
 private:
     Mode                  myMode;
@@ -94,7 +96,10 @@ private:
     QGroupBox*            GroupMedium;
     QPushButton*          mySelBtn;
     QLineEdit*            myMainName;
+    QPushButton*          mySelBtn2;
+    QLineEdit*            myShape2Name;
     QRadioButton*         mySelSubBtn;
+    QCheckBox*            myPlaceCheckBox;
     QPushButton*          mySelAllBtn;
     QPushButton*          myAddBtn;
     QPushButton*          myRemBtn;

@@ -81,7 +81,7 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWi
   Layout1->addWidget( GroupMedium, 2, 0 );
 
   QWidget* aFrame = new QWidget( GroupMedium );
-  QGridLayout* aMedLayout = new QGridLayout( aFrame, 4, 4, 0, 6 );
+  QGridLayout* aMedLayout = new QGridLayout( aFrame, 5, 4, 0, 6 );
 
   QLabel* aMainLabel = new QLabel( tr( "MAIN_SHAPE" ), aFrame );
 
@@ -93,7 +93,18 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWi
   myMainName->setReadOnly( true );
   myMainName->setEnabled( myMode == CreateGroup );
 
-  mySelSubBtn = new QRadioButton (tr( "SELECT_SUB_SHAPES" ), aFrame  );
+  QLabel* aSecondLabel = new QLabel( tr( "SECOND_SHAPE" ), aFrame );
+
+  mySelBtn2 = new QPushButton( aFrame );
+  mySelBtn2->setPixmap( iconSelect );
+  mySelBtn2->setEnabled( false );
+
+  myShape2Name = new QLineEdit( aFrame );
+  myShape2Name->setReadOnly( true );
+  myShape2Name->setEnabled( false );
+
+  mySelSubBtn = new QRadioButton ( tr( "SELECT_SUB_SHAPES" ), aFrame );
+  myPlaceCheckBox  = new QCheckBox ( tr( "GET_IN_PLACE" ), aFrame );
   mySelAllBtn = new QPushButton( tr( "SELECT_ALL" ), aFrame );
   myAddBtn    = new QPushButton( tr( "ADD" ), aFrame );
   myRemBtn    = new QPushButton( tr( "REMOVE" ), aFrame );
@@ -105,11 +116,18 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWi
   aMedLayout->addWidget( aMainLabel, 0, 0 );
   aMedLayout->addWidget( mySelBtn, 0, 1 );
   aMedLayout->addMultiCellWidget( myMainName, 0, 0, 2, 3 );
-  aMedLayout->addMultiCellWidget( mySelSubBtn, 1, 1, 0, 2 );
-  aMedLayout->addWidget( mySelAllBtn, 1, 3 );
-  aMedLayout->addMultiCellWidget( myIdList, 2, 3, 0, 2 );
-  aMedLayout->addWidget( myAddBtn, 2, 3 );
-  aMedLayout->addWidget( myRemBtn, 3, 3 );
+
+  aMedLayout->addWidget( aSecondLabel, 1, 0 );
+  aMedLayout->addWidget( mySelBtn2, 1, 1 );
+  aMedLayout->addMultiCellWidget( myShape2Name, 1, 1, 2, 3 );
+
+
+  aMedLayout->addMultiCellWidget( mySelSubBtn, 2, 2, 0, 1 );
+  aMedLayout->addWidget( myPlaceCheckBox, 2, 2 );
+  aMedLayout->addWidget( mySelAllBtn, 2, 3 );
+  aMedLayout->addMultiCellWidget( myIdList, 3, 4, 0, 2 );
+  aMedLayout->addWidget( myAddBtn, 3, 3 );
+  aMedLayout->addWidget( myRemBtn, 4, 3 );
 
   setHelpFileName("work_with_groups_page.html");
 
@@ -137,6 +155,7 @@ void GroupGUI_GroupDlg::Init()
 
     connect( GroupConstructors, SIGNAL( clicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
     connect( mySelBtn,          SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
+    connect( mySelBtn2,          SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
   }
   else if ( myMode == EditGroup && IObjectCount() ) {
     Standard_Boolean aResult = Standard_False;
@@ -175,6 +194,7 @@ void GroupGUI_GroupDlg::Init()
   connect( buttonApply, SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
   connect( mySelSubBtn, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( myPlaceCheckBox, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( mySelAllBtn, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( myAddBtn,    SIGNAL( clicked() ), this, SLOT( add() ) );
   connect( myRemBtn,    SIGNAL( clicked() ), this, SLOT( remove() ) );
@@ -261,7 +281,6 @@ void GroupGUI_GroupDlg::LineEditReturnPressed()
   updateState();
 }
 
-
 //=================================================================================
 // function : SetEditCurrentArgument()
 // purpose  :
@@ -270,17 +289,95 @@ void GroupGUI_GroupDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
-  if ( send == mySelBtn )
+  if ( send == mySelBtn ) {
     myEditCurrentArgument = myMainName;
+    myShape2Name->setText( "" );
+  }
   else if ( (QRadioButton*)sender() == mySelSubBtn || send == mySelAllBtn )
     myEditCurrentArgument = 0;
+  else if ( send == mySelBtn2 || (QCheckBox*)sender() == myPlaceCheckBox ) {
+    if ( myPlaceCheckBox->isChecked() ) {
+      myEditCurrentArgument = myShape2Name;
+      myIdList->clear();
+      myShape2Name->setText( "" );
+    }
+    else {
+      myEditCurrentArgument = myMainName;
+      myShape2Name->setText( "" );
+      myIdList->clear();
+    }
+  }
 
   activateSelection();
 
-  if ( send == mySelAllBtn )
+  if ( send == mySelAllBtn ) {
+    myIdList->clear();
+    myShape2Name->setText( "" );
+    myPlaceCheckBox->setChecked( false );
+    mySelBtn2->setEnabled( false );
+    myShape2Name->setEnabled( false );
     selectAllSubShapes();
+  }
   else
     updateState();
+}
+
+//=================================================================================
+// function : onGetInPlace()
+// purpose  :
+//=================================================================================
+void GroupGUI_GroupDlg::onGetInPlace()
+{
+    Standard_Boolean aResult = Standard_False;
+    GEOM::GEOM_Object_var anObj =
+      GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+    if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
+      if ( !anObj->_is_equivalent(myMainObj) ) {
+	myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
+	GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+	GEOM::GEOM_Object_var aGetInPlaceObj = aShapesOp->GetInPlace(myMainObj, anObj);
+        localSelection( aGetInPlaceObj, getShapeType() );
+	myEditCurrentArgument = 0;
+
+//Get indexes
+        GEOM::ListOfGO_var aSubObjects = new GEOM::ListOfGO();
+        TopoDS_Shape aShape;
+        if ( GEOMBase::GetShape(aGetInPlaceObj, aShape, getShapeType()) )
+	  {
+	    aSubObjects->length(1);
+	    aSubObjects[0] = aGetInPlaceObj;
+	  }
+
+	
+	aSubObjects = aShapesOp->MakeExplode( aGetInPlaceObj, getShapeType(), false);
+	GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
+	QListBoxItem* anItem;
+
+	bool isBlocked = myIdList->signalsBlocked();
+	myIdList->blockSignals( true );
+	myIdList->clear();
+	
+        for (int i = 0; i < aSubObjects->length(); i++)
+	{
+	  TopoDS_Shape aShape;
+	  if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) )
+	  {
+	    CORBA::Long anIndex;
+	    anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+	    if ( anIndex >= 0 ) {
+	      anItem = new QListBoxText( QString( "%1" ).arg( anIndex ) );
+	      myIdList->insertItem( anItem );
+	      myIdList->setSelected( anItem, true );
+	    }
+	  }
+	}
+	if ( !myMainObj->_is_nil() )
+	  localSelection( myMainObj, getShapeType() );
+
+	myIdList->blockSignals( isBlocked );
+	highlightSubShapes();
+      }
+    }
 }
 
 
@@ -290,23 +387,28 @@ void GroupGUI_GroupDlg::SetEditCurrentArgument()
 //=================================================================================
 void GroupGUI_GroupDlg::SelectionIntoArgument()
 {
-  if ( myEditCurrentArgument ) {  // Selection of a main shape is active
+  if (myPlaceCheckBox->isChecked() && myEditCurrentArgument == myShape2Name ) {
+    onGetInPlace();
+    return;
+  }
+
+  if ( myEditCurrentArgument == myMainName) {  // Selection of a main shape is active
     myEditCurrentArgument->setText( "" );
     myIdList->clear();
-
+    
     if ( IObjectCount() == 1 ) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+	GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
 
       if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
-        myMainObj = anObj;
-        myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
+	myMainObj = anObj;
+	myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
 	// activate subshapes selection by default
 	myEditCurrentArgument = 0;
 	activateSelection();
 	updateState();
-        return;
+	return;
       }
     }
 
@@ -364,7 +466,8 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
           TopoDS_Shape aShape;
           if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) )
           {
-            CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+	    CORBA::Long anIndex;
+	    anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
             if ( anIndex >= 0 )
               aMapIndex.Add( anIndex );
           }
@@ -412,8 +515,10 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
     return;
 
   GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+  GEOM::ListOfLong_var aSubShapes;
 
-  GEOM::ListOfLong_var aSubShapes = aShOp->SubShapeAllIDs(myMainObj, getShapeType(), false);
+  aSubShapes = aShOp->SubShapeAllIDs(myMainObj, getShapeType(), false);
+
   if ( !aShOp->IsDone() )
     return;
 
@@ -434,7 +539,6 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
 
   myIdList->blockSignals( isBlocked );
   highlightSubShapes();
-  //updateState(); // already done in highlightSubShapes()
 }
 
 //=================================================================================
@@ -489,7 +593,8 @@ void GroupGUI_GroupDlg::add()
         TopoDS_Shape aShape;
         if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) )
         {
-          CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+	  CORBA::Long anIndex;
+	    anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
           if ( anIndex >= 0 )
             aMapIndex.Add( anIndex );
         }
@@ -586,9 +691,8 @@ void GroupGUI_GroupDlg::activateSelection()
 {
   globalSelection( GEOM_ALLSHAPES );
 
-  if ( !myMainObj->_is_nil() && !myEditCurrentArgument ) {
+  if ( !myMainObj->_is_nil() && !myEditCurrentArgument && !myPlaceCheckBox->isChecked() )
     localSelection( myMainObj, getShapeType() );
-  }
 
   SelectionIntoArgument();
 }
@@ -649,7 +753,8 @@ void GroupGUI_GroupDlg::updateState()
         aSubObjects[i];
         if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) )
         {
-          CORBA::Long anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+	  CORBA::Long anIndex;
+	  anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
           if ( anIndex >= 0 )
             aMapIndex.Add( anIndex );
           else
@@ -678,7 +783,10 @@ void GroupGUI_GroupDlg::updateState()
     hasSel =  myIdList->isSelected( ii );
   myRemBtn->setEnabled( hasSel );
   mySelSubBtn->setEnabled( !CORBA::is_nil( myMainObj ) );
+  myPlaceCheckBox->setEnabled( !CORBA::is_nil( myMainObj ) );
   mySelAllBtn->setEnabled( !CORBA::is_nil( myMainObj ) );
+  mySelBtn2->setEnabled( myPlaceCheckBox->isChecked() );
+  myShape2Name->setEnabled( myPlaceCheckBox->isChecked() );
 }
 
 //=================================================================================
@@ -700,7 +808,10 @@ void GroupGUI_GroupDlg::highlightSubShapes()
     return;
 
   Standard_Boolean isOk;
-  char* objIOR = GEOMBase::GetIORFromObject( myMainObj );
+  char* objIOR;
+
+  objIOR = GEOMBase::GetIORFromObject( myMainObj );
+
   Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIORinGEOMAISShape( objIOR, isOk, true );
   free( objIOR );
   if ( !isOk || aSh.IsNull() )
@@ -712,21 +823,20 @@ void GroupGUI_GroupDlg::highlightSubShapes()
 
   int ii = 0, nn = myIdList->count();
   for ( ; ii < nn; ii++ )
-    if ( myIdList->isSelected( ii ) )
+    if ( myIdList->isSelected( ii ) ) {
       anIds.Add( myIdList->item( ii )->text().toInt() );
+    }
 
   SalomeApp_Application* app = myGeomGUI->getApp();
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   aSelMgr->clearSelected();
-  //if (nn < 3000) aSelMgr->AddOrRemoveIndex(aSh->getIO(), anIds, false);
+
   aSelMgr->AddOrRemoveIndex(aSh->getIO(), anIds, false);
 
   myBusy = false;
 
-  //updateState();
-  if (nn < 3000) {
+  if (nn < 3000)
     updateState();
-  }
   else {
     myAddBtn->setEnabled( true );
     myRemBtn->setEnabled( true );
