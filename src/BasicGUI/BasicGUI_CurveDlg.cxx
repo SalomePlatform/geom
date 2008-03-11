@@ -204,7 +204,7 @@ bool BasicGUI_CurveDlg::ClickOnApply()
  * \retval -1, if point not in list, else 1 in list
  */
 //=================================================================================
-static int isPointInList( list<GEOM::GEOM_Object_var>& thePoints,
+static int isPointInList( std::list<GEOM::GEOM_Object_var>& thePoints,
 			  GEOM::GEOM_Object_var& theObject )
 {
   int len = thePoints.size();
@@ -213,8 +213,8 @@ static int isPointInList( list<GEOM::GEOM_Object_var>& thePoints,
     return -1;
   }
   
-  for ( list<GEOM::GEOM_Object_var>::iterator i = thePoints.begin(); i != thePoints.end(); i++ ) {
-    if ( string( (*i)->GetEntry() ) == string( theObject->GetEntry() ) ) {
+  for ( std::list<GEOM::GEOM_Object_var>::iterator i = thePoints.begin(); i != thePoints.end(); i++ ) {
+    if ( std::string( (*i)->GetEntry() ) == std::string( theObject->GetEntry() ) ) {
       return 1;
     }
   }
@@ -229,14 +229,14 @@ static int isPointInList( list<GEOM::GEOM_Object_var>& thePoints,
  * \li \a theNewPoints - not ordered sequence with necessary points
  */
 //=================================================================================
-static void removeUnnecessaryPnt( list<GEOM::GEOM_Object_var>& theOldPoints,
+static void removeUnnecessaryPnt( std::list<GEOM::GEOM_Object_var>& theOldPoints,
 				  GEOM::ListOfGO_var& theNewPoints )
 {
-  list<GEOM::GEOM_Object_var> objs_to_remove;
-  for ( list<GEOM::GEOM_Object_var>::iterator i = theOldPoints.begin(); i != theOldPoints.end(); i++ ) {
+  std::list<GEOM::GEOM_Object_var> objs_to_remove;
+  for ( std::list<GEOM::GEOM_Object_var>::iterator i = theOldPoints.begin(); i != theOldPoints.end(); i++ ) {
     bool found = false;
     for ( int j = 0; j < theNewPoints->length() && !found ; j++ ) {
-      if ( string( (*i)->GetEntry() ) == string( theNewPoints[j]->GetEntry() ) ) {
+      if ( std::string( (*i)->GetEntry() ) == std::string( theNewPoints[j]->GetEntry() ) ) {
 	found = true;
       }
     }
@@ -245,7 +245,7 @@ static void removeUnnecessaryPnt( list<GEOM::GEOM_Object_var>& theOldPoints,
       //cout << "removed: " << (*i)->GetEntry() << endl;
     }
   }
-  for ( list<GEOM::GEOM_Object_var>::iterator i = objs_to_remove.begin(); i != objs_to_remove.end(); i++ ) {
+  for ( std::list<GEOM::GEOM_Object_var>::iterator i = objs_to_remove.begin(); i != objs_to_remove.end(); i++ ) {
     theOldPoints.remove( *i );
   }
 }
@@ -330,7 +330,7 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
   myPoints->length( aList.size()  );  
 
   int k = 0;
-  for ( list<GEOM::GEOM_Object_var>::iterator j = aList.begin(); j != aList.end(); j++ )
+  for ( std::list<GEOM::GEOM_Object_var>::iterator j = aList.begin(); j != aList.end(); j++ )
     myPoints[k++] = *j;
 
   if ( IOC == 0 )
@@ -341,7 +341,7 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
   // if ( myOrderedSel.size() == myPoints->length() ) {
   myPoints->length( myOrderedSel.size()  );  
   k = 0;
-  for ( list<GEOM::GEOM_Object_var>::iterator j = myOrderedSel.begin(); j != myOrderedSel.end(); j++ )
+  for ( std::list<GEOM::GEOM_Object_var>::iterator j = myOrderedSel.begin(); j != myOrderedSel.end(); j++ )
     myPoints[k++] = *j;
   //  }
 

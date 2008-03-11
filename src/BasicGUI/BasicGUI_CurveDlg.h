@@ -56,7 +56,7 @@ private:
 private:
   DlgRef_1Sel*                       GroupPoints;
   GEOM::ListOfGO_var                 myPoints;
-  list<GEOM::GEOM_Object_var>        myOrderedSel; //!< This list used for managing orderes selection
+  std::list<GEOM::GEOM_Object_var>   myOrderedSel; //!< This list used for managing orderes selection
 
 private slots:
   void                               ClickOnOk();
