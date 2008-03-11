@@ -176,7 +176,7 @@ protected:
 protected:
   Handle(SALOME_InteractiveObject) myIO;
   TopoDS_Shape                     myShape;
-  string                           myName;
+  std::string                      myName;
   int                              myType;
   SALOME_View*                     myViewFrame;
 

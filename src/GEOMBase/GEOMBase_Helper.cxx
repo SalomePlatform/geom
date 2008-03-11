@@ -162,7 +162,7 @@ void GEOMBase_Helper::erase( const ObjectList& objList, const bool updateView )
 void GEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateView )
 {
   if ( !object->_is_nil() ) {
-    string entry = getEntry( object );
+    std::string entry = getEntry( object );
     getDisplayer()->Erase( new SALOME_InteractiveObject(
       entry.c_str(), "GEOM", strdup( GEOMBase::GetName( object ).toLatin1().constData() ) ), true, updateView );
   }
@@ -201,7 +201,7 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
     // Enable activisation of selection
     getDisplayer()->SetToActivate( true );
 
-    string entry = getEntry( object );
+    std::string entry = getEntry( object );
     getDisplayer()->Redisplay(new SALOME_InteractiveObject
                               (entry.c_str(), "GEOM", strdup(GEOMBase::GetName(object).toLatin1().constData())), false);
   }
@@ -211,7 +211,7 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
     if ( aDoc && aDoc->studyDS() ) {
       _PTR(Study) aStudy = aDoc->studyDS();
       CORBA::String_var objStr = SalomeApp_Application::orb()->object_to_string(object);
-      _PTR(SObject) aSObj (aStudy->FindObjectIOR(string(objStr.in())));
+      _PTR(SObject) aSObj (aStudy->FindObjectIOR(std::string(objStr.in())));
       if ( aSObj  ) {
 	_PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
 	for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
@@ -219,7 +219,7 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
             (GeometryGUI::ClientSObjectToObject(anIt->Value()));
 	  if ( !CORBA::is_nil( aChild ) ) {
 	    if ( !aChild->_is_nil() ) {
-	      string entry = getEntry( aChild );
+	      std::string entry = getEntry( aChild );
 	      getDisplayer()->Redisplay( new SALOME_InteractiveObject(
                 entry.c_str(), "GEOM", strdup( GEOMBase::GetName( aChild ).toLatin1().constData() ) ), false );
 	    }
@@ -440,7 +440,7 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
     GEOM::GEOM_Object_ptr anObj = *anIter;
     if ( anObj->_is_nil() )
       continue;
-    string aEntry = getEntry( anObj );
+    std::string aEntry = getEntry( anObj );
     if ( aEntry != "" )
       aListOfIO.Append( new SALOME_InteractiveObject(
         aEntry.c_str(), "GEOM", strdup( GEOMBase::GetName( anObj ).toLatin1().constData() ) ) );
@@ -579,7 +579,7 @@ char* GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
   SalomeApp_Study* study = getStudy();
   if ( study )  {
     char * objIOR = GEOMBase::GetIORFromObject( object );
-    string IOR( objIOR );
+    std::string IOR( objIOR );
     free( objIOR );
     if ( IOR != "" ) {
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
@@ -619,7 +619,7 @@ void GEOMBase_Helper::clearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
     return;
 
   _PTR(Study) aStudy = getStudy()->studyDS();
-  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( string( IOR ) ) );
+  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( std::string( IOR ) ) );
   if ( !aSObj )
     return;
 
@@ -1003,7 +1003,7 @@ bool GEOMBase_Helper::selectObjects( ObjectList& objects )
   ObjectList::iterator anIter;
   for ( anIter = objects.begin(); anIter != objects.end(); ++anIter )
   {
-    string entry = getEntry( *anIter );
+    std::string entry = getEntry( *anIter );
     QString aEntry( entry.c_str() );
     LightApp_DataOwner* anOwher = new LightApp_DataOwner( aEntry );
     aList.append( anOwher );
@@ -1034,7 +1034,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
     dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
   _PTR(Study) aDStudy = appStudy->studyDS();
-  string IOR = GEOMBase::GetIORFromObject( theFather );
+  std::string IOR = GEOMBase::GetIORFromObject( theFather );
   _PTR(SObject) SObj ( aDStudy->FindObjectIOR( IOR ) );
 
   bool inStudy = false;
