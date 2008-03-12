@@ -98,12 +98,13 @@ static QString getFileName( QWidget*           parent,
     fd->selectFilter( aBrepFilter );
   }
 
-  fd->setFilters( filters );
+  QString filename;
+  if ( fd->exec() == QDialog::Accepted ) {
+    filename = fd->selectedFile();
+    format = filterMap[fd->selectedFilter()];
+    lastUsedFilter = fd->selectedFilter();
+  }
 
-  fd->exec();
-  QString filename = fd->selectedFile();
-  format = filterMap[fd->selectedFilter()];
-  lastUsedFilter = fd->selectedFilter();
   delete fd;
   qApp->processEvents();
   return filename;
@@ -501,6 +502,9 @@ bool GEOMToolsGUI::Import()
   QString fileName = getFileName(app->desktop(), "", aMap, filters,
                                  tr("GEOM_MEN_IMPORT"), true, fileType);
 
+  if (fileName.isEmpty())
+    return false;
+
   if (fileType.isEmpty() )
     {
       // Trying to detect file type
@@ -511,7 +515,7 @@ bool GEOMToolsGUI::Import()
 	fileType = aPossibleType;
     }
 
-  if (fileName.isEmpty() || fileType.isEmpty())
+  if (fileType.isEmpty())
     return false;
 
   GEOM_Operation* anOp = new GEOM_Operation (app, aInsOp.in());
@@ -522,8 +526,8 @@ bool GEOMToolsGUI::Import()
 
     anOp->start();
 
-    CORBA::String_var fileN = fileName.toLatin1().data();
-    CORBA::String_var fileT = fileType.toLatin1().data();
+    CORBA::String_var fileN = CORBA::string_dup(fileName.toLatin1().data());
+    CORBA::String_var fileT = CORBA::string_dup(fileType.toLatin1().data());
     anObj = aInsOp->Import(fileN, fileT);
 
     if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
