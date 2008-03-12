@@ -249,6 +249,10 @@ module GEOM
 				 in GEOM_Object theVector) ;
     GEOM_Object TranslateVectorCopy (in GEOM_Object theObject,
 				     in GEOM_Object theVector) ;
+    GEOM_Object TranslateVectorDistance (in GEOM_Object theObject,
+					 in GEOM_Object theVector,
+					 in double      theDistance,
+					 in boolean     theCopy) ;
     GEOM_Object MultiTranslate1D (in GEOM_Object theObject,
 				  in GEOM_Object theVector,
 				  in double      theStep,

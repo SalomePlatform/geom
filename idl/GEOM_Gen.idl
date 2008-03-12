@@ -475,6 +475,20 @@ module GEOM
 				     in GEOM_Object theVector);
 
     /*!
+     *  Translate the given object along the given vector on given distance,
+     *  creating its copy before the translation.
+     *  \param theObject The object to be translated.
+     *  \param theVector Translation vector, giving a direction.
+     *  \param theDistance Translation distance, giving a distance.
+     *  \param theCope Translation copy, creating its copy if true.
+     *  \return New GEOM_Object, containing the translated object.
+     */
+    GEOM_Object TranslateVectorDistance (in GEOM_Object theObject,
+					 in GEOM_Object theVector,
+					 in double      theDistance,
+					 in boolean     theCopy);
+
+    /*!
      *  Translate the given object along the given vector a given number times
      *  \param theObject The object to be translated.
      *  \param theVector Direction of the translation.
