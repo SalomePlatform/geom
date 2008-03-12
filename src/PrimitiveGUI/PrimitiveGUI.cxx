@@ -79,7 +79,7 @@ bool PrimitiveGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     aDlg = new PrimitiveGUI_TorusDlg( getGeometryGUI(), parent );
     break;
   case 4025: // CONE
-    aDlg = new PrimitiveGUI_ConeDlg( getGeometryGUI(), parent, "" );
+    aDlg = new PrimitiveGUI_ConeDlg( getGeometryGUI(), parent);
     break;
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
