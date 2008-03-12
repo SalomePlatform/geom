@@ -25,7 +25,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "POT-Creation-Date: 2002-03-19 09:35:48 AM CET\n"
-"PO-Revision-Date: 2003-10-27 17:32+0100\n"
+"PO-Revision-Date: 2008-03-12 12:26+0300\n"
 "Last-Translator: FULLNAME <EMAIL@ADDRESS>\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 
@@ -1381,7 +1381,7 @@ msgstr "Wireframe"
 
 #: GeometryGUI.cxx:4613
 msgid "GEOM_MEN_SHADING"
-msgstr "\nShading"
+msgstr "Shading"
 
 msgid "GEOM_RECONSTRUCTION_LIMIT"
 msgstr "Reconstruction Limit"
