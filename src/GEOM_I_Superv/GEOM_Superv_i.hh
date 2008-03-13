@@ -314,6 +314,10 @@ public:
 					 GEOM::GEOM_Object_ptr theVector);
   GEOM::GEOM_Object_ptr TranslateVectorCopy (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr theVector);
+  GEOM::GEOM_Object_ptr TranslateVectorDistance (GEOM::GEOM_Object_ptr theObject,
+						 GEOM::GEOM_Object_ptr theVector,
+						 CORBA::Double theDistance,
+						 CORBA::Boolean theCopy);
   GEOM::GEOM_Object_ptr MultiTranslate1D (GEOM::GEOM_Object_ptr theObject,
 					  GEOM::GEOM_Object_ptr theVector,
 					  CORBA::Double theStep,

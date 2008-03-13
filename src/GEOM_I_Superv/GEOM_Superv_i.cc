@@ -1348,6 +1348,23 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVectorCopy (GEOM::GEOM_Object_ptr 
 }
 
 //=============================================================================
+//  TranslateVectorDistance:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVectorDistance (GEOM::GEOM_Object_ptr theObject,
+							      GEOM::GEOM_Object_ptr theVector,
+							      CORBA::Double theDistance,
+							      CORBA::Boolean theCopy)
+{
+  beginService( " GEOM_Superv_i::TranslateVectorDistance" );
+  MESSAGE("GEOM_Superv_i::TranslateVectorDistance");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->TranslateVectorDistance(theObject, 
+								    theVector, theDistance, theCopy);
+  endService( " GEOM_Superv_i::TranslateVectorDistance" );
+  return anObj;
+}
+
+//=============================================================================
 //  MultiTranslate1D:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiTranslate1D (GEOM::GEOM_Object_ptr theObject,
