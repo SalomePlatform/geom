@@ -1,26 +1,7 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-//
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
 **
-** Created: Tue Mar 13 14:40:34 2007
+** Created: Wed Feb 13 17:37:30 2008
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -62,25 +43,29 @@ DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent, const char* name, boo
     GroupButtons->setColumnLayout(0, Qt::Vertical );
     GroupButtons->layout()->setSpacing( 6 );
     GroupButtons->layout()->setMargin( 11 );
-    GroupButtonsLayout = new QHBoxLayout( GroupButtons->layout() );
+    GroupButtonsLayout = new QVBoxLayout( GroupButtons->layout() );
     GroupButtonsLayout->setAlignment( Qt::AlignTop );
 
-    Layout3 = new QHBoxLayout( 0, 0, 6, "Layout3"); 
+    layout3 = new QGridLayout( 0, 1, 1, 0, 6, "layout3"); 
+    Spacer1 = new QSpacerItem( 90, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    layout3->addItem( Spacer1, 0, 3 );
 
     buttonOk = new QPushButton( GroupButtons, "buttonOk" );
-    Layout3->addWidget( buttonOk );
+
+    layout3->addWidget( buttonOk, 0, 2 );
 
     buttonApply = new QPushButton( GroupButtons, "buttonApply" );
-    Layout3->addWidget( buttonApply );
-    Spacer1 = new QSpacerItem( 91, 0, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    Layout3->addItem( Spacer1 );
+
+    layout3->addWidget( buttonApply, 0, 0 );
 
     buttonCancel = new QPushButton( GroupButtons, "buttonCancel" );
-    Layout3->addWidget( buttonCancel );
+
+    layout3->addWidget( buttonCancel, 0, 1 );
 
     buttonHelp = new QPushButton( GroupButtons, "buttonHelp" );
-    Layout3->addWidget( buttonHelp );
-    GroupButtonsLayout->addLayout( Layout3 );
+
+    layout3->addWidget( buttonHelp, 0, 4 );
+    GroupButtonsLayout->addLayout( layout3 );
 
     Layout1->addWidget( GroupButtons, 3, 0 );
 
@@ -132,7 +117,7 @@ DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent, const char* name, boo
 
     DlgRef_Skeleton_QTDLayout->addLayout( Layout1, 0, 0 );
     languageChange();
-    resize( QSize(307, 378).expandedTo(minimumSizeHint()) );
+    resize( QSize(615, 682).expandedTo(minimumSizeHint()) );
     clearWState( WState_Polished );
 }
 
@@ -150,5 +135,17 @@ DlgRef_Skeleton_QTD::~DlgRef_Skeleton_QTD()
  */
 void DlgRef_Skeleton_QTD::languageChange()
 {
+    setCaption( tr( "DlgRef_Skeleton_QTD" ) );
+    GroupButtons->setTitle( QString::null );
+    buttonOk->setText( QString::null );
+    buttonApply->setText( QString::null );
+    buttonCancel->setText( QString::null );
+    buttonHelp->setText( QString::null );
+    GroupConstructors->setTitle( QString::null );
+    RadioButton1->setText( QString::null );
+    RadioButton2->setText( QString::null );
+    RadioButton3->setText( QString::null );
+    RadioButton4->setText( QString::null );
+    GroupBoxName->setTitle( QString::null );
 }
 

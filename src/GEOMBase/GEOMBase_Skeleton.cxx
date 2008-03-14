@@ -62,7 +62,7 @@ GEOMBase_Skeleton::GEOMBase_Skeleton(GeometryGUI* theGeometryGUI, QWidget* paren
   NameLabel->setText(tr("GEOM_RESULT_NAME_LBL"));
 
   buttonCancel->setText(tr("GEOM_BUT_CLOSE"));
-  buttonOk->setText(tr("GEOM_BUT_OK"));
+  buttonOk->setText(tr("GEOM_BUT_APPLY_AND_CLOSE"));
   buttonApply->setText(tr("GEOM_BUT_APPLY"));
   buttonHelp->setText(tr("GEOM_BUT_HELP"));
 

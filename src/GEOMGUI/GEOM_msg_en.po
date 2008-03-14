@@ -49,6 +49,10 @@ msgstr "&Cancel"
 msgid "GEOM_BUT_OK"
 msgstr "O&k"
 
+#Button Apply and Close
+msgid "GEOM_BUT_APPLY_AND_CLOSE"
+msgstr "A&pply and Close"
+
 #Button Yes
 msgid "GEOM_BUT_YES"
 msgstr "&Yes"
@@ -1841,6 +1845,12 @@ msgstr "Main Shape"
 
 msgid "GroupGUI_GroupDlg::SELECT_SUB_SHAPES"
 msgstr "Select Sub-Shapes"
+
+msgid "GroupGUI_GroupDlg::GET_IN_PLACE"
+msgstr "Get In Place"
+
+msgid "GroupGUI_GroupDlg::SECOND_SHAPE"
+msgstr "Second Shape"
 
 msgid "GroupGUI_GroupDlg::SELECT_ALL"
 msgstr "Select All"
