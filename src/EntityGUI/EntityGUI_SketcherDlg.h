@@ -133,7 +133,9 @@ private :
                                  const bool            append = false,
                                  const bool            activate = false,
                                  const bool            update = true,
-                                 const double          lineWidth = -1 );
+                                 const double          lineWidth = -1,
+				 const int             displayMode = -1,
+				 const int             color = -1);
 
   bool createShapes( GEOM::GEOM_Object_ptr theObject,
                      TopoDS_Shape&         theApplyedWire,
