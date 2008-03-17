@@ -784,7 +784,7 @@
         </message>
         <message>
             <source>GEOM_MEN_SHADING</source>
-            <translation>\nShading</translation>
+            <translation>Shading</translation>
         </message>
         <message>
             <source>GEOM_MEN_SKETCHER_X</source>
