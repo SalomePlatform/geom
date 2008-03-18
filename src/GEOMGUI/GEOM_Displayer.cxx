@@ -33,6 +33,7 @@
 #include "GEOM_TypeFilter.h"
 #include "GEOM_EdgeFilter.h"
 #include "GEOM_FaceFilter.h"
+#include "GEOM_CompoundFilter.h"
 #include "GEOM_PreviewFilter.h"
 #include "GEOM_LogicalFilter.h"
 #include "GEOM_OCCFilter.h"
@@ -164,6 +165,30 @@ SUIT_SelectionFilter* GEOM_Displayer::getFilter( const int theMode )
       default             : aFilter = new GEOM_TypeFilter( getStudy(), theMode ); break;
       }
 
+  return aFilter;
+}
+
+//================================================================
+// Function : getComplexFilter
+// Purpose  : Get compound filter corresponding to the type of 
+//            object from GEOMImpl_Types.h
+//================================================================
+SUIT_SelectionFilter* GEOM_Displayer::getComplexFilter( const QValueList<int>* aSubShapes)
+{
+  GEOM_CompoundFilter* aFilter;
+  
+  if(aSubShapes != NULL ) {
+    aFilter = new GEOM_CompoundFilter(getStudy());
+    QValueList<int> aTopAbsTypes;
+    QValueList<int>::const_iterator it;
+    for(it = aSubShapes->constBegin(); it != aSubShapes->constEnd(); ++it ) {
+      int topAbsMode = getTopAbsMode(*it);
+      if(topAbsMode != -1 )
+        aTopAbsTypes.append(topAbsMode);
+    }
+    aFilter->addSubTypes(aTopAbsTypes);
+  }
+  
   return aFilter;
 }
 
@@ -1032,7 +1057,7 @@ void GEOM_Displayer::GlobalSelection( const int theMode, const bool update )
  */
 //=================================================================
 void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
-				      const bool update )
+				      const bool update, const QValueList<int>* theSubShapes)
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -1076,7 +1101,11 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
   if ( theModes.Extent() == 1 )
     {
       int aMode = TColStd_MapIteratorOfMapOfInteger( theModes ).Key();
-      aFilter = getFilter( aMode );
+      
+      if(aMode == GEOM_COMPOUNDFILTER)
+        aFilter = getComplexFilter(theSubShapes);
+      else    
+        aFilter = getFilter( aMode );
     }
   else if ( theModes.Extent() > 1 )
     {
@@ -1085,7 +1114,13 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
       QPtrList<SUIT_SelectionFilter> aListOfFilters;
       for ( ; anIter.More(); anIter.Next() )
 	{
-	  SUIT_SelectionFilter* aFilter = getFilter( anIter.Key() );
+          SUIT_SelectionFilter* aFilter;
+          int aMode = anIter.Key();
+          if(aMode == GEOM_COMPOUNDFILTER)
+            aFilter = getComplexFilter(theSubShapes);
+          else    
+            aFilter = getFilter( aMode );
+
 	  if ( aFilter )
 	    aListOfFilters.append( aFilter );
 	}

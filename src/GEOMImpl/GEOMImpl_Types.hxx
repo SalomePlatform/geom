@@ -81,6 +81,8 @@
 
 #define GEOM_THRUSECTIONS 40
 
+#define GEOM_COMPOUNDFILTER 41
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1

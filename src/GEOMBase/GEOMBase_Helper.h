@@ -100,6 +100,7 @@ protected:
   void activate( const int );
   void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );
   void globalSelection( const TColStd_MapOfInteger&, const bool = false );
+  void globalSelection( const TColStd_MapOfInteger&, const QValueList<int>& ,const bool = false );
   void updateViewer    ();
 
   void prepareSelection( const ObjectList&, const int );

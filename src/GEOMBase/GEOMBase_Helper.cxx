@@ -499,6 +499,18 @@ void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
 }
 
 //================================================================
+// Function : globalSelection
+// Purpose  : Activate selection of subshapes. Set selection filters
+//            in accordance with mode. theMode is from GEOMImpl_Types
+//================================================================
+void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
+                                       const QValueList<int>& subShapes,
+				       const bool update )
+{
+  getDisplayer()->GlobalSelection( theModes, update, &subShapes);
+}
+
+//================================================================
 // Function : addInStudy
 // Purpose  : Add object in study
 //================================================================

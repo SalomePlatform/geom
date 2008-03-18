@@ -101,8 +101,12 @@ void BuildGUI_ShellDlg::Init()
   TColStd_MapOfInteger aMap;
   aMap.Add(GEOM_SHELL);
   aMap.Add(GEOM_FACE);
-  globalSelection( aMap );
-
+  aMap.Add(GEOM_COMPOUNDFILTER);
+  
+  QValueList<int> aSubShapes;
+  aSubShapes.append(GEOM_FACE);
+  globalSelection( aMap, aSubShapes );
+  
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -179,7 +183,12 @@ void BuildGUI_ShellDlg::SetEditCurrentArgument()
   TColStd_MapOfInteger aMap;
   aMap.Add(GEOM_SHELL);
   aMap.Add(GEOM_FACE);
-  globalSelection( aMap );
+  aMap.Add(GEOM_COMPOUNDFILTER);
+
+  QValueList<int> aSubShapes;
+  aSubShapes.append(GEOM_FACE);
+  globalSelection( aMap, aSubShapes );
+  
   myEditCurrentArgument = GroupShell->LineEdit1;
 
   myEditCurrentArgument->setFocus();
@@ -196,10 +205,16 @@ void BuildGUI_ShellDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+
   TColStd_MapOfInteger aMap;
   aMap.Add(GEOM_SHELL);
   aMap.Add(GEOM_FACE);
-  globalSelection( aMap );
+  aMap.Add(GEOM_COMPOUNDFILTER);
+  
+  QValueList<int> aSubShapes;
+  aSubShapes.append(GEOM_FACE);
+  globalSelection( aMap, aSubShapes );
+  
 }
 
 
