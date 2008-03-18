@@ -34,7 +34,7 @@
 #include <GEOM_Function.hxx>
 
 #include <ShHealOper_Sewing.hxx>
-//#include <NMTAlgo_Splitter1.hxx>
+#include <ShHealOper_ShapeProcess.hxx>
 #include <GEOMAlgo_Gluer.hxx>
 #include <BlockFix_BlockFixAPI.hxx>
 
@@ -53,6 +53,7 @@
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
+#include <BRepCheck_Analyzer.hxx>
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepExtrema_ExtPF.hxx>
@@ -507,17 +508,28 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       aTool.SetShape(aBlockOrComp);
       aTool.Perform();
 
-      if (aType == BLOCK_REMOVE_EXTRA) {
+      TopoDS_Shape aFixedExtra = aTool.Shape();
 
-        aShape = aTool.Shape();
+      // Repair result
+      BRepCheck_Analyzer ana (aFixedExtra, false);
+      if (!ana.IsValid()) {
+        TopoDS_Shape aFixed;
+        ShHealOper_ShapeProcess aHealer;
+        aHealer.Perform(aFixedExtra, aFixed);
+        if (aHealer.isDone())
+          aFixedExtra = aFixed;
+      }
+
+      if (aType == BLOCK_REMOVE_EXTRA)
+      {
+        aShape = aFixedExtra;
+
         if (aShape == aBlockOrComp) {
           MESSAGE("No modifications have been done");
         }
-
-      } else { // aType == BLOCK_COMPOUND_IMPROVE
-
-        TopoDS_Shape aFixedExtra = aTool.Shape();
-
+      }
+      else // aType == BLOCK_COMPOUND_IMPROVE
+      {
         // 2. Separate non-blocks
         TopTools_ListOfShape BLO; // All blocks from the given compound
         TopTools_ListOfShape NOT; // Not blocks
