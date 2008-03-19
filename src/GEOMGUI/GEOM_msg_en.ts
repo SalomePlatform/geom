@@ -1167,6 +1167,10 @@
             <translation>Minor radius :</translation>
         </message>
         <message>
+            <source>GEOM_DELETE_OBJECTS</source>
+            <translation>Delete objects</translation>
+        </message>
+        <message>
             <source>GEOM_REALLY_DELETE</source>
             <translation>Do you really want to delete this %1 object(s):</translation>
         </message>

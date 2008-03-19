@@ -241,6 +241,9 @@ msgstr "Warning"
 msgid "GEOM_REALLY_DELETE"
 msgstr "Do you really want to delete this %1 object(s):"
 
+msgid "GEOM_DELETE_OBJECTS"
+msgstr "Delete objects"
+
 #
 #==============================================================================
 #
