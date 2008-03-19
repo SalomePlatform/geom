@@ -52,7 +52,7 @@ GEOMToolsGUI_DeleteDlg::GEOMToolsGUI_DeleteDlg( QWidget* parent, const QStringLi
   QLabel* lab = new QLabel( tr( "GEOM_REALLY_DELETE" ).arg( objects.count() ), this );
 
   QTextBrowser* viewer = new QTextBrowser( this );
-  viewer->setText( QString( "- " ).arg( objects.join( "<br> -" ) ) );
+  viewer->setText( QString( "-%1" ).arg( objects.join( "<br> -" ) ) );
 
   QPushButton* buttonYes = new QPushButton( tr( "GEOM_BUT_YES" ), this );
   QPushButton* buttonNo  = new QPushButton( tr( "GEOM_BUT_NO" ),  this );
