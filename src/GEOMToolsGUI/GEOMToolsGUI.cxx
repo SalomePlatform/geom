@@ -538,7 +538,7 @@ bool GEOMToolsGUI::Import()
 
   QString fileType;
 
-  QString fileName = getFileName(app->desktop(), "", aMap, filters,
+  QString fileName = getFileName(app->desktop(), QDir::currentDirPath(), aMap, filters,
                                  tr("GEOM_MEN_IMPORT"), true, fileType);
 
   if (fileType.isEmpty() )
