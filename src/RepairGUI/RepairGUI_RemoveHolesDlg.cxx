@@ -71,7 +71,7 @@ RepairGUI_RemoveHolesDlg::RepairGUI_RemoveHolesDlg( GeometryGUI* theGeometryGUI,
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->CheckButton1->setText( tr( "GEOM_REMOVE_ALL_HOLES" ) );
-  GroupPoints->TextLabel2->setText( tr( "GEOM_SELECTED_SHAPE" ) );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_WIRES_TO_REMOVE" ) );
   GroupPoints->PushButton2->setIcon( image1 );
   GroupPoints->LineEdit2->setReadOnly( true );
   
