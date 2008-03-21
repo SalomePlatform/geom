@@ -85,6 +85,8 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg( GeometryGUI* theGeometryGUI, QWidg
 
   setHelpFileName( "create_explode_page.html" );
 
+  mainFrame()->GroupBoxName->hide();
+
   Init();
 }
 
