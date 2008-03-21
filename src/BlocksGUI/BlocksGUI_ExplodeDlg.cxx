@@ -97,6 +97,8 @@ BlocksGUI_ExplodeDlg::~BlocksGUI_ExplodeDlg()
 //=================================================================================
 void BlocksGUI_ExplodeDlg::Init()
 {
+  mainFrame()->GroupBoxName->hide();
+
   // Set range of spinboxes
   int SpecificStep = 1;
   initSpinBox( myGrp1->SpinBox1, 0, 999, SpecificStep );
@@ -374,7 +376,7 @@ bool BlocksGUI_ExplodeDlg::isValid( QString& )
     break;
   }
 
-  return false;
+  return ok;
 }
 
 //=================================================================================

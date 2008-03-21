@@ -95,6 +95,7 @@ void BlocksGUI_PropagateDlg::Init()
 
   myObject = GEOM::GEOM_Object::_nil();
   mainFrame()->ResultName->setText( "" );
+  mainFrame()->GroupBoxName->hide();
 
   //myGeomGUI->SetState( 0 );
 
