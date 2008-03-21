@@ -45,6 +45,11 @@
 #include <Precision.hxx>
 #include <Standard_ConstructionError.hxx>
 
+#include <TColGeom_SequenceOfCurve.hxx>
+#include <ShapeFix_Face.hxx>
+#include <GeomAPI_PointsToBSplineSurface.hxx>
+#include <Geom_BSplineCurve.hxx>
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -99,34 +104,100 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape Scurrent;
   Standard_Real First, Last;
   Handle(Geom_Curve) C;
-  GeomFill_SectionGenerator Section;
 
-  Standard_Integer i = 0;
-  for (Ex.Init(aShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
-    Scurrent = Ex.Current() ;
-    if (Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE) return 0;
-    C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
-    C = new Geom_TrimmedCurve(C, First, Last);
-    Section.AddCurve(C);
-    i++;
+  if(!isApprox) {
+    // make filling as in old version of SALOME (before 4.1.1)
+    GeomFill_SectionGenerator Section;
+    Standard_Integer i = 0;
+    for (Ex.Init(aShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
+      Scurrent = Ex.Current() ;
+      if (Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE) return 0;
+      C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
+      C = new Geom_TrimmedCurve(C, First, Last);
+      Section.AddCurve(C);
+      i++;
+    }
+    
+    /* a 'tolerance' is used to compare 2 knots : see GeomFill_Generator.cdl */
+    Section.Perform(Precision::Confusion());
+    Handle(GeomFill_Line) Line = new GeomFill_Line(i);
+    
+    GeomFill_AppSurf App (mindeg, maxdeg, tol3d, tol2d, nbiter); /* user parameters */
+    App.Perform(Line, Section);
+    
+    if (!App.IsDone()) return 0;
+    Standard_Integer UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots;
+    App.SurfShape(UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots);
+    Handle(Geom_BSplineSurface) GBS = new Geom_BSplineSurface
+      (App.SurfPoles(), App.SurfWeights(), App.SurfUKnots(), App.SurfVKnots(),
+       App.SurfUMults(), App.SurfVMults(), App.UDegree(), App.VDegree());
+    
+    if (GBS.IsNull()) return 0;
+    aShape = BRepBuilderAPI_MakeFace(GBS);
+  }    
+  else {
+    // implemented by skl 20.03.2008 for bug 16568
+    // make approximation - try to create bspline surface
+    // using GeomAPI_PointsToBSplineSurface
+    TColGeom_SequenceOfCurve aSeq;
+    int MaxNbPoles = 0;
+    // add curves from edges to sequence and find maximal
+    // number of poles if some of them are bsplines
+    for (Ex.Init(aShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
+      Scurrent = Ex.Current() ;
+      if (Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE) return 0;
+      C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
+      Handle(Geom_TrimmedCurve) TC = Handle(Geom_TrimmedCurve)::DownCast(C);
+      if(TC.IsNull()) {
+        Handle(Geom_BSplineCurve) BC = Handle(Geom_BSplineCurve)::DownCast(C);
+        if(!BC.IsNull()) {
+          MaxNbPoles = Max(MaxNbPoles,BC->NbPoles());
+        }
+      }
+      else {
+        Handle(Geom_BSplineCurve) BC = Handle(Geom_BSplineCurve)::DownCast(TC->BasisCurve());
+        if(BC.IsNull()) {
+          Handle(Geom_TrimmedCurve) TC1 = Handle(Geom_TrimmedCurve)::DownCast(TC->BasisCurve());
+          if(!TC1.IsNull()) {
+            BC = Handle(Geom_BSplineCurve)::DownCast(TC1->BasisCurve());
+          }
+        }
+        if(!BC.IsNull()) {
+          MaxNbPoles = Max(MaxNbPoles,BC->NbPoles());
+        }
+      }
+      aSeq.Append(C);
+    }
+    // prepare array of points for creation bspline surface
+    // size of this array: by U parameter - number of curves,
+    // by V parameter - determ using MaxNbPoles but it's
+    // value must be between 21(min) and 101(max)
+    int nbc = aSeq.Length();
+    int nbp = Max(21,2*MaxNbPoles-1);
+    if(nbp>101) nbp = 101;
+    TColgp_Array2OfPnt Points(1,nbc,1,nbp);
+    int ic = 1;
+    for(; ic<=nbc; ic++) {
+      Handle(Geom_Curve) C = aSeq.Value(ic);
+      double fp = C->FirstParameter();
+      double lp = C->LastParameter();
+      double dp = (lp-fp)/(nbp-1);
+      int j = 0;
+      gp_Pnt P;
+      for(; j<nbp; j++) {
+        C->D0(fp+dp*j,P);
+        Points.SetValue(ic,j+1,P);
+      }
+    }
+    GeomAPI_PointsToBSplineSurface PTB(Points,mindeg,maxdeg,GeomAbs_C2,tol3d);
+    Handle(Geom_BSplineSurface) BS = PTB.Surface();
+    BRepBuilderAPI_MakeFace BB(BS);
+    TopoDS_Face NewF = BB.Face();
+    Handle(ShapeFix_Face) sff = new ShapeFix_Face(NewF);
+    sff->Perform();
+    sff->FixOrientation();
+    aShape = sff->Face();
   }
-
-  /* a 'tolerance' is used to compare 2 knots : see GeomFill_Generator.cdl */
-  Section.Perform(Precision::Confusion());
-  Handle(GeomFill_Line) Line = new GeomFill_Line(i);
-
-  GeomFill_AppSurf App (mindeg, maxdeg, tol3d, tol2d, nbiter); /* user parameters */
-  App.Perform(Line, Section, isApprox);
-
-  if (!App.IsDone()) return 0;
-  Standard_Integer UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots;
-  App.SurfShape(UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots);
-  Handle(Geom_BSplineSurface) GBS = new Geom_BSplineSurface
-    (App.SurfPoles(), App.SurfWeights(), App.SurfUKnots(), App.SurfVKnots(),
-     App.SurfUMults(), App.SurfVMults(), App.UDegree(), App.VDegree());
-
-  if (GBS.IsNull()) return 0;
-  aShape = BRepBuilderAPI_MakeFace(GBS);
 
   /* We test the validity of resulting shape */
   if (!BRepAlgo::IsValid((aShape))) {

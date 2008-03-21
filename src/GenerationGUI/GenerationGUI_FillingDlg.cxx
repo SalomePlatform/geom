@@ -117,7 +117,7 @@ void GenerationGUI_FillingDlg::Init()
   myMaxDeg = 5;
   myTol3D = 0.0001;
   myTol2D = 0.0001;
-  myNbIter = 5;
+  myNbIter = 0;
   myIsApprox = false;
   myOkCompound = false;
 
@@ -128,7 +128,7 @@ void GenerationGUI_FillingDlg::Init()
   /* min, max, step and decimals for spin boxes & initial values */
   GroupPoints->SpinBox_1->RangeStepAndValidator(2.0, MAX_NUMBER, SpecificStep1, 3);
   GroupPoints->SpinBox_2->RangeStepAndValidator(0.00001, 10000.0, SpecificStep2, 5);
-  GroupPoints->SpinBox_3->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep1, 3);
+  GroupPoints->SpinBox_3->RangeStepAndValidator(0.0, MAX_NUMBER, SpecificStep1, 3);
   GroupPoints->SpinBox_4->RangeStepAndValidator(1.0, MAX_NUMBER, SpecificStep1, 3);
   GroupPoints->SpinBox_5->RangeStepAndValidator(0.00001, 10000.0, SpecificStep2, 5);
 
