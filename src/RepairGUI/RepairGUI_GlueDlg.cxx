@@ -531,7 +531,7 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
         for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
 	  QString aName( "" );
           if ( nbObjs > 1 ) {
-            aName = strlen( getNewObjectName() ) ? GEOMBase::GetDefaultName( getNewObjectName() ) : GEOMBase::GetDefaultName( getPrefix( *it ) );
+            aName = getNewObjectName().length() ? GEOMBase::GetDefaultName( getNewObjectName() ) : GEOMBase::GetDefaultName( getPrefix( *it ) );
           }
           else {
             aName = getNewObjectName();

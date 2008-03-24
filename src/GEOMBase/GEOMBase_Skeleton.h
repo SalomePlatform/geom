@@ -70,7 +70,7 @@ protected:
 
     /*! returns contents of "Name" field
      */
-    virtual const char* getNewObjectName() const;
+    virtual QString getNewObjectName() const;
 
     /*! returns id of a selected "constructor" radio button or '-1' in case of error
      */

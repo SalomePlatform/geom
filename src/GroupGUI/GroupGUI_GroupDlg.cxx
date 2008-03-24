@@ -774,7 +774,7 @@ bool GroupGUI_GroupDlg::execute( ObjectList& objects )
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
       if ( SO ) {
         _PTR(StudyBuilder) aBuilder (study->studyDS()->NewBuilder());
-        aBuilder->SetName( SO, getNewObjectName() );
+        aBuilder->SetName( SO, getNewObjectName().toLatin1().constData() );
       }
     }
   }

@@ -902,9 +902,9 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::getFather( GEOM::GEOM_Object_ptr theObj )
 // Function : getNewObjectName
 // Purpose  : Redefine this method to return proper name for a new object
 //================================================================
-const char* GEOMBase_Helper::getNewObjectName() const
+QString GEOMBase_Helper::getNewObjectName() const
 {
-  return "";
+  return QString::null;
 }
 
 //================================================================

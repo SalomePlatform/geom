@@ -224,9 +224,9 @@ void GEOMBase_Skeleton::initName( const QString& thePrefix )
 // function : getNewObjectName()
 // purpose  : returns contents of Name field
 //=================================================================================
-const char* GEOMBase_Skeleton::getNewObjectName() const
+QString GEOMBase_Skeleton::getNewObjectName() const
 {
-  return myMainFrame->ResultName->text().toLatin1().constData();
+  return myMainFrame->ResultName->text();
 }
 
 //=================================================================================

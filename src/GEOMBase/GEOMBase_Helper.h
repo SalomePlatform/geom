@@ -171,7 +171,7 @@ protected:
   // for <theObj> or a nil reference if <theObj> should be published
   // as a top-level object.
 
-  virtual const char* getNewObjectName() const; 
+  virtual QString getNewObjectName() const; 
   virtual void addSubshapesToStudy();
 
   GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, const QString& theName );
