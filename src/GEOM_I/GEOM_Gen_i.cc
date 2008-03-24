@@ -858,7 +858,8 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr theMainShap
 //=============================================================================
 void GEOM_Gen_i::RemoveObject(GEOM::GEOM_Object_ptr theObject)
 {
-  Handle(GEOM_Object) anObject = _impl->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  CORBA::String_var anEntry = theObject->GetEntry();
+  Handle(GEOM_Object) anObject = _impl->GetObject(theObject->GetStudyID(), anEntry);
   if (anObject.IsNull()) return;
   _impl->RemoveObject(anObject);
   return;
