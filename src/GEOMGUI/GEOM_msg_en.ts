@@ -12,7 +12,8 @@
         </message>
         <message>
             <source>DEP_OBJECT</source>
-            <translation>Selected object has been used to create another one\n It can't be deleted </translation>
+            <translation>Selected object has been used to create another one.
+It can't be deleted </translation>
         </message>
         <message>
             <source>DEVIDE_EDGE_NEW_OBJECT_NAME</source>
@@ -20,7 +21,8 @@
         </message>
         <message>
             <source>ERROR_SHAPE_TYPE</source>
-            <translation>Object of incorrect type selected!\nPlease, select face, shell or solid and try again</translation>
+            <translation>Object of incorrect type selected!
+Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_2D_CONTINUTY</source>
@@ -3586,7 +3588,8 @@
         <name>EntityGUI_SketcherDlg</name>
         <message>
             <source>CANNOT_CLOSE</source>
-            <translation>It is impossible to close sketch\nNumber of sketch points too small</translation>
+            <translation>It is impossible to close sketch
+Number of sketch points too small</translation>
         </message>
     </context>
     <context>
@@ -3753,7 +3756,8 @@
         <name>RepairGUI_GlueDlg</name>
         <message>
             <source>FACES_FOR_GLUING_ARE_DETECTED</source>
-            <translation>There are %1 face(s) that can be glued. They are coloured on the screen with red colour\nPlease close this message box and select faces for glueing</translation>
+            <translation>There are %1 face(s) that can be glued. They are coloured on the screen with red colour.
+Please close this message box and select faces for glueing</translation>
         </message>
         <message>
             <source>GLUE_FACES</source>
@@ -3780,7 +3784,8 @@
         </message>
         <message>
             <source>TIME_CONSUMING</source>
-            <translation>Enabling this option may result in a very time-consuming operation for some input shapes.\nWould you like to continue?</translation>
+            <translation>Enabling this option may result in a very time-consuming operation for some input shapes.
+Would you like to continue?</translation>
         </message>
     </context>
 </TS>
