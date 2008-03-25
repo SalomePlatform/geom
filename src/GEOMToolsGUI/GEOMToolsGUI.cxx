@@ -359,9 +359,9 @@ void GEOMToolsGUI::OnEditDelete()
             return;	
 
 	// MAIN LOOP OF SELECTED OBJECTS
-	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-
-	  Handle(SALOME_InteractiveObject) io = It.Value();
+	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
+        {
+          Handle(SALOME_InteractiveObject) io = It.Value();
 	  if ( !io->hasEntry() )
 	    continue;
 
@@ -373,21 +373,32 @@ void GEOMToolsGUI::OnEditDelete()
 
           //If the object has been used to create another one,then it can't be deleted 
           _PTR(ChildIterator) it (aStudy->NewChildIterator(aGeom));
-          for ( it->InitEx( true ); it->More(); it->Next() ) {
+          for ( it->InitEx( true ); it->More(); it->Next() )
+          {
              _PTR(SObject) chobj (it->Value());
 	     if(CheckSubObjectInUse(chobj, obj, aStudy)) return;
 	     //check subobjects
-	     for (_PTR(ChildIterator) it (aStudy->NewChildIterator(obj)); it->More(); it->Next()) {
-	       _PTR(SObject) child (it->Value());
+             _PTR(ChildIterator) it1( aStudy->NewChildIterator( obj ) );
+	     for( it1->InitEx( true ); it1->More(); it1->Next())
+             {
+	       _PTR(SObject) child (it1->Value());
 	       if(CheckSubObjectInUse( chobj, child, aStudy)) return;
 	     }
 	   }
+        }
+
+      	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
+        {
+          Handle(SALOME_InteractiveObject) io = It.Value();
+	  if ( !io->hasEntry() )
+	    continue;
+
+	  _PTR(SObject) obj ( aStudy->FindObjectID( io->getEntry() ) );
 
           RemoveObjectWithChildren(obj, aStudy, views, disp);
-
+          
 	  // Remove objects from Study
 	  aStudyBuilder->RemoveObjectWithChildren( obj );
-
 	  //deleted = true;
 	} // MAIN LOOP of selected
 
