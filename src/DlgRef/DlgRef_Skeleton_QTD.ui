@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>380</width>
-    <height>170</height>
+    <height>182</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -219,15 +219,15 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>buttonOk</tabstop>
+  <tabstop>buttonApply</tabstop>
+  <tabstop>buttonCancel</tabstop>
+  <tabstop>buttonHelp</tabstop>
   <tabstop>RadioButton1</tabstop>
   <tabstop>RadioButton2</tabstop>
   <tabstop>RadioButton3</tabstop>
   <tabstop>RadioButton4</tabstop>
   <tabstop>ResultName</tabstop>
-  <tabstop>buttonOk</tabstop>
-  <tabstop>buttonApply</tabstop>
-  <tabstop>buttonCancel</tabstop>
-  <tabstop>buttonHelp</tabstop>
  </tabstops>
  <resources/>
  <connections/>
