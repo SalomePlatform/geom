@@ -63,6 +63,8 @@ public:
 			 const double = 2. );
   ~EntityGUI_SketcherDlg();
 
+  bool eventFilter (QObject* object, QEvent* event);
+
 protected:
   void                               initSpinBox( QDoubleSpinBox*, 
 						  double, double, double = 0.1, 

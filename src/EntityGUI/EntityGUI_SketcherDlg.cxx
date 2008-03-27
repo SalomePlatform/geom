@@ -216,27 +216,18 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
 
   connect( myGeometryGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
   connect( myGeometryGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
-
-  connect( Group1Spin->SpinBox_DX,  SIGNAL( editingFinished() ),
-	   Group1Spin->buttonApply, SLOT( animateClick() ) );
-  connect( Group2Spin->SpinBox_DX,  SIGNAL( editingFinished() ),
-	   Group2Spin->buttonApply, SLOT( animateClick() ) );
-  connect( Group2Spin->SpinBox_DY,  SIGNAL( editingFinished() ),
-	   Group2Spin->buttonApply, SLOT( animateClick() ) );
-  connect( Group3Spin->SpinBox_DX,  SIGNAL( editingFinished() ),
-	   Group3Spin->buttonApply, SLOT( animateClick() ) );
-  connect( Group3Spin->SpinBox_DY,  SIGNAL( editingFinished() ),
-	   Group3Spin->buttonApply, SLOT( animateClick() ) );
-  connect( Group3Spin->SpinBox_DZ,  SIGNAL( editingFinished() ),
-	   Group3Spin->buttonApply, SLOT( animateClick() ) );
-  connect( Group4Spin->SpinBox_DX,  SIGNAL( editingFinished() ),
-	   Group4Spin->buttonApply, SLOT( animateClick() ) );
-  connect( Group4Spin->SpinBox_DY,  SIGNAL( editingFinished() ),
-	   Group4Spin->buttonApply, SLOT( animateClick() ) );
-  connect( Group4Spin->SpinBox_DZ,  SIGNAL( editingFinished() ),
-	   Group4Spin->buttonApply, SLOT( animateClick() ) );
-  connect( Group4Spin->SpinBox_DS,  SIGNAL( editingFinished() ),
-	   Group4Spin->buttonApply, SLOT( animateClick() ) );
+  
+  // install event filter on spin-boxes to provide Apply action on Return pressed
+  Group1Spin->SpinBox_DX->installEventFilter(this);
+  Group2Spin->SpinBox_DX->installEventFilter(this);
+  Group2Spin->SpinBox_DY->installEventFilter(this);
+  Group3Spin->SpinBox_DX->installEventFilter(this);
+  Group3Spin->SpinBox_DY->installEventFilter(this);
+  Group3Spin->SpinBox_DZ->installEventFilter(this);
+  Group4Spin->SpinBox_DX->installEventFilter(this);
+  Group4Spin->SpinBox_DY->installEventFilter(this);
+  Group4Spin->SpinBox_DZ->installEventFilter(this);
+  Group4Spin->SpinBox_DS->installEventFilter(this);
 
   Init();
 }
@@ -249,6 +240,49 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
 EntityGUI_SketcherDlg::~EntityGUI_SketcherDlg()
 {
   myGeometryGUI->SetActiveDialogBox( 0 );
+}
+
+
+//=================================================================================
+// function : eventFilter()
+// purpose  : event filter for spin-boxes to provide Apply action on Return pressed
+//=================================================================================
+bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
+{
+  if (event->type() == QEvent::KeyPress) {
+    QKeyEvent* ke = (QKeyEvent*)event;
+    if (ke->key() == Qt::Key_Return) {
+      if (object == Group1Spin->SpinBox_DX) {
+        Group1Spin->buttonApply->animateClick();
+        return true;
+      } else if (object == Group2Spin->SpinBox_DX ||
+                 object == Group2Spin->SpinBox_DY) {
+        Group2Spin->buttonApply->animateClick();
+        return true;
+      } else if (object == Group3Spin->SpinBox_DX ||
+                 object == Group3Spin->SpinBox_DY ||
+                 object == Group3Spin->SpinBox_DZ) {
+        Group3Spin->buttonApply->animateClick();
+        return true;
+      } else if (object == Group4Spin->SpinBox_DX ||
+                 object == Group4Spin->SpinBox_DY ||
+                 object == Group4Spin->SpinBox_DZ ||
+                 object == Group4Spin->SpinBox_DS) {
+        Group4Spin->buttonApply->animateClick();
+        return true;
+      }
+    }
+  }
+
+  if (event->type() == QEvent::KeyRelease) {
+    // NPAL16010 (Sketcher Apply non available if only one line is modified)
+    // To have Apply active as soon as value text changed
+    QDoubleSpinBox* aDoubleSpinBox = (QDoubleSpinBox*)object;
+    if (aDoubleSpinBox)
+      ValueChangedInSpinBox( aDoubleSpinBox->value() );
+  }
+  
+  return QDialog::eventFilter(object, event);
 }
 
 
@@ -1498,4 +1532,3 @@ void EntityGUI_SketcherDlg::SetDoubleSpinBoxStep( double step )
   Group4Spin->SpinBox_DZ->setSingleStep(step);
   Group4Spin->SpinBox_DS->setSingleStep(step);
 }
-
