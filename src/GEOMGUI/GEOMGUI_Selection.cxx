@@ -54,8 +54,8 @@
 // VTK Includes
 #include <vtkActorCollection.h>
 
-GEOMGUI_Selection::GEOMGUI_Selection( const QString& client, LightApp_SelectionMgr* mgr )
-: LightApp_Selection( client, mgr )
+GEOMGUI_Selection::GEOMGUI_Selection()
+: LightApp_Selection()
 {
 }
 

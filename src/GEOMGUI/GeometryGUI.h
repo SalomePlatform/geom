@@ -141,7 +141,7 @@ signals :
   void                        SignalDefaultStepValueChanged( double newVal );
 
 protected:
-  virtual LightApp_Selection* createSelection( const QString&, LightApp_SelectionMgr* ) const;
+  virtual LightApp_Selection* createSelection() const;
 
 private:
   GEOMGUI*                    getLibrary( const QString& libraryName );

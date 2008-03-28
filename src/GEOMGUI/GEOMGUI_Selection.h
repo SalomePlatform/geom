@@ -36,7 +36,7 @@ class LightApp_SelectionMgr;
 class GEOMGUI_EXPORT GEOMGUI_Selection : public LightApp_Selection
 {
 public:
-  GEOMGUI_Selection( const QString&, LightApp_SelectionMgr* );
+  GEOMGUI_Selection();
   virtual ~GEOMGUI_Selection();
 
   virtual QVariant      parameter( const int, const QString& ) const;

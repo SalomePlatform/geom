@@ -1378,9 +1378,9 @@ QString GeometryGUI::engineIOR() const
   return "";
 }
 
-LightApp_Selection* GeometryGUI::createSelection( const QString& client, LightApp_SelectionMgr* mgr ) const
+LightApp_Selection* GeometryGUI::createSelection() const
 {
-  return new GEOMGUI_Selection( client, mgr );
+  return new GEOMGUI_Selection();
 }
 
 void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString& title )
