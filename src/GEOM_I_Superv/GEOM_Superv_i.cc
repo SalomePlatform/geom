@@ -1892,6 +1892,7 @@ CORBA::Long GEOM_Superv_i::NumberOfEdges (GEOM::GEOM_Object_ptr theShape)
   return aRes;
 }
 
+
 //=============================================================================
 //  ChangeOrientation:
 //=============================================================================
@@ -1902,6 +1903,46 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ChangeOrientation (GEOM::GEOM_Object_ptr th
   getShapesOp();
   GEOM::GEOM_Object_ptr anObj = myShapesOp->ChangeOrientation(theShape);
   endService( " GEOM_Superv_i::ChangeOrientation" );
+  return anObj;
+}
+
+
+//=============================================================================
+//  GetShapesOnShape:
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::GetShapesOnShape
+                                          (GEOM::GEOM_Object_ptr theCheckShape,
+					   GEOM::GEOM_Object_ptr theShape,
+					   CORBA::Short theShapeType,
+					   GEOM::shape_state theState)
+{
+  beginService( " GEOM_Superv_i::GetShapesOnShape" );
+  MESSAGE("GEOM_Superv_i::GetShapesOnShape");
+  getShapesOp();
+  GEOM::ListOfGO* aList =
+    myShapesOp->GetShapesOnShape(theCheckShape, theShape, theShapeType, theState);
+  GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aList));
+  MESSAGE(" List of "<<aListPtr->GetList().length()<<" element(s)");
+  endService( " GEOM_Superv_i::GetShapesOnShape" );
+  return aListPtr->_this();
+}
+
+
+//=============================================================================
+//  GetShapesOnShapeAsCompound:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::GetShapesOnShapeAsCompound
+                                          (GEOM::GEOM_Object_ptr theCheckShape,
+					   GEOM::GEOM_Object_ptr theShape,
+					   CORBA::Short theShapeType,
+					   GEOM::shape_state theState)
+{
+  beginService( " GEOM_Superv_i::GetShapesOnShapeAsCompound" );
+  MESSAGE("GEOM_Superv_i::GetShapesOnShapeAsCompound");
+  getShapesOp();
+  GEOM::GEOM_Object_ptr anObj = 
+    myShapesOp->GetShapesOnShapeAsCompound(theCheckShape, theShape, theShapeType, theState);
+  endService( " GEOM_Superv_i::GetShapesOnShapeAsCompound" );
   return anObj;
 }
 

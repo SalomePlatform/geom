@@ -499,7 +499,8 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 504 ||   // MENU OPERATION - ARCHIMEDE
 	   id == 505 ||   // MENU OPERATION - FILLET
 	   id == 506 ||   // MENU OPERATION - CHAMFER
-	   id == 507 ) {  // MENU OPERATION - CLIPPING RANGE
+	   id == 507 ||   // MENU OPERATION - CLIPPING RANGE
+	   id == 508 ) {  // MENU OPERATION - GET SHAPES ON SHAPE
 #ifndef WNT
 	library = getLibrary( "libOperationGUI.so" );
 #else
@@ -830,6 +831,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 505, "FILLET" );
   createGeomAction( 506, "CHAMFER" );
   //createGeomAction( 507, "CLIPPING" );
+  createGeomAction( 508, "GET_SHAPES_ON_SHAPES" );
 
   createGeomAction( 9998, "MUL_TRANSFORM" );
   createGeomAction( 9995, "EXPLODE_BLOCKS" );
@@ -981,6 +983,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createMenu( 503, operId, -1 );
   createMenu( 504, operId, -1 );
+  createMenu( 508, operId, -1 );
   createMenu( separator(), operId, -1 );
   createMenu( 505, transId, -1 );
   createMenu( 506, transId, -1 );

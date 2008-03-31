@@ -83,6 +83,9 @@
 
 #define GEOM_COMPOUNDFILTER 41
 
+#define GEOM_SHAPES_ON_SHAPE 42
+
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -248,6 +251,8 @@
 #define CDG_MEASURE 1
 
 #define GROUP_FUNCTION 1
+
+#define SHAPES_ON_SHAPE 1
 
 // Blocks
 #define BLOCK_FACE_FOUR_PNT       1

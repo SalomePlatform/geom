@@ -1107,6 +1107,38 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetShapesOnBoxIDs", self.ShapesOp)
             return aList
         
+        ## Find in \a theShape all sub-shapes of type \a theShapeType,
+        #  situated relatively the specified \a theCheckShape by the
+        #  certain way, defined through \a theState parameter.
+        #  @param theCheckShape Shape for relative comparing.
+        #  @param theShape Shape to find sub-shapes of.
+        #  @param theShapeType Type of sub-shapes to be retrieved.
+        #  @param theState The state of the subshapes to find. It can be one of
+        #   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
+        #  @return List of all found sub-shapes.
+        #
+        def GetShapesOnShape(self, theCheckShape, theShape, theShapeType, theState):
+            aList = self.ShapesOp.GetShapesOnShape(theCheckShape, theShape,
+                                                   theShapeType, theState)
+            RaiseIfFailed("GetShapesOnShape", self.ShapesOp)
+            return aList
+
+        ## Works like the above method, but returns result as compound
+        #
+        def GetShapesOnShapeAsCompound(self, theCheckShape, theShape, theShapeType, theState):
+            anObj = self.ShapesOp.GetShapesOnShapeAsCompound(theCheckShape, theShape,
+                                                             theShapeType, theState)
+            RaiseIfFailed("GetShapesOnShapeAsCompound", self.ShapesOp)
+            return anObj
+        
+        ## Works like the above method, but returns list of sub-shapes indices
+        #
+        def GetShapesOnShapeIDs(self, theCheckShape, theShape, theShapeType, theState):
+            aList = self.ShapesOp.GetShapesOnShapeIDs(theCheckShape, theShape,
+                                                      theShapeType, theState)
+            RaiseIfFailed("GetShapesOnShapeIDs", self.ShapesOp)
+            return aList
+        
         ## Get sub-shape(s) of theShapeWhere, which are
         #  coincident with \a theShapeWhat or could be a part of it.
         #  @param theShapeWhere Shape to find sub-shapes of.

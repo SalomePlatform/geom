@@ -465,6 +465,16 @@ msgstr "Step U :"
 #==============================================================================
 #
 
+#ShapesOnShape
+msgid "GEOM_SHAPES_ON_SHAPE"
+msgstr "Shapes_on_shape"
+msgid "GEOM_SHAPES_ON_SHAPE_ESHAPE"
+msgstr "Shape for exploding"
+msgid "GEOM_SHAPES_ON_SHAPE_CSHAPE"
+msgstr "Shape for checking"
+msgid "GEOM_SHAPES_ON_SHAPE_STATE"
+msgstr "State"
+
 #Partition
 msgid "GEOM_PARTITION"
 msgstr "Partition"
@@ -1076,6 +1086,10 @@ msgstr "Change Orientation"
 msgid "GEOM_ORIENTATION_OPT"
 msgstr "Reverse orientation with normal vectors simulation"
 
+#: GeometryGUI_GetShapesOnShapeDlg.cxx
+msgid "GEOM_SHAPES_ON_SHAPE_TITLE"
+msgstr "Get shapes on shape"
+
 #: GeometryGUI_PartitionDlg.cxx:45
 msgid "GEOM_PARTITION_TITLE"
 msgstr "Partition Of Object With Tool"
@@ -1429,6 +1443,19 @@ msgid "GEOM_BEZIER"
 msgstr "Bezier"
 msgid "GEOM_INTERPOL"
 msgstr "Interpolation"
+
+msgid "GEOM_STATE_IN"
+msgstr "IN"
+msgid "GEOM_STATE_OUT"
+msgstr "OUT"
+msgid "GEOM_STATE_ON"
+msgstr "ON"
+msgid "GEOM_STATE_ONIN"
+msgstr "ONIN"
+msgid "GEOM_STATE_ONOUT"
+msgstr "ONOUT"
+msgid "GEOM_STATE_INOUT"
+msgstr "INOUT"
 
 #
 #==============================================================================
@@ -2588,6 +2615,15 @@ msgstr "Partition"
 
 msgid "STB_PARTITION"
 msgstr "Partition"
+
+msgid "TOP_GET_SHAPES_ON_SHAPES"
+msgstr "Get shapes on shape"
+
+msgid "MEN_GET_SHAPES_ON_SHAPES"
+msgstr "Get shapes on shape"
+
+msgid "STB_GET_SHAPES_ON_SHAPES"
+msgstr "Get shapes on shape"
 
 msgid "TOP_ARCHIMEDE"
 msgstr "Archimede"

@@ -346,6 +346,15 @@ module GEOM
     long NumberOfEdges (in GEOM_Object theShape) ;
     GEOM_Object ChangeOrientation (in GEOM_Object theShape) ;
 
+    GEOM_List GetShapesOnShape (in GEOM_Object theCheckShape,
+				in GEOM_Object theShape, 
+				in short       theShapeType,
+				in shape_state theState);
+    GEOM_Object GetShapesOnShapeAsCompound (in GEOM_Object theCheckShape,
+					    in GEOM_Object theShape, 
+					    in short       theShapeType,
+					    in shape_state theState);
+
     //-----------------------------------------------------------//
     // BlocksOperations                                          //
     //-----------------------------------------------------------//

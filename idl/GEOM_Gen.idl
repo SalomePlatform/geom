@@ -1383,6 +1383,45 @@ module GEOM
 			     in shape_state theState);
 
     /*!
+     * \brief Find subshapes complying with given status
+     * \param theCheckShape - the shape to check state of subshapes against
+     * \param theShape - the shape to explore
+     * \param theShapeType - type of subshape of theShape
+     * \param theState - required state
+     * \return List of IDs of all found sub-shapes.
+     */
+    ListOfLong GetShapesOnShapeIDs (in GEOM_Object theCheckShape,
+				    in GEOM_Object theShape,
+				    in short       theShapeType,
+				    in shape_state theState);
+
+    /*!
+     * \brief Find subshapes complying with given status
+     * \param theCheckShape - the shape to check state of subshapes against
+     * \param theShape - the shape to explore
+     * \param theShapeType - type of subshape of theShape
+     * \param theState - required state
+     * \return List of all found sub-shapes.
+     */
+    ListOfGO GetShapesOnShape (in GEOM_Object theCheckShape,
+			       in GEOM_Object theShape,
+			       in short       theShapeType,
+			       in shape_state theState);
+
+    /*!
+     * \brief Find subshapes complying with given status
+     * \param theCheckShape - the shape to check state of subshapes against
+     * \param theShape - the shape to explore
+     * \param theShapeType - type of subshape of theShape
+     * \param theState - required state
+     * \return compound includes all found sub-shapes.
+     */
+    GEOM_Object GetShapesOnShapeAsCompound (in GEOM_Object theCheckShape,
+					    in GEOM_Object theShape,
+					    in short       theShapeType,
+					    in shape_state theState);
+
+    /*!
      *  Get sub-shape(s) of \a theShapeWhere, which are
      *  coincident with \a theShapeWhat or could be a part of it.
      *  \param theShapeWhere Shape to find sub-shapes of.

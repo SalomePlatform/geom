@@ -414,6 +414,17 @@ public:
   CORBA::Long NumberOfEdges (GEOM::GEOM_Object_ptr theShape);
   GEOM::GEOM_Object_ptr ChangeOrientation (GEOM::GEOM_Object_ptr theShape);
 
+  GEOM::GEOM_List_ptr GetShapesOnShape (GEOM::GEOM_Object_ptr theCheckShape,
+  					GEOM::GEOM_Object_ptr theShape,
+  					CORBA::Short theShapeType,
+  					GEOM::shape_state theState);
+  GEOM::GEOM_Object_ptr GetShapesOnShapeAsCompound
+                                       (GEOM::GEOM_Object_ptr theCheckShape,
+  					GEOM::GEOM_Object_ptr theShape,
+  					CORBA::Short theShapeType,
+  					GEOM::shape_state theState);
+
+
   //-----------------------------------------------------------//
   // BlocksOperations                                          //
   //-----------------------------------------------------------//

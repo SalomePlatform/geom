@@ -50,6 +50,7 @@ using namespace std;
 #include "GEOMAlgo_FinderShapeOnQuad.hxx"
 #include "GEOMAlgo_FinderShapeOn2.hxx"
 #include "GEOMAlgo_ClsfBox.hxx"
+#include "GEOMAlgo_ClsfSolid.hxx"
 #include "GEOMAlgo_Gluer1.hxx"
 #include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
 #include "GEOMAlgo_CoupleOfShapes.hxx"
@@ -116,6 +117,7 @@ using namespace std;
 
 #include <vector>
 
+#include <Standard_NullObject.hxx>
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -1554,7 +1556,7 @@ Handle(TColStd_HSequenceOfInteger)
 
   // Make a Python command
   GEOM::TPythonDump(aFunction)
-    << "listShapesOnBoxIDs = geompy.GetShapesOnQuadrangleIDs("
+    << "listShapesOnBoxIDs = geompy.GetShapesOnBoxIDs("
     << theBox << ", "
     << theShape << ", "
     << TopAbs_ShapeEnum(theShapeType) << ", "
@@ -1609,6 +1611,235 @@ Handle(TColStd_HSequenceOfTransient)
 
   SetErrorCode(OK);
   return aSeq;
+}
+
+
+//=======================================================================
+//function : getShapesOnShapeIDs
+/*!
+ * \brief Find IDs of subshapes complying with given status about surface
+ * \param theCheckShape - the shape to check state of subshapes against
+ * \param theShape - the shape to explore
+ * \param theShapeType - type of subshape of theShape
+ * \param theState - required state
+ * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+ */
+//=======================================================================
+
+Handle(TColStd_HSequenceOfInteger) 
+  GEOMImpl_IShapesOperations::getShapesOnShapeIDs
+                                 (const Handle(GEOM_Object)& theCheckShape,
+                                  const Handle(GEOM_Object)& theShape,
+                                  const Standard_Integer theShapeType,
+                                  GEOMAlgo_State theState)
+{
+  Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
+
+  TopoDS_Shape aCheckShape = theCheckShape->GetValue();
+  TopoDS_Shape aShape = theShape->GetValue();
+  TopTools_ListOfShape res;
+
+  // Check presence of triangulation, build if need
+  if (!CheckTriangulation(aShape)) {
+    SetErrorCode("Cannot build triangulation on the shape");
+    return aSeqOfIDs;
+  }
+
+  // Call algo
+  GEOMAlgo_FinderShapeOn2 aFinder;
+  Standard_Real aTol = 0.0001; // default value
+
+  Handle(GEOMAlgo_ClsfSolid) aClsfSolid = new GEOMAlgo_ClsfSolid;
+  aClsfSolid->SetShape(aCheckShape);
+
+  aFinder.SetShape(aShape);
+  aFinder.SetTolerance(aTol);
+  aFinder.SetClsf(aClsfSolid);
+  aFinder.SetShapeType( (TopAbs_ShapeEnum)theShapeType );
+  aFinder.SetState(theState);
+  aFinder.Perform();
+
+  // Interprete results
+  Standard_Integer iErr = aFinder.ErrorStatus();
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iErr) {
+    MESSAGE(" iErr : " << iErr);
+    TCollection_AsciiString aMsg (" iErr : ");
+    aMsg += TCollection_AsciiString(iErr);
+    SetErrorCode(aMsg);
+    return aSeqOfIDs;
+  }
+  Standard_Integer iWrn = aFinder.WarningStatus();
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iWrn) {
+    MESSAGE(" *** iWrn : " << iWrn);
+  }
+
+  const TopTools_ListOfShape& listSS = aFinder.Shapes(); // the result
+
+  if (listSS.Extent() < 1) {
+    //SetErrorCode("Not a single sub-shape of the requested type found on the given surface");
+    SetErrorCode(NOT_FOUND_ANY); // NPAL18017
+  }
+
+  // Fill sequence of object IDs
+  aSeqOfIDs = new TColStd_HSequenceOfInteger;
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+
+  TopTools_ListIteratorOfListOfShape itSub (listSS);
+  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
+    int id = anIndices.FindIndex(itSub.Value());
+    aSeqOfIDs->Append(id);
+  }
+
+  return aSeqOfIDs;
+}
+
+
+//=======================================================================
+//function : GetShapesOnShapeIDs
+/*!
+ * \brief Find subshapes complying with given status about surface
+ * \param theCheckShape - the shape to check state of subshapes against
+ * \param theShape - the shape to explore
+ * \param theShapeType - type of subshape of theShape
+ * \param theState - required state
+ * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+ */
+//=======================================================================
+
+Handle(TColStd_HSequenceOfInteger)
+    GEOMImpl_IShapesOperations::GetShapesOnShapeIDs
+                            (const Handle(GEOM_Object)& theCheckShape,
+                             const Handle(GEOM_Object)& theShape,
+                             const Standard_Integer theShapeType,
+                             GEOMAlgo_State theState)
+{
+  Handle(TColStd_HSequenceOfInteger) aSeqOfIDs =
+    getShapesOnShapeIDs (theCheckShape, theShape, theShapeType, theState);
+
+  if ( aSeqOfIDs.IsNull()  || aSeqOfIDs->Length() == 0 )
+    return NULL;
+
+  // The GetShapesOnShape() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction =
+    GEOM::GetCreatedLast(theShape,theCheckShape)->GetLastFunction();
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction)
+    << "listShapesOnBoxIDs = geompy.GetShapesOnShapeIDs("
+    << theCheckShape << ", "
+    << theShape << ", "
+    << TopAbs_ShapeEnum(theShapeType) << ", "
+    << theState << ")";
+
+  SetErrorCode(OK);
+  return aSeqOfIDs;
+}
+
+
+//=======================================================================
+//function : GetShapesOnShape
+/*!
+ * \brief Find subshapes complying with given status about surface
+ * \param theCheckShape - the shape to check state of subshapes against
+ * \param theShape - the shape to explore
+ * \param theShapeType - type of subshape of theShape
+ * \param theState - required state
+ * \retval Handle(TColStd_HSequenceOfTransient) - found subshapes
+ */
+//=======================================================================
+
+Handle(TColStd_HSequenceOfTransient)
+  GEOMImpl_IShapesOperations::GetShapesOnShape
+                             (const Handle(GEOM_Object)& theCheckShape,
+                              const Handle(GEOM_Object)&  theShape,
+                              const Standard_Integer theShapeType,
+                              GEOMAlgo_State theState)
+{
+  Handle(TColStd_HSequenceOfInteger) aSeqOfIDs =
+    getShapesOnShapeIDs (theCheckShape, theShape, theShapeType, theState);
+  if ( aSeqOfIDs.IsNull()  || aSeqOfIDs->Length() == 0 )
+    return NULL;
+
+  // Find objects by indices
+  TCollection_AsciiString anAsciiList;
+  Handle(TColStd_HSequenceOfTransient) aSeq;
+  aSeq = getObjectsShapesOn( theShape, aSeqOfIDs, anAsciiList );
+
+  if ( aSeq.IsNull() || aSeq->IsEmpty() )
+    return NULL;
+
+  // Make a Python command
+
+  Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast( aSeq->Value( 1 ));
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction)
+    << "[" << anAsciiList.ToCString() << "] = geompy.GetShapesOnShape("
+    << theCheckShape << ", "
+    << theShape << ", "
+    << TopAbs_ShapeEnum(theShapeType) << ", "
+    << theState << ")";
+
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+
+//=======================================================================
+//function : GetShapesOnShapeAsCompound
+//=======================================================================
+
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnShapeAsCompound
+                             (const Handle(GEOM_Object)& theCheckShape,
+                              const Handle(GEOM_Object)&  theShape,
+                              const Standard_Integer theShapeType,
+                              GEOMAlgo_State theState)
+{
+  Handle(TColStd_HSequenceOfInteger) aSeqOfIDs =
+    getShapesOnShapeIDs (theCheckShape, theShape, theShapeType, theState);
+
+  if ( aSeqOfIDs.IsNull()  || aSeqOfIDs->Length() == 0 )
+    return NULL;
+
+  // Find objects by indices
+  TCollection_AsciiString anAsciiList;
+  Handle(TColStd_HSequenceOfTransient) aSeq;
+  aSeq = getObjectsShapesOn( theShape, aSeqOfIDs, anAsciiList );
+
+  if ( aSeq.IsNull() || aSeq->IsEmpty() )
+    return NULL;
+
+  TopoDS_Compound aCompound;
+  BRep_Builder B;
+  B.MakeCompound(aCompound);
+  int i = 1;
+  for(; i<=aSeq->Length(); i++) {
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(aSeq->Value(i));
+    TopoDS_Shape aShape_i = anObj->GetValue();
+    B.Add(aCompound,aShape_i);
+  }
+
+  //Add a new result object
+  Handle(GEOM_Object) aRes = GetEngine()->AddObject(GetDocID(), GEOM_SHAPES_ON_SHAPE);
+  Handle(GEOM_Function) aFunction =
+    aRes->AddFunction(GEOMImpl_ShapeDriver::GetID(), SHAPES_ON_SHAPE);
+  aFunction->SetValue(aCompound);
+
+  GEOM::TPythonDump(aFunction)
+    << aRes << " = geompy.GetShapesOnShapeAsCompound("
+    << theCheckShape << ", "
+    << theShape << ", "
+    << TopAbs_ShapeEnum(theShapeType) << ", "
+    << theState << ")";
+
+  SetErrorCode(OK);
+
+  return aRes;
 }
 
 

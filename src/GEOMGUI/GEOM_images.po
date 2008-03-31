@@ -201,6 +201,10 @@ msgstr "arccenter.png"
 msgid "ICON_DLG_ARCHIMEDE"
 msgstr "archimede.png"
 
+#GetShapesOnShapeDlg
+msgid "ICON_DLG_SHAPES_ON_SHAPE"
+msgstr "shapesonshape.png"
+
 #PartitionDlg
 msgid "ICON_DLG_PARTITION"
 msgstr "partition.png"

@@ -39,6 +39,7 @@ dist_libOperationGUI_la_SOURCES = \
 	OperationGUI.cxx \
 	OperationGUI_ArchimedeDlg.cxx \
 	OperationGUI_PartitionDlg.cxx \
+	OperationGUI_GetShapesOnShapeDlg.cxx \
 	OperationGUI_FilletDlg.cxx \
 	OperationGUI_ChamferDlg.cxx \
 	OperationGUI_ClippingDlg.cxx
@@ -46,6 +47,7 @@ dist_libOperationGUI_la_SOURCES = \
 MOC_FILES = \
 	OperationGUI_ArchimedeDlg_moc.cxx \
 	OperationGUI_PartitionDlg_moc.cxx \
+	OperationGUI_GetShapesOnShapeDlg_moc.cxx \
 	OperationGUI_FilletDlg_moc.cxx \
 	OperationGUI_ChamferDlg_moc.cxx \
 	OperationGUI_ClippingDlg_moc.cxx
@@ -75,6 +77,7 @@ libOperationGUI_la_CPPFLAGS = \
 	-I$(srcdir)/../OBJECT \
 	-I$(srcdir)/../GEOMClient \
 	-I$(srcdir)/../GEOMImpl \
+	-I$(srcdir)/../GEOMAlgo \
 	-I$(top_builddir)/idl \
 	-I$(top_builddir)/salome_adm/unix
 

@@ -175,6 +175,22 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 				       CORBA::Long           theShapeType,
 				       GEOM::shape_state     theState);
 
+  GEOM::ListOfGO* GetShapesOnShape (GEOM::GEOM_Object_ptr theSheckShape,
+				    GEOM::GEOM_Object_ptr theShape,
+				    CORBA::Short          theShapeType,
+				    GEOM::shape_state     theState);
+
+  GEOM::GEOM_Object_ptr GetShapesOnShapeAsCompound
+                                   (GEOM::GEOM_Object_ptr theSheckShape,
+				    GEOM::GEOM_Object_ptr theShape,
+				    CORBA::Short          theShapeType,
+				    GEOM::shape_state     theState);
+
+  GEOM::ListOfLong* GetShapesOnShapeIDs (GEOM::GEOM_Object_ptr theCheckShape,
+					 GEOM::GEOM_Object_ptr theShape,
+					 CORBA::Short          theShapeType,
+					 GEOM::shape_state     theState);
+
   GEOM::GEOM_Object_ptr GetInPlace (GEOM::GEOM_Object_ptr theShapeWhere,
 				    GEOM::GEOM_Object_ptr theShapeWhat);
 

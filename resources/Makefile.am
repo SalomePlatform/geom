@@ -130,6 +130,7 @@ section.png \
 select1.png \
 sewing.png \
 shading.png \
+shapesonshape.png \
 sketch.png \
 sphere.png \
 spheredxyz.png \

@@ -1290,6 +1290,133 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnBoxIDs
   return aSeq._retn();
 }
 
+
+//=============================================================================
+/*!
+ *  GetShapesOnShape
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnShape
+                                           (GEOM::GEOM_Object_ptr theCheckShape,
+					    GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Short          theShapeType,
+					    GEOM::shape_state     theState)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if ( theShape == NULL ||  theCheckShape == NULL )
+    return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aCheckShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theCheckShape->GetEntry());
+
+  if (aShape.IsNull() || aCheckShape.IsNull() )
+    return aSeq._retn();
+
+  //Get Shapes On Shape
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->GetShapesOnShape
+    (aCheckShape,aShape, theShapeType,ShapeState(theState));
+
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+
+//=============================================================================
+/*!
+ *  GetShapesOnShapeAsCompound
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetShapesOnShapeAsCompound
+                                           (GEOM::GEOM_Object_ptr theCheckShape,
+					    GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Short          theShapeType,
+					    GEOM::shape_state     theState)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if ( theShape == NULL ||  theCheckShape == NULL )
+    return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aCheckShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theCheckShape->GetEntry());
+
+  if (aShape.IsNull() || aCheckShape.IsNull() )
+    return aGEOMObject._retn();
+
+  //Get Shapes On Shape
+  Handle(GEOM_Object) anObject = GetOperations()->GetShapesOnShapeAsCompound
+    (aCheckShape,aShape, theShapeType,ShapeState(theState));
+
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+
+//=============================================================================
+/*!
+ *  GetShapesOnShapeIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnShapeIDs
+                                           (GEOM::GEOM_Object_ptr theCheckShape,
+					    GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Short          theShapeType,
+					    GEOM::shape_state     theState)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if ( theShape == NULL ||  theCheckShape == NULL )
+    return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aCheckShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theCheckShape->GetEntry());
+
+  if (aShape.IsNull() || aCheckShape.IsNull() )
+    return aSeq._retn();
+
+  //Get Shapes On Shape
+  Handle(TColStd_HSequenceOfInteger) aHSeq = GetOperations()->GetShapesOnShapeIDs
+    (aCheckShape,aShape, theShapeType,ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
+
 //=============================================================================
 /*!
  *  GetInPlace

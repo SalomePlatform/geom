@@ -40,8 +40,8 @@
 #include "OperationGUI_ArchimedeDlg.h"   // Method ARCHIMEDE
 #include "OperationGUI_FilletDlg.h"      // Method FILLET
 #include "OperationGUI_ChamferDlg.h"     // Method CHAMFER
-
 #include "OperationGUI_ClippingDlg.h"
+#include "OperationGUI_GetShapesOnShapeDlg.h"
 
 using namespace std;
 
@@ -80,6 +80,7 @@ bool OperationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case 505: (new OperationGUI_FilletDlg   (getGeometryGUI(), parent))->show(); break;
   case 506: (new OperationGUI_ChamferDlg  (getGeometryGUI(), parent))->show(); break;
   case 507: (new OperationGUI_ClippingDlg (getGeometryGUI(), parent))->show(); break;
+  case 508: (new OperationGUI_GetShapesOnShapeDlg (getGeometryGUI(), parent))->show(); break;
   default:
     app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
   }

@@ -435,6 +435,16 @@ msgstr "Pas U :"
 #==============================================================================
 #
 
+#GetShapesOnShape
+msgid "GEOM_SHAPES_ON_SHAPE"
+msgstr "Get shapes on shape"
+msgid "GEOM_SHAPES_ON_SHAPE_ESHAPE"
+msgstr "Shape for exploding"
+msgid "GEOM_SHAPES_ON_SHAPE_CSHAPE"
+msgstr "Shape for checking"
+msgid "GEOM_SHAPES_ON_SHAPE_STATE"
+msgstr "State"
+
 #Partition
 msgid "GEOM_PARTITION"
 msgstr "Partition"
@@ -977,6 +987,10 @@ msgstr "Changer l'Orientation"
 msgid "GEOM_ORIENTATION_OPT"
 msgstr "Renverser l'orientation avec une simulation de vecteur normal"
 
+#: GeometryGUI_GetShapesOnShapeDlg.cxx
+msgid "GEOM_SHAPES_ON_SHAPE_TITLE"
+msgstr "Get shapes on shape"
+
 #: GeometryGUI_PartitionDlg.cxx:45
 msgid "GEOM_PARTITION_TITLE"
 msgstr "Partition d'Objects Avec Outils"
@@ -1273,6 +1287,19 @@ msgid "GEOM_BEZIER"
 msgstr "Bezier"
 msgid "GEOM_INTERPOL"
 msgstr "Interpolation"
+
+msgid "GEOM_STATE_IN"
+msgstr "IN"
+msgid "GEOM_STATE_OUT"
+msgstr "OUT"
+msgid "GEOM_STATE_ON"
+msgstr "ON"
+msgid "GEOM_STATE_ONIN"
+msgstr "ONIN"
+msgid "GEOM_STATE_ONOUT"
+msgstr "ONOUT"
+msgid "GEOM_STATE_INOUT"
+msgstr "INOUT"
 
 #
 #==============================================================================
