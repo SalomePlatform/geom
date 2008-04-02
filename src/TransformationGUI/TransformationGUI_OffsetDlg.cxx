@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -114,6 +114,8 @@ void TransformationGUI_OffsetDlg::Init()
   // Activate Create a Copy mode
   GroupPoints->CheckButton1->setChecked(true);
   CreateCopyModeChanged(true);
+
+  GroupBoxPublish->show();
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -281,7 +283,6 @@ bool TransformationGUI_OffsetDlg::isValid( QString& msg )
   return true;
 }
 
-
 //=================================================================================
 // function : execute
 // purpose  :
@@ -315,15 +316,17 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
 }
 
 //=================================================================================
-// function : closeEvent
+// function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void TransformationGUI_OffsetDlg::closeEvent( QCloseEvent* e )
+void TransformationGUI_OffsetDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                                    SALOMEDS::SObject_ptr theSObject)
 {
-  // myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
+  if (CheckBoxRestoreSS->isChecked()) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(), /*isTrsf=*/true);
+  }
 }
-
 
 //=================================================================================
 // function : GetOffset()
@@ -333,7 +336,6 @@ double TransformationGUI_OffsetDlg::GetOffset() const
 {
   return GroupPoints->SpinBox_DX->GetValue();
 }
-
 
 //=================================================================================
 // function :  CreateCopyModeChanged()

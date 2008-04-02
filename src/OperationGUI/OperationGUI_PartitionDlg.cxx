@@ -1,22 +1,22 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
@@ -36,6 +36,7 @@
 #include "LightApp_SelectionMgr.h"
 
 #include <qcheckbox.h>
+#include <qradiobutton.h>
 #include <qcombobox.h>
 #include <qlabel.h>
 
@@ -43,7 +44,7 @@
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg()
-// purpose  : Constructs a OperationGUI_PartitionDlg which is a child of 'parent', with the 
+// purpose  : Constructs a OperationGUI_PartitionDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -111,24 +112,24 @@ void OperationGUI_PartitionDlg::Init()
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_VERTEX"));
   GroupPoints->radioButton4->setChecked(FALSE);
 
+  GroupBoxPublish->show();
+
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
   connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
-  
+
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  
+
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  
+
   connect(GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(ComboTextChanged()));
-  
-  connect(GroupPoints->radioButton4, SIGNAL(stateChanged(int)), this, SLOT(ReverseSense(int)));
 
   connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  
+
   initName( tr( "GEOM_PARTITION" ) );
   ConstructorsClicked( 0 );
 }
@@ -142,7 +143,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked(int constructorId)
 {
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   globalSelection();
-  
+
   myListShapes.length(0);
   myListTools.length(0);
   myListKeepInside.length(0);
@@ -203,9 +204,9 @@ void OperationGUI_PartitionDlg::ClickOnOk()
 //=================================================================================
 bool OperationGUI_PartitionDlg::ClickOnApply()
 {
-  if ( !onAccept() )
+  if (!onAccept())
     return false;
-  
+
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
@@ -220,7 +221,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
   QString aString = "";
-  
+
   int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString, true );
 
   if ( nbSel < 1 )
@@ -233,15 +234,15 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
       myListTools.length( 0 );
   }
-  
+
   // One and only one plane can be selected
-  
+
   if ( getConstructorId() == 1 && myEditCurrentArgument == GroupPoints->LineEdit2 && nbSel != 1 )
   {
     myListTools.length( 0 );
     return;
   }
-  
+
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
   {
     GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myListShapes, true );
@@ -255,7 +256,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
     if ( !myListTools.length() )
       return;
   }
-  
+
   myEditCurrentArgument->setText( aString );
 }
 
@@ -267,7 +268,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
 void OperationGUI_PartitionDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  
+
   if(send == GroupPoints->PushButton1)
     myEditCurrentArgument = GroupPoints->LineEdit1;
   else if(send == GroupPoints->PushButton2)
@@ -276,7 +277,7 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
     if( getConstructorId()==1 )
       globalSelection( GEOM_PLANE  );
   }
- 
+
   globalSelection( GEOM_ALLSHAPES );
 
   myEditCurrentArgument->setFocus();
@@ -389,20 +390,22 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
   return res;
 }
 
-
 //=================================================================================
-// function : closeEvent
+// function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void OperationGUI_PartitionDlg::closeEvent( QCloseEvent* e )
+void OperationGUI_PartitionDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                                  SALOMEDS::SObject_ptr theSObject)
 {
-  GEOMBase_Skeleton::closeEvent( e );
+  if (CheckBoxRestoreSS->isChecked()) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(), /*isTrsf=*/false);
+  }
 }
-
 
 //=======================================================================
 //function : ComboTextChanged
-//purpose  : 
+//purpose  :
 //=======================================================================
 void OperationGUI_PartitionDlg::ComboTextChanged()
 {
@@ -415,10 +418,9 @@ void OperationGUI_PartitionDlg::ComboTextChanged()
   //GroupPoints->PushButton4->setEnabled(IsEnabled);
 }
 
-
 //=================================================================================
 // function : GetLimit()
-// purpose  : 
+// purpose  :
 //=================================================================================
 int OperationGUI_PartitionDlg::GetLimit() const
 {

@@ -106,7 +106,7 @@ protected:
   void prepareSelection( const ObjectList&, const int );
   void prepareSelection( GEOM::GEOM_Object_ptr, const int );
 
-  void addInStudy      ( GEOM::GEOM_Object_ptr, const char* theName ); 
+  void addInStudy      ( GEOM::GEOM_Object_ptr, const char* theName );
 
   bool openCommand     ();
   bool abortCommand    ();
@@ -170,6 +170,9 @@ protected:
   // This method is called by onAccept(). 
   // It should perform the required operation and put all new or modified objects into 
   // <objects> argument.Should return <false> if some error occurs during its execution. 
+
+  virtual void restoreSubShapes (SALOMEDS::Study_ptr theStudy, SALOMEDS::SObject_ptr theSObject);
+  // This method is called by addInStudy().
 
   virtual GEOM::GEOM_Object_ptr getFather( GEOM::GEOM_Object_ptr theObj );
   // This method is called by addInStudy(). It should return a father object

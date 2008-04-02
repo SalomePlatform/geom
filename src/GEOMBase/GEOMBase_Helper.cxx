@@ -523,10 +523,31 @@ void GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theN
   if ( !aStudy || theObj->_is_nil() )
     return;
 
+  SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(aStudy);
+
   GEOM::GEOM_Object_ptr aFatherObj = getFather( theObj );
 
-  getGeomEngine()->AddInStudy(GeometryGUI::ClientStudyToStudy(aStudy),
-                              theObj, theName, aFatherObj);
+  SALOMEDS::SObject_var aSO =
+    getGeomEngine()->AddInStudy(aStudyDS, theObj, theName, aFatherObj);
+
+  // Each dialog is responsible for this method implementation,
+  // default implementation does nothing
+  restoreSubShapes(aStudyDS, aSO);
+}
+
+//================================================================
+// Function : restoreSubShapes
+// Purpose  : restore tree of argument's sub-shapes under the resulting shape
+//================================================================
+void GEOMBase_Helper::restoreSubShapes (SALOMEDS::Study_ptr   /*theStudy*/,
+                                        SALOMEDS::SObject_ptr /*theSObject*/)
+{
+  // do nothing by default
+
+  // example of implementation in particular dialog:
+  // GEOM::ListOfGO anArgs;
+  // anArgs.length(0); // empty list means that all arguments should be restored
+  // getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs, /*isTrsf=*/false);
 }
 
 //================================================================
@@ -751,10 +772,11 @@ bool GEOMBase_Helper::checkViewWindow()
 //            It perfroms user input validation, then it
 //            performs a proper operation and manages transactions, etc.
 //================================================================
-bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
+bool GEOMBase_Helper::onAccept (const bool publish, const bool useTransaction)
 {
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
-  if ( !appStudy ) return false;
+  SalomeApp_Study* appStudy =
+    dynamic_cast<SalomeApp_Study*>(SUIT_Session::session()->activeApplication()->activeStudy());
+  if (!appStudy) return false;
   _PTR(Study) aStudy = appStudy->studyDS();
 
   bool aLocked = (_PTR(AttributeStudyProperties) (aStudy->GetProperties()))->IsLocked();

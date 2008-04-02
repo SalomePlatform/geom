@@ -20,9 +20,6 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <property name="caption">
-        <string>DlgRef_Skeleton_QTD</string>
-    </property>
     <property name="sizeGripEnabled">
         <bool>true</bool>
     </property>
@@ -50,92 +47,6 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QGroupBox" row="3" column="0">
-                    <property name="name">
-                        <cstring>GroupButtons</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="title">
-                        <string></string>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>11</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QLayoutWidget">
-                            <property name="name">
-                                <cstring>layout3</cstring>
-                            </property>
-                            <grid>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <spacer row="0" column="3">
-                                    <property name="name">
-                                        <cstring>Spacer1</cstring>
-                                    </property>
-                                    <property name="orientation">
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property name="sizeType">
-                                        <enum>Expanding</enum>
-                                    </property>
-                                    <property name="sizeHint">
-                                        <size>
-                                            <width>90</width>
-                                            <height>20</height>
-                                        </size>
-                                    </property>
-                                </spacer>
-                                <widget class="QPushButton" row="0" column="2">
-                                    <property name="name">
-                                        <cstring>buttonOk</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string></string>
-                                    </property>
-                                </widget>
-                                <widget class="QPushButton" row="0" column="0">
-                                    <property name="name">
-                                        <cstring>buttonApply</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string></string>
-                                    </property>
-                                </widget>
-                                <widget class="QPushButton" row="0" column="1">
-                                    <property name="name">
-                                        <cstring>buttonCancel</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string></string>
-                                    </property>
-                                </widget>
-                                <widget class="QPushButton" row="0" column="4">
-                                    <property name="name">
-                                        <cstring>buttonHelp</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string></string>
-                                    </property>
-                                </widget>
-                            </grid>
-                        </widget>
-                    </vbox>
-                </widget>
                 <widget class="QButtonGroup" row="0" column="0">
                     <property name="name">
                         <cstring>GroupConstructors</cstring>
@@ -147,9 +58,6 @@
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
-                    </property>
-                    <property name="title">
-                        <string></string>
                     </property>
                     <hbox>
                         <property name="name">
@@ -179,32 +87,20 @@
                                     <property name="name">
                                         <cstring>RadioButton1</cstring>
                                     </property>
-                                    <property name="text">
-                                        <string></string>
-                                    </property>
                                 </widget>
                                 <widget class="QRadioButton">
                                     <property name="name">
                                         <cstring>RadioButton2</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string></string>
                                     </property>
                                 </widget>
                                 <widget class="QRadioButton">
                                     <property name="name">
                                         <cstring>RadioButton3</cstring>
                                     </property>
-                                    <property name="text">
-                                        <string></string>
-                                    </property>
                                 </widget>
                                 <widget class="QRadioButton">
                                     <property name="name">
                                         <cstring>RadioButton4</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string></string>
                                     </property>
                                 </widget>
                             </hbox>
@@ -214,9 +110,6 @@
                 <widget class="QGroupBox" row="1" column="0">
                     <property name="name">
                         <cstring>GroupBoxName</cstring>
-                    </property>
-                    <property name="title">
-                        <string></string>
                     </property>
                     <grid>
                         <property name="name">
@@ -230,7 +123,7 @@
                         </property>
                         <widget class="QLayoutWidget" row="0" column="0">
                             <property name="name">
-                                <cstring>Layout66</cstring>
+                                <cstring>Layout4</cstring>
                             </property>
                             <grid>
                                 <property name="name">
@@ -242,19 +135,127 @@
                                 <property name="spacing">
                                     <number>6</number>
                                 </property>
-                                <widget class="QLineEdit" row="0" column="1">
-                                    <property name="name">
-                                        <cstring>ResultName</cstring>
-                                    </property>
-                                </widget>
                                 <widget class="QLabel" row="0" column="0">
                                     <property name="name">
                                         <cstring>NameLabel</cstring>
                                     </property>
                                 </widget>
+                                <widget class="QLineEdit" row="0" column="1">
+                                    <property name="name">
+                                        <cstring>ResultName</cstring>
+                                    </property>
+                                </widget>
                             </grid>
                         </widget>
                     </grid>
+                </widget>
+                <widget class="QGroupBox" row="3" column="0">
+                    <property name="name">
+                        <cstring>GroupBoxPublish</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>11</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLayoutWidget" row="0" column="0">
+                            <property name="name">
+                                <cstring>Layout5</cstring>
+                            </property>
+                            <grid>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QCheckBox" row="0" column="0">
+                                    <property name="name">
+                                        <cstring>CheckBoxRestoreSS</cstring>
+                                    </property>
+                                </widget>
+                            </grid>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="QGroupBox" row="4" column="0">
+                    <property name="name">
+                        <cstring>GroupButtons</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>11</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>Layout3</cstring>
+                            </property>
+                            <grid>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QPushButton" row="0" column="0">
+                                    <property name="name">
+                                        <cstring>buttonApply</cstring>
+                                    </property>
+                                </widget>
+                                <widget class="QPushButton" row="0" column="1">
+                                    <property name="name">
+                                        <cstring>buttonCancel</cstring>
+                                    </property>
+                                </widget>
+                                <widget class="QPushButton" row="0" column="2">
+                                    <property name="name">
+                                        <cstring>buttonOk</cstring>
+                                    </property>
+                                </widget>
+                                <spacer row="0" column="3">
+                                    <property name="name">
+                                        <cstring>Spacer1</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Expanding</enum>
+                                    </property>
+                                    <property name="sizeHint">
+                                        <size>
+                                            <width>90</width>
+                                            <height>20</height>
+                                        </size>
+                                    </property>
+                                </spacer>
+                                <widget class="QPushButton" row="0" column="4">
+                                    <property name="name">
+                                        <cstring>buttonHelp</cstring>
+                                    </property>
+                                </widget>
+                            </grid>
+                        </widget>
+                    </vbox>
                 </widget>
             </grid>
         </widget>

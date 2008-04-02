@@ -1,8 +1,8 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
 //  This library is free software; you can redistribute it and/or 
 //  modify it under the terms of the GNU Lesser General Public 
 //  License as published by the Free Software Foundation; either 
@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -46,7 +46,7 @@ using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_PositionDlg()
-// purpose  : Constructs a TransformationGUI_PositionDlg which is a child of 'parent', with the 
+// purpose  : Constructs a TransformationGUI_PositionDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -68,7 +68,7 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
   RadioButton1->setPixmap(image0);
   RadioButton2->setPixmap(image1);
   RadioButton3->close(TRUE);
- 
+
   Group1 = new DlgRef_3Sel3Spin1Check(this, "Group1");
   Group1->SpinBox1->hide();
   Group1->SpinBox2->hide();
@@ -86,11 +86,11 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
   Group1->CheckBox1->setText(tr("GEOM_CREATE_COPY"));
 
   Layout1->addWidget(Group1, 2, 0);
-  
+
   /***************************************************************/
 
-  setHelpFileName("modify_location_operation_page.html");  
-  
+  setHelpFileName("modify_location_operation_page.html");
+
   Init();
 }
 
@@ -100,7 +100,7 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 TransformationGUI_PositionDlg::~TransformationGUI_PositionDlg()
-{  
+{
   /* no need to delete child widgets, Qt does it all for us */
 }
 
@@ -110,18 +110,20 @@ TransformationGUI_PositionDlg::~TransformationGUI_PositionDlg()
 // purpose  :
 //=================================================================================
 void TransformationGUI_PositionDlg::Init()
-{  
+{
   /* init variables */
   Group1->LineEdit1->setReadOnly(true);
   Group1->LineEdit2->setReadOnly(true);
   Group1->LineEdit3->setReadOnly(true);
-  
+
   myStartLCS = GEOM::GEOM_Object::_nil();
   myEndLCS = GEOM::GEOM_Object::_nil();
-    
+
   // Activate Create a Copy mode
   Group1->CheckBox1->setChecked(true);
   CreateCopyModeChanged(true);
+
+  GroupBoxPublish->show();
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -135,10 +137,10 @@ void TransformationGUI_PositionDlg::Init()
   connect(Group1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(Group1->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(Group1->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  
+
   connect(Group1->CheckBox1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
-  
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_POSITION" ) );
@@ -154,14 +156,14 @@ void TransformationGUI_PositionDlg::Init()
 void TransformationGUI_PositionDlg::ConstructorsClicked(int constructorId)
 {
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  
+
   globalSelection();
   myEditCurrentArgument = Group1->LineEdit1;
   Group1->LineEdit2->clear();
   Group1->LineEdit3->clear();
   myStartLCS = GEOM::GEOM_Object::_nil();
   myEndLCS = GEOM::GEOM_Object::_nil();
-  
+
   switch (constructorId)
     {
     case 0:
@@ -179,7 +181,7 @@ void TransformationGUI_PositionDlg::ConstructorsClicked(int constructorId)
 	break;
       }
     }
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   SelectionIntoArgument();
 }
@@ -204,7 +206,7 @@ bool TransformationGUI_PositionDlg::ClickOnApply()
 {
   if ( !onAccept(Group1->CheckBox1->isChecked()) )
     return false;
-  
+
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
@@ -254,7 +256,7 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
       displayPreview();
       return;
     }
-    
+
     Standard_Boolean testResult = Standard_False;
     myEndLCS = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
     if(!testResult || CORBA::is_nil( myEndLCS )) {
@@ -265,7 +267,7 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
   }
 
   myEditCurrentArgument->setText( aName );
-  displayPreview(); 
+  displayPreview();
 }
 
 
@@ -290,7 +292,7 @@ void TransformationGUI_PositionDlg::LineEditReturnPressed()
 void TransformationGUI_PositionDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  
+
   if(send == Group1->PushButton1){
     myEditCurrentArgument = Group1->LineEdit1;
     globalSelection();
@@ -322,7 +324,7 @@ void TransformationGUI_PositionDlg::SetEditCurrentArgument()
 void TransformationGUI_PositionDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   ConstructorsClicked( getConstructorId() );
 }
@@ -374,16 +376,18 @@ bool  TransformationGUI_PositionDlg::execute( ObjectList& objects )
   bool res = false;
   bool toCreateCopy = IsPreview() || Group1->CheckBox1->isChecked();
   GEOM::GEOM_Object_var anObj;
-  
+
   switch ( getConstructorId() )
     {
     case 0 :
       {
 	for (int i = 0; i < myObjects.length(); i++) {
 	  if (toCreateCopy)
-	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->PositionShapeCopy( myObjects[i], myObjects[i], myEndLCS );
+	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+              PositionShapeCopy( myObjects[i], myObjects[i], myEndLCS );
 	  else
-	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->PositionShape( myObjects[i], myObjects[i], myEndLCS );
+	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+              PositionShape( myObjects[i], myObjects[i], myEndLCS );
 
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
@@ -395,9 +399,11 @@ bool  TransformationGUI_PositionDlg::execute( ObjectList& objects )
       {
 	for (int i = 0; i < myObjects.length(); i++) {
 	  if (toCreateCopy)
-	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->PositionShapeCopy( myObjects[i], myStartLCS, myEndLCS );
+	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+              PositionShapeCopy( myObjects[i], myStartLCS, myEndLCS );
 	  else
-	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->PositionShape( myObjects[i], myStartLCS, myEndLCS );
+	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+              PositionShape( myObjects[i], myStartLCS, myEndLCS );
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
 	}
@@ -405,19 +411,22 @@ bool  TransformationGUI_PositionDlg::execute( ObjectList& objects )
 	break;
       }
     }
-  
+
   return res;
 }
 
 //=================================================================================
-// function : closeEvent
+// function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void  TransformationGUI_PositionDlg::closeEvent( QCloseEvent* e )
+void TransformationGUI_PositionDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                                      SALOMEDS::SObject_ptr theSObject)
 {
-  GEOMBase_Skeleton::closeEvent( e );
+  if (CheckBoxRestoreSS->isChecked()) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(), /*isTrsf=*/true);
+  }
 }
-
 
 //=================================================================================
 // function :  CreateCopyModeChanged()

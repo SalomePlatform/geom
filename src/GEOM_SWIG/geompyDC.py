@@ -123,29 +123,57 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             index = self.ShapesOp.GetTopologyIndex(aMainObj, aSubObj)
             name = self.ShapesOp.GetShapeTypeString(aSubObj) + "_%d"%(index)
             return name
-    
+
         ## Publish in study aShape with name aName
         #
+        #  \param aShape the shape to be published
+        #  \param aName  the name for the shape
+        #  \param doRestoreSubShapes if True, finds and publishes also
+        #         sub-shapes of \a aShape, corresponding to its arguments
+        #         and published sub-shapes of arguments
+        #  \param theArgs,isTrsf see geompy.RestoreSubShapes for these arguments description
+        #  \return study entry of the published shape in form of string
+        #
         #  Example: see GEOM_TestAll.py
-        def addToStudy(self,aShape, aName):
+        def addToStudy(self, aShape, aName,
+                       doRestoreSubShapes=False, theArgs=[], isTrsf=False):
             try:
                 aSObject = self.AddInStudy(self.myStudy, aShape, aName, None)
+                if doRestoreSubShapes:
+                    self.RestoreSubShapesSO(self.myStudy, aSObject, theArgs, isTrsf)
             except:
                 print "addToStudy() failed"
                 return ""
             return aShape.GetStudyEntry()
-        
+
         ## Publish in study aShape with name aName as sub-object of previously published aFather
         #
         #  Example: see GEOM_TestAll.py
-        def addToStudyInFather(self,aFather, aShape, aName):
+        def addToStudyInFather(self, aFather, aShape, aName):
             try:
                 aSObject = self.AddInStudy(myStudy, aShape, aName, aFather)
             except:
                 print "addToStudyInFather() failed"
                 return ""
             return aShape.GetStudyEntry()
-        
+
+        ## Publish sub-shapes, standing for arguments and sub-shapes of arguments
+        #  To be used from python scripts out of geompy.addToStudy (non-default usage)
+        #  \param theStudy  the study, in which theObject is published already,
+        #                   and in which the arguments will be published
+        #  \param theObject published GEOM object, arguments of which will be published
+        #  \param theArgs   list of GEOM_Object, operation arguments to be published.
+        #                   If this list is empty, all operation arguments will be published
+        #  \param isTrsf    If True, search sub-shapes by indices, as in case of
+        #                   transformation they cannot be found by GetInPlace.
+        #                   The argument itself is not published in this case,
+        #                   because the whole shape corresponds to the argument.
+        #  \return True in case of success, False otherwise.
+        #
+        #  Example: see GEOM_TestAll.py
+        def RestoreSubShapes (self, theObject, theArgs=[], isTrsf=False):
+            return self.RestoreSubShapesO(self.myStudy, theObject, theArgs, isTrsf)
+
         # -----------------------------------------------------------------------------
         # Basic primitives
         # -----------------------------------------------------------------------------

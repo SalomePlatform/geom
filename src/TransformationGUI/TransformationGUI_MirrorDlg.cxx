@@ -1,23 +1,23 @@
 //  GEOM GEOMGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -51,7 +51,7 @@ using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_MirrorDlg()
-// purpose  : Constructs a TransformationGUI_MirrorDlg which is a child of 'parent', with the 
+// purpose  : Constructs a TransformationGUI_MirrorDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -73,7 +73,7 @@ TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(GeometryGUI* theGeometr
   RadioButton1->setPixmap(image0);
   RadioButton2->setPixmap(image1);
   RadioButton3->setPixmap(image2);
- 
+
   GroupPoints = new DlgRef_2Sel1Spin2Check(this, "GroupPoints");
   GroupPoints->SpinBox_DX->hide();
   GroupPoints->TextLabel3->hide();
@@ -88,8 +88,8 @@ TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(GeometryGUI* theGeometr
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
-  setHelpFileName("mirror_operation_page.html");  
-  
+  setHelpFileName("mirror_operation_page.html");
+
   Init();
 }
 
@@ -99,7 +99,7 @@ TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(GeometryGUI* theGeometr
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 TransformationGUI_MirrorDlg::~TransformationGUI_MirrorDlg()
-{  
+{
   /* no need to delete child widgets, Qt does it all for us */
 }
 
@@ -109,17 +109,19 @@ TransformationGUI_MirrorDlg::~TransformationGUI_MirrorDlg()
 // purpose  :
 //=================================================================================
 void TransformationGUI_MirrorDlg::Init()
-{  
+{
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->setReadOnly(true);
   GroupPoints->LineEdit2->setReadOnly(true);
-  
+
   myArgument = GEOM::GEOM_Object::_nil();
-    
+
   // Activate Create a Copy mode
   GroupPoints->CheckButton1->setChecked(true);
   CreateCopyModeChanged(true);
+
+  GroupBoxPublish->show();
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -131,10 +133,10 @@ void TransformationGUI_MirrorDlg::Init()
 
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  
+
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
-  
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_MIRROR" ) );
@@ -149,16 +151,16 @@ void TransformationGUI_MirrorDlg::Init()
 void TransformationGUI_MirrorDlg::ConstructorsClicked(int constructorId)
 {
   disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
-  
+
   globalSelection();
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit2->clear();
   myArgument = GEOM::GEOM_Object::_nil();
-  
+
   switch (constructorId)
     {
     case 0: /* mirror an object by point */
-      {	
+      {
 	GroupPoints->TextLabel2->setText(tr("GEOM_POINT_MIRROR"));
 	break;
       }
@@ -166,14 +168,14 @@ void TransformationGUI_MirrorDlg::ConstructorsClicked(int constructorId)
       {
 	GroupPoints->TextLabel2->setText(tr("GEOM_AXE_MIRROR"));
 	break;
-      } 
+      }
     case 2: /* mirror an object by plane */
       {
 	GroupPoints->TextLabel2->setText(tr("GEOM_PLANE_MIRROR"));
 	break;
       }
     }
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 
@@ -198,7 +200,7 @@ bool TransformationGUI_MirrorDlg::ClickOnApply()
 {
   if ( !onAccept(GroupPoints->CheckButton1->isChecked()) )
     return false;
-  
+
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
@@ -253,7 +255,7 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
 		aNeedType = TopAbs_EDGE;
 	      else if (getConstructorId() == 2)
 		aNeedType = TopAbs_FACE;
-	      
+
 	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 	      TColStd_IndexedMapOfInteger aMap;
 	      aSelMgr->GetIndexes( firstIObject(), aMap );
@@ -264,10 +266,10 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
 		      aName += QString(":vertex_%1").arg(anIndex);
 		    else
 		      aName += QString(":edge_%1").arg(anIndex);
-		    
+
 		    //Find SubShape Object in Father
 		    GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
-		    
+
 		    if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
 		      GEOM::GEOM_IShapesOperations_var aShapesOp =
 			getGeomEngine()->GetIShapesOperations( getStudyId() );
@@ -286,8 +288,8 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
 	}
     }
   myEditCurrentArgument->setText( aName );
-   
-  displayPreview(); 
+
+  displayPreview();
 }
 
 
@@ -315,7 +317,7 @@ void TransformationGUI_MirrorDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
   globalSelection();
-  
+
   if(send == GroupPoints->PushButton1){
     myEditCurrentArgument = GroupPoints->LineEdit1;
   }
@@ -353,7 +355,7 @@ void TransformationGUI_MirrorDlg::SetEditCurrentArgument()
 void TransformationGUI_MirrorDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(myGeomGUI->getApp()->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   ConstructorsClicked( getConstructorId() );
 }
@@ -398,24 +400,26 @@ bool  TransformationGUI_MirrorDlg::execute( ObjectList& objects )
 {
   bool res = false;
   bool toCreateCopy = IsPreview() || GroupPoints->CheckButton1->isChecked();
-  
+
   GEOM::GEOM_Object_var anObj;
-  
-  switch ( getConstructorId() ) 
+
+  switch ( getConstructorId() )
     {
     case 0 :
       {
 	if (toCreateCopy)
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
-	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MirrorPointCopy( myObjects[i], myArgument );
+	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+                MirrorPointCopy( myObjects[i], myArgument );
 	      if ( !anObj->_is_nil() )
 		objects.push_back( anObj._retn() );
 	    }
 	else
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
-	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MirrorPoint( myObjects[i], myArgument );
+	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+                MirrorPoint( myObjects[i], myArgument );
 	      if ( !anObj->_is_nil() )
 		objects.push_back( anObj._retn() );
 	    }
@@ -427,14 +431,16 @@ bool  TransformationGUI_MirrorDlg::execute( ObjectList& objects )
 	if (toCreateCopy)
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
-	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MirrorAxisCopy( myObjects[i], myArgument );
+	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+                MirrorAxisCopy( myObjects[i], myArgument );
 	      if ( !anObj->_is_nil() )
 		objects.push_back( anObj._retn() );
 	    }
 	else
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
-	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MirrorAxis( myObjects[i], myArgument );
+	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+                MirrorAxis( myObjects[i], myArgument );
 	      if ( !anObj->_is_nil() )
 		objects.push_back( anObj._retn() );
 	    }
@@ -446,14 +452,16 @@ bool  TransformationGUI_MirrorDlg::execute( ObjectList& objects )
 	if (toCreateCopy)
 	   for (int i = 0; i < myObjects.length(); i++)
 	    {
-	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MirrorPlaneCopy( myObjects[i], myArgument );
+	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+                MirrorPlaneCopy( myObjects[i], myArgument );
 	      if ( !anObj->_is_nil() )
 		objects.push_back( anObj._retn() );
 	    }
 	else
 	   for (int i = 0; i < myObjects.length(); i++)
 	    {
-	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MirrorPlane( myObjects[i], myArgument );
+	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+                MirrorPlane( myObjects[i], myArgument );
 	      if ( !anObj->_is_nil() )
 		objects.push_back( anObj._retn() );
 	    }
@@ -461,19 +469,22 @@ bool  TransformationGUI_MirrorDlg::execute( ObjectList& objects )
 	break;
       }
     }
-  
+
   return res;
 }
 
 //=================================================================================
-// function : closeEvent
+// function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void  TransformationGUI_MirrorDlg::closeEvent( QCloseEvent* e )
+void TransformationGUI_MirrorDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                                    SALOMEDS::SObject_ptr theSObject)
 {
-  GEOMBase_Skeleton::closeEvent( e );
+  if (CheckBoxRestoreSS->isChecked()) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(), /*isTrsf=*/true);
+  }
 }
-
 
 //=================================================================================
 // function :  CreateCopyModeChanged()

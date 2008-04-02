@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -127,6 +127,8 @@ void TransformationGUI_TranslationDlg::Init()
   // Activate Create a Copy mode
   GroupPoints->CheckBox2->setChecked(true);
   CreateCopyModeChanged(true);
+
+  GroupBoxPublish->show();
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -307,41 +309,42 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
     TopoDS_Shape aShape;
     aName = GEOMBase::GetName( aSelectedObject );
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+    {
+      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+      if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2)
+        aNeedType = TopAbs_EDGE;
+
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes( firstIObject(), aMap );
+      if ( aMap.Extent() == 1 )
       {
-	TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-	if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2)
-	  aNeedType = TopAbs_EDGE;
+        int anIndex = aMap( 1 );
+        if (aNeedType == TopAbs_EDGE)
+          aName += QString(":edge_%1").arg(anIndex);
+        else
+          aName += QString(":vertex_%1").arg(anIndex);
 
-	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-	TColStd_IndexedMapOfInteger aMap;
-	aSelMgr->GetIndexes( firstIObject(), aMap );
-	if ( aMap.Extent() == 1 )
-	  {
-	    int anIndex = aMap( 1 );
-	    if (aNeedType == TopAbs_EDGE)
-	      aName += QString(":edge_%1").arg(anIndex);
-	    else
-	      aName += QString(":vertex_%1").arg(anIndex);
+        //Find SubShape Object in Father
+        GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
 
-	    //Find SubShape Object in Father
-	    GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
-	    
-	    if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	      GEOM::GEOM_IShapesOperations_var aShapesOp =
-		getGeomEngine()->GetIShapesOperations( getStudyId() );
-	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	    }
-	    else
-	      aSelectedObject = aFindedObject;
-	  } else // Global Selection
-	    {
-	      if (aShape.ShapeType() != aNeedType) {
-		aSelectedObject = GEOM::GEOM_Object::_nil();
-		aName = "";
-	      }
-	    }
+        if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+          GEOM::GEOM_IShapesOperations_var aShapesOp =
+            getGeomEngine()->GetIShapesOperations( getStudyId() );
+          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        }
+        else
+          aSelectedObject = aFindedObject;
       }
-    
+      else // Global Selection
+      {
+        if (aShape.ShapeType() != aNeedType) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+        }
+      }
+    }
+
     if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1)
       myPoint1 = aSelectedObject;
     else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2)
@@ -386,7 +389,7 @@ void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit2;
     if (getConstructorId() == 1)
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-    else 
+    else
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if (send == GroupPoints->PushButton3) {
@@ -578,6 +581,18 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
   return res;
 }
 
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void TransformationGUI_TranslationDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                                         SALOMEDS::SObject_ptr theSObject)
+{
+  if (CheckBoxRestoreSS->isChecked()) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(), /*isTrsf=*/true);
+  }
+}
 
 //=================================================================================
 // function :  CreateCopyModeChanged()

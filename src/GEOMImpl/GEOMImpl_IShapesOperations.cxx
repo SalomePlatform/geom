@@ -68,6 +68,7 @@ using namespace std;
 #include <TDF_Tool.hxx>
 
 #include <BRepExtrema_ExtCF.hxx>
+#include <BRepExtrema_DistShapeShape.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
@@ -2812,19 +2813,17 @@ static bool GetInPlaceOfShape (const Handle(GEOM_Function)& theWhereFunction,
 void GEOMImpl_IShapesOperations::GetShapeProperties( const TopoDS_Shape aShape, Standard_Real tab[],
                                                      gp_Pnt & aVertex )
 {
-  GProp_GProps SProps, VProps;
+  GProp_GProps theProps;
   gp_Pnt aCenterMass;
   TopoDS_Shape aPntShape;
   Standard_Real aShapeSize;
 
-  BRepGProp::VolumeProperties(aShape, VProps);
-  aCenterMass = VProps.CentreOfMass();
-  aShapeSize  = VProps.Mass();
-  if (aShape.ShapeType() == TopAbs_FACE) {
-    BRepGProp::SurfaceProperties(aShape, SProps);
-    aCenterMass = SProps.CentreOfMass();
-    aShapeSize  = SProps.Mass();
-  }
+  if      (aShape.ShapeType() == TopAbs_EDGE) BRepGProp::LinearProperties(aShape,  theProps);
+  else if (aShape.ShapeType() == TopAbs_FACE) BRepGProp::SurfaceProperties(aShape, theProps);
+  else                                        BRepGProp::VolumeProperties(aShape,  theProps);
+
+  aCenterMass = theProps.CentreOfMass();
+  aShapeSize  = theProps.Mass();
 
   aPntShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
   aVertex   = BRep_Tool::Pnt( TopoDS::Vertex( aPntShape ) );
@@ -2849,6 +2848,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
 
   TopoDS_Shape aWhere = theShapeWhere->GetValue();
   TopoDS_Shape aWhat  = theShapeWhat->GetValue();
+  TopoDS_Shape aPntShape;
+  TopoDS_Vertex aVertex;
 
   if (aWhere.IsNull() || aWhat.IsNull()) {
     SetErrorCode("Error: aWhere and aWhat TopoDS_Shape are Null.");
@@ -2871,6 +2872,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
 
   bool isFound = false;
   Standard_Integer iType = TopAbs_SOLID;
+  Standard_Integer compType = TopAbs_SOLID;
   Standard_Real    aWhat_Mass = 0., aWhere_Mass = 0.;
   Standard_Real    tab_aWhat[4],    tab_aWhere[4];
   Standard_Real    dl_l = 1e-3;
@@ -2878,15 +2880,23 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   gp_Pnt           aPnt, aPnt_aWhat;
   GProp_GProps     aProps;
 
-  // 2D or 3D shapes
-  if ( aWhat.ShapeType() == TopAbs_COMPOUND  ||
-       aWhat.ShapeType() == TopAbs_SHELL     ||
-       aWhat.ShapeType() == TopAbs_COMPSOLID ) {
-    TopExp_Explorer Exp( aWhat, TopAbs_ShapeEnum( iType ) );
-    if ( ! Exp.More() ) iType = TopAbs_FACE;
+  // Find the iType of the aWhat shape
+  if      ( aWhat.ShapeType() == TopAbs_EDGE  || aWhat.ShapeType() == TopAbs_WIRE )      iType = TopAbs_EDGE;
+  else if ( aWhat.ShapeType() == TopAbs_FACE  || aWhat.ShapeType() == TopAbs_SHELL )     iType = TopAbs_FACE;
+  else if ( aWhat.ShapeType() == TopAbs_SOLID || aWhat.ShapeType() == TopAbs_COMPSOLID ) iType = TopAbs_SOLID;
+  else if ( aWhat.ShapeType() == TopAbs_COMPOUND ) {
+    // Only the iType of the first shape in the compound is taken into account
+    TopoDS_Iterator It (aWhat, Standard_True, Standard_True);
+    compType = It.Value().ShapeType();
+    if      ( compType == TopAbs_EDGE  || compType == TopAbs_WIRE )     iType = TopAbs_EDGE;
+    else if ( compType == TopAbs_FACE  || compType == TopAbs_SHELL)     iType = TopAbs_FACE;
+    else if ( compType == TopAbs_SOLID || compType == TopAbs_COMPSOLID) iType = TopAbs_SOLID;
   }
-  else if ( aWhat.ShapeType() == TopAbs_FACE )
-    iType = TopAbs_FACE;
+  else {
+    cout << endl;
+    cout << "WARNING : shape to be extracted is of unknown type !" << endl;
+    cout << endl;
+  }
 
   TopExp_Explorer Exp_aWhat( aWhat,   TopAbs_ShapeEnum( iType ) );
   TopExp_Explorer Exp_aWhere( aWhere, TopAbs_ShapeEnum( iType ) );
@@ -2905,29 +2915,31 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   Tol_3D = dl_l * ( min_l * min_l * min_l ) * ( 3. + (3 * dl_l) + (dl_l * dl_l) );
 
   Tol_Mass = Tol_3D;
-  if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
+  if      ( iType == TopAbs_EDGE ) Tol_Mass = Tol_1D;
+  else if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
 
   // Compute the ShapeWhat Mass
   for ( ; Exp_aWhat.More(); Exp_aWhat.Next() ) {
-    if      ( iType == TopAbs_SOLID ) BRepGProp::VolumeProperties(Exp_aWhat.Current(), aProps);
-    else if ( iType == TopAbs_FACE )  BRepGProp::SurfaceProperties(Exp_aWhat.Current(), aProps);
+    if      ( iType == TopAbs_EDGE ) BRepGProp::LinearProperties(Exp_aWhat.Current(),  aProps);
+    else if ( iType == TopAbs_FACE ) BRepGProp::SurfaceProperties(Exp_aWhat.Current(), aProps);
+    else                             BRepGProp::VolumeProperties(Exp_aWhat.Current(),  aProps);
     aWhat_Mass += aProps.Mass();
   }
 
-  // Finding the Sub-ShapeWhere
+  // Searching for the sub-shapes inside the ShapeWhere shape
   for ( Exp_aWhere.ReInit(); Exp_aWhere.More(); Exp_aWhere.Next() ) {
     GetShapeProperties( Exp_aWhere.Current(), tab_aWhere, aPnt );
     for ( Exp_aWhat.ReInit(); Exp_aWhat.More(); Exp_aWhat.Next() ) {
       GetShapeProperties( Exp_aWhat.Current(), tab_aWhat, aPnt_aWhat );
-      if ( fabs(tab_aWhat[3] - tab_aWhere[3]) <= Tol_Mass && aPnt_aWhat.Distance(aPnt) <= Tol_1D )
-        isFound = true;
-      else if ( tab_aWhat[3] - ( tab_aWhere[3] > Tol_Mass) ) {
-        BRepClass3d_SolidClassifier SC_aWhere (Exp_aWhere.Current(), aPnt, Precision::Confusion());
-        BRepClass3d_SolidClassifier SC_aWhat  (Exp_aWhat.Current(),  aPnt, Precision::Confusion());
-        // Block construction 3D
-        if      ( SC_aWhere.State() == TopAbs_IN && SC_aWhat.State() == TopAbs_IN ) isFound = true;
-        // Block construction 2D
-        else if ( SC_aWhere.State() == TopAbs_ON && SC_aWhat.State() == TopAbs_ON ) isFound = true;
+      if ( fabs(tab_aWhat[3] - tab_aWhere[3]) <= Tol_Mass && aPnt_aWhat.Distance(aPnt) <= Tol_1D ) isFound = true;
+      else {
+        if ( (tab_aWhat[3] - tab_aWhere[3]) > Tol_Mass ) {
+          aPntShape = BRepBuilderAPI_MakeVertex( aPnt ).Shape();
+          aVertex   = TopoDS::Vertex( aPntShape );
+          BRepExtrema_DistShapeShape aWhereDistance ( aVertex, Exp_aWhere.Current() );
+          BRepExtrema_DistShapeShape aWhatDistance  ( aVertex, Exp_aWhat.Current() );
+          if ( fabs(aWhereDistance.Value() - aWhatDistance.Value()) <= Tol_1D ) isFound = true;
+        }
       }
       if ( isFound ) {
         aWhereIndex = aWhereIndices.FindIndex(Exp_aWhere.Current());

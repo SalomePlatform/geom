@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -35,6 +35,7 @@
 #include "LightApp_SelectionMgr.h"
 
 #include <qlabel.h>
+#include <qcheckbox.h>
 
 using namespace std;
 
@@ -130,6 +131,8 @@ BooleanGUI_Dialog::~BooleanGUI_Dialog()
 //=================================================================================
 void BooleanGUI_Dialog::Init()
 {
+  GroupBoxPublish->show();
+
   /* init variables */
   myEditCurrentArgument = myGroup->LineEdit1;
 
@@ -305,4 +308,17 @@ bool BooleanGUI_Dialog::execute( ObjectList& objects )
     objects.push_back( anObj._retn() );
 
   return true;
+}
+
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void BooleanGUI_Dialog::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                          SALOMEDS::SObject_ptr theSObject)
+{
+  if (CheckBoxRestoreSS->isChecked()) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(), /*isTrsf=*/false);
+  }
 }

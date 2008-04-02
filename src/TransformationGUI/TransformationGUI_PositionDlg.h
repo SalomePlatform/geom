@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -32,14 +32,14 @@
 #include "DlgRef_3Sel3Spin1Check.h"
 
 #include "TransformationGUI.h"
-  
+
 
 //=================================================================================
 // class    : TransformationGUI_PositionDlg
 // purpose  :
 //=================================================================================
 class TransformationGUI_PositionDlg : public GEOMBase_Skeleton
-{ 
+{
     Q_OBJECT
 
 public:
@@ -52,19 +52,18 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
-
-    virtual void closeEvent( QCloseEvent* e );
+    virtual void restoreSubShapes (SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr);
 
 private:
     void Init();
     void enterEvent(QEvent* e);
-    
+
     GEOM::GEOM_Object_var myStartLCS;
     GEOM::GEOM_Object_var myEndLCS;
     GEOM::ListOfGO        myObjects;
-        
+
     DlgRef_3Sel3Spin1Check* Group1;
-    
+
 private slots:
     void ClickOnOk();
     bool ClickOnApply();

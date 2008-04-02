@@ -2639,7 +2639,7 @@ module GEOM
     void Redo (in long theStudyID);
 
     /*!
-     * Publishing manangement
+     * Publishing management
      * Adds in theStudy a object theObject under with a name theName,
      * if theFather is not NULL the object is placed under thFather's SObject.
      * Returns a SObject where theObject is placed
@@ -2648,6 +2648,44 @@ module GEOM
 				  in GEOM_Object theObject,
 				  in string theName,
 				  in GEOM_Object theFather);
+
+    /*!
+     *  Publish sub-shapes, standing for arguments and sub-shapes of arguments
+     *  To be used from python scripts out of geompy.addToStudy (non-default usage)
+     *  \param theStudy  the study, in which theObject is published already,
+     *                   and in which the arguments will be published
+     *  \param theObject published GEOM object, arguments of which will be published
+     *  \param theArgs   list of GEOM_Object, operation arguments to be published.
+     *                   If this list is empty, all operation arguments will be published
+     *  \param isTrsf    If True, search sub-shapes by indices, as in case of
+     *                   transformation they cannot be found by GetInPlace.
+     *                   The argument itself is not published in this case,
+     *                   because the whole shape corresponds to the argument.
+     *  \return True in case of success, False otherwise.
+     */
+    boolean RestoreSubShapesO (in SALOMEDS::Study   theStudy,
+			       in GEOM_Object       theObject,
+			       in ListOfGO          theArgs,
+			       in boolean           isTrsf);
+
+    /*!
+     *  Publish sub-shapes, standing for arguments and sub-shapes of arguments
+     *  To be used from GUI and from geompy.addToStudy
+     *  \param theStudy   the study, in which theObject is published already,
+     *                    and in which the arguments will be published
+     *  \param theSObject study object, referencing GEOM object, arguments of which will be published
+     *  \param theArgs    list of GEOM_Object, operation arguments to be published.
+     *                    If this list is empty, all operation arguments will be published
+     *  \param isTrsf    If True, search sub-shapes by indices, as in case of
+     *                   transformation they cannot be found by GetInPlace.
+     *                   The argument itself is not published in this case,
+     *                   because the whole shape corresponds to the argument.
+     *  \return True in case of success, False otherwise.
+     */
+    boolean RestoreSubShapesSO (in SALOMEDS::Study   theStudy,
+				in SALOMEDS::SObject theSObject,
+				in ListOfGO          theArgs,
+				in boolean           isTrsf);
 
     /*!
      *  Methods to access interfaces for objects creation and transformation

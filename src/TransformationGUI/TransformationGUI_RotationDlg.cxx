@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -105,6 +105,8 @@ TransformationGUI_RotationDlg::TransformationGUI_RotationDlg
   // Activate Create a Copy mode
   GroupPoints->CheckButton1->setChecked(true);
   CreateCopyModeChanged(true);
+
+  GroupBoxPublish->show();
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -306,7 +308,7 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
 	    }
 	  }
 	}
-     
+
       if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0)
 	myAxis = aSelectedObject;
       else if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1)
@@ -502,16 +504,18 @@ bool TransformationGUI_RotationDlg::execute( ObjectList& objects )
   return res;
 }
 
-
 //=================================================================================
-// function : closeEvent
+// function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void TransformationGUI_RotationDlg::closeEvent( QCloseEvent* e )
+void TransformationGUI_RotationDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                                      SALOMEDS::SObject_ptr theSObject)
 {
-  GEOMBase_Skeleton::closeEvent( e );
+  if (CheckBoxRestoreSS->isChecked()) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(), /*isTrsf=*/true);
+  }
 }
-
 
 //=================================================================================
 // function : GetAngle()

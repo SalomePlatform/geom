@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -97,6 +97,8 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg(GeometryGUI* theGeometryG
   // Activate Create a Copy mode
   GroupPoints->CheckButton1->setChecked(true);
   CreateCopyModeChanged(true);
+
+  GroupBoxPublish->show();
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -202,7 +204,7 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
       Standard_Boolean testResult = Standard_False;
       GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
       aName = GEOMBase::GetName( aSelectedObject );
-      
+
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
 	{
@@ -216,7 +218,7 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
 
 	      //Find SubShape Object in Father
 	      GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
-	      
+
 	      if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
 		GEOM::GEOM_IShapesOperations_var aShapesOp =
 		  getGeomEngine()->GetIShapesOperations( getStudyId() );
@@ -370,16 +372,18 @@ bool TransformationGUI_ScaleDlg::execute( ObjectList& objects )
   return res;
 }
 
-
 //=================================================================================
-// function : closeEvent
+// function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void  TransformationGUI_ScaleDlg::closeEvent( QCloseEvent* e )
+void TransformationGUI_ScaleDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                                   SALOMEDS::SObject_ptr theSObject)
 {
-  GEOMBase_Skeleton::closeEvent( e );
+  if (CheckBoxRestoreSS->isChecked()) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(), /*isTrsf=*/true);
+  }
 }
-
 
 //=================================================================================
 // function : GetFactor()

@@ -133,6 +133,22 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 				    const char* theName,
 				    GEOM::GEOM_Object_ptr theFather);
 
+  /*! \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments.
+   *         To be used from python scripts out of geompy.addToStudy (non-default usage)
+   */
+  CORBA::Boolean RestoreSubShapesO (SALOMEDS::Study_ptr   theStudy,
+				    GEOM::GEOM_Object_ptr theObject,
+				    const GEOM::ListOfGO& theArgs,
+				    CORBA::Boolean        isTrsf);
+
+  /*! \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments.
+   *         To be used from GUI and from geompy.addToStudy
+   */
+  CORBA::Boolean RestoreSubShapesSO (SALOMEDS::Study_ptr   theStudy,
+				     SALOMEDS::SObject_ptr theSObject,
+				     const GEOM::ListOfGO& theArgs,
+				     CORBA::Boolean        isTrsf);
+
   //-----------------------------------------------------------------------//
   // Transaction methods                                                   //
   //-----------------------------------------------------------------------//
@@ -218,6 +234,19 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   //-----------------------------------------------------------------------//
 
   virtual GEOM::GEOM_Object_ptr GetObject(CORBA::Long theStudyID, const char* theEntry);
+
+ private:
+  GEOM::ListOfGO* RestoreSubShapesOneLevel (SALOMEDS::Study_ptr   theStudy,
+					    SALOMEDS::SObject_ptr theOldSO,
+					    SALOMEDS::SObject_ptr theNewSO,
+					    GEOM::GEOM_Object_ptr theNewO,
+					    CORBA::Boolean        isTrsf);
+
+  CORBA::Boolean RestoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+				   GEOM::GEOM_Object_ptr theObject,
+				   SALOMEDS::SObject_ptr theSObject,
+				   const GEOM::ListOfGO& theArgs,
+				   CORBA::Boolean        isTrsf);
 
  private:
 
