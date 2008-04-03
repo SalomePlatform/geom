@@ -17,6 +17,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include "GEOM_ITransformOperations_i.hh"
@@ -84,18 +85,21 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPoints
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the first point of translation
+  CORBA::String_var aP1Entry = thePoint1->GetEntry();
   Handle(GEOM_Object) aPoint1 =
-    GetOperations()->GetEngine()->GetObject(thePoint1->GetStudyID(), thePoint1->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint1->GetStudyID(), aP1Entry);
   if (aPoint1.IsNull()) return aGEOMObject._retn();
 
   //Get the second point of translation
+  CORBA::String_var aP2Entry = thePoint2->GetEntry();
   Handle(GEOM_Object) aPoint2 =
-    GetOperations()->GetEngine()->GetObject(thePoint2->GetStudyID(), thePoint2->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint2->GetStudyID(), aP2Entry);
   if (aPoint2.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
@@ -122,18 +126,21 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPointsCopy
   if (thePoint1 == NULL || thePoint2 == NULL || theObject == NULL) return aGEOMObject._retn();
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the first point of translation
+  CORBA::String_var aP1Entry = thePoint1->GetEntry();
   Handle(GEOM_Object) aPoint1 =
-    GetOperations()->GetEngine()->GetObject(thePoint1->GetStudyID(), thePoint1->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint1->GetStudyID(), aP1Entry);
   if (aPoint1.IsNull()) return aGEOMObject._retn();
 
   //Get the second point of translation
+  CORBA::String_var aP2Entry = thePoint2->GetEntry();
   Handle(GEOM_Object) aPoint2 =
-    GetOperations()->GetEngine()->GetObject(thePoint2->GetStudyID(), thePoint2->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint2->GetStudyID(), aP2Entry);
   if (aPoint2.IsNull()) return aGEOMObject._retn();
 
   //Create the translated shape
@@ -150,8 +157,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPointsCopy
  *  TranslateDXDYDZ
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZ (GEOM::GEOM_Object_ptr theObject,
-								    CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZ
+                                                   (GEOM::GEOM_Object_ptr theObject,
+						    CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -168,8 +176,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZ (GEOM::GEOM_O
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
@@ -185,7 +194,8 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZ (GEOM::GEOM_O
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZCopy
-                                             (GEOM::GEOM_Object_ptr theObject, CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
+                                             (GEOM::GEOM_Object_ptr theObject,
+					      CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -195,11 +205,10 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZCopy
   if (theObject == NULL) return aGEOMObject._retn();
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
-
-
 
   //Create the translated shape
   Handle(GEOM_Object) anObject =
@@ -232,16 +241,18 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVector
     return aGEOMObject._retn();
   }
 
-   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
+  aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
+  CORBA::String_var aVEntry = theVector->GetEntry();
   Handle(GEOM_Object) aVector =
-    GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), theVector->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), aVEntry);
   if (aVector.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
@@ -267,13 +278,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorCopy
   if (theObject == NULL || theVector == NULL) return aGEOMObject._retn();
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
+  CORBA::String_var aVEntry = theVector->GetEntry();
   Handle(GEOM_Object) aVector =
-    GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), theVector->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), aVEntry);
   if (aVector.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
@@ -297,31 +310,34 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorDistance
 {
   GEOM::GEOM_Object_var aGEOMObject;
   GetOperations()->SetNotDone(); //Set a not done flag
-  
+
   if (theObject == NULL || theVector == NULL || theDistance == 0) return aGEOMObject._retn();
-  
+
   //check if the object is a subshape
-  if(!theObject->IsMainShape()) {
+  if (!theCopy && !theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
   }
-  
+
   if (!theCopy)
     aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
-  
+
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
-  
+
   //Get the vector of translation
+  CORBA::String_var aVecEntry = theVector->GetEntry();
   Handle(GEOM_Object) aVector =
-    GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), theVector->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), aVecEntry);
   if (aVector.IsNull()) return aGEOMObject._retn();
-  
+
   //Perform the translation
   if (theCopy) {
-    Handle(GEOM_Object) anObject = GetOperations()->TranslateVectorDistance(aBasicObject, aVector, theDistance, theCopy);
+    Handle(GEOM_Object) anObject = GetOperations()->
+      TranslateVectorDistance(aBasicObject, aVector, theDistance, theCopy);
     if (!GetOperations()->IsDone() || anObject.IsNull())
       return aGEOMObject._retn();
 
@@ -356,12 +372,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::Rotate (GEOM::GEOM_Object_ptr
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
-  Handle(GEOM_Object) anObject = GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  CORBA::String_var anEntry = theObject->GetEntry();
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the axis of revolution
+  CORBA::String_var anAEntry = theAxis->GetEntry();
   Handle(GEOM_Object) anAxis =
-    GetOperations()->GetEngine()->GetObject(theAxis->GetStudyID(), theAxis->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theAxis->GetStudyID(), anAEntry);
   if (anAxis.IsNull()) return aGEOMObject._retn();
 
   //Perform the rotation
@@ -387,13 +406,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateCopy (GEOM::GEOM_Object
   if (theObject == NULL || theAxis == NULL) return aGEOMObject._retn();
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the axis of rotation
+  CORBA::String_var anAEntry = theAxis->GetEntry();
   Handle(GEOM_Object) anAxis =
-    GetOperations()->GetEngine()->GetObject(theAxis->GetStudyID(), theAxis->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theAxis->GetStudyID(), anAEntry);
   if (anAxis.IsNull()) return aGEOMObject._retn();
 
   //Perform the rotation
@@ -422,19 +443,21 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlane
   if (theObject == NULL || thePlane == NULL) return aGEOMObject._retn();
 
   //check if the object is a subshape
-  if(!theObject->IsMainShape()) {
+  if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
   }
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the plane
+  CORBA::String_var aPlnEntry = thePlane->GetEntry();
   Handle(GEOM_Object) aPlane =
-    GetOperations()->GetEngine()->GetObject(thePlane->GetStudyID(), thePlane->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePlane->GetStudyID(), aPlnEntry);
   if (aPlane.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
@@ -460,13 +483,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlaneCopy
   if (theObject == NULL || thePlane == NULL) return aGEOMObject._retn();
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
+  CORBA::String_var aPlnEntry = thePlane->GetEntry();
   Handle(GEOM_Object) aPlane =
-    GetOperations()->GetEngine()->GetObject(thePlane->GetStudyID(), thePlane->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePlane->GetStudyID(), aPlnEntry);
   if (aPlane.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
@@ -500,13 +525,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxis
   }
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the axis
+  CORBA::String_var anAEntry = theAxis->GetEntry();
   Handle(GEOM_Object) aAxis =
-    GetOperations()->GetEngine()->GetObject(theAxis->GetStudyID(), theAxis->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theAxis->GetStudyID(), anAEntry);
   if (aAxis.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
@@ -532,13 +559,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxisCopy
   if (theObject == NULL || theAxis == NULL) return aGEOMObject._retn();
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
+  CORBA::String_var anAEntry = theAxis->GetEntry();
   Handle(GEOM_Object) aAxis =
-    GetOperations()->GetEngine()->GetObject(theAxis->GetStudyID(), theAxis->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theAxis->GetStudyID(), anAEntry);
   if (aAxis.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
@@ -566,19 +595,21 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPoint
   if (theObject == NULL || thePoint == NULL) return aGEOMObject._retn();
 
   //check if the object is a subshape
-  if(!theObject->IsMainShape()) {
+  if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
   }
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the point
+  CORBA::String_var aPntEntry = thePoint->GetEntry();
   Handle(GEOM_Object) aPoint =
-    GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), thePoint->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), aPntEntry);
   if (aPoint.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
@@ -604,13 +635,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPointCopy
   if (theObject == NULL || thePoint == NULL) return aGEOMObject._retn();
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
+  CORBA::String_var aPntEntry = thePoint->GetEntry();
   Handle(GEOM_Object) aPoint =
-    GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), thePoint->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), aPntEntry);
   if (aPoint.IsNull()) return aGEOMObject._retn();
 
   //Perform the mirror
@@ -639,15 +672,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShape
   if (theObject == NULL) return aGEOMObject._retn();
 
   //check if the object is a subshape
-  if(!theObject->IsMainShape()) {
+  if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
   }
 
-
   //Get the basic object
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Create the offset shape
@@ -673,8 +706,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShapeCopy
   if (theObject == NULL) return aGEOMObject._retn();
 
   //Get the basic object
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Create the offset shape
@@ -704,19 +738,21 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShape
   if (thePoint == NULL || theObject == NULL) return aGEOMObject._retn();
 
   //check if the object is a subshape
-  if(!theObject->IsMainShape()) {
+  if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
   }
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the point
+  CORBA::String_var aPntEntry = thePoint->GetEntry();
   Handle(GEOM_Object) aPoint =
-    GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), thePoint->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), aPntEntry);
   if (aPoint.IsNull()) return aGEOMObject._retn();
 
   //Perform the scale
@@ -743,13 +779,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeCopy
   if (thePoint == NULL || theObject == NULL) return aGEOMObject._retn();
 
   //Get the basic object
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the point
+  CORBA::String_var aPntEntry = thePoint->GetEntry();
   Handle(GEOM_Object) aPoint =
-    GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), thePoint->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), aPntEntry);
   if (aPoint.IsNull()) return aGEOMObject._retn();
 
   //Perform the scale
@@ -780,26 +818,29 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShape
     return aGEOMObject._retn();
 
   //check if the object is a subshape
-  if(!theObject->IsMainShape()) {
+  if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
   }
 
   //Get the basic object
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the Start LCS (may be NULL for positioning from global LCS)
   Handle(GEOM_Object) aStartLCS = NULL;
   if (theStartLCS != NULL && !CORBA::is_nil(theStartLCS)) {
-    aStartLCS = GetOperations()->GetEngine()->GetObject(theStartLCS->GetStudyID(), theStartLCS->GetEntry());
+    CORBA::String_var aStartLCSEntry = theStartLCS->GetEntry();
+    aStartLCS = GetOperations()->GetEngine()->GetObject(theStartLCS->GetStudyID(), aStartLCSEntry);
     if (aStartLCS.IsNull()) return aGEOMObject._retn();
   }
 
   //Get the End LCS
+  CORBA::String_var anEndLCSEntry = theEndLCS->GetEntry();
   Handle(GEOM_Object) aEndLCS =
-    GetOperations()->GetEngine()->GetObject(theEndLCS->GetStudyID(), theEndLCS->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theEndLCS->GetStudyID(), anEndLCSEntry);
   if (aEndLCS.IsNull()) return aGEOMObject._retn();
 
   //Perform the Position
@@ -827,20 +868,23 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShapeCopy
     return aGEOMObject._retn();
 
   //Get the basic object
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the Start LCS (may be NULL for positioning from global LCS)
   Handle(GEOM_Object) aStartLCS = NULL;
   if (theStartLCS != NULL && !CORBA::is_nil(theStartLCS)) {
-    aStartLCS = GetOperations()->GetEngine()->GetObject(theStartLCS->GetStudyID(), theStartLCS->GetEntry());
+    CORBA::String_var aStartLCSEntry = theStartLCS->GetEntry();
+    aStartLCS = GetOperations()->GetEngine()->GetObject(theStartLCS->GetStudyID(), aStartLCSEntry);
     if (aStartLCS.IsNull()) return aGEOMObject._retn();
   }
 
   //Get the End LCS
+  CORBA::String_var anEndLCSEntry = theEndLCS->GetEntry();
   Handle(GEOM_Object) aEndLCS =
-    GetOperations()->GetEngine()->GetObject(theEndLCS->GetStudyID(), theEndLCS->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theEndLCS->GetStudyID(), anEndLCSEntry);
   if (aEndLCS.IsNull()) return aGEOMObject._retn();
 
   //Perform the position
@@ -870,13 +914,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate1D
   if (theObject == NULL || theVector == NULL) return aGEOMObject._retn();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject
-    (theObject->GetStudyID(), theObject->GetEntry());
+  CORBA::String_var anEntry = theObject->GetEntry();
+  Handle(GEOM_Object) aBasicObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector of translation
-  Handle(GEOM_Object) aVector = GetOperations()->GetEngine()->GetObject
-    (theVector->GetStudyID(), theVector->GetEntry());
+  CORBA::String_var aVecEntry = theVector->GetEntry();
+  Handle(GEOM_Object) aVector =
+    GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), aVecEntry);
   if (aVector.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
@@ -908,18 +954,21 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate2D (GEOM::GEOM_
   if (theObject == NULL || theVector1 == NULL || theVector2 == NULL) return aGEOMObject._retn();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject
-    (theObject->GetStudyID(), theObject->GetEntry());
+  CORBA::String_var anEntry = theObject->GetEntry();
+  Handle(GEOM_Object) aBasicObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the vector1 of translation
-  Handle(GEOM_Object) aVector1 = GetOperations()->GetEngine()->GetObject
-    (theVector1->GetStudyID(), theVector1->GetEntry());
+  CORBA::String_var aVec1Entry = theVector1->GetEntry();
+  Handle(GEOM_Object) aVector1 =
+    GetOperations()->GetEngine()->GetObject(theVector1->GetStudyID(), aVec1Entry);
   if (aVector1.IsNull()) return aGEOMObject._retn();
 
   //Get the vector2 of translation
-  Handle(GEOM_Object) aVector2 = GetOperations()->GetEngine()->GetObject
-    (theVector2->GetStudyID(), theVector2->GetEntry());
+  CORBA::String_var aVec2Entry = theVector2->GetEntry();
+  Handle(GEOM_Object) aVector2 =
+    GetOperations()->GetEngine()->GetObject(theVector2->GetStudyID(), aVec2Entry);
   if (aVector2.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
@@ -947,13 +996,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate1D (GEOM::GEOM_Obj
   if (theObject == NULL || theVector == NULL) return aGEOMObject._retn();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject
-    (theObject->GetStudyID(), theObject->GetEntry());
+  CORBA::String_var anEntry = theObject->GetEntry();
+  Handle(GEOM_Object) aBasicObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the a directon of rotation
-  Handle(GEOM_Object) aVector = GetOperations()->GetEngine()->GetObject
-    (theVector->GetStudyID(), theVector->GetEntry());
+  CORBA::String_var aVecEntry = theVector->GetEntry();
+  Handle(GEOM_Object) aVector =
+    GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), aVecEntry);
   if (aVector.IsNull()) return aGEOMObject._retn();
 
   //Perform the rotation
@@ -983,13 +1034,15 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate2D (GEOM::GEOM_Obj
   if (theObject == NULL || theVector == NULL) return aGEOMObject._retn();
 
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject
-    (theObject->GetStudyID(), theObject->GetEntry());
+  CORBA::String_var anEntry = theObject->GetEntry();
+  Handle(GEOM_Object) aBasicObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the a directon of rotation
-  Handle(GEOM_Object) aVector = GetOperations()->GetEngine()->GetObject
-    (theVector->GetStudyID(), theVector->GetEntry());
+  CORBA::String_var aVecEntry = theVector->GetEntry();
+  Handle(GEOM_Object) aVector =
+    GetOperations()->GetEngine()->GetObject(theVector->GetStudyID(), aVecEntry);
   if (aVector.IsNull()) return aGEOMObject._retn();
 
   //Perform the rotation
@@ -1015,10 +1068,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePoints
   GetOperations()->SetNotDone();
   GEOM::GEOM_Object_var aGEOMObject;
 
-  if (theCentPoint == NULL || thePoint1 == NULL || thePoint2 == NULL || theObject == NULL) return aGEOMObject._retn();
+  if (theCentPoint == NULL || thePoint1 == NULL || thePoint2 == NULL || theObject == NULL)
+    return aGEOMObject._retn();
 
   //check if the object is a subshape
-  if(!theObject->IsMainShape()) {
+  if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
   }
@@ -1026,23 +1080,27 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePoints
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the central point of rotation
+  CORBA::String_var aCPEntry = theCentPoint->GetEntry();
   Handle(GEOM_Object) aCentPoint =
-    GetOperations()->GetEngine()->GetObject(theCentPoint->GetStudyID(), theCentPoint->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theCentPoint->GetStudyID(), aCPEntry);
   if (aCentPoint.IsNull()) return aGEOMObject._retn();
 
   //Get the first point
+  CORBA::String_var aP1Entry = thePoint1->GetEntry();
   Handle(GEOM_Object) aPoint1 =
-    GetOperations()->GetEngine()->GetObject(thePoint1->GetStudyID(), thePoint1->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint1->GetStudyID(), aP1Entry);
   if (aPoint1.IsNull()) return aGEOMObject._retn();
 
   //Get the second point
+  CORBA::String_var aP2Entry = thePoint2->GetEntry();
   Handle(GEOM_Object) aPoint2 =
-    GetOperations()->GetEngine()->GetObject(thePoint2->GetStudyID(), thePoint2->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint2->GetStudyID(), aP2Entry);
   if (aPoint2.IsNull()) return aGEOMObject._retn();
 
   //Perform the translation
@@ -1067,26 +1125,31 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePointsCopy
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theCentPoint == NULL || thePoint1 == NULL || thePoint2 == NULL || theObject == NULL) return aGEOMObject._retn();
+  if (theCentPoint == NULL || thePoint1 == NULL || thePoint2 == NULL || theObject == NULL)
+    return aGEOMObject._retn();
 
   //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
   Handle(GEOM_Object) aBasicObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the central point of rotation
+  CORBA::String_var aCPEntry = theCentPoint->GetEntry();
   Handle(GEOM_Object) aCentPoint =
-    GetOperations()->GetEngine()->GetObject(theCentPoint->GetStudyID(), theCentPoint->GetEntry());
+    GetOperations()->GetEngine()->GetObject(theCentPoint->GetStudyID(), aCPEntry);
   if (aCentPoint.IsNull()) return aGEOMObject._retn();
 
   //Get the first point
+  CORBA::String_var aP1Entry = thePoint1->GetEntry();
   Handle(GEOM_Object) aPoint1 =
-    GetOperations()->GetEngine()->GetObject(thePoint1->GetStudyID(), thePoint1->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint1->GetStudyID(), aP1Entry);
   if (aPoint1.IsNull()) return aGEOMObject._retn();
 
   //Get the second point
+  CORBA::String_var aP2Entry = thePoint2->GetEntry();
   Handle(GEOM_Object) aPoint2 =
-    GetOperations()->GetEngine()->GetObject(thePoint2->GetStudyID(), thePoint2->GetEntry());
+    GetOperations()->GetEngine()->GetObject(thePoint2->GetStudyID(), aP2Entry);
   if (aPoint2.IsNull()) return aGEOMObject._retn();
 
   //Perform the rotation
@@ -1097,4 +1160,3 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePointsCopy
 
   return GetObject(anObject);
 }
-
