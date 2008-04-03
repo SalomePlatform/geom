@@ -722,6 +722,10 @@ msgstr "Wire(s)"
 #Parameter
 msgid "GEOM_PARAMETER"
 msgstr "Paramètre :"
+msgid "GEOM_UPARAMETER"
+msgstr "U-paramètre :"
+msgid "GEOM_VPARAMETER"
+msgstr "V-paramètre :"
 
 
 #

@@ -288,6 +288,18 @@ module GEOM
 				  in double theParameter);
 
     /*!
+     *  Create a point, corresponding to the given parameters on the
+     *    given surface.
+     *  \param theRefSurf The referenced surface.
+     *  \param theUParameter Value of U-parameter on the referenced surface.
+     *  \param theVParameter Value of V-parameter on the referenced surface.
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object MakePointOnSurface (in GEOM_Object theRefSurf,
+				    in double theUParameter,
+				    in double theVParameter);
+
+    /*!
      *  Create a point, on two lines intersection.
      *  \param theRefLine1, theRefLine2 The referenced lines.
      *  \return New GEOM_Object, containing the created point.
@@ -2543,6 +2555,59 @@ module GEOM
      *  Get point coordinates
      */
     void PointCoordinates (in GEOM_Object theShape, out double X, out double Y, out double Z);
+
+    /*!
+     *  Get radius of curvature of curve in the point determinated by param
+     *  \param theShape - curve.
+     *  \param theParam - parameter on curve
+     *  \return Value of curvature.
+     */
+    double CurveCurvatureByParam (in GEOM_Object theShape, in double theParam);
+
+    /*!
+     *  Get radius of curvature of curve in the given point
+     *  \param theShape - curve.
+     *  \param thePoint - point
+     *  \return Value of curvature.
+     */
+    double CurveCurvatureByPoint (in GEOM_Object theShape, in GEOM_Object thePoint);
+
+    /*!
+     *  Get max radius of curvature of surface in the point determinated by params
+     *  \param theShape - surface.
+     *  \param theUParam - U-parameter on surface
+     *  \param theVParam - V-parameter on surface
+     *  \return Value of curvature.
+     */
+    double MaxSurfaceCurvatureByParam (in GEOM_Object theShape, in double theUParam,
+				       in double theVParam);
+
+    /*!
+     *  Get max radius of curvature of surface in the given point
+     *  \param theShape - surface.
+     *  \param thePoint - point
+     *  \return Value of curvature.
+     */
+    double MaxSurfaceCurvatureByPoint (in GEOM_Object theShape, in GEOM_Object thePoint);
+
+    /*!
+     *  Get min radius of curvature of surface in the point determinated by params
+     *  \param theShape - surface.
+     *  \param theUParam - U-parameter on surface
+     *  \param theVParam - V-parameter on surface
+     *  \return Value of curvature.
+     */
+    double MinSurfaceCurvatureByParam (in GEOM_Object theShape, in double theUParam,
+				       in double theVParam);
+
+    /*!
+     *  Get min radius of curvature of surface in the given point
+     *  \param theShape - surface.
+     *  \param thePoint - point
+     *  \return Value of curvature.
+     */
+    double MinSurfaceCurvatureByPoint (in GEOM_Object theShape, in GEOM_Object thePoint);
+
   };
 
 

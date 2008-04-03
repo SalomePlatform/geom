@@ -185,6 +185,10 @@ msgstr "point3.png"
 msgid "ICON_DLG_POINT_EDGE"
 msgstr "pointonedge.png"
 
+#PointDlg
+msgid "ICON_DLG_POINT_FACE"
+msgstr "pointonface.png"
+
 #PoinDlg
 msgid "ICON_DLG_POINT_LINES"
 msgstr "point_line_intersection.png"

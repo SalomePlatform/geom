@@ -215,6 +215,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePointOnCurve", self.BasicOp)
             return anObj
 
+        ## Create a point, corresponding to the given parameters on the
+        #    given surface.
+        #  @param theRefSurf The referenced surface.
+        #  @param theUParameter Value of U-parameter on the referenced surface.
+        #  @param theVParameter Value of V-parameter on the referenced surface.
+        #  @return New GEOM_Object, containing the created point.
+        #
+        #  Example: see GEOM_TestAll.py
+        def MakeVertexOnSurface(self,theRefSurf, theUParameter, theVParameter):
+            anObj = self.BasicOp.MakePointOnSurface(theRefSurf, theUParameter, theVParameter)
+            RaiseIfFailed("MakePointOnSurface", self.BasicOp)
+            return anObj
+
         ## Create a point on intersection of two lines.
         #  @param theRefLine1, theRefLine2 The referenced lines.
         #  @return New GEOM_Object, containing the created point.
@@ -2108,6 +2121,40 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anAngle = self.MeasuOp.GetAngle(theShape1, theShape2)
             RaiseIfFailed("GetAngle", self.MeasuOp)
             return anAngle
+
+        ## Methods for recieving radius of curvature of curves
+        #  in the given point
+        #
+        #  Example: see GEOM_TestMeasures.py
+        def CurveCurvatureByParam(self, theCurve, theParam):
+            aCurv = self.MeasuOp.CurveCurvatureByParam(theCurve,theParam)
+            RaiseIfFailed("CurveCurvatureByParam", self.MeasuOp)
+            return aCurv
+        def CurveCurvatureByPoint(self, theCurve, thePoint):
+            aCurv = self.MeasuOp.CurveCurvatureByPoint(theCurve,thePoint)
+            RaiseIfFailed("CurveCurvatureByPoint", self.MeasuOp)
+            return aCurv
+
+        ## Methods for recieving max and min radius of curvature of surfaces
+        #  in the given point
+        #
+        #  Example: see GEOM_TestMeasures.py
+        def MaxSurfaceCurvatureByParam(self, theSurf, theUParam, theVParam):
+            aSurf = self.MeasuOp.MaxSurfaceCurvatureByParam(theSurf,theUParam,theVParam)
+            RaiseIfFailed("MaxSurfaceCurvatureByParam", self.MeasuOp)
+            return aSurf
+        def MaxSurfaceCurvatureByPoint(self, theSurf, thePoint):
+            aSurf = self.MeasuOp.MaxSurfaceCurvatureByPoint(theSurf,thePoint)
+            RaiseIfFailed("MaxSurfaceCurvatureByPoint", self.MeasuOp)
+            return aSurf
+        def MinSurfaceCurvatureByParam(self, theSurf, theUParam, theVParam):
+            aSurf = self.MeasuOp.MinSurfaceCurvatureByParam(theSurf,theUParam,theVParam)
+            RaiseIfFailed("MinSurfaceCurvatureByParam", self.MeasuOp)
+            return aSurf
+        def MinSurfaceCurvatureByPoint(self, theSurf, thePoint):
+            aSurf = self.MeasuOp.MinSurfaceCurvatureByPoint(theSurf,thePoint)
+            RaiseIfFailed("MinSurfaceCurvatureByPoint", self.MeasuOp)
+            return aSurf
 
         ## Get min and max tolerances of sub-shapes of theShape
         #  @param theShape Shape, to get tolerances of.

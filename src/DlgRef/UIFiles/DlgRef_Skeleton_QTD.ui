@@ -103,6 +103,11 @@
                                         <cstring>RadioButton4</cstring>
                                     </property>
                                 </widget>
+                                <widget class="QRadioButton">
+                                    <property name="name">
+                                        <cstring>RadioButton5</cstring>
+                                    </property>
+                                </widget>
                             </hbox>
                         </widget>
                     </hbox>
@@ -145,6 +150,7 @@
                                         <cstring>ResultName</cstring>
                                     </property>
                                 </widget>
+
                             </grid>
                         </widget>
                     </grid>

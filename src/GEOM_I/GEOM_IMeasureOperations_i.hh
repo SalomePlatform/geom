@@ -94,6 +94,28 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
   CORBA::Double GetAngle (GEOM::GEOM_Object_ptr theShape1,
 			  GEOM::GEOM_Object_ptr theShape2);
 
+  // Methods for recieving radiuses of curvature of curves and surfaces
+  // in the given point
+  CORBA::Double CurveCurvatureByParam (GEOM::GEOM_Object_ptr theCurve,
+				       CORBA::Double theParam);
+
+  CORBA::Double CurveCurvatureByPoint (GEOM::GEOM_Object_ptr theCurve,
+				       GEOM::GEOM_Object_ptr thePoint);
+
+  CORBA::Double MaxSurfaceCurvatureByParam (GEOM::GEOM_Object_ptr theSurf,
+					    CORBA::Double theUParam,
+					    CORBA::Double theVParam);
+
+  CORBA::Double MaxSurfaceCurvatureByPoint (GEOM::GEOM_Object_ptr theSurf,
+					    GEOM::GEOM_Object_ptr thePoint);
+
+  CORBA::Double MinSurfaceCurvatureByParam (GEOM::GEOM_Object_ptr theSurf,
+					    CORBA::Double theUParam,
+					    CORBA::Double theVParam);
+
+  CORBA::Double MinSurfaceCurvatureByPoint (GEOM::GEOM_Object_ptr theSurf,
+					    GEOM::GEOM_Object_ptr thePoint);
+
   ::GEOMImpl_IMeasureOperations* GetOperations()
   { return (::GEOMImpl_IMeasureOperations*)GetImpl(); }
 };

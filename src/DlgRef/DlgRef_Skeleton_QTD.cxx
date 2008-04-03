@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
 **
-** Created: Wed Mar 26 12:14:14 2008
+** Created: Wed Apr 2 16:42:12 2008
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -60,6 +60,9 @@ DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent, const char* name, boo
 
     RadioButton4 = new QRadioButton( GroupConstructors, "RadioButton4" );
     Layout2->addWidget( RadioButton4 );
+
+    RadioButton5 = new QRadioButton( GroupConstructors, "RadioButton5" );
+    Layout2->addWidget( RadioButton5 );
     GroupConstructorsLayout->addLayout( Layout2 );
 
     Layout1->addWidget( GroupConstructors, 0, 0 );

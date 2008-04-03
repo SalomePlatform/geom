@@ -790,6 +790,10 @@ msgstr "Imported_Shape"
 #Parameter
 msgid "GEOM_PARAMETER"
 msgstr "Parameter :"
+msgid "GEOM_UPARAMETER"
+msgstr "U-parameter :"
+msgid "GEOM_VPARAMETER"
+msgstr "V-parameter :"
 
 #
 #==============================================================================

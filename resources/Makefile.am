@@ -118,6 +118,7 @@ planeworkingvector.png \
 planeworkingorigin.png \
 point2.png \
 pointonedge.png \
+pointonface.png \
 point_line_intersection.png \
 polyline.png \
 prism.png \

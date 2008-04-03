@@ -87,6 +87,12 @@
 #include <gp_Pln.hxx>
 #include <gp_Lin.hxx>
 
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+#include <ShapeAnalysis.hxx>
+#include <ShapeAnalysis_Surface.hxx>
+#include <GeomLProp_CLProps.hxx>
+#include <GeomLProp_SLProps.hxx>
+
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -1467,6 +1473,317 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngle (Handle(GEOM_Object) theLine
   return anAngle;
 }
 
+
+//=============================================================================
+/*!
+ *  CurveCurvatureByParam
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByParam
+                        (Handle(GEOM_Object) theCurve, Standard_Real& theParam)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if(theCurve.IsNull()) return aRes;
+
+  Handle(GEOM_Function) aRefShape = theCurve->GetLastFunction();
+  if(aRefShape.IsNull()) return aRes;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if(aShape.IsNull()) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return aRes;
+  }
+
+  Standard_Real aFP, aLP, aP;
+  Handle(Geom_Curve) aCurve = BRep_Tool::Curve(TopoDS::Edge(aShape), aFP, aLP);
+  aP = aFP + (aLP - aFP) * theParam;
+
+  if(aCurve.IsNull()) return aRes;
+
+  //Compute curvature
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    GeomLProp_CLProps Prop = GeomLProp_CLProps 
+      (aCurve, aP, 2, Precision::Confusion());
+    aRes = fabs(Prop.Curvature());
+    SetErrorCode(OK);
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return aRes;
+  }
+
+  if( aRes > Precision::Confusion() )
+    aRes = 1/aRes;
+  else
+    aRes = RealLast();
+  
+  return aRes;
+}
+
+
+//=============================================================================
+/*!
+ *  CurveCurvatureByPoint
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByPoint
+                   (Handle(GEOM_Object) theCurve, Handle(GEOM_Object) thePoint)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if( theCurve.IsNull() || thePoint.IsNull() ) return aRes;
+
+  Handle(GEOM_Function) aRefCurve = theCurve->GetLastFunction();
+  Handle(GEOM_Function) aRefPoint = thePoint->GetLastFunction();
+  if( aRefCurve.IsNull() || aRefPoint.IsNull() ) return aRes;
+
+  TopoDS_Edge anEdge = TopoDS::Edge(aRefCurve->GetValue());
+  TopoDS_Vertex aPnt = TopoDS::Vertex(aRefPoint->GetValue());
+  if( anEdge.IsNull() || aPnt.IsNull() ) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return aRes;
+  }
+
+  Standard_Real aFP, aLP;
+  Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, aFP, aLP);
+  if(aCurve.IsNull()) return aRes;
+  gp_Pnt aPoint = BRep_Tool::Pnt(aPnt);
+
+  //Compute curvature
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    GeomAPI_ProjectPointOnCurve PPC(aPoint, aCurve, aFP, aLP);
+    if(PPC.NbPoints()>0) {
+      GeomLProp_CLProps Prop = GeomLProp_CLProps 
+        (aCurve, PPC.LowerDistanceParameter(), 2, Precision::Confusion());
+      aRes = fabs(Prop.Curvature());
+      SetErrorCode(OK);
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return aRes;
+  }
+
+  if( aRes > Precision::Confusion() )
+    aRes = 1/aRes;
+  else
+    aRes = RealLast();
+  
+  return aRes;
+}
+
+
+//=============================================================================
+/*!
+ *  getSurfaceCurvatures
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::getSurfaceCurvatures
+                                          (const Handle(Geom_Surface)& aSurf,
+                                           Standard_Real theUParam,
+                                           Standard_Real theVParam,
+                                           Standard_Boolean theNeedMaxCurv)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = 1.0;
+
+  if (aSurf.IsNull()) return aRes;
+
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    GeomLProp_SLProps Prop = GeomLProp_SLProps 
+      (aSurf, theUParam, theVParam, 2, Precision::Confusion());
+    if(Prop.IsCurvatureDefined()) {
+      if(Prop.IsUmbilic()) {
+        //cout<<"is umbilic"<<endl;
+        aRes = fabs(Prop.MeanCurvature());
+      }
+      else {
+        //cout<<"is not umbilic"<<endl;
+        double c1 = fabs(Prop.MaxCurvature());
+        double c2 = fabs(Prop.MinCurvature());
+        if(theNeedMaxCurv)
+          aRes = Max(c1,c2);
+        else
+          aRes = Min(c1,c2);
+      }
+      SetErrorCode(OK);
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return aRes;
+  }
+
+  if( fabs(aRes) > Precision::Confusion() )
+    aRes = 1/aRes;
+  else
+    aRes = RealLast();
+  
+  return aRes;
+}
+
+
+//=============================================================================
+/*!
+ *  MaxSurfaceCurvatureByParam
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::MaxSurfaceCurvatureByParam
+                                                  (Handle(GEOM_Object) theSurf,
+                                                   Standard_Real& theUParam,
+                                                   Standard_Real& theVParam)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if (theSurf.IsNull()) return aRes;
+
+  Handle(GEOM_Function) aRefShape = theSurf->GetLastFunction();
+  if(aRefShape.IsNull()) return aRes;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if(aShape.IsNull()) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return aRes;
+  }
+
+  TopoDS_Face F = TopoDS::Face(aShape);
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(F);
+
+  //Compute the parameters
+  Standard_Real U1,U2,V1,V2;
+  ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
+  Standard_Real U = U1 + (U2-U1)*theUParam;
+  Standard_Real V = V1 + (V2-V1)*theVParam;
+  
+  return getSurfaceCurvatures(aSurf, U, V, true);
+}
+
+
+//=============================================================================
+/*!
+ *  MaxSurfaceCurvatureByPoint
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::MaxSurfaceCurvatureByPoint
+                    (Handle(GEOM_Object) theSurf, Handle(GEOM_Object) thePoint)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if( theSurf.IsNull() || thePoint.IsNull() ) return aRes;
+
+  Handle(GEOM_Function) aRefShape = theSurf->GetLastFunction();
+  Handle(GEOM_Function) aRefPoint = thePoint->GetLastFunction();
+  if( aRefShape.IsNull() || aRefPoint.IsNull() ) return aRes;
+
+  TopoDS_Face aFace = TopoDS::Face(aRefShape->GetValue());
+  TopoDS_Vertex aPnt = TopoDS::Vertex(aRefPoint->GetValue());
+  if( aFace.IsNull() || aPnt.IsNull() ) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return 0;
+  }
+
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
+  if(aSurf.IsNull()) return aRes;
+  gp_Pnt aPoint = BRep_Tool::Pnt(aPnt);
+
+  //Compute the parameters
+  ShapeAnalysis_Surface sas(aSurf);
+  gp_Pnt2d UV = sas.ValueOfUV(aPoint,Precision::Confusion());
+
+  return getSurfaceCurvatures(aSurf, UV.X(), UV.Y(), true);
+}
+
+
+//=============================================================================
+/*!
+ *  MinSurfaceCurvatureByParam
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::MinSurfaceCurvatureByParam
+                                                  (Handle(GEOM_Object) theSurf,
+                                                   Standard_Real& theUParam,
+                                                   Standard_Real& theVParam)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if (theSurf.IsNull()) return aRes;
+
+  Handle(GEOM_Function) aRefShape = theSurf->GetLastFunction();
+  if(aRefShape.IsNull()) return aRes;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if(aShape.IsNull()) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return aRes;
+  }
+
+  TopoDS_Face F = TopoDS::Face(aShape);
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(F);
+
+  //Compute the parameters
+  Standard_Real U1,U2,V1,V2;
+  ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
+  Standard_Real U = U1 + (U2-U1)*theUParam;
+  Standard_Real V = V1 + (V2-V1)*theVParam;
+  
+  return getSurfaceCurvatures(aSurf, U, V, false);
+}
+
+
+//=============================================================================
+/*!
+ *  MinSurfaceCurvatureByPoint
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::MinSurfaceCurvatureByPoint
+                    (Handle(GEOM_Object) theSurf, Handle(GEOM_Object) thePoint)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if( theSurf.IsNull() || thePoint.IsNull() ) return aRes;
+
+  Handle(GEOM_Function) aRefShape = theSurf->GetLastFunction();
+  Handle(GEOM_Function) aRefPoint = thePoint->GetLastFunction();
+  if( aRefShape.IsNull() || aRefPoint.IsNull() ) return aRes;
+
+  TopoDS_Face aFace = TopoDS::Face(aRefShape->GetValue());
+  TopoDS_Vertex aPnt = TopoDS::Vertex(aRefPoint->GetValue());
+  if( aFace.IsNull() || aPnt.IsNull() ) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return 0;
+  }
+
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
+  if(aSurf.IsNull()) return aRes;
+  gp_Pnt aPoint = BRep_Tool::Pnt(aPnt);
+
+  //Compute the parameters
+  ShapeAnalysis_Surface sas(aSurf);
+  gp_Pnt2d UV = sas.ValueOfUV(aPoint,Precision::Confusion());
+
+  return getSurfaceCurvatures(aSurf, UV.X(), UV.Y(), false);
+}
+
+
 //=======================================================================
 //function : StructuralDump
 //purpose  : Structural (data exchange) style of output.
@@ -1708,6 +2025,7 @@ void GEOMImpl_IMeasureOperations::StructuralDump (const BRepCheck_Analyzer& theA
     theDump += TCollection_AsciiString(nbo) + "\n";
   }
 }
+
 
 //=======================================================================
 //function : GetProblemShapes

@@ -113,6 +113,7 @@ void GEOMBase_Skeleton::Init()
   /* displays Dialog */
   RadioButton1->setChecked(TRUE);
   RadioButton4->hide();
+  RadioButton5->hide();
 
   CheckBoxRestoreSS->setChecked(FALSE);
   GroupBoxPublish->hide();

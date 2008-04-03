@@ -44,6 +44,10 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakePointOnLinesIntersection
                                       (Handle(GEOM_Object) theLine1, Handle(GEOM_Object) theLine2);
 
+  Standard_EXPORT Handle(GEOM_Object) MakePointOnSurface (Handle(GEOM_Object) theSurface,
+                                                          double theUParameter,
+                                                          double theVParameter);
+
   // Vector
   Standard_EXPORT Handle(GEOM_Object) MakeVectorDXDYDZ (double theDX, double theDY, double theDZ);
 

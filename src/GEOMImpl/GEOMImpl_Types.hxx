@@ -98,6 +98,7 @@
 #define POINT_XYZ_REF            2
 #define POINT_CURVE_PAR          3
 #define POINT_LINES_INTERSECTION 4
+#define POINT_SURFACE_PAR        5
 //#define POINT_FACE_PAR 5
 
 #define VECTOR_TWO_PNT  1
