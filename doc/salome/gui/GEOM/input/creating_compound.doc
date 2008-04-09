@@ -10,6 +10,8 @@ Entity - > Build - > Compound</b>.
 
 \n <b>TUI Command:</b> <em>geompy.MakeCompound(ListOfShape)</em>
 \n <b>Arguments:</b> Name + List of shapes.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html neo-obj7.png
 
