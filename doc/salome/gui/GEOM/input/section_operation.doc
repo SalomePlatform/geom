@@ -10,6 +10,8 @@
 \n The \b Result will be any \b GEOM_Object (EDGE or WIRE).
 \n <b>TUI Command:</b> <em>geompy.MakeSection(s1, s2)</em>
 \n <b>Arguments:</b> Name + 2 shapes.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html neo-section.png
 

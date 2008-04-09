@@ -12,6 +12,8 @@ with the origin of the Local Coordinate System.
 \n <b>Create a copy</b> checkbox allows to keep the initial objects, otherwise they
 will be removed.
 \n <b>Arguments:</b> Name + one or several objects + End Coordinate System.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation5.png
 
@@ -31,6 +33,8 @@ the coordinates of the End LSC.
 otherwise it will be removed.
 \n <b>Arguments:</b> Name + one or several objects + Start Coordinate System + End
 Coordinate System.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation6.png
 

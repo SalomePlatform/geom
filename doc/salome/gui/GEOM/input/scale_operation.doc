@@ -11,6 +11,8 @@ shape. For this, you need to define the \b Shape to be scaled, the
 \n The \b Result will be a \b GEOM_Object.
 \n <b>TUI Command:</b> <em>geompy.MakeScaleTransform(Shape, CenterOfScale, Factor)</em>
 \n <b>Arguments:</b> Name + 1 shape(s) + 1 vertex + 1 Scale Factor.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation10.png
 
