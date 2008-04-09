@@ -482,7 +482,9 @@ void TransformationGUI_MirrorDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStu
 {
   if (CheckBoxRestoreSS->isChecked()) {
     // empty list of arguments means that all arguments should be restored
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(), /*isTrsf=*/true);
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
+                                        /*theFindMethod=*/GEOM::FSM_Transformed,
+                                        /*theInheritFirstArg=*/true);
   }
 }
 

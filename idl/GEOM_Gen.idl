@@ -76,6 +76,32 @@ module GEOM
     ST_ONIN
   };
 
+  /*!
+   *  Kind of method to find inside one main shape some subshapes,
+   *  corresponding to other given shape (its argument)
+   *  Is used in functions GEOM_Gen.RestoreSubShapes<xxx>()
+   */
+  enum find_shape_method
+  {
+    /*! Use GetInPlace functionality. Suits all cases, except transformations */
+    FSM_GetInPlace,
+
+    /*! To be used only for transformation result, to find subshapes of argument.
+     *  Only this method can be used after transformation.
+     */
+    FSM_Transformed,
+
+    /*! To find only shared subshapes, not modified by the operation */
+    FSM_GetSame,
+
+    /*! Use GetShapesOnShape method (can work only on solids) */
+    FSM_GetShapesOnShape,
+
+    /*! Use GetInPlaceByHistory method (can work only after Partition) */
+    FSM_GetInPlaceByHistory
+  };
+
+
   typedef sequence<string>      string_array;
   typedef sequence<short>       short_array;
   typedef sequence<long>        ListOfLong;
@@ -2722,35 +2748,36 @@ module GEOM
      *  \param theObject published GEOM object, arguments of which will be published
      *  \param theArgs   list of GEOM_Object, operation arguments to be published.
      *                   If this list is empty, all operation arguments will be published
-     *  \param isTrsf    If True, search sub-shapes by indices, as in case of
-     *                   transformation they cannot be found by GetInPlace.
-     *                   The argument itself is not published in this case,
-     *                   because the whole shape corresponds to the argument.
+     *  \param theFindMethod method to search subshapes, corresponding to arguments and
+     *                       their subshapes. Value from enumeration GEOM::find_shape_method.
+     *  \param theInheritFirstArg set properties of the first argument for \a theObject.
+     *                            Do not publish subshapes in place of arguments, but only
+     *                            in place of subshapes of the first argument,
+     *                            because the whole shape corresponds to the first argument.
+     *                            Mainly to be used after transformations, but it also can be
+     *                            usefull after partition with one object shape, and some other
+     *                            operations, where only the first argument has to be considered.
+     *                            If theObject has only one argument shape, this flag is automatically
+     *                            considered as True, not regarding really passed value.
      *  \return True in case of success, False otherwise.
      */
     boolean RestoreSubShapesO (in SALOMEDS::Study   theStudy,
 			       in GEOM_Object       theObject,
 			       in ListOfGO          theArgs,
-			       in boolean           isTrsf);
+			       in find_shape_method theFindMethod,
+			       in boolean           theInheritFirstArg);
 
     /*!
      *  Publish sub-shapes, standing for arguments and sub-shapes of arguments
-     *  To be used from GUI and from geompy.addToStudy
-     *  \param theStudy   the study, in which theObject is published already,
-     *                    and in which the arguments will be published
+     *  To be used from GUI and from geompy.addToStudy.
+     *  Work like the above method, but accepts study object theSObject instead of GEOM_Object.
      *  \param theSObject study object, referencing GEOM object, arguments of which will be published
-     *  \param theArgs    list of GEOM_Object, operation arguments to be published.
-     *                    If this list is empty, all operation arguments will be published
-     *  \param isTrsf    If True, search sub-shapes by indices, as in case of
-     *                   transformation they cannot be found by GetInPlace.
-     *                   The argument itself is not published in this case,
-     *                   because the whole shape corresponds to the argument.
-     *  \return True in case of success, False otherwise.
      */
     boolean RestoreSubShapesSO (in SALOMEDS::Study   theStudy,
 				in SALOMEDS::SObject theSObject,
 				in ListOfGO          theArgs,
-				in boolean           isTrsf);
+				in find_shape_method theFindMethod,
+				in boolean           theInheritFirstArg);
 
     /*!
      *  Methods to access interfaces for objects creation and transformation

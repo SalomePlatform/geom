@@ -399,7 +399,9 @@ void OperationGUI_PartitionDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy
 {
   if (CheckBoxRestoreSS->isChecked()) {
     // empty list of arguments means that all arguments should be restored
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(), /*isTrsf=*/false);
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
+                                        /*theFindMethod=*/GEOM::FSM_GetInPlaceByHistory,
+                                        /*theInheritFirstArg=*/myListShapes.length() == 1); // ? false
   }
 }
 

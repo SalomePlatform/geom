@@ -1,4 +1,4 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  GEOM RepairGUI : GUI for Geometry component
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -87,16 +87,16 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   GroupPoints->TextLabel1->setText(tr("GEOM_SELECTED_SHAPE"));
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
-  
-  int aWidth = GroupPoints->TextLabel1->sizeHint().width() + 
-               GroupPoints->PushButton1->sizeHint().width() + 
+
+  int aWidth = GroupPoints->TextLabel1->sizeHint().width() +
+               GroupPoints->PushButton1->sizeHint().width() +
                GroupPoints->getGroupBoxLayout()->spacing();
 
   Layout1->addWidget(GroupPoints, 2, 0);
 
   QHBox* aHBox = new QHBox( GroupPoints->GroupBox1 );
   aHBox->setSpacing( 5 );
-  
+
   (new QLabel( tr( "GEOM_TOLERANCE" ), aHBox ))->setFixedWidth( aWidth );
   myTolEdt = new QtxDblSpinBox( 0, 100, 1e-7, aHBox );
   myTolEdt->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
@@ -127,9 +127,9 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   /***************************************************************/
 
   setHelpFileName("glue_faces_operation_page.html");
-  
+
   // Disable second way of gluing if OCC viewer is not active one
-  if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+  if (myGeomGUI->getApp()->desktop()->activeWindow()->getViewManager()->getType()
       != OCCViewer_Viewer::Type())
     RadioButton2->setEnabled(false);
 
@@ -160,6 +160,8 @@ void RepairGUI_GlueDlg::Init()
   //myGeomGUI->SetState( 0 );
   //globalSelection( GEOM_COMPOUND );
 
+  GroupBoxPublish->show();
+
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -173,7 +175,7 @@ void RepairGUI_GlueDlg::Init()
   connect( myTolEdt2, SIGNAL( valueChanged( double ) ), this, SLOT( onTolerChanged( double ) ) );
   connect( mySubShapesChk, SIGNAL( stateChanged( int ) ), this, SLOT( onSubShapesChk() ) );
 
-  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect( myGeomGUI->getApp()->selectionMgr(),
 	   SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()) );
 
   connect(myDetectBtn, SIGNAL(clicked()), this, SLOT(onDetect()));
@@ -181,7 +183,7 @@ void RepairGUI_GlueDlg::Init()
   initName( tr( "GLUE_NEW_OBJ_NAME" ) );
 
   ConstructorsClicked(0);
-  
+
   activateSelection();
   updateButtonState();
 }
@@ -195,9 +197,9 @@ void RepairGUI_GlueDlg::ConstructorsClicked( int constructorId )
 {
   if ( myCurrConstrId == constructorId )
     return;
-  
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
-  
+
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+
   switch ( constructorId )
     {
     case 0:
@@ -207,13 +209,13 @@ void RepairGUI_GlueDlg::ConstructorsClicked( int constructorId )
         GroupPoints->show();
         GroupPoints->LineEdit1->setText( "" );
         myEditCurrentArgument = GroupPoints->LineEdit1;
-        
+
         if ( myCurrConstrId >= 0 ) // i.e. it is not initialisation
         {
           // copy tolerance from previous tolerance field
           myTolEdt->setValue( myTolEdt2->value() );
         }
-          
+
         break;
       }
     case 1:
@@ -223,7 +225,7 @@ void RepairGUI_GlueDlg::ConstructorsClicked( int constructorId )
         GroupPoints2->show();
         GroupPoints->LineEdit1->setText("");
         myEditCurrentArgument = GroupPoints2->LineEdit1;
-        
+
         if ( myCurrConstrId >= 0 ) // i.e. it is not initialisation
         {
           // copy tolerance from previous tolerance field
@@ -231,23 +233,23 @@ void RepairGUI_GlueDlg::ConstructorsClicked( int constructorId )
           mySubShapesChk->setChecked( false );
           clearTemporary();
         }
-        
+
         break;
       }
     }
-    
-    myCurrConstrId = constructorId;
+
+  myCurrConstrId = constructorId;
 
   myEditCurrentArgument->setFocus();
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   qApp->processEvents();
   updateGeometry();
   QSize aSize = minimumSizeHint();
   resize( width(), aSize.height() );
-  
+
   displayPreview();
   updateButtonState();
   activateSelection();
@@ -298,7 +300,7 @@ void RepairGUI_GlueDlg::SelectionIntoArgument()
     updateButtonState();
     return;
   }
-  
+
   erasePreview();
   myEditCurrentArgument->setText("");
   myObject = GEOM::GEOM_Object::_nil();
@@ -352,7 +354,7 @@ void RepairGUI_GlueDlg::LineEditReturnPressed()
 void RepairGUI_GlueDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+  connect(myGeomGUI->getApp()->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   //GroupPoints->LineEdit1->setText("");
@@ -374,17 +376,6 @@ void RepairGUI_GlueDlg::enterEvent(QEvent* e)
   if ( !GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
-
-//=================================================================================
-// function : closeEvent()
-// purpose  :
-//=================================================================================
-void RepairGUI_GlueDlg::closeEvent(QCloseEvent* e)
-{
-  //myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
-}
-
 
 //=================================================================================
 // function : createOperation
@@ -441,14 +432,14 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
 
       // Get names of selected objects
       SALOME_ListIteratorOfListIO it ( selectedIO() );
-      for (; it.More(); it.Next()) 
+      for (; it.More(); it.Next())
         selected.insert( it.Value()->getName(), 0 );
 
       // Iterate through result and select objects with names from selection
       // ObjectList toRemoveFromEnggine;
       ObjectList toGlue;
       ObjectList::iterator anIter;
-      for (anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter) 
+      for (anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter)
       {
         if ( selected.contains( myGeomGUI->getApp()->orb()->object_to_string(*anIter) ) )
           toGlue.push_back(*anIter);
@@ -480,10 +471,27 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
   return aResult;
 }
 
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void RepairGUI_GlueDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                          SALOMEDS::SObject_ptr theSObject)
+{
+  if (CheckBoxRestoreSS->isChecked()) {
+    GEOM::find_shape_method aFindMethod = GEOM::FSM_GetInPlace;
+    if (getConstructorId() == 0) // MakeGlueFaces
+      aFindMethod = GEOM::FSM_GetInPlaceByHistory;
+
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
+                                        aFindMethod, /*theInheritFirstArg=*/true);
+  }
+}
 
 //================================================================
 // Function : clearShapeBufferLocal
-// Purpose  : 
+// Purpose  :
 //================================================================
 void RepairGUI_GlueDlg::clearShapeBufferLocal( GEOM::GEOM_Object_ptr theObj )
 {
@@ -508,7 +516,7 @@ void RepairGUI_GlueDlg::clearShapeBufferLocal( GEOM::GEOM_Object_ptr theObj )
     if ( anIt->Value()->FindAttribute(anAttr, "AttributeIOR") ) {
       _PTR(AttributeIOR) anIOR ( anAttr );
       TCollection_AsciiString asciiIOR( (char*)anIOR->Value().c_str() );
-      myGeomGUI->GetShapeReader().RemoveShapeFromBuffer( asciiIOR );      
+      myGeomGUI->GetShapeReader().RemoveShapeFromBuffer( asciiIOR );
     }
   }
 }
@@ -516,7 +524,7 @@ void RepairGUI_GlueDlg::clearShapeBufferLocal( GEOM::GEOM_Object_ptr theObj )
 //================================================================
 // Function : onAccept
 // Purpose  : This method should be called from dialog's slots onOk() and onApply()
-//            It perfroms user input validation, then it 
+//            It perfroms user input validation, then it
 //            performs a proper operation and manages transactions, etc.
 //================================================================
 bool RepairGUI_GlueDlg::onAcceptLocal()
@@ -527,16 +535,16 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
   _PTR(Study) aStudy = getStudy()->studyDS();
 
   bool aLocked = aStudy->GetProperties()->IsLocked();
-  if ( aLocked ) 
+  if ( aLocked )
   {
     MESSAGE("GEOMBase_Helper::onAccept - ActiveStudy is locked");
-    SUIT_MessageBox::warn1 ( (QWidget*)(SUIT_Session::session()->activeApplication()->desktop()),
+    SUIT_MessageBox::warn1 ( (QWidget*)(myGeomGUI->getApp()->desktop()),
       QObject::tr("WRN_WARNING"), QObject::tr("WRN_STUDY_LOCKED"), QObject::tr("BUT_OK") );
     return false;
   }
 
   QString msg;
-  if ( !isValid( msg ) ) 
+  if ( !isValid( msg ) )
   {
     showError( msg );
     return false;
@@ -544,65 +552,64 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
 
   erasePreview( false );
 
-  try 
+  try
   {
-    if ( openCommand() ) 
+    if ( openCommand() )
     {
       SUIT_OverrideCursor wc;
 
-      SUIT_Session::session()->activeApplication()->putInfo( "" );
+      myGeomGUI->getApp()->putInfo( "" );
       ObjectList objects;
-      
-      if ( !execute( objects ) ) 
-      { 
+
+      if ( !execute( objects ) )
+      {
         wc.suspend();
         abortCommand();
         showError();
       }
-      else 
+      else
       {
         const int nbObjs = objects.size();
-        bool withChildren = false;
-        for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) 
+        for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it )
         {
-          QString aName("");
+          QString aName = getNewObjectName();
           if ( nbObjs > 1 )
           {
-            aName = strlen( getNewObjectName() ) ? GEOMBase::GetDefaultName( getNewObjectName() ) : GEOMBase::GetDefaultName(   getPrefix( *it ) );
+            if (aName.isEmpty())
+              aName = getPrefix(*it);
+            aName = GEOMBase::GetDefaultName(aName);
           }
-          else 
+          else
           {
-            aName = getNewObjectName();
             // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
-            if ( aName.isEmpty() )
+            if (aName.isEmpty())
               aName = GEOMBase::GetDefaultName( getPrefix( *it ) );
           }
           addInStudy( *it, aName.latin1() );
-          withChildren = false;
           display( *it, false );
         }
 
-        if ( nbObjs ) 
+        if ( nbObjs )
         {
           commitCommand();
           updateObjBrowser();
-          SUIT_Session::session()->activeApplication()->putInfo( QObject::tr("GEOM_PRP_DONE") );
+          myGeomGUI->getApp()->putInfo( QObject::tr("GEOM_PRP_DONE") );
         }
-        else 
+        else
         {
           abortCommand();
         }
 
         // JFA 28.12.2004 BEGIN // To enable warnings
-        if ( !getOperation()->_is_nil() ) 
+        if ( !getOperation()->_is_nil() )
         {
-          if ( !getOperation()->IsDone() ) 
+          if ( !getOperation()->IsDone() )
           {
             wc.suspend();
       	    QString msgw = QObject::tr( getOperation()->GetErrorCode() );
-            SUIT_MessageBox::warn1((QWidget*)(SUIT_Session::session()->activeApplication()->desktop()),
-				   QObject::tr( "WRN_WARNING" ), 
-				   msgw, 
+            SUIT_MessageBox::warn1((QWidget*)(myGeomGUI->getApp()->desktop()),
+				   QObject::tr( "WRN_WARNING" ),
+				   msgw,
 				   QObject::tr( "BUT_OK" ));
           }
         }
@@ -610,7 +617,7 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
       }
     }
   }
-  catch( const SALOME::SALOME_Exception& e ) 
+  catch( const SALOME::SALOME_Exception& e )
   {
     SalomeApp_Tools::QtCatchCorbaException( e );
     abortCommand();
@@ -643,10 +650,10 @@ void RepairGUI_GlueDlg::onDetect()
 
   GEOM::ListOfGO_var aList = GEOM::GEOM_IShapesOperations::_narrow
     ( getOperation() )->GetGlueFaces( myObject, myTolEdt2->value() );
-  
-  for (int i = 0, n = aList->length(); i < n; i++) 
+
+  for (int i = 0, n = aList->length(); i < n; i++)
     myTmpObjs.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
-  
+
   if ( myTmpObjs.size() > 0  )
   {
     msg = tr( "FACES_FOR_GLUING_ARE_DETECTED" ).arg( myTmpObjs.size() );
@@ -656,9 +663,9 @@ void RepairGUI_GlueDlg::onDetect()
   {
     msg = tr( "THERE_ARE_NO_FACES_FOR_GLUING" );
   }
-  
-  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-	   SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()) ) ;
+
+  connect( myGeomGUI->getApp()->selectionMgr(),
+	   SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()) );
   SUIT_MessageBox::info1( this, tr( "GEOM_FREE_BOUNDS_TLT" ), msg, "Close" );
   updateButtonState();
   activateSelection();
@@ -671,40 +678,40 @@ void RepairGUI_GlueDlg::onDetect()
 void RepairGUI_GlueDlg::activateSelection()
 {
   erasePreview(false);
-  
+
   int anId = getConstructorId();
   if ( anId == 0 )  // Case of whole gluing
   {
-    disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()) ) ;
-    
+    disconnect( myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+                this, SLOT(SelectionIntoArgument()) );
+
     globalSelection( GEOM_ALLSHAPES );
-    if (myObject->_is_nil()) 
+    if (myObject->_is_nil())
       SelectionIntoArgument();
 
-    connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-	     SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()) ) ;
-  } 
+    connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+             this, SLOT(SelectionIntoArgument()) );
+  }
   else // Second case of gluing
   {
-    if ( !mySubShapesChk->isChecked() ) 
+    if ( !mySubShapesChk->isChecked() )
       globalSelection( GEOM_ALLSHAPES );
-    else 
+    else
     {
       displayPreview( true, false, false, 2/*line width*/, 1/*display mode*/, Quantity_NOC_RED );
-     disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()) ) ;
+     disconnect(myGeomGUI->getApp()->selectionMgr(),
+		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()) );
       globalSelection( GEOM_PREVIEW );
-      connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-	       SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()) ) ;
-    } 
+      connect( myGeomGUI->getApp()->selectionMgr(),
+	       SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()) );
+    }
   }
   updateViewer();
 }
 
 //=================================================================================
 // function : updateButtonState
-// purpose  : Update button state 
+// purpose  : Update button state
 //=================================================================================
 void RepairGUI_GlueDlg::updateButtonState()
 {
@@ -776,42 +783,3 @@ void RepairGUI_GlueDlg::ClickOnCancel()
   clearTemporary();
   GEOMBase_Skeleton::ClickOnCancel();
 }
-
-//================================================================
-// Function : getEntry
-// Purpose  :
-//================================================================
-static string getEntry( GEOM::GEOM_Object_ptr object )
-{
-  SUIT_Session* session = SUIT_Session::session();
-  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
-  if ( app )
-  {
-    string IOR = app->orb()->object_to_string( object );
-    if ( IOR != "" )
-    {
-      SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
-      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
-      if ( SO )
-        return SO->GetID();
-    }
-  }
-  return "";
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

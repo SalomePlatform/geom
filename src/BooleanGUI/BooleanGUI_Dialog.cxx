@@ -303,7 +303,8 @@ bool BooleanGUI_Dialog::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj;
  
-  anObj = GEOM::GEOM_IBooleanOperations::_narrow( getOperation() )->MakeBoolean( myObject1, myObject2, myOperation );
+  anObj = GEOM::GEOM_IBooleanOperations::_narrow( getOperation() )->
+    MakeBoolean( myObject1, myObject2, myOperation );
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
 
@@ -319,6 +320,8 @@ void BooleanGUI_Dialog::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
 {
   if (CheckBoxRestoreSS->isChecked()) {
     // empty list of arguments means that all arguments should be restored
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(), /*isTrsf=*/false);
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
+                                        /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GEOM::FSM_GetSame
+                                        /*theInheritFirstArg=*/myOperation==BooleanGUI::CUT); // ? false
   }
 }

@@ -131,16 +131,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  \param doRestoreSubShapes if True, finds and publishes also
         #         sub-shapes of \a aShape, corresponding to its arguments
         #         and published sub-shapes of arguments
-        #  \param theArgs,isTrsf see geompy.RestoreSubShapes for these arguments description
+        #  \param theArgs,theFindMethod,theInheritFirstArg see geompy.RestoreSubShapes for
+        #                                                  these arguments description
         #  \return study entry of the published shape in form of string
         #
         #  Example: see GEOM_TestAll.py
-        def addToStudy(self, aShape, aName,
-                       doRestoreSubShapes=False, theArgs=[], isTrsf=False):
+        def addToStudy(self, aShape, aName, doRestoreSubShapes=False,
+                       theArgs=[], theFindMethod=GEOM.FSM_GetInPlace, theInheritFirstArg=False):
             try:
                 aSObject = self.AddInStudy(self.myStudy, aShape, aName, None)
                 if doRestoreSubShapes:
-                    self.RestoreSubShapesSO(self.myStudy, aSObject, theArgs, isTrsf)
+                    self.RestoreSubShapesSO(self.myStudy, aSObject, theArgs,
+                                            theFindMethod, theInheritFirstArg)
             except:
                 print "addToStudy() failed"
                 return ""
@@ -164,15 +166,24 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  \param theObject published GEOM object, arguments of which will be published
         #  \param theArgs   list of GEOM_Object, operation arguments to be published.
         #                   If this list is empty, all operation arguments will be published
-        #  \param isTrsf    If True, search sub-shapes by indices, as in case of
-        #                   transformation they cannot be found by GetInPlace.
-        #                   The argument itself is not published in this case,
-        #                   because the whole shape corresponds to the argument.
+        #  \param theFindMethod method to search subshapes, corresponding to arguments and
+        #                       their subshapes. Value from enumeration GEOM::find_shape_method.
+        #  \param theInheritFirstArg set properties of the first argument for \a theObject.
+        #                            Do not publish subshapes in place of arguments, but only
+        #                            in place of subshapes of the first argument,
+        #                            because the whole shape corresponds to the first argument.
+        #                            Mainly to be used after transformations, but it also can be
+        #                            usefull after partition with one object shape, and some other
+        #                            operations, where only the first argument has to be considered.
+        #                            If theObject has only one argument shape, this flag is automatically
+        #                            considered as True, not regarding really passed value.
         #  \return True in case of success, False otherwise.
         #
         #  Example: see GEOM_TestAll.py
-        def RestoreSubShapes (self, theObject, theArgs=[], isTrsf=False):
-            return self.RestoreSubShapesO(self.myStudy, theObject, theArgs, isTrsf)
+        def RestoreSubShapes (self, theObject, theArgs=[],
+                              theFindMethod=GEOM.FSM_GetInPlace, theInheritFirstArg=False):
+            return self.RestoreSubShapesO(self.myStudy, theObject, theArgs,
+                                          theFindMethod, theInheritFirstArg)
 
         # -----------------------------------------------------------------------------
         # Basic primitives

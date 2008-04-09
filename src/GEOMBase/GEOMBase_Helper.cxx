@@ -547,7 +547,9 @@ void GEOMBase_Helper::restoreSubShapes (SALOMEDS::Study_ptr   /*theStudy*/,
   // example of implementation in particular dialog:
   // GEOM::ListOfGO anArgs;
   // anArgs.length(0); // empty list means that all arguments should be restored
-  // getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs, /*isTrsf=*/false);
+  // getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
+  //                                     /*theFindMethod=*/GEOM::FSM_GetInPlace,
+  //                                     /*theInheritFirstArg=*/false);
 }
 
 //================================================================
