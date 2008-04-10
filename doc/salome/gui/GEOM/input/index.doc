@@ -63,6 +63,7 @@
 <ul>
 <li>\ref partition_page</li>
 <li>\ref archimede_page</li>
+<li>\ref shapesonshape_page</li>
 </ul>
 <li>\ref boolean_operations_page</li>
 <ul>
@@ -106,6 +107,7 @@
 <li>\ref change_orientation_operation_page</li>
 <li>\ref remove_extra_edges_operation_page</li>
 </ul>
+<li>\subpage restore presentation parameters_page
 </ul>
 <li>\subpage using_measurement_tools_page</li>
 <li>\subpage geompy_page</li>

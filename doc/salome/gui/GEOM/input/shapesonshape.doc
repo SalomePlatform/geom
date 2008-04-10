@@ -1,0 +1,30 @@
+/*!
+
+\page shapesonshape_page Get Shapes on Shape
+
+This operation is a special case of <b>Explode</b> operation. It produces a group of sub-shapes of the explosed shape, which are located in a definite way relatively another reference shape.
+
+To use this operation, select in the Main Menu <b>Operations -> Get Shapes on Shape.</b> The following dialog box will appear. 
+
+image html shapesonshape.png
+
+\n <b>Name</b> is the name of the resulting group of shapes;
+\n <b>Shape for exploding</b> is the shape that will be exploded;
+\n <b>Shape for checking</b> is the reference shape;
+\n <b>Reconstruction Limit</b> is the type of created sub-shapes: solid, shell, face, wire, edge, vertex;
+\n <b>State</b> is the position of the created sub-shapes relatively the reference shapes:
+	\n IN - the created sub-shapes are located inside the reference shape;
+	\n OUT - the created sub-shapes are located outside the reference shape;
+	\n ON - the created sub-shapes lie on the reference shape;
+	\n ONIN - the created sub-shapes lie on the reference shape or are located inside it;
+	\n ONOUT - the created sub-shapes lie on the reference shape or are located outside it;
+
+Example: 
+
+In the images below the box is the exploded shape and the cylinder is the reference shape. In the first image the edge IN the reference cylinder is highlighted in red, in the second the edges OUT of the reference cylinder are highlighted.
+
+image html shonshex1
+image html shonshex2
+
+ 
+*/
