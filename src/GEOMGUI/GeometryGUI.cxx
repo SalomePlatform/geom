@@ -1403,7 +1403,7 @@ void GeometryGUI::createPreferences()
   int tabId = addPreference( tr( "PREF_TAB_SETTINGS" ) );
 
   int genGroup = addPreference( tr( "PREF_GROUP_GENERAL" ), tabId );
-  setPreferenceProperty( genGroup, "columns", 1 );
+  setPreferenceProperty( genGroup, "columns", 2 );
 
   int dispmode = addPreference( tr( "PREF_DISPLAY_MODE" ), genGroup,
 				LightApp_Preferences::Selector, 
@@ -1431,6 +1431,7 @@ void GeometryGUI::createPreferences()
 			    LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
 
   int VertexGroup = addPreference( tr( "PREF_GROUP_VERTEX" ), tabId );
+  setPreferenceProperty( VertexGroup, "columns", 2 );
 
   int typeOfMarker = addPreference( tr( "PREF_TYPE_OF_MARKER" ), VertexGroup,
                                     LightApp_Preferences::Selector, "Geometry", "type_of_marker" );
@@ -1451,7 +1452,7 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( dispmode, "indexes", anIndexesList );
 
   // Set property for step value for spinboxes
-  setPreferenceProperty( step, "min", 0.001 );
+  setPreferenceProperty( step, "min", 1 );
   setPreferenceProperty( step, "max", 10000 );
   setPreferenceProperty( step, "precision", 3 );
 
