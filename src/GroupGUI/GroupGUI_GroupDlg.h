@@ -31,6 +31,7 @@
 #include "GEOMBase_Skeleton.h"
 #include <qcheckbox.h>
 #include <TopAbs_ShapeEnum.hxx>
+#include <TColStd_DataMapOfIntegerInteger.hxx>
 
 class QGroupBox;
 class QLineEdit;
@@ -57,10 +58,12 @@ public:
 
 protected:
     // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& msg );
-    virtual bool execute( ObjectList& objects );
-    virtual GEOM::GEOM_Object_ptr getFather( GEOM::GEOM_Object_ptr theObj );
+    virtual GEOM::GEOM_IOperations_ptr  createOperation();
+    virtual bool                        isValid( QString& msg );
+    virtual bool                        execute( ObjectList& objects );
+    virtual GEOM::GEOM_Object_ptr       getFather( GEOM::GEOM_Object_ptr theObj );
+
+    void                                closeEvent(QCloseEvent* e);
 
 private slots:
     void                                ClickOnOk();
@@ -86,24 +89,26 @@ private:
     void                                updateState();
     void                                highlightSubShapes();
     void                                onGetInPlace();
+    void                                setInPlaceObj( GEOM::GEOM_Object_var theObj );
 
 private:
-    Mode                  myMode;
-    bool                  myBusy;
-    GEOM::GEOM_Object_var myMainObj;
-    GEOM::GEOM_Object_var myGroup;
+  Mode                            myMode;
+  bool                            myBusy;
+  GEOM::GEOM_Object_var           myMainObj;
+  GEOM::GEOM_Object_var           myGroup;
+  GEOM::GEOM_Object_var           myInPlaceObj;
+  TColStd_DataMapOfIntegerInteger myMain2InPlaceIndices;
 
-    QGroupBox*            GroupMedium;
-    QPushButton*          mySelBtn;
-    QLineEdit*            myMainName;
-    QPushButton*          mySelBtn2;
-    QLineEdit*            myShape2Name;
-    QRadioButton*         mySelSubBtn;
-    QCheckBox*            myPlaceCheckBox;
-    QPushButton*          mySelAllBtn;
-    QPushButton*          myAddBtn;
-    QPushButton*          myRemBtn;
-    QListBox*             myIdList;
+  QPushButton*                    mySelBtn;
+  QLineEdit*                      myMainName;
+  QPushButton*                    mySelBtn2;
+  QLineEdit*                      myShape2Name;
+  QRadioButton*                   mySelSubBtn;
+  QCheckBox*                      myPlaceCheckBox;
+  QPushButton*                    mySelAllBtn;
+  QPushButton*                    myAddBtn;
+  QPushButton*                    myRemBtn;
+  QListBox*                       myIdList;
 };
 
 #endif

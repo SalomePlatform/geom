@@ -1878,7 +1878,7 @@ msgid "GroupGUI_GroupDlg::SELECT_SUB_SHAPES"
 msgstr "Select Sub-Shapes"
 
 msgid "GroupGUI_GroupDlg::GET_IN_PLACE"
-msgstr "Get In Place"
+msgstr "Select In Place of Second Shape"
 
 msgid "GroupGUI_GroupDlg::SECOND_SHAPE"
 msgstr "Second Shape"
