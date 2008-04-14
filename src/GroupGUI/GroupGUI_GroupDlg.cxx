@@ -356,18 +356,6 @@ void GroupGUI_GroupDlg::onGetInPlace()
       setInPlaceObj( aGetInPlaceObj );
       myEditCurrentArgument = 0;
       activateSelection();
-
-      // Get indices
-
-      GEOM::ListOfGO_var aSubObjects = aShapesOp->MakeExplode( aGetInPlaceObj, getShapeType(), false);
-      GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
-      for (int i = 0; i < aSubObjects->length(); i++)
-      {
-        CORBA::Long aMainIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
-        CORBA::Long aPlaceIndex = aLocOp->GetSubShapeIndex( aGetInPlaceObj, aSubObjects[i] );
-        if ( aMainIndex >= 0 && aPlaceIndex > 0)
-          myMain2InPlaceIndices.Bind( aMainIndex, aPlaceIndex );
-      }
     }
   }
 }
@@ -379,17 +367,33 @@ void GroupGUI_GroupDlg::onGetInPlace()
 
 void GroupGUI_GroupDlg::setInPlaceObj( GEOM::GEOM_Object_var theObj )
 {
-  if ( !myInPlaceObj->_is_nil() ) {
-    getGeomEngine()->RemoveObject(myInPlaceObj);
+  if ( ! myInPlaceObj->_is_equivalent( theObj ) ) {
+    if ( !myInPlaceObj->_is_nil() ) {
+      getGeomEngine()->RemoveObject(myInPlaceObj);
+    }
+    // publish InPlaceObj to enable localSelection(InPlaceObj)
+    if ( !theObj->_is_nil() ) {
+      SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(getStudy()->studyDS());
+      SALOMEDS::SObject_var aSO =
+        getGeomEngine()->AddInStudy(aStudyDS, theObj, "InPlaceObj", myMainObj);
+    }
+    myInPlaceObj = theObj;
   }
-  // publish InPlaceObj to enable localSelection(InPlaceObj)
-  if ( !theObj->_is_nil() ) {
-    SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(getStudy()->studyDS());
-    SALOMEDS::SObject_var aSO =
-      getGeomEngine()->AddInStudy(aStudyDS, theObj, "InPlaceObj", myMainObj);
-  }
-  myInPlaceObj = theObj;
+  // build map of indices
   myMain2InPlaceIndices.Clear();
+  if ( !myInPlaceObj->_is_nil() ) {
+    GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+    GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
+
+    GEOM::ListOfGO_var aSubObjects = aShapesOp->MakeExplode( myInPlaceObj, getShapeType(), false);
+    for (int i = 0; i < aSubObjects->length(); i++)
+    {
+      CORBA::Long aMainIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+      CORBA::Long aPlaceIndex = aLocOp->GetSubShapeIndex( myInPlaceObj, aSubObjects[i] );
+      if ( aMainIndex >= 0 && aPlaceIndex > 0)
+        myMain2InPlaceIndices.Bind( aMainIndex, aPlaceIndex );
+    }
+  }
 }
 
 //=================================================================================
@@ -426,8 +430,9 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     myMainObj = GEOM::GEOM_Object::_nil();
   }
   else { // an attempt to synchronize list box selection with 3d viewer
-    if ( myBusy )
+    if ( myBusy ) {
       return;
+    }
 
     bool isBlocked = myIdList->signalsBlocked();
     myIdList->blockSignals( true );
@@ -455,8 +460,9 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
       TColStd_DataMapIteratorOfDataMapOfIntegerInteger m2ip( myMain2InPlaceIndices );
       for ( ; m2ip.More(); m2ip.Next() ) {
         int inPlaceId = m2ip.Value();
-        if ( aMapIndex.Contains( inPlaceId ))
+        if ( aMapIndex.Contains( inPlaceId )) {
           aMapIndex2.Add( m2ip.Key() );
+        }
       }
       aMapIndex = aMapIndex2;
     }
@@ -498,7 +504,6 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
           }
         }
       }
-
       if ( !myMainObj->_is_nil() /*&& mySelSubBtn->isChecked()*/)
         if ( !myInPlaceObj->_is_nil() )
           localSelection( myInPlaceObj, getShapeType() );
@@ -531,6 +536,7 @@ void GroupGUI_GroupDlg::ConstructorsClicked( int constructorId )
   myIdList->clear();
   activateSelection();
   updateState();
+  setInPlaceObj( myInPlaceObj ); // to rebuild myMain2InPlaceIndices
 }
 
 //=================================================================================
@@ -570,9 +576,14 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
     CORBA::Long anIndex = aSubShapes[i];
     if ( anIndex < 0 )
       continue;
-
-    anItem = new QListBoxText( QString( "%1" ).arg( anIndex ) );
-    myIdList->insertItem( anItem );
+    anItem = 0;
+    QString text = QString( "%1" ).arg( anIndex );
+    if ( !myInPlaceObj->_is_nil() )
+      anItem = myIdList->findItem( text, Qt::ExactMatch);
+    if ( !anItem ) {
+      anItem = new QListBoxText( text );
+      myIdList->insertItem( anItem );
+    }
     myIdList->setSelected( anItem, true );
   }
 
