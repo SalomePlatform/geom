@@ -185,6 +185,7 @@ void GroupGUI_GroupDlg::Init()
 
       myEditCurrentArgument = 0;
     }
+    connect( mySelBtn2,          SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
   }
 
   LightApp_SelectionMgr* aSelMgr =
@@ -202,14 +203,17 @@ void GroupGUI_GroupDlg::Init()
   connect( myRemBtn,    SIGNAL( clicked() ), this, SLOT( remove() ) );
   connect( myIdList,    SIGNAL( selectionChanged() ), this, SLOT( selectionChanged() ) );
 
-  activateSelection();
-  // activate subshapes selection if Main Shape is Selected
-  if ( !CORBA::is_nil( myMainObj ) ) {
-    myEditCurrentArgument = 0;
-    activateSelection();
-    updateState();
-  }
   setInPlaceObj( GEOM::GEOM_Object::_nil() );
+
+  myBusy = true; // just activate but do not select in the list
+  activateSelection();
+  myBusy = false;
+  // activate subshapes selection if Main Shape is Selected
+//   if ( !CORBA::is_nil( myMainObj ) ) {
+//     myEditCurrentArgument = 0;
+//     activateSelection();
+//     updateState();
+//  }
 }
 
 //=================================================================================
@@ -344,18 +348,29 @@ void GroupGUI_GroupDlg::SetEditCurrentArgument()
 void GroupGUI_GroupDlg::onGetInPlace()
 {
   setInPlaceObj( GEOM::GEOM_Object::_nil() );
+  myEditCurrentArgument->setText( "" );
+
+  bool isBlocked = myIdList->signalsBlocked();
+  myIdList->blockSignals( true );
+  myIdList->clearSelection();
+  myIdList->blockSignals( isBlocked );
+
+  if (IObjectCount() != 1 )
+    return;
 
   Standard_Boolean aResult = Standard_False;
   GEOM::GEOM_Object_var anObj =
     GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
   if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
-    if ( !anObj->_is_equivalent(myMainObj) ) {
+    if ( !anObj->_is_equivalent(myMainObj) && !anObj->_is_equivalent( myGroup )) {
       myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
       GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
       GEOM::GEOM_Object_var aGetInPlaceObj = aShapesOp->GetInPlace(myMainObj, anObj);
       setInPlaceObj( aGetInPlaceObj );
       myEditCurrentArgument = 0;
+      //myBusy = true; // just activate but do not select in the list
       activateSelection();
+      //myBusy = false;
     }
   }
 }
@@ -367,15 +382,20 @@ void GroupGUI_GroupDlg::onGetInPlace()
 
 void GroupGUI_GroupDlg::setInPlaceObj( GEOM::GEOM_Object_var theObj )
 {
-  if ( ! myInPlaceObj->_is_equivalent( theObj ) ) {
+  if ( ! myInPlaceObj->_is_equivalent( theObj ) )
+  {
+    const char* tmpName = "InPlaceObj";
+    // remove old InPlaceObj
     if ( !myInPlaceObj->_is_nil() ) {
+      if (_PTR(SObject) SO = getStudy()->studyDS()->FindObject( tmpName ))
+        getStudy()->studyDS()->NewBuilder()->RemoveObjectWithChildren( SO );
       getGeomEngine()->RemoveObject(myInPlaceObj);
     }
     // publish InPlaceObj to enable localSelection(InPlaceObj)
     if ( !theObj->_is_nil() ) {
       SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(getStudy()->studyDS());
       SALOMEDS::SObject_var aSO =
-        getGeomEngine()->AddInStudy(aStudyDS, theObj, "InPlaceObj", myMainObj);
+        getGeomEngine()->AddInStudy(aStudyDS, theObj, tmpName, myMainObj);
     }
     myInPlaceObj = theObj;
   }
@@ -451,9 +471,10 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
           aMapIndex = aMap.begin().data();
       }
     }
+    bool subselected = aMapIndex.Extent();
 
     // convert inPlace indices to main indices
-    if ( aMapIndex.Extent() > 0 && !myInPlaceObj->_is_nil() )
+    if ( subselected && myPlaceCheckBox->isChecked() )
     {
       TColStd_IndexedMapOfInteger aMapIndex2;
       
@@ -468,7 +489,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     }
 
     // try to find out and process the object browser selection
-    if ( !aMapIndex.Extent() ) {
+    if ( !subselected ) {
       globalSelection( GEOM_ALLSHAPES );
 
       GEOM::ListOfGO anObjects;
@@ -499,8 +520,11 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
           {
 	    CORBA::Long anIndex;
 	    anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
-            if ( anIndex >= 0 )
+            if ( anIndex >= 0 ) {
+              if ( myPlaceCheckBox->isChecked() && ! myMain2InPlaceIndices.IsBound( anIndex ))
+                continue;
               aMapIndex.Add( anIndex );
+            }
           }
         }
       }
@@ -545,15 +569,13 @@ void GroupGUI_GroupDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void GroupGUI_GroupDlg::selectAllSubShapes()
 {
-  if ( myInPlaceObj->_is_nil() )
-    myIdList->clear();
-
   if ( CORBA::is_nil( myMainObj ) )
     return;
 
   GEOM::ListOfLong_var aSubShapes;
-  if ( myInPlaceObj->_is_nil() )
+  if ( !myPlaceCheckBox->isChecked() )
   {
+    myIdList->clear();
     GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
     aSubShapes = aShOp->SubShapeAllIDs(myMainObj, getShapeType(), false);
 
@@ -898,7 +920,7 @@ void GroupGUI_GroupDlg::highlightSubShapes()
   for ( ; ii < nn; ii++ )
     if ( myIdList->isSelected( ii ) ) {
       int id = myIdList->item( ii )->text().toInt();
-      if ( !myMain2InPlaceIndices.IsEmpty())
+      if ( myPlaceCheckBox->isChecked() )
       {
         if (myMain2InPlaceIndices.IsBound( id ))
           id = myMain2InPlaceIndices( id );
