@@ -625,6 +625,58 @@ msgstr "Vector_Normal"
 msgid "GEOM_PROPERTIES"
 msgstr "Basic Properties"
 
+#
+#==============================================================================
+#
+
+#Kind of Shape
+msgid "GEOM_KIND_OF_SHAPE"
+msgstr "Kind of Shape :"
+
+#Kind of Shape
+msgid "GEOM_CLOSED"
+msgstr "Closed"
+
+#Kind of Shape
+msgid "GEOM_UNCLOSED"
+msgstr "Opened"
+
+#Kind of Shape
+msgid "GEOM_CLOSEDUNCLOSED"
+msgstr "Not defined, Closed or Opened. Possibly, error occured."
+
+#Kind of Shape
+msgid "GEOM_DISK_CIRCLE"
+msgstr "Disk"
+
+#Kind of Shape
+msgid "GEOM_DISK_ELLIPSE"
+msgstr "Elliptical face"
+
+#Kind of Shape
+msgid "GEOM_PLANAR_FACE"
+msgstr "Planar face"
+
+#Kind of Shape
+msgid "GEOM_POLYGON"
+msgstr "Polygon"
+
+#Kind of Shape
+msgid "GEOM_POLYGON"
+msgstr "Polygon"
+
+#Kind of Shape
+msgid "GEOM_NORMAL"
+msgstr "Normal direction"
+
+#Kind of Shape
+msgid "GEOM_DIRECTION"
+msgstr "Direction"
+
+#
+#==============================================================================
+#
+
 #Multi-Translation
 msgid "GEOM_MULTITRANSLATION"
 msgstr "Multi-Translation"
@@ -818,6 +870,18 @@ msgstr "Y :"
 #Z
 msgid "GEOM_Z"
 msgstr "Z :"
+
+#Xi
+msgid "GEOM_X_I"
+msgstr "X%1 :"
+
+#Yi
+msgid "GEOM_Y_I"
+msgstr "Y%1 :"
+
+#Zi
+msgid "GEOM_Z_I"
+msgstr "Z%1 :"
 
 #DX
 msgid "GEOM_DX"
