@@ -170,10 +170,17 @@ is a shape for which minimal and maximal tolerances are returned.
 \anchor whatis_anchor
 <br><h2>WhatIs</h2>
 
-\n Displays types and quantities of all elements composing the
-selected geometrical object.
+\n Under the Object input field it displays types and quantities of
+all topological entities, composing the selected object. Below this
+information there is "Kind of Shape" field, that characterises the
+whole shape. If there is no additional information available for the
+shape, the "Basic Properties" button will be disabled, otherwise it
+will show a "Basic Properties" dialog with information about
+dimensions, position, orientation and other parameters of the shape.
 
 \n <b>TUI Command:</b> <em>geompy.WhatIs(Shape),</em> where \em Shape is a
+shape from which a description is returned.
+\n <b>TUI Command:</b> <em>geompy.KindOfShape(Shape),</em> where \em Shape is a
 shape from which a description is returned.
 
 \image html measures8.png
