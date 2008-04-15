@@ -5,47 +5,51 @@
 \n This functionality allows the operation result to inherit colour
 and subshapes from its arguments.
 
-\n To activate this functionality, one should check the "Set
-presentation parameters and subshapes from arguments" checkbox in
+\n To activate this functionality, check in "Set
+presentation parameters and subshapes from arguments" checkbox in the
 corresponding dialog.
 
-\image html restore-ss-dialog.png
-
-\n Let us view an example to understand, how it works.
-Before the partitioning we had box Box_1 with two published faces and
-cylinder Cylinder_1 with free published edges. After the partition we
-have also resulting object with several subshapes, that corresponds to
-operation arguments and their published subshapes. We performed two
-partitions: Partition_1 result obtained by partitioning two objects
-Box_1 and Cylinder_1 as objects, with no tool, Partiton_2 obtained by
-partitioning Box_1 object with Cylinder_1 tool:
-
-\image html restore-ss-OB.png
-
-\n If all the shapes and subshapes have their own colours before the
-partitioning, the resultiong shape and its automatically generated
-subshapes will inherit these colours.
-
-\n If the resulting shape corresponds to its first argument (like
-after transformation or after the boolean operation Cut, or after the
-partiton with one object shape), it inherits its colour, and also
-inherits its subshapes (like Partition_2).
-
-\n In the case, when the resulting shape composed from multiple arguments
-(like after boolean operations, except Cut, or after the partition with
-several object shapes, or it is a compound), it will have default
-colour, but its generated subshapes, corresponding to arguments and
-their subshapes, will inherit corresponding colours. And in this case
-it will have generated subshapes, corresponding to the arguments (like
-Partition_1).
-
-\n See the picture before the partition:
+\n For example, there exist two objects: Box_1 with two published
+faces and Cylinder_1 with free published edges.
 
 \image html restore-ss-viewer-before.png
 
-\n And the picture, displaying only the Partition_2 with subshapes:
+First, we examine the case when the resulting shape corresponds to one argument (after transformation, 
+after the boolean operation Cut, or after the partiton with one object shape). 
+
+We create a Cut of Box_1 with Cylinder_1.
+
+\image html restore-ss-cut.png
+
+The resulting shape inherits the subshapes and the colour of Box_1. 
+
+\image html restore-ss-viewer-cut.png
+
+Second, we examine the case when the  resulting shape is composed from multiple arguments
+(after all boolean operations, except for Cut, or after the partition with
+several object shapes, or if the resulting shape is a compound).
+
+We create a Common of Box_1 and Cylinder_1.
+
+\image html restore-ss-dialog.png
+
+\n The resulting object is created with several subshapes that correspond to the
+operation arguments and their published subshapes. The resulting shape
+has a default colour, but its subshapes inherit colors corresponding
+to arguments and their subshapes.
 
 \image html restore-ss-viewer-after.png
+
+
+Please, note that when the resulting shape corresponds to one
+argument, the inherited subshapes depend directly on the resulting shape.
+
+\image html restore-ss-OB-cut.png
+
+When the resulting shape is composed from multiple arguments, the 
+inherited subshapes depend on the arguments.
+
+\image html restore-ss-OB.png
 
 \n You can also call this functionality from your python scripts.
 See our <b>TUI Scripts</b> for \ref tui_restore_prs_params "example".
