@@ -82,7 +82,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   
   QLabel* aTolLab = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->Box );
   myTolEdt = new QDoubleSpinBox( GroupPoints->Box );
-  initSpinBox( myTolEdt,  0, 100, 1e-7, 10 );
+  initSpinBox( myTolEdt,  0, 100, 1e-7, 7 );
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
 
   QGridLayout* boxLayout = new QGridLayout( GroupPoints->Box );
@@ -99,7 +99,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* pare
 
   QLabel* aTolLab2 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints2->Box );
   myTolEdt2 = new QDoubleSpinBox( GroupPoints2->Box );
-  initSpinBox( myTolEdt2, 0, 100, 1e-7, 10 );
+  initSpinBox( myTolEdt2, 0, 100, 1e-7, 7 );
   myTolEdt2->setValue( DEFAULT_TOLERANCE_VALUE );
 
   myDetectBtn = new QPushButton( tr( "GEOM_DETECT" ) + QString( " [%1]" ).arg( tr( "GLUE_FACES" ) ), 
