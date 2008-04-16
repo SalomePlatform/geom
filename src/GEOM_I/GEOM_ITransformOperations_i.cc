@@ -310,9 +310,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorDistance
 {
   GEOM::GEOM_Object_var aGEOMObject;
   GetOperations()->SetNotDone(); //Set a not done flag
-
-  if (theObject == NULL || theVector == NULL || theDistance == 0) return aGEOMObject._retn();
-
+  
+  if (theObject == NULL || theVector == NULL) return aGEOMObject._retn();
+  
   //check if the object is a subshape
   if (!theCopy && !theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
