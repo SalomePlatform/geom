@@ -28,14 +28,14 @@
 
 #include "GroupGUI_GroupDlg.h"
 
+#include "LightApp_SelectionMgr.h"
 #include "SUIT_Desktop.h"
+#include "SUIT_OverrideCursor.h"
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "SalomeApp_Study.h"
-#include "LightApp_SelectionMgr.h"
 
 #include "GEOMBase.h"
-
 #include "GEOMImpl_Types.hxx"
 
 #include <qlabel.h>
@@ -363,6 +363,7 @@ void GroupGUI_GroupDlg::onGetInPlace()
     GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
   if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
     if ( !anObj->_is_equivalent(myMainObj) && !anObj->_is_equivalent( myGroup )) {
+      SUIT_OverrideCursor wc;
       myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
       GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
       GEOM::GEOM_Object_var aGetInPlaceObj = aShapesOp->GetInPlace(myMainObj, anObj);
