@@ -54,6 +54,7 @@
 #include <LightApp_Preferences.h>
 #include <SALOME_LifeCycleCORBA.hxx>
 #include <SALOME_ListIO.hxx>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
 // External includes
 #include <qfileinfo.h>
@@ -1246,12 +1247,12 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
 
   // disable OCC selectors
-  //getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
   for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
     sr->setEnabled(true);
 
   // disable VTK selectors
-  //getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
+  getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
   for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
     sr->setEnabled(true);
 
