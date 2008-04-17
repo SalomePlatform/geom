@@ -87,8 +87,6 @@ geometry.png \
 line.png \
 line2points.png \
 line2faces.png \
-lineedge.png \
-linepointvector.png \
 mindist.png \
 mirrorPoint.png \
 mirrorAxe.png \
@@ -102,14 +100,12 @@ multitranslationdouble.png \
 multitranslationsimple.png \
 normale.png \
 offset.png \
-orientation.png \
 partition.png \
 partitionkeep.png \
 partitionplane.png \
 pipe.png \
 plane.png \
 planeWorking.png \
-planedxyz.png \
 plane3points.png \
 planeface.png \
 planepointvector.png \
