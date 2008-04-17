@@ -223,14 +223,6 @@
             <translation>line2faces.png</translation>
         </message>
         <message>
-            <source>ICON_DLG_LINE_EDGE</source>
-            <translation>lineedge.png</translation>
-        </message>
-        <message>
-            <source>ICON_DLG_LINE_PV</source>
-            <translation>linepointvector.png</translation>
-        </message>
-        <message>
             <source>ICON_DLG_MINDIST</source>
             <translation>mindist.png</translation>
         </message>
@@ -293,10 +285,6 @@
         <message>
             <source>ICON_DLG_PLANE_3PNTS</source>
             <translation>plane3points.png</translation>
-        </message>
-        <message>
-            <source>ICON_DLG_PLANE_DXYZ</source>
-            <translation>planedxyz.png</translation>
         </message>
         <message>
             <source>ICON_DLG_PLANE_FACE</source>
@@ -734,7 +722,7 @@
             <source>ICO_INERTIA</source>
             <translation>axisinertia.png</translation>
         </message>
-        <message>
+	<message>
             <source>ICO_LINE</source>
             <translation>line.png</translation>
         </message>
@@ -842,7 +830,7 @@
             <source>ICO_SEWING</source>
             <translation>sewing.png</translation>
         </message>
-        <message>
+	<message>
             <source>ICO_SHADING</source>
             <translation>shading.png</translation>
         </message>
