@@ -2952,6 +2952,11 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     if ( fabs( aWhat_Mass - aWhere_Mass ) <= Tol_Mass ) break;
   }
 
+  if (aModifiedList.Extent() == 0) { // Not found any Results
+    SetErrorCode(NOT_FOUND_ANY);
+    return NULL;
+  }
+
   aModifiedArray = new TColStd_HArray1OfInteger (1, aModifiedList.Extent());
   TColStd_ListIteratorOfListOfInteger anIterModif (aModifiedList);
   for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++)
