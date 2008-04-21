@@ -22,11 +22,11 @@ concerning created or imported geometrical objects. They are:
 <li>\ref check_compound_anchor "Check compound of blocks"</li>
 </ul>
 
-\n Our <b>TUI Scripts</b> show how to use 
+\n Our <b>TUI Scripts</b> show how to use
 \ref tui_measurement_tools_page "Measurement Tools" with <b>TUI
 commands</b>.
 
-\n <em>To use measurement tools:</em> 
+\n <em>To use measurement tools:</em>
 \par
 In the <b>Main menu</b> select \b Measures submenu.
 
@@ -36,7 +36,7 @@ In the <b>Main menu</b> select \b Measures submenu.
 \n Returns the coordinates of a point.
 
 \n <b>Result:</b> Point coordinates (X, Y, Z) in 3D space in the form of Python Tuple.
-\n <b>TUI Command:</b> <em>geompy.PointCoordinates(Point),</em> 
+\n <b>TUI Command:</b> <em>geompy.PointCoordinates(Point),</em>
 where \em Point is a point whose coordinates are inquired.
 
 \image html measures1.png
@@ -137,7 +137,7 @@ is a shape for which a bounding box is computed.
 <br><h2>Min. distance</h2>
 
 \n Returns the minimum distance between two geometrical objects and
-the coordinates of the vector of distance and shows the vector in the viewer.  
+the coordinates of the vector of distance and shows the vector in the viewer.
 
 \n <b>TUI Command:</b> <em>geompy.MinDistance(Shape1, Shape2),</em>
 where \em Shape1 and \em Shape2 are shapes between which the minimal
@@ -150,10 +150,10 @@ distance is computed.
 
 \n Returns the angle between two lines or linear edges
 \n <b>TUI Command:</b> <em>geompy.GetAngle(shape1, shape2),</em> where
-Shape1 and Shape2 are shapes between which the angle is computed. 
+Shape1 and Shape2 are shapes between which the angle is computed.
 
 \image html angle.png
- 
+
 \anchor tolerance_anchor
 <br><h2>Tolerance</h2>
 
@@ -170,20 +170,25 @@ is a shape for which minimal and maximal tolerances are returned.
 \anchor whatis_anchor
 <br><h2>WhatIs</h2>
 
-\n Under the Object input field it displays types and quantities of
-all topological entities, composing the selected object. Below this
-information there is "Kind of Shape" field, that characterises the
-whole shape. If there is no additional information available for the
-shape, the "Basic Properties" button will be disabled, otherwise it
-will show a "Basic Properties" dialog with information about
-dimensions, position, orientation and other parameters of the shape.
+\n General information about the selected geometrical object is the
+list of types and quantities of all topological entities, composing
+the shape.
 
 \n <b>TUI Command:</b> <em>geompy.WhatIs(Shape),</em> where \em Shape is a
 shape from which a description is returned.
+
+\image html measures8.png
+
+\n <b>Kind of Shape</b> field characterises the
+whole shape. If there is no additional information available for the
+shape, <b>Basic Properties</b> button will be disabled, otherwise it
+will show a dialog with information about
+dimensions, position, orientation and other parameters of the shape.
+
 \n <b>TUI Command:</b> <em>geompy.KindOfShape(Shape),</em> where \em Shape is a
 shape from which a description is returned.
 
-\image html measures8.png
+\image html measures8a.png
 
 \anchor check_anchor
 <br><h2>Check</h2>
