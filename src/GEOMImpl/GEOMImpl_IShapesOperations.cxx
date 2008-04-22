@@ -799,8 +799,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   TopExp::MapShapes(aShape, anIndices);
   Handle(TColStd_HArray1OfInteger) anArray;
 
-  Standard_Integer nbAllSubShape = anIndices.Extent();
-
   TopTools_ListIteratorOfListOfShape itSub (listShape);
   TCollection_AsciiString anAsciiList, anEntry;
   for (int index = 1; itSub.More(); itSub.Next(), ++index)
@@ -3266,6 +3264,12 @@ static bool isSameEdge(const TopoDS_Edge& theEdge1, const TopoDS_Edge& theEdge2)
   }
 
   if(!coincide) return false;
+
+  if (BRep_Tool::Degenerated(theEdge1))
+    if (BRep_Tool::Degenerated(theEdge2)) return true;
+    else return false;
+  else
+    if (BRep_Tool::Degenerated(theEdge2)) return false;
 
   double U11, U12, U21, U22;
   Handle(Geom_Curve) C1 = BRep_Tool::Curve(theEdge1, U11, U12);
