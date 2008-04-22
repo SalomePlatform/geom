@@ -727,18 +727,17 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
     break;
   }
 
-  if ( getConstructorId() == 1 || getConstructorId() == 2 )
-  {
+  if ( getConstructorId() == 1 || getConstructorId() == 2 ||
+       getConstructorId() == 4 ) {
     TopoDS_Shape aShape;
-    if ( GEOMBase::GetShape( anObj, aShape ) && !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
-    {
+    if ( GEOMBase::GetShape( anObj, aShape ) && !aShape.IsNull() &&
+         aShape.ShapeType() == TopAbs_VERTEX ) {
       gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
       myX->setText( QString( "%1" ).arg( aPnt.X() ) );
       myY->setText( QString( "%1" ).arg( aPnt.Y() ) );
       myZ->setText( QString( "%1" ).arg( aPnt.Z() ) );
     }
-    else
-    {
+    else {
       myX->setText( "" );
       myY->setText( "" );
       myZ->setText( "" );
