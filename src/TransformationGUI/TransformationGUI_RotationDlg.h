@@ -58,6 +58,7 @@ private:
     double GetAngle() const;
 
     GEOM::ListOfGO myObjects;
+    GEOM::GEOM_Object_var myCurrObject;
     GEOM::GEOM_Object_var myAxis, myCentPoint, myPoint1, myPoint2;
 
     DlgRef_4Sel1Spin2Check* GroupPoints;

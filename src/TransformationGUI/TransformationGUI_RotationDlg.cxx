@@ -462,6 +462,7 @@ bool TransformationGUI_RotationDlg::execute( ObjectList& objects )
 	if (toCreateCopy)
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
+              myCurrObject = myObjects[i];
 	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
                 RotateCopy( myObjects[i], myAxis, GetAngle() * PI180 );
 	      if ( !anObj->_is_nil() )
@@ -470,6 +471,7 @@ bool TransformationGUI_RotationDlg::execute( ObjectList& objects )
 	else
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
+              myCurrObject = myObjects[i];
 	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
                 Rotate( myObjects[i], myAxis, GetAngle() * PI180 );
 	      if ( !anObj->_is_nil() )
@@ -483,6 +485,7 @@ bool TransformationGUI_RotationDlg::execute( ObjectList& objects )
 	if (toCreateCopy)
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
+              myCurrObject = myObjects[i];
 	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
                 RotateThreePointsCopy( myObjects[i], myCentPoint, myPoint1, myPoint2 );
 	      if ( !anObj->_is_nil() )
@@ -491,6 +494,7 @@ bool TransformationGUI_RotationDlg::execute( ObjectList& objects )
 	else
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
+              myCurrObject = myObjects[i];
 	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
                 RotateThreePoints( myObjects[i], myCentPoint, myPoint1, myPoint2 );	
 	      if ( !anObj->_is_nil() )
@@ -512,8 +516,13 @@ void TransformationGUI_RotationDlg::restoreSubShapes (SALOMEDS::Study_ptr   theS
                                                       SALOMEDS::SObject_ptr theSObject)
 {
   if (CheckBoxRestoreSS->isChecked()) {
-    // empty list of arguments means that all arguments should be restored
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
+    // we pass here the first operation argument (object) through the list of arguments
+    // because the rotation operation place its arguments in the data structure in another order,
+    // and we need to point the first argument directly
+    GEOM::ListOfGO_var anArgs = new GEOM::ListOfGO;
+    anArgs->length(1);
+    anArgs[0] = myCurrObject;
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
                                         /*theInheritFirstArg=*/true);
   }
