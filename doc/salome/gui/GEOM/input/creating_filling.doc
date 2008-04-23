@@ -13,8 +13,8 @@ surface;
 created surface and the reference edge; 
 \n <b>Number of
 Iterations</b> - defines the maximum number of iterations. The iterations are repeated until the required tolerance is reached. So, a greater number of iterations allows producing a better surface. 
-\n <b>Approximation</b> - if checked, BSpline curves are generated in the process of surface construction, By default the surface is created using Besier curves. The usage of <b>Approximation</b> makes the algorithm work slower, but allows building the
-surface for rather complex cases.
+\n <b>Approximation</b> - if checked, BSpline curves are generated in the process of surface construction (using GeomAPI_PointsToBSplineSurface functionality). By default the surface is created using Besier curves. The usage of <b>Approximation</b> makes the algorithm work slower, but allows building the
+surface for rather complex cases. 
 
 \n The \b Result of the operation will be a GEOM_Object (face).
 
