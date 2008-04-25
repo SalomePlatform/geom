@@ -286,7 +286,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_CHECK_INFOS</source>
-            <translation>Object And Its Topological Informations</translation>
+            <translation>Object And Its Topological Information</translation>
         </message>
         <message>
             <source>GEOM_CHECK_SHAPE</source>
@@ -294,7 +294,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_CHECK_TITLE</source>
-            <translation>Check Shape Informations</translation>
+            <translation>Check Shape Information</translation>
         </message>
         <message>
             <source>GEOM_CIRCLE</source>

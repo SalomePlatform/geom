@@ -34,7 +34,7 @@
       <item row="2" column="0" colspan="2" >
        <widget class="QCheckBox" name="CheckBox1" >
         <property name="text" >
-         <string>Check</string>
+         <string>Check also geometry</string>
         </property>
        </widget>
       </item>
