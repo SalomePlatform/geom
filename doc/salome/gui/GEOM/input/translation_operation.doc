@@ -33,7 +33,8 @@ of the vector.
 
 \n Finally you can define an \b Object and the vector. The object will be translated by the length of the vector.  
 \n <b>TUI Command:</b> <em>geompy.MakeTranslationVector(Object, Vector)</em>
-\n <b>Activate Distance</b> checkbox and <b>Distance</b> field allow defining the custom distance of translation
+\n <b>Activate Distance</b> checkbox and <b>Distance</b> field allow defining the custom distance of translation.
+\n <b>TUI Command </b> for translation by vector and custom distance: <em>geompy.MakeTranslationVectorDistance(Object, Vector, Distance)</em> 
 \n <b>Arguments:</b> Name + one or several objects + 1 vector.
 \n <b>Advanced option:</b>
    \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
