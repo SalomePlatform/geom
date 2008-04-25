@@ -89,7 +89,8 @@ nodist_libDlgRef_la_SOURCES =	\
 
 # additional information to compile and link file
 libDlgRef_la_CPPFLAGS = \
-	$(QT_INCLUDES)
+	$(QT_INCLUDES) \
+	$(GUI_CXXFLAGS)
 
 #	$(KERNEL_CXXFLAGS) \
 #	$(GUI_CXXFLAGS)

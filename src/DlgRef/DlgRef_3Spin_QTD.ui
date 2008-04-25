@@ -56,13 +56,13 @@
        <number>6</number>
       </property>
       <item row="2" column="1" >
-       <widget class="QDoubleSpinBox" name="SpinBox_DZ" />
+       <widget class="QtxDoubleSpinBox" name="SpinBox_DZ" />
       </item>
       <item row="1" column="1" >
-       <widget class="QDoubleSpinBox" name="SpinBox_DY" />
+       <widget class="QtxDoubleSpinBox" name="SpinBox_DY" />
       </item>
       <item row="0" column="1" >
-       <widget class="QDoubleSpinBox" name="SpinBox_DX" />
+       <widget class="QtxDoubleSpinBox" name="SpinBox_DX" />
       </item>
       <item row="1" column="0" >
        <widget class="QLabel" name="TextLabel2" >
@@ -119,6 +119,13 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>QtxDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header location="global" >QtxDoubleSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>SpinBox_DX</tabstop>
   <tabstop>SpinBox_DY</tabstop>

@@ -104,7 +104,7 @@
        </widget>
       </item>
       <item row="1" column="1" colspan="2" >
-       <widget class="QDoubleSpinBox" name="SpinBox_DX" />
+       <widget class="QtxDoubleSpinBox" name="SpinBox_DX" />
       </item>
      </layout>
     </widget>
@@ -113,6 +113,13 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>QtxDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header location="global" >QtxDoubleSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>PushButton1</tabstop>
   <tabstop>LineEdit1</tabstop>

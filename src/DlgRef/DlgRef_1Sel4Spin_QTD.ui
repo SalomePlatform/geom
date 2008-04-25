@@ -72,7 +72,7 @@
        </widget>
       </item>
       <item row="2" column="1" colspan="2" >
-       <widget class="QDoubleSpinBox" name="SpinBox_S" />
+       <widget class="QtxDoubleSpinBox" name="SpinBox_S" />
       </item>
       <item row="1" column="0" colspan="3" >
        <widget class="QGroupBox" name="groupBox" >
@@ -112,7 +112,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="SpinBox_DX" />
+          <widget class="QtxDoubleSpinBox" name="SpinBox_DX" />
          </item>
          <item>
           <widget class="QLabel" name="TextLabel4" >
@@ -131,7 +131,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="SpinBox_DY" />
+          <widget class="QtxDoubleSpinBox" name="SpinBox_DY" />
          </item>
          <item>
           <widget class="QLabel" name="TextLabel5" >
@@ -150,7 +150,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="SpinBox_DZ" />
+          <widget class="QtxDoubleSpinBox" name="SpinBox_DZ" />
          </item>
         </layout>
        </widget>
@@ -194,6 +194,13 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>QtxDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header location="global" >QtxDoubleSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>PushButton1</tabstop>
   <tabstop>LineEdit1</tabstop>
