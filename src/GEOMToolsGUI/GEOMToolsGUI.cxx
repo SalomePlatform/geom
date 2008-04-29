@@ -77,7 +77,8 @@ static QString getFileName( QWidget*           parent,
                             const QStringList  filters,
 			    const QString&     caption,
 			    bool               open,
-			    QString&           format )
+			    QString&           format,
+			    bool               showCurrentDirInitially = false)
 {
   static QString lastUsedFilter;
   //QStringList filters;
@@ -94,7 +95,9 @@ static QString getFileName( QWidget*           parent,
   if ( !caption.isEmpty() )
     fd->setCaption( caption );
 
-  if ( !initial.isEmpty() )
+  if ( showCurrentDirInitially && SUIT_FileDlg::getLastVisitedPath().isEmpty() )
+    fd->setSelection( QDir::currentDirPath() );
+  else if ( !initial.isEmpty() )
     fd->setSelection( initial );
 
   fd->setFilters( filters );
@@ -537,9 +540,9 @@ bool GEOMToolsGUI::Import()
   }
 
   QString fileType;
-
-  QString fileName = getFileName(app->desktop(), QDir::currentDirPath(), aMap, filters,
-                                 tr("GEOM_MEN_IMPORT"), true, fileType);
+  
+  QString fileName = getFileName(app->desktop(), "", aMap, filters,
+                                 tr("GEOM_MEN_IMPORT"), true, fileType, true);
 
   if (fileType.isEmpty() )
     {
