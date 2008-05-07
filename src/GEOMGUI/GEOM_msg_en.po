@@ -1941,8 +1941,14 @@ msgstr "Main Shape"
 msgid "GroupGUI_GroupDlg::SELECT_SUB_SHAPES"
 msgstr "Select Sub-Shapes"
 
+msgid "GroupGUI_GroupDlg::ALL_SUBSHAPES"
+msgstr "All"
+
 msgid "GroupGUI_GroupDlg::GET_IN_PLACE"
-msgstr "Select In Place of Second Shape"
+msgstr "In Place of Second Shape"
+
+msgid "GroupGUI_GroupDlg::SUBSHAPES_OF_SHAPE2"
+msgstr "Sub-Shapes of Second Shape"
 
 msgid "GroupGUI_GroupDlg::SECOND_SHAPE"
 msgstr "Second Shape"

@@ -47,6 +47,7 @@
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerInteger.hxx>
 
+enum { ALL_SUBSHAPES = 0, GET_IN_PLACE, SUBSHAPES_OF_SHAPE2 };
 
 GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWidget* parent)
   :GEOMBase_Skeleton( theGeometryGUI, parent, "GroupGUI_GroupDlg", false,
@@ -82,7 +83,7 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWi
   Layout1->addWidget( GroupMedium, 2, 0 );
 
   QWidget* aFrame = new QWidget( GroupMedium );
-  QGridLayout* aMedLayout = new QGridLayout( aFrame, 5, 4, 0, 6 );
+  QGridLayout* aMedLayout = new QGridLayout( aFrame, 6, 4, 0, 6 );
 
   QLabel* aMainLabel = new QLabel( tr( "MAIN_SHAPE" ), aFrame );
 
@@ -105,7 +106,17 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWi
   myShape2Name->setEnabled( false );
 
   //mySelSubBtn = new QRadioButton ( tr( "SELECT_SUB_SHAPES" ), aFrame );
-  myPlaceCheckBox  = new QCheckBox ( tr( "GET_IN_PLACE" ), aFrame );
+  //myPlaceCheckBox  = new QCheckBox ( tr( "GET_IN_PLACE" ), aFrame );
+  mySelectionWayGroup = new QButtonGroup(1, Qt::Horizontal, tr("SELECT_SUB_SHAPES"),aFrame);
+  mySelectionWayGroup->setExclusive(true);
+  QRadioButton* allSubs     = new QRadioButton(tr("ALL_SUBSHAPES")      ,mySelectionWayGroup);
+  QRadioButton* inPlaceSubs = new QRadioButton(tr("GET_IN_PLACE")       ,mySelectionWayGroup);
+  QRadioButton* shape2Subs  = new QRadioButton(tr("SUBSHAPES_OF_SHAPE2"),mySelectionWayGroup);
+  mySelectionWayGroup->insert(allSubs    , ALL_SUBSHAPES);
+  mySelectionWayGroup->insert(inPlaceSubs, GET_IN_PLACE);
+  mySelectionWayGroup->insert(shape2Subs , SUBSHAPES_OF_SHAPE2);
+  mySelectionWayGroup->setButton( ALL_SUBSHAPES );
+
   mySelAllBtn = new QPushButton( tr( "SELECT_ALL" ), aFrame );
   myAddBtn    = new QPushButton( tr( "ADD" ), aFrame );
   myRemBtn    = new QPushButton( tr( "REMOVE" ), aFrame );
@@ -125,11 +136,14 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWi
 
   //aMedLayout->addMultiCellWidget( mySelSubBtn, 2, 2, 0, 1 );
   //aMedLayout->addWidget( myPlaceCheckBox, 2, 2 );
-  aMedLayout->addMultiCellWidget( myPlaceCheckBox, 2, 2, 0, 2 );
+  //aMedLayout->addMultiCellWidget( myPlaceCheckBox, 2, 2, 0, 2 );
+  aMedLayout->addMultiCellWidget( mySelectionWayGroup, 2, 4, 0, 2 );
   aMedLayout->addWidget( mySelAllBtn, 2, 3 );
-  aMedLayout->addMultiCellWidget( myIdList, 3, 4, 0, 2 );
   aMedLayout->addWidget( myAddBtn, 3, 3 );
   aMedLayout->addWidget( myRemBtn, 4, 3 );
+  aMedLayout->addMultiCellWidget( myIdList, 5, 5, 0, 3 );
+  aMedLayout->setRowStretch( 5, 1 );
+  
 
   setHelpFileName("work_with_groups_page.html");
 
@@ -197,7 +211,8 @@ void GroupGUI_GroupDlg::Init()
   connect( buttonApply, SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
   //connect( mySelSubBtn, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( myPlaceCheckBox, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  //connect( myPlaceCheckBox, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( mySelectionWayGroup,SIGNAL(clicked(int)),this,SLOT(SetEditCurrentArgument()));
   connect( mySelAllBtn, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( myAddBtn,    SIGNAL( clicked() ), this, SLOT( add() ) );
   connect( myRemBtn,    SIGNAL( clicked() ), this, SLOT( remove() ) );
@@ -313,18 +328,17 @@ void GroupGUI_GroupDlg::SetEditCurrentArgument()
   }
   else if ( /*(QRadioButton*)sender() == mySelSubBtn ||*/ send == mySelAllBtn )
     myEditCurrentArgument = 0;
-  else if ( send == mySelBtn2 || (QCheckBox*)sender() == myPlaceCheckBox ) {
+  else if ( send == mySelBtn2 || sender() == mySelectionWayGroup ) {
     setInPlaceObj( GEOM::GEOM_Object::_nil() );
-    if ( myPlaceCheckBox->isChecked() ) {
+    //if ( myPlaceCheckBox->isChecked() )
+    myShape2Name->setText( "" );
+    if ( subSelectionWay() != ALL_SUBSHAPES )
+    {
       myEditCurrentArgument = myShape2Name;
-      //myIdList->clear();
-      myShape2Name->setText( "" );
     }
     else {
       //myEditCurrentArgument = myMainName;
       myEditCurrentArgument = 0;
-      myShape2Name->setText( "" );
-      //myIdList->clear();
     }
   }
 
@@ -365,9 +379,15 @@ void GroupGUI_GroupDlg::onGetInPlace()
     if ( !anObj->_is_equivalent(myMainObj) && !anObj->_is_equivalent( myGroup )) {
       SUIT_OverrideCursor wc;
       myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
-      GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-      GEOM::GEOM_Object_var aGetInPlaceObj = aShapesOp->GetInPlace(myMainObj, anObj);
-      setInPlaceObj( aGetInPlaceObj );
+      GEOM::GEOM_IShapesOperations_var aShapesOp =
+        getGeomEngine()->GetIShapesOperations( getStudyId() );
+      if ( subSelectionWay() == GET_IN_PLACE ) {
+        GEOM::GEOM_Object_var aGetInPlaceObj = aShapesOp->GetInPlace(myMainObj, anObj);
+        setInPlaceObj( aGetInPlaceObj );
+      }
+      else {
+        setInPlaceObj( anObj );
+      }
       myEditCurrentArgument = 0;
       //myBusy = true; // just activate but do not select in the list
       activateSelection();
@@ -385,15 +405,16 @@ void GroupGUI_GroupDlg::setInPlaceObj( GEOM::GEOM_Object_var theObj )
 {
   if ( ! myInPlaceObj->_is_equivalent( theObj ) )
   {
-    const char* tmpName = "InPlaceObj";
+    const char* tmpName = "__InPlaceObj__";
     // remove old InPlaceObj
     if ( !myInPlaceObj->_is_nil() ) {
-      if (_PTR(SObject) SO = getStudy()->studyDS()->FindObject( tmpName ))
+      if (_PTR(SObject) SO = getStudy()->studyDS()->FindObject( tmpName )) {
         getStudy()->studyDS()->NewBuilder()->RemoveObjectWithChildren( SO );
-      getGeomEngine()->RemoveObject(myInPlaceObj);
+        getGeomEngine()->RemoveObject(myInPlaceObj);
+      }
     }
     // publish InPlaceObj to enable localSelection(InPlaceObj)
-    if ( !theObj->_is_nil() ) {
+    if ( !theObj->_is_nil() && subSelectionWay() == GET_IN_PLACE ) {
       SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(getStudy()->studyDS());
       SALOMEDS::SObject_var aSO =
         getGeomEngine()->AddInStudy(aStudyDS, theObj, tmpName, myMainObj);
@@ -423,7 +444,8 @@ void GroupGUI_GroupDlg::setInPlaceObj( GEOM::GEOM_Object_var theObj )
 //=================================================================================
 void GroupGUI_GroupDlg::SelectionIntoArgument()
 {
-  if (myPlaceCheckBox->isChecked() && myEditCurrentArgument == myShape2Name ) {
+//   if (myPlaceCheckBox->isChecked() && myEditCurrentArgument == myShape2Name )
+  if (subSelectionWay() != ALL_SUBSHAPES && myEditCurrentArgument == myShape2Name ) {
     onGetInPlace();
     return;
   }
@@ -475,7 +497,8 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     bool subselected = aMapIndex.Extent();
 
     // convert inPlace indices to main indices
-    if ( subselected && myPlaceCheckBox->isChecked() )
+    //if ( subselected && myPlaceCheckBox->isChecked() )
+    if ( subselected && subSelectionWay() != ALL_SUBSHAPES )
     {
       TColStd_IndexedMapOfInteger aMapIndex2;
       
@@ -522,7 +545,9 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 	    CORBA::Long anIndex;
 	    anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
             if ( anIndex >= 0 ) {
-              if ( myPlaceCheckBox->isChecked() && ! myMain2InPlaceIndices.IsBound( anIndex ))
+              //if ( myPlaceCheckBox->isChecked() && ! myMain2InPlaceIndices.IsBound( anIndex ))
+              if ( subSelectionWay() != ALL_SUBSHAPES &&
+                   ! myMain2InPlaceIndices.IsBound( anIndex ))
                 continue;
               aMapIndex.Add( anIndex );
             }
@@ -530,10 +555,10 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
         }
       }
       if ( !myMainObj->_is_nil() /*&& mySelSubBtn->isChecked()*/)
-        if ( !myInPlaceObj->_is_nil() )
-          localSelection( myInPlaceObj, getShapeType() );
-        else
+        if ( subSelectionWay() == ALL_SUBSHAPES )
           localSelection( myMainObj, getShapeType() );
+        else if ( !myInPlaceObj->_is_nil() )
+          localSelection( myInPlaceObj, getShapeType() );
     }
 
     if (aMapIndex.Extent() >= 1) {
@@ -574,7 +599,8 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
     return;
 
   GEOM::ListOfLong_var aSubShapes;
-  if ( !myPlaceCheckBox->isChecked() )
+//   if ( !myPlaceCheckBox->isChecked() )
+  if ( subSelectionWay() == ALL_SUBSHAPES )
   {
     myIdList->clear();
     GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
@@ -737,6 +763,16 @@ int GroupGUI_GroupDlg::getConstructorId() const
   return GroupConstructors->id( GroupConstructors->selected() );
 }
 
+//=======================================================================
+//function : subSelectionWay
+//purpose  : 
+//=======================================================================
+
+int GroupGUI_GroupDlg::subSelectionWay() const
+{
+  return mySelectionWayGroup->id( mySelectionWayGroup->selected() );
+}
+
 //=================================================================================
 // function : getShapeType()
 // purpose  :
@@ -779,7 +815,8 @@ void GroupGUI_GroupDlg::activateSelection()
 
   // local selection
   if ( !myMainObj->_is_nil() && !myEditCurrentArgument/* && mySelSubBtn->isChecked()*/) {
-    if ( !myPlaceCheckBox->isChecked() )
+//     if ( !myPlaceCheckBox->isChecked() )
+    if ( subSelectionWay() == ALL_SUBSHAPES )
       localSelection( myMainObj, getShapeType() );
     else if ( !myInPlaceObj->_is_nil() )
       localSelection( myInPlaceObj, getShapeType() );
@@ -874,11 +911,15 @@ void GroupGUI_GroupDlg::updateState()
     hasSel =  myIdList->isSelected( ii );
   myRemBtn->setEnabled( hasSel );
   //mySelSubBtn->setEnabled( !CORBA::is_nil( myMainObj ) );
-  myPlaceCheckBox->setEnabled( !CORBA::is_nil( myMainObj ) );
+  //myPlaceCheckBox->setEnabled( !CORBA::is_nil( myMainObj ) );
+  mySelectionWayGroup->setEnabled( !CORBA::is_nil( myMainObj ) );
   mySelAllBtn->setEnabled( !CORBA::is_nil( myMainObj ) );
-  mySelBtn2->setEnabled( myPlaceCheckBox->isChecked() );
-  myShape2Name->setEnabled( myPlaceCheckBox->isChecked() );
-  if ( !myPlaceCheckBox->isChecked() )
+//   mySelBtn2->setEnabled( myPlaceCheckBox->isChecked() );
+//   myShape2Name->setEnabled( myPlaceCheckBox->isChecked() );
+  mySelBtn2->setEnabled(    subSelectionWay() != ALL_SUBSHAPES );
+  myShape2Name->setEnabled( subSelectionWay() != ALL_SUBSHAPES );
+//   if ( !myPlaceCheckBox->isChecked() )
+  if ( subSelectionWay() == ALL_SUBSHAPES )
     setInPlaceObj( GEOM::GEOM_Object::_nil() );
 }
 
@@ -921,7 +962,8 @@ void GroupGUI_GroupDlg::highlightSubShapes()
   for ( ; ii < nn; ii++ )
     if ( myIdList->isSelected( ii ) ) {
       int id = myIdList->item( ii )->text().toInt();
-      if ( myPlaceCheckBox->isChecked() )
+//       if ( myPlaceCheckBox->isChecked() )
+      if ( subSelectionWay() != ALL_SUBSHAPES )
       {
         if (myMain2InPlaceIndices.IsBound( id ))
           id = myMain2InPlaceIndices( id );

@@ -37,7 +37,8 @@ class QGroupBox;
 class QLineEdit;
 class QListBox;
 
-class QRadioButton;
+//class QRadioButton;
+class QButtonGroup;
 
 //=================================================================================
 // class    : GroupGUI_GroupDlg
@@ -83,6 +84,7 @@ private:
     void                                Init();
     void                                enterEvent( QEvent* e );
     int                                 getConstructorId() const;    
+    int                                 subSelectionWay() const;    
     TopAbs_ShapeEnum                    getShapeType() const;
     void                                setShapeType( const TopAbs_ShapeEnum );
     void                                activateSelection();
@@ -103,8 +105,9 @@ private:
   QLineEdit*                      myMainName;
   QPushButton*                    mySelBtn2;
   QLineEdit*                      myShape2Name;
-  QRadioButton*                   mySelSubBtn;
-  QCheckBox*                      myPlaceCheckBox;
+  QButtonGroup*                   mySelectionWayGroup;
+  //QRadioButton*                   mySelSubBtn;
+  //QCheckBox*                      myPlaceCheckBox;
   QPushButton*                    mySelAllBtn;
   QPushButton*                    myAddBtn;
   QPushButton*                    myRemBtn;

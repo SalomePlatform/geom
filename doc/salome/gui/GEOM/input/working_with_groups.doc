@@ -25,26 +25,32 @@ group (points, wires, faces, shells or solids).</li>
 default, it is Group_n.</li>
 <li>Then, using the "Select" button, select the <b>Main Shape</b> (a
 geometrical object on which the group will be created). </li>
+<li> <b>Select Sub-Shapes</b> button group lets you restrict range
+of group elements you operate with.
+<ul><li>\b All button enables work with all sub-shapes of the Main
+Shape.</li>
+<li><b>In Place of Second Shape</b> restricts range of accesible
+elements to those sub-shapes of the Main Shape that geometrically
+coincide with the <b>Second Shape</b>.</li>
+<li><b>Sub-Shapes of Second Shape</b> restricts range of elements to 
+those sub-shapes of the Main Shape that are sub-shapes of <b>Second
+Shape</b>.</li>
+</ul>
 <li> You can select the elements of your group in two ways:
 <ul>
-<li>You can select them
-manually in the 3D Viewer, and add to the group by clicking the \b Add
-button (keep down the Shift button on the keyboard to select several
-elements and add all them together). The indexes of the selected
-elements will be displayed in the list. To delete elements from the
-list, select them and click \b Remove button.\n
-    Checking in <b>Select in Place of Second Shape</b> box allows you
-to specify <b>Second Shape</b> which will restrict selection to those
-subshapes of the main shape that geometrically coincide with the
-Second Shape.
-</li>
+<li>You can select them manually in the 3D Viewer, and add to the
+group by clicking the \b Add button (keep down the Shift button on the
+keyboard to select several elements and add all them together). The
+indexes of the selected elements will be displayed in the list. To
+delete elements from the list, select them and click \b Remove
+button.</li>
 <li>Clicking <b>Select All</b> button you can add all object's
 elements of a certain type in the list of the elements of the
 group. To delete elements from the list, select them and click \b
-Remove button. If you set <b>Second shape</b>, action of <b>Select
-All</b> is limited to subshapes geometrically coincident with the
-Second Shape</li>
-</ul></li>
+Remove button. If you set <b>Second Shape</b>, action of <b>Select
+All</b> is limited according to you choice in <b>Select Sub-Shapes</b>
+button group.</li></ul>
+</li>
 <li>Finally, confirm your selection by clicking \b OK (also closes the
 Menu) or \b Apply (leaves the Menu open for creation of other groups),
 or skip it by clicking \b Close button.</li>
