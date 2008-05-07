@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
 **
-** Created: Wed Apr 2 16:42:12 2008
+** Created: Wed May 7 11:21:32 2008
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -115,19 +115,19 @@ DlgRef_Skeleton_QTD::DlgRef_Skeleton_QTD( QWidget* parent, const char* name, boo
 
     Layout3 = new QGridLayout( 0, 1, 1, 0, 6, "Layout3"); 
 
+    buttonOk = new QPushButton( GroupButtons, "buttonOk" );
+
+    Layout3->addWidget( buttonOk, 0, 0 );
+
     buttonApply = new QPushButton( GroupButtons, "buttonApply" );
 
-    Layout3->addWidget( buttonApply, 0, 0 );
+    Layout3->addWidget( buttonApply, 0, 1 );
 
     buttonCancel = new QPushButton( GroupButtons, "buttonCancel" );
 
-    Layout3->addWidget( buttonCancel, 0, 1 );
-
-    buttonOk = new QPushButton( GroupButtons, "buttonOk" );
-
-    Layout3->addWidget( buttonOk, 0, 2 );
+    Layout3->addWidget( buttonCancel, 0, 3 );
     Spacer1 = new QSpacerItem( 90, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    Layout3->addItem( Spacer1, 0, 3 );
+    Layout3->addItem( Spacer1, 0, 2 );
 
     buttonHelp = new QPushButton( GroupButtons, "buttonHelp" );
 

@@ -224,20 +224,20 @@
                                 </property>
                                 <widget class="QPushButton" row="0" column="0">
                                     <property name="name">
-                                        <cstring>buttonApply</cstring>
+                                        <cstring>buttonOk</cstring>
                                     </property>
                                 </widget>
                                 <widget class="QPushButton" row="0" column="1">
                                     <property name="name">
+                                        <cstring>buttonApply</cstring>
+                                    </property>
+                                </widget>
+                                <widget class="QPushButton" row="0" column="3">
+                                    <property name="name">
                                         <cstring>buttonCancel</cstring>
                                     </property>
                                 </widget>
-                                <widget class="QPushButton" row="0" column="2">
-                                    <property name="name">
-                                        <cstring>buttonOk</cstring>
-                                    </property>
-                                </widget>
-                                <spacer row="0" column="3">
+                                <spacer row="0" column="2">
                                     <property name="name">
                                         <cstring>Spacer1</cstring>
                                     </property>

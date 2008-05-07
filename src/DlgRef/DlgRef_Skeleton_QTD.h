@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DlgRef_Skeleton_QTD.ui'
 **
-** Created: Wed Apr 2 16:42:12 2008
+** Created: Wed May 7 11:21:32 2008
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -45,9 +45,9 @@ public:
     QGroupBox* GroupBoxPublish;
     QCheckBox* CheckBoxRestoreSS;
     QGroupBox* GroupButtons;
+    QPushButton* buttonOk;
     QPushButton* buttonApply;
     QPushButton* buttonCancel;
-    QPushButton* buttonOk;
     QPushButton* buttonHelp;
 
 protected:
