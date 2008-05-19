@@ -50,6 +50,7 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_VTKSelector.h>
+#include <LightApp_DataObject.h>
 #include <SalomeApp_Study.h>
 #include <LightApp_Preferences.h>
 #include <SALOME_LifeCycleCORBA.hxx>
@@ -1237,6 +1238,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     it.data()->activate( application()->desktop() );
 
   LightApp_SelectionMgr* sm = getApp()->selectionMgr();
+
   SUIT_ViewManager* vm;
   ViewManagerList OCCViewManagers, VTKViewManagers;
   application()->viewManagers( OCCViewer_Viewer::Type(), OCCViewManagers );
@@ -1246,6 +1248,11 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   for ( vm = VTKViewManagers.first(); vm; vm = VTKViewManagers.next() )
     myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
 
+  //NPAL 19674
+  SALOME_ListIO selected;
+  sm->selectedObjects( selected );
+  sm->clearSelected();
+  
   // disable OCC selectors
   getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
   for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
@@ -1255,6 +1262,8 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
   for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
     sr->setEnabled(true);
+
+  sm->setSelectedObjects( selected, true );   //NPAL 19674
 
   return true;
 }
