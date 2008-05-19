@@ -414,14 +414,21 @@ void GEOMToolsGUI::OnEditDelete()
 	    continue;
 
           //If the object has been used to create another one,then it can't be deleted 
-          _PTR(ChildIterator) it (aStudy->NewChildIterator(aGeom));
-          for ( it->InitEx( true ); it->More(); it->Next() ) {
+	  //          _PTR(ChildIterator) it (aStudy->NewChildIterator(aGeom));
+	    //	  for ( it->InitEx( true ); it->More(); it->Next() ) {
+
+	  for (_PTR(ChildIterator) it (aStudy->NewChildIterator(aGeom)); it->More(); it->Next()) {
              _PTR(SObject) chobj (it->Value());
 	     if(CheckSubObjectInUse(chobj, obj, aStudy)) return;
 	     //check subobjects
 	     for (_PTR(ChildIterator) it (aStudy->NewChildIterator(obj)); it->More(); it->Next()) {
 	       _PTR(SObject) child (it->Value());
 	       if(CheckSubObjectInUse( chobj, child, aStudy)) return;
+	       //check subchildobject
+	       for (_PTR(ChildIterator) it (aStudy->NewChildIterator(child)); it->More(); it->Next()) {
+		 _PTR(SObject) subchildobj (it->Value());
+		 if(CheckSubObjectInUse( chobj, subchildobj, aStudy)) return;
+	       }
 	     }
 	   }
 
@@ -793,14 +800,16 @@ bool GEOMToolsGUI::CheckSubObjectInUse(_PTR(SObject) checkobj,
 {
   CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(checkobj);
   GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-  if( CORBA::is_nil(geomObj) ) 
+
+  CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject(remobj);
+  GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
+
+  if( CORBA::is_nil(geomObj) || CORBA::is_nil(geomObj_rem)) 
     return false;
 
   GEOM::ListOfGO_var list = geomObj->GetDependency();
-  if( list->length() > 1 )
+  if( list->length() > 0 )
     for(int i = 0; i < list->length(); i++ ){
-      CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject(remobj);
-      GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
       if( list[i]->_is_equivalent( geomObj_rem ) ){
 	SalomeApp_Application* app =
 	  dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
