@@ -98,6 +98,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     gp_Dir aDir(gp_Vec(aP1, aP2));
     gp_Ax1 anAx1(aP1, aDir);
     Standard_Real anAngle = RI.GetAngle();
+    if (fabs(anAngle) < Precision::Angular()) anAngle += 2*PI; // NPAL19665,19769
     aTrsf.SetRotation(anAx1, anAngle);
 
     //NPAL18620: performance problem: multiple locations are accumulated
@@ -240,33 +241,6 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     B.MakeCompound( aCompound );
 
     Standard_Real DX, DY, DZ;
-
-    // tmp
-    for (int i = 0; i < nbtimes2; i++ ) {
-      DX = i * step * Vec.X();
-      DY = i * step * Vec.Y();
-      DZ = i * step * Vec.Z();
-      aVec.SetCoord( DX, DY, DZ );
-      aVec = i * step * Vec;
-
-      aTrsf1.SetTranslation(aVec);
-
-      for (int j = 0; j < nbtimes1; j++ ) {
-        aTrsf2.SetRotation(AX1, j*ang*PI180);
-
-        gp_Trsf aTrsf3 = aTrsf1 * aTrsfOrig;
-        gp_Trsf aTrsf4 = aTrsf2 * aTrsf3;
-        gp_Trsf aTrsf5 = aTrsf2 * aTrsf1 * aTrsfOrig;
-
-        gp_Trsf aTrsf6 = aTrsf2 * aTrsfOrig;
-
-        gp_Pnt aP1 = P1.Transformed(aTrsf6);
-        gp_Pnt aP2 = P1.Transformed(aTrsf4);
-        gp_Pnt aP3 = P1.Transformed(aTrsf3);
-        gp_Pnt aP4 = P1.Transformed(aTrsf3);
-      }
-    }
-    // tmp
 
     for (int i = 0; i < nbtimes2; i++ ) {
       DX = i * step * Vec.X();
