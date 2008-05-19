@@ -440,6 +440,24 @@ static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Obje
 //=================================================================================
 bool BasicGUI_ArcDlg::isValid( QString& msg )
 {
+  switch (getConstructorId()) {
+  case 0:
+    {
+      if (Group3Pnts->LineEdit1->text() == "" ||
+	  Group3Pnts->LineEdit2->text() == "" ||
+	  Group3Pnts->LineEdit3->text() == "")
+	return false;
+      break;
+    }
+  case 1:
+    {
+      if (Group3Pnts2->LineEdit1->text() == "" ||
+	  Group3Pnts2->LineEdit2->text() == "" ||
+	  Group3Pnts2->LineEdit3->text() == "")
+	return false;
+      break;
+    }
+  }
   return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
     !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
 }
