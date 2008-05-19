@@ -185,6 +185,27 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
   QString aName = GEOMBase::GetName(aSelectedObject);
 
   if (myEditCurrentArgument == GroupArgs->LineEdit1) {
+    TopoDS_Shape aShape;
+    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+    {
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes(firstIObject(), aMap);
+      if (aMap.Extent() == 1) // Local Selection
+      {
+        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+        int anIndex = aMap( 1 );
+        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        aName += QString(":face_%1").arg(anIndex);
+      }
+      else // Global Selection
+      {
+	if (aShape.ShapeType() != TopAbs_FACE) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+	}
+      }
+    }
     myFace = aSelectedObject;
   }
   else if (myEditCurrentArgument == GroupArgs->LineEdit2) {
@@ -243,6 +264,7 @@ void MeasureGUI_NormaleDlg::SetEditCurrentArgument()
 
   if (send == GroupArgs->PushButton1) {
     myEditCurrentArgument = GroupArgs->LineEdit1;
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
   }
   else if (send == GroupArgs->PushButton2) {
     myEditCurrentArgument = GroupArgs->LineEdit2;
