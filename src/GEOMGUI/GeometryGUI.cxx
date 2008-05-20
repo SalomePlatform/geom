@@ -1230,8 +1230,10 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   // Reset actions accelerator keys
   //action(111)->setAccel(QKeySequence(CTRL + Key_I)); // Import
   //action(121)->setAccel(QKeySequence(CTRL + Key_E)); // Export
-  action(111)->setEnabled(true); // Import
-  action(121)->setEnabled(true); // Export
+  action(111)->setEnabled(true); // Import: CTRL + Key_I
+  action(121)->setEnabled(true); // Export: CTRL + Key_E
+  action( 33)->setEnabled(true); // Delete: Key_Delete
+  action(901)->setEnabled(true); // Rename: Key_F2
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
@@ -1290,8 +1292,10 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   // Unset actions accelerator keys
   //action(111)->setAccel(QKeySequence()); // Import
   //action(121)->setAccel(QKeySequence()); // Export
-  action(111)->setEnabled(false); // Import
-  action(121)->setEnabled(false); // Export
+  action(111)->setEnabled(false); // Import: CTRL + Key_I
+  action(121)->setEnabled(false); // Export: CTRL + Key_E
+  action( 33)->setEnabled(false); // Delete: Key_Delete
+  action(901)->setEnabled(false); // Rename: Key_F2
 
   myOCCSelectors.clear();
   getApp()->selectionMgr()->setEnabled( true, OCCViewer_Viewer::Type() );

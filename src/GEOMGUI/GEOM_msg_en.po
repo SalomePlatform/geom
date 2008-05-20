@@ -245,6 +245,10 @@ msgstr "Warning"
 msgid "GEOM_REALLY_DELETE"
 msgstr "Do you really want to delete this %1 object(s):"
 
+#: GEOMToolsGUI_1.cxx
+msgid "GEOM_WRN_NO_APPROPRIATE_SELECTION"
+msgstr "No appropriate objects selected"
+
 #
 #==============================================================================
 #
@@ -656,10 +660,6 @@ msgstr "Elliptical face"
 #Kind of Shape
 msgid "GEOM_PLANAR_FACE"
 msgstr "Planar face"
-
-#Kind of Shape
-msgid "GEOM_POLYGON"
-msgstr "Polygon"
 
 #Kind of Shape
 msgid "GEOM_POLYGON"

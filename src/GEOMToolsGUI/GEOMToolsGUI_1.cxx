@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -177,7 +177,8 @@ void GEOMToolsGUI::OnSettingsStep()
 void GEOMToolsGUI::OnRename()
 {
   SALOME_ListIO selected;
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( app ) {
     LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
     SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
@@ -195,28 +196,39 @@ void GEOMToolsGUI::OnRename()
 	  return;
 	}
 
+        bool isAny = false; // is there any appropriate object selected
 	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
 	  Handle(SALOME_InteractiveObject) IObject = It.Value();
 
 	  _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
 	  _PTR(GenericAttribute) anAttr;
 	  if ( obj ) {
-	    if( obj->FindAttribute(anAttr, "AttributeName") ) {
+	    if ( obj->FindAttribute(anAttr, "AttributeName") ) {
 	      _PTR(AttributeName) aName (anAttr);
 
-	      QString newName = LightApp_NameDlg::getName( app->desktop(), aName->Value().c_str() );
-	      if ( !newName.isEmpty() ) {
-		aName->SetValue( newName.latin1() ); // rename the SObject
-		IObject->setName( newName.latin1() );// rename the InteractiveObject
-		// Rename the corresponding GEOM_Object
-		GEOM::GEOM_Object_var anObj =  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
-		if (!CORBA::is_nil( anObj ))
-		  anObj->SetName( newName.latin1() );
-		(dynamic_cast<SalomeApp_Module*>(app->activeModule()))->updateObjBrowser( false );
-	      }
+              GEOM::GEOM_Object_var anObj =
+                GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
+              if (!CORBA::is_nil(anObj)) {
+                isAny = true;
+                QString newName = LightApp_NameDlg::getName( app->desktop(), aName->Value().c_str() );
+                if (!newName.isEmpty()) {
+                  aName->SetValue( newName.latin1() ); // rename the SObject
+                  IObject->setName( newName.latin1() );// rename the InteractiveObject
+                  anObj->SetName( newName.latin1() );  // Rename the corresponding GEOM_Object
+                  (dynamic_cast<SalomeApp_Module*>(app->activeModule()))->updateObjBrowser( false );
+                }
+              } // if ( anObj )
 	    } // if ( name attribute )
 	  } // if ( obj )
 	} // iterator
+
+        if (!isAny) {
+	  SUIT_MessageBox::warn1(app->desktop(),
+                                 QObject::tr("WRN_WARNING"),
+                                 QObject::tr("GEOM_WRN_NO_APPROPRIATE_SELECTION"),
+                                 QObject::tr("BUT_OK"));
+	  return;
+        }
       }
     }
   }
