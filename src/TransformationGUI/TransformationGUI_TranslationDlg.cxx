@@ -505,6 +505,7 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
 	if (toCreateCopy)
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
+              myCurrObject = myObjects[i];
 	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
                 TranslateDXDYDZCopy( myObjects[i], dx, dy, dz );
 	      if ( !anObj->_is_nil() )
@@ -513,6 +514,7 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
 	else
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
+              myCurrObject = myObjects[i];
 	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
                 TranslateDXDYDZ( myObjects[i], dx, dy, dz );
 	      if ( !anObj->_is_nil() )
@@ -526,6 +528,7 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
 	if (toCreateCopy)
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
+              myCurrObject = myObjects[i];
 	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
                 TranslateTwoPointsCopy( myObjects[i], myPoint1, myPoint2 );
 	      if ( !anObj->_is_nil() )
@@ -534,6 +537,7 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
 	else
 	  for (int i = 0; i < myObjects.length(); i++)
 	    {
+              myCurrObject = myObjects[i];
 	      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
                 TranslateTwoPoints( myObjects[i], myPoint1, myPoint2 );	
 	      if ( !anObj->_is_nil() )
@@ -546,9 +550,9 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
       {
 	bool byDistance = GroupPoints->CheckBox1->isChecked();
 	if (byDistance) {
-	  bool withCopy = GroupPoints->CheckBox2->isChecked();
 	  double aDistance = GroupPoints->SpinBox3->GetValue();
 	  for (int i = 0; i < myObjects.length(); i++) {
+            myCurrObject = myObjects[i];
 	    anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
 	      TranslateVectorDistance( myObjects[i], myVector, aDistance, toCreateCopy );
 	    if ( !anObj->_is_nil() )
@@ -559,6 +563,7 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
 	  if (toCreateCopy)
 	    for (int i = 0; i < myObjects.length(); i++)
 	      {
+                myCurrObject = myObjects[i];
 		anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
 		  TranslateVectorCopy( myObjects[i], myVector );
 		if ( !anObj->_is_nil() )
@@ -568,6 +573,7 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
 	  else
 	    for (int i = 0; i < myObjects.length(); i++)
 	      {
+                myCurrObject = myObjects[i];
 		anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
 		  TranslateVector( myObjects[i], myVector );
 		if ( !anObj->_is_nil() )
@@ -589,8 +595,13 @@ void TransformationGUI_TranslationDlg::restoreSubShapes (SALOMEDS::Study_ptr   t
                                                          SALOMEDS::SObject_ptr theSObject)
 {
   if (CheckBoxRestoreSS->isChecked()) {
-    // empty list of arguments means that all arguments should be restored
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
+    // we pass here the first operation argument (object) through the list of arguments
+    // because the rotation operation place its arguments in the data structure in another order,
+    // and we need to point the first argument directly
+    GEOM::ListOfGO_var anArgs = new GEOM::ListOfGO;
+    anArgs->length(1);
+    anArgs[0] = myCurrObject;
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
                                         /*theInheritFirstArg=*/true);
   }

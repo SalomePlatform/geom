@@ -57,8 +57,9 @@ private:
     void Init();
     void enterEvent(QEvent* e);
 
-    GEOM::GEOM_Object_var myVector, myPoint1, myPoint2;
     GEOM::ListOfGO        myObjects;
+    GEOM::GEOM_Object_var myCurrObject;
+    GEOM::GEOM_Object_var myVector, myPoint1, myPoint2;
     double                myTranslateDistance;
 
     DlgRef_3Sel3Spin2Check* GroupPoints;
