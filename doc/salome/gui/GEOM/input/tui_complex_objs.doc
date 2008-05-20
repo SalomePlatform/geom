@@ -45,12 +45,14 @@ face2 = geompy.MakeFace(wire2, isPlanarWanted)
 # create prisms
 prism1 = geompy.MakePrism(face2, p1, p5)
 prism2 = geompy.MakePrismVecH(face1, vector, 50)
+prism3 = geompy.MakePrismVecH2Ways(face1, vector, 50)
 
 # add objects in the study
 id_face1   = geompy.addToStudy(face1,"Face1")
 id_face2   = geompy.addToStudy(face2,"Face2")
 id_prism1 = geompy.addToStudy(prism1,"Prism1")
 id_prism2 = geompy.addToStudy(prism2,"Prism2")
+id_prism3 = geompy.addToStudy(prism3,"Prism3")
 
 # display cylinders
 gg.createAndDisplayGO(id_face1)
@@ -61,6 +63,8 @@ gg.createAndDisplayGO(id_prism1)
 gg.setDisplayMode(id_prism1,1)
 gg.createAndDisplayGO(id_prism2)
 gg.setDisplayMode(id_prism2,1) 
+gg.createAndDisplayGO(id_prism3)
+gg.setDisplayMode(id_prism3,1) 
 \endcode
 
 \anchor tui_creation_revolution

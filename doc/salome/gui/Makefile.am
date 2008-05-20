@@ -35,6 +35,8 @@ doxygen=@DOXYGEN@
 #
 usr_docs:
 	cd ./GEOM; \
+	echo "Running doxygen in directory: "`pwd`; \
+	$(doxygen) ./doxyfile_tui; \
 	echo "Processing geompyDC.py file: "; \
 	$(doxygen) ./doxyfile_py; \
 	cd ./geompy_doc; \
@@ -43,7 +45,9 @@ usr_docs:
 	  sed 's/\([^s1e]\)geompyDC\|^geompyDC/\1geompy/g' $${filen} > ./tmp1; \
 	  sed 's/geompy\.geompy/geompy/g' ./tmp1 > ./tmp; \
 	  rm -f tmp1; \
-	  mv -f tmp $${filen}; \
+	  sed 's/geompy::geompy/geompy/g' ./tmp > ./tmp1; \
+	  rm -f tmp; \
+	  mv -f tmp1 $${filen}; \
 	done; \
 	cd ..; \
 	echo "Running doxygen in directory: "`pwd`; \

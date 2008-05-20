@@ -377,6 +377,7 @@ AC_OUTPUT([ \
   ./doc/salome/gui/Makefile \
   ./doc/salome/gui/GEOM/doxyfile \
   ./doc/salome/gui/GEOM/doxyfile_py \
+  ./doc/salome/gui/GEOM/doxyfile_tui \
   ./doc/salome/tui/Makefile \
   ./doc/salome/tui/GEOM/doxyfile \
   ./doc/salome/tui/GEOM/sources/static/tree.js \

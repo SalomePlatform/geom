@@ -64,7 +64,7 @@ id_cylinder2 = geompy.addToStudy(cylinder2,"Cylinder2")
 gg.createAndDisplayGO(id_cylinder1)
 gg.setDisplayMode(id_cylinder1,1)
 gg.createAndDisplayGO(id_cylinder2)
-gg.setDisplayMode(id_cylinder2,1) 
+gg.setDisplayMode(id_cylinder2,1)
 \endcode
 
 \anchor tui_creation_sphere
@@ -97,10 +97,10 @@ gg.setDisplayMode(id_sphere1,1)
 gg.createAndDisplayGO(id_sphere2)
 gg.setDisplayMode(id_sphere2,1)
 gg.createAndDisplayGO(id_sphere3)
-gg.setDisplayMode(id_sphere3,1) 
+gg.setDisplayMode(id_sphere3,1)
 \endcode
 
-\anchor tui_creation_torus 
+\anchor tui_creation_torus
 <br><h2>Creation of a Torus</h2>
 
 \code
@@ -125,7 +125,7 @@ id_torus2 = geompy.addToStudy(torus2,"Torus2")
 gg.createAndDisplayGO(id_torus1)
 gg.setDisplayMode(id_torus1,1)
 gg.createAndDisplayGO(id_torus2)
-gg.setDisplayMode(id_torus2,1) 
+gg.setDisplayMode(id_torus2,1)
 \endcode
 
 \anchor tui_creation_cone
@@ -153,7 +153,7 @@ id_cone2 = geompy.addToStudy(cone2,"Cone2")
 gg.createAndDisplayGO(id_cone1)
 gg.setDisplayMode(id_cone1,1)
 gg.createAndDisplayGO(id_cone2)
-gg.setDisplayMode(id_cone2,1) 
+gg.setDisplayMode(id_cone2,1)
 \endcode
 
 */

@@ -17,8 +17,7 @@ WARNINGS          = YES
 #Input related options
 #---------------------------------------------------------------------------
 INPUT             = @srcdir@/input		  
-FILE_PATTERNS     = *.doc
-EXCLUDE           = 
+FILE_PATTERNS     = tui_*.doc
 IMAGE_PATH        = @srcdir@/images
 
 #---------------------------------------------------------------------------
@@ -47,5 +46,4 @@ GENERATE_RTF      = NO
 #---------------------------------------------------------------------------
 #External reference options
 #---------------------------------------------------------------------------
-TAGFILES          = geompy_doc.tag=./geompy_doc
-ALLEXTERNALS      = NO
+GENERATE_TAGFILE  = tui_examples.tag

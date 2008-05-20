@@ -87,7 +87,7 @@ returned.
 <br><h2>Normal to a Face</h2>
 
 \n Calculates the normal vector to the selected \b Face. The \b Point
-is a point of the \Face, where the Normal should be calculated.
+is a point of the \b Face, where the Normal should be calculated.
 
 \image html normaletoface.png
 

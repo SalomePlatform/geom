@@ -20,7 +20,7 @@ Dimension (radius) of the chamfer.
 
 \n In the algorithms below there exist two ways to define the \b
 Dimension of the Chamfer
-\n Firstly the \b Dimension can be defined via \b D1 and \D2, which
+\n Firstly the \b Dimension can be defined via \b D1 and \b D2, which
 represent the offset on the first and the second face forming the
 edge. 
 \n Secondly the \b Dimension can be defined via \b D, which represents

@@ -27,12 +27,14 @@ cylinder = geompy.MakeCylinder(p1, v, radius1, height)
 translation1 = geompy.MakeTranslationTwoPoints(cylinder, p1, p3)
 translation2 = geompy.MakeTranslation(cylinder, 40, 40, 0)
 translation3 = geompy.MakeTranslationVector(cylinder, vt)
+translation4 = geompy.MakeTranslationVectorDistance(cylinder, vt, 200)
 
 # add objects in the study
 id_cylinder = geompy.addToStudy(cylinder, "Cylinder")
 id_translation1 = geompy.addToStudy(translation1, "Translation1")
 id_translation2 = geompy.addToStudy(translation2, "Translation2")
 id_translation3 = geompy.addToStudy(translation3, "Translation3")
+id_translation4 = geompy.addToStudy(translation4, "Translation4")
 
 # display the results
 gg.createAndDisplayGO(id_cylinder)
@@ -43,6 +45,8 @@ gg.createAndDisplayGO(id_translation2)
 gg.setDisplayMode(id_translation2,1)
 gg.createAndDisplayGO(id_translation3)
 gg.setDisplayMode(id_translation3,1) 
+gg.createAndDisplayGO(id_translation4)
+gg.setDisplayMode(id_translation4,1) 
 \endcode
 
 \anchor tui_rotation

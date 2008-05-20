@@ -45,8 +45,6 @@
 <li>\ref sewing_operation_page</li>
 <li>\ref glue_faces_operation_page</li>
 <li>\ref add_point_on_edge_operation_page</li>
-<li>\ref check_free_boundaries_operation_page</li>
-<li>\ref check_free_faces_operation_page</li>
 <li>\ref change_orientation_operation_page</li>
 <li>\ref remove_extra_edges_operation_page</li>
 </ul>

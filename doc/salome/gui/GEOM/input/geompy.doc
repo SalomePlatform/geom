@@ -2,6 +2,6 @@
 
 \page geompy_page Python Interface geompy.py
 
-\n Please, see \ref geompyDC::geompyDC "documentation for geompy.py"
+\n Please, see <a href="geompy_doc/modules.html">documentation for geompy.py</a>
 
 */
