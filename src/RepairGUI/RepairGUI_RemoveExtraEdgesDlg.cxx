@@ -140,6 +140,8 @@ bool RepairGUI_RemoveExtraEdgesDlg::ClickOnApply()
   myEditCurrentArgument->setText("");
   myObject = GEOM::GEOM_Object::_nil();
 
+  myOkObject = false;
+
   activateSelection();
 
   return true;
