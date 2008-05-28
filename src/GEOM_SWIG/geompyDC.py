@@ -159,7 +159,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Get name for sub-shape aSubObj of shape aMainObj
         #
-        # @ref tui_todo "Example"
+        # @ref swig_SubShapeAllSorted "Example"
         def SubShapeName(self,aSubObj, aMainObj):
             # Example: see GEOM_TestAll.py
 
@@ -182,7 +182,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                                                  these arguments description
         #  \return study entry of the published shape in form of string
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_MakeQuad4Vertices "Example"
         def addToStudy(self, aShape, aName, doRestoreSubShapes=False,
                        theArgs=[], theFindMethod=GEOM.FSM_GetInPlace, theInheritFirstArg=False):
             # Example: see GEOM_TestAll.py
@@ -198,7 +198,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Publish in study aShape with name aName as sub-object of previously published aFather
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_SubShapeAllSorted "Example"
         def addToStudyInFather(self, aFather, aShape, aName):
             # Example: see GEOM_TestAll.py
             try:
@@ -294,8 +294,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVParameter Value of V-parameter on the referenced surface.
         #  @return New GEOM_Object, containing the created point.
         #
-        #  @ref tui_todo "Example"
-        def MakeVertexOnSurface(self,theRefSurf, theUParameter, theVParameter):
+        #  @ref swig_MakeVertexOnSurface "Example"
+        def MakeVertexOnSurface(self, theRefSurf, theUParameter, theVParameter):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnSurface(theRefSurf, theUParameter, theVParameter)
             RaiseIfFailed("MakePointOnSurface", self.BasicOp)
@@ -305,7 +305,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theRefLine1, theRefLine2 The referenced lines.
         #  @return New GEOM_Object, containing the created point.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_MakeVertexOnLinesIntersection "Example"
         def MakeVertexOnLinesIntersection(self, theRefLine1, theRefLine2):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnLinesIntersection(theRefLine1, theRefLine2)
@@ -317,8 +317,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theParameter Value of parameter on the referenced curve.
         #  @return New GEOM_Object, containing the created tangent.
         #
-        #  @ref tui_todo "Example"
-        def MakeTangentOnCurve(self,theRefCurve, theParameter):
+        #  @ref swig_MakeTangentOnCurve "Example"
+        def MakeTangentOnCurve(self, theRefCurve, theParameter):
             anObj = self.BasicOp.MakeTangentOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakeTangentOnCurve", self.BasicOp)
             return anObj
@@ -378,7 +378,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theFace2 Second of two faces, defining the line.
         #  @return New GEOM_Object, containing the created line.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_MakeLineTwoFaces "Example"
         def MakeLineTwoFaces(self, theFace1, theFace2):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakeLineTwoFaces(theFace1, theFace2)
@@ -431,8 +431,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param YDX,YDY,YDZ Three components of OY direction
         #  @return New GEOM_Object, containing the created coordinate system.
         #
-        #  @ref tui_todo "Example"
-        def MakeMarker(self,OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
+        #  @ref swig_MakeMarker "Example"
+        def MakeMarker(self, OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ)
             RaiseIfFailed("MakeMarker", self.BasicOp)
@@ -443,7 +443,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theXVec Vector of X direction
         #  @param theYVec Vector of Y direction
         #  @return New GEOM_Object, containing the created coordinate system.
-        def MakeMarkerPntTwoVec(self,theOrigin, theXVec, theYVec):
+        #
+        #  @ref swig_MakeMarker "Example"
+        def MakeMarkerPntTwoVec(self, theOrigin, theXVec, theYVec):
             O = self.PointCoordinates( theOrigin )
             OXOY = []
             for vec in [ theXVec, theYVec ]:
@@ -471,7 +473,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePnt3 End point of the arc.
         #  @return New GEOM_Object, containing the created arc.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_MakeArc "Example"
         def MakeArc(self,thePnt1, thePnt2, thePnt3):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeArc(thePnt1, thePnt2, thePnt3)
@@ -485,7 +487,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theSense Orientation of the arc
         #  @return New GEOM_Object, containing the created arc.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_MakeArc "Example"
         def MakeArcCenter(self, thePnt1, thePnt2, thePnt3, theSense=False):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeArcCenter(thePnt1, thePnt2, thePnt3, theSense)
@@ -522,7 +524,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePnt1,thePnt2,thePnt3 Points, defining the circle.
         #  @return New GEOM_Object, containing the created circle.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_MakeCircle "Example"
         def MakeCircleCenter2Pnt(self,thePnt1, thePnt2, thePnt3):
             # Example: see GEOM_example6.py
             anObj = self.CurvesOp.MakeCircleCenter2Pnt(thePnt1, thePnt2, thePnt3)
@@ -901,7 +903,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theRuled - mode defining type of the result surfaces (ruled or smoothed).
         #  @return New GEOM_Object, containing the created shell or solid.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def MakeThruSections(self,theSeqSections,theModeSolid,thePreci,theRuled):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakeThruSections(theSeqSections,theModeSolid,thePreci,theRuled)
@@ -935,7 +937,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                             orthogonal to the spine tangent in the correspondent point
         #  @return New GEOM_Object, containing the created pipe.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def MakePipeWithDifferentSections(self, theSeqBases,
                                           theLocations, thePath,
                                           theWithContact, theWithCorrection):
@@ -962,7 +964,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                             orthogonal to the spine tangent in the correspondent point
         #  @return New GEOM_Object, containing the created solids.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def MakePipeWithShellSections(self,theSeqBases, theSeqSubBases,
                                       theLocations, thePath,
                                       theWithContact, theWithCorrection):
@@ -1008,7 +1010,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theLocations - list of corresponding vertexes
         #  @return New GEOM_Object, containing the created solids.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def MakePipeShellsWithoutPath(self, theSeqBases, theLocations):
             anObj = self.PrimOp.MakePipeShellsWithoutPath(theSeqBases, theLocations)
             RaiseIfFailed("MakePipeShellsWithoutPath", self.PrimOp)
@@ -1071,7 +1073,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Shortcut to MakeFaceWires()
         #
-        #  @ref tui_creation_face "Example"
+        #  @ref tui_creation_face "Example 1"
+        #  \n @ref swig_MakeFaces  "Example 2"
         def MakeFaces(self,theWires, isPlanarWanted):
             # Example: see GEOM_TestOthers.py
             anObj = self.MakeFaceWires(theWires, isPlanarWanted)
@@ -1120,7 +1123,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to count faces of.
         #  @return Quantity of faces.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_NumberOfFaces "Example"
         def NumberOfFaces(self,theShape):
             # Example: see GEOM_TestOthers.py
             nb_faces = self.ShapesOp.NumberOfFaces(theShape)
@@ -1131,7 +1134,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to count edges of.
         #  @return Quantity of edges.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_NumberOfEdges "Example"
         def NumberOfEdges(self,theShape):
             # Example: see GEOM_TestOthers.py
             nb_edges = self.ShapesOp.NumberOfEdges(theShape)
@@ -1148,7 +1151,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to be reversed.
         #  @return The reversed copy of theShape.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_ChangeOrientation "Example"
         def ChangeOrientation(self,theShape):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.ChangeOrientation(theShape)
@@ -1157,7 +1160,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Shortcut to ChangeOrientation()
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_OrientationChange "Example"
         def OrientationChange(self,theShape):
             # Example: see GEOM_TestOthers.py
             anObj = self.ChangeOrientation(theShape)
@@ -1187,7 +1190,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShapeType Type of sub-shapes to be retrieved.
         #  @return List of sub-shapes of theShape1, shared with theShape2.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetSharedShapes "Example"
         def GetSharedShapes(self,theShape1, theShape2, theShapeType):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetSharedShapes(theShape1, theShape2, theShapeType)
@@ -1205,7 +1208,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetShapesOnPlane "Example"
         def GetShapesOnPlane(self,theShape, theShapeType, theAx1, theState):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnPlane(theShape, theShapeType, theAx1, theState)
@@ -1214,7 +1217,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Works like the above method, but returns list of sub-shapes indices
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetShapesOnPlaneIDs "Example"
         def GetShapesOnPlaneIDs(self,theShape, theShapeType, theAx1, theState):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnPlaneIDs(theShape, theShapeType, theAx1, theState)
@@ -1233,7 +1236,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                  ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetShapesOnPlaneWithLocation "Example"
         def GetShapesOnPlaneWithLocation(self, theShape, theShapeType, theAx1, thePnt, theState):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnPlaneWithLocation(theShape, theShapeType,
@@ -1243,7 +1246,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Works like the above method, but returns list of sub-shapes indices
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetShapesOnPlaneWithLocationIDs "Example"
         def GetShapesOnPlaneWithLocationIDs(self, theShape, theShapeType, theAx1, thePnt, theState):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnPlaneWithLocationIDs(theShape, theShapeType,
@@ -1262,7 +1265,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetShapesOnCylinder "Example"
         def GetShapesOnCylinder(self, theShape, theShapeType, theAxis, theRadius, theState):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState)
@@ -1271,7 +1274,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Works like the above method, but returns list of sub-shapes indices
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetShapesOnCylinderIDs "Example"
         def GetShapesOnCylinderIDs(self, theShape, theShapeType, theAxis, theRadius, theState):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnCylinderIDs(theShape, theShapeType, theAxis, theRadius, theState)
@@ -1288,7 +1291,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetShapesOnSphere "Example"
         def GetShapesOnSphere(self,theShape, theShapeType, theCenter, theRadius, theState):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState)
@@ -1297,7 +1300,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Works like the above method, but returns list of sub-shapes indices
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetShapesOnSphereIDs "Example"
         def GetShapesOnSphereIDs(self,theShape, theShapeType, theCenter, theRadius, theState):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnSphereIDs(theShape, theShapeType, theCenter, theRadius, theState)
@@ -1316,7 +1319,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                  ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetShapesOnQuadrangle "Example"
         def GetShapesOnQuadrangle(self, theShape, theShapeType,
                                   theTopLeftPoint, theTopRigthPoint,
                                   theBottomLeftPoint, theBottomRigthPoint, theState):
@@ -1329,7 +1332,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Works like the above method, but returns list of sub-shapes indices
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetShapesOnQuadrangleIDs "Example"
         def GetShapesOnQuadrangleIDs(self, theShape, theShapeType,
                                      theTopLeftPoint, theTopRigthPoint,
                                      theBottomLeftPoint, theBottomRigthPoint, theState):
@@ -1349,15 +1352,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                  ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
-        #  @ref tui_todo "Example"
-        def GetShapesOnBox(self,theBox, theShape, theShapeType, theState):
+        #  @ref swig_GetShapesOnBox "Example"
+        def GetShapesOnBox(self, theBox, theShape, theShapeType, theState):
+            # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnBox(theBox, theShape, theShapeType, theState)
             RaiseIfFailed("GetShapesOnBox", self.ShapesOp)
             return aList
 
         ## Works like the above method, but returns list of sub-shapes indices
         #
-        def GetShapesOnBoxIDs(self,theBox, theShape, theShapeType, theState):
+        #  @ref swig_GetShapesOnBoxIDs "Example"
+        def GetShapesOnBoxIDs(self, theBox, theShape, theShapeType, theState):
+            # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnBoxIDs(theBox, theShape, theShapeType, theState)
             RaiseIfFailed("GetShapesOnBoxIDs", self.ShapesOp)
             return aList
@@ -1372,8 +1378,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                  ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetShapesOnShape "Example"
         def GetShapesOnShape(self, theCheckShape, theShape, theShapeType, theState):
+            # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnShape(theCheckShape, theShape,
                                                    theShapeType, theState)
             RaiseIfFailed("GetShapesOnShape", self.ShapesOp)
@@ -1381,7 +1388,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Works like the above method, but returns result as compound
         #
+        #  @ref swig_GetShapesOnShapeAsCompound "Example"
         def GetShapesOnShapeAsCompound(self, theCheckShape, theShape, theShapeType, theState):
+            # Example: see GEOM_TestOthers.py
             anObj = self.ShapesOp.GetShapesOnShapeAsCompound(theCheckShape, theShape,
                                                              theShapeType, theState)
             RaiseIfFailed("GetShapesOnShapeAsCompound", self.ShapesOp)
@@ -1389,7 +1398,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Works like the above method, but returns list of sub-shapes indices
         #
+        #  @ref swig_GetShapesOnShapeIDs "Example"
         def GetShapesOnShapeIDs(self, theCheckShape, theShape, theShapeType, theState):
+            # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnShapeIDs(theCheckShape, theShape,
                                                       theShapeType, theState)
             RaiseIfFailed("GetShapesOnShapeIDs", self.ShapesOp)
@@ -1401,7 +1412,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShapeWhat Shape, specifying what to find.
         #  @return Group of all found sub-shapes or a single found sub-shape.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetInPlace "Example"
         def GetInPlace(self,theShapeWhere, theShapeWhat):
             # Example: see GEOM_TestOthers.py
             anObj = self.ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
@@ -1422,7 +1433,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                      building history of the ShapeWhere).
         #  @return Group of all found sub-shapes or a single found sub-shape.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetInPlace "Example"
         def GetInPlaceByHistory(self, theShapeWhere, theShapeWhat):
             # Example: see GEOM_TestOthers.py
             anObj = self.ShapesOp.GetInPlaceByHistory(theShapeWhere, theShapeWhat)
@@ -1435,7 +1446,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShapeWhat Shape, specifying what to find.
         #  @return New GEOM_Object for found sub-shape.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetSame "Example"
         def GetSame(self,theShapeWhere, theShapeWhat):
             anObj = self.ShapesOp.GetSame(theShapeWhere, theShapeWhat)
             RaiseIfFailed("GetSame", self.ShapesOp)
@@ -1450,7 +1461,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Obtain a composite sub-shape of <VAR>aShape</VAR>, composed from sub-shapes
         #  of aShape, selected by their unique IDs inside <VAR>aShape</VAR>
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_all_decompose "Example"
         def GetSubShape(self, aShape, ListOfID):
             # Example: see GEOM_TestAll.py
             anObj = self.AddSubShape(aShape,ListOfID)
@@ -1458,7 +1469,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Obtain unique ID of sub-shape <VAR>aSubShape</VAR> inside <VAR>aShape</VAR>
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_all_decompose "Example"
         def GetSubShapeID(self, aShape, aSubShape):
             # Example: see GEOM_TestAll.py
             anID = self.LocalOp.GetSubShapeIndex(aShape, aSubShape)
@@ -1468,7 +1479,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         # end of l4_access
         ## @}
 
-        ## @addtogroup l4_decompose Decompose objects
+        ## @addtogroup l4_decompose
         ## @{
 
         ## Explode a shape on subshapes of a given type.
@@ -1476,7 +1487,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param aType Type of sub-shapes to be retrieved.
         #  @return List of sub-shapes of type theShapeType, contained in theShape.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_all_decompose "Example"
         def SubShapeAll(self, aShape, aType):
             # Example: see GEOM_TestAll.py
             ListObj = self.ShapesOp.MakeExplode(aShape,aType,0)
@@ -1488,7 +1499,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param aType Type of sub-shapes to be retrieved.
         #  @return List of IDs of sub-shapes.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_all_decompose "Example"
         def SubShapeAllIDs(self, aShape, aType):
             ListObj = self.ShapesOp.SubShapeAllIDs(aShape,aType,0)
             RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
@@ -1500,7 +1511,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param aType Type of sub-shapes to be retrieved.
         #  @return List of sub-shapes of type theShapeType, contained in theShape.
         #
-        #  @ref tui_working_with_groups_page "Example"
+        #  @ref swig_SubShapeAllSorted "Example"
         def SubShapeAllSorted(self, aShape, aType):
             # Example: see GEOM_TestAll.py
             ListObj = self.ShapesOp.MakeExplode(aShape,aType,1)
@@ -1513,7 +1524,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param aType Type of sub-shapes to be retrieved.
         #  @return List of IDs of sub-shapes.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_all_decompose "Example"
         def SubShapeAllSortedIDs(self, aShape, aType):
             ListIDs = self.ShapesOp.SubShapeAllIDs(aShape,aType,1)
             RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
@@ -1523,7 +1534,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  selected by they indices in list of all sub-shapes of type <VAR>aType</VAR>.
         #  Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_all_decompose "Example"
         def SubShape(self, aShape, aType, ListOfInd):
             # Example: see GEOM_TestAll.py
             ListOfIDs = []
@@ -1537,7 +1548,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  selected by they indices in sorted list of all sub-shapes of type <VAR>aType</VAR>.
         #  Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_all_decompose "Example"
         def SubShapeSorted(self,aShape, aType, ListOfInd):
             # Example: see GEOM_TestAll.py
             ListOfIDs = []
@@ -1663,7 +1674,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theObject Shape to be processed.
         #  @update given shape
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def ChangeOrientationShell(self,theObject):
             theObject = self.HealOp.ChangeOrientation(theObject)
             RaiseIfFailed("ChangeOrientation", self.HealOp)
@@ -1673,7 +1684,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theObject Shape to be processed.
         #  @return New GEOM_Object, containing processed shape.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def ChangeOrientationShellCopy(self,theObject):
             anObj = self.HealOp.ChangeOrientationCopy(theObject)
             RaiseIfFailed("ChangeOrientationCopy", self.HealOp)
@@ -1715,7 +1726,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                      which can be considered as coincident.
         #  @return ListOfGO.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def GetGlueFaces(self, theShape, theTolerance):
             # Example: see GEOM_Spanner.py
             anObj = self.ShapesOp.GetGlueFaces(theShape, theTolerance)
@@ -1733,7 +1744,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing a copy of theShape
         #          without some faces.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def MakeGlueFacesByList(self, theShape, theTolerance, theFaces, doKeepNonSolids=True):
             # Example: see GEOM_Spanner.py
             anObj = self.ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids)
@@ -1767,28 +1778,32 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Shortcut to MakeBoolean(s1, s2, 1)
         #
-        #  @ref tui_common "Example"
+        #  @ref tui_common "Example 1"
+        #  \n @ref swig_MakeCommon "Example 2"
         def MakeCommon(self, s1, s2):
             # Example: see GEOM_TestOthers.py
             return self.MakeBoolean(s1, s2, 1)
 
         ## Shortcut to MakeBoolean(s1, s2, 2)
         #
-        #  @ref tui_cut "Example"
+        #  @ref tui_cut "Example 1"
+        #  \n @ref swig_MakeCommon "Example 2"
         def MakeCut(self, s1, s2):
             # Example: see GEOM_TestOthers.py
             return self.MakeBoolean(s1, s2, 2)
 
         ## Shortcut to MakeBoolean(s1, s2, 3)
         #
-        #  @ref tui_fuse "Example"
+        #  @ref tui_fuse "Example 1"
+        #  \n @ref swig_MakeCommon "Example 2"
         def MakeFuse(self, s1, s2):
             # Example: see GEOM_TestOthers.py
             return self.MakeBoolean(s1, s2, 3)
 
         ## Shortcut to MakeBoolean(s1, s2, 4)
         #
-        #  @ref tui_section "Example"
+        #  @ref tui_section "Example 1"
+        #  \n @ref swig_MakeCommon "Example 2"
         def MakeSection(self, s1, s2):
             # Example: see GEOM_TestOthers.py
             return self.MakeBoolean(s1, s2, 4)
@@ -1849,7 +1864,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM_Object, containing the result shapes.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def MakePartitionNonSelfIntersectedShape(self, ListShapes, ListTools=[],
                                                  ListKeepInside=[], ListRemoveInside=[],
                                                  Limit=ShapeType["SHAPE"], RemoveWebs=0,
@@ -1863,7 +1878,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Shortcut to MakePartition()
         #
-        #  @ref tui_partition "Example"
+        #  @ref tui_partition "Example 1"
+        #  \n @ref swig_Partition "Example 2"
         def Partition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                       Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
                       KeepNonlimitShapes=0):
@@ -1899,7 +1915,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePoint2 End point of translation vector.
         #  @return New GEOM_Object, containing the translated object.
         #
-        #  @ref tui_translation "Example"
+        #  @ref tui_translation "Example 1"
+        #  \n @ref swig_MakeTranslationTwoPoints "Example 2"
         def MakeTranslationTwoPoints(self,theObject, thePoint1, thePoint2):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.TranslateTwoPointsCopy(theObject, thePoint1, thePoint2)
@@ -2133,6 +2150,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return anObj
 
         ## The same, as MultiRotate1D(), but axis is given by direction and point
+        #  @ref swig_MakeMultiRotation "Example"
         def MakeMultiRotation1D(self,aShape,aDir,aPoint,aNbTimes):
             # Example: see GEOM_TestOthers.py
             aVec = self.MakeLine(aPoint,aDir)
@@ -2140,6 +2158,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return anObj
 
         ## The same, as MultiRotate2D(), but axis is given by direction and point
+        #  @ref swig_MakeMultiRotation "Example"
         def MakeMultiRotation2D(self,aShape,aDir,aPoint,anAngle,nbtimes1,aStep,nbtimes2):
             # Example: see GEOM_TestOthers.py
             aVec = self.MakeLine(aPoint,aDir)
@@ -2157,7 +2176,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theR Fillet radius.
         #  @return New GEOM_Object, containing the result shape.
         #
-        #  @ref tui_fillet "Example"
+        #  @ref tui_fillet "Example 1"
+        #  \n @ref swig_MakeFilletAll "Example 2"
         def MakeFilletAll(self,theShape, theR):
             # Example: see GEOM_TestOthers.py
             anObj = self.LocalOp.MakeFilletAll(theShape, theR)
@@ -2200,7 +2220,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theD Chamfer size along each face.
         #  @return New GEOM_Object, containing the result shape.
         #
-        #  @ref tui_chamfer "Example"
+        #  @ref tui_chamfer "Example 1"
+        #  \n @ref swig_MakeChamferAll "Example 2"
         def MakeChamferAll(self,theShape, theD):
             # Example: see GEOM_TestOthers.py
             anObj = self.LocalOp.MakeChamferAll(theShape, theD)
@@ -2223,7 +2244,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeChamferEdge", self.LocalOp)
             return anObj
 
-        ## The Same that MakeChamferEdge but with params theD is chamfer lenght and
+        ## The Same that MakeChamferEdge but with params theD is chamfer length and
         #  theAngle is Angle of chamfer (angle in radians)
         def MakeChamferEdgeAD(self, theShape, theD, theAngle, theFace1, theFace2):
             anObj = self.LocalOp.MakeChamferEdgeAD(theShape, theD, theAngle, theFace1, theFace2)
@@ -2250,6 +2271,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## The Same that MakeChamferFaces but with params theD is chamfer lenght and
         #  theAngle is Angle of chamfer (angle in radians)
+        #
+        #  @ref swig_FilletChamfer "Example"
         def MakeChamferFacesAD(self, theShape, theD, theAngle, theFaces):
             anObj = self.LocalOp.MakeChamferFacesAD(theShape, theD, theAngle, theFaces)
             RaiseIfFailed("MakeChamferFacesAD", self.LocalOp)
@@ -2262,7 +2285,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theEdges Sequence of edges of \a theShape.
         #  @return New GEOM_Object, containing the result shape.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_FilletChamfer "Example"
         def MakeChamferEdges(self, theShape, theD1, theD2, theEdges):
             anObj = self.LocalOp.MakeChamferEdges(theShape, theD1, theD2, theEdges)
             RaiseIfFailed("MakeChamferEdges", self.LocalOp)
@@ -2270,14 +2293,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## The Same that MakeChamferEdges but with params theD is chamfer lenght and
         #  theAngle is Angle of chamfer (angle in radians)
-        #
-        #  @ref tui_todo "Example"
         def MakeChamferEdgesAD(self, theShape, theD, theAngle, theEdges):
             anObj = self.LocalOp.MakeChamferEdgesAD(theShape, theD, theAngle, theEdges)
             RaiseIfFailed("MakeChamferEdgesAD", self.LocalOp)
             return anObj
 
         ## Shortcut to MakeChamferEdge() and MakeChamferFaces()
+        #
+        #  @ref swig_MakeChamfer "Example"
         def MakeChamfer(self,aShape,d1,d2,aShapeType,ListShape):
             # Example: see GEOM_TestOthers.py
             anObj = None
@@ -2382,7 +2405,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape1,theShape2 Shapes to find minimal distance between.
         #  @return Value of the minimal distance between the given shapes.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_all_measure "Example"
         def MinDistanceComponents(self, theShape1, theShape2):
             # Example: see GEOM_TestMeasures.py
             aTuple = self.MeasuOp.GetMinDistance(theShape1, theShape2)
@@ -2407,7 +2430,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## @{
 
         ## Measure curvature of a curve at a point, set by parameter.
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def CurveCurvatureByParam(self, theCurve, theParam):
             # Example: see GEOM_TestMeasures.py
             aCurv = self.MeasuOp.CurveCurvatureByParam(theCurve,theParam)
@@ -2415,7 +2438,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return aCurv
 
         ## @details
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def CurveCurvatureByPoint(self, theCurve, thePoint):
             aCurv = self.MeasuOp.CurveCurvatureByPoint(theCurve,thePoint)
             RaiseIfFailed("CurveCurvatureByPoint", self.MeasuOp)
@@ -2428,7 +2451,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## @{
 
         ## @details
-        ## @ref tui_todo "Example"
+        ## @ref swig_todo "Example"
         def MaxSurfaceCurvatureByParam(self, theSurf, theUParam, theVParam):
             # Example: see GEOM_TestMeasures.py
             aSurf = self.MeasuOp.MaxSurfaceCurvatureByParam(theSurf,theUParam,theVParam)
@@ -2436,21 +2459,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return aSurf
 
         ## @details
-        ## @ref tui_todo "Example"
+        ## @ref swig_todo "Example"
         def MaxSurfaceCurvatureByPoint(self, theSurf, thePoint):
             aSurf = self.MeasuOp.MaxSurfaceCurvatureByPoint(theSurf,thePoint)
             RaiseIfFailed("MaxSurfaceCurvatureByPoint", self.MeasuOp)
             return aSurf
 
         ## @details
-        ## @ref tui_todo "Example"
+        ## @ref swig_todo "Example"
         def MinSurfaceCurvatureByParam(self, theSurf, theUParam, theVParam):
             aSurf = self.MeasuOp.MinSurfaceCurvatureByParam(theSurf,theUParam,theVParam)
             RaiseIfFailed("MinSurfaceCurvatureByParam", self.MeasuOp)
             return aSurf
 
         ## @details
-        ## @ref tui_todo "Example"
+        ## @ref swig_todo "Example"
         def MinSurfaceCurvatureByPoint(self, theSurf, thePoint):
             aSurf = self.MeasuOp.MinSurfaceCurvatureByPoint(theSurf,thePoint)
             RaiseIfFailed("MinSurfaceCurvatureByPoint", self.MeasuOp)
@@ -2499,7 +2522,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theOptionalPoint Point to compute the normale at.
         #  @return New GEOM_Object, containing the created vector.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def GetNormal(self, theFace, theOptionalPoint = None):
             # Example: see GEOM_TestMeasures.py
             anObj = self.MeasuOp.GetNormal(theFace, theOptionalPoint)
@@ -2538,7 +2561,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #          Zx,Zy,Zz: Coordinates of shape's LCS normal(main) direction.
         #          Xx,Xy,Xz: Coordinates of shape's LCS X direction.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def GetPosition(self,theShape):
             # Example: see GEOM_TestMeasures.py
             aTuple = self.MeasuOp.GetPosition(theShape)
@@ -2593,7 +2616,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  - geompy.kind.VERTEX       x  y  z
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def KindOfShape(self,theShape):
             # Example: see GEOM_TestMeasures.py
             aRoughTuple = self.MeasuOp.KindOfShape(theShape)
@@ -2627,7 +2650,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #         Available formats can be obtained with InsertOp.ImportTranslators() method.
         #  @return New GEOM_Object, containing the imported shape.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_Import_Export "Example"
         def Import(self,theFileName, theFormatName):
             # Example: see GEOM_TestOthers.py
             anObj = self.InsertOp.Import(theFileName, theFormatName)
@@ -2636,21 +2659,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Shortcut to Import() for BREP format
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_Import_Export "Example"
         def ImportBREP(self,theFileName):
             # Example: see GEOM_TestOthers.py
             return self.Import(theFileName, "BREP")
 
         ## Shortcut to Import() for IGES format
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_Import_Export "Example"
         def ImportIGES(self,theFileName):
             # Example: see GEOM_TestOthers.py
             return self.Import(theFileName, "IGES")
 
         ## Shortcut to Import() for STEP format
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_Import_Export "Example"
         def ImportSTEP(self,theFileName):
             # Example: see GEOM_TestOthers.py
             return self.Import(theFileName, "STEP")
@@ -2661,7 +2684,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theFormatName Specify format for the shape storage.
         #         Available formats can be obtained with InsertOp.ImportTranslators() method.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_Import_Export "Example"
         def Export(self,theObject, theFileName, theFormatName):
             # Example: see GEOM_TestOthers.py
             self.InsertOp.Export(theObject, theFileName, theFormatName)
@@ -2672,21 +2695,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Shortcut to Export() for BREP format
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_Import_Export "Example"
         def ExportBREP(self,theObject, theFileName):
             # Example: see GEOM_TestOthers.py
             return self.Export(theObject, theFileName, "BREP")
 
         ## Shortcut to Export() for IGES format
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_Import_Export "Example"
         def ExportIGES(self,theObject, theFileName):
             # Example: see GEOM_TestOthers.py
             return self.Export(theObject, theFileName, "IGES")
 
         ## Shortcut to Export() for STEP format
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_Import_Export "Example"
         def ExportSTEP(self,theObject, theFileName):
             # Example: see GEOM_TestOthers.py
             return self.Export(theObject, theFileName, "STEP")
@@ -2726,7 +2749,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param V1,V2,V3,V4 Corner vertices for the face.
         #  @return New GEOM_Object, containing the created face.
         #
-        #  @ref tui_building_by_blocks_page "Example"
+        #  @ref tui_building_by_blocks_page "Example 1"
+        #  \n @ref swig_MakeQuad4Vertices "Example 2"
         def MakeQuad4Vertices(self,V1, V2, V3, V4):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeQuad4Vertices(V1, V2, V3, V4)
@@ -2738,7 +2762,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param F1,F2,F3,F4,F5,F6 Faces for the hexahedral solid.
         #  @return New GEOM_Object, containing the created solid.
         #
-        #  @ref tui_building_by_blocks_page "Example"
+        #  @ref tui_building_by_blocks_page "Example 1"
+        #  \n @ref swig_MakeHexa "Example 2"
         def MakeHexa(self,F1, F2, F3, F4, F5, F6):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeHexa(F1, F2, F3, F4, F5, F6)
@@ -2750,7 +2775,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param F1,F2 Two opposite faces for the hexahedral solid.
         #  @return New GEOM_Object, containing the created solid.
         #
-        #  @ref tui_building_by_blocks_page "Example"
+        #  @ref tui_building_by_blocks_page "Example 1"
+        #  \n @ref swig_MakeHexa2Faces "Example 2"
         def MakeHexa2Faces(self,F1, F2):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeHexa2Faces(F1, F2)
@@ -2770,7 +2796,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                    vertex and point with the given coordinates.
         #  @return New GEOM_Object, containing the found vertex.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetPoint "Example"
         def GetPoint(self,theShape, theX, theY, theZ, theEpsilon):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetPoint(theShape, theX, theY, theZ, theEpsilon)
@@ -2782,7 +2808,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePoint1,thePoint2 Points, close to the ends of the desired edge.
         #  @return New GEOM_Object, containing the found edge.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def GetEdge(self,theShape, thePoint1, thePoint2):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetEdge(theShape, thePoint1, thePoint2)
@@ -2794,7 +2820,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePoint Point, close to the desired edge.
         #  @return New GEOM_Object, containing the found edge.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetEdgeNearPoint "Example"
         def GetEdgeNearPoint(self,theShape, thePoint):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetEdgeNearPoint(theShape, thePoint)
@@ -2806,7 +2832,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePoint1,thePoint2,thePoint3,thePoint4 Points, close to the corners of the desired face.
         #  @return New GEOM_Object, containing the found face.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def GetFaceByPoints(self,theShape, thePoint1, thePoint2, thePoint3, thePoint4):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4)
@@ -2818,7 +2844,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theEdge1,theEdge2 Edges, close to the edges of the desired face.
         #  @return New GEOM_Object, containing the found face.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def GetFaceByEdges(self,theShape, theEdge1, theEdge2):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceByEdges(theShape, theEdge1, theEdge2)
@@ -2830,7 +2856,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theFace Face of \a theBlock, opposite to the desired face.
         #  @return New GEOM_Object, containing the found face.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetOppositeFace "Example"
         def GetOppositeFace(self,theBlock, theFace):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetOppositeFace(theBlock, theFace)
@@ -2842,7 +2868,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePoint Point, close to the desired face.
         #  @return New GEOM_Object, containing the found face.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetFaceNearPoint "Example"
         def GetFaceNearPoint(self,theShape, thePoint):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceNearPoint(theShape, thePoint)
@@ -2854,7 +2880,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVector Vector, close to the normale of the desired face.
         #  @return New GEOM_Object, containing the found face.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def GetFaceByNormale(self, theBlock, theVector):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceByNormale(theBlock, theVector)
@@ -2878,7 +2904,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return TRUE, if the given shape is a compound of blocks.
         #  If theCompound is not valid, prints all discovered errors.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_measurement_tools_page "Example 1"
+        #  \n @ref swig_CheckCompoundOfBlocks "Example 2"
         def CheckCompoundOfBlocks(self,theCompound):
             # Example: see GEOM_Spanner.py
             (IsValid, BCErrors) = self.BlocksOp.CheckCompoundOfBlocks(theCompound)
@@ -2894,7 +2921,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape The compound or single solid to remove irregular edges from.
         #  @return Improved shape.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_RemoveExtraEdges "Example"
         def RemoveExtraEdges(self,theShape):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.RemoveExtraEdges(theShape)
@@ -2907,7 +2934,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape The compound to check and improve.
         #  @return Improved compound.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_CheckAndImprove "Example"
         def CheckAndImprove(self,theShape):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.CheckAndImprove(theShape)
@@ -2927,7 +2954,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #    \note If theMaxNbFaces = 0, the maximum number of faces is not restricted.
         #  @return List of GEOM_Objects, containing the retrieved blocks.
         #
-        #  @ref tui_explode_on_blocks "Example"
+        #  @ref tui_explode_on_blocks "Example 1"
+        #  \n @ref swig_MakeBlockExplode "Example 2"
         def MakeBlockExplode(self,theCompound, theMinNbFaces, theMaxNbFaces):
             # Example: see GEOM_TestOthers.py
             aList = self.BlocksOp.ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces)
@@ -2940,7 +2968,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #         boundary between some blocks, we return block with nearest center.
         #  @return New GEOM_Object, containing the found block.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def GetBlockNearPoint(self,theCompound, thePoint):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetBlockNearPoint(theCompound, thePoint)
@@ -2952,7 +2980,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theParts List of faces and/or edges and/or vertices to be parts of the found block.
         #  @return New GEOM_Object, containing the found block.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetBlockByParts "Example"
         def GetBlockByParts(self,theCompound, theParts):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetBlockByParts(theCompound, theParts)
@@ -2964,7 +2992,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theParts List of faces and/or edges and/or vertices to be parts of the found blocks.
         #  @return List of GEOM_Objects, containing the found blocks.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def GetBlocksByParts(self,theCompound, theParts):
             # Example: see GEOM_Spanner.py
             aList = self.BlocksOp.GetBlocksByParts(theCompound, theParts)
@@ -3010,7 +3038,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to build propagation groups on.
         #  @return List of GEOM_Objects, each of them is a propagation group.
         #
-        #  @ref tui_propagate "Example"
+        #  @ref swig_Propagate "Example"
         def Propagate(self,theShape):
             # Example: see GEOM_TestOthers.py
             listChains = self.BlocksOp.Propagate(theShape)
@@ -3028,7 +3056,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShapeType defines a shape type of the group
         #  @return a newly created GEOM group
         #
-        #  @ref tui_working_with_groups_page "Example"
+        #  @ref tui_working_with_groups_page "Example 1"
+        #  \n @ref swig_CreateGroup "Example 2"
         def CreateGroup(self,theMainShape, theShapeType):
             # Example: see GEOM_TestOthers.py
             anObj = self.GroupOp.CreateGroup(theMainShape, theShapeType)
@@ -3073,7 +3102,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Works like the above method, but argument
         #  theSubShapes here is a list of sub-shapes indices
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_UnionIDs "Example"
         def UnionIDs(self,theGroup, theSubShapes):
             # Example: see GEOM_TestOthers.py
             self.GroupOp.UnionIDs(theGroup, theSubShapes)
@@ -3094,7 +3123,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Works like the above method, but argument
         #  theSubShapes here is a list of sub-shapes indices
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_DifferenceIDs "Example"
         def DifferenceIDs(self,theGroup, theSubShapes):
             # Example: see GEOM_TestOthers.py
             self.GroupOp.DifferenceIDs(theGroup, theSubShapes)
@@ -3104,7 +3133,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Returns a list of sub objects ID stored in the group
         #  @param theGroup is a GEOM group for which a list of IDs is requested
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetObjectIDs "Example"
         def GetObjectIDs(self,theGroup):
             # Example: see GEOM_TestOthers.py
             ListIDs = self.GroupOp.GetObjects(theGroup)
@@ -3114,7 +3143,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Returns a type of sub objects stored in the group
         #  @param theGroup is a GEOM group which type is returned.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetType "Example"
         def GetType(self,theGroup):
             # Example: see GEOM_TestOthers.py
             aType = self.GroupOp.GetType(theGroup)
@@ -3125,7 +3154,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theGroup is a GEOM group for which a main shape object is requested
         #  @return a GEOM object which is a main shape for theGroup
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_GetMainShape "Example"
         def GetMainShape(self,theGroup):
             # Example: see GEOM_TestOthers.py
             anObj = self.GroupOp.GetMainShape(theGroup)
@@ -3135,7 +3164,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Create group of edges of theShape, whose length is in range [min_length, max_length].
         #  If include_min/max == 0, edges with length == min/max_length will not be included in result.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def GetEdgesByLength (self, theShape, min_length, max_length, include_min = 1, include_max = 1):
             edges = self.SubShapeAll(theShape, ShapeType["EDGE"])
             edges_in_range = []
@@ -3162,7 +3191,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Create group of edges of selected shape, whose length is in range [min_length, max_length].
         #  If include_min/max == 0, edges with length == min/max_length will not be included in result.
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_todo "Example"
         def SelectEdges (self, min_length, max_length, include_min = 1, include_max = 1):
             nb_selected = sg.SelectedCount()
             if nb_selected < 1:
@@ -3195,7 +3224,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Create a copy of the given object
         #  @ingroup l1_geompy_auxiliary
         #
-        #  @ref tui_todo "Example"
+        #  @ref swig_all_advanced "Example"
         def MakeCopy(self,theOriginal):
             # Example: see GEOM_TestAll.py
             anObj = self.InsertOp.MakeCopy(theOriginal)

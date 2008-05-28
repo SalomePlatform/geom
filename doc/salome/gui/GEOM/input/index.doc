@@ -131,6 +131,12 @@
 <li>\ref tui_repairing_operations_page</li>
 </ul>
 <li>\ref tui_measurement_tools_page</li>
+<li>\ref tui_swig_examples_page</li>
+<ul>
+  <li>\ref tui_test_others_page</li>
+  <li>\ref tui_test_spanner_page</li>
+  <li>\ref tui_test_all_page</li>
+</ul>
 </ul>
 </ul>
 

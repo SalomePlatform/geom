@@ -20,6 +20,7 @@ INPUT             = @srcdir@/input
 FILE_PATTERNS     = *.doc
 EXCLUDE           = 
 IMAGE_PATH        = @srcdir@/images
+EXAMPLE_PATH      = @top_srcdir@/src/GEOM_SWIG
 
 #---------------------------------------------------------------------------
 #HTML related options

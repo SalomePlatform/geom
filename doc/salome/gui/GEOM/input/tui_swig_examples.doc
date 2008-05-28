@@ -1,0 +1,11 @@
+/*!
+
+\page tui_swig_examples_page Examples, generated from GEOM_SWIG test scripts
+
+<ul>
+  <li>\subpage tui_test_others_page</li>
+  <li>\subpage tui_test_spanner_page</li>
+  <li>\subpage tui_test_all_page</li>
+</ul>
+
+*/
