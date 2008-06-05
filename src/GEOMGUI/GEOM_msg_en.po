@@ -241,9 +241,14 @@ msgstr "Radius is null"
 msgid "GEOM_WRN_WARNING"
 msgstr "Warning"
 
-#: GeometryGUI.cxx:3854
-msgid "GEOM_REALLY_DELETE"
-msgstr "Do you really want to delete this %1 object(s):"
+msgid "GEOMToolsGUI_DeleteDlg::GEOM_REALLY_DELETE"
+msgstr "Do you really want to delete %1 object(s)?:"
+
+msgid "GEOMToolsGUI_DeleteDlg::GEOM_REALLY_DELETE_ALL"
+msgstr "Do you really want to delete all objects?:"
+
+msgid "GEOMToolsGUI_DeleteDlg::GEOM_DELETE_OBJECTS"
+msgstr "Delete objects:"
 
 #: GEOMToolsGUI_1.cxx
 msgid "GEOM_WRN_NO_APPROPRIATE_SELECTION"
