@@ -637,6 +637,10 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 		anAspect = AISShape->Attributes()->WireAspect();
 		anAspect->SetColor( aColor );
 		AISShape->Attributes()->SetWireAspect( anAspect );
+
+                // bug [SALOME platform 0019868]
+                // Set deviation angle. Default one is 12 degrees (Prs3d_Drawer.cxx:18)
+                AISShape->SetOwnDeviationAngle( 10*PI/180 );
 	      }
 	  }
 
