@@ -65,8 +65,6 @@ private:
   void OnEditDelete();
 
   void OnSettingsColor();
-  void OnSettingsIsos();
-  void OnSettingsStep();
   void OnRename();
   void OnCheckGeometry();
 
@@ -79,21 +77,11 @@ private:
   void OnOpen();
   void OnSelectOnly(int mode);
   
-  // returns name of Module (Component) of given objects (usually selected objects)
-  // if objects belong to different Components, a NULL string is returned.
-  QString getParentComponent( _PTR( Study ), const SALOME_ListIO& );
-  QString getParentComponent( _PTR(SObject) );
-
   // Recursive deletion of object with children
-  void RemoveObjectWithChildren(_PTR(SObject) obj,
+  void removeObjectWithChildren(_PTR(SObject) obj,
 				_PTR(Study) aStudy,
 				QPtrList<SALOME_View> views,
 				GEOM_Displayer* disp);
-
-  //checks if the object passed as the first argument depends on the second arguments
-  bool CheckSubObjectInUse(_PTR(SObject) checkobj,
-			   _PTR(SObject) remobj,
-			   _PTR(Study) aStudy);
 };
 
 #endif

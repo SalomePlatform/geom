@@ -36,14 +36,22 @@ lib_LTLIBRARIES = libGEOMToolsGUI.la
 salomeinclude_HEADERS =
 
 dist_libGEOMToolsGUI_la_SOURCES = \
-	GEOMToolsGUI.cxx \
-	GEOMToolsGUI_1.cxx \
-	GEOMToolsGUI_TransparencyDlg.cxx \
-	GEOMToolsGUI_NbIsosDlg.cxx
+	GEOM_ToolsGUI.hxx			\
+	GEOMToolsGUI.h				\
+	GEOMToolsGUI_NbIsosDlg.h		\
+	GEOMToolsGUI_TransparencyDlg.h		\
+	GEOMToolsGUI_DeleteDlg.h		\
+						\
+	GEOMToolsGUI.cxx			\
+	GEOMToolsGUI_1.cxx			\
+	GEOMToolsGUI_TransparencyDlg.cxx	\
+	GEOMToolsGUI_NbIsosDlg.cxx		\
+	GEOMToolsGUI_DeleteDlg.cxx
 
 MOC_FILES = \
-	GEOMToolsGUI_TransparencyDlg_moc.cxx \
-	GEOMToolsGUI_NbIsosDlg_moc.cxx
+	GEOMToolsGUI_TransparencyDlg_moc.cxx	\
+	GEOMToolsGUI_NbIsosDlg_moc.cxx		\
+	GEOMToolsGUI_DeleteDlg_moc.cxx
 
 nodist_libGEOMToolsGUI_la_SOURCES= \
 	$(MOC_FILES)
