@@ -38,21 +38,16 @@ salomeinclude_HEADERS = \
 	GEOMBase_Skeleton.h \
 	GEOMBase_Helper.h \
 	GEOM_Operation.h \
-	GEOMBase_aWarningDlg.h \
 	GEOM_GEOMBase.hxx
 
 dist_libGEOMBase_la_SOURCES = \
 	GEOMBase.cxx \
 	GEOMBase_Skeleton.cxx \
-	GEOMBase_aParameterDlg.cxx \
 	GEOMBase_Helper.cxx \
-	GEOMBase_aWarningDlg.cxx \
 	GEOM_Operation.cxx
 
 MOC_FILES = \
-	GEOMBase_Skeleton_moc.cxx \
-	GEOMBase_aWarningDlg_moc.cxx \
-	GEOMBase_aParameterDlg_moc.cxx
+	GEOMBase_Skeleton_moc.cxx
 
 nodist_libGEOMBase_la_SOURCES= \
 	 $(MOC_FILES)
