@@ -70,21 +70,11 @@ private:
   void         OnOpen();
   void         OnSelectOnly(int mode);
   
-  // returns name of Module (Component) of given objects (usually selected objects)
-  // if objects belong to different Components, a NULL string is returned.
-  QString      getParentComponent( _PTR(Study), const SALOME_ListIO& );
-  QString      getParentComponent( _PTR(SObject) );
-
   // Recursive deletion of object with children
-  void         RemoveObjectWithChildren( _PTR(SObject),
+  void         removeObjectWithChildren( _PTR(SObject),
 					 _PTR(Study),
 					 QList<SALOME_View*>,
 					 GEOM_Displayer* );
-  
-  //checks if the object passed as the first argument depends on the second arguments
-  bool         CheckSubObjectInUse( _PTR(SObject),
-				    _PTR(SObject),
-				    _PTR(Study) );
 };
 
 #endif // GEOMTOOLSGUI_H

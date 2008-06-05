@@ -111,6 +111,73 @@ static QString getFileName( QWidget*           parent,
 }
 
 //=======================================================================
+// function : getParentComponent
+// purpose  : Get object's parent component entry
+//=======================================================================
+static QString getParentComponent( _PTR( SObject ) obj )
+{
+  if ( obj ) {
+    _PTR(SComponent) comp = obj->GetFatherComponent();
+    if ( comp )
+      return QString( comp->GetID().c_str() );
+  }
+  return QString();
+}
+
+//=====================================================================================
+// function : inUse
+// purpose  : check if the object(s) passed as the the second arguments are used
+//            by the other objects in the study
+//=====================================================================================
+static bool inUse( _PTR(Study) study, const QString& component, const QMap<QString,QString>& objects )
+{
+  _PTR(SObject) comp = study->FindObjectID( component.toLatin1().data() );
+  if ( !comp )
+    return false;
+
+  // collect all GEOM objects being deleted
+  QMap<QString, GEOM::GEOM_Object_var> gobjects;
+  QMap<QString, QString>::ConstIterator oit;
+  for ( oit = objects.begin(); oit != objects.end(); ++oit ) {
+    _PTR(SObject) so = study->FindObjectID( oit.key().toLatin1().data() );
+    if ( !so )
+      continue;
+    CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject( so );
+    GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
+    if( CORBA::is_nil( geomObj_rem ) ) 
+      continue;
+    gobjects.insert( oit.key(), geomObj_rem );
+  }
+  
+  // browse through all GEOM data tree
+  _PTR(ChildIterator) it ( study->NewChildIterator( comp ) );
+  for ( it->InitEx( true ); it->More(); it->Next() ) {
+    _PTR(SObject) child( it->Value() );
+    CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( child );
+    GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+    if( CORBA::is_nil( geomObj ) ) 
+      continue;
+
+    GEOM::ListOfGO_var list = geomObj->GetDependency();
+    if( list->length() <= 1 ) 
+      continue; // ??? why 1?
+
+    for( int i = 0; i < list->length(); i++ ) {
+      bool depends = false;
+      bool deleted = false;
+      QMap<QString, GEOM::GEOM_Object_var>::Iterator git;
+      for ( git = gobjects.begin(); git != gobjects.end() && ( !depends || !deleted ); ++git ) {
+	depends = depends || list[i]->_is_equivalent( *git );
+	deleted = deleted || git.key() == child->GetID().c_str() ;//geomObj->_is_equivalent( *git );
+      }
+      if ( depends && !deleted )
+	return true;
+    }
+  }
+  return false;
+}
+
+//=======================================================================
 // function : GEOMToolsGUI()
 // purpose  : Constructor
 //=======================================================================
@@ -278,145 +345,149 @@ void GEOMToolsGUI::OnEditDelete()
   SALOME_ListIO selected;
   SalomeApp_Application* app =
     dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( app ) {
-    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-    if ( aSelMgr && appStudy ) {
-      aSelMgr->selectedObjects( selected, QString::null, false );
-      if ( !selected.IsEmpty() ) {
-	_PTR(Study) aStudy = appStudy->studyDS();
+  if ( !app )
+    return;
 
-	bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
-	if ( aLocked ) {
-	  SUIT_MessageBox::warning ( app->desktop(),
-				     QObject::tr("WRN_WARNING"),
-				     QObject::tr("WRN_STUDY_LOCKED"),
-				     QObject::tr("BUT_OK") );
-	  return;
-	}
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !aSelMgr || !appStudy )
+    return;
 
-	// VSR 17/11/04: check if all objects selected belong to GEOM component --> start
-	// modifications of ASV 01.06.05
-	QString parentComp = getParentComponent( aStudy, selected );
-	CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
-	QString geomComp = getParentComponent( aStudy->FindObjectIOR( geomIOR.in() ) );
+  // get selection
+  aSelMgr->selectedObjects( selected, "ObjectBrowser", false );
+  if ( selected.IsEmpty() )
+    return;
 
-	if ( parentComp != geomComp )  {
-	  SUIT_MessageBox::warning ( app->desktop(),
-				     QObject::tr("ERR_ERROR"),
-				     QObject::tr("NON_GEOM_OBJECTS_SELECTED").arg( getGeometryGUI()->moduleName() ),
-				     QObject::tr("BUT_OK") );
-	  return;
-	}
-	// VSR 17/11/04: check if all objects selected belong to GEOM component <-- finish
+  _PTR(Study) aStudy = appStudy->studyDS();
+  
+  // check if study is locked
+  if ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() )->IsLocked() ) {
+    SUIT_MessageBox::warning( app->desktop(),
+			      tr("WRN_WARNING"),
+			      tr("WRN_STUDY_LOCKED"),
+			      tr("BUT_OK") );
+    return; // study is locked
+  }
+  
+  // get GEOM component
+  CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
+  QString geomComp = getParentComponent( aStudy->FindObjectIOR( geomIOR.in() ) );
 
-	QStringList aNameList;
-	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-	  Handle(SALOME_InteractiveObject) anIObject = It.Value();
-	  QString aName = anIObject->getName();
-	  if ( aName != "" && aName[ 0 ] != '*' ) {
-	    aNameList.append( aName );
-	  
-	    _PTR(SObject) obj ( aStudy->FindObjectID( anIObject->getEntry() ) );
-	    _PTR(ChildIterator) it ( aStudy->NewChildIterator( obj ) );
-	    for ( it->InitEx( true ); it->More(); it->Next() ) {
-	      _PTR(SObject) child( it->Value() );
-	      QString aName = child->GetName().c_str();
-	      if ( aName != "" && aName[ 0 ] != '*' ) {
-		aNameList.append( aName );
-	      }
-	    }
-	  }
-	}
+  // check each selected object: if belongs to GEOM, if not reference...
+  QMap<QString,QString> toBeDeleted;
+  QMap<QString,QString> allDeleted;
+  bool isComponentSelected = false;
+  for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+    Handle(SALOME_InteractiveObject) anIObject = It.Value();
+    if ( !anIObject->hasEntry() )
+      continue; // invalid object
+    // ...
+    QString entry = anIObject->getEntry();
+    _PTR(SObject) obj = aStudy->FindObjectID( entry.toLatin1().data() );
+    // check parent component
+    QString parentComp = getParentComponent( obj );
+    if ( parentComp != geomComp )  {
+      SUIT_MessageBox::warning ( app->desktop(),
+				 QObject::tr("ERR_ERROR"),
+				 QObject::tr("NON_GEOM_OBJECTS_SELECTED").arg( getGeometryGUI()->moduleName() ),
+				 QObject::tr("BUT_OK") );
+      return; // not GEOM object selected
+    }
 
-	GEOMToolsGUI_DeleteDlg dlg( app->desktop(), aNameList );
-	if ( !dlg.exec() )
-	  return;
+    ///////////////////////////////////////////////////////
+    // if GEOM component is selected, so skip other checks
+    if ( isComponentSelected ) continue; 
+    ///////////////////////////////////////////////////////
+	
+    // check if object is reference
+    _PTR(SObject) refobj;
+    if ( obj && obj->ReferencedObject( refobj ) )
+      continue; // skip references
+    // ...
+    QString aName = obj->GetName().c_str();
+    if ( entry == geomComp ) {
+      // GEOM component is selected, skip other checks
+      isComponentSelected = true;
+      continue;
+    }
+    toBeDeleted.insert( entry, aName );
+    allDeleted.insert( entry, aName ); // skip GEOM component
+    // browse through all children recursively
+    _PTR(ChildIterator) it ( aStudy->NewChildIterator( obj ) );
+    for ( it->InitEx( true ); it->More(); it->Next() ) {
+      _PTR(SObject) child( it->Value() );
+      if ( child && child->ReferencedObject( refobj ) )
+	continue; // skip references
+      aName = child->GetName().c_str();
+      if ( !aName.isEmpty() )
+	allDeleted.insert( child->GetID().c_str(), aName );
+    }
+  }
+  
+  // is there is anything to delete?
+  if ( !isComponentSelected && allDeleted.count() <= 0 )
+    return; // nothing to delete
 
-	//	QAD_Operation* op = new SALOMEGUI_ImportOperation(.....);
-	//	op->start();
-
-	// prepare list of SALOME_Views
-	QList<SALOME_View*> views;
-	SALOME_View* view;
-	// fill the list
-	ViewManagerList vmans = app->viewManagers();
-	SUIT_ViewManager* vman;
-	QListIterator<SUIT_ViewManager*> it( vmans );
-	while ( it.hasNext() && (vman = it.next()) ) {
-	  SUIT_ViewModel* vmod = vman->getViewModel();
-	  view = dynamic_cast<SALOME_View*> ( vmod ); // must work for OCC and VTK views
-	  if ( view )
-	    views.append( view );
-	}
-
-	_PTR(StudyBuilder) aStudyBuilder (aStudy->NewBuilder());
-	_PTR(GenericAttribute) anAttr;
-	GEOM_Displayer* disp = new GEOM_Displayer( appStudy );
-
-        _PTR(SComponent) aGeom ( aStudy->FindComponent("GEOM") );
-          if ( !aGeom )
-            return;	
-
-	// MAIN LOOP OF SELECTED OBJECTS
-	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
-        {
-          Handle(SALOME_InteractiveObject) io = It.Value();
-	  if ( !io->hasEntry() )
-	    continue;
-
-	  _PTR(SObject) obj ( aStudy->FindObjectID( io->getEntry() ) );
-
-	  // disable removal of "Geometry" component object
-	  if ( !strcmp( obj->GetIOR().c_str(), geomIOR ) )
-	    continue;
-
-          //If the object has been used to create another one,then it can't be deleted 
-          _PTR(ChildIterator) it (aStudy->NewChildIterator(aGeom));
-          for ( it->InitEx( true ); it->More(); it->Next() )
-          {
-             _PTR(SObject) chobj (it->Value());
-	     if(CheckSubObjectInUse(chobj, obj, aStudy)) return;
-	     //check subobjects
-             _PTR(ChildIterator) it1( aStudy->NewChildIterator( obj ) );
-	     for( it1->InitEx( true ); it1->More(); it1->Next())
-             {
-	       _PTR(SObject) child (it1->Value());
-	       if(CheckSubObjectInUse( chobj, child, aStudy)) return;
-	     }
-	   }
-        }
-
-      	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
-        {
-          Handle(SALOME_InteractiveObject) io = It.Value();
-	  if ( !io->hasEntry() )
-	    continue;
-
-	  _PTR(SObject) obj ( aStudy->FindObjectID( io->getEntry() ) );
-
-          RemoveObjectWithChildren(obj, aStudy, views, disp);
-          
-	  // Remove objects from Study
-	  aStudyBuilder->RemoveObjectWithChildren( obj );
-	  //deleted = true;
-	} // MAIN LOOP of selected
-
-	selected.Clear();
-	aSelMgr->setSelectedObjects( selected );
-	getGeometryGUI()->updateObjBrowser();
-      } // if ( selected not empty )
-    } // if ( selMgr && appStudy )
-
-    app->updateActions(); //SRN: To update a Save button in the toolbar
-
-  } // if ( app )
-
-
-  //  if ( deleted )
-  //    op->finish();
-  //  else
-  //    op->abort();
+  // show confirmation dialog box
+  GEOMToolsGUI_DeleteDlg dlg( app->desktop(), allDeleted, isComponentSelected );
+  if ( !dlg.exec() )
+    return; // operation is cancelled by user
+  
+  // get currently opened views
+  QList<SALOME_View*> views;
+  SALOME_View* view;
+  ViewManagerList vmans = app->viewManagers();
+  SUIT_ViewManager* vman;
+  QListIterator<SUIT_ViewManager*> vit( vmans );
+  while ( vit.hasNext() && (vman = vit.next()) ) {
+    SUIT_ViewModel* vmod = vman->getViewModel();
+    view = dynamic_cast<SALOME_View*> ( vmod ); // must work for OCC and VTK views
+    if ( view )
+      views.append( view );
+  }
+  
+  _PTR(StudyBuilder) aStudyBuilder (aStudy->NewBuilder());
+  GEOM_Displayer* disp = new GEOM_Displayer( appStudy );
+  
+  if ( isComponentSelected ) {
+    // GEOM component is selected: delete all objects recursively
+    _PTR(SObject) comp = aStudy->FindObjectID( geomComp.toLatin1().data() );
+    if ( !comp )
+      return;
+    _PTR(ChildIterator) it ( aStudy->NewChildIterator( comp ) );
+    // remove top-level objects only
+    for ( it->InitEx( false ); it->More(); it->Next() ) {
+      _PTR(SObject) child( it->Value() );
+      // remove object from GEOM engine
+      removeObjectWithChildren( child, aStudy, views, disp );
+      // remove object from study
+      aStudyBuilder->RemoveObjectWithChildren( child );
+    }
+  }
+  else {
+    // GEOM component is not selected: check if selected objects are in use
+    if ( inUse( aStudy, geomComp, allDeleted ) ) {
+      SUIT_MessageBox::warning ( app->desktop(),
+				 QObject::tr("WRN_WARNING"),
+				 QObject::tr("DEP_OBJECT"),
+				 QObject::tr("BUT_OK") );
+      return; // object(s) in use
+    }
+    // ... and then delete all objects
+    QMap<QString, QString>::Iterator it;
+    for ( it = toBeDeleted.begin(); it != toBeDeleted.end(); ++it ) {
+      _PTR(SObject) obj ( aStudy->FindObjectID( it.key().toLatin1().data() ) );
+      // remove object from GEOM engine
+      removeObjectWithChildren( obj, aStudy, views, disp );
+      // remove objects from study
+      aStudyBuilder->RemoveObjectWithChildren( obj );
+    }
+  }
+  
+  selected.Clear();
+  aSelMgr->setSelectedObjects( selected );
+  getGeometryGUI()->updateObjBrowser();
+  app->updateActions(); //SRN: To update a Save button in the toolbar
 }
 
 
@@ -677,50 +748,11 @@ bool GEOMToolsGUI::Export()
   return true;
 }
 
-
-QString GEOMToolsGUI::getParentComponent( _PTR( Study ) study, const SALOME_ListIO& iobjs )
-{
-  QString parentComp;
-
-  for ( SALOME_ListIteratorOfListIO it( iobjs ); it.More(); it.Next() ) {
-
-    Handle(SALOME_InteractiveObject) io = it.Value();
-    if ( !io->hasEntry() )
-      continue;
-
-    QString compName = getParentComponent( study->FindObjectID( io->getEntry() ) );
-
-    if ( parentComp.isNull() )
-      parentComp = compName;
-    else if ( parentComp.compare( compName) != 0 ) { // objects belonging to different components are selected
-      parentComp = QString::null;
-      break;
-    }
-  }
-
-  return parentComp;
-}
-
-QString GEOMToolsGUI::getParentComponent( _PTR( SObject ) obj )
-{
-  if ( obj ) {
-    _PTR(SComponent) comp = obj->GetFatherComponent();
-    if ( comp ) {
-      _PTR(GenericAttribute) anAttr;
-      if ( comp->FindAttribute( anAttr, "AttributeName") ) {
-	_PTR(AttributeName) aName( anAttr );
-	return QString( aName->Value().c_str() );
-      }
-    }
-  }
-  return QString();
-}
-
 //=====================================================================================
 // function : RemoveObjectWithChildren
 // purpose  : to be used by OnEditDelete() method
 //=====================================================================================
-void GEOMToolsGUI::RemoveObjectWithChildren(_PTR(SObject) obj,
+void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
                                             _PTR(Study) aStudy,
                                             QList<SALOME_View*> views,
                                             GEOM_Displayer* disp)
@@ -728,7 +760,7 @@ void GEOMToolsGUI::RemoveObjectWithChildren(_PTR(SObject) obj,
   // iterate through all children of obj
   for (_PTR(ChildIterator) it (aStudy->NewChildIterator(obj)); it->More(); it->Next()) {
     _PTR(SObject) child (it->Value());
-    RemoveObjectWithChildren(child, aStudy, views, disp);
+    removeObjectWithChildren(child, aStudy, views, disp);
   }
 
   // erase object and remove it from engine
@@ -753,39 +785,6 @@ void GEOMToolsGUI::RemoveObjectWithChildren(_PTR(SObject) obj,
       GeometryGUI::GetGeomGen()->RemoveObject( geomObj );
     }
   }
-}
-
-//=====================================================================================
-// function : CheckSubObjectInUse
-// purpose  : to be used by OnEditDelete() method
-//=====================================================================================
-bool GEOMToolsGUI::CheckSubObjectInUse(_PTR(SObject) checkobj,
-				       _PTR(SObject) remobj,
-                                       _PTR(Study) aStudy)
-{
-  CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(checkobj);
-  GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-  if( CORBA::is_nil(geomObj) ) 
-    return false;
-
-  GEOM::ListOfGO_var list = geomObj->GetDependency();
-  if( list->length() > 1 )
-    for(int i = 0; i < list->length(); i++ ){
-      CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject(remobj);
-      GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
-      if( list[i]->_is_equivalent( geomObj_rem ) ){
-	SalomeApp_Application* app =
-	  dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-
-	SUIT_MessageBox::warning ( app->desktop(),
-				   QObject::tr("WRN_WARNING"),
-				   QObject::tr("DEP_OBJECT"),
-				   QObject::tr("BUT_OK") );
-	return true;
-      }
-    }
-
-  return false;
 }
 
 //=================================================================================

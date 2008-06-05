@@ -27,15 +27,14 @@
 #define GEOMTOOLSGUI_DELETEDLG_H
 
 #include <QDialog>
-
-class QStringList;
+#include <QMap>
 
 class GEOMToolsGUI_DeleteDlg : public QDialog
 { 
   Q_OBJECT
 
 public:
-  GEOMToolsGUI_DeleteDlg( QWidget*, const QStringList& );
+  GEOMToolsGUI_DeleteDlg( QWidget*, const QMap<QString, QString>&, bool = false );
   ~GEOMToolsGUI_DeleteDlg();
 };
 

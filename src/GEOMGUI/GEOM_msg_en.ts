@@ -1174,7 +1174,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_REALLY_DELETE</source>
-            <translation>Do you really want to delete this %1 object(s):</translation>
+            <translation>Do you really want to delete %1 object(s)?</translation>
+        </message>
+        <message>
+            <source>GEOM_REALLY_DELETE_ALL</source>
+            <translation>Do you really want to delete all objects?</translation>
         </message>
         <message>
             <source>GEOM_RECONSTRUCTION_LIMIT</source>
