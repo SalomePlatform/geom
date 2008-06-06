@@ -242,7 +242,7 @@ msgid "GEOM_WRN_WARNING"
 msgstr "Warning"
 
 msgid "GEOMToolsGUI_DeleteDlg::GEOM_REALLY_DELETE"
-msgstr "Do you really want to delete %1 object(s)?:"
+msgstr "Do you really want to delete %1 object(s)?"
 
 msgid "GEOMToolsGUI_DeleteDlg::GEOM_REALLY_DELETE_ALL"
 msgstr "Do you really want to delete all objects?:"
