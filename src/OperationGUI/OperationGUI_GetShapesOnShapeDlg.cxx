@@ -75,6 +75,8 @@ OperationGUI_GetShapesOnShapeDlg::OperationGUI_GetShapesOnShapeDlg(GeometryGUI* 
 
   Layout1->addWidget(GroupPoints, 2, 0);
 
+  setHelpFileName("shapesonshape_page.html");
+  
   Init();
 }
 
