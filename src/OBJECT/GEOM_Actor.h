@@ -124,7 +124,7 @@ public:
   void SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
   void GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b);
 
-  virtual bool IsInfinite();
+  virtual bool IsInfinitive();
 
   // overloaded functions
   //! To map current selection to VTK representation

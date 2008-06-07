@@ -573,7 +573,6 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
     aMatrix->Delete();    
   } else
     this->Device->Render(ren, theMapper);
-
 }
 
 void GEOM_Actor::ReleaseGraphicsResources(vtkWindow *)
@@ -671,7 +670,11 @@ vtkFloatingPointType GEOM_Actor::GetOpacity()
 void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b)
 {
   // enk:tested OK
-  myShadingFaceProp->SetColor(r,g,b);
+  myShadingFaceProp->SetColor(r,g,b);                          // shading color (Shading)
+  myIsolatedEdgeActor->GetProperty()->SetColor(r,g,b);         // standalone edge color (Wireframe)
+  myVertexActor->GetProperty()->SetColor(r,g,b);               // vertex actor (Shading/Wireframe)
+  myOneFaceEdgeActor->GetProperty()->SetColor(r,g,b);          // standalone face edge color (Wireframe)
+  mySharedEdgeActor->GetProperty()->SetColor(r,g,b);           // share edge color (Wireframe)
 }
 
 void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b)
@@ -684,7 +687,7 @@ void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFlo
   b = aRGB[2];
 }
 
-bool GEOM_Actor::IsInfinite()
+bool GEOM_Actor::IsInfinitive()
 {
   return (bool)(myShape.Infinite());
 }
