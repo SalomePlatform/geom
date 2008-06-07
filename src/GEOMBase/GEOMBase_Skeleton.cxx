@@ -133,9 +133,10 @@ void GEOMBase_Skeleton::initSpinBox( QDoubleSpinBox* spinBox,
 				     double min,  double max, 
 				     double step, int decimals )
 {
+  spinBox->setDecimals( decimals ); // it's necessary to set decimals before the range setting,
+                                    // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
-  spinBox->setDecimals( decimals );
 }
 
 //=================================================================================
