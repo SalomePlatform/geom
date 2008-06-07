@@ -95,10 +95,11 @@ static QString getFileName( QWidget*           parent,
   if ( !caption.isEmpty() )
     fd->setCaption( caption );
 
-  if ( showCurrentDirInitially && SUIT_FileDlg::getLastVisitedPath().isEmpty() )
-    fd->setSelection( QDir::currentDirPath() );
-  else if ( !initial.isEmpty() )
+  if ( !initial.isEmpty() )
     fd->setSelection( initial );
+  
+  if ( showCurrentDirInitially && SUIT_FileDlg::getLastVisitedPath().isEmpty() )
+    fd->setDir( QDir::currentDirPath() );
 
   fd->setFilters( filters );
 
@@ -713,7 +714,7 @@ bool GEOMToolsGUI::Export()
 
     QString fileType;
     QString file = getFileName(app->desktop(), QString( IObject->getName() ), aMap, filters,
-			       tr("GEOM_MEN_EXPORT"), false, fileType);
+			       tr("GEOM_MEN_EXPORT"), false, fileType, true);
 
     // User has pressed "Cancel" --> stop the operation
     if ( file.isEmpty() || fileType.isEmpty() )
