@@ -2875,7 +2875,9 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   Standard_Real    tab_aWhat[4],    tab_aWhere[4];
   Standard_Real    dl_l = 1e-3;
   Standard_Real    min_l, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
-  gp_Pnt           aPnt, aPnt_aWhat;
+  Standard_Real    aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+  Bnd_Box          BoundingBox;
+  gp_Pnt           aPnt, aPnt_aWhat, tab_Pnt[2];
   GProp_GProps     aProps;
 
   // Find the iType of the aWhat shape
@@ -2891,9 +2893,11 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     else if ( compType == TopAbs_SOLID || compType == TopAbs_COMPSOLID) iType = TopAbs_SOLID;
   }
   else {
-    cout << endl;
-    cout << "WARNING : shape to be extracted is of unknown type !" << endl;
-    cout << endl;
+    //MESSAGE("");
+    //MESSAGE("WARNING : the 'GetInPlace' function parameter used to extract a shape is probably of Vertex type !");
+    //MESSAGE("");
+    SetErrorCode("Error: An attempt to extract a shape of not supported type.");
+    return NULL;
   }
 
   TopExp_Explorer Exp_aWhat( aWhat,   TopAbs_ShapeEnum( iType ) );
@@ -2901,10 +2905,22 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   TopExp_Explorer Exp_Edge( aWhere,   TopAbs_EDGE );
 
   // Find the shortest edge in theShapeWhere shape
+  BRepBndLib::Add(aWhere, BoundingBox);
+  BoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+  min_l = fabs(aXmax - aXmin);
+  if( min_l < fabs(aYmax - aYmin) ) min_l = fabs(aYmax - aYmin);
+  if( min_l < fabs(aZmax - aZmin) ) min_l = fabs(aZmax - aZmin);
+  min_l /= dl_l;
   for ( Standard_Integer nbEdge = 0; Exp_Edge.More(); Exp_Edge.Next(), nbEdge++ ) {
-    BRepGProp::LinearProperties(Exp_Edge.Current(), aProps);
-    if ( ! nbEdge ) min_l = aProps.Mass();
-    if ( aProps.Mass() < min_l ) min_l = aProps.Mass();
+    TopExp_Explorer Exp_Vertex( Exp_Edge.Current(), TopAbs_VERTEX);
+    for ( Standard_Integer nbVertex = 0; Exp_Vertex.More(); Exp_Vertex.Next(), nbVertex++ ) {
+      aPnt = BRep_Tool::Pnt( TopoDS::Vertex( Exp_Vertex.Current() ) );
+      tab_Pnt[nbVertex] = aPnt;
+    }
+    if ( not tab_Pnt[0].IsEqual(tab_Pnt[1], dl_l) ) {
+      BRepGProp::LinearProperties(Exp_Edge.Current(), aProps);
+      if ( aProps.Mass() < min_l ) min_l = aProps.Mass();
+    }
   }
 
   // Compute tolerances
