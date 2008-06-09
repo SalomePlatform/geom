@@ -32,9 +32,12 @@ Shape.</li>
 <li><b>In Place of Second Shape</b> restricts the range of accessible
 elements to those sub-shapes of the Main Shape that geometrically
 coincide with the <b>Second Shape</b>.</li>
-<li><b>Sub-Shapes of Second Shape</b> restricts the range of accessible elements to 
-those sub-shapes of the Main Shape that are sub-shapes of <b>Second
-Shape</b>.</li>
+<li><b>Sub-Shapes of Second Shape</b> restricts the range of
+accessible elements to those sub-shapes of the Main Shape that 
+are sub-shapes of <b>Second Shape</b>. This is useful because 
+sometimes purely geometrical coincidence is not enough and it 
+is necessary to work with shapes, which actually belong both 
+to the main and the second shape.</li>
 </ul>
 <li> You can select the elements of your group in two ways:
 <ul>
