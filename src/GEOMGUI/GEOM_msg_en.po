@@ -476,7 +476,7 @@ msgstr "Step U :"
 
 #ShapesOnShape
 msgid "GEOM_SHAPES_ON_SHAPE"
-msgstr "Shapes_on_shape"
+msgstr "Get shapes on shape"
 msgid "GEOM_SHAPES_ON_SHAPE_ESHAPE"
 msgstr "Shape for exploding"
 msgid "GEOM_SHAPES_ON_SHAPE_CSHAPE"

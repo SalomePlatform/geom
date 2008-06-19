@@ -98,9 +98,11 @@ void OperationGUI_GetShapesOnShapeDlg::Init()
 {
   /* type for sub shape selection */
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_SOLID"));
-  GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_SHELL"));
+  // commented by skl for IPAL19949 - finder isn't allowed such type
+  //GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_SHELL"));
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_FACE"));
-  GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_WIRE"));
+  // commented by skl for IPAL19949 - finder isn't allowed such type
+  //GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_WIRE"));
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_EDGE"));
   GroupPoints->ComboBox1->insertItem(tr("GEOM_RECONSTRUCTION_LIMIT_VERTEX"));
 
@@ -294,11 +296,9 @@ bool OperationGUI_GetShapesOnShapeDlg::execute( ObjectList& objects )
   switch (aLimit)
   {
   case 0:  aLimit = GEOM::SOLID ; break;
-  case 1:  aLimit = GEOM::SHELL ; break;
-  case 2:  aLimit = GEOM::FACE  ; break;
-  case 3:  aLimit = GEOM::WIRE  ; break;
-  case 4:  aLimit = GEOM::EDGE  ; break;
-  case 5:  aLimit = GEOM::VERTEX; break;
+  case 1:  aLimit = GEOM::FACE  ; break;
+  case 2:  aLimit = GEOM::EDGE  ; break;
+  case 3:  aLimit = GEOM::VERTEX; break;
   default: aLimit = GEOM::SHAPE ;
   }
 
