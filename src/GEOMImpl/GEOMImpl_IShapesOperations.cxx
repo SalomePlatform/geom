@@ -2893,9 +2893,6 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     else if ( compType == TopAbs_SOLID || compType == TopAbs_COMPSOLID) iType = TopAbs_SOLID;
   }
   else {
-    //MESSAGE("");
-    //MESSAGE("WARNING : the 'GetInPlace' function parameter used to extract a shape is probably of Vertex type !");
-    //MESSAGE("");
     SetErrorCode("Error: An attempt to extract a shape of not supported type.");
     return NULL;
   }

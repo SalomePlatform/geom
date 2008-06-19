@@ -32,6 +32,8 @@
 #include <GEOM_Gen_i.hh>
 #include <SALOME_NamingService.hxx>
 
+#include "utilities.h"
+
 //==================================================================================
 // function : main()                      MAIN 
 // purpose  :
@@ -70,19 +72,19 @@ int main(int argc, char** argv)
     orb->destroy();
   }
   catch(CORBA::SystemException&) {
-    cerr << "Caught CORBA::SystemException." << endl;
+    INFOS ( "Caught CORBA::SystemException." );
   }
   catch(CORBA::Exception&) {
-    cerr << "Caught CORBA::Exception." << endl;
+    INFOS ( "Caught CORBA::Exception." );
   }
   catch(omniORB::fatalException& fe) {
-    cerr << "Caught omniORB::fatalException:" << endl;
-    cerr << "  file: " << fe.file() << endl;
-    cerr << "  line: " << fe.line() << endl;
-    cerr << "  msg: " << fe.errmsg() << endl;
+    INFOS ( "Caught omniORB::fatalException:" );
+    INFOS ( "  file: " << fe.file() );
+    INFOS ( "  line: " << fe.line() );
+    INFOS ( "  msg: " << fe.errmsg() );
   }
   catch(...) {
-    cerr << "Caught unknown exception." << endl;
+    INFOS ( "Caught unknown exception." );
   }
   return 0;
 }

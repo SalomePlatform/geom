@@ -737,16 +737,16 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
     aChamfer->AddFunction(GEOMImpl_ChamferDriver::GetID(), CHAMFER_SHAPE_EDGES);
-  if (aFunction.IsNull()) { return NULL; cout << "Edges Function is NULL!!!" << endl; }
+  if (aFunction.IsNull()) { MESSAGE ( "Edges Function is NULL!!!" ); return NULL;}
 
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID())
-	{ return NULL; cout << "Chamfer Driver is NULL!!!" << endl; }
+	{ MESSAGE ( "Chamfer Driver is NULL!!!" ); return NULL; }
 
   GEOMImpl_IChamfer aCI (aFunction);
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-  if (aRefShape.IsNull()) { return NULL; cout << "Shape is NULL!!!" << endl; }
+  if (aRefShape.IsNull()) { MESSAGE ("Shape is NULL!!!"); return NULL;}
 
   aCI.SetShape(aRefShape);
   aCI.SetD1(theD1);
@@ -809,16 +809,16 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
     aChamfer->AddFunction(GEOMImpl_ChamferDriver::GetID(), CHAMFER_SHAPE_EDGES_AD);
-  if (aFunction.IsNull()) { return NULL; cout << "Edges Function is NULL!!!" << endl; }
+  if (aFunction.IsNull()) { MESSAGE ( "Edges Function is NULL!!!" ); return NULL; }
 
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID())
-	{ return NULL; cout << "Chamfer Driver is NULL!!!" << endl; }
+	{ MESSAGE("Chamfer Driver is NULL!!!"); return NULL;}
 
   GEOMImpl_IChamfer aCI (aFunction);
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-  if (aRefShape.IsNull()) { return NULL; cout << "Shape is NULL!!!" << endl; }
+  if (aRefShape.IsNull()) { MESSAGE ("Shape is NULL!!!"); return NULL;}
 
   aCI.SetShape(aRefShape);
   aCI.SetD(theD);

@@ -548,7 +548,7 @@ bool GEOMToolsGUI::Import()
 
   SalomeApp_Study* stud = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
   if ( !stud ) {
-    cout << "FAILED to cast active study to SalomeApp_Study" << endl;
+    MESSAGE ( "FAILED to cast active study to SalomeApp_Study" );
     return false;
   }
   _PTR(Study) aStudy = stud->studyDS();
@@ -667,7 +667,7 @@ bool GEOMToolsGUI::Export()
 
   SalomeApp_Study* stud = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
   if ( !stud ) {
-    cout << "FAILED to cast active study to SalomeApp_Study" << endl;
+    MESSAGE ( "FAILED to cast active study to SalomeApp_Study" );
     return false;
   }
   _PTR(Study) aStudy = stud->studyDS();

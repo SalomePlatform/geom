@@ -447,7 +447,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       aNode = Itr.Value();
       aFunction = GEOM_Function::GetFunction(aNode->Label());
       if(aFunction.IsNull()) {
-	cout << "Null function !!!!" << endl;
+	MESSAGE ( "Null function !!!!" );
 	continue;
       }
       ProcessFunction(aFunction, aScript, aMap);
