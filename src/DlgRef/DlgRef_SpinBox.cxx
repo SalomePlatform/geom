@@ -29,6 +29,7 @@
 #include "DlgRef_SpinBox.h"
 
 #include <qvalidator.h>
+#include <math.h>
 
 //=================================================================================
 // class    : DlgRef_SpinBox()
@@ -105,8 +106,21 @@ void DlgRef_SpinBox::RangeStepAndValidator(double min, double max,double step,
 
 QString DlgRef_SpinBox::PrintDoubleValue (double theValue, int thePrecision)
 {
+  const double prec = 1e-12;
+
   QString aRes;
   aRes.setNum(theValue, 'g', thePrecision);
+
+  if ( prec > 0 ) {
+    int p = 0;
+    while ( p < thePrecision ) {
+      aRes.setNum( theValue, 'g', p++ );
+      double v = aRes.toDouble();
+      double err = fabs( theValue - v );
+      if ( err > 0 && err <= prec )
+	break;
+    }
+  }
 
   // remove trailing zeroes
   QString delim( "." );
