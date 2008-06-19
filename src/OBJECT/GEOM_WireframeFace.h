@@ -15,8 +15,8 @@ public:
   vtkTypeMacro(GEOM_WireframeFace,GEOM_FaceSource); 
   static GEOM_WireframeFace* New(); 
  
-  vtkSetMacro(NbIso,int); 
-  vtkGetMacro(NbIso,int); 
+  /*  vtkSetMacro(NbIso,int); 
+      vtkGetMacro(NbIso,int);*/
  
   vtkSetMacro(Discret,int); 
   vtkGetMacro(Discret,int); 
@@ -25,16 +25,22 @@ public:
   void OCC2VTK(const TopoDS_Face& theFace,  
                vtkPolyData* thePolyData, 
                vtkPoints* thePts, 
-               int theNbIso = 1, 
-               int theDiscret = 15); 
- 
+               const int theNbIso[2], 
+               const int theDiscret = 15);
+
+  //! IsoLines management
+  // theNb[0] - number of U lines
+  // theNb[1] - number of V lines
+  virtual void SetNbIso(const int theNb[2]);
+  virtual void GetNbIso(int &theNbU,int &theNbV);
+
 protected: 
-  int NbIso, Discret; 
+  int NbIso[2], Discret; 
  
   static  
   void 
   CreateIso(const TopoDS_Face& theFace,
-	          const int theNbIso, 
+	    const int theNbIso[2], 
             const int theDiscret, 
             vtkPolyData* thePolyData,
             vtkPoints* thePts);
