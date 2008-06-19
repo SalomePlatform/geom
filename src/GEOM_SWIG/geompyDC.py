@@ -81,6 +81,7 @@ salome.salome_init()
 from salome import *
 
 import GEOM
+import math
 
 ## Enumeration ShapeType as a dictionary
 #  @ingroup l1_geompy_auxiliary
@@ -2422,6 +2423,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             anAngle = self.MeasuOp.GetAngle(theShape1, theShape2)
             RaiseIfFailed("GetAngle", self.MeasuOp)
+            return anAngle
+        def GetAngleRadians(self, theShape1, theShape2):
+            # Example: see GEOM_TestMeasures.py
+            anAngle = self.MeasuOp.GetAngle(theShape1, theShape2)*math.pi/180.
+            RaiseIfFailed("GetAngleRadians", self.MeasuOp)
             return anAngle
 
         ## @name Curve Curvature Measurement
