@@ -2414,9 +2414,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             aRes = [aTuple[0], aTuple[4] - aTuple[1], aTuple[5] - aTuple[2], aTuple[6] - aTuple[3]]
             return aRes
 
-        ## Get angle between the given shapes.
+        ## Get angle between the given shapes in degrees.
         #  @param theShape1,theShape2 Lines or linear edges to find angle between.
-        #  @return Value of the angle between the given shapes.
+        #  @return Value of the angle between the given shapes in degrees.
         #
         #  @ref tui_measurement_tools_page "Example"
         def GetAngle(self, theShape1, theShape2):
@@ -2424,6 +2424,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anAngle = self.MeasuOp.GetAngle(theShape1, theShape2)
             RaiseIfFailed("GetAngle", self.MeasuOp)
             return anAngle
+        ## Get angle between the given shapes in radians.
+        #  @param theShape1,theShape2 Lines or linear edges to find angle between.
+        #  @return Value of the angle between the given shapes in radians.
+        #
+        #  @ref tui_measurement_tools_page "Example"
         def GetAngleRadians(self, theShape1, theShape2):
             # Example: see GEOM_TestMeasures.py
             anAngle = self.MeasuOp.GetAngle(theShape1, theShape2)*math.pi/180.
