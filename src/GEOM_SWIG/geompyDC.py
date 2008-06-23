@@ -2432,7 +2432,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def GetAngleRadians(self, theShape1, theShape2):
             # Example: see GEOM_TestMeasures.py
             anAngle = self.MeasuOp.GetAngle(theShape1, theShape2)*math.pi/180.
-            RaiseIfFailed("GetAngleRadians", self.MeasuOp)
+            RaiseIfFailed("GetAngle", self.MeasuOp)
             return anAngle
 
         ## @name Curve Curvature Measurement
