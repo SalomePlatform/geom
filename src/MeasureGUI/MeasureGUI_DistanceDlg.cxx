@@ -312,6 +312,7 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
 
       Handle( AIS_LengthDimension ) anIO = new AIS_LengthDimension
         (aVert1, aVert2, P, aDist, TCollection_ExtendedString((Standard_CString)aLabel.latin1()));
+      anIO->SetArrowSize( aDist/20 );
 
       SOCC_Prs* aPrs =
         dynamic_cast<SOCC_Prs*>( ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs( 0 ) );
