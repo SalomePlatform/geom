@@ -392,7 +392,15 @@ GEOM::GEOM_IOperations_ptr RepairGUI_GlueDlg::createOperation()
 //=================================================================================
 bool RepairGUI_GlueDlg::isValid( QString& msg )
 {
-  return !myObject->_is_nil() && ( IsPreview() || myTolEdt->value() > 0. );
+  double v = 0;
+  switch ( getConstructorId() )
+  {
+  case 0:
+    v = myTolEdt->value();  break;
+  case 1:
+    v = myTolEdt2->value(); break;
+  }
+  return !myObject->_is_nil() && ( IsPreview() || v > 0. );
 }
 
 //=================================================================================
@@ -409,7 +417,7 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
   case 0:
     {
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow
-        ( getOperation() )->MakeGlueFaces( myObject, myTolEdt2->value(), true );
+        ( getOperation() )->MakeGlueFaces( myObject, myTolEdt->value(), true );
       aResult = !anObj->_is_nil();
       if ( aResult )
         objects.push_back( anObj._retn() );
