@@ -96,6 +96,12 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+#include <GeomAPI_IntSS.hxx>
+#include <Geom_SphericalSurface.hxx>
+#include <Geom_ToroidalSurface.hxx>
+#include <BRep_Builder.hxx>
+
+
 //=============================================================================
 /*!
  *  Constructor
@@ -1302,6 +1308,106 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
   return Astr;
 }
 
+
+//=======================================================================
+//function : CheckSingularCase
+//purpose  : auxilary for GetMinDistance()
+//           workaround for bugs 19899 and 19908 from Mantis
+//=======================================================================
+static bool CheckSingularCase(const TopoDS_Shape& aSh1,
+                              const TopoDS_Shape& aSh2,
+                              gp_Pnt& Ptmp)
+{
+  TopExp_Explorer anExp;
+  TopoDS_Shape tmpSh1, tmpSh2;
+  int nbf = 0;
+  for ( anExp.Init( aSh1, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+    nbf++;
+    tmpSh1 = anExp.Current();
+  }
+  if(nbf==1) {
+    Handle(Geom_Surface) S1 = BRep_Tool::Surface(TopoDS::Face(tmpSh1));
+    if( S1->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        S1->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+      nbf = 0;
+      for ( anExp.Init( aSh2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+        nbf++;
+        tmpSh2 = anExp.Current();
+        Handle(Geom_Surface) S2 = BRep_Tool::Surface(TopoDS::Face(tmpSh2));
+        GeomAPI_IntSS ISS(S1,S2,1.e-7);
+        if(ISS.IsDone()) {
+          for(int i=1; i<=ISS.NbLines(); i++) {
+            Handle(Geom_Curve) C3d = ISS.Line(i);
+            BRep_Builder B;
+            TopoDS_Edge E;
+            B.MakeEdge(E,C3d,1.e-7);
+            BRepExtrema_DistShapeShape dst(tmpSh2,E);
+            if (dst.IsDone()) {
+              gp_Pnt PMin1, PMin2, P1, P2;
+              double MinDist = 1.e9;
+              for (int i = 1; i <= dst.NbSolution(); i++) {
+                P1 = dst.PointOnShape1(i);
+                P2 = dst.PointOnShape2(i);
+                Standard_Real Dist = P1.Distance(P2);
+                if (MinDist > Dist) {
+                  MinDist = Dist;
+                  Ptmp = P1;
+                }
+              }
+              if(MinDist<1.e-7)
+                return true;
+            }
+          }
+        }
+      }
+    }
+  }
+  nbf = 0;
+  for ( anExp.Init( aSh2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+    nbf++;
+    tmpSh1 = anExp.Current();
+  }
+  if(nbf==1) {
+    Handle(Geom_Surface) S1 = BRep_Tool::Surface(TopoDS::Face(tmpSh1));
+    if( S1->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        S1->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+      nbf = 0;
+      for ( anExp.Init( aSh1, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+        nbf++;
+        tmpSh2 = anExp.Current();
+        Handle(Geom_Surface) S2 = BRep_Tool::Surface(TopoDS::Face(tmpSh2));
+        GeomAPI_IntSS ISS(S1,S2,1.e-7);
+        if(ISS.IsDone()) {
+          for(int i=1; i<=ISS.NbLines(); i++) {
+            Handle(Geom_Curve) C3d = ISS.Line(i);
+            BRep_Builder B;
+            TopoDS_Edge E;
+            B.MakeEdge(E,C3d,1.e-7);
+            BRepExtrema_DistShapeShape dst(tmpSh2,E);
+            if (dst.IsDone()) {
+              gp_Pnt P1,P2;
+              double MinDist = 1.e9;
+              for (int i = 1; i <= dst.NbSolution(); i++) {
+                P1 = dst.PointOnShape1(i);
+                P2 = dst.PointOnShape2(i);
+                Standard_Real Dist = P1.Distance(P2);
+                if (MinDist > Dist) {
+                  MinDist = Dist;
+                  Ptmp = P1;
+                }
+              }
+              if(MinDist<1.e-7)
+                return true;
+            }
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+
+
 //=============================================================================
 /*!
  *  GetMinDistance
@@ -1333,6 +1439,17 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
 #endif
+
+    // skl 30.06.2008
+    // additional workaround for bugs 19899 and 19908 from Mantis
+    gp_Pnt Ptmp;
+    if( CheckSingularCase(aShape1, aShape2, Ptmp) ) {
+      Ptmp.Coord(X1, Y1, Z1);
+      Ptmp.Coord(X2, Y2, Z2);
+      SetErrorCode(OK);
+      return 0.0;
+    }
+
     BRepExtrema_DistShapeShape dst (aShape1, aShape2);
     if (dst.IsDone()) {
       gp_Pnt PMin1, PMin2, P1, P2;
