@@ -32,6 +32,7 @@
 #include "GEOM_ToolsGUI.hxx"
 
 #include <qdialog.h>
+#include <qlabel.h>
 
 class QSlider;
 
@@ -53,15 +54,16 @@ private:
 
 private :
   bool      myFirstInit ;   /* Inform for the first init  */
-  QSlider*  mySlider; 
+  QSlider*  mySlider;
+  QLabel*   myValueLab;
   QString   myHelpFileName;
 
 private slots: 
   void      ClickOnOk();
   void      ClickOnClose();
   void      ClickOnHelp();
-  void      ValueHasChanged( int ) ;
-    
+  void      ValueHasChanged();
+  void      SetTransparency();
 };
 
 #endif // DIALOGBOX_TRANSPARENCYDLG_H
