@@ -99,7 +99,10 @@
 #include <GeomAPI_IntSS.hxx>
 #include <Geom_SphericalSurface.hxx>
 #include <Geom_ToroidalSurface.hxx>
+#include <Geom_Circle.hxx>
 #include <BRep_Builder.hxx>
+#include <TopoDS_Compound.hxx>
+#include <ShapeFix_Shape.hxx>
 
 
 //=============================================================================
@@ -1312,8 +1315,207 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
 //=======================================================================
 //function : CheckSingularCase
 //purpose  : auxilary for GetMinDistance()
-//           workaround for bugs 19899 and 19908 from Mantis
+//           workaround for bugs 19899, 19908 and 19910 from Mantis
 //=======================================================================
+static double CheckSingularCase(const TopoDS_Shape& aSh1,
+                                const TopoDS_Shape& aSh2,
+                                gp_Pnt& Ptmp1, gp_Pnt& Ptmp2)
+{
+  bool IsChange1 = false;
+  double AddDist1 = 0.0;
+  TopExp_Explorer anExp;
+  TopoDS_Shape tmpSh1, tmpSh2;
+  int nbf = 0;
+  for ( anExp.Init( aSh1, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+    nbf++;
+    tmpSh1 = anExp.Current();
+  }
+  if(nbf==1) {
+    TopoDS_Shape sh = aSh1;
+    while(sh.ShapeType()==TopAbs_COMPOUND) {
+      TopoDS_Iterator it(sh);
+      sh = it.Value();
+    }
+    Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(tmpSh1));
+    if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+      if( sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE ) {
+        // non solid case
+        double U1,U2,V1,V2;
+        S->Bounds(U1,U2,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS1 = 
+          new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS2 = 
+          new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
+        BRep_Builder B;
+        TopoDS_Face F1,F2;
+        TopoDS_Compound Comp;
+        B.MakeCompound(Comp);
+        B.MakeFace(F1,TrS1,1.e-7);
+        B.Add(Comp,F1);
+        B.MakeFace(F2,TrS2,1.e-7);
+        B.Add(Comp,F2);
+        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
+        sfs->Init(Comp);
+        sfs->SetPrecision(1.e-6);
+        sfs->SetMaxTolerance(1.0);
+        sfs->Perform();
+        tmpSh1 = sfs->Shape();
+        IsChange1 = true;
+      }
+      else {
+        if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
+          Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
+          gp_Pnt PC = SS->Location();
+          BRep_Builder B;
+          TopoDS_Vertex V;
+          B.MakeVertex(V,PC,1.e-7);
+          tmpSh1 = V;
+          AddDist1 = SS->Radius();
+          IsChange1 = true;
+        }
+        else {
+          Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
+          gp_Ax3 ax3 = TS->Position();
+          Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
+          BRep_Builder B;
+          TopoDS_Edge E;
+          B.MakeEdge(E,C,1.e-7);
+          tmpSh1 = E;
+          AddDist1 = TS->MinorRadius();
+          IsChange1 = true;
+        }
+      }
+    }
+    else
+      tmpSh1 = aSh1;
+  }
+  else
+    tmpSh1 = aSh1;
+  bool IsChange2 = false;
+  double AddDist2 = 0.0;
+  nbf = 0;
+  for ( anExp.Init( aSh2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+    nbf++;
+    tmpSh2 = anExp.Current();
+  }
+  if(nbf==1) {
+    TopoDS_Shape sh = aSh2;
+    while(sh.ShapeType()==TopAbs_COMPOUND) {
+      TopoDS_Iterator it(sh);
+      sh = it.Value();
+    }
+    Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(tmpSh2));
+    if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+      if( sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE ) {
+        // non solid case
+        double U1,U2,V1,V2;
+        S->Bounds(U1,U2,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS1 = 
+          new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS2 = 
+          new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
+        BRep_Builder B;
+        TopoDS_Face F1,F2;
+        TopoDS_Compound Comp;
+        B.MakeCompound(Comp);
+        B.MakeFace(F1,TrS1,1.e-7);
+        B.Add(Comp,F1);
+        B.MakeFace(F2,TrS2,1.e-7);
+        B.Add(Comp,F2);
+        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
+        sfs->Init(Comp);
+        sfs->SetPrecision(1.e-6);
+        sfs->SetMaxTolerance(1.0);
+        sfs->Perform();
+        tmpSh2 = sfs->Shape();
+        IsChange2 = true;
+      }
+      else {
+        if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
+          Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
+          gp_Pnt PC = SS->Location();
+          BRep_Builder B;
+          TopoDS_Vertex V;
+          B.MakeVertex(V,PC,1.e-7);
+          tmpSh2 = V;
+          AddDist2 = SS->Radius();
+          IsChange2 = true;
+        }
+        else if( S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+          Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
+          gp_Ax3 ax3 = TS->Position();
+          Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
+          BRep_Builder B;
+          TopoDS_Edge E;
+          B.MakeEdge(E,C,1.e-7);
+          tmpSh2 = E;
+          AddDist2 = TS->MinorRadius();
+          IsChange2 = true;
+        }
+      }
+    }
+    else
+      tmpSh2 = aSh2;
+  }
+  else
+    tmpSh2 = aSh2;
+
+  if( !IsChange1 && !IsChange2 )
+    return -2.0;
+
+  BRepExtrema_DistShapeShape dst(tmpSh1,tmpSh2);
+  if (dst.IsDone()) {
+    double MinDist = 1.e9;
+    gp_Pnt PMin1, PMin2, P1, P2;
+    for (int i = 1; i <= dst.NbSolution(); i++) {
+      P1 = dst.PointOnShape1(i);
+      P2 = dst.PointOnShape2(i);
+      Standard_Real Dist = P1.Distance(P2);
+      if (MinDist > Dist) {
+        MinDist = Dist;
+        PMin1 = P1;
+        PMin2 = P2;
+      }
+    }
+    if(MinDist<1.e-7) {
+      Ptmp1 = PMin1;
+      Ptmp2 = PMin2;
+    }
+    else {
+      gp_Dir aDir(gp_Vec(PMin1,PMin2));
+      if( MinDist > (AddDist1+AddDist2) ) {
+        Ptmp1 = gp_Pnt( PMin1.X() + aDir.X()*AddDist1,
+                        PMin1.Y() + aDir.Y()*AddDist1,
+                        PMin1.Z() + aDir.Z()*AddDist1 );
+        Ptmp2 = gp_Pnt( PMin2.X() - aDir.X()*AddDist2,
+                        PMin2.Y() - aDir.Y()*AddDist2,
+                        PMin2.Z() - aDir.Z()*AddDist2 );
+        return (MinDist - AddDist1 - AddDist2);
+      }
+      else {
+        if( AddDist1 > 0 ) {
+          Ptmp1 = gp_Pnt( PMin1.X() + aDir.X()*AddDist1,
+                          PMin1.Y() + aDir.Y()*AddDist1,
+                          PMin1.Z() + aDir.Z()*AddDist1 );
+          Ptmp2 = Ptmp1;
+        }
+        else {
+          Ptmp2 = gp_Pnt( PMin2.X() - aDir.X()*AddDist2,
+                          PMin2.Y() - aDir.Y()*AddDist2,
+                          PMin2.Z() - aDir.Z()*AddDist2 );
+          Ptmp1 = Ptmp2;
+        }
+      }
+    }
+    double res = MinDist - AddDist1 - AddDist2;
+    if(res<0.) res = 0.0;
+    return res;
+  }
+  return -2.0;
+}
+/* old variant
 static bool CheckSingularCase(const TopoDS_Shape& aSh1,
                               const TopoDS_Shape& aSh2,
                               gp_Pnt& Ptmp)
@@ -1406,6 +1608,7 @@ static bool CheckSingularCase(const TopoDS_Shape& aSh1,
   }
   return false;
 }
+*/
 
 
 //=============================================================================
@@ -1441,13 +1644,14 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
 #endif
 
     // skl 30.06.2008
-    // additional workaround for bugs 19899 and 19908 from Mantis
-    gp_Pnt Ptmp;
-    if( CheckSingularCase(aShape1, aShape2, Ptmp) ) {
-      Ptmp.Coord(X1, Y1, Z1);
-      Ptmp.Coord(X2, Y2, Z2);
+    // additional workaround for bugs 19899, 19908 and 19910 from Mantis
+    gp_Pnt Ptmp1, Ptmp2;
+    double dist = CheckSingularCase(aShape1, aShape2, Ptmp1, Ptmp2);
+    if(dist>-1.0) {
+      Ptmp1.Coord(X1, Y1, Z1);
+      Ptmp2.Coord(X2, Y2, Z2);
       SetErrorCode(OK);
-      return 0.0;
+      return dist;
     }
 
     BRepExtrema_DistShapeShape dst (aShape1, aShape2);
