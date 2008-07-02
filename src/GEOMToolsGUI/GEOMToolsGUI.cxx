@@ -206,17 +206,35 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
   // collect all GEOM objects being deleted
   QMap<QString, GEOM::GEOM_Object_var> gobjects;
   QMap<QString, QString>::ConstIterator oit;
+  list<_PTR(SObject)> aSelectedSO;
   for ( oit = objects.begin(); oit != objects.end(); ++oit ) {
     _PTR(SObject) so = study->FindObjectID( oit.key().latin1() );
     if ( !so )
       continue;
+    aSelectedSO.push_back(so);
     CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject( so );
     GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
     if( CORBA::is_nil( geomObj_rem ) ) 
       continue;
     gobjects.insert( oit.key(), geomObj_rem );
   }
-  
+
+  // Search References with other Modules
+  list< _PTR(SObject) >::iterator itSO = aSelectedSO.begin();
+  for ( ; itSO != aSelectedSO.end(); ++itSO ) {
+    std::vector<_PTR(SObject)> aReferences = study->FindDependances( *itSO  );    
+    int aRefLength = aReferences.size();
+    if (aRefLength) {
+      for (int i = 0; i < aRefLength; i++) {
+	_PTR(SObject) firstSO( aReferences[i] );
+	_PTR(SComponent) aComponent = firstSO->GetFatherComponent();
+	QString type = aComponent->ComponentDataType();
+	if ( type == "SMESH" )
+	  return true;
+      }
+    }
+  }
+
   // browse through all GEOM data tree
   _PTR(ChildIterator) it ( study->NewChildIterator( comp ) );
   for ( it->InitEx( true ); it->More(); it->Next() ) {
