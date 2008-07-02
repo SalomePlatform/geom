@@ -3343,9 +3343,14 @@ msgstr "Compound"
 msgid "MEN_ALL_SEL_ONLY"
 msgstr "Select All"
 
+msgid "GEOM_ALL_IMPORT_FILES"
+msgstr "All supported formats ( %1 )"
 
+msgid "GEOM_UNSUPPORTED_TYPE"
+msgstr "Unsupported format for the file"
 
+msgid "GEOM_UNKNOWN_IMPORT_ERROR"
+msgstr "Unknown error"
 
-
-
-
+msgid "GEOM_IMPORT_ERRORS"
+msgstr "Import operation has finished with errors:"

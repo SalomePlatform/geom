@@ -58,6 +58,7 @@
 // QT Includes
 #include <qapplication.h>
 #include <qmap.h>
+#include <qregexp.h>
 
 // OCCT Includes
 #include <TCollection_AsciiString.hxx>
@@ -65,6 +66,7 @@
 using namespace std;
 
 typedef QMap<QString, QString> FilterMap;
+static QString lastUsedFilter;
 
 //=======================================================================
 // function : getFileName
@@ -80,7 +82,6 @@ static QString getFileName( QWidget*           parent,
 			    QString&           format,
 			    bool               showCurrentDirInitially = false)
 {
-  static QString lastUsedFilter;
   //QStringList filters;
   QString aBrepFilter;
   for ( FilterMap::const_iterator it = filterMap.begin(); it != filterMap.end(); ++it ) {
@@ -118,6 +119,63 @@ static QString getFileName( QWidget*           parent,
   delete fd;
   qApp->processEvents();
   return filename;
+}
+
+//=======================================================================
+// function : getFileNames
+// purpose  : Select list of files for Import operation. Returns also
+//            the selected file type code through <format> argument.
+//=======================================================================
+static QStringList getFileNames( QWidget*           parent,
+				 const QString&     initial,
+				 const FilterMap&   filterMap,
+				 const QString&     caption,
+				 QString&           format,
+				 bool               showCurrentDirInitially = false)
+{
+  QString aBrepFilter;
+  QStringList allFilters;
+  QStringList filters;
+  QRegExp re( "\\((.*)\\)" );
+  re.setMinimal( true );
+  for ( FilterMap::const_iterator it = filterMap.begin(); it != filterMap.end(); ++it ) {
+    if ( it.data().contains( "BREP", false ) && aBrepFilter.isEmpty() )
+      aBrepFilter = it.key();
+    filters.append( it.key() );
+    int pos = 0;
+    while ( re.search( it.key(), pos ) >= 0 ) {
+      QString f = re.cap(1);
+      pos = re.pos() + f.length() + 2;
+      allFilters.append( f.simplifyWhiteSpace() );
+    }
+  }
+  filters.append( QObject::tr( "GEOM_ALL_IMPORT_FILES" ).arg( allFilters.join( " " ) ) );
+  
+  SUIT_FileDlg fd( parent, true, true, true );
+  fd.setMode( SUIT_FileDlg::ExistingFiles );     
+  if ( !caption.isEmpty() )
+    fd.setCaption( caption );
+  if ( !initial.isEmpty() )
+    fd.setSelection( initial );
+  
+  if ( showCurrentDirInitially && SUIT_FileDlg::getLastVisitedPath().isEmpty() )
+    fd.setDir( QDir::currentDirPath() );
+  
+  fd.setFilters( filters );
+  
+  if ( !lastUsedFilter.isEmpty() && filterMap.contains( lastUsedFilter ) )
+    fd.setSelectedFilter( lastUsedFilter );
+  else if ( !aBrepFilter.isEmpty() )
+    fd.setSelectedFilter( aBrepFilter );
+
+  QStringList filenames;
+  if ( fd.exec() ) {
+    filenames = fd.selectedFiles();
+    format = filterMap.contains( fd.selectedFilter() ) ? filterMap[ fd.selectedFilter() ] : QString();
+    lastUsedFilter = fd.selectedFilter();
+  }
+  qApp->processEvents();
+  return filenames;
 }
 
 //=======================================================================
@@ -543,7 +601,6 @@ void GEOMToolsGUI::OnEditCopy()
 bool GEOMToolsGUI::Import()
 {
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( getGeometryGUI()->getApp() );
-  //SUIT_Application* app = getGeometryGUI()->getApp();
   if (! app) return false;
 
   SalomeApp_Study* stud = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
@@ -553,106 +610,135 @@ bool GEOMToolsGUI::Import()
   }
   _PTR(Study) aStudy = stud->studyDS();
 
+  // check if study is locked
   bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
   if ( aLocked ) {
     SUIT_MessageBox::warn1 ( app->desktop(),
-			    QObject::tr("WRN_WARNING"),
-			    QObject::tr("WRN_STUDY_LOCKED"),
-			    QObject::tr("BUT_OK") );
+			     QObject::tr("WRN_WARNING"),
+			     QObject::tr("WRN_STUDY_LOCKED"),
+			     QObject::tr("BUT_OK") );
     return false;
   }
 
+  // check if GEOM engine is available
   GEOM::GEOM_Gen_var eng = GeometryGUI::GetGeomGen();
   if ( CORBA::is_nil( eng ) ) {
     SUIT_MessageBox::error1( app->desktop(),
-			    QObject::tr("WRN_WARNING"),
-			    QObject::tr( "GEOM Engine is not started" ),
-			    QObject::tr("BUT_OK") );
-      return false;
-    }
+			     QObject::tr("WRN_WARNING"),
+			     QObject::tr( "GEOM Engine is not started" ),
+			     QObject::tr("BUT_OK") );
+    return false;
+  }
 
   GEOM::GEOM_IInsertOperations_var aInsOp = eng->GetIInsertOperations( aStudy->StudyId() );
   if ( aInsOp->_is_nil() )
     return false;
 
-  GEOM::GEOM_Object_var anObj;
-
-  // Obtain a list of available import formats
+  // obtain a list of available import formats
   FilterMap aMap;
-  QStringList filters;
   GEOM::string_array_var aFormats, aPatterns;
   aInsOp->ImportTranslators( aFormats, aPatterns );
 
-  for ( int i = 0, n = aFormats->length(); i < n; i++ ) {
+  for ( int i = 0, n = aFormats->length(); i < n; i++ )
     aMap.insert( (char*)aPatterns[i], (char*)aFormats[i] );
-    filters.push_back( (char*)aPatterns[i] );
-  }
 
+  // select files to be imported
   QString fileType;
+  QStringList fileNames = getFileNames( app->desktop(), "", aMap,
+					tr( "GEOM_MEN_IMPORT" ), fileType, true );
+
+  // set Wait cursor
+  SUIT_OverrideCursor wc;
+
+  if ( fileNames.count() == 0 )
+    return false; // nothing selected, return
+
+  QStringList errors;
+
+  QValueList< GEOM::GEOM_Object_var > objsForDisplay;
   
-  QString fileName = getFileName(app->desktop(), "", aMap, filters,
-                                 tr("GEOM_MEN_IMPORT"), true, fileType, true);
+  // iterate through all selected files
+  for ( QStringList::ConstIterator it = fileNames.begin(); it != fileNames.end(); ++it ) {
+    QString fileName = *it;
 
-  if (fileType.isEmpty() )
-    {
-      // Trying to detect file type
-      QFileInfo aFileInfo( fileName );
-      QString aPossibleType = (aFileInfo.extension(false)).upper() ;
+    if ( fileName.isEmpty() )
+      continue;
 
-      if ( (aMap.values()).contains(aPossibleType) )
-	fileType = aPossibleType;
-    }
-
-  if (fileName.isEmpty() || fileType.isEmpty())
-    return false;
-
-  GEOM_Operation* anOp = new GEOM_Operation (app, aInsOp.in());
-  try {
-    SUIT_OverrideCursor wc;
-
-    app->putInfo(tr("GEOM_PRP_LOADING").arg(SUIT_Tools::file(fileName, /*withExten=*/true)));
-
-    anOp->start();
-
-    CORBA::String_var fileN = fileName.latin1();
-    CORBA::String_var fileT = fileType.latin1();
-    anObj = aInsOp->Import(fileN, fileT);
-
-    if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
-      QString aPublishObjName =
-        GEOMBase::GetDefaultName(SUIT_Tools::file(fileName, /*withExten=*/true));
-
-      SALOMEDS::Study_var aDSStudy = GeometryGUI::ClientStudyToStudy(aStudy);
-      GeometryGUI::GetGeomGen()->PublishInStudy(aDSStudy,
-						SALOMEDS::SObject::_nil(),
-						anObj,
-						aPublishObjName);
-
-      GEOM_Displayer( stud ).Display( anObj.in() );
-
-      // update data model and object browser
-      getGeometryGUI()->updateObjBrowser( true );
-
-      anOp->commit();
+    QString aCurrentType;
+    if ( fileType.isEmpty() ) {
+      // file type is not defined, try to detect
+      QString ext = QFileInfo( fileName ).extension( false ).upper();
+      QRegExp re( "\\*\\.(\\w+)" );
+      for ( FilterMap::const_iterator it = aMap.begin(); 
+	    it != aMap.end() && aCurrentType.isEmpty(); ++it ) {
+	int pos = 0;
+	while ( re.search( it.key(), pos ) >= 0 ) {
+	  QString f = re.cap(1).stripWhiteSpace().upper();
+	  if ( ext == f ) { aCurrentType = it.data(); break; }
+	  pos = re.pos() + re.cap(1).length() + 2;
+	}
+      }
     }
     else {
+      aCurrentType = fileType;
+    }
+
+    if ( aCurrentType.isEmpty() ) {
+      errors.append( QString( "%1 : %2" ).arg( fileName ).arg( tr( "GEOM_UNSUPPORTED_TYPE" ) ) );
+      continue;
+    }
+
+    GEOM_Operation* anOp = new GEOM_Operation( app, aInsOp.in() );
+    try {
+      app->putInfo( tr( "GEOM_PRP_LOADING" ).arg( SUIT_Tools::file( fileName, /*withExten=*/true ) ) );
+      anOp->start();
+
+      CORBA::String_var fileN = fileName.latin1();
+      CORBA::String_var fileT = aCurrentType.latin1();
+      GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, fileT );
+
+      if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
+	QString aPublishObjName = 
+	  GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, /*withExten=*/true ) );
+	
+	SALOMEDS::Study_var aDSStudy = GeometryGUI::ClientStudyToStudy( aStudy );
+	GeometryGUI::GetGeomGen()->PublishInStudy( aDSStudy,
+						   SALOMEDS::SObject::_nil(),
+						   anObj,
+						   aPublishObjName );
+
+	objsForDisplay.append( anObj );
+	
+	anOp->commit();
+      }
+      else {
+	anOp->abort();
+	errors.append( QString( "%1 : %2" ).arg( fileName ).arg( aInsOp->GetErrorCode() ) );
+      }
+    }
+    catch( const SALOME::SALOME_Exception& S_ex ) {
       anOp->abort();
-      wc.suspend();
-      SUIT_MessageBox::error1( app->desktop(),
-			      QObject::tr( "GEOM_ERROR" ),
-			      QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ),
-			      QObject::tr("BUT_OK") );
+      errors.append( QString( "%1 : %2" ).arg( fileName ).arg( tr( "GEOM_UNKNOWN_IMPORT_ERROR" ) ) );
     }
   }
-  catch( const SALOME::SALOME_Exception& S_ex ) {
-    //QtCatchCorbaException(S_ex);
-    anOp->abort();
-    return false;
+
+  // update object browser
+  getGeometryGUI()->updateObjBrowser( true );
+
+  // display imported model (if only one file is selected)
+  if ( objsForDisplay.count() == 1 )
+    GEOM_Displayer( stud ).Display( objsForDisplay[0].in() );
+
+  if ( errors.count() > 0 ) {
+    SUIT_MessageBox::error1( app->desktop(),
+			     QObject::tr( "GEOM_ERROR" ),
+			     QObject::tr( "GEOM_IMPORT_ERRORS" ) + "\n" + errors.join( "\n" ),
+			     QObject::tr( "BUT_OK" ) );
   }
 
   app->updateActions(); //SRN: To update a Save button in the toolbar
 
-  return true;
+  return objsForDisplay.count() > 0;
 }
 
 
