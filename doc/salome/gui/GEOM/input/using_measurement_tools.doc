@@ -200,8 +200,8 @@ True if it is valid. Check also geometry checkbox allows to test the
 geometry as well.
 
 \n <b>Result:</b> Boolean.
-\n <b>TUI Command:</b> <em>geompy.(theShape, theIsCheckGeom = 0),</em>
-where is theShape is the shape checked for validity.
+\n <b>TUI Command:</b> <em>geompy.CheckShape(theShape, theIsCheckGeom = 0),</em>
+where \em theShape is the shape checked for validity.
 
 \image html measures9.png
 
@@ -235,3 +235,4 @@ is returned, and encountered errors are printed in the python console.
 \image html measures10.png
 
 */
+
