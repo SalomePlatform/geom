@@ -813,9 +813,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSphere  (CORBA::Double theX,
   MESSAGE("GEOM_Superv_i::MakeSphepe");
   getBasicOp();
   get3DPrimOp();
-  GEOM::GEOM_Object_var o = myBasicOp->MakePointXYZ(theX, theY, theZ);
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeSpherePntR(o, theRadius);
-  o->Destroy();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeSpherePntR(myBasicOp->MakePointXYZ(theX, theY, theZ), theRadius);
   endService( " GEOM_Superv_i::MakeSphepe" );
   return anObj;
 }
