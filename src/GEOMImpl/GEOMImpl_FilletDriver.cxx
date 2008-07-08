@@ -36,6 +36,9 @@
 #include <TopAbs.hxx>
 #include <TopExp_Explorer.hxx>
 
+#include <ShapeFix_ShapeTolerance.hxx>
+#include <ShapeFix_Shape.hxx>
+
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
 #include <StdFail_NotDone.hxx>
@@ -128,7 +131,16 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
   // Check shape validity
   BRepCheck_Analyzer ana (aShape, false);
   if (!ana.IsValid()) {
-    StdFail_NotDone::Raise("Fillet algorithm have produced an invalid shape result");
+    // 08.07.2008 added by skl during fixing bug 19761 from Mantis
+    ShapeFix_ShapeTolerance aSFT;
+    aSFT.LimitTolerance(aShape, Precision::Confusion(),
+                        Precision::Confusion(), TopAbs_SHAPE);
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+    aSfs->Perform();
+    aShape = aSfs->Shape();
+    ana.Init(aShape);
+    if (!ana.IsValid())
+      StdFail_NotDone::Raise("Fillet algorithm have produced an invalid shape result");
   }
 
   aFunction->SetValue(aShape);
