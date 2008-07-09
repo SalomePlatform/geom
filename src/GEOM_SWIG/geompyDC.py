@@ -938,7 +938,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                             orthogonal to the spine tangent in the correspondent point
         #  @return New GEOM_Object, containing the created pipe.
         #
-        #  @ref swig_todo "Example"
+        #  @ref tui_creation_pipe_with_diff_sec "Example"
         def MakePipeWithDifferentSections(self, theSeqBases,
                                           theLocations, thePath,
                                           theWithContact, theWithCorrection):
@@ -949,10 +949,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Create a shape by extrusion of the profile shape along
-        #  the path shape. The path shape can be a shell or a face.
+        #  the path shape. The path shape can be a wire or a edge.
         #  the several profiles can be specified in the several locations of path.	
-        #  @param theSeqBases - list of  Bases shape to be extruded.
+        #  @param theSeqBases - list of  Bases shape to be extruded. Base shape must be
+        #                       shell or face. If number of faces in neighbour sections
+        #                       aren't coincided result solid between such sections will
+        #                       be created using external boundaries of this shells.
         #  @param theSeqSubBases - list of corresponding subshapes of section shapes.
+        #                          This list is used for searching correspondences between
+        #                          faces in the sections. Size of this list must be equal
+        #                          to size of list of base shapes.
         #  @param theLocations - list of locations on the path corresponding
         #                        specified list of the Bases shapes. Number of locations
         #                        should be equal to number of bases. First and last
@@ -965,7 +971,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                             orthogonal to the spine tangent in the correspondent point
         #  @return New GEOM_Object, containing the created solids.
         #
-        #  @ref swig_todo "Example"
+        #  @ref tui_creation_pipe_with_shell_sec "Example"
         def MakePipeWithShellSections(self,theSeqBases, theSeqSubBases,
                                       theLocations, thePath,
                                       theWithContact, theWithCorrection):
@@ -975,6 +981,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePipeWithShellSections", self.PrimOp)
             return anObj
 
+        ## Create a shape by extrusion of the profile shape along
+        #  the path shape. This function is used only for debug pipe
+        #  functionality - it is a version of previous function
+        #  (MakePipeWithShellSections(...)) which give a possibility to
+        #  recieve information about creating pipe between each pair of
+        #  sections step by step.
         def MakePipeWithShellSectionsBySteps(self, theSeqBases, theSeqSubBases,
                                              theLocations, thePath,
                                              theWithContact, theWithCorrection):
@@ -1011,7 +1023,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theLocations - list of corresponding vertexes
         #  @return New GEOM_Object, containing the created solids.
         #
-        #  @ref swig_todo "Example"
+        #  @ref tui_creation_pipe_without_path "Example"
         def MakePipeShellsWithoutPath(self, theSeqBases, theLocations):
             anObj = self.PrimOp.MakePipeShellsWithoutPath(theSeqBases, theLocations)
             RaiseIfFailed("MakePipeShellsWithoutPath", self.PrimOp)
