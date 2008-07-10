@@ -43,6 +43,12 @@
 \until MakeSewing
 
 \anchor swig_all_trsf
+\until RotatPnt
+
+\anchor swig_scale
+\until Scale4
+
+\anchor swig_all_trsf_more
 \until MakeOffset
 
 \anchor swig_ChangeOrientation

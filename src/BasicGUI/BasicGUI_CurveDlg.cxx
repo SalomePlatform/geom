@@ -294,56 +294,57 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
   SALOME_ListIO selected;
   aSelMgr->selectedObjects( selected, QString::null, false );
 
-  for ( SALOME_ListIteratorOfListIO anIt( selected ); anIt.More(); anIt.Next() )
+  for (SALOME_ListIteratorOfListIO anIt (selected); anIt.More(); anIt.Next())
+  {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
+
+    if (!CORBA::is_nil(aSelectedObject) && aRes)
     {
-      GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
+      if (GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull())
+      {
+        aSelMgr->GetIndexes( anIt.Value(), aMapIndexes );
 
-      if ( !CORBA::is_nil( aSelectedObject ) && aRes )
-	{
-	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
-	    {
-	      aSelMgr->GetIndexes( anIt.Value(), aMapIndexes );
+        if (aMapIndexes.Extent() > 0)
+        {
+          for (int ii=1; ii <= aMapIndexes.Extent(); ii++) {
+            anIndex = aMapIndexes(ii);
+            QString aName = GEOMBase::GetName( aSelectedObject );
+            aName = aName + ":vertex_" + QString::number( anIndex );
+            anObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+            //Find Object in study
+            _PTR(SObject) obj ( aDStudy->FindObjectID( anIt.Value()->getEntry() ) );
+            bool inStudy = false;
+            _PTR(ChildIterator) iit (aDStudy->NewChildIterator(obj));
+            for (; iit->More() && !inStudy; iit->Next()) {
+              _PTR(SObject) child (iit->Value());
+              QString aChildName = child->GetName();
+              if (aChildName == aName) {
+                inStudy = true;
+                CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(iit->Value());
+                anObject = GEOM::GEOM_Object::_narrow( corbaObj );
+              }
+            }
 
-	      if ( aMapIndexes.Extent() > 0 )
-		{
-		  for (int ii=1; ii <= aMapIndexes.Extent(); ii++) {
-		    anIndex = aMapIndexes(ii);
-		    QString aName = GEOMBase::GetName( aSelectedObject );
-		    aName = aName + ":vertex_" + QString::number( anIndex );
-		    anObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-		    //Find Object in study
-		    _PTR(SObject) obj ( aDStudy->FindObjectID( anIt.Value()->getEntry() ) );
-		    bool inStudy = false;
-		    for (_PTR(ChildIterator) iit (aDStudy->NewChildIterator(obj)); iit->More(); iit->Next()) {
-		      _PTR(SObject) child (iit->Value());
-		      QString aChildName = child->GetName();
-		      if (aChildName == aName) {
-			inStudy = true;
-			CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(iit->Value());
-			anObject = GEOM::GEOM_Object::_narrow( corbaObj );
-		      }
-		    }
+            if (!inStudy)
+              GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
+                                                    anObject, aName, aSelectedObject);
 
-		    if (!inStudy)
-		      GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
-							    anObject, aName, aSelectedObject);
-		    
-		    int pos = isPointInList(myOrderedSel, anObject);
-		    if (pos==-1) {
-		      myOrderedSel.push_back(anObject);
-		    }
-		    //		    if (!inStudy)
-		    aList.push_back(anObject);
-		  }
-		} else { // aMap.Extent() == 0
-		  int pos = isPointInList(myOrderedSel,aSelectedObject);
-		  if(pos==-1)
-		    myOrderedSel.push_back(aSelectedObject);
-		  aList.push_back(aSelectedObject);
-		} 
-	    }
-	}
+            int pos = isPointInList(myOrderedSel, anObject);
+            if (pos==-1) {
+              myOrderedSel.push_back(anObject);
+            }
+            //		    if (!inStudy)
+            aList.push_back(anObject);
+          }
+        } else { // aMap.Extent() == 0
+          int pos = isPointInList(myOrderedSel,aSelectedObject);
+          if (pos==-1)
+            myOrderedSel.push_back(aSelectedObject);
+          aList.push_back(aSelectedObject);
+        } 
+      }
     }
+  }
 
   myPoints->length( aList.size()  );  
 

@@ -184,12 +184,21 @@ def TestAll (geompy, math):
   TranslVectD = geompy.MakeTranslationVectorDistance(Box, vxyz, 50.0)   #(2 GEOM_Object_ptr)->GEOM_Object_ptr  
   Rotation    = geompy.MakeRotation(Box, vz, angle1)            #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   RotatPnt    = geompy.MakeRotationThreePoints(Box, px, py, pz) #(4 GEOM_Object_ptr)->GEOM_Object_ptr
-  Scale       = geompy.MakeScaleTransform(Box, p0, factor)      #
-  Mirror      = geompy.MakeMirrorByPlane(Box, Plane)            #(2 GEOM_Object_ptr)->GEOM_Object_ptr
-  MirrorAxis  = geompy.MakeMirrorByAxis(Box, Line1)             #
-  MirrorPnt   = geompy.MakeMirrorByPoint(Box, p200)             #
-  Position    = geompy.MakePosition(Box, cs1, cs2)              #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  Offset      = geompy.MakeOffset(Box, 10.)                     #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+
+  #Scale by factor relatively given point
+  Scale1 = geompy.MakeScaleTransform(Box, pxyz, factor)      #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  #Scale by factor relatively the origin of global CS
+  Scale2 = geompy.MakeScaleTransform(Box, None, factor)      #
+  #Scale along axes of global CS by different factors. Scale relatively given point
+  Scale3 = geompy.MakeScaleAlongAxes(Box, pxyz, 1.5, 0.5, 3) #(2 GEOM_Object_ptr, 3 Doubles)->GEOM_Object_ptr
+  #Scale along axes of global CS by different factors. Scale relatively the origin of global CS
+  Scale4 = geompy.MakeScaleAlongAxes(Box, None, 1.5, 0.5, 3) #
+
+  Mirror      = geompy.MakeMirrorByPlane(Box, Plane) #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  MirrorAxis  = geompy.MakeMirrorByAxis(Box, Line1)  #
+  MirrorPnt   = geompy.MakeMirrorByPoint(Box, p200)  #
+  Position    = geompy.MakePosition(Box, cs1, cs2)   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
+  Offset      = geompy.MakeOffset(Box, 10.)          #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Orientation = geompy.ChangeOrientation(Box)
 
   #IDList for Fillet/Chamfer
@@ -338,7 +347,10 @@ def TestAll (geompy, math):
   id_TranslVectD = geompy.addToStudy(TranslVectD, "Translation along vector with defined distance")
   id_Rotation    = geompy.addToStudy(Rotation,    "Rotation")
   id_RotatPnt    = geompy.addToStudy(RotatPnt,    "Rotation by three points")
-  id_Scale       = geompy.addToStudy(Scale,       "Scale")
+  id_Scale1      = geompy.addToStudy(Scale1,      "Scale1")
+  id_Scale2      = geompy.addToStudy(Scale2,      "Scale2")
+  id_Scale3      = geompy.addToStudy(Scale3,      "Scale3")
+  id_Scale4      = geompy.addToStudy(Scale4,      "Scale4")
   id_Mirror      = geompy.addToStudy(Mirror,      "Mirror by Plane")
   id_MirrorAxis  = geompy.addToStudy(MirrorAxis,  "Mirror by Axis")
   id_MirrorPnt   = geompy.addToStudy(MirrorPnt,   "Mirror by Point")

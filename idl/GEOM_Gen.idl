@@ -11,8 +11,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -36,7 +36,7 @@ module GEOM
    *  Topological types of shapes (like Open Cascade types)
    */
   enum shape_type { COMPOUND, COMPSOLID, SOLID, SHELL,
-	            FACE, WIRE, EDGE, VERTEX, SHAPE };
+                    FACE, WIRE, EDGE, VERTEX, SHAPE };
 
 
   /*!
@@ -332,13 +332,13 @@ module GEOM
      */
     GEOM_Object MakePointOnLinesIntersection (in GEOM_Object theRefLine1,
 					      in GEOM_Object theRefLine2);
-    
+
      /*!
      *  Create a vector, corresponding to tangent to the given parameter on the given curve.
      *  \param theRefCurve The referenced curve.
      *  \param theParameter Value of parameter on the referenced curve.This value should be have value
      *  \between 0. and 1.. Value of 0. corresponds first parameter of curve value 1. corresponds
-     *  \last parameter of curve. 
+     *  \last parameter of curve.
      *  \return New GEOM_Object, containing the created point.
      */
      GEOM_Object MakeTangentOnCurve (in GEOM_Object theRefCurve,
@@ -432,11 +432,11 @@ module GEOM
     GEOM_Object MakeMarker (in double theOX , in double theOY , in double theOZ,
 			    in double theXDX, in double theXDY, in double theXDZ,
 			    in double theYDX, in double theYDY, in double theYDZ);
-     
+
     /*!
      *  Create a tangent plane to specified face in the point with specified parameters.
      *  Values of parameters should be between 0. and 1.0
-     *  \param theFace - face for which tangent plane shuold be built. 
+     *  \param theFace - face for which tangent plane shuold be built.
      *  \param theParameterU - value of parameter by U
      *  \param theParameterV - value of parameter Vthe
      *  \param theTrimSize - defines sizes of created face
@@ -736,6 +736,33 @@ module GEOM
 				in double theFactor);
 
     /*!
+     *  Scale the given object by different factors along coordinate axes.
+     *  \param theObject The object to be scaled.
+     *  \param thePoint Center point for scaling.
+     *  \param theFactorX,theFactorY,theFactorZ Scaling factors along each axis.
+     *  \return theObject.
+     */
+    GEOM_Object ScaleShapeAlongAxes (in GEOM_Object theObject,
+                                     in GEOM_Object thePoint,
+                                     in double theFactorX,
+                                     in double theFactorY,
+                                     in double theFactorZ);
+
+    /*!
+     *  Scale the given object by different factors along coordinate axes,
+     *  creating its copy before the scaling.
+     *  \param theObject The object to be scaled.
+     *  \param thePoint Center point for scaling.
+     *  \param theFactorX,theFactorY,theFactorZ Scaling factors along each axis.
+     *  \return New GEOM_Object, containing the scaled shape.
+     */
+    GEOM_Object ScaleShapeAlongAxesCopy (in GEOM_Object theObject,
+                                         in GEOM_Object thePoint,
+                                         in double theFactorX,
+                                         in double theFactorY,
+                                         in double theFactorZ);
+
+    /*!
      *  Modify the Location of the given object by LCS.
      *  \param theObject The object to be displaced.
      *  \param theStartLCS Coordinate system to perform displacement from it.
@@ -989,7 +1016,7 @@ module GEOM
 					       in GEOM_Object thePath,
 					       in boolean theWithContact ,
 					       in boolean theWithCorrection );
-    
+
     /*!
      *  Create a shape by extrusion of the profile shape along
      *  the path shape. The path shape can be a shell or a face.
@@ -1323,7 +1350,7 @@ module GEOM
 				    in long        theShapeType,
 				    in GEOM_Object theAx1,
 				    in shape_state theState);
-				    
+
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
      *  the specified plane by the certain way, defined through \a theState parameter.
@@ -1331,7 +1358,7 @@ module GEOM
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theAx1 Vector (or line, or linear edge), specifying normal
      *                direction of the plane to find shapes on.
-     *  \param thePnt Point specifying location of the plane to find shapes on.     
+     *  \param thePnt Point specifying location of the plane to find shapes on.
      *  \param theState The state of the subshapes to find.
      *  \return List of IDs of all found sub-shapes.
      */
@@ -2128,7 +2155,7 @@ module GEOM
     GEOM_Object MakeChamferEdge (in GEOM_Object theShape,
 				 in double theD1, in double theD2,
 				 in long theFace1, in long theFace2);
-    /*! 
+    /*!
      *  The Same but with params theD = Chamfer Lenght
      *  and theAngle = Chamfer Angle (Angle in radians)
      */
@@ -2152,7 +2179,7 @@ module GEOM
     GEOM_Object MakeChamferFaces (in GEOM_Object theShape,
 				  in double theD1, in double theD2,
 				  in ListOfLong theFaces);
-    /*! 
+    /*!
      *  The Same but with params theD = Chamfer Lenght
      *  and theAngle = Chamfer Angle (Angle in radians)
      */
@@ -2171,7 +2198,7 @@ module GEOM
     GEOM_Object MakeChamferEdges (in GEOM_Object theShape,
 				  in double theD1, in double theD2,
 				  in ListOfLong theEdges);
-    /*! 
+    /*!
      *  The Same but with params theD = Chamfer Lenght
      *  and theAngle = Chamfer Angle (Angle in radians)
      */

@@ -217,8 +217,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Publish sub-shapes, standing for arguments and sub-shapes of arguments
         #  To be used from python scripts out of geompy.addToStudy (non-default usage)
-        #  \param theStudy  the study, in which theObject is published already,
-        #                   and in which the arguments will be published
         #  \param theObject published GEOM object, arguments of which will be published
         #  \param theArgs   list of GEOM_Object, operation arguments to be published.
         #                   If this list is empty, all operation arguments will be published
@@ -1683,9 +1681,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("DivideEdge", self.HealOp)
             return anObj
 
-        ## Change orientation of the given object.
+        ## Change orientation of the given object. Updates given shape.
         #  @param theObject Shape to be processed.
-        #  @update given shape
         #
         #  @ref swig_todo "Example"
         def ChangeOrientationShell(self,theObject):
@@ -2008,14 +2005,31 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Scale the given object by the factor, creating its copy before the scaling.
         #  @param theObject The object to be scaled.
         #  @param thePoint Center point for scaling.
+        #                  Passing None for it means scaling relatively the origin of global CS.
         #  @param theFactor Scaling factor value.
         #  @return New GEOM_Object, containing the scaled shape.
         #
         #  @ref tui_scale "Example"
-        def MakeScaleTransform(self,theObject, thePoint, theFactor):
+        def MakeScaleTransform(self, theObject, thePoint, theFactor):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.ScaleShapeCopy(theObject, thePoint, theFactor)
             RaiseIfFailed("ScaleShapeCopy", self.TrsfOp)
+            return anObj
+
+        ## Scale the given object by different factors along coordinate axes,
+        #  creating its copy before the scaling.
+        #  @param theObject The object to be scaled.
+        #  @param thePoint Center point for scaling.
+        #                  Passing None for it means scaling relatively the origin of global CS.
+        #  @param theFactorX,theFactorY,theFactorZ Scaling factors along each axis.
+        #  @return New GEOM_Object, containing the scaled shape.
+        #
+        #  @ref swig_scale "Example"
+        def MakeScaleAlongAxes(self, theObject, thePoint, theFactorX, theFactorY, theFactorZ):
+            # Example: see GEOM_TestAll.py
+            anObj = self.TrsfOp.ScaleShapeAlongAxesCopy(theObject, thePoint,
+                                                        theFactorX, theFactorY, theFactorZ)
+            RaiseIfFailed("MakeScaleAlongAxes", self.TrsfOp)
             return anObj
 
         ## Create an object, symmetrical

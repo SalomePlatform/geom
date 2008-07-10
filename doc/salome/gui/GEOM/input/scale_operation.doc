@@ -7,12 +7,22 @@
 
 \n This operation creates a scaled shape basing on the initial
 shape. For this, you need to define the \b Shape to be scaled, the
-<b>Central Point</b> of scale and the Scale Factor.
+<b>Central Point</b> of scale and the Scale Factor(s).
 \n The \b Result will be a \b GEOM_Object.
 \n <b>TUI Command:</b> <em>geompy.MakeScaleTransform(Shape, CenterOfScale, Factor)</em>
 \n <b>Arguments:</b> Name + 1 shape(s) + 1 vertex + 1 Scale Factor.
+\n <b>TUI Command:</b> <em>geompy.MakeScaleAlongAxes(Shape, CenterOfScale, FactorX, FactorY, FactorZ)</em>
+\n <b>Arguments:</b> Name + 1 shape(s) + 1 vertex + 3 Scale Factors.
 \n <b>Advanced option:</b>
    \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+
+\note If <b>Central Point</b> is not defined, the scaling will be
+performed relatively the origin of global coordinate system.
+
+\note Scaling by a factor is a simple transformation, it does not modify
+geometry of the shape, while scaling by different factors along axes
+is a general transformation, which can modify geometry, for example, a
+circle can be transformed into an ellipse.
 
 \image html transformation10.png
 
@@ -23,6 +33,6 @@ shape. For this, you need to define the \b Shape to be scaled, the
 \image html scale_transformsn2.png
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
-\ref tui_scale "Transformation Operations".
+\ref tui_scale "Scale Transformation" and of \ref swig_scale "Scale Along Axes Transformation"
 
 */

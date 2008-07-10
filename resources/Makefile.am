@@ -127,6 +127,7 @@ revol.png \
 rotate.png \
 rotatepnt.png \
 scale.png \
+scale_along_axes.png \
 section.png \
 select1.png \
 sewing.png \

@@ -144,6 +144,8 @@
 
 #define SCALE_SHAPE      1
 #define SCALE_SHAPE_COPY 2
+#define SCALE_SHAPE_AXES      3
+#define SCALE_SHAPE_AXES_COPY 4
 
 #define POSITION_SHAPE      1
 #define POSITION_SHAPE_COPY 2

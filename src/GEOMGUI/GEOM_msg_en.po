@@ -1280,6 +1280,15 @@ msgstr "Offset Surface"
 msgid "GEOM_SCALE_FACTOR"
 msgstr "Scale Factor :"
 
+msgid "GEOM_SCALE_FACTOR_X"
+msgstr "Scale Factor X :"
+
+msgid "GEOM_SCALE_FACTOR_Y"
+msgstr "Scale Factor Y :"
+
+msgid "GEOM_SCALE_FACTOR_Z"
+msgstr "Scale Factor Z :"
+
 #: GeometryGUI_SectionDlg.cxx:50
 msgid "GEOM_SECTION_TITLE"
 msgstr "BOOLEAN : Section Of Two Objects"

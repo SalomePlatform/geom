@@ -310,9 +310,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorDistance
 {
   GEOM::GEOM_Object_var aGEOMObject;
   GetOperations()->SetNotDone(); //Set a not done flag
-  
+
   if (theObject == NULL || theVector == NULL) return aGEOMObject._retn();
-  
+
   //check if the object is a subshape
   if (!theCopy && !theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
@@ -728,14 +728,14 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShapeCopy
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShape
                                              (GEOM::GEOM_Object_ptr theObject,
 					      GEOM::GEOM_Object_ptr thePoint,
-					      CORBA::Double theFactor)
+					      CORBA::Double         theFactor)
 {
   GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePoint == NULL || theObject == NULL) return aGEOMObject._retn();
+  if (theObject->_is_nil()) return aGEOMObject._retn();
 
   //check if the object is a subshape
   if (!theObject->IsMainShape()) {
@@ -750,10 +750,12 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShape
   if (anObject.IsNull()) return aGEOMObject._retn();
 
   //Get the point
-  CORBA::String_var aPntEntry = thePoint->GetEntry();
-  Handle(GEOM_Object) aPoint =
-    GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), aPntEntry);
-  if (aPoint.IsNull()) return aGEOMObject._retn();
+  Handle(GEOM_Object) aPoint;
+  if (!thePoint->_is_nil()) {
+    CORBA::String_var aPntEntry = thePoint->GetEntry();
+    aPoint = GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), aPntEntry);
+    if (aPoint.IsNull()) return aGEOMObject._retn();
+  }
 
   //Perform the scale
   GetOperations()->ScaleShape(anObject, aPoint, theFactor);
@@ -769,14 +771,14 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShape
 GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeCopy
                                              (GEOM::GEOM_Object_ptr theObject,
 					      GEOM::GEOM_Object_ptr thePoint,
-					      CORBA::Double theFactor)
+					      CORBA::Double         theFactor)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePoint == NULL || theObject == NULL) return aGEOMObject._retn();
+  if (theObject->_is_nil()) return aGEOMObject._retn();
 
   //Get the basic object
   CORBA::String_var anEntry = theObject->GetEntry();
@@ -785,14 +787,104 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeCopy
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Get the point
-  CORBA::String_var aPntEntry = thePoint->GetEntry();
-  Handle(GEOM_Object) aPoint =
-    GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), aPntEntry);
-  if (aPoint.IsNull()) return aGEOMObject._retn();
+  Handle(GEOM_Object) aPoint;
+  if (!thePoint->_is_nil()) {
+    CORBA::String_var aPntEntry = thePoint->GetEntry();
+    aPoint = GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), aPntEntry);
+    if (aPoint.IsNull()) return aGEOMObject._retn();
+  }
 
   //Perform the scale
   Handle(GEOM_Object) anObject =
     GetOperations()->ScaleShapeCopy(aBasicObject, aPoint, theFactor);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  ScaleShapeAlongAxes
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeAlongAxes
+                                             (GEOM::GEOM_Object_ptr theObject,
+					      GEOM::GEOM_Object_ptr thePoint,
+					      CORBA::Double         theFactorX,
+					      CORBA::Double         theFactorY,
+					      CORBA::Double         theFactorZ)
+{
+  GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theObject->_is_nil()) return aGEOMObject._retn();
+
+  //check if the object is a subshape
+  if (!theObject->IsMainShape()) {
+    GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
+    return aGEOMObject._retn();
+  }
+
+  //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
+  if (anObject.IsNull()) return aGEOMObject._retn();
+
+  //Get the point
+  Handle(GEOM_Object) aPoint;
+  if (!thePoint->_is_nil()) {
+    CORBA::String_var aPntEntry = thePoint->GetEntry();
+    aPoint = GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), aPntEntry);
+    if (aPoint.IsNull()) return aGEOMObject._retn();
+  }
+
+  //Perform the scale
+  GetOperations()->ScaleShapeAlongAxes
+    (anObject, aPoint, theFactorX, theFactorY, theFactorZ, /*doCopy*/false);
+
+  return  aGEOMObject._retn();
+}
+
+//=============================================================================
+/*!
+ *  ScaleShapeAlongAxesCopy
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeAlongAxesCopy
+                                             (GEOM::GEOM_Object_ptr theObject,
+					      GEOM::GEOM_Object_ptr thePoint,
+					      CORBA::Double         theFactorX,
+					      CORBA::Double         theFactorY,
+					      CORBA::Double         theFactorZ)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theObject->_is_nil()) return aGEOMObject._retn();
+
+  //Get the basic object
+  CORBA::String_var anEntry = theObject->GetEntry();
+  Handle(GEOM_Object) aBasicObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
+  if (aBasicObject.IsNull()) return aGEOMObject._retn();
+
+  //Get the point
+  Handle(GEOM_Object) aPoint;
+  if (!thePoint->_is_nil()) {
+    CORBA::String_var aPntEntry = thePoint->GetEntry();
+    aPoint = GetOperations()->GetEngine()->GetObject(thePoint->GetStudyID(), aPntEntry);
+    if (aPoint.IsNull()) return aGEOMObject._retn();
+  }
+
+  //Perform the scale
+  Handle(GEOM_Object) anObject = GetOperations()->ScaleShapeAlongAxes
+    (aBasicObject, aPoint, theFactorX, theFactorY, theFactorZ, /*doCopy*/true);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

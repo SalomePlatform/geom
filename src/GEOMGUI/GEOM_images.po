@@ -331,6 +331,10 @@ msgstr "rotatepnt.png"
 msgid "ICON_DLG_SCALE"
 msgstr "scale.png"
 
+#ScaleDlg
+msgid "ICON_DLG_SCALE_ALONG_AXES"
+msgstr "scale_along_axes.png"
+
 #OffsetDlg
 msgid "ICON_DLG_OFFSET"
 msgstr "offset.png"

@@ -309,6 +309,16 @@ module GEOM
     GEOM_Object ScaleShapeCopy (in GEOM_Object theObject, 
 				in GEOM_Object thePoint,
 				in double      theFactor) ;
+    GEOM_Object ScaleShapeAlongAxes (in GEOM_Object theObject,
+                                     in GEOM_Object thePoint,
+                                     in double theFactorX,
+                                     in double theFactorY,
+                                     in double theFactorZ);
+    GEOM_Object ScaleShapeAlongAxesCopy (in GEOM_Object theObject,
+                                         in GEOM_Object thePoint,
+                                         in double theFactorX,
+                                         in double theFactorY,
+                                         in double theFactorZ);
     GEOM_Object PositionShape (in GEOM_Object theObject,
 			       in GEOM_Object theStartLCS,
 			       in GEOM_Object theEndLCS) ;

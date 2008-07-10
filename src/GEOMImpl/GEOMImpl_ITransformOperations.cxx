@@ -1030,13 +1030,10 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShape
 {
   SetErrorCode(KO);
 
-  if (theObject.IsNull() || thePoint.IsNull()) return NULL;
+  if (theObject.IsNull()) return NULL;
 
   Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be scaled
-
-  // Get last functions of the arguments
-  Handle(GEOM_Function) aPF = thePoint->GetLastFunction();
 
   //Add a scale function
   Handle(GEOM_Function) aFunction =
@@ -1046,10 +1043,16 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShape
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ScaleDriver::GetID()) return NULL;
 
+  // Set arguments
   GEOMImpl_IScale aTI (aFunction);
   aTI.SetShape(anOriginal);
-  aTI.SetPoint(aPF);
   aTI.SetFactor(theFactor);
+
+  // Set point argument
+  if (!thePoint.IsNull()) {
+    Handle(GEOM_Function) aPF = thePoint->GetLastFunction();
+    aTI.SetPoint(aPF);
+  }
 
   //Compute the scale
   try {
@@ -1085,7 +1088,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
 {
   SetErrorCode(KO);
 
-  if (theObject.IsNull() || thePoint.IsNull()) return NULL;
+  if (theObject.IsNull()) return NULL;
 
   Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be scaled
@@ -1101,10 +1104,16 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ScaleDriver::GetID()) return NULL;
 
+  // Set arguments
   GEOMImpl_IScale aTI (aFunction);
   aTI.SetShape(anOriginal);
-  aTI.SetPoint(thePoint->GetLastFunction());
   aTI.SetFactor(theFactor);
+
+  // Set point argument
+  if (!thePoint.IsNull()) {
+    Handle(GEOM_Function) aPF = thePoint->GetLastFunction();
+    aTI.SetPoint(aPF);
+  }
 
   //Compute the scale
   try {
@@ -1128,6 +1137,85 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
 
   SetErrorCode(OK);
   return aCopy;
+}
+
+//=============================================================================
+/*!
+ *  ScaleShapeAlongAxes
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeAlongAxes (Handle(GEOM_Object) theObject,
+                                                                        Handle(GEOM_Object) thePoint,
+                                                                        double theFactorX,
+                                                                        double theFactorY,
+                                                                        double theFactorZ,
+                                                                        bool   doCopy)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) return NULL;
+
+  Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
+  if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be scaled
+
+  //Add a scale function
+  Handle(GEOM_Object) aCopy;   //Add a new Copy object
+  Handle(GEOM_Function) aFunction;
+  if (doCopy) {
+    aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+    aFunction = aCopy->AddFunction(GEOMImpl_ScaleDriver::GetID(), SCALE_SHAPE_AXES_COPY);
+  }
+  else {
+    aFunction = theObject->AddFunction(GEOMImpl_ScaleDriver::GetID(), SCALE_SHAPE_AXES);
+  }
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ScaleDriver::GetID()) return NULL;
+
+  // Set arguments
+  GEOMImpl_IScale aTI (aFunction);
+  aTI.SetShape(anOriginal);
+  aTI.SetFactorX(theFactorX);
+  aTI.SetFactorY(theFactorY);
+  aTI.SetFactorZ(theFactorZ);
+
+  // Set point (optional argument)
+  if (!thePoint.IsNull()) {
+    Handle(GEOM_Function) aPF = thePoint->GetLastFunction();
+    aTI.SetPoint(aPF);
+  }
+
+  //Compute the scale
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Scale driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  SetErrorCode(OK);
+
+  //Make a Python command
+  if (doCopy) {
+    GEOM::TPythonDump(aFunction) << "geompy.MakeScaleAlongAxes("
+                                 << theObject << ", " << thePoint << ", "
+                                 << theFactorX << ", " << theFactorY << ", " << theFactorZ << ")";
+    return aCopy;
+  }
+
+  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.ScaleShapeAlongAxes("
+                               << theObject << ", " << thePoint << ", "
+                               << theFactorX << ", " << theFactorY << ", " << theFactorZ << ")";
+  return theObject;
 }
 
 //=============================================================================

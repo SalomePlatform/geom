@@ -1635,6 +1635,42 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeCopy (GEOM::GEOM_Object_ptr theOb
 }
 
 //=============================================================================
+//  ScaleShapeAlongAxes:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeAlongAxes (GEOM::GEOM_Object_ptr theObject,
+							  GEOM::GEOM_Object_ptr thePoint,
+							  CORBA::Double theFactorX,
+							  CORBA::Double theFactorY,
+							  CORBA::Double theFactorZ)
+{
+  beginService( " GEOM_Superv_i::ScaleShapeAlongAxes" );
+  MESSAGE("GEOM_Superv_i::ScaleShapeAlongAxes");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->ScaleShapeAlongAxes
+    (theObject, thePoint, theFactorX, theFactorY, theFactorZ);
+  endService( " GEOM_Superv_i::ScaleShapeAlongAxes" );
+  return anObj;
+}
+
+//=============================================================================
+//  ScaleShapeAlongAxesCopy:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeAlongAxesCopy (GEOM::GEOM_Object_ptr theObject,
+							      GEOM::GEOM_Object_ptr thePoint,
+							      CORBA::Double theFactorX,
+							      CORBA::Double theFactorY,
+							      CORBA::Double theFactorZ)
+{
+  beginService( " GEOM_Superv_i::ScaleShapeAlongAxesCopy" );
+  MESSAGE("GEOM_Superv_i::ScaleShapeAlongAxesCopy");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->ScaleShapeAlongAxesCopy
+    (theObject, thePoint, theFactorX, theFactorY, theFactorZ);
+  endService( " GEOM_Superv_i::ScaleShapeAlongAxesCopy" );
+  return anObj;
+}
+
+//=============================================================================
 //  PositionShape:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShape (GEOM::GEOM_Object_ptr theObject,

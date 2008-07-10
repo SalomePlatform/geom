@@ -121,6 +121,18 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 					GEOM::GEOM_Object_ptr thePoint,
 					CORBA::Double theFactor);
 
+  GEOM::GEOM_Object_ptr ScaleShapeAlongAxes (GEOM::GEOM_Object_ptr theObject,
+					     GEOM::GEOM_Object_ptr thePoint,
+					     CORBA::Double theFactorX,
+					     CORBA::Double theFactorY,
+					     CORBA::Double theFactorZ);
+
+  GEOM::GEOM_Object_ptr ScaleShapeAlongAxesCopy (GEOM::GEOM_Object_ptr theObject,
+						 GEOM::GEOM_Object_ptr thePoint,
+						 CORBA::Double theFactorX,
+						 CORBA::Double theFactorY,
+						 CORBA::Double theFactorZ);
+
   GEOM::GEOM_Object_ptr PositionShape (GEOM::GEOM_Object_ptr theObject,
 				       GEOM::GEOM_Object_ptr theStartLCS,
 				       GEOM::GEOM_Object_ptr theEndLCS);
