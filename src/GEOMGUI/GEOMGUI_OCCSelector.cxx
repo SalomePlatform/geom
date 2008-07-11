@@ -100,6 +100,7 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
           if (!bigShape.IsEqual(curBigShape))
           {
             curBigShape = bigShape;
+            subShapes.Clear();
             TopExp::MapShapes(bigShape, subShapes);
           }
           index = subShapes.FindIndex(subShape);
@@ -213,7 +214,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 #ifndef WNT
       if ( indexesMap.IsBound( TCollection_AsciiString((char*)entry.latin1())))
 #else
-	  if ( indexesMap.IsBound( (char*)entry.latin1()))
+      if ( indexesMap.IsBound( (char*)entry.latin1()))
 #endif
       {
 	TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind((char*)entry.latin1());
@@ -242,7 +243,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
   }
 
   // get all owners.  Fill "entry - list_of_owners" map.
-  for ( AIS_ListIteratorOfListOfInteractive it( aDispList ); it.More(); it.Next() )
+  for (AIS_ListIteratorOfListOfInteractive it (aDispList); it.More(); it.Next())
   {
     Handle(AIS_InteractiveObject) io = it.Value();
     QString entryStr = entry( io );
@@ -272,6 +273,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
             {
               isLocal = true;
               TopoDS_Shape shape = aisShape->Shape();
+              aMapOfShapes.Clear();
               TopExp::MapShapes(shape, aMapOfShapes);
             }
           }
