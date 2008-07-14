@@ -666,6 +666,20 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakePrismVecH(theBase, theVec, theH)
             RaiseIfFailed("MakePrismVecH", self.PrimOp)
             return anObj
+
+        ## Create a shape by extrusion of the base shape along the vector,
+        #  i.e. all the space, transfixed by the base shape during its translation
+        #  along the vector on the given distance in 2 Ways (forward/backward) .
+        #  @param theBase Base shape to be extruded.
+        #  @param theVec Direction of extrusion.
+        #  @param theH Prism dimension along theVec in forward direction.
+        #  @return New GEOM_Object, containing the created prism.
+        #
+        #  Example: see GEOM_TestAll.py
+        def MakePrismVecH2Ways(self, theBase, theVec, theH):
+            anObj = self.PrimOp.MakePrismVecH2Ways(theBase, theVec, theH)
+            RaiseIfFailed("MakePrismVecH2Ways", self.PrimOp)
+            return anObj
         
         ## Create a shape by extrusion of the base shape along
         #  the path shape. The path shape can be a wire or an edge.
@@ -691,6 +705,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeRevolution(self,theBase, theAxis, theAngle):
             anObj = self.PrimOp.MakeRevolutionAxisAngle(theBase, theAxis, theAngle)
             RaiseIfFailed("MakeRevolutionAxisAngle", self.PrimOp)
+            return anObj
+        ## The Same Revolution but in both ways forward&backward.
+        def MakeRevolution2Ways(self, theBase, theAxis, theAngle):
+            anObj = self.PrimOp.MakeRevolutionAxisAngle2Ways(theBase, theAxis, theAngle)
+            RaiseIfFailed("MakeRevolutionAxisAngle2Ways", self.PrimOp)
             return anObj
         
         ## Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.
@@ -1371,11 +1390,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         
         ## Create a filling from the given compound of contours.
         #  @param theShape the compound of contours
-        #  @param theMinDeg a minimal degree
-        #  @param theMaxDeg a maximal degree
-        #  @param theTol2D a 2d tolerance
-        #  @param theTol3D a 3d tolerance
-        #  @param theNbIter a number of iteration
+        #  @param theMinDeg a minimal degree of BSpline surface to create
+        #  @param theMaxDeg a maximal degree of BSpline surface to create
+        #  @param theTol2D a 2d tolerance to be reached
+        #  @param theTol3D a 3d tolerance to be reached
+        #  @param theNbIter a number of iteration of approximation algorithm
         #  @return New GEOM_Object, containing the created filling surface.
         #
         #  Example: see GEOM_TestAll.py
@@ -1595,7 +1614,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.TranslateVectorCopy(theObject, theVector)
             RaiseIfFailed("TranslateVectorCopy", self.TrsfOp)
             return anObj
-        
+
         ## Rotate the given object around the given axis
         #  on the given angle, creating its copy before the rotatation.
         #  @param theObject The object to be rotated.

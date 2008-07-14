@@ -27,10 +27,25 @@ EXTRA_DIST+=GEOM
 
 doxygen=@DOXYGEN@
 
+# Below command replaces "geompyDC" by "geompy" except cases
+# "sgeompyDC", "1geompyDC" and "egeompyDC" (these sequences
+# can be found in file names and must not be replaces):
+#
+# sed 's/\([^s1e]\)geompyDC\|^geompyDC/\1geompy/g' $${filen} > ./tmp;
+#
 usr_docs:
 	cd ./GEOM; \
 	echo "Processing geompyDC.py file: "; \
 	$(doxygen) ./doxyfile_py; \
+	cd ./geompy_doc; \
+	filesl=`find .`; \
+	for filen in $${filesl}; do \
+	  sed 's/\([^s1e]\)geompyDC\|^geompyDC/\1geompy/g' $${filen} > ./tmp1; \
+	  sed 's/geompy\.geompy/geompy/g' ./tmp1 > ./tmp; \
+	  rm -f tmp1; \
+	  mv -f tmp $${filen}; \
+	done; \
+	cd ..; \
 	echo "Running doxygen in directory: "`pwd`; \
 	$(doxygen) ./doxyfile;
 

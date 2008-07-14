@@ -12,9 +12,7 @@ and <b>Approximation</b>.
 
 \n <b>TUI Command:</b> <em>geompy.MakeFilling(Edges, MinDegree,
 MaxDegree, Tol2D, Tol3D, NbIter, isApprox)</em>
-\n <b>Arguments:</b> Name + 1 List of edges + 6 Parameters
-(Min. degree, Max. degree, Number of iterations, 2D tolerance, 3D
-tolerance, Number of iterations, Approximation).
+\n <b>Arguments:</b> Name + 1 Compound of edges + 2 Values (min. and max degree of result BSpline surface) + 2 Values (2D and 3D precision to reach) + 1 Value (number of iterations of approximaion algorithm) + 1 Flag (to select one of algorithms).
 
 \image html filling.png
 

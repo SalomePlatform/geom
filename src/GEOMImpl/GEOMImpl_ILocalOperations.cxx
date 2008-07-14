@@ -135,7 +135,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
-       (Handle(GEOM_Object) theShape, double theR, list<int> theEdges)
+       (Handle(GEOM_Object) theShape, double theR, std::list<int> theEdges)
 {
   SetErrorCode(KO);
 
@@ -161,7 +161,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theEdges.begin();
+  std::list<int>::iterator it = theEdges.begin();
   for (; it != theEdges.end(); it++, ind++) {
     aCI.SetEdge(ind, (*it));
   }
@@ -204,7 +204,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdgesR1R2
-       (Handle(GEOM_Object) theShape, double theR1, double theR2, list<int> theEdges)
+       (Handle(GEOM_Object) theShape, double theR1, double theR2, std::list<int> theEdges)
 {
   SetErrorCode(KO);
 
@@ -231,7 +231,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdgesR1R2
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theEdges.begin();
+  std::list<int>::iterator it = theEdges.begin();
   for (; it != theEdges.end(); it++, ind++) {
     aCI.SetEdge(ind, (*it));
   }
@@ -275,7 +275,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdgesR1R2
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
-       (Handle(GEOM_Object) theShape, double theR, list<int> theFaces)
+       (Handle(GEOM_Object) theShape, double theR, std::list<int> theFaces)
 {
   SetErrorCode(KO);
 
@@ -301,7 +301,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theFaces.begin();
+  std::list<int>::iterator it = theFaces.begin();
   for (; it != theFaces.end(); it++, ind++) {
     aCI.SetFace(ind, (*it));
   }
@@ -344,7 +344,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFacesR1R2
-       (Handle(GEOM_Object) theShape, double theR1, double theR2, list<int> theFaces)
+       (Handle(GEOM_Object) theShape, double theR1, double theR2, std::list<int> theFaces)
 {
   SetErrorCode(KO);
 
@@ -371,7 +371,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFacesR1R2
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theFaces.begin();
+  std::list<int>::iterator it = theFaces.begin();
   for (; it != theFaces.end(); it++, ind++) {
     aCI.SetFace(ind, (*it));
   }
@@ -582,7 +582,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgeAD
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
                             (Handle(GEOM_Object) theShape, double theD1, double theD2,
-                             list<int> theFaces)
+                             std::list<int> theFaces)
 {
   SetErrorCode(KO);
 
@@ -609,7 +609,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theFaces.begin();
+  std::list<int>::iterator it = theFaces.begin();
   for (; it != theFaces.end(); it++, ind++) {
     aCI.SetFace(ind, (*it));
   }
@@ -653,7 +653,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFacesAD
                             (Handle(GEOM_Object) theShape, double theD, double theAngle,
-                             list<int> theFaces)
+                             std::list<int> theFaces)
 {
   SetErrorCode(KO);
 
@@ -680,7 +680,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFacesAD
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theFaces.begin();
+  std::list<int>::iterator it = theFaces.begin();
   for (; it != theFaces.end(); it++, ind++) {
     aCI.SetFace(ind, (*it));
   }
@@ -724,7 +724,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFacesAD
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
                             (Handle(GEOM_Object) theShape, double theD1, double theD2,
-                             list<int> theEdges)
+                             std::list<int> theEdges)
 {
   SetErrorCode(KO);
 
@@ -752,7 +752,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theEdges.begin();
+  std::list<int>::iterator it = theEdges.begin();
   for (; it != theEdges.end(); it++, ind++) {
     aCI.SetEdge(ind, (*it));
   }
@@ -796,7 +796,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
                             (Handle(GEOM_Object) theShape, double theD, double theAngle,
-                             list<int> theEdges)
+                             std::list<int> theEdges)
 {
   SetErrorCode(KO);
 
@@ -824,7 +824,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theEdges.begin();
+  std::list<int>::iterator it = theEdges.begin();
   for (; it != theEdges.end(); it++, ind++) {
     aCI.SetEdge(ind, (*it));
   }

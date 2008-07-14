@@ -107,19 +107,26 @@ GENERATE_RTF      = NO
 #---------------------------------------------------------------------------
 # Configuration options related to the dot tool   
 #---------------------------------------------------------------------------
-CLASS_DIAGRAMS         = YES
+#CLASS_DIAGRAMS         = YES
+CLASS_DIAGRAMS         = NO
 HIDE_UNDOC_RELATIONS   = NO
-HAVE_DOT               = YES
-CLASS_GRAPH            = YES
+#HAVE_DOT               = YES
+HAVE_DOT               = NO
+#CLASS_GRAPH            = YES
+CLASS_GRAPH            = NO
 COLLABORATION_GRAPH    = NO
 GROUP_GRAPHS           = NO
 UML_LOOK               = NO
-TEMPLATE_RELATIONS     = YES
-INCLUDE_GRAPH          = YES
+#TEMPLATE_RELATIONS     = YES
+#INCLUDE_GRAPH          = YES
+TEMPLATE_RELATIONS     = NO
+INCLUDE_GRAPH          = NO
 INCLUDED_BY_GRAPH      = NO
 CALL_GRAPH             = NO
-GRAPHICAL_HIERARCHY    = YES
-DIRECTORY_GRAPH        = YES
+#GRAPHICAL_HIERARCHY    = YES
+#DIRECTORY_GRAPH        = YES
+GRAPHICAL_HIERARCHY    = NO
+DIRECTORY_GRAPH        = NO
 DOT_IMAGE_FORMAT       = jpg
 DOT_PATH               = 
 DOTFILE_DIRS           = 

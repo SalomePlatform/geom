@@ -605,7 +605,7 @@
   aTRF=BRep_Tool::Triangulation(aF, aLoc);
   if (aTRF.IsNull()) {
     if (!GEOMAlgo_FinderShapeOn::BuildTriangulation(aF)) {
-      myErrorStatus=20; // no triangulation found
+      myWarningStatus=20; // no triangulation found
       return;
     }
     aTRF=BRep_Tool::Triangulation(aF, aLoc);

@@ -275,6 +275,12 @@ GEOM::GEOM_IOperations_ptr BooleanGUI_Dialog::createOperation()
 //=================================================================================
 bool BooleanGUI_Dialog::isValid( QString& msg )
 {
+  Handle(SALOME_InteractiveObject) IO = firstIObject();
+  Standard_Boolean testResult;
+  GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject( IO, testResult );
+  if ( !testResult || anObject->_is_nil() )
+    return false;
+
   return !CORBA::is_nil( myObject1 ) && !CORBA::is_nil( myObject2 );
 }
 
