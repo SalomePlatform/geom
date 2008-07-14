@@ -20,12 +20,12 @@ shape. For this, you need to define the \b Shape to be scaled, the
 \n <b>TUI Command:</b> <em>geompy.MakeScaleAlongAxes(Shape, CenterOfScale, FactorX, FactorY, FactorZ)</em>
 \n <b>Arguments:</b> Name + 1 shape(s) + 1 vertex + 3 Scale Factors.
 
-\note If <b>Central Point</b> is not defined, the scaling will be
-performed relatively the origin of global coordinate system.
+\note If the <b>Central Point</b> is not defined, the scaling will be
+performed relatively the origin of the global coordinate system.
 
-\note Scaling by a factor is a simple transformation, it does not modify
-geometry of the shape, while scaling by different factors along axes
-is a general transformation, which can modify geometry, for example, a
+\note Scaling by one factor is a simple transformation, it does not modify the
+geometry of the shape, while scaling by several different factors along axes
+is a general transformation, which can modify the geometry, for example, a
 circle can be transformed into an ellipse.
 
 \n <b>Example of simple scaling:</b>
@@ -34,7 +34,7 @@ circle can be transformed into an ellipse.
 
 \image html scale_transformsn2.png
 
-\n <b>Example of scaling on different factors along axes:</b>
+\n <b>Example of scaling by different factors along axes:</b>
 
 \image html scale_transformsn3.png
 
