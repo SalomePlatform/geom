@@ -31,6 +31,7 @@ lib_LTLIBRARIES = libGEOMToolsGUI.la
 salomeinclude_HEADERS =
 
 dist_libGEOMToolsGUI_la_SOURCES =		\
+	GEOM_ToolsGUI.hxx			\
 	GEOMToolsGUI.h				\
 	GEOMToolsGUI_NbIsosDlg.h		\
 	GEOMToolsGUI_TransparencyDlg.h		\

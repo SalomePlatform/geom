@@ -81,6 +81,11 @@
 
 #define GEOM_THRUSECTIONS 40
 
+#define GEOM_COMPOUNDFILTER 41
+
+#define GEOM_SHAPES_ON_SHAPE 42
+
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -93,6 +98,7 @@
 #define POINT_XYZ_REF            2
 #define POINT_CURVE_PAR          3
 #define POINT_LINES_INTERSECTION 4
+#define POINT_SURFACE_PAR        5
 //#define POINT_FACE_PAR 5
 
 #define VECTOR_TWO_PNT  1
@@ -111,6 +117,7 @@
 
 #define TRANSLATE_TWO_POINTS      1
 #define TRANSLATE_VECTOR          2
+#define TRANSLATE_VECTOR_DISTANCE 9
 #define TRANSLATE_TWO_POINTS_COPY 3
 #define TRANSLATE_VECTOR_COPY     4
 #define TRANSLATE_1D              5
@@ -137,6 +144,8 @@
 
 #define SCALE_SHAPE      1
 #define SCALE_SHAPE_COPY 2
+#define SCALE_SHAPE_AXES      3
+#define SCALE_SHAPE_AXES_COPY 4
 
 #define POSITION_SHAPE      1
 #define POSITION_SHAPE_COPY 2
@@ -245,6 +254,8 @@
 #define CDG_MEASURE 1
 
 #define GROUP_FUNCTION 1
+
+#define SHAPES_ON_SHAPE 1
 
 // Blocks
 #define BLOCK_FACE_FOUR_PNT       1

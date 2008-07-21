@@ -32,9 +32,10 @@
 vtkStandardNewMacro(GEOM_WireframeFace);
  
 GEOM_WireframeFace::GEOM_WireframeFace(): 
-  NbIso(1), 
-  Discret(15) 
+  Discret(15)
 { 
+  NbIso[0] = 1;
+  NbIso[1] = 1;
 } 
  
 GEOM_WireframeFace::~GEOM_WireframeFace() 
@@ -58,12 +59,29 @@ Execute()
   }
 }
 
+void GEOM_WireframeFace::SetNbIso(const int theNb[2])
+{
+  if ( theNb[0] == NbIso[0] && theNb[1] == NbIso[1])
+    return;
+
+  NbIso[0] = theNb[0];
+  NbIso[1] = theNb[1];
+
+  Modified();
+}
+
+void GEOM_WireframeFace::GetNbIso(int &theNbU,int &theNbV)
+{
+  theNbU = NbIso[0];
+  theNbV = NbIso[1];
+}
+
 void  
 GEOM_WireframeFace:: 
 OCC2VTK(const TopoDS_Face& theFace,
         vtkPolyData* thePolyData,
 		    vtkPoints* thePts,  
-        const int theNbIso, 
+        const int theNbIso[2], 
         const int theDiscret) 
 { 
   TopoDS_Face aFace = theFace; 
@@ -74,7 +92,7 @@ OCC2VTK(const TopoDS_Face& theFace,
 void 
 GEOM_WireframeFace:: 
 CreateIso(const TopoDS_Face& theFace,
-	        const int theNbIso, 
+	  const int theNbIso[2], 
           const int theDiscret, 
           vtkPolyData* thePolyData,
           vtkPoints* thePts)
@@ -95,8 +113,8 @@ CreateIso(const TopoDS_Face& theFace,
 				     Standard_False);
   
   Standard_Real anUMin, anUMax, aVMin, aVMax;
-  TColStd_Array1OfReal anUPrm(1, theNbIso), aVPrm(1, theNbIso);
-  TColStd_Array1OfInteger anUInd(1, theNbIso), aVInd(1, theNbIso);
+  TColStd_Array1OfReal anUPrm(1, theNbIso[0]), aVPrm(1, theNbIso[1]);
+  TColStd_Array1OfInteger anUInd(1, theNbIso[0]), aVInd(1, theNbIso[1]);
 
   anUInd.Init(0);
   aVInd.Init(0);
@@ -185,11 +203,11 @@ CreateIso(const TopoDS_Face& theFace,
   Standard_Real confusion = Min(DeltaU, DeltaV) * HATHCER_CONFUSION_3D ;
   aHatcher.Confusion3d (confusion) ;
 
-  Standard_Real StepU = DeltaU / (Standard_Real)theNbIso;
+  Standard_Real StepU = DeltaU / (Standard_Real)theNbIso[0];
   if(StepU > confusion){
     Standard_Real UPrm = anUMin + StepU / 2.;
     gp_Dir2d Dir(0., 1.) ;
-    for(IIso = 1 ; IIso <= theNbIso ; IIso++) {
+    for(IIso = 1 ; IIso <= theNbIso[0] ; IIso++) {
       anUPrm(IIso) = UPrm ;
       gp_Pnt2d Ori (UPrm, 0.) ;
       Geom2dAdaptor_Curve HCur (new Geom2d_Line (Ori, Dir)) ;
@@ -198,11 +216,11 @@ CreateIso(const TopoDS_Face& theFace,
     }
   }
 
-  Standard_Real StepV = DeltaV / (Standard_Real) theNbIso ;
+  Standard_Real StepV = DeltaV / (Standard_Real) theNbIso[1] ;
   if(StepV > confusion){
     Standard_Real VPrm = aVMin + StepV / 2.;
     gp_Dir2d Dir(1., 0.);
-    for(IIso = 1 ; IIso <= theNbIso ; IIso++){
+    for(IIso = 1 ; IIso <= theNbIso[1] ; IIso++){
       aVPrm(IIso) = VPrm;
       gp_Pnt2d Ori (0., VPrm);
       Geom2dAdaptor_Curve HCur(new Geom2d_Line (Ori, Dir));
@@ -217,9 +235,9 @@ CreateIso(const TopoDS_Face& theFace,
   aHatcher.Trim() ;
 
   Standard_Integer aNbDom = 0 ; // for debug purpose
-  for(IIso = 1 ; IIso <= theNbIso ; IIso++){
-    Standard_Integer Index ;
+  Standard_Integer Index ;
 
+  for(IIso = 1 ; IIso <= theNbIso[0] ; IIso++){
     Index = anUInd(IIso) ;
     if(Index != 0){
       if(aHatcher.TrimDone(Index) && !aHatcher.TrimFailed(Index)){
@@ -228,7 +246,9 @@ CreateIso(const TopoDS_Face& theFace,
           aNbDom = aHatcher.NbDomains (Index);
       }
     }
+  }
 
+  for(IIso = 1 ; IIso <= theNbIso[1] ; IIso++){
     Index = aVInd(IIso);
     if(Index != 0){
       if(aHatcher.TrimDone (Index) && !aHatcher.TrimFailed(Index)){

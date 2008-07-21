@@ -100,6 +100,8 @@ void BuildGUI_CompoundDlg::Init()
   
   myOkShapes = false;
 
+  mainFrame()->GroupBoxPublish->show();
+
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
@@ -232,4 +234,19 @@ bool BuildGUI_CompoundDlg::execute( ObjectList& objects )
     objects.push_back( anObj._retn() );
 
   return true;
+}
+
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void BuildGUI_CompoundDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
+                                             SALOMEDS::SObject_ptr theSObject )
+{
+  if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
+					 /*theFindMethod=*/GEOM::FSM_GetSame, // ? GEOM::FSM_GetInPlace
+					 /*theInheritFirstArg=*/false );
+  }
 }

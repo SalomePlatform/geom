@@ -80,6 +80,7 @@ EXAMPLE_RECURSIVE      = NO
 INPUT             = @top_srcdir@/src/GEOM_SWIG
 FILE_PATTERNS     = geompyDC.py
 IMAGE_PATH        = @srcdir@/images
+EXAMPLE_PATH      = @top_srcdir@/src/GEOM_SWIG
 RECURSIVE         = NO
 
 #---------------------------------------------------------------------------
@@ -142,3 +143,4 @@ DOT_CLEANUP            = YES
 #External reference options
 #---------------------------------------------------------------------------
 GENERATE_TAGFILE  = geompy_doc.tag
+TAGFILES          = tui_examples.tag=./..

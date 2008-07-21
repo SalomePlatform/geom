@@ -318,6 +318,20 @@ DlgRef_2Sel1Spin::~DlgRef_2Sel1Spin()
 }
 
 //////////////////////////////////////////
+// DlgRef_2Sel2List
+//////////////////////////////////////////
+
+DlgRef_2Sel2List::DlgRef_2Sel2List( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_2Sel2List::~DlgRef_2Sel2List()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_2Sel2Spin1Check
 //////////////////////////////////////////
 
@@ -487,7 +501,37 @@ DlgRef_3Sel3Spin1Check::~DlgRef_3Sel3Spin1Check()
 
 void DlgRef_3Sel3Spin1Check::ShowRows( int fromRow, int toRow, bool toShow )
 {
-  const int maxRows = 6;
+  const int maxRows = 7;
+  
+  if ( toRow >= fromRow && fromRow >= 0 && toRow <= maxRows ) {
+    int c = gridLayout1->count();
+    for ( int i = 0; i < c; i++ ) {
+      QWidget* w = gridLayout1->itemAt( i )->widget();
+      int row, col, rowspan, colspan;
+      gridLayout1->getItemPosition( i, &row, &col, &rowspan, &colspan );
+      if ( w && row >= fromRow && row <= toRow )
+	w->setVisible( toShow );
+    }
+  }
+}
+
+//////////////////////////////////////////
+// DlgRef_3Sel3Spin2Check
+//////////////////////////////////////////
+
+DlgRef_3Sel3Spin2Check::DlgRef_3Sel3Spin2Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_3Sel3Spin2Check::~DlgRef_3Sel3Spin2Check()
+{
+}
+
+void DlgRef_3Sel3Spin2Check::ShowRows( int fromRow, int toRow, bool toShow )
+{
+  const int maxRows = 8;
   
   if ( toRow >= fromRow && fromRow >= 0 && toRow <= maxRows ) {
     int c = gridLayout1->count();
@@ -649,8 +693,21 @@ DlgRef_Skeleton::~DlgRef_Skeleton()
 
 QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
 {
+  const double prec = 1e-12;
+
   QString aRes;
   aRes.setNum( theValue, 'g', thePrecision );
+
+  if ( prec > 0 ) {
+    int p = 0;
+    while ( p < thePrecision ) {
+      aRes.setNum( theValue, 'g', p++ );
+      double v = aRes.toDouble();
+      double err = qAbs( theValue - v );
+      if ( err > 0 && err <= prec )
+	break;
+    }
+  }
 
   // remove trailing zeroes
   QString delim( "." );

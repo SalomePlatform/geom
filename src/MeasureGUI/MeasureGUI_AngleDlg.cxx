@@ -52,6 +52,7 @@
 #include <Geom_Plane.hxx>
 #include <gce_MakePln.hxx>
 #include <Precision.hxx>
+#include <AIS.hxx>
 
 // QT Includes
 #include <qlineedit.h>
@@ -306,6 +307,31 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension
           ( anEdge1, anEdge2, aPlane, anAngle * PI180,
 	    TCollection_ExtendedString( (Standard_CString)aLabel.toLatin1().data() ) );
+	Handle(Geom_Line) geom_lin1,geom_lin2;
+	gp_Pnt ptat11,ptat12,ptat21,ptat22;
+	Standard_Boolean isInfinite1,isInfinite2;
+	Handle(Geom_Curve) extCurv;
+	Standard_Integer extShape;
+	if ( AIS::ComputeGeometry(anEdge1,
+				  anEdge2,
+				  extShape,
+				  geom_lin1,
+				  geom_lin2,
+				  ptat11,
+				  ptat12,
+				  ptat21,
+				  ptat22,
+				  extCurv,
+				  isInfinite1,
+				  isInfinite2,
+				  aPlane)) {
+	  Standard_Real arrSize1 = anIO->ArrowSize();
+	  Standard_Real arrSize2 = anIO->ArrowSize();
+	  if (!isInfinite1) arrSize1 = ptat11.Distance(ptat12)/10.;
+	  if (!isInfinite2) arrSize2 = ptat21.Distance(ptat22)/10.;
+	  Standard_Real arrowSize = Max(arrSize1,arrSize2);
+	  anIO->SetArrowSize(arrowSize);
+	}
 
         SOCC_Prs* aPrs =
           dynamic_cast<SOCC_Prs*>( ( (SOCC_Viewer*)( vw->getViewManager()->getViewModel() ) )->CreatePrs( 0 ) );

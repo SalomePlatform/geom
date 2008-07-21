@@ -52,6 +52,7 @@
 // QT Includes
 #include <QApplication>
 #include <QMap>
+#include <QRegExp>
 
 // OCCT Includes
 #include <TCollection_AsciiString.hxx>
@@ -59,6 +60,7 @@
 using namespace std;
 
 typedef QMap<QString, QString> FilterMap;
+static QString lastUsedFilter;
 
 //=======================================================================
 // function : getFileName
@@ -71,9 +73,9 @@ static QString getFileName( QWidget*           parent,
                             const QStringList& filters,
 			    const QString&     caption,
 			    bool               open,
-			    QString&           format )
+			    QString&           format,
+			    bool               showCurrentDirInitially = false )
 {
-  static QString lastUsedFilter;
   //QStringList filters;
   QString aBrepFilter;
   for ( FilterMap::const_iterator it = filterMap.begin(); it != filterMap.end(); ++it ) {
@@ -88,6 +90,9 @@ static QString getFileName( QWidget*           parent,
 
   if ( !initial.isEmpty() )
     fd->selectFile( initial );
+  
+  if ( showCurrentDirInitially && SUIT_FileDlg::getLastVisitedPath().isEmpty() )
+    fd->setDirectory( QDir::currentPath() );
 
   fd->setFilters( filters );
   
@@ -108,6 +113,63 @@ static QString getFileName( QWidget*           parent,
   delete fd;
   qApp->processEvents();
   return filename;
+}
+
+//=======================================================================
+// function : getFileNames
+// purpose  : Select list of files for Import operation. Returns also
+//            the selected file type code through <format> argument.
+//=======================================================================
+static QStringList getFileNames( QWidget*           parent,
+				 const QString&     initial,
+				 const FilterMap&   filterMap,
+				 const QString&     caption,
+				 QString&           format,
+				 bool               showCurrentDirInitially = false)
+{
+  QString aBrepFilter;
+  QStringList allFilters;
+  QStringList filters;
+  QRegExp re( "\\((.*)\\)" );
+  re.setMinimal( true );
+  for ( FilterMap::const_iterator it = filterMap.begin(); it != filterMap.end(); ++it ) {
+    if ( it.value().contains( "BREP", Qt::CaseInsensitive ) && aBrepFilter.isEmpty() )
+      aBrepFilter = it.key();
+    filters.append( it.key() );
+    int pos = 0;
+    while ( re.indexIn( it.key(), pos ) >= 0 ) {
+      QString f = re.cap(1);
+      pos = re.pos() + f.length() + 2;
+      allFilters.append( f.simplified() );
+    }
+  }
+  filters.append( QObject::tr( "GEOM_ALL_IMPORT_FILES" ).arg( allFilters.join( " " ) ) );
+  
+  SUIT_FileDlg fd( parent, true, true, true );
+  fd.setFileMode( SUIT_FileDlg::ExistingFiles );     
+  if ( !caption.isEmpty() )
+    fd.setWindowTitle( caption );
+  if ( !initial.isEmpty() )
+    fd.selectFile( initial );
+  
+  if ( showCurrentDirInitially && SUIT_FileDlg::getLastVisitedPath().isEmpty() )
+    fd.setDirectory( QDir::currentPath() );
+  
+  fd.setFilters( filters );
+  
+  if ( !lastUsedFilter.isEmpty() && filterMap.contains( lastUsedFilter ) )
+    fd.selectFilter( lastUsedFilter );
+  else if ( !aBrepFilter.isEmpty() )
+    fd.selectFilter( aBrepFilter );
+
+  QStringList filenames;
+  if ( fd.exec() ) {
+    filenames = fd.selectedFiles();
+    format = filterMap.contains( fd.selectedFilter() ) ? filterMap[ fd.selectedFilter() ] : QString();
+    lastUsedFilter = fd.selectedFilter();
+  }
+  qApp->processEvents();
+  return filenames;
 }
 
 //=======================================================================
@@ -138,17 +200,35 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
   // collect all GEOM objects being deleted
   QMap<QString, GEOM::GEOM_Object_var> gobjects;
   QMap<QString, QString>::ConstIterator oit;
+  list<_PTR(SObject)> aSelectedSO;
   for ( oit = objects.begin(); oit != objects.end(); ++oit ) {
     _PTR(SObject) so = study->FindObjectID( oit.key().toLatin1().data() );
     if ( !so )
       continue;
+    aSelectedSO.push_back(so);
     CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject( so );
     GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
     if( CORBA::is_nil( geomObj_rem ) ) 
       continue;
     gobjects.insert( oit.key(), geomObj_rem );
   }
-  
+
+  // Search References with other Modules
+  list< _PTR(SObject) >::iterator itSO = aSelectedSO.begin();
+  for ( ; itSO != aSelectedSO.end(); ++itSO ) {
+    std::vector<_PTR(SObject)> aReferences = study->FindDependances( *itSO  );    
+    int aRefLength = aReferences.size();
+    if (aRefLength) {
+      for (int i = 0; i < aRefLength; i++) {
+	_PTR(SObject) firstSO( aReferences[i] );
+	_PTR(SComponent) aComponent = firstSO->GetFatherComponent();
+	QString type = aComponent->ComponentDataType().c_str();
+	if ( type == "SMESH" )
+	  return true;
+      }
+    }
+  }
+
   // browse through all GEOM data tree
   _PTR(ChildIterator) it ( study->NewChildIterator( comp ) );
   for ( it->InitEx( true ); it->More(); it->Next() ) {
@@ -176,6 +256,7 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
   }
   return false;
 }
+
 
 //=======================================================================
 // function : GEOMToolsGUI()
@@ -335,7 +416,6 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 }
 
 
-
 //===============================================================================
 // function : OnEditDelete()
 // purpose  :
@@ -364,8 +444,7 @@ void GEOMToolsGUI::OnEditDelete()
   if ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() )->IsLocked() ) {
     SUIT_MessageBox::warning( app->desktop(),
 			      tr("WRN_WARNING"),
-			      tr("WRN_STUDY_LOCKED"),
-			      tr("BUT_OK") );
+			      tr("WRN_STUDY_LOCKED") );
     return; // study is locked
   }
   
@@ -387,10 +466,9 @@ void GEOMToolsGUI::OnEditDelete()
     // check parent component
     QString parentComp = getParentComponent( obj );
     if ( parentComp != geomComp )  {
-      SUIT_MessageBox::warning ( app->desktop(),
-				 QObject::tr("ERR_ERROR"),
-				 QObject::tr("NON_GEOM_OBJECTS_SELECTED").arg( getGeometryGUI()->moduleName() ),
-				 QObject::tr("BUT_OK") );
+      SUIT_MessageBox::warning( app->desktop(),
+				QObject::tr("ERR_ERROR"),
+				QObject::tr("NON_GEOM_OBJECTS_SELECTED").arg( getGeometryGUI()->moduleName() ) );
       return; // not GEOM object selected
     }
 
@@ -438,8 +516,7 @@ void GEOMToolsGUI::OnEditDelete()
   SALOME_View* view;
   ViewManagerList vmans = app->viewManagers();
   SUIT_ViewManager* vman;
-  QListIterator<SUIT_ViewManager*> vit( vmans );
-  while ( vit.hasNext() && (vman = vit.next()) ) {
+  foreach ( vman, vmans ) {
     SUIT_ViewModel* vmod = vman->getViewModel();
     view = dynamic_cast<SALOME_View*> ( vmod ); // must work for OCC and VTK views
     if ( view )
@@ -467,10 +544,9 @@ void GEOMToolsGUI::OnEditDelete()
   else {
     // GEOM component is not selected: check if selected objects are in use
     if ( inUse( aStudy, geomComp, allDeleted ) ) {
-      SUIT_MessageBox::warning ( app->desktop(),
-				 QObject::tr("WRN_WARNING"),
-				 QObject::tr("DEP_OBJECT"),
-				 QObject::tr("BUT_OK") );
+      SUIT_MessageBox::warning( app->desktop(),
+				QObject::tr("WRN_WARNING"),
+				QObject::tr("DEP_OBJECT") );
       return; // object(s) in use
     }
     // ... and then delete all objects
@@ -526,7 +602,6 @@ void GEOMToolsGUI::OnEditCopy()
 */
 }
 
-
 //=====================================================================================
 // function : Import
 // purpose  : BRep, Iges, Step
@@ -534,119 +609,141 @@ void GEOMToolsGUI::OnEditCopy()
 bool GEOMToolsGUI::Import()
 {
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( getGeometryGUI()->getApp() );
-  //SUIT_Application* app = getGeometryGUI()->getApp();
   if (! app) return false;
 
   SalomeApp_Study* stud = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
   if ( !stud ) {
-    cout << "FAILED to cast active study to SalomeApp_Study" << endl;
+    MESSAGE ( "FAILED to cast active study to SalomeApp_Study" );
     return false;
   }
   _PTR(Study) aStudy = stud->studyDS();
 
+  // check if study is locked
   bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
   if ( aLocked ) {
-    SUIT_MessageBox::warning ( app->desktop(),
-			       QObject::tr("WRN_WARNING"),
-			       QObject::tr("WRN_STUDY_LOCKED"),
-			       QObject::tr("BUT_OK") );
+    SUIT_MessageBox::warning( app->desktop(),
+			      QObject::tr("WRN_WARNING"),
+			      QObject::tr("WRN_STUDY_LOCKED") );
     return false;
   }
 
+  // check if GEOM engine is available
   GEOM::GEOM_Gen_var eng = GeometryGUI::GetGeomGen();
   if ( CORBA::is_nil( eng ) ) {
     SUIT_MessageBox::critical( app->desktop(),
 			       QObject::tr("WRN_WARNING"),
-			       QObject::tr( "GEOM Engine is not started" ),
-			       QObject::tr("BUT_OK") );
-      return false;
-    }
+			       QObject::tr( "GEOM Engine is not started" ) );
+    return false;
+  }
 
   GEOM::GEOM_IInsertOperations_var aInsOp = eng->GetIInsertOperations( aStudy->StudyId() );
   if ( aInsOp->_is_nil() )
     return false;
 
-  GEOM::GEOM_Object_var anObj;
-
-  // Obtain a list of available import formats
+  // obtain a list of available import formats
   FilterMap aMap;
-  QStringList filters;
   GEOM::string_array_var aFormats, aPatterns;
   aInsOp->ImportTranslators( aFormats, aPatterns );
 
-  for ( int i = 0, n = aFormats->length(); i < n; i++ ) {
+  for ( int i = 0, n = aFormats->length(); i < n; i++ )
     aMap.insert( (char*)aPatterns[i], (char*)aFormats[i] );
-    filters.push_back( (char*)aPatterns[i] );
-  }
 
+  // select files to be imported
   QString fileType;
+  QStringList fileNames = getFileNames( app->desktop(), "", aMap,
+					tr( "GEOM_MEN_IMPORT" ), fileType, true );
 
-  QString fileName = getFileName(app->desktop(), "", aMap, filters,
-                                 tr("GEOM_MEN_IMPORT"), true, fileType);
+  // set Wait cursor
+  SUIT_OverrideCursor wc;
 
-  if (fileName.isEmpty())
-    return false;
+  if ( fileNames.count() == 0 )
+    return false; // nothing selected, return
 
-  if (fileType.isEmpty() )
-    {
-      // Trying to detect file type
-      QFileInfo aFileInfo( fileName );
-      QString aPossibleType = (aFileInfo.suffix()).toUpper() ;
+  QStringList errors;
 
-      if ( (aMap.values()).contains(aPossibleType) )
-	fileType = aPossibleType;
-    }
+  QList< GEOM::GEOM_Object_var > objsForDisplay;
+  
+  // iterate through all selected files
+  for ( QStringList::ConstIterator it = fileNames.begin(); it != fileNames.end(); ++it ) {
+    QString fileName = *it;
 
-  if (fileType.isEmpty())
-    return false;
+    if ( fileName.isEmpty() )
+      continue;
 
-  GEOM_Operation* anOp = new GEOM_Operation (app, aInsOp.in());
-  try {
-    SUIT_OverrideCursor wc;
-
-    app->putInfo(tr("GEOM_PRP_LOADING").arg(SUIT_Tools::file(fileName, /*withExten=*/true)));
-
-    anOp->start();
-
-    CORBA::String_var fileN = CORBA::string_dup(fileName.toLatin1().data());
-    CORBA::String_var fileT = CORBA::string_dup(fileType.toLatin1().data());
-    anObj = aInsOp->Import(fileN, fileT);
-
-    if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
-      QString aPublishObjName =
-        GEOMBase::GetDefaultName(SUIT_Tools::file(fileName, /*withExten=*/true));
-
-      SALOMEDS::Study_var aDSStudy = GeometryGUI::ClientStudyToStudy(aStudy);
-      GeometryGUI::GetGeomGen()->PublishInStudy(aDSStudy,
-						SALOMEDS::SObject::_nil(),
-						anObj,
-						aPublishObjName.toStdString().c_str());
-
-      GEOM_Displayer( stud ).Display( anObj.in() );
-
-      // update data model and object browser
-      getGeometryGUI()->updateObjBrowser( true );
-
-      anOp->commit();
+    QString aCurrentType;
+    if ( fileType.isEmpty() ) {
+      // file type is not defined, try to detect
+      QString ext = QFileInfo( fileName ).suffix().toUpper();
+      QRegExp re( "\\*\\.(\\w+)" );
+      for ( FilterMap::const_iterator it = aMap.begin(); 
+	    it != aMap.end() && aCurrentType.isEmpty(); ++it ) {
+	int pos = 0;
+	while ( re.indexIn( it.key(), pos ) >= 0 ) {
+	  QString f = re.cap(1).trimmed().toUpper();
+	  if ( ext == f ) { aCurrentType = it.value(); break; }
+	  pos = re.pos() + re.cap(1).length() + 2;
+	}
+      }
     }
     else {
+      aCurrentType = fileType;
+    }
+
+    if ( aCurrentType.isEmpty() ) {
+      errors.append( QString( "%1 : %2" ).arg( fileName ).arg( tr( "GEOM_UNSUPPORTED_TYPE" ) ) );
+      continue;
+    }
+
+    GEOM_Operation* anOp = new GEOM_Operation( app, aInsOp.in() );
+    try {
+      app->putInfo( tr( "GEOM_PRP_LOADING" ).arg( SUIT_Tools::file( fileName, /*withExten=*/true ) ) );
+      anOp->start();
+
+      CORBA::String_var fileN = fileName.toLatin1().constData();
+      CORBA::String_var fileT = aCurrentType.toLatin1().constData();
+      GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, fileT );
+
+      if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
+	QString aPublishObjName = 
+	  GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, /*withExten=*/true ) );
+	
+	SALOMEDS::Study_var aDSStudy = GeometryGUI::ClientStudyToStudy( aStudy );
+	GeometryGUI::GetGeomGen()->PublishInStudy( aDSStudy,
+						   SALOMEDS::SObject::_nil(),
+						   anObj,
+						   aPublishObjName.toLatin1().constData() );
+
+	objsForDisplay.append( anObj );
+	
+	anOp->commit();
+      }
+      else {
+	anOp->abort();
+	errors.append( QString( "%1 : %2" ).arg( fileName ).arg( aInsOp->GetErrorCode() ) );
+      }
+    }
+    catch( const SALOME::SALOME_Exception& S_ex ) {
       anOp->abort();
-      wc.suspend();
-      SUIT_MessageBox::critical( app->desktop(),
-				 QObject::tr( "GEOM_ERROR" ),
-				 QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ),
-				 QObject::tr("BUT_OK") );
+      errors.append( QString( "%1 : %2" ).arg( fileName ).arg( tr( "GEOM_UNKNOWN_IMPORT_ERROR" ) ) );
     }
   }
-  catch( const SALOME::SALOME_Exception& S_ex ) {
-    //QtCatchCorbaException(S_ex);
-    anOp->abort();
-    return false;
+
+  // update object browser
+  getGeometryGUI()->updateObjBrowser( true );
+
+  // display imported model (if only one file is selected)
+  if ( objsForDisplay.count() == 1 )
+    GEOM_Displayer( stud ).Display( objsForDisplay[0].in() );
+
+  if ( errors.count() > 0 ) {
+    SUIT_MessageBox::critical( app->desktop(),
+			       QObject::tr( "GEOM_ERROR" ),
+			       QObject::tr( "GEOM_IMPORT_ERRORS" ) + "\n" + errors.join( "\n" ) );
   }
 
   app->updateActions(); //SRN: To update a Save button in the toolbar
 
-  return true;
+  return objsForDisplay.count() > 0;
 }
 
 
@@ -661,7 +758,7 @@ bool GEOMToolsGUI::Export()
 
   SalomeApp_Study* stud = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
   if ( !stud ) {
-    cout << "FAILED to cast active study to SalomeApp_Study" << endl;
+    MESSAGE ( "FAILED to cast active study to SalomeApp_Study" );
     return false;
   }
   _PTR(Study) aStudy = stud->studyDS();
@@ -670,8 +767,7 @@ bool GEOMToolsGUI::Export()
   if ( CORBA::is_nil( eng ) ) {
     SUIT_MessageBox::critical( app->desktop(),
 			       QObject::tr("WRN_WARNING"),
-			       QObject::tr( "GEOM Engine is not started" ),
-			       QObject::tr("BUT_OK") );
+			       QObject::tr( "GEOM Engine is not started" ) );
     return false;
   }
 
@@ -708,7 +804,7 @@ bool GEOMToolsGUI::Export()
 
     QString fileType;
     QString file = getFileName(app->desktop(), QString( IObject->getName() ), aMap, filters,
-			       tr("GEOM_MEN_EXPORT"), false, fileType);
+			       tr("GEOM_MEN_EXPORT"), false, fileType, true);
 
     // User has pressed "Cancel" --> stop the operation
     if ( file.isEmpty() || fileType.isEmpty() )
@@ -733,8 +829,7 @@ bool GEOMToolsGUI::Export()
 	  wc.suspend();
 	  SUIT_MessageBox::critical( app->desktop(),
 				     QObject::tr( "GEOM_ERROR" ),
-				     QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ),
-				     QObject::tr("BUT_OK") );
+				     QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ) );
 	  return false;
 	}
     }

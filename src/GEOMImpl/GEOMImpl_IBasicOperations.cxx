@@ -231,6 +231,64 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
   return aPoint;
 }
 
+
+//=============================================================================
+/*!
+ *  MakePointOnSurface
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnSurface
+   (Handle(GEOM_Object) theSurface, double theUParameter, double theVParameter)
+{
+  SetErrorCode(KO);
+
+  if (theSurface.IsNull()) return NULL;
+
+  //Add a new Point object
+  Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GetDocID(), GEOM_POINT);
+
+  //Add a new Point function for creation a point relativley another point
+  Handle(GEOM_Function) aFunction = aPoint->AddFunction(GEOMImpl_PointDriver::GetID(),
+                                                        POINT_SURFACE_PAR);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PointDriver::GetID()) return NULL;
+
+  GEOMImpl_IPoint aPI (aFunction);
+
+  Handle(GEOM_Function) aRefFunction = theSurface->GetLastFunction();
+  if (aRefFunction.IsNull()) return NULL;
+
+  aPI.SetSurface(aRefFunction);
+  aPI.SetParameter(theUParameter);
+  aPI.SetParameter2(theVParameter);
+
+  //Compute the point value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Point driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnSurface("
+                               << theSurface << ", " << theUParameter 
+                               << ", " << theVParameter << ")";
+
+  SetErrorCode(OK);
+  return aPoint;
+}
+
+
 //=============================================================================
 /*!
  *  MakePointOnLinesIntersection

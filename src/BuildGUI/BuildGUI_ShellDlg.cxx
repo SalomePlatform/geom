@@ -105,7 +105,12 @@ void BuildGUI_ShellDlg::Init()
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_SHELL );
   aMap.Add( GEOM_FACE );
-  globalSelection( aMap );
+  aMap.Add( GEOM_COMPOUNDFILTER );
+  
+  QList<int> aSubShapes;
+  aSubShapes.append( GEOM_FACE );
+  globalSelection( aMap, aSubShapes );
+  
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
@@ -183,7 +188,12 @@ void BuildGUI_ShellDlg::SetEditCurrentArgument()
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_SHELL );
   aMap.Add( GEOM_FACE );
-  globalSelection( aMap );
+  aMap.Add( GEOM_COMPOUNDFILTER );
+
+  QList<int> aSubShapes;
+  aSubShapes.append( GEOM_FACE );
+  globalSelection( aMap, aSubShapes );
+  
   myEditCurrentArgument = GroupShell->LineEdit1;
 
   myEditCurrentArgument->setFocus();
@@ -203,7 +213,11 @@ void BuildGUI_ShellDlg::ActivateThisDialog()
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_SHELL );
   aMap.Add( GEOM_FACE );
-  globalSelection( aMap );
+  aMap.Add( GEOM_COMPOUNDFILTER );
+  
+  QList<int> aSubShapes;
+  aSubShapes.append( GEOM_FACE );
+  globalSelection( aMap, aSubShapes );
 }
 
 

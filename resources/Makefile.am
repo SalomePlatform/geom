@@ -114,6 +114,7 @@ planeworkingvector.png \
 planeworkingorigin.png \
 point2.png \
 pointonedge.png \
+pointonface.png \
 point_line_intersection.png \
 polyline.png \
 prism.png \
@@ -122,10 +123,12 @@ revol.png \
 rotate.png \
 rotatepnt.png \
 scale.png \
+scale_along_axes.png \
 section.png \
 select1.png \
 sewing.png \
 shading.png \
+shapesonshape.png \
 sketch.png \
 sphere.png \
 spheredxyz.png \

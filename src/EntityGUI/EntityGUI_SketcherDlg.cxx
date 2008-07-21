@@ -1413,7 +1413,9 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
                                             const bool            append,
                                             const bool            activate,
                                             const bool            update,
-                                            const double          lineWidth )
+                                            const double          lineWidth,
+                                            const int             displayMode,
+                                            const int             color )
 {
   // Set color for preview shape
   getDisplayer()->SetColor( Quantity_NOC_RED );

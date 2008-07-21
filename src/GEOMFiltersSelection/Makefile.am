@@ -37,7 +37,8 @@ salomeinclude_HEADERS = 	\
 	GEOM_TypeFilter.h	\
 	GEOM_PreviewFilter.h	\
 	GEOM_LogicalFilter.h	\
-	GEOM_OCCFilter.h
+	GEOM_OCCFilter.h	\
+	GEOM_CompoundFilter.h
 
 # Sources
 dist_libGEOMFiltersSelection_la_SOURCES = \
@@ -47,7 +48,8 @@ dist_libGEOMFiltersSelection_la_SOURCES = \
 	GEOM_TypeFilter.cxx		\
         GEOM_PreviewFilter.cxx		\
 	GEOM_LogicalFilter.cxx		\
-	GEOM_OCCFilter.cxx
+	GEOM_OCCFilter.cxx		\
+	GEOM_CompoundFilter.cxx
 
 # LIB_CLIENT_IDL= GEOM_Gen.idl SALOMEDS.idl SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
 

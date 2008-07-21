@@ -26,6 +26,7 @@
 #include <GEOM_Function.hxx>
 
 #include <BRepBuilderAPI_Transform.hxx>
+#include <BRepBuilderAPI_GTransform.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAlgo.hxx>
 #include <TopAbs.hxx>
@@ -37,6 +38,8 @@
 
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
+#include <gp_Trsf.hxx>
+#include <gp_GTrsf.hxx>
 
 //=======================================================================
 //function : GetID
@@ -73,11 +76,17 @@ Standard_Integer GEOMImpl_ScaleDriver::Execute(TFunction_Logbook& log) const
 
   if (aType == SCALE_SHAPE || aType == SCALE_SHAPE_COPY) {
     Handle(GEOM_Function) aRefShape = aCI.GetShape();
-    Handle(GEOM_Function) aRefPoint = aCI.GetPoint();
     TopoDS_Shape aShapeBase = aRefShape->GetValue();
-    TopoDS_Shape aShapePnt  = aRefPoint->GetValue();
-    if (aShapeBase.IsNull() || aShapePnt.IsNull()) return 0;
-    if (aShapePnt.ShapeType() != TopAbs_VERTEX) return 0;
+    if (aShapeBase.IsNull()) return 0;
+
+    gp_Pnt aP (0,0,0);
+    Handle(GEOM_Function) aRefPoint = aCI.GetPoint();
+    if (!aRefPoint.IsNull()) {
+      TopoDS_Shape aShapePnt = aRefPoint->GetValue();
+      if (aShapePnt.IsNull()) return 0;
+      if (aShapePnt.ShapeType() != TopAbs_VERTEX) return 0;
+      aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+    }
 
     // Bug 6839: Check for standalone (not included in faces) degenerated edges
     TopTools_IndexedDataMapOfShapeListOfShape aEFMap;
@@ -94,12 +103,67 @@ Standard_Integer GEOMImpl_ScaleDriver::Execute(TFunction_Logbook& log) const
     }
 
     // Perform Scaling
-    gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
     gp_Trsf aTrsf;
     aTrsf.SetScale(aP, aCI.GetFactor());
     BRepBuilderAPI_Transform aBRepTrsf (aShapeBase, aTrsf, Standard_False);
     aShape = aBRepTrsf.Shape();
-  } else {
+  }
+  else if (aType == SCALE_SHAPE_AXES || aType == SCALE_SHAPE_AXES_COPY) {
+    Handle(GEOM_Function) aRefShape = aCI.GetShape();
+    TopoDS_Shape aShapeBase = aRefShape->GetValue();
+    if (aShapeBase.IsNull()) return 0;
+
+    bool isP = false;
+    gp_Pnt aP (0,0,0);
+    Handle(GEOM_Function) aRefPoint = aCI.GetPoint();
+    if (!aRefPoint.IsNull()) {
+      TopoDS_Shape aShapePnt = aRefPoint->GetValue();
+      if (aShapePnt.IsNull()) return 0;
+      if (aShapePnt.ShapeType() != TopAbs_VERTEX) return 0;
+      aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+      isP = true;
+    }
+
+    // Bug 6839: Check for standalone (not included in faces) degenerated edges
+    TopTools_IndexedDataMapOfShapeListOfShape aEFMap;
+    TopExp::MapShapesAndAncestors(aShapeBase, TopAbs_EDGE, TopAbs_FACE, aEFMap);
+    Standard_Integer i, nbE = aEFMap.Extent();
+    for (i = 1; i <= nbE; i++) {
+      TopoDS_Shape anEdgeSh = aEFMap.FindKey(i);
+      if (BRep_Tool::Degenerated(TopoDS::Edge(anEdgeSh))) {
+        const TopTools_ListOfShape& aFaces = aEFMap.FindFromIndex(i);
+        if (aFaces.IsEmpty())
+          Standard_ConstructionError::Raise
+            ("Scaling aborted : cannot scale standalone degenerated edge");
+      }
+    }
+
+    // Perform Scaling
+    gp_GTrsf aGTrsf;
+    gp_Mat rot (aCI.GetFactorX(), 0, 0,
+                0, aCI.GetFactorY(), 0,
+                0, 0, aCI.GetFactorZ());
+    aGTrsf.SetVectorialPart(rot);
+
+    if (isP) {
+      gp_Pnt anO (0,0,0);
+      if (anO.Distance(aP) > Precision::Confusion()) {
+        gp_GTrsf aGTrsfP0;
+        aGTrsfP0.SetTranslationPart(anO.XYZ() - aP.XYZ());
+        gp_GTrsf aGTrsf0P;
+        aGTrsf0P.SetTranslationPart(aP.XYZ());
+        //aGTrsf = aGTrsf0P * aGTrsf * aGTrsfP0;
+        aGTrsf = aGTrsf0P.Multiplied(aGTrsf);
+        aGTrsf = aGTrsf.Multiplied(aGTrsfP0);
+      }
+    }
+
+    BRepBuilderAPI_GTransform aBRepGTrsf (aShapeBase, aGTrsf, Standard_False);
+    if (!aBRepGTrsf.IsDone())
+      Standard_ConstructionError::Raise("Scaling not done");
+    aShape = aBRepGTrsf.Shape();
+  }
+  else {
   }
 
   if (aShape.IsNull()) return 0;

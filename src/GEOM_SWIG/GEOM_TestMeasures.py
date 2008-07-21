@@ -152,6 +152,13 @@ def TestMeasureOperations (geompy, math):
   if math.fabs(Angle - 45.0) > 1e-05:
     print "  Error: returned angle is", Angle, "while must be 45.0"
 
+  Angle = geompy.GetAngleRadians(OX, OXY)
+
+  print "\nAngle between OX and OXY in radians = ", Angle
+  if math.fabs(Angle - math.pi/4) > 1e-05:
+    print "  Error: returned angle is", Angle, "while must be pi/4"
+    pass
+
   # not in one plane
   OXY_shift = geompy.MakeTranslation(OXY,10,-10,20)
   Angle = geompy.GetAngle(OX, OXY_shift)

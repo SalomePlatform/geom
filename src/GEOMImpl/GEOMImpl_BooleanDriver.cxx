@@ -38,6 +38,9 @@
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <Precision.hxx>
+#include <BRepCheck_Analyzer.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
+#include <ShapeFix_Shape.hxx>
 
 #include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
@@ -405,9 +408,24 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
   }
 
   if (aShape.IsNull()) return 0;
-  if (!BRepAlgo::IsValid(aShape)) {
-    Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
+
+  // 08.07.2008 skl for bug 19761 from Mantis
+  BRepCheck_Analyzer ana (aShape, Standard_True);
+  ana.Init(aShape);
+  if (!ana.IsValid()) {
+    ShapeFix_ShapeTolerance aSFT;
+    aSFT.LimitTolerance(aShape, Precision::Confusion(),
+                        Precision::Confusion(), TopAbs_SHAPE);
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+    aSfs->Perform();
+    aShape = aSfs->Shape();
+    ana.Init(aShape);
+    if (!ana.IsValid())
+      Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
   }
+  //if (!BRepAlgo::IsValid(aShape)) {
+  //  Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
+  //}
 
   aFunction->SetValue(aShape);
 

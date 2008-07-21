@@ -26,16 +26,19 @@
 #ifndef GEOMTOOLSGUI_TRANSPARENCYDLG_H
 #define GEOMTOOLSGUI_TRANSPARENCYDLG_H
 
+#include "GEOM_ToolsGUI.hxx"
+
 #include <QDialog>
 
 class QSlider;
+class QLabel;
 
 //=================================================================================
 // class    : GEOMBase_TransparencyDlg
 // purpose  :
 //          : WARNING : that is a MODAL dialog.
 //=================================================================================
-class GEOMToolsGUI_TransparencyDlg : public QDialog
+class GEOMTOOLSGUI_EXPORT GEOMToolsGUI_TransparencyDlg : public QDialog
 { 
   Q_OBJECT
 
@@ -49,13 +52,15 @@ private:
 private:
   bool      myFirstInit;   /* Inform for the first init  */
   QSlider*  mySlider; 
+  QLabel*   myValueLab;
   QString   myHelpFileName;
 
 private slots: 
   void      ClickOnOk();
   void      ClickOnClose();
   void      ClickOnHelp();
-  void      ValueHasChanged( int ) ;
+  void      ValueHasChanged();
+  void      SetTransparency();
 };
 
 #endif // GEOMTOOLSGUI_TRANSPARENCYDLG_H

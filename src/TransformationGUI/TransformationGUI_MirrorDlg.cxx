@@ -117,6 +117,8 @@ void TransformationGUI_MirrorDlg::Init()
   GroupPoints->CheckButton1->setChecked( true );
   CreateCopyModeChanged( true );
 
+  mainFrame()->GroupBoxPublish->show();
+
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
@@ -384,14 +386,16 @@ bool  TransformationGUI_MirrorDlg::execute( ObjectList& objects )
     {
       if ( toCreateCopy ) {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MirrorPointCopy( myObjects[i], myArgument );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+	    MirrorPointCopy( myObjects[i], myArgument );
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
 	}
       }
       else {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MirrorPoint( myObjects[i], myArgument );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+	    MirrorPoint( myObjects[i], myArgument );
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
 	}
@@ -403,14 +407,16 @@ bool  TransformationGUI_MirrorDlg::execute( ObjectList& objects )
     {
       if ( toCreateCopy ) {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MirrorAxisCopy( myObjects[i], myArgument );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+	    MirrorAxisCopy( myObjects[i], myArgument );
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
 	}
       }
       else {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->MirrorAxis( myObjects[i], myArgument );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+	    MirrorAxis( myObjects[i], myArgument );
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
 	}
@@ -440,6 +446,21 @@ bool  TransformationGUI_MirrorDlg::execute( ObjectList& objects )
   }
   
   return res;
+}
+
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void TransformationGUI_MirrorDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
+                                                    SALOMEDS::SObject_ptr theSObject )
+{
+  if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
+					 /*theFindMethod=*/GEOM::FSM_Transformed,
+					 /*theInheritFirstArg=*/true );
+  }
 }
 
 //=================================================================================

@@ -149,7 +149,7 @@ public:
   void         LocalSelection( const Handle(SALOME_InteractiveObject)&, const int );
   void         LocalSelection( const SALOME_ListIO& theIOList, const int );
   void         GlobalSelection( const int = GEOM_ALLOBJECTS, const bool = false );
-  void         GlobalSelection( const TColStd_MapOfInteger&, const bool = false );
+  void         GlobalSelection( const TColStd_MapOfInteger&, const bool = false, const QList<int>* = 0 );
 
   SalomeApp_Study* getStudy() const;
 
@@ -172,6 +172,7 @@ protected:
   void        clearTemporary( LightApp_SelectionMgr* theSelMgr );
 
   SUIT_SelectionFilter* getFilter( const int theMode );
+  SUIT_SelectionFilter* getComplexFilter( const QList<int>* );
 
 protected:
   Handle(SALOME_InteractiveObject) myIO;

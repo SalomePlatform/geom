@@ -26,6 +26,8 @@
 #ifndef GEOMTOOLSGUI_NBISOSDLG_H
 #define GEOMTOOLSGUI_NBISOSDLG_H
 
+#include "GEOM_ToolsGUI.hxx"
+
 #include <QDialog>
 
 class QSpinBox;
@@ -34,7 +36,7 @@ class QSpinBox;
 // class    : GEOMToolsGUI_NbIsosDlg
 // purpose  :
 //=================================================================================
-class GEOMToolsGUI_NbIsosDlg : public QDialog
+class GEOMTOOLSGUI_EXPORT GEOMToolsGUI_NbIsosDlg : public QDialog
 { 
   Q_OBJECT
 

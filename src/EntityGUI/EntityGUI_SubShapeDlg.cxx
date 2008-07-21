@@ -220,6 +220,7 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
   if ( !GEOMBase::GetTopoFromSelection( selectedIO(), S ) ||
        S.IsNull() ||
        S.ShapeType() == TopAbs_VERTEX ) {
+    myObject = GEOM::GEOM_Object::_nil();
     updateButtonState();
     return;
   }
@@ -520,9 +521,8 @@ GEOM::GEOM_IOperations_ptr EntityGUI_SubShapeDlg::createOperation()
 bool EntityGUI_SubShapeDlg::isValid( QString& msg )
 {
   bool isOk = false;
-  Handle(SALOME_InteractiveObject) IO = firstIObject();
-  Standard_Boolean testResult;
-  myObject = GEOMBase::ConvertIOinGEOMObject( IO, testResult );
+  Standard_Boolean testResult;  
+  GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
   if ( !testResult || myObject->_is_nil() )  {
     updateButtonState();
     return isOk;
@@ -531,11 +531,7 @@ bool EntityGUI_SubShapeDlg::isValid( QString& msg )
     if ( isAllSubShapes() )
       isOk = true;
     else if ( IObjectCount() == 1 ) {
-      Standard_Boolean aResult = Standard_False;
-      GEOM::GEOM_Object_var anObj =
-	GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
-      
-      if ( aResult && !anObj->_is_nil() ) {
+     if ( testResult && !anObj->_is_nil() ) {
 	TColStd_IndexedMapOfInteger aMapIndex;
 	myGeomGUI->getApp()->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
 	isOk = aMapIndex.Extent() > 0;

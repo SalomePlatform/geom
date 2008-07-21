@@ -98,6 +98,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     gp_Dir aDir(gp_Vec(aP1, aP2));
     gp_Ax1 anAx1(aP1, aDir);
     Standard_Real anAngle = RI.GetAngle();
+    if (fabs(anAngle) < Precision::Angular()) anAngle += 2*PI; // NPAL19665,19769
     aTrsf.SetRotation(anAx1, anAngle);
 
     //NPAL18620: performance problem: multiple locations are accumulated
@@ -125,11 +126,12 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     aP1 = BRep_Tool::Pnt(TopoDS::Vertex(aV1));
     aP2 = BRep_Tool::Pnt(TopoDS::Vertex(aV2));
 
-    gp_Vec aVec1(aCP, aP1);
-    gp_Vec aVec2(aCP, aP2);
-    gp_Dir aDir(aVec1 ^ aVec2);
-    gp_Ax1 anAx1(aCP, aDir);
+    gp_Vec aVec1 (aCP, aP1);
+    gp_Vec aVec2 (aCP, aP2);
+    gp_Dir aDir (aVec1 ^ aVec2);
+    gp_Ax1 anAx1 (aCP, aDir);
     Standard_Real anAngle = aVec1.Angle(aVec2);
+    if (fabs(anAngle) < Precision::Angular()) anAngle += 2*PI; // NPAL19665
     aTrsf.SetRotation(anAx1, anAngle);
     //NPAL18620: performance problem: multiple locations are accumulated
     //           in shape and need a great time to process
@@ -165,20 +167,23 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     gp_Trsf aTrsfOrig = aLocOrig.Transformation();
 
     for (int i = 0; i < nbtimes; i++ ) {
-      aTrsf.SetRotation(AX1, i*angle*PI180);
+      if (i == 0) { // NPAL19665
+        B.Add(aCompound, anOriginal);
+      }
+      else {
+        aTrsf.SetRotation(AX1, i*angle*PI180);
+        TopLoc_Location aLocRes (aTrsf * aTrsfOrig);
+        B.Add(aCompound, anOriginal.Located(aLocRes));
+      }
       //NPAL18620: performance problem: multiple locations are accumulated
       //           in shape and need a great time to process
       //BRepBuilderAPI_Transform aBRepTransformation(anOriginal, aTrsf, Standard_False);
       //B.Add(aCompound, aBRepTransformation.Shape());
-      TopLoc_Location aLocRes (aTrsf * aTrsfOrig);
-      B.Add(aCompound, anOriginal.Located(aLocRes));
     }
 
     aShape = aCompound;
   }
   else if (aType == ROTATE_2D) {
-    Standard_Real DX, DY, DZ;
-
     //Get direction
     Handle(GEOM_Function) anAxis = RI.GetAxis();
     if(anAxis.IsNull()) return 0;
@@ -219,7 +224,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
 
     if ( P1.IsEqual(P2, Precision::Confusion() ) ) return 0;
 
-    gp_Vec Vec(P1.X()-P2.X(), P1.Y()-P2.Y(), P1.Z()-P2.Z());
+    gp_Vec Vec (P1.X()-P2.X(), P1.Y()-P2.Y(), P1.Z()-P2.Z());
     Vec.Normalize();
 
     Standard_Integer nbtimes2 = RI.GetNbIter2();
@@ -234,21 +239,31 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     TopoDS_Compound aCompound;
     BRep_Builder B;
     B.MakeCompound( aCompound );
+
+    Standard_Real DX, DY, DZ;
+
     for (int i = 0; i < nbtimes2; i++ ) {
+      DX = i * step * Vec.X();
+      DY = i * step * Vec.Y();
+      DZ = i * step * Vec.Z();
+      aVec.SetCoord( DX, DY, DZ );
+      aTrsf1.SetTranslation(aVec);
+
       for (int j = 0; j < nbtimes1; j++ ) {
-        DX = i * step * Vec.X();
-        DY = i * step * Vec.Y();
-        DZ = i * step * Vec.Z();
-        aVec.SetCoord( DX, DY, DZ );
-        aTrsf1.SetTranslation(aVec);
-        aTrsf2.SetRotation(AX1, j*ang*PI180);
+        if (j == 0) { // NPAL19665
+          TopLoc_Location aLocRes (aTrsf1 * aTrsfOrig);
+          B.Add(aCompound, anOriginal.Located(aLocRes));
+        }
+        else {
+          aTrsf2.SetRotation(AX1, j*ang*PI180);
+          TopLoc_Location aLocRes (aTrsf2 * aTrsf1 * aTrsfOrig);
+          B.Add(aCompound, anOriginal.Located(aLocRes));
+        }
         //NPAL18620: performance problem: multiple locations are accumulated
         //           in shape and need a great time to process
         //BRepBuilderAPI_Transform aBRepTrsf1 (anOriginal, aTrsf1, Standard_False);
         //BRepBuilderAPI_Transform aBRepTrsf2 (aBRepTrsf1.Shape(), aTrsf2, Standard_False);
         //B.Add(aCompound, aBRepTrsf2.Shape());
-        TopLoc_Location aLocRes (aTrsf2 * aTrsf1 * aTrsfOrig);
-        B.Add(aCompound, anOriginal.Located(aLocRes));
       }
     }
 

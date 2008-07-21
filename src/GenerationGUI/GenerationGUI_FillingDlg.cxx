@@ -107,7 +107,7 @@ void GenerationGUI_FillingDlg::Init()
   myMaxDeg = 5;
   myTol3D = 0.0001;
   myTol2D = 0.0001;
-  myNbIter = 5;
+  myNbIter = 0;
   myIsApprox = false;
   myOkCompound = false;
 
@@ -118,7 +118,7 @@ void GenerationGUI_FillingDlg::Init()
   /* min, max, step and decimals for spin boxes & initial values */
   initSpinBox( GroupPoints->SpinBox1, 2.0, MAX_NUMBER,  SpecificStep1, 3 );
   initSpinBox( GroupPoints->SpinBox2, 0.00001, 10000.0, SpecificStep2, 5 );
-  initSpinBox( GroupPoints->SpinBox3, 1.0, MAX_NUMBER,  SpecificStep1, 3 );
+  initSpinBox( GroupPoints->SpinBox3, 0.0, MAX_NUMBER,  SpecificStep1, 3 );
   initSpinBox( GroupPoints->SpinBox4, 1.0, MAX_NUMBER,  SpecificStep1, 3 );
   initSpinBox( GroupPoints->SpinBox5, 0.00001, 10000.0, SpecificStep2, 5 );
 

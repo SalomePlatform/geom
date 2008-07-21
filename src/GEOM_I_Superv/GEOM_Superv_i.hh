@@ -314,6 +314,10 @@ public:
 					 GEOM::GEOM_Object_ptr theVector);
   GEOM::GEOM_Object_ptr TranslateVectorCopy (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr theVector);
+  GEOM::GEOM_Object_ptr TranslateVectorDistance (GEOM::GEOM_Object_ptr theObject,
+						 GEOM::GEOM_Object_ptr theVector,
+						 CORBA::Double theDistance,
+						 CORBA::Boolean theCopy);
   GEOM::GEOM_Object_ptr MultiTranslate1D (GEOM::GEOM_Object_ptr theObject,
 					  GEOM::GEOM_Object_ptr theVector,
 					  CORBA::Double theStep,
@@ -373,6 +377,16 @@ public:
   GEOM::GEOM_Object_ptr ScaleShapeCopy (GEOM::GEOM_Object_ptr theObject, 
 					GEOM::GEOM_Object_ptr thePoint,
 					CORBA::Double theFactor);
+  GEOM::GEOM_Object_ptr ScaleShapeAlongAxes (GEOM::GEOM_Object_ptr theObject,
+					     GEOM::GEOM_Object_ptr thePoint,
+					     CORBA::Double theFactorX,
+					     CORBA::Double theFactorY,
+					     CORBA::Double theFactorZ);
+  GEOM::GEOM_Object_ptr ScaleShapeAlongAxesCopy (GEOM::GEOM_Object_ptr theObject,
+						 GEOM::GEOM_Object_ptr thePoint,
+						 CORBA::Double theFactorX,
+						 CORBA::Double theFactorY,
+						 CORBA::Double theFactorZ);
   GEOM::GEOM_Object_ptr PositionShape (GEOM::GEOM_Object_ptr theObject,
 				       GEOM::GEOM_Object_ptr theStartLCS,
 				       GEOM::GEOM_Object_ptr theEndLCS);
@@ -409,6 +423,17 @@ public:
   CORBA::Long NumberOfFaces (GEOM::GEOM_Object_ptr theShape);
   CORBA::Long NumberOfEdges (GEOM::GEOM_Object_ptr theShape);
   GEOM::GEOM_Object_ptr ChangeOrientation (GEOM::GEOM_Object_ptr theShape);
+
+  GEOM::GEOM_List_ptr GetShapesOnShape (GEOM::GEOM_Object_ptr theCheckShape,
+  					GEOM::GEOM_Object_ptr theShape,
+  					CORBA::Short theShapeType,
+  					GEOM::shape_state theState);
+  GEOM::GEOM_Object_ptr GetShapesOnShapeAsCompound
+                                       (GEOM::GEOM_Object_ptr theCheckShape,
+  					GEOM::GEOM_Object_ptr theShape,
+  					CORBA::Short theShapeType,
+  					GEOM::shape_state theState);
+
 
   //-----------------------------------------------------------//
   // BlocksOperations                                          //

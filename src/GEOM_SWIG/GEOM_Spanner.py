@@ -16,7 +16,7 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 #
 #
@@ -24,6 +24,11 @@
 #  Author : Julia DOROVSKIKH
 #  Module : GEOM
 #  $Header$
+
+# ! Please, if you edit this example file, update also
+# ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_spanner.doc
+# ! as some sequences of symbols from this example are used during
+# ! documentation generation to identify certain places of this file
 
 ############# MakeSpanner #############
 
@@ -400,8 +405,8 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
     print algoReg.GetName()
     print algoReg.GetId()
     algoReg.SetName("Regular_1D")
-      
-      
+
+
     hypNbSeg3 = algoReg.NumberOfSegments(3)
     print hypNbSeg3.GetName()
     print hypNbSeg3.GetId()
@@ -419,7 +424,7 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
     algoQuad.SetName("Quadrangle_2D")
 
     print "-------------------------- add hypothesis to the Middle Block"
-    
+
     print "-------------------------- LocalLength"
     algoRegMb = mesh.Segment(BlockMh)
     hypLen1 = algoRegMb.LocalLength(10)
@@ -436,14 +441,14 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
     print hypPropE1.GetId()
     smesh.SetName(hypPropE1, "Propagation hypothesis")
     smesh.SetName(algoRegE1.GetSubMesh(), "SubMesh Edge 1 of Top Face")
-    
+
     algoRegE2 = mesh.Segment(Edge2)
     hypPropE2 = algoRegE2.Propagation()
     print hypPropE2.GetName()
     print hypPropE2.GetId()
     smesh.SetName(hypPropE2, "Propagation hypothesis")
     smesh.SetName(algoRegE2.GetSubMesh(), "SubMesh Edge 2 of Top Face")
-    
+
     print "-------------------------- compute the mesh"
     mesh.Compute()
 

@@ -46,6 +46,9 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
+#include <ShapeFix_ShapeTolerance.hxx>
+#include <ShapeFix_Shape.hxx>
+
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <Standard_NullObject.hxx>
@@ -258,7 +261,15 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   if (aShape.IsNull()) return 0;
 
   if (!BRepAlgo::IsValid(aShape)) {
-    Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
+    // 08.07.2008 added by skl during fixing bug 19761 from Mantis
+    ShapeFix_ShapeTolerance aSFT;
+    aSFT.LimitTolerance(aShape, Precision::Confusion(),
+                        Precision::Confusion(), TopAbs_SHAPE);
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+    aSfs->Perform();
+    aShape = aSfs->Shape();
+    if (!BRepAlgo::IsValid(aShape))
+      Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
   }
 
   aFunction->SetValue(aShape);

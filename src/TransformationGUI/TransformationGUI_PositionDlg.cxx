@@ -119,6 +119,8 @@ void TransformationGUI_PositionDlg::Init()
   Group1->CheckBox1->setChecked( true );
   CreateCopyModeChanged( true );
 
+  mainFrame()->GroupBoxPublish->show();
+
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
@@ -379,9 +381,11 @@ bool TransformationGUI_PositionDlg::execute( ObjectList& objects )
     {
       for ( int i = 0; i < myObjects.length(); i++ ) {
 	if ( toCreateCopy )
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->PositionShapeCopy( myObjects[i], myObjects[i], myEndLCS );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+	    PositionShapeCopy( myObjects[i], myObjects[i], myEndLCS );
 	else
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->PositionShape( myObjects[i], myObjects[i], myEndLCS );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+	    PositionShape( myObjects[i], myObjects[i], myEndLCS );
 	
 	if ( !anObj->_is_nil() )
 	  objects.push_back( anObj._retn() );
@@ -393,9 +397,11 @@ bool TransformationGUI_PositionDlg::execute( ObjectList& objects )
     {
       for ( int i = 0; i < myObjects.length(); i++ ) {
 	if ( toCreateCopy )
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->PositionShapeCopy( myObjects[i], myStartLCS, myEndLCS );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+	    PositionShapeCopy( myObjects[i], myStartLCS, myEndLCS );
 	else
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->PositionShape( myObjects[i], myStartLCS, myEndLCS );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+	    PositionShape( myObjects[i], myStartLCS, myEndLCS );
 	if ( !anObj->_is_nil() )
 	  objects.push_back( anObj._retn() );
       }
@@ -407,6 +413,20 @@ bool TransformationGUI_PositionDlg::execute( ObjectList& objects )
   return res;
 }
 
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void TransformationGUI_PositionDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
+                                                      SALOMEDS::SObject_ptr theSObject )
+{
+  if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
+					 /*theFindMethod=*/GEOM::FSM_Transformed,
+					 /*theInheritFirstArg=*/true );
+  }
+}
 
 //=================================================================================
 // function :  CreateCopyModeChanged()

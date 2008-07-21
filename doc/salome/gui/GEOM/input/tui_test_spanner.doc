@@ -1,0 +1,41 @@
+/*!
+
+\page tui_test_spanner_page GEOM_Spanner.py
+
+\anchor swig_Spanner
+<br><h2>GEOM_Spanner.py</h2>
+
+\dontinclude GEOM_Spanner.py
+\skipline def MakeSpanner
+
+\until vxy
+
+\anchor swig_MakeQuad4Vertices
+\until id_face11
+
+\anchor swig_MakeTranslationTwoPoints
+\until id_face12
+
+\anchor swig_MakeHexa2Faces
+\until id_block1
+
+\until p_15_10_1
+
+\anchor swig_GetFaceNearPoint
+\until id_face31
+
+\until not a hexahedral
+
+\anchor swig_SubShapeAllSorted
+\until ii + 1
+
+\anchor swig_MakeHexa
+\until id_block3
+
+\anchor swig_GetOppositeFace
+\until id_face41
+
+\anchor spanner_continue
+\until return Spanner
+
+*/

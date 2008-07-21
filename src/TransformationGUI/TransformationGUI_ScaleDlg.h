@@ -30,8 +30,13 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_2Sel1Spin2Check;  
-  
+class QCheckBox;
+class QGroupBox;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QtxDoubleSpinBox;
+
 //=================================================================================
 // class    : TransformationGUI_ScaleDlg
 // purpose  :
@@ -51,17 +56,30 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
   virtual void                       addSubshapesToStudy();
+  virtual void                       restoreSubShapes( SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr );
 
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
-  double                             GetFactor() const;
 
 private:
   GEOM::ListOfGO                     myObjects;
   GEOM::GEOM_Object_var              myPoint;   /* Central Point */
     
-  DlgRef_2Sel1Spin2Check*            GroupPoints;
+  QGroupBox*                         GroupBox1;
+  QLabel*                            TextLabel1;
+  QLabel*                            TextLabel2;
+  QPushButton*                       PushButton1;
+  QPushButton*                       PushButton2;
+  QLineEdit*                         LineEdit1;
+  QLineEdit*                         LineEdit2;
+  QLabel*                            TextLabel3;
+  QLabel*                            TextLabel4;
+  QLabel*                            TextLabel5;
+  QtxDoubleSpinBox*                  SpinBox_FX;
+  QtxDoubleSpinBox*                  SpinBox_FY;
+  QtxDoubleSpinBox*                  SpinBox_FZ;
+  QCheckBox*                         CheckBoxCopy;
 
 private slots:
   void                               ClickOnOk();
@@ -70,6 +88,7 @@ private slots:
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox();
   void                               CreateCopyModeChanged( bool );
   void                               SetDoubleSpinBoxStep( double );

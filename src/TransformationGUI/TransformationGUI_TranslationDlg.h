@@ -28,7 +28,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_3Sel3Spin1Check;
+class DlgRef_3Sel3Spin2Check;
 
 //=================================================================================
 // class    : TransformationGUI_TranslationDlg
@@ -49,16 +49,19 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
   virtual void                       addSubshapesToStudy();
+  virtual void                       restoreSubShapes( SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr );
 
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
 
 private:
-  GEOM::GEOM_Object_var              myVector, myPoint1, myPoint2;
   GEOM::ListOfGO                     myObjects;
+  GEOM::GEOM_Object_var              myCurrObject;
+  GEOM::GEOM_Object_var              myVector, myPoint1, myPoint2;
+  double                             myTranslateDistance;
   
-  DlgRef_3Sel3Spin1Check*            GroupPoints;
+  DlgRef_3Sel3Spin2Check*            GroupPoints;
     
 private slots:
   void                               ClickOnOk();
@@ -71,6 +74,7 @@ private slots:
   void                               ValueChangedInSpinBox();
   void                               CreateCopyModeChanged( bool );
   void                               SetDoubleSpinBoxStep( double );
+  void                               ActivateDistanceChanged( bool );
 };
 
 #endif // TRANSFORMATIONGUI_TRANSLATIONDLG_H

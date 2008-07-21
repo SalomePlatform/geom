@@ -118,7 +118,9 @@ void GenerationGUI_RevolDlg::Init()
 
   double SpecificStep = 5;
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  //initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  // 05.06.2008 skl for IPAL12958
+  initSpinBox( GroupPoints->SpinBox_DX, 0.0, 360.0, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
   GroupPoints->SpinBox_DX->setValue( 45.0 );
 
   /* signals and slots connections */

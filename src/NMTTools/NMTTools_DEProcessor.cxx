@@ -31,10 +31,13 @@
 
 #include <gp_Pnt2d.hxx>
 #include <gp_Pnt.hxx>
-#include <gp_Sphere.hxx>
+#include <gp_Lin2d.hxx>
+
+#include <ElCLib.hxx>
 
 #include <Geom2d_Curve.hxx>
 #include <Geom2d_Line.hxx>
+#include <Geom2d_TrimmedCurve.hxx>
 #include <Geom2dAdaptor_Curve.hxx>
 #include <Geom2dInt_GInter.hxx>
 
@@ -74,26 +77,18 @@
 #include <BOPTools_PavePool.hxx>
 #include <BOPTools_PaveSet.hxx>
 #include <BOPTools_Tools3D.hxx>
-
+#include <BOPTools_SequenceOfCurves.hxx>
+#include <BOPTools_Curve.hxx>
 #include <BOPTools_CArray1OfSSInterference.hxx>
 #include <BOPTools_SplitShapesPool.hxx>
 
 #include <NMTDS_ShapesDataStructure.hxx>
-
-#include <NMTTools_PaveFiller.hxx>
-//
-#include <BOPTools_SequenceOfCurves.hxx>
-#include <BOPTools_Curve.hxx>
-//
-#include <Geom2d_TrimmedCurve.hxx>
-
-#include <ElCLib.hxx>
-#include <gp_Lin2d.hxx>
-
 #include <NMTDS_InterfPool.hxx>
 
+#include <NMTTools_PaveFiller.hxx>
+
 //=======================================================================
-// function: NMTTools_DEProcessor::NMTTools_DEProcessor
+// function: 
 // purpose: 
 //=======================================================================
   NMTTools_DEProcessor::NMTTools_DEProcessor(NMTTools_PaveFiller& aPaveFiller)
@@ -118,15 +113,17 @@
   void NMTTools_DEProcessor::Do()
 {
   Standard_Integer aNbE;
+  //
   myIsDone=Standard_False;
-
+  //
   FindDegeneratedEdges();
+  //
   aNbE=myDEMap.Extent();
-  
   if (!aNbE) {
-    myIsDone=Standard_True;
+    myIsDone=!myIsDone;
     return;
   }
+  //
   DoPaves();
 }
 //=======================================================================
@@ -136,27 +133,25 @@
   void NMTTools_DEProcessor::FindDegeneratedEdges()
 {
   Standard_Integer i, aNb, nV, nF, nVx, ip, iRankE;
+  TopoDS_Vertex aV;
   TopTools_IndexedDataMapOfShapeListOfShape aMEF;
   //
   aNb=myDS->NumberOfShapesOfTheObject();
-  //
-  for (i=1; i<=aNb; i++) {
-    const TopoDS_Shape aF=myDS->Shape(i);//mpv
+  for (i=1; i<=aNb; ++i) {
+    const TopoDS_Shape aF=myDS->Shape(i);
     if (aF.ShapeType()==TopAbs_FACE) {
       TopExp::MapShapesAndAncestors (aF, TopAbs_EDGE, TopAbs_FACE, aMEF);
     }
   }
   //
-  for (i=1; i<=aNb; i++) {
-    const TopoDS_Shape aS=myDS->Shape(i);//mpv
+  for (i=1; i<=aNb; ++i) {
+    const TopoDS_Shape aS=myDS->Shape(i);
     if (aS.ShapeType()==TopAbs_EDGE) {
       const TopoDS_Edge& aE=TopoDS::Edge(aS);
       
       if (BRep_Tool::Degenerated(aE)) {
 	iRankE=myDS->Rank(i);
-
-	TopoDS_Vertex aV=TopExp::FirstVertex(aE);
-
+	aV=TopExp::FirstVertex(aE);
 	nVx=myDS->ShapeIndex(aV, iRankE);
 	//
 	nV=nVx;
@@ -193,11 +188,12 @@
   //
   nFD=0;
   aNbE=myDEMap.Extent();
-  for (i=1; i<=aNbE; i++) {
+  for (i=1; i<=aNbE; ++i) {
     nED=myDEMap.FindKey(i);
-    
+    //
     const BOPTools_DEInfo& aDEInfo=myDEMap(i);
     nVD=aDEInfo.Vertex();
+    //
     // Fill PaveSet for the edge nED
     const TColStd_ListOfInteger& nLF=aDEInfo.Faces();
     TColStd_ListIteratorOfListOfInteger anIt(nLF);
@@ -206,12 +202,12 @@
       
       BOPTools_ListOfPaveBlock aLPB;
       FindPaveBlocks(nED, nVD, nFD, aLPB);
-      // xxf
+      //
       aNbLPB=aLPB.Extent();
       if (!aNbLPB) {
 	continue;
       }
-      //xxt
+      //
       FillPaveSet (nED, nVD, nFD, aLPB);
     }
     // 
@@ -235,7 +231,6 @@
   BOPTools_ListIteratorOfListOfPaveBlock anIt;
   Standard_Integer i, aNb, nF2, nV;
   //
-  //BOPTools_CArray1OfSSInterference& aFFs=(myFiller->InterfPool())->SSInterferences();
   BOPTools_CArray1OfSSInterference& aFFs=(myFiller->IP())->SSInterferences();
   //
   aNb=aFFs.Extent();
@@ -270,24 +265,24 @@
     //
     // Section Parts
     Standard_Integer j, aNbCurves;   
+    //
     BOPTools_SequenceOfCurves& aSC=aFF.Curves();
     aNbCurves=aSC.Length();
-    
-    for (j=1; j<=aNbCurves; j++) {
+    for (j=1; j<=aNbCurves; ++j) {
       const BOPTools_Curve& aBC=aSC(j);
       const BOPTools_ListOfPaveBlock& aLPBSe=aBC.NewPaveBlocks();
-
+      //
       anIt.Initialize(aLPBSe);
       for (; anIt.More(); anIt.Next()) {
 	const BOPTools_PaveBlock& aPBSe=anIt.Value();
-	
+	//
 	const BOPTools_Pave& aPv1=aPBSe.Pave1();
 	nV=aPv1.Index();
 	if (nV==nVD) {
 	  aLPBOut.Append(aPBSe);
 	  continue;
 	}
-	
+	//
 	const BOPTools_Pave& aPv2=aPBSe.Pave2();
 	nV=aPv2.Index();
 	if (nV==nVD) {
@@ -309,28 +304,26 @@
 {
   Standard_Boolean bIsDone, bXDir, bRejectFlag;
   Standard_Integer nE, aNbPoints, j;
-  Standard_Real aTD1, aTD2, aT1, aT2, aTolInter, aX, aDT;
+  Standard_Real aTD1, aTD2, aT1, aT2, aTolInter, aX, aDT, aXx;
+  gp_Pnt2d aP2d1, aP2d2, aP2D;
+  gp_Lin2d aLDE;
   //
   aDT=Precision::PConfusion();
   //
-  BOPTools_PaveSet& aPaveSet= (myFiller->ChangePavePool()).ChangeValue(myDS->RefEdge(nED));
+  BOPTools_PaveSet& aPaveSet= 
+    (myFiller->ChangePavePool()).ChangeValue(myDS->RefEdge(nED));
   //
   // Clear aPaveSet, aSplitEdges
   aPaveSet.ChangeSet().Clear();
   //
-  const TopoDS_Edge aDE=TopoDS::Edge(myDS->Shape(nED));//mpv
-  const TopoDS_Face aDF=TopoDS::Face(myDS->Shape(nFD));//mpv
+  const TopoDS_Edge aDE=TopoDS::Edge(myDS->Shape(nED));
+  const TopoDS_Face aDF=TopoDS::Face(myDS->Shape(nFD));
   //
   // 2D Curve of degenerated edge on the face aDF
-  // Modified  Thu Sep 14 14:35:18 2006 
-  // Contribution of Samtech www.samcef.com BEGIN
-  //Handle(Geom2d_Curve) aC2DDE=BRep_Tool::CurveOnSurface(aDE, aDF, aTD1, aTD2);
   Handle(Geom2d_Curve) aC2DDE1=BRep_Tool::CurveOnSurface(aDE, aDF, aTD1, aTD2);
   Handle(Geom2d_TrimmedCurve)aC2DDE=new Geom2d_TrimmedCurve(aC2DDE1, aTD1, aTD2);
-  // Contribution of Samtech www.samcef.com END 
   //
-  // Choose direction for Degenerated Edge
-  gp_Pnt2d aP2d1, aP2d2;
+  // Choose direction for degenerated edge
   aC2DDE->D0(aTD1, aP2d1);
   aC2DDE->D0(aTD2, aP2d2);
 
@@ -350,15 +343,13 @@
   for (; anIt.More(); anIt.Next()) {
     const BOPTools_PaveBlock& aPB=anIt.Value();
     nE=aPB.Edge();
-    const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));//mpv
+    const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));
     
     Handle(Geom2d_Curve) aC2D=BRep_Tool::CurveOnSurface(aE, aDF, aT1, aT2);
     //
     // Intersection
-    aTolInter=0.001;
-        
     Geom2dAdaptor_Curve aGAC1, aGAC2;
-    
+    //
     aGAC1.Load(aC2DDE, aTD1, aTD2);
     Handle(Geom2d_Line) aL2D= Handle(Geom2d_Line)::DownCast(aC2D);
     if (!aL2D.IsNull()) {
@@ -367,27 +358,36 @@
     else {
       aGAC2.Load(aC2D, aT1, aT2);
     }
-    
+    //
+    aTolInter=0.001;
     Geom2dInt_GInter aGInter(aGAC1, aGAC2, aTolInter, aTolInter);
-    
     bIsDone=aGInter.IsDone();
     if(bIsDone) {
       aNbPoints=aGInter.NbPoints();
       if (aNbPoints) { 
 	for (j=1; j<=aNbPoints; ++j) {
-	  gp_Pnt2d aP2D=aGInter.Point(j).Value();
+	  aP2D=aGInter.Point(j).Value();
+	  Handle(Geom2d_Line) aCLDE;
 	  //
-	  // Modified to obtain exact parameter Thu Sep 14 14:35:18 2006 
-	  // Contribution of Samtech www.samcef.com BEGIN
-	  Handle(Geom2d_Line) aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
+	  //modified by NIZNHY-PKV Thu Mar 20 17:37:32 2008f
+	  Handle(Geom2d_TrimmedCurve) aCLDET1=
+	    Handle(Geom2d_TrimmedCurve)::DownCast(aC2DDE1);
+	  if (aCLDET1.IsNull()) {
+	    aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
+	  }
+	  else {
+	    Handle(Geom2d_Curve) aBasisCurve=aCLDET1->BasisCurve();
+	    aCLDE=Handle(Geom2d_Line)::DownCast(aBasisCurve);
+	  }
+	  //aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
+	  //modified by NIZNHY-PKV Thu Mar 20 17:37:37 2008t
+	  
 	  if (aCLDE.IsNull()) {
 	    continue;
 	  }
-	  gp_Lin2d aLDE=aCLDE->Lin2d();
+
+	  aLDE=aCLDE->Lin2d();
 	  aX=ElCLib::Parameter(aLDE, aP2D);
-	  //
-	  //aX=(bXDir) ? aP2D.X(): aP2D.Y();
-	  // Contribution of Samtech www.samcef.com END 
 	  //
 	  if (fabs (aX-aTD1) < aDT || fabs (aX-aTD2) < aDT) {
 	    continue; 
@@ -401,7 +401,7 @@
 	  BOPTools_ListIteratorOfListOfPave aPaveIt(aListOfPave);
 	  for (; aPaveIt.More(); aPaveIt.Next()) {
 	    const BOPTools_Pave& aPavex=aPaveIt.Value();
-	    Standard_Real aXx=aPavex.Param();
+	    aXx=aPavex.Param();
 	    if (fabs (aX-aXx) < aDT) {
 	      bRejectFlag=Standard_True;
 	      break;
@@ -424,8 +424,10 @@
 //=======================================================================
   void NMTTools_DEProcessor::FillSplitEdgesPool (const Standard_Integer nED)
 {
-  BOPTools_SplitShapesPool& aSplitShapesPool=myFiller->ChangeSplitShapesPool();
-  BOPTools_ListOfPaveBlock& aSplitEdges=aSplitShapesPool.ChangeValue(myDS->RefEdge(nED));
+  BOPTools_SplitShapesPool& aSplitShapesPool=
+    myFiller->ChangeSplitShapesPool();
+  BOPTools_ListOfPaveBlock& aSplitEdges=
+    aSplitShapesPool.ChangeValue(myDS->RefEdge(nED));
   //
   aSplitEdges.Clear();
   //
@@ -454,8 +456,8 @@
   TopoDS_Edge aE, aESplit;
   TopoDS_Vertex aV1, aV2;
 
-  const TopoDS_Edge aDE=TopoDS::Edge(myDS->Shape(nED));//mpv
-  const TopoDS_Face aDF=TopoDS::Face(myDS->Shape(nFD));//mpv
+  const TopoDS_Edge aDE=TopoDS::Edge(myDS->Shape(nED));
+  const TopoDS_Face aDF=TopoDS::Face(myDS->Shape(nFD));
 
   BOPTools_ListIteratorOfListOfPaveBlock aPBIt(aSplitEdges);
 
@@ -522,17 +524,4 @@
   BB.UpdateEdge(E, aTol);
   aNewEdge=E;
 }
-/*
-//=======================================================================
-// function: NMTTools_DEProcessor::NMTTools_DEProcessor
-// purpose: 
-//=======================================================================
-  NMTTools_DEProcessor::NMTTools_DEProcessor(NMTTools_PDSFiller& pDSFiller)
-:
-  myIsDone(Standard_False)
-{
-  myDSFiller=pDSFiller;
-  myFiller=(NMTTools_PaveFiller*) &(myDSFiller->PaveFiller());
-  myDS=myFiller->DS();
-}
-*/
+

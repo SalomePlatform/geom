@@ -18,7 +18,9 @@ WARNINGS          = YES
 #---------------------------------------------------------------------------
 INPUT             = @srcdir@/input		  
 FILE_PATTERNS     = *.doc
+EXCLUDE           = 
 IMAGE_PATH        = @srcdir@/images
+EXAMPLE_PATH      = @top_srcdir@/src/GEOM_SWIG
 
 #---------------------------------------------------------------------------
 #HTML related options
@@ -46,4 +48,5 @@ GENERATE_RTF      = NO
 #---------------------------------------------------------------------------
 #External reference options
 #---------------------------------------------------------------------------
-TAGFILES = geompy_doc.tag=./geompy_doc
+TAGFILES          = geompy_doc.tag=./geompy_doc
+ALLEXTERNALS      = NO

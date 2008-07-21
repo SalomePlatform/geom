@@ -31,6 +31,7 @@
 #include <TColStd_HSequenceOfInteger.hxx>
 #include <TColStd_HSequenceOfReal.hxx>
 #include <gp_Ax3.hxx>
+#include <Geom_Surface.hxx>
 
 class GEOM_Engine;
 class Handle(GEOM_Object);
@@ -130,6 +131,24 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
 
   Standard_EXPORT Standard_Real GetAngle (Handle(GEOM_Object) theLine1, Handle(GEOM_Object) theLine2);
 
+
+  // Methods for recieving radiuses of curvature of curves and surfaces
+  // in the given point
+  Standard_EXPORT Standard_Real CurveCurvatureByParam (Handle(GEOM_Object) theCurve,
+                                                       Standard_Real& theParam);
+  Standard_EXPORT Standard_Real CurveCurvatureByPoint (Handle(GEOM_Object) theCurve,
+                                                       Handle(GEOM_Object) thePoint);
+  Standard_EXPORT Standard_Real MaxSurfaceCurvatureByParam (Handle(GEOM_Object) theSurf,
+                                                            Standard_Real& theUParam,
+                                                            Standard_Real& theVParam);
+  Standard_EXPORT Standard_Real MaxSurfaceCurvatureByPoint (Handle(GEOM_Object) theSurf,
+                                                            Handle(GEOM_Object) thePoint);
+  Standard_EXPORT Standard_Real MinSurfaceCurvatureByParam (Handle(GEOM_Object) theSurf,
+                                                            Standard_Real& theUParam,
+                                                            Standard_Real& theVParam);
+  Standard_EXPORT Standard_Real MinSurfaceCurvatureByPoint (Handle(GEOM_Object) theSurf,
+                                                            Handle(GEOM_Object) thePoint);
+
  public:
   Standard_EXPORT static gp_Ax3 GetPosition (const TopoDS_Shape& theShape);
 
@@ -150,6 +169,11 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                       Handle(TColStd_HArray1OfInteger)&   NbProblems,
                       const TopAbs_ShapeEnum              Subtype,
                       TopTools_DataMapOfShapeListOfShape& theMap);
+
+  Standard_Real getSurfaceCurvatures (const Handle(Geom_Surface)& aSurf,
+                                      Standard_Real theUParam,
+                                      Standard_Real theVParam,
+                                      Standard_Boolean theNeedMaxCurv);
 };
 
 #endif

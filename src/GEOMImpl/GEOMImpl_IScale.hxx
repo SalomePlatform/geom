@@ -25,6 +25,8 @@
 #define SCALE_ARG_SHAPE 1
 #define SCALE_ARG_VALUE 2
 #define SCALE_ARG_POINT 3
+#define SCALE_ARG_VALUE_Y 4
+#define SCALE_ARG_VALUE_Z 5
 
 class GEOMImpl_IScale
 {
@@ -43,6 +45,14 @@ class GEOMImpl_IScale
   void SetPoint(Handle(GEOM_Function) thePoint) { _func->SetReference(SCALE_ARG_POINT, thePoint); }
 
   Handle(GEOM_Function) GetPoint() { return _func->GetReference(SCALE_ARG_POINT); }
+
+  void SetFactorX(double theValue) { _func->SetReal(SCALE_ARG_VALUE  , theValue); }
+  void SetFactorY(double theValue) { _func->SetReal(SCALE_ARG_VALUE_Y, theValue); }
+  void SetFactorZ(double theValue) { _func->SetReal(SCALE_ARG_VALUE_Z, theValue); }
+
+  double GetFactorX() { return _func->GetReal(SCALE_ARG_VALUE  ); }
+  double GetFactorY() { return _func->GetReal(SCALE_ARG_VALUE_Y); }
+  double GetFactorZ() { return _func->GetReal(SCALE_ARG_VALUE_Z); }
 
  private:
 

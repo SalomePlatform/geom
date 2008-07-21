@@ -473,3 +473,151 @@ CORBA::Double GEOM_IMeasureOperations_i::GetAngle (GEOM::GEOM_Object_ptr theShap
   // Get the angle
   return GetOperations()->GetAngle(aShape1, aShape2);
 }
+
+
+//=============================================================================
+/*!
+ *  CurveCurvatureByParam
+ */
+//=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::CurveCurvatureByParam
+                       (GEOM::GEOM_Object_ptr theCurve, CORBA::Double theParam)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if(theCurve==NULL) return -1.0;
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theCurve->GetStudyID(), theCurve->GetEntry());
+
+  if(aShape.IsNull()) return -1.0;
+
+  return GetOperations()->CurveCurvatureByParam(aShape,theParam);
+}
+
+
+//=============================================================================
+/*!
+ *  CurveCurvatureByPoint
+ */
+//=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::CurveCurvatureByPoint
+               (GEOM::GEOM_Object_ptr theCurve, GEOM::GEOM_Object_ptr thePoint)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if( theCurve==NULL || thePoint==NULL ) return -1.0;
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theCurve->GetStudyID(), theCurve->GetEntry());
+  Handle(GEOM_Object) aPoint = GetOperations()->GetEngine()->GetObject
+    (thePoint->GetStudyID(), thePoint->GetEntry());
+
+  if( aShape.IsNull() || aPoint.IsNull() ) return -1.0;
+
+  return GetOperations()->CurveCurvatureByPoint(aShape,aPoint);
+}
+
+
+//=============================================================================
+/*!
+ *  MaxSurfaceCurvatureByParam
+ */
+//=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::MaxSurfaceCurvatureByParam
+                                                (GEOM::GEOM_Object_ptr theSurf,
+						 CORBA::Double theUParam,
+						 CORBA::Double theVParam)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if(theSurf==NULL) return -1.0;
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theSurf->GetStudyID(), theSurf->GetEntry());
+
+  if(aShape.IsNull()) return -1.0;
+
+  return GetOperations()->MaxSurfaceCurvatureByParam(aShape,theUParam,theVParam);
+}
+
+
+//=============================================================================
+/*!
+ *  MaxSurfaceCurvatureByPoint
+ */
+//=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::MaxSurfaceCurvatureByPoint
+                (GEOM::GEOM_Object_ptr theSurf, GEOM::GEOM_Object_ptr thePoint)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if( theSurf==NULL || thePoint==NULL ) return -1.0;
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theSurf->GetStudyID(), theSurf->GetEntry());
+  Handle(GEOM_Object) aPoint = GetOperations()->GetEngine()->GetObject
+    (thePoint->GetStudyID(), thePoint->GetEntry());
+
+  if( aShape.IsNull() || aPoint.IsNull() ) return -1.0;
+
+  return GetOperations()->MaxSurfaceCurvatureByPoint(aShape,aPoint);
+}
+
+
+//=============================================================================
+/*!
+ *  MinSurfaceCurvatureByParam
+ */
+//=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::MinSurfaceCurvatureByParam
+                                                (GEOM::GEOM_Object_ptr theSurf,
+						 CORBA::Double theUParam,
+						 CORBA::Double theVParam)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if(theSurf==NULL) return -1.0;
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theSurf->GetStudyID(), theSurf->GetEntry());
+
+  if(aShape.IsNull()) return -1.0;
+
+  return GetOperations()->MinSurfaceCurvatureByParam(aShape,theUParam,theVParam);
+}
+
+
+//=============================================================================
+/*!
+ *  MinSurfaceCurvatureByPoint
+ */
+//=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::MinSurfaceCurvatureByPoint
+                (GEOM::GEOM_Object_ptr theSurf, GEOM::GEOM_Object_ptr thePoint)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if( theSurf==NULL || thePoint==NULL ) return -1.0;
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theSurf->GetStudyID(), theSurf->GetEntry());
+  Handle(GEOM_Object) aPoint = GetOperations()->GetEngine()->GetObject
+    (thePoint->GetStudyID(), thePoint->GetEntry());
+
+  if( aShape.IsNull() || aPoint.IsNull() ) return -1.0;
+
+  return GetOperations()->MinSurfaceCurvatureByPoint(aShape,aPoint);
+}

@@ -138,6 +138,7 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnLinesIntersection
   return GetObject(anObject);
 }
 
+
 //=============================================================================
 /*!
  *  MakePointOnCurve
@@ -168,6 +169,39 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurve
 
   return GetObject(anObject);
 }
+
+
+//=============================================================================
+/*!
+ *  MakePointOnSurface
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnSurface
+                                             (GEOM::GEOM_Object_ptr theSurface,
+					      CORBA::Double theUParameter,
+					      CORBA::Double theVParameter)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theSurface == NULL) return aGEOMObject._retn();
+
+  //Get the reference surface
+  Handle(GEOM_Object) aRefernce = GetOperations()->GetEngine()->GetObject
+    (theSurface->GetStudyID(), theSurface->GetEntry());
+  if (aRefernce.IsNull()) return aGEOMObject._retn();
+
+  //Create the point
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePointOnSurface(aRefernce, theUParameter, theVParameter);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
 
 //=============================================================================
 /*!

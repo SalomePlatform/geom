@@ -112,6 +112,8 @@ void TransformationGUI_OffsetDlg::Init()
   GroupPoints->CheckButton1->setChecked( true );
   CreateCopyModeChanged( true );
 
+  mainFrame()->GroupBoxPublish->show();
+
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
@@ -274,7 +276,6 @@ bool TransformationGUI_OffsetDlg::isValid( QString& msg )
   return true;
 }
 
-
 //=================================================================================
 // function : execute
 // purpose  :
@@ -305,6 +306,20 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
   return res;
 }
 
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void TransformationGUI_OffsetDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
+                                                    SALOMEDS::SObject_ptr theSObject )
+{
+  if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
+					 /*theFindMethod=*/GEOM::FSM_Transformed,
+					 /*theInheritFirstArg=*/true );
+  }
+}
 
 //=================================================================================
 // function : GetOffset()
@@ -314,7 +329,6 @@ double TransformationGUI_OffsetDlg::GetOffset() const
 {
   return GroupPoints->SpinBox_DX->value();
 }
-
 
 //=================================================================================
 // function :  CreateCopyModeChanged()

@@ -49,6 +49,7 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
   virtual void                       addSubshapesToStudy();
+  virtual void                       restoreSubShapes( SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr );
 
 private:
   void                               Init();
@@ -57,6 +58,7 @@ private:
   
 private:
   GEOM::ListOfGO                     myObjects;
+  GEOM::GEOM_Object_var              myCurrObject;
   GEOM::GEOM_Object_var              myAxis, myCentPoint, myPoint1, myPoint2;
     
   DlgRef_4Sel1Spin2Check*            GroupPoints;

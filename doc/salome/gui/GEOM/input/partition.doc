@@ -23,6 +23,8 @@ only to support the old scripts.
 \n <b>Arguments:</b> Name + 2 lists of shapes (the shapes from the
 first list will be intersected with the shapes from the second list) +
 reconstruction limit.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html partition1.png
 
@@ -37,6 +39,8 @@ Plane),</em> where \em Shapes are a list of Shapes to be intersected
 and \em Plane is a Tool shape, to intersect the \em Shapes.
 \n <b>Arguments:</b> Name + a list of shapes which will be intersected
 + 1 cutting plane.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html partition2.png
 

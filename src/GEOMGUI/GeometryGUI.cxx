@@ -47,10 +47,12 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_VTKSelector.h>
+#include <LightApp_DataObject.h>
 #include <SalomeApp_Study.h>
 #include <LightApp_Preferences.h>
 #include <SALOME_LifeCycleCORBA.hxx>
 #include <SALOME_ListIO.hxx>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
 // External includes
 #include <QAction>
@@ -466,7 +468,8 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 504 ||   // MENU OPERATION - ARCHIMEDE
 	   id == 505 ||   // MENU OPERATION - FILLET
 	   id == 506 ||   // MENU OPERATION - CHAMFER
-	   id == 507 ) {  // MENU OPERATION - CLIPPING RANGE
+	   id == 507 ||   // MENU OPERATION - CLIPPING RANGE
+	   id == 508 ) {  // MENU OPERATION - GET SHAPES ON SHAPE
 #ifndef WNT
 	library = getLibrary( "libOperationGUI.so" );
 #else
@@ -797,6 +800,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 505, "FILLET" );
   createGeomAction( 506, "CHAMFER" );
   //createGeomAction( 507, "CLIPPING" );
+  createGeomAction( 508, "GET_SHAPES_ON_SHAPES" );
 
   createGeomAction( 9998, "MUL_TRANSFORM" );
   createGeomAction( 9995, "EXPLODE_BLOCKS" );
@@ -946,6 +950,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createMenu( 503, operId, -1 );
   createMenu( 504, operId, -1 );
+  createMenu( 508, operId, -1 );
   createMenu( separator(), operId, -1 );
   createMenu( 505, transId, -1 );
   createMenu( 506, transId, -1 );
@@ -1187,14 +1192,17 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   // Reset actions accelerator keys
   //action(111)->setAccel(QKeySequence(CTRL + Key_I)); // Import
   //action(121)->setAccel(QKeySequence(CTRL + Key_E)); // Export
-  action(111)->setEnabled(true); // Import
-  action(121)->setEnabled(true); // Export
+  action(111)->setEnabled( true ); // Import: CTRL + Key_I
+  action(121)->setEnabled( true ); // Export: CTRL + Key_E
+  action( 33)->setEnabled( true ); // Delete: Key_Delete
+  action(901)->setEnabled( true ); // Rename: Key_F2
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
     it.value()->activate( application()->desktop() );
 
   LightApp_SelectionMgr* sm = getApp()->selectionMgr();
+
   SUIT_ViewManager* vm;
   ViewManagerList OCCViewManagers, VTKViewManagers;
 
@@ -1208,19 +1216,26 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   while ( itVTK.hasNext() && (vm = itVTK.next()) )
     myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
 
+  //NPAL 19674
+  SALOME_ListIO selected;
+  sm->selectedObjects( selected );
+  sm->clearSelected();
+  
   // disable OCC selectors
-  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() ); //@
+  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
   QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
   while ( itOCCSel.hasNext() )
     if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
       sr->setEnabled(true);
 
   // disable VTK selectors
-  getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() ); //@
+  getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
   QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
   while ( itVTKSel.hasNext() )
     if ( LightApp_VTKSelector* sr = itVTKSel.next() )
       sr->setEnabled(true);
+
+  sm->setSelectedObjects( selected, true );   //NPAL 19674
 
   return true;
 }
@@ -1247,8 +1262,10 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   // Unset actions accelerator keys
   //action(111)->setAccel(QKeySequence()); // Import
   //action(121)->setAccel(QKeySequence()); // Export
-  action(111)->setEnabled(false); // Import
-  action(121)->setEnabled(false); // Export
+  action(111)->setEnabled( false ); // Import: CTRL + Key_I
+  action(121)->setEnabled( false ); // Export: CTRL + Key_E
+  action( 33)->setEnabled( false ); // Delete: Key_Delete
+  action(901)->setEnabled( false ); // Rename: Key_F2
 
   qDeleteAll(myOCCSelectors);
   myOCCSelectors.clear();
@@ -1290,7 +1307,6 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
   action( 607 )->setEnabled( ViewOCC ); // RemoveInternalWires
   action( 608 )->setEnabled( ViewOCC ); // AddPointOnEdge
 //  action( 609 )->setEnabled( ViewOCC ); // Free boundaries
-//  action( 413 )->setEnabled( ViewOCC || ViewVTK ); // Isos Settings
 
   action( 800 )->setEnabled( ViewOCC ); // Create Group
   action( 801 )->setEnabled( ViewOCC ); // Edit Group

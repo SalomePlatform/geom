@@ -209,6 +209,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>O&amp;k</translation>
         </message>
         <message>
+            <source>GEOM_BUT_APPLY_AND_CLOSE</source>
+            <translation>A&amp;pply and Close</translation>
+        </message>
+        <message>
             <source>GEOM_BUT_YES</source>
             <translation>&amp;Yes</translation>
         </message>
@@ -1167,18 +1171,6 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_RADIUS_MINOR</source>
             <translation>Minor radius :</translation>
-        </message>
-        <message>
-            <source>GEOM_DELETE_OBJECTS</source>
-            <translation>Delete objects</translation>
-        </message>
-        <message>
-            <source>GEOM_REALLY_DELETE</source>
-            <translation>Do you really want to delete %1 object(s)?</translation>
-        </message>
-        <message>
-            <source>GEOM_REALLY_DELETE_ALL</source>
-            <translation>Do you really want to delete all objects?</translation>
         </message>
         <message>
             <source>GEOM_RECONSTRUCTION_LIMIT</source>
@@ -3444,6 +3436,162 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_FILLING_APPROX</source>
             <translation>Approximation</translation>
         </message>
+        <message>
+            <source>GEOM_WRN_NO_APPROPRIATE_SELECTION</source>
+            <translation>No appropriate objects selected</translation>
+        </message>
+        <message>
+            <source>GEOM_SHAPES_ON_SHAPE</source>
+            <translation>Get shapes on shape</translation>
+        </message>
+        <message>
+            <source>GEOM_SHAPES_ON_SHAPE_ESHAPE</source>
+            <translation>Shape for exploding</translation>
+        </message>
+        <message>
+            <source>GEOM_SHAPES_ON_SHAPE_CSHAPE</source>
+            <translation>Shape for checking</translation>
+        </message>
+        <message>
+            <source>GEOM_SHAPES_ON_SHAPE_STATE</source>
+            <translation>State</translation>
+        </message>
+        <message>
+            <source>GEOM_KIND_OF_SHAPE</source>
+            <translation>Kind of Shape :</translation>
+        </message>
+        <message>
+            <source>GEOM_CLOSED</source>
+            <translation>Closed</translation>
+        </message>
+        <message>
+            <source>GEOM_UNCLOSED</source>
+            <translation>Opened</translation>
+        </message>
+        <message>
+            <source>GEOM_CLOSEDUNCLOSED</source>
+            <translation>Not defined, Closed or Opened. Possibly, error occured.</translation>
+        </message>
+        <message>
+            <source>GEOM_DISK_CIRCLE</source>
+            <translation>Disk</translation>
+        </message>
+        <message>
+            <source>GEOM_DISK_ELLIPSE</source>
+            <translation>Elliptical face</translation>
+        </message>
+        <message>
+            <source>GEOM_PLANAR_FACE</source>
+            <translation>Planar face</translation>
+        </message>
+        <message>
+            <source>GEOM_POLYGON</source>
+            <translation>Polygon</translation>
+        </message>
+        <message>
+            <source>GEOM_NORMAL</source>
+            <translation>Normal direction</translation>
+        </message>
+        <message>
+            <source>GEOM_DIRECTION</source>
+            <translation>Direction</translation>
+        </message>
+        <message>
+            <source>GEOM_UPARAMETER</source>
+            <translation>U-parameter :</translation>
+        </message>
+        <message>
+            <source>GEOM_VPARAMETER</source>
+            <translation>V-parameter :</translation>
+        </message>
+        <message>
+            <source>GEOM_X_I</source>
+            <translation>X%1 :</translation>
+        </message>
+        <message>
+            <source>GEOM_Y_I</source>
+            <translation>Y%1 :</translation>
+        </message>
+        <message>
+            <source>GEOM_Z_I</source>
+            <translation>Z%1 :</translation>
+        </message>
+        <message>
+            <source>GEOM_SHAPES_ON_SHAPE_TITLE</source>
+            <translation>Get shapes on shape</translation>
+        </message>
+        <message>
+            <source>GEOM_SCALE_FACTOR_X</source>
+            <translation>Scale Factor X :</translation>
+        </message>
+        <message>
+            <source>GEOM_SCALE_FACTOR_Y</source>
+            <translation>Scale Factor Y :</translation>
+        </message>
+        <message>
+            <source>GEOM_SCALE_FACTOR_Z</source>
+            <translation>Scale Factor Z :</translation>
+        </message>
+        <message>
+            <source>GEOM_STATE_IN</source>
+            <translation>IN</translation>
+        </message>
+        <message>
+            <source>GEOM_STATE_OUT</source>
+            <translation>OUT</translation>
+        </message>
+        <message>
+            <source>GEOM_STATE_ON</source>
+            <translation>ON</translation>
+        </message>
+        <message>
+            <source>GEOM_STATE_ONIN</source>
+            <translation>ONIN</translation>
+        </message>
+        <message>
+            <source>GEOM_STATE_ONOUT</source>
+            <translation>ONOUT</translation>
+        </message>
+        <message>
+            <source>GEOM_STATE_INOUT</source>
+            <translation>INOUT</translation>
+        </message>
+        <message>
+            <source>TOP_GET_SHAPES_ON_SHAPES</source>
+            <translation>Get shapes on shape</translation>
+        </message>
+        <message>
+            <source>MEN_GET_SHAPES_ON_SHAPES</source>
+            <translation>Get shapes on shape</translation>
+        </message>
+        <message>
+            <source>STB_GET_SHAPES_ON_SHAPES</source>
+            <translation>Get shapes on shape</translation>
+        </message>
+        <message>
+            <source>GEOM_PUBLISH_RESULT_GRP</source>
+            <translation>Advanced options</translation>
+        </message>
+        <message>
+            <source>GEOM_RESTORE_SUB_SHAPES</source>
+            <translation>Set presentation parameters and subshapes from arguments</translation>
+        </message>
+        <message>
+            <source>GEOM_ALL_IMPORT_FILES</source>
+            <translation>All supported formats ( %1 )</translation>
+        </message>
+        <message>
+            <source>GEOM_UNSUPPORTED_TYPE</source>
+            <translation>Unsupported format for the file</translation>
+        </message>
+        <message>
+            <source>GEOM_UNKNOWN_IMPORT_ERROR</source>
+            <translation>Unknown error</translation>
+        </message>
+        <message>
+            <source>GEOM_IMPORT_ERRORS</source>
+            <translation>Import operation has finished with errors:</translation>
+        </message>
     </context>
     <context>
         <name>BasicGUI_MarkerDlg</name>
@@ -3672,6 +3820,22 @@ Number of sketch points too small</translation>
             <source>SHAPE_TYPE</source>
             <translation>Shape Type</translation>
         </message>
+        <message>
+            <source>ALL_SUBSHAPES</source>
+            <translation>All</translation>
+        </message>
+        <message>
+            <source>GET_IN_PLACE</source>
+            <translation>In Place of Second Shape</translation>
+        </message>
+        <message>
+            <source>SUBSHAPES_OF_SHAPE2</source>
+            <translation>Sub-Shapes of Second Shape</translation>
+        </message>
+        <message>
+            <source>SECOND_SHAPE</source>
+            <translation>Second Shape</translation>
+        </message>
     </context>
     <context>
         <name>MeasureGUI_1Sel1TextView1Check_QTD</name>
@@ -3790,6 +3954,21 @@ Please close this message box and select faces for glueing</translation>
             <source>TIME_CONSUMING</source>
             <translation>Enabling this option may result in a very time-consuming operation for some input shapes.
 Would you like to continue?</translation>
+        </message>
+    </context>
+    <context>
+        <name>GEOMToolsGUI_DeleteDlg</name>
+        <message>
+            <source>GEOM_REALLY_DELETE</source>
+            <translation>Do you really want to delete %1 object(s)?</translation>
+        </message>
+        <message>
+            <source>GEOM_REALLY_DELETE_ALL</source>
+            <translation>Do you really want to delete all objects?</translation>
+        </message>
+        <message>
+            <source>GEOM_DELETE_OBJECTS</source>
+            <translation>Delete objects</translation>
         </message>
     </context>
 </TS>

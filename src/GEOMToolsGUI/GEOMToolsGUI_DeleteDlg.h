@@ -26,10 +26,12 @@
 #ifndef GEOMTOOLSGUI_DELETEDLG_H
 #define GEOMTOOLSGUI_DELETEDLG_H
 
+#include "GEOM_ToolsGUI.hxx"
+
 #include <QDialog>
 #include <QMap>
 
-class GEOMToolsGUI_DeleteDlg : public QDialog
+class GEOMTOOLSGUI_EXPORT GEOMToolsGUI_DeleteDlg : public QDialog
 { 
   Q_OBJECT
 

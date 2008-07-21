@@ -100,7 +100,8 @@ void GEOMToolsGUI::OnSettingsColor()
 void GEOMToolsGUI::OnRename()
 {
   SALOME_ListIO selected;
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( app ) {
     LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
     SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
@@ -113,33 +114,42 @@ void GEOMToolsGUI::OnRename()
 	if ( aLocked ) {
 	  SUIT_MessageBox::warning ( app->desktop(),
 				     QObject::tr("WRN_WARNING"),
-				     QObject::tr("WRN_STUDY_LOCKED"),
-				     QObject::tr("BUT_OK") );
+				     QObject::tr("WRN_STUDY_LOCKED") );
 	  return;
 	}
 
+        bool isAny = false; // is there any appropriate object selected
 	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
 	  Handle(SALOME_InteractiveObject) IObject = It.Value();
 
 	  _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
 	  _PTR(GenericAttribute) anAttr;
 	  if ( obj ) {
-	    if( obj->FindAttribute(anAttr, "AttributeName") ) {
+	    if ( obj->FindAttribute(anAttr, "AttributeName") ) {
 	      _PTR(AttributeName) aName (anAttr);
 
-	      QString newName = LightApp_NameDlg::getName( app->desktop(), aName->Value().c_str() );
-	      if ( !newName.isEmpty() ) {
-		aName->SetValue( newName.toLatin1().constData() ); // rename the SObject
-		IObject->setName( newName.toLatin1() );// rename the InteractiveObject
-		// Rename the corresponding GEOM_Object
-		GEOM::GEOM_Object_var anObj =  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
-		if (!CORBA::is_nil( anObj ))
-		  anObj->SetName( newName.toLatin1() );
-		(dynamic_cast<SalomeApp_Module*>(app->activeModule()))->updateObjBrowser( false );
-	      }
+              GEOM::GEOM_Object_var anObj =
+                GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
+              if (!CORBA::is_nil(anObj)) {
+                isAny = true;
+                QString newName = LightApp_NameDlg::getName( app->desktop(), aName->Value().c_str() );
+                if (!newName.isEmpty()) {
+                  aName->SetValue( newName.toLatin1().data() ); // rename the SObject
+                  IObject->setName( newName.toLatin1().data() );// rename the InteractiveObject
+                  anObj->SetName( newName.toLatin1().data() );  // Rename the corresponding GEOM_Object
+                  (dynamic_cast<SalomeApp_Module*>(app->activeModule()))->updateObjBrowser( false );
+                }
+              } // if ( anObj )
 	    } // if ( name attribute )
 	  } // if ( obj )
 	} // iterator
+
+        if (!isAny) {
+	  SUIT_MessageBox::warning( app->desktop(),
+				    QObject::tr("WRN_WARNING"),
+				    QObject::tr("GEOM_WRN_NO_APPROPRIATE_SELECTION") );
+	  return;
+        }
       }
     }
   }
@@ -438,29 +448,41 @@ void GEOMToolsGUI::OnNbIsos()
     if ( selected.IsEmpty() )
       return;
     
-    Handle(SALOME_InteractiveObject) FirstIOS =  selected.First();
-    if ( FirstIOS.IsNull() )
-      return;
-    
     SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
     if ( !vtkVW )
       return;
+
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+
+    vtkActorCollection* aCollection = vtkActorCollection::New();
     
-    SVTK_View* aView = vtkVW->getView();
-    vtkActorCollection* aCollection = aView->getRenderer()->GetActors();
-    
+    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+      Handle(SALOME_InteractiveObject) anIObject = It.Value();
+      SALOME_Prs* aPrs = view->CreatePrs( anIObject->getEntry() ); 
+      SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( aPrs );
+      if ( vtkPrs ) {
+	vtkActorCollection* anActors = vtkPrs->GetObjects();
+	anActors->InitTraversal();
+	vtkActor* anAct = anActors->GetNextActor();
+	aCollection->AddItem(anAct);
+      }
+    }
+  
+    if(aCollection)
+      aCollection->InitTraversal();
+    else
+      return;
+   
     int UIso = 0;
     int VIso = 0;
-    if(aCollection){
-      aCollection->InitTraversal();
-    }
     
-    vtkActor *anAct = aCollection->GetNextActor();
-    if(GEOM_Actor *anActor = dynamic_cast<GEOM_Actor*>(anAct)){
+    vtkActor* anAct = aCollection->GetNextActor();
+    if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct))
       anActor->GetNbIsos(UIso,VIso);
-    }
+    else
+      return;
     
-    GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
+    GEOMToolsGUI_NbIsosDlg* NbIsosDlg =
       new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
 
     NbIsosDlg->setU( UIso );
@@ -469,14 +491,15 @@ void GEOMToolsGUI::OnNbIsos()
     if ( NbIsosDlg->exec() ) {
       SUIT_OverrideCursor();
       
-      while(anAct = aCollection->GetNextActor()) {
-	if(GEOM_Actor *anActor = dynamic_cast<GEOM_Actor*>(anAct)){
+      while( anAct!=NULL ) {
+	if(GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)){
 	  // There are no casting to needed actor.
 	  UIso = NbIsosDlg->getU();
 	  VIso = NbIsosDlg->getV();
 	  int aIsos[2]={UIso,VIso};
 	  anActor->SetNbIsos(aIsos);
 	}
+	anAct = aCollection->GetNextActor();
       }
     }
   } // end vtkviewer

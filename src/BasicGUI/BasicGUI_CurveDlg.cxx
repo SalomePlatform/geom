@@ -295,7 +295,8 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
 	    //Find Object in study
 	    _PTR(SObject) obj ( aDStudy->FindObjectID( anIt.Value()->getEntry() ) );
 	    bool inStudy = false;
-	    for (_PTR(ChildIterator) iit ( aDStudy->NewChildIterator( obj ) ); iit->More(); iit->Next() ) {
+            _PTR(ChildIterator) iit( aDStudy->NewChildIterator( obj ) );
+            for (; iit->More() && !inStudy; iit->Next()) {
 	      _PTR(SObject) child( iit->Value() );
 	      QString aChildName = child->GetName().c_str();
 	      if ( aChildName == aName ) {

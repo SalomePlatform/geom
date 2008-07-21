@@ -56,6 +56,7 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Iterator.hxx>
 
+#include "utilities.h"
 
 //=======================================================================
 //function : BlockFix_UnionEdges()
@@ -109,7 +110,7 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
     }
   }
   if(aChain.Length()<SeqEdges.Length()) {
-    cout<<"can not create correct chain..."<<endl;
+    MESSAGE ("can not create correct chain...");
     return Standard_False;
   }
   // union edges in chain
@@ -197,12 +198,12 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
     }
   }
   if(j<aChain.Length()) {
-    cout<<"null curve3d in edge..."<<endl;
+    MESSAGE ("null curve3d in edge...");
     return Standard_False;
   }
   if(aChain.Length()>1) {
     // second step: union edges with various curves
-    cout<<"can not make analitical union => make approximation"<<endl;
+    MESSAGE ("can not make analitical union => make approximation");
     TopoDS_Wire W;
     B.MakeWire(W);
     for(j=1; j<=aChain.Length(); j++) {

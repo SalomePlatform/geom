@@ -1,18 +1,26 @@
-// GEOM GEOMGUI : GUI for Geometry component
-// 
-// This library is distributed in the hope that it will be useful, 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details. 
-// 
-// You should have received a copy of the GNU Lesser General Public 
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
+// GEOM RepairGUI : GUI for Geometry component
+//
+// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  File   : RepairGUI_RemoveExtraEdgesDlg.cxx
-//  Author : Michael Zorin, Open CASCADE S.A.S.
+// File   : RepairGUI_RemoveExtraEdgesDlg.cxx
+// Author : Michael Zorin, Open CASCADE S.A.S.
 //
 
 #include "RepairGUI_RemoveExtraEdgesDlg.h"
@@ -41,8 +49,9 @@ RepairGUI_RemoveExtraEdgesDlg::RepairGUI_RemoveExtraEdgesDlg( GeometryGUI* theGe
 							      bool modal )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_REMOVE_EXTRA_EDGES" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+  QPixmap image0( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_REMOVE_EXTRA_EDGES" ) ) );
+  QPixmap image1( aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
     
   setWindowTitle( tr( "GEOM_REMOVE_EXTRA_EDGES_TITLE" ) );
 
@@ -94,6 +103,8 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
 
   activateSelection();
   
+  mainFrame()->GroupBoxPublish->show();
+
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
@@ -101,8 +112,8 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "REMOVE_EXTRA_EDGES_NEW_OBJ_NAME" ) );
 }
@@ -132,6 +143,8 @@ bool RepairGUI_RemoveExtraEdgesDlg::ClickOnApply()
   myEditCurrentArgument->setText( "" );
   myObject = GEOM::GEOM_Object::_nil();
   
+  myOkObject = false;
+
   activateSelection();
 
   return true;
@@ -206,8 +219,8 @@ void RepairGUI_RemoveExtraEdgesDlg::LineEditReturnPressed()
 void RepairGUI_RemoveExtraEdgesDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
 }
@@ -268,4 +281,19 @@ bool RepairGUI_RemoveExtraEdgesDlg::execute( ObjectList& objects )
     objects.push_back( anObj._retn() );
 
   return true;
+}
+
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void RepairGUI_RemoveExtraEdgesDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
+                                                      SALOMEDS::SObject_ptr theSObject )
+{
+  if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
+					 /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GetInPlaceByHistory
+					 /*theInheritFirstArg=*/true );
+  }
 }

@@ -813,9 +813,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSphere  (CORBA::Double theX,
   MESSAGE("GEOM_Superv_i::MakeSphepe");
   getBasicOp();
   get3DPrimOp();
-  GEOM::GEOM_Object_var o = myBasicOp->MakePointXYZ(theX, theY, theZ);
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeSpherePntR(o, theRadius);
-  o->Destroy();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeSpherePntR(myBasicOp->MakePointXYZ(theX, theY, theZ), theRadius);
   endService( " GEOM_Superv_i::MakeSphepe" );
   return anObj;
 }
@@ -1348,6 +1346,23 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVectorCopy (GEOM::GEOM_Object_ptr 
 }
 
 //=============================================================================
+//  TranslateVectorDistance:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVectorDistance (GEOM::GEOM_Object_ptr theObject,
+							      GEOM::GEOM_Object_ptr theVector,
+							      CORBA::Double theDistance,
+							      CORBA::Boolean theCopy)
+{
+  beginService( " GEOM_Superv_i::TranslateVectorDistance" );
+  MESSAGE("GEOM_Superv_i::TranslateVectorDistance");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->TranslateVectorDistance(theObject, 
+								    theVector, theDistance, theCopy);
+  endService( " GEOM_Superv_i::TranslateVectorDistance" );
+  return anObj;
+}
+
+//=============================================================================
 //  MultiTranslate1D:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiTranslate1D (GEOM::GEOM_Object_ptr theObject,
@@ -1620,6 +1635,42 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeCopy (GEOM::GEOM_Object_ptr theOb
 }
 
 //=============================================================================
+//  ScaleShapeAlongAxes:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeAlongAxes (GEOM::GEOM_Object_ptr theObject,
+							  GEOM::GEOM_Object_ptr thePoint,
+							  CORBA::Double theFactorX,
+							  CORBA::Double theFactorY,
+							  CORBA::Double theFactorZ)
+{
+  beginService( " GEOM_Superv_i::ScaleShapeAlongAxes" );
+  MESSAGE("GEOM_Superv_i::ScaleShapeAlongAxes");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->ScaleShapeAlongAxes
+    (theObject, thePoint, theFactorX, theFactorY, theFactorZ);
+  endService( " GEOM_Superv_i::ScaleShapeAlongAxes" );
+  return anObj;
+}
+
+//=============================================================================
+//  ScaleShapeAlongAxesCopy:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeAlongAxesCopy (GEOM::GEOM_Object_ptr theObject,
+							      GEOM::GEOM_Object_ptr thePoint,
+							      CORBA::Double theFactorX,
+							      CORBA::Double theFactorY,
+							      CORBA::Double theFactorZ)
+{
+  beginService( " GEOM_Superv_i::ScaleShapeAlongAxesCopy" );
+  MESSAGE("GEOM_Superv_i::ScaleShapeAlongAxesCopy");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->ScaleShapeAlongAxesCopy
+    (theObject, thePoint, theFactorX, theFactorY, theFactorZ);
+  endService( " GEOM_Superv_i::ScaleShapeAlongAxesCopy" );
+  return anObj;
+}
+
+//=============================================================================
 //  PositionShape:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShape (GEOM::GEOM_Object_ptr theObject,
@@ -1875,6 +1926,7 @@ CORBA::Long GEOM_Superv_i::NumberOfEdges (GEOM::GEOM_Object_ptr theShape)
   return aRes;
 }
 
+
 //=============================================================================
 //  ChangeOrientation:
 //=============================================================================
@@ -1885,6 +1937,46 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ChangeOrientation (GEOM::GEOM_Object_ptr th
   getShapesOp();
   GEOM::GEOM_Object_ptr anObj = myShapesOp->ChangeOrientation(theShape);
   endService( " GEOM_Superv_i::ChangeOrientation" );
+  return anObj;
+}
+
+
+//=============================================================================
+//  GetShapesOnShape:
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::GetShapesOnShape
+                                          (GEOM::GEOM_Object_ptr theCheckShape,
+					   GEOM::GEOM_Object_ptr theShape,
+					   CORBA::Short theShapeType,
+					   GEOM::shape_state theState)
+{
+  beginService( " GEOM_Superv_i::GetShapesOnShape" );
+  MESSAGE("GEOM_Superv_i::GetShapesOnShape");
+  getShapesOp();
+  GEOM::ListOfGO* aList =
+    myShapesOp->GetShapesOnShape(theCheckShape, theShape, theShapeType, theState);
+  GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aList));
+  MESSAGE(" List of "<<aListPtr->GetList().length()<<" element(s)");
+  endService( " GEOM_Superv_i::GetShapesOnShape" );
+  return aListPtr->_this();
+}
+
+
+//=============================================================================
+//  GetShapesOnShapeAsCompound:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::GetShapesOnShapeAsCompound
+                                          (GEOM::GEOM_Object_ptr theCheckShape,
+					   GEOM::GEOM_Object_ptr theShape,
+					   CORBA::Short theShapeType,
+					   GEOM::shape_state theState)
+{
+  beginService( " GEOM_Superv_i::GetShapesOnShapeAsCompound" );
+  MESSAGE("GEOM_Superv_i::GetShapesOnShapeAsCompound");
+  getShapesOp();
+  GEOM::GEOM_Object_ptr anObj = 
+    myShapesOp->GetShapesOnShapeAsCompound(theCheckShape, theShape, theShapeType, theState);
+  endService( " GEOM_Superv_i::GetShapesOnShapeAsCompound" );
   return anObj;
 }
 

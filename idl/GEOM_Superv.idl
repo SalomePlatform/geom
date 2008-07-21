@@ -249,6 +249,10 @@ module GEOM
 				 in GEOM_Object theVector) ;
     GEOM_Object TranslateVectorCopy (in GEOM_Object theObject,
 				     in GEOM_Object theVector) ;
+    GEOM_Object TranslateVectorDistance (in GEOM_Object theObject,
+					 in GEOM_Object theVector,
+					 in double      theDistance,
+					 in boolean     theCopy) ;
     GEOM_Object MultiTranslate1D (in GEOM_Object theObject,
 				  in GEOM_Object theVector,
 				  in double      theStep,
@@ -305,6 +309,16 @@ module GEOM
     GEOM_Object ScaleShapeCopy (in GEOM_Object theObject, 
 				in GEOM_Object thePoint,
 				in double      theFactor) ;
+    GEOM_Object ScaleShapeAlongAxes (in GEOM_Object theObject,
+                                     in GEOM_Object thePoint,
+                                     in double theFactorX,
+                                     in double theFactorY,
+                                     in double theFactorZ);
+    GEOM_Object ScaleShapeAlongAxesCopy (in GEOM_Object theObject,
+                                         in GEOM_Object thePoint,
+                                         in double theFactorX,
+                                         in double theFactorY,
+                                         in double theFactorZ);
     GEOM_Object PositionShape (in GEOM_Object theObject,
 			       in GEOM_Object theStartLCS,
 			       in GEOM_Object theEndLCS) ;
@@ -341,6 +355,15 @@ module GEOM
     long NumberOfFaces (in GEOM_Object theShape) ;
     long NumberOfEdges (in GEOM_Object theShape) ;
     GEOM_Object ChangeOrientation (in GEOM_Object theShape) ;
+
+    GEOM_List GetShapesOnShape (in GEOM_Object theCheckShape,
+				in GEOM_Object theShape, 
+				in short       theShapeType,
+				in shape_state theState);
+    GEOM_Object GetShapesOnShapeAsCompound (in GEOM_Object theCheckShape,
+					    in GEOM_Object theShape, 
+					    in short       theShapeType,
+					    in shape_state theState);
 
     //-----------------------------------------------------------//
     // BlocksOperations                                          //

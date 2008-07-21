@@ -26,6 +26,8 @@
 #ifndef GEOMTOOLSGUI_H
 #define GEOMTOOLSGUI_H
 
+#include "GEOM_ToolsGUI.hxx"
+
 #include <GEOMGUI.h>
 
 #include <SALOMEDSClient.hxx>
@@ -40,7 +42,7 @@ class SALOME_ListIO;
 // class    : GEOMToolsGUI
 // purpose  :
 //=================================================================================
-class GEOMToolsGUI : public GEOMGUI
+class GEOMTOOLSGUI_EXPORT GEOMToolsGUI : public GEOMGUI
 {
 public:
   GEOMToolsGUI( GeometryGUI* ); // hide constructor to avoid direct creation

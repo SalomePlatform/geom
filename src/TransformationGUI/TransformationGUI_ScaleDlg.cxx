@@ -28,6 +28,7 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
+#include <QtxDoubleSpinBox.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
@@ -52,62 +53,110 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg( GeometryGUI* theGeometry
 							bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_SCALE" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
+  QPixmap image1( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_SCALE" ) ) );
+  QPixmap image2( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_SCALE_ALONG_AXES" ) ) );
+  QPixmap image3( aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
   setWindowTitle( tr( "GEOM_SCALE_TITLE" ) );
 
-  /***************************************************************/
+  // Constructors
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_SCALE" ) );
-  mainFrame()->RadioButton1->setIcon( image0 );
-  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
-  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton1->setIcon( image1 );
+  mainFrame()->RadioButton2->setIcon( image2 );
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_2Sel1Spin2Check( centralWidget() );
-  GroupPoints->CheckButton2->hide();
-  GroupPoints->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
-  GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
-  GroupPoints->TextLabel2->setText( tr( "GEOM_CENTRAL_POINT" ) );
-  GroupPoints->TextLabel3->setText( tr( "GEOM_SCALE_FACTOR" ) );
-  GroupPoints->LineEdit1->setReadOnly( true );
-  GroupPoints->LineEdit2->setReadOnly( true );
-  GroupPoints->PushButton1->setIcon( image1 );
-  GroupPoints->PushButton2->setIcon( image1 );
-  GroupPoints->CheckButton1->setText( tr( "GEOM_CREATE_COPY" ) );
+  // Own widgets
+  GroupBox1 = new QGroupBox( tr( "GEOM_ARGUMENTS" ), this );
+  QGridLayout* OwnLayout = new QGridLayout( GroupBox1 );
+  OwnLayout->setSpacing( 6 );
+  OwnLayout->setMargin( 11 );
 
-  // san -- modification of an exisitng object by offset is not allowed
-  GroupPoints->CheckButton1->hide();
+  TextLabel1 = new QLabel( tr( "GEOM_OBJECTS" ), GroupBox1 );
+  PushButton1 = new QPushButton( GroupBox1 );
+  PushButton1->setIcon( image3 );
+  PushButton1->setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ) );
+  LineEdit1 = new QLineEdit( GroupBox1 );
+  LineEdit1->setReadOnly( true );
+  LineEdit1->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
+
+  TextLabel2 = new QLabel( tr( "GEOM_CENTRAL_POINT" ), GroupBox1 );
+  PushButton2 = new QPushButton( GroupBox1 );
+  PushButton2->setIcon( image3 );
+  PushButton2->setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ) );
+  LineEdit2 = new QLineEdit( GroupBox1 );
+  LineEdit2->setReadOnly( true );
+  LineEdit2->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
+
+  TextLabel3 = new QLabel( tr( "GEOM_SCALE_FACTOR" ), GroupBox1 );
+  SpinBox_FX = new QtxDoubleSpinBox( GroupBox1 );
+
+  TextLabel4 = new QLabel( tr( "GEOM_SCALE_FACTOR_Y" ), GroupBox1 );
+  SpinBox_FY = new QtxDoubleSpinBox( GroupBox1 );
+
+  TextLabel5 = new QLabel( tr( "GEOM_SCALE_FACTOR_Z" ), GroupBox1 );
+  SpinBox_FZ = new QtxDoubleSpinBox( GroupBox1 );
+
+  CheckBoxCopy = new QCheckBox( tr( "GEOM_CREATE_COPY" ), GroupBox1 );
+  CheckBoxCopy->setChecked( true );
+
+  // Layouting
+  OwnLayout->addWidget( TextLabel1,   0, 0 );
+  OwnLayout->addWidget( PushButton1,  0, 1 );
+  OwnLayout->addWidget( LineEdit1,    0, 2, 1, 2 );
+  OwnLayout->addWidget( TextLabel2,   1, 0 );
+  OwnLayout->addWidget( PushButton2,  1, 1 );
+  OwnLayout->addWidget( LineEdit2,    1, 2, 1, 2 );
+  OwnLayout->addWidget( TextLabel3,   2, 0 );
+  OwnLayout->addWidget( SpinBox_FX,   2, 2 );
+  OwnLayout->addWidget( TextLabel4,   3, 0 );
+  OwnLayout->addWidget( SpinBox_FY,   3, 2 );
+  OwnLayout->addWidget( TextLabel5,   4, 0 );
+  OwnLayout->addWidget( SpinBox_FZ,   4, 2 );
+  OwnLayout->addWidget( CheckBoxCopy, 5, 0, 1, 4 );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( GroupPoints );
+  layout->addWidget( GroupBox1 );
 
-  /***************************************************************/
+  // Min, max, step and decimals for spin boxes & initial values
   double aFactor = 2.0;
   double SpecificStep = 0.5;
-  /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  GroupPoints->SpinBox_DX->setValue( aFactor );
+  initSpinBox( SpinBox_FX, COORD_MIN, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY );
+  initSpinBox( SpinBox_FY, COORD_MIN, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY );
+  initSpinBox( SpinBox_FZ, COORD_MIN, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY );
+  SpinBox_FX->setValue( aFactor );
+  SpinBox_FY->setValue( aFactor );
+  SpinBox_FZ->setValue( aFactor );
+
+  // Modification of an existing object by offset is not allowed
+  CheckBoxCopy->hide();
   
   // Activate Create a Copy mode
-  GroupPoints->CheckButton1->setChecked( true );
   CreateCopyModeChanged( true );
 
-  /* signals and slots connections */
-  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
-  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  
-  connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupPoints->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  
-  connect( GroupPoints->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupPoints->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  // Allowed inheritance of children and visual properties by the scaling result
+  mainFrame()->GroupBoxPublish->show();
 
-  connect( GroupPoints->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
+  // Signals and slots connections
+  connect( buttonOk(),        SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(),     SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect( this, SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
+
+  connect( PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+
+  connect( LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  
+  connect( SpinBox_FX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
+  connect( SpinBox_FY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
+  connect( SpinBox_FZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
+  
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
-  connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ), this, SLOT( CreateCopyModeChanged( bool ) ) );
+
+  connect( CheckBoxCopy, SIGNAL( toggled( bool ) ), this, SLOT( CreateCopyModeChanged( bool ) ) );
    
   connect( myGeomGUI->getApp()->selectionMgr(), 
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
@@ -117,16 +166,13 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg( GeometryGUI* theGeometry
   Init();
 }
 
-
 //=================================================================================
 // function : ~TransformationGUI_ScaleDlg()
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 TransformationGUI_ScaleDlg::~TransformationGUI_ScaleDlg()
 {  
-  /* no need to delete child widgets, Qt does it all for us */
 }
-
 
 //=================================================================================
 // function : Init()
@@ -134,14 +180,50 @@ TransformationGUI_ScaleDlg::~TransformationGUI_ScaleDlg()
 //=================================================================================
 void TransformationGUI_ScaleDlg::Init()
 {
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  GroupPoints->LineEdit2->clear();
+  myEditCurrentArgument = LineEdit1;
+  LineEdit2->clear();
   
   myPoint = GEOM::GEOM_Object::_nil();
   
   initName( tr( "GEOM_SCALE" ) );
+
+  ConstructorsClicked( 0 );
 }
 
+//=================================================================================
+// function : ConstructorsClicked()
+// purpose  : Radio button management
+//=================================================================================
+void TransformationGUI_ScaleDlg::ConstructorsClicked( int constructorId )
+{
+  erasePreview();
+
+  switch( constructorId )
+  {
+  case 0: /* translation an object by dx, dy, dz */
+    TextLabel3->setText( tr( "GEOM_SCALE_FACTOR" ) );
+    TextLabel4->hide();
+    TextLabel5->hide();
+    SpinBox_FY->hide();
+    SpinBox_FZ->hide();
+    break;
+  case 1: /* translation an object by 2 points */
+    TextLabel3->setText( tr( "GEOM_SCALE_FACTOR_X" ) );
+    TextLabel4->show();
+    TextLabel5->show();
+    SpinBox_FY->show();
+    SpinBox_FZ->show();
+    break;
+  default:
+    break;
+  }
+
+  qApp->processEvents();
+  updateGeometry();
+  resize( minimumSize() );
+
+  displayPreview();
+}
 
 //=================================================================================
 // function : ClickOnOk()
@@ -153,20 +235,18 @@ void TransformationGUI_ScaleDlg::ClickOnOk()
     ClickOnCancel();
 }
 
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
 bool TransformationGUI_ScaleDlg::ClickOnApply()
 {
-  if ( !onAccept( GroupPoints->CheckButton1->isChecked() ) )
+  if ( !onAccept( CheckBoxCopy->isChecked() ) )
     return false;
 
-  Init();
+  initName( tr( "GEOM_SCALE" ) );
   return true;
 }
-
 
 //=================================================================================
 // function : SelectionIntoArgument()
@@ -174,12 +254,15 @@ bool TransformationGUI_ScaleDlg::ClickOnApply()
 //=================================================================================
 void TransformationGUI_ScaleDlg::SelectionIntoArgument()
 {
+  erasePreview();
   myEditCurrentArgument->setText( "" );
   QString aName;
 
-  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+  if ( myEditCurrentArgument == LineEdit1 )
+  {
     int aNbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aName );
-    if ( aNbSel < 1 ) {
+    if ( aNbSel < 1 )
+    {
       myObjects.length( 0 );
       return;
     }
@@ -187,55 +270,57 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
     if ( !myObjects.length() )
       return;
   }
-  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
-    if ( IObjectCount() != 1 ) {
-      myPoint = GEOM::GEOM_Object::_nil();
-      return;
-    }
-    Standard_Boolean testResult = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
-    aName = GEOMBase::GetName( aSelectedObject );
-    
-    TopoDS_Shape aShape;
-    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( firstIObject(), aMap );
-      if ( aMap.Extent() == 1 ) {
-	int anIndex = aMap( 1 );
-	aName += QString( ":vertex_%1" ).arg( anIndex );
-	
-	//Find SubShape Object in Father
-	GEOM::GEOM_Object_var aFindedObject = findObjectInFather( aSelectedObject, aName );
-	
-	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	  GEOM::GEOM_IShapesOperations_var aShapesOp =
-	    getGeomEngine()->GetIShapesOperations( getStudyId() );
-	  aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-	  aSelMgr->clearSelected();
-	}
-	else {
-	  aSelectedObject = aFindedObject; // get Object from study
-	}
-      }
-      else {
-	if ( aShape.ShapeType() != TopAbs_VERTEX ) {
-	  aSelectedObject = GEOM::GEOM_Object::_nil();
-	  aName = "";
-	}
-      }
-    }
-    
-    myPoint = aSelectedObject;
+  else if ( myEditCurrentArgument == LineEdit2 )
+  {
+    GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
+    if ( IObjectCount() == 1 )
+    {
+      Standard_Boolean testResult = Standard_False;
+      aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+      if ( testResult )
+      {
+        aName = GEOMBase::GetName( aSelectedObject );
 
-    if ( !testResult || CORBA::is_nil( myPoint ) )
-      return;
+        TopoDS_Shape aShape;
+        if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+        {
+          LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+          TColStd_IndexedMapOfInteger aMap;
+          aSelMgr->GetIndexes( firstIObject(), aMap );
+          if ( aMap.Extent() == 1 )
+          {
+            int anIndex = aMap( 1 );
+            aName += QString( ":vertex_%1" ).arg( anIndex );
+
+            //Find SubShape Object in Father
+            GEOM::GEOM_Object_var aFindedObject = findObjectInFather( aSelectedObject, aName );
+
+            if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+              GEOM::GEOM_IShapesOperations_var aShapesOp =
+                getGeomEngine()->GetIShapesOperations( getStudyId() );
+              aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+              aSelMgr->clearSelected();
+            }
+            else
+              aSelectedObject = aFindedObject; // get Object from study
+          }
+          else
+          {
+            if ( aShape.ShapeType() != TopAbs_VERTEX ) {
+              aSelectedObject = GEOM::GEOM_Object::_nil();
+              aName = "";
+            }
+          }
+        }
+      }
+    }
+
+    myPoint = aSelectedObject;
   }
+
   myEditCurrentArgument->setText( aName );
-  
   displayPreview();
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()
@@ -244,13 +329,12 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
 void TransformationGUI_ScaleDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupPoints->LineEdit1 ||
-       send == GroupPoints->LineEdit2 ) {
+  if ( send == LineEdit1 || send == LineEdit2 )
+  {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -261,18 +345,17 @@ void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
   QPushButton* send = (QPushButton*)sender();
   globalSelection();
   
-  if ( send == GroupPoints->PushButton1 ) {
-    myEditCurrentArgument = GroupPoints->LineEdit1;
+  if ( send == PushButton1 ) {
+    myEditCurrentArgument = LineEdit1;
   }
-  else if ( send == GroupPoints->PushButton2 ) {
-    myEditCurrentArgument = GroupPoints->LineEdit2;
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  else if ( send == PushButton2 ) {
+    myEditCurrentArgument = LineEdit2;
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
   }
   
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
-
 
 //=================================================================================
 // function : ActivateThisDialog()
@@ -281,13 +364,14 @@ void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
 void TransformationGUI_ScaleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
   globalSelection();
-  GroupPoints->LineEdit1->setFocus();
-  myEditCurrentArgument = GroupPoints->LineEdit1;
+  myEditCurrentArgument->setFocus();
+  if ( myEditCurrentArgument == LineEdit2 ) {
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  }
 }
-
 
 //=================================================================================
 // function : enterEvent()
@@ -298,7 +382,6 @@ void TransformationGUI_ScaleDlg::enterEvent( QEvent* )
   if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
-
 
 //=================================================================================
 // function : ValueChangedInSpinBox()
@@ -315,9 +398,10 @@ void TransformationGUI_ScaleDlg::ValueChangedInSpinBox()
 //=================================================================================
 void TransformationGUI_ScaleDlg::SetDoubleSpinBoxStep( double step )
 {
-  GroupPoints->SpinBox_DX->setSingleStep(step);
+  SpinBox_FX->setSingleStep( step );
+  SpinBox_FY->setSingleStep( step );
+  SpinBox_FZ->setSingleStep( step );
 }
-
 
 //=================================================================================
 // function : createOperation
@@ -334,9 +418,17 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_ScaleDlg::createOperation()
 //=================================================================================
 bool TransformationGUI_ScaleDlg::isValid( QString& /*msg*/)
 {
-  return !( myObjects.length() == 0 || myPoint->_is_nil() || fabs( GetFactor()) <= 0.00001 );
+  if ( myObjects.length() > 0 && fabs( SpinBox_FX->value() ) > 0.00001 )
+  {
+    // && !myPoint->_is_nil()
+    if ( getConstructorId() == 0 )
+      return true;
+    if ( fabs( SpinBox_FY->value() ) > 0.00001 &&
+         fabs( SpinBox_FZ->value() ) > 0.00001 )
+      return true;
+  }
+  return false;
 }
-
 
 //=================================================================================
 // function : execute
@@ -344,35 +436,83 @@ bool TransformationGUI_ScaleDlg::isValid( QString& /*msg*/)
 //=================================================================================
 bool TransformationGUI_ScaleDlg::execute( ObjectList& objects )
 {
+  bool toCreateCopy = IsPreview() || CheckBoxCopy->isChecked();
+
   GEOM::GEOM_Object_var anObj;
 
-  if ( GroupPoints->CheckButton1->isChecked() || IsPreview() ) {
-    for ( int i = 0; i < myObjects.length(); i++ ) {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->ScaleShapeCopy( myObjects[i], myPoint, GetFactor() );
-      if ( !anObj->_is_nil() )
-	objects.push_back( anObj._retn() );
+  switch ( getConstructorId() )
+  {
+  case 0:
+    {
+      if ( toCreateCopy )
+      {
+        for ( int i = 0; i < myObjects.length(); i++ )
+        {
+          anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+            ScaleShapeCopy( myObjects[i], myPoint, SpinBox_FX->value() );
+          if ( !anObj->_is_nil() )
+            objects.push_back( anObj._retn() );
+        }
+      }
+      else
+      {
+        for ( int i = 0; i < myObjects.length(); i++ )
+        {
+          anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+            ScaleShape( myObjects[i], myPoint, SpinBox_FX->value() );
+          if ( !anObj->_is_nil() )
+            objects.push_back( anObj._retn() );
+        }
+      }
     }
-  }
-  else {
-    for ( int i = 0; i < myObjects.length(); i++ ) {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->ScaleShape( myObjects[i], myPoint, GetFactor() );
-      if ( !anObj->_is_nil() )
-	objects.push_back( anObj._retn() );
+    break;
+  case 1:
+    {
+      if ( toCreateCopy )
+      {
+        for ( int i = 0; i < myObjects.length(); i++ )
+        {
+          anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+            ScaleShapeAlongAxesCopy( myObjects[i], myPoint, SpinBox_FX->value(),
+				     SpinBox_FY->value(), SpinBox_FZ->value() );
+          if ( !anObj->_is_nil() )
+            objects.push_back( anObj._retn() );
+        }
+      }
+      else
+      {
+        for ( int i = 0; i < myObjects.length(); i++ )
+        {
+          anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+            ScaleShapeAlongAxes( myObjects[i], myPoint, SpinBox_FX->value(),
+				 SpinBox_FY->value(), SpinBox_FZ->value() );
+          if ( !anObj->_is_nil() )
+            objects.push_back( anObj._retn() );
+        }
+      }
     }
+    break;
+  default:
+    break;
   }
+
   return true;
 }
 
-
 //=================================================================================
-// function : GetFactor()
+// function : restoreSubShapes
 // purpose  :
 //=================================================================================
-double TransformationGUI_ScaleDlg::GetFactor() const
+void TransformationGUI_ScaleDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
+                                                   SALOMEDS::SObject_ptr theSObject )
 {
-  return GroupPoints->SpinBox_DX->value();
+  if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
+					 /*theFindMethod=*/GEOM::FSM_Transformed,
+					 /*theInheritFirstArg=*/true );
+  }
 }
-
 
 //=================================================================================
 // function :  CreateCopyModeChanged()
@@ -380,21 +520,23 @@ double TransformationGUI_ScaleDlg::GetFactor() const
 //=================================================================================
 void TransformationGUI_ScaleDlg::CreateCopyModeChanged( bool isCreateCopy )
 {
-  mainFrame()->GroupBoxName->setEnabled(isCreateCopy);
+  mainFrame()->GroupBoxName->setEnabled( isCreateCopy );
 }
 
 //=================================================================================
-// function : addSubshapeToStudy
+// function : addSubshapesToStudy
 // purpose  : virtual method to add new SubObjects if local selection
 //=================================================================================
 void TransformationGUI_ScaleDlg::addSubshapesToStudy()
 {
-  bool toCreateCopy = IsPreview() || GroupPoints->CheckButton1->isChecked();
-  if ( toCreateCopy ) {
-    QMap<QString, GEOM::GEOM_Object_var> objMap;
-
-    objMap[GroupPoints->LineEdit2->text()] = myPoint;
-    
-    addSubshapesToFather( objMap );
+  bool toCreateCopy = IsPreview() || CheckBoxCopy->isChecked();
+  if ( toCreateCopy )
+  {
+    if ( !myPoint->_is_nil() )
+    {
+      QMap<QString, GEOM::GEOM_Object_var> objMap;
+      objMap[LineEdit2->text()] = myPoint;
+      addSubshapesToFather( objMap );
+    }
   }
 }

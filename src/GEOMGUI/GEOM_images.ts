@@ -910,5 +910,17 @@
             <source>ICO_WORK_PLANE</source>
             <translation>planeWorking.png</translation>
         </message>
+        <message>
+            <source>ICON_DLG_POINT_FACE</source>
+            <translation>pointonface.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_SHAPES_ON_SHAPE</source>
+            <translation>shapesonshape.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_SCALE_ALONG_AXES</source>
+            <translation>scale_along_axes.png</translation>
+        </message>
     </context>
 </TS>

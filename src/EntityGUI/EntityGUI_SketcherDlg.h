@@ -91,7 +91,9 @@ private:
 						     const bool = false,
 						     const bool = false,
 						     const bool = true,
-						     const double  = -1 );
+						     const double = -1,
+						     const int  = -1,
+						     const int  = -1);
 
   bool                               createShapes( GEOM::GEOM_Object_ptr,
 						   TopoDS_Shape&,

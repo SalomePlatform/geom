@@ -490,6 +490,18 @@ void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
 }
 
 //================================================================
+// Function : globalSelection
+// Purpose  : Activate selection of subshapes. Set selection filters
+//            in accordance with mode. theMode is from GEOMImpl_Types
+//================================================================
+void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
+                                       const QList<int>& subShapes,
+				       const bool update )
+{
+  getDisplayer()->GlobalSelection( theModes, update, &subShapes );
+}
+
+//================================================================
 // Function : addInStudy
 // Purpose  : Add object in study
 //================================================================
@@ -502,10 +514,33 @@ void GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theN
   if ( !aStudy || theObj->_is_nil() )
     return;
 
+  SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(aStudy);
+
   GEOM::GEOM_Object_ptr aFatherObj = getFather( theObj );
 
-  getGeomEngine()->AddInStudy(GeometryGUI::ClientStudyToStudy(aStudy),
-                              theObj, theName, aFatherObj);
+  SALOMEDS::SObject_var aSO =
+    getGeomEngine()->AddInStudy(aStudyDS, theObj, theName, aFatherObj);
+
+  // Each dialog is responsible for this method implementation,
+  // default implementation does nothing
+  restoreSubShapes(aStudyDS, aSO);
+}
+
+//================================================================
+// Function : restoreSubShapes
+// Purpose  : restore tree of argument's sub-shapes under the resulting shape
+//================================================================
+void GEOMBase_Helper::restoreSubShapes (SALOMEDS::Study_ptr   /*theStudy*/,
+                                        SALOMEDS::SObject_ptr /*theSObject*/)
+{
+  // do nothing by default
+
+  // example of implementation in particular dialog:
+  // GEOM::ListOfGO anArgs;
+  // anArgs.length(0); // empty list means that all arguments should be restored
+  // getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
+  //                                     /*theFindMethod=*/GEOM::FSM_GetInPlace,
+  //                                     /*theInheritFirstArg=*/false);
 }
 
 //================================================================

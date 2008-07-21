@@ -14,6 +14,8 @@ otherwise it will be removed.
 \n Firstly an \b Object can be mirrored through a \b Point of symmetry
 \n <b>TUI Command:</b> <em>geompy.MakeMirrorByPoint(Object, Point)</em>
 \n <b>Arguments:</b> Name + one or several objects + 1 vertex.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation7.png
 
@@ -25,6 +27,8 @@ otherwise it will be removed.
 symmetry
 \n <b>TUI Command:</b> <em>geompy.MakeMirrorByAxis(Object, Axis)</em>
 \n <b>Arguments:</b> Name + one or several objects + 1 vector.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation8.png
 
@@ -35,6 +39,8 @@ symmetry
 \n Finally an \b Object can be mirrored through a \b Plane of symmetry
 \n <b>TUI Command:</b> <em>geompy.MakeMirrorByPlane(Shape, Plane)</em>
 \n <b>Arguments:</b> Name + one or several objects + 1 plane
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation9.png
 

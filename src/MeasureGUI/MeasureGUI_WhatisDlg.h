@@ -28,15 +28,15 @@
 
 #include "MeasureGUI_Skeleton.h"
 
-class MeasureGUI_1Sel1TextView;
-
 //=================================================================================
-// class    : DialogBox_PROPERTIES
+// class    : MeasureGUI_WhatisDlg
 // purpose  :
 //=================================================================================
 class MeasureGUI_WhatisDlg : public MeasureGUI_Skeleton
 { 
   Q_OBJECT
+
+  class Whatis;
       
 public:
   MeasureGUI_WhatisDlg( GeometryGUI*, QWidget* );
@@ -46,12 +46,16 @@ protected:
   // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
   virtual void                        processObject();
   
+protected slots:
+  virtual void                        ClickOnProperties();
+
 private:
   void                                Init();
   bool                                getParameters( QString& );
+  QString                             getKindOfShape( QString& );
   
 private:
-  MeasureGUI_1Sel1TextView*           myGrp;
+  Whatis*                             myGrp;
 };
 
 #endif // MEASUREGUI_WHATISDLG_H

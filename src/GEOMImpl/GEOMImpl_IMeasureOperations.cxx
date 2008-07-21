@@ -87,8 +87,23 @@
 #include <gp_Pln.hxx>
 #include <gp_Lin.hxx>
 
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+#include <ShapeAnalysis.hxx>
+#include <ShapeAnalysis_Surface.hxx>
+#include <GeomLProp_CLProps.hxx>
+#include <GeomLProp_SLProps.hxx>
+
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+
+#include <GeomAPI_IntSS.hxx>
+#include <Geom_SphericalSurface.hxx>
+#include <Geom_ToroidalSurface.hxx>
+#include <Geom_Circle.hxx>
+#include <BRep_Builder.hxx>
+#include <TopoDS_Compound.hxx>
+#include <ShapeFix_Shape.hxx>
+
 
 //=============================================================================
 /*!
@@ -1296,6 +1311,306 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
   return Astr;
 }
 
+
+//=======================================================================
+//function : CheckSingularCase
+//purpose  : auxilary for GetMinDistance()
+//           workaround for bugs 19899, 19908 and 19910 from Mantis
+//=======================================================================
+static double CheckSingularCase(const TopoDS_Shape& aSh1,
+                                const TopoDS_Shape& aSh2,
+                                gp_Pnt& Ptmp1, gp_Pnt& Ptmp2)
+{
+  bool IsChange1 = false;
+  double AddDist1 = 0.0;
+  TopExp_Explorer anExp;
+  TopoDS_Shape tmpSh1, tmpSh2;
+  int nbf = 0;
+  for ( anExp.Init( aSh1, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+    nbf++;
+    tmpSh1 = anExp.Current();
+  }
+  if(nbf==1) {
+    TopoDS_Shape sh = aSh1;
+    while(sh.ShapeType()==TopAbs_COMPOUND) {
+      TopoDS_Iterator it(sh);
+      sh = it.Value();
+    }
+    Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(tmpSh1));
+    if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+      if( sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE ) {
+        // non solid case
+        double U1,U2,V1,V2;
+        S->Bounds(U1,U2,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS1 = 
+          new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS2 = 
+          new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
+        BRep_Builder B;
+        TopoDS_Face F1,F2;
+        TopoDS_Compound Comp;
+        B.MakeCompound(Comp);
+        B.MakeFace(F1,TrS1,1.e-7);
+        B.Add(Comp,F1);
+        B.MakeFace(F2,TrS2,1.e-7);
+        B.Add(Comp,F2);
+        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
+        sfs->Init(Comp);
+        sfs->SetPrecision(1.e-6);
+        sfs->SetMaxTolerance(1.0);
+        sfs->Perform();
+        tmpSh1 = sfs->Shape();
+        IsChange1 = true;
+      }
+      else {
+        if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
+          Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
+          gp_Pnt PC = SS->Location();
+          BRep_Builder B;
+          TopoDS_Vertex V;
+          B.MakeVertex(V,PC,1.e-7);
+          tmpSh1 = V;
+          AddDist1 = SS->Radius();
+          IsChange1 = true;
+        }
+        else {
+          Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
+          gp_Ax3 ax3 = TS->Position();
+          Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
+          BRep_Builder B;
+          TopoDS_Edge E;
+          B.MakeEdge(E,C,1.e-7);
+          tmpSh1 = E;
+          AddDist1 = TS->MinorRadius();
+          IsChange1 = true;
+        }
+      }
+    }
+    else
+      tmpSh1 = aSh1;
+  }
+  else
+    tmpSh1 = aSh1;
+  bool IsChange2 = false;
+  double AddDist2 = 0.0;
+  nbf = 0;
+  for ( anExp.Init( aSh2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+    nbf++;
+    tmpSh2 = anExp.Current();
+  }
+  if(nbf==1) {
+    TopoDS_Shape sh = aSh2;
+    while(sh.ShapeType()==TopAbs_COMPOUND) {
+      TopoDS_Iterator it(sh);
+      sh = it.Value();
+    }
+    Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(tmpSh2));
+    if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+      if( sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE ) {
+        // non solid case
+        double U1,U2,V1,V2;
+        S->Bounds(U1,U2,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS1 = 
+          new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS2 = 
+          new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
+        BRep_Builder B;
+        TopoDS_Face F1,F2;
+        TopoDS_Compound Comp;
+        B.MakeCompound(Comp);
+        B.MakeFace(F1,TrS1,1.e-7);
+        B.Add(Comp,F1);
+        B.MakeFace(F2,TrS2,1.e-7);
+        B.Add(Comp,F2);
+        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
+        sfs->Init(Comp);
+        sfs->SetPrecision(1.e-6);
+        sfs->SetMaxTolerance(1.0);
+        sfs->Perform();
+        tmpSh2 = sfs->Shape();
+        IsChange2 = true;
+      }
+      else {
+        if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
+          Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
+          gp_Pnt PC = SS->Location();
+          BRep_Builder B;
+          TopoDS_Vertex V;
+          B.MakeVertex(V,PC,1.e-7);
+          tmpSh2 = V;
+          AddDist2 = SS->Radius();
+          IsChange2 = true;
+        }
+        else if( S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+          Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
+          gp_Ax3 ax3 = TS->Position();
+          Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
+          BRep_Builder B;
+          TopoDS_Edge E;
+          B.MakeEdge(E,C,1.e-7);
+          tmpSh2 = E;
+          AddDist2 = TS->MinorRadius();
+          IsChange2 = true;
+        }
+      }
+    }
+    else
+      tmpSh2 = aSh2;
+  }
+  else
+    tmpSh2 = aSh2;
+
+  if( !IsChange1 && !IsChange2 )
+    return -2.0;
+
+  BRepExtrema_DistShapeShape dst(tmpSh1,tmpSh2);
+  if (dst.IsDone()) {
+    double MinDist = 1.e9;
+    gp_Pnt PMin1, PMin2, P1, P2;
+    for (int i = 1; i <= dst.NbSolution(); i++) {
+      P1 = dst.PointOnShape1(i);
+      P2 = dst.PointOnShape2(i);
+      Standard_Real Dist = P1.Distance(P2);
+      if (MinDist > Dist) {
+        MinDist = Dist;
+        PMin1 = P1;
+        PMin2 = P2;
+      }
+    }
+    if(MinDist<1.e-7) {
+      Ptmp1 = PMin1;
+      Ptmp2 = PMin2;
+    }
+    else {
+      gp_Dir aDir(gp_Vec(PMin1,PMin2));
+      if( MinDist > (AddDist1+AddDist2) ) {
+        Ptmp1 = gp_Pnt( PMin1.X() + aDir.X()*AddDist1,
+                        PMin1.Y() + aDir.Y()*AddDist1,
+                        PMin1.Z() + aDir.Z()*AddDist1 );
+        Ptmp2 = gp_Pnt( PMin2.X() - aDir.X()*AddDist2,
+                        PMin2.Y() - aDir.Y()*AddDist2,
+                        PMin2.Z() - aDir.Z()*AddDist2 );
+        return (MinDist - AddDist1 - AddDist2);
+      }
+      else {
+        if( AddDist1 > 0 ) {
+          Ptmp1 = gp_Pnt( PMin1.X() + aDir.X()*AddDist1,
+                          PMin1.Y() + aDir.Y()*AddDist1,
+                          PMin1.Z() + aDir.Z()*AddDist1 );
+          Ptmp2 = Ptmp1;
+        }
+        else {
+          Ptmp2 = gp_Pnt( PMin2.X() - aDir.X()*AddDist2,
+                          PMin2.Y() - aDir.Y()*AddDist2,
+                          PMin2.Z() - aDir.Z()*AddDist2 );
+          Ptmp1 = Ptmp2;
+        }
+      }
+    }
+    double res = MinDist - AddDist1 - AddDist2;
+    if(res<0.) res = 0.0;
+    return res;
+  }
+  return -2.0;
+}
+/* old variant
+static bool CheckSingularCase(const TopoDS_Shape& aSh1,
+                              const TopoDS_Shape& aSh2,
+                              gp_Pnt& Ptmp)
+{
+  TopExp_Explorer anExp;
+  TopoDS_Shape tmpSh1, tmpSh2;
+  int nbf = 0;
+  for ( anExp.Init( aSh1, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+    nbf++;
+    tmpSh1 = anExp.Current();
+  }
+  if(nbf==1) {
+    Handle(Geom_Surface) S1 = BRep_Tool::Surface(TopoDS::Face(tmpSh1));
+    if( S1->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        S1->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+      nbf = 0;
+      for ( anExp.Init( aSh2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+        nbf++;
+        tmpSh2 = anExp.Current();
+        Handle(Geom_Surface) S2 = BRep_Tool::Surface(TopoDS::Face(tmpSh2));
+        GeomAPI_IntSS ISS(S1,S2,1.e-7);
+        if(ISS.IsDone()) {
+          for(int i=1; i<=ISS.NbLines(); i++) {
+            Handle(Geom_Curve) C3d = ISS.Line(i);
+            BRep_Builder B;
+            TopoDS_Edge E;
+            B.MakeEdge(E,C3d,1.e-7);
+            BRepExtrema_DistShapeShape dst(tmpSh2,E);
+            if (dst.IsDone()) {
+              gp_Pnt PMin1, PMin2, P1, P2;
+              double MinDist = 1.e9;
+              for (int i = 1; i <= dst.NbSolution(); i++) {
+                P1 = dst.PointOnShape1(i);
+                P2 = dst.PointOnShape2(i);
+                Standard_Real Dist = P1.Distance(P2);
+                if (MinDist > Dist) {
+                  MinDist = Dist;
+                  Ptmp = P1;
+                }
+              }
+              if(MinDist<1.e-7)
+                return true;
+            }
+          }
+        }
+      }
+    }
+  }
+  nbf = 0;
+  for ( anExp.Init( aSh2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+    nbf++;
+    tmpSh1 = anExp.Current();
+  }
+  if(nbf==1) {
+    Handle(Geom_Surface) S1 = BRep_Tool::Surface(TopoDS::Face(tmpSh1));
+    if( S1->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        S1->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+      nbf = 0;
+      for ( anExp.Init( aSh1, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+        nbf++;
+        tmpSh2 = anExp.Current();
+        Handle(Geom_Surface) S2 = BRep_Tool::Surface(TopoDS::Face(tmpSh2));
+        GeomAPI_IntSS ISS(S1,S2,1.e-7);
+        if(ISS.IsDone()) {
+          for(int i=1; i<=ISS.NbLines(); i++) {
+            Handle(Geom_Curve) C3d = ISS.Line(i);
+            BRep_Builder B;
+            TopoDS_Edge E;
+            B.MakeEdge(E,C3d,1.e-7);
+            BRepExtrema_DistShapeShape dst(tmpSh2,E);
+            if (dst.IsDone()) {
+              gp_Pnt P1,P2;
+              double MinDist = 1.e9;
+              for (int i = 1; i <= dst.NbSolution(); i++) {
+                P1 = dst.PointOnShape1(i);
+                P2 = dst.PointOnShape2(i);
+                Standard_Real Dist = P1.Distance(P2);
+                if (MinDist > Dist) {
+                  MinDist = Dist;
+                  Ptmp = P1;
+                }
+              }
+              if(MinDist<1.e-7)
+                return true;
+            }
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+*/
+
+
 //=============================================================================
 /*!
  *  GetMinDistance
@@ -1327,6 +1642,18 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
 #endif
+
+    // skl 30.06.2008
+    // additional workaround for bugs 19899, 19908 and 19910 from Mantis
+    gp_Pnt Ptmp1, Ptmp2;
+    double dist = CheckSingularCase(aShape1, aShape2, Ptmp1, Ptmp2);
+    if(dist>-1.0) {
+      Ptmp1.Coord(X1, Y1, Z1);
+      Ptmp2.Coord(X2, Y2, Z2);
+      SetErrorCode(OK);
+      return dist;
+    }
+
     BRepExtrema_DistShapeShape dst (aShape1, aShape2);
     if (dst.IsDone()) {
       gp_Pnt PMin1, PMin2, P1, P2;
@@ -1466,6 +1793,317 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngle (Handle(GEOM_Object) theLine
 
   return anAngle;
 }
+
+
+//=============================================================================
+/*!
+ *  CurveCurvatureByParam
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByParam
+                        (Handle(GEOM_Object) theCurve, Standard_Real& theParam)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if(theCurve.IsNull()) return aRes;
+
+  Handle(GEOM_Function) aRefShape = theCurve->GetLastFunction();
+  if(aRefShape.IsNull()) return aRes;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if(aShape.IsNull()) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return aRes;
+  }
+
+  Standard_Real aFP, aLP, aP;
+  Handle(Geom_Curve) aCurve = BRep_Tool::Curve(TopoDS::Edge(aShape), aFP, aLP);
+  aP = aFP + (aLP - aFP) * theParam;
+
+  if(aCurve.IsNull()) return aRes;
+
+  //Compute curvature
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    GeomLProp_CLProps Prop = GeomLProp_CLProps 
+      (aCurve, aP, 2, Precision::Confusion());
+    aRes = fabs(Prop.Curvature());
+    SetErrorCode(OK);
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return aRes;
+  }
+
+  if( aRes > Precision::Confusion() )
+    aRes = 1/aRes;
+  else
+    aRes = RealLast();
+  
+  return aRes;
+}
+
+
+//=============================================================================
+/*!
+ *  CurveCurvatureByPoint
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByPoint
+                   (Handle(GEOM_Object) theCurve, Handle(GEOM_Object) thePoint)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if( theCurve.IsNull() || thePoint.IsNull() ) return aRes;
+
+  Handle(GEOM_Function) aRefCurve = theCurve->GetLastFunction();
+  Handle(GEOM_Function) aRefPoint = thePoint->GetLastFunction();
+  if( aRefCurve.IsNull() || aRefPoint.IsNull() ) return aRes;
+
+  TopoDS_Edge anEdge = TopoDS::Edge(aRefCurve->GetValue());
+  TopoDS_Vertex aPnt = TopoDS::Vertex(aRefPoint->GetValue());
+  if( anEdge.IsNull() || aPnt.IsNull() ) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return aRes;
+  }
+
+  Standard_Real aFP, aLP;
+  Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, aFP, aLP);
+  if(aCurve.IsNull()) return aRes;
+  gp_Pnt aPoint = BRep_Tool::Pnt(aPnt);
+
+  //Compute curvature
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    GeomAPI_ProjectPointOnCurve PPC(aPoint, aCurve, aFP, aLP);
+    if(PPC.NbPoints()>0) {
+      GeomLProp_CLProps Prop = GeomLProp_CLProps 
+        (aCurve, PPC.LowerDistanceParameter(), 2, Precision::Confusion());
+      aRes = fabs(Prop.Curvature());
+      SetErrorCode(OK);
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return aRes;
+  }
+
+  if( aRes > Precision::Confusion() )
+    aRes = 1/aRes;
+  else
+    aRes = RealLast();
+  
+  return aRes;
+}
+
+
+//=============================================================================
+/*!
+ *  getSurfaceCurvatures
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::getSurfaceCurvatures
+                                          (const Handle(Geom_Surface)& aSurf,
+                                           Standard_Real theUParam,
+                                           Standard_Real theVParam,
+                                           Standard_Boolean theNeedMaxCurv)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = 1.0;
+
+  if (aSurf.IsNull()) return aRes;
+
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    GeomLProp_SLProps Prop = GeomLProp_SLProps 
+      (aSurf, theUParam, theVParam, 2, Precision::Confusion());
+    if(Prop.IsCurvatureDefined()) {
+      if(Prop.IsUmbilic()) {
+        //cout<<"is umbilic"<<endl;
+        aRes = fabs(Prop.MeanCurvature());
+      }
+      else {
+        //cout<<"is not umbilic"<<endl;
+        double c1 = fabs(Prop.MaxCurvature());
+        double c2 = fabs(Prop.MinCurvature());
+        if(theNeedMaxCurv)
+          aRes = Max(c1,c2);
+        else
+          aRes = Min(c1,c2);
+      }
+      SetErrorCode(OK);
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return aRes;
+  }
+
+  if( fabs(aRes) > Precision::Confusion() )
+    aRes = 1/aRes;
+  else
+    aRes = RealLast();
+  
+  return aRes;
+}
+
+
+//=============================================================================
+/*!
+ *  MaxSurfaceCurvatureByParam
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::MaxSurfaceCurvatureByParam
+                                                  (Handle(GEOM_Object) theSurf,
+                                                   Standard_Real& theUParam,
+                                                   Standard_Real& theVParam)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if (theSurf.IsNull()) return aRes;
+
+  Handle(GEOM_Function) aRefShape = theSurf->GetLastFunction();
+  if(aRefShape.IsNull()) return aRes;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if(aShape.IsNull()) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return aRes;
+  }
+
+  TopoDS_Face F = TopoDS::Face(aShape);
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(F);
+
+  //Compute the parameters
+  Standard_Real U1,U2,V1,V2;
+  ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
+  Standard_Real U = U1 + (U2-U1)*theUParam;
+  Standard_Real V = V1 + (V2-V1)*theVParam;
+  
+  return getSurfaceCurvatures(aSurf, U, V, true);
+}
+
+
+//=============================================================================
+/*!
+ *  MaxSurfaceCurvatureByPoint
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::MaxSurfaceCurvatureByPoint
+                    (Handle(GEOM_Object) theSurf, Handle(GEOM_Object) thePoint)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if( theSurf.IsNull() || thePoint.IsNull() ) return aRes;
+
+  Handle(GEOM_Function) aRefShape = theSurf->GetLastFunction();
+  Handle(GEOM_Function) aRefPoint = thePoint->GetLastFunction();
+  if( aRefShape.IsNull() || aRefPoint.IsNull() ) return aRes;
+
+  TopoDS_Face aFace = TopoDS::Face(aRefShape->GetValue());
+  TopoDS_Vertex aPnt = TopoDS::Vertex(aRefPoint->GetValue());
+  if( aFace.IsNull() || aPnt.IsNull() ) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return 0;
+  }
+
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
+  if(aSurf.IsNull()) return aRes;
+  gp_Pnt aPoint = BRep_Tool::Pnt(aPnt);
+
+  //Compute the parameters
+  ShapeAnalysis_Surface sas(aSurf);
+  gp_Pnt2d UV = sas.ValueOfUV(aPoint,Precision::Confusion());
+
+  return getSurfaceCurvatures(aSurf, UV.X(), UV.Y(), true);
+}
+
+
+//=============================================================================
+/*!
+ *  MinSurfaceCurvatureByParam
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::MinSurfaceCurvatureByParam
+                                                  (Handle(GEOM_Object) theSurf,
+                                                   Standard_Real& theUParam,
+                                                   Standard_Real& theVParam)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if (theSurf.IsNull()) return aRes;
+
+  Handle(GEOM_Function) aRefShape = theSurf->GetLastFunction();
+  if(aRefShape.IsNull()) return aRes;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if(aShape.IsNull()) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return aRes;
+  }
+
+  TopoDS_Face F = TopoDS::Face(aShape);
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(F);
+
+  //Compute the parameters
+  Standard_Real U1,U2,V1,V2;
+  ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
+  Standard_Real U = U1 + (U2-U1)*theUParam;
+  Standard_Real V = V1 + (V2-V1)*theVParam;
+  
+  return getSurfaceCurvatures(aSurf, U, V, false);
+}
+
+
+//=============================================================================
+/*!
+ *  MinSurfaceCurvatureByPoint
+ */
+//=============================================================================
+Standard_Real GEOMImpl_IMeasureOperations::MinSurfaceCurvatureByPoint
+                    (Handle(GEOM_Object) theSurf, Handle(GEOM_Object) thePoint)
+{
+  SetErrorCode(KO);
+  Standard_Real aRes = -1.0;
+
+  if( theSurf.IsNull() || thePoint.IsNull() ) return aRes;
+
+  Handle(GEOM_Function) aRefShape = theSurf->GetLastFunction();
+  Handle(GEOM_Function) aRefPoint = thePoint->GetLastFunction();
+  if( aRefShape.IsNull() || aRefPoint.IsNull() ) return aRes;
+
+  TopoDS_Face aFace = TopoDS::Face(aRefShape->GetValue());
+  TopoDS_Vertex aPnt = TopoDS::Vertex(aRefPoint->GetValue());
+  if( aFace.IsNull() || aPnt.IsNull() ) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return 0;
+  }
+
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
+  if(aSurf.IsNull()) return aRes;
+  gp_Pnt aPoint = BRep_Tool::Pnt(aPnt);
+
+  //Compute the parameters
+  ShapeAnalysis_Surface sas(aSurf);
+  gp_Pnt2d UV = sas.ValueOfUV(aPoint,Precision::Confusion());
+
+  return getSurfaceCurvatures(aSurf, UV.X(), UV.Y(), false);
+}
+
 
 //=======================================================================
 //function : StructuralDump
@@ -1708,6 +2346,7 @@ void GEOMImpl_IMeasureOperations::StructuralDump (const BRepCheck_Analyzer& theA
     theDump += TCollection_AsciiString(nbo) + "\n";
   }
 }
+
 
 //=======================================================================
 //function : GetProblemShapes

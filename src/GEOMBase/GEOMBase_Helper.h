@@ -96,6 +96,7 @@ protected:
   void activate( const int );
   void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );
   void globalSelection( const TColStd_MapOfInteger&, const bool = false );
+  void globalSelection( const TColStd_MapOfInteger&, const QList<int>& ,const bool = false );
   void updateViewer    ();
 
   void prepareSelection( const ObjectList&, const int );
@@ -165,6 +166,9 @@ protected:
   // This method is called by onAccept(). 
   // It should perform the required operation and put all new or modified objects into 
   // <objects> argument.Should return <false> if some error occurs during its execution. 
+
+  virtual void restoreSubShapes( SALOMEDS::Study_ptr theStudy, SALOMEDS::SObject_ptr theSObject );
+  // This method is called by addInStudy().
 
   virtual GEOM::GEOM_Object_ptr getFather( GEOM::GEOM_Object_ptr theObj );
   // This method is called by addInStudy(). It should return a father object

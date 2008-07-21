@@ -33,6 +33,9 @@
 #define ARG_LINE1 7
 #define ARG_LINE2 8 
 
+#define ARG_SURFACE 9
+#define ARG_PARAM2 10
+
 class GEOMImpl_IPoint
 {
  public:
@@ -52,16 +55,20 @@ class GEOMImpl_IPoint
   Handle(GEOM_Function) GetRef() { return _func->GetReference(ARG_REF); }
 
   void SetCurve(Handle(GEOM_Function) theRef) { _func->SetReference(ARG_CURVE, theRef); }
+  void SetSurface(Handle(GEOM_Function) theRef) { _func->SetReference(ARG_SURFACE, theRef); }
   void SetLine1(Handle(GEOM_Function) theRef) { _func->SetReference(ARG_LINE1, theRef); }
   void SetLine2(Handle(GEOM_Function) theRef) { _func->SetReference(ARG_LINE2, theRef); }
 
   Handle(GEOM_Function) GetCurve() { return _func->GetReference(ARG_CURVE); }
+  Handle(GEOM_Function) GetSurface() { return _func->GetReference(ARG_SURFACE); }
   Handle(GEOM_Function) GetLine1() { return _func->GetReference(ARG_LINE1); }
   Handle(GEOM_Function) GetLine2() { return _func->GetReference(ARG_LINE2); }
 
   void SetParameter(double theParam) { _func->SetReal(ARG_PARAM, theParam); }
+  void SetParameter2(double theParam) { _func->SetReal(ARG_PARAM2, theParam); }
 
   double GetParameter() { return _func->GetReal(ARG_PARAM); }
+  double GetParameter2() { return _func->GetReal(ARG_PARAM2); }
 
  private:
 

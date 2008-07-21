@@ -32,6 +32,7 @@ class DlgRef_1Sel1Spin;
 class DlgRef_3Spin;
 class DlgRef_2Sel;
 class DlgRef_1Sel3Spin;
+class DlgRef_1Sel2Spin;
 
 class QLineEdit;
 class QGroupBox;
@@ -65,9 +66,12 @@ private:
   void                               Init();
   void                               enterEvent( QEvent* );
   double                             getParameter() const;
+  double                             getUParameter() const;
+  double                             getVParameter() const;
 
 private:
   GEOM::GEOM_Object_var              myEdge;
+  GEOM::GEOM_Object_var              myFace;
   GEOM::GEOM_Object_var              myRefPoint; 
   GEOM::GEOM_Object_var              myLine1; 
   GEOM::GEOM_Object_var              myLine2;
@@ -76,6 +80,7 @@ private:
   DlgRef_1Sel3Spin*                  GroupRefPoint;
   DlgRef_1Sel1Spin*                  GroupOnCurve;
   DlgRef_2Sel*                       GroupLineIntersection;
+  DlgRef_1Sel2Spin*                  GroupOnSurface;
   
   QGroupBox*                         myCoordGrp;
   QLineEdit*                         myX;

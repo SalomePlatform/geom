@@ -102,6 +102,8 @@ TransformationGUI_RotationDlg::TransformationGUI_RotationDlg
   GroupPoints->CheckButton1->setChecked( true );
   CreateCopyModeChanged( true );
   
+  mainFrame()->GroupBoxPublish->show();
+
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
@@ -439,6 +441,7 @@ bool TransformationGUI_RotationDlg::execute( ObjectList& objects )
     {
       if ( toCreateCopy ) {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
+	  myCurrObject = myObjects[i];
 	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->RotateCopy( myObjects[i], myAxis, GetAngle() * PI180 );
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
@@ -446,6 +449,7 @@ bool TransformationGUI_RotationDlg::execute( ObjectList& objects )
       }
       else {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
+	  myCurrObject = myObjects[i];
 	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->Rotate( myObjects[i], myAxis, GetAngle() * PI180 );
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
@@ -458,6 +462,7 @@ bool TransformationGUI_RotationDlg::execute( ObjectList& objects )
     {
       if ( toCreateCopy ) {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
+	  myCurrObject = myObjects[i];
 	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->RotateThreePointsCopy( myObjects[i], myCentPoint, myPoint1, myPoint2 );
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
@@ -465,6 +470,7 @@ bool TransformationGUI_RotationDlg::execute( ObjectList& objects )
       }
       else {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
+	  myCurrObject = myObjects[i];
 	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->RotateThreePoints( myObjects[i], myCentPoint, myPoint1, myPoint2 );	
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
@@ -478,6 +484,25 @@ bool TransformationGUI_RotationDlg::execute( ObjectList& objects )
   return res;
 }
 
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void TransformationGUI_RotationDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
+                                                      SALOMEDS::SObject_ptr theSObject )
+{
+  if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
+    // we pass here the first operation argument (object) through the list of arguments
+    // because the rotation operation place its arguments in the data structure in another order,
+    // and we need to point the first argument directly
+    GEOM::ListOfGO_var anArgs = new GEOM::ListOfGO;
+    anArgs->length(1);
+    anArgs[0] = myCurrObject;
+    getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, anArgs,
+					 /*theFindMethod=*/GEOM::FSM_Transformed,
+					 /*theInheritFirstArg=*/true );
+  }
+}
 
 //=================================================================================
 // function : GetAngle()
@@ -488,7 +513,6 @@ double TransformationGUI_RotationDlg::GetAngle() const
   return GroupPoints->SpinBox_DX->value();
 }
 
-
 //=================================================================================
 // function :  CreateCopyModeChanged()
 // purpose  :
@@ -497,7 +521,6 @@ void TransformationGUI_RotationDlg::CreateCopyModeChanged( bool isCreateCopy )
 {
   mainFrame()->GroupBoxName->setEnabled( isCreateCopy );
 }
-
 
 //=================================================================================
 // function :  onReverse()

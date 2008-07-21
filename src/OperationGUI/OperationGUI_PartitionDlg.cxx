@@ -119,6 +119,8 @@ void OperationGUI_PartitionDlg::Init()
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_VERTEX" ) );
   GroupPoints->CheckButton1->setChecked( false );
   
+  mainFrame()->GroupBoxPublish->show();
+
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
@@ -132,8 +134,6 @@ void OperationGUI_PartitionDlg::Init()
   connect( GroupPoints->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   
   connect( GroupPoints->ComboBox1, SIGNAL( activated( int ) ), this, SLOT( ComboTextChanged() ) );
-  
-  connect( GroupPoints->CheckButton1, SIGNAL( stateChanged( int ) ), this, SLOT( ReverseSense( int ) ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
@@ -388,6 +388,20 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
   return res;
 }
 
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void OperationGUI_PartitionDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
+                                                  SALOMEDS::SObject_ptr theSObject )
+{
+  if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
+					 /*theFindMethod=*/GEOM::FSM_GetInPlaceByHistory,
+					 /*theInheritFirstArg=*/myListShapes.length() == 1 ); // ? false
+  }
+}
 
 //=======================================================================
 //function : ComboTextChanged
@@ -403,7 +417,6 @@ void OperationGUI_PartitionDlg::ComboTextChanged()
   //GroupPoints->PushButton3->setEnabled(IsEnabled);
   //GroupPoints->PushButton4->setEnabled(IsEnabled);
 }
-
 
 //=================================================================================
 // function : GetLimit()

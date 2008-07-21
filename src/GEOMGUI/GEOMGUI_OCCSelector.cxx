@@ -103,6 +103,7 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
           if (!bigShape.IsEqual(curBigShape))
           {
             curBigShape = bigShape;
+            subShapes.Clear();
             TopExp::MapShapes(bigShape, subShapes);
           }
           index = subShapes.FindIndex(subShape);
@@ -216,7 +217,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 #ifndef WNT
       if ( indexesMap.IsBound( TCollection_AsciiString(entry.toLatin1().data())))
 #else
-	  if ( indexesMap.IsBound( entry.toLatin1().data() ) )
+      if ( indexesMap.IsBound( entry.toLatin1().data() ) )
 #endif
       {
 	TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entry.toLatin1().data());
@@ -275,6 +276,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
             {
               isLocal = true;
               TopoDS_Shape shape = aisShape->Shape();
+              aMapOfShapes.Clear();
               TopExp::MapShapes(shape, aMapOfShapes);
             }
           }

@@ -122,6 +122,26 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
     TopLoc_Location aLocRes (aTrsf * aTrsfOrig);
     aShape = anOriginal.Located(aLocRes);
   }
+  else if (aType == TRANSLATE_VECTOR_DISTANCE) {
+    Handle(GEOM_Function) aVector = TI.GetVector();
+    double aDistance = TI.GetDistance();
+    if(aVector.IsNull()) return 0;
+    TopoDS_Shape aV = aVector->GetValue();
+    if(aV.IsNull() || aV.ShapeType() != TopAbs_EDGE) return 0;
+    TopoDS_Edge anEdge = TopoDS::Edge(aV);
+
+    aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
+    aP2 = BRep_Tool::Pnt(TopExp::LastVertex(anEdge));
+
+    gp_Vec aVec (aP1, aP2);
+    aVec.Normalize();
+    aTrsf.SetTranslation(aVec * aDistance);
+
+    TopLoc_Location aLocOrig = anOriginal.Location();
+    gp_Trsf aTrsfOrig = aLocOrig.Transformation();
+    TopLoc_Location aLocRes (aTrsf * aTrsfOrig);
+    aShape = anOriginal.Located(aLocRes);
+  }
   else if (aType == TRANSLATE_XYZ || aType == TRANSLATE_XYZ_COPY) {
     gp_Vec aVec (TI.GetDX(), TI.GetDY(), TI.GetDZ());
     aTrsf.SetTranslation(aVec);

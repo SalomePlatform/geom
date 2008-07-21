@@ -4,15 +4,24 @@
 
 To generate a \b Filling in the <b>Main Menu</b> select <b>New Entity - > Generation  - > Filling</b>
 
-\n To create a curving face using several edges you need to define the
-<b>Edges Compound</b>, \b Minimum and <b>Maximum Degree</b>, \b
-Tolerance for \b 2D and for \b 3D , the <b>Number of Iterations</b>
-and <b>Approximation</b>.
+To create a curving face using several edges you need to define the
+following parameters:
+\n <b>Edges Compound</b> - the list of edges used for creation of the
+surface;
+\n \b Minimum and <b>Maximum Degree</b> of equation of the resulting BSpline or Besier curves describing the surface; 
+\n \b Tolerance for \b 2D and for \b 3D - minimum distance between the
+created surface and the reference edge; 
+\n <b>Number of
+Iterations</b> - defines the maximum number of iterations. The iterations are repeated until the required tolerance is reached. So, a greater number of iterations allows producing a better surface. 
+\n <b>Approximation</b> - if checked, BSpline curves are generated in the process of surface construction (using GeomAPI_PointsToBSplineSurface functionality). By default the surface is created using Besier curves. The usage of <b>Approximation</b> makes the algorithm work slower, but allows building the
+surface for rather complex cases. 
+
 \n The \b Result of the operation will be a GEOM_Object (face).
 
-\n <b>TUI Command:</b> <em>geompy.MakeFilling(Edges, MinDegree,
-MaxDegree, Tol2D, Tol3D, NbIter, isApprox)</em>
-\n <b>Arguments:</b> Name + 1 Compound of edges + 2 Values (min. and max degree of result BSpline surface) + 2 Values (2D and 3D precision to reach) + 1 Value (number of iterations of approximaion algorithm) + 1 Flag (to select one of algorithms).
+\n <b>TUI Command:</b> <em>geompy.MakeFilling(Edges, MinDegree, MaxDegree, Tol2D, Tol3D, NbIter)</em>
+\n <b>Arguments:</b> Name + 1 List of edges + 6 Parameters
+(Min. degree, Max. degree, Number of iterations, 2D tolerance, 3D
+tolerance, Number of iterations, Appro).
 
 \image html filling.png
 
