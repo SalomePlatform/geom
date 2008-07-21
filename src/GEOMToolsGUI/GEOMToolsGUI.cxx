@@ -245,8 +245,8 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
       continue;
 
     GEOM::ListOfGO_var list = geomObj->GetDependency();
-    if( list->length() <= 1 ) 
-      continue; // ??? why 1?
+    if( list->length() == 0 ) 
+      continue;
 
     for( int i = 0; i < list->length(); i++ ) {
       bool depends = false;
