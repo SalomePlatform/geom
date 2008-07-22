@@ -915,6 +915,10 @@
             <translation>planeWorking.png</translation>
         </message>
         <message>
+            <source>ICO_GET_SHAPES_ON_SHAPES</source>
+            <translation>shapesonshape.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_POINT_FACE</source>
             <translation>pointonface.png</translation>
         </message>
