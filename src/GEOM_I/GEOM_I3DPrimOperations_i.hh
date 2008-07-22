@@ -94,6 +94,15 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 					      GEOM::GEOM_Object_ptr thePoint1,
 					      GEOM::GEOM_Object_ptr thePoint2);
 
+  GEOM::GEOM_Object_ptr MakePrismDXDYDZ (GEOM::GEOM_Object_ptr theBase,
+				         CORBA::Double         theDX,
+				         CORBA::Double         theDY,
+				         CORBA::Double         theDZ);
+  GEOM::GEOM_Object_ptr MakePrismDXDYDZ2Ways (GEOM::GEOM_Object_ptr theBase,
+				              CORBA::Double         theDX,
+				              CORBA::Double         theDY,
+				              CORBA::Double         theDZ);
+
   GEOM::GEOM_Object_ptr MakePipe (GEOM::GEOM_Object_ptr theBase,
 				  GEOM::GEOM_Object_ptr thePath);
 

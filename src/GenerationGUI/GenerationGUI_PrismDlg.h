@@ -30,6 +30,7 @@
 
 class DlgRef_2Sel1Spin2Check;
 class DlgRef_3Sel1Check;
+class DlgRef_1Sel3Spin1Check;
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg
@@ -66,9 +67,11 @@ private:
   bool                               myOkPnt2;
   bool                               myBothway;
   bool                               myBothway2;
+  bool                               myBothway3;
   
   DlgRef_2Sel1Spin2Check*            GroupPoints;
   DlgRef_3Sel1Check*                 GroupPoints2; // for second layout for extrusion using 2 points
+  DlgRef_1Sel3Spin1Check*            GroupPoints3;
   
 private slots:
   void                               ClickOnOk();
@@ -82,7 +85,6 @@ private slots:
   void                               SetDoubleSpinBoxStep( double );
   void                               onReverse();
   void                               onBothway();
-  void                               onBothway2();
 };
 
 #endif // GENERATIONGUI_PRISMDLG_H

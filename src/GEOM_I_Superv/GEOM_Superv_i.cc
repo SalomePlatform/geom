@@ -968,6 +968,34 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr
 }
 
 //=============================================================================
+//  MakePrismDXDYDZ:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismDXDYDZ (GEOM::GEOM_Object_ptr theBase,
+		      CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
+{
+  beginService( " GEOM_Superv_i::MakePrismDXDYDZ" );
+  MESSAGE("GEOM_Superv_i::MakePrismDXDYDZ");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePrismDXDYDZ(theBase, theDX, theDY, theDZ);
+  endService( " GEOM_Superv_i::MakePrismDXDYDZ" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakePrismDXDYDZ:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismDXDYDZ2Ways (GEOM::GEOM_Object_ptr theBase,
+		      CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
+{
+  beginService( " GEOM_Superv_i::MakePrismDXDYDZ2Ways" );
+  MESSAGE("GEOM_Superv_i::MakePrismDXDYDZ2Ways");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePrismDXDYDZ2Ways(theBase, theDX, theDY, theDZ);
+  endService( " GEOM_Superv_i::MakePrismDXDYDZ2Ways" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakePipe:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipe (GEOM::GEOM_Object_ptr theBase, 

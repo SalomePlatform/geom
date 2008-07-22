@@ -461,6 +461,68 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismTwoPnt2Ways
 
 //=============================================================================
 /*!
+ *  MakePrismDXDYDZ
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismDXDYDZ
+                      (GEOM::GEOM_Object_ptr theBase, CORBA::Double theDX,
+		       CORBA::Double theDY, CORBA::Double theDZ)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theBase == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject
+    (theBase->GetStudyID(), theBase->GetEntry());
+
+  if (aBase.IsNull()) return aGEOMObject._retn();
+
+  //Create the Prism
+  Handle(GEOM_Object) anObject =
+      GetOperations()->MakePrismDXDYDZ(aBase, theDX, theDY, theDZ);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakePrismDXDYDZ2Ways
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismDXDYDZ2Ways
+                      (GEOM::GEOM_Object_ptr theBase, CORBA::Double theDX,
+		       CORBA::Double theDY, CORBA::Double theDZ)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theBase == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject
+    (theBase->GetStudyID(), theBase->GetEntry());
+
+  if (aBase.IsNull()) return aGEOMObject._retn();
+
+  //Create the Prism
+  Handle(GEOM_Object) anObject =
+      GetOperations()->MakePrismDXDYDZ2Ways(aBase, theDX, theDY, theDZ);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakePipe
  */
 //=============================================================================

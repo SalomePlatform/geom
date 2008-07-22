@@ -27,6 +27,9 @@
 #define PRISM_ARG_BASE  3
 #define PRISM_ARG_PNT_F 4
 #define PRISM_ARG_PNT_L 5
+#define PRISM_ARG_DX    6
+#define PRISM_ARG_DY    7
+#define PRISM_ARG_DZ    8
 
 class GEOMImpl_IPrism
 {
@@ -38,6 +41,14 @@ class GEOMImpl_IPrism
   void SetVector(Handle(GEOM_Function) theRefVector) { _func->SetReference(PRISM_ARG_VEC , theRefVector); }
   void SetFirstPoint(Handle(GEOM_Function) thePoint) { _func->SetReference(PRISM_ARG_PNT_F, thePoint); }
   void SetLastPoint (Handle(GEOM_Function) thePoint) { _func->SetReference(PRISM_ARG_PNT_L, thePoint); }
+
+  void SetDX(double theDX) { _func->SetReal(PRISM_ARG_DX, theDX); }
+  void SetDY(double theDY) { _func->SetReal(PRISM_ARG_DY, theDY); }
+  void SetDZ(double theDZ) { _func->SetReal(PRISM_ARG_DZ, theDZ); }
+
+  double GetDX() { return _func->GetReal(PRISM_ARG_DX); }
+  double GetDY() { return _func->GetReal(PRISM_ARG_DY); }
+  double GetDZ() { return _func->GetReal(PRISM_ARG_DZ); }
 
   Handle(GEOM_Function) GetBase  () { return _func->GetReference(PRISM_ARG_BASE); }
   Handle(GEOM_Function) GetVector() { return _func->GetReference(PRISM_ARG_VEC ); }

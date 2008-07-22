@@ -34,6 +34,16 @@ shell) serving as base object + 2 vertices.
 
 \image html extrusion2.png
 
+\n Finally, you can define the \b Extrusion by the <b>Base Shape</b>
+and the <b>DX, DY, DZ</b> Vector\n
+<b>Both Directions</b> checkbox allows extruding the
+source objects forward and backward also.
+\n <b>TUI Command:</b> <em>geompy.MakePrismDXDYDZ(Base, dx, dy, dz)</em>
+\n <b>Arguments:</b> Name + 1 shape (vertex, edge, planar wire, face or
+shell) serving as base object + 3 axis directions.
+
+\image html extrusion3.png
+
 <b>Examples:</b>
 
 \image html prisms_basessn.png

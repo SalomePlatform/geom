@@ -851,6 +851,32 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakePrismVecH2Ways(theBase, theVec, theH)
             RaiseIfFailed("MakePrismVecH2Ways", self.PrimOp)
             return anObj
+	    
+	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
+        #  @param theBase Base shape to be extruded.
+        #  @param theDX, theDY, theDZ Directions of extrusion.
+        #  @return New GEOM_Object, containing the created prism.
+        #
+        #  @ref tui_creation_prism "Example"
+        def MakePrismDXDYDZ(self, theBase, theDX, theDY, theDZ):
+            # Example: see GEOM_TestAll.py
+            anObj = self.PrimOp.MakePrismDXDYDZ(theBase, theDX, theDY, theDZ)
+            RaiseIfFailed("MakePrismDXDYDZ", self.PrimOp)
+            return anObj
+	    
+	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
+        #  i.e. all the space, transfixed by the base shape during its translation
+        #  along the vector on the given distance in 2 Ways (forward/backward) .
+        #  @param theBase Base shape to be extruded.
+        #  @param theDX, theDY, theDZ Directions of extrusion.
+        #  @return New GEOM_Object, containing the created prism.
+        #
+        #  @ref tui_creation_prism "Example"
+        def MakePrismDXDYDZ2Ways(self, theBase, theDX, theDY, theDZ):
+            # Example: see GEOM_TestAll.py
+            anObj = self.PrimOp.MakePrismDXDYDZ2Ways(theBase, theDX, theDY, theDZ)
+            RaiseIfFailed("MakePrismDXDYDZ2Ways", self.PrimOp)
+            return anObj
 
         ## Create a shape by revolution of the base shape around the axis
         #  on the given angle, i.e. all the space, transfixed by the base

@@ -338,6 +338,10 @@
             <source>ICON_DLG_PRISM_2P</source>
             <translation>prism2.png</translation>
         </message>
+	<message>
+            <source>ICON_DLG_PRISM_DXDYDZ</source>
+            <translation>prism3.png</translation>
+        </message>
         <message>
             <source>ICON_DLG_PROPAGATE</source>
             <translation>propagate.png</translation>

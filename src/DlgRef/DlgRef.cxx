@@ -178,6 +178,20 @@ DlgRef_1Sel3Spin::~DlgRef_1Sel3Spin()
 }
 
 //////////////////////////////////////////
+// DlgRef_1Sel3Spin1Check
+//////////////////////////////////////////
+
+DlgRef_1Sel3Spin1Check::DlgRef_1Sel3Spin1Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_1Sel3Spin1Check::~DlgRef_1Sel3Spin1Check()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_1Sel4Spin
 //////////////////////////////////////////
 

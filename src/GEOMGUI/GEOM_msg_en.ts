@@ -496,6 +496,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_EXTRUSION_BSV_2P</source>
             <translation>Base Shape + 2 Points</translation>
         </message>
+	<message>
+            <source>GEOM_EXTRUSION_DXDYDZ</source>
+            <translation>Base Shape + DX DY DZ Vector</translation>
+        </message>
         <message>
             <source>GEOM_EXTRUSION_TITLE</source>
             <translation>Construction by Extrusion</translation>

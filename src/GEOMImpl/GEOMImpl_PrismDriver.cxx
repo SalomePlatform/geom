@@ -129,7 +129,21 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
         }
       }
     }
-  } else {
+  } else if (aType == PRISM_BASE_DXDYDZ || aType == PRISM_BASE_DXDYDZ_2WAYS) {
+    Handle(GEOM_Function) aRefBase = aCI.GetBase();
+    TopoDS_Shape aShapeBase = aRefBase->GetValue();
+    gp_Vec aV (aCI.GetDX(), aCI.GetDY(), aCI.GetDZ());
+    if (aV.Magnitude() > gp::Resolution()) {
+      if (aType == PRISM_BASE_DXDYDZ_2WAYS)
+	{
+	  gp_Trsf aTrsf;
+	  aTrsf.SetTranslation(-aV);
+	  BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+	  aShapeBase = aTransformation.Shape();
+	  aV = aV * 2;
+	}
+      aShape = BRepPrimAPI_MakePrism(aShapeBase, aV, Standard_False).Shape();
+    }
   }
 
   if (aShape.IsNull()) return 0;

@@ -119,6 +119,7 @@ point_line_intersection.png \
 polyline.png \
 prism.png \
 prism2.png \
+prism3.png \
 revol.png \
 rotate.png \
 rotatepnt.png \

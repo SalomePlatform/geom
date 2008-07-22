@@ -942,6 +942,18 @@ module GEOM
     GEOM_Object MakePrismTwoPnt2Ways (in GEOM_Object theBase,
 				      in GEOM_Object thePoint1,
 				      in GEOM_Object thePoint2);
+				    
+    /*!
+     *  Create a shape by extrusion of the base shape along a vector, defined by DX DY DZ.
+     *  \param theBase Base shape to be extruded.
+     *  \param DX, DY, DZ end of extrusion vector.
+     *  \return New GEOM_Object, containing the created prism.
+     */
+    GEOM_Object MakePrismDXDYDZ (in GEOM_Object theBase,
+                          	 in double theDX, in double theDY, in double theDZ);
+    /*  The same prism but in two directions forward&backward */
+    GEOM_Object MakePrismDXDYDZ2Ways (in GEOM_Object theBase,
+                                      in double theDX, in double theDY, in double theDZ);
 
     /*!
      *  Create a shape by extrusion of the base shape along

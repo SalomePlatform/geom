@@ -874,6 +874,121 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt2Ways
   return aPrism;
 }
 
+//=============================================================================
+/*!
+ *  MakePrismDXDYDZ
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ
+       (Handle(GEOM_Object) theBase, double theDX, double theDY, double theDZ)
+{
+  SetErrorCode(KO);
+
+  if (theBase.IsNull()) return NULL;
+
+  //Add a new Prism object
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+
+  //Add a new Prism function for creation a Prism by DXDYDZ
+  Handle(GEOM_Function) aFunction =
+    aPrism->AddFunction(GEOMImpl_PrismDriver::GetID(), PRISM_BASE_DXDYDZ);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PrismDriver::GetID()) return NULL;
+
+  GEOMImpl_IPrism aCI (aFunction);
+
+  Handle(GEOM_Function) aRefBase = theBase->GetLastFunction();
+
+  if (aRefBase.IsNull()) return NULL;
+
+  aCI.SetBase(aRefBase);
+  aCI.SetDX(theDX);
+  aCI.SetDY(theDY);
+  aCI.SetDZ(theDZ);
+
+  //Compute the Prism value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Extrusion can not be created, check input data");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrismDXDYDZ("
+    << theBase << ", " << theDX << ", " << theDY << ", " << theDZ << ")";
+
+  SetErrorCode(OK);
+  return aPrism;
+}
+
+//=============================================================================
+/*!
+ *  MakePrismDXDYDZ_2WAYS
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ2Ways
+       (Handle(GEOM_Object) theBase, double theDX, double theDY, double theDZ)
+{
+  SetErrorCode(KO);
+
+  if (theBase.IsNull()) return NULL;
+
+  //Add a new Prism object
+  Handle(GEOM_Object) aPrism = GetEngine()->AddObject(GetDocID(), GEOM_PRISM);
+
+  //Add a new Prism function for creation a Prism by DXDYDZ
+  Handle(GEOM_Function) aFunction =
+    aPrism->AddFunction(GEOMImpl_PrismDriver::GetID(), PRISM_BASE_DXDYDZ_2WAYS);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PrismDriver::GetID()) return NULL;
+
+  GEOMImpl_IPrism aCI (aFunction);
+
+  Handle(GEOM_Function) aRefBase = theBase->GetLastFunction();
+
+  if (aRefBase.IsNull()) return NULL;
+
+  aCI.SetBase(aRefBase);
+  aCI.SetDX(theDX);
+  aCI.SetDY(theDY);
+  aCI.SetDZ(theDZ);
+
+  //Compute the Prism value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Extrusion can not be created, check input data");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrismDXDYDZ2Ways("
+    << theBase << ", " << theDX << ", " << theDY << ", " << theDZ << ")";
+
+  SetErrorCode(OK);
+  return aPrism;
+}
 
 //=============================================================================
 /*!
