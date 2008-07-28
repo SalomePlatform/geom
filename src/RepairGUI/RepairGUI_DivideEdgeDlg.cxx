@@ -37,6 +37,12 @@
 #include <GEOMImpl_Types.hxx>
 
 #include <TopAbs.hxx>
+#include <Geom_Curve.hxx>
+#include <gp_Pnt.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <BRep_Tool.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 
 //=================================================================================
@@ -118,7 +124,6 @@ void RepairGUI_DivideEdgeDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
   myObject = GEOM::GEOM_Object::_nil();
-  myIndex = -1;
 
   //myGeomGUI->SetState( 0 );
   initSelection();
@@ -126,6 +131,8 @@ void RepairGUI_DivideEdgeDlg::Init()
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+
+  connect( myValEdt,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
 
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
@@ -136,6 +143,41 @@ void RepairGUI_DivideEdgeDlg::Init()
   initName( tr( "DEVIDE_EDGE_NEW_OBJECT_NAME" ) );
 }
 
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  : On change value in spin box
+//=================================================================================
+void RepairGUI_DivideEdgeDlg::ValueChangedInSpinBox()
+{
+  displayPreview();
+}
+
+//=================================================================================
+// function : displayPreview()
+// purpose  : On display Preview
+//=================================================================================
+void RepairGUI_DivideEdgeDlg::displayPreview()
+{
+  if ( myObject->_is_nil() )
+    return;
+
+  TopoDS_Shape aShape;
+  gp_Pnt aPnt;
+  if ( GEOMBase::GetShape( myObject, aShape, TopAbs_SHAPE ) ) {
+    if (aShape.ShapeType() == TopAbs_EDGE) {
+      Standard_Real aFP, aLP, aP;
+	Handle(Geom_Curve) aCurve = BRep_Tool::Curve(TopoDS::Edge(aShape), aFP, aLP);
+	aP = aFP + (aLP - aFP) * myValEdt->value();
+	aPnt = aCurve->Value(aP);
+	BRepBuilderAPI_MakeVertex mkVertex (aPnt);
+	aShape = mkVertex.Shape();
+	// Build prs
+	SALOME_Prs* aPrs = getDisplayer()->BuildPrs( aShape );
+	if ( aPrs != 0 && !aPrs->IsNull() )
+	  GEOMBase_Helper::displayPreview( aPrs, false, true );
+    }
+  }
+}
 
 //=================================================================================
 // function : ClickOnOk()
@@ -161,7 +203,6 @@ bool RepairGUI_DivideEdgeDlg::ClickOnApply()
 
   myEditCurrentArgument->setText( "" );
   myObject = GEOM::GEOM_Object::_nil();
-  myIndex = -1;
 
   initSelection();
 
@@ -179,15 +220,15 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
 
   myObject = GEOM::GEOM_Object::_nil();
-  myIndex = -1;
 
   if ( IObjectCount() == 1 ) {
     Handle(SALOME_InteractiveObject) anIO = firstIObject();
     Standard_Boolean aRes;
-    GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-    if ( !CORBA::is_nil( aSelectedObj ) && aRes ) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
+    if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
+      QString aName = GEOMBase::GetName( aSelectedObject );
       TopoDS_Shape aShape;
-      if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) ) {
+      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) ) {
         const int aType = aShape.ShapeType();
         if ( aType <= TopAbs_EDGE ) {
 	  // edge, wire, face, shell, solid, compound
@@ -198,27 +239,34 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
             (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
           anApp->selectionMgr()->GetIndexes( anIO, aMap );
 
-          if ( !aMap.IsEmpty() ) { 
-	    // subshape selection
-            myIndex = aMap( 1 );
-            myObject = aSelectedObj;
-            myEditCurrentArgument->setText( tr( "GEOM_EDGE" ) + "_1" );
+          if ( aMap.Extent() == 1 ) { // local selection
+            int anIndex = aMap( 1 );
+            myEditCurrentArgument->setText( aName += QString( ":edge_%1" ).arg( anIndex ) );
+
+	    //Find SubShape Object in Father
+	    GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+	    if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	      GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+	      myObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+	    }
+	    else {
+	      myObject = aFindedObject; // get Object from study
+	    }
           }
           else if ( aType == TopAbs_EDGE ) { 
 	    // single shape selection
-            myIndex = -1;
-            myObject = aSelectedObj;
+            myObject = aSelectedObject;
             myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
           }
           else {
 	    // face, shell, solid or compound was selected, and NOT its subshape.
-            myIndex = -1;
             myObject = GEOM::GEOM_Object::_nil();
           }
         }
       }
     }
   }
+  displayPreview();
 }
 
 //=================================================================================
@@ -259,7 +307,6 @@ void RepairGUI_DivideEdgeDlg::ActivateThisDialog()
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   myObject = GEOM::GEOM_Object::_nil();
-  myIndex = -1;
 
   //myGeomGUI->SetState( 0 );
   initSelection();
@@ -301,7 +348,7 @@ bool RepairGUI_DivideEdgeDlg::isValid( QString& )
 bool RepairGUI_DivideEdgeDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->DivideEdge
-    ( myObject, myIndex, myValEdt->value(), getIsByParameter() );
+    ( myObject, -1, myValEdt->value(), getIsByParameter() );
   bool aResult = !anObj->_is_nil();
   if ( aResult )
     objects.push_back( anObj._retn() );
@@ -326,4 +373,16 @@ void RepairGUI_DivideEdgeDlg::initSelection()
 {
   GEOM::GEOM_Object_var aNullGeomObject;
   localSelection( aNullGeomObject, TopAbs_EDGE ); // load local selection on ALL objects
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void RepairGUI_DivideEdgeDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+  objMap[GroupPoints->LineEdit1->text()] = myObject;
+
+  addSubshapesToFather( objMap );
 }

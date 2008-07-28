@@ -49,6 +49,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
+  virtual void                       addSubshapesToStudy();
   
 private:
   void                               Init();
@@ -59,7 +60,6 @@ private:
   
 private:
   GEOM::GEOM_Object_var              myObject;
-  int                                myIndex;
   
   DlgRef_1SelExt*                    GroupPoints;
   QButtonGroup*                      myIsParameterGr;
@@ -68,9 +68,10 @@ private:
 protected slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
-  
+
+  void                               displayPreview();
+  void                               ValueChangedInSpinBox();
   void                               ActivateThisDialog();
-  
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
