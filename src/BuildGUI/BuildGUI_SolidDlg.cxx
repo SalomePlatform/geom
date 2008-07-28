@@ -32,6 +32,7 @@
 #include <GEOMImpl_Types.hxx>
 
 #include <SUIT_ResourceMgr.h>
+#include <SUIT_MessageBox.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -134,6 +135,17 @@ void BuildGUI_SolidDlg::ClickOnOk()
 //=================================================================================
 bool BuildGUI_SolidDlg::ClickOnApply()
 {
+  for ( int i = 0, n = myShells.length(); i< n; i++ ) {
+    if ( !isClosed(i)) {
+      QString aName = GEOMBase::GetName( myShells[i] );
+      SUIT_MessageBox::warning( (QWidget*)SUIT_Session::session()->activeApplication()->desktop(),
+                                 QObject::tr("WRN_WARNING"),
+                                 QObject::tr("WRN_SHAPE_UNCLOSED").arg(aName) ,
+                                 QObject::tr("BUT_OK") );
+       return false;
+    }
+  }
+
   if ( !onAccept() )
     return false;
 
@@ -233,6 +245,42 @@ GEOM::GEOM_IOperations_ptr BuildGUI_SolidDlg::createOperation()
 bool BuildGUI_SolidDlg::isValid( QString& )
 {
   return myOkShells;
+}
+
+//=================================================================================
+// function : isClosed
+// purpose  : Check the object 'i' in myShells list is closed or unclosed
+//=================================================================================
+bool BuildGUI_SolidDlg::isClosed(int i)
+{
+  GEOM::GEOM_Object_var aShape = myShells[i];
+  GEOM::GEOM_IKindOfShape::shape_kind aKind;
+  GEOM::ListOfLong_var anInts;
+  GEOM::ListOfDouble_var aDbls;
+
+  if (aShape->_is_nil()) {
+    MESSAGE ("Shape is NULL!!!");
+    return false;
+  }
+
+  GEOM::GEOM_IMeasureOperations_ptr anOp = myGeomGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() );
+
+  //  GEOM::GEOM_IMeasureOperations_var anOp = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
+
+  // Detect kind of shape and parameters
+  aKind = anOp->KindOfShape(aShape, anInts, aDbls);
+
+  if ( !anOp->IsDone() ) {
+    MESSAGE ("KindOfShape Operation is NOT DONE!!!");
+    return false;
+  }
+  
+  if ( anInts[0] == 1 )
+    return true;
+  else if ( anInts[0] == 2 )
+    return false;
+ 
+  return false;
 }
 
 //=================================================================================

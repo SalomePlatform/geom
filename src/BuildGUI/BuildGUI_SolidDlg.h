@@ -50,6 +50,7 @@ protected:
 
 private:
   void                               Init();
+  bool                               isClosed(int i);
   void                               enterEvent( QEvent* );
 
 private:
