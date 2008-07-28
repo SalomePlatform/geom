@@ -10,7 +10,7 @@
 <br><h2>Intersection of two shapes.</h2>
 
 \n As far as the intersection of two objects can produce any type of
-geometrical objects, <b>Reconstruction Limit</b> box allows choosing the
+geometrical objects, <b>Resulting type</b> box allows choosing the
 preferrable result, i.e. a solid, a shell, a list of faces, etc.
 \n <b>TUI Command:</b> <em>geompy.MakePartition(ListOfShapes,
 ListOfTools, ListOfKeepInside, ListOfRemoveInside, Limit, RemoveWebs,
@@ -28,8 +28,8 @@ reconstruction limit.
 
 \image html partition1.png
 
-<b>Keep nonlimit shapes</b> checkbox allows building geometrical objects of
-all types at the same time i.e. no reconstruction limit is applied.
+<b>Keep shapes of lower type</b> checkbox allows building geometrical objects. 
+Only lower type objects will be preserved without the upper ones.
 
 
 <br><h2>Intersection of a Shape and a Plane.</h2>

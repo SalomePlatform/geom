@@ -1178,7 +1178,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_RECONSTRUCTION_LIMIT</source>
-            <translation>Reconstruction Limit</translation>
+            <translation>Resulting Type</translation>
         </message>
         <message>
             <source>GEOM_RECONSTRUCTION_LIMIT_EDGE</source>
@@ -1831,6 +1831,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_WRN_WARNING</source>
             <translation>Warning</translation>
+        </message>
+        <message>
+            <source>WRN_SHAPE_UNCLOSED</source>
+            <translation>Unable to create solid from unclosed shape %1</translation>
         </message>
         <message>
             <source>GEOM_X</source>
@@ -3350,7 +3354,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_KEEP_NONLIMIT_SHAPES</source>
-            <translation>Keep nonlimit shapes</translation>
+            <translation>Keep shapes of lower type</translation>
         </message>
         <message>
             <source>GEOM_CENTER_2POINTS</source>
