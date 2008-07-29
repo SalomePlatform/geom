@@ -163,7 +163,7 @@ void GEOMImpl_IInsertOperations::Export
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Export driver failed");
+      SetErrorCode("Not enough space on disk, or you haven't permissions to write this directory");
       return;
     }
   }
