@@ -44,6 +44,8 @@
 #include <GEOMImpl_SplineDriver.hxx>
 #include <GEOMImpl_SketcherDriver.hxx>
 #include <GEOMImpl_BoxDriver.hxx>
+#include <GEOMImpl_FaceDriver.hxx>
+#include <GEOMImpl_DiskDriver.hxx>
 #include <GEOMImpl_ConeDriver.hxx>
 #include <GEOMImpl_CylinderDriver.hxx>
 #include <GEOMImpl_PrismDriver.hxx>
@@ -101,6 +103,8 @@ GEOMImpl_Gen::GEOMImpl_Gen()
 
    // 3D Primitives
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_BoxDriver::GetID(), new GEOMImpl_BoxDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_FaceDriver::GetID(), new GEOMImpl_FaceDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_DiskDriver::GetID(), new GEOMImpl_DiskDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ConeDriver::GetID(), new GEOMImpl_ConeDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_CylinderDriver::GetID(), new GEOMImpl_CylinderDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PrismDriver::GetID(), new GEOMImpl_PrismDriver());

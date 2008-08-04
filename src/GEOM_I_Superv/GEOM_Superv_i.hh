@@ -187,6 +187,17 @@ public:
 				       CORBA::Double theDZ);
   GEOM::GEOM_Object_ptr MakeBoxTwoPnt (GEOM::GEOM_Object_ptr thePnt1, 
 				       GEOM::GEOM_Object_ptr thePnt2);
+  GEOM::GEOM_Object_ptr MakeFaceHW (CORBA::Double theH,
+				    CORBA::Double theW);
+  GEOM::GEOM_Object_ptr MakeFacePlaneHW (GEOM::GEOM_Object_ptr theFace, 
+					 CORBA::Double theH,
+					 CORBA::Double theW);
+  GEOM::GEOM_Object_ptr MakeDiskPntVecR (GEOM::GEOM_Object_ptr theCenter,
+					 GEOM::GEOM_Object_ptr theVector,
+					 CORBA::Double theR);
+  GEOM::GEOM_Object_ptr MakeDiskThreePnt (GEOM::GEOM_Object_ptr thePnt1,
+					  GEOM::GEOM_Object_ptr thePnt2,
+					  GEOM::GEOM_Object_ptr thePnt3);
   GEOM::GEOM_Object_ptr MakeCylinderPntVecRH (GEOM::GEOM_Object_ptr thePnt,
 					      GEOM::GEOM_Object_ptr theAxis,
 					      CORBA::Double theRadius,

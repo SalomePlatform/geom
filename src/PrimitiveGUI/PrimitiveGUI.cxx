@@ -35,6 +35,8 @@
 #include "PrimitiveGUI_SphereDlg.h"   // Method SPHERE
 #include "PrimitiveGUI_TorusDlg.h"    // Method TORUS
 #include "PrimitiveGUI_ConeDlg.h"     // Method CONE
+#include "PrimitiveGUI_FaceDlg.h"     // Method FACE
+#include "PrimitiveGUI_DiskDlg.h"     // Method DISK
 
 //=======================================================================
 // function : PrimitiveGUI()
@@ -80,6 +82,12 @@ bool PrimitiveGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     break;
   case 4025: // CONE
     aDlg = new PrimitiveGUI_ConeDlg( getGeometryGUI(), parent);
+    break;
+  case 4026: // FACE
+    aDlg = new PrimitiveGUI_FaceDlg( getGeometryGUI(), parent);
+    break;
+  case 4027: // DISK
+    aDlg = new PrimitiveGUI_DiskDlg( getGeometryGUI(), parent);
     break;
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );

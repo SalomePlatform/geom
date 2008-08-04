@@ -75,6 +75,8 @@ dist_libGEOMimpl_la_SOURCES = \
 	GEOMImpl_ScaleDriver.cxx \
 	GEOMImpl_PositionDriver.cxx \
 	GEOMImpl_BoxDriver.cxx \
+	GEOMImpl_FaceDriver.cxx \
+	GEOMImpl_DiskDriver.cxx \
 	GEOMImpl_ConeDriver.cxx \
 	GEOMImpl_CylinderDriver.cxx \
 	GEOMImpl_SphereDriver.cxx \

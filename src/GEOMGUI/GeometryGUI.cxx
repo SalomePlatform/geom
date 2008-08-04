@@ -403,7 +403,9 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 4022 ||  // MENU PRIMITIVE - CYLINDER
 	   id == 4023 ||  // MENU PRIMITIVE - SPHERE
 	   id == 4024 ||  // MENU PRIMITIVE - TORUS
-	   id == 4025 ) { // MENU PRIMITIVE - CONE
+	   id == 4025 ||  // MENU PRIMITIVE - CONE
+	   id == 4026 ||  // MENU PRIMITIVE - FACE
+	   id == 4027 ) { // MENU PRIMITIVE - DISK
 #ifndef WNT
 	library = getLibrary( "libPrimitiveGUI.so" );
 #else
@@ -759,6 +761,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 4023, "SPHERE" );
   createGeomAction( 4024, "TORUS" );
   createGeomAction( 4025, "CONE" );
+  createGeomAction( 4026, "FACE" );
+  createGeomAction( 4027, "DISK" );
 
   createGeomAction( 4031, "EXTRUSION" );
   createGeomAction( 4032, "REVOLUTION" );
@@ -899,6 +903,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 4023, primId, -1 );
   createMenu( 4024, primId, -1 );
   createMenu( 4025, primId, -1 );
+  createMenu( 4026, primId, -1 );
+  createMenu( 4027, primId, -1 );
 
   int genId = createMenu( tr( "MEN_GENERATION" ), newEntId, -1 );
   createMenu( 4031, genId, -1 );
@@ -1053,6 +1059,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( 4023, primTbId );
   createTool( 4024, primTbId );
   createTool( 4025, primTbId );
+  createTool( 4026, primTbId );
+  createTool( 4027, primTbId );
 
   int boolTbId = createTool( tr( "TOOL_BOOLEAN" ) );
   createTool( 5011, boolTbId );

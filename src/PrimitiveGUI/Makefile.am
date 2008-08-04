@@ -37,20 +37,26 @@ dist_libPrimitiveGUI_la_SOURCES =	\
 	PrimitiveGUI_CylinderDlg.h	\
 	PrimitiveGUI_SphereDlg.h	\
 	PrimitiveGUI_TorusDlg.h		\
+	PrimitiveGUI_FaceDlg.h          \
+	PrimitiveGUI_DiskDlg.h          \
 					\
 	PrimitiveGUI.cxx		\
 	PrimitiveGUI_BoxDlg.cxx		\
 	PrimitiveGUI_CylinderDlg.cxx	\
 	PrimitiveGUI_SphereDlg.cxx	\
 	PrimitiveGUI_TorusDlg.cxx	\
-	PrimitiveGUI_ConeDlg.cxx
+	PrimitiveGUI_ConeDlg.cxx        \
+	PrimitiveGUI_FaceDlg.cxx        \
+	PrimitiveGUI_DiskDlg.cxx
 
 MOC_FILES =					\
 	PrimitiveGUI_BoxDlg_moc.cxx		\
 	PrimitiveGUI_CylinderDlg_moc.cxx	\
 	PrimitiveGUI_SphereDlg_moc.cxx		\
 	PrimitiveGUI_TorusDlg_moc.cxx		\
-	PrimitiveGUI_ConeDlg_moc.cxx
+	PrimitiveGUI_ConeDlg_moc.cxx            \
+	PrimitiveGUI_FaceDlg_moc.cxx		\
+	PrimitiveGUI_DiskDlg_moc.cxx
 
 nodist_libPrimitiveGUI_la_SOURCES = \
 	$(MOC_FILES)

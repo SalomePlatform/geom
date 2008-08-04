@@ -62,6 +62,18 @@
             <source>ICON_DLG_BUILD_COMPOUND</source>
             <translation>build_compound.png</translation>
         </message>
+	<message>
+            <source>ICON_DLG_DISK</source>
+            <translation>disk.png</translation>
+        </message>
+	<message>
+            <source>ICON_DLG_DISK_PNT_VEC_R</source>
+            <translation>disk_pntvecr.png</translation>
+        </message>
+	<message>
+            <source>ICON_DLG_DISK_THREE_POINTS</source>
+            <translation>disk3points.png</translation>
+        </message>
         <message>
             <source>ICON_DLG_BUILD_EDGE</source>
             <translation>build_edge.png</translation>
@@ -69,6 +81,14 @@
         <message>
             <source>ICON_DLG_BUILD_FACE</source>
             <translation>build_face.png</translation>
+        </message>
+	<message>
+            <source>ICON_DLG_FACE_HW</source>
+            <translation>face_hw.png</translation>
+        </message>
+	<message>
+            <source>ICON_DLG_FACE_PLANE_HW</source>
+            <translation>face_planehw.png</translation>
         </message>
         <message>
             <source>ICON_DLG_BUILD_SHELL</source>
@@ -641,6 +661,10 @@
         <message>
             <source>ICO_DELETE</source>
             <translation>delete.png</translation>
+        </message>
+	<message>
+            <source>ICO_DISK</source>
+            <translation>disk.png</translation>
         </message>
         <message>
             <source>ICO_DISPLAY</source>

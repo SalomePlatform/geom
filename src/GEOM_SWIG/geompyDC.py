@@ -679,6 +679,57 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeBoxTwoPnt(thePnt1, thePnt2)
             RaiseIfFailed("MakeBoxTwoPnt", self.PrimOp)
             return anObj
+	    
+        ## Create a face with specified dimensions along OX-OY coordinate axes,
+        #  with edges, parallel to this coordinate axes.
+        #  @param theH length of Face edge, parallel to OX axis.
+        #  @param theW length of Face edge, parallel to OY axis.
+        #  @return New GEOM_Object, containing the created face.
+        #
+        #  @ref tui_creation_face "Example"
+        def MakeFaceHW(self,theH, theW):
+            # Example: see GEOM_TestAll.py
+            anObj = self.PrimOp.MakeFaceHW(theH, theW)
+            RaiseIfFailed("MakeFaceHW", self.PrimOp)
+            return anObj
+
+        ## Create a face from another plane and two sizes,
+        #  vertical size and horisontal size.
+        #  @param thePlane Plane in that axis will be create new face.
+        #  @param theH     Height (vertical size).
+        #  @param theW     Width (horisontal size).
+        #  @return New GEOM_Object, containing the created face.
+        #
+        #  @ref tui_creation_face "Example"
+        def MakeFacePlaneHW(self, theFace, theH, theW):
+            # Example: see GEOM_TestAll.py
+            anObj = self.PrimOp.MakeFacePlaneHW(theFace, theH, theW)
+            RaiseIfFailed("MakeFacePlaneHW", self.PrimOp)
+            return anObj
+
+        ## Create a disk with given center, normal vector and radius.
+        #  @param thePnt Disk center.
+        #  @param theVec Vector, normal to the plane of the disk.
+        #  @param theR Disk radius.
+        #  @return New GEOM_Object, containing the created disk.
+        #
+        #  @ref tui_creation_disk "Example"
+        def MakeDiskPntVecR(self,thePnt, theVec, theR):
+            # Example: see GEOM_TestAll.py
+            anObj = self.PrimOp.MakeDiskPntVecR(thePnt, theVec, theR)
+            RaiseIfFailed("MakeDiskPntVecR", self.PrimOp)
+            return anObj
+
+        ## Create a disk, passing through three given points
+        #  @param thePnt1,thePnt2,thePnt3 Points, defining the disk.
+        #  @return New GEOM_Object, containing the created disk.
+        #
+        #  @ref tui_creation_disk "Example"
+        def MakeDiskThreePnt(self,thePnt1, thePnt2, thePnt3):
+            # Example: see GEOM_TestAll.py
+            anObj = self.PrimOp.MakeDiskThreePnt(thePnt1, thePnt2, thePnt3)
+            RaiseIfFailed("MakeDiskThreePnt", self.PrimOp)
+            return anObj
 
         ## Create a cylinder with given base point, axis, radius and height.
         #  @param thePnt Central point of cylinder base.

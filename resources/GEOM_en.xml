@@ -52,6 +52,8 @@
 	<popup-item item-id="4023" pos-id="" label-id="Sphere" icon-id="sphere.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 	<popup-item item-id="4024" pos-id="" label-id="Torus" icon-id="torus.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
         <popup-item item-id="4025" pos-id="" label-id="Cone" icon-id="cone.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+        <popup-item item-id="4026" pos-id="" label-id="Face" icon-id="face.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="4027" pos-id="" label-id="Face" icon-id="disk.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
    <submenu label-id="Generation" item-id="403" pos-id="3">
@@ -229,6 +231,8 @@
    <toolbutton-item item-id="4023" label-id="Sphere" icon-id="sphere.png" tooltip-id="Sphere" accel-id="" toggle-id="" execute-action=""/>
    <toolbutton-item item-id="4024" label-id="Torus" icon-id="torus.png" tooltip-id="Torus" accel-id="" toggle-id="" execute-action=""/>
    <toolbutton-item item-id="4025" label-id="Cone" icon-id="cone.png" tooltip-id="Cone" accel-id="" toggle-id="" execute-action=""/> 
+   <toolbutton-item item-id="4026" label-id="Face" icon-id="face.png" tooltip-id="Face" accel-id="" toggle-id="" execute-action=""/> 
+   <toolbutton-item item-id="4027" label-id="Disk" icon-id="disk.png" tooltip-id="Disk" accel-id="" toggle-id="" execute-action=""/> 
 </toolbar>                                                                                
 
 <toolbar label-id="Ope. Boolean">

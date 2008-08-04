@@ -138,6 +138,10 @@ def TestAll (geompy, math):
   Face1    = geompy.MakeFaceWires([Wire, Sketcher],
                                   WantPlanarFace)    #(List of GEOM_Object_ptr, Boolean)->GEOM_Object_ptr
   Face2    = geompy.MakeFace(Sketcher, WantPlanarFace)
+  Face3    = geompy.MakeFaceHW (100., 200.)          #(2 Doubles)->GEOM_Object_ptr
+  Face4    = geompy.MakeFacePlaneHW (Face, 200., 200.)#(1 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr
+  Disk     = geompy.MakeDiskPntVecR (p0, vz, radius) #(2 GEOM_Object_ptr, 1 Double)->GEOM_Object_ptr
+  Disk2    = geompy.MakeDiskThreePnt(p0, p200, pz)   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   Shell    = geompy.MakeShell([Face, Face1])         #(List of GEOM_Object_ptr)->GEOM_Object_ptr
 
   Prism1   = geompy.MakePrism(Face2, p0, pxyz)       #(3 GEOM_Object_ptr)->GEOM_Object_ptr
@@ -324,6 +328,10 @@ def TestAll (geompy, math):
   id_Face     = geompy.addToStudy(Face,     "Face")
   id_Face1    = geompy.addToStudy(Face1,    "Face from two wires")
   id_Face2    = geompy.addToStudy(Face2,    "Face from Sketcher")
+  id_Face3    = geompy.addToStudy(Face3,    "Face Height Width")
+  id_Face4    = geompy.addToStudy(Face4,    "Face Plane_HW")
+  id_Disk     = geompy.addToStudy(Disk,     "Disk PntVecR")
+  id_Disk2    = geompy.addToStudy(Disk2,    "Disk Three Points")
   id_Shell    = geompy.addToStudy(Shell,    "Shell")
 
   id_p_on_face = geompy.addToStudy(p_on_face, "Vertex on Face (0.1, 0.8)")

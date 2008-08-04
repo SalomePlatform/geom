@@ -772,6 +772,65 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoxTwoPnt (GEOM::GEOM_Object_ptr thePnt
 }
 
 //=============================================================================
+//  MakeFaceHW:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceHW (CORBA::Double theH,
+						 CORBA::Double theW)
+{
+  beginService( " GEOM_Superv_i::MakeFaceHW" );
+  MESSAGE("GEOM_Superv_i::MakeFaceHW");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeFaceHW(theH, theW);
+  endService( " GEOM_Superv_i::MakeFaceHW" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeFaceTwoPlaneHW:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFacePlaneHW (GEOM::GEOM_Object_ptr theFace, 
+						      CORBA::Double theH,
+						      CORBA::Double theW)
+{
+  beginService( " GEOM_Superv_i::MakeFacePlaneHW" );
+  MESSAGE("GEOM_Superv_i::MakeFacePlaneHW");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeFacePlaneHW(theFace, theH, theW);
+  endService( " GEOM_Superv_i::MakeFacePlaneHW" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeDiskPntVecR:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskPntVecR (GEOM::GEOM_Object_ptr theCenter,
+						      GEOM::GEOM_Object_ptr theVector,
+						      CORBA::Double theR)
+{
+  beginService( " GEOM_Superv_i::MakeDiskPntVecR" );
+  MESSAGE("GEOM_Superv_i::MakeDiskPntVecR");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeDiskPntVecR(theCenter, theVector, theR);
+  endService( " GEOM_Superv_i::MakeDiskPntVecR" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeDiskThreePnt:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskThreePnt (GEOM::GEOM_Object_ptr thePnt1,
+						       GEOM::GEOM_Object_ptr thePnt2,
+						       GEOM::GEOM_Object_ptr thePnt3)
+{
+  beginService( " GEOM_Superv_i::MakeDiskThreePnt" );
+  MESSAGE("GEOM_Superv_i::MakeDiskThreePnt");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeDiskThreePnt(thePnt1, thePnt2, thePnt3);
+  endService( " GEOM_Superv_i::MakeDiskThreePnt" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakeCylinderPntVecRH:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderPntVecRH (GEOM::GEOM_Object_ptr thePnt,

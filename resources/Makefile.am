@@ -72,11 +72,16 @@ cylinder.png \
 cylinderdxyz.png \
 cylinderpointvector.png \
 delete.png \
+disk.png \
+disk3points.png \
+disk_pntvecr.png \
 display.png \
 displayonly.png \
 displayall.png \
 erase.png \
 eraseall.png \
+face_hw.png \
+face_planehw.png \
 fillet.png \
 filletall.png \
 filletedge.png \

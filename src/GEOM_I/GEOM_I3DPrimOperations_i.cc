@@ -105,6 +105,131 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeBoxTwoPnt
 
 //=============================================================================
 /*!
+ *  MakeFaceHW
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceHW (CORBA::Double theH,
+							    CORBA::Double theW)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theH == 0 || theW == 0)
+    return aGEOMObject._retn();
+
+  //Create the Face
+  Handle(GEOM_Object) anObject = GetOperations()->MakeFaceHW(theH, theW);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeFacePlaneHW
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFacePlaneHW
+                                               (GEOM::GEOM_Object_ptr theFace,
+						CORBA::Double theH,
+						CORBA::Double theW)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theFace == NULL || theH == 0 || theW == 0)
+    return aGEOMObject._retn();
+
+  //Get the reference points
+  Handle(GEOM_Object) aFace = GetOperations()->GetEngine()->GetObject
+    (theFace->GetStudyID(), theFace->GetEntry());
+
+  if (aFace.IsNull())
+    return aGEOMObject._retn();
+
+  //Create the Face
+  Handle(GEOM_Object) anObject = GetOperations()->MakeFacePlaneHW(aFace, theH, theW);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeDiskPntVecR
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskPntVecR
+                      (GEOM::GEOM_Object_ptr thePnt, GEOM::GEOM_Object_ptr theVec,
+		       CORBA::Double theR)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (thePnt == NULL || theVec == NULL) return aGEOMObject._retn();
+
+  //Get the reference points
+  Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
+    (thePnt->GetStudyID(), thePnt->GetEntry());
+  Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
+    (theVec->GetStudyID(), theVec->GetEntry());
+
+  if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
+
+  // Make Disk
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeDiskPntVecR(aPnt, aVec, theR);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeDiskThreePnt
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskThreePnt
+                      (GEOM::GEOM_Object_ptr thePnt1, GEOM::GEOM_Object_ptr thePnt2,
+		       GEOM::GEOM_Object_ptr thePnt3)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (thePnt1 == NULL || thePnt2 == NULL || thePnt3 == NULL) return aGEOMObject._retn();
+
+  //Get the reference points
+  Handle(GEOM_Object) aPnt1 = GetOperations()->GetEngine()->GetObject
+    (thePnt1->GetStudyID(), thePnt1->GetEntry());
+  Handle(GEOM_Object) aPnt2 = GetOperations()->GetEngine()->GetObject
+    (thePnt2->GetStudyID(), thePnt2->GetEntry());
+  Handle(GEOM_Object) aPnt3 = GetOperations()->GetEngine()->GetObject
+    (thePnt3->GetStudyID(), thePnt3->GetEntry());
+
+  if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
+
+  // Make Disk
+  Handle(GEOM_Object) anObject =
+      GetOperations()->MakeDiskThreePnt(aPnt1, aPnt2, aPnt3);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeCylinderRH
  */
 //=============================================================================

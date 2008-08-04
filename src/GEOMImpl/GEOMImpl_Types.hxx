@@ -158,6 +158,12 @@
 #define BOX_DX_DY_DZ  1
 #define BOX_TWO_PNT   2
 
+#define FACE_PLANE_H_W  1
+#define FACE_H_W        2
+
+#define DISK_PNT_VEC_R    1
+#define DISK_THREE_PNT    2
+
 #define CYLINDER_R_H         1
 #define CYLINDER_PNT_VEC_R_H 2
 

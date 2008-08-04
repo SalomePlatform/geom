@@ -416,6 +416,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_DIAGONAL_POINTS</source>
             <translation>Diagonal Points</translation>
         </message>
+	<message>
+            <source>GEOM_DISK</source>
+            <translation>Disk</translation>
+        </message>
         <message>
             <source>GEOM_DIMENSIONS</source>
             <translation>Dimensions</translation>
@@ -1748,6 +1752,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_WEIGHT</source>
             <translation>Weight :</translation>
         </message>
+	<message>
+            <source>GEOM_WIDTH</source>
+            <translation>Width :</translation>
+        </message>
         <message>
             <source>GEOM_WHATIS</source>
             <translation>Whatis</translation>
@@ -1971,6 +1979,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>MEN_DISPLAY</source>
             <translation>Show</translation>
+        </message>
+	<message>
+            <source>MEN_DISK</source>
+            <translation>Disk</translation>
         </message>
         <message>
             <source>MEN_DISPLAY_ALL</source>
@@ -2516,6 +2528,10 @@ Please, select face, shell or solid and try again</translation>
             <source>STB_DELETE</source>
             <translation>Delete object</translation>
         </message>
+	<message>
+            <source>STB_DISK</source>
+            <translation>Create a disk</translation>
+        </message>
         <message>
             <source>STB_DISPLAY</source>
             <translation>Show object(s)</translation>
@@ -2566,7 +2582,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_FACE</source>
-            <translation>Build a face from wires and/or edges</translation>
+            <translation>Build a face</translation>
         </message>
         <message>
             <source>STB_FACE_SEL_ONLY</source>
@@ -2987,6 +3003,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>TOP_DELETE</source>
             <translation>Delete object</translation>
+        </message>
+	<message>
+            <source>TOP_DISK</source>
+            <translation>Build a Disk</translation>
         </message>
         <message>
             <source>TOP_DISPLAY</source>
