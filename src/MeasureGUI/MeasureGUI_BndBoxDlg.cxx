@@ -32,7 +32,16 @@
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
 
+#include <GEOM_Function.hxx>
+#include <GEOM_Object.hxx>
+
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepAdaptor_Surface.hxx>
+#include <BRep_Tool.hxx>
+#include <BRep_TFace.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopExp_Explorer.hxx>
 
 #include "utilities.h"
 #include "SUIT_Session.h"
@@ -161,8 +170,64 @@ bool MeasureGUI_BndBoxDlg::getParameters( double& theXmin, double& theXmax,
   {
     try
     {
+      Handle(Poly_Triangulation) Trtn = 0; 
+
+      Handle(GEOM_Object) anObject = GEOM_Engine::GetEngine()->GetObject(myObj->GetStudyID(), myObj->GetEntry());
+      if (!anObject.IsNull())
+      {
+	Handle(GEOM_Function) aRefShape = anObject->GetLastFunction();
+	if (!aRefShape.IsNull())
+	{
+	  TopoDS_Shape aShape = aRefShape->GetValue();
+	  if (!aShape.IsNull())
+	  {
+	    TopLoc_Location l;
+	    Handle(Poly_Triangulation) T;
+	    TopExp_Explorer ex;
+	    for (ex.Init(aShape,TopAbs_FACE); ex.More(); ex.Next()) {
+	      const TopoDS_Face& F = TopoDS::Face(ex.Current());
+	      
+	      BRepAdaptor_Surface surf(F);
+	      if (surf.GetType() == GeomAbs_Sphere)
+	      {
+		T = BRep_Tool::Triangulation(F, l);
+		if (!T.IsNull()) {
+		  Handle(Poly_Triangulation) NullTrtn = 0;
+		  (*((Handle(BRep_TFace)*)&F.TShape()))->Triangulation(NullTrtn);
+		  Trtn = T;
+		  break;
+		}
+	      }
+	      else
+		break;
+	    }
+	  }
+	}
+      }
+
       GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetBoundingBox(
         myObj, theXmin, theXmax, theYmin, theYmax, theZmin, theZmax );
+
+      if (!Trtn.IsNull())
+      {
+	Handle(GEOM_Function) aRefShape = anObject->GetLastFunction();
+	if (!aRefShape.IsNull())
+	{
+	  TopoDS_Shape aShape = aRefShape->GetValue();
+	  if (!aShape.IsNull())
+	  {
+	    TopLoc_Location l;
+	    Handle(Poly_Triangulation) T;
+	    TopExp_Explorer ex;
+	    for (ex.Init(aShape,TopAbs_FACE); ex.More(); ex.Next()) {
+	      const TopoDS_Face& F = TopoDS::Face(ex.Current());
+	      (*((Handle(BRep_TFace)*)&F.TShape()))->Triangulation(Trtn);
+	      break;
+	    }
+	  }
+	}
+      }
+
     }
     catch( const SALOME::SALOME_Exception& e )
     {
