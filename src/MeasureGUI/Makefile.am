@@ -119,6 +119,7 @@ libMeasureGUI_la_CPPFLAGS =		\
 	-I$(srcdir)/../OBJECT		\
 	-I$(srcdir)/../GEOMClient	\
 	-I$(srcdir)/../GEOMImpl		\
+	-I$(srcdir)/../GEOM             \
 	-I$(top_builddir)/src/DlgRef	\
 	-I$(top_builddir)/idl		\
 	-I$(top_builddir)/salome_adm/unix
