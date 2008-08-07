@@ -74,6 +74,10 @@
             <source>ICON_DLG_DISK_THREE_POINTS</source>
             <translation>disk3points.png</translation>
         </message>
+	<message>
+            <source>ICON_DLG_DISK_R</source>
+            <translation>disk_r.png</translation>
+        </message>
         <message>
             <source>ICON_DLG_BUILD_EDGE</source>
             <translation>build_edge.png</translation>
@@ -87,8 +91,8 @@
             <translation>face_hw.png</translation>
         </message>
 	<message>
-            <source>ICON_DLG_FACE_PLANE_HW</source>
-            <translation>face_planehw.png</translation>
+            <source>ICON_DLG_FACE_VEC_HW</source>
+            <translation>face_vechw.png</translation>
         </message>
         <message>
             <source>ICON_DLG_BUILD_SHELL</source>

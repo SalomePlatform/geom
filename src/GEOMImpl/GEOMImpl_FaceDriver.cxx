@@ -74,21 +74,35 @@ Standard_Integer GEOMImpl_FaceDriver::Execute(TFunction_Logbook& log) const
 
   TopoDS_Shape aShape;
 
-  if (aType == FACE_PLANE_H_W) {
-    Handle(GEOM_Function) aRefPlane = aFI.GetRef1();
-    TopoDS_Shape aShapePlane = aRefPlane->GetValue();
-    double aH = aFI.GetH() / 2.0;
-    double aW = aFI.GetW() / 2.0;
-    gp_Ax3 anAx = GEOMImpl_IMeasureOperations::GetPosition(aShapePlane);
-    gp_Pln aPln (anAx);
-    aShape = BRepBuilderAPI_MakeFace(aPln, -aH, +aH, -aW, +aW).Shape();
+  if (aType == FACE_VEC_H_W) {
+    Handle(GEOM_Function) aRefVec = aFI.GetRef1();
+    TopoDS_Shape aShapeVec = aRefVec->GetValue();
+    if (aShapeVec.ShapeType() == TopAbs_EDGE) {
+      TopoDS_Edge anEdge = TopoDS::Edge(aShapeVec);
+      double aH = aFI.GetH() / 2.0;
+      double aW = aFI.GetW() / 2.0;
+      TopoDS_Vertex V1, V2;
+      TopExp::Vertices(anEdge, V1, V2, Standard_True);
+      gp_Pnt aP (BRep_Tool::Pnt(V1));
+      gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+      gp_Pln aPlane (aP, aV);
+      aShape = BRepBuilderAPI_MakeFace(aPlane, -aH, +aH, -aW, +aW).Shape();
+    }
   }
   else if (aType == FACE_H_W) {
     double aH = aFI.GetH() / 2.0;
     double aW = aFI.GetW() / 2.0;
     TopoDS_Vertex V1, V2;
+    int anOrient = aFI.GetOrientation();
     gp_Pnt aP = gp::Origin();
-    gp_Vec aV = gp::DZ();
+    gp_Vec aV;
+    if (anOrient == 1)
+      aV = gp::DZ();
+    else if (anOrient == 2)
+      aV = gp::DX();
+    else if (anOrient == 3)
+      aV = gp::DY();
+
     gp_Pln aPlane (aP, aV);
     aShape = BRepBuilderAPI_MakeFace(aPlane, -aH, +aH, -aW, +aW).Shape();
   }

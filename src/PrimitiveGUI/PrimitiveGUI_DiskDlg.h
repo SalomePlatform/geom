@@ -30,6 +30,8 @@
 
 class DlgRef_3Sel;
 class DlgRef_2Sel1Spin;
+class DlgRef_1Spin;
+class DlgRef_3Check;
 
 //=================================================================================
 // class    : PrimitiveGUI_DiskDlg
@@ -55,12 +57,15 @@ private:
   void                               Init();
   void                               enterEvent( QEvent* );
   double                             getRadius() const;
+  int                                myOrientationType;
 
 private:
   GEOM::GEOM_Object_var              myPoint, myDir, myPoint1, myPoint2, myPoint3;
 
   DlgRef_2Sel1Spin*                  GroupPntVecR;
   DlgRef_3Sel*                       Group3Pnts;
+  DlgRef_1Spin*                      GroupDimensions;
+  DlgRef_3Check*                     GroupOrientation;
 
 private slots:
   void                               ClickOnOk();
@@ -76,6 +81,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox();
   void                               SetDoubleSpinBoxStep( double );
+  void                               RadioButtonClicked();
 };
 
 #endif // BASICGUI_DISKDLG_H

@@ -127,16 +127,19 @@ module GEOM
     GEOM_Object MakeBoxTwoPnt (in GEOM_Object thePnt1, 
 			       in GEOM_Object thePnt2) ;
     GEOM_Object MakeFaceHW (in double theH, 
-			    in double theW) ;
-    GEOM_Object MakeFacePlaneHW (in GEOM_Object theFace, 
-				 in double      theH,
-				 in double      theW) ;
+			    in double theW,
+			    in short  theOrientation) ;
+    GEOM_Object MakeFaceVecHW (in GEOM_Object theVec, 
+			       in double      theH,
+			       in double      theW) ;
     GEOM_Object MakeDiskPntVecR (in GEOM_Object thePnt,
 				 in GEOM_Object theVec,
 				 in double      theR) ;
     GEOM_Object MakeDiskThreePnt (in GEOM_Object thePnt1,
 				  in GEOM_Object thePnt2,
 				  in GEOM_Object thePnt3) ;
+    GEOM_Object MakeDiskR (in double theR, 
+ 		           in short  theOrientation) ;
     GEOM_Object MakeCylinderPntVecRH (in GEOM_Object thePnt,
 				      in GEOM_Object theAxis,
 				      in double      theRadius,

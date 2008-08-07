@@ -129,6 +129,25 @@ Standard_Integer GEOMImpl_DiskDriver::Execute(TFunction_Logbook& log) const
       aShape = MF.Shape();
     }  
   }
+  else if (aType == DISK_R) {
+    int anOrient = aCI.GetOrientation();
+    gp_Pnt aP = gp::Origin();
+    gp_Vec aV;
+    if (anOrient == 1)
+      aV = gp::DZ();
+    else if (anOrient == 2)
+      aV = gp::DX();
+    else if (anOrient == 3)
+      aV = gp::DY();
+
+    gp_Ax2 anAxes (aP, aV);
+    gp_Circ aCirc (anAxes, aCI.GetRadius());
+    TopoDS_Shape aCircle = BRepBuilderAPI_MakeEdge(aCirc).Edge();
+    BRepBuilderAPI_MakeWire MW;
+    MW.Add(TopoDS::Edge(aCircle));
+    BRepBuilderAPI_MakeFace MF (MW, Standard_False);
+    aShape = MF.Shape();
+  }
    else {
   }
 

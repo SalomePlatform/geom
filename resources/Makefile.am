@@ -75,13 +75,14 @@ delete.png \
 disk.png \
 disk3points.png \
 disk_pntvecr.png \
+disk_r.png \
 display.png \
 displayonly.png \
 displayall.png \
 erase.png \
 eraseall.png \
 face_hw.png \
-face_planehw.png \
+face_vechw.png \
 fillet.png \
 filletall.png \
 filletedge.png \

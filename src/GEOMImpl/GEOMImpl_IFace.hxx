@@ -22,13 +22,12 @@
 
 #include "GEOM_Function.hxx"
 
-#define FACE_ARG_REF1  1
-#define FACE_ARG_REF2  2
-#define FACE_ARG_REF3  3
+#define FACE_ARG_REF1    1
+#define FACE_ARG_ORIENT  2
 
-#define FACE_ARG_PLANE 4
-#define FACE_ARG_H     5
-#define FACE_ARG_W     6
+#define FACE_ARG_PLANE   4
+#define FACE_ARG_H       5
+#define FACE_ARG_W       6
 
 class GEOMImpl_IFace
 {
@@ -39,11 +38,8 @@ class GEOMImpl_IFace
   void SetRef1(Handle(GEOM_Function) theRefPoint1) { _func->SetReference(FACE_ARG_REF1, theRefPoint1); }
   Handle(GEOM_Function) GetRef1() { return _func->GetReference(FACE_ARG_REF1); }
 
-  void SetRef2(Handle(GEOM_Function) theRefPoint2) { _func->SetReference(FACE_ARG_REF2, theRefPoint2); }
-  Handle(GEOM_Function) GetRef2() { return _func->GetReference(FACE_ARG_REF2); }
-
-  void SetRef3(Handle(GEOM_Function) theRefVec) { _func->SetReference(FACE_ARG_REF3, theRefVec); }
-  Handle(GEOM_Function) GetRef3() { return _func->GetReference(FACE_ARG_REF3); }
+  void SetOrientation(int theOrientation) { _func->SetReal(FACE_ARG_ORIENT, theOrientation); }
+  int  GetOrientation() { return _func->GetReal(FACE_ARG_ORIENT); }
 
   void SetH(double theH) { _func->SetReal(FACE_ARG_H, theH); }
   void SetW(double theW) { _func->SetReal(FACE_ARG_W, theW); }

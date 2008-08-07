@@ -56,6 +56,7 @@ PrimitiveGUI_DiskDlg::PrimitiveGUI_DiskDlg( GeometryGUI* theGeometryGUI, QWidget
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_DISK_PNT_VEC_R" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
   QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_DISK_THREE_POINTS" ) ) );
+  QPixmap image3( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_DISK_R" ) ) );
 
   setWindowTitle( tr( "GEOM_DISK_TITLE" ) );
 
@@ -63,39 +64,46 @@ PrimitiveGUI_DiskDlg::PrimitiveGUI_DiskDlg( GeometryGUI* theGeometryGUI, QWidget
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_DISK" ) );
   mainFrame()->RadioButton1->setIcon( image0 );
   mainFrame()->RadioButton2->setIcon( image2 );
-  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  mainFrame()->RadioButton3->close();
+  mainFrame()->RadioButton3->setIcon( image3 );
 
   GroupPntVecR = new DlgRef_2Sel1Spin( centralWidget() );
-
   GroupPntVecR->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
   GroupPntVecR->TextLabel1->setText( tr( "GEOM_CENTER_POINT" ) );
   GroupPntVecR->TextLabel2->setText( tr( "GEOM_VECTOR" ) );
   GroupPntVecR->TextLabel3->setText( tr( "GEOM_RADIUS" ) );
   GroupPntVecR->PushButton1->setIcon( image1 );
   GroupPntVecR->PushButton2->setIcon( image1 );
-
   GroupPntVecR->LineEdit1->setReadOnly( true );
   GroupPntVecR->LineEdit2->setReadOnly( true );
 
   Group3Pnts = new DlgRef_3Sel( centralWidget() );
-
-  Group3Pnts->GroupBox1->setTitle( tr( "GEOM_3_POINTS" ) );
+  Group3Pnts->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
   Group3Pnts->TextLabel1->setText( tr( "GEOM_POINT1" ) );
   Group3Pnts->TextLabel2->setText( tr( "GEOM_POINT2" ) );
   Group3Pnts->TextLabel3->setText( tr( "GEOM_POINT3" ) );
   Group3Pnts->PushButton1->setIcon( image1 );
   Group3Pnts->PushButton2->setIcon( image1 );
   Group3Pnts->PushButton3->setIcon( image1 );
-
   Group3Pnts->LineEdit1->setReadOnly( true );
   Group3Pnts->LineEdit2->setReadOnly( true );
   Group3Pnts->LineEdit3->setReadOnly( true );
+
+  GroupDimensions = new DlgRef_1Spin( centralWidget() );
+  GroupDimensions->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
+  GroupDimensions->TextLabel1->setText( tr( "GEOM_RADIUS" ) );
+
+  GroupOrientation = new DlgRef_3Check( centralWidget() );
+  GroupOrientation->GroupBox1->setTitle( tr( "GEOM_ORIENTATION" ) );
+  GroupOrientation->RadioButton1->setText( tr( "GEOM_WPLANE_OXY" ) );
+  GroupOrientation->RadioButton2->setText( tr( "GEOM_WPLANE_OYZ" ) );
+  GroupOrientation->RadioButton3->setText( tr( "GEOM_WPLANE_OZX" ) );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupPntVecR );
   layout->addWidget( Group3Pnts );
+  layout->addWidget( GroupDimensions );
+  layout->addWidget( GroupOrientation );
   /***************************************************************/
 
   setHelpFileName( "create_disk_page.html" );
@@ -121,6 +129,7 @@ void PrimitiveGUI_DiskDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPntVecR->LineEdit1;
+  myOrientationType = 1;
 
   myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 
@@ -131,6 +140,8 @@ void PrimitiveGUI_DiskDlg::Init()
   /* min, max, step and decimals for spin boxes & initial values */
   initSpinBox( GroupPntVecR->SpinBox_DX, 0.001, COORD_MAX, aStep, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
   GroupPntVecR->SpinBox_DX->setValue( 100 );
+  initSpinBox( GroupDimensions->SpinBox_DX, 0.001, COORD_MAX, aStep, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
+  GroupDimensions->SpinBox_DX->setValue( 100 );
 
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
@@ -156,6 +167,11 @@ void PrimitiveGUI_DiskDlg::Init()
   connect( GroupPntVecR->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT(ValueChangedInSpinBox() ) );
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
+  connect( GroupDimensions->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
+  connect( GroupOrientation->RadioButton1, SIGNAL( clicked() ), this, SLOT( RadioButtonClicked() ) );
+  connect( GroupOrientation->RadioButton2, SIGNAL( clicked() ), this, SLOT( RadioButtonClicked() ) );
+  connect( GroupOrientation->RadioButton3, SIGNAL( clicked() ), this, SLOT( RadioButtonClicked() ) );
+
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
 
@@ -174,6 +190,21 @@ void PrimitiveGUI_DiskDlg::SetDoubleSpinBoxStep( double step )
 }
 
 //=================================================================================
+// function : RadioBittonClicked()
+// purpose  : Radio button management
+//=================================================================================
+void PrimitiveGUI_DiskDlg::RadioButtonClicked()
+{
+  if ( GroupOrientation->RadioButton1->isChecked() )
+    myOrientationType = 1;
+  else if ( GroupOrientation->RadioButton2->isChecked() )
+    myOrientationType = 2;
+  else if ( GroupOrientation->RadioButton3->isChecked() )
+    myOrientationType = 3;
+  displayPreview();
+}
+
+//=================================================================================
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
@@ -188,7 +219,8 @@ void PrimitiveGUI_DiskDlg::ConstructorsClicked( int constructorId )
     {
       Group3Pnts->hide();
       GroupPntVecR->show();
-      
+      GroupDimensions->hide();
+      GroupOrientation->hide();
       myEditCurrentArgument = GroupPntVecR->LineEdit1;
       GroupPntVecR->LineEdit1->setText( "" );
       GroupPntVecR->LineEdit2->setText( "" );
@@ -198,12 +230,22 @@ void PrimitiveGUI_DiskDlg::ConstructorsClicked( int constructorId )
     {
       GroupPntVecR->hide();
       Group3Pnts->show();
-      
+      GroupDimensions->hide();
+      GroupOrientation->hide();
       myEditCurrentArgument = Group3Pnts->LineEdit1;
       Group3Pnts->LineEdit1->setText( "" );
       Group3Pnts->LineEdit2->setText( "" );
       Group3Pnts->LineEdit3->setText( "" );
       break;
+    }
+  case 2:
+    {
+      GroupPntVecR->hide();
+      Group3Pnts->hide();
+      GroupDimensions->show();
+      GroupOrientation->show();
+      GroupOrientation->RadioButton1->setChecked( true );
+      myOrientationType = 1;
     }
   }
   
@@ -217,6 +259,7 @@ void PrimitiveGUI_DiskDlg::ConstructorsClicked( int constructorId )
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged() ),
 	   this, SLOT( SelectionIntoArgument() ) );
+  displayPreview();
 }
 
 //=================================================================================
@@ -249,6 +292,11 @@ bool PrimitiveGUI_DiskDlg::ClickOnApply()
 //=================================================================================
 void PrimitiveGUI_DiskDlg::SelectionIntoArgument()
 {
+  if (getConstructorId() == 2) {
+    displayPreview();
+    return;
+  }
+
   myEditCurrentArgument->setText( "" );
   
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -420,6 +468,8 @@ double PrimitiveGUI_DiskDlg::getRadius() const
   switch ( getConstructorId() ) {
   case 0:
     r = GroupPntVecR->SpinBox_DX->value(); break;
+  case 2:
+    r = GroupDimensions->SpinBox_DX->value(); break;
   }
   return r;
 }
@@ -454,6 +504,8 @@ bool PrimitiveGUI_DiskDlg::isValid( QString& msg )
   else if ( id == 1 )
     return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
       !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
+  else if ( id == 2 )
+    return true;
   return false;
 }
 
@@ -474,6 +526,10 @@ bool PrimitiveGUI_DiskDlg::execute( ObjectList& objects )
     break;
   case 1 :
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeDiskThreePnt( myPoint1, myPoint2, myPoint3 );
+    res = true;
+    break;
+  case 2 :
+    anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeDiskR( getRadius(), myOrientationType );
     res = true;
     break;
   }

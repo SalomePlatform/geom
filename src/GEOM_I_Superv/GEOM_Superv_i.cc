@@ -775,28 +775,29 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoxTwoPnt (GEOM::GEOM_Object_ptr thePnt
 //  MakeFaceHW:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceHW (CORBA::Double theH,
-						 CORBA::Double theW)
+						 CORBA::Double theW,
+						 CORBA::Short  theOrientation)
 {
   beginService( " GEOM_Superv_i::MakeFaceHW" );
   MESSAGE("GEOM_Superv_i::MakeFaceHW");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeFaceHW(theH, theW);
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeFaceHW(theH, theW, theOrientation);
   endService( " GEOM_Superv_i::MakeFaceHW" );
   return anObj;
 }
 
 //=============================================================================
-//  MakeFaceTwoPlaneHW:
+//  MakeFaceVecHW:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFacePlaneHW (GEOM::GEOM_Object_ptr theFace, 
-						      CORBA::Double theH,
-						      CORBA::Double theW)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceVecHW (GEOM::GEOM_Object_ptr theVec, 
+						    CORBA::Double theH,
+						    CORBA::Double theW)
 {
-  beginService( " GEOM_Superv_i::MakeFacePlaneHW" );
-  MESSAGE("GEOM_Superv_i::MakeFacePlaneHW");
+  beginService( " GEOM_Superv_i::MakeFaceVecHW" );
+  MESSAGE("GEOM_Superv_i::MakeFaceVecHW");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeFacePlaneHW(theFace, theH, theW);
-  endService( " GEOM_Superv_i::MakeFacePlaneHW" );
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeFaceVecHW(theVec, theH, theW);
+  endService( " GEOM_Superv_i::MakeFaceVecHW" );
   return anObj;
 }
 
@@ -827,6 +828,20 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskThreePnt (GEOM::GEOM_Object_ptr the
   get3DPrimOp();
   GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeDiskThreePnt(thePnt1, thePnt2, thePnt3);
   endService( " GEOM_Superv_i::MakeDiskThreePnt" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeDiskR:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskR (CORBA::Double theR,
+						CORBA::Short  theOrientation)
+{
+  beginService( " GEOM_Superv_i::MakeDiskR" );
+  MESSAGE("GEOM_Superv_i::MakeDiskR");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeDiskR(theR, theOrientation);
+  endService( " GEOM_Superv_i::MakeDiskR" );
   return anObj;
 }
 

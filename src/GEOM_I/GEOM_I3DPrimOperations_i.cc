@@ -109,7 +109,8 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeBoxTwoPnt
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceHW (CORBA::Double theH,
-							    CORBA::Double theW)
+							    CORBA::Double theW,
+							    CORBA::Short  theOrientation)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -120,7 +121,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceHW (CORBA::Double theH,
     return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject = GetOperations()->MakeFaceHW(theH, theW);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeFaceHW(theH, theW, theOrientation);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -129,11 +130,11 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceHW (CORBA::Double theH,
 
 //=============================================================================
 /*!
- *  MakeFacePlaneHW
+ *  MakeFaceVecHW
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFacePlaneHW
-                                               (GEOM::GEOM_Object_ptr theFace,
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceVecHW
+                                               (GEOM::GEOM_Object_ptr theVec,
 						CORBA::Double theH,
 						CORBA::Double theW)
 {
@@ -142,18 +143,18 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFacePlaneHW
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theFace == NULL || theH == 0 || theW == 0)
+  if (theVec == NULL || theH == 0 || theW == 0)
     return aGEOMObject._retn();
 
   //Get the reference points
   Handle(GEOM_Object) aFace = GetOperations()->GetEngine()->GetObject
-    (theFace->GetStudyID(), theFace->GetEntry());
+    (theVec->GetStudyID(), theVec->GetEntry());
 
   if (aFace.IsNull())
     return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject = GetOperations()->MakeFacePlaneHW(aFace, theH, theW);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeFaceVecHW(aFace, theH, theW);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -222,6 +223,30 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskThreePnt
   // Make Disk
   Handle(GEOM_Object) anObject =
       GetOperations()->MakeDiskThreePnt(aPnt1, aPnt2, aPnt3);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeDiskR
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskR (CORBA::Double theR,
+							   CORBA::Short  theOrientation)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theR == 0)
+    return aGEOMObject._retn();
+
+  //Create the Face
+  Handle(GEOM_Object) anObject = GetOperations()->MakeDiskR(theR, theOrientation);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

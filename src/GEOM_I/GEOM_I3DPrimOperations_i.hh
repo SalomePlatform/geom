@@ -48,9 +48,10 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 				       GEOM::GEOM_Object_ptr thePnt2);
 				    
   GEOM::GEOM_Object_ptr MakeFaceHW (CORBA::Double theH,
-				    CORBA::Double theW);
+				    CORBA::Double theW,
+				    CORBA::Short  theOrientation);
 
-  GEOM::GEOM_Object_ptr MakeFacePlaneHW (GEOM::GEOM_Object_ptr theFace,
+  GEOM::GEOM_Object_ptr MakeFaceVecHW (GEOM::GEOM_Object_ptr theFace,
 					 CORBA::Double theH,
 					 CORBA::Double theW);
 
@@ -61,6 +62,9 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
   GEOM::GEOM_Object_ptr MakeDiskThreePnt (GEOM::GEOM_Object_ptr thePnt1,
 					  GEOM::GEOM_Object_ptr thePnt2,
 					  GEOM::GEOM_Object_ptr thePnt3);
+
+  GEOM::GEOM_Object_ptr MakeDiskR (CORBA::Double theR,
+				   CORBA::Short  theOrientation);
 
   GEOM::GEOM_Object_ptr MakeCylinderRH (CORBA::Double theR,
 					CORBA::Double theH);

@@ -22,13 +22,15 @@
 
 #include "GEOM_Function.hxx"
 
-#define DISK_ARG_P1  1
-#define DISK_ARG_P2  2
-#define DISK_ARG_P3  3
+#define DISK_ARG_P1      1
+#define DISK_ARG_P2      2
+#define DISK_ARG_P3      3
 
-#define DISK_ARG_CC  4
-#define DISK_ARG_VV  5
-#define DISK_ARG_RR  6
+#define DISK_ARG_CC      4
+#define DISK_ARG_VV      5
+#define DISK_ARG_RR      6
+
+#define DISK_ARG_ORIENT  7
 
 class GEOMImpl_IDisk
 {
@@ -44,6 +46,7 @@ class GEOMImpl_IDisk
   void SetVector(Handle(GEOM_Function) theV) { _func->SetReference(DISK_ARG_VV, theV); }
 
   void SetRadius(double theR) { _func->SetReal(DISK_ARG_RR, theR); }
+  void SetOrientation(double theO) { _func->SetReal(DISK_ARG_ORIENT, theO); }
 
   Handle(GEOM_Function) GetPoint1() { return _func->GetReference(DISK_ARG_P1); }
   Handle(GEOM_Function) GetPoint2() { return _func->GetReference(DISK_ARG_P2); }
@@ -53,6 +56,7 @@ class GEOMImpl_IDisk
   Handle(GEOM_Function) GetVector() { return _func->GetReference(DISK_ARG_VV); }
 
   double GetRadius() { return _func->GetReal(DISK_ARG_RR); }
+  double GetOrientation() { return _func->GetReal(DISK_ARG_ORIENT); }
 
  private:
 

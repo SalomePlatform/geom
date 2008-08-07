@@ -201,7 +201,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxTwoPnt (Handle(GEOM_Objec
  *  MakeFaceHW
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceHW (double theH, double theW)
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceHW (double theH, double theW, int theOrientation)
 {
   SetErrorCode(KO);
 
@@ -221,6 +221,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceHW (double theH, double 
 
   aFI.SetH(theH);
   aFI.SetW(theW);
+  aFI.SetOrientation(theOrientation);
 
   //Compute the Face
   try {
@@ -240,7 +241,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceHW (double theH, double 
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aFace << " = geompy.MakeFaceHW("
-    << theH << ", " << theW << ")";
+    << theH << ", " << theW << ", " << theOrientation << ")";
 
   SetErrorCode(OK);
   return aFace;
@@ -248,21 +249,21 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceHW (double theH, double 
 
 //=============================================================================
 /*!
- *  MakeFacePlaneHW
+ *  MakeFaceVecHW
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFacePlaneHW (Handle(GEOM_Object) theFace,
-								 double theH, double theW)
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceVecHW (Handle(GEOM_Object) theVec,
+							       double theH, double theW)
 {
   SetErrorCode(KO);
 
-  if (theFace.IsNull()) return NULL;
+  if (theVec.IsNull()) return NULL;
 
   //Add a new Face object
   Handle(GEOM_Object) aFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
 
   //Add a new Box function for creation a box relatively to two points
-  Handle(GEOM_Function) aFunction = aFace->AddFunction(GEOMImpl_FaceDriver::GetID(), FACE_PLANE_H_W);
+  Handle(GEOM_Function) aFunction = aFace->AddFunction(GEOMImpl_FaceDriver::GetID(), FACE_VEC_H_W);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
@@ -270,7 +271,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFacePlaneHW (Handle(GEOM_Obj
 
   GEOMImpl_IFace aFI (aFunction);
 
-  Handle(GEOM_Function) aRefFunction1 = theFace->GetLastFunction();
+  Handle(GEOM_Function) aRefFunction1 = theVec->GetLastFunction();
 
   if (aRefFunction1.IsNull())
     return aFace;
@@ -296,8 +297,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFacePlaneHW (Handle(GEOM_Obj
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aFace << " = geompy.MakeFacePlaneHW("
-    << theFace << ", " << theH << ", " << theW << ")";
+  GEOM::TPythonDump(aFunction) << aFace << " = geompy.MakeFaceVecHW("
+    << theVec << ", " << theH << ", " << theW << ")";
 
   SetErrorCode(OK);
   return aFace;
@@ -416,6 +417,56 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskThreePnt (Handle(GEOM_Ob
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aDisk << " = geompy.MakeDiskThreePnt("
     << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << ")";
+
+  SetErrorCode(OK);
+  return aDisk;
+}
+
+//=============================================================================
+/*!
+ *  MakeDiskR
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskR (double theR, int theOrientation)
+{
+  SetErrorCode(KO);
+
+  if (theR == 0 ) return NULL;
+
+  //Add a new Disk object
+  Handle(GEOM_Object) aDisk = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+
+  //Add a new Box function for creation a box relatively to two points
+  Handle(GEOM_Function) aFunction = aDisk->AddFunction(GEOMImpl_DiskDriver::GetID(), DISK_R);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_DiskDriver::GetID()) return aDisk;
+
+  GEOMImpl_IDisk aDI (aFunction);
+
+  aDI.SetRadius(theR);
+  aDI.SetOrientation(theOrientation);
+
+  //Compute the Disk
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Disk driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aDisk << " = geompy.MakeDiskR("
+    << theR << ", " << theOrientation << ")";
 
   SetErrorCode(OK);
   return aDisk;

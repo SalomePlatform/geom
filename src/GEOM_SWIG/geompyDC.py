@@ -682,29 +682,30 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 	    
         ## Create a face with specified dimensions along OX-OY coordinate axes,
         #  with edges, parallel to this coordinate axes.
-        #  @param theH length of Face edge, parallel to OX axis.
-        #  @param theW length of Face edge, parallel to OY axis.
+        #  @param theH height of Face.
+        #  @param theW width of Face.
+	#  @param theOrientation orientation belong axis OXY OYZ OZX 
         #  @return New GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
-        def MakeFaceHW(self,theH, theW):
+        def MakeFaceHW(self,theH, theW, theOrientation):
             # Example: see GEOM_TestAll.py
-            anObj = self.PrimOp.MakeFaceHW(theH, theW)
+            anObj = self.PrimOp.MakeFaceHW(theH, theW, theOrientation)
             RaiseIfFailed("MakeFaceHW", self.PrimOp)
             return anObj
 
         ## Create a face from another plane and two sizes,
         #  vertical size and horisontal size.
-        #  @param thePlane Plane in that axis will be create new face.
+        #  @param theVec   Normale vector to the creating face.
         #  @param theH     Height (vertical size).
         #  @param theW     Width (horisontal size).
         #  @return New GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
-        def MakeFacePlaneHW(self, theFace, theH, theW):
+        def MakeFaceVecHW(self, theVec, theH, theW):
             # Example: see GEOM_TestAll.py
-            anObj = self.PrimOp.MakeFacePlaneHW(theFace, theH, theW)
-            RaiseIfFailed("MakeFacePlaneHW", self.PrimOp)
+            anObj = self.PrimOp.MakeFaceVecHW(theVec, theH, theW)
+            RaiseIfFailed("MakeFaceVecHW", self.PrimOp)
             return anObj
 
         ## Create a disk with given center, normal vector and radius.
@@ -729,6 +730,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakeDiskThreePnt(thePnt1, thePnt2, thePnt3)
             RaiseIfFailed("MakeDiskThreePnt", self.PrimOp)
+            return anObj
+
+        ## Create a disk with specified dimensions along OX-OY coordinate axes.
+        #  @param theR Radius of Face.
+	#  @param theOrientation set the orientation belong axis OXY or OYZ or OZX 
+        #  @return New GEOM_Object, containing the created disk.
+        #
+        #  @ref tui_creation_face "Example"
+        def MakeDiskR(self,theR, theOrientation):
+            # Example: see GEOM_TestAll.py
+            anObj = self.PrimOp.MakeDiskR(theR, theOrientation)
+            RaiseIfFailed("MakeDiskR", self.PrimOp)
             return anObj
 
         ## Create a cylinder with given base point, axis, radius and height.

@@ -825,20 +825,21 @@ module GEOM
      *  Create a face specified dimensions along OX-OY coordinate axes,
      *  with edges parallel to the coordinate axes.
      *  Center of the face will be at point (0, 0, 0).
-     *  \param theH length of Face edge, parallel to OX axis.
-     *  \param theW lenght of Face edge, patallel to OY axis.
+     *  \param theH Height of the Face.
+     *  \param theW Width of the Face.
+     *  \param theOrientation Orientation belong axis OXY OYZ OZX
      *  \return New GEOM_Object, containing the created face.
      */
-    GEOM_Object MakeFaceHW (in double theH, in double theW);
+    GEOM_Object MakeFaceHW (in double theH, in double theW, in short theOrientation);
     /*!
-     *  Create a face by another plane and two specified sizes,
+     *  Create a face by normale vector or edge and two specified sizes,
      *  vertical (H) and horisontal (W).
-     *  \param theFace defines plane.
+     *  \param theVec defines plane.
      *  \param theH vertical size (height).
      *  \param theW horisontal size (width). 
      *  \return New GEOM_Object, containing the created face.
      */
-    GEOM_Object MakeFacePlaneHW (in GEOM_Object theFace, in double theH, in double theW);
+    GEOM_Object MakeFaceVecHW (in GEOM_Object theVec, in double theH, in double theW);
     /*!
      *  Create a Disk (circular face) with given center, normal vector and radius.
      *  \param thePnt disk center.
@@ -857,6 +858,16 @@ module GEOM
     GEOM_Object MakeDiskThreePnt (in GEOM_Object thePnt1,
 				  in GEOM_Object thePnt2,
 				  in GEOM_Object thePnt3);
+				  
+    /*!
+     *  Create a disk specified dimensions along OX-OY coordinate axes,
+     *  Center of the disk at point (0, 0, 0).
+     *  \param theR of the Disk.
+     *  \param theOrientation Orientation belong axis OXY OYZ OZX
+     *  \return New GEOM_Object, containing the created disk.
+     */
+    GEOM_Object MakeDiskR (in double theR, in short theOrientation);
+    
     /*!
      *  Create a cylinder with given radius and height at
      *  the origin of coordinate system. Axis of the cylinder
