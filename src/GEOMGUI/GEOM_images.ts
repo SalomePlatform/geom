@@ -91,7 +91,7 @@
             <translation>face_hw.png</translation>
         </message>
 	<message>
-            <source>ICON_DLG_FACE_VEC_HW</source>
+            <source>ICON_DLG_FACE_OBJ_HW</source>
             <translation>face_vechw.png</translation>
         </message>
         <message>

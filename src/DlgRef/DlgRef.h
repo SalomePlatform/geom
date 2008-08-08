@@ -194,6 +194,8 @@ public:
   ~DlgRef_1Sel3Check();
 };
 
+
+
 //////////////////////////////////////////
 // DlgRef_1Sel3Spin
 //////////////////////////////////////////
@@ -544,6 +546,22 @@ class DLGREF_EXPORT DlgRef_3Check : public QWidget,
 public:
   DlgRef_3Check( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_3Check();
+};
+
+//////////////////////////////////////////
+// DlgRef_1Sel3Radio
+//////////////////////////////////////////
+
+#include "ui_DlgRef_3Radio_QTD.h"
+
+class DLGREF_EXPORT DlgRef_3Radio : public QWidget, 
+                                    public Ui::DlgRef_3Radio_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_3Radio( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_3Radio();
 };
 
 //////////////////////////////////////////

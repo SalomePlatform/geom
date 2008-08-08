@@ -420,6 +420,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_DISK</source>
             <translation>Disk</translation>
         </message>
+	<message>
+            <source>GEOM_DISK_TITLE</source>
+            <translation>Create A Disk</translation>
+        </message>
         <message>
             <source>GEOM_DIMENSIONS</source>
             <translation>Dimensions</translation>
@@ -923,6 +927,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_OBJECT</source>
             <translation>Object</translation>
+        </message>
+	<message>
+            <source>GEOM_OBJECT_TYPE</source>
+            <translation>Object Type</translation>
         </message>
         <message>
             <source>GEOM_OBJECTS</source>

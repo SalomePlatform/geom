@@ -158,7 +158,7 @@
 #define BOX_DX_DY_DZ  1
 #define BOX_TWO_PNT   2
 
-#define FACE_VEC_H_W  1
+#define FACE_OBJ_H_W  1
 #define FACE_H_W        2
 
 #define DISK_PNT_VEC_R    1

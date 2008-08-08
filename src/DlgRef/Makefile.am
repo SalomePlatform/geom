@@ -70,6 +70,7 @@ UIC_FILES = \
 	ui_DlgRef_2SelExt_QTD.h			\
 	ui_DlgRef_2Spin_QTD.h			\
 	ui_DlgRef_3Check_QTD.h			\
+	ui_DlgRef_3Radio_QTD.h			\
 	ui_DlgRef_3Sel1Check_QTD.h		\
 	ui_DlgRef_3Sel1Spin_QTD.h		\
 	ui_DlgRef_3Sel3Spin1Check_QTD.h		\

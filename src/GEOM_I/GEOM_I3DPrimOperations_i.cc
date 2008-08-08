@@ -130,11 +130,11 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceHW (CORBA::Double theH,
 
 //=============================================================================
 /*!
- *  MakeFaceVecHW
+ *  MakeFaceObjHW
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceVecHW
-                                               (GEOM::GEOM_Object_ptr theVec,
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceObjHW
+                                               (GEOM::GEOM_Object_ptr theObj,
 						CORBA::Double theH,
 						CORBA::Double theW)
 {
@@ -143,18 +143,18 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceVecHW
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theVec == NULL || theH == 0 || theW == 0)
+  if (theObj == NULL || theH == 0 || theW == 0)
     return aGEOMObject._retn();
 
   //Get the reference points
-  Handle(GEOM_Object) aFace = GetOperations()->GetEngine()->GetObject
-    (theVec->GetStudyID(), theVec->GetEntry());
+  Handle(GEOM_Object) anObj = GetOperations()->GetEngine()->GetObject
+    (theObj->GetStudyID(), theObj->GetEntry());
 
-  if (aFace.IsNull())
+  if (anObj.IsNull())
     return aGEOMObject._retn();
 
   //Create the Face
-  Handle(GEOM_Object) anObject = GetOperations()->MakeFaceVecHW(aFace, theH, theW);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeFaceObjHW(anObj, theH, theW);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

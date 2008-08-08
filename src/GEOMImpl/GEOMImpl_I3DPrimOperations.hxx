@@ -37,7 +37,7 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeBoxTwoPnt (Handle(GEOM_Object) thePnt1,
 						     Handle(GEOM_Object) thePnt2);
   Standard_EXPORT Handle(GEOM_Object) MakeFaceHW (double theH, double theW, int theOrientation);
-  Standard_EXPORT Handle(GEOM_Object) MakeFaceVecHW (Handle(GEOM_Object) theVec,
+  Standard_EXPORT Handle(GEOM_Object) MakeFaceObjHW (Handle(GEOM_Object) theObj,
 						     double theH, double theW);
   Standard_EXPORT Handle(GEOM_Object) MakeDiskThreePnt (Handle(GEOM_Object) thePnt1,
 							Handle(GEOM_Object) thePnt2,

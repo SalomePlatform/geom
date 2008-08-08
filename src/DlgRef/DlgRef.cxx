@@ -472,6 +472,20 @@ DlgRef_3Check::~DlgRef_3Check()
 }
 
 //////////////////////////////////////////
+// DlgRef_3Radio
+//////////////////////////////////////////
+
+DlgRef_3Radio::DlgRef_3Radio( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_3Radio::~DlgRef_3Radio()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_3Sel1Check
 //////////////////////////////////////////
 

@@ -30,7 +30,7 @@
 
 class DlgRef_2Spin;
 class DlgRef_1Sel2Spin;
-class DlgRef_3Check;
+class DlgRef_3Radio;
 
 //=================================================================================
 // class    : PrimitiveGUI_FaceDlg
@@ -60,12 +60,14 @@ private:
   GEOM::GEOM_Object_var              myPoint2;
   GEOM::GEOM_Object_var              myVector;
   GEOM::GEOM_Object_var              myEdge;
+  GEOM::GEOM_Object_var              myFace;
 
   int                                myOrientationType;
   
   DlgRef_2Spin*                      GroupDimensions;
   DlgRef_1Sel2Spin*                  GroupPlane;
-  DlgRef_3Check*                     GroupOrientation;
+  DlgRef_3Radio*                     GroupOrientation;
+  DlgRef_3Radio*                     GroupType;
     
 private slots:
   void                               ClickOnOk();
@@ -81,6 +83,7 @@ private slots:
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
   void                               RadioButtonClicked();
+  void                               TypeButtonClicked();
 };
 
 #endif // BASICGUI_FACEDLG_H

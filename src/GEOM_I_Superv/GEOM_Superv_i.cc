@@ -787,17 +787,17 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceHW (CORBA::Double theH,
 }
 
 //=============================================================================
-//  MakeFaceVecHW:
+//  MakeFaceObjHW:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceVecHW (GEOM::GEOM_Object_ptr theVec, 
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceObjHW (GEOM::GEOM_Object_ptr theObj, 
 						    CORBA::Double theH,
 						    CORBA::Double theW)
 {
-  beginService( " GEOM_Superv_i::MakeFaceVecHW" );
-  MESSAGE("GEOM_Superv_i::MakeFaceVecHW");
+  beginService( " GEOM_Superv_i::MakeFaceObjHW" );
+  MESSAGE("GEOM_Superv_i::MakeFaceObjHW");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeFaceVecHW(theVec, theH, theW);
-  endService( " GEOM_Superv_i::MakeFaceVecHW" );
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeFaceObjHW(theObj, theH, theW);
+  endService( " GEOM_Superv_i::MakeFaceObjHW" );
   return anObj;
 }
 

@@ -696,16 +696,17 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a face from another plane and two sizes,
         #  vertical size and horisontal size.
-        #  @param theVec   Normale vector to the creating face.
+        #  @param theObj   Normale vector to the creating face or
+	#  the face object.
         #  @param theH     Height (vertical size).
         #  @param theW     Width (horisontal size).
         #  @return New GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
-        def MakeFaceVecHW(self, theVec, theH, theW):
+        def MakeFaceObjHW(self, theObj, theH, theW):
             # Example: see GEOM_TestAll.py
-            anObj = self.PrimOp.MakeFaceVecHW(theVec, theH, theW)
-            RaiseIfFailed("MakeFaceVecHW", self.PrimOp)
+            anObj = self.PrimOp.MakeFaceObjHW(theObj, theH, theW)
+            RaiseIfFailed("MakeFaceObjHW", self.PrimOp)
             return anObj
 
         ## Create a disk with given center, normal vector and radius.

@@ -190,7 +190,7 @@ public:
   GEOM::GEOM_Object_ptr MakeFaceHW (CORBA::Double theH,
 				    CORBA::Double theW,
 				    CORBA::Short  theOrientation);
-  GEOM::GEOM_Object_ptr MakeFaceVecHW (GEOM::GEOM_Object_ptr theFace, 
+  GEOM::GEOM_Object_ptr MakeFaceObjHW (GEOM::GEOM_Object_ptr theObj, 
 				       CORBA::Double theH,
 				       CORBA::Double theW);
   GEOM::GEOM_Object_ptr MakeDiskPntVecR (GEOM::GEOM_Object_ptr theCenter,

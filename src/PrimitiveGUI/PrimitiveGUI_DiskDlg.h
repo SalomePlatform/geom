@@ -31,7 +31,7 @@
 class DlgRef_3Sel;
 class DlgRef_2Sel1Spin;
 class DlgRef_1Spin;
-class DlgRef_3Check;
+class DlgRef_3Radio;
 
 //=================================================================================
 // class    : PrimitiveGUI_DiskDlg
@@ -65,7 +65,7 @@ private:
   DlgRef_2Sel1Spin*                  GroupPntVecR;
   DlgRef_3Sel*                       Group3Pnts;
   DlgRef_1Spin*                      GroupDimensions;
-  DlgRef_3Check*                     GroupOrientation;
+  DlgRef_3Radio*                     GroupOrientation;
 
 private slots:
   void                               ClickOnOk();

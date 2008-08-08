@@ -249,21 +249,21 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceHW (double theH, double 
 
 //=============================================================================
 /*!
- *  MakeFaceVecHW
+ *  MakeFaceObjHW
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceVecHW (Handle(GEOM_Object) theVec,
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceObjHW (Handle(GEOM_Object) theObj,
 							       double theH, double theW)
 {
   SetErrorCode(KO);
 
-  if (theVec.IsNull()) return NULL;
+  if (theObj.IsNull()) return NULL;
 
   //Add a new Face object
   Handle(GEOM_Object) aFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
 
   //Add a new Box function for creation a box relatively to two points
-  Handle(GEOM_Function) aFunction = aFace->AddFunction(GEOMImpl_FaceDriver::GetID(), FACE_VEC_H_W);
+  Handle(GEOM_Function) aFunction = aFace->AddFunction(GEOMImpl_FaceDriver::GetID(), FACE_OBJ_H_W);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
@@ -271,7 +271,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceVecHW (Handle(GEOM_Objec
 
   GEOMImpl_IFace aFI (aFunction);
 
-  Handle(GEOM_Function) aRefFunction1 = theVec->GetLastFunction();
+  Handle(GEOM_Function) aRefFunction1 = theObj->GetLastFunction();
 
   if (aRefFunction1.IsNull())
     return aFace;
@@ -297,8 +297,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceVecHW (Handle(GEOM_Objec
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aFace << " = geompy.MakeFaceVecHW("
-    << theVec << ", " << theH << ", " << theW << ")";
+  GEOM::TPythonDump(aFunction) << aFace << " = geompy.MakeFaceObjHW("
+    << theObj << ", " << theH << ", " << theW << ")";
 
   SetErrorCode(OK);
   return aFace;

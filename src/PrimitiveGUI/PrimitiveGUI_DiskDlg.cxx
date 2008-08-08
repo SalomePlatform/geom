@@ -62,9 +62,9 @@ PrimitiveGUI_DiskDlg::PrimitiveGUI_DiskDlg( GeometryGUI* theGeometryGUI, QWidget
 
   /***************************************************************/
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_DISK" ) );
-  mainFrame()->RadioButton1->setIcon( image0 );
-  mainFrame()->RadioButton2->setIcon( image2 );
-  mainFrame()->RadioButton3->setIcon( image3 );
+  mainFrame()->RadioButton1->setIcon( image3 );
+  mainFrame()->RadioButton2->setIcon( image0 );
+  mainFrame()->RadioButton3->setIcon( image2 );
 
   GroupPntVecR = new DlgRef_2Sel1Spin( centralWidget() );
   GroupPntVecR->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
@@ -92,7 +92,7 @@ PrimitiveGUI_DiskDlg::PrimitiveGUI_DiskDlg( GeometryGUI* theGeometryGUI, QWidget
   GroupDimensions->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
   GroupDimensions->TextLabel1->setText( tr( "GEOM_RADIUS" ) );
 
-  GroupOrientation = new DlgRef_3Check( centralWidget() );
+  GroupOrientation = new DlgRef_3Radio( centralWidget() );
   GroupOrientation->GroupBox1->setTitle( tr( "GEOM_ORIENTATION" ) );
   GroupOrientation->RadioButton1->setText( tr( "GEOM_WPLANE_OXY" ) );
   GroupOrientation->RadioButton2->setText( tr( "GEOM_WPLANE_OYZ" ) );
@@ -217,6 +217,16 @@ void PrimitiveGUI_DiskDlg::ConstructorsClicked( int constructorId )
   switch ( constructorId ) {
   case 0:
     {
+      GroupPntVecR->hide();
+      Group3Pnts->hide();
+      GroupDimensions->show();
+      GroupOrientation->show();
+      GroupOrientation->RadioButton1->setChecked( true );
+      myOrientationType = 1;
+      break;
+    }
+  case 1:
+    {
       Group3Pnts->hide();
       GroupPntVecR->show();
       GroupDimensions->hide();
@@ -226,7 +236,7 @@ void PrimitiveGUI_DiskDlg::ConstructorsClicked( int constructorId )
       GroupPntVecR->LineEdit2->setText( "" );
       break;
     }
-  case 1:
+  case 2:
     {
       GroupPntVecR->hide();
       Group3Pnts->show();
@@ -237,15 +247,6 @@ void PrimitiveGUI_DiskDlg::ConstructorsClicked( int constructorId )
       Group3Pnts->LineEdit2->setText( "" );
       Group3Pnts->LineEdit3->setText( "" );
       break;
-    }
-  case 2:
-    {
-      GroupPntVecR->hide();
-      Group3Pnts->hide();
-      GroupDimensions->show();
-      GroupOrientation->show();
-      GroupOrientation->RadioButton1->setChecked( true );
-      myOrientationType = 1;
     }
   }
   
@@ -292,7 +293,7 @@ bool PrimitiveGUI_DiskDlg::ClickOnApply()
 //=================================================================================
 void PrimitiveGUI_DiskDlg::SelectionIntoArgument()
 {
-  if (getConstructorId() == 2) {
+  if (getConstructorId() == 0) {
     displayPreview();
     return;
   }
@@ -467,9 +468,9 @@ double PrimitiveGUI_DiskDlg::getRadius() const
   double r = 0.;
   switch ( getConstructorId() ) {
   case 0:
-    r = GroupPntVecR->SpinBox_DX->value(); break;
-  case 2:
     r = GroupDimensions->SpinBox_DX->value(); break;
+  case 1:
+    r = GroupPntVecR->SpinBox_DX->value(); break;
   }
   return r;
 }
@@ -500,12 +501,12 @@ bool PrimitiveGUI_DiskDlg::isValid( QString& msg )
 {
   const int id = getConstructorId();
   if ( id == 0 )
-    return !myPoint->_is_nil() && !myDir->_is_nil() && getRadius() > 0;
+    return true;
   else if ( id == 1 )
+    return !myPoint->_is_nil() && !myDir->_is_nil() && getRadius() > 0;
+  else if ( id == 2 )
     return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
       !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
-  else if ( id == 2 )
-    return true;
   return false;
 }
 
@@ -521,15 +522,15 @@ bool PrimitiveGUI_DiskDlg::execute( ObjectList& objects )
   
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeDiskPntVecR( myPoint, myDir, getRadius() );
+    anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeDiskR( getRadius(), myOrientationType );
     res = true;
     break;
   case 1 :
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeDiskThreePnt( myPoint1, myPoint2, myPoint3 );
+    anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeDiskPntVecR( myPoint, myDir, getRadius() );
     res = true;
     break;
   case 2 :
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeDiskR( getRadius(), myOrientationType );
+    anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeDiskThreePnt( myPoint1, myPoint2, myPoint3 );
     res = true;
     break;
   }
@@ -552,11 +553,11 @@ void PrimitiveGUI_DiskDlg::addSubshapesToStudy()
   QMap<QString, GEOM::GEOM_Object_var> objMap;
 
   switch ( getConstructorId() ) {
-  case 0:
+  case 1:
     objMap[GroupPntVecR->LineEdit1->text()] = myPoint;
     objMap[GroupPntVecR->LineEdit2->text()] = myDir;
     break;
-  case 1:
+  case 2:
     objMap[Group3Pnts->LineEdit1->text()] = myPoint1;
     objMap[Group3Pnts->LineEdit2->text()] = myPoint2;
     objMap[Group3Pnts->LineEdit3->text()] = myPoint3;

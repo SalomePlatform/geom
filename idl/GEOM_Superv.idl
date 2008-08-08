@@ -129,7 +129,7 @@ module GEOM
     GEOM_Object MakeFaceHW (in double theH, 
 			    in double theW,
 			    in short  theOrientation) ;
-    GEOM_Object MakeFaceVecHW (in GEOM_Object theVec, 
+    GEOM_Object MakeFaceObjHW (in GEOM_Object theObj, 
 			       in double      theH,
 			       in double      theW) ;
     GEOM_Object MakeDiskPntVecR (in GEOM_Object thePnt,

@@ -139,7 +139,7 @@ def TestAll (geompy, math):
                                   WantPlanarFace)    #(List of GEOM_Object_ptr, Boolean)->GEOM_Object_ptr
   Face2    = geompy.MakeFace(Sketcher, WantPlanarFace)
   Face3    = geompy.MakeFaceHW (100., 200., 1)       #(2 Doubles, 1 Int)->GEOM_Object_ptr
-  Face4    = geompy.MakeFaceVecHW (vz, 200., 100.)   #(1 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr
+  Face4    = geompy.MakeFaceObjHW (vz, 200., 100.)   #(1 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr
   Disk     = geompy.MakeDiskPntVecR (p0, vz, radius) #(2 GEOM_Object_ptr, 1 Double)->GEOM_Object_ptr
   Disk2    = geompy.MakeDiskThreePnt(p0, p200, pz)   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   Disk3    = geompy.MakeDiskR(100., 1)               #(1 Doubles, 1 Int)->GEOM_Object_ptr

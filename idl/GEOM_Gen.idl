@@ -839,7 +839,7 @@ module GEOM
      *  \param theW horisontal size (width). 
      *  \return New GEOM_Object, containing the created face.
      */
-    GEOM_Object MakeFaceVecHW (in GEOM_Object theVec, in double theH, in double theW);
+    GEOM_Object MakeFaceObjHW (in GEOM_Object theObj, in double theH, in double theW);
     /*!
      *  Create a Disk (circular face) with given center, normal vector and radius.
      *  \param thePnt disk center.
