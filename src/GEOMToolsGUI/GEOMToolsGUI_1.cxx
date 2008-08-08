@@ -168,8 +168,6 @@ void GEOMToolsGUI::OnCheckGeometry()
 
 void GEOMToolsGUI::OnAutoColor()
 {
-  QList<SALOME_Prs> aListOfGroups;
-
   SALOME_ListIO selected;
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if( !app )

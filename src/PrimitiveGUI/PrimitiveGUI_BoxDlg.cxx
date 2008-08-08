@@ -41,7 +41,7 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <GEOMImpl_Types.hxx>
-#include <ostream.h>
+#include <ostream>
 
 //=================================================================================
 // class    : PrimitiveGUI_BoxDlg()
