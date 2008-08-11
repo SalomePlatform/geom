@@ -1,0 +1,42 @@
+/*!
+
+\page create_squareface_page Face
+
+To create a \b Disk in the <b>Main Menu</b> select <b>New Entity - >
+Primitives - > Face</b>
+
+\n There are 2 algorithms to create a \b Face in 3D space. 
+\n The \b Result of each operation will be a GEOM_Object (Face).
+
+\n Firstly, you can create a \b Face by the given height and width at the origin 
+of coordinates. You can define the axis of the face by the orientation
+group buttons. There are three options to create a face in OXY, OYZ or OZX Planes.
+\n <b>TUI Command:</b> <em>geompy.MakeFaceHW(Height, Width, Orientation)</em>
+\n <b>Arguments:</b> Name + 3 values (Dimensions at origin: heigth, width and
+orientation).
+\n The orientation can be defined by "1", "2" or "3" values. This 
+means that the Disk will lie in "OXY", "OYZ" or "OZX" plane correspondingly.
+
+\image html face1.png
+
+\n Secondly, you can define a \b Face by a \b Vector giving the face's normal to the center and 
+\b Heigth and Width sizes.
+\n <b>TUI Command:</b> <em>geompy.MakeFaceObjHW(Vector, Height, Width)</em>
+\n <b>Arguments:</b> Name + 1 Vector (normale to the center) + 2 doubles (to
+describe a face sizes).
+\n You can also create face from another selected face. Just turn the <b>Object Type</b> button 
+to condition \b Face, then you can select a face object and set new values of
+Height and Width for the newly face. The created face will lie in the plane
+of the selected face.
+\n <b>TUI Command:</b> <em>geompy.MakeFaceObjHW(Face, Height, Width)</em>
+\n <b>Arguments:</b> Name + 1 Face + 2 parameters (to describe a face sizes).
+
+\image html face2.png
+
+<b>Example:</b>
+\image html faces.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creating 
+\ref tui_creation_face "Primitives".
+
+*/

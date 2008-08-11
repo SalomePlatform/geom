@@ -27,6 +27,8 @@
 <li>\ref create_sphere_page</li>
 <li>\ref create_torus_page </li>
 <li>\ref create_cone_page </li>
+<li>\ref create_disk_page </li>
+<li>\ref create_squareface_page </li>
 </ul>
 <li>\ref create_complex_obj_page</li>
 <ul>
