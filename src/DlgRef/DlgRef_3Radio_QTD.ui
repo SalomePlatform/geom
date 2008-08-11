@@ -1,0 +1,75 @@
+<ui version="4.0" >
+ <class>DlgRef_3Radio_QTD</class>
+ <widget class="QWidget" name="DlgRef_3Radio_QTD" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>335</width>
+    <height>44</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string/>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="GroupBox1" >
+     <property name="title" >
+      <string/>
+     </property>
+     <layout class="QHBoxLayout" >
+      <item>
+       <widget class="QRadioButton" name="RadioButton1" >
+        <property name="text" >
+         <string>RadioButton1</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RadioButton2" >
+        <property name="text" >
+         <string>RadioButton2</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RadioButton3" >
+        <property name="text" >
+         <string>RadioButton3</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <tabstops>
+  <tabstop>RadioButton1</tabstop>
+  <tabstop>RadioButton2</tabstop>
+  <tabstop>RadioButton3</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
