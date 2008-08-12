@@ -108,7 +108,8 @@ void MeasureGUI_NormaleDlg::Init()
   myPoint = GEOM::GEOM_Object::_nil();
 
   myEditCurrentArgument = GroupArgs->LineEdit1;
-  globalSelection( GEOM_FACE );
+  globalSelection( GEOM_FACE ); // to close previous local selection
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
