@@ -156,7 +156,8 @@ void PrimitiveGUI_TorusDlg::Init()
   
   initName( tr( "GEOM_TORUS" ) );
 
-  ConstructorsClicked( 0 );
+  setConstructorId( 1 ); // simplest constructor
+  ConstructorsClicked( 1 );
 }
 
 //=================================================================================

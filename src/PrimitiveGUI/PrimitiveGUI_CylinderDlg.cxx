@@ -159,7 +159,9 @@ void PrimitiveGUI_CylinderDlg::Init()
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
   initName( tr( "GEOM_CYLINDER" ) );
-  ConstructorsClicked( 0 );
+
+  setConstructorId( 1 ); // simplest constructor
+  ConstructorsClicked( 1 );
 }
 
 

@@ -15,6 +15,10 @@ Radius)</em>
 \n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
 the direction) + Radius.
 
+\note Passing None as <b>Center Point</b> means Origin of global
+coordinate system, passing None as \b Vector means OZ axis of global
+coordinate system.
+
 \image html circle1.png
 
 \n Secondly, you can define a \b Circle by three \b Points that lie on it. 

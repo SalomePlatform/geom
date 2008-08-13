@@ -69,8 +69,8 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg( GeometryGUI* theGeometryGUI, QWidget* pa
   GroupPntVecR = new DlgRef_2Sel1Spin( centralWidget() );
   GroupPntVecR->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
   
-  GroupPntVecR->TextLabel1->setText( tr( "GEOM_CENTER_POINT" ) );
-  GroupPntVecR->TextLabel2->setText( tr( "GEOM_VECTOR" ) );
+  GroupPntVecR->TextLabel1->setText( tr( "GEOM_CENTER_POINT" ) + " (Origin by default)" );
+  GroupPntVecR->TextLabel2->setText( tr( "GEOM_VECTOR" ) + " (Z axis by default)" );
   GroupPntVecR->TextLabel3->setText( tr( "GEOM_RADIUS" ) );
   GroupPntVecR->PushButton1->setIcon( image1 );
   GroupPntVecR->PushButton2->setIcon( image1 );
@@ -248,6 +248,8 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged() ),
 	   this, SLOT( SelectionIntoArgument() ) );
+
+  displayPreview();
 }
 
 //=================================================================================
@@ -494,12 +496,15 @@ bool BasicGUI_CircleDlg::isValid( QString& msg )
 {
   const int id = getConstructorId();
   if ( id == 0 )
-    return !myPoint->_is_nil() && !myDir->_is_nil() && getRadius() > 0;
+    //return !myPoint->_is_nil() && !myDir->_is_nil() && getRadius() > 0;
+    //nil point means origin of global CS
+    //nil vector means Z axis
+    return getRadius() > 0;
   else if ( id == 1 )
     return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
       !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
   else if ( id == 2 )
-      return !myPoint4->_is_nil() && !myPoint5->_is_nil() && !myPoint6->_is_nil() &&
+    return !myPoint4->_is_nil() && !myPoint5->_is_nil() && !myPoint6->_is_nil() &&
       !isEqual( myPoint4, myPoint5 ) && !isEqual( myPoint5, myPoint6 ) && !isEqual( myPoint4, myPoint6 );
   return false;
 }
@@ -548,8 +553,10 @@ void BasicGUI_CircleDlg::addSubshapesToStudy()
 
   switch ( getConstructorId() ) {
   case 0:
-    objMap[GroupPntVecR->LineEdit1->text()] = myPoint;
-    objMap[GroupPntVecR->LineEdit2->text()] = myDir;
+    if (!CORBA::is_nil(myPoint))
+      objMap[GroupPntVecR->LineEdit1->text()] = myPoint;
+    if (!CORBA::is_nil(myDir))
+      objMap[GroupPntVecR->LineEdit2->text()] = myDir;
     break;
   case 1:
     objMap[Group3Pnts->LineEdit1->text()] = myPoint1;

@@ -500,9 +500,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the created circle.
         #
         #  @ref tui_creation_circle "Example"
-        def MakeCircle(self,thePnt, theVec, theR):
+        def MakeCircle(self, thePnt, theVec, theR):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeCirclePntVecR(thePnt, theVec, theR)
+            RaiseIfFailed("MakeCirclePntVecR", self.CurvesOp)
+            return anObj
+
+        ## Create a circle with given radius.
+        #  Center of the circle will be in the origin of global
+        #  coordinate system and normal vector will be codirected with Z axis
+        #  @param theR Circle radius.
+        #  @return New GEOM_Object, containing the created circle.
+        def MakeCircleR(self, theR):
+            anObj = self.CurvesOp.MakeCirclePntVecR(None, None, theR)
             RaiseIfFailed("MakeCirclePntVecR", self.CurvesOp)
             return anObj
 
@@ -538,9 +548,20 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the created ellipse.
         #
         #  @ref tui_creation_ellipse "Example"
-        def MakeEllipse(self,thePnt, theVec, theRMajor, theRMinor):
+        def MakeEllipse(self, thePnt, theVec, theRMajor, theRMinor):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeEllipse(thePnt, theVec, theRMajor, theRMinor)
+            RaiseIfFailed("MakeEllipse", self.CurvesOp)
+            return anObj
+
+        ## Create an ellipse with given radiuses.
+        #  Center of the ellipse will be in the origin of global
+        #  coordinate system and normal vector will be codirected with Z axis
+        #  @param theRMajor Major ellipse radius.
+        #  @param theRMinor Minor ellipse radius.
+        #  @return New GEOM_Object, containing the created ellipse.
+        def MakeEllipseRR(self, theRMajor, theRMinor):
+            anObj = self.CurvesOp.MakeEllipse(None, None, theRMajor, theRMinor)
             RaiseIfFailed("MakeEllipse", self.CurvesOp)
             return anObj
 

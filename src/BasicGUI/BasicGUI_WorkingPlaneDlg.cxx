@@ -102,20 +102,20 @@ BasicGUI_WorkingPlaneDlg::BasicGUI_WorkingPlaneDlg( GeometryGUI* theGeometryGUI,
   /***************************************************************/
   QGroupBox* aReverseGroupBox = new QGroupBox( centralWidget() );
   QHBoxLayout* aReverseGroupBoxLayout = new QHBoxLayout( aReverseGroupBox );
-  aReverseGroupBoxLayout->setMargin( 9 ); 
+  aReverseGroupBoxLayout->setMargin( 9 );
   aReverseGroupBoxLayout->setSpacing( 6 );
-    
+
   myReverseCB = new QCheckBox( aReverseGroupBox );
   myReverseCB->setText( tr( "GEOM_REVERSE_PLANE" ) );
   aReverseGroupBoxLayout->addWidget( myReverseCB );
-    
+
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( Group1 );
   layout->addWidget( Group2 );
   layout->addWidget( Group3 );
   layout->addWidget( aReverseGroupBox );
-  
+
   setHelpFileName( "create_wplane_page.html" );
 
   Init();
@@ -175,7 +175,8 @@ void BasicGUI_WorkingPlaneDlg::Init()
 
   initName( tr( "GEOM_WPLANE" ) );
 
-  ConstructorsClicked( 0 );
+  setConstructorId( 2 ); // simplest constructor
+  ConstructorsClicked( 2 );
 }
 
 //=================================================================================
@@ -196,15 +197,15 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked( int constructorId )
       aMap.Add( GEOM_PLANE );
       aMap.Add( GEOM_MARKER );
       globalSelection( aMap );
-      
+
       Group2->hide();
       Group3->hide();
       Group1->show();
-      
+
       myEditCurrentArgument = Group1->LineEdit1;
       Group1->LineEdit1->setText( "" );
       myFace = GEOM::GEOM_Object::_nil();
-      
+
       connect( aSelMgr, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       break;
     }
@@ -213,17 +214,17 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked( int constructorId )
       //globalSelection( GEOM_LINE );
       GEOM::GEOM_Object_var anObj;
       localSelection( anObj, TopAbs_EDGE );
-      
+
       Group1->hide();
       Group3->hide();
       Group2->show();
-      
+
       myEditCurrentArgument = Group2->LineEdit1;
       Group2->LineEdit1->setText( "" );
       Group2->LineEdit2->setText( "" );
       myVectX = GEOM::GEOM_Object::_nil();
       myVectZ = GEOM::GEOM_Object::_nil();
-      
+
       connect( aSelMgr, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       break;
     }
@@ -232,13 +233,13 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked( int constructorId )
       Group1->hide();
       Group2->hide();
       Group3->show();
-      
+
       Group3->RadioButton1->setChecked( true );
       aOriginType = 1;
       break;
     }
   }
-  
+
   qApp->processEvents();
   updateGeometry();
   resize( minimumSize() );
@@ -274,12 +275,12 @@ bool BasicGUI_WorkingPlaneDlg::ClickOnApply()
 {
   buttonApply()->setFocus();
   myGeomGUI->application()->putInfo( "" );
- 
+
   if ( updateWPlane( false ) ) {
     myGeomGUI->SetWorkingPlane( myWPlane );
     myGeomGUI->ActiveWorkingPlane();
   }
-  
+
   return true;
 }
 
@@ -316,7 +317,7 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
 
   if ( myEditCurrentArgument == Group1->LineEdit1 )
     myFace = aSelectedObject;
-  else if ( myEditCurrentArgument == Group2->LineEdit1 || 
+  else if ( myEditCurrentArgument == Group2->LineEdit1 ||
 	    myEditCurrentArgument == Group2->LineEdit2 ) {
     if ( aRes && !aSelectedObject->_is_nil() ) {
       TopoDS_Shape aShape;
@@ -347,7 +348,7 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
   }
 
   myEditCurrentArgument->setText( aName );
-  
+
   updateWPlane();
 }
 
@@ -445,7 +446,7 @@ void BasicGUI_WorkingPlaneDlg::enterEvent( QEvent* )
 bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
 {
   erasePreview();
-  
+
   const int id = getConstructorId();
 
   if ( id == 0 ) { // by planar face selection
@@ -470,20 +471,20 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
       gp_Dir aDirN ( Zx, Zy, Zz );
       gp_Dir aDirX ( Xx, Xy, Xz );
       myWPlane = gp_Ax3( aPnt, aDirN, aDirX );
-    } 
+    }
     else {
       if ( !showPreview )
 	showError( "Wrong shape selected (has to be a planar face)" );
       return false;
     }
-  } 
+  }
   else if ( id == 1 ) { // by two vectors (Ox & Oz)
     if ( CORBA::is_nil( myVectX ) || CORBA::is_nil( myVectZ ) ) {
       if ( !showPreview )
 	showError( "Two vectors have to be selected" );
       return false;
     }
-    
+
     TopoDS_Edge aVectX, aVectZ;
     TopoDS_Vertex VX1, VX2, VZ1, VZ2;
     gp_Vec aVX, aVZ;
@@ -534,7 +535,7 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
 
     myWPlane = gp_Ax3( BRep_Tool::Pnt( VX1 ), aDirZ, aDirX );
 
-  } 
+  }
   else if ( id == 2 ) { // by selection from standard (OXY or OYZ, or OZX)
     gp_Ax2 anAx2;
 
@@ -544,23 +545,24 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
 
     myWPlane = gp_Ax3( anAx2 );
 
-  } 
+  }
   else {
     return false;
   }
-  
+
   if ( myReverseCB->isChecked() ) {
     myWPlane.YReverse();
     myWPlane.ZReverse();
   }
-  
+
   if ( showPreview ) {
     GEOM::GEOM_IBasicOperations_var aBasicOp = getGeomEngine()->GetIBasicOperations( getStudyId() );
-    GEOM::GEOM_Object_var anObj = aBasicOp->MakeMarker( myWPlane.Location().X(),   myWPlane.Location().Y(),   myWPlane.Location().Z(),
-							myWPlane.XDirection().X(), myWPlane.XDirection().Y(), myWPlane.XDirection().Z(),
-							myWPlane.YDirection().X(), myWPlane.YDirection().Y(), myWPlane.YDirection().Z() );
+    GEOM::GEOM_Object_var anObj = aBasicOp->MakeMarker
+      ( myWPlane.Location().X(),   myWPlane.Location().Y(),   myWPlane.Location().Z(),
+        myWPlane.XDirection().X(), myWPlane.XDirection().Y(), myWPlane.XDirection().Z(),
+        myWPlane.YDirection().X(), myWPlane.YDirection().Y(), myWPlane.YDirection().Z() );
     displayPreview( anObj );
   }
-  
+
   return true;
 }

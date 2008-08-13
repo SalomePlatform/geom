@@ -152,7 +152,8 @@ void PrimitiveGUI_BoxDlg::Init()
 
   initName( tr( "GEOM_BOX" ) );
 
-  ConstructorsClicked( 0 );
+  setConstructorId( 1 ); // simplest constructor
+  ConstructorsClicked( 1 );
 }
 
 //=================================================================================

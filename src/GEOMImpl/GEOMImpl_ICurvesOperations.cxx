@@ -266,7 +266,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 {
   SetErrorCode(KO);
 
-  if (thePnt.IsNull() || theVec.IsNull()) return NULL;
+  // Not set thePnt means origin of global CS,
+  // Not set theVec means Z axis of global CS
+  //if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Circle object
   Handle(GEOM_Object) aCircle = GetEngine()->AddObject(GetDocID(), GEOM_CIRCLE);
@@ -281,13 +283,18 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 
   GEOMImpl_ICircle aCI (aFunction);
 
-  Handle(GEOM_Function) aRefPnt = thePnt->GetLastFunction();
-  Handle(GEOM_Function) aRefVec = theVec->GetLastFunction();
+  if (!thePnt.IsNull()) {
+    Handle(GEOM_Function) aRefPnt = thePnt->GetLastFunction();
+    if (aRefPnt.IsNull()) return NULL;
+    aCI.SetCenter(aRefPnt);
+  }
 
-  if (aRefPnt.IsNull() || aRefVec.IsNull()) return NULL;
+  if (!theVec.IsNull()) {
+    Handle(GEOM_Function) aRefVec = theVec->GetLastFunction();
+    if (aRefVec.IsNull()) return NULL;
+    aCI.SetVector(aRefVec);
+  }
 
-  aCI.SetCenter(aRefPnt);
-  aCI.SetVector(aRefVec);
   aCI.SetRadius(theR);
 
   //Compute the Circle value
@@ -325,7 +332,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
 {
   SetErrorCode(KO);
 
-  if (thePnt.IsNull() || theVec.IsNull()) return NULL;
+  // Not set thePnt means origin of global CS,
+  // Not set theVec means Z axis of global CS
+  //if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Ellipse object
   Handle(GEOM_Object) anEll = GetEngine()->AddObject(GetDocID(), GEOM_ELLIPSE);
@@ -340,13 +349,18 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
 
   GEOMImpl_IEllipse aCI (aFunction);
 
-  Handle(GEOM_Function) aRefPnt = thePnt->GetLastFunction();
-  Handle(GEOM_Function) aRefVec = theVec->GetLastFunction();
+  if (!thePnt.IsNull()) {
+    Handle(GEOM_Function) aRefPnt = thePnt->GetLastFunction();
+    if (aRefPnt.IsNull()) return NULL;
+    aCI.SetCenter(aRefPnt);
+  }
 
-  if (aRefPnt.IsNull() || aRefVec.IsNull()) return NULL;
+  if (!theVec.IsNull()) {
+    Handle(GEOM_Function) aRefVec = theVec->GetLastFunction();
+    if (aRefVec.IsNull()) return NULL;
+    aCI.SetVector(aRefVec);
+  }
 
-  aCI.SetCenter(aRefPnt);
-  aCI.SetVector(aRefVec);
   aCI.SetRMajor(theRMajor);
   aCI.SetRMinor(theRMinor);
 

@@ -164,7 +164,8 @@ void PrimitiveGUI_ConeDlg::Init()
   
   initName( tr( "GEOM_CONE" ) );
 
-  ConstructorsClicked( 0 );
+  setConstructorId( 1 ); // simplest constructor
+  ConstructorsClicked( 1 );
 }
 
 

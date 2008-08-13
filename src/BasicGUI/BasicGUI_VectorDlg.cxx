@@ -44,7 +44,7 @@
 
 //=================================================================================
 // class    : BasicGUI_VectorDlg()
-// purpose  : Constructs a BasicGUI_VectorDlg which is a child of 'parent', with the 
+// purpose  : Constructs a BasicGUI_VectorDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -91,7 +91,7 @@ BasicGUI_VectorDlg::BasicGUI_VectorDlg( GeometryGUI* theGeometryGUI, QWidget* pa
   /***************************************************************/
 
   setHelpFileName( "create_vector_page.html" );
-  
+
   /* Initialisations */
   Init();
 }
@@ -102,7 +102,7 @@ BasicGUI_VectorDlg::BasicGUI_VectorDlg( GeometryGUI* theGeometryGUI, QWidget* pa
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 BasicGUI_VectorDlg::~BasicGUI_VectorDlg()
-{  
+{
 }
 
 
@@ -121,7 +121,7 @@ void BasicGUI_VectorDlg::Init()
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
- 
+
   /* min, max, step and decimals for spin boxes */
   initSpinBox( GroupDimensions->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
   initSpinBox( GroupDimensions->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
@@ -137,7 +137,7 @@ void BasicGUI_VectorDlg::Init()
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
   connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
-  
+
   connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
@@ -157,12 +157,13 @@ void BasicGUI_VectorDlg::Init()
 
   connect( GroupDimensions->CheckButton1, SIGNAL( stateChanged( int ) ), this, SLOT( ReverseVector( int ) ) );
 
-  connect( myGeomGUI->getApp()->selectionMgr(), 
+  connect( myGeomGUI->getApp()->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr("GEOM_VECTOR") );
 
-  ConstructorsClicked( 0 );
+  setConstructorId( 1 ); // simplest constructor
+  ConstructorsClicked( 1 );
 }
 
 //=================================================================================
@@ -192,14 +193,14 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
     {
       GroupDimensions->hide();
       GroupPoints->show();
-      
+
       myEditCurrentArgument = GroupPoints->LineEdit1;
       GroupPoints->LineEdit1->setText( "" );
       GroupPoints->LineEdit2->setText( "" );
-      
+
       globalSelection(); // close local contexts, if any
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-      connect( myGeomGUI->getApp()->selectionMgr(), 
+      connect( myGeomGUI->getApp()->selectionMgr(),
 	       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       break;
     }
@@ -208,12 +209,12 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
       GroupPoints->hide();
       GroupDimensions->show();
       globalSelection(); // close local contexts, if any
-      
-      double dx( 0. ), dy( 0. ), dz( 0. ); 
+
+      double dx( 0. ), dy( 0. ), dz( 0. );
       GroupDimensions->SpinBox_DX->setValue( dx );
       GroupDimensions->SpinBox_DY->setValue( dy );
       GroupDimensions->SpinBox_DZ->setValue( dz );
-      
+
       GroupDimensions->CheckButton1->setChecked( false );
       break;
     }
@@ -271,7 +272,7 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
     return;
   }
 
-  // nbSel == 1 
+  // nbSel == 1
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
@@ -334,7 +335,7 @@ void BasicGUI_VectorDlg::SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
 void BasicGUI_VectorDlg::LineEditReturnPressed()
-{ 
+{
   QLineEdit* send = (QLineEdit*)sender();
   if      ( send == GroupPoints->LineEdit1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
   else if ( send == GroupPoints->LineEdit2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
@@ -397,7 +398,7 @@ void BasicGUI_VectorDlg::ReverseVector( int state )
   GroupDimensions->SpinBox_DX->setValue( dx );
   GroupDimensions->SpinBox_DY->setValue( dy );
   GroupDimensions->SpinBox_DZ->setValue( dz );
-  
+
   displayPreview();
 }
 
@@ -426,7 +427,7 @@ bool BasicGUI_VectorDlg::isValid( QString& msg )
 bool BasicGUI_VectorDlg::execute( ObjectList& objects )
 {
   bool res = false;
-  
+
   GEOM::GEOM_Object_var anObj;
 
   switch ( getConstructorId() ) {

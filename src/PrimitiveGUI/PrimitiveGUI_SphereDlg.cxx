@@ -139,7 +139,8 @@ void PrimitiveGUI_SphereDlg::Init()
 
   initName( tr( "GEOM_SPHERE" ) );
 
-  ConstructorsClicked( 0 );
+  setConstructorId( 1 ); // simplest constructor
+  ConstructorsClicked( 1 );
 }
 
 //=================================================================================

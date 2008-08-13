@@ -69,8 +69,8 @@ BasicGUI_EllipseDlg::BasicGUI_EllipseDlg( GeometryGUI* theGeometryGUI, QWidget* 
 
   GroupPoints = new DlgRef_2Sel2Spin( centralWidget() );
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
-  GroupPoints->TextLabel1->setText( tr( "GEOM_CENTER" ) );
-  GroupPoints->TextLabel2->setText( tr( "GEOM_VECTOR" ) );
+  GroupPoints->TextLabel1->setText( tr( "GEOM_CENTER" ) + " (Origin by default)" );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_VECTOR" ) + " (Z axis by default)" );
   GroupPoints->TextLabel3->setText( tr( "GEOM_RADIUS_MAJOR" ) );
   GroupPoints->TextLabel4->setText( tr( "GEOM_RADIUS_MINOR" ) );
   GroupPoints->PushButton1->setIcon( image1 );
@@ -146,6 +146,8 @@ void BasicGUI_EllipseDlg::Init()
 	  SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_ELLIPSE" ) );
+
+  displayPreview();
 }
 
 //=================================================================================
@@ -189,6 +191,7 @@ bool BasicGUI_EllipseDlg::ClickOnApply()
   //globalSelection(GEOM_POINT);
   globalSelection(); // close local contexts, if any
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  displayPreview();
   
   return true;
 }
@@ -368,7 +371,10 @@ bool BasicGUI_EllipseDlg::isValid( QString& msg )
     msg = tr( "GEOM_ELLIPSE_ERROR_1" );
     return false;
   }
-  return !myPoint->_is_nil() && !myDir->_is_nil();
+  //return !myPoint->_is_nil() && !myDir->_is_nil();
+  //nil point means origin of global CS
+  //nil vector means Z axis
+  return true;
 }
 
 //=================================================================================
@@ -395,8 +401,10 @@ void BasicGUI_EllipseDlg::addSubshapesToStudy()
 {
   QMap<QString, GEOM::GEOM_Object_var> objMap;
 
-  objMap[GroupPoints->LineEdit1->text()] = myPoint;
-  objMap[GroupPoints->LineEdit2->text()] = myDir;
+  if (!CORBA::is_nil(myPoint))
+    objMap[GroupPoints->LineEdit1->text()] = myPoint;
+  if (!CORBA::is_nil(myDir))
+    objMap[GroupPoints->LineEdit2->text()] = myDir;
 
   addSubshapesToFather( objMap );
 }

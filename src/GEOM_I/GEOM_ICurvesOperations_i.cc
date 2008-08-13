@@ -65,15 +65,22 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCirclePntVecR
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePnt == NULL || theVec == NULL) return aGEOMObject._retn();
+  // Not set thePnt means origin of global CS,
+  // Not set theVec means Z axis of global CS
+  //if (thePnt == NULL || theVec == NULL) return aGEOMObject._retn();
 
-  //Get the reference points
-  Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
-    (thePnt->GetStudyID(), thePnt->GetEntry());
-  Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
-    (theVec->GetStudyID(), theVec->GetEntry());
-
-  if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
+  //Get the arguments
+  Handle(GEOM_Object) aPnt, aVec;
+  if (!CORBA::is_nil(thePnt)) {
+    aPnt = GetOperations()->GetEngine()->GetObject
+      (thePnt->GetStudyID(), thePnt->GetEntry());
+    if (aPnt.IsNull()) return aGEOMObject._retn();
+  }
+  if (!CORBA::is_nil(theVec)) {
+    aVec = GetOperations()->GetEngine()->GetObject
+      (theVec->GetStudyID(), theVec->GetEntry());
+    if (aVec.IsNull()) return aGEOMObject._retn();
+  }
 
   // Make Circle
   Handle(GEOM_Object) anObject =
@@ -167,15 +174,22 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipse
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePnt == NULL || theVec == NULL) return aGEOMObject._retn();
+  // Not set thePnt means origin of global CS,
+  // Not set theVec means Z axis of global CS
+  //if (thePnt == NULL || theVec == NULL) return aGEOMObject._retn();
 
-  //Get the reference points
-  Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
-    (thePnt->GetStudyID(), thePnt->GetEntry());
-  Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
-    (theVec->GetStudyID(), theVec->GetEntry());
-
-  if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
+  //Get the arguments
+  Handle(GEOM_Object) aPnt, aVec;
+  if (!CORBA::is_nil(thePnt)) {
+    aPnt = GetOperations()->GetEngine()->GetObject
+      (thePnt->GetStudyID(), thePnt->GetEntry());
+    if (aPnt.IsNull()) return aGEOMObject._retn();
+  }
+  if (!CORBA::is_nil(theVec)) {
+    aVec = GetOperations()->GetEngine()->GetObject
+      (theVec->GetStudyID(), theVec->GetEntry());
+    if (aVec.IsNull()) return aGEOMObject._retn();
+  }
 
   // Make Ellipse
   Handle(GEOM_Object) anObject =
