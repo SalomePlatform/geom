@@ -306,7 +306,7 @@ void RepairGUI_DivideEdgeDlg::ActivateThisDialog()
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  myObject = GEOM::GEOM_Object::_nil();
+//  myObject = GEOM::GEOM_Object::_nil();
 
   //myGeomGUI->SetState( 0 );
   initSelection();
