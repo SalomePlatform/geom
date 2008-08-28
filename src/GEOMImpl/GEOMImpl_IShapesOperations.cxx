@@ -2912,7 +2912,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
       aPnt = BRep_Tool::Pnt( TopoDS::Vertex( Exp_Vertex.Current() ) );
       tab_Pnt[nbVertex] = aPnt;
     }
-    if ( not tab_Pnt[0].IsEqual(tab_Pnt[1], dl_l) ) {
+    if ( ! tab_Pnt[0].IsEqual(tab_Pnt[1], dl_l) ) {
       BRepGProp::LinearProperties(Exp_Edge.Current(), aProps);
       if ( aProps.Mass() < min_l ) min_l = aProps.Mass();
     }

@@ -51,12 +51,12 @@ static QStringList objectsToNames( const QMap<QString, QString>& objects )
   QStringList entries;
   for ( QMap<QString, QString>::ConstIterator it = objects.begin(); it != objects.end(); ++it ) {
     QString entry = it.key();
-    QStringList::Iterator it;
+    QStringList::Iterator iter;
     bool added = false;
-    for ( it = entries.begin(); it != entries.end() && !added; ++it ) {
-      if ( isEntryLess( entry, *it ) ) {
-	entries.insert( it, entry );
-	added = true;
+    for ( iter = entries.begin(); iter != entries.end() && !added; ++it ) {
+      if ( isEntryLess( entry, *iter ) ) {
+        entries.insert( iter, entry );
+        added = true;
       }
     }
     if ( !added ) 
