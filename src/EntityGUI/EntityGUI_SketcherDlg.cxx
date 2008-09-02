@@ -1512,9 +1512,9 @@ void EntityGUI_SketcherDlg::initSpinBox( QDoubleSpinBox* spinBox,
 					 double min,  double max,
 					 double step, int decimals )
 {
+  spinBox->setDecimals( decimals );
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
-  spinBox->setDecimals( decimals );
 }
 
 //=================================================================================
