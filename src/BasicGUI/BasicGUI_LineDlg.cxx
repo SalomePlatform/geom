@@ -114,10 +114,12 @@ BasicGUI_LineDlg::~BasicGUI_LineDlg()
 void BasicGUI_LineDlg::Init()
 {
   /* init variables */
-  //myEditCurrentArgument = GroupPoints->LineEdit1;
-  //myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
-  //globalSelection(); // close local contexts, if any
-  //localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+  myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
+  globalSelection(); // close local contexts, if any
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  GroupPoints->PushButton1->setDown(true);
+  
 	
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
@@ -190,7 +192,8 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
       myEditCurrentArgument->setText( "" );
       myPoint1 = GEOM::GEOM_Object::_nil();
       myPoint2 = GEOM::GEOM_Object::_nil();
-
+      GroupPoints->PushButton1->setDown(true);
+      GroupPoints->PushButton2->setDown(false);
       GroupPoints->show();
       GroupFaces->hide();
       break;
@@ -204,6 +207,8 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
       myEditCurrentArgument->setText("");
       myFace1 = GEOM::GEOM_Object::_nil();
       myFace2 = GEOM::GEOM_Object::_nil();
+      GroupFaces->PushButton1->setDown(true);
+      GroupFaces->PushButton2->setDown(false);
       GroupPoints->hide();
       GroupFaces->show();
       break;
@@ -226,13 +231,15 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
 
   if ( IObjectCount() != 1 ) {
+    //    printf ( "IObjectCount() != 1 \n" );
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 )      myPoint1 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupFaces->LineEdit1 )  myFace1  = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupFaces->LineEdit2 )  myFace2  = GEOM::GEOM_Object::_nil();
+    displayPreview();
     return;
   }
-
+  //  printf ( "IObjectCount() == 1 \n" );
   // nbSel == 1 
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
@@ -277,8 +284,22 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
 
     myEditCurrentArgument->setText( aName );
 
-    if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint1 = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = aSelectedObject;
+    if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+      myPoint1 = aSelectedObject;
+      if ( !myPoint1->_is_nil() && myPoint2->_is_nil() ) {
+	globalSelection(); // close local selection to clear it
+	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+	GroupPoints->PushButton2->click();      
+      }
+    }
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
+      myPoint2 = aSelectedObject;
+      if ( !myPoint2->_is_nil() && myPoint1->_is_nil() ) {
+	globalSelection(); // close local selection to clear it
+	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+	GroupPoints->PushButton1->click();      
+      }
+    }
     else if ( myEditCurrentArgument == GroupFaces->LineEdit1 )  myFace1 = aSelectedObject;
     else if ( myEditCurrentArgument == GroupFaces->LineEdit2 )  myFace2 = aSelectedObject;
   }
@@ -294,12 +315,25 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
 void BasicGUI_LineDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  if      ( send == GroupPoints->PushButton1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if ( send == GroupPoints->PushButton2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
-  else if ( send == GroupFaces->PushButton1 )  myEditCurrentArgument = GroupFaces->LineEdit1;
-  else if ( send == GroupFaces->PushButton2 )  myEditCurrentArgument = GroupFaces->LineEdit2;
+  if ( send == GroupPoints->PushButton1 ) {
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+    GroupPoints->PushButton2->setDown(false);
+  }
+  else if ( send == GroupPoints->PushButton2 ) {
+    myEditCurrentArgument = GroupPoints->LineEdit2;
+    GroupPoints->PushButton1->setDown(false);
+  }
+  else if ( send == GroupFaces->PushButton1 ) {
+    myEditCurrentArgument = GroupFaces->LineEdit1;
+    GroupFaces->PushButton2->setDown(false);
+  }
+  else if ( send == GroupFaces->PushButton2 ) {
+    myEditCurrentArgument = GroupFaces->LineEdit2;
+    GroupFaces->PushButton1->setDown(false);
+  }
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
+  send->setDown(true);
 }
 
 
