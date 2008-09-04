@@ -190,6 +190,7 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
       
       myEditCurrentArgument = GroupPoints->LineEdit1;
       myEditCurrentArgument->setText( "" );
+      GroupPoints->LineEdit2->setText( "" );
       myPoint1 = GEOM::GEOM_Object::_nil();
       myPoint2 = GEOM::GEOM_Object::_nil();
       GroupPoints->PushButton1->setDown(true);
@@ -231,7 +232,6 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
 
   if ( IObjectCount() != 1 ) {
-    //    printf ( "IObjectCount() != 1 \n" );
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 )      myPoint1 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupFaces->LineEdit1 )  myFace1  = GEOM::GEOM_Object::_nil();
@@ -239,8 +239,7 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
     displayPreview();
     return;
   }
-  //  printf ( "IObjectCount() == 1 \n" );
-  // nbSel == 1 
+
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
@@ -314,6 +313,10 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
 //=================================================================================
 void BasicGUI_LineDlg::SetEditCurrentArgument()
 {
+  if ( IObjectCount() != 0 ) {
+    globalSelection(); // close local selection to clear it
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  }
   QPushButton* send = (QPushButton*)sender();
   if ( send == GroupPoints->PushButton1 ) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -332,8 +335,9 @@ void BasicGUI_LineDlg::SetEditCurrentArgument()
     GroupFaces->PushButton1->setDown(false);
   }
   myEditCurrentArgument->setFocus();
-  SelectionIntoArgument();
+  //  SelectionIntoArgument();
   send->setDown(true);
+  displayPreview();
 }
 
 
