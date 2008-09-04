@@ -813,9 +813,11 @@ Standard_Boolean IsClosedShell(const TopoDS_Shell& theShell)
       if (BRep_Tool::Degenerated(aE)) {
 	continue;
       }
+      /*
       if (BRep_Tool::IsClosed(aE, aF)) {
 	continue;
       }
+      */
       if (aE.Orientation()==TopAbs_INTERNAL) {
 	continue;
       }
