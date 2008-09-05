@@ -71,6 +71,8 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   GroupPoints->PushButton2->setIcon( image2 );
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->LineEdit1->setEnabled(true);
+  GroupPoints->LineEdit2->setEnabled(false);
   GroupPoints->CheckButton1->setText( tr( "GEOM_KEEP_NONLIMIT_SHAPES" ) );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
@@ -141,6 +143,7 @@ void OperationGUI_PartitionDlg::Init()
   initName( tr( "GEOM_PARTITION" ) );
 
   ConstructorsClicked( 0 );
+  GroupPoints->PushButton1->click();
 }
 
 
@@ -167,6 +170,10 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
     GroupPoints->ComboBox1->show();
     GroupPoints->ComboBox1->setCurrentIndex( 0 );
     GroupPoints->CheckButton1->show();
+    GroupPoints->PushButton1->setDown( true );
+    GroupPoints->PushButton2->setDown( false );
+    GroupPoints->LineEdit1->setEnabled(true);
+    GroupPoints->LineEdit2->setEnabled(false);
     break;
   case 1: /*Half-space partition */
     GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION_HALFSPACE" ) );
@@ -174,6 +181,8 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
     GroupPoints->ComboBox1->hide();
     GroupPoints->TextLabel2->setText( tr( "GEOM_PLANE" ) );
     GroupPoints->CheckButton1->hide();
+    GroupPoints->PushButton1->setDown( true );
+    GroupPoints->LineEdit1->setEnabled(true);
     break;
   } 
 
@@ -270,10 +279,17 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
   
-  if ( send == GroupPoints->PushButton1 ) 
+  if ( send == GroupPoints->PushButton1 ) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
+    GroupPoints->PushButton2->setDown(false);
+    GroupPoints->LineEdit1->setEnabled(true);
+    GroupPoints->LineEdit2->setEnabled(false);
+  }
   else if ( send == GroupPoints->PushButton2 ) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
+    GroupPoints->PushButton1->setDown(false);
+    GroupPoints->LineEdit1->setEnabled(false);
+    GroupPoints->LineEdit2->setEnabled(true);
     if ( getConstructorId() == 1 )
       globalSelection( GEOM_PLANE  );
   }
@@ -282,6 +298,7 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
       
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
+  send->setDown(true);
 }
 
 

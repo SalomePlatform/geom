@@ -75,6 +75,8 @@ BasicGUI_LineDlg::BasicGUI_LineDlg( GeometryGUI* theGeometryGUI, QWidget* parent
   GroupPoints->PushButton2->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->LineEdit1->setEnabled( true );
+  GroupPoints->LineEdit2->setEnabled( false );
 
   GroupFaces = new DlgRef_2Sel( centralWidget() );
   GroupFaces->GroupBox1->setTitle( tr( "GEOM_FACES" ) );
@@ -84,6 +86,8 @@ BasicGUI_LineDlg::BasicGUI_LineDlg( GeometryGUI* theGeometryGUI, QWidget* parent
   GroupFaces->PushButton2->setIcon( image1 );
   GroupFaces->LineEdit1->setReadOnly( true );
   GroupFaces->LineEdit2->setReadOnly( true );
+  GroupFaces->LineEdit1->setEnabled( true );
+  GroupFaces->LineEdit2->setEnabled( false );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -195,6 +199,8 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
       myPoint2 = GEOM::GEOM_Object::_nil();
       GroupPoints->PushButton1->setDown(true);
       GroupPoints->PushButton2->setDown(false);
+      GroupPoints->LineEdit1->setEnabled(true);
+      GroupPoints->LineEdit2->setEnabled(false);
       GroupPoints->show();
       GroupFaces->hide();
       break;
@@ -210,6 +216,8 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
       myFace2 = GEOM::GEOM_Object::_nil();
       GroupFaces->PushButton1->setDown(true);
       GroupFaces->PushButton2->setDown(false);
+      GroupFaces->LineEdit1->setEnabled(true);
+      GroupFaces->LineEdit2->setEnabled(false);
       GroupPoints->hide();
       GroupFaces->show();
       break;
@@ -244,14 +252,13 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
     QString aName = GEOMBase::GetName( aSelectedObject );
+    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+    if ( myEditCurrentArgument == GroupFaces->LineEdit1 ||
+	 myEditCurrentArgument == GroupFaces->LineEdit2 )
+      aNeedType = TopAbs_FACE;
     
     TopoDS_Shape aShape;
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-      if ( myEditCurrentArgument == GroupFaces->LineEdit1 ||
-	   myEditCurrentArgument == GroupFaces->LineEdit2 )
-        aNeedType = TopAbs_FACE;
-
       LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
       TColStd_IndexedMapOfInteger aMap;
       aSelMgr->GetIndexes( firstIObject(), aMap );
@@ -283,24 +290,31 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
 
     myEditCurrentArgument->setText( aName );
 
+    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
+      globalSelection();
+      localSelection( GEOM::GEOM_Object::_nil(), aNeedType );      
+    }
+
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
       myPoint1 = aSelectedObject;
-      if ( !myPoint1->_is_nil() && myPoint2->_is_nil() ) {
-	globalSelection(); // close local selection to clear it
-	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-	GroupPoints->PushButton2->click();      
-      }
+      if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+	GroupPoints->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
       myPoint2 = aSelectedObject;
-      if ( !myPoint2->_is_nil() && myPoint1->_is_nil() ) {
-	globalSelection(); // close local selection to clear it
-	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-	GroupPoints->PushButton1->click();      
-      }
+      if ( !myPoint2->_is_nil() && myPoint1->_is_nil() )
+	GroupPoints->PushButton1->click();
     }
-    else if ( myEditCurrentArgument == GroupFaces->LineEdit1 )  myFace1 = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupFaces->LineEdit2 )  myFace2 = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupFaces->LineEdit1 ) {
+      myFace1 = aSelectedObject;
+      if ( !myFace1->_is_nil() && myFace2->_is_nil() )
+	GroupFaces->PushButton2->click();
+    }
+    else if ( myEditCurrentArgument == GroupFaces->LineEdit2 ) {
+      myFace2 = aSelectedObject;
+      if ( !myFace2->_is_nil() && myFace1->_is_nil() )
+	GroupFaces->PushButton1->click();      
+    }
   }
   
   displayPreview();
@@ -315,24 +329,36 @@ void BasicGUI_LineDlg::SetEditCurrentArgument()
 {
   if ( IObjectCount() != 0 ) {
     globalSelection(); // close local selection to clear it
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+    if ( myEditCurrentArgument == GroupFaces->LineEdit1 || myEditCurrentArgument == GroupFaces->LineEdit2 )
+      aNeedType = TopAbs_FACE;
+    localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
   }
+
   QPushButton* send = (QPushButton*)sender();
   if ( send == GroupPoints->PushButton1 ) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
     GroupPoints->PushButton2->setDown(false);
+    GroupPoints->LineEdit1->setEnabled(true);
+    GroupPoints->LineEdit2->setEnabled(false);
   }
   else if ( send == GroupPoints->PushButton2 ) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
     GroupPoints->PushButton1->setDown(false);
+    GroupPoints->LineEdit1->setEnabled(false);
+    GroupPoints->LineEdit2->setEnabled(true);
   }
   else if ( send == GroupFaces->PushButton1 ) {
     myEditCurrentArgument = GroupFaces->LineEdit1;
     GroupFaces->PushButton2->setDown(false);
+    GroupFaces->LineEdit1->setEnabled(true);
+    GroupFaces->LineEdit2->setEnabled(false);
   }
   else if ( send == GroupFaces->PushButton2 ) {
     myEditCurrentArgument = GroupFaces->LineEdit2;
     GroupFaces->PushButton1->setDown(false);
+    GroupFaces->LineEdit1->setEnabled(false);
+    GroupFaces->LineEdit2->setEnabled(true);
   }
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();
