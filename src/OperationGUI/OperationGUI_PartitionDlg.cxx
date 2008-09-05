@@ -286,6 +286,7 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit2->setEnabled(false);
   }
   else if ( send == GroupPoints->PushButton2 ) {
+    myGeomGUI->getApp()->selectionMgr()->clearSelected(); //clear prewious selection
     myEditCurrentArgument = GroupPoints->LineEdit2;
     GroupPoints->PushButton1->setDown(false);
     GroupPoints->LineEdit1->setEnabled(false);

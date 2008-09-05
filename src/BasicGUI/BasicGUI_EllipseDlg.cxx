@@ -78,6 +78,8 @@ BasicGUI_EllipseDlg::BasicGUI_EllipseDlg( GeometryGUI* theGeometryGUI, QWidget* 
 
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->LineEdit1->setEnabled( true );
+  GroupPoints->LineEdit2->setEnabled( false );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -109,6 +111,7 @@ void BasicGUI_EllipseDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
   globalSelection(); // close local contexts, if any
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  GroupPoints->PushButton1->setDown(true);
 
   myPoint = myDir = GEOM::GEOM_Object::_nil();
 
@@ -187,8 +190,12 @@ bool BasicGUI_EllipseDlg::ClickOnApply()
   myPoint = myDir = GEOM::GEOM_Object::_nil();
   GroupPoints->LineEdit1->setText( "" );
   GroupPoints->LineEdit2->setText( "" );
+  GroupPoints->PushButton1->setDown(true);
+  GroupPoints->PushButton2->setDown(false);
+  GroupPoints->LineEdit1->setEnabled( true );
+  GroupPoints->LineEdit2->setEnabled( false );
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  //globalSelection(GEOM_POINT);
+
   globalSelection(); // close local contexts, if any
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   displayPreview();
@@ -218,12 +225,12 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
     
     // Get Selected object if selected subshape
     TopoDS_Shape aShape;
+
+    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+    if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+      aNeedType = TopAbs_EDGE;
     
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-      if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
-        aNeedType = TopAbs_EDGE;
-
       LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
       TColStd_IndexedMapOfInteger aMap;
       aSelMgr->GetIndexes( anIO, aMap );
@@ -255,8 +262,21 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
     
     myEditCurrentArgument->setText( aName );
 
-    if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myDir   = aSelectedObject;
+    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
+      globalSelection();
+      localSelection( GEOM::GEOM_Object::_nil(), aNeedType );      
+    }
+
+    if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+      myPoint = aSelectedObject;
+      if ( !myPoint->_is_nil() && myDir->_is_nil() )
+	GroupPoints->PushButton2->click();
+    }
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
+      myDir   = aSelectedObject;
+      if ( !myDir->_is_nil() && myPoint->_is_nil() )
+	GroupPoints->PushButton1->click();
+    }
   }
 
   displayPreview();
@@ -270,18 +290,30 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
 void BasicGUI_EllipseDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  globalSelection( GEOM_POINT );
 
-  if      ( send == GroupPoints->PushButton1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if ( send == GroupPoints->PushButton2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
+  if ( send == GroupPoints->PushButton1 ) {
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+    GroupPoints->PushButton2->setDown(false);
+    GroupPoints->LineEdit1->setEnabled( true );
+    GroupPoints->LineEdit2->setEnabled( false );
+  }
+  else if ( send == GroupPoints->PushButton2 ) {
+    myEditCurrentArgument = GroupPoints->LineEdit2;
+    GroupPoints->PushButton1->setDown(false);
+    GroupPoints->LineEdit1->setEnabled( false );
+    GroupPoints->LineEdit2->setEnabled( true );
+  }
+
+  globalSelection(); // close local contexts, if any
+  TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+  if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+    aNeedType = TopAbs_EDGE;
+  localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
   
   myEditCurrentArgument->setFocus();
-  globalSelection(); // close local contexts, if any
-  if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
-  else
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-  SelectionIntoArgument();
+  //SelectionIntoArgument();
+  send->setDown(true);
+  displayPreview();
 }
 
 //=================================================================================

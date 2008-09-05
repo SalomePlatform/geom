@@ -78,6 +78,9 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupPntDir->PushButton2->setIcon( image3 );
   GroupPntDir->LineEdit1->setReadOnly( true );
   GroupPntDir->LineEdit2->setReadOnly( true );
+  GroupPntDir->PushButton1->setDown( true );
+  GroupPntDir->LineEdit1->setEnabled( true );
+  GroupPntDir->LineEdit2->setEnabled( false );
 
   Group3Pnts = new DlgRef_3Sel1Spin( centralWidget() );
   Group3Pnts->GroupBox1->setTitle( tr( "GEOM_3_POINTS" ) );
@@ -88,16 +91,21 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   Group3Pnts->PushButton1->setIcon( image3 );
   Group3Pnts->PushButton2->setIcon( image3 );
   Group3Pnts->PushButton3->setIcon( image3 );
+  Group3Pnts->PushButton1->setDown( true );
 
   Group3Pnts->LineEdit1->setReadOnly( true );
   Group3Pnts->LineEdit2->setReadOnly( true );
   Group3Pnts->LineEdit3->setReadOnly( true );
+  Group3Pnts->LineEdit1->setEnabled( true );
+  Group3Pnts->LineEdit2->setEnabled( false );
+  Group3Pnts->LineEdit3->setEnabled( false );
 
   GroupFace = new DlgRef_1Sel1Spin( centralWidget() );
   GroupFace->GroupBox1->setTitle( tr( "GEOM_FACE_OR_LCS" ) );
   GroupFace->TextLabel1->setText( tr( "GEOM_SELECTION" ) );
   GroupFace->TextLabel2->setText( tr( "GEOM_PLANE_SIZE" ) );
   GroupFace->PushButton1->setIcon( image3 );
+  GroupFace->PushButton1->setDown( true );
 
   GroupFace->LineEdit1->setReadOnly( true );
 
@@ -217,6 +225,10 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       myEditCurrentArgument = GroupPntDir->LineEdit1;
       GroupPntDir->LineEdit1->setText( "" );
       GroupPntDir->LineEdit2->setText( "" );
+      GroupPntDir->PushButton1->setDown( true );
+      GroupPntDir->PushButton2->setDown( false );
+      GroupPntDir->LineEdit1->setEnabled( true );
+      GroupPntDir->LineEdit2->setEnabled( false );
       
       /* for the first argument */
       globalSelection(); // close local contexts, if any
@@ -233,6 +245,12 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       Group3Pnts->LineEdit1->setText( "" );
       Group3Pnts->LineEdit2->setText( "" );
       Group3Pnts->LineEdit3->setText( "" );
+      Group3Pnts->PushButton1->setDown( true );
+      Group3Pnts->PushButton2->setDown( false );
+      Group3Pnts->PushButton3->setDown( false );
+      Group3Pnts->LineEdit1->setEnabled( true );
+      Group3Pnts->LineEdit2->setEnabled( false );
+      Group3Pnts->LineEdit3->setEnabled( false );
       
       /* for the first argument */
       globalSelection(); // close local contexts, if any
@@ -247,6 +265,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       
       myEditCurrentArgument = GroupFace->LineEdit1;
       GroupFace->LineEdit1->setText( "" );
+      GroupFace->PushButton1->setDown( true );
       
       /* for the first argument */
       //globalSelection( GEOM_PLANE );
@@ -316,15 +335,12 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
     QString aName = GEOMBase::GetName( aSelectedObject );
+    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+    if ( myEditCurrentArgument == GroupPntDir->LineEdit2 )
+      aNeedType = TopAbs_EDGE;
 
     TopoDS_Shape aShape;
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-      if ( myEditCurrentArgument == GroupPntDir->LineEdit2 )
-        aNeedType = TopAbs_EDGE;
-      else if ( myEditCurrentArgument == GroupFace->LineEdit1 )
-        aNeedType = TopAbs_FACE;
-
       LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
       TColStd_IndexedMapOfInteger aMap;
       aSelMgr->GetIndexes( firstIObject(), aMap );
@@ -358,12 +374,45 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
 
     myEditCurrentArgument->setText( aName );
 
-    if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) myPoint  = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) myDir    = aSelectedObject;
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )  myPoint1 = aSelectedObject;
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )  myPoint2 = aSelectedObject;
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )  myPoint3 = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupFace->LineEdit1 )   myFace   = aSelectedObject;
+    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
+      globalSelection();
+      if ( myEditCurrentArgument == GroupFace->LineEdit1 ) {
+	TColStd_MapOfInteger aMap;
+	aMap.Add( GEOM_PLANE );
+	aMap.Add( GEOM_MARKER );
+	globalSelection( aMap );
+      }
+      else
+	localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
+    }
+
+    if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) {
+      myPoint  = aSelectedObject;
+      if ( !myPoint->_is_nil() && myDir->_is_nil() )
+	GroupPntDir->PushButton2->click();
+    }
+    else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) {
+      myDir    = aSelectedObject;
+      if ( !myDir->_is_nil() && myPoint->_is_nil() )
+	GroupPntDir->PushButton1->click();
+    }
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 ) {
+      myPoint1 = aSelectedObject;
+      if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+	Group3Pnts->PushButton2->click();
+    }
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 ) {
+      myPoint2 = aSelectedObject;
+      if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+	Group3Pnts->PushButton3->click();
+    }
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 ) {
+      myPoint3 = aSelectedObject;
+      if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+	Group3Pnts->PushButton1->click();
+    }
+    else if ( myEditCurrentArgument == GroupFace->LineEdit1 )
+      myFace   = aSelectedObject;
   }
 
   displayPreview();
@@ -379,17 +428,50 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
   QPushButton* send = (QPushButton*)sender();
   globalSelection( GEOM_POINT );
 
-  if      ( send == GroupPntDir->PushButton1 ) myEditCurrentArgument = GroupPntDir->LineEdit1;
-  else if ( send == GroupPntDir->PushButton2 ) myEditCurrentArgument = GroupPntDir->LineEdit2;
-  else if ( send == Group3Pnts->PushButton1 )  myEditCurrentArgument = Group3Pnts->LineEdit1;
-  else if ( send == Group3Pnts->PushButton2 )  myEditCurrentArgument = Group3Pnts->LineEdit2;
-  else if ( send == Group3Pnts->PushButton3 )  myEditCurrentArgument = Group3Pnts->LineEdit3;
-  else if ( send == GroupFace->PushButton1 )   myEditCurrentArgument = GroupFace->LineEdit1;
+  if      ( send == GroupPntDir->PushButton1 ) {
+    myEditCurrentArgument = GroupPntDir->LineEdit1;
+    GroupPntDir->PushButton2->setDown( false );
+    GroupPntDir->LineEdit1->setEnabled( true );
+    GroupPntDir->LineEdit2->setEnabled( false );
+  }
+  else if ( send == GroupPntDir->PushButton2 ) {
+    myEditCurrentArgument = GroupPntDir->LineEdit2;
+    GroupPntDir->PushButton1->setDown( false );
+    GroupPntDir->LineEdit1->setEnabled( false );
+    GroupPntDir->LineEdit2->setEnabled( true );
+  }
+  else if ( send == Group3Pnts->PushButton1 ) {
+    myEditCurrentArgument = Group3Pnts->LineEdit1;
+    Group3Pnts->PushButton2->setDown( false );
+    Group3Pnts->PushButton3->setDown( false );
+    Group3Pnts->LineEdit1->setEnabled( true );
+    Group3Pnts->LineEdit2->setEnabled( false );
+    Group3Pnts->LineEdit3->setEnabled( false );
+  }
+  else if ( send == Group3Pnts->PushButton2 ) {
+    myEditCurrentArgument = Group3Pnts->LineEdit2;
+    Group3Pnts->PushButton1->setDown( false );
+    Group3Pnts->PushButton3->setDown( false );
+    Group3Pnts->LineEdit1->setEnabled( false );
+    Group3Pnts->LineEdit2->setEnabled( true );
+    Group3Pnts->LineEdit3->setEnabled( false );
+  }
+  else if ( send == Group3Pnts->PushButton3 ) {
+    myEditCurrentArgument = Group3Pnts->LineEdit3;
+    Group3Pnts->PushButton1->setDown( false );
+    Group3Pnts->PushButton2->setDown( false );
+    Group3Pnts->LineEdit1->setEnabled( false );
+    Group3Pnts->LineEdit2->setEnabled( false );
+    Group3Pnts->LineEdit3->setEnabled( true );
+  }
+  else if ( send == GroupFace->PushButton1 ) {
+    myEditCurrentArgument = GroupFace->LineEdit1;
+    GroupFace->PushButton1->setDown( true );
+  }
 
   myEditCurrentArgument->setFocus();
 
   if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) {
-    globalSelection(); // close local contexts, if any
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if ( myEditCurrentArgument == GroupFace->LineEdit1 ) {
@@ -399,11 +481,13 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
     globalSelection( aMap );
   }
   else { // 3 Pnts
-    globalSelection(); // close local contexts, if any
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
 
-  SelectionIntoArgument();
+  //  SelectionIntoArgument();
+  myEditCurrentArgument->setFocus();
+  send->setDown(true);
+  displayPreview();
 }
 
 

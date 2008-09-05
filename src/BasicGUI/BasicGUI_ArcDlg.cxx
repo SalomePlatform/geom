@@ -79,6 +79,10 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
   Group3Pnts->LineEdit2->setReadOnly( true );
   Group3Pnts->LineEdit3->setReadOnly( true );
 
+  Group3Pnts->LineEdit1->setEnabled(true);
+  Group3Pnts->LineEdit2->setEnabled(false);
+  Group3Pnts->LineEdit3->setEnabled(false);
+
   Group3Pnts->PushButton1->setIcon(image2);
   Group3Pnts->PushButton2->setIcon(image2);
   Group3Pnts->PushButton3->setIcon(image2);
@@ -94,6 +98,10 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
   Group3Pnts2->LineEdit1->setReadOnly( true );
   Group3Pnts2->LineEdit2->setReadOnly( true );
   Group3Pnts2->LineEdit3->setReadOnly( true );
+
+  Group3Pnts2->LineEdit1->setEnabled(true);
+  Group3Pnts2->LineEdit2->setEnabled(false);
+  Group3Pnts2->LineEdit3->setEnabled(false);
 
   Group3Pnts2->PushButton1->setIcon( image2 );
   Group3Pnts2->PushButton2->setIcon( image2 );
@@ -132,6 +140,7 @@ void BasicGUI_ArcDlg::Init()
 
   myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
   Group3Pnts2->CheckButton1->setChecked( false );
+  Group3Pnts->PushButton1->setDown(true);
 
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
@@ -190,6 +199,7 @@ bool BasicGUI_ArcDlg::ClickOnApply()
     return false;
 
   initName();
+  ConstructorsClicked( getConstructorId() );
 
   return true;
 }
@@ -260,16 +270,45 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 
     myEditCurrentArgument->setText(aName);
 
+    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
+      globalSelection();
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );      
+    }
+
     switch ( getConstructorId() ) {
     case 0:
-      if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = aSelectedObject;
-      else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = aSelectedObject;
-      else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = aSelectedObject;
+      if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 ) {
+	myPoint1 = aSelectedObject;
+	if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+	  Group3Pnts->PushButton2->click();
+      }
+      else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 ) {
+	myPoint2 = aSelectedObject;
+	if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+	  Group3Pnts->PushButton3->click();
+      }
+      else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 ) {
+	myPoint3 = aSelectedObject;
+	if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+	  Group3Pnts->PushButton1->click();
+      }
       break;
     case 1:
-      if      ( myEditCurrentArgument == Group3Pnts2->LineEdit1 )   myPoint1 = aSelectedObject;
-      else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 )   myPoint2 = aSelectedObject;
-      else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 )   myPoint3 = aSelectedObject;
+      if ( myEditCurrentArgument == Group3Pnts2->LineEdit1 ) {
+	myPoint1 = aSelectedObject;
+	if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+	  Group3Pnts2->PushButton2->click();
+      }
+      else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 ) {
+	myPoint2 = aSelectedObject;
+	if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+	  Group3Pnts2->PushButton3->click();
+      }
+      else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 ) {
+	myPoint3 = aSelectedObject;
+	if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+	  Group3Pnts2->PushButton1->click();
+      }
       break;
     }
   }
@@ -284,21 +323,68 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 //=================================================================================
 void BasicGUI_ArcDlg::SetEditCurrentArgument()
 {
+  globalSelection(); // close local selection to clear it
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+
   QPushButton* send = (QPushButton*)sender();
   switch ( getConstructorId() ) {
   case 0:
-    if      ( send == Group3Pnts->PushButton1 )   myEditCurrentArgument = Group3Pnts->LineEdit1;
-    else if ( send == Group3Pnts->PushButton2 )   myEditCurrentArgument = Group3Pnts->LineEdit2;
-    else if ( send == Group3Pnts->PushButton3 )   myEditCurrentArgument = Group3Pnts->LineEdit3;
+    if      ( send == Group3Pnts->PushButton1 ) {
+      myEditCurrentArgument = Group3Pnts->LineEdit1;
+      Group3Pnts->PushButton2->setDown(false);
+      Group3Pnts->PushButton3->setDown(false);
+      Group3Pnts->LineEdit1->setEnabled(true);
+      Group3Pnts->LineEdit2->setEnabled(false);
+      Group3Pnts->LineEdit3->setEnabled(false);
+    }
+    else if ( send == Group3Pnts->PushButton2 ) {
+      myEditCurrentArgument = Group3Pnts->LineEdit2;
+      Group3Pnts->PushButton1->setDown(false);
+      Group3Pnts->PushButton3->setDown(false);
+      Group3Pnts->LineEdit1->setEnabled(false);
+      Group3Pnts->LineEdit2->setEnabled(true);
+      Group3Pnts->LineEdit3->setEnabled(false);
+    }
+    else if ( send == Group3Pnts->PushButton3 ) {
+      myEditCurrentArgument = Group3Pnts->LineEdit3;
+      Group3Pnts->PushButton1->setDown(false);
+      Group3Pnts->PushButton2->setDown(false);
+      Group3Pnts->LineEdit1->setEnabled(false);
+      Group3Pnts->LineEdit2->setEnabled(false);
+      Group3Pnts->LineEdit3->setEnabled(true);
+    }
     break;
   case 1:
-    if      ( send == Group3Pnts2->PushButton1 )   myEditCurrentArgument = Group3Pnts2->LineEdit1;
-    else if ( send == Group3Pnts2->PushButton2 )   myEditCurrentArgument = Group3Pnts2->LineEdit2;
-    else if ( send == Group3Pnts2->PushButton3 )   myEditCurrentArgument = Group3Pnts2->LineEdit3;
+    if      ( send == Group3Pnts2->PushButton1 ) {
+      myEditCurrentArgument = Group3Pnts2->LineEdit1;
+      Group3Pnts2->PushButton2->setDown(false);
+      Group3Pnts2->PushButton3->setDown(false);
+      Group3Pnts2->LineEdit1->setEnabled(true);
+      Group3Pnts2->LineEdit2->setEnabled(false);
+      Group3Pnts2->LineEdit3->setEnabled(false);
+    }
+    else if ( send == Group3Pnts2->PushButton2 ) {
+      myEditCurrentArgument = Group3Pnts2->LineEdit2;
+      Group3Pnts2->PushButton1->setDown(false);
+      Group3Pnts2->PushButton3->setDown(false);
+      Group3Pnts2->LineEdit1->setEnabled(false);
+      Group3Pnts2->LineEdit2->setEnabled(true);
+      Group3Pnts2->LineEdit3->setEnabled(false);
+    }
+    else if ( send == Group3Pnts2->PushButton3 ) {
+      myEditCurrentArgument = Group3Pnts2->LineEdit3;
+      Group3Pnts2->PushButton1->setDown(false);
+      Group3Pnts2->PushButton2->setDown(false);
+      Group3Pnts2->LineEdit1->setEnabled(false);
+      Group3Pnts2->LineEdit2->setEnabled(false);
+      Group3Pnts2->LineEdit3->setEnabled(true);
+    }
     break;
   }
   myEditCurrentArgument->setFocus();
-  SelectionIntoArgument();
+  //  SelectionIntoArgument();
+  send->setDown(true);
+  displayPreview();
 }
 
 
@@ -439,10 +525,16 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
 
       Group3Pnts2->hide();
       Group3Pnts->show();
-
-      Group3Pnts->LineEdit1->setText( Group3Pnts2->LineEdit1->text() );
-      Group3Pnts->LineEdit2->setText( Group3Pnts2->LineEdit2->text() );
-      Group3Pnts->LineEdit3->setText( Group3Pnts2->LineEdit3->text() );
+      Group3Pnts->PushButton1->setDown(true);
+      Group3Pnts->PushButton2->setDown(false);
+      Group3Pnts->PushButton3->setDown(false);
+      Group3Pnts->LineEdit1->setText( "" );
+      Group3Pnts->LineEdit2->setText( "" );
+      Group3Pnts->LineEdit3->setText( "" );
+      Group3Pnts->LineEdit1->setEnabled(true);
+      Group3Pnts->LineEdit2->setEnabled(false);
+      Group3Pnts->LineEdit3->setEnabled(false);
+      myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 
       myEditCurrentArgument = Group3Pnts->LineEdit1;
       break;
@@ -454,10 +546,16 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
 
       Group3Pnts->hide();
       Group3Pnts2->show();
-
-      Group3Pnts2->LineEdit1->setText( Group3Pnts->LineEdit1->text() );
-      Group3Pnts2->LineEdit2->setText( Group3Pnts->LineEdit2->text() );
-      Group3Pnts2->LineEdit3->setText( Group3Pnts->LineEdit3->text() );
+      Group3Pnts2->PushButton1->setDown(true);
+      Group3Pnts2->PushButton2->setDown(false);
+      Group3Pnts2->PushButton3->setDown(false);
+      Group3Pnts2->LineEdit1->setText( "" );
+      Group3Pnts2->LineEdit2->setText( "" );
+      Group3Pnts2->LineEdit3->setText( "" );
+      Group3Pnts2->LineEdit1->setEnabled(true);
+      Group3Pnts2->LineEdit2->setEnabled(false);
+      Group3Pnts2->LineEdit3->setEnabled(false);
+      myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
       
       myEditCurrentArgument = Group3Pnts2->LineEdit1;
       break;

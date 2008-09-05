@@ -73,9 +73,12 @@ BasicGUI_VectorDlg::BasicGUI_VectorDlg( GeometryGUI* theGeometryGUI, QWidget* pa
   GroupPoints->TextLabel2->setText( tr( "GEOM_POINT_I" ).arg( 2 ) );
   GroupPoints->PushButton1->setIcon( image2 );
   GroupPoints->PushButton2->setIcon( image2 );
+  GroupPoints->PushButton1->setDown( true );
 
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->LineEdit1->setEnabled( true );
+  GroupPoints->LineEdit2->setEnabled( false );
 
   GroupDimensions = new DlgRef_3Spin1Check( centralWidget() );
   GroupDimensions->GroupBox1->setTitle( tr( "GEOM_COORDINATES" ) );
@@ -197,6 +200,10 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
       myEditCurrentArgument = GroupPoints->LineEdit1;
       GroupPoints->LineEdit1->setText( "" );
       GroupPoints->LineEdit2->setText( "" );
+      GroupPoints->PushButton1->setDown( true );
+      GroupPoints->PushButton2->setDown( false );
+      GroupPoints->LineEdit1->setEnabled( true );
+      GroupPoints->LineEdit2->setEnabled( false );
 
       globalSelection(); // close local contexts, if any
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
@@ -251,7 +258,7 @@ bool BasicGUI_VectorDlg::ClickOnApply()
 
   initName();
   if ( getConstructorId() != 1 )
-  	ConstructorsClicked( getConstructorId() );
+    ConstructorsClicked( getConstructorId() );
   return true;
 }
 
@@ -308,8 +315,21 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
 
     myEditCurrentArgument->setText(aName);
 
-    if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint1 = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = aSelectedObject;
+    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
+      globalSelection();
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    }
+
+    if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+      myPoint1 = aSelectedObject;
+      if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+	GroupPoints->PushButton2->click();
+    }
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
+      myPoint2 = aSelectedObject;
+      if ( !myPoint2->_is_nil() && myPoint1->_is_nil() )
+	GroupPoints->PushButton1->click();
+    }
   }
 
   displayPreview();
@@ -323,10 +343,24 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
 void BasicGUI_VectorDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  if      ( send == GroupPoints->PushButton1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if ( send == GroupPoints->PushButton2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
+  if      ( send == GroupPoints->PushButton1 ) {
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+    GroupPoints->PushButton2->setDown(false);
+    GroupPoints->LineEdit1->setEnabled(true);
+    GroupPoints->LineEdit2->setEnabled(false);
+  }
+  else if ( send == GroupPoints->PushButton2 ) {
+    myEditCurrentArgument = GroupPoints->LineEdit2;
+    GroupPoints->PushButton1->setDown(false);
+    GroupPoints->LineEdit1->setEnabled(false);
+    GroupPoints->LineEdit2->setEnabled(true);
+  }
   myEditCurrentArgument->setFocus();
-  SelectionIntoArgument();
+  //  SelectionIntoArgument();
+  globalSelection(); // close local selection to clear it
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  send->setDown(true);
+  displayPreview();
 }
 
 

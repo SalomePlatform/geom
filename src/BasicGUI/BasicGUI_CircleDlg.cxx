@@ -74,9 +74,13 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg( GeometryGUI* theGeometryGUI, QWidget* pa
   GroupPntVecR->TextLabel3->setText( tr( "GEOM_RADIUS" ) );
   GroupPntVecR->PushButton1->setIcon( image1 );
   GroupPntVecR->PushButton2->setIcon( image1 );
+  GroupPntVecR->PushButton1->setDown( true );
 
   GroupPntVecR->LineEdit1->setReadOnly( true );
   GroupPntVecR->LineEdit2->setReadOnly( true );
+
+  GroupPntVecR->LineEdit1->setEnabled( true );
+  GroupPntVecR->LineEdit2->setEnabled( false );
 
   Group3Pnts = new DlgRef_3Sel( centralWidget() );
 
@@ -87,10 +91,14 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg( GeometryGUI* theGeometryGUI, QWidget* pa
   Group3Pnts->PushButton1->setIcon( image1 );
   Group3Pnts->PushButton2->setIcon( image1 );
   Group3Pnts->PushButton3->setIcon( image1 );
+  Group3Pnts->PushButton1->setDown( true );
 
   Group3Pnts->LineEdit1->setReadOnly( true );
   Group3Pnts->LineEdit2->setReadOnly( true );
   Group3Pnts->LineEdit3->setReadOnly( true );
+  Group3Pnts->LineEdit1->setEnabled( true );
+  Group3Pnts->LineEdit2->setEnabled( false );
+  Group3Pnts->LineEdit3->setEnabled( false );
 
   GroupCenter2Pnts = new DlgRef_3Sel( centralWidget() );
   GroupCenter2Pnts->GroupBox1->setTitle( tr( "GEOM_CENTER_2POINTS" ) );
@@ -100,10 +108,15 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg( GeometryGUI* theGeometryGUI, QWidget* pa
   GroupCenter2Pnts->PushButton1->setIcon( image1 );
   GroupCenter2Pnts->PushButton2->setIcon( image1 );
   GroupCenter2Pnts->PushButton3->setIcon( image1 );
+  GroupCenter2Pnts->PushButton1->setDown( true );
 
   GroupCenter2Pnts->LineEdit1->setReadOnly( true );
   GroupCenter2Pnts->LineEdit2->setReadOnly( true );
   GroupCenter2Pnts->LineEdit3->setReadOnly( true );
+
+  GroupCenter2Pnts->LineEdit1->setEnabled( true );
+  GroupCenter2Pnts->LineEdit2->setEnabled( false );
+  GroupCenter2Pnts->LineEdit3->setEnabled( false );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -210,6 +223,10 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
       myEditCurrentArgument = GroupPntVecR->LineEdit1;
       GroupPntVecR->LineEdit1->setText( "" );
       GroupPntVecR->LineEdit2->setText( "" );
+      GroupPntVecR->PushButton1->setDown( true );
+      GroupPntVecR->PushButton2->setDown( false );
+      GroupPntVecR->LineEdit1->setEnabled( true );
+      GroupPntVecR->LineEdit2->setEnabled( false );
       break;
     }
   case 1:
@@ -222,6 +239,12 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
       Group3Pnts->LineEdit1->setText( "" );
       Group3Pnts->LineEdit2->setText( "" );
       Group3Pnts->LineEdit3->setText( "" );
+      Group3Pnts->PushButton1->setDown( true );
+      Group3Pnts->PushButton2->setDown( false );
+      Group3Pnts->PushButton3->setDown( false );
+      Group3Pnts->LineEdit1->setEnabled( true );
+      Group3Pnts->LineEdit2->setEnabled( false );
+      Group3Pnts->LineEdit3->setEnabled( false );
       break;
     }
   case 2:
@@ -234,6 +257,12 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
       GroupCenter2Pnts->LineEdit1->setText( "" );
       GroupCenter2Pnts->LineEdit2->setText( "" );
       GroupCenter2Pnts->LineEdit3->setText( "" );
+      GroupCenter2Pnts->PushButton1->setDown( true );
+      GroupCenter2Pnts->PushButton2->setDown( false );
+      GroupCenter2Pnts->PushButton3->setDown( false );
+      GroupCenter2Pnts->LineEdit1->setEnabled( true );
+      GroupCenter2Pnts->LineEdit2->setEnabled( false );
+      GroupCenter2Pnts->LineEdit3->setEnabled( false );
       break;
     }
   }
@@ -308,13 +337,13 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
     QString aName = GEOMBase::GetName( aSelectedObject );
 
+    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+    if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 )
+      aNeedType = TopAbs_EDGE;
+
     // If selected Vertex or Edge on the some Shape Get selection Subshape
     TopoDS_Shape aShape;
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-      if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 )
-        aNeedType = TopAbs_EDGE;
-
       TColStd_IndexedMapOfInteger aMap;
       aSelMgr->GetIndexes(anIO, aMap);
       if ( aMap.Extent() == 1 ) { // Local Selection
@@ -345,14 +374,51 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
     
     myEditCurrentArgument->setText( aName );
 
-    if      ( myEditCurrentArgument == GroupPntVecR->LineEdit1 )     myPoint  = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 )     myDir    = aSelectedObject;
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )       myPoint1 = aSelectedObject;
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )       myPoint2 = aSelectedObject;
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )       myPoint3 = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit1 ) myPoint4 = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit2 ) myPoint5 = aSelectedObject;
-    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit3 ) myPoint6 = aSelectedObject;
+    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
+      globalSelection();
+      localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
+    }
+
+    if      ( myEditCurrentArgument == GroupPntVecR->LineEdit1 ) {
+      myPoint  = aSelectedObject;
+      if ( !myPoint->_is_nil() && myDir->_is_nil() )
+	GroupPntVecR->PushButton2->click();
+    }
+    else if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) {
+      myDir    = aSelectedObject;
+      if ( !myDir->_is_nil() && myPoint->_is_nil() )
+	GroupPntVecR->PushButton1->click();
+    }
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 ) {
+      myPoint1 = aSelectedObject;
+      if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+	Group3Pnts->PushButton2->click();
+    }
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 ) {
+      myPoint2 = aSelectedObject;
+      if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+	Group3Pnts->PushButton3->click();
+    }
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 ) {
+      myPoint3 = aSelectedObject;
+      if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+	Group3Pnts->PushButton1->click();
+    }
+    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit1 ) {
+      myPoint4 = aSelectedObject;
+      if ( !myPoint4->_is_nil() && myPoint5->_is_nil() )
+	GroupCenter2Pnts->PushButton2->click();
+    }
+    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit2 ) {
+      myPoint5 = aSelectedObject;
+      if ( !myPoint5->_is_nil() && myPoint6->_is_nil() )
+	GroupCenter2Pnts->PushButton3->click();
+    }
+    else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit3 ) {
+      myPoint6 = aSelectedObject;
+      if ( !myPoint6->_is_nil() && myPoint4->_is_nil() )
+	GroupCenter2Pnts->PushButton1->click();
+    }
   }
 
   displayPreview();
@@ -367,14 +433,67 @@ void BasicGUI_CircleDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
-  if ( send == GroupPntVecR->PushButton1 )          myEditCurrentArgument = GroupPntVecR->LineEdit1;
-  else if ( send == GroupPntVecR->PushButton2 )     myEditCurrentArgument = GroupPntVecR->LineEdit2;
-  else if ( send == Group3Pnts->PushButton1 )       myEditCurrentArgument = Group3Pnts->LineEdit1;
-  else if ( send == Group3Pnts->PushButton2 )       myEditCurrentArgument = Group3Pnts->LineEdit2;
-  else if ( send == Group3Pnts->PushButton3 )       myEditCurrentArgument = Group3Pnts->LineEdit3;
-  else if ( send == GroupCenter2Pnts->PushButton1 ) myEditCurrentArgument = GroupCenter2Pnts->LineEdit1;
-  else if ( send == GroupCenter2Pnts->PushButton2 ) myEditCurrentArgument = GroupCenter2Pnts->LineEdit2;
-  else if ( send == GroupCenter2Pnts->PushButton3 ) myEditCurrentArgument = GroupCenter2Pnts->LineEdit3;
+  if ( send == GroupPntVecR->PushButton1 ) {
+    myEditCurrentArgument = GroupPntVecR->LineEdit1;
+    GroupPntVecR->PushButton2->setDown(false);
+    GroupPntVecR->LineEdit1->setEnabled( true );
+    GroupPntVecR->LineEdit2->setEnabled( false );
+  }
+  else if ( send == GroupPntVecR->PushButton2 ) {
+    myEditCurrentArgument = GroupPntVecR->LineEdit2;
+    GroupPntVecR->PushButton1->setDown(false);
+    GroupPntVecR->LineEdit1->setEnabled( false );
+    GroupPntVecR->LineEdit2->setEnabled( true );
+  }
+  else if ( send == Group3Pnts->PushButton1 ) {
+    myEditCurrentArgument = Group3Pnts->LineEdit1;
+    Group3Pnts->PushButton2->setDown( false );
+    Group3Pnts->PushButton3->setDown( false );
+    Group3Pnts->LineEdit1->setEnabled( true );
+    Group3Pnts->LineEdit2->setEnabled( false );
+    Group3Pnts->LineEdit3->setEnabled( false );
+  }
+  else if ( send == Group3Pnts->PushButton2 )  {
+    myEditCurrentArgument = Group3Pnts->LineEdit2;
+    Group3Pnts->PushButton1->setDown( false );
+    Group3Pnts->PushButton3->setDown( false );
+    Group3Pnts->LineEdit1->setEnabled( false );
+    Group3Pnts->LineEdit2->setEnabled( true );
+    Group3Pnts->LineEdit3->setEnabled( false );
+  }
+  else if ( send == Group3Pnts->PushButton3 ) {
+    myEditCurrentArgument = Group3Pnts->LineEdit3;
+    Group3Pnts->PushButton1->setDown( false );
+    Group3Pnts->PushButton2->setDown( false );
+    Group3Pnts->LineEdit1->setEnabled( false );
+    Group3Pnts->LineEdit2->setEnabled( false );
+    Group3Pnts->LineEdit3->setEnabled( true );
+  }
+  else if ( send == GroupCenter2Pnts->PushButton1 ) {
+    myEditCurrentArgument = GroupCenter2Pnts->LineEdit1;
+    GroupCenter2Pnts->PushButton2->setDown( false );
+    GroupCenter2Pnts->PushButton3->setDown( false );
+    GroupCenter2Pnts->LineEdit1->setEnabled( true );
+    GroupCenter2Pnts->LineEdit2->setEnabled( false );
+    GroupCenter2Pnts->LineEdit3->setEnabled( false );
+  }
+  else if ( send == GroupCenter2Pnts->PushButton2 ) {
+    myEditCurrentArgument = GroupCenter2Pnts->LineEdit2;
+    GroupCenter2Pnts->PushButton1->setDown( false );
+    GroupCenter2Pnts->PushButton3->setDown( false );
+    GroupCenter2Pnts->LineEdit1->setEnabled( false );
+    GroupCenter2Pnts->LineEdit2->setEnabled( true );
+    GroupCenter2Pnts->LineEdit3->setEnabled( false );
+    
+  }
+  else if ( send == GroupCenter2Pnts->PushButton3 ) {
+    myEditCurrentArgument = GroupCenter2Pnts->LineEdit3;
+    GroupCenter2Pnts->PushButton1->setDown( false );
+    GroupCenter2Pnts->PushButton2->setDown( false );
+    GroupCenter2Pnts->LineEdit1->setEnabled( false );
+    GroupCenter2Pnts->LineEdit2->setEnabled( false );
+    GroupCenter2Pnts->LineEdit3->setEnabled( true );
+  }
 
   
   myEditCurrentArgument->setFocus();
@@ -388,7 +507,10 @@ void BasicGUI_CircleDlg::SetEditCurrentArgument()
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
 
-  SelectionIntoArgument();
+  myEditCurrentArgument->setFocus();
+  //  SelectionIntoArgument();
+  send->setDown(true);
+  displayPreview();
 }
 
 //=================================================================================

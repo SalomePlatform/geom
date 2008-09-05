@@ -76,6 +76,7 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   Group1->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
   Group1->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
   Group1->PushButton1->setIcon( iconSelect );
+  Group1->PushButton1->setDown( true );
 
   Group2 = new DlgRef_3Sel( centralWidget() );
 
@@ -86,6 +87,7 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   Group2->PushButton1->setIcon( iconSelect );
   Group2->PushButton2->setIcon( iconSelect );
   Group2->PushButton3->setIcon( iconSelect );
+  Group2->PushButton1->setDown( true );
 
   aMainGrp = new QFrame( centralWidget() );
   aMainGrp->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
@@ -172,6 +174,9 @@ void BasicGUI_MarkerDlg::Init()
   Group2->LineEdit1->setReadOnly( true );
   Group2->LineEdit2->setReadOnly( true );
   Group2->LineEdit3->setReadOnly( true );
+  Group2->LineEdit1->setEnabled( true );
+  Group2->LineEdit2->setEnabled( false );
+  Group2->LineEdit3->setEnabled( false );
 
   connect( this,                SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
@@ -267,7 +272,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       aMainGrp->hide();
       Group2->hide();
       Group1->show();
-      
+      Group1->PushButton1->setDown( true );
       globalSelection( GEOM_ALLGEOM );
       myEditCurrentArgument = Group1->LineEdit1;
       Group1->LineEdit1->setText( "" );
@@ -276,15 +281,20 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
   case 2:
     {
       aMainGrp->hide();
-      Group1->show();
+      Group1->hide();
       Group2->show();
-      
+      Group2->PushButton1->setDown( true );
+      Group2->PushButton2->setDown( false );
+      Group2->PushButton3->setDown( false );
       globalSelection(); // close local contexts, if any
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       myEditCurrentArgument = Group2->LineEdit1;
       Group2->LineEdit1->setText( "" );
       Group2->LineEdit2->setText( "" );
       Group2->LineEdit3->setText( "" );
+      Group2->LineEdit1->setEnabled( true );
+      Group2->LineEdit2->setEnabled( false );
+      Group2->LineEdit3->setEnabled( false );
       break;
     }
   }
@@ -477,6 +487,8 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 	      myData[ Y ]->setValue( aPnt.Y() );
 	      myData[ Z ]->setValue( aPnt.Z() );
 	      myEditCurrentArgument->setText( aName );
+	      if (Group2->LineEdit2->text() == "")
+		Group2->PushButton2->click();
 	    }
 	    else {
 	      myData[ X ]->setValue( 0 );
@@ -494,6 +506,8 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 	      myData[ DY1 ]->setValue( aDir.Y() );
 	      myData[ DZ1 ]->setValue( aDir.Z() );
 	      myEditCurrentArgument->setText( aName );
+	      if (Group2->LineEdit3->text() == "")
+		Group2->PushButton3->click();
 	    }
 	    else {
 	      myData[ DX1 ]->setValue( 0 );
@@ -511,6 +525,8 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 	      myData[ DY2 ]->setValue( aDir.Y() );
 	      myData[ DZ2 ]->setValue( aDir.Z() );
 	      myEditCurrentArgument->setText( aName );
+	      if (Group2->LineEdit1->text() == "")
+		Group2->PushButton1->click();
 	    }
 	    else {
 	      myData[ DX2 ]->setValue( 0 );
@@ -565,6 +581,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 void BasicGUI_MarkerDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection(); // close local contexts, if any
 
   if ( send == Group1->PushButton1 ) {
     myEditCurrentArgument = Group1->LineEdit1;
@@ -572,23 +589,34 @@ void BasicGUI_MarkerDlg::SetEditCurrentArgument()
   }
   else if ( send == Group2->PushButton1 ) {
     myEditCurrentArgument = Group2->LineEdit1;
-    //globalSelection( GEOM_POINT );
-    globalSelection(); // close local contexts, if any
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    Group2->PushButton2->setDown( false );
+    Group2->PushButton3->setDown( false );
+    Group2->LineEdit1->setEnabled( true );
+    Group2->LineEdit2->setEnabled( false );
+    Group2->LineEdit3->setEnabled( false );
   }
   else if ( send == Group2->PushButton2 ) {
     myEditCurrentArgument = Group2->LineEdit2;
-    //globalSelection( GEOM_LINE );
-    globalSelection(); // close local contexts, if any
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    Group2->PushButton1->setDown( false );
+    Group2->PushButton3->setDown( false );
+    Group2->LineEdit1->setEnabled( false );
+    Group2->LineEdit2->setEnabled( true );
+    Group2->LineEdit3->setEnabled( false );
   }
   else if ( send == Group2->PushButton3 ) {
     myEditCurrentArgument = Group2->LineEdit3;
-    globalSelection(); // close local contexts, if any
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    Group2->PushButton1->setDown( false );
+    Group2->PushButton2->setDown( false );
+    Group2->LineEdit1->setEnabled( false );
+    Group2->LineEdit2->setEnabled( false );
+    Group2->LineEdit3->setEnabled( true );
   }
   
   myEditCurrentArgument->setFocus();
+  send->setDown(true);
   onSelectionDone();
 }
 

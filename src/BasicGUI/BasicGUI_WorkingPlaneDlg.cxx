@@ -91,6 +91,9 @@ BasicGUI_WorkingPlaneDlg::BasicGUI_WorkingPlaneDlg( GeometryGUI* theGeometryGUI,
   Group2->PushButton2->setIcon( image0 );
   Group2->LineEdit1->setReadOnly( true );
   Group2->LineEdit2->setReadOnly( true );
+  Group2->PushButton1->setDown( true );
+  Group2->LineEdit1->setEnabled( true );
+  Group2->LineEdit2->setEnabled( false );
 
   Group3 = new DlgRef_3Check( centralWidget() );
 
@@ -192,16 +195,14 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked( int constructorId )
   switch ( constructorId ) {
   case 0:
     {
-      //globalSelection( GEOM_PLANE );
       TColStd_MapOfInteger aMap;
       aMap.Add( GEOM_PLANE );
       aMap.Add( GEOM_MARKER );
       globalSelection( aMap );
-
       Group2->hide();
       Group3->hide();
       Group1->show();
-
+      Group1->PushButton1->setDown(true);
       myEditCurrentArgument = Group1->LineEdit1;
       Group1->LineEdit1->setText( "" );
       myFace = GEOM::GEOM_Object::_nil();
@@ -211,17 +212,17 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked( int constructorId )
     }
   case 1:
     {
-      //globalSelection( GEOM_LINE );
-      GEOM::GEOM_Object_var anObj;
-      localSelection( anObj, TopAbs_EDGE );
-
+      globalSelection( GEOM_LINE );
       Group1->hide();
       Group3->hide();
       Group2->show();
-
       myEditCurrentArgument = Group2->LineEdit1;
       Group2->LineEdit1->setText( "" );
       Group2->LineEdit2->setText( "" );
+      Group2->PushButton1->setDown( true );
+      Group2->PushButton2->setDown( false );
+      Group2->LineEdit1->setEnabled( true );
+      Group2->LineEdit2->setEnabled( false );
       myVectX = GEOM::GEOM_Object::_nil();
       myVectZ = GEOM::GEOM_Object::_nil();
 
@@ -233,7 +234,6 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked( int constructorId )
       Group1->hide();
       Group2->hide();
       Group3->show();
-
       Group3->RadioButton1->setChecked( true );
       aOriginType = 1;
       break;
@@ -337,10 +337,10 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
 	    myVectZ = aShapesOp->GetSubShape( aSelectedObject, anIndex );
         }
         else {
-          if ( myEditCurrentArgument == Group2->LineEdit1 )
-            myVectX = aSelectedObject;
-          else
-            myVectZ = aSelectedObject;
+	  if ( aShape.ShapeType() != TopAbs_EDGE ) {
+	    aSelectedObject = GEOM::GEOM_Object::_nil();
+	    aName = "";
+	  }
         }
         aSelMgr->clearSelected();
       }
@@ -348,6 +348,17 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
   }
 
   myEditCurrentArgument->setText( aName );
+
+  if ( myEditCurrentArgument == Group2->LineEdit1 ) {
+    myVectX = aSelectedObject;
+    if ( !myVectX->_is_nil() && myVectZ->_is_nil() )
+      Group2->PushButton2->click();
+  }
+  else {
+    myVectZ = aSelectedObject;
+    if ( !myVectZ->_is_nil() && myVectX->_is_nil() )
+      Group2->PushButton1->click();
+  }
 
   updateWPlane();
 }
@@ -368,16 +379,26 @@ void BasicGUI_WorkingPlaneDlg::SetEditCurrentArgument()
   else if ( send == Group2->PushButton1 ) {
     myEditCurrentArgument = Group2->LineEdit1;
     GEOM::GEOM_Object_var anObj;
-    localSelection( anObj, TopAbs_EDGE );
+    //    localSelection( anObj, TopAbs_EDGE );
+    globalSelection( GEOM_LINE );
+    Group2->PushButton2->setDown( false );
+    Group2->LineEdit1->setEnabled( true );
+    Group2->LineEdit2->setEnabled( false );
   }
   else if ( send == Group2->PushButton2 ) {
     myEditCurrentArgument = Group2->LineEdit2;
     GEOM::GEOM_Object_var anObj;
-    localSelection( anObj, TopAbs_EDGE );
+    //    localSelection( anObj, TopAbs_EDGE );
+    globalSelection( GEOM_LINE );
+    Group2->PushButton1->setDown( false );
+    Group2->LineEdit1->setEnabled( false );
+    Group2->LineEdit2->setEnabled( true );
   }
 
   myEditCurrentArgument->setFocus();
-  SelectionIntoArgument();
+  //  SelectionIntoArgument();
+  send->setDown(true);
+  displayPreview();
 }
 
 

@@ -327,14 +327,6 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
 //=================================================================================
 void BasicGUI_LineDlg::SetEditCurrentArgument()
 {
-  if ( IObjectCount() != 0 ) {
-    globalSelection(); // close local selection to clear it
-    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-    if ( myEditCurrentArgument == GroupFaces->LineEdit1 || myEditCurrentArgument == GroupFaces->LineEdit2 )
-      aNeedType = TopAbs_FACE;
-    localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
-  }
-
   QPushButton* send = (QPushButton*)sender();
   if ( send == GroupPoints->PushButton1 ) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -360,6 +352,13 @@ void BasicGUI_LineDlg::SetEditCurrentArgument()
     GroupFaces->LineEdit1->setEnabled(false);
     GroupFaces->LineEdit2->setEnabled(true);
   }
+
+  globalSelection(); // close local selection to clear it
+  TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+  if ( myEditCurrentArgument == GroupFaces->LineEdit1 || myEditCurrentArgument == GroupFaces->LineEdit2 )
+    aNeedType = TopAbs_FACE;
+  localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
+
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();
   send->setDown(true);

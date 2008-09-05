@@ -102,7 +102,7 @@ PrimitiveGUI_FaceDlg::PrimitiveGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget
 
   /***************************************************************/
 
-  setHelpFileName( "create_face_page.html" );
+  setHelpFileName( "create_squareface_page.html" );
 
   Init();
 }

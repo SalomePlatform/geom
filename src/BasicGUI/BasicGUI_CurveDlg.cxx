@@ -73,6 +73,7 @@ BasicGUI_CurveDlg::BasicGUI_CurveDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_NODES" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_POINTS" ) );
   GroupPoints->PushButton1->setIcon( image1 );
+  GroupPoints->PushButton1->setDown( true );
 
   GroupPoints->LineEdit1->setReadOnly( true );
 

@@ -112,6 +112,7 @@ BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupLineIntersection->TextLabel2->setText( tr( "GEOM_LINE2" ) );
   GroupLineIntersection->PushButton1->setIcon( image2 );
   GroupLineIntersection->PushButton2->setIcon( image2 );
+  GroupLineIntersection->LineEdit2->setEnabled(false);
 
   myCoordGrp = new QGroupBox( tr( "GEOM_COORDINATES" ), centralWidget() );
   QGridLayout* myCoordGrpLayout = new QGridLayout( myCoordGrp );
@@ -174,6 +175,8 @@ void BasicGUI_PointDlg::Init()
   GroupRefPoint->LineEdit1->setReadOnly( true );
   GroupLineIntersection->LineEdit1->setReadOnly( true );
   GroupLineIntersection->LineEdit2->setReadOnly( true );
+  GroupLineIntersection->LineEdit1->setEnabled( true );
+  GroupLineIntersection->LineEdit2->setEnabled( false );
 
   myEdge = GEOM::GEOM_Object::_nil();
   myRefPoint = GEOM::GEOM_Object::_nil();
@@ -296,7 +299,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myEditCurrentArgument = GroupRefPoint->LineEdit1;
       myEditCurrentArgument->setText( "" );
       myRefPoint = GEOM::GEOM_Object::_nil();
-      
+      GroupRefPoint->PushButton1->setDown(true);      
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       
       GroupXYZ->hide();
@@ -314,7 +317,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myEditCurrentArgument = GroupOnCurve->LineEdit1;
       myEditCurrentArgument->setText( "" );
       myEdge = GEOM::GEOM_Object::_nil();
-
+      GroupOnCurve->PushButton1->setDown(true);
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
 
       GroupXYZ->hide();
@@ -332,8 +335,12 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myEditCurrentArgument = GroupLineIntersection->LineEdit1;
       GroupLineIntersection->LineEdit1->setText( "" );
       GroupLineIntersection->LineEdit2->setText( "" );
+      GroupLineIntersection->LineEdit1->setEnabled( true );
+      GroupLineIntersection->LineEdit2->setEnabled( false );
       myLine1 = GEOM::GEOM_Object::_nil();
       myLine2 = GEOM::GEOM_Object::_nil();
+      GroupLineIntersection->PushButton1->setDown(true);
+      GroupLineIntersection->PushButton2->setDown(false);
 
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
 
@@ -352,7 +359,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myEditCurrentArgument = GroupOnSurface->LineEdit1;
       myEditCurrentArgument->setText( "" );
       myFace = GEOM::GEOM_Object::_nil();
-
+      GroupOnSurface->PushButton1->setDown(true);
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
 
       GroupXYZ->hide();
@@ -483,13 +490,18 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
         GroupOnCurve->LineEdit1->setText( aName );
       }
       else if ( id == 3 ) {
+	myEditCurrentArgument->setText( aName );
+	globalSelection();
+	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
         if ( myEditCurrentArgument == GroupLineIntersection->LineEdit1 ) {
           myLine1 = aSelectedObject;
-          myEditCurrentArgument->setText( aName );
+	  if ( !myLine1->_is_nil() && myLine2->_is_nil() )
+	    GroupLineIntersection->PushButton2->click();
         }
         else if ( myEditCurrentArgument == GroupLineIntersection->LineEdit2 ) {
           myLine2 = aSelectedObject;
-          myEditCurrentArgument->setText( aName );
+	  if ( !myLine2->_is_nil() && myLine1->_is_nil() )
+	    GroupLineIntersection->PushButton1->click();
         }
       }
       else if ( id == 4 )
@@ -530,7 +542,6 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
   globalSelection(); // close local contexts, if any
 
   QPushButton* send = (QPushButton*)sender();
-  globalSelection( GEOM_POINT ); // to break previous local selection
 
   if ( send == GroupRefPoint->PushButton1 ) {
     GroupRefPoint->LineEdit1->setFocus();
@@ -554,15 +565,20 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
   else if ( send == GroupLineIntersection->PushButton1 ) {
     GroupLineIntersection->LineEdit1->setFocus();
     myEditCurrentArgument = GroupLineIntersection->LineEdit1;
-
+    GroupLineIntersection->PushButton2->setDown( false );
+    GroupLineIntersection->LineEdit1->setEnabled(true);
+    GroupLineIntersection->LineEdit2->setEnabled(false);
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if ( send == GroupLineIntersection->PushButton2 ) {
     GroupLineIntersection->LineEdit2->setFocus();
     myEditCurrentArgument = GroupLineIntersection->LineEdit2;
-
+    GroupLineIntersection->PushButton1->setDown( false );
+    GroupLineIntersection->LineEdit1->setEnabled(false);
+    GroupLineIntersection->LineEdit2->setEnabled(true);
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
+  send->setDown(true);
 }
 
 
