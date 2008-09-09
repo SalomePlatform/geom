@@ -68,6 +68,19 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
       "### of GEOM component\n\n";
   aScript += _impl->DumpPython(aStudy->StudyId(), aMap, isPublished, isValidScript);
 
+  if (isPublished)
+  {
+    //Output the script that sets up the visual parameters.
+    char* script = aStudy->GetDefaultScript(ComponentDataType(), "\t");
+    if (script && strlen(script) > 0) {
+      aScript += "\n\t### Store presentation parameters of displayed objects\n";
+      aScript += script;
+      CORBA::string_free(script);
+    }
+  }
+
+  aScript += "\n\tpass\n";
+
   int aLen = aScript.Length(); 
   unsigned char* aBuffer = new unsigned char[aLen+1];
   strcpy((char*)aBuffer, aScript.ToCString());

@@ -120,6 +120,9 @@ public:
   int                         getLocalSelectionMode() const;
   void                        setLocalSelectionMode(const int mode);
 
+  virtual void storeVisualParameters  (int savePoint);
+  virtual void restoreVisualParameters(int savePoint);
+
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );
   virtual bool                activateModule( SUIT_Study* );

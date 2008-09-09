@@ -419,34 +419,34 @@ void GEOM_Engine::Close(int theDocID)
  *  DumpPython
  */
 //=============================================================================
-TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID, 
+TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 						Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-						bool isPublished, 
+						bool isPublished,
 						bool& aValidScript)
 {
   TCollection_AsciiString aScript;
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
-  
-  if(aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
- 
+
+  if (aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
+
   aScript = "import geompy\n";
   aScript += "import math\n";
   aScript += "import SALOMEDS\n\n";
   aScript += "def RebuildData(theStudy):";
   aScript += "\n\tgeompy.init_geom(theStudy)";
-  
+
   Standard_Integer posToInertGlobalVars = aScript.Length() + 1;
 
   Handle(TDataStd_TreeNode) aNode, aRoot;
   Handle(GEOM_Function) aFunction;
   TColStd_MapOfTransient aMap;
 
-  if(aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
+  if (aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
     TDataStd_ChildNodeIterator Itr(aRoot);
-    for(; Itr.More(); Itr.Next()) {
+    for (; Itr.More(); Itr.Next()) {
       aNode = Itr.Value();
       aFunction = GEOM_Function::GetFunction(aNode->Label());
-      if(aFunction.IsNull()) {
+      if (aFunction.IsNull()) {
 	MESSAGE ( "Null function !!!!" );
 	continue;
       }
@@ -482,12 +482,12 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   //Replace entries by the names
   TCollection_AsciiString anUpdatedScript, anEntry, aName, aBaseName("geomObj_"),
     allowedChars ("qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM0987654321_");
-  if(aLen == 0) anUpdatedScript = aScript;
+  if (aLen == 0) anUpdatedScript = aScript;
 
-  for(Standard_Integer i = 1; i <= aLen; i+=2) {
+  for (Standard_Integer i = 1; i <= aLen; i+=2) {
     anUpdatedScript += aScript.SubString(aStart, aSeq->Value(i)-1);
     anEntry = aScript.SubString(aSeq->Value(i), aSeq->Value(i+1));
-    if(theObjectNames.IsBound(anEntry)) {
+    if (theObjectNames.IsBound(anEntry)) {
       aName = theObjectNames.Find(anEntry);
       // check validity of aName
       bool isValidName = true;
@@ -530,8 +530,9 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   }
 
   //Add final part of the script
-  if(aLen && aSeq->Value(aLen) < aScriptLength)  anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength); // mkr : IPAL11865
- 
+  if (aLen && aSeq->Value(aLen) < aScriptLength)
+    anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength); // mkr : IPAL11865
+
   // ouv : NPAL12872
   for (anEntryToNameIt.Initialize( theObjectNames );
        anEntryToNameIt.More();
@@ -612,7 +613,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     }
   }
 
-  anUpdatedScript += "\n\tpass\n";
+  //anUpdatedScript += "\n\tpass\n";
+  anUpdatedScript += "\n";
   aValidScript = true;
 
   // fill _studyEntry2NameMap and build globalVars
@@ -633,7 +635,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     globalVars.Insert( 1, "\n\tglobal " );
     anUpdatedScript.Insert( posToInertGlobalVars, globalVars );
   }
-  
+
   return anUpdatedScript;
 }
 
