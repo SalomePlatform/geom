@@ -63,9 +63,9 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeSplineBezier        (list<Handle(GEOM_Object)> thePoints);
   Standard_EXPORT Handle(GEOM_Object) MakeSplineInterpolation (list<Handle(GEOM_Object)> thePoints);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeSketcher (const TCollection_AsciiString& theCommand,
+  Standard_EXPORT Handle(GEOM_Object) MakeSketcher (const char* theCommand,
                                                     list<double> theWorkingPlane);
-  Standard_EXPORT Handle(GEOM_Object) MakeSketcherOnPlane (const TCollection_AsciiString& theCommand,
+  Standard_EXPORT Handle(GEOM_Object) MakeSketcherOnPlane (const char* theCommand,
                                                            Handle(GEOM_Object) theWorkingPlane);
 };
 
