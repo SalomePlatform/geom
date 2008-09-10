@@ -386,7 +386,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
 
   // Make Sketcher
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeSketcher((char*)theCommand, aWorkingPlane);
+    GetOperations()->MakeSketcher(theCommand, aWorkingPlane);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return GEOM::GEOM_Object::_nil();
 
@@ -410,7 +410,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcherOnPlane
 
   // Make Sketcher
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakeSketcherOnPlane((char*)theCommand, aWorkingPlane);
+      GetOperations()->MakeSketcherOnPlane(theCommand, aWorkingPlane);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return GEOM::GEOM_Object::_nil();
 
