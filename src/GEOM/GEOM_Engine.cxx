@@ -714,7 +714,7 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
   Standard_Integer aLen = theString.Length();
   Standard_Boolean isFound = Standard_False;
 
-  char* arr = theString.ToCString();
+  const char* arr = theString.ToCString();
   Standard_Integer i = 0, j;
 
   while(i < aLen) {

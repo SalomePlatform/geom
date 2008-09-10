@@ -62,7 +62,7 @@ class GEOM_IOperations
  
   //Returns an error code of the last operatioin
   Standard_EXPORT char* GetErrorCode() {
-    return _errorCode.ToCString();    
+    return (char*) _errorCode.ToCString();    
   }
   
   //Returns a pointer to  GEOM_Engine which this operation interface is associated
