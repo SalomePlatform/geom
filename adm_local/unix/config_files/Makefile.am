@@ -18,6 +18,5 @@
 # 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-dist_admlocalm4_DATA=\
-check_GEOM.m4\
-README
+dist_admlocalm4_DATA =	\
+check_GEOM.m4
