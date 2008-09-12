@@ -32,51 +32,46 @@
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-
-EXPORT_SHAREDPYSCRIPTS=\
-	GEOM_shared_modules.py
-
-#
 # ===============================================================
 # Files to be installed
 # ===============================================================
 #
 
 # Scripts to be installed.
-dist_salomescript_DATA= \
-	geompy.py \
-	geompyDC.py \
-	batchmode_geompy.py \
-	GEOM_Spanner.py \
-	GEOM_blocks.py \
-	GEOM_example.py \
-	GEOM_example2.py \
-	GEOM_example3.py \
-	GEOM_example4.py \
-	GEOM_example5.py \
-	GEOM_example6.py \
-	GEOM_moteur.py \
-	GEOM_TestAll.py  \
-	GEOM_TestOthers.py \
-	GEOM_TestHealing.py \
-	GEOM_TestMeasures.py \
-	GEOM_usinggeom.py  \
-	GEOM_Partition1.py \
-	GEOM_Partition2.py \
-	GEOM_Partition3.py \
-	GEOM_Partition4.py \
-	GEOM_Partition5.py \
-	GEOM_cyl2complementary.py \
-	GEOM_shellSolid.py \
-	GEOM_tube_geom.py \
-	GEOM_tube_geom_gg2.py \
-	GEOM_Nut.py \
-	GEOM_Sketcher.py \
-	PAL_MESH_019_020_geometry.py \
-	PAL_MESH_028_geometry.py \
-	PAL_MESH_030_geometry.py \
-	PAL_MESH_033_geometry.py \
+dist_salomescript_DATA =		\
+	geompy.py			\
+	geompyDC.py			\
+	batchmode_geompy.py		\
+	GEOM_Spanner.py			\
+	GEOM_blocks.py			\
+	GEOM_example.py			\
+	GEOM_example2.py		\
+	GEOM_example3.py		\
+	GEOM_example4.py		\
+	GEOM_example5.py		\
+	GEOM_example6.py		\
+	GEOM_moteur.py			\
+	GEOM_TestAll.py			\
+	GEOM_TestOthers.py		\
+	GEOM_TestHealing.py		\
+	GEOM_TestMeasures.py		\
+	GEOM_usinggeom.py		\
+	GEOM_Partition1.py		\
+	GEOM_Partition2.py		\
+	GEOM_Partition3.py		\
+	GEOM_Partition4.py		\
+	GEOM_Partition5.py		\
+	GEOM_cyl2complementary.py	\
+	GEOM_shellSolid.py		\
+	GEOM_tube_geom.py		\
+	GEOM_tube_geom_gg2.py		\
+	GEOM_Nut.py			\
+	GEOM_Sketcher.py		\
+	PAL_MESH_019_020_geometry.py	\
+	PAL_MESH_028_geometry.py	\
+	PAL_MESH_030_geometry.py	\
+	PAL_MESH_033_geometry.py	\
 	PAL_MESH_035_geometry.py
 
-sharedpkgpython_PYTHON = \
+sharedpkgpython_PYTHON =		\
 	GEOM_shared_modules.py

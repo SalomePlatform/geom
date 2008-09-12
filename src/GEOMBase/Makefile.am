@@ -46,19 +46,10 @@ dist_libGEOMBase_la_SOURCES =		\
 MOC_FILES =				\
 	GEOMBase_Skeleton_moc.cxx
 
-nodist_libGEOMBase_la_SOURCES = \
+nodist_libGEOMBase_la_SOURCES =	\
 	$(MOC_FILES)
 
-#LIB_CLIENT_IDL = SALOME_Exception.idl \
-#		 SALOMEDS.idl \
-#		 SALOMEDS_Attributes.idl \
-#                 SALOME_GenericObj.idl \
-#		 SALOME_Component.idl \
-#		 GEOM_Gen.idl
-
-#LIB_SERVER_IDL = 
-
-# additionnal information to compil and link file
+# additional information to compile and link file
 
 libGEOMBase_la_CPPFLAGS =		\
 	$(QT_INCLUDES)			\

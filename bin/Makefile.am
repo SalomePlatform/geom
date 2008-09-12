@@ -23,13 +23,8 @@
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-#
-# ===============================================================
-# Files to be installed
-# ===============================================================
-#
+# non-distributed files 
+nodist_salomescript_DATA = VERSION
 
-# These files are data, module or lib files
-nodist_salomescript_DATA= VERSION
-
-EXTRA_DIST+= VERSION.in
+# distributed files
+dist_salomescript_SCRIPTS =

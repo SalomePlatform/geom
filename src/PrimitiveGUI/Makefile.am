@@ -25,7 +25,13 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS =
+salomeinclude_HEADERS =			\
+	PrimitiveGUI.h			\
+	PrimitiveGUI_BoxDlg.h		\
+	PrimitiveGUI_CylinderDlg.h	\
+	PrimitiveGUI_SphereDlg.h	\
+	PrimitiveGUI_TorusDlg.h		\
+	PrimitiveGUI_ConeDlg.h		
 
 # Libraries targets
 lib_LTLIBRARIES = libPrimitiveGUI.la
@@ -58,14 +64,10 @@ MOC_FILES =					\
 	PrimitiveGUI_FaceDlg_moc.cxx		\
 	PrimitiveGUI_DiskDlg_moc.cxx
 
-nodist_libPrimitiveGUI_la_SOURCES = \
+nodist_libPrimitiveGUI_la_SOURCES =	\
 	$(MOC_FILES)
 
-#LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl SALOME_Exception.idl
-
-#LIB_SERVER_IDL =  
-
-# additionnal information to compil and link file
+# additional information to compile and link file
 
 libPrimitiveGUI_la_CPPFLAGS =			\
 	$(QT_INCLUDES) 				\

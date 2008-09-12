@@ -27,6 +27,9 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
+salomeinclude_HEADERS =		\
+	BooleanGUI.h		\
+	BooleanGUI_Dialog.h
 
 # Libraries targets
 lib_LTLIBRARIES = libBooleanGUI.la 
@@ -39,19 +42,15 @@ dist_libBooleanGUI_la_SOURCES =	\
 	BooleanGUI.cxx		\
 	BooleanGUI_Dialog.cxx
 
-MOC_FILES = \
+MOC_FILES =				\
 	BooleanGUI_Dialog_moc.cxx
 
-nodist_libBooleanGUI_la_SOURCES= \
+nodist_libBooleanGUI_la_SOURCES =	\
 	$(MOC_FILES)
 
-#LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
+# additional information to compile and link file
 
-#LIB_SERVER_IDL =  
-
-# additionnal information to compil and link file
-
-libBooleanGUI_la_CPPFLAGS = \
+libBooleanGUI_la_CPPFLAGS =			\
 	$(QT_INCLUDES)				\
 	$(VTK_INCLUDES)				\
 	$(CAS_CPPFLAGS)				\
@@ -72,5 +71,5 @@ libBooleanGUI_la_CPPFLAGS = \
 	-I$(top_builddir)/idl			\
 	-I$(top_builddir)/salome_adm/unix
 
-libBooleanGUI_la_LDFLAGS  = \
+libBooleanGUI_la_LDFLAGS  =		\
 	../GEOMBase/libGEOMBase.la

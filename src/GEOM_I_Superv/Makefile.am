@@ -32,7 +32,9 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS =
+salomeinclude_HEADERS = \
+	GEOM_Superv_i.hh \
+	GEOM_List_i.hh
 
 # Libraries targets
 lib_LTLIBRARIES = libGEOM_SupervEngine.la
@@ -40,28 +42,26 @@ lib_LTLIBRARIES = libGEOM_SupervEngine.la
 dist_libGEOM_SupervEngine_la_SOURCES = \
 	GEOM_Superv_i.cc
 
-#LIB_SERVER_IDL = SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Component.idl SALOME_Exception.idl \
-#                 SALOME_GenericObj.idl SALOME_ModuleCatalog.idl SALOME_Session.idl GEOM_Gen.idl GEOM_Superv.idl
+# additional information to compile and link file
 
-# additionnal information to compil and link file
-libGEOM_SupervEngine_la_CPPFLAGS = \
-	$(CAS_CPPFLAGS) \
-	$(QT_INCLUDES) \
-	$(KERNEL_CXXFLAGS) \
-	$(BOOST_CPPFLAGS) \
-	$(CORBA_CXXFLAGS) \
-	$(CORBA_INCLUDES) \
-	-I$(srcdir)/../GEOMGUI \
-	-I$(srcdir)/../GEOMBase \
-	-I$(srcdir)/../GEOMClient \
-	-I$(srcdir)/../GEOMImpl \
-	-I$(srcdir)/../GEOM \
-	-I$(srcdir)/../GEOM_I \
-	-I$(srcdir)/../GEOMAlgo \
-	-I$(top_builddir)/idl \
+libGEOM_SupervEngine_la_CPPFLAGS =	\
+	$(CAS_CPPFLAGS)			\
+	$(QT_INCLUDES)			\
+	$(KERNEL_CXXFLAGS)		\
+	$(BOOST_CPPFLAGS)		\
+	$(CORBA_CXXFLAGS)		\
+	$(CORBA_INCLUDES)		\
+	-I$(srcdir)/../GEOMGUI		\
+	-I$(srcdir)/../GEOMBase		\
+	-I$(srcdir)/../GEOMClient	\
+	-I$(srcdir)/../GEOMImpl		\
+	-I$(srcdir)/../GEOM		\
+	-I$(srcdir)/../GEOM_I		\
+	-I$(srcdir)/../GEOMAlgo		\
+	-I$(top_builddir)/idl		\
 	-I$(top_builddir)/salome_adm/unix
 
-libGEOM_SupervEngine_la_LDFLAGS  = \
-	$(CORBA_LIBS) \
+libGEOM_SupervEngine_la_LDFLAGS  =	\
+	$(CORBA_LIBS)			\
 	$(KERNEL_LDFLAGS) -lSalomeGenericObj -lSalomeNS -lSalomeLifeCycleCORBA -lSalomeContainer -lSalomeDSClient \
 	$(STDLIB)

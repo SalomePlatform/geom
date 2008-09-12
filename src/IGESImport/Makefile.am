@@ -29,15 +29,16 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # Libraries targets
 lib_LTLIBRARIES = libIGESImport.la
 
-dist_libIGESImport_la_SOURCES = \
+dist_libIGESImport_la_SOURCES =	\
 	IGESImport.cxx
 
-# additionnal information to compil and link file
-libIGESImport_la_CPPFLAGS = \
-	$(CAS_CPPFLAGS) \
+# additional information to compile and link file
+
+libIGESImport_la_CPPFLAGS =	\
+	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)
 
-libIGESImport_la_LDFLAGS  = \
-	$(STDLIB) \
-	$(CAS_LDPATH) -lTKIGES \
+libIGESImport_la_LDFLAGS  =	\
+	$(STDLIB)		\
+	$(CAS_LDPATH) -lTKIGES	\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace

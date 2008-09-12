@@ -30,7 +30,9 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 lib_LTLIBRARIES = libGroupGUI.la
 
 # header files 
-salomeinclude_HEADERS =
+salomeinclude_HEADERS =		\
+	GroupGUI.h		\
+	GroupGUI_GroupDlg.h
 
 dist_libGroupGUI_la_SOURCES =	\
 	GroupGUI.h		\
@@ -45,11 +47,7 @@ MOC_FILES =			\
 nodist_libGroupGUI_la_SOURCES =	\
 	$(MOC_FILES)
 
-# LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl SALOME_Exception.idl
-
-# LIB_SERVER_IDL =  
-
-# additionnal information to compil and link file
+# additional information to compile and link file
 
 libGroupGUI_la_CPPFLAGS =			\
 	$(QT_INCLUDES)				\

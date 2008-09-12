@@ -27,7 +27,8 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS =
+salomeinclude_HEADERS =	\
+	DisplayGUI.h
 
 # Libraries targets
 lib_LTLIBRARIES = libDisplayGUI.la
@@ -36,11 +37,7 @@ dist_libDisplayGUI_la_SOURCES = \
 	DisplayGUI.h		\
 	DisplayGUI.cxx
 
-#LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
-
-#LIB_SERVER_IDL = 
-
-# additionnal information to compil and link file
+# additional information to compile and link file
 
 libDisplayGUI_la_CPPFLAGS =		\
 	$(QT_INCLUDES)			\

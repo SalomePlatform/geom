@@ -30,34 +30,49 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS = \
-	NMTAlgo_Splitter1.hxx \
-	NMTAlgo_Splitter.hxx \
-	NMTAlgo_Builder.hxx \
-	NMTAlgo_Algo.hxx
+salomeinclude_HEADERS =		\
+	NMTAlgo_Splitter1.hxx	\
+	NMTAlgo_Splitter1.ixx	\
+	NMTAlgo_Splitter1.jxx	\
+	NMTAlgo_Splitter.hxx	\
+	NMTAlgo_Splitter.ixx	\
+	NMTAlgo_Splitter.jxx	\
+	NMTAlgo_Builder.hxx	\
+	NMTAlgo_Builder.ixx	\
+	NMTAlgo_Builder.jxx	\
+	NMTAlgo_Algo.hxx	\
+	NMTAlgo_Algo.ixx	\
+	NMTAlgo_Algo.jxx	\
+	NMTAlgo_Loop3d.hxx	\
+	NMTAlgo_Loop3d.ixx	\
+	NMTAlgo_Loop3d.jxx	\
+	NMTAlgo_Tools.hxx	\
+	NMTAlgo_Tools.ixx	\
+	NMTAlgo_Tools.jxx
 
 # Libraries targets
 lib_LTLIBRARIES = libNMTAlgo.la
 
-dist_libNMTAlgo_la_SOURCES = \
-	NMTAlgo_Algo.cxx \
-	NMTAlgo_Builder.cxx \
-	NMTAlgo_Loop3d.cxx \
-	NMTAlgo_Splitter.cxx \
-	NMTAlgo_Splitter1.cxx \
-	NMTAlgo_Splitter_1.cxx \
-	NMTAlgo_Splitter_2.cxx \
+dist_libNMTAlgo_la_SOURCES =	\
+	NMTAlgo_Algo.cxx	\
+	NMTAlgo_Builder.cxx	\
+	NMTAlgo_Loop3d.cxx	\
+	NMTAlgo_Splitter.cxx	\
+	NMTAlgo_Splitter1.cxx	\
+	NMTAlgo_Splitter_1.cxx	\
+	NMTAlgo_Splitter_2.cxx	\
 	NMTAlgo_Tools.cxx
 
-# additionnal information to compil and link file
-libNMTAlgo_la_CPPFLAGS = \
-	$(CAS_CPPFLAGS) \
-	$(KERNEL_CXXFLAGS) \
-	-I$(srcdir)/../NMTDS \
+# additional information to compile and link file
+
+libNMTAlgo_la_CPPFLAGS =	\
+	$(CAS_CPPFLAGS)		\
+	$(KERNEL_CXXFLAGS)	\
+	-I$(srcdir)/../NMTDS	\
 	-I$(srcdir)/../NMTTools
 
-libNMTAlgo_la_LDFLAGS  = \
-	$(STDLIB) \
-	$(CAS_LDPATH) -lTKBool -lTKBO \
-	$(KERNEL_LDFLAGS) \
+libNMTAlgo_la_LDFLAGS  =		\
+	$(STDLIB)			\
+	$(CAS_LDPATH) -lTKBool -lTKBO	\
+	$(KERNEL_LDFLAGS)		\
 	../NMTTools/libNMTTools.la

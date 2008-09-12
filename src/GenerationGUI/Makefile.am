@@ -30,7 +30,12 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 lib_LTLIBRARIES = libGenerationGUI.la
 
 # header files 
-salomeinclude_HEADERS =
+salomeinclude_HEADERS =			\
+	GenerationGUI.h			\
+	GenerationGUI_PrismDlg.h	\
+	GenerationGUI_RevolDlg.h	\
+	GenerationGUI_FillingDlg.h	\
+	GenerationGUI_PipeDlg.h
 
 dist_libGenerationGUI_la_SOURCES =	\
 	GenerationGUI.h			\
@@ -51,14 +56,10 @@ MOC_FILES = 					\
 	GenerationGUI_FillingDlg_moc.cxx	\
 	GenerationGUI_PipeDlg_moc.cxx
 
-nodist_libGenerationGUI_la_SOURCES = \
+nodist_libGenerationGUI_la_SOURCES =	\
 	$(MOC_FILES)
 
-#LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl SALOME_Exception.idl
-
-#LIB_SERVER_IDL =  
-
-# additionnal information to compil and link file
+# additional information to compile and link file
 
 libGenerationGUI_la_CPPFLAGS =			\
 	$(QT_INCLUDES)				\

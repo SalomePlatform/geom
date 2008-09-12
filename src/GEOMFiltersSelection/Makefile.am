@@ -46,15 +46,13 @@ dist_libGEOMFiltersSelection_la_SOURCES = \
 	GEOM_EdgeFilter.cxx		\
 	GEOM_FaceFilter.cxx		\
 	GEOM_TypeFilter.cxx		\
-        GEOM_PreviewFilter.cxx		\
+	GEOM_PreviewFilter.cxx		\
 	GEOM_LogicalFilter.cxx		\
 	GEOM_OCCFilter.cxx		\
 	GEOM_CompoundFilter.cxx
 
-# LIB_CLIENT_IDL= GEOM_Gen.idl SALOMEDS.idl SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
+# additional information to compile and link file
 
-
-# additionnal information to compil and link file
 libGEOMFiltersSelection_la_CPPFLAGS =	\
 	$(QT_INCLUDES)			\
 	$(CAS_CPPFLAGS)			\

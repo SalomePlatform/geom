@@ -9,11 +9,12 @@
 #
 
 
-AC_INIT([Salome2 Project GEOM module], [5.0.0], [webmaster.salome@opencascade.com], [salome])
+AC_INIT([Salome2 Project GEOM module], [5.0.0], [webmaster.salome@opencascade.com], [SalomeGEOM])
 AC_CONFIG_AUX_DIR(salome_adm/unix/config_files)
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([tar-pax])
+
 
 XVERSION=`echo $VERSION | awk -F. '{printf("0x%02x%02x%02x",$1,$2,$3)}'`
 AC_SUBST(XVERSION)
@@ -337,20 +338,15 @@ else
    AC_SUBST(SETX) SETX="set -x"
 fi
 
-dnl copy shells and utilities contained in the bin directory
-dnl excluding .in files (treated in AC-OUTPUT below) and CVS
-dnl directory
-
-
 echo
 echo ---------------------------------------------
 echo generating Makefiles and configure files
 echo ---------------------------------------------
 echo
 
-AC_OUTPUT_COMMANDS([ \
-  chmod +x ./bin/*; \
-])
+#AC_OUTPUT_COMMANDS([ \
+#  chmod +x ./bin/*; \
+#])
 
 # This list is initiated using autoscan and must be updated manually
 # when adding a new file <filename>.in to manage. When you execute
@@ -367,12 +363,12 @@ AC_OUTPUT([ \
   ./doc/Makefile \
   ./doc/salome/Makefile \
   ./doc/salome/gui/Makefile \
+  ./doc/salome/gui/GEOM/Makefile \
   ./doc/salome/gui/GEOM/doxyfile \
   ./doc/salome/gui/GEOM/doxyfile_py \
   ./doc/salome/gui/GEOM/doxyfile_tui \
   ./doc/salome/tui/Makefile \
-  ./doc/salome/tui/GEOM/doxyfile \
-  ./doc/salome/tui/GEOM/sources/static/tree.js \
+  ./doc/salome/tui/doxyfile \
   ./src/Makefile \
   ./src/ARCHIMEDE/Makefile \
   ./src/BREPExport/Makefile \
@@ -401,7 +397,6 @@ AC_OUTPUT([ \
   ./src/IGESExport/Makefile \
   ./src/IGESImport/Makefile \
   ./src/MeasureGUI/Makefile \
-  ./src/NMTAlgo/Makefile \
   ./src/NMTDS/Makefile \
   ./src/NMTTools/Makefile \
   ./src/OBJECT/Makefile \

@@ -30,55 +30,52 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 lib_LTLIBRARIES = libGEOMbasic.la
 
-dist_libGEOMbasic_la_SOURCES = \
-	GEOM_Application.cxx \
-	GEOM_Engine.cxx \
-	GEOM_Function.cxx \
-	GEOM_Object.cxx \
-	GEOM_IOperations.cxx \
-	GEOM_Solver.cxx \
-	GEOM_SubShapeDriver.cxx \
-	GEOM_PythonDump.cxx \
-	GEOM_DataMapNodeOfDataMapOfAsciiStringTransient_0.cxx \
-	GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient_0.cxx \
+dist_libGEOMbasic_la_SOURCES =		\
+	GEOM_Application.cxx		\
+	GEOM_Engine.cxx			\
+	GEOM_Function.cxx		\
+	GEOM_Object.cxx			\
+	GEOM_IOperations.cxx		\
+	GEOM_Solver.cxx			\
+	GEOM_SubShapeDriver.cxx		\
+	GEOM_PythonDump.cxx		\
+	GEOM_DataMapNodeOfDataMapOfAsciiStringTransient_0.cxx		\
+	GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient_0.cxx	\
 	GEOM_DataMapOfAsciiStringTransient_0.cxx
 
-#LIB_CLIENT_IDL = 
-#LIB_SERVER_IDL = 
-
-# Executables targets
-#BIN =
-#BIN_SRC =
-#BIN_CLIENT_IDL = 
-#BIN_SERVER_IDL = 
-
 # header files 
-salomeinclude_HEADERS = \
-	GEOM_Application.hxx \
-	Handle_GEOM_Application.hxx \
-	GEOM_Engine.hxx \
-	GEOM_Function.hxx \
-	GEOM_Object.hxx \
-	GEOM_IOperations.hxx \
-	GEOM_ISubShape.hxx \
-	GEOM_Solver.hxx \
-	GEOM_PythonDump.hxx \
-	GEOM_DataMapOfAsciiStringTransient.hxx \
+salomeinclude_HEADERS =			\
+	GEOM_Application.hxx		\
+	GEOM_Application.ixx		\
+	GEOM_Application.jxx		\
+	Handle_GEOM_Application.hxx	\
+	GEOM_Engine.hxx			\
+	GEOM_Function.hxx		\
+	GEOM_Object.hxx			\
+	GEOM_SubShapeDriver.hxx		\
+	GEOM_IOperations.hxx		\
+	GEOM_ISubShape.hxx		\
+	GEOM_Solver.hxx			\
+	GEOM_PythonDump.hxx		\
+	GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx		\
+	GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx		\
+	GEOM_DataMapOfAsciiStringTransient.hxx				\
 	Handle_GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx
 
-# additionnal information to compil and link file
-libGEOMbasic_la_CPPFLAGS = \
-	$(CORBA_CXXFLAGS) \
-        $(CORBA_INCLUDES) \
-	$(CAS_CPPFLAGS) \
-	$(KERNEL_CXXFLAGS) \
-	$(BOOST_CPPFLAGS) \
-	-I$(top_builddir)/idl \
+# additional information to compile and link file
+
+libGEOMbasic_la_CPPFLAGS =	\
+	$(CORBA_CXXFLAGS)	\
+        $(CORBA_INCLUDES)	\
+	$(CAS_CPPFLAGS)		\
+	$(KERNEL_CXXFLAGS)	\
+	$(BOOST_CPPFLAGS)	\
+	-I$(top_builddir)/idl	\
 	-I$(top_builddir)/salome_adm/unix
 
-libGEOMbasic_la_LDFLAGS  = \
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace \
-	$(STDLIB) \
-	$(CAS_LDPATH) -lTKXSBase \
-	$(CAS_OCAF) \
+libGEOMbasic_la_LDFLAGS  =			\
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
+	$(STDLIB)				\
+	$(CAS_LDPATH) -lTKXSBase		\
+	$(CAS_OCAF)				\
 	$(CAS_OCAFVIS) 

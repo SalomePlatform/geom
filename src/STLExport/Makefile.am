@@ -27,15 +27,16 @@ salomeinclude_HEADERS =
 # Libraries targets
 lib_LTLIBRARIES = libSTLExport.la
 
-dist_libSTLExport_la_SOURCES = \
+dist_libSTLExport_la_SOURCES =	\
 	STLExport.cxx
 
-# additionnal information to compil and link file
-libSTLExport_la_CPPFLAGS = \
-	$(CAS_CPPFLAGS) \
+# additional information to compile and link file
+
+libSTLExport_la_CPPFLAGS =	\
+	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)
 
-libSTLExport_la_LDFLAGS  = \
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace \
-	$(STDLIB) \
+libSTLExport_la_LDFLAGS  =			\
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
+	$(STDLIB)				\
 	$(CAS_LDPATH) -lTKSTL

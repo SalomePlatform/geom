@@ -30,30 +30,30 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS = \
-		GEOM_Client.hxx
-
+salomeinclude_HEADERS =	\
+	GEOM_Client.hxx
 
 # Libraries targets
 lib_LTLIBRARIES = libGEOMClient.la
 
 # Sources files
-dist_libGEOMClient_la_SOURCES = \
+dist_libGEOMClient_la_SOURCES =	\
 		GEOM_Client.cxx
 
-# additionnal information to compil and link file
-libGEOMClient_la_CPPFLAGS = \
-	$(CORBA_CXXFLAGS) \
-        $(CORBA_INCLUDES) \
-	$(CAS_CPPFLAGS) \
-	$(KERNEL_CXXFLAGS) \
-	-I$(top_builddir)/idl \
+# additional information to compile and link file
+
+libGEOMClient_la_CPPFLAGS =	\
+	$(CORBA_CXXFLAGS)	\
+        $(CORBA_INCLUDES)	\
+	$(CAS_CPPFLAGS)		\
+	$(KERNEL_CXXFLAGS)	\
+	-I$(top_builddir)/idl	\
 	-I$(top_builddir)/salome_adm/unix
 
-libGEOMClient_la_LDFLAGS  = \
-	../../idl/libSalomeIDLGEOM.la \
-	../GEOM/libGEOMbasic.la \
-	$(KERNEL_LDFLAGS) -lSalomeIDLKernel -lOpUtil \
+libGEOMClient_la_LDFLAGS  =				\
+	../../idl/libSalomeIDLGEOM.la			\
+	../GEOM/libGEOMbasic.la				\
+	$(KERNEL_LDFLAGS) -lSalomeIDLKernel -lOpUtil	\
 	$(CAS_TKTopAlgo)
 
 # \

@@ -22,36 +22,20 @@
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-EXTRA_DIST+=GEOM
+EXTRA_DIST += images static
 
-dev_docs:
-	cp -fr $(srcdir)/GEOM ./INPUT; \
-	cp -f ./GEOM/doxyfile ./INPUT; \
-	cd INPUT; \
-	sed 's|../../../share/salome|$(top_srcdir)|' ./doxyfile > ./doxyfile1; \
-	sed 's|../../build/salome|$(top_builddir)|' ./doxyfile1 > ./doxyfile2; \
-	mv -f doxyfile2 doxyfile1; \
-	echo "DOXYGEN SUPPORT PYTHON - @DOXYGEN_WITH_PYTHON@"; \
-	if( test "x@DOXYGEN_WITH_PYTHON@" = "xyes"); then \
-	  sed 's|python_extension_must_be_here|*.py|' ./doxyfile1 > ./doxyfile2; \
-	  mv -f doxyfile2 doxyfile1; \
-	  $(DOXYGEN) -u ./doxyfile1; \
-	else \
-	  sed 's|python_extension_must_be_here||' ./doxyfile1 > ./doxyfile2; \
-	  mv -f doxyfile2 doxyfile1; \
-	fi; \
-	if( test "x@DOXYGEN_WITH_STL@" = "xyes"); then \
-	  sed -e 's|BUILTIN_STL_SUPPORT    = NO|BUILTIN_STL_SUPPORT    = YES|' ./doxyfile1 > ./doxyfile2; \
-	  mv -f doxyfile2 doxyfile1; \
-	fi; \
-	mv -f doxyfile1 doxyfile; \
-	echo "Running doxygen in directory:"`pwd`; \
-	$(DOXYGEN) ./doxyfile; \
-	cd ../; \
-	cp -fr $(srcdir)/GEOM/sources/ GEOM/ ; \
-	rm -fr INPUT
+dev_docs: doxyfile
+	echo "Running doxygen in directory: "`pwd`; \
+	$(DOXYGEN) $<;
 
-doctuidir=$(docdir)/tui/GEOM
+clean-local:
+	-rm -fr GEOM doxygen.bak
 
-nodist_doctui_DATA= GEOM/doxyfile
-EXTRA_DIST+= GEOM/doxyfile.in
+install-data-local:
+	if test -d GEOM; then \
+	  $(INSTALL) -d $(DESTDIR)$(docdir)/tui ; \
+	  cp -rp GEOM $(DESTDIR)$(docdir)/tui ; \
+	fi;
+
+uninstall-local:
+	rm -rf $(docdir)/tui/GEOM

@@ -29,57 +29,62 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS = \
-	GEOM_Actor.h \
-	GEOM_AssemblyBuilder.h \
-	GEOM_AISShape.hxx \
-	Handle_GEOM_AISShape.hxx \
-	GEOM_InteractiveObject.hxx \
-	Handle_GEOM_InteractiveObject.hxx \
-	GEOM_AISTrihedron.hxx \
-	GEOM_VTKTrihedron.hxx \
-	GEOM_AISVector.hxx \
-	GEOM_OBJECT_defs.hxx \
-	GEOM_SmartPtr.h \
-	GEOM_DeviceActor.h \
-	GEOM_EdgeSource.h \
-	GEOM_FaceSource.h \
-	GEOM_ShadingFace.h \
-	GEOM_VertexSource.h \
+salomeinclude_HEADERS =				\
+	GEOM_Actor.h				\
+	GEOM_AssemblyBuilder.h			\
+	GEOM_AISShape.hxx			\
+	GEOM_AISShape.ixx			\
+	GEOM_AISShape.jxx			\
+	Handle_GEOM_AISShape.hxx		\
+	GEOM_InteractiveObject.hxx		\
+	GEOM_InteractiveObject.ixx		\
+	GEOM_InteractiveObject.jxx		\
+	Handle_GEOM_InteractiveObject.hxx	\
+	GEOM_AISTrihedron.hxx			\
+	GEOM_VTKTrihedron.hxx			\
+	GEOM_AISVector.hxx			\
+	GEOM_OBJECT_defs.hxx			\
+	GEOM_OCCReader.h			\
+	GEOM_SmartPtr.h				\
+	GEOM_DeviceActor.h			\
+	GEOM_EdgeSource.h			\
+	GEOM_FaceSource.h			\
+	GEOM_ShadingFace.h			\
+	GEOM_VertexSource.h			\
 	GEOM_WireframeFace.h
 
 # Libraries targets
 lib_LTLIBRARIES = libGEOMObject.la
 
-dist_libGEOMObject_la_SOURCES = \
-	GEOM_Actor.cxx \
-	GEOM_OCCReader.cxx \
-	GEOM_AssemblyBuilder.cxx \
-	GEOM_AISShape.cxx \
-	GEOM_InteractiveObject.cxx \
-	GEOM_AISTrihedron.cxx \
-	GEOM_VTKTrihedron.cxx \
-	GEOM_AISVector.cxx \
-	GEOM_DeviceActor.cxx \
-	GEOM_EdgeSource.cxx \
-	GEOM_FaceSource.cxx \
-	GEOM_ShadingFace.cxx \
-	GEOM_VertexSource.cxx \
+dist_libGEOMObject_la_SOURCES =		\
+	GEOM_Actor.cxx			\
+	GEOM_OCCReader.cxx		\
+	GEOM_AssemblyBuilder.cxx	\
+	GEOM_AISShape.cxx		\
+	GEOM_InteractiveObject.cxx	\
+	GEOM_AISTrihedron.cxx		\
+	GEOM_VTKTrihedron.cxx		\
+	GEOM_AISVector.cxx		\
+	GEOM_DeviceActor.cxx		\
+	GEOM_EdgeSource.cxx		\
+	GEOM_FaceSource.cxx		\
+	GEOM_ShadingFace.cxx		\
+	GEOM_VertexSource.cxx		\
 	GEOM_WireframeFace.cxx
 
 
-libGEOMObject_la_CPPFLAGS = \
-	$(CORBA_CXXFLAGS) \
-	$(CORBA_INCLUDES) \
-	$(QT_INCLUDES) \
-	$(PYTHON_INCLUDES) \
-	$(CAS_CPPFLAGS) \
-	$(VTK_INCLUDES) \
-	$(KERNEL_CXXFLAGS) \
+libGEOMObject_la_CPPFLAGS =	\
+	$(CORBA_CXXFLAGS)	\
+	$(CORBA_INCLUDES)	\
+	$(QT_INCLUDES)		\
+	$(PYTHON_INCLUDES)	\
+	$(CAS_CPPFLAGS)		\
+	$(VTK_INCLUDES)		\
+	$(KERNEL_CXXFLAGS)	\
 	$(GUI_CXXFLAGS) 
 	
-libGEOMObject_la_LDFLAGS  = \
-	$(KERNEL_LDFLAGS)  -lSALOMELocalTrace \
+libGEOMObject_la_LDFLAGS  =			\
+	$(KERNEL_LDFLAGS)  -lSALOMELocalTrace	\
 	$(GUI_LDFLAGS) -lqtx -lVTKViewer -lSVTK -lSalomeObject
 #	$(CORBA_LIBS) \
 #	$(STDLIB) \

@@ -27,21 +27,20 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS =
-
-# Libraries targets
-lib_LTLIBRARIES = libBuildGUI.la 
-
-# Sources files
-dist_libBuildGUI_la_SOURCES =	\
+salomeinclude_HEADERS =		\
 	BuildGUI.h		\
 	BuildGUI_EdgeDlg.h	\
 	BuildGUI_WireDlg.h	\
 	BuildGUI_FaceDlg.h	\
 	BuildGUI_ShellDlg.h	\
 	BuildGUI_SolidDlg.h	\
-	BuildGUI_CompoundDlg.h	\
-				\
+	BuildGUI_CompoundDlg.h
+
+# Libraries targets
+lib_LTLIBRARIES = libBuildGUI.la 
+
+# Sources files
+dist_libBuildGUI_la_SOURCES =	\
 	BuildGUI.cxx		\
 	BuildGUI_EdgeDlg.cxx	\
 	BuildGUI_WireDlg.cxx	\
@@ -50,7 +49,7 @@ dist_libBuildGUI_la_SOURCES =	\
 	BuildGUI_SolidDlg.cxx	\
 	BuildGUI_CompoundDlg.cxx
 
-MOC_FILES = \
+MOC_FILES =				\
 	BuildGUI_EdgeDlg_moc.cxx	\
 	BuildGUI_WireDlg_moc.cxx	\
 	BuildGUI_FaceDlg_moc.cxx	\
@@ -58,16 +57,12 @@ MOC_FILES = \
 	BuildGUI_SolidDlg_moc.cxx	\
 	BuildGUI_CompoundDlg_moc.cxx
 
-nodist_libBuildGUI_la_SOURCES = \
+nodist_libBuildGUI_la_SOURCES =		\
 	$(MOC_FILES)
 
-# LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
+# additional information to compile and link file
 
-# LIB_SERVER_IDL =  
-
-# additionnal information to compil and link file
-
-libBuildGUI_la_CPPFLAGS = \
+libBuildGUI_la_CPPFLAGS =			\
 	$(QT_INCLUDES)				\
 	$(VTK_INCLUDES)				\
 	$(CAS_CPPFLAGS)				\
@@ -88,6 +83,6 @@ libBuildGUI_la_CPPFLAGS = \
 	-I$(top_builddir)/src/DlgRef		\
 	-I$(top_builddir)/salome_adm/unix
 
-libBuildGUI_la_LDFLAGS = \
-	../GEOMFiltersSelection/libGEOMFiltersSelection.la \
+libBuildGUI_la_LDFLAGS =					\
+	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../GEOMBase/libGEOMBase.la

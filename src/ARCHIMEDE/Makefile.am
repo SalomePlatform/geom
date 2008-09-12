@@ -29,7 +29,7 @@
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-salomeinclude_HEADERS = \
+salomeinclude_HEADERS =	\
 	Archimede_VolumeSection.hxx
 
 # Libraries targets
@@ -37,17 +37,18 @@ salomeinclude_HEADERS = \
 lib_LTLIBRARIES = libGEOMArchimede.la
 
 # sources files
-dist_libGEOMArchimede_la_SOURCES = \
+dist_libGEOMArchimede_la_SOURCES =	\
 	Archimede_VolumeSection.cxx
 
 
-# additionnal information to compil and link file
-libGEOMArchimede_la_CPPFLAGS = \
-	$(CAS_CPPFLAGS) \
+# additional information to compile and link file
+
+libGEOMArchimede_la_CPPFLAGS =	\
+	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)
 
-libGEOMArchimede_la_LDFLAGS  = \
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace \
-	$(CAS_KERNEL) \
-	$(CAS_MODELER) -lTKMesh \
+libGEOMArchimede_la_LDFLAGS  =			\
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
+	$(CAS_KERNEL)				\
+	$(CAS_MODELER) -lTKMesh			\
 	$(STDLIB)

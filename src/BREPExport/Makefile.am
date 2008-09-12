@@ -30,15 +30,16 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 lib_LTLIBRARIES = libBREPExport.la
 
 # Sources files
-dist_libBREPExport_la_SOURCES = \
+dist_libBREPExport_la_SOURCES =	\
 	BREPExport.cxx
 
-# additionnal information to compil and link file
-libBREPExport_la_CPPFLAGS = \
-	$(CAS_CPPFLAGS) \
+# additional information to compile and link file
+
+libBREPExport_la_CPPFLAGS =	\
+	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)
 
-libBREPExport_la_LDFLAGS  = \
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace \
-	$(STDLIB) \
+libBREPExport_la_LDFLAGS  =			\
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
+	$(STDLIB)				\
 	$(CAS_LDPATH) -lTKBRep

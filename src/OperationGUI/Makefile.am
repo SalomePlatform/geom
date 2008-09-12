@@ -27,20 +27,19 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS =
+salomeinclude_HEADERS =				\
+	OperationGUI.h				\
+	OperationGUI_ArchimedeDlg.h		\
+	OperationGUI_PartitionDlg.h		\
+	OperationGUI_FilletDlg.h		\
+	OperationGUI_ChamferDlg.h		\
+	OperationGUI_GetShapesOnShapeDlg.h	\
+	OperationGUI_ClippingDlg.h
 
 # Libraries targets
 lib_LTLIBRARIES = libOperationGUI.la
 
-dist_libOperationGUI_la_SOURCES = \
-	OperationGUI.h				\
-	OperationGUI_ArchimedeDlg.h		\
-	OperationGUI_PartitionDlg.h		\
-	OperationGUI_GetShapesOnShapeDlg.h	\
-	OperationGUI_FilletDlg.h		\
-	OperationGUI_ChamferDlg.h		\
-	OperationGUI_ClippingDlg.h		\
-						\
+dist_libOperationGUI_la_SOURCES =		\
 	OperationGUI.cxx			\
 	OperationGUI_ArchimedeDlg.cxx		\
 	OperationGUI_PartitionDlg.cxx		\
@@ -49,7 +48,7 @@ dist_libOperationGUI_la_SOURCES = \
 	OperationGUI_ChamferDlg.cxx		\
 	OperationGUI_ClippingDlg.cxx
 
-MOC_FILES = \
+MOC_FILES =					\
 	OperationGUI_ArchimedeDlg_moc.cxx	\
 	OperationGUI_PartitionDlg_moc.cxx	\
 	OperationGUI_GetShapesOnShapeDlg_moc.cxx\
@@ -57,14 +56,10 @@ MOC_FILES = \
 	OperationGUI_ChamferDlg_moc.cxx		\
 	OperationGUI_ClippingDlg_moc.cxx
 
-nodist_libOperationGUI_la_SOURCES = \
+nodist_libOperationGUI_la_SOURCES =		\
 	$(MOC_FILES)
 
-#LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl SALOME_Exception.idl
-
-#LIB_SERVER_IDL =  
-
-# additionnal information to compil and link file
+# additional information to compile and link file
 
 libOperationGUI_la_CPPFLAGS =		\
 	$(QT_INCLUDES)			\
@@ -90,3 +85,9 @@ libOperationGUI_la_CPPFLAGS =		\
 libOperationGUI_la_LDFLAGS =		\
 	../GEOMBase/libGEOMBase.la	\
 	$(CAS_LDPATH) -lTKFillet
+
+###############################
+# Obsolete files ?
+###############################
+# OperationGUI_MaterialDlg.h
+# OperationGUI_MaterialDlg.cxx

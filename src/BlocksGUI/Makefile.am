@@ -25,20 +25,20 @@
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-# header files 
+# Headers files
+salomeinclude_HEADERS =			\
+	BlocksGUI.h			\
+	BlocksGUI_QuadFaceDlg.h		\
+	BlocksGUI_BlockDlg.h		\
+	BlocksGUI_ExplodeDlg.h		\
+	BlocksGUI_PropagateDlg.h	\
+	BlocksGUI_TrsfDlg.h
 
 # Libraries targets
 lib_LTLIBRARIES = libBlocksGUI.la 
 
 # Sources files
 dist_libBlocksGUI_la_SOURCES =		\
-	BlocksGUI.h			\
-	BlocksGUI_QuadFaceDlg.h		\
-	BlocksGUI_BlockDlg.h		\
-	BlocksGUI_ExplodeDlg.h		\
-	BlocksGUI_PropagateDlg.h	\
-	BlocksGUI_TrsfDlg.h		\
-					\
 	BlocksGUI.cxx			\
 	BlocksGUI_QuadFaceDlg.cxx	\
 	BlocksGUI_BlockDlg.cxx		\
@@ -46,23 +46,19 @@ dist_libBlocksGUI_la_SOURCES =		\
 	BlocksGUI_PropagateDlg.cxx	\
 	BlocksGUI_TrsfDlg.cxx
 
-MOC_FILES = \
+MOC_FILES =				\
 	BlocksGUI_QuadFaceDlg_moc.cxx	\
 	BlocksGUI_BlockDlg_moc.cxx	\
 	BlocksGUI_ExplodeDlg_moc.cxx	\
 	BlocksGUI_PropagateDlg_moc.cxx	\
 	BlocksGUI_TrsfDlg_moc.cxx
 
-nodist_libBlocksGUI_la_SOURCES = \
+nodist_libBlocksGUI_la_SOURCES =	\
 	$(MOC_FILES)
 
-#LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
+# additional information to compile and link file
 
-#LIB_SERVER_IDL =  
-
-# additionnal information to compil and link file
-
-libBlocksGUI_la_CPPFLAGS = \
+libBlocksGUI_la_CPPFLAGS =			\
 	$(QT_INCLUDES)				\
 	$(VTK_INCLUDES)				\
 	$(CAS_CPPFLAGS)				\
@@ -83,7 +79,7 @@ libBlocksGUI_la_CPPFLAGS = \
 	-I$(top_builddir)/idl			\
 	-I$(top_builddir)/salome_adm/unix
 
-libBlocksGUI_la_LDFLAGS  = \
+libBlocksGUI_la_LDFLAGS  =					\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../DlgRef/libDlgRef.la					\
 	../GEOMBase/libGEOMBase.la				\

@@ -25,13 +25,9 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS = 
 
-# Libraries targets
-lib_LTLIBRARIES = libBasicGUI.la
 
-# Sources files
-dist_libBasicGUI_la_SOURCES =		\
+salomeinclude_HEADERS =			\
 	BasicGUI.h			\
 	BasicGUI_ArcDlg.h		\
 	BasicGUI_CircleDlg.h		\
@@ -42,8 +38,14 @@ dist_libBasicGUI_la_SOURCES =		\
 	BasicGUI_PlaneDlg.h		\
 	BasicGUI_PointDlg.h		\
 	BasicGUI_VectorDlg.h		\
-	BasicGUI_WorkingPlaneDlg.h	\
-					\
+	BasicGUI_WorkingPlaneDlg.h
+
+# Libraries targets
+
+lib_LTLIBRARIES = libBasicGUI.la
+
+# Sources files
+dist_libBasicGUI_la_SOURCES =		\
 	BasicGUI.cxx			\
 	BasicGUI_PointDlg.cxx		\
 	BasicGUI_LineDlg.cxx		\
@@ -68,14 +70,10 @@ MOC_FILES =					\
 	BasicGUI_CurveDlg_moc.cxx		\
 	BasicGUI_MarkerDlg_moc.cxx
 
-nodist_libBasicGUI_la_SOURCES = \
+nodist_libBasicGUI_la_SOURCES =			\
 	$(MOC_FILES)
 
-# LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Exception.idl SALOME_Component.idl
-
-# LIB_SERVER_IDL = 
-
-# additionnal information to compil and link file
+# additional information to compile and link file
 
 libBasicGUI_la_CPPFLAGS =			\
 	$(QT_INCLUDES)				\

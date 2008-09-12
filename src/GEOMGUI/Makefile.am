@@ -48,11 +48,10 @@ dist_libGEOM_la_SOURCES =	\
 	GEOMGUI_Selection.cxx	\
 	GeometryGUI_Swig.cxx
 
-MOC_FILES = \
+MOC_FILES =			\
 	GeometryGUI_moc.cxx
 
-
-nodist_libGEOM_la_SOURCES = \
+nodist_libGEOM_la_SOURCES =	\
 	$(MOC_FILES)
 
 # resources files
@@ -61,16 +60,7 @@ nodist_salomeres_DATA =	\
 	GEOM_msg_en.qm	\
 	GEOM_msg_fr.qm
 
-#LIB_CLIENT_IDL = SALOME_Exception.idl \
-#		 SALOMEDS.idl \
-#		 SALOMEDS_Attributes.idl \
-#		 SALOME_GenericObj.idl \
-#		 SALOME_Component.idl \
-#		 GEOM_Gen.idl
-
-#LIB_SERVER_IDL =  
-
-# additionnal information to compil and link file
+# additional information to compile and link file
 
 libGEOM_la_CPPFLAGS =				\
 	$(QT_INCLUDES)				\
@@ -89,7 +79,7 @@ libGEOM_la_CPPFLAGS =				\
 	-I$(top_builddir)/idl			\
 	-I$(top_builddir)/salome_adm/unix
 
-libGEOM_la_LDFLAGS = \
+libGEOM_la_LDFLAGS =						\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../GEOMClient/libGEOMClient.la				\
 	../OBJECT/libGEOMObject.la				\

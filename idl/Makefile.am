@@ -26,45 +26,33 @@
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-BASEIDL_FILES= GEOM_Gen.idl GEOM_Superv.idl
-
-EXTRA_DIST+= $(BASEIDL_FILES)
+BASEIDL_FILES = GEOM_Gen.idl GEOM_Superv.idl
 
 # This variable defines the files to be installed
-salomeidl_DATA = $(BASEIDL_FILES)
+dist_salomeidl_DATA = $(BASEIDL_FILES)
 
 # GUI idl common library
 lib_LTLIBRARIES = libSalomeIDLGEOM.la
 
 # Sources built from idl files
-nodist_libSalomeIDLGEOM_la_SOURCES= GEOM_GenSK.cc GEOM_SupervSK.cc
+nodist_libSalomeIDLGEOM_la_SOURCES = GEOM_GenSK.cc GEOM_SupervSK.cc
 
 # header files must be exported: other modules have to use this library
-nodist_salomeinclude_HEADERS= $(BASEIDL_FILES:%.idl=%.hh)
+nodist_salomeinclude_HEADERS = $(BASEIDL_FILES:%.idl=%.hh)
 
-libSalomeIDLGEOM_la_CPPFLAGS =\
-	-I$(top_builddir)/salome_adm/unix \
-	-I$(top_builddir)/idl \
+libSalomeIDLGEOM_la_CPPFLAGS =			\
+	-I$(top_builddir)/salome_adm/unix	\
+	-I$(top_builddir)/idl			\
 	@CORBA_CXXFLAGS@ @CORBA_INCLUDES@ @KERNEL_CXXFLAGS@
 libSalomeIDLGEOM_la_LDFLAGS = -no-undefined -version-info=0:0:0
-libSalomeIDLGEOM_la_LIBADD  = \
-	$(STDLIB) \
-	@CORBA_LIBS@ \
-	$(KERNEL_LDFLAGS) -lSalomeIDLKernel
+libSalomeIDLGEOM_la_LIBADD  = $(STDLIB) @CORBA_LIBS@ $(KERNEL_LDFLAGS) -lSalomeIDLKernel
 
 # These variables defines the building process of CORBA files
 OMNIORB_IDL         = @OMNIORB_IDL@
 OMNIORB_IDLCXXFLAGS = @OMNIORB_IDLCXXFLAGS@
 OMNIORB_IDLPYFLAGS  = @OMNIORB_IDLPYFLAGS@ -I$(top_builddir)/idl/salome -I$(KERNEL_ROOT_DIR)/idl/salome 
-IDLCXXFLAGS = \
-	-bcxx \
-	@IDLCXXFLAGS@ \
-	-I$(top_builddir)/idl/salome \
-	-I$(KERNEL_ROOT_DIR)/idl/salome \
-	-I$(top_builddir)/salome_adm/unix
-IDLPYFLAGS  = \
-	@IDLPYFLAGS@ \
-	-I$(KERNEL_ROOT_DIR)/idl/salome
+IDLCXXFLAGS = -bcxx @IDLCXXFLAGS@ -I$(top_builddir)/idl/salome -I$(KERNEL_ROOT_DIR)/idl/salome -I$(top_builddir)/salome_adm/unix
+IDLPYFLAGS  = @IDLPYFLAGS@ -I$(KERNEL_ROOT_DIR)/idl/salome
 
 # potential problem on parallel make on the following - multiple outputs
 SUFFIXES = .idl .hh SK.cc
@@ -74,14 +62,14 @@ SUFFIXES = .idl .hh SK.cc
 	$(OMNIORB_IDL) $(IDLCXXFLAGS) $(OMNIORB_IDLCXXFLAGS) $<
 
 install-exec-local: $(BASEIDL_FILES:%=$(top_srcdir)/idl/%)
-	$(INSTALL) -d  $(pkgpythondir)
+	$(INSTALL) -d  $(DESTDIR)$(salomepythondir)
 	ls $^ | while read file; do \
-	  $(OMNIORB_IDL) $(IDLPYFLAGS) -C$(pkgpythondir) $$file ; \
+	  $(OMNIORB_IDL) $(IDLPYFLAGS) -C$(DESTDIR)$(salomepythondir) $$file ; \
 	done
 
 # uninstall-local removes too much, but it works in distcheck
 uninstall-local:
-	rm -rf $(pkgpythondir)/*
+	rm -rf $(DESTDIR)$(salomepythondir)/*
 
 mostlyclean-local:
 	-rm -f *.hh *.cc .depidl

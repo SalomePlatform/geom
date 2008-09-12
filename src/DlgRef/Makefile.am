@@ -34,10 +34,10 @@ dist_libDlgRef_la_SOURCES = 	\
 	DlgRef.h		\
 	DlgRef.cxx
 
-MOC_FILES = \
+MOC_FILES =			\
 	DlgRef_moc.cxx
 
-UIC_FILES = \
+UIC_FILES =					\
 	ui_DlgRef_1List1Spin1Btn_QTD.h		\
 	ui_DlgRef_1Sel1Check1List_QTD.h		\
 	ui_DlgRef_1Sel1Check1Sel_QTD.h		\
@@ -92,15 +92,11 @@ nodist_libDlgRef_la_SOURCES =	\
 	$(UIC_FILES)
 
 # additional information to compile and link file
-libDlgRef_la_CPPFLAGS = \
-	$(QT_INCLUDES) \
+
+libDlgRef_la_CPPFLAGS =		\
+	$(QT_INCLUDES)		\
 	$(GUI_CXXFLAGS)
 
-#	$(KERNEL_CXXFLAGS) \
-#	$(GUI_CXXFLAGS)
-
-libDlgRef_la_LDFLAGS  = \
-	$(STDLIB) \
+libDlgRef_la_LDFLAGS  =		\
+	$(STDLIB)		\
 	$(QT_MT_LIBS) 
-
-#	$(GUI_LDFLAGS)

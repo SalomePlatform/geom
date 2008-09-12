@@ -27,12 +27,7 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS =
-
-# Libraries targets
-lib_LTLIBRARIES = libMeasureGUI.la
-
-dist_libMeasureGUI_la_SOURCES =			\
+salomeinclude_HEADERS =				\
 	MeasureGUI.h				\
 	MeasureGUI_Widgets.h			\
 	MeasureGUI_Skeleton.h			\
@@ -47,8 +42,12 @@ dist_libMeasureGUI_la_SOURCES =			\
 	MeasureGUI_WhatisDlg.h			\
 	MeasureGUI_CheckShapeDlg.h		\
 	MeasureGUI_CheckCompoundOfBlocksDlg.h	\
-	MeasureGUI_PointDlg.h			\
-						\
+	MeasureGUI_PointDlg.h
+
+# Libraries targets
+lib_LTLIBRARIES = libMeasureGUI.la
+
+dist_libMeasureGUI_la_SOURCES =			\
 	MeasureGUI.cxx				\
 	MeasureGUI_Widgets.cxx			\
 	MeasureGUI_Skeleton.cxx			\
@@ -81,7 +80,7 @@ MOC_FILES = 						\
 	MeasureGUI_CheckCompoundOfBlocksDlg_moc.cxx	\
 	MeasureGUI_PointDlg_moc.cxx
 
-nodist_libMeasureGUI_la_SOURCES = \
+nodist_libMeasureGUI_la_SOURCES =			\
 	$(MOC_FILES)
 
 UIC_FILES =						\
@@ -97,11 +96,7 @@ UIC_FILES =						\
 
 BUILT_SOURCES = $(UIC_FILES)
 
-#LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
-
-#LIB_SERVER_IDL =  
-
-# additionnal information to compil and link file
+# additional information to compile and link file
 
 libMeasureGUI_la_CPPFLAGS =		\
 	$(QT_INCLUDES)			\
@@ -124,6 +119,6 @@ libMeasureGUI_la_CPPFLAGS =		\
 	-I$(top_builddir)/idl		\
 	-I$(top_builddir)/salome_adm/unix
 
-libMeasureGUI_la_LDFLAGS  = \
+libMeasureGUI_la_LDFLAGS  =		\
 	../GEOMBase/libGEOMBase.la
 

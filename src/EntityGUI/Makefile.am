@@ -30,14 +30,13 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 lib_LTLIBRARIES = libEntityGUI.la
 
 # header files
-salomeinclude_HEADERS =
-
-dist_libEntityGUI_la_SOURCES = 		\
+salomeinclude_HEADERS =			\
 	EntityGUI.h			\
 	EntityGUI_Widgets.h		\
 	EntityGUI_SketcherDlg.h		\
-	EntityGUI_SubShapeDlg.h		\
-					\
+	EntityGUI_SubShapeDlg.h	
+
+dist_libEntityGUI_la_SOURCES = 		\
 	EntityGUI.cxx			\
 	EntityGUI_Widgets.cxx		\
 	EntityGUI_SketcherDlg.cxx	\
@@ -48,10 +47,10 @@ MOC_FILES =				\
 	EntityGUI_SketcherDlg_moc.cxx	\
 	EntityGUI_SubShapeDlg_moc.cxx
 
-nodist_libEntityGUI_la_SOURCES = \
+nodist_libEntityGUI_la_SOURCES =	\
 	 $(MOC_FILES)
 
-UIC_FILES = \
+UIC_FILES =				\
 	ui_EntityGUI_1Sel_QTD.h		\
 	ui_EntityGUI_1Spin_QTD.h	\
 	ui_EntityGUI_2Spin_QTD.h	\
@@ -64,11 +63,7 @@ UIC_FILES = \
 
 BUILT_SOURCES = $(UIC_FILES)
 
-# LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
-
-# LIB_SERVER_IDL =  
-
-# additionnal information to compil and link file
+# additional information to compile and link file
 
 libEntityGUI_la_CPPFLAGS =			\
 	$(QT_INCLUDES)				\
@@ -92,7 +87,7 @@ libEntityGUI_la_CPPFLAGS =			\
 	-I$(top_builddir)/idl			\
 	-I$(top_builddir)/salome_adm/unix
 
-libEntityGUI_la_LDFLAGS  = \
+libEntityGUI_la_LDFLAGS  =					\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../GEOMBase/libGEOMBase.la				\
 	../SKETCHER/libGEOMSketcher.la				\

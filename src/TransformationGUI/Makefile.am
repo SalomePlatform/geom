@@ -27,7 +27,16 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS =
+salomeinclude_HEADERS =					\
+	TransformationGUI.h				\
+	TransformationGUI_MultiTranslationDlg.h		\
+	TransformationGUI_MultiRotationDlg.h		\
+	TransformationGUI_TranslationDlg.h		\
+	TransformationGUI_RotationDlg.h			\
+	TransformationGUI_MirrorDlg.h			\
+	TransformationGUI_ScaleDlg.h			\
+	TransformationGUI_OffsetDlg.h			\
+	TransformationGUI_PositionDlg.h
 
 # Libraries targets
 lib_LTLIBRARIES = libTransformationGUI.la
@@ -53,7 +62,7 @@ dist_libTransformationGUI_la_SOURCES =			\
 	TransformationGUI_OffsetDlg.cxx			\
 	TransformationGUI_PositionDlg.cxx
 
-MOC_FILES = \
+MOC_FILES =						\
 	TransformationGUI_MultiTranslationDlg_moc.cxx	\
 	TransformationGUI_MultiRotationDlg_moc.cxx	\
 	TransformationGUI_TranslationDlg_moc.cxx	\
@@ -63,14 +72,10 @@ MOC_FILES = \
 	TransformationGUI_OffsetDlg_moc.cxx		\
 	TransformationGUI_PositionDlg_moc.cxx
 
-nodist_libTransformationGUI_la_SOURCES = \
+nodist_libTransformationGUI_la_SOURCES =		\
 	$(MOC_FILES)
 
-#LIB_CLIENT_IDL = SALOME_GenericObj.idl SALOME_Component.idl SALOME_Exception.idl
-
-#LIB_SERVER_IDL = 
-
-# additionnal information to compil and link file
+# additional information to compile and link file
 
 libTransformationGUI_la_CPPFLAGS =		\
 	$(QT_INCLUDES)				\
@@ -93,6 +98,6 @@ libTransformationGUI_la_CPPFLAGS =		\
 	-I$(top_builddir)/idl			\
 	-I$(top_builddir)/salome_adm/unix
 
-libTransformationGUI_la_LDFLAGS  = \
-	../GEOMFiltersSelection/libGEOMFiltersSelection.la \
+libTransformationGUI_la_LDFLAGS  =				\
+	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../GEOMBase/libGEOMBase.la

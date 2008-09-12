@@ -27,7 +27,20 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS =
+salomeinclude_HEADERS =				\
+	RepairGUI.h				\
+	RepairGUI_SewingDlg.h			\
+	RepairGUI_SuppressFacesDlg.h		\
+	RepairGUI_ShapeProcessDlg.h		\
+	RepairGUI_CloseContourDlg.h		\
+	RepairGUI_RemoveIntWiresDlg.h		\
+	RepairGUI_RemoveHolesDlg.h		\
+	RepairGUI_DivideEdgeDlg.h		\
+	RepairGUI_FreeBoundDlg.h		\
+	RepairGUI_FreeFacesDlg.h		\
+	RepairGUI_ChangeOrientationDlg.h	\
+	RepairGUI_GlueDlg.h			\
+	RepairGUI_RemoveExtraEdgesDlg.h
 
 # Libraries targets
 lib_LTLIBRARIES = libRepairGUI.la
@@ -61,7 +74,7 @@ dist_libRepairGUI_la_SOURCES =			\
 	RepairGUI_GlueDlg.cxx			\
 	RepairGUI_RemoveExtraEdgesDlg.cxx
 
-MOC_FILES = \
+MOC_FILES = 					\
 	RepairGUI_SewingDlg_moc.cxx		\
 	RepairGUI_SuppressFacesDlg_moc.cxx	\
 	RepairGUI_ShapeProcessDlg_moc.cxx	\
@@ -75,16 +88,12 @@ MOC_FILES = \
 	RepairGUI_GlueDlg_moc.cxx     		\
 	RepairGUI_RemoveExtraEdgesDlg_moc.cxx
 
-nodist_libRepairGUI_la_SOURCES = \
+nodist_libRepairGUI_la_SOURCES =		\
 	$(MOC_FILES)
 
-#LIB_CLIENT_IDL = SALOME_Exception.idl SALOME_GenericObj.idl SALOME_Component.idl
+# additional information to compile and link file
 
-#LIB_SERVER_IDL =  
-
-# additionnal information to compil and link file
-
-libRepairGUI_la_CPPFLAGS = \
+libRepairGUI_la_CPPFLAGS =			\
 	$(QT_INCLUDES)				\
 	$(VTK_INCLUDES)				\
 	$(CAS_CPPFLAGS)				\

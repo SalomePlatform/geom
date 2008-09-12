@@ -31,22 +31,23 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
-salomeinclude_HEADERS = \
+salomeinclude_HEADERS =		\
 	Sketcher_Profile.hxx
 
 # Libraries targets
 lib_LTLIBRARIES = libGEOMSketcher.la
 
-dist_libGEOMSketcher_la_SOURCES = \
+dist_libGEOMSketcher_la_SOURCES =	\
 	Sketcher_Profile.cxx
 
-# additionnal information to compil and link file
-libGEOMSketcher_la_CPPFLAGS = \
-	$(CAS_CPPFLAGS) \
+# additional information to compile and link file
+
+libGEOMSketcher_la_CPPFLAGS =	\
+	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)
 
-libGEOMSketcher_la_LDFLAGS  = \
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace \
-	$(STDLIB) \
-	$(CAS_KERNEL) \
+libGEOMSketcher_la_LDFLAGS  =			\
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
+	$(STDLIB)				\
+	$(CAS_KERNEL)				\
 	$(CAS_MODELER)

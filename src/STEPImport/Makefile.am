@@ -32,15 +32,16 @@ salomeinclude_HEADERS =
 # Libraries targets
 lib_LTLIBRARIES = libSTEPImport.la
 
-dist_libSTEPImport_la_SOURCES = \
+dist_libSTEPImport_la_SOURCES =	\
 	STEPImport.cxx
 
-# additionnal information to compil and link file
-libSTEPImport_la_CPPFLAGS = \
-	$(CAS_CPPFLAGS) \
+# additional information to compile and link file
+
+libSTEPImport_la_CPPFLAGS =	\
+	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)
 
-libSTEPImport_la_LDFLAGS  = \
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace \
-	$(STDLIB) \
+libSTEPImport_la_LDFLAGS  =			\
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
+	$(STDLIB)				\
 	$(CAS_LDPATH) -lTKSTEP

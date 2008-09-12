@@ -28,15 +28,15 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 lib_LTLIBRARIES = libGEOMToolsGUI.la
 
 # header files 
-salomeinclude_HEADERS =
-
-dist_libGEOMToolsGUI_la_SOURCES =		\
+salomeinclude_HEADERS =				\
+	GEOMToolsGUI.h                          \
 	GEOM_ToolsGUI.hxx			\
-	GEOMToolsGUI.h				\
 	GEOMToolsGUI_NbIsosDlg.h		\
 	GEOMToolsGUI_TransparencyDlg.h		\
 	GEOMToolsGUI_DeleteDlg.h		\
-						\
+	GEOMToolsGUI_NbIsosDlg.h
+
+dist_libGEOMToolsGUI_la_SOURCES =		\
 	GEOMToolsGUI.cxx			\
 	GEOMToolsGUI_1.cxx			\
 	GEOMToolsGUI_TransparencyDlg.cxx	\
@@ -51,14 +51,8 @@ MOC_FILES = 					\
 nodist_libGEOMToolsGUI_la_SOURCES =		\
 	$(MOC_FILES)
 
-#LIB_CLIENT_IDL = SALOMEDS_Attributes.idl \
-#		 SALOME_GenericObj.idl \
-#		 SALOME_Exception.idl \
-#		 SALOME_Component.idl
+# additional information to compile and link file
 
-#LIB_SERVER_IDL = 
-
-# additionnal information to compile and link file
 libGEOMToolsGUI_la_CPPFLAGS =		\
 	$(QT_INCLUDES)			\
 	$(VTK_INCLUDES)			\

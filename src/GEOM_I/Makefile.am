@@ -33,66 +33,67 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 lib_LTLIBRARIES = libGEOMEngine.la
 
 # header files 
-salomeinclude_HEADERS = \
-	GEOM_Object_i.hh \
-        GEOM_IOperations_i.hh \
-        GEOM_IBasicOperations_i.hh \
-	GEOM_IHealingOperations_i.hh \
-        GEOM_I3DPrimOperations_i.hh \
-	GEOM_IShapesOperations_i.hh \
-	GEOM_IBlocksOperations_i.hh \
-	GEOM_IBooleanOperations_i.hh \
-	GEOM_ICurvesOperations_i.hh \
-	GEOM_ILocalOperations_i.hh \
-	GEOM_IInsertOperations_i.hh \
-	GEOM_ITransformOperations_i.hh \
-	GEOM_IMeasureOperations_i.hh \
-	GEOM_IGroupOperations_i.hh \
-	GEOM_Gen_i.hh \
+salomeinclude_HEADERS =			\
+	GEOM_Object_i.hh		\
+        GEOM_IOperations_i.hh		\
+        GEOM_IBasicOperations_i.hh	\
+	GEOM_IHealingOperations_i.hh	\
+        GEOM_I3DPrimOperations_i.hh	\
+	GEOM_IShapesOperations_i.hh	\
+	GEOM_IBlocksOperations_i.hh	\
+	GEOM_IBooleanOperations_i.hh	\
+	GEOM_ICurvesOperations_i.hh	\
+	GEOM_ILocalOperations_i.hh	\
+	GEOM_IInsertOperations_i.hh	\
+	GEOM_ITransformOperations_i.hh	\
+	GEOM_IMeasureOperations_i.hh	\
+	GEOM_IGroupOperations_i.hh	\
+	GEOM_Gen_i.hh			\
 	GEOM_GEOM_I.hxx
 
-dist_libGEOMEngine_la_SOURCES = \
-	GEOM_Object_i.cc \
-	GEOM_IOperations_i.cc \
-	GEOM_IBasicOperations_i.cc \
-        GEOM_IHealingOperations_i.cc \
-	GEOM_I3DPrimOperations_i.cc \
-	GEOM_IShapesOperations_i.cc \
-	GEOM_IBlocksOperations_i.cc \
-	GEOM_IBooleanOperations_i.cc \
-	GEOM_ICurvesOperations_i.cc \
-	GEOM_ILocalOperations_i.cc \
-	GEOM_IInsertOperations_i.cc \
-	GEOM_ITransformOperations_i.cc \
-	GEOM_IMeasureOperations_i.cc \
-	GEOM_IGroupOperations_i.cc \
-	GEOM_Gen_i.cc \
+dist_libGEOMEngine_la_SOURCES =		\
+	GEOM_Object_i.cc		\
+	GEOM_IOperations_i.cc		\
+	GEOM_IBasicOperations_i.cc	\
+        GEOM_IHealingOperations_i.cc	\
+	GEOM_I3DPrimOperations_i.cc	\
+	GEOM_IShapesOperations_i.cc	\
+	GEOM_IBlocksOperations_i.cc	\
+	GEOM_IBooleanOperations_i.cc	\
+	GEOM_ICurvesOperations_i.cc	\
+	GEOM_ILocalOperations_i.cc	\
+	GEOM_IInsertOperations_i.cc	\
+	GEOM_ITransformOperations_i.cc	\
+	GEOM_IMeasureOperations_i.cc	\
+	GEOM_IGroupOperations_i.cc	\
+	GEOM_Gen_i.cc			\
 	GEOM_DumpPython.cc
 
-# additionnal information to compil and link file
-libGEOMEngine_la_CPPFLAGS = \
-	$(CORBA_CXXFLAGS) \
-	$(CORBA_INCLUDES) \
-	$(CAS_CPPFLAGS) \
-	$(BOOST_CPPFLAGS) \
-	$(KERNEL_CXXFLAGS) \
-	-I$(srcdir)/../SKETCHER \
-	-I$(srcdir)/../ARCHIMEDE \
-	-I$(srcdir)/../GEOMImpl \
-	-I$(srcdir)/../GEOMAlgo \
-	-I$(srcdir)/../GEOM \
-	-I$(top_builddir)/idl \
+# additional information to compile and link file
+
+libGEOMEngine_la_CPPFLAGS =		\
+	$(CORBA_CXXFLAGS)		\
+	$(CORBA_INCLUDES)		\
+	$(CAS_CPPFLAGS)			\
+	$(BOOST_CPPFLAGS)		\
+	$(KERNEL_CXXFLAGS)		\
+	-I$(srcdir)/../SKETCHER		\
+	-I$(srcdir)/../ARCHIMEDE	\
+	-I$(srcdir)/../GEOMImpl		\
+	-I$(srcdir)/../GEOMAlgo		\
+	-I$(srcdir)/../GEOM		\
+	-I$(top_builddir)/idl		\
 	-I$(top_builddir)/salome_adm/unix
 
 
-libGEOMEngine_la_LDFLAGS  = \
-	../../idl/libSalomeIDLGEOM.la \
-	../ARCHIMEDE/libGEOMArchimede.la \
-	../GEOMImpl/libGEOMimpl.la \
-	../SKETCHER/libGEOMSketcher.la \
-	../GEOM/libGEOMbasic.la \
-	$(KERNEL_LDFLAGS) -lSalomeNS -lSalomeContainer -lSalomeGenericObj -lTOOLSDS \
-	$(CAS_DATAEXCHANGE) \
+libGEOMEngine_la_LDFLAGS  =			\
+	../../idl/libSalomeIDLGEOM.la		\
+	../ARCHIMEDE/libGEOMArchimede.la	\
+	../GEOMImpl/libGEOMimpl.la		\
+	../SKETCHER/libGEOMSketcher.la		\
+	../GEOM/libGEOMbasic.la			\
+	$(KERNEL_LDFLAGS) -lSalomeNS -lSalomeContainer -lSalomeGenericObj -lTOOLSDS	\
+	$(CAS_DATAEXCHANGE)			\
 	$(CAS_LDPATH) -lTKFillet -lTKOffset
 
 # \

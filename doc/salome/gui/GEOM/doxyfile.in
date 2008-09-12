@@ -2,7 +2,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME      = "Geometry Module Reference Manual v.@VERSION@"
-OUTPUT_DIRECTORY  = ./
+OUTPUT_DIRECTORY  = .
 CREATE_SUBDIRS	  = NO
 OUTPUT_LANGUAGE   = English
 TAB_SIZE          = 5
@@ -26,7 +26,7 @@ EXAMPLE_PATH      = @top_srcdir@/src/GEOM_SWIG
 #HTML related options
 #---------------------------------------------------------------------------
 GENERATE_HTML     = YES
-HTML_OUTPUT       = ./
+HTML_OUTPUT       = .
 HTML_HEADER       = @srcdir@/static/header.html
 HTML_FOOTER       = @srcdir@/static/footer.html
 #HTML_STYLESHEET  = @srcdir@/static/doxygen.css
@@ -48,5 +48,5 @@ GENERATE_RTF      = NO
 #---------------------------------------------------------------------------
 #External reference options
 #---------------------------------------------------------------------------
-TAGFILES          = geompy_doc.tag=./geompy_doc
+TAGFILES          = geompy_doc.tag=geompy_doc
 ALLEXTERNALS      = NO
