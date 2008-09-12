@@ -619,7 +619,7 @@ char* GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
     if ( IOR != "" ) {
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
       if ( SO ) {
-	      return TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
+	      return (char*) TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
       }
     }
   }
