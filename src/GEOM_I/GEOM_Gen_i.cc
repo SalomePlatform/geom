@@ -313,7 +313,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   // Build a full file name of temporary file
   TCollection_AsciiString aFullName = TCollection_AsciiString((char*)aTmpDir.c_str()) + aNameWithExt;
   // Save GEOM component in this file
-  _impl->Save(theComponent->GetStudy()->StudyId(), aFullName.ToCString());
+  _impl->Save(theComponent->GetStudy()->StudyId(),(char*) aFullName.ToCString());
   // Conver a file to the byte stream
   aStreamFile = SALOMEDS_Tool::PutFilesToStream(aTmpDir.c_str(), aSeq.in(), isMultiFile);
   // Remove the created file and tmp directory
@@ -375,7 +375,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   TCollection_AsciiString aFullName = (TCollection_AsciiString((char*)aTmpDir.c_str()) + aNameWithExt);
 
   // Open document
-  if (!_impl->Load(theComponent->GetStudy()->StudyId(), aFullName.ToCString())) return false;
+  if (!_impl->Load(theComponent->GetStudy()->StudyId(),(char*) aFullName.ToCString())) return false;
 
   // Remove the created file and tmp directory
   if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq.in(), true);
