@@ -88,7 +88,9 @@ Handle(GEOM_Object) GEOM_Object::GetObject(TDF_Label& theLabel)
 
   GEOM_Engine* anEngine=  GEOM_Engine::GetEngine();
   if(anEngine == NULL) return NULL;
-  return anEngine->GetObject(anID->Get(), anEntry.ToCString());
+  return anEngine->GetObject(anID->Get(), (char*) anEntry.ToCString());
+
+
 }
 
 //=============================================================================
