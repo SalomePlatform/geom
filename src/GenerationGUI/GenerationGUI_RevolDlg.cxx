@@ -218,7 +218,11 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText( "" );
   
-  if ( IObjectCount() != 1 ) {
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
       myOkBase = false;        
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
@@ -228,7 +232,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
   
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
   QString aName = GEOMBase::GetName( aSelectedObject );
   
   if ( !testResult )
@@ -249,9 +253,8 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
       TopoDS_Shape aShape;
       
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 	TColStd_IndexedMapOfInteger aMap;
-	aSelMgr->GetIndexes( firstIObject(), aMap );
+	aSelMgr->GetIndexes(aSelList.First(), aMap);
 	if ( aMap.Extent() == 1 ) {
 	  
 	  int anIndex = aMap( 1 );
@@ -288,7 +291,6 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
 
   displayPreview();
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()

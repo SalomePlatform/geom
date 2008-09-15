@@ -175,16 +175,20 @@ void OperationGUI_GetShapesOnShapeDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aString = "";
 
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString, true );
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
 
-  if ( nbSel > 0 ) {
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
+
+  if (nbSel > 0) {
     Standard_Boolean aRes = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-    if ( !CORBA::is_nil( aSelectedObject ) && aRes && GEOMBase::IsShape( aSelectedObject ) ) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
+    if (!CORBA::is_nil(aSelectedObject) && aRes && GEOMBase::IsShape(aSelectedObject)) {
     {
-      myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
-      if      ( myEditCurrentArgument == GroupPoints->LineEdit1 )   myObject1 = aSelectedObject;
-      else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )   myObject2 = aSelectedObject;
+      myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+      if      (myEditCurrentArgument == GroupPoints->LineEdit1) myObject1 = aSelectedObject;
+      else if (myEditCurrentArgument == GroupPoints->LineEdit2) myObject2 = aSelectedObject;
       }
     }
   }
@@ -258,11 +262,11 @@ GEOM::GEOM_IOperations_ptr OperationGUI_GetShapesOnShapeDlg::createOperation()
 //=================================================================================
 bool OperationGUI_GetShapesOnShapeDlg::isValid( QString& msg )
 {
-  Handle(SALOME_InteractiveObject) IO = firstIObject();
-  Standard_Boolean testResult;
-  GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject( IO, testResult );
-  if ( !testResult || anObject->_is_nil() )
-    return false;
+  //Handle(SALOME_InteractiveObject) IO = firstIObject();
+  //Standard_Boolean testResult;
+  //GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject( IO, testResult );
+  //if ( !testResult || anObject->_is_nil() )
+  //  return false;
 
   return !CORBA::is_nil( myObject1 ) && !CORBA::is_nil( myObject2 );
 }

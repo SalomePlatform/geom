@@ -215,8 +215,13 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
     return;
   
   myEditCurrentArgument->setText( "" );
-  if ( IObjectCount() != 1 ) {
-    switch ( getConstructorId() ) {
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    switch (getConstructorId()) {
     case 0:
       if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
       else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
@@ -233,7 +238,7 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
   }   
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
     QString aName = GEOMBase::GetName(aSelectedObject);
 
@@ -241,9 +246,8 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
     TopoDS_Shape aShape;
     if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
     {
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
       TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes(firstIObject(), aMap);
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
       if (aMap.Extent() == 1) // Local Selection
       {
         int anIndex = aMap(1);

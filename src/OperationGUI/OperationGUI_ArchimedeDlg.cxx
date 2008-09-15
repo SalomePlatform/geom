@@ -168,30 +168,32 @@ bool OperationGUI_ArchimedeDlg::ClickOnApply()
   return true;
 }
 
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
 //=================================================================================
 void OperationGUI_ArchimedeDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText( "" );
+  myEditCurrentArgument->setText("");
   myShape = GEOM::GEOM_Object::_nil();
-  
-  if ( IObjectCount() != 1 )
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1)
     return;
 
   Standard_Boolean testResult = Standard_False;
-  myShape = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+  myShape = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
-  if ( !testResult || myShape->_is_nil() || !GEOMBase::IsShape( myShape ) ) {
+  if (!testResult || myShape->_is_nil() || !GEOMBase::IsShape(myShape)) {
     myShape = GEOM::GEOM_Object::_nil();
     return;
   }
 
-  myEditCurrentArgument->setText( GEOMBase::GetName( myShape ) );
+  myEditCurrentArgument->setText(GEOMBase::GetName(myShape));
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()

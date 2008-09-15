@@ -177,8 +177,12 @@ void RepairGUI_SewingDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   myObject = GEOM::GEOM_Object::_nil();
 
-  if ( IObjectCount() == 1 ) {
-    Handle(SALOME_InteractiveObject) anIO = firstIObject();
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if ( aSelList.Extent() == 1 ) {
+    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
     Standard_Boolean aRes;
     myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
     if ( aRes )

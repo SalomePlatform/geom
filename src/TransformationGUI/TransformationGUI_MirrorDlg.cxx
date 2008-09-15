@@ -208,32 +208,36 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aName;
 
-  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
-    int aNbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aName );
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
+    int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
     if ( aNbSel < 1 ) {
-      myObjects.length( 0 );
+      myObjects.length(0);
       return;
     }
-    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myObjects );
-    if ( !myObjects.length() )
+    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myObjects);
+    if (!myObjects.length())
       return;
-    if ( aNbSel != 1 )
-      aName = tr( "%1_objects" ).arg( aNbSel );
+    if (aNbSel != 1)
+      aName = tr("%1_objects").arg(aNbSel);
   }
-  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
-    if ( IObjectCount() != 1 ) {
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+    if (aSelList.Extent() != 1) {
       myArgument = GEOM::GEOM_Object::_nil();
       return;
     }
     Standard_Boolean testResult = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
     myArgument = aSelectedObject;
-    if ( !testResult || CORBA::is_nil( myArgument ) )
+    if (!testResult || CORBA::is_nil(myArgument))
       return;
 
-    aName = GEOMBase::GetName( aSelectedObject );
+    aName = GEOMBase::GetName(aSelectedObject);
     
-    if ( testResult && !aSelectedObject->_is_nil() ) {
+    if (testResult && !aSelectedObject->_is_nil()) {
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
 	TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
@@ -242,9 +246,8 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
 	else if ( getConstructorId() == 2 )
 	  aNeedType = TopAbs_FACE;
 	
-	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 	TColStd_IndexedMapOfInteger aMap;
-	aSelMgr->GetIndexes( firstIObject(), aMap );
+	aSelMgr->GetIndexes(aSelList.First(), aMap);
 	if ( aMap.Extent() == 1 ) {
 	  int anIndex = aMap( 1 );
 	  if ( aNeedType == TopAbs_VERTEX )

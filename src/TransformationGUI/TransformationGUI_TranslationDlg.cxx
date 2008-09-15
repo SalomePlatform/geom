@@ -274,32 +274,36 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aName;
   
-  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
-    int aNbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aName );
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
+    int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
     
-    if ( aNbSel < 1 ) {
-      myObjects.length( 0 );
+    if (aNbSel < 1) {
+      myObjects.length(0);
 	  return;
     }
-    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myObjects );
-    if ( !myObjects.length() )
+    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myObjects);
+    if (!myObjects.length())
       return;
   }
   else {
-    if ( IObjectCount() != 1 ) {
-      if ( myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1 )
+    if (aSelList.Extent() != 1 ) {
+      if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1)
 	myPoint1 = GEOM::GEOM_Object::_nil();
-      else if ( myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2 )
+      else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2)
 	myVector = GEOM::GEOM_Object::_nil();
-      else if ( myEditCurrentArgument == GroupPoints->LineEdit3 )
+      else if (myEditCurrentArgument == GroupPoints->LineEdit3)
 	myPoint2 = GEOM::GEOM_Object::_nil();
       return;
     }
+
+    Standard_Boolean testResult = Standard_False;
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
     
-    Standard_Boolean testResult = Standard_False;;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
-    
-    if ( !testResult || CORBA::is_nil( aSelectedObject ) )
+    if (!testResult || CORBA::is_nil(aSelectedObject))
       return;
     
     TopoDS_Shape aShape;
@@ -310,9 +314,8 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
       if ( myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2 )
         aNeedType = TopAbs_EDGE;
 
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
       TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( firstIObject(), aMap );
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
       if ( aMap.Extent() == 1 )
       {
         int anIndex = aMap( 1 );
@@ -353,7 +356,6 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
   
   displayPreview();
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()
@@ -451,22 +453,26 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_TranslationDlg::createOperation()
 bool TransformationGUI_TranslationDlg::isValid( QString& /*msg*/ )
 {
   int aConstructorId = getConstructorId();
-  
-  switch ( aConstructorId ) {
+
+  switch (aConstructorId) {
   case 0: 
     {
-      Handle(SALOME_InteractiveObject) IO = firstIObject();
-      Standard_Boolean testResult;
-      GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject( IO, testResult );
-      if ( !testResult || anObject->_is_nil() )
-	return false;
-      
-      return !( myObjects.length() == 0 );
+      //LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      //SALOME_ListIO aSelList;
+      //aSelMgr->selectedObjects(aSelList);
+      //
+      //Handle(SALOME_InteractiveObject) IO = aSelList.First();
+      //Standard_Boolean testResult;
+      //GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject(IO, testResult);
+      //if (!testResult || anObject->_is_nil())
+      //  return false;
+
+      return !(myObjects.length() == 0);
     }
   case 1: 
-    return !( myObjects.length() == 0 || myPoint1->_is_nil() || myPoint2->_is_nil() );
+    return !(myObjects.length() == 0 || myPoint1->_is_nil() || myPoint2->_is_nil());
   case 2: 
-    return !( myObjects.length() == 0 || myVector->_is_nil() );
+    return !( myObjects.length() == 0 || myVector->_is_nil());
   default: 
     break;
   }
@@ -494,7 +500,8 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
       if ( toCreateCopy ) {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
 	  myCurrObject = myObjects[i];
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->TranslateDXDYDZCopy( myObjects[i], dx, dy, dz );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+            TranslateDXDYDZCopy( myObjects[i], dx, dy, dz );
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
 	}
@@ -502,7 +509,8 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
       else {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
 	  myCurrObject = myObjects[i];
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->TranslateDXDYDZ( myObjects[i], dx, dy, dz );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+            TranslateDXDYDZ( myObjects[i], dx, dy, dz );
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
 	}
@@ -515,7 +523,8 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
       if ( toCreateCopy ) {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
 	  myCurrObject = myObjects[i];
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->TranslateTwoPointsCopy( myObjects[i], myPoint1, myPoint2 );
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+            TranslateTwoPointsCopy( myObjects[i], myPoint1, myPoint2 );
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
 	}
@@ -523,7 +532,8 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
       else {
 	for ( int i = 0; i < myObjects.length(); i++ ) {
 	  myCurrObject = myObjects[i];
-	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->TranslateTwoPoints( myObjects[i], myPoint1, myPoint2 );	
+	  anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
+            TranslateTwoPoints( myObjects[i], myPoint1, myPoint2 );	
 	  if ( !anObj->_is_nil() )
 	    objects.push_back( anObj._retn() );
 	}

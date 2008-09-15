@@ -318,7 +318,11 @@ void PrimitiveGUI_FaceDlg::SelectionIntoArgument()
 
   myEditCurrentArgument->setText( "" );
 
-  if ( IObjectCount() != 1 ) {
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if ( aSelList.Extent() != 1 ) {
     if ( myEditCurrentArgument == GroupPlane->LineEdit1 )  myEdge = GEOM::GEOM_Object::_nil();
     return;
   }
@@ -326,7 +330,7 @@ void PrimitiveGUI_FaceDlg::SelectionIntoArgument()
   // nbSel == 1 
   Standard_Boolean aRes = Standard_False;
   TopAbs_ShapeEnum aNeedType = TopAbs_EDGE;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
     QString aName = GEOMBase::GetName( aSelectedObject );
     
@@ -335,9 +339,8 @@ void PrimitiveGUI_FaceDlg::SelectionIntoArgument()
       if (GroupType->RadioButton2->isChecked())
 	aNeedType = TopAbs_FACE;
 
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
       TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( firstIObject(), aMap );
+      aSelMgr->GetIndexes( aSelList.First(), aMap );
       if ( aMap.Extent() == 1 ) { // Local Selection
 	int anIndex = aMap( 1 );
 	if ( aNeedType == TopAbs_EDGE )

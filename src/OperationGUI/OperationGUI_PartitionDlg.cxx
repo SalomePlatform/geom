@@ -235,7 +235,11 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aString = "";
   
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString, true );
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
     
   if ( nbSel < 1 ) {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
@@ -248,7 +252,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
   
   // One and only one plane can be selected
   
-  if ( getConstructorId() == 1 && 
+  if ( getConstructorId() == 1 &&
        myEditCurrentArgument == GroupPoints->LineEdit2 && 
        nbSel != 1 ) {
     myListTools.length( 0 );
@@ -256,13 +260,13 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
   }
   
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
-    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myListShapes, true );
+    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myListShapes, true);
     myListMaterials.length( 0 );
     if ( !myListShapes.length() )
       return;
   }
   else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
-    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myListTools, true );
+    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myListTools, true);
     if ( !myListTools.length() )
       return;
   }

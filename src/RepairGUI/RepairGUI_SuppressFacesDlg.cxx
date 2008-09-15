@@ -164,9 +164,15 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
   Standard_Boolean aRes = Standard_False;
   int i = 0;
   int numFaces = 0;
-  myObjects->length( IObjectCount() );
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  myObjects->length( aSelList.Extent() );
   myFaces.clear();
-  for ( SALOME_ListIteratorOfListIO anIt( selectedIO() ); anIt.More(); anIt.Next() ) {
+
+  for (SALOME_ListIteratorOfListIO anIt (aSelList); anIt.More(); anIt.Next()) {
     Handle(SALOME_InteractiveObject) anIO = anIt.Value();
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
     if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
@@ -176,7 +182,7 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
 	  GEOM::short_array anIndexes;
 
 	  TColStd_IndexedMapOfInteger aMap;
-	  myGeomGUI->getApp()->selectionMgr()->GetIndexes( anIO, aMap );
+	  aSelMgr->GetIndexes( anIO, aMap );
 	  
 	  if ( !aMap.IsEmpty() ) {
 	    Convert( aMap, anIndexes );

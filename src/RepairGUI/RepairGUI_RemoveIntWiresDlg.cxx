@@ -172,8 +172,12 @@ void RepairGUI_RemoveIntWiresDlg::SelectionIntoArgument()
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myObject = GEOM::GEOM_Object::_nil();
   else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myWiresInd->length( 0 );
 
-  if ( IObjectCount() == 1 ) {
-    Handle(SALOME_InteractiveObject) anIO = firstIObject();
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if ( aSelList.Extent() == 1 ) {
+    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
     
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {	// face selection
       Standard_Boolean aRes;
@@ -186,7 +190,7 @@ void RepairGUI_RemoveIntWiresDlg::SelectionIntoArgument()
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 && 
 	      !GroupPoints->CheckButton1->isChecked() ) {
       TColStd_IndexedMapOfInteger aMap;
-      ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr()->GetIndexes( anIO, aMap );
+      aSelMgr->GetIndexes( anIO, aMap );
       const int n = aMap.Extent();
       myWiresInd->length( n );
       for ( int i = 1; i <= n; i++ )

@@ -249,7 +249,11 @@ void PrimitiveGUI_BoxDlg::SelectionIntoArgument()
   
   myEditCurrentArgument->setText( "" );
   
-  if ( IObjectCount() != 1 ) {
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if ( aSelList.Extent() != 1 ) {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
       myPoint1 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
@@ -259,7 +263,7 @@ void PrimitiveGUI_BoxDlg::SelectionIntoArgument()
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First(), testResult );
   
   if ( !testResult || CORBA::is_nil( aSelectedObject ) )
     return;
@@ -267,9 +271,8 @@ void PrimitiveGUI_BoxDlg::SelectionIntoArgument()
   TopoDS_Shape aShape;
   QString aName = GEOMBase::GetName( aSelectedObject );
   if (GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
     TColStd_IndexedMapOfInteger aMap;
-    aSelMgr->GetIndexes( firstIObject(), aMap );
+    aSelMgr->GetIndexes( aSelList.First(), aMap );
     if ( aMap.Extent() == 1) { // Local Selection
       int anIndex = aMap( 1 );
       aName.append( ":vertex_" + QString::number( anIndex ) );	  

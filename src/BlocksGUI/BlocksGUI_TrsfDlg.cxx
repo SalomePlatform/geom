@@ -234,12 +234,16 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
     }
   }
 
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   // If selection of main object is activated
   if ( aCurrFocus == MainObj1 || aCurrFocus == MainObj2 ) {
-    if ( IObjectCount() == 1 ) {
+    if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
 
       if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
         myShape = anObj;
@@ -256,14 +260,14 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
   else if ( aCurrFocus == Face1  || aCurrFocus == Face2  ||
 	    aCurrFocus == Face1U || aCurrFocus == Face2U ||
 	    aCurrFocus == Face1V || aCurrFocus == Face2V ) {
-    if ( IObjectCount() == 1 ) {
+    if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
 
       if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
         TColStd_IndexedMapOfInteger anIndexes;
-	( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr()->GetIndexes( firstIObject(), anIndexes );
+	myGeomGUI->getApp()->selectionMgr()->GetIndexes(aSelList.First(), anIndexes);
 
         if ( anIndexes.Extent() == 1 ) {
           int anIndex = anIndexes( 1 );

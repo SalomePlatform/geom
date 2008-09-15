@@ -358,10 +358,14 @@ void RepairGUI_ShapeProcessDlg::selectionChanged()
 {
   reset();
 	
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   Standard_Boolean aRes = Standard_False;
   int i = 0;
-  myObjects->length( IObjectCount() );
-  for ( SALOME_ListIteratorOfListIO anIt( selectedIO() ); anIt.More(); anIt.Next() ) {
+  myObjects->length(aSelList.Extent());
+  for (SALOME_ListIteratorOfListIO anIt (aSelList); anIt.More(); anIt.Next()) {
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
     if ( !CORBA::is_nil( aSelectedObject ) && aRes )
 	myObjects[i++] = aSelectedObject;

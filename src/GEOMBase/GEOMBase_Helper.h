@@ -131,21 +131,6 @@ protected:
 
   inline void setPrefix( const QString& prefix ) { myPrefix = prefix; }
   QString getPrefix( GEOM::GEOM_Object_ptr = GEOM::GEOM_Object::_nil() ) const;
-
-  const SALOME_ListIO& selectedIO();
-  // Function returns a list of SALOME_InteractiveObject's from
-  // selection manager in GUI
-
-  int   IObjectCount() ;
-  // Function returns the number of selected objects
-  
-  Handle(SALOME_InteractiveObject) firstIObject() ;
-  // Function returns the first selected object in the list
-  // of selected objects
-
-  Handle(SALOME_InteractiveObject) lastIObject() ;
-  // Function returns the last selected object in the list
-  // of selected objects
   
   bool selectObjects( ObjectList& objects );
   // Selects list of objects 

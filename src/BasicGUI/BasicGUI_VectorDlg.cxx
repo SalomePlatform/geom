@@ -271,42 +271,45 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
 
-  if ( IObjectCount() != 1 ) {
-    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1)
       myPoint1 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
       myPoint2 = GEOM::GEOM_Object::_nil();
     return;
   }
 
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
+  if (!CORBA::is_nil(aSelectedObject) && aRes) {
     QString aName = GEOMBase::GetName(aSelectedObject);
 
     TopoDS_Shape aShape;
-    if ( GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
       TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( firstIObject(), aMap );
-      if ( aMap.Extent() == 1 ) { // Local Selection
-        int anIndex = aMap( 1 );
-        aName += QString( ":vertex_%1" ).arg( anIndex );
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
+      if (aMap.Extent() == 1) { // Local Selection
+        int anIndex = aMap(1);
+        aName += QString(":vertex_%1").arg(anIndex);
 
 	//Find SubShape Object in Father
-	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
 	
-	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-	  aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+	if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	}
 	else {
 	  aSelectedObject = aFindedObject; // get Object from study
 	}
       }
       else { // Global Selection
-        if ( aShape.ShapeType() != TopAbs_VERTEX ) {
+        if (aShape.ShapeType() != TopAbs_VERTEX) {
           aSelectedObject = GEOM::GEOM_Object::_nil();
           aName = "";
         }
@@ -317,24 +320,23 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
 
     if (!aSelectedObject->_is_nil()) { // clear selection if something selected
       globalSelection();
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
     }
 
-    if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+    if      (myEditCurrentArgument == GroupPoints->LineEdit1) {
       myPoint1 = aSelectedObject;
-      if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+      if (!myPoint1->_is_nil() && myPoint2->_is_nil())
 	GroupPoints->PushButton2->click();
     }
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
       myPoint2 = aSelectedObject;
-      if ( !myPoint2->_is_nil() && myPoint1->_is_nil() )
+      if (!myPoint2->_is_nil() && myPoint1->_is_nil())
 	GroupPoints->PushButton1->click();
     }
   }
 
   displayPreview();
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()

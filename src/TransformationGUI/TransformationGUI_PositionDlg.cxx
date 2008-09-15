@@ -220,28 +220,32 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aName;
 
-  if ( myEditCurrentArgument == Group1->LineEdit1 ) {
-    int aNbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aName );
-    if ( aNbSel < 1 ) {
-      myObjects.length( 0 );
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (myEditCurrentArgument == Group1->LineEdit1) {
+    int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
+    if (aNbSel < 1) {
+      myObjects.length(0);
       displayPreview();
       return;
     }
-    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myObjects );
+    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myObjects);
     if ( !myObjects.length() ) {
       displayPreview();
       return;
     }
   }
-  else if ( myEditCurrentArgument == Group1->LineEdit2 ) {
+  else if (myEditCurrentArgument == Group1->LineEdit2) {
     myStartLCS = GEOM::GEOM_Object::_nil();
-    if ( IObjectCount() != 1 ) {
+    if (aSelList.Extent() != 1) {
       displayPreview();
       return;
     }
 
     Standard_Boolean testResult = Standard_False;
-    myStartLCS = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+    myStartLCS = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
     if ( !testResult || CORBA::is_nil( myStartLCS ) ) {
       displayPreview();
       return;
@@ -250,13 +254,13 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
   }
   else if ( myEditCurrentArgument == Group1->LineEdit3 ) {
     myEndLCS = GEOM::GEOM_Object::_nil();
-    if ( IObjectCount() != 1 ) {
+    if ( aSelList.Extent() != 1 ) {
       displayPreview();
       return;
     }
     
     Standard_Boolean testResult = Standard_False;
-    myEndLCS = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+    myEndLCS = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
     if ( !testResult || CORBA::is_nil( myEndLCS ) ) {
       displayPreview();
       return;
@@ -267,7 +271,6 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( aName );
   displayPreview(); 
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()

@@ -163,72 +163,72 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
 {
   erasePreview();
   myEditCurrentArgument->setText( "" );
-  
-  if ( IObjectCount() != 1 ) {
-    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
-      myOkBase = false;
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
-      myOkPath = false;
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    if      (myEditCurrentArgument == GroupPoints->LineEdit1) myOkBase = false;
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2) myOkPath = false;
     return;
   }
-  
+
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
-    
-  if ( !testResult )
+  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+
+  if (!testResult)
     return;
-  
+
   TopoDS_Shape S;
-  
-  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+
+  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
     myOkBase = false;
     
-    if ( !GEOMBase::GetShape( aSelectedObject, S ) ||
-	 S.ShapeType() == TopAbs_COMPSOLID || 
-	 S.ShapeType() == TopAbs_COMPOUND || 
-	 S.ShapeType() == TopAbs_SOLID || 
-	 S.ShapeType() == TopAbs_SHAPE ) 
-      return;
-    
-    myBase = aSelectedObject;
-    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
-    myOkBase = true;
-  }
-  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
-    myOkPath = false;
-    
-    if ( !GEOMBase::GetShape( aSelectedObject, S ) ) 
+    if (!GEOMBase::GetShape(aSelectedObject, S) ||
+        S.ShapeType() == TopAbs_COMPSOLID ||
+        S.ShapeType() == TopAbs_COMPOUND ||
+        S.ShapeType() == TopAbs_SOLID ||
+        S.ShapeType() == TopAbs_SHAPE)
       return;
 
-    QString aName = GEOMBase::GetName( aSelectedObject );
-    
-    if ( testResult && !aSelectedObject->_is_nil() && aSelectedObject != myBase ) {
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    myBase = aSelectedObject;
+    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+    myOkBase = true;
+  }
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+    myOkPath = false;
+
+    if (!GEOMBase::GetShape(aSelectedObject, S)) 
+      return;
+
+    QString aName = GEOMBase::GetName(aSelectedObject);
+
+    if (testResult && !aSelectedObject->_is_nil() && aSelectedObject != myBase) {
       TColStd_IndexedMapOfInteger aMap;
-      
-      aSelMgr->GetIndexes( firstIObject(), aMap );
-      if ( aMap.Extent() == 1 ) {
-	int anIndex = aMap( 1 );
-	aName.append( ":edge_" + QString::number( anIndex ) );
-	
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
+      if (aMap.Extent() == 1) {
+	int anIndex = aMap(1);
+	aName.append(":edge_" + QString::number(anIndex));
+
 	//Find SubShape Object in Father
-	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
-	
-	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+
+	if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
 	  GEOM::GEOM_IShapesOperations_var aShapesOp =
-	    getGeomEngine()->GetIShapesOperations( getStudyId() );
-	  myPath = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+	    getGeomEngine()->GetIShapesOperations(getStudyId());
+	  myPath = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	  myOkPath = true;
 	}
-	else {  // get Object from study
+	else { // get Object from study
 	  myPath = aFindedObject;
 	  myOkPath = true;
 	}
       }
       else {
 	myOkPath = true;
-	if ( S.ShapeType() != TopAbs_EDGE ) {
+	if (S.ShapeType() != TopAbs_EDGE) {
 	  aSelectedObject = GEOM::GEOM_Object::_nil();
 	  aName = "";
 	  myOkPath = false;
@@ -236,12 +236,11 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
 	myPath = aSelectedObject;
       }
     }
-    myEditCurrentArgument->setText( aName );
+    myEditCurrentArgument->setText(aName);
   }
-  
+
   displayPreview();
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()

@@ -293,8 +293,12 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aName;
 
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   const int id = getConstructorId();
-  if ( IObjectCount() != 1 ) {
+  if (aSelList.Extent() != 1) {
     if ( id == 0 )
       myFace = GEOM::GEOM_Object::_nil();
     else if ( id == 1 ) {
@@ -308,7 +312,7 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
 
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
 
   if ( !aRes || CORBA::is_nil( aSelectedObject ) )
     return;
@@ -322,9 +326,8 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
     if ( aRes && !aSelectedObject->_is_nil() ) {
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-        LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
         TColStd_IndexedMapOfInteger aMap;
-        aSelMgr->GetIndexes( firstIObject(), aMap );
+        aSelMgr->GetIndexes(aSelList.First(), aMap);
         if ( aMap.Extent() == 1 ) {
           int anIndex = aMap( 1 );
           aName = aName + ":edge_" + QString::number( anIndex );

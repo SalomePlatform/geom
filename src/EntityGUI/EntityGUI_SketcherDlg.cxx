@@ -858,18 +858,22 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
   myX = myLastX1;
   myY = myLastY1;
 
-  int nbSel = IObjectCount();
-  if ( nbSel == 1 && myEditCurrentArgument == Group1Sel->LineEdit1 ) {
+  LightApp_SelectionMgr* aSelMgr = myGeometryGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  int nbSel = aSelList.Extent();
+  if (nbSel == 1 && myEditCurrentArgument == Group1Sel->LineEdit1) {
     Standard_Boolean aRes = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-    if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
+    if (!CORBA::is_nil(aSelectedObject) && aRes) {
       TopoDS_Shape aShape;
-      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_VERTEX ) ) {
+      if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX)) {
 	gp_Trsf aTrans;
 	gp_Ax3 aWPlane = myGeometryGUI->GetWorkingPlane();
 
-	aTrans.SetTransformation( aWPlane );
-	BRepBuilderAPI_Transform aTransformation( aShape, aTrans, Standard_False );
+	aTrans.SetTransformation(aWPlane);
+	BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);
 	aShape = aTransformation.Shape();
 
 	gp_Pnt aPnt;
@@ -914,7 +918,12 @@ void EntityGUI_SketcherDlg::LineEditReturnPressed()
     /* so SelectionIntoArgument() is automatically called.           */
     const QString objectUserName = myEditCurrentArgument->text();
     QWidget* thisWidget = (QWidget*)this;
-    if ( GEOMBase::SelectionByNameInDialogs( thisWidget, objectUserName, selectedIO() ) )
+
+    LightApp_SelectionMgr* aSelMgr = myGeometryGUI->getApp()->selectionMgr();
+    SALOME_ListIO aSelList;
+    aSelMgr->selectedObjects(aSelList);
+
+    if (GEOMBase::SelectionByNameInDialogs(thisWidget, objectUserName, aSelList))
       myEditCurrentArgument->setText( objectUserName );
   }
 }

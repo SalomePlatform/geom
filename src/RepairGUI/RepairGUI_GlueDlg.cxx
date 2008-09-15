@@ -290,8 +290,12 @@ void RepairGUI_GlueDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   myObject = GEOM::GEOM_Object::_nil();
 
-  if ( IObjectCount() == 1 ) {
-    Handle(SALOME_InteractiveObject) anIO = firstIObject();
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if ( aSelList.Extent() == 1 ) {
+    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
     Standard_Boolean aRes;
     myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
     if ( aRes )
@@ -423,9 +427,13 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
       QMap<QString, char> selected;
 
       // Get names of selected objects
-      SALOME_ListIteratorOfListIO it ( selectedIO() );
-      for ( ; it.More(); it.Next() ) 
-        selected.insert( it.Value()->getName(), 0 );
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      SALOME_ListIO aSelList;
+      aSelMgr->selectedObjects(aSelList);
+
+      SALOME_ListIteratorOfListIO it (aSelList);
+      for (; it.More(); it.Next()) 
+        selected.insert(it.Value()->getName(), 0);
 
       // Iterate through result and select objects with names from selection
       // ObjectList toRemoveFromEnggine;
@@ -693,8 +701,12 @@ void RepairGUI_GlueDlg::updateButtonState()
   }
   else
   {
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    SALOME_ListIO aSelList;
+    aSelMgr->selectedObjects(aSelList);
+
     bool wasSelected = false;
-    SALOME_ListIteratorOfListIO it ( selectedIO() );
+    SALOME_ListIteratorOfListIO it (aSelList);
     if (it.More() > 0)
       wasSelected = true;
     bool wasDetected = myTmpObjs.size() ? true : false;

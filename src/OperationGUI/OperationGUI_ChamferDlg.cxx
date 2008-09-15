@@ -348,7 +348,6 @@ bool OperationGUI_ChamferDlg::ClickOnApply()
   return true;
 }
 
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection has changed
@@ -356,7 +355,7 @@ bool OperationGUI_ChamferDlg::ClickOnApply()
 void OperationGUI_ChamferDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myEditCurrentArgument->setText( "" );
+  myEditCurrentArgument->setText("");
 
   // Get index of current selection focus
   int aCurrFocus = -1;
@@ -368,12 +367,17 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
     }
   }
 
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   // If selection of main object is activated
-  if ( aCurrFocus == MainObj1 || aCurrFocus == MainObj2 || aCurrFocus == MainObj3 || aCurrFocus == MainObj4) {
-    if ( IObjectCount() == 1 ) {
+  if (aCurrFocus == MainObj1 || aCurrFocus == MainObj2 || aCurrFocus == MainObj3 || aCurrFocus == MainObj4)
+  {
+    if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
 
       if ( aResult && !anObj->_is_nil() ) {
         myShape = anObj;
@@ -388,18 +392,19 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
     enableWidgets();
   }
   // If face selection of second tab is activated
-  else if ( aCurrFocus == Face1 || aCurrFocus == Face2 ) {
-    if ( IObjectCount() == 1 ) {
+  else if (aCurrFocus == Face1 || aCurrFocus == Face2)
+  {
+    if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
 
       if ( aResult && !anObj->_is_nil() ) {
          TColStd_IndexedMapOfInteger anIndexes;
-	 ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr()->GetIndexes( firstIObject(), anIndexes );
+	 aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 
-         if ( anIndexes.Extent() == 1 ) {
-            int anIndex = anIndexes( 1 );
+         if (anIndexes.Extent() == 1) {
+            int anIndex = anIndexes(1);
             QString aFaceName = QString( GEOMBase::GetName( anObj ) ) + ":%1";
             myEditCurrentArgument->setText( aFaceName.arg( anIndex ) );
             myFace[ aCurrFocus ] = anIndex;
@@ -412,20 +417,20 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
     myFace[ aCurrFocus ] = -1;
   }
   // If face selection of third or fourth tab is activated
-  else if ( aCurrFocus == Faces  || aCurrFocus == Edges ) {
-    if ( IObjectCount() == 1 ) {
+  else if (aCurrFocus == Faces || aCurrFocus == Edges) {
+    if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
-      
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+
       if ( aResult && !anObj->_is_nil() ) {
 	TColStd_IndexedMapOfInteger anIndexes;
-	( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr()->GetIndexes( firstIObject(), anIndexes );
+	aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 	
-	if ( anIndexes.Extent() > 0 ) {
+	if (anIndexes.Extent() > 0) {
 	  QString aName;
-	  if ( anIndexes.Extent() == 1 ) {
-	    int anIndex = anIndexes( 1 );
+	  if (anIndexes.Extent() == 1) {
+	    int anIndex = anIndexes(1);
 	    
 	    aName = QString( GEOMBase::GetName( anObj ) ) + QString( ":%1" ).arg( anIndex );
 	  }

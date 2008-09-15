@@ -211,17 +211,21 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
 
-  if ( IObjectCount() != 1 ) {
-    if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myDir   = GEOM::GEOM_Object::_nil();
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2) myDir   = GEOM::GEOM_Object::_nil();
     return;
   }
 
   Standard_Boolean aRes = Standard_False;
-  Handle(SALOME_InteractiveObject) anIO = firstIObject();
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
-    QString aName = GEOMBase::GetName( aSelectedObject );
+  Handle(SALOME_InteractiveObject) anIO = aSelList.First();
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(anIO, aRes);
+  if (!CORBA::is_nil(aSelectedObject) && aRes) {
+    QString aName = GEOMBase::GetName(aSelectedObject);
     
     // Get Selected object if selected subshape
     TopoDS_Shape aShape;
@@ -231,29 +235,28 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
       aNeedType = TopAbs_EDGE;
     
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
       TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( anIO, aMap );
-      if ( aMap.Extent() == 1 ) {
+      aSelMgr->GetIndexes(anIO, aMap);
+      if (aMap.Extent() == 1) {
         int anIndex = aMap(1);
-        if ( aNeedType == TopAbs_EDGE )
-          aName += QString( ":edge_%1" ).arg( anIndex );
+        if (aNeedType == TopAbs_EDGE)
+          aName += QString(":edge_%1").arg(anIndex);
         else
-          aName += QString( ":vertex_%1" ).arg( anIndex );
+          aName += QString(":vertex_%1").arg(anIndex);
 
 	//Find SubShape Object in Father
-	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
 
-	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-        aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+	if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	} 
 	else {
 	  aSelectedObject = aFindedObject; // get Object from study
 	}
       }
       else { // Global Selection
-        if ( aShape.ShapeType() != aNeedType ) {
+        if (aShape.ShapeType() != aNeedType) {
           aSelectedObject = GEOM::GEOM_Object::_nil();
           aName = "";
         }

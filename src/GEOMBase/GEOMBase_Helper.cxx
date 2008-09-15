@@ -973,55 +973,9 @@ QString GEOMBase_Helper::getPrefix( GEOM::GEOM_Object_ptr theObj ) const
 }
 
 //================================================================
-// Function : selectedIO
-// Purpose  : Return the list of selected SALOME_InteractiveObject's
-//================================================================
-const SALOME_ListIO& GEOMBase_Helper::selectedIO()
-{
-  mySelected.Clear();
-
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( app ) {
-    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-    if ( aSelMgr )
-      aSelMgr->selectedObjects( mySelected );
-  }
-
-  return mySelected;
-}
-
-//================================================================
-// Function : IObjectCount
-// Purpose  : Return the number of selected objects
-//================================================================
-int GEOMBase_Helper::IObjectCount()
-{
-  return selectedIO().Extent();
-}
-
-//================================================================
-// Function : firstIObject
-// Purpose  :  Return the first selected object in the selected object list
-//================================================================
-Handle(SALOME_InteractiveObject) GEOMBase_Helper::firstIObject()
-{
-  const SALOME_ListIO& aList = selectedIO();
-  return aList.Extent() > 0 ? aList.First() : Handle(SALOME_InteractiveObject)();
-}
-
-//================================================================
-// Function : lastIObject
-// Purpose  : Return the last selected object in the selected object list
-//================================================================
-Handle(SALOME_InteractiveObject) GEOMBase_Helper::lastIObject()
-{
-  const SALOME_ListIO& aList = selectedIO();
-  return aList.Extent() > 0 ? aList.Last() : Handle(SALOME_InteractiveObject)();
-}
-
-//================================================================
 // Function : getDesktop
-// Purpose  : Returns myDesktop field.  Initialized in constructor, usually as dynamic_cast<SUIT_Desktop*>(parentWidget())
+// Purpose  : Returns myDesktop field. Initialized in constructor,
+//            usually as dynamic_cast<SUIT_Desktop*>(parentWidget())
 //================================================================
 SUIT_Desktop* GEOMBase_Helper::getDesktop() const
 {
@@ -1063,7 +1017,8 @@ bool GEOMBase_Helper::selectObjects( ObjectList& objects )
 // Purpose  : It should return an object if its founded in study or
 //            return Null object if the object is not founded
 //================================================================
-GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr theFather, const QString& theName)
+GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather (GEOM::GEOM_Object_ptr theFather,
+                                                           const QString& theName)
 {
   SalomeApp_Application* app =
     dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );

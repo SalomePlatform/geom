@@ -258,36 +258,39 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aName;
 
-  if ( myEditCurrentArgument == LineEdit1 )
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (myEditCurrentArgument == LineEdit1)
   {
-    int aNbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aName );
-    if ( aNbSel < 1 )
+    int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
+    if (aNbSel < 1)
     {
-      myObjects.length( 0 );
+      myObjects.length(0);
       return;
     }
-    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myObjects );
-    if ( !myObjects.length() )
+    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myObjects);
+    if (!myObjects.length())
       return;
   }
-  else if ( myEditCurrentArgument == LineEdit2 )
+  else if (myEditCurrentArgument == LineEdit2)
   {
     GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
-    if ( IObjectCount() == 1 )
+    if (aSelList.Extent() == 1)
     {
       Standard_Boolean testResult = Standard_False;
-      aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
-      if ( testResult )
+      aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+      if (testResult)
       {
-        aName = GEOMBase::GetName( aSelectedObject );
+        aName = GEOMBase::GetName(aSelectedObject);
 
         TopoDS_Shape aShape;
-        if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+        if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
         {
-          LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
           TColStd_IndexedMapOfInteger aMap;
-          aSelMgr->GetIndexes( firstIObject(), aMap );
-          if ( aMap.Extent() == 1 )
+          aSelMgr->GetIndexes(aSelList.First(), aMap);
+          if (aMap.Extent() == 1)
           {
             int anIndex = aMap( 1 );
             aName += QString( ":vertex_%1" ).arg( anIndex );
@@ -318,7 +321,7 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
     myPoint = aSelectedObject;
   }
 
-  myEditCurrentArgument->setText( aName );
+  myEditCurrentArgument->setText(aName);
   displayPreview();
 }
 

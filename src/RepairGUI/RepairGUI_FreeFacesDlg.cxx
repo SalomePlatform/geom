@@ -228,14 +228,19 @@ void RepairGUI_FreeFacesDlg::Init()
 void RepairGUI_FreeFacesDlg::onSelectionDone()
 {
   erasePreview();
-  if ( IObjectCount() != 1 ) {
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if ( aSelList.Extent() != 1 ) {
     myEdit->setText( "" );
     return;
   }
 
   Standard_Boolean isOk = Standard_False;
   GEOM::GEOM_Object_var anObj =
-    GEOMBase::ConvertIOinGEOMObject( firstIObject(), isOk );
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First(), isOk );
 
   if ( !isOk || anObj->_is_nil() || !GEOMBase::IsShape( anObj ) ) {
     myEdit->setText( "" );

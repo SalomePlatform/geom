@@ -165,7 +165,11 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::SelectionIntoArgument()
   erasePreview();
   myObj = GEOM::GEOM_Object::_nil();
 
-  if ( IObjectCount() != 1 ) {
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
     myGrp->LineEdit1->setText( "" );
     processObject();
     return;
@@ -173,7 +177,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::SelectionIntoArgument()
 
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
   if ( !testResult || aSelectedObject->_is_nil() ) {
     myGrp->LineEdit1->setText( "" );

@@ -189,8 +189,12 @@ void RepairGUI_CloseContourDlg::SelectionIntoArgument()
   else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
     myWiresInd->length( 0 );
 
-  if ( IObjectCount() == 1 ) {
-    Handle(SALOME_InteractiveObject) anIO = firstIObject();
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if ( aSelList.Extent() == 1 ) {
+    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
 
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) { // face selection
       Standard_Boolean aRes;
@@ -206,7 +210,7 @@ void RepairGUI_CloseContourDlg::SelectionIntoArgument()
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
       TColStd_IndexedMapOfInteger aMap;
-      myGeomGUI->getApp()->selectionMgr()->GetIndexes( anIO, aMap );
+      aSelMgr->GetIndexes( anIO, aMap );
       const int n = aMap.Extent();
       myWiresInd->length( n );
       for ( int i = 1; i <= n; i++ )

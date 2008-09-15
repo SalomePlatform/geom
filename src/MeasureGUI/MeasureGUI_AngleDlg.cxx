@@ -29,6 +29,8 @@
 #include <GEOMBase.h>
 #include <DlgRef.h>
 
+#include <GeometryGUI.h>
+
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -38,7 +40,8 @@
 #include <SUIT_ViewManager.h>
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
-//#include "SalomeApp_Application.h"
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
 // OCCT Includes
 #include <AIS_AngleDimension.hxx>
@@ -146,9 +149,13 @@ void MeasureGUI_AngleDlg::Init()
 //=================================================================================
 void MeasureGUI_AngleDlg::SelectionIntoArgument()
 {
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
   if ( !testResult )
     aSelectedObject = GEOM::GEOM_Object::_nil();
@@ -239,13 +246,17 @@ void MeasureGUI_AngleDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
 
-  if ( send == mySelEdit )
+  if (send == mySelEdit)
     myEditCurrentArgument = mySelEdit;
   else
     myEditCurrentArgument = mySelEdit2;
 
-  if ( GEOMBase::SelectionByNameInDialogs( this, mySelEdit->text(), selectedIO() ) )
-    mySelEdit->setText( mySelEdit->text() );
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (GEOMBase::SelectionByNameInDialogs(this, mySelEdit->text(), aSelList))
+    mySelEdit->setText(mySelEdit->text());
 }
 
 //=================================================================================

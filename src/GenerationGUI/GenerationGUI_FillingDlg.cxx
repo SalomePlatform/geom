@@ -197,40 +197,42 @@ bool GenerationGUI_FillingDlg::ClickOnApply()
 void GenerationGUI_FillingDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myEditCurrentArgument->setText( "" );
+  myEditCurrentArgument->setText("");
 
-  if ( IObjectCount() != 1 ) {
-    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkCompound = false;
     return;
   }
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
-  if ( !testResult )
+  if (!testResult)
     return;
 
-  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
     TopoDS_Shape S;
     myOkCompound = false;
 
-    if ( GEOMBase::GetShape(aSelectedObject, S) &&
-	 S.ShapeType() == TopAbs_COMPOUND ) {
-	// myCompound should be a compound of edges
-	for ( TopoDS_Iterator it( S ); it.More(); it.Next() )
-	  if ( it.Value().ShapeType() != TopAbs_EDGE )
-	    return;
-	myCompound = aSelectedObject;
-	myOkCompound = true;
-      }
+    if (GEOMBase::GetShape(aSelectedObject, S) && S.ShapeType() == TopAbs_COMPOUND) {
+      // myCompound should be a compound of edges
+      for (TopoDS_Iterator it (S); it.More(); it.Next())
+        if (it.Value().ShapeType() != TopAbs_EDGE)
+          return;
+      myCompound = aSelectedObject;
+      myOkCompound = true;
+    }
   }
 
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
   displayPreview();
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()

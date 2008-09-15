@@ -163,14 +163,18 @@ void BuildGUI_SolidDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aString = "";
   
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   myOkShells = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString );
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString);
   if ( nbSel == 0 )
     return;
   if ( nbSel != 1 )
     aString = tr( "%1_objects" ).arg( nbSel );
   
-  GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myShells );
+  GEOMBase::ConvertListOfIOInListOfGO(aSelList, myShells);
   if ( !myShells.length() )
     return;
   

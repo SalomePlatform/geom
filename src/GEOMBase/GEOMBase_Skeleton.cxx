@@ -162,7 +162,7 @@ void GEOMBase_Skeleton::ClickOnCancel()
 //=================================================================================
 void GEOMBase_Skeleton::LineEditReturnPressed()
 {
-  if ( !myEditCurrentArgument )
+  if (!myEditCurrentArgument)
     return;
 
   /* User name of object input management                          */
@@ -170,9 +170,13 @@ void GEOMBase_Skeleton::LineEditReturnPressed()
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text();
   QWidget* thisWidget = (QWidget*)this;
-  
-  if ( GEOMBase::SelectionByNameInDialogs( thisWidget, objectUserName, selectedIO() ) )
-     myEditCurrentArgument->setText( objectUserName );
+
+  SALOME_ListIO aList;
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  if (aSelMgr)
+    aSelMgr->selectedObjects(aList);
+  if (GEOMBase::SelectionByNameInDialogs(thisWidget, objectUserName, aList))
+    myEditCurrentArgument->setText(objectUserName);
 }
 
 //=================================================================================

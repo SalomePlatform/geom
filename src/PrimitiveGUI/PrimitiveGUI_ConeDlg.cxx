@@ -254,27 +254,30 @@ bool PrimitiveGUI_ConeDlg::ClickOnApply()
   return true;
 }
 
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
 //=================================================================================
 void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
 {
-  if ( getConstructorId() != 0 )
+  if (getConstructorId() != 0)
     return;
 
-  if ( IObjectCount() != 1 ) {
-    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1)
       myPoint = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
       myDir = GEOM::GEOM_Object::_nil();
     return;
   }
 
   /* nbSel == 1 */
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
   
   if ( !testResult || CORBA::is_nil( aSelectedObject ) )
     return;
@@ -287,9 +290,8 @@ void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
     if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
       aNeedType = TopAbs_EDGE;
 
-    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
     TColStd_IndexedMapOfInteger aMap;
-    aSelMgr->GetIndexes( firstIObject(), aMap );
+    aSelMgr->GetIndexes(aSelList.First(), aMap);
     if ( aMap.Extent() == 1 ) {
       int anIndex = aMap(1);
       if ( aNeedType == TopAbs_EDGE )
@@ -326,7 +328,6 @@ void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
   
   displayPreview();
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()

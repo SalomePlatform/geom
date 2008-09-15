@@ -168,13 +168,17 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
     myPoint = GEOM::GEOM_Object::_nil();
   }
   
-  if ( IObjectCount() != 1 )
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1)
     return;
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
   if ( !testResult )
     return;
@@ -185,9 +189,8 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
     TopoDS_Shape aShape;
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
     {
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
       TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( firstIObject(), aMap );
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
       if ( aMap.Extent() == 1 ) // Local Selection
       {
         GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
@@ -209,9 +212,8 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
     TopoDS_Shape aShape;
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
     {
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
       TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( firstIObject(), aMap );
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
       if ( aMap.Extent() == 1 ) // Local Selection
       {
         GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );

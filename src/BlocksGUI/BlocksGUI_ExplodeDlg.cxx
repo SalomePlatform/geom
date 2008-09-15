@@ -200,20 +200,23 @@ bool BlocksGUI_ExplodeDlg::ClickOnApply()
 //=================================================================================
 void BlocksGUI_ExplodeDlg::SelectionIntoArgument()
 {
-  if ( !isAllSubShapes() )
+  if (!isAllSubShapes())
     return;
 
   myObject = GEOM::GEOM_Object::_nil();
-  myGrp1->LineEdit1->setText( "" );
+  myGrp1->LineEdit1->setText("");
 
-  if ( IObjectCount() == 1 ) {
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() == 1) {
     Standard_Boolean aResult = Standard_False;
-    GEOM::GEOM_Object_var anObj =
-      GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+    GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
 
-    if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
+    if (aResult && !anObj->_is_nil() && GEOMBase::IsShape(anObj)) {
       myObject = anObj;
-      myGrp1->LineEdit1->setText( GEOMBase::GetName( anObj ) );
+      myGrp1->LineEdit1->setText(GEOMBase::GetName(anObj));
     }
   }
 
@@ -362,15 +365,21 @@ GEOM::GEOM_IOperations_ptr BlocksGUI_ExplodeDlg::createOperation()
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool BlocksGUI_ExplodeDlg::isValid( QString& )
+bool BlocksGUI_ExplodeDlg::isValid (QString&)
 {
   bool ok = false;
   switch ( getConstructorId() ) {
   case 0:
-    if ( IsPreview() )
+    if ( IsPreview() ) {
       ok = !myObject->_is_nil();
-    else
-      ok = !myObject->_is_nil() && ( isAllSubShapes() || IObjectCount() );
+    }
+    else {
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      SALOME_ListIO aSelList;
+      aSelMgr->selectedObjects(aSelList);
+
+      ok = !myObject->_is_nil() && (isAllSubShapes() || aSelList.Extent());
+    }
     break;
   default:
     break;
@@ -416,26 +425,30 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
   if ( !isAllSubShapes() ) {
     QMap<QString, char> selected;
 
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    SALOME_ListIO aSelList;
+    aSelMgr->selectedObjects(aSelList);
+
     // Get names of selected objects
-    SALOME_ListIteratorOfListIO it ( selectedIO() );
+    SALOME_ListIteratorOfListIO it (aSelList);
     for ( ; it.More(); it.Next() ) {
       selected.insert( it.Value()->getName(), 0 );
     }
 
     // Iterate through result and select objects with names from selection
-    ObjectList toRemoveFromEnggine;
+    ObjectList toRemoveFromEngine;
     ObjectList::iterator anIter;
     for ( anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter ) {
       CORBA::String_var objStr = myGeomGUI->getApp()->orb()->object_to_string( *anIter );
       if ( selected.contains( QString( objStr.in() ) ) )
         objects.push_back( *anIter );
       else
-        toRemoveFromEnggine.push_back( *anIter );
+        toRemoveFromEngine.push_back( *anIter );
     }
 
     // Remove from engine useless objects
-    ObjectList::iterator anIter2 = toRemoveFromEnggine.begin();
-    for ( ; anIter2 != toRemoveFromEnggine.end(); ++anIter2 )
+    ObjectList::iterator anIter2 = toRemoveFromEngine.begin();
+    for ( ; anIter2 != toRemoveFromEngine.end(); ++anIter2 )
       getGeomEngine()->RemoveObject( *anIter2 );
 
     myTmpObjs.clear();

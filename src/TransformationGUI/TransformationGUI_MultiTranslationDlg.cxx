@@ -293,7 +293,11 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
   
-  if ( IObjectCount() != 1 ) {
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if ( aSelList.Extent() != 1 ) {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 || 
 	 myEditCurrentArgument == GroupDimensions->LineEdit1 )
       myBase = GEOM::GEOM_Object::_nil();
@@ -307,7 +311,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First(), testResult );
 
   if ( !testResult || CORBA::is_nil( aSelectedObject ) || !GEOMBase::IsShape( aSelectedObject ) )
     return;
@@ -324,9 +328,8 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
       TopoDS_Shape aShape;
       
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 	TColStd_IndexedMapOfInteger aMap;
-	aSelMgr->GetIndexes( firstIObject(), aMap );
+	aSelMgr->GetIndexes( aSelList.First(), aMap );
 	if ( aMap.Extent() == 1 ) {
 	  int anIndex = aMap( 1 );
 	  aName += QString( ":edge_%1" ).arg( anIndex );

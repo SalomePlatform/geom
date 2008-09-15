@@ -161,8 +161,12 @@ void RepairGUI_RemoveExtraEdgesDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aName;
   
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
-    if ( IObjectCount() != 1 ) {
+    if ( aSelList.Extent() != 1 ) {
       if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
         myOkObject = false;
       return;
@@ -172,7 +176,7 @@ void RepairGUI_RemoveExtraEdgesDlg::SelectionIntoArgument()
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_ptr aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First(), testResult );
 
   if ( !testResult )
     return;

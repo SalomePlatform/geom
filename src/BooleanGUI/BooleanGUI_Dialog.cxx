@@ -183,7 +183,6 @@ bool BooleanGUI_Dialog::ClickOnApply()
   return true;
 }
 
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection has changed
@@ -192,22 +191,25 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
 
-  if ( IObjectCount() != 1 ) {
-    if      ( myEditCurrentArgument == myGroup->LineEdit1 )   myObject1 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == myGroup->LineEdit2 )   myObject2 = GEOM::GEOM_Object::_nil();
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    if      (myEditCurrentArgument == myGroup->LineEdit1) myObject1 = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == myGroup->LineEdit2) myObject2 = GEOM::GEOM_Object::_nil();
     return;
   }
 
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes && GEOMBase::IsShape( aSelectedObject ) ) {
-    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
-    if      ( myEditCurrentArgument == myGroup->LineEdit1 )   myObject1 = aSelectedObject;
-    else if ( myEditCurrentArgument == myGroup->LineEdit2 )   myObject2 = aSelectedObject;
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
+  if (!CORBA::is_nil(aSelectedObject) && aRes && GEOMBase::IsShape(aSelectedObject)) {
+    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+    if      (myEditCurrentArgument == myGroup->LineEdit1) myObject1 = aSelectedObject;
+    else if (myEditCurrentArgument == myGroup->LineEdit2) myObject2 = aSelectedObject;
   }
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -268,22 +270,22 @@ void BooleanGUI_Dialog::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BooleanGUI_Dialog::createOperation()
 {
-  return getGeomEngine()->GetIBooleanOperations( getStudyId() );
+  return getGeomEngine()->GetIBooleanOperations(getStudyId());
 }
 
 //=================================================================================
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BooleanGUI_Dialog::isValid( QString& msg )
+bool BooleanGUI_Dialog::isValid (QString& msg)
 {
-  Handle(SALOME_InteractiveObject) IO = firstIObject();
-  Standard_Boolean testResult;
-  GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject( IO, testResult );
-  if ( !testResult || anObject->_is_nil() )
-    return false;
+  //Handle(SALOME_InteractiveObject) IO = firstIObject();
+  //Standard_Boolean testResult;
+  //GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject(IO, testResult);
+  //if (!testResult || anObject->_is_nil())
+  //  return false;
 
-  return !CORBA::is_nil( myObject1 ) && !CORBA::is_nil( myObject2 );
+  return !CORBA::is_nil(myObject1) && !CORBA::is_nil(myObject2);
 }
 
 //=================================================================================

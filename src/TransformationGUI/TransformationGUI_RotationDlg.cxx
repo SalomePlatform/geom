@@ -233,18 +233,22 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aName;
   
-  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
-    int aNbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aName );
-    if ( aNbSel < 1) {
-      myObjects.length( 0 );
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
+    int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
+    if (aNbSel < 1) {
+      myObjects.length(0);
       return;
     }
-    GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myObjects );
-    if ( !myObjects.length() )
+    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myObjects);
+    if (!myObjects.length())
       return;
   }
   else {
-    if ( IObjectCount() != 1 ) {
+    if (aSelList.Extent() != 1) {
       if ( myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0 )
 	myAxis = GEOM::GEOM_Object::_nil();
       else if ( myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1 )
@@ -257,7 +261,7 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
     }
 
     Standard_Boolean testResult = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
     if ( !testResult || CORBA::is_nil( aSelectedObject ) )
       return;
     
@@ -268,9 +272,8 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
       if ( myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0 )
 	aNeedType = TopAbs_EDGE;
       
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
       TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( firstIObject(), aMap );
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
       if ( aMap.Extent() == 1 ) {
 	int anIndex = aMap( 1 );
 	if ( aNeedType == TopAbs_EDGE )

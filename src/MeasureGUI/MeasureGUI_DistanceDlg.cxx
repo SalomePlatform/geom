@@ -29,6 +29,8 @@
 #include <GEOMBase.h>
 #include <DlgRef.h>
 
+#include <GeometryGUI.h>
+
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
@@ -37,6 +39,8 @@
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
 #include <SalomeApp_Tools.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
 #include <Geom_Plane.hxx>
 #include <AIS_LengthDimension.hxx>
@@ -132,9 +136,13 @@ void MeasureGUI_DistanceDlg::Init()
 //=================================================================================
 void MeasureGUI_DistanceDlg::SelectionIntoArgument()
 {
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
   if ( !testResult )
     aSelectedObject = GEOM::GEOM_Object::_nil();
@@ -241,8 +249,12 @@ void MeasureGUI_DistanceDlg::LineEditReturnPressed()
   else
     myEditCurrentArgument = mySelEdit2;
 
-  if ( GEOMBase::SelectionByNameInDialogs( this, mySelEdit->text(), selectedIO() ) )
-    mySelEdit->setText( mySelEdit->text() );
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (GEOMBase::SelectionByNameInDialogs(this, mySelEdit->text(), aSelList))
+    mySelEdit->setText(mySelEdit->text());
 }
 
 

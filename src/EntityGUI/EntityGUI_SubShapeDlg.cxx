@@ -198,66 +198,68 @@ bool EntityGUI_SubShapeDlg::ClickOnApply()
 //=================================================================================
 void EntityGUI_SubShapeDlg::SelectionIntoArgument()
 {
-  if ( !isAllSubShapes() )
+  if (!isAllSubShapes())
     return;
 
   ResetStateOfDialog();
 
   QString aString = ""; /* name of selection */
 
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString, true );
-  if ( nbSel != 1 )
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
+  if (nbSel != 1)
     return;
 
   TopoDS_Shape S;
-  Handle(SALOME_InteractiveObject) IO = firstIObject();
+  Handle(SALOME_InteractiveObject) IO = aSelList.First();
   if ( !IO->hasEntry() ) {
     SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_SHAPE_IN_STUDY" ) );
     updateButtonState();
     return;
   }
 
-  if ( !GEOMBase::GetTopoFromSelection( selectedIO(), S ) ||
-       S.IsNull() ||
-       S.ShapeType() == TopAbs_VERTEX ) {
+  if (!GEOMBase::GetTopoFromSelection(aSelList, S) ||
+      S.IsNull() ||
+      S.ShapeType() == TopAbs_VERTEX) {
     myObject = GEOM::GEOM_Object::_nil();
     updateButtonState();
     return;
   }
 
-
   Standard_Boolean testResult;
-  myObject = GEOMBase::ConvertIOinGEOMObject( IO, testResult );
-  if ( !testResult || myObject->_is_nil() ) {
+  myObject = GEOMBase::ConvertIOinGEOMObject(IO, testResult);
+  if (!testResult || myObject->_is_nil()) {
     updateButtonState();
     return;
   }
 
   myShape = S;
-  GroupPoints->LineEdit1->setText( aString );
-
+  GroupPoints->LineEdit1->setText(aString);
 
   int SelectedShapeType = GroupPoints->ComboBox1->currentIndex();
   int count = GroupPoints->ComboBox1->count();
 
-  if ( myWithShape )
+  if (myWithShape)
     count = count - 1;
 
   int i = 0;
   // Solving PAL5590
-  if ( myShape.ShapeType() == TopAbs_COMPOUND ) {
+  if (myShape.ShapeType() == TopAbs_COMPOUND) {
     unsigned int nb = NumberOfSubShapes(myShape, TopAbs_COMPOUND);
     if ( nb > 0 )
       i++;
   }
-  while ( i <= myShape.ShapeType() ) {
-    GroupPoints->ComboBox1->removeItem( 0 );
+  while (i <= myShape.ShapeType()) {
+    GroupPoints->ComboBox1->removeItem(0);
     i++;
   }
 
-  if ( myShape.ShapeType() == TopAbs_COMPOUND ) {
-    if ( myWithShape == false ) {
-      GroupPoints->ComboBox1->insertItem( GroupPoints->ComboBox1->count(), "Shape" );
+  if (myShape.ShapeType() == TopAbs_COMPOUND) {
+    if (myWithShape == false) {
+      GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shape");
       myWithShape = true;
     }
   }
@@ -518,28 +520,35 @@ GEOM::GEOM_IOperations_ptr EntityGUI_SubShapeDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool EntityGUI_SubShapeDlg::isValid( QString& msg )
+bool EntityGUI_SubShapeDlg::isValid (QString& msg)
 {
   bool isOk = false;
-  Standard_Boolean testResult;  
-  GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
-  if ( !testResult || myObject->_is_nil() )  {
+
+  if (myObject->_is_nil()) {
     updateButtonState();
     return isOk;
   }
-  if ( !myObject->_is_nil() ) {
-    if ( isAllSubShapes() )
-      isOk = true;
-    else if ( IObjectCount() == 1 ) {
-     if ( testResult && !anObj->_is_nil() ) {
-	TColStd_IndexedMapOfInteger aMapIndex;
-	myGeomGUI->getApp()->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
-	isOk = aMapIndex.Extent() > 0;
-	if ( !isOk )
-	  msg += tr( "NO_SUBSHAPES_SELECTED" );
+
+  if (isAllSubShapes())
+    isOk = true;
+  else {
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    SALOME_ListIO aSelList;
+    aSelMgr->selectedObjects(aSelList);
+
+    if (aSelList.Extent() == 1) {
+      Standard_Boolean testResult;  
+      GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+      if (testResult && !anObj->_is_nil()) {
+        TColStd_IndexedMapOfInteger aMapIndex;
+        aSelMgr->GetIndexes(aSelList.First(), aMapIndex);
+        isOk = aMapIndex.Extent() > 0;
+        if (!isOk)
+          msg += tr("NO_SUBSHAPES_SELECTED");
       }
     }
   }
+
   return isOk;
 }
 
@@ -547,38 +556,42 @@ bool EntityGUI_SubShapeDlg::isValid( QString& msg )
 // function : execute
 // purpose  :
 //=================================================================================
-bool EntityGUI_SubShapeDlg::execute( ObjectList& objects )
+bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
 {
-  GEOM::ListOfGO_var aList = GEOM::GEOM_IShapesOperations::_narrow(
-    getOperation() )->MakeExplode( myObject, shapeType(), true );
-    
-  if ( !aList->length() )
+  GEOM::ListOfGO_var aList = GEOM::GEOM_IShapesOperations::_narrow(getOperation())->
+    MakeExplode(myObject, shapeType(), true);
+
+  if (!aList->length())
     return false;
-  
+
   // Throw away sub-shapes not selected by user if not in preview mode 
   // and manual selection is active
-  if ( !isAllSubShapes() ) {
-    if ( IObjectCount() == 1 ) {
+  if (!isAllSubShapes()) {
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    SALOME_ListIO aSelList;
+    aSelMgr->selectedObjects(aSelList);
+
+    if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-	GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+	GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
 
-      if ( aResult && !anObj->_is_nil() ) {
+      if (aResult && !anObj->_is_nil()) {
 	TColStd_IndexedMapOfInteger aMapIndex;
-	myGeomGUI->getApp()->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
+	aSelMgr->GetIndexes(aSelList.First(), aMapIndex);
 
 	GEOM::GEOM_ILocalOperations_var aLocOp = 
-	  getGeomEngine()->GetILocalOperations( getStudyId() );
+	  getGeomEngine()->GetILocalOperations(getStudyId());
 
-	for ( int i = 0, n = aList->length(); i < n; i++ )
-	  if ( aMapIndex.Contains( aLocOp->GetSubShapeIndex( myObject, aList[i] ) ) )
-	    objects.push_back( GEOM::GEOM_Object::_duplicate( aList[i] ) );
+	for (int i = 0, n = aList->length(); i < n; i++)
+	  if (aMapIndex.Contains(aLocOp->GetSubShapeIndex(myObject, aList[i])))
+	    objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
       }
     }
   }
   else
-    for ( int i = 0, n = aList->length(); i < n; i++ )
-      objects.push_back( GEOM::GEOM_Object::_duplicate( aList[i] ) );
+    for (int i = 0, n = aList->length(); i < n; i++)
+      objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
   
   return objects.size();
 }

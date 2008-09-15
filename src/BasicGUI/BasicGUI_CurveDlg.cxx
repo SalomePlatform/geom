@@ -261,34 +261,33 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
 
   Standard_Boolean aRes = Standard_False;
 
-  int IOC = IObjectCount();
-  // bool is_append = myPoints->length() < IOC; // if true - add point, else remove
-  // myPoints->length( IOC ); // this length may be greater than number of objects,
-                           // that will actually be put into myPoints
-
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SalomeApp_Application* app =
-    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  SalomeApp_Application* app = myGeomGUI->getApp();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
   _PTR(Study) aDStudy = appStudy->studyDS();
-  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
 
   int anIndex;
   TopoDS_Shape aShape;
   TColStd_IndexedMapOfInteger aMapIndexes;
   GEOM::GEOM_Object_var anObject;
   std::list<GEOM::GEOM_Object_var> aList;
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   SALOME_ListIO selected;
-  aSelMgr->selectedObjects( selected, QString::null, false );
+  aSelMgr->selectedObjects(selected, QString::null, false);
+
+  int IOC = selected.Extent();
+  // bool is_append = myPoints->length() < IOC; // if true - add point, else remove
+  // myPoints->length( IOC ); // this length may be greater than number of objects,
+                           // that will actually be put into myPoints
   
-  for ( SALOME_ListIteratorOfListIO anIt( selected ); anIt.More(); anIt.Next() ) {
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
-    if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
-      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-	aSelMgr->GetIndexes( anIt.Value(), aMapIndexes );
+  for (SALOME_ListIteratorOfListIO anIt (selected); anIt.More(); anIt.Next()) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(anIt.Value(), aRes);
+    if (!CORBA::is_nil(aSelectedObject) && aRes) {
+      if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
+	aSelMgr->GetIndexes(anIt.Value(), aMapIndexes);
 	
-	if ( aMapIndexes.Extent() > 0 ) {
-	  for ( int ii = 1; ii <= aMapIndexes.Extent(); ii++ ) {
+	if (aMapIndexes.Extent() > 0) {
+	  for (int ii = 1; ii <= aMapIndexes.Extent(); ii++) {
 	    anIndex = aMapIndexes(ii);
 	    QString aName = GEOMBase::GetName( aSelectedObject );
 	    aName = aName + ":vertex_" + QString::number( anIndex );

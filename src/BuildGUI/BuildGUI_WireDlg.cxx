@@ -152,15 +152,19 @@ void BuildGUI_WireDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aString = ""; /* name of selection */
 
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   myOkEdgesAndWires = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString );
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString);
 
   if ( nbSel == 0 )
     return;
   if ( nbSel != 1 )
     aString = tr( "%1_objects" ).arg( nbSel );
 
-  GEOMBase::ConvertListOfIOInListOfGO( selectedIO(),  myEdgesAndWires );
+  GEOMBase::ConvertListOfIOInListOfGO(aSelList,  myEdgesAndWires);
   if ( !myEdgesAndWires.length() )
     return;
 

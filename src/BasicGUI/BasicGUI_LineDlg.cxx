@@ -239,17 +239,21 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
 
-  if ( IObjectCount() != 1 ) {
-    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )      myPoint1 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == GroupFaces->LineEdit1 )  myFace1  = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == GroupFaces->LineEdit2 )  myFace2  = GEOM::GEOM_Object::_nil();
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint1 = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2) myPoint2 = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == GroupFaces->LineEdit1)  myFace1  = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == GroupFaces->LineEdit2)  myFace2  = GEOM::GEOM_Object::_nil();
     displayPreview();
     return;
   }
 
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
     QString aName = GEOMBase::GetName( aSelectedObject );
     TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
@@ -259,9 +263,8 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
     
     TopoDS_Shape aShape;
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
       TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( firstIObject(), aMap );
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
       if ( aMap.Extent() == 1 ) { // Local Selection
 	int anIndex = aMap( 1 );
         if ( aNeedType == TopAbs_FACE )

@@ -429,9 +429,13 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
     myRefPoint = myEdge = myFace = GEOM::GEOM_Object::_nil();
   }
 
-  if ( IObjectCount() == 1 ) {
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() == 1) {
     Standard_Boolean aRes = Standard_False;
-    Handle(SALOME_InteractiveObject) anIO = firstIObject();
+    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
     if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
       QString aName = GEOMBase::GetName(aSelectedObject);
@@ -444,9 +448,8 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
         else if ( id == 4 )
           aNeedType = TopAbs_FACE;
 
-        LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
         TColStd_IndexedMapOfInteger aMap;
-        aSelMgr->GetIndexes(firstIObject(), aMap);
+        aSelMgr->GetIndexes(anIO, aMap);
         if ( aMap.Extent() == 1 ) { // Local Selection
           int anIndex = aMap( 1 );
           if ( aNeedType == TopAbs_EDGE )
@@ -455,11 +458,12 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
             aName += QString( ":vertex_%1" ).arg( anIndex );
 
 	  //Find SubShape Object in Father
-	  GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+	  GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
 	  
 	  if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	    GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-	    aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+	    GEOM::GEOM_IShapesOperations_var aShapesOp =
+              getGeomEngine()->GetIShapesOperations(getStudyId());
+	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	  }
 	  else {
 	    aSelectedObject = aFindedObject; // get Object from study

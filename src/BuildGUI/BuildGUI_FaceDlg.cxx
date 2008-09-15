@@ -152,14 +152,18 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aName;
   
-  int aNbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aName );
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
   
   if ( aNbSel < 1) {
     myWires.length(0);
     return;
   }
   
-  GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myWires );
+  GEOMBase::ConvertListOfIOInListOfGO(aSelList, myWires);
   if ( !myWires.length() )
     return;
   if ( aNbSel != 1 )

@@ -299,18 +299,23 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText( "" );
 
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   // If selection of main object is activated
-  if ( myEditCurrentArgument == Group1->LineEdit1 ||
-       myEditCurrentArgument == Group2->LineEdit1 ||
-       myEditCurrentArgument == Group3->LineEdit1 ) {
-    if ( IObjectCount() == 1 ) {
+  if (myEditCurrentArgument == Group1->LineEdit1 ||
+      myEditCurrentArgument == Group2->LineEdit1 ||
+      myEditCurrentArgument == Group3->LineEdit1)
+  {
+    if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
-      
-      if ( aResult && !anObj->_is_nil() ) {
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+
+      if (aResult && !anObj->_is_nil()) {
         myShape = anObj;
-        myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
+        myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
         displayPreview();
         enableWidgets();
         return;
@@ -321,21 +326,22 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
     enableWidgets();
   }
   // If face or edge selection is activated
-  else if ( myEditCurrentArgument == Group2->LineEdit2 ||
-            myEditCurrentArgument == Group3->LineEdit2 ) {
-    if ( IObjectCount() == 1 ) {
+  else if (myEditCurrentArgument == Group2->LineEdit2 ||
+           myEditCurrentArgument == Group3->LineEdit2)
+  {
+    if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
 
-      if ( aResult && !anObj->_is_nil() ) {
+      if (aResult && !anObj->_is_nil()) {
         TColStd_IndexedMapOfInteger anIndexes;
-        myGeomGUI->getApp()->selectionMgr()->GetIndexes( firstIObject(), anIndexes );
+        aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 
-        if ( anIndexes.Extent() > 0 ) {
+        if (anIndexes.Extent() > 0) {
           QString aName;
-          if ( anIndexes.Extent() == 1 ) {
-            int anIndex = anIndexes( 1 );
+          if (anIndexes.Extent() == 1) {
+            int anIndex = anIndexes(1);
 
             aName = QString( GEOMBase::GetName( anObj ) ) + QString( ":%1" ).arg( anIndex );
           }
@@ -357,7 +363,6 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
     myFaces.Clear();
   }
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()

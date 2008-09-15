@@ -221,8 +221,12 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
 
   myObject = GEOM::GEOM_Object::_nil();
 
-  if ( IObjectCount() == 1 ) {
-    Handle(SALOME_InteractiveObject) anIO = firstIObject();
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if ( aSelList.Extent() == 1 ) {
+    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
     Standard_Boolean aRes;
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
     if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
@@ -235,9 +239,7 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
           GEOM::short_array anIndexes;
 
           TColStd_IndexedMapOfInteger aMap;
-          SalomeApp_Application* anApp =
-            (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
-          anApp->selectionMgr()->GetIndexes( anIO, aMap );
+          aSelMgr->GetIndexes( anIO, aMap );
 
           if ( aMap.Extent() == 1 ) { // local selection
             int anIndex = aMap( 1 );

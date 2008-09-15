@@ -222,10 +222,14 @@ void BlocksGUI_QuadFaceDlg::SelectionIntoArgument()
     }
   }
 
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   GEOM::GEOM_Object_var anObj;
-  Standard_Boolean aResult = Standard_False;
-  if ( IObjectCount() == 1 ) {
-    anObj = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aResult );
+  if (aSelList.Extent() == 1) {
+    Standard_Boolean aResult = Standard_False;
+    anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
     if ( aResult ) {
       if (anObj->_is_nil()) {
         aResult = Standard_False;

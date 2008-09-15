@@ -148,7 +148,6 @@ bool BuildGUI_EdgeDlg::ClickOnApply()
   return true;
 }
 
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
@@ -156,37 +155,39 @@ bool BuildGUI_EdgeDlg::ClickOnApply()
 void BuildGUI_EdgeDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myEditCurrentArgument->setText( "" );
-  
-  if ( IObjectCount() != 1 ) {
-    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
+  myEditCurrentArgument->setText("");
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkPoint1 = false;
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
       myOkPoint2 = false;
     return;
   }
-  
+
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
-  
-  if ( !testResult )
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+  if (!testResult)
     return;
 
-  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
     myPoint1 = aSelectedObject;
     myOkPoint1 = true;
   }
-  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
     myPoint2 = aSelectedObject;
     myOkPoint2 = true;
   }
-  
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
-  
+
+  myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+
   displayPreview();
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()

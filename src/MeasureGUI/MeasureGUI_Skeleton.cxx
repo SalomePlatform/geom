@@ -179,8 +179,12 @@ void MeasureGUI_Skeleton::LineEditReturnPressed()
     const QString objectUserName = mySelEdit->text();
     QWidget* thisWidget = ( QWidget* )this;
     
-    if ( GEOMBase::SelectionByNameInDialogs( thisWidget, objectUserName, selectedIO() ) )
-      mySelEdit->setText( objectUserName );
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    SALOME_ListIO aSelList;
+    aSelMgr->selectedObjects(aSelList);
+
+    if (GEOMBase::SelectionByNameInDialogs(thisWidget, objectUserName, aSelList))
+      mySelEdit->setText(objectUserName);
   }
 }
 
@@ -241,20 +245,24 @@ void MeasureGUI_Skeleton::SetEditCurrentArgument()
 void MeasureGUI_Skeleton::SelectionIntoArgument()
 {
   myObj = GEOM::GEOM_Object::_nil();
-  
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
-  
-  if ( !testResult || aSelectedObject->_is_nil() ) {
-    mySelEdit->setText( "" );
+    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+
+  if (!testResult || aSelectedObject->_is_nil()) {
+    mySelEdit->setText("");
     processObject();
     erasePreview();
     return;
   }
 
   myObj = aSelectedObject;
-  mySelEdit->setText( GEOMBase::GetName( myObj ) );
+  mySelEdit->setText(GEOMBase::GetName(myObj));
   processObject();
   redisplayPreview();
 }

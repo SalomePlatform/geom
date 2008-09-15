@@ -165,19 +165,23 @@ void TransformationGUI_OffsetDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aName;
 
-  int aNbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aName );
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
   if ( aNbSel < 1 ) {
     myObjects.length( 0 );
     return;
   }
 
   // nbSel > 0
-  GEOMBase::ConvertListOfIOInListOfGO( selectedIO(), myObjects );
-  if ( !myObjects.length() )
+  GEOMBase::ConvertListOfIOInListOfGO (aSelList, myObjects);
+  if (!myObjects.length())
     return;
-  
-  myEditCurrentArgument->setText( aName );
-  
+
+  myEditCurrentArgument->setText(aName);
+
   displayPreview();
 }
 

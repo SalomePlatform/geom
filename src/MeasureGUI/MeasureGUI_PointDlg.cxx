@@ -29,6 +29,8 @@
 #include <GEOMBase.h>
 #include <DlgRef.h>
 
+#include <GeometryGUI.h>
+
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
@@ -125,9 +127,13 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     myGrp->LineEdit3->setText( "" );
     myGrp->LineEdit4->setText( "" );
 
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    SALOME_ListIO aSelList;
+    aSelMgr->selectedObjects(aSelList);
+
     Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_var aSelectedObject =
-      GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+      GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
     if ( !testResult || aSelectedObject->_is_nil() )
       return;
@@ -135,8 +141,7 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     myObj = aSelectedObject;
 
     TColStd_IndexedMapOfInteger anIndexes;
-    ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->
-      selectionMgr()->GetIndexes( firstIObject(), anIndexes );
+    aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 
     TopoDS_Shape aShape;
     if ( anIndexes.Extent() > 1 || !GEOMBase::GetShape( myObj, aShape ) || aShape.IsNull() )

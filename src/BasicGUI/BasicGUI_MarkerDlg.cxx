@@ -339,13 +339,15 @@ bool BasicGUI_MarkerDlg::onApply()
 //=================================================================================
 void BasicGUI_MarkerDlg::onSelectionDone0()
 {
-  if ( IObjectCount() == 1 ) {
-    Standard_Boolean aRes = Standard_False;
-    Handle(SALOME_InteractiveObject) anIO = firstIObject();
-    GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-    
-    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
 
+  if (aSelList.Extent() == 1) {
+    Standard_Boolean aRes = Standard_False;
+    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
+    GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject(anIO, aRes);
+    
     if ( aRes && !aSelectedObj->_is_nil() ) {
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
@@ -413,9 +415,13 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 
   myEditCurrentArgument->setText( "" );
 
-  if ( IObjectCount() == 1 ) {
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() == 1) {
     Standard_Boolean aRes = Standard_False;
-    Handle(SALOME_InteractiveObject) anIO = firstIObject();
+    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
     GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
 
     if ( !CORBA::is_nil( aSelectedObj ) && aRes ) {
@@ -465,7 +471,6 @@ void BasicGUI_MarkerDlg::onSelectionDone()
             aNeedType = TopAbs_VERTEX;
 	  
           TColStd_IndexedMapOfInteger aMap;
-          LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
           aSelMgr->GetIndexes( anIO, aMap );
 
           if ( !aMap.IsEmpty() ) {
