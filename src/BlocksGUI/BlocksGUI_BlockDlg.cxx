@@ -35,59 +35,64 @@
 
 #include <GEOMImpl_Types.hxx>
 
+// OCCT Includes
+#include <TColStd_IndexedMapOfInteger.hxx>
+
 //=================================================================================
 // class    : BlocksGUI_BlockDlg()
 // purpose  : Constructs a BlocksGUI_BlockDlg which is a child of 'parent'.
 //=================================================================================
-BlocksGUI_BlockDlg::BlocksGUI_BlockDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
-  : GEOMBase_Skeleton( theGeometryGUI, parent )
+BlocksGUI_BlockDlg::BlocksGUI_BlockDlg (GeometryGUI* theGeometryGUI, QWidget* parent)
+  : GEOMBase_Skeleton(theGeometryGUI, parent),
+    myInitial(true)
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BLOCK_2F" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BLOCK_6F" ) ) );
-  QPixmap imageS( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BLOCK_2F")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BLOCK_6F")));
+  QPixmap imageS (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setWindowTitle( tr( "GEOM_BLOCK_TITLE" ) );
+  setWindowTitle(tr("GEOM_BLOCK_TITLE"));
 
   /***************************************************************/
-  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_BLOCK" ) );
+  mainFrame()->GroupConstructors->setTitle(tr("GEOM_BLOCK"));
 
-  mainFrame()->RadioButton1->setIcon( image0 );
-  mainFrame()->RadioButton2->setIcon( image1 );
-  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton1->setIcon(image0);
+  mainFrame()->RadioButton2->setIcon(image1);
+  mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
   // Create first group
-  Group2F = new DlgRef_2Sel( centralWidget() );
-  Group2F->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
-  Group2F->TextLabel1->setText( tr( "FACE_1" ) );
-  Group2F->TextLabel2->setText( tr( "FACE_2" ) );
-  Group2F->PushButton1->setIcon( imageS );
-  Group2F->PushButton2->setIcon( imageS );
+  Group2F = new DlgRef_2Sel (centralWidget());
+  Group2F->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  Group2F->TextLabel1->setText(tr("FACE_1"));
+  Group2F->TextLabel2->setText(tr("FACE_2"));
+  Group2F->PushButton1->setIcon(imageS);
+  Group2F->PushButton2->setIcon(imageS);
 
   // Create second group
-  Group6F = new DlgRef_6Sel( centralWidget() );
-  Group6F->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
-  Group6F->TextLabel1->setText( tr( "FACE_1" ) );
-  Group6F->TextLabel2->setText( tr( "FACE_2" ) );
-  Group6F->TextLabel3->setText( tr( "FACE_3" ) );
-  Group6F->TextLabel4->setText( tr( "FACE_4" ) );
-  Group6F->TextLabel5->setText( tr( "FACE_5" ) );
-  Group6F->TextLabel6->setText( tr( "FACE_6" ) );
-  Group6F->PushButton1->setIcon( imageS );
-  Group6F->PushButton2->setIcon( imageS );
-  Group6F->PushButton3->setIcon( imageS );
-  Group6F->PushButton4->setIcon( imageS );
-  Group6F->PushButton5->setIcon( imageS );
-  Group6F->PushButton6->setIcon( imageS );
+  Group6F = new DlgRef_6Sel (centralWidget());
+  Group6F->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  Group6F->TextLabel1->setText(tr("FACE_1"));
+  Group6F->TextLabel2->setText(tr("FACE_2"));
+  Group6F->TextLabel3->setText(tr("FACE_3"));
+  Group6F->TextLabel4->setText(tr("FACE_4"));
+  Group6F->TextLabel5->setText(tr("FACE_5"));
+  Group6F->TextLabel6->setText(tr("FACE_6"));
+  Group6F->PushButton1->setIcon(imageS);
+  Group6F->PushButton2->setIcon(imageS);
+  Group6F->PushButton3->setIcon(imageS);
+  Group6F->PushButton4->setIcon(imageS);
+  Group6F->PushButton5->setIcon(imageS);
+  Group6F->PushButton6->setIcon(imageS);
 
   // Add groups to layout
-  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
-  layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( Group2F );
-  layout->addWidget( Group6F );
+  QVBoxLayout* layout = new QVBoxLayout (centralWidget());
+  layout->setMargin(0);
+  layout->setSpacing(6);
+  layout->addWidget(Group2F);
+  layout->addWidget(Group6F);
   /***************************************************************/
 
-  setHelpFileName( "build_by_blocks_page.html#hexa_solid_anchor" );
+  setHelpFileName("build_by_blocks_page.html#hexa_solid_anchor");
 
   Init();
 }
@@ -108,91 +113,87 @@ BlocksGUI_BlockDlg::~BlocksGUI_BlockDlg()
 void BlocksGUI_BlockDlg::Init()
 {
   // init variables
-  Group2F->LineEdit1->setReadOnly( true );
-  Group2F->LineEdit2->setReadOnly( true );
+  Group2F->LineEdit1->setReadOnly(true);
+  Group2F->LineEdit2->setReadOnly(true);
 
-  Group6F->LineEdit1->setReadOnly( true );
-  Group6F->LineEdit2->setReadOnly( true );
-  Group6F->LineEdit3->setReadOnly( true );
-  Group6F->LineEdit4->setReadOnly( true );
-  Group6F->LineEdit5->setReadOnly( true );
-  Group6F->LineEdit6->setReadOnly( true );
+  Group6F->LineEdit1->setReadOnly(true);
+  Group6F->LineEdit2->setReadOnly(true);
+  Group6F->LineEdit3->setReadOnly(true);
+  Group6F->LineEdit4->setReadOnly(true);
+  Group6F->LineEdit5->setReadOnly(true);
+  Group6F->LineEdit6->setReadOnly(true);
 
   // signals and slots connections
-  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
-  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
-  connect( this, SIGNAL( constructorsClicked( int ) ), 
-	   this, SLOT( ConstructorsClicked( int ) ) );
+  connect(this, SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
 
-  connect( Group2F->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group2F->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect(Group2F->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group2F->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect( Group6F->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group6F->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group6F->PushButton3, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group6F->PushButton4, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group6F->PushButton5, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group6F->PushButton6, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect(Group6F->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group6F->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group6F->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group6F->PushButton4, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group6F->PushButton5, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group6F->PushButton6, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
   // init controls and fields
-  initName( tr( "GEOM_BLOCK" ) );
+  initName(tr("GEOM_BLOCK"));
 
   myConstructorId = -1;
-  ConstructorsClicked( 0 );
+  ConstructorsClicked(0);
 }
 
 //=================================================================================
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void BlocksGUI_BlockDlg::ConstructorsClicked( int constructorId )
+void BlocksGUI_BlockDlg::ConstructorsClicked (int constructorId)
 {
-  if ( myConstructorId == constructorId )
+  if (myConstructorId == constructorId)
     return;
 
   myConstructorId = constructorId;
-
-  switch ( constructorId ) {
-  case 0:
-    Group6F->hide();
-    Group2F->show();
-
-    myEditCurrentArgument = Group2F->LineEdit1;
-    Group2F->LineEdit1->setText( tr( "" ) );
-    Group2F->LineEdit2->setText( tr( "" ) );
-    break;
-  case 1:
-    Group2F->hide();
-    Group6F->show();
-
-    myEditCurrentArgument = Group6F->LineEdit1;
-    Group6F->LineEdit1->setText( tr( "" ) );
-    Group6F->LineEdit2->setText( tr( "" ) );
-    Group6F->LineEdit3->setText( tr( "" ) );
-    Group6F->LineEdit4->setText( tr( "" ) );
-    Group6F->LineEdit5->setText( tr( "" ) );
-    Group6F->LineEdit6->setText( tr( "" ) );
-    break;
-  default:
-    break;
-  }
 
   // init fields
   myFace1 = myFace2 = GEOM::GEOM_Object::_nil();
   myFace3 = myFace4 = myFace5 = myFace6 = myFace1;
 
+  switch (constructorId) {
+  case 0:
+    Group6F->hide();
+    Group2F->show();
+
+    Group2F->LineEdit1->setText(tr(""));
+    Group2F->LineEdit2->setText(tr(""));
+
+    Group2F->PushButton1->click();
+    break;
+  case 1:
+    Group2F->hide();
+    Group6F->show();
+
+    Group6F->LineEdit1->setText(tr(""));
+    Group6F->LineEdit2->setText(tr(""));
+    Group6F->LineEdit3->setText(tr(""));
+    Group6F->LineEdit4->setText(tr(""));
+    Group6F->LineEdit5->setText(tr(""));
+    Group6F->LineEdit6->setText(tr(""));
+
+    Group6F->PushButton1->click();
+    break;
+  default:
+    break;
+  }
+
   qApp->processEvents();
   updateGeometry();
-  resize( minimumSize() );
+  resize(minimumSize());
 
-  globalSelection( GEOM_FACE );
+  // on dialog initialization we init the first field with a selected object (if any)
   SelectionIntoArgument();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	  SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 }
 
 //=================================================================================
@@ -201,7 +202,7 @@ void BlocksGUI_BlockDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void BlocksGUI_BlockDlg::ClickOnOk()
 {
-  if ( ClickOnApply() )
+  if (ClickOnApply())
     ClickOnCancel();
 }
 
@@ -211,7 +212,7 @@ void BlocksGUI_BlockDlg::ClickOnOk()
 //=================================================================================
 bool BlocksGUI_BlockDlg::ClickOnApply()
 {
-  if ( !onAccept() )
+  if (!onAccept())
     return false;
 
   initName();
@@ -220,55 +221,111 @@ bool BlocksGUI_BlockDlg::ClickOnApply()
 
 //=================================================================================
 // function : SelectionIntoArgument()
-// purpose  : Called when selection as changed or other case
+// purpose  : Called when selection is changed or on dialog initialization or activation
 //=================================================================================
 void BlocksGUI_BlockDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myEditCurrentArgument->setText( "" );
+  myEditCurrentArgument->setText("");
 
-  if ( IObjectCount() != 1 ) {
-    if ( myEditCurrentArgument == Group2F->LineEdit1 ||
-	 myEditCurrentArgument == Group6F->LineEdit1 )
-      myFace1 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group2F->LineEdit2 ||
-	      myEditCurrentArgument == Group6F->LineEdit2 )
-      myFace2 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group6F->LineEdit3 )
-      myFace3 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group6F->LineEdit4 )
-      myFace4 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group6F->LineEdit5 )
-      myFace5 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group6F->LineEdit6 )
-      myFace6 = GEOM::GEOM_Object::_nil();
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    if (myEditCurrentArgument == Group2F->LineEdit1)      myFace1 = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == Group2F->LineEdit2) myFace2 = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == Group6F->LineEdit1) myFace1 = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == Group6F->LineEdit2) myFace2 = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == Group6F->LineEdit3) myFace3 = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == Group6F->LineEdit4) myFace4 = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == Group6F->LineEdit5) myFace5 = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == Group6F->LineEdit6) myFace6 = GEOM::GEOM_Object::_nil();
     return;
   }
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
-  if ( !testResult || CORBA::is_nil( aSelectedObject ) )
+  if (!testResult || CORBA::is_nil(aSelectedObject))
     return;
 
-  if ( myEditCurrentArgument == Group2F->LineEdit1 ||
-       myEditCurrentArgument == Group6F->LineEdit1 )
-    myFace1 = aSelectedObject;
-  else if ( myEditCurrentArgument == Group2F->LineEdit2 ||
-	    myEditCurrentArgument == Group6F->LineEdit2 )
-    myFace2 = aSelectedObject;
-  else if ( myEditCurrentArgument == Group6F->LineEdit3 )
-    myFace3 = aSelectedObject;
-  else if ( myEditCurrentArgument == Group6F->LineEdit4 )
-    myFace4 = aSelectedObject;
-  else if ( myEditCurrentArgument == Group6F->LineEdit5 )
-    myFace5 = aSelectedObject;
-  else if ( myEditCurrentArgument == Group6F->LineEdit6 )
-    myFace6 = aSelectedObject;
+  QString aName = GEOMBase::GetName(aSelectedObject);
 
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  // Get Selected object if selected subshape
+  TopoDS_Shape aShape;
+  if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+  {
+    TColStd_IndexedMapOfInteger aMap;
+    aSelMgr->GetIndexes(aSelList.First(), aMap);
+    if (aMap.Extent() == 1) // Local Selection
+    {
+      int anIndex = aMap(1);
+      aName += QString(":face_%1").arg(anIndex);
+
+      //Find SubShape Object in Father
+      GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+
+      if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+      }
+      else
+        aSelectedObject = aFindedObject; // get Object from study
+    }
+    else // Global Selection
+    {
+      if (aShape.ShapeType() != TopAbs_FACE) {
+        aSelectedObject = GEOM::GEOM_Object::_nil();
+        aName = "";
+      }
+    }
+  }
+
+  myEditCurrentArgument->setText(aName);
+
+  if (myEditCurrentArgument == Group2F->LineEdit1) {
+    myFace1 = aSelectedObject;
+    if (!myFace1->_is_nil() && myFace2->_is_nil())
+      Group2F->PushButton2->click();
+  }
+  else if (myEditCurrentArgument == Group2F->LineEdit2) {
+    myFace2 = aSelectedObject;
+    if (!myFace2->_is_nil() && myFace1->_is_nil())
+      Group2F->PushButton1->click();
+  }
+  else if (myEditCurrentArgument == Group6F->LineEdit1) {
+    myFace1 = aSelectedObject;
+    if (!myFace1->_is_nil() && myFace2->_is_nil())
+      Group6F->PushButton2->click();
+  }
+  else if (myEditCurrentArgument == Group6F->LineEdit2) {
+    myFace2 = aSelectedObject;
+    if (!myFace2->_is_nil() && myFace3->_is_nil())
+      Group6F->PushButton3->click();
+  }
+  else if (myEditCurrentArgument == Group6F->LineEdit3) {
+    myFace3 = aSelectedObject;
+    if (!myFace3->_is_nil() && myFace4->_is_nil())
+      Group6F->PushButton4->click();
+  }
+  else if (myEditCurrentArgument == Group6F->LineEdit4) {
+    myFace4 = aSelectedObject;
+    if (!myFace4->_is_nil() && myFace5->_is_nil())
+      Group6F->PushButton5->click();
+  }
+  else if (myEditCurrentArgument == Group6F->LineEdit5) {
+    myFace5 = aSelectedObject;
+    if (!myFace5->_is_nil() && myFace6->_is_nil())
+      Group6F->PushButton6->click();
+  }
+  else if (myEditCurrentArgument == Group6F->LineEdit6) {
+    myFace6 = aSelectedObject;
+    if (!myFace6->_is_nil() && myFace1->_is_nil())
+      Group6F->PushButton1->click();
+  }
 
   displayPreview();
 }
@@ -281,35 +338,78 @@ void BlocksGUI_BlockDlg::SetEditCurrentArgument()
 {
   QPushButton* aSender = (QPushButton*)sender();
 
-  if ( aSender == Group2F->PushButton1 ) {
+  // clear selection
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+  if (myInitial)
+    myInitial = false;
+  else
+    myGeomGUI->getApp()->selectionMgr()->clearSelected();
+
+  // disable all
+  switch (myConstructorId) {
+  case 0:
+    Group2F->PushButton1->setDown(false);
+    Group2F->PushButton2->setDown(false);
+
+    Group2F->LineEdit1->setEnabled(false);
+    Group2F->LineEdit2->setEnabled(false);
+    break;
+  case 1:
+    Group6F->PushButton1->setDown(false);
+    Group6F->PushButton2->setDown(false);
+    Group6F->PushButton3->setDown(false);
+    Group6F->PushButton4->setDown(false);
+    Group6F->PushButton5->setDown(false);
+    Group6F->PushButton6->setDown(false);
+
+    Group6F->LineEdit1->setEnabled(false);
+    Group6F->LineEdit2->setEnabled(false);
+    Group6F->LineEdit3->setEnabled(false);
+    Group6F->LineEdit4->setEnabled(false);
+    Group6F->LineEdit5->setEnabled(false);
+    Group6F->LineEdit6->setEnabled(false);
+    break;
+  default:
+    break;
+  }
+
+  // enable push button
+  aSender->setDown(true);
+
+  // set line edit as current argument
+  if (aSender == Group2F->PushButton1) {
     myEditCurrentArgument = Group2F->LineEdit1;
-  } 
-  else if ( aSender == Group2F->PushButton2 ) {
+  }
+  else if (aSender == Group2F->PushButton2) {
     myEditCurrentArgument = Group2F->LineEdit2;
   }
-  else if ( aSender == Group6F->PushButton1 ) {
+  else if (aSender == Group6F->PushButton1) {
     myEditCurrentArgument = Group6F->LineEdit1;
   }
-  else if ( aSender == Group6F->PushButton2 ) {
+  else if (aSender == Group6F->PushButton2) {
     myEditCurrentArgument = Group6F->LineEdit2;
-  } 
-  else if ( aSender == Group6F->PushButton3 ) {
+  }
+  else if (aSender == Group6F->PushButton3) {
     myEditCurrentArgument = Group6F->LineEdit3;
-  } 
-  else if ( aSender == Group6F->PushButton4 ) {
+  }
+  else if (aSender == Group6F->PushButton4) {
     myEditCurrentArgument = Group6F->LineEdit4;
-  } 
-  else if ( aSender == Group6F->PushButton5 ) {
+  }
+  else if (aSender == Group6F->PushButton5) {
     myEditCurrentArgument = Group6F->LineEdit5;
-  } 
-  else if ( aSender == Group6F->PushButton6 ) {
+  }
+  else if (aSender == Group6F->PushButton6) {
     myEditCurrentArgument = Group6F->LineEdit6;
   }
 
-  globalSelection( GEOM_FACE );
-
+  // enable line edit
+  myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
-  SelectionIntoArgument();
+
+  globalSelection(); // close local contexts, if any
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE); //Select Faces on All Shapes
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 }
 
 //=================================================================================
@@ -319,21 +419,19 @@ void BlocksGUI_BlockDlg::SetEditCurrentArgument()
 void BlocksGUI_BlockDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-
-  globalSelection( GEOM_FACE ); 
-
-  SelectionIntoArgument();
+  globalSelection(); // close local contexts, if any
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE); //Select Faces on All Shapes
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 }
 
 //=================================================================================
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BlocksGUI_BlockDlg::enterEvent( QEvent* )
+void BlocksGUI_BlockDlg::enterEvent (QEvent*)
 {
-  if ( !mainFrame()->GroupConstructors->isEnabled() )
+  if (!mainFrame()->GroupConstructors->isEnabled())
     ActivateThisDialog();
 }
 
@@ -343,7 +441,7 @@ void BlocksGUI_BlockDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BlocksGUI_BlockDlg::createOperation()
 {
-  return getGeomEngine()->GetIBlocksOperations( getStudyId() );
+  return getGeomEngine()->GetIBlocksOperations(getStudyId());
 }
 
 //=================================================================================
@@ -353,14 +451,14 @@ GEOM::GEOM_IOperations_ptr BlocksGUI_BlockDlg::createOperation()
 bool BlocksGUI_BlockDlg::isValid (QString&)
 {
   bool ok = false;
-  switch ( getConstructorId() ) {
+  switch (getConstructorId()) {
   case 0:
-    ok = !( myFace1->_is_nil() || myFace2->_is_nil() );
+    ok = !(myFace1->_is_nil() || myFace2->_is_nil());
     break;
   case 1:
-    ok =  !( myFace1->_is_nil() || myFace2->_is_nil() ||
-	     myFace3->_is_nil() || myFace4->_is_nil() ||
-	     myFace5->_is_nil() || myFace6->_is_nil() );
+    ok =  !(myFace1->_is_nil() || myFace2->_is_nil() ||
+            myFace3->_is_nil() || myFace4->_is_nil() ||
+            myFace5->_is_nil() || myFace6->_is_nil());
     break;
   default:
     break;
@@ -372,33 +470,58 @@ bool BlocksGUI_BlockDlg::isValid (QString&)
 // function : execute
 // purpose  :
 //=================================================================================
-bool BlocksGUI_BlockDlg::execute( ObjectList& objects )
+bool BlocksGUI_BlockDlg::execute (ObjectList& objects)
 {
   bool res = false;
 
   GEOM::GEOM_Object_var anObj;
 
-  switch ( getConstructorId() ) {
+  switch (getConstructorId()) {
   case 0:
-    if ( !CORBA::is_nil( myFace1 ) && !CORBA::is_nil( myFace2 ) ) {
-      anObj = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->
-	MakeHexa2Faces( myFace1, myFace2 );
+    if (!CORBA::is_nil(myFace1) && !CORBA::is_nil(myFace2)) {
+      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
+        MakeHexa2Faces(myFace1, myFace2);
       res = true;
     }
     break;
   case 1:
-    if ( !CORBA::is_nil( myFace1 ) && !CORBA::is_nil( myFace2 ) &&
-	 !CORBA::is_nil(myFace3 )  && !CORBA::is_nil( myFace4 ) &&
-	 !CORBA::is_nil( myFace5 ) && !CORBA::is_nil( myFace6 ) ) {
-        anObj = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->
-          MakeHexa( myFace1, myFace2, myFace3, myFace4, myFace5, myFace6 );
-        res = true;
+    if (!CORBA::is_nil(myFace1) && !CORBA::is_nil(myFace2) &&
+        !CORBA::is_nil(myFace3) && !CORBA::is_nil(myFace4) &&
+        !CORBA::is_nil(myFace5) && !CORBA::is_nil(myFace6)) {
+      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
+        MakeHexa(myFace1, myFace2, myFace3, myFace4, myFace5, myFace6);
+      res = true;
     }
     break;
   }
 
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
 
   return res;
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BlocksGUI_BlockDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+  switch (getConstructorId()) {
+  case 0:
+    objMap[Group2F->LineEdit1->text()] = myFace1;
+    objMap[Group2F->LineEdit2->text()] = myFace2;
+    break;
+  case 1:
+    objMap[Group6F->LineEdit1->text()] = myFace1;
+    objMap[Group6F->LineEdit2->text()] = myFace2;
+    objMap[Group6F->LineEdit3->text()] = myFace3;
+    objMap[Group6F->LineEdit4->text()] = myFace4;
+    objMap[Group6F->LineEdit5->text()] = myFace5;
+    objMap[Group6F->LineEdit6->text()] = myFace6;
+    break;
+  }
+  addSubshapesToFather(objMap);
 }

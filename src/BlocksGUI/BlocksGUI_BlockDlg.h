@@ -39,24 +39,28 @@ class BlocksGUI_BlockDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BlocksGUI_BlockDlg( GeometryGUI*, QWidget* );
+  BlocksGUI_BlockDlg (GeometryGUI*, QWidget*);
   ~BlocksGUI_BlockDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                       isValid( QString& );
-  virtual bool                       execute( ObjectList&);
+  virtual bool                       isValid (QString&);
+  virtual bool                       execute (ObjectList&);
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
-  void                               enterEvent( QEvent* );
+  void                               enterEvent (QEvent*);
 
 private:
   int                                myConstructorId;
 
   GEOM::GEOM_Object_var              myFace1, myFace2;
   GEOM::GEOM_Object_var              myFace3, myFace4, myFace5, myFace6;
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
 
   DlgRef_2Sel*                       Group2F;
   DlgRef_6Sel*                       Group6F;
@@ -65,7 +69,7 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               ConstructorsClicked( int );
+  void                               ConstructorsClicked (int);
 
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
