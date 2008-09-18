@@ -664,9 +664,7 @@ static
   //
   if (aType==GeomAbs_BSplineSurface||
       aType==GeomAbs_Sphere||
-      //modified by NIZNHY-PKV Wed Nov 29 10:18:50 2006f
       GeomAbs_SurfaceOfRevolution) {
-    //modified by NIZNHY-PKV Wed Nov 29 10:18:55 2006t
     if (aTol2D < aTolV3D) {
       aTol2D=aTolV3D;
     }
@@ -790,24 +788,29 @@ static
 			 const GeomAdaptor_Surface& aGAS,
 			 const Standard_Boolean aFlag)
 {
-  Standard_Real aFirst, aLast, aToler, dt, aTV, aTV1, anAngle;
-  
+  Standard_Real aFirst, aLast, aToler, dt, aTV, aTV1, anAngle, aTX;
+  gp_Pnt2d aPV, aPV1;
+  gp_Vec2d aV2D;
   Handle(Geom2d_Curve) aC2D;
-  
+  //
+  aTV=BRep_Tool::Parameter (aV, anEdge, myFace);
+  if (Precision::IsInfinite(aTV)) {
+    return 0.;
+  }
+  //
   BOPTools_Tools2D::CurveOnSurface (anEdge, myFace, aC2D, 
 				    aFirst, aLast, aToler, Standard_True);
-
-  aTV=BRep_Tool::Parameter (aV, anEdge, myFace);
-  if (Precision::IsInfinite(aTV))
-    return 0.;
-
   //dt=1.e-7;
-  dt=Tolerance2D(aV, aGAS);
-  
-  if(dt > (aLast - aFirst) * 0.25) {
+  //modified by NIZNHY-PKV Wed Sep 10 14:06:04 2008f
+  //dt=Tolerance2D(aV, aGAS);
+  dt=2.*Tolerance2D(aV, aGAS);
+  //modified by NIZNHY-PKV Wed Sep 10 14:06:07 2008t
+  //
+  aTX=0.25*(aLast - aFirst);
+  if(dt > aTX) {
     // to save direction of the curve as much as it possible
     // in the case of big tolerances
-    dt = (aLast - aFirst) * 0.25; 
+    dt = aTX; 
   }
   //
   if (fabs (aTV-aFirst) < fabs(aTV - aLast)) {
@@ -816,27 +819,22 @@ static
   else {
     aTV1=aTV - dt;
   }
-  
-  gp_Pnt2d aPV, aPV1;
+  //
   aC2D->D0 (aTV, aPV);
   aC2D->D0 (aTV1, aPV1);
-  
-  gp_Vec2d aV2D;
   //
   if (aFlag) {//IN
     gp_Vec2d aV2DIn(aPV1, aPV);
-    //
     aV2D=aV2DIn;
   }
-
   else {
     gp_Vec2d aV2DOut(aPV, aPV1);
     aV2D=aV2DOut;
   }
-
+  //
   gp_Dir2d aDir2D(aV2D);
   anAngle=Angle(aDir2D);
-
+  //
   return anAngle;
 }
 //=======================================================================

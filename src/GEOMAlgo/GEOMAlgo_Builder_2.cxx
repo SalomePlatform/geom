@@ -360,6 +360,26 @@ static
     aBF.SetFace(aFF);
     aBF.SetContext(aCtx);
     const TopTools_ListOfShape& aSE=aWES.StartElements();
+    //
+    //DEB f
+    /*
+    {
+      TopoDS_Compound aCx;
+      BRep_Builder aBBx;
+      TopTools_ListIteratorOfListOfShape aItx;
+      //
+      aBBx.MakeCompound(aCx);
+      aBBx.Add(aCx, aFF);
+      aItx.Initialize(aSE);
+      for (; aItx.More(); aItx.Next()) {
+	TopoDS_Shape& aEx=aItx.Value();
+	aBBx.Add(aCx, aEx);
+      }
+      int a=0;
+    }
+    */
+    //DEB t
+    //
     aBF.SetShapes(aSE);
     //
     aBF.Perform();
