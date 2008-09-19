@@ -51,7 +51,7 @@ usr_docs: doxyfile_tui doxyfile_py doxyfile
 docs: usr_docs
 
 clean-local:
-	@for filen in `find .` ; do						\
+	@for filen in `find . -maxdepth 1` ; do						\
 	  case $${filen} in							\
 	    ./Makefile | ./doxyfile | ./doxyfile_py | ./doxyfile_tui ) ;;	\
 	    . | .. ) ;;								\
@@ -61,7 +61,7 @@ clean-local:
 
 install-data-local: usr_docs
 	$(INSTALL) -d $(DESTDIR)$(docdir)/gui/GEOM
-	@for filen in `find .` ; do								\
+	@for filen in `find . -maxdepth 1` ; do								\
 	  case $${filen} in									\
 	    ./Makefile | ./doxyfile | ./doxyfile_py | ./doxyfile_tui ) ;;			\
 	    ./doxyfile.bak | ./doxyfile_py.bak | ./doxyfile_tui.bak ) ;;			\
