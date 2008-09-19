@@ -46,23 +46,21 @@ class BlocksGUI_TrsfDlg : public GEOMBase_Skeleton
   enum { SpinBox1, SpinBox2U, SpinBox2V };
 
 public:
-  BlocksGUI_TrsfDlg( GeometryGUI*, QWidget* );
+  BlocksGUI_TrsfDlg (GeometryGUI*, QWidget*);
   ~BlocksGUI_TrsfDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                       isValid( QString& );
-  virtual bool                       execute( ObjectList& );
+  virtual bool                       isValid (QString&);
+  virtual bool                       execute (ObjectList&);
 
 private:
   void                               Init();
-  void                               enterEvent( QEvent* );
+  void                               enterEvent(QEvent*);
 
-  void                               createSelWg( const QString&, QPixmap&, 
-						  QWidget*, const int );
-  void                               createSpinWg( const QString&, QWidget*, 
-						   const int );
+  void                               createSelWg (const QString&, QPixmap&, QWidget*, const int);
+  void                               createSpinWg (const QString&, QWidget*, const int);
   void                               activateSelection();
   void                               enableWidgets();
 
@@ -71,6 +69,9 @@ private:
 
   GEOM::GEOM_Object_var              myShape;
   QMap<int, int>                     myFaces;
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
 
   QGroupBox*                         myGrp1;
   QGroupBox*                         myGrp2;
@@ -83,12 +84,12 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               ConstructorsClicked( int );
+  void                               ConstructorsClicked (int);
 
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
 
-  void                               ValueChangedInSpinBox( double );
+  void                               ValueChangedInSpinBox (double);
 };
 
 #endif // BLOCKSGUI_TRSFDLG_H

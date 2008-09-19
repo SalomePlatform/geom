@@ -42,25 +42,26 @@ class BlocksGUI_QuadFaceDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
   enum { Vertex1, Vertex2, Vertex3, Vertex4,
-	 Edge12, Edge22,
-	 Edge14, Edge24, Edge34, Edge44 };
+         Edge12, Edge22,
+         Edge14, Edge24, Edge34, Edge44 };
 
 public:
-  BlocksGUI_QuadFaceDlg( GeometryGUI*, QWidget* );
+  BlocksGUI_QuadFaceDlg (GeometryGUI*, QWidget*);
   ~BlocksGUI_QuadFaceDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                       isValid( QString& );
-  virtual bool                       execute( ObjectList& );
+  virtual bool                       isValid (QString&);
+  virtual bool                       execute (ObjectList&);
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
-  void                               enterEvent( QEvent* );
+  void                               enterEvent (QEvent*);
 
-  void                               createSelWg( const QString&, QPixmap&, 
-						  QWidget*, const int );
+  void                               createSelWg (const QString&, QPixmap&,
+                                                  QWidget*, const int);
   void                               activateSelection();
 
 private:
@@ -70,6 +71,9 @@ private:
   GEOM::GEOM_Object_var              myShape2;
   GEOM::GEOM_Object_var              myShape3;
   GEOM::GEOM_Object_var              myShape4;
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
 
   QGroupBox*                         myGrp1;
   QGroupBox*                         myGrp2;
@@ -82,7 +86,7 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               ConstructorsClicked( int );
+  void                               ConstructorsClicked (int);
 
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
