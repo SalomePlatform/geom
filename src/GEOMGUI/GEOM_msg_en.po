@@ -1952,17 +1952,17 @@ msgstr "Main Shape And Sub-Shapes"
 msgid "GroupGUI_GroupDlg::MAIN_SHAPE"
 msgstr "Main Shape"
 
-msgid "GroupGUI_GroupDlg::SELECT_SUB_SHAPES"
-msgstr "Select Sub-Shapes"
+msgid "GroupGUI_GroupDlg::SHAPE_SEL_RESTR"
+msgstr "Main Shape Selection restriction"
 
-msgid "GroupGUI_GroupDlg::ALL_SUBSHAPES"
-msgstr "All"
+msgid "GroupGUI_GroupDlg::NO_RESTR"
+msgstr "No restriction"
 
-msgid "GroupGUI_GroupDlg::GET_IN_PLACE"
-msgstr "In Place of Second Shape"
+msgid "GroupGUI_GroupDlg::GEOM_PARTS_OF_SHAPE2"
+msgstr "Geometrical parts of the Second Shape"
 
 msgid "GroupGUI_GroupDlg::SUBSHAPES_OF_SHAPE2"
-msgstr "Sub-Shapes of Second Shape"
+msgstr "Only Sub-Shapes of the Second Shape"
 
 msgid "GroupGUI_GroupDlg::SECOND_SHAPE"
 msgstr "Second Shape"

@@ -107,11 +107,11 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWi
 
   //mySelSubBtn = new QRadioButton ( tr( "SELECT_SUB_SHAPES" ), aFrame );
   //myPlaceCheckBox  = new QCheckBox ( tr( "GET_IN_PLACE" ), aFrame );
-  mySelectionWayGroup = new QButtonGroup(1, Qt::Horizontal, tr("SELECT_SUB_SHAPES"),aFrame);
+  mySelectionWayGroup = new QButtonGroup(1, Qt::Horizontal, tr("SHAPE_SEL_RESTR"),aFrame);
   mySelectionWayGroup->setExclusive(true);
-  QRadioButton* allSubs     = new QRadioButton(tr("ALL_SUBSHAPES")      ,mySelectionWayGroup);
-  QRadioButton* inPlaceSubs = new QRadioButton(tr("GET_IN_PLACE")       ,mySelectionWayGroup);
-  QRadioButton* shape2Subs  = new QRadioButton(tr("SUBSHAPES_OF_SHAPE2"),mySelectionWayGroup);
+  QRadioButton* allSubs     = new QRadioButton(tr("NO_RESTR")            ,mySelectionWayGroup);
+  QRadioButton* inPlaceSubs = new QRadioButton(tr("GEOM_PARTS_OF_SHAPE2"),mySelectionWayGroup);
+  QRadioButton* shape2Subs  = new QRadioButton(tr("SUBSHAPES_OF_SHAPE2") ,mySelectionWayGroup);
   mySelectionWayGroup->insert(allSubs    , ALL_SUBSHAPES);
   mySelectionWayGroup->insert(inPlaceSubs, GET_IN_PLACE);
   mySelectionWayGroup->insert(shape2Subs , SUBSHAPES_OF_SHAPE2);
