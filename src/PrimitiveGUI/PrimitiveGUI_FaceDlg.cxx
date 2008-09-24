@@ -53,9 +53,9 @@ PrimitiveGUI_FaceDlg::PrimitiveGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget
 				    bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_FACE_OBJ_HW" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
-  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_FACE_HW" ) ) );
+  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_FACE_OBJ_HW")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_FACE_HW")));
 
   setWindowTitle( tr( "GEOM_FACE_TITLE" ) );
  
@@ -268,6 +268,7 @@ bool PrimitiveGUI_FaceDlg::ClickOnApply()
 //=================================================================================
 void PrimitiveGUI_FaceDlg::ConstructorsClicked( int constructorId )
 {  
+  erasePreview();
   switch ( constructorId ) {
   case 0:
     {
@@ -302,7 +303,7 @@ void PrimitiveGUI_FaceDlg::ConstructorsClicked( int constructorId )
   updateGeometry();
   resize( minimumSize() );
   SelectionIntoArgument();
-  displayPreview();
+  //displayPreview();
 }
 
 //=================================================================================
@@ -474,26 +475,30 @@ bool PrimitiveGUI_FaceDlg::isValid( QString& msg )
 // function : execute
 // purpose  :
 //=================================================================================
-bool PrimitiveGUI_FaceDlg::execute( ObjectList& objects )
+bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
 {
   bool res = false;
   GEOM::GEOM_Object_var anObj;
-  switch ( getConstructorId() ) {
-  case 0 :
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeFaceHW( GroupDimensions->SpinBox_DX->value(), GroupDimensions->SpinBox_DY->value(), myOrientationType );
+  switch (getConstructorId()) {
+  case 0:
+    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
+      MakeFaceHW(GroupDimensions->SpinBox_DX->value(),
+                 GroupDimensions->SpinBox_DY->value(), myOrientationType);
     res = true;
     break;
-  case 1 :
-    if ( GroupType->RadioButton1->isChecked() )
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeFaceObjHW( myEdge, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value() );
+  case 1:
+    if (GroupType->RadioButton1->isChecked())
+      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
+        MakeFaceObjHW(myEdge, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
     else if (GroupType->RadioButton2->isChecked())
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeFaceObjHW( myFace, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value() );
+      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
+        MakeFaceObjHW(myFace, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
     res = true;
     break;
   }
-  
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
 
   return res;
 }

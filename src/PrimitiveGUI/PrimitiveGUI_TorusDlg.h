@@ -56,7 +56,11 @@ private:
   double                             getRadius1() const;
   double                             getRadius2() const;
   
+private:
   GEOM::GEOM_Object_var              myPoint, myDir;
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
   
   DlgRef_2Sel2Spin*                  GroupPoints;
   DlgRef_2Spin*                      GroupDimensions;

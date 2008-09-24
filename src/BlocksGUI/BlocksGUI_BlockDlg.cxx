@@ -233,7 +233,7 @@ void BlocksGUI_BlockDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() != 1) {
-    if (myEditCurrentArgument == Group2F->LineEdit1)      myFace1 = GEOM::GEOM_Object::_nil();
+    if      (myEditCurrentArgument == Group2F->LineEdit1) myFace1 = GEOM::GEOM_Object::_nil();
     else if (myEditCurrentArgument == Group2F->LineEdit2) myFace2 = GEOM::GEOM_Object::_nil();
     else if (myEditCurrentArgument == Group6F->LineEdit1) myFace1 = GEOM::GEOM_Object::_nil();
     else if (myEditCurrentArgument == Group6F->LineEdit2) myFace2 = GEOM::GEOM_Object::_nil();
@@ -271,8 +271,9 @@ void BlocksGUI_BlockDlg::SelectionIntoArgument()
         GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
         aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
       }
-      else
+      else {
         aSelectedObject = aFindedObject; // get Object from study
+      }
     }
     else // Global Selection
     {
@@ -372,9 +373,6 @@ void BlocksGUI_BlockDlg::SetEditCurrentArgument()
     break;
   }
 
-  // enable push button
-  aSender->setDown(true);
-
   // set line edit as current argument
   if (aSender == Group2F->PushButton1) {
     myEditCurrentArgument = Group2F->LineEdit1;
@@ -401,9 +399,11 @@ void BlocksGUI_BlockDlg::SetEditCurrentArgument()
     myEditCurrentArgument = Group6F->LineEdit6;
   }
 
-  // enable line edit
+  // enable push button and line edit
   myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
+  // after setFocus(), because it will be setDown(false) then loses focus
+  aSender->setDown(true);
 
   globalSelection(); // close local contexts, if any
   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE); //Select Faces on All Shapes
@@ -422,6 +422,7 @@ void BlocksGUI_BlockDlg::ActivateThisDialog()
   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE); //Select Faces on All Shapes
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
+  displayPreview();
 }
 
 //=================================================================================
@@ -501,7 +502,7 @@ bool BlocksGUI_BlockDlg::execute (ObjectList& objects)
 }
 
 //=================================================================================
-// function : addSubshapeToStudy
+// function : addSubshapesToStudy
 // purpose  : virtual method to add new SubObjects if local selection
 //=================================================================================
 void BlocksGUI_BlockDlg::addSubshapesToStudy()

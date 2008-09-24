@@ -58,6 +58,9 @@ private:
   
 private:
   GEOM::GEOM_Object_var              myPoint, myDir;
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
   
   DlgRef_2Sel2Spin*                  GroupPoints;
   DlgRef_2Spin*                      GroupDimensions;
@@ -66,7 +69,6 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               DeactivateActiveDialog();
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();

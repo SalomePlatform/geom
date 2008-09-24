@@ -191,6 +191,7 @@ void GEOMBase_Skeleton::DeactivateActiveDialog()
     myGeomGUI->SetActiveDialogBox( 0 );
     disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
   }
+  erasePreview();
 }
 
 //=================================================================================

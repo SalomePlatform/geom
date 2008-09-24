@@ -359,9 +359,6 @@ void BlocksGUI_TrsfDlg::SetEditCurrentArgument()
     break;
   }
 
-  // enable push button
-  aSender->setDown(true);
-
   // set line edit as current argument
   QMap<int, QPushButton*>::iterator anIter;
   for (anIter = mySelBtn.begin(); anIter != mySelBtn.end(); ++anIter) {
@@ -374,6 +371,10 @@ void BlocksGUI_TrsfDlg::SetEditCurrentArgument()
   // enable line edit
   myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
+
+  // enable push button
+  // after setFocus(), because it will be setDown(false) then loses focus
+  aSender->setDown(true);
 
   activateSelection();
 }

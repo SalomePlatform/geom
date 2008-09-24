@@ -33,13 +33,14 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <GEOMImpl_Types.hxx>
-
+// QT Includes
 #include <qlabel.h>
 
 // OCCT Includes
-#include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopAbs.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+
+#include <GEOMImpl_Types.hxx>
 
 //=================================================================================
 // class    : BlocksGUI_QuadFaceDlg()
@@ -392,9 +393,6 @@ void BlocksGUI_QuadFaceDlg::SetEditCurrentArgument()
     break;
   }
 
-  // enable push button
-  aSender->setDown(true);
-
   // set line edit as current argument
   QMap<int, QPushButton*>::iterator anIter;
   for (anIter = mySelBtn.begin(); anIter != mySelBtn.end(); ++anIter) {
@@ -407,6 +405,10 @@ void BlocksGUI_QuadFaceDlg::SetEditCurrentArgument()
   // enable line edit
   myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
+
+  // enable push button
+  // after setFocus(), because it will be setDown(false) then loses focus
+  aSender->setDown(true);
 
   activateSelection();
 }

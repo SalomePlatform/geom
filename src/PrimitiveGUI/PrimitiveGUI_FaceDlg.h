@@ -56,9 +56,6 @@ private:
   void                               enterEvent( QEvent* );
   
 private:
-  GEOM::GEOM_Object_var              myPoint1;   
-  GEOM::GEOM_Object_var              myPoint2;
-  GEOM::GEOM_Object_var              myVector;
   GEOM::GEOM_Object_var              myEdge;
   GEOM::GEOM_Object_var              myFace;
 

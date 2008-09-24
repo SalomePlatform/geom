@@ -38,11 +38,11 @@ class DlgRef_3Spin;
 class PrimitiveGUI_BoxDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
-    
+
 public:
   PrimitiveGUI_BoxDlg( GeometryGUI*, QWidget* = 0, bool modal = false, Qt::WindowFlags = 0 );
   ~PrimitiveGUI_BoxDlg();
-  
+
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
@@ -55,8 +55,11 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
-  GEOM::GEOM_Object_var              myPoint1, myPoint2;   /* Points containing the vector */ 
-  
+  GEOM::GEOM_Object_var              myPoint1, myPoint2; /* Points containing the vector */
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
+
   DlgRef_2Sel*                       GroupPoints;
   DlgRef_3Spin*                      GroupDimensions;
 
