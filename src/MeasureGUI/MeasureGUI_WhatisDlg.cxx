@@ -31,11 +31,11 @@
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
-#include <SUIT_MessageBox.h>
 #include <SalomeApp_Tools.h>
 
 #include <QGroupBox>
 #include <QScrollBar>
+#include <QMessageBox>
 
 class MeasureGUI_WhatisDlg::Whatis : public QGroupBox
 { 
@@ -138,6 +138,10 @@ MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( GeometryGUI* GUI, QWidget* parent )
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( myGrp );
 
+  // Properties dialog
+  myParamsDlg = new QMessageBox(QMessageBox::Information, "", "", QMessageBox::Ok, this);
+  myParamsDlg->setModal( false );
+
   /***************************************************************/
 
   myHelpFileName = "using_measurement_tools_page.html#whatis_anchor";
@@ -181,6 +185,9 @@ void MeasureGUI_WhatisDlg::processObject()
   QString aKind = getKindOfShape( aParameters );
   myGrp->LineEdit2->setText( aKind );
   myGrp->PushButton2->setEnabled( !aParameters.isEmpty());
+  myParamsDlg->setWindowTitle(aKind + " " + tr("GEOM_PROPERTIES"));
+  myParamsDlg->setText(aParameters);
+  myParamsDlg->adjustSize();
 }
 
 //=================================================================================
@@ -189,12 +196,7 @@ void MeasureGUI_WhatisDlg::processObject()
 //=================================================================================
 void MeasureGUI_WhatisDlg::ClickOnProperties()
 {
-  QString aParameters;
-  QString aKind = getKindOfShape( aParameters );
-
-  SUIT_MessageBox::information( this,
-				aKind + " " + tr( "GEOM_PROPERTIES" ),
-				aParameters );
+  myParamsDlg->show();
 }
 
 //=================================================================================

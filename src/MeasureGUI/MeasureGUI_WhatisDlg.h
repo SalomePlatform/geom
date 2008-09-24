@@ -28,6 +28,8 @@
 
 #include "MeasureGUI_Skeleton.h"
 
+class QMessageBox;
+
 //=================================================================================
 // class    : MeasureGUI_WhatisDlg
 // purpose  :
@@ -56,6 +58,7 @@ private:
   
 private:
   Whatis*                             myGrp;
+  QMessageBox*                        myParamsDlg;
 };
 
 #endif // MEASUREGUI_WHATISDLG_H
