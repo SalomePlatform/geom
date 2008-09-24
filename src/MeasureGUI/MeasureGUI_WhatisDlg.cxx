@@ -170,7 +170,8 @@ MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg (GeometryGUI* GUI, QWidget* parent)
   // Properties dialog
   //myParamsDlg = new MeasureGUI_Params_Dlg;
   myParamsDlg = new QMessageBox ("", "", QMessageBox::Information,
-                                 QMessageBox::Ok, QMessageBox::NoButton, QMessageBox::NoButton, this);
+                                 QMessageBox::Ok, QMessageBox::NoButton, QMessageBox::NoButton, 
+				 this, 0, FALSE);
 
   /***************************************************************/
 
