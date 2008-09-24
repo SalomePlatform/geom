@@ -3849,24 +3849,24 @@ Number of sketch points too small</translation>
             <translation>Select All</translation>
         </message>
         <message>
-            <source>SELECT_SUB_SHAPES</source>
-            <translation>Select Sub-Shapes</translation>
+            <source>SHAPE_SEL_RESTR</source>
+            <translation>Main Shape Selection restriction</translation>
         </message>
         <message>
             <source>SHAPE_TYPE</source>
             <translation>Shape Type</translation>
         </message>
         <message>
-            <source>ALL_SUBSHAPES</source>
-            <translation>All</translation>
+            <source>NO_RESTR</source>
+            <translation>No restriction</translation>
         </message>
         <message>
-            <source>GET_IN_PLACE</source>
-            <translation>In Place of Second Shape</translation>
+            <source>GEOM_PARTS_OF_SHAPE2</source>
+            <translation>Geometrical parts of the Second Shape</translation>
         </message>
         <message>
             <source>SUBSHAPES_OF_SHAPE2</source>
-            <translation>Sub-Shapes of Second Shape</translation>
+            <translation>Only Sub-Shapes of the Second Shape</translation>
         </message>
         <message>
             <source>SECOND_SHAPE</source>

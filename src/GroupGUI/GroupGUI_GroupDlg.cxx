@@ -102,11 +102,11 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg( Mode mode, GeometryGUI* theGeometryGUI, QW
   myShape2Name->setReadOnly( true );
   myShape2Name->setEnabled( false );
 
-  mySelectionWayGroupBox = new QGroupBox( tr("SELECT_SUB_SHAPES"), GroupMedium );
+  mySelectionWayGroupBox = new QGroupBox( tr("SHAPE_SEL_RESTR"), GroupMedium );
   mySelectionWayGroup = new QButtonGroup( mySelectionWayGroupBox );
-  QRadioButton* allSubs     = new QRadioButton( tr( "ALL_SUBSHAPES" )      , mySelectionWayGroupBox );
-  QRadioButton* inPlaceSubs = new QRadioButton( tr( "GET_IN_PLACE" )       , mySelectionWayGroupBox );
-  QRadioButton* shape2Subs  = new QRadioButton( tr( "SUBSHAPES_OF_SHAPE2" ), mySelectionWayGroupBox );
+  QRadioButton* allSubs     = new QRadioButton( tr( "NO_RESTR" )            , mySelectionWayGroupBox );
+  QRadioButton* inPlaceSubs = new QRadioButton( tr( "GEOM_PARTS_OF_SHAPE2" ), mySelectionWayGroupBox );
+  QRadioButton* shape2Subs  = new QRadioButton( tr( "SUBSHAPES_OF_SHAPE2" ) , mySelectionWayGroupBox );
   QVBoxLayout* mySelWayLayout = new QVBoxLayout( mySelectionWayGroupBox );
   mySelWayLayout->setMargin( 9 );
   mySelWayLayout->setSpacing( 6 );
