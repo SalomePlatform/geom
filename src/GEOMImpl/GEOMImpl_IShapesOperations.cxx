@@ -2914,7 +2914,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
       aPnt = BRep_Tool::Pnt( TopoDS::Vertex( Exp_Vertex.Current() ) );
       tab_Pnt[nbVertex] = aPnt;
     }
-    if ( not tab_Pnt[0].IsEqual(tab_Pnt[1], dl_l) ) {
+    if ( ! tab_Pnt[0].IsEqual(tab_Pnt[1], dl_l) ) {
       BRepGProp::LinearProperties(Exp_Edge.Current(), aProps);
       if ( aProps.Mass() < min_l ) min_l = aProps.Mass();
     }
@@ -2938,18 +2938,23 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   }
 
   // Searching for the sub-shapes inside the ShapeWhere shape
+  TopTools_MapOfShape map_aWhere;
   for ( Exp_aWhere.ReInit(); Exp_aWhere.More(); Exp_aWhere.Next() ) {
+    if (!map_aWhere.Add(Exp_aWhere.Current()))
+      continue; // skip repeated shape to avoid mass addition
     GetShapeProperties( Exp_aWhere.Current(), tab_aWhere, aPnt );
     for ( Exp_aWhat.ReInit(); Exp_aWhat.More(); Exp_aWhat.Next() ) {
       GetShapeProperties( Exp_aWhat.Current(), tab_aWhat, aPnt_aWhat );
-      if ( fabs(tab_aWhat[3] - tab_aWhere[3]) <= Tol_Mass && aPnt_aWhat.Distance(aPnt) <= Tol_1D ) isFound = true;
+      if ( fabs(tab_aWhat[3] - tab_aWhere[3]) <= Tol_Mass && aPnt_aWhat.Distance(aPnt) <= Tol_1D )
+        isFound = true;
       else {
         if ( (tab_aWhat[3] - tab_aWhere[3]) > Tol_Mass ) {
           aPntShape = BRepBuilderAPI_MakeVertex( aPnt ).Shape();
           aVertex   = TopoDS::Vertex( aPntShape );
           BRepExtrema_DistShapeShape aWhereDistance ( aVertex, Exp_aWhere.Current() );
           BRepExtrema_DistShapeShape aWhatDistance  ( aVertex, Exp_aWhat.Current() );
-          if ( fabs(aWhereDistance.Value() - aWhatDistance.Value()) <= Tol_1D ) isFound = true;
+          if ( fabs(aWhereDistance.Value() - aWhatDistance.Value()) <= Tol_1D )
+            isFound = true;
         }
       }
       if ( isFound ) {
@@ -3064,7 +3069,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
   //Make a Python command
   Handle(GEOM_Function) aFunction = aResult->GetFunction(1);
 
-  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetInPlace("
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetInPlaceByHistory("
     << theShapeWhere << ", " << theShapeWhat << ")";
 
   SetErrorCode(OK);
