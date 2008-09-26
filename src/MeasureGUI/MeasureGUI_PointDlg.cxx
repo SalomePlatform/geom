@@ -131,11 +131,14 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     SALOME_ListIO aSelList;
     aSelMgr->selectedObjects(aSelList);
 
+    if (aSelList.Extent() < 1)
+      return;
+
     Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_var aSelectedObject =
       GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
-    if ( !testResult || aSelectedObject->_is_nil() )
+    if (!testResult || aSelectedObject->_is_nil())
       return;
 
     myObj = aSelectedObject;

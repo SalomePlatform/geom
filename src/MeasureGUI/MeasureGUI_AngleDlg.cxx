@@ -153,14 +153,16 @@ void MeasureGUI_AngleDlg::SelectionIntoArgument()
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+  GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
 
-  if ( !testResult )
-    aSelectedObject = GEOM::GEOM_Object::_nil();
+  if (aSelList.Extent() > 0) {
+    Standard_Boolean testResult = Standard_False;
+    aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+    if (!testResult)
+      aSelectedObject = GEOM::GEOM_Object::_nil();
+  }
 
-  if ( myEditCurrentArgument == mySelEdit )
+  if (myEditCurrentArgument == mySelEdit)
     myObj = aSelectedObject;
   else
     myObj2 = aSelectedObject;
