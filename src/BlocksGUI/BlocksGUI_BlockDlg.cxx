@@ -402,7 +402,7 @@ void BlocksGUI_BlockDlg::SetEditCurrentArgument()
   // enable push button and line edit
   myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
-  // after setFocus(), because it will be setDown(false) then loses focus
+  // after setFocus(), because it will be setDown(false) when loses focus
   aSender->setDown(true);
 
   globalSelection(); // close local contexts, if any

@@ -121,7 +121,6 @@ void PrimitiveGUI_TorusDlg::Init()
   initSpinBox(GroupDimensions->SpinBox_DY, 0.001, COORD_MAX, step, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
 
   // init variables
-  myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->setReadOnly(true);
   GroupPoints->LineEdit2->setReadOnly(true);
 
@@ -138,7 +137,7 @@ void PrimitiveGUI_TorusDlg::Init()
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
-  connect(this,          SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
+  connect(this, SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
 
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
@@ -254,17 +253,15 @@ void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
 
+  if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint = GEOM::GEOM_Object::_nil();
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2) myDir   = GEOM::GEOM_Object::_nil();
+
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  if (aSelList.Extent() != 1) {
-    if (myEditCurrentArgument == GroupPoints->LineEdit1)
-      myPoint = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
-      myDir = GEOM::GEOM_Object::_nil();
+  if (aSelList.Extent() != 1)
     return;
-  }
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
@@ -367,7 +364,7 @@ void PrimitiveGUI_TorusDlg::SetEditCurrentArgument()
   // enable line edit
   myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
-  // after setFocus(), because it will be setDown(false) then loses focus
+  // after setFocus(), because it will be setDown(false) when loses focus
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change

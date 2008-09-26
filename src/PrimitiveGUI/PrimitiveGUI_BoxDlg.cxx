@@ -349,7 +349,7 @@ void PrimitiveGUI_BoxDlg::SetEditCurrentArgument()
   // enable line edit
   myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
-  // after setFocus(), because it will be setDown(false) then loses focus
+  // after setFocus(), because it will be setDown(false) when loses focus
   send->setDown(true);
 
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
@@ -357,6 +357,9 @@ void PrimitiveGUI_BoxDlg::SetEditCurrentArgument()
   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
+
+  // seems we need it only to avoid preview disappearing, caused by selection mode change
+  displayPreview();
 }
 
 //=================================================================================

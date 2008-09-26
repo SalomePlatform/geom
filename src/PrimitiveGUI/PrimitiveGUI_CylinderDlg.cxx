@@ -367,8 +367,11 @@ void PrimitiveGUI_CylinderDlg::SetEditCurrentArgument()
   // enable line edit
   myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
-  // after setFocus(), because it will be setDown(false) then loses focus
+  // after setFocus(), because it will be setDown(false) when loses focus
   send->setDown(true);
+
+  // seems we need it only to avoid preview disappearing, caused by selection mode change
+  displayPreview();
 }
 
 //=================================================================================

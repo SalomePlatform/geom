@@ -407,7 +407,7 @@ void BlocksGUI_QuadFaceDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
 
   // enable push button
-  // after setFocus(), because it will be setDown(false) then loses focus
+  // after setFocus(), because it will be setDown(false) when loses focus
   aSender->setDown(true);
 
   activateSelection();

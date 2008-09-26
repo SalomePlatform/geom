@@ -69,6 +69,9 @@ private:
   bool                               myBothway2;
   bool                               myBothway3;
   
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
+  
   DlgRef_2Sel1Spin2Check*            GroupPoints;
   DlgRef_3Sel1Check*                 GroupPoints2; // for second layout for extrusion using 2 points
   DlgRef_1Sel3Spin1Check*            GroupPoints3;
