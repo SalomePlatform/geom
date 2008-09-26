@@ -18,7 +18,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File      : GEOMImpl_IShapesOperations.cxx
-// Created   : 
+// Created   :
 // Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
 // Project   : SALOME
 // $Header$
@@ -150,7 +150,6 @@ GEOMImpl_IShapesOperations::~GEOMImpl_IShapesOperations()
 {
   MESSAGE("GEOMImpl_IShapesOperations::~GEOMImpl_IShapesOperations");
 }
-
 
 //=============================================================================
 /*!
@@ -648,7 +647,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueFaces
   return aSeq;
 }
 
-
 //=============================================================================
 /*!
  *  MakeGlueFacesByList
@@ -719,7 +717,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
   }
 
   //Make a Python command
-  
+
   GEOM::TPythonDump pd(aFunction);
   pd << aGlued << " = geompy.MakeGlueFacesByList("
      << theShape << ", " << theTolerance << ", [";
@@ -733,13 +731,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
   }
   pd << "])";
 
-
   // to provide warning
   if (!isWarning) SetErrorCode(OK);
   return aGlued;
 }
-
-
 
 //=============================================================================
 /*!
@@ -1080,7 +1075,7 @@ TCollection_AsciiString GEOMImpl_IShapesOperations::GetShapeTypeString (Handle(G
             (Abs(curv.LastParameter()) >= 1E6))
           aTypeName = "Line";
 	else
-	  aTypeName = "Edge" ;
+	  aTypeName = "Edge";
       } else if (curv.GetType() == GeomAbs_Circle) {
 	if (curv.IsClosed())
           aTypeName = "Circle";
@@ -1103,7 +1098,6 @@ TCollection_AsciiString GEOMImpl_IShapesOperations::GetShapeTypeString (Handle(G
 
   return aTypeName;
 }
-
 
 //=============================================================================
 /*!
@@ -1263,7 +1257,6 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetFreeFacesIDs
 //function : GetSharedShapes
 //purpose  :
 //=======================================================================
-
 Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
                                                 (Handle(GEOM_Object)    theShape1,
                                                  Handle(GEOM_Object)    theShape2,
@@ -1363,7 +1356,6 @@ static GEOM::TPythonDump& operator<< (GEOM::TPythonDump&   theDump,
  * \retval bool  - result of the check
  */
 //=======================================================================
-
 bool GEOMImpl_IShapesOperations::checkTypeShapesOn(const Standard_Integer theShapeType)
 {
   if (theShapeType != TopAbs_VERTEX &&
@@ -1384,7 +1376,6 @@ bool GEOMImpl_IShapesOperations::checkTypeShapesOn(const Standard_Integer theSha
     * \retval Handle(Geom_Surface) - resulting surface
    */
 //=======================================================================
-
 Handle(Geom_Surface) GEOMImpl_IShapesOperations::makePlane(const TopoDS_Shape& anAx1)
 {
   if (anAx1.ShapeType() != TopAbs_EDGE) return NULL;
@@ -1413,7 +1404,6 @@ Handle(Geom_Surface) GEOMImpl_IShapesOperations::makePlane(const TopoDS_Shape& a
     * \retval Handle(Geom_Surface) - resulting surface
    */
 //=======================================================================
-
 Handle(Geom_Surface) GEOMImpl_IShapesOperations::makeCylinder(const TopoDS_Shape& anAxis,
                                                               const Standard_Real theRadius)
 {
@@ -1440,7 +1430,6 @@ Handle(Geom_Surface) GEOMImpl_IShapesOperations::makeCylinder(const TopoDS_Shape
   return new Geom_CylindricalSurface(anAx3, theRadius);
 }
 
-
 //=======================================================================
 //function : getShapesOnBoxIDs
   /*!
@@ -1452,7 +1441,6 @@ Handle(Geom_Surface) GEOMImpl_IShapesOperations::makeCylinder(const TopoDS_Shape
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
    */
 //=======================================================================
-
 Handle(TColStd_HSequenceOfInteger)
   GEOMImpl_IShapesOperations::getShapesOnBoxIDs(const Handle(GEOM_Object)& theBox,
 						const Handle(GEOM_Object)& theShape,
@@ -1523,7 +1511,6 @@ Handle(TColStd_HSequenceOfInteger)
   return aSeqOfIDs;
 }
 
-
 //=======================================================================
 //function : GetShapesOnBoxIDs
 /*!
@@ -1535,7 +1522,6 @@ Handle(TColStd_HSequenceOfInteger)
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
  */
 //=======================================================================
-
 Handle(TColStd_HSequenceOfInteger)
     GEOMImpl_IShapesOperations::GetShapesOnBoxIDs(const Handle(GEOM_Object)& theBox,
 						  const Handle(GEOM_Object)& theShape,
@@ -1574,7 +1560,6 @@ Handle(TColStd_HSequenceOfInteger)
     * \retval Handle(TColStd_HSequenceOfTransient) - found subshapes
  */
 //=======================================================================
-
 Handle(TColStd_HSequenceOfTransient)
     GEOMImpl_IShapesOperations::GetShapesOnBox(const Handle(GEOM_Object)& theBox,
 					       const Handle(GEOM_Object)&  theShape,
@@ -1610,7 +1595,6 @@ Handle(TColStd_HSequenceOfTransient)
   return aSeq;
 }
 
-
 //=======================================================================
 //function : getShapesOnShapeIDs
 /*!
@@ -1622,8 +1606,7 @@ Handle(TColStd_HSequenceOfTransient)
  * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
  */
 //=======================================================================
-
-Handle(TColStd_HSequenceOfInteger) 
+Handle(TColStd_HSequenceOfInteger)
   GEOMImpl_IShapesOperations::getShapesOnShapeIDs
                                  (const Handle(GEOM_Object)& theCheckShape,
                                   const Handle(GEOM_Object)& theShape,
@@ -1694,7 +1677,6 @@ Handle(TColStd_HSequenceOfInteger)
   return aSeqOfIDs;
 }
 
-
 //=======================================================================
 //function : GetShapesOnShapeIDs
 /*!
@@ -1706,7 +1688,6 @@ Handle(TColStd_HSequenceOfInteger)
  * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
  */
 //=======================================================================
-
 Handle(TColStd_HSequenceOfInteger)
     GEOMImpl_IShapesOperations::GetShapesOnShapeIDs
                             (const Handle(GEOM_Object)& theCheckShape,
@@ -1736,7 +1717,6 @@ Handle(TColStd_HSequenceOfInteger)
   return aSeqOfIDs;
 }
 
-
 //=======================================================================
 //function : GetShapesOnShape
 /*!
@@ -1748,7 +1728,6 @@ Handle(TColStd_HSequenceOfInteger)
  * \retval Handle(TColStd_HSequenceOfTransient) - found subshapes
  */
 //=======================================================================
-
 Handle(TColStd_HSequenceOfTransient)
   GEOMImpl_IShapesOperations::GetShapesOnShape
                              (const Handle(GEOM_Object)& theCheckShape,
@@ -1781,16 +1760,13 @@ Handle(TColStd_HSequenceOfTransient)
     << TopAbs_ShapeEnum(theShapeType) << ", "
     << theState << ")";
 
-
   SetErrorCode(OK);
   return aSeq;
 }
 
-
 //=======================================================================
 //function : GetShapesOnShapeAsCompound
 //=======================================================================
-
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnShapeAsCompound
                              (const Handle(GEOM_Object)& theCheckShape,
                               const Handle(GEOM_Object)&  theShape,
@@ -1839,7 +1815,6 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnShapeAsCompound
   return aRes;
 }
 
-
 //=======================================================================
 //function : getShapesOnSurfaceIDs
   /*!
@@ -1851,7 +1826,6 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnShapeAsCompound
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
    */
 //=======================================================================
-
 Handle(TColStd_HSequenceOfInteger)
   GEOMImpl_IShapesOperations::getShapesOnSurfaceIDs(const Handle(Geom_Surface)& theSurface,
                                                     const TopoDS_Shape&         theShape,
@@ -1936,7 +1910,6 @@ Handle(TColStd_HSequenceOfInteger)
  * \retval Handle(TColStd_HSequenceOfTransient) - found shape objects
  */
 //=======================================================================
-
 Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::
  getObjectsShapesOn(const Handle(GEOM_Object)&                theShape,
                     const Handle(TColStd_HSequenceOfInteger)& theShapeIDs,
@@ -1975,7 +1948,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
  */
 //=======================================================================
-
 Handle(TColStd_HSequenceOfTransient)
     GEOMImpl_IShapesOperations::getShapesOnSurface(const Handle(Geom_Surface)& theSurface,
                                                    const Handle(GEOM_Object)&  theShape,
@@ -2441,7 +2413,6 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnSphere
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
    */
 //=======================================================================
-
 Handle(TColStd_HSequenceOfInteger)
   GEOMImpl_IShapesOperations::getShapesOnQuadrangleIDs (const Handle(GEOM_Object)& theShape,
                                                         const Standard_Integer     theShapeType,
@@ -2568,7 +2539,6 @@ Handle(TColStd_HSequenceOfInteger)
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
    */
 //=======================================================================
-
 Handle(TColStd_HSequenceOfTransient)
     GEOMImpl_IShapesOperations::GetShapesOnQuadrangle (const Handle(GEOM_Object)& theShape,
                                                        const Standard_Integer     theShapeType,
@@ -2630,7 +2600,6 @@ Handle(TColStd_HSequenceOfTransient)
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
    */
 //=======================================================================
-
 Handle(TColStd_HSequenceOfInteger)
   GEOMImpl_IShapesOperations::GetShapesOnQuadrangleIDs (const Handle(GEOM_Object)& theShape,
                                                         const Standard_Integer     theShapeType,
@@ -2674,7 +2643,6 @@ Handle(TColStd_HSequenceOfInteger)
   SetErrorCode(OK);
   return aSeqOfIDs;
 }
-
 
 //=============================================================================
 /*!
@@ -2805,7 +2773,6 @@ static bool GetInPlaceOfShape (const Handle(GEOM_Function)& theWhereFunction,
  *  GetShapeProperties
  */
 //=============================================================================
-
 void GEOMImpl_IShapesOperations::GetShapeProperties( const TopoDS_Shape aShape, Standard_Real tab[],
                                                      gp_Pnt & aVertex )
 {
@@ -2936,18 +2903,23 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   }
 
   // Searching for the sub-shapes inside the ShapeWhere shape
+  TopTools_MapOfShape map_aWhere;
   for ( Exp_aWhere.ReInit(); Exp_aWhere.More(); Exp_aWhere.Next() ) {
+    if (!map_aWhere.Add(Exp_aWhere.Current()))
+      continue; // skip repeated shape to avoid mass addition
     GetShapeProperties( Exp_aWhere.Current(), tab_aWhere, aPnt );
     for ( Exp_aWhat.ReInit(); Exp_aWhat.More(); Exp_aWhat.Next() ) {
       GetShapeProperties( Exp_aWhat.Current(), tab_aWhat, aPnt_aWhat );
-      if ( fabs(tab_aWhat[3] - tab_aWhere[3]) <= Tol_Mass && aPnt_aWhat.Distance(aPnt) <= Tol_1D ) isFound = true;
+      if ( fabs(tab_aWhat[3] - tab_aWhere[3]) <= Tol_Mass && aPnt_aWhat.Distance(aPnt) <= Tol_1D )
+        isFound = true;
       else {
         if ( (tab_aWhat[3] - tab_aWhere[3]) > Tol_Mass ) {
           aPntShape = BRepBuilderAPI_MakeVertex( aPnt ).Shape();
           aVertex   = TopoDS::Vertex( aPntShape );
           BRepExtrema_DistShapeShape aWhereDistance ( aVertex, Exp_aWhere.Current() );
           BRepExtrema_DistShapeShape aWhatDistance  ( aVertex, Exp_aWhat.Current() );
-          if ( fabs(aWhereDistance.Value() - aWhatDistance.Value()) <= Tol_1D ) isFound = true;
+          if ( fabs(aWhereDistance.Value() - aWhatDistance.Value()) <= Tol_1D )
+            isFound = true;
         }
       }
       if ( isFound ) {
@@ -3062,7 +3034,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
   //Make a Python command
   Handle(GEOM_Function) aFunction = aResult->GetFunction(1);
 
-  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetInPlace("
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetInPlaceByHistory("
     << theShapeWhere << ", " << theShapeWhat << ")";
 
   SetErrorCode(OK);
@@ -3166,7 +3138,7 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
       }
     }
   }
-    
+
   for (Index=1; Index <= MaxShapes; Index++)
     SL.Append( aShapes( OrderInd(Index) ));
 }
@@ -3249,7 +3221,6 @@ bool GEOMImpl_IShapesOperations::CheckTriangulation (const TopoDS_Shape& aShape)
 }
 
 #define MAX_TOLERANCE 1.e-7
-
 
 //=======================================================================
 //function : isSameEdge
@@ -3348,7 +3319,6 @@ static bool isSameFace(const TopoDS_Face& theFace1, const TopoDS_Face& theFace2)
     if(P.Z() > zmaxB2) zmaxB2 = P.Z();
   }
 
-
   //Compare the bounding boxes of both faces
   if(gp_Pnt(xminB1, yminB1, zminB1).Distance(gp_Pnt(xminB2, yminB2, zminB2)) > MAX_TOLERANCE)
     return false;
@@ -3372,16 +3342,16 @@ static bool isSameFace(const TopoDS_Face& theFace1, const TopoDS_Face& theFace2)
   U = U11+rangeU*2.0/3.0;
   V = V11+rangeV*2.0/3.0;
   gp_Pnt P2 = S1->Value(U, V);
-  
-  if(!GeomLib_Tool::Parameters(S2, P1, MAX_TOLERANCE, U, V) || U < U21 || U > U22 || V < V21 || V > V22)
+
+  if (!GeomLib_Tool::Parameters(S2, P1, MAX_TOLERANCE, U, V) || U < U21 || U > U22 || V < V21 || V > V22)
     return false;
-  
-  if(P1.Distance(S2->Value(U,V)) > MAX_TOLERANCE) return false;
-  
-  if(!GeomLib_Tool::Parameters(S2, P2, MAX_TOLERANCE, U, V) || U < U21 || U > U22 || V < V21 || V > V22)
+
+  if (P1.Distance(S2->Value(U,V)) > MAX_TOLERANCE) return false;
+
+  if (!GeomLib_Tool::Parameters(S2, P2, MAX_TOLERANCE, U, V) || U < U21 || U > U22 || V < V21 || V > V22)
     return false;
-  
-  if(P2.Distance(S2->Value(U, V)) > MAX_TOLERANCE) return false;
+
+  if (P2.Distance(S2->Value(U, V)) > MAX_TOLERANCE) return false;
 
   //Check that each edge of the Face1 has a counterpart in the Face2
   TopTools_MapOfOrientedShape aMap;
