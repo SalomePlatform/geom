@@ -26,20 +26,19 @@
 #include "MeasureGUI_AngleDlg.h"
 #include "MeasureGUI_Widgets.h"
 
-#include <GEOMBase.h>
 #include <DlgRef.h>
-
+#include <GEOMBase.h>
 #include <GeometryGUI.h>
 
-#include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
+#include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
-#include <SalomeApp_Tools.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_ViewWindow.h>
 #include <SUIT_ViewManager.h>
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
+#include <SalomeApp_Tools.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
@@ -79,33 +78,34 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_AngleDlg::MeasureGUI_AngleDlg( GeometryGUI* GUI, QWidget* parent )
-  : MeasureGUI_Skeleton( GUI, parent )
+MeasureGUI_AngleDlg::MeasureGUI_AngleDlg (GeometryGUI* GUI, QWidget* parent)
+  : MeasureGUI_Skeleton(GUI, parent)
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_ANGLE" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+  QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_ANGLE")));
+  QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setWindowTitle( tr( "GEOM_MEASURE_ANGLE_TITLE" ) );
+  setWindowTitle(tr("GEOM_MEASURE_ANGLE_TITLE"));
 
-  // Widgets
+  /***************************************************************/
+  mainFrame()->GroupConstructors->setTitle(tr("GEOM_MEASURE_ANGLE_ANGLE"));
+  mainFrame()->RadioButton1->setIcon(image0);
 
-  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_MEASURE_ANGLE_ANGLE" ) );
-  mainFrame()->RadioButton1->setIcon( image0 );
+  myGrp = new MeasureGUI_2Sel1LineEdit(centralWidget());
+  myGrp->GroupBox1->setTitle(tr("GEOM_MEASURE_ANGLE_OBJ"));
+  myGrp->TextLabel1->setText(tr("GEOM_OBJECT_I").arg("1"));
+  myGrp->TextLabel2->setText(tr("GEOM_OBJECT_I").arg("2"));
+  myGrp->TextLabel3->setText(tr("GEOM_MEASURE_ANGLE_IS"));
+  myGrp->LineEdit3->setReadOnly(true);
+  myGrp->PushButton1->setIcon(image1);
+  myGrp->PushButton2->setIcon(image1);
+  myGrp->LineEdit1->setReadOnly(true);
+  myGrp->LineEdit2->setReadOnly(true);
 
-  myGrp = new MeasureGUI_2Sel1LineEdit( centralWidget() );
-  myGrp->GroupBox1->setTitle( tr( "GEOM_MEASURE_ANGLE_OBJ" ) );
-  myGrp->TextLabel1->setText( tr( "GEOM_OBJECT_I" ).arg( "1" ) );
-  myGrp->TextLabel2->setText( tr( "GEOM_OBJECT_I" ).arg( "2" ) );
-  myGrp->TextLabel3->setText( tr( "GEOM_MEASURE_ANGLE_IS" ) );
-  myGrp->LineEdit3->setReadOnly( true );
-  myGrp->PushButton1->setIcon( image1 );
-  myGrp->PushButton2->setIcon( image1 );
-  myGrp->LineEdit1->setReadOnly( true );
-  myGrp->LineEdit2->setReadOnly( true );
-
-  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
-  layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( myGrp );
+  QVBoxLayout* layout = new QVBoxLayout(centralWidget());
+  layout->setMargin(0); layout->setSpacing(6);
+  layout->addWidget(myGrp);
+  /***************************************************************/
 
   // Help page reference
   myHelpFileName = "using_measurement_tools_page.html#angle_anchor";
@@ -128,6 +128,11 @@ MeasureGUI_AngleDlg::~MeasureGUI_AngleDlg()
 //=================================================================================
 void MeasureGUI_AngleDlg::Init()
 {
+  // init variables
+  myGrp->LineEdit1->setText("");
+  myGrp->LineEdit2->setText("");
+  myObj = myObj2 = GEOM::GEOM_Object::_nil();
+
   mySelBtn   = myGrp->PushButton1;
   mySelEdit  = myGrp->LineEdit1;
   mySelBtn2  = myGrp->PushButton2;
@@ -135,13 +140,13 @@ void MeasureGUI_AngleDlg::Init()
 
   myEditCurrentArgument = mySelEdit;
 
-  connect( mySelEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( mySelBtn2,  SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  // signals and slots connections
+  connect(mySelEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(mySelBtn2,  SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
 
-  globalSelection( GEOM_LINE );
+  globalSelection(GEOM_LINE);
   MeasureGUI_Skeleton::Init();
 }
-
 
 //=================================================================================
 // function : SelectionIntoArgument()
@@ -162,10 +167,22 @@ void MeasureGUI_AngleDlg::SelectionIntoArgument()
       aSelectedObject = GEOM::GEOM_Object::_nil();
   }
 
-  if (myEditCurrentArgument == mySelEdit)
+  // clear selection
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+  myGeomGUI->getApp()->selectionMgr()->clearSelected();
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
+
+  if (myEditCurrentArgument == mySelEdit) {
     myObj = aSelectedObject;
-  else
+    if (!myObj->_is_nil() && myObj2->_is_nil())
+      myGrp->PushButton2->click();
+  }
+  else {
     myObj2 = aSelectedObject;
+    if (!myObj2->_is_nil() && myObj->_is_nil())
+      myGrp->PushButton1->click();
+  }
 
   processObject();
 }
@@ -176,16 +193,16 @@ void MeasureGUI_AngleDlg::SelectionIntoArgument()
 //=================================================================================
 void MeasureGUI_AngleDlg::processObject()
 {
-  myGrp->LineEdit1->setText( !myObj->_is_nil()  ? GEOMBase::GetName( myObj )  : "" );
-  myGrp->LineEdit2->setText( !myObj2->_is_nil() ? GEOMBase::GetName( myObj2 ) : "" );
+  myGrp->LineEdit1->setText(!myObj->_is_nil()  ? GEOMBase::GetName(myObj ) : "");
+  myGrp->LineEdit2->setText(!myObj2->_is_nil() ? GEOMBase::GetName(myObj2) : "");
 
   double anAngle = 0.;
-  if ( getParameters( anAngle ) ) {
-    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( anAngle ) );
+  if (getParameters(anAngle)) {
+    myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(anAngle));
     redisplayPreview();
   }
   else {
-    myGrp->LineEdit3->setText( "" );
+    myGrp->LineEdit3->setText("");
     erasePreview();
   }
 }
@@ -194,24 +211,24 @@ void MeasureGUI_AngleDlg::processObject()
 // function : getParameters()
 // purpose  : Get angle between objects
 //=================================================================================
-bool MeasureGUI_AngleDlg::getParameters( double& theAngle )
+bool MeasureGUI_AngleDlg::getParameters (double& theAngle)
 {
   QString msg;
-  if ( isValid( msg ) ) {
+  if (isValid(msg)) {
     try {
-      theAngle = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetAngle( myObj, myObj2 );
+      theAngle = GEOM::GEOM_IMeasureOperations::_narrow(getOperation())->GetAngle(myObj, myObj2);
     }
-    catch( const SALOME::SALOME_Exception& e ) {
-      SalomeApp_Tools::QtCatchCorbaException( e );
+    catch(const SALOME::SALOME_Exception& e) {
+      SalomeApp_Tools::QtCatchCorbaException(e);
       return false;
     }
-    
+
     bool isDone = getOperation()->IsDone();
-    if ( !isDone ) {
+    if (!isDone) {
       CORBA::String_var aMsg = getOperation()->GetErrorCode();
-      SUIT_MessageBox::warning( this, 
-				QObject::tr( "WRN_WARNING" ),
-				QObject::tr( aMsg.in() ) );
+      SUIT_MessageBox::warning(this,
+                               QObject::tr("WRN_WARNING"),
+                               QObject::tr(aMsg.in()));
     }
     return isDone;
   }
@@ -227,17 +244,32 @@ void MeasureGUI_AngleDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
-  if ( send == mySelBtn ) {
-    mySelEdit->setFocus();
-    myEditCurrentArgument = mySelEdit;
+  if (send == myGrp->PushButton1) {
+    myEditCurrentArgument = myGrp->LineEdit1;
+
+    myGrp->PushButton2->setDown(false);
+    myGrp->LineEdit2->setEnabled(false);
   }
   else {
-    mySelEdit2->setFocus();
-    myEditCurrentArgument = mySelEdit2;
+    myEditCurrentArgument = myGrp->LineEdit2;
+
+    myGrp->PushButton1->setDown(false);
+    myGrp->LineEdit1->setEnabled(false);
   }
 
-  globalSelection( GEOM_LINE );
-  SelectionIntoArgument();
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+  globalSelection(GEOM_LINE);
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
+
+  // enable line edit
+  myEditCurrentArgument->setEnabled(true);
+  myEditCurrentArgument->setFocus();
+  // after setFocus(), because it will be setDown(false) when loses focus
+  send->setDown(true);
+
+  // seems we need it only to avoid preview disappearing, caused by selection mode change
+  redisplayPreview();
 }
 
 //=================================================================================
@@ -271,31 +303,31 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
 
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
 
-  if ( myObj->_is_nil() || myObj2->_is_nil() || !getParameters( anAngle ) ||
-       vw->getViewManager()->getType() != OCCViewer_Viewer::Type() )
+  if (myObj->_is_nil() || myObj2->_is_nil() || !getParameters(anAngle) ||
+       vw->getViewManager()->getType() != OCCViewer_Viewer::Type())
     return 0;
-  
-  if ( anAngle > Precision::Angular() ) {
+
+  if (anAngle > Precision::Angular()) {
     try {
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
       OCC_CATCH_SIGNALS;
 #endif
       TopoDS_Shape S1, S2;
-      if ( GEOMBase::GetShape( myObj , S1, TopAbs_EDGE ) &&
-	   GEOMBase::GetShape( myObj2, S2, TopAbs_EDGE ) ) {
-        TopoDS_Edge anEdge1 = TopoDS::Edge( S1 );
-        TopoDS_Edge anEdge2 = TopoDS::Edge( S2 );
-	
+      if (GEOMBase::GetShape(myObj , S1, TopAbs_EDGE) &&
+           GEOMBase::GetShape(myObj2, S2, TopAbs_EDGE)) {
+        TopoDS_Edge anEdge1 = TopoDS::Edge(S1);
+        TopoDS_Edge anEdge2 = TopoDS::Edge(S2);
+
         // Build a plane for angle dimension presentation {P11, P12, P3}
         TopoDS_Vertex V11, V12, V21, V22;
-        TopExp::Vertices( anEdge1, V11, V12 );
-        TopExp::Vertices( anEdge2, V21, V22 );
-	
-        gp_Pnt aP11 = BRep_Tool::Pnt( TopExp::FirstVertex( anEdge1 ) );
-        gp_Pnt aP12 = BRep_Tool::Pnt( TopExp::LastVertex ( anEdge1 ) );
+        TopExp::Vertices(anEdge1, V11, V12);
+        TopExp::Vertices(anEdge2, V21, V22);
 
-        gp_Pnt aP21 = BRep_Tool::Pnt( TopExp::FirstVertex( anEdge2 ) );
-        gp_Pnt aP22 = BRep_Tool::Pnt( TopExp::LastVertex ( anEdge2 ) );
+        gp_Pnt aP11 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge1));
+        gp_Pnt aP12 = BRep_Tool::Pnt(TopExp::LastVertex (anEdge1));
+
+        gp_Pnt aP21 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge2));
+        gp_Pnt aP22 = BRep_Tool::Pnt(TopExp::LastVertex (anEdge2));
 
         //        *P3
         //         \
@@ -308,54 +340,54 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         //  \   /
         //   \ /
         //    *P21
-        gp_Pnt aP3 ( aP22.XYZ() + aP11.XYZ() - aP21.XYZ() );
+        gp_Pnt aP3 (aP22.XYZ() + aP11.XYZ() - aP21.XYZ());
 
-        gce_MakePln gce_MP( aP11, aP12, aP3 );
-        Handle(Geom_Plane) aPlane = new Geom_Plane( gce_MP.Value() );
+        gce_MakePln gce_MP(aP11, aP12, aP3);
+        Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP.Value());
 
         // Build the angle dimension presentation
         QString aLabel;
-        aLabel.sprintf( "%.1f", anAngle );
+        aLabel.sprintf("%.1f", anAngle);
 
         Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension
-          ( anEdge1, anEdge2, aPlane, anAngle * PI180,
-	    TCollection_ExtendedString( (Standard_CString)aLabel.toLatin1().data() ) );
-	Handle(Geom_Line) geom_lin1,geom_lin2;
-	gp_Pnt ptat11,ptat12,ptat21,ptat22;
-	Standard_Boolean isInfinite1,isInfinite2;
-	Handle(Geom_Curve) extCurv;
-	Standard_Integer extShape;
-	if ( AIS::ComputeGeometry(anEdge1,
-				  anEdge2,
-				  extShape,
-				  geom_lin1,
-				  geom_lin2,
-				  ptat11,
-				  ptat12,
-				  ptat21,
-				  ptat22,
-				  extCurv,
-				  isInfinite1,
-				  isInfinite2,
-				  aPlane)) {
-	  Standard_Real arrSize1 = anIO->ArrowSize();
-	  Standard_Real arrSize2 = anIO->ArrowSize();
-	  if (!isInfinite1) arrSize1 = ptat11.Distance(ptat12)/10.;
-	  if (!isInfinite2) arrSize2 = ptat21.Distance(ptat22)/10.;
-	  Standard_Real arrowSize = Max(arrSize1,arrSize2);
-	  anIO->SetArrowSize(arrowSize);
-	}
+          (anEdge1, anEdge2, aPlane, anAngle * PI180,
+            TCollection_ExtendedString((Standard_CString)aLabel.toLatin1().data()));
+        Handle(Geom_Line) geom_lin1,geom_lin2;
+        gp_Pnt ptat11,ptat12,ptat21,ptat22;
+        Standard_Boolean isInfinite1,isInfinite2;
+        Handle(Geom_Curve) extCurv;
+        Standard_Integer extShape;
+        if (AIS::ComputeGeometry(anEdge1,
+                                  anEdge2,
+                                  extShape,
+                                  geom_lin1,
+                                  geom_lin2,
+                                  ptat11,
+                                  ptat12,
+                                  ptat21,
+                                  ptat22,
+                                  extCurv,
+                                  isInfinite1,
+                                  isInfinite2,
+                                  aPlane)) {
+          Standard_Real arrSize1 = anIO->ArrowSize();
+          Standard_Real arrSize2 = anIO->ArrowSize();
+          if (!isInfinite1) arrSize1 = ptat11.Distance(ptat12)/10.;
+          if (!isInfinite2) arrSize2 = ptat21.Distance(ptat22)/10.;
+          Standard_Real arrowSize = Max(arrSize1,arrSize2);
+          anIO->SetArrowSize(arrowSize);
+        }
 
         SOCC_Prs* aPrs =
-          dynamic_cast<SOCC_Prs*>( ( (SOCC_Viewer*)( vw->getViewManager()->getViewModel() ) )->CreatePrs( 0 ) );
+          dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
 
-        if ( aPrs )
-          aPrs->AddObject( anIO );
+        if (aPrs)
+          aPrs->AddObject(anIO);
 
         return aPrs;
       }
     }
-    catch( Standard_Failure ) {
+    catch(Standard_Failure) {
     }
   }
 
@@ -366,7 +398,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
 // function : isValid()
 // purpose  :
 //=================================================================================
-bool MeasureGUI_AngleDlg::isValid( QString& msg )
+bool MeasureGUI_AngleDlg::isValid (QString& msg)
 {
-  return MeasureGUI_Skeleton::isValid( msg ) && !myObj2->_is_nil();
+  return MeasureGUI_Skeleton::isValid(msg) && !myObj2->_is_nil();
 }
