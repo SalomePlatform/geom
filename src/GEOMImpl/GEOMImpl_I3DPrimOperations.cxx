@@ -64,6 +64,7 @@
 #include <GEOMImpl_IThruSections.hxx>
 #include <GEOMImpl_IPipeDiffSect.hxx>
 #include <GEOMImpl_IPipeShellSect.hxx>
+#include <GEOMImpl_IPipeBiNormal.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -2120,5 +2121,66 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
   SetErrorCode(OK);
   return aPipeDS;
 
+}
+
+
+//=============================================================================
+/*!
+ *  MakePipeBiNormalAlongVector
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeBiNormalAlongVector (Handle(GEOM_Object) theBase,
+									     Handle(GEOM_Object) thePath,
+									     Handle(GEOM_Object) theVec)
+{
+  SetErrorCode(KO);
+
+  if (theBase.IsNull() || thePath.IsNull() || theVec.IsNull()) return NULL;
+
+  //Add a new Pipe object
+  Handle(GEOM_Object) aPipe = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
+
+  //Add a new Pipe function
+  Handle(GEOM_Function) aFunction =
+    aPipe->AddFunction(GEOMImpl_PipeDriver::GetID(), PIPE_BI_NORMAL_ALONG_VECTOR);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PipeDriver::GetID()) return NULL;
+
+  GEOMImpl_IPipeBiNormal aCI (aFunction);
+
+  Handle(GEOM_Function) aRefBase = theBase->GetLastFunction();
+  Handle(GEOM_Function) aRefPath = thePath->GetLastFunction();
+  Handle(GEOM_Function) aRefVec  = theVec->GetLastFunction();
+
+  if (aRefBase.IsNull() || aRefPath.IsNull() || aRefVec.IsNull()) return NULL;
+
+  aCI.SetBase(aRefBase);
+  aCI.SetPath(aRefPath);
+  aCI.SetVector(aRefVec);
+
+  //Compute the Pipe value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Pipe driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPipe << " = geompy.MakePipeBiNormalAlongVector("
+    << theBase << ", " << thePath << ", " << theVec << ")";
+
+  SetErrorCode(OK);
+  return aPipe;
 }
 

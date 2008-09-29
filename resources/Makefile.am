@@ -110,6 +110,7 @@ partition.png			\
 partitionkeep.png		\
 partitionplane.png		\
 pipe.png			\
+pipebinormal.png		\
 plane.png			\
 planeWorking.png		\
 plane3points.png		\

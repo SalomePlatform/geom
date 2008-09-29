@@ -92,6 +92,7 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_IPartition.hxx			\
 	GEOMImpl_IPipeDiffSect.hxx		\
 	GEOMImpl_IPipeShellSect.hxx		\
+	GEOMImpl_IPipeBiNormal.hxx		\
 	GEOMImpl_VectorDriver.hxx		\
 	GEOMImpl_LineDriver.hxx			\
 	GEOMImpl_DiskDriver.hxx			\

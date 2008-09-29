@@ -307,6 +307,10 @@
             <translation>pipe.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_PIPE_BINORMAL</source>
+            <translation>pipebinormal.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_PLANE_3PNTS</source>
             <translation>plane3points.png</translation>
         </message>

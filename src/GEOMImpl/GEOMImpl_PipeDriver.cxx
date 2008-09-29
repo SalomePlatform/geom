@@ -25,6 +25,7 @@
 #include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_IPipeDiffSect.hxx>
 #include <GEOMImpl_IPipeShellSect.hxx>
+#include <GEOMImpl_IPipeBiNormal.hxx>
 #include <GEOMImpl_IPipe.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
@@ -1852,6 +1853,72 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 
 
 //=======================================================================
+//function : CreatePipeBiNormalAlongVector
+//purpose  : auxilary for Execute()
+//=======================================================================
+static TopoDS_Shape CreatePipeBiNormalAlongVector(const TopoDS_Wire& aWirePath,
+						  GEOMImpl_IPipe* aCI)
+{
+  GEOMImpl_IPipeBiNormal* aCIBN = (GEOMImpl_IPipeBiNormal*)aCI;
+
+  Handle(GEOM_Function) aRefBase = aCIBN->GetBase();
+  Handle(GEOM_Function) aRefVec = aCIBN->GetVector();
+  TopoDS_Shape aShapeBase = aRefBase->GetValue();
+  TopoDS_Shape aShapeVec = aRefVec->GetValue();
+
+  if (aShapeBase.IsNull()) {
+    if(aCIBN) delete aCIBN;
+    Standard_NullObject::Raise("MakePipe aborted : null base argument");
+  }
+
+  TopoDS_Shape aProf;
+  if( aShapeBase.ShapeType() == TopAbs_VERTEX ) {
+    aProf = aShapeBase;
+  }
+  else if( aShapeBase.ShapeType() == TopAbs_EDGE) {
+    aProf = BRepBuilderAPI_MakeWire(TopoDS::Edge(aShapeBase)).Shape();
+  }
+  else if( aShapeBase.ShapeType() == TopAbs_WIRE) {
+    aProf = aShapeBase;
+  }
+  else if( aShapeBase.ShapeType() == TopAbs_FACE) {
+    TopExp_Explorer wexp(aShapeBase,TopAbs_WIRE);
+    aProf = wexp.Current();
+  }
+  else {
+    Standard_TypeMismatch::Raise
+      ("MakePipe aborted : invalid type of base");
+  }
+  BRepOffsetAPI_MakePipeShell PipeBuilder(aWirePath);
+  PipeBuilder.Add(aProf);
+
+  if (aShapeVec.IsNull()) {
+    if(aCIBN) delete aCIBN;
+    Standard_NullObject::Raise
+      ("MakePipe aborted : null vector argument");
+  }
+  if (aShapeVec.ShapeType() != TopAbs_EDGE)
+    Standard_TypeMismatch::Raise
+      ("MakePipe aborted: invalid type of vector");
+  TopoDS_Edge anEdge = TopoDS::Edge(aShapeVec);
+  TopoDS_Vertex V1, V2;
+  TopExp::Vertices(anEdge, V1, V2, Standard_True);
+  if (V1.IsNull() || V2.IsNull())
+    Standard_NullObject::Raise
+      ("MakePipe aborted: vector is not defined");
+  gp_Vec aVec(BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+  gp_Dir BiNormal(aVec);
+  PipeBuilder.SetMode(BiNormal);
+  PipeBuilder.Build();
+  if( aShapeBase.ShapeType() == TopAbs_FACE) {
+      PipeBuilder.MakeSolid();
+  }
+
+  return PipeBuilder.Shape();
+}
+
+
+//=======================================================================
 //function : Execute
 //purpose  :
 //=======================================================================
@@ -1870,6 +1937,8 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     aCI = new GEOMImpl_IPipeShellSect(aFunction);
   else if(aType == PIPE_SHELLS_WITHOUT_PATH)
     aCI = new GEOMImpl_IPipeShellSect(aFunction);
+  else if(aType == PIPE_BI_NORMAL_ALONG_VECTOR)
+    aCI = new GEOMImpl_IPipeBiNormal(aFunction);
   else
     return 0;
 
@@ -2291,6 +2360,11 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
   //building pipe shell sections without path
   else if (aType == PIPE_SHELLS_WITHOUT_PATH) {
     aShape = CreatePipeShellsWithoutPath(aCI);
+  }
+
+  //building a pipe with constant bi-normal along given vector
+  else if (aType == PIPE_BI_NORMAL_ALONG_VECTOR) {
+    aShape = CreatePipeBiNormalAlongVector(aWirePath, aCI);
   }
 
   if (aCI) {

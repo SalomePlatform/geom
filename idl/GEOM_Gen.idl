@@ -1107,6 +1107,22 @@ module GEOM
      */
     GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
 					   in ListOfGO theLocations);
+
+    /*!
+     *  Create a shape by extrusion of the base shape along
+     *  the path shape with constant bi-normal direction along the given vector. 
+     *  The path shape can be a wire or an edge.
+     *  \param theBase Base shape to be extruded.
+     *  \param thePath Path shape to extrude the base shape along it.
+     *  \param theVec Vector defines a constant binormal direction to keep the
+     *                same angle beetween the Direction and the sections
+     *                along the sweep surface.
+     *  \return New GEOM_Object, containing the created pipe.
+     */
+    GEOM_Object MakePipeBiNormalAlongVector (in GEOM_Object theBase, 
+					     in GEOM_Object thePath, 
+					     in GEOM_Object theVec);
+
   };
 
   /*!

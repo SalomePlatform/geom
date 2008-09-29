@@ -124,6 +124,10 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
 		const Handle(TColStd_HSequenceOfTransient)& theBases,
 		const Handle(TColStd_HSequenceOfTransient)& theLocations);
 
+  Standard_EXPORT Handle(GEOM_Object) MakePipeBiNormalAlongVector (Handle(GEOM_Object) theBase,
+								   Handle(GEOM_Object) thePath,
+								   Handle(GEOM_Object) theVec);
+
 };
 
 #endif
