@@ -65,7 +65,6 @@ private slots:
 private:
   void                                Init();
   void                                enterEvent( QEvent* );
-  void                                reset();
   void                                activateSelection();
   void                                enableWidgets();
   double                              getRadius() const;
@@ -76,6 +75,9 @@ private:
   GEOM::GEOM_Object_var               myShape;
   TColStd_IndexedMapOfInteger         myEdges;
   TColStd_IndexedMapOfInteger         myFaces;
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
   
   DlgRef_1Sel1Spin*                   Group1;
   DlgRef_2Sel3Spin2Rb*                Group2;

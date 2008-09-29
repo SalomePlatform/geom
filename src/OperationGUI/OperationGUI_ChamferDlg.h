@@ -81,7 +81,6 @@ private slots:
 private:
   void                                Init();
   void                                enterEvent( QEvent* );
-  void                                reset();
   void                                createSelWg( const QString&, QPixmap&, QWidget*, 
 						   QGridLayout*, const int );
   void                                createRadioWg( const QString&, const QString&, QWidget*, 
@@ -96,6 +95,9 @@ private:
   QMap< int, int >                    myFace;  // indexes of faces from second tab ( Face1,2 )
   TColStd_IndexedMapOfInteger         myFaces; // indexes of faces from first tab ( Faces )
   TColStd_IndexedMapOfInteger         myEdges; // indexes of edges from fourth tab (Edges)
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
   
   QGroupBox*                          myGrp1;
   QGroupBox*                          myGrp2;

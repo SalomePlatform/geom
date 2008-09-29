@@ -1,22 +1,22 @@
 // GEOM GEOMGUI : GUI for Geometry component
 //
 // Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-// This library is free software; you can redistribute it and/or 
-// modify it under the terms of the GNU Lesser General Public 
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License. 
-// 
-// This library is distributed in the hope that it will be useful, 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details. 
-// 
-// You should have received a copy of the GNU Lesser General Public 
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File   : TransformationGUI_MultiRotationDlg.cxx
@@ -29,11 +29,12 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
-#include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+// OCCT Includes
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS.hxx>
@@ -45,64 +46,64 @@
 
 //=================================================================================
 // class    : TransformationGUI_MultiRotationDlg()
-// purpose  : Constructs a TransformationGUI_MultiRotationDlg which is a child of 'parent', with the 
+// purpose  : Constructs a TransformationGUI_MultiRotationDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
 TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg
-( GeometryGUI* theGeometryGUI, QWidget* parent, bool modal, Qt::WindowFlags fl )
-  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
+(GeometryGUI* theGeometryGUI, QWidget* parent, bool modal, Qt::WindowFlags fl)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl),
+    myInitial(true)
 {
   SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
-  QPixmap image0( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_MULTIROTATION_SIMPLE" ) ) );
-  QPixmap image1( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_MULTIROTATION_DOUBLE" ) ) );
-  QPixmap image2( aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_MULTIROTATION_SIMPLE")));
+  QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_MULTIROTATION_DOUBLE")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setWindowTitle( tr( "GEOM_MULTIROTATION_TITLE" ) );
+  setWindowTitle(tr("GEOM_MULTIROTATION_TITLE"));
 
   /***************************************************************/
-  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_MULTIROTATION" ) );
-  mainFrame()->RadioButton1->setIcon( image0 );
-  mainFrame()->RadioButton2->setIcon( image1 );
-  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->GroupConstructors->setTitle(tr("GEOM_MULTIROTATION"));
+  mainFrame()->RadioButton1->setIcon(image0);
+  mainFrame()->RadioButton2->setIcon(image1);
+  mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_2Sel1Spin( centralWidget() );
-  GroupPoints->GroupBox1->setTitle( tr( "GEOM_MULTIROTATION_SIMPLE" ) );
-  GroupPoints->TextLabel1->setText( tr( "GEOM_MAIN_OBJECT" ) );
-  GroupPoints->TextLabel2->setText( tr( "GEOM_VECTOR" ) );
-  GroupPoints->TextLabel3->setText( tr( "GEOM_NB_TIMES" ) );
-  GroupPoints->PushButton1->setIcon( image2 );
-  GroupPoints->PushButton2->setIcon( image2 );
-  GroupPoints->LineEdit1->setReadOnly( true );
-  GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints = new DlgRef_2Sel1Spin(centralWidget());
+  GroupPoints->GroupBox1->setTitle(tr("GEOM_MULTIROTATION_SIMPLE"));
+  GroupPoints->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
+  GroupPoints->TextLabel3->setText(tr("GEOM_NB_TIMES"));
+  GroupPoints->PushButton1->setIcon(image2);
+  GroupPoints->PushButton2->setIcon(image2);
+  GroupPoints->LineEdit1->setReadOnly(true);
+  GroupPoints->LineEdit2->setReadOnly(true);
 
-  GroupDimensions = new DlgRef_2Sel4Spin1Check( centralWidget() );
-  GroupDimensions->GroupBox1->setTitle( tr( "GEOM_MULTIROTATION_DOUBLE" ) );
-  GroupDimensions->TextLabel1->setText( tr( "GEOM_MAIN_OBJECT" ) );
-  GroupDimensions->TextLabel2->setText( tr( "GEOM_VECTOR" ) );
-  GroupDimensions->TextLabel3->setText( tr( "GEOM_ANGLE" ) );
-  GroupDimensions->TextLabel4->setText( tr( "GEOM_NB_TIMES" ) );
-  GroupDimensions->TextLabel5->setText( tr( "GEOM_STEP" ) );
-  GroupDimensions->TextLabel6->setText( tr( "GEOM_NB_TIMES" ) );
-  GroupDimensions->CheckButton1->setText( tr( "GEOM_REVERSE" ) );
-  GroupDimensions->PushButton1->setIcon( image2 );
-  GroupDimensions->PushButton2->setIcon( image2 );
-  GroupDimensions->LineEdit1->setReadOnly( true );
-  GroupDimensions->LineEdit2->setReadOnly( true );
+  GroupDimensions = new DlgRef_2Sel4Spin1Check(centralWidget());
+  GroupDimensions->GroupBox1->setTitle(tr("GEOM_MULTIROTATION_DOUBLE"));
+  GroupDimensions->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  GroupDimensions->TextLabel2->setText(tr("GEOM_VECTOR"));
+  GroupDimensions->TextLabel3->setText(tr("GEOM_ANGLE"));
+  GroupDimensions->TextLabel4->setText(tr("GEOM_NB_TIMES"));
+  GroupDimensions->TextLabel5->setText(tr("GEOM_STEP"));
+  GroupDimensions->TextLabel6->setText(tr("GEOM_NB_TIMES"));
+  GroupDimensions->CheckButton1->setText(tr("GEOM_REVERSE"));
+  GroupDimensions->PushButton1->setIcon(image2);
+  GroupDimensions->PushButton2->setIcon(image2);
+  GroupDimensions->LineEdit1->setReadOnly(true);
+  GroupDimensions->LineEdit2->setReadOnly(true);
 
-  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
-  layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( GroupPoints );
-  layout->addWidget( GroupDimensions );
+  QVBoxLayout* layout = new QVBoxLayout(centralWidget());
+  layout->setMargin(0); layout->setSpacing(6);
+  layout->addWidget(GroupPoints);
+  layout->addWidget(GroupDimensions);
   /***************************************************************/
 
-  setHelpFileName( "multi_rotation_operation_page.html" );
+  setHelpFileName("multi_rotation_operation_page.html");
 
   Init();
 }
-
 
 //=================================================================================
 // function : ~TransformationGUI_MultiRotationDlg()
@@ -113,73 +114,80 @@ TransformationGUI_MultiRotationDlg::~TransformationGUI_MultiRotationDlg()
   // no need to delete child widgets, Qt does it all for us
 }
 
-
 //=================================================================================
 // function : Init()
 // purpose  :
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::Init()
 {
-  /* Get setting of step value from file configuration */
+  // Get setting of step value from file configuration
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
+  double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
 
   double SpecificStep1 = 5;
   double SpecificStep2 = 1;
-  /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, 1.0, MAX_NUMBER, SpecificStep2, 10 );
-  GroupPoints->SpinBox_DX->setValue( myNbTimes1 );
+  // min, max, step and decimals for spin boxes & initial values
+  initSpinBox(GroupPoints->SpinBox_DX, 1.0, MAX_NUMBER, SpecificStep2, 10);
+  GroupPoints->SpinBox_DX->setValue(myNbTimes1);
 
-  initSpinBox( GroupDimensions->SpinBox_DX1, COORD_MIN, COORD_MAX, SpecificStep1, 10 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupDimensions->SpinBox_DY1, 1.0, MAX_NUMBER, SpecificStep2, 10 );
-  initSpinBox( GroupDimensions->SpinBox_DX2, COORD_MIN, COORD_MAX, step, 10 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupDimensions->SpinBox_DY2, 1.0, MAX_NUMBER, SpecificStep2, 10 );
-  GroupDimensions->SpinBox_DX1->setValue( myAng );
-  GroupDimensions->SpinBox_DY1->setValue( myNbTimes1 );
-  GroupDimensions->SpinBox_DX2->setValue( myStep );
-  GroupDimensions->SpinBox_DY2->setValue( myNbTimes2 );
+  initSpinBox(GroupDimensions->SpinBox_DX1, COORD_MIN, COORD_MAX, SpecificStep1, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupDimensions->SpinBox_DY1, 1.0, MAX_NUMBER, SpecificStep2, 10);
+  initSpinBox(GroupDimensions->SpinBox_DX2, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupDimensions->SpinBox_DY2, 1.0, MAX_NUMBER, SpecificStep2, 10);
+  GroupDimensions->SpinBox_DX1->setValue(myAng);
+  GroupDimensions->SpinBox_DY1->setValue(myNbTimes1);
+  GroupDimensions->SpinBox_DX2->setValue(myStep);
+  GroupDimensions->SpinBox_DY2->setValue(myNbTimes2);
 
-  /* signals and slots connections */
-  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
-  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  // init variables
+  myAng = 45.0;
+  myStep = 50.0;
+  myNbTimes1 = myNbTimes2 = 2;
 
-  connect( this,          SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
+  GroupPoints->LineEdit1->setText("");
+  GroupPoints->LineEdit2->setText("");
 
-  connect( GroupPoints->PushButton1,     SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupPoints->PushButton2,     SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupDimensions->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupDimensions->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  GroupDimensions->LineEdit1->setText("");
+  GroupDimensions->LineEdit2->setText("");
 
-  connect( GroupPoints->LineEdit1,     SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupPoints->LineEdit2,     SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupDimensions->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupDimensions->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  myBase = myVector = GEOM::GEOM_Object::_nil();
 
-  connect( GroupPoints->SpinBox_DX,      SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( GroupDimensions->SpinBox_DX1, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( GroupDimensions->SpinBox_DY1, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( GroupDimensions->SpinBox_DX2, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( GroupDimensions->SpinBox_DY2, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  // signals and slots connections
+  connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
+  connect(this,          SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
 
-  connect( GroupDimensions->CheckButton1, SIGNAL( toggled( bool ) ), this, SLOT( ReverseAngle() ) );
-  
-  connect( myGeomGUI->getApp()->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect(GroupPoints->PushButton1,     SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->PushButton2,     SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupDimensions->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupDimensions->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  initName( tr( "GEOM_MULTIROTATION" ) );
+  connect(GroupPoints->LineEdit1,     SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupPoints->LineEdit2,     SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupDimensions->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupDimensions->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  ConstructorsClicked( 0 );
+  connect(GroupPoints->SpinBox_DX,      SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DX1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DY1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DX2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DY2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
+
+  connect(GroupDimensions->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(ReverseAngle()));
+
+  initName(tr("GEOM_MULTIROTATION"));
+
+  ConstructorsClicked(0);
 }
-
-
 
 //=================================================================================
 // function : SetDoubleSpinBoxStep()
 // purpose  : Double spin box management
 //=================================================================================
-void TransformationGUI_MultiRotationDlg::SetDoubleSpinBoxStep( double step )
+void TransformationGUI_MultiRotationDlg::SetDoubleSpinBoxStep (double step)
 {
   GroupPoints->SpinBox_DX->setSingleStep(step);
   GroupDimensions->SpinBox_DX1->setSingleStep(step);
@@ -192,58 +200,56 @@ void TransformationGUI_MultiRotationDlg::SetDoubleSpinBoxStep( double step )
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void TransformationGUI_MultiRotationDlg::ConstructorsClicked( int constructorId )
+void TransformationGUI_MultiRotationDlg::ConstructorsClicked (int constructorId)
 {
-  disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
 
-  myAng = 45.0;
-  myStep = 50.0;
-  myNbTimes1 = myNbTimes2 = 2;
-
-  globalSelection( GEOM_ALLSHAPES );
-
-  switch ( constructorId ) {
-  case 0: /* Rotate simple */
+  switch (constructorId) {
+  case 0: // Rotate simple
     {
       GroupDimensions->hide();
       GroupPoints->show();
 
-      myEditCurrentArgument = GroupPoints->LineEdit1;
-      GroupPoints->LineEdit1->setText( "" );
-      GroupPoints->LineEdit2->setText( "" );
-      
-      GroupPoints->SpinBox_DX->setValue( myNbTimes1 );
-      
-      break;
+      GroupPoints->LineEdit1->setText("");
+      GroupPoints->LineEdit2->setText("");
+      myBase = myVector = GEOM::GEOM_Object::_nil();
+
+      GroupPoints->SpinBox_DX->setValue(myNbTimes1);
+
+      GroupPoints->PushButton1->click();
     }
-  case 1: /* Rotate double */
+    break;
+  case 1: // Rotate double
     {
       GroupPoints->hide();
       GroupDimensions->show();
-      
-      myEditCurrentArgument = GroupDimensions->LineEdit1;
-      GroupDimensions->LineEdit1->setText( "" );
-      GroupDimensions->LineEdit2->setText( "" );
-      
-      GroupDimensions->SpinBox_DX1->setValue( myAng );
-      GroupDimensions->SpinBox_DY1->setValue( myNbTimes1 );
-      GroupDimensions->SpinBox_DX2->setValue( myStep );
-      GroupDimensions->SpinBox_DY2->setValue( myNbTimes2 );
-      
-      break;
-    }      
+
+      GroupDimensions->LineEdit1->setText("");
+      GroupDimensions->LineEdit2->setText("");
+      myBase = myVector = GEOM::GEOM_Object::_nil();
+
+      GroupDimensions->SpinBox_DX1->setValue(myAng);
+      GroupDimensions->SpinBox_DY1->setValue(myNbTimes1);
+      GroupDimensions->SpinBox_DX2->setValue(myStep);
+      GroupDimensions->SpinBox_DY2->setValue(myNbTimes2);
+
+      GroupDimensions->PushButton1->click();
+    }
+    break;
   }
 
   qApp->processEvents();
   updateGeometry();
-  resize( minimumSize() );
+  resize(minimumSize());
 
-  myEditCurrentArgument->setFocus();
-  myBase = myVector = GEOM::GEOM_Object::_nil();
-  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+  if (myInitial) {
+    myInitial = false;
+    SelectionIntoArgument();
+  }
+  else {
+    displayPreview();
+  }
 }
-
 
 //=================================================================================
 // function : ClickOnOk()
@@ -251,10 +257,9 @@ void TransformationGUI_MultiRotationDlg::ConstructorsClicked( int constructorId 
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::ClickOnOk()
 {
-  if ( ClickOnApply() )
+  if (ClickOnApply())
     ClickOnCancel();
 }
-
 
 //=================================================================================
 // function : ClickOnApply()
@@ -262,89 +267,110 @@ void TransformationGUI_MultiRotationDlg::ClickOnOk()
 //=================================================================================
 bool TransformationGUI_MultiRotationDlg::ClickOnApply()
 {
-  if ( !onAccept() )
+  if (!onAccept())
     return false;
-  
+
   initName();
-  ConstructorsClicked( getConstructorId() );
+  // activate selection and connect selection manager
+  ConstructorsClicked(getConstructorId());
   return true;
 }
 
-
 //=================================================================================
 // function : SelectionIntoArgument()
-// purpose  : Called when selection as changed or other case
+// purpose  : Called when selection is changed or on dialog initialization or activation
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText( "" );
+  erasePreview();
+  myEditCurrentArgument->setText("");
+
+  if (myEditCurrentArgument == GroupPoints->LineEdit1 ||
+      myEditCurrentArgument == GroupDimensions->LineEdit1)
+    myBase = GEOM::GEOM_Object::_nil();
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2 ||
+           myEditCurrentArgument == GroupDimensions->LineEdit2)
+    myVector = GEOM::GEOM_Object::_nil();
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  if ( aSelList.Extent() != 1 ) {
-    if ( myEditCurrentArgument == GroupPoints->LineEdit1 ||
-	 myEditCurrentArgument == GroupDimensions->LineEdit1 )
-      myBase = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ||
-	      myEditCurrentArgument == GroupDimensions->LineEdit2 )
-      myVector = GEOM::GEOM_Object::_nil();
+  if (aSelList.Extent() != 1)
     return;
-  }
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( aSelList.First(), testResult );
+    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
-  if ( !testResult || CORBA::is_nil( aSelectedObject) || !GEOMBase::IsShape( aSelectedObject ) )
+  if (!testResult || CORBA::is_nil(aSelectedObject) || !GEOMBase::IsShape(aSelectedObject))
     return;
 
-  QString aName = GEOMBase::GetName( aSelectedObject );
+  QString aName = GEOMBase::GetName(aSelectedObject);
 
-  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ||
-       myEditCurrentArgument == GroupDimensions->LineEdit1 )
+  if (myEditCurrentArgument == GroupPoints->LineEdit1 ||
+      myEditCurrentArgument == GroupDimensions->LineEdit1)
     myBase = aSelectedObject;
-  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ||
-            myEditCurrentArgument == GroupDimensions->LineEdit2 ) {
-    if ( testResult && !aSelectedObject->_is_nil() ) {
-      TopoDS_Shape aShape;
-	  
-      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-	TColStd_IndexedMapOfInteger aMap;
-	aSelMgr->GetIndexes( aSelList.First(), aMap );
-	if ( aMap.Extent() == 1 ) {
-	  int anIndex = aMap( 1 );
-	  aName += QString( ":edge_%1" ).arg( anIndex );
-	  
-	  //Find SubShape Object in Father
-	  GEOM::GEOM_Object_var aFindedObject = findObjectInFather( aSelectedObject, aName );
-		  
-	  if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	    GEOM::GEOM_IShapesOperations_var aShapesOp =
-	      getGeomEngine()->GetIShapesOperations( getStudyId() );
-	    myVector = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	  }
-	  else {
-	    myVector = aFindedObject; // get existing object
-	  }
-	}
-	else {
-	  if ( aShape.ShapeType() != TopAbs_EDGE ) {
-	    aSelectedObject = GEOM::GEOM_Object::_nil();
-	    aName = "";
-	  }
-	  myVector = aSelectedObject;
-	}
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2 ||
+           myEditCurrentArgument == GroupDimensions->LineEdit2) {
+    TopoDS_Shape aShape;
+
+    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
+      if (aMap.Extent() == 1) {
+        int anIndex = aMap(1);
+        aName += QString(":edge_%1").arg(anIndex);
+
+        //Find SubShape Object in Father
+        GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
+
+        if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+          GEOM::GEOM_IShapesOperations_var aShapesOp =
+            getGeomEngine()->GetIShapesOperations(getStudyId());
+          myVector = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        }
+        else {
+          myVector = aFindedObject; // get existing object
+        }
+      }
+      else {
+        if (aShape.ShapeType() != TopAbs_EDGE) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+        }
+        myVector = aSelectedObject;
       }
     }
   }
-  myEditCurrentArgument->setText( aName );
+  myEditCurrentArgument->setText(aName);
+
+  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
+    if (!myBase->_is_nil() && myVector->_is_nil())
+      GroupPoints->PushButton2->click();
+  }
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+    if (!myVector->_is_nil() && myBase->_is_nil())
+      GroupPoints->PushButton1->click();
+  }
+  else if (myEditCurrentArgument == GroupDimensions->LineEdit1) {
+    if (!myBase->_is_nil() && myVector->_is_nil())
+      GroupDimensions->PushButton2->click();
+  }
+  else if (myEditCurrentArgument == GroupDimensions->LineEdit2) {
+    if (!myVector->_is_nil() && myBase->_is_nil())
+      GroupDimensions->PushButton1->click();
+  }
+
+  // clear selection
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+  myGeomGUI->getApp()->selectionMgr()->clearSelected();
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
   displayPreview();
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -353,27 +379,50 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
 void TransformationGUI_MultiRotationDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  globalSelection( GEOM_ALLSHAPES );
-  
-  if ( send == GroupPoints->PushButton1 ) {
+
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+  globalSelection(GEOM_ALLSHAPES);
+
+  if (send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
+
+    GroupPoints->PushButton2->setDown(false);
+    GroupPoints->LineEdit2->setEnabled(false);
   }
-  else if ( send == GroupPoints->PushButton2 ) {
+  else if (send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+
+    GroupPoints->PushButton1->setDown(false);
+    GroupPoints->LineEdit1->setEnabled(false);
   }
-  else if ( send == GroupDimensions->PushButton1 ) {
+  else if (send == GroupDimensions->PushButton1) {
     myEditCurrentArgument = GroupDimensions->LineEdit1;
+
+    GroupDimensions->PushButton2->setDown(false);
+    GroupDimensions->LineEdit2->setEnabled(false);
   }
-  else if ( send == GroupDimensions->PushButton2 ) {
+  else if (send == GroupDimensions->PushButton2) {
     myEditCurrentArgument = GroupDimensions->LineEdit2;
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+
+    GroupDimensions->PushButton1->setDown(false);
+    GroupDimensions->LineEdit1->setEnabled(false);
   }
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
+  // enable line edit
+  myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
-  SelectionIntoArgument();
-}
+  // after setFocus(), because it will be setDown(false) when loses focus
+  send->setDown(true);
 
+  // seems we need it only to avoid preview disappearing, caused by selection mode change
+  displayPreview();
+}
 
 //=================================================================================
 // function : LineEditReturnPressed()
@@ -382,13 +431,12 @@ void TransformationGUI_MultiRotationDlg::SetEditCurrentArgument()
 void TransformationGUI_MultiRotationDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupPoints->LineEdit1 || send == GroupDimensions->LineEdit1 || 
-       send == GroupPoints->LineEdit2 || send == GroupDimensions->LineEdit2 ) {
-    myEditCurrentArgument = send; 
+  if (send == GroupPoints->LineEdit1 || send == GroupDimensions->LineEdit1 ||
+      send == GroupPoints->LineEdit2 || send == GroupDimensions->LineEdit2) {
+    myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
 }
-
 
 //=================================================================================
 // function : ActivateThisDialog()
@@ -397,44 +445,40 @@ void TransformationGUI_MultiRotationDlg::LineEditReturnPressed()
 void TransformationGUI_MultiRotationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  
-  ConstructorsClicked( getConstructorId() );
-}
 
+  // reinit, because some selected objects could be removed
+  Init();
+}
 
 //=================================================================================
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void TransformationGUI_MultiRotationDlg::enterEvent( QEvent* )
+void TransformationGUI_MultiRotationDlg::enterEvent (QEvent*)
 {
-  if ( !mainFrame()->GroupConstructors->isEnabled() )
+  if (!mainFrame()->GroupConstructors->isEnabled())
     ActivateThisDialog();
 }
-
 
 //=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void TransformationGUI_MultiRotationDlg::ValueChangedInSpinBox( double newValue )
+void TransformationGUI_MultiRotationDlg::ValueChangedInSpinBox (double newValue)
 {
   QObject* send = (QObject*)sender();
 
-  if ( send == GroupPoints->SpinBox_DX || send == GroupDimensions->SpinBox_DY1 )
+  if (send == GroupPoints->SpinBox_DX || send == GroupDimensions->SpinBox_DY1)
     myNbTimes1 = (int)newValue;
-  else if ( send == GroupDimensions->SpinBox_DX1 )
+  else if (send == GroupDimensions->SpinBox_DX1)
     myAng = newValue;
-  else if ( send == GroupDimensions->SpinBox_DX2 )
+  else if (send == GroupDimensions->SpinBox_DX2)
     myStep = newValue;
-  else if ( send == GroupDimensions->SpinBox_DY2 )
+  else if (send == GroupDimensions->SpinBox_DY2)
     myNbTimes2 = (int)newValue;
-  
+
   displayPreview();
 }
-
 
 //=================================================================================
 // function : ReverseAngle()
@@ -446,14 +490,13 @@ void TransformationGUI_MultiRotationDlg::ReverseAngle()
 
   int aConstructorId = getConstructorId();
 
-  if ( aConstructorId == 0 )
-    GroupPoints->SpinBox_DX->setValue( myAng );
-  else if ( aConstructorId == 1 )
-    GroupDimensions->SpinBox_DX1->setValue( myAng );
+  if (aConstructorId == 0)
+    GroupPoints->SpinBox_DX->setValue(myAng);
+  else if (aConstructorId == 1)
+    GroupDimensions->SpinBox_DX1->setValue(myAng);
 
   displayPreview();
 }
-
 
 //=================================================================================
 // function : createOperation
@@ -461,49 +504,48 @@ void TransformationGUI_MultiRotationDlg::ReverseAngle()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_MultiRotationDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetITransformOperations( getStudyId() );
+  return getGeomEngine()->GetITransformOperations(getStudyId());
 }
-
 
 //=================================================================================
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_MultiRotationDlg::isValid( QString& /*msg*/ )
+bool TransformationGUI_MultiRotationDlg::isValid (QString& /*msg*/)
 {
-  return !( myBase->_is_nil() || myVector->_is_nil() );
+  return !(myBase->_is_nil() || myVector->_is_nil());
 }
 
 //=================================================================================
 // function : execute
 // purpose  :
 //=================================================================================
-bool TransformationGUI_MultiRotationDlg::execute( ObjectList& objects )
+bool TransformationGUI_MultiRotationDlg::execute (ObjectList& objects)
 {
   bool res = false;
-  
+
   GEOM::GEOM_Object_var anObj;
 
-  switch ( getConstructorId() ) {
-  case 0 :
-    if ( !CORBA::is_nil( myBase ) && !CORBA::is_nil( myVector ) ) {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
-	MultiRotate1D( myBase, myVector, myNbTimes1 );
+  switch (getConstructorId()) {
+  case 0:
+    if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVector)) {
+      anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
+        MultiRotate1D(myBase, myVector, myNbTimes1);
       res = true;
     }
     break;
-  case 1 :
-    if ( !CORBA::is_nil( myBase ) && !CORBA::is_nil( myVector ) ) {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
-	MultiRotate2D( myBase, myVector, myAng, myNbTimes1, myStep, myNbTimes2 );
+  case 1:
+    if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVector)) {
+      anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
+        MultiRotate2D(myBase, myVector, myAng, myNbTimes1, myStep, myNbTimes2);
       res = true;
     }
     break;
   }
-  
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
-  
+
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
+
   return res;
 }
 
@@ -514,8 +556,8 @@ bool TransformationGUI_MultiRotationDlg::execute( ObjectList& objects )
 void TransformationGUI_MultiRotationDlg::addSubshapesToStudy()
 {
   QMap<QString, GEOM::GEOM_Object_var> objMap;
-  
-  switch ( getConstructorId() ) {
+
+  switch (getConstructorId()) {
   case 0:
     objMap[GroupPoints->LineEdit2->text()] = myVector;
     break;
@@ -523,5 +565,5 @@ void TransformationGUI_MultiRotationDlg::addSubshapesToStudy()
     objMap[GroupDimensions->LineEdit2->text()] = myVector;
     break;
   }
-  addSubshapesToFather( objMap );
+  addSubshapesToFather(objMap);
 }

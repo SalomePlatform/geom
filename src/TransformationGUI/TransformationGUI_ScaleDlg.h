@@ -65,6 +65,9 @@ private:
 private:
   GEOM::ListOfGO                     myObjects;
   GEOM::GEOM_Object_var              myPoint;   /* Central Point */
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
     
   QGroupBox*                         GroupBox1;
   QLabel*                            TextLabel1;

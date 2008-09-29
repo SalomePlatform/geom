@@ -58,6 +58,9 @@ private:
   GEOM::GEOM_Object_var              myStartLCS;
   GEOM::GEOM_Object_var              myEndLCS;
   GEOM::ListOfGO                     myObjects;
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
   
   DlgRef_3Sel3Spin1Check*            Group1;
     

@@ -58,6 +58,9 @@ private:
 private:
   GEOM::GEOM_Object_var              myArgument;
   GEOM::ListOfGO                     myObjects;
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
   
   DlgRef_2Sel1Spin2Check*            GroupPoints;
     

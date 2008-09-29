@@ -209,6 +209,7 @@ void TransformationGUI_OffsetDlg::SetEditCurrentArgument()
   QPushButton* send = (QPushButton*)sender();
   
   if ( send == GroupPoints->PushButton1 ) {
+    GroupPoints->PushButton1->setDown(true);
     myEditCurrentArgument = GroupPoints->LineEdit1;
     myEditCurrentArgument->setFocus();
     SelectionIntoArgument();

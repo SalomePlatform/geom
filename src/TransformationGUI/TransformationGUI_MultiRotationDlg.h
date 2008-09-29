@@ -61,6 +61,9 @@ private:
   int                                myNbTimes2;
   Standard_Real                      myAng;
   Standard_Real                      myStep;
+
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
   
   DlgRef_2Sel1Spin*                  GroupPoints;
   DlgRef_2Sel4Spin1Check*            GroupDimensions;

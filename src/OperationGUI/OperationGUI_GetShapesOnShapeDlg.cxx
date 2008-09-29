@@ -1,21 +1,21 @@
 // GEOM GEOMGUI : GUI for Geometry component
 //
 // Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// This library is free software; you can redistribute it and/or 
-// modify it under the terms of the GNU Lesser General Public 
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License. 
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful, 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details. 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public 
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
@@ -25,14 +25,14 @@
 
 #include "OperationGUI_GetShapesOnShapeDlg.h"
 
+#include <DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
+
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
-
-#include <DlgRef.h>
-#include <GeometryGUI.h>
-#include <GEOMBase.h>
 
 //==============================================================================
 // class    : OperationGUI_GetShapesOnShapeDlg()
@@ -41,41 +41,43 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_GetShapesOnShapeDlg::OperationGUI_GetShapesOnShapeDlg( GeometryGUI* theGeometryGUI,
-								    QWidget* parent )
-  : GEOMBase_Skeleton( theGeometryGUI, parent, false )
+OperationGUI_GetShapesOnShapeDlg::OperationGUI_GetShapesOnShapeDlg (GeometryGUI* theGeometryGUI,
+                                                                    QWidget* parent)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, false)
 {
   SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
-  QPixmap image0( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_SHAPES_ON_SHAPE" ) ) );
-  QPixmap image2( aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_SHAPES_ON_SHAPE")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setWindowTitle( tr( "GEOM_SHAPES_ON_SHAPE_TITLE" ) );
+  setWindowTitle(tr("GEOM_SHAPES_ON_SHAPE_TITLE"));
 
-  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_SHAPES_ON_SHAPE" ) );
+  /***************************************************************/
+  mainFrame()->GroupConstructors->setTitle(tr("GEOM_SHAPES_ON_SHAPE"));
   mainFrame()->RadioButton1->setIcon(image0);
-  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton2->close();
-  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_2Sel2List( centralWidget() );
+  GroupPoints = new DlgRef_2Sel2List(centralWidget());
   //GroupPoints->GroupBox1->setTitle(tr("GEOM_PARTITION"));
-  GroupPoints->GroupBox1->setTitle( "Input data" );
-  GroupPoints->TextLabel1->setText( tr( "GEOM_SHAPES_ON_SHAPE_ESHAPE" ) );
-  GroupPoints->TextLabel2->setText( tr( "GEOM_SHAPES_ON_SHAPE_CSHAPE" ) );
-  GroupPoints->TextLabel3->setText( tr( "GEOM_RECONSTRUCTION_LIMIT" ) );
-  GroupPoints->TextLabel4->setText( tr( "GEOM_SHAPES_ON_SHAPE_STATE" ) );
-  GroupPoints->PushButton1->setIcon( image2 );
-  GroupPoints->PushButton2->setIcon( image2 );
-  GroupPoints->LineEdit1->setReadOnly( true );
-  GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->GroupBox1->setTitle("Input data");
+  GroupPoints->TextLabel1->setText(tr("GEOM_SHAPES_ON_SHAPE_ESHAPE"));
+  GroupPoints->TextLabel2->setText(tr("GEOM_SHAPES_ON_SHAPE_CSHAPE"));
+  GroupPoints->TextLabel3->setText(tr("GEOM_RECONSTRUCTION_LIMIT"));
+  GroupPoints->TextLabel4->setText(tr("GEOM_SHAPES_ON_SHAPE_STATE"));
+  GroupPoints->PushButton1->setIcon(image2);
+  GroupPoints->PushButton2->setIcon(image2);
+  GroupPoints->LineEdit1->setReadOnly(true);
+  GroupPoints->LineEdit2->setReadOnly(true);
 
-  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
-  layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( GroupPoints );
+  QVBoxLayout* layout = new QVBoxLayout(centralWidget());
+  layout->setMargin(0); layout->setSpacing(6);
+  layout->addWidget(GroupPoints);
+  /***************************************************************/
 
-  setHelpFileName( "shapesonshape_page.html" );
-  
+  setHelpFileName("shapesonshape_page.html");
+
   Init();
 }
 
@@ -93,54 +95,55 @@ OperationGUI_GetShapesOnShapeDlg::~OperationGUI_GetShapesOnShapeDlg()
 //=================================================================================
 void OperationGUI_GetShapesOnShapeDlg::Init()
 {
-  /* type for sub shape selection */
-  GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_SOLID" ) );
+  // type for sub shape selection
+  GroupPoints->ComboBox1->addItem(tr("GEOM_RECONSTRUCTION_LIMIT_SOLID"));
   // commented by skl for IPAL19949 - finder isn't allowed such type
-  //GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_SHELL" ) );
-  GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_FACE" ) );
+  //GroupPoints->ComboBox1->addItem(tr("GEOM_RECONSTRUCTION_LIMIT_SHELL"));
+  GroupPoints->ComboBox1->addItem(tr("GEOM_RECONSTRUCTION_LIMIT_FACE"));
   // commented by skl for IPAL19949 - finder isn't allowed such type
-  //GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_WIRE" ) );
-  GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_EDGE" ) );
-  GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_VERTEX" ) );
+  //GroupPoints->ComboBox1->addItem(tr("GEOM_RECONSTRUCTION_LIMIT_WIRE"));
+  GroupPoints->ComboBox1->addItem(tr("GEOM_RECONSTRUCTION_LIMIT_EDGE"));
+  GroupPoints->ComboBox1->addItem(tr("GEOM_RECONSTRUCTION_LIMIT_VERTEX"));
 
-  /* type for state selection */
-  GroupPoints->ComboBox2->addItem( tr( "GEOM_STATE_IN" ) );
-  GroupPoints->ComboBox2->addItem( tr( "GEOM_STATE_OUT" ) );
-  GroupPoints->ComboBox2->addItem( tr( "GEOM_STATE_ON" ) );
-  GroupPoints->ComboBox2->addItem( tr( "GEOM_STATE_ONIN" ) );
-  GroupPoints->ComboBox2->addItem( tr( "GEOM_STATE_ONOUT" ) );
+  // type for state selection
+  GroupPoints->ComboBox2->addItem(tr("GEOM_STATE_IN"));
+  GroupPoints->ComboBox2->addItem(tr("GEOM_STATE_OUT"));
+  GroupPoints->ComboBox2->addItem(tr("GEOM_STATE_ON"));
+  GroupPoints->ComboBox2->addItem(tr("GEOM_STATE_ONIN"));
+  GroupPoints->ComboBox2->addItem(tr("GEOM_STATE_ONOUT"));
 
   GroupPoints->LineEdit1->clear();
   GroupPoints->LineEdit2->clear();
+  myObject1 = myObject2 = GEOM::GEOM_Object::_nil();
 
-   /* signals and slots connections */
-  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
-  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  // signals and slots connections
+  connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
-  connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupPoints->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect( GroupPoints->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupPoints->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  
-  connect( GroupPoints->ComboBox1, SIGNAL( activated( int ) ), this, SLOT( ComboTextChanged() ) );
-  connect( GroupPoints->ComboBox2, SIGNAL( activated( int ) ), this, SLOT( ComboTextChanged() ) );
+  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect( myGeomGUI->getApp()->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect(GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(ComboTextChanged()));
+  connect(GroupPoints->ComboBox2, SIGNAL(activated(int)), this, SLOT(ComboTextChanged()));
 
-  globalSelection( GEOM_ALLSHAPES );
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
-  initName( mainFrame()->GroupConstructors->title() );
+  initName(mainFrame()->GroupConstructors->title());
 
   GroupPoints->TextLabel3->show();
   GroupPoints->ComboBox1->show();
-  GroupPoints->ComboBox1->setCurrentIndex( 0 );
+  GroupPoints->ComboBox1->setCurrentIndex(0);
   GroupPoints->ComboBox2->show();
-  GroupPoints->ComboBox2->setCurrentIndex( 0 );
+  GroupPoints->ComboBox2->setCurrentIndex(0);
 
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  myEditCurrentArgument->setFocus();
+  globalSelection(GEOM_ALLSHAPES);
+
+  GroupPoints->PushButton1->click();
+  SelectionIntoArgument();
 }
 
 //=================================================================================
@@ -149,7 +152,7 @@ void OperationGUI_GetShapesOnShapeDlg::Init()
 //=================================================================================
 void OperationGUI_GetShapesOnShapeDlg::ClickOnOk()
 {
-  if ( ClickOnApply() )
+  if (ClickOnApply())
     ClickOnCancel();
 }
 
@@ -159,41 +162,57 @@ void OperationGUI_GetShapesOnShapeDlg::ClickOnOk()
 //=================================================================================
 bool OperationGUI_GetShapesOnShapeDlg::ClickOnApply()
 {
-  if ( !onAccept() )
-    return false;  
+  if (!onAccept())
+    return false;
 
   initName();
+  // activate first line edit
+  GroupPoints->PushButton1->click();
   return true;
 }
 
 //=================================================================================
 // function : SelectionIntoArgument()
-// purpose  : Called when selection has changed
+// purpose  : Called when selection is changed or on dialog initialization or activation
 //=================================================================================
 void OperationGUI_GetShapesOnShapeDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText( "" );
-  QString aString = "";
+  myEditCurrentArgument->setText("");
+
+  if      (myEditCurrentArgument == GroupPoints->LineEdit1) myObject1 = GEOM::GEOM_Object::_nil();
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2) myObject2 = GEOM::GEOM_Object::_nil();
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
+  QString aName = "";
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName, true);
 
   if (nbSel > 0) {
     Standard_Boolean aRes = Standard_False;
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
     if (!CORBA::is_nil(aSelectedObject) && aRes && GEOMBase::IsShape(aSelectedObject)) {
-    {
-      myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
-      if      (myEditCurrentArgument == GroupPoints->LineEdit1) myObject1 = aSelectedObject;
-      else if (myEditCurrentArgument == GroupPoints->LineEdit2) myObject2 = aSelectedObject;
+      myEditCurrentArgument->setText(aName);
+
+      // clear selection
+      disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+      myGeomGUI->getApp()->selectionMgr()->clearSelected();
+      connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+              this, SLOT(SelectionIntoArgument()));
+
+      if (myEditCurrentArgument == GroupPoints->LineEdit1) {
+        myObject1 = aSelectedObject;
+        if (myObject2->_is_nil())
+          GroupPoints->PushButton2->click();
+      }
+      else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+        myObject2 = aSelectedObject;
+        if (myObject1->_is_nil())
+          GroupPoints->PushButton1->click();
       }
     }
   }
-
-  myEditCurrentArgument->setText( aString );
 }
 
 //=================================================================================
@@ -204,11 +223,24 @@ void OperationGUI_GetShapesOnShapeDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
-  if      ( send == GroupPoints->PushButton1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if ( send == GroupPoints->PushButton2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
+  if      (send == GroupPoints->PushButton1) {
+    myEditCurrentArgument = GroupPoints->LineEdit1;
 
+    GroupPoints->PushButton2->setDown(false);
+    GroupPoints->LineEdit2->setEnabled(false);
+  }
+  else if (send == GroupPoints->PushButton2) {
+    myEditCurrentArgument = GroupPoints->LineEdit2;
+
+    GroupPoints->PushButton1->setDown(false);
+    GroupPoints->LineEdit1->setEnabled(false);
+  }
+
+  // enable line edit
+  myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
-  SelectionIntoArgument();
+  // after setFocus(), because it will be setDown(false) when loses focus
+  send->setDown(true);
 }
 
 //=================================================================================
@@ -218,7 +250,7 @@ void OperationGUI_GetShapesOnShapeDlg::SetEditCurrentArgument()
 void OperationGUI_GetShapesOnShapeDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupPoints->LineEdit1 || send == GroupPoints->LineEdit2 )
+  if (send == GroupPoints->LineEdit1 || send == GroupPoints->LineEdit2)
   {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
@@ -232,18 +264,18 @@ void OperationGUI_GetShapesOnShapeDlg::LineEditReturnPressed()
 void OperationGUI_GetShapesOnShapeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  globalSelection( GEOM_ALLSHAPES );
-  connect( myGeomGUI->getApp()->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+
+  // reinit, because some selected objects could be removed
+  Init();
 }
 
 //=================================================================================
 // function : enterEvent()
 // purpose  : when mouse enter onto the QWidget
 //=================================================================================
-void OperationGUI_GetShapesOnShapeDlg::enterEvent(QEvent * e)
+void OperationGUI_GetShapesOnShapeDlg::enterEvent (QEvent*)
 {
-  if ( !mainFrame()->GroupConstructors->isEnabled() )
+  if (!mainFrame()->GroupConstructors->isEnabled())
     ActivateThisDialog();
 }
 
@@ -253,32 +285,32 @@ void OperationGUI_GetShapesOnShapeDlg::enterEvent(QEvent * e)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_GetShapesOnShapeDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+  return getGeomEngine()->GetIShapesOperations(getStudyId());
 }
 
 //=================================================================================
 // function : isValid
 // purpose  :
 //=================================================================================
-bool OperationGUI_GetShapesOnShapeDlg::isValid( QString& msg )
+bool OperationGUI_GetShapesOnShapeDlg::isValid(QString&)
 {
   //Handle(SALOME_InteractiveObject) IO = firstIObject();
   //Standard_Boolean testResult;
-  //GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject( IO, testResult );
-  //if ( !testResult || anObject->_is_nil() )
+  //GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject(IO, testResult);
+  //if (!testResult || anObject->_is_nil())
   //  return false;
 
-  return !CORBA::is_nil( myObject1 ) && !CORBA::is_nil( myObject2 );
+  return !CORBA::is_nil(myObject1) && !CORBA::is_nil(myObject2);
 }
 
 //=================================================================================
 // function : execute
 // purpose  :
 //=================================================================================
-bool OperationGUI_GetShapesOnShapeDlg::execute( ObjectList& objects )
+bool OperationGUI_GetShapesOnShapeDlg::execute (ObjectList& objects)
 {
   int aLimit = GroupPoints->ComboBox1->currentIndex();
-  switch ( aLimit )
+  switch (aLimit)
   {
   case 0:  aLimit = GEOM::SOLID ; break;
   case 1:  aLimit = GEOM::FACE  ; break;
@@ -288,7 +320,7 @@ bool OperationGUI_GetShapesOnShapeDlg::execute( ObjectList& objects )
   }
 
   GEOM::shape_state aState;
-  switch ( GroupPoints->ComboBox2->currentIndex() )
+  switch (GroupPoints->ComboBox2->currentIndex())
   {
     case 0:  aState = GEOM::ST_IN;    break;
     case 1:  aState = GEOM::ST_OUT;   break;
@@ -298,20 +330,21 @@ bool OperationGUI_GetShapesOnShapeDlg::execute( ObjectList& objects )
     default: break;
   }
 
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::
-    _narrow( getOperation() )->GetShapesOnShapeAsCompound( myObject2, myObject1,
-							   (CORBA::Short) aLimit,
-							   aState );
+  GEOM::GEOM_Object_var anObj =
+    GEOM::GEOM_IShapesOperations::_narrow(getOperation())->
+    GetShapesOnShapeAsCompound(myObject2, myObject1,
+                               (CORBA::Short) aLimit,
+                               aState);
 
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
 
   return objects.size();
 }
 
 //=======================================================================
 //function : ComboTextChanged
-//purpose  : 
+//purpose  :
 //=======================================================================
 void OperationGUI_GetShapesOnShapeDlg::ComboTextChanged()
 {

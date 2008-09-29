@@ -196,8 +196,8 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked (int constructorId)
       GroupPoints->CheckBox1->hide();
 
       GroupPoints->PushButton1->click();
-      break;
     }
+    break;
   case 1: // translation an object by 2 points
     {
       GroupPoints->ShowRows(3, 5, false);
@@ -214,8 +214,8 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked (int constructorId)
       myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
 
       GroupPoints->PushButton1->click();
-      break;
     }
+    break;
   case 2: // translation an object by vector
     {
       GroupPoints->ShowRows(0, 1, true);
@@ -234,8 +234,8 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked (int constructorId)
       ActivateDistanceChanged(GroupPoints->CheckBox1->isChecked());
 
       GroupPoints->PushButton1->click();
-      break;
     }
+    break;
   }
 
   qApp->processEvents();

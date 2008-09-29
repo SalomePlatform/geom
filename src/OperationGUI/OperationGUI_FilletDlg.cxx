@@ -1,22 +1,22 @@
 // GEOM GEOMGUI : GUI for Geometry component
 //
 // Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-// This library is free software; you can redistribute it and/or 
-// modify it under the terms of the GNU Lesser General Public 
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License. 
-// 
-// This library is distributed in the hope that it will be useful, 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details. 
-// 
-// You should have received a copy of the GNU Lesser General Public 
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File   : OperationGUI_FilletDlg.cxx
@@ -38,6 +38,7 @@
 #include <LightApp_SelectionMgr.h>
 #include <OCCViewer_ViewModel.h>
 
+// OCCT Includes
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 
@@ -45,91 +46,91 @@
 
 //=================================================================================
 // class    : OperationGUI_FilletDlg()
-// purpose  : Constructs a OperationGUI_FilletDlg which is a child of 'parent', with the 
+// purpose  : Constructs a OperationGUI_FilletDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_FilletDlg::OperationGUI_FilletDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
-  : GEOMBase_Skeleton( theGeometryGUI, parent, false )
+OperationGUI_FilletDlg::OperationGUI_FilletDlg (GeometryGUI* theGeometryGUI, QWidget* parent)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, false),
+    myInitial(true)
 {
   SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
-  QPixmap image0( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_ALL" ) ) );
-  QPixmap image1( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_EDGE" ) ) );
-  QPixmap image2( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_FILLET_FACE" ) ) );
+  QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_FILLET_ALL")));
+  QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_FILLET_EDGE")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_FILLET_FACE")));
 
-  QPixmap iconSelect( aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap iconSelect (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setWindowTitle( tr( "GEOM_FILLET_TITLE" ) );
+  setWindowTitle(tr("GEOM_FILLET_TITLE"));
 
   /***************************************************************/
-  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_FILLET" ) );
-  mainFrame()->RadioButton1->setIcon( image0 );
-  mainFrame()->RadioButton2->setIcon( image1 );
-  mainFrame()->RadioButton3->setIcon( image2 );
+  mainFrame()->GroupConstructors->setTitle(tr("GEOM_FILLET"));
+  mainFrame()->RadioButton1->setIcon(image0);
+  mainFrame()->RadioButton2->setIcon(image1);
+  mainFrame()->RadioButton3->setIcon(image2);
 
-  Group1 = new DlgRef_1Sel1Spin( centralWidget() );
-  Group1->GroupBox1->setTitle( tr( "GEOM_FILLET_ALL" ) );
-  Group1->TextLabel1->setText( tr( "GEOM_MAIN_OBJECT" ) );
-  Group1->TextLabel2->setText( tr( "GEOM_RADIUS" ) );
-  Group1->PushButton1->setIcon( iconSelect );
-  Group1->LineEdit1->setReadOnly( true );
+  Group1 = new DlgRef_1Sel1Spin(centralWidget());
+  Group1->GroupBox1->setTitle(tr("GEOM_FILLET_ALL"));
+  Group1->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  Group1->TextLabel2->setText(tr("GEOM_RADIUS"));
+  Group1->PushButton1->setIcon(iconSelect);
+  Group1->LineEdit1->setReadOnly(true);
 
-  Group2 = new DlgRef_2Sel3Spin2Rb( centralWidget() );
-  Group2->GroupBox1->setTitle( tr( "GEOM_FILLET_EDGES" ) );
-  Group2->TextLabel1->setText( tr( "GEOM_MAIN_OBJECT" ) );
-  Group2->TextLabel2->setText( tr( "SELECTED_EDGES" ) );
-  Group2->TextLabel3->setText( tr( "GEOM_RADIUS" ) );
-  Group2->TextLabel4->setText( tr( "GEOM_R1" ) );
-  Group2->TextLabel5->setText( tr( "GEOM_R2" ) );
-  Group2->PushButton1->setIcon( iconSelect );
-  Group2->PushButton2->setIcon( iconSelect );
-  Group2->LineEdit1->setReadOnly( true );
-  Group2->LineEdit2->setReadOnly( true );
+  Group2 = new DlgRef_2Sel3Spin2Rb(centralWidget());
+  Group2->GroupBox1->setTitle(tr("GEOM_FILLET_EDGES"));
+  Group2->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  Group2->TextLabel2->setText(tr("SELECTED_EDGES"));
+  Group2->TextLabel3->setText(tr("GEOM_RADIUS"));
+  Group2->TextLabel4->setText(tr("GEOM_R1"));
+  Group2->TextLabel5->setText(tr("GEOM_R2"));
+  Group2->PushButton1->setIcon(iconSelect);
+  Group2->PushButton2->setIcon(iconSelect);
+  Group2->LineEdit1->setReadOnly(true);
+  Group2->LineEdit2->setReadOnly(true);
 
-  Group3 = new DlgRef_2Sel3Spin2Rb( centralWidget() );
-  Group3->GroupBox1->setTitle( tr( "GEOM_FILLET_FACES" ) );
-  Group3->TextLabel1->setText( tr( "GEOM_MAIN_OBJECT" ) );
-  Group3->TextLabel2->setText( tr( "SELECTED_FACES" ) );
-  Group3->TextLabel3->setText( tr( "GEOM_RADIUS" ) );
-  Group3->TextLabel4->setText( tr( "GEOM_R1" ) );
-  Group3->TextLabel5->setText( tr( "GEOM_R2" ) );
-  Group3->PushButton1->setIcon( iconSelect );
-  Group3->PushButton2->setIcon( iconSelect );
-  Group3->LineEdit1->setReadOnly( true );
-  Group3->LineEdit2->setReadOnly( true );
+  Group3 = new DlgRef_2Sel3Spin2Rb(centralWidget());
+  Group3->GroupBox1->setTitle(tr("GEOM_FILLET_FACES"));
+  Group3->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  Group3->TextLabel2->setText(tr("SELECTED_FACES"));
+  Group3->TextLabel3->setText(tr("GEOM_RADIUS"));
+  Group3->TextLabel4->setText(tr("GEOM_R1"));
+  Group3->TextLabel5->setText(tr("GEOM_R2"));
+  Group3->PushButton1->setIcon(iconSelect);
+  Group3->PushButton2->setIcon(iconSelect);
+  Group3->LineEdit1->setReadOnly(true);
+  Group3->LineEdit2->setReadOnly(true);
 
-  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
-  layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( Group1 );
-  layout->addWidget( Group2 );
-  layout->addWidget( Group3 );
+  QVBoxLayout* layout = new QVBoxLayout(centralWidget());
+  layout->setMargin(0); layout->setSpacing(6);
+  layout->addWidget(Group1);
+  layout->addWidget(Group2);
+  layout->addWidget(Group3);
   /***************************************************************/
 
+  // Set range of spinboxes
   double SpecificStep = 10.0;
-  initSpinBox( Group1->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group2->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group2->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group2->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group3->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group3->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group3->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  
-  setHelpFileName( "fillet_operation_page.html" );
+  initSpinBox(Group1->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(Group2->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(Group2->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(Group2->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(Group3->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(Group3->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(Group3->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
 
-  /* Initialisations */
+  setHelpFileName("fillet_operation_page.html");
+
+  // Initialisation
   Init();
 }
-
 
 //=================================================================================
 // function : ~OperationGUI_FilletDlg()
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 OperationGUI_FilletDlg::~OperationGUI_FilletDlg()
-{  
+{
 }
-
 
 //=================================================================================
 // function : Init()
@@ -137,74 +138,90 @@ OperationGUI_FilletDlg::~OperationGUI_FilletDlg()
 //=================================================================================
 void OperationGUI_FilletDlg::Init()
 {
-  myConstructorId = -1;
-  reset();
+  // Set Initial values of spinboxes
+  Group1->SpinBox_DX->setValue(5);
+  Group2->SpinBox_DX->setValue(5);
+  Group2->SpinBox_DY->setValue(5);
+  Group2->SpinBox_DZ->setValue(5);
+  Group3->SpinBox_DX->setValue(5);
+  Group3->SpinBox_DY->setValue(5);
+  Group3->SpinBox_DZ->setValue(5);
+
+  // Clear line edits
+  Group1->LineEdit1->setText("");
+  Group2->LineEdit1->setText("");
+  Group2->LineEdit2->setText("");
+  Group3->LineEdit1->setText("");
+  Group3->LineEdit2->setText("");
+
+  myShape = GEOM::GEOM_Object::_nil();
+
+  myFaces.Clear();
+  myEdges.Clear();
+
+  // signals and slots connections
 
   // main buttons
-  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk()    ) );
-  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()   ));
+  connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
   // group box
-  connect( this,          SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
+  connect(this,          SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
 
   // push buttons
-  connect( Group1->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group2->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group3->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group2->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group3->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect(Group1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group2->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group2->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
   // line edits
-  connect( Group1->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group2->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group3->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect(Group1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group2->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group3->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  // spin boxes  
-  connect( Group1->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group2->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group2->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group2->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group3->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group3->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group3->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  // spin boxes
+  connect(Group1->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group2->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group2->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group2->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group3->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group3->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group3->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
   // radio buttons
-  connect( Group2->RadioButton1, SIGNAL( clicked() ), this, SLOT( RadioButtonClicked() ) );
-  connect( Group2->RadioButton2, SIGNAL( clicked() ), this, SLOT( RadioButtonClicked() ) );
-  connect( Group3->RadioButton1, SIGNAL( clicked() ), this, SLOT( RadioButtonClicked() ) );
-  connect( Group3->RadioButton2, SIGNAL( clicked() ), this, SLOT( RadioButtonClicked() ) );
+  connect(Group2->RadioButton1, SIGNAL(clicked()), this, SLOT(RadioButtonClicked()));
+  connect(Group2->RadioButton2, SIGNAL(clicked()), this, SLOT(RadioButtonClicked()));
+  connect(Group3->RadioButton1, SIGNAL(clicked()), this, SLOT(RadioButtonClicked()));
+  connect(Group3->RadioButton2, SIGNAL(clicked()), this, SLOT(RadioButtonClicked()));
 
-  // selection
-  connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  initName(tr("GEOM_FILLET"));
 
-  initName( tr( "GEOM_FILLET" ) );
-
-  ConstructorsClicked( 0 );
+  myConstructorId = -1;
+  ConstructorsClicked(0);
 }
-
 
 //=================================================================================
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void OperationGUI_FilletDlg::ConstructorsClicked( int constructorId )
+void OperationGUI_FilletDlg::ConstructorsClicked (int constructorId)
 {
-  if ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
-       != OCCViewer_Viewer::Type() ) {
-    mainFrame()->RadioButton1->setChecked( true );
+  if (myGeomGUI->getApp()->desktop()->activeWindow()->getViewManager()->getType()
+      != OCCViewer_Viewer::Type()) {
+    mainFrame()->RadioButton1->setChecked(true);
     return;
   }
 
-  if ( myConstructorId == constructorId )
+  if (myConstructorId == constructorId)
     return;
 
   // Get radius from previous widget
   double R = 5, R1 = 5, R2 = 5;
-  if      ( myConstructorId == 0 ) { 
+  if      (myConstructorId == 0) {
     R = Group1->SpinBox_DX->value();
   }
-  else if ( myConstructorId == 1 ) {
+  else if (myConstructorId == 1) {
     R = Group2->SpinBox_DX->value();
     R1 = Group2->SpinBox_DY->value();
     R2 = Group2->SpinBox_DZ->value();
@@ -217,54 +234,70 @@ void OperationGUI_FilletDlg::ConstructorsClicked( int constructorId )
 
   myConstructorId = constructorId;
 
-  switch ( constructorId ) {
+  switch (constructorId) {
   case 0:
     Group2->hide();
     Group3->hide();
     Group1->show();
-    Group1->SpinBox_DX->setValue( R );
+    Group1->SpinBox_DX->setValue(R);
     break;
   case 1:
     Group1->hide();
     Group3->hide();
     Group2->show();
-    Group2->SpinBox_DX->setValue( R );
-    Group2->SpinBox_DY->setValue( R1 );
-    Group2->SpinBox_DZ->setValue( R2 );
+    Group2->SpinBox_DX->setValue(R);
+    Group2->SpinBox_DY->setValue(R1);
+    Group2->SpinBox_DZ->setValue(R2);
     break;
   case 2:
     Group1->hide();
     Group2->hide();
     Group3->show();
-    Group3->SpinBox_DX->setValue( R );
-    Group3->SpinBox_DY->setValue( R1 );
-    Group3->SpinBox_DZ->setValue( R2 );
+    Group3->SpinBox_DX->setValue(R);
+    Group3->SpinBox_DY->setValue(R1);
+    Group3->SpinBox_DZ->setValue(R2);
     break;
   default:
     break;
   }
 
-  if      ( constructorId == 0 ) myEditCurrentArgument = Group1->LineEdit1;
-  else if ( constructorId == 1 ) myEditCurrentArgument = Group2->LineEdit1;
-  else                           myEditCurrentArgument = Group3->LineEdit1;
+  if      (constructorId == 0) Group1->PushButton1->click();
+  else if (constructorId == 1) Group2->PushButton1->click();
+  else                         Group3->PushButton1->click();
 
-  activateSelection();
   enableWidgets();
 
-  if ( !myShape->_is_nil() ) {
-    myEditCurrentArgument->setText( GEOMBase::GetName( myShape ) );
-    GEOMBase_Skeleton::LineEditReturnPressed();
+  if (myInitial) {
+    myInitial = false;
+    SelectionIntoArgument();
   }
-  else
-    myEditCurrentArgument->setText( "" );
+  else {
+    if (!myShape->_is_nil()) {
+      myEditCurrentArgument->setText(GEOMBase::GetName(myShape));
+      GEOMBase_Skeleton::LineEditReturnPressed();
+      switch (getConstructorId()) {
+      case 1:
+        if (myEdges.Extent() == 0)
+          Group2->PushButton2->click();
+        break;
+      case 2:
+        if (myFaces.Extent() == 0)
+          Group3->PushButton2->click();
+        break;
+      default:
+        break;
+      }
+    }
+    else
+      myEditCurrentArgument->setText("");
+
+    displayPreview();
+  }
 
   qApp->processEvents();
   updateGeometry();
-  resize( minimumSize() );
-
-  displayPreview();  
+  resize(minimumSize());
 }
-
 
 //=================================================================================
 // function : ClickOnOk()
@@ -272,10 +305,9 @@ void OperationGUI_FilletDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void OperationGUI_FilletDlg::ClickOnOk()
 {
-  if ( ClickOnApply() )
+  if (ClickOnApply())
     ClickOnCancel();
 }
-
 
 //=================================================================================
 // function : ClickOnApply()
@@ -283,21 +315,23 @@ void OperationGUI_FilletDlg::ClickOnOk()
 //=================================================================================
 bool OperationGUI_FilletDlg::ClickOnApply()
 {
-  if ( !onAccept() )
+  if (!onAccept())
     return false;
 
   initName();
+  // activate selection and connect selection manager
+  ConstructorsClicked(getConstructorId());
   return true;
 }
 
 //=================================================================================
 // function : SelectionIntoArgument()
-// purpose  : Called when selection has changed
+// purpose  : Called when selection is changed or on dialog initialization or activation
 //=================================================================================
 void OperationGUI_FilletDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myEditCurrentArgument->setText( "" );
+  myEditCurrentArgument->setText("");
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
@@ -308,6 +342,7 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
       myEditCurrentArgument == Group2->LineEdit1 ||
       myEditCurrentArgument == Group3->LineEdit1)
   {
+    myShape = GEOM::GEOM_Object::_nil();
     if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
@@ -317,18 +352,17 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
         myShape = anObj;
         myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
         displayPreview();
-        enableWidgets();
-        return;
       }
     }
 
-    myShape = GEOM::GEOM_Object::_nil();
     enableWidgets();
   }
   // If face or edge selection is activated
   else if (myEditCurrentArgument == Group2->LineEdit2 ||
            myEditCurrentArgument == Group3->LineEdit2)
   {
+    if (myEditCurrentArgument == Group2->LineEdit2) myEdges.Clear();
+    else myFaces.Clear();
     if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
@@ -343,47 +377,51 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
           if (anIndexes.Extent() == 1) {
             int anIndex = anIndexes(1);
 
-            aName = QString( GEOMBase::GetName( anObj ) ) + QString( ":%1" ).arg( anIndex );
+            aName = QString(GEOMBase::GetName(anObj)) + QString(":%1").arg(anIndex);
           }
-          else
-            aName = tr( "GEOM_MEN_POPUP_NAME" ).arg( anIndexes.Extent() );
+          else {
+            aName = tr("GEOM_MEN_POPUP_NAME").arg(anIndexes.Extent());
+          }
 
-          myEditCurrentArgument->setText( aName );
+          myEditCurrentArgument->setText(aName);
 
-          if ( myConstructorId == 1 )
+          if (myConstructorId == 1)
             myEdges = anIndexes;
           else
             myFaces = anIndexes;
 
           displayPreview();
-          return;
         }
       }
     }
-    myFaces.Clear();
+  }
+
+  // clear selection
+  if (!(myEditCurrentArgument == Group2->LineEdit2 ||
+        myEditCurrentArgument == Group3->LineEdit2)) {
+    disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+    myGeomGUI->getApp()->selectionMgr()->clearSelected();
+    connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+            this, SLOT(SelectionIntoArgument()));
+  }
+
+  switch (getConstructorId()) {
+  case 1:
+    if (myEditCurrentArgument == Group2->LineEdit1) {
+      if (!myShape->_is_nil() && myEdges.Extent() == 0)
+        Group2->PushButton2->click();
+    }
+    break;
+  case 2:
+    if (myEditCurrentArgument == Group3->LineEdit1) {
+      if (!myShape->_is_nil() && myFaces.Extent() == 0)
+        Group3->PushButton2->click();
+    }
+    break;
+  default:
+    break;
   }
 }
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void OperationGUI_FilletDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = ( QLineEdit* )sender();
-  
-  if ( send == Group1->LineEdit1 )
-    myEditCurrentArgument = Group1->LineEdit1;
-  else if ( send == Group2->LineEdit1 )
-    myEditCurrentArgument = Group2->LineEdit1;
-  else if ( send == Group3->LineEdit1 )
-    myEditCurrentArgument = Group3->LineEdit1;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-}
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -393,30 +431,61 @@ void OperationGUI_FilletDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
-  if ( send == Group1->PushButton1 ) {
-    Group1->LineEdit1->setFocus();
+  if (send == Group1->PushButton1) {
     myEditCurrentArgument = Group1->LineEdit1;
   }
-  else if ( send == Group2->PushButton1 ) {
-    Group2->LineEdit1->setFocus();
+  else if (send == Group2->PushButton1) {
     myEditCurrentArgument = Group2->LineEdit1;
+    Group2->PushButton2->setDown(false);
+    Group2->LineEdit2->setEnabled(false);
   }
-  else if ( send == Group2->PushButton2 ) {
-    Group2->LineEdit2->setFocus();
+  else if (send == Group2->PushButton2) {
     myEditCurrentArgument = Group2->LineEdit2;
+    Group2->PushButton1->setDown(false);
+    Group2->LineEdit1->setEnabled(false);
   }
-  else if ( send == Group3->PushButton1 ) {
-    Group3->LineEdit1->setFocus();
+  else if (send == Group3->PushButton1) {
     myEditCurrentArgument = Group3->LineEdit1;
+    Group3->PushButton2->setDown(false);
+    Group3->LineEdit2->setEnabled(false);
   }
-  else if ( send == Group3->PushButton2 ) {
-    Group3->LineEdit1->setFocus();
+  else if (send == Group3->PushButton2) {
     myEditCurrentArgument = Group3->LineEdit2;
+    Group3->PushButton1->setDown(false);
+    Group3->LineEdit1->setEnabled(false);
   }
+
+  // enable line edit
+  myEditCurrentArgument->setEnabled(true);
+  myEditCurrentArgument->setFocus();
+  // after setFocus(), because it will be setDown(false) when loses focus
+  send->setDown(true);
 
   activateSelection();
+
+  // seems we need it only to avoid preview disappearing, caused by selection mode change
+  displayPreview();
 }
 
+//=================================================================================
+// function : LineEditReturnPressed()
+// purpose  :
+//=================================================================================
+void OperationGUI_FilletDlg::LineEditReturnPressed()
+{
+  QLineEdit* send = (QLineEdit*)sender();
+
+  if (send == Group1->LineEdit1)
+    myEditCurrentArgument = Group1->LineEdit1;
+  else if (send == Group2->LineEdit1)
+    myEditCurrentArgument = Group2->LineEdit1;
+  else if (send == Group3->LineEdit1)
+    myEditCurrentArgument = Group3->LineEdit1;
+  else
+    return;
+
+  GEOMBase_Skeleton::LineEditReturnPressed();
+}
 
 //=================================================================================
 // function : ActivateThisDialog()
@@ -426,21 +495,17 @@ void OperationGUI_FilletDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-
-  activateSelection();
-  displayPreview();
+  // reinit, because some selected objects could be removed
+  Init();
 }
-
 
 //=================================================================================
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void OperationGUI_FilletDlg::enterEvent( QEvent* )
+void OperationGUI_FilletDlg::enterEvent (QEvent*)
 {
-  if ( !mainFrame()->GroupConstructors->isEnabled() )
+  if (!mainFrame()->GroupConstructors->isEnabled())
     this->ActivateThisDialog();
 }
 
@@ -448,49 +513,9 @@ void OperationGUI_FilletDlg::enterEvent( QEvent* )
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void OperationGUI_FilletDlg::ValueChangedInSpinBox( double )
+void OperationGUI_FilletDlg::ValueChangedInSpinBox (double)
 {
   displayPreview();
-}
-
-//=================================================================================
-// function : reset()
-// purpose  :
-//=================================================================================
-void OperationGUI_FilletDlg::reset()
-{
-  // Set Initial values of spinboxes
-  Group1->SpinBox_DX->setValue( 5 );
-  Group2->SpinBox_DX->setValue( 5 );
-  Group2->SpinBox_DY->setValue( 5 );
-  Group2->SpinBox_DZ->setValue( 5 );
-  Group3->SpinBox_DX->setValue( 5 );
-  Group3->SpinBox_DY->setValue( 5 );
-  Group3->SpinBox_DZ->setValue( 5 );
-
-  Group1->LineEdit1->setText( "" );
-  Group2->LineEdit1->setText( "" );
-  Group2->LineEdit2->setText( "" );
-  Group3->LineEdit1->setText( "" );
-  Group3->LineEdit2->setText( "" );
-
-  // constructor id
-  int aConstructorId = getConstructorId();
-
-  if      ( aConstructorId == 0 ) myEditCurrentArgument = Group1->LineEdit1;
-  else if ( aConstructorId == 1 ) myEditCurrentArgument = Group2->LineEdit1;
-  else                            myEditCurrentArgument = Group3->LineEdit1;
-
-  myShape = GEOM::GEOM_Object::_nil();
-
-  myFaces.Clear();
-  myEdges.Clear();
-
-  erasePreview( true );
-
-  activateSelection();
-
-  enableWidgets();
 }
 
 //=================================================================================
@@ -499,20 +524,22 @@ void OperationGUI_FilletDlg::reset()
 //=================================================================================
 void OperationGUI_FilletDlg::activateSelection()
 {
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
 
-  if ( !myShape->_is_nil() && myEditCurrentArgument == Group2->LineEdit2 )
-    localSelection( myShape, TopAbs_EDGE );
-  else if ( !myShape->_is_nil() && myEditCurrentArgument == Group3->LineEdit2 )
-    localSelection( myShape, TopAbs_FACE );
+  if (!myShape->_is_nil() && myEditCurrentArgument == Group2->LineEdit2)
+    localSelection(myShape, TopAbs_EDGE);
+  else if (!myShape->_is_nil() && myEditCurrentArgument == Group3->LineEdit2)
+    localSelection(myShape, TopAbs_FACE);
   else {
     TColStd_MapOfInteger aMap;
-    aMap.Add( GEOM_SHELL );
-    aMap.Add( GEOM_SOLID );
-    aMap.Add( GEOM_COMPOUND );
-    globalSelection( aMap );
+    aMap.Add(GEOM_SHELL);
+    aMap.Add(GEOM_SOLID);
+    aMap.Add(GEOM_COMPOUND);
+    globalSelection(aMap);
   }
 
-  SelectionIntoArgument();
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 }
 
 //=================================================================================
@@ -525,21 +552,21 @@ void OperationGUI_FilletDlg::enableWidgets()
 
   bool toEnable = !myShape->_is_nil();
 
-  if ( anId == 1 ) {
-    Group2->LineEdit2->setEnabled( toEnable );
-    Group2->PushButton2->setEnabled( toEnable );
-    
-    if ( !toEnable ) {
-      Group2->LineEdit2->setText( "" );
+  if (anId == 1) {
+    //Group2->LineEdit2->setEnabled(toEnable);
+    Group2->PushButton2->setEnabled(toEnable);
+
+    if (!toEnable) {
+      Group2->LineEdit2->setText("");
       myEdges.Clear();
     }
   }
-  else if ( anId == 2 ) {
-    Group3->LineEdit2->setEnabled( toEnable );
-    Group3->PushButton2->setEnabled( toEnable );
+  else if (anId == 2) {
+    //Group3->LineEdit2->setEnabled(toEnable);
+    Group3->PushButton2->setEnabled(toEnable);
 
-    if ( !toEnable ) {
-      Group3->LineEdit2->setText( "" );
+    if (!toEnable) {
+      Group3->LineEdit2->setText("");
       myFaces.Clear();
     }
   }
@@ -551,16 +578,16 @@ void OperationGUI_FilletDlg::enableWidgets()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_FilletDlg::createOperation()
 {
-  return getGeomEngine()->GetILocalOperations( getStudyId() );
+  return getGeomEngine()->GetILocalOperations(getStudyId());
 }
 
 //=================================================================================
-// function : ClickOnApply()
+// function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool OperationGUI_FilletDlg::isValid( QString& )
+bool OperationGUI_FilletDlg::isValid (QString&)
 {
-  switch ( getConstructorId() )
+  switch (getConstructorId())
   {
     case 0: return !myShape->_is_nil();
     case 1: return !myShape->_is_nil() && myEdges.Extent() > 0;
@@ -573,99 +600,98 @@ bool OperationGUI_FilletDlg::isValid( QString& )
 // function : execute
 // purpose  :
 //=================================================================================
-bool OperationGUI_FilletDlg::execute( ObjectList& objects )
+bool OperationGUI_FilletDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_Object_var anObj;
 
   int anId = getConstructorId();
-  if ( anId == 0 )
-    anObj = GEOM::GEOM_ILocalOperations::_narrow(
-      getOperation() )->MakeFilletAll( myShape, getRadius() );
-  else if ( anId == 1 ) {
+  if (anId == 0)
+    anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
+      MakeFilletAll(myShape, getRadius());
+  else if (anId == 1) {
     GEOM::ListOfLong_var aList = new GEOM::ListOfLong;
-    aList->length( myEdges.Extent() );
+    aList->length(myEdges.Extent());
 
-    for ( int i = 1, n = myEdges.Extent(); i <= n; i++ )
-      aList[ i - 1 ] = myEdges( i );
+    for (int i = 1, n = myEdges.Extent(); i <= n; i++)
+      aList[ i - 1 ] = myEdges(i);
 
-    if ( Group2->RadioButton1->isChecked() )
-      anObj = GEOM::GEOM_ILocalOperations::_narrow( getOperation() )->
-	MakeFilletEdges( myShape, getRadius(), aList );
+    if (Group2->RadioButton1->isChecked())
+      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
+        MakeFilletEdges(myShape, getRadius(), aList);
     else
-      anObj = GEOM::GEOM_ILocalOperations::_narrow( getOperation() )->
-	MakeFilletEdgesR1R2( myShape,
-			     Group2->SpinBox_DY->value(),
-			     Group2->SpinBox_DZ->value(),
-			     aList );
+      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
+        MakeFilletEdgesR1R2(myShape,
+                            Group2->SpinBox_DY->value(),
+                            Group2->SpinBox_DZ->value(),
+                            aList);
   }
-  else if ( anId == 2 ) {
+  else if (anId == 2) {
     GEOM::ListOfLong_var aList = new GEOM::ListOfLong;
-    aList->length( myFaces.Extent() );
+    aList->length(myFaces.Extent());
 
-    for ( int i = 1, n = myFaces.Extent(); i <= n; i++ )
-      aList[ i - 1 ] = myFaces( i );
+    for (int i = 1, n = myFaces.Extent(); i <= n; i++)
+      aList[ i - 1 ] = myFaces(i);
 
-    if ( Group3->RadioButton1->isChecked() ) {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow( getOperation() )->
-	MakeFilletFaces( myShape, getRadius(), aList );
+    if (Group3->RadioButton1->isChecked()) {
+      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
+        MakeFilletFaces(myShape, getRadius(), aList);
     }
     else {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow( getOperation() )->
-	MakeFilletFacesR1R2( myShape, 
-			     Group3->SpinBox_DY->value(),
-			     Group3->SpinBox_DZ->value(), aList );
+      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
+        MakeFilletFacesR1R2(myShape,
+                            Group3->SpinBox_DY->value(),
+                            Group3->SpinBox_DZ->value(), aList);
     }
   }
 
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
 
   return true;
 }
 
 //=================================================================================
 // function : getRadius
-// purpose  : Get radius     
+// purpose  : Get radius
 //=================================================================================
 double OperationGUI_FilletDlg::getRadius() const
 {
   int anId = getConstructorId();
-  if      ( anId == 0 ) return Group1->SpinBox_DX->value();
-  else if ( anId == 1 ) return Group2->SpinBox_DX->value();
-  else                  return Group3->SpinBox_DX->value();
+  if      (anId == 0) return Group1->SpinBox_DX->value();
+  else if (anId == 1) return Group2->SpinBox_DX->value();
+  else                return Group3->SpinBox_DX->value();
 }
 
 //=================================================================================
 // function : RadiobuttonClicked
 // purpose  :
 //=================================================================================
-
 void OperationGUI_FilletDlg::RadioButtonClicked()
 {
   const QObject* s = sender();
 
   bool flag = s == Group2->RadioButton1 || s == Group3->RadioButton1;
-    
-  Group2->RadioButton1->blockSignals( true );
-  Group2->RadioButton2->blockSignals( true );
-  Group3->RadioButton1->blockSignals( true );
-  Group3->RadioButton2->blockSignals( true );
-  
-  Group2->SpinBox_DX->setEnabled( flag );
-  Group2->SpinBox_DY->setEnabled( !flag );
-  Group2->SpinBox_DZ->setEnabled( !flag );
-  Group2->RadioButton1->setChecked( flag );
-  Group2->RadioButton2->setChecked( !flag );
-  Group3->SpinBox_DX->setEnabled( flag );
-  Group3->SpinBox_DY->setEnabled( !flag );
-  Group3->SpinBox_DZ->setEnabled( !flag );
-  Group3->RadioButton1->setChecked( flag );
-  Group3->RadioButton2->setChecked( !flag );
 
-  Group2->RadioButton1->blockSignals( false );
-  Group2->RadioButton2->blockSignals( false );
-  Group3->RadioButton1->blockSignals( false );
-  Group3->RadioButton2->blockSignals( false );
+  Group2->RadioButton1->blockSignals(true);
+  Group2->RadioButton2->blockSignals(true);
+  Group3->RadioButton1->blockSignals(true);
+  Group3->RadioButton2->blockSignals(true);
 
-  displayPreview();  
+  Group2->SpinBox_DX->setEnabled(flag);
+  Group2->SpinBox_DY->setEnabled(!flag);
+  Group2->SpinBox_DZ->setEnabled(!flag);
+  Group2->RadioButton1->setChecked(flag);
+  Group2->RadioButton2->setChecked(!flag);
+  Group3->SpinBox_DX->setEnabled(flag);
+  Group3->SpinBox_DY->setEnabled(!flag);
+  Group3->SpinBox_DZ->setEnabled(!flag);
+  Group3->RadioButton1->setChecked(flag);
+  Group3->RadioButton2->setChecked(!flag);
+
+  Group2->RadioButton1->blockSignals(false);
+  Group2->RadioButton2->blockSignals(false);
+  Group3->RadioButton1->blockSignals(false);
+  Group3->RadioButton2->blockSignals(false);
+
+  displayPreview();
 }
