@@ -28,7 +28,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_2Sel;
+class DlgRef_3Sel;
 
 //=================================================================================
 // class    : GenerationGUI_PipeDlg
@@ -56,10 +56,12 @@ private:
 private:
   GEOM::GEOM_Object_var              myBase; /* Base shape */
   GEOM::GEOM_Object_var              myPath; /* Shape, defining the path */
+  GEOM::GEOM_Object_var              myVec;  /* Vector, defining the constant binormal direction */
   bool                               myOkBase;
-  bool                               myOkPath; /* to check when arguments are defined */
+  bool                               myOkPath;
+  bool                               myOkVec; /* to check when arguments are defined */
   
-  DlgRef_2Sel*                       GroupPoints;
+  DlgRef_3Sel*                       GroupPoints;
 
 private slots:
   void                               ClickOnOk();
@@ -68,6 +70,7 @@ private slots:
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               ConstructorsClicked( int );
 };
 
 #endif // GENERATIONGUI_PIPEDLG_H

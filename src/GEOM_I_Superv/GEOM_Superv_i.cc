@@ -1223,6 +1223,24 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeShellsWithoutPath
 
 
 //=============================================================================
+//  MakePipe:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeBiNormalAlongVector 
+                                                (GEOM::GEOM_Object_ptr theBase, 
+						 GEOM::GEOM_Object_ptr thePath, 
+						 GEOM::GEOM_Object_ptr theVec)
+{
+  beginService( " GEOM_Superv_i::MakePipeBiNormalAlongVector" );
+  MESSAGE("GEOM_Superv_i::MakePipeBiNormalAlongVector");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = 
+    my3DPrimOp->MakePipeBiNormalAlongVector(theBase, thePath, theVec);
+  endService( " GEOM_Superv_i::MakePipeBiNormalAlongVector" );
+  return anObj;
+}
+
+
+//=============================================================================
 //  MakeFuse:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFuse (GEOM::GEOM_Object_ptr theShape1,

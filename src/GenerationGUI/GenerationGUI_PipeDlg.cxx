@@ -55,26 +55,26 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg (GeometryGUI* theGeometryGUI, QWidg
 {
   QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_PIPE")));
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_PIPE_BINORMAL")));
 
   setWindowTitle(tr("GEOM_PIPE_TITLE"));
 
   /***************************************************************/
   mainFrame()->GroupConstructors->setTitle(tr("GEOM_PIPE"));
   mainFrame()->RadioButton1->setIcon(image0);
-  mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
-  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton2->setIcon(image2);
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_2Sel(centralWidget());
+  GroupPoints = new DlgRef_3Sel(centralWidget());
 
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_BASE_OBJECT"));
   GroupPoints->TextLabel2->setText(tr("GEOM_PATH_OBJECT"));
+  GroupPoints->TextLabel3->setText(tr("GEOM_VECTOR"));
   GroupPoints->PushButton1->setIcon(image1);
   GroupPoints->PushButton2->setIcon(image1);
-  GroupPoints->LineEdit1->setReadOnly(true);
-  GroupPoints->LineEdit2->setReadOnly(true);
+  GroupPoints->PushButton3->setIcon(image1);
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -105,26 +105,66 @@ void GenerationGUI_PipeDlg::Init()
   // init variables
   GroupPoints->LineEdit1->setReadOnly(true);
   GroupPoints->LineEdit2->setReadOnly(true);
+  GroupPoints->LineEdit3->setReadOnly(true);
 
   GroupPoints->LineEdit1->setText("");
   GroupPoints->LineEdit2->setText("");
-  myBase = myPath = GEOM::GEOM_Object::_nil();
-  myOkBase = myOkPath = false;
+  GroupPoints->LineEdit3->setText("");
+  myBase = myPath = myVec = GEOM::GEOM_Object::_nil();
+  myOkBase = myOkPath = myOkVec = false;
 
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
+  connect(this,          SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
+
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
   connect(GroupPoints->LineEdit1,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupPoints->LineEdit3,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   initName(tr("GEOM_PIPE"));
 
+  GroupPoints->TextLabel3->hide();
+  GroupPoints->PushButton3->hide();
+  GroupPoints->LineEdit3->hide();
+  ConstructorsClicked(0);
+
   GroupPoints->PushButton1->click();
   SelectionIntoArgument();
+}
+
+//=================================================================================
+// function : ConstructorsClicked()
+// purpose  : Radio button management
+//=================================================================================
+void GenerationGUI_PipeDlg::ConstructorsClicked( int constructorId )
+{
+  erasePreview();
+
+  switch (constructorId)
+  {
+    case 0:
+    {
+      GroupPoints->TextLabel3->hide();
+      GroupPoints->PushButton3->hide();
+      GroupPoints->LineEdit3->hide();
+      break;
+    }
+    case 1:
+    {
+      GroupPoints->TextLabel3->show();
+      GroupPoints->PushButton3->show();
+      GroupPoints->LineEdit3->show();
+      break;
+    }
+  }
+
+  displayPreview();
 }
 
 //=================================================================================
@@ -147,6 +187,8 @@ bool GenerationGUI_PipeDlg::ClickOnApply()
     return false;
 
   initName();
+  if ( getConstructorId() != 1 )
+  	ConstructorsClicked( getConstructorId() );
   // activate selection and connect selection manager
   GroupPoints->PushButton1->click();
   return true;
@@ -162,6 +204,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText("");
   if      (myEditCurrentArgument == GroupPoints->LineEdit1) myOkBase = false;
   else if (myEditCurrentArgument == GroupPoints->LineEdit2) myOkPath = false;
+  else if (myEditCurrentArgument == GroupPoints->LineEdit3) myOkVec  = false;
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
@@ -187,14 +230,23 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
         S.ShapeType() == TopAbs_SOLID ||
         S.ShapeType() == TopAbs_SHAPE)
       return;
+    if ( getConstructorId() == 1 && 
+	 (S.ShapeType() == TopAbs_SHELL || 
+	  S.ShapeType() == TopAbs_VERTEX))
+      return;
 
     myBase = aSelectedObject;
     myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
     myOkBase = true;
     if (!myOkPath)
       GroupPoints->PushButton2->click();
+    else if (!myOkVec)
+      GroupPoints->PushButton3->click();
   }
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2 || 
+	   myEditCurrentArgument == GroupPoints->LineEdit3) {
+    myEditCurrentArgument == GroupPoints->LineEdit2 ? myOkPath = false : myOkVec = false;
+    bool myOk = false;
     QString aName = GEOMBase::GetName(aSelectedObject);
 
     if (aSelectedObject != myBase) {
@@ -210,27 +262,44 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
         if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
           GEOM::GEOM_IShapesOperations_var aShapesOp =
             getGeomEngine()->GetIShapesOperations(getStudyId());
-          myPath = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-          myOkPath = true;
+          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+          myOk = true;
         }
         else { // get Object from study
-          myPath = aFindedObject;
-          myOkPath = true;
+          aSelectedObject = aFindedObject;
+          myOk = true;
         }
       }
       else {
-        myOkPath = true;
+        myOk = true;
         if (S.ShapeType() != TopAbs_EDGE) {
           aSelectedObject = GEOM::GEOM_Object::_nil();
           aName = "";
-          myOkPath = false;
+          myOk = false;
         }
-        myPath = aSelectedObject;
+      }
+      if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+	myPath = aSelectedObject;
+	myOkPath = myOk;
+      }
+      else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
+	myVec = aSelectedObject;
+	myOkVec = myOk;
       }
     }
     myEditCurrentArgument->setText(aName);
-    if (myOkPath && !myOkBase)
-      GroupPoints->PushButton1->click();
+    if (myOkPath) {
+      if (!myOkBase)
+	GroupPoints->PushButton1->click();
+      else if (!myOkVec)
+	GroupPoints->PushButton3->click();
+    }
+    else if (myOkVec) {
+      if (!myOkBase)
+	GroupPoints->PushButton1->click();
+      else if (!myOkPath)
+	GroupPoints->PushButton2->click();
+    }
   }
 
   // clear selection
@@ -252,15 +321,22 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
 
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   globalSelection(GEOM_ALLSHAPES);
+  GroupPoints->PushButton1->setDown(false);
+  GroupPoints->PushButton2->setDown(false);
+  GroupPoints->PushButton3->setDown(false);
+  GroupPoints->LineEdit1->setEnabled(false);
+  GroupPoints->LineEdit2->setEnabled(false);
+  GroupPoints->LineEdit3->setEnabled(false);
   if (send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    GroupPoints->PushButton2->setDown(false);
-    GroupPoints->LineEdit2->setEnabled(false);
   }
   else if (send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    GroupPoints->PushButton1->setDown(false);
-    GroupPoints->LineEdit1->setEnabled(false);
+
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+  }
+  else if(send == GroupPoints->PushButton3) {
+    myEditCurrentArgument = GroupPoints->LineEdit3;
 
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
   }
@@ -285,7 +361,8 @@ void GenerationGUI_PipeDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
   if (send == GroupPoints->LineEdit1 ||
-      send == GroupPoints->LineEdit2) {
+      send == GroupPoints->LineEdit2 ||
+      send == GroupPoints->LineEdit3) {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
@@ -328,7 +405,12 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_PipeDlg::createOperation()
 //=================================================================================
 bool GenerationGUI_PipeDlg::isValid (QString&)
 {
-  return myOkBase && myOkPath;
+  switch ( getConstructorId() ) {
+  case 0 :
+    return myOkBase && myOkPath;
+  case 1 :
+    return myOkBase && myOkPath && myOkVec;
+  }
 }
 
 //=================================================================================
@@ -339,7 +421,15 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_Object_var anObj;
 
-  anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->MakePipe(myBase, myPath);
+  switch ( getConstructorId() ) {
+  case 0 :
+    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->MakePipe(myBase, myPath);
+    break;
+  case 1 :
+    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
+      MakePipeBiNormalAlongVector(myBase, myPath, myVec);
+    break;
+  }
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());

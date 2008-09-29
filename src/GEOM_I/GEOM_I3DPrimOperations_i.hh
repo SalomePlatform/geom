@@ -156,6 +156,10 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
   GEOM::GEOM_Object_ptr MakePipeShellsWithoutPath(const GEOM::ListOfGO& theBases,
 						  const GEOM::ListOfGO& theLocations);
 
+  GEOM::GEOM_Object_ptr MakePipeBiNormalAlongVector (GEOM::GEOM_Object_ptr theBase,
+						     GEOM::GEOM_Object_ptr thePath,
+						     GEOM::GEOM_Object_ptr theVec);
+
   ::GEOMImpl_I3DPrimOperations* GetOperations()
   { return (::GEOMImpl_I3DPrimOperations*)GetImpl(); }
 };

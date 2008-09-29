@@ -1031,3 +1031,40 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath
 
   return GetObject(anObject);
 }
+
+
+//=============================================================================
+/*!
+ *  MakePipeBiNormalAlongVector
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeBiNormalAlongVector
+                 (GEOM::GEOM_Object_ptr theBase, 
+		  GEOM::GEOM_Object_ptr thePath, 
+		  GEOM::GEOM_Object_ptr theVec)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theBase == NULL || thePath == NULL || theVec == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject
+    (theBase->GetStudyID(), theBase->GetEntry());
+  Handle(GEOM_Object) aPath = GetOperations()->GetEngine()->GetObject
+    (thePath->GetStudyID(), thePath->GetEntry());
+  Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
+    (theVec->GetStudyID(), theVec->GetEntry());
+
+  if (aBase.IsNull() || aPath.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
+
+  //Create the Pipe
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePipeBiNormalAlongVector(aBase, aPath, aVec);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
