@@ -31,7 +31,7 @@
 #include "GenerationGUI.h"
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel_QTD.h"
+#include "DlgRef_3Sel_QTD.h"
 
 //=================================================================================
 // class    : GenerationGUI_PipeDlg
@@ -59,10 +59,12 @@ private:
 
     GEOM::GEOM_Object_var myBase; /* Base shape */
     GEOM::GEOM_Object_var myPath; /* Shape, defining the path */
+    GEOM::GEOM_Object_var myVec;  /* Vector, defining the constant binormal direction */
     bool myOkBase;
-    bool myOkPath; /* to check when arguments are defined */
+    bool myOkPath;
+    bool myOkVec; /* to check when arguments are defined */
 
-    DlgRef_2Sel_QTD* GroupPoints;
+    DlgRef_3Sel_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();
@@ -71,6 +73,7 @@ private slots:
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
+    void ConstructorsClicked(int constructorId);
 };
 
 #endif // DIALOGBOX_PIPE_H

@@ -359,6 +359,9 @@ msgstr "remove_extra_edges.png"
 msgid "ICON_DLG_PIPE"
 msgstr "pipe.png"
 
+msgid "ICON_DLG_PIPE_BINORMAL"
+msgstr "pipebinormal.png"
+
 #PrismDlg
 msgid "ICON_DLG_PRISM"
 msgstr "prism.png"

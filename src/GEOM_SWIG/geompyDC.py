@@ -1027,6 +1027,23 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePipeShellsWithoutPath", self.PrimOp)
             return anObj
 
+        ## Create a shape by extrusion of the base shape along
+        #  the path shape with constant bi-normal direction along the given vector.
+        #  The path shape can be a wire or an edge.
+        #  @param theBase Base shape to be extruded.
+        #  @param thePath Path shape to extrude the base shape along it.
+        #  @param theVec Vector defines a constant binormal direction to keep the
+        #                same angle beetween the direction and the sections
+        #                along the sweep surface.
+        #  @return New GEOM_Object, containing the created pipe.
+        #
+        #  @ref tui_creation_pipe "Example"
+        def MakePipeBiNormalAlongVector(self,theBase, thePath, theVec):
+            # Example: see GEOM_TestAll.py
+            anObj = self.PrimOp.MakePipeBiNormalAlongVector(theBase, thePath, theVec)
+            RaiseIfFailed("MakePipeBiNormalAlongVector", self.PrimOp)
+            return anObj
+
         # end of l3_complex
         ## @}
 

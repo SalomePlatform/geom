@@ -198,6 +198,10 @@ module GEOM
     GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
 					   in ListOfGO theLocations );
 
+    GEOM_Object MakePipeBiNormalAlongVector (in GEOM_Object theBase, 
+					     in GEOM_Object thePath, 
+					     in GEOM_Object theVec);
+
     //-----------------------------------------------------------//
     // BooleanOperations                                         //
     //-----------------------------------------------------------//
