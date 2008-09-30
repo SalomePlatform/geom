@@ -408,6 +408,8 @@ void GroupGUI_GroupDlg::setInPlaceObj( GEOM::GEOM_Object_var theObj )
     const char* tmpName = "__InPlaceObj__";
     // remove old InPlaceObj
     if ( !myInPlaceObj->_is_nil() ) {
+      if ( myInPlaceObjSelectWay == GET_IN_PLACE ) // hide temporary object
+        GEOM_Displayer(getStudy()).Erase( myInPlaceObj, true );
       if (_PTR(SObject) SO = getStudy()->studyDS()->FindObject( tmpName )) {
         getStudy()->studyDS()->NewBuilder()->RemoveObjectWithChildren( SO );
         getGeomEngine()->RemoveObject(myInPlaceObj);
@@ -436,6 +438,7 @@ void GroupGUI_GroupDlg::setInPlaceObj( GEOM::GEOM_Object_var theObj )
         myMain2InPlaceIndices.Bind( aMainIndex, aPlaceIndex );
     }
   }
+  myInPlaceObjSelectWay = subSelectionWay();
 }
 
 //=================================================================================
