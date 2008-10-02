@@ -94,6 +94,7 @@ private:
   GEOM::GEOM_Object_var               myMainObj;
   GEOM::GEOM_Object_var               myGroup;
   GEOM::GEOM_Object_var               myInPlaceObj;
+  int                                 myInPlaceObjSelectWay;
   TColStd_DataMapOfIntegerInteger     myMain2InPlaceIndices;
 
   QPushButton*                        mySelBtn;
