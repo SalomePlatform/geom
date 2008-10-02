@@ -71,6 +71,7 @@
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
 
+#include "GEOMImpl_Types.hxx"
 
 extern "C" {
   Standard_EXPORT CAM_Module* createModule() {
@@ -488,7 +489,8 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 5025 ||  // MENU TRANSFORMATION - SCALE
 	   id == 5026 ||  // MENU TRANSFORMATION - OFFSET
 	   id == 5027 ||  // MENU TRANSFORMATION - MULTI-TRANSLATION
-	   id == 5028 ) { // MENU TRANSFORMATION - MULTI-ROTATION
+	   id == 5028 ||  // MENU TRANSFORMATION - MULTI-ROTATION
+           id == 5029 ) { // CONTEXT(POPUP) MENU - RELOAD_IMPORTED
 #ifndef WNT
 	library = getLibrary( "libTransformationGUI.so" );
 #else
@@ -825,6 +827,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 5026, "OFFSET" );
   createGeomAction( 5027, "MUL_TRANSLATION" );
   createGeomAction( 5028, "MUL_ROTATION" );
+  createGeomAction( 5029, "RELOAD_IMPORTED" );
 
   createGeomAction( 503, "PARTITION" );
   createGeomAction( 504, "ARCHIMEDE" );
@@ -1722,13 +1725,23 @@ void GeometryGUI::contextMenuPopup( const QString& client, QPopupMenu* menu, QSt
   SalomeApp_Module::contextMenuPopup( client, menu, title );
   SALOME_ListIO lst;
   getApp()->selectionMgr()->selectedObjects( lst );
-  if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() == 1 ) {
+
+  if (lst.Extent() == 1) {
     Handle(SALOME_InteractiveObject) io = lst.First();
-    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
     _PTR(Study) study = appStudy->studyDS();
-    _PTR(SObject) obj = study->FindObjectID( io->getEntry() );
-    if ( obj )
-      title = QString( obj->GetName().c_str() );
+    _PTR(SObject) aSObj = study->FindObjectID(io->getEntry());
+    if (aSObj) {
+      // Set context menu title
+      if (client == "OCCViewer" || client == "VTKViewer")
+        title = QString(aSObj->GetName().c_str());
+
+      // Reload imported shape
+      CORBA::Object_var anObj = GeometryGUI::ClientSObjectToObject(aSObj);
+      GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(anObj);
+      if (!CORBA::is_nil(aGeomObj) && aGeomObj->GetType() == GEOM_IMPORT)
+        action(5029)->addTo(menu);
+    }
   }
 }
 

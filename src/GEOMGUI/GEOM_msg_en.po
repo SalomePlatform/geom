@@ -2482,6 +2482,12 @@ msgstr "Edit"
 msgid "STB_GROUP_EDIT"
 msgstr "Edit a group"
 
+msgid "MEN_RELOAD_IMPORTED"
+msgstr "Reload From Disk"
+
+msgid "STB_RELOAD_IMPORTED"
+msgstr "Reload imported shape from its original place on disk"
+
 msgid "MEN_BLOCKS"
 msgstr "Blocks"
 

@@ -27,12 +27,18 @@
 //  $Header$
 
 #include "TransformationGUI.h"
+
+#include <GEOMBase.h>
 #include "GeometryGUI.h"
 
-#include "SUIT_Session.h"
-#include "SUIT_Desktop.h"
-
-#include "SalomeApp_Application.h"
+#include <SUIT_Session.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_ViewModel.h>
+#include <SUIT_ViewWindow.h>
+#include <SUIT_ViewManager.h>
+#include <LightApp_SelectionMgr.h>
+#include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
 
 #include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
 #include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION
@@ -99,6 +105,60 @@ bool TransformationGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     break;
   case 5028: // MULTI ROTATION
     aDlg = new TransformationGUI_MultiRotationDlg( getGeometryGUI(), parent, "" );
+    break;
+  case 5029: // RELOAD IMPORTED SHAPE
+    {
+      LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+      SALOME_ListIO aSelList;
+      aSelMgr->selectedObjects(aSelList);
+      if (aSelList.Extent() == 1) {
+        Standard_Boolean testResult = Standard_False;
+        GEOM::GEOM_Object_var aGeomObj =
+          GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+        if (testResult) {
+          SalomeApp_Study* anAppStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+          GEOM::GEOM_ITransformOperations_var anOp =
+            GeometryGUI::GetGeomGen()->GetITransformOperations(anAppStudy->id());
+          if (!anOp->_is_nil()) {
+            anOp->RecomputeObject(aGeomObj);
+            GEOM_Displayer aDisp (anAppStudy);
+            //aDisp.Redisplay(aSelList.First());
+            //aDisp.Display(aSelList.First());
+            Handle(SALOME_InteractiveObject) theIO = aSelList.First();
+            SUIT_Desktop* desk = app->desktop();
+            QPtrList<SUIT_ViewWindow> wnds = desk->windows();
+            SUIT_ViewWindow* wnd;
+            for ( wnd = wnds.first(); wnd; wnd = wnds.next() )
+            {
+              SUIT_ViewManager* vman = wnd->getViewManager();
+              if ( vman )
+              {
+                SUIT_ViewModel* vmodel = vman->getViewModel();
+                if ( vmodel )
+                {
+                  SALOME_View* view = dynamic_cast<SALOME_View*>(vmodel);
+                  if ( view )
+                  {
+                    //if (view->isVisible(theIO) || view == GetActiveView())
+                    if (view->isVisible(theIO))
+                    {
+                      //SALOME_Prs* prs = view->CreatePrs( theIO->getEntry() );
+                      //if ( prs ) {
+                      //  prs->Update(&aDisp);
+                      //  view->Repaint();
+                      //}
+                      aDisp.Erase(theIO, false, false, view);
+                      aDisp.Display(theIO, true, view);
+                    }
+                  }
+                }
+              }
+            }
+            // ? Redisplay subshapes ?
+          }
+        }
+      }
+    }
     break;
   default:
     app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
