@@ -66,6 +66,7 @@
 #include <SALOMEDSClient_IParameters.hxx>
 
 // External includes
+#include <QMenu>
 #include <QAction>
 #include <QFileInfo>
 #include <QString>
@@ -84,6 +85,8 @@
 
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
+
+#include "GEOMImpl_Types.hxx"
 
 using namespace Qt;
 
@@ -474,7 +477,8 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 5025 ||  // MENU TRANSFORMATION - SCALE
 	   id == 5026 ||  // MENU TRANSFORMATION - OFFSET
 	   id == 5027 ||  // MENU TRANSFORMATION - MULTI-TRANSLATION
-	   id == 5028 ) { // MENU TRANSFORMATION - MULTI-ROTATION
+	   id == 5028 ||  // MENU TRANSFORMATION - MULTI-ROTATION
+           id == 5029 ) { // CONTEXT(POPUP) MENU - RELOAD_IMPORTED
 #ifndef WNT
 	library = getLibrary( "libTransformationGUI.so" );
 #else
@@ -522,7 +526,7 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 706   ||  // MENU MEASURE - WHATIS
 	   id == 707   ||  // MENU MEASURE - CHECK
 	   id == 7072  ||  // MENU MEASURE - CHECK COMPOUND OF BLOCKS
-	   id == 708 ) {  // MENU MEASURE - POINT COORDINATES
+	   id == 708 ) {   // MENU MEASURE - POINT COORDINATES
 #ifndef WNT
 	library = getLibrary( "libMeasureGUI.so" );
 #else
@@ -542,7 +546,7 @@ void GeometryGUI::OnGUIEvent( int id )
            id == 9998  ||  // MENU BLOCKS - MULTI-TRANSFORMATION
            id == 9997  ||  // MENU BLOCKS - QUADRANGLE FACE
            id == 99991 ||  // MENU BLOCKS - PROPAGATE
-           id == 9995 ) { // MENU BLOCKS - EXPLODE ON BLOCKS
+           id == 9995 ) {  // MENU BLOCKS - EXPLODE ON BLOCKS
 #ifndef WNT
 	library = getLibrary( "libBlocksGUI.so" );
 #else
@@ -786,6 +790,8 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( 800, "GROUP_CREATE" );
   createGeomAction( 801, "GROUP_EDIT" );
+
+  createGeomAction( 5029, "RELOAD_IMPORTED" );
 
   createGeomAction( 9997, "Q_FACE" );
   createGeomAction( 9999, "HEX_SOLID" );
@@ -1426,16 +1432,26 @@ LightApp_Selection* GeometryGUI::createSelection() const
 
 void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString& title )
 {
-  SalomeApp_Module::contextMenuPopup( client, menu, title );
+  SalomeApp_Module::contextMenuPopup(client, menu, title);
   SALOME_ListIO lst;
-  getApp()->selectionMgr()->selectedObjects( lst );
-  if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() == 1 ) {
+  getApp()->selectionMgr()->selectedObjects(lst);
+
+  if (lst.Extent() == 1) {
     Handle(SALOME_InteractiveObject) io = lst.First();
-    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
     _PTR(Study) study = appStudy->studyDS();
-    _PTR(SObject) obj = study->FindObjectID( io->getEntry() );
-    if ( obj )
-      title = QString( obj->GetName().c_str() );
+    _PTR(SObject) aSObj = study->FindObjectID(io->getEntry());
+    if (aSObj) {
+      // Set context menu title
+      if (client == "OCCViewer" || client == "VTKViewer")
+        title = QString(aSObj->GetName().c_str());
+
+      // Reload imported shape
+      CORBA::Object_var anObj = GeometryGUI::ClientSObjectToObject(aSObj);
+      GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(anObj);
+      if (!CORBA::is_nil(aGeomObj) && aGeomObj->GetType() == GEOM_IMPORT)
+        menu->addAction(action(5029));
+    }
   }
 }
 

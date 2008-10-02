@@ -2089,6 +2089,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Edit</translation>
         </message>
         <message>
+            <source>MEN_RELOAD_IMPORTED</source>
+            <translation>Reload From Disk</translation>
+        </message>
+        <message>
             <source>MEN_HEX_SOLID</source>
             <translation>Hexahedral Solid</translation>
         </message>
@@ -2619,6 +2623,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>STB_GROUP_EDIT</source>
             <translation>Edit a group</translation>
+        </message>
+        <message>
+            <source>STB_RELOAD_IMPORTED</source>
+            <translation>Reload imported shape from its original place on disk</translation>
         </message>
         <message>
             <source>STB_HEX_SOLID</source>

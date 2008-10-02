@@ -151,6 +151,8 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 					       GEOM::GEOM_Object_ptr thePoint1,
 					       GEOM::GEOM_Object_ptr thePoint2);
 
+  GEOM::GEOM_Object_ptr RecomputeObject (GEOM::GEOM_Object_ptr theObject);
+
 
   ::GEOMImpl_ITransformOperations* GetOperations() { return (::GEOMImpl_ITransformOperations*)GetImpl(); }
 };

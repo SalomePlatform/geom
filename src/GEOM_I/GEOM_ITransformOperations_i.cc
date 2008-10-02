@@ -1252,3 +1252,39 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePointsCopy
 
   return GetObject(anObject);
 }
+
+//=============================================================================
+/*!
+ *  RecomputeObject
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RecomputeObject
+                                             (GEOM::GEOM_Object_ptr theObject)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  if (theObject == NULL) return aGEOMObject._retn();
+
+  //check if the object is a subshape
+  //if (!theObject->IsMainShape()) {
+  //  GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
+  //  return aGEOMObject._retn();
+  //}
+
+  aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
+
+  //Get the object itself
+  CORBA::String_var anEntry = theObject->GetEntry();
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
+  if (anObject.IsNull()) return aGEOMObject._retn();
+
+  //Perform the recomputation
+  Handle(GEOM_Function) aLastFunction = anObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return aGEOMObject._retn();
+  GetOperations()->GetSolver()->ComputeFunction(aLastFunction);
+
+  return aGEOMObject._retn();
+}

@@ -792,6 +792,13 @@ module GEOM
     GEOM_Object PositionShapeCopy (in GEOM_Object theObject,
 				   in GEOM_Object theStartLCS,
 				   in GEOM_Object theEndLCS);
+
+    /*!
+     *  Recompute the shape from its arguments.
+     *  \param theObject The object to be recomputed.
+     *  \return theObject.
+     */
+    GEOM_Object RecomputeObject (in GEOM_Object theObject);
   };
 
   /*!
