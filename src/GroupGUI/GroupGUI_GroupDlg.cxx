@@ -37,6 +37,7 @@
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
 #include <GEOMImpl_Types.hxx>
+#include <GEOM_Displayer.h>
 
 #include <QLabel>
 #include <QListWidget>
@@ -403,8 +404,10 @@ void GroupGUI_GroupDlg::setInPlaceObj( GEOM::GEOM_Object_var theObj )
     const char* tmpName = "__InPlaceObj__";
     // remove old InPlaceObj
     if ( !myInPlaceObj->_is_nil() ) {
-      if ( myInPlaceObjSelectWay == GET_IN_PLACE ) // hide temporary object
-        GEOM_Displayer(getStudy()).Erase( myInPlaceObj, true );
+      if ( myInPlaceObjSelectWay == GET_IN_PLACE ) { // hide temporary object
+        GEOM_Displayer aDisplayer(getStudy());
+        aDisplayer.Erase( myInPlaceObj, true );
+      }
       if (_PTR(SObject) SO = getStudy()->studyDS()->FindObject( tmpName )) {
         getStudy()->studyDS()->NewBuilder()->RemoveObjectWithChildren( SO );
         getGeomEngine()->RemoveObject(myInPlaceObj);
