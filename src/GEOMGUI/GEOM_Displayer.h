@@ -29,8 +29,6 @@
 #if !defined (__GEOM_DISPLAYER_H)
 #define __GEOM_DISPLAYER_H
 
-using namespace std;
-
 #include "GEOM_GEOMGUI.hxx"
 
 #include "SALOME_Prs.h"
@@ -176,7 +174,7 @@ protected:
 protected:
   Handle(SALOME_InteractiveObject) myIO;
   TopoDS_Shape                     myShape;
-  string                           myName;
+  std::string                      myName;
   int                              myType;
   SALOME_View*                     myViewFrame;
 

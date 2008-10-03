@@ -48,6 +48,8 @@
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerInteger.hxx>
 
+using namespace std;
+
 enum { ALL_SUBSHAPES = 0, GET_IN_PLACE, SUBSHAPES_OF_SHAPE2 };
 
 GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWidget* parent)

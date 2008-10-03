@@ -23,7 +23,6 @@
 // Project   : SALOME
 // $Header$
 
-using namespace std;
 
 #include <Standard_Stream.hxx>
 
@@ -131,6 +130,9 @@ using namespace std;
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <Precision.hxx>
+
+using namespace std;
+
 
 //=============================================================================
 /*!

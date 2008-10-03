@@ -28,6 +28,8 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+using namespace std;
+
 //=============================================================================
 /*!
  *   constructor:

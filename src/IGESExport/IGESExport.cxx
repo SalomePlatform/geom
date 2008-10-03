@@ -31,22 +31,14 @@
 #include <TCollection_AsciiString.hxx>
 #include <TopoDS_Shape.hxx>
 
-#ifdef WNT
- #if defined IGESEXPORT_EXPORTS
-  #if defined WIN32
-   #define IGESEXPORT_EXPORT __declspec( dllexport )
-  #else
-   #define IGESEXPORT_EXPORT
-  #endif
- #else
-  #if defined WIN32
-   #define IGESEXPORT_EXPORT __declspec( dllimport )
-  #else
-   #define IGESEXPORT_EXPORT
-  #endif
- #endif
+#ifdef WIN32
+# ifdef IGESEXPORT_EXPORTS
+#  define IGESEXPORT_EXPORT __declspec( dllexport )
+# else
+#  define IGESEXPORT_EXPORT __declspec( dllimport )
+# endif
 #else
- #define IGESEXPORT_EXPORT
+# define IGESEXPORT_EXPORT
 #endif
 
 //=============================================================================

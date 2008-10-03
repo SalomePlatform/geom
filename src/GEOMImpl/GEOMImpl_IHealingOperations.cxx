@@ -24,8 +24,6 @@
 #pragma warning( disable:4786 )
 #endif
 
-using namespace std;
-
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IHealingOperations.hxx>
@@ -56,6 +54,8 @@ using namespace std;
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+
+using namespace std;
 
 
 //=============================================================================

@@ -28,8 +28,6 @@
 #ifndef _GEOMImpl_IShapesOperations_HXX_
 #define _GEOMImpl_IShapesOperations_HXX_
 
-using namespace std;
-
 #include "GEOM_IOperations.hxx"
 
 #include "GEOMAlgo_State.hxx"
@@ -56,20 +54,20 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) MakeEdge (Handle(GEOM_Object) thePoint1,
                                 Handle(GEOM_Object) thePoint2);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeWire (list<Handle(GEOM_Object)> theEdgesAndWires);
+  Standard_EXPORT Handle(GEOM_Object) MakeWire (std::list<Handle(GEOM_Object)> theEdgesAndWires);
 
   Standard_EXPORT Handle(GEOM_Object) MakeFace (Handle(GEOM_Object) theWire, const bool isPlanarWanted);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeFaceWires (list<Handle(GEOM_Object)> theWires,
+  Standard_EXPORT Handle(GEOM_Object) MakeFaceWires (std::list<Handle(GEOM_Object)> theWires,
                                      const bool isPlanarWanted);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeShell (list<Handle(GEOM_Object)> theShapes);
+  Standard_EXPORT Handle(GEOM_Object) MakeShell (std::list<Handle(GEOM_Object)> theShapes);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSolidShell (Handle(GEOM_Object) theShell);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeSolidShells (list<Handle(GEOM_Object)> theShells);
+  Standard_EXPORT Handle(GEOM_Object) MakeSolidShells (std::list<Handle(GEOM_Object)> theShells);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeCompound (list<Handle(GEOM_Object)> theShapes);
+  Standard_EXPORT Handle(GEOM_Object) MakeCompound (std::list<Handle(GEOM_Object)> theShapes);
 
   Standard_EXPORT Handle(GEOM_Object) MakeGlueFaces (Handle(GEOM_Object) theShape,
 						     const Standard_Real theTolerance,
@@ -80,7 +78,7 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT Handle(GEOM_Object) MakeGlueFacesByList (Handle(GEOM_Object) theShape,
 							   const Standard_Real theTolerance,
-							   list<Handle(GEOM_Object)> theFaces,
+							   std::list<Handle(GEOM_Object)> theFaces,
                                                            const Standard_Boolean doKeepNonSolids);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakeExplode (Handle(GEOM_Object)    theShape,
@@ -257,10 +255,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
    * \retval Handle(TColStd_HSequenceOfTransient) - found shape objects
    */
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
-                             GetShapesOnBox(const Handle(GEOM_Object)& theBox,
-                                            const Handle(GEOM_Object)& theShape,
-                                            const Standard_Integer theShapeType,
-                                            GEOMAlgo_State theState);
+                                GetShapesOnBox(const Handle(GEOM_Object)& theBox,
+                                               const Handle(GEOM_Object)& theShape,
+                                               const Standard_Integer theShapeType,
+                                               GEOMAlgo_State theState);
 
   /*!
    * \brief Find IDs of subshapes complying with given status about surface
@@ -320,7 +318,7 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT static bool CheckTriangulation (const TopoDS_Shape& theShape);
 
  private:
-  Handle(GEOM_Object) MakeShape (list<Handle(GEOM_Object)>      theShapes,
+  Handle(GEOM_Object) MakeShape (std::list<Handle(GEOM_Object)>      theShapes,
                                  const Standard_Integer         theObjectType,
                                  const Standard_Integer         theFunctionType,
                                  const TCollection_AsciiString& theMethodName);
@@ -404,11 +402,11 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   /*!
    * \brief Find IDs of subshapes complying with given status about surface
-   * \param theBox - the box to check state of subshapes against
-   * \param theShape - the shape to explore
-   * \param theShapeType - type of subshape of theShape
-   * \param theState - required state
-   * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+    * \param theBox - the box to check state of subshapes against
+    * \param theShape - the shape to explore
+    * \param theShapeType - type of subshape of theShape
+    * \param theState - required state
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
    */
   Handle(TColStd_HSequenceOfInteger) getShapesOnBoxIDs(const Handle(GEOM_Object)& theBox,
                                                        const Handle(GEOM_Object)& theShape,

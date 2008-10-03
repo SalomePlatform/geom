@@ -51,6 +51,8 @@
 
 #include "SALOMEDS_Tool.hxx"
 
+using namespace std;
+
 //============================================================================
 // function : GEOM_Gen_i()
 // purpose  : constructor to be called for servant creation.

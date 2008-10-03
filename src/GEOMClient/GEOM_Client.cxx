@@ -26,8 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
-
 #include <Standard_Stream.hxx>
 
 #include <Standard_Stream.hxx>
@@ -36,7 +34,7 @@ using namespace std;
 
 #include "GEOM_Client.hxx"
 #include <SALOMEconfig.h>
-#include "OpUtil.hxx"
+#include "Basics_Utils.hxx"
 #include "utilities.h"
 
 #include <BRep_Builder.hxx>
@@ -60,7 +58,7 @@ using namespace std;
 
 #define HST_CLIENT_LEN 256
 
-
+using namespace std;
 
 //=======================================================================
 // function : Load()
@@ -68,7 +66,7 @@ using namespace std;
 //=======================================================================
 TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape )
 {
-    string hst_client = GetHostname();
+    string hst_client = Kernel_Utils::GetHostname();
 
     Engines::Container_var ctn_server = geom->GetContainerRef();
     long                   pid_server = ctn_server->getPID();

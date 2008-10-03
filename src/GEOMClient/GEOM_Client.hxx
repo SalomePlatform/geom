@@ -52,22 +52,14 @@ class TopoDS_Shape;
 #include <Standard_Macro.hxx>
 #endif
 
-#ifdef WNT
- #if defined GEOMCLIENT_EXPORTS
-  #if defined WIN32
-   #define GEOMCLIENT_EXPORT __declspec( dllexport )
-  #else
-   #define GEOMCLIENT_EXPORT
-  #endif
- #else
-  #if defined WIN32
-   #define GEOMCLIENT_EXPORT __declspec( dllimport )
-  #else
-   #define GEOMCLIENT_EXPORT
-  #endif
- #endif
+#ifdef WIN32
+# ifdef GEOMCLIENT_EXPORTS
+#  define GEOMCLIENT_EXPORT __declspec( dllexport )
+# else
+#  define GEOMCLIENT_EXPORT __declspec( dllimport )
+# endif
 #else
- #define GEOMCLIENT_EXPORT
+# define GEOMCLIENT_EXPORT
 #endif
 
 //=====================================================================

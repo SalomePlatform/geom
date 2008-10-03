@@ -31,6 +31,8 @@
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 
+using namespace std;
+
 //=============================================================================
 /*!
  *   constructor:
