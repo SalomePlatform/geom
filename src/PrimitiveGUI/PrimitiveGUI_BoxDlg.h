@@ -32,8 +32,6 @@
 #include "DlgRef_2Sel_QTD.h"
 #include "DlgRef_3Spin.h"
 
-using namespace std;
-
 //=================================================================================
 // class    : PrimitiveGUI_BoxDlg
 // purpose  :
