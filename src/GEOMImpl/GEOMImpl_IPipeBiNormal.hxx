@@ -22,6 +22,7 @@
 #ifndef _GEOMImpl_IPIPEBINORMAL_HXX_
 #define _GEOMImpl_IPIPEBINORMAL_HXX_
 
+#include "GEOM_GEOMImpl.hxx"
 #include "GEOM_Function.hxx"
 
 #ifndef _GEOMImpl_IPIPE_HXX_
@@ -32,7 +33,7 @@
 #define PIPE_ARG_PATH 2
 #define PIPE_ARG_VEC  3
 
-class GEOMImpl_IPipeBiNormal : public GEOMImpl_IPipe
+class GEOMIMPL_EXPORT GEOMImpl_IPipeBiNormal : public GEOMImpl_IPipe
 {
  public:
 

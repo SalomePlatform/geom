@@ -10,6 +10,8 @@
 #ifndef DLGREF_2SEL2LIST_QTD_H
 #define DLGREF_2SEL2LIST_QTD_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include <qvariant.h>
 #include <qwidget.h>
 
@@ -23,7 +25,7 @@ class QComboBox;
 class QLabel;
 class QPushButton;
 
-class DlgRef_2Sel2List_QTD : public QWidget
+class GEOM_DLGREF_EXPORT DlgRef_2Sel2List_QTD : public QWidget
 {
     Q_OBJECT
 

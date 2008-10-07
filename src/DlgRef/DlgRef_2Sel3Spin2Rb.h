@@ -6,19 +6,12 @@
 #ifndef DLGREF_2SEL3SPIN2RB_H
 #define DLGREF_2SEL3SPIN2RB_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include "DlgRef_2Sel3Spin2Rb_QTD.h"
 #include "DlgRef_SpinBox.h"
-//#if defined WNT 
-//#include <SALOME_WNT.hxx>
-//#else
-//#define SALOME_WNT_EXPORT
-//#endif
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define DLGREF_WNT_EXPORT __declspec( dllexport )
-#else
-#define DLGREF_WNT_EXPORT
-#endif
-class DLGREF_WNT_EXPORT DlgRef_2Sel3Spin2Rb : public DlgRef_2Sel3Spin2Rb_QTD
+
+class GEOM_DLGREF_EXPORT DlgRef_2Sel3Spin2Rb : public DlgRef_2Sel3Spin2Rb_QTD
 { 
     Q_OBJECT
 

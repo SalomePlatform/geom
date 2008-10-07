@@ -4,7 +4,7 @@
 //  $Header: 
 
 #include "DlgRef_2Sel3Spin2Rb.h"
-#include <iostream.h>
+#include <iostream>
 
 #include <qlayout.h>
 #include <qspinbox.h>
