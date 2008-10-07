@@ -32,7 +32,7 @@
 #include <qlayout.h>
 #include <qmessagebox.h>
 #include <SUIT_MessageBox.h>
- 
+
 static bool isEntryLess( const QString& e1, const QString& e2 )
 {
   QStringList el1 = QStringList::split(":", e1);
@@ -50,14 +50,14 @@ static bool isEntryLess( const QString& e1, const QString& e2 )
 static QStringList objectsToNames( const QMap<QString, QString>& objects )
 {
   QStringList entries;
-  for ( QMap<QString, QString>::ConstIterator it = objects.begin(); it != objects.end(); ++it ) {
-    QString entry = it.key();
+  for ( QMap<QString, QString>::ConstIterator cit = objects.begin(); cit != objects.end(); ++cit ) {
+    QString entry = cit.key();
     QStringList::Iterator it;
     bool added = false;
     for ( it = entries.begin(); it != entries.end() && !added; ++it ) {
       if ( isEntryLess( entry, *it ) ) {
-	entries.insert( it, entry );
-	added = true;
+        entries.insert( it, entry );
+        added = true;
       }
     }
     if ( !added ) 
@@ -73,13 +73,13 @@ static QStringList objectsToNames( const QMap<QString, QString>& objects )
 }
 
 /*!
-  \brief Constructor.
-  \param parent parent widget
+\brief Constructor.
+\param parent parent widget
 */
 GEOMToolsGUI_DeleteDlg::GEOMToolsGUI_DeleteDlg( QWidget* parent, 
-						const QMap<QString, QString>& objects, 
-						bool deleteAll )
-: QDialog( parent, "GEOMToolsGUI_DeleteDlg", true )
+                                               const QMap<QString, QString>& objects, 
+                                               bool deleteAll )
+                                               : QDialog( parent, "GEOMToolsGUI_DeleteDlg", true )
 {
   setCaption( tr( "GEOM_DELETE_OBJECTS" ) );
   setSizeGripEnabled( true );
