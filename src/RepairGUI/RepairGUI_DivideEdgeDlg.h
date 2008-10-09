@@ -29,7 +29,7 @@
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_1SelExt;
-class QDoubleSpinBox;
+class QtxDoubleSpinBox;
 class QButtonGroup;
 
 //=================================================================================
@@ -63,7 +63,7 @@ private:
   
   DlgRef_1SelExt*                    GroupPoints;
   QButtonGroup*                      myIsParameterGr;
-  QDoubleSpinBox*                    myValEdt;
+  QtxDoubleSpinBox*                  myValEdt;
 
 protected slots:
   void                               ClickOnOk();

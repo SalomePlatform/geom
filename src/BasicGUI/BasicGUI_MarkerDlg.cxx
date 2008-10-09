@@ -99,13 +99,13 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   QVBoxLayout* anOriGrpLayout = new QVBoxLayout( anOriGrp );
 
   anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_X" ), anOriGrp ) );
-  myData[ X ] = new QDoubleSpinBox( anOriGrp );
+  myData[ X ] = new QtxDoubleSpinBox( anOriGrp );
   anOriGrpLayout->addWidget( myData[ X ] );
   anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_Y" ), anOriGrp ) );
-  myData[ Y ] = new QDoubleSpinBox( anOriGrp );
+  myData[ Y ] = new QtxDoubleSpinBox( anOriGrp );
   anOriGrpLayout->addWidget( myData[ Y ] );
   anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_Z" ), anOriGrp ) );
-  myData[ Z ] = new QDoubleSpinBox( anOriGrp );
+  myData[ Z ] = new QtxDoubleSpinBox( anOriGrp );
   anOriGrpLayout->addWidget( myData[ Z ] );
 
   aMainGrpLayout->addWidget( anOriGrp );
@@ -114,13 +114,13 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   QVBoxLayout* aXAxisGrpLayout = new QVBoxLayout( aXAxisGrp );
 
   aXAxisGrpLayout->addWidget( new QLabel( tr( "DX" ), aXAxisGrp ) );
-  myData[ DX1 ] = new QDoubleSpinBox( aXAxisGrp );
+  myData[ DX1 ] = new QtxDoubleSpinBox( aXAxisGrp );
   aXAxisGrpLayout->addWidget( myData[ DX1 ] );
   aXAxisGrpLayout->addWidget( new QLabel( tr( "DY" ), aXAxisGrp ) );
-  myData[ DY1 ] = new QDoubleSpinBox( aXAxisGrp );
+  myData[ DY1 ] = new QtxDoubleSpinBox( aXAxisGrp );
   aXAxisGrpLayout->addWidget( myData[ DY1 ] );
   aXAxisGrpLayout->addWidget( new QLabel( tr( "DZ" ), aXAxisGrp ) );
-  myData[ DZ1 ] = new QDoubleSpinBox( aXAxisGrp );
+  myData[ DZ1 ] = new QtxDoubleSpinBox( aXAxisGrp );
   aXAxisGrpLayout->addWidget( myData[ DZ1 ] );
 
   aMainGrpLayout->addWidget( aXAxisGrp );
@@ -129,13 +129,13 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   QVBoxLayout* anYAxisGrpLayout = new QVBoxLayout( anYAxisGrp );
 
   anYAxisGrpLayout->addWidget( new QLabel( tr( "DX" ), anYAxisGrp ) );
-  myData[ DX2 ] = new QDoubleSpinBox( anYAxisGrp );
+  myData[ DX2 ] = new QtxDoubleSpinBox( anYAxisGrp );
   anYAxisGrpLayout->addWidget( myData[ DX2 ] );
   anYAxisGrpLayout->addWidget( new QLabel( tr( "DY" ), anYAxisGrp ) );
-  myData[ DY2 ] = new QDoubleSpinBox( anYAxisGrp );
+  myData[ DY2 ] = new QtxDoubleSpinBox( anYAxisGrp );
   anYAxisGrpLayout->addWidget( myData[ DY2 ] );
   anYAxisGrpLayout->addWidget( new QLabel( tr( "DZ" ), anYAxisGrp ) );
-  myData[ DZ2 ] = new QDoubleSpinBox( anYAxisGrp );
+  myData[ DZ2 ] = new QtxDoubleSpinBox( anYAxisGrp );
   anYAxisGrpLayout->addWidget( myData[ DZ2 ] );
 
   aMainGrpLayout->addWidget( anYAxisGrp );

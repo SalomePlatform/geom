@@ -28,6 +28,7 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
+#include <QtxDoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -69,13 +70,12 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg( GeometryGUI* theGeometryGUI, QWidget* 
   GroupPoints = new DlgRef_1SelExt( centralWidget() );
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_SEWING" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_SELECTED_SHAPE" ) );
-  GroupPoints->PushButton1->setIcon( image1 );
+  GroupPoints->PushButton1->setIxcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
 
   QGridLayout* aLay = new QGridLayout( GroupPoints->Box );
   aLay->setMargin( 0 ); aLay->setSpacing( 6 );
-  myTolEdt = new QDoubleSpinBox( GroupPoints->Box );
-  initSpinBox( myTolEdt, 0, 100, 1e-7, 10 );
+  myTolEdt = new QtxDoubleSpinBox( 0.0, 100.0, DEFAULT_TOLERANCE_VALUE, 7, 10, GroupPoints->Box );
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->Box );
   myFreeBoundBtn = new QPushButton( tr( "GEOM_DETECT" ) + QString( " [%1]" ).arg( tr( "GEOM_FREE_BOUNDARIES" ) ), 

@@ -32,7 +32,7 @@
 
 class DlgRef_1Sel;
 class QSpinBox;
-class QDoubleSpinBox;
+class QtxDoubleSpinBox;
 class QComboBox;
 class QCheckBox;
 class QListWidget;
@@ -84,27 +84,27 @@ private:
   DlgRef_1Sel*                       mySelectWdgt;
   QListWidget*                       myOpList;
   
-  QDoubleSpinBox*                    myFixShapeTol3D;
-  QDoubleSpinBox*                    myFixShapeMaxTol3D;
+  QtxDoubleSpinBox*                  myFixShapeTol3D;
+  QtxDoubleSpinBox*                  myFixShapeMaxTol3D;
 
-  QDoubleSpinBox*                    myFixFaceSizeTol;
+  QtxDoubleSpinBox*                  myFixFaceSizeTol;
   
-  QDoubleSpinBox*                    myDropSmallEdgesTol3D;
+  QtxDoubleSpinBox*                  myDropSmallEdgesTol3D;
 
-  QDoubleSpinBox*                    mySplitAngleAngle;
-  QDoubleSpinBox*                    mySplitAngleMaxTol;
+  QtxDoubleSpinBox*                  mySplitAngleAngle;
+  QtxDoubleSpinBox*                  mySplitAngleMaxTol;
   
   QSpinBox*                          mySplitClosedFacesNum;
   
-  QDoubleSpinBox*                    mySplitContTol3D;
+  QtxDoubleSpinBox*                  mySplitContTol3D;
   QComboBox*                         mySplitContSurfCont;
   QComboBox*                         mySplitContCurvCont;
   
   QCheckBox*                         myBSplineSurfModeChk;
   QCheckBox*                         myBSpline3DCurveChk;
   QCheckBox*                         myBSpline2DCurveChk;
-  QDoubleSpinBox*                    myBSplineTol3D;
-  QDoubleSpinBox*                    myBSplineTol2D;
+  QtxDoubleSpinBox*                  myBSplineTol3D;
+  QtxDoubleSpinBox*                  myBSplineTol2D;
   QSpinBox*                          myBSplineDegree;
   QSpinBox*                          myBSplineSegments;
   QComboBox*                         myBSpline2DCont;
@@ -113,9 +113,9 @@ private:
   QCheckBox*                         myToBezierSurfModeChk;
   QCheckBox*                         myToBezier3DCurveChk;
   QCheckBox*                         myToBezier2DCurveChk;
-  QDoubleSpinBox*                    myToBezierMaxTol;
+  QtxDoubleSpinBox*                  myToBezierMaxTol;
   
-  QDoubleSpinBox*                    mySameParameterTol3D;
+  QtxDoubleSpinBox*                  mySameParameterTol3D;
   
 private slots:
   void                               onOk();

@@ -32,11 +32,10 @@
 
 #include <QMap>
 
-class QDoubleSpinBox;
 class QGroupBox;
 class QPushButton;
 class QLineEdit;
-class QDoubleSpinBox;
+class QtxDoubleSpinBox;
 class QGridLayout;
 class QRadioButton;
 
@@ -106,7 +105,7 @@ private:
   
   QMap< int, QPushButton* >           mySelBtn;
   QMap< int, QLineEdit* >             mySelName;
-  QMap< int, QDoubleSpinBox* >        mySpinBox;
+  QMap< int, QtxDoubleSpinBox* >      mySpinBox;
   QMap< int, QRadioButton* >          myRadioButton;
 };
 

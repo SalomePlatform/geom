@@ -29,7 +29,7 @@
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_1SelExt;
-class QDoubleSpinBox;
+class QtxDoubleSpinBox;
 class QPushButton;
 class QCheckBox;
 
@@ -73,8 +73,8 @@ private:
     
   DlgRef_1SelExt*                    GroupPoints;
   DlgRef_1SelExt*                    GroupPoints2;
-  QDoubleSpinBox*                    myTolEdt;
-  QDoubleSpinBox*                    myTolEdt2;
+  QtxDoubleSpinBox*                  myTolEdt;
+  QtxDoubleSpinBox*                  myTolEdt2;
   QPushButton*                       myDetectBtn;
   QCheckBox*                         mySubShapesChk;
   

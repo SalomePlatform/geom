@@ -32,7 +32,7 @@ class QGroupBox;
 class QLabel;
 class QPushButton;
 class QComboBox;
-class QDoubleSpinBox;
+class QtxDoubleSpinBox;
 
 enum ViewerTypes { VTK, OCC, OTHER };
 
@@ -58,9 +58,9 @@ private:
   
   QGroupBox*        GroupArguments;
   QLabel*           TextLabelNear;
-  QDoubleSpinBox*   SpinBox_Near;
+  QtxDoubleSpinBox* SpinBox_Near;
   QLabel*           TextLabelFar;
-  QDoubleSpinBox*   SpinBox_Far;
+  QtxDoubleSpinBox* SpinBox_Far;
   QPushButton*      resetButton;
   QComboBox*        TypeCB;
 

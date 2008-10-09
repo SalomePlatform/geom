@@ -32,7 +32,7 @@
 
 class DlgRef_1Sel;
 class DlgRef_3Sel;
-class QDoubleSpinBox;
+class QtxDoubleSpinBox;
 class QFrame;
 
 class BasicGUI_MarkerDlg : public GEOMBase_Skeleton
@@ -41,7 +41,7 @@ class BasicGUI_MarkerDlg : public GEOMBase_Skeleton
 
 private:
   enum { X, Y, Z, DX1, DY1, DZ1, DX2, DY2, DZ2 };
-  typedef QMap< int, QDoubleSpinBox* > DataMap;
+  typedef QMap< int, QtxDoubleSpinBox* > DataMap;
 
 public:
                                 BasicGUI_MarkerDlg( GeometryGUI*, QWidget* );

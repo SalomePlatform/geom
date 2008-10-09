@@ -28,6 +28,7 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
+#include <QtxDoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -83,8 +84,7 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg( GeometryGUI* theGeometryGUI, Q
   myIsParameterGr->addButton( rb2, 1 );
   rb1->setChecked( true );
 
-  myValEdt = new QDoubleSpinBox( GroupPoints->Box );
-  initSpinBox( myValEdt, 0., 1., 0.1, 3 );
+  myValEdt = new QtxDoubleSpinBox( 0., 1., 0.1, 3, 32, GroupPoints->Box );
   myValEdt->setValue( 0.5 );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_VALUE" ), GroupPoints->Box );
 

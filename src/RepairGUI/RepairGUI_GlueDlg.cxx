@@ -28,6 +28,7 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
+#include <QtxDoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -81,8 +82,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupPoints->LineEdit1->setReadOnly( true );
   
   QLabel* aTolLab = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->Box );
-  myTolEdt = new QDoubleSpinBox( GroupPoints->Box );
-  initSpinBox( myTolEdt,  0, 100, 1e-7, 7 );
+  myTolEdt = new QtxDoubleSpinBox( 0.0, 100.0, DEFAULT_TOLERANCE_VALUE, 7, 7, GroupPoints->Box );
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
 
   QGridLayout* boxLayout = new QGridLayout( GroupPoints->Box );
@@ -98,7 +98,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupPoints2->LineEdit1->setReadOnly( true );
 
   QLabel* aTolLab2 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints2->Box );
-  myTolEdt2 = new QDoubleSpinBox( GroupPoints2->Box );
+  myTolEdt2 = new QtxDoubleSpinBox( GroupPoints2->Box );
   initSpinBox( myTolEdt2, 0, 100, 1e-7, 7 );
   myTolEdt2->setValue( DEFAULT_TOLERANCE_VALUE );
 

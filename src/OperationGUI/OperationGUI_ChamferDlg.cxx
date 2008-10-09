@@ -24,6 +24,7 @@
 //
 
 #include "OperationGUI_ChamferDlg.h"
+#include <QtxDoubleSpinBox.h>
 
 #include <DlgRef.h>
 #include <GeometryGUI.h>
@@ -84,7 +85,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg (GeometryGUI* theGeometryGUI, Q
 
   int row = aLayout->rowCount();
   aLayout->addWidget(new QLabel(tr("D"), myGrp1), row, 0);
-  aLayout->addWidget((mySpinBox[ SpinBox1 ] = new QDoubleSpinBox(myGrp1)), row++, 2);
+  aLayout->addWidget((mySpinBox[ SpinBox1 ] = new QtxDoubleSpinBox(myGrp1)), row++, 2);
   aLayout->setRowStretch(row, 10);
 
   // Create second group
@@ -145,7 +146,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg (GeometryGUI* theGeometryGUI, Q
 
   // Set range of spinboxes
   double SpecificStep = 10.0;
-  QMap< int, QDoubleSpinBox* >::iterator anIter;
+  QMap< int, QtxDoubleSpinBox* >::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
     if (anIter.key() == SpinBox44 || anIter.key() == SpinBox34 || anIter.key() == SpinBox24)
       initSpinBox(anIter.value(), 0.001, 89.999, 5, 0);
@@ -175,7 +176,7 @@ OperationGUI_ChamferDlg::~OperationGUI_ChamferDlg()
 void OperationGUI_ChamferDlg::Init()
 {
   // Set Initial values of spinboxes
-  QMap< int, QDoubleSpinBox* >::iterator anIter;
+  QMap< int, QtxDoubleSpinBox* >::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter)
     anIter.value()->setValue(5);
 
@@ -213,7 +214,7 @@ void OperationGUI_ChamferDlg::Init()
             this, SLOT(LineEditReturnPressed()));
 
   // spin boxes
-  QMap< int, QDoubleSpinBox* >::iterator anIterSpin;
+  QMap< int, QtxDoubleSpinBox* >::iterator anIterSpin;
   for (anIterSpin = mySpinBox.begin(); anIterSpin != mySpinBox.end(); ++anIterSpin)
     connect(anIterSpin.value(), SIGNAL(valueChanged(double)),
             this, SLOT(ValueChangedInSpinBox(double)));
@@ -641,8 +642,8 @@ void OperationGUI_ChamferDlg::createRadioWg(const QString& theLbl1,
   myRadioButton[ theRbId ] = new QRadioButton(theParent);
   QLabel* lab1 = new QLabel(theLbl1, theParent);
   QLabel* lab2 = new QLabel(theLbl2, theParent);
-  mySpinBox[ theSpin1Id ]  = new QDoubleSpinBox(theParent);
-  mySpinBox[ theSpin2Id ]  = new QDoubleSpinBox(theParent);
+  mySpinBox[ theSpin1Id ]  = new QtxDoubleSpinBox(theParent);
+  mySpinBox[ theSpin2Id ]  = new QtxDoubleSpinBox(theParent);
   int row = theLayout->rowCount();
   theLayout->addWidget(myRadioButton[ theRbId ], row, 0);
   theLayout->addWidget(lab1,                     row, 2);

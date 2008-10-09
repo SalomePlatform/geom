@@ -25,6 +25,7 @@
 
 #include "EntityGUI_SketcherDlg.h"
 #include "EntityGUI_Widgets.h"
+#include <QtxDoubleSpinBox.h>
 
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
@@ -277,7 +278,7 @@ bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
   if (event->type() == QEvent::KeyRelease) {
     // NPAL16010 (Sketcher Apply non available if only one line is modified)
     // To have Apply active as soon as value text changed
-    QDoubleSpinBox* aDoubleSpinBox = (QDoubleSpinBox*)object;
+    QtxDoubleSpinBox* aDoubleSpinBox = (QtxDoubleSpinBox*)object;
     if (aDoubleSpinBox)
       ValueChangedInSpinBox( aDoubleSpinBox->value() );
   }

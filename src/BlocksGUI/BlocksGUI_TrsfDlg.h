@@ -29,7 +29,7 @@
 
 #include <QMap>
 
-class QDoubleSpinBox;
+class QtxDoubleSpinBox;
 class QGroupBox;
 class QPushButton;
 class QLineEdit;
@@ -78,7 +78,7 @@ private:
 
   QMap<int, QPushButton*>            mySelBtn;
   QMap<int, QLineEdit*>              mySelName;
-  QMap<int, QDoubleSpinBox*>         mySpinBox;
+  QMap<int, QtxDoubleSpinBox*>       mySpinBox;
 
 private slots:
   void                               ClickOnOk();

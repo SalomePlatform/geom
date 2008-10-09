@@ -28,6 +28,7 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
+#include <QtxDoubleSpinBox.h>
 
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
@@ -73,13 +74,13 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( GeometryGUI* theGeometryGUI,
   TextLabelNear = new QLabel( tr( "Near" ), GroupArguments );
   GroupArgumentsLayout->addWidget( TextLabelNear, 0, 0 );
 
-  SpinBox_Near = new QDoubleSpinBox( GroupArguments );
+  SpinBox_Near = new QtxDoubleSpinBox( COORD_MIN, COORD_MAX, 10.0, 3, 10, GroupArguments );
   GroupArgumentsLayout->addWidget( SpinBox_Near, 0, 1 );
 
   TextLabelFar = new QLabel( tr( "Far" ), GroupArguments );
   GroupArgumentsLayout->addWidget( TextLabelFar, 0, 2 );
 
-  SpinBox_Far = new QDoubleSpinBox( GroupArguments );
+  SpinBox_Far = new QtxDoubleSpinBox(  COORD_MIN, COORD_MAX, 10.0, 3, 10, GroupArguments );
   GroupArgumentsLayout->addWidget( SpinBox_Far, 0, 3 );
 
   resetButton  = new QPushButton( tr( "Reset" ), GroupArguments );
@@ -95,10 +96,6 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( GeometryGUI* theGeometryGUI,
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupArguments );
-
-  /* Initialisations */
-  initSpinBox( SpinBox_Near, COORD_MIN, COORD_MAX, 10.0, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( SpinBox_Far, COORD_MIN, COORD_MAX, 10.0, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );

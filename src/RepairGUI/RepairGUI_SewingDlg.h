@@ -29,7 +29,7 @@
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_1SelExt;
-class QDoubleSpinBox;
+class QtxDoubleSpinBox;
 class QPushButton;
 
 //=================================================================================
@@ -59,7 +59,7 @@ private:
   GEOM::GEOM_Object_var              myObject;
 
   DlgRef_1SelExt*                    GroupPoints;
-  QDoubleSpinBox*                    myTolEdt;
+  QtxDoubleSpinBox*                    myTolEdt;
   QPushButton*                       myFreeBoundBtn;
   
   int                                myClosed; // Number of free closed boundaries detected. Calculated in execute(), used in onDetect().

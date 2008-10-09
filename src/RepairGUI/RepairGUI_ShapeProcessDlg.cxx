@@ -29,6 +29,7 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
+#include <QtxDoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -123,10 +124,8 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      myFixShapeTol3D = new QDoubleSpinBox( w );
-      initSpinBox( myFixShapeTol3D, 0, 100, 1e-7, 10 );
-      myFixShapeMaxTol3D = new QDoubleSpinBox( w );
-      initSpinBox( myFixShapeMaxTol3D, 0, 100, 1e-7, 10 );
+      myFixShapeTol3D = new QtxDoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myFixShapeMaxTol3D = new QtxDoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
       
       aLay->addWidget( new QLabel( tr( "GEOM_3D_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( myFixShapeTol3D, 0, 1 );
@@ -140,8 +139,7 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      myFixFaceSizeTol = new QDoubleSpinBox( w );
-      initSpinBox( myFixFaceSizeTol, 0, 100, 1e-7, 10 );
+      myFixFaceSizeTol = new QtxDoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
       
       aLay->addWidget( new QLabel( tr( "GEOM_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( myFixFaceSizeTol, 0, 1 );
@@ -153,8 +151,7 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      myDropSmallEdgesTol3D = new QDoubleSpinBox( w );
-      initSpinBox( myDropSmallEdgesTol3D, 0, 100, 1e-7, 10 );
+      myDropSmallEdgesTol3D = new QtxDoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
   
       aLay->addWidget( new QLabel( tr( "GEOM_3D_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( myDropSmallEdgesTol3D, 0, 1 );
@@ -166,10 +163,8 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      mySplitAngleAngle = new QDoubleSpinBox( w );
-      initSpinBox( mySplitAngleAngle, 0, 360, 1 );
-      mySplitAngleMaxTol = new QDoubleSpinBox( w );
-      initSpinBox( mySplitAngleMaxTol, 0, 100, 1e-7, 10 );
+      mySplitAngleAngle = new QtxDoubleSpinBox(  0, 360, 1, 10, 10, w );
+      mySplitAngleMaxTol = new QtxDoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
       
       aLay->addWidget( new QLabel( tr( "GEOM_ANGLE_1" ), w ), 0, 0 );
       aLay->addWidget( mySplitAngleAngle, 0, 1 );
@@ -195,8 +190,7 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
 
-      mySplitContTol3D = new QDoubleSpinBox( w );
-      initSpinBox( mySplitContTol3D, 0, 100, 1e-7, 10 );
+      mySplitContTol3D = new QtxDoubleSpinBox(  0., 100., 1e-7, 10, 10, w );
       mySplitContSurfCont = new QComboBox( w );
       mySplitContSurfCont->addItems( aContinueties );
       mySplitContCurvCont = new QComboBox( w );
@@ -220,11 +214,9 @@ void RepairGUI_ShapeProcessDlg::init()
       myBSpline3DCurveChk = new QCheckBox( tr("GEOM_3D_CURVE_MODE"), w );
       myBSpline2DCurveChk = new QCheckBox( tr("GEOM_2D_CURVE_MODE"), w );
 
-      myBSplineTol3D = new QDoubleSpinBox( w );
-      initSpinBox( myBSplineTol3D, 0, 100, 1e-7, 10 );
+      myBSplineTol3D = new QtxDoubleSpinBox(  0., 100., 1e-7, 10, 10, w );
       
-      myBSplineTol2D = new QDoubleSpinBox( w );
-      initSpinBox( myBSplineTol2D, 0, 100, 1e-7, 10 );
+      myBSplineTol2D = new QtxDoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
 
       myBSplineDegree = new QSpinBox( w );
       myBSplineSegments = new QSpinBox( w );
@@ -264,8 +256,7 @@ void RepairGUI_ShapeProcessDlg::init()
       myToBezier3DCurveChk = new QCheckBox( tr("GEOM_3D_CURVE_MODE"), w );
       myToBezier2DCurveChk = new QCheckBox( tr("GEOM_2D_CURVE_MODE"), w );
   
-      myToBezierMaxTol = new QDoubleSpinBox( w );
-      initSpinBox( myToBezierMaxTol, 0, 100, 1e-7, 10 );
+      myToBezierMaxTol = new QtxDoubleSpinBox(  0., 100., 1e-7, 10, 10, w );
 
       aLay->addWidget( myToBezierSurfModeChk, 0, 0 );
       aLay->addWidget( myToBezier3DCurveChk, 1, 0 );
@@ -280,8 +271,7 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
 
-      mySameParameterTol3D = new QDoubleSpinBox( w );
-      initSpinBox( mySameParameterTol3D, 0, 100, 1e-7, 10 );
+      mySameParameterTol3D = new QtxDoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
       
       aLay->addWidget( new QLabel( tr( "GEOM_3D_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( mySameParameterTol3D, 0, 1 );
@@ -508,8 +498,8 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
 void RepairGUI_ShapeProcessDlg::setValue( QWidget* theControl, const QString& theValue )
 {
   if ( theControl && !theValue.isNull() ) {
-    if ( qobject_cast<QDoubleSpinBox*>( theControl ) )
-      qobject_cast<QDoubleSpinBox*>( theControl )->setValue( theValue.toDouble() );
+    if ( qobject_cast<QtxDoubleSpinBox*>( theControl ) )
+      qobject_cast<QtxDoubleSpinBox*>( theControl )->setValue( theValue.toDouble() );
     else if ( qobject_cast<QSpinBox*>( theControl ) )
       qobject_cast<QSpinBox*>( theControl )->setValue( theValue.toInt() );
     else if ( qobject_cast<QComboBox*>( theControl ) )
@@ -526,8 +516,8 @@ void RepairGUI_ShapeProcessDlg::setValue( QWidget* theControl, const QString& th
 QString RepairGUI_ShapeProcessDlg::getValue( QWidget* theControl ) const
 {
   if ( theControl ) {
-    if ( qobject_cast<QDoubleSpinBox*>( theControl ) )
-      return QString::number( qobject_cast<QDoubleSpinBox*>( theControl )->value() );
+    if ( qobject_cast<QtxDoubleSpinBox*>( theControl ) )
+      return QString::number( qobject_cast<QtxDoubleSpinBox*>( theControl )->value() );
     else if ( qobject_cast<QSpinBox*>( theControl ) )
       return QString::number( qobject_cast<QSpinBox*>( theControl )->value() );
     else if ( qobject_cast<QComboBox*>( theControl ) )

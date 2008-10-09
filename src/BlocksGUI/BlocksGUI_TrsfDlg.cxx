@@ -111,7 +111,7 @@ void BlocksGUI_TrsfDlg::Init()
 {
   // Set range of spinboxes
   double SpecificStep = 1.0;
-  QMap<int, QDoubleSpinBox*>::iterator anIter;
+  QMap<int, QtxDoubleSpinBox*>::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
     //anIter.data()->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
     initSpinBox(anIter.value(), 1.0, MAX_NUMBER, SpecificStep, 3);
@@ -127,7 +127,7 @@ void BlocksGUI_TrsfDlg::Init()
   for (anIterBtn = mySelBtn.begin(); anIterBtn != mySelBtn.end(); ++anIterBtn)
     connect(anIterBtn.value(), SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  QMap<int, QDoubleSpinBox*>::iterator anIterSpin;
+  QMap<int, QtxDoubleSpinBox*>::iterator anIterSpin;
   for (anIterSpin = mySpinBox.begin(); anIterSpin != mySpinBox.end(); ++anIterSpin)
     connect(anIterSpin.value(), SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
@@ -449,7 +449,7 @@ void BlocksGUI_TrsfDlg::createSpinWg (const QString& theLbl,
                                       const int      theId)
 {
   QLabel* lab = new QLabel(theLbl, theParent);
-  mySpinBox[theId] = new QDoubleSpinBox(theParent);
+  mySpinBox[theId] = new QtxDoubleSpinBox(theParent);
   QGridLayout* l = 0;
   if (!theParent->layout()) {
     l = new QGridLayout(theParent);
