@@ -34,7 +34,7 @@
 
 #include "GEOM_Client.hxx"
 #include <SALOMEconfig.h>
-#include "OpUtil.hxx"
+#include "Basics_Utils.hxx"
 #include "utilities.h"
 
 #include <BRep_Builder.hxx>
@@ -66,7 +66,7 @@
 //=======================================================================
 TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape )
 {
-    std::string hst_client = GetHostname();
+    std::string hst_client = Kernel_Utils::GetHostname();
 
     Engines::Container_var ctn_server = geom->GetContainerRef();
     long                   pid_server = ctn_server->getPID();
