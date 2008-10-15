@@ -1767,7 +1767,8 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngle (Handle(GEOM_Object) theLine
     Handle(Geom_Curve) C1 = BRep_Tool::Curve(E1,fp,lp);
     Handle(Geom_Curve) C2 = BRep_Tool::Curve(E2,fp,lp);
 
-    if (!C1->IsKind(STANDARD_TYPE(Geom_Line)) ||
+    if ( C1.IsNull() || C2.IsNull() ||
+	!C1->IsKind(STANDARD_TYPE(Geom_Line)) ||
         !C2->IsKind(STANDARD_TYPE(Geom_Line)))
     {
       SetErrorCode("The edges must be linear");
