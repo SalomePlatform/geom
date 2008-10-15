@@ -107,7 +107,9 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     //aShape = aTransformation.Shape();
     TopLoc_Location aLocOrig = anOriginal.Location();
     gp_Trsf aTrsfOrig = aLocOrig.Transformation();
-    TopLoc_Location aLocRes (aTrsf * aTrsfOrig);
+    //TopLoc_Location aLocRes (aTrsf * aTrsfOrig); // gp_Trsf::Multiply() has a bug
+    aTrsfOrig.PreMultiply(aTrsf);
+    TopLoc_Location aLocRes (aTrsfOrig);
     aShape = anOriginal.Located(aLocRes);
   }
   else if (aType ==  ROTATE_THREE_POINTS || aType == ROTATE_THREE_POINTS_COPY) {
@@ -139,7 +141,9 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     //aShape = aTransformation.Shape();
     TopLoc_Location aLocOrig = anOriginal.Location();
     gp_Trsf aTrsfOrig = aLocOrig.Transformation();
-    TopLoc_Location aLocRes (aTrsf * aTrsfOrig);
+    //TopLoc_Location aLocRes (aTrsf * aTrsfOrig); // gp_Trsf::Multiply() has a bug
+    aTrsfOrig.PreMultiply(aTrsf);
+    TopLoc_Location aLocRes (aTrsfOrig);
     aShape = anOriginal.Located(aLocRes);
   }
   else if (aType == ROTATE_1D) {
@@ -172,7 +176,10 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
       }
       else {
         aTrsf.SetRotation(AX1, i*angle*PI180);
-        TopLoc_Location aLocRes (aTrsf * aTrsfOrig);
+        //TopLoc_Location aLocRes (aTrsf * aTrsfOrig); // gp_Trsf::Multiply() has a bug
+        gp_Trsf aTrsfNew (aTrsfOrig);
+        aTrsfNew.PreMultiply(aTrsf);
+        TopLoc_Location aLocRes (aTrsfNew);
         B.Add(aCompound, anOriginal.Located(aLocRes));
       }
       //NPAL18620: performance problem: multiple locations are accumulated
@@ -256,7 +263,11 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
         }
         else {
           aTrsf2.SetRotation(AX1, j*ang*PI180);
-          TopLoc_Location aLocRes (aTrsf2 * aTrsf1 * aTrsfOrig);
+          //TopLoc_Location aLocRes (aTrsf2 * aTrsf1 * aTrsfOrig); // gp_Trsf::Multiply() has a bug
+          gp_Trsf aTrsfNew (aTrsfOrig);
+          aTrsfNew.PreMultiply(aTrsf1);
+          aTrsfNew.PreMultiply(aTrsf2);
+          TopLoc_Location aLocRes (aTrsfNew);
           B.Add(aCompound, anOriginal.Located(aLocRes));
         }
         //NPAL18620: performance problem: multiple locations are accumulated
