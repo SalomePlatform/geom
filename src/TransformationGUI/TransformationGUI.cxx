@@ -35,6 +35,7 @@
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
 #include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
 #include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION
@@ -102,57 +103,46 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     break;
   case 5029: // RELOAD IMPORTED SHAPE
     {
+      SalomeApp_Study* anAppStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+
+      GEOM::GEOM_ITransformOperations_var anOp =
+        GeometryGUI::GetGeomGen()->GetITransformOperations(anAppStudy->id());
+      if (anOp->_is_nil()) return false;
+
+      GEOM_Displayer aDisp (anAppStudy);
+      SUIT_Desktop* desk = app->desktop();
+      QList<SUIT_ViewWindow*> wnds = desk->windows();
+
       LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
       SALOME_ListIO aSelList;
       aSelMgr->selectedObjects(aSelList);
-      if (aSelList.Extent() == 1) {
+
+      SALOME_ListIteratorOfListIO aSelIt (aSelList);
+      for (; aSelIt.More(); aSelIt.Next()) {
+        Handle(SALOME_InteractiveObject) io = aSelIt.Value();
         Standard_Boolean testResult = Standard_False;
-        GEOM::GEOM_Object_var aGeomObj =
-          GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+        GEOM::GEOM_Object_var aGeomObj = GEOMBase::ConvertIOinGEOMObject(io, testResult);
         if (testResult) {
-          SalomeApp_Study* anAppStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-          GEOM::GEOM_ITransformOperations_var anOp =
-            GeometryGUI::GetGeomGen()->GetITransformOperations(anAppStudy->id());
-          if (!anOp->_is_nil()) {
-            anOp->RecomputeObject(aGeomObj);
-            GEOM_Displayer aDisp (anAppStudy);
-            //aDisp.Redisplay(aSelList.First());
-            //aDisp.Display(aSelList.First());
-            Handle(SALOME_InteractiveObject) theIO = aSelList.First();
-            SUIT_Desktop* desk = app->desktop();
-            QList<SUIT_ViewWindow*> wnds = desk->windows();
-            SUIT_ViewWindow* wnd;
-            QListIterator<SUIT_ViewWindow*> it( wnds );
-            while ( it.hasNext() && (wnd = it.next()) )
-            {
-              SUIT_ViewManager* vman = wnd->getViewManager();
-              if ( vman )
-              {
-                SUIT_ViewModel* vmodel = vman->getViewModel();
-                if ( vmodel )
-                {
-                  SALOME_View* view = dynamic_cast<SALOME_View*>(vmodel);
-                  if ( view )
-                  {
-                    //if (view->isVisible(theIO) || view == GetActiveView())
-                    if (view->isVisible(theIO))
-                    {
-                      //SALOME_Prs* prs = view->CreatePrs( theIO->getEntry() );
-                      //if ( prs ) {
-                      //  prs->Update(&aDisp);
-                      //  view->Repaint();
-                      //}
-                      aDisp.Erase(theIO, false, false, view);
-                      aDisp.Display(theIO, true, view);
-                    }
+          anOp->RecomputeObject(aGeomObj);
+
+          SUIT_ViewWindow* wnd;
+          QListIterator<SUIT_ViewWindow*> it (wnds);
+          while (it.hasNext() && (wnd = it.next()))
+          {
+            if (SUIT_ViewManager* vman = wnd->getViewManager()) {
+              if (SUIT_ViewModel* vmodel = vman->getViewModel()) {
+                if (SALOME_View* view = dynamic_cast<SALOME_View*>(vmodel)) {
+                  if (view->isVisible(io)) {
+                    aDisp.Erase(io, false, false, view);
+                    aDisp.Display(io, true, view);
                   }
+                  // ? Redisplay subshapes ?
                 }
               }
             }
-            // ? Redisplay subshapes ?
           }
         }
-      }
+      } // for (; aSelIt.More(); aSelIt.Next())
     }
     break;
   default:
